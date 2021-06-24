@@ -3,7 +3,7 @@ import { DemoDataGenerator } from "../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
 import { Child } from "../children/model/child";
 import { faker } from "../../core/demo-data/faker";
-import { WarningLevel } from "../warning-level";
+import { warningLevels } from "../warning-level";
 import { Aser } from "./model/aser";
 import { ConfigurableEnumValue } from "../../core/configurable-enum/configurable-enum.interface";
 import { mathLevels } from "./model/mathLevels";
@@ -68,7 +68,8 @@ export class DemoAserGeneratorService extends DemoDataGenerator<Aser> {
       previousResult = aserResult;
     } while (
       date < faker.getEarlierDateOrToday(child.dropoutDate) &&
-      previousResult.getWarningLevel() !== WarningLevel.OK
+      previousResult.getWarningLevel() !==
+        warningLevels.find((level) => level.id === "OK")
     );
 
     return data;

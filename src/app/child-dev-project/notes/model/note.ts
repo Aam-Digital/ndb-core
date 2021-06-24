@@ -18,7 +18,7 @@
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { Entity } from "../../../core/entity/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import { WarningLevel, WarningLevelColor } from "../../warning-level";
+import { warningLevels } from "../../warning-level";
 import {
   INTERACTION_TYPE_CONFIG_ID,
   InteractionType,
@@ -30,6 +30,7 @@ import {
 } from "../../attendance/model/attendance-status";
 import { User } from "../../../core/user/user";
 import { Child } from "../../children/model/child";
+import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
@@ -95,28 +96,19 @@ export class Note extends Entity {
   @DatabaseField() schools: string[] = [];
 
   @DatabaseField({
-    dataType: "string",
     label: "",
-    editComponent: "EditSelectable",
-    additional: ["OK", "WARNING", "URGENT"],
+    dataType: "configurable-enum",
+    innerDataType: "warning-levels",
   })
-  warningLevel: WarningLevel = WarningLevel.OK;
+  warningLevel: ConfigurableEnumValue;
 
-  getWarningLevel(): WarningLevel {
-    return this.warningLevel;
+  getWarningLevel(): ConfigurableEnumValue {
+    return this.warningLevel || super.getWarningLevel();
   }
 
   // TODO: color logic should not be part of entity/model but rather in the component responsible for displaying it
   public getColor() {
-    if (this.warningLevel === WarningLevel.URGENT) {
-      return WarningLevelColor(WarningLevel.URGENT);
-    }
-    if (this.warningLevel === WarningLevel.WARNING) {
-      return WarningLevelColor(WarningLevel.WARNING);
-    }
-
-    const color = this.category.color;
-    return color ? color : "";
+    return super.getColor() || this.category.color || "";
   }
 
   public getColorForId(childId: string) {
@@ -126,7 +118,7 @@ export class Note extends Entity {
         AttendanceLogicalStatus.ABSENT
     ) {
       // child is absent, highlight the entry
-      return WarningLevelColor(WarningLevel.URGENT);
+      return warningLevels.find((warning) => warning.id === "URGENT").color;
     }
     return this.getColor();
   }

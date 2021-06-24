@@ -22,7 +22,6 @@ import { ConfigurableEnumValue } from "../../../core/configurable-enum/configura
 
 @DatabaseEntity("EducationalMaterial")
 export class EducationalMaterial extends Entity {
-
   @DatabaseField() child: string; // id of Child entity
   @DatabaseField({ label: "Date" }) date: Date;
   @DatabaseField({
@@ -35,8 +34,6 @@ export class EducationalMaterial extends Entity {
   @DatabaseField({ label: "Description" }) description = "";
 
   public getColor() {
-    return this.materialType && this.materialType["color"]
-      ? this.materialType["color"]
-      : "white";
+    return this.materialType?.color || "white";
   }
 }

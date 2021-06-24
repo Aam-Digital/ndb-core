@@ -22,6 +22,11 @@ export interface ConfigurableEnumValue {
   label: string;
 
   /**
+   * an optional color code which should be displayed
+   */
+  color?: string;
+
+  /**
    * Optionally any number of additional properties specific to a certain enum collection.
    */
   [x: string]: any;

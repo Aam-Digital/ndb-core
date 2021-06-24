@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { HealthCheck } from "../../health-checkup/model/health-check";
-import { WarningLevel } from "../../warning-level";
+import { warningLevels } from "../../warning-level";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { take } from "rxjs/operators";
 import { ChildrenService } from "../children.service";
@@ -46,14 +46,15 @@ export class ChildrenBmiDashboardComponent
         .getHealthChecksOfChild(child.getId())
         .pipe()
         .subscribe((results) => {
-          /** get newest HealtCheck */
+          /** get latest HealthCheck */
           if (results.length > 0) {
             this.currentHealthCheck = results.reduce((prev, cur) =>
               cur.date > prev.date ? cur : prev
             );
             /**Check health status */
             if (
-              this.currentHealthCheck.getWarningLevel() === WarningLevel.URGENT
+              this.currentHealthCheck.getWarningLevel() ===
+              warningLevels.find((level) => level.id === "URGENT")
             ) {
               this.bmiRows.push({
                 childId: child.getId(),

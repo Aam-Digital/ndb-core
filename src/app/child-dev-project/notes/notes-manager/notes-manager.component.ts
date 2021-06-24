@@ -3,7 +3,7 @@ import { Note } from "../model/note";
 import { MediaObserver } from "@angular/flex-layout";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { ActivatedRoute } from "@angular/router";
-import { WarningLevel } from "../../warning-level";
+import { warningLevels } from "../../warning-level";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FilterSelectionOption } from "../../../core/filter/filter-selection/filter-selection";
 import { SessionService } from "../../../core/session/session-service/session.service";
@@ -44,18 +44,25 @@ export class NotesManagerComponent implements OnInit {
   noteConstructor = Note;
   notes: Note[] = [];
 
+  private readonly urgentLevel = warningLevels.find(
+    (level) => level.id === "URGENT"
+  );
+  private readonly warningLevel = warningLevels.find(
+    (level) => level.id === "WARNING"
+  );
+
   private statusFS: FilterSelectionOption<Note>[] = [
     {
       key: "urgent",
       label: "Urgent",
-      filterFun: (n: Note) => n.warningLevel === WarningLevel.URGENT,
+      filterFun: (n: Note) => n.warningLevel === this.urgentLevel,
     },
     {
       key: "follow-up",
       label: "Needs Follow-Up",
       filterFun: (n: Note) =>
-        n.warningLevel === WarningLevel.WARNING ||
-        n.warningLevel === WarningLevel.URGENT,
+        n.warningLevel === this.warningLevel ||
+        n.warningLevel === this.urgentLevel,
     },
     { key: "", label: "All", filterFun: () => true },
   ];

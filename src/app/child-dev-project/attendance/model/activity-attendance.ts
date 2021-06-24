@@ -5,8 +5,9 @@ import {
 import { Entity } from "../../../core/entity/entity";
 import { RecurringActivity } from "./recurring-activity";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
-import { WarningLevel } from "../../warning-level";
+import { warningLevels } from "../../warning-level";
 import { EventNote } from "./event-note";
+import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 
 /**
  * Aggregate information about all events for a {@link RecurringActivity} within a given time period.
@@ -198,7 +199,7 @@ export class ActivityAttendance extends Entity {
   /**
    * Custom warning level for attendance thresholds - optionally for a specific child.
    */
-  public getWarningLevel(forChildId?: string): WarningLevel {
+  public getWarningLevel(forChildId?: string): ConfigurableEnumValue {
     let attendancePercentage;
     if (forChildId) {
       attendancePercentage = this.getAttendancePercentage(forChildId);
@@ -207,13 +208,13 @@ export class ActivityAttendance extends Entity {
     }
 
     if (!attendancePercentage) {
-      return WarningLevel.NONE;
+      return warningLevels.find((level) => level.id === "OK");
     } else if (attendancePercentage < ActivityAttendance.THRESHOLD_URGENT) {
-      return WarningLevel.URGENT;
+      return warningLevels.find((level) => level.id === "URGENT");
     } else if (attendancePercentage < ActivityAttendance.THRESHOLD_WARNING) {
-      return WarningLevel.WARNING;
+      return warningLevels.find((level) => level.id === "WARNING");
     } else {
-      return WarningLevel.OK;
+      return warningLevels.find((level) => level.id === "OK");
     }
   }
 }

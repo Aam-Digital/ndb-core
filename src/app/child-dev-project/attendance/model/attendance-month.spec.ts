@@ -16,7 +16,7 @@
  */
 
 import { AttendanceMonth, daysInMonth } from "./attendance-month";
-import { WarningLevel } from "../../warning-level";
+import { warningLevels } from "../../warning-level";
 import { waitForAsync } from "@angular/core/testing";
 import { Entity } from "../../../core/entity/entity";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
@@ -103,7 +103,9 @@ describe("AttendanceMonth", () => {
     entity.daysWorking = working;
     entity.daysAttended = attended;
 
-    expect(entity.getWarningLevel()).toBe(WarningLevel.URGENT);
+    expect(entity.getWarningLevel()).toBe(
+      warningLevels.find((level) => level.id === "URGENT")
+    );
   });
 
   it("has dailyRegister array after creation", () => {

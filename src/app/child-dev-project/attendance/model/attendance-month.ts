@@ -16,11 +16,12 @@
  */
 
 import { Entity } from "../../../core/entity/entity";
-import { WarningLevel } from "../../warning-level";
+import { warningLevels } from "../../warning-level";
 import { AttendanceDay } from "./attendance-day";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { AttendanceStatus } from "./attendance-status";
+import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 
 /**
  * @deprecated Use new system based on EventNote and RecurrentActivity instead
@@ -222,14 +223,14 @@ export class AttendanceMonth extends Entity {
     return this.daysAttended / (this.daysWorking - this.daysExcused);
   }
 
-  getWarningLevel() {
+  getWarningLevel(): ConfigurableEnumValue {
     const attendance = this.getAttendancePercentage();
     if (attendance < AttendanceMonth.THRESHOLD_URGENT) {
-      return WarningLevel.URGENT;
+      return warningLevels.find((level) => level.id === "URGENT");
     } else if (attendance < AttendanceMonth.THRESHOLD_WARNING) {
-      return WarningLevel.WARNING;
+      return warningLevels.find((level) => level.id === "WARNING");
     } else {
-      return WarningLevel.OK;
+      return warningLevels.find((level) => level.id === "OK");
     }
   }
 }

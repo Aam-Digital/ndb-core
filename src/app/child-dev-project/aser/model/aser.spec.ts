@@ -16,7 +16,7 @@
  */
 
 import { Aser } from "./aser";
-import { WarningLevel } from "../../warning-level";
+import { warningLevels } from "../../warning-level";
 import { waitForAsync } from "@angular/core/testing";
 import { Entity } from "../../../core/entity/entity";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
@@ -79,7 +79,9 @@ describe("Aser", () => {
     const id = "test1";
     const entity = new Aser(id);
 
-    expect(entity.getWarningLevel()).toBe(WarningLevel.OK);
+    expect(entity.getWarningLevel()).toBe(
+      warningLevels.find((level) => level.id === "OK")
+    );
   });
 
   it("warning level WARNING if some bad results", function () {
@@ -88,6 +90,8 @@ describe("Aser", () => {
     entity.english = readingLevels[1];
     entity.math = readingLevels[2];
 
-    expect(entity.getWarningLevel()).toBe(WarningLevel.WARNING);
+    expect(entity.getWarningLevel()).toBe(
+      warningLevels.find((level) => level.id === "WARNING")
+    );
   });
 });

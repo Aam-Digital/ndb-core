@@ -16,7 +16,7 @@
  */
 
 import { Entity } from "../../../core/entity/entity";
-import { WarningLevel } from "../../warning-level";
+import { warningLevels } from "../../warning-level";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
@@ -70,7 +70,7 @@ export class Aser extends Entity {
   math: ConfigurableEnumValue;
   @DatabaseField({ label: "Remarks" }) remarks: string = "";
 
-  getWarningLevel(): WarningLevel {
+  getWarningLevel(): ConfigurableEnumValue {
     let warningLevel;
 
     if (
@@ -79,9 +79,9 @@ export class Aser extends Entity {
       Aser.isReadingPassedOrNA(this.bengali) &&
       Aser.isMathPassedOrNA(this.math)
     ) {
-      warningLevel = WarningLevel.OK;
+      warningLevel = warningLevels.find((level) => level.id === "OK");
     } else {
-      warningLevel = WarningLevel.WARNING;
+      warningLevel = warningLevels.find((level) => level.id === "WARNING");
     }
 
     return warningLevel;
