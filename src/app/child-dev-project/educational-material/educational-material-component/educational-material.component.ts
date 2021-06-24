@@ -17,8 +17,6 @@ export class EducationalMaterialComponent
   @Input() child: Child;
   records = new Array<EducationalMaterial>();
 
-  materialTypes = EducationalMaterial.MATERIAL_ALL;
-
   columns: FormFieldConfig[] = [
     { id: "date", visibleFrom: "xs" },
     { id: "materialType", visibleFrom: "xs" },
@@ -77,10 +75,10 @@ export class EducationalMaterialComponent
 
     const summary = new Map<string, number>();
     this.records.forEach((m) => {
-      const previousValue = summary.has(m.materialType)
-        ? summary.get(m.materialType)
+      const previousValue = summary.has(m.materialType.id)
+        ? summary.get(m.materialType.id)
         : 0;
-      summary.set(m.materialType, previousValue + m.materialAmount);
+      summary.set(m.materialType.id, previousValue + m.materialAmount);
     });
 
     let summaryText = "";

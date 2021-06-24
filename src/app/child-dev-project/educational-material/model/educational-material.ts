@@ -18,63 +18,25 @@
 import { Entity } from "../../../core/entity/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
+import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 
 @DatabaseEntity("EducationalMaterial")
 export class EducationalMaterial extends Entity {
-  static MATERIAL_STATIONARIES = [
-    "pencil",
-    "eraser",
-    "sharpener",
-    "pen (black)",
-    "pen (blue)",
-    "oil pastels",
-    "crayons",
-    "sketch pens",
-    "scale (big)",
-    "scale (small)",
-    "geometry box",
-    "copy (single line, small)",
-    "copy (single line, big)",
-    "copy (four line)",
-    "copy (squared)",
-    "copy (plain)",
-    "copy (line-plain)",
-    "copy (drawing)",
-    "copy (practical)",
-    "graph book",
-    "project papers",
-    "project file",
-    "scrap book",
-    "exam board",
-  ];
-  static MATERIAL_OTHER = [
-    "Bag",
-    "School Uniform",
-    "School Shoes",
-    "Sports Dress",
-    "Sports Shoes",
-    "Raincoat",
-  ];
-  static MATERIAL_ALL = EducationalMaterial.MATERIAL_STATIONARIES.concat(
-    EducationalMaterial.MATERIAL_OTHER
-  );
 
   @DatabaseField() child: string; // id of Child entity
   @DatabaseField({ label: "Date" }) date: Date;
   @DatabaseField({
     label: "Material",
-    editComponent: "EditSelectable",
-    additional: EducationalMaterial.MATERIAL_ALL,
+    dataType: "configurable-enum",
+    innerDataType: "materials",
   })
-  materialType = "";
+  materialType: ConfigurableEnumValue;
   @DatabaseField({ label: "Amount" }) materialAmount: number;
   @DatabaseField({ label: "Description" }) description = "";
 
   public getColor() {
-    if (EducationalMaterial.MATERIAL_STATIONARIES.includes(this.materialType)) {
-      return "white";
-    } else {
-      return "#B3E5FC";
-    }
+    return this.materialType && this.materialType["color"]
+      ? this.materialType["color"]
+      : "white";
   }
 }

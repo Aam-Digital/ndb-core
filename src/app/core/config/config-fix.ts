@@ -9,6 +9,7 @@ import {
   readingLevels,
 } from "../../child-dev-project/aser/model/aser";
 import { genders } from "../../child-dev-project/children/model/genders";
+import { materials } from "../../child-dev-project/educational-material/model/materials";
 
 // prettier-ignore
 export const defaultJsonConfig = {
@@ -87,6 +88,8 @@ export const defaultJsonConfig = {
   "enum:math-levels": mathLevels,
 
   "enum:genders": genders,
+
+  "enum:materials": materials,
 
   "enum:document-status": [
     {
