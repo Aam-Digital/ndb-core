@@ -317,7 +317,7 @@ describe("EntitySubrecordComponent", () => {
     expect(component.records).toEqual([child]);
   }));
 
-  it("should create new entities and make them editable", fakeAsync(() => {
+  it("should create new entities and make them editable", () => {
     const child = new Child();
     component.newRecordFactory = () => child;
     component.columns = [{ id: "name" }, { id: "projectNumber" }];
@@ -329,7 +329,7 @@ describe("EntitySubrecordComponent", () => {
       (row) => row.record === child
     );
     expect(tableRow.formGroup.enabled).toBeTrue();
-  }));
+  });
 
   it("should notify when an entity is clicked", (done) => {
     const child = new Child();
