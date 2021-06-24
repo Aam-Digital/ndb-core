@@ -23,6 +23,11 @@ import { ChildSchoolRelation } from "../../child-dev-project/children/model/chil
 import { HistoricalEntityData } from "../../features/historical-data/historical-entity-data";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { HealthCheck } from "../../child-dev-project/health-checkup/model/health-check";
+import { readingLevels } from "../../child-dev-project/aser/model/readingLevels";
+import { mathLevels } from "../../child-dev-project/aser/model/mathLevels";
+import { genders } from "../../child-dev-project/children/model/genders";
+import { materials } from "../../child-dev-project/educational-material/model/materials";
+import { CONFIGURABLE_ENUM_CONFIG_PREFIX } from "../configurable-enum/configurable-enum.interface";
 
 @Injectable({
   providedIn: "root",
@@ -43,6 +48,24 @@ export class ConfigMigrationService {
 
   async migrateConfig(): Promise<Config> {
     this.config = await this.configService.loadConfig(this.entityMapper);
+    this.addNewConfigurableEnums();
+    this.migrateViewConfigs();
+    console.log("config", this.config);
+    return this.configService.saveConfig(this.entityMapper, this.config.data);
+  }
+
+  private addNewConfigurableEnums() {
+    this.config.data[
+      CONFIGURABLE_ENUM_CONFIG_PREFIX + "reading-levels"
+    ] = readingLevels;
+    this.config.data[
+      CONFIGURABLE_ENUM_CONFIG_PREFIX + "math-levels"
+    ] = mathLevels;
+    this.config.data[CONFIGURABLE_ENUM_CONFIG_PREFIX + "genders"] = genders;
+    this.config.data[CONFIGURABLE_ENUM_CONFIG_PREFIX + "materials"] = materials;
+  }
+
+  private migrateViewConfigs() {
     const viewConfigs = this.configService.getAllConfigs<ViewConfig>("view:");
     viewConfigs.forEach((viewConfig) => {
       const entity = this.getEntity(viewConfig._id);
@@ -53,8 +76,6 @@ export class ConfigMigrationService {
         this.migrateEntityDetailsConfig(viewConfig.config, entity);
       }
     });
-    console.log("config", this.config);
-    return this.configService.saveConfig(this.entityMapper, this.config.data);
   }
 
   private getEntity(viewId: string): EntityConstructor<Entity> {

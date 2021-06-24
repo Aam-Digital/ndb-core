@@ -5,6 +5,8 @@ import { ConfigService } from "./config.service";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Config } from "./config";
 import { EntityConfig } from "../entity/entity-config.service";
+import { CONFIGURABLE_ENUM_CONFIG_PREFIX } from "../configurable-enum/configurable-enum.interface";
+import { genders } from "../../child-dev-project/children/model/genders";
 
 describe("ConfigMigrationService", () => {
   let service: ConfigMigrationService;
@@ -299,6 +301,13 @@ describe("ConfigMigrationService", () => {
   it("should migrate the details configs", async () => {
     const childDetailsConfig = configService.getConfig("view:child/:id");
     expect(childDetailsConfig).toEqual(expectedChildDetailsConfig);
+  });
+
+  it("should add configurable enum configs", () => {
+    const genderConfig = configService.getConfig(
+      CONFIGURABLE_ENUM_CONFIG_PREFIX + "genders"
+    );
+    expect(genderConfig).toEqual(genders);
   });
 });
 const expectedChildrenListConfig = {

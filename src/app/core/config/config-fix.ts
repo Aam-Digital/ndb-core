@@ -78,17 +78,11 @@ export const defaultJsonConfig = {
 
 
   "enum:interaction-type": defaultInteractionTypes,
-
   "enum:attendance-status": defaultAttendanceStatusTypes,
-
   "enum:reading-levels": readingLevels,
-
   "enum:math-levels": mathLevels,
-
   "enum:genders": genders,
-
   "enum:materials": materials,
-
   "enum:document-status": [
     {
       "id": "",
