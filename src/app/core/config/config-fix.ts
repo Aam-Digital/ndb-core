@@ -5,6 +5,10 @@ import { Gender } from "../../child-dev-project/children/model/Gender";
 import { School } from "../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
+import {
+  mathLevels,
+  readingLevels,
+} from "../../child-dev-project/aser/model/aser";
 
 // prettier-ignore
 export const defaultJsonConfig = {
@@ -77,6 +81,10 @@ export const defaultJsonConfig = {
   "enum:interaction-type": defaultInteractionTypes,
 
   "enum:attendance-status": defaultAttendanceStatusTypes,
+
+  "enum:reading-levels": readingLevels,
+
+  "enum:math-levels": mathLevels,
 
   "enum:document-status": [
     {
