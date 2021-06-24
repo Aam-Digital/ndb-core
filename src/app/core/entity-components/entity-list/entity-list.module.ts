@@ -8,6 +8,7 @@ import { Angulartics2Module } from "angulartics2";
 import { MatButtonModule } from "@angular/material/button";
 import { ExtendedModule, FlexModule } from "@angular/flex-layout";
 import { MatInputModule } from "@angular/material/input";
+import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatTableModule } from "@angular/material/table";
@@ -23,7 +24,7 @@ import { EntityUtilsModule } from "../entity-utils/entity-utils.module";
 import { EntityFormModule } from "../entity-form/entity-form.module";
 
 @NgModule({
-  declarations: [ListFilterComponent, EntityListComponent],
+  declarations: [EntityListComponent, ListFilterComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -35,6 +36,7 @@ import { EntityFormModule } from "../entity-form/entity-form.module";
     MatButtonModule,
     FlexModule,
     MatInputModule,
+    MatCheckboxModule,
     MatExpansionModule,
     ExtendedModule,
     MatButtonToggleModule,
@@ -48,6 +50,5 @@ import { EntityFormModule } from "../entity-form/entity-form.module";
     EntityFormModule,
   ],
   exports: [EntityListComponent],
-  entryComponents: [],
 })
 export class EntityListModule {}

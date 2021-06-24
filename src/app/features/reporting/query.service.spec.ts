@@ -419,4 +419,27 @@ describe("QueryService", () => {
 
     expectEntitiesToMatch(allNotesLastWeek, [yesterdayNote, sixDaysAgoNote]);
   });
+
+  it("should add notes to an array of event notes", async () => {
+    const entityMapper = TestBed.inject(EntityMapperService);
+    const note1 = new Note();
+    note1.children = [femaleMuslimChild.getId()];
+    note1.date = new Date();
+    await entityMapper.save(note1);
+    const note2 = new Note();
+    note2.children = [maleChild.getId()];
+    note2.date = new Date();
+    await entityMapper.save(note2);
+    const onlyEvents = await service.queryData(
+      `${EventNote.ENTITY_TYPE}:toArray`
+    );
+
+    const eventsWithNotes = await service.queryData(
+      `${EventNote.ENTITY_TYPE}:toArray:addEntities(${Note.ENTITY_TYPE})`
+    );
+
+    expect(eventsWithNotes.length).toBe(onlyEvents.length + 2);
+    expect(eventsWithNotes).toContain(note1);
+    expect(eventsWithNotes).toContain(note2);
+  });
 });

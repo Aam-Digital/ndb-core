@@ -56,7 +56,9 @@ describe("ChildPhotoService", () => {
 
     const actualImage = await service.getImage(testChild);
 
-    expect(actualImage).toBe(Child.generatePhotoPath(testChild.photo.path));
+    expect(actualImage).toBe(
+      ChildPhotoService.generatePhotoPath(testChild.photo.path)
+    );
   });
 
   it("should getFile default if neither webdav nor assets has the file", async () => {

@@ -7,7 +7,6 @@ import {
 } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatSort, MatSortable } from "@angular/material/sort";
-import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -82,9 +81,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   private mediaSubscription: Subscription;
   private screenWidth = "";
 
+  public idForSavingPagination = "startWert";
+
   @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  paginatorPageSize = EntitySubrecordComponent.paginatorPageSize.value;
 
   constructor(
     private _entityMapper: EntityMapperService,
@@ -142,6 +141,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
           this.records[0],
           true
         );
+        this.idForSavingPagination = this.columns.map((col) => col.id).join("");
       } catch (err) {
         this.alertService.addWarning(`Error creating form definitions: ${err}`);
       }
@@ -150,10 +150,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
 
   private initDefaultSort() {
     this.recordsDataSource.sort = this.sort;
-    this.recordsDataSource.paginator = this.paginator;
-    EntitySubrecordComponent.paginatorPageSize.subscribe((newPageSize) =>
-      this.updatePagination(newPageSize)
-    );
     this.recordsDataSource.sortingDataAccessor = (
       row: TableRow<T>,
       id: string
@@ -179,38 +175,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       id: sortBy,
       start: sortDirection,
     } as MatSortable);
-  }
-
-  /**
-   * Set the new page size (if it changed) and trigger an update of the UI.
-   * @param newPageSize
-   * @private
-   */
-  private updatePagination(newPageSize: number) {
-    if (this.paginatorPageSize === newPageSize) {
-      return;
-    }
-
-    this.paginatorPageSize = newPageSize;
-
-    setTimeout(() => {
-      this.paginator.pageSize = newPageSize;
-      this.paginator.page.next({
-        pageIndex: this.paginator.pageIndex,
-        pageSize: this.paginator.pageSize,
-        length: this.paginator.length,
-      });
-    });
-  }
-
-  /**
-   * Propagate the change of page size to all other entity subrecord components.
-   * @param event
-   */
-  onPaginateChange(event: PageEvent) {
-    if (event.pageSize !== this.paginatorPageSize) {
-      EntitySubrecordComponent.paginatorPageSize.next(event.pageSize);
-    }
   }
 
   edit(row: TableRow<T>) {

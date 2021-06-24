@@ -55,6 +55,7 @@ export class PhotoDatatype implements EntitySchemaDatatype {
     return {
       path: value,
       photo: new BehaviorSubject<SafeUrl>(
+        // reactivate the integration of cloud file loading here after testing and performance improvements
         ChildPhotoService.getImageFromAssets(value)
       ),
     };

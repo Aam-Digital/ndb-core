@@ -120,10 +120,7 @@
       class="table-row"
     ></tr>
   </table>
-  <mat-paginator
-    (page)="onPaginateChange($event)"
-    [pageSize]="paginatorPageSize"
-    [pageSizeOptions]="[3, 10, 20, 50]"
-    [showFirstLastButtons]="true"
-  ></mat-paginator>
+  <app-list-paginator
+    [dataSource]="recordsDataSource" [idForSavingPagination]="idForSavingPagination"
+  ></app-list-paginator>
 </div>
