@@ -24,11 +24,11 @@ import { Note } from "../../../../child-dev-project/notes/model/note";
 import { AlertService } from "../../../alerts/alert.service";
 import { PageEvent } from "@angular/material/paginator";
 import { FormBuilder, FormGroup } from "@angular/forms";
-import { Gender } from "../../../../child-dev-project/children/model/Gender";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 import { Subject } from "rxjs";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { genders } from "../../../../child-dev-project/children/model/genders";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -258,7 +258,7 @@ describe("EntitySubrecordComponent", () => {
     child.name = "Old Name";
     const formGroup = fb.group({
       name: "New Name",
-      gender: Gender.FEMALE,
+      gender: genders[2],
     });
 
     component.save({ record: child, formGroup: formGroup });
@@ -266,7 +266,7 @@ describe("EntitySubrecordComponent", () => {
 
     expect(mockEntityMapper.save).toHaveBeenCalledWith(child);
     expect(child.name).toBe("New Name");
-    expect(child.gender).toBe(Gender.FEMALE);
+    expect(child.gender).toBe(genders[2]);
     expect(formGroup.disabled).toBeTrue();
   }));
 
