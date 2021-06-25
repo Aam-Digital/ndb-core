@@ -253,7 +253,6 @@ export class ConfigMigrationService {
       ["age", "EditAge"],
       ["datepicker", "EditDate"],
       ["entity-select", "EditEntityArray"],
-      ["select", "EditSelectable"],
     ]);
     columns.forEach((row) =>
       row.forEach((formField) => {

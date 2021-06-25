@@ -76,17 +76,6 @@ const cols = [
       label: "Is active",
     },
     { id: "gender" },
-    {
-      edit: "EditSelectable",
-      id: "health_vaccinationStatus",
-      label: "Vaccination Status",
-      additional: [
-        "Good",
-        "Vaccination Due",
-        "Needs Checking",
-        "No Card/Information",
-      ],
-    },
   ],
   [
     {

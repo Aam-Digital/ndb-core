@@ -25,7 +25,6 @@ import { HistoricalDataComponent } from "../../features/historical-data/historic
 import { EditTextComponent } from "../entity-components/entity-utils/dynamic-form-components/edit-text/edit-text.component";
 import { EditConfigurableEnumComponent } from "../entity-components/entity-utils/dynamic-form-components/edit-configurable-enum/edit-configurable-enum.component";
 import { EditDateComponent } from "../entity-components/entity-utils/dynamic-form-components/edit-date/edit-date.component";
-import { EditSelectableComponent } from "../entity-components/entity-utils/dynamic-form-components/edit-selectable/edit-selectable.component";
 import { EditAgeComponent } from "../entity-components/entity-utils/dynamic-form-components/edit-age/edit-age.component";
 import { EditBooleanComponent } from "../entity-components/entity-utils/dynamic-form-components/edit-boolean/edit-boolean.component";
 import { EditLongTextComponent } from "../entity-components/entity-utils/dynamic-form-components/edit-long-text/edit-long-text.component";
@@ -71,7 +70,6 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["EditText", EditTextComponent],
   ["EditConfigurableEnum", EditConfigurableEnumComponent],
   ["EditDate", EditDateComponent],
-  ["EditSelectable", EditSelectableComponent],
   ["EditEntityArray", EditEntityArrayComponent],
   ["EditAge", EditAgeComponent],
   ["EditBoolean", EditBooleanComponent],

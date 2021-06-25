@@ -3,7 +3,6 @@ import { CommonModule } from "@angular/common";
 import { EditConfigurableEnumComponent } from "./dynamic-form-components/edit-configurable-enum/edit-configurable-enum.component";
 import { EditTextComponent } from "./dynamic-form-components/edit-text/edit-text.component";
 import { EditDateComponent } from "./dynamic-form-components/edit-date/edit-date.component";
-import { EditSelectableComponent } from "./dynamic-form-components/edit-selectable/edit-selectable.component";
 import { EditAgeComponent } from "./dynamic-form-components/edit-age/edit-age.component";
 import { EditBooleanComponent } from "./dynamic-form-components/edit-boolean/edit-boolean.component";
 import { EditLongTextComponent } from "./dynamic-form-components/edit-long-text/edit-long-text.component";
@@ -39,7 +38,6 @@ import { MatChipsModule } from "@angular/material/chips";
     EditConfigurableEnumComponent,
     EditTextComponent,
     EditDateComponent,
-    EditSelectableComponent,
     EditAgeComponent,
     EditBooleanComponent,
     EditLongTextComponent,
@@ -77,7 +75,6 @@ import { MatChipsModule } from "@angular/material/chips";
     EditConfigurableEnumComponent,
     EditTextComponent,
     EditDateComponent,
-    EditSelectableComponent,
     EditAgeComponent,
     EditBooleanComponent,
     EditLongTextComponent,
