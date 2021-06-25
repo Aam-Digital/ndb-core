@@ -11,7 +11,7 @@ import { MatNativeDateModule } from "@angular/material/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { RouterTestingModule } from "@angular/router/testing";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { PanelConfig } from "./EntityDetailsConfig";
+import { EntityDetailsConfig, PanelConfig } from "./EntityDetailsConfig";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { User } from "../../user/user";
 import { SessionService } from "../../session/session-service/session.service";
@@ -27,7 +27,7 @@ describe("EntityDetailsComponent", () => {
 
   let routeObserver: Subscriber<any>;
 
-  const routeConfig = {
+  const routeConfig: EntityDetailsConfig = {
     icon: "child",
     entity: "Child",
     panels: [

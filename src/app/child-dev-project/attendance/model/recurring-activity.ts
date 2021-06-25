@@ -69,7 +69,7 @@ export class RecurringActivity extends Entity {
 
   /** IDs of groups (schools, teams) whose (active) members should be included in the activity*/
   @DatabaseField({
-    label: "Schools",
+    label: "Groups",
     viewComponent: "DisplayEntityArray",
     editComponent: "EditEntityArray",
     additional: School.ENTITY_TYPE,
@@ -78,7 +78,7 @@ export class RecurringActivity extends Entity {
 
   /** IDs of the users who are responsible for conducting this activity */
   @DatabaseField({
-    label: "Assigned to",
+    label: "Assigned user(s)",
     viewComponent: "DisplayEntityArray",
     editComponent: "EditEntityArray",
     additional: User.ENTITY_TYPE,

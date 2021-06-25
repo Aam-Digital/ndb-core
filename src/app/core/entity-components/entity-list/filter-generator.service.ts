@@ -18,13 +18,7 @@ import { ConfigService } from "../../config/config.service";
 import { LoggingService } from "../../logging/logging.service";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
-
-export interface FilterComponentSettings<T> {
-  filterSettings: FilterSelection<T>;
-  selectedOption?: string;
-  display?: string;
-  label?: string;
-}
+import { FilterComponentSettings } from "./filter-component.settings";
 
 @Injectable({
   providedIn: "root",

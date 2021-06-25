@@ -22,6 +22,7 @@ import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 import { MatDialog } from "@angular/material/dialog";
 import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
+import { LoggingService } from "../../../logging/logging.service";
 
 export interface TableRow<T> {
   record: T;
@@ -77,6 +78,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    */
   @Input() newRecordFactory: () => T;
 
+  /**
+   * Whether the rows of the table are inline editable and new entries can be created through the "+" button.
+   */
   @Input() editable: boolean = true;
 
   /** columns displayed in the template's table */
@@ -99,7 +103,8 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     private alertService: AlertService,
     private media: MediaObserver,
     private entityFormService: EntityFormService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private loggingService: LoggingService
   ) {
     this.mediaSubscription = this.media
       .asObservable()
@@ -112,10 +117,15 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       });
   }
 
+  /**
+   * A function which should be executed when a row is clicked or a new entity created.
+   * @param entity The newly created or clicked entity.
+   * @param creatingNew If a new entity is created, this value is true.
+   */
   @Input() showEntity = (entity: Entity, creatingNew = false) =>
     this.showEntityInForm(entity, creatingNew);
 
-  /** function returns the background color for each entry*/
+  /** function returns the background color for each row*/
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
 
   /**
@@ -149,7 +159,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
           true
         );
       } catch (err) {
-        this.alertService.addWarning(`Error creating form definitions: ${err}`);
+        this.loggingService.warn(`Error creating form definitions: ${err}`);
       }
     }
     this.recordsDataSource.data = this.records.map((rec) => {

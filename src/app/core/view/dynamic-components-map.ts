@@ -15,7 +15,7 @@ import { ChildBlockComponent } from "../../child-dev-project/children/child-bloc
 import { DisplayTextComponent } from "../entity-components/entity-utils/view-components/display-text/display-text.component";
 import { DisplayCheckmarkComponent } from "../entity-components/entity-utils/view-components/display-checkmark/display-checkmark.component";
 import { DisplayDateComponent } from "../entity-components/entity-utils/view-components/display-date/display-date.component";
-import { DisplayConfigurableEnumComponent } from "../entity-components/entity-utils/view-components/display-configurable-enum/display-configurable-enum.component";
+import { DisplayConfigurableEnumComponent } from "../configurable-enum/display-configurable-enum/display-configurable-enum.component";
 import { ActivityAttendanceSectionComponent } from "../../child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component";
 import { BmiBlockComponent } from "../../child-dev-project/children/children-list/bmi-block/bmi-block.component";
 import { ChildrenBmiDashboardComponent } from "../../child-dev-project/children/children-bmi-dashboard/children-bmi-dashboard.component";
@@ -23,7 +23,7 @@ import { DashboardShortcutWidgetComponent } from "../dashboard-shortcut-widget/d
 import { UserListComponent } from "../admin/user-list/user-list.component";
 import { HistoricalDataComponent } from "../../features/historical-data/historical-data/historical-data.component";
 import { EditTextComponent } from "../entity-components/entity-utils/dynamic-form-components/edit-text/edit-text.component";
-import { EditConfigurableEnumComponent } from "../entity-components/entity-utils/dynamic-form-components/edit-configurable-enum/edit-configurable-enum.component";
+import { EditConfigurableEnumComponent } from "../configurable-enum/edit-configurable-enum/edit-configurable-enum.component";
 import { EditDateComponent } from "../entity-components/entity-utils/dynamic-form-components/edit-date/edit-date.component";
 import { EditAgeComponent } from "../entity-components/entity-utils/dynamic-form-components/edit-age/edit-age.component";
 import { EditBooleanComponent } from "../entity-components/entity-utils/dynamic-form-components/edit-boolean/edit-boolean.component";

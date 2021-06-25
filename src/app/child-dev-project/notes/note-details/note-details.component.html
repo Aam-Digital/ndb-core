@@ -76,7 +76,7 @@
 
         <app-entity-select
           fxFlex
-          [entityType]="'User'"
+          entityType="User"
           (selectionChange)="entityForm.form.markAsDirty()"
           [(selection)]="entity.authors"
           placeholder="Add Author..."
@@ -120,7 +120,7 @@
     <div fxLayout="column" fxLayoutGap="20px">
 
       <app-entity-select
-        [entityType]="'Child'"
+        entityType="Child"
         [(selection)]="entity.children"
         (selectionChange)="entityForm.form.markAsDirty()"
         [additionalFilter]="filterInactiveChildren"
@@ -150,7 +150,7 @@
 
       <div fxFlex>
         <app-entity-select
-          [entityType]="'School'"
+          entityType="School"
           [(selection)]="entity.schools"
           (selectionChange)="entityForm.form.markAsDirty()"
           label="Groups"

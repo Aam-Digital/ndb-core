@@ -1,6 +1,5 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { EditConfigurableEnumComponent } from "./dynamic-form-components/edit-configurable-enum/edit-configurable-enum.component";
 import { EditTextComponent } from "./dynamic-form-components/edit-text/edit-text.component";
 import { EditDateComponent } from "./dynamic-form-components/edit-date/edit-date.component";
 import { EditAgeComponent } from "./dynamic-form-components/edit-age/edit-age.component";
@@ -14,7 +13,6 @@ import { DisplayEntityComponent } from "./view-components/display-entity/display
 import { DisplayEntityArrayComponent } from "./view-components/display-entity-array/display-entity-array.component";
 import { DisplayTextComponent } from "./view-components/display-text/display-text.component";
 import { DisplayDateComponent } from "./view-components/display-date/display-date.component";
-import { DisplayConfigurableEnumComponent } from "./view-components/display-configurable-enum/display-configurable-enum.component";
 import { DisplayCheckmarkComponent } from "./view-components/display-checkmark/display-checkmark.component";
 import { ReadonlyFunctionComponent } from "./view-components/readonly-function/readonly-function.component";
 import { DisplayPercentageComponent } from "./view-components/display-percentage/display-percentage.component";
@@ -36,7 +34,6 @@ import { EditNumberComponent } from "./dynamic-form-components/edit-number/edit-
 
 @NgModule({
   declarations: [
-    EditConfigurableEnumComponent,
     EditTextComponent,
     EditDateComponent,
     EditAgeComponent,
@@ -50,7 +47,6 @@ import { EditNumberComponent } from "./dynamic-form-components/edit-number/edit-
     DisplayEntityArrayComponent,
     DisplayTextComponent,
     DisplayDateComponent,
-    DisplayConfigurableEnumComponent,
     DisplayCheckmarkComponent,
     ReadonlyFunctionComponent,
     DisplayPercentageComponent,
@@ -74,7 +70,6 @@ import { EditNumberComponent } from "./dynamic-form-components/edit-number/edit-
     MatChipsModule,
   ],
   entryComponents: [
-    EditConfigurableEnumComponent,
     EditTextComponent,
     EditDateComponent,
     EditAgeComponent,
@@ -88,7 +83,6 @@ import { EditNumberComponent } from "./dynamic-form-components/edit-number/edit-
     DisplayEntityArrayComponent,
     DisplayTextComponent,
     DisplayDateComponent,
-    DisplayConfigurableEnumComponent,
     DisplayCheckmarkComponent,
     ReadonlyFunctionComponent,
     DisplayPercentageComponent,

@@ -30,7 +30,7 @@ export class Aser extends Entity {
       // not applicable
       return true;
     }
-    return level === readingLevels[5];
+    return level === readingLevels.find((it) => it.id === "read_paragraph");
   }
 
   static isMathPassedOrNA(level: ConfigurableEnumValue) {
@@ -38,12 +38,11 @@ export class Aser extends Entity {
       // not applicable
       return true;
     }
-    return level === mathLevels[5];
+    return level === mathLevels.find((it) => it.id === "division");
   }
 
   @DatabaseField() child: string; // id of Child entity
-  @DatabaseField({ label: "Date" })
-  date: Date = new Date();
+  @DatabaseField({ label: "Date" }) date: Date = new Date();
   @DatabaseField({
     label: "Hindi",
     dataType: "configurable-enum",
