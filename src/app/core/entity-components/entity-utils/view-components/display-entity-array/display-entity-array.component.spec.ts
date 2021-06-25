@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { DisplayEntityArrayComponent } from "./display-entity-array.component";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 import { Child } from "../../../../../child-dev-project/children/model/child";
+import { Note } from "../../../../../child-dev-project/notes/model/note";
 
 describe("DisplayEntityArrayComponent", () => {
   let component: DisplayEntityArrayComponent;
@@ -21,6 +22,7 @@ describe("DisplayEntityArrayComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DisplayEntityArrayComponent);
     component = fixture.componentInstance;
+    component.onInitFromDynamicConfig({ entity: new Note(), id: "children" });
     fixture.detectChanges();
   });
 

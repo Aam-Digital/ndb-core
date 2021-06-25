@@ -29,6 +29,7 @@ import { Subject } from "rxjs";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { genders } from "../../../../child-dev-project/children/model/genders";
+import { LoggingService } from "../../../logging/logging.service";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -209,9 +210,9 @@ describe("EntitySubrecordComponent", () => {
     expect(sortedIds).toEqual(["0", "3", "1", "2"]);
   });
 
-  it("should log an error when the column definition can not be initialized", () => {
-    const alertService = TestBed.inject(AlertService);
-    spyOn(alertService, "addWarning");
+  it("should log a warning when the column definition can not be initialized", () => {
+    const loggingService = TestBed.inject(LoggingService);
+    spyOn(loggingService, "warn");
     component.records = [new Child()];
     component.columns = [
       {
@@ -224,7 +225,7 @@ describe("EntitySubrecordComponent", () => {
 
     component.ngOnChanges({ columns: null });
 
-    expect(alertService.addWarning).toHaveBeenCalled();
+    expect(loggingService.warn).toHaveBeenCalled();
   });
 
   it("should trigger an update of the paginator when changing the page size", fakeAsync(() => {
