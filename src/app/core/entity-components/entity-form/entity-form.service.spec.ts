@@ -1,4 +1,4 @@
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 
 import { EntityFormService } from "./entity-form.service";
 import { FormBuilder } from "@angular/forms";
@@ -40,13 +40,12 @@ describe("EntityFormService", () => {
     expect(entity.getId()).toBe("initialId");
   });
 
-  it("should update initial entity if saving is successful", fakeAsync(() => {
+  it("should return updated entity if saving is successful", async () => {
     const entity = new Entity("initialId");
     const formGroup = TestBed.inject(FormBuilder).group({ _id: "newId" });
 
-    service.saveChanges(formGroup, entity);
-    tick();
+    const newEntity = await service.saveChanges(formGroup, entity);
 
-    expect(entity.getId()).toBe("newId");
-  }));
+    expect(newEntity.getId()).toBe("newId");
+  });
 });

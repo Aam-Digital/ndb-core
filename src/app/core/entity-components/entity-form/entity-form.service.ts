@@ -64,21 +64,23 @@ export class EntityFormService {
     return this.fb.group(formConfig);
   }
 
-  public saveChanges(form: FormGroup, entity: Entity): Promise<Entity> {
+  /**
+   * This function applies the changes of the formGroup to the entity.
+   * If the form is invalid or the entity does not pass validation after applying the changes, an error will be thrown.
+   * In order to not edit the initial entity until the new one is saved, call entity.copy() on the input entity.
+   * @param form The formGroup holding the changes
+   * @param entity The entity on which the changes should be applied. Should be a copy.
+   */
+  public saveChanges<T extends Entity>(form: FormGroup, entity: T): Promise<T> {
     this.checkFormValidity(form);
-    const entityConstructor = entity.getConstructor();
-    const tmpEntity = entity.copy();
-
-    this.assignFormValuesToEntity(form, tmpEntity);
-    tmpEntity.assertValid();
+    this.assignFormValuesToEntity(form, entity);
+    entity.assertValid();
 
     return this.entityMapper
-      .save<Entity>(tmpEntity)
-      .then(() => Object.assign(entity, tmpEntity))
+      .save(entity)
+      .then(() => entity)
       .catch((err) => {
-        throw new Error(
-          `Could not save ${entityConstructor.ENTITY_TYPE}: ${err}`
-        );
+        throw new Error(`Could not save ${entity.getType()}: ${err}`);
       });
   }
 
@@ -104,7 +106,10 @@ export class EntityFormService {
 
   private assignFormValuesToEntity(form: FormGroup, entity: Entity) {
     Object.keys(form.controls).forEach((key) => {
-      entity[key] = form.get(key).value;
+      // Trying to set a getter function will throw an error
+      if (Object.getOwnPropertyDescriptor(entity, key)?.writable) {
+        entity[key] = form.get(key).value;
+      }
     });
   }
 }

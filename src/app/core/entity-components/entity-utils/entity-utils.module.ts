@@ -31,6 +31,7 @@ import { EntitySelectComponent } from "./entity-select/entity-select.component";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatChipsModule } from "@angular/material/chips";
 import { EditNumberComponent } from "./dynamic-form-components/edit-number/edit-number.component";
+import { EntityFunctionPipe } from './view-components/readonly-function/entity-function.pipe';
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import { EditNumberComponent } from "./dynamic-form-components/edit-number/edit-
     DisplayUnitComponent,
     EntitySelectComponent,
     EditNumberComponent,
+    EntityFunctionPipe,
   ],
   imports: [
     CommonModule,

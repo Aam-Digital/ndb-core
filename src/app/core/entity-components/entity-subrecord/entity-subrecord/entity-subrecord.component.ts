@@ -250,7 +250,10 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    */
   async save(row: TableRow<T>) {
     try {
-      await this.entityFormService.saveChanges(row.formGroup, row.record);
+      row.record = await this.entityFormService.saveChanges(
+        row.formGroup,
+        row.record.copy() as T
+      );
       row.formGroup.disable();
     } catch (err) {
       this.alertService.addDanger(err.message);
