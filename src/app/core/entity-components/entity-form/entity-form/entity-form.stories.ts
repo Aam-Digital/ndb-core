@@ -66,6 +66,10 @@ const cols = [
       required: true,
     },
     {
+      id: "projectNumber",
+      edit: "EditNumber",
+    },
+    {
       edit: "EditLongText",
       id: "additionalInfo",
       label: "Additional information",

@@ -32,6 +32,7 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
 import { EntitySelectComponent } from "./entity-select/entity-select.component";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatChipsModule } from "@angular/material/chips";
+import { EditNumberComponent } from "./dynamic-form-components/edit-number/edit-number.component";
 
 @NgModule({
   declarations: [
@@ -55,6 +56,7 @@ import { MatChipsModule } from "@angular/material/chips";
     DisplayPercentageComponent,
     DisplayUnitComponent,
     EntitySelectComponent,
+    EditNumberComponent,
   ],
   imports: [
     CommonModule,
@@ -91,6 +93,7 @@ import { MatChipsModule } from "@angular/material/chips";
     ReadonlyFunctionComponent,
     DisplayPercentageComponent,
     DisplayUnitComponent,
+    EditNumberComponent,
   ],
   exports: [DisplayEntityComponent, EntitySelectComponent],
 })
