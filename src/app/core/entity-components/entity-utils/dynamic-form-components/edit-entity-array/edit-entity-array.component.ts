@@ -3,7 +3,7 @@ import { EditComponent, EditPropertyConfig } from "../edit-component";
 import { Entity } from "../../../../entity/entity";
 
 @Component({
-  selector: "app-edit-selectable-entity",
+  selector: "app-edit-entity-array",
   templateUrl: "./edit-entity-array.component.html",
   styleUrls: ["./edit-entity-array.component.scss"],
 })
