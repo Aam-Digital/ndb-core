@@ -5,8 +5,12 @@ import { ConfigService } from "./config.service";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Config } from "./config";
 import { EntityConfig } from "../entity/entity-config.service";
-import { CONFIGURABLE_ENUM_CONFIG_PREFIX } from "../configurable-enum/configurable-enum.interface";
+import {
+  CONFIGURABLE_ENUM_CONFIG_PREFIX,
+  ConfigurableEnumValue,
+} from "../configurable-enum/configurable-enum.interface";
 import { genders } from "../../child-dev-project/children/model/genders";
+import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 
 describe("ConfigMigrationService", () => {
   let service: ConfigMigrationService;
@@ -156,6 +160,12 @@ describe("ConfigMigrationService", () => {
                           placeholder: "Gender",
                           options: ["M", "F"],
                         },
+                        {
+                          input: "select",
+                          id: "status",
+                          placeholder: "Status",
+                          options: ["Active", "Inactive", "Still Considering"],
+                        },
                       ],
                       [
                         {
@@ -294,13 +304,28 @@ describe("ConfigMigrationService", () => {
     const childConfig = configService.getConfig<EntityConfig>("entity:Child");
     const centerSchema = childConfig.attributes.find(
       (attr) => attr.name === "center"
-    );
-    expect(centerSchema.schema).toEqual(expectedCenterSchema);
+    ).schema;
+    expect(centerSchema).toEqual(expectedCenterSchema);
   });
 
   it("should migrate the details configs", async () => {
     const childDetailsConfig = configService.getConfig("view:child/:id");
     expect(childDetailsConfig).toEqual(expectedChildDetailsConfig);
+
+    const childConfig = configService.getConfig<EntityConfig>("entity:Child");
+    const genderSchema = childConfig.attributes.find(
+      (attr) => attr.name === "gender"
+    ).schema;
+    expect(genderSchema).toEqual(expectedGenderSchema);
+
+    const statusSchema = childConfig.attributes.find(
+      (attr) => attr.name === "status"
+    ).schema;
+    expect(statusSchema).toEqual(expectedStatusSchema);
+    const statusEnum = configService.getConfig(
+      CONFIGURABLE_ENUM_CONFIG_PREFIX + "status"
+    );
+    expect(statusEnum).toEqual(expectedStatusConfigurableEnum);
   });
 
   it("should add configurable enum configs", () => {
@@ -398,12 +423,45 @@ const expectedChildrenListConfig = {
   },
 };
 
-const expectedCenterSchema = {
+const expectedCenterSchema: EntitySchemaField = {
   dataType: "configurable-enum",
   innerDataType: "center",
   labelShort: "Center",
   label: "Center",
 };
+
+const expectedGenderSchema: EntitySchemaField = {
+  dataType: "configurable-enum",
+  innerDataType: "genders",
+  label: "Gender",
+  labelShort: "Gender",
+};
+
+const expectedStatusSchema: EntitySchemaField = {
+  dataType: "configurable-enum",
+  innerDataType: "status",
+  label: "Status",
+  labelShort: "Status",
+};
+
+const expectedStatusConfigurableEnum: ConfigurableEnumValue[] = [
+  {
+    id: "",
+    label: "",
+  },
+  {
+    id: "active",
+    label: "Active",
+  },
+  {
+    id: "inactive",
+    label: "Inactive",
+  },
+  {
+    id: "still_considering",
+    label: "Still Considering",
+  },
+];
 
 const expectedChildDetailsConfig = {
   component: "EntityDetails",
@@ -450,10 +508,12 @@ const expectedChildDetailsConfig = {
                     label: "Date of Birth",
                   },
                   {
-                    edit: "EditSelectable",
                     id: "gender",
                     label: "Gender",
-                    additional: ["M", "F"],
+                  },
+                  {
+                    id: "status",
+                    label: "Status",
                   },
                 ],
                 [

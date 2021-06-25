@@ -27,7 +27,10 @@ import { readingLevels } from "../../child-dev-project/aser/model/readingLevels"
 import { mathLevels } from "../../child-dev-project/aser/model/mathLevels";
 import { genders } from "../../child-dev-project/children/model/genders";
 import { materials } from "../../child-dev-project/educational-material/model/materials";
-import { CONFIGURABLE_ENUM_CONFIG_PREFIX } from "../configurable-enum/configurable-enum.interface";
+import {
+  CONFIGURABLE_ENUM_CONFIG_PREFIX,
+  ConfigurableEnumValue,
+} from "../configurable-enum/configurable-enum.interface";
 
 @Injectable({
   providedIn: "root",
@@ -270,7 +273,11 @@ export class ConfigMigrationService {
           if (formField.id === "photoFile") {
             formField.id = "photo";
           }
-          formField.edit = editMap.get(formField["input"]);
+          if (formField["input"] === "select") {
+            this.migrateSelectFormField(formField, entity);
+          } else {
+            formField.edit = editMap.get(formField["input"]);
+          }
           delete formField["input"];
           this.addLabelToEntity(formField.label, formField.id, entity, "short");
         } catch (e) {
@@ -278,6 +285,47 @@ export class ConfigMigrationService {
         }
       })
     );
+  }
+
+  private migrateSelectFormField(
+    formField: FormFieldConfig,
+    entity: EntityConstructor<Entity>
+  ) {
+    const selectableMap = new Map<string, string>([
+      ["warningLevel", "warning-levels"],
+      ["materialType", "materials"],
+      ["gender", "genders"],
+      ["hindi", "reading-levels"],
+      ["bengali", "reading-levels"],
+      ["english", "reading-levels"],
+      ["math", "math-levels"],
+    ]);
+    if (!selectableMap.has(formField.id)) {
+      const newEnum: ConfigurableEnumValue[] = [{ id: "", label: "" }].concat(
+        ...formField["additional"].map((option: string) => {
+          return {
+            label: option,
+            id: option
+              .toLowerCase()
+              .replace("(", "")
+              .replace(")", "")
+              .replace(" ", "_"),
+          };
+        })
+      );
+      this.config.data[
+        CONFIGURABLE_ENUM_CONFIG_PREFIX + formField.id
+      ] = newEnum;
+      console.warn(
+        `Automatically created enum "${formField.id}" with values:`,
+        newEnum
+      );
+      selectableMap.set(formField.id, formField.id);
+    }
+    const propertySchema = entity.schema.get(formField.id);
+    propertySchema.dataType = "configurable-enum";
+    propertySchema.innerDataType = selectableMap.get(formField.id);
+    delete formField["additional"];
   }
 
   private migratePreviousSchoolsComponent(columns: FormFieldConfig[]) {
