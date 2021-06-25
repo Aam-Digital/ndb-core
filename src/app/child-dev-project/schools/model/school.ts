@@ -13,12 +13,7 @@ export class School extends Entity {
   @DatabaseField({ label: "Medium" }) medium: string = "";
   @DatabaseField({ label: "Remarks" }) remarks: string = "";
   @DatabaseField({ label: "Website" }) website: string = "";
-  @DatabaseField({
-    label: "Private School",
-    editComponent: "EditBoolean",
-    viewComponent: "DisplayCheckmark",
-  })
-  privateSchool: boolean;
+  @DatabaseField({ label: "Private School" }) privateSchool: boolean;
   @DatabaseField({ label: "Contact Number" }) phone: string = "";
   @DatabaseField({ label: "Teaching up to class" }) upToClass: number;
   @DatabaseField({ label: "Board" }) academicBoard: string = "";
