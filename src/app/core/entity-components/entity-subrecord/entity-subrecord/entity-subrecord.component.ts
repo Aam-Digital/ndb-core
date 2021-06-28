@@ -14,7 +14,7 @@ import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { Entity } from "../../../entity/entity";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "../../../alerts/alert.service";
-import { BehaviorSubject, Subscription } from "rxjs";
+import { Subscription } from "rxjs";
 import { entityListSortingAccessor } from "../../entity-list/sorting-accessor";
 import { FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
@@ -47,14 +47,6 @@ export interface TableRow<T> {
   styleUrls: ["./entity-subrecord.component.scss"],
 })
 export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
-  /**
-   * Global state of pagination size for all entity subrecord components.
-   *
-   * When the user changes page size in one component the page size is automatically changed for other components also.
-   * This ensures a consistent UI e.g. for side-by-side subrecord components of multiple attendance record tables.
-   */
-  static paginatorPageSize = new BehaviorSubject(10);
-
   /** data to be displayed */
   @Input() records: Array<T> = [];
 
@@ -147,7 +139,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
           entity,
           true
         );
-        this.idForSavingPagination = this.columns
+        this.idForSavingPagination = this._columns
           .map((col) => (typeof col === "object" ? col.id : col))
           .join("");
       } catch (err) {

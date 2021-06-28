@@ -1,6 +1,7 @@
 import {
   ComponentFixture,
   fakeAsync,
+  flush,
   TestBed,
   tick,
   waitForAsync,
@@ -316,6 +317,8 @@ describe("EntitySubrecordComponent", () => {
     snackbarObservable.next();
     expect(mockEntityMapper.save).toHaveBeenCalledWith(child, true);
     expect(component.records).toEqual([child]);
+
+    flush();
   }));
 
   it("should create new entities and call the show entity function", fakeAsync(() => {
