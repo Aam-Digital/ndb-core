@@ -1,5 +1,8 @@
 import { Component } from "@angular/core";
-import { EditComponent, EditPropertyConfig } from "../../entity-components/entity-utils/dynamic-form-components/edit-component";
+import {
+  EditComponent,
+  EditPropertyConfig,
+} from "../../entity-components/entity-utils/dynamic-form-components/edit-component";
 import { ConfigurableEnumValue } from "../configurable-enum.interface";
 
 @Component({

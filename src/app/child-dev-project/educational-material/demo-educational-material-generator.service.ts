@@ -3,7 +3,7 @@ import { DemoDataGenerator } from "../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
 import { Child } from "../children/model/child";
 import { faker } from "../../core/demo-data/faker";
-import { EducationalMaterial} from "./model/educational-material";
+import { EducationalMaterial } from "./model/educational-material";
 import { materials } from "./model/materials";
 
 export class DemoEducationMaterialConfig {

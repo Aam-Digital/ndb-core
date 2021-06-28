@@ -8,5 +8,4 @@ export const booleanEntitySchemaDatatype: EntitySchemaDatatype = {
   transformToDatabaseFormat: (value: boolean) => value,
 
   transformToObjectFormat: (value) => value,
-
-}
+};

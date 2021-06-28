@@ -49,7 +49,10 @@ export class EntityFormComponent implements OnInit {
   }
 
   async save(): Promise<void> {
-    this.entity = await this.entityFormService.saveChanges(this.form, this.entity);
+    this.entity = await this.entityFormService.saveChanges(
+      this.form,
+      this.entity
+    );
     this.switchEdit();
     this.onSave.emit(this.entity);
   }

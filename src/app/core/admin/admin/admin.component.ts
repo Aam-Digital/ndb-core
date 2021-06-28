@@ -62,7 +62,7 @@ export class AdminComponent implements OnInit {
 
   async migrateConfigChanges() {
     await this.configMigrationService.migrateConfig();
-    await this.configurableEnumMigrationSerivice.migrateSelectionsToConfigurableEnum()
+    await this.configurableEnumMigrationSerivice.migrateSelectionsToConfigurableEnum();
   }
 
   /**

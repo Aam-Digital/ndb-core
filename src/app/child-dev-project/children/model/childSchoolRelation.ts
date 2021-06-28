@@ -9,19 +9,6 @@ import { School } from "../../schools/model/school";
  */
 @DatabaseEntity("ChildSchoolRelation")
 export class ChildSchoolRelation extends Entity {
-  assertValid() {
-    super.assertValid();
-    const startLabel = this.getSchema().get("start").label;
-    const endLabel = this.getSchema().get("end").label;
-    if (this.end && !this.start) {
-      throw new Error(`No "${startLabel}" date is set`);
-    } else if (moment(this.start).isAfter(this.end, "days")) {
-      throw new Error(
-        `The "${startLabel}" date is after the "${endLabel}" date`
-      );
-    }
-  }
-
   @DatabaseField() childId: string;
   @DatabaseField({
     label: "School",
@@ -49,5 +36,18 @@ export class ChildSchoolRelation extends Entity {
       moment(this.start).isSameOrBefore(moment(), "day") &&
       (!this.end || moment(this.end).isAfter(moment(), "day"))
     );
+  }
+
+  assertValid() {
+    super.assertValid();
+    const startLabel = this.getSchema().get("start").label;
+    const endLabel = this.getSchema().get("end").label;
+    if (this.end && !this.start) {
+      throw new Error(`No "${startLabel}" date is set`);
+    } else if (moment(this.start).isAfter(this.end, "days")) {
+      throw new Error(
+        `The "${startLabel}" date is after the "${endLabel}" date`
+      );
+    }
   }
 }
