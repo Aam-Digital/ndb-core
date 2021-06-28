@@ -107,7 +107,8 @@ export class EntityFormService {
   private assignFormValuesToEntity(form: FormGroup, entity: Entity) {
     Object.keys(form.controls).forEach((key) => {
       // Trying to set a getter function will throw an error
-      if (Object.getOwnPropertyDescriptor(entity, key)?.writable) {
+      const propertyDescriptor = Object.getOwnPropertyDescriptor(entity, key);
+      if (propertyDescriptor === undefined || propertyDescriptor.writable) {
         entity[key] = form.get(key).value;
       }
     });

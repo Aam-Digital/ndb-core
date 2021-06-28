@@ -266,7 +266,7 @@ describe("EntitySubrecordComponent", () => {
     component.save(tableRow);
     tick();
 
-    expect(mockEntityMapper.save).toHaveBeenCalledWith(child);
+    expect(mockEntityMapper.save).toHaveBeenCalledWith(tableRow.record);
     expect(tableRow.record.name).toBe("New Name");
     expect(tableRow.record.gender).toBe(genders[2]);
     expect(tableRow.formGroup.disabled).toBeTrue();
