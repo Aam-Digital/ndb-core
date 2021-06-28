@@ -1,6 +1,7 @@
 import {
   ComponentFixture,
   fakeAsync,
+  flush,
   TestBed,
   tick,
   waitForAsync,
@@ -39,6 +40,7 @@ describe("EntitySubrecordComponent", () => {
   beforeEach(
     waitForAsync(() => {
       mockEntityMapper = jasmine.createSpyObj(["remove", "save"]);
+      mockEntityMapper.save.and.resolveTo();
       const mockSessionService = jasmine.createSpyObj<SessionService>([
         "getCurrentUser",
       ]);
@@ -86,7 +88,7 @@ describe("EntitySubrecordComponent", () => {
     component.columns = [
       {
         id: "enumValue",
-        placeholder: "Test Configurable Enum",
+        label: "Test Configurable Enum",
         view: "DisplayConfigurableEnum",
       },
     ];
@@ -141,12 +143,12 @@ describe("EntitySubrecordComponent", () => {
     component.columns = [
       {
         view: "DisplayDate",
-        placeholder: "Admission",
+        label: "Admission",
         id: "admissionDate",
       },
       {
         view: "DisplayText",
-        placeholder: "Name",
+        label: "Name",
         id: "name",
       },
     ];
@@ -221,7 +223,7 @@ describe("EntitySubrecordComponent", () => {
     component.columns = [
       {
         id: "correctColumn",
-        placeholder: "Predefined Title",
+        label: "Predefined Title",
         view: "DisplayDate",
       },
       { id: "notExistentColumn" },
@@ -315,21 +317,23 @@ describe("EntitySubrecordComponent", () => {
     snackbarObservable.next();
     expect(mockEntityMapper.save).toHaveBeenCalledWith(child, true);
     expect(component.records).toEqual([child]);
+
+    flush();
   }));
 
-  it("should create new entities and make them editable", () => {
+  it("should create new entities and call the show entity function", fakeAsync(() => {
     const child = new Child();
     component.newRecordFactory = () => child;
     component.columns = [{ id: "name" }, { id: "projectNumber" }];
+    const showEntitySpy = spyOn(component, "showEntity");
 
     component.create();
+    tick();
 
     expect(component.records).toEqual([child]);
-    const tableRow = component.recordsDataSource.data.find(
-      (row) => row.record === child
-    );
-    expect(tableRow.formGroup.enabled).toBeTrue();
-  });
+    expect(component.recordsDataSource.data).toContain({ record: child });
+    expect(showEntitySpy).toHaveBeenCalledWith(child, true);
+  }));
 
   it("should notify when an entity is clicked", (done) => {
     const child = new Child();

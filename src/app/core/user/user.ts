@@ -156,4 +156,8 @@ export class User extends Entity {
   public setAdmin(admin: boolean) {
     this.admin = admin;
   }
+
+  toString(): string {
+    return this.name;
+  }
 }

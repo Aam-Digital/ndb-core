@@ -36,7 +36,7 @@ export class Child extends Entity {
     return "ChildBlock";
   }
 
-  @DatabaseField({ label: "Name" }) name: string;
+  @DatabaseField({ label: "Name", required: true }) name: string;
   @DatabaseField({ label: "Project Number", labelShort: "PN" })
   projectNumber: string;
   @DatabaseField({
@@ -50,7 +50,7 @@ export class Child extends Entity {
   @DatabaseField({
     dataType: "string",
     label: "Gender",
-    ext: ["", "M", "F"],
+    additional: ["", "M", "F"],
     editComponent: "EditSelectable",
   })
   gender: Gender; // M or F

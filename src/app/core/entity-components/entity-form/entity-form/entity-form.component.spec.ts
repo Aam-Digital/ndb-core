@@ -5,7 +5,6 @@ import { ChildPhotoService } from "../../../../child-dev-project/children/child-
 import { Entity } from "../../../entity/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { User } from "../../../user/user";
-import { Router } from "@angular/router";
 import { RouterTestingModule } from "@angular/router/testing";
 import { SessionService } from "../../../session/session-service/session.service";
 import { ConfigService } from "../../../config/config.service";
@@ -74,10 +73,7 @@ describe("EntityFormComponent", () => {
     mockChildPhotoService.canSetImage.and.returnValue(false);
     fixture = TestBed.createComponent(EntityFormComponent);
     component = fixture.componentInstance;
-    component.onInitFromDynamicConfig({
-      entity: testChild,
-      config: { cols: [] },
-    });
+    component.entity = testChild;
     fixture.detectChanges();
   });
 
@@ -85,23 +81,15 @@ describe("EntityFormComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should change the creating state", () => {
-    expect(component.creatingNew).toBe(false);
-    component.onInitFromDynamicConfig({
-      entity: testChild,
-      config: { cols: [] },
-      creatingNew: true,
-    });
-    expect(component.creatingNew).toBe(true);
-  });
-
-  it("calls router once a new child is saved", async () => {
+  it("should emit notification when a child is saved", (done) => {
     spyOnProperty(component.form, "valid").and.returnValue(true);
-    const router = fixture.debugElement.injector.get(Router);
-    spyOn(router, "navigate");
-    component.creatingNew = true;
-    await component.save();
-    expect(router.navigate).toHaveBeenCalledWith(["", testChild.getId()]);
+    const subscription = component.onSave.subscribe((child) => {
+      expect(child).toBe(testChild);
+      subscription.unsubscribe();
+      done();
+    });
+
+    component.save();
   });
 
   it("reports error when form is invalid", () => {
@@ -123,42 +111,43 @@ describe("EntityFormComponent", () => {
 
   it("should add column definitions from property schema", () => {
     class Test extends Entity {
-      @DatabaseField() propertyField: string;
+      @DatabaseField({ description: "Property description" })
+      propertyField: string;
     }
     mockEntitySchemaService.getComponent.and.returnValue("PredefinedComponent");
-
-    component.onInitFromDynamicConfig({
-      entity: new Test(),
-      config: {
-        cols: [
-          [
-            {
-              id: "fieldWithDefinition",
-              edit: "EditComponent",
-              view: "DisplayComponent",
-              placeholder: "Field with definition",
-            },
-            { id: "propertyField", placeholder: "Property" },
-          ],
-        ],
-      },
-    });
-
-    expect(component.columns).toEqual([
+    component.entity = new Test();
+    component.columns = [
       [
         {
           id: "fieldWithDefinition",
           edit: "EditComponent",
           view: "DisplayComponent",
-          placeholder: "Field with definition",
+          label: "Field with definition",
+          tooltip: "Custom tooltip",
+        },
+        { id: "propertyField", label: "Property" },
+      ],
+    ];
+
+    component.ngOnInit();
+
+    expect(component._columns).toEqual([
+      [
+        {
+          id: "fieldWithDefinition",
+          edit: "EditComponent",
+          view: "DisplayComponent",
+          label: "Field with definition",
           forTable: false,
+          tooltip: "Custom tooltip",
         },
         {
           id: "propertyField",
           edit: "PredefinedComponent",
           view: "PredefinedComponent",
-          placeholder: "Property",
+          label: "Property",
           forTable: false,
+          tooltip: "Property description",
         },
       ],
     ]);

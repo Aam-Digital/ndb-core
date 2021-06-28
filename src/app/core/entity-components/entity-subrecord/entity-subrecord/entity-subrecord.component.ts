@@ -14,7 +14,7 @@ import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { Entity } from "../../../entity/entity";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "../../../alerts/alert.service";
-import { BehaviorSubject, Subscription } from "rxjs";
+import { Subscription } from "rxjs";
 import { entityListSortingAccessor } from "../../entity-list/sorting-accessor";
 import { FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
@@ -47,19 +47,20 @@ export interface TableRow<T> {
   styleUrls: ["./entity-subrecord.component.scss"],
 })
 export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
-  /**
-   * Global state of pagination size for all entity subrecord components.
-   *
-   * When the user changes page size in one component the page size is automatically changed for other components also.
-   * This ensures a consistent UI e.g. for side-by-side subrecord components of multiple attendance record tables.
-   */
-  static paginatorPageSize = new BehaviorSubject(10);
-
   /** data to be displayed */
   @Input() records: Array<T> = [];
 
   /** configuration what kind of columns to be generated for the table */
-  @Input() columns: FormFieldConfig[] = [];
+  @Input() set columns(columns: (FormFieldConfig | string)[]) {
+    this._columns = columns.map((col) => {
+      if (typeof col === "string") {
+        return { id: col };
+      } else {
+        return col;
+      }
+    });
+  }
+  _columns: FormFieldConfig[] = [];
 
   /**
    * factory method to create a new instance of the displayed Entity type
@@ -102,11 +103,11 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       });
   }
 
-  /** function returns the background color for each entry*/
-  @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
-
   @Input() showEntity = (entity: Entity, creatingNew = false) =>
     this.showEntityInForm(entity, creatingNew);
+
+  /** function returns the background color for each entry*/
+  @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
 
   /**
    * Update the component if any of the @Input properties were changed from outside.
@@ -129,23 +130,27 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   }
 
   private initFormGroups() {
+    if (this.records.length > 0 || this.newRecordFactory) {
+      const entity =
+        this.records.length > 0 ? this.records[0] : this.newRecordFactory();
+      try {
+        this.entityFormService.extendFormFieldConfig(
+          this._columns,
+          entity,
+          true
+        );
+        this.idForSavingPagination = this._columns
+          .map((col) => (typeof col === "object" ? col.id : col))
+          .join("");
+      } catch (err) {
+        this.alertService.addWarning(`Error creating form definitions: ${err}`);
+      }
+    }
     this.recordsDataSource.data = this.records.map((rec) => {
       return {
         record: rec,
       };
     });
-    if (this.records.length > 0) {
-      try {
-        this.entityFormService.extendFormFieldConfig(
-          this.columns,
-          this.records[0],
-          true
-        );
-        this.idForSavingPagination = this.columns.map((col) => col.id).join("");
-      } catch (err) {
-        this.alertService.addWarning(`Error creating form definitions: ${err}`);
-      }
-    }
   }
 
   private initDefaultSort() {
@@ -161,7 +166,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
 
     // initial sorting by first column
     const sortBy = this.columnsToDisplay[0];
-    const sortByColumn = this.columns.find((c) => c.id === sortBy);
+    const sortByColumn = this._columns.find((c) => c.id === sortBy);
     let sortDirection = "asc";
     if (
       sortByColumn?.view === "DisplayDate" ||
@@ -180,7 +185,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   edit(row: TableRow<T>) {
     if (!row.formGroup) {
       row.formGroup = this.entityFormService.createFormGroup(
-        this.columns,
+        this._columns,
         row.record
       );
     }
@@ -253,25 +258,13 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   create() {
     const newRecord = this.newRecordFactory();
 
-    if (this.records.length === 0) {
-      this.entityFormService.extendFormFieldConfig(
-        this.columns,
-        newRecord,
-        true
-      );
-    }
-
-    const newRow: TableRow<T> = {
-      record: newRecord,
-      formGroup: this.entityFormService.createFormGroup(
-        this.columns,
-        newRecord
-      ),
-    };
     this.records.unshift(newRecord);
-    this.recordsDataSource.data = [newRow].concat(this.recordsDataSource.data);
-
-    this.showEntity(newRecord, true);
+    this.recordsDataSource.data = [{ record: newRecord }].concat(
+      this.recordsDataSource.data
+    );
+    this._entityMapper
+      .save(newRecord)
+      .then(() => this.showEntity(newRecord, true));
   }
 
   /**
@@ -289,7 +282,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       width: "80%",
     });
     const columnsCopy = [];
-    this.columns.forEach((col) => {
+    this._columns.forEach((col) => {
       const newCol = {};
       Object.assign(newCol, col);
       columnsCopy.push([newCol]);
@@ -297,19 +290,18 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     dialogRef.componentInstance.columns = columnsCopy;
     dialogRef.componentInstance.entity = entity;
     dialogRef.componentInstance.creatingNew = creatingNew;
+    dialogRef.componentInstance.onSave.subscribe(() => dialogRef.close());
   }
 
   /**
    * resets columnsToDisplay depending on current screensize
    */
   setupTable() {
-    if (this.columns !== undefined && this.screenWidth !== "") {
-      this.columnsToDisplay = this.columns
+    if (this._columns !== undefined && this.screenWidth !== "") {
+      this.columnsToDisplay = this._columns
         .filter((col) => this.isVisible(col))
         .map((col) => col.id);
-      if (this.screenWidth !== "xs") {
-        this.columnsToDisplay.push("actions");
-      }
+      this.columnsToDisplay.push("actions");
     }
   }
 

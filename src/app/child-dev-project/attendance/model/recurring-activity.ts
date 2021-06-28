@@ -44,7 +44,7 @@ export class RecurringActivity extends Entity {
   }
 
   /** primary name to identify the activity */
-  @DatabaseField({ label: "Title" }) title: string = "";
+  @DatabaseField({ label: "Title", required: true }) title: string = "";
 
   /**
    * a category to group and filter activities by.
@@ -63,7 +63,7 @@ export class RecurringActivity extends Entity {
     label: "Participants",
     viewComponent: "DisplayEntityArray",
     editComponent: "EditEntityArray",
-    ext: Child.ENTITY_TYPE,
+    additional: Child.ENTITY_TYPE,
   })
   participants: string[] = [];
 
@@ -72,7 +72,7 @@ export class RecurringActivity extends Entity {
     label: "Schools",
     viewComponent: "DisplayEntityArray",
     editComponent: "EditEntityArray",
-    ext: School.ENTITY_TYPE,
+    additional: School.ENTITY_TYPE,
   })
   linkedGroups: string[] = [];
 
@@ -81,7 +81,7 @@ export class RecurringActivity extends Entity {
     label: "Assigned to",
     viewComponent: "DisplayEntityArray",
     editComponent: "EditEntityArray",
-    ext: User.ENTITY_TYPE,
+    additional: User.ENTITY_TYPE,
   })
   assignedTo: string[] = [];
 

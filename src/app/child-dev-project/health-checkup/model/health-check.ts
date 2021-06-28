@@ -33,7 +33,7 @@ export class HealthCheck extends Entity {
   @DatabaseField({
     label: "Height [cm]",
     viewComponent: "DisplayUnit",
-    ext: "cm",
+    additional: "cm",
   })
   height: number;
 
@@ -41,7 +41,7 @@ export class HealthCheck extends Entity {
   @DatabaseField({
     label: "Weight [kg]",
     viewComponent: "DisplayUnit",
-    ext: "kg",
+    additional: "kg",
   })
   weight: number;
 

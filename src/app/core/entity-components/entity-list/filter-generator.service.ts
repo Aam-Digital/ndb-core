@@ -86,10 +86,13 @@ export class FilterGeneratorService {
         config.id,
         schema.innerDataType
       );
-    } else if (ENTITY_MAP.has(config.type) || ENTITY_MAP.has(schema.ext)) {
+    } else if (
+      ENTITY_MAP.has(config.type) ||
+      ENTITY_MAP.has(schema.additional)
+    ) {
       return await this.createEntityFilterOption(
         config.id,
-        config.type || schema.ext
+        config.type || schema.additional
       );
     } else {
       const options = [...new Set(data.map((c) => c[config.id]))];

@@ -28,10 +28,10 @@ describe("EntityListComponent", () => {
   const testConfig: EntityListConfig = {
     title: "Children List",
     columns: [
-      { view: "DisplayText", placeholder: "Age", id: "age" },
+      { view: "DisplayText", label: "Age", id: "age" },
       {
         view: "RecentAttendanceBlocks",
-        placeholder: "Attendance (School)",
+        label: "Attendance (School)",
         id: "school",
         additional: {
           filterByActivityType: "SCHOOL_CLASS",
@@ -190,7 +190,7 @@ describe("EntityListComponent", () => {
       columns: [
         {
           id: "anotherColumn",
-          placeholder: "Predefined Title",
+          label: "Predefined Title",
           view: "DisplayDate",
         },
       ],
@@ -204,7 +204,9 @@ describe("EntityListComponent", () => {
 
     component.ngOnChanges({ listConfig: null });
 
-    expect(component.columns.map((col) => col.id)).toEqual(
+    expect(
+      component.columns.map((col) => (typeof col === "string" ? col : col.id))
+    ).toEqual(
       jasmine.arrayWithExactContents(["testProperty", "anotherColumn"])
     );
   });

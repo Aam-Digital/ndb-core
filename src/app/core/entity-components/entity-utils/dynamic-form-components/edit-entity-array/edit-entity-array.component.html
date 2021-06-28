@@ -3,7 +3,7 @@
   [selection]="formControl.value"
   (selectionChange)="formControl.setValue($event)"
   [disabled]="formControl.disabled"
-  [label]="placeholder"
-  [placeholder]="placeholder"
+  [label]="label"
+  [placeholder]="label ? 'Add ' + label : ''"
 >
 </app-entity-select>

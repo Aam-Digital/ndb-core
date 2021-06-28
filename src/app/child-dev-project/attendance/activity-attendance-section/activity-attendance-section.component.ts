@@ -27,13 +27,13 @@ export class ActivityAttendanceSectionComponent
   columns: FormFieldConfig[] = [
     {
       id: "periodFrom",
-      placeholder: "Month",
+      label: "Month",
       view: "DisplayDate",
       additional: "YYYY-MM",
     },
     {
       id: "presentEvents",
-      placeholder: "Present",
+      label: "Present",
       view: "ReadonlyFunction",
       additional: (e: ActivityAttendance) =>
         this.forChild
@@ -42,13 +42,13 @@ export class ActivityAttendanceSectionComponent
     },
     {
       id: "totalEvents",
-      placeholder: "Events",
+      label: "Events",
       view: "ReadonlyFunction",
       additional: (e: ActivityAttendance) => e.countEventsTotal(),
     },
     {
       id: "attendancePercentage",
-      placeholder: "Attended",
+      label: "Attended",
       view: "ReadonlyFunction",
       additional: (e: ActivityAttendance) =>
         this.percentPipe.transform(

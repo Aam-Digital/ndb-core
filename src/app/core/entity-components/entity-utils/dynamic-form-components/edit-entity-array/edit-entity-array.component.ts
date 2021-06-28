@@ -14,6 +14,6 @@ export class EditEntityArrayComponent extends EditComponent<
   onInitFromDynamicConfig(config: EditPropertyConfig) {
     super.onInitFromDynamicConfig(config);
     this.entityName =
-      config.formFieldConfig.additional || config.propertySchema.ext;
+      config.formFieldConfig.additional || config.propertySchema.additional;
   }
 }

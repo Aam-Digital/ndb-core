@@ -23,10 +23,10 @@ export class AttendanceDetailsComponent
 
   eventsColumns: FormFieldConfig[] = [
     { id: "date" },
-    { id: "subject", placeholder: "Event" },
+    { id: "subject", label: "Event" },
     {
       id: "getAttendance",
-      placeholder: "Attended",
+      label: "Attended",
       view: "ReadonlyFunction",
       additional: (note: Note) => {
         if (this.focusedChild) {

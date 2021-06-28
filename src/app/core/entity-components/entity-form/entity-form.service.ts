@@ -37,15 +37,14 @@ export class EntityFormService {
     formField.view =
       formField.view ||
       this.entitySchemaService.getComponent(propertySchema, "view");
+    formField.tooltip = formField.tooltip || propertySchema?.description;
     if (forTable) {
       formField.forTable = true;
-      formField.placeholder =
-        formField.placeholder ||
-        propertySchema.labelShort ||
-        propertySchema.label;
+      formField.label =
+        formField.label || propertySchema.labelShort || propertySchema.label;
     } else {
       formField.forTable = false;
-      formField.placeholder = formField.placeholder || propertySchema.label;
+      formField.label = formField.label || propertySchema.label;
     }
   }
 
@@ -54,9 +53,11 @@ export class EntityFormService {
     entity: Entity
   ): FormGroup {
     const formConfig = {};
+    const entitySchema = entity.getSchema();
     formFields.forEach((formField) => {
+      const propertySchema = entitySchema.get(formField.id);
       formConfig[formField.id] = [entity[formField.id]];
-      if (formField.required) {
+      if (formField.required || propertySchema?.required) {
         formConfig[formField.id].push(Validators.required);
       }
     });

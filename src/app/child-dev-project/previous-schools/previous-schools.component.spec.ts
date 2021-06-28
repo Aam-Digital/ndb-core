@@ -83,35 +83,35 @@ describe("PreviousSchoolsComponent", () => {
       config: {
         single: true,
         columns: [
-          { id: "schoolId", placeholder: "Team", view: "school" },
-          { id: "start", placeholder: "From", view: "date" },
-          { id: "end", placeholder: "To", view: "date" },
+          { id: "schoolId", label: "Team", view: "school" },
+          { id: "start", label: "From", view: "date" },
+          { id: "end", label: "To", view: "date" },
         ],
       },
     };
     component.onInitFromDynamicConfig(config);
     tick();
     expect(component.columns).toHaveSize(3);
-    let columnNames = component.columns.map((column) => column.placeholder);
+    let columnNames = component.columns.map((column) => column.label);
     expect(columnNames).toContain("Team");
     expect(columnNames).toContain("From");
     expect(columnNames).toContain("To");
 
     config.config.columns.push({
       id: "schoolClass",
-      placeholder: "Class",
+      label: "Class",
       input: "text",
     });
     config.config.columns.push({
       id: "result",
-      placeholder: "Result",
+      label: "Result",
       input: "percentageResult",
     });
 
     component.onInitFromDynamicConfig(config);
     tick();
     expect(component.columns).toHaveSize(5);
-    columnNames = component.columns.map((column) => column.placeholder);
+    columnNames = component.columns.map((column) => column.label);
     expect(columnNames).toContain("Team");
     expect(columnNames).toContain("From");
     expect(columnNames).toContain("To");

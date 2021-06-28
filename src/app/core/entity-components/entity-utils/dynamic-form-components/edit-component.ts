@@ -27,13 +27,12 @@ export class TypedFormControl<T> extends FormControl {
 export abstract class EditComponent<T> implements OnInitDynamicComponent {
   tooltip: string;
   formControlName: string;
-  placeholder: string;
+  label: string;
   formControl: TypedFormControl<T>;
 
   onInitFromDynamicConfig(config: EditPropertyConfig) {
     if (!config.formFieldConfig.forTable) {
-      this.placeholder =
-        config.formFieldConfig.placeholder || config.propertySchema?.label;
+      this.label = config.formFieldConfig.label || config.propertySchema?.label;
       this.tooltip = config.formFieldConfig.tooltip;
     }
     this.formControlName = config.formFieldConfig.id;

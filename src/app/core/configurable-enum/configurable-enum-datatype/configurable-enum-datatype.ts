@@ -32,17 +32,13 @@ export class ConfigurableEnumDatatype
     value: string,
     schemaField: EntitySchemaField
   ): ConfigurableEnumValue {
-    if (value !== null) {
-      let enumId = schemaField.innerDataType;
-      if (!enumId.startsWith(CONFIGURABLE_ENUM_CONFIG_PREFIX)) {
-        enumId = CONFIGURABLE_ENUM_CONFIG_PREFIX + enumId;
-      }
-
-      return this.configService
-        .getConfig<ConfigurableEnumConfig>(enumId)
-        ?.find((option) => option.id === value);
-    } else {
-      return undefined;
+    let enumId = schemaField.innerDataType;
+    if (!enumId.startsWith(CONFIGURABLE_ENUM_CONFIG_PREFIX)) {
+      enumId = CONFIGURABLE_ENUM_CONFIG_PREFIX + enumId;
     }
+
+    return this.configService
+      .getConfig<ConfigurableEnumConfig>(enumId)
+      ?.find((option) => option.id === value);
   }
 }

@@ -17,6 +17,6 @@ import { PermissionsModule } from "../../permissions/permissions.module";
     PermissionsModule,
   ],
   providers: [EntityFormService],
-  entryComponents: [EntityFormComponent],
+  exports: [EntityFormComponent],
 })
 export class EntityFormModule {}

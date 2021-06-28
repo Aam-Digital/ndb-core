@@ -57,7 +57,7 @@ export interface EntitySchemaField {
    * You can pass any kind of value here to allow complex custom datytypes' transformations
    * that are not part of the core datatypes and therefore not included in this core interface.
    */
-  ext?: any;
+  additional?: any;
 
   /**
    * (Optional) Define using which component this property should be displayed in lists and forms.
@@ -75,4 +75,8 @@ export interface EntitySchemaField {
   label?: string;
 
   labelShort?: string;
+
+  description?: string;
+
+  required?: boolean;
 }

@@ -16,7 +16,8 @@ export class EditSingleEntityComponent extends EditComponent<string> {
   }
   async onInitFromDynamicConfig(config: EditPropertyConfig) {
     super.onInitFromDynamicConfig(config);
-    const entityType: string = config.propertySchema.ext;
+    const entityType: string =
+      config.formFieldConfig.additional || config.propertySchema.additional;
     const entityConstructor = ENTITY_MAP.get(entityType);
     if (!entityConstructor) {
       throw new Error(`Entity-Type ${entityType} not in EntityMap`);
@@ -24,13 +25,7 @@ export class EditSingleEntityComponent extends EditComponent<string> {
     this.entities = await this.entityMapper
       .loadType(entityConstructor)
       .then((entities) =>
-        entities.sort((e1, e2) => {
-          if (e1.hasOwnProperty("name")) {
-            return e1["name"].localeCompare(e2["name"]);
-          } else {
-            return 0;
-          }
-        })
+        entities.sort((e1, e2) => e1.toString().localeCompare(e2.toString()))
       );
   }
 }
