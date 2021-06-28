@@ -41,12 +41,14 @@ export class ConfigService {
     });
   }
 
-  public saveConfig(
+  public async saveConfig(
     entityMapper: EntityMapperService,
     config: any
   ): Promise<Config> {
     this.config.data = config;
-    return entityMapper.save<Config>(this.config);
+    this.configUpdated.next(this.config);
+    await entityMapper.save<Config>(this.config);
+    return this.config;
   }
 
   public async exportConfig(

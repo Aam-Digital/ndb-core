@@ -38,10 +38,8 @@ export class AserComponent implements OnChanges, OnInitDynamicComponent {
   }
 
   onInitFromDynamicConfig(config: PanelConfig) {
-    if (config?.config?.displayedColumns) {
-      this.columns = this.columns.filter((c) =>
-        config.config.displayedColumns.includes(c.id)
-      );
+    if (config?.config?.columns) {
+      this.columns = config.config.columns;
     }
 
     this.child = config.entity as Child;

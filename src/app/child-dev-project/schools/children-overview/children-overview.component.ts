@@ -31,8 +31,8 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
   constructor(private schoolsService: SchoolsService, private router: Router) {}
 
   async onInitFromDynamicConfig(config: PanelConfig) {
-    if (config?.config?.displayedColumns) {
-      this.columns = config.config.displayedColumns;
+    if (config?.config?.columns) {
+      this.columns = config.config.columns;
     }
     this.children = await this.schoolsService.getChildrenForSchool(
       config.entity.getId()
