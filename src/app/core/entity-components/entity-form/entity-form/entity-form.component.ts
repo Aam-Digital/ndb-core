@@ -4,6 +4,7 @@ import { OperationType } from "../../../permissions/entity-permissions.service";
 import { FormFieldConfig } from "./FormConfig";
 import { FormGroup } from "@angular/forms";
 import { EntityFormService } from "../entity-form.service";
+import { AlertService } from "../../../alerts/alert.service";
 
 @Component({
   selector: "app-entity-form",
@@ -61,7 +62,10 @@ export class EntityFormComponent implements OnInit {
   operationType = OperationType;
   form: FormGroup;
 
-  constructor(private entityFormService: EntityFormService) {}
+  constructor(
+    private entityFormService: EntityFormService,
+    private alertService: AlertService
+  ) {}
 
   ngOnInit() {
     this.buildFormConfig();
@@ -79,12 +83,16 @@ export class EntityFormComponent implements OnInit {
   }
 
   async save(): Promise<void> {
-    this.entity = await this.entityFormService.saveChanges(
-      this.form,
-      this.entity
-    );
-    this.onSave.emit(this.entity);
-    this.switchEdit();
+    try {
+      this.entity = await this.entityFormService.saveChanges(
+        this.form,
+        this.entity
+      );
+      this.onSave.emit(this.entity);
+      this.switchEdit();
+    } catch (err) {
+      this.alertService.addWarning(err.message);
+    }
   }
 
   cancel() {

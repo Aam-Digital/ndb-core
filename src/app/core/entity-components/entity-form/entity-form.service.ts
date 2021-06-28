@@ -6,6 +6,10 @@ import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
 @Injectable()
+/**
+ * This service provides helper functions for creating tables or forms for an entity as well as saving
+ * new changes correctly to the entity.
+ */
 export class EntityFormService {
   constructor(
     private fb: FormBuilder,

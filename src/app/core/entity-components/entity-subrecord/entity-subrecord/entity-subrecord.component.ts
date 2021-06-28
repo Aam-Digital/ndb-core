@@ -345,6 +345,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
         (row) => row.record === entity
       );
       this.recordsDataSource.data[rowIndex] = { record: updatedEntity };
+      this.recordsDataSource._updateChangeSubscription();
     });
     dialogRef.componentInstance.onCancel.subscribe(() => dialogRef.close());
   }
