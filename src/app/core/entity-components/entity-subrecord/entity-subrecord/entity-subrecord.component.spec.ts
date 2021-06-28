@@ -334,7 +334,7 @@ describe("EntitySubrecordComponent", () => {
 
     expect(component.records).toEqual([child]);
     expect(component.recordsDataSource.data).toContain({ record: child });
-    expect(showEntitySpy).toHaveBeenCalledWith(child, true);
+    expect(showEntitySpy).toHaveBeenCalledWith(child);
   }));
 
   it("should notify when an entity is clicked", (done) => {

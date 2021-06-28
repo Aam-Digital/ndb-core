@@ -92,21 +92,25 @@ describe("EntityFormComponent", () => {
     component.save();
   });
 
-  it("reports error when form is invalid", () => {
+  it("reports error when form is invalid", async () => {
     const alertService = fixture.debugElement.injector.get(AlertService);
-    spyOn(alertService, "addDanger");
+    spyOn(alertService, "addWarning");
     spyOnProperty(component.form, "invalid").and.returnValue(true);
 
-    return expectAsync(component.save()).toBeRejected();
+    await component.save();
+
+    expect(alertService.addWarning).toHaveBeenCalled();
   });
 
-  it("logs error when saving fails", () => {
+  it("logs error when saving fails", async () => {
     const alertService = fixture.debugElement.injector.get(AlertService);
-    spyOn(alertService, "addDanger");
+    spyOn(alertService, "addWarning");
     spyOnProperty(component.form, "valid").and.returnValue(true);
-    mockEntityMapper.save.and.rejectWith("error");
+    mockEntityMapper.save.and.rejectWith();
 
-    return expectAsync(component.save()).toBeRejected();
+    await component.save();
+
+    expect(alertService.addWarning).toHaveBeenCalled();
   });
 
   it("should add column definitions from property schema", () => {
