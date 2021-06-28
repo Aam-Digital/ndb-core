@@ -120,10 +120,8 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   /**
    * A function which should be executed when a row is clicked or a new entity created.
    * @param entity The newly created or clicked entity.
-   * @param creatingNew If a new entity is created, this value is true.
    */
-  @Input() showEntity = (entity: Entity, creatingNew = false) =>
-    this.showEntityInForm(entity, creatingNew);
+  @Input() showEntity = (entity: Entity) => this.showEntityInForm(entity);
 
   /** function returns the background color for each row*/
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
@@ -319,7 +317,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     );
     this._entityMapper
       .save(newRecord)
-      .then(() => this.showEntity(newRecord, true));
+      .then(() => this.showEntity(newRecord));
   }
 
   /**
@@ -332,19 +330,16 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     }
   }
 
-  private showEntityInForm(entity: Entity, creatingNew = false) {
+  private showEntityInForm(entity: Entity) {
     const dialogRef = this.dialog.open(EntityFormComponent, {
       width: "80%",
     });
-    const columnsCopy = [];
-    this._columns.forEach((col) => {
-      const newCol = {};
-      Object.assign(newCol, col);
-      columnsCopy.push([newCol]);
-    });
-    dialogRef.componentInstance.columns = columnsCopy;
+    // Making a copy of the columns before assigning them
+    dialogRef.componentInstance.columns = this._columns.map((col) => [
+      Object.assign({}, col),
+    ]);
     dialogRef.componentInstance.entity = entity;
-    dialogRef.componentInstance.editing = creatingNew;
+    dialogRef.componentInstance.editing = true;
     dialogRef.componentInstance.onSave.subscribe(() => dialogRef.close());
   }
 
