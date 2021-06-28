@@ -344,7 +344,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     });
     dialogRef.componentInstance.columns = columnsCopy;
     dialogRef.componentInstance.entity = entity;
-    dialogRef.componentInstance.creatingNew = creatingNew;
+    dialogRef.componentInstance.editing = creatingNew;
     dialogRef.componentInstance.onSave.subscribe(() => dialogRef.close());
   }
 

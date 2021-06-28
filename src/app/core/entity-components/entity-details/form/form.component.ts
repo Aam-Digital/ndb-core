@@ -8,13 +8,18 @@ import { Router } from "@angular/router";
 
 @Component({
   selector: "app-form",
-  template: `<app-entity-form
-    [entity]="entity"
-    [columns]="columns"
-    [creatingNew]="creatingNew"
-    (onSave)="routeToEntity($event)"
-  ></app-entity-form>`,
+  template: `
+    <app-entity-form
+      [entity]="entity"
+      [columns]="columns"
+      [editing]="creatingNew"
+      (onSave)="routeToEntity($event)"
+    ></app-entity-form>`,
 })
+/**
+ * A simple wrapper function of the EntityFormComponent which can be used as a dynamic component
+ * e.g. as a panel for the EntityDetailsComponent.
+ */
 export class FormComponent implements OnInitDynamicComponent {
   entity: Entity;
   columns: FormFieldConfig[][] = [];

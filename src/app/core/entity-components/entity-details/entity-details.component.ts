@@ -38,8 +38,8 @@ export const ENTITY_MAP: Map<string, EntityConstructor<Entity>> = new Map<
 /**
  * This component can be used to display a entity in more detail.
  * It groups subcomponents in panels.
- * Any component can be used as a subcomponent.
- * The subcomponents will be provided with the Entity object and the creating new status, as well as its static config.
+ * Any component from the DYNAMIC_COMPONENT_MAP can be used as a subcomponent.
+ * The subcomponents will be provided with the Entity object and the creating new status, as well as it's static config.
  */
 @Component({
   selector: "app-entity-details",
