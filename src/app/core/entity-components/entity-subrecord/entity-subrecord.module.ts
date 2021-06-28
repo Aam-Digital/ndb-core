@@ -16,9 +16,12 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { ConfirmationDialogModule } from "../../confirmation-dialog/confirmation-dialog.module";
 import { EntityDetailsModule } from "../entity-details/entity-details.module";
 import { EntityFormModule } from "../entity-form/entity-form.module";
+import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { MatToolbarModule } from "@angular/material/toolbar";
 
 @NgModule({
-  declarations: [EntitySubrecordComponent, KeysPipe],
+  declarations: [EntitySubrecordComponent, KeysPipe, ListPaginatorComponent],
   imports: [
     CommonModule,
     AlertsModule,
@@ -33,6 +36,8 @@ import { EntityFormModule } from "../entity-form/entity-form.module";
     MatTooltipModule,
     MatButtonModule,
     MatIconModule,
+    MatSlideToggleModule,
+    MatToolbarModule,
     EntityDetailsModule,
     EntityFormModule,
   ],

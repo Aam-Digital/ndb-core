@@ -9,6 +9,7 @@ import { materials } from "../../child-dev-project/educational-material/model/ma
 import { mathLevels } from "../../child-dev-project/aser/model/mathLevels";
 import { readingLevels } from "../../child-dev-project/aser/model/readingLevels";
 import { warningLevels } from "../../child-dev-project/warning-level";
+import { ratingAnswers } from "../../features/historical-data/rating-answers";
 
 // prettier-ignore
 export const defaultJsonConfig = {
@@ -129,28 +130,7 @@ export const defaultJsonConfig = {
       "label": "Barabazar"
     }
   ],
-  "enum:rating-answer": [
-    {
-      id: "noAnswerPossible",
-      label: "no answer possible",
-    },
-    {
-      id: "notTrueAtAll",
-      label: "not true at all",
-    },
-    {
-      id: "rarelyTrue",
-      label: "rarely true",
-    },
-    {
-      id: "usuallyTrue",
-      label: "usually true",
-    },
-    {
-      id: "absolutelyTrue",
-      label: "absolutely true",
-    },
-  ],
+  "enum:rating-answer": ratingAnswers,
 
   "view:": {
     "component": "Dashboard",

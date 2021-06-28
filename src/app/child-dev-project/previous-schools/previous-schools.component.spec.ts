@@ -17,6 +17,8 @@ import { Child } from "../children/model/child";
 import { PanelConfig } from "../../core/entity-components/entity-details/EntityDetailsConfig";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import moment from "moment";
+import { SessionService } from "../../core/session/session-service/session.service";
+import { User } from "../../core/user/user";
 
 describe("PreviousSchoolsComponent", () => {
   let component: PreviousSchoolsComponent;
@@ -45,6 +47,10 @@ describe("PreviousSchoolsComponent", () => {
         providers: [
           { provide: ChildrenService, useValue: mockChildrenService },
           { provide: EntityMapperService, useValue: mockEntityMapper },
+          {
+            provide: SessionService,
+            useValue: { getCurrentUser: () => new User() },
+          },
         ],
       }).compileComponents();
     })

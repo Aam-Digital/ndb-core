@@ -21,7 +21,6 @@ import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 import { calculateAge } from "../../../utils/utils";
 import { Photo } from "../child-photo-service/photo";
-import { SafeUrl } from "@angular/platform-browser";
 
 export type Center = ConfigurableEnumValue;
 @DatabaseEntity("Child")
@@ -32,25 +31,13 @@ export class Child extends Entity {
     return instance;
   }
 
-  public static getDefaultImage(): SafeUrl {
-    return "assets/child.png";
-  }
-
   static getBlockComponent(): string {
     return "ChildBlock";
   }
 
-  /**
-   * Returns the full relative filePath to a child photo given a filename, adding the relevant folders to it.
-   * @param filename The given filename with file extension.
-   */
-  public static generatePhotoPath(filename: string): string {
-    return "assets/child-photos/" + filename;
-  }
-
   @DatabaseField({ label: "Name", required: true }) name: string;
   @DatabaseField({ label: "Project Number", labelShort: "PN" })
-  projectNumber: string; // project number
+  projectNumber: string;
   @DatabaseField({
     dataType: "date-only",
     label: "Date of birth",
@@ -87,7 +74,7 @@ export class Child extends Entity {
 
   @DatabaseField({
     dataType: "photo",
-    defaultValue: Child.getDefaultImage(),
+    defaultValue: "",
     label: "Photo Filename",
   })
   photo: Photo;

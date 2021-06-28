@@ -14,6 +14,8 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Router } from "@angular/router";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { User } from "../../../core/user/user";
 
 describe("ChildrenOverviewComponent", () => {
   let component: ChildrenOverviewComponent;
@@ -25,12 +27,18 @@ describe("ChildrenOverviewComponent", () => {
 
   beforeEach(
     waitForAsync(() => {
+      const mockSessionService = jasmine.createSpyObj<SessionService>([
+        "getCurrentUser",
+      ]);
+      mockSessionService.getCurrentUser.and.returnValue(new User());
+
       TestBed.configureTestingModule({
         declarations: [],
         imports: [SchoolsModule, RouterTestingModule, NoopAnimationsModule],
         providers: [
           { provide: SchoolsService, useValue: schoolsService },
           { provide: EntityMapperService, useValue: {} },
+          { provide: SessionService, useValue: mockSessionService },
         ],
       }).compileComponents();
     })
