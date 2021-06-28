@@ -31,13 +31,10 @@ describe("EntityFormService", () => {
 
   it("should not save invalid entities", () => {
     const entity = new Entity("initialId");
-    const tmpEntity = new Entity();
-    spyOn(entity, "copy").and.returnValue(tmpEntity);
-    spyOn(tmpEntity, "assertValid").and.throwError(new Error());
+    spyOn(entity, "assertValid").and.throwError(new Error());
     const formGroup = TestBed.inject(FormBuilder).group({ _id: "newId" });
 
     expect(() => service.saveChanges(formGroup, entity)).toThrowError();
-    expect(entity.getId()).toBe("initialId");
   });
 
   it("should return updated entity if saving is successful", async () => {

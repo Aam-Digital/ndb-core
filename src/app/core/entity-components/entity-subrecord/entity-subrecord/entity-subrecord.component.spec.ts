@@ -252,7 +252,7 @@ describe("EntitySubrecordComponent", () => {
     expect(formGroup.enabled).toBeTrue();
   });
 
-  it("should correctly save changes to a entity", fakeAsync(() => {
+  it("should correctly save changes to an entity", fakeAsync(() => {
     mockEntityMapper.save.and.resolveTo();
     const fb = TestBed.inject(FormBuilder);
     const child = new Child();
@@ -261,14 +261,15 @@ describe("EntitySubrecordComponent", () => {
       name: "New Name",
       gender: genders[2],
     });
+    const tableRow = { record: child, formGroup: formGroup };
 
-    component.save({ record: child, formGroup: formGroup });
+    component.save(tableRow);
     tick();
 
     expect(mockEntityMapper.save).toHaveBeenCalledWith(child);
-    expect(child.name).toBe("New Name");
-    expect(child.gender).toBe(genders[2]);
-    expect(formGroup.disabled).toBeTrue();
+    expect(tableRow.record.name).toBe("New Name");
+    expect(tableRow.record.gender).toBe(genders[2]);
+    expect(tableRow.formGroup.disabled).toBeTrue();
   }));
 
   it("should show a error message when saving fails", fakeAsync(() => {
@@ -279,7 +280,7 @@ describe("EntitySubrecordComponent", () => {
     const alertService = TestBed.inject(AlertService);
     spyOn(alertService, "addDanger");
 
-    component.save({ formGroup: null, record: null });
+    component.save({ formGroup: null, record: new Child() });
     tick();
 
     expect(alertService.addDanger).toHaveBeenCalledWith("Form invalid");
