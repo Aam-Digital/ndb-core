@@ -121,7 +121,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    * A function which should be executed when a row is clicked or a new entity created.
    * @param entity The newly created or clicked entity.
    */
-  @Input() showEntity = (entity: Entity) => this.showEntityInForm(entity);
+  @Input() showEntity = (entity: T) => this.showEntityInForm(entity);
 
   /** function returns the background color for each row*/
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
@@ -315,9 +315,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     this.recordsDataSource.data = [{ record: newRecord }].concat(
       this.recordsDataSource.data
     );
-    this._entityMapper
-      .save(newRecord)
-      .then(() => this.showEntity(newRecord));
+    this._entityMapper.save(newRecord).then(() => this.showEntity(newRecord));
   }
 
   /**
@@ -330,17 +328,25 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     }
   }
 
-  private showEntityInForm(entity: Entity) {
+  private showEntityInForm(entity: T) {
     const dialogRef = this.dialog.open(EntityFormComponent, {
       width: "80%",
     });
-    // Making a copy of the columns before assigning them
-    dialogRef.componentInstance.columns = this._columns.map((col) => [
-      Object.assign({}, col),
-    ]);
+    // Making a copy of the editable columns before assigning them
+    dialogRef.componentInstance.columns = this._columns
+      .filter((col) => col.edit)
+      .map((col) => [Object.assign({}, col)]);
     dialogRef.componentInstance.entity = entity;
     dialogRef.componentInstance.editing = true;
-    dialogRef.componentInstance.onSave.subscribe(() => dialogRef.close());
+    dialogRef.componentInstance.onSave.subscribe((updatedEntity: T) => {
+      dialogRef.close();
+      // Trigger the change detection
+      const rowIndex = this.recordsDataSource.data.findIndex(
+        (row) => row.record === entity
+      );
+      this.recordsDataSource.data[rowIndex] = { record: updatedEntity };
+    });
+    dialogRef.componentInstance.onCancel.subscribe(() => dialogRef.close());
   }
 
   /**

@@ -56,9 +56,12 @@ export class EntityFormService {
     const entitySchema = entity.getSchema();
     formFields.forEach((formField) => {
       const propertySchema = entitySchema.get(formField.id);
-      formConfig[formField.id] = [entity[formField.id]];
-      if (formField.required || propertySchema?.required) {
-        formConfig[formField.id].push(Validators.required);
+      // Only properties with a schema are editable
+      if (propertySchema) {
+        formConfig[formField.id] = [entity[formField.id]];
+        if (formField.required || propertySchema?.required) {
+          formConfig[formField.id].push(Validators.required);
+        }
       }
     });
     return this.fb.group(formConfig);
@@ -106,11 +109,7 @@ export class EntityFormService {
 
   private assignFormValuesToEntity(form: FormGroup, entity: Entity) {
     Object.keys(form.controls).forEach((key) => {
-      // Trying to set a getter function will throw an error
-      const propertyDescriptor = Object.getOwnPropertyDescriptor(entity, key);
-      if (propertyDescriptor === undefined || propertyDescriptor.writable) {
-        entity[key] = form.get(key).value;
-      }
+      entity[key] = form.get(key).value;
     });
   }
 }

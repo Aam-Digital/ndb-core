@@ -53,6 +53,11 @@ export class EntityFormComponent implements OnInit {
    */
   @Output() onSave = new EventEmitter<Entity>();
 
+  /**
+   * This will be emitted whenever the cancel button is pressed.
+   */
+  @Output() onCancel = new EventEmitter<void>();
+
   operationType = OperationType;
   form: FormGroup;
 
@@ -78,11 +83,12 @@ export class EntityFormComponent implements OnInit {
       this.form,
       this.entity
     );
-    this.switchEdit();
     this.onSave.emit(this.entity);
+    this.switchEdit();
   }
 
   cancel() {
+    this.onCancel.emit();
     this.buildFormConfig();
   }
 

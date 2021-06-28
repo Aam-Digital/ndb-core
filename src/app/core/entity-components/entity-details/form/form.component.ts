@@ -5,16 +5,17 @@ import { Entity } from "../../../entity/entity";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { getParentUrl } from "../../../../utils/utils";
 import { Router } from "@angular/router";
+import { Location } from "@angular/common";
 
 @Component({
   selector: "app-form",
-  template: `
-    <app-entity-form
-      [entity]="entity"
-      [columns]="columns"
-      [editing]="creatingNew"
-      (onSave)="routeToEntity($event)"
-    ></app-entity-form>`,
+  template: ` <app-entity-form
+    [entity]="entity"
+    [columns]="columns"
+    [editing]="creatingNew"
+    (onSave)="saveClicked($event)"
+    (onCancel)="cancelClicked()"
+  ></app-entity-form>`,
 })
 /**
  * A simple wrapper function of the EntityFormComponent which can be used as a dynamic component
@@ -25,7 +26,7 @@ export class FormComponent implements OnInitDynamicComponent {
   columns: FormFieldConfig[][] = [];
   creatingNew = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private location: Location) {}
 
   onInitFromDynamicConfig(config: PanelConfig) {
     this.entity = config.entity;
@@ -35,9 +36,15 @@ export class FormComponent implements OnInitDynamicComponent {
     }
   }
 
-  routeToEntity(entity: Entity) {
+  saveClicked(entity: Entity) {
     if (this.creatingNew) {
       this.router.navigate([getParentUrl(this.router), entity.getId()]);
+    }
+  }
+
+  cancelClicked() {
+    if (this.creatingNew) {
+      this.location.back();
     }
   }
 }

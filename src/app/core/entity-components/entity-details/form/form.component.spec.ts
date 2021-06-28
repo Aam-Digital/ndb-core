@@ -43,7 +43,7 @@ describe("FormComponent", () => {
     const router = fixture.debugElement.injector.get(Router);
     spyOn(router, "navigate");
     component.creatingNew = true;
-    await component.routeToEntity(testChild);
+    await component.saveClicked(testChild);
     expect(router.navigate).toHaveBeenCalledWith(["", testChild.getId()]);
   });
 });

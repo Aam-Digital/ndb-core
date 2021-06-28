@@ -1,5 +1,10 @@
 <mat-form-field [formGroup]="formControl.parent">
-  <input matInput [formControlName]="formControlName">
+  <input
+    matInput
+    [formControlName]="formControlName"
+    [placeholder]="label"
+    [title]="label"
+  />
   <mat-error *ngIf="formControl.errors?.pattern">
     Only numbers are allowed
   </mat-error>
