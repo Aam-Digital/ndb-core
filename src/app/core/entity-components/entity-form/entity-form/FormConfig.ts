@@ -1,6 +1,6 @@
 /**
  * The general configuration for fields in tables and forms.
- * This defines which property is displayed on how it should be displayed.
+ * This defines which property is displayed and how it should be displayed.
  * Most information does not need to be provided if a property with schema definitions is displayed.
  */
 export interface FormFieldConfig {
