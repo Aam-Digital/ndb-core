@@ -70,7 +70,7 @@ describe("EntitySelectComponent", () => {
   }));
 
   it("should suggest all entities after an initial load", (done) => {
-    component.filteredEntities.subscribe((next) => {
+    const subscription = component.filteredEntities.subscribe((next) => {
       expect(next.length).toBe(testUsers.length);
       done();
       subscription.unsubscribe();
