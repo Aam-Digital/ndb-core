@@ -15,10 +15,10 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { RouterTestingModule } from "@angular/router/testing";
-import { EntityBlockModule } from "../../entity-components/entity-block/entity-block.module";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 import { Subscription } from "rxjs";
 import { Entity } from "../../entity/entity";
+import { EntityUtilsModule } from "../../entity-components/entity-utils/entity-utils.module";
 
 describe("SearchComponent", () => {
   let component: SearchComponent;
@@ -48,8 +48,8 @@ describe("SearchComponent", () => {
           SchoolsModule,
           MatToolbarModule,
           RouterTestingModule,
-          EntityBlockModule,
           ReactiveFormsModule,
+          EntityUtilsModule,
         ],
         providers: [
           { provide: EntitySchemaService, useValue: entitySchemaService },

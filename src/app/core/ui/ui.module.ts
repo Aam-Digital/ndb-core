@@ -39,7 +39,7 @@ import { PrimaryActionComponent } from "./primary-action/primary-action.componen
 import { NotesModule } from "../../child-dev-project/notes/notes.module";
 import { Angulartics2Module } from "angulartics2";
 import { PermissionsModule } from "../permissions/permissions.module";
-import { EntityBlockModule } from "../entity-components/entity-block/entity-block.module";
+import { EntityUtilsModule } from "../entity-components/entity-utils/entity-utils.module";
 
 /**
  * The core user interface structure that ties different components together into the overall app layout.
@@ -67,7 +67,7 @@ import { EntityBlockModule } from "../entity-components/entity-block/entity-bloc
     Angulartics2Module,
     PermissionsModule,
     ReactiveFormsModule,
-    EntityBlockModule,
+    EntityUtilsModule,
   ],
   declarations: [SearchComponent, UiComponent, PrimaryActionComponent],
   exports: [UiComponent],
