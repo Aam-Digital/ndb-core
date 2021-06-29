@@ -249,7 +249,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">164</context>
+          <context context-type="linenumber">165</context>
         </context-group>
         <note priority="1" from="description">To whom a school activity is assigned to</note>
       </trans-unit>
@@ -261,7 +261,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">166</context>
+          <context context-type="linenumber">167</context>
         </context-group>
         <note priority="1" from="description">Add a coordinator to an activity</note>
       </trans-unit>
@@ -273,7 +273,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">133</context>
+          <context context-type="linenumber">134</context>
         </context-group>
         <note priority="1" from="description">Participants of a school-activity</note>
       </trans-unit>
@@ -285,7 +285,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">135</context>
+          <context context-type="linenumber">136</context>
         </context-group>
         <note priority="1" from="description">Add a participant of a school-activity</note>
       </trans-unit>
@@ -469,6 +469,13 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
           <context context-type="linenumber">50,53</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="0dc97840c4fe5e03dfb822aed93db7b7bcc45b9b" datatype="html">
+        <source> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.average | percent: &quot;1.0-0&quot; }}"/> attended (of <x id="INTERPOLATION_1" equiv-text="{{ selectedEvent.children.length }}"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other {participants} }"/>) </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
+          <context context-type="linenumber">47,51</context>
         </context-group>
       </trans-unit>
       <trans-unit id="812462e20157a95f89d505f85909d142ff78406f" datatype="html">
@@ -1237,11 +1244,19 @@
         </context-group>
         <note priority="1" from="description">Status of the note is &apos;Urgent Follow-Up&apos;</note>
       </trans-unit>
+      <trans-unit id="483724599dbaabe37f5f82b0bee1c1faf0b27cd0" datatype="html">
+        <source>Type of Interaction</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
+          <context context-type="linenumber">63</context>
+        </context-group>
+        <note priority="1" from="description">Type of Interaction when adding event</note>
+      </trans-unit>
       <trans-unit id="ec3f853537ad707f8ce894ebd598335a40d787e0" datatype="html">
         <source>Add Author...</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">84</context>
+          <context context-type="linenumber">85</context>
         </context-group>
         <note priority="1" from="description">placeholder when adding multiple authors</note>
       </trans-unit>
@@ -1249,7 +1264,7 @@
         <source>Authors</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">86</context>
+          <context context-type="linenumber">87</context>
         </context-group>
         <note priority="1" from="description">Authors of a note</note>
       </trans-unit>
@@ -1257,7 +1272,7 @@
         <source>Topic / Summary</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">101</context>
+          <context context-type="linenumber">102</context>
         </context-group>
         <note priority="1" from="description">Placeholder informing that this is the Topic/Summary of the note</note>
         <note priority="1" from="meaning">Placeholder</note>
@@ -1266,7 +1281,7 @@
         <source>Notes</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">115</context>
+          <context context-type="linenumber">116</context>
         </context-group>
         <note priority="1" from="description">Placeholder informing that this is textarea the actual note can be entered into</note>
         <note priority="1" from="meaning">Placeholder</note>
@@ -1684,6 +1699,15 @@
           <context context-type="sourcefile">src/app/conflict-resolution/compare-rev/compare-rev.component.ts</context>
           <context context-type="linenumber">167</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="f9326e450a7a6ca7d56e9e7424fd4f5c112f188e" datatype="html">
+        <source>conflicts to resolve:</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/conflict-resolution/conflict-resolution-list/conflict-resolution-list.component.html</context>
+          <context context-type="linenumber">1,5</context>
+        </context-group>
+        <note priority="1" from="description">Shows the database conflicts that need to be resolved</note>
+        <note priority="1" from="meaning">Conflicts to be resolved</note>
       </trans-unit>
       <trans-unit id="eb24700c8ea13217647018eddd861387c601a29d" datatype="html">
         <source> Data </source>

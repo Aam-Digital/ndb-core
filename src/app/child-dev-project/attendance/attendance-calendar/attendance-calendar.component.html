@@ -44,7 +44,7 @@
       All excused (out of {{selectedEvent.children.length}}
       { selectedEvent.children.length, plural, one {participant} other {participants} })
     </div>
-    <div *ngIf="selectedEventStats.average">
+    <div *ngIf="selectedEventStats.average" i18n>
       {{ selectedEventStats.average | percent: "1.0-0" }} attended (of
       {{ selectedEvent.children.length }}
       { selectedEvent.children.length, plural, one {participant} other {participants} })
