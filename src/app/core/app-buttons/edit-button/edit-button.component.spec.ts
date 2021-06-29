@@ -20,6 +20,8 @@ class PermittedEntity extends Entity {
 describe("EditButtonComponent", () => {
   let component: EditButtonComponent;
   let fixture: ComponentFixture<EditButtonComponent>;
+  const notPermittedEntity = new NotPermittedEntity();
+  const permittedEntity = new PermittedEntity();
 
   beforeEach(async () => {
     const mockPermissionService = jasmine.createSpyObj(["userIsPermitted"]);
@@ -48,17 +50,29 @@ describe("EditButtonComponent", () => {
   });
 
   it("should emit whenever a user clicks on the edit button", (done) => {
-    component.toggleEditing.subscribe(() => done());
+    component.editingChange.subscribe(done);
     component.toggleEdit();
   });
 
   it("should disable the button when the current user does not have the required permission", () => {
-    component.managingEntity = NotPermittedEntity;
+    component.managingEntity = notPermittedEntity;
     expect(component.disabled).toBeTrue();
   });
 
   it("should be enabled when the current user has the required permission", () => {
-    component.managingEntity = PermittedEntity;
+    component.managingEntity = permittedEntity;
     expect(component.disabled).toBeFalse();
+  });
+
+  it("no longer edits when save is clicked", (done) => {
+    component.onSave.subscribe(done);
+    component.save();
+    expect(component.editing).toBeFalse();
+  });
+
+  it("no longer edits when cancel is clicked", (done) => {
+    component.onCancel.subscribe(done);
+    component.cancel();
+    expect(component.editing).toBeFalse();
   });
 });

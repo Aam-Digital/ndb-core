@@ -91,7 +91,7 @@ describe("FormComponent", () => {
   it("changes enablePhotoUpload state", () => {
     expect(component.enablePhotoUpload).toBe(false);
     mockChildPhotoService.canSetImage.and.returnValues(true);
-    component.switchEdit();
+    component.editing = !component.editing
     expect(component.enablePhotoUpload).toBe(true);
   });
 
