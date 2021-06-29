@@ -3,19 +3,26 @@
   <h2>{{listName}}</h2>
 
   <button
+    mat-stroked-button
+    color="accent"
     class="add-entity-button"
     (click)="addNewClick.emit()"
     angulartics2On="click"
     angularticsCategory="UserAction"
     [angularticsAction]="
-        listName.toLowerCase().replace(' ', '_') + '_add_new'
-      "
+          listName.toLowerCase().replace(' ', '_') + '_add_new'
+        "
     *appDisabledEntityOperation="{
-        entity: entityConstructor,
-        operation: operationType.CREATE
-      }"
+          entity: entityConstructor,
+          operation: operationType.CREATE
+        }"
   >
-    <span fxHide.lt-md="true" class="fa fa-plus-circle button-icon"> {{listConfig.addNew}} </span>
+    <mat-icon
+      class="button-icon"
+      aria-label="add element"
+      fontIcon="fa-plus-circle"
+    ></mat-icon>
+    <span fxHide.lt-md="true"> Add New </span>
   </button>
 
   <div fxFlex="20"></div>
@@ -40,7 +47,8 @@
   </mat-form-field>
 
   <button mat-icon-button class="additional-button" [matMenuTriggerFor]="additional">
-     <mat-icon class="fa fa-ellipsis-v additional-button-icon"></mat-icon>
+    <!--<mat-icon class="additional-button-icon material-icons">more_vert</mat-icon> -->
+    <span class="material-icons">more_vert</span>
   </button>
 
   <div fxFlex="5"></div>

@@ -23,16 +23,11 @@
 
 .button-icon {
   font-size: 1.5em;
-  margin: 5px;
+  margin-bottom: -2px;
 }
 
 .add-entity-button {
-  color: mat-color($ndb-app-accent);
-  border: 1px solid;
   background: white;
-  border-radius: 5px;
-  text-align: center;
-  cursor: pointer;
 }
 
 .align-form-field {
