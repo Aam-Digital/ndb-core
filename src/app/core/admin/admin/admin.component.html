@@ -18,6 +18,12 @@
   <button (click)="notesMigration.migrateToMultiUser()" mat-stroked-button>
     Migrate Notes to new author users
   </button>
+  <button (click)="childrenMigrationService.migratePhotoFormat()" mat-stroked-button>
+    Migrate Children to correct photo format
+  </button>
+  <button (click)="migrateConfigChanges()" mat-stroked-button>
+    Migrate Config to new format
+  </button>
 </p>
 
 <br />

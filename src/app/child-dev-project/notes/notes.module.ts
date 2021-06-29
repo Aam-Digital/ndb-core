@@ -39,9 +39,9 @@ import { EntitySubrecordModule } from "../../core/entity-components/entity-subre
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
 import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
 import { AttendanceModule } from "../attendance/attendance.module";
-import { EntitySelectModule } from "../../core/entity-components/entity-select/entity-select.module";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { ChildMeetingNoteAttendanceComponent } from "./note-details/child-meeting-attendance/child-meeting-note-attendance.component";
+import { EntityUtilsModule } from "../../core/entity-components/entity-utils/entity-utils.module";
 
 @NgModule({
   declarations: [
@@ -93,9 +93,10 @@ import { ChildMeetingNoteAttendanceComponent } from "./note-details/child-meetin
     EntityListModule,
     ConfigurableEnumModule,
     AttendanceModule,
-    EntitySelectModule,
     MatSlideToggleModule,
+    EntityUtilsModule,
   ],
   providers: [],
+  entryComponents: [NoteDetailsComponent],
 })
 export class NotesModule {}

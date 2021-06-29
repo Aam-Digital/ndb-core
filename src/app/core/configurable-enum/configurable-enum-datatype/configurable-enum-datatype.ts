@@ -10,6 +10,8 @@ import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 export class ConfigurableEnumDatatype
   implements EntitySchemaDatatype<ConfigurableEnumValue> {
   public readonly name = "configurable-enum";
+  public readonly viewComponent = "DisplayConfigurableEnum";
+  public readonly editComponent = "EditConfigurableEnum";
 
   constructor(private configService: ConfigService) {}
 
@@ -30,17 +32,14 @@ export class ConfigurableEnumDatatype
     value: string,
     schemaField: EntitySchemaField
   ): ConfigurableEnumValue {
-    if (value !== null) {
-      let enumId = schemaField.innerDataType;
-      if (!enumId.startsWith(CONFIGURABLE_ENUM_CONFIG_PREFIX)) {
-        enumId = CONFIGURABLE_ENUM_CONFIG_PREFIX + enumId;
-      }
-
-      return this.configService
-        .getConfig<ConfigurableEnumConfig>(enumId)
-        ?.find((option) => option.id === value);
-    } else {
-      return undefined;
+    let enumId = schemaField.innerDataType;
+    if (!enumId.startsWith(CONFIGURABLE_ENUM_CONFIG_PREFIX)) {
+      enumId = CONFIGURABLE_ENUM_CONFIG_PREFIX + enumId;
     }
+
+    // The label check is used to also match enums that were automatically created
+    return this.configService
+      .getConfig<ConfigurableEnumConfig>(enumId)
+      ?.find((option) => option.id === value || option.label === value);
   }
 }

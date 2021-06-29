@@ -2,8 +2,7 @@
   [records]="records"
   [columns]="columns"
   [newRecordFactory]="generateNewRecordFactory()"
-  [detailsComponent]="detailsComponent"
-  [entityId]="child.getId()"
+  [showEntity]="showNoteDetails.bind(this)"
   [getBackgroundColor]="getColor"
 >
 </app-entity-subrecord>

@@ -93,9 +93,8 @@
       <app-entity-subrecord
         [records]="entity.events"
         [columns]="eventsColumns"
-        [detailsComponent]="eventDetailsComponent"
-        [showAddButton]="false"
-        [disableEditingInline]="true"
+        [showEntity]="showEventDetails.bind(this)"
+        [editable]="false"
       >
       </app-entity-subrecord>
     </div>
@@ -104,6 +103,7 @@
       <app-attendance-calendar
         [records]="entity.events"
         [highlightForChild]="focusedChild"
+        [activity]="entity.activity"
       ></app-attendance-calendar>
     </div>
   </form>

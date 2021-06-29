@@ -35,6 +35,15 @@ export interface EntitySchemaDatatype<EntityType = any, DBType = any> {
   name: string;
 
   /**
+   * The default component how this datatype should be displayed in lists and forms.
+   *
+   * The name has to match one of the strings in the DYNAMIC_COMPONENT_MAP.
+   */
+  viewComponent?: string;
+
+  editComponent?: string;
+
+  /**
    * Transformation function taking a value in the format that is used in entity instances and returning the value
    * in the format used in database objects.
    *

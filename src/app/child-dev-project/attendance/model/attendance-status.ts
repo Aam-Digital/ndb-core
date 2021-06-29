@@ -1,7 +1,4 @@
-import {
-  CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnumValue,
-} from "../../../core/configurable-enum/configurable-enum.interface";
+import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 
 /**
  * @deprecated
@@ -27,8 +24,7 @@ export enum AttendanceLogicalStatus {
 /**
  * the id through which the available attendance status types can be loaded from the ConfigService.
  */
-export const ATTENDANCE_STATUS_CONFIG_ID =
-  CONFIGURABLE_ENUM_CONFIG_PREFIX + "attendance-status";
+export const ATTENDANCE_STATUS_CONFIG_ID = "attendance-status";
 
 /**
  * Details of one status option users can assign to a participant's details attending an event.

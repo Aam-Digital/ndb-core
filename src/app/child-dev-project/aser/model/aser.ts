@@ -16,60 +16,61 @@
  */
 
 import { Entity } from "../../../core/entity/entity";
-import { WarningLevel } from "../../warning-level";
+import { warningLevels } from "../../warning-level";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
+import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
+import { mathLevels } from "./mathLevels";
+import { readingLevels } from "./readingLevels";
 
 @DatabaseEntity("Aser")
 export class Aser extends Entity {
-  static ReadingLevels = [
-    "Nothing",
-    "Read Letters",
-    "Read Words",
-    "Read Sentence",
-    "Read Paragraph",
-  ];
-  static MathLevels = [
-    "Nothing",
-    "Numbers 1-9",
-    "Numbers 10-99",
-    "Subtraction",
-    "Division",
-  ];
-
-  static isReadingPassedOrNA(level: string) {
-    if (level === "" || level === undefined) {
+  static isReadingPassedOrNA(level: ConfigurableEnumValue) {
+    if (!level || level.id === "") {
       // not applicable
       return true;
     }
-    if (level === this.ReadingLevels[4]) {
-      // passed highest level
-      return true;
-    }
-    return false;
+    return level === readingLevels.find((it) => it.id === "read_paragraph");
   }
-  static isMathPassedOrNA(level: string) {
-    if (level === "" || level === undefined) {
+
+  static isMathPassedOrNA(level: ConfigurableEnumValue) {
+    if (!level || level.id === "") {
       // not applicable
       return true;
     }
-    if (level === this.MathLevels[4]) {
-      // passed highest level
-      return true;
-    }
-    return false;
+    return level === mathLevels.find((it) => it.id === "division");
   }
 
   @DatabaseField() child: string; // id of Child entity
-  @DatabaseField() date: Date = new Date();
-  @DatabaseField() hindi: string = "";
-  @DatabaseField() bengali: string = "";
-  @DatabaseField() english: string = "";
-  @DatabaseField() math: string = "";
-  @DatabaseField() remarks: string = "";
+  @DatabaseField({ label: "Date" }) date: Date = new Date();
+  @DatabaseField({
+    label: "Hindi",
+    dataType: "configurable-enum",
+    innerDataType: "reading-levels",
+  })
+  hindi: ConfigurableEnumValue;
+  @DatabaseField({
+    label: "Bengali",
+    dataType: "configurable-enum",
+    innerDataType: "reading-levels",
+  })
+  bengali: ConfigurableEnumValue;
+  @DatabaseField({
+    label: "English",
+    dataType: "configurable-enum",
+    innerDataType: "reading-levels",
+  })
+  english: ConfigurableEnumValue;
+  @DatabaseField({
+    label: "Math",
+    dataType: "configurable-enum",
+    innerDataType: "math-levels",
+  })
+  math: ConfigurableEnumValue;
+  @DatabaseField({ label: "Remarks" }) remarks: string = "";
 
-  getWarningLevel(): WarningLevel {
-    let warningLevel = WarningLevel.NONE;
+  getWarningLevel(): ConfigurableEnumValue {
+    let warningLevel;
 
     if (
       Aser.isReadingPassedOrNA(this.english) &&
@@ -77,9 +78,9 @@ export class Aser extends Entity {
       Aser.isReadingPassedOrNA(this.bengali) &&
       Aser.isMathPassedOrNA(this.math)
     ) {
-      warningLevel = WarningLevel.OK;
+      warningLevel = warningLevels.find((level) => level.id === "OK");
     } else {
-      warningLevel = WarningLevel.WARNING;
+      warningLevel = warningLevels.find((level) => level.id === "WARNING");
     }
 
     return warningLevel;

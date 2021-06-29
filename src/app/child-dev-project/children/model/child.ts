@@ -16,13 +16,11 @@
  */
 
 import { Entity } from "../../../core/entity/entity";
-import { Gender } from "./Gender";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import { SafeUrl } from "@angular/platform-browser";
-import { BehaviorSubject } from "rxjs";
 import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 import { calculateAge } from "../../../utils/utils";
+import { Photo } from "../child-photo-service/photo";
 
 export type Center = ConfigurableEnumValue;
 @DatabaseEntity("Child")
@@ -33,42 +31,53 @@ export class Child extends Entity {
     return instance;
   }
 
-  /**
-   * Returns the full relative filePath to a child photo given a filename, adding the relevant folders to it.
-   * @param filename The given filename with file extension.
-   */
-  public static generatePhotoPath(filename: string): string {
-    return "assets/child-photos/" + filename;
+  static getBlockComponent(): string {
+    return "ChildBlock";
   }
 
-  @DatabaseField() name: string;
-  @DatabaseField() projectNumber: string; // project number
-  @DatabaseField({ dataType: "date-only" }) dateOfBirth: Date;
-  @DatabaseField() motherTongue: string = "";
-  @DatabaseField({ dataType: "string" }) gender: Gender; // M or F
-  @DatabaseField() religion: string = "";
+  @DatabaseField({ label: "Name", required: true }) name: string;
+  @DatabaseField({ label: "Project Number", labelShort: "PN" })
+  projectNumber: string;
+  @DatabaseField({
+    dataType: "date-only",
+    label: "Date of birth",
+    labelShort: "DoB",
+    editComponent: "EditAge",
+  })
+  dateOfBirth: Date;
+  @DatabaseField({ label: "Mother Tongue" }) motherTongue: string = "";
+  @DatabaseField({
+    dataType: "configurable-enum",
+    label: "Gender",
+    innerDataType: "genders",
+  })
+  gender: ConfigurableEnumValue;
+  @DatabaseField({ label: "Religion" }) religion: string = "";
 
-  @DatabaseField() center: Center;
-  @DatabaseField() admissionDate: Date;
-  @DatabaseField() status: string = "";
+  @DatabaseField({
+    dataType: "configurable-enum",
+    innerDataType: "center",
+    label: "Center",
+  })
+  center: Center;
+  @DatabaseField({ label: "Admission" }) admissionDate: Date;
+  @DatabaseField({ label: "Status" }) status: string = "";
 
-  @DatabaseField() dropoutDate: Date;
-  @DatabaseField() dropoutType: string;
-  @DatabaseField() dropoutRemarks: string;
+  @DatabaseField({ label: "Dropout Date" }) dropoutDate: Date;
+  @DatabaseField({ label: "Dropout Type" }) dropoutType: string;
+  @DatabaseField({ label: "Dropout remarks" }) dropoutRemarks: string;
 
   /** current school (as determined through the ChildSchoolRelation docs) set during loading through ChildrenService */
   schoolId: string = "";
   /** current class (as determined through the ChildSchoolRelation docs) set during loading through ChildrenService */
   schoolClass: string = "";
 
-  /**
-   * Url to an image that is displayed for the child
-   * as a fallback option if no CloudFileService file or connection is available.
-   */
-  @DatabaseField() photoFile: string;
-
-  @DatabaseField({ dataType: "load-child-photo", defaultValue: true })
-  photo: BehaviorSubject<SafeUrl>;
+  @DatabaseField({
+    dataType: "photo",
+    defaultValue: "",
+    label: "Photo Filename",
+  })
+  photo: Photo;
 
   get age(): number {
     return this.dateOfBirth ? calculateAge(this.dateOfBirth) : null;

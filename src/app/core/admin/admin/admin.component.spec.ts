@@ -22,6 +22,7 @@ import { MatDialogRef } from "@angular/material/dialog";
 import { SessionType } from "../../session/session-type";
 import { NotesMigrationService } from "../../../child-dev-project/notes/notes-migration/notes-migration.service";
 import { AttendanceMigrationService } from "../../../child-dev-project/attendance/attendance-migration/attendance-migration.service";
+import { ChildrenMigrationService } from "../../../child-dev-project/children/child-photo-service/children-migration.service";
 
 describe("AdminComponent", () => {
   let component: AdminComponent;
@@ -114,6 +115,10 @@ describe("AdminComponent", () => {
             provide: NotesMigrationService,
             useValue: {},
           },
+          {
+            provide: ChildrenMigrationService,
+            useValue: {},
+          },
         ],
       }).compileComponents();
     })
@@ -162,7 +167,6 @@ describe("AdminComponent", () => {
     tick();
     expect(mockFileReader.readAsText).toHaveBeenCalled();
     expect(mockConfigService.saveConfig).toHaveBeenCalled();
-    expect(mockConfigService.loadConfig).toHaveBeenCalled();
   }));
 
   it("should open dialog and call backup service when loading backup", fakeAsync(() => {

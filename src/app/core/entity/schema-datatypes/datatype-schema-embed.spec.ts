@@ -39,7 +39,7 @@ describe("Schema data type: schema-embed", () => {
   }
 
   class TestEntity extends Entity {
-    @DatabaseField({ dataType: "schema-embed", ext: InnerClass })
+    @DatabaseField({ dataType: "schema-embed", additional: InnerClass })
     embedded = new InnerClass();
   }
 

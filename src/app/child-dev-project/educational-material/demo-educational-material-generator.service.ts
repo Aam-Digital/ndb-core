@@ -4,6 +4,7 @@ import { Injectable } from "@angular/core";
 import { Child } from "../children/model/child";
 import { faker } from "../../core/demo-data/faker";
 import { EducationalMaterial } from "./model/educational-material";
+import { materials } from "./model/materials";
 
 export class DemoEducationMaterialConfig {
   minCount: number;
@@ -51,7 +52,7 @@ export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<E
 
       const specialMaterial = this.generateEducationalMaterialEntity(child);
       specialMaterial.materialType = faker.random.arrayElement(
-        EducationalMaterial.MATERIAL_OTHER
+        materials.filter((material) => material.hasOwnProperty("color"))
       );
       specialMaterial.materialAmount = 1;
       data.push(specialMaterial);
@@ -61,7 +62,7 @@ export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<E
   }
 
   private generateEducationalMaterialEntity(child: Child): EducationalMaterial {
-    const entity = new EducationalMaterial(faker.datatype.uuid());
+    const entity = new EducationalMaterial();
 
     entity.child = child.getId();
     entity.date = faker.date.between(
@@ -69,9 +70,7 @@ export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<E
       faker.getEarlierDateOrToday(child.dropoutDate)
     );
     entity.materialAmount = faker.random.arrayElement([1, 1, 1, 2, 3]);
-    entity.materialType = faker.random.arrayElement(
-      EducationalMaterial.MATERIAL_ALL
-    );
+    entity.materialType = faker.random.arrayElement(materials);
 
     return entity;
   }

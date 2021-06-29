@@ -18,7 +18,7 @@
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { Entity } from "../../../core/entity/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import { WarningLevel, WarningLevelColor } from "../../warning-level";
+import { warningLevels } from "../../warning-level";
 import {
   INTERACTION_TYPE_CONFIG_ID,
   InteractionType,
@@ -28,6 +28,9 @@ import {
   AttendanceLogicalStatus,
   NullAttendanceStatusType,
 } from "../../attendance/model/attendance-status";
+import { User } from "../../../core/user/user";
+import { Child } from "../../children/model/child";
+import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
@@ -46,23 +49,37 @@ export class Note extends Entity {
   }
 
   /** IDs of Child entities linked with this note */
-  @DatabaseField() children: string[] = [];
+  @DatabaseField({
+    label: "Children",
+    viewComponent: "DisplayEntityArray",
+    editComponent: "EditEntityArray",
+    additional: Child.ENTITY_TYPE,
+  })
+  children: string[] = [];
 
   /**
    * optional additional information about attendance at this event for each of the linked children
    *
    * No direct access to change this property. Use the `.getAttendance()` method to have safe access.
    */
-  @DatabaseField({ innerDataType: "schema-embed", ext: EventAttendance })
+  @DatabaseField({ innerDataType: "schema-embed", additional: EventAttendance })
   private childrenAttendance: Map<string, EventAttendance> = new Map();
 
-  @DatabaseField() date: Date;
-  @DatabaseField() subject: string = "";
-  @DatabaseField() text: string = "";
+  @DatabaseField({ label: "Date" }) date: Date;
+  @DatabaseField({ label: "Subject" }) subject: string = "";
+  @DatabaseField({ label: "Notes", editComponent: "EditLongText" })
+  text: string = "";
   /** IDs of users that authored this note */
-  @DatabaseField() authors: string[] = [];
+  @DatabaseField({
+    label: "SW",
+    viewComponent: "DisplayEntityArray",
+    editComponent: "EditEntityArray",
+    additional: User.ENTITY_TYPE,
+  })
+  authors: string[] = [];
 
   @DatabaseField({
+    label: "Category",
     dataType: "configurable-enum",
     innerDataType: INTERACTION_TYPE_CONFIG_ID,
   })
@@ -78,24 +95,20 @@ export class Note extends Entity {
    */
   @DatabaseField() schools: string[] = [];
 
-  @DatabaseField({ dataType: "string" }) warningLevel: WarningLevel =
-    WarningLevel.OK;
+  @DatabaseField({
+    label: "",
+    dataType: "configurable-enum",
+    innerDataType: "warning-levels",
+  })
+  warningLevel: ConfigurableEnumValue;
 
-  getWarningLevel(): WarningLevel {
-    return this.warningLevel;
+  getWarningLevel(): ConfigurableEnumValue {
+    return this.warningLevel || super.getWarningLevel();
   }
 
   // TODO: color logic should not be part of entity/model but rather in the component responsible for displaying it
   public getColor() {
-    if (this.warningLevel === WarningLevel.URGENT) {
-      return WarningLevelColor(WarningLevel.URGENT);
-    }
-    if (this.warningLevel === WarningLevel.WARNING) {
-      return WarningLevelColor(WarningLevel.WARNING);
-    }
-
-    const color = this.category.color;
-    return color ? color : "";
+    return super.getColor() || this.category.color || "";
   }
 
   public getColorForId(childId: string) {
@@ -105,7 +118,7 @@ export class Note extends Entity {
         AttendanceLogicalStatus.ABSENT
     ) {
       // child is absent, highlight the entry
-      return WarningLevelColor(WarningLevel.URGENT);
+      return warningLevels.find((warning) => warning.id === "URGENT").color;
     }
     return this.getColor();
   }

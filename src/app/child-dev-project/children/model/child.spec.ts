@@ -18,9 +18,9 @@
 import { Child } from "./child";
 import { waitForAsync } from "@angular/core/testing";
 import { Entity } from "../../../core/entity/entity";
-import { Gender } from "./Gender";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
-import { LoadChildPhotoEntitySchemaDatatype } from "../child-photo-service/datatype-load-child-photo";
+import { PhotoDatatype } from "../child-photo-service/datatype-photo";
+import { genders } from "./genders";
 
 describe("Child", () => {
   const ENTITY_TYPE = "Child";
@@ -29,9 +29,7 @@ describe("Child", () => {
   beforeEach(
     waitForAsync(() => {
       entitySchemaService = new EntitySchemaService();
-      entitySchemaService.registerSchemaDatatype(
-        new LoadChildPhotoEntitySchemaDatatype(null)
-      );
+      entitySchemaService.registerSchemaDatatype(new PhotoDatatype());
     })
   );
 
@@ -58,12 +56,12 @@ describe("Child", () => {
 
       name: "Max",
       projectNumber: "1",
-      gender: "M",
+      gender: genders[1],
       dateOfBirth: "2010-01-01",
       motherTongue: "Hindi",
       religion: "Hindu",
 
-      photoFile: "..",
+      photo: "..",
       center: { id: "alpha", label: "Alpha" },
       admissionDate: new Date(),
       status: "Active",
@@ -80,12 +78,12 @@ describe("Child", () => {
     const entity = new Child(id);
     entity.name = expectedData.name;
     entity.projectNumber = expectedData.projectNumber;
-    entity.gender = Gender.MALE;
+    entity.gender = expectedData.gender;
     entity.dateOfBirth = new Date(expectedData.dateOfBirth);
     entity.motherTongue = expectedData.motherTongue;
     entity.religion = expectedData.religion;
 
-    entity.photoFile = expectedData.photoFile;
+    entity.photo = { path: expectedData.photo, photo: null };
     entity.center = expectedData.center;
     entity.admissionDate = expectedData.admissionDate;
     entity.status = expectedData.status;

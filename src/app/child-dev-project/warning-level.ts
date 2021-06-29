@@ -1,19 +1,24 @@
-export enum WarningLevel {
-  OK = "OK",
-  WARNING = "WARNING",
-  URGENT = "URGENT",
-  NONE = "",
-}
+import { ConfigurableEnumValue } from "../core/configurable-enum/configurable-enum.interface";
 
-export function WarningLevelColor(warningLevel: WarningLevel): string {
-  switch (warningLevel) {
-    case WarningLevel.OK:
-      return "#90ee9040";
-    case WarningLevel.WARNING:
-      return "#ffa50080";
-    case WarningLevel.URGENT:
-      return "#fd727280";
-    default:
-      return "";
-  }
-}
+export const warningLevels: ConfigurableEnumValue[] = [
+  {
+    id: "",
+    label: "None",
+    color: "",
+  },
+  {
+    id: "OK",
+    label: "OK",
+    color: "#90ee9040",
+  },
+  {
+    id: "WARNING",
+    label: "WARNING",
+    color: "#ffa50080",
+  },
+  {
+    id: "URGENT",
+    label: "URGENT",
+    color: "#fd727280",
+  },
+];
