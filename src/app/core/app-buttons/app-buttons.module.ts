@@ -6,7 +6,7 @@ import { Angulartics2Module } from "angulartics2";
 
 @NgModule({
   declarations: [EditButtonComponent],
-    imports: [CommonModule, MatButtonModule, Angulartics2Module],
+  imports: [CommonModule, MatButtonModule, Angulartics2Module],
   exports: [EditButtonComponent],
 })
 export class AppButtonsModule {}
