@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { Entity } from "../../../../entity/entity";
+import { Entity } from "../../../../entity/model/entity";
 import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 import { ENTITY_MAP } from "../../../entity-details/entity-details.component";

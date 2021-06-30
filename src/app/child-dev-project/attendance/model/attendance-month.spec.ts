@@ -18,7 +18,7 @@
 import { AttendanceMonth, daysInMonth } from "./attendance-month";
 import { warningLevels } from "../../warning-level";
 import { waitForAsync } from "@angular/core/testing";
-import { Entity } from "../../../core/entity/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 
 describe("AttendanceMonth", () => {

@@ -17,7 +17,7 @@
 
 import { waitForAsync } from "@angular/core/testing";
 import { ChildSchoolRelation } from "./childSchoolRelation";
-import { Entity } from "../../../core/entity/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import moment from "moment";
 

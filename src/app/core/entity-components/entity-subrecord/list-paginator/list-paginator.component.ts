@@ -6,7 +6,7 @@ import {
   SimpleChanges,
   AfterViewInit,
 } from "@angular/core";
-import { Entity } from "../../../entity/entity";
+import { Entity } from "../../../entity/model/entity";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { User } from "../../../user/user";

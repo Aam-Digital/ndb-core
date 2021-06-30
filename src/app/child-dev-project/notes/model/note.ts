@@ -16,7 +16,7 @@
  */
 
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
-import { Entity } from "../../../core/entity/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { warningLevels } from "../../warning-level";
 import {

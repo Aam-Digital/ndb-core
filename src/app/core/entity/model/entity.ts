@@ -16,10 +16,9 @@
  */
 
 import { v4 as uuid } from "uuid";
-import { EntitySchema } from "./schema/entity-schema";
-import { DatabaseField } from "./database-field.decorator";
-import { warningLevels } from "../../child-dev-project/warning-level";
-import { ConfigurableEnumValue } from "../configurable-enum/configurable-enum.interface";
+import { EntitySchema } from "../schema/entity-schema";
+import { DatabaseField } from "../database-field.decorator";
+import { getWarningLevelColor, WarningLevel } from "./warning-level";
 
 /**
  * This represents a static class of type <T>.
@@ -203,16 +202,16 @@ export class Entity {
    * Used by some generic UI components to set the color for the entity instance.
    * Override this method as needed.
    */
-  public getColor() {
-    return this.getWarningLevel().color;
+  public getColor(): string {
+    return getWarningLevelColor(this.getWarningLevel());
   }
 
   /**
    * Override getWarningLevel() to define when the entity is in a critical condition and should be color-coded
    * and highlighted in generic components of the UI.
    */
-  public getWarningLevel(): ConfigurableEnumValue {
-    return warningLevels.find((warning) => warning.id === "");
+  public getWarningLevel(): WarningLevel {
+    return WarningLevel.OK;
   }
 
   /**

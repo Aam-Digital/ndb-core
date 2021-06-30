@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from "../../../core/entity/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { warningLevels } from "../../warning-level";
 import { AttendanceDay } from "./attendance-day";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";

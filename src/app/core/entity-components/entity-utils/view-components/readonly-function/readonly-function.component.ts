@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
 import { ViewComponent } from "../view-component";
-import { Entity } from "../../../../entity/entity";
+import { Entity } from "../../../../entity/model/entity";
 
 @Component({
   selector: "app-readonly-function",

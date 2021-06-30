@@ -17,7 +17,7 @@
 
 import { Child } from "./child";
 import { waitForAsync } from "@angular/core/testing";
-import { Entity } from "../../../core/entity/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { PhotoDatatype } from "../child-photo-service/datatype-photo";
 import { genders } from "./genders";

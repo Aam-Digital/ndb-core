@@ -13,7 +13,7 @@ import {
 } from "./entity-subrecord.component";
 import { RouterTestingModule } from "@angular/router/testing";
 import { EntitySubrecordModule } from "../entity-subrecord.module";
-import { Entity } from "../../../entity/entity";
+import { Entity } from "../../../entity/model/entity";
 import { SimpleChange } from "@angular/core";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatNativeDateModule } from "@angular/material/core";

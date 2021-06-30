@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { Entity } from "../../../entity/entity";
+import { Entity } from "../../../entity/model/entity";
 import { OperationType } from "../../../permissions/entity-permissions.service";
 import { FormFieldConfig } from "./FormConfig";
 import { FormGroup } from "@angular/forms";

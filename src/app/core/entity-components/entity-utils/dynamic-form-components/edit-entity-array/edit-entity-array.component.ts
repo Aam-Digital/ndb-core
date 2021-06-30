@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { EditComponent, EditPropertyConfig } from "../edit-component";
-import { Entity } from "../../../../entity/entity";
+import { Entity } from "../../../../entity/model/entity";
 
 @Component({
   selector: "app-edit-entity-array",

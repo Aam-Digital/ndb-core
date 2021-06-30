@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init-dynamic-component.interface";
 import { PanelConfig } from "../EntityDetailsConfig";
-import { Entity } from "../../../entity/entity";
+import { Entity } from "../../../entity/model/entity";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { getParentUrl } from "../../../../utils/utils";
 import { Router } from "@angular/router";

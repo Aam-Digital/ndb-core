@@ -8,7 +8,7 @@ import {
   Panel,
   PanelComponent,
 } from "./EntityDetailsConfig";
-import { Entity, EntityConstructor } from "../../entity/entity";
+import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { getUrlWithoutParams } from "../../../utils/utils";

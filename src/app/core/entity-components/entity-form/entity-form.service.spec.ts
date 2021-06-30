@@ -5,7 +5,7 @@ import { FormBuilder } from "@angular/forms";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntityFormModule } from "./entity-form.module";
-import { Entity } from "../../entity/entity";
+import { Entity } from "../../entity/model/entity";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;

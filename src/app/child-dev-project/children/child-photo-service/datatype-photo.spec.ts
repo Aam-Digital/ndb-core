@@ -19,7 +19,7 @@ import { TestBed } from "@angular/core/testing";
 import { SafeUrl } from "@angular/platform-browser";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import { Entity } from "../../../core/entity/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { ChildPhotoService } from "./child-photo.service";
 import { BehaviorSubject } from "rxjs";
 import { PhotoDatatype } from "./datatype-photo";

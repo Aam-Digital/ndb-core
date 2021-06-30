@@ -18,7 +18,7 @@
 import { Aser } from "./aser";
 import { warningLevels } from "../../warning-level";
 import { waitForAsync } from "@angular/core/testing";
-import { Entity } from "../../../core/entity/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { mathLevels } from "./mathLevels";
 import { readingLevels } from "./readingLevels";

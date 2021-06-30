@@ -2,7 +2,7 @@ import {
   AttendanceLogicalStatus,
   AttendanceStatusType,
 } from "./attendance-status";
-import { Entity } from "../../../core/entity/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { RecurringActivity } from "./recurring-activity";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { warningLevels } from "../../warning-level";

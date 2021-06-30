@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { EducationalMaterial } from "../../child-dev-project/educational-material/model/educational-material";
 import { Aser } from "../../child-dev-project/aser/model/aser";
-import { Entity } from "../entity/entity";
+import { Entity } from "../entity/model/entity";
 import { Child } from "../../child-dev-project/children/model/child";
 import { Note } from "../../child-dev-project/notes/model/note";
 

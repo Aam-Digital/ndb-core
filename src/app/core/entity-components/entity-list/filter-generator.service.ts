@@ -9,7 +9,7 @@ import {
   PrebuiltFilterConfig,
 } from "./EntityListConfig";
 import { ENTITY_MAP } from "../entity-details/entity-details.component";
-import { Entity, EntityConstructor } from "../../entity/entity";
+import { Entity, EntityConstructor } from "../../entity/model/entity";
 import {
   CONFIGURABLE_ENUM_CONFIG_PREFIX,
   ConfigurableEnumConfig,

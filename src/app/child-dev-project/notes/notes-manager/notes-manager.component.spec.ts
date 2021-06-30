@@ -31,7 +31,7 @@ import { EntityListComponent } from "../../../core/entity-components/entity-list
 import { EventNote } from "app/child-dev-project/attendance/model/event-note";
 import { BehaviorSubject } from "rxjs";
 import { BackupService } from "../../../core/admin/services/backup.service";
-import { UpdatedEntity } from "../../../core/entity/entity-update";
+import { UpdatedEntity } from "../../../core/entity/model/entity-update";
 
 describe("NotesManagerComponent", () => {
   let component: NotesManagerComponent;

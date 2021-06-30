@@ -1,4 +1,4 @@
-import { Entity } from "../../entity/entity";
+import { Entity } from "../../entity/model/entity";
 import { FilterSelectionOption } from "../../filter/filter-selection/filter-selection";
 import { FormFieldConfig } from "../entity-form/entity-form/FormConfig";
 

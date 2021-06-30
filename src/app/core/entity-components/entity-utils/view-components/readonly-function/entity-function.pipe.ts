@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from "@angular/core";
-import { Entity } from "../../../../entity/entity";
+import { Entity } from "../../../../entity/model/entity";
 
 @Pipe({
   name: "entityFunction",

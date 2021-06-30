@@ -17,7 +17,7 @@
 
 import { EntitySchemaField } from "./entity-schema-field";
 import { EntitySchemaService } from "./entity-schema.service";
-import { Entity } from "../entity";
+import { Entity } from "../model/entity";
 
 /**
  * Interface to be implemented by any Datatype transformer of the Schema system.

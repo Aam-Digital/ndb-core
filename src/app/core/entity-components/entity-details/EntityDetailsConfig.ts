@@ -1,4 +1,4 @@
-import { Entity } from "../../entity/entity";
+import { Entity } from "../../entity/model/entity";
 
 /**
  * The configuration for a entity details page

@@ -11,11 +11,11 @@ import { FormDialogService } from "../../../core/form-dialog/form-dialog.service
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
-import { applyUpdate } from "../../../core/entity/entity-update";
+import { applyUpdate } from "../../../core/entity/model/entity-update";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { Input } from "@angular/core";
 import { EventNote } from "../../attendance/model/event-note";
-import { EntityConstructor } from "../../../core/entity/entity";
+import { EntityConstructor } from "../../../core/entity/model/entity";
 
 /**
  * additional config specifically for NotesManagerComponent
