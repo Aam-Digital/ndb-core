@@ -208,7 +208,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     try {
       row.record = await this.entityFormService.saveChanges(
         row.formGroup,
-        row.record.copy() as T
+        row.record
       );
       row.formGroup.disable();
     } catch (err) {

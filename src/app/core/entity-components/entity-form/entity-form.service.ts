@@ -74,18 +74,20 @@ export class EntityFormService {
   /**
    * This function applies the changes of the formGroup to the entity.
    * If the form is invalid or the entity does not pass validation after applying the changes, an error will be thrown.
-   * In order to not edit the initial entity until the new one is saved, call entity.copy() on the input entity.
+   * The input entity will not be modified but a copy of it will be returned in case of success.
    * @param form The formGroup holding the changes
-   * @param entity The entity on which the changes should be applied. Should be a copy.
+   * @param entity The entity on which the changes should be applied.
+   * @returns a copy of the input entity with the changes from the form group
    */
   public saveChanges<T extends Entity>(form: FormGroup, entity: T): Promise<T> {
     this.checkFormValidity(form);
-    this.assignFormValuesToEntity(form, entity);
-    entity.assertValid();
+    const entityCopy = entity.copy() as T;
+    this.assignFormValuesToEntity(form, entityCopy);
+    entityCopy.assertValid();
 
     return this.entityMapper
       .save(entity)
-      .then(() => entity)
+      .then(() => entityCopy)
       .catch((err) => {
         throw new Error(`Could not save ${entity.getType()}: ${err}`);
       });

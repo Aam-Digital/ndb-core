@@ -31,6 +31,7 @@ describe("EntityFormService", () => {
 
   it("should not save invalid entities", () => {
     const entity = new Entity("initialId");
+    spyOn(entity, "copy").and.returnValue(entity);
     spyOn(entity, "assertValid").and.throwError(new Error());
     const formGroup = TestBed.inject(FormBuilder).group({ _id: "newId" });
 
