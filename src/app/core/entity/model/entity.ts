@@ -211,7 +211,7 @@ export class Entity {
    * and highlighted in generic components of the UI.
    */
   public getWarningLevel(): WarningLevel {
-    return WarningLevel.OK;
+    return WarningLevel.NONE;
   }
 
   /**

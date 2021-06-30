@@ -3,22 +3,18 @@ import { ConfigurableEnumValue } from "../core/configurable-enum/configurable-en
 export const warningLevels: ConfigurableEnumValue[] = [
   {
     id: "",
-    label: "None",
-    color: "",
+    label: "",
   },
   {
     id: "OK",
-    label: "OK",
-    color: "#90ee9040",
+    label: "Solved",
   },
   {
     id: "WARNING",
-    label: "WARNING",
-    color: "#ffa50080",
+    label: "Needs Follow-Up",
   },
   {
     id: "URGENT",
-    label: "URGENT",
-    color: "#fd727280",
+    label: "Urgent Follow-Up",
   },
 ];

@@ -14,6 +14,6 @@ export function getWarningLevelColor(warningLevel: WarningLevel) {
     case WarningLevel.OK:
       return "#90ee9040";
     default:
-      return "#ffa50080";
+      return "";
   }
 }

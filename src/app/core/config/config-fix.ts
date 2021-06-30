@@ -8,7 +8,7 @@ import { genders } from "../../child-dev-project/children/model/genders";
 import { materials } from "../../child-dev-project/educational-material/model/materials";
 import { mathLevels } from "../../child-dev-project/aser/model/mathLevels";
 import { readingLevels } from "../../child-dev-project/aser/model/readingLevels";
-import { warningLevels } from "../../child-dev-project/warning-level";
+import { warningLevels } from "../../child-dev-project/warning-levels";
 import { ratingAnswers } from "../../features/historical-data/rating-answers";
 
 // prettier-ignore

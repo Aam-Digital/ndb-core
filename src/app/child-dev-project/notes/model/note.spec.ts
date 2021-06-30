@@ -1,5 +1,5 @@
 import { Note } from "./note";
-import { warningLevels } from "../../warning-level";
+import { warningLevels } from "../../warning-levels";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { waitForAsync } from "@angular/core/testing";
 import { Entity } from "../../../core/entity/model/entity";

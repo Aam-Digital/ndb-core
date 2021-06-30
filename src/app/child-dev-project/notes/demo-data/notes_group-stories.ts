@@ -1,4 +1,4 @@
-import { warningLevels } from "../../warning-level";
+import { warningLevels } from "../../warning-levels";
 
 export const noteGroupStories = [
   {

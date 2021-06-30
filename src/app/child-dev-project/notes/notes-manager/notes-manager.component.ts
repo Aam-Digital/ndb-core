@@ -3,7 +3,7 @@ import { Note } from "../model/note";
 import { MediaObserver } from "@angular/flex-layout";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { ActivatedRoute } from "@angular/router";
-import { warningLevels } from "../../warning-level";
+import { warningLevels } from "../../warning-levels";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FilterSelectionOption } from "../../../core/filter/filter-selection/filter-selection";
 import { SessionService } from "../../../core/session/session-service/session.service";
