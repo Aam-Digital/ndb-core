@@ -16,12 +16,12 @@
  */
 
 import { Entity } from "../../../core/entity/model/entity";
-import { warningLevels } from "../../warning-level";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 import { mathLevels } from "./mathLevels";
 import { readingLevels } from "./readingLevels";
+import { WarningLevel } from "../../../core/entity/model/warning-level";
 
 @DatabaseEntity("Aser")
 export class Aser extends Entity {
@@ -69,20 +69,16 @@ export class Aser extends Entity {
   math: ConfigurableEnumValue;
   @DatabaseField({ label: "Remarks" }) remarks: string = "";
 
-  getWarningLevel(): ConfigurableEnumValue {
-    let warningLevel;
-
+  getWarningLevel(): WarningLevel {
     if (
       Aser.isReadingPassedOrNA(this.english) &&
       Aser.isReadingPassedOrNA(this.hindi) &&
       Aser.isReadingPassedOrNA(this.bengali) &&
       Aser.isMathPassedOrNA(this.math)
     ) {
-      warningLevel = warningLevels.find((level) => level.id === "OK");
+      return WarningLevel.OK;
     } else {
-      warningLevel = warningLevels.find((level) => level.id === "WARNING");
+      return WarningLevel.WARNING;
     }
-
-    return warningLevel;
   }
 }

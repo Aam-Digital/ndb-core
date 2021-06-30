@@ -3,11 +3,11 @@ import { DemoDataGenerator } from "../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
 import { Child } from "../children/model/child";
 import { faker } from "../../core/demo-data/faker";
-import { warningLevels } from "../warning-level";
 import { Aser } from "./model/aser";
 import { ConfigurableEnumValue } from "../../core/configurable-enum/configurable-enum.interface";
 import { mathLevels } from "./model/mathLevels";
 import { readingLevels } from "./model/readingLevels";
+import { WarningLevel } from "../../core/entity/model/warning-level";
 
 /**
  * Generate ASER results every 12 months for each Child until passing.
@@ -68,8 +68,7 @@ export class DemoAserGeneratorService extends DemoDataGenerator<Aser> {
       previousResult = aserResult;
     } while (
       date < faker.getEarlierDateOrToday(child.dropoutDate) &&
-      previousResult.getWarningLevel() !==
-        warningLevels.find((level) => level.id === "OK")
+      previousResult.getWarningLevel() !== WarningLevel.OK
     );
 
     return data;

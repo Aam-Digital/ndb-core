@@ -2,12 +2,11 @@ import {
   AttendanceLogicalStatus,
   AttendanceStatusType,
 } from "./attendance-status";
-import { Entity } from "../../../core/entity/model/entity";
 import { RecurringActivity } from "./recurring-activity";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
-import { warningLevels } from "../../warning-level";
 import { EventNote } from "./event-note";
-import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
+import { WarningLevel } from "../../../core/entity/model/warning-level";
+import { Entity } from "../../../core/entity/model/entity";
 
 /**
  * Aggregate information about all events for a {@link RecurringActivity} within a given time period.
@@ -102,14 +101,14 @@ export class ActivityAttendance extends Entity {
     return this.countIndividual(childId, AttendanceLogicalStatus.ABSENT);
   }
 
-  getAttendancePercentage(childId: string) {
+  getAttendancePercentage(childId: string): number {
     const present = this.countEventsPresent(childId);
     const absent = this.countEventsAbsent(childId);
 
     return present / (present + absent);
   }
 
-  getAttendancePercentageAverage() {
+  getAttendancePercentageAverage(): number {
     // TODO calculate overall averaged attendance percentage
     return NaN;
   }
@@ -199,7 +198,7 @@ export class ActivityAttendance extends Entity {
   /**
    * Custom warning level for attendance thresholds - optionally for a specific child.
    */
-  public getWarningLevel(forChildId?: string): ConfigurableEnumValue {
+  public getWarningLevel(forChildId?: string): WarningLevel {
     let attendancePercentage;
     if (forChildId) {
       attendancePercentage = this.getAttendancePercentage(forChildId);
@@ -208,13 +207,13 @@ export class ActivityAttendance extends Entity {
     }
 
     if (!attendancePercentage) {
-      return warningLevels.find((level) => level.id === "OK");
+      return WarningLevel.NONE;
     } else if (attendancePercentage < ActivityAttendance.THRESHOLD_URGENT) {
-      return warningLevels.find((level) => level.id === "URGENT");
+      return WarningLevel.URGENT;
     } else if (attendancePercentage < ActivityAttendance.THRESHOLD_WARNING) {
-      return warningLevels.find((level) => level.id === "WARNING");
+      return WarningLevel.WARNING;
     } else {
-      return warningLevels.find((level) => level.id === "OK");
+      return WarningLevel.OK;
     }
   }
 }

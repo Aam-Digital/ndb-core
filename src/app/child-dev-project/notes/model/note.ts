@@ -18,7 +18,6 @@
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import { warningLevels } from "../../warning-level";
 import {
   INTERACTION_TYPE_CONFIG_ID,
   InteractionType,
@@ -31,6 +30,10 @@ import {
 import { User } from "../../../core/user/user";
 import { Child } from "../../children/model/child";
 import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
+import {
+  getWarningLevelColor,
+  WarningLevel,
+} from "../../../core/entity/model/warning-level";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
@@ -102,23 +105,31 @@ export class Note extends Entity {
   })
   warningLevel: ConfigurableEnumValue;
 
-  getWarningLevel(): ConfigurableEnumValue {
-    return this.warningLevel || super.getWarningLevel();
+  getWarningLevel(): WarningLevel {
+    if (this.warningLevel) {
+      return WarningLevel[this.warningLevel.id];
+    } else {
+      return WarningLevel.NONE;
+    }
   }
 
-  // TODO: color logic should not be part of entity/model but rather in the component responsible for displaying it
   public getColor() {
-    return super.getColor() || this.category.color || "";
+    const actualLevel = this.getWarningLevel();
+    if (actualLevel === WarningLevel.OK || actualLevel === WarningLevel.NONE) {
+      return this.category.color;
+    } else {
+      return super.getColor();
+    }
   }
 
-  public getColorForId(childId: string) {
+  public getColorForId(childId: string): string {
     if (
       this.category.isMeeting &&
       this.childrenAttendance.get(childId)?.status.countAs ===
         AttendanceLogicalStatus.ABSENT
     ) {
       // child is absent, highlight the entry
-      return warningLevels.find((warning) => warning.id === "URGENT").color;
+      return getWarningLevelColor(WarningLevel.URGENT);
     }
     return this.getColor();
   }

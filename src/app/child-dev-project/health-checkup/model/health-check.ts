@@ -18,8 +18,7 @@
 import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import { warningLevels } from "../../warning-level";
-import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
+import { WarningLevel } from "../../../core/entity/model/warning-level";
 
 /**
  * Model Class for the Health Checks that are taken for a Child.
@@ -50,13 +49,13 @@ export class HealthCheck extends Entity {
     return this.weight / ((this.height / 100) * (this.height / 100));
   }
 
-  getWarningLevel(): ConfigurableEnumValue {
+  getWarningLevel(): WarningLevel {
     if (this.bmi <= 16 || this.bmi >= 30) {
-      return warningLevels.find((level) => level.id === "URGENT");
+      return WarningLevel.URGENT;
     } else if (this.bmi >= 18 && this.bmi <= 25) {
-      return warningLevels.find((level) => level.id === "OK");
+      return WarningLevel.OK;
     } else {
-      return warningLevels.find((level) => level.id === "WARNING");
+      return WarningLevel.WARNING;
     }
   }
 }
