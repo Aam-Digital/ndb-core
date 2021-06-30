@@ -66,6 +66,10 @@ const cols = [
       required: true,
     },
     {
+      id: "projectNumber",
+      edit: "EditNumber",
+    },
+    {
       edit: "EditLongText",
       id: "additionalInfo",
       label: "Additional information",
@@ -76,17 +80,6 @@ const cols = [
       label: "Is active",
     },
     { id: "gender" },
-    {
-      edit: "EditSelectable",
-      id: "health_vaccinationStatus",
-      label: "Vaccination Status",
-      additional: [
-        "Good",
-        "Vaccination Due",
-        "Needs Checking",
-        "No Card/Information",
-      ],
-    },
   ],
   [
     {

@@ -1,6 +1,9 @@
 import { Component } from "@angular/core";
-import { EditComponent, EditPropertyConfig } from "../edit-component";
-import { ConfigurableEnumValue } from "../../../../configurable-enum/configurable-enum.interface";
+import {
+  EditComponent,
+  EditPropertyConfig,
+} from "../../entity-components/entity-utils/dynamic-form-components/edit-component";
+import { ConfigurableEnumValue } from "../configurable-enum.interface";
 
 @Component({
   selector: "app-edit-configurable-enum",

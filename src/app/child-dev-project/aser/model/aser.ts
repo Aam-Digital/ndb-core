@@ -15,87 +15,70 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from "../../../core/entity/entity";
-import { WarningLevel } from "../../warning-level";
+import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
+import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
+import { mathLevels } from "./mathLevels";
+import { readingLevels } from "./readingLevels";
+import { WarningLevel } from "../../../core/entity/model/warning-level";
 
 @DatabaseEntity("Aser")
 export class Aser extends Entity {
-  static ReadingLevels = [
-    "Nothing",
-    "Read Letters",
-    "Read Words",
-    "Read Sentence",
-    "Read Paragraph",
-  ];
-  static MathLevels = [
-    "Nothing",
-    "Numbers 1-9",
-    "Numbers 10-99",
-    "Subtraction",
-    "Division",
-  ];
-
-  static isReadingPassedOrNA(level: string) {
-    if (level === "" || level === undefined) {
+  static isReadingPassedOrNA(level: ConfigurableEnumValue) {
+    if (!level || level.id === "") {
       // not applicable
       return true;
     }
-    return level === this.ReadingLevels[4];
+    return level === readingLevels.find((it) => it.id === "read_paragraph");
   }
 
-  static isMathPassedOrNA(level: string) {
-    if (level === "" || level === undefined) {
+  static isMathPassedOrNA(level: ConfigurableEnumValue) {
+    if (!level || level.id === "") {
       // not applicable
       return true;
     }
-    return level === this.MathLevels[4];
+    return level === mathLevels.find((it) => it.id === "division");
   }
 
   @DatabaseField() child: string; // id of Child entity
-  @DatabaseField({ label: "Date", additional: Aser.ReadingLevels })
-  date: Date = new Date();
+  @DatabaseField({ label: "Date" }) date: Date = new Date();
   @DatabaseField({
     label: "Hindi",
-    editComponent: "EditSelectable",
-    additional: Aser.ReadingLevels,
+    dataType: "configurable-enum",
+    innerDataType: "reading-levels",
   })
-  hindi: string = "";
+  hindi: ConfigurableEnumValue;
   @DatabaseField({
     label: "Bengali",
-    editComponent: "EditSelectable",
-    additional: Aser.ReadingLevels,
+    dataType: "configurable-enum",
+    innerDataType: "reading-levels",
   })
-  bengali: string = "";
+  bengali: ConfigurableEnumValue;
   @DatabaseField({
     label: "English",
-    editComponent: "EditSelectable",
-    additional: Aser.ReadingLevels,
+    dataType: "configurable-enum",
+    innerDataType: "reading-levels",
   })
-  english: string = "";
+  english: ConfigurableEnumValue;
   @DatabaseField({
     label: "Math",
-    editComponent: "EditSelectable",
-    additional: Aser.MathLevels,
+    dataType: "configurable-enum",
+    innerDataType: "math-levels",
   })
-  math: string = "";
+  math: ConfigurableEnumValue;
   @DatabaseField({ label: "Remarks" }) remarks: string = "";
 
   getWarningLevel(): WarningLevel {
-    let warningLevel;
-
     if (
       Aser.isReadingPassedOrNA(this.english) &&
       Aser.isReadingPassedOrNA(this.hindi) &&
       Aser.isReadingPassedOrNA(this.bengali) &&
       Aser.isMathPassedOrNA(this.math)
     ) {
-      warningLevel = WarningLevel.OK;
+      return WarningLevel.OK;
     } else {
-      warningLevel = WarningLevel.WARNING;
+      return WarningLevel.WARNING;
     }
-
-    return warningLevel;
   }
 }

@@ -16,13 +16,9 @@
  */
 
 import { v4 as uuid } from "uuid";
-import { EntitySchema } from "./schema/entity-schema";
-import { DatabaseField } from "./database-field.decorator";
-import {
-  WarningLevel,
-  WarningLevelColor,
-} from "../../child-dev-project/warning-level";
-import { FormGroup } from "@angular/forms";
+import { EntitySchema } from "../schema/entity-schema";
+import { DatabaseField } from "../database-field.decorator";
+import { getWarningLevelColor, WarningLevel } from "./warning-level";
 
 /**
  * This represents a static class of type <T>.
@@ -93,10 +89,6 @@ export class Entity {
     } else {
       return id;
     }
-  }
-
-  static validateForm(formGroup: FormGroup) {
-    return;
   }
 
   static getBlockComponent(): string {
@@ -210,8 +202,8 @@ export class Entity {
    * Used by some generic UI components to set the color for the entity instance.
    * Override this method as needed.
    */
-  public getColor() {
-    return WarningLevelColor(this.getWarningLevel());
+  public getColor(): string {
+    return getWarningLevelColor(this.getWarningLevel());
   }
 
   /**
@@ -231,5 +223,12 @@ export class Entity {
     const other = new (this.getConstructor())(this._id);
     Object.assign(other, this);
     return other;
+  }
+
+  /**
+   * Checks if the entity is valid and if the check fails, throws an error explaining the failed check.
+   */
+  assertValid(): void {
+    return;
   }
 }

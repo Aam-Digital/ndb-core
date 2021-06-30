@@ -15,7 +15,7 @@ import { ChildBlockComponent } from "../../child-dev-project/children/child-bloc
 import { DisplayTextComponent } from "../entity-components/entity-utils/view-components/display-text/display-text.component";
 import { DisplayCheckmarkComponent } from "../entity-components/entity-utils/view-components/display-checkmark/display-checkmark.component";
 import { DisplayDateComponent } from "../entity-components/entity-utils/view-components/display-date/display-date.component";
-import { DisplayConfigurableEnumComponent } from "../entity-components/entity-utils/view-components/display-configurable-enum/display-configurable-enum.component";
+import { DisplayConfigurableEnumComponent } from "../configurable-enum/display-configurable-enum/display-configurable-enum.component";
 import { ActivityAttendanceSectionComponent } from "../../child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component";
 import { BmiBlockComponent } from "../../child-dev-project/children/children-list/bmi-block/bmi-block.component";
 import { ChildrenBmiDashboardComponent } from "../../child-dev-project/children/children-bmi-dashboard/children-bmi-dashboard.component";
@@ -23,9 +23,8 @@ import { DashboardShortcutWidgetComponent } from "../dashboard-shortcut-widget/d
 import { UserListComponent } from "../admin/user-list/user-list.component";
 import { HistoricalDataComponent } from "../../features/historical-data/historical-data/historical-data.component";
 import { EditTextComponent } from "../entity-components/entity-utils/dynamic-form-components/edit-text/edit-text.component";
-import { EditConfigurableEnumComponent } from "../entity-components/entity-utils/dynamic-form-components/edit-configurable-enum/edit-configurable-enum.component";
+import { EditConfigurableEnumComponent } from "../configurable-enum/edit-configurable-enum/edit-configurable-enum.component";
 import { EditDateComponent } from "../entity-components/entity-utils/dynamic-form-components/edit-date/edit-date.component";
-import { EditSelectableComponent } from "../entity-components/entity-utils/dynamic-form-components/edit-selectable/edit-selectable.component";
 import { EditAgeComponent } from "../entity-components/entity-utils/dynamic-form-components/edit-age/edit-age.component";
 import { EditBooleanComponent } from "../entity-components/entity-utils/dynamic-form-components/edit-boolean/edit-boolean.component";
 import { EditLongTextComponent } from "../entity-components/entity-utils/dynamic-form-components/edit-long-text/edit-long-text.component";
@@ -40,6 +39,7 @@ import { EditPercentageComponent } from "../entity-components/entity-utils/dynam
 import { DisplayPercentageComponent } from "../entity-components/entity-utils/view-components/display-percentage/display-percentage.component";
 import { DisplayUnitComponent } from "../entity-components/entity-utils/view-components/display-unit/display-unit.component";
 import { FormComponent } from "../entity-components/entity-details/form/form.component";
+import { EditNumberComponent } from "../entity-components/entity-utils/dynamic-form-components/edit-number/edit-number.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -71,7 +71,6 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["EditText", EditTextComponent],
   ["EditConfigurableEnum", EditConfigurableEnumComponent],
   ["EditDate", EditDateComponent],
-  ["EditSelectable", EditSelectableComponent],
   ["EditEntityArray", EditEntityArrayComponent],
   ["EditAge", EditAgeComponent],
   ["EditBoolean", EditBooleanComponent],
@@ -84,4 +83,5 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["EditPercentage", EditPercentageComponent],
   ["DisplayPercentage", DisplayPercentageComponent],
   ["DisplayUnit", DisplayUnitComponent],
+  ["EditNumber", EditNumberComponent],
 ]);

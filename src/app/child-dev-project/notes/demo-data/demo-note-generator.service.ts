@@ -4,7 +4,7 @@ import { Injectable } from "@angular/core";
 import { Child } from "../../children/model/child";
 import { Note } from "../model/note";
 import { faker } from "../../../core/demo-data/faker";
-import { WarningLevel } from "../../warning-level";
+import { warningLevels } from "../../warning-levels";
 import { noteIndividualStories } from "./notes_individual-stories";
 import { noteGroupStories } from "./notes_group-stories";
 import { centersUnique } from "../../children/demo-data-generators/fixtures/centers";
@@ -146,7 +146,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     const lastMonths = new Date();
     lastMonths.setMonth(lastMonths.getMonth() - 1);
     if (note.date < lastMonths) {
-      note.warningLevel = WarningLevel.OK;
+      note.warningLevel = warningLevels.find((level) => level.id === "OK");
     }
   }
 

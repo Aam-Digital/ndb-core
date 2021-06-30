@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { EditComponent, EditPropertyConfig } from "../edit-component";
 import { ENTITY_MAP } from "../../../entity-details/entity-details.component";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
-import { Entity } from "../../../../entity/entity";
+import { Entity } from "../../../../entity/model/entity";
 
 @Component({
   selector: "app-edit-single-entity",

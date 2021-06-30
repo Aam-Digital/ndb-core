@@ -34,7 +34,7 @@
           }"
         ></ng-template>
         <ng-template
-          *ngIf="row.formGroup?.enabled"
+          *ngIf="row.formGroup?.enabled && col.edit"
           [appDynamicComponent]="{
             component: col.edit,
             config: {

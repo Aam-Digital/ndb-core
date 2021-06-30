@@ -1,6 +1,6 @@
-import { Entity, EntityConstructor } from "./entity";
+import { Entity, EntityConstructor } from "./model/entity";
 import { EntityMapperService } from "./entity-mapper.service";
-import { UpdatedEntity } from "./entity-update";
+import { UpdatedEntity } from "./model/entity-update";
 import { NEVER, Observable } from "rxjs";
 
 export function mockEntityMapper(

@@ -15,8 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from "../../../core/entity/entity";
-import { Gender } from "./Gender";
+import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
@@ -48,12 +47,11 @@ export class Child extends Entity {
   dateOfBirth: Date;
   @DatabaseField({ label: "Mother Tongue" }) motherTongue: string = "";
   @DatabaseField({
-    dataType: "string",
+    dataType: "configurable-enum",
     label: "Gender",
-    additional: ["", "M", "F"],
-    editComponent: "EditSelectable",
+    innerDataType: "genders",
   })
-  gender: Gender; // M or F
+  gender: ConfigurableEnumValue;
   @DatabaseField({ label: "Religion" }) religion: string = "";
 
   @DatabaseField({

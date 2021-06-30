@@ -1,8 +1,8 @@
 import { Note } from "./note";
-import { WarningLevel, WarningLevelColor } from "../../warning-level";
+import { warningLevels } from "../../warning-levels";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { waitForAsync } from "@angular/core/testing";
-import { Entity } from "../../../core/entity/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import {
   ATTENDANCE_STATUS_CONFIG_ID,
   AttendanceLogicalStatus,
@@ -19,6 +19,10 @@ import {
   ConfigurableEnumConfig,
 } from "../../../core/configurable-enum/configurable-enum.interface";
 import { createTestingConfigService } from "../../../core/config/config.service";
+import {
+  getWarningLevelColor,
+  WarningLevel,
+} from "../../../core/entity/model/warning-level";
 
 const testStatusTypes: ConfigurableEnumConfig<AttendanceStatusType> = [
   {
@@ -47,7 +51,7 @@ function createTestModel(): Note {
   n1.subject = "Note Subject";
   n1.text = "Note text";
   n1.authors = ["1"];
-  n1.warningLevel = WarningLevel.URGENT;
+  n1.warningLevel = warningLevels.find((level) => level.id === "URGENT");
 
   return n1;
 }
@@ -110,7 +114,7 @@ describe("Note", () => {
       text: "Note text",
       authors: ["1"],
       category: "GUARDIAN_TALK",
-      warningLevel: WarningLevel.URGENT,
+      warningLevel: "OK",
 
       searchIndices: [],
     };
@@ -120,6 +124,7 @@ describe("Note", () => {
     entity.category = testInteractionTypes.find(
       (c) => c.id === "GUARDIAN_TALK"
     );
+    entity.warningLevel = warningLevels.find((level) => level.id === "OK");
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
@@ -157,10 +162,12 @@ describe("Note", () => {
 
   it("should return colors", function () {
     const note = new Note("1");
+
     note.category = { id: "", label: "test", color: "#FFFFFF" };
     expect(note.getColor()).toBe("#FFFFFF");
-    note.warningLevel = WarningLevel.URGENT;
-    expect(note.getColor()).toBe(WarningLevelColor(WarningLevel.URGENT));
+
+    note.warningLevel = warningLevels.find((level) => level.id === "URGENT");
+    expect(note.getColor()).toBe(getWarningLevelColor(WarningLevel.URGENT));
   });
 
   it("transforms interactionType from config", function () {

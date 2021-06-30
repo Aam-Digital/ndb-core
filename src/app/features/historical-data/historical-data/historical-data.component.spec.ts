@@ -8,7 +8,7 @@ import {
 import { HistoricalDataComponent } from "./historical-data.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { HistoricalDataModule } from "../historical-data.module";
-import { Entity } from "../../../core/entity/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { HistoricalEntityData } from "../historical-entity-data";
 import moment from "moment";
 import { DatePipe } from "@angular/common";

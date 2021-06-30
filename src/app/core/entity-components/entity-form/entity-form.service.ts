@@ -1,11 +1,15 @@
 import { Injectable } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { FormFieldConfig } from "./entity-form/FormConfig";
-import { Entity } from "../../entity/entity";
+import { Entity } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
 @Injectable()
+/**
+ * This service provides helper functions for creating tables or forms for an entity as well as saving
+ * new changes correctly to the entity.
+ */
 export class EntityFormService {
   constructor(
     private fb: FormBuilder,
@@ -56,25 +60,37 @@ export class EntityFormService {
     const entitySchema = entity.getSchema();
     formFields.forEach((formField) => {
       const propertySchema = entitySchema.get(formField.id);
-      formConfig[formField.id] = [entity[formField.id]];
-      if (formField.required || propertySchema?.required) {
-        formConfig[formField.id].push(Validators.required);
+      // Only properties with a schema are editable
+      if (propertySchema) {
+        formConfig[formField.id] = [entity[formField.id]];
+        if (formField.required || propertySchema?.required) {
+          formConfig[formField.id].push(Validators.required);
+        }
       }
     });
     return this.fb.group(formConfig);
   }
 
-  public saveChanges(form: FormGroup, entity: Entity): Promise<Entity> {
+  /**
+   * This function applies the changes of the formGroup to the entity.
+   * If the form is invalid or the entity does not pass validation after applying the changes, an error will be thrown.
+   * The input entity will not be modified but a copy of it will be returned in case of success.
+   * @param form The formGroup holding the changes
+   * @param entity The entity on which the changes should be applied.
+   * @returns a copy of the input entity with the changes from the form group
+   */
+  public saveChanges<T extends Entity>(form: FormGroup, entity: T): Promise<T> {
     this.checkFormValidity(form);
-    const entityConstructor = entity.getConstructor();
-    entityConstructor.validateForm(form);
+    const entityCopy = entity.copy() as T;
+    this.assignFormValuesToEntity(form, entityCopy);
+    entityCopy.assertValid();
 
-    this.assignFormValuesToEntity(form, entity);
-    return this.entityMapper.save<Entity>(entity).catch((err) => {
-      throw new Error(
-        `Could not save ${entityConstructor.ENTITY_TYPE}: ${err}`
-      );
-    });
+    return this.entityMapper
+      .save(entityCopy)
+      .then(() => entityCopy)
+      .catch((err) => {
+        throw new Error(`Could not save ${entity.getType()}: ${err}`);
+      });
   }
 
   private checkFormValidity(form: FormGroup) {

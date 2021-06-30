@@ -15,10 +15,10 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from "../../../core/entity/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import { WarningLevel } from "../../warning-level";
+import { WarningLevel } from "../../../core/entity/model/warning-level";
 
 /**
  * Model Class for the Health Checks that are taken for a Child.
@@ -49,7 +49,7 @@ export class HealthCheck extends Entity {
     return this.weight / ((this.height / 100) * (this.height / 100));
   }
 
-  getWarningLevel() {
+  getWarningLevel(): WarningLevel {
     if (this.bmi <= 16 || this.bmi >= 30) {
       return WarningLevel.URGENT;
     } else if (this.bmi >= 18 && this.bmi <= 25) {

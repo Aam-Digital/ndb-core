@@ -67,6 +67,12 @@ export interface EntitySchemaField {
    */
   viewComponent?: string;
 
+  /**
+   * (Optional) Define using which component this property should be editable in lists and forms.
+   *
+   * The name has to match one of the strings in the DYNAMIC_COMPONENT_MAP.
+   * If nothing is defined, the default component for this datatype will be used.
+   */
   editComponent?: string;
 
   /**
@@ -74,9 +80,19 @@ export interface EntitySchemaField {
    */
   label?: string;
 
+  /**
+   * A short label which can be used in tables.
+   * If nothing is specified, the long name will be used.
+   */
   labelShort?: string;
 
+  /**
+   * A further description of the property which can be displayed in tooltips.
+   */
   description?: string;
 
+  /**
+   * If set to true, the entity cannot be saved without setting a value for this property.
+   */
   required?: boolean;
 }

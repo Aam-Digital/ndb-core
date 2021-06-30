@@ -16,14 +16,12 @@ import {
   FilterConfig,
   GroupConfig,
 } from "./EntityListConfig";
-import { Entity, EntityConstructor } from "../../entity/entity";
+import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { OperationType } from "../../permissions/entity-permissions.service";
 import { FormFieldConfig } from "../entity-form/entity-form/FormConfig";
 import { EntitySubrecordComponent } from "../entity-subrecord/entity-subrecord/entity-subrecord.component";
-import {
-  FilterComponentSettings,
-  FilterGeneratorService,
-} from "./filter-generator.service";
+import { FilterGeneratorService } from "./filter-generator.service";
+import { FilterComponentSettings } from "./filter-component.settings";
 
 /**
  * This component allows to create a full blown table with pagination, filtering, searching and grouping.
@@ -89,7 +87,7 @@ export class EntityListComponent<T extends Entity>
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("listConfig")) {
       this.listName = this.listConfig.title;
-      this.initColumns();
+      this.addColumnsFromColumnGroups();
       this.initColumnGroups(this.listConfig.columnGroups);
       this.filtersConfig = this.listConfig.filters || [];
       this.displayColumnGroup(this.defaultColumnGroup);
@@ -101,21 +99,20 @@ export class EntityListComponent<T extends Entity>
     this.loadUrlParams();
   }
 
-  private initColumns() {
+  private addColumnsFromColumnGroups() {
     this.columns = this.listConfig.columns || [];
-    const uniqueColumnIds = new Set<string>();
-    this.listConfig?.columnGroups?.groups?.forEach((group) =>
-      group.columns.forEach((column) => uniqueColumnIds.add(column))
-    );
-    this.columns.push(
-      ...new Array(...uniqueColumnIds).filter(
-        (columnId) =>
-          !this.columns.some((column) =>
-            typeof column === "string"
-              ? column === columnId
-              : column.id === columnId
-          )
-      )
+    this.listConfig.columnGroups?.groups?.forEach((group) =>
+      group.columns
+        .filter(
+          (columnId) =>
+            !this.columns.some((column) =>
+              // Check if the column is already defined as object or string
+              typeof column === "string"
+                ? column === columnId
+                : column.id === columnId
+            )
+        )
+        .forEach((column) => this.columns.push(column))
     );
   }
 

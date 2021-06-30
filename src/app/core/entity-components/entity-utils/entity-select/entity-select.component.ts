@@ -9,7 +9,7 @@ import {
   SimpleChanges,
 } from "@angular/core";
 import { ENTER, COMMA } from "@angular/cdk/keycodes";
-import { Entity, EntityConstructor } from "../../../entity/entity";
+import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { BehaviorSubject, Observable } from "rxjs";
 import { FormControl } from "@angular/forms";

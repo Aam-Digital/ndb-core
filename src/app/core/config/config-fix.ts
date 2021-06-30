@@ -1,10 +1,14 @@
 import { defaultAttendanceStatusTypes } from "./default-config/default-attendance-status-types";
 import { defaultInteractionTypes } from "./default-config/default-interaction-types";
 import { Child } from "../../child-dev-project/children/model/child";
-import { Gender } from "../../child-dev-project/children/model/Gender";
 import { School } from "../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
+import { genders } from "../../child-dev-project/children/model/genders";
+import { materials } from "../../child-dev-project/educational-material/model/materials";
+import { mathLevels } from "../../child-dev-project/aser/model/mathLevels";
+import { readingLevels } from "../../child-dev-project/aser/model/readingLevels";
+import { warningLevels } from "../../child-dev-project/warning-levels";
 import { ratingAnswers } from "../../features/historical-data/rating-answers";
 
 // prettier-ignore
@@ -76,9 +80,12 @@ export const defaultJsonConfig = {
 
 
   "enum:interaction-type": defaultInteractionTypes,
-
   "enum:attendance-status": defaultAttendanceStatusTypes,
-
+  "enum:reading-levels": readingLevels,
+  "enum:math-levels": mathLevels,
+  "enum:genders": genders,
+  "enum:materials": materials,
+  "enum:warning-levels": warningLevels,
   "enum:document-status": [
     {
       "id": "",
@@ -702,8 +709,8 @@ export const defaultJsonConfig = {
               "query": `${Child.ENTITY_TYPE}:toArray[*isActive=true]`,
               "label": "All children",
               "aggregations": [
-                {"label": "Male children", "query": `[*gender=${Gender.MALE}]`},
-                {"label": "Female children", "query": `[*gender=${Gender.FEMALE}]`},
+                {"label": "Male children", "query": `:filterByObjectAttribute(gender, id, M)`},
+                {"label": "Female children", "query": `:filterByObjectAttribute(gender, id, F)`},
               ]
             },
             {
@@ -716,8 +723,8 @@ export const defaultJsonConfig = {
                   "query": `[*privateSchool!=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`,
                   "label": "Children attending a governmental school",
                   "aggregations": [
-                    {"label": "Male children attending a governmental school", "query": `[*gender=${Gender.MALE}]`},
-                    {"label": "Female children attending a governmental school", "query": `[*gender=${Gender.FEMALE}]`},
+                    {"label": "Male children attending a governmental school", "query": `:filterByObjectAttribute(gender, id, M)`},
+                    {"label": "Female children attending a governmental school", "query": `:filterByObjectAttribute(gender, id, F)`},
                   ]
                 },
                 {"label": "Private schools", "query": `[*privateSchool=true]`},
@@ -725,8 +732,8 @@ export const defaultJsonConfig = {
                   "query": `[*privateSchool=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`,
                   "label": "Children attending a private school",
                   "aggregations": [
-                    {"label": "Male children attending a private school", "query": `[*gender=${Gender.MALE}]`},
-                    {"label": "Female children attending a private school", "query": `[*gender=${Gender.FEMALE}]`},
+                    {"label": "Male children attending a private school", "query": `:filterByObjectAttribute(gender, id, M)`},
+                    {"label": "Female children attending a private school", "query": `:filterByObjectAttribute(gender, id, F)`},
                   ]
                 },
               ]

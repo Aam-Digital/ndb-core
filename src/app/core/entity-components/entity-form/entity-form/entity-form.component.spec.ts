@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { EntityFormComponent } from "./entity-form.component";
 import { ChildPhotoService } from "../../../../child-dev-project/children/child-photo-service/child-photo.service";
-import { Entity } from "../../../entity/entity";
+import { Entity } from "../../../entity/model/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { User } from "../../../user/user";
 import { RouterTestingModule } from "@angular/router/testing";
@@ -16,6 +16,7 @@ import { Child } from "../../../../child-dev-project/children/model/child";
 import { EntityFormModule } from "../entity-form.module";
 import { FormBuilder } from "@angular/forms";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { EntityFormService } from "../entity-form.service";
 
 describe("EntityFormComponent", () => {
   let component: EntityFormComponent;
@@ -84,7 +85,7 @@ describe("EntityFormComponent", () => {
   it("should emit notification when a child is saved", (done) => {
     spyOnProperty(component.form, "valid").and.returnValue(true);
     const subscription = component.onSave.subscribe((child) => {
-      expect(child).toBe(testChild);
+      expect(child).toEqual(testChild);
       subscription.unsubscribe();
       done();
     });
@@ -92,21 +93,17 @@ describe("EntityFormComponent", () => {
     component.save();
   });
 
-  it("reports error when form is invalid", () => {
-    const alertService = fixture.debugElement.injector.get(AlertService);
-    spyOn(alertService, "addDanger");
-    spyOnProperty(component.form, "invalid").and.returnValue(true);
+  it("should show an warning alert when form service rejects saving", async () => {
+    const alertService = TestBed.inject(AlertService);
+    spyOn(alertService, "addWarning");
+    const entityFormService = TestBed.inject(EntityFormService);
+    spyOn(entityFormService, "saveChanges").and.rejectWith(
+      new Error("error message")
+    );
 
-    return expectAsync(component.save()).toBeRejected();
-  });
+    await component.save();
 
-  it("logs error when saving fails", () => {
-    const alertService = fixture.debugElement.injector.get(AlertService);
-    spyOn(alertService, "addDanger");
-    spyOnProperty(component.form, "valid").and.returnValue(true);
-    mockEntityMapper.save.and.rejectWith("error");
-
-    return expectAsync(component.save()).toBeRejected();
+    expect(alertService.addWarning).toHaveBeenCalledWith("error message");
   });
 
   it("should add column definitions from property schema", () => {

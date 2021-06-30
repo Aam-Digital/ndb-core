@@ -16,8 +16,7 @@ export class EducationalMaterialComponent
   implements OnChanges, OnInitDynamicComponent {
   @Input() child: Child;
   records = new Array<EducationalMaterial>();
-
-  materialTypes = EducationalMaterial.MATERIAL_ALL;
+  summary = "";
 
   columns: FormFieldConfig[] = [
     { id: "date", visibleFrom: "xs" },
@@ -52,41 +51,35 @@ export class EducationalMaterialComponent
           (a, b) =>
             (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0)
         );
+        this.updateSummary();
       });
   }
 
   generateNewRecordFactory() {
-    // define values locally because "this" is a different scope after passing a function as input to another component
-    const child = this.child.getId();
-
     return () => {
       const newAtt = new EducationalMaterial(Date.now().toString());
 
       // use last entered date as default, otherwise today's date
       newAtt.date = this.records.length > 0 ? this.records[0].date : new Date();
-      newAtt.child = child;
+      newAtt.child = this.child.getId();
 
       return newAtt;
     };
   }
 
-  getSummary() {
-    if (this.records.length === 0) {
-      return "";
-    }
-
+  updateSummary() {
     const summary = new Map<string, number>();
     this.records.forEach((m) => {
-      const previousValue = summary.has(m.materialType)
-        ? summary.get(m.materialType)
+      const previousValue = summary.has(m.materialType.label)
+        ? summary.get(m.materialType.label)
         : 0;
-      summary.set(m.materialType, previousValue + m.materialAmount);
+      summary.set(m.materialType.label, previousValue + m.materialAmount);
     });
 
     let summaryText = "";
     summary.forEach(
       (v, k) => (summaryText = summaryText + k + ": " + v + ", ")
     );
-    return summaryText;
+    this.summary = summaryText;
   }
 }

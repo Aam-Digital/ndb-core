@@ -17,10 +17,10 @@
 
 import { Injectable } from "@angular/core";
 import { Database } from "../database/database";
-import { Entity, EntityConstructor } from "./entity";
+import { Entity, EntityConstructor } from "./model/entity";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 import { Observable, Subject } from "rxjs";
-import { UpdatedEntity } from "./entity-update";
+import { UpdatedEntity } from "./model/entity-update";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.

@@ -18,7 +18,7 @@
 import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { EntitySchemaService } from "../schema/entity-schema.service";
-import { EntityConstructor } from "../entity";
+import { EntityConstructor } from "../model/entity";
 
 /**
  * Datatype for the EntitySchemaService transforming values of complex objects recursively.

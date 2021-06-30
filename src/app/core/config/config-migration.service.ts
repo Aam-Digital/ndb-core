@@ -10,7 +10,7 @@ import {
 } from "../entity-components/entity-list/EntityListConfig";
 import { FormFieldConfig } from "../entity-components/entity-form/entity-form/FormConfig";
 import { ENTITY_MAP } from "../entity-components/entity-details/entity-details.component";
-import { Entity, EntityConstructor } from "../entity/entity";
+import { Entity, EntityConstructor } from "../entity/model/entity";
 import {
   EntityConfig,
   EntityConfigService,
@@ -23,6 +23,15 @@ import { ChildSchoolRelation } from "../../child-dev-project/children/model/chil
 import { HistoricalEntityData } from "../../features/historical-data/historical-entity-data";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { HealthCheck } from "../../child-dev-project/health-checkup/model/health-check";
+import { readingLevels } from "../../child-dev-project/aser/model/readingLevels";
+import { mathLevels } from "../../child-dev-project/aser/model/mathLevels";
+import { genders } from "../../child-dev-project/children/model/genders";
+import { materials } from "../../child-dev-project/educational-material/model/materials";
+import {
+  CONFIGURABLE_ENUM_CONFIG_PREFIX,
+  ConfigurableEnumValue,
+} from "../configurable-enum/configurable-enum.interface";
+import { warningLevels } from "../../child-dev-project/warning-levels";
 
 @Injectable({
   providedIn: "root",
@@ -43,6 +52,27 @@ export class ConfigMigrationService {
 
   async migrateConfig(): Promise<Config> {
     this.config = await this.configService.loadConfig(this.entityMapper);
+    this.addNewConfigurableEnums();
+    this.migrateViewConfigs();
+    console.log("config", this.config);
+    return this.configService.saveConfig(this.entityMapper, this.config.data);
+  }
+
+  private addNewConfigurableEnums() {
+    this.config.data[
+      CONFIGURABLE_ENUM_CONFIG_PREFIX + "reading-levels"
+    ] = readingLevels;
+    this.config.data[
+      CONFIGURABLE_ENUM_CONFIG_PREFIX + "math-levels"
+    ] = mathLevels;
+    this.config.data[CONFIGURABLE_ENUM_CONFIG_PREFIX + "genders"] = genders;
+    this.config.data[CONFIGURABLE_ENUM_CONFIG_PREFIX + "materials"] = materials;
+    this.config.data[
+      CONFIGURABLE_ENUM_CONFIG_PREFIX + "warning-levels"
+    ] = warningLevels;
+  }
+
+  private migrateViewConfigs() {
     const viewConfigs = this.configService.getAllConfigs<ViewConfig>("view:");
     viewConfigs.forEach((viewConfig) => {
       const entity = this.getEntity(viewConfig._id);
@@ -53,8 +83,6 @@ export class ConfigMigrationService {
         this.migrateEntityDetailsConfig(viewConfig.config, entity);
       }
     });
-    console.log("config", this.config);
-    return this.configService.saveConfig(this.entityMapper, this.config.data);
   }
 
   private getEntity(viewId: string): EntityConstructor<Entity> {
@@ -64,7 +92,6 @@ export class ConfigMigrationService {
       .split("-")
       .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
       .join("");
-    console.log("Loading Entity", entityType, viewId);
     return ENTITY_MAP.get(entityType);
   }
 
@@ -230,7 +257,6 @@ export class ConfigMigrationService {
       ["age", "EditAge"],
       ["datepicker", "EditDate"],
       ["entity-select", "EditEntityArray"],
-      ["select", "EditSelectable"],
     ]);
     columns.forEach((row) =>
       row.forEach((formField) => {
@@ -250,7 +276,11 @@ export class ConfigMigrationService {
           if (formField.id === "photoFile") {
             formField.id = "photo";
           }
-          formField.edit = editMap.get(formField["input"]);
+          if (formField["input"] === "select") {
+            this.migrateSelectFormField(formField, entity);
+          } else {
+            formField.edit = editMap.get(formField["input"]);
+          }
           delete formField["input"];
           this.addLabelToEntity(formField.label, formField.id, entity, "short");
         } catch (e) {
@@ -258,6 +288,43 @@ export class ConfigMigrationService {
         }
       })
     );
+  }
+
+  private migrateSelectFormField(
+    formField: FormFieldConfig,
+    entity: EntityConstructor<Entity>
+  ) {
+    const selectableMap = new Map<string, string>([
+      ["warningLevel", "warning-levels"],
+      ["materialType", "materials"],
+      ["gender", "genders"],
+      ["hindi", "reading-levels"],
+      ["bengali", "reading-levels"],
+      ["english", "reading-levels"],
+      ["math", "math-levels"],
+    ]);
+    if (!selectableMap.has(formField.id)) {
+      const newEnum: ConfigurableEnumValue[] = [{ id: "", label: "" }].concat(
+        ...formField["additional"].map((option: string) => {
+          return {
+            label: option,
+            id: option,
+          };
+        })
+      );
+      this.config.data[
+        CONFIGURABLE_ENUM_CONFIG_PREFIX + formField.id
+      ] = newEnum;
+      console.warn(
+        `Automatically created enum "${formField.id}" with values:`,
+        newEnum
+      );
+      selectableMap.set(formField.id, formField.id);
+    }
+    const propertySchema = entity.schema.get(formField.id);
+    propertySchema.dataType = "configurable-enum";
+    propertySchema.innerDataType = selectableMap.get(formField.id);
+    delete formField["additional"];
   }
 
   private migratePreviousSchoolsComponent(columns: FormFieldConfig[]) {

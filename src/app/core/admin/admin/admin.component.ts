@@ -58,6 +58,10 @@ export class AdminComponent implements OnInit {
     this.childPhotoUpdateService.updateChildrenPhotoFilenames();
   }
 
+  async migrateConfigChanges() {
+    await this.configMigrationService.migrateConfig();
+  }
+
   /**
    * Send a reference of the PouchDB to the browser's developer console for real-time debugging.
    */

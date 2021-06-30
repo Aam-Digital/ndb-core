@@ -17,7 +17,7 @@
 
 import { User } from "./user";
 import { waitForAsync } from "@angular/core/testing";
-import { Entity } from "../entity/entity";
+import { Entity } from "../entity/model/entity";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 
 describe("User", () => {

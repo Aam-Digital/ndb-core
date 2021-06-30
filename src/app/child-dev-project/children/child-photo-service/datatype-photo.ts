@@ -19,7 +19,7 @@ import { EntitySchemaDatatype } from "../../../core/entity/schema/entity-schema-
 import { ChildPhotoService } from "./child-photo.service";
 import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
-import { Entity } from "../../../core/entity/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { Photo } from "./photo";
 import { SafeUrl } from "@angular/platform-browser";
 import { BehaviorSubject } from "rxjs";

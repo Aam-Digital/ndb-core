@@ -15,12 +15,12 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from "../../../core/entity/entity";
-import { WarningLevel } from "../../warning-level";
+import { Entity } from "../../../core/entity/model/entity";
 import { AttendanceDay } from "./attendance-day";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { AttendanceStatus } from "./attendance-status";
+import { WarningLevel } from "../../../core/entity/model/warning-level";
 
 /**
  * @deprecated Use new system based on EventNote and RecurrentActivity instead
@@ -222,7 +222,7 @@ export class AttendanceMonth extends Entity {
     return this.daysAttended / (this.daysWorking - this.daysExcused);
   }
 
-  getWarningLevel() {
+  getWarningLevel(): WarningLevel {
     const attendance = this.getAttendancePercentage();
     if (attendance < AttendanceMonth.THRESHOLD_URGENT) {
       return WarningLevel.URGENT;

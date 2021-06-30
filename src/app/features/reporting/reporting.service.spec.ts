@@ -7,8 +7,8 @@ import { EventNote } from "../../child-dev-project/attendance/model/event-note";
 import moment from "moment";
 import { School } from "../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
-import { Gender } from "../../child-dev-project/children/model/Gender";
 import { centersUnique } from "../../child-dev-project/children/demo-data-generators/fixtures/centers";
+import { genders } from "../../child-dev-project/children/model/genders";
 
 describe("ReportingService", () => {
   let service: ReportingService;
@@ -160,9 +160,9 @@ describe("ReportingService", () => {
 
   it("should correctly parse groupBy results", async () => {
     const maleChild = new Child();
-    maleChild.gender = Gender.MALE;
+    maleChild.gender = genders[1];
     const femaleChild = new Child();
-    femaleChild.gender = Gender.FEMALE;
+    femaleChild.gender = genders[2];
     mockQueryService.queryData.and.resolveTo([
       femaleChild,
       maleChild,
@@ -184,7 +184,7 @@ describe("ReportingService", () => {
           {
             header: {
               label: "Total # of children",
-              groupedBy: [{ property: "gender", value: Gender.FEMALE }],
+              groupedBy: [{ property: "gender", value: genders[2] }],
               result: 1,
             },
             subRows: [],
@@ -192,7 +192,7 @@ describe("ReportingService", () => {
           {
             header: {
               label: "Total # of children",
-              groupedBy: [{ property: "gender", value: Gender.MALE }],
+              groupedBy: [{ property: "gender", value: genders[1] }],
               result: 2,
             },
             subRows: [],
@@ -204,9 +204,9 @@ describe("ReportingService", () => {
 
   it("should run aggregations after a groupBy", async () => {
     const maleChild = new Child();
-    maleChild.gender = Gender.MALE;
+    maleChild.gender = genders[1];
     const femaleChild = new Child();
-    femaleChild.gender = Gender.FEMALE;
+    femaleChild.gender = genders[2];
     mockQueryService.queryData.and.resolveTo([
       maleChild,
       femaleChild,
@@ -239,14 +239,14 @@ describe("ReportingService", () => {
           {
             header: {
               label: "Total # of children",
-              groupedBy: [{ property: "gender", value: Gender.MALE }],
+              groupedBy: [{ property: "gender", value: genders[1] }],
               result: 2,
             },
             subRows: [
               {
                 header: {
                   label: "Total # of christians",
-                  groupedBy: [{ property: "gender", value: Gender.MALE }],
+                  groupedBy: [{ property: "gender", value: genders[1] }],
                   result: 3,
                 },
                 subRows: [],
@@ -256,14 +256,14 @@ describe("ReportingService", () => {
           {
             header: {
               label: "Total # of children",
-              groupedBy: [{ property: "gender", value: Gender.FEMALE }],
+              groupedBy: [{ property: "gender", value: genders[2] }],
               result: 1,
             },
             subRows: [
               {
                 header: {
                   label: "Total # of christians",
-                  groupedBy: [{ property: "gender", value: Gender.FEMALE }],
+                  groupedBy: [{ property: "gender", value: genders[2] }],
                   result: 3,
                 },
                 subRows: [],
@@ -279,19 +279,19 @@ describe("ReportingService", () => {
     const alipore = centersUnique.find((c) => c.id === "alipore");
     const barabazar = centersUnique.find((c) => c.id === "barabazar");
     const maleChristianAlipore = new Child();
-    maleChristianAlipore.gender = Gender.MALE;
+    maleChristianAlipore.gender = genders[1];
     maleChristianAlipore.religion = "christian";
     maleChristianAlipore.center = alipore;
     const maleMuslimAlipore = new Child();
-    maleMuslimAlipore.gender = Gender.MALE;
+    maleMuslimAlipore.gender = genders[1];
     maleMuslimAlipore.religion = "muslim";
     maleMuslimAlipore.center = alipore;
     const femaleChristianBarabazar = new Child();
-    femaleChristianBarabazar.gender = Gender.FEMALE;
+    femaleChristianBarabazar.gender = genders[2];
     femaleChristianBarabazar.religion = "christian";
     femaleChristianBarabazar.center = barabazar;
     const femaleChristianAlipore = new Child();
-    femaleChristianAlipore.gender = Gender.FEMALE;
+    femaleChristianAlipore.gender = genders[2];
     femaleChristianAlipore.religion = "christian";
     femaleChristianAlipore.center = alipore;
     mockQueryService.queryData.and.resolveTo([
@@ -382,7 +382,7 @@ describe("ReportingService", () => {
           {
             header: {
               label: "Total # of children",
-              groupedBy: [{ property: "gender", value: Gender.FEMALE }],
+              groupedBy: [{ property: "gender", value: genders[2] }],
               result: 2,
             },
             subRows: [
@@ -390,7 +390,7 @@ describe("ReportingService", () => {
                 header: {
                   label: "Total # of children",
                   groupedBy: [
-                    { property: "gender", value: Gender.FEMALE },
+                    { property: "gender", value: genders[2] },
                     { property: "center", value: alipore },
                   ],
                   result: 1,
@@ -401,7 +401,7 @@ describe("ReportingService", () => {
                 header: {
                   label: "Total # of children",
                   groupedBy: [
-                    { property: "gender", value: Gender.FEMALE },
+                    { property: "gender", value: genders[2] },
                     { property: "center", value: barabazar },
                   ],
                   result: 1,
@@ -412,7 +412,7 @@ describe("ReportingService", () => {
                 header: {
                   label: "Total # of children",
                   groupedBy: [
-                    { property: "gender", value: Gender.FEMALE },
+                    { property: "gender", value: genders[2] },
                     { property: "religion", value: "christian" },
                   ],
                   result: 2,
@@ -422,7 +422,7 @@ describe("ReportingService", () => {
                     header: {
                       label: "Total # of children",
                       groupedBy: [
-                        { property: "gender", value: Gender.FEMALE },
+                        { property: "gender", value: genders[2] },
                         { property: "religion", value: "christian" },
                         { property: "center", value: alipore },
                       ],
@@ -434,7 +434,7 @@ describe("ReportingService", () => {
                     header: {
                       label: "Total # of children",
                       groupedBy: [
-                        { property: "gender", value: Gender.FEMALE },
+                        { property: "gender", value: genders[2] },
                         { property: "religion", value: "christian" },
                         { property: "center", value: barabazar },
                       ],
@@ -449,7 +449,7 @@ describe("ReportingService", () => {
           {
             header: {
               label: "Total # of children",
-              groupedBy: [{ property: "gender", value: Gender.MALE }],
+              groupedBy: [{ property: "gender", value: genders[1] }],
               result: 2,
             },
             subRows: [
@@ -457,7 +457,7 @@ describe("ReportingService", () => {
                 header: {
                   label: "Total # of children",
                   groupedBy: [
-                    { property: "gender", value: Gender.MALE },
+                    { property: "gender", value: genders[1] },
                     { property: "center", value: alipore },
                   ],
                   result: 2,
@@ -468,7 +468,7 @@ describe("ReportingService", () => {
                 header: {
                   label: "Total # of children",
                   groupedBy: [
-                    { property: "gender", value: Gender.MALE },
+                    { property: "gender", value: genders[1] },
                     { property: "religion", value: "christian" },
                   ],
                   result: 1,
@@ -478,7 +478,7 @@ describe("ReportingService", () => {
                     header: {
                       label: "Total # of children",
                       groupedBy: [
-                        { property: "gender", value: Gender.MALE },
+                        { property: "gender", value: genders[1] },
                         { property: "religion", value: "christian" },
                         { property: "center", value: alipore },
                       ],
@@ -492,7 +492,7 @@ describe("ReportingService", () => {
                 header: {
                   label: "Total # of children",
                   groupedBy: [
-                    { property: "gender", value: Gender.MALE },
+                    { property: "gender", value: genders[1] },
                     { property: "religion", value: "muslim" },
                   ],
                   result: 1,
@@ -502,7 +502,7 @@ describe("ReportingService", () => {
                     header: {
                       label: "Total # of children",
                       groupedBy: [
-                        { property: "gender", value: Gender.MALE },
+                        { property: "gender", value: genders[1] },
                         { property: "religion", value: "muslim" },
                         { property: "center", value: alipore },
                       ],
@@ -521,13 +521,13 @@ describe("ReportingService", () => {
 
   it("should allow multiple groupBy's", async () => {
     const femaleMuslim = new Child();
-    femaleMuslim.gender = Gender.FEMALE;
+    femaleMuslim.gender = genders[2];
     femaleMuslim.religion = "muslim";
     const femaleChristian = new Child();
-    femaleChristian.gender = Gender.FEMALE;
+    femaleChristian.gender = genders[2];
     femaleChristian.religion = "christian";
     const maleMuslim = new Child();
-    maleMuslim.gender = Gender.MALE;
+    maleMuslim.gender = genders[1];
     maleMuslim.religion = "muslim";
     mockQueryService.queryData.and.resolveTo([
       femaleChristian,
@@ -584,14 +584,14 @@ describe("ReportingService", () => {
           {
             header: {
               label: "Total # of children",
-              groupedBy: [{ property: "gender", value: Gender.FEMALE }],
+              groupedBy: [{ property: "gender", value: genders[2] }],
               result: 4,
             },
             subRows: [
               {
                 header: {
                   label: "Total # of old children",
-                  groupedBy: [{ property: "gender", value: Gender.FEMALE }],
+                  groupedBy: [{ property: "gender", value: genders[2] }],
                   result: 5,
                 },
                 subRows: [
@@ -599,7 +599,7 @@ describe("ReportingService", () => {
                     header: {
                       label: "Total # of old children",
                       groupedBy: [
-                        { property: "gender", value: Gender.FEMALE },
+                        { property: "gender", value: genders[2] },
                         { property: "religion", value: "christian" },
                       ],
                       result: 2,
@@ -610,7 +610,7 @@ describe("ReportingService", () => {
                     header: {
                       label: "Total # of old children",
                       groupedBy: [
-                        { property: "gender", value: Gender.FEMALE },
+                        { property: "gender", value: genders[2] },
                         { property: "religion", value: "muslim" },
                       ],
                       result: 3,
@@ -624,14 +624,14 @@ describe("ReportingService", () => {
           {
             header: {
               label: "Total # of children",
-              groupedBy: [{ property: "gender", value: Gender.MALE }],
+              groupedBy: [{ property: "gender", value: genders[1] }],
               result: 1,
             },
             subRows: [
               {
                 header: {
                   label: "Total # of old children",
-                  groupedBy: [{ property: "gender", value: Gender.MALE }],
+                  groupedBy: [{ property: "gender", value: genders[1] }],
                   result: 5,
                 },
                 subRows: [
@@ -639,7 +639,7 @@ describe("ReportingService", () => {
                     header: {
                       label: "Total # of old children",
                       groupedBy: [
-                        { property: "gender", value: Gender.MALE },
+                        { property: "gender", value: genders[1] },
                         { property: "religion", value: "christian" },
                       ],
                       result: 2,
@@ -650,7 +650,7 @@ describe("ReportingService", () => {
                     header: {
                       label: "Total # of old children",
                       groupedBy: [
-                        { property: "gender", value: Gender.MALE },
+                        { property: "gender", value: genders[1] },
                         { property: "religion", value: "muslim" },
                       ],
                       result: 3,

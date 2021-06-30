@@ -17,8 +17,8 @@
 
 import { Entity } from "./entity";
 import { waitForAsync } from "@angular/core/testing";
-import { EntitySchemaService } from "./schema/entity-schema.service";
-import { DatabaseField } from "./database-field.decorator";
+import { EntitySchemaService } from "../schema/entity-schema.service";
+import { DatabaseField } from "../database-field.decorator";
 
 describe("Entity", () => {
   let entitySchemaService: EntitySchemaService;

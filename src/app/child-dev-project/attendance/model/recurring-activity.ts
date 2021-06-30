@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from "../../../core/entity/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { Note } from "../../notes/model/note";
@@ -69,7 +69,7 @@ export class RecurringActivity extends Entity {
 
   /** IDs of groups (schools, teams) whose (active) members should be included in the activity*/
   @DatabaseField({
-    label: "Schools",
+    label: "Groups",
     viewComponent: "DisplayEntityArray",
     editComponent: "EditEntityArray",
     additional: School.ENTITY_TYPE,
@@ -78,7 +78,7 @@ export class RecurringActivity extends Entity {
 
   /** IDs of the users who are responsible for conducting this activity */
   @DatabaseField({
-    label: "Assigned to",
+    label: "Assigned user(s)",
     viewComponent: "DisplayEntityArray",
     editComponent: "EditEntityArray",
     additional: User.ENTITY_TYPE,

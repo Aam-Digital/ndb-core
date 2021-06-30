@@ -11,7 +11,7 @@ import { MatTableDataSource } from "@angular/material/table";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { Entity } from "../../../entity/entity";
+import { Entity } from "../../../entity/model/entity";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "../../../alerts/alert.service";
 import { Subscription } from "rxjs";
@@ -21,6 +21,7 @@ import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 import { MatDialog } from "@angular/material/dialog";
 import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
+import { LoggingService } from "../../../logging/logging.service";
 
 export interface TableRow<T> {
   record: T;
@@ -68,6 +69,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    */
   @Input() newRecordFactory: () => T;
 
+  /**
+   * Whether the rows of the table are inline editable and new entries can be created through the "+" button.
+   */
   @Input() editable: boolean = true;
 
   /** columns displayed in the template's table */
@@ -90,7 +94,8 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     private alertService: AlertService,
     private media: MediaObserver,
     private entityFormService: EntityFormService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private loggingService: LoggingService
   ) {
     this.mediaSubscription = this.media
       .asObservable()
@@ -103,10 +108,13 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       });
   }
 
-  @Input() showEntity = (entity: Entity, creatingNew = false) =>
-    this.showEntityInForm(entity, creatingNew);
+  /**
+   * A function which should be executed when a row is clicked or a new entity created.
+   * @param entity The newly created or clicked entity.
+   */
+  @Input() showEntity = (entity: T) => this.showEntityInForm(entity);
 
-  /** function returns the background color for each entry*/
+  /** function returns the background color for each row*/
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
 
   /**
@@ -143,7 +151,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
           .map((col) => (typeof col === "object" ? col.id : col))
           .join("");
       } catch (err) {
-        this.alertService.addWarning(`Error creating form definitions: ${err}`);
+        this.loggingService.warn(`Error creating form definitions: ${err}`);
       }
     }
     this.recordsDataSource.data = this.records.map((rec) => {
@@ -198,7 +206,10 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    */
   async save(row: TableRow<T>) {
     try {
-      await this.entityFormService.saveChanges(row.formGroup, row.record);
+      row.record = await this.entityFormService.saveChanges(
+        row.formGroup,
+        row.record
+      );
       row.formGroup.disable();
     } catch (err) {
       this.alertService.addDanger(err.message);
@@ -262,9 +273,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     this.recordsDataSource.data = [{ record: newRecord }].concat(
       this.recordsDataSource.data
     );
-    this._entityMapper
-      .save(newRecord)
-      .then(() => this.showEntity(newRecord, true));
+    this._entityMapper.save(newRecord).then(() => this.showEntity(newRecord));
   }
 
   /**
@@ -277,20 +286,26 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     }
   }
 
-  private showEntityInForm(entity: Entity, creatingNew = false) {
+  private showEntityInForm(entity: T) {
     const dialogRef = this.dialog.open(EntityFormComponent, {
       width: "80%",
     });
-    const columnsCopy = [];
-    this._columns.forEach((col) => {
-      const newCol = {};
-      Object.assign(newCol, col);
-      columnsCopy.push([newCol]);
-    });
-    dialogRef.componentInstance.columns = columnsCopy;
+    // Making a copy of the editable columns before assigning them
+    dialogRef.componentInstance.columns = this._columns
+      .filter((col) => col.edit)
+      .map((col) => [Object.assign({}, col)]);
     dialogRef.componentInstance.entity = entity;
-    dialogRef.componentInstance.creatingNew = creatingNew;
-    dialogRef.componentInstance.onSave.subscribe(() => dialogRef.close());
+    dialogRef.componentInstance.editing = true;
+    dialogRef.componentInstance.onSave.subscribe((updatedEntity: T) => {
+      dialogRef.close();
+      // Trigger the change detection
+      const rowIndex = this.recordsDataSource.data.findIndex(
+        (row) => row.record === entity
+      );
+      this.recordsDataSource.data[rowIndex] = { record: updatedEntity };
+      this.recordsDataSource._updateChangeSubscription();
+    });
+    dialogRef.componentInstance.onCancel.subscribe(() => dialogRef.close());
   }
 
   /**

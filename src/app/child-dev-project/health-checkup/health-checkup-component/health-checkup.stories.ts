@@ -30,7 +30,10 @@ export default {
       imports: [ChildrenModule],
       declarations: [],
       providers: [
-        { provide: EntityMapperService, useValue: {} },
+        {
+          provide: EntityMapperService,
+          useValue: { save: () => Promise.resolve() },
+        },
         {
           provide: ChildrenService,
           useValue: { getHealthChecksOfChild: () => of([hc1, hc2, hc3]) },

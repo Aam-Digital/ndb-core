@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from "../entity";
+import { Entity } from "../model/entity";
 import { EntitySchemaDatatype } from "./entity-schema-datatype";
 import { Injectable } from "@angular/core";
 import { defaultEntitySchemaDatatype } from "../schema-datatypes/datatype-default";
@@ -29,6 +29,7 @@ import { arrayEntitySchemaDatatype } from "../schema-datatypes/datatype-array";
 import { schemaEmbedEntitySchemaDatatype } from "../schema-datatypes/datatype-schema-embed";
 import { dateOnlyEntitySchemaDatatype } from "../schema-datatypes/datatype-date-only";
 import { mapEntitySchemaDatatype } from "../schema-datatypes/datatype-map";
+import { booleanEntitySchemaDatatype } from "../schema-datatypes/datatype-boolean";
 
 /**
  * Transform between entity instances and database objects
@@ -63,6 +64,7 @@ export class EntitySchemaService {
     this.registerSchemaDatatype(arrayEntitySchemaDatatype);
     this.registerSchemaDatatype(schemaEmbedEntitySchemaDatatype);
     this.registerSchemaDatatype(mapEntitySchemaDatatype);
+    this.registerSchemaDatatype(booleanEntitySchemaDatatype);
   }
 
   /**

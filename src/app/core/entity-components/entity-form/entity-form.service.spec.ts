@@ -5,6 +5,7 @@ import { FormBuilder } from "@angular/forms";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntityFormModule } from "./entity-form.module";
+import { Entity } from "../../entity/model/entity";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
@@ -26,5 +27,23 @@ describe("EntityFormService", () => {
 
   it("should be created", () => {
     expect(service).toBeTruthy();
+  });
+
+  it("should not save invalid entities", () => {
+    const entity = new Entity("initialId");
+    spyOn(entity, "copy").and.returnValue(entity);
+    spyOn(entity, "assertValid").and.throwError(new Error());
+    const formGroup = TestBed.inject(FormBuilder).group({ _id: "newId" });
+
+    expect(() => service.saveChanges(formGroup, entity)).toThrowError();
+  });
+
+  it("should return updated entity if saving is successful", async () => {
+    const entity = new Entity("initialId");
+    const formGroup = TestBed.inject(FormBuilder).group({ _id: "newId" });
+
+    const newEntity = await service.saveChanges(formGroup, entity);
+
+    expect(newEntity.getId()).toBe("newId");
   });
 });

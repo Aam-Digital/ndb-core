@@ -16,7 +16,7 @@
  */
 
 import { EntityMapperService } from "./entity-mapper.service";
-import { Entity } from "./entity";
+import { Entity } from "./model/entity";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 import { waitForAsync } from "@angular/core/testing";
 import { PouchDatabase } from "../database/pouch-database";

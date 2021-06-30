@@ -16,9 +16,8 @@
  */
 
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
-import { Entity } from "../../../core/entity/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import { WarningLevel, WarningLevelColor } from "../../warning-level";
 import {
   INTERACTION_TYPE_CONFIG_ID,
   InteractionType,
@@ -30,6 +29,11 @@ import {
 } from "../../attendance/model/attendance-status";
 import { User } from "../../../core/user/user";
 import { Child } from "../../children/model/child";
+import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
+import {
+  getWarningLevelColor,
+  WarningLevel,
+} from "../../../core/entity/model/warning-level";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
@@ -95,38 +99,37 @@ export class Note extends Entity {
   @DatabaseField() schools: string[] = [];
 
   @DatabaseField({
-    dataType: "string",
     label: "",
-    editComponent: "EditSelectable",
-    additional: ["OK", "WARNING", "URGENT"],
+    dataType: "configurable-enum",
+    innerDataType: "warning-levels",
   })
-  warningLevel: WarningLevel = WarningLevel.OK;
+  warningLevel: ConfigurableEnumValue;
 
   getWarningLevel(): WarningLevel {
-    return this.warningLevel;
+    if (this.warningLevel) {
+      return WarningLevel[this.warningLevel.id];
+    } else {
+      return WarningLevel.NONE;
+    }
   }
 
-  // TODO: color logic should not be part of entity/model but rather in the component responsible for displaying it
   public getColor() {
-    if (this.warningLevel === WarningLevel.URGENT) {
-      return WarningLevelColor(WarningLevel.URGENT);
+    const actualLevel = this.getWarningLevel();
+    if (actualLevel === WarningLevel.OK || actualLevel === WarningLevel.NONE) {
+      return this.category.color;
+    } else {
+      return super.getColor();
     }
-    if (this.warningLevel === WarningLevel.WARNING) {
-      return WarningLevelColor(WarningLevel.WARNING);
-    }
-
-    const color = this.category.color;
-    return color ? color : "";
   }
 
-  public getColorForId(childId: string) {
+  public getColorForId(childId: string): string {
     if (
       this.category.isMeeting &&
       this.childrenAttendance.get(childId)?.status.countAs ===
         AttendanceLogicalStatus.ABSENT
     ) {
       // child is absent, highlight the entry
-      return WarningLevelColor(WarningLevel.URGENT);
+      return getWarningLevelColor(WarningLevel.URGENT);
     }
     return this.getColor();
   }

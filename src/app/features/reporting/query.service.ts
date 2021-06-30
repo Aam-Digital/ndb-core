@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Entity, EntityConstructor } from "../../core/entity/entity";
+import { Entity, EntityConstructor } from "../../core/entity/model/entity";
 import { Child } from "../../child-dev-project/children/model/child";
 import { School } from "../../child-dev-project/schools/model/school";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";

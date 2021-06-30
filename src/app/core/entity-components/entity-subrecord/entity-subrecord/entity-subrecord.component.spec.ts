@@ -13,7 +13,7 @@ import {
 } from "./entity-subrecord.component";
 import { RouterTestingModule } from "@angular/router/testing";
 import { EntitySubrecordModule } from "../entity-subrecord.module";
-import { Entity } from "../../../entity/entity";
+import { Entity } from "../../../entity/model/entity";
 import { SimpleChange } from "@angular/core";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatNativeDateModule } from "@angular/material/core";
@@ -24,11 +24,12 @@ import { Child } from "../../../../child-dev-project/children/model/child";
 import { Note } from "../../../../child-dev-project/notes/model/note";
 import { AlertService } from "../../../alerts/alert.service";
 import { FormBuilder, FormGroup } from "@angular/forms";
-import { Gender } from "../../../../child-dev-project/children/model/Gender";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 import { Subject } from "rxjs";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { genders } from "../../../../child-dev-project/children/model/genders";
+import { LoggingService } from "../../../logging/logging.service";
 import { SessionService } from "../../../session/session-service/session.service";
 import { User } from "../../../user/user";
 
@@ -216,9 +217,9 @@ describe("EntitySubrecordComponent", () => {
     expect(sortedIds).toEqual(["0", "3", "1", "2"]);
   });
 
-  it("should log an error when the column definition can not be initialized", () => {
-    const alertService = TestBed.inject(AlertService);
-    spyOn(alertService, "addWarning");
+  it("should log a warning when the column definition can not be initialized", () => {
+    const loggingService = TestBed.inject(LoggingService);
+    spyOn(loggingService, "warn");
     component.records = [new Child()];
     component.columns = [
       {
@@ -231,7 +232,7 @@ describe("EntitySubrecordComponent", () => {
 
     component.ngOnChanges({ columns: null });
 
-    expect(alertService.addWarning).toHaveBeenCalled();
+    expect(loggingService.warn).toHaveBeenCalled();
   });
 
   it("should create a formGroup when editing a row", () => {
@@ -249,23 +250,24 @@ describe("EntitySubrecordComponent", () => {
     expect(formGroup.enabled).toBeTrue();
   });
 
-  it("should correctly save changes to a entity", fakeAsync(() => {
+  it("should correctly save changes to an entity", fakeAsync(() => {
     mockEntityMapper.save.and.resolveTo();
     const fb = TestBed.inject(FormBuilder);
     const child = new Child();
     child.name = "Old Name";
     const formGroup = fb.group({
       name: "New Name",
-      gender: Gender.FEMALE,
+      gender: genders[2],
     });
+    const tableRow = { record: child, formGroup: formGroup };
 
-    component.save({ record: child, formGroup: formGroup });
+    component.save(tableRow);
     tick();
 
-    expect(mockEntityMapper.save).toHaveBeenCalledWith(child);
-    expect(child.name).toBe("New Name");
-    expect(child.gender).toBe(Gender.FEMALE);
-    expect(formGroup.disabled).toBeTrue();
+    expect(mockEntityMapper.save).toHaveBeenCalledWith(tableRow.record);
+    expect(tableRow.record.name).toBe("New Name");
+    expect(tableRow.record.gender).toBe(genders[2]);
+    expect(tableRow.formGroup.disabled).toBeTrue();
   }));
 
   it("should show a error message when saving fails", fakeAsync(() => {
@@ -276,7 +278,7 @@ describe("EntitySubrecordComponent", () => {
     const alertService = TestBed.inject(AlertService);
     spyOn(alertService, "addDanger");
 
-    component.save({ formGroup: null, record: null });
+    component.save({ formGroup: null, record: new Child() });
     tick();
 
     expect(alertService.addDanger).toHaveBeenCalledWith("Form invalid");
@@ -332,7 +334,7 @@ describe("EntitySubrecordComponent", () => {
 
     expect(component.records).toEqual([child]);
     expect(component.recordsDataSource.data).toContain({ record: child });
-    expect(showEntitySpy).toHaveBeenCalledWith(child, true);
+    expect(showEntitySpy).toHaveBeenCalledWith(child);
   }));
 
   it("should notify when an entity is clicked", (done) => {
