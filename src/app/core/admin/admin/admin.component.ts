@@ -43,7 +43,7 @@ export class AdminComponent implements OnInit {
     public attendanceMigration: AttendanceMigrationService,
     public notesMigration: NotesMigrationService,
     public childrenMigrationService: ChildrenMigrationService,
-    public configMigrationService: ConfigMigrationService,
+    public configMigrationService: ConfigMigrationService
   ) {}
 
   ngOnInit() {
