@@ -19,6 +19,10 @@ import {
   ConfigurableEnumConfig,
 } from "../../../core/configurable-enum/configurable-enum.interface";
 import { createTestingConfigService } from "../../../core/config/config.service";
+import {
+  getWarningLevelColor,
+  WarningLevel,
+} from "../../../core/entity/model/warning-level";
 
 const testStatusTypes: ConfigurableEnumConfig<AttendanceStatusType> = [
   {
@@ -158,12 +162,12 @@ describe("Note", () => {
 
   it("should return colors", function () {
     const note = new Note("1");
+
     note.category = { id: "", label: "test", color: "#FFFFFF" };
     expect(note.getColor()).toBe("#FFFFFF");
+
     note.warningLevel = warningLevels.find((level) => level.id === "URGENT");
-    expect(note.getColor()).toBe(
-      warningLevels.find((level) => level.id === "URGENT").color
-    );
+    expect(note.getColor()).toBe(getWarningLevelColor(WarningLevel.URGENT));
   });
 
   it("transforms interactionType from config", function () {

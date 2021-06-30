@@ -86,7 +86,7 @@ export class EntityFormService {
     entityCopy.assertValid();
 
     return this.entityMapper
-      .save(entity)
+      .save(entityCopy)
       .then(() => entityCopy)
       .catch((err) => {
         throw new Error(`Could not save ${entity.getType()}: ${err}`);

@@ -16,6 +16,7 @@ import { Child } from "../../../../child-dev-project/children/model/child";
 import { EntityFormModule } from "../entity-form.module";
 import { FormBuilder } from "@angular/forms";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { EntityFormService } from "../entity-form.service";
 
 describe("EntityFormComponent", () => {
   let component: EntityFormComponent;
@@ -84,7 +85,7 @@ describe("EntityFormComponent", () => {
   it("should emit notification when a child is saved", (done) => {
     spyOnProperty(component.form, "valid").and.returnValue(true);
     const subscription = component.onSave.subscribe((child) => {
-      expect(child).toBe(testChild);
+      expect(child).toEqual(testChild);
       subscription.unsubscribe();
       done();
     });
@@ -92,25 +93,17 @@ describe("EntityFormComponent", () => {
     component.save();
   });
 
-  it("reports error when form is invalid", async () => {
-    const alertService = fixture.debugElement.injector.get(AlertService);
+  it("should show an warning alert when form service rejects saving", async () => {
+    const alertService = TestBed.inject(AlertService);
     spyOn(alertService, "addWarning");
-    spyOnProperty(component.form, "invalid").and.returnValue(true);
+    const entityFormService = TestBed.inject(EntityFormService);
+    spyOn(entityFormService, "saveChanges").and.rejectWith(
+      new Error("error message")
+    );
 
     await component.save();
 
-    expect(alertService.addWarning).toHaveBeenCalled();
-  });
-
-  it("logs error when saving fails", async () => {
-    const alertService = fixture.debugElement.injector.get(AlertService);
-    spyOn(alertService, "addWarning");
-    spyOnProperty(component.form, "valid").and.returnValue(true);
-    mockEntityMapper.save.and.rejectWith();
-
-    await component.save();
-
-    expect(alertService.addWarning).toHaveBeenCalled();
+    expect(alertService.addWarning).toHaveBeenCalledWith("error message");
   });
 
   it("should add column definitions from property schema", () => {
