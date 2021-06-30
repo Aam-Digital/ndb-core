@@ -31,6 +31,7 @@ import {
   CONFIGURABLE_ENUM_CONFIG_PREFIX,
   ConfigurableEnumValue,
 } from "../configurable-enum/configurable-enum.interface";
+import { warningLevels } from "../../child-dev-project/warning-levels";
 
 @Injectable({
   providedIn: "root",
@@ -66,6 +67,9 @@ export class ConfigMigrationService {
     ] = mathLevels;
     this.config.data[CONFIGURABLE_ENUM_CONFIG_PREFIX + "genders"] = genders;
     this.config.data[CONFIGURABLE_ENUM_CONFIG_PREFIX + "materials"] = materials;
+    this.config.data[
+      CONFIGURABLE_ENUM_CONFIG_PREFIX + "warning-levels"
+    ] = warningLevels;
   }
 
   private migrateViewConfigs() {
@@ -133,6 +137,12 @@ export class ConfigMigrationService {
           column.view = "DisplayEntityArray";
           column.additional = "Child";
           column.noSorting = true;
+        }
+        const propertySchema = entity.schema.get(column.id);
+        if (propertySchema?.dataType === "configurable-enum") {
+          delete column.view;
+          delete column.edit;
+          delete column.additional;
         }
         this.addLabelToEntity(column.label, column.id, entity, "short");
       } catch (e) {

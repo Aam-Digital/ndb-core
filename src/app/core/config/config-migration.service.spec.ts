@@ -47,6 +47,11 @@ describe("ConfigMigrationService", () => {
               id: "schoolId",
             },
             {
+              component: "DisplayText",
+              title: "Gender",
+              id: "gender",
+            },
+            {
               component: "RecentAttendanceBlocks",
               title: "Attendance (School)",
               id: "schoolAttendance",
@@ -362,6 +367,10 @@ const expectedChildrenListConfig = {
         id: "schoolId",
         additional: "School",
         noSorting: true,
+      },
+      {
+        title: "Gender",
+        id: "gender",
       },
       {
         view: "RecentAttendanceBlocks",
