@@ -37,9 +37,8 @@ export class ConfigurableEnumDatatype
       enumId = CONFIGURABLE_ENUM_CONFIG_PREFIX + enumId;
     }
 
-    // The label check is used to also match enums that were automatically created
     return this.configService
       .getConfig<ConfigurableEnumConfig>(enumId)
-      ?.find((option) => option.id === value || option.label === value);
+      ?.find((option) => option.id === value);
   }
 }

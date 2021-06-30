@@ -304,11 +304,7 @@ export class ConfigMigrationService {
         ...formField["additional"].map((option: string) => {
           return {
             label: option,
-            id: option
-              .toLowerCase()
-              .replace("(", "")
-              .replace(")", "")
-              .replace(" ", "_"),
+            id: option,
           };
         })
       );

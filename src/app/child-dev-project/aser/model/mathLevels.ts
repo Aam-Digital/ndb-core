@@ -6,23 +6,23 @@ export const mathLevels: ConfigurableEnumValue[] = [
     label: "",
   },
   {
-    id: "nothing",
+    id: "Nothing",
     label: "Nothing",
   },
   {
-    id: "numbers1to9",
+    id: "Numbers 1-9",
     label: "Numbers 1-9",
   },
   {
-    id: "numbers10to99",
+    id: "Numbers 10-99",
     label: "Numbers 10-99",
   },
   {
-    id: "subtraction",
+    id: "Subtraction",
     label: "Subtraction",
   },
   {
-    id: "division",
+    id: "Division",
     label: "Division",
   },
 ];

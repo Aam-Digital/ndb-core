@@ -6,23 +6,23 @@ export const readingLevels: ConfigurableEnumValue[] = [
     label: "",
   },
   {
-    id: "nothing",
+    id: "Nothing",
     label: "Nothing",
   },
   {
-    id: "read_letters",
+    id: "Read Letters",
     label: "Read Letters",
   },
   {
-    id: "read_words",
+    id: "Read Words",
     label: "Read Words",
   },
   {
-    id: "read_sentence",
+    id: "Read Sentence",
     label: "Read Sentence",
   },
   {
-    id: "read_paragraph",
+    id: "Read Paragraph",
     label: "Read Paragraph",
   },
 ];

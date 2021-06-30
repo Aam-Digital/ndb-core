@@ -14,11 +14,11 @@ export const materials: ConfigurableEnumValue[] = [
     label: "sharpener",
   },
   {
-    id: "pen_black",
+    id: "pen (black)",
     label: "pen (black)",
   },
   {
-    id: "oil_pastels",
+    id: "oil pastels",
     label: "oil pastels",
   },
   {
@@ -26,100 +26,100 @@ export const materials: ConfigurableEnumValue[] = [
     label: "crayons",
   },
   {
-    id: "sketch_pens",
+    id: "sketch pens",
     label: "sketch pens",
   },
   {
-    id: "scale_big",
+    id: "scale (big)",
     label: "scale (big)",
   },
   {
-    id: "scale_small",
+    id: "scale (small)",
     label: "scale (small)",
   },
   {
-    id: "geometry_box",
+    id: "geometry box",
     label: "geometry box",
   },
   {
-    id: "copy_single_small",
+    id: "copy (single line, small)",
     label: "copy (single line, small)",
   },
   {
-    id: "copy_single_big",
+    id: "copy (single line, big)",
     label: "copy (single line, big)",
   },
   {
-    id: "copy_four",
+    id: "copy (four line)",
     label: "copy (four line)",
   },
   {
-    id: "copy_squared",
+    id: "copy (squared)",
     label: "copy (squared)",
   },
   {
-    id: "copy_plain",
+    id: "copy (plain)",
     label: "copy (plain)",
   },
   {
-    id: "copy_line_plain",
+    id: "copy (line-plain)",
     label: "copy (line-plain)",
   },
   {
-    id: "copy_drawing",
+    id: "copy (drawing)",
     label: "copy (drawing)",
   },
   {
-    id: "copy_practical",
+    id: "copy (practical)",
     label: "copy (practical)",
   },
   {
-    id: "graph_book",
+    id: "graph book",
     label: "graph book",
   },
   {
-    id: "project_papers",
+    id: "project papers",
     label: "project papers",
   },
   {
-    id: "project_file",
+    id: "project file",
     label: "project file",
   },
   {
-    id: "scrap_book",
+    id: "scrap book",
     label: "scrap book",
   },
   {
-    id: "exam_board",
+    id: "exam board",
     label: "exam board",
   },
   {
-    id: "bag",
+    id: "Bag",
     label: "Bag",
     color: "#B3E5FC",
   },
   {
-    id: "school_uniform",
+    id: "School Uniform",
     label: "School Uniform",
     color: "#B3E5FC",
   },
   {
-    id: "school_shoes",
+    id: "School Shoes",
     label: "School Shoes",
     color: "#B3E5FC",
   },
   {
-    id: "sports_dress",
+    id: "Sports Dress",
     label: "Sports Dress",
     color: "#B3E5FC",
   },
   {
-    id: "sports_shoes",
+    id: "Sports Shoes",
     label: "Sports Shoes",
     color: "#B3E5FC",
   },
   {
-    id: "raincoat",
+    id: "Raincoat",
     label: "Raincoat",
     color: "#B3E5FC",
   },

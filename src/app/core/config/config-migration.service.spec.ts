@@ -450,15 +450,15 @@ const expectedStatusConfigurableEnum: ConfigurableEnumValue[] = [
     label: "",
   },
   {
-    id: "active",
+    id: "Active",
     label: "Active",
   },
   {
-    id: "inactive",
+    id: "Inactive",
     label: "Inactive",
   },
   {
-    id: "still_considering",
+    id: "Still Considering",
     label: "Still Considering",
   },
 ];

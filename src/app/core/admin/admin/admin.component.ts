@@ -13,7 +13,6 @@ import { AttendanceMigrationService } from "../../../child-dev-project/attendanc
 import { NotesMigrationService } from "../../../child-dev-project/notes/notes-migration/notes-migration.service";
 import { ChildrenMigrationService } from "../../../child-dev-project/children/child-photo-service/children-migration.service";
 import { ConfigMigrationService } from "../../config/config-migration.service";
-import { ConfigurableEnumMigrationService } from "../../configurable-enum/configurable-enum-migration.service";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -45,7 +44,6 @@ export class AdminComponent implements OnInit {
     public notesMigration: NotesMigrationService,
     public childrenMigrationService: ChildrenMigrationService,
     public configMigrationService: ConfigMigrationService,
-    public configurableEnumMigrationSerivice: ConfigurableEnumMigrationService
   ) {}
 
   ngOnInit() {
@@ -62,7 +60,6 @@ export class AdminComponent implements OnInit {
 
   async migrateConfigChanges() {
     await this.configMigrationService.migrateConfig();
-    await this.configurableEnumMigrationSerivice.migrateSelectionsToConfigurableEnum();
   }
 
   /**
