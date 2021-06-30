@@ -207,7 +207,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     if (value) {
       const filterValue = value.toLowerCase();
       filteredEntities = filteredEntities.filter((entity) =>
-        this.accessor(entity).toLowerCase().startsWith(filterValue)
+        this.accessor(entity).toLowerCase().includes(filterValue)
       );
     }
     return filteredEntities;
