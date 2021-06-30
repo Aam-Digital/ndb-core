@@ -9,7 +9,7 @@ import { BehaviorSubject } from "rxjs";
 })
 export class ChildPhotoService {
   public static getImageFromAssets(photoFile: string): SafeUrl {
-    if (!photoFile || photoFile.trim() === "") {
+    if (typeof photoFile !== "string" || photoFile.trim() === "") {
       return ChildPhotoService.getDefaultImage();
     }
     return ChildPhotoService.generatePhotoPath(photoFile);
