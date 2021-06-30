@@ -1,9 +1,8 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, Input, OnInit, ViewChild } from "@angular/core";
 import { Note } from "../model/note";
 import { MediaObserver } from "@angular/flex-layout";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { ActivatedRoute } from "@angular/router";
-import { warningLevels } from "../../warning-levels";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FilterSelectionOption } from "../../../core/filter/filter-selection/filter-selection";
 import { SessionService } from "../../../core/session/session-service/session.service";
@@ -13,9 +12,9 @@ import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
 import { applyUpdate } from "../../../core/entity/model/entity-update";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
-import { Input } from "@angular/core";
 import { EventNote } from "../../attendance/model/event-note";
 import { EntityConstructor } from "../../../core/entity/model/entity";
+import { WarningLevel } from "../../../core/entity/model/warning-level";
 
 /**
  * additional config specifically for NotesManagerComponent
@@ -44,25 +43,18 @@ export class NotesManagerComponent implements OnInit {
   noteConstructor = Note;
   notes: Note[] = [];
 
-  private readonly urgentLevel = warningLevels.find(
-    (level) => level.id === "URGENT"
-  );
-  private readonly warningLevel = warningLevels.find(
-    (level) => level.id === "WARNING"
-  );
-
   private statusFS: FilterSelectionOption<Note>[] = [
     {
       key: "urgent",
       label: "Urgent",
-      filterFun: (n: Note) => n.warningLevel === this.urgentLevel,
+      filterFun: (n: Note) => n.getWarningLevel() === WarningLevel.URGENT,
     },
     {
       key: "follow-up",
       label: "Needs Follow-Up",
       filterFun: (n: Note) =>
-        n.warningLevel === this.warningLevel ||
-        n.warningLevel === this.urgentLevel,
+        n.getWarningLevel() === WarningLevel.URGENT ||
+        n.getWarningLevel() === WarningLevel.WARNING,
     },
     { key: "", label: "All", filterFun: () => true },
   ];
