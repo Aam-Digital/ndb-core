@@ -2,6 +2,10 @@ import { ConfigurableEnumValue } from "../../../core/configurable-enum/configura
 
 export const materials: ConfigurableEnumValue[] = [
   {
+    id: "OTHER",
+    label: "",
+  },
+  {
     id: "pencil",
     label: "pencil",
   },

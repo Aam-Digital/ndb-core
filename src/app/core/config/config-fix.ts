@@ -432,13 +432,8 @@ export const defaultJsonConfig = {
               "name",
               "center",
               "health_BMI",
-              "health_vaccinationStatus",
               "health_bloodGroup",
-              "health_eyeHealthStatus",
-              "health_lastEyeCheckup",
               "health_lastDentalCheckup",
-              "health_lastENTCheckup",
-              "health_lastVitaminD",
               "health_lastDeworming",
               "gender",
               "age",
@@ -573,13 +568,8 @@ export const defaultJsonConfig = {
               "component": "Form",
               "config": {
                 "cols": [
-                  ["health_vaccinationStatus"],
-                  ["health_eyeHealthStatus"],
                   ["health_bloodGroup"],
                   ["health_lastDentalCheckup"],
-                  ["health_lastEyeCheckup"],
-                  ["health_lastENTCheckup"],
-                  ["health_lastVitaminD"],
                   ["health_lastDeworming"]
                 ]
               }
@@ -802,32 +792,12 @@ export const defaultJsonConfig = {
         "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "BPL Card" }
       },
       {
-        "name": "health_vaccinationStatus",
-        "schema": { "dataType": "string", label: "Vaccination Status", additional: ["", "Good", "Vaccination Due", "Needs Checking", "No Card/Information"] }
-      },
-      {
         "name": "health_bloodGroup",
         "schema": { "dataType": "string", label: "Blood Group" }
       },
       {
         "name": "health_lastDentalCheckup",
         "schema": { "dataType": "Date", label: "Last Dental Check-Up" }
-      },
-      {
-        "name": "health_lastEyeCheckup",
-        "schema": { "dataType": "Date", label: "Last Eye Check-Up", additional: ["", "Good", "Has Glasses", "Needs Glasses", "Needs Checkup"] }
-      },
-      {
-        "name": "health_lastENTCheckup",
-        "schema": { "dataType": "Date", label: "Last ENT Check-Up" }
-      },
-      {
-        "name": "health_eyeHealthStatus",
-        "schema": { "dataType": "string", label: "Eye Status" }
-      },
-      {
-        "name": "health_lastVitaminD",
-        "schema": { "dataType": "Date", label: "Last Vitamin D" }
       },
       {
         "name": "health_lastDeworming",
