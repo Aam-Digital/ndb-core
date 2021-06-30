@@ -133,7 +133,7 @@ export class PreviousSchoolsComponent
             return { value: t.getId(), label: t.name };
           });
         column.valueFunction = (entity: ChildSchoolRelation) =>
-          this.schoolMap.get(entity["schoolId"]).name;
+          this.schoolMap.get(entity["schoolId"])?.name;
         break;
       case "percentageResult":
         column.inputType = ColumnDescriptionInputType.NUMBER;
