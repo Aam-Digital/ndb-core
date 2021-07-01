@@ -32,6 +32,7 @@ import {
   ConfigurableEnumValue,
 } from "../configurable-enum/configurable-enum.interface";
 import { warningLevels } from "../../child-dev-project/warning-levels";
+import { User } from "../user/user";
 
 @Injectable({
   providedIn: "root",
@@ -284,6 +285,14 @@ export class ConfigMigrationService {
           }
           if (formField["input"] === "select") {
             this.migrateSelectFormField(formField, entity);
+          } else if (formField.id === "assignedTo") {
+            const schema = entity.schema.get("assignedTo");
+            formField.label = "Assigned user(s)";
+            schema.dataType = "array";
+            schema.innerDataType = "string";
+            schema.viewComponent = "DisplayEntityArray";
+            schema.editComponent = "EditEntityArray";
+            schema.additional = User.ENTITY_TYPE;
           } else {
             formField.edit = editMap.get(formField["input"]);
           }

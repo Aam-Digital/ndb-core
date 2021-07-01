@@ -4,13 +4,18 @@ import { ConfigMigrationService } from "./config-migration.service";
 import { ConfigService } from "./config.service";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Config } from "./config";
-import { EntityConfig } from "../entity/entity-config.service";
+import {
+  EntityConfig,
+  EntityConfigService,
+} from "../entity/entity-config.service";
 import {
   CONFIGURABLE_ENUM_CONFIG_PREFIX,
   ConfigurableEnumValue,
 } from "../configurable-enum/configurable-enum.interface";
 import { genders } from "../../child-dev-project/children/model/genders";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
+import { Child } from "../../child-dev-project/children/model/child";
+import { HistoricalEntityData } from "../../features/historical-data/historical-entity-data";
 
 describe("ConfigMigrationService", () => {
   let service: ConfigMigrationService;
@@ -186,11 +191,16 @@ describe("ConfigMigrationService", () => {
                           placeholder: "Address",
                         },
                         {
-                          input: "entity-select",
+                          input: "text",
                           id: "assignedTo",
-                          entityType: "User",
-                          placeholder: "Add coordinator...",
-                          label: "Assigned to",
+                          placeholder: "Additional Information",
+                        },
+                        {
+                          input: "entity-select",
+                          id: "children",
+                          entityType: "Child",
+                          placeholder: "Add children...",
+                          label: "Assigned children",
                         },
                       ],
                     ],
@@ -280,18 +290,60 @@ describe("ConfigMigrationService", () => {
           ],
         },
       },
+      "entity:Child": {
+        permissions: {},
+        attributes: [
+          {
+            name: "children",
+            schema: { dataType: "array", innerDataType: "string" },
+          },
+          {
+            name: "assignedTo",
+            schema: { dataType: "string" },
+          },
+          {
+            name: "address",
+            schema: { dataType: "string" },
+          },
+        ],
+      },
+      "entity:HistoricalEntityData": {
+        permissions: {},
+        attributes: [
+          {
+            name: "observer",
+            schema: {
+              dataType: "string",
+            },
+          },
+          {
+            name: "isMotivatedDuringClass",
+            schema: {
+              dataType: "configurable-enum",
+              innerDataType: "rating-answer",
+            },
+          },
+        ],
+      },
     };
     mockEntityMapper = jasmine.createSpyObj(["load", "save"]);
     mockEntityMapper.load.and.resolveTo(config);
     mockEntityMapper.save.and.resolveTo();
     TestBed.configureTestingModule({
       providers: [
+        EntityConfigService,
         ConfigService,
         { provide: EntityMapperService, useValue: mockEntityMapper },
       ],
     });
     service = TestBed.inject(ConfigMigrationService);
     configService = TestBed.inject(ConfigService);
+
+    await configService.loadConfig(mockEntityMapper);
+    const entityConfigService = TestBed.inject(EntityConfigService);
+    entityConfigService.addConfigAttributes(Child);
+    entityConfigService.addConfigAttributes(HistoricalEntityData);
+
     await service.migrateConfig();
   });
 
@@ -331,6 +383,11 @@ describe("ConfigMigrationService", () => {
       CONFIGURABLE_ENUM_CONFIG_PREFIX + "status"
     );
     expect(statusEnum).toEqual(expectedStatusConfigurableEnum);
+
+    const assignedToSchema = childConfig.attributes.find(
+      (attr) => attr.name === "assignedTo"
+    ).schema;
+    expect(assignedToSchema).toEqual(expectedAssignedToSchema);
   });
 
   it("should add configurable enum configs", () => {
@@ -384,7 +441,6 @@ const expectedChildrenListConfig = {
       },
       {
         view: "DisplayEntityArray",
-        label: "Children",
         id: "children",
         additional: "Child",
         noSorting: true,
@@ -446,7 +502,15 @@ const expectedStatusSchema: EntitySchemaField = {
   dataType: "configurable-enum",
   innerDataType: "status",
   label: "Status",
-  labelShort: "Status",
+};
+
+const expectedAssignedToSchema: EntitySchemaField = {
+  dataType: "array",
+  innerDataType: "string",
+  editComponent: "EditEntityArray",
+  viewComponent: "DisplayEntityArray",
+  additional: "User",
+  label: "Assigned user(s)",
 };
 
 const expectedStatusConfigurableEnum: ConfigurableEnumValue[] = [
@@ -525,13 +589,14 @@ const expectedChildDetailsConfig = {
                   {
                     edit: "EditLongText",
                     id: "address",
-                    label: "Address",
+                  },
+                  {
+                    id: "assignedTo",
                   },
                   {
                     edit: "EditEntityArray",
-                    id: "assignedTo",
-                    additional: "User",
-                    label: "Assigned to",
+                    id: "children",
+                    additional: "Child",
                   },
                 ],
               ],
@@ -620,7 +685,6 @@ const expectedChildDetailsConfig = {
               },
               {
                 id: "isMotivatedDuringClass",
-                label: "Motivated",
                 view: "DisplayConfigurableEnum",
                 edit: "EditConfigurableEnum",
                 additional: "rating-answer",
@@ -628,8 +692,6 @@ const expectedChildDetailsConfig = {
               },
               {
                 id: "observer",
-                label: "Observer",
-                view: "DisplayText",
                 edit: "EditText",
                 tooltip: "Name of the observer",
               },
