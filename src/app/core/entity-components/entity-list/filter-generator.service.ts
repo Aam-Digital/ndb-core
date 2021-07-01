@@ -98,7 +98,7 @@ export class FilterGeneratorService {
     filter: BooleanFilterConfig
   ): FilterSelectionOption<T>[] {
     return [
-      { key: "", label: filter.all, filterFun: () => true },
+      { key: null, label: filter.all, filterFun: () => true },
       {
         key: "true",
         label: filter.true,
@@ -116,7 +116,7 @@ export class FilterGeneratorService {
     property: string,
     enumId: string
   ): FilterSelectionOption<T>[] {
-    const options = [{ key: "", label: "All", filterFun: (e: T) => true }];
+    const options = [{ key: null, label: "All", filterFun: (e: T) => true }];
 
     const enumValues = this.configService.getConfig<ConfigurableEnumConfig>(
       CONFIGURABLE_ENUM_CONFIG_PREFIX + enumId
@@ -142,12 +142,12 @@ export class FilterGeneratorService {
       entityConstructor
     );
 
-    const options = [{ key: "", label: "All", filterFun: (e: T) => true }];
+    const options = [{ key: null, label: "All", filterFun: (e: T) => true }];
     options.push(
       ...filterEntities.map((filterEntity) => {
         return {
           key: filterEntity.getId(),
-          label: filterEntity["name"] || filterEntity.getId(),
+          label: filterEntity.toString(),
           filterFun: (entity) => entity[property] === filterEntity.getId(),
         };
       })
