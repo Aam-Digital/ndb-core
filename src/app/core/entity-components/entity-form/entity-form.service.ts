@@ -87,7 +87,7 @@ export class EntityFormService {
 
     return this.entityMapper
       .save(entityCopy)
-      .then(() => entityCopy)
+      .then(() => Object.assign(entity, entityCopy))
       .catch((err) => {
         throw new Error(`Could not save ${entity.getType()}: ${err}`);
       });
