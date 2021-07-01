@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   EventEmitter,
   Input,
@@ -22,6 +23,7 @@ import { FormFieldConfig } from "../entity-form/entity-form/FormConfig";
 import { EntitySubrecordComponent } from "../entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { FilterGeneratorService } from "./filter-generator.service";
 import { FilterComponentSettings } from "./filter-component.settings";
+import { entityFilterPredicate } from "./filter-predicate";
 
 /**
  * This component allows to create a full blown table with pagination, filtering, searching and grouping.
@@ -36,7 +38,7 @@ import { FilterComponentSettings } from "./filter-component.settings";
   styleUrls: ["./entity-list.component.scss"],
 })
 export class EntityListComponent<T extends Entity>
-  implements OnChanges, OnInit {
+  implements OnChanges, OnInit, AfterViewInit {
   @Input() allEntities: T[] = [];
   filteredEntities: T[] = [];
   @Input() listConfig: EntityListConfig;
@@ -82,6 +84,11 @@ export class EntityListComponent<T extends Entity>
         }
       }
     });
+  }
+
+  ngAfterViewInit() {
+    this.entityTable.recordsDataSource.filterPredicate = (data, filter) =>
+      entityFilterPredicate(data.record, filter);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
