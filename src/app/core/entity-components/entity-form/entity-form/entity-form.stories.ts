@@ -13,6 +13,14 @@ import { ChildrenModule } from "../../../../child-dev-project/children/children.
 import { Router } from "@angular/router";
 import { EntityFormModule } from "../entity-form.module";
 import { EntityFormComponent } from "./entity-form.component";
+import { School } from "../../../../child-dev-project/schools/model/school";
+
+const s1 = new School();
+s1.name = "First School";
+const s2 = new School();
+s2.name = "Second School";
+const s3 = new School();
+s3.name = "Third School";
 
 export default {
   title: "Core/EntityComponents/EntityForm",
@@ -26,7 +34,13 @@ export default {
         ChildrenModule,
       ],
       providers: [
-        { provide: EntityMapperService, useValue: { save: () => null } },
+        {
+          provide: EntityMapperService,
+          useValue: {
+            save: () => null,
+            loadType: () => Promise.resolve([s1, s2, s3]),
+          },
+        },
         {
           provide: AlertService,
           useValue: { addDanger: () => null, addInfo: () => null },
@@ -71,19 +85,15 @@ const cols = [
     },
     {
       edit: "EditLongText",
-      id: "additionalInfo",
+      id: "status",
       label: "Additional information",
-    },
-    {
-      edit: "EditBoolean",
-      id: "active",
-      label: "Is active",
     },
     { id: "gender" },
   ],
   [
     {
       edit: "EditConfigurableEnum",
+      view: "DisplayConfigurableEnum",
       id: "has_rationCard",
       label: "Ration Card Status",
       additional: "document-status",
@@ -94,8 +104,21 @@ const cols = [
     {
       id: "dateOfBirth",
     },
+    {
+      id: "assignedTo",
+      edit: "EditEntityArray",
+      view: "DisplayEntityArray",
+      additional: "School",
+      label: "Assigned school(s)",
+    },
   ],
 ];
+
+Child.schema.set("has_rationCard", {
+  dataType: "configurable-enum",
+  innerDataType: "document-status",
+});
+Child.schema.set("assignedTo", { dataType: "array", innerDataType: "string" });
 
 const Template: Story<EntityFormComponent> = (args: EntityFormComponent) => ({
   component: EntityFormComponent,
