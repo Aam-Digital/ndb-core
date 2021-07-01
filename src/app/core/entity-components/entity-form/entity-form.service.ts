@@ -48,7 +48,8 @@ export class EntityFormService {
         formField.label || propertySchema.labelShort || propertySchema.label;
     } else {
       formField.forTable = false;
-      formField.label = formField.label || propertySchema.label;
+      formField.label =
+        formField.label || propertySchema.label || propertySchema.labelShort;
     }
   }
 

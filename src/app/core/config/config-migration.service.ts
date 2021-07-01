@@ -292,7 +292,7 @@ export class ConfigMigrationService {
             formField.label,
             formField.id,
             entity,
-            "short",
+            "long",
             formField
           );
         } catch (e) {
@@ -348,7 +348,7 @@ export class ConfigMigrationService {
             formField.label,
             formField.id,
             ChildSchoolRelation,
-            "long",
+            "short",
             formField
           );
         } catch (e) {
@@ -386,9 +386,9 @@ export class ConfigMigrationService {
         },
       ],
     } as any;
-    this.addLabelToEntity("Team", "schoolId", ChildSchoolRelation, "long");
-    this.addLabelToEntity("From", "start", ChildSchoolRelation, "long");
-    this.addLabelToEntity("To", "end", ChildSchoolRelation, "long");
+    this.addLabelToEntity("Team", "schoolId", ChildSchoolRelation, "short");
+    this.addLabelToEntity("From", "start", ChildSchoolRelation, "short");
+    this.addLabelToEntity("To", "end", ChildSchoolRelation, "short");
   }
 
   private migrateEntitySubrecordInput(
@@ -445,7 +445,7 @@ export class ConfigMigrationService {
           formField.label,
           formField.id,
           HistoricalEntityData,
-          "long",
+          "short",
           formField
         );
       } catch (e) {
@@ -476,12 +476,12 @@ export class ConfigMigrationService {
         ],
       ],
     } as any;
-    this.addLabelToEntity("Groups", "linkedGroups", RecurringActivity, "long");
+    this.addLabelToEntity("Groups", "linkedGroups", RecurringActivity, "short");
     this.addLabelToEntity(
       "Participants",
       "participants",
       RecurringActivity,
-      "long"
+      "short"
     );
   }
 
