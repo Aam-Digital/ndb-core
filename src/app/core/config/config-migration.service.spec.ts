@@ -348,7 +348,6 @@ const expectedChildrenListConfig = {
     columns: [
       {
         view: "ChildBlock",
-        label: "Name",
         id: "name",
       },
       {
@@ -358,7 +357,6 @@ const expectedChildrenListConfig = {
       },
       {
         view: "DisplayDate",
-        label: "DoB",
         id: "dateOfBirth",
       },
       {
@@ -369,7 +367,6 @@ const expectedChildrenListConfig = {
         noSorting: true,
       },
       {
-        title: "Gender",
         id: "gender",
       },
       {
@@ -383,7 +380,6 @@ const expectedChildrenListConfig = {
       },
       {
         view: "DisplayConfigurableEnum",
-        label: "Center",
         id: "center",
       },
       {
@@ -491,20 +487,17 @@ const expectedChildDetailsConfig = {
                   {
                     edit: "EditPhoto",
                     id: "photo",
-                    label: "Photo Filename",
                   },
                 ],
                 [
                   {
                     edit: "EditText",
                     id: "name",
-                    label: "Name",
                     required: true,
                   },
                   {
                     edit: "EditConfigurableEnum",
                     id: "center",
-                    label: "Center",
                     additional: "center",
                   },
                 ],
@@ -514,22 +507,18 @@ const expectedChildDetailsConfig = {
                     tooltip:
                       "This field is read-only. Edit Date of Birth to change age. Select Jan 1st if you only know the year of birth.",
                     id: "dateOfBirth",
-                    label: "Date of Birth",
                   },
                   {
                     id: "gender",
-                    label: "Gender",
                   },
                   {
                     id: "status",
-                    label: "Status",
                   },
                 ],
                 [
                   {
                     edit: "EditDate",
                     id: "admissionDate",
-                    label: "Admission Date",
                   },
                 ],
                 [
@@ -561,32 +550,26 @@ const expectedChildDetailsConfig = {
               columns: [
                 {
                   id: "schoolId",
-                  label: "School",
                   view: "DisplayEntity",
                   edit: "EditSingleEntity",
                   additional: "School",
                 },
                 {
                   id: "schoolClass",
-                  label: "Class",
-                  view: "DisplayText",
                   edit: "EditText",
                 },
                 {
                   id: "start",
-                  label: "From",
                   view: "DisplayDate",
                   edit: "EditDate",
                 },
                 {
                   id: "end",
-                  label: "To",
                   view: "DisplayDate",
                   edit: "EditDate",
                 },
                 {
                   id: "result",
-                  label: "Result",
                   view: "DisplayPercentage",
                   edit: "EditPercentage",
                 },
@@ -632,7 +615,6 @@ const expectedChildDetailsConfig = {
             config: [
               {
                 id: "date",
-                label: "Date",
                 view: "DisplayDate",
                 edit: "EditDate",
               },

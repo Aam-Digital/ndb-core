@@ -37,13 +37,6 @@ import { warningLevels } from "../../child-dev-project/warning-levels";
   providedIn: "root",
 })
 export class ConfigMigrationService {
-  readonly entityListComponents = [
-    "ChildrenList",
-    "SchoolsList",
-    "ActivityList",
-    "NotesManager",
-  ];
-
   private config: Config;
   constructor(
     private configService: ConfigService,
@@ -73,10 +66,16 @@ export class ConfigMigrationService {
   }
 
   private migrateViewConfigs() {
+    const entityListComponents = [
+      "ChildrenList",
+      "SchoolsList",
+      "ActivityList",
+      "NotesManager",
+    ];
     const viewConfigs = this.configService.getAllConfigs<ViewConfig>("view:");
     viewConfigs.forEach((viewConfig) => {
       const entity = this.getEntity(viewConfig._id);
-      if (this.entityListComponents.includes(viewConfig.component)) {
+      if (entityListComponents.includes(viewConfig.component)) {
         this.migrateEntityListConfig(viewConfig.config, entity);
       }
       if (viewConfig.component === "EntityDetails") {
@@ -138,13 +137,7 @@ export class ConfigMigrationService {
           column.additional = "Child";
           column.noSorting = true;
         }
-        const propertySchema = entity.schema.get(column.id);
-        if (propertySchema?.dataType === "configurable-enum") {
-          delete column.view;
-          delete column.edit;
-          delete column.additional;
-        }
-        this.addLabelToEntity(column.label, column.id, entity, "short");
+        this.addLabelToEntity(column.label, column.id, entity, "short", column);
       } catch (e) {
         console.warn(`Failed to migrate column ${column.id}: ${e}`);
       }
@@ -155,7 +148,8 @@ export class ConfigMigrationService {
     label: string,
     attribute: string,
     entity: EntityConstructor<Entity>,
-    type: "short" | "long"
+    type: "short" | "long",
+    formField?: FormFieldConfig
   ) {
     try {
       const schema = entity.schema.get(attribute);
@@ -182,6 +176,12 @@ export class ConfigMigrationService {
         configSchema.attributes.push(existing);
       }
       existing.schema = schema;
+      if (formField) {
+        delete formField.label;
+        if (formField.view === "DisplayText") {
+          delete formField.view;
+        }
+      }
     } catch (e) {
       console.warn(
         `Failed to set label ${label} to attribute ${attribute} of entity ${entity.ENTITY_TYPE}: ${e}`
@@ -288,7 +288,13 @@ export class ConfigMigrationService {
             formField.edit = editMap.get(formField["input"]);
           }
           delete formField["input"];
-          this.addLabelToEntity(formField.label, formField.id, entity, "short");
+          this.addLabelToEntity(
+            formField.label,
+            formField.id,
+            entity,
+            "short",
+            formField
+          );
         } catch (e) {
           console.warn(`Failed to migrate form field ${formField.id}: ${e}`);
         }
@@ -342,7 +348,8 @@ export class ConfigMigrationService {
             formField.label,
             formField.id,
             ChildSchoolRelation,
-            "long"
+            "long",
+            formField
           );
         } catch (e) {
           console.warn(
@@ -438,7 +445,8 @@ export class ConfigMigrationService {
           formField.label,
           formField.id,
           HistoricalEntityData,
-          "long"
+          "long",
+          formField
         );
       } catch (e) {
         console.warn(
