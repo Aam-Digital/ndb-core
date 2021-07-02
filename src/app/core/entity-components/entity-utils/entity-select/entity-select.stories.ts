@@ -76,3 +76,12 @@ primary.args = {
   label: "Attending Children",
   placeholder: "Select Children",
 };
+
+export const disabled = Template.bind({});
+disabled.args = {
+  entityType: Child.ENTITY_TYPE,
+  label: "Attending Children",
+  placeholder: "Select Children",
+  selection: [child1.getId()],
+  disabled: true,
+};
