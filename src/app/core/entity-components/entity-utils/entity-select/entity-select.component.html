@@ -3,7 +3,6 @@
 
   <input
     #inputField
-    *ngIf="formControl.enabled"
     [placeholder]="loading.value ? 'loading...' : placeholder"
     [formControl]="formControl"
     [matAutocomplete]='autoSuggestions'

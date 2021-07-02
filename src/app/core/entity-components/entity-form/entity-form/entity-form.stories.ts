@@ -37,7 +37,7 @@ export default {
         {
           provide: EntityMapperService,
           useValue: {
-            save: () => null,
+            save: () => Promise.resolve(),
             loadType: () => Promise.resolve([s1, s2, s3]),
           },
         },
