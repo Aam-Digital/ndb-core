@@ -24,8 +24,6 @@ import { EntitySubrecordComponent } from "../entity-subrecord/entity-subrecord/e
 import { FilterGeneratorService } from "./filter-generator.service";
 import { FilterComponentSettings } from "./filter-component.settings";
 import { entityFilterPredicate } from "./filter-predicate";
-import { FilterGeneratorService } from "./filter-generator.service";
-import { FilterComponentSettings } from "./filter-component.settings";
 
 /**
  * This component allows to create a full blown table with pagination, filtering, searching and grouping.

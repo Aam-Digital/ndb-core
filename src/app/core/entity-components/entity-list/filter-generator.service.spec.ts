@@ -52,7 +52,7 @@ describe("FilterGeneratorService", () => {
         return { key: option.key, label: option.label };
       })
     ).toEqual([
-      { key: null, label: "All" },
+      { key: "all", label: "All" },
       { key: "true", label: "Private" },
       { key: "false", label: "Government" },
     ]);
@@ -63,7 +63,7 @@ describe("FilterGeneratorService", () => {
     const interactionTypes = defaultInteractionTypes.map((it) => {
       return { key: it.id, label: it.label };
     });
-    interactionTypes.push({ key: null, label: "All" });
+    interactionTypes.push({ key: "all", label: "All" });
     const schema = Note.schema.get("category");
 
     const filter = (await service.generate([{ id: "category" }], Note, []))[0];
@@ -102,7 +102,7 @@ describe("FilterGeneratorService", () => {
     expect(filter.filterSettings.name).toEqual("schoolId");
     const allRelations = [csr1, csr2, csr3, csr4];
     const allFilter = filter.filterSettings.options.find(
-      (opt) => opt.key === null
+      (opt) => opt.key === "all"
     );
     expect(allFilter.label).toEqual("All");
     expect(allRelations.filter(allFilter.filterFun)).toEqual(allRelations);
