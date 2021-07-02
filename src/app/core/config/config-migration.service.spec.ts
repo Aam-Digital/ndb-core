@@ -106,6 +106,14 @@ describe("ConfigMigrationService", () => {
               all: "All",
             },
             {
+              id: "isActiveAll",
+              type: "boolean",
+              default: "",
+              true: "Active Children",
+              false: "Inactive",
+              all: "All",
+            },
+            {
               id: "center",
               label: "Center",
               type: "configurable-enum",
@@ -465,6 +473,13 @@ const expectedChildrenListConfig = {
         id: "isActive",
         type: "boolean",
         default: "true",
+        true: "Active Children",
+        false: "Inactive",
+        all: "All",
+      },
+      {
+        id: "isActiveAll",
+        type: "boolean",
         true: "Active Children",
         false: "Inactive",
         all: "All",

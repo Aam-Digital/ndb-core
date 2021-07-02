@@ -278,7 +278,6 @@ export const defaultJsonConfig = {
         },
         {
           "id": "privateSchool",
-          "default": "",
           "true": "Private School",
           "false": "Government School",
           "all": "All"

@@ -201,6 +201,9 @@ export class ConfigMigrationService {
           filter.type = "School";
           filter.id = "schoolId";
         }
+        if (filter.default === "") {
+          delete filter.default;
+        }
       } catch (e) {
         console.warn(`Failed to migrate filter ${filter.id}: ${e}`);
       }
