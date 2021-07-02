@@ -36,14 +36,15 @@ describe("EntityFormService", () => {
     const formGroup = TestBed.inject(FormBuilder).group({ _id: "newId" });
 
     expect(() => service.saveChanges(formGroup, entity)).toThrowError();
+    expect(entity.getId).not.toBe("newId");
   });
 
-  it("should return updated entity if saving is successful", async () => {
+  it("should update entity if saving is successful", async () => {
     const entity = new Entity("initialId");
     const formGroup = TestBed.inject(FormBuilder).group({ _id: "newId" });
 
-    const newEntity = await service.saveChanges(formGroup, entity);
+    await service.saveChanges(formGroup, entity);
 
-    expect(newEntity.getId()).toBe("newId");
+    expect(entity.getId()).toBe("newId");
   });
 });

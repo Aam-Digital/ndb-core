@@ -15,7 +15,7 @@ import { Entity } from "../../../entity/model/entity";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "../../../alerts/alert.service";
 import { Subscription } from "rxjs";
-import { entityListSortingAccessor } from "../../entity-list/sorting-accessor";
+import { entityListSortingAccessor } from "./sorting-accessor";
 import { FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { EntityFormService } from "../../entity-form/entity-form.service";

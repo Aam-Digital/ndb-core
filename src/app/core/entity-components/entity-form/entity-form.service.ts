@@ -48,7 +48,8 @@ export class EntityFormService {
         formField.label || propertySchema.labelShort || propertySchema.label;
     } else {
       formField.forTable = false;
-      formField.label = formField.label || propertySchema.label;
+      formField.label =
+        formField.label || propertySchema.label || propertySchema.labelShort;
     }
   }
 
@@ -87,7 +88,7 @@ export class EntityFormService {
 
     return this.entityMapper
       .save(entityCopy)
-      .then(() => entityCopy)
+      .then(() => Object.assign(entity, entityCopy))
       .catch((err) => {
         throw new Error(`Could not save ${entity.getType()}: ${err}`);
       });

@@ -32,18 +32,12 @@ import {
   ConfigurableEnumValue,
 } from "../configurable-enum/configurable-enum.interface";
 import { warningLevels } from "../../child-dev-project/warning-levels";
+import { User } from "../user/user";
 
 @Injectable({
   providedIn: "root",
 })
 export class ConfigMigrationService {
-  readonly entityListComponents = [
-    "ChildrenList",
-    "SchoolsList",
-    "ActivityList",
-    "NotesManager",
-  ];
-
   private config: Config;
   constructor(
     private configService: ConfigService,
@@ -73,10 +67,16 @@ export class ConfigMigrationService {
   }
 
   private migrateViewConfigs() {
+    const entityListComponents = [
+      "ChildrenList",
+      "SchoolsList",
+      "ActivityList",
+      "NotesManager",
+    ];
     const viewConfigs = this.configService.getAllConfigs<ViewConfig>("view:");
     viewConfigs.forEach((viewConfig) => {
       const entity = this.getEntity(viewConfig._id);
-      if (this.entityListComponents.includes(viewConfig.component)) {
+      if (entityListComponents.includes(viewConfig.component)) {
         this.migrateEntityListConfig(viewConfig.config, entity);
       }
       if (viewConfig.component === "EntityDetails") {
@@ -138,7 +138,7 @@ export class ConfigMigrationService {
           column.additional = "Child";
           column.noSorting = true;
         }
-        this.addLabelToEntity(column.label, column.id, entity, "short");
+        this.addLabelToEntity(column.label, column.id, entity, "short", column);
       } catch (e) {
         console.warn(`Failed to migrate column ${column.id}: ${e}`);
       }
@@ -149,7 +149,8 @@ export class ConfigMigrationService {
     label: string,
     attribute: string,
     entity: EntityConstructor<Entity>,
-    type: "short" | "long"
+    type: "short" | "long",
+    formField?: FormFieldConfig
   ) {
     try {
       const schema = entity.schema.get(attribute);
@@ -176,6 +177,12 @@ export class ConfigMigrationService {
         configSchema.attributes.push(existing);
       }
       existing.schema = schema;
+      if (formField) {
+        delete formField.label;
+        if (formField.view === "DisplayText") {
+          delete formField.view;
+        }
+      }
     } catch (e) {
       console.warn(
         `Failed to set label ${label} to attribute ${attribute} of entity ${entity.ENTITY_TYPE}: ${e}`
@@ -193,6 +200,9 @@ export class ConfigMigrationService {
         } else if (filter.id === "school") {
           filter.type = "School";
           filter.id = "schoolId";
+        }
+        if (filter.default === "") {
+          delete filter.default;
         }
       } catch (e) {
         console.warn(`Failed to migrate filter ${filter.id}: ${e}`);
@@ -278,11 +288,25 @@ export class ConfigMigrationService {
           }
           if (formField["input"] === "select") {
             this.migrateSelectFormField(formField, entity);
+          } else if (formField.id === "assignedTo") {
+            const schema = entity.schema.get("assignedTo");
+            formField.label = "Assigned user(s)";
+            schema.dataType = "array";
+            schema.innerDataType = "string";
+            schema.viewComponent = "DisplayEntityArray";
+            schema.editComponent = "EditEntityArray";
+            schema.additional = User.ENTITY_TYPE;
           } else {
             formField.edit = editMap.get(formField["input"]);
           }
           delete formField["input"];
-          this.addLabelToEntity(formField.label, formField.id, entity, "short");
+          this.addLabelToEntity(
+            formField.label,
+            formField.id,
+            entity,
+            "long",
+            formField
+          );
         } catch (e) {
           console.warn(`Failed to migrate form field ${formField.id}: ${e}`);
         }
@@ -336,7 +360,8 @@ export class ConfigMigrationService {
             formField.label,
             formField.id,
             ChildSchoolRelation,
-            "long"
+            "short",
+            formField
           );
         } catch (e) {
           console.warn(
@@ -373,9 +398,9 @@ export class ConfigMigrationService {
         },
       ],
     } as any;
-    this.addLabelToEntity("Team", "schoolId", ChildSchoolRelation, "long");
-    this.addLabelToEntity("From", "start", ChildSchoolRelation, "long");
-    this.addLabelToEntity("To", "end", ChildSchoolRelation, "long");
+    this.addLabelToEntity("Team", "schoolId", ChildSchoolRelation, "short");
+    this.addLabelToEntity("From", "start", ChildSchoolRelation, "short");
+    this.addLabelToEntity("To", "end", ChildSchoolRelation, "short");
   }
 
   private migrateEntitySubrecordInput(
@@ -432,7 +457,8 @@ export class ConfigMigrationService {
           formField.label,
           formField.id,
           HistoricalEntityData,
-          "long"
+          "short",
+          formField
         );
       } catch (e) {
         console.warn(
@@ -462,12 +488,12 @@ export class ConfigMigrationService {
         ],
       ],
     } as any;
-    this.addLabelToEntity("Groups", "linkedGroups", RecurringActivity, "long");
+    this.addLabelToEntity("Groups", "linkedGroups", RecurringActivity, "short");
     this.addLabelToEntity(
       "Participants",
       "participants",
       RecurringActivity,
-      "long"
+      "short"
     );
   }
 
