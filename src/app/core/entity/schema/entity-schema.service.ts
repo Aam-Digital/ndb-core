@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from "../entity";
+import { Entity } from "../model/entity";
 import { EntitySchemaDatatype } from "./entity-schema-datatype";
 import { Injectable } from "@angular/core";
 import { defaultEntitySchemaDatatype } from "../schema-datatypes/datatype-default";
@@ -29,6 +29,7 @@ import { arrayEntitySchemaDatatype } from "../schema-datatypes/datatype-array";
 import { schemaEmbedEntitySchemaDatatype } from "../schema-datatypes/datatype-schema-embed";
 import { dateOnlyEntitySchemaDatatype } from "../schema-datatypes/datatype-date-only";
 import { mapEntitySchemaDatatype } from "../schema-datatypes/datatype-map";
+import { booleanEntitySchemaDatatype } from "../schema-datatypes/datatype-boolean";
 
 /**
  * Transform between entity instances and database objects
@@ -63,6 +64,7 @@ export class EntitySchemaService {
     this.registerSchemaDatatype(arrayEntitySchemaDatatype);
     this.registerSchemaDatatype(schemaEmbedEntitySchemaDatatype);
     this.registerSchemaDatatype(mapEntitySchemaDatatype);
+    this.registerSchemaDatatype(booleanEntitySchemaDatatype);
   }
 
   /**
@@ -97,7 +99,7 @@ export class EntitySchemaService {
     for (const key of schema.keys()) {
       const schemaField: EntitySchemaField = schema.get(key);
 
-      if (data[key] === undefined) {
+      if (data[key] === undefined || data[key] === null) {
         if (schemaField.defaultValue !== undefined) {
           data[key] = schemaField.defaultValue;
         } else {
@@ -153,7 +155,7 @@ export class EntitySchemaService {
       let value = entity[key];
       const schemaField: EntitySchemaField = schema.get(key);
 
-      if (value === undefined) {
+      if (value === undefined || value === null) {
         if (schemaField.defaultValue !== undefined) {
           value = schemaField.defaultValue;
         } else {
@@ -162,9 +164,13 @@ export class EntitySchemaService {
         }
       }
 
-      data[key] = this.getDatatypeOrDefault(
-        schemaField.dataType
-      ).transformToDatabaseFormat(value, schemaField, this, entity);
+      try {
+        data[key] = this.getDatatypeOrDefault(
+          schemaField.dataType
+        ).transformToDatabaseFormat(value, schemaField, this, entity);
+      } catch (err) {
+        throw new Error(`Transformation for ${key} failed: ${err}`);
+      }
 
       if (data[key] === undefined) {
         delete data[key];
@@ -172,5 +178,28 @@ export class EntitySchemaService {
     }
 
     return data;
+  }
+
+  /**
+   * Get the name of the component that should display this property.
+   * The names will be one of the DYNAMIC_COMPONENT_MAP.
+   *
+   * @param propertySchema The schema definition of the attribute for which a component should be get
+   * @param mode (Optional) The mode for which a component is required. Default is "view".
+   * @returns string The name of the component which should display this property
+   */
+  getComponent(
+    propertySchema: EntitySchemaField,
+    mode: "view" | "edit" = "view"
+  ): string {
+    if (!propertySchema) {
+      return undefined;
+    }
+    const componentAttribute =
+      mode === "view" ? "viewComponent" : "editComponent";
+    return (
+      propertySchema[componentAttribute] ||
+      this.getDatatypeOrDefault(propertySchema.dataType)[componentAttribute]
+    );
   }
 }

@@ -1,5 +1,5 @@
 import { FormDialogWrapperComponent } from "./form-dialog-wrapper/form-dialog-wrapper.component";
-import { Entity } from "../entity/entity";
+import { Entity } from "../entity/model/entity";
 
 /**
  * Interface to be implemented by Components so that they can be used with {@link FormDialogService}.

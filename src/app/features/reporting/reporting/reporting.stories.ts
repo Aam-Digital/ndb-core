@@ -9,11 +9,10 @@ import { MatNativeDateModule } from "@angular/material/core";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeIconsModule } from "../../../core/icons/font-awesome-icons.module";
 import { BackupService } from "../../../core/admin/services/backup.service";
-import { Gender } from "../../../child-dev-project/children/model/Gender";
 import { ReportingModule } from "../reporting.module";
+import { genders } from "../../../child-dev-project/children/model/genders";
 
 const reportingService = {
-  setAggregations: () => null,
   calculateReport: () => {
     return Promise.resolve([
       {
@@ -80,7 +79,7 @@ const reportingService = {
           {
             header: {
               label: "Total # of children",
-              values: [Gender.FEMALE],
+              values: [genders[2]],
               result: 2,
             },
             subRows: [
@@ -130,7 +129,7 @@ const reportingService = {
           {
             header: {
               label: "Total # of children",
-              values: [Gender.MALE],
+              values: [genders[1]],
               result: 2,
             },
             subRows: [

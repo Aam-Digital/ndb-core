@@ -12,8 +12,8 @@ import { Pipe, PipeTransform } from "@angular/core";
 export class KeysPipe implements PipeTransform {
   transform(value: any, args?: any): any {
     const keys = [];
-    for (const enumMember of Object.keys(value)) {
-      keys.push({ key: enumMember, value: value[enumMember] });
+    for (const key of Object.keys(value)) {
+      keys.push({ key: key, value: value[key] });
     }
     return keys;
   }

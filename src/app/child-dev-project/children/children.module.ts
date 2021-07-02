@@ -52,7 +52,6 @@ import { HealthCheckupComponent } from "../health-checkup/health-checkup-compone
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { PreviousSchoolsComponent } from "../previous-schools/previous-schools.component";
 import { AdminModule } from "../../core/admin/admin.module";
-import { SelectGroupChildrenComponent } from "./select-group-children/select-group-children.component";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { RecentNotesDashboardComponent } from "../notes/dashboard-widgets/recent-notes-dashboard/recent-notes-dashboard.component";
 import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
@@ -60,18 +59,15 @@ import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirm
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { Angulartics2Module } from "angulartics2";
 import { ViewModule } from "../../core/view/view.module";
-import { SchoolBlockWrapperComponent } from "./children-list/school-block-wrapper/school-block-wrapper.component";
-import { ChildBlockListComponent } from "./child-block-list/child-block-list.component";
 import { ChildBlockComponent } from "./child-block/child-block.component";
 import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
 import { WebdavModule } from "../../core/webdav/webdav.module";
-import { PreviousTeamsComponent } from "../previous-teams/previous-teams.component";
 import { BmiBlockComponent } from "./children-list/bmi-block/bmi-block.component";
 import { ChildrenBmiDashboardComponent } from "./children-bmi-dashboard/children-bmi-dashboard.component";
-import { EntitySelectModule } from "../../core/entity-components/entity-select/entity-select.module";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { PhotoDatatype } from "./child-photo-service/datatype-photo";
+import { EntityUtilsModule } from "../../core/entity-components/entity-utils/entity-utils.module";
 
 @NgModule({
   imports: [
@@ -113,7 +109,7 @@ import { PhotoDatatype } from "./child-photo-service/datatype-photo";
     ViewModule,
     EntitySubrecordModule,
     EntityListModule,
-    EntitySelectModule,
+    EntityUtilsModule,
   ],
   declarations: [
     ChildBlockComponent,
@@ -122,14 +118,10 @@ import { PhotoDatatype } from "./child-photo-service/datatype-photo";
     ChildrenCountDashboardComponent,
     EducationalMaterialComponent,
     AserComponent,
-    SelectGroupChildrenComponent,
     NoRecentNotesDashboardComponent,
     RecentNotesDashboardComponent,
     HealthCheckupComponent,
     PreviousSchoolsComponent,
-    PreviousTeamsComponent,
-    SchoolBlockWrapperComponent,
-    ChildBlockListComponent,
     BmiBlockComponent,
     ChildrenBmiDashboardComponent,
   ],
@@ -141,6 +133,7 @@ import { PhotoDatatype } from "./child-photo-service/datatype-photo";
     RecentNotesDashboardComponent,
     BmiBlockComponent,
   ],
+  entryComponents: [ChildBlockComponent],
 })
 export class ChildrenModule {
   constructor(entitySchemaService: EntitySchemaService) {

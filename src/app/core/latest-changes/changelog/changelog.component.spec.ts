@@ -25,6 +25,7 @@ import { of } from "rxjs";
 import { LatestChangesModule } from "../latest-changes.module";
 import { SwUpdate } from "@angular/service-worker";
 import { MarkdownModule } from "ngx-markdown";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
 describe("ChangelogComponent", () => {
   let component: ChangelogComponent;
@@ -42,10 +43,15 @@ describe("ChangelogComponent", () => {
     waitForAsync(() => {
       mockLatestChangesService = jasmine.createSpyObj([
         "getChangelogsBeforeVersion",
+        "getChangelogsBetweenVersions",
       ]);
 
       TestBed.configureTestingModule({
-        imports: [LatestChangesModule, MarkdownModule.forRoot()],
+        imports: [
+          LatestChangesModule,
+          MarkdownModule.forRoot(),
+          NoopAnimationsModule,
+        ],
         providers: [
           { provide: MatDialogRef, useValue: {} },
           { provide: MAT_DIALOG_DATA, useValue: of([testChangelog]) },

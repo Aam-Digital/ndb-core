@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from "../entity";
+import { Entity } from "../model/entity";
 import { DatabaseField } from "../database-field.decorator";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { waitForAsync } from "@angular/core/testing";
@@ -39,7 +39,7 @@ describe("Schema data type: schema-embed", () => {
   }
 
   class TestEntity extends Entity {
-    @DatabaseField({ dataType: "schema-embed", ext: InnerClass })
+    @DatabaseField({ dataType: "schema-embed", additional: InnerClass })
     embedded = new InnerClass();
   }
 

@@ -12,6 +12,10 @@ import { Child } from "../../children/model/child";
 import { SchoolsService } from "../schools.service";
 import { RouterTestingModule } from "@angular/router/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { Router } from "@angular/router";
+import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { User } from "../../../core/user/user";
 
 describe("ChildrenOverviewComponent", () => {
   let component: ChildrenOverviewComponent;
@@ -23,10 +27,19 @@ describe("ChildrenOverviewComponent", () => {
 
   beforeEach(
     waitForAsync(() => {
+      const mockSessionService = jasmine.createSpyObj<SessionService>([
+        "getCurrentUser",
+      ]);
+      mockSessionService.getCurrentUser.and.returnValue(new User());
+
       TestBed.configureTestingModule({
         declarations: [],
         imports: [SchoolsModule, RouterTestingModule, NoopAnimationsModule],
-        providers: [{ provide: SchoolsService, useValue: schoolsService }],
+        providers: [
+          { provide: SchoolsService, useValue: schoolsService },
+          { provide: EntityMapperService, useValue: {} },
+          { provide: SessionService, useValue: mockSessionService },
+        ],
       }).compileComponents();
     })
   );
@@ -46,50 +59,27 @@ describe("ChildrenOverviewComponent", () => {
     const child1 = new Child("c1");
     const child2 = new Child("c2");
     const config = { entity: school };
-    schoolsService.getChildrenForSchool.and.returnValue(
-      Promise.resolve([child1, child2])
-    );
+    schoolsService.getChildrenForSchool.and.resolveTo([child1, child2]);
+
     component.onInitFromDynamicConfig(config);
+
     expect(schoolsService.getChildrenForSchool).toHaveBeenCalledWith(
       school.getId()
     );
     tick();
-    expect(component.studentsDataSource.data).toEqual([child1, child2]);
+    expect(component.children).toEqual([child1, child2]);
   }));
 
-  function expectToBeSortedAccordingTo(specifier: string, sortedValues: any[]) {
-    let id = 0;
-    const ids = [];
-    // create an array of children with increasing id's
-    let children = sortedValues.map((value) => {
-      ids.push(id);
-      const child = new Child(String(id));
-      id += 1;
-      child[specifier] = value;
-      return child;
-    });
-    // shuffle the array
-    children = children
-      .map((a) => ({ sort: Math.random(), value: a }))
-      .sort((a, b) => a.sort - b.sort)
-      .map((a) => a.value);
-    // and re-sort it
-    component.sort.sort({
-      id: specifier,
-      start: "asc",
-      disableClear: false,
-    });
-    const sortedChildIds = component.studentsDataSource
-      .sortData(children, component.sort)
-      .map((it) => Number(it.getId()));
-    expect(sortedChildIds).toEqual(ids);
-  }
+  it("should route to a child when clicked", () => {
+    const router = TestBed.inject(Router);
+    spyOn(router, "navigate");
+    const child = new Child();
 
-  it("should sort the table according to the different column values", () => {
-    component.ngAfterViewInit();
-    expectToBeSortedAccordingTo("name", ["AA", "AB", "F", "ZZ"]);
-    expectToBeSortedAccordingTo("projectNumber", [1, 3, 5, 10]);
-    expectToBeSortedAccordingTo("schoolClass", ["AA", "FG", "FH", "I"]);
-    // cannot test sorting according to age because the setter is inaccessible
+    component.routeToChild(child);
+
+    expect(router.navigate).toHaveBeenCalledWith([
+      `/${Child.ENTITY_TYPE.toLowerCase()}`,
+      child.getId(),
+    ]);
   });
 });

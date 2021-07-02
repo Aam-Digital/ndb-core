@@ -167,7 +167,6 @@ describe("AdminComponent", () => {
     tick();
     expect(mockFileReader.readAsText).toHaveBeenCalled();
     expect(mockConfigService.saveConfig).toHaveBeenCalled();
-    expect(mockConfigService.loadConfig).toHaveBeenCalled();
   }));
 
   it("should open dialog and call backup service when loading backup", fakeAsync(() => {

@@ -18,7 +18,7 @@ import { EntityListComponent } from "../../../core/entity-components/entity-list
   selector: "app-children-list",
   template: `
     <app-entity-list
-      [entityList]="childrenList"
+      [allEntities]="childrenList"
       [listConfig]="listConfig"
       [entityConstructor]="childConstructor"
       (elementClick)="routeTo($event.getId())"

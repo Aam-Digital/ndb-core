@@ -19,7 +19,7 @@ import {
 } from "../model/calculate-average-event-attendance";
 import { EventNote } from "../model/event-note";
 import { RecurringActivity } from "../model/recurring-activity";
-import { applyUpdate } from "../../../core/entity/entity-update";
+import { applyUpdate } from "../../../core/entity/model/entity-update";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { AttendanceService } from "../attendance.service";
 

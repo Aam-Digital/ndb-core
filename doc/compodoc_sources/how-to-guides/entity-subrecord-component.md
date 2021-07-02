@@ -57,56 +57,32 @@ Unfortunately the implementation has to be a little clumsy: A method that itself
 
 Finally, the `[columns]` configuration allows you a lot of flexibility over 
 which properties of the entities are shown and how they are formatted and edited.
-This takes an array of [ColumnDescription](../../classes/ColumnDescription.html)s:
+This takes an array of [FormFieldConfiguration](../../interfaces/FormFieldConfig.html)s:
 ```
-columns: Array<ColumnDescription> = [
-    new ColumnDescription('subject', 'Topic', ColumnDescriptionInputType.TEXT, null, undefined, 'xs'),
-    new ColumnDescription('text', 'Notes', ColumnDescriptionInputType.TEXTAREA, null, undefined, 'md'),
-    new ColumnDescription('date', 'Date', ColumnDescriptionInputType.DATE, null, (v: Date) => this.datePipe.transform(v, 'yyyy-MM-dd'), 'xs'),
+columns: FormFieldConfig[] = [
+    { id: 'subject', label: 'Topic', view: 'DisplayText', edit: 'EditText', visibleFrom: 'xs'),
+    { id: 'text', label: 'Notes', view: 'DisplayText', edit: 'EditLongText', visibleFrom: 'md'),
+    { id: 'date', label: 'Date', view: 'DisplayDate', edit: 'EditDate', visibleFrom: 'xs'),
 ];
 ```
 Only the properties that you set here will be displayed to the user.
 Use the parameters to configure transformations and form field types.
+When a entity is displayed, most of the properties can be omitted and will be fetched from the schema definition
 
 > To learn about the full range of column options check out the API Reference:
-> - [ColumnDescription](../../classes/ColumnDescription.html)
-> - [ColumnDescriptionInputType](../../miscellaneous/enumerations.html#ColumnDescriptionInputType)
+> - [FormFieldConfiguration](../../interfaces/FormFieldConfig.html)
+> - [EntitySchemaField](../../interfaces/EntitySchemaField.html)
 
 ## Showing details of one entity
 The EntitySubrecordComponent allows the user to edit an entity inline in the table.
-If you have more complex entities it can be more feasible to show the user a modal (overlay) component
-with the details of a single entity when a row of the table is clicked.
-
-You can enable this optional behaviour by additionally setting the `[detailsComponent]` input property
-of `<app-entity-subrecord>` in your template.
-This simply takes a Component class that will be used to display details of a single entity instance.
-
-To be able to use it in your template, you have to assign the Component class to a class variable:
+By default, clicking on a row will automatically open a form popup which shows all editable fields of the table.
+What happens when a row is clicked can be overwritten with the `[showEntity]` parameter.
+This parameter expects a function that gets the clicked entity as input.
 ```
-@Component({
-  selector: 'app-notes',
-  template: '<app-entity-subrecord [records]="records" [columns]="columns" ' +
-            '[detailsComponent]="detailsComponent">' +
-            '</app-entity-subrecord>',
-})
-export class ChildNotesComponent  {
-  detailsComponent = { component: NoteDetailsComponent, config: { displayMode: 1 } };
+<app-entity-subrecord
+    [records]="children"
+    [columns]="columns"
+    [showEntity]="routeToChild.bind(this)"
+    [editable]="false"
+  ></app-entity-subrecord>
 ```
-
-The Component used as "detailsComponent" receives the entity to be display as `MAT_DIALOG_DATA` like this:
-```
-export class NoteDetailsComponent implements OnInit, OnInitDynamicComponent {
-    private note: Note;
-    displayMode: number;
-
-    constructor(@Inject(MAT_DIALOG_DATA) data: any) {
-        this.note = data.entity;
-    }
-    
-    async onInitFromDynamicConfig(config: any) {
-        this.displayMode = config.displayMode;
-        this.init();
-    }
-```
-As shown above the (optional) config object is received by implementing the {@link OnInitDynamicComponent} 
-interface's `onInitFromDynamicConfig` method.

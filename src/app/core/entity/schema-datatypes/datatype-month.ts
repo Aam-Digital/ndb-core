@@ -47,7 +47,6 @@ export const monthEntitySchemaDatatype: EntitySchemaDatatype = {
       .replace(/-(\d)$/g, "-0$1");
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) {
-      console.log("value aus datatype-month.ts: " + value);
       throw new Error("failed to convert data to Date object: " + value);
     }
     return date;

@@ -11,7 +11,7 @@ import {
   EntityPermissionsService,
   OperationType,
 } from "./entity-permissions.service";
-import { Entity } from "../entity/entity";
+import { Entity } from "../entity/model/entity";
 import { DisabledWrapperComponent } from "./disabled-wrapper/disabled-wrapper.component";
 
 /**
