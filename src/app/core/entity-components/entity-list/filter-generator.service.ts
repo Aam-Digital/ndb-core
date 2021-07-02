@@ -148,7 +148,13 @@ export class FilterGeneratorService {
         return {
           key: filterEntity.getId(),
           label: filterEntity.toString(),
-          filterFun: (entity) => entity[property] === filterEntity.getId(),
+          filterFun: (entity) => {
+            if (Array.isArray(entity[property])) {
+              return entity[property].includes(filterEntity.getId());
+            } else {
+              return entity[property] === filterEntity.getId();
+            }
+          },
         };
       })
     );

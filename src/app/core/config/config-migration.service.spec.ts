@@ -126,6 +126,9 @@ describe("ConfigMigrationService", () => {
               label: "School",
               display: "dropdown",
             },
+            {
+              id: "assignedTo",
+            },
           ],
         },
       },
@@ -493,6 +496,12 @@ const expectedChildrenListConfig = {
         id: "schoolId",
         type: "School",
         label: "School",
+        display: "dropdown",
+      },
+      {
+        id: "assignedTo",
+        type: "User",
+        label: "Assigned user(s)",
         display: "dropdown",
       },
     ],

@@ -200,6 +200,10 @@ export class ConfigMigrationService {
         } else if (filter.id === "school") {
           filter.type = "School";
           filter.id = "schoolId";
+        } else if (filter.id === "assignedTo") {
+          filter.type = "User";
+          filter.label = "Assigned user(s)";
+          filter.display = "dropdown";
         }
         if (filter.default === "") {
           delete filter.default;
