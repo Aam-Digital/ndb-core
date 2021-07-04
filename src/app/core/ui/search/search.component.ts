@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { School } from "../../../child-dev-project/schools/model/school";
-import { Entity } from "../../entity/entity";
+import { Entity } from "../../entity/model/entity";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Subject } from "rxjs";
 import { debounceTime, switchMap } from "rxjs/operators";

@@ -8,7 +8,7 @@ import {
   ConfigurableEnumConfig,
 } from "../../core/configurable-enum/configurable-enum.interface";
 import { faker } from "../../core/demo-data/faker";
-import { ENTITY_CONFIG_PREFIX } from "../../core/entity/entity";
+import { ENTITY_CONFIG_PREFIX } from "../../core/entity/model/entity";
 
 export class DemoHistoricalDataConfig {
   minCountAttributes: number;

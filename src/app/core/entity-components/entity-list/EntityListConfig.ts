@@ -1,15 +1,16 @@
-import { Entity } from "../../entity/entity";
+import { Entity } from "../../entity/model/entity";
 import { FilterSelectionOption } from "../../filter/filter-selection/filter-selection";
+import { FormFieldConfig } from "../entity-form/entity-form/FormConfig";
 
-export class EntityListConfig {
+export interface EntityListConfig {
   title: string;
-  columns: ColumnConfig[];
+  columns: (FormFieldConfig | string)[];
 
   /**
    * Optional config for which columns are displayed.
    * By default all columns are shown
    */
-  columnGroup?: ColumnGroupConfig;
+  columnGroups?: ColumnGroupsConfig;
 
   /**
    * Optional config for available filters.
@@ -18,16 +19,7 @@ export class EntityListConfig {
   filters?: FilterConfig[];
 }
 
-export class ColumnConfig {
-  component: string;
-  title: string;
-  id: string;
-  /** this config can be anything that the component understands to parse */
-  config?: any;
-  noSorting?: boolean = false;
-}
-
-export class ColumnGroupConfig {
+export interface ColumnGroupsConfig {
   groups: GroupConfig[];
 
   /**
@@ -43,12 +35,12 @@ export class ColumnGroupConfig {
   mobile?: string;
 }
 
-export class GroupConfig {
+export interface GroupConfig {
   name: string;
   columns: string[];
 }
 
-export class FilterConfig {
+export interface FilterConfig {
   id: string;
   display?: string;
   type?: string;
@@ -56,21 +48,21 @@ export class FilterConfig {
   label?: string;
 }
 
-export class BooleanFilterConfig extends FilterConfig {
+export interface BooleanFilterConfig extends FilterConfig {
   true: string;
   false: string;
   all: string;
 }
 
-export class PrebuiltFilterConfig<T> extends FilterConfig {
+export interface PrebuiltFilterConfig<T> extends FilterConfig {
   options: FilterSelectionOption<T>[];
 }
 
-export class ConfigurableEnumFilterConfig<T> extends FilterConfig {
+export interface ConfigurableEnumFilterConfig<T> extends FilterConfig {
   enumId: string;
 }
 
-export class ColumnCellConfig {
+export interface ViewPropertyConfig {
   entity: Entity;
   id: string;
   config?: any;

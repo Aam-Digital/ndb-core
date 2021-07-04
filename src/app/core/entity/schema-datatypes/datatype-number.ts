@@ -31,6 +31,8 @@ import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
  */
 export const numberEntitySchemaDatatype: EntitySchemaDatatype = {
   name: "number",
+  viewComponent: "DisplayText",
+  editComponent: "EditNumber",
 
   transformToDatabaseFormat: (value) => {
     return Number(value);

@@ -4,6 +4,13 @@ import { ConfigService } from "../config/config.service";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { ConfigurableEnumDatatype } from "./configurable-enum-datatype/configurable-enum-datatype";
 import { ConfigurableEnumDirective } from "./configurable-enum-directive/configurable-enum.directive";
+import { EditConfigurableEnumComponent } from "./edit-configurable-enum/edit-configurable-enum.component";
+import { DisplayConfigurableEnumComponent } from "./display-configurable-enum/display-configurable-enum.component";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatSelectModule } from "@angular/material/select";
+import { ReactiveFormsModule } from "@angular/forms";
+import { MatIconModule } from "@angular/material/icon";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 /**
  * Provides a generic functionality to define enums (collections of selectable options) in the config database
@@ -47,9 +54,24 @@ import { ConfigurableEnumDirective } from "./configurable-enum-directive/configu
  * {@link ConfigurableEnumDirective} similar to `*ngFor`.
  */
 @NgModule({
-  declarations: [ConfigurableEnumDirective],
-  imports: [CommonModule],
+  declarations: [
+    ConfigurableEnumDirective,
+    EditConfigurableEnumComponent,
+    DisplayConfigurableEnumComponent,
+  ],
+  imports: [
+    CommonModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    ReactiveFormsModule,
+    MatIconModule,
+    MatTooltipModule,
+  ],
   exports: [ConfigurableEnumDirective],
+  entryComponents: [
+    EditConfigurableEnumComponent,
+    DisplayConfigurableEnumComponent,
+  ],
 })
 export class ConfigurableEnumModule {
   constructor(

@@ -1,0 +1,17 @@
+<mat-form-field [formGroup]="formControl.parent">
+  <input
+    matInput
+    [formControlName]="formControlName"
+    [placeholder]="label"
+    [title]="label"
+  />
+  <mat-error *ngIf="formControl.errors?.pattern">
+    Only numbers are allowed
+  </mat-error>
+  <mat-error *ngIf="formControl.errors?.max">
+    Must be equal or smaller 100 (%)
+  </mat-error>
+  <mat-error *ngIf="formControl.errors?.required">
+    This field is required
+  </mat-error>
+</mat-form-field>

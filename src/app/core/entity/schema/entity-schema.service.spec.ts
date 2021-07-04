@@ -15,10 +15,11 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from "../entity";
+import { Entity } from "../model/entity";
 import { waitForAsync } from "@angular/core/testing";
 import { EntitySchemaService } from "./entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
+import { EntitySchemaDatatype } from "./entity-schema-datatype";
 
 describe("EntitySchemaService", () => {
   let entitySchemaService: EntitySchemaService;
@@ -172,7 +173,8 @@ describe("EntitySchemaService", () => {
       otherStuff: string;
     }
     class TestEntity extends Entity {
-      @DatabaseField({ dataType: "schema-embed", ext: Detail }) details: Detail;
+      @DatabaseField({ dataType: "schema-embed", additional: Detail })
+      details: Detail;
     }
     const id = "test1";
     const entity = new TestEntity(id);
@@ -189,5 +191,48 @@ describe("EntitySchemaService", () => {
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
     expect(rawData.details.month).toEqual("2020-01");
     expect(rawData.details.otherStuff).toBeUndefined();
+  });
+
+  it("should return the directly defined component name for viewing and editing a property", () => {
+    class Test extends Entity {
+      @DatabaseField({
+        dataType: "month",
+        viewComponent: "DisplayDate",
+        editComponent: "EditDate",
+      })
+      month: Date;
+    }
+
+    const viewComponent = entitySchemaService.getComponent(
+      Test.schema.get("month"),
+      "view"
+    );
+    const editComponent = entitySchemaService.getComponent(
+      Test.schema.get("month"),
+      "edit"
+    );
+
+    expect(viewComponent).toEqual("DisplayDate");
+    expect(editComponent).toEqual("EditDate");
+  });
+
+  it("should return the display component of the datatype if no other is defined", () => {
+    const testDatatype: EntitySchemaDatatype = {
+      name: "test-datatype",
+      viewComponent: "DisplayText",
+      transformToDatabaseFormat: () => null,
+      transformToObjectFormat: () => null,
+    };
+    entitySchemaService.registerSchemaDatatype(testDatatype);
+    class Test extends Entity {
+      @DatabaseField({ dataType: "test-datatype" }) stringProperty: string;
+    }
+
+    const displayComponent = entitySchemaService.getComponent(
+      Test.schema.get("stringProperty"),
+      "view"
+    );
+
+    expect(displayComponent).toEqual("DisplayText");
   });
 });

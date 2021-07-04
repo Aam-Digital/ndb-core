@@ -1,4 +1,4 @@
-import { Entity } from "../entity/entity";
+import { Entity } from "../entity/model/entity";
 import { DatabaseField } from "../entity/database-field.decorator";
 import { DatabaseEntity } from "../entity/database-entity.decorator";
 
