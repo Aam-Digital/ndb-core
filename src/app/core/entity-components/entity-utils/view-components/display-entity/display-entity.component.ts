@@ -28,15 +28,17 @@ export class DisplayEntityComponent extends ViewComponent implements OnInit {
 
   async onInitFromDynamicConfig(config: ViewPropertyConfig) {
     super.onInitFromDynamicConfig(config);
-    const type =
-      config.config || this.entity.getSchema().get(this.property).additional;
-    const entityConstructor = ENTITY_MAP.get(type);
-    if (!entityConstructor) {
-      throw new Error(`Could not find type ${type} in ENTITY_MAP`);
+    if (this.entity[this.property]) {
+      const type =
+        config.config || this.entity.getSchema().get(this.property).additional;
+      const entityConstructor = ENTITY_MAP.get(type);
+      if (!entityConstructor) {
+        throw new Error(`Could not find type ${type} in ENTITY_MAP`);
+      }
+      this.entityToDisplay = await this.entityMapper
+        .load(entityConstructor, this.entity[this.property])
+        .catch(() => undefined);
+      this.ngOnInit();
     }
-    this.entityToDisplay = await this.entityMapper
-      .load(entityConstructor, this.entity[this.property])
-      .catch(() => null);
-    this.ngOnInit();
   }
 }
