@@ -7,7 +7,7 @@
                 "link": "/"
             },
             {
-                "name": "Kinder",
+                "name": "Schüler:innen",
                 "icon": "child",
                 "link": "/child"
             },
@@ -42,7 +42,7 @@
                 "link": "/admin"
             },
             {
-                "name": "Benutzer",
+                "name": "Benutzer:innen",
                 "icon": "user",
                 "link": "/users"
             },
@@ -78,7 +78,7 @@
         },
         {
             "id": "CHILD_TALK",
-            "label": "Gespräch mit Kind"
+            "label": "Gespräch mit dem Kind"
         },
         {
             "id": "INCIDENT",
@@ -99,15 +99,15 @@
         },
         {
             "id": "COACHING_TALK",
-            "label": "gespräch mit Coaching-Lehrer"
+            "label": "Gespräch mit Coaching-Lehrer:in"
         },
         {
             "id": "PEER_TALK",
-            "label": "Gespräch mit gleichaltrigen"
+            "label": "Gespräch mit Gleichaltrigen"
         },
         {
             "id": "NEIGHBOUR_TALK",
-            "label": "Gespräch mit Nachbarn"
+            "label": "Gespräch mit Nachbar:innen"
         },
         {
             "id": "GUARDIAN_MEETING",
@@ -117,7 +117,7 @@
         },
         {
             "id": "CHILDREN_MEETING",
-            "label": "Treffen der Kinder",
+            "label": "Treffen der Schüler:innen",
             "color": "#E1F5FE",
             "isMeeting": true
         },
@@ -161,7 +161,7 @@
         },
         {
             "id": "LIFE_SKILLS",
-            "label": "Life Skills Workshop",
+            "label": "Life-Skills-Workshop",
             "color": "#E1F5FE",
             "isMeeting": true
         }
@@ -191,7 +191,7 @@
         {
             "id": "HOLIDAY",
             "shortName": "H",
-            "label": "Ferien",
+            "label": "In Ferien",
             "style": "attendance-H",
             "countAs": "IGNORE"
         },
@@ -250,23 +250,23 @@
     "enum:rating-answer": [
         {
             "id": "noAnswerPossible",
-            "label": "keine Antwort möglich"
+            "label": "Keine Antwort möglich"
         },
         {
             "id": "notTrueAtAll",
-            "label": "trifft gar nicht zu"
+            "label": "Trifft gar nicht zu"
         },
         {
             "id": "rarelyTrue",
-            "label": "trifft selten zu"
+            "label": "Trifft selten zu"
         },
         {
             "id": "usuallyTrue",
-            "label": "trifft für gewöhnlich zu"
+            "label": "Trifft für gewöhnlich zu"
         },
         {
             "id": "absolutelyTrue",
-            "label": "trifft voll zu"
+            "label": "Trifft voll zu"
         }
     ],
     "view:": {
@@ -348,19 +348,19 @@
                 },
                 {
                     "component": "DisplayUsers",
-                    "title": "Autoren",
+                    "title": "Ersteller:innen",
                     "id": "authors"
                 },
                 {
                     "component": "ChildBlockList",
-                    "title": "Kinder",
+                    "title": "Schüler:innen",
                     "id": "children",
                     "noSorting": true
                 }
             ],
             "columnGroup": {
                 "default": "Standard",
-                "mobile": "Mobilgerät",
+                "mobile": "Mobile Ansicht",
                 "groups": [
                     {
                         "name": "Standard",
@@ -373,7 +373,7 @@
                         ]
                     },
                     {
-                        "name": "Mobilgerät",
+                        "name": "Mobile Ansicht",
                         "columns": [
                             "date",
                             "subject",
@@ -435,7 +435,7 @@
                 },
                 {
                     "component": "DisplayText",
-                    "title": "Medium",
+                    "title": "Sprache",
                     "id": "medium"
                 },
                 {
@@ -493,7 +493,7 @@
                                         {
                                             "input": "text",
                                             "id": "medium",
-                                            "placeholder": "Medium"
+                                            "placeholder": "Sprache"
                                         }
                                     ],
                                     [
@@ -565,7 +565,7 @@
                     ]
                 },
                 {
-                    "title": "Schüler",
+                    "title": "Schüler:innen",
                     "components": [
                         {
                             "title": "",
@@ -580,7 +580,7 @@
     "view:child": {
         "component": "ChildrenList",
         "config": {
-            "title": "Liste der Kinder",
+            "title": "Liste der Schüler:innen",
             "columns": [
                 {
                     "component": "DisplayText",
@@ -729,7 +729,7 @@
             ],
             "columnGroup": {
                 "default": "School Info",
-                "mobile": "Mobilgerät",
+                "mobile": "Mobile Ansicht",
                 "groups": [
                     {
                         "name": "Basisinformationen",
@@ -793,7 +793,7 @@
                         ]
                     },
                     {
-                        "name": "Mobilgerät",
+                        "name": "Mobile Ansicht",
                         "columns": [
                             "projectNumber",
                             "name",
@@ -808,9 +808,9 @@
                     "id": "isActive",
                     "type": "boolean",
                     "default": "true",
-                    "true": "Aktive Kinder",
-                    "false": "Inaktive Kinder",
-                    "all": "Alle Kinder"
+                    "true": "Aktive Schüler:innen",
+                    "false": "Inaktive Schüler:innen",
+                    "all": "Alle Schüler:innen"
                 },
                 {
                     "id": "center",
@@ -822,7 +822,7 @@
                 {
                     "id": "school",
                     "type": "prebuilt",
-                    "label": "School",
+                    "label": "Schule",
                     "display": "dropdown"
                 }
             ]
@@ -1105,13 +1105,13 @@
                             }
                         },
                         {
-                            "title": "Kontrolle von Größe und Gewicht",
+                            "title": "Größe und Gewicht",
                             "component": "HealthCheckup"
                         }
                     ]
                 },
                 {
-                    "title": "Lehr- und Lernmittel",
+                    "title": "Lernmaterial",
                     "components": [
                         {
                             "title": "",
@@ -1150,7 +1150,7 @@
                                     "label": "Interagiert",
                                     "inputType": "configurable_enum",
                                     "enumId": "rating-answer",
-                                    "tooltip": "Das Kind interagiert im Unterricht mit anderen Kindern."
+                                    "tooltip": "Das Kind interagiert im Unterricht mit anderen Schüler:innen."
                                 },
                                 {
                                     "name": "doesHomework",
@@ -1217,21 +1217,21 @@
                                         {
                                             "input": "datepicker",
                                             "id": "dropoutDate",
-                                            "placeholder": "Austrittsdatum"
+                                            "placeholder": "Datum"
                                         }
                                     ],
                                     [
                                         {
                                             "input": "text",
                                             "id": "dropoutType",
-                                            "placeholder": "Austrittsart"
+                                            "placeholder": "Grund"
                                         }
                                     ],
                                     [
                                         {
                                             "input": "text",
                                             "id": "dropoutRemarks",
-                                            "placeholder": "Austrittsbemerkungen"
+                                            "placeholder": "Bemerkungen"
                                         }
                                     ]
                                 ]
@@ -1286,7 +1286,7 @@
             "entity": "RecurringActivity",
             "panels": [
                 {
-                    "title": "Activität",
+                    "title": "Aktivität",
                     "components": [
                         {
                             "component": "Form",
@@ -1312,8 +1312,8 @@
                                             "input": "entity-select",
                                             "id": "assignedTo",
                                             "entityType": "User",
-                                            "placeholder": "Koordinator hinzufügen",
-                                            "label": "Koordinator(en)"
+                                            "placeholder": "Koordinator:in hinzufügen",
+                                            "label": "Koordinator:innen"
                                         }
                                     ]
                                 ]
@@ -1322,7 +1322,7 @@
                     ]
                 },
                 {
-                    "title": "Teilnehmer",
+                    "title": "Teilnehmer:innen",
                     "components": [
                         {
                             "component": "ActivityParticipantsSection"
@@ -1367,7 +1367,7 @@
                             "label": "Alle Schulen",
                             "aggregations": [
                                 {
-                                    "label": "Kinder auf einer Schule",
+                                    "label": " Auf einer Schule",
                                     "query": ":getRelated(ChildSchoolRelation, schoolId)[*isActive=true].childId:unique"
                                 },
                                 {
@@ -1376,7 +1376,7 @@
                                 },
                                 {
                                     "query": "[*privateSchool!=true]:getRelated(ChildSchoolRelation, schoolId)[*isActive=true].childId:addPrefix(Child):unique:toEntities",
-                                    "label": "Kinder an einer staatlichen Schule",
+                                    "label": "Schüler:innen an einer staatlichen Schule",
                                     "aggregations": [
                                         {
                                             "label": "Jungen auf einer staatlichen Schule",
@@ -1394,7 +1394,7 @@
                                 },
                                 {
                                     "query": "[*privateSchool=true]:getRelated(ChildSchoolRelation, schoolId)[*isActive=true].childId:addPrefix(Child):unique:toEntities",
-                                    "label": "Kinder auf einer Privatschule",
+                                    "label": "Schüler:innen auf einer Privatschule",
                                     "aggregations": [
                                         {
                                             "label": "Jungen auf einer Privatschule",
@@ -1426,7 +1426,7 @@
                                         "gender",
                                         "religion"
                                     ],
-                                    "label": "Teilnehmer"
+                                    "label": "Teilnehmer:innen"
                                 }
                             ]
                         }

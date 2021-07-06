@@ -19,9 +19,9 @@ export class DemoProgressDashboardWidgetGeneratorService extends DemoDataGenerat
   }
 
   private readonly DEMO_TASKS = [
-    "Clubs visited",
-    "Schools checked",
-    "Government Officials met",
+    $localize`:Example for demo task in the progress wdiget:Clubs visited`,
+    $localize`:Example for demo task in the progress wdiget:Schools checked`,
+    $localize`:Example for demo task in the progress wdiget:Government Officials met`,
   ];
 
   constructor() {
