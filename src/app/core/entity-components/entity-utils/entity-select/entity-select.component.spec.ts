@@ -70,8 +70,9 @@ describe("EntitySelectComponent", () => {
   }));
 
   it("should suggest all entities after an initial load", (done) => {
-    component.filteredEntities.subscribe((next) => {
+    const subscription = component.filteredEntities.subscribe((next) => {
       expect(next.length).toBe(testUsers.length);
+      subscription.unsubscribe();
       done();
     });
     component.entityType = User.ENTITY_TYPE;
@@ -145,10 +146,11 @@ describe("EntitySelectComponent", () => {
     component.loading.next(false);
     let iterations = 0;
     let expectedLength = 4;
-    component.filteredEntities.subscribe((next) => {
+    const subscription = component.filteredEntities.subscribe((next) => {
       iterations++;
       expect(next.length).toEqual(expectedLength);
       if (iterations === 4) {
+        subscription.unsubscribe();
         done();
       }
     });
