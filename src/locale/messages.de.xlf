@@ -63,7 +63,7 @@
       </trans-unit>
       <trans-unit id="dd9e271c1b77197013f8e72933162b08df7e058d" datatype="html">
         <source>{VAR_PLURAL, plural, one {participant} other {participants}}</source>
-        <target state="translated">{VAR_PLURAL, plural, 1= {Teilnehmer} other {Teilnehmer}}</target>
+        <target state="translated">{VAR_PLURAL, plural, 1= {Teilnehmer:in} other {Teilnehmer:innen}}</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-card/activity-card.component.html</context>
           <context context-type="linenumber">27</context>
@@ -107,7 +107,7 @@
       </trans-unit>
       <trans-unit id="303cf04ca5c12a60d676b6a00ceaf852799c1af4" datatype="html">
         <source>Participants</source>
-        <target state="translated">Teilnehmer</target>
+        <target state="translated">Teilnehmer:innen</target>
         <note priority="1" from="description">Participants of a school-activity</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-participants-section/activity-participants-section.component.html</context>
@@ -120,7 +120,7 @@
       </trans-unit>
       <trans-unit id="781e08965bad0a6de4dc79d832da4ec55bcd3d85" datatype="html">
         <source>Add participant ...</source>
-        <target state="translated">Teilnehmer hinzufügen …</target>
+        <target state="translated">Teilnehmer:innen hinzufügen …</target>
         <note priority="1" from="description">Add a participant of a school-activity</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-participants-section/activity-participants-section.component.html</context>
@@ -210,13 +210,23 @@
         <note priority="1" from="description">Button to go to the previous child</note>
         <note priority="1" from="meaning">Back-button</note>
       </trans-unit>
+      <trans-unit id="871ad34321b1517e1707bd0f05d8ba7c122d34ed" datatype="html">
+        <source> Skip </source>
+        <target state="translated"> Überspringen </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
+          <context context-type="linenumber">58,63</context>
+        </context-group>
+        <note priority="1" from="description">Button to skip a step in the roll call</note>
+        <note priority="1" from="meaning">Skip-Button</note>
+      </trans-unit>
       <trans-unit id="3ea51cf415feffef55e82c7b60e9486055837661" datatype="html">
         <source>Finish</source>
         <target>Fertig</target>
         <note priority="1" from="description">Finish entering the attendance of a child</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
-          <context context-type="linenumber">62</context>
+          <context context-type="linenumber">63</context>
         </context-group>
       </trans-unit>
       <trans-unit id="896458a165a1aede12e3b6ce0db7a9f0274b2f55" datatype="html">
@@ -225,7 +235,7 @@
         <note priority="1" from="description">Abort entering the attendance of a child</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
-          <context context-type="linenumber">63</context>
+          <context context-type="linenumber">64</context>
         </context-group>
       </trans-unit>
       <trans-unit id="a0c68b92e83d90f858d094011f3fdea3704a25f8" datatype="html">
@@ -260,7 +270,7 @@
       </trans-unit>
       <trans-unit id="abdae1e3bafb82fee915a4fd59e1c0f10fc4bbc9" datatype="html">
         <source> All excused (out of <x id="INTERPOLATION" equiv-text="{{selectedEvent.children.length}}"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other {participants} }"/>) </source>
-        <target state="translated"> Alle entschuldigt (von <x id="INTERPOLATION" equiv-text="{{selectedEvent.children.length}}"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {Teilnehmern} other {Teilnehmern} }"/>) </target>
+        <target state="translated"> Alle entschuldigt (von <x id="INTERPOLATION" equiv-text="{{selectedEvent.children.length}}"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {Teilnehmer:in} other {Teilnehmer:innen} }"/>) </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
           <context context-type="linenumber">43,46</context>
@@ -270,7 +280,7 @@
       </trans-unit>
       <trans-unit id="07ac11d423e4809d0c4b11c7cdbf72ada5d94909" datatype="html">
         <source>{VAR_PLURAL, plural, one {participant} other {participants}}</source>
-        <target state="translated">{VAR_PLURAL, plural, 1= {Teilnehmer} other {Teilnehmer}}</target>
+        <target state="translated">{VAR_PLURAL, plural, 1= {Teilnehmender:in} other {Teilnehmer:innen}}</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
           <context context-type="linenumber">45</context>
@@ -282,7 +292,7 @@
       </trans-unit>
       <trans-unit id="0dc97840c4fe5e03dfb822aed93db7b7bcc45b9b" datatype="html">
         <source> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.average | percent: &quot;1.0-0&quot; }}"/> attended (of <x id="INTERPOLATION_1" equiv-text="{{ selectedEvent.children.length }}"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other {participants} }"/>) </source>
-        <target state="translated"> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.average | percent: &quot;1.0-0&quot; }}"/> haben teilgenommen (von <x id="INTERPOLATION_1" equiv-text="{{ selectedEvent.children.length }}"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, 1= {Teilnehmer} other {Teilnehmern} }"/>) </target>
+        <target state="translated"> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.average | percent: &quot;1.0-0&quot; }}"/> haben teilgenommen (von <x id="INTERPOLATION_1" equiv-text="{{ selectedEvent.children.length }}"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, 1= {Teilnehmende/r} other {Teilnehmern} }"/>) </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
           <context context-type="linenumber">47,51</context>
@@ -290,7 +300,7 @@
       </trans-unit>
       <trans-unit id="812462e20157a95f89d505f85909d142ff78406f" datatype="html">
         <source> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.excludedUnknown }}"/> <x id="ICU" equiv-text="{ selectedEventStats.excludedUnknown, plural, one {participant} other {participants} }"/> without recorded status </source>
-        <target state="translated"> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.unknownStatus }}"/> <x id="ICU" equiv-text="{ selectedEventStats.unknownStatus, plural, 1={Teilnehmer} other {Teilnehmer} }"/> ohne aufgenommenen Status </target>
+        <target state="translated"> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.unknownStatus }}"/> <x id="ICU" equiv-text="{ selectedEventStats.unknownStatus, plural, 1={Teilnehmer:in} other {Teilnehmer:innen} }"/> ohne aufgenommenen Status </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
           <context context-type="linenumber">56,60</context>
@@ -382,6 +392,16 @@
           <context context-type="linenumber">33</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="94094b72fedae943fdba9033672550b44a07aa78" datatype="html">
+        <source>Attendance Register</source>
+        <target state="new">Anwesenheitsübersicht</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+        <note priority="1" from="description">The heading for the view showing the Attendance Register</note>
+        <note priority="1" from="meaning">Heading for Attendance Register</note>
+      </trans-unit>
       <trans-unit id="ec824511986aeece23bcb0b13f7d979d7d55285a" datatype="html">
         <source> Attendance data can be seen and edited in an individual's details as well as here across groups.
 </source>
@@ -413,7 +433,7 @@
       </trans-unit>
       <trans-unit id="6a5b087cd3439c25b1b63a0e298c4617b606bc36" datatype="html">
         <source> Select a group of children and easily mark their attendance one by one. This works well on a smartphone to record attendance on site. </source>
-        <target> Auswählen einer Gruppe von Kindern, um einfach die Anwesenheit einzeln aufzuzeichnen. Gedacht für Smartphones vor Ort.</target>
+        <target> Auswählen einer Gruppe von Kindern, um die Anwesenheit einzeln aufzuzeichnen.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html</context>
           <context context-type="linenumber">21,23</context>
@@ -449,7 +469,7 @@
       </trans-unit>
       <trans-unit id="e67d37aad59c2809acd6f699f50df0706dae0107" datatype="html">
         <source> Enter attendance numbers for a whole month in a table format for a group of children. This allows you to quickly record attendance that was collected on paper. However, as you only enter a monthly total for each child you cannot see attendance in the day-wise calender. </source>
-        <target> Die Anwesenheit für einen ganzen Monat kann im Tabellen-Format eingegeben werden. Das ermöglicht es, einfach Anwesenheitsdaten einzutragen, die auf Papier vorliegen. Da für jedes Kind die monatliche Anwesenheit nur insgesamt eingetragen wird, kann sie nicht tagweise angezeigt werden.</target>
+        <target> Die Anwesenheit für einen ganzen Monat kann im Tabellenformat eingegeben werden. Das ermöglicht es etwa, Anwesenheitsdaten einzutragen, die auf Papier vorliegen. Da für jedes Kind die monatliche Anwesenheit nur insgesamt eingetragen wird, kann sie nicht tageweise angezeigt werden.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html</context>
           <context context-type="linenumber">47,51</context>
@@ -485,7 +505,7 @@
       </trans-unit>
       <trans-unit id="d3d7fe9ce278ed8481ef61ab70e7ade3cb87c058" datatype="html">
         <source> Analyse and compare attendance for all children. To see an individual's attendance history you can open the child's overall details page. </source>
-        <target> Analysen und Vergleiche von Anwesenheiten für alle Kinder. Die Detail-Seite der Kinder gibt Auskunft über die individuelle Anwesenheit. </target>
+        <target> Analysen und Vergleiche von Anwesenheiten für alle Kinder. Die Detailseite der Kinder gibt Auskunft über die Anwesenheit des jeweiligen Kindes. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html</context>
           <context context-type="linenumber">76,78</context>
@@ -503,7 +523,7 @@
       </trans-unit>
       <trans-unit id="3e746368c1b5b659192c989239efd445213af9b6" datatype="html">
         <source>Students more than one day absent <x id="START_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;em>"/><x id="INTERPOLATION" equiv-text="{{ periodLabel }}"/><x id="CLOSE_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;/em>"/></source>
-        <target>Kinder, die <x id="START_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;em>"/><x id="INTERPOLATION" equiv-text="{{ periodLabel }}"/><x id="CLOSE_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;/em>"/> mehr als einen Tag abwesend wahren</target>
+        <target>Kinder, die <x id="START_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;em>"/><x id="INTERPOLATION" equiv-text="{{ periodLabel }}"/><x id="CLOSE_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;/em>"/> mehr als einen Tag abwesend waren</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component.html</context>
           <context context-type="linenumber">9,11</context>
@@ -605,7 +625,7 @@
       </trans-unit>
       <trans-unit id="4158424023747658445" datatype="html">
         <source>Material</source>
-        <target>Materialien</target>
+        <target>Material</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/educational-material/educational-material-component/educational-material.component.ts</context>
           <context context-type="linenumber">32</context>
@@ -917,7 +937,7 @@
       </trans-unit>
       <trans-unit id="f872297e2d39a29cddb02ace45a40f87f4f618df" datatype="html">
         <source> Children <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;subtitle-highlight&quot;>"/>without<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/> recent report </source>
-        <target> Kinder <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;subtitle-highlight&quot;>"/>ohne<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/> neuen Berichtseintrag </target>
+        <target> Kinder <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;subtitle-highlight&quot;>"/>ohne<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/> neuen Eintrag </target>
         <note priority="1" from="description">Subtitle informing the user that these are the children without recent reports</note>
         <note priority="1" from="meaning">Subtitle</note>
         <context-group purpose="location">
@@ -954,7 +974,7 @@
       </trans-unit>
       <trans-unit id="b7f79581b494b3c992f0af5fc0acc6e002d30432" datatype="html">
         <source> Children <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;subtitle-highlight&quot;>"/>with<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/> recent report </source>
-        <target> Kinder <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;subtitle-highlight&quot;>"/>mit<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/> neuem Berichtseintrag </target>
+        <target> Kinder <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;subtitle-highlight&quot;>"/>mit<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/> neuem Eintrag </target>
         <note priority="1" from="description">Subtitle informing the user that these are the children with recent reports</note>
         <note priority="1" from="meaning">Subtitle</note>
         <context-group purpose="location">
@@ -964,7 +984,7 @@
       </trans-unit>
       <trans-unit id="e00803aa5acd9594a3b54386905ec896341e76bd" datatype="html">
         <source> Go to Notes <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;fa fa-external-link-square&quot;>"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/></source>
-        <target> Zu den Notizen <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;fa fa-external-link-square&quot;>"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/></target>
+        <target> Zu den Einträgen <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;fa fa-external-link-square&quot;>"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/></target>
         <note priority="1" from="description">Link that will take the user to a list of notes</note>
         <note priority="1" from="meaning">Go to Notes Link</note>
         <context-group purpose="location">
@@ -1079,7 +1099,7 @@
       </trans-unit>
       <trans-unit id="ec3f853537ad707f8ce894ebd598335a40d787e0" datatype="html">
         <source>Add Author...</source>
-        <target state="translated">Autor hinzufügen … </target>
+        <target state="translated">Ersteller:in hinzufügen … </target>
         <note priority="1" from="description">placeholder when adding multiple authors</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
@@ -1088,7 +1108,7 @@
       </trans-unit>
       <trans-unit id="415f73cbdba5d09762df6c89878273c3aa6da51e" datatype="html">
         <source>Authors</source>
-        <target state="translated">Autoren</target>
+        <target state="translated">Ersteller:innen</target>
         <note priority="1" from="description">Authors of a note</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
@@ -1107,7 +1127,7 @@
       </trans-unit>
       <trans-unit id="7350eb960cd51aedbc7bb7f8bf89814947d2aa65" datatype="html">
         <source>Notes</source>
-        <target>Notizen</target>
+        <target>Bemerkungen</target>
         <note priority="1" from="description">Placeholder informing that this is textarea the actual note can be entered into</note>
         <note priority="1" from="meaning">Placeholder</note>
         <context-group purpose="location">
@@ -1117,7 +1137,7 @@
       </trans-unit>
       <trans-unit id="17714c20ad87372b7483534c5df5682526c00683" datatype="html">
         <source>Include events</source>
-        <target state="translated">Zeige auch events</target>
+        <target state="translated">Zeige auch wiederkehrende Aktivitäten</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/notes-manager/notes-manager.component.html</context>
           <context context-type="linenumber">8,14</context>
@@ -1731,7 +1751,7 @@
       </trans-unit>
       <trans-unit id="2852116050343159761" datatype="html">
         <source>SW</source>
-        <target>Author</target>
+        <target>Ersteller:in</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/notes-of-child/notes-of-child.component.ts</context>
           <context context-type="linenumber">53</context>
@@ -1775,7 +1795,7 @@
       </trans-unit>
       <trans-unit id="2aa8d0bbbeae1af451b244071ad7ae429692d80f" datatype="html">
         <source>{VAR_SELECT, select, true {at} false {}}</source>
-        <target state="translated">{VAR_PLURAL, plural, 1= {Teilnehmer} other {Teilnehmer}}</target>
+        <target state="translated">{VAR_PLURAL, plural, 1= {Teilnehmer:in} other {Teilnehmer:innen}}</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/previous-schools/previous-schools.component.html</context>
           <context context-type="linenumber">8,9</context>
@@ -2130,6 +2150,33 @@
           <context context-type="linenumber">116</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="6680431077518392028" datatype="html">
+        <source>Clubs visited</source>
+        <target state="translated">Schulpartnerschaften geschlossen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service.ts</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+        <note priority="1" from="description">Example for demo task in the progress wdiget</note>
+      </trans-unit>
+      <trans-unit id="5068770072034604941" datatype="html">
+        <source>Schools checked</source>
+        <target state="translated">Sponsoren geworben</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service.ts</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+        <note priority="1" from="description">Example for demo task in the progress wdiget</note>
+      </trans-unit>
+      <trans-unit id="6255187912631729238" datatype="html">
+        <source>Government Officials met</source>
+        <target state="translated">Treffen mit Regierungsmitgliedern</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service.ts</context>
+          <context context-type="linenumber">24</context>
+        </context-group>
+        <note priority="1" from="description">Example for demo task in the progress wdiget</note>
+      </trans-unit>
       <trans-unit id="9099121471164431783" datatype="html">
         <source>School</source>
         <target>Schule</target>
@@ -2190,7 +2237,7 @@
       </trans-unit>
       <trans-unit id="1669277742108379782" datatype="html">
         <source>Attended</source>
-        <target>Teilnehmer</target>
+        <target>Teilgenommen</target>
         <note priority="1" from="description">Percentage of people that attended an event</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.ts</context>
@@ -2257,7 +2304,7 @@
       </trans-unit>
       <trans-unit id="555959431673518236" datatype="html">
         <source>Talk with Child</source>
-        <target>Gespräch mit Kind</target>
+        <target>Gespräch mit dem Kind</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/default-config/default-interaction-types.ts</context>
           <context context-type="linenumber">18</context>
@@ -2302,7 +2349,7 @@
       </trans-unit>
       <trans-unit id="1966523612136411478" datatype="html">
         <source>Talk with Coaching Teacher</source>
-        <target>gespräch mit Coaching-Lehrer</target>
+        <target>gespräch mit Coaching-Lehrer:in</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/default-config/default-interaction-types.ts</context>
           <context context-type="linenumber">39</context>
@@ -2311,7 +2358,7 @@
       </trans-unit>
       <trans-unit id="453482581512100727" datatype="html">
         <source>Talk with Peer</source>
-        <target>Gespräch mit gleichaltrigen</target>
+        <target>Gespräch mit Gleichaltrigen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/default-config/default-interaction-types.ts</context>
           <context context-type="linenumber">43</context>
@@ -2320,7 +2367,7 @@
       </trans-unit>
       <trans-unit id="5867336081846400112" datatype="html">
         <source>Talk with Neighbours</source>
-        <target>Gespräch mit Nachbarn</target>
+        <target>Gespräch mit Nachbar:innen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/default-config/default-interaction-types.ts</context>
           <context context-type="linenumber">47</context>
@@ -2422,7 +2469,7 @@
       </trans-unit>
       <trans-unit id="2557534193403410843" datatype="html">
         <source>Life Skills Workshop</source>
-        <target>Life Skills Workshop</target>
+        <target>Life-Skills-Workshop</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/default-config/default-interaction-types.ts</context>
           <context context-type="linenumber">101</context>
@@ -2484,7 +2531,7 @@
       </trans-unit>
       <trans-unit id="a3f9c6977c14ba817b201212b8c093163700f7a8" datatype="html">
         <source> Adding new <x id="INTERPOLATION" equiv-text="{{ config?.entity }}"/></source>
-        <target> Neu <x id="INTERPOLATION" equiv-text="{{ config?.entity }}"/></target>
+        <target> Neuer Eintrag </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-details/entity-details.component.html</context>
           <context context-type="linenumber">35,36</context>
@@ -2666,7 +2713,7 @@
       </trans-unit>
       <trans-unit id="be8b19b9ce027b37eb4db8e226ea47fa906bc291" datatype="html">
         <source> (Showing <x id="INTERPOLATION" equiv-text="{{ entityDataSource.filteredData.length }}"/> entries) </source>
-        <target> (Zeige <x id="INTERPOLATION" equiv-text="{{ entityDataSource.filteredData.length }}"/> Einträge) </target>
+        <target> (<x id="INTERPOLATION" equiv-text="{{ entityDataSource.filteredData.length }}"/> Einträge vorhanden) </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-list/entity-list.component.html</context>
           <context context-type="linenumber">27,29</context>
@@ -3170,7 +3217,7 @@
       </trans-unit>
       <trans-unit id="a0aa334621492b0408578b0747e7b39030f010dd" datatype="html">
         <source>Please enter your username and password for your Nextcloud account. This will be used for photo uploads.</source>
-        <target>Bitte Benutzername und Passwort für den Nextcloud Account eingeben. Wird benötigt zum Foto-Upload</target>
+        <target>Bitte Benutzername und Passwort für den Nextcloud-Account eingeben. Wird benötigt zum Foto-Upload.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/webdav/cloud-file-service-user-settings/cloud-file-service-user-settings.component.html</context>
           <context context-type="linenumber">4,11</context>
@@ -3178,7 +3225,7 @@
       </trans-unit>
       <trans-unit id="697efb5f782539376a4125815dfdb53cda168e24" datatype="html">
         <source>Cloud Image Service User</source>
-        <target>Cloud Image Service Benutzer</target>
+        <target>Cloud-Image-Service-Benutzer</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/webdav/cloud-file-service-user-settings/cloud-file-service-user-settings.component.html</context>
           <context context-type="linenumber">15,21</context>
@@ -3187,7 +3234,7 @@
       </trans-unit>
       <trans-unit id="f1edde4a9c3eea5cfdb80b30ca7de9cc664711d1" datatype="html">
         <source>Cloud Image Service Password</source>
-        <target>Cloud Image Service Passwort</target>
+        <target>Cloud-Image-Service-Passwort</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/webdav/cloud-file-service-user-settings/cloud-file-service-user-settings.component.html</context>
           <context context-type="linenumber">26,28</context>
@@ -3196,7 +3243,7 @@
       </trans-unit>
       <trans-unit id="2f08eaf749cc4f9cc5597df669aa4ef506574727" datatype="html">
         <source> Couldn't connect to the cloud service. Please check your username and password or try again later. </source>
-        <target> verbindung zum Cloud Service fehlgeschlagen. Bitte Nutzername und Passwort überprüfen oder später nochmal probieren. </target>
+        <target> Verbindung zum Cloud-Service fehlgeschlagen. Bitte Nutzername und Passwort überprüfen oder später nochmal probieren. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/webdav/cloud-file-service-user-settings/cloud-file-service-user-settings.component.html</context>
           <context context-type="linenumber">29,34</context>
@@ -3204,7 +3251,7 @@
       </trans-unit>
       <trans-unit id="3fde93eb215129dec301de4167bbd5942b71dd3a" datatype="html">
         <source>Please enter your password for this app, so your cloud service password above will then be encrypted and stored for future uses.</source>
-        <target>Bitte Paswort für diese App eingeben, sodass das Cloud Service Passwort oben verschlüsselt später verwendet werden kann.</target>
+        <target>Bitte Passwort für diese App eingeben, sodass das obige Cloud-Service-Passwort verschlüsselt später verwendet werden kann.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/webdav/cloud-file-service-user-settings/cloud-file-service-user-settings.component.html</context>
           <context context-type="linenumber">37,44</context>
@@ -3212,7 +3259,7 @@
       </trans-unit>
       <trans-unit id="3bcbc3c8283886202d0174f65658a8174c1cdd93" datatype="html">
         <source> The password you entered is not correct. Please enter your user account password for this app here (not your password for the cloud service above). </source>
-        <target> Das eingegebene Passwort stimmt nicht. Bitte das Benutzer-Passwort für diese App eingeben (nicht das Passwort für den Cloud Service oben). </target>
+        <target> Das eingegebene Passwort stimmt nicht. Bitte das Benutzer-Passwort für diese App eingeben (nicht das Passwort für den obigen Cloud-Service). </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/webdav/cloud-file-service-user-settings/cloud-file-service-user-settings.component.html</context>
           <context context-type="linenumber">52,58</context>
@@ -3229,7 +3276,7 @@
       </trans-unit>
       <trans-unit id="8084830282937656857" datatype="html">
         <source>Successfully saved cloud service credentials.</source>
-        <target>Cloud-Service Anmeldetaten erfolgreich gesichert.</target>
+        <target>Anmeldedaten für den Cloud-Service erfolgreich gespeichtert.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/webdav/cloud-file-service-user-settings/cloud-file-service-user-settings.component.ts</context>
           <context context-type="linenumber">81,80</context>
@@ -3257,7 +3304,7 @@
       </trans-unit>
       <trans-unit id="4db47817ae80f9e77c9166a80d022a9510c5750e" datatype="html">
         <source> Reports have not been configured for you yet. </source>
-        <target state="translated"> Reports wurden noch nicht konfiguriert. </target>
+        <target state="translated"> Die Berichte wurden noch nicht konfiguriert. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/reporting.component.html</context>
           <context context-type="linenumber">3,5</context>
@@ -3265,7 +3312,7 @@
       </trans-unit>
       <trans-unit id="0317506013ba7114515aad25c35fa6f2ab38f376" datatype="html">
         <source>Ask for a setup call</source>
-        <target state="translated">Setup anfordern</target>
+        <target state="translated">Um einen Termin zur Hilfe bei der Einrichtung bitten</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/reporting.component.html</context>
           <context context-type="linenumber">5,8</context>
@@ -3273,7 +3320,7 @@
       </trans-unit>
       <trans-unit id="cbcd1ad773b351576ba9315c392fa14085a1c51d" datatype="html">
         <source>Select Report</source>
-        <target state="translated">Report auswählen</target>
+        <target state="translated">Einen Bericht auswählen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/reporting.component.html</context>
           <context context-type="linenumber">12,13</context>
@@ -3314,7 +3361,7 @@
       </trans-unit>
       <trans-unit id="1126ca3eba3f1ff39bf687d6f03b39302185309d" datatype="html">
         <source> Download report </source>
-        <target state="translated"> Report herunterladen </target>
+        <target state="translated"> Bericht herunterladen </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/reporting.component.html</context>
           <context context-type="linenumber">47,52</context>
