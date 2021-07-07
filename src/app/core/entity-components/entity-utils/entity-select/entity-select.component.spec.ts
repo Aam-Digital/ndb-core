@@ -171,12 +171,12 @@ describe("EntitySelectComponent", () => {
     const selectedUser = testUsers[1];
     let iteration = 0;
 
-    const subscription = component.filteredEntities.subscribe((next) => {
+    const subscription = component.filteredEntities.subscribe((autocompleteEntities) => {
       iteration++;
       if (iteration === 1) {
-        expect(next).not.toContain(selectedUser);
+        expect(autocompleteEntities).not.toContain(selectedUser);
       } else if (iteration === 2) {
-        expect(next).toContain(selectedUser);
+        expect(autocompleteEntities).toContain(selectedUser);
         subscription.unsubscribe();
         done();
       }
