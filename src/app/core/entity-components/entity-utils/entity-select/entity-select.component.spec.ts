@@ -156,7 +156,7 @@ describe("EntitySelectComponent", () => {
         done();
       }
     });
-    expectedLength = 4;
+    expectedLength;
     component.formControl.setValue(null);
     expectedLength = 3;
     component.formControl.setValue("A");
@@ -171,16 +171,18 @@ describe("EntitySelectComponent", () => {
     const selectedUser = testUsers[1];
     let iteration = 0;
 
-    const subscription = component.filteredEntities.subscribe((autocompleteEntities) => {
-      iteration++;
-      if (iteration === 1) {
-        expect(autocompleteEntities).not.toContain(selectedUser);
-      } else if (iteration === 2) {
-        expect(autocompleteEntities).toContain(selectedUser);
-        subscription.unsubscribe();
-        done();
+    const subscription = component.filteredEntities.subscribe(
+      (autocompleteEntities) => {
+        iteration++;
+        if (iteration === 1) {
+          expect(autocompleteEntities).not.toContain(selectedUser);
+        } else if (iteration === 2) {
+          expect(autocompleteEntities).toContain(selectedUser);
+          subscription.unsubscribe();
+          done();
+        }
       }
-    });
+    );
 
     component.selectEntity(selectedUser);
     component.unselectEntity(selectedUser);
