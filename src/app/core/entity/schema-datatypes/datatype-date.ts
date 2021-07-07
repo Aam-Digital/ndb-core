@@ -29,6 +29,8 @@ import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
  */
 export const dateEntitySchemaDatatype: EntitySchemaDatatype = {
   name: "date",
+  viewComponent: "DisplayDate",
+  editComponent: "EditDate",
 
   transformToDatabaseFormat: (value: Date) => {
     // TODO: should date format be saved as date object or as string "YYYY-mm-dd"?

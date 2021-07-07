@@ -18,7 +18,7 @@
 import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { EntitySchemaService } from "../schema/entity-schema.service";
-import { EntityConstructor } from "../entity";
+import { EntityConstructor } from "../model/entity";
 
 /**
  * Datatype for the EntitySchemaService transforming values of complex objects recursively.
@@ -33,7 +33,7 @@ import { EntityConstructor } from "../entity";
  *
  * Requires the class constructor as extension field in the schema field annotation:
  *
- * `@DatabaseField({ dataType: 'schema-embed', ext: MyClass })`
+ * `@DatabaseField({ dataType: 'schema-embed', additional: MyClass })`
  */
 export const schemaEmbedEntitySchemaDatatype: EntitySchemaDatatype = {
   name: "schema-embed",
@@ -45,7 +45,7 @@ export const schemaEmbedEntitySchemaDatatype: EntitySchemaDatatype = {
   ) => {
     return schemaService.transformEntityToDatabaseFormat(
       value,
-      schemaField.ext.schema
+      schemaField.additional.schema
     );
   },
 
@@ -54,7 +54,7 @@ export const schemaEmbedEntitySchemaDatatype: EntitySchemaDatatype = {
     schemaField: EntitySchemaField,
     schemaService: EntitySchemaService
   ) => {
-    const instance = new (schemaField.ext as EntityConstructor<any>)();
+    const instance = new (schemaField.additional as EntityConstructor<any>)();
     schemaService.loadDataIntoEntity(instance, value);
     return instance;
   },

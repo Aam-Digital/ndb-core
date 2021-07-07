@@ -5,38 +5,41 @@ import { KeysPipe } from "./keys-pipe/keys.pipe";
 import { MatTableModule } from "@angular/material/table";
 import { MatSortModule } from "@angular/material/sort";
 import { MatPaginatorModule } from "@angular/material/paginator";
-import { MatInputModule } from "@angular/material/input";
-import { MatDatepickerModule } from "@angular/material/datepicker";
-import { MatSelectModule } from "@angular/material/select";
-import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatIconModule } from "@angular/material/icon";
-import { FormDialogModule } from "../../form-dialog/form-dialog.module";
 import { EntityModule } from "../../entity/entity.module";
 import { AlertsModule } from "../../alerts/alerts.module";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatButtonModule } from "@angular/material/button";
-import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enum.module";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { ViewModule } from "../../view/view.module";
+import { ReactiveFormsModule } from "@angular/forms";
+import { ConfirmationDialogModule } from "../../confirmation-dialog/confirmation-dialog.module";
+import { EntityDetailsModule } from "../entity-details/entity-details.module";
+import { EntityFormModule } from "../entity-form/entity-form.module";
+import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { MatToolbarModule } from "@angular/material/toolbar";
 
 @NgModule({
-  declarations: [EntitySubrecordComponent, KeysPipe],
+  declarations: [EntitySubrecordComponent, KeysPipe, ListPaginatorComponent],
   imports: [
     CommonModule,
     AlertsModule,
     MatSnackBarModule,
-    FormDialogModule,
     EntityModule,
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
-    MatInputModule,
-    MatDatepickerModule,
-    MatSelectModule,
-    MatAutocompleteModule,
-    MatIconModule,
-    MatButtonModule,
-    ConfigurableEnumModule,
+    ViewModule,
+    ReactiveFormsModule,
+    ConfirmationDialogModule,
     MatTooltipModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSlideToggleModule,
+    MatToolbarModule,
+    EntityDetailsModule,
+    EntityFormModule,
   ],
   exports: [EntitySubrecordComponent, KeysPipe],
 })

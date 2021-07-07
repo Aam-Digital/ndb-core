@@ -3,7 +3,7 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { FormDialogService } from "./form-dialog.service";
 import { Component, EventEmitter, Input } from "@angular/core";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { Entity } from "../entity/entity";
+import { Entity } from "../entity/model/entity";
 import { ShowsEntity } from "./shows-entity.interface";
 import { FormDialogModule } from "./form-dialog.module";
 import { FormDialogWrapperComponent } from "./form-dialog-wrapper/form-dialog-wrapper.component";

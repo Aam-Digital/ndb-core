@@ -25,11 +25,8 @@ describe("SchoolsListComponent", () => {
 
   const routeData: EntityListConfig = {
     title: "Schools List",
-    columns: [
-      { component: "DisplayText", title: "Name", id: "name" },
-      { component: "DisplayText", title: "Up to class", id: "upToClass" },
-    ],
-    columnGroup: {
+    columns: [],
+    columnGroups: {
       default: "School Info",
       mobile: "School Info",
       groups: [

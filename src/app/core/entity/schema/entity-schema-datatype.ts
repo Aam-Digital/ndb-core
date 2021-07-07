@@ -17,7 +17,7 @@
 
 import { EntitySchemaField } from "./entity-schema-field";
 import { EntitySchemaService } from "./entity-schema.service";
-import { Entity } from "../entity";
+import { Entity } from "../model/entity";
 
 /**
  * Interface to be implemented by any Datatype transformer of the Schema system.
@@ -33,6 +33,15 @@ export interface EntitySchemaDatatype<EntityType = any, DBType = any> {
    * (e.g. `@DatabaseField() myField: string` is triggering the EntitySchemaDatatype with `name` "string".
    */
   name: string;
+
+  /**
+   * The default component how this datatype should be displayed in lists and forms.
+   *
+   * The name has to match one of the strings in the DYNAMIC_COMPONENT_MAP.
+   */
+  viewComponent?: string;
+
+  editComponent?: string;
 
   /**
    * Transformation function taking a value in the format that is used in entity instances and returning the value

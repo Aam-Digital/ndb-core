@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Entity } from "./entity";
+import { Entity } from "./model/entity";
 import { ConfigService } from "../config/config.service";
 import { EntitySchemaField } from "./schema/entity-schema-field";
 import { addPropertySchema } from "./database-field.decorator";

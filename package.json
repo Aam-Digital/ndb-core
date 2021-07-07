@@ -1,6 +1,6 @@
 {
   "name": "ndb-core",
-  "version": "2.50.9",
+  "version": "2.52.1",
   "license": "GPL-3.0",
   "scripts": {
     "ng": "ng",
@@ -31,13 +31,13 @@
     "@angular/router": "^11.2.12",
     "@angular/service-worker": "^11.2.12",
     "@ngneat/until-destroy": "^8.0.4",
-    "@sentry/browser": "^6.4.1",
+    "@sentry/browser": "^6.7.0",
     "angulartics2": "^10.0.0",
     "crypto-js": "^4.0.0",
     "deep-object-diff": "^1.1.0",
     "faker": "^5.5.3",
     "font-awesome": "^4.7.0",
-    "idb": "^6.1.1",
+    "idb": "^6.1.2",
     "json-query": "^2.2.2",
     "lodash": "^4.17.21",
     "material-design-icons": "^3.0.1",
@@ -53,7 +53,7 @@
     "reveal": "0.0.4",
     "rxjs": "^6.6.7",
     "stream": "0.0.2",
-    "tslib": "^2.2.0",
+    "tslib": "^2.3.0",
     "uuid": "^8.3.2",
     "webdav": "^4.4.0",
     "zone.js": "~0.11.4"

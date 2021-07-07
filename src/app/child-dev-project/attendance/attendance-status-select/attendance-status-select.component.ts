@@ -1,6 +1,9 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { ConfigService } from "../../../core/config/config.service";
-import { ConfigurableEnumConfig } from "../../../core/configurable-enum/configurable-enum.interface";
+import {
+  CONFIGURABLE_ENUM_CONFIG_PREFIX,
+  ConfigurableEnumConfig,
+} from "../../../core/configurable-enum/configurable-enum.interface";
 import {
   ATTENDANCE_STATUS_CONFIG_ID,
   AttendanceStatusType,
@@ -21,6 +24,6 @@ export class AttendanceStatusSelectComponent {
   constructor(private configService: ConfigService) {
     this.statusValues = this.configService.getConfig<
       ConfigurableEnumConfig<AttendanceStatusType>
-    >(ATTENDANCE_STATUS_CONFIG_ID);
+    >(CONFIGURABLE_ENUM_CONFIG_PREFIX + ATTENDANCE_STATUS_CONFIG_ID);
   }
 }

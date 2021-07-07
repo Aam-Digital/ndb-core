@@ -1,9 +1,9 @@
-import { WarningLevel } from "../../warning-level";
+import { warningLevels } from "../../warning-levels";
 
 export const noteIndividualStories = [
   {
     category: "HOME_VISIT",
-    warningLevel: WarningLevel.WARNING,
+    warningLevel: warningLevels.find((level) => level.id === "WARNING"),
     subject: "Mother sick",
     text:
       "Visited family after we heard that mother is seriously ill. She cannot get up. " +
@@ -12,7 +12,7 @@ export const noteIndividualStories = [
   },
   {
     category: "GUARDIAN_TALK",
-    warningLevel: WarningLevel.WARNING,
+    warningLevel: warningLevels.find((level) => level.id === "WARNING"),
     subject: "Discussed school change",
     text:
       "Discussed future of the child with the parents. They agree that changing school can be a good option. " +
@@ -21,21 +21,21 @@ export const noteIndividualStories = [
 
   {
     category: "PHONE_CALL",
-    warningLevel: WarningLevel.OK,
+    warningLevel: warningLevels.find((level) => level.id === "OK"),
     subject: "Follow up for school absence",
     text:
       "Called to ask for reason about absence. Mother made excuses but promised to send the child tomorrow.",
   },
   {
     category: "PHONE_CALL",
-    warningLevel: WarningLevel.OK,
-    subject: "absent because ill",
+    warningLevel: warningLevels.find((level) => level.id === "OK"),
+    subject: "Absent because ill",
     text:
       "Mother has called in the morning. Child cannot come to class because of fever.",
   },
   {
     category: "PHONE_CALL",
-    warningLevel: WarningLevel.URGENT,
+    warningLevel: warningLevels.find((level) => level.id === "URGENT"),
     subject: "Absence without information",
     text:
       "Child was not in school whole last week again. When calling the mother she didn't know about it. " +
@@ -44,7 +44,7 @@ export const noteIndividualStories = [
 
   {
     category: "VISIT",
-    warningLevel: WarningLevel.OK,
+    warningLevel: warningLevels.find((level) => level.id === "OK"),
     subject: "School is happy about progress",
     text:
       "Visited the school and talked to the class teacher and principal. They are happy about the progress " +
@@ -52,7 +52,7 @@ export const noteIndividualStories = [
   },
   {
     category: "COACHING_TALK",
-    warningLevel: WarningLevel.WARNING,
+    warningLevel: warningLevels.find((level) => level.id === "WARNING"),
     subject: "Needs to work more for school",
     text:
       "Discussed the child's progress with coaching teacher. He is still a weak student and needs more support. " +
@@ -61,7 +61,7 @@ export const noteIndividualStories = [
 
   {
     category: "INCIDENT",
-    warningLevel: WarningLevel.URGENT,
+    warningLevel: warningLevels.find((level) => level.id === "URGENT"),
     subject: "Fight at school",
     text:
       "Principal called us today. Our student got into a fight and was suspended for a week. " +
@@ -70,7 +70,7 @@ export const noteIndividualStories = [
 
   {
     category: "DISCUSSION",
-    warningLevel: WarningLevel.OK,
+    warningLevel: warningLevels.find((level) => level.id === "OK"),
     subject: "Special help for family",
     text:
       "Since the father has lost his job the family is struggling to survive. " +
@@ -78,7 +78,7 @@ export const noteIndividualStories = [
   },
   {
     category: "DISCUSSION",
-    warningLevel: WarningLevel.OK,
+    warningLevel: warningLevels.find((level) => level.id === "OK"),
     subject: "Chance to repeat class",
     text:
       "Child has failed this school year as she did not go to school regularly. " +
@@ -88,7 +88,7 @@ export const noteIndividualStories = [
 
   {
     category: "CHILD_TALK",
-    warningLevel: WarningLevel.WARNING,
+    warningLevel: warningLevels.find((level) => level.id === "WARNING"),
     subject: "Distracted in class",
     text:
       "Teacher has let us know that he is very unfocused during class these days. " +
@@ -96,7 +96,7 @@ export const noteIndividualStories = [
   },
   {
     category: "CHILD_TALK",
-    warningLevel: WarningLevel.WARNING,
+    warningLevel: warningLevels.find((level) => level.id === "WARNING"),
     subject: "Disturbing class",
     text:
       "She refused to listen to the teacher was disturbing the class. " +

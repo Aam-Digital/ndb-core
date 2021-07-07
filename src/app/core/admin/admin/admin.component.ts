@@ -12,6 +12,7 @@ import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { AttendanceMigrationService } from "../../../child-dev-project/attendance/attendance-migration/attendance-migration.service";
 import { NotesMigrationService } from "../../../child-dev-project/notes/notes-migration/notes-migration.service";
 import { ChildrenMigrationService } from "../../../child-dev-project/children/child-photo-service/children-migration.service";
+import { ConfigMigrationService } from "../../config/config-migration.service";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -41,7 +42,8 @@ export class AdminComponent implements OnInit {
     private entityMapper: EntityMapperService,
     public attendanceMigration: AttendanceMigrationService,
     public notesMigration: NotesMigrationService,
-    public childrenMigrationService: ChildrenMigrationService
+    public childrenMigrationService: ChildrenMigrationService,
+    public configMigrationService: ConfigMigrationService
   ) {}
 
   ngOnInit() {
@@ -54,6 +56,10 @@ export class AdminComponent implements OnInit {
    */
   updatePhotoFilenames() {
     this.childPhotoUpdateService.updateChildrenPhotoFilenames();
+  }
+
+  async migrateConfigChanges() {
+    await this.configMigrationService.migrateConfig();
   }
 
   /**
@@ -92,7 +98,6 @@ export class AdminComponent implements OnInit {
       this.entityMapper,
       JSON.parse(loadedFile)
     );
-    await this.configService.loadConfig(this.entityMapper);
   }
 
   private startDownload(data: string, type: string, name: string) {

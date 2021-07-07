@@ -8,12 +8,14 @@ import {
 import { HistoricalDataComponent } from "./historical-data.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { HistoricalDataModule } from "../historical-data.module";
-import { Entity } from "../../../core/entity/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { HistoricalEntityData } from "../historical-entity-data";
 import moment from "moment";
 import { DatePipe } from "@angular/common";
 import { HistoricalDataService } from "../historical-data.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { User } from "../../../core/user/user";
 
 describe("HistoricalDataComponent", () => {
   let component: HistoricalDataComponent;
@@ -34,6 +36,10 @@ describe("HistoricalDataComponent", () => {
           useValue: jasmine.createSpyObj(["save", "remove"]),
         },
         DatePipe,
+        {
+          provide: SessionService,
+          useValue: { getCurrentUser: () => new User() },
+        },
       ],
     }).compileComponents();
   });
@@ -41,6 +47,11 @@ describe("HistoricalDataComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(HistoricalDataComponent);
     component = fixture.componentInstance;
+
+    component.onInitFromDynamicConfig({
+      entity: new Entity(),
+      config: [],
+    });
     fixture.detectChanges();
   });
 

@@ -2,7 +2,6 @@ import { TestBed } from "@angular/core/testing";
 
 import { QueryService } from "./query.service";
 import { Child } from "../../child-dev-project/children/model/child";
-import { Gender } from "../../child-dev-project/children/model/Gender";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { School } from "../../child-dev-project/schools/model/school";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
@@ -20,6 +19,7 @@ import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
 import { Database } from "../../core/database/database";
 import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
 import { Note } from "../../child-dev-project/notes/model/note";
+import { genders } from "../../child-dev-project/children/model/genders";
 
 describe("QueryService", () => {
   let service: QueryService;
@@ -66,19 +66,19 @@ describe("QueryService", () => {
   beforeEach(async () => {
     const entityMapper = TestBed.inject(EntityMapperService);
     maleChristianChild = new Child("maleChristianChild");
-    maleChristianChild.gender = Gender.MALE;
+    maleChristianChild.gender = genders[1];
     maleChristianChild.religion = "christian";
     await entityMapper.save(maleChristianChild);
     femaleChristianChild = new Child("femaleChristianChild");
-    femaleChristianChild.gender = Gender.FEMALE;
+    femaleChristianChild.gender = genders[2];
     femaleChristianChild.religion = "christian";
     await entityMapper.save(femaleChristianChild);
     femaleMuslimChild = new Child("femaleMuslimChild");
-    femaleMuslimChild.gender = Gender.FEMALE;
+    femaleMuslimChild.gender = genders[2];
     femaleMuslimChild.religion = "muslim";
     await entityMapper.save(femaleMuslimChild);
     maleChild = new Child("maleChild");
-    maleChild.gender = Gender.MALE;
+    maleChild.gender = genders[1];
     await entityMapper.save(maleChild);
 
     privateSchool = new School("privateSchool");
@@ -221,11 +221,11 @@ describe("QueryService", () => {
   });
 
   it("should return all children with specified attributes", async () => {
-    const maleChristianQuery = `${Child.ENTITY_TYPE}:toArray[*gender=M & religion=christian]`;
+    const maleChristianQuery = `${Child.ENTITY_TYPE}:toArray:filterByObjectAttribute(gender, id, M)[*religion=christian]`;
     const maleChristians = await service.queryData(maleChristianQuery);
     expectEntitiesToMatch(maleChristians, [maleChristianChild]);
 
-    const femaleQuery = `${Child.ENTITY_TYPE}:toArray[*gender=F]`;
+    const femaleQuery = `${Child.ENTITY_TYPE}:toArray:filterByObjectAttribute(gender, id, F)`;
     const females = await service.queryData(femaleQuery);
     expectEntitiesToMatch(females, [femaleChristianChild, femaleMuslimChild]);
 
@@ -243,7 +243,7 @@ describe("QueryService", () => {
       ${School.ENTITY_TYPE}:toArray[*privateSchool=true]
       :getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)
       [*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique
-      :toEntities[*gender=${Gender.MALE}]`;
+      :toEntities:filterByObjectAttribute(gender, id, M)`;
 
     const maleChildrenOnPrivateSchools = await service.queryData(
       maleChildrenOnPrivateSchoolsQuery
@@ -273,7 +273,7 @@ describe("QueryService", () => {
       maleChild,
     ]);
 
-    const maleChildrenCountQuery = `[*gender=${Gender.MALE}]:count`;
+    const maleChildrenCountQuery = `:filterByObjectAttribute(gender, id, M):count`;
     const maleChildrenCount = await service.queryData(
       maleChildrenCountQuery,
       null,
@@ -291,7 +291,7 @@ describe("QueryService", () => {
     );
     expect(christianCount).toBe(2);
 
-    const maleChristiansCountQuery = `[*gender=${Gender.MALE} & religion=christian]:count`;
+    const maleChristiansCountQuery = `:filterByObjectAttribute(gender, id, M)[*religion=christian]:count`;
     const maleChristiansCount = await service.queryData(
       maleChristiansCountQuery,
       null,
@@ -334,7 +334,7 @@ describe("QueryService", () => {
       :getRelated(${RecurringActivity.ENTITY_TYPE}, linkedGroups)
       :getRelated(${EventNote.ENTITY_TYPE}, relatesTo)
       :getParticipantsWithAttendance(PRESENT):addPrefix(${Child.ENTITY_TYPE}):unique
-      :toEntities[*gender=${Gender.FEMALE}]`;
+      :toEntities:filterByObjectAttribute(gender, id, F)`;
     const femaleParticipantsInPrivateSchools = await service.queryData(
       femaleParticipantsPrivateSchoolQuery
     );
@@ -418,5 +418,28 @@ describe("QueryService", () => {
     );
 
     expectEntitiesToMatch(allNotesLastWeek, [yesterdayNote, sixDaysAgoNote]);
+  });
+
+  it("should add notes to an array of event notes", async () => {
+    const entityMapper = TestBed.inject(EntityMapperService);
+    const note1 = new Note();
+    note1.children = [femaleMuslimChild.getId()];
+    note1.date = new Date();
+    await entityMapper.save(note1);
+    const note2 = new Note();
+    note2.children = [maleChild.getId()];
+    note2.date = new Date();
+    await entityMapper.save(note2);
+    const onlyEvents = await service.queryData(
+      `${EventNote.ENTITY_TYPE}:toArray`
+    );
+
+    const eventsWithNotes = await service.queryData(
+      `${EventNote.ENTITY_TYPE}:toArray:addEntities(${Note.ENTITY_TYPE})`
+    );
+
+    expect(eventsWithNotes.length).toBe(onlyEvents.length + 2);
+    expect(eventsWithNotes).toContain(note1);
+    expect(eventsWithNotes).toContain(note2);
   });
 });

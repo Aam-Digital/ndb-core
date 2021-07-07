@@ -2,7 +2,7 @@ import { Component, Input, Optional, ViewChild } from "@angular/core";
 import { Note } from "../model/note";
 import { ShowsEntity } from "../../../core/form-dialog/shows-entity.interface";
 import { MatDialogRef } from "@angular/material/dialog";
-import { Entity, EntityConstructor } from "../../../core/entity/entity";
+import { Entity, EntityConstructor } from "../../../core/entity/model/entity";
 import { INTERACTION_TYPE_CONFIG_ID } from "../model/interaction-type.interface";
 import { Child } from "../../children/model/child";
 import { User } from "../../../core/user/user";
