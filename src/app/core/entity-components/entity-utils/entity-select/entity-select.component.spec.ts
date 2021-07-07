@@ -15,6 +15,7 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 import { User } from "../../../user/user";
 import { Child } from "../../../../child-dev-project/children/model/child";
+import { FlexLayoutModule } from "@angular/flex-layout";
 
 describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any>;
@@ -42,6 +43,7 @@ describe("EntitySelectComponent", () => {
         MatChipsModule,
         NoopAnimationsModule,
         ReactiveFormsModule,
+        FlexLayoutModule,
       ],
     }).compileComponents();
   });
@@ -162,5 +164,27 @@ describe("EntitySelectComponent", () => {
     component.formControl.setValue("Ab");
     expectedLength = 1;
     component.formControl.setValue("Abc");
+  });
+
+  it("should add an unselected entity to the filtered entities array", (done) => {
+    component.allEntities = testUsers;
+    const selectedUser = testUsers[1];
+    let iteration = 0;
+
+    const subscription = component.filteredEntities.subscribe(
+      (autocompleteEntities) => {
+        iteration++;
+        if (iteration === 1) {
+          expect(autocompleteEntities).not.toContain(selectedUser);
+        } else if (iteration === 2) {
+          expect(autocompleteEntities).toContain(selectedUser);
+          subscription.unsubscribe();
+          done();
+        }
+      }
+    );
+
+    component.selectEntity(selectedUser);
+    component.unselectEntity(selectedUser);
   });
 });
