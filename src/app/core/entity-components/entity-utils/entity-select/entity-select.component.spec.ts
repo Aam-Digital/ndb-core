@@ -156,7 +156,7 @@ describe("EntitySelectComponent", () => {
         done();
       }
     });
-    expectedLength;
+    expectedLength = 4;
     component.formControl.setValue(null);
     expectedLength = 3;
     component.formControl.setValue("A");
