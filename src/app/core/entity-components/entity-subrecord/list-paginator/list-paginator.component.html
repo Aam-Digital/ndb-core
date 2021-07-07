@@ -7,9 +7,9 @@
   >
   <mat-paginator
     (page)="onPaginateChange($event)"
-    [pageSize]="paginatorPageSize"
-    [pageIndex]="paginatorPageIndex"
-    [pageSizeOptions]="paginatorPageSizeOptions"
+    [pageSize]="pageSize"
+    [pageIndex]="currentPageIndex"
+    [pageSizeOptions]="sizeOptions"
     [showFirstLastButtons]="true"
   ></mat-paginator>
 </mat-toolbar>

@@ -69,35 +69,35 @@ describe("ListPaginatorComponent", () => {
   });
 
   it("should reset the pagination size when clicking the all toggle twice", () => {
-    component.paginatorPageSize = 20;
+    component.pageSize = 20;
     component.dataSource.data = new Array(100);
     component.showingAll = false;
     component.ngOnChanges({ dataSource: null });
 
     component.changeAllToggle();
 
-    expect(component.paginatorPageSize).toBe(100);
+    expect(component.pageSize).toBe(100);
     expect(component.showingAll).toBeTrue();
 
     component.changeAllToggle();
 
-    expect(component.paginatorPageSize).toBe(20);
+    expect(component.pageSize).toBe(20);
     expect(component.showingAll).toBeFalse();
   });
 
   it("should toggle back to second biggest size if the previous size is too big", fakeAsync(() => {
     component.dataSource.data = new Array(100);
     component.paginator._changePageSize(100);
-    component.paginatorPageSizeBeforeToggle = 200;
+    component.sizeBeforeToggling = 200;
 
     component.ngOnChanges({ dataSource: null });
 
     expect(component.showingAll).toBeTrue();
-    expect(component.paginatorPageSize).toBe(100);
+    expect(component.pageSize).toBe(100);
 
     component.changeAllToggle();
 
-    const po = component.paginatorPageSizeOptions;
-    expect(component.paginatorPageSize).toBe(po[po.length - 2]);
+    const po = component.sizeOptions;
+    expect(component.pageSize).toBe(po[po.length - 2]);
   }));
 });

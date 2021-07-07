@@ -23,16 +23,19 @@ import { filter } from "rxjs/operators";
 })
 export class ListPaginatorComponent<E extends Entity>
   implements OnChanges, AfterViewInit {
+  readonly defaultSizeOptions = [10, 20, 50];
+  readonly defaultPageSize = 10;
+
   @Input() dataSource: MatTableDataSource<E>;
   @Input() idForSavingPagination: string;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   user: User;
-  paginatorPageSize = 10;
-  paginatorPageSizeBeforeToggle = 10;
-  paginatorPageSizeOptions = [3, 10, 20, 50];
-  paginatorPageIndex = 0;
+  pageSize = this.defaultPageSize;
+  sizeBeforeToggling = this.defaultPageSize;
+  sizeOptions = this.defaultSizeOptions;
+  currentPageIndex = 0;
   showingAll = false;
   allToggleDisabled = false;
 
@@ -45,12 +48,7 @@ export class ListPaginatorComponent<E extends Entity>
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("idForSavingPagination")) {
-      this.paginatorPageSize =
-        this.user.paginatorSettingsPageSize[this.idForSavingPagination] ||
-        this.paginatorPageSize;
-      this.paginatorPageIndex =
-        this.user.paginatorSettingsPageIndex[this.idForSavingPagination] ||
-        this.paginatorPageIndex;
+      this.applyUserPaginationSettings();
     }
     if (changes.hasOwnProperty("dataSource")) {
       this.dataSource
@@ -60,16 +58,16 @@ export class ListPaginatorComponent<E extends Entity>
           filter((res) => res.length > 0)
         )
         .subscribe(() => {
-          this.paginatorPageSize = Math.min(
-            this.dataSource.data.length,
-            this.paginatorPageSize
-          );
+          if (
+            !this.defaultSizeOptions.includes(this.pageSize) &&
+            this.dataSource.data.length > this.defaultPageSize
+          ) {
+            this.pageSize = this.dataSource.data.length;
+          }
           this.setPageSizeOptions();
-          this.setPageSize();
-          this.showingAll =
-            this.paginatorPageSize >= this.dataSource.data.length;
+          this.showingAll = this.pageSize >= this.dataSource.data.length;
           this.allToggleDisabled =
-            this.dataSource.data.length <= this.paginatorPageSizeOptions[0];
+            this.dataSource.data.length <= this.defaultPageSize;
         });
     }
   }
@@ -79,52 +77,62 @@ export class ListPaginatorComponent<E extends Entity>
   }
 
   setPageSizeOptions() {
-    const ar = [3, 10, 20, 50].filter((n) => {
+    const ar = this.defaultSizeOptions.filter((n) => {
       return n < this.dataSource.data.length;
     });
-    this.paginatorPageSizeOptions = ar.concat(this.dataSource.data.length);
-  }
-
-  setPageSize() {
-    if (this.paginatorPageSize >= this.dataSource.data.length) {
-      this.paginatorPageSize = this.dataSource.data.length;
-    }
+    this.sizeOptions = ar.concat(this.dataSource.data.length);
   }
 
   onPaginateChange(event: PageEvent) {
-    this.paginatorPageSize = event.pageSize;
-    this.paginatorPageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.currentPageIndex = event.pageIndex;
     this.updateUserPaginationSettings();
   }
 
   changeAllToggle() {
     if (!this.showingAll) {
-      this.paginatorPageSizeBeforeToggle = this.paginatorPageSize;
-      this.paginatorPageSize = this.dataSource.data.length;
-    } else if (
-      this.paginatorPageSizeBeforeToggle <= this.dataSource.data.length
-    ) {
-      this.paginatorPageSize = this.paginatorPageSizeBeforeToggle;
+      this.sizeBeforeToggling = this.pageSize;
+      this.pageSize = this.dataSource.data.length;
+    } else if (this.sizeBeforeToggling <= this.dataSource.data.length) {
+      this.pageSize = this.sizeBeforeToggling;
     } else {
-      const po = this.paginatorPageSizeOptions;
-      this.paginatorPageSize = po.length > 2 ? po[po.length - 2] : po[0];
+      const po = this.sizeOptions;
+      this.pageSize = po.length > 2 ? po[po.length - 2] : po[0];
     }
-    this.paginator._changePageSize(this.paginatorPageSize);
+    this.paginator._changePageSize(this.pageSize);
     this.updateUserPaginationSettings();
+  }
+
+  private applyUserPaginationSettings() {
+    const pageSize = this.user.paginatorSettingsPageSize[
+      this.idForSavingPagination
+    ];
+    if (pageSize) {
+      if (this.defaultSizeOptions.includes(pageSize)) {
+        this.pageSize = pageSize;
+      } else if (pageSize < this.defaultPageSize) {
+        this.pageSize = this.defaultPageSize;
+      } else {
+        this.pageSize = this.dataSource.data.length;
+      }
+    }
+    this.currentPageIndex =
+      this.user.paginatorSettingsPageIndex[this.idForSavingPagination] ||
+      this.currentPageIndex;
   }
 
   private updateUserPaginationSettings() {
     // The PageSize is stored in the database, the PageList is only in memory
     const hasChangesToBeSaved =
-      this.paginatorPageSize !==
+      this.pageSize !==
       this.user.paginatorSettingsPageSize[this.idForSavingPagination];
 
     this.user.paginatorSettingsPageIndex[
       this.idForSavingPagination
-    ] = this.paginatorPageIndex;
+    ] = this.currentPageIndex;
     this.user.paginatorSettingsPageSize[
       this.idForSavingPagination
-    ] = this.paginatorPageSize;
+    ] = this.pageSize;
 
     if (hasChangesToBeSaved) {
       this.entityMapperService.save<User>(this.user);
