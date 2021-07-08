@@ -60,14 +60,6 @@ describe("ListPaginatorComponent", () => {
     expect(component.user.paginatorSettingsPageIndex["table-id"]).toEqual(1);
   }));
 
-  it("should disable the all toggle when too little entries are available", () => {
-    component.dataSource.data = new Array(2);
-
-    component.ngOnChanges({ dataSource: null });
-
-    expect(component.allToggleDisabled).toBeTrue();
-  });
-
   it("should reset the pagination size when clicking the all toggle twice", () => {
     component.pageSize = 20;
     component.dataSource.data = new Array(100);
@@ -97,7 +89,7 @@ describe("ListPaginatorComponent", () => {
 
     component.changeAllToggle();
 
-    const po = component.sizeOptions;
+    const po = component.pageSizeOptions;
     expect(component.pageSize).toBe(po[po.length - 2]);
   }));
 });
