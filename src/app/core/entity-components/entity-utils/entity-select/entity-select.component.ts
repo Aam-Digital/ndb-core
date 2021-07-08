@@ -19,8 +19,6 @@ import { MatAutocompleteTrigger } from "@angular/material/autocomplete";
 import { ENTITY_MAP } from "../../entity-details/entity-details.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
-export type accessorFn<E extends Entity> = (E) => string;
-
 @Component({
   selector: "app-entity-select",
   templateUrl: "./entity-select.component.html",
@@ -162,7 +160,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * <br> Per default, this filters for the name. If the entity
    * has no name, this filters for the entity's id.
    */
-  @Input() accessor: accessorFn<E> = (e) => e["name"] || e.getId();
+  @Input() accessor: (e: Entity) => string = (e) => e["name"] || e.getId();
 
   @Input() additionalFilter: (e: E) => boolean = (_) => true;
   /**
@@ -229,6 +227,8 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     if (index !== -1) {
       this.selection_.splice(index, 1);
       this.emitChange();
+      // Update the form control to re-run the filter function
+      this.formControl.updateValueAndValidity();
     }
   }
 
