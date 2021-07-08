@@ -23,7 +23,7 @@ import { filter } from "rxjs/operators";
 })
 export class ListPaginatorComponent<E extends Entity>
   implements OnChanges, AfterViewInit {
-  readonly defaultSizeOptions = [10, 20, 50];
+  readonly pageSizeOptions = [10, 20, 50];
   readonly defaultPageSize = 10;
 
   @Input() dataSource: MatTableDataSource<E>;
@@ -33,11 +33,9 @@ export class ListPaginatorComponent<E extends Entity>
 
   user: User;
   pageSize = this.defaultPageSize;
-  sizeBeforeToggling = this.defaultPageSize;
-  sizeOptions = this.defaultSizeOptions;
   currentPageIndex = 0;
   showingAll = false;
-  allToggleDisabled = false;
+  sizeBeforeToggling = this.defaultPageSize;
 
   constructor(
     private sessionService: SessionService,
@@ -55,19 +53,12 @@ export class ListPaginatorComponent<E extends Entity>
         .connect()
         .pipe(
           untilDestroyed(this),
+          filter(() => this.showingAll && !!this.paginator),
           filter((res) => res.length > 0)
         )
         .subscribe(() => {
-          if (
-            !this.defaultSizeOptions.includes(this.pageSize) &&
-            this.dataSource.data.length > this.defaultPageSize
-          ) {
-            this.pageSize = this.dataSource.data.length;
-          }
-          this.setPageSizeOptions();
-          this.showingAll = this.pageSize >= this.dataSource.data.length;
-          this.allToggleDisabled =
-            this.dataSource.data.length <= this.defaultPageSize;
+          this.pageSize = this.dataSource.data.length;
+          this.paginator.pageSize = this.dataSource.data.length;
         });
     }
   }
@@ -76,27 +67,23 @@ export class ListPaginatorComponent<E extends Entity>
     this.dataSource.paginator = this.paginator;
   }
 
-  setPageSizeOptions() {
-    const ar = this.defaultSizeOptions.filter((n) => {
-      return n < this.dataSource.data.length;
-    });
-    this.sizeOptions = ar.concat(this.dataSource.data.length);
-  }
-
   onPaginateChange(event: PageEvent) {
     this.pageSize = event.pageSize;
     this.currentPageIndex = event.pageIndex;
+    this.showingAll = this.pageSize === this.dataSource.data.length;
     this.updateUserPaginationSettings();
   }
 
   changeAllToggle() {
-    if (!this.showingAll) {
+    this.showingAll = !this.showingAll;
+
+    if (this.showingAll) {
       this.sizeBeforeToggling = this.pageSize;
       this.pageSize = this.dataSource.data.length;
     } else if (this.sizeBeforeToggling <= this.dataSource.data.length) {
       this.pageSize = this.sizeBeforeToggling;
     } else {
-      const po = this.sizeOptions;
+      const po = this.pageSizeOptions;
       this.pageSize = po.length > 2 ? po[po.length - 2] : po[0];
     }
     this.paginator._changePageSize(this.pageSize);
@@ -108,12 +95,11 @@ export class ListPaginatorComponent<E extends Entity>
       this.idForSavingPagination
     ];
     if (pageSize) {
-      if (this.defaultSizeOptions.includes(pageSize)) {
+      if (this.pageSizeOptions.includes(pageSize)) {
         this.pageSize = pageSize;
-      } else if (pageSize < this.defaultPageSize) {
-        this.pageSize = this.defaultPageSize;
       } else {
         this.pageSize = this.dataSource.data.length;
+        this.showingAll = true;
       }
     }
     this.currentPageIndex =
@@ -122,7 +108,7 @@ export class ListPaginatorComponent<E extends Entity>
   }
 
   private updateUserPaginationSettings() {
-    // The PageSize is stored in the database, the PageList is only in memory
+    // The page size is stored in the database, the page index is only in memory
     const hasChangesToBeSaved =
       this.pageSize !==
       this.user.paginatorSettingsPageSize[this.idForSavingPagination];
