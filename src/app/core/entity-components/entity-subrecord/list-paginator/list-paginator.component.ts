@@ -53,8 +53,8 @@ export class ListPaginatorComponent<E extends Entity>
         .connect()
         .pipe(
           untilDestroyed(this),
-          filter(() => this.showingAll && !!this.paginator),
-          filter((res) => res.length > 0)
+          filter((updatedDataSource) => this.showingAll && !!this.paginator), // why?
+          filter((updatedDataSource) => updatedDataSource.length > 0)
         )
         .subscribe(() => {
           this.pageSize = this.dataSource.data.length;
@@ -70,7 +70,11 @@ export class ListPaginatorComponent<E extends Entity>
   onPaginateChange(event: PageEvent) {
     this.pageSize = event.pageSize;
     this.currentPageIndex = event.pageIndex;
-    this.showingAll = this.pageSize === this.dataSource.data.length;
+
+    if (this.pageSize !== this.dataSource.data.length) {
+      this.showingAll = false;
+    }
+
     this.updateUserPaginationSettings();
   }
 
@@ -80,11 +84,8 @@ export class ListPaginatorComponent<E extends Entity>
     if (this.showingAll) {
       this.sizeBeforeToggling = this.pageSize;
       this.pageSize = this.dataSource.data.length;
-    } else if (this.sizeBeforeToggling <= this.dataSource.data.length) {
-      this.pageSize = this.sizeBeforeToggling;
     } else {
-      const po = this.pageSizeOptions;
-      this.pageSize = po.length > 2 ? po[po.length - 2] : po[0];
+      this.pageSize = this.sizeBeforeToggling;
     }
     this.paginator._changePageSize(this.pageSize);
     this.updateUserPaginationSettings();
@@ -95,11 +96,11 @@ export class ListPaginatorComponent<E extends Entity>
       this.idForSavingPagination
     ];
     if (pageSize) {
-      if (this.pageSizeOptions.includes(pageSize)) {
-        this.pageSize = pageSize;
-      } else {
+      if (pageSize === -1) {
         this.pageSize = this.dataSource.data.length;
         this.showingAll = true;
+      } else {
+        this.pageSize = pageSize;
       }
     }
     this.currentPageIndex =
@@ -108,9 +109,12 @@ export class ListPaginatorComponent<E extends Entity>
   }
 
   private updateUserPaginationSettings() {
+    // save "all" as -1
+    const sizeToBeSaved = this.showingAll ? -1 : this.pageSize;
+
     // The page size is stored in the database, the page index is only in memory
     const hasChangesToBeSaved =
-      this.pageSize !==
+      sizeToBeSaved !==
       this.user.paginatorSettingsPageSize[this.idForSavingPagination];
 
     this.user.paginatorSettingsPageIndex[
@@ -118,7 +122,7 @@ export class ListPaginatorComponent<E extends Entity>
     ] = this.currentPageIndex;
     this.user.paginatorSettingsPageSize[
       this.idForSavingPagination
-    ] = this.pageSize;
+    ] = sizeToBeSaved;
 
     if (hasChangesToBeSaved) {
       this.entityMapperService.save<User>(this.user);
