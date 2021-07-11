@@ -53,7 +53,8 @@ export class ListPaginatorComponent<E extends Entity>
         .connect()
         .pipe(
           untilDestroyed(this),
-          filter((updatedDataSource) => this.showingAll && !!this.paginator), // why?
+          // When showingAll is false, nothing needs to be done -> filtered out
+          filter((updatedDataSource) => this.showingAll && !!this.paginator),
           filter((updatedDataSource) => updatedDataSource.length > 0)
         )
         .subscribe(() => {
