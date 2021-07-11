@@ -14,6 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
+@use '~@angular/material' as mat;
 @import "~@angular/material/theming";
 
 .form-container {
@@ -36,7 +37,7 @@
 }
 
 .info {
-  @include mat-elevation(1);
+  @include mat.elevation(1);
   font-style: italic;
   padding: 8px;
   margin: 8px;
