@@ -50,7 +50,7 @@ export class Entity {
    * The type needs to be used as routing path in lower case. The routing path can be defined in the configuration file.
    */
   static ENTITY_TYPE = "Entity";
-  
+
   /**
    * EntitySchema defining property transformations from/to the database.
    * This is auto-generated from the property annotations `@DatabaseField()`.
