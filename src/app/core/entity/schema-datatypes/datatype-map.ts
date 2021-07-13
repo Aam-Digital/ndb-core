@@ -78,7 +78,7 @@ export const mapEntitySchemaDatatype: EntitySchemaDatatype = {
     }
     if (!Array.isArray(value) || value === null) {
       console.warn(
-        'property to be loaded with "map" EntitySchema is not valid',
+        "property to be loaded with 'map' EntitySchema is not valid",
         value
       );
       return value;

@@ -34,9 +34,8 @@ export interface StateChangedEvent<StateEnum> {
  */
 export class StateHandler<StateEnum> {
   private state: StateEnum;
-  private stateChanged: EventEmitter<
-    StateChangedEvent<StateEnum>
-  > = new EventEmitter<StateChangedEvent<StateEnum>>();
+  private stateChanged: EventEmitter<StateChangedEvent<StateEnum>> =
+    new EventEmitter<StateChangedEvent<StateEnum>>();
 
   /**
    * Create a StateHandler helper.

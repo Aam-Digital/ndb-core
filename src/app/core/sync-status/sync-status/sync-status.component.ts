@@ -44,9 +44,8 @@ export class SyncStatusComponent implements OnInit {
   private syncInProgress: boolean;
   private indexingProcesses: BackgroundProcessState[];
 
-  private _backgroundProcesses: BehaviorSubject<
-    BackgroundProcessState[]
-  > = new BehaviorSubject([]);
+  private _backgroundProcesses: BehaviorSubject<BackgroundProcessState[]> =
+    new BehaviorSubject([]);
   /** background processes to be displayed to users, with short delay to avoid flickering */
   backgroundProcesses = this._backgroundProcesses
     .asObservable()

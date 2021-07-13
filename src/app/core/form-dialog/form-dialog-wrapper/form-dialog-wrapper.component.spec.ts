@@ -82,7 +82,7 @@ describe("FormDialogWrapperComponent", () => {
     const testEntity: any = { value: 1 };
     component.entity = testEntity;
     const transformedEntity: any = { value: 99 };
-    component.beforeSave = (entity) => Promise.resolve(transformedEntity);
+    component.beforeSave = () => Promise.resolve(transformedEntity);
     spyOn(component, "beforeSave").and.callThrough();
 
     await component.save();

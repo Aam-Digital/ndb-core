@@ -102,7 +102,10 @@ export class NotesMigrationService {
    */
   public findUsers(
     str: string
-  ): { detectedUsers: User[]; additional: string[] } {
+  ): {
+    detectedUsers: User[];
+    additional: string[];
+  } {
     const detectedUsers: User[] = [];
     const additional: string[] = [];
     // split on '&', 'and' and ','

@@ -17,19 +17,35 @@
     (optionSelected)="clickOption($event.option)"
   >
     <ng-container [ngSwitch]="state">
-      <mat-option *ngSwitchCase="TOO_FEW_CHARACTERS" class="result-hint" [disabled]="true">
+      <mat-option
+        *ngSwitchCase="TOO_FEW_CHARACTERS"
+        [disabled]="true"
+        class="result-hint"
+      >
         <p>Insert at least {{ MIN_CHARACTERS_FOR_SEARCH }} characters</p>
       </mat-option>
 
-      <mat-option class="result-hint" *ngSwitchCase="SEARCH_IN_PROGRESS" [disabled]="true">
+      <mat-option
+        *ngSwitchCase="SEARCH_IN_PROGRESS"
+        [disabled]="true"
+        class="result-hint"
+      >
         <p>Search in progress...</p>
       </mat-option>
 
-      <mat-option class="result-hint" *ngSwitchCase="NO_RESULTS" [disabled]="true">
+      <mat-option
+        *ngSwitchCase="NO_RESULTS"
+        [disabled]="true"
+        class="result-hint"
+      >
         <p>There were no results</p>
       </mat-option>
 
-      <mat-option class="result-hint" *ngSwitchCase="ILLEGAL_INPUT" [disabled]="true">
+      <mat-option
+        *ngSwitchCase="ILLEGAL_INPUT"
+        [disabled]="true"
+        class="result-hint"
+      >
         <p>Please only enter numbers or letters</p>
       </mat-option>
 
@@ -37,6 +53,5 @@
         <app-display-entity [entityToDisplay]="res"></app-display-entity>
       </mat-option>
     </ng-container>
-
   </mat-autocomplete>
 </div>

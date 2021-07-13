@@ -29,9 +29,8 @@ export class OnlineSessionService extends SessionService {
   private loginState: StateHandler<LoginState> = new StateHandler<LoginState>(
     LoginState.LOGGED_OUT
   );
-  private connectionState: StateHandler<ConnectionState> = new StateHandler<ConnectionState>(
-    ConnectionState.DISCONNECTED
-  );
+  private connectionState: StateHandler<ConnectionState> =
+    new StateHandler<ConnectionState>(ConnectionState.DISCONNECTED);
   private syncState: StateHandler<SyncState> = new StateHandler<SyncState>(
     SyncState.UNSYNCED
   );

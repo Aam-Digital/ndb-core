@@ -86,7 +86,6 @@
           label="Authors"
         >
         </app-entity-select>
-
       </div>
     </div>
 
@@ -121,7 +120,6 @@
     </div>
 
     <div fxLayout="column" fxLayoutGap="20px">
-
       <app-entity-select
         entityType="Child"
         [(selection)]="entity.children"
@@ -129,12 +127,14 @@
         [additionalFilter]="filterInactiveChildren"
         [showEntities]="!entity.category.isMeeting"
         label="Participants"
-        placeholder="Add participant ...">
+        placeholder="Add participant ..."
+      >
         <!-- Header for autocomplete -->
         <mat-option (click)="toggleIncludeInactiveChildren()">
           <mat-checkbox
             labelPosition="before"
-            [checked]="includeInactiveChildren">
+            [checked]="includeInactiveChildren"
+          >
             Include Inactive Children
           </mat-checkbox>
         </mat-option>
@@ -146,7 +146,9 @@
           [childId]="childId"
           [attendance]="entity.getAttendance(childId)"
           (changeClicked)="entityForm.form.markAsDirty()"
-          (removeClicked)="entity.removeChild(childId); entityForm.form.markAsDirty()"
+          (removeClicked)="
+            entity.removeChild(childId); entityForm.form.markAsDirty()
+          "
         >
         </app-child-meeting-note-attendance>
       </div>
@@ -161,8 +163,6 @@
         >
         </app-entity-select>
       </div>
-
     </div>
-
   </form>
 </app-form-dialog-wrapper>

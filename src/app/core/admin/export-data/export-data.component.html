@@ -1,3 +1,8 @@
-<button mat-stroked-button color="accent" (click)="exportData()" [disabled]="disabled">
+<button
+  (click)="exportData()"
+  [disabled]="disabled"
+  color="accent"
+  mat-stroked-button
+>
   <ng-content></ng-content>
 </button>

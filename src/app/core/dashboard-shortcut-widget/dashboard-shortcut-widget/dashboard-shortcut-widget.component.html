@@ -9,14 +9,16 @@
 
   <mat-card-content>
     <table class="dashboard-table">
-
-      <tr *ngFor="let entry of shortcuts" class="dashboard-table-row clickable" [routerLink]="[entry.link]">
+      <tr
+        *ngFor="let entry of shortcuts"
+        [routerLink]="[entry.link]"
+        class="dashboard-table-row clickable"
+      >
         <td class="dashboard-table-cell">
-          <mat-icon fontIcon="fa-{{entry.icon}}"></mat-icon>
+          <mat-icon fontIcon="fa-{{ entry.icon }}"></mat-icon>
           {{ entry.label }}
         </td>
       </tr>
-
     </table>
   </mat-card-content>
 </mat-card>

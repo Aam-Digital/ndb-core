@@ -27,8 +27,12 @@
       <h3>{{ entity?.name }}</h3>
       <p><span class="fa fa-phone"></span> {{ entity?.phone }}</p>
       <p>
-        <app-school-block [entityId]="entity?.schoolId" [linkDisabled]="true"></app-school-block>,
-        class {{ entity?.schoolClass }}
+        <app-school-block
+          [entityId]="entity?.schoolId"
+          [linkDisabled]="true"
+        ></app-school-block
+        >
+        , class {{ entity?.schoolClass }}
       </p>
     </div>
   </div>
