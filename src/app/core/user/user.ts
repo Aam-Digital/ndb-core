@@ -18,8 +18,7 @@
 import { Entity } from "../entity/model/entity";
 import { DatabaseEntity } from "../entity/database-entity.decorator";
 import { DatabaseField } from "../entity/database-field.decorator";
-
-import * as CryptoJS from "crypto-js";
+import CryptoES from "crypto-es";
 
 /**
  * Entity representing a User object including password.
@@ -69,8 +68,8 @@ export class User extends Entity {
   public setNewPassword(password: string) {
     const cryptKeySize = 256 / 32;
     const cryptIterations = 128;
-    const cryptSalt = CryptoJS.lib.WordArray.random(128 / 8).toString();
-    const hash = CryptoJS.PBKDF2(password, cryptSalt, {
+    const cryptSalt = CryptoES.lib.WordArray.random(128 / 8).toString();
+    const hash = CryptoES.PBKDF2(password, cryptSalt, {
       keySize: cryptKeySize,
       iterations: cryptIterations,
     }).toString();
@@ -83,7 +82,7 @@ export class User extends Entity {
     };
 
     // update encrypted nextcloud password
-    this.cloudPasswordEnc = CryptoJS.AES.encrypt(
+    this.cloudPasswordEnc = CryptoES.AES.encrypt(
       this.cloudPasswordDec,
       password
     ).toString();
@@ -98,18 +97,6 @@ export class User extends Entity {
     return this.hashPassword(givenPassword) === this.password.hash;
   }
 
-  private hashPassword(givenPassword: string): string {
-    const options = {
-      keySize: this.password.keysize,
-      iterations: this.password.iterations,
-    };
-    return CryptoJS.PBKDF2(
-      givenPassword,
-      this.password.salt,
-      options
-    ).toString();
-  }
-
   /**
    * Decrypt the stored cloud password with the user's regular password.
    * @param givenPassword The user entity's password (not the webdav cloud password)
@@ -120,10 +107,10 @@ export class User extends Entity {
       return;
     }
 
-    this.cloudPasswordDec = CryptoJS.AES.decrypt(
+    this.cloudPasswordDec = CryptoES.AES.decrypt(
       this.cloudPasswordEnc.toString(),
       givenPassword
-    ).toString(CryptoJS.enc.Utf8);
+    ).toString(CryptoES.enc.Utf8);
     return this.cloudPasswordDec;
   }
 
@@ -135,11 +122,23 @@ export class User extends Entity {
   public setCloudPassword(blobPassword: string, givenPassword: string) {
     if (this.checkPassword(givenPassword)) {
       this.cloudPasswordDec = blobPassword;
-      this.cloudPasswordEnc = CryptoJS.AES.encrypt(
+      this.cloudPasswordEnc = CryptoES.AES.encrypt(
         blobPassword,
         givenPassword
       ).toString();
     }
+  }
+
+  private hashPassword(givenPassword: string): string {
+    const options = {
+      keySize: this.password.keysize,
+      iterations: this.password.iterations,
+    };
+    return CryptoES.PBKDF2(
+      givenPassword,
+      this.password.salt,
+      options
+    ).toString();
   }
 
   /**
