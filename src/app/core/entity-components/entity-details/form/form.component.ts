@@ -13,8 +13,8 @@ import { Location } from "@angular/common";
     [entity]="entity"
     [columns]="columns"
     [editing]="creatingNew"
-    (onSave)="saveClicked($event)"
-    (onCancel)="cancelClicked()"
+    (save)="saveClicked($event)"
+    (cancel)="cancelClicked()"
   ></app-entity-form>`,
 })
 /**

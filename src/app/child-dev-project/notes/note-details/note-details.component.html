@@ -18,7 +18,7 @@
 <app-form-dialog-wrapper
   #dialogForm
   [entity]="entity"
-  (onClose)="closeDialog($event)"
+  (closed)="closeDialog($event)"
 >
   <h1>{{ entity.date?.toLocaleDateString() }}: {{ entity.subject }}</h1>
 
@@ -145,9 +145,9 @@
           *ngFor="let childId of entity.children"
           [childId]="childId"
           [attendance]="entity.getAttendance(childId)"
-          (change)="entityForm.form.markAsDirty()"
-          (remove)="entity.removeChild(childId); entityForm.form.markAsDirty()"
-          >
+          (changeClicked)="entityForm.form.markAsDirty()"
+          (removeClicked)="entity.removeChild(childId); entityForm.form.markAsDirty()"
+        >
         </app-child-meeting-note-attendance>
       </div>
 

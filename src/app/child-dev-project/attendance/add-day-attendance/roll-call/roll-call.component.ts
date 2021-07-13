@@ -40,7 +40,7 @@ export class RollCallComponent implements OnInit {
   /**
    * Emitted when the roll call is finished and results can be saved.
    */
-  @Output() complete = new EventEmitter<Note>();
+  @Output() completed = new EventEmitter<Note>();
 
   /**
    * Emitted when the user wants to dismiss & leave the roll call view.
@@ -109,7 +109,7 @@ export class RollCallComponent implements OnInit {
     }
 
     if (this.isFinished()) {
-      this.complete.emit(this.eventEntity);
+      this.completed.emit(this.eventEntity);
     }
   }
 

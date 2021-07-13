@@ -37,7 +37,7 @@
 <mat-accordion multi="true">
   <mat-expansion-panel
     *ngFor="let panelConfig of panels; let i = index"
-    [expanded]="i == 0"
+    [expanded]="i === 0"
     [disabled]="creatingNew && i > 0"
   >
     <mat-expansion-panel-header class="section-header">

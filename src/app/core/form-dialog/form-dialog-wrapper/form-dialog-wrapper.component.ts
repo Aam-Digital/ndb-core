@@ -59,7 +59,7 @@ export class FormDialogWrapperComponent implements AfterViewInit {
    *
    * This emits the saved entity or undefined if the form was canceled.
    */
-  @Output() onClose = new EventEmitter<Entity>();
+  @Output() closed = new EventEmitter<Entity>();
 
   /** ngForm component of the child component that is set through the ng-content */
   @ContentChild("entityForm", { static: true }) contentForm;
@@ -98,14 +98,14 @@ export class FormDialogWrapperComponent implements AfterViewInit {
     }
 
     await this.entityMapper.save<Entity>(this.entity);
-    this.onClose.emit(this.entity);
+    this.closed.emit(this.entity);
   }
 
   /**
-   * Reset any changes made to the entity in the current form (and trigger an `onClose` event).
+   * Reset any changes made to the entity in the current form (and trigger an `closed` event).
    */
   public async cancel() {
     Object.assign(this._entity, this.originalEntity);
-    this.onClose.emit(undefined);
+    this.closed.emit(undefined);
   }
 }

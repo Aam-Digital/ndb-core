@@ -296,7 +296,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       .map((col) => [Object.assign({}, col)]);
     dialogRef.componentInstance.entity = entity;
     dialogRef.componentInstance.editing = true;
-    dialogRef.componentInstance.onSave.subscribe((updatedEntity: T) => {
+    dialogRef.componentInstance.save.subscribe((updatedEntity: T) => {
       dialogRef.close();
       // Trigger the change detection
       const rowIndex = this.recordsDataSource.data.findIndex(
@@ -305,7 +305,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       this.recordsDataSource.data[rowIndex] = { record: updatedEntity };
       this.recordsDataSource._updateChangeSubscription();
     });
-    dialogRef.componentInstance.onCancel.subscribe(() => dialogRef.close());
+    dialogRef.componentInstance.cancel.subscribe(() => dialogRef.close());
   }
 
   /**

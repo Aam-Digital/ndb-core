@@ -26,7 +26,7 @@
     *ngIf="form?.enabled"
     mat-stroked-button
     class="edit-button"
-    (click)="save()"
+    (click)="saveClicked()"
   >
     Save
   </button>
@@ -35,7 +35,7 @@
     *ngIf="form?.enabled"
     mat-stroked-button
     class="edit-button"
-    (click)="cancel()"
+    (click)="cancelClicked()"
   >
     Cancel
   </button>

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { MenuItem } from "../../navigation/menu-item";
 import { OnInitDynamicComponent } from "../../view/dynamic-components/on-init-dynamic-component.interface";
 
@@ -11,13 +11,9 @@ import { OnInitDynamicComponent } from "../../view/dynamic-components/on-init-dy
   styleUrls: ["./dashboard-shortcut-widget.component.scss"],
 })
 export class DashboardShortcutWidgetComponent
-  implements OnInit, OnInitDynamicComponent {
+  implements OnInitDynamicComponent {
   /** displayed entries, each representing one line displayed as a shortcut */
   @Input() shortcuts: MenuItem[] = [];
-
-  constructor() {}
-
-  ngOnInit(): void {}
 
   onInitFromDynamicConfig(config: any) {
     this.shortcuts = config.shortcuts;

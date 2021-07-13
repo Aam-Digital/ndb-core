@@ -84,13 +84,13 @@ describe("EntityFormComponent", () => {
 
   it("should emit notification when a child is saved", (done) => {
     spyOnProperty(component.form, "valid").and.returnValue(true);
-    const subscription = component.onSave.subscribe((child) => {
+    const subscription = component.save.subscribe((child) => {
       expect(child).toEqual(testChild);
       subscription.unsubscribe();
       done();
     });
 
-    component.save();
+    component.saveClicked();
   });
 
   it("should show an warning alert when form service rejects saving", async () => {
@@ -101,7 +101,7 @@ describe("EntityFormComponent", () => {
       new Error("error message")
     );
 
-    await component.save();
+    await component.saveClicked();
 
     expect(alertService.addWarning).toHaveBeenCalledWith("error message");
   });

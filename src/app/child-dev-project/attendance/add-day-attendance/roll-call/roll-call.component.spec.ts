@@ -167,7 +167,7 @@ describe("RollCallComponent", () => {
       Promise.reject(),
       Promise.resolve(existingChild1)
     );
-    spyOn(component.complete, "emit");
+    spyOn(component.completed, "emit");
     component.eventEntity = note;
     component.ngOnInit();
     tick();
@@ -175,6 +175,6 @@ describe("RollCallComponent", () => {
     component.goToNextParticipant();
     component.goToNextParticipant();
 
-    expect(component.complete.emit).toHaveBeenCalledWith(note);
+    expect(component.completed.emit).toHaveBeenCalledWith(note);
   }));
 });

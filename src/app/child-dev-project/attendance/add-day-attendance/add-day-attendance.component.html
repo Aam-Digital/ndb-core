@@ -14,7 +14,7 @@
       *ngIf="currentStage === 1"
       [eventEntity]="event"
       (exit)="finishRollCallState()"
-      (complete)="saveRollCallResult($event)"
+      (completed)="saveRollCallResult($event)"
     >
     </app-roll-call>
   </div>

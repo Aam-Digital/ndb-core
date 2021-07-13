@@ -12,6 +12,6 @@ import { EventAttendance } from "../../../attendance/model/event-attendance";
 export class ChildMeetingNoteAttendanceComponent {
   @Input() childId: string;
   @Input() attendance: EventAttendance;
-  @Output() change = new EventEmitter();
-  @Output() remove = new EventEmitter();
+  @Output() changeClicked = new EventEmitter();
+  @Output() removeClicked = new EventEmitter();
 }

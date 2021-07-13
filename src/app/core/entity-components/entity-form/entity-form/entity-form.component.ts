@@ -52,12 +52,12 @@ export class EntityFormComponent implements OnInit {
   /**
    * This will be emitted whenever changes have been successfully saved to the entity.
    */
-  @Output() onSave = new EventEmitter<Entity>();
+  @Output() save = new EventEmitter<Entity>();
 
   /**
    * This will be emitted whenever the cancel button is pressed.
    */
-  @Output() onCancel = new EventEmitter<void>();
+  @Output() cancel = new EventEmitter<void>();
 
   operationType = OperationType;
   form: FormGroup;
@@ -82,18 +82,18 @@ export class EntityFormComponent implements OnInit {
     }
   }
 
-  async save(): Promise<void> {
+  async saveClicked(): Promise<void> {
     try {
       await this.entityFormService.saveChanges(this.form, this.entity);
-      this.onSave.emit(this.entity);
+      this.save.emit(this.entity);
       this.switchEdit();
     } catch (err) {
       this.alertService.addWarning(err.message);
     }
   }
 
-  cancel() {
-    this.onCancel.emit();
+  cancelClicked() {
+    this.cancel.emit();
     this.buildFormConfig();
   }
 
