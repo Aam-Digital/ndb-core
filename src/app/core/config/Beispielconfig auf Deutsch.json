@@ -1364,7 +1364,7 @@
                         },
                         {
                             "query": "School:toArray",
-                            "label": "Alle Schulen",
+                            "label": "Schulen",
                             "aggregations": [
                                 {
                                     "label": " Auf einer Schule",
