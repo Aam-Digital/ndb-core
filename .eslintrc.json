@@ -18,7 +18,8 @@
       },
       "extends": [
         "plugin:@angular-eslint/recommended",
-        "plugin:@angular-eslint/template/process-inline-templates"
+        "plugin:@angular-eslint/template/process-inline-templates",
+        "plugin:prettier/recommended"
       ],
       "rules": {
         "@angular-eslint/component-selector": [
@@ -48,20 +49,24 @@
       ],
       "rules": {}
     },
+    // Correctly configure prettier according to the documentation
+    // https://github.com/angular-eslint/angular-eslint#notes-for-eslint-plugin-prettier-users
     {
       "files": [
-        "*.html",
-        "*.ts"
+        "*.html"
+      ],
+      "excludedFiles": [
+        "*inline-template-*.component.html"
       ],
       "extends": [
-        "prettier"
-      ],
-      "plugins": [
-        "prettier"
+        "plugin:prettier/recommended"
       ],
       "rules": {
         "prettier/prettier": [
-          "error"
+          "error",
+          {
+            "parser": "html"
+          }
         ]
       }
     }
