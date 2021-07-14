@@ -728,7 +728,7 @@
                 }
             ],
             "columnGroup": {
-                "default": "School Info",
+                "default": "Schulinformationen",
                 "mobile": "Mobile Ansicht",
                 "groups": [
                     {
