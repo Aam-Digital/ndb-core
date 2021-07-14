@@ -21,18 +21,16 @@
   <mat-card *ngFor="let changelog of changelogs" class="mat-elevation-z2">
     <mat-card-header>
       <mat-card-title
-      >{{ changelog ? changelog.name : "No Changelog Available"
+        >{{ changelog ? changelog.name : "No Changelog Available"
         }}</mat-card-title
       >
       <mat-card-subtitle>
         <span class="meta-info"
-        ><mat-icon fontIcon="fa-calendar-o"></mat-icon>
-          {{
-            changelog?.published_at | date }}</span
+          ><mat-icon fontIcon="fa-calendar-o"></mat-icon> {{
+          changelog?.published_at | date }}</span
         >
         <span class="meta-info"
-        ><mat-icon fontIcon="fa-tag"></mat-icon>
-          {{ changelog?.tag_name
+          ><mat-icon fontIcon="fa-tag"></mat-icon> {{ changelog?.tag_name
           }}</span
         >
       </mat-card-subtitle>

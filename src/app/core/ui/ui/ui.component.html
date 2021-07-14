@@ -31,7 +31,7 @@
         angulartics2On="click"
         angularticsCategory="Navigation"
         angularticsAction="navbar_site_title_link"
-      >{{ title }}</a
+        >{{ title }}</a
       >
     </span>
 
@@ -69,16 +69,16 @@
 <!-- MAIN NAVIGATION + CONTENT -->
 <mat-sidenav-container class="app-content mat-typography">
   <mat-sidenav
-      #sideNav
-      *ngIf="isLoggedIn()"
-      [autoFocus]="false"
-      [mode]="sideNavMode"
-      [opened]="sideNavMode === 'side'"
-      class="sidenav-menu mat-elevation-z1"
-      disableClose
-      fixedInViewport="true"
+    #sideNav
+    *ngIf="isLoggedIn()"
+    [autoFocus]="false"
+    [mode]="sideNavMode"
+    [opened]="sideNavMode === 'side'"
+    class="sidenav-menu mat-elevation-z1"
+    disableClose
+    fixedInViewport="true"
   >
-    <img *ngIf="logo_path" [src]="logo_path" style="width: 180px"/>
+    <img *ngIf="logo_path" [src]="logo_path" style="width: 180px" />
     <app-navigation
       (click)="sideNavMode === 'over' && sideNav.close()"
     ></app-navigation>

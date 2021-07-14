@@ -1,8 +1,7 @@
 <mat-toolbar>
   <mat-slide-toggle (change)="changeAllToggle()" [checked]="showingAll"
-  >Show All
-  </mat-slide-toggle
-  >
+    >Show All
+  </mat-slide-toggle>
   <mat-paginator
     (page)="onPaginateChange($event)"
     [pageSize]="pageSize"

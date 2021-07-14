@@ -40,7 +40,7 @@
     </div>
     <div *ngIf="hasAverage">
       {{ selectedEventStats.average | percent: "1.0-0" }} attended (of {{
-        selectedEventStats.counted }} participants)
+      selectedEventStats.counted }} participants)
     </div>
     <div
       *ngIf="selectedEventStats.excludedUnknown > 0"

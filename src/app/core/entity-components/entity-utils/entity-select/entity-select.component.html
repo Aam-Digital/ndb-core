@@ -2,14 +2,14 @@
   <mat-label *ngIf="label">{{ label }}</mat-label>
 
   <input
-      #inputField
-      (matChipInputTokenEnd)="select($event)"
-      [formControl]="formControl"
-      [fxHide]="!formControl.enabled"
-      [matAutocomplete]="autoSuggestions"
-      [matChipInputFor]="chipList"
-      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-      [placeholder]="loading.value ? 'loading...' : placeholder"
+    #inputField
+    (matChipInputTokenEnd)="select($event)"
+    [formControl]="formControl"
+    [fxHide]="!formControl.enabled"
+    [matAutocomplete]="autoSuggestions"
+    [matChipInputFor]="chipList"
+    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+    [placeholder]="loading.value ? 'loading...' : placeholder"
   />
 
   <mat-chip-list #chipList [disabled]="formControl.disabled || loading.value">
@@ -32,8 +32,8 @@
   </mat-chip-list>
 
   <mat-autocomplete
-      #autoSuggestions="matAutocomplete"
-      (optionSelected)="selectEntity($event.option.value)"
+    #autoSuggestions="matAutocomplete"
+    (optionSelected)="selectEntity($event.option.value)"
   >
     <!-- Optional header -->
     <ng-content select="mat-option"></ng-content>

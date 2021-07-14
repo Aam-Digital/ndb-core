@@ -12,7 +12,8 @@ import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components
   styleUrls: ["./recent-notes-dashboard.component.scss"],
 })
 export class RecentNotesDashboardComponent
-  implements OnInitDynamicComponent, OnInit {
+  implements OnInitDynamicComponent, OnInit
+{
   /**
    * number of days since last note that children should be considered having a "recent" note.
    */

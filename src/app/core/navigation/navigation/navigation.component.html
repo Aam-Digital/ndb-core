@@ -24,11 +24,9 @@
     *ngFor="let item of menuItems"
     [routerLink]="[item.link]"
   >
-    <a
-    >
+    <a>
       <mat-icon class="nav-icon" fontIcon="fa-{{ item.icon }}"></mat-icon>
-      {{
-        item.label }}</a
+      {{ item.label }}</a
     >
     <mat-divider></mat-divider>
   </mat-list-item>

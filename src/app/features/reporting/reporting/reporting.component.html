@@ -3,7 +3,7 @@
   <a
     href="mailto:info@aam-digital.com?subject=Set up reports"
     mat-stroked-button
-  >Ask for a setup call</a
+    >Ask for a setup call</a
   >
 </div>
 
@@ -25,8 +25,8 @@
     <mat-form-field>
       <mat-label>Enter a date range</mat-label>
       <mat-date-range-input [rangePicker]="picker" [disabled]="loading">
-        <input [(ngModel)]="fromDate" matStartDate placeholder="Start date"/>
-        <input [(ngModel)]="toDate" matEndDate placeholder="End date"/>
+        <input [(ngModel)]="fromDate" matStartDate placeholder="Start date" />
+        <input [(ngModel)]="toDate" matEndDate placeholder="End date" />
       </mat-date-range-input>
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-date-range-picker #picker></mat-date-range-picker>

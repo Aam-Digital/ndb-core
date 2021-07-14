@@ -38,7 +38,8 @@ import { entityFilterPredicate } from "./filter-predicate";
   styleUrls: ["./entity-list.component.scss"],
 })
 export class EntityListComponent<T extends Entity>
-  implements OnChanges, OnInit, AfterViewInit {
+  implements OnChanges, OnInit, AfterViewInit
+{
   @Input() allEntities: T[] = [];
   filteredEntities: T[] = [];
   @Input() listConfig: EntityListConfig;

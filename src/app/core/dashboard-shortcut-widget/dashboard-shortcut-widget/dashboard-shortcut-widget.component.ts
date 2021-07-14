@@ -11,7 +11,8 @@ import { OnInitDynamicComponent } from "../../view/dynamic-components/on-init-dy
   styleUrls: ["./dashboard-shortcut-widget.component.scss"],
 })
 export class DashboardShortcutWidgetComponent
-  implements OnInitDynamicComponent {
+  implements OnInitDynamicComponent
+{
   /** displayed entries, each representing one line displayed as a shortcut */
   @Input() shortcuts: MenuItem[] = [];
 
