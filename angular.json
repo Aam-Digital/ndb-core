@@ -65,20 +65,24 @@
                 }
               ],
               "serviceWorker": true
-            }
+            },
+            "development": {}
           },
-          "defaultConfiguration": ""
+          "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "ndb-core:build"
           },
           "configurations": {
             "production": {
               "browserTarget": "ndb-core:build:production"
+            },
+            "development": {
+              "browserTarget": "ndb-core:build:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
@@ -128,7 +132,8 @@
           "options": {
             "protractorConfig": "./protractor.conf.js",
             "devServerTarget": "ndb-core:serve"
-          }
+          },
+          "configurations": {}
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
