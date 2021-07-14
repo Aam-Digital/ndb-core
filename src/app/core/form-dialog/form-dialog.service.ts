@@ -43,9 +43,9 @@ export class FormDialogService {
       typeof (dialogRef.componentInstance as OnInitDynamicComponent)
         .onInitFromDynamicConfig === "function"
     ) {
-      (dialogRef.componentInstance as OnInitDynamicComponent).onInitFromDynamicConfig(
-        componentConfig
-      );
+      (
+        dialogRef.componentInstance as OnInitDynamicComponent
+      ).onInitFromDynamicConfig(componentConfig);
     }
 
     const dialogWrapper = dialogRef.componentInstance.formDialogWrapper;

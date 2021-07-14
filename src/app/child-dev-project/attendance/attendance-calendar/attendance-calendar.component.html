@@ -7,9 +7,7 @@
 </mat-calendar>
 
 <div *ngIf="selectedDate" class="form">
-  <h3 class="selected-title">
-    {{ selectedDate.toDate() | date }}
-  </h3>
+  <h3 class="selected-title">{{ selectedDate.toDate() | date }}</h3>
 
   <button mat-icon-button class="form-close" (click)="selectDay()">
     <span class="fa fa-times"></span>
@@ -41,8 +39,8 @@
       All excused (out of {{ selectedEvent.children.length }} participants)
     </div>
     <div *ngIf="hasAverage">
-      {{ selectedEventStats.average | percent: "1.0-0" }} attended (of
-      {{ selectedEventStats.counted }} participants)
+      {{ selectedEventStats.average | percent: "1.0-0" }} attended (of {{
+        selectedEventStats.counted }} participants)
     </div>
     <div
       *ngIf="selectedEventStats.excludedUnknown > 0"

@@ -6,10 +6,8 @@ import { defaultJsonConfig } from "./config-fix";
 
 describe("ConfigService", () => {
   let service: ConfigService;
-  const entityMapper: jasmine.SpyObj<EntityMapperService> = jasmine.createSpyObj(
-    "entityMapper",
-    ["load", "save"]
-  );
+  const entityMapper: jasmine.SpyObj<EntityMapperService> =
+    jasmine.createSpyObj("entityMapper", ["load", "save"]);
 
   beforeEach(() => {
     TestBed.configureTestingModule({});

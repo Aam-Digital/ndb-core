@@ -62,7 +62,8 @@ export class ChildrenListComponent implements OnInit {
     )) {
       switch (prebuiltFilter.id) {
         case "school": {
-          (prebuiltFilter as PrebuiltFilterConfig<Child>).options = await this.buildSchoolFilter();
+          (prebuiltFilter as PrebuiltFilterConfig<Child>).options =
+            await this.buildSchoolFilter();
           (prebuiltFilter as PrebuiltFilterConfig<Child>).default = "";
           break;
         }

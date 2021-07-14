@@ -110,7 +110,8 @@ describe("QueryService", () => {
     femaleChristianChildAttendsNormalSchool = new ChildSchoolRelation(
       "femaleChristianChildAttendsNormalSchool"
     );
-    femaleChristianChildAttendsNormalSchool.childId = femaleChristianChild.getId();
+    femaleChristianChildAttendsNormalSchool.childId =
+      femaleChristianChild.getId();
     femaleChristianChildAttendsNormalSchool.schoolId = normalSchool.getId();
     femaleChristianChildAttendsNormalSchool.start = moment()
       .subtract(1, "week")
@@ -153,13 +154,11 @@ describe("QueryService", () => {
     twoWeeksAgoPrivateEvent.relatesTo = privateSchoolClassActivity._id;
     twoWeeksAgoPrivateEvent.category = schoolClass;
     twoWeeksAgoPrivateEvent.addChild(maleChild.getId());
-    twoWeeksAgoPrivateEvent.getAttendance(
-      maleChild.getId()
-    ).status = absentAttendanceStatus;
+    twoWeeksAgoPrivateEvent.getAttendance(maleChild.getId()).status =
+      absentAttendanceStatus;
     twoWeeksAgoPrivateEvent.addChild(femaleChristianChild.getId());
-    twoWeeksAgoPrivateEvent.getAttendance(
-      femaleChristianChild.getId()
-    ).status = presentAttendanceStatus;
+    twoWeeksAgoPrivateEvent.getAttendance(femaleChristianChild.getId()).status =
+      presentAttendanceStatus;
     await entityMapper.save(twoWeeksAgoPrivateEvent);
 
     threeDaysAgoPrivateEvent = new EventNote("threeDaysAgoPrivateEvent");
@@ -167,9 +166,8 @@ describe("QueryService", () => {
     threeDaysAgoPrivateEvent.relatesTo = privateSchoolClassActivity._id;
     threeDaysAgoPrivateEvent.category = schoolClass;
     threeDaysAgoPrivateEvent.addChild(maleChild.getId());
-    threeDaysAgoPrivateEvent.getAttendance(
-      maleChild.getId()
-    ).status = absentAttendanceStatus;
+    threeDaysAgoPrivateEvent.getAttendance(maleChild.getId()).status =
+      absentAttendanceStatus;
     await entityMapper.save(threeDaysAgoPrivateEvent);
 
     sixDaysAgoNormalEvent = new EventNote("sixDaysAgoNormalEvent");
@@ -177,9 +175,8 @@ describe("QueryService", () => {
     sixDaysAgoNormalEvent.relatesTo = normalLifeSkillsActivity._id;
     sixDaysAgoNormalEvent.category = lifeSkills;
     sixDaysAgoNormalEvent.addChild(femaleMuslimChild.getId());
-    sixDaysAgoNormalEvent.getAttendance(
-      femaleMuslimChild.getId()
-    ).status = presentAttendanceStatus;
+    sixDaysAgoNormalEvent.getAttendance(femaleMuslimChild.getId()).status =
+      presentAttendanceStatus;
     await entityMapper.save(sixDaysAgoNormalEvent);
 
     todayEventWithoutSchool = new EventNote("todayEventWithoutSchool");
@@ -187,13 +184,11 @@ describe("QueryService", () => {
     todayEventWithoutSchool.relatesTo = lifeSkillsActivityWithoutLink._id;
     todayEventWithoutSchool.category = lifeSkills;
     todayEventWithoutSchool.addChild(femaleChristianChild.getId());
-    todayEventWithoutSchool.getAttendance(
-      femaleChristianChild.getId()
-    ).status = presentAttendanceStatus;
+    todayEventWithoutSchool.getAttendance(femaleChristianChild.getId()).status =
+      presentAttendanceStatus;
     todayEventWithoutSchool.addChild(maleChild.getId());
-    todayEventWithoutSchool.getAttendance(
-      maleChild.getId()
-    ).status = absentAttendanceStatus;
+    todayEventWithoutSchool.getAttendance(maleChild.getId()).status =
+      absentAttendanceStatus;
     await entityMapper.save(todayEventWithoutSchool);
 
     twoDaysAgoEventWithoutRelation = new EventNote(

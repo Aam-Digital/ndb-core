@@ -10,10 +10,11 @@ import { ChildrenModule } from "../children.module";
 describe("ChildrenBmiDashboardComponent", () => {
   let component: ChildrenBmiDashboardComponent;
   let fixture: ComponentFixture<ChildrenBmiDashboardComponent>;
-  const mockChildrenService: jasmine.SpyObj<ChildrenService> = jasmine.createSpyObj(
-    "mockChildrenService",
-    ["getHealthChecksOfChild", "getChildren"]
-  );
+  const mockChildrenService: jasmine.SpyObj<ChildrenService> =
+    jasmine.createSpyObj("mockChildrenService", [
+      "getHealthChecksOfChild",
+      "getChildren",
+    ]);
 
   beforeEach(() => {
     mockChildrenService.getChildren.and.returnValue(of([]));

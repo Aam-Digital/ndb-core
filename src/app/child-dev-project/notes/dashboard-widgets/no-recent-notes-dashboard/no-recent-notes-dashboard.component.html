@@ -8,9 +8,7 @@
         <mat-spinner [diameter]="40" class="loading-indicator"></mat-spinner>
         &nbsp;
       </span>
-      <span *ngIf="!isLoading">
-        {{ concernedChildren?.length }}
-      </span>
+      <span *ngIf="!isLoading"> {{ concernedChildren?.length }} </span>
     </mat-card-title>
     <mat-card-subtitle
       [matTooltip]="

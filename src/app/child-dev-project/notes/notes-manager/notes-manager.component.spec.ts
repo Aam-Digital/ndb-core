@@ -174,9 +174,9 @@ describe("NotesManagerComponent", () => {
     flush();
 
     const list = fixture.debugElement.query(By.css("app-entity-list"));
-    const filterSettings = (list.componentInstance as EntityListComponent<Note>).filterSelections.find(
-      (f) => f.filterSettings.name === "category"
-    );
+    const filterSettings = (
+      list.componentInstance as EntityListComponent<Note>
+    ).filterSelections.find((f) => f.filterSettings.name === "category");
 
     expect(filterSettings.filterSettings.options.length).toEqual(
       testInteractionTypes.length + 1

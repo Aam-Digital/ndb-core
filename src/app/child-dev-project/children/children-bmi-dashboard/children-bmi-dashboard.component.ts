@@ -18,7 +18,8 @@ interface BmiRow {
   styleUrls: ["./children-bmi-dashboard.component.scss"],
 })
 export class ChildrenBmiDashboardComponent
-  implements OnInit, OnInitDynamicComponent {
+  implements OnInit, OnInitDynamicComponent
+{
   public currentHealthCheck: HealthCheck;
   bmiRows: BmiRow[] = [];
 

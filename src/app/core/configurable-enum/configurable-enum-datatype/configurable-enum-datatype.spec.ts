@@ -56,9 +56,8 @@ describe("ConfigurableEnumDatatype", () => {
         ],
       });
 
-      entitySchemaService = TestBed.inject<EntitySchemaService>(
-        EntitySchemaService
-      );
+      entitySchemaService =
+        TestBed.inject<EntitySchemaService>(EntitySchemaService);
     })
   );
 

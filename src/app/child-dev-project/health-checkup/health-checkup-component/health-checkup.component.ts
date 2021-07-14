@@ -14,7 +14,8 @@ import { FormFieldConfig } from "../../../core/entity-components/entity-form/ent
   styleUrls: ["./health-checkup.component.scss"],
 })
 export class HealthCheckupComponent
-  implements OnChanges, OnInitDynamicComponent {
+  implements OnChanges, OnInitDynamicComponent
+{
   records = new Array<HealthCheck>();
   /**
    * Column Description for the SubentityRecordComponent

@@ -24,7 +24,8 @@ interface AttendanceWeekRow {
   styleUrls: ["./attendance-week-dashboard.component.scss"],
 })
 export class AttendanceWeekDashboardComponent
-  implements OnInitDynamicComponent, OnInit {
+  implements OnInitDynamicComponent, OnInit
+{
   /**
    * The offset from the default time period, which is the last complete week.
    *
@@ -85,10 +86,11 @@ export class AttendanceWeekDashboardComponent
       previousMonday.getDate() + 5
     );
 
-    const activityAttendances = await this.attendanceService.getAllActivityAttendancesForPeriod(
-      previousMonday,
-      previousSaturday
-    );
+    const activityAttendances =
+      await this.attendanceService.getAllActivityAttendancesForPeriod(
+        previousMonday,
+        previousSaturday
+      );
 
     const lowAttendanceCases = new Set<string>();
     const records: AttendanceWeekRow[] = [];
@@ -106,9 +108,9 @@ export class AttendanceWeekDashboardComponent
     }
 
     const groupedRecords = groupBy(records, "childId");
-    this.dashboardRowGroups = Array.from(
-      lowAttendanceCases.values()
-    ).map((childId) => groupedRecords.get(childId));
+    this.dashboardRowGroups = Array.from(lowAttendanceCases.values()).map(
+      (childId) => groupedRecords.get(childId)
+    );
   }
 
   private generateRowsFromActivityAttendance(

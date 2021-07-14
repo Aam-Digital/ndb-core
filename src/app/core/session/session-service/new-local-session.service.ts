@@ -41,9 +41,8 @@ export class NewLocalSessionService extends SessionService {
     SyncState.UNSYNCED
   );
   /** StateHandler for connection state changes (not relevant for LocalSession) */
-  public connectionState: StateHandler<ConnectionState> = new StateHandler<ConnectionState>(
-    ConnectionState.DISCONNECTED
-  );
+  public connectionState: StateHandler<ConnectionState> =
+    new StateHandler<ConnectionState>(ConnectionState.DISCONNECTED);
 
   /** The currently authenticated user entity */
   public currentUser: User;

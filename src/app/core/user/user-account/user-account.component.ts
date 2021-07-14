@@ -124,8 +124,8 @@ export class UserAccountComponent implements OnInit {
 
   private passwordMatchValidator(): ValidationErrors | null {
     const newPassword: string = this?.passwordForm?.get("newPassword")?.value;
-    const confirmPassword: string = this?.passwordForm?.get("confirmPassword")
-      ?.value;
+    const confirmPassword: string =
+      this?.passwordForm?.get("confirmPassword")?.value;
     if (newPassword !== confirmPassword) {
       this.passwordForm
         .get("confirmPassword")

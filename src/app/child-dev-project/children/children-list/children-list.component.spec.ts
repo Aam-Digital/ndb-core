@@ -80,12 +80,10 @@ describe("ChildrenListComponent", () => {
     data: of(routeData),
     queryParams: of({}),
   };
-  const mockChildrenService: jasmine.SpyObj<ChildrenService> = jasmine.createSpyObj(
-    ["getChildren"]
-  );
-  const mockEntityMapper: jasmine.SpyObj<EntityMapperService> = jasmine.createSpyObj(
-    ["loadType", "save"]
-  );
+  const mockChildrenService: jasmine.SpyObj<ChildrenService> =
+    jasmine.createSpyObj(["getChildren"]);
+  const mockEntityMapper: jasmine.SpyObj<EntityMapperService> =
+    jasmine.createSpyObj(["loadType", "save"]);
   beforeEach(
     waitForAsync(() => {
       mockEntityMapper.loadType.and.resolveTo([]);

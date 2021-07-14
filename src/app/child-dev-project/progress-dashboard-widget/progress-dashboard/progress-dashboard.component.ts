@@ -13,7 +13,8 @@ import { LoggingService } from "../../../core/logging/logging.service";
   styleUrls: ["./progress-dashboard.component.scss"],
 })
 export class ProgressDashboardComponent
-  implements OnInitDynamicComponent, OnInit {
+  implements OnInitDynamicComponent, OnInit
+{
   @Input() dashboardConfigId = "";
   data: ProgressDashboardConfig;
   configure = false;

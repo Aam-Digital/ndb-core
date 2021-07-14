@@ -8,7 +8,8 @@ import { ConfigService } from "../../config/config.service";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 
 export class ConfigurableEnumDatatype
-  implements EntitySchemaDatatype<ConfigurableEnumValue> {
+  implements EntitySchemaDatatype<ConfigurableEnumValue>
+{
   public readonly name = "configurable-enum";
   public readonly viewComponent = "DisplayConfigurableEnum";
   public readonly editComponent = "EditConfigurableEnum";

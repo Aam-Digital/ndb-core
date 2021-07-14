@@ -48,9 +48,8 @@ export const mapEntitySchemaDatatype: EntitySchemaDatatype = {
       return value;
     }
 
-    const innerElementDatatype: EntitySchemaDatatype = schemaService.getDatatypeOrDefault(
-      schemaField.innerDataType
-    );
+    const innerElementDatatype: EntitySchemaDatatype =
+      schemaService.getDatatypeOrDefault(schemaField.innerDataType);
     const result = [];
     value.forEach((item, key) => {
       result.push([
@@ -84,9 +83,8 @@ export const mapEntitySchemaDatatype: EntitySchemaDatatype = {
       return value;
     }
 
-    const innerElementType: EntitySchemaDatatype = schemaService.getDatatypeOrDefault(
-      schemaField.innerDataType
-    );
+    const innerElementType: EntitySchemaDatatype =
+      schemaService.getDatatypeOrDefault(schemaField.innerDataType);
 
     const result = new Map();
     for (const keyValue of value) {

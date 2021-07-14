@@ -58,9 +58,8 @@ describe("EntityDetailsComponent", () => {
     data: of(routeConfig),
   };
 
-  const mockEntityPermissionsService: jasmine.SpyObj<EntityPermissionsService> = jasmine.createSpyObj(
-    ["userIsPermitted"]
-  );
+  const mockEntityPermissionsService: jasmine.SpyObj<EntityPermissionsService> =
+    jasmine.createSpyObj(["userIsPermitted"]);
 
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let mockSessionService: jasmine.SpyObj<SessionService>;

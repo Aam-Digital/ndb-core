@@ -62,10 +62,11 @@ export class CompareRevComponent {
     this.diffsReverse = this.stringify(diffReverseObject);
     this.diffsCustom = this.stringify(diffReverseObject);
 
-    const isIrrelevantConflictingDoc = this.conflictResolver.shouldDeleteConflictingRevision(
-      this.doc,
-      this.revDoc
-    );
+    const isIrrelevantConflictingDoc =
+      this.conflictResolver.shouldDeleteConflictingRevision(
+        this.doc,
+        this.revDoc
+      );
     if (isIrrelevantConflictingDoc) {
       const success = await this.deleteDoc(this.revDoc);
       if (success) {

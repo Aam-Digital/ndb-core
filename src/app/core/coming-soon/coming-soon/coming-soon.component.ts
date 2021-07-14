@@ -52,9 +52,8 @@ export class ComingSoonComponent implements OnChanges {
 
   private init(newFeatureId: string) {
     this.featureId = newFeatureId;
-    this.requested = ComingSoonComponent.featuresRequested.includes(
-      newFeatureId
-    );
+    this.requested =
+      ComingSoonComponent.featuresRequested.includes(newFeatureId);
 
     this.track("visit");
   }

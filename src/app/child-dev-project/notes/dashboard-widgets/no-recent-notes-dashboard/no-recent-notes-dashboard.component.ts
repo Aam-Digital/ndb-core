@@ -24,7 +24,8 @@ import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components
   styleUrls: ["./no-recent-notes-dashboard.component.scss"],
 })
 export class NoRecentNotesDashboardComponent
-  implements OnInitDynamicComponent, OnInit, AfterViewInit {
+  implements OnInitDynamicComponent, OnInit, AfterViewInit
+{
   /**
    * number of days since last note that children should be considered having a "recent" note.
    */
@@ -42,7 +43,8 @@ export class NoRecentNotesDashboardComponent
   concernedChildren: ChildWithRecentNoteInfo[] = [];
 
   columnsToDisplay: string[] = ["name", "daysSinceLastNote"];
-  childrenWithNoteInfoDataSource: MatTableDataSource<ChildWithRecentNoteInfo> = new MatTableDataSource<ChildWithRecentNoteInfo>();
+  childrenWithNoteInfoDataSource: MatTableDataSource<ChildWithRecentNoteInfo> =
+    new MatTableDataSource<ChildWithRecentNoteInfo>();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 

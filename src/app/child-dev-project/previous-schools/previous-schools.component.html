@@ -2,8 +2,8 @@
   <em
     matTooltip="To change this field, please add a new entry to the history below"
   >
-    Currently attending
-    {{ current.schoolClass ? current.schoolClass + " at " : "" }}
+    Currently attending {{ current.schoolClass ? current.schoolClass + " at " :
+      "" }}
     <app-school-block [entityId]="current.schoolId"></app-school-block>
   </em>
 </div>

@@ -18,18 +18,15 @@
     (mouseleave)="hideTooltip()"
   >
     <div class="attendance-tooltip-header">
-      {{ attendanceData.periodFrom | date: "shortDate" }} -
-      {{ attendanceData.periodTo | date: "shortDate" }}
-      {{ attendanceData.activity.title }}
+      {{ attendanceData.periodFrom | date: "shortDate" }} - {{
+        attendanceData.periodTo | date: "shortDate" }} {{
+        attendanceData.activity.title }}
     </div>
 
     <div class="attendance-tooltip-content">
-      attended {{ logicalCount[LStatus.PRESENT] || 0 }} /
-      {{
-        (logicalCount[LStatus.PRESENT] || 0) +
-          (logicalCount[LStatus.ABSENT] || 0)
-      }}
-      events
+      attended {{ logicalCount[LStatus.PRESENT] || 0 }} / {{
+        (logicalCount[LStatus.PRESENT] || 0) + (logicalCount[LStatus.ABSENT] || 0)
+      }} events
     </div>
 
     <div

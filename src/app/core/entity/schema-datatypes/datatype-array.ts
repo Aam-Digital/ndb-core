@@ -49,9 +49,8 @@ export const arrayEntitySchemaDatatype: EntitySchemaDatatype = {
       return value;
     }
 
-    const arrayElementDatatype: EntitySchemaDatatype = schemaService.getDatatypeOrDefault(
-      schemaField.innerDataType
-    );
+    const arrayElementDatatype: EntitySchemaDatatype =
+      schemaService.getDatatypeOrDefault(schemaField.innerDataType);
     return value.map((el) =>
       arrayElementDatatype.transformToDatabaseFormat(
         el,
@@ -77,9 +76,8 @@ export const arrayEntitySchemaDatatype: EntitySchemaDatatype = {
       return value;
     }
 
-    const arrayElementDatatype: EntitySchemaDatatype = schemaService.getDatatypeOrDefault(
-      schemaField.innerDataType
-    );
+    const arrayElementDatatype: EntitySchemaDatatype =
+      schemaService.getDatatypeOrDefault(schemaField.innerDataType);
 
     return value.map((el) =>
       arrayElementDatatype.transformToObjectFormat(

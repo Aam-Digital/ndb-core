@@ -71,8 +71,8 @@ export class ChangelogComponent implements OnInit {
    * Add one more previous release card to the end of the currently displayed list of changelogs.
    */
   loadPreviousRelease() {
-    const lastDisplayedVersion = this.changelogs[this.changelogs.length - 1]
-      .tag_name;
+    const lastDisplayedVersion =
+      this.changelogs[this.changelogs.length - 1].tag_name;
     this.latestChangesService
       .getChangelogsBeforeVersion(lastDisplayedVersion, 1)
       .subscribe((additionalChangelog) => {
@@ -83,6 +83,7 @@ export class ChangelogComponent implements OnInit {
   }
 
   private scrollToBottomOfReleases() {
-    this.contentContainer.nativeElement.scrollTop = this.contentContainer.nativeElement.scrollHeight;
+    this.contentContainer.nativeElement.scrollTop =
+      this.contentContainer.nativeElement.scrollHeight;
   }
 }

@@ -16,7 +16,8 @@ import { FormDialogService } from "../../../core/form-dialog/form-dialog.service
   styleUrls: ["./activity-attendance-section.component.scss"],
 })
 export class ActivityAttendanceSectionComponent
-  implements OnChanges, OnInitDynamicComponent {
+  implements OnChanges, OnInitDynamicComponent
+{
   @Input() activity: RecurringActivity;
   @Input() forChild?: string;
 

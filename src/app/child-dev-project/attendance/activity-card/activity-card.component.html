@@ -22,7 +22,6 @@
   <mat-card-content>
     {{ event.children.length }} participants
     <span *ngIf="!recurring">({{ event.date | date: "shortDate" }})</span>
-    ;
-    {{ event.category?.label }}
+    ; {{ event.category?.label }}
   </mat-card-content>
 </mat-card>

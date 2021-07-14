@@ -53,17 +53,14 @@ export class ConfigMigrationService {
   }
 
   private addNewConfigurableEnums() {
-    this.config.data[
-      CONFIGURABLE_ENUM_CONFIG_PREFIX + "reading-levels"
-    ] = readingLevels;
-    this.config.data[
-      CONFIGURABLE_ENUM_CONFIG_PREFIX + "math-levels"
-    ] = mathLevels;
+    this.config.data[CONFIGURABLE_ENUM_CONFIG_PREFIX + "reading-levels"] =
+      readingLevels;
+    this.config.data[CONFIGURABLE_ENUM_CONFIG_PREFIX + "math-levels"] =
+      mathLevels;
     this.config.data[CONFIGURABLE_ENUM_CONFIG_PREFIX + "genders"] = genders;
     this.config.data[CONFIGURABLE_ENUM_CONFIG_PREFIX + "materials"] = materials;
-    this.config.data[
-      CONFIGURABLE_ENUM_CONFIG_PREFIX + "warning-levels"
-    ] = warningLevels;
+    this.config.data[CONFIGURABLE_ENUM_CONFIG_PREFIX + "warning-levels"] =
+      warningLevels;
   }
 
   private migrateViewConfigs() {
@@ -340,9 +337,8 @@ export class ConfigMigrationService {
           };
         })
       );
-      this.config.data[
-        CONFIGURABLE_ENUM_CONFIG_PREFIX + formField.id
-      ] = newEnum;
+      this.config.data[CONFIGURABLE_ENUM_CONFIG_PREFIX + formField.id] =
+        newEnum;
       console.warn(
         `Automatically created enum "${formField.id}" with values:`,
         newEnum

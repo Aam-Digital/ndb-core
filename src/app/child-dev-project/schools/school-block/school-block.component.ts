@@ -19,7 +19,8 @@ import { ViewConfig } from "../../../core/view/dynamic-routing/view-config.inter
   styleUrls: ["./school-block.component.scss"],
 })
 export class SchoolBlockComponent
-  implements OnInitDynamicComponent, OnChanges, OnInit {
+  implements OnInitDynamicComponent, OnChanges, OnInit
+{
   iconName: String;
   @Input() entity: School = new School("");
   @Input() entityId: string;

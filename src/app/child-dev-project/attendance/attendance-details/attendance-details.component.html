@@ -24,13 +24,9 @@
   <form #entityForm="ngForm">
     <div class="w-{{ entity.getWarningLevel() }}">
       <div class="summary">
-        Attendance:
-        {{
-          (focusedChild
-                  ? entity?.getAttendancePercentage(focusedChild)
-                  : entity?.getAttendancePercentageAverage()
-          ) | percent: "1.0-0"
-        }}
+        Attendance: {{ (focusedChild ?
+          entity?.getAttendancePercentage(focusedChild) :
+          entity?.getAttendancePercentageAverage()) | percent: "1.0-0" }}
       </div>
     </div>
 

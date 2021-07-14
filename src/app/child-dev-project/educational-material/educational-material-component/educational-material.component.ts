@@ -13,7 +13,8 @@ import { FormFieldConfig } from "../../../core/entity-components/entity-form/ent
   templateUrl: "./educational-material.component.html",
 })
 export class EducationalMaterialComponent
-  implements OnChanges, OnInitDynamicComponent {
+  implements OnChanges, OnInitDynamicComponent
+{
   @Input() child: Child;
   records = new Array<EducationalMaterial>();
   summary = "";

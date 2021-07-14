@@ -37,16 +37,14 @@ describe("DemoDataService", () => {
   });
 
   it("should be created", () => {
-    const service: DemoDataService = TestBed.inject<DemoDataService>(
-      DemoDataService
-    );
+    const service: DemoDataService =
+      TestBed.inject<DemoDataService>(DemoDataService);
     expect(service).toBeTruthy();
   });
 
   it("should register generator but not config providers", () => {
-    const service: DemoDataService = TestBed.inject<DemoDataService>(
-      DemoDataService
-    );
+    const service: DemoDataService =
+      TestBed.inject<DemoDataService>(DemoDataService);
 
     expect(service.dataGenerators.length).toBe(1);
   });

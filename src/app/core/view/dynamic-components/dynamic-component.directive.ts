@@ -46,20 +46,22 @@ export class DynamicComponentDirective implements OnChanges {
     if (!component) {
       this.loggingService.warn(
         "Could not load dashboard widget - component not found: " +
-          this.appDynamicComponent.component
+        this.appDynamicComponent.component
       );
       return;
     }
 
-    const componentFactory = this.componentFactoryResolver.resolveComponentFactory<OnInitDynamicComponent>(
-      component
-    );
+    const componentFactory =
+      this.componentFactoryResolver.resolveComponentFactory<OnInitDynamicComponent>(
+        component
+      );
 
     this.viewContainerRef.clear();
 
-    const componentRef = this.viewContainerRef.createComponent<OnInitDynamicComponent>(
-      componentFactory
-    );
+    const componentRef =
+      this.viewContainerRef.createComponent<OnInitDynamicComponent>(
+        componentFactory
+      );
     componentRef.instance.onInitFromDynamicConfig(
       this.appDynamicComponent.config
     );

@@ -12,7 +12,8 @@ import moment from "moment";
   templateUrl: "./previous-schools.component.html",
 })
 export class PreviousSchoolsComponent
-  implements OnChanges, OnInitDynamicComponent {
+  implements OnChanges, OnInitDynamicComponent
+{
   @Input() child: Child;
   records = new Array<ChildSchoolRelation>();
   columns: FormFieldConfig[] = [

@@ -62,16 +62,13 @@ describe("AttendanceMigrationService", () => {
       event.relatesTo = service.activities.school._id;
       event.children = [testChild];
     }
-    expectedNotes[0].getAttendance(
-      testChild
-    ).status = defaultAttendanceStatusTypes.find((t) => t.shortName === "E");
+    expectedNotes[0].getAttendance(testChild).status =
+      defaultAttendanceStatusTypes.find((t) => t.shortName === "E");
     expectedNotes[0].getAttendance(testChild).remarks = "some remark";
-    expectedNotes[1].getAttendance(
-      testChild
-    ).status = defaultAttendanceStatusTypes.find((t) => t.shortName === "A");
-    expectedNotes[2].getAttendance(
-      testChild
-    ).status = defaultAttendanceStatusTypes.find((t) => t.shortName === "P");
+    expectedNotes[1].getAttendance(testChild).status =
+      defaultAttendanceStatusTypes.find((t) => t.shortName === "A");
+    expectedNotes[2].getAttendance(testChild).status =
+      defaultAttendanceStatusTypes.find((t) => t.shortName === "P");
 
     await service.createEventsForAttendanceMonth(old);
 
@@ -105,12 +102,10 @@ describe("AttendanceMigrationService", () => {
       event.relatesTo = service.activities.school._id;
       event.children = [testChild1, testChild2];
     }
-    expectedNotes[0].getAttendance(
-      testChild1
-    ).status = defaultAttendanceStatusTypes.find((t) => t.shortName === "A");
-    expectedNotes[0].getAttendance(
-      testChild2
-    ).status = defaultAttendanceStatusTypes.find((t) => t.shortName === "P");
+    expectedNotes[0].getAttendance(testChild1).status =
+      defaultAttendanceStatusTypes.find((t) => t.shortName === "A");
+    expectedNotes[0].getAttendance(testChild2).status =
+      defaultAttendanceStatusTypes.find((t) => t.shortName === "P");
 
     await service.createEventsForAttendanceMonth(old1);
     await service.createEventsForAttendanceMonth(old2);

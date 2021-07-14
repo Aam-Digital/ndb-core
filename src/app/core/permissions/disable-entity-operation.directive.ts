@@ -51,12 +51,12 @@ export class DisableEntityOperationDirective implements OnInit {
         this.arguments.operation
       );
     }
-    const containerFactory = this.componentFactoryResolver.resolveComponentFactory(
-      DisabledWrapperComponent
-    );
-    this.wrapperComponent = this.viewContainerRef.createComponent(
-      containerFactory
-    );
+    const containerFactory =
+      this.componentFactoryResolver.resolveComponentFactory(
+        DisabledWrapperComponent
+      );
+    this.wrapperComponent =
+      this.viewContainerRef.createComponent(containerFactory);
     this.wrapperComponent.instance.template = this.templateRef;
     this.wrapperComponent.instance.text = this.text;
     this.wrapperComponent.instance.elementDisabled = !permitted;

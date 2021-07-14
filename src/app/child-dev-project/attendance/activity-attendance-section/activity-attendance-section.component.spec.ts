@@ -91,11 +91,10 @@ describe("ActivityAttendanceSectionComponent", () => {
 
     const eventParticipatingIn = EventNote.create(new Date(), "participating");
     eventParticipatingIn.addChild(testChildId);
-    eventParticipatingIn.getAttendance(
-      testChildId
-    ).status = defaultAttendanceStatusTypes.find(
-      (s) => s.countAs === AttendanceLogicalStatus.PRESENT
-    );
+    eventParticipatingIn.getAttendance(testChildId).status =
+      defaultAttendanceStatusTypes.find(
+        (s) => s.countAs === AttendanceLogicalStatus.PRESENT
+      );
 
     component.allRecords = [
       ActivityAttendance.create(new Date(), []),

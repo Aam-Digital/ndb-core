@@ -9,9 +9,8 @@ import { Entity } from "../entity/model/entity";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
 describe("DisableEntityOperationDirective", () => {
-  const mockEntityPermissionService: jasmine.SpyObj<EntityPermissionsService> = jasmine.createSpyObj(
-    ["userIsPermitted"]
-  );
+  const mockEntityPermissionService: jasmine.SpyObj<EntityPermissionsService> =
+    jasmine.createSpyObj(["userIsPermitted"]);
 
   beforeEach(() => {
     TestBed.configureTestingModule({

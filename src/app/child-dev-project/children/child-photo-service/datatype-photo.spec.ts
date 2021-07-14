@@ -34,9 +34,8 @@ describe("dataType photo", () => {
       providers: [EntitySchemaService],
     });
 
-    entitySchemaService = TestBed.inject<EntitySchemaService>(
-      EntitySchemaService
-    );
+    entitySchemaService =
+      TestBed.inject<EntitySchemaService>(EntitySchemaService);
     entitySchemaService.registerSchemaDatatype(new PhotoDatatype());
   });
 

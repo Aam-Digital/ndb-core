@@ -9,10 +9,8 @@ import { BmiBlockComponent } from "./bmi-block.component";
 describe("BmiBlockComponent", () => {
   let component: BmiBlockComponent;
   let fixture: ComponentFixture<BmiBlockComponent>;
-  const mockChildrenService: jasmine.SpyObj<ChildrenService> = jasmine.createSpyObj(
-    "mockChildrenService",
-    ["getHealthChecksOfChild"]
-  );
+  const mockChildrenService: jasmine.SpyObj<ChildrenService> =
+    jasmine.createSpyObj("mockChildrenService", ["getHealthChecksOfChild"]);
 
   beforeEach(
     waitForAsync(() => {

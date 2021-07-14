@@ -136,11 +136,8 @@ export class AttendanceMigrationService {
       }
 
       newEvent.children.push(old.student);
-      newEvent.getAttendance(
-        old.student
-      ).status = defaultAttendanceStatusTypes.find(
-        (t) => t.shortName === day.status
-      );
+      newEvent.getAttendance(old.student).status =
+        defaultAttendanceStatusTypes.find((t) => t.shortName === day.status);
       newEvent.getAttendance(old.student).remarks = day.remarks;
     }
   }

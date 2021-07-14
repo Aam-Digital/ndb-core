@@ -11,12 +11,10 @@ import { EntityConfigService } from "../entity/entity-config.service";
 
 describe("EntityPermissionsService", () => {
   let service: EntityPermissionsService;
-  const mockConfigService: jasmine.SpyObj<EntityConfigService> = jasmine.createSpyObj(
-    ["getEntityConfig"]
-  );
-  const mockSessionService: jasmine.SpyObj<SessionService> = jasmine.createSpyObj(
-    ["getCurrentUser"]
-  );
+  const mockConfigService: jasmine.SpyObj<EntityConfigService> =
+    jasmine.createSpyObj(["getEntityConfig"]);
+  const mockSessionService: jasmine.SpyObj<SessionService> =
+    jasmine.createSpyObj(["getCurrentUser"]);
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [

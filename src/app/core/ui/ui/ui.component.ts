@@ -65,9 +65,10 @@ export class UiComponent implements OnInit {
         }
       });
     this.configService.configUpdated.subscribe(() => {
-      this.logo_path = this.configService.getConfig<{ logo_path: string }>(
-        "appConfig"
-      )?.logo_path;
+      this.logo_path =
+        this.configService.getConfig<{ logo_path: string }>(
+          "appConfig"
+        )?.logo_path;
     });
   }
 

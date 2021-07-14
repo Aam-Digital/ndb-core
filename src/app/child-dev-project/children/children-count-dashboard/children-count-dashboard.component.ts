@@ -12,7 +12,8 @@ import { Child } from "../model/child";
   styleUrls: ["./children-count-dashboard.component.scss"],
 })
 export class ChildrenCountDashboardComponent
-  implements OnInitDynamicComponent, OnInit {
+  implements OnInitDynamicComponent, OnInit
+{
   /**
    * The property of the Child entities to group counts by.
    *

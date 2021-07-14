@@ -51,9 +51,8 @@ export class NotesMigrationService {
   }
 
   async migrateToMultiAssignedActivities() {
-    const allActivities: RecurringActivity[] = await this.entityMapperService.loadType(
-      RecurringActivity
-    );
+    const allActivities: RecurringActivity[] =
+      await this.entityMapperService.loadType(RecurringActivity);
     for (const act of allActivities) {
       act.assignedTo = [];
       await this.entityMapperService.save(act);
@@ -100,9 +99,7 @@ export class NotesMigrationService {
    * as well as all 'parts' of that name, meaning every sub-string, split by whitespaces
    * @param str the string to search
    */
-  public findUsers(
-    str: string
-  ): {
+  public findUsers(str: string): {
     detectedUsers: User[];
     additional: string[];
   } {

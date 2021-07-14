@@ -22,7 +22,8 @@ import { filter } from "rxjs/operators";
   styleUrls: ["./list-paginator.component.scss"],
 })
 export class ListPaginatorComponent<E extends Entity>
-  implements OnChanges, AfterViewInit {
+  implements OnChanges, AfterViewInit
+{
   readonly pageSizeOptions = [10, 20, 50];
   readonly defaultPageSize = 10;
 
@@ -93,9 +94,8 @@ export class ListPaginatorComponent<E extends Entity>
   }
 
   private applyUserPaginationSettings() {
-    const pageSize = this.user.paginatorSettingsPageSize[
-      this.idForSavingPagination
-    ];
+    const pageSize =
+      this.user.paginatorSettingsPageSize[this.idForSavingPagination];
     if (pageSize) {
       if (pageSize === -1) {
         this.pageSize = this.dataSource.data.length;
@@ -118,12 +118,10 @@ export class ListPaginatorComponent<E extends Entity>
       sizeToBeSaved !==
       this.user.paginatorSettingsPageSize[this.idForSavingPagination];
 
-    this.user.paginatorSettingsPageIndex[
-      this.idForSavingPagination
-    ] = this.currentPageIndex;
-    this.user.paginatorSettingsPageSize[
-      this.idForSavingPagination
-    ] = sizeToBeSaved;
+    this.user.paginatorSettingsPageIndex[this.idForSavingPagination] =
+      this.currentPageIndex;
+    this.user.paginatorSettingsPageSize[this.idForSavingPagination] =
+      sizeToBeSaved;
 
     if (hasChangesToBeSaved) {
       this.entityMapperService.save<User>(this.user);

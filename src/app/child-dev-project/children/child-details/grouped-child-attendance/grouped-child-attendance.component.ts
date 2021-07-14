@@ -11,7 +11,8 @@ import { RecurringActivity } from "../../../attendance/model/recurring-activity"
   styleUrls: ["./grouped-child-attendance.component.scss"],
 })
 export class GroupedChildAttendanceComponent
-  implements OnChanges, OnInitDynamicComponent {
+  implements OnChanges, OnInitDynamicComponent
+{
   @Input() child: Child = new Child("");
 
   activities: RecurringActivity[] = [];

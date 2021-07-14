@@ -21,7 +21,8 @@ import { FormDialogService } from "../../../core/form-dialog/form-dialog.service
   styleUrls: ["./notes-of-child.component.scss"],
 })
 export class NotesOfChildComponent
-  implements OnChanges, OnInitDynamicComponent {
+  implements OnChanges, OnInitDynamicComponent
+{
   @Input() child: Child;
   records: Array<Note> = [];
 

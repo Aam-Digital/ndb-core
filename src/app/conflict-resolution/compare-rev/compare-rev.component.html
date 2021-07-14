@@ -1,9 +1,9 @@
 <mat-expansion-panel (opened)="loadRev()" *ngIf="!resolution">
   <mat-expansion-panel-header>
     <mat-panel-title>
-      <span [matTooltip]="docString" (mouseover)="docString = stringify(doc)">{{
-        rev
-      }}</span>
+      <span (mouseover)="docString = stringify(doc)" [matTooltip]="docString"
+      >{{ rev }}</span
+      >
     </mat-panel-title>
   </mat-expansion-panel-header>
 

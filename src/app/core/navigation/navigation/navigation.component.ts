@@ -51,9 +51,8 @@ export class NavigationComponent {
    */
   private initMenuItemsFromConfig() {
     this.menuItems = [];
-    const config: NavigationMenuConfig = this.configService.getConfig<NavigationMenuConfig>(
-      this.CONFIG_ID
-    );
+    const config: NavigationMenuConfig =
+      this.configService.getConfig<NavigationMenuConfig>(this.CONFIG_ID);
     for (const configItem of config.items) {
       if (this.checkMenuItemPermissions(configItem.link)) {
         this.menuItems.push(

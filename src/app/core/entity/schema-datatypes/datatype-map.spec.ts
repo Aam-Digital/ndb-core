@@ -22,10 +22,8 @@ import { EntitySchemaService } from "../schema/entity-schema.service";
 
 describe("Schema data type: map", () => {
   class TestEntity extends Entity {
-    @DatabaseField({ innerDataType: "month" }) dateMap: Map<
-      string,
-      Date
-    > = new Map();
+    @DatabaseField({ innerDataType: "month" }) dateMap: Map<string, Date> =
+      new Map();
   }
 
   let entitySchemaService: EntitySchemaService;
@@ -73,9 +71,8 @@ describe("Schema data type: map", () => {
     originalEntity.dateMap.set("a", new Date("2020-01-01"));
     originalEntity.dateMap.set("b", new Date("2019-02-01"));
 
-    const rawData = entitySchemaService.transformEntityToDatabaseFormat(
-      originalEntity
-    );
+    const rawData =
+      entitySchemaService.transformEntityToDatabaseFormat(originalEntity);
 
     const loadedEntity = new TestEntity("");
     entitySchemaService.loadDataIntoEntity(loadedEntity, rawData);
@@ -100,9 +97,8 @@ describe("Schema data type: map", () => {
     originalEntity.dateMap.set("a", new Date("2020-01-01"));
     originalEntity.dateMap.set("b", new Date("2020-02-02"));
 
-    const rawData = entitySchemaService.transformEntityToDatabaseFormat(
-      originalEntity
-    );
+    const rawData =
+      entitySchemaService.transformEntityToDatabaseFormat(originalEntity);
 
     const loadedEntity = new TestEntity();
     entitySchemaService.loadDataIntoEntity(loadedEntity, rawData);

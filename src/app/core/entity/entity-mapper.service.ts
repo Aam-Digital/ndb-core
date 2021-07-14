@@ -119,9 +119,8 @@ export class EntityMapperService {
     entity: T,
     forceUpdate: boolean = false
   ): Promise<any> {
-    const rawData = this.entitySchemaService.transformEntityToDatabaseFormat(
-      entity
-    );
+    const rawData =
+      this.entitySchemaService.transformEntityToDatabaseFormat(entity);
     this.sendUpdate(entity, entity._rev === undefined ? "new" : "update");
     const result = await this._db.put(rawData, forceUpdate);
     if (result?.ok) {

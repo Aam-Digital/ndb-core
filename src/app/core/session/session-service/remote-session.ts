@@ -37,9 +37,8 @@ export class RemoteSession {
   public database: any;
 
   /** state of the remote connection */
-  public connectionState: StateHandler<ConnectionState> = new StateHandler<ConnectionState>(
-    ConnectionState.DISCONNECTED
-  );
+  public connectionState: StateHandler<ConnectionState> =
+    new StateHandler<ConnectionState>(ConnectionState.DISCONNECTED);
 
   /**
    * Create a RemoteSession and set up connection to the remote database CouchDB server configured in AppConfig.

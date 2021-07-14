@@ -70,7 +70,8 @@ describe("FormDialogService", () => {
       template: "<div></div>",
     })
     class TestDynamicComponent
-      implements ShowsEntity<Entity>, OnInitDynamicComponent {
+      implements ShowsEntity<Entity>, OnInitDynamicComponent
+    {
       @Input() entity: Entity;
       public hasCalledInitFromDynamicConfig = false;
 

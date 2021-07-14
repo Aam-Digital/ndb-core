@@ -23,15 +23,13 @@ export const noteIndividualStories = [
     category: "PHONE_CALL",
     warningLevel: warningLevels.find((level) => level.id === "OK"),
     subject: "Follow up for school absence",
-    text:
-      "Called to ask for reason about absence. Mother made excuses but promised to send the child tomorrow.",
+    text: "Called to ask for reason about absence. Mother made excuses but promised to send the child tomorrow.",
   },
   {
     category: "PHONE_CALL",
     warningLevel: warningLevels.find((level) => level.id === "OK"),
     subject: "Absent because ill",
-    text:
-      "Mother has called in the morning. Child cannot come to class because of fever.",
+    text: "Mother has called in the morning. Child cannot come to class because of fever.",
   },
   {
     category: "PHONE_CALL",
