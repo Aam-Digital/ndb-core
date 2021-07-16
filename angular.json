@@ -37,8 +37,7 @@
             ],
             "scripts": [
               "node_modules/marked/lib/marked.js"
-            ],
-            "localize": ["de"]
+            ]
           },
           "configurations": {
             "production": {
@@ -64,7 +63,7 @@
               ],
               "serviceWorker": true
             },
-            "de-en": {
+            "localized": {
               "localize": ["de", "en-US"]
             }
           }
