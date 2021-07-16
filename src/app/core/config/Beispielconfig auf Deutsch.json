@@ -1,0 +1,1634 @@
+{
+    "navigationMenu": {
+        "items": [
+            {
+                "name": "Dashboard",
+                "icon": "home",
+                "link": "/"
+            },
+            {
+                "name": "Schüler:innen",
+                "icon": "child",
+                "link": "/child"
+            },
+            {
+                "name": "Schulen",
+                "icon": "university",
+                "link": "/school"
+            },
+            {
+                "name": "Wiederkehrende Aktivitäten",
+                "icon": "calendar",
+                "link": "/recurring-activity"
+            },
+            {
+                "name": "Anwesenheiten aufnehmen",
+                "icon": "calendar-check-o",
+                "link": "/attendance/add/day"
+            },
+            {
+                "name": "Anwesenheiten verwalten",
+                "icon": "table",
+                "link": "/attendance"
+            },
+            {
+                "name": "Notizen",
+                "icon": "file-text",
+                "link": "/note"
+            },
+            {
+                "name": "Verwaltung",
+                "icon": "wrench",
+                "link": "/admin"
+            },
+            {
+                "name": "Benutzer:innen",
+                "icon": "user",
+                "link": "/users"
+            },
+            {
+                "name": "Berichte",
+                "icon": "line-chart",
+                "link": "/report"
+            },
+            {
+                "name": "Datenbankkonflikte",
+                "icon": "wrench",
+                "link": "/admin/conflicts"
+            },
+            {
+                "name": "Hilfe",
+                "icon": "question-circle",
+                "link": "/help"
+            }
+        ]
+    },
+    "enum:interaction-type": [
+        {
+            "id": "",
+            "label": ""
+        },
+        {
+            "id": "HOME_VISIT",
+            "label": "Hausbesuch"
+        },
+        {
+            "id": "GUARDIAN_TALK",
+            "label": "Gespräch mit den Vormündern"
+        },
+        {
+            "id": "CHILD_TALK",
+            "label": "Gespräch mit dem Kind"
+        },
+        {
+            "id": "INCIDENT",
+            "label": "Vorfall"
+        },
+        {
+            "id": "DISCUSSION",
+            "label": "Diskussion/Entscheidung",
+            "color": "#E1BEE7"
+        },
+        {
+            "id": "VISIT",
+            "label": "Schul/Hostel-Besuch"
+        },
+        {
+            "id": "PHONE_CALL",
+            "label": "Anruf"
+        },
+        {
+            "id": "COACHING_TALK",
+            "label": "Gespräch mit Coaching-Lehrer:in"
+        },
+        {
+            "id": "PEER_TALK",
+            "label": "Gespräch mit Gleichaltrigen"
+        },
+        {
+            "id": "NEIGHBOUR_TALK",
+            "label": "Gespräch mit Nachbar:innen"
+        },
+        {
+            "id": "GUARDIAN_MEETING",
+            "label": "Treffen der Vormünder",
+            "color": "#E1F5FE",
+            "isMeeting": true
+        },
+        {
+            "id": "CHILDREN_MEETING",
+            "label": "Treffen der Schüler:innen",
+            "color": "#E1F5FE",
+            "isMeeting": true
+        },
+        {
+            "id": "DAILY_ROUTINE",
+            "label": "Tägliche Routine",
+            "color": "#F1F8E9"
+        },
+        {
+            "id": "ANNUAL_SURVEY",
+            "label": "Jährliche Musterung",
+            "color": "#FFFDE7"
+        },
+        {
+            "id": "EXCURSION",
+            "label": "Exkursion/Ausflug",
+            "color": "#E1F5FE",
+            "isMeeting": true
+        },
+        {
+            "id": "PARTNER_CONTACT",
+            "label": "Kontakt mit anderen Partnern (Klubs/NGO/...)"
+        },
+        {
+            "id": "RATION_DISTRIBUTION",
+            "label": "Rations-Verteilung",
+            "color": "#E1F5FE",
+            "isMeeting": true
+        },
+        {
+            "id": "COACHING_CLASS",
+            "label": "Coaching-Klasse",
+            "color": "#EEEEEE",
+            "isMeeting": true
+        },
+        {
+            "id": "SCHOOL_CLASS",
+            "label": "Schulklasse",
+            "color": "#EEEEEE",
+            "isMeeting": true
+        },
+        {
+            "id": "LIFE_SKILLS",
+            "label": "Life-Skills-Workshop",
+            "color": "#E1F5FE",
+            "isMeeting": true
+        }
+    ],
+    "enum:attendance-status": [
+        {
+            "id": "PRESENT",
+            "shortName": "P",
+            "label": "Anwesend",
+            "style": "attendance-P",
+            "countAs": "PRESENT"
+        },
+        {
+            "id": "ABSENT",
+            "shortName": "A",
+            "label": "Abwesend",
+            "style": "attendance-A",
+            "countAs": "ABSENT"
+        },
+        {
+            "id": "LATE",
+            "shortName": "L",
+            "label": "Zu spät",
+            "style": "attendance-L",
+            "countAs": "PRESENT"
+        },
+        {
+            "id": "HOLIDAY",
+            "shortName": "H",
+            "label": "In Ferien",
+            "style": "attendance-H",
+            "countAs": "IGNORE"
+        },
+        {
+            "id": "EXCUSED",
+            "shortName": "E",
+            "label": "Entschuldigt",
+            "style": "attendance-E",
+            "countAs": "IGNORE"
+        }
+    ],
+    "enum:document-status": [
+        {
+            "id": "",
+            "label": ""
+        },
+        {
+            "id": "OK (copy with us)",
+            "label": "OK (Kopie liegt uns vor)"
+        },
+        {
+            "id": "OK (copy needed for us)",
+            "label": "OK (Kopie für uns benötigt)"
+        },
+        {
+            "id": "needs correction",
+            "label": "Korrektur erforderlich"
+        },
+        {
+            "id": "applied",
+            "label": "Angefragt"
+        },
+        {
+            "id": "doesn't have",
+            "label": "Nicht vorhanden"
+        },
+        {
+            "id": "not eligible",
+            "label": "Nicht verfügbar"
+        }
+    ],
+    "enum:center": [
+        {
+            "id": "alipore",
+            "label": "Alipore"
+        },
+        {
+            "id": "tollygunge",
+            "label": "Tollygunge"
+        },
+        {
+            "id": "barabazar",
+            "label": "Barabazar"
+        }
+    ],
+    "enum:rating-answer": [
+        {
+            "id": "noAnswerPossible",
+            "label": "Keine Antwort möglich"
+        },
+        {
+            "id": "notTrueAtAll",
+            "label": "Trifft gar nicht zu"
+        },
+        {
+            "id": "rarelyTrue",
+            "label": "Trifft selten zu"
+        },
+        {
+            "id": "usuallyTrue",
+            "label": "Trifft für gewöhnlich zu"
+        },
+        {
+            "id": "absolutelyTrue",
+            "label": "Trifft voll zu"
+        }
+    ],
+    "view:": {
+        "component": "Dashboard",
+        "config": {
+            "widgets": [
+                {
+                    "component": "DashboardShortcutWidget",
+                    "config": {
+                        "shortcuts": [
+                            {
+                                "label": "Anwesenheiten aufnehmen",
+                                "icon": "calendar-check-o",
+                                "link": "/attendance/add/day"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "component": "ChildrenCountDashboard"
+                },
+                {
+                    "component": "RecentNotesDashboard"
+                },
+                {
+                    "component": "NoRecentNotesDashboard",
+                    "config": {
+                        "sinceDays": 28,
+                        "fromBeginningOfWeek": false
+                    }
+                },
+                {
+                    "component": "AttendanceWeekDashboard",
+                    "config": {
+                        "daysOffset": 0,
+                        "periodLabel": "letzte Woche"
+                    }
+                },
+                {
+                    "component": "AttendanceWeekDashboard",
+                    "config": {
+                        "daysOffset": 7,
+                        "periodLabel": "diese Woche"
+                    }
+                },
+                {
+                    "component": "ProgressDashboard",
+                    "config": {
+                        "dashboardConfigId": "1"
+                    }
+                }
+            ]
+        }
+    },
+    "view:user": {
+        "component": "UserAccount"
+    },
+    "view:note": {
+        "component": "NotesManager",
+        "config": {
+            "title": "Notizen & Berichte",
+            "includeEventNotes": false,
+            "showEventNotesToggle": true,
+            "columns": [
+                {
+                    "component": "DisplayDate",
+                    "title": "Datum",
+                    "id": "date"
+                },
+                {
+                    "component": "DisplayText",
+                    "title": "Fach",
+                    "id": "subject"
+                },
+                {
+                    "component": "DisplayConfigurableEnum",
+                    "title": "Kategorie",
+                    "id": "category"
+                },
+                {
+                    "component": "DisplayUsers",
+                    "title": "Ersteller:innen",
+                    "id": "authors"
+                },
+                {
+                    "component": "ChildBlockList",
+                    "title": "Schüler:innen",
+                    "id": "children",
+                    "noSorting": true
+                }
+            ],
+            "columnGroup": {
+                "default": "Standard",
+                "mobile": "Mobile Ansicht",
+                "groups": [
+                    {
+                        "name": "Standard",
+                        "columns": [
+                            "date",
+                            "subject",
+                            "category",
+                            "authors",
+                            "children"
+                        ]
+                    },
+                    {
+                        "name": "Mobile Ansicht",
+                        "columns": [
+                            "date",
+                            "subject",
+                            "children"
+                        ]
+                    }
+                ]
+            },
+            "filters": [
+                {
+                    "id": "status",
+                    "type": "prebuilt"
+                },
+                {
+                    "id": "date",
+                    "type": "prebuilt"
+                },
+                {
+                    "id": "category",
+                    "label": "Kategorie",
+                    "type": "configurable-enum",
+                    "enumId": "interaction-type",
+                    "display": "dropdown"
+                }
+            ]
+        }
+    },
+    "view:admin": {
+        "component": "Admin",
+        "requiresAdmin": true
+    },
+    "view:users": {
+        "component": "UserList",
+        "requiresAdmin": true
+    },
+    "view:admin/conflicts": {
+        "component": "ConflictResolution",
+        "requiresAdmin": true,
+        "lazyLoaded": true
+    },
+    "view:help": {
+        "component": "Help"
+    },
+    "view:attendance": {
+        "component": "AttendanceManager"
+    },
+    "view:attendance/add/day": {
+        "component": "AddDayAttendance"
+    },
+    "view:school": {
+        "component": "SchoolsList",
+        "config": {
+            "title": "Liste der Schulen",
+            "columns": [
+                {
+                    "component": "DisplayText",
+                    "title": "Name",
+                    "id": "name"
+                },
+                {
+                    "component": "DisplayText",
+                    "title": "Sprache",
+                    "id": "medium"
+                },
+                {
+                    "component": "DisplayCheckmark",
+                    "title": "Privatschule",
+                    "id": "privateSchool"
+                },
+                {
+                    "component": "DisplayText",
+                    "title": "Gremium",
+                    "id": "academicBoard"
+                },
+                {
+                    "component": "DisplayText",
+                    "title": "Bis zu Klasse",
+                    "id": "upToClass"
+                }
+            ],
+            "filters": [
+                {
+                    "id": "medium"
+                },
+                {
+                    "id": "privateSchool",
+                    "type": "boolean",
+                    "default": "",
+                    "true": "Privatschulen",
+                    "false": "Staatliche Schulen",
+                    "all": "Alle Schulen"
+                }
+            ]
+        }
+    },
+    "view:school/:id": {
+        "component": "EntityDetails",
+        "config": {
+            "entity": "School",
+            "panels": [
+                {
+                    "title": "Basisinformationen",
+                    "components": [
+                        {
+                            "title": "",
+                            "component": "Form",
+                            "config": {
+                                "cols": [
+                                    [
+                                        {
+                                            "input": "text",
+                                            "id": "name",
+                                            "placeholder": "Name"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "input": "text",
+                                            "id": "medium",
+                                            "placeholder": "Sprache"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "input": "checkbox",
+                                            "id": "privateSchool",
+                                            "placeholder": "Privatschule"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "input": "text",
+                                            "id": "academicBoard",
+                                            "placeholder": "Gremium"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "input": "text",
+                                            "id": "phone",
+                                            "placeholder": "Telefonnummer"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "input": "text",
+                                            "id": "address",
+                                            "placeholder": "Adresse"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "input": "text",
+                                            "id": "website",
+                                            "placeholder": "Website"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "input": "text",
+                                            "id": "timing",
+                                            "placeholder": "Unterrichtszeiten"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "input": "text",
+                                            "id": "workingDays",
+                                            "placeholder": "Unterrichtstage"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "input": "text",
+                                            "id": "upToClass",
+                                            "placeholder": "Unterricht bis zu Klasse"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "input": "textarea",
+                                            "id": "remarks",
+                                            "placeholder": "Bemerkungen"
+                                        }
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "title": "Schüler:innen",
+                    "components": [
+                        {
+                            "title": "",
+                            "component": "ChildrenOverview"
+                        }
+                    ]
+                }
+            ],
+            "icon": "university"
+        }
+    },
+    "view:child": {
+        "component": "ChildrenList",
+        "config": {
+            "title": "Liste der Schüler:innen",
+            "columns": [
+                {
+                    "component": "DisplayText",
+                    "title": "PN",
+                    "id": "projectNumber"
+                },
+                {
+                    "component": "ChildBlock",
+                    "title": "Name",
+                    "id": "name"
+                },
+                {
+                    "component": "DisplayText",
+                    "title": "Alter",
+                    "id": "age"
+                },
+                {
+                    "component": "DisplayDate",
+                    "title": "Geburtsdatum",
+                    "id": "dateOfBirth"
+                },
+                {
+                    "component": "DisplayText",
+                    "title": "Geschlecht",
+                    "id": "gender"
+                },
+                {
+                    "component": "DisplayText",
+                    "title": "Klasse",
+                    "id": "schoolClass"
+                },
+                {
+                    "component": "SchoolBlockWrapper",
+                    "title": "Schule",
+                    "id": "schoolId"
+                },
+                {
+                    "component": "RecentAttendanceBlocks",
+                    "title": "Schulanwesenheit",
+                    "id": "schoolAttendance",
+                    "config": {
+                        "filterByActivityType": "SCHOOL_CLASS"
+                    },
+                    "noSorting": true
+                },
+                {
+                    "component": "RecentAttendanceBlocks",
+                    "title": "Coachinganwesenheit",
+                    "id": "coachingAttendance",
+                    "config": {
+                        "filterByActivityType": "COACHING_CLASS"
+                    },
+                    "noSorting": true
+                },
+                {
+                    "component": "DisplayConfigurableEnum",
+                    "title": "Zentrum",
+                    "id": "center"
+                },
+                {
+                    "component": "DisplayText",
+                    "title": "Status",
+                    "id": "status"
+                },
+                {
+                    "component": "DisplayDate",
+                    "title": "Eintrittsdatum",
+                    "id": "admissionDate"
+                },
+                {
+                    "component": "DisplayText",
+                    "title": "Muttersprache",
+                    "id": "motherTongue"
+                },
+                {
+                    "component": "DisplayConfigurableEnum",
+                    "title": "Aadhar",
+                    "id": "has_aadhar"
+                },
+                {
+                    "component": "DisplayConfigurableEnum",
+                    "title": "Bankkonto",
+                    "id": "has_bankAccount"
+                },
+                {
+                    "component": "DisplayConfigurableEnum",
+                    "title": "Kanyashree",
+                    "id": "has_kanyashree"
+                },
+                {
+                    "component": "DisplayConfigurableEnum",
+                    "title": "Rationskarte",
+                    "id": "has_rationCard"
+                },
+                {
+                    "component": "DisplayConfigurableEnum",
+                    "title": "BPL-Karte",
+                    "id": "has_BplCard"
+                },
+                {
+                    "component": "DisplayText",
+                    "title": "Impfstatus",
+                    "id": "health_vaccinationStatus"
+                },
+                {
+                    "component": "DisplayText",
+                    "title": "Blutgruppe",
+                    "id": "health_bloodGroup"
+                },
+                {
+                    "component": "DisplayText",
+                    "title": "Augengesundheit",
+                    "id": "health_eyeHealthStatus"
+                },
+                {
+                    "component": "DisplayDate",
+                    "title": "Letzte Augenkontrolle",
+                    "id": "health_lastEyeCheckup"
+                },
+                {
+                    "component": "DisplayDate",
+                    "title": "Letzte Zahnkontrolle",
+                    "id": "health_lastDentalCheckup"
+                },
+                {
+                    "component": "DisplayDate",
+                    "title": "Letzte ENT-Kontrolle",
+                    "id": "health_lastENTCheckup"
+                },
+                {
+                    "component": "DisplayDate",
+                    "title": "Letzter Vitamin-D-Status",
+                    "id": "health_lastVitaminD"
+                },
+                {
+                    "component": "DisplayDate",
+                    "title": "Letzte Entwurmung",
+                    "id": "health_lastDeworming"
+                },
+                {
+                    "component": "BmiBlock",
+                    "title": "Körpermasseindex",
+                    "id": "health_BMI",
+                    "noSorting": true
+                }
+            ],
+            "columnGroup": {
+                "default": "Schulinformationen",
+                "mobile": "Mobile Ansicht",
+                "groups": [
+                    {
+                        "name": "Basisinformationen",
+                        "columns": [
+                            "projectNumber",
+                            "name",
+                            "age",
+                            "gender",
+                            "schoolClass",
+                            "schoolId",
+                            "center",
+                            "status"
+                        ]
+                    },
+                    {
+                        "name": "Schulinformationen",
+                        "columns": [
+                            "projectNumber",
+                            "name",
+                            "age",
+                            "schoolClass",
+                            "schoolId",
+                            "schoolAttendance",
+                            "coachingAttendance",
+                            "motherTongue"
+                        ]
+                    },
+                    {
+                        "name": "Status",
+                        "columns": [
+                            "projectNumber",
+                            "name",
+                            "center",
+                            "status",
+                            "admissionDate",
+                            "has_aadhar",
+                            "has_kanyashree",
+                            "has_bankAccount",
+                            "has_rationCard",
+                            "has_BplCard"
+                        ]
+                    },
+                    {
+                        "name": "Gesundheit",
+                        "columns": [
+                            "projectNumber",
+                            "name",
+                            "center",
+                            "health_BMI",
+                            "health_vaccinationStatus",
+                            "health_bloodGroup",
+                            "health_eyeHealthStatus",
+                            "health_lastEyeCheckup",
+                            "health_lastDentalCheckup",
+                            "health_lastENTCheckup",
+                            "health_lastVitaminD",
+                            "health_lastDeworming",
+                            "gender",
+                            "age",
+                            "dateOfBirth"
+                        ]
+                    },
+                    {
+                        "name": "Mobile Ansicht",
+                        "columns": [
+                            "projectNumber",
+                            "name",
+                            "age",
+                            "schoolId"
+                        ]
+                    }
+                ]
+            },
+            "filters": [
+                {
+                    "id": "isActive",
+                    "type": "boolean",
+                    "default": "true",
+                    "true": "Aktive Schüler:innen",
+                    "false": "Inaktive Schüler:innen",
+                    "all": "Alle Schüler:innen"
+                },
+                {
+                    "id": "center",
+                    "label": "Zentrum",
+                    "type": "configurable-enum",
+                    "enumId": "center",
+                    "display": "dropdown"
+                },
+                {
+                    "id": "school",
+                    "type": "prebuilt",
+                    "label": "Schule",
+                    "display": "dropdown"
+                }
+            ]
+        }
+    },
+    "view:child/:id": {
+        "component": "EntityDetails",
+        "config": {
+            "icon": "child",
+            "entity": "Child",
+            "panels": [
+                {
+                    "title": "Basisinformationen",
+                    "components": [
+                        {
+                            "title": "",
+                            "component": "Form",
+                            "config": {
+                                "cols": [
+                                    [
+                                        {
+                                            "input": "photo",
+                                            "id": "photo",
+                                            "placeholder": "Foto-Dateiname"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "input": "text",
+                                            "id": "name",
+                                            "placeholder": "Name",
+                                            "required": true
+                                        },
+                                        {
+                                            "input": "text",
+                                            "id": "projectNumber",
+                                            "placeholder": "Projektnummer"
+                                        },
+                                        {
+                                            "input": "configurable-enum-select",
+                                            "id": "center",
+                                            "placeholder": "Zentrum",
+                                            "enumId": "center"
+                                        },
+                                        {
+                                            "input": "text",
+                                            "id": "status",
+                                            "placeholder": "Projektstatus"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "input": "age",
+                                            "tooltip": "Dieses Feld kann nicht geändert werden. Ändern Sie stattdessen das Geburtsdatum. Wählen Sie den 1. Januar, wenn Sie nur das Geburtsjahr kennen.",
+                                            "id": "dateOfBirth",
+                                            "placeholder": "Geburtsdatum"
+                                        },
+                                        {
+                                            "input": "select",
+                                            "id": "gender",
+                                            "placeholder": "Geschlecht",
+                                            "options": [
+                                                "M",
+                                                "W"
+                                            ]
+                                        },
+                                        {
+                                            "input": "text",
+                                            "id": "motherTongue",
+                                            "placeholder": "Muttersprache"
+                                        },
+                                        {
+                                            "input": "text",
+                                            "id": "religion",
+                                            "placeholder": "Religion"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "input": "datepicker",
+                                            "id": "admissionDate",
+                                            "placeholder": "Eintrittsdatum"
+                                        },
+                                        {
+                                            "input": "configurable-enum-select",
+                                            "id": "has_aadhar",
+                                            "placeholder": "Aadhar-Status",
+                                            "enumId": "document-status"
+                                        },
+                                        {
+                                            "input": "configurable-enum-select",
+                                            "id": "has_kanyashree",
+                                            "placeholder": "Kanyashree-Status",
+                                            "enumId": "document-status"
+                                        },
+                                        {
+                                            "input": "configurable-enum-select",
+                                            "id": "has_bankAccount",
+                                            "placeholder": "Bankkonto-Status",
+                                            "enumId": "document-status"
+                                        },
+                                        {
+                                            "input": "configurable-enum-select",
+                                            "id": "has_rationCard",
+                                            "placeholder": "Rationskarte-Status",
+                                            "enumId": "document-status"
+                                        },
+                                        {
+                                            "input": "configurable-enum-select",
+                                            "id": "has_BplCard",
+                                            "placeholder": "BPL-Karte-Status",
+                                            "enumId": "document-status"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "input": "text",
+                                            "id": "address",
+                                            "placeholder": "Adresse"
+                                        },
+                                        {
+                                            "input": "text",
+                                            "id": "phone",
+                                            "placeholder": "Telefonnummer"
+                                        },
+                                        {
+                                            "input": "text",
+                                            "id": "guardianName",
+                                            "placeholder": "Erzieher"
+                                        },
+                                        {
+                                            "input": "text",
+                                            "id": "preferredTimeForGuardianMeeting",
+                                            "placeholder": "Bevorzugte Zeit für ein Treffen mit den Erziehern"
+                                        }
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "title": "Schullaufbahn",
+                    "components": [
+                        {
+                            "title": "Besuchte Schulen",
+                            "component": "PreviousSchools",
+                            "config": {
+                                "single": true,
+                                "columns": [
+                                    {
+                                        "id": "schoolId",
+                                        "label": "Schule",
+                                        "input": "school"
+                                    },
+                                    {
+                                        "id": "schoolClass",
+                                        "label": "Klasse",
+                                        "input": "text"
+                                    },
+                                    {
+                                        "id": "start",
+                                        "label": "Von",
+                                        "input": "date"
+                                    },
+                                    {
+                                        "id": "end",
+                                        "label": "Bis",
+                                        "input": "date"
+                                    },
+                                    {
+                                        "id": "result",
+                                        "label": "Ergebnis",
+                                        "input": "percentageResult"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "title": "ASER-Ergebnisse",
+                            "component": "Aser"
+                        }
+                    ]
+                },
+                {
+                    "title": "Anwesenheit",
+                    "components": [
+                        {
+                            "title": "",
+                            "component": "GroupedChildAttendance"
+                        }
+                    ]
+                },
+                {
+                    "title": "Notizen & Berichte",
+                    "components": [
+                        {
+                            "title": "",
+                            "component": "NotesOfChild"
+                        }
+                    ]
+                },
+                {
+                    "title": "Gesundheit",
+                    "components": [
+                        {
+                            "title": "",
+                            "component": "Form",
+                            "config": {
+                                "cols": [
+                                    [
+                                        {
+                                            "input": "select",
+                                            "id": "health_vaccinationStatus",
+                                            "placeholder": "Impfstatus",
+                                            "options": [
+                                                "Gut",
+                                                "Impfung fällig",
+                                                "Zu überprüfen",
+                                                "Kein Impfpass"
+                                            ]
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "input": "select",
+                                            "id": "health_eyeHealthStatus",
+                                            "placeholder": "Augengesundheit",
+                                            "options": [
+                                                "Tut",
+                                                "Trägt eine Brille",
+                                                "Braucht eine Brille",
+                                                "Zu überprüfen"
+                                            ]
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "input": "text",
+                                            "id": "health_bloodGroup",
+                                            "placeholder": "Blutgruppe"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "input": "datepicker",
+                                            "id": "health_lastDentalCheckup",
+                                            "placeholder": "Letzte Zahnkontrolle"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "input": "datepicker",
+                                            "id": "health_lastEyeCheckup",
+                                            "placeholder": "Letzte Augenkontrolle"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "input": "datepicker",
+                                            "id": "health_lastENTCheckup",
+                                            "placeholder": "Letzte ENT-Kontrolle"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "input": "datepicker",
+                                            "id": "health_lastVitaminD",
+                                            "placeholder": "Letzter Vitamin-D-Status"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "input": "datepicker",
+                                            "id": "health_lastDeworming",
+                                            "placeholder": "Letzte Entwurmung"
+                                        }
+                                    ]
+                                ]
+                            }
+                        },
+                        {
+                            "title": "Größe und Gewicht",
+                            "component": "HealthCheckup"
+                        }
+                    ]
+                },
+                {
+                    "title": "Lernmaterial",
+                    "components": [
+                        {
+                            "title": "",
+                            "component": "EducationalMaterial"
+                        }
+                    ]
+                },
+                {
+                    "title": "Beobachtungen",
+                    "components": [
+                        {
+                            "title": "",
+                            "component": "HistoricalDataComponent",
+                            "config": [
+                                {
+                                    "name": "date",
+                                    "label": "Datum",
+                                    "inputType": "date"
+                                },
+                                {
+                                    "name": "isMotivatedDuringClass",
+                                    "label": "Ist motiviert",
+                                    "inputType": "configurable_enum",
+                                    "enumId": "rating-answer",
+                                    "tooltip": "Das Kind ist im Unterricht motiviert."
+                                },
+                                {
+                                    "name": "isParticipatingInClass",
+                                    "label": "Nimmt aktiv teil",
+                                    "inputType": "configurable_enum",
+                                    "enumId": "rating-answer",
+                                    "tooltip": "Das Kind nimmt am Unterricht aktiv teil."
+                                },
+                                {
+                                    "name": "isInteractingWithOthers",
+                                    "label": "Interagiert",
+                                    "inputType": "configurable_enum",
+                                    "enumId": "rating-answer",
+                                    "tooltip": "Das Kind interagiert im Unterricht mit anderen Schüler:innen."
+                                },
+                                {
+                                    "name": "doesHomework",
+                                    "label": "Macht Hausaufgaben",
+                                    "inputType": "configurable_enum",
+                                    "enumId": "rating-answer",
+                                    "tooltip": "Das Kind macht seine Hausaufgaben."
+                                },
+                                {
+                                    "name": "isOnTime",
+                                    "label": "Ist pünktlich",
+                                    "inputType": "configurable_enum",
+                                    "enumId": "rating-answer",
+                                    "tooltip": "Das Kind kommt pünktlich zum Unterricht."
+                                },
+                                {
+                                    "name": "asksQuestions",
+                                    "label": "Fragt nach",
+                                    "inputType": "configurable_enum",
+                                    "enumId": "rating-answer",
+                                    "tooltip": "Das Kind stellt Fragen im Unterricht."
+                                },
+                                {
+                                    "name": "listens",
+                                    "label": "Hört zu",
+                                    "inputType": "configurable_enum",
+                                    "enumId": "rating-answer",
+                                    "tooltip": "Das Kind hört im Unterricht zu."
+                                },
+                                {
+                                    "name": "canWorkOnBoard",
+                                    "label": "Arbeitet an der Tafel",
+                                    "inputType": "configurable_enum",
+                                    "enumId": "rating-answer",
+                                    "tooltip": "Das Kind kann Aufgaben an der Tafel lösen."
+                                },
+                                {
+                                    "name": "isConcentrated",
+                                    "label": "Ist konzentriert",
+                                    "inputType": "configurable_enum",
+                                    "enumId": "rating-answer",
+                                    "tooltip": "Das Kind ist im Unterricht konzentriert."
+                                },
+                                {
+                                    "name": "doesNotDisturb",
+                                    "label": "Stört nicht",
+                                    "inputType": "configurable_enum",
+                                    "enumId": "rating-answer",
+                                    "tooltip": "Das Kind stört den Unterricht nicht."
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "title": "Austritt",
+                    "components": [
+                        {
+                            "title": "",
+                            "component": "Form",
+                            "config": {
+                                "cols": [
+                                    [
+                                        {
+                                            "input": "datepicker",
+                                            "id": "dropoutDate",
+                                            "placeholder": "Datum"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "input": "text",
+                                            "id": "dropoutType",
+                                            "placeholder": "Grund"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "input": "text",
+                                            "id": "dropoutRemarks",
+                                            "placeholder": "Bemerkungen"
+                                        }
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "view:recurring-activity": {
+        "component": "ActivityList",
+        "config": {
+            "title": "Wiederkehrende Aktivitäten",
+            "columns": [
+                {
+                    "component": "DisplayText",
+                    "title": "Titel",
+                    "id": "title"
+                },
+                {
+                    "component": "DisplayConfigurableEnum",
+                    "title": "Typ",
+                    "id": "type"
+                },
+                {
+                    "component": "DisplayUsers",
+                    "title": "Zugewiesen an",
+                    "id": "assignedTo"
+                }
+            ],
+            "columnGroup": {
+                "default": "All",
+                "mobile": "All",
+                "groups": [
+                    {
+                        "name": "All",
+                        "columns": [
+                            "title",
+                            "type",
+                            "assignedTo"
+                        ]
+                    }
+                ]
+            },
+            "filters": []
+        }
+    },
+    "view:recurring-activity/:id": {
+        "component": "EntityDetails",
+        "config": {
+            "entity": "RecurringActivity",
+            "panels": [
+                {
+                    "title": "Aktivität",
+                    "components": [
+                        {
+                            "component": "Form",
+                            "config": {
+                                "cols": [
+                                    [
+                                        {
+                                            "input": "text",
+                                            "id": "title",
+                                            "placeholder": "Titel"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "id": "type",
+                                            "input": "configurable-enum-select",
+                                            "enumId": "interaction-type",
+                                            "placeholder": "Typ"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "input": "entity-select",
+                                            "id": "assignedTo",
+                                            "entityType": "User",
+                                            "placeholder": "Koordinator:in hinzufügen",
+                                            "label": "Koordinator:innen"
+                                        }
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "title": "Teilnehmer:innen",
+                    "components": [
+                        {
+                            "component": "ActivityParticipantsSection"
+                        }
+                    ]
+                },
+                {
+                    "title": "Events & Anwesenheit",
+                    "components": [
+                        {
+                            "component": "ActivityAttendanceSection"
+                        }
+                    ]
+                }
+            ],
+            "icon": "calendar"
+        }
+    },
+    "view:report": {
+        "component": "Reporting",
+        "config": {
+            "reports": [
+                {
+                    "title": "Basisbericht",
+                    "aggregationDefinitions": [
+                        {
+                            "query": "Child:toArray[*isActive=true]",
+                            "label": "All children",
+                            "aggregations": [
+                                {
+                                    "label": "Jungen",
+                                    "query": "[*gender=M]"
+                                },
+                                {
+                                    "label": "Mädchen",
+                                    "query": "[*gender=W]"
+                                }
+                            ]
+                        },
+                        {
+                            "query": "School:toArray",
+                            "label": "Schulen",
+                            "aggregations": [
+                                {
+                                    "label": "Schulgänger:innen"
+                                    "query": ":getRelated(ChildSchoolRelation, schoolId)[*isActive=true].childId:unique"
+                                },
+                                {
+                                    "label": "Staatliche Schulen",
+                                    "query": "[*privateSchool!=true]"
+                                },
+                                {
+                                    "query": "[*privateSchool!=true]:getRelated(ChildSchoolRelation, schoolId)[*isActive=true].childId:addPrefix(Child):unique:toEntities",
+                                    "label": "Schüler:innen an einer staatlichen Schule",
+                                    "aggregations": [
+                                        {
+                                            "label": "Jungen auf einer staatlichen Schule",
+                                            "query": "[*gender=M]"
+                                        },
+                                        {
+                                            "label": "Mädchen auf einer staatlichen Schule",
+                                            "query": "[*gender=W]"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "label": "Privatschulen",
+                                    "query": "[*privateSchool=true]"
+                                },
+                                {
+                                    "query": "[*privateSchool=true]:getRelated(ChildSchoolRelation, schoolId)[*isActive=true].childId:addPrefix(Child):unique:toEntities",
+                                    "label": "Schüler:innen auf einer Privatschule",
+                                    "aggregations": [
+                                        {
+                                            "label": "Jungen auf einer Privatschule",
+                                            "query": "[*gender=M]"
+                                        },
+                                        {
+                                            "label": "Mädchen auf einer Privatschule",
+                                            "query": "[*gender=W]"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "title": "Eventbericht",
+                    "aggregationDefinitions": [
+                        {
+                            "query": "EventNote:toArray[*date >= ? & date <= ?]",
+                            "groupBy": [
+                                "category"
+                            ],
+                            "label": "Events",
+                            "aggregations": [
+                                {
+                                    "query": ":getParticipantsWithAttendance(PRESENT):unique:addPrefix(Child):toEntities",
+                                    "groupBy": [
+                                        "gender",
+                                        "religion"
+                                    ],
+                                    "label": "Teilnehmer:innen"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "entity:Child": {
+        "permissions": {},
+        "attributes": [
+            {
+                "name": "address",
+                "schema": {
+                    "dataType": "string"
+                }
+            },
+            {
+                "name": "phone",
+                "schema": {
+                    "dataType": "string"
+                }
+            },
+            {
+                "name": "guardianName",
+                "schema": {
+                    "dataType": "string"
+                }
+            },
+            {
+                "name": "preferredTimeForGuardianMeeting",
+                "schema": {
+                    "dataType": "string"
+                }
+            },
+            {
+                "name": "center",
+                "schema": {
+                    "dataType": "configurable-enum",
+                    "innerDataType": "center"
+                }
+            },
+            {
+                "name": "has_aadhar",
+                "schema": {
+                    "dataType": "configurable-enum",
+                    "innerDataType": "document-status"
+                }
+            },
+            {
+                "name": "has_bankAccount",
+                "schema": {
+                    "dataType": "configurable-enum",
+                    "innerDataType": "document-status"
+                }
+            },
+            {
+                "name": "has_kanyashree",
+                "schema": {
+                    "dataType": "configurable-enum",
+                    "innerDataType": "document-status"
+                }
+            },
+            {
+                "name": "has_rationCard",
+                "schema": {
+                    "dataType": "configurable-enum",
+                    "innerDataType": "document-status"
+                }
+            },
+            {
+                "name": "has_BplCard",
+                "schema": {
+                    "dataType": "configurable-enum",
+                    "innerDataType": "document-status"
+                }
+            },
+            {
+                "name": "health_vaccinationStatus",
+                "schema": {
+                    "dataType": "string"
+                }
+            },
+            {
+                "name": "health_bloodGroup",
+                "schema": {
+                    "dataType": "string"
+                }
+            },
+            {
+                "name": "health_lastDentalCheckup",
+                "schema": {
+                    "dataType": "Date"
+                }
+            },
+            {
+                "name": "health_lastEyeCheckup",
+                "schema": {
+                    "dataType": "Date"
+                }
+            },
+            {
+                "name": "health_lastENTCheckup",
+                "schema": {
+                    "dataType": "Date"
+                }
+            },
+            {
+                "name": "health_eyeHealthStatus",
+                "schema": {
+                    "dataType": "string"
+                }
+            },
+            {
+                "name": "health_lastVitaminD",
+                "schema": {
+                    "dataType": "Date"
+                }
+            },
+            {
+                "name": "health_lastDeworming",
+                "schema": {
+                    "dataType": "Date"
+                }
+            }
+        ]
+    },
+    "entity:School": {
+        "permissions": {}
+    },
+    "entity:HistoricalEntityData": {
+        "attributes": [
+            {
+                "name": "isMotivatedDuringClass",
+                "schema": {
+                    "dataType": "configurable-enum",
+                    "innerDataType": "rating-answer"
+                }
+            },
+            {
+                "name": "isParticipatingInClass",
+                "schema": {
+                    "dataType": "configurable-enum",
+                    "innerDataType": "rating-answer"
+                }
+            },
+            {
+                "name": "isInteractingWithOthers",
+                "schema": {
+                    "dataType": "configurable-enum",
+                    "innerDataType": "rating-answer"
+                }
+            },
+            {
+                "name": "doesHomework",
+                "schema": {
+                    "dataType": "configurable-enum",
+                    "innerDataType": "rating-answer"
+                }
+            },
+            {
+                "name": "isOnTime",
+                "schema": {
+                    "dataType": "configurable-enum",
+                    "innerDataType": "rating-answer"
+                }
+            },
+            {
+                "name": "asksQuestions",
+                "schema": {
+                    "dataType": "configurable-enum",
+                    "innerDataType": "rating-answer"
+                }
+            },
+            {
+                "name": "listens",
+                "schema": {
+                    "dataType": "configurable-enum",
+                    "innerDataType": "rating-answer"
+                }
+            },
+            {
+                "name": "canWorkOnBoard",
+                "schema": {
+                    "dataType": "configurable-enum",
+                    "innerDataType": "rating-answer"
+                }
+            },
+            {
+                "name": "isConcentrated",
+                "schema": {
+                    "dataType": "configurable-enum",
+                    "innerDataType": "rating-answer"
+                }
+            },
+            {
+                "name": "doesNotDisturb",
+                "schema": {
+                    "dataType": "configurable-enum",
+                    "innerDataType": "rating-answer"
+                }
+            }
+        ]
+    }
+}

@@ -249,7 +249,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">164</context>
+          <context context-type="linenumber">165</context>
         </context-group>
         <note priority="1" from="description">To whom a school activity is assigned to</note>
       </trans-unit>
@@ -261,7 +261,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">166</context>
+          <context context-type="linenumber">167</context>
         </context-group>
         <note priority="1" from="description">Add a coordinator to an activity</note>
       </trans-unit>
@@ -273,7 +273,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">133</context>
+          <context context-type="linenumber">134</context>
         </context-group>
         <note priority="1" from="description">Participants of a school-activity</note>
       </trans-unit>
@@ -285,7 +285,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">135</context>
+          <context context-type="linenumber">136</context>
         </context-group>
         <note priority="1" from="description">Add a participant of a school-activity</note>
       </trans-unit>
@@ -408,11 +408,20 @@
         <note priority="1" from="description">Button to go to the previous child</note>
         <note priority="1" from="meaning">Back-button</note>
       </trans-unit>
+      <trans-unit id="871ad34321b1517e1707bd0f05d8ba7c122d34ed" datatype="html">
+        <source> Skip </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
+          <context context-type="linenumber">58,63</context>
+        </context-group>
+        <note priority="1" from="description">Button to skip a step in the roll call</note>
+        <note priority="1" from="meaning">Skip-Button</note>
+      </trans-unit>
       <trans-unit id="3ea51cf415feffef55e82c7b60e9486055837661" datatype="html">
         <source>Finish</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
-          <context context-type="linenumber">62,64</context>
+          <context context-type="linenumber">63,65</context>
         </context-group>
         <note priority="1" from="description">Finish entering the attendance of a child</note>
       </trans-unit>
@@ -420,7 +429,7 @@
         <source>Abort</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
-          <context context-type="linenumber">63,66</context>
+          <context context-type="linenumber">64,67</context>
         </context-group>
         <note priority="1" from="description">Abort entering the attendance of a child</note>
       </trans-unit>
@@ -469,6 +478,13 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
           <context context-type="linenumber">50,53</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="0dc97840c4fe5e03dfb822aed93db7b7bcc45b9b" datatype="html">
+        <source> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.average | percent: &quot;1.0-0&quot; }}"/> attended (of <x id="INTERPOLATION_1" equiv-text="{{ selectedEvent.children.length }}"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other {participants} }"/>) </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
+          <context context-type="linenumber">47,51</context>
         </context-group>
       </trans-unit>
       <trans-unit id="812462e20157a95f89d505f85909d142ff78406f" datatype="html">
@@ -551,6 +567,15 @@
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.ts</context>
           <context context-type="linenumber">33</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="94094b72fedae943fdba9033672550b44a07aa78" datatype="html">
+        <source>Attendance Register</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+        <note priority="1" from="description">The heading for the view showing the Attendance Register</note>
+        <note priority="1" from="meaning">Heading for Attendance Register</note>
       </trans-unit>
       <trans-unit id="ec824511986aeece23bcb0b13f7d979d7d55285a" datatype="html">
         <source> Attendance data can be seen and edited in an individual&apos;s details as well as here across groups.
@@ -1237,11 +1262,19 @@
         </context-group>
         <note priority="1" from="description">Status of the note is &apos;Urgent Follow-Up&apos;</note>
       </trans-unit>
+      <trans-unit id="483724599dbaabe37f5f82b0bee1c1faf0b27cd0" datatype="html">
+        <source>Type of Interaction</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
+          <context context-type="linenumber">63</context>
+        </context-group>
+        <note priority="1" from="description">Type of Interaction when adding event</note>
+      </trans-unit>
       <trans-unit id="ec3f853537ad707f8ce894ebd598335a40d787e0" datatype="html">
         <source>Add Author...</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">84</context>
+          <context context-type="linenumber">85</context>
         </context-group>
         <note priority="1" from="description">placeholder when adding multiple authors</note>
       </trans-unit>
@@ -1249,7 +1282,7 @@
         <source>Authors</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">86</context>
+          <context context-type="linenumber">87</context>
         </context-group>
         <note priority="1" from="description">Authors of a note</note>
       </trans-unit>
@@ -1257,7 +1290,7 @@
         <source>Topic / Summary</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">101</context>
+          <context context-type="linenumber">102</context>
         </context-group>
         <note priority="1" from="description">Placeholder informing that this is the Topic/Summary of the note</note>
         <note priority="1" from="meaning">Placeholder</note>
@@ -1266,7 +1299,7 @@
         <source>Notes</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">115</context>
+          <context context-type="linenumber">116</context>
         </context-group>
         <note priority="1" from="description">Placeholder informing that this is textarea the actual note can be entered into</note>
         <note priority="1" from="meaning">Placeholder</note>
@@ -1470,6 +1503,30 @@
           <context context-type="sourcefile">src/app/child-dev-project/previous-teams/previous-teams.component.ts</context>
           <context context-type="linenumber">116</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="6680431077518392028" datatype="html">
+        <source>Clubs visited</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service.ts</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+        <note priority="1" from="description">Example for demo task in the progress wdiget</note>
+      </trans-unit>
+      <trans-unit id="5068770072034604941" datatype="html">
+        <source>Schools checked</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service.ts</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+        <note priority="1" from="description">Example for demo task in the progress wdiget</note>
+      </trans-unit>
+      <trans-unit id="6255187912631729238" datatype="html">
+        <source>Government Officials met</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service.ts</context>
+          <context context-type="linenumber">24</context>
+        </context-group>
+        <note priority="1" from="description">Example for demo task in the progress wdiget</note>
       </trans-unit>
       <trans-unit id="3524232675257470877" datatype="html">
         <source>Annual Survey</source>
@@ -1684,6 +1741,15 @@
           <context context-type="sourcefile">src/app/conflict-resolution/compare-rev/compare-rev.component.ts</context>
           <context context-type="linenumber">167</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="f9326e450a7a6ca7d56e9e7424fd4f5c112f188e" datatype="html">
+        <source>conflicts to resolve:</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/conflict-resolution/conflict-resolution-list/conflict-resolution-list.component.html</context>
+          <context context-type="linenumber">1,5</context>
+        </context-group>
+        <note priority="1" from="description">Shows the database conflicts that need to be resolved</note>
+        <note priority="1" from="meaning">Conflicts to be resolved</note>
       </trans-unit>
       <trans-unit id="eb24700c8ea13217647018eddd861387c601a29d" datatype="html">
         <source> Data </source>
