@@ -9,7 +9,6 @@ import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { EventNote } from "../model/event-note";
-import { PercentPipe } from "@angular/common";
 
 @Component({
   selector: "app-attendance-details",
@@ -43,7 +42,7 @@ export class AttendanceDetailsComponent
   ];
   UnknownStatus = NullAttendanceStatusType;
 
-  constructor(private percentPipe: PercentPipe, private formDialog: FormDialogService) {}
+  constructor(private formDialog: FormDialogService) {}
 
   onInitFromDynamicConfig(config?: { forChild?: string }) {
     if (config?.forChild) {

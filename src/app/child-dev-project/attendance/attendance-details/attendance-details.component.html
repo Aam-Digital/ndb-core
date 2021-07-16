@@ -25,12 +25,17 @@
     <div class="w-{{ entity.getWarningLevel() }}">
       <div
         class="summary"
-        i18n="Attendance|Attendance of a child (in percent) or the average of the event (in percent)">
+        i18n="
+          Attendance|Attendance of a child (in percent) or the average of the
+          event (in percent)
+        "
+      >
         Attendance:
         {{
-        (focusedChild
+          (focusedChild
             ? entity?.getAttendancePercentage(focusedChild)
-            : entity?.getAttendancePercentageAverage()) | percent: "1.0-0"
+            : entity?.getAttendancePercentageAverage()
+          ) | percent: "1.0-0"
         }}
       </div>
     </div>
@@ -42,7 +47,9 @@
             matInput
             type="number"
             min="0"
-            i18n-placeholder="days present|How many days a child or a class was present"
+            i18n-placeholder="
+              days present|How many days a child or a class was present
+            "
             placeholder="days present"
             [value]="
               focusedChild
@@ -60,7 +67,9 @@
             matInput
             type="number"
             min="0"
-            i18n-placeholder="days absent|How many days a child or a class was absent"
+            i18n-placeholder="
+              days absent|How many days a child or a class was absent
+            "
             placeholder="days absent"
             [value]="
               focusedChild
@@ -78,7 +87,10 @@
             matInput
             type="number"
             min="0"
-            i18n-placeholder="days absent|How many days the presence or absence of a child is unknown"
+            i18n-placeholder="
+              days absent|How many days the presence or absence of a child is
+              unknown
+            "
             placeholder="unknown status"
             [value]="
               focusedChild

@@ -8,14 +8,18 @@
     <mat-icon
       *ngIf="!recurring"
       fontIcon="fa-calendar-o"
-      i18n-matTooltip="One-time event|Informs the user that this is a one-time event"
+      i18n-matTooltip="
+        One-time event|Informs the user that this is a one-time event
+      "
       matTooltip="one-time event"
     >
     </mat-icon>
     <mat-icon
       *ngIf="recurring"
       fontIcon="fa-calendar"
-      i18n-matTooltip="Recurring-event|Informs the user that this is a recurring event"
+      i18n-matTooltip="
+        Recurring-event|Informs the user that this is a recurring event
+      "
       matTooltip="recurring activity - record for one day"
     >
     </mat-icon>
@@ -26,9 +30,7 @@
     <span i18n="Participants|Amount of participants of an event">
       {event.children.length, plural, one {participant} other {participants}}
     </span>
-    <span *ngIf="!recurring">
-      ({{ event.date | date: "shortDate" }})
-    </span>
+    <span *ngIf="!recurring"> ({{ event.date | date: "shortDate" }}) </span>
     ; {{ event.category?.label }}
   </mat-card-content>
 </mat-card>
