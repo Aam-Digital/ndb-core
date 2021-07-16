@@ -1,32 +1,32 @@
 import {
-  AfterViewInit,
   Component,
-  EventEmitter,
   Input,
   OnChanges,
-  OnInit,
-  Output,
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { MatSort } from "@angular/material/sort";
-import { MatPaginator, PageEvent } from "@angular/material/paginator";
+import { MatSort, MatSortable } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
-import { ColumnDescription } from "../column-description";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
-import { FormValidationResult } from "../form-validation-result";
-import { ColumnDescriptionInputType } from "../column-description-input-type.enum";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { Entity } from "../../../entity/entity";
-import { FormDialogService } from "../../../form-dialog/form-dialog.service";
+import { Entity } from "../../../entity/model/entity";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "../../../alerts/alert.service";
-import { DatePipe } from "@angular/common";
-import { BehaviorSubject } from "rxjs";
-import { ComponentWithConfig } from "../component-with-config";
-import { entityListSortingAccessor } from "../../entity-list/sorting-accessor";
+import { Subscription } from "rxjs";
+import { entityListSortingAccessor } from "./sorting-accessor";
+import { FormGroup } from "@angular/forms";
+import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
+import { EntityFormService } from "../../entity-form/entity-form.service";
+import { MatDialog } from "@angular/material/dialog";
+import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
+import { LoggingService } from "../../../logging/logging.service";
+
+export interface TableRow<T> {
+  record: T;
+  formGroup?: FormGroup;
+}
 
 /**
  * Generically configurable component to display and edit a list of entities in a compact way
@@ -47,21 +47,21 @@ import { entityListSortingAccessor } from "../../entity-list/sorting-accessor";
   templateUrl: "./entity-subrecord.component.html",
   styleUrls: ["./entity-subrecord.component.scss"],
 })
-export class EntitySubrecordComponent<T extends Entity>
-  implements OnInit, OnChanges, AfterViewInit {
-  /**
-   * Global state of pagination size for all entity subrecord components.
-   *
-   * When the user changes page size in one component the page size is automatically changed for other components also.
-   * This ensures a consistent UI e.g. for side-by-side subrecord components of multiple attendance record tables.
-   */
-  static paginatorPageSize = new BehaviorSubject(10);
-
+export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   /** data to be displayed */
-  @Input() records: Array<T>;
+  @Input() records: Array<T> = [];
 
   /** configuration what kind of columns to be generated for the table */
-  @Input() columns: Array<ColumnDescription>;
+  @Input() set columns(columns: (FormFieldConfig | string)[]) {
+    this._columns = columns.map((col) => {
+      if (typeof col === "string") {
+        return { id: col };
+      } else {
+        return col;
+      }
+    });
+  }
+  _columns: FormFieldConfig[] = [];
 
   /**
    * factory method to create a new instance of the displayed Entity type
@@ -70,66 +70,34 @@ export class EntitySubrecordComponent<T extends Entity>
   @Input() newRecordFactory: () => T;
 
   /**
-   * A Component to be used to display a detailed view or form of a single instance of the displayed entities.
-   * This is displayed as a modal (hovering) dialog above the active view and allows the user to get
-   * more information or more comfortable editing of a single record.
-   *
-   * Optionally this input can include a componentConfig property passing any values into the component,
-   * which has to implement the OnInitDynamicComponent interface to receive this config.
+   * Whether the rows of the table are inline editable and new entries can be created through the "+" button.
    */
-  @Input() detailsComponent: ComponentWithConfig<T>;
+  @Input() editable: boolean = true;
 
-  /**
-   * Whether the records can be edited directly in the table.
-   */
-  @Input() disableEditingInline: boolean;
-
-  /**
-   * Whether an "Add" button to create a new entry should be displayed as part of the form.
-   * Default is "true".
-   */
-  @Input() showAddButton = true;
-
-  /**
-   * Optional function implementing form validation logic that takes an entity instance, checks it and returns
-   * a {@link FormValidationResult} that is then handled by the EntitySubrecordComponent.
-   */
-  @Input() formValidation?: (record: T) => FormValidationResult;
-
-  /**
-   * Event whenever an entity in this table is changed.
-   */
-  @Output() changedRecordsInEntitySubrecordEvent = new EventEmitter<any>();
-
-  /** id of the parent entity of the records being displayed. May be used for custom display logic. */
-  @Input() entityId?: string;
+  /** columns displayed in the template's table */
+  @Input() columnsToDisplay = [];
 
   /** data displayed in the template's table */
-  recordsDataSource = new MatTableDataSource();
-  /** columns displayed in the template's table */
-  columnsToDisplay = [];
+  recordsDataSource = new MatTableDataSource<TableRow<T>>();
 
-  /** map of entities' ids and whether this record's table row is currently in edit mode */
-  recordsEditing = new Map<string, boolean>();
-  /** backup copies of the original state of records to allow reset */
-  private originalRecords = [];
-
+  private mediaSubscription: Subscription;
   private screenWidth = "";
 
+  public idForSavingPagination = "startWert";
+
   @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  paginatorPageSize = EntitySubrecordComponent.paginatorPageSize.value;
 
   constructor(
     private _entityMapper: EntityMapperService,
     private _snackBar: MatSnackBar,
     private _confirmationDialog: ConfirmationDialogService,
-    private formDialog: FormDialogService,
     private alertService: AlertService,
-    private datePipe: DatePipe,
-    private media: MediaObserver
+    private media: MediaObserver,
+    private entityFormService: EntityFormService,
+    private dialog: MatDialog,
+    private loggingService: LoggingService
   ) {
-    this.media
+    this.mediaSubscription = this.media
       .asObservable()
       .pipe(untilDestroyed(this))
       .subscribe((change: MediaChange[]) => {
@@ -140,161 +108,127 @@ export class EntitySubrecordComponent<T extends Entity>
       });
   }
 
-  /** function returns the background color for each entry*/
-  @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
+  /**
+   * A function which should be executed when a row is clicked or a new entity created.
+   * @param entity The newly created or clicked entity.
+   */
+  @Input() showEntity = (entity: T) => this.showEntityInForm(entity);
 
-  ngOnInit() {}
+  /** function returns the background color for each row*/
+  @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
 
   /**
    * Update the component if any of the @Input properties were changed from outside.
    * @param changes
    */
   ngOnChanges(changes: SimpleChanges) {
-    if (changes["records"] && this.records !== undefined) {
-      this.recordsDataSource.data = this.records;
-
-      this.records.forEach((e) =>
-        this.originalRecords.push(Object.assign({}, e))
-      );
+    if (
+      changes.hasOwnProperty("columns") ||
+      changes.hasOwnProperty("records")
+    ) {
+      this.initFormGroups();
+      this.initDefaultSort();
+      if (this.columnsToDisplay.length < 2) {
+        this.setupTable();
+      }
     }
-    if (changes["columns"]) {
-      this.columns = this.columns.map((colDef) =>
-        this.applyDefaultColumnDefinitions(colDef)
-      );
-      this.columnsToDisplay = this.columns.map((e) => e.name);
-      this.columnsToDisplay.push("actions");
-      this.setupTable();
+    if (changes.hasOwnProperty("columnsToDisplay")) {
+      this.mediaSubscription.unsubscribe();
     }
   }
 
-  ngAfterViewInit() {
-    this.recordsDataSource.sort = this.sort;
-    this.recordsDataSource.paginator = this.paginator;
-    EntitySubrecordComponent.paginatorPageSize.subscribe((newPageSize) =>
-      this.updatePagination(newPageSize)
-    );
-    this.recordsDataSource.sortingDataAccessor = entityListSortingAccessor;
-  }
-
-  /**
-   * Set the new page size (if it changed) and trigger an update of the UI.
-   * @param newPageSize
-   * @private
-   */
-  private updatePagination(newPageSize: number) {
-    if (this.paginatorPageSize === newPageSize) {
-      return;
+  private initFormGroups() {
+    if (this.records.length > 0 || this.newRecordFactory) {
+      const entity =
+        this.records.length > 0 ? this.records[0] : this.newRecordFactory();
+      try {
+        this.entityFormService.extendFormFieldConfig(
+          this._columns,
+          entity,
+          true
+        );
+        this.idForSavingPagination = this._columns
+          .map((col) => (typeof col === "object" ? col.id : col))
+          .join("");
+      } catch (err) {
+        this.loggingService.warn(`Error creating form definitions: ${err}`);
+      }
     }
-
-    this.paginatorPageSize = newPageSize;
-
-    setTimeout(() => {
-      this.paginator.pageSize = newPageSize;
-      this.paginator.page.next({
-        pageIndex: this.paginator.pageIndex,
-        pageSize: this.paginator.pageSize,
-        length: this.paginator.length,
-      });
+    this.recordsDataSource.data = this.records.map((rec) => {
+      return {
+        record: rec,
+      };
     });
   }
 
-  /**
-   * Propagate the change of page size to all other entity subrecord components.
-   * @param event
-   */
-  onPaginateChange(event: PageEvent) {
-    if (event.pageSize !== this.paginatorPageSize) {
-      EntitySubrecordComponent.paginatorPageSize.next(event.pageSize);
+  private initDefaultSort() {
+    this.recordsDataSource.sort = this.sort;
+    this.recordsDataSource.sortingDataAccessor = (
+      row: TableRow<T>,
+      id: string
+    ) => entityListSortingAccessor(row.record, id);
+    if (!this.sort || this.sort.active) {
+      // do not overwrite existing sort
+      return;
     }
+
+    // initial sorting by first column
+    const sortBy = this.columnsToDisplay[0];
+    const sortByColumn = this._columns.find((c) => c.id === sortBy);
+    let sortDirection = "asc";
+    if (
+      sortByColumn?.view === "DisplayDate" ||
+      sortByColumn?.edit === "EditDate"
+    ) {
+      // flip default sort order for dates (latest first)
+      sortDirection = "desc";
+    }
+
+    this.sort.sort({
+      id: sortBy,
+      start: sortDirection,
+    } as MatSortable);
   }
 
-  /**
-   * Set default values for optional properties that are not given.
-   * @param colDef
-   * @private
-   */
-  private applyDefaultColumnDefinitions(
-    colDef: ColumnDescription
-  ): ColumnDescription {
-    if (!colDef.valueFunction) {
-      switch (colDef.inputType) {
-        case ColumnDescriptionInputType.DATE:
-          colDef.valueFunction = (entity) =>
-            this.datePipe.transform(entity[colDef.name], "yyyy-MM-dd");
-          break;
-        case ColumnDescriptionInputType.MONTH:
-          colDef.valueFunction = (entity) =>
-            this.datePipe.transform(entity[colDef.name], "yyyy-MM");
-          break;
-        case ColumnDescriptionInputType.CONFIGURABLE_ENUM:
-          colDef.valueFunction = (entity) => entity[colDef.name]?.label;
-          break;
-        default:
-          colDef.valueFunction = (entity) => entity[colDef.name];
-      }
+  edit(row: TableRow<T>) {
+    if (!row.formGroup) {
+      row.formGroup = this.entityFormService.createFormGroup(
+        this._columns,
+        row.record
+      );
     }
-    colDef.styleBuilder = colDef.styleBuilder ?? (() => Object);
-    return colDef;
+    row.formGroup.enable();
   }
 
   /**
    * Save an edited record to the database (if validation succeeds).
-   * @param record The entity to be saved.
+   * @param row The entity to be saved.
    */
-  save(record: T) {
-    if (this.formValidation) {
-      const formValidationResult = this.formValidation(record);
-      if (!formValidationResult.hasPassedValidation) {
-        this.alertService.addWarning(formValidationResult.validationMessage);
-        return;
-      }
+  async save(row: TableRow<T>) {
+    try {
+      row.record = await this.entityFormService.saveChanges(
+        row.formGroup,
+        row.record
+      );
+      row.formGroup.disable();
+    } catch (err) {
+      this.alertService.addDanger(err.message);
     }
-
-    this._entityMapper.save(record).then(() => {
-      this.changedRecordsInEntitySubrecordEvent.emit();
-    });
-
-    // updated backup copies used for reset
-    const i = this.originalRecords.findIndex(
-      (e) => e.entityId === record.getId()
-    );
-    this.originalRecords[i] = Object.assign({}, record);
-
-    this.recordsEditing.set(record.getId(), false);
   }
 
   /**
    * Discard any changes to the given entity and reset it to the state before the user started editing.
-   * @param record The entity to be reset.
+   * @param row The entity to be reset.
    */
-  resetChanges(record: T) {
-    // reload original record from database
-    const index = this.records.findIndex((a) => a.getId() === record.getId());
-    if (index > -1) {
-      const originalRecord = this.originalRecords.find(
-        (e) => e.entityId === record.getId()
-      );
-      Object.assign(record, originalRecord);
-      this.records[index] = record;
-      this.recordsDataSource.data = this.records;
-    }
-
-    this.recordsEditing.set(record.getId(), false);
-  }
-
-  private removeFromDataTable(record: T) {
-    const index = this.records.findIndex((a) => a.getId() === record.getId());
-    if (index > -1) {
-      this.records.splice(index, 1);
-      this.recordsDataSource.data = this.records;
-    }
+  resetChanges(row: TableRow<T>) {
+    row.formGroup = null;
   }
 
   /**
    * Delete the given entity from the database (after explicit user confirmation).
-   * @param record The entity to be deleted.
+   * @param row The entity to be deleted.
    */
-  delete(record: T) {
+  delete(row: TableRow<T>) {
     const dialogRef = this._confirmationDialog.openDialog(
       $localize`:Confirmation dialog delete header:Delete?`,
       $localize`:Delete confirmation message:Are you sure you want to delete this record?`
@@ -302,10 +236,9 @@ export class EntitySubrecordComponent<T extends Entity>
 
     dialogRef.afterClosed().subscribe((confirmed) => {
       if (confirmed) {
-        this._entityMapper.remove(record).then(() => {
-          this.changedRecordsInEntitySubrecordEvent.emit();
-        });
-        this.removeFromDataTable(record);
+        this._entityMapper
+          .remove(row.record)
+          .then(() => this.removeFromDataTable(row));
 
         const snackBarRef = this._snackBar.open(
           $localize`:Record deleted info:Record deleted`,
@@ -315,12 +248,22 @@ export class EntitySubrecordComponent<T extends Entity>
           }
         );
         snackBarRef.onAction().subscribe(() => {
-          this._entityMapper.save(record, true);
-          this.records.unshift(record);
-          this.recordsDataSource.data = this.records;
+          this._entityMapper.save(row.record, true);
+          this.records.unshift(row.record);
+          this.initFormGroups();
         });
       }
     });
+  }
+
+  private removeFromDataTable(row: TableRow<T>) {
+    const index = this.records.findIndex(
+      (a) => a.getId() === row.record.getId()
+    );
+    if (index > -1) {
+      this.records.splice(index, 1);
+      this.initFormGroups();
+    }
   }
 
   /**
@@ -331,61 +274,53 @@ export class EntitySubrecordComponent<T extends Entity>
     const newRecord = this.newRecordFactory();
 
     this.records.unshift(newRecord);
-    this.originalRecords.unshift(Object.assign({}, newRecord));
-    this.recordsDataSource.data = this.records;
-
-    if (this.detailsComponent === undefined) {
-      // edit inline in table
-      this.recordsEditing.set(newRecord.getId(), true);
-    } else {
-      // open in modal for comfortable editing
-      this.showRecord(newRecord);
-    }
+    this.recordsDataSource.data = [{ record: newRecord }].concat(
+      this.recordsDataSource.data
+    );
+    this._entityMapper.save(newRecord).then(() => this.showEntity(newRecord));
   }
 
   /**
    * Show one record's details in a modal dialog (if configured).
-   * @param record The entity whose details should be displayed.
+   * @param row The entity whose details should be displayed.
    */
-  showRecord(record: T) {
-    if (
-      this.detailsComponent === undefined ||
-      this.recordsEditing.get(record.getId())
-    ) {
-      return;
+  rowClick(row: TableRow<T>) {
+    if (!row.formGroup || row.formGroup.disabled) {
+      this.showEntity(row.record);
     }
-    this.formDialog.openDialog(
-      this.detailsComponent.component,
-      record,
-      this.detailsComponent.componentConfig
-    );
   }
 
-  autocompleteSearch(col, input) {
-    if (col.allSelectValues === undefined) {
-      col.allSelectValues = col.selectValues;
-    }
-    col.selectValues = col.allSelectValues.filter(
-      (v) => v.value.includes(input) || v.label.includes(input)
-    );
+  private showEntityInForm(entity: T) {
+    const dialogRef = this.dialog.open(EntityFormComponent, {
+      width: "80%",
+    });
+    // Making a copy of the editable columns before assigning them
+    dialogRef.componentInstance.columns = this._columns
+      .filter((col) => col.edit)
+      .map((col) => [Object.assign({}, col)]);
+    dialogRef.componentInstance.entity = entity;
+    dialogRef.componentInstance.editing = true;
+    dialogRef.componentInstance.onSave.subscribe((updatedEntity: T) => {
+      dialogRef.close();
+      // Trigger the change detection
+      const rowIndex = this.recordsDataSource.data.findIndex(
+        (row) => row.record === entity
+      );
+      this.recordsDataSource.data[rowIndex] = { record: updatedEntity };
+      this.recordsDataSource._updateChangeSubscription();
+    });
+    dialogRef.componentInstance.onCancel.subscribe(() => dialogRef.close());
   }
 
   /**
    * resets columnsToDisplay depending on current screensize
    */
   setupTable() {
-    if (this.columns !== undefined && this.screenWidth !== "") {
-      const columnsHelpArray = [];
-      const entitySubrecordComponent = this;
-      this.columns.forEach(function (this, col) {
-        if (entitySubrecordComponent.isVisible(col)) {
-          columnsHelpArray.push(col.name);
-        }
-      });
-      this.columnsToDisplay = columnsHelpArray;
-      if (this.screenWidth !== "xs") {
-        this.columnsToDisplay.push("actions");
-      }
+    if (this._columns !== undefined && this.screenWidth !== "") {
+      this.columnsToDisplay = this._columns
+        .filter((col) => this.isVisible(col))
+        .map((col) => col.id);
+      this.columnsToDisplay.push("actions");
     }
   }
 
@@ -395,41 +330,14 @@ export class EntitySubrecordComponent<T extends Entity>
    * @param col column that is checked
    * @return returns true if column is visible
    */
-  isVisible(col) {
-    let returnVal;
-    switch (col.visibleFrom) {
-      case "xl": {
-        returnVal = this.screenWidth.match("xl");
-        break;
-      }
-      case "lg": {
-        returnVal = this.screenWidth.match("(lg|xl)");
-        break;
-      }
-      case "md": {
-        returnVal = this.screenWidth.match("(md|lg|xl)");
-        break;
-      }
-      case "sm": {
-        returnVal = this.screenWidth.match("(sm|md|lg|xl)");
-        break;
-      }
-      default: {
-        returnVal = true;
-      }
+  private isVisible(col: FormFieldConfig): boolean {
+    const visibilityGroups = ["sm", "md", "lg", "xl"];
+    const visibleFromIndex = visibilityGroups.indexOf(col.visibleFrom);
+    if (visibleFromIndex !== -1) {
+      const regex = visibilityGroups.slice(visibleFromIndex).join("|");
+      return !!this.screenWidth.match(regex);
+    } else {
+      return true;
     }
-    return returnVal;
-  }
-
-  /**
-   * Checks whether the given column configuration's input type is readonly
-   * and therefore not changing its template in edit mode.
-   * @param inputType The input type to be checked.
-   */
-  isReadonlyInputType(inputType: ColumnDescriptionInputType): boolean {
-    return (
-      inputType === ColumnDescriptionInputType.FUNCTION ||
-      inputType === ColumnDescriptionInputType.READONLY
-    );
   }
 }

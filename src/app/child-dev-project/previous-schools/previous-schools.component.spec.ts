@@ -17,6 +17,8 @@ import { Child } from "../children/model/child";
 import { PanelConfig } from "../../core/entity-components/entity-details/EntityDetailsConfig";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import moment from "moment";
+import { SessionService } from "../../core/session/session-service/session.service";
+import { User } from "../../core/user/user";
 
 describe("PreviousSchoolsComponent", () => {
   let component: PreviousSchoolsComponent;
@@ -29,8 +31,10 @@ describe("PreviousSchoolsComponent", () => {
 
   beforeEach(
     waitForAsync(() => {
-      mockChildrenService = jasmine.createSpyObj(["getSchoolsWithRelations"]);
-      mockChildrenService.getSchoolsWithRelations.and.resolveTo([]);
+      mockChildrenService = jasmine.createSpyObj(["getSchoolRelationsFor"]);
+      mockChildrenService.getSchoolRelationsFor.and.resolveTo([
+        new ChildSchoolRelation(),
+      ]);
       mockEntityMapper = jasmine.createSpyObj(["loadType"]);
       mockEntityMapper.loadType.and.resolveTo([]);
       TestBed.configureTestingModule({
@@ -43,6 +47,10 @@ describe("PreviousSchoolsComponent", () => {
         providers: [
           { provide: ChildrenService, useValue: mockChildrenService },
           { provide: EntityMapperService, useValue: mockEntityMapper },
+          {
+            provide: SessionService,
+            useValue: { getCurrentUser: () => new User() },
+          },
         ],
       }).compileComponents();
     })
@@ -64,7 +72,7 @@ describe("PreviousSchoolsComponent", () => {
       child: new SimpleChange(undefined, testChild, false),
     });
     tick();
-    expect(mockChildrenService.getSchoolsWithRelations).toHaveBeenCalledWith(
+    expect(mockChildrenService.getSchoolRelationsFor).toHaveBeenCalledWith(
       testChild.getId()
     );
   }));
@@ -75,14 +83,13 @@ describe("PreviousSchoolsComponent", () => {
       config: {
         single: true,
         columns: [
-          { id: "schoolId", label: "Team", input: "school" },
-          { id: "start", label: "From", input: "date" },
-          { id: "end", label: "To", input: "date" },
+          { id: "schoolId", label: "Team", view: "school" },
+          { id: "start", label: "From", view: "date" },
+          { id: "end", label: "To", view: "date" },
         ],
       },
     };
     component.onInitFromDynamicConfig(config);
-    component.ngOnInit();
     tick();
     expect(component.columns).toHaveSize(3);
     let columnNames = component.columns.map((column) => column.label);
@@ -102,7 +109,6 @@ describe("PreviousSchoolsComponent", () => {
     });
 
     component.onInitFromDynamicConfig(config);
-    component.ngOnInit();
     tick();
     expect(component.columns).toHaveSize(5);
     columnNames = component.columns.map((column) => column.label);
@@ -113,24 +119,21 @@ describe("PreviousSchoolsComponent", () => {
     expect(columnNames).toContain("Result");
   }));
 
-  it("should display errors for invalid fields", () => {
-    const entry = new ChildSchoolRelation();
-    let validation = component.formValidation(entry);
-    expect(validation.hasPassedValidation).toBeFalse();
+  it("should create new records with preset data", () => {
+    const existingRelation = new ChildSchoolRelation();
+    existingRelation.start = moment().subtract(1, "year").toDate();
+    existingRelation.end = moment().subtract(1, "week").toDate();
+    component.records = [existingRelation];
+    const child = new Child();
+    component.child = child;
 
-    entry.schoolId = "test school";
-    entry.start = new Date();
-    entry.end = moment().subtract(1, "week").toDate();
-    validation = component.formValidation(entry);
-    expect(validation.hasPassedValidation).toBeFalse();
+    const newRelation = component.generateNewRecordFactory()();
 
-    entry.end = moment().add(1, "week").toDate();
-    entry.result = 200;
-    validation = component.formValidation(entry);
-    expect(validation.hasPassedValidation).toBeFalse();
-
-    entry.result = 75;
-    validation = component.formValidation(entry);
-    expect(validation.hasPassedValidation).toBeTrue();
+    expect(newRelation.childId).toEqual(child.getId());
+    expect(
+      moment(existingRelation.end)
+        .add(1, "day")
+        .isSame(newRelation.start, "day")
+    ).toBeTrue();
   });
 });

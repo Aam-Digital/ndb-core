@@ -1,6 +1,4 @@
 # Entity Schema 
-> THIS DOCUMENT IS STILL WORK IN PROGRESS AND WILL BE CONTINUOUSLY UPDATED AS THE DESIGN OF THE SYSTEM EVOLVES
-
 -----
 
 An example of a schema definition:
@@ -21,22 +19,27 @@ class Note extends Entity {
 The logical flow looks something like this:
 1. Entities are requested through the `EntityMapperService` (`entityMapper.load(...)`)
 2. The `EntitySchemaService` functions as a helper to the `EntityMapperService` 
-and takes care of data transformations based on the schema of that Entity type.
-3. Data from the database is "loaded" into an Entity instance to combine the raw data
-with its Entity class by the `EntityMapperService` together with the `EntitySchemaService`.
-4. The Entity classes themselves only define the schema through the `@DatabaseEntity` and `@DatabaseField` decorators
+and takes care of data transformations based on the schema of that entity type.
+3. Data from the database is "loaded" into an entity instance to combine the raw data
+with its entity class by the `EntityMapperService` together with the `EntitySchemaService`.
+4. The entity classes themselves only define the schema through the `@DatabaseEntity` and `@DatabaseField` decorators
 and are otherwise simple Typescript objects.
 
-The process of saving an Entity to the database works similarly with `EntitySchemaService`
+The process of saving an entity to the database works similarly with `EntitySchemaService`
 supporting the `EntityMapperService` and transforming the entity object into the desired format to be persisted into the database.
 
 
 -----
-
-
 
 `EntitySchemaService` keeps a registry of "data types",
 i.e. transformation functions that will be called for a specific schema field's dataType.
 
 Basic data transformations for `string`, `number`, `date` and `month` are supported by default.
 You can register your own transformations by injecting the `EntitySchemaService` and using its `registerSchemaDatatype()` method.
+
+## Schema options
+
+The schema definitions contains information regarding the schema transformation as well as how a property can be displayed.
+The [EntitySchemaField](../../interfaces/EntitySchemaField.html) interface shows all configuration options.
+If the `editComponent` and the `viewComponent` are not set, the default components of this property's datatype will be used.
+The `description` field allows adding further explanation which will be displayed as a tooltip.

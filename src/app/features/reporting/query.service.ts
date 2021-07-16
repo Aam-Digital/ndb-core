@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Entity, EntityConstructor } from "../../core/entity/entity";
+import { Entity, EntityConstructor } from "../../core/entity/model/entity";
 import { Child } from "../../child-dev-project/children/model/child";
 import { School } from "../../child-dev-project/schools/model/school";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
@@ -59,6 +59,7 @@ export class QueryService {
         filterByObjectAttribute: this.filterByObjectAttribute,
         getIds: this.getIds,
         getParticipantsWithAttendance: this.getParticipantsWithAttendance,
+        addEntities: this.addEntities.bind(this),
       },
     }).value;
   }
@@ -115,7 +116,7 @@ export class QueryService {
    * @param prefix the prefix which should be added to the string
    * @returns a list where every string has the prefix
    */
-  private addPrefix(ids: string[], prefix: string): string[] {
+  addPrefix(ids: string[], prefix: string): string[] {
     return ids.map((id) => (id.startsWith(prefix) ? id : prefix + ":" + id));
   }
 
@@ -127,7 +128,7 @@ export class QueryService {
    * @param obj the object which should be transformed to an array
    * @returns the values of the input object as a list
    */
-  private toArray(obj): any[] {
+  toArray(obj): any[] {
     return Object.values(obj);
   }
 
@@ -136,7 +137,7 @@ export class QueryService {
    * @param data the array where duplicates should be removed
    * @returns a list without duplicates
    */
-  private unique(data: any[]): any[] {
+  unique(data: any[]): any[] {
     return new Array(...new Set(data));
   }
 
@@ -145,7 +146,7 @@ export class QueryService {
    * @param data the data for which the length should be returned
    * @returns the length of the input array or 0 if no array is provided
    */
-  private count(data: any[]): number {
+  count(data: any[]): number {
     return data ? data.length : 0;
   }
 
@@ -154,7 +155,7 @@ export class QueryService {
    * @param ids the array of ids with entity prefix
    * @returns a list of entity objects
    */
-  private toEntities(ids: string[]): Entity[] {
+  toEntities(ids: string[]): Entity[] {
     return ids.map((id) => {
       const prefix = id.split(":")[0];
       return this.entities[prefix][id];
@@ -169,7 +170,7 @@ export class QueryService {
    *                    The attribute can be a string or a list of strings
    * @returns a list of the related unique entities
    */
-  private getRelated(
+  getRelated(
     srcEntities: Entity[],
     entityType: string,
     relationKey: string
@@ -204,7 +205,7 @@ export class QueryService {
    *              If it is a list of values, then the object is returned if its value matches any of the given values.
    * @returns the filtered objects
    */
-  private filterByObjectAttribute(
+  filterByObjectAttribute(
     objs: any[],
     attr: string,
     key: string,
@@ -226,7 +227,7 @@ export class QueryService {
    * @returns a one dimensional string array holding all IDs which are held by the objects.
    *            This list may contain duplicate IDs. If this is not desired, use `:unique` afterwards.
    */
-  private getIds(objs: any[], key: string): string[] {
+  getIds(objs: any[], key: string): string[] {
     const ids: string[] = [];
     objs.forEach((obj) => {
       if (obj.hasOwnProperty(key)) {
@@ -243,7 +244,7 @@ export class QueryService {
    * @param attendanceStatus the status for which should be looked for
    * @returns the ids of children which have the specified attendance in an event
    */
-  private getParticipantsWithAttendance(
+  getParticipantsWithAttendance(
     events: EventNote[],
     attendanceStatus: string
   ): string[] {
@@ -256,5 +257,15 @@ export class QueryService {
       })
     );
     return attendedChildren;
+  }
+
+  /**
+   * Adds all entities of the given type to the input array
+   * @param entities the array before
+   * @param entityType the type of entities which should be added
+   * @returns the input array concatenated with all entities of the entityType
+   */
+  addEntities(entities: Entity[], entityType: string): Entity[] {
+    return entities.concat(...this.toArray(this.entities[entityType]));
   }
 }

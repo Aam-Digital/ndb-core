@@ -17,15 +17,22 @@ import {
   AverageAttendanceStats,
   calculateAverageAttendance,
 } from "../model/calculate-average-event-attendance";
+import { EventNote } from "../model/event-note";
+import { RecurringActivity } from "../model/recurring-activity";
+import { applyUpdate } from "../../../core/entity/model/entity-update";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { AttendanceService } from "../attendance.service";
 
 @Component({
   selector: "app-attendance-calendar",
   templateUrl: "./attendance-calendar.component.html",
   styleUrls: ["./attendance-calendar.component.scss"],
 })
+@UntilDestroy()
 export class AttendanceCalendarComponent implements OnChanges {
   @Input() records: Note[] = [];
   @Input() highlightForChild: string;
+  @Input() activity: RecurringActivity;
 
   @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
   minDate: Date;
@@ -39,8 +46,17 @@ export class AttendanceCalendarComponent implements OnChanges {
 
   constructor(
     private entityMapper: EntityMapperService,
-    private formDialog: FormDialogService
-  ) {}
+    private formDialog: FormDialogService,
+    private attendanceService: AttendanceService
+  ) {
+    this.entityMapper
+      .receiveUpdates(EventNote)
+      .pipe(untilDestroyed(this))
+      .subscribe((newNotes) => {
+        this.records = applyUpdate(this.records, newNotes);
+        this.selectDay(this.selectedDate.toDate());
+      });
+  }
 
   highlightDate = (cellDate: Date): MatCalendarCellCssClasses => {
     const cellMoment = moment(cellDate);
@@ -103,6 +119,10 @@ export class AttendanceCalendarComponent implements OnChanges {
     }
   }
 
+  get hasAverage(): boolean {
+    return !Number.isNaN(this.selectedEventStats.average);
+  }
+
   selectDay(newDate?: Date) {
     if (!newDate) {
       this.selectedDate = undefined;
@@ -123,7 +143,11 @@ export class AttendanceCalendarComponent implements OnChanges {
         {},
         this.selectedEventAttendanceOriginal
       );
-      this.selectedEventStats = calculateAverageAttendance(this.selectedEvent);
+      if (this.selectedEvent) {
+        this.selectedEventStats = calculateAverageAttendance(
+          this.selectedEvent
+        );
+      }
     }
 
     this.calendar.updateTodaysDate();
@@ -141,6 +165,14 @@ export class AttendanceCalendarComponent implements OnChanges {
     }
 
     await this.entityMapper.save(this.selectedEvent);
+  }
+
+  createNewEvent() {
+    this.attendanceService
+      .createEventForActivity(this.activity, this.selectedDate.toDate())
+      .then((note) => {
+        this.showEventDetails(note);
+      });
   }
 
   showEventDetails(selectedEvent: Note) {

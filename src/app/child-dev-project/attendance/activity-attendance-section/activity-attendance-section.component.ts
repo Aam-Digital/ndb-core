@@ -2,14 +2,13 @@ import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { RecurringActivity } from "../model/recurring-activity";
 import { AttendanceDetailsComponent } from "../attendance-details/attendance-details.component";
-import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
-import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
 import { AttendanceService } from "../attendance.service";
 import { PercentPipe } from "@angular/common";
 import { ActivityAttendance } from "../model/activity-attendance";
 import { Note } from "../../notes/model/note";
 import moment from "moment";
-import { ComponentWithConfig } from "../../../core/entity-components/entity-subrecord/component-with-config";
+import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
+import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 
 @Component({
   selector: "app-activity-attendance-section",
@@ -21,38 +20,37 @@ export class ActivityAttendanceSectionComponent
   @Input() activity: RecurringActivity;
   @Input() forChild?: string;
 
-  records: ActivityAttendance[];
-  allRecords: ActivityAttendance[];
+  records: ActivityAttendance[] = [];
+  allRecords: ActivityAttendance[] = [];
   displayedEvents: Note[] = [];
 
-  detailsComponent: ComponentWithConfig<ActivityAttendance>;
-
-  columns: Array<ColumnDescription> = [
+  columns: FormFieldConfig[] = [
     {
-      name: "periodFrom",
+      id: "periodFrom",
       label: $localize`:The month something took place:Month`,
-      inputType: ColumnDescriptionInputType.MONTH,
+      view: "DisplayDate",
+      additional: "YYYY-MM",
     },
     {
-      name: "countEventsPresent",
+      id: "presentEvents",
       label: $localize`:How many children are present at a meeting:Present`,
-      inputType: ColumnDescriptionInputType.FUNCTION,
-      valueFunction: (e: ActivityAttendance) =>
+      view: "ReadonlyFunction",
+      additional: (e: ActivityAttendance) =>
         this.forChild
           ? e.countEventsPresent(this.forChild)
           : e.countEventsPresentAverage(true),
     },
     {
-      name: "countEventsTotal",
+      id: "totalEvents",
       label: $localize`:Events of an attendance:Events`,
-      inputType: ColumnDescriptionInputType.FUNCTION,
-      valueFunction: (e: ActivityAttendance) => e.countEventsTotal(),
+      view: "ReadonlyFunction",
+      additional: (e: ActivityAttendance) => e.countEventsTotal(),
     },
     {
-      name: "getAttendancePercentage",
+      id: "attendancePercentage",
       label: $localize`:Percentage of people that attended an event:Attended`,
-      inputType: ColumnDescriptionInputType.FUNCTION,
-      valueFunction: (e: ActivityAttendance) =>
+      view: "ReadonlyFunction",
+      additional: (e: ActivityAttendance) =>
         this.percentPipe.transform(
           this.forChild
             ? e.getAttendancePercentage(this.forChild)
@@ -64,7 +62,8 @@ export class ActivityAttendanceSectionComponent
 
   constructor(
     private attendanceService: AttendanceService,
-    private percentPipe: PercentPipe
+    private percentPipe: PercentPipe,
+    private formDialog: FormDialogService
   ) {}
 
   async ngOnChanges(changes: SimpleChanges) {
@@ -92,12 +91,6 @@ export class ActivityAttendanceSectionComponent
         moment().startOf("month").subtract(6, "months").toDate()
       );
     }
-
-    this.detailsComponent = {
-      component: AttendanceDetailsComponent,
-      componentConfig: { forChild: this.forChild },
-    };
-
     this.updateDisplayedRecords(false);
   }
 
@@ -119,5 +112,11 @@ export class ActivityAttendanceSectionComponent
       );
       this.displayedEvents = this.records[0].events;
     }
+  }
+
+  showDetails(activity: ActivityAttendance) {
+    this.formDialog.openDialog(AttendanceDetailsComponent, activity, {
+      forChild: this.forChild,
+    });
   }
 }

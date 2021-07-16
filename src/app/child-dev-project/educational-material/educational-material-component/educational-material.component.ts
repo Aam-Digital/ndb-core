@@ -4,9 +4,8 @@ import { ChildrenService } from "../../children/children.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
-import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
+import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 
 @UntilDestroy()
 @Component({
@@ -17,37 +16,13 @@ export class EducationalMaterialComponent
   implements OnChanges, OnInitDynamicComponent {
   @Input() child: Child;
   records = new Array<EducationalMaterial>();
+  summary = "";
 
-  materialTypes = EducationalMaterial.MATERIAL_ALL;
-
-  columns: Array<ColumnDescription> = [
-    {
-      name: "date",
-      label: $localize`Date`,
-      inputType: ColumnDescriptionInputType.DATE,
-      visibleFrom: "xs",
-    },
-    {
-      name: "materialType",
-      label: $localize`:Education material type:Material`,
-      inputType: ColumnDescriptionInputType.AUTOCOMPLETE,
-      selectValues: this.materialTypes.map((t) => {
-        return { value: t, label: t };
-      }),
-      visibleFrom: "xs",
-    },
-    {
-      name: "materialAmount",
-      label: $localize`:Amount of Education material:Amount`,
-      inputType: ColumnDescriptionInputType.NUMBER,
-      visibleFrom: "md",
-    },
-    {
-      name: "description",
-      label: $localize`Description/Remarks`,
-      inputType: ColumnDescriptionInputType.TEXT,
-      visibleFrom: "md",
-    },
+  columns: FormFieldConfig[] = [
+    { id: "date", visibleFrom: "xs" },
+    { id: "materialType", visibleFrom: "xs" },
+    { id: "materialAmount", visibleFrom: "md" },
+    { id: "description", visibleFrom: "md" },
   ];
 
   constructor(private childrenService: ChildrenService) {}
@@ -59,10 +34,8 @@ export class EducationalMaterialComponent
   }
 
   onInitFromDynamicConfig(config: PanelConfig) {
-    if (config?.config?.displayedColumns) {
-      this.columns = this.columns.filter((c) =>
-        config.config.displayedColumns.includes(c.name)
-      );
+    if (config?.config?.columns) {
+      this.columns = config.config.columns;
     }
 
     this.child = config.entity as Child;
@@ -78,41 +51,35 @@ export class EducationalMaterialComponent
           (a, b) =>
             (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0)
         );
+        this.updateSummary();
       });
   }
 
   generateNewRecordFactory() {
-    // define values locally because "this" is a different scope after passing a function as input to another component
-    const child = this.child.getId();
-
     return () => {
       const newAtt = new EducationalMaterial(Date.now().toString());
 
       // use last entered date as default, otherwise today's date
       newAtt.date = this.records.length > 0 ? this.records[0].date : new Date();
-      newAtt.child = child;
+      newAtt.child = this.child.getId();
 
       return newAtt;
     };
   }
 
-  getSummary() {
-    if (this.records.length === 0) {
-      return "";
-    }
-
+  updateSummary() {
     const summary = new Map<string, number>();
     this.records.forEach((m) => {
-      const previousValue = summary.has(m.materialType)
-        ? summary.get(m.materialType)
+      const previousValue = summary.has(m.materialType.label)
+        ? summary.get(m.materialType.label)
         : 0;
-      summary.set(m.materialType, previousValue + m.materialAmount);
+      summary.set(m.materialType.label, previousValue + m.materialAmount);
     });
 
     let summaryText = "";
     summary.forEach(
       (v, k) => (summaryText = summaryText + k + ": " + v + ", ")
     );
-    return summaryText;
+    this.summary = summaryText;
   }
 }

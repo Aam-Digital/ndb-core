@@ -15,8 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from "../../../core/entity/entity";
-import { Gender } from "./Gender";
+import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
@@ -32,20 +31,41 @@ export class Child extends Entity {
     return instance;
   }
 
-  @DatabaseField() name: string;
-  @DatabaseField() projectNumber: string; // project number
-  @DatabaseField({ dataType: "date-only" }) dateOfBirth: Date;
-  @DatabaseField() motherTongue: string = "";
-  @DatabaseField({ dataType: "string" }) gender: Gender; // M or F
-  @DatabaseField() religion: string = "";
+  static getBlockComponent(): string {
+    return "ChildBlock";
+  }
 
-  @DatabaseField() center: Center;
-  @DatabaseField() admissionDate: Date;
-  @DatabaseField() status: string = "";
+  @DatabaseField({ label: "Name", required: true }) name: string;
+  @DatabaseField({ label: "Project Number", labelShort: "PN" })
+  projectNumber: string;
+  @DatabaseField({
+    dataType: "date-only",
+    label: "Date of birth",
+    labelShort: "DoB",
+    editComponent: "EditAge",
+  })
+  dateOfBirth: Date;
+  @DatabaseField({ label: "Mother Tongue" }) motherTongue: string = "";
+  @DatabaseField({
+    dataType: "configurable-enum",
+    label: "Gender",
+    innerDataType: "genders",
+  })
+  gender: ConfigurableEnumValue;
+  @DatabaseField({ label: "Religion" }) religion: string = "";
 
-  @DatabaseField() dropoutDate: Date;
-  @DatabaseField() dropoutType: string;
-  @DatabaseField() dropoutRemarks: string;
+  @DatabaseField({
+    dataType: "configurable-enum",
+    innerDataType: "center",
+    label: "Center",
+  })
+  center: Center;
+  @DatabaseField({ label: "Admission" }) admissionDate: Date;
+  @DatabaseField({ label: "Status" }) status: string = "";
+
+  @DatabaseField({ label: "Dropout Date" }) dropoutDate: Date;
+  @DatabaseField({ label: "Dropout Type" }) dropoutType: string;
+  @DatabaseField({ label: "Dropout remarks" }) dropoutRemarks: string;
 
   /** current school (as determined through the ChildSchoolRelation docs) set during loading through ChildrenService */
   schoolId: string = "";
@@ -55,6 +75,7 @@ export class Child extends Entity {
   @DatabaseField({
     dataType: "photo",
     defaultValue: "",
+    label: "Photo Filename",
   })
   photo: Photo;
 

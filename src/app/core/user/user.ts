@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from "../entity/entity";
+import { Entity } from "../entity/model/entity";
 import { DatabaseEntity } from "../entity/database-entity.decorator";
 import { DatabaseField } from "../entity/database-field.decorator";
 
@@ -155,5 +155,9 @@ export class User extends Entity {
    */
   public setAdmin(admin: boolean) {
     this.admin = admin;
+  }
+
+  toString(): string {
+    return this.name;
   }
 }

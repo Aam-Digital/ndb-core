@@ -11,6 +11,9 @@ import { Child } from "../../children/model/child";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatNativeDateModule } from "@angular/material/core";
+import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
+import { EventNote } from "../model/event-note";
+import { AttendanceService } from "../attendance.service";
 
 describe("AttendanceCalendarComponent", () => {
   let component: AttendanceCalendarComponent;
@@ -18,13 +21,23 @@ describe("AttendanceCalendarComponent", () => {
 
   beforeEach(
     waitForAsync(() => {
+      const mockAttendanceService = jasmine.createSpyObj([
+        "createEventForActivity",
+      ]);
+      mockAttendanceService.createEventForActivity.and.resolveTo(
+        new EventNote()
+      );
       TestBed.configureTestingModule({
         imports: [FormDialogModule, MatDatepickerModule, MatNativeDateModule],
         declarations: [AttendanceCalendarComponent],
         providers: [
           {
             provide: EntityMapperService,
-            useValue: { save: () => Promise.resolve() },
+            useValue: mockEntityMapper(),
+          },
+          {
+            provide: AttendanceService,
+            useValue: mockAttendanceService,
           },
         ],
       }).compileComponents();

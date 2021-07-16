@@ -1,13 +1,14 @@
 import { Component, Input, ViewChild } from "@angular/core";
 import { ShowsEntity } from "../../../core/form-dialog/shows-entity.interface";
 import { ActivityAttendance } from "../model/activity-attendance";
-import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
-import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
 import { NoteDetailsComponent } from "../../notes/note-details/note-details.component";
 import { Note } from "../../notes/model/note";
 import { calculateAverageAttendance } from "../model/calculate-average-event-attendance";
 import { NullAttendanceStatusType } from "../model/attendance-status";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
+import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
+import { EventNote } from "../model/event-note";
 import { PercentPipe } from "@angular/common";
 
 @Component({
@@ -21,23 +22,14 @@ export class AttendanceDetailsComponent
   @Input() focusedChild: string;
   @ViewChild("dialogForm", { static: true }) formDialogWrapper;
 
-  eventDetailsComponent = { component: NoteDetailsComponent };
-  eventsColumns: Array<ColumnDescription> = [
+  eventsColumns: FormFieldConfig[] = [
+    { id: "date" },
+    { id: "subject", label: $localize`Event` },
     {
-      name: "date",
-      label: $localize`Date`,
-      inputType: ColumnDescriptionInputType.DATE,
-    },
-    {
-      name: "subject",
-      label: $localize`Event`,
-      inputType: ColumnDescriptionInputType.TEXT,
-    },
-    {
-      name: "getAttendance",
+      id: "getAttendance",
       label: $localize`:How a child attended, e.g. too late, in time, excused, e.t.c:Attended`,
-      inputType: ColumnDescriptionInputType.FUNCTION,
-      valueFunction: (note: Note) => {
+      view: "ReadonlyFunction",
+      additional: (note: Note) => {
         if (this.focusedChild) {
           return note.getAttendance(this.focusedChild).status.label;
         } else {
@@ -51,7 +43,7 @@ export class AttendanceDetailsComponent
   ];
   UnknownStatus = NullAttendanceStatusType;
 
-  constructor(private percentPipe: PercentPipe) {}
+  constructor(private percentPipe: PercentPipe, private formDialog: FormDialogService) {}
 
   onInitFromDynamicConfig(config?: { forChild?: string }) {
     if (config?.forChild) {
@@ -59,17 +51,7 @@ export class AttendanceDetailsComponent
     }
   }
 
-  get attendance(): string {
-    if (this.focusedChild) {
-      return this.percentPipe.transform(
-        this.entity?.getAttendancePercentage(this.focusedChild),
-        "1.0-0"
-      );
-    } else {
-      return this.percentPipe.transform(
-        this.entity?.getAttendancePercentageAverage(),
-        "1.0-0"
-      );
-    }
+  showEventDetails(event: EventNote) {
+    this.formDialog.openDialog(NoteDetailsComponent, event);
   }
 }

@@ -1,0 +1,16 @@
+<mat-form-field [formGroup]="formControl.parent">
+    <input
+            matInput
+            [formControlName]="formControlName"
+            [placeholder]="label"
+            [title]="label"
+            type="text"
+    />
+    <mat-icon *ngIf="formControl.disabled && tooltip" matSuffix
+              fontIcon="fa-question-circle-o"
+              [matTooltip]="tooltip"
+    ></mat-icon>
+    <mat-error *ngIf="formControl.errors?.required">
+        This field is required
+    </mat-error>
+</mat-form-field>

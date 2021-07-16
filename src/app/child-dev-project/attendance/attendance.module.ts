@@ -18,7 +18,6 @@
 import { NgModule } from "@angular/core";
 import { ActivityListComponent } from "./activity-list/activity-list.component";
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
-import { ActivityParticipantsSectionComponent } from "./activity-participants-section/activity-participants-section.component";
 import { ChildrenModule } from "../children/children.module";
 import { MatButtonModule } from "@angular/material/button";
 import { CommonModule } from "@angular/common";
@@ -57,12 +56,11 @@ import { RouterModule } from "@angular/router";
 import { Angulartics2Module } from "angulartics2";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { AttendanceManagerComponent } from "./attendance-manager/attendance-manager.component";
-import { EntitySelectModule } from "../../core/entity-components/entity-select/entity-select.module";
+import { EntityUtilsModule } from "../../core/entity-components/entity-utils/entity-utils.module";
 
 @NgModule({
   declarations: [
     ActivityListComponent,
-    ActivityParticipantsSectionComponent,
     ActivityCardComponent,
     RollCallSetupComponent,
     AttendanceDayBlockComponent,
@@ -104,7 +102,7 @@ import { EntitySelectModule } from "../../core/entity-components/entity-select/e
     RouterModule,
     Angulartics2Module,
     MatSlideToggleModule,
-    EntitySelectModule,
+    EntityUtilsModule,
   ],
   exports: [
     ActivityCardComponent,
@@ -113,5 +111,6 @@ import { EntitySelectModule } from "../../core/entity-components/entity-select/e
     AttendanceDayBlockComponent,
     AttendanceWeekDashboardComponent,
   ],
+  entryComponents: [AttendanceDetailsComponent],
 })
 export class AttendanceModule {}

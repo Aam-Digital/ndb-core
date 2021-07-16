@@ -1,0 +1,56 @@
+<form>
+  <div
+    fxLayout="row wrap"
+    fxLayout.xs="row wrap"
+    fxLayout.md="row wrap"
+    fxLayout.sm="row wrap"
+  >
+    <div *ngFor="let col of _columns" fxFlex>
+      <div *ngFor="let row of col">
+        <ng-template [appDynamicComponent]="{
+          component: row.edit,
+          config: {
+            formFieldConfig: row,
+            propertySchema: entity.getSchema().get(row.id),
+            formControl: form.get(row.id)
+          }
+        }"
+        >
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</form>
+<div>
+  <button
+    *ngIf="form?.enabled"
+    mat-stroked-button
+    class="edit-button"
+    (click)="save()"
+  >
+    Save
+  </button>
+
+  <button
+    *ngIf="form?.enabled"
+    mat-stroked-button
+    class="edit-button"
+    (click)="cancel()"
+  >
+    Cancel
+  </button>
+
+  <ng-container *ngIf="form?.disabled">
+    <button
+      mat-stroked-button
+      class="edit-button"
+      (click)="switchEdit()"
+      *appDisabledEntityOperation="{
+        entity: entity?.getConstructor(),
+        operation: operationType.UPDATE
+      }"
+    >
+      Edit
+    </button>
+  </ng-container>
+</div>

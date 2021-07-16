@@ -8,7 +8,7 @@
 >Include events</mat-slide-toggle>
 
 <app-entity-list
-  [entityList]="notes"
+  [allEntities]="notes"
   [listConfig]="config"
   [entityConstructor]="noteConstructor"
   (elementClick)="showDetails($event)"

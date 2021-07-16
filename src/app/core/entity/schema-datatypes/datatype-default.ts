@@ -24,6 +24,8 @@ import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
  */
 export const defaultEntitySchemaDatatype: EntitySchemaDatatype = {
   name: "any",
+  viewComponent: "DisplayText",
+  editComponent: "EditText",
 
   transformToDatabaseFormat: (value) => {
     return value;

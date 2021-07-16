@@ -15,61 +15,29 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from "../../../core/entity/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
+import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 
 @DatabaseEntity("EducationalMaterial")
 export class EducationalMaterial extends Entity {
-  static MATERIAL_STATIONARIES = [
-    $localize`:education material:pencil`,
-    $localize`:education material:eraser`,
-    $localize`:education material:sharpener`,
-    $localize`:education material:pen (black)`,
-    $localize`:education material:pen (blue)`,
-    $localize`:education material:oil pastels`,
-    $localize`:education material:crayons`,
-    $localize`:education material:sketch pens`,
-    $localize`:education material:scale (big)`,
-    $localize`:education material:scale (small)`,
-    $localize`:education material:geometry box`,
-    $localize`:education material:copy (single line, small)`,
-    $localize`:education material:copy (single line, big)`,
-    $localize`:education material:copy (four line)`,
-    $localize`:education material:copy (squared)`,
-    $localize`:education material:copy (plain)`,
-    $localize`:education material:copy (line-plain)`,
-    $localize`:education material:copy (drawing)`,
-    $localize`:education material:copy (practical)`,
-    $localize`:education material:graph book`,
-    $localize`:education material:project papers`,
-    $localize`:education material:project file`,
-    $localize`:education material:scrap book`,
-    $localize`:education material:exam board`,
-  ];
-  static MATERIAL_OTHER = [
-    $localize`:education material:Bag`,
-    $localize`:education material:School Uniform`,
-    $localize`:education material:School Shoes`,
-    $localize`:education material:Sports Dress`,
-    $localize`:education material:Sports Shoes`,
-    $localize`:education material:Raincoat`,
-  ];
-  static MATERIAL_ALL = EducationalMaterial.MATERIAL_STATIONARIES.concat(
-    EducationalMaterial.MATERIAL_OTHER
-  );
-
   @DatabaseField() child: string; // id of Child entity
-  @DatabaseField() date: Date;
-  @DatabaseField() materialType = "";
-  @DatabaseField() materialAmount: number;
-  @DatabaseField() description = "";
+  @DatabaseField({ label: $localize`:Date on which the material has been borrowed:Date` }) date: Date;
+  @DatabaseField({
+    label: $localize`:The material which has been borrowed:Material`,
+    dataType: "configurable-enum",
+    innerDataType: "materials",
+  })
+  materialType: ConfigurableEnumValue;
+  @DatabaseField({
+    label: $localize`:The amount of the material which has been borrowed:Amount`
+  }) materialAmount: number;
+  @DatabaseField({
+    label: $localize`:An additional description for the borrowed material:Description`
+  }) description = "";
 
   public getColor() {
-    if (EducationalMaterial.MATERIAL_STATIONARIES.includes(this.materialType)) {
-      return "white";
-    } else {
-      return "#B3E5FC";
-    }
+    return this.materialType?.color || "white";
   }
 }

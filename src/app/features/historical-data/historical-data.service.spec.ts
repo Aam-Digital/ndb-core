@@ -2,7 +2,7 @@ import { TestBed } from "@angular/core/testing";
 
 import { HistoricalDataService } from "./historical-data.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
-import { Entity } from "../../core/entity/entity";
+import { Entity } from "../../core/entity/model/entity";
 import { HistoricalEntityData } from "./historical-entity-data";
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
 import { PouchDatabase } from "../../core/database/pouch-database";

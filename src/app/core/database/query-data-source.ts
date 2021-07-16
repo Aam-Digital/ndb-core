@@ -1,7 +1,7 @@
 import { CollectionViewer, DataSource } from "@angular/cdk/collections";
 import { BehaviorSubject, Observable } from "rxjs";
 import { MatPaginator } from "@angular/material/paginator";
-import { Entity } from "../entity/entity";
+import { Entity } from "../entity/model/entity";
 import { Database } from "./database";
 
 /**

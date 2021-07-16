@@ -1,20 +1,19 @@
 <div
-  *ngIf="config.single && current"
+  *ngIf="single && current"
 >
   <em
     i18n-matTooltip
-    matTooltip="To change the currently attending {{schoolNaming}}, please add a new entry to the history below"
-    i18n="The class and school a child is currently attending|Context 'currently attending class at school'">
+    matTooltip="To change this field, please add a new entry to the history below"
+    i18n="The class and school a child is currently attending|Context 'currently attending class at school'"
+  >
     Currently attending class {{current.schoolClass}} {!!current.schoolClass, select, true {at} false {}}
-    <app-school-block [entity]="schoolMap.get(current.schoolId)"></app-school-block>
+    <app-school-block [entityId]="current.schoolId"></app-school-block>
   </em>
 </div>
 
 <app-entity-subrecord
-  (changedRecordsInEntitySubrecordEvent)="changedRecordInEntitySubrecord.emit()"
   [records]="records"
   [columns]="columns"
   [newRecordFactory]="generateNewRecordFactory()"
-  [formValidation]="formValidation"
 >
 </app-entity-subrecord>

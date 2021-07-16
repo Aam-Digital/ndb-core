@@ -1,10 +1,10 @@
 import { Component } from "@angular/core";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { HistoricalEntityData } from "../historical-entity-data";
-import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
-import { Entity } from "../../../core/entity/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { HistoricalDataService } from "../historical-data.service";
+import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 
 /**
  * A general component that can be included on a entity details page through the config.
@@ -21,7 +21,7 @@ import { HistoricalDataService } from "../historical-data.service";
 })
 export class HistoricalDataComponent implements OnInitDynamicComponent {
   entries: HistoricalEntityData[] = [];
-  columns: ColumnDescription[] = [];
+  columns: FormFieldConfig[] = [];
   private entity: Entity;
 
   constructor(private historicalDataService: HistoricalDataService) {}

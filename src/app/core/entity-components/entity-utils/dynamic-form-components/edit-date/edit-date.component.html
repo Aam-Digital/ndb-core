@@ -1,0 +1,13 @@
+<mat-form-field style="width: 180px" [formGroup]="formControl.parent">
+  <input
+    matInput
+    [formControlName]="formControlName"
+    [placeholder]="label"
+    [matDatepicker]="datepickerComp"
+  />
+  <mat-datepicker-toggle
+    matSuffix
+    [for]="datepickerComp"
+  ></mat-datepicker-toggle>
+  <mat-datepicker #datepickerComp></mat-datepicker>
+</mat-form-field>

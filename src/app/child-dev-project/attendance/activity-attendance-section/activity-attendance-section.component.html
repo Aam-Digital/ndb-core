@@ -1,15 +1,15 @@
 <app-attendance-calendar
   [records]="displayedEvents"
   [highlightForChild]="forChild"
+  [activity]="activity"
 >
 </app-attendance-calendar>
 
 <app-entity-subrecord
   [records]="records"
   [columns]="columns"
-  [detailsComponent]="detailsComponent"
-  [showAddButton]="false"
-  [disableEditingInline]="true"
+  [showEntity]="showDetails.bind(this)"
+  [editable]="false"
 >
 </app-entity-subrecord>
 

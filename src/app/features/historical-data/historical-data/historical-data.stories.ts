@@ -12,10 +12,12 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { HistoricalEntityData } from "../historical-entity-data";
 import { HistoricalDataComponent } from "./historical-data.component";
 import { HistoricalDataModule } from "../historical-data.module";
-import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
+import { HistoricalDataService } from "../historical-data.service";
+import { EntityPermissionsService } from "../../../core/permissions/entity-permissions.service";
+import { ratingAnswers } from "../rating-answers";
 
 export default {
-  title: "Core/EntityComponents/HistoricalDataComponent",
+  title: "Features/HistoricalDataComponent",
   component: HistoricalDataComponent,
   decorators: [
     moduleMetadata({
@@ -38,7 +40,18 @@ export default {
         DatePipe,
         {
           provide: ConfigService,
-          useValue: { getConfig: () => ratingAnswer },
+          useValue: { getConfig: () => ratingAnswers },
+        },
+        {
+          provide: HistoricalDataService,
+          useValue: {
+            getHistoricalDataFor: () =>
+              Promise.resolve([new Test(), new Test(), new Test()]),
+          },
+        },
+        {
+          provide: EntityPermissionsService,
+          useValue: { userIsPermitted: () => true },
         },
       ],
     }),
@@ -52,42 +65,19 @@ const Template: Story<HistoricalDataComponent> = (
   props: args,
 });
 
-const ratingAnswer = [
-  {
-    id: "notTrueAtAll",
-    label: "not true at all",
-  },
-  {
-    id: "rarelyTrue",
-    label: "rarely true",
-  },
-  {
-    id: "usuallyTrue",
-    label: "usually true",
-  },
-  {
-    id: "absolutelyTrue",
-    label: "absolutelyTrue",
-  },
-  {
-    id: "noAnswerPossible",
-    label: "no answer possible",
-  },
-];
-
 class Test extends HistoricalEntityData {
   date = new Date();
   nameOfObserver = "My name";
-  firstQuestion = ratingAnswer[0];
-  secondQuestion = ratingAnswer[1];
-  thirdQuestion = ratingAnswer[2];
-  fourthQuestion = ratingAnswer[3];
-  fifthQuestion = ratingAnswer[4];
-  sixthQuestion = ratingAnswer[0];
-  seventhQuestion = ratingAnswer[1];
-  eightQuestion = ratingAnswer[2];
-  ninthQuestion = ratingAnswer[3];
-  tenthQuestion = ratingAnswer[4];
+  firstQuestion = ratingAnswers[0];
+  secondQuestion = ratingAnswers[1];
+  thirdQuestion = ratingAnswers[2];
+  fourthQuestion = ratingAnswers[3];
+  fifthQuestion = ratingAnswers[4];
+  sixthQuestion = ratingAnswers[0];
+  seventhQuestion = ratingAnswers[1];
+  eightQuestion = ratingAnswers[2];
+  ninthQuestion = ratingAnswers[3];
+  tenthQuestion = ratingAnswers[4];
 }
 
 export const Primary = Template.bind({});
@@ -95,94 +85,97 @@ Primary.args = {
   columns: [
     {
       label: "Date",
-      name: "date",
-      inputType: ColumnDescriptionInputType.DATE,
+      id: "date",
+      edit: "EditDate",
+      view: "DisplayDate",
     },
     {
       label: "Name of Observer",
-      inputType: ColumnDescriptionInputType.TEXT,
-      name: "nameOfObserver",
+      edit: "EditText",
+      view: "DisplayText",
+      id: "nameOfObserver",
     },
     {
-      inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-      name: "firstQuestion",
+      edit: "EditConfigurableEnum",
+      view: "DisplayConfigurableEnum",
+      id: "firstQuestion",
       label: "1. Question",
-      enumId: "rating-answer",
-      tooltip: "Child admits sown guilt in conflict situations.",
-      valueFunction: (entity) => entity["firstQuestion"].label,
+      additional: "rating-answer",
+      tooltip: "Child admits own guilt in conflict situations.",
     },
     {
-      inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-      name: "secondQuestion",
+      edit: "EditConfigurableEnum",
+      view: "DisplayConfigurableEnum",
+      id: "secondQuestion",
       label: "2. Question",
-      enumId: "rating-answer",
-      tooltip: "Child admits sown guilt in conflict situations.",
-      valueFunction: (entity) => entity["secondQuestion"].label,
+      additional: "rating-answer",
+      tooltip: "Child admits own guilt in conflict situations.",
     },
     {
-      inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-      name: "thirdQuestion",
+      edit: "EditConfigurableEnum",
+      view: "DisplayConfigurableEnum",
+      id: "thirdQuestion",
       label: "3. Question",
-      enumId: "rating-answer",
-      tooltip: "Child admits sown guilt in conflict situations.",
-      valueFunction: (entity) => entity["thirdQuestion"].label,
+      additional: "rating-answer",
+      tooltip: "Child admits own guilt in conflict situations.",
     },
     {
-      inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-      name: "fourthQuestion",
+      edit: "EditConfigurableEnum",
+      view: "DisplayConfigurableEnum",
+      id: "fourthQuestion",
       label: "4. Question",
-      enumId: "rating-answer",
-      tooltip: "Child admits sown guilt in conflict situations.",
-      valueFunction: (entity) => entity["fourthQuestion"].label,
+      additional: "rating-answer",
+      tooltip: "Child admits own guilt in conflict situations.",
     },
     {
-      inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-      name: "fifthQuestion",
+      edit: "EditConfigurableEnum",
+      view: "DisplayConfigurableEnum",
+      id: "fifthQuestion",
       label: "5. Question",
-      enumId: "rating-answer",
-      tooltip: "Child admits sown guilt in conflict situations.",
-      valueFunction: (entity) => entity["fifthQuestion"].label,
+      additional: "rating-answer",
+      tooltip: "Child admits own guilt in conflict situations.",
     },
     {
-      inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-      name: "sixthQuestion",
+      edit: "EditConfigurableEnum",
+      view: "DisplayConfigurableEnum",
+      id: "sixthQuestion",
       label: "6. Question",
-      enumId: "rating-answer",
-      tooltip: "Child admits sown guilt in conflict situations.",
-      valueFunction: (entity) => entity["sixthQuestion"].label,
+      additional: "rating-answer",
+      tooltip: "Child admits own guilt in conflict situations.",
     },
     {
-      inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-      name: "seventhQuestion",
+      edit: "EditConfigurableEnum",
+      view: "DisplayConfigurableEnum",
+      id: "seventhQuestion",
       label: "7. Question",
-      enumId: "rating-answer",
-      tooltip: "Child admits sown guilt in conflict situations.",
-      valueFunction: (entity) => entity["seventhQuestion"].label,
+      additional: "rating-answer",
+      tooltip: "Child admits own guilt in conflict situations.",
     },
     {
-      inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-      name: "eightQuestion",
+      edit: "EditConfigurableEnum",
+      view: "DisplayConfigurableEnum",
+      id: "eightQuestion",
       label: "8. Question",
-      enumId: "rating-answer",
-      tooltip: "Child admits sown guilt in conflict situations.",
-      valueFunction: (entity) => entity["eightQuestion"].label,
+      additional: "rating-answer",
+      tooltip: "Child admits own guilt in conflict situations.",
     },
     {
-      inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-      name: "ninthQuestion",
+      edit: "EditConfigurableEnum",
+      view: "DisplayConfigurableEnum",
+      id: "ninthQuestion",
       label: "9. Question",
-      enumId: "rating-answer",
-      tooltip: "Child admits sown guilt in conflict situations.",
-      valueFunction: (entity) => entity["ninthQuestion"].label,
+      additional: "rating-answer",
+      tooltip: "Child admits own guilt in conflict situations.",
     },
     {
-      inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-      name: "tenthQuestion",
+      edit: "EditConfigurableEnum",
+      view: "DisplayConfigurableEnum",
+      id: "tenthQuestion",
       label: "10. Question",
-      enumId: "rating-answer",
-      tooltip: "Child admits sown guilt in conflict situations.",
-      valueFunction: (entity) => entity["tenthQuestion"].label,
+      additional: "rating-answer",
+      tooltip: "Child admits own guilt in conflict situations.",
     },
   ],
   entries: [new Test(), new Test(), new Test()],
+  entity: new Test(),
 };

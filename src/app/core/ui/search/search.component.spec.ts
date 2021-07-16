@@ -6,8 +6,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
 import { MatToolbarModule } from "@angular/material/toolbar";
-import { FormsModule } from "@angular/forms";
-import { Database } from "../../database/database";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ChildrenModule } from "../../../child-dev-project/children/children.module";
@@ -16,18 +15,24 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { RouterTestingModule } from "@angular/router/testing";
+import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
+import { EntityUtilsModule } from "../../entity-components/entity-utils/entity-utils.module";
+import { Subscription } from "rxjs";
+import { Entity } from "../../entity/model/entity";
 
 describe("SearchComponent", () => {
   let component: SearchComponent;
   let fixture: ComponentFixture<SearchComponent>;
 
-  let mockDatabase: jasmine.SpyObj<Database>;
+  let mockIndexService: jasmine.SpyObj<DatabaseIndexingService>;
+  const entitySchemaService = new EntitySchemaService();
+  let subscription: Subscription;
 
   beforeEach(
     waitForAsync(() => {
-      mockDatabase = jasmine.createSpyObj("mockDatabase", [
-        "query",
-        "saveDatabaseIndex",
+      mockIndexService = jasmine.createSpyObj("mockIndexService", [
+        "queryIndexRaw",
+        "createIndex",
       ]);
 
       TestBed.configureTestingModule({
@@ -43,10 +48,12 @@ describe("SearchComponent", () => {
           SchoolsModule,
           MatToolbarModule,
           RouterTestingModule,
+          ReactiveFormsModule,
+          EntityUtilsModule,
         ],
         providers: [
-          EntitySchemaService,
-          { provide: Database, useValue: mockDatabase },
+          { provide: EntitySchemaService, useValue: entitySchemaService },
+          { provide: DatabaseIndexingService, useValue: mockIndexService },
         ],
         declarations: [SearchComponent],
       }).compileComponents();
@@ -54,98 +61,103 @@ describe("SearchComponent", () => {
   );
 
   beforeEach(() => {
+    mockIndexService.createIndex.and.returnValue(Promise.resolve());
     fixture = TestBed.createComponent(SearchComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    subscription?.unsubscribe();
+  });
+
   it("should create", () => {
     expect(component).toBeTruthy();
-    expect(mockDatabase.saveDatabaseIndex).toHaveBeenCalled();
+    expect(mockIndexService.createIndex).toHaveBeenCalled();
   });
 
-  it("should not search for less than MIN_CHARACTERS_FOR_SEARCH character of input", async () => {
-    let result = await component.startSearch("A");
-    component.handleSearchQueryResult(result);
-    expect(mockDatabase.query).not.toHaveBeenCalled();
-    expect(component.results).toEqual([]);
-
-    result = await component.startSearch("AB");
-    component.handleSearchQueryResult(result);
-    expect(mockDatabase.query).not.toHaveBeenCalled();
-    expect(component.results).toEqual([]);
+  it("should not search for less than MIN_CHARACTERS_FOR_SEARCH character of input", (done) => {
+    const tests = ["A", "AB"];
+    let iteration = 0;
+    subscription = component.results.subscribe((next) => {
+      iteration++;
+      expect(next).toHaveSize(0);
+      expect(mockIndexService.queryIndexRaw).not.toHaveBeenCalled();
+      if (iteration === 2) {
+        done();
+      }
+    });
+    tests.forEach((t, index) => {
+      setTimeout(() => component.formControl.setValue(t), 600 * index); // debounce
+    });
   });
 
-  it("should not search for less than one real character of input", async () => {
-    const result = await component.startSearch("   ");
-    component.handleSearchQueryResult(result);
-    expect(mockDatabase.query).not.toHaveBeenCalled();
-    expect(component.results).toEqual([]);
+  function expectResultToBeEmpty(done: DoneFn) {
+    subscription = component.results.subscribe((next) => {
+      expect(next).toHaveSize(0);
+      expect(mockIndexService.queryIndexRaw).not.toHaveBeenCalled();
+      done();
+    });
+  }
+
+  it("should not search for less than one real character of input", (done) => {
+    expectResultToBeEmpty(done);
+    component.formControl.setValue("   ");
   });
 
-  it("should reset results if a a null search is performed", async () => {
-    const result = await component.startSearch(null);
-    component.handleSearchQueryResult(result);
-    expect(mockDatabase.query).not.toHaveBeenCalled();
-    expect(component.results).toEqual([]);
+  it("should reset results if a a null search is performed", (done) => {
+    expectResultToBeEmpty(done);
+    component.formControl.setValue(null);
   });
 
-  it("should set results correctly for search input", async () => {
+  function expectResultToHave(queryResults: any, result: Entity, done: DoneFn) {
+    mockIndexService.queryIndexRaw.and.returnValue(
+      Promise.resolve(queryResults)
+    );
+
+    subscription = component.results.subscribe((next) => {
+      console.log(next);
+      expect(next).toHaveSize(1);
+      expect(next[0].getId()).toEqual(result.getId());
+      expect(mockIndexService.queryIndexRaw).toHaveBeenCalled();
+      done();
+    });
+  }
+
+  function generateDemoData(): [Child, School, object] {
     const child1 = new Child("1");
     child1.name = "Adam X";
     const school1 = new School("s1");
     school1.name = "Anglo Primary";
-
     const mockQueryResults = {
       rows: [
-        { id: child1.getId(), doc: child1 },
-        { id: school1.getId(), doc: school1 },
+        { id: child1._id, doc: { name: child1.name }, key: "adam" },
+        { id: child1._id, doc: { name: child1.name }, key: "x" },
+        { id: school1._id, doc: { name: school1.name }, key: "anglo" },
+        { id: school1._id, doc: { name: school1.name }, key: "primary" },
       ],
     };
-    mockDatabase.query.and.returnValue(Promise.resolve(mockQueryResults));
+    return [child1, school1, mockQueryResults];
+  }
 
-    const result = await component.startSearch("Ada");
-    component.handleSearchQueryResult(result);
-    expect(mockDatabase.query).toHaveBeenCalled();
-    expect(component.results).toEqual([child1, school1]);
+  it("should set results correctly for search input", (done) => {
+    const [child1, , mockQueryResults] = generateDemoData();
+
+    expectResultToHave(mockQueryResults, child1, done);
+    component.formControl.setValue("Ada");
   });
 
-  it("should not include duplicates in results", async () => {
-    const child1 = new Child("1");
-    child1.name = "Adam Ant";
+  it("should not include duplicates in results", (done) => {
+    const [child1, , mockQueryResults] = generateDemoData();
 
-    const mockQueryResults = {
-      rows: [
-        { id: child1.getId(), doc: child1 },
-        { id: child1.getId(), doc: child1 }, // may be returned twice from db if several indexed values match the search
-      ],
-    };
-    mockDatabase.query.and.returnValue(Promise.resolve(mockQueryResults));
-
-    const result = await component.startSearch("Ada");
-    component.handleSearchQueryResult(result);
-    expect(mockDatabase.query).toHaveBeenCalled();
-    expect(component.results.length).toBe(1);
-    expect(component.results).toEqual([child1]);
+    expectResultToHave(mockQueryResults, child1, done);
+    component.formControl.setValue("Ada");
   });
 
-  it("should only include results matching all search terms (words)", async () => {
-    const child1 = new Child("1");
-    child1.name = "Adam X";
-    const school1 = new School("s1");
-    school1.name = "Anglo Primary";
+  it("should only include results matching all search terms (words)", (done) => {
+    const [child1, , mockQueryResults] = generateDemoData();
 
-    const mockQueryResults = {
-      rows: [
-        { id: child1.getId(), doc: child1 },
-        { id: school1.getId(), doc: school1 },
-      ],
-    };
-    mockDatabase.query.and.returnValue(Promise.resolve(mockQueryResults));
-
-    const result = await component.startSearch("A X");
-    component.handleSearchQueryResult(result);
-    expect(mockDatabase.query).toHaveBeenCalled();
-    expect(component.results).toEqual([child1]);
+    expectResultToHave(mockQueryResults, child1, done);
+    component.formControl.setValue("A X");
   });
 });

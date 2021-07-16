@@ -2,11 +2,11 @@ import {
   AttendanceLogicalStatus,
   AttendanceStatusType,
 } from "./attendance-status";
-import { Entity } from "../../../core/entity/entity";
 import { RecurringActivity } from "./recurring-activity";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
-import { WarningLevel } from "../../warning-level";
 import { EventNote } from "./event-note";
+import { WarningLevel } from "../../../core/entity/model/warning-level";
+import { Entity } from "../../../core/entity/model/entity";
 
 /**
  * Aggregate information about all events for a {@link RecurringActivity} within a given time period.
@@ -101,14 +101,14 @@ export class ActivityAttendance extends Entity {
     return this.countIndividual(childId, AttendanceLogicalStatus.ABSENT);
   }
 
-  getAttendancePercentage(childId: string) {
+  getAttendancePercentage(childId: string): number {
     const present = this.countEventsPresent(childId);
     const absent = this.countEventsAbsent(childId);
 
     return present / (present + absent);
   }
 
-  getAttendancePercentageAverage() {
+  getAttendancePercentageAverage(): number {
     // TODO calculate overall averaged attendance percentage
     return NaN;
   }

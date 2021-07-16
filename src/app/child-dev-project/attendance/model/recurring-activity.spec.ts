@@ -18,7 +18,7 @@
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { waitForAsync } from "@angular/core/testing";
 import { RecurringActivity } from "./recurring-activity";
-import { Entity } from "../../../core/entity/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { InteractionType } from "../../notes/model/interaction-type.interface";
 import { ConfigurableEnumDatatype } from "../../../core/configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
 

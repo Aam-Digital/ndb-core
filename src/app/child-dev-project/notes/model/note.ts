@@ -16,9 +16,8 @@
  */
 
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
-import { Entity } from "../../../core/entity/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import { WarningLevel, WarningLevelColor } from "../../warning-level";
 import {
   INTERACTION_TYPE_CONFIG_ID,
   InteractionType,
@@ -28,6 +27,13 @@ import {
   AttendanceLogicalStatus,
   NullAttendanceStatusType,
 } from "../../attendance/model/attendance-status";
+import { User } from "../../../core/user/user";
+import { Child } from "../../children/model/child";
+import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
+import {
+  getWarningLevelColor,
+  WarningLevel,
+} from "../../../core/entity/model/warning-level";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
@@ -46,23 +52,37 @@ export class Note extends Entity {
   }
 
   /** IDs of Child entities linked with this note */
-  @DatabaseField() children: string[] = [];
+  @DatabaseField({
+    label: "Children",
+    viewComponent: "DisplayEntityArray",
+    editComponent: "EditEntityArray",
+    additional: Child.ENTITY_TYPE,
+  })
+  children: string[] = [];
 
   /**
    * optional additional information about attendance at this event for each of the linked children
    *
    * No direct access to change this property. Use the `.getAttendance()` method to have safe access.
    */
-  @DatabaseField({ innerDataType: "schema-embed", ext: EventAttendance })
+  @DatabaseField({ innerDataType: "schema-embed", additional: EventAttendance })
   private childrenAttendance: Map<string, EventAttendance> = new Map();
 
-  @DatabaseField() date: Date;
-  @DatabaseField() subject: string = "";
-  @DatabaseField() text: string = "";
+  @DatabaseField({ label: "Date" }) date: Date;
+  @DatabaseField({ label: "Subject" }) subject: string = "";
+  @DatabaseField({ label: "Notes", editComponent: "EditLongText" })
+  text: string = "";
   /** IDs of users that authored this note */
-  @DatabaseField() authors: string[] = [];
+  @DatabaseField({
+    label: "SW",
+    viewComponent: "DisplayEntityArray",
+    editComponent: "EditEntityArray",
+    additional: User.ENTITY_TYPE,
+  })
+  authors: string[] = [];
 
   @DatabaseField({
+    label: "Category",
     dataType: "configurable-enum",
     innerDataType: INTERACTION_TYPE_CONFIG_ID,
   })
@@ -78,34 +98,38 @@ export class Note extends Entity {
    */
   @DatabaseField() schools: string[] = [];
 
-  @DatabaseField({ dataType: "string" }) warningLevel: WarningLevel =
-    WarningLevel.OK;
+  @DatabaseField({
+    label: "",
+    dataType: "configurable-enum",
+    innerDataType: "warning-levels",
+  })
+  warningLevel: ConfigurableEnumValue;
 
   getWarningLevel(): WarningLevel {
-    return this.warningLevel;
+    if (this.warningLevel) {
+      return WarningLevel[this.warningLevel.id];
+    } else {
+      return WarningLevel.NONE;
+    }
   }
 
-  // TODO: color logic should not be part of entity/model but rather in the component responsible for displaying it
   public getColor() {
-    if (this.warningLevel === WarningLevel.URGENT) {
-      return WarningLevelColor(WarningLevel.URGENT);
+    const actualLevel = this.getWarningLevel();
+    if (actualLevel === WarningLevel.OK || actualLevel === WarningLevel.NONE) {
+      return this.category.color;
+    } else {
+      return super.getColor();
     }
-    if (this.warningLevel === WarningLevel.WARNING) {
-      return WarningLevelColor(WarningLevel.WARNING);
-    }
-
-    const color = this.category.color;
-    return color ? color : "";
   }
 
-  public getColorForId(childId: string) {
+  public getColorForId(childId: string): string {
     if (
       this.category.isMeeting &&
       this.childrenAttendance.get(childId)?.status.countAs ===
         AttendanceLogicalStatus.ABSENT
     ) {
       // child is absent, highlight the entry
-      return WarningLevelColor(WarningLevel.URGENT);
+      return getWarningLevelColor(WarningLevel.URGENT);
     }
     return this.getColor();
   }

@@ -7,7 +7,7 @@ import {
   Output,
 } from "@angular/core";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { Entity } from "../../entity/entity";
+import { Entity } from "../../entity/model/entity";
 import { MatDialogRef } from "@angular/material/dialog";
 
 /**

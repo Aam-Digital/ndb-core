@@ -5,7 +5,7 @@ import {
 } from "./entity-permissions.service";
 import { Component, ElementRef, ViewChild } from "@angular/core";
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
-import { Entity } from "../entity/entity";
+import { Entity } from "../entity/model/entity";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
 describe("DisableEntityOperationDirective", () => {

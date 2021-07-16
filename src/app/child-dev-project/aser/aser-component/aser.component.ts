@@ -4,61 +4,29 @@ import { ChildrenService } from "../../children/children.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
-import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
-
-function createColumnDescription(
-  name: string,
-  label: string,
-  visibleFrom: "md" | "xs" = "md",
-  inputType = ColumnDescriptionInputType.SELECT
-): ColumnDescription {
-  return {
-    name: name,
-    label: label,
-    inputType: inputType,
-    selectValues: Aser.ReadingLevels.map((s) => {
-      return { value: s, label: s };
-    }),
-    visibleFrom: visibleFrom,
-  };
-}
+import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 
 @UntilDestroy()
 @Component({
   selector: "app-aser",
-  template:
-    '<app-entity-subrecord [records]="records" [columns]="columns" [newRecordFactory]="generateNewRecordFactory()">' +
-    "</app-entity-subrecord>",
+  template: `<app-entity-subrecord
+    [records]="records"
+    [columns]="columns"
+    [newRecordFactory]="generateNewRecordFactory()"
+  ></app-entity-subrecord>`,
 })
 export class AserComponent implements OnChanges, OnInitDynamicComponent {
   @Input() child: Child;
-  records: Array<Aser>;
+  records: Array<Aser> = [];
 
-  columns: Array<ColumnDescription> = [
-    createColumnDescription("name", $localize`Date`),
-    createColumnDescription("math", $localize`:Math as a subject:Math`),
-    createColumnDescription(
-      "english",
-      $localize`:English as a subject in school:English`
-    ),
-    createColumnDescription(
-      "hindi",
-      $localize`:Hindi as a subject in school:Hindi`,
-      "md"
-    ),
-    createColumnDescription(
-      "bengali",
-      $localize`:Bengali as a subject in school:Bengali`,
-      "md"
-    ),
-    createColumnDescription(
-      "remarks",
-      $localize`Remarks`,
-      "md",
-      ColumnDescriptionInputType.TEXT
-    ),
+  columns: FormFieldConfig[] = [
+    { id: "date", visibleFrom: "xs" },
+    { id: "math", visibleFrom: "xs" },
+    { id: "english", visibleFrom: "xs" },
+    { id: "hindi", visibleFrom: "md" },
+    { id: "bengali", visibleFrom: "md" },
+    { id: "remarks", visibleFrom: "md" },
   ];
 
   constructor(private childrenService: ChildrenService) {}
@@ -70,10 +38,8 @@ export class AserComponent implements OnChanges, OnInitDynamicComponent {
   }
 
   onInitFromDynamicConfig(config: PanelConfig) {
-    if (config?.config?.displayedColumns) {
-      this.columns = this.columns.filter((c) =>
-        config.config.displayedColumns.includes(c.name)
-      );
+    if (config?.config?.columns) {
+      this.columns = config.config.columns;
     }
 
     this.child = config.entity as Child;

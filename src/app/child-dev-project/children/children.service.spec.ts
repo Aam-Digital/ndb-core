@@ -3,13 +3,13 @@ import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { ChildSchoolRelation } from "./model/childSchoolRelation";
 import { Child } from "./model/child";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
-import { Gender } from "./model/Gender";
 import { School } from "../schools/model/school";
 import { TestBed } from "@angular/core/testing";
 import moment from "moment";
 import { Database } from "../../core/database/database";
 import { Note } from "../notes/model/note";
 import { PouchDatabase } from "../../core/database/pouch-database";
+import { genders } from "./model/genders";
 
 describe("ChildrenService", () => {
   let service: ChildrenService;
@@ -196,7 +196,7 @@ function generateChildEntities(): Child[] {
   a1.name = "Arjun A.";
   a1.projectNumber = "1";
   a1.religion = "Hindu";
-  a1.gender = Gender.MALE;
+  a1.gender = genders[1];
   a1.dateOfBirth = new Date("2000-03-13");
   a1.motherTongue = "Hindi";
   a1.center = { id: "delhi", label: "Delhi" };
@@ -206,7 +206,7 @@ function generateChildEntities(): Child[] {
   a2.name = "Bandana B.";
   a2.projectNumber = "2";
   a2.religion = "Hindu";
-  a2.gender = Gender.FEMALE;
+  a2.gender = genders[2];
   a2.dateOfBirth = new Date("2001-01-01");
   a2.motherTongue = "Bengali";
   a2.center = { id: "kolkata", label: "Kolkata" };
@@ -216,7 +216,7 @@ function generateChildEntities(): Child[] {
   a3.name = "Chandan C.";
   a3.projectNumber = "3";
   a3.religion = "Hindu";
-  a3.gender = Gender.MALE;
+  a3.gender = genders[1];
   a3.dateOfBirth = new Date("2002-07-29");
   a3.motherTongue = "Hindi";
   a3.center = { id: "kolkata", label: "Kolkata" };

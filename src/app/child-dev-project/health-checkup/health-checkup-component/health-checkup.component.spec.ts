@@ -9,6 +9,8 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { ChildrenModule } from "../../children/children.module";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { User } from "../../../core/user/user";
 
 describe("HealthCheckupComponent", () => {
   let component: HealthCheckupComponent;
@@ -39,6 +41,10 @@ describe("HealthCheckupComponent", () => {
           { provide: ChildrenService, useValue: mockChildrenService },
           { provide: EntityMapperService, useValue: mockEntityMapper },
           AlertService,
+          {
+            provide: SessionService,
+            useValue: { getCurrentUser: () => new User() },
+          },
         ],
       }).compileComponents();
     })

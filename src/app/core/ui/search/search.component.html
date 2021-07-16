@@ -7,10 +7,8 @@
     <input
       matInput
       title="Search"
+      [formControl]="formControl"
       [matAutocomplete]="autoResults"
-      [(ngModel)]="searchText"
-      (ngModelChange)="searchStringChanged.next($event)"
-      #searchInput
     />
   </mat-form-field>
 
@@ -18,83 +16,35 @@
     #autoResults="matAutocomplete"
     (optionSelected)="clickOption($event.option)"
   >
-    <mat-option
-      class="result-hint"
-      *ngIf="
-        searchInput.value.length > 0 &&
-        searchInput.value.length < MIN_CHARACTERS_FOR_SEARCH
-      "
-    >
-      <p i18n="The user has inserted too few characters to start a search">
-        Insert at least {{ MIN_CHARACTERS_FOR_SEARCH }} characters
-      </p>
-    </mat-option>
+    <ng-container [ngSwitch]="state">
+      <mat-option *ngSwitchCase="TOO_FEW_CHARACTERS" class="result-hint" [disabled]="true">
+        <p i18n="The user has inserted too few characters to start a search">
+          Insert at least {{ MIN_CHARACTERS_FOR_SEARCH }} characters
+        </p>
+      </mat-option>
 
-    <mat-option
-      class="result-hint"
-      *ngIf="
-        results.length === 0 &&
-        searchInput.value.length >= MIN_CHARACTERS_FOR_SEARCH &&
-        !isSearching
-      "
-    >
-      <p i18n="No search results are available">There were no results</p>
-    </mat-option>
+      <mat-option class="result-hint" *ngSwitchCase="SEARCH_IN_PROGRESS" [disabled]="true">
+        <p i18n="A search is in progress">
+          Search in progress...
+        </p>
+      </mat-option>
 
-    <mat-option class="result-hint" *ngIf="isSearching">
-      <p i18n="A search is in progress">Search in progress...</p>
-    </mat-option>
+      <mat-option class="result-hint" *ngSwitchCase="NO_RESULTS" [disabled]="true">
+        <p i18n="No search results are available">
+          There were no results
+        </p>
+      </mat-option>
 
-    <mat-option *ngFor="let res of results" [value]="res">
-      <app-child-block
-        *ngIf="res.getType() === 'Child'"
-        [entity]="res"
-        angulartics2On="click"
-        angularticsCategory="Navigation"
-        angularticsAction="search_result_list_link"
-        [angularticsLabel]="'search-result-type-child'"
-      ></app-child-block>
-      <app-school-block
-        *ngIf="res.getType() === 'School'"
-        [entity]="res"
-        angulartics2On="click"
-        angularticsCategory="Navigation"
-        angularticsAction="search_result_list_link"
-        [angularticsLabel]="'search-result-type-school'"
-      ></app-school-block>
-    </mat-option>
+      <mat-option class="result-hint" *ngSwitchCase="ILLEGAL_INPUT" [disabled]="true">
+        <p i18n="Invalid characters were entered into the search field">
+          Please only enter numbers or letters
+        </p>
+      </mat-option>
+
+      <mat-option *ngFor="let res of results | async" [value]="res">
+        <app-display-entity [entityToDisplay]="res"></app-display-entity>
+      </mat-option>
+    </ng-container>
+
   </mat-autocomplete>
 </div>
-
-<button
-  mat-icon-button
-  fxHide.xs="false"
-  fxHide="true"
-  (click)="toggleSearchToolbar()"
->
-  <mat-icon class="header-icon" fontIcon="fa-search"></mat-icon>
-</button>
-
-<mat-toolbar
-  *ngIf="showSearchToolbar"
-  class="search-header mat-elevation-z2 mat-typography"
->
-  <mat-toolbar-row fxLayout="row">
-    <span matPrefix>
-      <mat-icon class="search-icon" fontIcon="fa-search"></mat-icon>
-    </span>
-    <input
-      #searchInput
-      fxFlex="grow"
-      matInput
-      title="Search"
-      [matAutocomplete]="autoResults"
-      [(ngModel)]="searchText"
-      (ngModelChange)="searchStringChanged.next($event)"
-    />
-    {{ searchInput.focus() }}
-    <button mat-icon-button (click)="toggleSearchToolbar()">
-      <mat-icon class="search-icon" fontIcon="fa-times"></mat-icon>
-    </button>
-  </mat-toolbar-row>
-</mat-toolbar>

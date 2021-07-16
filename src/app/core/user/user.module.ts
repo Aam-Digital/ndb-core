@@ -27,7 +27,6 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatListModule } from "@angular/material/list";
 import { FontAwesomeIconsModule } from "../icons/font-awesome-icons.module";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { UsersBlockComponent } from "./users-block/users-block.component";
 
 /**
  * Provides a User functionality including user account forms.
@@ -46,6 +45,6 @@ import { UsersBlockComponent } from "./users-block/users-block.component";
     MatAutocompleteModule,
     FormsModule,
   ],
-  declarations: [UserAccountComponent, UsersBlockComponent],
+  declarations: [UserAccountComponent],
 })
 export class UserModule {}

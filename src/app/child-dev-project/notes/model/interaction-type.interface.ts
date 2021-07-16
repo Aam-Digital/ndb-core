@@ -1,7 +1,4 @@
-import {
-  CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnumValue,
-} from "../../../core/configurable-enum/configurable-enum.interface";
+import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 
 /**
  * Additional properties defined in the "interaction-type" {@link ConfigurableEnumValue} values
@@ -18,5 +15,4 @@ export interface InteractionType extends ConfigurableEnumValue {
 /**
  * ID of the Note category {@link ConfigurableEnumValue} in the config database.
  */
-export const INTERACTION_TYPE_CONFIG_ID =
-  CONFIGURABLE_ENUM_CONFIG_PREFIX + "interaction-type";
+export const INTERACTION_TYPE_CONFIG_ID = "interaction-type";

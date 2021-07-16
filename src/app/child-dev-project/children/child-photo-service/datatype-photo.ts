@@ -19,7 +19,7 @@ import { EntitySchemaDatatype } from "../../../core/entity/schema/entity-schema-
 import { ChildPhotoService } from "./child-photo.service";
 import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
-import { Entity } from "../../../core/entity/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { Photo } from "./photo";
 import { SafeUrl } from "@angular/platform-browser";
 import { BehaviorSubject } from "rxjs";
@@ -29,6 +29,7 @@ import { BehaviorSubject } from "rxjs";
  */
 export class PhotoDatatype implements EntitySchemaDatatype {
   public readonly name = "photo";
+  public readonly editComponent = "EditPhoto";
 
   public transformToDatabaseFormat(value: Photo, schema: EntitySchemaField) {
     if (value.path === schema.defaultValue) {
@@ -46,7 +47,7 @@ export class PhotoDatatype implements EntitySchemaDatatype {
   ): Photo {
     // Using of old photoFile values
     if (
-      parent.hasOwnProperty("photoFile") &&
+      typeof parent["photoFile"] === "string" &&
       parent["photoFile"].trim() !== ""
     ) {
       value = parent["photoFile"];

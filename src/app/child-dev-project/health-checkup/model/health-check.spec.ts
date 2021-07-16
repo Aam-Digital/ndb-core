@@ -16,7 +16,7 @@
  */
 
 import { waitForAsync } from "@angular/core/testing";
-import { Entity } from "../../../core/entity/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { HealthCheck } from "./health-check";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 
