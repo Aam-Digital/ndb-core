@@ -23,7 +23,6 @@ import {
   INTERACTION_TYPE_CONFIG_ID,
   InteractionType,
 } from "../../notes/model/interaction-type.interface";
-
 import { User } from "../../../core/user/user";
 import { Child } from "../../children/model/child";
 import { School } from "../../schools/model/school";
