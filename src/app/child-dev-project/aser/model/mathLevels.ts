@@ -7,22 +7,22 @@ export const mathLevels: ConfigurableEnumValue[] = [
   },
   {
     id: "Nothing",
-    label: "Nothing",
+    label: $localize`:Label math level:Nothing`,
   },
   {
     id: "Numbers 1-9",
-    label: "Numbers 1-9",
+    label: $localize`:Label math level:Numbers 1-9`,
   },
   {
     id: "Numbers 10-99",
-    label: "Numbers 10-99",
+    label: $localize`:Label math level:Numbers 10-99`,
   },
   {
     id: "Subtraction",
-    label: "Subtraction",
+    label: $localize`:Label math level:Subtraction`,
   },
   {
     id: "Division",
-    label: "Division",
+    label: $localize`:Label math level:Division`,
   },
 ];
