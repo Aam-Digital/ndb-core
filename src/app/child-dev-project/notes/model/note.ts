@@ -18,13 +18,22 @@
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import { INTERACTION_TYPE_CONFIG_ID, InteractionType, } from "./interaction-type.interface";
+import {
+  INTERACTION_TYPE_CONFIG_ID,
+  InteractionType,
+} from "./interaction-type.interface";
 import { EventAttendance } from "../../attendance/model/event-attendance";
-import { AttendanceLogicalStatus, NullAttendanceStatusType, } from "../../attendance/model/attendance-status";
+import {
+  AttendanceLogicalStatus,
+  NullAttendanceStatusType,
+} from "../../attendance/model/attendance-status";
 import { User } from "../../../core/user/user";
 import { Child } from "../../children/model/child";
 import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
-import { getWarningLevelColor, WarningLevel, } from "../../../core/entity/model/warning-level";
+import {
+  getWarningLevelColor,
+  WarningLevel,
+} from "../../../core/entity/model/warning-level";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {

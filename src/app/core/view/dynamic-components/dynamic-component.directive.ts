@@ -1,4 +1,11 @@
-import { ComponentFactoryResolver, Directive, Input, OnChanges, SimpleChanges, ViewContainerRef, } from "@angular/core";
+import {
+  ComponentFactoryResolver,
+  Directive,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  ViewContainerRef,
+} from "@angular/core";
 import { DynamicComponentConfig } from "./dynamic-component-config.interface";
 import { OnInitDynamicComponent } from "./on-init-dynamic-component.interface";
 import { DYNAMIC_COMPONENTS_MAP } from "../dynamic-components-map";

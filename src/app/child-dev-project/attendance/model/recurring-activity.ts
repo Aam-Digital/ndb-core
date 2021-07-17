@@ -19,7 +19,11 @@ import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { Note } from "../../notes/model/note";
-import { INTERACTION_TYPE_CONFIG_ID, InteractionType, } from "../../notes/model/interaction-type.interface";
+import {
+  INTERACTION_TYPE_CONFIG_ID,
+  InteractionType,
+} from "../../notes/model/interaction-type.interface";
+
 import { User } from "../../../core/user/user";
 import { Child } from "../../children/model/child";
 import { School } from "../../schools/model/school";
