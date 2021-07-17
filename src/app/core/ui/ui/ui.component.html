@@ -25,12 +25,15 @@
     </span>
 
     <span fxFlex [fxHide.lt-md]="isLoggedIn()">
-      <a [routerLink]="['']"
+      <a
+        [routerLink]="['']"
         class="header-title"
         angulartics2On="click"
         angularticsCategory="Navigation"
         angularticsAction="navbar_site_title_link"
-        >{{ title }}</a>
+      >
+        {{ title }}
+      </a>
     </span>
 
     <span fxFlex="grow">&nbsp;</span>
@@ -59,7 +62,6 @@
     <button mat-icon-button (click)="logout()" *ngIf="isLoggedIn()">
       <mat-icon class="header-icon" fontIcon="fa-sign-out"></mat-icon>
     </button>
-
   </mat-toolbar-row>
 </mat-toolbar>
 
@@ -77,7 +79,7 @@
     fixedInViewport="true"
     class="sidenav-menu mat-elevation-z1"
   >
-    <img *ngIf="logo_path" style="width: 180px;" [src]="logo_path"/>
+    <img *ngIf="logo_path" style="width: 180px" [src]="logo_path" />
     <app-navigation
       (click)="sideNavMode == 'over' && sideNav.close()"
     ></app-navigation>

@@ -25,7 +25,10 @@
         i18n-placeholder="Cloud password placeholder"
         placeholder="Cloud Image Service Password"
       />
-      <mat-error *ngIf="form.controls.cloudPassword.errors?.connectionFailed" i18n>
+      <mat-error
+        *ngIf="form.controls.cloudPassword.errors?.connectionFailed"
+        i18n
+      >
         Couldn't connect to the cloud service. Please check your username and
         password or try again later.
       </mat-error>
@@ -48,7 +51,10 @@
         i18n-placeholder="Generic password placeholder"
         placeholder="Password"
       />
-      <mat-error *ngIf="form.controls.userPassword.errors?.incorrectPassword" i18n>
+      <mat-error
+        *ngIf="form.controls.userPassword.errors?.incorrectPassword"
+        i18n
+      >
         The password you entered is not correct. Please enter your user account
         password for this app here (not your password for the cloud service
         above).

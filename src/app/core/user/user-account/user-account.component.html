@@ -48,7 +48,8 @@
             <button
               mat-stroked-button
               (click)="checkIfPasswordChangeAllowed()"
-              i18n="retry switching from offline to online">
+              i18n="retry switching from offline to online"
+            >
               retry
             </button>
           </p>
@@ -64,7 +65,11 @@
             </label>
             <mat-error
               *ngIf="passwordForm.get('currentPassword').invalid"
-              i18n="Password Confirmation|An incorrect password was entered trying to change the password">
+              i18n="
+                Password Confirmation|An incorrect password was entered trying
+                to change the password
+              "
+            >
               Please provide your correct current password for confirmation.
             </mat-error>
           </mat-form-field>
@@ -76,10 +81,16 @@
               <input matInput type="password" formControlName="newPassword" />
             </label>
             <mat-error *ngIf="passwordForm.get('newPassword').invalid">
-              <div *ngIf="passwordForm.get('newPassword').errors.minlength" i18n="Password validation">
+              <div
+                *ngIf="passwordForm.get('newPassword').errors.minlength"
+                i18n="Password validation"
+              >
                 Must be at least 8 characters long.
               </div>
-              <div *ngIf="passwordForm.get('newPassword').errors.pattern" i18n="Illegal password pattern">
+              <div
+                *ngIf="passwordForm.get('newPassword').errors.pattern"
+                i18n="Illegal password pattern"
+              >
                 Must contain lower case letters, upper case letters, symbols and
                 numbers to be secure.
               </div>

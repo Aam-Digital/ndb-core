@@ -19,7 +19,7 @@ import { Component, OnInit, ViewChild } from "@angular/core";
 import { SessionService } from "../../session/session-service/session.service";
 import { AppConfig } from "../../app-config/app-config";
 import { Title } from "@angular/platform-browser";
-import { MediaObserver, MediaChange } from "@angular/flex-layout";
+import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { MatDrawerMode } from "@angular/material/sidenav";
 import { ConfigService } from "../../config/config.service";
