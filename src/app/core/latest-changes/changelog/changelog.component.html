@@ -41,10 +41,13 @@
 
     <mat-card-actions *ngIf="showAdvancedDetails">
       <button mat-stroked-button>
-        <a [href]="'https://www.github.com'" target="_blank"
-           i18n="Show more information about a change that was made to the app"
-          >More Information</a
+        <a
+          [href]="'https://www.github.com'"
+          target="_blank"
+          i18n="Show more information about a change that was made to the app"
         >
+          More Information
+        </a>
       </button>
     </mat-card-actions>
   </mat-card>
@@ -54,7 +57,12 @@
   <button mat-raised-button (click)="loadPreviousRelease()" i18n>
     Show previous changes
   </button>
-  <button mat-raised-button color="accent" [mat-dialog-close]="true" i18n="Generic close button">
+  <button
+    mat-raised-button
+    color="accent"
+    [mat-dialog-close]="true"
+    i18n="Generic close button"
+  >
     Close
   </button>
 </mat-dialog-actions>

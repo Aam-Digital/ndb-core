@@ -1,4 +1,9 @@
 <ng-container *ngIf="entities">
-  <app-display-entity *ngFor="let entity of entities" [entityToDisplay]="entity"></app-display-entity>
+  <app-display-entity
+    *ngFor="let entity of entities"
+    [entityToDisplay]="entity"
+  ></app-display-entity>
 </ng-container>
-<ng-container *ngIf="!entities">{{ entity[property]?.length }} in total</ng-container>
+<ng-container *ngIf="!entities">
+  {{ entity[property]?.length }} in total
+</ng-container>
