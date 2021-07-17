@@ -23,7 +23,10 @@ import { ConfigurableEnumValue } from "../../../core/configurable-enum/configura
 @DatabaseEntity("EducationalMaterial")
 export class EducationalMaterial extends Entity {
   @DatabaseField() child: string; // id of Child entity
-  @DatabaseField({ label: $localize`:Date on which the material has been borrowed:Date` }) date: Date;
+  @DatabaseField({
+    label: $localize`:Date on which the material has been borrowed:Date`,
+  })
+  date: Date;
   @DatabaseField({
     label: $localize`:The material which has been borrowed:Material`,
     dataType: "configurable-enum",
@@ -31,11 +34,13 @@ export class EducationalMaterial extends Entity {
   })
   materialType: ConfigurableEnumValue;
   @DatabaseField({
-    label: $localize`:The amount of the material which has been borrowed:Amount`
-  }) materialAmount: number;
+    label: $localize`:The amount of the material which has been borrowed:Amount`,
+  })
+  materialAmount: number;
   @DatabaseField({
-    label: $localize`:An additional description for the borrowed material:Description`
-  }) description = "";
+    label: $localize`:An additional description for the borrowed material:Description`,
+  })
+  description = "";
 
   public getColor() {
     return this.materialType?.color || "white";

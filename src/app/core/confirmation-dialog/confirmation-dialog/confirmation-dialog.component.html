@@ -8,21 +8,25 @@
     i18n="Confirmation dialog Yes"
     mat-stroked-button
     [mat-dialog-close]="true"
-    cdkFocusInitial>
+    cdkFocusInitial
+  >
     Yes
   </button>
   <button
     i18n="Confirmation dialog No"
     mat-stroked-button
-    [mat-dialog-close]="false">
-    No</button>
+    [mat-dialog-close]="false"
+  >
+    No
+  </button>
 </div>
 <div mat-dialog-actions *ngIf="!data.yesNo">
   <button
     i18n="Confirmation dialog OK"
     mat-stroked-button
     [mat-dialog-close]="true"
-    cdkFocusInitial>
+    cdkFocusInitial
+  >
     OK
   </button>
 </div>

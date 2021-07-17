@@ -10,18 +10,14 @@
   class="child-pic-photofile"
 >
   <input
-      #photoFileInput
-      matTooltip="filename for child photo uploaded by server administrator"
-      matInput
-      (change)="changeFilename(photoFileInput.value)"
-      [value]="formControl.value?.path"
-      [placeholder]="label"
-      [title]="label"
-      type="text"
+    #photoFileInput
+    matTooltip="filename for child photo uploaded by server administrator"
+    matInput
+    (change)="changeFilename(photoFileInput.value)"
+    [value]="formControl.value?.path"
+    [placeholder]="label"
+    [title]="label"
+    type="text"
   />
-  <span
-    matSuffix
-    (click)="changeFilename('')"
-    class="fa fa-times"
-  ></span>
+  <span matSuffix (click)="changeFilename('')" class="fa fa-times"></span>
 </mat-form-field>

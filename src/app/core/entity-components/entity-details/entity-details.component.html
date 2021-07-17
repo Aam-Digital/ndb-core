@@ -32,8 +32,13 @@
       <span *ngIf="!creatingNew">{{ entity?.toString() }}</span>
       <span
         *ngIf="creatingNew"
-        i18n="Title when adding a new entity|An entity is a child, note, school, e.t.c">
-        Adding new {{ config?.entity }}</span>
+        i18n="
+          Title when adding a new entity|An entity is a child, note, school,
+          e.t.c
+        "
+      >
+        Adding new {{ config?.entity }}
+      </span>
     </h1>
   </div>
 </div>

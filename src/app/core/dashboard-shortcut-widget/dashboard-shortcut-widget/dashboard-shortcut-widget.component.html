@@ -4,21 +4,25 @@
       <mat-icon fontIcon="fa-external-link"></mat-icon>
     </div>
     <mat-card-title></mat-card-title>
-    <mat-card-subtitle i18n="Shows a list of certain actions that a user can click on">
+    <mat-card-subtitle
+      i18n="Shows a list of certain actions that a user can click on"
+    >
       Quick actions
     </mat-card-subtitle>
   </mat-card-header>
 
   <mat-card-content>
     <table class="dashboard-table">
-
-      <tr *ngFor="let entry of shortcuts" class="dashboard-table-row clickable" [routerLink]="[entry.link]">
+      <tr
+        *ngFor="let entry of shortcuts"
+        class="dashboard-table-row clickable"
+        [routerLink]="[entry.link]"
+      >
         <td class="dashboard-table-cell">
-          <mat-icon fontIcon="fa-{{entry.icon}}"></mat-icon>
+          <mat-icon fontIcon="fa-{{ entry.icon }}"></mat-icon>
           {{ entry.label }}
         </td>
       </tr>
-
     </table>
   </mat-card-content>
 </mat-card>

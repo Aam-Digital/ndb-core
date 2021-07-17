@@ -90,7 +90,6 @@
           label="Authors"
         >
         </app-entity-select>
-
       </div>
     </div>
 
@@ -101,7 +100,10 @@
           <mat-form-field class="input-medium">
             <input
               matInput
-              i18n-placeholder="Placeholder|Placeholder informing that this is the Topic/Summary of the note"
+              i18n-placeholder="
+                Placeholder|Placeholder informing that this is the Topic/Summary
+                of the note
+              "
               placeholder="Topic / Summary"
               name="subject"
               type="text"
@@ -115,7 +117,10 @@
         <mat-form-field class="input-max">
           <textarea
             matInput
-            i18n-placeholder="Placeholder|Placeholder informing that this is textarea the actual note can be entered into"
+            i18n-placeholder="
+              Placeholder|Placeholder informing that this is textarea the actual
+              note can be entered into
+            "
             placeholder="Notes"
             name="notes"
             [(ngModel)]="entity.text"
@@ -127,7 +132,6 @@
     </div>
 
     <div fxLayout="column" fxLayoutGap="20px">
-
       <app-entity-select
         entityType="Child"
         [(selection)]="entity.children"
@@ -137,12 +141,14 @@
         label="Participants"
         i18n-label="Participants of a note"
         placeholder="Add participant ..."
-        i18n-placeholder="Add participants of a note">
+        i18n-placeholder="Add participants of a note"
+      >
         <!-- Header for autocomplete -->
         <mat-option (click)="toggleIncludeInactiveChildren()">
           <mat-checkbox
             labelPosition="before"
-            [checked]="includeInactiveChildren">
+            [checked]="includeInactiveChildren"
+          >
             Include Inactive Children
           </mat-checkbox>
         </mat-option>
@@ -155,7 +161,7 @@
           [attendance]="entity.getAttendance(childId)"
           (change)="entityForm.form.markAsDirty()"
           (remove)="entity.removeChild(childId); entityForm.form.markAsDirty()"
-          >
+        >
         </app-child-meeting-note-attendance>
       </div>
 
@@ -171,8 +177,6 @@
         >
         </app-entity-select>
       </div>
-
     </div>
-
   </form>
 </app-form-dialog-wrapper>

@@ -1367,7 +1367,7 @@
                             "label": "Schulen",
                             "aggregations": [
                                 {
-                                    "label": "Schulgänger:innen"
+                                    "label": "Schulgänger:innen",
                                     "query": ":getRelated(ChildSchoolRelation, schoolId)[*isActive=true].childId:unique"
                                 },
                                 {

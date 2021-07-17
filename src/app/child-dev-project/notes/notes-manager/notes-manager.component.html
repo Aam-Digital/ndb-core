@@ -4,8 +4,13 @@
   ngDefaultControl
   [(ngModel)]="includeEventNotes"
   (change)="updateIncludeEvents()"
-  i18n="Slider that allows a user to also include events|events are related to a child"
->Include events</mat-slide-toggle>
+  i18n="
+    Slider that allows a user to also include events|events are related to a
+    child
+  "
+>
+  Include events
+</mat-slide-toggle>
 
 <app-entity-list
   [allEntities]="notes"

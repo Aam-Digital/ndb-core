@@ -25,12 +25,12 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
     {
       id: "schoolClass",
       label: $localize`:The school-class of a child:Class`,
-      view: "DisplayText"
+      view: "DisplayText",
     },
     {
       id: "age",
       label: $localize`:The age of a child:Age`,
-      view: "DisplayText"
+      view: "DisplayText",
     },
   ];
 
