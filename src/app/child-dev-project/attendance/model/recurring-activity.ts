@@ -19,10 +19,7 @@ import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { Note } from "../../notes/model/note";
-import {
-  INTERACTION_TYPE_CONFIG_ID,
-  InteractionType,
-} from "../../notes/model/interaction-type.interface";
+import { INTERACTION_TYPE_CONFIG_ID, InteractionType, } from "../../notes/model/interaction-type.interface";
 import { User } from "../../../core/user/user";
 import { Child } from "../../children/model/child";
 import { School } from "../../schools/model/school";
@@ -44,7 +41,11 @@ export class RecurringActivity extends Entity {
   }
 
   /** primary name to identify the activity */
-  @DatabaseField({ label: "Title", required: true }) title: string = "";
+  @DatabaseField({
+    label: $localize`:Label for the title of a recurring activity:Title`,
+    required: true,
+  })
+  title: string = "";
 
   /**
    * a category to group and filter activities by.
@@ -52,7 +53,7 @@ export class RecurringActivity extends Entity {
    * This is also assigned to individual events' category generated for this activity.
    */
   @DatabaseField({
-    label: "Type",
+    label: $localize`:Label for the interaction type of a recurring activity:Type`,
     dataType: "configurable-enum",
     innerDataType: INTERACTION_TYPE_CONFIG_ID,
   })
@@ -60,7 +61,7 @@ export class RecurringActivity extends Entity {
 
   /** IDs of children linked to this activity */
   @DatabaseField({
-    label: "Participants",
+    label: $localize`:Label for the participants of a recurring activity:Participants`,
     viewComponent: "DisplayEntityArray",
     editComponent: "EditEntityArray",
     additional: Child.ENTITY_TYPE,
@@ -69,7 +70,7 @@ export class RecurringActivity extends Entity {
 
   /** IDs of groups (schools, teams) whose (active) members should be included in the activity*/
   @DatabaseField({
-    label: "Groups",
+    label: $localize`:Label for the linked schools of a recurring activity:Groups`,
     viewComponent: "DisplayEntityArray",
     editComponent: "EditEntityArray",
     additional: School.ENTITY_TYPE,
@@ -78,7 +79,7 @@ export class RecurringActivity extends Entity {
 
   /** IDs of the users who are responsible for conducting this activity */
   @DatabaseField({
-    label: "Assigned user(s)",
+    label: $localize`:Label for the assigned user(s) of a recurring activity:Assigned user(s)`,
     viewComponent: "DisplayEntityArray",
     editComponent: "EditEntityArray",
     additional: User.ENTITY_TYPE,

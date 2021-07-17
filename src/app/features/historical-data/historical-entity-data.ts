@@ -8,6 +8,7 @@ import { DatabaseField } from "../../core/entity/database-field.decorator";
  */
 @DatabaseEntity("HistoricalEntityData")
 export class HistoricalEntityData extends Entity {
-  @DatabaseField({ label: "Date" }) date: Date;
+  @DatabaseField({ label: $localize`:Label for date of historical data:Date` })
+  date: Date;
   @DatabaseField() relatedEntity: string;
 }

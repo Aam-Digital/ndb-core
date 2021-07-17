@@ -1,17 +1,17 @@
 import {
   Component,
-  Input,
-  Output,
-  EventEmitter,
-  ViewChild,
   ElementRef,
+  EventEmitter,
+  Input,
   OnChanges,
+  Output,
   SimpleChanges,
+  ViewChild,
 } from "@angular/core";
-import { ENTER, COMMA } from "@angular/cdk/keycodes";
+import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { BehaviorSubject, Observable, Subscription } from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
 import { FormControl } from "@angular/forms";
 import { filter, map } from "rxjs/operators";
 import { MatChipInputEvent } from "@angular/material/chips";
@@ -27,8 +27,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 @UntilDestroy()
 export class EntitySelectComponent<E extends Entity> implements OnChanges {
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
-  readonly loadingPlaceholder =
-    $localize`:A placeholder for the input element when select options are not loaded yet:loading...`;
+  readonly loadingPlaceholder = $localize`:A placeholder for the input element when select options are not loaded yet:loading...`;
 
   /**
    * The entity-type (e.g. 'Child', 'School', e.t.c.) to set.

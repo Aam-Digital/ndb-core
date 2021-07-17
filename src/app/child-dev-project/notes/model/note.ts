@@ -18,22 +18,13 @@
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import {
-  INTERACTION_TYPE_CONFIG_ID,
-  InteractionType,
-} from "./interaction-type.interface";
+import { INTERACTION_TYPE_CONFIG_ID, InteractionType, } from "./interaction-type.interface";
 import { EventAttendance } from "../../attendance/model/event-attendance";
-import {
-  AttendanceLogicalStatus,
-  NullAttendanceStatusType,
-} from "../../attendance/model/attendance-status";
+import { AttendanceLogicalStatus, NullAttendanceStatusType, } from "../../attendance/model/attendance-status";
 import { User } from "../../../core/user/user";
 import { Child } from "../../children/model/child";
 import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
-import {
-  getWarningLevelColor,
-  WarningLevel,
-} from "../../../core/entity/model/warning-level";
+import { getWarningLevelColor, WarningLevel, } from "../../../core/entity/model/warning-level";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
@@ -53,7 +44,7 @@ export class Note extends Entity {
 
   /** IDs of Child entities linked with this note */
   @DatabaseField({
-    label: "Children",
+    label: $localize`:Label for the children of a note:Children`,
     viewComponent: "DisplayEntityArray",
     editComponent: "EditEntityArray",
     additional: Child.ENTITY_TYPE,
@@ -68,13 +59,18 @@ export class Note extends Entity {
   @DatabaseField({ innerDataType: "schema-embed", additional: EventAttendance })
   private childrenAttendance: Map<string, EventAttendance> = new Map();
 
-  @DatabaseField({ label: "Date" }) date: Date;
-  @DatabaseField({ label: "Subject" }) subject: string = "";
-  @DatabaseField({ label: "Notes", editComponent: "EditLongText" })
+  @DatabaseField({ label: $localize`:Label for the date of a note:Date` })
+  date: Date;
+  @DatabaseField({ label: $localize`:Label for the subject of a note:Subject` })
+  subject: string = "";
+  @DatabaseField({
+    label: $localize`:Label for the actual notes of a note:Notes`,
+    editComponent: "EditLongText",
+  })
   text: string = "";
   /** IDs of users that authored this note */
   @DatabaseField({
-    label: "SW",
+    label: $localize`:Label for the social worker(s) who created the note:SW`,
     viewComponent: "DisplayEntityArray",
     editComponent: "EditEntityArray",
     additional: User.ENTITY_TYPE,
@@ -82,7 +78,7 @@ export class Note extends Entity {
   authors: string[] = [];
 
   @DatabaseField({
-    label: "Category",
+    label: $localize`:Label for the category of a note:Category`,
     dataType: "configurable-enum",
     innerDataType: INTERACTION_TYPE_CONFIG_ID,
   })
