@@ -907,6 +907,392 @@
           <context context-type="linenumber">37</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="2102202381764262244" datatype="html">
+        <source>Guardians Meeting</source>
+        <target state="translated">Treffen mit Vormünder</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_group-stories.ts</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_group-stories.ts</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+        <note priority="1" from="description">Note demo subject</note>
+      </trans-unit>
+      <trans-unit id="5569941509861371063" datatype="html">
+        <source>
+        Our regular monthly meeting. Find the agenda and minutes in our meeting folder.
+      </source>
+        <target state="translated">
+        Monatliches Treffen. Die Agenda und das Protokoll können in unserem Treffen Ordner gefunden werden.
+      </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_group-stories.ts</context>
+          <context context-type="linenumber">8,10</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_group-stories.ts</context>
+          <context context-type="linenumber">16,18</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_group-stories.ts</context>
+          <context context-type="linenumber">25,27</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_group-stories.ts</context>
+          <context context-type="linenumber">33,35</context>
+        </context-group>
+        <note priority="1" from="description">Note demo text</note>
+      </trans-unit>
+      <trans-unit id="1641785087474564536" datatype="html">
+        <source>Children Meeting</source>
+        <target state="translated">Treffen mit Kindern</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_group-stories.ts</context>
+          <context context-type="linenumber">24</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_group-stories.ts</context>
+          <context context-type="linenumber">32</context>
+        </context-group>
+        <note priority="1" from="description">Note demo subject</note>
+      </trans-unit>
+      <trans-unit id="4835554405658415558" datatype="html">
+        <source>Drug Prevention Workshop</source>
+        <target state="translated">Drogenprevention</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_group-stories.ts</context>
+          <context context-type="linenumber">40</context>
+        </context-group>
+        <note priority="1" from="description">Note demo subject</note>
+      </trans-unit>
+      <trans-unit id="3626410465668376106" datatype="html">
+        <source>
+        Expert conducted a two day workshop on drug prevention.
+      </source>
+        <target state="translated">
+        Ein Experte führte einen zwei-Tages Drogenpreventionstraining durch.
+      </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_group-stories.ts</context>
+          <context context-type="linenumber">41,43</context>
+        </context-group>
+        <note priority="1" from="description">Note demo text</note>
+      </trans-unit>
+      <trans-unit id="3559296383889245701" datatype="html">
+        <source>Mother sick</source>
+        <target state="translated">Mutter krank</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_individual-stories.ts</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+        <note priority="1" from="description">Note demo subject</note>
+      </trans-unit>
+      <trans-unit id="6429478743219664415" datatype="html">
+        <source>
+        Visited family after we heard that mother is seriously ill. She cannot get up.
+        Children are taking care of housework. Told her to see doctor. We should follow up next week.
+      </source>
+        <target state="translated">
+        Habe die Familie besucht nachdem wir erfahren hatten, dass die Mutter ernsthaft erkankt ist. Sie kann nicht ausfstehen.
+        Die Kinder übernehmen die Hausarbeiten. Habe ihr gesagt, sie soll den Arzt besuchen. Wir sollten nächste Woche nachfragen.
+      </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_individual-stories.ts</context>
+          <context context-type="linenumber">8,11</context>
+        </context-group>
+        <note priority="1" from="description">Note demo text</note>
+      </trans-unit>
+      <trans-unit id="4880660125541726316" datatype="html">
+        <source>Discussed school change</source>
+        <target state="translated">Schulwechsel diskutiert</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_individual-stories.ts</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+        <note priority="1" from="description">Note demo subject</note>
+      </trans-unit>
+      <trans-unit id="7518433188279355782" datatype="html">
+        <source>
+        Discussed future of the child with the parents. They agree that changing school can be a good option.
+        Will discuss further together with the child.
+      </source>
+        <target state="translated">
+        Mit den Eltern über die Zukunft des Kindes gesprochen. Sie stimmen zu, dass ein Schulwechsel eine gute Option sein kann.
+        Ich werde nun mit dem Kind alles weitere besprechen.
+      </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_individual-stories.ts</context>
+          <context context-type="linenumber">17,20</context>
+        </context-group>
+        <note priority="1" from="description">Note demo text</note>
+      </trans-unit>
+      <trans-unit id="3051594388948519004" datatype="html">
+        <source>Follow up for school absence</source>
+        <target state="translated">Nachfragen Schulabwesenheit</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_individual-stories.ts</context>
+          <context context-type="linenumber">26</context>
+        </context-group>
+        <note priority="1" from="description">Note demo subject</note>
+      </trans-unit>
+      <trans-unit id="489523464205373057" datatype="html">
+        <source>
+        Called to ask for reason about absence. Mother made excuses but promised to send the child tomorrow.
+      </source>
+        <target state="translated">
+        Habe Mutter angerufen, wieso Kind abwesend war. Mutter hatte Entschuldigungen, versprach aber das Kind morgen in die Schule zu schicken.
+      </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_individual-stories.ts</context>
+          <context context-type="linenumber">27,29</context>
+        </context-group>
+        <note priority="1" from="description">Note demo text</note>
+      </trans-unit>
+      <trans-unit id="2337800045489160283" datatype="html">
+        <source>Absent because ill</source>
+        <target state="translated">Krankgeschrieben</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_individual-stories.ts</context>
+          <context context-type="linenumber">34</context>
+        </context-group>
+        <note priority="1" from="description">Note demo subject</note>
+      </trans-unit>
+      <trans-unit id="2667035106248591549" datatype="html">
+        <source>
+        Mother has called in the morning. Child cannot come to class because of fever.
+      </source>
+        <target state="translated">
+        Die Mutter hat morgens angerufen. Das Kind hat Fieber und kann nicht in die Schule kommen.
+      </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_individual-stories.ts</context>
+          <context context-type="linenumber">35,37</context>
+        </context-group>
+        <note priority="1" from="description">Note demo text</note>
+      </trans-unit>
+      <trans-unit id="7420484875653487905" datatype="html">
+        <source>Absence without information</source>
+        <target state="translated">Abwesend ohne Informationen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_individual-stories.ts</context>
+          <context context-type="linenumber">42</context>
+        </context-group>
+        <note priority="1" from="description">Note demo subject</note>
+      </trans-unit>
+      <trans-unit id="8315493754621952456" datatype="html">
+        <source>
+        Child was not in school whole last week again. When calling the mother she didn't know about it.
+        Need to follow up urgently to discuss with the child and the guardians.
+      </source>
+        <target state="translated">
+        Das Kind war letzte Woche wiederholt nicht in der Schule. Als ich mit der Mutter telefonierte, wusste sie davon nicht.
+        Sollte dringend nachgefragt und mit den Vormündern und dem Kind besprochen werden.
+      </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_individual-stories.ts</context>
+          <context context-type="linenumber">43,46</context>
+        </context-group>
+        <note priority="1" from="description">Note demo text</note>
+      </trans-unit>
+      <trans-unit id="4071730476521647343" datatype="html">
+        <source>School is happy about progress</source>
+        <target state="translated">Schule ist glücklich mit Fortschritt</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_individual-stories.ts</context>
+          <context context-type="linenumber">51</context>
+        </context-group>
+        <note priority="1" from="description">Note demo subject</note>
+      </trans-unit>
+      <trans-unit id="3715018440594100835" datatype="html">
+        <source>
+        Visited the school and talked to the class teacher and principal. They are happy about the progress
+        and behaviour.
+      </source>
+        <target state="translated">
+        Besuchte die Schule und sprach mit Lehrer und Rektor. Sie sind beide sehr glücklich mit der Entwicklung und
+        dem Verhalten des Kindes.
+      </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_individual-stories.ts</context>
+          <context context-type="linenumber">52,55</context>
+        </context-group>
+        <note priority="1" from="description">Note demo text</note>
+      </trans-unit>
+      <trans-unit id="1009108357831450490" datatype="html">
+        <source>Needs to work more for school</source>
+        <target state="translated">Muss sich mehr für die Schule bemühen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_individual-stories.ts</context>
+          <context context-type="linenumber">60</context>
+        </context-group>
+        <note priority="1" from="description">Note demo subject</note>
+      </trans-unit>
+      <trans-unit id="4334514354076121762" datatype="html">
+        <source>
+        Discussed the child's progress with coaching teacher. He is still a weak student and needs more support.
+        We should consider arranging an extra class for him. Discuss next social worker meeting.
+      </source>
+        <target state="translated">
+        Besprach den Fortschritt des Kindes mit dem Lehrer. Das Kind gehört weiterhin zu den schwächeren Schüler:innen und benötigt Untersützung.
+        Vielleicht benötigt das Kind Nachhilfe. Wird im nächsten Sozialarbeitertreffen besprochen.
+      </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_individual-stories.ts</context>
+          <context context-type="linenumber">61,64</context>
+        </context-group>
+        <note priority="1" from="description">Note demo text</note>
+      </trans-unit>
+      <trans-unit id="3212678946254736518" datatype="html">
+        <source>Fight at school</source>
+        <target state="translated">Schlägerei in der Schule</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_individual-stories.ts</context>
+          <context context-type="linenumber">69</context>
+        </context-group>
+        <note priority="1" from="description">Note demo subject</note>
+      </trans-unit>
+      <trans-unit id="6100403300582490879" datatype="html">
+        <source>
+        Principal called us today. Our student got into a fight and was suspended for a week.
+        Need to follow up with the child and discuss the matter.
+      </source>
+        <target state="translated">
+        Rektor hat heute angerufen. Eines unserer Kinder war in einer Schlägerei verwickelt und ist für nächste Woche von der Schule ausgeschlossen.
+        Sollte mit dem Kind besprochen werden.
+      </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_individual-stories.ts</context>
+          <context context-type="linenumber">70,73</context>
+        </context-group>
+        <note priority="1" from="description">Note demo text</note>
+      </trans-unit>
+      <trans-unit id="1891461682978249681" datatype="html">
+        <source>Special help for family</source>
+        <target state="translated">Unterstützung für Familie</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_individual-stories.ts</context>
+          <context context-type="linenumber">78</context>
+        </context-group>
+        <note priority="1" from="description">Note demo subject</note>
+      </trans-unit>
+      <trans-unit id="861038284434691918" datatype="html">
+        <source>
+        Since the father has lost his job the family is struggling to survive.
+        After home visits and discussion in our team we decided to refer them to a special support programme.
+      </source>
+        <target state="translated">
+        Seit der Vater seine Arbeit verloren hatte hat die Familie große Schwierigkeiten zu überleben.
+        Nach Hausbesuchen und Diskussionen mit dem Team haben wir uns dazu entschieden die Familie an das spezielle Unterstützungsprogramm zu verweisen.
+      </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_individual-stories.ts</context>
+          <context context-type="linenumber">79,82</context>
+        </context-group>
+        <note priority="1" from="description">Note demo text</note>
+      </trans-unit>
+      <trans-unit id="6766498705829340394" datatype="html">
+        <source>Chance to repeat class</source>
+        <target state="translated">Möglichkeit sitzenzubleiben</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_individual-stories.ts</context>
+          <context context-type="linenumber">87</context>
+        </context-group>
+        <note priority="1" from="description">Note demo subject</note>
+      </trans-unit>
+      <trans-unit id="773721120779683083" datatype="html">
+        <source>
+        Child has failed this school year as she did not go to school regularly.
+        After a long discussion with the child and her parents we agreed to support her to repeat the class
+        and she promised to attend school regularly.
+      </source>
+        <target state="translated">
+        Das Kind ist dieses Jahr in der Schule durchgefallen da es oft fehlte.
+        Nach langen Diskussionen mit dem Kind und den Eltern wurde beschlossen, dass das Kind die Klasse wiederholt.
+        Es verspricht die Schule nun regelmäßig zu besuchen.
+      </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_individual-stories.ts</context>
+          <context context-type="linenumber">88,92</context>
+        </context-group>
+        <note priority="1" from="description">Note demo text</note>
+      </trans-unit>
+      <trans-unit id="1769685325079342285" datatype="html">
+        <source>Distracted in class</source>
+        <target state="translated">Unaufmerksam im Unterricht</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_individual-stories.ts</context>
+          <context context-type="linenumber">97</context>
+        </context-group>
+        <note priority="1" from="description">Note demo subject</note>
+      </trans-unit>
+      <trans-unit id="6912914146245728962" datatype="html">
+        <source>
+        Teacher has let us know that he is very unfocused during class these days.
+        Discussed with him - there are a lot of problems in the family currently.
+      </source>
+        <target state="translated">
+        Die Lehrerin hat uns benachrichtigt, dass das Kind die letzten Tage sehr unaufmerksam im Unterricht ist.
+        Habe mit dem Kind darüber gesprochen - es hat zurzeit sehr viele Probleme in der Familie.
+      </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_individual-stories.ts</context>
+          <context context-type="linenumber">98,101</context>
+        </context-group>
+        <note priority="1" from="description">Note demo text</note>
+      </trans-unit>
+      <trans-unit id="6359022262341565822" datatype="html">
+        <source>Disturbing class</source>
+        <target state="translated">Stört im Unterricht</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_individual-stories.ts</context>
+          <context context-type="linenumber">106</context>
+        </context-group>
+        <note priority="1" from="description">Note demo subject</note>
+      </trans-unit>
+      <trans-unit id="4025385445245120250" datatype="html">
+        <source>
+        She refused to listen to the teacher was disturbing the class.
+        Did counselling session with her.
+      </source>
+        <target state="translated">
+        Das Kind ignorierte die Anweisungen des Lehrers und störte im Unterricht.
+        Habe mich mit dem Kind über dieses Problem unterhalten.
+      </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/notes_individual-stories.ts</context>
+          <context context-type="linenumber">107,110</context>
+        </context-group>
+        <note priority="1" from="description">Note demo text</note>
+      </trans-unit>
+      <trans-unit id="960104205206293026" datatype="html">
+        <source>got excused by it's mother</source>
+        <target state="translated">wurde durch die Mutter entschuldigt</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/remarks.ts</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+        <note priority="1" from="description">Absence remark</note>
+      </trans-unit>
+      <trans-unit id="546129229624480724" datatype="html">
+        <source>absent without excuse</source>
+        <target state="translated">Abwesend ohne Entschuldigung</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/remarks.ts</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+        <note priority="1" from="description">Absence remark</note>
+      </trans-unit>
+      <trans-unit id="7835515233054610452" datatype="html">
+        <source>absent because ill</source>
+        <target state="translated">Krankgeschrieben</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/remarks.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <note priority="1" from="description">Absence remark</note>
+      </trans-unit>
       <trans-unit id="4705822664965381735" datatype="html">
         <source>Children</source>
         <target state="translated">Kinder</target>
@@ -1756,29 +2142,72 @@
       <trans-unit id="5910775518786454299" datatype="html">
         <source>Alipore</source>
         <target state="translated">Alipore</target>
+        <note priority="1" from="description">center</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/centers.ts</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/centers.ts</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
           <context context-type="linenumber">122</context>
         </context-group>
-        <note priority="1" from="description">center</note>
       </trans-unit>
       <trans-unit id="449116330532787155" datatype="html">
         <source>Tollygunge</source>
         <target state="translated">Tollygunge</target>
+        <note priority="1" from="description">center</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/centers.ts</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
           <context context-type="linenumber">126</context>
         </context-group>
-        <note priority="1" from="description">center</note>
       </trans-unit>
       <trans-unit id="1264264408873477158" datatype="html">
         <source>Barabazar</source>
         <target state="translated">Barabazar</target>
+        <note priority="1" from="description">center</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/centers.ts</context>
+          <context context-type="linenumber">8</context>
+        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
           <context context-type="linenumber">130</context>
         </context-group>
-        <note priority="1" from="description">center</note>
+      </trans-unit>
+      <trans-unit id="8056881763442606556" datatype="html">
+        <source>Finished School or Training</source>
+        <target state="translated">Schule erfolgreich abgeschlossen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/dropout-types.ts</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+        <note priority="1" from="description">Dropout type</note>
+      </trans-unit>
+      <trans-unit id="5607670931809944421" datatype="html">
+        <source>Continues Education without project</source>
+        <target state="translated">Besucht Schuler außerhalb des Projekts</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/dropout-types.ts</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+        <note priority="1" from="description">Dropout type</note>
+      </trans-unit>
+      <trans-unit id="6153434905015910798" datatype="html">
+        <source>Moved away</source>
+        <target state="translated">Umgezogen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/dropout-types.ts</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+        <note priority="1" from="description">Dropout type</note>
       </trans-unit>
       <trans-unit id="2329598843423950672" datatype="html">
         <source>last week</source>
@@ -2031,11 +2460,19 @@
       <trans-unit id="3124732769396723042" datatype="html">
         <source>Dropout</source>
         <target state="translated">Ausstieg</target>
+        <note priority="1" from="description">Child status</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service.ts</context>
+          <context context-type="linenumber">58</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/dropout-types.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
           <context context-type="linenumber">614</context>
         </context-group>
-        <note priority="1" from="description">Panel title</note>
       </trans-unit>
       <trans-unit id="5306473977542913614" datatype="html">
         <source>Activity</source>
@@ -2628,6 +3065,14 @@
           <context context-type="linenumber">460</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-components/entity-list/filter-generator.service.ts</context>
+          <context context-type="linenumber">122</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-components/entity-list/filter-generator.service.ts</context>
+          <context context-type="linenumber">154</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/filter/filter-selection/filter-selection.ts</context>
           <context context-type="linenumber">47</context>
         </context-group>
@@ -2796,6 +3241,64 @@
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
           <context context-type="linenumber">342</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="5560057304612443507" datatype="html">
+        <source>High School</source>
+        <target state="translated">Gymnasium</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/schools/demo-school-generator.service.ts</context>
+          <context context-type="linenumber">43</context>
+        </context-group>
+        <note priority="1" from="description">School demo name that is prepended to a name</note>
+      </trans-unit>
+      <trans-unit id="3975709744412444339" datatype="html">
+        <source>6 a.m. - 11 a.m.</source>
+        <target state="translated">6 - 11 Uhr</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/schools/demo-school-generator.service.ts</context>
+          <context context-type="linenumber">56</context>
+        </context-group>
+        <note priority="1" from="description">School demo timing</note>
+      </trans-unit>
+      <trans-unit id="136600465023711201" datatype="html">
+        <source>11 a.m. - 4 p.m.</source>
+        <target state="translated">11 - 16 Uhr</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/schools/demo-school-generator.service.ts</context>
+          <context context-type="linenumber">57</context>
+        </context-group>
+        <note priority="1" from="description">School demo timing</note>
+      </trans-unit>
+      <trans-unit id="2368928035270884916" datatype="html">
+        <source>6:30-11:00 and 11:30-16:00</source>
+        <target state="translated">6:30-11:00 und 11:30-16:00</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/schools/demo-school-generator.service.ts</context>
+          <context context-type="linenumber">58</context>
+        </context-group>
+        <note priority="1" from="description">School demo timing</note>
+      </trans-unit>
+      <trans-unit id="1343712558623478456" datatype="html">
+        <source>Mon - Fri</source>
+        <target state="translated">Mo - Fr</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/schools/demo-school-generator.service.ts</context>
+          <context context-type="linenumber">61</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/schools/demo-school-generator.service.ts</context>
+          <context context-type="linenumber">62</context>
+        </context-group>
+        <note priority="1" from="description">School demo working days</note>
+      </trans-unit>
+      <trans-unit id="6125349123070416667" datatype="html">
+        <source>Mon - Sat</source>
+        <target state="translated">Mo - Sa</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/schools/demo-school-generator.service.ts</context>
+          <context context-type="linenumber">63</context>
+        </context-group>
+        <note priority="1" from="description">School demo working days</note>
       </trans-unit>
       <trans-unit id="6304432362546770951" datatype="html">
         <source>Address</source>
@@ -3046,7 +3549,7 @@
           <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service.ts</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <note priority="1" from="description">Example for demo task in the progress wdiget</note>
+        <note priority="1" from="description">Example for demo task in the progress widget</note>
       </trans-unit>
       <trans-unit id="5068770072034604941" datatype="html">
         <source>Schools checked</source>
@@ -3055,7 +3558,7 @@
           <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service.ts</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <note priority="1" from="description">Example for demo task in the progress wdiget</note>
+        <note priority="1" from="description">Example for demo task in the progress widget</note>
       </trans-unit>
       <trans-unit id="6255187912631729238" datatype="html">
         <source>Government Officials met</source>
@@ -3064,7 +3567,7 @@
           <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service.ts</context>
           <context context-type="linenumber">24</context>
         </context-group>
-        <note priority="1" from="description">Example for demo task in the progress wdiget</note>
+        <note priority="1" from="description">Example for demo task in the progress widget</note>
       </trans-unit>
       <trans-unit id="9099121471164431783" datatype="html">
         <source>School</source>
@@ -3076,6 +3579,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/model/childSchoolRelation.ts</context>
           <context context-type="linenumber">14</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/schools/demo-school-generator.service.ts</context>
+          <context context-type="linenumber">42</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
@@ -3102,6 +3609,33 @@
           <context context-type="linenumber">8,11</context>
         </context-group>
         <note priority="1" from="description">Dashbord attendance component subtitle</note>
+      </trans-unit>
+      <trans-unit id="3925699341785679202" datatype="html">
+        <source>sick</source>
+        <target state="translated">krank</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/demo-data/demo-activity-events-generator.service.ts</context>
+          <context context-type="linenumber">41</context>
+        </context-group>
+        <note priority="1" from="description">Event demo attendance remarks</note>
+      </trans-unit>
+      <trans-unit id="67705713427853924" datatype="html">
+        <source>fever</source>
+        <target state="translated">Fieber</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/demo-data/demo-activity-events-generator.service.ts</context>
+          <context context-type="linenumber">42</context>
+        </context-group>
+        <note priority="1" from="description">Event demo attendance remarks</note>
+      </trans-unit>
+      <trans-unit id="4294726156492975533" datatype="html">
+        <source>no information</source>
+        <target state="translated">kein Informationen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/demo-data/demo-activity-events-generator.service.ts</context>
+          <context context-type="linenumber">43</context>
+        </context-group>
+        <note priority="1" from="description">Event demo attendance remarks</note>
       </trans-unit>
       <trans-unit id="5701618810648052610" datatype="html">
         <source>Title</source>
@@ -3469,6 +4003,42 @@
           <context context-type="linenumber">68</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="3199366444284225288" datatype="html">
+        <source>Evaluation targets reached</source>
+        <target state="translated">Evaluationsziele erreicht</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service.ts</context>
+          <context context-type="linenumber">57</context>
+        </context-group>
+        <note priority="1" from="description">Dashboard widget demo tile</note>
+      </trans-unit>
+      <trans-unit id="3709730044825814951" datatype="html">
+        <source>Students graduating</source>
+        <target state="translated">Schulabschlüsse</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service.ts</context>
+          <context context-type="linenumber">59</context>
+        </context-group>
+        <note priority="1" from="description">Dashboard widget demo entry</note>
+      </trans-unit>
+      <trans-unit id="163711824937173568" datatype="html">
+        <source>Students enrolled in training</source>
+        <target state="translated">Schüler:innen in Nachhilfe</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service.ts</context>
+          <context context-type="linenumber">60</context>
+        </context-group>
+        <note priority="1" from="description">Dashboard widget demo entry</note>
+      </trans-unit>
+      <trans-unit id="5287898150892986947" datatype="html">
+        <source>Students found job</source>
+        <target state="translated">Schüler:innen Job gefunden</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service.ts</context>
+          <context context-type="linenumber">61</context>
+        </context-group>
+        <note priority="1" from="description">Dashboard widget demo entry</note>
+      </trans-unit>
       <trans-unit id="4137119971596288330" datatype="html">
         <source>Progress Widget</source>
         <target state="translated">Fortschritt Widget</target>
@@ -3657,7 +4227,11 @@
       <trans-unit id="9e0eaab2042cd18d46b66c7fafc914b7e54b91c3" datatype="html">
         <source> Save </source>
         <target state="translated"> Speichern </target>
-        <note priority="1" from="description">Generic save button</note>
+        <note priority="1" from="description">Save button for forms</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-components/entity-form/entity-form/entity-form.component.html</context>
+          <context context-type="linenumber">33</context>
+        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/form-dialog/form-dialog-wrapper/form-dialog-wrapper.component.html</context>
           <context context-type="linenumber">19</context>
@@ -3666,11 +4240,24 @@
       <trans-unit id="e67bebb0291cbe76b190e83225878cdd3a8a6df6" datatype="html">
         <source> Cancel </source>
         <target state="translated"> Abbrechen </target>
-        <note priority="1" from="description">Generic cancel button</note>
+        <note priority="1" from="description">Cancel button for forms</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-components/entity-form/entity-form/entity-form.component.html</context>
+          <context context-type="linenumber">43</context>
+        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/form-dialog/form-dialog-wrapper/form-dialog-wrapper.component.html</context>
           <context context-type="linenumber">29</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="c135f4618bd4d3741aa311d61a3c455739f8aa16" datatype="html">
+        <source> Edit </source>
+        <target state="translated"> Bearbeiten </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-components/entity-form/entity-form/entity-form.component.html</context>
+          <context context-type="linenumber">57,61</context>
+        </context-group>
+        <note priority="1" from="description">Edit button for forms</note>
       </trans-unit>
       <trans-unit id="8455a83025850863b98819ba40214f845a7770c4" datatype="html">
         <source>Filter</source>
@@ -3727,9 +4314,18 @@
           <context context-type="linenumber">244</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="e26051095cf9572610ef63702b2260ae80f3b2d7" datatype="html">
+        <source> Show All </source>
+        <target state="translated"> Zeige alle </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-components/entity-subrecord/list-paginator/list-paginator.component.html</context>
+          <context context-type="linenumber">7,8</context>
+        </context-group>
+        <note priority="1" from="description">All toggle for paginator</note>
+      </trans-unit>
       <trans-unit id="34296e9800ffbe3502a716a00baf10266960fd49" datatype="html">
         <source>This field is read-only. Edit Date of Birth to change age. Select Jan 1st if you only know the year of birth.</source>
-        <target state="new">Dieses Feld kann nicht editiert werden. Änbdern Sie stattdessen das Geburtsdatum.</target>
+        <target state="translated">Dieses Feld kann nicht editiert werden. Änbdern Sie stattdessen das Geburtsdatum.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-age/edit-age.component.html</context>
           <context context-type="linenumber">22</context>
@@ -4257,6 +4853,51 @@
           <context context-type="sourcefile">src/app/core/webdav/cloud-file-service-user-settings/cloud-file-service-user-settings.component.ts</context>
           <context context-type="linenumber">81,80</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="1204364323866917119" datatype="html">
+        <source>not true at all</source>
+        <target state="translated">trifft nicht zu</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/historical-data/rating-answers.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <note priority="1" from="description">Rating answer</note>
+      </trans-unit>
+      <trans-unit id="5615148640138383169" datatype="html">
+        <source>rarely true</source>
+        <target state="translated">trifft teilweise zu</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/historical-data/rating-answers.ts</context>
+          <context context-type="linenumber">8</context>
+        </context-group>
+        <note priority="1" from="description">Rating answer</note>
+      </trans-unit>
+      <trans-unit id="2827286264130101050" datatype="html">
+        <source>usually true</source>
+        <target state="translated">trifft meistens zu</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/historical-data/rating-answers.ts</context>
+          <context context-type="linenumber">12</context>
+        </context-group>
+        <note priority="1" from="description">Rating answer</note>
+      </trans-unit>
+      <trans-unit id="7569745217496702437" datatype="html">
+        <source>absolutely True</source>
+        <target state="translated">trifft voll zu</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/historical-data/rating-answers.ts</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+        <note priority="1" from="description">Rating answer</note>
+      </trans-unit>
+      <trans-unit id="7555076926138670284" datatype="html">
+        <source>no answer possible</source>
+        <target state="translated">keine Antwort</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/historical-data/rating-answers.ts</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+        <note priority="1" from="description">Rating answer</note>
       </trans-unit>
       <trans-unit id="1906738132039774080" datatype="html">
         <source>not <x id="PH" equiv-text="property"/></source>

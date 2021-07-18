@@ -28,6 +28,7 @@
     mat-stroked-button
     class="edit-button"
     (click)="save()"
+    i18n="Save button for forms"
   >
     Save
   </button>
@@ -37,6 +38,7 @@
     mat-stroked-button
     class="edit-button"
     (click)="cancel()"
+    i18n="Cancel button for forms"
   >
     Cancel
   </button>
@@ -50,6 +52,7 @@
         entity: entity?.getConstructor(),
         operation: operationType.UPDATE
       }"
+      i18n="Edit button for forms"
     >
       Edit
     </button>

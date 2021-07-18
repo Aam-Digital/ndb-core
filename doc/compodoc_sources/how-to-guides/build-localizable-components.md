@@ -56,7 +56,7 @@ like so:
 
 The `i18n` directive can also be used to translate tooltips, titles and other
 attributes of the element. This is done by writing `i18n-title`, 
-`i18n-tooltip`, e.t.c. The rules are the same as for the regular directive.
+`i18n-matTooltip`, e.t.c. The rules are the same as for the regular directive.
 
 ### The localize-function
 
