@@ -13,6 +13,9 @@ import { ratingAnswers } from "../../features/historical-data/rating-answers";
 
 // prettier-ignore
 export const defaultJsonConfig = {
+  "appConfig": {
+    displayLanguageSelect: true,
+  },
   "navigationMenu": {
     "items": [
       {

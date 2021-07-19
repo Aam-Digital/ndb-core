@@ -48,6 +48,8 @@
 
     <app-sync-status></app-sync-status>
 
+    <app-language-select *ngIf="showLanguageSelect"></app-language-select>
+
     <button
       mat-icon-button
       [routerLink]="['/user']"
