@@ -74,7 +74,6 @@ export class ConfigService {
 
 export function createTestingConfigService(configsObject: any): ConfigService {
   const configService = new ConfigService(null);
-  // @ts-ignore
-  configService.config.data = configsObject;
+  configService.configUpdates.next(new Config(configsObject));
   return configService;
 }
