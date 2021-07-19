@@ -101,11 +101,11 @@ describe("ConfigService", () => {
   });
 
   it("should emit new value", fakeAsync(() => {
-    spyOn(service.configUpdated, "next");
+    spyOn(service.configUpdates, "next");
     entityMapper.load.and.returnValue(Promise.resolve(new Config()));
-    expect(service.configUpdated.next).not.toHaveBeenCalled();
+    expect(service.configUpdates.next).not.toHaveBeenCalled();
     service.loadConfig(entityMapper);
     tick();
-    expect(service.configUpdated.next).toHaveBeenCalled();
+    expect(service.configUpdates.next).toHaveBeenCalled();
   }));
 });
