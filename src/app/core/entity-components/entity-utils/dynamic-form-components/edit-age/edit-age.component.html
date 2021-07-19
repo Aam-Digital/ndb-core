@@ -5,7 +5,6 @@
       [formControlName]="formControlName"
       [placeholder]="label"
       [matDatepicker]="dateOfBirthDatepicker"
-      #dateOfBirth
     />
     <mat-datepicker-toggle
       matSuffix
@@ -15,7 +14,7 @@
   </mat-form-field>
   <mat-form-field style="width: 50px">
     <mat-icon
-      *ngIf="formControl.enabled && tooltip"
+      *ngIf="formControl.enabled"
       matSuffix
       fontIcon="fa-question-circle-o"
       i18n-matTooltip="Tooltip for the disabled age field"
@@ -25,7 +24,7 @@
       matInput
       i18n-placeholder="Placeholder for the input that displays the age"
       placeholder="Age"
-      [value]="getAge(dateOfBirth.value)"
+      [value]="getAge(formControl.value)"
       [disabled]="true"
     />
   </mat-form-field>

@@ -8,9 +8,7 @@ import { calculateAge } from "../../../../../utils/utils";
   styleUrls: ["./edit-age.component.scss"],
 })
 export class EditAgeComponent extends EditComponent<Date> {
-  getAge(selectedDateOfBirth: string) {
-    return selectedDateOfBirth
-      ? calculateAge(new Date(selectedDateOfBirth))
-      : "";
+  getAge(selectedDateOfBirth: Date) {
+    return selectedDateOfBirth ? calculateAge(selectedDateOfBirth) : "";
   }
 }
