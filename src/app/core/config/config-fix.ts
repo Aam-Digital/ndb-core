@@ -39,7 +39,7 @@ export const defaultJsonConfig = {
         "link": "/recurring-activity"
       },
       {
-        "name": $localize`:Menu item:Record Attendance`,
+        "name": $localize`:Menu item|Record attendance menu item:Record Attendance`,
         "icon": "calendar-check-o",
         "link": "/attendance/add/day"
       },
@@ -144,7 +144,7 @@ export const defaultJsonConfig = {
           "config": {
             "shortcuts": [
               {
-                "label": $localize`:Dashboard shortcut widget:Record Attendance`,
+                "label": $localize`:Dashboard shortcut widget|record attendance shortcut:Record Attendance`,
                 "icon": "calendar-check-o",
                 "link": "/attendance/add/day",
               }
