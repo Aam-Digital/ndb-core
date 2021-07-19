@@ -887,6 +887,50 @@
         </context-group>
         <note priority="1" from="description">Dropout type</note>
       </trans-unit>
+      <trans-unit id="1991432124565542842" datatype="html">
+        <source>Hindu</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+        <note priority="1" from="description">religion</note>
+      </trans-unit>
+      <trans-unit id="5048451843330274151" datatype="html">
+        <source>Muslim</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+        <note priority="1" from="description">religion</note>
+      </trans-unit>
+      <trans-unit id="8023565994008055166" datatype="html">
+        <source>Christian</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
+          <context context-type="linenumber">8</context>
+        </context-group>
+        <note priority="1" from="description">religion</note>
+      </trans-unit>
+      <trans-unit id="1948629758839313078" datatype="html">
+        <source>Sikh</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+        <note priority="1" from="description">religion</note>
+      </trans-unit>
       <trans-unit id="8953033926734869941" datatype="html">
         <source>Name</source>
         <context-group purpose="location">
@@ -3863,7 +3907,7 @@
         <source>This field is read-only. Edit Date of Birth to change age. Select Jan 1st if you only know the year of birth.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-age/edit-age.component.html</context>
-          <context context-type="linenumber">22</context>
+          <context context-type="linenumber">21</context>
         </context-group>
         <note priority="1" from="description">Tooltip for the disabled age field</note>
       </trans-unit>
@@ -3871,9 +3915,58 @@
         <source>Age</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-age/edit-age.component.html</context>
-          <context context-type="linenumber">27</context>
+          <context context-type="linenumber">26</context>
         </context-group>
         <note priority="1" from="description">Placeholder for the input that displays the age</note>
+      </trans-unit>
+      <trans-unit id="8454211630052123531" datatype="html">
+        <source>Add <x id="PH" equiv-text="this.label"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-entity-array/edit-entity-array.component.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+        <note priority="1" from="description">context Add User(s)</note>
+        <note priority="1" from="meaning">Placeholder for input to add entities</note>
+      </trans-unit>
+      <trans-unit id="0ea08e9d9d116c62684b227e9015454d0102af5d" datatype="html">
+        <source> Only numbers are allowed </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-number/edit-number.component.html</context>
+          <context context-type="linenumber">9,10</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-percentage/edit-percentage.component.html</context>
+          <context context-type="linenumber">9,10</context>
+        </context-group>
+        <note priority="1" from="description">Error message for number input</note>
+      </trans-unit>
+      <trans-unit id="7a39368f9393f9bf97632d275e023ffbbe594be8" datatype="html">
+        <source> This field is required </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-number/edit-number.component.html</context>
+          <context context-type="linenumber">12,13</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-percentage/edit-percentage.component.html</context>
+          <context context-type="linenumber">15,16</context>
+        </context-group>
+        <note priority="1" from="description">Error message for number input</note>
+      </trans-unit>
+      <trans-unit id="2f9a50a21ce861fe55e8546bb744c94777982ce2" datatype="html">
+        <source> Must be equal or smaller 100 (%) </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-percentage/edit-percentage.component.html</context>
+          <context context-type="linenumber">12,13</context>
+        </context-group>
+        <note priority="1" from="description">Error message for percentage input</note>
+      </trans-unit>
+      <trans-unit id="a1838d8f76044ce9db24b71e68641a72ef45c5dc" datatype="html">
+        <source>filename for child photo uploaded by server administrator</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-photo/edit-photo.component.html</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+        <note priority="1" from="description">Tooltip for edit photo component</note>
       </trans-unit>
       <trans-unit id="2849064100927111571" datatype="html">
         <source>loading...</source>
@@ -3882,6 +3975,16 @@
           <context context-type="linenumber">30</context>
         </context-group>
         <note priority="1" from="description">A placeholder for the input element when select options are not loaded yet</note>
+      </trans-unit>
+      <trans-unit id="bff91547325db41ddc532740323020315227b440" datatype="html">
+        <source> <x id="INTERPOLATION" equiv-text="{{ entity[property]?.length }}"/> in total
+</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-components/entity-utils/view-components/display-entity-array/display-entity-array.component.html</context>
+          <context context-type="linenumber">7,9</context>
+        </context-group>
+        <note priority="1" from="description">context 10 in total</note>
+        <note priority="1" from="meaning">Displaying the amount of involved entities</note>
       </trans-unit>
       <trans-unit id="7532581571486706488" datatype="html">
         <source>Preparing data (Indexing)</source>

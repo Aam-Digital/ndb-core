@@ -4,6 +4,6 @@
     [entityToDisplay]="entity"
   ></app-display-entity>
 </ng-container>
-<ng-container *ngIf="!entities">
+<ng-container *ngIf="!entities" i18n="Displaying the amount of involved entities|context 10 in total">
   {{ entity[property]?.length }} in total
 </ng-container>

@@ -1496,7 +1496,7 @@
       </trans-unit>
       <trans-unit id="fdf7cbdc140d0aab0f0b6c06065a0fd448ed6a2e" datatype="html">
         <source>Title</source>
-        <target state="target">Titel</target>
+        <target state="translated">Titel</target>
         <note priority="1" from="description">Input placeholder</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.html</context>
@@ -1709,7 +1709,7 @@
       </trans-unit>
       <trans-unit id="d970d5a7468a47ac3e0912bc051c39c9d97bee15" datatype="html">
         <source> Migrate Notes to new author users </source>
-        <target state="target"> Notizen zu neuem Format migrieren </target>
+        <target state="translated"> Notizen zu neuem Format migrieren </target>
         <note priority="1" from="description">Data migration for notes</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
@@ -1901,7 +1901,7 @@
       </trans-unit>
       <trans-unit id="8031134143341104236" datatype="html">
         <source>Empty complete database?</source>
-        <target state="translate">Komplette Datenbank löschen?</target>
+        <target state="translated">Komplette Datenbank löschen?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.ts</context>
           <context context-type="linenumber">204</context>
@@ -2208,6 +2208,54 @@
           <context context-type="linenumber">6</context>
         </context-group>
         <note priority="1" from="description">Dropout type</note>
+      </trans-unit>
+      <trans-unit id="1991432124565542842" datatype="html">
+        <source>Hindu</source>
+        <target state="translated">hinduistisch</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+        <note priority="1" from="description">religion</note>
+      </trans-unit>
+      <trans-unit id="5048451843330274151" datatype="html">
+        <source>Muslim</source>
+        <target state="translated">muslimisch</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+        <note priority="1" from="description">religion</note>
+      </trans-unit>
+      <trans-unit id="8023565994008055166" datatype="html">
+        <source>Christian</source>
+        <target state="translated">christlich</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
+          <context context-type="linenumber">8</context>
+        </context-group>
+        <note priority="1" from="description">religion</note>
+      </trans-unit>
+      <trans-unit id="1948629758839313078" datatype="html">
+        <source>Sikh</source>
+        <target state="translated">jüdisch</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+        <note priority="1" from="description">religion</note>
       </trans-unit>
       <trans-unit id="2329598843423950672" datatype="html">
         <source>last week</source>
@@ -2908,7 +2956,7 @@
       </trans-unit>
       <trans-unit id="5215821575953016408" datatype="html">
         <source>Record Attendance</source>
-        <target state="translated">Anwesenheit aufzeichnen</target>
+        <target state="translated">zeichne Anwesenheit auf</target>
         <note from="description" priority="1">One of the stages while recording child-attendances</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/add-day-attendance.component.ts</context>
@@ -3177,7 +3225,7 @@
       </trans-unit>
       <trans-unit id="2283054349785348898" datatype="html">
         <source>PN</source>
-        <target state="stranslated">PN</target>
+        <target state="translated">PN</target>
         <note priority="1" from="description">Short label for the project number</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/model/child.ts</context>
@@ -3683,7 +3731,7 @@
       </trans-unit>
       <trans-unit id="1926074981483556431" datatype="html">
         <source>Assigned user(s)</source>
-        <target state="translated">Zugewiesene Nutzer</target>
+        <target state="translated">Verantwortliche:r</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/model/recurring-activity.ts</context>
           <context context-type="linenumber">85</context>
@@ -4326,20 +4374,74 @@
       <trans-unit id="34296e9800ffbe3502a716a00baf10266960fd49" datatype="html">
         <source>This field is read-only. Edit Date of Birth to change age. Select Jan 1st if you only know the year of birth.</source>
         <target state="translated">Dieses Feld kann nicht editiert werden. Änbdern Sie stattdessen das Geburtsdatum.</target>
+        <note priority="1" from="description">Tooltip for the disabled age field</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-age/edit-age.component.html</context>
-          <context context-type="linenumber">22</context>
+          <context context-type="linenumber">21</context>
         </context-group>
-        <note priority="1" from="description">Tooltip for the disabled age field</note>
       </trans-unit>
       <trans-unit id="2e6be334a2152f179a557167f98ce4459ff9a2f9" datatype="html">
         <source>Age</source>
         <target state="translated">Alter</target>
+        <note priority="1" from="description">Placeholder for the input that displays the age</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-age/edit-age.component.html</context>
-          <context context-type="linenumber">27</context>
+          <context context-type="linenumber">26</context>
         </context-group>
-        <note priority="1" from="description">Placeholder for the input that displays the age</note>
+      </trans-unit>
+      <trans-unit id="8454211630052123531" datatype="html">
+        <source>Add <x id="PH" equiv-text="this.label"/></source>
+        <target state="translated"><x id="PH" equiv-text="this.label"/> hinzufügen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-entity-array/edit-entity-array.component.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+        <note priority="1" from="description">context Add User(s)</note>
+        <note priority="1" from="meaning">Placeholder for input to add entities</note>
+      </trans-unit>
+      <trans-unit id="0ea08e9d9d116c62684b227e9015454d0102af5d" datatype="html">
+        <source> Only numbers are allowed </source>
+        <target state="translated"> Nur Zahlen sind erlaubt </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-number/edit-number.component.html</context>
+          <context context-type="linenumber">9,10</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-percentage/edit-percentage.component.html</context>
+          <context context-type="linenumber">9,10</context>
+        </context-group>
+        <note priority="1" from="description">Error message for number input</note>
+      </trans-unit>
+      <trans-unit id="7a39368f9393f9bf97632d275e023ffbbe594be8" datatype="html">
+        <source> This field is required </source>
+        <target state="translated"> Dieses Feld muss ausgefüllt werden </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-number/edit-number.component.html</context>
+          <context context-type="linenumber">12,13</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-percentage/edit-percentage.component.html</context>
+          <context context-type="linenumber">15,16</context>
+        </context-group>
+        <note priority="1" from="description">Error message for number input</note>
+      </trans-unit>
+      <trans-unit id="2f9a50a21ce861fe55e8546bb744c94777982ce2" datatype="html">
+        <source> Must be equal or smaller 100 (%) </source>
+        <target state="translated"> Muss kleiner oder gleich 100 (%) sein </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-percentage/edit-percentage.component.html</context>
+          <context context-type="linenumber">12,13</context>
+        </context-group>
+        <note priority="1" from="description">Error message for percentage input</note>
+      </trans-unit>
+      <trans-unit id="a1838d8f76044ce9db24b71e68641a72ef45c5dc" datatype="html">
+        <source>filename for child photo uploaded by server administrator</source>
+        <target state="translated">Dateiname für das Foto, welches vom Server-Administrator hochgeladen wurde</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-photo/edit-photo.component.html</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+        <note priority="1" from="description">Tooltip for edit photo component</note>
       </trans-unit>
       <trans-unit id="2849064100927111571" datatype="html">
         <source>loading...</source>
@@ -4349,6 +4451,18 @@
           <context context-type="linenumber">30</context>
         </context-group>
         <note priority="1" from="description">A placeholder for the input element when select options are not loaded yet</note>
+      </trans-unit>
+      <trans-unit id="bff91547325db41ddc532740323020315227b440" datatype="html">
+        <source> <x id="INTERPOLATION" equiv-text="{{ entity[property]?.length }}"/> in total
+</source>
+        <target state="translated"> <x id="INTERPOLATION" equiv-text="{{ entity[property]?.length }}"/> insgesamt
+</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-components/entity-utils/view-components/display-entity-array/display-entity-array.component.html</context>
+          <context context-type="linenumber">7,9</context>
+        </context-group>
+        <note priority="1" from="description">context 10 in total</note>
+        <note priority="1" from="meaning">Displaying the amount of involved entities</note>
       </trans-unit>
       <trans-unit id="7532581571486706488" datatype="html">
         <source>Preparing data (Indexing)</source>
@@ -4599,7 +4713,7 @@
       </trans-unit>
       <trans-unit id="7609250563997703714" datatype="html">
         <source>Database up-to-date</source>
-        <target state="translated">Datenbank ist auf dem neusten Stand</target>
+        <target state="translated">Datenbank ist aktuell</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/sync-status/sync-status/sync-status.component.ts</context>
           <context context-type="linenumber">119</context>
@@ -4634,7 +4748,7 @@
       </trans-unit>
       <trans-unit id="c718b6f2e16c6346e1f653d9f4aacabc329ba0c7" datatype="html">
         <source> Please only enter numbers or letters </source>
-        <target state="translated"> Bitte tragen Sie nur Zahlen oder Buchstaben in das Feld </target>
+        <target state="translated"> Bitte tragen Sie nur Zahlen oder Buchstaben in das Feld ein </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/search/search.component.html</context>
           <context context-type="linenumber">52,57</context>
@@ -4946,7 +5060,7 @@
       </trans-unit>
       <trans-unit id="1d7ed2343579b6d2528114177b13f59e55b96cef" datatype="html">
         <source>Enter a date range</source>
-        <target state="target">von – bis</target>
+        <target state="translated">von – bis</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/reporting.component.html</context>
           <context context-type="linenumber">28</context>
