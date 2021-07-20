@@ -108,4 +108,9 @@ export class FormDialogWrapperComponent implements AfterViewInit {
     Object.assign(this._entity, this.originalEntity);
     this.onClose.emit(undefined);
   }
+
+  public async delete() {
+    await this.entityMapper.remove<Entity>(this.entity);
+    this.onClose.emit(undefined);
+  }
 }
