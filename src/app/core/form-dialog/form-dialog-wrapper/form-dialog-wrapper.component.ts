@@ -128,12 +128,8 @@ export class FormDialogWrapperComponent implements AfterViewInit {
     dialogRef.afterClosed().subscribe(async(confirmed: any) => {
       const currentUrl = getUrlWithoutParams(this.router);
       if (confirmed) {
-        // this.entityMapper
-          // .remove<Entity>(this.entity)
-          // .then(() => this.delete())
         await this.entityMapper.remove<Entity>(this.entity);
           this.onClose.emit(undefined);
-          // .catch((err) => console.log("error", err));
 
         const snackBarRef = this.snackBar.open(
           'Deleted Entity "' + this.entity.getId() + '"',
