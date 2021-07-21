@@ -115,12 +115,15 @@
       mat-row
       *matRowDef="let row; columns: columnsToDisplay"
       [ngStyle]="
-        getBackgroundColor && { 'background-color': getBackgroundColor(row.record) }
+        getBackgroundColor && {
+          'background-color': getBackgroundColor(row.record)
+        }
       "
       class="table-row"
     ></tr>
   </table>
   <app-list-paginator
-    [dataSource]="recordsDataSource" [idForSavingPagination]="idForSavingPagination"
+    [dataSource]="recordsDataSource"
+    [idForSavingPagination]="idForSavingPagination"
   ></app-list-paginator>
 </div>

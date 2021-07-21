@@ -82,6 +82,10 @@ export class EntityListComponent<T extends Entity>
           this.displayColumnGroup(this.defaultColumnGroup);
           break;
         }
+        case "lg":
+        case "xl": {
+          break;
+        }
       }
     });
   }

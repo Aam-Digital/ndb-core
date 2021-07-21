@@ -1,8 +1,14 @@
-<div
-  *ngIf="single && current"
->
-  <em matTooltip="To change this field, please add a new entry to the history below">
-    Currently attending {{current.schoolClass ? current.schoolClass + " at " : ""}}
+<div *ngIf="single && current">
+  <em
+    i18n-matTooltip
+    matTooltip="To change this field, please add a new entry to the history below"
+    i18n="
+      The class and school a child is currently attending|Context 'currently
+      attending class at school'
+    "
+  >
+    Currently attending class {{ current.schoolClass }}
+    <ng-container *ngIf="current.schoolClass">at</ng-container>
     <app-school-block [entityId]="current.schoolId"></app-school-block>
   </em>
 </div>

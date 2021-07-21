@@ -27,7 +27,7 @@ export class HealthCheckupComponent
     { id: "weight" },
     {
       id: "bmi",
-      label: "BMI",
+      label: $localize`:Table header, Short for Body Mass Index:BMI`,
       view: "ReadonlyFunction",
       additional: (entity: HealthCheck) => entity.bmi.toFixed(2),
     },

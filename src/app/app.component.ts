@@ -65,8 +65,8 @@ export class AppComponent implements OnInit {
       .then(() => configService.loadConfig(entityMapper))
       .then(() => router.navigate([], { relativeTo: this.activatedRoute }));
     // These functions will be executed whenever a new config is available
-    configService.configUpdated.subscribe(() => routerService.initRouting());
-    configService.configUpdated.subscribe(() => {
+    configService.configUpdates.subscribe(() => routerService.initRouting());
+    configService.configUpdates.subscribe(() => {
       entityConfigService.addConfigAttributes(Child);
       entityConfigService.addConfigAttributes(School);
       entityConfigService.addConfigAttributes(RecurringActivity);

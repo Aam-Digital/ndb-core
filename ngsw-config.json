@@ -23,7 +23,8 @@
         "/assets/changelog.json",
         "/assets/child.png",
         "/assets/config.default.json",
-        "/assets/How_To.md"
+        "/assets/How_To.md",
+        "assets/locale/How_To.de.md"
       ]
     }
   }],

@@ -42,32 +42,38 @@ export class Aser extends Entity {
   }
 
   @DatabaseField() child: string; // id of Child entity
-  @DatabaseField({ label: "Date" }) date: Date = new Date();
   @DatabaseField({
-    label: "Hindi",
+    label: $localize`:Label for date of the ASER results:Date`,
+  })
+  date: Date = new Date();
+  @DatabaseField({
+    label: $localize`:Label of the Hindi ASER result:Hindi`,
     dataType: "configurable-enum",
     innerDataType: "reading-levels",
   })
   hindi: ConfigurableEnumValue;
   @DatabaseField({
-    label: "Bengali",
+    label: $localize`:Label of the Bengali ASER result:Bengali`,
     dataType: "configurable-enum",
     innerDataType: "reading-levels",
   })
   bengali: ConfigurableEnumValue;
   @DatabaseField({
-    label: "English",
+    label: $localize`:Label of the English ASER result:English`,
     dataType: "configurable-enum",
     innerDataType: "reading-levels",
   })
   english: ConfigurableEnumValue;
   @DatabaseField({
-    label: "Math",
+    label: $localize`:Label of the Math ASER result:Math`,
     dataType: "configurable-enum",
     innerDataType: "math-levels",
   })
   math: ConfigurableEnumValue;
-  @DatabaseField({ label: "Remarks" }) remarks: string = "";
+  @DatabaseField({
+    label: $localize`:Label for the remarks of a ASER result:Remarks`,
+  })
+  remarks: string = "";
 
   getWarningLevel(): WarningLevel {
     if (

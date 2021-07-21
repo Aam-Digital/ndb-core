@@ -84,7 +84,7 @@ export class ChildrenListComponent implements OnInit {
   private async buildSchoolFilter(): Promise<FilterSelectionOption<Child>[]> {
     const schools: School[] = await this.entityMapper.loadType(School);
     const options: FilterSelectionOption<Child>[] = [
-      { key: "", label: "All", filterFun: () => true },
+      { key: "", label: $localize`All`, filterFun: () => true },
     ];
     schools
       .sort((s1, s2) => s1.name.localeCompare(s2.name))

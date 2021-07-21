@@ -39,8 +39,8 @@ export class DemoSchoolGenerator extends DemoDataGenerator<School> {
         faker.name.firstName() +
         " " +
         faker.random.arrayElement([
-          "School",
-          "High School",
+          $localize`:School demo name that is prepended to a name:School`,
+          $localize`:School demo name that is prepended to a name:High School`,
           school.medium + " Medium",
         ]);
       school.address = faker.address.streetAddress();
@@ -53,14 +53,14 @@ export class DemoSchoolGenerator extends DemoDataGenerator<School> {
         "WBBSE",
       ]);
       school.timing = faker.random.arrayElement([
-        "6 a.m. - 11 a.m.",
-        "11 a.m. - 4 p.m.",
-        "6:30-11:00 and 11:30-16:00",
+        $localize`:School demo timing:6 a.m. - 11 a.m.`,
+        $localize`:School demo timing:11 a.m. - 4 p.m.`,
+        $localize`:School demo timing:6:30-11:00 and 11:30-16:00`,
       ]);
       school.workingDays = faker.random.arrayElement([
-        "Mon - Fri",
-        "Mon - Fri",
-        "Mon - Sat",
+        $localize`:School demo working days:Mon - Fri`,
+        $localize`:School demo working days:Mon - Fri`,
+        $localize`:School demo working days:Mon - Sat`,
       ]);
 
       data.push(school);

@@ -13,65 +13,68 @@ import { ratingAnswers } from "../../features/historical-data/rating-answers";
 
 // prettier-ignore
 export const defaultJsonConfig = {
+  "appConfig": {
+    displayLanguageSelect: true,
+  },
   "navigationMenu": {
     "items": [
       {
-        "name": "Dashboard",
+        "name": $localize`:Menu item:Dashboard`,
         "icon": "home",
         "link": "/"
       },
       {
-        "name": "Children",
+        "name": $localize`:Menu item:Children`,
         "icon": "child",
         "link": "/child"
       },
       {
-        "name": "Schools",
+        "name": $localize`:Menu item:Schools`,
         "icon": "university",
         "link": "/school"
       },
       {
-        "name": "Recurring Activities",
+        "name": $localize`:Menu item:Recurring Activities`,
         "icon": "calendar",
         "link": "/recurring-activity"
       },
       {
-        "name": "Record Attendance",
+        "name": $localize`:Menu item|Record attendance menu item:Record Attendance`,
         "icon": "calendar-check-o",
         "link": "/attendance/add/day"
       },
       {
-        "name": "Manage Attendance",
+        "name": $localize`:Menu item:Manage Attendance`,
         "icon": "table",
         "link": "/attendance"
       },
       {
-        "name": "Notes",
+        "name": $localize`:Menu item:Notes`,
         "icon": "file-text",
         "link": "/note"
       },
       {
-        "name": "Admin",
+        "name": $localize`:Menu item:Admin`,
         "icon": "wrench",
         "link": "/admin"
       },
       {
-        "name": "Users",
+        "name": $localize`:Menu item:Users`,
         "icon": "user",
         "link": "/users"
       },
       {
-        "name": "Reports",
+        "name": $localize`:Menu item:Reports`,
         "icon": "line-chart",
         "link": "/report"
       },
       {
-        "name": "Database Conflicts",
+        "name": $localize`:Menu item:Database Conflicts`,
         "icon": "wrench",
         "link": "/admin/conflicts"
       },
       {
-        "name": "Help",
+        "name": $localize`:Menu item:Help`,
         "icon": "question-circle",
         "link": "/help"
       }
@@ -93,41 +96,41 @@ export const defaultJsonConfig = {
     },
     {
       "id": "OK (copy with us)",
-      "label": "OK (copy with us)"
+      "label": $localize`:Document status:OK (copy with us)`
     },
     {
       "id": "OK (copy needed for us)",
-      "label": "OK (copy needed for us)"
+      "label": $localize`:Document status:OK (copy needed for us)`
     },
     {
       "id": "needs correction",
-      "label": "needs correction"
+      "label": $localize`:Document status:needs correction`
     },
     {
       "id": "applied",
-      "label": "applied"
+      "label": $localize`:Document status:applied`
     },
     {
       "id": "doesn't have",
-      "label": "doesn't have"
+      "label": $localize`:Document status:doesn't have`
     },
     {
       "id": "not eligible",
-      "label": "not eligible"
+      "label": $localize`:Document status:not eligible`
     }
   ],
   "enum:center": [
     {
       "id": "alipore",
-      "label": "Alipore"
+      "label": $localize`:center:Alipore`
     },
     {
       "id": "tollygunge",
-      "label": "Tollygunge"
+      "label": $localize`:center:Tollygunge`
     },
     {
       "id": "barabazar",
-      "label": "Barabazar"
+      "label": $localize`:center:Barabazar`
     }
   ],
   "enum:rating-answer": ratingAnswers,
@@ -141,7 +144,7 @@ export const defaultJsonConfig = {
           "config": {
             "shortcuts": [
               {
-                "label": "Record Attendance",
+                "label": $localize`:Dashboard shortcut widget|record attendance shortcut:Record Attendance`,
                 "icon": "calendar-check-o",
                 "link": "/attendance/add/day",
               }
@@ -165,14 +168,14 @@ export const defaultJsonConfig = {
           "component": "AttendanceWeekDashboard",
           "config": {
             "daysOffset": 0,
-            "periodLabel": "last week"
+            "periodLabel": $localize`:Attendance week dashboard widget label:last week`
           }
         },
         {
           "component": "AttendanceWeekDashboard",
           "config": {
             "daysOffset": 7,
-            "periodLabel": "this week"
+            "periodLabel": $localize`:Attendance week dashboard widget label:this week`
           }
         },
         {
@@ -190,7 +193,7 @@ export const defaultJsonConfig = {
   "view:note": {
     "component": "NotesManager",
     "config": {
-      "title": "Notes & Reports",
+      "title": $localize`:Title for notes overview:Notes & Reports`,
       "includeEventNotes": false,
       "showEventNotesToggle": true,
       "columns": [
@@ -200,11 +203,11 @@ export const defaultJsonConfig = {
         }
       ],
       "columnGroups": {
-        "default": "Standard",
-        "mobile": "Mobile",
+        "default": $localize`:Translated name of default column group:Standard`,
+        "mobile": $localize`:Translated name of mobile column group:Mobile`,
         "groups": [
           {
-            "name": "Standard",
+            "name": $localize`:Column group name:Standard`,
             "columns": [
               "date",
               "subject",
@@ -214,7 +217,7 @@ export const defaultJsonConfig = {
             ]
           },
           {
-            "name": "Mobile",
+            "name": $localize`:Column group name:Mobile`,
             "columns": [
               "date",
               "subject",
@@ -264,7 +267,7 @@ export const defaultJsonConfig = {
   "view:school": {
     "component": "SchoolsList",
     "config": {
-      "title": "Schools List",
+      "title": $localize`:Title of schools overview:Schools List`,
       "columns": [
         "name",
         "medium",
@@ -278,9 +281,9 @@ export const defaultJsonConfig = {
         },
         {
           "id": "privateSchool",
-          "true": "Private School",
-          "false": "Government School",
-          "all": "All"
+          "true": $localize`:Label for private schools filter - true case:Private School`,
+          "false": $localize`:Label for private schools filter - false case:Government School`,
+          "all": $localize`:Label for disabling the filter:All`
         }
       ]
     }
@@ -291,7 +294,7 @@ export const defaultJsonConfig = {
       "entity": "School",
       "panels": [
         {
-          "title": "Basic Information",
+          "title": $localize`:Panel title:Basic Information`,
           "components": [
             {
               "title": "",
@@ -315,7 +318,7 @@ export const defaultJsonConfig = {
           ]
         },
         {
-          "title": "Students",
+          "title": $localize`:Panel title:Students`,
           "components": [
             {
               "title": "",
@@ -330,33 +333,33 @@ export const defaultJsonConfig = {
   "view:child": {
     "component": "ChildrenList",
     "config": {
-      "title": "Children List",
+      "title": $localize`:Title children overview:Children List`,
       "columns": [
         {
           "view": "ChildBlock",
-          "label": "Name",
+          "label": $localize`:Column title for ChildBlockComponents:Name`,
           "id": "name"
         },
         {
           "view": "DisplayText",
-          "label": "Age",
+          "label": $localize`:Column label for age of child:Age`,
           "id": "age"
         },
         {
           "view": "DisplayText",
-          "label": "Class",
+          "label": $localize`:Column label for class which child attends:Class`,
           "id": "schoolClass"
         },
         {
           "view": "DisplayEntity",
-          "label": "School",
+          "label": $localize`:Column label for school which child attends:School`,
           "id": "schoolId",
           "additional": `${School.ENTITY_TYPE}`,
           "noSorting": true
         },
         {
           "view": "RecentAttendanceBlocks",
-          "label": "Attendance (School)",
+          "label": $localize`:Column label for school attendance of child:Attendance (School)`,
           "id": "schoolAttendance",
           "additional": {
             "filterByActivityType": "SCHOOL_CLASS"
@@ -365,7 +368,7 @@ export const defaultJsonConfig = {
         },
         {
           "view": "RecentAttendanceBlocks",
-          "label": "Attendance (Coaching)",
+          "label": $localize`:Column label for coaching attendance of child:Attendance (Coaching)`,
           "id": "coachingAttendance",
           "additional": {
             "filterByActivityType": "COACHING_CLASS"
@@ -374,17 +377,17 @@ export const defaultJsonConfig = {
         },
         {
           "view": "BmiBlock",
-          "label": "BMI",
+          "label": $localize`:Column label for BMI of child:BMI`,
           "id": "health_BMI",
           "noSorting": true
         }
       ],
       "columnGroups": {
-        "default": "School Info",
-        "mobile": "Mobile",
+        "default": $localize`:Translated name of default column group:School Info`,
+        "mobile": $localize`:Translated name of mobile column group:Mobile`,
         "groups": [
           {
-            "name": "Basic Info",
+            "name": $localize`:Column group name:Basic Info`,
             "columns": [
               "projectNumber",
               "name",
@@ -397,7 +400,7 @@ export const defaultJsonConfig = {
             ]
           },
           {
-            "name": "School Info",
+            "name": $localize`:Column group name:School Info`,
             "columns": [
               "projectNumber",
               "name",
@@ -410,7 +413,7 @@ export const defaultJsonConfig = {
             ]
           },
           {
-            "name": "Status",
+            "name": $localize`:Column group name:Status`,
             "columns": [
               "projectNumber",
               "name",
@@ -425,7 +428,7 @@ export const defaultJsonConfig = {
             ]
           },
           {
-            "name": "Health",
+            "name": $localize`:Column group name:Health`,
             "columns": [
               "projectNumber",
               "name",
@@ -440,7 +443,7 @@ export const defaultJsonConfig = {
             ]
           },
           {
-            "name": "Mobile",
+            "name": $localize`:Column group name:Mobile`,
             "columns": [
               "projectNumber",
               "name",
@@ -455,9 +458,9 @@ export const defaultJsonConfig = {
           "id": "isActive",
           "type": "boolean",
           "default": "true",
-          "true": "Active Children",
-          "false": "Inactive",
-          "all": "All"
+          "true": $localize`:Active children filter label - true case:Active Children`,
+          "false": $localize`:Active children filter label - false case:Inactive`,
+          "all": $localize`:Active children unselect option:All`
         },
         {
           "id": "center",
@@ -466,7 +469,7 @@ export const defaultJsonConfig = {
         {
           "id": "schoolId",
           "type": "School",
-          "label": "School",
+          "label": $localize`:Label of schools filter:School`,
           "display": "dropdown"
         }
       ]
@@ -479,7 +482,7 @@ export const defaultJsonConfig = {
       "entity": "Child",
       "panels": [
         {
-          "title": "Basic Information",
+          "title": $localize`:Panel title:Basic Information`,
           "components": [
             {
               "title": "",
@@ -519,10 +522,10 @@ export const defaultJsonConfig = {
           ]
         },
         {
-          "title": "Education",
+          "title": $localize`:Panel title:Education`,
           "components": [
             {
-              "title": "School History",
+              "title": $localize`:Title inside a panel:School History`,
               "component": "PreviousSchools",
               "config": {
                 "single": true,
@@ -536,13 +539,13 @@ export const defaultJsonConfig = {
               }
             },
             {
-              "title": "ASER Results",
+              "title": $localize`:Title inside a panel:ASER Results`,
               "component": "Aser"
             }
           ]
         },
         {
-          "title": "Attendance",
+          "title": $localize`:Panel title:Attendance`,
           "components": [
             {
               "title": "",
@@ -551,7 +554,7 @@ export const defaultJsonConfig = {
           ]
         },
         {
-          "title": "Notes & Reports",
+          "title": $localize`:Panel title:Notes & Reports`,
           "components": [
             {
               "title": "",
@@ -560,7 +563,7 @@ export const defaultJsonConfig = {
           ]
         },
         {
-          "title": "Health",
+          "title": $localize`:Panel title:Health`,
           "components": [
             {
               "title": "",
@@ -574,13 +577,13 @@ export const defaultJsonConfig = {
               }
             },
             {
-              "title": "Height & Weight Tracking",
+              "title": $localize`:Title inside a panel:Height & Weight Tracking`,
               "component": "HealthCheckup"
             }
           ]
         },
         {
-          "title": "Educational Materials",
+          "title": $localize`:Panel title:Educational Materials`,
           "components": [
             {
               "title": "",
@@ -589,7 +592,7 @@ export const defaultJsonConfig = {
           ]
         },
         {
-          title: "Observations",
+          title: $localize`:Panel title:Observations`,
           components: [
             {
               title: "",
@@ -611,7 +614,7 @@ export const defaultJsonConfig = {
           ]
         },
         {
-          "title": "Dropout",
+          "title": $localize`:Panel title:Dropout`,
           "components": [
             {
               "title": "",
@@ -633,7 +636,7 @@ export const defaultJsonConfig = {
   "view:recurring-activity": {
     "component": "ActivityList",
     "config": {
-      "title": "Recurring Activities",
+      "title": $localize`:Title of recurring activities overview:Recurring Activities`,
       "columns": [
         "title",
         "type",
@@ -647,7 +650,7 @@ export const defaultJsonConfig = {
       "entity": "RecurringActivity",
       "panels": [
         {
-          "title": "Activity",
+          "title": $localize`:Panel title:Activity`,
           "components": [
             {
               "component": "Form",
@@ -662,7 +665,7 @@ export const defaultJsonConfig = {
           ]
         },
         {
-          "title": "Participants",
+          "title": $localize`:Panel title:Participants`,
           "components": [
             {
               "component": "Form",
@@ -676,7 +679,7 @@ export const defaultJsonConfig = {
           ]
         },
         {
-          "title": "Events & Attendance",
+          "title": $localize`:Panel title:Events & Attendance`,
           "components": [
             {
               "component": "ActivityAttendanceSection"
@@ -692,37 +695,64 @@ export const defaultJsonConfig = {
     "config": {
       "reports": [
         {
-          "title": "Basic Report",
+          "title": $localize`:Name of a report:Basic Report`,
           "aggregationDefinitions": [
             {
               "query": `${Child.ENTITY_TYPE}:toArray[*isActive=true]`,
-              "label": "All children",
+              "label": $localize`:Label of report query:All children`,
               "aggregations": [
-                {"label": "Male children", "query": `:filterByObjectAttribute(gender, id, M)`},
-                {"label": "Female children", "query": `:filterByObjectAttribute(gender, id, F)`},
+                {
+                  "label": $localize`:Label of report query:Male children`,
+                  "query": `:filterByObjectAttribute(gender, id, M)`
+                },
+                {
+                  "label": $localize`:Label of report query:Female children`,
+                  "query": `:filterByObjectAttribute(gender, id, F)`
+                },
               ]
             },
             {
               "query": `${School.ENTITY_TYPE}:toArray`,
-              "label": "All schools",
+              "label": $localize`:Label for report query:All schools`,
               "aggregations": [
-                {"label": "Children attending a school", "query": `:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:unique`},
-                {"label": "Governmental schools", "query": `[*privateSchool!=true]`},
+                {
+                  "label": $localize`:Label for report query:Children attending a school`,
+                  "query": `:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:unique`
+                },
+                {
+                  "label": $localize`:Label for report query:Governmental schools`,
+                  "query": `[*privateSchool!=true]`
+                },
                 {
                   "query": `[*privateSchool!=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`,
-                  "label": "Children attending a governmental school",
+                  "label": $localize`:Label for report query:Children attending a governmental school`,
                   "aggregations": [
-                    {"label": "Male children attending a governmental school", "query": `:filterByObjectAttribute(gender, id, M)`},
-                    {"label": "Female children attending a governmental school", "query": `:filterByObjectAttribute(gender, id, F)`},
+                    {
+                      "label": $localize`:Label for report query:Male children attending a governmental school`,
+                      "query": `:filterByObjectAttribute(gender, id, M)`
+                    },
+                    {
+                      "label": $localize`:Label for report query:Female children attending a governmental school`,
+                      "query": `:filterByObjectAttribute(gender, id, F)`
+                    },
                   ]
                 },
-                {"label": "Private schools", "query": `[*privateSchool=true]`},
+                {
+                  "label": $localize`:Label for report query:Private schools`,
+                  "query": `[*privateSchool=true]`
+                },
                 {
                   "query": `[*privateSchool=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`,
-                  "label": "Children attending a private school",
+                  "label": $localize`:Label for report query:Children attending a private school`,
                   "aggregations": [
-                    {"label": "Male children attending a private school", "query": `:filterByObjectAttribute(gender, id, M)`},
-                    {"label": "Female children attending a private school", "query": `:filterByObjectAttribute(gender, id, F)`},
+                    {
+                      "label": $localize`:Label for report query:Male children attending a private school`,
+                      "query": `:filterByObjectAttribute(gender, id, M)`
+                    },
+                    {
+                      "label": $localize`:Label for report query:Female children attending a private school`,
+                      "query": `:filterByObjectAttribute(gender, id, F)`
+                    },
                   ]
                 },
               ]
@@ -730,17 +760,17 @@ export const defaultJsonConfig = {
           ],
         },
         {
-          "title": "Event Report",
+          "title": $localize`:Name of a report:Event Report`,
           "aggregationDefinitions": [
             {
               "query": `${EventNote.ENTITY_TYPE}:toArray[*date >= ? & date <= ?]`,
               "groupBy": ["category"],
-              "label": "Events",
+              "label": $localize`:Label for a report query:Events`,
               "aggregations": [
                 {
                   "query": `:getParticipantsWithAttendance(PRESENT):unique:addPrefix(${Child.ENTITY_TYPE}):toEntities`,
                   "groupBy": ["gender", "religion"],
-                  "label": "Participants"
+                  "label": $localize`:Label for a report query:Participants`
                 }
               ]
             }
@@ -756,51 +786,91 @@ export const defaultJsonConfig = {
     "attributes": [
       {
         "name": "address",
-        "schema": { "dataType": "string", label: "Address" }
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for the address of a child:Address`
+        }
       },
       {
         "name": "phone",
-        "schema": { "dataType": "string", label: "Phone No." }
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for phone number of a child:Phone No.`
+        }
       },
       {
         "name": "guardianName",
-        "schema": { "dataType": "string", label: "Guardians" }
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for the guardians of a child:Guardians`
+        }
       },
       {
         "name": "preferredTimeForGuardianMeeting",
-        "schema": { "dataType": "string", label: "Preferred time for guardians meeting" }
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for a child attribute:Preferred time for guardians meeting` }
       },
       {
         "name": "has_aadhar",
-        "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "Aadhar" }
+        "schema": {
+          dataType: "configurable-enum",
+          innerDataType: "document-status",
+          label: $localize`:Label for a child attribute:Aadhar`
+        }
       },
       {
         "name": "has_bankAccount",
-        "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "Bank Account" }
+        "schema": {
+          dataType: "configurable-enum",
+          innerDataType: "document-status",
+          label: $localize`:Label for a child attribute:Bank Account`
+        }
       },
       {
         "name": "has_kanyashree",
-        "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "Kanyashree" }
+        "schema": {
+          dataType: "configurable-enum",
+          innerDataType: "document-status",
+          label: $localize`:Label for a child attribute:Kanyashree`
+        }
       },
       {
         "name": "has_rationCard",
-        "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "Ration Card" }
+        "schema": {
+          dataType: "configurable-enum",
+          innerDataType: "document-status",
+          label: $localize`:Label for a child attribute:Ration Card`
+        }
       },
       {
         "name": "has_BplCard",
-        "schema": { "dataType": "configurable-enum", "innerDataType": "document-status", label: "BPL Card" }
+        "schema": {
+          dataType: "configurable-enum",
+          innerDataType: "document-status",
+          label: $localize`:Label for a child attribute:BPL Card`
+        }
       },
       {
         "name": "health_bloodGroup",
-        "schema": { "dataType": "string", label: "Blood Group" }
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for a child attribute:Blood Group`
+        }
       },
       {
         "name": "health_lastDentalCheckup",
-        "schema": { "dataType": "Date", label: "Last Dental Check-Up" }
+        "schema": {
+          dataType: "Date",
+          label: $localize`:Label for a child attribute:Last Dental Check-Up`
+        }
       },
       {
         "name": "health_lastDeworming",
-        "schema": { "dataType": "Date", label: "Last De-Worming" }
+        "schema": {
+          dataType: "Date",
+          label: $localize`:Label for a child attribute:Last De-Worming`
+        }
       }
     ]
   },
@@ -815,8 +885,8 @@ export const defaultJsonConfig = {
         "schema": {
           "dataType": "configurable-enum",
           "innerDataType": "rating-answer",
-          label: "Motivated",
-          description: "The child is motivated during the class."
+          label: $localize`:Label for a child attribute:Motivated`,
+          description: $localize`:Description for a child attribute:The child is motivated during the class.`
         }
       },
       {
@@ -824,8 +894,8 @@ export const defaultJsonConfig = {
         "schema": {
           "dataType": "configurable-enum",
           "innerDataType": "rating-answer",
-          label: "Participates",
-          description: "The child is actively participating in the class."
+          label: $localize`:Label for a child attribute:Participates`,
+          description: $localize`:Description for a child attribute:The child is actively participating in the class.`
         }
       },
       {
@@ -833,8 +903,8 @@ export const defaultJsonConfig = {
         "schema": {
           "dataType": "configurable-enum",
           "innerDataType": "rating-answer",
-          label: "Interacts",
-          description: "The child interacts with other students during the class."
+          label: $localize`:Label for a child attribute:Interacts`,
+          description: $localize`:Description for a child attribute:The child interacts with other students during the class.`
         }
       },
       {
@@ -842,8 +912,8 @@ export const defaultJsonConfig = {
         "schema": {
           "dataType": "configurable-enum",
           "innerDataType": "rating-answer",
-          label: "Homework",
-          description: "The child does its homework."
+          label: $localize`:Label for a child attribute:Homework`,
+          description: $localize`:Description for a child attribute:The child does its homework.`
         }
       },
       {
@@ -851,8 +921,8 @@ export const defaultJsonConfig = {
         "schema": {
           "dataType": "configurable-enum",
           "innerDataType": "rating-answer",
-          label: "On time",
-          description: "The child is always on time for the class."
+          label: $localize`:Label for a child attribute:On time`,
+          description: $localize`:Description for a child attribute:The child is always on time for the class.`
         }
       },
       {
@@ -860,8 +930,8 @@ export const defaultJsonConfig = {
         "schema": {
           "dataType": "configurable-enum",
           "innerDataType": "rating-answer",
-          label: "Asks",
-          description: "The child is asking questions during the class."
+          label: $localize`:Label for a child attribute:Asks`,
+          description: $localize`:Description for a child attribute:The child is asking questions during the class.`
         }
       },
       {
@@ -869,8 +939,8 @@ export const defaultJsonConfig = {
         "schema": {
           "dataType": "configurable-enum",
           "innerDataType": "rating-answer",
-          label: "Listens",
-          description: "The child is listening during the class."
+          label: $localize`:Label for a child attribute:Listens`,
+          description: $localize`:Description for a child attribute:The child is listening during the class.`
         }
       },
       {
@@ -878,8 +948,8 @@ export const defaultJsonConfig = {
         "schema": {
           "dataType": "configurable-enum",
           "innerDataType": "rating-answer",
-          label: "Solves on board",
-          description: "The child can solve exercises on the board."
+          label: $localize`:Label for a child attribute:Solves on board`,
+          description: $localize`:Description for a child attribute:The child can solve exercises on the board.`
         }
       },
       {
@@ -887,8 +957,8 @@ export const defaultJsonConfig = {
         "schema": {
           "dataType": "configurable-enum",
           "innerDataType": "rating-answer",
-          label: "Concentrated",
-          description: "The child is concentrated during the class."
+          label: $localize`:Label for a child attribute:Concentrated`,
+          description: $localize`:Description for a child attribute:The child is concentrated during the class.`
         }
       },
       {
@@ -896,8 +966,8 @@ export const defaultJsonConfig = {
         "schema": {
           "dataType": "configurable-enum",
           "innerDataType": "rating-answer",
-          label: "Not disturbing",
-          description: "The child does not disturb the class."
+          label: $localize`:Label for a child attribute:Not disturbing`,
+          description: $localize`:Description for a child attribute:The child does not disturb the class.`
         }
       },
     ]

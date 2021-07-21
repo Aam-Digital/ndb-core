@@ -35,37 +35,65 @@ export class Child extends Entity {
     return "ChildBlock";
   }
 
-  @DatabaseField({ label: "Name", required: true }) name: string;
-  @DatabaseField({ label: "Project Number", labelShort: "PN" })
+  @DatabaseField({
+    label: $localize`:Label for the name of a child:Name`,
+    required: true,
+  })
+  name: string;
+  @DatabaseField({
+    label: $localize`:Label for the project number of a child:Project Number`,
+    labelShort: $localize`:Short label for the project number:PN`,
+  })
   projectNumber: string;
   @DatabaseField({
     dataType: "date-only",
-    label: "Date of birth",
-    labelShort: "DoB",
+    label: $localize`:Label for the date of birth of a child:Date of birth`,
+    labelShort: $localize`:Short label for the date of birth:DoB`,
     editComponent: "EditAge",
   })
   dateOfBirth: Date;
-  @DatabaseField({ label: "Mother Tongue" }) motherTongue: string = "";
+  @DatabaseField({
+    label: $localize`:Label for the mother tongue of a child:Mother Tongue`,
+  })
+  motherTongue: string = "";
   @DatabaseField({
     dataType: "configurable-enum",
-    label: "Gender",
+    label: $localize`:Label for the gender of a child:Gender`,
     innerDataType: "genders",
   })
   gender: ConfigurableEnumValue;
-  @DatabaseField({ label: "Religion" }) religion: string = "";
+  @DatabaseField({
+    label: $localize`:Label for the religion of a child:Religion`,
+  })
+  religion: string = "";
 
   @DatabaseField({
     dataType: "configurable-enum",
     innerDataType: "center",
-    label: "Center",
+    label: $localize`:Label for the center of a child:Center`,
   })
   center: Center;
-  @DatabaseField({ label: "Admission" }) admissionDate: Date;
-  @DatabaseField({ label: "Status" }) status: string = "";
+  @DatabaseField({
+    label: $localize`:Label for the admission date of a child:Admission`,
+  })
+  admissionDate: Date;
+  @DatabaseField({
+    label: $localize`:Label for the status of a child:Status`,
+  })
+  status: string = "";
 
-  @DatabaseField({ label: "Dropout Date" }) dropoutDate: Date;
-  @DatabaseField({ label: "Dropout Type" }) dropoutType: string;
-  @DatabaseField({ label: "Dropout remarks" }) dropoutRemarks: string;
+  @DatabaseField({
+    label: $localize`:Label for the dropout date of a child:Dropout Date`,
+  })
+  dropoutDate: Date;
+  @DatabaseField({
+    label: $localize`:Label for the type of dropout of a child:Dropout Type`,
+  })
+  dropoutType: string;
+  @DatabaseField({
+    label: $localize`:Label for the remarks about a dropout of a child:Dropout remarks`,
+  })
+  dropoutRemarks: string;
 
   /** current school (as determined through the ChildSchoolRelation docs) set during loading through ChildrenService */
   schoolId: string = "";
@@ -75,7 +103,7 @@ export class Child extends Entity {
   @DatabaseField({
     dataType: "photo",
     defaultValue: "",
-    label: "Photo Filename",
+    label: $localize`:Label for the filename of a photo of a child:Photo Filename`,
   })
   photo: Photo;
 
@@ -108,23 +136,5 @@ export class Child extends Entity {
 
   public toString() {
     return this.name;
-  }
-}
-
-export function sortByChildClass(a: Child, b: Child) {
-  {
-    if (a.schoolClass === b.schoolClass) {
-      return 0;
-    }
-
-    const diff = parseInt(b.schoolClass, 10) - parseInt(a.schoolClass, 10);
-    if (!Number.isNaN(diff)) {
-      return diff;
-    }
-
-    if (a.schoolClass < b.schoolClass || b.schoolClass === undefined) {
-      return 1;
-    }
-    return -1;
   }
 }

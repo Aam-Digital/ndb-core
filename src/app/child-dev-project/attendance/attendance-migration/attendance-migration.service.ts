@@ -17,12 +17,12 @@ export class AttendanceMigrationService {
   activities: { [key: string]: RecurringActivity } = {
     school: Object.assign(new RecurringActivity("school"), {
       entityId: "school",
-      title: "school",
+      title: $localize`School`,
       type: defaultInteractionTypes.find((t) => t.id === "SCHOOL_CLASS"),
     }),
     coaching: Object.assign(new RecurringActivity("coaching"), {
       entityId: "coaching",
-      title: "coaching",
+      title: $localize`Coaching`,
       type: defaultInteractionTypes.find((t) => t.id === "COACHING_CLASS"),
     }),
   };

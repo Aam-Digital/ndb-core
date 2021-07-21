@@ -55,7 +55,7 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
     child.dropoutDate = faker.date.between(child.admissionDate, new Date());
     child.dropoutRemarks = faker.lorem.sentence();
     child.dropoutType = faker.random.arrayElement(dropoutTypes);
-    child.status = "Dropout";
+    child.status = $localize`:Child status:Dropout`;
   }
 
   constructor(public config: DemoChildConfig) {

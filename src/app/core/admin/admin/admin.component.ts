@@ -128,14 +128,12 @@ export class AdminComponent implements OnInit {
     const newData = await this.readFile(file);
 
     const dialogRef = this.confirmationDialog.openDialog(
-      "Overwrite complete database?",
-      "Are you sure you want to restore this backup? " +
-        "This will delete all " +
-        restorePoint.split("\n").length +
-        " existing records in the database, " +
-        "restoring " +
-        newData.split("\n").length +
-        " records from the loaded file."
+      $localize`Overwrite complete database?`,
+      $localize`Are you sure you want to restore this backup? This will delete all ${
+        restorePoint.split("\n").length
+      } existing records in the database, restoring ${
+        newData.split("\n").length
+      } records from the loaded file.`
     );
 
     dialogRef.afterClosed().subscribe(async (confirmed) => {
@@ -146,9 +144,13 @@ export class AdminComponent implements OnInit {
       await this.backupService.clearDatabase();
       await this.backupService.importJson(newData, true);
 
-      const snackBarRef = this.snackBar.open("Backup restored", "Undo", {
-        duration: 8000,
-      });
+      const snackBarRef = this.snackBar.open(
+        $localize`Backup restored`,
+        "Undo",
+        {
+          duration: 8000,
+        }
+      );
       snackBarRef.onAction().subscribe(async () => {
         await this.backupService.clearDatabase();
         await this.backupService.importJson(restorePoint, true);
@@ -165,12 +167,10 @@ export class AdminComponent implements OnInit {
     const newData = await this.readFile(file);
 
     const dialogRef = this.confirmationDialog.openDialog(
-      "Import new data?",
-      "Are you sure you want to import this file? " +
-        "This will add or update " +
-        (newData.trim().split("\n").length - 1) +
-        " records from the loaded file. " +
-        'Existing records with same "_id" in the database will be overwritten!'
+      $localize`Import new data?`,
+      $localize`Are you sure you want to import this file? This will add or update ${
+        newData.trim().split("\n").length - 1
+      } records from the loaded file. Existing records with same "_id" in the database will be overwritten!`
     );
 
     dialogRef.afterClosed().subscribe(async (confirmed) => {
@@ -180,9 +180,13 @@ export class AdminComponent implements OnInit {
 
       await this.backupService.importCsv(newData, true);
 
-      const snackBarRef = this.snackBar.open("Import completed", "Undo", {
-        duration: 8000,
-      });
+      const snackBarRef = this.snackBar.open(
+        $localize`Import completed?`,
+        "Undo",
+        {
+          duration: 8000,
+        }
+      );
       snackBarRef.onAction().subscribe(async () => {
         await this.backupService.clearDatabase();
         await this.backupService.importJson(restorePoint, true);
@@ -197,11 +201,10 @@ export class AdminComponent implements OnInit {
     const restorePoint = await this.backupService.getJsonExport();
 
     const dialogRef = this.confirmationDialog.openDialog(
-      "Empty complete database?",
-      "Are you sure you want to clear the database? " +
-        "This will delete all " +
-        restorePoint.split("\n").length +
-        " existing records in the database!"
+      $localize`Empty complete database?`,
+      $localize`Are you sure you want to clear the database? This will delete all ${
+        restorePoint.split("\n").length
+      } existing records in the database!`
     );
 
     dialogRef.afterClosed().subscribe(async (confirmed) => {
@@ -211,9 +214,13 @@ export class AdminComponent implements OnInit {
 
       await this.backupService.clearDatabase();
 
-      const snackBarRef = this.snackBar.open("Import completed", "Undo", {
-        duration: 8000,
-      });
+      const snackBarRef = this.snackBar.open(
+        $localize`Import completed`,
+        "Undo",
+        {
+          duration: 8000,
+        }
+      );
       snackBarRef.onAction().subscribe(async () => {
         await this.backupService.importJson(restorePoint, true);
       });

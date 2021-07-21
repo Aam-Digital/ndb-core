@@ -16,7 +16,7 @@
   -->
 
 <mat-card class="login-panel centered mat-elevation-z2">
-  <mat-card-title> Please Sign In </mat-card-title>
+  <mat-card-title i18n="Sign in title"> Please Sign In </mat-card-title>
 
   <mat-card-content>
     <form>
@@ -28,6 +28,7 @@
         <mat-form-field class="login-field">
           <input
             matInput
+            i18n-placeholder="Username placeholder"
             placeholder="Username"
             type="text"
             [(ngModel)]="username"
@@ -44,6 +45,7 @@
         <mat-form-field class="login-field">
           <input
             matInput
+            i18n-placeholder="password placeholder"
             placeholder="Password"
             type="password"
             [(ngModel)]="password"
@@ -61,6 +63,7 @@
           type="submit"
           [disabled]="loginInProgress"
           (click)="login()"
+          i18n="Login button"
         >
           Login
         </button>

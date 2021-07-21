@@ -46,31 +46,31 @@ export class NotesManagerComponent implements OnInit {
   private statusFS: FilterSelectionOption<Note>[] = [
     {
       key: "urgent",
-      label: "Urgent",
+      label: $localize`:Filter-option for notes:Urgent`,
       filterFun: (n: Note) => n.getWarningLevel() === WarningLevel.URGENT,
     },
     {
       key: "follow-up",
-      label: "Needs Follow-Up",
+      label: $localize`:Filter-option for notes:Needs Follow-Up`,
       filterFun: (n: Note) =>
         n.getWarningLevel() === WarningLevel.URGENT ||
         n.getWarningLevel() === WarningLevel.WARNING,
     },
-    { key: "", label: "All", filterFun: () => true },
+    { key: "", label: $localize`All`, filterFun: () => true },
   ];
 
   private dateFS: FilterSelectionOption<Note>[] = [
     {
       key: "current-week",
-      label: "This Week",
+      label: $localize`:Filter-option for notes:This Week`,
       filterFun: (n: Note) => n.date > this.getPreviousSunday(0),
     },
     {
       key: "last-week",
-      label: "Since Last Week",
+      label: $localize`:Filter-option for notes:Since Last Week`,
       filterFun: (n: Note) => n.date > this.getPreviousSunday(1),
     },
-    { key: "", label: "All", filterFun: () => true },
+    { key: "", label: $localize`All`, filterFun: () => true },
   ];
 
   constructor(

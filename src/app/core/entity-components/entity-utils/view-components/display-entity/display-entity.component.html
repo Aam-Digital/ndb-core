@@ -1,13 +1,14 @@
 <ng-container
   *ngIf="entityBlockComponent && entityToDisplay"
   [appDynamicComponent]="{
-      component: entityBlockComponent,
-      config: {
-        entity: entityToDisplay,
-        linkDisabled: linkDisabled,
-        tooltipDisabled: true
-      }
-    }">
+    component: entityBlockComponent,
+    config: {
+      entity: entityToDisplay,
+      linkDisabled: linkDisabled,
+      tooltipDisabled: true
+    }
+  }"
+>
 </ng-container>
 <ng-container *ngIf="!entityBlockComponent">
   {{ entityToDisplay?.toString() }}

@@ -16,12 +16,13 @@
   -->
 
 <mat-tab-group>
-  <mat-tab label="User Account">
+  <mat-tab i18n-label="User-Account label" label="User Account">
     <ng-template matTabContent>
       <div class="user-profile-tab">
         <p>
           <mat-form-field>
             <input
+              i18n-placeholder="Username placeholder"
               placeholder="Username"
               matInput="text"
               id="username"
@@ -35,18 +36,26 @@
         <form [formGroup]="passwordForm" class="form-container">
           <p *ngIf="disabledForDemoMode" class="info">
             <mat-icon fontIcon="fa-exclamation-circle"></mat-icon>
-            Password change is not allowed in demo mode.
+            <ng-container i18n>
+              Password change is not allowed in demo mode.
+            </ng-container>
           </p>
           <p *ngIf="disabledForOfflineMode" class="info">
             <mat-icon fontIcon="fa-exclamation-circle"></mat-icon>
-            Password change is not possible while being offline.
-            <button mat-stroked-button (click)="checkIfPasswordChangeAllowed()">
+            <ng-container i18n>
+              Password change is not possible while being offline.
+            </ng-container>
+            <button
+              mat-stroked-button
+              (click)="checkIfPasswordChangeAllowed()"
+              i18n="retry switching from offline to online"
+            >
               retry
             </button>
           </p>
 
           <mat-form-field class="user-form-field">
-            <label>
+            <label i18n>
               Current Password
               <input
                 matInput
@@ -54,22 +63,34 @@
                 formControlName="currentPassword"
               />
             </label>
-            <mat-error *ngIf="passwordForm.get('currentPassword').invalid">
+            <mat-error
+              *ngIf="passwordForm.get('currentPassword').invalid"
+              i18n="
+                Password Confirmation|An incorrect password was entered trying
+                to change the password
+              "
+            >
               Please provide your correct current password for confirmation.
             </mat-error>
           </mat-form-field>
           <br />
 
           <mat-form-field class="user-form-field" style="height: 80px">
-            <label>
+            <label i18n>
               New password
               <input matInput type="password" formControlName="newPassword" />
             </label>
             <mat-error *ngIf="passwordForm.get('newPassword').invalid">
-              <div *ngIf="passwordForm.get('newPassword').errors.minlength">
+              <div
+                *ngIf="passwordForm.get('newPassword').errors.minlength"
+                i18n="Password validation"
+              >
                 Must be at least 8 characters long.
               </div>
-              <div *ngIf="passwordForm.get('newPassword').errors.pattern">
+              <div
+                *ngIf="passwordForm.get('newPassword').errors.pattern"
+                i18n="Illegal password pattern"
+              >
                 Must contain lower case letters, upper case letters, symbols and
                 numbers to be secure.
               </div>
@@ -78,7 +99,7 @@
           <br />
 
           <mat-form-field class="user-form-field">
-            <label>
+            <label i18n>
               Confirm new password
               <input
                 matInput
@@ -91,6 +112,7 @@
                 passwordForm.get('confirmPassword').invalid &&
                 passwordForm.get('confirmPassword').touched
               "
+              i18n="Illegal new password"
             >
               Confirmation does not match your new password.
             </mat-error>
@@ -98,10 +120,10 @@
           <br />
 
           <div *ngIf="passwordChangeResult">
-            <div *ngIf="passwordChangeResult.success" class="info success">
+            <div *ngIf="passwordChangeResult.success" class="info success" i18n>
               Password changed successfully.
             </div>
-            <div *ngIf="!passwordChangeResult.success" class="info error">
+            <div *ngIf="!passwordChangeResult.success" class="info error" i18n>
               Failed to change password.<br />
               Please try again. If the problem persists contact Aam Digital
               support.
@@ -114,6 +136,7 @@
             [disabled]="passwordForm.invalid || passwordForm.disabled"
             (click)="changePassword()"
             (submit)="changePassword()"
+            i18n="Change password button"
           >
             Change Password
           </button>

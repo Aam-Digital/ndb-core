@@ -67,6 +67,10 @@ export class ChangelogComponent implements OnInit {
     }
   }
 
+  get noChangelogAvailable(): string {
+    return $localize`No Changelog Available`;
+  }
+
   /**
    * Add one more previous release card to the end of the currently displayed list of changelogs.
    */

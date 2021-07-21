@@ -1,5 +1,7 @@
 <mat-form-field [formGroup]="formControl.parent">
-  <mat-icon *ngIf="formControl.disabled && tooltip" matSuffix
+  <mat-icon
+    *ngIf="formControl.disabled && tooltip"
+    matSuffix
     fontIcon="fa-question-circle-o"
     [matTooltip]="tooltip"
   ></mat-icon>

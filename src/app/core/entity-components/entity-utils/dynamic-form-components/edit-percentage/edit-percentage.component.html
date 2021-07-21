@@ -5,13 +5,13 @@
     [placeholder]="label"
     [title]="label"
   />
-  <mat-error *ngIf="formControl.errors?.pattern">
+  <mat-error *ngIf="formControl.errors?.pattern" i18n="Error message for percentage input">
     Only numbers are allowed
   </mat-error>
-  <mat-error *ngIf="formControl.errors?.max">
+  <mat-error *ngIf="formControl.errors?.max" i18n="Error message for percentage input">
     Must be equal or smaller 100 (%)
   </mat-error>
-  <mat-error *ngIf="formControl.errors?.required">
+  <mat-error *ngIf="formControl.errors?.required" i18n="Error message for percentage input">
     This field is required
   </mat-error>
 </mat-form-field>

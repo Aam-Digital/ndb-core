@@ -79,18 +79,6 @@ describe("ConfigService", () => {
     ).toEqual({ test: "data" });
   });
 
-  it("should keep the same entity id when saving", fakeAsync(() => {
-    const initialConfig = new Config("initialId");
-    entityMapper.load.and.returnValue(Promise.resolve(initialConfig));
-    service.loadConfig(entityMapper);
-    tick();
-    const newData = { first: "foo", second: "bar" };
-    service.saveConfig(entityMapper, newData);
-    expect(entityMapper.save.calls.mostRecent().args[0].entityId).toEqual(
-      "initialId"
-    );
-  }));
-
   it("should create export config string", async () => {
     const config = new Config();
     config.data = { first: "foo", second: "bar" };
@@ -101,11 +89,11 @@ describe("ConfigService", () => {
   });
 
   it("should emit new value", fakeAsync(() => {
-    spyOn(service.configUpdated, "next");
+    spyOn(service.configUpdates, "next");
     entityMapper.load.and.returnValue(Promise.resolve(new Config()));
-    expect(service.configUpdated.next).not.toHaveBeenCalled();
+    expect(service.configUpdates.next).not.toHaveBeenCalled();
     service.loadConfig(entityMapper);
     tick();
-    expect(service.configUpdated.next).toHaveBeenCalled();
+    expect(service.configUpdates.next).toHaveBeenCalled();
   }));
 });

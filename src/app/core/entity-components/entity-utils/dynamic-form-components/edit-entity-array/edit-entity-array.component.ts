@@ -10,10 +10,12 @@ import { Entity } from "../../../../entity/model/entity";
 export class EditEntityArrayComponent extends EditComponent<
   (string | Entity)[]
 > {
+  placeholder: string;
   entityName: string;
   onInitFromDynamicConfig(config: EditPropertyConfig) {
     super.onInitFromDynamicConfig(config);
     this.entityName =
       config.formFieldConfig.additional || config.propertySchema.additional;
+    this.placeholder = $localize`:Placeholder for input to add entities|context Add User(s):Add ${this.label}`;
   }
 }

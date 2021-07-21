@@ -7,14 +7,14 @@ export const warningLevels: ConfigurableEnumValue[] = [
   },
   {
     id: "OK",
-    label: "Solved",
+    label: $localize`:Label warning level:Solved`,
   },
   {
     id: "WARNING",
-    label: "Needs Follow-Up",
+    label: $localize`:Label warning level:Needs Follow-Up`,
   },
   {
     id: "URGENT",
-    label: "Urgent Follow-Up",
+    label: $localize`:Label warning level:Urgent Follow-Up`,
   },
 ];

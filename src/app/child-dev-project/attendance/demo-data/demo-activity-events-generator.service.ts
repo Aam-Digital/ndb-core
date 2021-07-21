@@ -38,9 +38,9 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<EventN
 
       if (eventAtt.status.countAs === AttendanceLogicalStatus.ABSENT) {
         eventAtt.remarks = faker.random.arrayElement([
-          "sick",
-          "fever",
-          "no information",
+          $localize`:Event demo attendance remarks:sick`,
+          $localize`:Event demo attendance remarks:fever`,
+          $localize`:Event demo attendance remarks:no information`,
         ]);
       }
     }

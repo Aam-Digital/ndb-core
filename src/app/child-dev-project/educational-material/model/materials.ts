@@ -7,124 +7,124 @@ export const materials: ConfigurableEnumValue[] = [
   },
   {
     id: "pencil",
-    label: "pencil",
+    label: $localize`:Label school material:pencil`,
   },
   {
     id: "eraser",
-    label: "eraser",
+    label: $localize`:Label school material:eraser`,
   },
   {
     id: "sharpener",
-    label: "sharpener",
+    label: $localize`:Label school material:sharpener`,
   },
   {
     id: "pen (black)",
-    label: "pen (black)",
+    label: $localize`:Label school material:pen (black)`,
   },
   {
     id: "oil pastels",
-    label: "oil pastels",
+    label: $localize`:Label school material:oil pastels`,
   },
   {
     id: "crayons",
-    label: "crayons",
+    label: $localize`:Label school material:crayons`,
   },
   {
     id: "sketch pens",
-    label: "sketch pens",
+    label: $localize`:Label school material:sketch pens`,
   },
   {
     id: "scale (big)",
-    label: "scale (big)",
+    label: $localize`:Label school material:scale (big)`,
   },
   {
     id: "scale (small)",
-    label: "scale (small)",
+    label: $localize`:Label school material:scale (small)`,
   },
   {
     id: "geometry box",
-    label: "geometry box",
+    label: $localize`:Label school material:geometry box`,
   },
   {
     id: "copy (single line, small)",
-    label: "copy (single line, small)",
+    label: $localize`:Label school material:copy (single line, small)`,
   },
   {
     id: "copy (single line, big)",
-    label: "copy (single line, big)",
+    label: $localize`:Label school material:copy (single line, big)`,
   },
   {
     id: "copy (four line)",
-    label: "copy (four line)",
+    label: $localize`:Label school material:copy (four line)`,
   },
   {
     id: "copy (squared)",
-    label: "copy (squared)",
+    label: $localize`:Label school material:copy (squared)`,
   },
   {
     id: "copy (plain)",
-    label: "copy (plain)",
+    label: $localize`:Label school material:copy (plain)`,
   },
   {
     id: "copy (line-plain)",
-    label: "copy (line-plain)",
+    label: $localize`:Label school material:copy (line-plain)`,
   },
   {
     id: "copy (drawing)",
-    label: "copy (drawing)",
+    label: $localize`:Label school material:copy (drawing)`,
   },
   {
     id: "copy (practical)",
-    label: "copy (practical)",
+    label: $localize`:Label school material:copy (practical)`,
   },
   {
     id: "graph book",
-    label: "graph book",
+    label: $localize`:Label school material:graph book`,
   },
   {
     id: "project papers",
-    label: "project papers",
+    label: $localize`:Label school material:project papers`,
   },
   {
     id: "project file",
-    label: "project file",
+    label: $localize`:Label school material:project file`,
   },
   {
     id: "scrap book",
-    label: "scrap book",
+    label: $localize`:Label school material:scrap book`,
   },
   {
     id: "exam board",
-    label: "exam board",
+    label: $localize`:Label school material:exam board`,
   },
   {
     id: "Bag",
-    label: "Bag",
+    label: $localize`:Label school material:Bag`,
     color: "#B3E5FC",
   },
   {
     id: "School Uniform",
-    label: "School Uniform",
+    label: $localize`:Label school material:School Uniform`,
     color: "#B3E5FC",
   },
   {
     id: "School Shoes",
-    label: "School Shoes",
+    label: $localize`:Label school material:School Shoes`,
     color: "#B3E5FC",
   },
   {
     id: "Sports Dress",
-    label: "Sports Dress",
+    label: $localize`:Label school material:Sports Dress`,
     color: "#B3E5FC",
   },
   {
     id: "Sports Shoes",
-    label: "Sports Shoes",
+    label: $localize`:Label school material:Sports Shoes`,
     color: "#B3E5FC",
   },
   {
     id: "Raincoat",
-    label: "Raincoat",
+    label: $localize`:Label school material:Raincoat`,
     color: "#B3E5FC",
   },
 ];

@@ -15,7 +15,10 @@ export class AddDayAttendanceComponent {
 
   event: Note;
 
-  stages = ["Select Event", "Record Attendance"];
+  stages = [
+    $localize`:One of the stages while recording child-attendances:Select Event`,
+    $localize`:One of the stages while recording child-attendances:Record Attendance`,
+  ];
 
   constructor(private entityMapper: EntityMapperService) {}
 

@@ -52,7 +52,7 @@ export class ProgressDashboardComponent
   }
 
   private createDefaultConfig() {
-    this.data.title = "Progress of X";
+    this.data.title = $localize`:The progress, e.g. of a certain activity:Progress of X`;
     this.addPart();
     this.addPart();
     this.save();
@@ -60,7 +60,7 @@ export class ProgressDashboardComponent
 
   addPart() {
     const newPart: ProgressDashboardPart = {
-      label: "Part",
+      label: $localize`:Part of a whole:Part`,
       currentValue: 1,
       targetValue: 10,
     };

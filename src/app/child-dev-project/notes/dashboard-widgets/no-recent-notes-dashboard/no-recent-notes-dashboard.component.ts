@@ -85,6 +85,28 @@ export class NoRecentNotesDashboardComponent
 
     this.isLoading = false;
   }
+
+  get tooltip(): string {
+    return $localize`:Tooltip|Spaces in front of the variables are added automatically:includes children without a note${this.sinceBeginningOfTheWeek}:sinceBeginningOfWeek:${this.withinTheLastNDays}:withinTheLastDays:`;
+  }
+
+  get sinceBeginningOfTheWeek(): string {
+    if (this.fromBeginningOfWeek) {
+      return (
+        " " +
+        $localize`:Tooltip-part|'includes children without a note since the beginning of the week':since the beginning of the week`
+      );
+    }
+  }
+
+  get withinTheLastNDays(): string {
+    if (this.sinceDays > 0) {
+      return (
+        " " +
+        $localize`:Tooltip-part|'includes children without a note within the last x days':without a note within the last ${this.sinceDays} days`
+      );
+    }
+  }
 }
 
 /**

@@ -69,11 +69,13 @@ import { FontAwesomeIconsModule } from "./core/icons/font-awesome-icons.module";
 import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-enum.module";
 import { ConfigModule } from "./core/config/config.module";
 import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-events-generator.service";
+import { MatPaginatorIntl } from "@angular/material/paginator";
 import { ReportingModule } from "./features/reporting/reporting.module";
 import { DashboardShortcutWidgetModule } from "./core/dashboard-shortcut-widget/dashboard-shortcut-widget.module";
 import { HistoricalDataModule } from "./features/historical-data/historical-data.module";
 import { EntityUtilsModule } from "./core/entity-components/entity-utils/entity-utils.module";
 import { DemoHistoricalDataGenerator } from "./features/historical-data/demo-historical-data-generator";
+import { TranslatableMatPaginator } from "./core/translation/TranslatableMatPaginator";
 
 /**
  * Main entry point of the application.
@@ -83,7 +85,7 @@ import { DemoHistoricalDataGenerator } from "./features/historical-data/demo-his
 @NgModule({
   declarations: [AppComponent],
   imports: [
-    ServiceWorkerModule.register("/ngsw-worker.js", {
+    ServiceWorkerModule.register("ngsw-worker.js", {
       enabled: environment.production,
     }),
     Angulartics2Module.forRoot({
@@ -151,6 +153,7 @@ import { DemoHistoricalDataGenerator } from "./features/historical-data/demo-his
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
+    { provide: MatPaginatorIntl, useValue: TranslatableMatPaginator() },
     AnalyticsService,
     Angulartics2Piwik,
   ],

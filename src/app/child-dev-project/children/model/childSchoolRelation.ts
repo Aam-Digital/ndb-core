@@ -11,20 +11,29 @@ import { School } from "../../schools/model/school";
 export class ChildSchoolRelation extends Entity {
   @DatabaseField() childId: string;
   @DatabaseField({
-    label: "School",
+    label: $localize`:Label for the school of a relation:School`,
     viewComponent: "DisplayEntity",
     editComponent: "EditSingleEntity",
     additional: School.ENTITY_TYPE,
     required: true,
   })
   schoolId: string;
-  @DatabaseField({ label: "Class" }) schoolClass: string = "";
-  @DatabaseField({ dataType: "date-only", label: "From" }) start: Date;
-  @DatabaseField({ dataType: "date-only", label: "To" }) end: Date;
+  @DatabaseField({ label: $localize`:Label for the class of a relation:Class` })
+  schoolClass: string = "";
+  @DatabaseField({
+    dataType: "date-only",
+    label: $localize`:Label for the start date of a relation:From`,
+  })
+  start: Date;
+  @DatabaseField({
+    dataType: "date-only",
+    label: $localize`:Label for the end date of a relation:To`,
+  })
+  end: Date;
 
   /** percentage achieved in the final school exams of that year */
   @DatabaseField({
-    label: "Result",
+    label: $localize`:Label for the percentage result of a relation:Result`,
     viewComponent: "DisplayPercentage",
     editComponent: "EditPercentage",
   })
@@ -43,10 +52,12 @@ export class ChildSchoolRelation extends Entity {
     const startLabel = this.getSchema().get("start").label;
     const endLabel = this.getSchema().get("end").label;
     if (this.end && !this.start) {
-      throw new Error(`No "${startLabel}" date is set`);
+      throw new Error(
+        $localize`:Error assertValid failed:No "${startLabel}" date is set`
+      );
     } else if (moment(this.start).isAfter(this.end, "days")) {
       throw new Error(
-        `The "${startLabel}" date is after the "${endLabel}" date`
+        $localize`:Error assertValid failed:The "${startLabel}" date is after the "${endLabel}" date`
       );
     }
   }

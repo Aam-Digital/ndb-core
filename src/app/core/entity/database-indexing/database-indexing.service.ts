@@ -54,7 +54,7 @@ export class DatabaseIndexingService {
    */
   async createIndex(designDoc: any): Promise<void> {
     const indexState: BackgroundProcessState = {
-      title: "Preparing data (Indexing)",
+      title: $localize`Preparing data (Indexing)`,
       details: designDoc._id.replace(/_design\//, ""),
       pending: true,
     };

@@ -1,14 +1,14 @@
 import {
   Component,
-  Input,
-  Output,
-  EventEmitter,
-  ViewChild,
   ElementRef,
+  EventEmitter,
+  Input,
   OnChanges,
+  Output,
   SimpleChanges,
+  ViewChild,
 } from "@angular/core";
-import { ENTER, COMMA } from "@angular/cdk/keycodes";
+import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { BehaviorSubject, Observable } from "rxjs";
@@ -26,6 +26,9 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 })
 @UntilDestroy()
 export class EntitySelectComponent<E extends Entity> implements OnChanges {
+  readonly separatorKeysCodes: number[] = [ENTER, COMMA];
+  readonly loadingPlaceholder = $localize`:A placeholder for the input element when select options are not loaded yet:loading...`;
+
   /**
    * The entity-type (e.g. 'Child', 'School', e.t.c.) to set.
    * The entity-type has to be inside {@link ENTITY_MAP}
@@ -62,8 +65,8 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     if (this.selectionInputType === "id") {
       this.loading
         .pipe(
-          filter((isLoading) => !isLoading),
-          untilDestroyed(this)
+          untilDestroyed(this),
+          filter((isLoading) => !isLoading)
         )
         .subscribe((_) => {
           this.selection_ = this.allEntities.filter((e) =>
@@ -96,6 +99,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * The placeholder is what is seen when someone clicks into the input-
    * field and adds new entities.
    * In the note-details-view, this is "Add children..."
+   * The placeholder is only displayed if `loading === false`
    */
   @Input() placeholder: string;
   /**
@@ -108,12 +112,6 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * If this is the case, they can be deleted.
    */
   @Input() removable = true;
-  /**
-   * true when this is loading and false when it's ready.
-   * This subject's state reflects the actual loading resp. the 'readiness'-
-   * state of this component. Will trigger once loading is done
-   */
-  loading = new BehaviorSubject(true);
 
   /**
    * Whether or not to show entities in the list.
@@ -123,11 +121,10 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    */
   @Input() showEntities: boolean = true;
 
-  allEntities: E[] = [];
-  filteredEntities: Observable<E[]>;
-
-  formControl = new FormControl();
-
+  /**
+   * Setting the disabled state of the input element
+   * @param disabled whether the input element should be disabled
+   */
   @Input() set disabled(disabled: boolean) {
     if (disabled) {
       this.formControl.disable();
@@ -135,7 +132,19 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
       this.formControl.enable();
     }
   }
-  readonly separatorKeysCodes: number[] = [ENTER, COMMA];
+
+  /**
+   * true when this is loading and false when it's ready.
+   * This subject's state reflects the actual loading resp. the 'readiness'-
+   * state of this component. Will trigger once loading is done
+   */
+  loading = new BehaviorSubject(true);
+
+  inputPlaceholder = this.loadingPlaceholder;
+
+  allEntities: E[] = [];
+  filteredEntities: Observable<E[]>;
+  formControl = new FormControl();
 
   @ViewChild("inputField") inputField: ElementRef<HTMLInputElement>;
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
@@ -145,6 +154,11 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
       filter((value) => value === null || typeof value === "string"), // sometimes produces entities
       map((searchText?: string) => this.filter(searchText))
     );
+    this.loading.pipe(untilDestroyed(this)).subscribe((isLoading) => {
+      this.inputPlaceholder = isLoading
+        ? this.loadingPlaceholder
+        : this.placeholder;
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -163,11 +177,11 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   @Input() accessor: (e: Entity) => string = (e) => e["name"] || e.getId();
 
   @Input() additionalFilter: (e: E) => boolean = (_) => true;
+
   /**
    * selects a given entity and emits values
    * @param entity the entity to select
    */
-
   selectEntity(entity: E) {
     this.selection_.push(entity);
     this.emitChange();

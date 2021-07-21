@@ -74,6 +74,8 @@ export class ComingSoonComponent implements OnChanges {
 
     this.requested = true;
     ComingSoonComponent.featuresRequested.push(this.featureId);
-    this.alertService.addInfo("Thank you for letting us know.");
+    this.alertService.addInfo(
+      $localize`:Sent after the user has sent a feature-request:Thank you for letting us know.`
+    );
   }
 }

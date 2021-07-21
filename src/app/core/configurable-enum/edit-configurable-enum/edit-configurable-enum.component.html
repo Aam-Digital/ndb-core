@@ -3,15 +3,14 @@
     {{ label }}
   </mat-label>
   <mat-select [formControlName]="formControlName">
-    <mat-option
-      *appConfigurableEnum="let o of enumId"
-      [value]="o"
-    >
+    <mat-option *appConfigurableEnum="let o of enumId" [value]="o">
       {{ o.label }}
     </mat-option>
   </mat-select>
-  <mat-icon *ngIf="tooltip" matSuffix
-            fontIcon="fa-question-circle-o"
-            [matTooltip]="tooltip"
+  <mat-icon
+    *ngIf="tooltip"
+    matSuffix
+    fontIcon="fa-question-circle-o"
+    [matTooltip]="tooltip"
   ></mat-icon>
 </mat-form-field>

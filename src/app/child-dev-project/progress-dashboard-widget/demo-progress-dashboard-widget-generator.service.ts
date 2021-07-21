@@ -19,9 +19,9 @@ export class DemoProgressDashboardWidgetGeneratorService extends DemoDataGenerat
   }
 
   private readonly DEMO_TASKS = [
-    "Clubs visited",
-    "Schools checked",
-    "Government Officials met",
+    $localize`:Example for demo task in the progress widget:Clubs visited`,
+    $localize`:Example for demo task in the progress widget:Schools checked`,
+    $localize`:Example for demo task in the progress widget:Government Officials met`,
   ];
 
   constructor() {
@@ -39,7 +39,7 @@ export class DemoProgressDashboardWidgetGeneratorService extends DemoDataGenerat
 
   private generateDashboardWidgetSurveyStatus(): ProgressDashboardConfig {
     const dashboardProgressWidget = new ProgressDashboardConfig("1");
-    dashboardProgressWidget.title = "Annual Survey";
+    dashboardProgressWidget.title = $localize`:Widget title:Annual Survey`;
 
     for (const task of this.DEMO_TASKS) {
       const targetNumber = faker.datatype.number({ min: 5, max: 50 });
@@ -54,11 +54,11 @@ export class DemoProgressDashboardWidgetGeneratorService extends DemoDataGenerat
 
   private generateDashboardWidgetEvaluation() {
     const dashboardProgressWidget = new ProgressDashboardConfig("2");
-    dashboardProgressWidget.title = "Evaluation targets reached";
+    dashboardProgressWidget.title = $localize`:Dashboard widget demo tile:Evaluation targets reached`;
     const evaluationEntries = [
-      "Students graduating",
-      "Students enrolled in training",
-      "Students found job",
+      $localize`:Dashboard widget demo entry:Students graduating`,
+      $localize`:Dashboard widget demo entry:Students enrolled in training`,
+      $localize`:Dashboard widget demo entry:Students found job`,
     ];
 
     for (const task of evaluationEntries) {

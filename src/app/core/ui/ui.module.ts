@@ -40,6 +40,7 @@ import { NotesModule } from "../../child-dev-project/notes/notes.module";
 import { Angulartics2Module } from "angulartics2";
 import { PermissionsModule } from "../permissions/permissions.module";
 import { EntityUtilsModule } from "../entity-components/entity-utils/entity-utils.module";
+import { TranslationModule } from "../translation/translation.module";
 
 /**
  * The core user interface structure that ties different components together into the overall app layout.
@@ -68,6 +69,7 @@ import { EntityUtilsModule } from "../entity-components/entity-utils/entity-util
     PermissionsModule,
     EntityUtilsModule,
     ReactiveFormsModule,
+    TranslationModule,
   ],
   declarations: [SearchComponent, UiComponent, PrimaryActionComponent],
   exports: [UiComponent],
