@@ -131,9 +131,10 @@
         label="Participants"
         placeholder="Add participant ...">
         <!-- Header for autocomplete -->
-        <mat-option (click)="toggleIncludeInactiveChildren()">
+        <mat-option>
           <mat-checkbox
             labelPosition="before"
+            (change)="toggleIncludeInactiveChildren()"
             [checked]="includeInactiveChildren">
             Include Inactive Children
           </mat-checkbox>
