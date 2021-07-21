@@ -26,9 +26,11 @@ export function getGroupingInformationString(
 
 function getValueDescription(value: any, property: string): string {
   if (typeof value === "boolean") {
-    return value ? property : "not " + property;
+    return value
+      ? property
+      : $localize`:Not a certain property|e.g. 'not male':not ${property}`;
   } else if (!value) {
-    return "without " + property;
+    return $localize`:Excluding a certain property|e.g. 'without religion':without ${property}`;
   } else if (value.hasOwnProperty("label")) {
     return value.label;
   } else {

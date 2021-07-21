@@ -19,10 +19,11 @@ import { Component, OnInit, ViewChild } from "@angular/core";
 import { SessionService } from "../../session/session-service/session.service";
 import { AppConfig } from "../../app-config/app-config";
 import { Title } from "@angular/platform-browser";
-import { MediaObserver, MediaChange } from "@angular/flex-layout";
+import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { MatDrawerMode } from "@angular/material/sidenav";
 import { ConfigService } from "../../config/config.service";
+import { UiConfig } from "../ui-config";
 
 /**
  * The main user interface component as root element for the app structure
@@ -36,7 +37,7 @@ import { ConfigService } from "../../config/config.service";
   styleUrls: ["./ui.component.scss"],
 })
 export class UiComponent implements OnInit {
-  /** display mode for the menu to make it responive and usable on smaller screens */
+  /** display mode for the menu to make it responsive and usable on smaller screens */
   sideNavMode: MatDrawerMode;
   /** reference to sideNav component in template, required for toggling the menu on user actions */
   @ViewChild("sideNav") sideNav;
@@ -46,6 +47,8 @@ export class UiComponent implements OnInit {
 
   /** path to the image of a logo */
   logo_path: string;
+
+  showLanguageSelect: boolean = false;
 
   constructor(
     private _sessionService: SessionService,
@@ -64,11 +67,15 @@ export class UiComponent implements OnInit {
           this.sideNavMode = "side";
         }
       });
-    this.configService.configUpdated.subscribe(() => {
-      this.logo_path = this.configService.getConfig<{ logo_path: string }>(
-        "appConfig"
-      )?.logo_path;
-    });
+    this.configService.configUpdates
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        const uiConfig = this.configService.getConfig<UiConfig>("appConfig");
+        this.logo_path = uiConfig?.logo_path;
+        if (uiConfig?.displayLanguageSelect === true) {
+          this.showLanguageSelect = true;
+        }
+      });
   }
 
   ngOnInit(): void {

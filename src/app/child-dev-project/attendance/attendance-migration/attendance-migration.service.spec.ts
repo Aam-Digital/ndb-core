@@ -53,9 +53,9 @@ describe("AttendanceMigrationService", () => {
     old.dailyRegister[7].status = AttendanceStatus.PRESENT;
 
     const expectedNotes: EventNote[] = [
-      EventNote.create(old.dailyRegister[4].date, testInstitution),
-      EventNote.create(old.dailyRegister[5].date, testInstitution),
-      EventNote.create(old.dailyRegister[7].date, testInstitution),
+      EventNote.create(old.dailyRegister[4].date, "School"),
+      EventNote.create(old.dailyRegister[5].date, "School"),
+      EventNote.create(old.dailyRegister[7].date, "School"),
     ];
     for (const event of expectedNotes) {
       event.category = service.activities.school.type;
@@ -98,7 +98,7 @@ describe("AttendanceMigrationService", () => {
     old2.dailyRegister[0].status = AttendanceStatus.PRESENT;
 
     const expectedNotes: EventNote[] = [
-      EventNote.create(old1.dailyRegister[0].date, testInstitution),
+      EventNote.create(old1.dailyRegister[0].date, "School"),
     ];
     for (const event of expectedNotes) {
       event.category = service.activities.school.type;

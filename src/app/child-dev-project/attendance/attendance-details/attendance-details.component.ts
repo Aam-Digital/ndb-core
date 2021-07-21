@@ -23,10 +23,10 @@ export class AttendanceDetailsComponent
 
   eventsColumns: FormFieldConfig[] = [
     { id: "date" },
-    { id: "subject", label: "Event" },
+    { id: "subject", label: $localize`Event` },
     {
       id: "getAttendance",
-      label: "Attended",
+      label: $localize`:How a child attended, e.g. too late, in time, excused, e.t.c:Attended`,
       view: "ReadonlyFunction",
       additional: (note: Note) => {
         if (this.focusedChild) {
