@@ -8,7 +8,17 @@ import { DatabaseEntity } from "../entity/database-entity.decorator";
 @DatabaseEntity("Config")
 export class Config extends Entity {
   /**
+   * The key of the ID of the config for the database
+   */
+  static readonly CONFIG_KEY = "CONFIG_ENTITY";
+
+  /**
    * This field contains all the configuration and does not have a predefined type.
    */
   @DatabaseField({ dataType: "default" }) data: any;
+
+  constructor(configuration?: any) {
+    super(Config.CONFIG_KEY);
+    this.data = configuration;
+  }
 }

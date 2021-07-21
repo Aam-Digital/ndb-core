@@ -1,15 +1,19 @@
 <mat-accordion [multi]="true">
-    <mat-expansion-panel *ngFor="let row of rows" [hideToggle]="row.subRows.length === 0">
-        <mat-expansion-panel-header [ngClass]="row.subRows.length === 0 ? 'disabled-header' : '' ">
-            <mat-panel-title>
-                {{ row.header.label }} {{ getGroupedByString(row.header.groupedBy) }}
-            </mat-panel-title>
-            <mat-panel-description>
-                {{ row.header.result }} {{ row.header.label }}
-            </mat-panel-description>
-        </mat-expansion-panel-header>
+  <mat-expansion-panel
+    *ngFor="let row of rows"
+    [hideToggle]="row.subRows.length === 0"
+  >
+    <mat-expansion-panel-header
+      [ngClass]="row.subRows.length === 0 ? 'disabled-header' : ''"
+    >
+      <mat-panel-title>
+        {{ row.header.label }} {{ getGroupedByString(row.header.groupedBy) }}
+      </mat-panel-title>
+      <mat-panel-description>
+        {{ row.header.result }} {{ row.header.label }}
+      </mat-panel-description>
+    </mat-expansion-panel-header>
 
-        <app-report-row [rows]="row.subRows"></app-report-row>
-    </mat-expansion-panel>
+    <app-report-row [rows]="row.subRows"></app-report-row>
+  </mat-expansion-panel>
 </mat-accordion>
-

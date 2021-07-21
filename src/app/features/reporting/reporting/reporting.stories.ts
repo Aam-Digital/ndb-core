@@ -1,4 +1,4 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { RouterTestingModule } from "@angular/router/testing";
 import { ReportingComponent } from "./reporting.component";
