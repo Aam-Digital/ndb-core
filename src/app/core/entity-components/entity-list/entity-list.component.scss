@@ -1,18 +1,5 @@
 @import "../../../../ndb-theme";
 
-.filter-panel {
-  padding-top: 10px;
-  border-radius: 0;
-}
-
-.toggle-selection-section {
-  margin-top: 10px;
-}
-
-.table-list {
-  margin-top: 10px;
-}
-
 .table-list td {
   padding-left: 8px;
 }
@@ -42,13 +29,15 @@
 .additional-button {
   color: white;
   border: 0;
-  background-color: mat-color($ndb-app-primary);
+  background: mat-color($ndb-app-primary);
   border-radius: 5px;
   cursor: pointer;
-  width: 30px;
-  height: 45px;
+  // width: 28px;
+  // height: 38px;
 }
 
 .additional-button-icon {
-  font-size: 2em;
+  font-size: 40px;
+  margin-left: -6px;
+  margin-top: -3px;
 }

@@ -4,8 +4,8 @@ import { FormFieldConfig } from "../entity-form/entity-form/FormConfig";
 
 export interface EntityListConfig {
   title: string;
-  addNew?: string = "Add new";
-  filterPlaceholder?: string = "";
+  addNew?: string;
+  filterPlaceholder?: string;
   columns: (FormFieldConfig | string)[];
 
   /**
@@ -45,7 +45,7 @@ export interface GroupConfig {
 export interface FilterConfig {
   id: string;
   display?: string;
-  type?: "boolean" | "prebuilt" | "configurable-enum";
+  type?: string;
   default?: string;
   label?: string;
 }

@@ -1,74 +1,63 @@
-<div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="25px" >
+<div fxLayout="column" fxLayoutGap="20px">
+  <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="25px">
 
-  <h2>{{listName}}</h2>
+    <h2 fxFlexAlign="end">{{listName}}</h2>
 
-  <button
-    mat-stroked-button
-    color="accent"
-    class="add-entity-button"
-    (click)="addNewClick.emit()"
-    angulartics2On="click"
-    angularticsCategory="UserAction"
-    [angularticsAction]="
-          listName.toLowerCase().replace(' ', '_') + '_add_new'
-        "
-    *appDisabledEntityOperation="{
-          entity: entityConstructor,
-          operation: operationType.CREATE
-        }"
-  >
-    <mat-icon
-      class="button-icon"
-      aria-label="add element"
-      fontIcon="fa-plus-circle"
-    ></mat-icon>
-    <span fxHide.lt-md="true"> Add New </span>
-  </button>
-
-  <div fxFlex="20"></div>
-
-  <mat-form-field class="filter-field" fxFlex>
-    <mat-label>Filter</mat-label>
-    <input
-      matInput
-      [placeholder]="listConfig.filterPlaceholder"
-      (ngModelChange)="applyFilter($event)"
-      [(ngModel)]="filterString"
-    />
     <button
-      mat-icon-button
-      *ngIf="filterString"
-      matSuffix
-      aria-label="Clear"
-      (click)="filterString = ''; applyFilter('')"
+      mat-stroked-button
+      color="accent"
+      class="add-entity-button"
+      (click)="addNewClick.emit()"
+      angulartics2On="click"
+      angularticsCategory="UserAction"
+      [angularticsAction]="
+            listName.toLowerCase().replace(' ', '_') + '_add_new'
+          "
+      *appDisabledEntityOperation="{
+            entity: entityConstructor,
+            operation: operationType.CREATE
+          }"
     >
-      <mat-icon fontIcon="fa-times"></mat-icon>
-    </button>
-  </mat-form-field>
-
-  <button mat-icon-button class="additional-button" [matMenuTriggerFor]="additional">
-    <span class="material-icons">more_vert</span>
-  </button>
-
-</div>
-
-<mat-menu #additional>
-    <button mat-menu-item [appExportData]="entityList">
       <mat-icon
-        color="accent"
         class="button-icon"
-        aria-label="download csv"
-        fontIcon="fa-download"
+        aria-label="add element"
+        fontIcon="fa-plus-circle"
       ></mat-icon>
-      <span> Download CSV </span>
+      <span fxHide.lt-md="true"> Add New </span>
     </button>
-</mat-menu>
+
+    <div fxFlex></div>
+
+    <mat-form-field class="filter-field" style="width: 100px" fxLayoutAlign="end">
+      <mat-label>Filter</mat-label>
+      <input
+        matInput
+        [placeholder]="listConfig.filterPlaceholder"
+        (ngModelChange)="applyFilter($event)"
+        [(ngModel)]="filterString"
+      />
+      <button
+        mat-icon-button
+        *ngIf="filterString"
+        matSuffix
+        aria-label="Clear"
+        (click)="filterString = ''; applyFilter('')"
+      >
+        <mat-icon fontIcon="fa-times"></mat-icon>
+      </button>
+    </mat-form-field>
+
+    <button mat-icon-button class="additional-button" [matMenuTriggerFor]="additional">
+      <span class="material-icons">more_vert</span>
+    </button>
+
+  </div>
 
   <div
     *ngIf="filterSelections.length > 0"
     class="toggle-selection-section"
     fxLayout="row wrap"
-    fxLayoutGap="10px grid"
+    fxLayoutGap="10px"
   >
     <app-list-filter
       *ngFor="let filter of filterSelections"
@@ -80,24 +69,39 @@
     </app-list-filter>
   </div>
 
-<div
-  *ngIf="columnGroups.length > 1"
-  class="toggle-selection-section"
-  fxHide.lt-sm
->
-  <mat-tab-group [(selectedIndex)]="selectedColumnGroupIndex">
-    <mat-tab *ngFor="let item of columnGroups"
-             [label]="item.name">
-    </mat-tab>
-  </mat-tab-group>
+  <div>
+    <div
+      *ngIf="columnGroups.length > 1"
+      fxHide.lt-sm
+    >
+      <mat-tab-group [(selectedIndex)]="selectedColumnGroupIndex">
+        <mat-tab *ngFor="let item of columnGroups"
+                 [label]="item.name">
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+
+    <div class="mat-elevation-z2 table-list">
+      <app-entity-subrecord
+        [records]="filteredEntities"
+        [columns]="columns"
+        [editable]="false"
+        [showEntity]="elementClick.emit.bind(elementClick)"
+        [columnsToDisplay]="columnsToDisplay"
+      ></app-entity-subrecord>
+    </div>
+  </div>
+
 </div>
 
-<div class="mat-elevation-z2 table-list">
-  <app-entity-subrecord
-    [records]="filteredEntities"
-    [columns]="columns"
-    [editable]="false"
-    [showEntity]="elementClick.emit.bind(elementClick)"
-    [columnsToDisplay]="columnsToDisplay"
-  ></app-entity-subrecord>
-</div>
+<mat-menu #additional>
+  <button mat-menu-item [appExportData]="allEntities">
+    <mat-icon
+      color="accent"
+      class="button-icon"
+      aria-label="download csv"
+      fontIcon="fa-download"
+    ></mat-icon>
+    <span> Download CSV </span>
+  </button>
+</mat-menu>

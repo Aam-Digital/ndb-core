@@ -169,7 +169,7 @@ export class EntityListComponent<T extends Entity>
   }
 
   columnGroupClick(columnGroupName: string) {
-    this.displayColumnGroup(columnGroupName);
+    this.displayColumnGroupByName(columnGroupName);
     this.updateUrl("view", columnGroupName);
   }
 

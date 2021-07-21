@@ -443,10 +443,7 @@ export const defaultJsonConfig = {
               "health_BMI",
               "health_bloodGroup",
               "health_lastDentalCheckup",
-              "health_lastDeworming",
-              "gender",
-              "age",
-              "dateOfBirth"
+              "health_lastDeworming"
             ]
           },
           {

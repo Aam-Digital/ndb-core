@@ -9,7 +9,6 @@ import { Entity } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { User } from "../../user/user";
 import { SessionService } from "../../session/session-service/session.service";
-import { ExportDataComponent } from "../../admin/export-data/export-data.component";
 import { ChildrenListComponent } from "../../../child-dev-project/children/children-list/children-list.component";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ConfigService } from "../../config/config.service";
@@ -21,6 +20,7 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { ReactiveFormsModule } from "@angular/forms";
 import { AttendanceService } from "../../../child-dev-project/attendance/attendance.service";
+import { ExportDataDirective } from "../../admin/export-data/export-data.directive";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -98,7 +98,7 @@ describe("EntityListComponent", () => {
       );
 
       TestBed.configureTestingModule({
-        declarations: [EntityListComponent, ExportDataComponent],
+        declarations: [EntityListComponent, ExportDataDirective],
         imports: [
           CommonModule,
           NoopAnimationsModule,
@@ -145,17 +145,19 @@ describe("EntityListComponent", () => {
 
   it("should create column groups from config and set correct one", () => {
     expect(component.columnGroups).toEqual(testConfig.columnGroups.groups);
-    const defaultGroup = testConfig.columnGroups.groups.find(
+    const defaultGroup = testConfig.columnGroups.groups.findIndex(
       (g) => g.name === testConfig.columnGroups.default
     );
-    expect(component.selectedColumnGroup).toEqual(defaultGroup.name);
-    expect(component.columnsToDisplay).toEqual(defaultGroup.columns);
+    expect(component.selectedColumnGroupIndex).toEqual(defaultGroup);
+    expect(component.columnsToDisplay).toEqual(
+      testConfig.columnGroups[defaultGroup].columns
+    );
   });
 
   it("should set the clicked column group", () => {
     const clickedColumnGroup = testConfig.columnGroups.groups[0];
     component.columnGroupClick(clickedColumnGroup.name);
-    expect(component.selectedColumnGroup).toEqual(clickedColumnGroup.name);
+    expect(component.selectedColumnGroupIndex).toEqual(0);
     expect(component.columnsToDisplay).toEqual(clickedColumnGroup.columns);
   });
 
