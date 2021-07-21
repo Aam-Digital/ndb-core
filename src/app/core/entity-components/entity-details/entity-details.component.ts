@@ -142,6 +142,7 @@ export class EntityDetailsComponent {
           { duration: 8000 }
         );
         snackBarRef.onAction().subscribe(() => {
+          this.entity._rev = undefined;
           this.entityMapperService.save(this.entity, true);
           this.router.navigate([currentUrl]);
         });
