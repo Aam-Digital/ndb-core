@@ -2,10 +2,12 @@ import { Component } from "@angular/core";
 import { TranslationService } from "../translation.service";
 import { NavigationEnd, Router } from "@angular/router";
 import { filter } from "rxjs/operators";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Shows a dropdown-menu of available languages
  */
+@UntilDestroy()
 @Component({
   selector: "app-language-select",
   templateUrl: "./language-select.component.html",
@@ -28,7 +30,10 @@ export class LanguageSelectComponent {
   ) {
     this.siteRegionCode = translationService.currentRegionCode();
     this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
+      .pipe(
+        untilDestroyed(this),
+        filter((event) => event instanceof NavigationEnd)
+      )
       .subscribe(() => {
         this.currentUrl = this.router.url;
       });
