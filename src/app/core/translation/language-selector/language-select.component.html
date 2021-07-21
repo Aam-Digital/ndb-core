@@ -3,14 +3,14 @@
 </button>
 
 <mat-menu #menu>
-  <button
+  <a
     *ngFor="let lang of languageList"
-    (click)="select(lang.locale)"
+    [href]="'/' + lang.locale + currentUrl"
     mat-menu-item
   >
     <mat-icon
       [class]="'flag-clip flag-icon flag-icon-' + lang.regionCode"
     ></mat-icon>
     <span>{{ lang.regionCode }}</span>
-  </button>
+  </a>
 </mat-menu>

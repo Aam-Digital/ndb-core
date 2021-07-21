@@ -1,5 +1,7 @@
 import { Component } from "@angular/core";
 import { TranslationService } from "../translation.service";
+import { NavigationEnd, Router } from "@angular/router";
+import { filter } from "rxjs/operators";
 
 /**
  * Shows a dropdown-menu of available languages
@@ -15,8 +17,21 @@ export class LanguageSelectComponent {
    */
   siteRegionCode: string;
 
-  constructor(private translationService: TranslationService) {
+  /**
+   * The relative route the user is currently on
+   */
+  currentUrl = "";
+
+  constructor(
+    private translationService: TranslationService,
+    private router: Router
+  ) {
     this.siteRegionCode = translationService.currentRegionCode();
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.currentUrl = this.router.url;
+      });
   }
 
   /**
@@ -24,14 +39,5 @@ export class LanguageSelectComponent {
    */
   get languageList(): { locale: string; regionCode: string }[] {
     return this.translationService.availableLocales;
-  }
-
-  /**
-   * Selects a new language
-   * @param selectedLang The new locale to select. Must be a valid locale and
-   * <em>not</em> only the region-code
-   */
-  select(selectedLang: string) {
-    this.translationService.switchToLanguage(selectedLang);
   }
 }
