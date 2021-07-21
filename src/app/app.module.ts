@@ -85,7 +85,7 @@ import { TranslatableMatPaginator } from "./core/translation/TranslatableMatPagi
 @NgModule({
   declarations: [AppComponent],
   imports: [
-    ServiceWorkerModule.register("/ngsw-worker.js", {
+    ServiceWorkerModule.register("ngsw-worker.js", {
       enabled: environment.production,
     }),
     Angulartics2Module.forRoot({
