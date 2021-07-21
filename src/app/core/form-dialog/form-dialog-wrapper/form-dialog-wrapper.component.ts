@@ -1,3 +1,4 @@
+import { EntityConfigService } from './../../entity/entity-config.service';
 import {
   AfterViewInit,
   Component,
@@ -9,6 +10,10 @@ import {
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { Entity } from "../../entity/model/entity";
 import { MatDialogRef } from "@angular/material/dialog";
+import { getUrlWithoutParams } from "../../../utils/utils";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { Router } from "@angular/router";
+import { ConfirmationDialogService } from "app/core/confirmation-dialog/confirmation-dialog.service";
 
 /**
  * Use `<app-form-dialog-wrapper>` in your form templates to handle the saving and resetting of the edited entity.
@@ -32,6 +37,8 @@ import { MatDialogRef } from "@angular/material/dialog";
   styleUrls: ["./form-dialog-wrapper.component.scss"],
 })
 export class FormDialogWrapperComponent implements AfterViewInit {
+  [x: string]: any;
+
   /** entity to be edited */
   @Input() set entity(value: Entity) {
     this.originalEntity = Object.assign({}, value);
@@ -66,7 +73,10 @@ export class FormDialogWrapperComponent implements AfterViewInit {
 
   constructor(
     private entityMapper: EntityMapperService,
-    private matDialogRef: MatDialogRef<any>
+    private matDialogRef: MatDialogRef<any>,
+    private router: Router,
+    private snackBar: MatSnackBar,
+    private confirmationDialog: ConfirmationDialogService
   ) {}
 
   ngAfterViewInit() {
@@ -110,7 +120,34 @@ export class FormDialogWrapperComponent implements AfterViewInit {
   }
 
   public async delete() {
-    await this.entityMapper.remove<Entity>(this.entity);
-    this.onClose.emit(undefined);
+    const dialogRef = this.confirmationDialog.openDialog(
+      "Delete?",
+      "Are you sure you want to delete this object?"
+    );
+
+    dialogRef.afterClosed().subscribe(async(confirmed: any) => {
+      const currentUrl = getUrlWithoutParams(this.router);
+      if (confirmed) {
+        // this.entityMapper
+          // .remove<Entity>(this.entity)
+          // .then(() => this.delete())
+        await this.entityMapper.remove<Entity>(this.entity);
+          this.onClose.emit(undefined);
+          // .catch((err) => console.log("error", err));
+
+        const snackBarRef = this.snackBar.open(
+          'Deleted Entity "' + this.entity.getId() + '"',
+          "Undo",
+          { duration: 8000 }
+        );
+        snackBarRef.onAction().subscribe(() => {
+          this.entityMapperService.save(this.entity, true);
+          this.router.navigate([currentUrl]);
+        });
+      }
+    });
+
+
   }
+  
 }
