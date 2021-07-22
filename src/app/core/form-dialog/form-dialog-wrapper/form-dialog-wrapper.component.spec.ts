@@ -7,6 +7,7 @@ import { Angulartics2Module } from "angulartics2";
 import { RouterTestingModule } from "@angular/router/testing";
 import { MatDialogRef } from "@angular/material/dialog";
 import { Subject } from "rxjs";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
 
 describe("FormDialogWrapperComponent", () => {
   let component: FormDialogWrapperComponent;
@@ -23,6 +24,7 @@ describe("FormDialogWrapperComponent", () => {
           FormDialogModule,
           Angulartics2Module.forRoot(),
           RouterTestingModule,
+          MatSnackBarModule
         ],
         providers: [
           { provide: EntityMapperService, useValue: mockEntityMapper },
@@ -82,7 +84,7 @@ describe("FormDialogWrapperComponent", () => {
     const testEntity: any = { value: 1 };
     component.entity = testEntity;
     const transformedEntity: any = { value: 99 };
-    component.beforeSave = (entity) => Promise.resolve(transformedEntity);
+    component.beforeSave = () => Promise.resolve(transformedEntity);
     spyOn(component, "beforeSave").and.callThrough();
 
     await component.save();
