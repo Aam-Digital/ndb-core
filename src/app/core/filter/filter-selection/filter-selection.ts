@@ -41,7 +41,13 @@ export class FilterSelection<T> {
     valuesToMatchAsOptions: string[],
     attributeName: string
   ): FilterSelectionOption<TT>[] {
-    const options = [{ key: "", label: "All", filterFun: (e: TT) => true }];
+    const options = [
+      {
+        key: "",
+        label: $localize`:generic filter option showing all entries:All`,
+        filterFun: (e: TT) => true,
+      },
+    ];
 
     valuesToMatchAsOptions.forEach((k) => {
       if (k) {

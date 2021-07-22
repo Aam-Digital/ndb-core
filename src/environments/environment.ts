@@ -25,7 +25,7 @@
  */
 export const environment = {
   production: false,
-  appVersion: "2.52.4", // replaced automatically by semantic-release
+  appVersion: "2.53.0", // replaced automatically by semantic-release
   repositoryId: "Aam-Digital/ndb-core",
   remoteLoggingDsn: undefined, // only set for production mode in environment.prod.ts
 };

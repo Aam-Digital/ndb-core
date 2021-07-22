@@ -48,8 +48,8 @@ describe("UiComponent", () => {
       ]);
       mockSession.getSyncState.and.returnValue(new StateHandler<SyncState>());
 
-      const mockConfig = jasmine.createSpyObj(["getConfig"]);
-      mockConfig.configUpdated = new BehaviorSubject({});
+      const mockConfig = jasmine.createSpyObj<ConfigService>(["getConfig"]);
+      mockConfig.configUpdates = new BehaviorSubject({} as any);
 
       TestBed.configureTestingModule({
         declarations: [SearchComponent, PrimaryActionComponent, UiComponent],

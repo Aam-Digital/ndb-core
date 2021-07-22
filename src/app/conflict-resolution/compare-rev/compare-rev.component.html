@@ -9,7 +9,12 @@
 
   <div fxLayout="row" fxLayoutGap="10px">
     <div fxFlex="50">
-      <label for="conflictingDiff">Conflicting Entity:</label>
+      <label
+        for="conflictingDiff"
+        i18n="Signals that there are conflicting database-entities"
+      >
+        Conflicting Entity:
+      </label>
       <textarea
         id="conflictingDiff"
         cdkTextareaAutosize
@@ -22,6 +27,7 @@
         mat-raised-button
         class="resolution-btn"
         (click)="resolveByManualEdit(diffs)"
+        i18n
       >
         Choose conflicting version
       </button>
@@ -40,13 +46,16 @@
         mat-raised-button
         class="resolution-btn"
         (click)="resolveByManualEdit(diffsCustom)"
+        i18n
       >
         Save manually resolved record
       </button>
     </div>
 
     <div fxFlex="50">
-      <label for="currentDiff">Current Entity:</label>
+      <label for="currentDiff" i18n="A currently selected entity">
+        Current Entity:
+      </label>
       <textarea
         id="currentDiff"
         cdkTextareaAutosize
@@ -59,6 +68,10 @@
         mat-raised-button
         class="resolution-btn"
         (click)="resolveByDelete(revDoc)"
+        i18n="
+          Choose a current version between several conflicting versions of
+          database entries
+        "
       >
         Choose current version
       </button>

@@ -30,6 +30,7 @@
           <mat-form-field>
             <input
               matInput
+              i18n-placeholder="Date input|Placeholder for a date-input"
               placeholder="Date"
               name="date"
               [(ngModel)]="entity.date"
@@ -45,7 +46,7 @@
 
         <div fxFlex>
           <mat-form-field>
-            <mat-label> Status </mat-label>
+            <mat-label i18n="Status of a note"> Status </mat-label>
             <mat-select name="followup" [(ngModel)]="entity.warningLevel">
               <mat-option
                 *appConfigurableEnum="let warningLevel of 'warning-levels'"
@@ -61,6 +62,7 @@
         <div fxFlex>
           <mat-form-field class="input-medium">
             <mat-select
+              i18n-placeholder="Type of Interaction when adding event"
               placeholder="Type of Interaction"
               name="type"
               [(ngModel)]="entity.category"
@@ -82,11 +84,12 @@
           entityType="User"
           (selectionChange)="entityForm.form.markAsDirty()"
           [(selection)]="entity.authors"
+          i18n-placeholder="placeholder when adding multiple authors"
           placeholder="Add Author..."
+          i18n-label="Authors of a note"
           label="Authors"
         >
         </app-entity-select>
-
       </div>
     </div>
 
@@ -97,6 +100,10 @@
           <mat-form-field class="input-medium">
             <input
               matInput
+              i18n-placeholder="
+                Placeholder|Placeholder informing that this is the Topic/Summary
+                of the note
+              "
               placeholder="Topic / Summary"
               name="subject"
               type="text"
@@ -110,6 +117,10 @@
         <mat-form-field class="input-max">
           <textarea
             matInput
+            i18n-placeholder="
+              Placeholder|Placeholder informing that this is textarea the actual
+              note can be entered into
+            "
             placeholder="Notes"
             name="notes"
             [(ngModel)]="entity.text"
@@ -121,7 +132,6 @@
     </div>
 
     <div fxLayout="column" fxLayoutGap="20px">
-
       <app-entity-select
         entityType="Child"
         [(selection)]="entity.children"
@@ -129,12 +139,17 @@
         [additionalFilter]="filterInactiveChildren"
         [showEntities]="!entity.category.isMeeting"
         label="Participants"
-        placeholder="Add participant ...">
+        i18n-label="Participants of a note"
+        placeholder="Add participant ..."
+        i18n-placeholder="Add participants of a note"
+      >
         <!-- Header for autocomplete -->
-        <mat-option (click)="toggleIncludeInactiveChildren()">
+        <mat-option>
           <mat-checkbox
             labelPosition="before"
-            [checked]="includeInactiveChildren">
+            (change)="toggleIncludeInactiveChildren()"
+            [checked]="includeInactiveChildren"
+          >
             Include Inactive Children
           </mat-checkbox>
         </mat-option>
@@ -147,7 +162,7 @@
           [attendance]="entity.getAttendance(childId)"
           (change)="entityForm.form.markAsDirty()"
           (remove)="entity.removeChild(childId); entityForm.form.markAsDirty()"
-          >
+        >
         </app-child-meeting-note-attendance>
       </div>
 
@@ -156,13 +171,13 @@
           entityType="School"
           [(selection)]="entity.schools"
           (selectionChange)="entityForm.form.markAsDirty()"
+          i18n-label="Groups that belong to a note"
           label="Groups"
+          i18n-placeholder="Add a group to a note"
           placeholder="Add group ..."
         >
         </app-entity-select>
       </div>
-
     </div>
-
   </form>
 </app-form-dialog-wrapper>
