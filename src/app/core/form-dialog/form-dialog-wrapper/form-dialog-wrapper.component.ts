@@ -1,4 +1,3 @@
-import { EntityConfigService } from './../../entity/entity-config.service';
 import {
   AfterViewInit,
   Component,
@@ -125,11 +124,11 @@ export class FormDialogWrapperComponent implements AfterViewInit {
       "Are you sure you want to delete this object?"
     );
 
-    dialogRef.afterClosed().subscribe(async(confirmed: any) => {
+    dialogRef.afterClosed().subscribe(async (confirmed: any) => {
       const currentUrl = getUrlWithoutParams(this.router);
       if (confirmed) {
         await this.entityMapper.remove<Entity>(this.entity);
-          this.onClose.emit(undefined);
+        this.onClose.emit(undefined);
 
         const snackBarRef = this.snackBar.open(
           'Deleted Entity "' + this.entity.getId() + '"',
@@ -142,8 +141,5 @@ export class FormDialogWrapperComponent implements AfterViewInit {
         });
       }
     });
-
-
   }
-  
 }
