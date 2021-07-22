@@ -26,10 +26,21 @@
     <div fxFlex="grow">
       <h3>{{ entity?.name }}</h3>
       <p><span class="fa fa-phone"></span> {{ entity?.phone }}</p>
-      <p>
-        <app-school-block [entityId]="entity?.schoolId" [linkDisabled]="true"></app-school-block>,
-        class {{ entity?.schoolClass }}
-      </p>
+      <ng-container>
+        <p>
+          <app-school-block [entityId]="entity?.schoolId"></app-school-block>,
+        </p>
+        <p>
+          <app-school-block
+            [entityId]="entity?.schoolId"
+            [linkDisabled]="true"
+          ></app-school-block
+          >,
+          <ng-container i18n="The class a child is attending|e.g. 'class 8'">
+            class {{ entity?.schoolClass }}
+          </ng-container>
+        </p>
+      </ng-container>
     </div>
   </div>
 </div>

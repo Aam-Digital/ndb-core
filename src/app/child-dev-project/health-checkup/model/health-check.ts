@@ -27,11 +27,12 @@ import { WarningLevel } from "../../../core/entity/model/warning-level";
 @DatabaseEntity("HealthCheck")
 export class HealthCheck extends Entity {
   @DatabaseField() child: string;
-  @DatabaseField({ label: "Date" }) date: Date;
+  @DatabaseField({ label: $localize`:Label for date of a health check:Date` })
+  date: Date;
 
   /** height measurement in cm **/
   @DatabaseField({
-    label: "Height [cm]",
+    label: $localize`:Label for height in cm of a health check:Height [cm]`,
     viewComponent: "DisplayUnit",
     additional: "cm",
   })
@@ -39,7 +40,7 @@ export class HealthCheck extends Entity {
 
   /** weight measurement in kg **/
   @DatabaseField({
-    label: "Weight [kg]",
+    label: $localize`:Label for weight in kg of a health check:Weight [kg]`,
     viewComponent: "DisplayUnit",
     additional: "kg",
   })

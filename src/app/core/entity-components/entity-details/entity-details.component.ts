@@ -124,8 +124,8 @@ export class EntityDetailsComponent {
 
   removeEntity() {
     const dialogRef = this.confirmationDialog.openDialog(
-      "Delete?",
-      "Are you sure you want to delete this " + this.config.entity + " ?"
+      $localize`:Delete confirmation title:Delete?`,
+      $localize`:Delete confirmation text:Are you sure you want to delete this ${this.config.entity} ?`
     );
 
     dialogRef.afterClosed().subscribe((confirmed) => {
@@ -137,7 +137,7 @@ export class EntityDetailsComponent {
           .catch((err) => console.log("error", err));
 
         const snackBarRef = this.snackBar.open(
-          'Deleted Entity "' + this.entity.getId() + '"',
+          $localize`:Deleted Entity information:Deleted Entity ${this.entity.getId()}`,
           "Undo",
           { duration: 8000 }
         );

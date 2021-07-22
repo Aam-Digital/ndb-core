@@ -142,7 +142,7 @@ export class SyncedSessionService extends SessionService {
             this._localSession.logout();
             this._localSession.loginState.setState(LoginState.LOGIN_FAILED);
             this._alertService.addDanger(
-              "Your password was changed recently. Please retry with your new password!"
+              $localize`Your password was changed recently. Please retry with your new password!`
             );
           }
         }

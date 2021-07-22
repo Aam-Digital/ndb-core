@@ -4,7 +4,7 @@
 # >> docker build -f build/Dockerfile -t aam/digital:latest .
 # >> docker run -p=80:80 aam/digital:latest aam-digital
 # >> docker kill aam-digital
-FROM node:15.11.0-alpine3.12 as builder
+FROM node:15.11.0-alpine3.13 as builder
 WORKDIR /app
 
 COPY package*.json ./
@@ -14,7 +14,7 @@ RUN npm ci --no-progress
 RUN $(npm bin)/ng version
 
 COPY . .
-RUN npm run build
+RUN npm run build-localized
 
 # When set to true, tests are run and coverage will be uploaded to CodeClimate
 ARG UPLOAD_COVERAGE=false
@@ -50,9 +50,14 @@ RUN if [ "$UPLOAD_COVERAGE" = true ] ; then ./cc-test-reporter after-build --deb
 FROM nginx:1.21-alpine
 COPY ./build/default.conf /etc/nginx/templates/default.conf
 COPY --from=builder /app/dist/ /usr/share/nginx/html
+# The port on which the app will run in the Docker container
 ENV PORT=80
+# The url to the webdav server
 ENV WEBDAV_URL="http://localhost"
+# The url to the CouchDB database
 ENV COUCHDB_URL="http://localhost"
+# The language which should be loaded on default options are "en-US" and "de"
+ENV DEFAULT_LANGUAGE="en-US"
 # variables are inserted into the nginx config
-CMD envsubst '$$PORT $$WEBDAV_URL $$COUCHDB_URL' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
+CMD envsubst '$$PORT $$WEBDAV_URL $$COUCHDB_URL $$DEFAULT_LANGUAGE' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
     nginx -g 'daemon off;'
