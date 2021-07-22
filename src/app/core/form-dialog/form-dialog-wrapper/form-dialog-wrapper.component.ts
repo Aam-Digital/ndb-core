@@ -36,8 +36,6 @@ import { ConfirmationDialogService } from "app/core/confirmation-dialog/confirma
   styleUrls: ["./form-dialog-wrapper.component.scss"],
 })
 export class FormDialogWrapperComponent implements AfterViewInit {
-  [x: string]: any;
-
   /** entity to be edited */
   @Input() set entity(value: Entity) {
     this.originalEntity = Object.assign({}, value);
@@ -136,7 +134,7 @@ export class FormDialogWrapperComponent implements AfterViewInit {
           { duration: 8000 }
         );
         snackBarRef.onAction().subscribe(() => {
-          this.entityMapperService.save(this.entity, true);
+          this.entityMapper.save(this.entity, true);
           this.router.navigate([currentUrl]);
         });
       }
