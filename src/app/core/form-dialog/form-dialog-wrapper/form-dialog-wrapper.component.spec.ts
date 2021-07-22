@@ -24,7 +24,7 @@ describe("FormDialogWrapperComponent", () => {
           FormDialogModule,
           Angulartics2Module.forRoot(),
           RouterTestingModule,
-          MatSnackBarModule
+          MatSnackBarModule,
         ],
         providers: [
           { provide: EntityMapperService, useValue: mockEntityMapper },
