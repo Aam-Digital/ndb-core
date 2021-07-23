@@ -14,6 +14,10 @@ RUN npm ci --no-progress
 RUN $(npm bin)/ng version
 
 COPY . .
+
+ARG APP_VERSION="UNKNOWN"
+RUN sed -i "s/appVersion: \".*\"/appVersion: \"$APP_VERSION\"/g" src/environments/environment*.ts
+
 RUN npm run build-localized
 
 # When set to true, tests are run and coverage will be uploaded to CodeClimate
