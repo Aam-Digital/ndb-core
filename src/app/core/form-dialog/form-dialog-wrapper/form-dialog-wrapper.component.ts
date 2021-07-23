@@ -13,6 +13,7 @@ import { getUrlWithoutParams } from "../../../utils/utils";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { ConfirmationDialogService } from "app/core/confirmation-dialog/confirmation-dialog.service";
+import { OperationType } from "../../permissions/entity-permissions.service";
 
 /**
  * Use `<app-form-dialog-wrapper>` in your form templates to handle the saving and resetting of the edited entity.
@@ -36,6 +37,8 @@ import { ConfirmationDialogService } from "app/core/confirmation-dialog/confirma
   styleUrls: ["./form-dialog-wrapper.component.scss"],
 })
 export class FormDialogWrapperComponent implements AfterViewInit {
+  readonly operationType = OperationType;
+
   /** entity to be edited */
   @Input() set entity(value: Entity) {
     this.originalEntity = Object.assign({}, value);
@@ -129,7 +132,7 @@ export class FormDialogWrapperComponent implements AfterViewInit {
         this.onClose.emit(undefined);
 
         const snackBarRef = this.snackBar.open(
-          'Deleted Entity "' + this.entity.getId() + '"',
+          $localize`:Deleted Entity information:Deleted Entity ${this.entity.toString()}`,
           "Undo",
           { duration: 8000 }
         );
