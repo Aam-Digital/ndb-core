@@ -12,8 +12,8 @@ import { MatDialogRef } from "@angular/material/dialog";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
-import { ConfirmationDialogService } from "app/core/confirmation-dialog/confirmation-dialog.service";
 import { OperationType } from "../../permissions/entity-permissions.service";
+import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 
 /**
  * Use `<app-form-dialog-wrapper>` in your form templates to handle the saving and resetting of the edited entity.

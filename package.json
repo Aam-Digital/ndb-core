@@ -14,7 +14,7 @@
     "compodoc": "npx compodoc -c doc/compodoc_sources/.compodocrc.json",
     "postinstall": "ngcc && node patch-webpack.js",
     "docs:json": "compodoc -p ./tsconfig.json -e json -d .",
-    "storybook": "npm run docs:json && start-storybook -p 6006",
+    "storybook": "start-storybook -p 6006",
     "build-storybook": "npm run docs:json && build-storybook",
     "extract-i18n": "ng extract-i18n --output-path ./src/locale/ && xliffmerge --profile xliffmerge.json"
   },
