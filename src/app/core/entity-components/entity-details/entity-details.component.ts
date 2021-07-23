@@ -137,7 +137,7 @@ export class EntityDetailsComponent {
           .catch((err) => console.log("error", err));
 
         const snackBarRef = this.snackBar.open(
-          $localize`:Deleted Entity information:Deleted Entity ${this.entity.getId()}`,
+          $localize`:Deleted Entity information:Deleted Entity ${this.entity.toString()}`,
           "Undo",
           { duration: 8000 }
         );
