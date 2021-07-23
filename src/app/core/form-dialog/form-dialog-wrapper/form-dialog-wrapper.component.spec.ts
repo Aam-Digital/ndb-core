@@ -8,6 +8,8 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { MatDialogRef } from "@angular/material/dialog";
 import { Subject } from "rxjs";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { User } from "../../user/user";
+import { SessionService } from "../../session/session-service/session.service";
 
 describe("FormDialogWrapperComponent", () => {
   let component: FormDialogWrapperComponent;
@@ -29,6 +31,10 @@ describe("FormDialogWrapperComponent", () => {
         providers: [
           { provide: EntityMapperService, useValue: mockEntityMapper },
           { provide: MatDialogRef, useValue: {} },
+          {
+            provide: SessionService,
+            useValue: { getCurrentUser: () => new User() },
+          },
         ],
       }).compileComponents();
     })
