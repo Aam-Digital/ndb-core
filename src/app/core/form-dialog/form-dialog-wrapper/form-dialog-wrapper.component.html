@@ -28,4 +28,20 @@
   >
     Cancel
   </button>
+  <button
+    style="margin-left: 8px"
+    mat-stroked-button
+    color="warn"
+    (click)="delete()"
+    angulartics2On="click"
+    angularticsCategory="UserAction"
+    angularticsAction="form_dialog_delete"
+    i18n="Generic delete button"
+    *appDisabledEntityOperation="{
+      entity: entity?.getConstructor(),
+      operation: operationType.DELETE
+    }"
+  >
+    Delete
+  </button>
 </mat-dialog-actions>

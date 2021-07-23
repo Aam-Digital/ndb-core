@@ -971,5 +971,13 @@ export const defaultJsonConfig = {
         }
       },
     ]
+  },
+  "entity:Note": {
+    permissions: {
+    }
+  },
+  "entity:EventNote": {
+    permission: {
+    }
   }
 }

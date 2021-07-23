@@ -12,6 +12,8 @@ import { MatDialogRef } from "@angular/material/dialog";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { User } from "../../../core/user/user";
 
 function generateTestNote(forChildren: Child[]) {
   const testNote = Note.create(new Date(), "test note");
@@ -62,6 +64,10 @@ describe("NoteDetailsComponent", () => {
         { provide: MatDialogRef, useValue: dialogRefMock },
         { provide: EntityMapperService, useValue: mockEntityMapper() },
         { provide: ChildrenService, useValue: mockChildrenService },
+        {
+          provide: SessionService,
+          useValue: { getCurrentUser: () => new User() },
+        },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(NoteDetailsComponent);
