@@ -4,9 +4,9 @@ import { BackupService } from "./backup.service";
 import { Database } from "../../database/database";
 import { PouchDatabase } from "../../database/pouch-database";
 import { ConfigurableEnumValue } from "../../configurable-enum/configurable-enum.interface";
-import { Entity } from "../../entity/entity";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
+import { Entity } from "../../entity/model/entity";
 
 describe("BackupService", () => {
   let db: PouchDatabase;
