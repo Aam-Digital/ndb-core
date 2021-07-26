@@ -57,7 +57,7 @@
         ></mat-icon>
         <span fxHide.lt-md="true" i18n="Add New Button"> Add New </span>
       </button>
-      <app-export-data
+      <app-export-data-button
         [data]="allEntities"
         format="csv"
         [filename]="listName.replace(' ', '')"
@@ -75,7 +75,7 @@
         <span fxHide.lt-md="true" i18n="Download list contents as CSV">
           Download CSV
         </span>
-      </app-export-data>
+      </app-export-data-button>
     </div>
   </div>
 

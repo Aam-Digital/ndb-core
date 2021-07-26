@@ -3,10 +3,6 @@ import { TestBed } from "@angular/core/testing";
 import { BackupService } from "./backup.service";
 import { Database } from "../../database/database";
 import { PouchDatabase } from "../../database/pouch-database";
-import { ConfigurableEnumValue } from "../../configurable-enum/configurable-enum.interface";
-import { DatabaseField } from "../../entity/database-field.decorator";
-import { DatabaseEntity } from "../../entity/database-entity.decorator";
-import { Entity } from "../../entity/model/entity";
 
 describe("BackupService", () => {
   let db: PouchDatabase;
@@ -147,101 +143,4 @@ describe("BackupService", () => {
     delete x._rev;
     return x;
   }
-
-  it("exportJson creates the correct json object", () => {
-    class TestClass {
-      propertyOne;
-      propertyTwo;
-    }
-    const test = new TestClass();
-    test.propertyOne = "Hello";
-    test.propertyTwo = "World";
-    const expected = JSON.stringify({
-      propertyOne: "Hello",
-      propertyTwo: "World",
-    });
-    const result = service.createJson([test]);
-    expect(result).toEqual(expected);
-  });
-
-  it("exportJson transforms an json array correctly", () => {
-    class TestClass {
-      propertyOne;
-      propertyTwo;
-    }
-    const test = new TestClass();
-    test.propertyOne = "Hello";
-    test.propertyTwo = "World";
-    let expected = JSON.stringify({
-      propertyOne: "Hello",
-      propertyTwo: "World",
-    });
-    expected += BackupService.SEPARATOR_ROW;
-    expected += JSON.stringify({ propertyOne: "Hello", propertyTwo: "World" });
-    const result = service.createJson([test, test]);
-    expect(result).toEqual(expected);
-  });
-
-  it("should create a csv string correctly", () => {
-    class TestClass {
-      _id;
-      _rev;
-      propOne;
-      propTwo;
-    }
-    const test = new TestClass();
-    test._id = 1;
-    test._rev = 2;
-    test.propOne = "first";
-    test.propTwo = "second";
-    const expected =
-      '"_id","_rev","propOne","propTwo"\r\n"1","2","first","second"';
-    const result = service.createCsv([test]);
-    expect(result).toEqual(expected);
-  });
-
-  it("should create a csv string correctly with multiple objects", () => {
-    class TestClass {
-      _id;
-      _rev;
-      propOne;
-      propTwo;
-    }
-    const test = new TestClass();
-    test._id = 1;
-    test._rev = 2;
-    test.propOne = "first";
-    test.propTwo = "second";
-    const expected =
-      '"_id","_rev","propOne","propTwo"\r\n"1","2","first","second"\r\n"1","2","first","second"';
-    const result = service.createCsv([test, test]);
-    expect(result).toEqual(expected);
-  });
-
-  it("getCsvExport should transform object properties to their label for export", async () => {
-    const testEnumValue: ConfigurableEnumValue = {
-      id: "ID VALUE",
-      label: "label value",
-    };
-    const testDate = "2020-01-30";
-
-    @DatabaseEntity("TestEntity")
-    class TestEntity extends Entity {
-      @DatabaseField() enumProperty: ConfigurableEnumValue;
-      @DatabaseField() dateProperty: Date;
-    }
-
-    const testEntity = new TestEntity();
-    testEntity.enumProperty = testEnumValue;
-    testEntity.dateProperty = new Date(testDate);
-
-    const csvExport = await service.createCsv([testEntity]);
-
-    const rows = csvExport.split(BackupService.SEPARATOR_ROW);
-    expect(rows).toHaveSize(1 + 1); // includes 1 header line
-    const columnValues = rows[1].split(BackupService.SEPARATOR_COL);
-    expect(columnValues).toHaveSize(2 + 1);
-    expect(columnValues).toContain('"' + testEnumValue.label + '"');
-    expect(columnValues).toContain(new Date(testDate).toISOString());
-  });
 });
