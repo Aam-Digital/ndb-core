@@ -40,7 +40,7 @@ import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
 import { AdminModule } from "./core/admin/admin.module";
 import { EntityModule } from "./core/entity/entity.module";
-import { HelpModule } from "./core/help/help.module";
+import { MarkdownPageModule } from "./core/markdown-page/markdown-page.module";
 import { DemoDataModule } from "./core/demo-data/demo-data.module";
 import { LoggingErrorHandler } from "./core/logging/logging-error-handler";
 import { DemoChildGenerator } from "./child-dev-project/children/demo-data-generators/demo-child-generator.service";
@@ -116,7 +116,7 @@ import { TranslatableMatPaginator } from "./core/translation/TranslatableMatPagi
     SchoolsModule,
     AdminModule,
     FontAwesomeIconsModule,
-    HelpModule,
+    MarkdownPageModule,
     EntitySubrecordModule,
     EntityListModule,
     EntityDetailsModule,
