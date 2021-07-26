@@ -64,14 +64,14 @@ export class BackupService {
     // create list of row descriptions for the csv string
     const allFields = new Set();
     const exportableData = [];
-    
+
     data.forEach((element: any) => {
       const exportableObj = {};
       Object.keys(element).forEach((key: string) => {
-        let res = entityListSortingAccessor(element, key);
-        
+        const res = entityListSortingAccessor(element, key);
+
         if (res.toString().match(/\[object.*\]/) === null) {
-          allFields.add(key)
+          allFields.add(key);
           exportableObj[key] = res;
         }
       });
