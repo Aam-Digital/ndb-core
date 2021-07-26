@@ -15,15 +15,21 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component } from "@angular/core";
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { MarkdownPageComponent } from "./markdown-page/markdown-page.component";
+import { HttpClient, HttpClientModule } from "@angular/common/http";
+import { MarkdownModule } from "ngx-markdown";
 
 /**
- * Display markdown formatted help that is dynamically loaded from a file in the assets folder.
- * Displayed file: assets/How_To.md
+ * Display any information contained in a markdown file.
  */
-@Component({
-  selector: "app-help",
-  templateUrl: "./how-to.component.html",
-  styleUrls: ["./how-to.component.scss"],
+@NgModule({
+  declarations: [MarkdownPageComponent],
+  imports: [
+    CommonModule,
+    HttpClientModule,
+    MarkdownModule.forRoot({ loader: HttpClient }),
+  ],
 })
-export class HowToComponent {}
+export class MarkdownPageModule {}
