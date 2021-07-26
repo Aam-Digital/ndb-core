@@ -3,6 +3,10 @@ import { TestBed } from "@angular/core/testing";
 import { BackupService } from "./backup.service";
 import { Database } from "../../database/database";
 import { PouchDatabase } from "../../database/pouch-database";
+import { ConfigurableEnumValue } from "../../configurable-enum/configurable-enum.interface";
+import { Entity } from "../../entity/entity";
+import { DatabaseField } from "../../entity/database-field.decorator";
+import { DatabaseEntity } from "../../entity/database-entity.decorator";
 
 describe("BackupService", () => {
   let db: PouchDatabase;
@@ -212,5 +216,32 @@ describe("BackupService", () => {
       '"_id","_rev","propOne","propTwo"\r\n"1","2","first","second"\r\n"1","2","first","second"';
     const result = service.createCsv([test, test]);
     expect(result).toEqual(expected);
+  });
+
+  it("getCsvExport should transform object properties to their label for export", async () => {
+    const testEnumValue: ConfigurableEnumValue = {
+      id: "ID VALUE",
+      label: "label value",
+    };
+    const testDate = "2020-01-30";
+
+    @DatabaseEntity("TestEntity")
+    class TestEntity extends Entity {
+      @DatabaseField() enumProperty: ConfigurableEnumValue;
+      @DatabaseField() dateProperty: Date;
+    }
+
+    const testEntity = new TestEntity();
+    testEntity.enumProperty = testEnumValue;
+    testEntity.dateProperty = new Date(testDate);
+
+    const csvExport = await service.createCsv([testEntity]);
+
+    const rows = csvExport.split(BackupService.SEPARATOR_ROW);
+    expect(rows).toHaveSize(1 + 1); // includes 1 header line
+    const columnValues = rows[1].split(BackupService.SEPARATOR_COL);
+    expect(columnValues).toHaveSize(2 + 1);
+    expect(columnValues).toContain('"' + testEnumValue.label + '"');
+    expect(columnValues).toContain(new Date(testDate).toISOString());
   });
 });
