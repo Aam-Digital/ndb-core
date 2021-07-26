@@ -9,7 +9,7 @@ import { BehaviorSubject } from "rxjs";
 })
 export class ChildPhotoService {
   public static getImageFromAssets(photoFile: string): SafeUrl {
-    if (!photoFile || photoFile.trim() === "") {
+    if (typeof photoFile !== "string" || photoFile.trim() === "") {
       return ChildPhotoService.getDefaultImage();
     }
     return ChildPhotoService.generatePhotoPath(photoFile);
@@ -67,7 +67,7 @@ export class ChildPhotoService {
   /**
    * Load the image for the given child asynchronously, immediately returning an Observable
    * that initially emits the static image and later resolves to the image from the cloud service if one exists.
-   * This allows to immediately display a proper placeholder while the loading may take some time.
+   * This allows to immediately display a proper label while the loading may take some time.
    * @param child The Child instance for which the photo should be loaded.
    */
   public getImageAsyncObservable(child: Child): BehaviorSubject<SafeUrl> {

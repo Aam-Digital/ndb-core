@@ -1,9 +1,8 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, Input, OnInit, ViewChild } from "@angular/core";
 import { Note } from "../model/note";
 import { MediaObserver } from "@angular/flex-layout";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { ActivatedRoute } from "@angular/router";
-import { WarningLevel } from "../../warning-level";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FilterSelectionOption } from "../../../core/filter/filter-selection/filter-selection";
 import { SessionService } from "../../../core/session/session-service/session.service";
@@ -11,11 +10,11 @@ import { FormDialogService } from "../../../core/form-dialog/form-dialog.service
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
-import { applyUpdate } from "../../../core/entity/entity-update";
+import { applyUpdate } from "../../../core/entity/model/entity-update";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
-import { Input } from "@angular/core";
 import { EventNote } from "../../attendance/model/event-note";
-import { EntityConstructor } from "../../../core/entity/entity";
+import { EntityConstructor } from "../../../core/entity/model/entity";
+import { WarningLevel } from "../../../core/entity/model/warning-level";
 
 /**
  * additional config specifically for NotesManagerComponent
@@ -47,31 +46,31 @@ export class NotesManagerComponent implements OnInit {
   private statusFS: FilterSelectionOption<Note>[] = [
     {
       key: "urgent",
-      label: "Urgent",
-      filterFun: (n: Note) => n.warningLevel === WarningLevel.URGENT,
+      label: $localize`:Filter-option for notes:Urgent`,
+      filterFun: (n: Note) => n.getWarningLevel() === WarningLevel.URGENT,
     },
     {
       key: "follow-up",
-      label: "Needs Follow-Up",
+      label: $localize`:Filter-option for notes:Needs Follow-Up`,
       filterFun: (n: Note) =>
-        n.warningLevel === WarningLevel.WARNING ||
-        n.warningLevel === WarningLevel.URGENT,
+        n.getWarningLevel() === WarningLevel.URGENT ||
+        n.getWarningLevel() === WarningLevel.WARNING,
     },
-    { key: "", label: "All", filterFun: () => true },
+    { key: "", label: $localize`All`, filterFun: () => true },
   ];
 
   private dateFS: FilterSelectionOption<Note>[] = [
     {
       key: "current-week",
-      label: "This Week",
+      label: $localize`:Filter-option for notes:This Week`,
       filterFun: (n: Note) => n.date > this.getPreviousSunday(0),
     },
     {
       key: "last-week",
-      label: "Since Last Week",
+      label: $localize`:Filter-option for notes:Since Last Week`,
       filterFun: (n: Note) => n.date > this.getPreviousSunday(1),
     },
-    { key: "", label: "All", filterFun: () => true },
+    { key: "", label: $localize`All`, filterFun: () => true },
   ];
 
   constructor(

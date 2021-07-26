@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Database } from "../../database/database";
 import { User } from "../../user/user";
 import { Papa } from "ngx-papaparse";
-import { entityListSortingAccessor } from "app/core/entity-components/entity-list/sorting-accessor";
+import { entityListSortingAccessor } from "../../entity-components/entity-subrecord/entity-subrecord/sorting-accessor";
 
 /**
  * Create and load backups of the database.

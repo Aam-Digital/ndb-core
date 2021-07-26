@@ -13,11 +13,11 @@
       </span>
     </mat-card-title>
     <mat-card-subtitle
-      [matTooltip]="
-        'includes children without a note ' +
-        (fromBeginningOfWeek ? 'since beginning of week ' : '') +
-        (sinceDays > 0 ? 'within the last ' + sinceDays + ' days' : '')
+      i18n="
+        Subtitle|Subtitle informing the user that these are the children without
+        recent reports
       "
+      [matTooltip]="tooltip"
     >
       Children
       <span class="subtitle-highlight">without</span>
@@ -33,15 +33,28 @@
         width="100%"
       >
         <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header
+            i18n="Name of a child"
+            scope="col"
+          >
+            Name
+          </th>
           <td mat-cell *matCellDef="let childNoteInfo">
             <app-child-block
               [entityId]="childNoteInfo.childId"
             ></app-child-block>
           </td>
         </ng-container>
-        <ng-container matColumnDef="daysSinceLastNote">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Days passed</th>
+        <ng-container
+          matColumnDef="daysSinceLastNote"
+          i18n="Amount of days back|Format like 'Days passed > 5 days'"
+        >
+          <th mat-header-cell *matHeaderCellDef mat-sort-header scope="col">
+            Days passed
+          </th>
           <td
             mat-cell
             *matCellDef="let childNoteInfo"

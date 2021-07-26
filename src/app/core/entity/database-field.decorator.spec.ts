@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from "./entity";
+import { Entity } from "./model/entity";
 import { DatabaseField } from "./database-field.decorator";
 
 class TestClass extends Entity {

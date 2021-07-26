@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { Child } from "../../model/child";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { ColumnCellConfig } from "../../../../core/entity-components/entity-list/EntityListConfig";
+import { ViewPropertyConfig } from "../../../../core/entity-components/entity-list/EntityListConfig";
 import { ActivityAttendance } from "../../../attendance/model/activity-attendance";
 import { AttendanceService } from "../../../attendance/attendance.service";
 import moment from "moment";
@@ -56,7 +56,7 @@ export class RecentAttendanceBlocksComponent implements OnInitDynamicComponent {
     });
   }
 
-  async onInitFromDynamicConfig(config: ColumnCellConfig) {
+  async onInitFromDynamicConfig(config: ViewPropertyConfig) {
     this.filterByActivityType = config.config.filterByActivityType;
 
     if (config.hasOwnProperty("entity")) {

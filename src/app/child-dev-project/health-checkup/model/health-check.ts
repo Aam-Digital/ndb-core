@@ -15,10 +15,10 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from "../../../core/entity/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import { WarningLevel } from "../../warning-level";
+import { WarningLevel } from "../../../core/entity/model/warning-level";
 
 /**
  * Model Class for the Health Checks that are taken for a Child.
@@ -27,19 +27,30 @@ import { WarningLevel } from "../../warning-level";
 @DatabaseEntity("HealthCheck")
 export class HealthCheck extends Entity {
   @DatabaseField() child: string;
-  @DatabaseField() date: Date;
+  @DatabaseField({ label: $localize`:Label for date of a health check:Date` })
+  date: Date;
 
   /** height measurement in cm **/
-  @DatabaseField() height: number;
+  @DatabaseField({
+    label: $localize`:Label for height in cm of a health check:Height [cm]`,
+    viewComponent: "DisplayUnit",
+    additional: "cm",
+  })
+  height: number;
 
   /** weight measurement in kg **/
-  @DatabaseField() weight: number;
+  @DatabaseField({
+    label: $localize`:Label for weight in kg of a health check:Weight [kg]`,
+    viewComponent: "DisplayUnit",
+    additional: "kg",
+  })
+  weight: number;
 
   get bmi(): number {
     return this.weight / ((this.height / 100) * (this.height / 100));
   }
 
-  getWarningLevel() {
+  getWarningLevel(): WarningLevel {
     if (this.bmi <= 16 || this.bmi >= 30) {
       return WarningLevel.URGENT;
     } else if (this.bmi >= 18 && this.bmi <= 25) {

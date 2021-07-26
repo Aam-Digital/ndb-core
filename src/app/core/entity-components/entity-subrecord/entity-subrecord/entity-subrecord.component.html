@@ -5,146 +5,53 @@
     matSort
     class="mat-elevation-z1 subrecord-table"
   >
-    <ng-container *ngFor="let col of columns" [matColumnDef]="col.name">
+    <ng-container *ngFor="let col of _columns" [matColumnDef]="col.id">
       <th
         mat-header-cell
         mat-sort-header
         *matHeaderCellDef
         [matTooltip]="col.tooltip"
         [matTooltipDisabled]="!col.tooltip"
+        [disabled]="col.noSorting"
       >
         {{ col.label }}
       </th>
       <td
         mat-cell
-        *matCellDef="let rec"
-        (click)="showRecord(rec)"
-        [ngClass]="{ 'table-link': detailsComponent !== undefined }"
+        *matCellDef="let row"
+        (click)="rowClick(row)"
+        style="cursor: pointer"
       >
-        <div
-          *ngIf="
-            isReadonlyInputType(col.inputType) ||
-            !recordsEditing.get(rec.getId())
-          "
-          [ngStyle]="col.styleBuilder ? col.styleBuilder(rec[col.name]) : {}"
-          [ngClass]="{ 'table-show-number': col.inputType === 'number' }"
+        <ng-template
+          *ngIf="!row.formGroup || row.formGroup.disabled || !col.edit"
+          [appDynamicComponent]="{
+            component: col.view,
+            config: {
+              id: col.id,
+              entity: row.record,
+              config: col.additional
+            }
+          }"
+        ></ng-template>
+        <ng-template
+          *ngIf="row.formGroup?.enabled && col.edit"
+          [appDynamicComponent]="{
+            component: col.edit,
+            config: {
+              formFieldConfig: col,
+              propertySchema: row.record.getSchema().get(col.id),
+              formControl: row.formGroup.get(col.id)
+            }
+          }"
         >
-          {{ col.valueFunction(rec) }}
-        </div>
-
-        <div
-          *ngIf="
-            recordsEditing.get(rec.getId()) &&
-            !isReadonlyInputType(col.inputType)
-          "
-        >
-          <mat-form-field
-            [ngClass]="{
-              'table-input-number': col.inputType === 'number',
-              'table-input-month':
-                col.inputType === 'month' || col.inputType === 'date'
-            }"
-          >
-            <input
-              *ngIf="col.inputType === 'text'"
-              matInput
-              type="text"
-              [title]="col.label"
-              [value]="rec[col.name] || ''"
-              (change)="rec[col.name] = $event.target.value"
-            />
-
-            <input
-              *ngIf="col.inputType === 'number'"
-              matInput
-              type="number"
-              min="0"
-              [title]="col.label"
-              [value]="rec[col.name]"
-              (change)="rec[col.name] = $event.target.valueAsNumber"
-            />
-
-            <input
-              *ngIf="col.inputType === 'date'"
-              matInput
-              [title]="col.label"
-              [value]="rec[col.name]"
-              (dateChange)="rec[col.name] = $event.target.value"
-              [matDatepicker]="subrecordDatepicker"
-            />
-            <mat-datepicker-toggle
-              *ngIf="col.inputType === 'date'"
-              matSuffix
-              [for]="subrecordDatepicker"
-            ></mat-datepicker-toggle>
-            <mat-datepicker #subrecordDatepicker></mat-datepicker>
-
-            <input
-              *ngIf="col.inputType === 'month'"
-              matInput
-              type="month"
-              [title]="col.label"
-              [valueAsDate]="rec[col.name]"
-              (change)="rec[col.name] = $event.target.valueAsDate"
-            />
-
-            <textarea
-              *ngIf="col.inputType === 'textarea'"
-              matInput
-              [title]="col.label"
-              [value]="rec[col.name] || ''"
-              (change)="rec[col.name] = $event.target.value"
-            ></textarea>
-
-            <mat-select
-              *ngIf="col.inputType === 'select'"
-              [(value)]="rec[col.name]"
-            >
-              <mat-option
-                *ngFor="let option of col.selectValues"
-                [value]="option.value"
-                >{{ option.label }}</mat-option
-              >
-            </mat-select>
-
-            <span *ngIf="col.inputType === 'autocomplete'">
-              <input
-                [matAutocomplete]="auto"
-                (input)="autocompleteSearch(col, $event.target.value)"
-                matInput
-                type="text"
-                [title]="col.label"
-                [value]="rec[col.name]"
-                (change)="rec[col.name] = $event.target.value"
-              />
-              <mat-autocomplete
-                #auto="matAutocomplete"
-                (optionSelected)="rec[col.name] = $event.option.value"
-              >
-                <mat-option
-                  *ngFor="let option of col.selectValues"
-                  [value]="option.value"
-                  >{{ option.label }}</mat-option
-                >
-              </mat-autocomplete>
-            </span>
-            <mat-select *ngIf="col.inputType === 'configurable_enum'" [(value)]="rec[col.name]">
-              <mat-option
-                      *appConfigurableEnum="let o of col.enumId"
-                      [value]="o"
-              >
-                {{ o.label }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
+        </ng-template>
       </td>
     </ng-container>
 
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef>
         <button
-          *ngIf="showAddButton"
+          *ngIf="editable"
           mat-stroked-button
           class="table-action-button"
           color="accent"
@@ -155,15 +62,14 @@
             aria-label="add"
             fontIcon="fa-plus-circle"
           ></mat-icon>
-          <!-- fxHide.md="false">Add New -->
         </button>
       </th>
       <td mat-cell *matCellDef="let rec">
-        <div *ngIf="!disableEditingInline">
+        <div *ngIf="editable">
           <button
             mat-icon-button
-            *ngIf="!recordsEditing.get(rec.getId())"
-            (click)="recordsEditing.set(rec.getId(), true)"
+            *ngIf="!rec.formGroup || rec.formGroup.disabled"
+            (click)="edit(rec)"
           >
             <mat-icon
               class="table-action-icon"
@@ -173,7 +79,7 @@
           </button>
           <button
             mat-icon-button
-            *ngIf="recordsEditing.get(rec.getId())"
+            *ngIf="rec.formGroup?.enabled"
             (click)="save(rec)"
           >
             <mat-icon
@@ -184,7 +90,7 @@
           </button>
           <button
             mat-icon-button
-            *ngIf="recordsEditing.get(rec.getId())"
+            *ngIf="rec.formGroup?.enabled"
             (click)="resetChanges(rec)"
           >
             <mat-icon
@@ -207,16 +113,17 @@
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
     <tr
       mat-row
-      *matRowDef="let rec; columns: columnsToDisplay"
+      *matRowDef="let row; columns: columnsToDisplay"
       [ngStyle]="
-        getBackgroundColor && { 'background-color': getBackgroundColor(rec) }
+        getBackgroundColor && {
+          'background-color': getBackgroundColor(row.record)
+        }
       "
+      class="table-row"
     ></tr>
   </table>
-  <mat-paginator
-    (page)="onPaginateChange($event)"
-    [pageSize]="paginatorPageSize"
-    [pageSizeOptions]="[3, 10, 20, 50]"
-    [showFirstLastButtons]="true"
-  ></mat-paginator>
+  <app-list-paginator
+    [dataSource]="recordsDataSource"
+    [idForSavingPagination]="idForSavingPagination"
+  ></app-list-paginator>
 </div>

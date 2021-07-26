@@ -57,5 +57,42 @@ export interface EntitySchemaField {
    * You can pass any kind of value here to allow complex custom datytypes' transformations
    * that are not part of the core datatypes and therefore not included in this core interface.
    */
-  ext?: any;
+  additional?: any;
+
+  /**
+   * (Optional) Define using which component this property should be displayed in lists and forms.
+   *
+   * The name has to match one of the strings in the DYNAMIC_COMPONENT_MAP.
+   * If nothing is defined, the default component for this datatype will be used.
+   */
+  viewComponent?: string;
+
+  /**
+   * (Optional) Define using which component this property should be editable in lists and forms.
+   *
+   * The name has to match one of the strings in the DYNAMIC_COMPONENT_MAP.
+   * If nothing is defined, the default component for this datatype will be used.
+   */
+  editComponent?: string;
+
+  /**
+   * A label which explains this value in a human readable way
+   */
+  label?: string;
+
+  /**
+   * A short label which can be used in tables.
+   * If nothing is specified, the long name will be used.
+   */
+  labelShort?: string;
+
+  /**
+   * A further description of the property which can be displayed in tooltips.
+   */
+  description?: string;
+
+  /**
+   * If set to true, the entity cannot be saved without setting a value for this property.
+   */
+  required?: boolean;
 }

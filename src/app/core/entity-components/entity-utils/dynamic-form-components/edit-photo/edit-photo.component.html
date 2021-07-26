@@ -1,0 +1,24 @@
+<img
+  *ngIf="formControl.value?.photo"
+  [src]="formControl.value?.photo?.value"
+  class="child-pic"
+  alt="child's photo"
+/>
+<p *ngIf="!formControl.value?.photo">No photo set</p>
+<mat-form-field
+  *ngIf="formControl.enabled && user?.isAdmin()"
+  class="child-pic-photofile"
+>
+  <input
+    #photoFileInput
+    i18n-matTooltip="Tooltip for edit photo component"
+    matTooltip="filename for child photo uploaded by server administrator"
+    matInput
+    (change)="changeFilename(photoFileInput.value)"
+    [value]="formControl.value?.path"
+    [placeholder]="label"
+    [title]="label"
+    type="text"
+  />
+  <span matSuffix (click)="changeFilename('')" class="fa fa-times"></span>
+</mat-form-field>

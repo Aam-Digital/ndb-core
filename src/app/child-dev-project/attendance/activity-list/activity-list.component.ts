@@ -8,8 +8,9 @@ import { EntityListConfig } from "../../../core/entity-components/entity-list/En
   selector: "app-activity-list",
   template: `
     <app-entity-list
-      [entityList]="entities"
+      [allEntities]="entities"
       [listConfig]="listConfig"
+      [entityConstructor]="activityConstructor"
       (elementClick)="routeTo($event.getId())"
       (addNewClick)="routeTo('new')"
     ></app-entity-list>
@@ -18,6 +19,7 @@ import { EntityListConfig } from "../../../core/entity-components/entity-list/En
 export class ActivityListComponent implements OnInit {
   entities: RecurringActivity[] = [];
   listConfig: EntityListConfig;
+  activityConstructor = RecurringActivity;
 
   constructor(
     private entityMapper: EntityMapperService,

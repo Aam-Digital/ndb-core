@@ -1,36 +1,67 @@
-<h1>Administration & Configuration</h1>
+<h1 i18n="Admin Header">Administration & Configuration</h1>
 
-<p style="font-style: italic; font-weight: bold">
+<p
+  style="font-style: italic; font-weight: bold"
+  i18n="Admin security paragraph"
+>
   Warning: This section is intended for system administrators only. Make sure
   you know what you are doing.
 </p>
 
 <br />
 <hr />
-<h2>Utility Functions</h2>
+<h2 i18n="Utility Functions header">Utility Functions</h2>
 <p>
-  <button (click)="updatePhotoFilenames()" mat-stroked-button>
+  <button
+    (click)="updatePhotoFilenames()"
+    mat-stroked-button
+    i18n="Auto-Update button"
+  >
     Auto-Update children's photo filenames
   </button>
-  <button (click)="attendanceMigration.createEventsForAllAttendanceMonths()" mat-stroked-button>
+  <button
+    (click)="attendanceMigration.createEventsForAllAttendanceMonths()"
+    mat-stroked-button
+    i18n="Data migration"
+  >
     Migration
   </button>
-  <button (click)="notesMigration.migrateToMultiUser()" mat-stroked-button>
+  <button
+    (click)="notesMigration.migrateToMultiUser()"
+    mat-stroked-button
+    i18n="Data migration for notes"
+  >
     Migrate Notes to new author users
   </button>
-  <button (click)="childrenMigrationService.migratePhotoFormat()" mat-stroked-button>
+  <button
+    (click)="childrenMigrationService.migratePhotoFormat()"
+    mat-stroked-button
+    i18n="Data migration for photos"
+  >
     Migrate Children to correct photo format
+  </button>
+  <button (click)="migrateConfigChanges()" mat-stroked-button>
+    Migrate Config to new format
   </button>
 </p>
 
 <br />
 <hr />
-<h2>Backup</h2>
+<h2 i18n="Backup header">Backup</h2>
 <p>
-  <button (click)="saveBackup()" mat-stroked-button>
-    Download Backup (.json)</button
-  >&nbsp;
-  <button (click)="backupImport.click()" mat-stroked-button>
+  <button
+    (click)="saveBackup()"
+    mat-stroked-button
+    i18n="Download-Update button"
+  >
+    Download Backup (.json)
+  </button>
+  &nbsp;
+  <button
+    (click)="backupImport.click()"
+    mat-stroked-button
+    i18n="Restore-Update button"
+  >
     Restore Backup (.json)
   </button>
   <input
@@ -43,12 +74,23 @@
 
 <br />
 <hr />
-<h2>Export</h2>
+<h2 i18n="Export header">Export</h2>
 <p>
-  <button (click)="saveCsvExport()" mat-stroked-button>
-    Download whole database (.csv)</button
-  >&nbsp;
-  <button (click)="csvImport.click()" mat-stroked-button>Import (.csv)</button>
+  <button
+    (click)="saveCsvExport()"
+    mat-stroked-button
+    i18n="Download database button"
+  >
+    Download whole database (.csv)
+  </button>
+  &nbsp;
+  <button
+    (click)="csvImport.click()"
+    mat-stroked-button
+    i18n="Import database button"
+  >
+    Import (.csv)
+  </button>
   <input
     #csvImport
     type="file"
@@ -59,12 +101,21 @@
 
 <br />
 <hr />
-<h2>Application Configuration</h2>
+<h2 i18n="Application configuration header">Application Configuration</h2>
 <p>
-  <button (click)="downloadConfigClick()" mat-stroked-button>
-    Download configuration</button
-  >&nbsp;
-  <button (click)="configImport.click()" mat-stroked-button>
+  <button
+    (click)="downloadConfigClick()"
+    mat-stroked-button
+    i18n="Download configuration button"
+  >
+    Download configuration
+  </button>
+  &nbsp;
+  <button
+    (click)="configImport.click()"
+    mat-stroked-button
+    i18n="Upload configuration button"
+  >
     Upload new configuration
   </button>
   <input
@@ -77,24 +128,30 @@
 
 <br />
 <hr />
-<h2>AppConfig</h2>
+<h2 i18n="App-Config header">AppConfig</h2>
 <p>{{ appConfig | json }}</p>
 
 <br />
 <hr />
-<h2>Debug the PouchDB</h2>
+<h2 i18n="Debug PouchDB header">Debug the PouchDB</h2>
 <p>
-  <button (click)="debugDatabase()" mat-stroked-button>
+  <button (click)="debugDatabase()" mat-stroked-button i18n="Log button">
     Send to console.log()
   </button>
 </p>
 <p>
-  <button (click)="clearDatabase()" mat-stroked-button>Empty Database</button>
+  <button
+    (click)="clearDatabase()"
+    mat-stroked-button
+    i18n="Empty database button"
+  >
+    Empty Database
+  </button>
 </p>
 
 <br />
 <hr />
-<h2>Alert Log</h2>
+<h2 i18n="Alert log header">Alert Log</h2>
 <table>
   <tr *ngFor="let alert of alerts.reverse()">
     <td>{{ alert.type }}</td>

@@ -4,9 +4,8 @@ import { ChildrenService } from "../../children/children.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
-import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
+import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 
 @UntilDestroy()
 @Component({
@@ -22,29 +21,15 @@ export class HealthCheckupComponent
    * The Date-Column needs to be transformed to apply the MathFormCheck in the SubentityRecordComponent
    * BMI is rounded to 2 decimal digits
    */
-  columns: Array<ColumnDescription> = [
+  columns: FormFieldConfig[] = [
+    { id: "date" },
+    { id: "height" },
+    { id: "weight" },
     {
-      name: "date",
-      label: "Date",
-      inputType: ColumnDescriptionInputType.DATE,
-    },
-    {
-      name: "height",
-      label: "Height [cm]",
-      inputType: ColumnDescriptionInputType.NUMBER,
-      valueFunction: (entity: HealthCheck) => entity.height + " cm",
-    },
-    {
-      name: "weight",
-      label: "Weight [kg]",
-      inputType: ColumnDescriptionInputType.NUMBER,
-      valueFunction: (entity: HealthCheck) => entity.weight + " kg",
-    },
-    {
-      name: "bmi",
-      label: "BMI",
-      inputType: ColumnDescriptionInputType.READONLY,
-      valueFunction: (entity: HealthCheck) => entity.bmi.toFixed(2),
+      id: "bmi",
+      label: $localize`:Table header, Short for Body Mass Index:BMI`,
+      view: "ReadonlyFunction",
+      additional: (entity: HealthCheck) => entity.bmi.toFixed(2),
     },
   ];
   @Input() child: Child;
@@ -57,10 +42,8 @@ export class HealthCheckupComponent
   }
 
   onInitFromDynamicConfig(config: PanelConfig) {
-    if (config?.config?.displayedColumns) {
-      this.columns = this.columns.filter((c) =>
-        config.config.displayedColumns.includes(c.name)
-      );
+    if (config?.config?.columns) {
+      this.columns = config.config.columns;
     }
 
     this.child = config.entity as Child;

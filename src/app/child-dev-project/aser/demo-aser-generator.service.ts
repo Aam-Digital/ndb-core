@@ -3,8 +3,11 @@ import { DemoDataGenerator } from "../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
 import { Child } from "../children/model/child";
 import { faker } from "../../core/demo-data/faker";
-import { WarningLevel } from "../warning-level";
 import { Aser } from "./model/aser";
+import { ConfigurableEnumValue } from "../../core/configurable-enum/configurable-enum.interface";
+import { mathLevels } from "./model/mathLevels";
+import { readingLevels } from "./model/readingLevels";
+import { WarningLevel } from "../../core/entity/model/warning-level";
 
 /**
  * Generate ASER results every 12 months for each Child until passing.
@@ -43,19 +46,19 @@ export class DemoAserGeneratorService extends DemoDataGenerator<Aser> {
     let previousResult = new Aser("");
     const firstLanguage = child.motherTongue.toLowerCase();
     do {
-      const aserResult = new Aser(faker.datatype.uuid());
+      const aserResult = new Aser();
       aserResult.child = child.getId();
       aserResult.date = date;
       aserResult.math = this.selectNextSkillLevel(
-        Aser.MathLevels,
+        mathLevels.slice(1),
         previousResult.math
       );
       aserResult.english = this.selectNextSkillLevel(
-        Aser.ReadingLevels,
+        readingLevels.slice(1),
         previousResult.english
       );
       aserResult[firstLanguage] = this.selectNextSkillLevel(
-        Aser.ReadingLevels,
+        readingLevels.slice(1),
         previousResult[firstLanguage]
       );
 
@@ -73,13 +76,13 @@ export class DemoAserGeneratorService extends DemoDataGenerator<Aser> {
 
   /**
    * Randomly select the next Aser level for a skill based on the previous result.
-   * @param skillRange The array of skill levels for the desired subject (Aser.MathLevels or Aser.ReadingLevels)
+   * @param skillRange The array of skill levels for the desired subject (mathLevels or readingLevels)
    * @param previousSkillLevel The string indicating the level from the previous test for this subject
    */
   private selectNextSkillLevel(
-    skillRange: string[],
-    previousSkillLevel: string
-  ): string {
+    skillRange: ConfigurableEnumValue[],
+    previousSkillLevel: ConfigurableEnumValue
+  ): ConfigurableEnumValue {
     const previousSkillLevelIndex = skillRange.indexOf(previousSkillLevel);
 
     let nextSkillLevelIndex;

@@ -7,6 +7,9 @@
       <mat-form-field style="width: 100%">
         <input
           matInput
+          i18n-placeholder="
+            Filter placeholder|Allows the user to filter through entities
+          "
           placeholder="Filter"
           (ngModelChange)="applyFilter($event)"
           [(ngModel)]="filterString"
@@ -23,8 +26,13 @@
       </mat-form-field>
     </div>
     <!-- number of table entries -->
-    <div fxFlex="25" fxHide.xs="true" class="align-form-field">
-      (Showing {{ entityDataSource.filteredData.length }} entries)
+    <div
+      fxFlex="25"
+      fxHide.xs="true"
+      class="align-form-field"
+      i18n="The amount of entities that can be seen in a list"
+    >
+      (Showing {{ filteredEntities.length }} entries)
     </div>
     <!-- add new button -->
     <div fxFlex="25" class="align-form-field">
@@ -47,10 +55,10 @@
           aria-label="add element"
           fontIcon="fa-plus-circle"
         ></mat-icon>
-        <span fxHide.lt-md="true"> Add New </span>
+        <span fxHide.lt-md="true" i18n="Add New Button"> Add New </span>
       </button>
       <app-export-data
-        [data]="entityList"
+        [data]="allEntities"
         format="csv"
         [filename]="listName.replace(' ', '')"
         angulartics2On="click"
@@ -64,7 +72,9 @@
           aria-label="download csv"
           fontIcon="fa-download"
         ></mat-icon>
-        <span fxHide.lt-md="true"> Download CSV </span>
+        <span fxHide.lt-md="true" i18n="Download list contents as CSV">
+          Download CSV
+        </span>
       </app-export-data>
     </div>
   </div>
@@ -80,7 +90,7 @@
       [filterConfig]="filter.filterSettings"
       [(selectedOption)]="filter.selectedOption"
       [displayAsToggle]="filter.display !== 'dropdown'"
-      (selectedOptionChange)="onFilterOptionSelected(filter, $event)"
+      (selectedOptionChange)="filterOptionSelected(filter, $event)"
     >
     </app-list-filter>
   </div>
@@ -106,40 +116,11 @@
 </mat-expansion-panel>
 
 <div class="mat-elevation-z2 table-list">
-  <table mat-table [dataSource]="entityDataSource" matSort style="width: 100%">
-    <ng-container *ngFor="let col of columns" [matColumnDef]="col.id">
-      <th
-        mat-header-cell
-        *matHeaderCellDef
-        mat-sort-header
-        [disabled]="col.noSorting"
-      >
-        {{ col.title }}
-      </th>
-      <td *matCellDef="let entity">
-        <ng-template
-          [appDynamicComponent]="{
-            component: col.component,
-            config: { id: col.id, entity: entity, config: col.config }
-          }"
-        ></ng-template>
-      </td>
-    </ng-container>
-    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-    <tr
-      mat-row
-      *matRowDef="let entity; columns: columnsToDisplay"
-      [ngStyle]="{ 'background-color': entity.getColor() }"
-      (click)="elementClick.emit(entity)"
-      style="cursor: pointer"
-      class="table-list-item"
-    ></tr>
-  </table>
-  <mat-paginator
-    (page)="onPaginateChange($event)"
-    [pageSize]="paginatorPageSize"
-    [pageIndex]="paginatorPageIndex"
-    [pageSizeOptions]="[3, 10, 20, 50]"
-    [showFirstLastButtons]="true"
-  ></mat-paginator>
+  <app-entity-subrecord
+    [records]="filteredEntities"
+    [columns]="columns"
+    [editable]="false"
+    [showEntity]="elementClick.emit.bind(elementClick)"
+    [columnsToDisplay]="columnsToDisplay"
+  ></app-entity-subrecord>
 </div>

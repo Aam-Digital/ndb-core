@@ -31,7 +31,7 @@ import { EntityListComponent } from "../../../core/entity-components/entity-list
 import { EventNote } from "app/child-dev-project/attendance/model/event-note";
 import { BehaviorSubject } from "rxjs";
 import { BackupService } from "../../../core/admin/services/backup.service";
-import { UpdatedEntity } from "../../../core/entity/entity-update";
+import { UpdatedEntity } from "../../../core/entity/model/entity-update";
 
 describe("NotesManagerComponent", () => {
   let component: NotesManagerComponent;
@@ -47,12 +47,8 @@ describe("NotesManagerComponent", () => {
 
   const routeData: EntityListConfig = {
     title: "Notes List",
-    columns: [
-      { component: "DisplayDate", title: "Date", id: "date" },
-      { component: "DisplayText", title: "Subject", id: "subject" },
-      { component: "ChildBlockList", title: "Children", id: "children" },
-    ],
-    columnGroup: {
+    columns: [],
+    columnGroups: {
       default: "Standard",
       mobile: "Standard",
       groups: [

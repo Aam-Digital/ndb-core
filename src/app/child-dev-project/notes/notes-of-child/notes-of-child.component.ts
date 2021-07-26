@@ -7,10 +7,9 @@ import { SessionService } from "../../../core/session/session-service/session.se
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { ColumnDescriptionInputType } from "../../../core/entity-components/entity-subrecord/column-description-input-type.enum";
-import { ColumnDescription } from "../../../core/entity-components/entity-subrecord/column-description";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
-import { ComponentWithConfig } from "../../../core/entity-components/entity-subrecord/component-with-config";
+import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
+import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain child
@@ -25,52 +24,19 @@ export class NotesOfChildComponent
   implements OnChanges, OnInitDynamicComponent {
   @Input() child: Child;
   records: Array<Note> = [];
-  detailsComponent: ComponentWithConfig<Note> = {
-    component: NoteDetailsComponent,
-  };
 
-  columns: Array<ColumnDescription> = [
-    {
-      name: "date",
-      label: "Date",
-      inputType: ColumnDescriptionInputType.DATE,
-      visibleFrom: "xs",
-    },
-    {
-      name: "subject",
-      label: "Topic",
-      inputType: ColumnDescriptionInputType.TEXT,
-      visibleFrom: "xs",
-    },
-    {
-      name: "text",
-      label: "Notes",
-      inputType: ColumnDescriptionInputType.TEXTAREA,
-      visibleFrom: "md",
-    },
-    {
-      name: "author",
-      label: "SW",
-      inputType: ColumnDescriptionInputType.TEXT,
-      visibleFrom: "md",
-    },
-    {
-      name: "warningLevel",
-      label: "",
-      inputType: ColumnDescriptionInputType.SELECT,
-      selectValues: [
-        { value: "OK", label: "Solved" },
-        { value: "WARNING", label: "Needs Follow-Up" },
-        { value: "URGENT", label: "Urgent Follow-Up" },
-      ],
-      valueFunction: () => "",
-      visibleFrom: "md",
-    },
+  columns: FormFieldConfig[] = [
+    { id: "date", visibleFrom: "xs" },
+    { id: "subject", visibleFrom: "xs" },
+    { id: "text", visibleFrom: "md" },
+    { id: "authors", visibleFrom: "md" },
+    { id: "warningLevel", visibleFrom: "md" },
   ];
 
   constructor(
     private childrenService: ChildrenService,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private formDialog: FormDialogService
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -80,10 +46,8 @@ export class NotesOfChildComponent
   }
 
   onInitFromDynamicConfig(config: PanelConfig) {
-    if (config?.config?.displayedColumns) {
-      this.columns = this.columns.filter((c) =>
-        config.config.displayedColumns.includes(c.name)
-      );
+    if (config?.config?.columns) {
+      this.columns = config.config.columns;
     }
 
     this.child = config.entity as Child;
@@ -126,4 +90,8 @@ export class NotesOfChildComponent
    * @param note note to get color for
    */
   getColor = (note: Note) => note?.getColorForId(this.child.getId());
+
+  showNoteDetails(note: Note) {
+    this.formDialog.openDialog(NoteDetailsComponent, note);
+  }
 }

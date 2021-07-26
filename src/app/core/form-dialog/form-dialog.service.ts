@@ -5,7 +5,7 @@ import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-d
 import { FormDialogWrapperComponent } from "./form-dialog-wrapper/form-dialog-wrapper.component";
 import { ShowsEntity } from "./shows-entity.interface";
 import { OnInitDynamicComponent } from "../view/dynamic-components/on-init-dynamic-component.interface";
-import { Entity } from "../entity/entity";
+import { Entity } from "../entity/model/entity";
 
 /**
  * Inject this service instead of MatDialog to display a form or details view as a modal
@@ -55,8 +55,8 @@ export class FormDialogService {
       if (!activelyClosed && dialogWrapper.isFormDirty) {
         this.confirmationDialog
           .openDialog(
-            "Save Changes?",
-            "Do you want to save the changes you made to the record?"
+            $localize`:Save changes header:Save Changes?`,
+            $localize`:Save changes message:Do you want to save the changes you made to the record?`
           )
           .afterClosed()
           .subscribe((confirmed) => {

@@ -145,7 +145,9 @@ List components showing data in a table (such as ChildrenList oder SchoolsList) 
 
 The `"title"` is the text shown in the heading of the component.
 
-`"columns"` contains an array of the columns to be displayed. Each column-entry has the three fields `"component"`, `"title"` and `"id"`.
+`"columns"` contains an array of the columns to be displayed.
+The configuration for the columns happens with the [FormFieldConfiguration](../../interfaces/FormFieldConfig.html) interface.
+If all the information is available on the schema or through the datatype of a property, it is sufficient to put a string with the name of the property into the columns array.
 
 Example:
 ```
@@ -154,16 +156,12 @@ Example:
     "config": {
         "title": "Children List",
         "columns": [
-            {
-                "component": "DisplayText",
-                "title": "PN",
-                "id": "projectNumber"
-            },
-            {
-                "component": "ChildBlock",
-                "title": "Name",
-                "id": "name"
-            }
+          "projectNumber",
+          {
+            "view": "ChildBlock",
+            "label": "Name",
+            "id": "name"
+          },
             ...
 ```
 
@@ -171,7 +169,8 @@ The `"columnGroup"` object holds the three properties `"default"`, `"mobile"` an
 `"default"` and `"mobile"` hold the names of the group of columns being displayed by default or on a mobile device.
 If the `"columnGroup"` property is not defined, all columns will be displayed.
 If `"default"` or `"mobile"` is not defined, the first entry of `"groups"` will be used.
-`"groups"` consists of an array of groups of columns, where every entry has a `"name"` and an array of column names within `"columns"`.
+`"groups"` consists of an array of groups of columns, where every entry has a `"name"` and an array of column ids within `"columns"`.
+Properties that are listed in any of the `groups` arrays and don't require further configurations, can be omitted from the `columns` array, the `EntityListComponent` will automatically add them.
 
 Example:
 ```
@@ -200,13 +199,10 @@ Example:
 ```
 
 The object `"filters"` within the config of a list component can be used to create filter options for the list data.
-Currently, three types of filters exist: default, boolean and prebuilt.
-For default and boolean filters, the `"id"` field refers to an attribute of the entity which is displayed in the list.
-The default filter only requires the field `"id"` and will provide filter options for all possible values of this property.
-A boolean filter can be specified with `"type": "boolean"` and requires the fields `"id"`, `"default"`, `"true"`, `"false"` and `"all"` to be set.
+The type of filter will be automatically determined by the datatype of that property.
+The filters allow to filter the table by the possible values of a property.
 This will create a filter for boolean values with three buttons (`all`, `true`, `false`).
 The names of these buttons can be specified using the `"true"`, `"false"` and `"all"` option.
-The `"default"` options defines which button should be active on default and has to be `""`, `"true"` or `"false"`.
 The prebuilt option is used to enable or disable filters that contain more logic and are implemented inside the component which is displayed.
 This option requires the fields `"type"` and `"id"`, where `"id"` matched the `id` of a prebuilt filter inside a component.
 
@@ -218,8 +214,7 @@ Example:
                 },
                 {
                     "id": "privateSchool",
-                    "type": "boolean",
-                    "default": "",
+                    "default": "all",
                     "true": "Private School",
                     "false": "Government School",
                     "all": "All"
@@ -283,61 +278,22 @@ It allows to dynamically create a form through configuration.
 The configuration for this component expects a single field, the `"cols"`.
 This field should be a two dimensional array where the first dimension defines what is rendered next to each other (the columns), and the second dimension what is rendered in each column.
 If all fields are the same height, then every field can be defined as a column.
-The inner object can have the following but not always required fields: `"input"`, `"id"`, `"placeholder"`, `"required"`, `"options"` and `"enumId"`.
-`"input"` defines which input type should be used.
-`"id"` defines the entity attribute which should be displayed and modified.
-`"placeholder"` defines a value that is displayed if no value is present.
-`"required"` specifies whether a value is required, default is `false`.
-`"options"` is only required when `"input": "select"` and defines the available select options.
-`"enumId"` is only required when `"input": "configurable-enum-select"` and refers to the config id of the enum that should be used for the select options.
+The definitions for the columns is defined by the [FormFieldConfiguration](../../interfaces/FormFieldConfig.html)
+However, the schema definitions of the entity should be sufficient so that only the names of the properties which should be editable in the form have to be provided.
+This means instead of placing an object in the `cols` array, simple strings do the same job.
 
 ```
   "config": {
     "cols": [
       [
-        {
-          "input": "photo",
-          "id": "photoFile",
-          "placeholder": "Photo Filename"
-        }
+        "photo"
       ],
       [
-        {
-          "input": "text",
-          "id": "name",
-          "placeholder": "Name",
-          "required": true
-        },
-        {
-          "input": "text",
-          "id": "projectNumber",
-          "placeholder": "Project Number"
-        }
+        "name"
+        "projectNumber"
       ],
       [
-        {
-          "input": "age"
-        },
-        {
-          "input": "datepicker",
-          "id": "dateOfBirth",
-          "placeholder": "Date of Birth"
-        },
-        {
-          "input": "select",
-          "id": "gender",
-          "placeholder": "Gender",
-          "options": [
-            "M",
-            "F"
-          ],
-        },
-        {
-          "input": "configurable-enum-select",
-          "id": "has_aadhar",
-          "placeholder": "Aadhar Status",
-          "enumId": "document-status"
-        },
+        "dateOfBirth"
       ]
     ]
   }
@@ -349,23 +305,20 @@ It can be configured which attributes of the `ChildSchoolRelation` are shown in 
 Possible configurations are `single` and `columns` which are both optional. 
 `single` is a boolean and if is set to `true` the component will show which (if any) school the child is currently attending.
 This should only be set to  `true`, when the use-case only allows one active school per child.
-`columns` is an object and determines which columns are shown and how the columns are called.
-If `columns` is set, then `schoolId`, `start` and `end` need to be defined. 
-`schoolClass` and `result` are optional.
-The value of a field determines the name of the column, e.g. setting `schoolId: School` will give the column which displays the schools the name `School`.
-If `schoolClass` or `result` is not defined, then the respective column will not be visible.
+`columns` is an object and determines which columns of the `ChildSchoolRelation` are shown.
+The configuration is according to the [EntitySubrecordComponent](../how-to-guides/entity-subrecord-component.md);
 
 Example:
 ```
   "config": {
     "single": true,
-    "columns": {
-      "schoolId": "School",
-      "schoolClass": "Class",
-      "start": "From",
-      "end": "To",
-      "result": "Result"
-    }
+    "columns": [
+      "schoolId",
+      "schoolClass",
+      "start",
+      "end",
+      "result",
+    ],
   }
 ```
 
@@ -381,10 +334,10 @@ Example:
 ```
 "entity:Child": {
     "attributes": [
-        {"name": "address", "schema": { "dataType": "string" } },
-        {"name": "phone", "schema": { "dataType": "string" } },
+        {"name": "address", "schema": { "dataType": "string", "label": "Address" } },
+        {"name": "phone", "schema": { "dataType": "string", "label": "Phone number" } },
         ...
-        {"name": "health_lastDeworming", "schema": { "dataType": "Date" } }
+        {"name": "health_lastDeworming", "schema": { "dataType": "Date", "label": "Last deworming" } }
     ]
 }
 
@@ -554,133 +507,4 @@ Example:
       "style": "attendance-E",
       "countAs": "IGNORE"
     }
-```
-
-
------
-## Example
-
-An example of a full config file:
-
-```
-{
-    "navigationMenu": {
-        "items": [
-            {"name": "Dashboard", "icon": "home", "link": "/dashboard"},
-            {"name": "Children", "icon": "child", "link": "/child"},
-            {"name": "Schools", "icon": "university", "link": "/school"},
-            {"name": "Notes", "icon": "file-text", "link": "/note"},
-            {"name": "Attendance Register", "icon": "table", "link": "/attendance"},
-            {"name": "Admin", "icon": "wrench", "link": "/admin"},
-            {"name": "Users", "icon": "user", "link": "/users"},
-            {"name": "Database Conflicts", "icon": "wrench", "link": "/admin/conflicts"},
-            {"name": "Help", "icon": "question-circle", "link": "/help"}
-        ]
-    },
-    "notes": {
-        "InteractionTypes": {
-            "NONE": {"name": ""},
-            "HOME_VISIT": {"name": "Home Visit"},
-            "GUARDIAN_TALK": {"name": "Talk with Guardians"},
-            "CHILD_TALK": {"name": "Talk with Child"},
-            "INCIDENT": {"name": "Incident"},
-            "DISCUSSION": {"name": "Discussion/Decision", "color": "#E1BEE7"},
-            "VISIT": {"name": "School/Hostel Visit"},
-            "PHONE_CALL": {"name": "Phone Call"},
-            "COACHING_TALK": {"name": "Talk with Coaching Teacher"},
-            "PEER_TALK": {"name": "Talk with Peer"},
-            "NEIGHBOUR_TALK": {"name": "Talk with Neighbours"},
-            "GUARDIAN_MEETING": {"name": "Guardians' Meeting", "color": "#E1F5FE", "isMeeting": true},
-            "CHILDREN_MEETING": {"name": "Children's Meeting", "color": "#E1F5FE", "isMeeting": true},
-            "DAILY_ROUTINE": {"name": "Daily Routine", "color": "#F1F8E9"},
-            "ANNUAL_SURVEY": {"name": "Annual Survey", "color": "#FFFDE7"},
-            "EXCURSION": {"name": "Excursion/Trip", "color": "#E1F5FE", "isMeeting": true},
-            "PARTNER_CONTACT": {"name": "Contact with other partners (club/NGO/...)"},
-            "RATION_DISTRIBUTION": {"name": "Ration Distribution", "color": "#E1F5FE", "isMeeting": true}
-        }
-    },
-    "view:": {
-        "component": "Dashboard",
-        "config": {
-            "widgets": [
-                {
-                    "component": "ChildrenCountDashboard"
-                },
-                {
-                    "component": "RecentNotesDashboard"
-                },
-                {
-                    "component": "NoRecentNotesDashboard",
-                    "config": {
-                        "sinceDays": 28,
-                        "fromBeginningOfWeek": false
-                    }
-                },
-                {
-                    "component": "AttendanceWeekDashboard",
-                    "config": {
-                        "daysOffset": 0,
-                        "periodLabel": "last week"
-                    }
-                },
-                {
-                    "component": "AttendanceWeekDashboard",
-                    "config": {
-                        "daysOffset": 7,
-                        "periodLabel": "this week"
-                    }
-                },
-                {
-                    "component": "ProgressDashboard",
-                    "config": {
-                        "dashboardConfigId": "1"
-                    }
-                },
-                {
-                    "component": "AttendanceAverageDashboard"
-                },
-                {
-                    "component": "AttendanceWarningsDashboard"
-                }
-            ]
-        }
-    },
-    "view:user": {"component": "UserAccount"},
-    "view:note": {"component": "NotesManager", "config": { "title": "Notes & Reports"}},
-    "view:admin": {"component": "Admin", "requiresAdmin": true},
-    "view:users": {"component": "UserList", "requiresAdmin": true},
-    "view:help": {"component": "Help"},
-    "view:attendance": {"component": "AttendanceManager"},
-    "view:attendance/analysis": {"component": "AttendanceAnalysis"},
-    "view:attendance/add/month": {"component": "AddMonthAttendance"},
-    "view:attendance/add/day": {"component": "AddDayAttendance"},
-
-    "view:school": {"component": "SchoolsList", "config": { "title": "Schools List"} },
-    "view:school/:id": {
-        "component": "SchoolDetails",
-        "config": {
-            "submenu": [
-                {
-                    "name": "Education",
-                    "components": ["previousSchools", "aserResults"]
-                }
-            ],
-            "icon": "university"
-        }
-    },
-    "view:child": {"component": "ChildrenList", "config": { "title": "Children List"} },
-    "view:child/:id": {
-        "component": "ChildDetails",
-        "config": {
-            "submenu": [
-                {
-                    "name": "Education",
-                    "components": ["previousSchools", "aserResults"]
-                }
-            ],
-            "icon": "child"
-        }
-    }
-}
-
 ```

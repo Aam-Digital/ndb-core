@@ -17,10 +17,10 @@
 
 import { Child } from "./child";
 import { waitForAsync } from "@angular/core/testing";
-import { Entity } from "../../../core/entity/entity";
-import { Gender } from "./Gender";
+import { Entity } from "../../../core/entity/model/entity";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { PhotoDatatype } from "../child-photo-service/datatype-photo";
+import { genders } from "./genders";
 
 describe("Child", () => {
   const ENTITY_TYPE = "Child";
@@ -56,7 +56,7 @@ describe("Child", () => {
 
       name: "Max",
       projectNumber: "1",
-      gender: "M",
+      gender: genders[1],
       dateOfBirth: "2010-01-01",
       motherTongue: "Hindi",
       religion: "Hindu",
@@ -78,7 +78,7 @@ describe("Child", () => {
     const entity = new Child(id);
     entity.name = expectedData.name;
     entity.projectNumber = expectedData.projectNumber;
-    entity.gender = Gender.MALE;
+    entity.gender = expectedData.gender;
     entity.dateOfBirth = new Date(expectedData.dateOfBirth);
     entity.motherTongue = expectedData.motherTongue;
     entity.religion = expectedData.religion;

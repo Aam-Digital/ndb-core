@@ -6,7 +6,7 @@ import {
 } from "./entity-permissions.service";
 import { SessionService } from "../session/session-service/session.service";
 import { User } from "../user/user";
-import { Entity } from "../entity/entity";
+import { Entity } from "../entity/model/entity";
 import { EntityConfigService } from "../entity/entity-config.service";
 
 describe("EntityPermissionsService", () => {

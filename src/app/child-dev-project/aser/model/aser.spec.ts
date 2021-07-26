@@ -16,10 +16,12 @@
  */
 
 import { Aser } from "./aser";
-import { WarningLevel } from "../../warning-level";
 import { waitForAsync } from "@angular/core/testing";
-import { Entity } from "../../../core/entity/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import { mathLevels } from "./mathLevels";
+import { readingLevels } from "./readingLevels";
+import { WarningLevel } from "../../../core/entity/model/warning-level";
 
 describe("Aser", () => {
   const ENTITY_TYPE = "Aser";
@@ -50,10 +52,10 @@ describe("Aser", () => {
 
       child: "1",
       date: new Date(),
-      hindi: "Read Sentence",
-      bengali: "Nothing",
-      english: "Read Letters",
-      math: "Subtraction",
+      hindi: readingLevels[2],
+      bengali: readingLevels[1],
+      english: readingLevels[2],
+      math: mathLevels[4],
       remarks: "nothing to remark",
 
       searchIndices: [],
@@ -83,8 +85,8 @@ describe("Aser", () => {
   it("warning level WARNING if some bad results", function () {
     const id = "test1";
     const entity = new Aser(id);
-    entity.english = Aser.ReadingLevels[0];
-    entity.math = Aser.MathLevels[1];
+    entity.english = readingLevels[1];
+    entity.math = readingLevels[2];
 
     expect(entity.getWarningLevel()).toBe(WarningLevel.WARNING);
   });

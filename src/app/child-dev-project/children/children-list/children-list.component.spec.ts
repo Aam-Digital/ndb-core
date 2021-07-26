@@ -32,19 +32,19 @@ describe("ChildrenListComponent", () => {
   const routeData: EntityListConfig = {
     title: "Children List",
     columns: [
-      { component: "DisplayText", title: "PN", id: "projectNumber" },
-      { component: "ChildBlock", title: "Name", id: "name" },
-      { component: "DisplayDate", title: "DoB", id: "dateOfBirth" },
-      { component: "DisplayText", title: "Gender", id: "gender" },
-      { component: "DisplayText", title: "Class", id: "schoolClass" },
-      { component: "DisplayText", title: "School", id: "schoolId" },
+      { view: "DisplayText", label: "PN", id: "projectNumber" },
+      { view: "ChildBlock", label: "Name", id: "name" },
+      { view: "DisplayDate", label: "DoB", id: "dateOfBirth" },
+      { view: "DisplayText", label: "Gender", id: "gender" },
+      { view: "DisplayText", label: "Class", id: "schoolClass" },
+      { view: "DisplayText", label: "School", id: "schoolId" },
       {
-        component: "RecentAttendanceBlocks",
-        title: "Attendance (School)",
+        view: "RecentAttendanceBlocks",
+        label: "Attendance (School)",
         id: "school",
       },
     ],
-    columnGroup: {
+    columnGroups: {
       default: "Basic Info",
       mobile: "School Info",
       groups: [

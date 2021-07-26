@@ -42,7 +42,6 @@ import { AdminModule } from "./core/admin/admin.module";
 import { EntityModule } from "./core/entity/entity.module";
 import { HelpModule } from "./core/help/help.module";
 import { DemoDataModule } from "./core/demo-data/demo-data.module";
-import { MatNativeDateModule } from "@angular/material/core";
 import { LoggingErrorHandler } from "./core/logging/logging-error-handler";
 import { DemoChildGenerator } from "./child-dev-project/children/demo-data-generators/demo-child-generator.service";
 import { DemoSchoolGenerator } from "./child-dev-project/schools/demo-school-generator.service";
@@ -70,10 +69,13 @@ import { FontAwesomeIconsModule } from "./core/icons/font-awesome-icons.module";
 import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-enum.module";
 import { ConfigModule } from "./core/config/config.module";
 import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-events-generator.service";
+import { MatPaginatorIntl } from "@angular/material/paginator";
 import { ReportingModule } from "./features/reporting/reporting.module";
-import { MatFormFieldModule } from "@angular/material/form-field";
 import { DashboardShortcutWidgetModule } from "./core/dashboard-shortcut-widget/dashboard-shortcut-widget.module";
 import { HistoricalDataModule } from "./features/historical-data/historical-data.module";
+import { EntityUtilsModule } from "./core/entity-components/entity-utils/entity-utils.module";
+import { DemoHistoricalDataGenerator } from "./features/historical-data/demo-historical-data-generator";
+import { TranslatableMatPaginator } from "./core/translation/TranslatableMatPaginator";
 
 /**
  * Main entry point of the application.
@@ -83,7 +85,7 @@ import { HistoricalDataModule } from "./features/historical-data/historical-data
 @NgModule({
   declarations: [AppComponent],
   imports: [
-    ServiceWorkerModule.register("/ngsw-worker.js", {
+    ServiceWorkerModule.register("ngsw-worker.js", {
       enabled: environment.production,
     }),
     Angulartics2Module.forRoot({
@@ -115,12 +117,12 @@ import { HistoricalDataModule } from "./features/historical-data/historical-data
     AdminModule,
     FontAwesomeIconsModule,
     HelpModule,
-    MatNativeDateModule,
     EntitySubrecordModule,
     EntityListModule,
     EntityDetailsModule,
     ConfigurableEnumModule,
     ReportingModule,
+    EntityUtilsModule,
     DemoDataModule.forRoot([
       ...DemoChildGenerator.provider({ count: 120 }),
       ...DemoSchoolGenerator.provider({ count: 8 }),
@@ -140,14 +142,18 @@ import { HistoricalDataModule } from "./features/historical-data/historical-data
       ...DemoHealthCheckGeneratorService.provider(),
       ...DemoProgressDashboardWidgetGeneratorService.provider(),
       ...DemoUserGeneratorService.provider(),
+      ...DemoHistoricalDataGenerator.provider({
+        minCountAttributes: 2,
+        maxCountAttributes: 5,
+      }),
     ]),
     AttendanceModule,
-    MatFormFieldModule,
     DashboardShortcutWidgetModule,
     HistoricalDataModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
+    { provide: MatPaginatorIntl, useValue: TranslatableMatPaginator() },
     AnalyticsService,
     Angulartics2Piwik,
   ],

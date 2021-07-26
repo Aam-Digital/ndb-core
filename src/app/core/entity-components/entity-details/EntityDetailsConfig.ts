@@ -1,24 +1,79 @@
-import { Entity } from "../../entity/entity";
+import { Entity } from "../../entity/model/entity";
 
-export class EntityDetailsConfig {
+/**
+ * The configuration for a entity details page
+ */
+export interface EntityDetailsConfig {
+  /**
+   * The name of an icon which should be displayed next to the entity name.
+   * The name has to be a valid font-awesome icon name.
+   */
   icon: string;
+
+  /**
+   * The name of the entity (according to the ENTITY_TYPE).
+   */
   entity: string;
+
+  /**
+   * The configuration for the panels on this details page.
+   */
   panels: Panel[];
 }
 
-export class Panel {
+/**
+ * A panel is a simple accordion that can be expanded and closed.
+ * It can hold multiple components.
+ */
+export interface Panel {
+  /**
+   * The title of this panel. This should group the contained components.
+   */
   title: string;
+
+  /**
+   * The configurations for the components in this panel.
+   */
   components: PanelComponent[];
 }
 
-export class PanelComponent {
+/**
+ * The configuration for a component displayed inside a panel.
+ */
+export interface PanelComponent {
+  /**
+   * An optional second title for only this component.
+   */
   title: string;
+
+  /**
+   * The name of the component according to the DYNAMIC_COMPONENT_MAP.
+   */
   component: string;
-  config?: PanelConfig;
+
+  /**
+   * A addition config which will be passed to the component.
+   */
+  config?: any;
 }
 
-export class PanelConfig {
+/**
+ * This interface represents the config which will be created by the entity-details component and passed to each of
+ * the panel components.
+ */
+export interface PanelConfig {
+  /**
+   * The full entity which is displayed in this details page.
+   */
   entity: Entity;
+
+  /**
+   * Whether this entity has been newly created.
+   */
   creatingNew?: boolean;
+
+  /**
+   * An additional config which has been defined in the PanelComponent.
+   */
   config?: any;
 }

@@ -8,7 +8,7 @@ import {
   Panel,
   PanelComponent,
 } from "./EntityDetailsConfig";
-import { Entity, EntityConstructor } from "../../entity/entity";
+import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { getUrlWithoutParams } from "../../../utils/utils";
@@ -20,8 +20,9 @@ import {
   OperationType,
 } from "../../permissions/entity-permissions.service";
 import { User } from "../../user/user";
+import { Note } from "../../../child-dev-project/notes/model/note";
 
-export const ENTITY_MAP: Map<string, any> = new Map<
+export const ENTITY_MAP: Map<string, EntityConstructor<Entity>> = new Map<
   string,
   EntityConstructor<Entity>
 >([
@@ -30,14 +31,15 @@ export const ENTITY_MAP: Map<string, any> = new Map<
   ["School", School],
   ["Team", School],
   ["RecurringActivity", RecurringActivity],
+  ["Note", Note],
   ["User", User],
 ]);
 
 /**
  * This component can be used to display a entity in more detail.
  * It groups subcomponents in panels.
- * Any component can be used as a subcomponent.
- * The subcomponents will be provided with the Entity object and the creating new status, as well as its static config.
+ * Any component from the DYNAMIC_COMPONENT_MAP can be used as a subcomponent.
+ * The subcomponents will be provided with the Entity object and the creating new status, as well as it's static config.
  */
 @Component({
   selector: "app-entity-details",
@@ -122,8 +124,8 @@ export class EntityDetailsComponent {
 
   removeEntity() {
     const dialogRef = this.confirmationDialog.openDialog(
-      "Delete?",
-      "Are you sure you want to delete this " + this.config.entity + " ?"
+      $localize`:Delete confirmation title:Delete?`,
+      $localize`:Delete confirmation text:Are you sure you want to delete this ${this.config.entity} ?`
     );
 
     dialogRef.afterClosed().subscribe((confirmed) => {
@@ -135,7 +137,7 @@ export class EntityDetailsComponent {
           .catch((err) => console.log("error", err));
 
         const snackBarRef = this.snackBar.open(
-          'Deleted Entity "' + this.entity.getId() + '"',
+          $localize`:Deleted Entity information:Deleted Entity ${this.entity.toString()}`,
           "Undo",
           { duration: 8000 }
         );

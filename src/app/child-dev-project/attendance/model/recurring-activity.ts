@@ -15,20 +15,22 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from "../../../core/entity/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import { v4 as uuid } from "uuid";
 import { Note } from "../../notes/model/note";
 import {
   INTERACTION_TYPE_CONFIG_ID,
   InteractionType,
 } from "../../notes/model/interaction-type.interface";
+import { User } from "../../../core/user/user";
+import { Child } from "../../children/model/child";
+import { School } from "../../schools/model/school";
 
 @DatabaseEntity("RecurringActivity")
 export class RecurringActivity extends Entity {
   static create(title: string = ""): RecurringActivity {
-    const instance = new RecurringActivity(uuid());
+    const instance = new RecurringActivity();
     instance.title = title;
     return instance;
   }
@@ -42,7 +44,11 @@ export class RecurringActivity extends Entity {
   }
 
   /** primary name to identify the activity */
-  @DatabaseField() title: string = "";
+  @DatabaseField({
+    label: $localize`:Label for the title of a recurring activity:Title`,
+    required: true,
+  })
+  title: string = "";
 
   /**
    * a category to group and filter activities by.
@@ -50,19 +56,38 @@ export class RecurringActivity extends Entity {
    * This is also assigned to individual events' category generated for this activity.
    */
   @DatabaseField({
+    label: $localize`:Label for the interaction type of a recurring activity:Type`,
     dataType: "configurable-enum",
     innerDataType: INTERACTION_TYPE_CONFIG_ID,
   })
   type: InteractionType;
 
   /** IDs of children linked to this activity */
-  @DatabaseField() participants: string[] = [];
+  @DatabaseField({
+    label: $localize`:Label for the participants of a recurring activity:Participants`,
+    viewComponent: "DisplayEntityArray",
+    editComponent: "EditEntityArray",
+    additional: Child.ENTITY_TYPE,
+  })
+  participants: string[] = [];
 
   /** IDs of groups (schools, teams) whose (active) members should be included in the activity*/
-  @DatabaseField() linkedGroups: string[] = [];
+  @DatabaseField({
+    label: $localize`:Label for the linked schools of a recurring activity:Groups`,
+    viewComponent: "DisplayEntityArray",
+    editComponent: "EditEntityArray",
+    additional: School.ENTITY_TYPE,
+  })
+  linkedGroups: string[] = [];
 
   /** IDs of the users who are responsible for conducting this activity */
-  @DatabaseField() assignedTo: string[] = [];
+  @DatabaseField({
+    label: $localize`:Label for the assigned user(s) of a recurring activity:Assigned user(s)`,
+    viewComponent: "DisplayEntityArray",
+    editComponent: "EditEntityArray",
+    additional: User.ENTITY_TYPE,
+  })
+  assignedTo: string[] = [];
 
   toString(): string {
     return this.title;

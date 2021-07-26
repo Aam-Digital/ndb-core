@@ -7,8 +7,13 @@ import {
   Output,
 } from "@angular/core";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { Entity } from "../../entity/entity";
+import { Entity } from "../../entity/model/entity";
 import { MatDialogRef } from "@angular/material/dialog";
+import { getUrlWithoutParams } from "../../../utils/utils";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { Router } from "@angular/router";
+import { ConfirmationDialogService } from "app/core/confirmation-dialog/confirmation-dialog.service";
+import { OperationType } from "../../permissions/entity-permissions.service";
 
 /**
  * Use `<app-form-dialog-wrapper>` in your form templates to handle the saving and resetting of the edited entity.
@@ -32,6 +37,8 @@ import { MatDialogRef } from "@angular/material/dialog";
   styleUrls: ["./form-dialog-wrapper.component.scss"],
 })
 export class FormDialogWrapperComponent implements AfterViewInit {
+  readonly operationType = OperationType;
+
   /** entity to be edited */
   @Input() set entity(value: Entity) {
     this.originalEntity = Object.assign({}, value);
@@ -66,7 +73,10 @@ export class FormDialogWrapperComponent implements AfterViewInit {
 
   constructor(
     private entityMapper: EntityMapperService,
-    private matDialogRef: MatDialogRef<any>
+    private matDialogRef: MatDialogRef<any>,
+    private router: Router,
+    private snackBar: MatSnackBar,
+    private confirmationDialog: ConfirmationDialogService
   ) {}
 
   ngAfterViewInit() {
@@ -107,5 +117,30 @@ export class FormDialogWrapperComponent implements AfterViewInit {
   public async cancel() {
     Object.assign(this._entity, this.originalEntity);
     this.onClose.emit(undefined);
+  }
+
+  public async delete() {
+    const dialogRef = this.confirmationDialog.openDialog(
+      "Delete?",
+      "Are you sure you want to delete this object?"
+    );
+
+    dialogRef.afterClosed().subscribe(async (confirmed: any) => {
+      const currentUrl = getUrlWithoutParams(this.router);
+      if (confirmed) {
+        await this.entityMapper.remove<Entity>(this.entity);
+        this.onClose.emit(undefined);
+
+        const snackBarRef = this.snackBar.open(
+          $localize`:Deleted Entity information:Deleted Entity ${this.entity.toString()}`,
+          "Undo",
+          { duration: 8000 }
+        );
+        snackBarRef.onAction().subscribe(() => {
+          this.entityMapper.save(this.entity, true);
+          this.router.navigate([currentUrl]);
+        });
+      }
+    });
   }
 }

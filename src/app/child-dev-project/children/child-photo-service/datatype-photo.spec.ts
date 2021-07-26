@@ -19,7 +19,7 @@ import { TestBed } from "@angular/core/testing";
 import { SafeUrl } from "@angular/platform-browser";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import { Entity } from "../../../core/entity/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { ChildPhotoService } from "./child-photo.service";
 import { BehaviorSubject } from "rxjs";
 import { PhotoDatatype } from "./datatype-photo";
@@ -90,5 +90,16 @@ describe("dataType photo", () => {
     const result = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
     expect(result.photo).toBeUndefined();
+  });
+
+  it("should not throw an error if deprecated value is null", () => {
+    const oldChild = {
+      _id: "oldChild",
+      photoFile: null,
+    };
+
+    expect(() =>
+      entitySchemaService.loadDataIntoEntity(new Child(), oldChild)
+    ).not.toThrowError();
   });
 });

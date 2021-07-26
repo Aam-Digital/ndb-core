@@ -3,7 +3,7 @@ import { TestBed } from "@angular/core/testing";
 import { EntityConfig, EntityConfigService } from "./entity-config.service";
 import { DatabaseEntity } from "./database-entity.decorator";
 import { DatabaseField } from "./database-field.decorator";
-import { Entity } from "./entity";
+import { Entity } from "./model/entity";
 import { ConfigService } from "../config/config.service";
 
 describe("EntityConfigService", () => {

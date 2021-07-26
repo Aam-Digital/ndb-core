@@ -1,73 +1,80 @@
 import { defaultAttendanceStatusTypes } from "./default-config/default-attendance-status-types";
 import { defaultInteractionTypes } from "./default-config/default-interaction-types";
 import { Child } from "../../child-dev-project/children/model/child";
-import { Gender } from "../../child-dev-project/children/model/Gender";
 import { School } from "../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
-import { ColumnDescriptionInputType } from "../entity-components/entity-subrecord/column-description-input-type.enum";
+import { genders } from "../../child-dev-project/children/model/genders";
+import { materials } from "../../child-dev-project/educational-material/model/materials";
+import { mathLevels } from "../../child-dev-project/aser/model/mathLevels";
+import { readingLevels } from "../../child-dev-project/aser/model/readingLevels";
+import { warningLevels } from "../../child-dev-project/warning-levels";
+import { ratingAnswers } from "../../features/historical-data/rating-answers";
 
 // prettier-ignore
 export const defaultJsonConfig = {
+  "appConfig": {
+    displayLanguageSelect: true,
+  },
   "navigationMenu": {
     "items": [
       {
-        "name": "Dashboard",
+        "name": $localize`:Menu item:Dashboard`,
         "icon": "home",
         "link": "/"
       },
       {
-        "name": "Children",
+        "name": $localize`:Menu item:Children`,
         "icon": "child",
         "link": "/child"
       },
       {
-        "name": "Schools",
+        "name": $localize`:Menu item:Schools`,
         "icon": "university",
         "link": "/school"
       },
       {
-        "name": "Recurring Activities",
+        "name": $localize`:Menu item:Recurring Activities`,
         "icon": "calendar",
         "link": "/recurring-activity"
       },
       {
-        "name": "Record Attendance",
+        "name": $localize`:Menu item|Record attendance menu item:Record Attendance`,
         "icon": "calendar-check-o",
         "link": "/attendance/add/day"
       },
       {
-        "name": "Manage Attendance",
+        "name": $localize`:Menu item:Manage Attendance`,
         "icon": "table",
         "link": "/attendance"
       },
       {
-        "name": "Notes",
+        "name": $localize`:Menu item:Notes`,
         "icon": "file-text",
         "link": "/note"
       },
       {
-        "name": "Admin",
+        "name": $localize`:Menu item:Admin`,
         "icon": "wrench",
         "link": "/admin"
       },
       {
-        "name": "Users",
+        "name": $localize`:Menu item:Users`,
         "icon": "user",
         "link": "/users"
       },
       {
-        "name": "Reports",
+        "name": $localize`:Menu item:Reports`,
         "icon": "line-chart",
         "link": "/report"
       },
       {
-        "name": "Database Conflicts",
+        "name": $localize`:Menu item:Database Conflicts`,
         "icon": "wrench",
         "link": "/admin/conflicts"
       },
       {
-        "name": "Help",
+        "name": $localize`:Menu item:Help`,
         "icon": "question-circle",
         "link": "/help"
       }
@@ -76,9 +83,12 @@ export const defaultJsonConfig = {
 
 
   "enum:interaction-type": defaultInteractionTypes,
-
   "enum:attendance-status": defaultAttendanceStatusTypes,
-
+  "enum:reading-levels": readingLevels,
+  "enum:math-levels": mathLevels,
+  "enum:genders": genders,
+  "enum:materials": materials,
+  "enum:warning-levels": warningLevels,
   "enum:document-status": [
     {
       "id": "",
@@ -86,65 +96,44 @@ export const defaultJsonConfig = {
     },
     {
       "id": "OK (copy with us)",
-      "label": "OK (copy with us)"
+      "label": $localize`:Document status:OK (copy with us)`
     },
     {
       "id": "OK (copy needed for us)",
-      "label": "OK (copy needed for us)"
+      "label": $localize`:Document status:OK (copy needed for us)`
     },
     {
       "id": "needs correction",
-      "label": "needs correction"
+      "label": $localize`:Document status:needs correction`
     },
     {
       "id": "applied",
-      "label": "applied"
+      "label": $localize`:Document status:applied`
     },
     {
       "id": "doesn't have",
-      "label": "doesn't have"
+      "label": $localize`:Document status:doesn't have`
     },
     {
       "id": "not eligible",
-      "label": "not eligible"
+      "label": $localize`:Document status:not eligible`
     }
   ],
   "enum:center": [
     {
       "id": "alipore",
-      "label": "Alipore"
+      "label": $localize`:center:Alipore`
     },
     {
       "id": "tollygunge",
-      "label": "Tollygunge"
+      "label": $localize`:center:Tollygunge`
     },
     {
       "id": "barabazar",
-      "label": "Barabazar"
+      "label": $localize`:center:Barabazar`
     }
   ],
-  "enum:rating-answer": [
-    {
-      id: "noAnswerPossible",
-      label: "no answer possible",
-    },
-    {
-      id: "notTrueAtAll",
-      label: "not true at all",
-    },
-    {
-      id: "rarelyTrue",
-      label: "rarely true",
-    },
-    {
-      id: "usuallyTrue",
-      label: "usually true",
-    },
-    {
-      id: "absolutelyTrue",
-      label: "absolutely true",
-    },
-  ],
+  "enum:rating-answer": ratingAnswers,
 
   "view:": {
     "component": "Dashboard",
@@ -155,7 +144,7 @@ export const defaultJsonConfig = {
           "config": {
             "shortcuts": [
               {
-                "label": "Record Attendance",
+                "label": $localize`:Dashboard shortcut widget|record attendance shortcut:Record Attendance`,
                 "icon": "calendar-check-o",
                 "link": "/attendance/add/day",
               }
@@ -179,14 +168,14 @@ export const defaultJsonConfig = {
           "component": "AttendanceWeekDashboard",
           "config": {
             "daysOffset": 0,
-            "periodLabel": "last week"
+            "periodLabel": $localize`:Attendance week dashboard widget label:last week`
           }
         },
         {
           "component": "AttendanceWeekDashboard",
           "config": {
             "daysOffset": 7,
-            "periodLabel": "this week"
+            "periodLabel": $localize`:Attendance week dashboard widget label:this week`
           }
         },
         {
@@ -204,43 +193,21 @@ export const defaultJsonConfig = {
   "view:note": {
     "component": "NotesManager",
     "config": {
-      "title": "Notes & Reports",
+      "title": $localize`:Title for notes overview:Notes & Reports`,
       "includeEventNotes": false,
       "showEventNotesToggle": true,
       "columns": [
         {
-          "component": "DisplayDate",
-          "title": "Date",
-          "id": "date"
-        },
-        {
-          "component": "DisplayText",
-          "title": "Subject",
-          "id": "subject"
-        },
-        {
-          "component": "DisplayConfigurableEnum",
-          "title": "Category",
-          "id": "category"
-        },
-        {
-          "component": "DisplayUsers",
-          "title": "Authors",
-          "id": "authors"
-        },
-        {
-          "component": "ChildBlockList",
-          "title": "Children",
           "id": "children",
           "noSorting": true
         }
       ],
-      "columnGroup": {
-        "default": "Standard",
-        "mobile": "Mobile",
+      "columnGroups": {
+        "default": $localize`:Translated name of default column group:Standard`,
+        "mobile": $localize`:Translated name of mobile column group:Mobile`,
         "groups": [
           {
-            "name": "Standard",
+            "name": $localize`:Column group name:Standard`,
             "columns": [
               "date",
               "subject",
@@ -250,7 +217,7 @@ export const defaultJsonConfig = {
             ]
           },
           {
-            "name": "Mobile",
+            "name": $localize`:Column group name:Mobile`,
             "columns": [
               "date",
               "subject",
@@ -270,9 +237,6 @@ export const defaultJsonConfig = {
         },
         {
           "id": "category",
-          "label": "Category",
-          "type": "configurable-enum",
-          "enumId": "interaction-type",
           "display": "dropdown"
         }
       ]
@@ -303,33 +267,13 @@ export const defaultJsonConfig = {
   "view:school": {
     "component": "SchoolsList",
     "config": {
-      "title": "Schools List",
+      "title": $localize`:Title of schools overview:Schools List`,
       "columns": [
-        {
-          "component": "DisplayText",
-          "title": "Name",
-          "id": "name"
-        },
-        {
-          "component": "DisplayText",
-          "title": "Medium",
-          "id": "medium"
-        },
-        {
-          "component": "DisplayCheckmark",
-          "title": "Private School",
-          "id": "privateSchool"
-        },
-        {
-          "component": "DisplayText",
-          "title": "Board",
-          "id": "academicBoard"
-        },
-        {
-          "component": "DisplayText",
-          "title": "Up to class",
-          "id": "upToClass"
-        }
+        "name",
+        "medium",
+        "privateSchool",
+        "academicBoard",
+        "upToClass"
       ],
       "filters": [
         {
@@ -337,11 +281,9 @@ export const defaultJsonConfig = {
         },
         {
           "id": "privateSchool",
-          "type": "boolean",
-          "default": "",
-          "true": "Private School",
-          "false": "Government School",
-          "all": "All"
+          "true": $localize`:Label for private schools filter - true case:Private School`,
+          "false": $localize`:Label for private schools filter - false case:Government School`,
+          "all": $localize`:Label for disabling the filter:All`
         }
       ]
     }
@@ -352,97 +294,31 @@ export const defaultJsonConfig = {
       "entity": "School",
       "panels": [
         {
-          "title": "Basic Information",
+          "title": $localize`:Panel title:Basic Information`,
           "components": [
             {
               "title": "",
               "component": "Form",
               "config": {
                 "cols": [
-                  [
-                    {
-                      "input": "text",
-                      "id": "name",
-                      "placeholder": "Name"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "medium",
-                      "placeholder": "Medium"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "checkbox",
-                      "id": "privateSchool",
-                      "placeholder": "Private School"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "academicBoard",
-                      "placeholder": "Board"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "phone",
-                      "placeholder": "Contact Number"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "address",
-                      "placeholder": "Address"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "website",
-                      "placeholder": "Website"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "timing",
-                      "placeholder": "School Timing"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "workingDays",
-                      "placeholder": "Working Days"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "upToClass",
-                      "placeholder": "Teaching up to class"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "textarea",
-                      "id": "remarks",
-                      "placeholder": "Remarks"
-                    }
-                  ]
+                  ["name"],
+                  ["medium"],
+                  ["privateSchool"],
+                  ["academicBoard"],
+                  ["phone"],
+                  ["address"],
+                  ["website"],
+                  ["timing"],
+                  ["workingDays"],
+                  ["upToClass"],
+                  ["remarks"]
                 ]
               }
             }
           ]
         },
         {
-          "title": "Students",
+          "title": $localize`:Panel title:Students`,
           "components": [
             {
               "title": "",
@@ -457,158 +333,61 @@ export const defaultJsonConfig = {
   "view:child": {
     "component": "ChildrenList",
     "config": {
-      "title": "Children List",
+      "title": $localize`:Title children overview:Children List`,
       "columns": [
         {
-          "component": "DisplayText",
-          "title": "PN",
-          "id": "projectNumber"
-        },
-        {
-          "component": "ChildBlock",
-          "title": "Name",
+          "view": "ChildBlock",
+          "label": $localize`:Column title for ChildBlockComponents:Name`,
           "id": "name"
         },
         {
-          "component": "DisplayText",
-          "title": "Age",
+          "view": "DisplayText",
+          "label": $localize`:Column label for age of child:Age`,
           "id": "age"
         },
         {
-          "component": "DisplayDate",
-          "title": "DoB",
-          "id": "dateOfBirth"
-        },
-        {
-          "component": "DisplayText",
-          "title": "Gender",
-          "id": "gender"
-        },
-        {
-          "component": "DisplayText",
-          "title": "Class",
+          "view": "DisplayText",
+          "label": $localize`:Column label for class which child attends:Class`,
           "id": "schoolClass"
         },
         {
-          "component": "SchoolBlockWrapper",
-          "title": "School",
-          "id": "schoolId"
+          "view": "DisplayEntity",
+          "label": $localize`:Column label for school which child attends:School`,
+          "id": "schoolId",
+          "additional": `${School.ENTITY_TYPE}`,
+          "noSorting": true
         },
         {
-          "component": "RecentAttendanceBlocks",
-          "title": "Attendance (School)",
+          "view": "RecentAttendanceBlocks",
+          "label": $localize`:Column label for school attendance of child:Attendance (School)`,
           "id": "schoolAttendance",
-          "config": {
+          "additional": {
             "filterByActivityType": "SCHOOL_CLASS"
           },
           "noSorting": true
         },
         {
-          "component": "RecentAttendanceBlocks",
-          "title": "Attendance (Coaching)",
+          "view": "RecentAttendanceBlocks",
+          "label": $localize`:Column label for coaching attendance of child:Attendance (Coaching)`,
           "id": "coachingAttendance",
-          "config": {
+          "additional": {
             "filterByActivityType": "COACHING_CLASS"
           },
           "noSorting": true
         },
         {
-          "component": "DisplayConfigurableEnum",
-          "title": "Center",
-          "id": "center"
-        },
-        {
-          "component": "DisplayText",
-          "title": "Status",
-          "id": "status"
-        },
-        {
-          "component": "DisplayDate",
-          "title": "Admission",
-          "id": "admissionDate"
-        },
-        {
-          "component": "DisplayText",
-          "title": "Mother Tongue",
-          "id": "motherTongue"
-        },
-        {
-          "component": "DisplayConfigurableEnum",
-          "title": "Aadhar",
-          "id": "has_aadhar"
-        },
-        {
-          "component": "DisplayConfigurableEnum",
-          "title": "Bank Account",
-          "id": "has_bankAccount"
-        },
-        {
-          "component": "DisplayConfigurableEnum",
-          "title": "Kanyashree",
-          "id": "has_kanyashree"
-        },
-        {
-          "component": "DisplayConfigurableEnum",
-          "title": "Ration Card",
-          "id": "has_rationCard"
-        },
-        {
-          "component": "DisplayConfigurableEnum",
-          "title": "BPL Card",
-          "id": "has_BplCard"
-        },
-        {
-          "component": "DisplayText",
-          "title": "Vaccination Status",
-          "id": "health_vaccinationStatus"
-        },
-        {
-          "component": "DisplayText",
-          "title": "Blood Group",
-          "id": "health_bloodGroup"
-        },
-        {
-          "component": "DisplayText",
-          "title": "Eye Status",
-          "id": "health_eyeHealthStatus"
-        },
-        {
-          "component": "DisplayDate",
-          "title": "Last Eye Check-Up",
-          "id": "health_lastEyeCheckup"
-        },
-        {
-          "component": "DisplayDate",
-          "title": "Last Dental Check-Up",
-          "id": "health_lastDentalCheckup"
-        },
-        {
-          "component": "DisplayDate",
-          "title": "Last ENT Check-Up",
-          "id": "health_lastENTCheckup"
-        },
-        {
-          "component": "DisplayDate",
-          "title": "Last Vitamin D",
-          "id": "health_lastVitaminD"
-        },
-        {
-          "component": "DisplayDate",
-          "title": "Last De-Worming",
-          "id": "health_lastDeworming"
-        },
-        {
-          "component": "BmiBlock",
-          "title": "BMI",
+          "view": "BmiBlock",
+          "label": $localize`:Column label for BMI of child:BMI`,
           "id": "health_BMI",
-          "noSorting": true}
+          "noSorting": true
+        }
       ],
-      "columnGroup": {
-        "default": "School Info",
-        "mobile": "Mobile",
+      "columnGroups": {
+        "default": $localize`:Translated name of default column group:School Info`,
+        "mobile": $localize`:Translated name of mobile column group:Mobile`,
         "groups": [
           {
-            "name": "Basic Info",
+            "name": $localize`:Column group name:Basic Info`,
             "columns": [
               "projectNumber",
               "name",
@@ -621,7 +400,7 @@ export const defaultJsonConfig = {
             ]
           },
           {
-            "name": "School Info",
+            "name": $localize`:Column group name:School Info`,
             "columns": [
               "projectNumber",
               "name",
@@ -634,7 +413,7 @@ export const defaultJsonConfig = {
             ]
           },
           {
-            "name": "Status",
+            "name": $localize`:Column group name:Status`,
             "columns": [
               "projectNumber",
               "name",
@@ -649,19 +428,14 @@ export const defaultJsonConfig = {
             ]
           },
           {
-            "name": "Health",
+            "name": $localize`:Column group name:Health`,
             "columns": [
               "projectNumber",
               "name",
               "center",
               "health_BMI",
-              "health_vaccinationStatus",
               "health_bloodGroup",
-              "health_eyeHealthStatus",
-              "health_lastEyeCheckup",
               "health_lastDentalCheckup",
-              "health_lastENTCheckup",
-              "health_lastVitaminD",
               "health_lastDeworming",
               "gender",
               "age",
@@ -669,7 +443,7 @@ export const defaultJsonConfig = {
             ]
           },
           {
-            "name": "Mobile",
+            "name": $localize`:Column group name:Mobile`,
             "columns": [
               "projectNumber",
               "name",
@@ -684,21 +458,18 @@ export const defaultJsonConfig = {
           "id": "isActive",
           "type": "boolean",
           "default": "true",
-          "true": "Active Children",
-          "false": "Inactive",
-          "all": "All"
+          "true": $localize`:Active children filter label - true case:Active Children`,
+          "false": $localize`:Active children filter label - false case:Inactive`,
+          "all": $localize`:Active children unselect option:All`
         },
         {
           "id": "center",
-          "label": "Center",
-          "type": "configurable-enum",
-          "enumId": "center",
           "display": "dropdown"
         },
         {
-          "id": "school",
-          "type": "prebuilt",
-          "label": "School",
+          "id": "schoolId",
+          "type": "School",
+          "label": $localize`:Label of schools filter:School`,
           "display": "dropdown"
         }
       ]
@@ -711,129 +482,39 @@ export const defaultJsonConfig = {
       "entity": "Child",
       "panels": [
         {
-          "title": "Basic Information",
+          "title": $localize`:Panel title:Basic Information`,
           "components": [
             {
               "title": "",
               "component": "Form",
               "config": {
                 "cols": [
+                  ["photo"],
                   [
-                    {
-                      "input": "photo",
-                      "id": "photo",
-                      "placeholder": "Photo Filename"
-                    }
+                    "name",
+                    "projectNumber",
+                    "center",
+                    "status"
                   ],
                   [
-                    {
-                      "input": "text",
-                      "id": "name",
-                      "placeholder": "Name",
-                      "required": true
-                    },
-                    {
-                      "input": "text",
-                      "id": "projectNumber",
-                      "placeholder": "Project Number"
-                    },
-                    {
-                      "input": "configurable-enum-select",
-                      "id": "center",
-                      "placeholder": "Center",
-                      "enumId": "center"
-                    },
-                    {
-                      "input": "text",
-                      "id": "status",
-                      "placeholder": "Project Status"
-                    }
+                    "dateOfBirth",
+                    "gender",
+                    "motherTongue",
+                    "religion"
                   ],
                   [
-                    {
-                      "input": "age",
-                      "tooltip": "This field is read-only. Edit Date of Birth to change age. Select Jan 1st if you only know the year of birth.",
-                      "id": "dateOfBirth",
-                      "placeholder": "Date of Birth"
-                    },
-                    {
-                      "input": "select",
-                      "id": "gender",
-                      "placeholder": "Gender",
-                      "options": [
-                        "M",
-                        "F"
-                      ]
-                    },
-                    {
-                      "input": "text",
-                      "id": "motherTongue",
-                      "placeholder": "Mother Tongue"
-                    },
-                    {
-                      "input": "text",
-                      "id": "religion",
-                      "placeholder": "Religion"
-                    }
+                    "admissionDate",
+                    "has_aadhar",
+                    "has_kanyashree",
+                    "has_bankAccount",
+                    "has_rationCard",
+                    "has_BplCard"
                   ],
                   [
-                    {
-                      "input": "datepicker",
-                      "id": "admissionDate",
-                      "placeholder": "Admission Date"
-                    },
-                    {
-                      "input": "configurable-enum-select",
-                      "id": "has_aadhar",
-                      "placeholder": "Aadhar Status",
-                      "enumId": "document-status"
-                    },
-                    {
-                      "input": "configurable-enum-select",
-                      "id": "has_kanyashree",
-                      "placeholder": "Kanyashree Status",
-                      "enumId": "document-status"
-                    },
-                    {
-                      "input": "configurable-enum-select",
-                      "id": "has_bankAccount",
-                      "placeholder": "Bank Account Status",
-                      "enumId": "document-status"
-                    },
-                    {
-                      "input": "configurable-enum-select",
-                      "id": "has_rationCard",
-                      "placeholder": "Ration Card Status",
-                      "enumId": "document-status"
-                    },
-                    {
-                      "input": "configurable-enum-select",
-                      "id": "has_BplCard",
-                      "placeholder": "BPL Card Status",
-                      "enumId": "document-status"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "address",
-                      "placeholder": "Address"
-                    },
-                    {
-                      "input": "text",
-                      "id": "phone",
-                      "placeholder": "Phone No."
-                    },
-                    {
-                      "input": "text",
-                      "id": "guardianName",
-                      "placeholder": "Guardians"
-                    },
-                    {
-                      "input": "text",
-                      "id": "preferredTimeForGuardianMeeting",
-                      "placeholder": "Preferred time for guardians meeting"
-                    }
+                    "address",
+                    "phone",
+                    "guardianName",
+                    "preferredTimeForGuardianMeeting"
                   ]
                 ]
               }
@@ -841,30 +522,30 @@ export const defaultJsonConfig = {
           ]
         },
         {
-          "title": "Education",
+          "title": $localize`:Panel title:Education`,
           "components": [
             {
-              "title": "School History",
+              "title": $localize`:Title inside a panel:School History`,
               "component": "PreviousSchools",
               "config": {
                 "single": true,
                 "columns": [
-                  { "id": "schoolId", "label": "School", "input": "school" },
-                  { "id": "schoolClass", "label": "Class", "input": "text" },
-                  { "id": "start", "label": "From", "input": "date" },
-                  { "id": "end", "label": "To", "input": "date" },
-                  { "id": "result", "label": "Result", "input": "percentageResult" },
+                  "schoolId",
+                  "schoolClass",
+                  "start",
+                  "end",
+                  "result",
                 ],
               }
             },
             {
-              "title": "ASER Results",
+              "title": $localize`:Title inside a panel:ASER Results`,
               "component": "Aser"
             }
           ]
         },
         {
-          "title": "Attendance",
+          "title": $localize`:Panel title:Attendance`,
           "components": [
             {
               "title": "",
@@ -873,7 +554,7 @@ export const defaultJsonConfig = {
           ]
         },
         {
-          "title": "Notes & Reports",
+          "title": $localize`:Panel title:Notes & Reports`,
           "components": [
             {
               "title": "",
@@ -882,92 +563,27 @@ export const defaultJsonConfig = {
           ]
         },
         {
-          "title": "Health",
+          "title": $localize`:Panel title:Health`,
           "components": [
             {
               "title": "",
               "component": "Form",
               "config": {
                 "cols": [
-                  [
-                    {
-                      "input": "select",
-                      "id": "health_vaccinationStatus",
-                      "placeholder": "Vaccination Status",
-                      "options": [
-                        "Good",
-                        "Vaccination Due",
-                        "Needs Checking",
-                        "No Card/Information"
-                      ]
-                    }
-                  ],
-                  [
-                    {
-                      "input": "select",
-                      "id": "health_eyeHealthStatus",
-                      "placeholder": "Eye Status",
-                      "options": [
-                        "Good",
-                        "Has Glasses",
-                        "Needs Glasses",
-                        "Needs Checkup"
-                      ]
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "health_bloodGroup",
-                      "placeholder": "Blood Group"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "datepicker",
-                      "id": "health_lastDentalCheckup",
-                      "placeholder": "Last Dental Check-Up"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "datepicker",
-                      "id": "health_lastEyeCheckup",
-                      "placeholder": "Last Eye Check-Up"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "datepicker",
-                      "id": "health_lastENTCheckup",
-                      "placeholder": "Last ENT Check-Up"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "datepicker",
-                      "id": "health_lastVitaminD",
-                      "placeholder": "Last Vitamin D"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "datepicker",
-                      "id": "health_lastDeworming",
-                      "placeholder": "Last De-Worming"
-                    }
-                  ]
+                  ["health_bloodGroup"],
+                  ["health_lastDentalCheckup"],
+                  ["health_lastDeworming"]
                 ]
               }
             },
             {
-              "title": "Height & Weight Tracking",
+              "title": $localize`:Title inside a panel:Height & Weight Tracking`,
               "component": "HealthCheckup"
             }
           ]
         },
         {
-          "title": "Educational Materials",
+          "title": $localize`:Panel title:Educational Materials`,
           "components": [
             {
               "title": "",
@@ -976,120 +592,38 @@ export const defaultJsonConfig = {
           ]
         },
         {
-          title: "Observations",
+          title: $localize`:Panel title:Observations`,
           components: [
             {
               title: "",
               component: "HistoricalDataComponent",
               config: [
-                {
-                  name: "date",
-                  label: "Date",
-                  inputType: ColumnDescriptionInputType.DATE
-                },
-                {
-                  name: "isMotivatedDuringClass",
-                  label: "Motivated",
-                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-                  enumId: "rating-answer",
-                  tooltip: "The child is motivated during the class."
-                },
-                {
-                  name: "isParticipatingInClass",
-                  label: "Participates",
-                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-                  enumId: "rating-answer",
-                  tooltip: "The child is actively participating in the class."
-                },
-                {
-                  name: "isInteractingWithOthers",
-                  label: "Interacts",
-                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-                  enumId: "rating-answer",
-                  tooltip: "The child interacts with other students during the class."
-                },
-                {
-                  name: "doesHomework",
-                  label: "Homework",
-                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-                  enumId: "rating-answer",
-                  tooltip: "The child does its homework."
-                },
-                {
-                  name: "isOnTime",
-                  label: "On time",
-                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-                  enumId: "rating-answer",
-                  tooltip: "The child is always on time for the class."
-                },
-                {
-                  name: "asksQuestions",
-                  label: "Asks",
-                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-                  enumId: "rating-answer",
-                  tooltip: "The child is asking questions during the class."
-                },
-                {
-                  name: "listens",
-                  label: "Listens",
-                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-                  enumId: "rating-answer",
-                  tooltip: "The child is listening during the class."
-                },
-                {
-                  name: "canWorkOnBoard",
-                  label: "Solves on board",
-                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-                  enumId: "rating-answer",
-                  tooltip: "The child can solve exercises on the board."
-                },
-                {
-                  name: "isConcentrated",
-                  label: "Concentrated",
-                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-                  enumId: "rating-answer",
-                  tooltip: "The child is concentrated during the class."
-                },
-                {
-                  name: "doesNotDisturb",
-                  label: "Not Disturbing",
-                  inputType: ColumnDescriptionInputType.CONFIGURABLE_ENUM,
-                  enumId: "rating-answer",
-                  tooltip: "The child does not disturb the class."
-                },
+                "date",
+                "isMotivatedDuringClass" ,
+                "isParticipatingInClass",
+                "isInteractingWithOthers",
+                "doesHomework",
+                "isOnTime",
+                "asksQuestions",
+                "listens",
+                "canWorkOnBoard",
+                "isConcentrated",
+                "doesNotDisturb",
               ]
             }
           ]
         },
         {
-          "title": "Dropout",
+          "title": $localize`:Panel title:Dropout`,
           "components": [
             {
               "title": "",
               "component": "Form",
               "config": {
                 "cols": [
-                  [
-                    {
-                      "input": "datepicker",
-                      "id": "dropoutDate",
-                      "placeholder": "Dropout Date"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "dropoutType",
-                      "placeholder": "Dropout Type"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "text",
-                      "id": "dropoutRemarks",
-                      "placeholder": "Dropout Remarks"
-                    }
-                  ]
+                  ["dropoutDate"],
+                  ["dropoutType"],
+                  ["dropoutRemarks"]
                 ]
               }
             }
@@ -1102,40 +636,12 @@ export const defaultJsonConfig = {
   "view:recurring-activity": {
     "component": "ActivityList",
     "config": {
-      "title": "Recurring Activities",
+      "title": $localize`:Title of recurring activities overview:Recurring Activities`,
       "columns": [
-        {
-          "component": "DisplayText",
-          "title": "Title",
-          "id": "title"
-        },
-        {
-          "component": "DisplayConfigurableEnum",
-          "title": "Type",
-          "id": "type"
-        },
-        {
-          "component": "DisplayUsers",
-          "title": "Assigned to",
-          "id": "assignedTo"
-        }
+        "title",
+        "type",
+        "assignedTo"
       ],
-      "columnGroup": {
-        "default": "All",
-        "mobile": "All",
-        "groups": [
-          {
-            "name": "All",
-            "columns": [
-              "title",
-              "type",
-              "assignedTo"
-            ]
-          }
-        ]
-      },
-      "filters": [
-      ]
     }
   },
   "view:recurring-activity/:id": {
@@ -1144,51 +650,36 @@ export const defaultJsonConfig = {
       "entity": "RecurringActivity",
       "panels": [
         {
-          "title": "Activity",
+          "title": $localize`:Panel title:Activity`,
           "components": [
             {
               "component": "Form",
               "config": {
                 "cols": [
-                  [
-                    {
-                      "input": "text",
-                      "id": "title",
-                      "placeholder": "Title"
-                    }
-                  ],
-                  [
-                    {
-                      "id": "type",
-                      "input": "configurable-enum-select",
-                      "enumId": "interaction-type",
-                      "placeholder": "Type"
-                    }
-                  ],
-                  [
-                    {
-                      "input": "entity-select",
-                      "id": "assignedTo",
-                      "entityType": "User",
-                      "placeholder": "Add coordinator...",
-                      "label": "Assigned to"
-                    }
-                  ]
+                  ["title"],
+                  ["type"],
+                  ["assignedTo"]
                 ]
               }
             }
           ]
         },
         {
-          "title": "Participants",
+          "title": $localize`:Panel title:Participants`,
           "components": [
             {
-              "component": "ActivityParticipantsSection"
+              "component": "Form",
+              "config": {
+                "cols": [[
+                  "linkedGroups",
+                  "participants"
+                ]]
+              }
             }
           ]
         },
         {
-          "title": "Events & Attendance",
+          "title": $localize`:Panel title:Events & Attendance`,
           "components": [
             {
               "component": "ActivityAttendanceSection"
@@ -1204,37 +695,64 @@ export const defaultJsonConfig = {
     "config": {
       "reports": [
         {
-          "title": "Basic Report",
+          "title": $localize`:Name of a report:Basic Report`,
           "aggregationDefinitions": [
             {
               "query": `${Child.ENTITY_TYPE}:toArray[*isActive=true]`,
-              "label": "All children",
+              "label": $localize`:Label of report query:All children`,
               "aggregations": [
-                {"label": "Male children", "query": `[*gender=${Gender.MALE}]`},
-                {"label": "Female children", "query": `[*gender=${Gender.FEMALE}]`},
+                {
+                  "label": $localize`:Label of report query:Male children`,
+                  "query": `:filterByObjectAttribute(gender, id, M)`
+                },
+                {
+                  "label": $localize`:Label of report query:Female children`,
+                  "query": `:filterByObjectAttribute(gender, id, F)`
+                },
               ]
             },
             {
               "query": `${School.ENTITY_TYPE}:toArray`,
-              "label": "All schools",
+              "label": $localize`:Label for report query:All schools`,
               "aggregations": [
-                {"label": "Children attending a school", "query": `:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:unique`},
-                {"label": "Governmental schools", "query": `[*privateSchool!=true]`},
+                {
+                  "label": $localize`:Label for report query:Children attending a school`,
+                  "query": `:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:unique`
+                },
+                {
+                  "label": $localize`:Label for report query:Governmental schools`,
+                  "query": `[*privateSchool!=true]`
+                },
                 {
                   "query": `[*privateSchool!=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`,
-                  "label": "Children attending a governmental school",
+                  "label": $localize`:Label for report query:Children attending a governmental school`,
                   "aggregations": [
-                    {"label": "Male children attending a governmental school", "query": `[*gender=${Gender.MALE}]`},
-                    {"label": "Female children attending a governmental school", "query": `[*gender=${Gender.FEMALE}]`},
+                    {
+                      "label": $localize`:Label for report query:Male children attending a governmental school`,
+                      "query": `:filterByObjectAttribute(gender, id, M)`
+                    },
+                    {
+                      "label": $localize`:Label for report query:Female children attending a governmental school`,
+                      "query": `:filterByObjectAttribute(gender, id, F)`
+                    },
                   ]
                 },
-                {"label": "Private schools", "query": `[*privateSchool=true]`},
+                {
+                  "label": $localize`:Label for report query:Private schools`,
+                  "query": `[*privateSchool=true]`
+                },
                 {
                   "query": `[*privateSchool=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`,
-                  "label": "Children attending a private school",
+                  "label": $localize`:Label for report query:Children attending a private school`,
                   "aggregations": [
-                    {"label": "Male children attending a private school", "query": `[*gender=${Gender.MALE}]`},
-                    {"label": "Female children attending a private school", "query": `[*gender=${Gender.FEMALE}]`},
+                    {
+                      "label": $localize`:Label for report query:Male children attending a private school`,
+                      "query": `:filterByObjectAttribute(gender, id, M)`
+                    },
+                    {
+                      "label": $localize`:Label for report query:Female children attending a private school`,
+                      "query": `:filterByObjectAttribute(gender, id, F)`
+                    },
                   ]
                 },
               ]
@@ -1242,17 +760,17 @@ export const defaultJsonConfig = {
           ],
         },
         {
-          "title": "Event Report",
+          "title": $localize`:Name of a report:Event Report`,
           "aggregationDefinitions": [
             {
               "query": `${EventNote.ENTITY_TYPE}:toArray[*date >= ? & date <= ?]`,
               "groupBy": ["category"],
-              "label": "Events",
+              "label": $localize`:Label for a report query:Events`,
               "aggregations": [
                 {
                   "query": `:getParticipantsWithAttendance(PRESENT):unique:addPrefix(${Child.ENTITY_TYPE}):toEntities`,
                   "groupBy": ["gender", "religion"],
-                  "label": "Participants"
+                  "label": $localize`:Label for a report query:Participants`
                 }
               ]
             }
@@ -1266,24 +784,94 @@ export const defaultJsonConfig = {
     "permissions": {
     },
     "attributes": [
-      {"name": "address", "schema": { "dataType": "string" } },
-      {"name": "phone", "schema": { "dataType": "string" } },
-      {"name": "guardianName", "schema": { "dataType": "string" } },
-      {"name": "preferredTimeForGuardianMeeting", "schema": { "dataType": "string" } },
-      {"name": "center", "schema":  { "dataType": "configurable-enum", "innerDataType": "center" }},
-      {"name": "has_aadhar", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status" } },
-      {"name": "has_bankAccount", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status" } },
-      {"name": "has_kanyashree", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status" } },
-      {"name": "has_rationCard", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status" } },
-      {"name": "has_BplCard", "schema": { "dataType": "configurable-enum", "innerDataType": "document-status" } },
-      {"name": "health_vaccinationStatus", "schema": { "dataType": "string" } },
-      {"name": "health_bloodGroup", "schema": { "dataType": "string" } },
-      {"name": "health_lastDentalCheckup", "schema": { "dataType": "Date" } },
-      {"name": "health_lastEyeCheckup", "schema": { "dataType": "Date" } },
-      {"name": "health_lastENTCheckup", "schema": { "dataType": "Date" } },
-      {"name": "health_eyeHealthStatus", "schema": { "dataType": "string" } },
-      {"name": "health_lastVitaminD", "schema": { "dataType": "Date" } },
-      {"name": "health_lastDeworming", "schema": { "dataType": "Date" } }
+      {
+        "name": "address",
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for the address of a child:Address`
+        }
+      },
+      {
+        "name": "phone",
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for phone number of a child:Phone No.`
+        }
+      },
+      {
+        "name": "guardianName",
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for the guardians of a child:Guardians`
+        }
+      },
+      {
+        "name": "preferredTimeForGuardianMeeting",
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for a child attribute:Preferred time for guardians meeting` }
+      },
+      {
+        "name": "has_aadhar",
+        "schema": {
+          dataType: "configurable-enum",
+          innerDataType: "document-status",
+          label: $localize`:Label for a child attribute:Aadhar`
+        }
+      },
+      {
+        "name": "has_bankAccount",
+        "schema": {
+          dataType: "configurable-enum",
+          innerDataType: "document-status",
+          label: $localize`:Label for a child attribute:Bank Account`
+        }
+      },
+      {
+        "name": "has_kanyashree",
+        "schema": {
+          dataType: "configurable-enum",
+          innerDataType: "document-status",
+          label: $localize`:Label for a child attribute:Kanyashree`
+        }
+      },
+      {
+        "name": "has_rationCard",
+        "schema": {
+          dataType: "configurable-enum",
+          innerDataType: "document-status",
+          label: $localize`:Label for a child attribute:Ration Card`
+        }
+      },
+      {
+        "name": "has_BplCard",
+        "schema": {
+          dataType: "configurable-enum",
+          innerDataType: "document-status",
+          label: $localize`:Label for a child attribute:BPL Card`
+        }
+      },
+      {
+        "name": "health_bloodGroup",
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for a child attribute:Blood Group`
+        }
+      },
+      {
+        "name": "health_lastDentalCheckup",
+        "schema": {
+          dataType: "Date",
+          label: $localize`:Label for a child attribute:Last Dental Check-Up`
+        }
+      },
+      {
+        "name": "health_lastDeworming",
+        "schema": {
+          dataType: "Date",
+          label: $localize`:Label for a child attribute:Last De-Worming`
+        }
+      }
     ]
   },
   "entity:School": {
@@ -1292,16 +880,104 @@ export const defaultJsonConfig = {
   },
   "entity:HistoricalEntityData": {
     "attributes": [
-      {"name": "isMotivatedDuringClass", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
-      {"name": "isParticipatingInClass", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
-      {"name": "isInteractingWithOthers", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
-      {"name": "doesHomework", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
-      {"name": "isOnTime", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
-      {"name": "asksQuestions", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
-      {"name": "listens", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
-      {"name": "canWorkOnBoard", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
-      {"name": "isConcentrated", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
-      {"name": "doesNotDisturb", "schema": { "dataType": "configurable-enum", "innerDataType": "rating-answer"}},
+      {
+        "name": "isMotivatedDuringClass",
+        "schema": {
+          "dataType": "configurable-enum",
+          "innerDataType": "rating-answer",
+          label: $localize`:Label for a child attribute:Motivated`,
+          description: $localize`:Description for a child attribute:The child is motivated during the class.`
+        }
+      },
+      {
+        "name": "isParticipatingInClass",
+        "schema": {
+          "dataType": "configurable-enum",
+          "innerDataType": "rating-answer",
+          label: $localize`:Label for a child attribute:Participates`,
+          description: $localize`:Description for a child attribute:The child is actively participating in the class.`
+        }
+      },
+      {
+        "name": "isInteractingWithOthers",
+        "schema": {
+          "dataType": "configurable-enum",
+          "innerDataType": "rating-answer",
+          label: $localize`:Label for a child attribute:Interacts`,
+          description: $localize`:Description for a child attribute:The child interacts with other students during the class.`
+        }
+      },
+      {
+        "name": "doesHomework",
+        "schema": {
+          "dataType": "configurable-enum",
+          "innerDataType": "rating-answer",
+          label: $localize`:Label for a child attribute:Homework`,
+          description: $localize`:Description for a child attribute:The child does its homework.`
+        }
+      },
+      {
+        "name": "isOnTime",
+        "schema": {
+          "dataType": "configurable-enum",
+          "innerDataType": "rating-answer",
+          label: $localize`:Label for a child attribute:On time`,
+          description: $localize`:Description for a child attribute:The child is always on time for the class.`
+        }
+      },
+      {
+        "name": "asksQuestions",
+        "schema": {
+          "dataType": "configurable-enum",
+          "innerDataType": "rating-answer",
+          label: $localize`:Label for a child attribute:Asks`,
+          description: $localize`:Description for a child attribute:The child is asking questions during the class.`
+        }
+      },
+      {
+        "name": "listens",
+        "schema": {
+          "dataType": "configurable-enum",
+          "innerDataType": "rating-answer",
+          label: $localize`:Label for a child attribute:Listens`,
+          description: $localize`:Description for a child attribute:The child is listening during the class.`
+        }
+      },
+      {
+        "name": "canWorkOnBoard",
+        "schema": {
+          "dataType": "configurable-enum",
+          "innerDataType": "rating-answer",
+          label: $localize`:Label for a child attribute:Solves on board`,
+          description: $localize`:Description for a child attribute:The child can solve exercises on the board.`
+        }
+      },
+      {
+        "name": "isConcentrated",
+        "schema": {
+          "dataType": "configurable-enum",
+          "innerDataType": "rating-answer",
+          label: $localize`:Label for a child attribute:Concentrated`,
+          description: $localize`:Description for a child attribute:The child is concentrated during the class.`
+        }
+      },
+      {
+        "name": "doesNotDisturb",
+        "schema": {
+          "dataType": "configurable-enum",
+          "innerDataType": "rating-answer",
+          label: $localize`:Label for a child attribute:Not disturbing`,
+          description: $localize`:Description for a child attribute:The child does not disturb the class.`
+        }
+      },
     ]
+  },
+  "entity:Note": {
+    permissions: {
+    }
+  },
+  "entity:EventNote": {
+    permission: {
+    }
   }
 }

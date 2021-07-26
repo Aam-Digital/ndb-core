@@ -9,44 +9,44 @@ import { defaultJsonConfig } from "./config-fix";
   providedIn: "root",
 })
 export class ConfigService {
-  private static CONFIG_KEY = "CONFIG_ENTITY";
-  private config: Config = new Config(ConfigService.CONFIG_KEY);
-
   /**
    * Subscribe to receive the current config and get notified whenever the config is updated.
    */
-  public configUpdated: BehaviorSubject<Config>;
+  public configUpdates: BehaviorSubject<Config>;
 
-  constructor(@Optional() private loggingService: LoggingService) {
-    this.config.data = JSON.parse(JSON.stringify(defaultJsonConfig));
-    this.configUpdated = new BehaviorSubject<Config>(this.config);
+  private get configData(): any {
+    return this.configUpdates.value.data;
+  }
+
+  constructor(@Optional() private loggingService?: LoggingService) {
+    const defaultConfig = JSON.parse(JSON.stringify(defaultJsonConfig));
+    this.configUpdates = new BehaviorSubject<Config>(new Config(defaultConfig));
   }
 
   public async loadConfig(entityMapper: EntityMapperService): Promise<Config> {
-    this.config = await this.getConfigOrDefault(entityMapper);
-    this.configUpdated.next(this.config);
-    return this.config;
+    this.configUpdates.next(await this.getConfigOrDefault(entityMapper));
+    return this.configUpdates.value;
   }
 
   private getConfigOrDefault(
     entityMapper: EntityMapperService
   ): Promise<Config> {
-    return entityMapper.load(Config, ConfigService.CONFIG_KEY).catch(() => {
+    return entityMapper.load(Config, Config.CONFIG_KEY).catch(() => {
       this.loggingService.info(
         "No configuration found in the database, using default one"
       );
-      const defaultConfig = new Config(ConfigService.CONFIG_KEY);
-      defaultConfig.data = JSON.parse(JSON.stringify(defaultJsonConfig));
-      return defaultConfig;
+      const defaultConfig = JSON.parse(JSON.stringify(defaultJsonConfig));
+      return new Config(defaultConfig);
     });
   }
 
-  public saveConfig(
+  public async saveConfig(
     entityMapper: EntityMapperService,
     config: any
   ): Promise<Config> {
-    this.config.data = config;
-    return entityMapper.save<Config>(this.config);
+    this.configUpdates.next(new Config(config));
+    await entityMapper.save<Config>(this.configUpdates.value);
+    return this.configUpdates.value;
   }
 
   public async exportConfig(
@@ -57,15 +57,15 @@ export class ConfigService {
   }
 
   public getConfig<T>(id: string): T {
-    return this.config.data[id];
+    return this.configData[id];
   }
 
   public getAllConfigs<T>(prefix: string): T[] {
     const matchingConfigs = [];
-    for (const id of Object.keys(this.config.data)) {
+    for (const id of Object.keys(this.configData)) {
       if (id.startsWith(prefix)) {
-        this.config.data[id]._id = id;
-        matchingConfigs.push(this.config.data[id]);
+        this.configData[id]._id = id;
+        matchingConfigs.push(this.configData[id]);
       }
     }
     return matchingConfigs;
@@ -74,7 +74,6 @@ export class ConfigService {
 
 export function createTestingConfigService(configsObject: any): ConfigService {
   const configService = new ConfigService(null);
-  // @ts-ignore
-  configService.config.data = configsObject;
+  configService.configUpdates.next(new Config(configsObject));
   return configService;
 }

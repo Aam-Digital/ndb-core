@@ -1,0 +1,6 @@
+<div
+  *ngIf="entity[property]"
+  [ngStyle]="resultColorStyleBuilder(entity[property])"
+>
+  {{ entity[property] + "%" }}
+</div>

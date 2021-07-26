@@ -1,5 +1,4 @@
 import { Child } from "../model/child";
-import { Gender } from "../model/Gender";
 import { religions } from "./fixtures/religions";
 import { languages } from "./fixtures/languages";
 import { dropoutTypes } from "./fixtures/dropout-types";
@@ -8,6 +7,7 @@ import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { faker } from "../../../core/demo-data/faker";
 import { centersWithProbability } from "./fixtures/centers";
 import { addDefaultChildPhoto } from "../../../../../.storybook/utils/addDefaultChildPhoto";
+import { genders } from "../model/genders";
 
 export class DemoChildConfig {
   count: number;
@@ -34,7 +34,7 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
     child.name = faker.name.firstName() + " " + faker.name.lastName();
     child.projectNumber = id;
     child.religion = faker.random.arrayElement(religions);
-    child.gender = faker.random.arrayElement([Gender.MALE, Gender.FEMALE]);
+    child.gender = faker.random.arrayElement(genders.slice(1));
     child.dateOfBirth = faker.dateOfBirth(5, 20);
     child.motherTongue = faker.random.arrayElement(languages);
     child.center = faker.random.arrayElement(centersWithProbability);
@@ -55,7 +55,7 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
     child.dropoutDate = faker.date.between(child.admissionDate, new Date());
     child.dropoutRemarks = faker.lorem.sentence();
     child.dropoutType = faker.random.arrayElement(dropoutTypes);
-    child.status = "Dropout";
+    child.status = $localize`:Child status:Dropout`;
   }
 
   constructor(public config: DemoChildConfig) {

@@ -23,18 +23,20 @@
       {{ attendanceData.activity.title }}
     </div>
 
-    <div class="attendance-tooltip-content">
-      attended {{ logicalCount[LStatus.PRESENT] || 0 }} /
-      {{
-        (logicalCount[LStatus.PRESENT] || 0) +
-          (logicalCount[LStatus.ABSENT] || 0)
-      }}
-      events
+    <div
+      class="attendance-tooltip-content"
+      i18n="
+        Attended Tooltip|How many attendees were present / how many attendees
+        were absent
+      "
+    >
+      attended {{ attendanceDescription }} events
     </div>
 
     <div
       class="attendance-tooltip-content"
       *ngIf="logicalCount[LStatus.IGNORE] > 0"
+      i18n="Attended Tooltip|How many events were excluded"
     >
       (excluding {{ logicalCount[LStatus.IGNORE] }} events excused or unknown)
     </div>
@@ -42,6 +44,7 @@
       <app-attendance-calendar
         [records]="attendanceData.events"
         [highlightForChild]="forChild"
+        [activity]="attendanceData.activity"
       >
       </app-attendance-calendar>
     </div>

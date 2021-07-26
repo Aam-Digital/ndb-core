@@ -47,7 +47,7 @@ export class DemoHealthCheckGeneratorService extends DemoDataGenerator<HealthChe
     previousRecord.height = 0;
     previousRecord.weight = 0;
     do {
-      const record = new HealthCheck(faker.datatype.uuid());
+      const record = new HealthCheck();
       record.child = child.getId();
       record.date = date;
       this.setNextHeightAndWeight(
