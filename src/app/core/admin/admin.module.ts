@@ -17,7 +17,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatIconModule } from "@angular/material/icon";
 import { UserListComponent } from "./user-list/user-list.component";
-import { ExportDataComponent } from "./export-data/export-data.component";
 import { BackupService } from "./services/backup.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
@@ -43,13 +42,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatIconModule,
     MatTooltipModule,
   ],
-  declarations: [AdminComponent, UserListComponent, ExportDataComponent],
-  providers: [
-    AdminGuard,
-    ChildPhotoUpdateService,
-    BackupService,
-    ExportDataComponent,
-  ],
-  exports: [ExportDataComponent],
+  declarations: [AdminComponent, UserListComponent],
+  providers: [AdminGuard, ChildPhotoUpdateService, BackupService],
 })
 export class AdminModule {}
