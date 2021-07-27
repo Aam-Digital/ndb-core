@@ -7,10 +7,10 @@ export const genders: ConfigurableEnumValue[] = [
   },
   {
     id: "M",
-    label: "male",
+    label: $localize`:Label gender:male`,
   },
   {
     id: "F",
-    label: "female",
+    label: $localize`:Label gender:female`,
   },
 ];

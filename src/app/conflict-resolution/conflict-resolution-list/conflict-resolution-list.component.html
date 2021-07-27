@@ -1,4 +1,11 @@
-<p>conflicts to resolve:</p>
+<p
+  i18n="
+    Conflicts to be resolved|Shows the database conflicts that need to be
+    resolved
+  "
+>
+  conflicts to resolve:
+</p>
 
 <div class="mat-elevation-z1">
   <div *ngIf="dataSource?.loading$ | async">
@@ -12,7 +19,14 @@
     </ng-container>
 
     <ng-container matColumnDef="data" class="col-data">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Data</th>
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        i18n="Raw data, e.g. from a database"
+      >
+        Data
+      </th>
       <td mat-cell *matCellDef="let row">
         <app-compare-rev
           *ngFor="let rev of row.key"

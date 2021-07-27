@@ -25,7 +25,7 @@
  */
 export const environment = {
   production: true,
-  appVersion: "2.52.4", // replaced automatically by semantic-release
+  appVersion: "0.0.0", // replaced automatically during docker build
   repositoryId: "Aam-Digital/ndb-core",
   remoteLoggingDsn:
     "https://bd6aba79ca514d35bb06a4b4e0c2a21e@sentry.io/1242399",

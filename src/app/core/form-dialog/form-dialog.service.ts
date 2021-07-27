@@ -55,8 +55,8 @@ export class FormDialogService {
       if (!activelyClosed && dialogWrapper.isFormDirty) {
         this.confirmationDialog
           .openDialog(
-            "Save Changes?",
-            "Do you want to save the changes you made to the record?"
+            $localize`:Save changes header:Save Changes?`,
+            $localize`:Save changes message:Do you want to save the changes you made to the record?`
           )
           .afterClosed()
           .subscribe((confirmed) => {

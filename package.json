@@ -1,11 +1,12 @@
 {
   "name": "ndb-core",
-  "version": "2.52.4",
+  "version": "0.0.0",
   "license": "GPL-3.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build --prod",
+    "build-localized": "ng build --configuration=production,localized",
     "test": "ng test",
     "test-ci": "ng test --code-coverage --karmaConfig=build/karma-ci.conf.js ",
     "lint": "ng lint ndb-core --type-check",
@@ -14,7 +15,8 @@
     "postinstall": "ngcc && node patch-webpack.js",
     "docs:json": "compodoc -p ./tsconfig.json -e json -d .",
     "storybook": "npm run docs:json && start-storybook -p 6006",
-    "build-storybook": "npm run docs:json && build-storybook"
+    "build-storybook": "npm run docs:json && build-storybook",
+    "extract-i18n": "ng extract-i18n --output-path ./src/locale/ && xliffmerge --profile xliffmerge.json"
   },
   "private": true,
   "dependencies": {
@@ -25,6 +27,7 @@
     "@angular/core": "^11.2.12",
     "@angular/flex-layout": "^11.0.0-beta.33",
     "@angular/forms": "^11.2.12",
+    "@angular/localize": "^11.2.12",
     "@angular/material": "^11.2.13",
     "@angular/platform-browser": "^11.2.12",
     "@angular/platform-browser-dynamic": "^11.2.12",
@@ -36,6 +39,7 @@
     "crypto-js": "^4.0.0",
     "deep-object-diff": "^1.1.0",
     "faker": "^5.5.3",
+    "flag-icon-css": "^3.5.0",
     "font-awesome": "^4.7.0",
     "idb": "^6.1.2",
     "json-query": "^2.2.2",
@@ -62,7 +66,7 @@
     "@angular/cli": "^11.2.3",
     "@angular/compiler-cli": "^11.2.4",
     "@babel/core": "^7.13.8",
-    "@compodoc/compodoc": "^1.1.11",
+    "@compodoc/compodoc": "^1.1.14",
     "@schematics/angular": "^11.2.3",
     "@storybook/addon-actions": "^6.1.21",
     "@storybook/addon-essentials": "^6.1.21",
@@ -88,6 +92,7 @@
     "karma-jasmine": "~4.0.1",
     "karma-jasmine-html-reporter": "^1.5.4",
     "lint-staged": "^10.5.4",
+    "ngx-i18nsupport": "^0.17.1",
     "prettier": "^2.2.1",
     "protractor": "~7.0.0",
     "ts-node": "^9.1.1",
