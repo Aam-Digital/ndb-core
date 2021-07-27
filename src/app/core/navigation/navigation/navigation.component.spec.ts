@@ -48,7 +48,7 @@ describe("NavigationComponent", () => {
     waitForAsync(() => {
       mockConfigService = jasmine.createSpyObj(["getConfig"]);
       mockConfigService.getConfig.and.returnValue({ items: [] });
-      mockConfigService.configUpdated = mockConfigUpdated;
+      mockConfigService.configUpdates = mockConfigUpdated;
       mockAdminGuard = jasmine.createSpyObj(["isAdmin"]);
       mockAdminGuard.isAdmin.and.returnValue(false);
       mockRouter = jasmine.createSpyObj("Router", [], {

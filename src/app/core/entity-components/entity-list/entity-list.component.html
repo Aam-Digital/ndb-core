@@ -29,7 +29,7 @@
     <div fxFlex></div>
 
     <mat-form-field class="filter-field" style="width: 100px" fxLayoutAlign="end">
-      <mat-label>Filter</mat-label>
+      <mat-label i18n="Filter placeholder|Allows the user to filter through entities">Filter</mat-label>
       <input
         matInput
         [placeholder]="listConfig.filterPlaceholder"
@@ -102,6 +102,6 @@
       aria-label="download csv"
       fontIcon="fa-download"
     ></mat-icon>
-    <span> Download CSV </span>
+    <span i18n="Download list contents as CSV"> Download CSV </span>
   </button>
 </mat-menu>

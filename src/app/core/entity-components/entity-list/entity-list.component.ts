@@ -92,6 +92,10 @@ export class EntityListComponent<T extends Entity>
           this.displayColumnGroupByName(this.defaultColumnGroup);
           break;
         }
+        case "lg":
+        case "xl": {
+          break;
+        }
       }
     });
   }

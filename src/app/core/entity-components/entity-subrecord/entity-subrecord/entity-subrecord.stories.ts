@@ -20,6 +20,8 @@ import { ChildrenService } from "../../../../child-dev-project/children/children
 import { of } from "rxjs";
 import * as faker from "faker";
 import { EntityPermissionsService } from "../../../permissions/entity-permissions.service";
+import { SessionService } from "../../../session/session-service/session.service";
+import { User } from "../../../user/user";
 
 const configService = new ConfigService();
 const schemaService = new EntitySchemaService();
@@ -74,6 +76,10 @@ export default {
         {
           provide: EntityPermissionsService,
           useValue: { userIsPermitted: () => true },
+        },
+        {
+          provide: SessionService,
+          useValue: { getCurrentUser: () => new User() },
         },
       ],
     }),

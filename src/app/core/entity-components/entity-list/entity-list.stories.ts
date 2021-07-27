@@ -14,6 +14,9 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enum.module";
 import { DatePipe } from "@angular/common";
 
+const user = new User();
+user.paginatorSettingsPageSize["ageprojectNumbernamegendercenterstatus"] = 13;
+
 export default {
   title: "Core/Entity List",
   component: EntityListComponent,
@@ -30,10 +33,13 @@ export default {
         DatePipe,
         {
           provide: SessionService,
-          useValue: { getCurrentUser: () => new User() },
+          useValue: { getCurrentUser: () => user },
         },
         { provide: BackupService, useValue: {} },
-        { provide: EntityMapperService, useValue: {} },
+        {
+          provide: EntityMapperService,
+          useValue: { save: () => Promise.resolve() },
+        },
       ],
     }),
   ],
@@ -46,7 +52,7 @@ const Template: Story<EntityListComponent<Child>> = (
   props: args,
 });
 
-const children = new DemoChildGenerator({ count: 20 }).generateEntities();
+const children = new DemoChildGenerator({ count: 25 }).generateEntities();
 
 export const Primary = Template.bind({});
 Primary.args = {

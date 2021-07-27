@@ -1,15 +1,16 @@
 <mat-toolbar>
   <mat-slide-toggle
-    [disabled]="allToggleDisabled"
     [checked]="showingAll"
     (change)="changeAllToggle()"
-    >Show All</mat-slide-toggle
+    i18n="All toggle for paginator"
   >
+    Show All
+  </mat-slide-toggle>
   <mat-paginator
     (page)="onPaginateChange($event)"
-    [pageSize]="paginatorPageSize"
-    [pageIndex]="paginatorPageIndex"
-    [pageSizeOptions]="paginatorPageSizeOptions"
+    [pageSize]="pageSize"
+    [pageIndex]="currentPageIndex"
+    [pageSizeOptions]="pageSizeOptions"
     [showFirstLastButtons]="true"
   ></mat-paginator>
 </mat-toolbar>

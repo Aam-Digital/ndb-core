@@ -47,7 +47,7 @@ export class NavigationComponent {
     private configService: ConfigService,
     private router: Router
   ) {
-    this.configService.configUpdated.subscribe(() =>
+    this.configService.configUpdates.subscribe(() =>
       this.initMenuItemsFromConfig()
     );
     this.router.events

@@ -1,27 +1,44 @@
 <div *ngIf="!availableReports || availableReports.length === 0">
-  <p>
-    Reports have not been configured for you yet.
-  </p>
-  <a mat-stroked-button href="mailto:info@aam-digital.com?subject=Set up reports">Ask for a setup call</a>
+  <p i18n>Reports have not been configured for you yet.</p>
+  <a
+    mat-stroked-button
+    href="mailto:info@aam-digital.com?subject=Set up reports"
+    i18n="Button if no reports are configured yet"
+  >
+    Ask for a setup call
+  </a>
 </div>
 
-<mat-expansion-panel expanded="true" class="work-panel mat-elevation-z2" *ngIf="availableReports?.length > 0">
-
+<mat-expansion-panel
+  expanded="true"
+  class="work-panel mat-elevation-z2"
+  *ngIf="availableReports?.length > 0"
+>
   <div fxLayout="row wrap" fxLayoutGap="1rem">
     <mat-form-field>
-      <mat-label>Select Report</mat-label>
+      <mat-label i18n>Select Report</mat-label>
       <mat-select [(ngModel)]="selectedReport" [disabled]="loading">
         <mat-option *ngFor="let report of availableReports" [value]="report">
-          {{report.title}}
+          {{ report.title }}
         </mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>Enter a date range</mat-label>
+      <mat-label i18n>Enter a date range</mat-label>
       <mat-date-range-input [rangePicker]="picker" [disabled]="loading">
-        <input [(ngModel)]="fromDate" matStartDate placeholder="Start date">
-        <input [(ngModel)]="toDate" matEndDate placeholder="End date">
+        <input
+          [(ngModel)]="fromDate"
+          matStartDate
+          i18n-placeholder="Date selection for the reporting"
+          placeholder="Start date"
+        />
+        <input
+          [(ngModel)]="toDate"
+          matEndDate
+          i18n-placeholder="Date selection for the reporting"
+          placeholder="End date"
+        />
       </mat-date-range-input>
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-date-range-picker #picker></mat-date-range-picker>
@@ -29,6 +46,12 @@
   </div>
 
   <div>
+    <button
+      mat-stroked-button
+      [disabled]="!selectedReport || (!fromDate && !toDate) || loading"
+      (click)="calculateResults()"
+      i18n="Calculate the results for a report"
+    >
     <button
       mat-stroked-button [disabled]="!selectedReport || (!fromDate && !toDate) || loading"
       (click)="calculateResults()"
@@ -49,7 +72,9 @@
           aria-label="download csv"
           fontIcon="fa-download"
         ></mat-icon>
-        Download report
+        <ng-container i18n="Button that allows to download a report">
+          Download report
+        </ng-container>
       </button>
   </div>
 

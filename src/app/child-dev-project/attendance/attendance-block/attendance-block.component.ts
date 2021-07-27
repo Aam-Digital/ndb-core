@@ -38,4 +38,10 @@ export class AttendanceBlockComponent implements OnChanges {
     }
     this.tooltipTimeout = setTimeout(() => (this.tooltip = false), 150);
   }
+  get attendanceDescription(): string {
+    return `${this.logicalCount[this.LStatus.PRESENT]} / ${
+      (this.logicalCount[this.LStatus.PRESENT] || 0) +
+      (this.logicalCount[this.LStatus.ABSENT] || 0)
+    }`;
+  }
 }

@@ -29,3 +29,5 @@ jobs:
           tags: aamdigital/ndb-server:${{ env.TAG }}
           cache-from: type=registry,ref=aamdigital/ndb-server:cache
           cache-to: type=registry,ref=aamdigital/ndb-server:cache,mode=max
+          build-args: |
+            APP_VERSION=${{ env.TAG }}

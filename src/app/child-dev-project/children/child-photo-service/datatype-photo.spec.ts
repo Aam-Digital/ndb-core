@@ -91,4 +91,15 @@ describe("dataType photo", () => {
 
     expect(result.photo).toBeUndefined();
   });
+
+  it("should not throw an error if deprecated value is null", () => {
+    const oldChild = {
+      _id: "oldChild",
+      photoFile: null,
+    };
+
+    expect(() =>
+      entitySchemaService.loadDataIntoEntity(new Child(), oldChild)
+    ).not.toThrowError();
+  });
 });

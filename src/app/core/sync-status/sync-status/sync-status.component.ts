@@ -110,9 +110,15 @@ export class SyncStatusComponent implements OnInit {
   private updateBackgroundProcessesList() {
     let currentProcesses: BackgroundProcessState[] = [];
     if (this.syncInProgress) {
-      currentProcesses.push({ title: "Synchronizing database", pending: true });
+      currentProcesses.push({
+        title: $localize`Synchronizing database`,
+        pending: true,
+      });
     } else {
-      currentProcesses.push({ title: "Database up-to-date", pending: false });
+      currentProcesses.push({
+        title: $localize`Database up-to-date`,
+        pending: false,
+      });
     }
     currentProcesses = currentProcesses.concat(this.indexingProcesses);
     this._backgroundProcesses.next(currentProcesses);

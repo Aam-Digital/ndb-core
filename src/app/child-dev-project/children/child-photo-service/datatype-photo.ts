@@ -47,7 +47,7 @@ export class PhotoDatatype implements EntitySchemaDatatype {
   ): Photo {
     // Using of old photoFile values
     if (
-      parent.hasOwnProperty("photoFile") &&
+      typeof parent["photoFile"] === "string" &&
       parent["photoFile"].trim() !== ""
     ) {
       value = parent["photoFile"];

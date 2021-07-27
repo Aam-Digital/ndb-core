@@ -23,18 +23,19 @@ import { filter } from "rxjs/operators";
 })
 export class ListPaginatorComponent<E extends Entity>
   implements OnChanges, AfterViewInit {
+  readonly pageSizeOptions = [10, 20, 50];
+  readonly defaultPageSize = 10;
+
   @Input() dataSource: MatTableDataSource<E>;
   @Input() idForSavingPagination: string;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   user: User;
-  paginatorPageSize = 10;
-  paginatorPageSizeBeforeToggle = 10;
-  paginatorPageSizeOptions = [3, 10, 20, 50];
-  paginatorPageIndex = 0;
+  pageSize = this.defaultPageSize;
+  currentPageIndex = 0;
   showingAll = false;
-  allToggleDisabled = false;
+  sizeBeforeToggling = this.defaultPageSize;
 
   constructor(
     private sessionService: SessionService,
@@ -45,31 +46,20 @@ export class ListPaginatorComponent<E extends Entity>
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("idForSavingPagination")) {
-      this.paginatorPageSize =
-        this.user.paginatorSettingsPageSize[this.idForSavingPagination] ||
-        this.paginatorPageSize;
-      this.paginatorPageIndex =
-        this.user.paginatorSettingsPageIndex[this.idForSavingPagination] ||
-        this.paginatorPageIndex;
+      this.applyUserPaginationSettings();
     }
     if (changes.hasOwnProperty("dataSource")) {
       this.dataSource
         .connect()
         .pipe(
           untilDestroyed(this),
-          filter((res) => res.length > 0)
+          // When showingAll is false, nothing needs to be done -> filtered out
+          filter((updatedDataSource) => this.showingAll && !!this.paginator),
+          filter((updatedDataSource) => updatedDataSource.length > 0)
         )
         .subscribe(() => {
-          this.paginatorPageSize = Math.min(
-            this.dataSource.data.length,
-            this.paginatorPageSize
-          );
-          this.setPageSizeOptions();
-          this.setPageSize();
-          this.showingAll =
-            this.paginatorPageSize >= this.dataSource.data.length;
-          this.allToggleDisabled =
-            this.dataSource.data.length <= this.paginatorPageSizeOptions[0];
+          this.pageSize = this.dataSource.data.length;
+          this.paginator.pageSize = this.dataSource.data.length;
         });
     }
   }
@@ -78,53 +68,62 @@ export class ListPaginatorComponent<E extends Entity>
     this.dataSource.paginator = this.paginator;
   }
 
-  setPageSizeOptions() {
-    const ar = [3, 10, 20, 50].filter((n) => {
-      return n < this.dataSource.data.length;
-    });
-    this.paginatorPageSizeOptions = ar.concat(this.dataSource.data.length);
-  }
-
-  setPageSize() {
-    if (this.paginatorPageSize >= this.dataSource.data.length) {
-      this.paginatorPageSize = this.dataSource.data.length;
-    }
-  }
-
   onPaginateChange(event: PageEvent) {
-    this.paginatorPageSize = event.pageSize;
-    this.paginatorPageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.currentPageIndex = event.pageIndex;
+
+    if (this.pageSize !== this.dataSource.data.length) {
+      this.showingAll = false;
+    }
+
     this.updateUserPaginationSettings();
   }
 
   changeAllToggle() {
-    if (!this.showingAll) {
-      this.paginatorPageSizeBeforeToggle = this.paginatorPageSize;
-      this.paginatorPageSize = this.dataSource.data.length;
-    } else if (
-      this.paginatorPageSizeBeforeToggle <= this.dataSource.data.length
-    ) {
-      this.paginatorPageSize = this.paginatorPageSizeBeforeToggle;
+    this.showingAll = !this.showingAll;
+
+    if (this.showingAll) {
+      this.sizeBeforeToggling = this.pageSize;
+      this.pageSize = this.dataSource.data.length;
     } else {
-      const po = this.paginatorPageSizeOptions;
-      this.paginatorPageSize = po.length > 2 ? po[po.length - 2] : po[0];
+      this.pageSize = this.sizeBeforeToggling;
     }
-    this.paginator._changePageSize(this.paginatorPageSize);
+    this.paginator._changePageSize(this.pageSize);
     this.updateUserPaginationSettings();
   }
 
+  private applyUserPaginationSettings() {
+    const pageSize = this.user.paginatorSettingsPageSize[
+      this.idForSavingPagination
+    ];
+    if (pageSize) {
+      if (pageSize === -1) {
+        this.pageSize = this.dataSource.data.length;
+        this.showingAll = true;
+      } else {
+        this.pageSize = pageSize;
+      }
+    }
+    this.currentPageIndex =
+      this.user.paginatorSettingsPageIndex[this.idForSavingPagination] ||
+      this.currentPageIndex;
+  }
+
   private updateUserPaginationSettings() {
-    // The PageSize is stored in the database, the PageList is only in memory
+    // save "all" as -1
+    const sizeToBeSaved = this.showingAll ? -1 : this.pageSize;
+
+    // The page size is stored in the database, the page index is only in memory
     const hasChangesToBeSaved =
-      this.paginatorPageSize !==
+      sizeToBeSaved !==
       this.user.paginatorSettingsPageSize[this.idForSavingPagination];
 
     this.user.paginatorSettingsPageIndex[
       this.idForSavingPagination
-    ] = this.paginatorPageIndex;
+    ] = this.currentPageIndex;
     this.user.paginatorSettingsPageSize[
       this.idForSavingPagination
-    ] = this.paginatorPageSize;
+    ] = sizeToBeSaved;
 
     if (hasChangesToBeSaved) {
       this.entityMapperService.save<User>(this.user);

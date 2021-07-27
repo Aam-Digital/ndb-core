@@ -21,6 +21,7 @@
       <button
         mat-icon-button
         (click)="navigateBack()"
+        i18n-matTooltip="Generic back button"
         matTooltip="Back"
         style="vertical-align: middle"
       >
@@ -29,7 +30,15 @@
 
       <i [className]="classNamesWithIcon"></i>
       <span *ngIf="!creatingNew">{{ entity?.toString() }}</span>
-      <span *ngIf="creatingNew">Adding new {{ config?.entity }}</span>
+      <span
+        *ngIf="creatingNew"
+        i18n="
+          Title when adding a new entity|An entity is a child, note, school,
+          e.t.c
+        "
+      >
+        Adding new {{ config?.entity }}
+      </span>
     </h1>
   </div>
 </div>
@@ -45,6 +54,7 @@
         fontIcon="fa-exclamation-triangle"
         *ngIf="creatingNew && i > 0"
         class="locked-icon"
+        i18n-matTooltip
         matTooltip="Please save before entering further data"
         [matTooltipDisabled]="!creatingNew"
       >
@@ -67,6 +77,7 @@
     entity: entity?.getConstructor(),
     operation: operationType.DELETE
   }"
+  i18n="Generic delete button"
 >
   Delete
 </button>
