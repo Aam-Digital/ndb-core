@@ -53,7 +53,7 @@ export class EntityDetailsComponent {
   operationType = OperationType;
 
   panels: Panel[] = [];
-  classNamesWithIcon: String;
+  classNamesWithIcon: string;
   config: EntityDetailsConfig;
 
   constructor(
@@ -142,7 +142,6 @@ export class EntityDetailsComponent {
           { duration: 8000 }
         );
         snackBarRef.onAction().subscribe(() => {
-          this.entity._rev = undefined;
           this.entityMapperService.save(this.entity, true);
           this.router.navigate([currentUrl]);
         });
