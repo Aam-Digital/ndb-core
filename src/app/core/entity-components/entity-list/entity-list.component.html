@@ -1,7 +1,7 @@
 <div fxLayout="column" fxLayoutGap="20px">
   <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="25px">
 
-    <h2 fxFlexAlign="end">{{listName}}</h2>
+    <h2>{{listName}}</h2>
 
     <button
       mat-stroked-button
@@ -23,12 +23,12 @@
         aria-label="add element"
         fontIcon="fa-plus-circle"
       ></mat-icon>
-      <span fxHide.lt-md="true"> Add New </span>
+      <span fxHide.lt-md="true" i18n="Add a new entity to a list of multiple entities"> Add New </span>
     </button>
 
     <div fxFlex></div>
 
-    <mat-form-field class="filter-field" style="width: 100px" fxLayoutAlign="end">
+    <mat-form-field class="filter-field" style="width: 1000px">
       <mat-label i18n="Filter placeholder|Allows the user to filter through entities">Filter</mat-label>
       <input
         matInput
