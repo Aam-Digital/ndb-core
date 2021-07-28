@@ -645,6 +645,11 @@ export const defaultJsonConfig = {
         "type",
         "assignedTo"
       ],
+      "exportConfig": [
+        { label: "Title", key: "title" },
+        { label: "Type", key: "type" },
+        { label: "Assigned users", key: "assignedTo" }
+      ]
     }
   },
   "view:recurring-activity/:id": {

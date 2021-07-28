@@ -12,7 +12,7 @@ describe("ExportService", () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [ExportService, QueryService],
+      providers: [ExportService],
     });
 
     service = TestBed.inject<ExportService>(ExportService);
@@ -91,22 +91,41 @@ describe("ExportService", () => {
     expect(result).toEqual(expected);
   });
 
-  it("should create a csv string correctly with multiple objects", () => {
-    class TestClass {
-      _id;
-      _rev;
-      propOne;
-      propTwo;
-    }
-    const test = new TestClass();
-    test._id = 1;
-    test._rev = 2;
-    test.propOne = "first";
-    test.propTwo = "second";
-    const expected =
-      '"_id","_rev","propOne","propTwo"\r\n"1","2","first","second"\r\n"1","2","first","second"';
-    const result = service.createCsv([test, test]);
-    expect(result).toEqual(expected);
+  it("should export all properties", async () => {
+    const testObject1 = {
+      name: "foo",
+      age: 12,
+    };
+    const testObject2 = {
+      name: "bar",
+      age: 15,
+      extra: true,
+    };
+
+    const csvResult = await service.createCsv([testObject1, testObject2]);
+
+    expect(csvResult).toBe(
+      '"name","age","extra"\r\n"foo","12",\r\n"bar","15","1"'
+    );
+  });
+
+  it("should export only properties mentioned in config", async () => {
+    const testObject1 = {
+      name: "foo",
+      age: 12,
+    };
+    const testObject2 = {
+      name: "bar",
+      age: 15,
+      extra: true,
+    };
+
+    const csvResult = await service.createCsv(
+      [testObject1, testObject2],
+      [{ label: "test name", key: "name" }]
+    );
+
+    expect(csvResult).toBe('"test name"\r\n"foo"\r\n"bar"');
   });
 
   it("should transform object properties to their label for export", async () => {
@@ -120,19 +139,22 @@ describe("ExportService", () => {
     class TestEntity extends Entity {
       @DatabaseField() enumProperty: ConfigurableEnumValue;
       @DatabaseField() dateProperty: Date;
+      @DatabaseField() boolProperty: boolean;
     }
 
     const testEntity = new TestEntity();
     testEntity.enumProperty = testEnumValue;
     testEntity.dateProperty = new Date(testDate);
+    testEntity.boolProperty = true;
 
     const csvExport = await service.createCsv([testEntity]);
 
     const rows = csvExport.split(ExportService.SEPARATOR_ROW);
     expect(rows).toHaveSize(1 + 1); // includes 1 header line
     const columnValues = rows[1].split(ExportService.SEPARATOR_COL);
-    expect(columnValues).toHaveSize(2 + 1);
+    expect(columnValues).toHaveSize(3 + 1);
     expect(columnValues).toContain('"' + testEnumValue.label + '"');
     expect(columnValues).toContain(new Date(testDate).toISOString());
+    expect(columnValues).toContain('"1"'); // true => "1"
   });
 });
