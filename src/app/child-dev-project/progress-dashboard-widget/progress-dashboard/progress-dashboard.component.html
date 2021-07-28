@@ -9,14 +9,6 @@
     <mat-card-subtitle>{{ data.title }}</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
-    <p
-      class="dashboard-desc"
-      i18n="
-        Status description|Informs the user that the following is the status
-      "
-    >
-      Status of current processes:
-    </p>
     <table class="dashboard-table">
       <tr *ngFor="let entry of data?.parts" class="dashboard-table-row">
         <td class="dashboard-table-cell">{{ entry.label }}</td>
