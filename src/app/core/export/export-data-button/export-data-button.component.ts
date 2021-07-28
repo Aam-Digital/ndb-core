@@ -1,5 +1,6 @@
 import { Component, Input } from "@angular/core";
 import { ExportService } from "../export-service/export.service";
+import { ExportColumnConfig } from "../export-service/export-column-config";
 
 /**
  * Generic export data button that allows the user to download a file of the given data.
@@ -12,6 +13,13 @@ import { ExportService } from "../export-service/export.service";
 export class ExportDataButtonComponent {
   /** data to be exported */
   @Input() data: any = [];
+
+  /**
+   * (Optional) definition of fields to be exported.
+   *
+   * If not provided, all properties will be included in the export.
+   */
+  @Input() exportConfig: ExportColumnConfig[];
 
   /** What kind of data should be export? Currently implemented are 'json', 'csv' */
   @Input() format: string = "csv";
@@ -46,10 +54,10 @@ export class ExportDataButtonComponent {
     let result = "";
     switch (this.format.toLowerCase()) {
       case "json":
-        result = this.exportService.createJson(this.data);
+        result = this.exportService.createJson(this.data); // TODO: support exportConfig for json format
         return new Blob([result], { type: "application/json" });
       case "csv":
-        result = this.exportService.createCsv(this.data);
+        result = this.exportService.createCsv(this.data, this.exportConfig);
         return new Blob([result], { type: "text/csv" });
       default:
         console.warn("Not supported format:", this.format);

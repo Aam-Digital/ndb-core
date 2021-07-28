@@ -59,6 +59,7 @@
       </button>
       <app-export-data-button
         [data]="allEntities"
+        [exportConfig]="listConfig.exportConfig"
         format="csv"
         [filename]="listName.replace(' ', '')"
         angulartics2On="click"
