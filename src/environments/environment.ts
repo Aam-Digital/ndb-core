@@ -25,7 +25,7 @@
  */
 export const environment = {
   production: false,
-  appVersion: "2.54.0", // replaced automatically by semantic-release
+  appVersion: "0.0.0", // replaced automatically during docker build
   repositoryId: "Aam-Digital/ndb-core",
   remoteLoggingDsn: undefined, // only set for production mode in environment.prod.ts
 };

@@ -256,7 +256,10 @@ export const defaultJsonConfig = {
     "lazyLoaded":  true
   },
   "view:help": {
-    "component": "Help"
+    "component": "MarkdownPage",
+    "config": {
+      "markdownFile": $localize`:Filename of markdown help page (make sure the filename you enter as a translation actually exists on the server!):assets/help/help.en.md`,
+    }
   },
   "view:attendance": {
     "component": "AttendanceManager"

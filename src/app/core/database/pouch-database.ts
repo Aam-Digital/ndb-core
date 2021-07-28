@@ -116,9 +116,9 @@ export class PouchDatabase extends Database {
    */
   put(object: any, forceOverwrite?: boolean): Promise<any> {
     const options: any = {};
-    // if (forceOverwrite) {
-    //   options.force = true;
-    // }
+    if (forceOverwrite) {
+      object._rev = undefined;
+    }
 
     return this._pouchDB.put(object, options).catch((err) => {
       if (err.status === 409) {

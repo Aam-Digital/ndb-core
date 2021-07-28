@@ -15,21 +15,27 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { HowToComponent } from "./how-to/how-to.component";
-import { HttpClient, HttpClientModule } from "@angular/common/http";
-import { MarkdownModule } from "ngx-markdown";
+import { Component, Input, OnInit } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
+import { MarkdownPageConfig } from "../MarkdownPageConfig";
 
 /**
- * Display help information to users.
+ * Display markdown formatted page that is dynamically loaded based on the file defined in config.
  */
-@NgModule({
-  declarations: [HowToComponent],
-  imports: [
-    CommonModule,
-    HttpClientModule,
-    MarkdownModule.forRoot({ loader: HttpClient }),
-  ],
+@Component({
+  selector: "app-markdown-page",
+  templateUrl: "./markdown-page.component.html",
+  styleUrls: ["./markdown-page.component.scss"],
 })
-export class HelpModule {}
+export class MarkdownPageComponent implements OnInit {
+  /** filepath to be loaded as markdown */
+  @Input() markdownFile: string;
+
+  constructor(private route: ActivatedRoute) {}
+
+  ngOnInit() {
+    this.route.data.subscribe(
+      (config: MarkdownPageConfig) => (this.markdownFile = config.markdownFile)
+    );
+  }
+}

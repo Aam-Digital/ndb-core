@@ -55,13 +55,46 @@ describe("PouchDatabase tests", () => {
     return expectAsync(database.get("some_id")).toBeRejected();
   });
 
-  it("rejects putting new object with existing _id and no _rev", async () => {
+  it("rejects putting new object with existing _id and no _rev with forceOverwrite being false", async () => {
     const testData = { _id: "test_id", name: "test", count: 42 };
     const duplicateData = { _id: "test_id", name: "duplicate", count: 43 };
     await database.put(testData);
     const result = await database.get(testData._id);
     expect(result._id).toBe(testData._id);
     await expectAsync(database.put(duplicateData)).toBeRejected();
+    const result2 = await database.get(testData._id);
+    expect(result2.name).toBe(testData.name);
+  });
+
+  it("allows overwriting an existing object with existing _id and no _rev with forceOverwrite being true", async () => {
+    const testData = { _id: "test_id", name: "test", count: 42 };
+    const duplicateData = { _id: "test_id", name: "duplicate", count: 43 };
+    await database.put(testData);
+    const result = await database.get(testData._id);
+    expect(result._id).toBe(testData._id);
+    await expectAsync(database.put(duplicateData, true)).toBeResolved();
+    const result2 = await database.get(testData._id);
+    expect(result2.name).toBe(duplicateData.name);
+  });
+
+  it("allows overwriting object with existing _id and a wrong _rev with forceOverwrite being true", async () => {
+    const testData = { _id: "test_id", name: "test" };
+    const duplicateData = {
+      _id: "test_id",
+      name: "duplicate",
+      _rev: "1234blabla",
+    };
+    await database.put(testData);
+    const result = await database.get(testData._id);
+    expect(result._id).toBe(testData._id);
+    await expectAsync(database.put(duplicateData, true)).toBeResolved();
+    const result2 = await database.get(testData._id);
+    expect(result2.name).toBe(duplicateData.name);
+  });
+
+  it("allows saving a new object even when the _rev field is set with forceOverwrite being true", async () => {
+    const testData = { _id: "test_id", name: "test", _rev: "1234blabla" };
+    await expectAsync(database.put(testData, true)).toBeResolved();
     const result2 = await database.get(testData._id);
     expect(result2.name).toBe(testData.name);
   });
