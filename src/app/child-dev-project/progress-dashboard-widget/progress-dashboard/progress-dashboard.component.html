@@ -21,22 +21,19 @@
       <tr *ngFor="let entry of data?.parts" class="dashboard-table-row">
         <td class="dashboard-table-cell">{{ entry.label }}</td>
         <td class="dashboard-table-cell filler">
-          <mat-progress-bar
+          <mat-progress-bar style="height: 6px"
             mode="determinate"
             [value]="(entry.currentValue / entry.targetValue) * 100"
           ></mat-progress-bar>
         </td>
-        <td class="dashboard-table-cell">
-          {{ entry.currentValue / entry.targetValue | percent: "1.0-0" }}
-        </td>
-        <td class="dashboard-table-cell" style="white-space: nowrap">
+        <td class="align-dashboard-table-cell" style="white-space: nowrap">
           {{ entry.currentValue }} / {{ entry.targetValue }}
         </td>
       </tr>
     </table>
 
     <div [ngClass]="{ 'dashboard-config': configure }">
-      <div style="text-align: right">
+      <div style="text-align: left">
         <button mat-icon-button (click)="addPart()" *ngIf="configure">
           <mat-icon aria-label="add part" fontIcon="fa-plus"></mat-icon>
         </button>
