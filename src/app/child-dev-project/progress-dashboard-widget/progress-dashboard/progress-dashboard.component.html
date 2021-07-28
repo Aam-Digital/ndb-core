@@ -18,7 +18,7 @@
             [value]="(entry.currentValue / entry.targetValue) * 100"
           ></mat-progress-bar>
         </td>
-        <td class="align-dashboard-table-cell" style="white-space: nowrap">
+        <td class="align-right" style="white-space: nowrap">
           {{ entry.currentValue }} / {{ entry.targetValue }}
         </td>
       </tr>
@@ -49,8 +49,7 @@
             type="text"
             i18n-placeholder="Input placeholder"
             placeholder="Title"
-            [value]="data.title"
-            (input)="data.title = $event.target.value"
+            [(ngModel)]="data.title"
           />
         </mat-form-field>
       </div>
@@ -70,8 +69,7 @@
                 type="text"
                 i18n-placeholder="Process Label|The label of a process"
                 placeholder="Label"
-                [value]="entry.label"
-                (input)="entry.label = $event.target.value"
+                [(ngModel)]="entry.label"
               />
             </mat-form-field>
           </td>
@@ -91,8 +89,7 @@
                   Current process|The Current amount of a process
                 "
                 placeholder="Current"
-                [value]="entry.currentValue"
-                (change)="entry.currentValue = $event.target.valueAsNumber"
+                [(ngModel)]="entry.currentValue"
               />
             </mat-form-field>
 
@@ -102,8 +99,7 @@
                 type="number"
                 i18n-placeholder="Target process|The target amount of a process"
                 placeholder="Target"
-                [value]="entry.targetValue"
-                (change)="entry.targetValue = $event.target.valueAsNumber"
+                [(ngModel)]="entry.targetValue"
               />
             </mat-form-field>
           </td>
