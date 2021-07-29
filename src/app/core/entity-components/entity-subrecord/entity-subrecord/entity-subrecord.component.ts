@@ -292,7 +292,8 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
 
   private showEntityInForm(entity: T) {
     const dialogRef = this.dialog.open(EntityFormComponent, {
-      width: "80%", maxHeight: "90vh",
+      width: "80%",
+      maxHeight: "90vh",
     });
     // Making a copy of the editable columns before assigning them
     dialogRef.componentInstance.columns = this._columns
