@@ -6,7 +6,7 @@
   <ng-content select="form"></ng-content>
 </mat-dialog-content>
 
-<mat-dialog-actions>
+<mat-dialog-actions *ngIf="!readonly">
   <button
     mat-stroked-button
     [disabled]="!contentForm.form.dirty"
