@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { RouterTestingModule } from "@angular/router/testing";
-import { HealthCheck } from "app/child-dev-project/health-checkup/model/health-check";
+import { HealthCheck } from "../../health-checkup/model/health-check";
 import { of } from "rxjs";
 import { ChildrenService } from "../children.service";
 import { Child } from "../model/child";

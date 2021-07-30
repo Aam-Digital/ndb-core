@@ -28,7 +28,7 @@ import { InteractionType } from "../model/interaction-type.interface";
 import { ConfigService } from "../../../core/config/config.service";
 import { By } from "@angular/platform-browser";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
-import { EventNote } from "app/child-dev-project/attendance/model/event-note";
+import { EventNote } from "../../attendance/model/event-note";
 import { BehaviorSubject } from "rxjs";
 import { BackupService } from "../../../core/admin/services/backup.service";
 import { UpdatedEntity } from "../../../core/entity/model/entity-update";
