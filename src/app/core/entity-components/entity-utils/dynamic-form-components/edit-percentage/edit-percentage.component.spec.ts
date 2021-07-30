@@ -59,10 +59,14 @@ describe("EditPercentageComponent", () => {
     expect(formGroup.valid).toBeTrue();
 
     component.formControl.setValue(-1);
-    expect(formGroup.invalid).toBeTrue();
+    expect(formGroup.invalid)
+      .withContext("disallow negative values")
+      .toBeTrue();
 
     component.formControl.setValue("one" as any);
-    expect(formGroup.invalid).toBeTrue();
+    expect(formGroup.invalid)
+      .withContext("disallow values that are not a number")
+      .toBeTrue();
   });
 
   it("should keep existing validators", () => {
@@ -79,5 +83,10 @@ describe("EditPercentageComponent", () => {
 
     component.formControl.setValue(null);
     expect(formGroup.invalid).toBeTrue();
+  });
+
+  it("should allow decimal values", () => {
+    component.formControl.setValue(10.5);
+    expect(formGroup.valid).toBeTrue();
   });
 });
