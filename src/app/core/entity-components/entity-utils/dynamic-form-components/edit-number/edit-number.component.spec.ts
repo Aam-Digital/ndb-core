@@ -40,11 +40,16 @@ describe("EditNumberComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should only allow valid entries", () => {
+  it("should only allow valid numbers", () => {
     component.formControl.setValue("one" as any);
     expect(formGroup.invalid).toBeTrue();
 
     component.formControl.setValue("1" as any);
+    expect(formGroup.valid).toBeTrue();
+  });
+
+  it("should allow decimal numbers", () => {
+    component.formControl.setValue(1.1);
     expect(formGroup.valid).toBeTrue();
   });
 });
