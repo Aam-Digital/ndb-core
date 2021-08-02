@@ -242,6 +242,7 @@ export class PouchDatabase extends Database {
       return this.put(newObject);
     } else {
       existingError.message = existingError.message + " (unable to resolve)";
+      existingError.affectedDocument = newObject._id;
       throw existingError;
     }
   }
