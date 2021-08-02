@@ -18,6 +18,13 @@
           }"
         >
         </ng-template>
+        <mat-icon
+          (click)="tooltipElement.show()" #tooltipElement="matTooltip"
+          *ngIf="row.tooltip"
+          matSuffix
+          fontIcon="fa-question-circle-o"
+          [matTooltip]="row.tooltip"
+        ></mat-icon>
       </div>
     </div>
   </div>
