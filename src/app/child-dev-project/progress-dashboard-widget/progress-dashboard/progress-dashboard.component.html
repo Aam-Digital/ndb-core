@@ -9,34 +9,23 @@
     <mat-card-subtitle>{{ data.title }}</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
-    <p
-      class="dashboard-desc"
-      i18n="
-        Status description|Informs the user that the following is the status
-      "
-    >
-      Status of current processes:
-    </p>
     <table class="dashboard-table">
       <tr *ngFor="let entry of data?.parts" class="dashboard-table-row">
         <td class="dashboard-table-cell">{{ entry.label }}</td>
         <td class="dashboard-table-cell filler">
-          <mat-progress-bar
+          <mat-progress-bar style="height: 6px"
             mode="determinate"
             [value]="(entry.currentValue / entry.targetValue) * 100"
           ></mat-progress-bar>
         </td>
-        <td class="dashboard-table-cell">
-          {{ entry.currentValue / entry.targetValue | percent: "1.0-0" }}
-        </td>
-        <td class="dashboard-table-cell" style="white-space: nowrap">
+        <td class="align-right" style="white-space: nowrap">
           {{ entry.currentValue }} / {{ entry.targetValue }}
         </td>
       </tr>
     </table>
 
     <div [ngClass]="{ 'dashboard-config': configure }">
-      <div style="text-align: right">
+      <div style="text-align: left">
         <button mat-icon-button (click)="addPart()" *ngIf="configure">
           <mat-icon aria-label="add part" fontIcon="fa-plus"></mat-icon>
         </button>
@@ -60,8 +49,7 @@
             type="text"
             i18n-placeholder="Input placeholder"
             placeholder="Title"
-            [value]="data.title"
-            (input)="data.title = $event.target.value"
+            [(ngModel)]="data.title"
           />
         </mat-form-field>
       </div>
@@ -81,8 +69,7 @@
                 type="text"
                 i18n-placeholder="Process Label|The label of a process"
                 placeholder="Label"
-                [value]="entry.label"
-                (input)="entry.label = $event.target.value"
+                [(ngModel)]="entry.label"
               />
             </mat-form-field>
           </td>
@@ -102,8 +89,7 @@
                   Current process|The Current amount of a process
                 "
                 placeholder="Current"
-                [value]="entry.currentValue"
-                (change)="entry.currentValue = $event.target.valueAsNumber"
+                [(ngModel)]="entry.currentValue"
               />
             </mat-form-field>
 
@@ -113,8 +99,7 @@
                 type="number"
                 i18n-placeholder="Target process|The target amount of a process"
                 placeholder="Target"
-                [value]="entry.targetValue"
-                (change)="entry.targetValue = $event.target.valueAsNumber"
+                [(ngModel)]="entry.targetValue"
               />
             </mat-form-field>
           </td>

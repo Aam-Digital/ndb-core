@@ -15,7 +15,7 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<app-form-dialog-wrapper #dialogForm [entity]="entity">
+<app-form-dialog-wrapper #dialogForm [entity]="entity" [readonly]="true">
   <h1>
     {{ entity?.activity?.title }}: {{ entity.periodFrom | date: "shortDate" }} -
     {{ entity.periodTo | date: "shortDate" }}

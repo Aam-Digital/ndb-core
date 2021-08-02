@@ -11,7 +11,7 @@ import { BackupService } from "../../../core/admin/services/backup.service";
 import { Angulartics2Module } from "angulartics2";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { User } from "../../../core/user/user";
-import { mockEntityMapper } from "app/core/entity/mock-entity-mapper-service";
+import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
 
 describe("ActivityListComponent", () => {
   let component: ActivityListComponent;
