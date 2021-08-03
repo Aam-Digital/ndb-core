@@ -12,7 +12,7 @@ import { MatDialogRef } from "@angular/material/dialog";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
-import { ConfirmationDialogService } from "app/core/confirmation-dialog/confirmation-dialog.service";
+import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { OperationType } from "../../permissions/entity-permissions.service";
 
 /**
@@ -47,6 +47,9 @@ export class FormDialogWrapperComponent implements AfterViewInit {
   get entity(): Entity {
     return this._entity;
   }
+
+  // TODO: workaround, possibly remove after creating a proper read-only entity view dialog service #921
+  @Input() readonly: boolean = false;
 
   /** actual reference to the entity to be edited in the form used by the getter/setter */
   private _entity: Entity;

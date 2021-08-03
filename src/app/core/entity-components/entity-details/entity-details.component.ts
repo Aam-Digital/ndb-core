@@ -53,7 +53,7 @@ export class EntityDetailsComponent {
   operationType = OperationType;
 
   panels: Panel[] = [];
-  classNamesWithIcon: String;
+  classNamesWithIcon: string;
   config: EntityDetailsConfig;
 
   constructor(

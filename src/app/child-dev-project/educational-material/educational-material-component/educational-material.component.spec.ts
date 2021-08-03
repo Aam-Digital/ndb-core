@@ -8,7 +8,7 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { of } from "rxjs";
 import { ChildrenModule } from "../../children/children.module";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { mockEntityMapper } from "app/core/entity/mock-entity-mapper-service";
+import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { User } from "../../../core/user/user";
 

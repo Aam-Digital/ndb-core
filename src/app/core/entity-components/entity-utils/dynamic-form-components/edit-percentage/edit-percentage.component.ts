@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 import { EditComponent, EditPropertyConfig } from "../edit-component";
 import { Validators } from "@angular/forms";
+import { CustomNumberValidators } from "../../../../../utils/custom-number-validators";
 
 @Component({
   selector: "app-edit-percentage",
@@ -8,9 +9,16 @@ import { Validators } from "@angular/forms";
   styleUrls: ["./edit-percentage.component.scss"],
 })
 export class EditPercentageComponent extends EditComponent<number> {
+  minValue = 0;
+  maxValue = 100;
+
   onInitFromDynamicConfig(config: EditPropertyConfig) {
     super.onInitFromDynamicConfig(config);
-    const newValidators = [Validators.max(100), Validators.pattern("[0-9]*")];
+    const newValidators = [
+      Validators.min(this.minValue),
+      Validators.max(this.maxValue),
+      CustomNumberValidators.isNumber,
+    ];
     if (this.formControl.validator) {
       newValidators.push(this.formControl.validator);
     }

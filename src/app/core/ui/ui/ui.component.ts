@@ -72,9 +72,7 @@ export class UiComponent implements OnInit {
       .subscribe(() => {
         const uiConfig = this.configService.getConfig<UiConfig>("appConfig");
         this.logo_path = uiConfig?.logo_path;
-        if (uiConfig?.displayLanguageSelect === true) {
-          this.showLanguageSelect = true;
-        }
+        this.showLanguageSelect = uiConfig?.displayLanguageSelect === true;
       });
   }
 

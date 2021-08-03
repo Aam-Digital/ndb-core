@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { EditComponent, EditPropertyConfig } from "../edit-component";
-import { Validators } from "@angular/forms";
+import { CustomNumberValidators } from "../../../../../utils/custom-number-validators";
 
 @Component({
   selector: "app-edit-number",
@@ -10,7 +10,7 @@ import { Validators } from "@angular/forms";
 export class EditNumberComponent extends EditComponent<number> {
   onInitFromDynamicConfig(config: EditPropertyConfig) {
     super.onInitFromDynamicConfig(config);
-    const newValidators = [Validators.pattern("[0-9]*")];
+    const newValidators = [CustomNumberValidators.isNumber];
     if (this.formControl.validator) {
       newValidators.push(this.formControl.validator);
     }

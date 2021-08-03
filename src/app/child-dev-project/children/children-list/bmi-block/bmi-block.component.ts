@@ -1,8 +1,8 @@
 import { Component } from "@angular/core";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { HealthCheck } from "app/child-dev-project/health-checkup/model/health-check";
-import { ViewPropertyConfig } from "app/core/entity-components/entity-list/EntityListConfig";
-import { OnInitDynamicComponent } from "app/core/view/dynamic-components/on-init-dynamic-component.interface";
+import { HealthCheck } from "../../../health-checkup/model/health-check";
+import { ViewPropertyConfig } from "../../../../core/entity-components/entity-list/EntityListConfig";
+import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { ChildrenService } from "../../children.service";
 
 @UntilDestroy()

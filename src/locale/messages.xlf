@@ -2112,20 +2112,11 @@
           <context context-type="linenumber">24</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="a634a6376fe8afab53d46a1dae3c243730e82f71" datatype="html">
-        <source> Status of current processes: </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.html</context>
-          <context context-type="linenumber">18,22</context>
-        </context-group>
-        <note priority="1" from="description">Informs the user that the following is the status</note>
-        <note priority="1" from="meaning">Status description</note>
-      </trans-unit>
       <trans-unit id="fdf7cbdc140d0aab0f0b6c06065a0fd448ed6a2e" datatype="html">
         <source>Title</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.html</context>
-          <context context-type="linenumber">62,64</context>
+          <context context-type="linenumber">51,55</context>
         </context-group>
         <note priority="1" from="description">Input placeholder</note>
       </trans-unit>
@@ -2133,7 +2124,7 @@
         <source>Label</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.html</context>
-          <context context-type="linenumber">83,86</context>
+          <context context-type="linenumber">71,75</context>
         </context-group>
         <note priority="1" from="description">The label of a process</note>
         <note priority="1" from="meaning">Process Label</note>
@@ -2142,7 +2133,7 @@
         <source>Current</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.html</context>
-          <context context-type="linenumber">104,106</context>
+          <context context-type="linenumber">91,96</context>
         </context-group>
         <note priority="1" from="description">The Current amount of a process</note>
         <note priority="1" from="meaning">Current process</note>
@@ -2151,7 +2142,7 @@
         <source>Target</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.html</context>
-          <context context-type="linenumber">115,117</context>
+          <context context-type="linenumber">101,105</context>
         </context-group>
         <note priority="1" from="description">The target amount of a process</note>
         <note priority="1" from="meaning">Target process</note>
@@ -3882,11 +3873,11 @@
         <source> Only numbers are allowed </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-number/edit-number.component.html</context>
-          <context context-type="linenumber">9,10</context>
+          <context context-type="linenumber">10,11</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-percentage/edit-percentage.component.html</context>
-          <context context-type="linenumber">9,10</context>
+          <context context-type="linenumber">12,13</context>
         </context-group>
         <note priority="1" from="description">Error message for number input</note>
       </trans-unit>
@@ -3894,19 +3885,31 @@
         <source> This field is required </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-number/edit-number.component.html</context>
-          <context context-type="linenumber">12,13</context>
+          <context context-type="linenumber">13,14</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-percentage/edit-percentage.component.html</context>
+          <context context-type="linenumber">21,22</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-text/edit-text.component.html</context>
+          <context context-type="linenumber">16,17</context>
+        </context-group>
+        <note priority="1" from="description">Error message for any input</note>
+      </trans-unit>
+      <trans-unit id="54a0a976079bf7d6d718f3e0240e99cb58975657" datatype="html">
+        <source> Must be equal or less than 100% </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-percentage/edit-percentage.component.html</context>
           <context context-type="linenumber">15,16</context>
         </context-group>
-        <note priority="1" from="description">Error message for number input</note>
+        <note priority="1" from="description">Error message for percentage input</note>
       </trans-unit>
-      <trans-unit id="2f9a50a21ce861fe55e8546bb744c94777982ce2" datatype="html">
-        <source> Must be equal or smaller 100 (%) </source>
+      <trans-unit id="f92573a4ef36215a5bd701be583d4cedc31a3242" datatype="html">
+        <source> Must be equal or more than 0% </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-percentage/edit-percentage.component.html</context>
-          <context context-type="linenumber">12,13</context>
+          <context context-type="linenumber">18,19</context>
         </context-group>
         <note priority="1" from="description">Error message for percentage input</note>
       </trans-unit>

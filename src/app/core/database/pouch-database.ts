@@ -116,9 +116,9 @@ export class PouchDatabase extends Database {
    */
   put(object: any, forceOverwrite?: boolean): Promise<any> {
     const options: any = {};
-    // if (forceOverwrite) {
-    //   options.force = true;
-    // }
+    if (forceOverwrite) {
+      object._rev = undefined;
+    }
 
     return this._pouchDB.put(object, options).catch((err) => {
       if (err.status === 409) {
@@ -242,6 +242,7 @@ export class PouchDatabase extends Database {
       return this.put(newObject);
     } else {
       existingError.message = existingError.message + " (unable to resolve)";
+      existingError.affectedDocument = newObject._id;
       throw existingError;
     }
   }
