@@ -50,7 +50,6 @@
     "ngx-markdown": "^11.1.3",
     "ngx-papaparse": "^5.0.0",
     "pouchdb-adapter-memory": "^7.2.2",
-    "pouchdb-authentication": "^1.1.3",
     "pouchdb-browser": "^7.2.2",
     "reflect-metadata": "^0.1.13",
     "reveal": "0.0.4",
