@@ -96,14 +96,13 @@ export class RemoteSession {
     password: string
   ): Promise<ConnectionState> {
     try {
-      const loginResponse = await this.httpClient
+      await this.httpClient
         .post(
           `${AppConfig.settings.database.remote_url}_session`,
           { name: "demo", password: "pass" },
           { withCredentials: true }
         )
         .toPromise();
-      console.log("login response", loginResponse);
       this.connectionState.setState(ConnectionState.CONNECTED);
       return ConnectionState.CONNECTED;
     } catch (error) {
