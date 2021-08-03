@@ -273,15 +273,10 @@ export const defaultJsonConfig = {
       "title": $localize`:Title of schools overview:Schools List`,
       "columns": [
         "name",
-        "medium",
         "privateSchool",
-        "academicBoard",
         "upToClass"
       ],
       "filters": [
-        {
-          "id": "medium"
-        },
         {
           "id": "privateSchool",
           "true": $localize`:Label for private schools filter - true case:Private School`,
@@ -304,17 +299,17 @@ export const defaultJsonConfig = {
               "component": "Form",
               "config": {
                 "cols": [
-                  ["name"],
-                  ["medium"],
-                  ["privateSchool"],
-                  ["academicBoard"],
-                  ["phone"],
-                  ["address"],
-                  ["website"],
-                  ["timing"],
-                  ["workingDays"],
-                  ["upToClass"],
-                  ["remarks"]
+                  [
+                    "name",
+                    "privateSchool"
+                  ],
+                  [
+                    "address",
+                    "phone"
+                  ],
+                  [
+                    "timing",
+                  "upToClass"]
                 ]
               }
             }
@@ -422,12 +417,7 @@ export const defaultJsonConfig = {
               "name",
               "center",
               "status",
-              "admissionDate",
-              "has_aadhar",
-              "has_kanyashree",
-              "has_bankAccount",
-              "has_rationCard",
-              "has_BplCard"
+              "admissionDate"
             ]
           },
           {
@@ -439,7 +429,6 @@ export const defaultJsonConfig = {
               "health_BMI",
               "health_bloodGroup",
               "health_lastDentalCheckup",
-              "health_lastDeworming",
               "gender",
               "age",
               "dateOfBirth"
@@ -496,29 +485,18 @@ export const defaultJsonConfig = {
                   [
                     "name",
                     "projectNumber",
-                    "center",
-                    "status"
+                    "admissionDate",
                   ],
                   [
                     "dateOfBirth",
                     "gender",
-                    "motherTongue",
-                    "religion"
+                    "motherTongue"
                   ],
                   [
-                    "admissionDate",
-                    "has_aadhar",
-                    "has_kanyashree",
-                    "has_bankAccount",
-                    "has_rationCard",
-                    "has_BplCard"
-                  ],
-                  [
+                    "center",
+                    "status",
                     "address",
-                    "phone",
-                    "guardianName",
-                    "preferredTimeForGuardianMeeting"
-                  ]
+                  ],
                 ]
               }
             }
@@ -574,8 +552,7 @@ export const defaultJsonConfig = {
               "config": {
                 "cols": [
                   ["health_bloodGroup"],
-                  ["health_lastDentalCheckup"],
-                  ["health_lastDeworming"]
+                  ["health_lastDentalCheckup"]
                 ]
               }
             },
@@ -772,7 +749,7 @@ export const defaultJsonConfig = {
               "aggregations": [
                 {
                   "query": `:getParticipantsWithAttendance(PRESENT):unique:addPrefix(${Child.ENTITY_TYPE}):toEntities`,
-                  "groupBy": ["gender", "religion"],
+                  "groupBy": ["gender"],
                   "label": $localize`:Label for a report query:Participants`
                 }
               ]
@@ -795,66 +772,6 @@ export const defaultJsonConfig = {
         }
       },
       {
-        "name": "phone",
-        "schema": {
-          dataType: "string",
-          label: $localize`:Label for phone number of a child:Phone No.`
-        }
-      },
-      {
-        "name": "guardianName",
-        "schema": {
-          dataType: "string",
-          label: $localize`:Label for the guardians of a child:Guardians`
-        }
-      },
-      {
-        "name": "preferredTimeForGuardianMeeting",
-        "schema": {
-          dataType: "string",
-          label: $localize`:Label for a child attribute:Preferred time for guardians meeting` }
-      },
-      {
-        "name": "has_aadhar",
-        "schema": {
-          dataType: "configurable-enum",
-          innerDataType: "document-status",
-          label: $localize`:Label for a child attribute:Aadhar`
-        }
-      },
-      {
-        "name": "has_bankAccount",
-        "schema": {
-          dataType: "configurable-enum",
-          innerDataType: "document-status",
-          label: $localize`:Label for a child attribute:Bank Account`
-        }
-      },
-      {
-        "name": "has_kanyashree",
-        "schema": {
-          dataType: "configurable-enum",
-          innerDataType: "document-status",
-          label: $localize`:Label for a child attribute:Kanyashree`
-        }
-      },
-      {
-        "name": "has_rationCard",
-        "schema": {
-          dataType: "configurable-enum",
-          innerDataType: "document-status",
-          label: $localize`:Label for a child attribute:Ration Card`
-        }
-      },
-      {
-        "name": "has_BplCard",
-        "schema": {
-          dataType: "configurable-enum",
-          innerDataType: "document-status",
-          label: $localize`:Label for a child attribute:BPL Card`
-        }
-      },
-      {
         "name": "health_bloodGroup",
         "schema": {
           dataType: "string",
@@ -868,13 +785,6 @@ export const defaultJsonConfig = {
           label: $localize`:Label for a child attribute:Last Dental Check-Up`
         }
       },
-      {
-        "name": "health_lastDeworming",
-        "schema": {
-          dataType: "Date",
-          label: $localize`:Label for a child attribute:Last De-Worming`
-        }
-      }
     ]
   },
   "entity:School": {
