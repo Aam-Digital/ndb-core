@@ -121,7 +121,7 @@ export class RemoteSession {
    */
   public async logout(): Promise<void> {
     await this.httpClient
-      .delete(`${AppConfig.settings.database.remote_url}/_session`, {
+      .delete(`${AppConfig.settings.database.remote_url}_session`, {
         withCredentials: true,
       })
       .toPromise();
