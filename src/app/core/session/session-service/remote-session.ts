@@ -99,7 +99,7 @@ export class RemoteSession {
       await this.httpClient
         .post(
           `${AppConfig.settings.database.remote_url}_session`,
-          { name: "demo", password: "pass" },
+          { name: username, password: password },
           { withCredentials: true }
         )
         .toPromise();
