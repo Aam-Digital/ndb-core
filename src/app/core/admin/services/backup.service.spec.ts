@@ -3,6 +3,7 @@ import { TestBed } from "@angular/core/testing";
 import { BackupService } from "./backup.service";
 import { Database } from "../../database/database";
 import { PouchDatabase } from "../../database/pouch-database";
+import { ExportService } from "../../export/export-service/export.service";
 
 describe("BackupService", () => {
   let db: PouchDatabase;
@@ -46,7 +47,9 @@ describe("BackupService", () => {
 
     const jsonExport = await service.getJsonExport();
 
-    expect(jsonExport.split(BackupService.SEPARATOR_ROW)).toHaveSize(2);
+    expect(jsonExport).toBe(
+      `[{"test":1,"_id":"Test:1","_rev":"${res[0]._rev}"},{"test":2,"_id":"Test:2","_rev":"${res[1]._rev}"}]`
+    );
   });
 
   it("getJsonExport | clearDatabase | importJson should restore all records", async () => {
@@ -77,36 +80,23 @@ describe("BackupService", () => {
 
     const csvExport = await service.getCsvExport();
 
-    expect(csvExport.split(BackupService.SEPARATOR_ROW)).toHaveSize(2 + 1); // includes 1 header line
-  });
-
-  it("getCsvExport should contain a column for every property", async () => {
-    await db.put({ _id: "Test:1", test: 1 });
-    await db.put({ _id: "Test:2", other: 2 });
-    const res = await db.getAll();
-    expect(res).toHaveSize(2);
-
-    const csvExport = await service.getCsvExport();
-
-    const rows = csvExport.split(BackupService.SEPARATOR_ROW);
-    expect(rows).toHaveSize(2 + 1); // includes 1 header line
-    expect(rows[0].split(BackupService.SEPARATOR_COL)).toHaveSize(3 + 1); // includes _rev
+    expect(csvExport.split(ExportService.SEPARATOR_ROW)).toHaveSize(2 + 1); // includes 1 header line
   });
 
   it("importCsv should add records", async () => {
     const csv =
       "_id" +
-      BackupService.SEPARATOR_COL +
+      ExportService.SEPARATOR_COL +
       "test" +
-      BackupService.SEPARATOR_ROW +
+      ExportService.SEPARATOR_ROW +
       '"Test:1"' +
-      BackupService.SEPARATOR_COL +
+      ExportService.SEPARATOR_COL +
       "1" +
-      BackupService.SEPARATOR_ROW +
+      ExportService.SEPARATOR_ROW +
       '"Test:2"' +
-      BackupService.SEPARATOR_COL +
+      ExportService.SEPARATOR_COL +
       "2" +
-      BackupService.SEPARATOR_ROW;
+      ExportService.SEPARATOR_ROW;
 
     await service.importCsv(csv, true);
 
@@ -121,14 +111,14 @@ describe("BackupService", () => {
   it("importCsv should not add empty properties to records", async () => {
     const csv =
       "_id" +
-      BackupService.SEPARATOR_COL +
+      ExportService.SEPARATOR_COL +
       "other" +
-      BackupService.SEPARATOR_COL +
+      ExportService.SEPARATOR_COL +
       "test" +
-      BackupService.SEPARATOR_ROW +
+      ExportService.SEPARATOR_ROW +
       '"Test:1"' +
-      BackupService.SEPARATOR_COL +
-      BackupService.SEPARATOR_COL +
+      ExportService.SEPARATOR_COL +
+      ExportService.SEPARATOR_COL +
       "1";
 
     await service.importCsv(csv);

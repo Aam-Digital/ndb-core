@@ -5,7 +5,6 @@ import { ConfigurableEnumValue } from "../../configurable-enum/configurable-enum
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { Entity } from "../../entity/model/entity";
-import { BackupService } from "../../admin/services/backup.service";
 
 describe("ExportService", () => {
   let service: ExportService;
@@ -22,25 +21,7 @@ describe("ExportService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should create the correct json object", () => {
-    class TestClass {
-      propertyOne;
-      propertyTwo;
-    }
-    const test = new TestClass();
-    test.propertyOne = "Hello";
-    test.propertyTwo = "World";
-
-    const result = service.createJson([test]);
-
-    const expected = JSON.stringify({
-      propertyOne: "Hello",
-      propertyTwo: "World",
-    });
-    expect(result).toEqual(expected);
-  });
-
-  it("should transform a json array", () => {
+  it("should export to json array", () => {
     class TestClass {
       propertyOne;
       propertyTwo;
@@ -51,13 +32,9 @@ describe("ExportService", () => {
 
     const result = service.createJson([test, test]);
 
-    let expected = JSON.stringify({
-      propertyOne: "Hello",
-      propertyTwo: "World",
-    });
-    expected += BackupService.SEPARATOR_ROW;
-    expected += JSON.stringify({ propertyOne: "Hello", propertyTwo: "World" });
-    expect(result).toEqual(expected);
+    expect(result).toEqual(
+      '[{"propertyOne":"Hello","propertyTwo":"World"},{"propertyOne":"Hello","propertyTwo":"World"}]'
+    );
   });
 
   it("should contain a column for every property", async () => {
@@ -91,7 +68,7 @@ describe("ExportService", () => {
     expect(result).toEqual(expected);
   });
 
-  it("should export all properties", async () => {
+  it("should export all properties if no config is provided", async () => {
     const testObject1 = {
       name: "foo",
       age: 12,
