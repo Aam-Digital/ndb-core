@@ -24,12 +24,7 @@ export class ExportService {
    * @returns string containing all the values stringified elements of the input data
    */
   createJson(data): string {
-    let res = "";
-    data.forEach((r) => {
-      res += JSON.stringify(r) + ExportService.SEPARATOR_ROW;
-    });
-
-    return res.trim();
+    return JSON.stringify(data);
   }
 
   /**

@@ -11,11 +11,6 @@ import { ExportService } from "../../export/export-service/export.service";
   providedIn: "root",
 })
 export class BackupService {
-  /** CSV row separator */
-  static readonly SEPARATOR_ROW = "\n";
-  /** CSV column/field separator */
-  static readonly SEPARATOR_COL = ",";
-
   constructor(
     private db: Database,
     private papa: Papa,
@@ -66,8 +61,8 @@ export class BackupService {
    * @param forceUpdate should existing objects be overridden? Default false
    */
   async importJson(json, forceUpdate = false): Promise<void> {
-    for (const stringRecord of json.split(BackupService.SEPARATOR_ROW)) {
-      const record = JSON.parse(stringRecord);
+    const documents = JSON.parse(json);
+    for (const record of documents) {
       // Remove _rev so CouchDB treats it as a new rather than a updated document
       delete record._rev;
       await this.db.put(record, forceUpdate);
