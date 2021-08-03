@@ -16,14 +16,12 @@
  */
 
 import PouchDB from "pouchdb-browser";
-import PouchDBAuthentication from "pouchdb-authentication";
 
 import { AppConfig } from "../../app-config/app-config";
 import { Injectable } from "@angular/core";
 import { StateHandler } from "../session-states/state-handler";
 import { ConnectionState } from "../session-states/connection-state.enum";
-
-PouchDB.plugin(PouchDBAuthentication);
+import { HttpClient } from "@angular/common/http";
 
 /**
  * Responsibilities:
@@ -34,17 +32,15 @@ PouchDB.plugin(PouchDBAuthentication);
 @Injectable()
 export class RemoteSession {
   /** remote (!) database PouchDB */
-  public database: any;
+  public database: PouchDB.Database;
 
   /** state of the remote connection */
-  public connectionState: StateHandler<ConnectionState> = new StateHandler<ConnectionState>(
-    ConnectionState.DISCONNECTED
-  );
+  public connectionState = new StateHandler(ConnectionState.DISCONNECTED);
 
   /**
    * Create a RemoteSession and set up connection to the remote database CouchDB server configured in AppConfig.
    */
-  constructor() {
+  constructor(private httpClient: HttpClient) {
     const thisRemoteSession = this;
     this.database = new PouchDB(
       AppConfig.settings.database.remote_url + AppConfig.settings.database.name,
@@ -53,12 +49,8 @@ export class RemoteSession {
           rejectUnauthorized: false,
           timeout: 60000,
         },
-        // This is a workaround for PouchDB 7.0.0 with pouchdb-authentication 1.1.3:
-        // https://github.com/pouchdb-community/pouchdb-authentication/issues/239
-        // It is necessary, until this merged PR will be published in PouchDB 7.0.1
-        // https://github.com/pouchdb/pouchdb/pull/7395
+        // TODO remove connection state and this code
         fetch(url, opts) {
-          opts.credentials = "include";
           const req = fetch(url, opts);
           req.then((result) => {
             if (
@@ -103,16 +95,14 @@ export class RemoteSession {
     username: string,
     password: string
   ): Promise<ConnectionState> {
-    const ajaxOpts = {
-      ajax: {
-        headers: {
-          Authorization: "Basic " + window.btoa(username + ":" + password),
-        },
-      },
-    };
-
     try {
-      await this.database.login(username, password, ajaxOpts);
+      await this.httpClient
+        .post(
+          `${AppConfig.settings.database.remote_url}_session`,
+          { name: username, password: password },
+          { withCredentials: true }
+        )
+        .toPromise();
       this.connectionState.setState(ConnectionState.CONNECTED);
       return ConnectionState.CONNECTED;
     } catch (error) {
@@ -129,8 +119,12 @@ export class RemoteSession {
   /**
    * Logout at the remote database.
    */
-  public logout(): void {
-    this.database.logout();
+  public async logout(): Promise<void> {
+    await this.httpClient
+      .delete(`${AppConfig.settings.database.remote_url}_session`, {
+        withCredentials: true,
+      })
+      .toPromise();
     this.connectionState.setState(ConnectionState.DISCONNECTED);
   }
 }
