@@ -30,6 +30,8 @@ import { User } from "../../user/user";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { LoggingService } from "../../logging/logging.service";
 import { HttpClient } from "@angular/common/http";
+import PouchDB from "pouchdb-browser";
+import { AppConfig } from "../../app-config/app-config";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -45,6 +47,10 @@ export class SyncedSessionService extends SessionService {
   private _liveSyncHandle: any;
   private _liveSyncScheduledHandle: any;
   private _offlineRetryLoginScheduleHandle: any;
+  private readonly pouchDB: PouchDB.Database;
+  private readonly database: Database;
+
+  private currentUser: User;
 
   constructor(
     private _alertService: AlertService,
@@ -53,7 +59,9 @@ export class SyncedSessionService extends SessionService {
     private _httpClient: HttpClient
   ) {
     super();
-    this._localSession = new LocalSession(this._entitySchemaService);
+    this.pouchDB = new PouchDB(AppConfig.settings.database.name);
+    this.database = new PouchDatabase(this.pouchDB, this._loggingService);
+    this._localSession = new LocalSession();
     this._remoteSession = new RemoteSession(this._httpClient);
   }
 
@@ -75,7 +83,7 @@ export class SyncedSessionService extends SessionService {
    * @param password Password
    * @returns a promise resolving with the local LoginState
    */
-  public login(username: string, password: string): Promise<LoginState> {
+  public async login(username: string, password: string): Promise<LoginState> {
     this.cancelLoginOfflineRetry(); // in case this is running in the background
     this.getSyncState().setState(SyncState.UNSYNCED);
 
@@ -122,7 +130,7 @@ export class SyncedSessionService extends SessionService {
         }
 
         // If we are not connected, we must check (asynchronously), whether the local database is initial
-        this._localSession.isInitial().then((isInitial) => {
+        this.isInitial().then((isInitial) => {
           if (isInitial) {
             // If we were initial, the local session was waiting for a sync.
             if (connectionState === ConnectionState.REJECTED) {
@@ -152,7 +160,7 @@ export class SyncedSessionService extends SessionService {
         // offline? retry (unless we are in an initial state)! TODO(lh): Backoff
         if (
           connectionState === ConnectionState.OFFLINE &&
-          !(await this._localSession.isInitial())
+          !(await this.isInitial())
         ) {
           this._offlineRetryLoginScheduleHandle = setTimeout(() => {
             this.login(username, password);
@@ -160,12 +168,17 @@ export class SyncedSessionService extends SessionService {
         }
       })
       .catch((err) => this._loggingService.error(err));
-    return localLogin; // the local login is the Promise that counts
+
+    const loginState = await localLogin;
+    if (loginState === LoginState.LOGGED_IN) {
+      this.currentUser = await this.loadUser(username);
+    }
+    return loginState;
   }
 
   /** see {@link SessionService} */
   public getCurrentUser(): User {
-    return this._localSession.currentUser;
+    return this.currentUser;
   }
 
   /** see {@link SessionService} */
@@ -185,10 +198,9 @@ export class SyncedSessionService extends SessionService {
   public async sync(): Promise<any> {
     this._localSession.syncState.setState(SyncState.STARTED);
     try {
-      const result = await this._localSession.database.sync(
-        this._remoteSession.database,
-        { batch_size: 500 }
-      );
+      const result = await this.pouchDB.sync(this._remoteSession.database, {
+        batch_size: 500,
+      });
       this._localSession.syncState.setState(SyncState.COMPLETED);
       return result;
     } catch (error) {
@@ -203,13 +215,10 @@ export class SyncedSessionService extends SessionService {
   public liveSync() {
     this.cancelLiveSync(); // cancel any liveSync that may have been alive before
     this._localSession.syncState.setState(SyncState.STARTED);
-    this._liveSyncHandle = (this._localSession.database.sync(
-      this._remoteSession.database,
-      {
-        live: true,
-        retry: true,
-      }
-    ) as any)
+    this._liveSyncHandle = (this.pouchDB.sync(this._remoteSession.database, {
+      live: true,
+      retry: true,
+    }) as any)
       .on("change", (change) => {
         // after sync. change has direction and changes with info on errors etc
       })
@@ -273,7 +282,7 @@ export class SyncedSessionService extends SessionService {
    * als see {@link SessionService}
    */
   public getDatabase(): Database {
-    return new PouchDatabase(this._localSession.database, this._loggingService);
+    return this.database;
   }
 
   /**
@@ -285,5 +294,25 @@ export class SyncedSessionService extends SessionService {
     this.cancelLiveSync();
     this._localSession.logout();
     this._remoteSession.logout();
+  }
+
+  /**
+   * Helper to get a User Entity from the Database without needing the EntityMapperService
+   * @param userId Id of the User to be loaded
+   */
+  public async loadUser(userId: string): Promise<User> {
+    const user = new User("");
+    const userData = await this.getDatabase().get("User:" + userId);
+    this._entitySchemaService.loadDataIntoEntity(user, userData);
+    return user;
+  }
+
+  /**
+   * Check whether the local database is in an initial state.
+   * This check can only be performed async, so this method returns a Promise
+   */
+  private isInitial(): Promise<Boolean> {
+    // `doc_count === 0 => initial` is a valid assumptions, as documents for users must always be present, even after db-clean
+    return this.pouchDB.info().then((result) => result.doc_count === 0);
   }
 }

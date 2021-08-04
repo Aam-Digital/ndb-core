@@ -15,7 +15,6 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { AppConfig } from "../../../app-config/app-config";
 import { LocalSession } from "./local-session";
 import { SessionType } from "../../session-type";
@@ -38,8 +37,7 @@ describe("LocalSessionService", () => {
         remote_url: "https://demo.aam-digital.com/db/",
       },
     };
-
-    localSession = new LocalSession(new EntitySchemaService());
+    localSession = new LocalSession();
   });
 
   beforeEach(() => {

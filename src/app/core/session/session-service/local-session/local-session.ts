@@ -14,18 +14,10 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-import PouchDB from "pouchdb-browser";
-
 import { Injectable } from "@angular/core";
-
-import { AppConfig } from "../../../app-config/app-config";
-import { User } from "../../../user/user";
-
 import { SyncState } from "../../session-states/sync-state.enum";
 import { LoginState } from "../../session-states/login-state.enum";
 import { StateHandler } from "../../session-states/state-handler";
-import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { LocalUser } from "./local-user";
 import * as CryptoJS from "crypto-js";
 
@@ -40,24 +32,15 @@ import * as CryptoJS from "crypto-js";
  */
 @Injectable()
 export class LocalSession {
-  /** local (IndexedDB) database PouchDB */
-  public database: PouchDB.Database;
-
   /** StateHandler for login state changes */
   public loginState = new StateHandler(LoginState.LOGGED_OUT);
   /** StateHandler for sync state changes */
   public syncState = new StateHandler(SyncState.UNSYNCED);
 
-  /** The currently authenticated user entity */
-  public currentUser: User;
-
   /**
    * Create a LocalSession and set up the local PouchDB instance based on AppConfig settings.
-   * @param _entitySchemaService
    */
-  constructor(private _entitySchemaService: EntitySchemaService) {
-    this.database = new PouchDB(AppConfig.settings.database.name);
-  }
+  constructor() {}
 
   /**
    * Get a login at the local session by fetching the user from the local database and validating the password.
@@ -74,7 +57,6 @@ export class LocalSession {
         iterations: user.iterations,
       }).toString();
       if (hashedPassword === user.hash) {
-        await this.loadUser(username);
         this.loginState.setState(LoginState.LOGGED_IN);
       } else {
         this.loginState.setState(LoginState.LOGIN_FAILED);
@@ -89,31 +71,7 @@ export class LocalSession {
     window.localStorage.setItem(user.name, JSON.stringify(user));
   }
 
-  /**
-   * Check whether the local database is in an initial state.
-   * This check can only be performed async, so this method returns a Promise
-   */
-  public isInitial(): Promise<Boolean> {
-    // `doc_count === 0 => initial` is a valid assumptions, as documents for users must always be present, even after db-clean
-    return this.database.info().then((result) => result.doc_count === 0);
-  }
-
-  /**
-   * Logout
-   */
   public logout() {
-    this.currentUser = undefined;
     this.loginState.setState(LoginState.LOGGED_OUT);
-  }
-
-  /**
-   * Helper to get a User Entity from the Database without needing the EntityMapperService
-   * @param userId Id of the User to be loaded
-   */
-  public async loadUser(userId: string): Promise<User> {
-    const user = new User("");
-    const userData = await this.database.get("User:" + userId);
-    this._entitySchemaService.loadDataIntoEntity(user, userData);
-    return user;
   }
 }
