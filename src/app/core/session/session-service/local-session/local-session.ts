@@ -104,7 +104,9 @@ export class LocalSession {
     }
   }
 
-  saveUser(user: LocalUser) {}
+  saveUser(user: LocalUser) {
+    window.localStorage.setItem(user.name, JSON.stringify(user));
+  }
 
   /**
    * Wait for the first sync of the database, returns a Promise.
