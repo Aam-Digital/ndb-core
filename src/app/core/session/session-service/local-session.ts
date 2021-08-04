@@ -38,14 +38,14 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
  */
 @Injectable()
 export class LocalSession {
-  /** local (IndexedDb) database PouchDB */
-  public database: any;
+  /** local (IndexedDB) database PouchDB */
+  public database: PouchDB.Database;
   public liveSyncHandle: any;
 
   /** StateHandler for login state changes */
-  public loginState: StateHandler<LoginState>;
+  public loginState = new StateHandler(LoginState.LOGGED_OUT);
   /** StateHandler for sync state changes */
-  public syncState: StateHandler<SyncState>;
+  public syncState = new StateHandler(SyncState.UNSYNCED);
 
   /** The currently authenticated user entity */
   public currentUser: User;
@@ -56,9 +56,6 @@ export class LocalSession {
    */
   constructor(private _entitySchemaService: EntitySchemaService) {
     this.database = new PouchDB(AppConfig.settings.database.name);
-
-    this.loginState = new StateHandler<LoginState>(LoginState.LOGGED_OUT);
-    this.syncState = new StateHandler<SyncState>(SyncState.UNSYNCED);
   }
 
   /**
