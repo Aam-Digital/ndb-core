@@ -77,4 +77,16 @@ describe("LocalSessionService", () => {
 
     expect(localSession.loginState.getState()).toBe(LoginState.LOGGED_IN);
   });
+
+  it("should fail login with correct username but wrong password", async () => {
+    await localSession.login(username, "wrong password");
+
+    expect(localSession.loginState.getState()).toBe(LoginState.LOGIN_FAILED);
+  });
+
+  it("should fail login with correct wrong username", async () => {
+    await localSession.login("wrong username", password);
+
+    expect(localSession.loginState.getState()).toBe(LoginState.LOGIN_FAILED);
+  });
 });
