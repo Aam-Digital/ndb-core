@@ -82,7 +82,7 @@ describe("ExportService", () => {
     const csvResult = await service.createCsv([testObject1, testObject2]);
 
     expect(csvResult).toBe(
-      '"name","age","extra"\r\n"foo","12",\r\n"bar","15","1"'
+      '"name","age","extra"\r\n"foo","12",\r\n"bar","15","true"'
     );
   });
 
@@ -132,6 +132,6 @@ describe("ExportService", () => {
     expect(columnValues).toHaveSize(3 + 1);
     expect(columnValues).toContain('"' + testEnumValue.label + '"');
     expect(columnValues).toContain(new Date(testDate).toISOString());
-    expect(columnValues).toContain('"1"'); // true => "1"
+    expect(columnValues).toContain('"true"');
   });
 });
