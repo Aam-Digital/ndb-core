@@ -19,6 +19,7 @@ import { EntitySchemaService } from "../../../entity/schema/entity-schema.servic
 import { AppConfig } from "../../../app-config/app-config";
 import { LocalSession } from "./local-session";
 import { SessionType } from "../../session-type";
+import { LocalUser } from "./local-user";
 
 describe("LocalSessionService", () => {
   let localSession: LocalSession;
@@ -41,6 +42,18 @@ describe("LocalSessionService", () => {
   });
 
   it("should save user objects to local storage", () => {
+    const testUser: LocalUser = {
+      name: "TestUser",
+      roles: ["user_app"],
+      hash: "hash",
+      salt: "salt",
+      iterations: 10,
+      keysize: 100,
+    };
 
+    localSession.saveUser(testUser);
+
+    const storedUser = window.localStorage.getItem(testUser.name);
+    expect(JSON.parse(storedUser)).toEqual(testUser);
   });
 });

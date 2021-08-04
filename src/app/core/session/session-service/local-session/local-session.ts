@@ -26,6 +26,7 @@ import { SyncState } from "../../session-states/sync-state.enum";
 import { LoginState } from "../../session-states/login-state.enum";
 import { StateHandler } from "../../session-states/state-handler";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
+import { LocalUser } from "./local-user";
 
 /**
  * Responsibilities:
@@ -102,6 +103,8 @@ export class LocalSession {
       throw error;
     }
   }
+
+  saveUser(user: LocalUser) {}
 
   /**
    * Wait for the first sync of the database, returns a Promise.

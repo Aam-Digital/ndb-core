@@ -201,11 +201,13 @@ export class SyncedSessionService extends SessionService {
   public liveSync() {
     this.cancelLiveSync(); // cancel any liveSync that may have been alive before
     this._localSession.syncState.setState(SyncState.STARTED);
-    this._liveSyncHandle = this._localSession.database
-      .sync(this._remoteSession.database, {
+    this._liveSyncHandle = (this._localSession.database.sync(
+      this._remoteSession.database,
+      {
         live: true,
         retry: true,
-      })
+      }
+    ) as any)
       .on("change", (change) => {
         // after sync. change has direction and changes with info on errors etc
       })
