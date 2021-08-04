@@ -42,7 +42,6 @@ import * as CryptoJS from "crypto-js";
 export class LocalSession {
   /** local (IndexedDB) database PouchDB */
   public database: PouchDB.Database;
-  public liveSyncHandle: any;
 
   /** StateHandler for login state changes */
   public loginState = new StateHandler(LoginState.LOGGED_OUT);
@@ -75,6 +74,7 @@ export class LocalSession {
         iterations: user.iterations,
       }).toString();
       if (hashedPassword === user.hash) {
+        await this.loadUser(username);
         this.loginState.setState(LoginState.LOGGED_IN);
       } else {
         this.loginState.setState(LoginState.LOGIN_FAILED);
@@ -87,19 +87,6 @@ export class LocalSession {
 
   saveUser(user: LocalUser) {
     window.localStorage.setItem(user.name, JSON.stringify(user));
-  }
-
-  /**
-   * Wait for the first sync of the database, returns a Promise.
-   * Resolves directly, if the database is not initial, otherwise waits for the first change of the SyncState to completed (or failed)
-   */
-  public async waitForFirstSync() {
-    if (await this.isInitial()) {
-      return await this.syncState.waitForChangeTo(SyncState.COMPLETED, [
-        SyncState.FAILED,
-        SyncState.ABORTED,
-      ]);
-    }
   }
 
   /**
