@@ -12,10 +12,10 @@ export function entityListSortingAccessor(data: Object, sortingHeader: string) {
     "label" in data[sortingHeader]
   ) {
     return data[sortingHeader].label;
-  } else if (data[sortingHeader] instanceof Date) {
-    return data[sortingHeader];
-  } else {
+  } else if (typeof data[sortingHeader] === "string") {
     return tryNumber(data[sortingHeader]);
+  } else {
+    return data[sortingHeader];
   }
 }
 
