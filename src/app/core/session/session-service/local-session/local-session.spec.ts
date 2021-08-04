@@ -15,10 +15,10 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { AppConfig } from "../../app-config/app-config";
+import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
+import { AppConfig } from "../../../app-config/app-config";
 import { LocalSession } from "./local-session";
-import { SessionType } from "../session-type";
+import { SessionType } from "../../session-type";
 
 describe("LocalSessionService", () => {
   let localSession: LocalSession;
@@ -38,5 +38,9 @@ describe("LocalSessionService", () => {
 
   it("should be created", async () => {
     expect(localSession).toBeDefined();
+  });
+
+  it("should save user objects to local storage", () => {
+
   });
 });

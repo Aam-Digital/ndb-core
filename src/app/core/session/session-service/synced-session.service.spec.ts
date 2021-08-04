@@ -21,7 +21,7 @@ import { LoginState } from "../session-states/login-state.enum";
 import { SyncState } from "../session-states/sync-state.enum";
 import { ConnectionState } from "../session-states/connection-state.enum";
 import { AppConfig } from "../../app-config/app-config";
-import { LocalSession } from "./local-session";
+import { LocalSession } from "./local-session/local-session";
 import { RemoteSession } from "./remote-session";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { SessionType } from "../session-type";

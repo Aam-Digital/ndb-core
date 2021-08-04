@@ -19,7 +19,7 @@ import { Injectable } from "@angular/core";
 import { AlertService } from "../../alerts/alert.service";
 
 import { SessionService } from "./session.service";
-import { LocalSession } from "./local-session";
+import { LocalSession } from "./local-session/local-session";
 import { RemoteSession } from "./remote-session";
 import { LoginState } from "../session-states/login-state.enum";
 import { Database } from "../../database/database";

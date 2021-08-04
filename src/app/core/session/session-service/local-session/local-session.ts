@@ -19,13 +19,13 @@ import PouchDB from "pouchdb-browser";
 
 import { Injectable } from "@angular/core";
 
-import { AppConfig } from "../../app-config/app-config";
-import { User } from "../../user/user";
+import { AppConfig } from "../../../app-config/app-config";
+import { User } from "../../../user/user";
 
-import { SyncState } from "../session-states/sync-state.enum";
-import { LoginState } from "../session-states/login-state.enum";
-import { StateHandler } from "../session-states/state-handler";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { SyncState } from "../../session-states/sync-state.enum";
+import { LoginState } from "../../session-states/login-state.enum";
+import { StateHandler } from "../../session-states/state-handler";
+import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 
 /**
  * Responsibilities:
