@@ -35,19 +35,28 @@ export class QueryService {
    *             This will also affect the amount of data being loaded.
    * @param to a date which can be accessed in the query using another ?
    * @param data the data on which the query should run, default is all entities
+   * @param reloadData force an explicit loading of the cache necessary for related entities
    * @returns the results of the query on the data
    */
   public async queryData(
     query: string,
     from: Date = null,
     to: Date = null,
-    data: any = this.entities
+    data: any = this.entities,
+    reloadData: boolean = false
   ): Promise<any> {
-    if (!data || (data === this.entities && from < this.dataAvailableFrom)) {
+    if (
+      !data ||
+      (data === this.entities && from < this.dataAvailableFrom)
+      // TODO: why only if data === this.entities?! merge this with the second loadData condition below
+    ) {
       await this.loadData(from);
-      this.dataAvailableFrom = from;
       data = this.entities;
     }
+    if (reloadData) {
+      await this.loadData(from);
+    }
+
     return jsonQuery([query, from, to], {
       data: data,
       locals: {
@@ -99,6 +108,8 @@ export class QueryService {
     }
 
     await Promise.all(dataPromises);
+
+    this.dataAvailableFrom = from;
   }
 
   private setEntities<T extends Entity>(
@@ -158,6 +169,10 @@ export class QueryService {
    * @returns a list of entity objects
    */
   toEntities(ids: string[], entityPrefix?: string): Entity[] {
+    if (!ids) {
+      return [];
+    }
+
     if (entityPrefix) {
       ids = this.addPrefix(ids, entityPrefix);
     }
