@@ -47,6 +47,13 @@ describe("LatestChangesService", () => {
       body: "A",
       published_at: "2018-01-01",
     },
+    {
+      name: "prerelease 1",
+      tag_name: "1.0-rc.1",
+      prerelease: true,
+      body: "A",
+      published_at: "2018-01-01",
+    },
   ];
 
   beforeEach(() => {
@@ -121,5 +128,57 @@ describe("LatestChangesService", () => {
         done();
       }
     );
+  });
+
+  it("should not include prereleases", (done) => {
+    spyOn(http, "get").and.returnValue(of(testReleases));
+
+    service.getChangelogsBeforeVersion("1.1", 10).subscribe((result) => {
+      expect(result).toEqual([testReleases[2]]);
+      expect(result[0]["prerelease"]).toBeFalsy();
+      expect(result).not.toContain(testReleases[3]);
+      done();
+    });
+  });
+
+  it("should remove lines from release changelog body that are explicitly hidden by starting with a '.'", (done) => {
+    const testRelease = {
+      name: "test with notes",
+      tag_name: "3.0",
+      body: `changelog
+### Bugs
+* relevant fix
+* .hidden fix
+### .Hidden
+`,
+    };
+
+    spyOn(http, "get").and.returnValue(of([testRelease]));
+
+    service.getChangelogsBetweenVersions("3.0", "2.9").subscribe((result) => {
+      expect(result[0].tag_name).toBe(testRelease.tag_name);
+      expect(result[0].body).toBe(`changelog
+# Bugs
+* relevant fix
+`);
+      done();
+    });
+  });
+
+  it("should remove irrelevant details from release changelog body", (done) => {
+    const testRelease = {
+      name: "test with notes",
+      tag_name: "3.0",
+      body:
+        "* fix ([e03dcca](https://github.com/Aam-Digital/ndb-core/commit/e03dcca7d89e584b8f08cc7fe30621c1ad428dba))",
+    };
+
+    spyOn(http, "get").and.returnValue(of([testRelease]));
+
+    service.getChangelogsBetweenVersions("3.0", "2.9").subscribe((result) => {
+      expect(result[0].tag_name).toBe(testRelease.tag_name);
+      expect(result[0].body).toBe("* fix");
+      done();
+    });
   });
 });
