@@ -29,6 +29,7 @@ import { SyncState } from "../session-states/sync-state.enum";
 import { User } from "../../user/user";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { LoggingService } from "../../logging/logging.service";
+import { HttpClient } from "@angular/common/http";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -48,11 +49,12 @@ export class SyncedSessionService extends SessionService {
   constructor(
     private _alertService: AlertService,
     private _loggingService: LoggingService,
-    private _entitySchemaService: EntitySchemaService
+    private _entitySchemaService: EntitySchemaService,
+    private _httpClient: HttpClient
   ) {
     super();
     this._localSession = new LocalSession(this._entitySchemaService);
-    this._remoteSession = new RemoteSession();
+    this._remoteSession = new RemoteSession(this._httpClient);
   }
 
   /** see {@link SessionService} */
