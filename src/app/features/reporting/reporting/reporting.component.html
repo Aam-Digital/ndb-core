@@ -54,7 +54,7 @@
     >
       Calculate
     </button>
-    <app-export-data
+    <app-export-data-button
       [disabled]="!exportableTable"
       [data]="exportableTable"
       format="csv"
@@ -69,7 +69,7 @@
       <ng-container i18n="Button that allows to download a report">
         Download report
       </ng-container>
-    </app-export-data>
+    </app-export-data-button>
   </div>
 
   <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>

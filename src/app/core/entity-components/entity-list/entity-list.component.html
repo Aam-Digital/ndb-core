@@ -57,8 +57,9 @@
         ></mat-icon>
         <span fxHide.lt-md="true" i18n="Add New Button"> Add New </span>
       </button>
-      <app-export-data
+      <app-export-data-button
         [data]="allEntities"
+        [exportConfig]="listConfig.exportConfig"
         format="csv"
         [filename]="listName.replace(' ', '')"
         angulartics2On="click"
@@ -75,7 +76,7 @@
         <span fxHide.lt-md="true" i18n="Download list contents as CSV">
           Download CSV
         </span>
-      </app-export-data>
+      </app-export-data-button>
     </div>
   </div>
 
