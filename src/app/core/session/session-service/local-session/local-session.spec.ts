@@ -21,6 +21,7 @@ import { LocalSession } from "./local-session";
 import { SessionType } from "../../session-type";
 import { LocalUser } from "./local-user";
 import * as CryptoJS from "crypto-js";
+import { LoginState } from "../../session-states/login-state.enum";
 
 describe("LocalSessionService", () => {
   let localSession: LocalSession;
@@ -52,7 +53,7 @@ describe("LocalSessionService", () => {
     testUser = {
       name: username,
       roles: ["user_app"],
-      keysize: cryptKeySize,
+      keySize: cryptKeySize,
       iterations: cryptIterations,
       salt: cryptSalt,
       hash: hash,
@@ -67,5 +68,13 @@ describe("LocalSessionService", () => {
   it("should save user objects to local storage", () => {
     const storedUser = window.localStorage.getItem(testUser.name);
     expect(JSON.parse(storedUser)).toEqual(testUser);
+  });
+
+  it("should login a previously saved user with correct password", async () => {
+    expect(localSession.loginState.getState()).toBe(LoginState.LOGGED_OUT);
+
+    await localSession.login(username, password);
+
+    expect(localSession.loginState.getState()).toBe(LoginState.LOGGED_IN);
   });
 });

@@ -4,5 +4,5 @@ export interface LocalUser {
   hash: string;
   salt: string;
   iterations: number;
-  keysize: number;
+  keySize: number;
 }

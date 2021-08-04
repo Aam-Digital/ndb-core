@@ -27,6 +27,7 @@ import { LoginState } from "../../session-states/login-state.enum";
 import { StateHandler } from "../../session-states/state-handler";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { LocalUser } from "./local-user";
+import * as CryptoJS from "crypto-js";
 
 /**
  * Responsibilities:
@@ -67,41 +68,21 @@ export class LocalSession {
    * @param password Password
    */
   public async login(username: string, password: string): Promise<LoginState> {
-    try {
-      await this.waitForFirstSync();
-      const userEntity = await this.loadUser(username);
-      if (userEntity.checkPassword(password)) {
-        this.currentUser = userEntity;
-        this.currentUser.decryptCloudPassword(password);
+    const user: LocalUser = JSON.parse(window.localStorage.getItem(username));
+    if (user) {
+      const hashedPassword = CryptoJS.PBKDF2(password, user.salt, {
+        keySize: user.keySize,
+        iterations: user.iterations,
+      }).toString();
+      if (hashedPassword === user.hash) {
         this.loginState.setState(LoginState.LOGGED_IN);
-        return LoginState.LOGGED_IN;
       } else {
         this.loginState.setState(LoginState.LOGIN_FAILED);
-        return LoginState.LOGIN_FAILED;
       }
-    } catch (error) {
-      // possible error: initial sync failed or aborted
-      if (
-        error &&
-        error.toState &&
-        [SyncState.ABORTED, SyncState.FAILED].includes(error.toState)
-      ) {
-        if (this.loginState.getState() === LoginState.LOGIN_FAILED) {
-          // The sync failed because the remote rejected
-          return LoginState.LOGIN_FAILED;
-        }
-        // The sync failed for other reasons. The user should try again
-        this.loginState.setState(LoginState.LOGGED_OUT);
-        return LoginState.LOGGED_OUT;
-      }
-      // possible error: user object not found locally, which should return loginFailed.
-      if (error && error.status && error.status === 404) {
-        this.loginState.setState(LoginState.LOGIN_FAILED);
-        return LoginState.LOGIN_FAILED;
-      }
-      // all other cases must throw an error
-      throw error;
+    } else {
+      this.loginState.setState(LoginState.LOGIN_FAILED);
     }
+    return this.loginState.getState();
   }
 
   saveUser(user: LocalUser) {
