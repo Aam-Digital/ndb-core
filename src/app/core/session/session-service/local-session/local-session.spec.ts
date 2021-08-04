@@ -20,9 +20,13 @@ import { AppConfig } from "../../../app-config/app-config";
 import { LocalSession } from "./local-session";
 import { SessionType } from "../../session-type";
 import { LocalUser } from "./local-user";
+import * as CryptoJS from "crypto-js";
 
 describe("LocalSessionService", () => {
   let localSession: LocalSession;
+  let username = "demo";
+  let password = "pass";
+  let testUser: LocalUser;
 
   beforeEach(() => {
     AppConfig.settings = {
@@ -37,22 +41,30 @@ describe("LocalSessionService", () => {
     localSession = new LocalSession(new EntitySchemaService());
   });
 
+  beforeEach(() => {
+    const cryptKeySize = 256 / 32;
+    const cryptIterations = 128;
+    const cryptSalt = CryptoJS.lib.WordArray.random(128 / 8).toString();
+    const hash = CryptoJS.PBKDF2(password, cryptSalt, {
+      keySize: cryptKeySize,
+      iterations: cryptIterations,
+    }).toString();
+    testUser = {
+      name: username,
+      roles: ["user_app"],
+      keysize: cryptKeySize,
+      iterations: cryptIterations,
+      salt: cryptSalt,
+      hash: hash,
+    };
+    localSession.saveUser(testUser);
+  });
+
   it("should be created", async () => {
     expect(localSession).toBeDefined();
   });
 
   it("should save user objects to local storage", () => {
-    const testUser: LocalUser = {
-      name: "TestUser",
-      roles: ["user_app"],
-      hash: "hash",
-      salt: "salt",
-      iterations: 10,
-      keysize: 100,
-    };
-
-    localSession.saveUser(testUser);
-
     const storedUser = window.localStorage.getItem(testUser.name);
     expect(JSON.parse(storedUser)).toEqual(testUser);
   });
