@@ -100,7 +100,7 @@ export class ExportService {
     return exportableObj;
 
     function isQuery(queryKey) {
-      return queryKey.startsWith(".") || queryKey.query.startsWith(":");
+      return queryKey.startsWith(".") || queryKey.startsWith(":");
     }
   }
 
