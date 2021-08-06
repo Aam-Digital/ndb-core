@@ -30,6 +30,7 @@ import { MatCardModule } from "@angular/material/card";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { RouterModule } from "@angular/router";
+import { HttpClientModule } from "@angular/common/http";
 
 /**
  * The core session logic handling user login as well as connection and synchronization with the remote database.
@@ -49,6 +50,7 @@ import { RouterModule } from "@angular/router";
     MatButtonModule,
     RouterModule,
     UserModule,
+    HttpClientModule,
   ],
   declarations: [LoginComponent],
   exports: [LoginComponent],

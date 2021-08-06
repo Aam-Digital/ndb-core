@@ -170,8 +170,8 @@ describe("AdminComponent", () => {
   }));
 
   it("should open dialog and call backup service when loading backup", fakeAsync(() => {
-    const mockFileReader = createFileReaderMock();
-    mockBackupService.getJsonExport.and.returnValue(Promise.resolve(""));
+    const mockFileReader = createFileReaderMock("[]");
+    mockBackupService.getJsonExport.and.returnValue(Promise.resolve("[]"));
     createDialogMock();
 
     component.loadBackup(null);

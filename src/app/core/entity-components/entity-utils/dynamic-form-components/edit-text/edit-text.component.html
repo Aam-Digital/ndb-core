@@ -6,7 +6,7 @@
     [title]="label"
     type="text"
   />
-  <mat-error *ngIf="formControl.errors?.required">
+  <mat-error *ngIf="formControl.errors?.required" i18n="Error message for any input">
     This field is required
   </mat-error>
 </mat-form-field>

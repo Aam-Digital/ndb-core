@@ -48,6 +48,9 @@ export class FormDialogWrapperComponent implements AfterViewInit {
     return this._entity;
   }
 
+  // TODO: workaround, possibly remove after creating a proper read-only entity view dialog service #921
+  @Input() readonly: boolean = false;
+
   /** actual reference to the entity to be edited in the form used by the getter/setter */
   private _entity: Entity;
   /** clone of the initially given entity as backup for resetting changes */

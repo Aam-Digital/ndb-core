@@ -154,9 +154,14 @@ export class QueryService {
   /**
    * Turns a list of ids (with the entity prefix) into a list of entities
    * @param ids the array of ids with entity prefix
+   * @param entityPrefix (Optional) entity type prefix that should be added to the given ids where prefix is still missing
    * @returns a list of entity objects
    */
-  toEntities(ids: string[]): Entity[] {
+  toEntities(ids: string[], entityPrefix?: string): Entity[] {
+    if (entityPrefix) {
+      ids = this.addPrefix(ids, entityPrefix);
+    }
+
     return ids.map((id) => {
       const prefix = id.split(":")[0];
       return this.entities[prefix][id];

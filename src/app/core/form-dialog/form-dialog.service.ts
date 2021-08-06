@@ -36,6 +36,7 @@ export class FormDialogService {
   ): MatDialogRef<T> {
     const dialogRef = this.dialog.open(entityDetailsComponent, {
       width: "80%",
+      maxHeight: "90vh",
     });
 
     dialogRef.componentInstance.entity = entity;
