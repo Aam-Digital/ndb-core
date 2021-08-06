@@ -8,7 +8,6 @@ import {
 import { ChildrenListComponent } from "./children-list.component";
 import { ChildrenService } from "../children.service";
 import { RouterTestingModule } from "@angular/router/testing";
-import { ExportDataComponent } from "../../../core/admin/export-data/export-data.component";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { of } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -93,7 +92,7 @@ describe("ChildrenListComponent", () => {
       mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
       mockChildrenService.getChildren.and.returnValue(of([]));
       TestBed.configureTestingModule({
-        declarations: [ChildrenListComponent, ExportDataComponent],
+        declarations: [ChildrenListComponent],
 
         imports: [
           ChildrenModule,

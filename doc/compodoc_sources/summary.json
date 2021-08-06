@@ -80,6 +80,18 @@
       {
         "title": "Create a Report",
         "file": "how-to-guides/reports.md"
+      },
+      {
+        "title": "Build Localizable Components",
+        "file": "how-to-guides/build-localizable-components.md"
+      },
+      {
+        "title": "Work with XLF",
+        "file": "how-to-guides/work-with-xlf.md"
+      },
+      {
+        "title": "Add Another Language",
+        "file": "how-to-guides/add-another-language.md"
       }
     ]
   },

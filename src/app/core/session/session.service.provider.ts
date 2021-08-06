@@ -25,20 +25,18 @@ import { LoginState } from "./session-states/login-state.enum";
 import { SessionType } from "./session-type";
 import { NewLocalSessionService } from "./session-service/new-local-session.service";
 import { PouchDatabase } from "../database/pouch-database";
+import { HttpClient } from "@angular/common/http";
 
 /**
  * Factory method for Angular DI provider of SessionService.
  *
  * see [sessionServiceProvider]{@link sessionServiceProvider} for details.
- *
- * @param alertService
- * @param loggingService
- * @param entitySchemaService
  */
 export function sessionServiceFactory(
   alertService: AlertService,
   loggingService: LoggingService,
-  entitySchemaService: EntitySchemaService
+  entitySchemaService: EntitySchemaService,
+  httpClient: HttpClient
 ): SessionService {
   let sessionService: SessionService;
   switch (AppConfig.settings.session_type) {
@@ -56,7 +54,8 @@ export function sessionServiceFactory(
       sessionService = new SyncedSessionService(
         alertService,
         loggingService,
-        entitySchemaService
+        entitySchemaService,
+        httpClient
       );
       break;
     default:
@@ -105,5 +104,5 @@ function updateLoggingServiceWithUserContext(sessionService: SessionService) {
 export const sessionServiceProvider = {
   provide: SessionService,
   useFactory: sessionServiceFactory,
-  deps: [AlertService, LoggingService, EntitySchemaService],
+  deps: [AlertService, LoggingService, EntitySchemaService, HttpClient],
 };

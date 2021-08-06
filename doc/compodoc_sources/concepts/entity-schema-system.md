@@ -1,5 +1,10 @@
 # Entity Schema 
 -----
+The Entity Schema defines details of the properties of an entity type.
+(An "entity" is an object of a certain type that users work with and save to the database, like "Child" or "School")
+
+We define an entity type and its schema in code through a plain TypeScript class and some custom annotations.
+Read more on the background and practical considerations in [How to create a new Entity Type](../how-to-guides/create-a-new-entity-type.html).
 
 An example of a schema definition:
 

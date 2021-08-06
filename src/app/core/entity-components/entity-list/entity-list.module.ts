@@ -15,7 +15,7 @@ import { MatTableModule } from "@angular/material/table";
 import { MatSortModule } from "@angular/material/sort";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { FormsModule } from "@angular/forms";
-import { AdminModule } from "../../admin/admin.module";
+import { ExportModule } from "../../export/export.module";
 import { ViewModule } from "../../view/view.module";
 import { ListFilterComponent } from "./list-filter/list-filter.component";
 import { PermissionsModule } from "../../permissions/permissions.module";
@@ -30,7 +30,7 @@ import { EntityFormModule } from "../entity-form/entity-form.module";
     FormsModule,
     MatFormFieldModule,
     MatSelectModule,
-    AdminModule,
+    ExportModule,
     MatIconModule,
     Angulartics2Module,
     MatButtonModule,
