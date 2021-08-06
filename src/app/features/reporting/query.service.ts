@@ -35,26 +35,23 @@ export class QueryService {
    *             This will also affect the amount of data being loaded.
    * @param to a date which can be accessed in the query using another ?
    * @param data the data on which the query should run, default is all entities
-   * @param reloadData force an explicit loading of the cache necessary for related entities
    * @returns the results of the query on the data
    */
   public async queryData(
     query: string,
     from: Date = null,
     to: Date = null,
-    data: any = this.entities,
-    reloadData: boolean = false
+    data?: any
   ): Promise<any> {
-    if (
-      !data ||
-      (data === this.entities && from < this.dataAvailableFrom)
-      // TODO: why only if data === this.entities?! merge this with the second loadData condition below
-    ) {
-      await this.loadData(from);
-      data = this.entities;
+    if (from === null) {
+      from = new Date(0);
     }
-    if (reloadData) {
+    if (from < this.dataAvailableFrom || !this.dataAvailableFrom) {
       await this.loadData(from);
+    }
+
+    if (!data) {
+      data = this.entities;
     }
 
     return jsonQuery([query, from, to], {
@@ -74,7 +71,7 @@ export class QueryService {
     }).value;
   }
 
-  private async loadData(from?: Date): Promise<void> {
+  private async loadData(from: Date): Promise<void> {
     const entityClasses: [EntityConstructor<any>, () => Promise<Entity[]>][] = [
       [Child, () => this.entityMapper.loadType(Child)],
       [School, () => this.entityMapper.loadType(School)],
@@ -83,17 +80,10 @@ export class QueryService {
         ChildSchoolRelation,
         () => this.entityMapper.loadType(ChildSchoolRelation),
       ],
-      [
-        Note,
-        () => this.childrenService.getNotesInTimespan(from ?? new Date(0)),
-      ],
+      [Note, () => this.childrenService.getNotesInTimespan(from)],
       [
         EventNote,
-        () =>
-          this.attendanceService.getEventsOnDate(
-            from ?? new Date(0),
-            new Date()
-          ),
+        () => this.attendanceService.getEventsOnDate(from, new Date()),
       ],
     ];
 

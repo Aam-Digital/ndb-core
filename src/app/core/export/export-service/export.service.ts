@@ -86,8 +86,7 @@ export class ExportService {
           columnConfig.query,
           null,
           null,
-          [element],
-          true
+          [element]
         );
       } else {
         value = entityListSortingAccessor(element, columnConfig.query);
