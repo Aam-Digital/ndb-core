@@ -41,18 +41,18 @@ export class ExportService {
       (config ?? []).map((c) => c.label ?? c.query)
     );
 
-    for (const element of data) {
+    for (const dataRow of data) {
       const rowConfig =
         config ??
-        Object.keys(element).map(
+        Object.keys(dataRow).map(
           (key) => ({ query: key } as ExportColumnConfig)
         );
       if (!config) {
-        Object.keys(element).forEach((k) => columns.add(k));
+        Object.keys(dataRow).forEach((k) => columns.add(k));
       }
 
-      const exportableElement = await this.prepareObjectForExport(
-        element,
+      const exportableElement = await this.transformDataRowToExportRow(
+        dataRow,
         rowConfig
       );
 
@@ -60,7 +60,7 @@ export class ExportService {
         exportableElement,
         rowConfig
       );
-      extendedExportableRows.forEach((r) => exportableData.push(r));
+      exportableData.push(...extendedExportableRows);
     }
 
     return this.papa.unparse(
@@ -69,7 +69,7 @@ export class ExportService {
     );
   }
 
-  private async prepareObjectForExport(
+  private async transformDataRowToExportRow(
     element: any,
     config: ExportColumnConfig[]
   ) {
@@ -78,10 +78,7 @@ export class ExportService {
     for (const columnConfig of config) {
       const label = columnConfig.label ?? columnConfig.query;
       let value;
-      if (
-        columnConfig.query.startsWith(".") ||
-        columnConfig.query.startsWith(":")
-      ) {
+      if (isQuery(columnConfig.query)) {
         value = await this.queryService.queryData(
           columnConfig.query,
           null,
@@ -101,6 +98,10 @@ export class ExportService {
     }
 
     return exportableObj;
+
+    function isQuery(queryKey) {
+      return queryKey.startsWith(".") || queryKey.query.startsWith(":");
+    }
   }
 
   private extendIntoMultipleRows(
