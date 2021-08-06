@@ -39,10 +39,7 @@ describe("ReportingComponent", () => {
   };
 
   beforeEach(async () => {
-    mockReportingService = jasmine.createSpyObj([
-      "setAggregations",
-      "calculateReport",
-    ]);
+    mockReportingService = jasmine.createSpyObj(["calculateReport"]);
     mockReportingService.calculateReport.and.resolveTo([]);
     await TestBed.configureTestingModule({
       declarations: [ReportingComponent],
@@ -84,8 +81,10 @@ describe("ReportingComponent", () => {
     tick();
     expect(component.loading).toBeFalse();
 
-    expect(mockReportingService.setAggregations).toHaveBeenCalledWith(
-      testReport.aggregationDefinitions
+    expect(mockReportingService.calculateReport).toHaveBeenCalledWith(
+      testReport.aggregationDefinitions,
+      undefined,
+      jasmine.any(Date)
     );
   }));
 
