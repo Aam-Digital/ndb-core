@@ -12,16 +12,16 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 
 @NgModule({
   declarations: [EntityFormComponent],
-    imports: [
-        CommonModule,
-        MatButtonModule,
-        FlexModule,
-        ViewModule,
-        PermissionsModule,
-        MatIconModule,
-        MatTooltipModule,
-        MatFormFieldModule,
-    ],
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    FlexModule,
+    ViewModule,
+    PermissionsModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatFormFieldModule,
+  ],
   providers: [EntityFormService],
   exports: [EntityFormComponent],
 })
