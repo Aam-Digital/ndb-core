@@ -6,7 +6,7 @@
     fxLayout.sm="row wrap"
   >
     <div *ngFor="let col of _columns" fxFlex>
-      <div *ngFor="let row of col">
+      <div *ngFor="let row of col" style="min-width: 224px">
         <div class="form-field">
           <ng-template
             [appDynamicComponent]="{
