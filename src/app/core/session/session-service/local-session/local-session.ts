@@ -49,7 +49,7 @@ export class LocalSession {
    * @param username Username
    * @param password Password
    */
-  public async login(username: string, password: string): Promise<LoginState> {
+  public login(username: string, password: string): LoginState {
     const user: LocalUser = JSON.parse(window.localStorage.getItem(username));
     if (user) {
       const hashedPassword = CryptoJS.PBKDF2(password, user.salt, {

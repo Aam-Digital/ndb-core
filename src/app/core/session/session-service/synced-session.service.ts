@@ -87,93 +87,58 @@ export class SyncedSessionService extends SessionService {
     this.cancelLoginOfflineRetry(); // in case this is running in the background
     this.getSyncState().setState(SyncState.UNSYNCED);
 
-    const localLogin = this._localSession.login(username, password);
-    const remoteLogin = this._remoteSession.login(username, password);
-
-    remoteLogin
-      .then(async (connectionState: ConnectionState) => {
-        // remote connected -- sync!
-        if (connectionState === ConnectionState.CONNECTED) {
-          const syncPromise = this.sync(); // no liveSync() here, as we can't know when that's finished if there are no changes.
-
-          // no matter the result of the non-live sync(), start liveSync() once it is done
-          syncPromise
-            .then(
-              // successful -> start liveSync()
-              () => this.liveSyncDeferred(),
-              // not successful -> only start a liveSync() to retry, if we are logged in locally
-              // otherwise the UI is in a fairly unusable state.
-              async () => {
-                if ((await localLogin) === LoginState.LOGGED_IN) {
-                  this.liveSyncDeferred();
-                } else {
-                  // TODO(lh): Alert the AlertService: Your password was changed recently, but there is an issue with sync. Try again later!
-                }
-              }
-            )
-            .catch((err) => this._loggingService.error(err));
-
-          // asynchronously check if the local login failed --> this happens, when the password was changed at the remote
-          localLogin.then(async (loginState: LoginState) => {
-            if (loginState === LoginState.LOGIN_FAILED) {
-              // in this case: when the sync is completed, retry the local login after the sync
-              try {
-                await syncPromise;
-              } catch (err) {
-                this._loggingService.error(err);
-              }
-              return this._localSession.login(username, password);
+    const syncPromise = this._remoteSession.connectionState
+      .waitForChangeTo(ConnectionState.CONNECTED)
+      .then(() => {
+        return this.sync()
+          .then(() => this.liveSyncDeferred())
+          .catch(() => {
+            if (
+              this._localSession.loginState.getState() === LoginState.LOGGED_IN
+            ) {
+              this.liveSyncDeferred();
             }
           });
+      });
 
-          return syncPromise;
+    const remoteLogin = this._remoteSession.login(username, password);
+    let localLoginState = this._localSession.login(username, password);
+
+    if (localLoginState === LoginState.LOGGED_IN) {
+      remoteLogin.then((remoteLoginState) => {
+        if (remoteLoginState === ConnectionState.REJECTED) {
+          // Password changed
+          this._localSession.logout();
+          this._localSession.loginState.setState(LoginState.LOGIN_FAILED);
+          this._alertService.addDanger(
+            $localize`Your password was changed recently. Please retry with your new password!`
+          );
         }
-
-        // If we are not connected, we must check (asynchronously), whether the local database is initial
-        this.isInitial().then((isInitial) => {
-          if (isInitial) {
-            // If we were initial, the local session was waiting for a sync.
-            if (connectionState === ConnectionState.REJECTED) {
-              // Explicitly fail the login if the Connection was rejected, so the LocalSession knows what's going on
-              // additionally, fail sync to resolve deadlock
-              this._localSession.loginState.setState(LoginState.LOGIN_FAILED);
-              this._localSession.syncState.setState(SyncState.FAILED);
-            } else {
-              // Explicitly abort the sync to resolve the deadlock
-              this._localSession.syncState.setState(SyncState.ABORTED);
-            }
-          }
-        });
-
-        // remote rejected but local logged in
-        if (connectionState === ConnectionState.REJECTED) {
-          if ((await localLogin) === LoginState.LOGGED_IN) {
-            // Someone changed the password remotely --> log out and signal failed login
-            this._localSession.logout();
-            this._localSession.loginState.setState(LoginState.LOGIN_FAILED);
-            this._alertService.addDanger(
-              $localize`Your password was changed recently. Please retry with your new password!`
-            );
-          }
-        }
-
-        // offline? retry (unless we are in an initial state)! TODO(lh): Backoff
-        if (
-          connectionState === ConnectionState.OFFLINE &&
-          !(await this.isInitial())
-        ) {
+        if (remoteLoginState === ConnectionState.OFFLINE) {
+          // retry remote login while offline
           this._offlineRetryLoginScheduleHandle = setTimeout(() => {
             this.login(username, password);
           }, 2000);
         }
-      })
-      .catch((err) => this._loggingService.error(err));
+      });
+    } else {
+      // Local login failed
+      const remoteLoginState = await remoteLogin;
+      if (remoteLoginState === ConnectionState.CONNECTED) {
+        // New user or password changed
+        await syncPromise;
+        // TODO save remote user in local session
+        localLoginState = this._localSession.login(username, password);
+      } else {
+        // Password wrong or offline without local users, neither local nor remote login worked
+      }
+    }
 
-    const loginState = await localLogin;
-    if (loginState === LoginState.LOGGED_IN) {
+    if (localLoginState === LoginState.LOGGED_IN) {
       this.currentUser = await this.loadUser(username);
     }
-    return loginState;
+
+    return localLoginState;
   }
 
   /** see {@link SessionService} */
@@ -305,14 +270,5 @@ export class SyncedSessionService extends SessionService {
     const userData = await this.getDatabase().get("User:" + userId);
     this._entitySchemaService.loadDataIntoEntity(user, userData);
     return user;
-  }
-
-  /**
-   * Check whether the local database is in an initial state.
-   * This check can only be performed async, so this method returns a Promise
-   */
-  private isInitial(): Promise<Boolean> {
-    // `doc_count === 0 => initial` is a valid assumptions, as documents for users must always be present, even after db-clean
-    return this.pouchDB.info().then((result) => result.doc_count === 0);
   }
 }
