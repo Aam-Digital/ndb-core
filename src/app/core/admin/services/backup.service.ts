@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Database } from "../../database/database";
 import { User } from "../../user/user";
 import { Papa } from "ngx-papaparse";
-import { entityListSortingAccessor } from "../../entity-components/entity-subrecord/entity-subrecord/sorting-accessor";
+import { ExportService } from "../../export/export-service/export.service";
 
 /**
  * Create and load backups of the database.
@@ -11,12 +11,11 @@ import { entityListSortingAccessor } from "../../entity-components/entity-subrec
   providedIn: "root",
 })
 export class BackupService {
-  /** CSV row separator */
-  static readonly SEPARATOR_ROW = "\n";
-  /** CSV column/field separator */
-  static readonly SEPARATOR_COL = ",";
-
-  constructor(private db: Database, private papa: Papa) {}
+  constructor(
+    private db: Database,
+    private papa: Papa,
+    private exportService: ExportService
+  ) {}
 
   /**
    * Creates a List of JSON elements separated by `BackupService.SEPARATOR_ROW` holding all elements of the database.
@@ -26,22 +25,7 @@ export class BackupService {
    */
   async getJsonExport(): Promise<string> {
     const results = await this.db.getAll();
-    return this.createJson(results);
-  }
-
-  /**
-   * Creates a JSON string of the given data.
-   *
-   * @param data the data which should be converted to JSON
-   * @returns string containing all the values stringified elements of the input data
-   */
-  createJson(data): string {
-    let res = "";
-    data.forEach((r) => {
-      res += JSON.stringify(r) + BackupService.SEPARATOR_ROW;
-    });
-
-    return res.trim();
+    return this.exportService.createJson(results);
   }
 
   /**
@@ -51,38 +35,7 @@ export class BackupService {
    */
   async getCsvExport(): Promise<string> {
     const results = await this.db.getAll();
-    return this.createCsv(results);
-  }
-
-  /**
-   * Creates a CSV string of the input data
-   *
-   * @param data an array of elements
-   * @returns string a valid CSV string of the input data
-   */
-  createCsv(data: any[]): string {
-    // create list of row descriptions for the csv string
-    const allFields = new Set();
-    const exportableData = [];
-
-    data.forEach((element: any) => {
-      const exportableObj = {};
-      Object.keys(element).forEach((key: string) => {
-        const res = entityListSortingAccessor(element, key);
-
-        if (res.toString().match(/\[object.*\]/) === null) {
-          allFields.add(key);
-          exportableObj[key] = res;
-        }
-      });
-
-      exportableData.push(exportableObj);
-    });
-
-    return this.papa.unparse(
-      { data: exportableData, fields: [...new Set(allFields)] },
-      { quotes: true, header: true }
-    );
+    return this.exportService.createCsv(results);
   }
 
   /**
@@ -108,8 +61,8 @@ export class BackupService {
    * @param forceUpdate should existing objects be overridden? Default false
    */
   async importJson(json, forceUpdate = false): Promise<void> {
-    for (const stringRecord of json.split(BackupService.SEPARATOR_ROW)) {
-      const record = JSON.parse(stringRecord);
+    const documents = JSON.parse(json);
+    for (const record of documents) {
       // Remove _rev so CouchDB treats it as a new rather than a updated document
       delete record._rev;
       await this.db.put(record, forceUpdate);
