@@ -382,6 +382,28 @@ describe("SyncedSessionService", () => {
       expectAsync(result).toBeResolvedTo(LoginState.LOGGED_IN);
       tick();
     }));
+
+    it("should update the local user object once connected", fakeAsync(() => {
+      const oldUser: DatabaseUser = {
+        name: username,
+        roles: ["user_app"],
+      };
+      localSession.saveUser(oldUser, "password");
+      const newUser: DatabaseUser = {
+        name: username,
+        roles: oldUser.roles.concat("admin"),
+      };
+      passRemoteLogin(newUser);
+      spyOn(sessionService, "loadUser").and.resolveTo();
+
+      const result = sessionService.login(username, "password");
+      tick();
+
+      const currentUser = localSession.getCurrentUser();
+      expect(currentUser.roles).toEqual(["user_app", "admin"]);
+      expectAsync(result).toBeResolvedTo(LoginState.LOGGED_IN);
+      tick();
+    }));
   });
 });
 

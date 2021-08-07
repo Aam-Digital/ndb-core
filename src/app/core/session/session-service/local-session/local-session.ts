@@ -57,7 +57,6 @@ export class LocalSession {
    */
   public login(username: string, password: string): LoginState {
     const user: LocalUser = JSON.parse(window.localStorage.getItem(username));
-    console.log("local user", user);
     if (user) {
       if (checkPassword(password, user.encryptedPassword)) {
         this.currentUser = user;
@@ -78,6 +77,10 @@ export class LocalSession {
       encryptedPassword: encryptPassword(password),
     };
     window.localStorage.setItem(localUser.name, JSON.stringify(localUser));
+    // Update when already logged in
+    if (this.getCurrentUser()?.name === localUser.name) {
+      this.currentUser = localUser;
+    }
   }
 
   public removeUser(username: string) {

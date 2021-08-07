@@ -90,6 +90,10 @@ export class SyncedSessionService extends SessionService {
     const syncPromise = this._remoteSession.connectionState
       .waitForChangeTo(ConnectionState.CONNECTED)
       .then(() => {
+        // Update local user object
+        const remoteUser = this._remoteSession.getCurrentUser()
+        this._localSession.saveUser(remoteUser, password);
+
         return this.sync()
           .then(() => this.liveSyncDeferred())
           .catch(() => {
