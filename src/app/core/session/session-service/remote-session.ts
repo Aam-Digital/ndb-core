@@ -110,7 +110,8 @@ export class RemoteSession {
       this.connectionState.setState(ConnectionState.CONNECTED);
       return ConnectionState.CONNECTED;
     } catch (error) {
-      if (error.name === "unauthorized" || error.name === "forbidden") {
+      const errorStatus = error?.statusText?.toLowerCase();
+      if (errorStatus === "unauthorized" || errorStatus === "forbidden") {
         this.connectionState.setState(ConnectionState.REJECTED);
         return ConnectionState.REJECTED;
       } else {

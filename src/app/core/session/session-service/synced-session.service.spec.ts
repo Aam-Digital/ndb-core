@@ -27,7 +27,11 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { SessionType } from "../session-type";
 import { fakeAsync, flush, TestBed, tick } from "@angular/core/testing";
 import { User } from "../../user/user";
-import { HttpClient, HttpClientModule } from "@angular/common/http";
+import {
+  HttpClient,
+  HttpClientModule,
+  HttpErrorResponse,
+} from "@angular/common/http";
 import { LoggingService } from "../../logging/logging.service";
 import * as CryptoJS from "crypto-js";
 import { of, throwError } from "rxjs";
@@ -438,9 +442,9 @@ function passRemoteLogin(response: DatabaseUser = { name: "", roles: [] }) {
 }
 
 function failRemoteLogin(offline = false) {
-  const rejectError = new Error();
+  let rejectError;
   if (!offline) {
-    rejectError.name = "unauthorized";
+    rejectError = new HttpErrorResponse({ statusText: "Unauthorized" });
   }
   spyOn(TestBed.inject(HttpClient), "post").and.returnValue(
     throwError(rejectError)
