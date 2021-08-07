@@ -23,8 +23,8 @@ import { LoginState } from "../../session-states/login-state.enum";
 
 describe("LocalSessionService", () => {
   let localSession: LocalSession;
-  let username = "demo";
-  let password = "pass";
+  const username = "demo";
+  const password = "pass";
   let testUser: DatabaseUser;
 
   beforeEach(() => {

@@ -220,7 +220,7 @@ describe("SyncedSessionService", () => {
       syncSpy = spyOn(sessionService, "sync").and.resolveTo();
       liveSyncSpy = spyOn(sessionService, "liveSyncDeferred");
 
-      //TODO remove this once User Entity is not needed in session any more
+      // TODO remove this once User Entity is not needed in session any more
       loadUserSpy = spyOn(localSession, "loadUser").and.resolveTo();
     });
 
