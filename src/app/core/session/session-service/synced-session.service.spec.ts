@@ -177,7 +177,7 @@ describe("SyncedSessionService", () => {
     let localSession: LocalSession;
     let remoteSession: RemoteSession;
     let localLoginSpy: jasmine.Spy<
-      (username: string, password: string) => LoginState
+      (username: string, password: string) => Promise<LoginState>
     >;
     let remoteLoginSpy: jasmine.Spy<
       (username: string, password: string) => Promise<ConnectionState>
@@ -221,7 +221,7 @@ describe("SyncedSessionService", () => {
       liveSyncSpy = spyOn(sessionService, "liveSyncDeferred");
 
       //TODO remove this once User Entity is not needed in session any more
-      loadUserSpy = spyOn(sessionService, "loadUser").and.resolveTo();
+      loadUserSpy = spyOn(localSession, "loadUser").and.resolveTo();
     });
 
     afterEach(() => {

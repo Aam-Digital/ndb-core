@@ -50,8 +50,6 @@ export class SyncedSessionService extends SessionService {
   private readonly pouchDB: PouchDB.Database;
   private readonly database: Database;
 
-  private currentUser: User;
-
   constructor(
     private _alertService: AlertService,
     private _loggingService: LoggingService,
@@ -61,7 +59,10 @@ export class SyncedSessionService extends SessionService {
     super();
     this.pouchDB = new PouchDB(AppConfig.settings.database.name);
     this.database = new PouchDatabase(this.pouchDB, this._loggingService);
-    this._localSession = new LocalSession();
+    this._localSession = new LocalSession(
+      this.database,
+      this._entitySchemaService
+    );
     this._remoteSession = new RemoteSession(this._httpClient);
   }
 
@@ -106,7 +107,7 @@ export class SyncedSessionService extends SessionService {
       });
 
     const remoteLogin = this._remoteSession.login(username, password);
-    let localLoginState = this._localSession.login(username, password);
+    let localLoginState = await this._localSession.login(username, password);
 
     if (localLoginState === LoginState.LOGGED_IN) {
       remoteLogin.then((remoteLoginState) => {
@@ -132,22 +133,17 @@ export class SyncedSessionService extends SessionService {
       if (remoteLoginState === ConnectionState.CONNECTED) {
         // New user or password changed
         await syncPromise;
-        localLoginState = this._localSession.login(username, password);
+        localLoginState = await this._localSession.login(username, password);
       } else {
         // Password wrong or offline without local users, neither local nor remote login worked
       }
     }
-
-    if (localLoginState === LoginState.LOGGED_IN) {
-      this.currentUser = await this.loadUser(username);
-    }
-
     return localLoginState;
   }
 
   /** see {@link SessionService} */
   public getCurrentUser(): User {
-    return this.currentUser;
+    return this._localSession.getCurrentUserEntity();
   }
 
   /** see {@link SessionService} */
@@ -263,16 +259,5 @@ export class SyncedSessionService extends SessionService {
     this.cancelLiveSync();
     this._localSession.logout();
     this._remoteSession.logout();
-  }
-
-  /**
-   * Helper to get a User Entity from the Database without needing the EntityMapperService
-   * @param userId Id of the User to be loaded
-   */
-  public async loadUser(userId: string): Promise<User> {
-    const user = new User("");
-    const userData = await this.getDatabase().get("User:" + userId);
-    this._entitySchemaService.loadDataIntoEntity(user, userData);
-    return user;
   }
 }

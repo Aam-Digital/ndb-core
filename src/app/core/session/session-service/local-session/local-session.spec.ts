@@ -18,7 +18,7 @@
 import { AppConfig } from "../../../app-config/app-config";
 import { LocalSession } from "./local-session";
 import { SessionType } from "../../session-type";
-import { DatabaseUser } from "./local-user";
+import { checkPassword, DatabaseUser, LocalUser } from "./local-user";
 import { LoginState } from "../../session-states/login-state.enum";
 
 describe("LocalSessionService", () => {
@@ -56,32 +56,36 @@ describe("LocalSessionService", () => {
   });
 
   it("should save user objects to local storage", () => {
-    const storedUser = window.localStorage.getItem(testUser.name);
-    expect(JSON.parse(storedUser)).toEqual(testUser);
+    const storedUser: LocalUser = JSON.parse(
+      window.localStorage.getItem(testUser.name)
+    );
+    expect(storedUser.name).toBe(testUser.name);
+    expect(storedUser.roles).toEqual(testUser.roles);
+    expect(checkPassword(password, storedUser.encryptedPassword)).toBeTrue();
   });
 
-  it("should login a previously saved user with correct password", () => {
+  it("should login a previously saved user with correct password", async () => {
     expect(localSession.loginState.getState()).toBe(LoginState.LOGGED_OUT);
 
-    localSession.login(username, password);
+    await localSession.login(username, password);
 
     expect(localSession.loginState.getState()).toBe(LoginState.LOGGED_IN);
   });
 
-  it("should fail login with correct username but wrong password", () => {
-    localSession.login(username, "wrong password");
+  it("should fail login with correct username but wrong password", async () => {
+    await localSession.login(username, "wrong password");
 
     expect(localSession.loginState.getState()).toBe(LoginState.LOGIN_FAILED);
   });
 
-  it("should fail login with correct wrong username", () => {
-    localSession.login("wrong username", password);
+  it("should fail login with correct wrong username", async () => {
+    await localSession.login("wrong username", password);
 
     expect(localSession.loginState.getState()).toBe(LoginState.LOGIN_FAILED);
   });
 
-  it("should assign current user after successful login", () => {
-    localSession.login(username, password);
+  it("should assign current user after successful login", async () => {
+    await localSession.login(username, password);
 
     const currentUser = localSession.getCurrentUser();
 
@@ -89,10 +93,10 @@ describe("LocalSessionService", () => {
     expect(currentUser.roles).toEqual(testUser.roles);
   });
 
-  it("should fail login after a user is removed", () => {
+  it("should fail login after a user is removed", async () => {
     localSession.removeUser(username);
 
-    localSession.login(username, password);
+    await localSession.login(username, password);
     expect(localSession.loginState.getState()).toBe(LoginState.LOGIN_FAILED);
     expect(localSession.getCurrentUser()).toBeUndefined();
   });
