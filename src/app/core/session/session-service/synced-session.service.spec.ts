@@ -203,28 +203,17 @@ describe("SyncedSessionService", () => {
       expect(result).toEqual(LoginState.LOGGED_IN);
     });
 
-    it("behaves correctly when both local and remote session reject (normal login with wrong password)", (done) => {
-      const localLogin = spyOn(localSession, "login").and.returnValue(
-        Promise.resolve(LoginState.LOGIN_FAILED)
-      );
-      const remoteLogin = spyOn(remoteSession, "login").and.returnValue(
-        Promise.resolve(ConnectionState.REJECTED)
-      );
-      const syncSpy = spyOn(sessionService, "sync").and.returnValue(
-        Promise.resolve()
-      );
-      const result = sessionService.login("u", "p");
-      setTimeout(async () => {
-        // wait for the next event cycle loop --> all Promise handlers are evaluated before this
-        // login methods should have been called, the local one twice
-        expect(localLogin.calls.allArgs()).toEqual([["u", "p"]]);
-        expect(remoteLogin.calls.allArgs()).toEqual([["u", "p"]]);
-        // sync should have been triggered
-        expect(syncSpy.calls.count()).toEqual(0);
-        // result should be correct
-        expect(await result).toEqual(LoginState.LOGIN_FAILED);
-        done();
-      });
+    it("behaves correctly when both local and remote session reject (normal login with wrong password)", async () => {
+      spyOn(localSession, "login").and.resolveTo(LoginState.LOGIN_FAILED);
+      spyOn(remoteSession, "login").and.resolveTo(ConnectionState.REJECTED);
+      spyOn(sessionService, "sync").and.resolveTo();
+
+      const result = await sessionService.login("u", "p");
+
+      expect(localSession.login).toHaveBeenCalledWith("u", "p");
+      expect(remoteSession.login).toHaveBeenCalledWith("u", "p");
+      expect(sessionService.sync).not.toHaveBeenCalled();
+      expect(result).toEqual(LoginState.LOGIN_FAILED);
     });
 
     it("behaves correctly in the offline scenario", async () => {
@@ -246,7 +235,9 @@ describe("SyncedSessionService", () => {
         Promise.resolve(LoginState.LOGIN_FAILED),
         Promise.resolve(LoginState.LOGGED_IN)
       );
-      const remoteLogin = spyOn(remoteSession, "login").and.resolveTo(ConnectionState.CONNECTED);
+      const remoteLogin = spyOn(remoteSession, "login").and.resolveTo(
+        ConnectionState.CONNECTED
+      );
       const syncSpy = spyOn(sessionService, "sync").and.resolveTo();
       const liveSyncSpy = spyOn(sessionService, "liveSyncDeferred");
       const result = sessionService.login("u", "p");
@@ -269,8 +260,8 @@ describe("SyncedSessionService", () => {
 
     it("behaves correctly when the local session logs in, but the remote session rejects (password change, old password", async () => {
       spyOn(localSession, "login").and.resolveTo(LoginState.LOGGED_IN);
-      spyOn(localSession, "logout").and.rejectWith();
       spyOn(remoteSession, "login").and.resolveTo(ConnectionState.REJECTED);
+      spyOn(localSession, "logout");
       spyOn(sessionService, "sync").and.resolveTo();
       spyOn(sessionService, "loadUser").and.resolveTo();
 
