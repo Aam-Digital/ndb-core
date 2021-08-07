@@ -18,7 +18,12 @@ import { Injectable } from "@angular/core";
 import { SyncState } from "../../session-states/sync-state.enum";
 import { LoginState } from "../../session-states/login-state.enum";
 import { StateHandler } from "../../session-states/state-handler";
-import { checkPassword, DatabaseUser, LocalUser } from "./local-user";
+import {
+  checkPassword,
+  DatabaseUser,
+  encryptPassword,
+  LocalUser,
+} from "./local-user";
 
 /**
  * Responsibilities:
@@ -52,6 +57,7 @@ export class LocalSession {
    */
   public login(username: string, password: string): LoginState {
     const user: LocalUser = JSON.parse(window.localStorage.getItem(username));
+    console.log("local user", user);
     if (user) {
       if (checkPassword(password, user.encryptedPassword)) {
         this.currentUser = user;
@@ -65,8 +71,17 @@ export class LocalSession {
     return this.loginState.getState();
   }
 
-  public saveUser(user: LocalUser) {
-    window.localStorage.setItem(user.name, JSON.stringify(user));
+  public saveUser(user: DatabaseUser, password: string) {
+    const localUser: LocalUser = {
+      name: user.name,
+      roles: user.roles,
+      encryptedPassword: encryptPassword(password),
+    };
+    window.localStorage.setItem(localUser.name, JSON.stringify(localUser));
+  }
+
+  public removeUser(username: string) {
+    window.localStorage.removeItem(username);
   }
 
   public getCurrentUser(): DatabaseUser {

@@ -33,6 +33,7 @@ import * as CryptoJS from "crypto-js";
 import { of, throwError } from "rxjs";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { DatabaseUser } from "./local-session/local-user";
 
 describe("SyncedSessionService", () => {
   let sessionService: SyncedSessionService;
@@ -169,6 +170,8 @@ describe("SyncedSessionService", () => {
   // These tests mock the login-methods of local and remote session.
   // We cannot test whether the StateHandlers are in correct state, as these are set in the sub-classes themselves.
   describe("Mocked Tests", () => {
+    let localSession: LocalSession;
+    let remoteSession: RemoteSession;
     let localLoginSpy: jasmine.Spy<
       (username: string, password: string) => LoginState
     >;
@@ -177,6 +180,8 @@ describe("SyncedSessionService", () => {
     >;
     let syncSpy: jasmine.Spy<() => Promise<void>>;
     let liveSyncSpy: jasmine.Spy<() => void>;
+
+    const username = "username";
 
     beforeEach(() => {
       TestBed.configureTestingModule({
@@ -197,19 +202,22 @@ describe("SyncedSessionService", () => {
         },
         webdav: { remote_url: "" },
       };
-      // setup synced session service
       sessionService = TestBed.inject(SyncedSessionService);
+
       // make private members localSession and remoteSession available in the tests
-      localLoginSpy = spyOn(
-        sessionService["_localSession"] as LocalSession,
-        "login"
-      ).and.callThrough();
-      remoteLoginSpy = spyOn(
-        sessionService["_remoteSession"] as RemoteSession,
-        "login"
-      ).and.callThrough();
+      // @ts-ignore
+      localSession = sessionService._localSession;
+      // @ts-ignore
+      remoteSession = sessionService._remoteSession;
+
+      localLoginSpy = spyOn(localSession, "login").and.callThrough();
+      remoteLoginSpy = spyOn(remoteSession, "login").and.callThrough();
       syncSpy = spyOn(sessionService, "sync").and.resolveTo();
       liveSyncSpy = spyOn(sessionService, "liveSyncDeferred");
+    });
+
+    afterEach(() => {
+      localSession.removeUser(username);
     });
 
     it("behaves correctly when both local and remote session succeed (normal login)", fakeAsync(() => {
@@ -217,11 +225,11 @@ describe("SyncedSessionService", () => {
       passRemoteLogin();
       spyOn(sessionService, "loadUser").and.resolveTo();
 
-      const result = sessionService.login("u", "p");
+      const result = sessionService.login(username, "p");
       tick();
 
-      expect(localLoginSpy).toHaveBeenCalledWith("u", "p");
-      expect(remoteLoginSpy).toHaveBeenCalledWith("u", "p");
+      expect(localLoginSpy).toHaveBeenCalledWith(username, "p");
+      expect(remoteLoginSpy).toHaveBeenCalledWith(username, "p");
       expect(syncSpy).toHaveBeenCalledTimes(1);
       expect(liveSyncSpy).toHaveBeenCalledTimes(1);
       expectAsync(result).toBeResolvedTo(LoginState.LOGGED_IN);
@@ -232,11 +240,11 @@ describe("SyncedSessionService", () => {
       failLocalLogin();
       failRemoteLogin();
 
-      const result = sessionService.login("u", "p");
+      const result = sessionService.login(username, "p");
       tick();
 
-      expect(localLoginSpy).toHaveBeenCalledWith("u", "p");
-      expect(remoteLoginSpy).toHaveBeenCalledWith("u", "p");
+      expect(localLoginSpy).toHaveBeenCalledWith(username, "p");
+      expect(remoteLoginSpy).toHaveBeenCalledWith(username, "p");
       expect(syncSpy).not.toHaveBeenCalled();
       expectAsync(result).toBeResolvedTo(LoginState.LOGIN_FAILED);
       flush();
@@ -247,11 +255,11 @@ describe("SyncedSessionService", () => {
       failRemoteLogin(true);
       spyOn(sessionService, "loadUser").and.resolveTo();
 
-      const result = sessionService.login("u", "p");
+      const result = sessionService.login(username, "p");
       tick();
 
-      expect(localLoginSpy).toHaveBeenCalledWith("u", "p");
-      expect(remoteLoginSpy).toHaveBeenCalledWith("u", "p");
+      expect(localLoginSpy).toHaveBeenCalledWith(username, "p");
+      expect(remoteLoginSpy).toHaveBeenCalledWith(username, "p");
       expect(syncSpy).not.toHaveBeenCalled();
       expectAsync(result).toBeResolvedTo(LoginState.LOGGED_IN);
 
@@ -264,14 +272,14 @@ describe("SyncedSessionService", () => {
       passRemoteLogin();
       spyOn(sessionService, "loadUser").and.resolveTo();
 
-      const result = sessionService.login("u", "p");
+      const result = sessionService.login(username, "p");
       tick();
 
       expect(localLoginSpy.calls.allArgs()).toEqual([
-        ["u", "p"],
-        ["u", "p"],
+        [username, "p"],
+        [username, "p"],
       ]);
-      expect(remoteLoginSpy.calls.allArgs()).toEqual([["u", "p"]]);
+      expect(remoteLoginSpy.calls.allArgs()).toEqual([[username, "p"]]);
       expect(syncSpy.calls.count()).toEqual(1);
       expect(liveSyncSpy.calls.count()).toEqual(1);
       expectAsync(result).toBeResolvedTo(LoginState.LOGGED_IN);
@@ -285,11 +293,11 @@ describe("SyncedSessionService", () => {
       const logoutSpy = spyOn(sessionService._localSession, "logout");
       spyOn(sessionService, "loadUser").and.resolveTo();
 
-      const result = sessionService.login("u", "p");
+      const result = sessionService.login(username, "p");
       tick();
 
-      expect(localLoginSpy).toHaveBeenCalledWith("u", "p");
-      expect(remoteLoginSpy).toHaveBeenCalledWith("u", "p");
+      expect(localLoginSpy).toHaveBeenCalledWith(username, "p");
+      expect(remoteLoginSpy).toHaveBeenCalledWith(username, "p");
       expect(syncSpy).not.toHaveBeenCalled();
       expect(logoutSpy).toHaveBeenCalled();
       expectAsync(result).toBeResolvedTo(LoginState.LOGGED_IN);
@@ -302,11 +310,11 @@ describe("SyncedSessionService", () => {
       syncSpy.and.rejectWith();
       spyOn(sessionService, "loadUser").and.resolveTo();
 
-      const login = sessionService.login("u", "p");
+      const login = sessionService.login(username, "p");
       tick();
 
-      expect(localLoginSpy).toHaveBeenCalledWith("u", "p");
-      expect(remoteLoginSpy).toHaveBeenCalledWith("u", "p");
+      expect(localLoginSpy).toHaveBeenCalledWith(username, "p");
+      expect(remoteLoginSpy).toHaveBeenCalledWith(username, "p");
       expect(syncSpy).toHaveBeenCalled();
       expect(liveSyncSpy).toHaveBeenCalled();
       expectAsync(login).toBeResolvedTo(LoginState.LOGGED_IN);
@@ -318,12 +326,12 @@ describe("SyncedSessionService", () => {
       passRemoteLogin();
       syncSpy.and.rejectWith();
 
-      const result = sessionService.login("u", "p");
+      const result = sessionService.login(username, "p");
       tick();
 
-      expect(localLoginSpy).toHaveBeenCalledWith("u", "p");
+      expect(localLoginSpy).toHaveBeenCalledWith(username, "p");
       expect(localLoginSpy).toHaveBeenCalledTimes(2);
-      expect(remoteLoginSpy).toHaveBeenCalledWith("u", "p");
+      expect(remoteLoginSpy).toHaveBeenCalledWith(username, "p");
       expect(remoteLoginSpy).toHaveBeenCalledTimes(1);
       expect(syncSpy).toHaveBeenCalled();
       expect(liveSyncSpy).not.toHaveBeenCalled();
@@ -332,8 +340,8 @@ describe("SyncedSessionService", () => {
     }));
 
     it("should load the user entity after successful local login", fakeAsync(() => {
-      const testUser = new User("username");
-      testUser.name = "username";
+      const testUser = new User(username);
+      testUser.name = username;
       const database = sessionService.getDatabase();
       spyOn(database, "get").and.resolveTo(
         TestBed.inject(EntitySchemaService).transformEntityToDatabaseFormat(
@@ -343,12 +351,36 @@ describe("SyncedSessionService", () => {
       passLocalLogin();
       passRemoteLogin();
 
-      sessionService.login("username", "password");
+      sessionService.login(username, "password");
       tick();
 
-      expect(localLoginSpy).toHaveBeenCalledWith("username", "password");
+      expect(localLoginSpy).toHaveBeenCalledWith(username, "password");
       expect(database.get).toHaveBeenCalledWith(testUser._id);
       expect(sessionService.getCurrentUser()).toEqual(testUser);
+    }));
+
+    it("should save the user locally after successful remote login", fakeAsync(() => {
+      const dbUser: DatabaseUser = { name: username, roles: ["user_app"] };
+      passRemoteLogin(dbUser);
+      localLoginSpy.and.callThrough();
+      spyOn(localSession, "saveUser").and.callThrough();
+      spyOn(sessionService, "loadUser").and.resolveTo();
+
+      const result = sessionService.login(username, "password");
+      tick();
+
+      expect(remoteLoginSpy).toHaveBeenCalledWith(username, "password");
+      expect(localLoginSpy).toHaveBeenCalledWith(username, "password");
+      expect(localLoginSpy).toHaveBeenCalledTimes(2);
+      expect(localSession.saveUser).toHaveBeenCalledWith(
+        {
+          name: dbUser.name,
+          roles: dbUser.roles,
+        },
+        "password"
+      );
+      expectAsync(result).toBeResolvedTo(LoginState.LOGGED_IN);
+      tick();
     }));
   });
 });
@@ -364,10 +396,8 @@ function passLocalLogin() {
   spyOn(CryptoJS, "PBKDF2").and.returnValue("password" as any);
 }
 
-function passRemoteLogin() {
-  spyOn(TestBed.inject(HttpClient), "post").and.returnValue(
-    of({ name: "", roles: [] })
-  );
+function passRemoteLogin(response: DatabaseUser = { name: "", roles: [] }) {
+  spyOn(TestBed.inject(HttpClient), "post").and.returnValue(of(response));
 }
 
 function failRemoteLogin(offline = false) {

@@ -18,14 +18,14 @@
 import { AppConfig } from "../../../app-config/app-config";
 import { LocalSession } from "./local-session";
 import { SessionType } from "../../session-type";
-import { encryptPassword, LocalUser } from "./local-user";
+import { DatabaseUser } from "./local-user";
 import { LoginState } from "../../session-states/login-state.enum";
 
 describe("LocalSessionService", () => {
   let localSession: LocalSession;
   let username = "demo";
   let password = "pass";
-  let testUser: LocalUser;
+  let testUser: DatabaseUser;
 
   beforeEach(() => {
     AppConfig.settings = {
@@ -43,9 +43,12 @@ describe("LocalSessionService", () => {
     testUser = {
       name: username,
       roles: ["user_app"],
-      encryptedPassword: encryptPassword(password),
     };
-    localSession.saveUser(testUser);
+    localSession.saveUser(testUser, password);
+  });
+
+  afterEach(() => {
+    localSession.removeUser(username);
   });
 
   it("should be created", () => {
@@ -84,5 +87,13 @@ describe("LocalSessionService", () => {
 
     expect(currentUser.name).toBe(username);
     expect(currentUser.roles).toEqual(testUser.roles);
+  });
+
+  it("should fail login after a user is removed", () => {
+    localSession.removeUser(username);
+
+    localSession.login(username, password);
+    expect(localSession.loginState.getState()).toBe(LoginState.LOGIN_FAILED);
+    expect(localSession.getCurrentUser()).toBeUndefined();
   });
 });

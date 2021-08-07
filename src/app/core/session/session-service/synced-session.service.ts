@@ -127,7 +127,8 @@ export class SyncedSessionService extends SessionService {
       if (remoteLoginState === ConnectionState.CONNECTED) {
         // New user or password changed
         await syncPromise;
-        // TODO save remote user in local session
+        const remoteUser = this._remoteSession.getCurrentUser();
+        this._localSession.saveUser(remoteUser, password);
         localLoginState = this._localSession.login(username, password);
       } else {
         // Password wrong or offline without local users, neither local nor remote login worked
