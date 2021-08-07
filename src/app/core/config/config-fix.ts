@@ -602,16 +602,16 @@ export const defaultJsonConfig = {
               component: "HistoricalDataComponent",
               config: [
                 "date",
-                "isMotivatedDuringClass" ,
-                "isParticipatingInClass",
-                "isInteractingWithOthers",
-                "doesHomework",
-                "isOnTime",
-                "asksQuestions",
-                "listens",
-                "canWorkOnBoard",
-                "isConcentrated",
-                "doesNotDisturb",
+                {id: "isMotivatedDuringClass", visibleFrom: "lg" },
+                {id: "isParticipatingInClass", visibleFrom: "lg" },
+                {id: "isInteractingWithOthers", visibleFrom: "lg" },
+                {id: "doesHomework", visibleFrom: "lg" },
+                {id: "isOnTime", visibleFrom: "lg" },
+                {id: "asksQuestions", visibleFrom: "lg" },
+                {id: "listens", visibleFrom: "lg" },
+                {id: "canWorkOnBoard", visibleFrom: "lg" },
+                {id: "isConcentrated", visibleFrom: "lg" },
+                {id: "doesNotDisturb", visibleFrom: "lg" },
               ]
             }
           ]
