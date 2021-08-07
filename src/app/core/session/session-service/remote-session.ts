@@ -22,6 +22,7 @@ import { Injectable } from "@angular/core";
 import { StateHandler } from "../session-states/state-handler";
 import { ConnectionState } from "../session-states/connection-state.enum";
 import { HttpClient } from "@angular/common/http";
+import { DatabaseUser } from "./local-session/local-user";
 
 /**
  * Responsibilities:
@@ -36,6 +37,8 @@ export class RemoteSession {
 
   /** state of the remote connection */
   public connectionState = new StateHandler(ConnectionState.DISCONNECTED);
+
+  private currentUser: DatabaseUser;
 
   /**
    * Create a RemoteSession and set up connection to the remote database CouchDB server configured in AppConfig.
@@ -96,13 +99,14 @@ export class RemoteSession {
     password: string
   ): Promise<ConnectionState> {
     try {
-      await this.httpClient
+      const response = await this.httpClient
         .post(
           `${AppConfig.settings.database.remote_url}_session`,
           { name: username, password: password },
           { withCredentials: true }
         )
         .toPromise();
+      this.assignDatabaseUser(response);
       this.connectionState.setState(ConnectionState.CONNECTED);
       return ConnectionState.CONNECTED;
     } catch (error) {
@@ -116,6 +120,13 @@ export class RemoteSession {
     }
   }
 
+  private assignDatabaseUser(couchDBResponse: any) {
+    this.currentUser = {
+      name: couchDBResponse.name,
+      roles: couchDBResponse.roles,
+    };
+  }
+
   /**
    * Logout at the remote database.
    */
@@ -126,5 +137,9 @@ export class RemoteSession {
       })
       .toPromise();
     this.connectionState.setState(ConnectionState.DISCONNECTED);
+  }
+
+  getCurrentUser(): DatabaseUser {
+    return this.currentUser;
   }
 }

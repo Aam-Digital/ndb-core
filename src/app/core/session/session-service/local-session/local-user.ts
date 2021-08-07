@@ -1,8 +1,11 @@
 import * as CryptoJS from "crypto-js";
 
-export interface LocalUser {
+export interface DatabaseUser {
   name: string;
   roles: string[];
+}
+
+export interface LocalUser extends DatabaseUser {
   encryptedPassword: EncryptedPassword;
 }
 

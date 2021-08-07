@@ -70,4 +70,17 @@ describe("RemoteSessionService", () => {
       ConnectionState.DISCONNECTED
     );
   });
+
+  it("should assign the current user after successful login", async () => {
+    mockHttpClient.post.and.returnValue(
+      of({ name: "username", roles: ["user_app"] })
+    );
+
+    await service.login("", "");
+
+    expect(service.getCurrentUser()).toEqual({
+      name: "username",
+      roles: ["user_app"],
+    });
+  });
 });
