@@ -30,7 +30,7 @@ import { User } from "../../user/user";
 import { HttpClient, HttpClientModule } from "@angular/common/http";
 import { LoggingService } from "../../logging/logging.service";
 import * as CryptoJS from "crypto-js";
-import { of } from "rxjs";
+import { of, throwError } from "rxjs";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
@@ -359,14 +359,14 @@ function failLocalLogin() {
 
 function passLocalLogin() {
   spyOn(window.localStorage, "getItem").and.returnValue(
-    JSON.stringify({ hash: "password" })
+    JSON.stringify({ encryptedPassword: { hash: "password" } })
   );
   spyOn(CryptoJS, "PBKDF2").and.returnValue("password" as any);
 }
 
 function passRemoteLogin() {
   spyOn(TestBed.inject(HttpClient), "post").and.returnValue(
-    of(Promise.resolve())
+    of({ name: "", roles: [] })
   );
 }
 
@@ -376,14 +376,14 @@ function failRemoteLogin(offline = false) {
     rejectError.name = "unauthorized";
   }
   spyOn(TestBed.inject(HttpClient), "post").and.returnValue(
-    of(Promise.reject(rejectError))
+    throwError(rejectError)
   );
 }
 
 function passLocalLoginOnSecondAttempt() {
   spyOn(window.localStorage, "getItem").and.returnValues(
     JSON.stringify(false),
-    JSON.stringify({ hash: "password" })
+    JSON.stringify({ encryptedPassword: { hash: "password" } })
   );
   spyOn(CryptoJS, "PBKDF2").and.returnValue("password" as any);
 }

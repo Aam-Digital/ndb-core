@@ -38,9 +38,9 @@ export function checkPassword(
   password: string,
   encryptedPassword: EncryptedPassword
 ): boolean {
-  const hash = CryptoJS.PBKDF2(password, encryptedPassword.salt, {
-    iterations: encryptedPassword.iterations,
-    keySize: encryptedPassword.keySize,
+  const hash = CryptoJS.PBKDF2(password, encryptedPassword?.salt, {
+    iterations: encryptedPassword?.iterations,
+    keySize: encryptedPassword?.keySize,
   }).toString();
   return hash === encryptedPassword.hash;
 }
