@@ -18,8 +18,7 @@ import { Injectable } from "@angular/core";
 import { SyncState } from "../../session-states/sync-state.enum";
 import { LoginState } from "../../session-states/login-state.enum";
 import { StateHandler } from "../../session-states/state-handler";
-import { LocalUser } from "./local-user";
-import * as CryptoJS from "crypto-js";
+import { checkPassword, LocalUser } from "./local-user";
 
 /**
  * Responsibilities:
@@ -52,11 +51,7 @@ export class LocalSession {
   public login(username: string, password: string): LoginState {
     const user: LocalUser = JSON.parse(window.localStorage.getItem(username));
     if (user) {
-      const hashedPassword = CryptoJS.PBKDF2(password, user.salt, {
-        keySize: user.keySize,
-        iterations: user.iterations,
-      }).toString();
-      if (hashedPassword === user.hash) {
+      if (checkPassword(password, user.encryptedPassword)) {
         this.loginState.setState(LoginState.LOGGED_IN);
       } else {
         this.loginState.setState(LoginState.LOGIN_FAILED);

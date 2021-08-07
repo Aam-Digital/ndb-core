@@ -18,8 +18,7 @@
 import { AppConfig } from "../../../app-config/app-config";
 import { LocalSession } from "./local-session";
 import { SessionType } from "../../session-type";
-import { LocalUser } from "./local-user";
-import * as CryptoJS from "crypto-js";
+import { encryptPassword, LocalUser } from "./local-user";
 import { LoginState } from "../../session-states/login-state.enum";
 
 describe("LocalSessionService", () => {
@@ -41,20 +40,10 @@ describe("LocalSessionService", () => {
   });
 
   beforeEach(() => {
-    const cryptKeySize = 256 / 32;
-    const cryptIterations = 128;
-    const cryptSalt = CryptoJS.lib.WordArray.random(128 / 8).toString();
-    const hash = CryptoJS.PBKDF2(password, cryptSalt, {
-      keySize: cryptKeySize,
-      iterations: cryptIterations,
-    }).toString();
     testUser = {
       name: username,
       roles: ["user_app"],
-      keySize: cryptKeySize,
-      iterations: cryptIterations,
-      salt: cryptSalt,
-      hash: hash,
+      encryptedPassword: encryptPassword(password),
     };
     localSession.saveUser(testUser);
   });
