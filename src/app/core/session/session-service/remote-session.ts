@@ -136,6 +136,7 @@ export class RemoteSession {
         withCredentials: true,
       })
       .toPromise();
+    this.currentUser = undefined;
     this.connectionState.setState(ConnectionState.DISCONNECTED);
   }
 

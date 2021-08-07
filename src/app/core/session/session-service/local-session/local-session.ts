@@ -18,7 +18,7 @@ import { Injectable } from "@angular/core";
 import { SyncState } from "../../session-states/sync-state.enum";
 import { LoginState } from "../../session-states/login-state.enum";
 import { StateHandler } from "../../session-states/state-handler";
-import { checkPassword, LocalUser } from "./local-user";
+import { checkPassword, DatabaseUser, LocalUser } from "./local-user";
 
 /**
  * Responsibilities:
@@ -36,6 +36,8 @@ export class LocalSession {
   /** StateHandler for sync state changes */
   public syncState = new StateHandler(SyncState.UNSYNCED);
 
+  private currentUser: DatabaseUser;
+
   /**
    * Create a LocalSession and set up the local PouchDB instance based on AppConfig settings.
    */
@@ -52,6 +54,7 @@ export class LocalSession {
     const user: LocalUser = JSON.parse(window.localStorage.getItem(username));
     if (user) {
       if (checkPassword(password, user.encryptedPassword)) {
+        this.currentUser = user;
         this.loginState.setState(LoginState.LOGGED_IN);
       } else {
         this.loginState.setState(LoginState.LOGIN_FAILED);
@@ -62,11 +65,16 @@ export class LocalSession {
     return this.loginState.getState();
   }
 
-  saveUser(user: LocalUser) {
+  public saveUser(user: LocalUser) {
     window.localStorage.setItem(user.name, JSON.stringify(user));
   }
 
+  public getCurrentUser(): DatabaseUser {
+    return this.currentUser;
+  }
+
   public logout() {
+    this.currentUser = undefined;
     this.loginState.setState(LoginState.LOGGED_OUT);
   }
 }

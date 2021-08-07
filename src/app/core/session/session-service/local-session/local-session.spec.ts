@@ -48,7 +48,7 @@ describe("LocalSessionService", () => {
     localSession.saveUser(testUser);
   });
 
-  it("should be created", async () => {
+  it("should be created", () => {
     expect(localSession).toBeDefined();
   });
 
@@ -57,23 +57,32 @@ describe("LocalSessionService", () => {
     expect(JSON.parse(storedUser)).toEqual(testUser);
   });
 
-  it("should login a previously saved user with correct password", async () => {
+  it("should login a previously saved user with correct password", () => {
     expect(localSession.loginState.getState()).toBe(LoginState.LOGGED_OUT);
 
-    await localSession.login(username, password);
+    localSession.login(username, password);
 
     expect(localSession.loginState.getState()).toBe(LoginState.LOGGED_IN);
   });
 
-  it("should fail login with correct username but wrong password", async () => {
-    await localSession.login(username, "wrong password");
+  it("should fail login with correct username but wrong password", () => {
+    localSession.login(username, "wrong password");
 
     expect(localSession.loginState.getState()).toBe(LoginState.LOGIN_FAILED);
   });
 
-  it("should fail login with correct wrong username", async () => {
-    await localSession.login("wrong username", password);
+  it("should fail login with correct wrong username", () => {
+    localSession.login("wrong username", password);
 
     expect(localSession.loginState.getState()).toBe(LoginState.LOGIN_FAILED);
+  });
+
+  it("should assign current user after successful login", () => {
+    localSession.login(username, password);
+
+    const currentUser = localSession.getCurrentUser();
+
+    expect(currentUser.name).toBe(username);
+    expect(currentUser.roles).toEqual(testUser.roles);
   });
 });
