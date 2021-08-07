@@ -91,7 +91,7 @@ export class SyncedSessionService extends SessionService {
       .waitForChangeTo(ConnectionState.CONNECTED)
       .then(() => {
         // Update local user object
-        const remoteUser = this._remoteSession.getCurrentUser()
+        const remoteUser = this._remoteSession.getCurrentUser();
         this._localSession.saveUser(remoteUser, password);
 
         return this.sync()
@@ -113,6 +113,7 @@ export class SyncedSessionService extends SessionService {
         if (remoteLoginState === ConnectionState.REJECTED) {
           // Password changed
           this._localSession.logout();
+          this._localSession.removeUser(username);
           this._localSession.loginState.setState(LoginState.LOGIN_FAILED);
           this._alertService.addDanger(
             $localize`Your password was changed recently. Please retry with your new password!`
@@ -131,8 +132,6 @@ export class SyncedSessionService extends SessionService {
       if (remoteLoginState === ConnectionState.CONNECTED) {
         // New user or password changed
         await syncPromise;
-        const remoteUser = this._remoteSession.getCurrentUser();
-        this._localSession.saveUser(remoteUser, password);
         localLoginState = this._localSession.login(username, password);
       } else {
         // Password wrong or offline without local users, neither local nor remote login worked
