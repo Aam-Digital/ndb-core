@@ -15,34 +15,27 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { Injectable } from "@angular/core";
-import { SyncState } from "../../session-states/sync-state.enum";
-import { LoginState } from "../../session-states/login-state.enum";
-import { StateHandler } from "../../session-states/state-handler";
+import { LoginState } from "../session-states/login-state.enum";
+import { StateHandler } from "../session-states/state-handler";
 import {
   checkPassword,
   DatabaseUser,
   encryptPassword,
   LocalUser,
 } from "./local-user";
-import { Database } from "../../../database/database";
-import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
-import { User } from "../../../user/user";
+import { Database } from "../../database/database";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { User } from "../../user/user";
 
 /**
  * Responsibilities:
- * - Hold the local DB
- * - Hold local user
- * - Check credentials against DB
- * - Provide the state of the synchronisation of the local db
- *   - we want to block before the first full sync
- * - Provide an interface to access the data
+ * - Manage local authentication
+ * - Save users in local storage
  */
 @Injectable()
 export class LocalSession {
   /** StateHandler for login state changes */
   public loginState = new StateHandler(LoginState.LOGGED_OUT);
-  /** StateHandler for sync state changes */
-  public syncState = new StateHandler(SyncState.UNSYNCED);
 
   private currentUser: DatabaseUser;
   /**
@@ -50,37 +43,34 @@ export class LocalSession {
    */
   private currentUserEntity: User;
 
-  /**
-   * Create a LocalSession and set up the local PouchDB instance based on AppConfig settings.
-   */
   constructor(
     private database?: Database,
     private entitySchemaService?: EntitySchemaService
   ) {}
 
   /**
-   * Get a login at the local session by fetching the user from the local database and validating the password.
+   * Get a login at the local session by fetching the user from the local storage and validating the password.
    * Returns a Promise resolving with the loginState.
-   * Attention: This method waits for the first synchronisation of the database (or a fail of said initial sync).
    * @param username Username
    * @param password Password
    */
   public async login(username: string, password: string): Promise<LoginState> {
     const user: LocalUser = JSON.parse(window.localStorage.getItem(username));
-    if (user) {
-      if (checkPassword(password, user.encryptedPassword)) {
-        this.currentUser = user;
-        this.currentUserEntity = await this.loadUser(username);
-        this.loginState.setState(LoginState.LOGGED_IN);
-      } else {
-        this.loginState.setState(LoginState.LOGIN_FAILED);
-      }
+    if (user && checkPassword(password, user.encryptedPassword)) {
+      this.currentUser = user;
+      this.currentUserEntity = await this.loadUser(username);
+      this.loginState.setState(LoginState.LOGGED_IN);
     } else {
       this.loginState.setState(LoginState.LOGIN_FAILED);
     }
     return this.loginState.getState();
   }
 
+  /**
+   * Saves a user to the local storage
+   * @param user a object holding the username and the roles of the user
+   * @param password of the user
+   */
   public saveUser(user: DatabaseUser, password: string) {
     const localUser: LocalUser = {
       name: user.name,
@@ -94,21 +84,33 @@ export class LocalSession {
     }
   }
 
+  /**
+   * Removes the user from the local storage.
+   * Method never fails, even if the user was not stored before
+   * @param username
+   */
   public removeUser(username: string) {
     window.localStorage.removeItem(username);
   }
 
+  /**
+   * Returns the current user object holding information about the username and roles
+   */
   public getCurrentUser(): DatabaseUser {
     return this.currentUser;
   }
 
   /**
+   * Returns the current user Entity
    * @deprecated instead use getCurrentUser
    */
   public getCurrentUserEntity(): User {
     return this.currentUserEntity;
   }
 
+  /**
+   * Changes the login state and removes the current user
+   */
   public logout() {
     this.currentUser = undefined;
     this.loginState.setState(LoginState.LOGGED_OUT);

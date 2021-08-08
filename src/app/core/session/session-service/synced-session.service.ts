@@ -19,7 +19,7 @@ import { Injectable } from "@angular/core";
 import { AlertService } from "../../alerts/alert.service";
 
 import { SessionService } from "./session.service";
-import { LocalSession } from "./local-session/local-session";
+import { LocalSession } from "./local-session";
 import { RemoteSession } from "./remote-session";
 import { LoginState } from "../session-states/login-state.enum";
 import { Database } from "../../database/database";
@@ -32,6 +32,7 @@ import { LoggingService } from "../../logging/logging.service";
 import { HttpClient } from "@angular/common/http";
 import PouchDB from "pouchdb-browser";
 import { AppConfig } from "../../app-config/app-config";
+import { StateHandler } from "../session-states/state-handler";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -49,6 +50,7 @@ export class SyncedSessionService extends SessionService {
   private _offlineRetryLoginScheduleHandle: any;
   private readonly pouchDB: PouchDB.Database;
   private readonly database: Database;
+  private syncState = new StateHandler(SyncState.UNSYNCED);
 
   constructor(
     private _alertService: AlertService,
@@ -156,20 +158,20 @@ export class SyncedSessionService extends SessionService {
   }
   /** see {@link SessionService} */
   public getSyncState() {
-    return this._localSession.syncState;
+    return this.syncState;
   }
 
   /** see {@link SessionService} */
   public async sync(): Promise<any> {
-    this._localSession.syncState.setState(SyncState.STARTED);
+    this.getSyncState().setState(SyncState.STARTED);
     try {
       const result = await this.pouchDB.sync(this._remoteSession.database, {
         batch_size: 500,
       });
-      this._localSession.syncState.setState(SyncState.COMPLETED);
+      this.getSyncState().setState(SyncState.COMPLETED);
       return result;
     } catch (error) {
-      this._localSession.syncState.setState(SyncState.FAILED);
+      this.getSyncState().setState(SyncState.FAILED);
       throw error; // rethrow, so later Promise-handling lands in .catch, too
     }
   }
@@ -179,7 +181,7 @@ export class SyncedSessionService extends SessionService {
    */
   public liveSync() {
     this.cancelLiveSync(); // cancel any liveSync that may have been alive before
-    this._localSession.syncState.setState(SyncState.STARTED);
+    this.getSyncState().setState(SyncState.STARTED);
     this._liveSyncHandle = (this.pouchDB.sync(this._remoteSession.database, {
       live: true,
       retry: true,
@@ -190,18 +192,18 @@ export class SyncedSessionService extends SessionService {
       .on("paused", (info) => {
         // replication was paused: either because sync is finished or because of a failed sync (mostly due to lost connection). info is empty.
         if (this.getConnectionState().getState() !== ConnectionState.OFFLINE) {
-          this._localSession.syncState.setState(SyncState.COMPLETED);
+          this.getSyncState().setState(SyncState.COMPLETED);
           // We might end up here after a failed sync that is not due to offline errors.
           // It shouldn't happen too often, as we have an initial non-live sync to catch those situations, but we can't find that out here
         }
       })
       .on("active", (info) => {
         // replication was resumed: either because new things to sync or because connection is available again. info contains the direction
-        this._localSession.syncState.setState(SyncState.STARTED);
+        this.getSyncState().setState(SyncState.STARTED);
       })
       .on("error", (err) => {
         // totally unhandled error (shouldn't happen)
-        this._localSession.syncState.setState(SyncState.FAILED);
+        this.getSyncState().setState(SyncState.FAILED);
       })
       .on("complete", (info) => {
         // replication was canceled!

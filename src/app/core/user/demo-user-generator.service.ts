@@ -2,7 +2,7 @@ import { DemoDataGenerator } from "../demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
 import { User } from "./user";
 import { faker } from "../demo-data/faker";
-import { LocalSession } from "../session/session-service/local-session/local-session";
+import { LocalSession } from "../session/session-service/local-session";
 
 /**
  * Generate demo users for the application with its DemoDataModule.

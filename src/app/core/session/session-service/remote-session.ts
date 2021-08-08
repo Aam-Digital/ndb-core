@@ -22,12 +22,12 @@ import { Injectable } from "@angular/core";
 import { StateHandler } from "../session-states/state-handler";
 import { ConnectionState } from "../session-states/connection-state.enum";
 import { HttpClient } from "@angular/common/http";
-import { DatabaseUser } from "./local-session/local-user";
+import { DatabaseUser } from "./local-user";
 
 /**
  * Responsibilities:
  * - Hold the remote DB
- * - Handle auth
+ * - Handle auth against CouchDB
  * - provide "am i online"-info
  */
 @Injectable()
@@ -41,7 +41,7 @@ export class RemoteSession {
   private currentUser: DatabaseUser;
 
   /**
-   * Create a RemoteSession and set up connection to the remote database CouchDB server configured in AppConfig.
+   * Create a RemoteSession and set up connection to the remote CouchDB server configured in AppConfig.
    */
   constructor(private httpClient: HttpClient) {
     const thisRemoteSession = this;

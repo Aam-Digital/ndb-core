@@ -15,11 +15,11 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { AppConfig } from "../../../app-config/app-config";
+import { AppConfig } from "../../app-config/app-config";
 import { LocalSession } from "./local-session";
-import { SessionType } from "../../session-type";
+import { SessionType } from "../session-type";
 import { checkPassword, DatabaseUser, LocalUser } from "./local-user";
-import { LoginState } from "../../session-states/login-state.enum";
+import { LoginState } from "../session-states/login-state.enum";
 
 describe("LocalSessionService", () => {
   let localSession: LocalSession;
@@ -78,7 +78,7 @@ describe("LocalSessionService", () => {
     expect(localSession.loginState.getState()).toBe(LoginState.LOGIN_FAILED);
   });
 
-  it("should fail login with correct wrong username", async () => {
+  it("should fail login with wrong username", async () => {
     await localSession.login("wrong username", password);
 
     expect(localSession.loginState.getState()).toBe(LoginState.LOGIN_FAILED);
