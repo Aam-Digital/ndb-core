@@ -16,9 +16,7 @@
  */
 
 import { Component, OnInit } from "@angular/core";
-import { User } from "../user";
 import { SessionService } from "../../session/session-service/session.service";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { WebdavModule } from "../../webdav/webdav.module";
 import { UserAccountService } from "./user-account.service";
 import { FormBuilder, ValidationErrors, Validators } from "@angular/forms";
@@ -36,7 +34,7 @@ import { SessionType } from "../../session/session-type";
 })
 export class UserAccountComponent implements OnInit {
   /** user to be edited */
-  user: User;
+  username: string;
 
   /** whether webdav integration is configured and the cloud settings section should be displayed */
   webdavEnabled = WebdavModule.isEnabled;
@@ -67,7 +65,6 @@ export class UserAccountComponent implements OnInit {
   );
 
   constructor(
-    private entityMapperService: EntityMapperService,
     private sessionService: SessionService,
     private userAccountService: UserAccountService,
     private fb: FormBuilder,
@@ -76,7 +73,7 @@ export class UserAccountComponent implements OnInit {
 
   ngOnInit() {
     this.checkIfPasswordChangeAllowed();
-    this.user = this.sessionService.getCurrentUser();
+    this.username = this.sessionService.getCurrentUser()?.name;
   }
 
   checkIfPasswordChangeAllowed() {
@@ -97,20 +94,12 @@ export class UserAccountComponent implements OnInit {
     this.passwordChangeResult = undefined;
 
     const currentPassword = this.passwordForm.get("currentPassword").value;
-    if (!this.user.checkPassword(currentPassword)) {
-      this.passwordForm
-        .get("currentPassword")
-        .setErrors({ incorrectPassword: true });
-      return;
-    }
 
     const newPassword = this.passwordForm.get("newPassword").value;
     this.userAccountService
-      .changePassword(this.user, currentPassword, newPassword)
-      .then(() => this.sessionService.login(this.user.name, newPassword))
-      .then(() => {
-        this.passwordChangeResult = { success: true };
-      })
+      .changePassword(this.username, currentPassword, newPassword)
+      .then(() => this.sessionService.login(this.username, newPassword))
+      .then(() => (this.passwordChangeResult = { success: true }))
       .catch((err: Error) => {
         this.passwordChangeResult = { success: false, error: err.message };
         this.loggingService.error({
