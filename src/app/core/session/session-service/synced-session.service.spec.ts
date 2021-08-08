@@ -48,7 +48,7 @@ describe("SyncedSessionService", () => {
   let remoteLoginSpy: jasmine.Spy<
     (username: string, password: string) => Promise<ConnectionState>
   >;
-  let dbUser: DatabaseUser = { name: TEST_USER, roles: ["user_app"] };
+  let dbUser: DatabaseUser;
   let syncSpy: jasmine.Spy<() => Promise<void>>;
   let liveSyncSpy: jasmine.Spy<() => void>;
   let loadUserSpy: jasmine.Spy<(userId: string) => void>;
@@ -85,6 +85,7 @@ describe("SyncedSessionService", () => {
     remoteSession = sessionService._remoteSession;
 
     // Setting up local and remote session to accept TEST_USER and TEST_PASSWORD as valid credentials
+    dbUser = { name: TEST_USER, roles: ["user_app"] };
     localSession.saveUser({ name: TEST_USER, roles: [] }, TEST_PASSWORD);
     mockHttpClient.post.and.callFake((url, body) => {
       if (body.name === TEST_USER && body.password === TEST_PASSWORD) {
