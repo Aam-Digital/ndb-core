@@ -82,7 +82,7 @@ export class LocalSession implements SessionService {
     };
     window.localStorage.setItem(localUser.name, JSON.stringify(localUser));
     // Update when already logged in
-    if (this.getCurrentUser()?.name === localUser.name) {
+    if (this.getCurrentDBUser()?.name === localUser.name) {
       this.currentDBUser = localUser;
     }
   }
