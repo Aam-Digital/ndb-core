@@ -79,7 +79,7 @@ describe("RemoteSessionService", () => {
 
     await service.login("", "");
 
-    expect(service.getCurrentUser()).toEqual({
+    expect(service.getCurrentDBUser()).toEqual({
       name: "username",
       roles: ["user_app"],
     });

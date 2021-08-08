@@ -40,7 +40,7 @@ export class LocalSession implements SessionService {
   /** StateHandler for login state changes */
   public loginState = new StateHandler(LoginState.LOGGED_OUT);
 
-  private currentUser: DatabaseUser;
+  private currentDBUser: DatabaseUser;
   /**
    * @deprecated instead use currentUser
    */
@@ -60,7 +60,7 @@ export class LocalSession implements SessionService {
   public async login(username: string, password: string): Promise<LoginState> {
     const user: LocalUser = JSON.parse(window.localStorage.getItem(username));
     if (user && checkPassword(password, user.encryptedPassword)) {
-      this.currentUser = user;
+      this.currentDBUser = user;
       this.currentUserEntity = await this.loadUser(username);
       this.loginState.setState(LoginState.LOGGED_IN);
     } else {
@@ -83,7 +83,7 @@ export class LocalSession implements SessionService {
     window.localStorage.setItem(localUser.name, JSON.stringify(localUser));
     // Update when already logged in
     if (this.getCurrentUser()?.name === localUser.name) {
-      this.currentUser = localUser;
+      this.currentDBUser = localUser;
     }
   }
 
@@ -108,14 +108,14 @@ export class LocalSession implements SessionService {
    * Returns the user format according to the CouchDB format
    */
   public getCurrentDBUser(): DatabaseUser {
-    return this.currentUser;
+    return this.currentDBUser;
   }
 
   /**
    * Changes the login state and removes the current user
    */
   public logout() {
-    this.currentUser = undefined;
+    this.currentDBUser = undefined;
     this.loginState.setState(LoginState.LOGGED_OUT);
   }
 

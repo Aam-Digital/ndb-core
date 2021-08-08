@@ -38,7 +38,7 @@ export class RemoteSession {
   /** state of the remote connection */
   public connectionState = new StateHandler(ConnectionState.DISCONNECTED);
 
-  private currentUser: DatabaseUser;
+  private currentDBUser: DatabaseUser;
 
   /**
    * Create a RemoteSession and set up connection to the remote CouchDB server configured in AppConfig.
@@ -122,7 +122,7 @@ export class RemoteSession {
   }
 
   private assignDatabaseUser(couchDBResponse: any) {
-    this.currentUser = {
+    this.currentDBUser = {
       name: couchDBResponse.name,
       roles: couchDBResponse.roles,
     };
@@ -137,11 +137,11 @@ export class RemoteSession {
         withCredentials: true,
       })
       .toPromise();
-    this.currentUser = undefined;
+    this.currentDBUser = undefined;
     this.connectionState.setState(ConnectionState.DISCONNECTED);
   }
 
-  getCurrentUser(): DatabaseUser {
-    return this.currentUser;
+  getCurrentDBUser(): DatabaseUser {
+    return this.currentDBUser;
   }
 }

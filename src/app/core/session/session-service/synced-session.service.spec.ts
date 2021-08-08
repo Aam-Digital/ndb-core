@@ -239,7 +239,8 @@ describe("SyncedSessionService", () => {
     expect(remoteLoginSpy).toHaveBeenCalledWith(username, "password");
     expect(syncSpy).toHaveBeenCalledTimes(1);
     expect(liveSyncSpy).toHaveBeenCalledTimes(1);
-    const currentUser = localSession.getCurrentUser();
+    const currentUser = localSession.getCurrentDBUser();
+    expect(currentUser.name).toEqual(username);
     expect(currentUser.roles).toEqual(["user_app", "admin"]);
     expectAsync(result).toBeResolvedTo(LoginState.LOGGED_IN);
     tick();
