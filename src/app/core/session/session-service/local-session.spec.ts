@@ -87,7 +87,7 @@ describe("LocalSessionService", () => {
   it("should assign current user after successful login", async () => {
     await localSession.login(username, password);
 
-    const currentUser = localSession.getCurrentUser();
+    const currentUser = localSession.getCurrentDBUser();
 
     expect(currentUser.name).toBe(username);
     expect(currentUser.roles).toEqual(testUser.roles);
