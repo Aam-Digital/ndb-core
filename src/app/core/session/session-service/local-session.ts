@@ -26,6 +26,9 @@ import {
 import { Database } from "../../database/database";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { User } from "../../user/user";
+import { SessionService } from "./session.service";
+import { ConnectionState } from "../session-states/connection-state.enum";
+import { SyncState } from "../session-states/sync-state.enum";
 
 /**
  * Responsibilities:
@@ -33,7 +36,7 @@ import { User } from "../../user/user";
  * - Save users in local storage
  */
 @Injectable()
-export class LocalSession {
+export class LocalSession implements SessionService {
   /** StateHandler for login state changes */
   public loginState = new StateHandler(LoginState.LOGGED_OUT);
 
@@ -94,18 +97,18 @@ export class LocalSession {
   }
 
   /**
-   * Returns the current user object holding information about the username and roles
+   * Returns the current user Entity
+   * @deprecated instead use getCurrentDBUser
    */
-  public getCurrentUser(): DatabaseUser {
-    return this.currentUser;
+  public getCurrentUser(): User {
+    return this.currentUserEntity;
   }
 
   /**
-   * Returns the current user Entity
-   * @deprecated instead use getCurrentUser
+   * Returns the user format according to the CouchDB format
    */
-  public getCurrentUserEntity(): User {
-    return this.currentUserEntity;
+  public getCurrentDBUser(): DatabaseUser {
+    return this.currentUser;
   }
 
   /**
@@ -128,5 +131,29 @@ export class LocalSession {
       this.entitySchemaService.loadDataIntoEntity(user, userData);
       return user;
     }
+  }
+
+  getConnectionState(): StateHandler<ConnectionState> {
+    return new StateHandler(ConnectionState.DISCONNECTED);
+  }
+
+  getDatabase(): Database {
+    return this.database;
+  }
+
+  getLoginState(): StateHandler<LoginState> {
+    return this.loginState;
+  }
+
+  getSyncState(): StateHandler<SyncState> {
+    return new StateHandler(SyncState.UNSYNCED);
+  }
+
+  isLoggedIn(): boolean {
+    return this.loginState.getState() === LoginState.LOGGED_IN;
+  }
+
+  sync(): Promise<any> {
+    return Promise.reject(new Error("Cannot sync local session"));
   }
 }

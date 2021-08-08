@@ -145,7 +145,7 @@ export class SyncedSessionService extends SessionService {
 
   /** see {@link SessionService} */
   public getCurrentUser(): User {
-    return this._localSession.getCurrentUserEntity();
+    return this._localSession.getCurrentUser();
   }
 
   /** see {@link SessionService} */
