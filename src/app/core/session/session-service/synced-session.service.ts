@@ -33,6 +33,7 @@ import { HttpClient } from "@angular/common/http";
 import PouchDB from "pouchdb-browser";
 import { AppConfig } from "../../app-config/app-config";
 import { StateHandler } from "../session-states/state-handler";
+import { DatabaseUser } from "./local-user";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -146,6 +147,10 @@ export class SyncedSessionService extends SessionService {
   /** see {@link SessionService} */
   public getCurrentUser(): User {
     return this._localSession.getCurrentUser();
+  }
+
+  public getCurrentDBUser(): DatabaseUser {
+    return this._localSession.getCurrentDBUser();
   }
 
   public checkPassword(username: string, password: string): boolean {

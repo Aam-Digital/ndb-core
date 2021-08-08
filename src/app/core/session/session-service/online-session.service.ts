@@ -9,6 +9,7 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { RemoteSession } from "./remote-session";
 import { PouchDatabase } from "../../database/pouch-database";
 import { LoggingService } from "../../logging/logging.service";
+import { DatabaseUser } from "./local-user";
 
 /**
  * SessionService implementation for use of the app with direct requests to the remote server
@@ -53,6 +54,10 @@ export class OnlineSessionService extends SessionService {
   /** see {@link SessionService} */
   public getCurrentUser(): User {
     return this.currentUser;
+  }
+
+  public getCurrentDBUser(): DatabaseUser {
+    return this.remoteSession.getCurrentDBUser();
   }
 
   checkPassword(username: string, password: string): boolean {

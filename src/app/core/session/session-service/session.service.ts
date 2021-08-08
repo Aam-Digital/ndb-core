@@ -21,6 +21,7 @@ import { ConnectionState } from "../session-states/connection-state.enum";
 import { SyncState } from "../session-states/sync-state.enum";
 import { User } from "../../user/user";
 import { StateHandler } from "../session-states/state-handler";
+import { DatabaseUser } from "./local-user";
 
 /**
  * A session manages user authentication and database connection for the app.
@@ -50,8 +51,14 @@ export abstract class SessionService {
 
   /**
    * Get the currently logged in user (or undefined).
+   * @deprecated use getCurrentDBUser instead
    */
   abstract getCurrentUser(): User;
+
+  /**
+   * Get the current user according to the new format
+   */
+  abstract getCurrentDBUser(): DatabaseUser;
 
   /**
    * Check a password if its valid
