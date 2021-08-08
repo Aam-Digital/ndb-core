@@ -55,6 +55,11 @@ export class OnlineSessionService extends SessionService {
     return this.currentUser;
   }
 
+  checkPassword(username: string, password: string): boolean {
+    // Remote password check is difficult due to cookie-auth
+    return false;
+  }
+
   /** see {@link SessionService} */
   public isLoggedIn(): boolean {
     return this.loginState.getState() === LoginState.LOGGED_IN;

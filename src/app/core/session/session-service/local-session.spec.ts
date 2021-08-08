@@ -18,7 +18,7 @@
 import { AppConfig } from "../../app-config/app-config";
 import { LocalSession } from "./local-session";
 import { SessionType } from "../session-type";
-import { checkPassword, DatabaseUser, LocalUser } from "./local-user";
+import { passwordEqualsEncrypted, DatabaseUser, LocalUser } from "./local-user";
 import { LoginState } from "../session-states/login-state.enum";
 
 describe("LocalSessionService", () => {
@@ -61,7 +61,9 @@ describe("LocalSessionService", () => {
     );
     expect(storedUser.name).toBe(testUser.name);
     expect(storedUser.roles).toEqual(testUser.roles);
-    expect(checkPassword(password, storedUser.encryptedPassword)).toBeTrue();
+    expect(
+      passwordEqualsEncrypted(password, storedUser.encryptedPassword)
+    ).toBeTrue();
   });
 
   it("should login a previously saved user with correct password", async () => {

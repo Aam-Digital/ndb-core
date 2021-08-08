@@ -34,7 +34,7 @@ export function encryptPassword(
   };
 }
 
-export function checkPassword(
+export function passwordEqualsEncrypted(
   password: string,
   encryptedPassword: EncryptedPassword
 ): boolean {

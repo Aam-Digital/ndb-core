@@ -18,7 +18,7 @@ import { Injectable } from "@angular/core";
 import { LoginState } from "../session-states/login-state.enum";
 import { StateHandler } from "../session-states/state-handler";
 import {
-  checkPassword,
+  passwordEqualsEncrypted,
   DatabaseUser,
   encryptPassword,
   LocalUser,
@@ -59,7 +59,7 @@ export class LocalSession implements SessionService {
    */
   public async login(username: string, password: string): Promise<LoginState> {
     const user: LocalUser = JSON.parse(window.localStorage.getItem(username));
-    if (user && checkPassword(password, user.encryptedPassword)) {
+    if (user && passwordEqualsEncrypted(password, user.encryptedPassword)) {
       this.currentDBUser = user;
       this.currentUserEntity = await this.loadUser(username);
       this.loginState.setState(LoginState.LOGGED_IN);
@@ -102,6 +102,11 @@ export class LocalSession implements SessionService {
    */
   public getCurrentUser(): User {
     return this.currentUserEntity;
+  }
+
+  public checkPassword(username: string, password: string): boolean {
+    const user: LocalUser = JSON.parse(window.localStorage.getItem(username));
+    return user && passwordEqualsEncrypted(password, user.encryptedPassword);
   }
 
   /**

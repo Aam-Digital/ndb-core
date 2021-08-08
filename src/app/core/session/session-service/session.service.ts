@@ -54,6 +54,14 @@ export abstract class SessionService {
   abstract getCurrentUser(): User;
 
   /**
+   * Check a password if its valid
+   * @param username the username for which the password should be checked
+   * @param password the password to be checked
+   * @returns boolean true if the password is correct, false otherwise
+   */
+  abstract checkPassword(username: string, password: string): boolean;
+
+  /**
    * Get the session status - whether a user is authenticated currently.
    */
   abstract isLoggedIn(): boolean;

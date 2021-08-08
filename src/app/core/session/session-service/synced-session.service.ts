@@ -148,6 +148,11 @@ export class SyncedSessionService extends SessionService {
     return this._localSession.getCurrentUser();
   }
 
+  public checkPassword(username: string, password: string): boolean {
+    // This only checks the password against locally saved users
+    return this._localSession.checkPassword(username, password);
+  }
+
   /** see {@link SessionService} */
   public getLoginState() {
     return this._localSession.loginState;
