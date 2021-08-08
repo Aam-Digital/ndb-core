@@ -139,7 +139,7 @@ export class LocalSession implements SessionService {
   }
 
   getConnectionState(): StateHandler<ConnectionState> {
-    return new StateHandler(ConnectionState.DISCONNECTED);
+    return new StateHandler(ConnectionState.OFFLINE);
   }
 
   getDatabase(): Database {

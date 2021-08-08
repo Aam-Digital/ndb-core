@@ -43,7 +43,7 @@ export class User extends Entity {
   @DatabaseField() paginatorSettingsPageSize: any = {};
   public paginatorSettingsPageIndex: any = {};
 
-  /** password for webdav account (encrypted with user.password) */
+  /** password for webdav account (encrypted) */
   @DatabaseField() private cloudPasswordEnc: any;
 
   /** username for webdav account */

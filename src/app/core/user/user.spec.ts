@@ -53,7 +53,7 @@ describe("User", () => {
 
       name: "tester",
       admin: true,
-      cloudPasswordEnc: undefined,
+      cloudPasswordEnc: "encryptedPassword",
       cloudBaseFolder: "/aam-digital/",
       paginatorSettingsPageSize: {},
 
@@ -65,7 +65,7 @@ describe("User", () => {
     entity.name = expectedData.name;
     entity.admin = expectedData.admin;
     // @ts-ignore
-    expectedData.cloudPasswordEnc = entity.cloudPasswordEnc;
+    entity.cloudPasswordEnc = expectedData.cloudPasswordEnc;
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 

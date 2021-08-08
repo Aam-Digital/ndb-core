@@ -20,6 +20,11 @@ import { LocalSession } from "./local-session";
 import { SessionType } from "../session-type";
 import { passwordEqualsEncrypted, DatabaseUser, LocalUser } from "./local-user";
 import { LoginState } from "../session-states/login-state.enum";
+import {
+  TEST_PASSWORD,
+  TEST_USER,
+  testSessionServiceImplementation,
+} from "./session.service.spec";
 
 describe("LocalSessionService", () => {
   let localSession: LocalSession;
@@ -101,5 +106,10 @@ describe("LocalSessionService", () => {
     await localSession.login(username, password);
     expect(localSession.loginState.getState()).toBe(LoginState.LOGIN_FAILED);
     expect(localSession.getCurrentUser()).toBeUndefined();
+  });
+
+  testSessionServiceImplementation(async () => {
+    localSession.saveUser({ name: TEST_USER, roles: [] }, TEST_PASSWORD);
+    return localSession;
   });
 });

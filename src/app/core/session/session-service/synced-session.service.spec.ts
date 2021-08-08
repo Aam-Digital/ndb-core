@@ -26,17 +26,18 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { SessionType } from "../session-type";
 import { fakeAsync, flush, TestBed, tick } from "@angular/core/testing";
 import { User } from "../../user/user";
-import {
-  HttpClient,
-  HttpClientModule,
-  HttpErrorResponse,
-} from "@angular/common/http";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { LoggingService } from "../../logging/logging.service";
 import * as CryptoJS from "crypto-js";
 import { of, throwError } from "rxjs";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { DatabaseUser } from "./local-user";
+import {
+  TEST_PASSWORD,
+  TEST_USER,
+  testSessionServiceImplementation,
+} from "./session.service.spec";
 
 describe("SyncedSessionService", () => {
   let sessionService: SyncedSessionService;
@@ -51,17 +52,21 @@ describe("SyncedSessionService", () => {
   let syncSpy: jasmine.Spy<() => Promise<void>>;
   let liveSyncSpy: jasmine.Spy<() => void>;
   let loadUserSpy: jasmine.Spy<(userId: string) => void>;
+  let mockHttpClient: jasmine.SpyObj<HttpClient>;
 
   const username = "username";
 
   beforeEach(() => {
+    mockHttpClient = jasmine.createSpyObj(["post", "delete"]);
+    mockHttpClient.delete.and.returnValue(of());
     TestBed.configureTestingModule({
-      imports: [HttpClientModule, MatSnackBarModule, NoopAnimationsModule],
+      imports: [MatSnackBarModule, NoopAnimationsModule],
       providers: [
         EntitySchemaService,
         AlertService,
         LoggingService,
         SyncedSessionService,
+        { provide: HttpClient, useValue: mockHttpClient },
       ],
     });
     AppConfig.settings = {
@@ -263,37 +268,51 @@ describe("SyncedSessionService", () => {
     );
     flush();
   }));
-});
 
-function failLocalLogin() {
-  spyOn(window.localStorage, "getItem").and.returnValue(JSON.stringify(false));
-}
+  testSessionServiceImplementation(async () => {
+    localSession.saveUser({ name: TEST_USER, roles: [] }, TEST_PASSWORD);
+    mockHttpClient.post.and.callFake((url, body) => {
+      if (body.name === TEST_USER && body.password === TEST_PASSWORD) {
+        return of({ name: TEST_USER, roles: [] } as any);
+      } else {
+        return throwError(
+          new HttpErrorResponse({ statusText: "Unauthorized" })
+        );
+      }
+    });
+    return sessionService;
+  });
 
-function passLocalLogin() {
-  spyOn(window.localStorage, "getItem").and.returnValue(
-    JSON.stringify({ encryptedPassword: { hash: "password" } })
-  );
-  spyOn(CryptoJS, "PBKDF2").and.returnValue("password" as any);
-}
-
-function passRemoteLogin(response: DatabaseUser = { name: "", roles: [] }) {
-  spyOn(TestBed.inject(HttpClient), "post").and.returnValue(of(response));
-}
-
-function failRemoteLogin(offline = false) {
-  let rejectError;
-  if (!offline) {
-    rejectError = new HttpErrorResponse({ statusText: "Unauthorized" });
+  function failLocalLogin() {
+    spyOn(window.localStorage, "getItem").and.returnValue(
+      JSON.stringify(false)
+    );
   }
-  spyOn(TestBed.inject(HttpClient), "post").and.returnValue(
-    throwError(rejectError)
-  );
-}
 
-function passLocalLoginOnSecondAttempt() {
-  spyOn(window.localStorage, "getItem").and.returnValues(
-    JSON.stringify(false),
-    JSON.stringify({ encryptedPassword: { hash: "password" } })
-  );
-  spyOn(CryptoJS, "PBKDF2").and.returnValue("password" as any);
-}
+  function passLocalLogin() {
+    spyOn(window.localStorage, "getItem").and.returnValue(
+      JSON.stringify({ encryptedPassword: { hash: "password" } })
+    );
+    spyOn(CryptoJS, "PBKDF2").and.returnValue("password" as any);
+  }
+
+  function passRemoteLogin(response: DatabaseUser = { name: "", roles: [] }) {
+    mockHttpClient.post.and.returnValue(of(response));
+  }
+
+  function failRemoteLogin(offline = false) {
+    let rejectError;
+    if (!offline) {
+      rejectError = new HttpErrorResponse({ statusText: "Unauthorized" });
+    }
+    mockHttpClient.post.and.returnValue(throwError(rejectError));
+  }
+
+  function passLocalLoginOnSecondAttempt() {
+    spyOn(window.localStorage, "getItem").and.returnValues(
+      JSON.stringify(false),
+      JSON.stringify({ encryptedPassword: { hash: "password" } })
+    );
+    spyOn(CryptoJS, "PBKDF2").and.returnValue("password" as any);
+  }
+});
