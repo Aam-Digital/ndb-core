@@ -96,10 +96,6 @@ export class LocalSession implements SessionService {
     window.localStorage.removeItem(username);
   }
 
-  /**
-   * Returns the current user Entity
-   * @deprecated instead use getCurrentDBUser
-   */
   public getCurrentUser(): User {
     return this.currentUserEntity;
   }
@@ -109,9 +105,6 @@ export class LocalSession implements SessionService {
     return user && passwordEqualsEncrypted(password, user.encryptedPassword);
   }
 
-  /**
-   * Returns the user format according to the CouchDB format
-   */
   public getCurrentDBUser(): DatabaseUser {
     return this.currentDBUser;
   }
@@ -121,6 +114,7 @@ export class LocalSession implements SessionService {
    */
   public logout() {
     this.currentDBUser = undefined;
+    this.currentUserEntity = undefined;
     this.loginState.setState(LoginState.LOGGED_OUT);
   }
 

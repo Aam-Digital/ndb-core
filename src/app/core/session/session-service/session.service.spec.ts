@@ -37,15 +37,9 @@ export function testSessionServiceImplementation(
   sessionSetupFunction: () => Promise<SessionService>
 ) {
   let sessionService: SessionService;
-  const TEST_USER = "test";
-  const TEST_PASSWORD = "pass";
 
   beforeEach(async () => {
     sessionService = await sessionSetupFunction();
-  });
-
-  afterEach(async () => {
-    await sessionService.getDatabase()?.destroy();
   });
 
   it("has the correct initial state", () => {

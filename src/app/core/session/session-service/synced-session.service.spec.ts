@@ -28,7 +28,6 @@ import { fakeAsync, flush, TestBed, tick } from "@angular/core/testing";
 import { User } from "../../user/user";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { LoggingService } from "../../logging/logging.service";
-import * as CryptoJS from "crypto-js";
 import { of, throwError } from "rxjs";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -49,12 +48,11 @@ describe("SyncedSessionService", () => {
   let remoteLoginSpy: jasmine.Spy<
     (username: string, password: string) => Promise<ConnectionState>
   >;
+  let dbUser: DatabaseUser = { name: TEST_USER, roles: ["user_app"] };
   let syncSpy: jasmine.Spy<() => Promise<void>>;
   let liveSyncSpy: jasmine.Spy<() => void>;
   let loadUserSpy: jasmine.Spy<(userId: string) => void>;
   let mockHttpClient: jasmine.SpyObj<HttpClient>;
-
-  const username = "username";
 
   beforeEach(() => {
     mockHttpClient = jasmine.createSpyObj(["post", "delete"]);
@@ -86,6 +84,18 @@ describe("SyncedSessionService", () => {
     // @ts-ignore
     remoteSession = sessionService._remoteSession;
 
+    // Setting up local and remote session to accept TEST_USER and TEST_PASSWORD as valid credentials
+    localSession.saveUser({ name: TEST_USER, roles: [] }, TEST_PASSWORD);
+    mockHttpClient.post.and.callFake((url, body) => {
+      if (body.name === TEST_USER && body.password === TEST_PASSWORD) {
+        return of(dbUser as any);
+      } else {
+        return throwError(
+          new HttpErrorResponse({ statusText: "Unauthorized" })
+        );
+      }
+    });
+
     localLoginSpy = spyOn(localSession, "login").and.callThrough();
     remoteLoginSpy = spyOn(remoteSession, "login").and.callThrough();
     syncSpy = spyOn(sessionService, "sync").and.resolveTo();
@@ -96,32 +106,28 @@ describe("SyncedSessionService", () => {
   });
 
   afterEach(() => {
-    localSession.removeUser(username);
+    localSession.removeUser(TEST_USER);
   });
 
   it("behaves correctly when both local and remote session reject (normal login with wrong password)", fakeAsync(() => {
-    failLocalLogin();
-    failRemoteLogin();
-
-    const result = sessionService.login(username, "p");
+    const result = sessionService.login(TEST_USER, "wrongPassword");
     tick();
 
-    expect(localLoginSpy).toHaveBeenCalledWith(username, "p");
-    expect(remoteLoginSpy).toHaveBeenCalledWith(username, "p");
+    expect(localLoginSpy).toHaveBeenCalledWith(TEST_USER, "wrongPassword");
+    expect(remoteLoginSpy).toHaveBeenCalledWith(TEST_USER, "wrongPassword");
     expect(syncSpy).not.toHaveBeenCalled();
     expectAsync(result).toBeResolvedTo(LoginState.LOGIN_FAILED);
     flush();
   }));
 
   it("behaves correctly in the offline scenario", fakeAsync(() => {
-    passLocalLogin();
     failRemoteLogin(true);
 
-    const result = sessionService.login(username, "p");
+    const result = sessionService.login(TEST_USER, TEST_PASSWORD);
     tick();
 
-    expect(localLoginSpy).toHaveBeenCalledWith(username, "p");
-    expect(remoteLoginSpy).toHaveBeenCalledWith(username, "p");
+    expect(localLoginSpy).toHaveBeenCalledWith(TEST_USER, TEST_PASSWORD);
+    expect(remoteLoginSpy).toHaveBeenCalledWith(TEST_USER, TEST_PASSWORD);
     expect(syncSpy).not.toHaveBeenCalled();
     expectAsync(result).toBeResolvedTo(LoginState.LOGGED_IN);
 
@@ -129,34 +135,43 @@ describe("SyncedSessionService", () => {
     flush();
   }));
 
-  it("behaves correctly when the local session rejects, but the remote session succeeds (password change, new password)", fakeAsync(() => {
-    passLocalLoginOnSecondAttempt();
-    passRemoteLogin();
+  it("behaves correctly when the local session rejects, but the remote session succeeds (password changed/new user)", fakeAsync(() => {
+    const newUser = { name: "newUser", roles: ["user_app"] };
+    passRemoteLogin(newUser);
+    spyOn(localSession, "saveUser").and.callThrough();
 
-    const result = sessionService.login(username, "p");
+    const result = sessionService.login(newUser.name, "p");
     tick();
 
     expect(localLoginSpy.calls.allArgs()).toEqual([
-      [username, "p"],
-      [username, "p"],
+      [newUser.name, "p"],
+      [newUser.name, "p"],
     ]);
-    expect(remoteLoginSpy.calls.allArgs()).toEqual([[username, "p"]]);
+    expect(remoteLoginSpy.calls.allArgs()).toEqual([[newUser.name, "p"]]);
     expect(syncSpy).toHaveBeenCalledTimes(1);
     expect(liveSyncSpy).toHaveBeenCalledTimes(1);
     expectAsync(result).toBeResolvedTo(LoginState.LOGGED_IN);
+    expect(localSession.saveUser).toHaveBeenCalledWith(
+      {
+        name: newUser.name,
+        roles: newUser.roles,
+      },
+      "p"
+    );
+    expect(sessionService.getCurrentDBUser().name).toBe("newUser");
+    expect(sessionService.getCurrentDBUser().roles).toEqual(["user_app"]);
     tick();
+    localSession.removeUser(newUser.name);
   }));
 
   it("behaves correctly when the sync fails and the local login succeeds", fakeAsync(() => {
-    passLocalLogin();
-    passRemoteLogin();
     syncSpy.and.rejectWith();
 
-    const login = sessionService.login(username, "p");
+    const login = sessionService.login(TEST_USER, TEST_PASSWORD);
     tick();
 
-    expect(localLoginSpy).toHaveBeenCalledWith(username, "p");
-    expect(remoteLoginSpy).toHaveBeenCalledWith(username, "p");
+    expect(localLoginSpy).toHaveBeenCalledWith(TEST_USER, TEST_PASSWORD);
+    expect(remoteLoginSpy).toHaveBeenCalledWith(TEST_USER, TEST_PASSWORD);
     expect(syncSpy).toHaveBeenCalled();
     expect(liveSyncSpy).toHaveBeenCalled();
     expectAsync(login).toBeResolvedTo(LoginState.LOGGED_IN);
@@ -164,16 +179,15 @@ describe("SyncedSessionService", () => {
   }));
 
   it("behaves correctly when the sync fails and the local login fails", fakeAsync(() => {
-    failLocalLogin();
     passRemoteLogin();
     syncSpy.and.rejectWith();
 
-    const result = sessionService.login(username, "p");
+    const result = sessionService.login(TEST_USER, "anotherPassword");
     tick();
 
-    expect(localLoginSpy).toHaveBeenCalledWith(username, "p");
+    expect(localLoginSpy).toHaveBeenCalledWith(TEST_USER, "anotherPassword");
     expect(localLoginSpy).toHaveBeenCalledTimes(2);
-    expect(remoteLoginSpy).toHaveBeenCalledWith(username, "p");
+    expect(remoteLoginSpy).toHaveBeenCalledWith(TEST_USER, "anotherPassword");
     expect(remoteLoginSpy).toHaveBeenCalledTimes(1);
     expect(syncSpy).toHaveBeenCalled();
     expect(liveSyncSpy).not.toHaveBeenCalled();
@@ -182,8 +196,8 @@ describe("SyncedSessionService", () => {
   }));
 
   it("should load the user entity after successful local login", fakeAsync(() => {
-    const testUser = new User(username);
-    testUser.name = username;
+    const testUser = new User(TEST_USER);
+    testUser.name = TEST_USER;
     const database = sessionService.getDatabase();
     loadUserSpy.and.callThrough();
     spyOn(database, "get").and.resolveTo(
@@ -191,75 +205,45 @@ describe("SyncedSessionService", () => {
         testUser
       )
     );
-    passLocalLogin();
-    passRemoteLogin();
 
-    sessionService.login(username, "password");
+    sessionService.login(TEST_USER, TEST_PASSWORD);
     tick();
 
-    expect(localLoginSpy).toHaveBeenCalledWith(username, "password");
+    expect(localLoginSpy).toHaveBeenCalledWith(TEST_USER, TEST_PASSWORD);
     expect(database.get).toHaveBeenCalledWith(testUser._id);
     expect(sessionService.getCurrentUser()).toEqual(testUser);
   }));
 
-  it("should save the user locally after successful remote login", fakeAsync(() => {
-    const dbUser: DatabaseUser = { name: username, roles: ["user_app"] };
-    passRemoteLogin(dbUser);
-    localLoginSpy.and.callThrough();
-    spyOn(localSession, "saveUser").and.callThrough();
-
-    const result = sessionService.login(username, "password");
-    tick();
-
-    expect(remoteLoginSpy).toHaveBeenCalledWith(username, "password");
-    expect(localLoginSpy).toHaveBeenCalledWith(username, "password");
-    expect(localLoginSpy).toHaveBeenCalledTimes(2);
-    expect(localSession.saveUser).toHaveBeenCalledWith(
-      {
-        name: dbUser.name,
-        roles: dbUser.roles,
-      },
-      "password"
-    );
-    expectAsync(result).toBeResolvedTo(LoginState.LOGGED_IN);
-    tick();
-  }));
-
   it("should update the local user object once connected", fakeAsync(() => {
-    const oldUser: DatabaseUser = {
-      name: username,
-      roles: ["user_app"],
+    const updatedUser: DatabaseUser = {
+      name: TEST_USER,
+      roles: dbUser.roles.concat("admin"),
     };
-    localSession.saveUser(oldUser, "password");
-    const newUser: DatabaseUser = {
-      name: username,
-      roles: oldUser.roles.concat("admin"),
-    };
-    passRemoteLogin(newUser);
+    passRemoteLogin(updatedUser);
 
-    const result = sessionService.login(username, "password");
+    const result = sessionService.login(TEST_USER, TEST_PASSWORD);
     tick();
 
-    expect(localLoginSpy).toHaveBeenCalledWith(username, "password");
-    expect(remoteLoginSpy).toHaveBeenCalledWith(username, "password");
+    expect(localLoginSpy).toHaveBeenCalledWith(TEST_USER, TEST_PASSWORD);
+    expect(remoteLoginSpy).toHaveBeenCalledWith(TEST_USER, TEST_PASSWORD);
     expect(syncSpy).toHaveBeenCalledTimes(1);
     expect(liveSyncSpy).toHaveBeenCalledTimes(1);
+
     const currentUser = localSession.getCurrentDBUser();
-    expect(currentUser.name).toEqual(username);
+    expect(currentUser.name).toEqual(TEST_USER);
     expect(currentUser.roles).toEqual(["user_app", "admin"]);
     expectAsync(result).toBeResolvedTo(LoginState.LOGGED_IN);
     tick();
   }));
 
   it("should delete the local user object if remote login fails", fakeAsync(() => {
-    localSession.saveUser({ name: username, roles: [] }, "password");
     failRemoteLogin();
     spyOn(localSession, "removeUser").and.callThrough();
 
-    const result = sessionService.login(username, "password");
+    const result = sessionService.login(TEST_USER, TEST_PASSWORD);
     tick();
 
-    expect(localSession.removeUser).toHaveBeenCalledWith(username);
+    expect(localSession.removeUser).toHaveBeenCalledWith(TEST_USER);
     // Initially the user is logged in
     expectAsync(result).toBeResolvedTo(LoginState.LOGGED_IN);
     // After remote session fails the user is logged out again
@@ -269,32 +253,7 @@ describe("SyncedSessionService", () => {
     flush();
   }));
 
-  testSessionServiceImplementation(async () => {
-    localSession.saveUser({ name: TEST_USER, roles: [] }, TEST_PASSWORD);
-    mockHttpClient.post.and.callFake((url, body) => {
-      if (body.name === TEST_USER && body.password === TEST_PASSWORD) {
-        return of({ name: TEST_USER, roles: [] } as any);
-      } else {
-        return throwError(
-          new HttpErrorResponse({ statusText: "Unauthorized" })
-        );
-      }
-    });
-    return sessionService;
-  });
-
-  function failLocalLogin() {
-    spyOn(window.localStorage, "getItem").and.returnValue(
-      JSON.stringify(false)
-    );
-  }
-
-  function passLocalLogin() {
-    spyOn(window.localStorage, "getItem").and.returnValue(
-      JSON.stringify({ encryptedPassword: { hash: "password" } })
-    );
-    spyOn(CryptoJS, "PBKDF2").and.returnValue("password" as any);
-  }
+  testSessionServiceImplementation(() => Promise.resolve(sessionService));
 
   function passRemoteLogin(response: DatabaseUser = { name: "", roles: [] }) {
     mockHttpClient.post.and.returnValue(of(response));
@@ -306,13 +265,5 @@ describe("SyncedSessionService", () => {
       rejectError = new HttpErrorResponse({ statusText: "Unauthorized" });
     }
     mockHttpClient.post.and.returnValue(throwError(rejectError));
-  }
-
-  function passLocalLoginOnSecondAttempt() {
-    spyOn(window.localStorage, "getItem").and.returnValues(
-      JSON.stringify(false),
-      JSON.stringify({ encryptedPassword: { hash: "password" } })
-    );
-    spyOn(CryptoJS, "PBKDF2").and.returnValue("password" as any);
   }
 });

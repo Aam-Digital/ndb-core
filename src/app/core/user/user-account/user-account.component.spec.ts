@@ -124,7 +124,6 @@ describe("UserAccountComponent", () => {
 
     component.changePassword();
     tick();
-    tick();
     expect(component.passwordChangeResult.success).toBeTrue();
     expect(mockSessionService.login).toHaveBeenCalledWith(
       "testUser",

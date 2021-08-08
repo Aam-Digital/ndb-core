@@ -28,8 +28,6 @@ import {
 
 describe("LocalSessionService", () => {
   let localSession: LocalSession;
-  const username = "demo";
-  const password = "pass";
   let testUser: DatabaseUser;
 
   beforeEach(() => {
@@ -46,14 +44,14 @@ describe("LocalSessionService", () => {
 
   beforeEach(() => {
     testUser = {
-      name: username,
+      name: TEST_USER,
       roles: ["user_app"],
     };
-    localSession.saveUser(testUser, password);
+    localSession.saveUser(testUser, TEST_PASSWORD);
   });
 
   afterEach(() => {
-    localSession.removeUser(username);
+    localSession.removeUser(TEST_USER);
   });
 
   it("should be created", () => {
@@ -67,49 +65,46 @@ describe("LocalSessionService", () => {
     expect(storedUser.name).toBe(testUser.name);
     expect(storedUser.roles).toEqual(testUser.roles);
     expect(
-      passwordEqualsEncrypted(password, storedUser.encryptedPassword)
+      passwordEqualsEncrypted(TEST_PASSWORD, storedUser.encryptedPassword)
     ).toBeTrue();
   });
 
   it("should login a previously saved user with correct password", async () => {
     expect(localSession.loginState.getState()).toBe(LoginState.LOGGED_OUT);
 
-    await localSession.login(username, password);
+    await localSession.login(TEST_USER, TEST_PASSWORD);
 
     expect(localSession.loginState.getState()).toBe(LoginState.LOGGED_IN);
   });
 
   it("should fail login with correct username but wrong password", async () => {
-    await localSession.login(username, "wrong password");
+    await localSession.login(TEST_USER, "wrong password");
 
     expect(localSession.loginState.getState()).toBe(LoginState.LOGIN_FAILED);
   });
 
   it("should fail login with wrong username", async () => {
-    await localSession.login("wrong username", password);
+    await localSession.login("wrongUsername", TEST_PASSWORD);
 
     expect(localSession.loginState.getState()).toBe(LoginState.LOGIN_FAILED);
   });
 
   it("should assign current user after successful login", async () => {
-    await localSession.login(username, password);
+    await localSession.login(TEST_USER, TEST_PASSWORD);
 
     const currentUser = localSession.getCurrentDBUser();
 
-    expect(currentUser.name).toBe(username);
+    expect(currentUser.name).toBe(TEST_USER);
     expect(currentUser.roles).toEqual(testUser.roles);
   });
 
   it("should fail login after a user is removed", async () => {
-    localSession.removeUser(username);
+    localSession.removeUser(TEST_USER);
 
-    await localSession.login(username, password);
+    await localSession.login(TEST_USER, TEST_PASSWORD);
     expect(localSession.loginState.getState()).toBe(LoginState.LOGIN_FAILED);
     expect(localSession.getCurrentUser()).toBeUndefined();
   });
 
-  testSessionServiceImplementation(async () => {
-    localSession.saveUser({ name: TEST_USER, roles: [] }, TEST_PASSWORD);
-    return localSession;
-  });
+  testSessionServiceImplementation(() => Promise.resolve(localSession));
 });
