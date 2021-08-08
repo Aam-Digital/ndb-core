@@ -95,6 +95,13 @@ export class UserAccountComponent implements OnInit {
 
     const currentPassword = this.passwordForm.get("currentPassword").value;
 
+    if (!this.sessionService.checkPassword(this.username, currentPassword)) {
+      this.passwordForm
+        .get("currentPassword")
+        .setErrors({ incorrectPassword: true });
+      return;
+    }
+
     const newPassword = this.passwordForm.get("newPassword").value;
     this.userAccountService
       .changePassword(this.username, currentPassword, newPassword)

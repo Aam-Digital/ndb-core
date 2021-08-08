@@ -49,6 +49,7 @@ describe("UserAccountComponent", () => {
       mockSessionService = jasmine.createSpyObj("sessionService", [
         "getCurrentUser",
         "login",
+        "checkPassword",
       ]);
       mockSessionService.getCurrentUser.and.returnValue(null);
       mockUserAccountService = jasmine.createSpyObj("mockUserAccount", [
@@ -82,18 +83,33 @@ describe("UserAccountComponent", () => {
     expect(component.passwordForm.enabled).toBeTrue();
   });
 
+  it("should set error when password is incorrect", () => {
+    component.passwordForm.get("currentPassword").setValue("wrongPW");
+    mockSessionService.checkPassword.and.returnValue(false);
+
+    expect(component.passwordForm.get("currentPassword").valid).toBeTrue();
+
+    component.changePassword();
+
+    expect(component.passwordForm.get("currentPassword").valid).toBeFalse();
+  });
+
   it("should set error when password change fails", fakeAsync(() => {
     component.username = "testUser";
     component.passwordForm.get("currentPassword").setValue("testPW");
+    mockSessionService.checkPassword.and.returnValue(true);
     mockUserAccountService.changePassword.and.rejectWith(
       new Error("pw change error")
     );
+
     try {
       component.changePassword();
       tick();
     } catch (e) {
       // expected to re-throw the error for upstream reporting
     }
+
+    expect(mockUserAccountService.changePassword).toHaveBeenCalled();
     expect(component.passwordChangeResult.success).toBeFalse();
     expect(component.passwordChangeResult.error).toBe("pw change error");
   }));
@@ -102,6 +118,7 @@ describe("UserAccountComponent", () => {
     component.username = "testUser";
     component.passwordForm.get("currentPassword").setValue("testPW");
     component.passwordForm.get("newPassword").setValue("changedPassword");
+    mockSessionService.checkPassword.and.returnValue(true);
     mockUserAccountService.changePassword.and.resolveTo();
     mockSessionService.login.and.resolveTo(null);
 
