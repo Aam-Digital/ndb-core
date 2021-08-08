@@ -5,6 +5,7 @@ import { AppConfig } from "../../app-config/app-config";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { AlertService } from "../../alerts/alert.service";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { SessionService } from "../../session/session-service/session.service";
 
 /**
  * User Profile form to allow the user to set up credentials for a webdav server to be used by the CloudFileService.
@@ -30,7 +31,8 @@ export class CloudFileServiceUserSettingsComponent implements OnInit {
     private fb: FormBuilder,
     private entityMapperService: EntityMapperService,
     private cloudFileService: CloudFileService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private sessionService: SessionService
   ) {}
 
   ngOnInit() {
@@ -49,7 +51,7 @@ export class CloudFileServiceUserSettingsComponent implements OnInit {
    */
   async updateCloudServiceSettings() {
     const password = this.form.controls.userPassword.value;
-    if (!this.user.checkPassword(password)) {
+    if (!this.sessionService.checkPassword(this.user.name, password)) {
       this.form.controls.userPassword.setErrors({ incorrectPassword: true });
       return;
     }

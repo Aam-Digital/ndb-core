@@ -25,10 +25,6 @@ export class DemoUserGeneratorService extends DemoDataGenerator<User> {
     ];
   }
 
-  constructor() {
-    super();
-  }
-
   /**
    * Generate User entities to be loaded by the DemoDataModule.
    */
@@ -36,12 +32,10 @@ export class DemoUserGeneratorService extends DemoDataGenerator<User> {
     const users = [];
     const demoUser = new User(DemoUserGeneratorService.DEFAULT_USERNAME);
     demoUser.name = DemoUserGeneratorService.DEFAULT_USERNAME;
-    demoUser.setNewPassword(DemoUserGeneratorService.DEFAULT_PASSWORD);
 
     const demoAdmin = new User("demo-admin");
     demoAdmin.name = "demo-admin";
     demoAdmin.admin = true;
-    demoAdmin.setNewPassword(DemoUserGeneratorService.DEFAULT_PASSWORD);
 
     // Create temporary session to save users to local storage
     const tmpLocalSession = new LocalSession();

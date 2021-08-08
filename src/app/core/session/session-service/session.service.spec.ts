@@ -114,7 +114,6 @@ async function saveUser(
 ) {
   const testUser = new User(testUsername);
   testUser.name = testUsername;
-  testUser.setNewPassword(testPassword);
   await database.put(testUser);
 }
 
