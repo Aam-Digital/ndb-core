@@ -11,12 +11,7 @@ import { Router } from "@angular/router";
  */
 @Component({
   selector: "app-children-overview",
-  template: `<app-entity-subrecord
-    [records]="children"
-    [columns]="columns"
-    [showEntity]="routeToChild.bind(this)"
-    [editable]="false"
-  ></app-entity-subrecord>`,
+  templateUrl: "children-overview.component.html",
 })
 export class ChildrenOverviewComponent implements OnInitDynamicComponent {
   columns: FormFieldConfig[] = [
