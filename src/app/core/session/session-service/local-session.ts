@@ -16,7 +16,6 @@
  */
 import { Injectable } from "@angular/core";
 import { LoginState } from "../session-states/login-state.enum";
-import { StateHandler } from "../session-states/state-handler";
 import {
   passwordEqualsEncrypted,
   DatabaseUser,
@@ -27,8 +26,6 @@ import { Database } from "../../database/database";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { User } from "../../user/user";
 import { SessionService } from "./session.service";
-import { ConnectionState } from "../session-states/connection-state.enum";
-import { SyncState } from "../session-states/sync-state.enum";
 
 /**
  * Responsibilities:
@@ -36,10 +33,7 @@ import { SyncState } from "../session-states/sync-state.enum";
  * - Save users in local storage
  */
 @Injectable()
-export class LocalSession implements SessionService {
-  /** StateHandler for login state changes */
-  public loginState = new StateHandler(LoginState.LOGGED_OUT);
-
+export class LocalSession extends SessionService {
   private currentDBUser: DatabaseUser;
   /**
    * @deprecated instead use currentUser
@@ -49,7 +43,9 @@ export class LocalSession implements SessionService {
   constructor(
     private database?: Database,
     private entitySchemaService?: EntitySchemaService
-  ) {}
+  ) {
+    super();
+  }
 
   /**
    * Get a login at the local session by fetching the user from the local storage and validating the password.
@@ -62,11 +58,11 @@ export class LocalSession implements SessionService {
     if (user && passwordEqualsEncrypted(password, user.encryptedPassword)) {
       this.currentDBUser = user;
       this.currentUserEntity = await this.loadUser(username);
-      this.loginState.setState(LoginState.LOGGED_IN);
+      this.getLoginState().setState(LoginState.LOGGED_IN);
     } else {
-      this.loginState.setState(LoginState.LOGIN_FAILED);
+      this.getLoginState().setState(LoginState.LOGIN_FAILED);
     }
-    return this.loginState.getState();
+    return this.getLoginState().getState();
   }
 
   /**
@@ -115,7 +111,7 @@ export class LocalSession implements SessionService {
   public logout() {
     this.currentDBUser = undefined;
     this.currentUserEntity = undefined;
-    this.loginState.setState(LoginState.LOGGED_OUT);
+    this.getLoginState().setState(LoginState.LOGGED_OUT);
   }
 
   /**
@@ -132,24 +128,8 @@ export class LocalSession implements SessionService {
     }
   }
 
-  getConnectionState(): StateHandler<ConnectionState> {
-    return new StateHandler(ConnectionState.OFFLINE);
-  }
-
   getDatabase(): Database {
     return this.database;
-  }
-
-  getLoginState(): StateHandler<LoginState> {
-    return this.loginState;
-  }
-
-  getSyncState(): StateHandler<SyncState> {
-    return new StateHandler(SyncState.UNSYNCED);
-  }
-
-  isLoggedIn(): boolean {
-    return this.loginState.getState() === LoginState.LOGGED_IN;
   }
 
   sync(): Promise<any> {

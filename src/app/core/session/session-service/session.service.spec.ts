@@ -17,6 +17,8 @@
 
 import { LoginState } from "../session-states/login-state.enum";
 import { SessionService } from "./session.service";
+import { SyncState } from "../session-states/sync-state.enum";
+import { ConnectionState } from "../session-states/connection-state.enum";
 
 export const TEST_USER = "test";
 export const TEST_PASSWORD = "pass";
@@ -43,6 +45,10 @@ export function testSessionServiceImplementation(
   });
 
   it("has the correct initial state", () => {
+    expect(sessionService.getSyncState().getState()).toBe(SyncState.UNSYNCED);
+    expect(sessionService.getConnectionState().getState()).toBe(
+      ConnectionState.DISCONNECTED
+    );
     expectNotToBeLoggedIn(sessionService, LoginState.LOGGED_OUT);
   });
 

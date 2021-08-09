@@ -37,6 +37,13 @@ import { DatabaseUser } from "./local-user";
  * Providers are set up in a way that you will get the correct implementation during runtime.
  */
 export abstract class SessionService {
+  /** StateHandler for connection state changes */
+  private connectionState = new StateHandler(ConnectionState.DISCONNECTED);
+  /** StateHandler for login state changes */
+  private loginState = new StateHandler(LoginState.LOGGED_OUT);
+  /** StateHandler for sync state changes */
+  private syncState = new StateHandler(SyncState.UNSYNCED);
+
   /**
    * Authenticate a user.
    * @param username
@@ -71,22 +78,30 @@ export abstract class SessionService {
   /**
    * Get the session status - whether a user is authenticated currently.
    */
-  abstract isLoggedIn(): boolean;
+  public isLoggedIn(): boolean {
+    return this.loginState.getState() === LoginState.LOGGED_IN;
+  }
 
   /**
    * Get the state of the session.
    */
-  abstract getLoginState(): StateHandler<LoginState>;
+  public getLoginState(): StateHandler<LoginState> {
+    return this.loginState;
+  }
 
   /**
    * Get the state of the connection to the remote server.
    */
-  abstract getConnectionState(): StateHandler<ConnectionState>;
+  public getConnectionState(): StateHandler<ConnectionState> {
+    return this.connectionState;
+  }
 
   /**
    * Get the state of the synchronization with the remote server.
    */
-  abstract getSyncState(): StateHandler<SyncState>;
+  public getSyncState(): StateHandler<SyncState> {
+    return this.syncState;
+  }
 
   /**
    * Start a synchronization process.

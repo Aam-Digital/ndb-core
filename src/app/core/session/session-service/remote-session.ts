@@ -19,11 +19,9 @@ import PouchDB from "pouchdb-browser";
 
 import { AppConfig } from "../../app-config/app-config";
 import { Injectable } from "@angular/core";
-import { StateHandler } from "../session-states/state-handler";
 import { ConnectionState } from "../session-states/connection-state.enum";
 import { HttpClient } from "@angular/common/http";
 import { DatabaseUser } from "./local-user";
-import { SyncState } from "../session-states/sync-state.enum";
 import { SessionService } from "./session.service";
 import { LoginState } from "../session-states/login-state.enum";
 import { Database } from "../../database/database";
@@ -38,15 +36,10 @@ import { LoggingService } from "../../logging/logging.service";
  * - provide "am i online"-info
  */
 @Injectable()
-export class RemoteSession implements SessionService {
+export class RemoteSession extends SessionService {
   /** remote (!) database PouchDB */
   public pouchDB: PouchDB.Database;
   private readonly database: Database;
-
-  /** state of the remote connection */
-  private connectionState = new StateHandler(ConnectionState.DISCONNECTED);
-  private loginState = new StateHandler(LoginState.LOGGED_OUT);
-
   private currentDBUser: DatabaseUser;
 
   /**
@@ -56,6 +49,7 @@ export class RemoteSession implements SessionService {
     private httpClient: HttpClient,
     private loggingService: LoggingService
   ) {
+    super();
     const thisRemoteSession = this;
     this.pouchDB = new PouchDB(
       AppConfig.settings.database.remote_url + AppConfig.settings.database.name,
@@ -117,19 +111,19 @@ export class RemoteSession implements SessionService {
         )
         .toPromise();
       this.assignDatabaseUser(response);
-      this.connectionState.setState(ConnectionState.CONNECTED);
-      this.loginState.setState(LoginState.LOGGED_IN);
+      this.getConnectionState().setState(ConnectionState.CONNECTED);
+      this.getLoginState().setState(LoginState.LOGGED_IN);
     } catch (error) {
       const errorStatus = error?.statusText?.toLowerCase();
       if (errorStatus === "unauthorized" || errorStatus === "forbidden") {
-        this.connectionState.setState(ConnectionState.REJECTED);
-        this.loginState.setState(LoginState.LOGIN_FAILED);
+        this.getConnectionState().setState(ConnectionState.REJECTED);
+        this.getLoginState().setState(LoginState.LOGIN_FAILED);
       } else {
-        this.connectionState.setState(ConnectionState.OFFLINE);
-        this.loginState.setState(LoginState.LOGIN_FAILED);
+        this.getConnectionState().setState(ConnectionState.OFFLINE);
+        this.getLoginState().setState(LoginState.LOGIN_FAILED);
       }
     }
-    return this.loginState.getState();
+    return this.getLoginState().getState();
   }
 
   private assignDatabaseUser(couchDBResponse: any) {
@@ -149,8 +143,8 @@ export class RemoteSession implements SessionService {
       })
       .toPromise();
     this.currentDBUser = undefined;
-    this.connectionState.setState(ConnectionState.DISCONNECTED);
-    this.loginState.setState(LoginState.LOGGED_OUT);
+    this.getConnectionState().setState(ConnectionState.DISCONNECTED);
+    this.getLoginState().setState(LoginState.LOGGED_OUT);
   }
 
   getCurrentDBUser(): DatabaseUser {
@@ -162,28 +156,12 @@ export class RemoteSession implements SessionService {
     return false;
   }
 
-  getConnectionState(): StateHandler<ConnectionState> {
-    return this.connectionState;
-  }
-
   getCurrentUser(): User {
     return undefined;
   }
 
   getDatabase(): Database {
     return this.database;
-  }
-
-  getLoginState(): StateHandler<LoginState> {
-    return this.loginState;
-  }
-
-  getSyncState(): StateHandler<SyncState> {
-    return new StateHandler(SyncState.UNSYNCED);
-  }
-
-  isLoggedIn(): boolean {
-    return this.loginState.getState() === LoginState.LOGGED_IN;
   }
 
   sync(): Promise<any> {

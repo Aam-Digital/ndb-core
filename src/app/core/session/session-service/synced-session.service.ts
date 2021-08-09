@@ -32,7 +32,6 @@ import { LoggingService } from "../../logging/logging.service";
 import { HttpClient } from "@angular/common/http";
 import PouchDB from "pouchdb-browser";
 import { AppConfig } from "../../app-config/app-config";
-import { StateHandler } from "../session-states/state-handler";
 import { DatabaseUser } from "./local-user";
 
 /**
@@ -54,7 +53,6 @@ export class SyncedSessionService extends SessionService {
   private _liveSyncHandle: any;
   private _liveSyncScheduledHandle: any;
   private _offlineRetryLoginScheduleHandle: any;
-  private syncState = new StateHandler(SyncState.UNSYNCED);
 
   constructor(
     private _alertService: AlertService,
@@ -70,11 +68,6 @@ export class SyncedSessionService extends SessionService {
       this._entitySchemaService
     );
     this._remoteSession = new RemoteSession(this._httpClient, _loggingService);
-  }
-
-  /** see {@link SessionService} */
-  public isLoggedIn(): boolean {
-    return this._localSession.loginState.getState() === LoginState.LOGGED_IN;
   }
 
   /**
@@ -131,7 +124,7 @@ export class SyncedSessionService extends SessionService {
   private handleRemotePasswordChange(username: string) {
     this._localSession.logout();
     this._localSession.removeUser(username);
-    this._localSession.loginState.setState(LoginState.LOGIN_FAILED);
+    this._localSession.getLoginState().setState(LoginState.LOGIN_FAILED);
     this._alertService.addDanger(
       $localize`Your password was changed recently. Please retry with your new password!`
     );
@@ -151,7 +144,9 @@ export class SyncedSessionService extends SessionService {
     return this.sync()
       .then(() => this.liveSyncDeferred())
       .catch(() => {
-        if (this._localSession.loginState.getState() === LoginState.LOGGED_IN) {
+        if (
+          this._localSession.getLoginState().getState() === LoginState.LOGGED_IN
+        ) {
           this.liveSyncDeferred();
         }
       });
@@ -173,15 +168,11 @@ export class SyncedSessionService extends SessionService {
 
   /** see {@link SessionService} */
   public getLoginState() {
-    return this._localSession.loginState;
+    return this._localSession.getLoginState();
   }
   /** see {@link SessionService} */
   public getConnectionState() {
     return this._remoteSession.getConnectionState();
-  }
-  /** see {@link SessionService} */
-  public getSyncState() {
-    return this.syncState;
   }
 
   /** see {@link SessionService} */
