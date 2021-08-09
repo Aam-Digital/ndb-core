@@ -44,13 +44,16 @@ import { DatabaseUser } from "./local-user";
  */
 @Injectable()
 export class SyncedSessionService extends SessionService {
-  private _localSession: LocalSession;
-  private _remoteSession: RemoteSession;
+  private readonly LOGIN_RETRY_TIMEOUT = 60000;
+  private readonly POUCHDB_SYNC_BATCH_SIZE = 500;
+
+  private readonly _localSession: LocalSession;
+  private readonly _remoteSession: RemoteSession;
+  private readonly pouchDB: PouchDB.Database;
+  private readonly database: Database;
   private _liveSyncHandle: any;
   private _liveSyncScheduledHandle: any;
   private _offlineRetryLoginScheduleHandle: any;
-  private readonly pouchDB: PouchDB.Database;
-  private readonly database: Database;
   private syncState = new StateHandler(SyncState.UNSYNCED);
 
   constructor(
@@ -91,43 +94,20 @@ export class SyncedSessionService extends SessionService {
     this.cancelLoginOfflineRetry(); // in case this is running in the background
     this.getSyncState().setState(SyncState.UNSYNCED);
 
+    const remoteLogin = this._remoteSession.login(username, password);
     const syncPromise = this._remoteSession.connectionState
       .waitForChangeTo(ConnectionState.CONNECTED)
-      .then(() => {
-        // Update local user object
-        const remoteUser = this._remoteSession.getCurrentDBUser();
-        this._localSession.saveUser(remoteUser, password);
+      .then(() => this.updateLocalUserAndStartSync(password));
 
-        return this.sync()
-          .then(() => this.liveSyncDeferred())
-          .catch(() => {
-            if (
-              this._localSession.loginState.getState() === LoginState.LOGGED_IN
-            ) {
-              this.liveSyncDeferred();
-            }
-          });
-      });
-
-    const remoteLogin = this._remoteSession.login(username, password);
     let localLoginState = await this._localSession.login(username, password);
 
     if (localLoginState === LoginState.LOGGED_IN) {
       remoteLogin.then((remoteLoginState) => {
         if (remoteLoginState === ConnectionState.REJECTED) {
-          // Password changed
-          this._localSession.logout();
-          this._localSession.removeUser(username);
-          this._localSession.loginState.setState(LoginState.LOGIN_FAILED);
-          this._alertService.addDanger(
-            $localize`Your password was changed recently. Please retry with your new password!`
-          );
+          this.handleRemotePasswordChange(username);
         }
         if (remoteLoginState === ConnectionState.OFFLINE) {
-          // retry remote login while offline
-          this._offlineRetryLoginScheduleHandle = setTimeout(() => {
-            this.login(username, password);
-          }, 2000);
+          this.retryLoginWhileOffline(username, password);
         }
       });
     } else {
@@ -142,6 +122,35 @@ export class SyncedSessionService extends SessionService {
       }
     }
     return localLoginState;
+  }
+
+  private handleRemotePasswordChange(username: string) {
+    this._localSession.logout();
+    this._localSession.removeUser(username);
+    this._localSession.loginState.setState(LoginState.LOGIN_FAILED);
+    this._alertService.addDanger(
+      $localize`Your password was changed recently. Please retry with your new password!`
+    );
+  }
+
+  private retryLoginWhileOffline(username: string, password: string) {
+    this._offlineRetryLoginScheduleHandle = setTimeout(() => {
+      this.login(username, password);
+    }, this.LOGIN_RETRY_TIMEOUT);
+  }
+
+  private updateLocalUserAndStartSync(password: string) {
+    // Update local user object
+    const remoteUser = this._remoteSession.getCurrentDBUser();
+    this._localSession.saveUser(remoteUser, password);
+
+    return this.sync()
+      .then(() => this.liveSyncDeferred())
+      .catch(() => {
+        if (this._localSession.loginState.getState() === LoginState.LOGGED_IN) {
+          this.liveSyncDeferred();
+        }
+      });
   }
 
   /** see {@link SessionService} */
@@ -176,7 +185,7 @@ export class SyncedSessionService extends SessionService {
     this.getSyncState().setState(SyncState.STARTED);
     try {
       const result = await this.pouchDB.sync(this._remoteSession.database, {
-        batch_size: 500,
+        batch_size: this.POUCHDB_SYNC_BATCH_SIZE,
       });
       this.getSyncState().setState(SyncState.COMPLETED);
       return result;
@@ -213,6 +222,7 @@ export class SyncedSessionService extends SessionService {
       })
       .on("error", (err) => {
         // totally unhandled error (shouldn't happen)
+        console.error("sync failed", err);
         this.getSyncState().setState(SyncState.FAILED);
       })
       .on("complete", (info) => {
