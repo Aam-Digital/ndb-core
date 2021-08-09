@@ -119,6 +119,7 @@ export class LatestChangesService {
         LatestChangesService.GITHUB_API + environment.repositoryId + "/releases"
       )
       .pipe(
+        map(excludePrereleases),
         map(releaseFilter),
         map((relevantReleases) =>
           relevantReleases.map((r) => this.parseGithubApiRelease(r))
@@ -130,23 +131,37 @@ export class LatestChangesService {
           return throwError("Could not load latest changes.");
         })
       );
+
+    function excludePrereleases(releases: any[]): Changelog[] {
+      return releases.filter(
+        (release) => !release.prerelease && !release.draft
+      );
+    }
   }
 
   private parseGithubApiRelease(githubResponse: any): Changelog {
-    const releaseNotesWithoutHeading = githubResponse.body.replace(
-      /#{1,2}[^###]*/,
-      ""
-    );
-    const releaseNotesWithoutCommitRefs = releaseNotesWithoutHeading.replace(
-      / \(\[\w{7}\]\([^\)]*\)\)/g,
-      ""
-    );
+    const cleanedReleaseNotes = githubResponse.body
+      .replace(
+        // remove heading
+        /#{1,2}[^###]*/,
+        ""
+      )
+      .replace(
+        // remove commit refs
+        / \(\[\w{7}\]\([^\)]*\)\)/g,
+        ""
+      )
+      .replace(
+        // remove lines starting with "." after markdown characters
+        /^(\*|\#)* *\.(.*)(\n|\r\n)/gm,
+        ""
+      );
 
     return {
       tag_name: githubResponse.tag_name,
       name: githubResponse.name,
       published_at: githubResponse.published_at,
-      body: releaseNotesWithoutCommitRefs,
+      body: cleanedReleaseNotes,
     };
   }
 }
