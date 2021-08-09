@@ -129,11 +129,9 @@ export class AdminComponent implements OnInit {
 
     const dialogRef = this.confirmationDialog.openDialog(
       $localize`Overwrite complete database?`,
-      $localize`Are you sure you want to restore this backup? This will delete all ${
-        restorePoint.split("\n").length
-      } existing records in the database, restoring ${
-        newData.split("\n").length
-      } records from the loaded file.`
+      $localize`Are you sure you want to restore this backup? This will
+      delete all ${JSON.parse(restorePoint).length} existing records,
+      restoring ${JSON.parse(newData).length} records from the loaded file.`
     );
 
     dialogRef.afterClosed().subscribe(async (confirmed) => {

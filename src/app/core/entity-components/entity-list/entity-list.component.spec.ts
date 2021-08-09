@@ -9,7 +9,6 @@ import { Entity } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { User } from "../../user/user";
 import { SessionService } from "../../session/session-service/session.service";
-import { ExportDataComponent } from "../../admin/export-data/export-data.component";
 import { ChildrenListComponent } from "../../../child-dev-project/children/children-list/children-list.component";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ConfigService } from "../../config/config.service";
@@ -21,6 +20,7 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { ReactiveFormsModule } from "@angular/forms";
 import { AttendanceService } from "../../../child-dev-project/attendance/attendance.service";
+import { ExportModule } from "../../export/export.module";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -98,11 +98,12 @@ describe("EntityListComponent", () => {
       );
 
       TestBed.configureTestingModule({
-        declarations: [EntityListComponent, ExportDataComponent],
+        declarations: [EntityListComponent],
         imports: [
           CommonModule,
           NoopAnimationsModule,
           EntityListModule,
+          ExportModule,
           Angulartics2Module.forRoot(),
           ReactiveFormsModule,
           RouterTestingModule.withRoutes([

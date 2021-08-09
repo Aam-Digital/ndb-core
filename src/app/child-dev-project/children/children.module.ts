@@ -51,7 +51,6 @@ import { NoRecentNotesDashboardComponent } from "../notes/dashboard-widgets/no-r
 import { HealthCheckupComponent } from "../health-checkup/health-checkup-component/health-checkup.component";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { PreviousSchoolsComponent } from "../previous-schools/previous-schools.component";
-import { AdminModule } from "../../core/admin/admin.module";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { RecentNotesDashboardComponent } from "../notes/dashboard-widgets/recent-notes-dashboard/recent-notes-dashboard.component";
 import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
@@ -99,7 +98,6 @@ import { EntityUtilsModule } from "../../core/entity-components/entity-utils/ent
     SchoolsModule,
     ReactiveFormsModule,
     MatDialogModule,
-    AdminModule,
     MatListModule,
     WebdavModule,
     MatProgressSpinnerModule,
