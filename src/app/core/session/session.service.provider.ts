@@ -67,8 +67,8 @@ export function sessionServiceFactory(
       );
       break;
   }
-  // TODO: requires a configuration or UI option to select OnlineSession: https://github.com/Aam-Digital/ndb-core/issues/434
-  // return new OnlineSessionService(alertService, entitySchemaService);
+  // TODO: requires a configuration or UI option to select RemoteSession: https://github.com/Aam-Digital/ndb-core/issues/434
+  // return new RemoteSession(httpClient, loggingService);
 
   updateLoggingServiceWithUserContext(sessionService);
 
