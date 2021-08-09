@@ -17,7 +17,9 @@ import { SessionService } from "../../session/session-service/session.service";
 })
 export class CloudFileServiceUserSettingsComponent implements OnInit {
   /** The user for who this form edits data */
-  @Input() user: User;
+  @Input() username: string;
+
+  user: User;
 
   /** Webdav server URL */
   webdavUrl: string;
@@ -33,16 +35,18 @@ export class CloudFileServiceUserSettingsComponent implements OnInit {
     private cloudFileService: CloudFileService,
     private alertService: AlertService,
     private sessionService: SessionService
-  ) {}
-
-  ngOnInit() {
-    this.webdavUrl = AppConfig.settings.webdav.remote_url;
-
+  ) {
     this.form = this.fb.group({
-      cloudUser: [this.user.cloudUserName, Validators.required],
+      cloudUser: ["", Validators.required],
       cloudPassword: ["", Validators.required],
       userPassword: ["", Validators.required],
     });
+  }
+
+  async ngOnInit() {
+    this.webdavUrl = AppConfig.settings.webdav.remote_url;
+    this.user = await this.entityMapperService.load(User, this.username);
+    this.form.get("cloudUser").setValue(this.user.cloudUserName);
   }
 
   /**

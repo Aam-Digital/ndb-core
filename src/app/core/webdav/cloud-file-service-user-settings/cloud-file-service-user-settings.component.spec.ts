@@ -22,13 +22,16 @@ describe("CloudFileServiceUserSettingsComponent", () => {
   beforeEach(
     waitForAsync(() => {
       testUser = new User("user");
+      testUser.cloudUserName = "cloudUsername";
       mockCloudFileService = jasmine.createSpyObj<CloudFileService>([
         "connect",
         "checkConnection",
       ]);
       mockEntityMapper = jasmine.createSpyObj<EntityMapperService>("", [
         "save",
+        "load",
       ]);
+      mockEntityMapper.load.and.resolveTo(testUser);
       mockSessionService = jasmine.createSpyObj(["checkPassword"]);
 
       // @ts-ignore
@@ -49,15 +52,26 @@ describe("CloudFileServiceUserSettingsComponent", () => {
     })
   );
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(CloudFileServiceUserSettingsComponent);
-    component = fixture.componentInstance;
-    component.user = testUser;
-    fixture.detectChanges();
-  });
+  beforeEach(
+    waitForAsync(() => {
+      fixture = TestBed.createComponent(CloudFileServiceUserSettingsComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+    })
+  );
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should load the user entity on startup", async () => {
+    component.username = "testUser";
+
+    await component.ngOnInit();
+
+    expect(mockEntityMapper.load).toHaveBeenCalledWith(User, "testUser");
+    expect(component.user).toBe(testUser);
+    expect(component.form.get("cloudUser").value).toBe(testUser.cloudUserName);
   });
 
   it("should update cloud-service credentials and check the connection", async () => {
