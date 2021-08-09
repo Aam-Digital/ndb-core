@@ -70,23 +70,27 @@ describe("LocalSessionService", () => {
   });
 
   it("should login a previously saved user with correct password", async () => {
-    expect(localSession.loginState.getState()).toBe(LoginState.LOGGED_OUT);
+    expect(localSession.getLoginState().getState()).toBe(LoginState.LOGGED_OUT);
 
     await localSession.login(TEST_USER, TEST_PASSWORD);
 
-    expect(localSession.loginState.getState()).toBe(LoginState.LOGGED_IN);
+    expect(localSession.getLoginState().getState()).toBe(LoginState.LOGGED_IN);
   });
 
   it("should fail login with correct username but wrong password", async () => {
     await localSession.login(TEST_USER, "wrong password");
 
-    expect(localSession.loginState.getState()).toBe(LoginState.LOGIN_FAILED);
+    expect(localSession.getLoginState().getState()).toBe(
+      LoginState.LOGIN_FAILED
+    );
   });
 
   it("should fail login with wrong username", async () => {
     await localSession.login("wrongUsername", TEST_PASSWORD);
 
-    expect(localSession.loginState.getState()).toBe(LoginState.LOGIN_FAILED);
+    expect(localSession.getLoginState().getState()).toBe(
+      LoginState.LOGIN_FAILED
+    );
   });
 
   it("should assign current user after successful login", async () => {
@@ -102,7 +106,9 @@ describe("LocalSessionService", () => {
     localSession.removeUser(TEST_USER);
 
     await localSession.login(TEST_USER, TEST_PASSWORD);
-    expect(localSession.loginState.getState()).toBe(LoginState.LOGIN_FAILED);
+    expect(localSession.getLoginState().getState()).toBe(
+      LoginState.LOGIN_FAILED
+    );
     expect(localSession.getCurrentUser()).toBeUndefined();
   });
 

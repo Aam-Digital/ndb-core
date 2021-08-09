@@ -79,7 +79,7 @@ export abstract class SessionService {
    * Get the session status - whether a user is authenticated currently.
    */
   public isLoggedIn(): boolean {
-    return this.loginState.getState() === LoginState.LOGGED_IN;
+    return this.getLoginState().getState() === LoginState.LOGGED_IN;
   }
 
   /**
