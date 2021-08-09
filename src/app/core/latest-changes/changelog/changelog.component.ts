@@ -75,6 +75,10 @@ export class ChangelogComponent implements OnInit {
    * Add one more previous release card to the end of the currently displayed list of changelogs.
    */
   loadPreviousRelease() {
+    if (!this.changelogs) {
+      return;
+    }
+
     const lastDisplayedVersion = this.changelogs[this.changelogs.length - 1]
       .tag_name;
     this.latestChangesService
