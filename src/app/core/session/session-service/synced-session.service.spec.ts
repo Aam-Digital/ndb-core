@@ -18,7 +18,6 @@
 import { SyncedSessionService } from "./synced-session.service";
 import { AlertService } from "../../alerts/alert.service";
 import { LoginState } from "../session-states/login-state.enum";
-import { ConnectionState } from "../session-states/connection-state.enum";
 import { AppConfig } from "../../app-config/app-config";
 import { LocalSession } from "./local-session";
 import { RemoteSession } from "./remote-session";
@@ -46,7 +45,7 @@ describe("SyncedSessionService", () => {
     (username: string, password: string) => Promise<LoginState>
   >;
   let remoteLoginSpy: jasmine.Spy<
-    (username: string, password: string) => Promise<ConnectionState>
+    (username: string, password: string) => Promise<LoginState>
   >;
   let dbUser: DatabaseUser;
   let syncSpy: jasmine.Spy<() => Promise<void>>;

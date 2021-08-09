@@ -44,9 +44,9 @@ export class OnlineSessionService extends SessionService {
     private entitySchemaService: EntitySchemaService
   ) {
     super();
-    this.remoteSession = new RemoteSession(null);
+    this.remoteSession = new RemoteSession(null, loggingService);
     this.database = new PouchDatabase(
-      this.remoteSession.database,
+      this.remoteSession.pouchDB,
       this.loggingService
     );
   }
@@ -96,10 +96,8 @@ export class OnlineSessionService extends SessionService {
    * also see {@link SessionService}
    */
   public async login(username, password): Promise<LoginState> {
-    const connectionState: ConnectionState = await this.remoteSession.login(
-      username,
-      password
-    );
+    await this.remoteSession.login(username, password);
+    const connectionState = this.remoteSession.getConnectionState().getState();
     if (connectionState === ConnectionState.CONNECTED) {
       this.currentUser = await this.loadUser(username);
 

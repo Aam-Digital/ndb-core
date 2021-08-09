@@ -5,10 +5,19 @@ import { ConnectionState } from "../session-states/connection-state.enum";
 import { of, throwError } from "rxjs";
 import { AppConfig } from "../../app-config/app-config";
 import { SessionType } from "../session-type";
+import { LoggingService } from "../../logging/logging.service";
+import {
+  TEST_PASSWORD,
+  TEST_USER,
+  testSessionServiceImplementation,
+} from "./session.service.spec";
+import { DatabaseUser } from "./local-user";
+import { LoginState } from "../session-states/login-state.enum";
 
 describe("RemoteSessionService", () => {
   let service: RemoteSession;
   let mockHttpClient: jasmine.SpyObj<HttpClient>;
+  let dbUser: DatabaseUser;
 
   beforeEach(() => {
     AppConfig.settings = {
@@ -20,68 +29,85 @@ describe("RemoteSessionService", () => {
       },
     };
     mockHttpClient = jasmine.createSpyObj(["post", "delete"]);
+    mockHttpClient.delete.and.returnValue(of());
+
     TestBed.configureTestingModule({
       providers: [
         RemoteSession,
+        LoggingService,
         { provide: HttpClient, useValue: mockHttpClient },
       ],
     });
+
+    // Remote session allows TEST_USER and TEST_PASSWORD as valid credentials
+    dbUser = { name: TEST_USER, roles: ["user_app"] };
+    mockHttpClient.post.and.callFake((url, body) => {
+      if (body.name === TEST_USER && body.password === TEST_PASSWORD) {
+        return of(dbUser as any);
+      } else {
+        return throwError(
+          new HttpErrorResponse({ statusText: "Unauthorized" })
+        );
+      }
+    });
+
     service = TestBed.inject(RemoteSession);
   });
 
   it("should be connected after successful login", async () => {
-    expect(service.connectionState.getState()).toBe(
+    expect(service.getConnectionState().getState()).toBe(
       ConnectionState.DISCONNECTED
     );
+    expect(service.getLoginState().getState()).toBe(LoginState.LOGGED_OUT);
 
-    mockHttpClient.post.and.returnValue(of({}));
-
-    await service.login("", "");
+    await service.login(TEST_USER, TEST_PASSWORD);
 
     expect(mockHttpClient.post).toHaveBeenCalled();
-    expect(service.connectionState.getState()).toBe(ConnectionState.CONNECTED);
+    expect(service.getConnectionState().getState()).toBe(
+      ConnectionState.CONNECTED
+    );
+    expect(service.getLoginState().getState()).toBe(LoginState.LOGGED_IN);
   });
 
   it("should be offline if login fails", async () => {
     mockHttpClient.post.and.returnValue(throwError(new Error()));
 
-    await service.login("", "");
+    await service.login(TEST_USER, TEST_PASSWORD);
 
-    expect(service.connectionState.getState()).toBe(ConnectionState.OFFLINE);
+    expect(service.getConnectionState().getState()).toBe(
+      ConnectionState.OFFLINE
+    );
+    expect(service.getLoginState().getState()).toBe(LoginState.LOGIN_FAILED);
   });
 
   it("should be rejected if login is unauthorized", async () => {
-    const unauthorizedError = new HttpErrorResponse({
-      statusText: "Unauthorized",
-    });
-    mockHttpClient.post.and.returnValue(throwError(unauthorizedError));
+    await service.login(TEST_USER, "wrongPassword");
 
-    await service.login("", "");
-
-    expect(service.connectionState.getState()).toBe(ConnectionState.REJECTED);
+    expect(service.getConnectionState().getState()).toBe(
+      ConnectionState.REJECTED
+    );
+    expect(service.getLoginState().getState()).toBe(LoginState.LOGIN_FAILED);
   });
 
   it("should disconnect after logout", async () => {
-    service.connectionState.setState(ConnectionState.CONNECTED);
-    mockHttpClient.delete.and.returnValue(of());
+    await service.login(TEST_USER, TEST_PASSWORD);
 
     await service.logout();
 
-    expect(service.connectionState.getState()).toBe(
+    expect(service.getConnectionState().getState()).toBe(
       ConnectionState.DISCONNECTED
     );
+    expect(service.getLoginState().getState()).toBe(LoginState.LOGGED_OUT);
   });
 
   it("should assign the current user after successful login", async () => {
-    mockHttpClient.post.and.returnValue(
-      of({ name: "username", roles: ["user_app"] })
-    );
-
-    await service.login("", "");
+    await service.login(TEST_USER, TEST_PASSWORD);
 
     expect(service.getCurrentDBUser()).toEqual({
-      name: "username",
-      roles: ["user_app"],
+      name: dbUser.name,
+      roles: dbUser.roles,
     });
   });
+
+  testSessionServiceImplementation(() => Promise.resolve(service));
 });

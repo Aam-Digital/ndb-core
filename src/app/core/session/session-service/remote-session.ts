@@ -23,6 +23,13 @@ import { StateHandler } from "../session-states/state-handler";
 import { ConnectionState } from "../session-states/connection-state.enum";
 import { HttpClient } from "@angular/common/http";
 import { DatabaseUser } from "./local-user";
+import { SyncState } from "../session-states/sync-state.enum";
+import { SessionService } from "./session.service";
+import { LoginState } from "../session-states/login-state.enum";
+import { Database } from "../../database/database";
+import { User } from "../../user/user";
+import { PouchDatabase } from "../../database/pouch-database";
+import { LoggingService } from "../../logging/logging.service";
 
 /**
  * Responsibilities:
@@ -31,21 +38,26 @@ import { DatabaseUser } from "./local-user";
  * - provide "am i online"-info
  */
 @Injectable()
-export class RemoteSession {
+export class RemoteSession implements SessionService {
   /** remote (!) database PouchDB */
-  public database: PouchDB.Database;
+  public pouchDB: PouchDB.Database;
+  private readonly database: Database;
 
   /** state of the remote connection */
-  public connectionState = new StateHandler(ConnectionState.DISCONNECTED);
+  private connectionState = new StateHandler(ConnectionState.DISCONNECTED);
+  private loginState = new StateHandler(LoginState.LOGGED_OUT);
 
   private currentDBUser: DatabaseUser;
 
   /**
    * Create a RemoteSession and set up connection to the remote CouchDB server configured in AppConfig.
    */
-  constructor(private httpClient: HttpClient) {
+  constructor(
+    private httpClient: HttpClient,
+    private loggingService: LoggingService
+  ) {
     const thisRemoteSession = this;
-    this.database = new PouchDB(
+    this.pouchDB = new PouchDB(
       AppConfig.settings.database.remote_url + AppConfig.settings.database.name,
       {
         ajax: {
@@ -57,12 +69,12 @@ export class RemoteSession {
           const req = fetch(url, opts);
           req.then((result) => {
             if (
-              thisRemoteSession.connectionState.getState() ===
+              thisRemoteSession.getConnectionState().getState() ===
               ConnectionState.OFFLINE
             ) {
-              thisRemoteSession.connectionState.setState(
-                ConnectionState.CONNECTED
-              );
+              thisRemoteSession
+                .getConnectionState()
+                .setState(ConnectionState.CONNECTED);
             }
             return result;
           });
@@ -73,12 +85,12 @@ export class RemoteSession {
             // https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch#Exceptions
             if (
               error.name !== "AbortError" &&
-              thisRemoteSession.connectionState.getState() ===
+              thisRemoteSession.getConnectionState().getState() ===
                 ConnectionState.CONNECTED
             ) {
-              thisRemoteSession.connectionState.setState(
-                ConnectionState.OFFLINE
-              );
+              thisRemoteSession
+                .getConnectionState()
+                .setState(ConnectionState.OFFLINE);
             }
             throw error;
           });
@@ -87,6 +99,7 @@ export class RemoteSession {
         skip_setup: true,
       } as PouchDB.Configuration.RemoteDatabaseConfiguration
     );
+    this.database = new PouchDatabase(this.pouchDB, this.loggingService);
   }
 
   /**
@@ -94,10 +107,7 @@ export class RemoteSession {
    * @param username Username
    * @param password Password
    */
-  public async login(
-    username: string,
-    password: string
-  ): Promise<ConnectionState> {
+  public async login(username: string, password: string): Promise<LoginState> {
     try {
       const response = await this.httpClient
         .post(
@@ -108,17 +118,18 @@ export class RemoteSession {
         .toPromise();
       this.assignDatabaseUser(response);
       this.connectionState.setState(ConnectionState.CONNECTED);
-      return ConnectionState.CONNECTED;
+      this.loginState.setState(LoginState.LOGGED_IN);
     } catch (error) {
       const errorStatus = error?.statusText?.toLowerCase();
       if (errorStatus === "unauthorized" || errorStatus === "forbidden") {
         this.connectionState.setState(ConnectionState.REJECTED);
-        return ConnectionState.REJECTED;
+        this.loginState.setState(LoginState.LOGIN_FAILED);
       } else {
         this.connectionState.setState(ConnectionState.OFFLINE);
-        return ConnectionState.OFFLINE;
+        this.loginState.setState(LoginState.LOGIN_FAILED);
       }
     }
+    return this.loginState.getState();
   }
 
   private assignDatabaseUser(couchDBResponse: any) {
@@ -139,9 +150,43 @@ export class RemoteSession {
       .toPromise();
     this.currentDBUser = undefined;
     this.connectionState.setState(ConnectionState.DISCONNECTED);
+    this.loginState.setState(LoginState.LOGGED_OUT);
   }
 
   getCurrentDBUser(): DatabaseUser {
     return this.currentDBUser;
+  }
+
+  checkPassword(username: string, password: string): boolean {
+    // Cannot be checked against CouchDB due to cookie-auth
+    return false;
+  }
+
+  getConnectionState(): StateHandler<ConnectionState> {
+    return this.connectionState;
+  }
+
+  getCurrentUser(): User {
+    return undefined;
+  }
+
+  getDatabase(): Database {
+    return this.database;
+  }
+
+  getLoginState(): StateHandler<LoginState> {
+    return this.loginState;
+  }
+
+  getSyncState(): StateHandler<SyncState> {
+    return new StateHandler(SyncState.UNSYNCED);
+  }
+
+  isLoggedIn(): boolean {
+    return this.loginState.getState() === LoginState.LOGGED_IN;
+  }
+
+  sync(): Promise<any> {
+    return Promise.reject(new Error("Cannot sync remote session"));
   }
 }
