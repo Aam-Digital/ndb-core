@@ -230,12 +230,12 @@ function generateSchoolEntities(): School[] {
 
   const s1 = new School("1");
   s1.name = "People's Primary";
-  s1.medium = "Hindi";
+  s1["language"] = "Hindi";
   data.push(s1);
 
   const s2 = new School("2");
   s2.name = "Hope High School";
-  s2.medium = "English";
+  s2["language"] = "English";
   data.push(s2);
 
   return data;

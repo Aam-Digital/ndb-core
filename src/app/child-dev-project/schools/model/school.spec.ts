@@ -53,15 +53,11 @@ describe("School Entity", () => {
 
       name: "Max",
       address: "Muster",
-      medium: "English",
+      language: "English",
       remarks: "None",
-      website: "www.google.com",
       privateSchool: true,
       phone: "911",
-      upToClass: 10,
-      academicBoard: "XY",
       timing: "9-5",
-      workingDays: "Mon-Fri",
 
       searchIndices: [],
     };
@@ -69,16 +65,12 @@ describe("School Entity", () => {
 
     const entity = new School(id);
     entity.name = expectedData.name;
-    entity.address = expectedData.address;
-    entity.medium = expectedData.medium;
-    entity.remarks = expectedData.remarks;
-    entity.website = expectedData.website;
-    entity.privateSchool = expectedData.privateSchool;
-    entity.phone = expectedData.phone;
-    entity.upToClass = expectedData.upToClass;
-    entity.academicBoard = expectedData.academicBoard;
-    entity.timing = expectedData.timing;
-    entity.workingDays = expectedData.workingDays;
+    entity["address"] = expectedData.address;
+    entity["language"] = expectedData.language;
+    entity["remarks"] = expectedData.remarks;
+    entity["privateSchool"] = expectedData.privateSchool;
+    entity["phone"] = expectedData.phone;
+    entity["timing"] = expectedData.timing;
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
