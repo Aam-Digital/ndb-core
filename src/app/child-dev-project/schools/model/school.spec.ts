@@ -52,12 +52,12 @@ describe("School Entity", () => {
       _id: "School:" + id,
 
       name: "Max",
-      address: "Muster",
-      language: "English",
-      remarks: "None",
-      privateSchool: true,
-      phone: "911",
-      timing: "9-5",
+      // address: "Muster",
+      // language: "English",
+      // remarks: "None",
+      // privateSchool: true,
+      // phone: "911",
+      // timing: "9-5",
 
       searchIndices: [],
     };
@@ -65,12 +65,12 @@ describe("School Entity", () => {
 
     const entity = new School(id);
     entity.name = expectedData.name;
-    entity["address"] = expectedData.address;
-    entity["language"] = expectedData.language;
-    entity["remarks"] = expectedData.remarks;
-    entity["privateSchool"] = expectedData.privateSchool;
-    entity["phone"] = expectedData.phone;
-    entity["timing"] = expectedData.timing;
+    // entity["address"] = expectedData.address;
+    // entity["language"] = expectedData.language;
+    // entity["remarks"] = expectedData.remarks;
+    // entity["privateSchool"] = expectedData.privateSchool;
+    // entity["phone"] = expectedData.phone;
+    // entity["timing"] = expectedData.timing;
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 

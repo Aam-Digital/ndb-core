@@ -34,29 +34,29 @@ describe("FilterGeneratorService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should create a boolean filter", async () => {
-    const filterConfig: BooleanFilterConfig = {
-      id: "privateSchool",
-      true: "Private",
-      false: "Government",
-      all: "All",
-    };
-    const schema = School.schema.get("privateSchool");
+  // it("should create a boolean filter", async () => {
+  //   const filterConfig: BooleanFilterConfig = {
+  //     id: "privateSchool",
+  //     true: "Private",
+  //     false: "Government",
+  //     all: "All",
+  //   };
+  //   const schema = School.schema.get("privateSchool");
 
-    const filter = (await service.generate([filterConfig], School, []))[0];
+  //   const filter = (await service.generate([filterConfig], School, []))[0];
 
-    expect(filter.filterSettings.label).toEqual(schema.label);
-    expect(filter.filterSettings.name).toEqual("privateSchool");
-    expect(
-      filter.filterSettings.options.map((option) => {
-        return { key: option.key, label: option.label };
-      })
-    ).toEqual([
-      { key: "all", label: "All" },
-      { key: "true", label: "Private" },
-      { key: "false", label: "Government" },
-    ]);
-  });
+  //   expect(filter.filterSettings.label).toEqual(schema.label);
+  //   expect(filter.filterSettings.name).toEqual("privateSchool");
+  //   expect(
+  //     filter.filterSettings.options.map((option) => {
+  //       return { key: option.key, label: option.label };
+  //     })
+  //   ).toEqual([
+  //     { key: "all", label: "All" },
+  //     { key: "true", label: "Private" },
+  //     { key: "false", label: "Government" },
+  //   ]);
+  // });
 
   it("should create a configurable enum filter", async () => {
     mockConfigService.getConfig.and.returnValue(defaultInteractionTypes);
