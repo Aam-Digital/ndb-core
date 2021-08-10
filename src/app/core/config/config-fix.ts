@@ -274,7 +274,7 @@ export const defaultJsonConfig = {
       "columns": [
         "name",
         "privateSchool",
-        "upToClass"
+        "language"
       ],
       "filters": [
         {
@@ -308,8 +308,12 @@ export const defaultJsonConfig = {
                     "phone"
                   ],
                   [
+                    "language",
                     "timing",
-                  "upToClass"]
+                  ],
+                  [
+                    "remarks"
+                  ]
                 ]
               }
             }
@@ -789,7 +793,58 @@ export const defaultJsonConfig = {
   },
   "entity:School": {
     "permissions": {
-    }
+    },
+    "attributes": [
+      {
+        "name": "name",
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for the name of a school:Name`
+        }
+      },
+      {
+        "name": "privateSchool",
+        "schema": {
+          dataType: "boolean",
+          label: $localize`:Label for if a school is a private school:Private School`
+        }
+      },
+      {
+        "name": "language",
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for the language of a school:Language`
+        }
+      },
+      {
+        "name": "address",
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for the address of a school:Address`
+        }
+      },
+      {
+        "name": "phone",
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for the phone number of a school:Phone Number`
+        }
+      },
+      {
+        "name": "timing",
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for the timing of a school:School Timing`
+        }
+      },
+      {
+        "name": "remarks",
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for the remarks for a school:Remarks`
+        }
+      }
+    ]
   },
   "entity:HistoricalEntityData": {
     "attributes": [

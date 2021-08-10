@@ -32,13 +32,13 @@ describe("SchoolsListComponent", () => {
       groups: [
         {
           name: "School Info",
-          columns: ["name", "upToClass"],
+          columns: ["name", "lanuage", "address"],
         },
       ],
     },
     filters: [
       {
-        id: "upToClass",
+        id: "language",
       },
     ],
   };

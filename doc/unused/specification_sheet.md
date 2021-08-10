@@ -34,12 +34,12 @@ The following subitems are to be defined as functional requirements to be fulfil
 - schools
    * school id
    * name
-   * board
-   * highest class
+   * private school
+   * language
    * address
-   * phone number/contact info
-   * annotations
-   * fees
+   * phone number
+   * remarks
+   * timing
 - legal guardian
    * address
    * contact info
