@@ -1,20 +1,19 @@
-<div>
-  <button
-    mat-stroked-button
-    color="accent"
-    (click)="addChildClick()"
-  >
-    <mat-icon
-      class="button-icon"
-      aria-label="add child"
-      fontIcon="fa-plus-circle"
-    ></mat-icon>
-    <span fxHide.lt-md="true" i18n="Add New Button"> Add Child </span>
-  </button>
-  <app-entity-subrecord
-    [records]="children"
-    [columns]="columns"
-    [showEntity]="routeToChild.bind(this)"
-    [editable]="false"
-  ></app-entity-subrecord>
-</div>
+<button
+  mat-stroked-button
+  color="accent"
+  (click)="addChildClick()"
+>
+  <mat-icon
+    class="button-icon"
+    aria-label="add child"
+    fontIcon="fa-plus-circle"
+  ></mat-icon>
+  <span fxHide.lt-md="true" i18n="Add New Button"> Add Child </span>
+</button>
+<app-entity-subrecord
+  [records]="children"
+  [columns]="columns"
+  [showEntity]="routeToChild.bind(this)"
+  [editable]="false"
+></app-entity-subrecord>
+
