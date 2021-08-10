@@ -1,6 +1,7 @@
 import { Entity } from "../../entity/model/entity";
 import { FilterSelectionOption } from "../../filter/filter-selection/filter-selection";
 import { FormFieldConfig } from "../entity-form/entity-form/FormConfig";
+import { ExportColumnConfig } from "../../export/export-service/export-column-config";
 
 export interface EntityListConfig {
   title: string;
@@ -17,6 +18,11 @@ export interface EntityListConfig {
    * Default is no filters.
    */
   filters?: FilterConfig[];
+
+  /**
+   * Optional config defining what fields are included in exports.
+   */
+  exportConfig?: ExportColumnConfig[];
 }
 
 export interface ColumnGroupsConfig {

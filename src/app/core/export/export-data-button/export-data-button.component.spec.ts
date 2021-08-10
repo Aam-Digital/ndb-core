@@ -1,24 +1,24 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
-import { BackupService } from "../services/backup.service";
-import { ExportDataComponent } from "./export-data.component";
+import { BackupService } from "../../admin/services/backup.service";
+import { ExportDataButtonComponent } from "./export-data-button.component";
 
 describe("ExportDataComponent", () => {
-  let component: ExportDataComponent;
-  let fixture: ComponentFixture<ExportDataComponent>;
+  let component: ExportDataButtonComponent;
+  let fixture: ComponentFixture<ExportDataButtonComponent>;
   let mockBackupService: jasmine.SpyObj<BackupService>;
 
   beforeEach(
     waitForAsync(() => {
       mockBackupService = jasmine.createSpyObj(["createJson", "createCsv"]);
       TestBed.configureTestingModule({
-        declarations: [ExportDataComponent],
+        declarations: [ExportDataButtonComponent],
         providers: [{ provide: BackupService, useValue: mockBackupService }],
       }).compileComponents();
     })
   );
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ExportDataComponent);
+    fixture = TestBed.createComponent(ExportDataButtonComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
