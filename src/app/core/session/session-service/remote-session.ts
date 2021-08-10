@@ -19,7 +19,6 @@ import PouchDB from "pouchdb-browser";
 
 import { AppConfig } from "../../app-config/app-config";
 import { Injectable } from "@angular/core";
-import { ConnectionState } from "../session-states/connection-state.enum";
 import { HttpClient } from "@angular/common/http";
 import { DatabaseUser } from "./local-user";
 import { SessionService } from "./session.service";
@@ -50,48 +49,11 @@ export class RemoteSession extends SessionService {
     private loggingService: LoggingService
   ) {
     super();
-    const thisRemoteSession = this;
     this.pouchDB = new PouchDB(
       AppConfig.settings.database.remote_url + AppConfig.settings.database.name,
       {
-        ajax: {
-          rejectUnauthorized: false,
-          timeout: 60000,
-        },
-        // TODO remove connection state and this code
-        fetch(url, opts) {
-          const req = fetch(url, opts);
-          req.then((result) => {
-            if (
-              thisRemoteSession.getConnectionState().getState() ===
-              ConnectionState.OFFLINE
-            ) {
-              thisRemoteSession
-                .getConnectionState()
-                .setState(ConnectionState.CONNECTED);
-            }
-            return result;
-          });
-          req.catch((error) => {
-            // fetch will throw on network errors, giving us a chance to check the online status
-            // if we are offline at the start, this will already be set on login, so we need not check that initial condition here
-            // do not set offline on AbortErrors, as these are fine:
-            // https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch#Exceptions
-            if (
-              error.name !== "AbortError" &&
-              thisRemoteSession.getConnectionState().getState() ===
-                ConnectionState.CONNECTED
-            ) {
-              thisRemoteSession
-                .getConnectionState()
-                .setState(ConnectionState.OFFLINE);
-            }
-            throw error;
-          });
-          return req;
-        },
         skip_setup: true,
-      } as PouchDB.Configuration.RemoteDatabaseConfiguration
+      }
     );
     this.database = new PouchDatabase(this.pouchDB, this.loggingService);
   }
@@ -111,16 +73,13 @@ export class RemoteSession extends SessionService {
         )
         .toPromise();
       this.assignDatabaseUser(response);
-      this.getConnectionState().setState(ConnectionState.CONNECTED);
       this.getLoginState().setState(LoginState.LOGGED_IN);
     } catch (error) {
       const errorStatus = error?.statusText?.toLowerCase();
       if (errorStatus === "unauthorized" || errorStatus === "forbidden") {
-        this.getConnectionState().setState(ConnectionState.REJECTED);
         this.getLoginState().setState(LoginState.LOGIN_FAILED);
       } else {
-        this.getConnectionState().setState(ConnectionState.OFFLINE);
-        this.getLoginState().setState(LoginState.LOGIN_FAILED);
+        this.getLoginState().setState(LoginState.UNAVAILABLE);
       }
     }
     return this.getLoginState().getState();
@@ -143,7 +102,6 @@ export class RemoteSession extends SessionService {
       })
       .toPromise();
     this.currentDBUser = undefined;
-    this.getConnectionState().setState(ConnectionState.DISCONNECTED);
     this.getLoginState().setState(LoginState.LOGGED_OUT);
   }
 

@@ -63,29 +63,22 @@ describe("RemoteSessionService", () => {
     await service.login(TEST_USER, TEST_PASSWORD);
 
     expect(mockHttpClient.post).toHaveBeenCalled();
-    expect(service.getConnectionState().getState()).toBe(
-      ConnectionState.CONNECTED
-    );
     expect(service.getLoginState().getState()).toBe(LoginState.LOGGED_IN);
   });
 
-  it("should be offline if login fails", async () => {
-    mockHttpClient.post.and.returnValue(throwError(new Error()));
+  it("should be unavailable if offline", async () => {
+    mockHttpClient.post.and.returnValue(
+      throwError(new HttpErrorResponse({ status: 501 }))
+    );
 
     await service.login(TEST_USER, TEST_PASSWORD);
 
-    expect(service.getConnectionState().getState()).toBe(
-      ConnectionState.OFFLINE
-    );
-    expect(service.getLoginState().getState()).toBe(LoginState.LOGIN_FAILED);
+    expect(service.getLoginState().getState()).toBe(LoginState.UNAVAILABLE);
   });
 
   it("should be rejected if login is unauthorized", async () => {
     await service.login(TEST_USER, "wrongPassword");
 
-    expect(service.getConnectionState().getState()).toBe(
-      ConnectionState.REJECTED
-    );
     expect(service.getLoginState().getState()).toBe(LoginState.LOGIN_FAILED);
   });
 
@@ -94,9 +87,6 @@ describe("RemoteSessionService", () => {
 
     await service.logout();
 
-    expect(service.getConnectionState().getState()).toBe(
-      ConnectionState.DISCONNECTED
-    );
     expect(service.getLoginState().getState()).toBe(LoginState.LOGGED_OUT);
   });
 
