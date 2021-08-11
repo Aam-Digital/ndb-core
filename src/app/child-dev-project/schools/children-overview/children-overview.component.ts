@@ -17,6 +17,7 @@ import { Entity } from "../../../core/entity/model/entity";
 @Component({
   selector: "app-children-overview",
   templateUrl: "children-overview.component.html",
+  styleUrls: ["./children-overview.component.scss"],
 })
 export class ChildrenOverviewComponent implements OnInitDynamicComponent {
   columns: FormFieldConfig[] = [
