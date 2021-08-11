@@ -55,7 +55,6 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
   }
 
   addChildClick() {
-    console.log('addChildClick')
     const dialogRef = this.dialog.open(EntityFormComponent, {
       width: "80%",
       maxHeight: "90vh",
