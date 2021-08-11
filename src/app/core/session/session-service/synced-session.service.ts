@@ -104,19 +104,20 @@ export class SyncedSessionService extends SessionService {
         }
       });
     } else {
-      switch (await remoteLogin) {
-        case LoginState.LOGGED_IN:
-          // New user or password changed
-          await syncPromise;
-          await this._localSession.login(username, password);
-          break;
-        case LoginState.UNAVAILABLE:
-          // Offline with no local user
-          this._localSession.getLoginState().setState(LoginState.UNAVAILABLE);
-          break;
-        default:
-          // Password and or username wrong
-          this._localSession.getLoginState().setState(LoginState.LOGIN_FAILED);
+      const remoteLoginState = await remoteLogin;
+      if (remoteLoginState === LoginState.LOGGED_IN) {
+        // New user or password changed
+        await syncPromise;
+        await this._localSession.login(username, password);
+      } else if (
+        remoteLoginState === LoginState.UNAVAILABLE &&
+        localLoginState === LoginState.UNAVAILABLE
+      ) {
+        // Offline with no local user
+        this._localSession.getLoginState().setState(LoginState.UNAVAILABLE);
+      } else {
+        // Password and or username wrong
+        this._localSession.getLoginState().setState(LoginState.LOGIN_FAILED);
       }
     }
     return this.getLoginState().getState();

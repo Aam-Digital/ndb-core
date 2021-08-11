@@ -111,7 +111,7 @@ describe("SyncedSessionService", () => {
     localSession.removeUser(TEST_USER);
   });
 
-  it("behaves correctly when both local and remote session reject (normal login with wrong password)", fakeAsync(() => {
+  it("Remote and local fail (normal login with wrong password)", fakeAsync(() => {
     const result = sessionService.login(TEST_USER, "wrongPassword");
     tick();
 
@@ -122,7 +122,7 @@ describe("SyncedSessionService", () => {
     flush();
   }));
 
-  it("should login when offline but with local user", fakeAsync(() => {
+  it("Remote unavailable, local succeeds (offline)", fakeAsync(() => {
     failRemoteLogin(true);
 
     const result = sessionService.login(TEST_USER, TEST_PASSWORD);
@@ -137,7 +137,20 @@ describe("SyncedSessionService", () => {
     flush();
   }));
 
-  it("behaves correctly when the local session rejects, but the remote session succeeds (password changed/new user)", fakeAsync(() => {
+  it("Remote unavailable, local fails (offline, wrong password)", fakeAsync(() => {
+    failRemoteLogin(true);
+
+    const result = sessionService.login(TEST_USER, "wrongPassword");
+    tick();
+
+    expect(localLoginSpy).toHaveBeenCalledWith(TEST_USER, "wrongPassword");
+    expect(remoteLoginSpy).toHaveBeenCalledWith(TEST_USER, "wrongPassword");
+    expect(syncSpy).not.toHaveBeenCalled();
+    expectAsync(result).toBeResolvedTo(LoginState.LOGIN_FAILED);
+    tick();
+  }));
+
+  it("Remote succeeds, local fails (password changed and new password entered/new user)", fakeAsync(() => {
     const newUser = { name: "newUser", roles: ["user_app"] };
     passRemoteLogin(newUser);
     spyOn(localSession, "saveUser").and.callThrough();
@@ -166,7 +179,25 @@ describe("SyncedSessionService", () => {
     localSession.removeUser(newUser.name);
   }));
 
-  it("behaves correctly when the sync fails and the local login succeeds", fakeAsync(() => {
+  it("Remote fails, local succeeds (Password changes, old password entered)", fakeAsync(() => {
+    failRemoteLogin();
+    spyOn(localSession, "removeUser").and.callThrough();
+
+    const result = sessionService.login(TEST_USER, TEST_PASSWORD);
+    tick();
+
+    // The local user is removed to prohibit further offline login
+    expect(localSession.removeUser).toHaveBeenCalledWith(TEST_USER);
+    // Initially the user is logged in
+    expectAsync(result).toBeResolvedTo(LoginState.LOGGED_IN);
+    // After remote session fails the user is logged out again
+    expect(sessionService.getLoginState().getState()).toBe(
+      LoginState.LOGIN_FAILED
+    );
+    flush();
+  }));
+
+  it("Remote and local succeed, sync fails", fakeAsync(() => {
     syncSpy.and.rejectWith();
 
     const login = sessionService.login(TEST_USER, TEST_PASSWORD);
@@ -180,7 +211,7 @@ describe("SyncedSessionService", () => {
     flush();
   }));
 
-  it("behaves correctly when the sync fails and the local login fails", fakeAsync(() => {
+  it("Remote succeeds, local fails, sync fails", fakeAsync(() => {
     passRemoteLogin();
     syncSpy.and.rejectWith();
 
@@ -197,7 +228,7 @@ describe("SyncedSessionService", () => {
     tick();
   }));
 
-  it("should report unavailable login if offline and no local user object is available", fakeAsync(() => {
+  it("remote and local unavailable", fakeAsync(() => {
     failRemoteLogin(true);
 
     const result = sessionService.login("anotherUser", "anotherPassword");
@@ -256,23 +287,6 @@ describe("SyncedSessionService", () => {
     expect(currentUser.roles).toEqual(["user_app", "admin"]);
     expectAsync(result).toBeResolvedTo(LoginState.LOGGED_IN);
     tick();
-  }));
-
-  it("should delete the local user object if remote login fails", fakeAsync(() => {
-    failRemoteLogin();
-    spyOn(localSession, "removeUser").and.callThrough();
-
-    const result = sessionService.login(TEST_USER, TEST_PASSWORD);
-    tick();
-
-    expect(localSession.removeUser).toHaveBeenCalledWith(TEST_USER);
-    // Initially the user is logged in
-    expectAsync(result).toBeResolvedTo(LoginState.LOGGED_IN);
-    // After remote session fails the user is logged out again
-    expect(sessionService.getLoginState().getState()).toBe(
-      LoginState.LOGIN_FAILED
-    );
-    flush();
   }));
 
   testSessionServiceImplementation(() => Promise.resolve(sessionService));
