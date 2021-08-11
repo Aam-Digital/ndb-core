@@ -91,7 +91,9 @@ describe("SyncedSessionService", () => {
         return of(dbUser as any);
       } else {
         return throwError(
-          new HttpErrorResponse({ statusText: "Unauthorized" })
+          new HttpErrorResponse({
+            status: remoteSession.UNAUTHORIZED_STATUS_CODE,
+          })
         );
       }
     });
@@ -282,7 +284,9 @@ describe("SyncedSessionService", () => {
   function failRemoteLogin(offline = false) {
     let rejectError;
     if (!offline) {
-      rejectError = new HttpErrorResponse({ statusText: "Unauthorized" });
+      rejectError = new HttpErrorResponse({
+        status: remoteSession.UNAUTHORIZED_STATUS_CODE,
+      });
     }
     mockHttpClient.post.and.returnValue(throwError(rejectError));
   }

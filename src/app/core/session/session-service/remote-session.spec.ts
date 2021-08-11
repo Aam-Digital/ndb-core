@@ -40,17 +40,17 @@ describe("RemoteSessionService", () => {
 
     // Remote session allows TEST_USER and TEST_PASSWORD as valid credentials
     dbUser = { name: TEST_USER, roles: ["user_app"] };
+    service = TestBed.inject(RemoteSession);
+
     mockHttpClient.post.and.callFake((url, body) => {
       if (body.name === TEST_USER && body.password === TEST_PASSWORD) {
         return of(dbUser as any);
       } else {
         return throwError(
-          new HttpErrorResponse({ statusText: "Unauthorized" })
+          new HttpErrorResponse({ status: service.UNAUTHORIZED_STATUS_CODE })
         );
       }
     });
-
-    service = TestBed.inject(RemoteSession);
   });
 
   it("should be connected after successful login", async () => {

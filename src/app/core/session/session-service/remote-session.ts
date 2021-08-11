@@ -19,7 +19,7 @@ import PouchDB from "pouchdb-browser";
 
 import { AppConfig } from "../../app-config/app-config";
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { DatabaseUser } from "./local-user";
 import { SessionService } from "./session.service";
 import { LoginState } from "../session-states/login-state.enum";
@@ -36,6 +36,8 @@ import { LoggingService } from "../../logging/logging.service";
  */
 @Injectable()
 export class RemoteSession extends SessionService {
+  // See https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+  readonly UNAUTHORIZED_STATUS_CODE = 401;
   /** remote (!) database PouchDB */
   public pouchDB: PouchDB.Database;
   private readonly database: Database;
@@ -75,8 +77,8 @@ export class RemoteSession extends SessionService {
       this.assignDatabaseUser(response);
       this.getLoginState().setState(LoginState.LOGGED_IN);
     } catch (error) {
-      const errorStatus = error?.statusText?.toLowerCase();
-      if (errorStatus === "unauthorized" || errorStatus === "forbidden") {
+      const httpError = error as HttpErrorResponse;
+      if (httpError?.status === this.UNAUTHORIZED_STATUS_CODE) {
         this.getLoginState().setState(LoginState.LOGIN_FAILED);
       } else {
         this.getLoginState().setState(LoginState.UNAVAILABLE);
