@@ -82,8 +82,8 @@ export class LoginComponent {
       .catch((reason) => {
         this.loggingService.error(`Unexpected login error: ${reason}`);
         this.onLoginFailure($localize`
-          :LoginError:An unexpected error occurred. 
-          Please reload the the page and try again. 
+          :LoginError:An unexpected error occurred.
+          Please reload the the page and try again.
           If you keep seeing this error message, please contact your system administrator.
         `);
       });
