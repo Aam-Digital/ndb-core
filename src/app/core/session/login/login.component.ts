@@ -74,15 +74,12 @@ export class LoginComponent {
             );
             break;
           default:
-            throw new Error(
-              $localize`:LoginError:Unexpected login state: ${loginState}`
-            );
+            throw new Error(`Unexpected login state: ${loginState}`);
         }
       })
       .catch((reason) => {
         this.loggingService.error(`Unexpected login error: ${reason}`);
-        this.onLoginFailure($localize`
-          :LoginError:An unexpected error occurred.
+        this.onLoginFailure($localize`:LoginError:An unexpected error occurred.
           Please reload the the page and try again.
           If you keep seeing this error message, please contact your system administrator.
         `);
