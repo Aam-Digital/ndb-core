@@ -120,7 +120,7 @@ describe("SyncedSessionService", () => {
     flush();
   }));
 
-  it("behaves correctly in the offline scenario", fakeAsync(() => {
+  it("should login when offline but with local user", fakeAsync(() => {
     failRemoteLogin(true);
 
     const result = sessionService.login(TEST_USER, TEST_PASSWORD);
@@ -193,6 +193,26 @@ describe("SyncedSessionService", () => {
     expect(liveSyncSpy).not.toHaveBeenCalled();
     expectAsync(result).toBeResolvedTo(LoginState.LOGIN_FAILED);
     tick();
+  }));
+
+  it("should report unavailable login if offline and no local user object is available", fakeAsync(() => {
+    failRemoteLogin(true);
+
+    const result = sessionService.login("anotherUser", "anotherPassword");
+    tick();
+
+    expect(localLoginSpy).toHaveBeenCalledWith(
+      "anotherUser",
+      "anotherPassword"
+    );
+    expect(remoteLoginSpy).toHaveBeenCalledWith(
+      "anotherUser",
+      "anotherPassword"
+    );
+    expect(syncSpy).not.toHaveBeenCalled();
+    expectAsync(result).toBeResolvedTo(LoginState.UNAVAILABLE);
+
+    flush();
   }));
 
   it("should load the user entity after successful local login", fakeAsync(() => {

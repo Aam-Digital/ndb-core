@@ -17,10 +17,10 @@
 import { Injectable } from "@angular/core";
 import { LoginState } from "../session-states/login-state.enum";
 import {
-  passwordEqualsEncrypted,
   DatabaseUser,
   encryptPassword,
   LocalUser,
+  passwordEqualsEncrypted,
 } from "./local-user";
 import { Database } from "../../database/database";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
@@ -55,12 +55,16 @@ export class LocalSession extends SessionService {
    */
   public async login(username: string, password: string): Promise<LoginState> {
     const user: LocalUser = JSON.parse(window.localStorage.getItem(username));
-    if (user && passwordEqualsEncrypted(password, user.encryptedPassword)) {
-      this.currentDBUser = user;
-      this.currentUserEntity = await this.loadUser(username);
-      this.getLoginState().setState(LoginState.LOGGED_IN);
+    if (user) {
+      if (passwordEqualsEncrypted(password, user.encryptedPassword)) {
+        this.currentDBUser = user;
+        this.currentUserEntity = await this.loadUser(username);
+        this.getLoginState().setState(LoginState.LOGGED_IN);
+      } else {
+        this.getLoginState().setState(LoginState.LOGIN_FAILED);
+      }
     } else {
-      this.getLoginState().setState(LoginState.LOGIN_FAILED);
+      this.getLoginState().setState(LoginState.UNAVAILABLE);
     }
     return this.getLoginState().getState();
   }

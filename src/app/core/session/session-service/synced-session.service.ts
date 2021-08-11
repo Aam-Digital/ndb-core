@@ -24,7 +24,6 @@ import { RemoteSession } from "./remote-session";
 import { LoginState } from "../session-states/login-state.enum";
 import { Database } from "../../database/database";
 import { PouchDatabase } from "../../database/pouch-database";
-import { ConnectionState } from "../session-states/connection-state.enum";
 import { SyncState } from "../session-states/sync-state.enum";
 import { User } from "../../user/user";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
@@ -89,36 +88,38 @@ export class SyncedSessionService extends SessionService {
 
     const remoteLogin = this._remoteSession.login(username, password);
     const syncPromise = this._remoteSession
-      .getConnectionState()
-      .waitForChangeTo(ConnectionState.CONNECTED)
+      .getLoginState()
+      .waitForChangeTo(LoginState.LOGGED_IN)
       .then(() => this.updateLocalUserAndStartSync(password));
 
     let localLoginState = await this._localSession.login(username, password);
 
     if (localLoginState === LoginState.LOGGED_IN) {
-      remoteLogin.then(() => {
-        const connectionState = this._remoteSession
-          .getConnectionState()
-          .getState();
-        if (connectionState === ConnectionState.REJECTED) {
+      remoteLogin.then((loginState) => {
+        if (loginState === LoginState.LOGIN_FAILED) {
           this.handleRemotePasswordChange(username);
         }
-        if (connectionState === ConnectionState.OFFLINE) {
+        if (loginState === LoginState.UNAVAILABLE) {
           this.retryLoginWhileOffline(username, password);
         }
       });
     } else {
-      // Local login failed
-      const remoteLoginState = await remoteLogin;
-      if (remoteLoginState === LoginState.LOGGED_IN) {
-        // New user or password changed
-        await syncPromise;
-        localLoginState = await this._localSession.login(username, password);
-      } else {
-        // Password wrong or offline without local users, neither local nor remote login worked
+      switch (await remoteLogin) {
+        case LoginState.LOGGED_IN:
+          // New user or password changed
+          await syncPromise;
+          await this._localSession.login(username, password);
+          break;
+        case LoginState.UNAVAILABLE:
+          // Offline with no local user
+          this._localSession.getLoginState().setState(LoginState.UNAVAILABLE);
+          break;
+        default:
+          // Password and or username wrong
+          this._localSession.getLoginState().setState(LoginState.LOGIN_FAILED);
       }
     }
-    return localLoginState;
+    return this.getLoginState().getState();
   }
 
   private handleRemotePasswordChange(username: string) {
@@ -170,10 +171,6 @@ export class SyncedSessionService extends SessionService {
   public getLoginState() {
     return this._localSession.getLoginState();
   }
-  /** see {@link SessionService} */
-  public getConnectionState() {
-    return this._remoteSession.getConnectionState();
-  }
 
   /** see {@link SessionService} */
   public async sync(): Promise<any> {
@@ -205,7 +202,10 @@ export class SyncedSessionService extends SessionService {
       })
       .on("paused", (info) => {
         // replication was paused: either because sync is finished or because of a failed sync (mostly due to lost connection). info is empty.
-        if (this.getConnectionState().getState() !== ConnectionState.OFFLINE) {
+        if (
+          this._remoteSession.getLoginState().getState() ===
+          LoginState.LOGGED_IN
+        ) {
           this.getSyncState().setState(SyncState.COMPLETED);
           // We might end up here after a failed sync that is not due to offline errors.
           // It shouldn't happen too often, as we have an initial non-live sync to catch those situations, but we can't find that out here
