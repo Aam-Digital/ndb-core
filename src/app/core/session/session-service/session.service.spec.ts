@@ -45,7 +45,7 @@ export function testSessionServiceImplementation(
 
   it("has the correct initial state", () => {
     expect(sessionService.getSyncState().getState()).toBe(SyncState.UNSYNCED);
-    expectNotToBeLoggedIn(sessionService, LoginState.LOGGED_OUT);
+    expectNotToBeLoggedIn(LoginState.LOGGED_OUT);
   });
 
   it("succeeds login", async () => {
@@ -67,14 +67,15 @@ export function testSessionServiceImplementation(
     const loginResult = await sessionService.login(TEST_USER, "");
 
     expect(loginResult).toEqual(LoginState.LOGIN_FAILED);
-    expectNotToBeLoggedIn(sessionService, LoginState.LOGIN_FAILED);
+    expectNotToBeLoggedIn(LoginState.LOGIN_FAILED);
   });
 
   it("fails login with wrong/non-existing username", async () => {
     const loginResult = await sessionService.login("other", TEST_PASSWORD);
 
-    expect(loginResult).toEqual(LoginState.LOGIN_FAILED);
-    expectNotToBeLoggedIn(sessionService, LoginState.LOGIN_FAILED);
+    // The LocalSession returns LoginState.UNAVAILABLE for unknown users because they might be available remote
+    const failedStates = [LoginState.LOGIN_FAILED, LoginState.UNAVAILABLE];
+    expect(failedStates).toContain(loginResult);
   });
 
   it("logs out and resets states", async () => {
@@ -82,25 +83,26 @@ export function testSessionServiceImplementation(
     expect(loginResult).toEqual(LoginState.LOGGED_IN);
 
     await sessionService.logout();
-    expectNotToBeLoggedIn(sessionService, LoginState.LOGGED_OUT);
+    expectNotToBeLoggedIn(LoginState.LOGGED_OUT);
   });
-}
 
-/**
- * Check all states of the session to be "logged out".
- * @param session The SessionService whose state should be checked
- * @param expectedLoginState The expected LoginState (failed or simply logged out)
- */
-function expectNotToBeLoggedIn(
-  session: SessionService,
-  expectedLoginState: LoginState.LOGGED_OUT | LoginState.LOGIN_FAILED
-) {
-  expect(session.getLoginState().getState())
-    .withContext("unexpected LoginState")
-    .toEqual(expectedLoginState);
+  /**
+   * Check all states of the session to be "logged out".
+   * @param expectedLoginState The expected LoginState (failed or simply logged out)
+   */
+  function expectNotToBeLoggedIn(
+    expectedLoginState:
+      | LoginState.LOGGED_OUT
+      | LoginState.LOGIN_FAILED
+      | LoginState.UNAVAILABLE
+  ) {
+    expect(sessionService.getLoginState().getState())
+      .withContext("unexpected LoginState")
+      .toEqual(expectedLoginState);
 
-  expect(session.isLoggedIn())
-    .withContext("unexpected isLoggedIn")
-    .toEqual(false);
-  expect(session.getCurrentDBUser()).not.toBeDefined();
+    expect(sessionService.isLoggedIn())
+      .withContext("unexpected isLoggedIn")
+      .toEqual(false);
+    expect(sessionService.getCurrentDBUser()).not.toBeDefined();
+  }
 }

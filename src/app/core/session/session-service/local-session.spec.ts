@@ -89,7 +89,7 @@ describe("LocalSessionService", () => {
     await localSession.login("wrongUsername", TEST_PASSWORD);
 
     expect(localSession.getLoginState().getState()).toBe(
-      LoginState.LOGIN_FAILED
+      LoginState.UNAVAILABLE
     );
   });
 
@@ -106,8 +106,9 @@ describe("LocalSessionService", () => {
     localSession.removeUser(TEST_USER);
 
     await localSession.login(TEST_USER, TEST_PASSWORD);
+
     expect(localSession.getLoginState().getState()).toBe(
-      LoginState.LOGIN_FAILED
+      LoginState.UNAVAILABLE
     );
     expect(localSession.getCurrentUser()).toBeUndefined();
   });
