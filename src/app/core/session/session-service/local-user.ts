@@ -1,10 +1,17 @@
 import * as CryptoJS from "crypto-js";
 
+/**
+ * User object as received from the remote server database.
+ * See {@link https://docs.couchdb.org/en/stable/intro/security.html?highlight=_users#users-documents}
+ */
 export interface DatabaseUser {
   name: string;
   roles: string[];
 }
 
+/**
+ * User object as prepared and used by the local session.
+ */
 export interface LocalUser extends DatabaseUser {
   encryptedPassword: EncryptedPassword;
 }

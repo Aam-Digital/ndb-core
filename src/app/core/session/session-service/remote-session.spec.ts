@@ -62,7 +62,7 @@ describe("RemoteSessionService", () => {
     expect(service.getLoginState().getState()).toBe(LoginState.LOGGED_IN);
   });
 
-  it("should be unavailable if offline", async () => {
+  it("should be unavailable if requests fails with error other than 401", async () => {
     mockHttpClient.post.and.returnValue(
       throwError(new HttpErrorResponse({ status: 501 }))
     );

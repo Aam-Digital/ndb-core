@@ -110,7 +110,7 @@ export class LocalSession extends SessionService {
   }
 
   /**
-   * Changes the login state and removes the current user
+   * Resets the login state and current user (leaving it in local storage to allow later local login)
    */
   public logout() {
     this.currentDBUser = undefined;
