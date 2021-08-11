@@ -92,7 +92,7 @@ export class SyncedSessionService extends SessionService {
       .waitForChangeTo(LoginState.LOGGED_IN)
       .then(() => this.updateLocalUserAndStartSync(password));
 
-    let localLoginState = await this._localSession.login(username, password);
+    const localLoginState = await this._localSession.login(username, password);
 
     if (localLoginState === LoginState.LOGGED_IN) {
       remoteLogin.then((loginState) => {
