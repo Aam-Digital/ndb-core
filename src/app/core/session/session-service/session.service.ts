@@ -17,7 +17,6 @@
 
 import { LoginState } from "../session-states/login-state.enum";
 import { Database } from "../../database/database";
-import { ConnectionState } from "../session-states/connection-state.enum";
 import { SyncState } from "../session-states/sync-state.enum";
 import { User } from "../../user/user";
 import { StateHandler } from "../session-states/state-handler";
@@ -37,8 +36,6 @@ import { DatabaseUser } from "./local-user";
  * Providers are set up in a way that you will get the correct implementation during runtime.
  */
 export abstract class SessionService {
-  /** StateHandler for connection state changes */
-  private connectionState = new StateHandler(ConnectionState.DISCONNECTED);
   /** StateHandler for login state changes */
   private loginState = new StateHandler(LoginState.LOGGED_OUT);
   /** StateHandler for sync state changes */
@@ -87,13 +84,6 @@ export abstract class SessionService {
    */
   public getLoginState(): StateHandler<LoginState> {
     return this.loginState;
-  }
-
-  /**
-   * Get the state of the connection to the remote server.
-   */
-  public getConnectionState(): StateHandler<ConnectionState> {
-    return this.connectionState;
   }
 
   /**

@@ -1,7 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 import { RemoteSession } from "./remote-session";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import { ConnectionState } from "../session-states/connection-state.enum";
 import { of, throwError } from "rxjs";
 import { AppConfig } from "../../app-config/app-config";
 import { SessionType } from "../session-type";
@@ -55,9 +54,6 @@ describe("RemoteSessionService", () => {
   });
 
   it("should be connected after successful login", async () => {
-    expect(service.getConnectionState().getState()).toBe(
-      ConnectionState.DISCONNECTED
-    );
     expect(service.getLoginState().getState()).toBe(LoginState.LOGGED_OUT);
 
     await service.login(TEST_USER, TEST_PASSWORD);
