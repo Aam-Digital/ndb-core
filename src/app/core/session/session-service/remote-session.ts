@@ -113,11 +113,11 @@ export class RemoteSession extends SessionService {
 
   checkPassword(username: string, password: string): boolean {
     // Cannot be checked against CouchDB due to cookie-auth
-    return false;
+    throw Error("Can't check password in remote session");
   }
 
   getCurrentUser(): User {
-    return undefined;
+    throw Error("Can't get user entity in remote session");
   }
 
   getDatabase(): Database {
