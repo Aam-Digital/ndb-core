@@ -151,6 +151,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
 
   constructor(private entityMapperService: EntityMapperService) {
     this.filteredEntities = this.formControl.valueChanges.pipe(
+      untilDestroyed(this),
       filter((value) => value === null || typeof value === "string"), // sometimes produces entities
       map((searchText?: string) => this.filter(searchText))
     );
