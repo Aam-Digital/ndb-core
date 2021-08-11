@@ -10,6 +10,7 @@ import { mathLevels } from "../../child-dev-project/aser/model/mathLevels";
 import { readingLevels } from "../../child-dev-project/aser/model/readingLevels";
 import { warningLevels } from "../../child-dev-project/warning-levels";
 import { ratingAnswers } from "../../features/historical-data/rating-answers";
+import { Note } from "../../child-dev-project/notes/model/note";
 
 // prettier-ignore
 export const defaultJsonConfig = {
@@ -772,6 +773,23 @@ export const defaultJsonConfig = {
           "aggregationDefinitions": [
             {
               "query": `${EventNote.ENTITY_TYPE}:toArray[*date >= ? & date <= ?]`,
+              "groupBy": ["category"],
+              "label": $localize`:Label for a report query:Events`,
+              "aggregations": [
+                {
+                  "query": `:getParticipantsWithAttendance(PRESENT):unique:addPrefix(${Child.ENTITY_TYPE}):toEntities`,
+                  "groupBy": ["gender", "religion"],
+                  "label": $localize`:Label for a report query:Participants`
+                }
+              ]
+            }
+          ],
+        },
+        {
+          "title": $localize`:Name of a report:Overall Activity Report`,
+          "aggregationDefinitions": [
+            {
+              "query": `${EventNote.ENTITY_TYPE}:toArray:addEntities(${Note.ENTITY_TYPE})[*date >= ? & date <= ?]`,
               "groupBy": ["category"],
               "label": $localize`:Label for a report query:Events`,
               "aggregations": [
