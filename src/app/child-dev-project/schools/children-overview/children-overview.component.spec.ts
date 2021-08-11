@@ -16,14 +16,15 @@ import { Router } from "@angular/router";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { User } from "../../../core/user/user";
+import { MatDialog } from "@angular/material/dialog";
+import { EntityFormComponent } from "../../../core/entity-components/entity-form/entity-form/entity-form.component";
+import { EntityFormService } from "../../../core/entity-components/entity-form/entity-form.service";
+import { AlertService } from "../../../core/alerts/alert.service";
 
 describe("ChildrenOverviewComponent", () => {
   let component: ChildrenOverviewComponent;
   let fixture: ComponentFixture<ChildrenOverviewComponent>;
-  const schoolsService: jasmine.SpyObj<SchoolsService> = jasmine.createSpyObj(
-    "schoolsService",
-    ["getChildrenForSchool"]
-  );
+  let schoolsService: jasmine.SpyObj<SchoolsService>;
 
   beforeEach(
     waitForAsync(() => {
@@ -31,6 +32,10 @@ describe("ChildrenOverviewComponent", () => {
         "getCurrentUser",
       ]);
       mockSessionService.getCurrentUser.and.returnValue(new User());
+      schoolsService = jasmine.createSpyObj(
+        "schoolsService",
+        ["getChildrenForSchool"]
+      );
 
       TestBed.configureTestingModule({
         declarations: [],
@@ -82,4 +87,36 @@ describe("ChildrenOverviewComponent", () => {
       child.getId(),
     ]);
   });
+
+  it( "should open a dialog when clicking add new child", () => {
+    component.entity = new School();
+    const dialog = TestBed.inject(MatDialog);
+    const entityFormService = TestBed.inject(EntityFormService);
+    const alertService = TestBed.inject(AlertService);
+    spyOn(dialog,  "open").and.returnValues({componentInstance: new EntityFormComponent(entityFormService, alertService)} as any)
+
+    component.addChildClick();
+
+    expect(dialog.open).toHaveBeenCalled()
+  });
+
+  it( "should add a newly added child to the list", fakeAsync(() => {
+    component.entity = new School();
+    const child = new Child();
+    const dialog = TestBed.inject(MatDialog);
+    const entityFormService = TestBed.inject(EntityFormService);
+    const alertService = TestBed.inject(AlertService);
+    const componentInstance = new EntityFormComponent(entityFormService, alertService);
+    spyOn(dialog,  "open").and.returnValues({
+      componentInstance: componentInstance,
+      close: () => {}
+    } as any)
+    schoolsService.getChildrenForSchool.and.resolveTo([child])
+
+    component.addChildClick();
+    componentInstance.onSave.emit();
+    tick();
+
+    expect(component.children).toContain(child)
+  }));
 });
