@@ -14,15 +14,16 @@ import { AttendanceModule } from "../attendance.module";
 import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { MatNativeDateModule } from "@angular/material/core";
 import { MatDialogRef } from "@angular/material/dialog";
-import { EMPTY } from "rxjs";
 import { EventNote } from "../model/event-note";
 import { AttendanceService } from "../attendance.service";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { User } from "../../../core/user/user";
+import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
 
 describe("AttendanceDetailsComponent", () => {
   let component: AttendanceDetailsComponent;
   let fixture: ComponentFixture<AttendanceDetailsComponent>;
+  let mockSessionService: jasmine.SpyObj<SessionService>;
 
   beforeEach(
     waitForAsync(() => {
@@ -32,6 +33,12 @@ describe("AttendanceDetailsComponent", () => {
       mockAttendanceService.createEventForActivity.and.resolveTo(
         new EventNote()
       );
+
+      mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
+      mockSessionService.getCurrentDBUser.and.returnValue({
+        name: "TestUser",
+        roles: [],
+      });
 
       const entity = ActivityAttendance.create(new Date(), [
         generateEventWithAttendance(
@@ -52,9 +59,6 @@ describe("AttendanceDetailsComponent", () => {
       ]);
       entity.activity = RecurringActivity.create("Test Activity");
 
-      const mockEntityMapperService = jasmine.createSpyObj(["receiveUpdates"]);
-      mockEntityMapperService.receiveUpdates.and.returnValue(EMPTY);
-
       TestBed.configureTestingModule({
         imports: [
           AttendanceModule,
@@ -65,13 +69,13 @@ describe("AttendanceDetailsComponent", () => {
           MatNativeDateModule,
         ],
         providers: [
-          { provide: EntityMapperService, useValue: mockEntityMapperService },
+          {
+            provide: EntityMapperService,
+            useValue: mockEntityMapper([new User("TestUser")]),
+          },
           { provide: MatDialogRef, useValue: {} },
           { provide: AttendanceService, useValue: mockAttendanceService },
-          {
-            provide: SessionService,
-            useValue: { getCurrentUser: () => new User() },
-          },
+          { provide: SessionService, useValue: mockSessionService },
         ],
       }).compileComponents();
     })

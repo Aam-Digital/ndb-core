@@ -15,6 +15,10 @@ import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { EntityFormService } from "../../../core/entity-components/entity-form/entity-form.service";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { User } from "../../../core/user/user";
+import {
+  mockEntityMapper,
+  MockEntityMapperService,
+} from "../../../core/entity/mock-entity-mapper-service";
 
 describe("AserComponent", () => {
   let component: AserComponent;
@@ -28,11 +32,18 @@ describe("AserComponent", () => {
       return of([]);
     },
   };
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockSessionService: jasmine.SpyObj<SessionService>;
+  let mockedEntityMapper: MockEntityMapperService;
 
   beforeEach(
     waitForAsync(() => {
-      mockEntityMapper = jasmine.createSpyObj(["save"]);
+      mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
+      mockSessionService.getCurrentDBUser.and.returnValue({
+        name: "TestUser",
+        roles: [],
+      });
+      mockedEntityMapper = mockEntityMapper([new User("TestUser")]);
+
       TestBed.configureTestingModule({
         declarations: [AserComponent],
         imports: [
@@ -48,11 +59,8 @@ describe("AserComponent", () => {
           EntityFormService,
           DatePipe,
           { provide: ChildrenService, useValue: mockChildrenService },
-          { provide: EntityMapperService, useValue: mockEntityMapper },
-          {
-            provide: SessionService,
-            useValue: { getCurrentUser: () => new User() },
-          },
+          { provide: EntityMapperService, useValue: mockedEntityMapper },
+          { provide: SessionService, useValue: mockSessionService },
         ],
       }).compileComponents();
     })

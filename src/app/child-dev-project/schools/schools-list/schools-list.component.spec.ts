@@ -18,10 +18,15 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { User } from "../../../core/user/user";
 import { BackupService } from "../../../core/admin/services/backup.service";
+import {
+  mockEntityMapper,
+  MockEntityMapperService,
+} from "../../../core/entity/mock-entity-mapper-service";
 
 describe("SchoolsListComponent", () => {
   let component: SchoolsListComponent;
   let fixture: ComponentFixture<SchoolsListComponent>;
+  let mockSessionService: jasmine.SpyObj<SessionService>;
 
   const routeData: EntityListConfig = {
     title: "Schools List",
@@ -47,14 +52,16 @@ describe("SchoolsListComponent", () => {
     data: of(routeData),
     queryParams: of({}),
   };
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockedEntityMapper: MockEntityMapperService;
 
   beforeEach(
     waitForAsync(() => {
-      const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
-      mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
-      mockEntityMapper = jasmine.createSpyObj(["loadType", "save"]);
-      mockEntityMapper.loadType.and.resolveTo([]);
+      mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
+      mockSessionService.getCurrentDBUser.and.returnValue({
+        name: "TestUser",
+        roles: [],
+      });
+      mockedEntityMapper = mockEntityMapper([new User("TestUser")]);
       TestBed.configureTestingModule({
         declarations: [],
         imports: [
@@ -66,7 +73,7 @@ describe("SchoolsListComponent", () => {
         providers: [
           { provide: ActivatedRoute, useValue: routeMock },
           { provide: SessionService, useValue: mockSessionService },
-          { provide: EntityMapperService, useValue: mockEntityMapper },
+          { provide: EntityMapperService, useValue: mockedEntityMapper },
           { provide: BackupService, useValue: {} },
         ],
       }).compileComponents();
@@ -86,10 +93,10 @@ describe("SchoolsListComponent", () => {
   it("should load the schools", fakeAsync(() => {
     const school1 = new School("s1");
     const school2 = new School("s2");
-    mockEntityMapper.loadType.and.resolveTo([school1, school2]);
+    spyOn(mockedEntityMapper, "loadType").and.resolveTo([school1, school2]);
     component.ngOnInit();
     tick();
-    expect(mockEntityMapper.loadType).toHaveBeenCalledWith(School);
+    expect(mockedEntityMapper.loadType).toHaveBeenCalledWith(School);
     expect(component.schoolList).toEqual([school1, school2]);
   }));
 

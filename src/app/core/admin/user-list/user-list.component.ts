@@ -50,7 +50,7 @@ export class UserListComponent implements OnInit {
       this.loadData();
       return;
     }
-    if (this.sessionService.getCurrentUser().getId() === user.getId()) {
+    if (this.sessionService.getCurrentDBUser().name === user.getId()) {
       // do not change own user to avoid removing your own admin rights by accident
       this.loadData();
       return;

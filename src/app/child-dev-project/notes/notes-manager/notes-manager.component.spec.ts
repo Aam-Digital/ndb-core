@@ -32,12 +32,16 @@ import { EventNote } from "../../attendance/model/event-note";
 import { BehaviorSubject } from "rxjs";
 import { BackupService } from "../../../core/admin/services/backup.service";
 import { UpdatedEntity } from "../../../core/entity/model/entity-update";
+import {
+  mockEntityMapper,
+  MockEntityMapperService,
+} from "../../../core/entity/mock-entity-mapper-service";
 
 describe("NotesManagerComponent", () => {
   let component: NotesManagerComponent;
   let fixture: ComponentFixture<NotesManagerComponent>;
 
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockedEntityMapper: MockEntityMapperService;
   let mockNoteObservable: Subject<UpdatedEntity<Note>>;
   let mockEventNoteObservable: Subject<UpdatedEntity<Note>>;
   const dialogMock: jasmine.SpyObj<FormDialogService> = jasmine.createSpyObj(
@@ -96,29 +100,26 @@ describe("NotesManagerComponent", () => {
       "getConfig",
     ]);
     mockConfigService.getConfig.and.returnValue(testInteractionTypes);
-
-    mockEntityMapper = jasmine.createSpyObj([
-      "loadType",
-      "receiveUpdates",
-      "save",
-    ]);
-    mockEntityMapper.loadType.and.resolveTo([]);
     mockNoteObservable = new Subject<UpdatedEntity<Note>>();
     mockEventNoteObservable = new Subject<UpdatedEntity<EventNote>>();
-    mockEntityMapper.receiveUpdates.and.callFake((entityType) =>
+
+    const mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
+    mockSessionService.getCurrentDBUser.and.returnValue({
+      name: "TestUser",
+      roles: [],
+    });
+    mockedEntityMapper = mockEntityMapper([new User("TestUser")]);
+    spyOn(mockedEntityMapper, "receiveUpdates").and.callFake((entityType) =>
       (entityType as any) === Note
         ? (mockNoteObservable as any)
         : (mockEventNoteObservable as any)
     );
-
-    const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
-    mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
     TestBed.configureTestingModule({
       declarations: [],
       imports: [NotesModule, RouterTestingModule, Angulartics2Module.forRoot()],
       providers: [
         { provide: SessionService, useValue: mockSessionService },
-        { provide: EntityMapperService, useValue: mockEntityMapper },
+        { provide: EntityMapperService, useValue: mockedEntityMapper },
         { provide: FormDialogService, useValue: dialogMock },
         { provide: ActivatedRoute, useValue: routeMock },
         { provide: ConfigService, useValue: mockConfigService },
@@ -207,20 +208,17 @@ describe("NotesManagerComponent", () => {
     note.category = testInteractionTypes[0];
     const eventNote = EventNote.create(new Date("2020-01-01"), "test event");
     eventNote.category = testInteractionTypes[0];
-    mockEntityMapper.loadType.and.callFake(loadTypeFake([note], [eventNote]));
+    mockedEntityMapper.addAll([note, eventNote]);
 
     component.includeEventNotes = true;
     await component.updateIncludeEvents();
 
     expect(component.notes).toEqual([note, eventNote]);
-    expect(mockEntityMapper.loadType).toHaveBeenCalledWith(Note);
-    expect(mockEntityMapper.loadType).toHaveBeenCalledWith(EventNote);
 
     component.includeEventNotes = false;
     await component.updateIncludeEvents();
 
     expect(component.notes).toEqual([note]);
-    expect(mockEntityMapper.loadType.calls.mostRecent().args).toEqual([Note]);
   });
 
   it("loads initial list including EventNotes if set in config", fakeAsync(async () => {
@@ -228,7 +226,7 @@ describe("NotesManagerComponent", () => {
     note.category = testInteractionTypes[0];
     const eventNote = EventNote.create(new Date("2020-01-01"), "test event");
     eventNote.category = testInteractionTypes[0];
-    mockEntityMapper.loadType.and.callFake(loadTypeFake([note], [eventNote]));
+    mockedEntityMapper.addAll([note, eventNote]);
 
     routeMock.data.next(
       Object.assign(
@@ -240,20 +238,5 @@ describe("NotesManagerComponent", () => {
     flush();
 
     expect(component.notes).toEqual([note, eventNote]);
-    expect(mockEntityMapper.loadType).toHaveBeenCalledWith(Note);
-    expect(mockEntityMapper.loadType).toHaveBeenCalledWith(EventNote);
   }));
 });
-
-function loadTypeFake(notes: Note[], eventNotes: EventNote[]) {
-  return (type) => {
-    switch (type) {
-      case Note:
-        return Promise.resolve(notes);
-      case EventNote:
-        return Promise.resolve(eventNotes);
-      default:
-        return Promise.resolve([]);
-    }
-  };
-}

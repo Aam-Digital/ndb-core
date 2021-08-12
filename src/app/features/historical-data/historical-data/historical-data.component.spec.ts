@@ -16,15 +16,22 @@ import { HistoricalDataService } from "../historical-data.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { User } from "../../../core/user/user";
+import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
 
 describe("HistoricalDataComponent", () => {
   let component: HistoricalDataComponent;
   let fixture: ComponentFixture<HistoricalDataComponent>;
   let mockHistoricalDataService: jasmine.SpyObj<HistoricalDataService>;
+  let mockSessionService: jasmine.SpyObj<SessionService>;
 
   beforeEach(async () => {
     mockHistoricalDataService = jasmine.createSpyObj(["getHistoricalDataFor"]);
     mockHistoricalDataService.getHistoricalDataFor.and.resolveTo([]);
+    mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
+    mockSessionService.getCurrentDBUser.and.returnValue({
+      name: "TestUser",
+      roles: [],
+    });
 
     await TestBed.configureTestingModule({
       declarations: [HistoricalDataComponent],
@@ -33,13 +40,10 @@ describe("HistoricalDataComponent", () => {
         { provide: HistoricalDataService, useValue: mockHistoricalDataService },
         {
           provide: EntityMapperService,
-          useValue: jasmine.createSpyObj(["save", "remove"]),
+          useValue: mockEntityMapper([new User("TestUser")]),
         },
         DatePipe,
-        {
-          provide: SessionService,
-          useValue: { getCurrentUser: () => new User() },
-        },
+        { provide: SessionService, useValue: mockSessionService },
       ],
     }).compileComponents();
   });

@@ -32,20 +32,25 @@ import { genders } from "../../../../child-dev-project/children/model/genders";
 import { LoggingService } from "../../../logging/logging.service";
 import { SessionService } from "../../../session/session-service/session.service";
 import { User } from "../../../user/user";
+import {
+  mockEntityMapper,
+  MockEntityMapperService,
+} from "../../../entity/mock-entity-mapper-service";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
   let fixture: ComponentFixture<EntitySubrecordComponent<Entity>>;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockedEntityMapper: MockEntityMapperService;
+  let mockSessionService: jasmine.SpyObj<SessionService>;
 
   beforeEach(
     waitForAsync(() => {
-      mockEntityMapper = jasmine.createSpyObj(["remove", "save"]);
-      mockEntityMapper.save.and.resolveTo();
-      const mockSessionService = jasmine.createSpyObj<SessionService>([
-        "getCurrentUser",
-      ]);
-      mockSessionService.getCurrentUser.and.returnValue(new User());
+      mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
+      mockSessionService.getCurrentDBUser.and.returnValue({
+        name: "TestUser",
+        roles: [],
+      });
+      mockedEntityMapper = mockEntityMapper([new User("TestUser")]);
 
       TestBed.configureTestingModule({
         imports: [
@@ -57,7 +62,7 @@ describe("EntitySubrecordComponent", () => {
         providers: [
           DatePipe,
           PercentPipe,
-          { provide: EntityMapperService, useValue: mockEntityMapper },
+          { provide: EntityMapperService, useValue: mockedEntityMapper },
           { provide: SessionService, useValue: mockSessionService },
         ],
       }).compileComponents();
@@ -251,7 +256,7 @@ describe("EntitySubrecordComponent", () => {
   });
 
   it("should correctly save changes to an entity", fakeAsync(() => {
-    mockEntityMapper.save.and.resolveTo();
+    spyOn(mockedEntityMapper, "save").and.resolveTo();
     const fb = TestBed.inject(FormBuilder);
     const child = new Child();
     child.name = "Old Name";
@@ -264,7 +269,7 @@ describe("EntitySubrecordComponent", () => {
     component.save(tableRow);
     tick();
 
-    expect(mockEntityMapper.save).toHaveBeenCalledWith(tableRow.record);
+    expect(mockedEntityMapper.save).toHaveBeenCalledWith(tableRow.record);
     expect(tableRow.record.name).toBe("New Name");
     expect(tableRow.record.gender).toBe(genders[2]);
     expect(tableRow.formGroup.disabled).toBeTrue();
@@ -303,7 +308,8 @@ describe("EntitySubrecordComponent", () => {
     spyOn(snackbarService, "open").and.returnValue({
       onAction: () => snackbarObservable,
     } as any);
-    mockEntityMapper.remove.and.resolveTo();
+    spyOn(mockedEntityMapper, "remove").and.resolveTo();
+    spyOn(mockedEntityMapper, "save").and.resolveTo();
     const child = new Child();
     component.records = [child];
 
@@ -313,11 +319,11 @@ describe("EntitySubrecordComponent", () => {
 
     dialogObservable.next(true);
     tick();
-    expect(mockEntityMapper.remove).toHaveBeenCalledWith(child);
+    expect(mockedEntityMapper.remove).toHaveBeenCalledWith(child);
     expect(component.records).toEqual([]);
 
     snackbarObservable.next();
-    expect(mockEntityMapper.save).toHaveBeenCalledWith(child, true);
+    expect(mockedEntityMapper.save).toHaveBeenCalledWith(child, true);
     expect(component.records).toEqual([child]);
 
     flush();

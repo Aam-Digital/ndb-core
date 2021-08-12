@@ -21,6 +21,10 @@ import { DatabaseField } from "../../entity/database-field.decorator";
 import { ReactiveFormsModule } from "@angular/forms";
 import { AttendanceService } from "../../../child-dev-project/attendance/attendance.service";
 import { ExportModule } from "../../export/export.module";
+import {
+  mockEntityMapper,
+  MockEntityMapperService,
+} from "../../entity/mock-entity-mapper-service";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -73,17 +77,20 @@ describe("EntityListComponent", () => {
   let mockConfigService: jasmine.SpyObj<ConfigService>;
   let mockLoggingService: jasmine.SpyObj<LoggingService>;
   let mockSessionService: jasmine.SpyObj<SessionService>;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockedEntityMapper: MockEntityMapperService;
   let mockEntitySchemaService: jasmine.SpyObj<EntitySchemaService>;
   let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
 
   beforeEach(
     waitForAsync(() => {
-      mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
-      mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
+      mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
+      mockSessionService.getCurrentDBUser.and.returnValue({
+        name: "TestUser",
+        roles: [],
+      });
+      mockedEntityMapper = mockEntityMapper([new User("TestUser")]);
       mockConfigService = jasmine.createSpyObj(["getConfig"]);
       mockLoggingService = jasmine.createSpyObj(["warn"]);
-      mockEntityMapper = jasmine.createSpyObj(["save"]);
       mockEntitySchemaService = jasmine.createSpyObj([
         "getComponent",
         "registerSchemaDatatype",
@@ -114,7 +121,7 @@ describe("EntityListComponent", () => {
           DatePipe,
           { provide: SessionService, useValue: mockSessionService },
           { provide: ConfigService, useValue: mockConfigService },
-          { provide: EntityMapperService, useValue: mockEntityMapper },
+          { provide: EntityMapperService, useValue: mockedEntityMapper },
           { provide: LoggingService, useValue: mockLoggingService },
           { provide: BackupService, useValue: {} },
           { provide: EntitySchemaService, useValue: mockEntitySchemaService },

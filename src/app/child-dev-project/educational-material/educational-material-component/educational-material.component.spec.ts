@@ -15,29 +15,36 @@ import { User } from "../../../core/user/user";
 describe("EducationalMaterialComponent", () => {
   let component: EducationalMaterialComponent;
   let fixture: ComponentFixture<EducationalMaterialComponent>;
-
-  const mockChildrenService = {
-    getChild: () => {
-      return of([new Child("22")]);
-    },
-    getEducationalMaterialsOfChild: () => {
-      return of([]);
-    },
-  };
+  let mockSessionService: jasmine.SpyObj<SessionService>;
+  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
+  const child = new Child("22");
 
   beforeEach(
     waitForAsync(() => {
+      mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
+      mockSessionService.getCurrentDBUser.and.returnValue({
+        name: "TestUser",
+        roles: [],
+      });
+      mockChildrenService = jasmine.createSpyObj([
+        "getChild",
+        "getEducationalMaterialsOfChild",
+      ]);
+      mockChildrenService.getChild.and.returnValue(of(child));
+      mockChildrenService.getEducationalMaterialsOfChild.and.returnValue(
+        of([])
+      );
       TestBed.configureTestingModule({
         declarations: [EducationalMaterialComponent],
         imports: [ChildrenModule, NoopAnimationsModule],
         providers: [
           DatePipe,
           { provide: ChildrenService, useValue: mockChildrenService },
-          { provide: EntityMapperService, useValue: mockEntityMapper([]) },
           {
-            provide: SessionService,
-            useValue: { getCurrentUser: () => new User() },
+            provide: EntityMapperService,
+            useValue: mockEntityMapper([new User("TestUser")]),
           },
+          { provide: SessionService, useValue: mockSessionService },
         ],
       }).compileComponents();
     })
@@ -46,7 +53,7 @@ describe("EducationalMaterialComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EducationalMaterialComponent);
     component = fixture.componentInstance;
-    component.child = new Child("22");
+    component.child = child;
     fixture.detectChanges();
   });
 

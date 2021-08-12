@@ -10,32 +10,36 @@ import { SessionService } from "../../../core/session/session-service/session.se
 import { Child } from "../../children/model/child";
 import { User } from "../../../core/user/user";
 import { RouterTestingModule } from "@angular/router/testing";
+import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
 
 const allChildren: Array<Note> = [];
-
-const mockedSessionService = {
-  getCurrentUser(): User {
-    return new User("1");
-  },
-};
 
 describe("NotesOfChildComponent", () => {
   let component: NotesOfChildComponent;
   let fixture: ComponentFixture<NotesOfChildComponent>;
 
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
+  let mockSessionService: jasmine.SpyObj<SessionService>;
 
   beforeEach(() => {
     mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
       "getNotesOfChild",
     ]);
+    mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
+    mockSessionService.getCurrentDBUser.and.returnValue({
+      name: "TestUser",
+      roles: [],
+    });
     TestBed.configureTestingModule({
       imports: [NotesModule, MatNativeDateModule, RouterTestingModule],
       providers: [
         { provide: ChildrenService, useValue: mockChildrenService },
-        { provide: SessionService, useValue: mockedSessionService },
+        { provide: SessionService, useValue: mockSessionService },
         { provide: DatePipe, useValue: new DatePipe("medium") },
-        { provide: EntityMapperService, useValue: {} },
+        {
+          provide: EntityMapperService,
+          useValue: mockEntityMapper([new User("TestUser")]),
+        },
       ],
     }).compileComponents();
   });

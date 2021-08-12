@@ -40,9 +40,7 @@ export class ListPaginatorComponent<E extends Entity>
   constructor(
     private sessionService: SessionService,
     private entityMapperService: EntityMapperService
-  ) {
-    this.user = this.sessionService.getCurrentUser();
-  }
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("idForSavingPagination")) {
@@ -92,7 +90,12 @@ export class ListPaginatorComponent<E extends Entity>
     this.updateUserPaginationSettings();
   }
 
-  private applyUserPaginationSettings() {
+  private async applyUserPaginationSettings() {
+    if (!this.user) {
+      const currentUser = this.sessionService.getCurrentDBUser();
+      this.user = await this.entityMapperService.load(User, currentUser.name);
+    }
+
     const pageSize = this.user.paginatorSettingsPageSize[
       this.idForSavingPagination
     ];
@@ -109,7 +112,12 @@ export class ListPaginatorComponent<E extends Entity>
       this.currentPageIndex;
   }
 
-  private updateUserPaginationSettings() {
+  private async updateUserPaginationSettings() {
+    if (!this.user) {
+      const currentUser = this.sessionService.getCurrentDBUser();
+      this.user = await this.entityMapperService.load(User, currentUser.name);
+    }
+
     // save "all" as -1
     const sizeToBeSaved = this.showingAll ? -1 : this.pageSize;
 

@@ -24,10 +24,15 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 import { School } from "../../schools/model/school";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { BackupService } from "../../../core/admin/services/backup.service";
+import {
+  mockEntityMapper,
+  MockEntityMapperService,
+} from "../../../core/entity/mock-entity-mapper-service";
 
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;
   let fixture: ComponentFixture<ChildrenListComponent>;
+  let mockSessionService: jasmine.SpyObj<SessionService>;
   const routeData: EntityListConfig = {
     title: "Children List",
     columns: [
@@ -82,14 +87,16 @@ describe("ChildrenListComponent", () => {
   const mockChildrenService: jasmine.SpyObj<ChildrenService> = jasmine.createSpyObj(
     ["getChildren"]
   );
-  const mockEntityMapper: jasmine.SpyObj<EntityMapperService> = jasmine.createSpyObj(
-    ["loadType", "save"]
-  );
+  let mockedEntityMapper: MockEntityMapperService;
+
   beforeEach(
     waitForAsync(() => {
-      mockEntityMapper.loadType.and.resolveTo([]);
-      const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
-      mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
+      mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
+      mockSessionService.getCurrentDBUser.and.returnValue({
+        name: "TestUser",
+        roles: [],
+      });
+      mockedEntityMapper = mockEntityMapper([new User("TestUser")]);
       mockChildrenService.getChildren.and.returnValue(of([]));
       TestBed.configureTestingModule({
         declarations: [ChildrenListComponent],
@@ -106,7 +113,7 @@ describe("ChildrenListComponent", () => {
           },
           {
             provide: EntityMapperService,
-            useValue: mockEntityMapper,
+            useValue: mockedEntityMapper,
           },
           {
             provide: SessionService,
@@ -158,9 +165,10 @@ describe("ChildrenListComponent", () => {
     const secondSchool = new School("test");
     secondSchool.name = "Test";
 
-    mockEntityMapper.loadType.and.resolveTo([secondSchool, firstSchool]);
+    mockedEntityMapper.addAll([secondSchool, firstSchool]);
     component.ngOnInit();
     tick();
+
     const schoolFilter = component.listConfig.filters.find(
       (f) => f.id === "school"
     ) as PrebuiltFilterConfig<Child>;

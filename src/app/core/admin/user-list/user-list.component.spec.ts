@@ -23,9 +23,14 @@ describe("UserListComponent", () => {
       ]);
       mockEntityMapper.loadType.and.returnValue(Promise.resolve(testUsers));
 
-      mockSessionService = jasmine.createSpyObj("mockSessionService", [
+      mockSessionService = jasmine.createSpyObj([
+        "getCurrentDBUser",
         "getCurrentUser",
       ]);
+      mockSessionService.getCurrentDBUser.and.returnValue({
+        name: "TestUser",
+        roles: [],
+      });
 
       TestBed.configureTestingModule({
         imports: [AdminModule],
@@ -71,8 +76,13 @@ describe("UserListComponent", () => {
     const currentUser = new User("1");
     currentUser.setAdmin(true);
     mockSessionService.getCurrentUser.and.returnValue(currentUser);
+    mockSessionService.getCurrentDBUser.and.returnValue({
+      name: currentUser.getId(),
+      roles: [],
+    });
 
     await component.makeAdmin(currentUser, false);
+
     expect(currentUser.isAdmin()).toBeTruthy();
     expect(mockEntityMapper.save).not.toHaveBeenCalled();
   });

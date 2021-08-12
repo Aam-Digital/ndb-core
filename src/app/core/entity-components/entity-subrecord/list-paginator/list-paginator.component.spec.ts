@@ -24,9 +24,13 @@ describe("ListPaginatorComponent", () => {
 
   beforeEach(
     waitForAsync(() => {
-      mockEntityMapper = jasmine.createSpyObj(["save"]);
-      mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
-      mockSessionService.getCurrentUser.and.returnValue(new User());
+      mockEntityMapper = jasmine.createSpyObj(["save", "load"]);
+      mockEntityMapper.load.and.resolveTo(new User());
+      mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
+      mockSessionService.getCurrentDBUser.and.returnValue({
+        name: "TestUser",
+        roles: [],
+      });
 
       TestBed.configureTestingModule({
         imports: [EntityListModule, NoopAnimationsModule],

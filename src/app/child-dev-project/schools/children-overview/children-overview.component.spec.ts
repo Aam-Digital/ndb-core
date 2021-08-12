@@ -16,28 +16,32 @@ import { Router } from "@angular/router";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { User } from "../../../core/user/user";
+import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
 
 describe("ChildrenOverviewComponent", () => {
   let component: ChildrenOverviewComponent;
   let fixture: ComponentFixture<ChildrenOverviewComponent>;
-  const schoolsService: jasmine.SpyObj<SchoolsService> = jasmine.createSpyObj(
-    "schoolsService",
-    ["getChildrenForSchool"]
-  );
+  let mockSchoolsService: jasmine.SpyObj<SchoolsService>;
+  let mockSessionService: jasmine.SpyObj<SessionService>;
 
   beforeEach(
     waitForAsync(() => {
-      const mockSessionService = jasmine.createSpyObj<SessionService>([
-        "getCurrentUser",
-      ]);
-      mockSessionService.getCurrentUser.and.returnValue(new User());
+      mockSchoolsService = jasmine.createSpyObj(["getChildrenForSchool"]);
+      mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
+      mockSessionService.getCurrentDBUser.and.returnValue({
+        name: "TestUser",
+        roles: [],
+      });
 
       TestBed.configureTestingModule({
         declarations: [],
         imports: [SchoolsModule, RouterTestingModule, NoopAnimationsModule],
         providers: [
-          { provide: SchoolsService, useValue: schoolsService },
-          { provide: EntityMapperService, useValue: {} },
+          { provide: SchoolsService, useValue: mockSchoolsService },
+          {
+            provide: EntityMapperService,
+            useValue: mockEntityMapper([new User("TestUser")]),
+          },
           { provide: SessionService, useValue: mockSessionService },
         ],
       }).compileComponents();
@@ -59,11 +63,11 @@ describe("ChildrenOverviewComponent", () => {
     const child1 = new Child("c1");
     const child2 = new Child("c2");
     const config = { entity: school };
-    schoolsService.getChildrenForSchool.and.resolveTo([child1, child2]);
+    mockSchoolsService.getChildrenForSchool.and.resolveTo([child1, child2]);
 
     component.onInitFromDynamicConfig(config);
 
-    expect(schoolsService.getChildrenForSchool).toHaveBeenCalledWith(
+    expect(mockSchoolsService.getChildrenForSchool).toHaveBeenCalledWith(
       school.getId()
     );
     tick();

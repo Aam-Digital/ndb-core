@@ -20,6 +20,10 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { EntityPermissionsService } from "../../permissions/entity-permissions.service";
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
+import {
+  mockEntityMapper,
+  MockEntityMapperService,
+} from "../../entity/mock-entity-mapper-service";
 
 describe("EntityDetailsComponent", () => {
   let component: EntityDetailsComponent;
@@ -62,7 +66,7 @@ describe("EntityDetailsComponent", () => {
     ["userIsPermitted"]
   );
 
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockedEntityMapper: MockEntityMapperService;
   let mockSessionService: jasmine.SpyObj<SessionService>;
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
 
@@ -74,15 +78,12 @@ describe("EntityDetailsComponent", () => {
       ]);
       mockChildrenService.getSchoolRelationsFor.and.resolveTo([]);
       mockChildrenService.getAserResultsOfChild.and.returnValue(of([]));
-      mockEntityMapper = jasmine.createSpyObj([
-        "loadType",
-        "load",
-        "remove",
-        "save",
-      ]);
-      mockEntityMapper.loadType.and.resolveTo([]);
-      mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
-      mockSessionService.getCurrentUser.and.returnValue(new User("Test-User"));
+      mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
+      mockSessionService.getCurrentDBUser.and.returnValue({
+        name: "TestUser",
+        roles: [],
+      });
+      mockedEntityMapper = mockEntityMapper([new User("TestUser")]);
       TestBed.configureTestingModule({
         imports: [ChildrenModule, MatNativeDateModule, RouterTestingModule],
         providers: [
@@ -91,7 +92,7 @@ describe("EntityDetailsComponent", () => {
             provide: EntityPermissionsService,
             useValue: mockEntityPermissionsService,
           },
-          { provide: EntityMapperService, useValue: mockEntityMapper },
+          { provide: EntityMapperService, useValue: mockedEntityMapper },
           { provide: SessionService, useValue: mockSessionService },
           { provide: ChildrenService, useValue: mockChildrenService },
         ],
@@ -111,7 +112,7 @@ describe("EntityDetailsComponent", () => {
 
   it("sets the panels config with child and creating status", fakeAsync(() => {
     const testChild = new Child("Test-Child");
-    mockEntityMapper.load.and.resolveTo(testChild);
+    mockedEntityMapper.add(testChild);
     component.creatingNew = false;
     routeObserver.next({ get: () => testChild.getId() });
     tick();
@@ -127,10 +128,13 @@ describe("EntityDetailsComponent", () => {
 
   it("should load the correct child on startup", fakeAsync(() => {
     const testChild = new Child("Test-Child");
-    mockEntityMapper.load.and.returnValue(Promise.resolve(testChild));
+    mockedEntityMapper.add(testChild);
+    spyOn(mockedEntityMapper, "load").and.callThrough();
+
     routeObserver.next({ get: () => testChild.getId() });
     tick();
-    expect(mockEntityMapper.load).toHaveBeenCalledWith(
+
+    expect(mockedEntityMapper.load).toHaveBeenCalledWith(
       Child,
       testChild.getId()
     );
@@ -147,17 +151,20 @@ describe("EntityDetailsComponent", () => {
     const router = fixture.debugElement.injector.get(Router);
     const dialogReturn: any = { afterClosed: () => of(true) };
     spyOn(dialogRef, "openDialog").and.returnValue(dialogReturn);
-    mockEntityMapper.remove.and.returnValue(Promise.resolve());
+    spyOn(mockedEntityMapper, "remove").and.resolveTo();
+    spyOn(mockedEntityMapper, "save").and.resolveTo();
     spyOn(component, "navigateBack");
     const snackBarReturn: any = { onAction: () => of({}) };
     spyOn(snackBar, "open").and.returnValue(snackBarReturn);
     spyOn(router, "navigate");
+
     component.removeEntity();
     tick();
+
     expect(dialogRef.openDialog).toHaveBeenCalled();
-    expect(mockEntityMapper.remove).toHaveBeenCalledWith(testChild);
+    expect(mockedEntityMapper.remove).toHaveBeenCalledWith(testChild);
     expect(snackBar.open).toHaveBeenCalled();
-    expect(mockEntityMapper.save).toHaveBeenCalledWith(testChild, true);
+    expect(mockedEntityMapper.save).toHaveBeenCalledWith(testChild, true);
     expect(router.navigate).toHaveBeenCalled();
   }));
 

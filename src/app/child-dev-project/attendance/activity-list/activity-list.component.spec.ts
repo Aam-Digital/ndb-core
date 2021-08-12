@@ -16,6 +16,7 @@ import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-servic
 describe("ActivityListComponent", () => {
   let component: ActivityListComponent;
   let fixture: ComponentFixture<ActivityListComponent>;
+  let mockSessionService: jasmine.SpyObj<SessionService>;
 
   const mockConfig: EntityListConfig = {
     columns: [],
@@ -24,6 +25,11 @@ describe("ActivityListComponent", () => {
 
   beforeEach(
     waitForAsync(() => {
+      mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
+      mockSessionService.getCurrentDBUser.and.returnValue({
+        name: "TestUser",
+        roles: [],
+      });
       TestBed.configureTestingModule({
         imports: [
           AttendanceModule,
@@ -31,11 +37,11 @@ describe("ActivityListComponent", () => {
           Angulartics2Module.forRoot(),
         ],
         providers: [
-          { provide: EntityMapperService, useValue: mockEntityMapper([]) },
           {
-            provide: SessionService,
-            useValue: { getCurrentUser: () => new User() },
+            provide: EntityMapperService,
+            useValue: mockEntityMapper([new User("TestUser")]),
           },
+          { provide: SessionService, useValue: mockSessionService },
           { provide: BackupService, useValue: {} },
           {
             provide: ActivatedRoute,

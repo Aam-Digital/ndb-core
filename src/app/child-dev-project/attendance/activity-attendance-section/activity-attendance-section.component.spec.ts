@@ -21,6 +21,7 @@ describe("ActivityAttendanceSectionComponent", () => {
   let fixture: ComponentFixture<ActivityAttendanceSectionComponent>;
 
   let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
+  let mockSessionService: jasmine.SpyObj<SessionService>;
   let testActivity: RecurringActivity;
   let testRecords: ActivityAttendance[];
 
@@ -33,6 +34,11 @@ describe("ActivityAttendanceSectionComponent", () => {
         "getActivityAttendances",
       ]);
       mockAttendanceService.getActivityAttendances.and.resolveTo(testRecords);
+      mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
+      mockSessionService.getCurrentDBUser.and.returnValue({
+        name: "TestUser",
+        roles: [],
+      });
 
       TestBed.configureTestingModule({
         imports: [AttendanceModule, NoopAnimationsModule, MatNativeDateModule],
@@ -40,14 +46,11 @@ describe("ActivityAttendanceSectionComponent", () => {
           { provide: AttendanceService, useValue: mockAttendanceService },
           {
             provide: EntityMapperService,
-            useValue: mockEntityMapper(),
+            useValue: mockEntityMapper([new User("TestUser")]),
           },
           DatePipe,
           PercentPipe,
-          {
-            provide: SessionService,
-            useValue: { getCurrentUser: () => new User() },
-          },
+          { provide: SessionService, useValue: mockSessionService },
         ],
       }).compileComponents();
     })

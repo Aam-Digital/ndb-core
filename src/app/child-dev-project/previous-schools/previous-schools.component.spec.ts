@@ -19,24 +19,29 @@ import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import moment from "moment";
 import { SessionService } from "../../core/session/session-service/session.service";
 import { User } from "../../core/user/user";
+import { mockEntityMapper } from "../../core/entity/mock-entity-mapper-service";
 
 describe("PreviousSchoolsComponent", () => {
   let component: PreviousSchoolsComponent;
   let fixture: ComponentFixture<PreviousSchoolsComponent>;
 
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockSessionService: jasmine.SpyObj<SessionService>;
 
   const testChild = new Child("22");
 
   beforeEach(
     waitForAsync(() => {
+      mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
+      mockSessionService.getCurrentDBUser.and.returnValue({
+        name: "TestUser",
+        roles: [],
+      });
       mockChildrenService = jasmine.createSpyObj(["getSchoolRelationsFor"]);
       mockChildrenService.getSchoolRelationsFor.and.resolveTo([
         new ChildSchoolRelation(),
       ]);
-      mockEntityMapper = jasmine.createSpyObj(["loadType"]);
-      mockEntityMapper.loadType.and.resolveTo([]);
+
       TestBed.configureTestingModule({
         declarations: [PreviousSchoolsComponent],
         imports: [
@@ -46,11 +51,11 @@ describe("PreviousSchoolsComponent", () => {
         ],
         providers: [
           { provide: ChildrenService, useValue: mockChildrenService },
-          { provide: EntityMapperService, useValue: mockEntityMapper },
           {
-            provide: SessionService,
-            useValue: { getCurrentUser: () => new User() },
+            provide: EntityMapperService,
+            useValue: mockEntityMapper([new User("TestUser")]),
           },
+          { provide: SessionService, useValue: mockSessionService },
         ],
       }).compileComponents();
     })
