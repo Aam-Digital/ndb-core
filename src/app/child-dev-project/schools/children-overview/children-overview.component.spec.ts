@@ -32,10 +32,9 @@ describe("ChildrenOverviewComponent", () => {
         "getCurrentUser",
       ]);
       mockSessionService.getCurrentUser.and.returnValue(new User());
-      schoolsService = jasmine.createSpyObj(
-        "schoolsService",
-        ["getChildrenForSchool"]
-      );
+      schoolsService = jasmine.createSpyObj("schoolsService", [
+        "getChildrenForSchool",
+      ]);
 
       TestBed.configureTestingModule({
         declarations: [],
@@ -88,35 +87,65 @@ describe("ChildrenOverviewComponent", () => {
     ]);
   });
 
-  it( "should open a dialog when clicking add new child", () => {
+  it("should open a dialog when clicking add new child", () => {
     component.entity = new School();
     const dialog = TestBed.inject(MatDialog);
     const entityFormService = TestBed.inject(EntityFormService);
     const alertService = TestBed.inject(AlertService);
-    spyOn(dialog,  "open").and.returnValues({componentInstance: new EntityFormComponent(entityFormService, alertService)} as any)
+    spyOn(dialog, "open").and.returnValues({
+      componentInstance: new EntityFormComponent(
+        entityFormService,
+        alertService
+      ),
+    } as any);
 
     component.addChildClick();
 
-    expect(dialog.open).toHaveBeenCalled()
+    expect(dialog.open).toHaveBeenCalled();
   });
 
-  it( "should add a newly added child to the list", fakeAsync(() => {
+  it("should add a newly added child to the list", fakeAsync(() => {
     component.entity = new School();
     const child = new Child();
     const dialog = TestBed.inject(MatDialog);
     const entityFormService = TestBed.inject(EntityFormService);
     const alertService = TestBed.inject(AlertService);
-    const componentInstance = new EntityFormComponent(entityFormService, alertService);
-    spyOn(dialog,  "open").and.returnValues({
+    const componentInstance = new EntityFormComponent(
+      entityFormService,
+      alertService
+    );
+    spyOn(dialog, "open").and.returnValues({
       componentInstance: componentInstance,
-      close: () => {}
-    } as any)
-    schoolsService.getChildrenForSchool.and.resolveTo([child])
+      close: () => {},
+    } as any);
+    schoolsService.getChildrenForSchool.and.resolveTo([child]);
 
     component.addChildClick();
     componentInstance.onSave.emit();
     tick();
 
-    expect(component.children).toContain(child)
+    expect(component.children).toContain(child);
+  }));
+
+  it("should close the dialog when cancel is clicked", fakeAsync(() => {
+    component.entity = new School();
+    const dialog = TestBed.inject(MatDialog);
+    const entityFormService = TestBed.inject(EntityFormService);
+    const alertService = TestBed.inject(AlertService);
+    const closeSpy = jasmine.createSpy();
+    const componentInstance = new EntityFormComponent(
+      entityFormService,
+      alertService
+    );
+    spyOn(dialog, "open").and.returnValues({
+      componentInstance: componentInstance,
+      close: closeSpy,
+    } as any);
+
+    component.addChildClick();
+    componentInstance.onCancel.emit();
+    tick();
+
+    expect(closeSpy).toHaveBeenCalled();
   }));
 });

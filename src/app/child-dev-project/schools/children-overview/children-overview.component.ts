@@ -38,7 +38,11 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
   children: Child[] = [];
   entity: Entity;
 
-  constructor(private schoolsService: SchoolsService, private router: Router, private dialog: MatDialog) {}
+  constructor(
+    private schoolsService: SchoolsService,
+    private router: Router,
+    private dialog: MatDialog
+  ) {}
 
   async onInitFromDynamicConfig(config: PanelConfig) {
     if (config?.config?.columns) {
@@ -60,7 +64,13 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
       maxHeight: "90vh",
     });
 
-    dialogRef.componentInstance.columns = [["childId"], ["start"], ["end"], ["schoolClass"], ["result"]];
+    dialogRef.componentInstance.columns = [
+      ["childId"],
+      ["start"],
+      ["end"],
+      ["schoolClass"],
+      ["result"],
+    ];
     const newRelation = new ChildSchoolRelation();
     newRelation.schoolId = this.entity.getId();
     dialogRef.componentInstance.entity = newRelation;
@@ -68,7 +78,8 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
     dialogRef.componentInstance.onSave.subscribe(async () => {
       dialogRef.close();
       this.children = await this.schoolsService.getChildrenForSchool(
-        this.entity.getId())
+        this.entity.getId()
+      );
     });
     dialogRef.componentInstance.onCancel.subscribe(() => dialogRef.close());
   }

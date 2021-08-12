@@ -16,7 +16,8 @@ export class ChildSchoolRelation extends Entity {
     editComponent: "EditSingleEntity",
     additional: Child.ENTITY_TYPE,
     required: true,
-  }) childId: string;
+  })
+  childId: string;
   @DatabaseField({
     label: $localize`:Label for the school of a relation:School`,
     viewComponent: "DisplayEntity",
