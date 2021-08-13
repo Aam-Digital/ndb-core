@@ -245,15 +245,15 @@ export const defaultJsonConfig = {
   },
   "view:admin": {
     "component": "Admin",
-    "requiresAdmin": true
+    "permittedUserRoles": ["admin_app"]
   },
   "view:users": {
     "component": "UserList",
-    "requiresAdmin": true
+    "permittedUserRoles": ["admin_app"]
   },
   "view:admin/conflicts": {
     "component": "ConflictResolution",
-    "requiresAdmin": true,
+    "permittedUserRoles": ["admin_app"],
     "lazyLoaded":  true
   },
   "view:help": {

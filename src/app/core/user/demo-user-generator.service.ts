@@ -44,7 +44,7 @@ export class DemoUserGeneratorService extends DemoDataGenerator<User> {
       DemoUserGeneratorService.DEFAULT_PASSWORD
     );
     tmpLocalSession.saveUser(
-      { name: demoAdmin.name, roles: ["user_app", "admin"] },
+      { name: demoAdmin.name, roles: ["user_app", "admin_app"] },
       DemoUserGeneratorService.DEFAULT_PASSWORD
     );
 
