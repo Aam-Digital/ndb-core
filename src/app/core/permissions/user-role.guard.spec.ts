@@ -3,8 +3,8 @@ import { TestBed } from "@angular/core/testing";
 import { UserRoleGuard } from "./user-role.guard";
 import { ConfigService } from "../config/config.service";
 import { SessionService } from "../session/session-service/session.service";
-import { RouterService } from "../view/dynamic-routing/router.service";
 import { DatabaseUser } from "../session/session-service/local-user";
+import { PREFIX_VIEW_CONFIG } from "../view/dynamic-routing/view-config.interface";
 
 describe("UserRoleGuard", () => {
   let guard: UserRoleGuard;
@@ -40,7 +40,7 @@ describe("UserRoleGuard", () => {
     const result = guard.canActivate({ routeConfig: { path: "url" } } as any);
 
     expect(mockConfigService.getConfig).toHaveBeenCalledWith(
-      RouterService.PREFIX_VIEW_CONFIG + "url"
+      PREFIX_VIEW_CONFIG + "url"
     );
     expect(result).toBeTrue();
   });
@@ -51,7 +51,7 @@ describe("UserRoleGuard", () => {
     const result = guard.canActivate({ routeConfig: { path: "url" } } as any);
 
     expect(mockConfigService.getConfig).toHaveBeenCalledWith(
-      RouterService.PREFIX_VIEW_CONFIG + "url"
+      PREFIX_VIEW_CONFIG + "url"
     );
     expect(result).toBeFalse();
   });
@@ -62,7 +62,7 @@ describe("UserRoleGuard", () => {
     const result = guard.canActivate({ routeConfig: { path: "url" } } as any);
 
     expect(mockConfigService.getConfig).toHaveBeenCalledWith(
-      RouterService.PREFIX_VIEW_CONFIG + "url"
+      PREFIX_VIEW_CONFIG + "url"
     );
     expect(result).toBeTrue();
   });

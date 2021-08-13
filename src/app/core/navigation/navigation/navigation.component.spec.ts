@@ -26,7 +26,6 @@ import { MatListModule } from "@angular/material/list";
 import { ConfigService } from "../../config/config.service";
 import { BehaviorSubject } from "rxjs";
 import { Config } from "../../config/config";
-import { AdminGuard } from "../../admin/admin.guard";
 import { UserRoleGuard } from "../../permissions/user-role.guard";
 import { ActivatedRouteSnapshot } from "@angular/router";
 
@@ -36,7 +35,7 @@ describe("NavigationComponent", () => {
 
   let mockConfigService: jasmine.SpyObj<ConfigService>;
   let mockConfigUpdated: BehaviorSubject<Config>;
-  let mockUserRoleGuard: jasmine.SpyObj<AdminGuard>;
+  let mockUserRoleGuard: jasmine.SpyObj<UserRoleGuard>;
 
   beforeEach(
     waitForAsync(() => {

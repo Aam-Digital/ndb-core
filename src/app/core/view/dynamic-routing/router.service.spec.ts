@@ -3,7 +3,6 @@ import { TestBed } from "@angular/core/testing";
 import { Router } from "@angular/router";
 import { RouterTestingModule } from "@angular/router/testing";
 import { ChildrenListComponent } from "../../../child-dev-project/children/children-list/children-list.component";
-import { AdminGuard } from "../../admin/admin.guard";
 import { AdminComponent } from "../../admin/admin/admin.component";
 import { ConfigService } from "../../config/config.service";
 import { LoggingService } from "../../logging/logging.service";
@@ -50,14 +49,18 @@ describe("RouterService", () => {
 
   it("should generate and add routes from config for router config", () => {
     const testViewConfig = { foo: 1 };
-    const testViewConfigs = [
+    const testViewConfigs: ViewConfig[] = [
       { _id: "view:child", component: "ChildrenList" },
       {
         _id: "view:child/:id",
         component: "EntityDetails",
         config: testViewConfig,
       },
-      { _id: "view:admin", component: "Admin", requiresAdmin: true },
+      {
+        _id: "view:admin",
+        component: "Admin",
+        permittedUserRoles: ["user_app"],
+      },
     ];
     const expectedRoutes = [
       { path: "child", component: ChildrenListComponent },
@@ -66,7 +69,11 @@ describe("RouterService", () => {
         component: EntityDetailsComponent,
         data: testViewConfig,
       },
-      { path: "admin", component: AdminComponent, canActivate: [AdminGuard] },
+      {
+        path: "admin",
+        component: AdminComponent,
+        canActivate: [UserRoleGuard],
+      },
     ];
 
     const router = TestBed.inject<Router>(Router);

@@ -35,3 +35,8 @@ export interface ViewConfig {
    */
   lazyLoaded?: boolean;
 }
+
+/**
+ * The prefix which is used to find the ViewConfig's in the config file
+ */
+export const PREFIX_VIEW_CONFIG = "view:";
