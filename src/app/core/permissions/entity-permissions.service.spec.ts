@@ -5,19 +5,18 @@ import {
   OperationType,
 } from "./entity-permissions.service";
 import { SessionService } from "../session/session-service/session.service";
-import { User } from "../user/user";
 import { Entity } from "../entity/model/entity";
 import { EntityConfigService } from "../entity/entity-config.service";
 
 describe("EntityPermissionsService", () => {
   let service: EntityPermissionsService;
-  const mockConfigService: jasmine.SpyObj<EntityConfigService> = jasmine.createSpyObj(
-    ["getEntityConfig"]
-  );
-  const mockSessionService: jasmine.SpyObj<SessionService> = jasmine.createSpyObj(
-    ["getCurrentUser"]
-  );
+  let mockConfigService: jasmine.SpyObj<EntityConfigService>;
+  let mockSessionService: jasmine.SpyObj<SessionService>;
+
   beforeEach(() => {
+    mockConfigService = jasmine.createSpyObj(["getEntityConfig"]);
+    mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
+
     TestBed.configureTestingModule({
       providers: [
         { provide: EntityConfigService, useValue: mockConfigService },
@@ -33,7 +32,9 @@ describe("EntityPermissionsService", () => {
 
   it("should give permission if nothing is defined", () => {
     mockConfigService.getEntityConfig.and.returnValue(null);
+
     const permitted = service.userIsPermitted(Entity, OperationType.CREATE);
+
     expect(permitted).toBeTrue();
   });
 
@@ -41,29 +42,37 @@ describe("EntityPermissionsService", () => {
     mockConfigService.getEntityConfig.and.returnValue({
       permissions: { update: ["admin"] },
     });
+
     const permitted = service.userIsPermitted(Entity, OperationType.CREATE);
+
     expect(permitted).toBeTrue();
   });
 
-  it("should not give user create permission when only admin is specified", () => {
-    const noAdmin = new User();
-    noAdmin.setAdmin(false);
-    mockSessionService.getCurrentUser.and.returnValue(noAdmin);
-    mockConfigService.getEntityConfig.and.returnValue({
-      permissions: { create: ["admin"] },
+  it("should not give permission if user does not have any required role", () => {
+    mockSessionService.getCurrentDBUser.and.returnValue({
+      name: "noAdminUser",
+      roles: ["user_app"],
     });
+    mockConfigService.getEntityConfig.and.returnValue({
+      permissions: { create: ["admin_app"] },
+    });
+
     const permitted = service.userIsPermitted(Entity, OperationType.CREATE);
+
     expect(permitted).toBeFalse();
   });
 
-  it("should give admin create permission when admin is specified", () => {
-    const admin = new User();
-    admin.setAdmin(true);
-    mockSessionService.getCurrentUser.and.returnValue(admin);
-    mockConfigService.getEntityConfig.and.returnValue({
-      permissions: { create: ["admin"] },
+  it("should give permission when user has a required role", () => {
+    mockSessionService.getCurrentDBUser.and.returnValue({
+      name: "adminUser",
+      roles: ["user_app", "admin_app"],
     });
+    mockConfigService.getEntityConfig.and.returnValue({
+      permissions: { create: ["admin_app"] },
+    });
+
     const permitted = service.userIsPermitted(Entity, OperationType.CREATE);
+
     expect(permitted).toBeTrue();
   });
 });
