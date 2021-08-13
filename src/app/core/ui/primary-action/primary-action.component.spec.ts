@@ -11,13 +11,15 @@ describe("PrimaryActionComponent", () => {
   let component: PrimaryActionComponent;
   let fixture: ComponentFixture<PrimaryActionComponent>;
 
-  const mockSessionService = {
-    getCurrentUser: () => {
-      return { name: "tester" };
-    },
-  };
+  let mockSessionService: jasmine.SpyObj<SessionService>;
 
   beforeEach(() => {
+    mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
+    mockSessionService.getCurrentDBUser.and.returnValue({
+      name: "user",
+      roles: [],
+    });
+
     TestBed.configureTestingModule({
       declarations: [PrimaryActionComponent],
       imports: [

@@ -13,7 +13,6 @@ import { defaultAttendanceStatusTypes } from "../../../core/config/default-confi
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
 import { SessionService } from "../../../core/session/session-service/session.service";
-import { User } from "../../../core/user/user";
 
 function generateTestNote(forChildren: Child[]) {
   const testNote = Note.create(new Date(), "test note");
@@ -36,12 +35,18 @@ describe("NoteDetailsComponent", () => {
   let component: NoteDetailsComponent;
   let fixture: ComponentFixture<NoteDetailsComponent>;
 
+  let mockSessionService: jasmine.SpyObj<SessionService>;
   let children: Child[];
   let testNote: Note;
 
   beforeEach(() => {
     children = [new Child("1"), new Child("2"), new Child("3")];
     testNote = generateTestNote(children);
+    mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
+    mockSessionService.getCurrentDBUser.and.returnValue({
+      name: "user",
+      roles: [],
+    });
 
     const mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
       "getChildren",
@@ -64,10 +69,7 @@ describe("NoteDetailsComponent", () => {
         { provide: MatDialogRef, useValue: dialogRefMock },
         { provide: EntityMapperService, useValue: mockEntityMapper() },
         { provide: ChildrenService, useValue: mockChildrenService },
-        {
-          provide: SessionService,
-          useValue: { getCurrentUser: () => new User() },
-        },
+        { provide: SessionService, useValue: mockSessionService },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(NoteDetailsComponent);

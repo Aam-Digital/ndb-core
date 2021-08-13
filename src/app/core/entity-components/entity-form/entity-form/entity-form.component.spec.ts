@@ -4,7 +4,6 @@ import { EntityFormComponent } from "./entity-form.component";
 import { ChildPhotoService } from "../../../../child-dev-project/children/child-photo-service/child-photo.service";
 import { Entity } from "../../../entity/model/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { User } from "../../../user/user";
 import { RouterTestingModule } from "@angular/router/testing";
 import { SessionService } from "../../../session/session-service/session.service";
 import { ConfigService } from "../../../config/config.service";
@@ -37,8 +36,10 @@ describe("EntityFormComponent", () => {
         "setImage",
         "getImage",
       ]);
-      mockSessionService = jasmine.createSpyObj({
-        getCurrentUser: new User("test-user"),
+      mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
+      mockSessionService.getCurrentDBUser.and.returnValue({
+        name: "user",
+        roles: [],
       });
       mockConfigService = jasmine.createSpyObj(["getConfig"]);
       mockEntityMapper = jasmine.createSpyObj(["save"]);
