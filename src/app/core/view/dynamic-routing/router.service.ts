@@ -5,6 +5,7 @@ import { AdminGuard } from "../../admin/admin.guard";
 import { ConfigService } from "../../config/config.service";
 import { LoggingService } from "../../logging/logging.service";
 import { ViewConfig } from "./view-config.interface";
+import { UserRoleGuard } from "../../permissions/user-role.guard";
 
 /**
  * The RouterService dynamically sets up Angular routing from config loaded through the {@link ConfigService}.
@@ -87,6 +88,9 @@ export class RouterService {
     };
     if (view.requiresAdmin) {
       route.canActivate = [AdminGuard];
+    }
+    if (view.permittedUserRoles) {
+      route.canActivate = [UserRoleGuard];
     }
     if (view.config) {
       route.data = view.config;

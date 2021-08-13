@@ -11,6 +11,7 @@ import { LoggingService } from "../../logging/logging.service";
 import { RouterService } from "./router.service";
 import { EntityDetailsComponent } from "../../entity-components/entity-details/entity-details.component";
 import { ViewConfig } from "./view-config.interface";
+import { UserRoleGuard } from "../../permissions/user-role.guard";
 
 class TestComponent extends Component {}
 
@@ -118,5 +119,24 @@ describe("RouterService", () => {
     expect(router.config.find((r) => r.path === "child2").data).toEqual({
       foo: 2,
     });
+  });
+
+  it("should add the user role guard if userIsPermitted is set", () => {
+    const testViewConfigs: ViewConfig[] = [
+      { _id: "view:admin", component: "Admin", permittedUserRoles: ["admin"] },
+    ];
+    const expectedRoutes = [
+      {
+        path: "admin",
+        component: AdminComponent,
+        canActivate: [UserRoleGuard],
+      },
+    ];
+    const router = TestBed.inject<Router>(Router);
+    spyOn(router, "resetConfig");
+
+    service.reloadRouting(testViewConfigs);
+
+    expect(router.resetConfig).toHaveBeenCalledWith(expectedRoutes);
   });
 });
