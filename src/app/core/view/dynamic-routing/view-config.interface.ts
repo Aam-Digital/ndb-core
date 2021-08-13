@@ -12,8 +12,17 @@ export interface ViewConfig {
    */
   component: string;
 
-  /** whether users need admin rights to access this view */
+  /** whether users need admin rights to access this view
+   * @deprecated use permittedUserRoles instead
+   * */
   requiresAdmin?: boolean;
+
+  /**
+   * Allows to restrict the route to the given list of user roles.
+   * If set, the route can only be visited by users which have a role which is in the list.
+   * If not set, all logged in users can viste the route.
+   */
+  permittedUserRoles?: string[];
 
   /** optional object providing any kind of config to be interpreted by the component for this view */
   config?: any;
