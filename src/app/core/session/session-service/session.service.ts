@@ -18,8 +18,8 @@
 import { LoginState } from "../session-states/login-state.enum";
 import { Database } from "../../database/database";
 import { SyncState } from "../session-states/sync-state.enum";
-import { StateHandler } from "../session-states/state-handler";
 import { DatabaseUser } from "./local-user";
+import { BehaviorSubject } from "rxjs";
 
 /**
  * A session manages user authentication and database connection for the app.
@@ -36,9 +36,9 @@ import { DatabaseUser } from "./local-user";
  */
 export abstract class SessionService {
   /** StateHandler for login state changes */
-  private loginState = new StateHandler(LoginState.LOGGED_OUT);
+  private _loginState = new BehaviorSubject(LoginState.LOGGED_OUT);
   /** StateHandler for sync state changes */
-  private syncState = new StateHandler(SyncState.UNSYNCED);
+  private _syncState = new BehaviorSubject(SyncState.UNSYNCED);
 
   /**
    * Authenticate a user.
@@ -69,21 +69,21 @@ export abstract class SessionService {
    * Get the session status - whether a user is authenticated currently.
    */
   public isLoggedIn(): boolean {
-    return this.getLoginState().getState() === LoginState.LOGGED_IN;
+    return this.loginState.value === LoginState.LOGGED_IN;
   }
 
   /**
    * Get the state of the session.
    */
-  public getLoginState(): StateHandler<LoginState> {
-    return this.loginState;
+  public get loginState(): BehaviorSubject<LoginState> {
+    return this._loginState;
   }
 
   /**
    * Get the state of the synchronization with the remote server.
    */
-  public getSyncState(): StateHandler<SyncState> {
-    return this.syncState;
+  public get syncState(): BehaviorSubject<SyncState> {
+    return this._syncState;
   }
 
   /**

@@ -33,9 +33,8 @@ import { School } from "./child-dev-project/schools/model/school";
 import { HistoricalEntityData } from "./features/historical-data/historical-entity-data";
 import { Note } from "./child-dev-project/notes/model/note";
 import { EventNote } from "./child-dev-project/attendance/model/event-note";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { waitForChangeTo } from "./core/session/session-service/session-utils";
 
-@UntilDestroy()
 @Component({
   selector: "app-root",
   template: "<app-ui></app-ui>",
@@ -63,13 +62,13 @@ export class AppComponent implements OnInit {
     // TODO fix this with https://github.com/Aam-Digital/ndb-core/issues/595
     configService.loadConfig(entityMapper);
     // Reload config once the database is synced
-    sessionService
-      .getSyncState()
-      .waitForChangeTo(SyncState.COMPLETED)
+    sessionService.syncState
+      .pipe(waitForChangeTo(SyncState.COMPLETED))
+      .toPromise()
       .then(() => configService.loadConfig(entityMapper))
       .then(() => router.navigate([], { relativeTo: this.activatedRoute }));
     // These functions will be executed whenever a new config is available
-    configService.configUpdates.pipe(untilDestroyed(this)).subscribe(() => {
+    configService.configUpdates.subscribe(() => {
       routerService.initRouting();
       entityConfigService.addConfigAttributes(Child);
       entityConfigService.addConfigAttributes(School);

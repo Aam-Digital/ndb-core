@@ -29,7 +29,6 @@ import { BehaviorSubject, of } from "rxjs";
 import { ApplicationInitStatus } from "@angular/core";
 import { UiModule } from "../ui.module";
 import { Angulartics2Module } from "angulartics2";
-import { StateHandler } from "../../session/session-states/state-handler";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { ConfigService } from "../../config/config.service";
 
@@ -40,13 +39,10 @@ describe("UiComponent", () => {
   beforeEach(
     waitForAsync(() => {
       const mockSwUpdate = { available: of(), checkForUpdate: () => {} };
-      const mockSession: jasmine.SpyObj<SessionService> = jasmine.createSpyObj([
-        "isLoggedIn",
-        "logout",
-        "getDatabase",
-        "getSyncState",
-      ]);
-      mockSession.getSyncState.and.returnValue(new StateHandler<SyncState>());
+      const mockSession: jasmine.SpyObj<SessionService> = jasmine.createSpyObj(
+        ["isLoggedIn", "logout", "getDatabase"],
+        { syncState: new BehaviorSubject(SyncState.UNSYNCED) }
+      );
 
       const mockConfig = jasmine.createSpyObj<ConfigService>(["getConfig"]);
       mockConfig.configUpdates = new BehaviorSubject({} as any);

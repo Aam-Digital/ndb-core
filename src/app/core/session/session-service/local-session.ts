@@ -49,14 +49,14 @@ export class LocalSession extends SessionService {
     if (user) {
       if (passwordEqualsEncrypted(password, user.encryptedPassword)) {
         this.currentDBUser = user;
-        this.getLoginState().setState(LoginState.LOGGED_IN);
+        this.loginState.next(LoginState.LOGGED_IN);
       } else {
-        this.getLoginState().setState(LoginState.LOGIN_FAILED);
+        this.loginState.next(LoginState.LOGIN_FAILED);
       }
     } else {
-      this.getLoginState().setState(LoginState.UNAVAILABLE);
+      this.loginState.next(LoginState.UNAVAILABLE);
     }
-    return this.getLoginState().getState();
+    return this.loginState.value;
   }
 
   /**
@@ -100,7 +100,7 @@ export class LocalSession extends SessionService {
    */
   public logout() {
     this.currentDBUser = undefined;
-    this.getLoginState().setState(LoginState.LOGGED_OUT);
+    this.loginState.next(LoginState.LOGGED_OUT);
   }
 
   getDatabase(): Database {

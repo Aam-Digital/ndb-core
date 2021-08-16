@@ -74,16 +74,16 @@ export class RemoteSession extends SessionService {
         )
         .toPromise();
       this.assignDatabaseUser(response);
-      this.getLoginState().setState(LoginState.LOGGED_IN);
+      this.loginState.next(LoginState.LOGGED_IN);
     } catch (error) {
       const httpError = error as HttpErrorResponse;
       if (httpError?.status === this.UNAUTHORIZED_STATUS_CODE) {
-        this.getLoginState().setState(LoginState.LOGIN_FAILED);
+        this.loginState.next(LoginState.LOGIN_FAILED);
       } else {
-        this.getLoginState().setState(LoginState.UNAVAILABLE);
+        this.loginState.next(LoginState.UNAVAILABLE);
       }
     }
-    return this.getLoginState().getState();
+    return this.loginState.value;
   }
 
   private assignDatabaseUser(couchDBResponse: any) {
@@ -103,7 +103,7 @@ export class RemoteSession extends SessionService {
       })
       .toPromise();
     this.currentDBUser = undefined;
-    this.getLoginState().setState(LoginState.LOGGED_OUT);
+    this.loginState.next(LoginState.LOGGED_OUT);
   }
 
   getCurrentUser(): DatabaseUser {

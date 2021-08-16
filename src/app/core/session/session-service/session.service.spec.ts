@@ -44,7 +44,7 @@ export function testSessionServiceImplementation(
   });
 
   it("has the correct initial state", () => {
-    expect(sessionService.getSyncState().getState()).toBe(SyncState.UNSYNCED);
+    expect(sessionService.syncState.value).toBe(SyncState.UNSYNCED);
     expectNotToBeLoggedIn(LoginState.LOGGED_OUT);
   });
 
@@ -53,7 +53,7 @@ export function testSessionServiceImplementation(
 
     expect(loginResult).toEqual(LoginState.LOGGED_IN);
 
-    expect(sessionService.getLoginState().getState())
+    expect(sessionService.loginState.value)
       .withContext("unexpected LoginState")
       .toEqual(LoginState.LOGGED_IN);
 
@@ -96,7 +96,7 @@ export function testSessionServiceImplementation(
       | LoginState.LOGIN_FAILED
       | LoginState.UNAVAILABLE
   ) {
-    expect(sessionService.getLoginState().getState())
+    expect(sessionService.loginState.value)
       .withContext("unexpected LoginState")
       .toEqual(expectedLoginState);
 
