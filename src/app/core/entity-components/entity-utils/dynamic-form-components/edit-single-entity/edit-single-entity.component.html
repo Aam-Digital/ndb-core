@@ -2,6 +2,7 @@
   <mat-label>{{ label }}</mat-label>
   <input
     #inputField
+    matInput
     [fxHide]="!formControl.enabled"
     [placeholder]="placeholder"
     [formControl]="formControl"
@@ -12,8 +13,11 @@
   >
     <!-- Optional header -->
     <ng-content select="mat-option"></ng-content>
-    <mat-option *ngFor="let res of entities" [value]="res">
-      {{ res }}
+    <mat-option *ngFor="let res of filteredEntities | async" [value]="res">
+      <app-display-entity
+        [entityToDisplay]="res"
+        [linkDisabled]="true"
+      ></app-display-entity>
     </mat-option>
   </mat-autocomplete>
 </mat-form-field>

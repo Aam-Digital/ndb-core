@@ -9,7 +9,6 @@ import { ChildrenModule } from "../../../../../child-dev-project/children/childr
 import { Database } from "../../../../database/database";
 import { ChildrenService } from "../../../../../child-dev-project/children/children.service";
 import { Child } from "../../../../../child-dev-project/children/model/child";
-import { EntitySelectComponent } from "../../entity-select/entity-select.component";
 import { CloudFileService } from "../../../../webdav/cloud-file-service.service";
 import { EntityUtilsModule } from "../../entity-utils.module";
 import { EditSingleEntityComponent } from "./edit-single-entity.component";
@@ -66,15 +65,16 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<EntitySelectComponent<Child>> = (
-  args: EntitySelectComponent<Child>
+const Template: Story<EditSingleEntityComponent> = (
+  args: EditSingleEntityComponent
 ) => ({
-  component: EntitySelectComponent,
+  component: EditSingleEntityComponent,
   props: args,
 });
 
 const formGroup = new FormGroup({child:new FormControl()
   })
+formGroup.get("child").enable();
 
 export const primary = Template.bind({});
 primary.args = {
@@ -82,6 +82,6 @@ primary.args = {
   label: "child",
   formControl: formGroup.get("child"),
   formControlName: "child",
-  entities: ["hhh", "ssss", "jjjj"],
+  entities: [child1, child2, child3],
   placeholder: "add child"
 };
