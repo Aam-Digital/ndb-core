@@ -17,6 +17,10 @@ import { MatNativeDateModule } from "@angular/material/core";
 import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { MatDialogRef } from "@angular/material/dialog";
 import { NotesModule } from "../../notes/notes.module";
+import { AttendanceService } from "../attendance.service";
+import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { User } from "../../../core/user/user";
 
 const demoActivity = RecurringActivity.create("Coaching Batch C");
 const activityAttendance = ActivityAttendance.create(new Date("2020-01-01"), [
@@ -73,8 +77,18 @@ export default {
       providers: [
         {
           provide: EntityMapperService,
+          useValue: mockEntityMapper([new User("username")]),
+        },
+        {
+          provide: AttendanceService,
+          useValue: null,
+        },
+        {
+          provide: SessionService,
           useValue: {
-            loadType: () => Promise.resolve([]),
+            getCurrentDBUser: () => {
+              return { name: "username" };
+            },
           },
         },
         { provide: MatDialogRef, useValue: {} },

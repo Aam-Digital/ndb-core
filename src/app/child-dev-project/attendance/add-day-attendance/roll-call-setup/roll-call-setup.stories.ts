@@ -32,6 +32,7 @@ import { FontAwesomeIconsModule } from "../../../../core/icons/font-awesome-icon
 import { DemoActivityGeneratorService } from "../../demo-data/demo-activity-generator.service";
 import { FormDialogModule } from "../../../../core/form-dialog/form-dialog.module";
 import { PouchDatabase } from "../../../../core/database/pouch-database";
+import { SessionService } from "../../../../core/session/session-service/session.service";
 
 const demoEvents: Note[] = [
   Note.create(new Date(), "Class 5a Parents Meeting"),
@@ -95,14 +96,23 @@ export default {
         AttendanceService,
         {
           provide: Database,
-          useValue: PouchDatabase.createWithData([
-            ...demoChildren,
-            ...demoEvents,
-            ...demoActivities,
-          ]),
+          useFactory: () =>
+            PouchDatabase.createWithData([
+              ...demoChildren,
+              ...demoEvents,
+              ...demoActivities,
+            ]),
         },
         DatabaseIndexingService,
         ChildPhotoService,
+        {
+          provide: SessionService,
+          useValue: {
+            getCurrentDBUser: () => {
+              return { name: "username" };
+            },
+          },
+        },
       ],
     }),
   ],

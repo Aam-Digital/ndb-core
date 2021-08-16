@@ -29,9 +29,11 @@ import { PerformanceAnalysisLogging } from "../../utils/performance-analysis-log
  * should be implemented in the abstract {@link Database}.
  */
 export class PouchDatabase extends Database {
-  static async createWithData(data: any[]): Promise<PouchDatabase> {
+  static createWithData(data: any[]): PouchDatabase {
     const instance = PouchDatabase.createWithInMemoryDB();
-    await Promise.all(data.map((doc) => instance.put(doc)));
+    Promise.all(data.map((doc) => instance.put(doc, true))).then(() =>
+      console.log("data saved")
+    );
     return instance;
   }
 

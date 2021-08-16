@@ -8,6 +8,9 @@ import { HealthCheck } from "../model/health-check";
 import moment from "moment";
 import { Child } from "../../children/model/child";
 import { of } from "rxjs";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
+import { User } from "../../../core/user/user";
 
 const hc1 = new HealthCheck();
 hc1.date = new Date();
@@ -32,11 +35,19 @@ export default {
       providers: [
         {
           provide: EntityMapperService,
-          useValue: { save: () => Promise.resolve() },
+          useValue: mockEntityMapper([new User("username")]),
         },
         {
           provide: ChildrenService,
           useValue: { getHealthChecksOfChild: () => of([hc1, hc2, hc3]) },
+        },
+        {
+          provide: SessionService,
+          useValue: {
+            getCurrentDBUser: () => {
+              return { name: "username" };
+            },
+          },
         },
       ],
     }),

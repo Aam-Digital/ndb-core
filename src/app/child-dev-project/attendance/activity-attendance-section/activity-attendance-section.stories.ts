@@ -18,6 +18,9 @@ import { of } from "rxjs";
 import { Child } from "../../children/model/child";
 import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { Angulartics2Module } from "angulartics2";
+import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { User } from "../../../core/user/user";
 
 const demoActivity = RecurringActivity.create("Coaching Batch C");
 const attendanceRecords = [
@@ -82,8 +85,16 @@ export default {
       declarations: [],
       providers: [
         {
+          provide: SessionService,
+          useValue: {
+            getCurrentDBUser: () => {
+              return { name: "username" };
+            },
+          },
+        },
+        {
           provide: EntityMapperService,
-          useValue: { save: () => Promise.resolve() },
+          useValue: mockEntityMapper([new User("username")]),
         },
         {
           provide: AttendanceService,
