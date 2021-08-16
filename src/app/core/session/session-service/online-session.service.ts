@@ -43,7 +43,7 @@ export class OnlineSessionService extends SessionService {
     private entitySchemaService: EntitySchemaService
   ) {
     super();
-    this.remoteSession = new RemoteSession();
+    this.remoteSession = new RemoteSession(null);
     this.database = new PouchDatabase(
       this.remoteSession.database,
       this.loggingService
