@@ -24,7 +24,6 @@ import { RemoteSession } from "./remote-session";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { SessionType } from "../session-type";
 import { fakeAsync, flush, TestBed, tick } from "@angular/core/testing";
-import { User } from "../../user/user";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { LoggingService } from "../../logging/logging.service";
 import { of, throwError } from "rxjs";
@@ -50,7 +49,6 @@ describe("SyncedSessionService", () => {
   let dbUser: DatabaseUser;
   let syncSpy: jasmine.Spy<() => Promise<void>>;
   let liveSyncSpy: jasmine.Spy<() => void>;
-  let loadUserSpy: jasmine.Spy<(userId: string) => void>;
   let mockHttpClient: jasmine.SpyObj<HttpClient>;
 
   beforeEach(() => {
@@ -102,9 +100,6 @@ describe("SyncedSessionService", () => {
     remoteLoginSpy = spyOn(remoteSession, "login").and.callThrough();
     syncSpy = spyOn(sessionService, "sync").and.resolveTo();
     liveSyncSpy = spyOn(sessionService, "liveSyncDeferred");
-
-    // TODO remove this once User Entity is not needed in session any more
-    loadUserSpy = spyOn(localSession, "loadUser").and.resolveTo();
   });
 
   afterEach(() => {
@@ -246,25 +241,6 @@ describe("SyncedSessionService", () => {
     expectAsync(result).toBeResolvedTo(LoginState.UNAVAILABLE);
 
     flush();
-  }));
-
-  it("should load the user entity after successful local login", fakeAsync(() => {
-    const testUser = new User(TEST_USER);
-    testUser.name = TEST_USER;
-    const database = sessionService.getDatabase();
-    loadUserSpy.and.callThrough();
-    spyOn(database, "get").and.resolveTo(
-      TestBed.inject(EntitySchemaService).transformEntityToDatabaseFormat(
-        testUser
-      )
-    );
-
-    sessionService.login(TEST_USER, TEST_PASSWORD);
-    tick();
-
-    expect(localLoginSpy).toHaveBeenCalledWith(TEST_USER, TEST_PASSWORD);
-    expect(database.get).toHaveBeenCalledWith(testUser._id);
-    expect(sessionService.getCurrentUser()).toEqual(testUser);
   }));
 
   it("should update the local user object once connected", fakeAsync(() => {

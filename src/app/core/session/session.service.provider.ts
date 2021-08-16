@@ -45,8 +45,7 @@ export function sessionServiceFactory(
         PouchDatabase.createWithIndexedDB(
           AppConfig.settings.database.name,
           loggingService
-        ),
-        entitySchemaService
+        )
       );
       break;
     case SessionType.synced:
@@ -62,8 +61,7 @@ export function sessionServiceFactory(
         PouchDatabase.createWithInMemoryDB(
           AppConfig.settings.database.name,
           loggingService
-        ),
-        entitySchemaService
+        )
       );
       break;
   }

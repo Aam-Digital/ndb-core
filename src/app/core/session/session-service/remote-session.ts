@@ -24,7 +24,6 @@ import { DatabaseUser } from "./local-user";
 import { SessionService } from "./session.service";
 import { LoginState } from "../session-states/login-state.enum";
 import { Database } from "../../database/database";
-import { User } from "../../user/user";
 import { PouchDatabase } from "../../database/pouch-database";
 import { LoggingService } from "../../logging/logging.service";
 
@@ -114,10 +113,6 @@ export class RemoteSession extends SessionService {
   checkPassword(username: string, password: string): boolean {
     // Cannot be checked against CouchDB due to cookie-auth
     throw Error("Can't check password in remote session");
-  }
-
-  getCurrentUser(): User {
-    throw Error("Can't get user entity in remote session");
   }
 
   getDatabase(): Database {

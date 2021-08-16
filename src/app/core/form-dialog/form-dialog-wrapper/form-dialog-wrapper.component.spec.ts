@@ -8,7 +8,6 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { MatDialogRef } from "@angular/material/dialog";
 import { Subject } from "rxjs";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
-import { User } from "../../user/user";
 import { SessionService } from "../../session/session-service/session.service";
 
 describe("FormDialogWrapperComponent", () => {
@@ -16,10 +15,12 @@ describe("FormDialogWrapperComponent", () => {
   let fixture: ComponentFixture<FormDialogWrapperComponent>;
 
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockSessionService: jasmine.SpyObj<SessionService>;
 
   beforeEach(
     waitForAsync(() => {
       mockEntityMapper = jasmine.createSpyObj("mockEntityMapper", ["save"]);
+      mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
 
       TestBed.configureTestingModule({
         imports: [
@@ -30,11 +31,8 @@ describe("FormDialogWrapperComponent", () => {
         ],
         providers: [
           { provide: EntityMapperService, useValue: mockEntityMapper },
+          { provide: SessionService, useValue: mockSessionService },
           { provide: MatDialogRef, useValue: {} },
-          {
-            provide: SessionService,
-            useValue: { getCurrentUser: () => new User() },
-          },
         ],
       }).compileComponents();
     })

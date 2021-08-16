@@ -18,7 +18,6 @@
 import { LoginState } from "../session-states/login-state.enum";
 import { Database } from "../../database/database";
 import { SyncState } from "../session-states/sync-state.enum";
-import { User } from "../../user/user";
 import { StateHandler } from "../session-states/state-handler";
 import { DatabaseUser } from "./local-user";
 
@@ -52,12 +51,6 @@ export abstract class SessionService {
    * Logout the current user.
    */
   abstract logout();
-
-  /**
-   * Get the currently logged in user (or undefined).
-   * @deprecated use getCurrentDBUser instead
-   */
-  abstract getCurrentUser(): User;
 
   /**
    * Get the current user according to the new format

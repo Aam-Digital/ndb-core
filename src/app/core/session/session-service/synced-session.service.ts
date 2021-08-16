@@ -25,7 +25,6 @@ import { LoginState } from "../session-states/login-state.enum";
 import { Database } from "../../database/database";
 import { PouchDatabase } from "../../database/pouch-database";
 import { SyncState } from "../session-states/sync-state.enum";
-import { User } from "../../user/user";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { LoggingService } from "../../logging/logging.service";
 import { HttpClient } from "@angular/common/http";
@@ -62,10 +61,7 @@ export class SyncedSessionService extends SessionService {
     super();
     this.pouchDB = new PouchDB(AppConfig.settings.database.name);
     this.database = new PouchDatabase(this.pouchDB, this._loggingService);
-    this._localSession = new LocalSession(
-      this.database,
-      this._entitySchemaService
-    );
+    this._localSession = new LocalSession(this.database);
     this._remoteSession = new RemoteSession(this._httpClient, _loggingService);
   }
 
@@ -152,11 +148,6 @@ export class SyncedSessionService extends SessionService {
           this.liveSyncDeferred();
         }
       });
-  }
-
-  /** see {@link SessionService} */
-  public getCurrentUser(): User {
-    return this._localSession.getCurrentUser();
   }
 
   public getCurrentDBUser(): DatabaseUser {

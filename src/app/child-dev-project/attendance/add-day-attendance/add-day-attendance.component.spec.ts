@@ -7,10 +7,9 @@ import { AttendanceModule } from "../attendance.module";
 import { RouterTestingModule } from "@angular/router/testing";
 import { ChildrenService } from "../../children/children.service";
 import { of } from "rxjs";
-import { SessionService } from "../../../core/session/session-service/session.service";
-import { User } from "../../../core/user/user";
 import { MatNativeDateModule } from "@angular/material/core";
 import { AttendanceService } from "../attendance.service";
+import { SessionService } from "../../../core/session/session-service/session.service";
 
 describe("AddDayAttendanceComponent", () => {
   let component: AddDayAttendanceComponent;
@@ -18,6 +17,7 @@ describe("AddDayAttendanceComponent", () => {
 
   let mockEntityService: jasmine.SpyObj<EntityMapperService>;
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
+  let mockSessionService: jasmine.SpyObj<SessionService>;
 
   beforeEach(
     waitForAsync(() => {
@@ -33,15 +33,14 @@ describe("AddDayAttendanceComponent", () => {
       ]);
       mockChildrenService.getChildren.and.returnValue(of([]));
 
+      mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
+
       TestBed.configureTestingModule({
         imports: [AttendanceModule, RouterTestingModule, MatNativeDateModule],
         providers: [
           { provide: EntityMapperService, useValue: mockEntityService },
           { provide: ChildrenService, useValue: mockChildrenService },
-          {
-            provide: SessionService,
-            useValue: { getCurrentUser: () => new User("") },
-          },
+          { provide: SessionService, useValue: mockSessionService },
           {
             provide: AttendanceService,
             useValue: { getEventsOnDate: () => Promise.resolve([]) },

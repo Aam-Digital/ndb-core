@@ -39,7 +39,7 @@ describe("LocalSessionService", () => {
         remote_url: "https://demo.aam-digital.com/db/",
       },
     };
-    localSession = new LocalSession();
+    localSession = new LocalSession(null);
   });
 
   beforeEach(() => {
@@ -110,7 +110,7 @@ describe("LocalSessionService", () => {
     expect(localSession.getLoginState().getState()).toBe(
       LoginState.UNAVAILABLE
     );
-    expect(localSession.getCurrentUser()).toBeUndefined();
+    expect(localSession.getCurrentDBUser()).toBeUndefined();
   });
 
   testSessionServiceImplementation(() => Promise.resolve(localSession));

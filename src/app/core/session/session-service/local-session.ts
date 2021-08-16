@@ -23,8 +23,6 @@ import {
   passwordEqualsEncrypted,
 } from "./local-user";
 import { Database } from "../../database/database";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { User } from "../../user/user";
 import { SessionService } from "./session.service";
 
 /**
@@ -35,15 +33,8 @@ import { SessionService } from "./session.service";
 @Injectable()
 export class LocalSession extends SessionService {
   private currentDBUser: DatabaseUser;
-  /**
-   * @deprecated instead use currentUser
-   */
-  private currentUserEntity: User;
 
-  constructor(
-    private database?: Database,
-    private entitySchemaService?: EntitySchemaService
-  ) {
+  constructor(private database: Database) {
     super();
   }
 
@@ -58,7 +49,6 @@ export class LocalSession extends SessionService {
     if (user) {
       if (passwordEqualsEncrypted(password, user.encryptedPassword)) {
         this.currentDBUser = user;
-        this.currentUserEntity = await this.loadUser(username);
         this.getLoginState().setState(LoginState.LOGGED_IN);
       } else {
         this.getLoginState().setState(LoginState.LOGIN_FAILED);
@@ -96,10 +86,6 @@ export class LocalSession extends SessionService {
     window.localStorage.removeItem(username);
   }
 
-  public getCurrentUser(): User {
-    return this.currentUserEntity;
-  }
-
   public checkPassword(username: string, password: string): boolean {
     const user: LocalUser = JSON.parse(window.localStorage.getItem(username));
     return user && passwordEqualsEncrypted(password, user.encryptedPassword);
@@ -114,22 +100,7 @@ export class LocalSession extends SessionService {
    */
   public logout() {
     this.currentDBUser = undefined;
-    this.currentUserEntity = undefined;
     this.getLoginState().setState(LoginState.LOGGED_OUT);
-  }
-
-  /**
-   * TODO remove once admin information is migrated to new format (CouchDB)
-   * Helper to get a User Entity from the Database without needing the EntityMapperService
-   * @param userId Id of the User to be loaded
-   */
-  public async loadUser(userId: string): Promise<User> {
-    if (this.database && this.entitySchemaService) {
-      const user = new User("");
-      const userData = await this.database.get("User:" + userId);
-      this.entitySchemaService.loadDataIntoEntity(user, userData);
-      return user;
-    }
   }
 
   getDatabase(): Database {
