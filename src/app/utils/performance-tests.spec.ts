@@ -23,7 +23,7 @@ import { SyncState } from "../core/session/session-states/sync-state.enum";
 import moment from "moment";
 import { ChildrenService } from "../child-dev-project/children/children.service";
 import { deleteDB } from "idb";
-import { waitForChangeTo } from "../core/session/session-service/session-utils";
+import { waitForChangeTo } from "../core/session/session-states/session-utils";
 
 const TEST_REMOTE_DATABASE_URL = "http://dev.aam-digital.com/db/";
 // WARNING - do not check in credentials into public git repository

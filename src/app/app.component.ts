@@ -33,7 +33,7 @@ import { School } from "./child-dev-project/schools/model/school";
 import { HistoricalEntityData } from "./features/historical-data/historical-entity-data";
 import { Note } from "./child-dev-project/notes/model/note";
 import { EventNote } from "./child-dev-project/attendance/model/event-note";
-import { waitForChangeTo } from "./core/session/session-service/session-utils";
+import { waitForChangeTo } from "./core/session/session-states/session-utils";
 
 @Component({
   selector: "app-root",
