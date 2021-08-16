@@ -14,6 +14,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { OperationType } from "../../permissions/entity-permissions.service";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Use `<app-form-dialog-wrapper>` in your form templates to handle the saving and resetting of the edited entity.
@@ -31,6 +32,7 @@ import { OperationType } from "../../permissions/entity-permissions.service";
    </form>
  </app-form-dialog-wrapper>
  */
+@UntilDestroy()
 @Component({
   selector: "app-form-dialog-wrapper",
   templateUrl: "./form-dialog-wrapper.component.html",
@@ -83,9 +85,11 @@ export class FormDialogWrapperComponent implements AfterViewInit {
   ) {}
 
   ngAfterViewInit() {
-    this.contentForm.form.statusChanges.subscribe(() => {
-      this.matDialogRef.disableClose = this.isFormDirty;
-    });
+    this.contentForm.form.statusChanges
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.matDialogRef.disableClose = this.isFormDirty;
+      });
   }
 
   /**
@@ -128,22 +132,28 @@ export class FormDialogWrapperComponent implements AfterViewInit {
       "Are you sure you want to delete this object?"
     );
 
-    dialogRef.afterClosed().subscribe(async (confirmed: any) => {
-      const currentUrl = getUrlWithoutParams(this.router);
-      if (confirmed) {
-        await this.entityMapper.remove<Entity>(this.entity);
-        this.onClose.emit(undefined);
+    dialogRef
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe(async (confirmed: any) => {
+        const currentUrl = getUrlWithoutParams(this.router);
+        if (confirmed) {
+          await this.entityMapper.remove<Entity>(this.entity);
+          this.onClose.emit(undefined);
 
-        const snackBarRef = this.snackBar.open(
-          $localize`:Deleted Entity information:Deleted Entity ${this.entity.toString()}`,
-          "Undo",
-          { duration: 8000 }
-        );
-        snackBarRef.onAction().subscribe(() => {
-          this.entityMapper.save(this.entity, true);
-          this.router.navigate([currentUrl]);
-        });
-      }
-    });
+          const snackBarRef = this.snackBar.open(
+            $localize`:Deleted Entity information:Deleted Entity ${this.entity.toString()}`,
+            "Undo",
+            { duration: 8000 }
+          );
+          snackBarRef
+            .onAction()
+            .pipe(untilDestroyed(this))
+            .subscribe(() => {
+              this.entityMapper.save(this.entity, true);
+              this.router.navigate([currentUrl]);
+            });
+        }
+      });
   }
 }

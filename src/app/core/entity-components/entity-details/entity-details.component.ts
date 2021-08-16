@@ -21,6 +21,7 @@ import {
 } from "../../permissions/entity-permissions.service";
 import { User } from "../../user/user";
 import { Note } from "../../../child-dev-project/notes/model/note";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 export const ENTITY_MAP: Map<string, EntityConstructor<Entity>> = new Map<
   string,
@@ -41,6 +42,7 @@ export const ENTITY_MAP: Map<string, EntityConstructor<Entity>> = new Map<
  * Any component from the DYNAMIC_COMPONENT_MAP can be used as a subcomponent.
  * The subcomponents will be provided with the Entity object and the creating new status, as well as it's static config.
  */
+@UntilDestroy()
 @Component({
   selector: "app-entity-details",
   templateUrl: "./entity-details.component.html",
@@ -65,13 +67,15 @@ export class EntityDetailsComponent {
     private confirmationDialog: ConfirmationDialogService,
     private permissionService: EntityPermissionsService
   ) {
-    this.route.data.subscribe((config: EntityDetailsConfig) => {
-      this.config = config;
-      this.classNamesWithIcon = "fa fa-" + config.icon + " fa-fw";
-      this.route.paramMap.subscribe((params) =>
-        this.loadEntity(params.get("id"))
-      );
-    });
+    this.route.data
+      .pipe(untilDestroyed(this))
+      .subscribe((config: EntityDetailsConfig) => {
+        this.config = config;
+        this.classNamesWithIcon = "fa fa-" + config.icon + " fa-fw";
+        this.route.paramMap
+          .pipe(untilDestroyed(this))
+          .subscribe((params) => this.loadEntity(params.get("id")));
+      });
   }
 
   private loadEntity(id: string) {
@@ -128,25 +132,31 @@ export class EntityDetailsComponent {
       $localize`:Delete confirmation text:Are you sure you want to delete this ${this.config.entity} ?`
     );
 
-    dialogRef.afterClosed().subscribe((confirmed) => {
-      const currentUrl = getUrlWithoutParams(this.router);
-      if (confirmed) {
-        this.entityMapperService
-          .remove<Entity>(this.entity)
-          .then(() => this.navigateBack())
-          .catch((err) => console.log("error", err));
+    dialogRef
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe((confirmed) => {
+        const currentUrl = getUrlWithoutParams(this.router);
+        if (confirmed) {
+          this.entityMapperService
+            .remove<Entity>(this.entity)
+            .then(() => this.navigateBack())
+            .catch((err) => console.log("error", err));
 
-        const snackBarRef = this.snackBar.open(
-          $localize`:Deleted Entity information:Deleted Entity ${this.entity.toString()}`,
-          "Undo",
-          { duration: 8000 }
-        );
-        snackBarRef.onAction().subscribe(() => {
-          this.entityMapperService.save(this.entity, true);
-          this.router.navigate([currentUrl]);
-        });
-      }
-    });
+          const snackBarRef = this.snackBar.open(
+            $localize`:Deleted Entity information:Deleted Entity ${this.entity.toString()}`,
+            "Undo",
+            { duration: 8000 }
+          );
+          snackBarRef
+            .onAction()
+            .pipe(untilDestroyed(this))
+            .subscribe(() => {
+              this.entityMapperService.save(this.entity, true);
+              this.router.navigate([currentUrl]);
+            });
+        }
+      });
   }
 
   navigateBack() {

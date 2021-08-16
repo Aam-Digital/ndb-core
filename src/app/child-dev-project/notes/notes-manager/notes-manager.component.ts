@@ -83,16 +83,16 @@ export class NotesManagerComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.route.data.subscribe(
-      async (config: EntityListConfig & NotesManagerConfig) => {
+    this.route.data
+      .pipe(untilDestroyed(this))
+      .subscribe(async (config: EntityListConfig & NotesManagerConfig) => {
         this.config = config;
         this.addPrebuiltFilters();
 
         this.includeEventNotes = config.includeEventNotes;
         this.showEventNotesToggle = config.showEventNotesToggle;
         this.notes = await this.loadEntities();
-      }
-    );
+      });
 
     this.subscribeEntityUpdates(Note);
     this.subscribeEntityUpdates(EventNote);

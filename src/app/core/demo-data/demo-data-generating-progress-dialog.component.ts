@@ -21,12 +21,14 @@ import { DemoDataService } from "./demo-data.service";
 import { LoggingService } from "../logging/logging.service";
 import { SessionService } from "../session/session-service/session.service";
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Loading box during demo data generation.
  *
  * see {@link DemoDataModule}
  */
+@UntilDestroy()
 @Component({
   template:
     "<p i18n>Generating sample data for this demo ...</p>" +
@@ -50,23 +52,26 @@ export class DemoDataGeneratingProgressDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.dialogRef.disableClose = true;
-    this.dialogRef.afterOpened().subscribe(() => {
-      this.demoDataService
-        .publishDemoData()
-        // don't use await this.demoDataService - dialogRef.close doesn't seem to work consistently in that case
-        .then(async () => {
-          await this.sessionService.login(
-            DemoUserGeneratorService.DEFAULT_USERNAME,
-            DemoUserGeneratorService.DEFAULT_PASSWORD
-          );
-          this.dialogRef.close(true);
-        })
-        .catch((err) =>
-          this.loggingService.error({
-            title: "error during demo data generation",
-            details: err,
+    this.dialogRef
+      .afterOpened()
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.demoDataService
+          .publishDemoData()
+          // don't use await this.demoDataService - dialogRef.close doesn't seem to work consistently in that case
+          .then(async () => {
+            await this.sessionService.login(
+              DemoUserGeneratorService.DEFAULT_USERNAME,
+              DemoUserGeneratorService.DEFAULT_PASSWORD
+            );
+            this.dialogRef.close(true);
           })
-        );
-    });
+          .catch((err) =>
+            this.loggingService.error({
+              title: "error during demo data generation",
+              details: err,
+            })
+          );
+      });
   }
 }

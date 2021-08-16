@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { School } from "../model/school";
 import { ActivatedRoute, Router } from "@angular/router";
-import { UntilDestroy } from "@ngneat/until-destroy";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
@@ -33,9 +33,9 @@ export class SchoolsListComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.route.data.subscribe(
-      (config: EntityListConfig) => (this.listConfig = config)
-    );
+    this.route.data
+      .pipe(untilDestroyed(this))
+      .subscribe((config: EntityListConfig) => (this.listConfig = config));
     this.entityMapper
       .loadType<School>(School)
       .then((data) => (this.schoolList = data));

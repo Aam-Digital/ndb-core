@@ -18,10 +18,12 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { MarkdownPageConfig } from "../MarkdownPageConfig";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Display markdown formatted page that is dynamically loaded based on the file defined in config.
  */
+@UntilDestroy()
 @Component({
   selector: "app-markdown-page",
   templateUrl: "./markdown-page.component.html",
@@ -34,8 +36,11 @@ export class MarkdownPageComponent implements OnInit {
   constructor(private route: ActivatedRoute) {}
 
   ngOnInit() {
-    this.route.data.subscribe(
-      (config: MarkdownPageConfig) => (this.markdownFile = config.markdownFile)
-    );
+    this.route.data
+      .pipe(untilDestroyed(this))
+      .subscribe(
+        (config: MarkdownPageConfig) =>
+          (this.markdownFile = config.markdownFile)
+      );
   }
 }

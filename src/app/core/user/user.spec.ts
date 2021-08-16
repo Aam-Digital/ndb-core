@@ -52,7 +52,6 @@ describe("User", () => {
       _id: ENTITY_TYPE + ":" + id,
 
       name: "tester",
-      admin: true,
       cloudPasswordEnc: "encryptedPassword",
       cloudBaseFolder: "/aam-digital/",
       paginatorSettingsPageSize: {},
@@ -63,7 +62,6 @@ describe("User", () => {
 
     const entity = new User(id);
     entity.name = expectedData.name;
-    entity.admin = expectedData.admin;
     // @ts-ignore
     entity.cloudPasswordEnc = expectedData.cloudPasswordEnc;
 

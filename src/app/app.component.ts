@@ -33,15 +33,17 @@ import { School } from "./child-dev-project/schools/model/school";
 import { HistoricalEntityData } from "./features/historical-data/historical-entity-data";
 import { Note } from "./child-dev-project/notes/model/note";
 import { EventNote } from "./child-dev-project/attendance/model/event-note";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
-/**
- * Component as the main entry point for the app.
- * Actual logic and UI structure is defined in other modules.
- */
+@UntilDestroy()
 @Component({
   selector: "app-root",
   template: "<app-ui></app-ui>",
 })
+/**
+ * Component as the main entry point for the app.
+ * Actual logic and UI structure is defined in other modules.
+ */
 export class AppComponent implements OnInit {
   constructor(
     private viewContainerRef: ViewContainerRef, // need this small hack in order to catch application root view container ref
@@ -67,8 +69,8 @@ export class AppComponent implements OnInit {
       .then(() => configService.loadConfig(entityMapper))
       .then(() => router.navigate([], { relativeTo: this.activatedRoute }));
     // These functions will be executed whenever a new config is available
-    configService.configUpdates.subscribe(() => routerService.initRouting());
-    configService.configUpdates.subscribe(() => {
+    configService.configUpdates.pipe(untilDestroyed(this)).subscribe(() => {
+      routerService.initRouting();
       entityConfigService.addConfigAttributes(Child);
       entityConfigService.addConfigAttributes(School);
       entityConfigService.addConfigAttributes(RecurringActivity);

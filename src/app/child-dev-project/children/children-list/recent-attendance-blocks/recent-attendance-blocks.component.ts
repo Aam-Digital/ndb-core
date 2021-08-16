@@ -6,12 +6,9 @@ import { ViewPropertyConfig } from "../../../../core/entity-components/entity-li
 import { ActivityAttendance } from "../../../attendance/model/activity-attendance";
 import { AttendanceService } from "../../../attendance/attendance.service";
 import moment from "moment";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
-/**
- * This component lists attendance blocks for a child for recent months filtered by institutions.
- * The child object the institution needs to be provided.
- * It also implements a flexible layout to display less attendance blocks on a smaller layout.
- */
+@UntilDestroy()
 @Component({
   selector: "app-recent-attendance-blocks",
   template: `
@@ -22,6 +19,11 @@ import moment from "moment";
     ></app-attendance-block>
   `,
 })
+/**
+ * This component lists attendance blocks for a child for recent months filtered by institutions.
+ * The child object the institution needs to be provided.
+ * It also implements a flexible layout to display less attendance blocks on a smaller layout.
+ */
 export class RecentAttendanceBlocksComponent implements OnInitDynamicComponent {
   attendanceList: ActivityAttendance[] = [];
   maxAttendanceBlocks: number = 3;
@@ -33,27 +35,30 @@ export class RecentAttendanceBlocksComponent implements OnInitDynamicComponent {
     private attendanceService: AttendanceService,
     private media: MediaObserver
   ) {
-    this.media.asObservable().subscribe((change: MediaChange[]) => {
-      switch (change[0].mqAlias) {
-        case "xs":
-        case "sm": {
-          this.maxAttendanceBlocks = 1;
-          break;
+    this.media
+      .asObservable()
+      .pipe(untilDestroyed(this))
+      .subscribe((change: MediaChange[]) => {
+        switch (change[0].mqAlias) {
+          case "xs":
+          case "sm": {
+            this.maxAttendanceBlocks = 1;
+            break;
+          }
+          case "md": {
+            this.maxAttendanceBlocks = 2;
+            break;
+          }
+          case "lg": {
+            this.maxAttendanceBlocks = 3;
+            break;
+          }
+          case "xl": {
+            this.maxAttendanceBlocks = 6;
+            break;
+          }
         }
-        case "md": {
-          this.maxAttendanceBlocks = 2;
-          break;
-        }
-        case "lg": {
-          this.maxAttendanceBlocks = 3;
-          break;
-        }
-        case "xl": {
-          this.maxAttendanceBlocks = 6;
-          break;
-        }
-      }
-    });
+      });
   }
 
   async onInitFromDynamicConfig(config: ViewPropertyConfig) {

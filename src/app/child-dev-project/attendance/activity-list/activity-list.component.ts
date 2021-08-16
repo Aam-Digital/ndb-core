@@ -3,7 +3,9 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { RecurringActivity } from "../model/recurring-activity";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: "app-activity-list",
   template: `
@@ -28,9 +30,9 @@ export class ActivityListComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.route.data.subscribe(
-      (config: EntityListConfig) => (this.listConfig = config)
-    );
+    this.route.data
+      .pipe(untilDestroyed(this))
+      .subscribe((config: EntityListConfig) => (this.listConfig = config));
     this.entities = await this.entityMapper.loadType<RecurringActivity>(
       RecurringActivity
     );
