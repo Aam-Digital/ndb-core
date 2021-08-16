@@ -20,7 +20,7 @@ describe("FormDialogWrapperComponent", () => {
   beforeEach(
     waitForAsync(() => {
       mockEntityMapper = jasmine.createSpyObj("mockEntityMapper", ["save"]);
-      mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
+      mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
 
       TestBed.configureTestingModule({
         imports: [

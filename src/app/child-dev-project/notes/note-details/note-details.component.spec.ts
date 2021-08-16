@@ -42,8 +42,8 @@ describe("NoteDetailsComponent", () => {
   beforeEach(() => {
     children = [new Child("1"), new Child("2"), new Child("3")];
     testNote = generateTestNote(children);
-    mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
-    mockSessionService.getCurrentDBUser.and.returnValue({
+    mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
+    mockSessionService.getCurrentUser.and.returnValue({
       name: "user",
       roles: [],
     });

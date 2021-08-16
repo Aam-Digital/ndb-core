@@ -72,7 +72,7 @@ export class LocalSession extends SessionService {
     };
     window.localStorage.setItem(localUser.name, JSON.stringify(localUser));
     // Update when already logged in
-    if (this.getCurrentDBUser()?.name === localUser.name) {
+    if (this.getCurrentUser()?.name === localUser.name) {
       this.currentDBUser = localUser;
     }
   }
@@ -91,7 +91,7 @@ export class LocalSession extends SessionService {
     return user && passwordEqualsEncrypted(password, user.encryptedPassword);
   }
 
-  public getCurrentDBUser(): DatabaseUser {
+  public getCurrentUser(): DatabaseUser {
     return this.currentDBUser;
   }
 

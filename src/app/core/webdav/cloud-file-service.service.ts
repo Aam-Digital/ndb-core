@@ -47,10 +47,10 @@ export class CloudFileService {
     username: string = null,
     password: string = null
   ): Promise<void> {
-    const currentUser = this.sessionService.getCurrentDBUser();
+    const currentUser = this.sessionService.getCurrentUser();
     if (
       !CloudFileService.WEBDAV_ENABLED ||
-      !this.sessionService.getCurrentDBUser()
+      !this.sessionService.getCurrentUser()
     ) {
       return;
     }

@@ -136,7 +136,7 @@ export class SyncedSessionService extends SessionService {
 
   private updateLocalUserAndStartSync(password: string) {
     // Update local user object
-    const remoteUser = this._remoteSession.getCurrentDBUser();
+    const remoteUser = this._remoteSession.getCurrentUser();
     this._localSession.saveUser(remoteUser, password);
 
     return this.sync()
@@ -150,8 +150,8 @@ export class SyncedSessionService extends SessionService {
       });
   }
 
-  public getCurrentDBUser(): DatabaseUser {
-    return this._localSession.getCurrentDBUser();
+  public getCurrentUser(): DatabaseUser {
+    return this._localSession.getCurrentUser();
   }
 
   public checkPassword(username: string, password: string): boolean {

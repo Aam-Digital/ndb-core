@@ -92,7 +92,7 @@ export class ListPaginatorComponent<E extends Entity>
 
   private async applyUserPaginationSettings() {
     if (!this.user) {
-      const currentUser = this.sessionService.getCurrentDBUser();
+      const currentUser = this.sessionService.getCurrentUser();
       this.user = await this.entityMapperService.load(User, currentUser.name);
     }
 
@@ -114,7 +114,7 @@ export class ListPaginatorComponent<E extends Entity>
 
   private async updateUserPaginationSettings() {
     if (!this.user) {
-      const currentUser = this.sessionService.getCurrentDBUser();
+      const currentUser = this.sessionService.getCurrentUser();
       this.user = await this.entityMapperService.load(User, currentUser.name);
     }
 

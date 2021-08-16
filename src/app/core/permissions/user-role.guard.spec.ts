@@ -20,7 +20,7 @@ describe("UserRoleGuard", () => {
   beforeEach(() => {
     mockConfigService = jasmine.createSpyObj(["getConfig"]);
     mockConfigService.getConfig.and.returnValue(adminRouteConfig);
-    mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
+    mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
     TestBed.configureTestingModule({
       providers: [
         { provide: ConfigService, useValue: mockConfigService },
@@ -35,7 +35,7 @@ describe("UserRoleGuard", () => {
   });
 
   it("should return true if current user is allowed", () => {
-    mockSessionService.getCurrentDBUser.and.returnValue(adminUser);
+    mockSessionService.getCurrentUser.and.returnValue(adminUser);
 
     const result = guard.canActivate({ routeConfig: { path: "url" } } as any);
 
@@ -46,7 +46,7 @@ describe("UserRoleGuard", () => {
   });
 
   it("should return false for a user without permissions", () => {
-    mockSessionService.getCurrentDBUser.and.returnValue(normalUser);
+    mockSessionService.getCurrentUser.and.returnValue(normalUser);
 
     const result = guard.canActivate({ routeConfig: { path: "url" } } as any);
 

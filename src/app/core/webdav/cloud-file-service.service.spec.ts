@@ -33,8 +33,8 @@ describe("CloudFileService", () => {
       webdav: { remote_url: "test-url" },
     };
 
-    mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
-    mockSessionService.getCurrentDBUser.and.returnValue({
+    mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
+    mockSessionService.getCurrentUser.and.returnValue({
       name: "user",
       roles: [],
     });
@@ -70,7 +70,7 @@ describe("CloudFileService", () => {
   it(".connect() should check user existence and call webdav.createClient()", async () => {
     await cloudFileService.connect("user", "pass");
 
-    expect(mockSessionService.getCurrentDBUser).toHaveBeenCalled();
+    expect(mockSessionService.getCurrentUser).toHaveBeenCalled();
     expect(mockWebdav.createClient).toHaveBeenCalledWith("test-url", {
       username: "user",
       password: "pass",
@@ -96,7 +96,7 @@ describe("CloudFileService", () => {
   it(".connect() should connect using credentials saved for user", async () => {
     await cloudFileService.connect();
 
-    expect(mockSessionService.getCurrentDBUser).toHaveBeenCalled();
+    expect(mockSessionService.getCurrentUser).toHaveBeenCalled();
     expect(mockWebdav.createClient).toHaveBeenCalledWith("test-url", {
       username: "testuser",
       password: "testuserpass",

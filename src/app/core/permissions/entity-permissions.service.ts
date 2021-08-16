@@ -32,7 +32,7 @@ export class EntityPermissionsService {
     entity: EntityConstructor<Entity>,
     operation: OperationType
   ): boolean {
-    const currentUser = this.sessionService.getCurrentDBUser();
+    const currentUser = this.sessionService.getCurrentUser();
     const entityConfig = this.entityConfigService.getEntityConfig(entity);
     if (entityConfig?.permissions && entityConfig.permissions[operation]) {
       // Check the user has a role that has permission for this operation

@@ -103,8 +103,8 @@ describe("NotesManagerComponent", () => {
     mockNoteObservable = new Subject<UpdatedEntity<Note>>();
     mockEventNoteObservable = new Subject<UpdatedEntity<EventNote>>();
 
-    const mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
-    mockSessionService.getCurrentDBUser.and.returnValue({
+    const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
+    mockSessionService.getCurrentUser.and.returnValue({
       name: "TestUser",
       roles: [],
     });

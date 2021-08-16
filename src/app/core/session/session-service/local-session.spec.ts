@@ -96,7 +96,7 @@ describe("LocalSessionService", () => {
   it("should assign current user after successful login", async () => {
     await localSession.login(TEST_USER, TEST_PASSWORD);
 
-    const currentUser = localSession.getCurrentDBUser();
+    const currentUser = localSession.getCurrentUser();
 
     expect(currentUser.name).toBe(TEST_USER);
     expect(currentUser.roles).toEqual(testUser.roles);
@@ -110,7 +110,7 @@ describe("LocalSessionService", () => {
     expect(localSession.getLoginState().getState()).toBe(
       LoginState.UNAVAILABLE
     );
-    expect(localSession.getCurrentDBUser()).toBeUndefined();
+    expect(localSession.getCurrentUser()).toBeUndefined();
   });
 
   testSessionServiceImplementation(() => Promise.resolve(localSession));

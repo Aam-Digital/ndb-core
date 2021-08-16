@@ -86,7 +86,7 @@ export default {
         {
           provide: SessionService,
           useValue: {
-            getCurrentDBUser: () => {
+            getCurrentUser: () => {
               return { name: "username" };
             },
           },

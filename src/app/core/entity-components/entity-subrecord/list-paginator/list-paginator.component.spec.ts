@@ -26,8 +26,8 @@ describe("ListPaginatorComponent", () => {
     waitForAsync(() => {
       mockEntityMapper = jasmine.createSpyObj(["save", "load"]);
       mockEntityMapper.load.and.resolveTo(new User());
-      mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
-      mockSessionService.getCurrentDBUser.and.returnValue({
+      mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
+      mockSessionService.getCurrentUser.and.returnValue({
         name: "TestUser",
         roles: [],
       });

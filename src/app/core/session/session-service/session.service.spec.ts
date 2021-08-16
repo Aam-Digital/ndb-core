@@ -60,7 +60,7 @@ export function testSessionServiceImplementation(
     expect(sessionService.isLoggedIn())
       .withContext("unexpected isLoggedIn")
       .toBeTrue();
-    expect(sessionService.getCurrentDBUser().name).toBe(TEST_USER);
+    expect(sessionService.getCurrentUser().name).toBe(TEST_USER);
   });
 
   it("fails login with wrong password", async () => {
@@ -103,6 +103,6 @@ export function testSessionServiceImplementation(
     expect(sessionService.isLoggedIn())
       .withContext("unexpected isLoggedIn")
       .toEqual(false);
-    expect(sessionService.getCurrentDBUser()).not.toBeDefined();
+    expect(sessionService.getCurrentUser()).not.toBeDefined();
   }
 }

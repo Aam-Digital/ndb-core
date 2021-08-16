@@ -106,7 +106,7 @@ export class RemoteSession extends SessionService {
     this.getLoginState().setState(LoginState.LOGGED_OUT);
   }
 
-  getCurrentDBUser(): DatabaseUser {
+  getCurrentUser(): DatabaseUser {
     return this.currentDBUser;
   }
 

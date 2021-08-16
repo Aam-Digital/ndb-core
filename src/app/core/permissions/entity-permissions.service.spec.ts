@@ -15,7 +15,7 @@ describe("EntityPermissionsService", () => {
 
   beforeEach(() => {
     mockConfigService = jasmine.createSpyObj(["getEntityConfig"]);
-    mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
+    mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
 
     TestBed.configureTestingModule({
       providers: [
@@ -49,7 +49,7 @@ describe("EntityPermissionsService", () => {
   });
 
   it("should not give permission if user does not have any required role", () => {
-    mockSessionService.getCurrentDBUser.and.returnValue({
+    mockSessionService.getCurrentUser.and.returnValue({
       name: "noAdminUser",
       roles: ["user_app"],
     });
@@ -63,7 +63,7 @@ describe("EntityPermissionsService", () => {
   });
 
   it("should give permission when user has a required role", () => {
-    mockSessionService.getCurrentDBUser.and.returnValue({
+    mockSessionService.getCurrentUser.and.returnValue({
       name: "adminUser",
       roles: ["user_app", "admin_app"],
     });

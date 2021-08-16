@@ -14,8 +14,8 @@ describe("PrimaryActionComponent", () => {
   let mockSessionService: jasmine.SpyObj<SessionService>;
 
   beforeEach(() => {
-    mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
-    mockSessionService.getCurrentDBUser.and.returnValue({
+    mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
+    mockSessionService.getCurrentUser.and.returnValue({
       name: "user",
       roles: [],
     });

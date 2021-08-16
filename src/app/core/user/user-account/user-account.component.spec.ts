@@ -47,11 +47,11 @@ describe("UserAccountComponent", () => {
         session_type: SessionType.synced, // password change only available in synced mode
       } as IAppConfig;
       mockSessionService = jasmine.createSpyObj("sessionService", [
-        "getCurrentDBUser",
+        "getCurrentUser",
         "login",
         "checkPassword",
       ]);
-      mockSessionService.getCurrentDBUser.and.returnValue({
+      mockSessionService.getCurrentUser.and.returnValue({
         name: "TestUser",
         roles: [],
       });

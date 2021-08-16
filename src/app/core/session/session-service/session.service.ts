@@ -53,9 +53,9 @@ export abstract class SessionService {
   abstract logout();
 
   /**
-   * Get the current user according to the new format
+   * Get the current user according to the CouchDB format
    */
-  abstract getCurrentDBUser(): DatabaseUser;
+  abstract getCurrentUser(): DatabaseUser;
 
   /**
    * Check a password if its valid

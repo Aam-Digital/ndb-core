@@ -26,8 +26,8 @@ describe("HealthCheckupComponent", () => {
 
   beforeEach(
     waitForAsync(() => {
-      mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
-      mockSessionService.getCurrentDBUser.and.returnValue({
+      mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
+      mockSessionService.getCurrentUser.and.returnValue({
         name: "TestUser",
         roles: [],
       });

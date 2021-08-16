@@ -48,7 +48,7 @@ export class RollCallSetupComponent implements OnInit {
     );
 
     this.visibleActivities = this.allActivities.filter((a) =>
-      a.assignedTo.includes(this.sessionService.getCurrentDBUser().name)
+      a.assignedTo.includes(this.sessionService.getCurrentUser().name)
     );
     if (this.visibleActivities.length === 0) {
       this.visibleActivities = this.allActivities.filter(
@@ -99,7 +99,7 @@ export class RollCallSetupComponent implements OnInit {
       activity,
       this.date
     )) as NoteForActivitySetup;
-    event.authors = [this.sessionService.getCurrentDBUser().name];
+    event.authors = [this.sessionService.getCurrentUser().name];
     event.isNewFromActivity = true;
     return event;
   }
@@ -119,7 +119,7 @@ export class RollCallSetupComponent implements OnInit {
         score += 1;
       }
 
-      if (assignedUsers.includes(this.sessionService.getCurrentDBUser().name)) {
+      if (assignedUsers.includes(this.sessionService.getCurrentUser().name)) {
         score += 2;
       }
 
@@ -133,7 +133,7 @@ export class RollCallSetupComponent implements OnInit {
 
   createOneTimeEvent() {
     const newNote = Note.create(new Date());
-    newNote.authors = [this.sessionService.getCurrentDBUser().name];
+    newNote.authors = [this.sessionService.getCurrentUser().name];
 
     this.formDialog
       .openDialog(NoteDetailsComponent, newNote)

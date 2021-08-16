@@ -73,7 +73,7 @@ export class UserAccountComponent implements OnInit {
 
   ngOnInit() {
     this.checkIfPasswordChangeAllowed();
-    this.username = this.sessionService.getCurrentDBUser()?.name;
+    this.username = this.sessionService.getCurrentUser()?.name;
   }
 
   checkIfPasswordChangeAllowed() {

@@ -32,8 +32,8 @@ describe("RollCallSetupComponent", () => {
     ]);
     mockEntityService.loadType.and.resolveTo([]);
 
-    mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
-    mockSessionService.getCurrentDBUser.and.returnValue(user);
+    mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
+    mockSessionService.getCurrentUser.and.returnValue(user);
 
     mockChildrenService = jasmine.createSpyObj(["queryRelationsOf"]);
     mockChildrenService.queryRelationsOf.and.resolveTo([]);

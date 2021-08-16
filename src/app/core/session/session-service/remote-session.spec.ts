@@ -89,7 +89,7 @@ describe("RemoteSessionService", () => {
   it("should assign the current user after successful login", async () => {
     await service.login(TEST_USER, TEST_PASSWORD);
 
-    expect(service.getCurrentDBUser()).toEqual({
+    expect(service.getCurrentUser()).toEqual({
       name: dbUser.name,
       roles: dbUser.roles,
     });

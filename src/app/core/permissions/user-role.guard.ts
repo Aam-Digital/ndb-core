@@ -20,7 +20,7 @@ export class UserRoleGuard implements CanActivate {
     const config = this.configService.getConfig<ViewConfig>(
       PREFIX_VIEW_CONFIG + route.routeConfig.path
     );
-    const user = this.sessionService.getCurrentDBUser();
+    const user = this.sessionService.getCurrentUser();
     if (config.permittedUserRoles?.length > 0) {
       // Check if user has a role which is in the list of permitted roles
       return config.permittedUserRoles.some((role) =>

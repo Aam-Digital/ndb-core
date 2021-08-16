@@ -168,8 +168,8 @@ describe("SyncedSessionService", () => {
       },
       "p"
     );
-    expect(sessionService.getCurrentDBUser().name).toBe("newUser");
-    expect(sessionService.getCurrentDBUser().roles).toEqual(["user_app"]);
+    expect(sessionService.getCurrentUser().name).toBe("newUser");
+    expect(sessionService.getCurrentUser().roles).toEqual(["user_app"]);
     tick();
     localSession.removeUser(newUser.name);
   }));
@@ -258,7 +258,7 @@ describe("SyncedSessionService", () => {
     expect(syncSpy).toHaveBeenCalledTimes(1);
     expect(liveSyncSpy).toHaveBeenCalledTimes(1);
 
-    const currentUser = localSession.getCurrentDBUser();
+    const currentUser = localSession.getCurrentUser();
     expect(currentUser.name).toEqual(TEST_USER);
     expect(currentUser.roles).toEqual(["user_app", "admin"]);
     expectAsync(result).toBeResolvedTo(LoginState.LOGGED_IN);

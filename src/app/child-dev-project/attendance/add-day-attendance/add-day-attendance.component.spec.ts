@@ -33,7 +33,7 @@ describe("AddDayAttendanceComponent", () => {
       ]);
       mockChildrenService.getChildren.and.returnValue(of([]));
 
-      mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
+      mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
 
       TestBed.configureTestingModule({
         imports: [AttendanceModule, RouterTestingModule, MatNativeDateModule],

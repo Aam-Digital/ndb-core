@@ -34,8 +34,8 @@ describe("ActivityAttendanceSectionComponent", () => {
         "getActivityAttendances",
       ]);
       mockAttendanceService.getActivityAttendances.and.resolveTo(testRecords);
-      mockSessionService = jasmine.createSpyObj(["getCurrentDBUser"]);
-      mockSessionService.getCurrentDBUser.and.returnValue({
+      mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
+      mockSessionService.getCurrentUser.and.returnValue({
         name: "TestUser",
         roles: [],
       });
