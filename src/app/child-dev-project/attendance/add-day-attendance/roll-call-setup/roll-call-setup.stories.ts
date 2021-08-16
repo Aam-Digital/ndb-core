@@ -96,12 +96,11 @@ export default {
         AttendanceService,
         {
           provide: Database,
-          useFactory: () =>
-            PouchDatabase.createWithData([
-              ...demoChildren,
-              ...demoEvents,
-              ...demoActivities,
-            ]),
+          useValue: PouchDatabase.createWithData([
+            ...demoChildren,
+            ...demoEvents,
+            ...demoActivities,
+          ]),
         },
         DatabaseIndexingService,
         ChildPhotoService,

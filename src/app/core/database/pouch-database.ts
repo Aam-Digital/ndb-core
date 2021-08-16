@@ -31,9 +31,7 @@ import { PerformanceAnalysisLogging } from "../../utils/performance-analysis-log
 export class PouchDatabase extends Database {
   static createWithData(data: any[]): PouchDatabase {
     const instance = PouchDatabase.createWithInMemoryDB();
-    Promise.all(data.map((doc) => instance.put(doc, true))).then(() =>
-      console.log("data saved")
-    );
+    data.forEach((doc) => instance.put(doc, true));
     return instance;
   }
 

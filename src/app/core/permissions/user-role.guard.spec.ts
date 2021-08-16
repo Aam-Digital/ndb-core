@@ -25,6 +25,7 @@ describe("UserRoleGuard", () => {
       providers: [
         { provide: ConfigService, useValue: mockConfigService },
         { provide: SessionService, useValue: mockSessionService },
+        UserRoleGuard,
       ],
     });
     guard = TestBed.inject(UserRoleGuard);

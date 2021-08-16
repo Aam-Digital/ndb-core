@@ -35,7 +35,7 @@ export class EntityPermissionsService {
     const currentUser = this.sessionService.getCurrentUser();
     const entityConfig = this.entityConfigService.getEntityConfig(entity);
     if (entityConfig?.permissions && entityConfig.permissions[operation]) {
-      // Check the user has a role that has permission for this operation
+      // Check if the user has a role that is permitted for this operation
       return entityConfig.permissions[operation].some((role) =>
         currentUser.roles.includes(role)
       );
