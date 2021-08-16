@@ -31,7 +31,7 @@ import { HttpClient } from "@angular/common/http";
 import PouchDB from "pouchdb-browser";
 import { AppConfig } from "../../app-config/app-config";
 import { DatabaseUser } from "./local-user";
-import { waitForChangeTo } from "./session-utils";
+import { waitForChangeTo } from "../session-states/session-utils";
 import { BehaviorSubject } from "rxjs";
 
 /**
