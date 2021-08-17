@@ -1,7 +1,12 @@
 <div fxLayout="column" fxLayoutGap="20px">
-  <div fxLayout="row" fxLayoutAlign="space-between start" fxLayoutGap="25px">
+  <div
+    fxLayout.gt-xs="row"
+    fxLayout.xs="column"
+    fxLayoutAlign="space-between center"
+    fxLayoutGap="25px"
+  >
 
-    <h2>{{listName}}</h2>
+    <h2 fxHide.lt-sm>{{listName}}</h2>
 
     <button
       mat-stroked-button
@@ -23,33 +28,35 @@
         aria-label="add element"
         fontIcon="fa-plus-circle"
       ></mat-icon>
-      <span fxHide.lt-md="true" i18n="Add a new entity to a list of multiple entities"> Add New </span>
+      <span i18n="Add a new entity to a list of multiple entities"> Add New </span>
     </button>
 
-    <div fxFlex></div>
+    <div fxFlex fxHide.lt-sm></div>
 
-    <mat-form-field class="filter-field" style="width: 1000px">
-      <mat-label i18n="Filter placeholder|Allows the user to filter through entities">Filter</mat-label>
-      <input
-        matInput
-        [placeholder]="listConfig.filterPlaceholder"
-        (ngModelChange)="applyFilter($event)"
-        [(ngModel)]="filterString"
-      />
-      <button
-        mat-icon-button
-        *ngIf="filterString"
-        matSuffix
-        aria-label="Clear"
-        (click)="filterString = ''; applyFilter('')"
-      >
-        <mat-icon fontIcon="fa-times"></mat-icon>
+    <div fxLayoutGap="25px" fxLayoutAlign="end">
+      <mat-form-field class="filter-field">
+        <mat-label i18n="Filter placeholder|Allows the user to filter through entities">Filter</mat-label>
+        <input
+          matInput
+          [placeholder]="listConfig.filterPlaceholder"
+          (ngModelChange)="applyFilter($event)"
+          [(ngModel)]="filterString"
+        />
+        <button
+          mat-icon-button
+          *ngIf="filterString"
+          matSuffix
+          aria-label="Clear"
+          (click)="filterString = ''; applyFilter('')"
+        >
+          <mat-icon fontIcon="fa-times"></mat-icon>
+        </button>
+      </mat-form-field>
+
+      <button mat-icon-button class="additional-button" [matMenuTriggerFor]="additional">
+        <span class="material-icons">more_vert</span>
       </button>
-    </mat-form-field>
-
-    <button mat-icon-button class="additional-button" [matMenuTriggerFor]="additional">
-      <span class="material-icons">more_vert</span>
-    </button>
+    </div>
 
   </div>
 
