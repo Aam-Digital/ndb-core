@@ -38,6 +38,10 @@ import { LatestChangesService } from "./latest-changes.service";
  * Displaying app version and changelog information to the user
  * through components that can be used in other templates
  * as well as automatic popups on updates (see {@link UpdateManagerService}, {@link LatestChangesService}).
+ *
+ * Changelogs are dynamically loaded from GitHub Releases through the GitHub API.
+ * pre-releases are excluded and individual lines in the body can be hidden by starting
+ * text (after markdown characters) with a ".".
  */
 @NgModule({
   imports: [

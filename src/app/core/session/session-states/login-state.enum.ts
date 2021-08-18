@@ -23,4 +23,6 @@ export enum LoginState {
   LOGGED_OUT,
   /** Successfully logged in */
   LOGGED_IN,
+  /** Login is not possible right now */
+  UNAVAILABLE,
 }

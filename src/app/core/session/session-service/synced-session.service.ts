@@ -24,12 +24,14 @@ import { RemoteSession } from "./remote-session";
 import { LoginState } from "../session-states/login-state.enum";
 import { Database } from "../../database/database";
 import { PouchDatabase } from "../../database/pouch-database";
-import { ConnectionState } from "../session-states/connection-state.enum";
 import { SyncState } from "../session-states/sync-state.enum";
 import { User } from "../../user/user";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { LoggingService } from "../../logging/logging.service";
 import { HttpClient } from "@angular/common/http";
+import PouchDB from "pouchdb-browser";
+import { AppConfig } from "../../app-config/app-config";
+import { DatabaseUser } from "./local-user";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -40,8 +42,13 @@ import { HttpClient } from "@angular/common/http";
  */
 @Injectable()
 export class SyncedSessionService extends SessionService {
-  private _localSession: LocalSession;
-  private _remoteSession: RemoteSession;
+  private readonly LOGIN_RETRY_TIMEOUT = 60000;
+  private readonly POUCHDB_SYNC_BATCH_SIZE = 500;
+
+  private readonly _localSession: LocalSession;
+  private readonly _remoteSession: RemoteSession;
+  private readonly pouchDB: PouchDB.Database;
+  private readonly database: Database;
   private _liveSyncHandle: any;
   private _liveSyncScheduledHandle: any;
   private _offlineRetryLoginScheduleHandle: any;
@@ -53,13 +60,13 @@ export class SyncedSessionService extends SessionService {
     private _httpClient: HttpClient
   ) {
     super();
-    this._localSession = new LocalSession(this._entitySchemaService);
-    this._remoteSession = new RemoteSession(this._httpClient);
-  }
-
-  /** see {@link SessionService} */
-  public isLoggedIn(): boolean {
-    return this._localSession.loginState.getState() === LoginState.LOGGED_IN;
+    this.pouchDB = new PouchDB(AppConfig.settings.database.name);
+    this.database = new PouchDatabase(this.pouchDB, this._loggingService);
+    this._localSession = new LocalSession(
+      this.database,
+      this._entitySchemaService
+    );
+    this._remoteSession = new RemoteSession(this._httpClient, _loggingService);
   }
 
   /**
@@ -75,124 +82,108 @@ export class SyncedSessionService extends SessionService {
    * @param password Password
    * @returns a promise resolving with the local LoginState
    */
-  public login(username: string, password: string): Promise<LoginState> {
+  public async login(username: string, password: string): Promise<LoginState> {
     this.cancelLoginOfflineRetry(); // in case this is running in the background
     this.getSyncState().setState(SyncState.UNSYNCED);
 
-    const localLogin = this._localSession.login(username, password);
     const remoteLogin = this._remoteSession.login(username, password);
+    const syncPromise = this._remoteSession
+      .getLoginState()
+      .waitForChangeTo(LoginState.LOGGED_IN)
+      .then(() => this.updateLocalUserAndStartSync(password));
 
-    remoteLogin
-      .then(async (connectionState: ConnectionState) => {
-        // remote connected -- sync!
-        if (connectionState === ConnectionState.CONNECTED) {
-          const syncPromise = this.sync(); // no liveSync() here, as we can't know when that's finished if there are no changes.
+    const localLoginState = await this._localSession.login(username, password);
 
-          // no matter the result of the non-live sync(), start liveSync() once it is done
-          syncPromise
-            .then(
-              // successful -> start liveSync()
-              () => this.liveSyncDeferred(),
-              // not successful -> only start a liveSync() to retry, if we are logged in locally
-              // otherwise the UI is in a fairly unusable state.
-              async () => {
-                if ((await localLogin) === LoginState.LOGGED_IN) {
-                  this.liveSyncDeferred();
-                } else {
-                  // TODO(lh): Alert the AlertService: Your password was changed recently, but there is an issue with sync. Try again later!
-                }
-              }
-            )
-            .catch((err) => this._loggingService.error(err));
-
-          // asynchronously check if the local login failed --> this happens, when the password was changed at the remote
-          localLogin.then(async (loginState: LoginState) => {
-            if (loginState === LoginState.LOGIN_FAILED) {
-              // in this case: when the sync is completed, retry the local login after the sync
-              try {
-                await syncPromise;
-              } catch (err) {
-                this._loggingService.error(err);
-              }
-              return this._localSession.login(username, password);
-            }
-          });
-
-          return syncPromise;
+    if (localLoginState === LoginState.LOGGED_IN) {
+      remoteLogin.then((loginState) => {
+        if (loginState === LoginState.LOGIN_FAILED) {
+          this.handleRemotePasswordChange(username);
         }
-
-        // If we are not connected, we must check (asynchronously), whether the local database is initial
-        this._localSession.isInitial().then((isInitial) => {
-          if (isInitial) {
-            // If we were initial, the local session was waiting for a sync.
-            if (connectionState === ConnectionState.REJECTED) {
-              // Explicitly fail the login if the Connection was rejected, so the LocalSession knows what's going on
-              // additionally, fail sync to resolve deadlock
-              this._localSession.loginState.setState(LoginState.LOGIN_FAILED);
-              this._localSession.syncState.setState(SyncState.FAILED);
-            } else {
-              // Explicitly abort the sync to resolve the deadlock
-              this._localSession.syncState.setState(SyncState.ABORTED);
-            }
-          }
-        });
-
-        // remote rejected but local logged in
-        if (connectionState === ConnectionState.REJECTED) {
-          if ((await localLogin) === LoginState.LOGGED_IN) {
-            // Someone changed the password remotely --> log out and signal failed login
-            this._localSession.logout();
-            this._localSession.loginState.setState(LoginState.LOGIN_FAILED);
-            this._alertService.addDanger(
-              $localize`Your password was changed recently. Please retry with your new password!`
-            );
-          }
+        if (loginState === LoginState.UNAVAILABLE) {
+          this.retryLoginWhileOffline(username, password);
         }
+      });
+    } else {
+      const remoteLoginState = await remoteLogin;
+      if (remoteLoginState === LoginState.LOGGED_IN) {
+        // New user or password changed
+        await syncPromise;
+        await this._localSession.login(username, password);
+      } else if (
+        remoteLoginState === LoginState.UNAVAILABLE &&
+        localLoginState === LoginState.UNAVAILABLE
+      ) {
+        // Offline with no local user
+        this._localSession.getLoginState().setState(LoginState.UNAVAILABLE);
+      } else {
+        // Password and or username wrong
+        this._localSession.getLoginState().setState(LoginState.LOGIN_FAILED);
+      }
+    }
+    return this.getLoginState().getState();
+  }
 
-        // offline? retry (unless we are in an initial state)! TODO(lh): Backoff
+  private handleRemotePasswordChange(username: string) {
+    this._localSession.logout();
+    this._localSession.removeUser(username);
+    this._localSession.getLoginState().setState(LoginState.LOGIN_FAILED);
+    this._alertService.addDanger(
+      $localize`Your password was changed recently. Please retry with your new password!`
+    );
+  }
+
+  private retryLoginWhileOffline(username: string, password: string) {
+    this._offlineRetryLoginScheduleHandle = setTimeout(() => {
+      this.login(username, password);
+    }, this.LOGIN_RETRY_TIMEOUT);
+  }
+
+  private updateLocalUserAndStartSync(password: string) {
+    // Update local user object
+    const remoteUser = this._remoteSession.getCurrentDBUser();
+    this._localSession.saveUser(remoteUser, password);
+
+    return this.sync()
+      .then(() => this.liveSyncDeferred())
+      .catch(() => {
         if (
-          connectionState === ConnectionState.OFFLINE &&
-          !(await this._localSession.isInitial())
+          this._localSession.getLoginState().getState() === LoginState.LOGGED_IN
         ) {
-          this._offlineRetryLoginScheduleHandle = setTimeout(() => {
-            this.login(username, password);
-          }, 2000);
+          this.liveSyncDeferred();
         }
-      })
-      .catch((err) => this._loggingService.error(err));
-    return localLogin; // the local login is the Promise that counts
+      });
   }
 
   /** see {@link SessionService} */
   public getCurrentUser(): User {
-    return this._localSession.currentUser;
+    return this._localSession.getCurrentUser();
+  }
+
+  public getCurrentDBUser(): DatabaseUser {
+    return this._localSession.getCurrentDBUser();
+  }
+
+  public checkPassword(username: string, password: string): boolean {
+    // This only checks the password against locally saved users
+    return this._localSession.checkPassword(username, password);
   }
 
   /** see {@link SessionService} */
   public getLoginState() {
-    return this._localSession.loginState;
-  }
-  /** see {@link SessionService} */
-  public getConnectionState() {
-    return this._remoteSession.connectionState;
-  }
-  /** see {@link SessionService} */
-  public getSyncState() {
-    return this._localSession.syncState;
+    return this._localSession.getLoginState();
   }
 
   /** see {@link SessionService} */
   public async sync(): Promise<any> {
-    this._localSession.syncState.setState(SyncState.STARTED);
+    this.getSyncState().setState(SyncState.STARTED);
     try {
-      const result = await this._localSession.database.sync(
-        this._remoteSession.database,
-        { batch_size: 500 }
-      );
-      this._localSession.syncState.setState(SyncState.COMPLETED);
+      const result = await this.pouchDB.sync(this._remoteSession.pouchDB, {
+        batch_size: this.POUCHDB_SYNC_BATCH_SIZE,
+      });
+      this.getSyncState().setState(SyncState.COMPLETED);
       return result;
     } catch (error) {
-      this._localSession.syncState.setState(SyncState.FAILED);
+      this.getSyncState().setState(SyncState.FAILED);
       throw error; // rethrow, so later Promise-handling lands in .catch, too
     }
   }
@@ -202,30 +193,33 @@ export class SyncedSessionService extends SessionService {
    */
   public liveSync() {
     this.cancelLiveSync(); // cancel any liveSync that may have been alive before
-    this._localSession.syncState.setState(SyncState.STARTED);
-    this._liveSyncHandle = this._localSession.database
-      .sync(this._remoteSession.database, {
-        live: true,
-        retry: true,
-      })
+    this.getSyncState().setState(SyncState.STARTED);
+    this._liveSyncHandle = (this.pouchDB.sync(this._remoteSession.pouchDB, {
+      live: true,
+      retry: true,
+    }) as any)
       .on("change", (change) => {
         // after sync. change has direction and changes with info on errors etc
       })
       .on("paused", (info) => {
         // replication was paused: either because sync is finished or because of a failed sync (mostly due to lost connection). info is empty.
-        if (this.getConnectionState().getState() !== ConnectionState.OFFLINE) {
-          this._localSession.syncState.setState(SyncState.COMPLETED);
+        if (
+          this._remoteSession.getLoginState().getState() ===
+          LoginState.LOGGED_IN
+        ) {
+          this.getSyncState().setState(SyncState.COMPLETED);
           // We might end up here after a failed sync that is not due to offline errors.
           // It shouldn't happen too often, as we have an initial non-live sync to catch those situations, but we can't find that out here
         }
       })
       .on("active", (info) => {
         // replication was resumed: either because new things to sync or because connection is available again. info contains the direction
-        this._localSession.syncState.setState(SyncState.STARTED);
+        this.getSyncState().setState(SyncState.STARTED);
       })
       .on("error", (err) => {
         // totally unhandled error (shouldn't happen)
-        this._localSession.syncState.setState(SyncState.FAILED);
+        console.error("sync failed", err);
+        this.getSyncState().setState(SyncState.FAILED);
       })
       .on("complete", (info) => {
         // replication was canceled!
@@ -271,7 +265,7 @@ export class SyncedSessionService extends SessionService {
    * als see {@link SessionService}
    */
   public getDatabase(): Database {
-    return new PouchDatabase(this._localSession.database, this._loggingService);
+    return this.database;
   }
 
   /**
