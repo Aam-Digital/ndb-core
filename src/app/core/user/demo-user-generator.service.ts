@@ -2,6 +2,7 @@ import { DemoDataGenerator } from "../demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
 import { User } from "./user";
 import { faker } from "../demo-data/faker";
+import { LocalSession } from "../session/session-service/local-session";
 
 /**
  * Generate demo users for the application with its DemoDataModule.
@@ -24,10 +25,6 @@ export class DemoUserGeneratorService extends DemoDataGenerator<User> {
     ];
   }
 
-  constructor() {
-    super();
-  }
-
   /**
    * Generate User entities to be loaded by the DemoDataModule.
    */
@@ -35,12 +32,21 @@ export class DemoUserGeneratorService extends DemoDataGenerator<User> {
     const users = [];
     const demoUser = new User(DemoUserGeneratorService.DEFAULT_USERNAME);
     demoUser.name = DemoUserGeneratorService.DEFAULT_USERNAME;
-    demoUser.setNewPassword(DemoUserGeneratorService.DEFAULT_PASSWORD);
 
     const demoAdmin = new User("demo-admin");
     demoAdmin.name = "demo-admin";
     demoAdmin.admin = true;
-    demoAdmin.setNewPassword(DemoUserGeneratorService.DEFAULT_PASSWORD);
+
+    // Create temporary session to save users to local storage
+    const tmpLocalSession = new LocalSession();
+    tmpLocalSession.saveUser(
+      { name: demoUser.name, roles: ["user_app"] },
+      DemoUserGeneratorService.DEFAULT_PASSWORD
+    );
+    tmpLocalSession.saveUser(
+      { name: demoAdmin.name, roles: ["user_app", "admin"] },
+      DemoUserGeneratorService.DEFAULT_PASSWORD
+    );
 
     users.push(demoUser, demoAdmin);
 

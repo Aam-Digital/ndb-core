@@ -77,12 +77,12 @@ describe("CloudFileService", () => {
 
   it(".connect() should connect using credentials saved for user", () => {
     const testUser = new User("user");
-    testUser.setNewPassword("pass");
     testUser.cloudUserName = "testuser";
     testUser.setCloudPassword("testuserpass", "pass");
     sessionSpy.getCurrentUser.and.returnValue(testUser);
 
     cloudFileService.connect();
+
     expect(sessionSpy.getCurrentUser).toHaveBeenCalled();
     expect(mockWebdav.createClient).toHaveBeenCalledWith("test-url", {
       username: "testuser",

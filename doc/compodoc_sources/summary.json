@@ -122,6 +122,10 @@
       {
         "title": "Documentation Structure",
         "file": "concepts/documentation-structure.md"
+      },
+      {
+        "title": "Infrastructure",
+        "file": "concepts/infrastructure.md"
       }
     ]
   },

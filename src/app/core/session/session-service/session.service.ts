@@ -17,10 +17,10 @@
 
 import { LoginState } from "../session-states/login-state.enum";
 import { Database } from "../../database/database";
-import { ConnectionState } from "../session-states/connection-state.enum";
 import { SyncState } from "../session-states/sync-state.enum";
 import { User } from "../../user/user";
 import { StateHandler } from "../session-states/state-handler";
+import { DatabaseUser } from "./local-user";
 
 /**
  * A session manages user authentication and database connection for the app.
@@ -36,6 +36,11 @@ import { StateHandler } from "../session-states/state-handler";
  * Providers are set up in a way that you will get the correct implementation during runtime.
  */
 export abstract class SessionService {
+  /** StateHandler for login state changes */
+  private loginState = new StateHandler(LoginState.LOGGED_OUT);
+  /** StateHandler for sync state changes */
+  private syncState = new StateHandler(SyncState.UNSYNCED);
+
   /**
    * Authenticate a user.
    * @param username
@@ -50,28 +55,43 @@ export abstract class SessionService {
 
   /**
    * Get the currently logged in user (or undefined).
+   * @deprecated use getCurrentDBUser instead
    */
   abstract getCurrentUser(): User;
 
   /**
+   * Get the current user according to the new format
+   */
+  abstract getCurrentDBUser(): DatabaseUser;
+
+  /**
+   * Check a password if its valid
+   * @param username the username for which the password should be checked
+   * @param password the password to be checked
+   * @returns boolean true if the password is correct, false otherwise
+   */
+  abstract checkPassword(username: string, password: string): boolean;
+
+  /**
    * Get the session status - whether a user is authenticated currently.
    */
-  abstract isLoggedIn(): boolean;
+  public isLoggedIn(): boolean {
+    return this.getLoginState().getState() === LoginState.LOGGED_IN;
+  }
 
   /**
    * Get the state of the session.
    */
-  abstract getLoginState(): StateHandler<LoginState>;
-
-  /**
-   * Get the state of the connection to the remote server.
-   */
-  abstract getConnectionState(): StateHandler<ConnectionState>;
+  public getLoginState(): StateHandler<LoginState> {
+    return this.loginState;
+  }
 
   /**
    * Get the state of the synchronization with the remote server.
    */
-  abstract getSyncState(): StateHandler<SyncState>;
+  public getSyncState(): StateHandler<SyncState> {
+    return this.syncState;
+  }
 
   /**
    * Start a synchronization process.

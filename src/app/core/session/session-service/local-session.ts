@@ -14,136 +14,129 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-import PouchDB from "pouchdb-browser";
-
 import { Injectable } from "@angular/core";
-
-import { AppConfig } from "../../app-config/app-config";
-import { User } from "../../user/user";
-
-import { SyncState } from "../session-states/sync-state.enum";
 import { LoginState } from "../session-states/login-state.enum";
-import { StateHandler } from "../session-states/state-handler";
+import {
+  DatabaseUser,
+  encryptPassword,
+  LocalUser,
+  passwordEqualsEncrypted,
+} from "./local-user";
+import { Database } from "../../database/database";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { User } from "../../user/user";
+import { SessionService } from "./session.service";
 
 /**
  * Responsibilities:
- * - Hold the local DB
- * - Hold local user
- * - Check credentials against DB
- * - Provide the state of the synchronisation of the local db
- *   - we want to block before the first full sync
- * - Provide an interface to access the data
+ * - Manage local authentication
+ * - Save users in local storage
  */
 @Injectable()
-export class LocalSession {
-  /** local (IndexedDb) database PouchDB */
-  public database: any;
-  public liveSyncHandle: any;
-
-  /** StateHandler for login state changes */
-  public loginState: StateHandler<LoginState>;
-  /** StateHandler for sync state changes */
-  public syncState: StateHandler<SyncState>;
-
-  /** The currently authenticated user entity */
-  public currentUser: User;
-
+export class LocalSession extends SessionService {
+  private currentDBUser: DatabaseUser;
   /**
-   * Create a LocalSession and set up the local PouchDB instance based on AppConfig settings.
-   * @param _entitySchemaService
+   * @deprecated instead use currentUser
    */
-  constructor(private _entitySchemaService: EntitySchemaService) {
-    this.database = new PouchDB(AppConfig.settings.database.name);
+  private currentUserEntity: User;
 
-    this.loginState = new StateHandler<LoginState>(LoginState.LOGGED_OUT);
-    this.syncState = new StateHandler<SyncState>(SyncState.UNSYNCED);
+  constructor(
+    private database?: Database,
+    private entitySchemaService?: EntitySchemaService
+  ) {
+    super();
   }
 
   /**
-   * Get a login at the local session by fetching the user from the local database and validating the password.
+   * Get a login at the local session by fetching the user from the local storage and validating the password.
    * Returns a Promise resolving with the loginState.
-   * Attention: This method waits for the first synchronisation of the database (or a fail of said initial sync).
    * @param username Username
    * @param password Password
    */
   public async login(username: string, password: string): Promise<LoginState> {
-    try {
-      await this.waitForFirstSync();
-      const userEntity = await this.loadUser(username);
-      if (userEntity.checkPassword(password)) {
-        this.currentUser = userEntity;
-        this.currentUser.decryptCloudPassword(password);
-        this.loginState.setState(LoginState.LOGGED_IN);
-        return LoginState.LOGGED_IN;
+    const user: LocalUser = JSON.parse(window.localStorage.getItem(username));
+    if (user) {
+      if (passwordEqualsEncrypted(password, user.encryptedPassword)) {
+        this.currentDBUser = user;
+        this.currentUserEntity = await this.loadUser(username);
+        this.getLoginState().setState(LoginState.LOGGED_IN);
       } else {
-        this.loginState.setState(LoginState.LOGIN_FAILED);
-        return LoginState.LOGIN_FAILED;
+        this.getLoginState().setState(LoginState.LOGIN_FAILED);
       }
-    } catch (error) {
-      // possible error: initial sync failed or aborted
-      if (
-        error &&
-        error.toState &&
-        [SyncState.ABORTED, SyncState.FAILED].includes(error.toState)
-      ) {
-        if (this.loginState.getState() === LoginState.LOGIN_FAILED) {
-          // The sync failed because the remote rejected
-          return LoginState.LOGIN_FAILED;
-        }
-        // The sync failed for other reasons. The user should try again
-        this.loginState.setState(LoginState.LOGGED_OUT);
-        return LoginState.LOGGED_OUT;
-      }
-      // possible error: user object not found locally, which should return loginFailed.
-      if (error && error.status && error.status === 404) {
-        this.loginState.setState(LoginState.LOGIN_FAILED);
-        return LoginState.LOGIN_FAILED;
-      }
-      // all other cases must throw an error
-      throw error;
+    } else {
+      this.getLoginState().setState(LoginState.UNAVAILABLE);
+    }
+    return this.getLoginState().getState();
+  }
+
+  /**
+   * Saves a user to the local storage
+   * @param user a object holding the username and the roles of the user
+   * @param password of the user
+   */
+  public saveUser(user: DatabaseUser, password: string) {
+    const localUser: LocalUser = {
+      name: user.name,
+      roles: user.roles,
+      encryptedPassword: encryptPassword(password),
+    };
+    window.localStorage.setItem(localUser.name, JSON.stringify(localUser));
+    // Update when already logged in
+    if (this.getCurrentDBUser()?.name === localUser.name) {
+      this.currentDBUser = localUser;
     }
   }
 
   /**
-   * Wait for the first sync of the database, returns a Promise.
-   * Resolves directly, if the database is not initial, otherwise waits for the first change of the SyncState to completed (or failed)
+   * Removes the user from the local storage.
+   * Method never fails, even if the user was not stored before
+   * @param username
    */
-  public async waitForFirstSync() {
-    if (await this.isInitial()) {
-      return await this.syncState.waitForChangeTo(SyncState.COMPLETED, [
-        SyncState.FAILED,
-        SyncState.ABORTED,
-      ]);
-    }
+  public removeUser(username: string) {
+    window.localStorage.removeItem(username);
+  }
+
+  public getCurrentUser(): User {
+    return this.currentUserEntity;
+  }
+
+  public checkPassword(username: string, password: string): boolean {
+    const user: LocalUser = JSON.parse(window.localStorage.getItem(username));
+    return user && passwordEqualsEncrypted(password, user.encryptedPassword);
+  }
+
+  public getCurrentDBUser(): DatabaseUser {
+    return this.currentDBUser;
   }
 
   /**
-   * Check whether the local database is in an initial state.
-   * This check can only be performed async, so this method returns a Promise
-   */
-  public isInitial(): Promise<Boolean> {
-    // `doc_count === 0 => initial` is a valid assumptions, as documents for users must always be present, even after db-clean
-    return this.database.info().then((result) => result.doc_count === 0);
-  }
-
-  /**
-   * Logout
+   * Resets the login state and current user (leaving it in local storage to allow later local login)
    */
   public logout() {
-    this.currentUser = undefined;
-    this.loginState.setState(LoginState.LOGGED_OUT);
+    this.currentDBUser = undefined;
+    this.currentUserEntity = undefined;
+    this.getLoginState().setState(LoginState.LOGGED_OUT);
   }
 
   /**
+   * TODO remove once admin information is migrated to new format (CouchDB)
    * Helper to get a User Entity from the Database without needing the EntityMapperService
    * @param userId Id of the User to be loaded
    */
   public async loadUser(userId: string): Promise<User> {
-    const user = new User("");
-    const userData = await this.database.get("User:" + userId);
-    this._entitySchemaService.loadDataIntoEntity(user, userData);
-    return user;
+    if (this.database && this.entitySchemaService) {
+      const user = new User("");
+      const userData = await this.database.get("User:" + userId);
+      this.entitySchemaService.loadDataIntoEntity(user, userData);
+      return user;
+    }
+  }
+
+  getDatabase(): Database {
+    return this.database;
+  }
+
+  sync(): Promise<any> {
+    return Promise.reject(new Error("Cannot sync local session"));
   }
 }
