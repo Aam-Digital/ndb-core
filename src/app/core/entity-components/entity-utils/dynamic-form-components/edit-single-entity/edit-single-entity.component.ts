@@ -20,7 +20,9 @@ export class EditSingleEntityComponent extends EditComponent<string> {
     super();
   }
   filter(searchText: string): Entity[] {
-    return this.entities.filter(entity => entity.toString().toLowerCase().includes(searchText))
+    return this.entities.filter((entity) =>
+      entity.toString().toLowerCase().includes(searchText)
+    );
   }
   ngOnInit() {
     this.filteredEntities = this.formControl.valueChanges.pipe(
