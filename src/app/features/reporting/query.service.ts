@@ -9,6 +9,7 @@ import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { ChildrenService } from "../../child-dev-project/children/children.service";
 import { AttendanceService } from "../../child-dev-project/attendance/attendance.service";
+import { EventAttendance } from "../../child-dev-project/attendance/model/event-attendance";
 
 const jsonQuery = require("json-query");
 
@@ -66,6 +67,7 @@ export class QueryService {
         filterByObjectAttribute: this.filterByObjectAttribute,
         getIds: this.getIds,
         getParticipantsWithAttendance: this.getParticipantsWithAttendance,
+        getAttendanceArray: this.getAttendanceArray,
         addEntities: this.addEntities.bind(this),
       },
     }).value;
@@ -268,6 +270,19 @@ export class QueryService {
       })
     );
     return attendedChildren;
+  }
+
+  getAttendanceArray(
+    events: Note[]
+  ): { participant: string; status: EventAttendance }[] {
+    return events
+      .map((e) =>
+        e.children.map((childId) => ({
+          participant: childId,
+          status: e.getAttendance(childId),
+        }))
+      )
+      .reduce((acc, val) => acc.concat(val), []);
   }
 
   /**

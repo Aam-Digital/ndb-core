@@ -18,6 +18,7 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { ExportColumnConfig } from "./export-column-config";
+import { defaultAttendanceStatusTypes } from "../../config/default-config/default-attendance-status-types";
 
 describe("ExportService", () => {
   let service: ExportService;
@@ -171,37 +172,14 @@ describe("ExportService", () => {
   });
 
   it("should load fields from related entity for joint export", async () => {
-    const child1 = new Child("child1");
-    child1.name = "John";
-    await db.put(child1);
-
-    const child2 = new Child("child2");
-    child2.name = "Jane";
-    await db.put(child2);
-
-    const school1 = new School("school1");
-    school1.name = "School with student";
-    await db.put(school1);
-    const childSchool1 = new ChildSchoolRelation();
-    childSchool1.childId = child1.getId();
-    childSchool1.schoolId = school1.getId();
-    await db.put(childSchool1);
-
-    const school2 = new School("school2");
-    school2.name = "School without student";
-    await db.put(school2);
-
-    const school3 = new School("school3");
-    school3.name = "School with multiple students";
-    await db.put(school3);
-    const childSchool3a = new ChildSchoolRelation();
-    childSchool3a.childId = child1.getId();
-    childSchool3a.schoolId = school3.getId();
-    await db.put(childSchool3a);
-    const childSchool3b = new ChildSchoolRelation();
-    childSchool3b.childId = child2.getId();
-    childSchool3b.schoolId = school3.getId();
-    await db.put(childSchool3b);
+    const child1 = await createChildInDB("John");
+    const child2 = await createChildInDB("Jane");
+    const school1 = await createSchoolInDB("School with student", [child1]);
+    const school2 = await createSchoolInDB("School without student", []);
+    const school3 = await createSchoolInDB("School with multiple students", [
+      child1,
+      child2,
+    ]);
 
     const query1 =
       ":getRelated(ChildSchoolRelation, schoolId).childId:toEntities(Child).name";
@@ -226,41 +204,111 @@ describe("ExportService", () => {
   });
 
   it("should roll out export to one row for each related entity", async () => {
-    const child1 = new Child("child1");
-    child1.name = "John";
-    await db.put(child1);
+    const child1 = await createChildInDB("John");
+    const child2 = await createChildInDB("Jane");
+    const child3 = await createChildInDB("Jack");
+    const noteA = await createNoteInDB("A", [child1, child2]);
+    const noteB = await createNoteInDB("B", [child1, child3]);
 
-    const child2 = new Child("child2");
-    child2.name = "Jane";
-    await db.put(child2);
-
-    const child3 = new Child("child3");
-    child3.name = "Jack";
-    await db.put(child3);
-
-    const noteA = new Note("noteA");
-    noteA.subject = "A";
-    noteA.children = [child1.getId(), child2.getId()];
-    await db.put(noteA);
-
-    const noteB = new Note("noteB");
-    noteB.subject = "B";
-    noteB.children = [child1.getId(), child3.getId()];
-    await db.put(noteB);
-
-    const query = ".children:toEntities(Child).name";
     const exportConfig: ExportColumnConfig[] = [
       { label: "note", query: "subject" },
-      { label: "participant", query: query, extendIntoMultipleRows: true },
+      {
+        query: ".children:toEntities(Child)",
+        aggregations: [{ label: "participant", query: "name" }],
+      },
     ];
     const result1 = await service.createCsv([noteA, noteB], exportConfig);
     const resultRows = result1.split(ExportService.SEPARATOR_ROW);
     expect(resultRows).toEqual([
-      `"${exportConfig[0].label}","${exportConfig[1].label}"`,
+      `"${exportConfig[0].label}","${exportConfig[1].aggregations[0].label}"`,
       '"A","John"',
       '"A","Jane"',
       '"B","John"',
       '"B","Jack"',
     ]);
   });
+
+  it("should export attendance status for each note participant", async () => {
+    const child1 = await createChildInDB("present kid");
+    const child2 = await createChildInDB("absent kid");
+    const child3 = await createChildInDB("unknown kid");
+    const note = await createNoteInDB(
+      "Note 1",
+      [child1, child2, child3],
+      ["PRESENT", "ABSENT"]
+    );
+
+    const exportConfig: ExportColumnConfig[] = [
+      { label: "note", query: "subject" },
+      {
+        query: ":getAttendanceArray",
+        label: "helper",
+        aggregations: [
+          {
+            label: "participant",
+            query: ".participant:toEntities(Child).name",
+          },
+          {
+            label: "status",
+            query: ".status._status.id",
+          },
+        ],
+      },
+    ];
+
+    const result = await service.createCsv([note], exportConfig);
+
+    const resultRows = result.split(ExportService.SEPARATOR_ROW);
+    expect(resultRows).toEqual([
+      `"${exportConfig[0].label}","participant","status"`,
+      '"Note 1","present kid","PRESENT"',
+      '"Note 1","absent kid","ABSENT"',
+      '"Note 1","unknown kid",""',
+    ]);
+  });
+
+  async function createChildInDB(name: string): Promise<Child> {
+    const child = new Child();
+    child.name = name;
+    await db.put(child);
+    return child;
+  }
+
+  async function createNoteInDB(
+    subject: string,
+    children: Child[] = [],
+    attendanceStatus: string[] = []
+  ): Promise<Note> {
+    const note = new Note();
+    note.subject = subject;
+    note.children = children.map((child) => child.getId());
+
+    for (let i = 0; i < attendanceStatus.length; i++) {
+      note.getAttendance(
+        note.children[i]
+      ).status = defaultAttendanceStatusTypes.find(
+        (s) => s.id === attendanceStatus[i]
+      );
+    }
+    await db.put(note);
+    return note;
+  }
+
+  async function createSchoolInDB(
+    schoolName: string,
+    students: Child[] = []
+  ): Promise<School> {
+    const school = new School();
+    school.name = schoolName;
+    await db.put(school);
+
+    for (const child of students) {
+      const childSchoolRel = new ChildSchoolRelation();
+      childSchoolRel.childId = child.getId();
+      childSchoolRel.schoolId = school.getId();
+      await db.put(childSchoolRel);
+    }
+
+    return school;
+  }
 });

@@ -35,100 +35,155 @@ export class ExportService {
    * @param config (Optional) config specifying which fields should be exported
    * @returns string a valid CSV string of the input data
    */
-  async createCsv(data: any[], config?: ExportColumnConfig[]): Promise<string> {
+  async createCsv<T = any>(
+    data: T[],
+    config?: ExportColumnConfig[]
+  ): Promise<string> {
+    if (!config) {
+      config = this.generateExportConfigFromData(data);
+    }
+
     const exportableData = [];
-    const columns = new Set<string>(
-      (config ?? []).map((c) => c.label ?? c.query)
-    );
-
     for (const dataRow of data) {
-      const rowConfig =
-        config ??
-        Object.keys(dataRow).map(
-          (key) => ({ query: key } as ExportColumnConfig)
-        );
-      if (!config) {
-        Object.keys(dataRow).forEach((k) => columns.add(k));
-      }
-
-      const exportableElement = await this.transformDataRowToExportRow(
+      const extendedExportableRows = await this.generateExportRows(
         dataRow,
-        rowConfig
-      );
-
-      const extendedExportableRows = this.extendIntoMultipleRows(
-        exportableElement,
-        rowConfig
+        config
       );
       exportableData.push(...extendedExportableRows);
     }
 
     return this.papa.unparse(
-      { data: exportableData, fields: Array.from(columns.values()) },
+      { data: exportableData },
       { quotes: true, header: true, newline: ExportService.SEPARATOR_ROW }
     );
   }
 
-  private async transformDataRowToExportRow(
-    element: any,
-    config: ExportColumnConfig[]
-  ) {
-    const exportableObj = {};
+  /**
+   * Infer a column export config from the given data.
+   * Includes all properties of the data objects,
+   * if different objects are in the data a config for the superset across all objects' properties is returned.
+   *
+   * @param data objects to be exported, each object can have different properties
+   * @private
+   */
+  private generateExportConfigFromData(data: Object[]): ExportColumnConfig[] {
+    const generatedConfig = [];
+    for (const dataRow of data) {
+      const newConfigFromRow = Object.keys(dataRow)
+        .filter(
+          (query) => !generatedConfig.find((config) => config.query === query)
+        )
+        .map((key) => ({ query: key } as ExportColumnConfig));
 
-    for (const columnConfig of config) {
-      const label = columnConfig.label ?? columnConfig.query;
-      let value;
-      if (isQuery(columnConfig.query)) {
-        value = await this.queryService.queryData(
-          columnConfig.query,
-          null,
-          null,
-          [element]
-        );
-      } else {
-        value = entityListSortingAccessor(element, columnConfig.query);
-      }
-
-      if (value?.toString().match(/\[object.*\]/) !== null) {
-        // skip object values that cannot be converted to a meaningful string
-        continue;
-      }
-
-      exportableObj[label] = value;
+      generatedConfig.push(...newConfigFromRow);
     }
 
-    return exportableObj;
+    return generatedConfig;
+  }
+
+  /**
+   * Generate one or more export row objects from the given data object and config.
+   * @param object A single data object to be exported as one or more export row objects
+   * @param config
+   * @returns array of one or more export row objects (as simple {key: value})
+   * @private
+   */
+  private async generateExportRows(
+    object: Object,
+    config: ExportColumnConfig[]
+  ): Promise<ExportRow[]> {
+    let exportRows: ExportRow[] = [{}];
+    for (const exportColumnConfig of config) {
+      const partialExportObjects: ExportRow[] = await this.getExportRowsForColumn(
+        object,
+        exportColumnConfig
+      );
+
+      exportRows = this.mergePartialExportRows(
+        exportRows,
+        partialExportObjects
+      );
+    }
+    return exportRows;
+  }
+
+  /**
+   * Generate one or more (partial) export row objects from a single property of the data object
+   * @param object
+   * @param exportColumnConfig
+   * @private
+   */
+  private async getExportRowsForColumn(
+    object: Object,
+    exportColumnConfig: ExportColumnConfig
+  ): Promise<ExportRow[]> {
+    const label = exportColumnConfig.label ?? exportColumnConfig.query;
+    const value = await this.getValueForQuery(exportColumnConfig, object);
+
+    if (!exportColumnConfig.aggregations) {
+      const result = {};
+      result[label] = value;
+      return [result];
+    } else {
+      const additionalRows: ExportRow[] = [];
+      for (const v of value) {
+        const addRows = await this.generateExportRows(
+          v,
+          exportColumnConfig.aggregations
+        );
+        additionalRows.push(...addRows);
+      }
+      return additionalRows;
+    }
+  }
+
+  private async getValueForQuery(
+    exportColumnConfig: ExportColumnConfig,
+    object: Object
+  ) {
+    if (!isQuery(exportColumnConfig.query)) {
+      return entityListSortingAccessor(object, exportColumnConfig.query);
+    } else {
+      const value = await this.queryService.queryData(
+        exportColumnConfig.query,
+        null,
+        null,
+        [object]
+      );
+
+      if (!exportColumnConfig.aggregations && value.length === 1) {
+        // queryData() always returns an array, simple queries should be a direct value however
+        return value[0];
+      }
+      return value;
+    }
 
     function isQuery(queryKey) {
       return queryKey.startsWith(".") || queryKey.startsWith(":");
     }
   }
 
-  private extendIntoMultipleRows(
-    exportableElement: {},
-    rowsToExtend: ExportColumnConfig[]
-  ): any[] {
-    const multiElementColumns = rowsToExtend.filter(
-      (c) => c.extendIntoMultipleRows
+  /**
+   * Combine two arrays of export row objects.
+   * Every additional row is merge with every row of the first array (combining properties),
+   * resulting in n*m export rows.
+   *
+   * @param exportRows
+   * @param additionalExportRows
+   * @private
+   */
+  private mergePartialExportRows(
+    exportRows: ExportRow[],
+    additionalExportRows: ExportRow[]
+  ): ExportRow[] {
+    const rowsOfRows: ExportRow[][] = additionalExportRows.map((addRow) =>
+      exportRows.map((row) => Object.assign({}, row, addRow))
     );
-
-    if (multiElementColumns.length === 0) {
-      return [exportableElement];
-    }
-
-    const multiProperty = multiElementColumns.pop();
-    const extendedElements = exportableElement[multiProperty.label].map(
-      (val) => {
-        const multipliedRow = Object.assign({}, exportableElement);
-        multipliedRow[multiProperty.label] = val;
-        return multipliedRow;
-      }
-    );
-
-    return [].concat(
-      ...extendedElements.map((element) =>
-        this.extendIntoMultipleRows(element, multiElementColumns)
-      )
-    );
+    // return flattened array
+    return rowsOfRows.reduce((acc, rowOfRows) => acc.concat(rowOfRows), []);
   }
+}
+
+interface ExportRow {
+  [key: string]: any;
 }

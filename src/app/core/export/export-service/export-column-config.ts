@@ -13,10 +13,15 @@ export interface ExportColumnConfig {
   query: string;
 
   /**
-   * whether a query that has multiple results (multiple entities related to the primary entity)
-   * should be rolled out and result in one row for each of the related entities in the final export.
+   * One or more sub queries to expand one column into multiple columns and/or rows.
    *
-   * Data from the primary entity is duplicated for each of the rows.
+   * The queries in the aggregations are executed based on the result(s) from the parent query where:
+   * each object in the parent query result will lead to its own row in the final export (extending one object into multiple export rows);
+   * each query in the aggregations will lead to one (or recursively more) columns in the export rows.
+   *
+   * e.g. `{ query: ".participants:toEntities(Child)", aggregations: [ {query: "name"}, {query: "phone"} ] }`
+   * => parent query (not output in export): [{..child1}, {..child2}]
+   * => overall result: two export rows: [{ name: "child1", phone: "123"}, {name: "child2", phone: "567"}]
    */
-  extendIntoMultipleRows?: boolean;
+  aggregations?: ExportColumnConfig[];
 }
