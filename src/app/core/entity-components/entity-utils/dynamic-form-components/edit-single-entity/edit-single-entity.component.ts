@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { EditComponent, EditPropertyConfig } from "../edit-component";
 import { ENTITY_MAP } from "../../../entity-details/entity-details.component";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
@@ -11,7 +11,9 @@ import { map } from "rxjs/operators";
   templateUrl: "./edit-single-entity.component.html",
   styleUrls: ["./edit-single-entity.component.scss"],
 })
-export class EditSingleEntityComponent extends EditComponent<string> {
+export class EditSingleEntityComponent
+  extends EditComponent<string>
+  implements OnInit {
   entities: Entity[] = [];
   placeholder: string;
   filteredEntities: Observable<Entity[]>;
