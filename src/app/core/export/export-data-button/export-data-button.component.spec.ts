@@ -1,18 +1,24 @@
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
-import { BackupService } from "../../admin/services/backup.service";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+  waitForAsync,
+} from "@angular/core/testing";
+import { ExportService } from "../export-service/export.service";
 import { ExportDataButtonComponent } from "./export-data-button.component";
 
 describe("ExportDataComponent", () => {
   let component: ExportDataButtonComponent;
   let fixture: ComponentFixture<ExportDataButtonComponent>;
-  let mockBackupService: jasmine.SpyObj<BackupService>;
+  let mockExportService: jasmine.SpyObj<ExportService>;
 
   beforeEach(
     waitForAsync(() => {
-      mockBackupService = jasmine.createSpyObj(["createJson", "createCsv"]);
+      mockExportService = jasmine.createSpyObj(["createJson", "createCsv"]);
       TestBed.configureTestingModule({
         declarations: [ExportDataButtonComponent],
-        providers: [{ provide: BackupService, useValue: mockBackupService }],
+        providers: [{ provide: ExportService, useValue: mockExportService }],
       }).compileComponents();
     })
   );
@@ -27,7 +33,7 @@ describe("ExportDataComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("opens download link when pressing button", () => {
+  it("opens download link when pressing button", fakeAsync(() => {
     const link = document.createElement("a");
     const clickSpy = spyOn(link, "click");
     // Needed to later reset the createElement function, otherwise subsequent calls result in an error
@@ -39,8 +45,9 @@ describe("ExportDataComponent", () => {
 
     expect(clickSpy.calls.count()).toBe(0);
     button.click();
+    tick();
     expect(clickSpy.calls.count()).toBe(1);
     // reset createElement otherwise results in: 'an Error was thrown after all'
     document.createElement = oldCreateElement;
-  });
+  }));
 });

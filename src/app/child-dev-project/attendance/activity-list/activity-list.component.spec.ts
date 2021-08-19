@@ -7,11 +7,11 @@ import { ActivatedRoute } from "@angular/router";
 import { of } from "rxjs";
 import { AttendanceModule } from "../attendance.module";
 import { SessionService } from "../../../core/session/session-service/session.service";
-import { BackupService } from "../../../core/admin/services/backup.service";
 import { Angulartics2Module } from "angulartics2";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { User } from "../../../core/user/user";
 import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
+import { ExportService } from "../../../core/export/export-service/export.service";
 
 describe("ActivityListComponent", () => {
   let component: ActivityListComponent;
@@ -36,7 +36,7 @@ describe("ActivityListComponent", () => {
             provide: SessionService,
             useValue: { getCurrentUser: () => new User() },
           },
-          { provide: BackupService, useValue: {} },
+          { provide: ExportService, useValue: {} },
           {
             provide: ActivatedRoute,
             useValue: {

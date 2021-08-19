@@ -4,6 +4,7 @@ import { BackupService } from "./backup.service";
 import { Database } from "../../database/database";
 import { PouchDatabase } from "../../database/pouch-database";
 import { ExportService } from "../../export/export-service/export.service";
+import { QueryService } from "../../../features/reporting/query.service";
 
 describe("BackupService", () => {
   let db: PouchDatabase;
@@ -12,7 +13,12 @@ describe("BackupService", () => {
   beforeEach(() => {
     db = PouchDatabase.createWithInMemoryDB();
     TestBed.configureTestingModule({
-      providers: [BackupService, { provide: Database, useValue: db }],
+      providers: [
+        BackupService,
+        ExportService,
+        { provide: QueryService, useValue: { queryData: () => [] } },
+        { provide: Database, useValue: db },
+      ],
     });
 
     service = TestBed.inject<BackupService>(BackupService);
