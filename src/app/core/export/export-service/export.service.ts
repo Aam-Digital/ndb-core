@@ -124,7 +124,7 @@ export class ExportService {
       exportColumnConfig.label ?? exportColumnConfig.query.replace(".", "");
     const value = await this.getValueForQuery(exportColumnConfig, object);
 
-    if (!exportColumnConfig.aggregations) {
+    if (!exportColumnConfig.subQueries) {
       const result = {};
       result[label] = value;
       return [result];
@@ -133,7 +133,7 @@ export class ExportService {
       for (const v of value) {
         const addRows = await this.generateExportRows(
           v,
-          exportColumnConfig.aggregations
+          exportColumnConfig.subQueries
         );
         additionalRows.push(...addRows);
       }
@@ -152,7 +152,7 @@ export class ExportService {
       [object]
     );
 
-    if (!exportColumnConfig.aggregations && value.length === 1) {
+    if (!exportColumnConfig.subQueries && value.length === 1) {
       // queryData() always returns an array, simple queries should be a direct value however
       return value[0];
     }

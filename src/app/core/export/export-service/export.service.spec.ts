@@ -212,13 +212,13 @@ describe("ExportService", () => {
       { label: "note", query: ".subject" },
       {
         query: ".children:toEntities(Child)",
-        aggregations: [{ label: "participant", query: ".name" }],
+        subQueries: [{ label: "participant", query: ".name" }],
       },
     ];
     const result1 = await service.createCsv([noteA, noteB], exportConfig);
     const resultRows = result1.split(ExportService.SEPARATOR_ROW);
     expect(resultRows).toEqual([
-      `"${exportConfig[0].label}","${exportConfig[1].aggregations[0].label}"`,
+      `"${exportConfig[0].label}","${exportConfig[1].subQueries[0].label}"`,
       '"A","John"',
       '"A","Jane"',
       '"B","John"',
@@ -240,7 +240,7 @@ describe("ExportService", () => {
       { label: "note", query: ".subject" },
       {
         query: ":getAttendanceArray",
-        aggregations: [
+        subQueries: [
           {
             label: "participant",
             query: ".participant:toEntities(Child).name",
