@@ -24,8 +24,8 @@ describe("ExportService", () => {
   let service: ExportService;
   let db: PouchDatabase;
 
-  beforeEach(async () => {
-    db = await PouchDatabase.createWithInMemoryDB("export-service-tests");
+  beforeEach(() => {
+    db = PouchDatabase.createWithInMemoryDB("export-service-tests");
 
     TestBed.configureTestingModule({
       providers: [
@@ -81,15 +81,13 @@ describe("ExportService", () => {
   });
 
   it("should create a csv string correctly", async () => {
-    class TestClass {
-      _id;
-      _rev;
+    class TestClass extends Entity {
       propOne;
       propTwo;
     }
     const test = new TestClass();
-    test._id = 1;
-    test._rev = 2;
+    test._id = "1";
+    test._rev = "2";
     test.propOne = "first";
     test.propTwo = "second";
     const expected =
@@ -116,7 +114,7 @@ describe("ExportService", () => {
     const resultRows = csvResult.split(ExportService.SEPARATOR_ROW);
     expect(resultRows).toEqual([
       '"name","age","extra"',
-      '"foo","12",',
+      '"foo","12",""',
       '"bar","15","true"',
     ]);
   });
@@ -134,7 +132,7 @@ describe("ExportService", () => {
 
     const csvResult = await service.createCsv(
       [testObject1, testObject2],
-      [{ label: "test name", query: "name" }]
+      [{ label: "test name", query: ".name" }]
     );
 
     const resultRows = csvResult.split(ExportService.SEPARATOR_ROW);
@@ -165,7 +163,7 @@ describe("ExportService", () => {
     const rows = csvExport.split(ExportService.SEPARATOR_ROW);
     expect(rows).toHaveSize(1 + 1); // includes 1 header line
     const columnValues = rows[1].split(ExportService.SEPARATOR_COL);
-    expect(columnValues).toHaveSize(3 + 1);
+    expect(columnValues).toHaveSize(3 + 1); // Properties + _id
     expect(columnValues).toContain('"' + testEnumValue.label + '"');
     expect(columnValues).toContain(new Date(testDate).toISOString());
     expect(columnValues).toContain('"true"');
@@ -184,7 +182,7 @@ describe("ExportService", () => {
     const query1 =
       ":getRelated(ChildSchoolRelation, schoolId).childId:toEntities(Child).name";
     const exportConfig: ExportColumnConfig[] = [
-      { label: "school name", query: "name" },
+      { label: "school name", query: ".name" },
       { label: "child name", query: query1 },
     ];
     const result1 = await service.createCsv(
@@ -211,10 +209,10 @@ describe("ExportService", () => {
     const noteB = await createNoteInDB("B", [child1, child3]);
 
     const exportConfig: ExportColumnConfig[] = [
-      { label: "note", query: "subject" },
+      { label: "note", query: ".subject" },
       {
         query: ".children:toEntities(Child)",
-        aggregations: [{ label: "participant", query: "name" }],
+        aggregations: [{ label: "participant", query: ".name" }],
       },
     ];
     const result1 = await service.createCsv([noteA, noteB], exportConfig);
@@ -239,10 +237,9 @@ describe("ExportService", () => {
     );
 
     const exportConfig: ExportColumnConfig[] = [
-      { label: "note", query: "subject" },
+      { label: "note", query: ".subject" },
       {
         query: ":getAttendanceArray",
-        label: "helper",
         aggregations: [
           {
             label: "participant",

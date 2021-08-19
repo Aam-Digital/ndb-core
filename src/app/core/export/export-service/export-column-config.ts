@@ -9,7 +9,7 @@ export interface ExportColumnConfig {
    */
   label?: string;
 
-  /** property key or query to access the value for this column from the object to be exported */
+  /** The query to access the value for this column from the object to be exported */
   query: string;
 
   /**

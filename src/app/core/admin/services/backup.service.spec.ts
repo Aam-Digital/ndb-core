@@ -16,7 +16,7 @@ describe("BackupService", () => {
       providers: [
         BackupService,
         ExportService,
-        { provide: QueryService, useValue: {} },
+        { provide: QueryService, useValue: { queryData: () => [] } },
         { provide: Database, useValue: db },
       ],
     });

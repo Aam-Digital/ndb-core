@@ -35,25 +35,31 @@ export class ExportService {
    * @param config (Optional) config specifying which fields should be exported
    * @returns string a valid CSV string of the input data
    */
-  async createCsv<T = any>(
-    data: T[],
-    config?: ExportColumnConfig[]
-  ): Promise<string> {
+  async createCsv(data: any[], config?: ExportColumnConfig[]): Promise<string> {
     if (!config) {
       config = this.generateExportConfigFromData(data);
     }
 
-    const exportableData = [];
+    const flattenedExportRows: ExportRow[] = [];
     for (const dataRow of data) {
       const extendedExportableRows = await this.generateExportRows(
         dataRow,
         config
       );
-      exportableData.push(...extendedExportableRows);
+      flattenedExportRows.push(...extendedExportableRows);
     }
 
+    // Apply entitySortingDataAccessor to transform values into human readable format
+    const readableExportRow = flattenedExportRows.map((row) => {
+      const readableRow = {};
+      Object.keys(row).forEach((key) => {
+        readableRow[key] = entityListSortingAccessor(row, key);
+      });
+      return readableRow;
+    });
+
     return this.papa.unparse(
-      { data: exportableData },
+      { data: readableExportRow },
       { quotes: true, header: true, newline: ExportService.SEPARATOR_ROW }
     );
   }
@@ -67,18 +73,15 @@ export class ExportService {
    * @private
    */
   private generateExportConfigFromData(data: Object[]): ExportColumnConfig[] {
-    const generatedConfig = [];
-    for (const dataRow of data) {
-      const newConfigFromRow = Object.keys(dataRow)
-        .filter(
-          (query) => !generatedConfig.find((config) => config.query === query)
-        )
-        .map((key) => ({ query: key } as ExportColumnConfig));
+    const uniqueKeys = new Set<string>();
+    data.forEach((obj) =>
+      Object.keys(obj).forEach((key) => uniqueKeys.add(key))
+    );
 
-      generatedConfig.push(...newConfigFromRow);
-    }
+    const columnConfigs: ExportColumnConfig[] = [];
+    uniqueKeys.forEach((key) => columnConfigs.push({ query: "." + key }));
 
-    return generatedConfig;
+    return columnConfigs;
   }
 
   /**
@@ -117,7 +120,8 @@ export class ExportService {
     object: Object,
     exportColumnConfig: ExportColumnConfig
   ): Promise<ExportRow[]> {
-    const label = exportColumnConfig.label ?? exportColumnConfig.query;
+    const label =
+      exportColumnConfig.label ?? exportColumnConfig.query.replace(".", "");
     const value = await this.getValueForQuery(exportColumnConfig, object);
 
     if (!exportColumnConfig.aggregations) {
@@ -140,27 +144,19 @@ export class ExportService {
   private async getValueForQuery(
     exportColumnConfig: ExportColumnConfig,
     object: Object
-  ) {
-    if (!isQuery(exportColumnConfig.query)) {
-      return entityListSortingAccessor(object, exportColumnConfig.query);
-    } else {
-      const value = await this.queryService.queryData(
-        exportColumnConfig.query,
-        null,
-        null,
-        [object]
-      );
+  ): Promise<any> {
+    const value = await this.queryService.queryData(
+      exportColumnConfig.query,
+      null,
+      null,
+      [object]
+    );
 
-      if (!exportColumnConfig.aggregations && value.length === 1) {
-        // queryData() always returns an array, simple queries should be a direct value however
-        return value[0];
-      }
-      return value;
+    if (!exportColumnConfig.aggregations && value.length === 1) {
+      // queryData() always returns an array, simple queries should be a direct value however
+      return value[0];
     }
-
-    function isQuery(queryKey) {
-      return queryKey.startsWith(".") || queryKey.startsWith(":");
-    }
+    return value;
   }
 
   /**
