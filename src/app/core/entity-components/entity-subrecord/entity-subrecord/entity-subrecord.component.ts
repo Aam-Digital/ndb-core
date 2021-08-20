@@ -234,32 +234,26 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       $localize`:Delete confirmation message:Are you sure you want to delete this record?`
     );
 
-    dialogRef
-      .afterClosed()
-      .pipe(untilDestroyed(this))
-      .subscribe((confirmed) => {
-        if (confirmed) {
-          this._entityMapper
-            .remove(row.record)
-            .then(() => this.removeFromDataTable(row));
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+        this._entityMapper
+          .remove(row.record)
+          .then(() => this.removeFromDataTable(row));
 
-          const snackBarRef = this._snackBar.open(
-            $localize`:Record deleted info:Record deleted`,
-            "Undo",
-            {
-              duration: 8000,
-            }
-          );
-          snackBarRef
-            .onAction()
-            .pipe(untilDestroyed(this))
-            .subscribe(() => {
-              this._entityMapper.save(row.record, true);
-              this.records.unshift(row.record);
-              this.initFormGroups();
-            });
-        }
-      });
+        const snackBarRef = this._snackBar.open(
+          $localize`:Record deleted info:Record deleted`,
+          "Undo",
+          {
+            duration: 8000,
+          }
+        );
+        snackBarRef.onAction().subscribe(() => {
+          this._entityMapper.save(row.record, true);
+          this.records.unshift(row.record);
+          this.initFormGroups();
+        });
+      }
+    });
   }
 
   private removeFromDataTable(row: TableRow<T>) {
@@ -307,20 +301,16 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       .map((col) => [Object.assign({}, col)]);
     dialogRef.componentInstance.entity = entity;
     dialogRef.componentInstance.editing = true;
-    dialogRef.componentInstance.onSave
-      .pipe(untilDestroyed(this))
-      .subscribe((updatedEntity: T) => {
-        dialogRef.close();
-        // Trigger the change detection
-        const rowIndex = this.recordsDataSource.data.findIndex(
-          (row) => row.record === entity
-        );
-        this.recordsDataSource.data[rowIndex] = { record: updatedEntity };
-        this.recordsDataSource._updateChangeSubscription();
-      });
-    dialogRef.componentInstance.onCancel
-      .pipe(untilDestroyed(this))
-      .subscribe(() => dialogRef.close());
+    dialogRef.componentInstance.onSave.subscribe((updatedEntity: T) => {
+      dialogRef.close();
+      // Trigger the change detection
+      const rowIndex = this.recordsDataSource.data.findIndex(
+        (row) => row.record === entity
+      );
+      this.recordsDataSource.data[rowIndex] = { record: updatedEntity };
+      this.recordsDataSource._updateChangeSubscription();
+    });
+    dialogRef.componentInstance.onCancel.subscribe(() => dialogRef.close());
   }
 
   /**

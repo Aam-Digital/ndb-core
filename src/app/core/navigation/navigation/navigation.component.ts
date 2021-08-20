@@ -20,12 +20,10 @@ import { MenuItem } from "../menu-item";
 import { NavigationMenuConfig } from "../navigation-menu-config.interface";
 import { ConfigService } from "../../config/config.service";
 import { UserRoleGuard } from "../../permissions/user-role.guard";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Main app menu listing.
  */
-@UntilDestroy()
 @Component({
   selector: "app-navigation",
   templateUrl: "./navigation.component.html",
@@ -41,9 +39,9 @@ export class NavigationComponent {
     private userRoleGuard: UserRoleGuard,
     private configService: ConfigService
   ) {
-    this.configService.configUpdates
-      .pipe(untilDestroyed(this))
-      .subscribe(() => this.initMenuItemsFromConfig());
+    this.configService.configUpdates.subscribe(() =>
+      this.initMenuItemsFromConfig()
+    );
   }
 
   /**

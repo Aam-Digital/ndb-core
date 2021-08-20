@@ -5,17 +5,15 @@ import { ConfirmationDialogService } from "../../core/confirmation-dialog/confir
 import { Database } from "../../core/database/database";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AutoResolutionService } from "../auto-resolution/auto-resolution.service";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
-@UntilDestroy()
+/**
+ * Visualize one specific conflicting document revision and offer resolution options.
+ */
 @Component({
   selector: "app-compare-rev",
   templateUrl: "./compare-rev.component.html",
   styleUrls: ["./compare-rev.component.scss"],
 })
-/**
- * Visualize one specific conflicting document revision and offer resolution options.
- */
 export class CompareRevComponent {
   /** revision key (_rev) of the confliction version to be displayed */
   @Input() rev: string;
@@ -100,17 +98,14 @@ export class CompareRevComponent {
       )}`
     );
 
-    dialogRef
-      .afterClosed()
-      .pipe(untilDestroyed(this))
-      .subscribe(async (confirmed) => {
-        if (confirmed) {
-          const success = await this.deleteDoc(docToDelete);
-          if (success) {
-            this.resolution = $localize`deleted conflicting version`;
-          }
+    dialogRef.afterClosed().subscribe(async (confirmed) => {
+      if (confirmed) {
+        const success = await this.deleteDoc(docToDelete);
+        if (success) {
+          this.resolution = $localize`deleted conflicting version`;
         }
-      });
+      }
+    });
   }
 
   private async deleteDoc(docToDelete: any): Promise<boolean> {
@@ -161,21 +156,18 @@ export class CompareRevComponent {
         newChanges
       )}`
     );
-    dialogRef
-      .afterClosed()
-      .pipe(untilDestroyed(this))
-      .subscribe(async (confirmed) => {
-        if (confirmed) {
-          const successSave = await this.saveDoc(this.doc);
-          const successDel = await this.deleteDoc(this.revDoc);
-          if (successSave && successDel) {
-            if (diffStringToApply === this.diffs) {
-              this.resolution = $localize`selected conflicting version`;
-            } else {
-              this.resolution = $localize`resolved manually`;
-            }
+    dialogRef.afterClosed().subscribe(async (confirmed) => {
+      if (confirmed) {
+        const successSave = await this.saveDoc(this.doc);
+        const successDel = await this.deleteDoc(this.revDoc);
+        if (successSave && successDel) {
+          if (diffStringToApply === this.diffs) {
+            this.resolution = $localize`selected conflicting version`;
+          } else {
+            this.resolution = $localize`resolved manually`;
           }
         }
-      });
+      }
+    });
   }
 }

@@ -7,17 +7,15 @@ import { INTERACTION_TYPE_CONFIG_ID } from "../model/interaction-type.interface"
 import { Child } from "../../children/model/child";
 import { User } from "../../../core/user/user";
 import { School } from "../../schools/model/school";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
-@UntilDestroy()
+/**
+ * Component responsible for displaying the Note creation/view window
+ */
 @Component({
   selector: "app-note-details",
   templateUrl: "./note-details.component.html",
   styleUrls: ["./note-details.component.scss"],
 })
-/**
- * Component responsible for displaying the Note creation/view window
- */
 export class NoteDetailsComponent implements ShowsEntity<Note> {
   @Input() entity: Note;
   @ViewChild("dialogForm", { static: true }) formDialogWrapper;
@@ -51,7 +49,6 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
     // Return the entity which has been saved
     this.matDialogRef
       .beforeClosed()
-      .pipe(untilDestroyed(this))
       .subscribe(() => this.matDialogRef.close(entity));
   }
 }

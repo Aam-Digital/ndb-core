@@ -13,17 +13,15 @@ import { AttendanceMigrationService } from "../../../child-dev-project/attendanc
 import { NotesMigrationService } from "../../../child-dev-project/notes/notes-migration/notes-migration.service";
 import { ChildrenMigrationService } from "../../../child-dev-project/children/child-photo-service/children-migration.service";
 import { ConfigMigrationService } from "../../config/config-migration.service";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
-@UntilDestroy()
+/**
+ * Admin GUI giving administrative users different options/actions.
+ */
 @Component({
   selector: "app-admin",
   templateUrl: "./admin.component.html",
   styleUrls: ["./admin.component.scss"],
 })
-/**
- * Admin GUI giving administrative users different options/actions.
- */
 export class AdminComponent implements OnInit {
   /** app-wide configuration */
   appConfig = AppConfig.settings;
@@ -136,32 +134,26 @@ export class AdminComponent implements OnInit {
       restoring ${JSON.parse(newData).length} records from the loaded file.`
     );
 
-    dialogRef
-      .afterClosed()
-      .pipe(untilDestroyed(this))
-      .subscribe(async (confirmed) => {
-        if (!confirmed) {
-          return;
+    dialogRef.afterClosed().subscribe(async (confirmed) => {
+      if (!confirmed) {
+        return;
+      }
+
+      await this.backupService.clearDatabase();
+      await this.backupService.importJson(newData, true);
+
+      const snackBarRef = this.snackBar.open(
+        $localize`Backup restored`,
+        "Undo",
+        {
+          duration: 8000,
         }
-
+      );
+      snackBarRef.onAction().subscribe(async () => {
         await this.backupService.clearDatabase();
-        await this.backupService.importJson(newData, true);
-
-        const snackBarRef = this.snackBar.open(
-          $localize`Backup restored`,
-          "Undo",
-          {
-            duration: 8000,
-          }
-        );
-        snackBarRef
-          .onAction()
-          .pipe(untilDestroyed(this))
-          .subscribe(async () => {
-            await this.backupService.clearDatabase();
-            await this.backupService.importJson(restorePoint, true);
-          });
+        await this.backupService.importJson(restorePoint, true);
       });
+    });
   }
 
   /**
@@ -179,31 +171,25 @@ export class AdminComponent implements OnInit {
       } records from the loaded file. Existing records with same "_id" in the database will be overwritten!`
     );
 
-    dialogRef
-      .afterClosed()
-      .pipe(untilDestroyed(this))
-      .subscribe(async (confirmed) => {
-        if (!confirmed) {
-          return;
+    dialogRef.afterClosed().subscribe(async (confirmed) => {
+      if (!confirmed) {
+        return;
+      }
+
+      await this.backupService.importCsv(newData, true);
+
+      const snackBarRef = this.snackBar.open(
+        $localize`Import completed?`,
+        "Undo",
+        {
+          duration: 8000,
         }
-
-        await this.backupService.importCsv(newData, true);
-
-        const snackBarRef = this.snackBar.open(
-          $localize`Import completed?`,
-          "Undo",
-          {
-            duration: 8000,
-          }
-        );
-        snackBarRef
-          .onAction()
-          .pipe(untilDestroyed(this))
-          .subscribe(async () => {
-            await this.backupService.clearDatabase();
-            await this.backupService.importJson(restorePoint, true);
-          });
+      );
+      snackBarRef.onAction().subscribe(async () => {
+        await this.backupService.clearDatabase();
+        await this.backupService.importJson(restorePoint, true);
       });
+    });
   }
 
   /**
@@ -219,29 +205,23 @@ export class AdminComponent implements OnInit {
       } existing records in the database!`
     );
 
-    dialogRef
-      .afterClosed()
-      .pipe(untilDestroyed(this))
-      .subscribe(async (confirmed) => {
-        if (!confirmed) {
-          return;
+    dialogRef.afterClosed().subscribe(async (confirmed) => {
+      if (!confirmed) {
+        return;
+      }
+
+      await this.backupService.clearDatabase();
+
+      const snackBarRef = this.snackBar.open(
+        $localize`Import completed`,
+        "Undo",
+        {
+          duration: 8000,
         }
-
-        await this.backupService.clearDatabase();
-
-        const snackBarRef = this.snackBar.open(
-          $localize`Import completed`,
-          "Undo",
-          {
-            duration: 8000,
-          }
-        );
-        snackBarRef
-          .onAction()
-          .pipe(untilDestroyed(this))
-          .subscribe(async () => {
-            await this.backupService.importJson(restorePoint, true);
-          });
+      );
+      snackBarRef.onAction().subscribe(async () => {
+        await this.backupService.importJson(restorePoint, true);
       });
+    });
   }
 }

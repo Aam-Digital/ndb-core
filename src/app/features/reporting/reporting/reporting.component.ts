@@ -11,9 +11,7 @@ import {
   ReportingComponentConfig,
 } from "./reporting-component-config";
 import moment from "moment";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
-@UntilDestroy()
 @Component({
   selector: "app-reporting",
   templateUrl: "./reporting.component.html",
@@ -36,14 +34,12 @@ export class ReportingComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.activatedRoute.data
-      .pipe(untilDestroyed(this))
-      .subscribe((config: ReportingComponentConfig) => {
-        this.availableReports = config.reports;
-        if (this.availableReports?.length === 1) {
-          this.selectedReport = this.availableReports[0];
-        }
-      });
+    this.activatedRoute.data.subscribe((config: ReportingComponentConfig) => {
+      this.availableReports = config.reports;
+      if (this.availableReports?.length === 1) {
+        this.selectedReport = this.availableReports[0];
+      }
+    });
   }
 
   async calculateResults() {

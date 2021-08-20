@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { Child } from "../model/child";
 import { ActivatedRoute, Router } from "@angular/router";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { UntilDestroy } from "@ngneat/until-destroy";
 import { ChildrenService } from "../children.service";
 import { FilterSelectionOption } from "../../../core/filter/filter-selection/filter-selection";
 import {
@@ -42,16 +42,13 @@ export class ChildrenListComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.route.data
-      .pipe(untilDestroyed(this))
-      .subscribe((config: EntityListConfig) => (this.listConfig = config));
-    this.childrenService
-      .getChildren()
-      .pipe(untilDestroyed(this))
-      .subscribe((children) => {
-        this.childrenList = children;
-        this.addPrebuiltFilters();
-      });
+    this.route.data.subscribe(
+      (config: EntityListConfig) => (this.listConfig = config)
+    );
+    this.childrenService.getChildren().subscribe((children) => {
+      this.childrenList = children;
+      this.addPrebuiltFilters();
+    });
   }
 
   routeTo(route: string) {

@@ -5,9 +5,7 @@ import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on
 import { take } from "rxjs/operators";
 import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 import { Child } from "../model/child";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
-@UntilDestroy()
 @Component({
   selector: "app-children-count-dashboard",
   templateUrl: "./children-count-dashboard.component.html",
@@ -39,7 +37,7 @@ export class ChildrenCountDashboardComponent
   ngOnInit() {
     this.childrenService
       .getChildren()
-      .pipe(untilDestroyed(this), take(1)) // only take the initial result, no need for updated details
+      .pipe(take(1)) // only take the initial result, no need for updated details
       .subscribe((results) => {
         this.updateCounts(results);
       });

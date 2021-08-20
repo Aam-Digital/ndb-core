@@ -6,14 +6,12 @@ import { take } from "rxjs/operators";
 import { ChildrenService } from "../children.service";
 import { Child } from "../model/child";
 import { WarningLevel } from "../../../core/entity/model/warning-level";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 interface BmiRow {
   childId: string;
   bmi: number;
 }
 
-@UntilDestroy()
 @Component({
   selector: "app-children-bmi-dashboard",
   templateUrl: "./children-bmi-dashboard.component.html",
@@ -32,7 +30,7 @@ export class ChildrenBmiDashboardComponent
   ngOnInit(): void {
     this.childrenService
       .getChildren()
-      .pipe(untilDestroyed(this), take(1))
+      .pipe(take(1))
       .subscribe((results) => {
         this.filterBMI(results);
       });
@@ -46,7 +44,7 @@ export class ChildrenBmiDashboardComponent
     children.forEach((child) => {
       this.childrenService
         .getHealthChecksOfChild(child.getId())
-        .pipe(untilDestroyed(this))
+        .pipe()
         .subscribe((results) => {
           /** get latest HealthCheck */
           if (results.length > 0) {

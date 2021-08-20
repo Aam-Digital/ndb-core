@@ -6,9 +6,7 @@ import { RecurringActivity } from "../../model/recurring-activity";
 import { SessionService } from "../../../../core/session/session-service/session.service";
 import { NoteDetailsComponent } from "../../../notes/note-details/note-details.component";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
-@UntilDestroy()
 @Component({
   selector: "app-roll-call-setup",
   templateUrl: "./roll-call-setup.component.html",
@@ -140,7 +138,6 @@ export class RollCallSetupComponent implements OnInit {
     this.formDialog
       .openDialog(NoteDetailsComponent, newNote)
       .afterClosed()
-      .pipe(untilDestroyed(this))
       .subscribe((createdNote: Note) => {
         if (createdNote) {
           this.existingEvents.push(createdNote);

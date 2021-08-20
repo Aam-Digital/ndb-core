@@ -18,9 +18,7 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { DynamicComponentConfig } from "../../view/dynamic-components/dynamic-component-config.interface";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
-@UntilDestroy()
 @Component({
   selector: "app-dashboard",
   templateUrl: "./dashboard.component.html",
@@ -32,7 +30,7 @@ export class DashboardComponent implements OnInit {
   constructor(private activatedRoute: ActivatedRoute) {}
 
   ngOnInit() {
-    this.activatedRoute.data.pipe(untilDestroyed(this)).subscribe((config) => {
+    this.activatedRoute.data.subscribe((config) => {
       this.widgets = config.widgets;
     });
   }

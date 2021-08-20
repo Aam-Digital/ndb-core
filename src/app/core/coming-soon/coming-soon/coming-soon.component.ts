@@ -2,19 +2,17 @@ import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { AlertService } from "../../alerts/alert.service";
 import { ActivatedRoute } from "@angular/router";
 import { AnalyticsService } from "../../analytics/analytics.service";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
-@UntilDestroy()
-@Component({
-  selector: "app-coming-soon",
-  templateUrl: "./coming-soon.component.html",
-  styleUrls: ["./coming-soon.component.scss"],
-})
 /**
  * Placeholder page to announce that a feature is not available yet.
  *
  * This integrates with analytics and allows user to explicitly request the feature.
  */
+@Component({
+  selector: "app-coming-soon",
+  templateUrl: "./coming-soon.component.html",
+  styleUrls: ["./coming-soon.component.scss"],
+})
 export class ComingSoonComponent implements OnChanges {
   /**
    * An array of featureIds that the user has already requested during the current session.
@@ -39,13 +37,11 @@ export class ComingSoonComponent implements OnChanges {
     private analyticsService: AnalyticsService,
     private activatedRoute: ActivatedRoute
   ) {
-    this.activatedRoute.paramMap
-      .pipe(untilDestroyed(this))
-      .subscribe((params) => {
-        if (params.has("feature")) {
-          this.init(params.get("feature"));
-        }
-      });
+    this.activatedRoute.paramMap.subscribe((params) => {
+      if (params.has("feature")) {
+        this.init(params.get("feature"));
+      }
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
