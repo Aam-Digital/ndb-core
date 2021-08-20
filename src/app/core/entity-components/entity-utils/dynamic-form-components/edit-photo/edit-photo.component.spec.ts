@@ -4,14 +4,18 @@ import { EditPhotoComponent } from "./edit-photo.component";
 import { EntityDetailsModule } from "../../../entity-details/entity-details.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FormControl, FormGroup } from "@angular/forms";
+import { SessionService } from "../../../../session/session-service/session.service";
 
 describe("EditPhotoComponent", () => {
   let component: EditPhotoComponent;
   let fixture: ComponentFixture<EditPhotoComponent>;
+  let mockSessionService: jasmine.SpyObj<SessionService>;
 
   beforeEach(async () => {
+    mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
     await TestBed.configureTestingModule({
       imports: [EntityDetailsModule, NoopAnimationsModule],
+      providers: [{ provide: SessionService, useValue: mockSessionService }],
       declarations: [EditPhotoComponent],
     }).compileComponents();
   });
@@ -35,5 +39,17 @@ describe("EditPhotoComponent", () => {
     component.changeFilename("new_file.name");
 
     expect(component.formControl.value.path).toBe("new_file.name");
+  });
+
+  it("should allow editing photos when the user is admin", () => {
+    mockSessionService.getCurrentUser.and.returnValue({
+      name: "User",
+      roles: ["admin_app"],
+    });
+    expect(component.editPhotoAllowed).toBeFalse();
+
+    component.ngOnInit();
+
+    expect(component.editPhotoAllowed).toBeTrue();
   });
 });
