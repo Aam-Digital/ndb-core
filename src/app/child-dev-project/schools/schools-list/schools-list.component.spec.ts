@@ -17,7 +17,7 @@ import { School } from "../model/school";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { User } from "../../../core/user/user";
-import { BackupService } from "../../../core/admin/services/backup.service";
+import { ExportService } from "../../../core/export/export-service/export.service";
 
 describe("SchoolsListComponent", () => {
   let component: SchoolsListComponent;
@@ -67,7 +67,7 @@ describe("SchoolsListComponent", () => {
           { provide: ActivatedRoute, useValue: routeMock },
           { provide: SessionService, useValue: mockSessionService },
           { provide: EntityMapperService, useValue: mockEntityMapper },
-          { provide: BackupService, useValue: {} },
+          { provide: ExportService, useValue: {} },
         ],
       }).compileComponents();
     })
