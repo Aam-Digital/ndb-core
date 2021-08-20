@@ -13,7 +13,6 @@ import { ChildrenListComponent } from "../../../child-dev-project/children/child
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ConfigService } from "../../config/config.service";
 import { LoggingService } from "../../logging/logging.service";
-import { BackupService } from "../../admin/services/backup.service";
 import { EntityListModule } from "./entity-list.module";
 import { Angulartics2Module } from "angulartics2";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
@@ -21,6 +20,7 @@ import { DatabaseField } from "../../entity/database-field.decorator";
 import { ReactiveFormsModule } from "@angular/forms";
 import { AttendanceService } from "../../../child-dev-project/attendance/attendance.service";
 import { ExportModule } from "../../export/export.module";
+import { ExportService } from "../../export/export-service/export.service";
 import {
   mockEntityMapper,
   MockEntityMapperService,
@@ -123,7 +123,7 @@ describe("EntityListComponent", () => {
           { provide: ConfigService, useValue: mockConfigService },
           { provide: EntityMapperService, useValue: mockedEntityMapper },
           { provide: LoggingService, useValue: mockLoggingService },
-          { provide: BackupService, useValue: {} },
+          { provide: ExportService, useValue: {} },
           { provide: EntitySchemaService, useValue: mockEntitySchemaService },
           { provide: AttendanceService, useValue: mockAttendanceService },
         ],

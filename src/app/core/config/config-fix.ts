@@ -647,9 +647,9 @@ export const defaultJsonConfig = {
         "assignedTo"
       ],
       "exportConfig": [
-        { label: "Title", key: "title" },
-        { label: "Type", key: "type" },
-        { label: "Assigned users", key: "assignedTo" }
+        { label: "Title", query: "title" },
+        { label: "Type", query: "type" },
+        { label: "Assigned users", query: "assignedTo" }
       ]
     }
   },

@@ -23,11 +23,11 @@ import { User } from "../../../core/user/user";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { School } from "../../schools/model/school";
 import { LoggingService } from "../../../core/logging/logging.service";
-import { BackupService } from "../../../core/admin/services/backup.service";
 import {
   mockEntityMapper,
   MockEntityMapperService,
 } from "../../../core/entity/mock-entity-mapper-service";
+import { ExportService } from "../../../core/export/export-service/export.service";
 
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;
@@ -124,7 +124,7 @@ describe("ChildrenListComponent", () => {
             provide: LoggingService,
             useValue: jasmine.createSpyObj(["warn"]),
           },
-          { provide: BackupService, useValue: {} },
+          { provide: ExportService, useValue: {} },
         ],
       }).compileComponents();
     })

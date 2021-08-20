@@ -13,20 +13,19 @@ export interface Aggregation {
   providedIn: "root",
 })
 export class ReportingService {
-  private aggregations: Aggregation[] = [];
   private fromDate: Date;
   private toDate: Date;
 
   constructor(private queryService: QueryService) {}
 
-  public setAggregations(aggregations: Aggregation[]) {
-    this.aggregations = aggregations;
-  }
-
-  public calculateReport(from?: Date, to?: Date): Promise<ReportRow[]> {
+  public calculateReport(
+    aggregations: Aggregation[],
+    from?: Date,
+    to?: Date
+  ): Promise<ReportRow[]> {
     this.fromDate = from;
     this.toDate = to;
-    return this.calculateAggregations(this.aggregations);
+    return this.calculateAggregations(aggregations);
   }
 
   private async calculateAggregations(
@@ -43,6 +42,7 @@ export class ReportingService {
         this.toDate,
         data
       );
+
       if (aggregation.label) {
         const newRow = {
           header: {
