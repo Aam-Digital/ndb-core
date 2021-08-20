@@ -91,10 +91,7 @@ export class ListPaginatorComponent<E extends Entity>
   }
 
   private async applyUserPaginationSettings() {
-    if (!this.user) {
-      const currentUser = this.sessionService.getCurrentUser();
-      this.user = await this.entityMapperService.load(User, currentUser.name);
-    }
+    await this.ensureUserIsLoaded();
 
     const pageSize = this.user.paginatorSettingsPageSize[
       this.idForSavingPagination
@@ -113,10 +110,7 @@ export class ListPaginatorComponent<E extends Entity>
   }
 
   private async updateUserPaginationSettings() {
-    if (!this.user) {
-      const currentUser = this.sessionService.getCurrentUser();
-      this.user = await this.entityMapperService.load(User, currentUser.name);
-    }
+    await this.ensureUserIsLoaded();
 
     // save "all" as -1
     const sizeToBeSaved = this.showingAll ? -1 : this.pageSize;
@@ -134,7 +128,14 @@ export class ListPaginatorComponent<E extends Entity>
     ] = sizeToBeSaved;
 
     if (hasChangesToBeSaved) {
-      this.entityMapperService.save<User>(this.user);
+      await this.entityMapperService.save<User>(this.user);
+    }
+  }
+
+  private async ensureUserIsLoaded() {
+    if (!this.user) {
+      const currentUser = this.sessionService.getCurrentUser();
+      this.user = await this.entityMapperService.load(User, currentUser.name);
     }
   }
 }

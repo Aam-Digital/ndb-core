@@ -14,12 +14,13 @@ import { AttendanceModule } from "../../attendance.module";
 import { MatNativeDateModule } from "@angular/material/core";
 import { AttendanceService } from "../../attendance.service";
 import { EventNote } from "../../model/event-note";
+import { DatabaseUser } from "../../../../core/session/session-service/local-user";
 
 describe("RollCallSetupComponent", () => {
   let component: RollCallSetupComponent;
   let fixture: ComponentFixture<RollCallSetupComponent>;
 
-  const user = { name: "TestUser", roles: [] };
+  const user: DatabaseUser = { name: "TestUser", roles: [] };
   let mockEntityService: jasmine.SpyObj<EntityMapperService>;
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
   let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
