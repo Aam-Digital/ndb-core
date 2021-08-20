@@ -30,8 +30,8 @@ import { By } from "@angular/platform-browser";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
 import { EventNote } from "../../attendance/model/event-note";
 import { BehaviorSubject } from "rxjs";
-import { BackupService } from "../../../core/admin/services/backup.service";
 import { UpdatedEntity } from "../../../core/entity/model/entity-update";
+import { ExportService } from "../../../core/export/export-service/export.service";
 
 describe("NotesManagerComponent", () => {
   let component: NotesManagerComponent;
@@ -122,7 +122,7 @@ describe("NotesManagerComponent", () => {
         { provide: FormDialogService, useValue: dialogMock },
         { provide: ActivatedRoute, useValue: routeMock },
         { provide: ConfigService, useValue: mockConfigService },
-        { provide: BackupService, useValue: {} },
+        { provide: ExportService, useValue: {} },
       ],
     }).compileComponents();
   });

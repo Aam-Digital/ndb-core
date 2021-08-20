@@ -82,6 +82,10 @@
         "file": "how-to-guides/reports.md"
       },
       {
+        "title": "Format Data Export",
+        "file": "how-to-guides/exports.md"
+      },
+      {
         "title": "Build Localizable Components",
         "file": "how-to-guides/build-localizable-components.md"
       },

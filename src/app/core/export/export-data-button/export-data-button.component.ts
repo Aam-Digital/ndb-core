@@ -34,8 +34,8 @@ export class ExportDataButtonComponent {
   /**
    * Trigger the download of the export file.
    */
-  exportData() {
-    const blobData = this.getFormattedBlobData();
+  async exportData() {
+    const blobData = await this.getFormattedBlobData();
     const link = this.createDownloadLink(blobData);
     link.click();
   }
@@ -50,14 +50,17 @@ export class ExportDataButtonComponent {
     return link;
   }
 
-  private getFormattedBlobData(): Blob {
+  private async getFormattedBlobData(): Promise<Blob> {
     let result = "";
     switch (this.format.toLowerCase()) {
       case "json":
         result = this.exportService.createJson(this.data); // TODO: support exportConfig for json format
         return new Blob([result], { type: "application/json" });
       case "csv":
-        result = this.exportService.createCsv(this.data, this.exportConfig);
+        result = await this.exportService.createCsv(
+          this.data,
+          this.exportConfig
+        );
         return new Blob([result], { type: "text/csv" });
       default:
         console.warn("Not supported format:", this.format);
