@@ -1,15 +1,17 @@
 <!-- Individual Student's Page -->
 <div *ngIf="!isFinished() && entries?.length > 0">
-<!--  <app-child-block [entity]="entries[currentIndex].child"></app-child-block>-->
-  <app-child-block [entity]="entries[currentIndex].child"
-    *ngFor="let entry of data?.parts">
-      <mat-progress-bar
-          mode="determinate"
-          [value]="(entry.currentValue / entry.targetValue) * 100"
-      ></mat-progress-bar>
-      <td class="align-right" style="white-space: nowrap">
-        {{ entry.currentValue }} / {{ entry.targetValue }}
-      </td>
+  <!--  <app-child-block [entity]="entries[currentIndex].child"></app-child-block>-->
+  <app-child-block
+    [entity]="entries[currentIndex].child"
+    *ngFor="let entry of data?.parts"
+  >
+    <mat-progress-bar
+      mode="determinate"
+      [value]="(entry.currentValue / entry.targetValue) * 100"
+    ></mat-progress-bar>
+    <td class="align-right" style="white-space: nowrap">
+      {{ entry.currentValue }} / {{ entry.targetValue }}
+    </td>
   </app-child-block>
 
   <div
