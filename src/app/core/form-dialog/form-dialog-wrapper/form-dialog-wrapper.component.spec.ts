@@ -8,33 +8,28 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { MatDialogRef } from "@angular/material/dialog";
 import { Subject } from "rxjs";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
-import { SessionService } from "../../session/session-service/session.service";
+import { MockSessionModule } from "../../session/mock-session.module";
 
 describe("FormDialogWrapperComponent", () => {
   let component: FormDialogWrapperComponent;
   let fixture: ComponentFixture<FormDialogWrapperComponent>;
 
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
-  let mockSessionService: jasmine.SpyObj<SessionService>;
+  let saveEntitySpy: jasmine.Spy;
 
   beforeEach(
     waitForAsync(() => {
-      mockEntityMapper = jasmine.createSpyObj("mockEntityMapper", ["save"]);
-      mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
-
       TestBed.configureTestingModule({
         imports: [
           FormDialogModule,
           Angulartics2Module.forRoot(),
           RouterTestingModule,
           MatSnackBarModule,
+          MockSessionModule.withState(),
         ],
-        providers: [
-          { provide: EntityMapperService, useValue: mockEntityMapper },
-          { provide: SessionService, useValue: mockSessionService },
-          { provide: MatDialogRef, useValue: {} },
-        ],
+        providers: [{ provide: MatDialogRef, useValue: {} }],
       }).compileComponents();
+
+      saveEntitySpy = spyOn(TestBed.inject(EntityMapperService), "save");
     })
   );
 
@@ -69,7 +64,7 @@ describe("FormDialogWrapperComponent", () => {
 
     await component.save();
 
-    expect(mockEntityMapper.save).toHaveBeenCalledWith(testEntity);
+    expect(saveEntitySpy).toHaveBeenCalledWith(testEntity);
   });
 
   it("should allow aborting save", async () => {
@@ -81,7 +76,7 @@ describe("FormDialogWrapperComponent", () => {
     await component.save();
 
     expect(component.beforeSave).toHaveBeenCalledWith(testEntity);
-    expect(mockEntityMapper.save).not.toHaveBeenCalled();
+    expect(saveEntitySpy).not.toHaveBeenCalled();
   });
 
   it("should save entity as transformed by beforeSave", async () => {
@@ -94,6 +89,6 @@ describe("FormDialogWrapperComponent", () => {
     await component.save();
 
     expect(component.beforeSave).toHaveBeenCalledWith(testEntity);
-    expect(mockEntityMapper.save).toHaveBeenCalledWith(transformedEntity);
+    expect(saveEntitySpy).toHaveBeenCalledWith(transformedEntity);
   });
 });

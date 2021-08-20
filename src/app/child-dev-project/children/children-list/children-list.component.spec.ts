@@ -8,7 +8,6 @@ import {
 import { ChildrenListComponent } from "./children-list.component";
 import { ChildrenService } from "../children.service";
 import { RouterTestingModule } from "@angular/router/testing";
-import { SessionService } from "../../../core/session/session-service/session.service";
 import { of } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ChildrenModule } from "../children.module";
@@ -19,20 +18,15 @@ import {
   EntityListConfig,
   PrebuiltFilterConfig,
 } from "../../../core/entity-components/entity-list/EntityListConfig";
-import { User } from "../../../core/user/user";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { School } from "../../schools/model/school";
 import { LoggingService } from "../../../core/logging/logging.service";
-import {
-  mockEntityMapper,
-  MockEntityMapperService,
-} from "../../../core/entity/mock-entity-mapper-service";
 import { ExportService } from "../../../core/export/export-service/export.service";
+import { MockSessionModule } from "../../../core/session/mock-session.module";
 
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;
   let fixture: ComponentFixture<ChildrenListComponent>;
-  let mockSessionService: jasmine.SpyObj<SessionService>;
   const routeData: EntityListConfig = {
     title: "Children List",
     columns: [
@@ -87,16 +81,9 @@ describe("ChildrenListComponent", () => {
   const mockChildrenService: jasmine.SpyObj<ChildrenService> = jasmine.createSpyObj(
     ["getChildren"]
   );
-  let mockedEntityMapper: MockEntityMapperService;
 
   beforeEach(
     waitForAsync(() => {
-      mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
-      mockSessionService.getCurrentUser.and.returnValue({
-        name: "TestUser",
-        roles: [],
-      });
-      mockedEntityMapper = mockEntityMapper([new User("TestUser")]);
       mockChildrenService.getChildren.and.returnValue(of([]));
       TestBed.configureTestingModule({
         declarations: [ChildrenListComponent],
@@ -105,19 +92,12 @@ describe("ChildrenListComponent", () => {
           ChildrenModule,
           RouterTestingModule,
           Angulartics2Module.forRoot(),
+          MockSessionModule.withState(),
         ],
         providers: [
           {
             provide: ChildrenService,
             useValue: mockChildrenService,
-          },
-          {
-            provide: EntityMapperService,
-            useValue: mockedEntityMapper,
-          },
-          {
-            provide: SessionService,
-            useValue: mockSessionService,
           },
           { provide: ActivatedRoute, useValue: routeMock },
           {
@@ -164,8 +144,11 @@ describe("ChildrenListComponent", () => {
     firstSchool.name = "A Test";
     const secondSchool = new School("test");
     secondSchool.name = "Test";
+    const entityMapper = TestBed.inject(EntityMapperService);
+    entityMapper.save(firstSchool);
+    entityMapper.save(secondSchool);
+    tick();
 
-    mockedEntityMapper.addAll([secondSchool, firstSchool]);
     component.ngOnInit();
     tick();
 

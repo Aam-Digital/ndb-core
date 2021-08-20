@@ -8,7 +8,6 @@ import {
 
 import { PreviousSchoolsComponent } from "./previous-schools.component";
 import { ChildrenService } from "../children/children.service";
-import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { ChildrenModule } from "../children/children.module";
 import { RouterTestingModule } from "@angular/router/testing";
 import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirmation-dialog.module";
@@ -17,26 +16,18 @@ import { Child } from "../children/model/child";
 import { PanelConfig } from "../../core/entity-components/entity-details/EntityDetailsConfig";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import moment from "moment";
-import { SessionService } from "../../core/session/session-service/session.service";
-import { User } from "../../core/user/user";
-import { mockEntityMapper } from "../../core/entity/mock-entity-mapper-service";
+import { MockSessionModule } from "../../core/session/mock-session.module";
 
 describe("PreviousSchoolsComponent", () => {
   let component: PreviousSchoolsComponent;
   let fixture: ComponentFixture<PreviousSchoolsComponent>;
 
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
-  let mockSessionService: jasmine.SpyObj<SessionService>;
 
   const testChild = new Child("22");
 
   beforeEach(
     waitForAsync(() => {
-      mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
-      mockSessionService.getCurrentUser.and.returnValue({
-        name: "TestUser",
-        roles: [],
-      });
       mockChildrenService = jasmine.createSpyObj(["getSchoolRelationsFor"]);
       mockChildrenService.getSchoolRelationsFor.and.resolveTo([
         new ChildSchoolRelation(),
@@ -48,14 +39,10 @@ describe("PreviousSchoolsComponent", () => {
           RouterTestingModule,
           ChildrenModule,
           ConfirmationDialogModule,
+          MockSessionModule.withState(),
         ],
         providers: [
           { provide: ChildrenService, useValue: mockChildrenService },
-          {
-            provide: EntityMapperService,
-            useValue: mockEntityMapper([new User("TestUser")]),
-          },
-          { provide: SessionService, useValue: mockSessionService },
         ],
       }).compileComponents();
     })

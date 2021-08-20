@@ -13,37 +13,26 @@ import { SchoolsService } from "../schools.service";
 import { RouterTestingModule } from "@angular/router/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Router } from "@angular/router";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { SessionService } from "../../../core/session/session-service/session.service";
-import { User } from "../../../core/user/user";
-import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
+import { MockSessionModule } from "../../../core/session/mock-session.module";
 
 describe("ChildrenOverviewComponent", () => {
   let component: ChildrenOverviewComponent;
   let fixture: ComponentFixture<ChildrenOverviewComponent>;
   let mockSchoolsService: jasmine.SpyObj<SchoolsService>;
-  let mockSessionService: jasmine.SpyObj<SessionService>;
 
   beforeEach(
     waitForAsync(() => {
       mockSchoolsService = jasmine.createSpyObj(["getChildrenForSchool"]);
-      mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
-      mockSessionService.getCurrentUser.and.returnValue({
-        name: "TestUser",
-        roles: [],
-      });
 
       TestBed.configureTestingModule({
         declarations: [],
-        imports: [SchoolsModule, RouterTestingModule, NoopAnimationsModule],
-        providers: [
-          { provide: SchoolsService, useValue: mockSchoolsService },
-          {
-            provide: EntityMapperService,
-            useValue: mockEntityMapper([new User("TestUser")]),
-          },
-          { provide: SessionService, useValue: mockSessionService },
+        imports: [
+          SchoolsModule,
+          RouterTestingModule,
+          NoopAnimationsModule,
+          MockSessionModule.withState(),
         ],
+        providers: [{ provide: SchoolsService, useValue: mockSchoolsService }],
       }).compileComponents();
     })
   );

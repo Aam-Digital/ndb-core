@@ -3,16 +3,18 @@ import { TestBed } from "@angular/core/testing";
 import { AnalyticsService } from "./analytics.service";
 import { Angulartics2Module } from "angulartics2";
 import { RouterTestingModule } from "@angular/router/testing";
-import { SessionService } from "../session/session-service/session.service";
-import { of } from "rxjs";
+import { MockSessionModule } from "../session/mock-session.module";
 
 describe("AnalyticsService", () => {
   let service: AnalyticsService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [Angulartics2Module.forRoot(), RouterTestingModule],
-      providers: [{ provide: SessionService, useValue: { loginState: of() } }],
+      imports: [
+        Angulartics2Module.forRoot(),
+        RouterTestingModule,
+        MockSessionModule.withState(),
+      ],
     });
     service = TestBed.inject(AnalyticsService);
   });

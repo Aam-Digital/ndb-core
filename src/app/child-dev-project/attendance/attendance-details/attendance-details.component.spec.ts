@@ -9,21 +9,17 @@ import {
 } from "../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { RecurringActivity } from "../model/recurring-activity";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { AttendanceModule } from "../attendance.module";
 import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { MatNativeDateModule } from "@angular/material/core";
 import { MatDialogRef } from "@angular/material/dialog";
 import { EventNote } from "../model/event-note";
 import { AttendanceService } from "../attendance.service";
-import { SessionService } from "../../../core/session/session-service/session.service";
-import { User } from "../../../core/user/user";
-import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
+import { MockSessionModule } from "../../../core/session/mock-session.module";
 
 describe("AttendanceDetailsComponent", () => {
   let component: AttendanceDetailsComponent;
   let fixture: ComponentFixture<AttendanceDetailsComponent>;
-  let mockSessionService: jasmine.SpyObj<SessionService>;
 
   beforeEach(
     waitForAsync(() => {
@@ -33,12 +29,6 @@ describe("AttendanceDetailsComponent", () => {
       mockAttendanceService.createEventForActivity.and.resolveTo(
         new EventNote()
       );
-
-      mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
-      mockSessionService.getCurrentUser.and.returnValue({
-        name: "TestUser",
-        roles: [],
-      });
 
       const entity = ActivityAttendance.create(new Date(), [
         generateEventWithAttendance(
@@ -67,15 +57,11 @@ describe("AttendanceDetailsComponent", () => {
           Angulartics2Module.forRoot(),
           RouterTestingModule,
           MatNativeDateModule,
+          MockSessionModule.withState(),
         ],
         providers: [
-          {
-            provide: EntityMapperService,
-            useValue: mockEntityMapper([new User("TestUser")]),
-          },
           { provide: MatDialogRef, useValue: {} },
           { provide: AttendanceService, useValue: mockAttendanceService },
-          { provide: SessionService, useValue: mockSessionService },
         ],
       }).compileComponents();
     })

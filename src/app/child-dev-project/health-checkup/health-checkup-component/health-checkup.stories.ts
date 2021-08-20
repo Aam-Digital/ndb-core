@@ -2,15 +2,12 @@ import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { HealthCheckupComponent } from "./health-checkup.component";
 import { ChildrenModule } from "../../children/children.module";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { ChildrenService } from "../../children/children.service";
 import { HealthCheck } from "../model/health-check";
 import moment from "moment";
 import { Child } from "../../children/model/child";
 import { of } from "rxjs";
-import { SessionService } from "../../../core/session/session-service/session.service";
-import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
-import { User } from "../../../core/user/user";
+import { MockSessionModule } from "../../../core/session/mock-session.module";
 
 const hc1 = new HealthCheck();
 hc1.date = new Date();
@@ -30,24 +27,12 @@ export default {
   component: HealthCheckupComponent,
   decorators: [
     moduleMetadata({
-      imports: [ChildrenModule],
+      imports: [ChildrenModule, MockSessionModule.withState()],
       declarations: [],
       providers: [
         {
-          provide: EntityMapperService,
-          useValue: mockEntityMapper([new User("username")]),
-        },
-        {
           provide: ChildrenService,
           useValue: { getHealthChecksOfChild: () => of([hc1, hc2, hc3]) },
-        },
-        {
-          provide: SessionService,
-          useValue: {
-            getCurrentUser: () => {
-              return { name: "username" };
-            },
-          },
         },
       ],
     }),

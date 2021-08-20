@@ -6,9 +6,7 @@ import {
   waitForAsync,
 } from "@angular/core/testing";
 import { SchoolsListComponent } from "./schools-list.component";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { SessionService } from "../../../core/session/session-service/session.service";
 import { of } from "rxjs";
 import { SchoolsModule } from "../schools.module";
 import { RouterTestingModule } from "@angular/router/testing";
@@ -16,17 +14,13 @@ import { Angulartics2Module } from "angulartics2";
 import { School } from "../model/school";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
-import { User } from "../../../core/user/user";
-import {
-  mockEntityMapper,
-  MockEntityMapperService,
-} from "../../../core/entity/mock-entity-mapper-service";
 import { ExportService } from "../../../core/export/export-service/export.service";
+import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 
 describe("SchoolsListComponent", () => {
   let component: SchoolsListComponent;
   let fixture: ComponentFixture<SchoolsListComponent>;
-  let mockSessionService: jasmine.SpyObj<SessionService>;
 
   const routeData: EntityListConfig = {
     title: "Schools List",
@@ -52,16 +46,9 @@ describe("SchoolsListComponent", () => {
     data: of(routeData),
     queryParams: of({}),
   };
-  let mockedEntityMapper: MockEntityMapperService;
 
   beforeEach(
     waitForAsync(() => {
-      mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
-      mockSessionService.getCurrentUser.and.returnValue({
-        name: "TestUser",
-        roles: [],
-      });
-      mockedEntityMapper = mockEntityMapper([new User("TestUser")]);
       TestBed.configureTestingModule({
         declarations: [],
         imports: [
@@ -69,11 +56,10 @@ describe("SchoolsListComponent", () => {
           RouterTestingModule,
           Angulartics2Module.forRoot(),
           NoopAnimationsModule,
+          MockSessionModule.withState(),
         ],
         providers: [
           { provide: ActivatedRoute, useValue: routeMock },
-          { provide: SessionService, useValue: mockSessionService },
-          { provide: EntityMapperService, useValue: mockedEntityMapper },
           { provide: ExportService, useValue: {} },
         ],
       }).compileComponents();
@@ -93,10 +79,13 @@ describe("SchoolsListComponent", () => {
   it("should load the schools", fakeAsync(() => {
     const school1 = new School("s1");
     const school2 = new School("s2");
-    spyOn(mockedEntityMapper, "loadType").and.resolveTo([school1, school2]);
+    const loadTypeSpy = spyOn(TestBed.inject(EntityMapperService), "loadType");
+    loadTypeSpy.and.resolveTo([school1, school2]);
+
     component.ngOnInit();
     tick();
-    expect(mockedEntityMapper.loadType).toHaveBeenCalledWith(School);
+
+    expect(loadTypeSpy).toHaveBeenCalledWith(School);
     expect(component.schoolList).toEqual([school1, school2]);
   }));
 

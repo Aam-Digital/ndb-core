@@ -13,37 +13,27 @@ import { HistoricalEntityData } from "../historical-entity-data";
 import moment from "moment";
 import { DatePipe } from "@angular/common";
 import { HistoricalDataService } from "../historical-data.service";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { SessionService } from "../../../core/session/session-service/session.service";
-import { User } from "../../../core/user/user";
-import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
+import { MockSessionModule } from "../../../core/session/mock-session.module";
 
 describe("HistoricalDataComponent", () => {
   let component: HistoricalDataComponent;
   let fixture: ComponentFixture<HistoricalDataComponent>;
   let mockHistoricalDataService: jasmine.SpyObj<HistoricalDataService>;
-  let mockSessionService: jasmine.SpyObj<SessionService>;
 
   beforeEach(async () => {
     mockHistoricalDataService = jasmine.createSpyObj(["getHistoricalDataFor"]);
     mockHistoricalDataService.getHistoricalDataFor.and.resolveTo([]);
-    mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
-    mockSessionService.getCurrentUser.and.returnValue({
-      name: "TestUser",
-      roles: [],
-    });
 
     await TestBed.configureTestingModule({
       declarations: [HistoricalDataComponent],
-      imports: [HistoricalDataModule, NoopAnimationsModule],
+      imports: [
+        HistoricalDataModule,
+        NoopAnimationsModule,
+        MockSessionModule.withState(),
+      ],
       providers: [
         { provide: HistoricalDataService, useValue: mockHistoricalDataService },
-        {
-          provide: EntityMapperService,
-          useValue: mockEntityMapper([new User("TestUser")]),
-        },
         DatePipe,
-        { provide: SessionService, useValue: mockSessionService },
       ],
     }).compileComponents();
   });

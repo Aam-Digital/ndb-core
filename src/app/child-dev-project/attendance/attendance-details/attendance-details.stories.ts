@@ -10,7 +10,6 @@ import { AttendanceDetailsComponent } from "./attendance-details.component";
 import { AttendanceModule } from "../attendance.module";
 import { RouterTestingModule } from "@angular/router/testing";
 import { FormDialogModule } from "../../../core/form-dialog/form-dialog.module";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { Angulartics2Module } from "angulartics2";
 import { FontAwesomeIconsModule } from "../../../core/icons/font-awesome-icons.module";
 import { MatNativeDateModule } from "@angular/material/core";
@@ -18,9 +17,7 @@ import { EntitySubrecordModule } from "../../../core/entity-components/entity-su
 import { MatDialogRef } from "@angular/material/dialog";
 import { NotesModule } from "../../notes/notes.module";
 import { AttendanceService } from "../attendance.service";
-import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
-import { SessionService } from "../../../core/session/session-service/session.service";
-import { User } from "../../../core/user/user";
+import { MockSessionModule } from "../../../core/session/mock-session.module";
 
 const demoActivity = RecurringActivity.create("Coaching Batch C");
 const activityAttendance = ActivityAttendance.create(new Date("2020-01-01"), [
@@ -72,24 +69,13 @@ export default {
         MatNativeDateModule,
         NotesModule,
         Angulartics2Module.forRoot(),
+        MockSessionModule.withState(),
       ],
       declarations: [],
       providers: [
         {
-          provide: EntityMapperService,
-          useValue: mockEntityMapper([new User("username")]),
-        },
-        {
           provide: AttendanceService,
           useValue: null,
-        },
-        {
-          provide: SessionService,
-          useValue: {
-            getCurrentUser: () => {
-              return { name: "username" };
-            },
-          },
         },
         { provide: MatDialogRef, useValue: {} },
       ],

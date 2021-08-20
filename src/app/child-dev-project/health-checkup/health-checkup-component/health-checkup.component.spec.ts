@@ -5,33 +5,19 @@ import { of } from "rxjs";
 import { Child } from "../../children/model/child";
 import { DatePipe } from "@angular/common";
 import { ChildrenService } from "../../children/children.service";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { ChildrenModule } from "../../children/children.module";
-import { SessionService } from "../../../core/session/session-service/session.service";
-import { User } from "../../../core/user/user";
-import {
-  mockEntityMapper,
-  MockEntityMapperService,
-} from "../../../core/entity/mock-entity-mapper-service";
+import { MockSessionModule } from "../../../core/session/mock-session.module";
 
 describe("HealthCheckupComponent", () => {
   let component: HealthCheckupComponent;
   let fixture: ComponentFixture<HealthCheckupComponent>;
-  let mockSessionService: jasmine.SpyObj<SessionService>;
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
   const child = new Child();
-  let mockedEntityMapper: MockEntityMapperService;
 
   beforeEach(
     waitForAsync(() => {
-      mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
-      mockSessionService.getCurrentUser.and.returnValue({
-        name: "TestUser",
-        roles: [],
-      });
-      mockedEntityMapper = mockEntityMapper([new User("TestUser")]);
       mockChildrenService = jasmine.createSpyObj([
         "getChild",
         "getEducationalMaterialsOfChild",
@@ -44,13 +30,15 @@ describe("HealthCheckupComponent", () => {
       mockChildrenService.getHealthChecksOfChild.and.returnValue(of([]));
 
       TestBed.configureTestingModule({
-        imports: [ChildrenModule, NoopAnimationsModule],
+        imports: [
+          ChildrenModule,
+          NoopAnimationsModule,
+          MockSessionModule.withState(),
+        ],
         providers: [
           DatePipe,
           { provide: ChildrenService, useValue: mockChildrenService },
-          { provide: EntityMapperService, useValue: mockedEntityMapper },
           AlertService,
-          { provide: SessionService, useValue: mockSessionService },
         ],
       }).compileComponents();
     })

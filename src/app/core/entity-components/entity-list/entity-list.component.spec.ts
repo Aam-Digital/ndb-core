@@ -6,9 +6,6 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { SimpleChange } from "@angular/core";
 import { BooleanFilterConfig, EntityListConfig } from "./EntityListConfig";
 import { Entity } from "../../entity/model/entity";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { User } from "../../user/user";
-import { SessionService } from "../../session/session-service/session.service";
 import { ChildrenListComponent } from "../../../child-dev-project/children/children-list/children-list.component";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ConfigService } from "../../config/config.service";
@@ -21,10 +18,7 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { AttendanceService } from "../../../child-dev-project/attendance/attendance.service";
 import { ExportModule } from "../../export/export.module";
 import { ExportService } from "../../export/export-service/export.service";
-import {
-  mockEntityMapper,
-  MockEntityMapperService,
-} from "../../entity/mock-entity-mapper-service";
+import { MockSessionModule } from "../../session/mock-session.module";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -76,19 +70,11 @@ describe("EntityListComponent", () => {
   };
   let mockConfigService: jasmine.SpyObj<ConfigService>;
   let mockLoggingService: jasmine.SpyObj<LoggingService>;
-  let mockSessionService: jasmine.SpyObj<SessionService>;
-  let mockedEntityMapper: MockEntityMapperService;
   let mockEntitySchemaService: jasmine.SpyObj<EntitySchemaService>;
   let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
 
   beforeEach(
     waitForAsync(() => {
-      mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
-      mockSessionService.getCurrentUser.and.returnValue({
-        name: "TestUser",
-        roles: [],
-      });
-      mockedEntityMapper = mockEntityMapper([new User("TestUser")]);
       mockConfigService = jasmine.createSpyObj(["getConfig"]);
       mockLoggingService = jasmine.createSpyObj(["warn"]);
       mockEntitySchemaService = jasmine.createSpyObj([
@@ -116,12 +102,11 @@ describe("EntityListComponent", () => {
           RouterTestingModule.withRoutes([
             { path: "child", component: ChildrenListComponent },
           ]),
+          MockSessionModule.withState(),
         ],
         providers: [
           DatePipe,
-          { provide: SessionService, useValue: mockSessionService },
           { provide: ConfigService, useValue: mockConfigService },
-          { provide: EntityMapperService, useValue: mockedEntityMapper },
           { provide: LoggingService, useValue: mockLoggingService },
           { provide: ExportService, useValue: {} },
           { provide: EntitySchemaService, useValue: mockEntitySchemaService },

@@ -12,18 +12,13 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { RouterTestingModule } from "@angular/router/testing";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { EntityDetailsConfig, PanelConfig } from "./EntityDetailsConfig";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { User } from "../../user/user";
-import { SessionService } from "../../session/session-service/session.service";
 import { ChildrenModule } from "../../../child-dev-project/children/children.module";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { EntityPermissionsService } from "../../permissions/entity-permissions.service";
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
-import {
-  mockEntityMapper,
-  MockEntityMapperService,
-} from "../../entity/mock-entity-mapper-service";
+import { MockEntityMapperService } from "../../entity/mock-entity-mapper-service";
+import { MockSessionModule } from "../../session/mock-session.module";
 
 describe("EntityDetailsComponent", () => {
   let component: EntityDetailsComponent;
@@ -66,9 +61,8 @@ describe("EntityDetailsComponent", () => {
     ["userIsPermitted"]
   );
 
-  let mockedEntityMapper: MockEntityMapperService;
-  let mockSessionService: jasmine.SpyObj<SessionService>;
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
+  let mockedEntityMapper: MockEntityMapperService;
 
   beforeEach(
     waitForAsync(() => {
@@ -78,25 +72,23 @@ describe("EntityDetailsComponent", () => {
       ]);
       mockChildrenService.getSchoolRelationsFor.and.resolveTo([]);
       mockChildrenService.getAserResultsOfChild.and.returnValue(of([]));
-      mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
-      mockSessionService.getCurrentUser.and.returnValue({
-        name: "TestUser",
-        roles: [],
-      });
-      mockedEntityMapper = mockEntityMapper([new User("TestUser")]);
       TestBed.configureTestingModule({
-        imports: [ChildrenModule, MatNativeDateModule, RouterTestingModule],
+        imports: [
+          ChildrenModule,
+          MatNativeDateModule,
+          RouterTestingModule,
+          MockSessionModule.withState(),
+        ],
         providers: [
           { provide: ActivatedRoute, useValue: mockedRoute },
           {
             provide: EntityPermissionsService,
             useValue: mockEntityPermissionsService,
           },
-          { provide: EntityMapperService, useValue: mockedEntityMapper },
-          { provide: SessionService, useValue: mockSessionService },
           { provide: ChildrenService, useValue: mockChildrenService },
         ],
       }).compileComponents();
+      mockedEntityMapper = TestBed.inject(MockEntityMapperService);
     })
   );
 
