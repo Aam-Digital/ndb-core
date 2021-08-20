@@ -16,7 +16,7 @@ export class EditSingleEntityComponent
   implements OnInit {
   entities: Entity[] = [];
   placeholder: string;
-  filteredEntities: Observable<Entity[]>;
+  filteredChildren: Observable<Entity[]>;
 
   constructor(private entityMapper: EntityMapperService) {
     super();
@@ -27,7 +27,7 @@ export class EditSingleEntityComponent
     );
   }
   ngOnInit() {
-    this.filteredEntities = this.formControl.valueChanges.pipe(
+    this.filteredChildren = this.formControl.valueChanges.pipe(
       map((searchText?: string) => this.filter(searchText))
     );
   }

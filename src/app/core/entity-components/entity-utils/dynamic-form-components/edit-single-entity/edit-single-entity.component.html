@@ -13,9 +13,9 @@
   >
     <!-- Optional header -->
     <ng-content select="mat-option"></ng-content>
-    <mat-option *ngFor="let res of filteredEntities | async" [value]="res">
+    <mat-option *ngFor="let getId of filteredChildren | async" [value]="getId">
       <app-display-entity
-        [entityToDisplay]="res"
+        [entityToDisplay]="getId"
         [linkDisabled]="true"
       ></app-display-entity>
     </mat-option>
