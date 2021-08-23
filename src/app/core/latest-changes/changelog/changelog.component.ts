@@ -26,12 +26,14 @@ import { Changelog } from "../changelog";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { isObservable, Observable } from "rxjs";
 import { LatestChangesService } from "../latest-changes.service";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Display information from the changelog for the latest version.
  *
  * This component is used as content of a dialog.
  */
+@UntilDestroy()
 @Component({
   templateUrl: "./changelog.component.html",
   styleUrls: ["./changelog.component.scss"],
@@ -63,7 +65,9 @@ export class ChangelogComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.data && isObservable(this.data)) {
-      this.data.subscribe((changelog) => (this.changelogs = changelog));
+      this.data
+        .pipe(untilDestroyed(this))
+        .subscribe((changelog) => (this.changelogs = changelog));
     }
   }
 
@@ -83,6 +87,7 @@ export class ChangelogComponent implements OnInit {
       .tag_name;
     this.latestChangesService
       .getChangelogsBeforeVersion(lastDisplayedVersion, 1)
+      .pipe(untilDestroyed(this))
       .subscribe((additionalChangelog) => {
         this.changelogs.push(...additionalChangelog);
 

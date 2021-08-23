@@ -22,10 +22,12 @@ import { NavigationMenuConfig } from "../navigation-menu-config.interface";
 import { RouterService } from "../../view/dynamic-routing/router.service";
 import { ViewConfig } from "../../view/dynamic-routing/view-config.interface";
 import { ConfigService } from "../../config/config.service";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Main app menu listing.
  */
+@UntilDestroy()
 @Component({
   selector: "app-navigation",
   templateUrl: "./navigation.component.html",
@@ -41,9 +43,9 @@ export class NavigationComponent {
     private adminGuard: AdminGuard,
     private configService: ConfigService
   ) {
-    this.configService.configUpdates.subscribe(() =>
-      this.initMenuItemsFromConfig()
-    );
+    this.configService.configUpdates
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.initMenuItemsFromConfig());
   }
 
   /**
