@@ -14,9 +14,6 @@ import {
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { Child } from "../../../children/model/child";
 import { LoggingService } from "../../../../core/logging/logging.service";
-import { DatabaseEntity } from "../../../../core/entity/database-entity.decorator";
-import { Entity } from "../../../../core/entity/model/entity";
-import { DatabaseField } from "../../../../core/entity/database-field.decorator";
 
 /**
  * Displays the participants of the given event one by one to mark attendance status.
@@ -56,7 +53,6 @@ export class RollCallComponent implements OnInit {
   availableStatus: AttendanceStatusType[];
 
   entries: { child: Child; attendance: EventAttendance }[];
-  data: RollCallConfig;
 
   constructor(
     private configService: ConfigService,
@@ -120,28 +116,4 @@ export class RollCallComponent implements OnInit {
   isFinished(): boolean {
     return this.currentIndex >= this.entries?.length;
   }
-}
-
-@DatabaseEntity("RollCallConfig")
-export class RollCallConfig extends Entity {
-  @DatabaseField() title: string = $localize`Progress Widget`;
-  @DatabaseField() parts: Array<RollCallPart> = [];
-
-  getTotalPercentage() {
-    const currentTotal = this.parts.reduce(
-      (acc, entry) => acc + entry.currentValue,
-      0
-    );
-    const targetTotal = this.parts.reduce(
-      (acc, entry) => acc + entry.targetValue,
-      0
-    );
-    return currentTotal / targetTotal;
-  }
-}
-
-export interface RollCallPart {
-  label: string;
-  currentValue: number;
-  targetValue: number;
 }

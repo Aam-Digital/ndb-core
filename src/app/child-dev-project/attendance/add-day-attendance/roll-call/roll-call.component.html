@@ -1,18 +1,14 @@
 <!-- Individual Student's Page -->
 <div *ngIf="!isFinished() && entries?.length > 0">
-  <!--  <app-child-block [entity]="entries[currentIndex].child"></app-child-block>-->
-  <app-child-block
-    [entity]="entries[currentIndex].child"
-    *ngFor="let entry of data?.parts"
-  >
+  <div class="attendance-progress-bar">
     <mat-progress-bar
+      class="filler"
       mode="determinate"
-      [value]="(entry.currentValue / entry.targetValue) * 100"
+      [value]="(currentIndex / entries.length) * 100"
     ></mat-progress-bar>
-    <td class="align-right" style="white-space: nowrap">
-      {{ entry.currentValue }} / {{ entry.targetValue }}
-    </td>
-  </app-child-block>
+    <app-child-block [entity]="entries[currentIndex].child"></app-child-block>
+    <div class="align-right">{{ currentIndex }} / {{ entries.length }}</div>
+  </div>
 
   <div
     fxLayout="column"

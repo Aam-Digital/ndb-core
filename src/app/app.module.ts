@@ -76,7 +76,6 @@ import { HistoricalDataModule } from "./features/historical-data/historical-data
 import { EntityUtilsModule } from "./core/entity-components/entity-utils/entity-utils.module";
 import { DemoHistoricalDataGenerator } from "./features/historical-data/demo-historical-data-generator";
 import { TranslatableMatPaginator } from "./core/translation/TranslatableMatPaginator";
-import { MatProgressBarModule } from "@angular/material/progress-bar";
 
 /**
  * Main entry point of the application.
@@ -124,7 +123,6 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
     ConfigurableEnumModule,
     ReportingModule,
     EntityUtilsModule,
-    MatProgressBarModule,
     DemoDataModule.forRoot([
       ...DemoChildGenerator.provider({ count: 120 }),
       ...DemoSchoolGenerator.provider({ count: 8 }),
