@@ -17,7 +17,7 @@ const md5 = require("md5");
 })
 export class AnalyticsService {
   private static getUserHash(username: string) {
-    return md5(AppConfig.settings.site_name + username);
+    return md5(AppConfig.settings?.site_name + username);
   }
 
   constructor(

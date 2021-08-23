@@ -32,7 +32,6 @@ import PouchDB from "pouchdb-browser";
 import { AppConfig } from "../../app-config/app-config";
 import { DatabaseUser } from "./local-user";
 import { waitForChangeTo } from "../session-states/session-utils";
-import { BehaviorSubject } from "rxjs";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -93,6 +92,7 @@ export class SyncedSessionService extends SessionService {
     const localLoginState = await this._localSession.login(username, password);
 
     if (localLoginState === LoginState.LOGGED_IN) {
+      this.loginState.next(LoginState.LOGGED_IN);
       remoteLogin.then((loginState) => {
         if (loginState === LoginState.LOGIN_FAILED) {
           this.handleRemotePasswordChange(username);
@@ -106,16 +106,20 @@ export class SyncedSessionService extends SessionService {
       if (remoteLoginState === LoginState.LOGGED_IN) {
         // New user or password changed
         await syncPromise;
-        await this._localSession.login(username, password);
+        const localLoginRetry = await this._localSession.login(
+          username,
+          password
+        );
+        this.loginState.next(localLoginRetry);
       } else if (
         remoteLoginState === LoginState.UNAVAILABLE &&
         localLoginState === LoginState.UNAVAILABLE
       ) {
         // Offline with no local user
-        this._localSession.loginState.next(LoginState.UNAVAILABLE);
+        this.loginState.next(LoginState.UNAVAILABLE);
       } else {
         // Password and or username wrong
-        this._localSession.loginState.next(LoginState.LOGIN_FAILED);
+        this.loginState.next(LoginState.LOGIN_FAILED);
       }
     }
     return this.loginState.value;
@@ -124,7 +128,7 @@ export class SyncedSessionService extends SessionService {
   private handleRemotePasswordChange(username: string) {
     this._localSession.logout();
     this._localSession.removeUser(username);
-    this._localSession.loginState.next(LoginState.LOGIN_FAILED);
+    this.loginState.next(LoginState.LOGIN_FAILED);
     this._alertService.addDanger(
       $localize`Your password was changed recently. Please retry with your new password!`
     );
@@ -157,11 +161,6 @@ export class SyncedSessionService extends SessionService {
   public checkPassword(username: string, password: string): boolean {
     // This only checks the password against locally saved users
     return this._localSession.checkPassword(username, password);
-  }
-
-  /** see {@link SessionService} */
-  public get loginState(): BehaviorSubject<LoginState> {
-    return this._localSession.loginState;
   }
 
   /** see {@link SessionService} */
@@ -263,6 +262,7 @@ export class SyncedSessionService extends SessionService {
   public logout() {
     this.cancelLoginOfflineRetry();
     this.cancelLiveSync();
+    this.loginState.next(LoginState.LOGGED_OUT);
     this._localSession.logout();
     this._remoteSession.logout();
   }
