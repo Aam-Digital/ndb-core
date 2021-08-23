@@ -5,7 +5,7 @@ import { RouteData } from "../view/dynamic-routing/view-config.interface";
 
 @Injectable()
 /**
- * A guard that checks the roles of the current user against the permissions of the route config.
+ * A guard that checks the roles of the current user against the permissions which are saved in the route data.
  */
 export class UserRoleGuard implements CanActivate {
   constructor(private sessionService: SessionService) {}

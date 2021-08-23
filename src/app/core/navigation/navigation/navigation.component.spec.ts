@@ -79,7 +79,11 @@ describe("NavigationComponent", () => {
         { name: "Children", icon: "child", link: "/child" },
       ],
     };
-    mockConfigService.getConfig.and.returnValue(testConfig);
+    mockConfigService.getConfig.and.returnValues(
+      testConfig,
+      undefined,
+      undefined
+    );
     mockConfigUpdated.next(null);
     const items = component.menuItems;
 
@@ -96,7 +100,11 @@ describe("NavigationComponent", () => {
         { name: "Children", icon: "child", link: "/child" },
       ],
     };
-    mockConfigService.getConfig.and.returnValue(testConfig);
+    mockConfigService.getConfig.and.returnValues(
+      testConfig,
+      { permittedUserRoles: ["admin"] },
+      undefined
+    );
     mockUserRoleGuard.canActivate.and.callFake(
       (route: ActivatedRouteSnapshot) => {
         switch (route.routeConfig.path) {
@@ -112,6 +120,14 @@ describe("NavigationComponent", () => {
 
     mockConfigUpdated.next(null);
 
+    expect(mockUserRoleGuard.canActivate).toHaveBeenCalledWith({
+      routeConfig: { path: "dashboard" },
+      data: { permittedUserRoles: ["admin"] },
+    } as any);
+    expect(mockUserRoleGuard.canActivate).toHaveBeenCalledWith({
+      routeConfig: { path: "child" },
+      data: { permittedUserRoles: undefined },
+    } as any);
     expect(component.menuItems).toEqual([
       new MenuItem("Children", "child", "/child"),
     ]);

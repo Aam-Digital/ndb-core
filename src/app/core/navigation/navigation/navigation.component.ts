@@ -21,6 +21,10 @@ import { NavigationMenuConfig } from "../navigation-menu-config.interface";
 import { ConfigService } from "../../config/config.service";
 import { UserRoleGuard } from "../../permissions/user-role.guard";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import {
+  PREFIX_VIEW_CONFIG,
+  ViewConfig,
+} from "../../view/dynamic-routing/view-config.interface";
 
 /**
  * Main app menu listing.
@@ -67,8 +71,13 @@ export class NavigationComponent {
    * Check whether the user has the required rights
    */
   private checkMenuItemPermissions(link: string): boolean {
+    const configPath = link.replace(/^\//, "");
+    const userRoles = this.configService.getConfig<ViewConfig>(
+      PREFIX_VIEW_CONFIG + configPath
+    )?.permittedUserRoles;
     return this.userRoleGuard.canActivate({
-      routeConfig: { path: link.replace(/^\//, "") },
+      routeConfig: { path: configPath },
+      data: { permittedUserRoles: userRoles },
     } as any);
   }
 }
