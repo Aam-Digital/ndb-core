@@ -54,7 +54,7 @@ describe("EntityDetailsComponent", () => {
       routeObserver = observer;
       observer.next({ get: () => "new" });
     }),
-    data: of(routeConfig),
+    data: of({ config: routeConfig }),
   };
 
   const mockEntityPermissionsService: jasmine.SpyObj<EntityPermissionsService> = jasmine.createSpyObj(

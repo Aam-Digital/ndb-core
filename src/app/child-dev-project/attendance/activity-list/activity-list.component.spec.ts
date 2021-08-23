@@ -33,7 +33,7 @@ describe("ActivityListComponent", () => {
           {
             provide: ActivatedRoute,
             useValue: {
-              data: of(mockConfig),
+              data: of({ config: mockConfig }),
               queryParams: of({}),
             },
           },

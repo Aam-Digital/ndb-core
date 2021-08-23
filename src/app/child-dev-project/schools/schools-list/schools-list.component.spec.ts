@@ -43,7 +43,7 @@ describe("SchoolsListComponent", () => {
   };
 
   const routeMock = {
-    data: of(routeData),
+    data: of({ config: routeData }),
     queryParams: of({}),
   };
 

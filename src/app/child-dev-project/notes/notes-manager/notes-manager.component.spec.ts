@@ -75,7 +75,7 @@ describe("NotesManagerComponent", () => {
   };
 
   const routeMock = {
-    data: new BehaviorSubject(routeData),
+    data: new BehaviorSubject({ config: routeData }),
     queryParams: of({}),
   };
 
@@ -225,12 +225,12 @@ describe("NotesManagerComponent", () => {
     entityMapper.save(eventNote);
     tick();
 
-    routeMock.data.next(
-      Object.assign(
+    routeMock.data.next({
+      config: Object.assign(
         { includeEventNotes: true } as NotesManagerConfig,
         routeData
-      )
-    );
+      ),
+    });
 
     flush();
 

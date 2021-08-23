@@ -22,6 +22,7 @@ import {
 import { User } from "../../user/user";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { RouteData } from "../../view/dynamic-routing/view-config.interface";
 
 export const ENTITY_MAP: Map<string, EntityConstructor<Entity>> = new Map<
   string,
@@ -67,9 +68,9 @@ export class EntityDetailsComponent {
     private confirmationDialog: ConfirmationDialogService,
     private permissionService: EntityPermissionsService
   ) {
-    this.route.data.subscribe((config: EntityDetailsConfig) => {
-      this.config = config;
-      this.classNamesWithIcon = "fa fa-" + config.icon + " fa-fw";
+    this.route.data.subscribe((data: RouteData<EntityDetailsConfig>) => {
+      this.config = data.config;
+      this.classNamesWithIcon = "fa fa-" + data.config.icon + " fa-fw";
       this.route.paramMap.subscribe((params) =>
         this.loadEntity(params.get("id"))
       );

@@ -75,7 +75,7 @@ describe("ChildrenListComponent", () => {
     ],
   };
   const routeMock = {
-    data: of(routeData),
+    data: of({ config: routeData }),
     queryParams: of({}),
   };
   const mockChildrenService: jasmine.SpyObj<ChildrenService> = jasmine.createSpyObj(
