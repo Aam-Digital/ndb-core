@@ -3,7 +3,11 @@ import { Route, Router } from "@angular/router";
 import { COMPONENT_MAP } from "../../../app.routing";
 import { ConfigService } from "../../config/config.service";
 import { LoggingService } from "../../logging/logging.service";
-import { PREFIX_VIEW_CONFIG, ViewConfig } from "./view-config.interface";
+import {
+  PREFIX_VIEW_CONFIG,
+  RouteData,
+  ViewConfig,
+} from "./view-config.interface";
 import { UserRoleGuard } from "../../permissions/user-role.guard";
 
 /**
@@ -83,13 +87,19 @@ export class RouterService {
       path: path,
       component: COMPONENT_MAP[view.component],
     };
+
+    const routeData: RouteData = {};
+
     if (view.permittedUserRoles) {
       route.canActivate = [UserRoleGuard];
-    }
-    if (view.config) {
-      route.data = view.config;
+      routeData.permittedUserRoles = view.permittedUserRoles;
     }
 
+    if (view.config) {
+      routeData.config = view.config;
+    }
+
+    route.data = routeData;
     return route;
   }
 }

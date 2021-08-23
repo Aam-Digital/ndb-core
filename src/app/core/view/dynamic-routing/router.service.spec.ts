@@ -63,16 +63,17 @@ describe("RouterService", () => {
       },
     ];
     const expectedRoutes = [
-      { path: "child", component: ChildrenListComponent },
+      { path: "child", component: ChildrenListComponent, data: {} },
       {
         path: "child/:id",
         component: EntityDetailsComponent,
-        data: testViewConfig,
+        data: { config: testViewConfig },
       },
       {
         path: "admin",
         component: AdminComponent,
         canActivate: [UserRoleGuard],
+        data: { permittedUserRoles: ["user_app"] },
       },
     ];
 
@@ -91,7 +92,7 @@ describe("RouterService", () => {
       { _id: "view:other", component: "EntityDetails" },
     ];
     const expectedRoutes = [
-      { path: "child", component: ChildrenListComponent },
+      { path: "child", component: ChildrenListComponent, data: {} },
       { path: "other", component: TestComponent },
     ];
 
@@ -121,10 +122,10 @@ describe("RouterService", () => {
 
     const router = TestBed.inject<Router>(Router);
     expect(router.config.find((r) => r.path === "child").data).toEqual({
-      foo: 1,
+      config: { foo: 1 },
     });
     expect(router.config.find((r) => r.path === "child2").data).toEqual({
-      foo: 2,
+      config: { foo: 2 },
     });
   });
 
@@ -137,6 +138,7 @@ describe("RouterService", () => {
         path: "admin",
         component: AdminComponent,
         canActivate: [UserRoleGuard],
+        data: { permittedUserRoles: ["admin"] },
       },
     ];
     const router = TestBed.inject<Router>(Router);
