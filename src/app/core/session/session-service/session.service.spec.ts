@@ -44,7 +44,7 @@ export function testSessionServiceImplementation(
   });
 
   it("has the correct initial state", () => {
-    expect(sessionService.getSyncState().getState()).toBe(SyncState.UNSYNCED);
+    expect(sessionService.syncState.value).toBe(SyncState.UNSYNCED);
     expectNotToBeLoggedIn(LoginState.LOGGED_OUT);
   });
 
@@ -53,14 +53,14 @@ export function testSessionServiceImplementation(
 
     expect(loginResult).toEqual(LoginState.LOGGED_IN);
 
-    expect(sessionService.getLoginState().getState())
+    expect(sessionService.loginState.value)
       .withContext("unexpected LoginState")
       .toEqual(LoginState.LOGGED_IN);
 
     expect(sessionService.isLoggedIn())
       .withContext("unexpected isLoggedIn")
       .toBeTrue();
-    expect(sessionService.getCurrentDBUser().name).toBe(TEST_USER);
+    expect(sessionService.getCurrentUser().name).toBe(TEST_USER);
   });
 
   it("fails login with wrong password", async () => {
@@ -96,13 +96,13 @@ export function testSessionServiceImplementation(
       | LoginState.LOGIN_FAILED
       | LoginState.UNAVAILABLE
   ) {
-    expect(sessionService.getLoginState().getState())
+    expect(sessionService.loginState.value)
       .withContext("unexpected LoginState")
       .toEqual(expectedLoginState);
 
     expect(sessionService.isLoggedIn())
       .withContext("unexpected isLoggedIn")
       .toEqual(false);
-    expect(sessionService.getCurrentDBUser()).not.toBeDefined();
+    expect(sessionService.getCurrentUser()).not.toBeDefined();
   }
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { Child } from "../model/child";
 import { ActivatedRoute, Router } from "@angular/router";
-import { UntilDestroy } from "@ngneat/until-destroy";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { ChildrenService } from "../children.service";
 import { FilterSelectionOption } from "../../../core/filter/filter-selection/filter-selection";
 import {
@@ -12,6 +12,7 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 import { School } from "../../schools/model/school";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
+import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 
 @UntilDestroy()
 @Component({
@@ -43,12 +44,15 @@ export class ChildrenListComponent implements OnInit {
 
   ngOnInit() {
     this.route.data.subscribe(
-      (config: EntityListConfig) => (this.listConfig = config)
+      (data: RouteData<EntityListConfig>) => (this.listConfig = data.config)
     );
-    this.childrenService.getChildren().subscribe((children) => {
-      this.childrenList = children;
-      this.addPrebuiltFilters();
-    });
+    this.childrenService
+      .getChildren()
+      .pipe(untilDestroyed(this))
+      .subscribe((children) => {
+        this.childrenList = children;
+        this.addPrebuiltFilters();
+      });
   }
 
   routeTo(route: string) {

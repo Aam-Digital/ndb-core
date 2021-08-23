@@ -19,11 +19,12 @@ import {
   ReportConfig,
   ReportingComponentConfig,
 } from "./reporting-component-config";
+import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 
 describe("ReportingComponent", () => {
   let component: ReportingComponent;
   let fixture: ComponentFixture<ReportingComponent>;
-  const mockRouteData = new Subject();
+  const mockRouteData = new Subject<RouteData<ReportingComponentConfig>>();
   let mockReportingService: jasmine.SpyObj<ReportingService>;
 
   const testReport: ReportConfig = {
@@ -60,7 +61,7 @@ describe("ReportingComponent", () => {
     fixture = TestBed.createComponent(ReportingComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    mockRouteData.next({ aggregationDefinitions: {} });
+    mockRouteData.next({ config: { reports: [] } });
   });
 
   it("should create", () => {
@@ -71,7 +72,7 @@ describe("ReportingComponent", () => {
     const aggregationConfig: ReportingComponentConfig = {
       reports: [testReport],
     };
-    mockRouteData.next(aggregationConfig);
+    mockRouteData.next({ config: aggregationConfig });
 
     expect(component.loading).toBeFalsy();
 

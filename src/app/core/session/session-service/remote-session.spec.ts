@@ -54,12 +54,12 @@ describe("RemoteSessionService", () => {
   });
 
   it("should be connected after successful login", async () => {
-    expect(service.getLoginState().getState()).toBe(LoginState.LOGGED_OUT);
+    expect(service.loginState.value).toBe(LoginState.LOGGED_OUT);
 
     await service.login(TEST_USER, TEST_PASSWORD);
 
     expect(mockHttpClient.post).toHaveBeenCalled();
-    expect(service.getLoginState().getState()).toBe(LoginState.LOGGED_IN);
+    expect(service.loginState.value).toBe(LoginState.LOGGED_IN);
   });
 
   it("should be unavailable if requests fails with error other than 401", async () => {
@@ -69,13 +69,13 @@ describe("RemoteSessionService", () => {
 
     await service.login(TEST_USER, TEST_PASSWORD);
 
-    expect(service.getLoginState().getState()).toBe(LoginState.UNAVAILABLE);
+    expect(service.loginState.value).toBe(LoginState.UNAVAILABLE);
   });
 
   it("should be rejected if login is unauthorized", async () => {
     await service.login(TEST_USER, "wrongPassword");
 
-    expect(service.getLoginState().getState()).toBe(LoginState.LOGIN_FAILED);
+    expect(service.loginState.value).toBe(LoginState.LOGIN_FAILED);
   });
 
   it("should disconnect after logout", async () => {
@@ -83,13 +83,13 @@ describe("RemoteSessionService", () => {
 
     await service.logout();
 
-    expect(service.getLoginState().getState()).toBe(LoginState.LOGGED_OUT);
+    expect(service.loginState.value).toBe(LoginState.LOGGED_OUT);
   });
 
   it("should assign the current user after successful login", async () => {
     await service.login(TEST_USER, TEST_PASSWORD);
 
-    expect(service.getCurrentDBUser()).toEqual({
+    expect(service.getCurrentUser()).toEqual({
       name: dbUser.name,
       roles: dbUser.roles,
     });
