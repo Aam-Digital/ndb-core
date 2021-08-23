@@ -22,10 +22,7 @@ import { LocalSession } from "../../core/session/session-service/local-session";
 const database = PouchDatabase.createWithInMemoryDB();
 const schemaService = new EntitySchemaService();
 const entityMapper = new EntityMapperService(database, schemaService);
-const sessionService = new LocalSession(
-  database,
-  schemaService
-);
+const sessionService = new LocalSession(database);
 
 const child = new Child("testChild");
 const school1 = new School("1");

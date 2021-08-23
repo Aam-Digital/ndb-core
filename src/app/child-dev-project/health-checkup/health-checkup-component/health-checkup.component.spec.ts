@@ -5,46 +5,40 @@ import { of } from "rxjs";
 import { Child } from "../../children/model/child";
 import { DatePipe } from "@angular/common";
 import { ChildrenService } from "../../children/children.service";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { ChildrenModule } from "../../children/children.module";
-import { SessionService } from "../../../core/session/session-service/session.service";
-import { User } from "../../../core/user/user";
+import { MockSessionModule } from "../../../core/session/mock-session.module";
 
 describe("HealthCheckupComponent", () => {
   let component: HealthCheckupComponent;
   let fixture: ComponentFixture<HealthCheckupComponent>;
-
-  const mockChildrenService = {
-    getChild: () => {
-      return of([new Child("22")]);
-    },
-    getEducationalMaterialsOfChild: () => {
-      return of([]);
-    },
-    getHealthChecksOfChild: () => {
-      return of([]);
-    },
-  };
-  const mockEntityMapper = jasmine.createSpyObj("mockEntityMapper", [
-    "save",
-    "remove",
-  ]);
+  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
+  const child = new Child();
 
   beforeEach(
     waitForAsync(() => {
+      mockChildrenService = jasmine.createSpyObj([
+        "getChild",
+        "getEducationalMaterialsOfChild",
+        "getHealthChecksOfChild",
+      ]);
+      mockChildrenService.getChild.and.returnValue(of(child));
+      mockChildrenService.getEducationalMaterialsOfChild.and.returnValue(
+        of([])
+      );
+      mockChildrenService.getHealthChecksOfChild.and.returnValue(of([]));
+
       TestBed.configureTestingModule({
-        imports: [ChildrenModule, NoopAnimationsModule],
+        imports: [
+          ChildrenModule,
+          NoopAnimationsModule,
+          MockSessionModule.withState(),
+        ],
         providers: [
           DatePipe,
           { provide: ChildrenService, useValue: mockChildrenService },
-          { provide: EntityMapperService, useValue: mockEntityMapper },
           AlertService,
-          {
-            provide: SessionService,
-            useValue: { getCurrentUser: () => new User() },
-          },
         ],
       }).compileComponents();
     })
@@ -53,7 +47,7 @@ describe("HealthCheckupComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(HealthCheckupComponent);
     component = fixture.componentInstance;
-    component.child = new Child("22");
+    component.child = child;
     fixture.detectChanges();
   });
 

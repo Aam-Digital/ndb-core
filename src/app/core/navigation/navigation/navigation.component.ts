@@ -17,12 +17,14 @@
 
 import { Component } from "@angular/core";
 import { MenuItem } from "../menu-item";
-import { AdminGuard } from "../../admin/admin.guard";
 import { NavigationMenuConfig } from "../navigation-menu-config.interface";
-import { RouterService } from "../../view/dynamic-routing/router.service";
-import { ViewConfig } from "../../view/dynamic-routing/view-config.interface";
 import { ConfigService } from "../../config/config.service";
+import { UserRoleGuard } from "../../permissions/user-role.guard";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import {
+  PREFIX_VIEW_CONFIG,
+  ViewConfig,
+} from "../../view/dynamic-routing/view-config.interface";
 
 /**
  * Main app menu listing.
@@ -40,7 +42,7 @@ export class NavigationComponent {
   public menuItems: MenuItem[] = [];
 
   constructor(
-    private adminGuard: AdminGuard,
+    private userRoleGuard: UserRoleGuard,
     private configService: ConfigService
   ) {
     this.configService.configUpdates
@@ -69,9 +71,13 @@ export class NavigationComponent {
    * Check whether the user has the required rights
    */
   private checkMenuItemPermissions(link: string): boolean {
-    const viewConfig = this.configService.getConfig<ViewConfig>(
-      RouterService.PREFIX_VIEW_CONFIG + link.replace(/^\//, "")
-    );
-    return !viewConfig?.requiresAdmin || this.adminGuard.isAdmin();
+    const configPath = link.replace(/^\//, "");
+    const userRoles = this.configService.getConfig<ViewConfig>(
+      PREFIX_VIEW_CONFIG + configPath
+    )?.permittedUserRoles;
+    return this.userRoleGuard.canActivate({
+      routeConfig: { path: configPath },
+      data: { permittedUserRoles: userRoles },
+    } as any);
   }
 }

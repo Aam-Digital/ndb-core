@@ -12,6 +12,7 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 import { School } from "../../schools/model/school";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
+import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 
 @UntilDestroy()
 @Component({
@@ -43,7 +44,7 @@ export class ChildrenListComponent implements OnInit {
 
   ngOnInit() {
     this.route.data.subscribe(
-      (config: EntityListConfig) => (this.listConfig = config)
+      (data: RouteData<EntityListConfig>) => (this.listConfig = data.config)
     );
     this.childrenService
       .getChildren()

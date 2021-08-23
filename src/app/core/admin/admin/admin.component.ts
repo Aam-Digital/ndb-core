@@ -13,6 +13,7 @@ import { AttendanceMigrationService } from "../../../child-dev-project/attendanc
 import { NotesMigrationService } from "../../../child-dev-project/notes/notes-migration/notes-migration.service";
 import { ChildrenMigrationService } from "../../../child-dev-project/children/child-photo-service/children-migration.service";
 import { ConfigMigrationService } from "../../config/config-migration.service";
+import { PermissionsMigrationService } from "../../permissions/permissions-migration.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
@@ -45,7 +46,8 @@ export class AdminComponent implements OnInit {
     public attendanceMigration: AttendanceMigrationService,
     public notesMigration: NotesMigrationService,
     public childrenMigrationService: ChildrenMigrationService,
-    public configMigrationService: ConfigMigrationService
+    public configMigrationService: ConfigMigrationService,
+    public permissionsMigrationService: PermissionsMigrationService
   ) {}
 
   ngOnInit() {

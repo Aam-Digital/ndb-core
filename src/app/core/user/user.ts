@@ -32,9 +32,6 @@ export class User extends Entity {
   /** username used for login and identification */
   @DatabaseField() name: string;
 
-  /** whether this user has admin rights */
-  @DatabaseField() admin: boolean;
-
   /** settings for the mat-paginator for tables
    * pageSizeOptions is set in the corresponding html of the component,
    * pageSize is stored persistently in the database and
@@ -83,21 +80,6 @@ export class User extends Entity {
       blobPassword,
       givenPassword
     ).toString();
-  }
-
-  /**
-   * Check admin rights of the user.
-   */
-  public isAdmin(): boolean {
-    return this.admin || false;
-  }
-
-  /**
-   * Change this user's admin status
-   * @param admin New admin status to be set
-   */
-  public setAdmin(admin: boolean) {
-    this.admin = admin;
   }
 
   toString(): string {

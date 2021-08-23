@@ -4,7 +4,6 @@ import { EntityListComponent } from "./entity-list.component";
 import { EntityListModule } from "./entity-list.module";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { DemoChildGenerator } from "../../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
-import { SessionService } from "../../session/session-service/session.service";
 import { User } from "../../user/user";
 import { RouterTestingModule } from "@angular/router/testing";
 import { BackupService } from "../../admin/services/backup.service";
@@ -31,10 +30,6 @@ export default {
       ],
       providers: [
         DatePipe,
-        {
-          provide: SessionService,
-          useValue: { getCurrentUser: () => user },
-        },
         { provide: BackupService, useValue: {} },
         {
           provide: EntityMapperService,

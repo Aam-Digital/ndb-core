@@ -3,15 +3,19 @@ import { DashboardComponent } from "./dashboard.component";
 import { ActivatedRoute } from "@angular/router";
 import { BehaviorSubject } from "rxjs";
 import { ProgressDashboardComponent } from "../../../child-dev-project/progress-dashboard-widget/progress-dashboard/progress-dashboard.component";
+import { RouteData } from "../../view/dynamic-routing/view-config.interface";
+import { DynamicComponentConfig } from "../../view/dynamic-components/dynamic-component-config.interface";
 
 describe("DashboardComponent", () => {
   let component: DashboardComponent;
   let fixture: ComponentFixture<DashboardComponent>;
 
-  let mockRouteData: BehaviorSubject<any>;
+  let mockRouteData: BehaviorSubject<
+    RouteData<{ widgets: DynamicComponentConfig[] }>
+  >;
 
   beforeEach(() => {
-    mockRouteData = new BehaviorSubject({ widgets: [] });
+    mockRouteData = new BehaviorSubject({ config: { widgets: [] } });
 
     TestBed.configureTestingModule({
       declarations: [DashboardComponent, ProgressDashboardComponent],
@@ -44,7 +48,7 @@ describe("DashboardComponent", () => {
       ],
     };
 
-    mockRouteData.next(testDashboardConfig);
+    mockRouteData.next({ config: testDashboardConfig });
 
     expect(component.widgets).toEqual(testDashboardConfig.widgets);
   });

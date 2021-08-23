@@ -51,7 +51,10 @@ describe("UserAccountComponent", () => {
         "login",
         "checkPassword",
       ]);
-      mockSessionService.getCurrentUser.and.returnValue(null);
+      mockSessionService.getCurrentUser.and.returnValue({
+        name: "TestUser",
+        roles: [],
+      });
       mockUserAccountService = jasmine.createSpyObj("mockUserAccount", [
         "changePassword",
       ]);

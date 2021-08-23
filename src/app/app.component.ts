@@ -33,15 +33,16 @@ import { School } from "./child-dev-project/schools/model/school";
 import { HistoricalEntityData } from "./features/historical-data/historical-entity-data";
 import { Note } from "./child-dev-project/notes/model/note";
 import { EventNote } from "./child-dev-project/attendance/model/event-note";
+import { waitForChangeTo } from "./core/session/session-states/session-utils";
 
-/**
- * Component as the main entry point for the app.
- * Actual logic and UI structure is defined in other modules.
- */
 @Component({
   selector: "app-root",
   template: "<app-ui></app-ui>",
 })
+/**
+ * Component as the main entry point for the app.
+ * Actual logic and UI structure is defined in other modules.
+ */
 export class AppComponent implements OnInit {
   constructor(
     private viewContainerRef: ViewContainerRef, // need this small hack in order to catch application root view container ref
@@ -61,9 +62,9 @@ export class AppComponent implements OnInit {
     // TODO fix this with https://github.com/Aam-Digital/ndb-core/issues/595
     configService.loadConfig(entityMapper);
     // Reload config once the database is synced
-    sessionService
-      .getSyncState()
-      .waitForChangeTo(SyncState.COMPLETED)
+    sessionService.syncState
+      .pipe(waitForChangeTo(SyncState.COMPLETED))
+      .toPromise()
       .then(() => configService.loadConfig(entityMapper))
       .then(() => router.navigate([], { relativeTo: this.activatedRoute }));
     // These functions will be executed whenever a new config is available
