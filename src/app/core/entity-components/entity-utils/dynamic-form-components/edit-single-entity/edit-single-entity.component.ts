@@ -5,6 +5,7 @@ import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 import { Entity } from "../../../../entity/model/entity";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
+import { FormControl } from "@angular/forms";
 
 @Component({
   selector: "app-edit-single-entity",
@@ -16,10 +17,12 @@ export class EditSingleEntityComponent
   implements OnInit {
   entities: Entity[] = [];
   placeholder: string;
-  filteredChildren: Observable<Entity[]>;
+  filteredEntities: Observable<Entity[]>;
+  entityNameFormControl: FormControl;
 
   constructor(private entityMapper: EntityMapperService) {
     super();
+    this.entityNameFormControl= new FormControl();
   }
   filter(searchText: string): Entity[] {
     return this.entities.filter((entity) =>
@@ -27,7 +30,7 @@ export class EditSingleEntityComponent
     );
   }
   ngOnInit() {
-    this.filteredChildren = this.formControl.valueChanges.pipe(
+    this.filteredEntities = this.entityNameFormControl.valueChanges.pipe(
       map((searchText?: string) => this.filter(searchText))
     );
   }
@@ -45,5 +48,9 @@ export class EditSingleEntityComponent
       .then((entities) =>
         entities.sort((e1, e2) => e1.toString().localeCompare(e2.toString()))
       );
+    const selectedEntity = this.entities.find(entity => entity.getId() === this.formControl.value)
+    if (selectedEntity) {
+      this.entityNameFormControl.setValue(selectedEntity.toString());
+    }
   }
 }

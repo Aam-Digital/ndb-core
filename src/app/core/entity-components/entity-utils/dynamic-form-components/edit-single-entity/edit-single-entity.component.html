@@ -5,7 +5,7 @@
     matInput
     [fxHide]="!formControl.enabled"
     [placeholder]="placeholder"
-    [formControl]="formControl"
+    [formControl]="entityNameFormControl"
     [matAutocomplete]="autoSuggestions"
   />
   <mat-autocomplete
@@ -13,9 +13,9 @@
   >
     <!-- Optional header -->
     <ng-content select="mat-option"></ng-content>
-    <mat-option *ngFor="let child of filteredChildren | async" [value]="child.getId()">
+    <mat-option *ngFor="let entity of filteredEntities | async" [value]="entity.toString()" (click)="formControl.setValue(entity.getId())">
       <app-display-entity
-        [entityToDisplay]="child"
+        [entityToDisplay]="entity"
         [linkDisabled]="true"
       ></app-display-entity>
     </mat-option>
