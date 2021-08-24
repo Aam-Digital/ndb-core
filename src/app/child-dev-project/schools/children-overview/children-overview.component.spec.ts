@@ -14,9 +14,6 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Router } from "@angular/router";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { SessionService } from "../../../core/session/session-service/session.service";
-import { User } from "../../../core/user/user";
 import { MatDialog } from "@angular/material/dialog";
 import { EntityFormComponent } from "../../../core/entity-components/entity-form/entity-form/entity-form.component";
 import { EntityFormService } from "../../../core/entity-components/entity-form/entity-form.service";
@@ -114,7 +111,7 @@ describe("ChildrenOverviewComponent", () => {
       componentInstance: componentInstance,
       close: () => {},
     } as any);
-    schoolsService.getChildrenForSchool.and.resolveTo([child]);
+    mockSchoolsService.getChildrenForSchool.and.resolveTo([child]);
 
     component.addChildClick();
     componentInstance.onSave.emit();
