@@ -22,7 +22,7 @@ export class EditSingleEntityComponent
 
   constructor(private entityMapper: EntityMapperService) {
     super();
-    this.entityNameFormControl= new FormControl();
+    this.entityNameFormControl = new FormControl();
   }
   filter(searchText: string): Entity[] {
     return this.entities.filter((entity) =>
@@ -48,7 +48,9 @@ export class EditSingleEntityComponent
       .then((entities) =>
         entities.sort((e1, e2) => e1.toString().localeCompare(e2.toString()))
       );
-    const selectedEntity = this.entities.find(entity => entity.getId() === this.formControl.value)
+    const selectedEntity = this.entities.find(
+      (entity) => entity.getId() === this.formControl.value
+    );
     if (selectedEntity) {
       this.entityNameFormControl.setValue(selectedEntity.toString());
     }

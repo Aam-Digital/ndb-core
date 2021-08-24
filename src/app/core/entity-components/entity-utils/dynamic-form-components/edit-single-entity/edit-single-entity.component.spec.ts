@@ -69,7 +69,7 @@ describe("EditSingleEntityComponent", () => {
     expect(component.entities).toEqual([school1, school2]);
   }));
 
-  it( "should show name of the selected entity", fakeAsync(() => {
+  it("should show name of the selected entity", fakeAsync(() => {
     const child1 = new Child();
     child1.name = "First Child";
     const child2 = new Child();
@@ -77,13 +77,13 @@ describe("EditSingleEntityComponent", () => {
     component.formControl.setValue(child1.getId());
     mockEntityMapper.loadType.and.resolveTo([child1, child2]);
 
-    component.onInitFromDynamicConfig( {
+    component.onInitFromDynamicConfig({
       formFieldConfig: { id: "childId" },
       formControl: component.formControl,
       propertySchema: ChildSchoolRelation.schema.get("childId"),
     });
     tick();
 
-    expect(component.entityNameFormControl.value).toEqual("First Child")
-  }))
+    expect(component.entityNameFormControl.value).toEqual("First Child");
+  }));
 });
