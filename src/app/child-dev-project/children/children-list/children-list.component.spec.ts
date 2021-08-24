@@ -8,7 +8,6 @@ import {
 import { ChildrenListComponent } from "./children-list.component";
 import { ChildrenService } from "../children.service";
 import { RouterTestingModule } from "@angular/router/testing";
-import { SessionService } from "../../../core/session/session-service/session.service";
 import { of } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ChildrenModule } from "../children.module";
@@ -19,11 +18,11 @@ import {
   EntityListConfig,
   PrebuiltFilterConfig,
 } from "../../../core/entity-components/entity-list/EntityListConfig";
-import { User } from "../../../core/user/user";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { School } from "../../schools/model/school";
 import { LoggingService } from "../../../core/logging/logging.service";
-import { BackupService } from "../../../core/admin/services/backup.service";
+import { ExportService } from "../../../core/export/export-service/export.service";
+import { MockSessionModule } from "../../../core/session/mock-session.module";
 
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;
@@ -76,20 +75,15 @@ describe("ChildrenListComponent", () => {
     ],
   };
   const routeMock = {
-    data: of(routeData),
+    data: of({ config: routeData }),
     queryParams: of({}),
   };
   const mockChildrenService: jasmine.SpyObj<ChildrenService> = jasmine.createSpyObj(
     ["getChildren"]
   );
-  const mockEntityMapper: jasmine.SpyObj<EntityMapperService> = jasmine.createSpyObj(
-    ["loadType", "save"]
-  );
+
   beforeEach(
     waitForAsync(() => {
-      mockEntityMapper.loadType.and.resolveTo([]);
-      const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
-      mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
       mockChildrenService.getChildren.and.returnValue(of([]));
       TestBed.configureTestingModule({
         declarations: [ChildrenListComponent],
@@ -98,26 +92,19 @@ describe("ChildrenListComponent", () => {
           ChildrenModule,
           RouterTestingModule,
           Angulartics2Module.forRoot(),
+          MockSessionModule.withState(),
         ],
         providers: [
           {
             provide: ChildrenService,
             useValue: mockChildrenService,
           },
-          {
-            provide: EntityMapperService,
-            useValue: mockEntityMapper,
-          },
-          {
-            provide: SessionService,
-            useValue: mockSessionService,
-          },
           { provide: ActivatedRoute, useValue: routeMock },
           {
             provide: LoggingService,
             useValue: jasmine.createSpyObj(["warn"]),
           },
-          { provide: BackupService, useValue: {} },
+          { provide: ExportService, useValue: {} },
         ],
       }).compileComponents();
     })
@@ -157,10 +144,14 @@ describe("ChildrenListComponent", () => {
     firstSchool.name = "A Test";
     const secondSchool = new School("test");
     secondSchool.name = "Test";
+    const entityMapper = TestBed.inject(EntityMapperService);
+    entityMapper.save(firstSchool);
+    entityMapper.save(secondSchool);
+    tick();
 
-    mockEntityMapper.loadType.and.resolveTo([secondSchool, firstSchool]);
     component.ngOnInit();
     tick();
+
     const schoolFilter = component.listConfig.filters.find(
       (f) => f.id === "school"
     ) as PrebuiltFilterConfig<Child>;

@@ -10,13 +10,14 @@ import { AttendanceDetailsComponent } from "./attendance-details.component";
 import { AttendanceModule } from "../attendance.module";
 import { RouterTestingModule } from "@angular/router/testing";
 import { FormDialogModule } from "../../../core/form-dialog/form-dialog.module";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { Angulartics2Module } from "angulartics2";
 import { FontAwesomeIconsModule } from "../../../core/icons/font-awesome-icons.module";
 import { MatNativeDateModule } from "@angular/material/core";
 import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { MatDialogRef } from "@angular/material/dialog";
 import { NotesModule } from "../../notes/notes.module";
+import { AttendanceService } from "../attendance.service";
+import { MockSessionModule } from "../../../core/session/mock-session.module";
 
 const demoActivity = RecurringActivity.create("Coaching Batch C");
 const activityAttendance = ActivityAttendance.create(new Date("2020-01-01"), [
@@ -68,14 +69,13 @@ export default {
         MatNativeDateModule,
         NotesModule,
         Angulartics2Module.forRoot(),
+        MockSessionModule.withState(),
       ],
       declarations: [],
       providers: [
         {
-          provide: EntityMapperService,
-          useValue: {
-            loadType: () => Promise.resolve([]),
-          },
+          provide: AttendanceService,
+          useValue: null,
         },
         { provide: MatDialogRef, useValue: {} },
       ],

@@ -10,10 +10,7 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { Angulartics2Module } from "angulartics2";
 import { MatDialogRef } from "@angular/material/dialog";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
-import { SessionService } from "../../../core/session/session-service/session.service";
-import { User } from "../../../core/user/user";
+import { MockSessionModule } from "../../../core/session/mock-session.module";
 
 function generateTestNote(forChildren: Child[]) {
   const testNote = Note.create(new Date(), "test note");
@@ -59,15 +56,11 @@ describe("NoteDetailsComponent", () => {
         RouterTestingModule,
         MatNativeDateModule,
         Angulartics2Module.forRoot(),
+        MockSessionModule.withState(),
       ],
       providers: [
         { provide: MatDialogRef, useValue: dialogRefMock },
-        { provide: EntityMapperService, useValue: mockEntityMapper() },
         { provide: ChildrenService, useValue: mockChildrenService },
-        {
-          provide: SessionService,
-          useValue: { getCurrentUser: () => new User() },
-        },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(NoteDetailsComponent);

@@ -11,6 +11,8 @@ import { Note } from "../../notes/model/note";
 import moment from "moment";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FormDialogModule } from "../../../core/form-dialog/form-dialog.module";
+import { AttendanceService } from "../attendance.service";
+import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
 
 const demoEvents: Note[] = [
   generateEventWithAttendance(
@@ -63,7 +65,11 @@ export default {
       providers: [
         {
           provide: EntityMapperService,
-          useValue: { save: () => Promise.resolve() },
+          useValue: mockEntityMapper(),
+        },
+        {
+          provide: AttendanceService,
+          useValue: null,
         },
       ],
     }),

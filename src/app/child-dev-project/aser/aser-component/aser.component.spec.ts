@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { AserComponent } from "./aser.component";
 import { FormsModule } from "@angular/forms";
 import { ChildrenService } from "../../children/children.service";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { Child } from "../../children/model/child";
 import { DatePipe } from "@angular/common";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -13,8 +12,7 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { EntityFormService } from "../../../core/entity-components/entity-form/entity-form.service";
-import { SessionService } from "../../../core/session/session-service/session.service";
-import { User } from "../../../core/user/user";
+import { MockSessionModule } from "../../../core/session/mock-session.module";
 
 describe("AserComponent", () => {
   let component: AserComponent;
@@ -28,11 +26,9 @@ describe("AserComponent", () => {
       return of([]);
     },
   };
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
 
   beforeEach(
     waitForAsync(() => {
-      mockEntityMapper = jasmine.createSpyObj(["save"]);
       TestBed.configureTestingModule({
         declarations: [AserComponent],
         imports: [
@@ -43,16 +39,12 @@ describe("AserComponent", () => {
           RouterTestingModule,
           EntitySubrecordModule,
           MatSnackBarModule,
+          MockSessionModule.withState(),
         ],
         providers: [
           EntityFormService,
           DatePipe,
           { provide: ChildrenService, useValue: mockChildrenService },
-          { provide: EntityMapperService, useValue: mockEntityMapper },
-          {
-            provide: SessionService,
-            useValue: { getCurrentUser: () => new User() },
-          },
         ],
       }).compileComponents();
     })
