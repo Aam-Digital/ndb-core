@@ -14,6 +14,7 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ChildSchoolRelation } from "../../../../../child-dev-project/children/model/childSchoolRelation";
 import { School } from "../../../../../child-dev-project/schools/model/school";
 import { EntityUtilsModule } from "../../entity-utils.module";
+import { Child } from "../../../../../child-dev-project/children/model/child";
 
 describe("EditSingleEntityComponent", () => {
   let component: EditSingleEntityComponent;
@@ -67,4 +68,22 @@ describe("EditSingleEntityComponent", () => {
     expect(mockEntityMapper.loadType).toHaveBeenCalled();
     expect(component.entities).toEqual([school1, school2]);
   }));
+
+  it( "should show name of the selected entity", fakeAsync(() => {
+    const child1 = new Child();
+    child1.name = "First Child";
+    const child2 = new Child();
+    child2.name = "Second Child";
+    component.formControl.setValue(child1.getId());
+    mockEntityMapper.loadType.and.resolveTo([child1, child2]);
+
+    component.onInitFromDynamicConfig( {
+      formFieldConfig: { id: "childId" },
+      formControl: component.formControl,
+      propertySchema: ChildSchoolRelation.schema.get("childId"),
+    });
+    tick();
+
+    expect(component.entityNameFormControl.value).toEqual("First Child")
+  }))
 });
