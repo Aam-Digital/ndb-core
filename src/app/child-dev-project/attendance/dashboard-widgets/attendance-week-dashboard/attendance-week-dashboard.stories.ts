@@ -13,6 +13,7 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { Angulartics2Module } from "angulartics2";
 import { Database } from "../../../../core/database/database";
 import { PouchDatabase } from "../../../../core/database/pouch-database";
+import { SessionService } from "../../../../core/session/session-service/session.service";
 
 const child1 = Child.create("Jack");
 const child2 = Child.create("Jane");
@@ -62,6 +63,10 @@ export default {
         Angulartics2Module.forRoot(),
       ],
       providers: [
+        {
+          provide: SessionService,
+          useValue: null,
+        },
         {
           provide: Database,
           useValue: PouchDatabase.createWithData([

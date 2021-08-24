@@ -245,15 +245,15 @@ export const defaultJsonConfig = {
   },
   "view:admin": {
     "component": "Admin",
-    "requiresAdmin": true
+    "permittedUserRoles": ["admin_app"]
   },
   "view:users": {
     "component": "UserList",
-    "requiresAdmin": true
+    "permittedUserRoles": ["admin_app"]
   },
   "view:admin/conflicts": {
     "component": "ConflictResolution",
-    "requiresAdmin": true,
+    "permittedUserRoles": ["admin_app"],
     "lazyLoaded":  true
   },
   "view:help": {
@@ -647,9 +647,9 @@ export const defaultJsonConfig = {
         "assignedTo"
       ],
       "exportConfig": [
-        { label: "Title", key: "title" },
-        { label: "Type", key: "type" },
-        { label: "Assigned users", key: "assignedTo" }
+        { label: "Title", query: "title" },
+        { label: "Type", query: "type" },
+        { label: "Assigned users", query: "assignedTo" }
       ]
     }
   },

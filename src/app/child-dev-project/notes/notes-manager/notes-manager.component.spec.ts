@@ -11,12 +11,10 @@ import {
 } from "@angular/core/testing";
 import { NotesModule } from "../notes.module";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { SessionService } from "../../../core/session/session-service/session.service";
 import { RouterTestingModule } from "@angular/router/testing";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { of, Subject } from "rxjs";
-import { User } from "../../../core/user/user";
 import { Note } from "../model/note";
 import { Angulartics2Module } from "angulartics2";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
@@ -30,14 +28,15 @@ import { By } from "@angular/platform-browser";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
 import { EventNote } from "../../attendance/model/event-note";
 import { BehaviorSubject } from "rxjs";
-import { BackupService } from "../../../core/admin/services/backup.service";
 import { UpdatedEntity } from "../../../core/entity/model/entity-update";
+import { ExportService } from "../../../core/export/export-service/export.service";
+import { MockSessionModule } from "../../../core/session/mock-session.module";
 
 describe("NotesManagerComponent", () => {
   let component: NotesManagerComponent;
   let fixture: ComponentFixture<NotesManagerComponent>;
 
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let entityMapper: EntityMapperService;
   let mockNoteObservable: Subject<UpdatedEntity<Note>>;
   let mockEventNoteObservable: Subject<UpdatedEntity<Note>>;
   const dialogMock: jasmine.SpyObj<FormDialogService> = jasmine.createSpyObj(
@@ -76,7 +75,7 @@ describe("NotesManagerComponent", () => {
   };
 
   const routeMock = {
-    data: new BehaviorSubject(routeData),
+    data: new BehaviorSubject({ config: routeData }),
     queryParams: of({}),
   };
 
@@ -96,35 +95,31 @@ describe("NotesManagerComponent", () => {
       "getConfig",
     ]);
     mockConfigService.getConfig.and.returnValue(testInteractionTypes);
-
-    mockEntityMapper = jasmine.createSpyObj([
-      "loadType",
-      "receiveUpdates",
-      "save",
-    ]);
-    mockEntityMapper.loadType.and.resolveTo([]);
     mockNoteObservable = new Subject<UpdatedEntity<Note>>();
     mockEventNoteObservable = new Subject<UpdatedEntity<EventNote>>();
-    mockEntityMapper.receiveUpdates.and.callFake((entityType) =>
+
+    TestBed.configureTestingModule({
+      declarations: [],
+      imports: [
+        NotesModule,
+        RouterTestingModule,
+        Angulartics2Module.forRoot(),
+        MockSessionModule.withState(),
+      ],
+      providers: [
+        { provide: FormDialogService, useValue: dialogMock },
+        { provide: ActivatedRoute, useValue: routeMock },
+        { provide: ConfigService, useValue: mockConfigService },
+        { provide: ExportService, useValue: {} },
+      ],
+    }).compileComponents();
+
+    entityMapper = TestBed.inject(EntityMapperService);
+    spyOn(entityMapper, "receiveUpdates").and.callFake((entityType) =>
       (entityType as any) === Note
         ? (mockNoteObservable as any)
         : (mockEventNoteObservable as any)
     );
-
-    const mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
-    mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
-    TestBed.configureTestingModule({
-      declarations: [],
-      imports: [NotesModule, RouterTestingModule, Angulartics2Module.forRoot()],
-      providers: [
-        { provide: SessionService, useValue: mockSessionService },
-        { provide: EntityMapperService, useValue: mockEntityMapper },
-        { provide: FormDialogService, useValue: dialogMock },
-        { provide: ActivatedRoute, useValue: routeMock },
-        { provide: ConfigService, useValue: mockConfigService },
-        { provide: BackupService, useValue: {} },
-      ],
-    }).compileComponents();
   });
 
   beforeEach(async () => {
@@ -207,53 +202,38 @@ describe("NotesManagerComponent", () => {
     note.category = testInteractionTypes[0];
     const eventNote = EventNote.create(new Date("2020-01-01"), "test event");
     eventNote.category = testInteractionTypes[0];
-    mockEntityMapper.loadType.and.callFake(loadTypeFake([note], [eventNote]));
+    await entityMapper.save(note);
+    await entityMapper.save(eventNote);
 
     component.includeEventNotes = true;
     await component.updateIncludeEvents();
 
     expect(component.notes).toEqual([note, eventNote]);
-    expect(mockEntityMapper.loadType).toHaveBeenCalledWith(Note);
-    expect(mockEntityMapper.loadType).toHaveBeenCalledWith(EventNote);
 
     component.includeEventNotes = false;
     await component.updateIncludeEvents();
 
     expect(component.notes).toEqual([note]);
-    expect(mockEntityMapper.loadType.calls.mostRecent().args).toEqual([Note]);
   });
 
-  it("loads initial list including EventNotes if set in config", fakeAsync(async () => {
+  it("loads initial list including EventNotes if set in config", fakeAsync(() => {
     const note = Note.create(new Date("2020-01-01"), "test note");
     note.category = testInteractionTypes[0];
     const eventNote = EventNote.create(new Date("2020-01-01"), "test event");
     eventNote.category = testInteractionTypes[0];
-    mockEntityMapper.loadType.and.callFake(loadTypeFake([note], [eventNote]));
+    entityMapper.save(note);
+    entityMapper.save(eventNote);
+    tick();
 
-    routeMock.data.next(
-      Object.assign(
+    routeMock.data.next({
+      config: Object.assign(
         { includeEventNotes: true } as NotesManagerConfig,
         routeData
-      )
-    );
+      ),
+    });
 
     flush();
 
     expect(component.notes).toEqual([note, eventNote]);
-    expect(mockEntityMapper.loadType).toHaveBeenCalledWith(Note);
-    expect(mockEntityMapper.loadType).toHaveBeenCalledWith(EventNote);
   }));
 });
-
-function loadTypeFake(notes: Note[], eventNotes: EventNote[]) {
-  return (type) => {
-    switch (type) {
-      case Note:
-        return Promise.resolve(notes);
-      case EventNote:
-        return Promise.resolve(eventNotes);
-      default:
-        return Promise.resolve([]);
-    }
-  };
-}

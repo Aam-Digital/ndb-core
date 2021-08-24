@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { RecurringActivity } from "../model/recurring-activity";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
+import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 
 @Component({
   selector: "app-activity-list",
@@ -29,7 +30,7 @@ export class ActivityListComponent implements OnInit {
 
   async ngOnInit() {
     this.route.data.subscribe(
-      (config: EntityListConfig) => (this.listConfig = config)
+      (data: RouteData<EntityListConfig>) => (this.listConfig = data.config)
     );
     this.entities = await this.entityMapper.loadType<RecurringActivity>(
       RecurringActivity

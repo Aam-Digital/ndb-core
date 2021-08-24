@@ -4,7 +4,10 @@ import { NotesMigrationService } from "./notes-migration.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { User } from "../../../core/user/user";
 import { Note } from "../model/note";
-import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
+import {
+  mockEntityMapper,
+  MockEntityMapperService,
+} from "../../../core/entity/mock-entity-mapper-service";
 import { AlertService } from "../../../core/alerts/alert.service";
 
 function legacyNote(author: string): Note {
@@ -29,9 +32,10 @@ describe("NotesMigrationService", () => {
   const Johanna = createUser("Johanna");
   const users = [Peter, Ursula, Jens, Angela, Albrecht, Johanna];
 
-  const entityMapper = mockEntityMapper([]);
+  let entityMapper: MockEntityMapperService;
 
   beforeEach(() => {
+    entityMapper = mockEntityMapper([]);
     TestBed.configureTestingModule({
       providers: [
         {

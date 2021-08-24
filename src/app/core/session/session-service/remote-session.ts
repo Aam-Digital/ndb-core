@@ -24,7 +24,6 @@ import { DatabaseUser } from "./local-user";
 import { SessionService } from "./session.service";
 import { LoginState } from "../session-states/login-state.enum";
 import { Database } from "../../database/database";
-import { User } from "../../user/user";
 import { PouchDatabase } from "../../database/pouch-database";
 import { LoggingService } from "../../logging/logging.service";
 
@@ -75,16 +74,16 @@ export class RemoteSession extends SessionService {
         )
         .toPromise();
       this.assignDatabaseUser(response);
-      this.getLoginState().setState(LoginState.LOGGED_IN);
+      this.loginState.next(LoginState.LOGGED_IN);
     } catch (error) {
       const httpError = error as HttpErrorResponse;
       if (httpError?.status === this.UNAUTHORIZED_STATUS_CODE) {
-        this.getLoginState().setState(LoginState.LOGIN_FAILED);
+        this.loginState.next(LoginState.LOGIN_FAILED);
       } else {
-        this.getLoginState().setState(LoginState.UNAVAILABLE);
+        this.loginState.next(LoginState.UNAVAILABLE);
       }
     }
-    return this.getLoginState().getState();
+    return this.loginState.value;
   }
 
   private assignDatabaseUser(couchDBResponse: any) {
@@ -104,20 +103,16 @@ export class RemoteSession extends SessionService {
       })
       .toPromise();
     this.currentDBUser = undefined;
-    this.getLoginState().setState(LoginState.LOGGED_OUT);
+    this.loginState.next(LoginState.LOGGED_OUT);
   }
 
-  getCurrentDBUser(): DatabaseUser {
+  getCurrentUser(): DatabaseUser {
     return this.currentDBUser;
   }
 
   checkPassword(username: string, password: string): boolean {
     // Cannot be checked against CouchDB due to cookie-auth
     throw Error("Can't check password in remote session");
-  }
-
-  getCurrentUser(): User {
-    throw Error("Can't get user entity in remote session");
   }
 
   getDatabase(): Database {

@@ -5,6 +5,7 @@ import { UntilDestroy } from "@ngneat/until-destroy";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
+import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 
 @UntilDestroy()
 @Component({
@@ -34,7 +35,7 @@ export class SchoolsListComponent implements OnInit {
 
   ngOnInit() {
     this.route.data.subscribe(
-      (config: EntityListConfig) => (this.listConfig = config)
+      (data: RouteData<EntityListConfig>) => (this.listConfig = data.config)
     );
     this.entityMapper
       .loadType<School>(School)

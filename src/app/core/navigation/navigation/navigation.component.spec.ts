@@ -23,27 +23,28 @@ import { MenuItem } from "../menu-item";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatIconModule } from "@angular/material/icon";
 import { MatListModule } from "@angular/material/list";
-import { RouterService } from "../../view/dynamic-routing/router.service";
 import { ConfigService } from "../../config/config.service";
 import { BehaviorSubject } from "rxjs";
 import { Config } from "../../config/config";
-import { AdminGuard } from "../../admin/admin.guard";
+import { UserRoleGuard } from "../../permissions/user-role.guard";
+import { ActivatedRouteSnapshot } from "@angular/router";
 
 describe("NavigationComponent", () => {
   let component: NavigationComponent;
   let fixture: ComponentFixture<NavigationComponent>;
 
   let mockConfigService: jasmine.SpyObj<ConfigService>;
-  const mockConfigUpdated = new BehaviorSubject<Config>(null);
-  let mockAdminGuard: jasmine.SpyObj<AdminGuard>;
+  let mockConfigUpdated: BehaviorSubject<Config>;
+  let mockUserRoleGuard: jasmine.SpyObj<UserRoleGuard>;
 
   beforeEach(
     waitForAsync(() => {
+      mockConfigUpdated = new BehaviorSubject<Config>(null);
       mockConfigService = jasmine.createSpyObj(["getConfig"]);
       mockConfigService.getConfig.and.returnValue({ items: [] });
       mockConfigService.configUpdates = mockConfigUpdated;
-      mockAdminGuard = jasmine.createSpyObj(["isAdmin"]);
-      mockAdminGuard.isAdmin.and.returnValue(false);
+      mockUserRoleGuard = jasmine.createSpyObj(["canActivate"]);
+      mockUserRoleGuard.canActivate.and.returnValue(true);
 
       TestBed.configureTestingModule({
         imports: [
@@ -54,7 +55,7 @@ describe("NavigationComponent", () => {
         ],
         declarations: [NavigationComponent],
         providers: [
-          { provide: AdminGuard, useValue: mockAdminGuard },
+          { provide: UserRoleGuard, useValue: mockUserRoleGuard },
           { provide: ConfigService, useValue: mockConfigService },
         ],
       }).compileComponents();
@@ -78,7 +79,11 @@ describe("NavigationComponent", () => {
         { name: "Children", icon: "child", link: "/child" },
       ],
     };
-    mockConfigService.getConfig.and.returnValue(testConfig);
+    mockConfigService.getConfig.and.returnValues(
+      testConfig,
+      undefined,
+      undefined
+    );
     mockConfigUpdated.next(null);
     const items = component.menuItems;
 
@@ -95,19 +100,34 @@ describe("NavigationComponent", () => {
         { name: "Children", icon: "child", link: "/child" },
       ],
     };
-
-    mockConfigService.getConfig.and.callFake((id) => {
-      switch (id) {
-        case RouterService.PREFIX_VIEW_CONFIG + "dashboard":
-          return { requiresAdmin: true } as any;
-        case RouterService.PREFIX_VIEW_CONFIG + "child":
-          return { requiresAdmin: false } as any;
-        default:
-          return testConfig;
+    mockConfigService.getConfig.and.returnValues(
+      testConfig,
+      { permittedUserRoles: ["admin"] },
+      undefined
+    );
+    mockUserRoleGuard.canActivate.and.callFake(
+      (route: ActivatedRouteSnapshot) => {
+        switch (route.routeConfig.path) {
+          case "dashboard":
+            return false;
+          case "child":
+            return true;
+          default:
+            return false;
+        }
       }
-    });
+    );
+
     mockConfigUpdated.next(null);
 
+    expect(mockUserRoleGuard.canActivate).toHaveBeenCalledWith({
+      routeConfig: { path: "dashboard" },
+      data: { permittedUserRoles: ["admin"] },
+    } as any);
+    expect(mockUserRoleGuard.canActivate).toHaveBeenCalledWith({
+      routeConfig: { path: "child" },
+      data: { permittedUserRoles: undefined },
+    } as any);
     expect(component.menuItems).toEqual([
       new MenuItem("Children", "child", "/child"),
     ]);
