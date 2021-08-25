@@ -4,12 +4,12 @@ import {
   EventEmitter,
   Input,
   OnChanges,
-  OnInit,
+  OnDestroy,
   Output,
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import { MediaChange, MediaObserver } from "@angular/flex-layout";
+import { MediaObserver } from "@angular/flex-layout";
 import { ActivatedRoute, Router } from "@angular/router";
 import {
   ColumnGroupsConfig,
@@ -24,6 +24,8 @@ import { EntitySubrecordComponent } from "../entity-subrecord/entity-subrecord/e
 import { FilterGeneratorService } from "./filter-generator.service";
 import { FilterComponentSettings } from "./filter-component.settings";
 import { entityFilterPredicate } from "./filter-predicate";
+import { map } from "rxjs/operators";
+import { QuickActionService } from "../../ui/primary-action/quick-action.service";
 
 /**
  * This component allows to create a full blown table with pagination, filtering, searching and grouping.
@@ -38,7 +40,8 @@ import { entityFilterPredicate } from "./filter-predicate";
   styleUrls: ["./entity-list.component.scss"],
 })
 export class EntityListComponent<T extends Entity>
-  implements OnChanges, OnInit, AfterViewInit {
+  implements OnChanges, AfterViewInit, OnDestroy
+{
   @Input() allEntities: T[] = [];
   filteredEntities: T[] = [];
   @Input() listConfig: EntityListConfig;
@@ -54,6 +57,7 @@ export class EntityListComponent<T extends Entity>
   defaultColumnGroup = "";
   mobileColumnGroup = "";
   filtersConfig: FilterConfig[] = [];
+  subrecordUsesPaginator: boolean;
 
   operationType = OperationType;
 
@@ -77,27 +81,34 @@ export class EntityListComponent<T extends Entity>
     private media: MediaObserver,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private filterGeneratorService: FilterGeneratorService
-  ) {}
-
-  ngOnInit() {
-    this.media.asObservable().subscribe((change: MediaChange[]) => {
-      switch (change[0].mqAlias) {
-        case "xs":
-        case "sm": {
-          this.displayColumnGroupByName(this.mobileColumnGroup);
-          break;
-        }
-        case "md": {
+    private filterGeneratorService: FilterGeneratorService,
+    private quickActionService: QuickActionService
+  ) {
+    this.media
+      .asObservable()
+      .pipe(
+        map(
+          (changes) =>
+            changes[0].mqAlias !== "xs" && changes[0].mqAlias !== "md"
+        )
+      )
+      .subscribe((isBigScreen) => {
+        this.subrecordUsesPaginator = isBigScreen;
+        if (isBigScreen) {
+          this.quickActionService.resetQuickAction();
           this.displayColumnGroupByName(this.defaultColumnGroup);
-          break;
+        } else {
+          this.quickActionService.setQuickAction({
+            action: this.addNewClick.emit,
+            icon: "fa-plus",
+          });
+          this.displayColumnGroupByName(this.mobileColumnGroup);
         }
-        case "lg":
-        case "xl": {
-          break;
-        }
-      }
-    });
+      });
+  }
+
+  ngOnDestroy() {
+    this.quickActionService.resetQuickAction();
   }
 
   ngAfterViewInit() {

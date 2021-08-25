@@ -447,8 +447,7 @@ export const defaultJsonConfig = {
             "columns": [
               "projectNumber",
               "name",
-              "age",
-              "schoolId"
+              "age"
             ]
           }
         ]
@@ -516,6 +515,13 @@ export const defaultJsonConfig = {
                     "guardianName",
                     "preferredTimeForGuardianMeeting"
                   ]
+                ],
+                "headers": [
+                  null,
+                  "Personal Information",
+                  "Additional",
+                  "Scholar activities",
+                  null
                 ]
               }
             }

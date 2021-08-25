@@ -20,7 +20,10 @@
         *ngFor="let entity of selection_"
         class="chip"
       >
-        <app-display-entity [entityToDisplay]="entity"></app-display-entity>
+        <app-display-entity
+          [entityToDisplay]="entity"
+          [linkDisabled]="true"
+        ></app-display-entity>
         <div
           *ngIf="removable && formControl.enabled"
           matTooltip="remove"

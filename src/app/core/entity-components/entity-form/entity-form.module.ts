@@ -3,9 +3,10 @@ import { CommonModule } from "@angular/common";
 import { EntityFormComponent } from "./entity-form/entity-form.component";
 import { EntityFormService } from "./entity-form.service";
 import { MatButtonModule } from "@angular/material/button";
-import { FlexModule } from "@angular/flex-layout";
+import { FlexLayoutModule, FlexModule } from "@angular/flex-layout";
 import { ViewModule } from "../../view/view.module";
 import { PermissionsModule } from "../../permissions/permissions.module";
+import { MatTabsModule } from "@angular/material/tabs";
 
 @NgModule({
   declarations: [EntityFormComponent],
@@ -15,6 +16,8 @@ import { PermissionsModule } from "../../permissions/permissions.module";
     FlexModule,
     ViewModule,
     PermissionsModule,
+    FlexLayoutModule,
+    MatTabsModule,
   ],
   providers: [EntityFormService],
   exports: [EntityFormComponent],

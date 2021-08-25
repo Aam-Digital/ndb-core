@@ -1,24 +1,21 @@
 <form>
   <div
-    fxLayout="row wrap"
-    fxLayout.xs="row wrap"
-    fxLayout.md="row wrap"
-    fxLayout.sm="row wrap"
+    fxLayout.gt-xs="row wrap"
+    fxLayout.lt-sm="column"
   >
-    <div *ngFor="let col of _columns" fxFlex>
-      <div *ngFor="let row of col">
-        <ng-template
-          [appDynamicComponent]="{
-            component: row.edit,
-            config: {
-              formFieldConfig: row,
-              propertySchema: entity.getSchema().get(row.id),
-              formControl: form.get(row.id)
-            }
-          }"
-        >
-        </ng-template>
-      </div>
+    <div *ngFor="let col of _columns; let i=index" fxFlex style="margin-left: auto; margin-right: auto">
+      <h2 *ngIf="columnHeaders && columnHeaders[i]">{{columnHeaders[i]}}</h2>
+      <div
+        *ngFor="let row of col"
+        [appDynamicComponent]="{
+          component: row.edit,
+          config: {
+            formFieldConfig: row,
+            propertySchema: entity.getSchema().get(row.id),
+            formControl: form.get(row.id)
+          }
+        }"
+      ></div>
     </div>
   </div>
 </form>

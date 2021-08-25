@@ -19,6 +19,7 @@ import { EntityFormModule } from "../entity-form/entity-form.module";
 import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatToolbarModule } from "@angular/material/toolbar";
+import { FlexLayoutModule } from "@angular/flex-layout";
 
 @NgModule({
   declarations: [EntitySubrecordComponent, KeysPipe, ListPaginatorComponent],
@@ -40,6 +41,7 @@ import { MatToolbarModule } from "@angular/material/toolbar";
     MatToolbarModule,
     EntityDetailsModule,
     EntityFormModule,
+    FlexLayoutModule,
   ],
   exports: [EntitySubrecordComponent, KeysPipe],
 })

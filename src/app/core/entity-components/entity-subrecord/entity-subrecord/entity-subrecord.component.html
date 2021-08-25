@@ -99,7 +99,11 @@
               fontIcon="fa-times-circle"
             ></mat-icon>
           </button>
-          <button mat-icon-button (click)="delete(rec)">
+          <button
+            mat-icon-button
+            (click)="delete(rec)"
+            *ngIf="rec.formGroup?.enabled"
+          >
             <mat-icon
               class="table-action-icon"
               aria-label="delete"
@@ -123,6 +127,8 @@
     ></tr>
   </table>
   <app-list-paginator
+    fxHide.lt-md
+    *ngIf="usesPaginator"
     [dataSource]="recordsDataSource"
     [idForSavingPagination]="idForSavingPagination"
   ></app-list-paginator>

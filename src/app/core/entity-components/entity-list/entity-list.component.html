@@ -3,7 +3,7 @@
 
     <div
       fxLayout="row"
-      fxLayoutAlign="space-between center"
+      fxLayoutAlign="space-between start"
       fxLayoutGap="25px"
     >
 
@@ -42,7 +42,6 @@
           <span class="material-icons">more_vert</span>
         </button>
       </div>
-
     </div>
 
     <div
@@ -78,8 +77,9 @@
 </div>
 
 <!-- Mobile Version -->
-
 <div fxHide.gt-xs>
+
+  <h2>{{listName}}</h2>
 
   <div fxLayout="row" fxLayoutGap="15px">
     <div *ngTemplateOutlet="filterDialog"></div>
@@ -98,7 +98,7 @@
 
 <ng-template #filterDialog>
   <mat-form-field class="filter-field">
-    <mat-label i18n="Filter placeholder|Allows the user to filter through entities">Filter</mat-label>
+    <mat-label i18n="Filter placeholder|Allows the user to filter through entities">Filter through {{listName}}</mat-label>
     <input
       matInput
       [placeholder]="listConfig.filterPlaceholder"
@@ -119,6 +119,7 @@
 
 <ng-template #subrecord>
   <app-entity-subrecord
+    [usesPaginator]="subrecordUsesPaginator"
     [records]="filteredEntities"
     [columns]="columns"
     [editable]="false"
