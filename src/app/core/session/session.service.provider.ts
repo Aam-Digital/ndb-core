@@ -45,8 +45,7 @@ export function sessionServiceFactory(
         PouchDatabase.createWithIndexedDB(
           AppConfig.settings.database.name,
           loggingService
-        ),
-        entitySchemaService
+        )
       );
       break;
     case SessionType.synced:
@@ -62,8 +61,7 @@ export function sessionServiceFactory(
         PouchDatabase.createWithInMemoryDB(
           AppConfig.settings.database.name,
           loggingService
-        ),
-        entitySchemaService
+        )
       );
       break;
   }
@@ -78,18 +76,15 @@ export function sessionServiceFactory(
 function updateLoggingServiceWithUserContext(sessionService: SessionService) {
   // update the user context for remote error logging
   // cannot subscribe within LoggingService itself because of cyclic dependencies, therefore doing this here
-  sessionService
-    .getLoginState()
-    .getStateChangedStream()
-    .subscribe((newState) => {
-      if (newState.toState === LoginState.LOGGED_IN) {
-        LoggingService.setLoggingContextUser(
-          sessionService.getCurrentUser().name
-        );
-      } else {
-        LoggingService.setLoggingContextUser(undefined);
-      }
-    });
+  sessionService.loginState.subscribe((newState) => {
+    if (newState === LoginState.LOGGED_IN) {
+      LoggingService.setLoggingContextUser(
+        sessionService.getCurrentUser().name
+      );
+    } else {
+      LoggingService.setLoggingContextUser(undefined);
+    }
+  });
 }
 
 /**

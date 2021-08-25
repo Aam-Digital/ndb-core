@@ -35,16 +35,15 @@ export class DemoUserGeneratorService extends DemoDataGenerator<User> {
 
     const demoAdmin = new User("demo-admin");
     demoAdmin.name = "demo-admin";
-    demoAdmin.admin = true;
 
     // Create temporary session to save users to local storage
-    const tmpLocalSession = new LocalSession();
+    const tmpLocalSession = new LocalSession(null);
     tmpLocalSession.saveUser(
       { name: demoUser.name, roles: ["user_app"] },
       DemoUserGeneratorService.DEFAULT_PASSWORD
     );
     tmpLocalSession.saveUser(
-      { name: demoAdmin.name, roles: ["user_app", "admin"] },
+      { name: demoAdmin.name, roles: ["user_app", "admin_app"] },
       DemoUserGeneratorService.DEFAULT_PASSWORD
     );
 

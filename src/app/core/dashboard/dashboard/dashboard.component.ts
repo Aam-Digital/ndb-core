@@ -18,6 +18,7 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { DynamicComponentConfig } from "../../view/dynamic-components/dynamic-component-config.interface";
+import { RouteData } from "../../view/dynamic-routing/view-config.interface";
 
 @Component({
   selector: "app-dashboard",
@@ -30,8 +31,10 @@ export class DashboardComponent implements OnInit {
   constructor(private activatedRoute: ActivatedRoute) {}
 
   ngOnInit() {
-    this.activatedRoute.data.subscribe((config) => {
-      this.widgets = config.widgets;
-    });
+    this.activatedRoute.data.subscribe(
+      (data: RouteData<{ widgets: DynamicComponentConfig[] }>) => {
+        this.widgets = data.config.widgets;
+      }
+    );
   }
 }

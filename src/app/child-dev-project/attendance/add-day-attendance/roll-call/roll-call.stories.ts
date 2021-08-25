@@ -10,6 +10,8 @@ import { Note } from "../../../notes/model/note";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { ChildrenService } from "../../../children/children.service";
 import { of } from "rxjs";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { mockEntityMapper } from "../../../../core/entity/mock-entity-mapper-service";
 
 export default {
   title: "Attendance/Views/RollCall",
@@ -24,6 +26,10 @@ export default {
       ],
       declarations: [ChildBlockComponent],
       providers: [
+        {
+          provide: EntityMapperService,
+          useValue: mockEntityMapper(),
+        },
         {
           provide: ChildrenService,
           useValue: {

@@ -13,10 +13,13 @@ import { AttendanceMigrationService } from "../../../child-dev-project/attendanc
 import { NotesMigrationService } from "../../../child-dev-project/notes/notes-migration/notes-migration.service";
 import { ChildrenMigrationService } from "../../../child-dev-project/children/child-photo-service/children-migration.service";
 import { ConfigMigrationService } from "../../config/config-migration.service";
+import { PermissionsMigrationService } from "../../permissions/permissions-migration.service";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Admin GUI giving administrative users different options/actions.
  */
+@UntilDestroy()
 @Component({
   selector: "app-admin",
   templateUrl: "./admin.component.html",
@@ -43,7 +46,8 @@ export class AdminComponent implements OnInit {
     public attendanceMigration: AttendanceMigrationService,
     public notesMigration: NotesMigrationService,
     public childrenMigrationService: ChildrenMigrationService,
-    public configMigrationService: ConfigMigrationService
+    public configMigrationService: ConfigMigrationService,
+    public permissionsMigrationService: PermissionsMigrationService
   ) {}
 
   ngOnInit() {
@@ -149,10 +153,13 @@ export class AdminComponent implements OnInit {
           duration: 8000,
         }
       );
-      snackBarRef.onAction().subscribe(async () => {
-        await this.backupService.clearDatabase();
-        await this.backupService.importJson(restorePoint, true);
-      });
+      snackBarRef
+        .onAction()
+        .pipe(untilDestroyed(this))
+        .subscribe(async () => {
+          await this.backupService.clearDatabase();
+          await this.backupService.importJson(restorePoint, true);
+        });
     });
   }
 
@@ -185,10 +192,13 @@ export class AdminComponent implements OnInit {
           duration: 8000,
         }
       );
-      snackBarRef.onAction().subscribe(async () => {
-        await this.backupService.clearDatabase();
-        await this.backupService.importJson(restorePoint, true);
-      });
+      snackBarRef
+        .onAction()
+        .pipe(untilDestroyed(this))
+        .subscribe(async () => {
+          await this.backupService.clearDatabase();
+          await this.backupService.importJson(restorePoint, true);
+        });
     });
   }
 
@@ -219,9 +229,12 @@ export class AdminComponent implements OnInit {
           duration: 8000,
         }
       );
-      snackBarRef.onAction().subscribe(async () => {
-        await this.backupService.importJson(restorePoint, true);
-      });
+      snackBarRef
+        .onAction()
+        .pipe(untilDestroyed(this))
+        .subscribe(async () => {
+          await this.backupService.importJson(restorePoint, true);
+        });
     });
   }
 }

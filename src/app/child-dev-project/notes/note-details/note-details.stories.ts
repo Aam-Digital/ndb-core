@@ -6,10 +6,13 @@ import { NotesModule } from "../notes.module";
 import { NoteDetailsComponent } from "./note-details.component";
 import { Note } from "../model/note";
 import { RouterTestingModule } from "@angular/router/testing";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { MatNativeDateModule } from "@angular/material/core";
 import { Angulartics2Module } from "angulartics2";
 import { Child } from "../../children/model/child";
+import { MatDialogRef } from "@angular/material/dialog";
+import { ChildrenService } from "../../children/children.service";
+import { of } from "rxjs";
+import { MockSessionModule } from "../../../core/session/mock-session.module";
 
 const demoChildren: Child[] = [Child.create("Joe"), Child.create("Jane")];
 
@@ -25,8 +28,15 @@ export default {
         Angulartics2Module.forRoot(),
         ConfigurableEnumModule,
         NotesModule,
+        MockSessionModule.withState(),
       ],
-      providers: [{ provide: EntityMapperService, useValue: {} }],
+      providers: [
+        { provide: MatDialogRef, useValue: {} },
+        {
+          provide: ChildrenService,
+          useValue: { getChild: () => of(new Child()) },
+        },
+      ],
     }),
   ],
 } as Meta;
