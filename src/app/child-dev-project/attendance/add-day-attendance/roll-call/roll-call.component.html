@@ -1,6 +1,14 @@
 <!-- Individual Student's Page -->
 <div *ngIf="!isFinished() && entries?.length > 0">
+  <div class="attendance-progress-bar">
+    <mat-progress-bar
+      class="filler"
+      mode="determinate"
+      [value]="(currentIndex / entries.length) * 100"
+    ></mat-progress-bar>
   <app-child-block [entity]="entries[currentIndex].child"></app-child-block>
+  <div class="progress-label">{{ currentIndex }} / {{ entries.length }}</div>
+  </div>
 
   <div
     fxLayout="column"
