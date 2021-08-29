@@ -34,7 +34,7 @@
     "@angular/router": "^11.2.12",
     "@angular/service-worker": "^11.2.12",
     "@ngneat/until-destroy": "^8.1.1",
-    "@sentry/browser": "^6.10.0",
+    "@sentry/browser": "^6.11.0",
     "angulartics2": "^10.0.0",
     "crypto-js": "^4.1.1",
     "deep-object-diff": "^1.1.0",
