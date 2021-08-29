@@ -1,4 +1,3 @@
-
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { SessionService } from "../core/session/session-service/session.service";
 import { AppModule } from "../app.module";
@@ -22,9 +21,7 @@ xdescribe("Performance Tests", () => {
       "performance_db",
       loggingService
     );
-    const mockSessionService = new LocalSession(
-      mockDatabase
-    );
+    const mockSessionService = new LocalSession(mockDatabase);
 
     await TestBed.configureTestingModule({
       imports: [AppModule],
@@ -48,12 +45,11 @@ xdescribe("Performance Tests", () => {
 
   it("basic test example", async () => {
     await comparePerformance(
-      (num) => new Promise((resolve) =>
-        setTimeout(() => resolve(num), 100)),
+      (num) => new Promise((resolve) => setTimeout(() => resolve(num), 100)),
       (num) => Promise.resolve(num),
       "Basic performance test example",
       [10, 20, 30]
-    )
+    );
   });
 });
 
