@@ -9,7 +9,7 @@ import { DemoDataService } from "../core/demo-data/demo-data.service";
 import { PouchDatabase } from "../core/database/pouch-database";
 import { LocalSession } from "app/core/session/session-service/local-session";
 
-describe("Performance Tests", () => {
+xdescribe("Performance Tests", () => {
   let mockDatabase: PouchDatabase;
 
   beforeEach(async () => {
