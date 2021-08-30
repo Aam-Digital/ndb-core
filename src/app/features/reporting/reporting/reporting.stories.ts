@@ -8,9 +8,9 @@ import { ReportingService } from "../reporting.service";
 import { MatNativeDateModule } from "@angular/material/core";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeIconsModule } from "../../../core/icons/font-awesome-icons.module";
-import { BackupService } from "../../../core/admin/services/backup.service";
 import { ReportingModule } from "../reporting.module";
 import { genders } from "../../../child-dev-project/children/model/genders";
+import { ExportService } from "../../../core/export/export-service/export.service";
 
 const reportingService = {
   calculateReport: () => {
@@ -184,7 +184,7 @@ const reportingService = {
 };
 
 export default {
-  title: "Child Dev Project/Reporting",
+  title: "Features/Reporting",
   component: ReportingComponent,
   decorators: [
     moduleMetadata({
@@ -196,10 +196,15 @@ export default {
         FontAwesomeIconsModule,
       ],
       providers: [
-        { provide: ActivatedRoute, useValue: { data: of({}) } },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            data: of({ config: { reports: [{ title: "Dummy Report" }] } }),
+          },
+        },
         { provide: ReportingService, useValue: reportingService },
         {
-          provide: BackupService,
+          provide: ExportService,
           useValue: { createJson: () => {}, createCsv: () => {} },
         },
       ],

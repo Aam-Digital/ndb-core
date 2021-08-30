@@ -30,11 +30,8 @@ import { of, throwError } from "rxjs";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { DatabaseUser } from "./local-user";
-import {
-  TEST_PASSWORD,
-  TEST_USER,
-  testSessionServiceImplementation,
-} from "./session.service.spec";
+import { TEST_PASSWORD, TEST_USER } from "../mock-session.module";
+import { testSessionServiceImplementation } from "./session.service.spec";
 
 describe("SyncedSessionService", () => {
   let sessionService: SyncedSessionService;
