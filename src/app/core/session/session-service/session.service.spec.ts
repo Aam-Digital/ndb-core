@@ -18,9 +18,8 @@
 import { LoginState } from "../session-states/login-state.enum";
 import { SessionService } from "./session.service";
 import { SyncState } from "../session-states/sync-state.enum";
+import { TEST_PASSWORD, TEST_USER } from "../mock-session.module";
 
-export const TEST_USER = "test";
-export const TEST_PASSWORD = "pass";
 /**
  * Default tests for testing basic functionality of any SessionService implementation.
  * The session has to be setup, so TEST_USER and TEST_PASSWORD are (the only) valid credentials

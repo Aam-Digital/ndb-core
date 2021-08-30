@@ -13,8 +13,10 @@ import { AttendanceModule } from "../../attendance.module";
 import { MatNativeDateModule } from "@angular/material/core";
 import { AttendanceService } from "../../attendance.service";
 import { EventNote } from "../../model/event-note";
-import { MockSessionModule } from "../../../../core/session/mock-session.module";
-import { TEST_USER } from "../../../../core/session/session-service/session.service.spec";
+import {
+  MockSessionModule,
+  TEST_USER,
+} from "../../../../core/session/mock-session.module";
 
 describe("RollCallSetupComponent", () => {
   let component: RollCallSetupComponent;
