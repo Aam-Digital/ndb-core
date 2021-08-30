@@ -27,7 +27,7 @@
               matInput="text"
               id="username"
               type="text"
-              [value]="user.name"
+              [value]="username"
               disabled
             />
           </mat-form-field>
@@ -124,7 +124,7 @@
               Password changed successfully.
             </div>
             <div *ngIf="!passwordChangeResult.success" class="info error" i18n>
-              Failed to change password.<br />
+              Failed to change password: {{ passwordChangeResult.error }}<br />
               Please try again. If the problem persists contact Aam Digital
               support.
             </div>
@@ -149,7 +149,7 @@
     <ng-template matTabContent>
       <div class="user-profile-tab">
         <app-cloud-file-service-user-settings
-          [user]="user"
+          [username]="username"
         ></app-cloud-file-service-user-settings>
       </div>
     </ng-template>

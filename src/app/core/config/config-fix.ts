@@ -10,6 +10,7 @@ import { mathLevels } from "../../child-dev-project/aser/model/mathLevels";
 import { readingLevels } from "../../child-dev-project/aser/model/readingLevels";
 import { warningLevels } from "../../child-dev-project/warning-levels";
 import { ratingAnswers } from "../../features/historical-data/rating-answers";
+import { Note } from "../../child-dev-project/notes/model/note";
 
 // prettier-ignore
 export const defaultJsonConfig = {
@@ -244,19 +245,22 @@ export const defaultJsonConfig = {
   },
   "view:admin": {
     "component": "Admin",
-    "requiresAdmin": true
+    "permittedUserRoles": ["admin_app"]
   },
   "view:users": {
     "component": "UserList",
-    "requiresAdmin": true
+    "permittedUserRoles": ["admin_app"]
   },
   "view:admin/conflicts": {
     "component": "ConflictResolution",
-    "requiresAdmin": true,
+    "permittedUserRoles": ["admin_app"],
     "lazyLoaded":  true
   },
   "view:help": {
-    "component": "Help"
+    "component": "MarkdownPage",
+    "config": {
+      "markdownFile": $localize`:Filename of markdown help page (make sure the filename you enter as a translation actually exists on the server!):assets/help/help.en.md`,
+    }
   },
   "view:attendance": {
     "component": "AttendanceManager"
@@ -605,16 +609,16 @@ export const defaultJsonConfig = {
               component: "HistoricalDataComponent",
               config: [
                 "date",
-                "isMotivatedDuringClass" ,
-                "isParticipatingInClass",
-                "isInteractingWithOthers",
-                "doesHomework",
-                "isOnTime",
-                "asksQuestions",
-                "listens",
-                "canWorkOnBoard",
-                "isConcentrated",
-                "doesNotDisturb",
+                {id: "isMotivatedDuringClass", visibleFrom: "lg" },
+                {id: "isParticipatingInClass", visibleFrom: "lg" },
+                {id: "isInteractingWithOthers", visibleFrom: "lg" },
+                {id: "doesHomework", visibleFrom: "lg" },
+                {id: "isOnTime", visibleFrom: "lg" },
+                {id: "asksQuestions", visibleFrom: "lg" },
+                {id: "listens", visibleFrom: "lg" },
+                {id: "canWorkOnBoard", visibleFrom: "lg" },
+                {id: "isConcentrated", visibleFrom: "lg" },
+                {id: "doesNotDisturb", visibleFrom: "lg" },
               ]
             }
           ]
@@ -648,6 +652,11 @@ export const defaultJsonConfig = {
         "type",
         "assignedTo"
       ],
+      "exportConfig": [
+        { label: "Title", query: "title" },
+        { label: "Type", query: "type" },
+        { label: "Assigned users", query: "assignedTo" }
+      ]
     }
   },
   "view:recurring-activity/:id": {
@@ -770,6 +779,23 @@ export const defaultJsonConfig = {
           "aggregationDefinitions": [
             {
               "query": `${EventNote.ENTITY_TYPE}:toArray[*date >= ? & date <= ?]`,
+              "groupBy": ["category"],
+              "label": $localize`:Label for a report query:Events`,
+              "aggregations": [
+                {
+                  "query": `:getParticipantsWithAttendance(PRESENT):unique:addPrefix(${Child.ENTITY_TYPE}):toEntities`,
+                  "groupBy": ["gender", "religion"],
+                  "label": $localize`:Label for a report query:Participants`
+                }
+              ]
+            }
+          ],
+        },
+        {
+          "title": $localize`:Name of a report:Overall Activity Report`,
+          "aggregationDefinitions": [
+            {
+              "query": `${EventNote.ENTITY_TYPE}:toArray:addEntities(${Note.ENTITY_TYPE})[*date >= ? & date <= ?]`,
               "groupBy": ["category"],
               "label": $localize`:Label for a report query:Events`,
               "aggregations": [

@@ -23,29 +23,25 @@ import { LoggingService } from "../logging/logging.service";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { LoginState } from "./session-states/login-state.enum";
 import { SessionType } from "./session-type";
-import { NewLocalSessionService } from "./session-service/new-local-session.service";
 import { PouchDatabase } from "../database/pouch-database";
+import { HttpClient } from "@angular/common/http";
+import { LocalSession } from "./session-service/local-session";
 
 /**
  * Factory method for Angular DI provider of SessionService.
  *
  * see [sessionServiceProvider]{@link sessionServiceProvider} for details.
- *
- * @param alertService
- * @param loggingService
- * @param entitySchemaService
  */
 export function sessionServiceFactory(
   alertService: AlertService,
   loggingService: LoggingService,
-  entitySchemaService: EntitySchemaService
+  entitySchemaService: EntitySchemaService,
+  httpClient: HttpClient
 ): SessionService {
   let sessionService: SessionService;
   switch (AppConfig.settings.session_type) {
     case SessionType.local:
-      sessionService = new NewLocalSessionService(
-        loggingService,
-        entitySchemaService,
+      sessionService = new LocalSession(
         PouchDatabase.createWithIndexedDB(
           AppConfig.settings.database.name,
           loggingService
@@ -56,13 +52,12 @@ export function sessionServiceFactory(
       sessionService = new SyncedSessionService(
         alertService,
         loggingService,
-        entitySchemaService
+        entitySchemaService,
+        httpClient
       );
       break;
     default:
-      sessionService = new NewLocalSessionService(
-        loggingService,
-        entitySchemaService,
+      sessionService = new LocalSession(
         PouchDatabase.createWithInMemoryDB(
           AppConfig.settings.database.name,
           loggingService
@@ -70,8 +65,8 @@ export function sessionServiceFactory(
       );
       break;
   }
-  // TODO: requires a configuration or UI option to select OnlineSession: https://github.com/Aam-Digital/ndb-core/issues/434
-  // return new OnlineSessionService(alertService, entitySchemaService);
+  // TODO: requires a configuration or UI option to select RemoteSession: https://github.com/Aam-Digital/ndb-core/issues/434
+  // return new RemoteSession(httpClient, loggingService);
 
   updateLoggingServiceWithUserContext(sessionService);
 
@@ -81,18 +76,15 @@ export function sessionServiceFactory(
 function updateLoggingServiceWithUserContext(sessionService: SessionService) {
   // update the user context for remote error logging
   // cannot subscribe within LoggingService itself because of cyclic dependencies, therefore doing this here
-  sessionService
-    .getLoginState()
-    .getStateChangedStream()
-    .subscribe((newState) => {
-      if (newState.toState === LoginState.LOGGED_IN) {
-        LoggingService.setLoggingContextUser(
-          sessionService.getCurrentUser().name
-        );
-      } else {
-        LoggingService.setLoggingContextUser(undefined);
-      }
-    });
+  sessionService.loginState.subscribe((newState) => {
+    if (newState === LoginState.LOGGED_IN) {
+      LoggingService.setLoggingContextUser(
+        sessionService.getCurrentUser().name
+      );
+    } else {
+      LoggingService.setLoggingContextUser(undefined);
+    }
+  });
 }
 
 /**
@@ -105,5 +97,5 @@ function updateLoggingServiceWithUserContext(sessionService: SessionService) {
 export const sessionServiceProvider = {
   provide: SessionService,
   useFactory: sessionServiceFactory,
-  deps: [AlertService, LoggingService, EntitySchemaService],
+  deps: [AlertService, LoggingService, EntitySchemaService, HttpClient],
 };

@@ -6,21 +6,19 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { SimpleChange } from "@angular/core";
 import { BooleanFilterConfig, EntityListConfig } from "./EntityListConfig";
 import { Entity } from "../../entity/model/entity";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { User } from "../../user/user";
-import { SessionService } from "../../session/session-service/session.service";
 import { ChildrenListComponent } from "../../../child-dev-project/children/children-list/children-list.component";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ConfigService } from "../../config/config.service";
 import { LoggingService } from "../../logging/logging.service";
-import { BackupService } from "../../admin/services/backup.service";
 import { EntityListModule } from "./entity-list.module";
 import { Angulartics2Module } from "angulartics2";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { ReactiveFormsModule } from "@angular/forms";
 import { AttendanceService } from "../../../child-dev-project/attendance/attendance.service";
-import { ExportDataDirective } from "../../admin/export-data/export-data.directive";
+import { ExportModule } from "../../export/export.module";
+import { ExportService } from "../../export/export-service/export.service";
+import { MockSessionModule } from "../../session/mock-session.module";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -72,18 +70,13 @@ describe("EntityListComponent", () => {
   };
   let mockConfigService: jasmine.SpyObj<ConfigService>;
   let mockLoggingService: jasmine.SpyObj<LoggingService>;
-  let mockSessionService: jasmine.SpyObj<SessionService>;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let mockEntitySchemaService: jasmine.SpyObj<EntitySchemaService>;
   let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
 
   beforeEach(
     waitForAsync(() => {
-      mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
-      mockSessionService.getCurrentUser.and.returnValue(new User("test1"));
       mockConfigService = jasmine.createSpyObj(["getConfig"]);
       mockLoggingService = jasmine.createSpyObj(["warn"]);
-      mockEntityMapper = jasmine.createSpyObj(["save"]);
       mockEntitySchemaService = jasmine.createSpyObj([
         "getComponent",
         "registerSchemaDatatype",
@@ -98,24 +91,24 @@ describe("EntityListComponent", () => {
       );
 
       TestBed.configureTestingModule({
-        declarations: [EntityListComponent, ExportDataDirective],
+        declarations: [EntityListComponent],
         imports: [
           CommonModule,
           NoopAnimationsModule,
           EntityListModule,
+          ExportModule,
           Angulartics2Module.forRoot(),
           ReactiveFormsModule,
           RouterTestingModule.withRoutes([
             { path: "child", component: ChildrenListComponent },
           ]),
+          MockSessionModule.withState(),
         ],
         providers: [
           DatePipe,
-          { provide: SessionService, useValue: mockSessionService },
           { provide: ConfigService, useValue: mockConfigService },
-          { provide: EntityMapperService, useValue: mockEntityMapper },
           { provide: LoggingService, useValue: mockLoggingService },
-          { provide: BackupService, useValue: {} },
+          { provide: ExportService, useValue: {} },
           { provide: EntitySchemaService, useValue: mockEntitySchemaService },
           { provide: AttendanceService, useValue: mockAttendanceService },
         ],

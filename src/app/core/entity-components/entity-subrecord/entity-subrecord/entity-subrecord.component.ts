@@ -254,11 +254,14 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
             duration: 8000,
           }
         );
-        snackBarRef.onAction().subscribe(() => {
-          this._entityMapper.save(row.record, true);
-          this.records.unshift(row.record);
-          this.initFormGroups();
-        });
+        snackBarRef
+          .onAction()
+          .pipe(untilDestroyed(this))
+          .subscribe(() => {
+            this._entityMapper.save(row.record, true);
+            this.records.unshift(row.record);
+            this.initFormGroups();
+          });
       }
     });
   }
@@ -300,23 +303,28 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   private showEntityInForm(entity: T) {
     const dialogRef = this.dialog.open(EntityFormComponent, {
       width: "80%",
-    });
+      maxHeight: "90vh",
+    }); // TODO: shouldn't this use FormDialogService rather than directly MatDialog? #921
     // Making a copy of the editable columns before assigning them
     dialogRef.componentInstance.columns = this._columns
       .filter((col) => col.edit)
       .map((col) => [Object.assign({}, col)]);
     dialogRef.componentInstance.entity = entity;
     dialogRef.componentInstance.editing = true;
-    dialogRef.componentInstance.onSave.subscribe((updatedEntity: T) => {
-      dialogRef.close();
-      // Trigger the change detection
-      const rowIndex = this.recordsDataSource.data.findIndex(
-        (row) => row.record === entity
-      );
-      this.recordsDataSource.data[rowIndex] = { record: updatedEntity };
-      this.recordsDataSource._updateChangeSubscription();
-    });
-    dialogRef.componentInstance.onCancel.subscribe(() => dialogRef.close());
+    dialogRef.componentInstance.onSave
+      .pipe(untilDestroyed(this))
+      .subscribe((updatedEntity: T) => {
+        dialogRef.close();
+        // Trigger the change detection
+        const rowIndex = this.recordsDataSource.data.findIndex(
+          (row) => row.record === entity
+        );
+        this.recordsDataSource.data[rowIndex] = { record: updatedEntity };
+        this.recordsDataSource._updateChangeSubscription();
+      });
+    dialogRef.componentInstance.onCancel
+      .pipe(untilDestroyed(this))
+      .subscribe(() => dialogRef.close());
   }
 
   /**

@@ -32,12 +32,6 @@ export class User extends Entity {
   /** username used for login and identification */
   @DatabaseField() name: string;
 
-  /** whether this user has admin rights */
-  @DatabaseField() admin: boolean;
-
-  /** password object (encrypted) */
-  @DatabaseField() private password: any;
-
   /** settings for the mat-paginator for tables
    * pageSizeOptions is set in the corresponding html of the component,
    * pageSize is stored persistently in the database and
@@ -46,7 +40,7 @@ export class User extends Entity {
   @DatabaseField() paginatorSettingsPageSize: any = {};
   public paginatorSettingsPageIndex: any = {};
 
-  /** password for webdav account (encrypted with user.password) */
+  /** password for webdav account (encrypted) */
   @DatabaseField() private cloudPasswordEnc: any;
 
   /** username for webdav account */
@@ -57,58 +51,6 @@ export class User extends Entity {
 
   /** base folder for webdav, all actions of the app will happen relative to this as the root folder */
   @DatabaseField() public cloudBaseFolder: string = "/aam-digital/";
-
-  /**
-   * Set a new user password.
-   * This will be encrypted before saving.
-   *
-   * Warning: User password must be identical to the CouchDB user password. Otherwise database sync will fail!
-   *
-   * @param password The new password to be set
-   */
-  public setNewPassword(password: string) {
-    const cryptKeySize = 256 / 32;
-    const cryptIterations = 128;
-    const cryptSalt = CryptoJS.lib.WordArray.random(128 / 8).toString();
-    const hash = CryptoJS.PBKDF2(password, cryptSalt, {
-      keySize: cryptKeySize,
-      iterations: cryptIterations,
-    }).toString();
-
-    this.password = {
-      hash: hash,
-      salt: cryptSalt,
-      iterations: cryptIterations,
-      keysize: cryptKeySize,
-    };
-
-    // update encrypted nextcloud password
-    this.cloudPasswordEnc = CryptoJS.AES.encrypt(
-      this.cloudPasswordDec,
-      password
-    ).toString();
-  }
-
-  /**
-   * Check whether the given password is correct.
-   * @param givenPassword Password attempted
-   */
-  public checkPassword(givenPassword: string): boolean {
-    // hash the given password string and compare it with the stored hash
-    return this.hashPassword(givenPassword) === this.password.hash;
-  }
-
-  private hashPassword(givenPassword: string): string {
-    const options = {
-      keySize: this.password.keysize,
-      iterations: this.password.iterations,
-    };
-    return CryptoJS.PBKDF2(
-      givenPassword,
-      this.password.salt,
-      options
-    ).toString();
-  }
 
   /**
    * Decrypt the stored cloud password with the user's regular password.
@@ -133,28 +75,11 @@ export class User extends Entity {
    * @param givenPassword The user entity's password (used for encrypting the cloud password before storage)
    */
   public setCloudPassword(blobPassword: string, givenPassword: string) {
-    if (this.checkPassword(givenPassword)) {
-      this.cloudPasswordDec = blobPassword;
-      this.cloudPasswordEnc = CryptoJS.AES.encrypt(
-        blobPassword,
-        givenPassword
-      ).toString();
-    }
-  }
-
-  /**
-   * Check admin rights of the user.
-   */
-  public isAdmin(): boolean {
-    return this.admin || false;
-  }
-
-  /**
-   * Change this user's admin status
-   * @param admin New admin status to be set
-   */
-  public setAdmin(admin: boolean) {
-    this.admin = admin;
+    this.cloudPasswordDec = blobPassword;
+    this.cloudPasswordEnc = CryptoJS.AES.encrypt(
+      blobPassword,
+      givenPassword
+    ).toString();
   }
 
   toString(): string {

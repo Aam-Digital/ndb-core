@@ -21,7 +21,6 @@ import { LoginComponent } from "./login/login.component";
 import { FormsModule } from "@angular/forms";
 import { EntityModule } from "../entity/entity.module";
 import { AlertsModule } from "../alerts/alerts.module";
-import { LoggedInGuard } from "./logged-in-guard/logged-in.guard";
 import { sessionServiceProvider } from "./session.service.provider";
 import { databaseServiceProvider } from "../database/database.service.provider";
 import { UserModule } from "../user/user.module";
@@ -30,6 +29,7 @@ import { MatCardModule } from "@angular/material/card";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { RouterModule } from "@angular/router";
+import { HttpClientModule } from "@angular/common/http";
 
 /**
  * The core session logic handling user login as well as connection and synchronization with the remote database.
@@ -49,9 +49,10 @@ import { RouterModule } from "@angular/router";
     MatButtonModule,
     RouterModule,
     UserModule,
+    HttpClientModule,
   ],
   declarations: [LoginComponent],
   exports: [LoginComponent],
-  providers: [LoggedInGuard, sessionServiceProvider, databaseServiceProvider],
+  providers: [sessionServiceProvider, databaseServiceProvider],
 })
 export class SessionModule {}

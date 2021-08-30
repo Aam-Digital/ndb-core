@@ -1,7 +1,14 @@
 @use 'src/app/core/dashboard/dashboard-widget-base';
 
 .filler {
-  width: 100%;
+  width: 45%;
+  padding-left: 40px;
+  padding-right: 5px;
+}
+
+.align-right {
+  padding-right: 10px;
+  text-align: right;
 }
 
 .dashboard-config {

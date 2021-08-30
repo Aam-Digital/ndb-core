@@ -5,7 +5,6 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { BrowserModule } from "@angular/platform-browser";
 import { AlertsModule } from "../alerts/alerts.module";
-import { AdminGuard } from "./admin.guard";
 import { EntityModule } from "../entity/entity.module";
 import { HttpClientModule } from "@angular/common/http";
 import { ChildPhotoUpdateService } from "./services/child-photo-update.service";
@@ -19,7 +18,6 @@ import { MatIconModule } from "@angular/material/icon";
 import { UserListComponent } from "./user-list/user-list.component";
 import { BackupService } from "./services/backup.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { ExportDataDirective } from "./export-data/export-data.directive";
 
 /**
  * GUI for administrative users to manage and maintain background and technical aspects of the app.
@@ -43,8 +41,7 @@ import { ExportDataDirective } from "./export-data/export-data.directive";
     MatIconModule,
     MatTooltipModule,
   ],
-  declarations: [AdminComponent, UserListComponent, ExportDataDirective],
-  providers: [AdminGuard, ChildPhotoUpdateService, BackupService],
-  exports: [ExportDataDirective],
+  declarations: [AdminComponent, UserListComponent],
+  providers: [ChildPhotoUpdateService, BackupService],
 })
 export class AdminModule {}

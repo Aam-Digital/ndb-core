@@ -1,5 +1,6 @@
 import { Directive, HostListener, Input } from "@angular/core";
-import { BackupService } from "../services/backup.service";
+import { ExportService } from "../export-service/export.service";
+import { ExportColumnConfig } from "../export-service/export-column-config";
 
 /**
  * A directive that can be attached to a html element, commonly a button.
@@ -28,17 +29,24 @@ export class ExportDataDirective {
   /** filename for the download of the exported data */
   @Input() filename: string = "exportedData";
 
-  constructor(private backupService: BackupService) {}
+  /**
+   * (Optional) definition of fields to be exported.
+   *
+   * If not provided, all properties will be included in the export.
+   */
+  @Input() exportConfig: ExportColumnConfig[];
 
-  exportData() {
-    const blobData = this.getFormattedBlobData();
+  constructor(private exportService: ExportService) {}
+
+  async exportData() {
+    const blobData = await this.getFormattedBlobData();
     const link = this.createDownloadLink(blobData);
     link.click();
   }
 
   @HostListener("click")
-  click() {
-    this.exportData();
+  async click() {
+    await this.exportData();
   }
 
   private createDownloadLink(blobData): HTMLAnchorElement {
@@ -51,14 +59,17 @@ export class ExportDataDirective {
     return link;
   }
 
-  private getFormattedBlobData(): Blob {
+  private async getFormattedBlobData(): Promise<Blob> {
     let result = "";
     switch (this.format.toLowerCase()) {
       case "json":
-        result = this.backupService.createJson(this.data);
+        result = this.exportService.createJson(this.data); // TODO: support exportConfig for json format
         return new Blob([result], { type: "application/json" });
       case "csv":
-        result = this.backupService.createCsv(this.data);
+        result = await this.exportService.createCsv(
+          this.data,
+          this.exportConfig
+        );
         return new Blob([result], { type: "text/csv" });
       default:
         console.warn("Not supported format:", this.format);

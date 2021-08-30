@@ -22,23 +22,23 @@ import { SchoolsListComponent } from "./child-dev-project/schools/schools-list/s
 import { UserAccountComponent } from "./core/user/user-account/user-account.component";
 import { ChildrenListComponent } from "./child-dev-project/children/children-list/children-list.component";
 import { AdminComponent } from "./core/admin/admin/admin.component";
-import { AdminGuard } from "./core/admin/admin.guard";
 import { NotesManagerComponent } from "./child-dev-project/notes/notes-manager/notes-manager.component";
 import { AddDayAttendanceComponent } from "./child-dev-project/attendance/add-day-attendance/add-day-attendance.component";
 import { AttendanceManagerComponent } from "./child-dev-project/attendance/attendance-manager/attendance-manager.component";
-import { HowToComponent } from "./core/help/how-to/how-to.component";
+import { MarkdownPageComponent } from "./core/markdown-page/markdown-page/markdown-page.component";
 import { UserListComponent } from "./core/admin/user-list/user-list.component";
 import { EntityDetailsComponent } from "./core/entity-components/entity-details/entity-details.component";
 import { ConflictResolutionListComponent } from "./conflict-resolution/conflict-resolution-list/conflict-resolution-list.component";
 import { ActivityListComponent } from "./child-dev-project/attendance/activity-list/activity-list.component";
 import { ReportingComponent } from "./features/reporting/reporting/reporting.component";
+import { UserRoleGuard } from "./core/permissions/user-role.guard";
 
 export const COMPONENT_MAP = {
   Dashboard: DashboardComponent,
   UserAccount: UserAccountComponent,
   NotesManager: NotesManagerComponent,
   UserList: UserListComponent,
-  Help: HowToComponent,
+  MarkdownPage: MarkdownPageComponent,
   AttendanceManager: AttendanceManagerComponent,
   AddDayAttendance: AddDayAttendanceComponent,
   SchoolsList: SchoolsListComponent,
@@ -57,7 +57,7 @@ export const routes: Routes = [
   // routes are added dynamically by the RouterService
   {
     path: "admin/conflicts",
-    canActivate: [AdminGuard],
+    canActivate: [UserRoleGuard],
     loadChildren: () =>
       import("./conflict-resolution/conflict-resolution.module").then(
         (m) => m["ConflictResolutionModule"]

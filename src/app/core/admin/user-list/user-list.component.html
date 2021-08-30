@@ -7,15 +7,6 @@
     <th mat-header-cell *matHeaderCellDef i18n>Username</th>
     <td mat-cell *matCellDef="let user">{{ user.name }}</td>
   </ng-container>
-  <ng-container matColumnDef="admin">
-    <th mat-header-cell *matHeaderCellDef i18n>Admin</th>
-    <td mat-cell *matCellDef="let user">
-      <mat-checkbox
-        [checked]="user.isAdmin()"
-        (change)="makeAdmin(user, $event.checked)"
-      ></mat-checkbox>
-    </td>
-  </ng-container>
   <ng-container matColumnDef="details">
     <th mat-header-cell *matHeaderCellDef i18n="Details of a certain User">
       Details

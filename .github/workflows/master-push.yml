@@ -50,20 +50,3 @@ jobs:
             CC_TEST_REPORTER_ID=${{ secrets.CODE_CLIMATE_ID }}
           cache-from: type=registry,ref=aamdigital/ndb-server:cache
           cache-to: type=registry,ref=aamdigital/ndb-server:cache,mode=max
-  run-semantic-release:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          persist-credentials: false
-      - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
-        with:
-          extra_plugins: |
-            @google/semantic-release-replace-plugin
-            @semantic-release/git
-            @semantic-release/github
-            semantic-release-slack-bot

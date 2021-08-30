@@ -16,82 +16,47 @@
  */
 
 import PouchDB from "pouchdb-browser";
-import PouchDBAuthentication from "pouchdb-authentication";
 
 import { AppConfig } from "../../app-config/app-config";
 import { Injectable } from "@angular/core";
-import { StateHandler } from "../session-states/state-handler";
-import { ConnectionState } from "../session-states/connection-state.enum";
-
-PouchDB.plugin(PouchDBAuthentication);
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
+import { DatabaseUser } from "./local-user";
+import { SessionService } from "./session.service";
+import { LoginState } from "../session-states/login-state.enum";
+import { Database } from "../../database/database";
+import { PouchDatabase } from "../../database/pouch-database";
+import { LoggingService } from "../../logging/logging.service";
 
 /**
  * Responsibilities:
  * - Hold the remote DB
- * - Handle auth
+ * - Handle auth against CouchDB
  * - provide "am i online"-info
  */
 @Injectable()
-export class RemoteSession {
+export class RemoteSession extends SessionService {
+  // See https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+  readonly UNAUTHORIZED_STATUS_CODE = 401;
   /** remote (!) database PouchDB */
-  public database: any;
-
-  /** state of the remote connection */
-  public connectionState: StateHandler<ConnectionState> = new StateHandler<ConnectionState>(
-    ConnectionState.DISCONNECTED
-  );
+  public pouchDB: PouchDB.Database;
+  private readonly database: Database;
+  private currentDBUser: DatabaseUser;
 
   /**
-   * Create a RemoteSession and set up connection to the remote database CouchDB server configured in AppConfig.
+   * Create a RemoteSession and set up connection to the remote CouchDB server configured in AppConfig.
    */
-  constructor() {
-    const thisRemoteSession = this;
-    this.database = new PouchDB(
+  constructor(
+    private httpClient: HttpClient,
+    private loggingService: LoggingService
+  ) {
+    super();
+    this.pouchDB = new PouchDB(
       AppConfig.settings.database.remote_url + AppConfig.settings.database.name,
       {
-        ajax: {
-          rejectUnauthorized: false,
-          timeout: 60000,
-        },
-        // This is a workaround for PouchDB 7.0.0 with pouchdb-authentication 1.1.3:
-        // https://github.com/pouchdb-community/pouchdb-authentication/issues/239
-        // It is necessary, until this merged PR will be published in PouchDB 7.0.1
-        // https://github.com/pouchdb/pouchdb/pull/7395
-        fetch(url, opts) {
-          opts.credentials = "include";
-          const req = fetch(url, opts);
-          req.then((result) => {
-            if (
-              thisRemoteSession.connectionState.getState() ===
-              ConnectionState.OFFLINE
-            ) {
-              thisRemoteSession.connectionState.setState(
-                ConnectionState.CONNECTED
-              );
-            }
-            return result;
-          });
-          req.catch((error) => {
-            // fetch will throw on network errors, giving us a chance to check the online status
-            // if we are offline at the start, this will already be set on login, so we need not check that initial condition here
-            // do not set offline on AbortErrors, as these are fine:
-            // https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch#Exceptions
-            if (
-              error.name !== "AbortError" &&
-              thisRemoteSession.connectionState.getState() ===
-                ConnectionState.CONNECTED
-            ) {
-              thisRemoteSession.connectionState.setState(
-                ConnectionState.OFFLINE
-              );
-            }
-            throw error;
-          });
-          return req;
-        },
         skip_setup: true,
-      } as PouchDB.Configuration.RemoteDatabaseConfiguration
+      }
     );
+    this.database = new PouchDatabase(this.pouchDB, this.loggingService);
   }
 
   /**
@@ -99,38 +64,62 @@ export class RemoteSession {
    * @param username Username
    * @param password Password
    */
-  public async login(
-    username: string,
-    password: string
-  ): Promise<ConnectionState> {
-    const ajaxOpts = {
-      ajax: {
-        headers: {
-          Authorization: "Basic " + window.btoa(username + ":" + password),
-        },
-      },
-    };
-
+  public async login(username: string, password: string): Promise<LoginState> {
     try {
-      await this.database.login(username, password, ajaxOpts);
-      this.connectionState.setState(ConnectionState.CONNECTED);
-      return ConnectionState.CONNECTED;
+      const response = await this.httpClient
+        .post(
+          `${AppConfig.settings.database.remote_url}_session`,
+          { name: username, password: password },
+          { withCredentials: true }
+        )
+        .toPromise();
+      this.assignDatabaseUser(response);
+      this.loginState.next(LoginState.LOGGED_IN);
     } catch (error) {
-      if (error.name === "unauthorized" || error.name === "forbidden") {
-        this.connectionState.setState(ConnectionState.REJECTED);
-        return ConnectionState.REJECTED;
+      const httpError = error as HttpErrorResponse;
+      if (httpError?.status === this.UNAUTHORIZED_STATUS_CODE) {
+        this.loginState.next(LoginState.LOGIN_FAILED);
       } else {
-        this.connectionState.setState(ConnectionState.OFFLINE);
-        return ConnectionState.OFFLINE;
+        this.loginState.next(LoginState.UNAVAILABLE);
       }
     }
+    return this.loginState.value;
+  }
+
+  private assignDatabaseUser(couchDBResponse: any) {
+    this.currentDBUser = {
+      name: couchDBResponse.name,
+      roles: couchDBResponse.roles,
+    };
   }
 
   /**
    * Logout at the remote database.
    */
-  public logout(): void {
-    this.database.logout();
-    this.connectionState.setState(ConnectionState.DISCONNECTED);
+  public async logout(): Promise<void> {
+    await this.httpClient
+      .delete(`${AppConfig.settings.database.remote_url}_session`, {
+        withCredentials: true,
+      })
+      .toPromise();
+    this.currentDBUser = undefined;
+    this.loginState.next(LoginState.LOGGED_OUT);
+  }
+
+  getCurrentUser(): DatabaseUser {
+    return this.currentDBUser;
+  }
+
+  checkPassword(username: string, password: string): boolean {
+    // Cannot be checked against CouchDB due to cookie-auth
+    throw Error("Can't check password in remote session");
+  }
+
+  getDatabase(): Database {
+    return this.database;
+  }
+
+  sync(): Promise<any> {
+    return Promise.reject(new Error("Cannot sync remote session"));
   }
 }

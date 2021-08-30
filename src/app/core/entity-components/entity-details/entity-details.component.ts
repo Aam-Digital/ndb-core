@@ -21,6 +21,8 @@ import {
 } from "../../permissions/entity-permissions.service";
 import { User } from "../../user/user";
 import { Note } from "../../../child-dev-project/notes/model/note";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { RouteData } from "../../view/dynamic-routing/view-config.interface";
 
 export const ENTITY_MAP: Map<string, EntityConstructor<Entity>> = new Map<
   string,
@@ -41,6 +43,7 @@ export const ENTITY_MAP: Map<string, EntityConstructor<Entity>> = new Map<
  * Any component from the DYNAMIC_COMPONENT_MAP can be used as a subcomponent.
  * The subcomponents will be provided with the Entity object and the creating new status, as well as it's static config.
  */
+@UntilDestroy()
 @Component({
   selector: "app-entity-details",
   templateUrl: "./entity-details.component.html",
@@ -53,7 +56,7 @@ export class EntityDetailsComponent {
   operationType = OperationType;
 
   panels: Panel[] = [];
-  classNamesWithIcon: String;
+  classNamesWithIcon: string;
   config: EntityDetailsConfig;
 
   constructor(
@@ -65,9 +68,9 @@ export class EntityDetailsComponent {
     private confirmationDialog: ConfirmationDialogService,
     private permissionService: EntityPermissionsService
   ) {
-    this.route.data.subscribe((config: EntityDetailsConfig) => {
-      this.config = config;
-      this.classNamesWithIcon = "fa fa-" + config.icon + " fa-fw";
+    this.route.data.subscribe((data: RouteData<EntityDetailsConfig>) => {
+      this.config = data.config;
+      this.classNamesWithIcon = "fa fa-" + data.config.icon + " fa-fw";
       this.route.paramMap.subscribe((params) =>
         this.loadEntity(params.get("id"))
       );
@@ -141,10 +144,13 @@ export class EntityDetailsComponent {
           "Undo",
           { duration: 8000 }
         );
-        snackBarRef.onAction().subscribe(() => {
-          this.entityMapperService.save(this.entity, true);
-          this.router.navigate([currentUrl]);
-        });
+        snackBarRef
+          .onAction()
+          .pipe(untilDestroyed(this))
+          .subscribe(() => {
+            this.entityMapperService.save(this.entity, true);
+            this.router.navigate([currentUrl]);
+          });
       }
     });
   }

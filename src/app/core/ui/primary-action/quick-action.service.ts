@@ -33,7 +33,7 @@ export class QuickActionService {
   private createNewNote() {
     const newNote = new Note(Date.now().toString());
     newNote.date = new Date();
-    newNote.authors = [this.sessionService.getCurrentUser().getId()];
+    newNote.authors = [this.sessionService.getCurrentUser().name];
     return newNote;
   }
 

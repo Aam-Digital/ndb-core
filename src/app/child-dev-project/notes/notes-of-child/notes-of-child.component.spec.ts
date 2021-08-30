@@ -5,19 +5,11 @@ import { MatNativeDateModule } from "@angular/material/core";
 import { ChildrenService } from "../../children/children.service";
 import { DatePipe } from "@angular/common";
 import { Note } from "../model/note";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { SessionService } from "../../../core/session/session-service/session.service";
 import { Child } from "../../children/model/child";
-import { User } from "../../../core/user/user";
 import { RouterTestingModule } from "@angular/router/testing";
+import { MockSessionModule } from "../../../core/session/mock-session.module";
 
 const allChildren: Array<Note> = [];
-
-const mockedSessionService = {
-  getCurrentUser(): User {
-    return new User("1");
-  },
-};
 
 describe("NotesOfChildComponent", () => {
   let component: NotesOfChildComponent;
@@ -30,12 +22,15 @@ describe("NotesOfChildComponent", () => {
       "getNotesOfChild",
     ]);
     TestBed.configureTestingModule({
-      imports: [NotesModule, MatNativeDateModule, RouterTestingModule],
+      imports: [
+        NotesModule,
+        MatNativeDateModule,
+        RouterTestingModule,
+        MockSessionModule.withState(),
+      ],
       providers: [
         { provide: ChildrenService, useValue: mockChildrenService },
-        { provide: SessionService, useValue: mockedSessionService },
         { provide: DatePipe, useValue: new DatePipe("medium") },
-        { provide: EntityMapperService, useValue: {} },
       ],
     }).compileComponents();
   });

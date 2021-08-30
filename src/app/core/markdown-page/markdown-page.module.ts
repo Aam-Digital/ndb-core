@@ -15,17 +15,21 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { NewLocalSessionService } from "./new-local-session.service";
-import { testSessionServiceImplementation } from "./session.service.spec";
-import { PouchDatabase } from "../../database/pouch-database";
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { MarkdownPageComponent } from "./markdown-page/markdown-page.component";
+import { HttpClient, HttpClientModule } from "@angular/common/http";
+import { MarkdownModule } from "ngx-markdown";
 
-describe("NewLocalSessionService", async () => {
-  testSessionServiceImplementation(async () => {
-    return new NewLocalSessionService(
-      jasmine.createSpyObj(["warn"]),
-      new EntitySchemaService(),
-      PouchDatabase.createWithInMemoryDB()
-    );
-  });
-});
+/**
+ * Display any information contained in a markdown file.
+ */
+@NgModule({
+  declarations: [MarkdownPageComponent],
+  imports: [
+    CommonModule,
+    HttpClientModule,
+    MarkdownModule.forRoot({ loader: HttpClient }),
+  ],
+})
+export class MarkdownPageModule {}

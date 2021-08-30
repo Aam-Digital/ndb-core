@@ -2,7 +2,7 @@
 # To use it only Docker needs to be installed locally
 # Run the following commands from the root folder to build, run and kill the application
 # >> docker build -f build/Dockerfile -t aam/digital:latest .
-# >> docker run -p=80:80 aam/digital:latest aam-digital
+# >> docker run -p=80:80 aam/digital:latest
 # >> docker kill aam-digital
 FROM node:15.11.0-alpine3.13 as builder
 WORKDIR /app

@@ -1,9 +1,9 @@
-import { ExportDataDirective } from "./export-data.directive";
-import { BackupService } from "../services/backup.service";
 import { TestBed, waitForAsync } from "@angular/core/testing";
+import { ExportService } from "../export-service/export.service";
+import { ExportDataDirective } from "./export-data.directive";
 
 describe("ExportDataDirective", () => {
-  let mockBackupService: jasmine.SpyObj<BackupService>;
+  let mockBackupService: jasmine.SpyObj<ExportService>;
   let directive: ExportDataDirective;
 
   beforeEach(
@@ -11,7 +11,7 @@ describe("ExportDataDirective", () => {
       mockBackupService = jasmine.createSpyObj(["createJson", "createCsv"]);
       TestBed.configureTestingModule({
         declarations: [ExportDataDirective],
-        providers: [{ provide: BackupService, useValue: mockBackupService }],
+        providers: [{ provide: ExportService, useValue: mockBackupService }],
       }).compileComponents();
       directive = new ExportDataDirective(mockBackupService);
     })

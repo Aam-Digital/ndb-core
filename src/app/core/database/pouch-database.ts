@@ -29,9 +29,15 @@ import { PerformanceAnalysisLogging } from "../../utils/performance-analysis-log
  * should be implemented in the abstract {@link Database}.
  */
 export class PouchDatabase extends Database {
-  static async createWithData(data: any[]): Promise<PouchDatabase> {
+  /**
+   * Creates a PouchDB in-memory instance in which the passed documents are saved.
+   * The functions returns immediately but the documents are saved asynchronously.
+   * In tests use `tick()` or `waitForAsync()` to prevent accessing documents before they are saved.
+   * @param data an array of documents
+   */
+  static createWithData(data: any[]): PouchDatabase {
     const instance = PouchDatabase.createWithInMemoryDB();
-    await Promise.all(data.map((doc) => instance.put(doc)));
+    data.forEach((doc) => instance.put(doc, true));
     return instance;
   }
 
@@ -116,9 +122,9 @@ export class PouchDatabase extends Database {
    */
   put(object: any, forceOverwrite?: boolean): Promise<any> {
     const options: any = {};
-    // if (forceOverwrite) {
-    //   options.force = true;
-    // }
+    if (forceOverwrite) {
+      object._rev = undefined;
+    }
 
     return this._pouchDB.put(object, options).catch((err) => {
       if (err.status === 409) {
@@ -242,6 +248,7 @@ export class PouchDatabase extends Database {
       return this.put(newObject);
     } else {
       existingError.message = existingError.message + " (unable to resolve)";
+      existingError.affectedDocument = newObject._id;
       throw existingError;
     }
   }

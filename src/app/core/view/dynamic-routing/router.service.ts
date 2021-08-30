@@ -1,10 +1,14 @@
 import { Injectable } from "@angular/core";
 import { Route, Router } from "@angular/router";
 import { COMPONENT_MAP } from "../../../app.routing";
-import { AdminGuard } from "../../admin/admin.guard";
 import { ConfigService } from "../../config/config.service";
 import { LoggingService } from "../../logging/logging.service";
-import { ViewConfig } from "./view-config.interface";
+import {
+  PREFIX_VIEW_CONFIG,
+  RouteData,
+  ViewConfig,
+} from "./view-config.interface";
+import { UserRoleGuard } from "../../permissions/user-role.guard";
 
 /**
  * The RouterService dynamically sets up Angular routing from config loaded through the {@link ConfigService}.
@@ -16,8 +20,6 @@ import { ViewConfig } from "./view-config.interface";
   providedIn: "root",
 })
 export class RouterService {
-  static readonly PREFIX_VIEW_CONFIG = "view:";
-
   constructor(
     private configService: ConfigService,
     private router: Router,
@@ -29,7 +31,7 @@ export class RouterService {
    */
   initRouting() {
     const viewConfigs = this.configService.getAllConfigs<ViewConfig>(
-      RouterService.PREFIX_VIEW_CONFIG
+      PREFIX_VIEW_CONFIG
     );
     this.reloadRouting(viewConfigs, this.router.config, true);
   }
@@ -79,19 +81,25 @@ export class RouterService {
   }
 
   private generateRouteFromConfig(view: ViewConfig): Route {
-    const path = view._id.substring(RouterService.PREFIX_VIEW_CONFIG.length); // remove prefix to get actual path
+    const path = view._id.substring(PREFIX_VIEW_CONFIG.length); // remove prefix to get actual path
 
     const route: Route = {
       path: path,
       component: COMPONENT_MAP[view.component],
     };
-    if (view.requiresAdmin) {
-      route.canActivate = [AdminGuard];
-    }
-    if (view.config) {
-      route.data = view.config;
+
+    const routeData: RouteData = {};
+
+    if (view.permittedUserRoles) {
+      route.canActivate = [UserRoleGuard];
+      routeData.permittedUserRoles = view.permittedUserRoles;
     }
 
+    if (view.config) {
+      routeData.config = view.config;
+    }
+
+    route.data = routeData;
     return route;
   }
 }

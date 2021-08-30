@@ -12,8 +12,9 @@ import { MatDialogRef } from "@angular/material/dialog";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
-import { ConfirmationDialogService } from "app/core/confirmation-dialog/confirmation-dialog.service";
+import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { OperationType } from "../../permissions/entity-permissions.service";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Use `<app-form-dialog-wrapper>` in your form templates to handle the saving and resetting of the edited entity.
@@ -31,6 +32,7 @@ import { OperationType } from "../../permissions/entity-permissions.service";
    </form>
  </app-form-dialog-wrapper>
  */
+@UntilDestroy()
 @Component({
   selector: "app-form-dialog-wrapper",
   templateUrl: "./form-dialog-wrapper.component.html",
@@ -47,6 +49,9 @@ export class FormDialogWrapperComponent implements AfterViewInit {
   get entity(): Entity {
     return this._entity;
   }
+
+  // TODO: workaround, possibly remove after creating a proper read-only entity view dialog service #921
+  @Input() readonly: boolean = false;
 
   /** actual reference to the entity to be edited in the form used by the getter/setter */
   private _entity: Entity;
@@ -80,9 +85,11 @@ export class FormDialogWrapperComponent implements AfterViewInit {
   ) {}
 
   ngAfterViewInit() {
-    this.contentForm.form.statusChanges.subscribe(() => {
-      this.matDialogRef.disableClose = this.isFormDirty;
-    });
+    this.contentForm.form.statusChanges
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.matDialogRef.disableClose = this.isFormDirty;
+      });
   }
 
   /**
@@ -136,10 +143,13 @@ export class FormDialogWrapperComponent implements AfterViewInit {
           "Undo",
           { duration: 8000 }
         );
-        snackBarRef.onAction().subscribe(() => {
-          this.entityMapper.save(this.entity, true);
-          this.router.navigate([currentUrl]);
-        });
+        snackBarRef
+          .onAction()
+          .pipe(untilDestroyed(this))
+          .subscribe(() => {
+            this.entityMapper.save(this.entity, true);
+            this.router.navigate([currentUrl]);
+          });
       }
     });
   }
