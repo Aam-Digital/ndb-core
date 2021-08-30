@@ -110,7 +110,7 @@ describe("ChildrenOverviewComponent", () => {
     const dialogComponent = {
       onSave: new EventEmitter(),
       onCancel: new EventEmitter(),
-    }
+    };
     spyOn(dialog, "open").and.returnValues({
       componentInstance: dialogComponent,
       close: () => {},
@@ -130,7 +130,7 @@ describe("ChildrenOverviewComponent", () => {
     const dialogComponent = {
       onSave: new EventEmitter(),
       onCancel: new EventEmitter(),
-    }
+    };
     const closeSpy = jasmine.createSpy();
     spyOn(dialog, "open").and.returnValues({
       componentInstance: dialogComponent,
@@ -159,13 +159,13 @@ describe("ChildrenOverviewComponent", () => {
     const config: PanelConfig = {
       entity: new Child(),
       config: { popupColumns: popupColumns },
-    }
+    };
 
     component.onInitFromDynamicConfig(config);
     tick();
     component.addChildClick();
     tick();
 
-    expect(dialogComponent.columns).toEqual(popupColumns.map(col => [col]));
+    expect(dialogComponent.columns).toEqual(popupColumns.map((col) => [col]));
   }));
 });

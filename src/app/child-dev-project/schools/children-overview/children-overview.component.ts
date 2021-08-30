@@ -20,7 +20,7 @@ import { Entity } from "../../../core/entity/model/entity";
 })
 export class ChildrenOverviewComponent implements OnInitDynamicComponent {
   readonly addButtonLabel = ChildSchoolRelation.schema.get("childId").label;
-  
+
   columns: FormFieldConfig[] = [
     { id: "projectNumber" },
     { id: "name" },
