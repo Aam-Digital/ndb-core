@@ -18,6 +18,9 @@ import { MatDialog } from "@angular/material/dialog";
 import { EntityFormComponent } from "../../../core/entity-components/entity-form/entity-form/entity-form.component";
 import { EntityFormService } from "../../../core/entity-components/entity-form/entity-form.service";
 import { AlertService } from "../../../core/alerts/alert.service";
+import { EventEmitter } from "@angular/core";
+import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
+import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 
 describe("ChildrenOverviewComponent", () => {
   let component: ChildrenOverviewComponent;
@@ -80,41 +83,42 @@ describe("ChildrenOverviewComponent", () => {
     ]);
   });
 
-  it("should open a dialog when clicking add new child", () => {
+  it("should open a dialog when clicking add new child with correct relation", () => {
     component.entity = new School();
     const dialog = TestBed.inject(MatDialog);
     const entityFormService = TestBed.inject(EntityFormService);
     const alertService = TestBed.inject(AlertService);
+    const dialogComponent = new EntityFormComponent(
+      entityFormService,
+      alertService
+    );
     spyOn(dialog, "open").and.returnValues({
-      componentInstance: new EntityFormComponent(
-        entityFormService,
-        alertService
-      ),
+      componentInstance: dialogComponent,
     } as any);
 
     component.addChildClick();
 
     expect(dialog.open).toHaveBeenCalled();
+    const relation = dialogComponent.entity as ChildSchoolRelation;
+    expect(relation.schoolId).toBe(component.entity.getId());
   });
 
   it("should add a newly added child to the list", fakeAsync(() => {
     component.entity = new School();
     const child = new Child();
     const dialog = TestBed.inject(MatDialog);
-    const entityFormService = TestBed.inject(EntityFormService);
-    const alertService = TestBed.inject(AlertService);
-    const componentInstance = new EntityFormComponent(
-      entityFormService,
-      alertService
-    );
+    const dialogComponent = {
+      onSave: new EventEmitter(),
+      onCancel: new EventEmitter(),
+    }
     spyOn(dialog, "open").and.returnValues({
-      componentInstance: componentInstance,
+      componentInstance: dialogComponent,
       close: () => {},
     } as any);
     mockSchoolsService.getChildrenForSchool.and.resolveTo([child]);
 
     component.addChildClick();
-    componentInstance.onSave.emit();
+    dialogComponent.onSave.emit(undefined);
     tick();
 
     expect(component.children).toContain(child);
@@ -123,22 +127,45 @@ describe("ChildrenOverviewComponent", () => {
   it("should close the dialog when cancel is clicked", fakeAsync(() => {
     component.entity = new School();
     const dialog = TestBed.inject(MatDialog);
-    const entityFormService = TestBed.inject(EntityFormService);
-    const alertService = TestBed.inject(AlertService);
+    const dialogComponent = {
+      onSave: new EventEmitter(),
+      onCancel: new EventEmitter(),
+    }
     const closeSpy = jasmine.createSpy();
-    const componentInstance = new EntityFormComponent(
-      entityFormService,
-      alertService
-    );
     spyOn(dialog, "open").and.returnValues({
-      componentInstance: componentInstance,
+      componentInstance: dialogComponent,
       close: closeSpy,
     } as any);
 
     component.addChildClick();
-    componentInstance.onCancel.emit();
+    dialogComponent.onCancel.emit(undefined);
     tick();
 
     expect(closeSpy).toHaveBeenCalled();
+  }));
+
+  it("should assign the popup columns from the config", fakeAsync(() => {
+    const dialog = TestBed.inject(MatDialog);
+    const dialogComponent = {
+      columns: [],
+      onSave: new EventEmitter(),
+      onCancel: new EventEmitter(),
+    };
+    spyOn(dialog, "open").and.returnValues({
+      componentInstance: dialogComponent,
+      close: () => {},
+    } as any);
+    const popupColumns = ["start", "end", "class"];
+    const config: PanelConfig = {
+      entity: new Child(),
+      config: { popupColumns: popupColumns },
+    }
+
+    component.onInitFromDynamicConfig(config);
+    tick();
+    component.addChildClick();
+    tick();
+
+    expect(dialogComponent.columns).toEqual(popupColumns.map(col => [col]));
   }));
 });

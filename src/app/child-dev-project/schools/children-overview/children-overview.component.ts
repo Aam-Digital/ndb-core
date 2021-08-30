@@ -8,7 +8,6 @@ import { Router } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
 import { EntityFormComponent } from "../../../core/entity-components/entity-form/entity-form/entity-form.component";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
-import { School } from "../model/school";
 import { Entity } from "../../../core/entity/model/entity";
 
 /**
@@ -20,6 +19,8 @@ import { Entity } from "../../../core/entity/model/entity";
   styleUrls: ["./children-overview.component.scss"],
 })
 export class ChildrenOverviewComponent implements OnInitDynamicComponent {
+  readonly addButtonLabel = ChildSchoolRelation.schema.get("childId").label;
+  
   columns: FormFieldConfig[] = [
     { id: "projectNumber" },
     { id: "name" },
@@ -35,6 +36,12 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
     },
   ];
 
+  private popupColumns: (string | FormFieldConfig)[] = [
+    "childId",
+    "start",
+    "end",
+  ];
+
   children: Child[] = [];
   entity: Entity;
 
@@ -47,6 +54,9 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
   async onInitFromDynamicConfig(config: PanelConfig) {
     if (config?.config?.columns) {
       this.columns = config.config.columns;
+    }
+    if (config?.config?.popupColumns?.length > 0) {
+      this.popupColumns = config.config.popupColumns;
     }
     this.entity = config.entity;
     this.children = await this.schoolsService.getChildrenForSchool(
@@ -64,13 +74,7 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
       maxHeight: "90vh",
     });
 
-    dialogRef.componentInstance.columns = [
-      ["childId"],
-      ["start"],
-      ["end"],
-      ["schoolClass"],
-      ["result"],
-    ];
+    dialogRef.componentInstance.columns = this.popupColumns.map((col) => [col]);
     const newRelation = new ChildSchoolRelation();
     newRelation.schoolId = this.entity.getId();
     dialogRef.componentInstance.entity = newRelation;
