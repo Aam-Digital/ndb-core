@@ -20,11 +20,8 @@ import { LocalSession } from "./local-session";
 import { SessionType } from "../session-type";
 import { passwordEqualsEncrypted, DatabaseUser, LocalUser } from "./local-user";
 import { LoginState } from "../session-states/login-state.enum";
-import {
-  TEST_PASSWORD,
-  TEST_USER,
-  testSessionServiceImplementation,
-} from "./session.service.spec";
+import { testSessionServiceImplementation } from "./session.service.spec";
+import { TEST_PASSWORD, TEST_USER } from "../mock-session.module";
 
 describe("LocalSessionService", () => {
   let localSession: LocalSession;

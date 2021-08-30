@@ -1,10 +1,6 @@
 import { ModuleWithProviders, NgModule } from "@angular/core";
 import { LocalSession } from "./session-service/local-session";
 import { SessionService } from "./session-service/session.service";
-import {
-  TEST_PASSWORD,
-  TEST_USER,
-} from "./session-service/session.service.spec";
 import { LoginState } from "./session-states/login-state.enum";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import {
@@ -12,6 +8,9 @@ import {
   MockEntityMapperService,
 } from "../entity/mock-entity-mapper-service";
 import { User } from "../user/user";
+
+export const TEST_USER = "test";
+export const TEST_PASSWORD = "pass";
 
 /**
  * A simple module that can be imported in test files or stories to have mock implementations of the SessionService
