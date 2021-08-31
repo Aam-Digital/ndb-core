@@ -234,7 +234,6 @@ function generateSchoolEntities(): School[] {
 
   const s2 = new School("2");
   s2.name = "Hope High School";
-  s2["language"] = "English";
   data.push(s2);
 
   return data;
