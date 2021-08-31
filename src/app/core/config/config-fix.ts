@@ -240,6 +240,32 @@ export const defaultJsonConfig = {
           "id": "category",
           "display": "dropdown"
         }
+      ],
+      "exportConfig": [
+        { "label": "event_id", "query": "_id" },
+        { "label": "date", "query": "date" },
+        { "label": "event title", "query": "subject" },
+        { "label": "event type", "query": "category" },
+        { "label": "event description", "query": "text" },
+        {
+          "query": ":getAttendanceArray",
+          "subQueries": [
+            {
+              "query": ".participant:toEntities(Child)",
+              "subQueries": [
+                { "label": "participant_id", "query": "_id" },
+                { "label": "participant", "query": "name" },
+                { "label": "gender", "query": "gender" },
+                { "label": "area", "query": "area" },
+                { "label": "religion", "query": "religion" },
+              ]
+            },
+            {
+              "label": "status",
+              "query": ".status._status.id",
+            },
+          ],
+        },
       ]
     }
   },
