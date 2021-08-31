@@ -22,6 +22,7 @@ import { PermissionsModule } from "../../permissions/permissions.module";
 import { EntitySubrecordModule } from "../entity-subrecord/entity-subrecord.module";
 import { EntityUtilsModule } from "../entity-utils/entity-utils.module";
 import { EntityFormModule } from "../entity-form/entity-form.module";
+import { FilterModule } from "../../filter/filter.module";
 
 @NgModule({
   declarations: [EntityListComponent, ListFilterComponent],
@@ -48,7 +49,8 @@ import { EntityFormModule } from "../entity-form/entity-form.module";
     EntitySubrecordModule,
     EntityUtilsModule,
     EntityFormModule,
+    FilterModule,
   ],
-  exports: [EntityListComponent],
+  exports: [EntityListComponent, ListFilterComponent],
 })
 export class EntityListModule {}
