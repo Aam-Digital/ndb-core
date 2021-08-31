@@ -11,55 +11,63 @@ import { defaultInteractionTypes } from "../../config/default-config/default-int
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { Child } from "../../../child-dev-project/children/model/child";
 import moment from "moment";
+import { EntityConfigService } from "app/core/entity/entity-config.service";
 
 describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
 
-  beforeEach(() => {
-    mockConfigService = jasmine.createSpyObj(["getConfig"]);
-    mockEntityMapper = jasmine.createSpyObj(["loadType"]);
+  beforeEach(async() => {
+    mockEntityMapper = jasmine.createSpyObj(["loadType", "load"]);
+    mockEntityMapper.load.and.rejectWith();
     TestBed.configureTestingModule({
       providers: [
-        { provide: ConfigService, useValue: mockConfigService },
+        ConfigService,
         { provide: EntityMapperService, useValue: mockEntityMapper },
         LoggingService,
+        EntityConfigService,
       ],
     });
     service = TestBed.inject(FilterGeneratorService);
+    let configService = TestBed.inject(ConfigService);
+    let entityConfigService = TestBed.inject(EntityConfigService);
+    let entityMapper = TestBed.inject(EntityMapperService);
+    await configService.loadConfig(entityMapper);
+    entityConfigService.addConfigAttributes(School);
+    entityConfigService.addConfigAttributes(Child);
   });
 
   it("should be created", () => {
     expect(service).toBeTruthy();
   });
 
-  // it("should create a boolean filter", async () => {
-  //   const filterConfig: BooleanFilterConfig = {
-  //     id: "privateSchool",
-  //     true: "Private",
-  //     false: "Government",
-  //     all: "All",
-  //   };
-  //   const schema = School.schema.get("privateSchool");
+  it("should create a boolean filter", async () => {
+    const filterConfig: BooleanFilterConfig = {
+      id: "privateSchool",
+      true: "Private",
+      false: "Government",
+      all: "All",
+    };
+    const schema = School.schema.get("privateSchool");
 
-  //   const filter = (await service.generate([filterConfig], School, []))[0];
+    const filter = (await service.generate([filterConfig], School, []))[0];
 
-  //   expect(filter.filterSettings.label).toEqual(schema.label);
-  //   expect(filter.filterSettings.name).toEqual("privateSchool");
-  //   expect(
-  //     filter.filterSettings.options.map((option) => {
-  //       return { key: option.key, label: option.label };
-  //     })
-  //   ).toEqual([
-  //     { key: "all", label: "All" },
-  //     { key: "true", label: "Private" },
-  //     { key: "false", label: "Government" },
-  //   ]);
-  // });
+    expect(filter.filterSettings.label).toEqual(schema.label);
+    expect(filter.filterSettings.name).toEqual("privateSchool");
+    expect(
+      filter.filterSettings.options.map((option) => {
+        return { key: option.key, label: option.label };
+      })
+    ).toEqual([
+      { key: "all", label: "All" },
+      { key: "true", label: "Private" },
+      { key: "false", label: "Government" },
+    ]);
+  });
 
   it("should create a configurable enum filter", async () => {
-    mockConfigService.getConfig.and.returnValue(defaultInteractionTypes);
+    const getConfigSpy = spyOn(TestBed.inject(ConfigService), "getConfig");
+    getConfigSpy.and.returnValue(defaultInteractionTypes);
     const interactionTypes = defaultInteractionTypes.map((it) => {
       return { key: it.id, label: it.label };
     });
@@ -120,11 +128,11 @@ describe("FilterGeneratorService", () => {
 
   it("should create filters with all possible options on default", async () => {
     const child1 = new Child();
-    child1.religion = "muslim";
+    child1["religion"] = "muslim";
     const child2 = new Child();
-    child2.religion = "christian";
+    child2["religion"] = "christian";
     const child3 = new Child();
-    child3.religion = "muslim";
+    child3["religion"] = "muslim";
     const schema = Child.schema.get("religion");
 
     const filter = (

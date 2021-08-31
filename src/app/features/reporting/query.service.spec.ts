@@ -20,6 +20,9 @@ import { Database } from "../../core/database/database";
 import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
 import { Note } from "../../child-dev-project/notes/model/note";
 import { genders } from "../../child-dev-project/children/model/genders";
+import { EntityConfigService } from "app/core/entity/entity-config.service";
+import { ConfigService } from "app/core/config/config.service";
+
 
 describe("QueryService", () => {
   let service: QueryService;
@@ -47,7 +50,7 @@ describe("QueryService", () => {
   let todayEventWithoutSchool: EventNote;
   let twoDaysAgoEventWithoutRelation: EventNote;
 
-  beforeEach(() => {
+  beforeEach(async() => {
     database = PouchDatabase.createWithInMemoryDB();
     TestBed.configureTestingModule({
       imports: [ConfigurableEnumModule],
@@ -57,25 +60,33 @@ describe("QueryService", () => {
         ChildrenService,
         AttendanceService,
         DatabaseIndexingService,
+        ConfigService,
+        EntityConfigService,
         { provide: Database, useValue: database },
       ],
     });
     service = TestBed.inject(QueryService);
+    let configService = TestBed.inject(ConfigService);
+    let entityConfigService = TestBed.inject(EntityConfigService);
+    let entityMapper = TestBed.inject(EntityMapperService);
+    await configService.loadConfig(entityMapper);
+    entityConfigService.addConfigAttributes(School);
+    entityConfigService.addConfigAttributes(Child);
   });
 
   beforeEach(async () => {
     const entityMapper = TestBed.inject(EntityMapperService);
     maleChristianChild = new Child("maleChristianChild");
     maleChristianChild.gender = genders[1];
-    maleChristianChild.religion = "christian";
+    maleChristianChild["religion"] = "christian";
     await entityMapper.save(maleChristianChild);
     femaleChristianChild = new Child("femaleChristianChild");
     femaleChristianChild.gender = genders[2];
-    femaleChristianChild.religion = "christian";
+    femaleChristianChild["religion"] = "christian";
     await entityMapper.save(femaleChristianChild);
     femaleMuslimChild = new Child("femaleMuslimChild");
     femaleMuslimChild.gender = genders[2];
-    femaleMuslimChild.religion = "muslim";
+    femaleMuslimChild["religion"] = "muslim";
     await entityMapper.save(femaleMuslimChild);
     maleChild = new Child("maleChild");
     maleChild.gender = genders[1];
@@ -239,16 +250,16 @@ describe("QueryService", () => {
   });
 
   it("should return all children attending a school based on attributes", async () => {
-    // const maleChildrenOnPrivateSchoolsQuery = `
-    //   ${School.ENTITY_TYPE}:toArray[*privateSchool=true]
-    //   :getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)
-    //   [*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique
-    //   :toEntities:filterByObjectAttribute(gender, id, M)`;
+    const maleChildrenOnPrivateSchoolsQuery = `
+      ${School.ENTITY_TYPE}:toArray[*privateSchool=true]
+      :getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)
+      [*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique
+      :toEntities:filterByObjectAttribute(gender, id, M)`;
 
-    // const maleChildrenOnPrivateSchools = await service.queryData(
-    //   maleChildrenOnPrivateSchoolsQuery
-    // );
-    // expectEntitiesToMatch(maleChildrenOnPrivateSchools, [maleChild]);
+    const maleChildrenOnPrivateSchools = await service.queryData(
+      maleChildrenOnPrivateSchoolsQuery
+    );
+    expectEntitiesToMatch(maleChildrenOnPrivateSchools, [maleChild]);
 
     const childrenVisitingAnySchoolQuery = `
       ${School.ENTITY_TYPE}:toArray
@@ -329,29 +340,29 @@ describe("QueryService", () => {
   });
 
   it("should count unique participants of events based on school and activity", async () => {
-    // const femaleParticipantsPrivateSchoolQuery = `
-    //   ${School.ENTITY_TYPE}:toArray[*privateSchool=true]
-    //   :getRelated(${RecurringActivity.ENTITY_TYPE}, linkedGroups)
-    //   :getRelated(${EventNote.ENTITY_TYPE}, relatesTo)
-    //   :getParticipantsWithAttendance(PRESENT):addPrefix(${Child.ENTITY_TYPE}):unique
-    //   :toEntities:filterByObjectAttribute(gender, id, F)`;
-    // const femaleParticipantsInPrivateSchools = await service.queryData(
-    //   femaleParticipantsPrivateSchoolQuery
-    // );
-    // expectEntitiesToMatch(femaleParticipantsInPrivateSchools, [
-    //   femaleChristianChild,
-    // ]);
+    const femaleParticipantsPrivateSchoolQuery = `
+      ${School.ENTITY_TYPE}:toArray[*privateSchool=true]
+      :getRelated(${RecurringActivity.ENTITY_TYPE}, linkedGroups)
+      :getRelated(${EventNote.ENTITY_TYPE}, relatesTo)
+      :getParticipantsWithAttendance(PRESENT):addPrefix(${Child.ENTITY_TYPE}):unique
+      :toEntities:filterByObjectAttribute(gender, id, F)`;
+    const femaleParticipantsInPrivateSchools = await service.queryData(
+      femaleParticipantsPrivateSchoolQuery
+    );
+    expectEntitiesToMatch(femaleParticipantsInPrivateSchools, [
+      femaleChristianChild,
+    ]);
 
-    // const participantsNotPrivateSchoolQuery = `
-    //   ${School.ENTITY_TYPE}:toArray[*privateSchool!=true]
-    //   :getRelated(${RecurringActivity.ENTITY_TYPE}, linkedGroups)
-    //   :getRelated(${EventNote.ENTITY_TYPE}, relatesTo)
-    //   :getParticipantsWithAttendance(PRESENT):addPrefix(${Child.ENTITY_TYPE}):unique
-    //   :toEntities`;
-    // const participantsNotPrivateSchool = await service.queryData(
-    //   participantsNotPrivateSchoolQuery
-    // );
-    // expectEntitiesToMatch(participantsNotPrivateSchool, [femaleMuslimChild]);
+    const participantsNotPrivateSchoolQuery = `
+      ${School.ENTITY_TYPE}:toArray[*privateSchool!=true]
+      :getRelated(${RecurringActivity.ENTITY_TYPE}, linkedGroups)
+      :getRelated(${EventNote.ENTITY_TYPE}, relatesTo)
+      :getParticipantsWithAttendance(PRESENT):addPrefix(${Child.ENTITY_TYPE}):unique
+      :toEntities`;
+    const participantsNotPrivateSchool = await service.queryData(
+      participantsNotPrivateSchoolQuery
+    );
+    expectEntitiesToMatch(participantsNotPrivateSchool, [femaleMuslimChild]);
 
     const attendedParticipantsQuery = `
       ${EventNote.ENTITY_TYPE}:toArray

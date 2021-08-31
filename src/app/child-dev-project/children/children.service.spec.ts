@@ -195,30 +195,30 @@ function generateChildEntities(): Child[] {
   const a1 = new Child("1");
   a1.name = "Arjun A.";
   a1.projectNumber = "1";
-  a1.religion = "Hindu";
+  a1["religion"] = "Hindu";
   a1.gender = genders[1];
   a1.dateOfBirth = new Date("2000-03-13");
-  a1.motherTongue = "Hindi";
+  a1["motherTongue"] = "Hindi";
   a1.center = { id: "delhi", label: "Delhi" };
   data.push(a1);
 
   const a2 = new Child("2");
   a2.name = "Bandana B.";
   a2.projectNumber = "2";
-  a2.religion = "Hindu";
+  a2["religion"] = "Hindu";
   a2.gender = genders[2];
   a2.dateOfBirth = new Date("2001-01-01");
-  a2.motherTongue = "Bengali";
+  a2["motherTongue"] = "Bengali";
   a2.center = { id: "kolkata", label: "Kolkata" };
   data.push(a2);
 
   const a3 = new Child("3");
   a3.name = "Chandan C.";
   a3.projectNumber = "3";
-  a3.religion = "Hindu";
+  a3["religion"] = "Hindu";
   a3.gender = genders[1];
   a3.dateOfBirth = new Date("2002-07-29");
-  a3.motherTongue = "Hindi";
+  a3["motherTongue"] = "Hindi";
   a3.center = { id: "kolkata", label: "Kolkata" };
   data.push(a3);
 

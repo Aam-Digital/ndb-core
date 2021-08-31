@@ -783,6 +783,20 @@ export const defaultJsonConfig = {
         }
       },
       {
+        "name": "religion",
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for the religion of a child:Religion`
+        }
+      },
+      {
+        "name": "motherTongue",
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for the mother tongue of a child:Mother Tongue`
+        }
+      },
+      {
         "name": "health_lastDentalCheckup",
         "schema": {
           dataType: "Date",

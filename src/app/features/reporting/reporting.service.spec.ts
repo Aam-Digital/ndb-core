@@ -280,19 +280,19 @@ describe("ReportingService", () => {
     const barabazar = centersUnique.find((c) => c.id === "barabazar");
     const maleChristianAlipore = new Child();
     maleChristianAlipore.gender = genders[1];
-    maleChristianAlipore.religion = "christian";
+    maleChristianAlipore["religion"] = "christian";
     maleChristianAlipore.center = alipore;
     const maleMuslimAlipore = new Child();
     maleMuslimAlipore.gender = genders[1];
-    maleMuslimAlipore.religion = "muslim";
+    maleMuslimAlipore["religion"] = "muslim";
     maleMuslimAlipore.center = alipore;
     const femaleChristianBarabazar = new Child();
     femaleChristianBarabazar.gender = genders[2];
-    femaleChristianBarabazar.religion = "christian";
+    femaleChristianBarabazar["religion"] = "christian";
     femaleChristianBarabazar.center = barabazar;
     const femaleChristianAlipore = new Child();
     femaleChristianAlipore.gender = genders[2];
-    femaleChristianAlipore.religion = "christian";
+    femaleChristianAlipore["religion"] = "christian";
     femaleChristianAlipore.center = alipore;
     mockQueryService.queryData.and.resolveTo([
       femaleChristianAlipore,
@@ -522,13 +522,13 @@ describe("ReportingService", () => {
   it("should allow multiple groupBy's", async () => {
     const femaleMuslim = new Child();
     femaleMuslim.gender = genders[2];
-    femaleMuslim.religion = "muslim";
+    femaleMuslim["religion"] = "muslim";
     const femaleChristian = new Child();
     femaleChristian.gender = genders[2];
-    femaleChristian.religion = "christian";
+    femaleChristian["religion"] = "christian";
     const maleMuslim = new Child();
     maleMuslim.gender = genders[1];
-    maleMuslim.religion = "muslim";
+    maleMuslim["religion"] = "muslim";
     mockQueryService.queryData.and.resolveTo([
       femaleChristian,
       femaleMuslim,
