@@ -326,7 +326,16 @@ export const defaultJsonConfig = {
           "components": [
             {
               "title": "",
-              "component": "ChildrenOverview"
+              "component": "ChildrenOverview",
+              "config": {
+                "popupColumns": [
+                  "childId",
+                  "start",
+                  "end",
+                  "schoolClass",
+                  "result",
+                ],
+              }
             }
           ]
         }
