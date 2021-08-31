@@ -23,7 +23,6 @@ import { genders } from "../../child-dev-project/children/model/genders";
 import { EntityConfigService } from "app/core/entity/entity-config.service";
 import { ConfigService } from "app/core/config/config.service";
 
-
 describe("QueryService", () => {
   let service: QueryService;
   let database: PouchDatabase;
@@ -50,7 +49,7 @@ describe("QueryService", () => {
   let todayEventWithoutSchool: EventNote;
   let twoDaysAgoEventWithoutRelation: EventNote;
 
-  beforeEach(async() => {
+  beforeEach(async () => {
     database = PouchDatabase.createWithInMemoryDB();
     TestBed.configureTestingModule({
       imports: [ConfigurableEnumModule],
@@ -66,9 +65,9 @@ describe("QueryService", () => {
       ],
     });
     service = TestBed.inject(QueryService);
-    let configService = TestBed.inject(ConfigService);
-    let entityConfigService = TestBed.inject(EntityConfigService);
-    let entityMapper = TestBed.inject(EntityMapperService);
+    const configService = TestBed.inject(ConfigService);
+    const entityConfigService = TestBed.inject(EntityConfigService);
+    const entityMapper = TestBed.inject(EntityMapperService);
     await configService.loadConfig(entityMapper);
     entityConfigService.addConfigAttributes(School);
     entityConfigService.addConfigAttributes(Child);

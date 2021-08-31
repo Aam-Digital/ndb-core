@@ -13,7 +13,7 @@ export class School extends Entity {
     required: true,
   })
   name: string = "";
- 
+
   public toString() {
     return this.name;
   }
