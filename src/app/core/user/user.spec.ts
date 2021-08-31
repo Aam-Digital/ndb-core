@@ -52,9 +52,7 @@ describe("User", () => {
       _id: ENTITY_TYPE + ":" + id,
 
       name: "tester",
-      admin: true,
-      password: undefined,
-      cloudPasswordEnc: undefined,
+      cloudPasswordEnc: "encryptedPassword",
       cloudBaseFolder: "/aam-digital/",
       paginatorSettingsPageSize: {},
 
@@ -64,42 +62,20 @@ describe("User", () => {
 
     const entity = new User(id);
     entity.name = expectedData.name;
-    entity.admin = expectedData.admin;
-    entity.setNewPassword("pass");
     // @ts-ignore
-    expectedData.password = entity.password;
-    // @ts-ignore
-    expectedData.cloudPasswordEnc = entity.cloudPasswordEnc;
+    entity.cloudPasswordEnc = expectedData.cloudPasswordEnc;
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
     expect(rawData).toEqual(expectedData);
   });
 
-  it("accepts valid password", function () {
-    const entityId = "test1";
-    const user = new User(entityId);
-    const password = "pass";
-    user.setNewPassword(password);
-
-    expect(user.checkPassword(password)).toBeTruthy();
-  });
-
-  it("rejects wrong password", function () {
-    const entityId = "test1";
-    const user = new User(entityId);
-    const password = "pass";
-    user.setNewPassword(password);
-
-    expect(user.checkPassword(password + "x")).toBeFalsy();
-  });
-
   it("sets cloud passwords", () => {
     const user = new User("test1");
-    user.setNewPassword("userpwd");
     expect(user.cloudPasswordDec).not.toBeDefined();
-    expect(user.checkPassword("userpwd")).toBeTrue();
+
     user.setCloudPassword("cloudpwd", "userpwd");
+
     expect(user.cloudPasswordDec).toEqual("cloudpwd");
     expect(user.decryptCloudPassword("userpwd")).toEqual("cloudpwd");
   });

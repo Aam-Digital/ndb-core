@@ -1,17 +1,25 @@
 import { Component, Input } from "@angular/core";
-import { BackupService } from "../services/backup.service";
+import { ExportService } from "../export-service/export.service";
+import { ExportColumnConfig } from "../export-service/export-column-config";
 
 /**
  * Generic export data button that allows the user to download a file of the given data.
  */
 @Component({
-  selector: "app-export-data",
-  templateUrl: "./export-data.component.html",
-  styleUrls: ["./export-data.component.scss"],
+  selector: "app-export-data-button",
+  templateUrl: "./export-data-button.component.html",
+  styleUrls: ["./export-data-button.component.scss"],
 })
-export class ExportDataComponent {
+export class ExportDataButtonComponent {
   /** data to be exported */
   @Input() data: any = [];
+
+  /**
+   * (Optional) definition of fields to be exported.
+   *
+   * If not provided, all properties will be included in the export.
+   */
+  @Input() exportConfig: ExportColumnConfig[];
 
   /** What kind of data should be export? Currently implemented are 'json', 'csv' */
   @Input() format: string = "csv";
@@ -21,13 +29,13 @@ export class ExportDataComponent {
 
   @Input() disabled: boolean = false;
 
-  constructor(private backupService: BackupService) {}
+  constructor(private exportService: ExportService) {}
 
   /**
    * Trigger the download of the export file.
    */
-  exportData() {
-    const blobData = this.getFormattedBlobData();
+  async exportData() {
+    const blobData = await this.getFormattedBlobData();
     const link = this.createDownloadLink(blobData);
     link.click();
   }
@@ -42,14 +50,17 @@ export class ExportDataComponent {
     return link;
   }
 
-  private getFormattedBlobData(): Blob {
+  private async getFormattedBlobData(): Promise<Blob> {
     let result = "";
     switch (this.format.toLowerCase()) {
       case "json":
-        result = this.backupService.createJson(this.data);
+        result = this.exportService.createJson(this.data); // TODO: support exportConfig for json format
         return new Blob([result], { type: "application/json" });
       case "csv":
-        result = this.backupService.createCsv(this.data);
+        result = await this.exportService.createCsv(
+          this.data,
+          this.exportConfig
+        );
         return new Blob([result], { type: "text/csv" });
       default:
         console.warn("Not supported format:", this.format);

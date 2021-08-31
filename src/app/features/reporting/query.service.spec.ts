@@ -453,4 +453,28 @@ describe("QueryService", () => {
     expect(eventsWithNotes).toContain(note1);
     expect(eventsWithNotes).toContain(note2);
   });
+
+  it("should do addPrefix as part of toEntities if optional parameter is given", async () => {
+    const queryWithAddPrefix = `
+      ${School.ENTITY_TYPE}:toArray[*privateSchool=true]
+      :getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)
+      .childId:addPrefix(${Child.ENTITY_TYPE}):toEntities.name`;
+    const queryWithoutAddPrefix = `
+      ${School.ENTITY_TYPE}:toArray[*privateSchool=true]
+      :getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)
+      .childId:toEntities(${Child.ENTITY_TYPE}).name`;
+
+    const resultWithAddPrefix = await service.queryData(
+      queryWithAddPrefix,
+      null,
+      null
+    );
+    const resultWithoutAddPrefix = await service.queryData(
+      queryWithoutAddPrefix,
+      null,
+      null
+    );
+
+    expect(resultWithoutAddPrefix).toEqual(resultWithAddPrefix);
+  });
 });

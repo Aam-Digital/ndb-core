@@ -36,7 +36,6 @@ describe("ReportingService", () => {
         { label: "muslims", query: muslimsQuery },
       ],
     };
-    service.setAggregations([childDisaggregation]);
     const baseData = [new School()];
     mockQueryService.queryData.and.returnValues(
       Promise.resolve(baseData),
@@ -44,7 +43,7 @@ describe("ReportingService", () => {
       Promise.resolve([new School(), new School()])
     );
 
-    const report = await service.calculateReport();
+    const report = await service.calculateReport([childDisaggregation]);
     expect(mockQueryService.queryData.calls.allArgs()).toEqual([
       [baseQuery, undefined, undefined, undefined],
       [christiansQuery, undefined, undefined, baseData],
@@ -68,9 +67,8 @@ describe("ReportingService", () => {
       query: baseQueryString,
       aggregations: [{ label: "tests", query: subjectQueryString }],
     };
-    service.setAggregations([disaggregation]);
 
-    await service.calculateReport(firstDate, secondDate);
+    await service.calculateReport([disaggregation], firstDate, secondDate);
     expect(mockQueryService.queryData.calls.allArgs()).toEqual([
       [baseQueryString, firstDate, secondDate, undefined],
       [subjectQueryString, firstDate, secondDate, undefined],
@@ -103,7 +101,6 @@ describe("ReportingService", () => {
         { label: "Normal aggregation", query: normalAggregation },
       ],
     };
-    service.setAggregations([aggregation]);
 
     const baseData = [new School(), new School()];
     const nestedData = [new ChildSchoolRelation()];
@@ -117,7 +114,7 @@ describe("ReportingService", () => {
           return Promise.resolve([new School()]);
       }
     });
-    const result = await service.calculateReport();
+    const result = await service.calculateReport([aggregation]);
     expect(mockQueryService.queryData.calls.allArgs()).toEqual([
       [baseQuery, undefined, undefined, undefined],
       [nestedBaseQuery, undefined, undefined, baseData],
@@ -174,8 +171,7 @@ describe("ReportingService", () => {
       label: "Total # of children",
     };
 
-    service.setAggregations([groupByAggregation]);
-    const result = await service.calculateReport();
+    const result = await service.calculateReport([groupByAggregation]);
 
     expect(result).toEqual([
       {
@@ -221,8 +217,7 @@ describe("ReportingService", () => {
       ],
     };
 
-    service.setAggregations([groupByAggregation]);
-    const result = await service.calculateReport();
+    const result = await service.calculateReport([groupByAggregation]);
 
     expect(result).toEqual([
       {
@@ -305,8 +300,7 @@ describe("ReportingService", () => {
       groupBy: ["gender", "religion", "center"],
       label: "Total # of children",
     };
-    service.setAggregations([groupByAggregation]);
-    const result = await service.calculateReport();
+    const result = await service.calculateReport([groupByAggregation]);
 
     expect(result).toEqual([
       {
@@ -549,8 +543,7 @@ describe("ReportingService", () => {
         },
       ],
     };
-    service.setAggregations([nestedGroupBy]);
-    const result = await service.calculateReport();
+    const result = await service.calculateReport([nestedGroupBy]);
 
     expect(result).toEqual([
       {

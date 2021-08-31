@@ -19,11 +19,12 @@ import {
   ReportConfig,
   ReportingComponentConfig,
 } from "./reporting-component-config";
+import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 
 describe("ReportingComponent", () => {
   let component: ReportingComponent;
   let fixture: ComponentFixture<ReportingComponent>;
-  const mockRouteData = new Subject();
+  const mockRouteData = new Subject<RouteData<ReportingComponentConfig>>();
   let mockReportingService: jasmine.SpyObj<ReportingService>;
 
   const testReport: ReportConfig = {
@@ -39,10 +40,7 @@ describe("ReportingComponent", () => {
   };
 
   beforeEach(async () => {
-    mockReportingService = jasmine.createSpyObj([
-      "setAggregations",
-      "calculateReport",
-    ]);
+    mockReportingService = jasmine.createSpyObj(["calculateReport"]);
     mockReportingService.calculateReport.and.resolveTo([]);
     await TestBed.configureTestingModule({
       declarations: [ReportingComponent],
@@ -63,7 +61,7 @@ describe("ReportingComponent", () => {
     fixture = TestBed.createComponent(ReportingComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    mockRouteData.next({ aggregationDefinitions: {} });
+    mockRouteData.next({ config: { reports: [] } });
   });
 
   it("should create", () => {
@@ -74,7 +72,7 @@ describe("ReportingComponent", () => {
     const aggregationConfig: ReportingComponentConfig = {
       reports: [testReport],
     };
-    mockRouteData.next(aggregationConfig);
+    mockRouteData.next({ config: aggregationConfig });
 
     expect(component.loading).toBeFalsy();
 
@@ -84,8 +82,10 @@ describe("ReportingComponent", () => {
     tick();
     expect(component.loading).toBeFalse();
 
-    expect(mockReportingService.setAggregations).toHaveBeenCalledWith(
-      testReport.aggregationDefinitions
+    expect(mockReportingService.calculateReport).toHaveBeenCalledWith(
+      testReport.aggregationDefinitions,
+      undefined,
+      jasmine.any(Date)
     );
   }));
 

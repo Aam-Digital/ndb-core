@@ -24,6 +24,7 @@ import { EntitySubrecordComponent } from "../entity-subrecord/entity-subrecord/e
 import { FilterGeneratorService } from "./filter-generator.service";
 import { FilterComponentSettings } from "./filter-component.settings";
 import { entityFilterPredicate } from "./filter-predicate";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * This component allows to create a full blown table with pagination, filtering, searching and grouping.
@@ -32,6 +33,7 @@ import { entityFilterPredicate } from "./filter-predicate";
  * The columns can be any kind of component.
  * The column components will be provided with the Entity object, the id for this column, as well as its static config.
  */
+@UntilDestroy()
 @Component({
   selector: "app-entity-list",
   templateUrl: "./entity-list.component.html",
@@ -71,23 +73,26 @@ export class EntityListComponent<T extends Entity>
   ) {}
 
   ngOnInit() {
-    this.media.asObservable().subscribe((change: MediaChange[]) => {
-      switch (change[0].mqAlias) {
-        case "xs":
-        case "sm": {
-          this.displayColumnGroup(this.mobileColumnGroup);
-          break;
+    this.media
+      .asObservable()
+      .pipe(untilDestroyed(this))
+      .subscribe((change: MediaChange[]) => {
+        switch (change[0].mqAlias) {
+          case "xs":
+          case "sm": {
+            this.displayColumnGroup(this.mobileColumnGroup);
+            break;
+          }
+          case "md": {
+            this.displayColumnGroup(this.defaultColumnGroup);
+            break;
+          }
+          case "lg":
+          case "xl": {
+            break;
+          }
         }
-        case "md": {
-          this.displayColumnGroup(this.defaultColumnGroup);
-          break;
-        }
-        case "lg":
-        case "xl": {
-          break;
-        }
-      }
-    });
+      });
   }
 
   ngAfterViewInit() {

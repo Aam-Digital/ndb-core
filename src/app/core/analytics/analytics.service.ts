@@ -17,7 +17,7 @@ const md5 = require("md5");
 })
 export class AnalyticsService {
   private static getUserHash(username: string) {
-    return md5(AppConfig.settings.site_name + username);
+    return md5(AppConfig.settings?.site_name + username);
   }
 
   constructor(
@@ -46,16 +46,13 @@ export class AnalyticsService {
   }
 
   private subscribeToUserChanges() {
-    this.sessionService
-      .getLoginState()
-      .getStateChangedStream()
-      .subscribe((newState) => {
-        if (newState.toState === LoginState.LOGGED_IN) {
-          this.setUser(this.sessionService.getCurrentUser().name);
-        } else {
-          this.setUser(undefined);
-        }
-      });
+    this.sessionService.loginState.subscribe((newState) => {
+      if (newState === LoginState.LOGGED_IN) {
+        this.setUser(this.sessionService.getCurrentUser().name);
+      } else {
+        this.setUser(undefined);
+      }
+    });
   }
 
   /**

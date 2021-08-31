@@ -15,6 +15,7 @@ import { EntityListConfig } from "../../../core/entity-components/entity-list/En
 import { EventNote } from "../../attendance/model/event-note";
 import { EntityConstructor } from "../../../core/entity/model/entity";
 import { WarningLevel } from "../../../core/entity/model/warning-level";
+import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 
 /**
  * additional config specifically for NotesManagerComponent
@@ -84,12 +85,12 @@ export class NotesManagerComponent implements OnInit {
 
   async ngOnInit() {
     this.route.data.subscribe(
-      async (config: EntityListConfig & NotesManagerConfig) => {
-        this.config = config;
+      async (data: RouteData<EntityListConfig & NotesManagerConfig>) => {
+        this.config = data.config;
         this.addPrebuiltFilters();
 
-        this.includeEventNotes = config.includeEventNotes;
-        this.showEventNotesToggle = config.showEventNotesToggle;
+        this.includeEventNotes = data.config.includeEventNotes;
+        this.showEventNotesToggle = data.config.showEventNotesToggle;
         this.notes = await this.loadEntities();
       }
     );
@@ -165,7 +166,7 @@ export class NotesManagerComponent implements OnInit {
   addNoteClick() {
     const newNote = new Note(Date.now().toString());
     newNote.date = new Date();
-    newNote.authors = [this.sessionService.getCurrentUser().getId()];
+    newNote.authors = [this.sessionService.getCurrentUser().name];
     this.showDetails(newNote);
   }
 

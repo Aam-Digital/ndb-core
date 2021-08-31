@@ -9,6 +9,7 @@ import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { ChildrenService } from "../../child-dev-project/children/children.service";
 import { AttendanceService } from "../../child-dev-project/attendance/attendance.service";
+import { EventAttendance } from "../../child-dev-project/attendance/model/event-attendance";
 
 const jsonQuery = require("json-query");
 
@@ -41,13 +42,19 @@ export class QueryService {
     query: string,
     from: Date = null,
     to: Date = null,
-    data: any = this.entities
+    data?: any
   ): Promise<any> {
-    if (!data || (data === this.entities && from < this.dataAvailableFrom)) {
+    if (from === null) {
+      from = new Date(0);
+    }
+    if (from < this.dataAvailableFrom || !this.dataAvailableFrom) {
       await this.loadData(from);
-      this.dataAvailableFrom = from;
+    }
+
+    if (!data) {
       data = this.entities;
     }
+
     return jsonQuery([query, from, to], {
       data: data,
       locals: {
@@ -60,12 +67,13 @@ export class QueryService {
         filterByObjectAttribute: this.filterByObjectAttribute,
         getIds: this.getIds,
         getParticipantsWithAttendance: this.getParticipantsWithAttendance,
+        getAttendanceArray: this.getAttendanceArray,
         addEntities: this.addEntities.bind(this),
       },
     }).value;
   }
 
-  private async loadData(from?: Date): Promise<void> {
+  private async loadData(from: Date): Promise<void> {
     const entityClasses: [EntityConstructor<any>, () => Promise<Entity[]>][] = [
       [Child, () => this.entityMapper.loadType(Child)],
       [School, () => this.entityMapper.loadType(School)],
@@ -74,17 +82,10 @@ export class QueryService {
         ChildSchoolRelation,
         () => this.entityMapper.loadType(ChildSchoolRelation),
       ],
-      [
-        Note,
-        () => this.childrenService.getNotesInTimespan(from ?? new Date(0)),
-      ],
+      [Note, () => this.childrenService.getNotesInTimespan(from)],
       [
         EventNote,
-        () =>
-          this.attendanceService.getEventsOnDate(
-            from ?? new Date(0),
-            new Date()
-          ),
+        () => this.attendanceService.getEventsOnDate(from, new Date()),
       ],
     ];
 
@@ -99,6 +100,8 @@ export class QueryService {
     }
 
     await Promise.all(dataPromises);
+
+    this.dataAvailableFrom = from;
   }
 
   private setEntities<T extends Entity>(
@@ -154,9 +157,18 @@ export class QueryService {
   /**
    * Turns a list of ids (with the entity prefix) into a list of entities
    * @param ids the array of ids with entity prefix
+   * @param entityPrefix (Optional) entity type prefix that should be added to the given ids where prefix is still missing
    * @returns a list of entity objects
    */
-  toEntities(ids: string[]): Entity[] {
+  toEntities(ids: string[], entityPrefix?: string): Entity[] {
+    if (!ids) {
+      return [];
+    }
+
+    if (entityPrefix) {
+      ids = this.addPrefix(ids, entityPrefix);
+    }
+
     return ids.map((id) => {
       const prefix = id.split(":")[0];
       return this.entities[prefix][id];
@@ -258,6 +270,19 @@ export class QueryService {
       })
     );
     return attendedChildren;
+  }
+
+  getAttendanceArray(
+    events: Note[]
+  ): { participant: string; status: EventAttendance }[] {
+    return events
+      .map((e) =>
+        e.children.map((childId) => ({
+          participant: childId,
+          status: e.getAttendance(childId),
+        }))
+      )
+      .reduce((acc, val) => acc.concat(val), []);
   }
 
   /**

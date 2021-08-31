@@ -9,16 +9,13 @@ import {
 } from "../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { RecurringActivity } from "../model/recurring-activity";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { AttendanceModule } from "../attendance.module";
 import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { MatNativeDateModule } from "@angular/material/core";
 import { MatDialogRef } from "@angular/material/dialog";
-import { EMPTY } from "rxjs";
 import { EventNote } from "../model/event-note";
 import { AttendanceService } from "../attendance.service";
-import { SessionService } from "../../../core/session/session-service/session.service";
-import { User } from "../../../core/user/user";
+import { MockSessionModule } from "../../../core/session/mock-session.module";
 
 describe("AttendanceDetailsComponent", () => {
   let component: AttendanceDetailsComponent;
@@ -52,9 +49,6 @@ describe("AttendanceDetailsComponent", () => {
       ]);
       entity.activity = RecurringActivity.create("Test Activity");
 
-      const mockEntityMapperService = jasmine.createSpyObj(["receiveUpdates"]);
-      mockEntityMapperService.receiveUpdates.and.returnValue(EMPTY);
-
       TestBed.configureTestingModule({
         imports: [
           AttendanceModule,
@@ -63,15 +57,11 @@ describe("AttendanceDetailsComponent", () => {
           Angulartics2Module.forRoot(),
           RouterTestingModule,
           MatNativeDateModule,
+          MockSessionModule.withState(),
         ],
         providers: [
-          { provide: EntityMapperService, useValue: mockEntityMapperService },
           { provide: MatDialogRef, useValue: {} },
           { provide: AttendanceService, useValue: mockAttendanceService },
-          {
-            provide: SessionService,
-            useValue: { getCurrentUser: () => new User() },
-          },
         ],
       }).compileComponents();
     })

@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Entity } from "./model/entity";
+import { Entity, EntityConstructor } from "./model/entity";
 import { ConfigService } from "../config/config.service";
 import { EntitySchemaField } from "./schema/entity-schema-field";
 import { addPropertySchema } from "./database-field.decorator";
@@ -26,7 +26,7 @@ export class EntityConfigService {
     }
   }
 
-  public getEntityConfig(entityType: typeof Entity): EntityConfig {
+  public getEntityConfig(entityType: EntityConstructor<any>): EntityConfig {
     const configName =
       EntityConfigService.PREFIX_ENTITY_CONFIG + entityType.ENTITY_TYPE;
     return this.configService.getConfig<EntityConfig>(configName);
