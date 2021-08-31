@@ -9,6 +9,6 @@
     (mouseenter)="showTooltip()"
     (mouseleave)="hideTooltip()"
   >
-    <div>{{ entity?.language}}</div>
+    <div>{{ entity?.language || entity?.medium}}</div>
   </div>
 </div>
