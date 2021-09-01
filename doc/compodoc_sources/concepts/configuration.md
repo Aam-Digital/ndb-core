@@ -210,7 +210,7 @@ Example:
 ```
         "filters": [
                 {
-                    "id": "medium"
+                    "id": "language"
                 },
                 {
                     "id": "privateSchool",
