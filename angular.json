@@ -37,8 +37,7 @@
             ],
             "scripts": [
               "node_modules/marked/lib/marked.js"
-            ],
-            "localize": ["de"]
+            ]
           },
           "configurations": {
             "production": {

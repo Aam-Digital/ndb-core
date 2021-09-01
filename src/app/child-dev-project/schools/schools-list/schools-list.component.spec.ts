@@ -32,15 +32,10 @@ describe("SchoolsListComponent", () => {
       groups: [
         {
           name: "School Info",
-          columns: ["name", "lanuage", "address"],
+          columns: ["name"],
         },
       ],
     },
-    filters: [
-      {
-        id: "language",
-      },
-    ],
   };
 
   const routeMock = {
