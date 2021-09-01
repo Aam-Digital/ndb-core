@@ -7,37 +7,34 @@ import { DatePipe } from "@angular/common";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { of } from "rxjs";
 import { ChildrenModule } from "../../children/children.module";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
-import { SessionService } from "../../../core/session/session-service/session.service";
-import { User } from "../../../core/user/user";
+import { MockSessionModule } from "../../../core/session/mock-session.module";
 
 describe("EducationalMaterialComponent", () => {
   let component: EducationalMaterialComponent;
   let fixture: ComponentFixture<EducationalMaterialComponent>;
-
-  const mockChildrenService = {
-    getChild: () => {
-      return of([new Child("22")]);
-    },
-    getEducationalMaterialsOfChild: () => {
-      return of([]);
-    },
-  };
+  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
+  const child = new Child("22");
 
   beforeEach(
     waitForAsync(() => {
+      mockChildrenService = jasmine.createSpyObj([
+        "getChild",
+        "getEducationalMaterialsOfChild",
+      ]);
+      mockChildrenService.getChild.and.returnValue(of(child));
+      mockChildrenService.getEducationalMaterialsOfChild.and.returnValue(
+        of([])
+      );
       TestBed.configureTestingModule({
         declarations: [EducationalMaterialComponent],
-        imports: [ChildrenModule, NoopAnimationsModule],
+        imports: [
+          ChildrenModule,
+          NoopAnimationsModule,
+          MockSessionModule.withState(),
+        ],
         providers: [
           DatePipe,
           { provide: ChildrenService, useValue: mockChildrenService },
-          { provide: EntityMapperService, useValue: mockEntityMapper([]) },
-          {
-            provide: SessionService,
-            useValue: { getCurrentUser: () => new User() },
-          },
         ],
       }).compileComponents();
     })
@@ -46,7 +43,7 @@ describe("EducationalMaterialComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EducationalMaterialComponent);
     component = fixture.componentInstance;
-    component.child = new Child("22");
+    component.child = child;
     fixture.detectChanges();
   });
 

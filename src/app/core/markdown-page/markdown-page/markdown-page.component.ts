@@ -18,6 +18,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { MarkdownPageConfig } from "../MarkdownPageConfig";
+import { RouteData } from "../../view/dynamic-routing/view-config.interface";
 
 /**
  * Display markdown formatted page that is dynamically loaded based on the file defined in config.
@@ -35,7 +36,8 @@ export class MarkdownPageComponent implements OnInit {
 
   ngOnInit() {
     this.route.data.subscribe(
-      (config: MarkdownPageConfig) => (this.markdownFile = config.markdownFile)
+      (data: RouteData<MarkdownPageConfig>) =>
+        (this.markdownFile = data.config.markdownFile)
     );
   }
 }

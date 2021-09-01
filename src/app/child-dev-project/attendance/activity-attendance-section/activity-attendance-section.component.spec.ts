@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ActivityAttendanceSectionComponent } from "./activity-attendance-section.component";
 import { AttendanceService } from "../attendance.service";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { DatePipe, PercentPipe } from "@angular/common";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { RecurringActivity } from "../model/recurring-activity";
@@ -12,9 +11,7 @@ import { defaultAttendanceStatusTypes } from "../../../core/config/default-confi
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { AttendanceModule } from "../attendance.module";
 import { MatNativeDateModule } from "@angular/material/core";
-import { SessionService } from "../../../core/session/session-service/session.service";
-import { User } from "../../../core/user/user";
-import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
+import { MockSessionModule } from "../../../core/session/mock-session.module";
 
 describe("ActivityAttendanceSectionComponent", () => {
   let component: ActivityAttendanceSectionComponent;
@@ -33,21 +30,17 @@ describe("ActivityAttendanceSectionComponent", () => {
         "getActivityAttendances",
       ]);
       mockAttendanceService.getActivityAttendances.and.resolveTo(testRecords);
-
       TestBed.configureTestingModule({
-        imports: [AttendanceModule, NoopAnimationsModule, MatNativeDateModule],
+        imports: [
+          AttendanceModule,
+          NoopAnimationsModule,
+          MatNativeDateModule,
+          MockSessionModule.withState(),
+        ],
         providers: [
           { provide: AttendanceService, useValue: mockAttendanceService },
-          {
-            provide: EntityMapperService,
-            useValue: mockEntityMapper(),
-          },
           DatePipe,
           PercentPipe,
-          {
-            provide: SessionService,
-            useValue: { getCurrentUser: () => new User() },
-          },
         ],
       }).compileComponents();
     })

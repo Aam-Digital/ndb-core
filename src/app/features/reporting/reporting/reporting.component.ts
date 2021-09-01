@@ -11,6 +11,7 @@ import {
   ReportingComponentConfig,
 } from "./reporting-component-config";
 import moment from "moment";
+import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 
 @Component({
   selector: "app-reporting",
@@ -34,25 +35,24 @@ export class ReportingComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.activatedRoute.data.subscribe((config: ReportingComponentConfig) => {
-      this.availableReports = config.reports;
-      if (this.availableReports?.length === 1) {
-        this.selectedReport = this.availableReports[0];
+    this.activatedRoute.data.subscribe(
+      (data: RouteData<ReportingComponentConfig>) => {
+        this.availableReports = data.config.reports;
+        if (this.availableReports?.length === 1) {
+          this.selectedReport = this.availableReports[0];
+        }
       }
-    });
+    );
   }
 
   async calculateResults() {
     this.loading = true;
 
-    this.reportingService.setAggregations(
-      this.selectedReport.aggregationDefinitions
-    );
-
     // Add one day because to date is exclusive
     const dayAfterToDate = moment(this.toDate).add(1, "day").toDate();
 
     this.results = await this.reportingService.calculateReport(
+      this.selectedReport.aggregationDefinitions,
       this.fromDate,
       dayAfterToDate
     );

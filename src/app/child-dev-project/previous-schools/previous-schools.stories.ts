@@ -16,18 +16,13 @@ import { PouchDatabase } from "../../core/database/pouch-database";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { Database } from "../../core/database/database";
 import { ChildrenModule } from "../children/children.module";
-import { NewLocalSessionService } from "../../core/session/session-service/new-local-session.service";
-import { LoggingService } from "../../core/logging/logging.service";
 import { SessionService } from "../../core/session/session-service/session.service";
+import { LocalSession } from "../../core/session/session-service/local-session";
 
 const database = PouchDatabase.createWithInMemoryDB();
 const schemaService = new EntitySchemaService();
 const entityMapper = new EntityMapperService(database, schemaService);
-const sessionService = new NewLocalSessionService(
-  new LoggingService(),
-  schemaService,
-  database
-);
+const sessionService = new LocalSession(database);
 
 const child = new Child("testChild");
 const school1 = new School("1");

@@ -6,18 +6,27 @@
     fxLayout.sm="row wrap"
   >
     <div *ngFor="let col of _columns" fxFlex>
-      <div *ngFor="let row of col">
-        <ng-template
-          [appDynamicComponent]="{
-            component: row.edit,
-            config: {
-              formFieldConfig: row,
-              propertySchema: entity.getSchema().get(row.id),
-              formControl: form.get(row.id)
-            }
-          }"
-        >
-        </ng-template>
+      <div *ngFor="let row of col" style="min-width: 224px">
+        <div class="form-field">
+          <ng-template
+            [appDynamicComponent]="{
+              component: row.edit,
+              config: {
+                formFieldConfig: row,
+                propertySchema: entity.getSchema().get(row.id),
+                formControl: form.get(row.id)
+              }
+            }">
+          </ng-template>
+        </div>
+        <mat-icon
+          (click)="tooltipElement.show()"
+          #tooltipElement="matTooltip"
+          *ngIf="row.tooltip"
+          matSuffix
+          fontIcon="fa-question-circle-o"
+          [matTooltip]="row.tooltip"
+        ></mat-icon>
       </div>
     </div>
   </div>

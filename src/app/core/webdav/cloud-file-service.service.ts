@@ -4,6 +4,8 @@ import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { SessionService } from "../session/session-service/session.service";
 import { WebdavWrapperService } from "./webdav-wrapper.service";
 import { WebDAVClient } from "webdav";
+import { EntityMapperService } from "../entity/entity-mapper.service";
+import { User } from "../user/user";
 
 /**
  * Connect and access a remote cloud file system like Nextcloud
@@ -30,7 +32,8 @@ export class CloudFileService {
   constructor(
     private domSanitizer: DomSanitizer,
     private sessionService: SessionService,
-    private webdav: WebdavWrapperService
+    private webdav: WebdavWrapperService,
+    private entityMapper: EntityMapperService
   ) {
     this.connect();
   }
@@ -44,6 +47,7 @@ export class CloudFileService {
     username: string = null,
     password: string = null
   ): Promise<void> {
+    const currentUser = this.sessionService.getCurrentUser();
     if (
       !CloudFileService.WEBDAV_ENABLED ||
       !this.sessionService.getCurrentUser()
@@ -52,13 +56,12 @@ export class CloudFileService {
     }
 
     this.reset();
-
-    const currentUser = this.sessionService.getCurrentUser();
-    this.basePath = currentUser.cloudBaseFolder;
+    const userEntity = await this.entityMapper.load(User, currentUser.name);
+    this.basePath = userEntity.cloudBaseFolder;
 
     if (username === null && password == null) {
-      username = currentUser.cloudUserName;
-      password = currentUser.cloudPasswordDec;
+      username = userEntity.cloudUserName;
+      password = userEntity.cloudPasswordDec;
     }
 
     if (!username || !password) {
@@ -147,8 +150,8 @@ export class CloudFileService {
    * creates new directory
    * @param path path to directory to be created, without leading slash; e.g. 'new-folder'
    */
-  public async createDir(path: string) {
-    this.client.createDirectory(this.basePath + path);
+  public createDir(path: string) {
+    return this.client.createDirectory(this.basePath + path);
   }
 
   /**
@@ -156,7 +159,7 @@ export class CloudFileService {
    * @param file The file to be stored
    * @param filePath the filename and path to which the file will be uploaded, no leading slash
    */
-  public async uploadFile(file: any, filePath: string): Promise<boolean> {
+  public uploadFile(file: any, filePath: string): Promise<boolean> {
     return this.client.putFileContents(
       this.basePath + filePath,
       file

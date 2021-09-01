@@ -25,7 +25,6 @@ import { DatabaseIndexingService } from "../../entity/database-indexing/database
 import { BackgroundProcessState } from "../background-process-state.interface";
 import { BehaviorSubject } from "rxjs";
 import { debounceTime } from "rxjs/operators";
-import { StateChangedEvent } from "../../session/session-states/state-handler";
 import { LoggingService } from "../../logging/logging.service";
 
 /**
@@ -67,14 +66,13 @@ export class SyncStatusComponent implements OnInit {
       this.handleIndexingState(indicesStatus)
     );
 
-    this.sessionService
-      .getSyncState()
-      .getStateChangedStream()
-      .subscribe((state) => this.handleSyncState(state));
+    this.sessionService.syncState.subscribe((state) =>
+      this.handleSyncState(state)
+    );
   }
 
-  private handleSyncState(state: StateChangedEvent<SyncState>) {
-    switch (state.toState) {
+  private handleSyncState(state: SyncState) {
+    switch (state) {
       case SyncState.STARTED:
         this.syncInProgress = true;
         if (!this.sessionService.isLoggedIn() && !this.dialogRef) {

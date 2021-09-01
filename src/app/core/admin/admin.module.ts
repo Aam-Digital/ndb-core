@@ -5,7 +5,6 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { BrowserModule } from "@angular/platform-browser";
 import { AlertsModule } from "../alerts/alerts.module";
-import { AdminGuard } from "./admin.guard";
 import { EntityModule } from "../entity/entity.module";
 import { HttpClientModule } from "@angular/common/http";
 import { ChildPhotoUpdateService } from "./services/child-photo-update.service";
@@ -17,7 +16,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatIconModule } from "@angular/material/icon";
 import { UserListComponent } from "./user-list/user-list.component";
-import { ExportDataComponent } from "./export-data/export-data.component";
 import { BackupService } from "./services/backup.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
@@ -43,13 +41,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatIconModule,
     MatTooltipModule,
   ],
-  declarations: [AdminComponent, UserListComponent, ExportDataComponent],
-  providers: [
-    AdminGuard,
-    ChildPhotoUpdateService,
-    BackupService,
-    ExportDataComponent,
-  ],
-  exports: [ExportDataComponent],
+  declarations: [AdminComponent, UserListComponent],
+  providers: [ChildPhotoUpdateService, BackupService],
 })
 export class AdminModule {}

@@ -10,7 +10,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormsModule } from "@angular/forms";
-import { AdminModule } from "../../core/admin/admin.module";
+import { ExportModule } from "../../core/export/export.module";
 import { ReportRowComponent } from "./reporting/report-row/report-row.component";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatSelectModule } from "@angular/material/select";
@@ -29,7 +29,7 @@ import { FlexModule } from "@angular/flex-layout";
     MatDatepickerModule,
     MatFormFieldModule,
     FormsModule,
-    AdminModule,
+    ExportModule,
     MatProgressBarModule,
     MatSelectModule,
     FlexModule,

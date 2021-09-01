@@ -3,10 +3,7 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { EntityFormComponent } from "./entity-form.component";
 import { ChildPhotoService } from "../../../../child-dev-project/children/child-photo-service/child-photo.service";
 import { Entity } from "../../../entity/model/entity";
-import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { User } from "../../../user/user";
 import { RouterTestingModule } from "@angular/router/testing";
-import { SessionService } from "../../../session/session-service/session.service";
 import { ConfigService } from "../../../config/config.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { AlertService } from "../../../alerts/alert.service";
@@ -17,15 +14,14 @@ import { EntityFormModule } from "../entity-form.module";
 import { FormBuilder } from "@angular/forms";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { EntityFormService } from "../entity-form.service";
+import { MockSessionModule } from "../../../session/mock-session.module";
 
 describe("EntityFormComponent", () => {
   let component: EntityFormComponent;
   let fixture: ComponentFixture<EntityFormComponent>;
 
   let mockChildPhotoService: jasmine.SpyObj<ChildPhotoService>;
-  let mockSessionService: jasmine.SpyObj<SessionService>;
   let mockConfigService: jasmine.SpyObj<ConfigService>;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let mockEntitySchemaService: jasmine.SpyObj<EntitySchemaService>;
 
   const testChild = new Child("Test Name");
@@ -37,12 +33,7 @@ describe("EntityFormComponent", () => {
         "setImage",
         "getImage",
       ]);
-      mockSessionService = jasmine.createSpyObj({
-        getCurrentUser: new User("test-user"),
-      });
       mockConfigService = jasmine.createSpyObj(["getConfig"]);
-      mockEntityMapper = jasmine.createSpyObj(["save"]);
-      mockEntityMapper.save.and.resolveTo();
       mockEntitySchemaService = jasmine.createSpyObj([
         "getComponent",
         "registerSchemaDatatype",
@@ -55,13 +46,12 @@ describe("EntityFormComponent", () => {
           NoopAnimationsModule,
           RouterTestingModule,
           MatSnackBarModule,
+          MockSessionModule.withState(),
         ],
         providers: [
           FormBuilder,
           AlertService,
-          { provide: EntityMapperService, useValue: mockEntityMapper },
           { provide: ChildPhotoService, useValue: mockChildPhotoService },
-          { provide: SessionService, useValue: mockSessionService },
           { provide: ConfigService, useValue: mockConfigService },
           { provide: EntitySchemaService, useValue: mockEntitySchemaService },
         ],

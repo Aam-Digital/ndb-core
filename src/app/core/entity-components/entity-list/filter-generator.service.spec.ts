@@ -17,7 +17,7 @@ describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
 
-  beforeEach(async() => {
+  beforeEach(async () => {
     mockEntityMapper = jasmine.createSpyObj(["loadType", "load"]);
     mockEntityMapper.load.and.rejectWith();
     TestBed.configureTestingModule({
@@ -29,9 +29,9 @@ describe("FilterGeneratorService", () => {
       ],
     });
     service = TestBed.inject(FilterGeneratorService);
-    let configService = TestBed.inject(ConfigService);
-    let entityConfigService = TestBed.inject(EntityConfigService);
-    let entityMapper = TestBed.inject(EntityMapperService);
+    const configService = TestBed.inject(ConfigService);
+    const entityConfigService = TestBed.inject(EntityConfigService);
+    const entityMapper = TestBed.inject(EntityMapperService);
     await configService.loadConfig(entityMapper);
     entityConfigService.addConfigAttributes(School);
     entityConfigService.addConfigAttributes(Child);
