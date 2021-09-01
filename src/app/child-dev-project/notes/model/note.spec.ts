@@ -235,4 +235,24 @@ describe("Note", () => {
     otherNote.removeChild("5");
     expect(otherNote.children.length).toBe(note.children.length - 1);
   });
+
+  it("should count children with a given attendance", () => {
+    const present = testStatusTypes[0];
+    const absent = testStatusTypes[1];
+    const note = new Note();
+    note.addChild("presentChild");
+    note.getAttendance("presentChild").status = present;
+    note.addChild("lateChild");
+    note.getAttendance("lateChild").status = present;
+    note.addChild("absentChild");
+    note.getAttendance("absentChild").status = absent;
+
+    const presentChildren = note.countWithStatus(
+      AttendanceLogicalStatus.PRESENT
+    );
+    expect(presentChildren).toBe(2);
+
+    const absentChildren = note.countWithStatus(AttendanceLogicalStatus.ABSENT);
+    expect(absentChildren).toBe(1);
+  });
 });
