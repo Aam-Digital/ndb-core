@@ -5,4 +5,4 @@ Haben Sie Fragen oder technische Probleme? Kontaktieren Sie uns:
 - [WhatsApp](https://wa.me/491776181407)
 - [Telegram](https://telegram.me/SebastianLeidig)
 
-_Wir freuen uns von Ihnen zu hören und zu helfen!_
+_Wir freuen uns darauf, von Ihnen zu hören und Ihnen zu helfen!_
