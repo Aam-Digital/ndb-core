@@ -33,10 +33,10 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
     const child = new Child(id);
     child.name = faker.name.firstName() + " " + faker.name.lastName();
     child.projectNumber = id;
-    child.religion = faker.random.arrayElement(religions);
+    child["religion"] = faker.random.arrayElement(religions);
     child.gender = faker.random.arrayElement(genders.slice(1));
     child.dateOfBirth = faker.dateOfBirth(5, 20);
-    child.motherTongue = faker.random.arrayElement(languages);
+    child["motherTongue"] = faker.random.arrayElement(languages);
     child.center = faker.random.arrayElement(centersWithProbability);
 
     child.admissionDate = faker.date.past(child.age - 4);
