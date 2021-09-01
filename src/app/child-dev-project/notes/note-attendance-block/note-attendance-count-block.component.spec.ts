@@ -1,21 +1,21 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { NoteAttendanceBlockComponent } from "./note-attendance-block.component";
+import { NoteAttendanceCountBlockComponent } from "./note-attendance-count-block.component";
 import { Note } from "../model/note";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 
-describe("NoteAttendanceBlockComponent", () => {
-  let component: NoteAttendanceBlockComponent;
-  let fixture: ComponentFixture<NoteAttendanceBlockComponent>;
+describe("NoteAttendanceBlockCountComponent", () => {
+  let component: NoteAttendanceCountBlockComponent;
+  let fixture: ComponentFixture<NoteAttendanceCountBlockComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [NoteAttendanceBlockComponent],
+      declarations: [NoteAttendanceCountBlockComponent],
     }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(NoteAttendanceBlockComponent);
+    fixture = TestBed.createComponent(NoteAttendanceCountBlockComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

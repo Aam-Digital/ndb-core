@@ -112,14 +112,14 @@ WithAttendance.args = {
     {
       id: "present",
       label: "Present",
-      view: "NoteAttendanceBlock",
+      view: "NoteAttendanceCountBlock",
       additional: { status: AttendanceLogicalStatus.PRESENT },
       noSorting: true,
     },
     {
       id: "absent",
       label: "Absent",
-      view: "NoteAttendanceBlock",
+      view: "NoteAttendanceCountBlock",
       additional: { status: AttendanceLogicalStatus.ABSENT },
       noSorting: true,
     },
