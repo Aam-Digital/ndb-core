@@ -256,7 +256,6 @@ export const defaultJsonConfig = {
                 { "label": "participant_id", "query": "_id" },
                 { "label": "participant", "query": "name" },
                 { "label": "gender", "query": "gender" },
-                { "label": "area", "query": "area" },
                 { "label": "religion", "query": "religion" },
               ]
             },
