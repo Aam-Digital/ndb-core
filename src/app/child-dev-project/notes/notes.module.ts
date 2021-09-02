@@ -42,12 +42,14 @@ import { AttendanceModule } from "../attendance/attendance.module";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { ChildMeetingNoteAttendanceComponent } from "./note-details/child-meeting-attendance/child-meeting-note-attendance.component";
 import { EntityUtilsModule } from "../../core/entity-components/entity-utils/entity-utils.module";
+import { NoteAttendanceCountBlockComponent } from "./note-attendance-block/note-attendance-count-block.component";
 
 @NgModule({
   declarations: [
     NoteDetailsComponent,
     NotesManagerComponent,
     ChildMeetingNoteAttendanceComponent,
+    NoteAttendanceCountBlockComponent,
   ],
   imports: [
     CommonModule,

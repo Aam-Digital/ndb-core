@@ -28,7 +28,7 @@ export const defaultAttendanceStatusTypes: AttendanceStatusType[] = [
   {
     id: "HOLIDAY",
     shortName: "H",
-    label: $localize`:Child was on holliday:Holiday`,
+    label: $localize`:Child was on holiday:Holiday`,
     style: "attendance-H",
     countAs: "IGNORE" as AttendanceLogicalStatus,
   },
