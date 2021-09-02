@@ -1,7 +1,19 @@
 .edit-button {
   margin-left: 10px;
 }
+
+.form-cell {
+  min-width: 224px;
+  width: 100%;
+  white-space: nowrap;
+}
+
+.form-icon {
+  float: left;
+  width: 20px;
+  padding-top: 20px;
+}
+
 .form-field {
-  display: inline-block;
-  margin-left: 20px;
+  width: 100%;
 }
