@@ -5,6 +5,7 @@ import { AppConfig } from "../../app-config/app-config";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { AlertService } from "../../alerts/alert.service";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { SessionService } from "../../session/session-service/session.service";
 
 /**
  * User Profile form to allow the user to set up credentials for a webdav server to be used by the CloudFileService.
@@ -16,7 +17,9 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 })
 export class CloudFileServiceUserSettingsComponent implements OnInit {
   /** The user for who this form edits data */
-  @Input() user: User;
+  @Input() username: string;
+
+  user: User;
 
   /** Webdav server URL */
   webdavUrl: string;
@@ -30,17 +33,20 @@ export class CloudFileServiceUserSettingsComponent implements OnInit {
     private fb: FormBuilder,
     private entityMapperService: EntityMapperService,
     private cloudFileService: CloudFileService,
-    private alertService: AlertService
-  ) {}
-
-  ngOnInit() {
-    this.webdavUrl = AppConfig.settings.webdav.remote_url;
-
+    private alertService: AlertService,
+    private sessionService: SessionService
+  ) {
     this.form = this.fb.group({
-      cloudUser: [this.user.cloudUserName, Validators.required],
+      cloudUser: ["", Validators.required],
       cloudPassword: ["", Validators.required],
       userPassword: ["", Validators.required],
     });
+  }
+
+  async ngOnInit() {
+    this.webdavUrl = AppConfig.settings.webdav.remote_url;
+    this.user = await this.entityMapperService.load(User, this.username);
+    this.form.get("cloudUser").setValue(this.user.cloudUserName);
   }
 
   /**
@@ -49,7 +55,7 @@ export class CloudFileServiceUserSettingsComponent implements OnInit {
    */
   async updateCloudServiceSettings() {
     const password = this.form.controls.userPassword.value;
-    if (!this.user.checkPassword(password)) {
+    if (!this.sessionService.checkPassword(this.user.name, password)) {
       this.form.controls.userPassword.setErrors({ incorrectPassword: true });
       return;
     }

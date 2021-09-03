@@ -20,6 +20,8 @@ import { Database } from "../../core/database/database";
 import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
 import { Note } from "../../child-dev-project/notes/model/note";
 import { genders } from "../../child-dev-project/children/model/genders";
+import { EntityConfigService } from "app/core/entity/entity-config.service";
+import { ConfigService } from "app/core/config/config.service";
 
 describe("QueryService", () => {
   let service: QueryService;
@@ -47,7 +49,7 @@ describe("QueryService", () => {
   let todayEventWithoutSchool: EventNote;
   let twoDaysAgoEventWithoutRelation: EventNote;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     database = PouchDatabase.createWithInMemoryDB();
     TestBed.configureTestingModule({
       imports: [ConfigurableEnumModule],
@@ -57,32 +59,40 @@ describe("QueryService", () => {
         ChildrenService,
         AttendanceService,
         DatabaseIndexingService,
+        ConfigService,
+        EntityConfigService,
         { provide: Database, useValue: database },
       ],
     });
     service = TestBed.inject(QueryService);
+    const configService = TestBed.inject(ConfigService);
+    const entityConfigService = TestBed.inject(EntityConfigService);
+    const entityMapper = TestBed.inject(EntityMapperService);
+    await configService.loadConfig(entityMapper);
+    entityConfigService.addConfigAttributes(School);
+    entityConfigService.addConfigAttributes(Child);
   });
 
   beforeEach(async () => {
     const entityMapper = TestBed.inject(EntityMapperService);
     maleChristianChild = new Child("maleChristianChild");
     maleChristianChild.gender = genders[1];
-    maleChristianChild.religion = "christian";
+    maleChristianChild["religion"] = "christian";
     await entityMapper.save(maleChristianChild);
     femaleChristianChild = new Child("femaleChristianChild");
     femaleChristianChild.gender = genders[2];
-    femaleChristianChild.religion = "christian";
+    femaleChristianChild["religion"] = "christian";
     await entityMapper.save(femaleChristianChild);
     femaleMuslimChild = new Child("femaleMuslimChild");
     femaleMuslimChild.gender = genders[2];
-    femaleMuslimChild.religion = "muslim";
+    femaleMuslimChild["religion"] = "muslim";
     await entityMapper.save(femaleMuslimChild);
     maleChild = new Child("maleChild");
     maleChild.gender = genders[1];
     await entityMapper.save(maleChild);
 
     privateSchool = new School("privateSchool");
-    privateSchool.privateSchool = true;
+    privateSchool["privateSchool"] = true;
     await entityMapper.save(privateSchool);
     normalSchool = new School("normalSchool");
     await entityMapper.save(normalSchool);

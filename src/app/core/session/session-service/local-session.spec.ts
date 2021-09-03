@@ -15,13 +15,17 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { AppConfig } from "../../app-config/app-config";
 import { LocalSession } from "./local-session";
 import { SessionType } from "../session-type";
+import { passwordEqualsEncrypted, DatabaseUser, LocalUser } from "./local-user";
+import { LoginState } from "../session-states/login-state.enum";
+import { testSessionServiceImplementation } from "./session.service.spec";
+import { TEST_PASSWORD, TEST_USER } from "../mock-session.module";
 
 describe("LocalSessionService", () => {
   let localSession: LocalSession;
+  let testUser: DatabaseUser;
 
   beforeEach(() => {
     AppConfig.settings = {
@@ -32,11 +36,73 @@ describe("LocalSessionService", () => {
         remote_url: "https://demo.aam-digital.com/db/",
       },
     };
-
-    localSession = new LocalSession(new EntitySchemaService());
+    localSession = new LocalSession(null);
   });
 
-  it("should be created", async () => {
+  beforeEach(() => {
+    testUser = {
+      name: TEST_USER,
+      roles: ["user_app"],
+    };
+    localSession.saveUser(testUser, TEST_PASSWORD);
+  });
+
+  afterEach(() => {
+    localSession.removeUser(TEST_USER);
+  });
+
+  it("should be created", () => {
     expect(localSession).toBeDefined();
   });
+
+  it("should save user objects to local storage", () => {
+    const storedUser: LocalUser = JSON.parse(
+      window.localStorage.getItem(testUser.name)
+    );
+    expect(storedUser.name).toBe(testUser.name);
+    expect(storedUser.roles).toEqual(testUser.roles);
+    expect(
+      passwordEqualsEncrypted(TEST_PASSWORD, storedUser.encryptedPassword)
+    ).toBeTrue();
+  });
+
+  it("should login a previously saved user with correct password", async () => {
+    expect(localSession.loginState.value).toBe(LoginState.LOGGED_OUT);
+
+    await localSession.login(TEST_USER, TEST_PASSWORD);
+
+    expect(localSession.loginState.value).toBe(LoginState.LOGGED_IN);
+  });
+
+  it("should fail login with correct username but wrong password", async () => {
+    await localSession.login(TEST_USER, "wrong password");
+
+    expect(localSession.loginState.value).toBe(LoginState.LOGIN_FAILED);
+  });
+
+  it("should fail login with wrong username", async () => {
+    await localSession.login("wrongUsername", TEST_PASSWORD);
+
+    expect(localSession.loginState.value).toBe(LoginState.UNAVAILABLE);
+  });
+
+  it("should assign current user after successful login", async () => {
+    await localSession.login(TEST_USER, TEST_PASSWORD);
+
+    const currentUser = localSession.getCurrentUser();
+
+    expect(currentUser.name).toBe(TEST_USER);
+    expect(currentUser.roles).toEqual(testUser.roles);
+  });
+
+  it("should fail login after a user is removed", async () => {
+    localSession.removeUser(TEST_USER);
+
+    await localSession.login(TEST_USER, TEST_PASSWORD);
+
+    expect(localSession.loginState.value).toBe(LoginState.UNAVAILABLE);
+    expect(localSession.getCurrentUser()).toBeUndefined();
+  });
+
+  testSessionServiceImplementation(() => Promise.resolve(localSession));
 });

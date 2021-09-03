@@ -10,6 +10,7 @@ import { mathLevels } from "../../child-dev-project/aser/model/mathLevels";
 import { readingLevels } from "../../child-dev-project/aser/model/readingLevels";
 import { warningLevels } from "../../child-dev-project/warning-levels";
 import { ratingAnswers } from "../../features/historical-data/rating-answers";
+import { Note } from "../../child-dev-project/notes/model/note";
 
 // prettier-ignore
 export const defaultJsonConfig = {
@@ -239,20 +240,45 @@ export const defaultJsonConfig = {
           "id": "category",
           "display": "dropdown"
         }
+      ],
+      "exportConfig": [
+        { "label": "event_id", "query": "_id" },
+        { "label": "date", "query": "date" },
+        { "label": "event title", "query": "subject" },
+        { "label": "event type", "query": "category" },
+        { "label": "event description", "query": "text" },
+        {
+          "query": ":getAttendanceArray",
+          "subQueries": [
+            {
+              "query": ".participant:toEntities(Child)",
+              "subQueries": [
+                { "label": "participant_id", "query": "_id" },
+                { "label": "participant", "query": "name" },
+                { "label": "gender", "query": "gender" },
+                { "label": "religion", "query": "religion" },
+              ]
+            },
+            {
+              "label": "status",
+              "query": ".status._status.id",
+            },
+          ],
+        },
       ]
     }
   },
   "view:admin": {
     "component": "Admin",
-    "requiresAdmin": true
+    "permittedUserRoles": ["admin_app"]
   },
   "view:users": {
     "component": "UserList",
-    "requiresAdmin": true
+    "permittedUserRoles": ["admin_app"]
   },
   "view:admin/conflicts": {
     "component": "ConflictResolution",
-    "requiresAdmin": true,
+    "permittedUserRoles": ["admin_app"],
     "lazyLoaded":  true
   },
   "view:help": {
@@ -273,15 +299,10 @@ export const defaultJsonConfig = {
       "title": $localize`:Title of schools overview:Schools List`,
       "columns": [
         "name",
-        "medium",
         "privateSchool",
-        "academicBoard",
-        "upToClass"
+        "language"
       ],
       "filters": [
-        {
-          "id": "medium"
-        },
         {
           "id": "privateSchool",
           "true": $localize`:Label for private schools filter - true case:Private School`,
@@ -304,17 +325,21 @@ export const defaultJsonConfig = {
               "component": "Form",
               "config": {
                 "cols": [
-                  ["name"],
-                  ["medium"],
-                  ["privateSchool"],
-                  ["academicBoard"],
-                  ["phone"],
-                  ["address"],
-                  ["website"],
-                  ["timing"],
-                  ["workingDays"],
-                  ["upToClass"],
-                  ["remarks"]
+                  [
+                    "name",
+                    "privateSchool"
+                  ],
+                  [
+                    "address",
+                    "phone"
+                  ],
+                  [
+                    "language",
+                    "timing",
+                  ],
+                  [
+                    "remarks"
+                  ]
                 ]
               }
             }
@@ -325,7 +350,16 @@ export const defaultJsonConfig = {
           "components": [
             {
               "title": "",
-              "component": "ChildrenOverview"
+              "component": "ChildrenOverview",
+              "config": {
+                "popupColumns": [
+                  "childId",
+                  "start",
+                  "end",
+                  "schoolClass",
+                  "result",
+                ],
+              }
             }
           ]
         }
@@ -422,12 +456,7 @@ export const defaultJsonConfig = {
               "name",
               "center",
               "status",
-              "admissionDate",
-              "has_aadhar",
-              "has_kanyashree",
-              "has_bankAccount",
-              "has_rationCard",
-              "has_BplCard"
+              "admissionDate"
             ]
           },
           {
@@ -439,7 +468,6 @@ export const defaultJsonConfig = {
               "health_BMI",
               "health_bloodGroup",
               "health_lastDentalCheckup",
-              "health_lastDeworming",
               "gender",
               "age",
               "dateOfBirth"
@@ -496,29 +524,18 @@ export const defaultJsonConfig = {
                   [
                     "name",
                     "projectNumber",
-                    "center",
-                    "status"
+                    "admissionDate",
                   ],
                   [
                     "dateOfBirth",
                     "gender",
-                    "motherTongue",
-                    "religion"
+                    "motherTongue"
                   ],
                   [
-                    "admissionDate",
-                    "has_aadhar",
-                    "has_kanyashree",
-                    "has_bankAccount",
-                    "has_rationCard",
-                    "has_BplCard"
-                  ],
-                  [
+                    "center",
+                    "status",
                     "address",
-                    "phone",
-                    "guardianName",
-                    "preferredTimeForGuardianMeeting"
-                  ]
+                  ],
                 ]
               }
             }
@@ -574,8 +591,7 @@ export const defaultJsonConfig = {
               "config": {
                 "cols": [
                   ["health_bloodGroup"],
-                  ["health_lastDentalCheckup"],
-                  ["health_lastDeworming"]
+                  ["health_lastDentalCheckup"]
                 ]
               }
             },
@@ -646,9 +662,9 @@ export const defaultJsonConfig = {
         "assignedTo"
       ],
       "exportConfig": [
-        { label: "Title", key: "title" },
-        { label: "Type", key: "type" },
-        { label: "Assigned users", key: "assignedTo" }
+        { label: "Title", query: "title" },
+        { label: "Type", query: "type" },
+        { label: "Assigned users", query: "assignedTo" }
       ]
     }
   },
@@ -777,6 +793,23 @@ export const defaultJsonConfig = {
               "aggregations": [
                 {
                   "query": `:getParticipantsWithAttendance(PRESENT):unique:addPrefix(${Child.ENTITY_TYPE}):toEntities`,
+                  "groupBy": ["gender"],
+                  "label": $localize`:Label for a report query:Participants`
+                }
+              ]
+            }
+          ],
+        },
+        {
+          "title": $localize`:Name of a report:Overall Activity Report`,
+          "aggregationDefinitions": [
+            {
+              "query": `${EventNote.ENTITY_TYPE}:toArray:addEntities(${Note.ENTITY_TYPE})[*date >= ? & date <= ?]`,
+              "groupBy": ["category"],
+              "label": $localize`:Label for a report query:Events`,
+              "aggregations": [
+                {
+                  "query": `:getParticipantsWithAttendance(PRESENT):unique:addPrefix(${Child.ENTITY_TYPE}):toEntities`,
                   "groupBy": ["gender", "religion"],
                   "label": $localize`:Label for a report query:Participants`
                 }
@@ -800,70 +833,24 @@ export const defaultJsonConfig = {
         }
       },
       {
-        "name": "phone",
-        "schema": {
-          dataType: "string",
-          label: $localize`:Label for phone number of a child:Phone No.`
-        }
-      },
-      {
-        "name": "guardianName",
-        "schema": {
-          dataType: "string",
-          label: $localize`:Label for the guardians of a child:Guardians`
-        }
-      },
-      {
-        "name": "preferredTimeForGuardianMeeting",
-        "schema": {
-          dataType: "string",
-          label: $localize`:Label for a child attribute:Preferred time for guardians meeting` }
-      },
-      {
-        "name": "has_aadhar",
-        "schema": {
-          dataType: "configurable-enum",
-          innerDataType: "document-status",
-          label: $localize`:Label for a child attribute:Aadhar`
-        }
-      },
-      {
-        "name": "has_bankAccount",
-        "schema": {
-          dataType: "configurable-enum",
-          innerDataType: "document-status",
-          label: $localize`:Label for a child attribute:Bank Account`
-        }
-      },
-      {
-        "name": "has_kanyashree",
-        "schema": {
-          dataType: "configurable-enum",
-          innerDataType: "document-status",
-          label: $localize`:Label for a child attribute:Kanyashree`
-        }
-      },
-      {
-        "name": "has_rationCard",
-        "schema": {
-          dataType: "configurable-enum",
-          innerDataType: "document-status",
-          label: $localize`:Label for a child attribute:Ration Card`
-        }
-      },
-      {
-        "name": "has_BplCard",
-        "schema": {
-          dataType: "configurable-enum",
-          innerDataType: "document-status",
-          label: $localize`:Label for a child attribute:BPL Card`
-        }
-      },
-      {
         "name": "health_bloodGroup",
         "schema": {
           dataType: "string",
           label: $localize`:Label for a child attribute:Blood Group`
+        }
+      },
+      {
+        "name": "religion",
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for the religion of a child:Religion`
+        }
+      },
+      {
+        "name": "motherTongue",
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for the mother tongue of a child:Mother Tongue`
         }
       },
       {
@@ -873,18 +860,62 @@ export const defaultJsonConfig = {
           label: $localize`:Label for a child attribute:Last Dental Check-Up`
         }
       },
-      {
-        "name": "health_lastDeworming",
-        "schema": {
-          dataType: "Date",
-          label: $localize`:Label for a child attribute:Last De-Worming`
-        }
-      }
     ]
   },
   "entity:School": {
     "permissions": {
-    }
+    },
+    "attributes": [
+      {
+        "name": "name",
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for the name of a school:Name`
+        }
+      },
+      {
+        "name": "privateSchool",
+        "schema": {
+          dataType: "boolean",
+          label: $localize`:Label for if a school is a private school:Private School`
+        }
+      },
+      {
+        "name": "language",
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for the language of a school:Language`
+        }
+      },
+      {
+        "name": "address",
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for the address of a school:Address`
+        }
+      },
+      {
+        "name": "phone",
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for the phone number of a school:Phone Number`
+        }
+      },
+      {
+        "name": "timing",
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for the timing of a school:School Timing`
+        }
+      },
+      {
+        "name": "remarks",
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for the remarks for a school:Remarks`
+        }
+      }
+    ]
   },
   "entity:HistoricalEntityData": {
     "attributes": [

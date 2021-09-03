@@ -20,8 +20,8 @@ import { ChildrenService } from "../../../../child-dev-project/children/children
 import { of } from "rxjs";
 import * as faker from "faker";
 import { EntityPermissionsService } from "../../../permissions/entity-permissions.service";
-import { SessionService } from "../../../session/session-service/session.service";
-import { User } from "../../../user/user";
+import { AttendanceLogicalStatus } from "../../../../child-dev-project/attendance/model/attendance-status";
+import { MockSessionModule } from "../../../session/mock-session.module";
 
 const configService = new ConfigService();
 const schemaService = new EntitySchemaService();
@@ -49,6 +49,7 @@ export default {
         BrowserAnimationsModule,
         MatNativeDateModule,
         ChildrenModule,
+        MockSessionModule.withState(),
       ],
       providers: [
         {
@@ -77,10 +78,6 @@ export default {
           provide: EntityPermissionsService,
           useValue: { userIsPermitted: () => true },
         },
-        {
-          provide: SessionService,
-          useValue: { getCurrentUser: () => new User() },
-        },
       ],
     }),
   ],
@@ -100,6 +97,32 @@ Primary.args = {
     { id: "subject" },
     { id: "category" },
     { id: "children" },
+  ],
+  records: data,
+  newRecordFactory: () => new Note(),
+};
+
+export const WithAttendance = Template.bind({});
+WithAttendance.args = {
+  columns: <FormFieldConfig[]>[
+    { id: "date" },
+    { id: "subject" },
+    { id: "category" },
+    { id: "children" },
+    {
+      id: "present",
+      label: "Present",
+      view: "NoteAttendanceCountBlock",
+      additional: { status: AttendanceLogicalStatus.PRESENT },
+      noSorting: true,
+    },
+    {
+      id: "absent",
+      label: "Absent",
+      view: "NoteAttendanceCountBlock",
+      additional: { status: AttendanceLogicalStatus.ABSENT },
+      noSorting: true,
+    },
   ],
   records: data,
   newRecordFactory: () => new Note(),

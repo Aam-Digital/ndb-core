@@ -5,7 +5,6 @@ import { ActivityAttendanceSectionComponent } from "./activity-attendance-sectio
 import { AttendanceModule } from "../attendance.module";
 import { FontAwesomeIconsModule } from "../../../core/icons/font-awesome-icons.module";
 import { RouterTestingModule } from "@angular/router/testing";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { AttendanceService } from "../attendance.service";
 import {
   ActivityAttendance,
@@ -18,6 +17,7 @@ import { of } from "rxjs";
 import { Child } from "../../children/model/child";
 import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { Angulartics2Module } from "angulartics2";
+import { MockSessionModule } from "../../../core/session/mock-session.module";
 
 const demoActivity = RecurringActivity.create("Coaching Batch C");
 const attendanceRecords = [
@@ -78,13 +78,10 @@ export default {
         RouterTestingModule,
         MatNativeDateModule,
         Angulartics2Module.forRoot(),
+        MockSessionModule.withState(),
       ],
       declarations: [],
       providers: [
-        {
-          provide: EntityMapperService,
-          useValue: { save: () => Promise.resolve() },
-        },
         {
           provide: AttendanceService,
           useValue: {

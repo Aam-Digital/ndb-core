@@ -23,6 +23,7 @@ import { SessionType } from "../../session/session-type";
 import { NotesMigrationService } from "../../../child-dev-project/notes/notes-migration/notes-migration.service";
 import { AttendanceMigrationService } from "../../../child-dev-project/attendance/attendance-migration/attendance-migration.service";
 import { ChildrenMigrationService } from "../../../child-dev-project/children/child-photo-service/children-migration.service";
+import { PermissionsMigrationService } from "../../permissions/permissions-migration.service";
 
 describe("AdminComponent", () => {
   let component: AdminComponent;
@@ -117,6 +118,10 @@ describe("AdminComponent", () => {
           },
           {
             provide: ChildrenMigrationService,
+            useValue: {},
+          },
+          {
+            provide: PermissionsMigrationService,
             useValue: {},
           },
         ],

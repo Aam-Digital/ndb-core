@@ -3,13 +3,21 @@ import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import moment from "moment";
 import { School } from "../../schools/model/school";
+import { Child } from "./child";
 
 /**
  * Record of a school year that a Child attended a certain class in a School.
  */
 @DatabaseEntity("ChildSchoolRelation")
 export class ChildSchoolRelation extends Entity {
-  @DatabaseField() childId: string;
+  @DatabaseField({
+    label: $localize`:Label for the child of a relation:Child`,
+    viewComponent: "DisplayEntity",
+    editComponent: "EditSingleEntity",
+    additional: Child.ENTITY_TYPE,
+    required: true,
+  })
+  childId: string;
   @DatabaseField({
     label: $localize`:Label for the school of a relation:School`,
     viewComponent: "DisplayEntity",

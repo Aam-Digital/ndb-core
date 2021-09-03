@@ -17,10 +17,9 @@
 
 import { LoginState } from "../session-states/login-state.enum";
 import { Database } from "../../database/database";
-import { ConnectionState } from "../session-states/connection-state.enum";
 import { SyncState } from "../session-states/sync-state.enum";
-import { User } from "../../user/user";
-import { StateHandler } from "../session-states/state-handler";
+import { DatabaseUser } from "./local-user";
+import { BehaviorSubject } from "rxjs";
 
 /**
  * A session manages user authentication and database connection for the app.
@@ -36,6 +35,11 @@ import { StateHandler } from "../session-states/state-handler";
  * Providers are set up in a way that you will get the correct implementation during runtime.
  */
 export abstract class SessionService {
+  /** StateHandler for login state changes */
+  private _loginState = new BehaviorSubject(LoginState.LOGGED_OUT);
+  /** StateHandler for sync state changes */
+  private _syncState = new BehaviorSubject(SyncState.UNSYNCED);
+
   /**
    * Authenticate a user.
    * @param username
@@ -49,29 +53,38 @@ export abstract class SessionService {
   abstract logout();
 
   /**
-   * Get the currently logged in user (or undefined).
+   * Get the current user according to the CouchDB format
    */
-  abstract getCurrentUser(): User;
+  abstract getCurrentUser(): DatabaseUser;
+
+  /**
+   * Check a password if its valid
+   * @param username the username for which the password should be checked
+   * @param password the password to be checked
+   * @returns boolean true if the password is correct, false otherwise
+   */
+  abstract checkPassword(username: string, password: string): boolean;
 
   /**
    * Get the session status - whether a user is authenticated currently.
    */
-  abstract isLoggedIn(): boolean;
+  public isLoggedIn(): boolean {
+    return this.loginState.value === LoginState.LOGGED_IN;
+  }
 
   /**
    * Get the state of the session.
    */
-  abstract getLoginState(): StateHandler<LoginState>;
-
-  /**
-   * Get the state of the connection to the remote server.
-   */
-  abstract getConnectionState(): StateHandler<ConnectionState>;
+  public get loginState(): BehaviorSubject<LoginState> {
+    return this._loginState;
+  }
 
   /**
    * Get the state of the synchronization with the remote server.
    */
-  abstract getSyncState(): StateHandler<SyncState>;
+  public get syncState(): BehaviorSubject<SyncState> {
+    return this._syncState;
+  }
 
   /**
    * Start a synchronization process.

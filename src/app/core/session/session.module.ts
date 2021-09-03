@@ -21,7 +21,6 @@ import { LoginComponent } from "./login/login.component";
 import { FormsModule } from "@angular/forms";
 import { EntityModule } from "../entity/entity.module";
 import { AlertsModule } from "../alerts/alerts.module";
-import { LoggedInGuard } from "./logged-in-guard/logged-in.guard";
 import { sessionServiceProvider } from "./session.service.provider";
 import { databaseServiceProvider } from "../database/database.service.provider";
 import { UserModule } from "../user/user.module";
@@ -54,6 +53,6 @@ import { HttpClientModule } from "@angular/common/http";
   ],
   declarations: [LoginComponent],
   exports: [LoginComponent],
-  providers: [LoggedInGuard, sessionServiceProvider, databaseServiceProvider],
+  providers: [sessionServiceProvider, databaseServiceProvider],
 })
 export class SessionModule {}
