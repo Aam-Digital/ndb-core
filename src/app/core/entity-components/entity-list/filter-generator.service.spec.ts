@@ -11,7 +11,6 @@ import { defaultInteractionTypes } from "../../config/default-config/default-int
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { Child } from "../../../child-dev-project/children/model/child";
 import moment from "moment";
-import { InteractionType } from "../../../child-dev-project/notes/model/interaction-type.interface";
 
 describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
@@ -53,7 +52,7 @@ describe("FilterGeneratorService", () => {
         return { key: option.key, label: option.label };
       })
     ).toEqual([
-      { key: "", label: "All" },
+      { key: "all", label: "All" },
       { key: "true", label: "Private" },
       { key: "false", label: "Government" },
     ]);
@@ -64,7 +63,7 @@ describe("FilterGeneratorService", () => {
     const interactionTypes = defaultInteractionTypes.map((it) => {
       return { key: it.id, label: it.label };
     });
-    interactionTypes.push({ key: "", label: "All" });
+    interactionTypes.push({ key: "all", label: "All" });
     const schema = Note.schema.get("category");
 
     const filter = (await service.generate([{ id: "category" }], Note, []))[0];
@@ -77,31 +76,6 @@ describe("FilterGeneratorService", () => {
     expect(comparableOptions).toEqual(
       jasmine.arrayWithExactContents(interactionTypes)
     );
-  });
-
-  it("should only include values that are present in data", async () => {
-    mockConfigService.getConfig.and.returnValue(defaultInteractionTypes);
-
-    function createNoteWithCategory(interactionType: InteractionType) {
-      const note = new Note();
-      note.category = interactionType;
-      return note;
-    }
-
-    const testData = [
-      createNoteWithCategory(defaultInteractionTypes[1]),
-      createNoteWithCategory(defaultInteractionTypes[3]),
-    ];
-
-    const generatedFilter = (
-      await service.generate([{ id: "category" }], Note, testData, true)
-    )[0];
-
-    expect(generatedFilter.filterSettings.options.map((o) => o.key)).toEqual([
-      "", // "All" option
-      defaultInteractionTypes[1].id,
-      defaultInteractionTypes[3].id,
-    ]);
   });
 
   it("should create a entity filter", async () => {
@@ -128,7 +102,7 @@ describe("FilterGeneratorService", () => {
     expect(filter.filterSettings.name).toEqual("schoolId");
     const allRelations = [csr1, csr2, csr3, csr4];
     const allFilter = filter.filterSettings.options.find(
-      (opt) => opt.key === ""
+      (opt) => opt.key === "all"
     );
     expect(allFilter.label).toEqual("All");
     expect(allRelations.filter(allFilter.filterFun)).toEqual(allRelations);

@@ -114,7 +114,7 @@ export class FilterGeneratorService {
     filter: BooleanFilterConfig
   ): FilterSelectionOption<T>[] {
     return [
-      { key: "", label: filter.all, filterFun: () => true },
+      { key: "all", label: filter.all, filterFun: () => true },
       {
         key: "true",
         label: filter.true,
@@ -134,7 +134,7 @@ export class FilterGeneratorService {
   ): FilterSelectionOption<T>[] {
     const options = [
       {
-        key: "",
+        key: "all",
         label: $localize`:Filter label:All`,
         filterFun: (e: T) => true,
       },
@@ -166,7 +166,7 @@ export class FilterGeneratorService {
 
     const options = [
       {
-        key: "",
+        key: "all",
         label: $localize`:Filter option:All`,
         filterFun: (e: T) => true,
       },
