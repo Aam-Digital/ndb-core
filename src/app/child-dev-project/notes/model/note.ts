@@ -34,7 +34,7 @@ import {
   getWarningLevelColor,
   WarningLevel,
 } from "../../../core/entity/model/warning-level";
-import {School} from "../../schools/model/school";
+import { School } from "../../schools/model/school";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
