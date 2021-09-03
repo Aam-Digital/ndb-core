@@ -103,7 +103,7 @@ export class Note extends Entity {
    */
   @DatabaseField({
     label: "Groups",
-    additional: "School",
+    additional: School.ENTITY_TYPE,
   })
   schools: string[] = [];
 
