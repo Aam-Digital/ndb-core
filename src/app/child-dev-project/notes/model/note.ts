@@ -101,7 +101,11 @@ export class Note extends Entity {
   /**
    * related school ids (e.g. to infer participants for event roll calls)
    */
-  @DatabaseField() schools: string[] = [];
+  @DatabaseField({
+    label: "Groups",
+    additional: "School",
+  })
+  schools: string[] = [];
 
   @DatabaseField({
     label: "",

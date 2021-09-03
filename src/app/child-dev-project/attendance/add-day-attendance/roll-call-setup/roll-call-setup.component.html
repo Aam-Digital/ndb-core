@@ -23,10 +23,21 @@
     </mat-form-field>
   </div>
 
+  <div *ngIf="existingEvents.length >= FILTER_VISIBLE_THRESHOLD"
+       fxLayout="row wrap" fxLayoutGap="8px" fxFlex>
+    <app-list-filter
+      *ngFor="let filter of filterSettings"
+      [filterConfig]="filter.filterSettings"
+      [(selectedOption)]="filter.selectedOption"
+      (selectedOptionChange)="applyFilter(filter, $event)"
+    >
+    </app-list-filter>
+  </div>
+
   <div class="flex-scroll-container" fxFlex="grow">
     <div fxLayout="row wrap" fxLayoutGap="8px">
       <app-activity-card
-        *ngFor="let event of existingEvents"
+        *ngFor="let event of filteredExistingEvents"
         [event]="event"
         (click)="selectedEvent = event"
         [highlighted]="selectedEvent === event"
