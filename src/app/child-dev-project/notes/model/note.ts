@@ -204,8 +204,20 @@ export class Note extends Entity {
         }
       }
     }
-
     return false;
+  }
+
+  /**
+   * Counts how many children have the given attendance status.
+   * The status is counted based on the AttendanceLogicalStatus and the `AttendanceStatusType.countAs` attribute
+   * @param status which should be counted
+   * @returns number of children with this status
+   */
+  countWithStatus(status: AttendanceLogicalStatus): number {
+    const attendanceValues = this.childrenAttendance.values();
+    return [...attendanceValues].filter(
+      (attendance) => attendance.status.countAs === status
+    ).length;
   }
 
   /**

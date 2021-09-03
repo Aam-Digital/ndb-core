@@ -58,8 +58,6 @@ describe("Child", () => {
       projectNumber: "1",
       gender: genders[1],
       dateOfBirth: "2010-01-01",
-      motherTongue: "Hindi",
-      religion: "Hindu",
 
       photo: "..",
       center: { id: "alpha", label: "Alpha" },
@@ -80,8 +78,6 @@ describe("Child", () => {
     entity.projectNumber = expectedData.projectNumber;
     entity.gender = expectedData.gender;
     entity.dateOfBirth = new Date(expectedData.dateOfBirth);
-    entity.motherTongue = expectedData.motherTongue;
-    entity.religion = expectedData.religion;
 
     entity.photo = { path: expectedData.photo, photo: null };
     entity.center = expectedData.center;

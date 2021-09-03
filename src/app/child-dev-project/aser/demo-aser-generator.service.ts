@@ -44,7 +44,7 @@ export class DemoAserGeneratorService extends DemoDataGenerator<Aser> {
 
     let date = new Date(child.admissionDate.getTime());
     let previousResult = new Aser("");
-    const firstLanguage = child.motherTongue.toLowerCase();
+    const firstLanguage = child["motherTongue"].toLowerCase();
     do {
       const aserResult = new Aser();
       aserResult.child = child.getId();

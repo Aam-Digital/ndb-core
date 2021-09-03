@@ -141,6 +141,15 @@ To build the app for a specific locale, enter that locale inside
   }
 }
 ```
+For the German version for example, just add
+```json
+{
+
+    "localize": ["de"]
+}
+```
+at the end of "projects" --> "ndb-core" --> "architect" --> "build" before the "configuration"-section starts.
+
 Since the build process is fairly complex, only one locale is allowed during
 development. The locale must be inside the locale-folder and be of type
 `messages.<your locale>.xlf`
