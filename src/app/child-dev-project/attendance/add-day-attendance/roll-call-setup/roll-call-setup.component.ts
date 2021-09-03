@@ -116,15 +116,6 @@ export class RollCallSetupComponent implements OnInit {
     return event;
   }
 
-  private async updateFilterOptions() {
-    this.filterSettings = await this.filterGenerator.generate(
-      [{ id: "category" }, { id: "schools" }],
-      Note,
-      this.existingEvents,
-      true
-    );
-  }
-
   private sortEvents() {
     const calculateEventPriority = (event: Note) => {
       let score = 0;
@@ -171,6 +162,15 @@ export class RollCallSetupComponent implements OnInit {
     await this.updateFilterOptions();
     this.filterExistingEvents();
     this.sortEvents();
+  }
+
+  private async updateFilterOptions() {
+    this.filterSettings = await this.filterGenerator.generate(
+      [{ id: "category" }, { id: "schools" }],
+      Note,
+      this.existingEvents,
+      true
+    );
   }
 
   private filterExistingEvents() {
