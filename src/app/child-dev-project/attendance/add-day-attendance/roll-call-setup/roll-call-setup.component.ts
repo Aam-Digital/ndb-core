@@ -50,7 +50,8 @@ export class RollCallSetupComponent implements OnInit {
     this.filterSettings = await this.filterGenerator.generate(
       [{ id: "category" }, { id: "schools" }],
       Note,
-      this.existingEvents
+      this.existingEvents,
+      true
     );
   }
 

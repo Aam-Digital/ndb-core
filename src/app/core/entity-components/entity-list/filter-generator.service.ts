@@ -30,10 +30,18 @@ export class FilterGeneratorService {
     private entityMapperService: EntityMapperService
   ) {}
 
+  /**
+   *
+   * @param filtersConfig
+   * @param entityConstructor
+   * @param data
+   * @param onlyShowUsedOptions (Optional) whether to remove those filter options for selection that are not present in the data
+   */
   async generate<T extends Entity>(
     filtersConfig: FilterConfig[],
     entityConstructor: EntityConstructor<T>,
-    data: T[]
+    data: T[],
+    onlyShowUsedOptions: boolean = false
   ): Promise<FilterComponentSettings<T>[]> {
     const filterSettings: FilterComponentSettings<T>[] = [];
     for (const filter of filtersConfig) {
@@ -54,6 +62,14 @@ export class FilterGeneratorService {
         );
       } catch (e) {
         this.loggingService.warn(`Could not init filter: ${filter.id}: ${e}`);
+      }
+
+      if (onlyShowUsedOptions) {
+        fs.filterSettings.options = fs.filterSettings.options.filter(
+          (option) =>
+            data.filter(fs.filterSettings.getFilterFunction(option.key))
+              .length > 0
+        );
       }
 
       // Filters should only be added, if they have more than one (the default) option
