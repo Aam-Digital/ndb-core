@@ -34,6 +34,7 @@ import {
   getWarningLevelColor,
   WarningLevel,
 } from "../../../core/entity/model/warning-level";
+import { School } from "../../schools/model/school";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
@@ -101,7 +102,11 @@ export class Note extends Entity {
   /**
    * related school ids (e.g. to infer participants for event roll calls)
    */
-  @DatabaseField() schools: string[] = [];
+  @DatabaseField({
+    label: "Groups",
+    additional: School.ENTITY_TYPE,
+  })
+  schools: string[] = [];
 
   @DatabaseField({
     label: "",
