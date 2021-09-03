@@ -362,8 +362,8 @@ describe("ConfigMigrationService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should save the updated config", () => {
-    expect(mockEntityMapper.save).toHaveBeenCalledWith(config);
+  it("should save the updated config with force update", () => {
+    expect(mockEntityMapper.save).toHaveBeenCalledWith(config, true);
   });
 
   it("should migrate the list configs", async () => {
