@@ -30,7 +30,7 @@ export class DemoSchoolGenerator extends DemoDataGenerator<School> {
 
     for (let i = 1; i <= this.config.count; i++) {
       const school = new School(String(i));
-      school.medium = faker.random.arrayElement([
+      school["language"] = faker.random.arrayElement([
         "Hindi",
         "English",
         "Bengali",
@@ -41,26 +41,15 @@ export class DemoSchoolGenerator extends DemoDataGenerator<School> {
         faker.random.arrayElement([
           $localize`:School demo name that is prepended to a name:School`,
           $localize`:School demo name that is prepended to a name:High School`,
-          school.medium + " Medium",
+          school["language"] + " Language",
         ]);
-      school.address = faker.address.streetAddress();
-      school.phone = faker.phone.phoneNumberFormat();
-      school.privateSchool = faker.datatype.boolean();
-      school.upToClass = faker.random.arrayElement([8, 10, 12]);
-      school.academicBoard = faker.random.arrayElement([
-        "CBSE",
-        "ICSE",
-        "WBBSE",
-      ]);
-      school.timing = faker.random.arrayElement([
+      school["address"] = faker.address.streetAddress();
+      school["phone"] = faker.phone.phoneNumberFormat();
+      school["privateSchool"] = faker.datatype.boolean();
+      school["timing"] = faker.random.arrayElement([
         $localize`:School demo timing:6 a.m. - 11 a.m.`,
         $localize`:School demo timing:11 a.m. - 4 p.m.`,
         $localize`:School demo timing:6:30-11:00 and 11:30-16:00`,
-      ]);
-      school.workingDays = faker.random.arrayElement([
-        $localize`:School demo working days:Mon - Fri`,
-        $localize`:School demo working days:Mon - Fri`,
-        $localize`:School demo working days:Mon - Sat`,
       ]);
 
       data.push(school);

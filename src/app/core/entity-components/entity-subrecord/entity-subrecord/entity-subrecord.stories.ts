@@ -20,6 +20,8 @@ import { ChildrenService } from "../../../../child-dev-project/children/children
 import { of } from "rxjs";
 import * as faker from "faker";
 import { EntityPermissionsService } from "../../../permissions/entity-permissions.service";
+import { AttendanceLogicalStatus } from "../../../../child-dev-project/attendance/model/attendance-status";
+import { MockSessionModule } from "../../../session/mock-session.module";
 
 const configService = new ConfigService();
 const schemaService = new EntitySchemaService();
@@ -47,6 +49,7 @@ export default {
         BrowserAnimationsModule,
         MatNativeDateModule,
         ChildrenModule,
+        MockSessionModule.withState(),
       ],
       providers: [
         {
@@ -94,6 +97,32 @@ Primary.args = {
     { id: "subject" },
     { id: "category" },
     { id: "children" },
+  ],
+  records: data,
+  newRecordFactory: () => new Note(),
+};
+
+export const WithAttendance = Template.bind({});
+WithAttendance.args = {
+  columns: <FormFieldConfig[]>[
+    { id: "date" },
+    { id: "subject" },
+    { id: "category" },
+    { id: "children" },
+    {
+      id: "present",
+      label: "Present",
+      view: "NoteAttendanceCountBlock",
+      additional: { status: AttendanceLogicalStatus.PRESENT },
+      noSorting: true,
+    },
+    {
+      id: "absent",
+      label: "Absent",
+      view: "NoteAttendanceCountBlock",
+      additional: { status: AttendanceLogicalStatus.ABSENT },
+      noSorting: true,
+    },
   ],
   records: data,
   newRecordFactory: () => new Note(),

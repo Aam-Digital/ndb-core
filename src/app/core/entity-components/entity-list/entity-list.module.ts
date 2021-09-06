@@ -49,6 +49,6 @@ import { EntityFormModule } from "../entity-form/entity-form.module";
     EntityUtilsModule,
     EntityFormModule,
   ],
-  exports: [EntityListComponent],
+  exports: [EntityListComponent, ListFilterComponent],
 })
 export class EntityListModule {}
