@@ -461,7 +461,8 @@ export const defaultJsonConfig = {
           "id": "isActive",
           "type": "boolean",
           "default": "true",
-          "true": $localize`:Active children filter label - true case:Active Children`,
+          "label": $localize`Children`,
+          "true": $localize`:Active children filter label - true case:Active`,
           "false": $localize`:Active children filter label - false case:Inactive`,
           "all": $localize`:Active children unselect option:All`
         },

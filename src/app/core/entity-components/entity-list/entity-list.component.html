@@ -3,7 +3,7 @@
 
     <div
       fxLayout="row"
-      fxLayoutAlign="space-between start"
+      fxLayoutAlign="space-between end"
       fxLayoutGap="25px"
     >
 
@@ -34,7 +34,7 @@
 
       <div fxFlex></div>
 
-      <div fxLayoutGap="25px" fxLayoutAlign="end">
+      <div fxLayoutGap="25px" fxLayoutAlign="end end" fxFlex>
 
         <div *ngTemplateOutlet="filterDialog"></div>
 
@@ -97,11 +97,12 @@
 <!-- Templates and menus for both mobile and desktop -->
 
 <ng-template #filterDialog>
-  <mat-form-field class="filter-field">
-    <mat-label i18n="Filter placeholder|Allows the user to filter through entities">Filter through {{listName}}</mat-label>
+  <mat-form-field class="filter-field" appearance="outline">
+    <mat-label i18n="Filter placeholder|Allows the user to filter through entities">Filter</mat-label>
     <input
       matInput
-      [placeholder]="listConfig.filterPlaceholder"
+      placeholder="i.e. name, age"
+
       (ngModelChange)="applyFilter($event)"
       [(ngModel)]="filterString"
     />

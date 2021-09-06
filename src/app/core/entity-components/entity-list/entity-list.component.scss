@@ -28,9 +28,10 @@
 }
 
 .additional-button {
-  color: white;
+  color: orange;
   border: 0;
-  background: mat-color($ndb-app-primary);
+  font-size: larger;
+  // background: mat-color($ndb-app-primary);
   border-radius: 5px;
   cursor: pointer;
   width: 25px;
