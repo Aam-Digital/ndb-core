@@ -133,9 +133,7 @@ export class RollCallComponent implements OnInit {
     }
   }
 
-  private async saveChanges(form: FormGroup, eventEntity: Note) {
-
-  }
+  private async saveChanges(form: FormGroup, eventEntity: Note) {}
 
   private switchEdit() {
     if (this.form.disabled) {
