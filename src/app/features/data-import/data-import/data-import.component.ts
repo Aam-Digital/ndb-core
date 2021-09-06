@@ -1,14 +1,22 @@
-import { Component, OnInit } from '@angular/core';
-import {untilDestroyed} from "@ngneat/until-destroy";
+import { BackupService } from '../../../core/admin/services/backup.service';
+import { Component, Injectable, OnInit } from '@angular/core';
+import { ConfirmationDialogService } from '../../../core/confirmation-dialog/confirmation-dialog.service';
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { untilDestroyed } from "@ngneat/until-destroy";
 
 @Component({
   selector: 'app-data-import',
   templateUrl: './data-import.component.html',
   styleUrls: ['./data-import.component.scss']
 })
+@Injectable({
+  providedIn: "root",
+})
 export class DataImportComponent implements OnInit {
 
-  constructor() { }
+  constructor(private backupService: BackupService,
+    private confirmationDialog: ConfirmationDialogService,
+    private snackBar: MatSnackBar) {  }
 
   ngOnInit(): void {
   }
@@ -52,4 +60,13 @@ export class DataImportComponent implements OnInit {
     });
   }
 
+  private readFile(file: Blob): Promise<string> {
+    return new Promise((resolve) => {
+      const fileReader = new FileReader();
+      fileReader.addEventListener("load", () =>
+        resolve(fileReader.result as string)
+      );
+      fileReader.readAsText(file);
+    });
+  }
 }

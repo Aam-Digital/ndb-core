@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataImportComponent } from './data-import/data-import.component';
+import { BackupService } from 'app/core/admin/services/backup.service';
 
 
 
@@ -9,8 +10,9 @@ import { DataImportComponent } from './data-import/data-import.component';
     DataImportComponent
   ],
   imports: [
-    CommonModule
-  ]
+    CommonModule,
+  ],
+  exports: [DataImportComponent]
 })
 export class DataImportModule { }
 
