@@ -2,7 +2,7 @@ import { BackupService } from '../../../core/admin/services/backup.service';
 import { Component, Injectable, OnInit } from '@angular/core';
 import { ConfirmationDialogService } from '../../../core/confirmation-dialog/confirmation-dialog.service';
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { untilDestroyed } from "@ngneat/until-destroy";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 @Component({
   selector: 'app-data-import',
@@ -12,6 +12,7 @@ import { untilDestroyed } from "@ngneat/until-destroy";
 @Injectable({
   providedIn: "root",
 })
+@UntilDestroy()
 export class DataImportComponent implements OnInit {
 
   constructor(private backupService: BackupService,
