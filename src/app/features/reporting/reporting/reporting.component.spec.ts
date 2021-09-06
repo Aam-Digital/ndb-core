@@ -141,7 +141,7 @@ describe("ReportingComponent", () => {
           {
             header: {
               label: "Total # of schools",
-              groupedBy: [{ property: "medium", value: "" }],
+              groupedBy: [{ property: "language", value: "" }],
               result: 2,
             },
             subRows: [],
@@ -149,7 +149,7 @@ describe("ReportingComponent", () => {
           {
             header: {
               label: "Total # of schools",
-              groupedBy: [{ property: "medium", value: "Hindi" }],
+              groupedBy: [{ property: "language", value: "Hindi" }],
               result: 1,
             },
             subRows: [],
@@ -187,7 +187,7 @@ describe("ReportingComponent", () => {
       { label: `Total # of events (${coachingClass.label})`, result: 1 },
       { label: `Total # of events (${schoolClass.label})`, result: 2 },
       { label: "Total # of schools", result: 3 },
-      { label: `Total # of schools (without medium)`, result: 2 },
+      { label: `Total # of schools (without language)`, result: 2 },
       { label: `Total # of schools (Hindi)`, result: 1 },
       { label: "Total # of schools", result: 2 },
       { label: `Total # of schools (privateSchool)`, result: 1 },

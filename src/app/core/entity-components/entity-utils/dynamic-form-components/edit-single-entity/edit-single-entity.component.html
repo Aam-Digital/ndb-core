@@ -1,11 +1,23 @@
 <mat-form-field [formGroup]="formControl.parent">
   <mat-label>{{ label }}</mat-label>
-  <mat-select [formControlName]="formControlName">
-    <mat-option *ngFor="let entity of entities" [value]="entity.getId()">
+  <input
+    #inputField
+    matInput
+    [fxHide]="!formControl.enabled"
+    [placeholder]="placeholder"
+    [formControl]="entityNameFormControl"
+    [matAutocomplete]="autoSuggestions"
+  />
+  <mat-autocomplete
+    #autoSuggestions="matAutocomplete"
+  >
+    <!-- Optional header -->
+    <ng-content select="mat-option"></ng-content>
+    <mat-option *ngFor="let entity of filteredEntities | async" [value]="entity.toString()" (click)="formControl.setValue(entity.getId())">
       <app-display-entity
         [entityToDisplay]="entity"
         [linkDisabled]="true"
       ></app-display-entity>
     </mat-option>
-  </mat-select>
+  </mat-autocomplete>
 </mat-form-field>

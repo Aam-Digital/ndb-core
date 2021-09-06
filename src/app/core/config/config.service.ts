@@ -45,7 +45,7 @@ export class ConfigService {
     config: any
   ): Promise<Config> {
     this.configUpdates.next(new Config(config));
-    await entityMapper.save<Config>(this.configUpdates.value);
+    await entityMapper.save<Config>(this.configUpdates.value, true);
     return this.configUpdates.value;
   }
 
