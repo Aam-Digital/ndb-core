@@ -328,7 +328,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       this.columnsToDisplay = this._columns
         .filter((col) => this.isVisible(col))
         .map((col) => col.id);
-      this.columnsToDisplay.push("actions");
+      this.columnsToDisplay.unshift("actions");
     }
   }
 
