@@ -14,6 +14,8 @@ import {
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { Child } from "../../../children/model/child";
 import { LoggingService } from "../../../../core/logging/logging.service";
+import { FormGroup } from "@angular/forms";
+import { AlertService } from "../../../../core/alerts/alert.service";
 
 /**
  * Displays the participants of the given event one by one to mark attendance status.
@@ -53,6 +55,10 @@ export class RollCallComponent implements OnInit {
   availableStatus: AttendanceStatusType[];
 
   entries: { child: Child; attendance: EventAttendance }[];
+  form: FormGroup;
+  private RollCallComponent: RollCallComponent;
+  private onSave: any;
+  private alertService: AlertService;
 
   constructor(
     private configService: ConfigService,
@@ -115,5 +121,27 @@ export class RollCallComponent implements OnInit {
 
   isFinished(): boolean {
     return this.currentIndex >= this.entries?.length;
+  }
+
+  async save(): Promise<void> {
+    try {
+      await this.RollCallComponent.saveChanges(this.form, this.eventEntity);
+      this.onSave.emit(this.eventEntity);
+      this.switchEdit();
+    } catch (err) {
+      this.alertService.addWarning(err.message);
+    }
+  }
+
+  private async saveChanges(form: FormGroup, eventEntity: Note) {
+
+  }
+
+  private switchEdit() {
+    if (this.form.disabled) {
+      this.form.enable();
+    } else {
+      this.form.disable();
+    }
   }
 }
