@@ -3,6 +3,7 @@ import { Component, Injectable, OnInit } from '@angular/core';
 import { ConfirmationDialogService } from '../../../core/confirmation-dialog/confirmation-dialog.service';
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { DataImportService } from "../data-import.service";
 
 @Component({
   selector: 'app-data-import',
@@ -17,7 +18,8 @@ export class DataImportComponent implements OnInit {
 
   constructor(private backupService: BackupService,
     private confirmationDialog: ConfirmationDialogService,
-    private snackBar: MatSnackBar) {  }
+    private snackBar: MatSnackBar,
+    private dataImportService: DataImportService) {  }
 
   ngOnInit(): void {
   }
@@ -42,7 +44,7 @@ export class DataImportComponent implements OnInit {
         return;
       }
 
-      await this.backupService.importCsv(newData, true);
+      await this.dataImportService.importCsv(newData);
 
       const snackBarRef = this.snackBar.open(
         $localize`Import completed?`,
