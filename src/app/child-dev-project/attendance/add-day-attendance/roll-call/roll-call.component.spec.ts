@@ -178,7 +178,7 @@ describe("RollCallComponent", () => {
     expect(component.complete.emit).toHaveBeenCalledWith(note);
   }));
 
-  it( "should complete roll call after clicking on save button", () => {
+  it("should complete roll call after clicking on save button", () => {
     const note = new Note();
     spyOn(component.complete, "emit");
     component.eventEntity = note;
@@ -186,5 +186,5 @@ describe("RollCallComponent", () => {
     component.save();
 
     expect(component.complete.emit).toHaveBeenCalledWith(note);
-  })
+  });
 });
