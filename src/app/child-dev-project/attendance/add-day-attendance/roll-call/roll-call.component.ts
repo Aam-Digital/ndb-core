@@ -15,7 +15,6 @@ import { EntityMapperService } from "../../../../core/entity/entity-mapper.servi
 import { Child } from "../../../children/model/child";
 import { LoggingService } from "../../../../core/logging/logging.service";
 import { FormGroup } from "@angular/forms";
-import { AlertService } from "../../../../core/alerts/alert.service";
 
 /**
  * Displays the participants of the given event one by one to mark attendance status.
@@ -56,9 +55,6 @@ export class RollCallComponent implements OnInit {
 
   entries: { child: Child; attendance: EventAttendance }[];
   form: FormGroup;
-  private RollCallComponent: RollCallComponent;
-  private onSave: any;
-  private alertService: AlertService;
 
   constructor(
     private configService: ConfigService,
