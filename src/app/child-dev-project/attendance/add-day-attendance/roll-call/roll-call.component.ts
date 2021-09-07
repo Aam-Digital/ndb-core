@@ -64,7 +64,8 @@ export class RollCallComponent implements OnInit {
     private configService: ConfigService,
     private entityMapper: EntityMapperService,
     private loggingService: LoggingService
-  ) {}
+  ) {
+  }
 
   async ngOnInit() {
     this.loadAttendanceStatusTypes();
@@ -72,9 +73,7 @@ export class RollCallComponent implements OnInit {
   }
 
   private loadAttendanceStatusTypes() {
-    this.availableStatus = this.configService.getConfig<
-      ConfigurableEnumConfig<AttendanceStatusType>
-    >(CONFIGURABLE_ENUM_CONFIG_PREFIX + ATTENDANCE_STATUS_CONFIG_ID);
+    this.availableStatus = this.configService.getConfig<ConfigurableEnumConfig<AttendanceStatusType>>(CONFIGURABLE_ENUM_CONFIG_PREFIX + ATTENDANCE_STATUS_CONFIG_ID);
   }
 
   private async loadParticipants() {
@@ -87,9 +86,9 @@ export class RollCallComponent implements OnInit {
       } catch (e) {
         this.loggingService.warn(
           "Could not find child " +
-            childId +
-            " for event " +
-            this.eventEntity.getId()
+          childId +
+          " for event " +
+          this.eventEntity.getId()
         );
         continue;
       }
@@ -123,23 +122,8 @@ export class RollCallComponent implements OnInit {
     return this.currentIndex >= this.entries?.length;
   }
 
-  async save(): Promise<void> {
-    try {
-      await this.RollCallComponent.saveChanges(this.form, this.eventEntity);
-      this.onSave.emit(this.eventEntity);
-      this.switchEdit();
-    } catch (err) {
-      this.alertService.addWarning(err.message);
-    }
-  }
-
-  private async saveChanges(form: FormGroup, eventEntity: Note) {}
-
-  private switchEdit() {
-    if (this.form.disabled) {
-      this.form.enable();
-    } else {
-      this.form.disable();
-    }
+  save() {
+    this.goToNextParticipant(this.entries?.length)
   }
 }
+
