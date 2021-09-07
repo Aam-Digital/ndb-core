@@ -25,7 +25,6 @@ import { FilterGeneratorService } from "./filter-generator.service";
 import { FilterComponentSettings } from "./filter-component.settings";
 import { entityFilterPredicate } from "./filter-predicate";
 import { map } from "rxjs/operators";
-import { QuickActionService } from "../../ui/primary-action/quick-action.service";
 
 /**
  * This component allows to create a full blown table with pagination, filtering, searching and grouping.
@@ -40,8 +39,7 @@ import { QuickActionService } from "../../ui/primary-action/quick-action.service
   styleUrls: ["./entity-list.component.scss"],
 })
 export class EntityListComponent<T extends Entity>
-  implements OnChanges, AfterViewInit, OnDestroy
-{
+  implements OnChanges, AfterViewInit {
   @Input() allEntities: T[] = [];
   filteredEntities: T[] = [];
   @Input() listConfig: EntityListConfig;
@@ -81,8 +79,7 @@ export class EntityListComponent<T extends Entity>
     private media: MediaObserver,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private filterGeneratorService: FilterGeneratorService,
-    private quickActionService: QuickActionService
+    private filterGeneratorService: FilterGeneratorService
   ) {
     this.media
       .asObservable()
@@ -95,20 +92,11 @@ export class EntityListComponent<T extends Entity>
       .subscribe((isBigScreen) => {
         this.subrecordUsesPaginator = isBigScreen;
         if (isBigScreen) {
-          this.quickActionService.resetQuickAction();
           this.displayColumnGroupByName(this.defaultColumnGroup);
         } else {
-          this.quickActionService.setQuickAction({
-            action: this.addNewClick.emit,
-            icon: "fa-plus",
-          });
           this.displayColumnGroupByName(this.mobileColumnGroup);
         }
       });
-  }
-
-  ngOnDestroy() {
-    this.quickActionService.resetQuickAction();
   }
 
   ngAfterViewInit() {

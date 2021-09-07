@@ -4,10 +4,9 @@
     <div
       fxLayout="row"
       fxLayoutAlign="space-between end"
-      fxLayoutGap="25px"
     >
 
-      <h2>{{listName}}</h2>
+      <h2 style="margin: 0 25px 0 0 !important;">{{listName}}</h2>
 
       <button
         mat-stroked-button
@@ -36,7 +35,7 @@
 
       <div fxLayoutGap="25px" fxLayoutAlign="end end" fxFlex>
 
-        <div *ngTemplateOutlet="filterDialog"></div>
+        <div *ngTemplateOutlet="filterDialog" style="padding-bottom: 0"></div>
 
         <button mat-icon-button class="additional-button" [matMenuTriggerFor]="additional">
           <span class="material-icons">more_vert</span>
@@ -81,11 +80,11 @@
 
   <h2>{{listName}}</h2>
 
-  <div fxLayout="row" fxLayoutGap="15px">
+  <div fxLayout="row" fxLayoutGap="15px" style="margin-bottom: 15px">
     <div *ngTemplateOutlet="filterDialog"></div>
 
     <button mat-icon-button class="additional-button" [matMenuTriggerFor]="additional">
-      <span class="material-icons">more_vert</span>
+      <span class="material-icons" style="font-size: xxx-large; font-weight: bolder">more_vert</span>
     </button>
 
   </div>
@@ -97,7 +96,7 @@
 <!-- Templates and menus for both mobile and desktop -->
 
 <ng-template #filterDialog>
-  <mat-form-field class="filter-field" appearance="outline">
+  <mat-form-field class="filter-field">
     <mat-label i18n="Filter placeholder|Allows the user to filter through entities">Filter</mat-label>
     <input
       matInput

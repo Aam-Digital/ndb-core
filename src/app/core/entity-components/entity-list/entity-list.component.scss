@@ -25,17 +25,14 @@
 .filter-field {
   color: mat-color($ndb-app-accent);
   width: 100%;
+  margin-bottom: -1.25em;
 }
 
 .additional-button {
   color: orange;
   border: 0;
-  font-size: larger;
-  // background: mat-color($ndb-app-primary);
   border-radius: 5px;
   cursor: pointer;
-  width: 25px;
-  height: 40px;
 }
 
 .additional-button-icon {

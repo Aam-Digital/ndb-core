@@ -25,6 +25,8 @@ import {
   PREFIX_VIEW_CONFIG,
   ViewConfig,
 } from "../../view/dynamic-routing/view-config.interface";
+import { UserAccountService } from "../../user/user-account/user-account.service";
+import { SessionService } from "../../session/session-service/session.service";
 
 /**
  * Main app menu listing.
@@ -43,7 +45,8 @@ export class NavigationComponent {
 
   constructor(
     private userRoleGuard: UserRoleGuard,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private session: SessionService
   ) {
     this.configService.configUpdates
       .pipe(untilDestroyed(this))
@@ -79,5 +82,9 @@ export class NavigationComponent {
       routeConfig: { path: configPath },
       data: { permittedUserRoles: userRoles },
     } as any);
+  }
+
+  logout() {
+    this.session.logout();
   }
 }

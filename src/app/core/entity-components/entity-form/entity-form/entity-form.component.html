@@ -3,7 +3,7 @@
     fxLayout.gt-xs="row wrap"
     fxLayout.lt-sm="column"
   >
-    <div *ngFor="let col of _columns; let i=index" fxFlex style="margin-left: auto; margin-right: auto">
+    <div *ngFor="let col of _columns; let i=index" fxFlex>
       <h2 *ngIf="columnHeaders && columnHeaders[i]">{{columnHeaders[i]}}</h2>
       <div
         *ngFor="let row of col"
@@ -15,17 +15,16 @@
             formControl: form.get(row.id)
           }
         }"
-      ></div>
-      <!--
-      <mat-icon
-        (click)="tooltipElement.show()"
-        #tooltipElement="matTooltip"
-        *ngIf="row.tooltip"
-        matSuffix
-        fontIcon="fa-question-circle-o"
-        [matTooltip]="row.tooltip"
-      ></mat-icon>
-      -->
+      >
+        <mat-icon
+          (click)="tooltipElement.show()"
+          #tooltipElement="matTooltip"
+          *ngIf="row.tooltip"
+          matSuffix
+          fontIcon="fa-question-circle-o"
+          [matTooltip]="row.tooltip"
+        ></mat-icon>
+      </div>
 
     </div>
   </div>

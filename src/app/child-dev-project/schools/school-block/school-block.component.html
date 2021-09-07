@@ -1,7 +1,6 @@
 <span (mouseenter)="showTooltip()" (mouseleave)="hideTooltip()">
   <mat-icon class="school-pic" [fontIcon]="iconName"></mat-icon>
-  <a href="#" *ngIf="!linkDisabled">{{ entity?.name }}</a>
-  <ng-container *ngIf="linkDisabled">{{entity?.name}}</ng-container>
+  {{ entity?.name }}
 </span>
 
 <div style="position: absolute" *ngIf="tooltip">
@@ -10,6 +9,6 @@
     (mouseenter)="showTooltip()"
     (mouseleave)="hideTooltip()"
   >
-    <div>{{ entity?.medium }}</div>
+    <div>{{ entity?.language || entity?.medium}}</div>
   </div>
 </div>
