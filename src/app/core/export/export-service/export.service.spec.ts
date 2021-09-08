@@ -341,7 +341,6 @@ describe("ExportService", () => {
   /**
    * Returns the timezone offset in hours and minutes.
    * E.g. german date object => "+02:00" or "+01:00" depending on time of the year
-   * In case of no offset, returns "Z" according to ISO format.
    * @param date object for which the offset should be calculated
    */
   function getTimezoneOffset(date: Date): string {
