@@ -36,11 +36,10 @@ export class ExportService {
    * @param config (Optional) config specifying which fields should be exported
    * @returns string a valid CSV string of the input data
    */
-  async createCsv(data: any[], config?: ExportColumnConfig[]): Promise<string> {
-    if (!config) {
-      config = this.generateExportConfigFromData(data);
-    }
-
+  async createCsv(
+    data: any[],
+    config: ExportColumnConfig[] = this.generateExportConfigFromData(data)
+  ): Promise<string> {
     const flattenedExportRows: ExportRow[] = [];
     for (const dataRow of data) {
       const extendedExportableRows = await this.generateExportRows(

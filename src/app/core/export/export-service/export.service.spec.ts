@@ -19,6 +19,7 @@ import { School } from "../../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { ExportColumnConfig } from "./export-column-config";
 import { defaultAttendanceStatusTypes } from "../../config/default-config/default-attendance-status-types";
+import moment from "moment";
 
 describe("ExportService", () => {
   let service: ExportService;
@@ -165,7 +166,9 @@ describe("ExportService", () => {
     const columnValues = rows[1].split(ExportService.SEPARATOR_COL);
     expect(columnValues).toHaveSize(3 + 1); // Properties + _id
     expect(columnValues).toContain('"' + testEnumValue.label + '"');
-    expect(columnValues).toContain(new Date(testDate).toISOString());
+    expect(columnValues).toContain(
+      '"' + moment(new Date(testDate)).toISOString(true) + '"'
+    );
     expect(columnValues).toContain('"true"');
   });
 
@@ -281,6 +284,7 @@ describe("ExportService", () => {
     const csv = await service.createCsv(exportData);
 
     const results = csv.split(ExportService.SEPARATOR_ROW);
+    // Format: yyyy-mm-ddThh:mm:ss.mmm+hh:mm
     const expectedDateFormat =
       dateString + "T00:00:00.000" + getTimezoneOffset(dateObject);
     expect(results).toEqual([
