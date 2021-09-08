@@ -99,7 +99,11 @@
               fontIcon="fa-times-circle"
             ></mat-icon>
           </button>
-          <button mat-icon-button (click)="delete(rec)">
+          <button
+            mat-icon-button
+            *ngIf="rec.formGroup?.enabled"
+            (click)="delete(rec)"
+          >
             <mat-icon
               class="table-action-icon"
               aria-label="delete"
