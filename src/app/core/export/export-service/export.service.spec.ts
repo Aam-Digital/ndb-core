@@ -348,10 +348,6 @@ describe("ExportService", () => {
     // from https://usefulangle.com/post/30/javascript-get-date-time-with-offset-hours-minutes
     const offset = date.getTimezoneOffset();
 
-    if (offset === 0) {
-      return "Z";
-    }
-
     const offsetHrs = parseInt(Math.abs(offset / 60).toString(), 10);
     const offsetMin = Math.abs(offset % 60);
 
