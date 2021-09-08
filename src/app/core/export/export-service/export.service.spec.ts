@@ -352,7 +352,7 @@ describe("ExportService", () => {
       return "Z";
     }
 
-    const offsetHrs = parseInt(Math.abs(offset / 60).toString());
+    const offsetHrs = parseInt(Math.abs(offset / 60).toString(), 10);
     const offsetMin = Math.abs(offset % 60);
 
     const hrsString = offsetHrs > 10 ? offsetHrs.toString() : "0" + offsetHrs;
