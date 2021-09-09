@@ -1,6 +1,6 @@
 {
   "/db": {
-    "target": "https://dev.aam-digital.com",
+    "target": "http://localhost:3000/couchdb",
     "secure": true,
     "logLevel": "debug",
     "changeOrigin": true
