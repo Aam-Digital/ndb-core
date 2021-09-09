@@ -133,4 +133,17 @@ export class RollCallComponent implements OnInit {
       }
     });
   }
+
+  skip() {
+    const dialogRef = this.confirmationDialog.openDialog(
+      $localize`:Skip confirmation title: Skip`,
+      $localize`:Skip confirmation text:Are you sure you want to skip and go to next?`
+    );
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+        this.goToNextParticipant();
+      }
+    });
+  }
 }
