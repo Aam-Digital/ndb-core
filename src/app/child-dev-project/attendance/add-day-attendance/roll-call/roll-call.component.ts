@@ -15,6 +15,7 @@ import { EntityMapperService } from "../../../../core/entity/entity-mapper.servi
 import { Child } from "../../../children/model/child";
 import { LoggingService } from "../../../../core/logging/logging.service";
 import { FormGroup } from "@angular/forms";
+import { ConfirmationDialogService } from "../../../../core/confirmation-dialog/confirmation-dialog.service";
 
 /**
  * Displays the participants of the given event one by one to mark attendance status.
@@ -59,7 +60,8 @@ export class RollCallComponent implements OnInit {
   constructor(
     private configService: ConfigService,
     private entityMapper: EntityMapperService,
-    private loggingService: LoggingService
+    private loggingService: LoggingService,
+    private confirmationDialog: ConfirmationDialogService
   ) {}
 
   async ngOnInit() {
@@ -120,6 +122,15 @@ export class RollCallComponent implements OnInit {
   }
 
   save() {
-    this.goToNextParticipant(this.entries?.length);
+    const dialogRef = this.confirmationDialog.openDialog(
+      $localize`:Save & Next confirmation title: Save & Exit`,
+      $localize`:Save & Exit confirmation text:Are you sure you want to save and exit?`
+    );
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+        this.goToNextParticipant(this.entries?.length);
+      }
+    });
   }
 }
