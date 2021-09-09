@@ -83,7 +83,7 @@
   </button>
 </div>
 <div>
-  <button mat-stroked-button (click)="exit.emit()" class="nav-button" fxFlex>
+  <button mat-stroked-button (click)="abort()" class="nav-button" fxFlex>
     <span *ngIf="isFinished()" i18n="Finish entering the attendance of a child">
       Finish
     </span>

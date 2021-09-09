@@ -146,4 +146,17 @@ export class RollCallComponent implements OnInit {
       }
     });
   }
+
+  abort() {
+    const dialogRef = this.confirmationDialog.openDialog(
+      $localize`:Abort confirmation title: Abort`,
+      $localize`:Abort confirmation text:Are you sure you want to exit and discard all recordings?`
+    );
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+        this.exit.emit();
+      }
+    });
+  }
 }
