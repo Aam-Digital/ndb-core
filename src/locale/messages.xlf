@@ -18,7 +18,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">71</context>
+          <context context-type="linenumber">72</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/historical-data/historical-entity-data.ts</context>
@@ -66,7 +66,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">858</context>
+          <context context-type="linenumber">915</context>
         </context-group>
         <note priority="1" from="description">Label for the remarks of a ASER result</note>
       </trans-unit>
@@ -203,7 +203,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">752</context>
+          <context context-type="linenumber">792</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
+          <context context-type="linenumber">809</context>
         </context-group>
         <note priority="1" from="description">Events of an attendance</note>
       </trans-unit>
@@ -293,7 +297,7 @@
         <source> Show more </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.html</context>
-          <context context-type="linenumber">46,51</context>
+          <context context-type="linenumber">57,62</context>
         </context-group>
         <note priority="1" from="description">Show more events to record the attendance</note>
         <note priority="1" from="meaning">Show more-button</note>
@@ -302,7 +306,7 @@
         <source> My event is not listed ... </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.html</context>
-          <context context-type="linenumber">53,58</context>
+          <context context-type="linenumber">64,69</context>
         </context-group>
         <note priority="1" from="description">Allows to create a new event</note>
         <note priority="1" from="meaning">Not listed</note>
@@ -311,7 +315,7 @@
         <source> Record Attendance </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.html</context>
-          <context context-type="linenumber">71,76</context>
+          <context context-type="linenumber">82,87</context>
         </context-group>
         <note priority="1" from="description">Start recording the attendance of a child at
           an event</note>
@@ -644,11 +648,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">357</context>
+          <context context-type="linenumber">392</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">468</context>
+          <context context-type="linenumber">503</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2461294555485264241" datatype="html">
@@ -714,11 +718,15 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">652</context>
+          <context context-type="linenumber">692</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">757</context>
+          <context context-type="linenumber">797</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
+          <context context-type="linenumber">814</context>
         </context-group>
         <note priority="1" from="description">Label for the participants of a recurring activity</note>
       </trans-unit>
@@ -779,19 +787,19 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">284</context>
+          <context context-type="linenumber">310</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">459</context>
+          <context context-type="linenumber">494</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-list/filter-generator.service.ts</context>
-          <context context-type="linenumber">122,120</context>
+          <context context-type="linenumber">138,136</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-list/filter-generator.service.ts</context>
-          <context context-type="linenumber">154,152</context>
+          <context context-type="linenumber">170,168</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/filter/filter-selection/filter-selection.ts</context>
@@ -810,7 +818,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">601</context>
+          <context context-type="linenumber">636</context>
         </context-group>
         <note priority="1" from="description">Child status</note>
       </trans-unit>
@@ -934,11 +942,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">342</context>
+          <context context-type="linenumber">377</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">816</context>
+          <context context-type="linenumber">873</context>
         </context-group>
         <note priority="1" from="description">Label for the name of a child</note>
       </trans-unit>
@@ -1006,7 +1014,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">418</context>
+          <context context-type="linenumber">453</context>
         </context-group>
         <note priority="1" from="description">Label for the status of a child</note>
       </trans-unit>
@@ -1062,7 +1070,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">352</context>
+          <context context-type="linenumber">387</context>
         </context-group>
         <note priority="1" from="description">Label for the class of a relation</note>
       </trans-unit>
@@ -1119,6 +1127,14 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/model/genders.ts</context>
           <context context-type="linenumber">14</context>
+        </context-group>
+        <note priority="1" from="description">Label gender</note>
+      </trans-unit>
+      <trans-unit id="7394385898582190852" datatype="html">
+        <source>Non-binary/third gender</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/model/genders.ts</context>
+          <context context-type="linenumber">18</context>
         </context-group>
         <note priority="1" from="description">Label gender</note>
       </trans-unit>
@@ -1396,7 +1412,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">382</context>
+          <context context-type="linenumber">417</context>
         </context-group>
         <note priority="1" from="description">Table header, Short for Body Mass Index</note>
       </trans-unit>
@@ -1824,7 +1840,7 @@
         <source>Children</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">56</context>
+          <context context-type="linenumber">57</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
@@ -1836,7 +1852,7 @@
         <source>Subject</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">73</context>
+          <context context-type="linenumber">74</context>
         </context-group>
         <note priority="1" from="description">Label for the subject of a note</note>
       </trans-unit>
@@ -1844,7 +1860,7 @@
         <source>Notes</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">76</context>
+          <context context-type="linenumber">77</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
@@ -1856,7 +1872,7 @@
         <source>SW</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">82</context>
+          <context context-type="linenumber">83</context>
         </context-group>
         <note priority="1" from="description">Label for the social worker(s) who created the note</note>
       </trans-unit>
@@ -1864,7 +1880,7 @@
         <source>Category</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">90</context>
+          <context context-type="linenumber">91</context>
         </context-group>
         <note priority="1" from="description">Label for the category of a note</note>
       </trans-unit>
@@ -2023,7 +2039,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="f728c501e701d8d7aac7bf1a7cb85ed0b202029a" datatype="html">
-        <source> Currently attending class <x id="INTERPOLATION" equiv-text="{{ current.schoolClass }}"/> <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngIf=&quot;current.schoolClass&quot;&gt;"/>at <x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="START_TAG_APP_SCHOOL_BLOCK" ctype="x-app_school_block" equiv-text="&lt;app-school-block [entityId]=&quot;current.schoolId&quot;&gt;"/><x id="CLOSE_TAG_APP_SCHOOL_BLOCK" ctype="x-app_school_block" equiv-text="&lt;/app-school-block&gt;"/></source>
+        <source> Currently attending class <x id="INTERPOLATION" equiv-text="{{ current.schoolClass }"/> <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngIf=&quot;current.schoolClass&quot;&gt;"/>at <x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/><x id="START_TAG_APP_SCHOOL_BLOCK" ctype="x-app_school_block" equiv-text="&lt;app-school-block [entityId]=&quot;current.schoolId&quot;&gt;"/><x id="CLOSE_TAG_APP_SCHOOL_BLOCK" ctype="x-app_school_block" equiv-text="&lt;/app-school-block&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/previous-schools/previous-schools.component.html</context>
           <context context-type="linenumber">9,16</context>
@@ -2174,7 +2190,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">347</context>
+          <context context-type="linenumber">382</context>
         </context-group>
         <note priority="1" from="description">The age of a child</note>
       </trans-unit>
@@ -2667,7 +2683,7 @@
         <source> I can tell you about my use case </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/coming-soon/coming-soon/coming-soon.component.html</context>
-          <context context-type="linenumber">47,48</context>
+          <context context-type="linenumber">48,49</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5514520297087734093" datatype="html">
@@ -2702,7 +2718,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">623</context>
+          <context context-type="linenumber">658</context>
         </context-group>
         <note priority="1" from="description">Menu item</note>
       </trans-unit>
@@ -2844,7 +2860,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">542</context>
+          <context context-type="linenumber">577</context>
         </context-group>
         <note priority="1" from="description">Title for notes overview</note>
       </trans-unit>
@@ -2872,11 +2888,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">389</context>
+          <context context-type="linenumber">424</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">442</context>
+          <context context-type="linenumber">477</context>
         </context-group>
         <note priority="1" from="description">Translated name of mobile column group</note>
       </trans-unit>
@@ -2884,7 +2900,7 @@
         <source>assets/help/help.en.md</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">262</context>
+          <context context-type="linenumber">287</context>
         </context-group>
         <note priority="1" from="description">Filename of markdown help page (make sure the filename you enter as a translation actually exists on the server!)</note>
       </trans-unit>
@@ -2892,7 +2908,7 @@
         <source>Schools List</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">274</context>
+          <context context-type="linenumber">299</context>
         </context-group>
         <note priority="1" from="description">Title of schools overview</note>
       </trans-unit>
@@ -2900,11 +2916,11 @@
         <source>Private School</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">282</context>
+          <context context-type="linenumber">308</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">823</context>
+          <context context-type="linenumber">880</context>
         </context-group>
         <note priority="1" from="description">Label for private schools filter - true case</note>
       </trans-unit>
@@ -2912,7 +2928,7 @@
         <source>Government School</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">283</context>
+          <context context-type="linenumber">309</context>
         </context-group>
         <note priority="1" from="description">Label for private schools filter - false case</note>
       </trans-unit>
@@ -2920,11 +2936,11 @@
         <source>Basic Information</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">295</context>
+          <context context-type="linenumber">321</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">481</context>
+          <context context-type="linenumber">516</context>
         </context-group>
         <note priority="1" from="description">Panel title</note>
       </trans-unit>
@@ -2932,7 +2948,7 @@
         <source>Students</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">323</context>
+          <context context-type="linenumber">349</context>
         </context-group>
         <note priority="1" from="description">Panel title</note>
       </trans-unit>
@@ -2940,7 +2956,7 @@
         <source>Children List</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">338</context>
+          <context context-type="linenumber">373</context>
         </context-group>
         <note priority="1" from="description">Title children overview</note>
       </trans-unit>
@@ -2948,7 +2964,7 @@
         <source>Attendance (School)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">364</context>
+          <context context-type="linenumber">399</context>
         </context-group>
         <note priority="1" from="description">Column label for school attendance of child</note>
       </trans-unit>
@@ -2956,7 +2972,7 @@
         <source>Attendance (Coaching)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">373</context>
+          <context context-type="linenumber">408</context>
         </context-group>
         <note priority="1" from="description">Column label for coaching attendance of child</note>
       </trans-unit>
@@ -2964,11 +2980,11 @@
         <source>School Info</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">388</context>
+          <context context-type="linenumber">423</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">405</context>
+          <context context-type="linenumber">440</context>
         </context-group>
         <note priority="1" from="description">Translated name of default column group</note>
       </trans-unit>
@@ -2976,7 +2992,7 @@
         <source>Basic Info</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">392</context>
+          <context context-type="linenumber">427</context>
         </context-group>
         <note priority="1" from="description">Column group name</note>
       </trans-unit>
@@ -2984,11 +3000,11 @@
         <source>Health</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">428</context>
+          <context context-type="linenumber">463</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">551</context>
+          <context context-type="linenumber">586</context>
         </context-group>
         <note priority="1" from="description">Column group name</note>
       </trans-unit>
@@ -2996,7 +3012,7 @@
         <source>Active Children</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">457</context>
+          <context context-type="linenumber">492</context>
         </context-group>
         <note priority="1" from="description">Active children filter label - true case</note>
       </trans-unit>
@@ -3004,7 +3020,7 @@
         <source>Inactive</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">458</context>
+          <context context-type="linenumber">493</context>
         </context-group>
         <note priority="1" from="description">Active children filter label - false case</note>
       </trans-unit>
@@ -3012,7 +3028,7 @@
         <source>Education</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">510</context>
+          <context context-type="linenumber">545</context>
         </context-group>
         <note priority="1" from="description">Panel title</note>
       </trans-unit>
@@ -3020,7 +3036,7 @@
         <source>School History</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">513</context>
+          <context context-type="linenumber">548</context>
         </context-group>
         <note priority="1" from="description">Title inside a panel</note>
       </trans-unit>
@@ -3028,7 +3044,7 @@
         <source>ASER Results</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">527</context>
+          <context context-type="linenumber">562</context>
         </context-group>
         <note priority="1" from="description">Title inside a panel</note>
       </trans-unit>
@@ -3036,7 +3052,7 @@
         <source>Attendance</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">533</context>
+          <context context-type="linenumber">568</context>
         </context-group>
         <note priority="1" from="description">Panel title</note>
       </trans-unit>
@@ -3044,7 +3060,7 @@
         <source>Height &amp; Weight Tracking</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">564</context>
+          <context context-type="linenumber">599</context>
         </context-group>
         <note priority="1" from="description">Title inside a panel</note>
       </trans-unit>
@@ -3052,7 +3068,7 @@
         <source>Educational Materials</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">570</context>
+          <context context-type="linenumber">605</context>
         </context-group>
         <note priority="1" from="description">Panel title</note>
       </trans-unit>
@@ -3060,7 +3076,7 @@
         <source>Observations</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">579</context>
+          <context context-type="linenumber">614</context>
         </context-group>
         <note priority="1" from="description">Panel title</note>
       </trans-unit>
@@ -3068,7 +3084,7 @@
         <source>Activity</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">637</context>
+          <context context-type="linenumber">677</context>
         </context-group>
         <note priority="1" from="description">Panel title</note>
       </trans-unit>
@@ -3076,7 +3092,7 @@
         <source>Events &amp; Attendance</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">666</context>
+          <context context-type="linenumber">706</context>
         </context-group>
         <note priority="1" from="description">Panel title</note>
       </trans-unit>
@@ -3084,7 +3100,7 @@
         <source>Basic Report</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">682</context>
+          <context context-type="linenumber">722</context>
         </context-group>
         <note priority="1" from="description">Name of a report</note>
       </trans-unit>
@@ -3092,7 +3108,7 @@
         <source>All children</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">686</context>
+          <context context-type="linenumber">726</context>
         </context-group>
         <note priority="1" from="description">Label of report query</note>
       </trans-unit>
@@ -3100,7 +3116,7 @@
         <source>Male children</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">689</context>
+          <context context-type="linenumber">729</context>
         </context-group>
         <note priority="1" from="description">Label of report query</note>
       </trans-unit>
@@ -3108,7 +3124,7 @@
         <source>Female children</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">693</context>
+          <context context-type="linenumber">733</context>
         </context-group>
         <note priority="1" from="description">Label of report query</note>
       </trans-unit>
@@ -3116,7 +3132,7 @@
         <source>All schools</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">700</context>
+          <context context-type="linenumber">740</context>
         </context-group>
         <note priority="1" from="description">Label for report query</note>
       </trans-unit>
@@ -3124,7 +3140,7 @@
         <source>Children attending a school</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">703</context>
+          <context context-type="linenumber">743</context>
         </context-group>
         <note priority="1" from="description">Label for report query</note>
       </trans-unit>
@@ -3132,7 +3148,7 @@
         <source>Governmental schools</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">707</context>
+          <context context-type="linenumber">747</context>
         </context-group>
         <note priority="1" from="description">Label for report query</note>
       </trans-unit>
@@ -3140,7 +3156,7 @@
         <source>Children attending a governmental school</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">712</context>
+          <context context-type="linenumber">752</context>
         </context-group>
         <note priority="1" from="description">Label for report query</note>
       </trans-unit>
@@ -3148,7 +3164,7 @@
         <source>Male children attending a governmental school</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">715</context>
+          <context context-type="linenumber">755</context>
         </context-group>
         <note priority="1" from="description">Label for report query</note>
       </trans-unit>
@@ -3156,7 +3172,7 @@
         <source>Female children attending a governmental school</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">719</context>
+          <context context-type="linenumber">759</context>
         </context-group>
         <note priority="1" from="description">Label for report query</note>
       </trans-unit>
@@ -3164,7 +3180,7 @@
         <source>Private schools</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">725</context>
+          <context context-type="linenumber">765</context>
         </context-group>
         <note priority="1" from="description">Label for report query</note>
       </trans-unit>
@@ -3172,7 +3188,7 @@
         <source>Children attending a private school</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">730</context>
+          <context context-type="linenumber">770</context>
         </context-group>
         <note priority="1" from="description">Label for report query</note>
       </trans-unit>
@@ -3180,7 +3196,7 @@
         <source>Male children attending a private school</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">733</context>
+          <context context-type="linenumber">773</context>
         </context-group>
         <note priority="1" from="description">Label for report query</note>
       </trans-unit>
@@ -3188,7 +3204,7 @@
         <source>Female children attending a private school</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">737</context>
+          <context context-type="linenumber">777</context>
         </context-group>
         <note priority="1" from="description">Label for report query</note>
       </trans-unit>
@@ -3196,7 +3212,15 @@
         <source>Event Report</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">747</context>
+          <context context-type="linenumber">787</context>
+        </context-group>
+        <note priority="1" from="description">Name of a report</note>
+      </trans-unit>
+      <trans-unit id="819578366272929200" datatype="html">
+        <source>Overall Activity Report</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
+          <context context-type="linenumber">804</context>
         </context-group>
         <note priority="1" from="description">Name of a report</note>
       </trans-unit>
@@ -3204,11 +3228,11 @@
         <source>Address</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">775</context>
+          <context context-type="linenumber">832</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">837</context>
+          <context context-type="linenumber">894</context>
         </context-group>
         <note priority="1" from="description">Label for the address of a child</note>
       </trans-unit>
@@ -3216,7 +3240,7 @@
         <source>Blood Group</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">782</context>
+          <context context-type="linenumber">839</context>
         </context-group>
         <note priority="1" from="description">Label for a child attribute</note>
       </trans-unit>
@@ -3224,7 +3248,7 @@
         <source>Religion</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">789</context>
+          <context context-type="linenumber">846</context>
         </context-group>
         <note priority="1" from="description">Label for the religion of a child</note>
       </trans-unit>
@@ -3232,7 +3256,7 @@
         <source>Mother Tongue</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">796</context>
+          <context context-type="linenumber">853</context>
         </context-group>
         <note priority="1" from="description">Label for the mother tongue of a child</note>
       </trans-unit>
@@ -3240,7 +3264,7 @@
         <source>Last Dental Check-Up</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">803</context>
+          <context context-type="linenumber">860</context>
         </context-group>
         <note priority="1" from="description">Label for a child attribute</note>
       </trans-unit>
@@ -3248,7 +3272,7 @@
         <source>Language</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">830</context>
+          <context context-type="linenumber">887</context>
         </context-group>
         <note priority="1" from="description">Label for the language of a school</note>
       </trans-unit>
@@ -3256,7 +3280,7 @@
         <source>Phone Number</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">844</context>
+          <context context-type="linenumber">901</context>
         </context-group>
         <note priority="1" from="description">Label for the phone number of a school</note>
       </trans-unit>
@@ -3264,7 +3288,7 @@
         <source>School Timing</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">851</context>
+          <context context-type="linenumber">908</context>
         </context-group>
         <note priority="1" from="description">Label for the timing of a school</note>
       </trans-unit>
@@ -3272,7 +3296,7 @@
         <source>Motivated</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">870</context>
+          <context context-type="linenumber">927</context>
         </context-group>
         <note priority="1" from="description">Label for a child attribute</note>
       </trans-unit>
@@ -3280,7 +3304,7 @@
         <source>The child is motivated during the class.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">871</context>
+          <context context-type="linenumber">928</context>
         </context-group>
         <note priority="1" from="description">Description for a child attribute</note>
       </trans-unit>
@@ -3288,7 +3312,7 @@
         <source>Participates</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">879</context>
+          <context context-type="linenumber">936</context>
         </context-group>
         <note priority="1" from="description">Label for a child attribute</note>
       </trans-unit>
@@ -3296,7 +3320,7 @@
         <source>The child is actively participating in the class.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">880</context>
+          <context context-type="linenumber">937</context>
         </context-group>
         <note priority="1" from="description">Description for a child attribute</note>
       </trans-unit>
@@ -3304,7 +3328,7 @@
         <source>Interacts</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">888</context>
+          <context context-type="linenumber">945</context>
         </context-group>
         <note priority="1" from="description">Label for a child attribute</note>
       </trans-unit>
@@ -3312,7 +3336,7 @@
         <source>The child interacts with other students during the class.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">889</context>
+          <context context-type="linenumber">946</context>
         </context-group>
         <note priority="1" from="description">Description for a child attribute</note>
       </trans-unit>
@@ -3320,7 +3344,7 @@
         <source>Homework</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">897</context>
+          <context context-type="linenumber">954</context>
         </context-group>
         <note priority="1" from="description">Label for a child attribute</note>
       </trans-unit>
@@ -3328,7 +3352,7 @@
         <source>The child does its homework.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">898</context>
+          <context context-type="linenumber">955</context>
         </context-group>
         <note priority="1" from="description">Description for a child attribute</note>
       </trans-unit>
@@ -3336,7 +3360,7 @@
         <source>On time</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">906</context>
+          <context context-type="linenumber">963</context>
         </context-group>
         <note priority="1" from="description">Label for a child attribute</note>
       </trans-unit>
@@ -3344,7 +3368,7 @@
         <source>The child is always on time for the class.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">907</context>
+          <context context-type="linenumber">964</context>
         </context-group>
         <note priority="1" from="description">Description for a child attribute</note>
       </trans-unit>
@@ -3352,7 +3376,7 @@
         <source>Asks</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">915</context>
+          <context context-type="linenumber">972</context>
         </context-group>
         <note priority="1" from="description">Label for a child attribute</note>
       </trans-unit>
@@ -3360,7 +3384,7 @@
         <source>The child is asking questions during the class.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">916</context>
+          <context context-type="linenumber">973</context>
         </context-group>
         <note priority="1" from="description">Description for a child attribute</note>
       </trans-unit>
@@ -3368,7 +3392,7 @@
         <source>Listens</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">924</context>
+          <context context-type="linenumber">981</context>
         </context-group>
         <note priority="1" from="description">Label for a child attribute</note>
       </trans-unit>
@@ -3376,7 +3400,7 @@
         <source>The child is listening during the class.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">925</context>
+          <context context-type="linenumber">982</context>
         </context-group>
         <note priority="1" from="description">Description for a child attribute</note>
       </trans-unit>
@@ -3384,7 +3408,7 @@
         <source>Solves on board</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">933</context>
+          <context context-type="linenumber">990</context>
         </context-group>
         <note priority="1" from="description">Label for a child attribute</note>
       </trans-unit>
@@ -3392,7 +3416,7 @@
         <source>The child can solve exercises on the board.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">934</context>
+          <context context-type="linenumber">991</context>
         </context-group>
         <note priority="1" from="description">Description for a child attribute</note>
       </trans-unit>
@@ -3400,7 +3424,7 @@
         <source>Concentrated</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">942</context>
+          <context context-type="linenumber">999</context>
         </context-group>
         <note priority="1" from="description">Label for a child attribute</note>
       </trans-unit>
@@ -3408,7 +3432,7 @@
         <source>The child is concentrated during the class.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">943</context>
+          <context context-type="linenumber">1000</context>
         </context-group>
         <note priority="1" from="description">Description for a child attribute</note>
       </trans-unit>
@@ -3416,7 +3440,7 @@
         <source>Not disturbing</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">951</context>
+          <context context-type="linenumber">1008</context>
         </context-group>
         <note priority="1" from="description">Label for a child attribute</note>
       </trans-unit>
@@ -3424,7 +3448,7 @@
         <source>The child does not disturb the class.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">952</context>
+          <context context-type="linenumber">1009</context>
         </context-group>
         <note priority="1" from="description">Description for a child attribute</note>
       </trans-unit>
@@ -3450,7 +3474,7 @@
           <context context-type="sourcefile">src/app/core/config/default-config/default-attendance-status-types.ts</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <note priority="1" from="description">Child was on holliday</note>
+        <note priority="1" from="description">Child was on holiday</note>
       </trans-unit>
       <trans-unit id="2562268224972878399" datatype="html">
         <source>Excused</source>
@@ -3713,7 +3737,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/form-dialog/form-dialog-wrapper/form-dialog-wrapper.component.ts</context>
-          <context context-type="linenumber">138,137</context>
+          <context context-type="linenumber">142,141</context>
         </context-group>
         <note priority="1" from="description">Deleted Entity information</note>
       </trans-unit>
@@ -3721,7 +3745,7 @@
         <source> Save </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-form/entity-form/entity-form.component.html</context>
-          <context context-type="linenumber">42,48</context>
+          <context context-type="linenumber">44,50</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/form-dialog/form-dialog-wrapper/form-dialog-wrapper.component.html</context>
@@ -3733,7 +3757,7 @@
         <source> Cancel </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-form/entity-form/entity-form.component.html</context>
-          <context context-type="linenumber">52,57</context>
+          <context context-type="linenumber">54,59</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/form-dialog/form-dialog-wrapper/form-dialog-wrapper.component.html</context>
@@ -3745,7 +3769,7 @@
         <source> Edit </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-form/entity-form/entity-form.component.html</context>
-          <context context-type="linenumber">66,70</context>
+          <context context-type="linenumber">68,72</context>
         </context-group>
         <note priority="1" from="description">Edit button for forms</note>
       </trans-unit>
@@ -4055,7 +4079,7 @@
         <source>Your password was changed recently. Please retry with your new password!</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/session/session-service/synced-session.service.ts</context>
-          <context context-type="linenumber">147,146</context>
+          <context context-type="linenumber">133,132</context>
         </context-group>
       </trans-unit>
       <trans-unit id="75e83679bf9fc19906d0e3b2e5422466c282e539" datatype="html">
