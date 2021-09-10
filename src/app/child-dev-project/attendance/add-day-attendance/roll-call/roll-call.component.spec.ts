@@ -19,6 +19,8 @@ import { LoggingService } from "../../../../core/logging/logging.service";
 import { defaultAttendanceStatusTypes } from "../../../../core/config/default-config/default-attendance-status-types";
 import { AttendanceModule } from "../../attendance.module";
 import { ChildrenService } from "../../../children/children.service";
+import { ConfirmationDialogService } from "../../../../core/confirmation-dialog/confirmation-dialog.service";
+import { of } from "rxjs";
 
 describe("RollCallComponent", () => {
   let component: RollCallComponent;
@@ -180,11 +182,47 @@ describe("RollCallComponent", () => {
 
   it("should complete roll call after clicking on save button", () => {
     const note = new Note();
+    const confirmationDialogService = TestBed.inject(ConfirmationDialogService)
     spyOn(component.complete, "emit");
     component.eventEntity = note;
+    spyOn(confirmationDialogService, "openDialog").and.returnValue({
+      afterClosed: () => of(true),
+    } as any);
 
     component.save();
 
     expect(component.complete.emit).toHaveBeenCalledWith(note);
+  });
+
+  it("should not open the dialog when the roll call is finished", () => {
+    const confirmationDialogService = TestBed.inject(ConfirmationDialogService)
+    spyOn(confirmationDialogService, "openDialog");
+    spyOn(component, "isFinished").and.returnValue(true);
+
+    component.abort();
+
+    expect(confirmationDialogService.openDialog).not.toHaveBeenCalled();
+  });
+
+  it("should open the dialog when the roll call is not finished", () => {
+    const confirmationDialogService = TestBed.inject(ConfirmationDialogService)
+    spyOn(confirmationDialogService, "openDialog").and.returnValue({
+      afterClosed: () => of(true),
+    } as any);
+    spyOn(component, "isFinished").and.returnValue(false);
+
+    component.abort();
+
+    expect(confirmationDialogService.openDialog).toHaveBeenCalled();
+  });
+
+  it("should not open the dialog for exit button when the roll call finished", () => {
+    const confirmationDialogService = TestBed.inject(ConfirmationDialogService)
+    spyOn(confirmationDialogService, "openDialog");
+    spyOn(component, "isFinished").and.returnValue(true);
+
+    component.save();
+
+    expect(confirmationDialogService.openDialog).not.toHaveBeenCalled();
   });
 });

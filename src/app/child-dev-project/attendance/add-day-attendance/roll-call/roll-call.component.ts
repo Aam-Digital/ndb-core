@@ -122,41 +122,37 @@ export class RollCallComponent implements OnInit {
   }
 
   save() {
-    const dialogRef = this.confirmationDialog.openDialog(
-      $localize`:Save & Next confirmation title: Save & Exit`,
-      $localize`:Save & Exit confirmation text:Are you sure you want to save and exit?`
-    );
+    if (this.isFinished()) {
+      this.goToNextParticipant(this.entries?.length);
+    } else {
+      const remainingParticipant = this.entries.length - this.currentIndex;
+      const dialogRef = this.confirmationDialog.openDialog(
+        $localize`:Save & Next confirmation title: Save & Exit`,
+        $localize`:Save & Exit confirmation text:Are you sure you want to save, exit and skip the remaining ${remainingParticipant.toString()} participants?`
+      );
 
-    dialogRef.afterClosed().subscribe((confirmed) => {
-      if (confirmed) {
-        this.goToNextParticipant(this.entries?.length);
-      }
-    });
-  }
-
-  skip() {
-    const dialogRef = this.confirmationDialog.openDialog(
-      $localize`:Skip confirmation title: Skip`,
-      $localize`:Skip confirmation text:Are you sure you want to skip and go to next?`
-    );
-
-    dialogRef.afterClosed().subscribe((confirmed) => {
-      if (confirmed) {
-        this.goToNextParticipant();
-      }
-    });
+      dialogRef.afterClosed().subscribe((confirmed) => {
+        if (confirmed) {
+          this.goToNextParticipant(this.entries?.length);
+        }
+      });
+    }
   }
 
   abort() {
-    const dialogRef = this.confirmationDialog.openDialog(
-      $localize`:Abort confirmation title: Abort`,
-      $localize`:Abort confirmation text:Are you sure you want to exit and discard all recordings?`
-    );
+    if (this.isFinished()) {
+      this.exit.emit();
+    } else {
+      const dialogRef = this.confirmationDialog.openDialog(
+        $localize`:Abort confirmation title: Abort`,
+        $localize`:Abort confirmation text:Are you sure you want to exit and discard all recordings?`
+      );
 
-    dialogRef.afterClosed().subscribe((confirmed) => {
-      if (confirmed) {
-        this.exit.emit();
-      }
-    });
+      dialogRef.afterClosed().subscribe((confirmed) => {
+        if (confirmed) {
+          this.exit.emit();
+        }
+      });
+    }
   }
 }
