@@ -242,7 +242,7 @@ export class EntityListComponent<T extends Entity>
       data: {
         filterSelections: this.filterSelections,
         filterChangeCallback: (
-          filter: FilterComponentSettings<any>,
+          filter: FilterComponentSettings<T>,
           option: string
         ) => {
           this.filterOptionSelected(filter, option);
