@@ -109,7 +109,7 @@ export class EntityListComponent<T extends Entity>
       entityFilterPredicate(data.record, filter);
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  async ngOnChanges(changes: SimpleChanges): Promise<void> {
     if (changes.hasOwnProperty("listConfig")) {
       this.listName = this.listConfig.title;
       this.addColumnsFromColumnGroups();
@@ -118,8 +118,8 @@ export class EntityListComponent<T extends Entity>
       this.displayColumnGroupByName(this.defaultColumnGroup);
     }
     if (changes.hasOwnProperty("allEntities")) {
-      this.filteredEntities = this.allEntities;
-      this.initFilterSelections();
+      await this.initFilterSelections();
+      this.applyFilterSelections();
     }
   }
 
