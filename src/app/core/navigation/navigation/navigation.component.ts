@@ -40,6 +40,7 @@ import { filter, map, startWith } from "rxjs/operators";
   styleUrls: ["./navigation.component.scss"],
 })
 export class NavigationComponent {
+  /** The menu-item link (not the actual router link) that is currently active */
   activeLink: string;
   /** name of config array in the config json file */
   private readonly CONFIG_ID = "navigationMenu";
@@ -65,27 +66,41 @@ export class NavigationComponent {
         )
       )
       .subscribe((items) => {
-        if (items.length === 0) {
-          this.activeLink = "";
-        } else if (items.length === 1) {
-          this.activeLink = items[0].link;
-        } else {
-          // If there are multiple matches (A user navigates with a URL that starts with
-          // multiple links from a MenuItem), use the element where the length is bigger.
-          //
-          // For example: Let there be two possible routes: '/attendance' and '/attendance/add/day'.
-          // When a user navigates to the URL '/attendance', only '/attendance' is
-          // a prefix of the possible '/attendance'. The potential other candidate '/attendance/add/day'
-          // is not a prefix of '/attendance' and there is no ambiguity.
-          //
-          // Vice Versa, when navigated to '/attendance/add/day',
-          // both '/attendance' and '/attendance/add/day' are a prefix of '/attendance/add/day'.
-          // In the latter case, the one with the longer URL should match.
-          this.activeLink = items.reduce((i1, i2) =>
-            i1.link.length > i2.link.length ? i1 : i2
-          ).link;
-        }
+        this.activeLink = this.computeActiveLink(items);
       });
+  }
+
+  /**
+   * Computes the active link from a set of MenuItems.
+   * The active link is the link with the most "overlap", i.e.
+   * the most specific link that can be found given the array.
+   * @param items The items that belong to a certain link. All items
+   * must have a common prefix
+   * @return the most specific link
+   * @private
+   */
+  private computeActiveLink(items: MenuItem[]): string {
+    switch (items.length) {
+      case 0:
+        return "";
+      case 1:
+        return items[0].link;
+      default:
+        // If there are multiple matches (A user navigates with a URL that starts with
+        // multiple links from a MenuItem), use the element where the length is bigger.
+        //
+        // For example: Let there be two possible routes: '/attendance' and '/attendance/add/day'.
+        // When a user navigates to the URL '/attendance', only '/attendance' is
+        // a prefix of the possible '/attendance'. The potential other candidate '/attendance/add/day'
+        // is not a prefix of '/attendance' and there is no ambiguity.
+        //
+        // Vice Versa, when navigated to '/attendance/add/day',
+        // both '/attendance' and '/attendance/add/day' are a prefix of '/attendance/add/day'.
+        // In the latter case, the one with the longer URL should match.
+        return items.reduce((i1, i2) =>
+          i1.link.length > i2.link.length ? i1 : i2
+        ).link;
+    }
   }
 
   /**
