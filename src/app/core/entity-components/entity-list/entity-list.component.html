@@ -1,12 +1,13 @@
 <!-- Desktop version -->
-<div fxHide.lt-sm fxLayout="column" fxLayoutGap="20px">
+<div fxHide.lt-sm fxLayout="column">
 
     <div
       fxLayout="row"
       fxLayoutAlign="space-between end"
+      [ngStyle]="offsetFilterStyle"
     >
 
-      <h2 style="margin: 0 25px 0 0 !important;">{{listName}}</h2>
+      <h2 class="list-header">{{listName}}</h2>
 
       <button
         mat-stroked-button
@@ -100,8 +101,8 @@
     <mat-label i18n="Filter placeholder|Allows the user to filter through entities">Filter</mat-label>
     <input
       matInput
+      i18n-placeholder="Examples of things to filter"
       placeholder="i.e. name, age"
-
       (ngModelChange)="applyFilter($event)"
       [(ngModel)]="filterString"
     />

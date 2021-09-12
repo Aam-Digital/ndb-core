@@ -76,6 +76,19 @@ export class EntityListComponent<T extends Entity>
 
   selectedColumnGroupIndex_: number = 0;
 
+  /**
+   * defines the bottom margin of the topmost row in the
+   * desktop version. This has to be bigger when there are
+   * several column groups since there are
+   * tabs with zero top-padding in this case
+   */
+  get offsetFilterStyle(): object {
+    const bottomMargin = this.columnGroups.length > 1 ? 29 : 14;
+    return {
+      "margin-bottom": `${bottomMargin}px`,
+    };
+  }
+
   constructor(
     private media: MediaObserver,
     private router: Router,
