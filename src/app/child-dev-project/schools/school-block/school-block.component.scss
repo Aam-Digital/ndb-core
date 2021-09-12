@@ -7,6 +7,11 @@
   background-color: white;
 }
 
+.entity-name:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .school-pic {
   margin-right: 4px;
 }

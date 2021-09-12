@@ -1,6 +1,6 @@
 <span (mouseenter)="showTooltip()" (mouseleave)="hideTooltip()">
   <mat-icon class="school-pic" [fontIcon]="iconName"></mat-icon>
-  {{ entity?.name }}
+  <span class="entity-name">{{ entity?.name }}</span>
 </span>
 
 <div style="position: absolute" *ngIf="tooltip">
