@@ -78,6 +78,11 @@ export const defaultJsonConfig = {
         "name": $localize`:Menu item:Help`,
         "icon": "question-circle",
         "link": "/help"
+      },
+      {
+        "name": $localize`:Menu item:Profile`,
+        "icon": "user-circle-o",
+        "link": "/user"
       }
     ]
   },

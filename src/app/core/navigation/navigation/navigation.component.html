@@ -23,18 +23,12 @@
     [angularticsLabel]="item.label"
     *ngFor="let item of menuItems"
     [routerLink]="[item.link]"
+    [class.primary-background]="item.link === activeLink"
   >
     <a
       ><mat-icon class="nav-icon" fontIcon="fa-{{ item.icon }}"></mat-icon
       >{{ item.label }}</a
     >
-    <mat-divider></mat-divider>
-  </mat-list-item>
-  <mat-list-item routerLink="/user">
-    <a>
-      <mat-icon class="nav-icon" fontIcon="fa-user-circle-o"></mat-icon>
-      Profile
-    </a>
     <mat-divider></mat-divider>
   </mat-list-item>
   <mat-list-item (click)="logout()">

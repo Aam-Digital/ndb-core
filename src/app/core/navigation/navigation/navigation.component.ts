@@ -27,6 +27,8 @@ import {
 } from "../../view/dynamic-routing/view-config.interface";
 import { UserAccountService } from "../../user/user-account/user-account.service";
 import { SessionService } from "../../session/session-service/session.service";
+import { NavigationEnd, Router } from "@angular/router";
+import { filter, map, startWith } from "rxjs/operators";
 
 /**
  * Main app menu listing.
@@ -38,6 +40,7 @@ import { SessionService } from "../../session/session-service/session.service";
   styleUrls: ["./navigation.component.scss"],
 })
 export class NavigationComponent {
+  activeLink: string;
   /** name of config array in the config json file */
   private readonly CONFIG_ID = "navigationMenu";
   /** all menu items to be displayed */
@@ -46,11 +49,43 @@ export class NavigationComponent {
   constructor(
     private userRoleGuard: UserRoleGuard,
     private configService: ConfigService,
-    private session: SessionService
+    private session: SessionService,
+    private router: Router
   ) {
     this.configService.configUpdates
       .pipe(untilDestroyed(this))
       .subscribe(() => this.initMenuItemsFromConfig());
+    this.router.events
+      .pipe(
+        startWith(new NavigationEnd(0, this.router.url, "")),
+        filter((event) => event instanceof NavigationEnd),
+        map((event: NavigationEnd) =>
+          // conservative filter matching all items that could fit to the given url
+          this.menuItems.filter((item) => event.url.startsWith(item.link))
+        )
+      )
+      .subscribe((items) => {
+        if (items.length === 0) {
+          this.activeLink = "";
+        } else if (items.length === 1) {
+          this.activeLink = items[0].link;
+        } else {
+          // If there are multiple matches (A user navigates with a URL that starts with
+          // multiple links from a MenuItem), use the element where the length is bigger.
+          //
+          // For example: Let there be two possible routes: '/attendance' and '/attendance/add/day'.
+          // When a user navigates to the URL '/attendance', only '/attendance' is
+          // a prefix of the possible '/attendance'. The potential other candidate '/attendance/add/day'
+          // is not a prefix of '/attendance' and there is no ambiguity.
+          //
+          // Vice Versa, when navigated to '/attendance/add/day',
+          // both '/attendance' and '/attendance/add/day' are a prefix of '/attendance/add/day'.
+          // In the latter case, the one with the longer URL should match.
+          this.activeLink = items.reduce((i1, i2) =>
+            i1.link.length > i2.link.length ? i1 : i2
+          ).link;
+        }
+      });
   }
 
   /**
