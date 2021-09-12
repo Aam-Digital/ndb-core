@@ -154,7 +154,10 @@
       <span i18n="Add a new entity to a list of multiple entities"> Add New </span>
     </button>
 
-    <button mat-menu-item>
+    <button
+      mat-menu-item
+      (click)="openFilterOverlay()"
+    >
       <mat-icon
         color="accent"
         aria-label="filter"

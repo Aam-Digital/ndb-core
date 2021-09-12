@@ -4,13 +4,12 @@ import {
   EventEmitter,
   Input,
   OnChanges,
-  OnDestroy,
   Output,
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
 import { MediaObserver } from "@angular/flex-layout";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Params, Router } from "@angular/router";
 import {
   ColumnGroupsConfig,
   EntityListConfig,
@@ -25,6 +24,8 @@ import { FilterGeneratorService } from "./filter-generator.service";
 import { FilterComponentSettings } from "./filter-component.settings";
 import { entityFilterPredicate } from "./filter-predicate";
 import { map } from "rxjs/operators";
+import { MatDialog } from "@angular/material/dialog";
+import { FilterOverlayComponent } from "./filter-overlay/filter-overlay.component";
 
 /**
  * This component allows to create a full blown table with pagination, filtering, searching and grouping.
@@ -79,7 +80,8 @@ export class EntityListComponent<T extends Entity>
     private media: MediaObserver,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private filterGeneratorService: FilterGeneratorService
+    private filterGeneratorService: FilterGeneratorService,
+    private dialog: MatDialog
   ) {
     this.media
       .asObservable()
@@ -97,6 +99,9 @@ export class EntityListComponent<T extends Entity>
           this.displayColumnGroupByName(this.mobileColumnGroup);
         }
       });
+    this.activatedRoute.queryParams.subscribe((params) =>
+      this.loadUrlParams(params)
+    );
   }
 
   ngAfterViewInit() {
@@ -116,7 +121,6 @@ export class EntityListComponent<T extends Entity>
       this.filteredEntities = this.allEntities;
       this.initFilterSelections();
     }
-    this.loadUrlParams();
   }
 
   private addColumnsFromColumnGroups() {
@@ -154,21 +158,19 @@ export class EntityListComponent<T extends Entity>
     }
   }
 
-  private loadUrlParams() {
-    this.activatedRoute.queryParams.subscribe((params) => {
-      if (params["view"]) {
-        this.displayColumnGroupByName(params["view"]);
-      }
-      this.filterSelections.forEach((f) => {
-        if (params.hasOwnProperty(f.filterSettings.name)) {
-          f.selectedOption = params[f.filterSettings.name];
-        }
-      });
-      this.applyFilterSelections();
-      if (params["search"]) {
-        this.applyFilter(params["search"]);
+  private loadUrlParams(params: Params) {
+    if (params["view"]) {
+      this.displayColumnGroupByName(params["view"]);
+    }
+    this.filterSelections.forEach((f) => {
+      if (params.hasOwnProperty(f.filterSettings.name)) {
+        f.selectedOption = params[f.filterSettings.name];
       }
     });
+    this.applyFilterSelections();
+    if (params["search"]) {
+      this.applyFilter(params["search"]);
+    }
   }
 
   columnGroupClick(columnGroupName: string) {
@@ -219,6 +221,7 @@ export class EntityListComponent<T extends Entity>
       this.entityConstructor,
       this.allEntities
     );
+    this.loadUrlParams(this.activatedRoute.snapshot.queryParams);
   }
 
   private displayColumnGroupByName(columnGroupName: string) {
@@ -232,5 +235,19 @@ export class EntityListComponent<T extends Entity>
 
   getNewRecordFactory(): () => T {
     return () => new this.entityConstructor();
+  }
+
+  openFilterOverlay() {
+    this.dialog.open(FilterOverlayComponent, {
+      data: {
+        filterSelections: this.filterSelections,
+        filterChangeCallback: (
+          filter: FilterComponentSettings<any>,
+          option: string
+        ) => {
+          this.filterOptionSelected(filter, option);
+        },
+      },
+    });
   }
 }

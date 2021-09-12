@@ -24,9 +24,15 @@ import { EntityUtilsModule } from "../entity-utils/entity-utils.module";
 import { EntityFormModule } from "../entity-form/entity-form.module";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatTabsModule } from "@angular/material/tabs";
+import { FilterOverlayComponent } from "./filter-overlay/filter-overlay.component";
+import { MatDialogModule } from "@angular/material/dialog";
 
 @NgModule({
-  declarations: [EntityListComponent, ListFilterComponent],
+  declarations: [
+    EntityListComponent,
+    ListFilterComponent,
+    FilterOverlayComponent,
+  ],
   imports: [
     CommonModule,
     FormsModule,
@@ -52,6 +58,7 @@ import { MatTabsModule } from "@angular/material/tabs";
     EntitySubrecordModule,
     EntityUtilsModule,
     EntityFormModule,
+    MatDialogModule,
   ],
   exports: [EntityListComponent],
 })
