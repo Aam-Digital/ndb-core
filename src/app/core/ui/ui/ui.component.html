@@ -47,25 +47,9 @@
     ></app-search>
 
     <app-sync-status></app-sync-status>
-    <!--
 
-<app-language-select *ngIf="showLanguageSelect"></app-language-select>
+    <app-language-select *ngIf="showLanguageSelect"></app-language-select>
 
-<button
-  mat-icon-button
-  [routerLink]="['/user']"
-  *ngIf="isLoggedIn()"
-  angulartics2On="click"
-  angularticsCategory="Navigation"
-  angularticsAction="navbar_profile_link"
->
-  <mat-icon class="header-icon" style="font-size: 24px" fontIcon="fa-user-circle-o"></mat-icon>
-</button>
-
-<button mat-icon-button (click)="logout()" *ngIf="isLoggedIn()">
-  <mat-icon class="header-icon" style="font-size: 24px" fontIcon="fa-sign-out"></mat-icon>
-</button>
-  -->
   </mat-toolbar-row>
 </mat-toolbar>
 
