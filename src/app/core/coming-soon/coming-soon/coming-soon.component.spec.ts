@@ -52,9 +52,9 @@ describe("ComingSoonComponent", () => {
     );
 
     expect(component).toBeTruthy();
-    expect(mockAnalytics.eventTrack).toHaveBeenCalledWith("visit", {
+    expect(mockAnalytics.eventTrack).toHaveBeenCalledWith(testFeatureId, {
       category: "feature_request",
-      label: testFeatureId,
+      label: "visit",
     });
   });
 
@@ -63,9 +63,9 @@ describe("ComingSoonComponent", () => {
 
     component.reportFeatureRequest();
 
-    expect(mockAnalytics.eventTrack).toHaveBeenCalledWith("request", {
+    expect(mockAnalytics.eventTrack).toHaveBeenCalledWith(testFeatureId, {
       category: "feature_request",
-      label: testFeatureId,
+      label: "request",
     });
     expect(component.requested).toBeTrue();
   });
