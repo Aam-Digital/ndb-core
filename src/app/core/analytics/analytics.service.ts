@@ -69,9 +69,10 @@ export class AnalyticsService {
       AppConfig.settings.usage_analytics.site_id
     );
 
-    this.angulartics2Piwik.startTracking();
     this.setVersion();
     this.setOrganization(AppConfig.settings.site_name);
+    this.setUser(undefined);
+    this.angulartics2Piwik.startTracking();
   }
 
   /**
