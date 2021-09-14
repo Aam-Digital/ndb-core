@@ -93,14 +93,15 @@ describe("DataImportComponent", () => {
     fixture = TestBed.createComponent(DataImportComponent);
     component = fixture.componentInstance;
     confirmationDialogMock.openDialog.calls.reset();
+    mockDataImportService.importCsv.calls.reset();
     fixture.detectChanges();
   });
 
-  fit("should create", () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 
-  fit("should open dialog and call backup service and data-import service when loading csv", fakeAsync(() => {
+  it("should open dialog and call backup service and data-import service when loading csv", fakeAsync(() => {
     const mockFileReader = createFileReaderMock();
     mockBackupService.getJsonExport.and.returnValue(Promise.resolve(null));
     createDialogMock(true);
@@ -114,7 +115,7 @@ describe("DataImportComponent", () => {
     expect(mockDataImportService.importCsv).toHaveBeenCalled();
   }));
 
-  xit("should open dialog and abort data-import when cancelled", fakeAsync(() => {
+  it("should open dialog and abort data-import when cancelled", fakeAsync(() => {
     const mockFileReader = createFileReaderMock();
     mockBackupService.getJsonExport.and.returnValue(Promise.resolve(null));
     createDialogMock(false);
