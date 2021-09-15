@@ -29,5 +29,5 @@ $max-screen-width: $min-widget-width + $margin-main-view-right + $margin-main-vi
   @media all and (max-width: $max-screen-width) {
     grid-template-columns: 1fr;
   }
-  grid-gap: 25px;
+  grid-gap: $standard-grid-gap;
 }
