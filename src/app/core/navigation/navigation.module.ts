@@ -26,25 +26,23 @@ import { MatListModule } from "@angular/material/list";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Angulartics2Module } from "angulartics2";
 import { ConfigModule } from "../config/config.module";
-import { TranslationModule } from "../translation/translation.module";
 
 /**
  * Manages the main app navigation menu
  * which can dynamically be configured through the {@link NavigationItemsService}.
  */
 @NgModule({
-    imports: [
-        CommonModule,
-        SessionModule,
-        RouterModule,
-        MatListModule,
-        MatIconModule,
-        MatButtonModule,
-        MatTooltipModule,
-        Angulartics2Module,
-        ConfigModule,
-        TranslationModule,
-    ],
+  imports: [
+    CommonModule,
+    SessionModule,
+    RouterModule,
+    MatListModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule,
+    Angulartics2Module,
+    ConfigModule,
+  ],
   declarations: [NavigationComponent],
   exports: [NavigationComponent],
   providers: [],

@@ -1,3 +1,4 @@
+<!-- Desktop Version -->
 <mat-toolbar
   fxHide.lt-md
 >
@@ -17,6 +18,7 @@
   ></mat-paginator>
 </mat-toolbar>
 
+<!-- Mobile Version -->
 <div fxHide.gt-sm fxLayout="column" fxLayoutAlign="end">
   <mat-paginator
     (page)="onPaginateChange($event)"

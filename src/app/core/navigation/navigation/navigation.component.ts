@@ -25,7 +25,6 @@ import {
   PREFIX_VIEW_CONFIG,
   ViewConfig,
 } from "../../view/dynamic-routing/view-config.interface";
-import { UserAccountService } from "../../user/user-account/user-account.service";
 import { SessionService } from "../../session/session-service/session.service";
 import { NavigationEnd, Router } from "@angular/router";
 import { filter, map, startWith } from "rxjs/operators";

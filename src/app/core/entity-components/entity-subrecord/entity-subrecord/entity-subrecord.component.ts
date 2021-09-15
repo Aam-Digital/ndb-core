@@ -135,12 +135,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     if (changes.hasOwnProperty("columnsToDisplay")) {
       this.mediaSubscription.unsubscribe();
     }
-    if (
-      changes.hasOwnProperty("usesPaginator") &&
-      changes["usesPaginator"].currentValue === false
-    ) {
-      this.recordsDataSource.paginator = null;
-    }
   }
 
   private initFormGroups() {
