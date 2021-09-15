@@ -13,4 +13,8 @@ export const genders: ConfigurableEnumValue[] = [
     id: "F",
     label: $localize`:Label gender:female`,
   },
+  {
+    id: "X",
+    label: $localize`:Label gender:Non-binary/third gender`,
+  },
 ];

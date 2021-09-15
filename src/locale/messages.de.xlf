@@ -250,6 +250,42 @@
           <context context-type="linenumber">91</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="6149790421325658341" datatype="html">
+        <source> Save &amp; Exit</source>
+        <target state="translated"> Save &amp; Exit </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.ts</context>
+          <context context-type="linenumber">130,129</context>
+        </context-group>
+        <note priority="1" from="description">Save &amp; Next confirmation title</note>
+      </trans-unit>
+      <trans-unit id="5773856749871082334" datatype="html">
+        <source>Are you sure you want to save, exit and skip the remaining <x id="PH" equiv-text="remainingParticipant.toString()"/> participants?</source>
+        <target state="translated">Sind Sie sicher, dass Sie die Aufzeichung der Anwesenheit beenden und <x id="PH" equiv-text="remainingParticipant.toString()"/> Teilnehmer:innen überspringen wollen?</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.ts</context>
+          <context context-type="linenumber">131,129</context>
+        </context-group>
+        <note priority="1" from="description">Save &amp; Exit confirmation text</note>
+      </trans-unit>
+      <trans-unit id="3304180909188588981" datatype="html">
+        <source> Abort</source>
+        <target state="translated">Abbrechen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.ts</context>
+          <context context-type="linenumber">147,146</context>
+        </context-group>
+        <note priority="1" from="description">Abort confirmation title</note>
+      </trans-unit>
+      <trans-unit id="2317876813032660437" datatype="html">
+        <source>Are you sure you want to exit and discard all recordings?</source>
+        <target state="translated">Sind Sie sicher, dass Sie die Aufzeichung der Anwesenheit beenden und alle Änderungen verwerfen wollen?</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.ts</context>
+          <context context-type="linenumber">148,146</context>
+        </context-group>
+        <note priority="1" from="description">Abort confirmation text</note>
+      </trans-unit>
       <trans-unit id="828a009e2c01bece732333b25efb6b62ed46f6ec" datatype="html">
         <source> attended <x id="INTERPOLATION" equiv-text="{{ attendanceDescription }"/> events </source>
         <target state="translated"> haben an <x id="INTERPOLATION" equiv-text="{{attendanceDescription}}"/> events teilgenommen </target>
@@ -2724,7 +2760,7 @@
       </trans-unit>
       <trans-unit id="819578366272929200" datatype="html">
         <source>Overall Activity Report</source>
-        <target state="translated">Aktivitätenbericht</target>
+        <target state="translated">Anwesenheitsbericht</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
           <context context-type="linenumber">804</context>
@@ -3489,6 +3525,15 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/model/genders.ts</context>
           <context context-type="linenumber">14</context>
+        </context-group>
+        <note priority="1" from="description">Label gender</note>
+      </trans-unit>
+      <trans-unit id="7394385898582190852" datatype="html">
+        <source>Non-binary/third gender</source>
+        <target state="translated">divers</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/model/genders.ts</context>
+          <context context-type="linenumber">18</context>
         </context-group>
         <note priority="1" from="description">Label gender</note>
       </trans-unit>
