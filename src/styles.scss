@@ -17,6 +17,8 @@
 
 /* You can add global styles to this file, and also import other style files */
 
+$standard-grid-gap: 25px;
+
 body {
   margin: 0;
 }
@@ -96,8 +98,6 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
 }
 
 mat-card.dashboard-widget {
-  min-width: 250px;
-  margin: 10px;
   padding: 0;
 }
 

@@ -15,8 +15,19 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.widget-wrapper > * {
-  margin-bottom: 20px;
-  min-width: min-content;
-  margin-right: 10px !important;
+@import "../../../../styles";
+
+// The minimum size of a widget for big screens
+// The minimum size on small screens is whatever size is available
+$min-widget-width: 330px;
+// TODO: There will be more logic behind this in a later step
+$max-screen-width: $min-widget-width;
+
+.widget-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax($min-widget-width, 1fr));
+  @media all and (max-width: $max-screen-width) {
+    grid-template-columns: 1fr;
+  }
+  grid-gap: $standard-grid-gap;
 }
