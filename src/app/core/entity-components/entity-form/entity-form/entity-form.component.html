@@ -36,12 +36,8 @@
     </ng-container>
   </div>
 
-  <form
-    class="columns-wrapper"
-  >
-    <div
-      *ngFor="let col of _columns; let i=index"
-    >
+  <form class="columns-wrapper">
+    <div *ngFor="let col of _columns; let i=index">
       <h2 *ngIf="columnHeaders && columnHeaders[i]">{{columnHeaders[i]}}</h2>
       <div
         *ngFor="let row of col"

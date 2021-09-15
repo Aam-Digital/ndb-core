@@ -1,3 +1,5 @@
+@import "../../../../../styles";
+
 $padding-block: 50px;
 
 $padding-buttons-top: 0.5cm;
@@ -6,6 +8,7 @@ $padding-buttons-bottom: 1cm;
 $button-margin: 10px;
 
 $min-block-width: 330px;
+$max-screen-width: $min-block-width + $margin-main-view-right + $margin-main-view-left;
 
 .form-field {
   display: inline-block;
@@ -19,7 +22,10 @@ $min-block-width: 330px;
 .columns-wrapper {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax($min-block-width, 1fr));
-  grid-gap: 25px;
+  @media all and (max-width: $max-screen-width) {
+    grid-template-columns: 1fr;
+  }
+  grid-gap: $standard-grid-gap;
 }
 
 .action-button {
