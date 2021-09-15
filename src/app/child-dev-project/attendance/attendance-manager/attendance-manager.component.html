@@ -15,8 +15,8 @@
   here across groups.
 </p>
 
-<div fxLayout="row wrap">
-  <mat-card fxFlex>
+<div class="cards-wrapper">
+  <mat-card>
     <mat-card-header>
       <mat-card-title i18n="Record attendance title">
         Record Attendance
@@ -31,7 +31,7 @@
       Select a group of children and easily mark their attendance one by one.
       This works well on a smartphone to record attendance on site.
     </mat-card-content>
-    <mat-card-actions>
+    <mat-card-footer>
       <button
         routerLink="/attendance/add/day"
         class="action-button"
@@ -40,10 +40,10 @@
       >
         Record an event's attendance
       </button>
-    </mat-card-actions>
+    </mat-card-footer>
   </mat-card>
 
-  <mat-card fxFlex>
+  <mat-card>
     <mat-card-header>
       <mat-card-title i18n="Monthly attendance title">
         Enter Monthly Attendance
@@ -58,7 +58,7 @@
       collected on paper. However, as you only enter a monthly total for each
       child you cannot see attendance in the day-wise calender.
     </mat-card-content>
-    <mat-card-actions>
+    <mat-card-footer>
       <button
         routerLink="/coming-soon/monthly-attendance"
         class="action-button"
@@ -67,10 +67,10 @@
       >
         Enter Attendance
       </button>
-    </mat-card-actions>
+    </mat-card-footer>
   </mat-card>
 
-  <mat-card fxFlex>
+  <mat-card>
     <mat-card-header>
       <mat-card-title i18n="Analyse attendance title">
         Analyse Attendance
@@ -83,7 +83,7 @@
       Analyse and compare attendance for all children. To see an individual's
       attendance history you can open the child's overall details page.
     </mat-card-content>
-    <mat-card-actions>
+    <mat-card-footer>
       <button
         routerLink="/coming-soon/attendance-analysis"
         class="action-button"
@@ -92,6 +92,6 @@
       >
         Analyse Attendance
       </button>
-    </mat-card-actions>
+    </mat-card-footer>
   </mat-card>
 </div>

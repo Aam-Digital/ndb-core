@@ -1,3 +1,9 @@
+@import "../../../../styles";
+
+$margin-side: 16px;
+
+$min-width-content: 250px;
+
 .general-description {
   font-style: italic;
 }
@@ -6,12 +12,18 @@
   width: 100%;
 }
 
+.cards-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: $standard-grid-gap;
+}
+
 .mat-card {
   display: flex;
   flex-direction: column;
-  min-width: 250px;
-  margin-right: 24px;
-  margin-bottom: 24px;
+  min-width: $min-width-content;
+  flex: 1;
 }
 
 .mat-card-header {
@@ -21,4 +33,12 @@
 .mat-card-content {
   flex-grow: 1;
   overflow: auto;
+  margin-left: $margin-side;
+  margin-right: $margin-side;
+}
+
+.mat-card-footer {
+  margin-left: $margin-side;
+  margin-right: $margin-side;
+  margin-bottom: auto;
 }
