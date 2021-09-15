@@ -33,8 +33,8 @@
     "@angular/platform-browser-dynamic": "^11.2.12",
     "@angular/router": "^11.2.12",
     "@angular/service-worker": "^11.2.12",
-    "@ngneat/until-destroy": "^8.1.1",
-    "@sentry/browser": "^6.10.0",
+    "@ngneat/until-destroy": "^8.1.3",
+    "@sentry/browser": "^6.11.0",
     "angulartics2": "^10.0.0",
     "crypto-js": "^4.1.1",
     "deep-object-diff": "^1.1.0",
@@ -56,9 +56,9 @@
     "reveal": "0.0.4",
     "rxjs": "^6.6.7",
     "stream": "0.0.2",
-    "tslib": "^2.3.0",
+    "tslib": "^2.3.1",
     "uuid": "^8.3.2",
-    "webdav": "^4.4.0",
+    "webdav": "^4.6.1",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {

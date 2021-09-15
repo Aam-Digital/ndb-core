@@ -5,13 +5,10 @@ import { of, throwError } from "rxjs";
 import { AppConfig } from "../../app-config/app-config";
 import { SessionType } from "../session-type";
 import { LoggingService } from "../../logging/logging.service";
-import {
-  TEST_PASSWORD,
-  TEST_USER,
-  testSessionServiceImplementation,
-} from "./session.service.spec";
+import { testSessionServiceImplementation } from "./session.service.spec";
 import { DatabaseUser } from "./local-user";
 import { LoginState } from "../session-states/login-state.enum";
+import { TEST_PASSWORD, TEST_USER } from "../mock-session.module";
 
 describe("RemoteSessionService", () => {
   let service: RemoteSession;

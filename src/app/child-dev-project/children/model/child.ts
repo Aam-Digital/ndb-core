@@ -52,20 +52,13 @@ export class Child extends Entity {
     editComponent: "EditAge",
   })
   dateOfBirth: Date;
-  @DatabaseField({
-    label: $localize`:Label for the mother tongue of a child:Mother Tongue`,
-  })
-  motherTongue: string = "";
+
   @DatabaseField({
     dataType: "configurable-enum",
     label: $localize`:Label for the gender of a child:Gender`,
     innerDataType: "genders",
   })
   gender: ConfigurableEnumValue;
-  @DatabaseField({
-    label: $localize`:Label for the religion of a child:Religion`,
-  })
-  religion: string = "";
 
   @DatabaseField({
     dataType: "configurable-enum",

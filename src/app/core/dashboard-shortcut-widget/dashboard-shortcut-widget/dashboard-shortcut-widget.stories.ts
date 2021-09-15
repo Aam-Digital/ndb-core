@@ -8,7 +8,7 @@ import { DashboardShortcutWidgetComponent } from "./dashboard-shortcut-widget.co
 import { MenuItem } from "../../navigation/menu-item";
 
 export default {
-  title: "ShortcutDashboardWidget",
+  title: "Core/ShortcutDashboardWidget",
   component: DashboardShortcutWidgetComponent,
   decorators: [
     moduleMetadata({

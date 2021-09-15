@@ -31,15 +31,10 @@ describe("SchoolsListComponent", () => {
       groups: [
         {
           name: "School Info",
-          columns: ["name", "upToClass"],
+          columns: ["name"],
         },
       ],
     },
-    filters: [
-      {
-        id: "upToClass",
-      },
-    ],
   };
 
   const routeMock = {

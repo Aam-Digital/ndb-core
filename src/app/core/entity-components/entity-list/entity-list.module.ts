@@ -60,6 +60,6 @@ import { MatDialogModule } from "@angular/material/dialog";
     EntityFormModule,
     MatDialogModule,
   ],
-  exports: [EntityListComponent],
+  exports: [EntityListComponent, ListFilterComponent],
 })
 export class EntityListModule {}

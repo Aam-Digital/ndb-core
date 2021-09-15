@@ -34,6 +34,7 @@ import {
   getWarningLevelColor,
   WarningLevel,
 } from "../../../core/entity/model/warning-level";
+import { School } from "../../schools/model/school";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
@@ -101,7 +102,11 @@ export class Note extends Entity {
   /**
    * related school ids (e.g. to infer participants for event roll calls)
    */
-  @DatabaseField() schools: string[] = [];
+  @DatabaseField({
+    label: "Groups",
+    additional: School.ENTITY_TYPE,
+  })
+  schools: string[] = [];
 
   @DatabaseField({
     label: "",
@@ -200,8 +205,20 @@ export class Note extends Entity {
         }
       }
     }
-
     return false;
+  }
+
+  /**
+   * Counts how many children have the given attendance status.
+   * The status is counted based on the AttendanceLogicalStatus and the `AttendanceStatusType.countAs` attribute
+   * @param status which should be counted
+   * @returns number of children with this status
+   */
+  countWithStatus(status: AttendanceLogicalStatus): number {
+    const attendanceValues = this.childrenAttendance.values();
+    return [...attendanceValues].filter(
+      (attendance) => attendance.status.countAs === status
+    ).length;
   }
 
   /**
