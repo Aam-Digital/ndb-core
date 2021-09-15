@@ -310,8 +310,9 @@ export const defaultJsonConfig = {
       "filters": [
         {
           "id": "privateSchool",
-          "true": $localize`:Label for private schools filter - true case:Private School`,
-          "false": $localize`:Label for private schools filter - false case:Government School`,
+          "label": $localize`Schools`,
+          "true": $localize`:Label for private schools filter - true case:Private`,
+          "false": $localize`:Label for private schools filter - false case:Government`,
           "all": $localize`:Label for disabling the filter:All`
         }
       ]
