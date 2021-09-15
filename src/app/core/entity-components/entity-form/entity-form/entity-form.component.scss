@@ -1,7 +1,32 @@
-.edit-button {
-  margin-left: 10px;
-}
+$padding-block: 50px;
+
+$padding-buttons-top: 0.5cm;
+$padding-buttons-bottom: 1cm;
+
+$button-margin: 10px;
+
+$min-block-width: 330px;
+
 .form-field {
   display: inline-block;
   margin-left: 20px;
+}
+
+:host ::ng-deep .mat-form-field {
+  width: 100%;
+}
+
+.columns-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax($min-block-width, 1fr));
+  grid-gap: 25px;
+}
+
+.action-button {
+  margin-left: $button-margin;
+}
+
+.buttons-wrapper {
+  padding-top: $padding-buttons-top;
+  padding-bottom: $padding-buttons-bottom;
 }

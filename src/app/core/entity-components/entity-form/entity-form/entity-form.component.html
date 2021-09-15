@@ -1,9 +1,47 @@
-<form>
-  <div
-    fxLayout.gt-xs="row wrap"
-    fxLayout.lt-sm="column"
+<div fxLayout="column">
+  <div fxFlexAlign="end" class="buttons-wrapper">
+    <button
+      *ngIf="form?.enabled"
+      mat-raised-button
+      class="action-button"
+      (click)="save()"
+      i18n="Save button for forms"
+    >
+      Save
+    </button>
+
+    <button
+      *ngIf="form?.enabled"
+      mat-raised-button
+      class="action-button"
+      (click)="cancel()"
+      i18n="Cancel button for forms"
+    >
+      Cancel
+    </button>
+
+    <ng-container *ngIf="form?.disabled">
+      <button
+        mat-raised-button
+        class="action-button"
+        (click)="switchEdit()"
+        *appDisabledEntityOperation="{
+          entity: entity?.getConstructor(),
+          operation: operationType.UPDATE
+        }"
+        i18n="Edit button for forms"
+      >
+        Edit
+      </button>
+    </ng-container>
+  </div>
+
+  <form
+    class="columns-wrapper"
   >
-    <div *ngFor="let col of _columns; let i=index" fxFlex>
+    <div
+      *ngFor="let col of _columns; let i=index"
+    >
       <h2 *ngIf="columnHeaders && columnHeaders[i]">{{columnHeaders[i]}}</h2>
       <div
         *ngFor="let row of col"
@@ -27,41 +65,5 @@
       </div>
 
     </div>
-  </div>
-</form>
-<div>
-  <button
-    *ngIf="form?.enabled"
-    mat-stroked-button
-    class="edit-button"
-    (click)="save()"
-    i18n="Save button for forms"
-  >
-    Save
-  </button>
-
-  <button
-    *ngIf="form?.enabled"
-    mat-stroked-button
-    class="edit-button"
-    (click)="cancel()"
-    i18n="Cancel button for forms"
-  >
-    Cancel
-  </button>
-
-  <ng-container *ngIf="form?.disabled">
-    <button
-      mat-stroked-button
-      class="edit-button"
-      (click)="switchEdit()"
-      *appDisabledEntityOperation="{
-        entity: entity?.getConstructor(),
-        operation: operationType.UPDATE
-      }"
-      i18n="Edit button for forms"
-    >
-      Edit
-    </button>
-  </ng-container>
+  </form>
 </div>
