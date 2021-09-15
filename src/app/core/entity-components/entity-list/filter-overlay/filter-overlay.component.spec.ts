@@ -1,16 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { FilterOverlayComponent } from './filter-overlay.component';
+import { FilterOverlayComponent } from "./filter-overlay.component";
 
-describe('FilterOverlayComponent', () => {
-  let component: FilterOverlayComponent;
-  let fixture: ComponentFixture<FilterOverlayComponent>;
+describe("FilterOverlayComponent", () => {
+  let component: FilterOverlayComponent<any>;
+  let fixture: ComponentFixture<FilterOverlayComponent<any>>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FilterOverlayComponent ]
-    })
-    .compileComponents();
+      declarations: [FilterOverlayComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('FilterOverlayComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });
