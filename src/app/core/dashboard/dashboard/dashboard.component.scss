@@ -17,6 +17,8 @@
 
 @import "../../../../styles";
 
+// The minimum size of a widget for big screens
+// The minimum size on small screens is whatever size is available
 $min-widget-width: 330px;
 // There will only be one column below this screen width, as defined by the media query
 $max-screen-width: $min-widget-width + $margin-main-view-right + $margin-main-view-left;
