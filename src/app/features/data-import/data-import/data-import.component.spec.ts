@@ -11,21 +11,20 @@ import {AppConfig} from "../../../core/app-config/app-config";
 import {SessionType} from "../../../core/session/session-type";
 import {DataImportService} from "../data-import.service";
 import {of} from "rxjs";
-import {untilDestroyed} from "@ngneat/until-destroy";
 
 describe("DataImportComponent", () => {
   let component: DataImportComponent;
   let fixture: ComponentFixture<DataImportComponent>;
 
   const mockDataImportService: jasmine.SpyObj<DataImportService> = jasmine.createSpyObj(
-    DataImportService,
+    "DataImportService",
     [
       "importCsv"
     ]
   );
 
   const mockBackupService: jasmine.SpyObj<BackupService> = jasmine.createSpyObj(
-    BackupService,
+    "BackupService",
     [
       "getJsonExport",
       "clearDatabase",
@@ -34,12 +33,12 @@ describe("DataImportComponent", () => {
   );
 
   const confirmationDialogMock: jasmine.SpyObj<ConfirmationDialogService> = jasmine.createSpyObj(
-    ConfirmationDialogService,
+    "ConfirmationDialogService",
     ["openDialog"]
   );
 
   const mockSnackBar: jasmine.SpyObj<MatSnackBar> = jasmine.createSpyObj(
-    MatSnackBar,
+    "MatSnackBar",
     ["open"]
   );
 
@@ -64,11 +63,15 @@ describe("DataImportComponent", () => {
     return mockDialogRef;
   }
 
-  function createSnackBarMock(): jasmine.SpyObj<MatSnackBarRef<any>> {
+  function createSnackBarMock(readable: boolean = false): jasmine.SpyObj<MatSnackBarRef<any>> {
     const mockSnackBarRef: jasmine.SpyObj<
       MatSnackBarRef<any>
       > = jasmine.createSpyObj("mockSnackBarRef", ["onAction"]);
-    mockSnackBarRef.onAction.and.returnValue(of());
+    if (readable) {
+      mockSnackBarRef.onAction.and.returnValue(of(null));
+    } else {
+      mockSnackBarRef.onAction.and.returnValue(of());
+    }
     mockSnackBar.open.and.returnValue(mockSnackBarRef);
     return mockSnackBarRef;
   }
@@ -115,16 +118,18 @@ describe("DataImportComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  fit("should create", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should open dialog and call backup service and data-import service when loading csv", fakeAsync(() => {
+  fit("should open dialog and call backup service and data-import service when loading csv", fakeAsync(() => {
     const mockFileReader = createFileReaderMock();
-    mockBackupService.getJsonExport.and.returnValue(Promise.resolve(null));
+    mockBackupService.getJsonExport.and.resolveTo(null);
     createDialogMock(true);
+    createSnackBarMock();
 
     component.loadCsv(null);
+
     expect(mockBackupService.getJsonExport).toHaveBeenCalled();
     tick();
     expect(mockFileReader.readAsText).toHaveBeenCalled();
@@ -133,12 +138,13 @@ describe("DataImportComponent", () => {
     expect(mockDataImportService.importCsv).toHaveBeenCalled();
   }));
 
-  it("should open dialog and abort data-import when cancelled", fakeAsync(() => {
+  fit("should open dialog and abort data-import when cancelled", fakeAsync(() => {
     const mockFileReader = createFileReaderMock();
     mockBackupService.getJsonExport.and.resolveTo(null);
     createDialogMock(false);
 
     component.loadCsv(null);
+
     expect(mockBackupService.getJsonExport).toHaveBeenCalled();
     tick();
     expect(mockFileReader.readAsText).toHaveBeenCalled();
@@ -148,18 +154,18 @@ describe("DataImportComponent", () => {
   }));
 
   fit("should restore database when undo button is clicked", fakeAsync(() => {
-    const mockFileReader = createFileReaderMock();
-    // Hier noch mockobjekt statt null übergeben und dann im expect testen
+    createFileReaderMock();
+    // TO-DO: Hier statt null ein Mock-JSON-objekt übergeben und dann im expect testen, ob dies wieder importiert wird
     mockBackupService.getJsonExport.and.resolveTo(null);
     mockBackupService.clearDatabase.and.callThrough();
     createDialogMock(true);
-    const snackBarRef = createSnackBarMock();
+    createSnackBarMock(true);
 
     component.loadCsv(null);
-    tick();
 
+    tick();
     expect(mockBackupService.clearDatabase).toHaveBeenCalled();
-    // expect(mockBackupService.importJson).toHaveBeenCalled();
+    expect(mockBackupService.importJson).toHaveBeenCalled();
     flush();
   }));
 });
