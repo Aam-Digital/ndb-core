@@ -21,8 +21,9 @@ import {
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { School } from "../../schools/model/school";
 import { LoggingService } from "../../../core/logging/logging.service";
-import { ExportDataDirective } from "../../../core/admin/export-data/export-data.directive";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { ExportDataDirective } from "../../../core/export/export-data-directive/export-data.directive";
+import { ExportService } from "../../../core/export/export-service/export.service";
 
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;
