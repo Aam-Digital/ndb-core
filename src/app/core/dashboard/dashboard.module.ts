@@ -18,11 +18,10 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { DashboardComponent } from "./dashboard/dashboard.component";
-import { FlexLayoutModule } from "@angular/flex-layout";
 import { ViewModule } from "../view/view.module";
 
 @NgModule({
-  imports: [CommonModule, FlexLayoutModule, ViewModule],
+  imports: [CommonModule, ViewModule],
   declarations: [DashboardComponent],
 })
 export class DashboardModule {}

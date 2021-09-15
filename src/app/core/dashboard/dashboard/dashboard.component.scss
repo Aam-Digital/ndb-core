@@ -15,8 +15,17 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.widget-wrapper > * {
-  margin-bottom: 20px;
-  min-width: min-content;
-  margin-right: 10px !important;
+@import "../../../../styles";
+
+$min-widget-width: 330px;
+// There will only be one column below this screen width, as defined by the media query
+$max-screen-width: $min-widget-width + $margin-main-view-right + $margin-main-view-left;
+
+.widget-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax($min-widget-width, 1fr));
+  @media all and (max-width: $max-screen-width) {
+    grid-template-columns: 1fr;
+  }
+  grid-gap: 25px;
 }
