@@ -11,6 +11,7 @@ import {AppConfig} from "../../../core/app-config/app-config";
 import {SessionType} from "../../../core/session/session-type";
 import {DataImportService} from "../data-import.service";
 import {of} from "rxjs";
+import {untilDestroyed} from "@ngneat/until-destroy";
 
 describe("DataImportComponent", () => {
   let component: DataImportComponent;
@@ -66,9 +67,8 @@ describe("DataImportComponent", () => {
   function createSnackBarMock(): jasmine.SpyObj<MatSnackBarRef<any>> {
     const mockSnackBarRef: jasmine.SpyObj<
       MatSnackBarRef<any>
-      > = jasmine.createSpyObj("mockSnackBarRef", ["onAction", "dismiss"]);
-    mockSnackBarRef.dismiss.and.callThrough();
-    mockSnackBarRef.onAction.and.callThrough();
+      > = jasmine.createSpyObj("mockSnackBarRef", ["onAction"]);
+    mockSnackBarRef.onAction.and.returnValue(of());
     mockSnackBar.open.and.returnValue(mockSnackBarRef);
     return mockSnackBarRef;
   }
@@ -98,6 +98,10 @@ describe("DataImportComponent", () => {
           {
             provide: ConfirmationDialogService,
             useValue: confirmationDialogMock,
+          },
+          {
+            provide: MatSnackBar,
+            useValue: mockSnackBar,
           }
         ],
       }).compileComponents();
@@ -107,7 +111,6 @@ describe("DataImportComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DataImportComponent);
     component = fixture.componentInstance;
-    // confirmationDialogMock.openDialog.calls.reset();
     mockDataImportService.importCsv.calls.reset();
     fixture.detectChanges();
   });
@@ -132,7 +135,7 @@ describe("DataImportComponent", () => {
 
   it("should open dialog and abort data-import when cancelled", fakeAsync(() => {
     const mockFileReader = createFileReaderMock();
-    mockBackupService.getJsonExport.and.returnValue(Promise.resolve(null));
+    mockBackupService.getJsonExport.and.resolveTo(null);
     createDialogMock(false);
 
     component.loadCsv(null);
@@ -144,26 +147,19 @@ describe("DataImportComponent", () => {
     expect(mockDataImportService.importCsv).not.toHaveBeenCalled();
   }));
 
-  xit("should restore database when undo button is clicked", fakeAsync(() => {
+  fit("should restore database when undo button is clicked", fakeAsync(() => {
     const mockFileReader = createFileReaderMock();
-    mockBackupService.getJsonExport.and.returnValue(Promise.resolve(null));
+    // Hier noch mockobjekt statt null übergeben und dann im expect testen
+    mockBackupService.getJsonExport.and.resolveTo(null);
     mockBackupService.clearDatabase.and.callThrough();
     createDialogMock(true);
     const snackBarRef = createSnackBarMock();
+
     component.loadCsv(null);
-    expect(mockBackupService.getJsonExport).toHaveBeenCalled();
     tick();
-    expect(mockFileReader.readAsText).toHaveBeenCalled();
-    expect(confirmationDialogMock.openDialog).toHaveBeenCalled();
-    snackBarRef.onAction();
-    //
-    // flush();
-    tick();
-    // snackBarRef.dismiss();
-    // flush();
-    expect(snackBarRef.onAction).toHaveBeenCalled();
-    //
+
     expect(mockBackupService.clearDatabase).toHaveBeenCalled();
     // expect(mockBackupService.importJson).toHaveBeenCalled();
+    flush();
   }));
 });

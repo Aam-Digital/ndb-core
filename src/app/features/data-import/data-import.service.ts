@@ -2,9 +2,7 @@ import { Injectable } from "@angular/core";
 import { Database } from "../../core/database/database";
 import { Papa } from "ngx-papaparse";
 
-@Injectable({
-  providedIn: "root",
-})
+@Injectable()
 export class DataImportService {
 
   constructor(private db: Database,
