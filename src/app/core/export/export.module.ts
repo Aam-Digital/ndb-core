@@ -1,11 +1,11 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ExportDataButtonComponent } from "./export-data-button/export-data-button.component";
 import { MatButtonModule } from "@angular/material/button";
+import { ExportDataDirective } from "./export-data-directive/export-data.directive";
 
 @NgModule({
-  declarations: [ExportDataButtonComponent],
+  declarations: [ExportDataDirective],
   imports: [CommonModule, MatButtonModule],
-  exports: [ExportDataButtonComponent],
+  exports: [ExportDataDirective],
 })
 export class ExportModule {}
