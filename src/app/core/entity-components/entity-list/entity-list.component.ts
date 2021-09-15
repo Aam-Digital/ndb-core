@@ -8,7 +8,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import { MediaChange, MediaObserver } from "@angular/flex-layout";
+import { MediaObserver } from "@angular/flex-layout";
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import {
   ColumnGroupsConfig,
@@ -40,7 +40,7 @@ import { FilterOverlayComponent } from "./filter-overlay/filter-overlay.componen
   styleUrls: ["./entity-list.component.scss"],
 })
 export class EntityListComponent<T extends Entity>
-  implements OnChanges, OnInit, AfterViewInit {
+  implements OnChanges, AfterViewInit {
   @Input() allEntities: T[] = [];
   filteredEntities: T[] = [];
   @Input() listConfig: EntityListConfig;
@@ -173,7 +173,7 @@ export class EntityListComponent<T extends Entity>
   private loadUrlParams(parameters?: Params) {
     const params = parameters || this.activatedRoute.snapshot.queryParams;
     if (params["view"]) {
-      this.displayColumnGroup(params["view"]);
+      this.displayColumnGroupByName(params["view"]);
     }
     this.filterSelections.forEach((f) => {
       if (params.hasOwnProperty(f.filterSettings.name)) {
