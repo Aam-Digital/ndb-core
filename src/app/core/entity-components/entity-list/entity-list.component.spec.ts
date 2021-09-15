@@ -143,7 +143,7 @@ describe("EntityListComponent", () => {
     );
     expect(component.selectedColumnGroupIndex).toEqual(defaultGroup);
     expect(component.columnsToDisplay).toEqual(
-      testConfig.columnGroups[defaultGroup].columns
+      testConfig.columnGroups.groups[defaultGroup].columns
     );
   });
 
