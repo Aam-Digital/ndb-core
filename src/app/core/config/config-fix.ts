@@ -531,7 +531,7 @@ export const defaultJsonConfig = {
                   "Personal Information",
                   "Additional",
                   "Scholar activities",
-                  null
+                  "Address"
                 ]
               }
             }
