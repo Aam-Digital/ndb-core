@@ -101,8 +101,8 @@
           </button>
           <button
             mat-icon-button
-            (click)="delete(rec)"
             *ngIf="rec.formGroup?.enabled"
+            (click)="delete(rec)"
           >
             <mat-icon
               class="table-action-icon"
