@@ -21,7 +21,7 @@ describe("ExportDataDirective", () => {
     expect(directive).toBeTruthy();
   });
 
-  it("opens download link when pressing button", () => {
+  it("opens download link when pressing button", async () => {
     const link = document.createElement("a");
     const clickSpy = spyOn(link, "click");
     // Needed to later reset the createElement function, otherwise subsequent calls result in an error
@@ -31,7 +31,7 @@ describe("ExportDataDirective", () => {
       .and.returnValue(link);
 
     expect(clickSpy).not.toHaveBeenCalled();
-    directive.click();
+    await directive.click();
     expect(clickSpy).toHaveBeenCalled();
     // reset createElement otherwise results in: 'an Error was thrown after all'
     document.createElement = oldCreateElement;

@@ -2,6 +2,8 @@ import { Directive, HostListener, Input } from "@angular/core";
 import { ExportService } from "../export-service/export.service";
 import { ExportColumnConfig } from "../export-service/export-column-config";
 
+export type ExportDataFormat = "csv" | "json";
+
 /**
  * A directive that can be attached to a html element, commonly a button.
  * Usage:
@@ -24,7 +26,7 @@ export class ExportDataDirective {
   @Input("appExportData") data: any = [];
 
   /** What kind of data should be export? Currently implemented are 'json', 'csv' */
-  @Input() format: string = "csv";
+  @Input() format: ExportDataFormat = "csv";
 
   /** filename for the download of the exported data */
   @Input() filename: string = "exportedData";

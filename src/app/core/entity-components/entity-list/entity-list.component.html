@@ -170,7 +170,13 @@
 
   </div>
 
-  <button mat-menu-item [appExportData]="allEntities">
+  <button
+    mat-menu-item
+    [appExportData]="allEntities"
+    format="csv"
+    [exportConfig]="listConfig.exportConfig"
+    [filename]="listName.replace(' ', '')"
+  >
     <mat-icon
       color="accent"
       class="button-icon"
