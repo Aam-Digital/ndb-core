@@ -38,7 +38,7 @@
 
         <div *ngTemplateOutlet="filterDialog" style="padding-bottom: 0"></div>
 
-        <button mat-icon-button class="additional-button" [matMenuTriggerFor]="additional">
+        <button mat-icon-button class="additional-button" color="primary" [matMenuTriggerFor]="additional">
           <span class="material-icons">more_vert</span>
         </button>
       </div>
@@ -120,7 +120,6 @@
 
 <ng-template #subrecord>
   <app-entity-subrecord
-    [usesPaginator]="subrecordUsesPaginator"
     [records]="filteredEntities"
     [columns]="columns"
     [editable]="false"

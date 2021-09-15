@@ -56,7 +56,6 @@ export class EntityListComponent<T extends Entity>
   defaultColumnGroup = "";
   mobileColumnGroup = "";
   filtersConfig: FilterConfig[] = [];
-  subrecordUsesPaginator: boolean;
 
   operationType = OperationType;
 
@@ -105,7 +104,6 @@ export class EntityListComponent<T extends Entity>
         )
       )
       .subscribe((isBigScreen) => {
-        this.subrecordUsesPaginator = isBigScreen;
         if (isBigScreen) {
           this.displayColumnGroupByName(this.defaultColumnGroup);
         } else {

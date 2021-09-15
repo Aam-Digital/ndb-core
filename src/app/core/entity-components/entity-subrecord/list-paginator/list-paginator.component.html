@@ -1,4 +1,6 @@
-<mat-toolbar>
+<mat-toolbar
+  fxHide.lt-md
+>
   <mat-slide-toggle
     [checked]="showingAll"
     (change)="changeAllToggle()"
@@ -7,7 +9,6 @@
     Show All
   </mat-slide-toggle>
   <mat-paginator
-    fxHide.lt-md
     (page)="onPaginateChange($event)"
     [pageSize]="pageSize"
     [pageIndex]="currentPageIndex"
@@ -15,3 +16,22 @@
     [showFirstLastButtons]="true"
   ></mat-paginator>
 </mat-toolbar>
+
+<div fxHide.gt-sm fxLayout="column" fxLayoutAlign="end">
+  <mat-paginator
+    (page)="onPaginateChange($event)"
+    [pageSize]="pageSize"
+    [pageIndex]="currentPageIndex"
+    [pageSizeOptions]="pageSizeOptions"
+    [showFirstLastButtons]="true"
+  ></mat-paginator>
+
+  <mat-slide-toggle
+    class="slider-lt-md"
+    [checked]="showingAll"
+    (change)="changeAllToggle()"
+    i18n="All toggle for paginator"
+  >
+    Show All
+  </mat-slide-toggle>
+</div>

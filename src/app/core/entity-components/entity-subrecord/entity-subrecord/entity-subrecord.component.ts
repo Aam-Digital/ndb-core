@@ -81,7 +81,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   recordsDataSource = new MatTableDataSource<TableRow<T>>();
 
   private mediaSubscription: Subscription;
-  @Input() usesPaginator: boolean = true;
   private screenWidth = "";
 
   public idForSavingPagination = "startWert";

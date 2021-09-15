@@ -11,6 +11,12 @@
   font-size: small;
 }
 
+.slider-lt-md {
+  background: white;
+  padding-bottom: 10px;
+  padding-left: 10px;
+}
+
 /* configuration for the mat-slide-toggle feature, used e.g. in the entity-list.component for the "Show All"
 option within the pagination of the tables */
 ::ng-deep .mat-slide-toggle-thumb {
