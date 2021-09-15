@@ -115,6 +115,7 @@ export class EntityListComponent<T extends Entity>
       await this.initFilterSelections();
       this.applyFilterSelections();
     }
+    this.loadUrlParams();
   }
 
   private addColumnsFromColumnGroups() {
@@ -152,7 +153,8 @@ export class EntityListComponent<T extends Entity>
     }
   }
 
-  private loadUrlParams(params: Params) {
+  private loadUrlParams(parameters?: Params) {
+    const params = parameters || this.activatedRoute.snapshot.queryParams;
     if (params["view"]) {
       this.displayColumnGroup(params["view"]);
     }
@@ -215,7 +217,7 @@ export class EntityListComponent<T extends Entity>
       this.entityConstructor,
       this.allEntities
     );
-    this.loadUrlParams(this.activatedRoute.snapshot.queryParams);
+    this.loadUrlParams();
   }
 
   private displayColumnGroup(columnGroupName: string) {
