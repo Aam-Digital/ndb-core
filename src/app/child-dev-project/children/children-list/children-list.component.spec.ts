@@ -80,6 +80,7 @@ describe("ChildrenListComponent", () => {
   const routeMock = {
     data: of({ config: routeData }),
     queryParams: of({}),
+    snapshot: { queryParams: {} },
   };
   const mockChildrenService: jasmine.SpyObj<ChildrenService> = jasmine.createSpyObj(
     ["getChildren"]

@@ -8,7 +8,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import { MediaObserver } from "@angular/flex-layout";
+import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import {
   ColumnGroupsConfig,
@@ -40,7 +40,7 @@ import { FilterOverlayComponent } from "./filter-overlay/filter-overlay.componen
   styleUrls: ["./entity-list.component.scss"],
 })
 export class EntityListComponent<T extends Entity>
-  implements OnChanges, AfterViewInit {
+  implements OnChanges, OnInit, AfterViewInit {
   @Input() allEntities: T[] = [];
   filteredEntities: T[] = [];
   @Input() listConfig: EntityListConfig;
@@ -110,9 +110,9 @@ export class EntityListComponent<T extends Entity>
           this.displayColumnGroupByName(this.mobileColumnGroup);
         }
       });
-    this.activatedRoute.queryParams.subscribe((params) =>
-      this.loadUrlParams(params)
-    );
+    this.activatedRoute.queryParams.subscribe((params) => {
+      this.loadUrlParams(params);
+    });
   }
 
   ngAfterViewInit() {
@@ -132,6 +132,7 @@ export class EntityListComponent<T extends Entity>
       await this.initFilterSelections();
       this.applyFilterSelections();
     }
+    this.loadUrlParams();
   }
 
   private addColumnsFromColumnGroups() {
@@ -169,9 +170,10 @@ export class EntityListComponent<T extends Entity>
     }
   }
 
-  private loadUrlParams(params: Params) {
+  private loadUrlParams(parameters?: Params) {
+    const params = parameters || this.activatedRoute.snapshot.queryParams;
     if (params["view"]) {
-      this.displayColumnGroupByName(params["view"]);
+      this.displayColumnGroup(params["view"]);
     }
     this.filterSelections.forEach((f) => {
       if (params.hasOwnProperty(f.filterSettings.name)) {
@@ -232,7 +234,7 @@ export class EntityListComponent<T extends Entity>
       this.entityConstructor,
       this.allEntities
     );
-    this.loadUrlParams(this.activatedRoute.snapshot.queryParams);
+    this.loadUrlParams();
   }
 
   private displayColumnGroupByName(columnGroupName: string) {
