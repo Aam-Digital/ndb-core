@@ -325,17 +325,26 @@
         <source> Attendance completed. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
-          <context context-type="linenumber">46,53</context>
+          <context context-type="linenumber">46,54</context>
         </context-group>
         <note priority="1" from="description">shows when the user has registered the attendance of
       all children</note>
         <note priority="1" from="meaning">Attendance completed</note>
       </trans-unit>
+      <trans-unit id="004c780ad24219ab7e2f577a5557225675f512df" datatype="html">
+        <source> Save &amp; Exit </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
+          <context context-type="linenumber">60,66</context>
+        </context-group>
+        <note priority="1" from="description">Button to finish roll call early</note>
+        <note priority="1" from="meaning">Save-Button</note>
+      </trans-unit>
       <trans-unit id="058db649ec3f6f1dba6157a51b6c48d15b2ca96a" datatype="html">
         <source> Back </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
-          <context context-type="linenumber">60,66</context>
+          <context context-type="linenumber">71,77</context>
         </context-group>
         <note priority="1" from="description">Button to go to the previous child</note>
         <note priority="1" from="meaning">Back-button</note>
@@ -344,7 +353,7 @@
         <source> Skip </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
-          <context context-type="linenumber">71,76</context>
+          <context context-type="linenumber">82,87</context>
         </context-group>
         <note priority="1" from="description">Button to skip a step in the roll call</note>
         <note priority="1" from="meaning">Skip-Button</note>
@@ -353,7 +362,7 @@
         <source> Finish </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
-          <context context-type="linenumber">77,80</context>
+          <context context-type="linenumber">88,91</context>
         </context-group>
         <note priority="1" from="description">Finish entering the attendance of a child</note>
       </trans-unit>
@@ -361,9 +370,41 @@
         <source> Abort </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
-          <context context-type="linenumber">80,84</context>
+          <context context-type="linenumber">91,95</context>
         </context-group>
         <note priority="1" from="description">Abort entering the attendance of a child</note>
+      </trans-unit>
+      <trans-unit id="6149790421325658341" datatype="html">
+        <source> Save &amp; Exit</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.ts</context>
+          <context context-type="linenumber">130,129</context>
+        </context-group>
+        <note priority="1" from="description">Save &amp; Next confirmation title</note>
+      </trans-unit>
+      <trans-unit id="5773856749871082334" datatype="html">
+        <source>Are you sure you want to save, exit and skip the remaining <x id="PH" equiv-text="remainingParticipant.toString()"/> participants?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.ts</context>
+          <context context-type="linenumber">131,129</context>
+        </context-group>
+        <note priority="1" from="description">Save &amp; Exit confirmation text</note>
+      </trans-unit>
+      <trans-unit id="3304180909188588981" datatype="html">
+        <source> Abort</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.ts</context>
+          <context context-type="linenumber">147,146</context>
+        </context-group>
+        <note priority="1" from="description">Abort confirmation title</note>
+      </trans-unit>
+      <trans-unit id="2317876813032660437" datatype="html">
+        <source>Are you sure you want to exit and discard all recordings?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.ts</context>
+          <context context-type="linenumber">148,146</context>
+        </context-group>
+        <note priority="1" from="description">Abort confirmation text</note>
       </trans-unit>
       <trans-unit id="828a009e2c01bece732333b25efb6b62ed46f6ec" datatype="html">
         <source> attended <x id="INTERPOLATION" equiv-text="{{ attendanceDescription }"/> events </source>
