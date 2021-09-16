@@ -27,6 +27,11 @@ export class EditSingleEntityComponent extends EditComponent<string> {
 
   constructor(private entityMapper: EntityMapperService) {
     super();
+    this.filteredEntities = this.entityNameFormControl.valueChanges.pipe(
+      untilDestroyed(this),
+      filter((s) => s !== null),
+      map((searchText?: string) => this.filter(searchText))
+    );
   }
 
   private filter(searchText?: string): Entity[] {
@@ -54,12 +59,6 @@ export class EditSingleEntityComponent extends EditComponent<string> {
       .then((entities) =>
         entities.sort((e1, e2) => e1.toString().localeCompare(e2.toString()))
       );
-    this.filteredEntities = this.entityNameFormControl.valueChanges.pipe(
-      untilDestroyed(this),
-      filter((value) => value === null || typeof value === "string"), // sometimes produces entities
-      map((searchText?: string) => this.filter(searchText))
-    );
-    this.entityNameFormControl.setValue(null);
     const selectedEntity = this.entities.find(
       (entity) => entity.getId() === this.formControl.value
     );
@@ -67,6 +66,8 @@ export class EditSingleEntityComponent extends EditComponent<string> {
       this.selectedEntity = selectedEntity;
       this.editingSelectedEntity = false;
       this.entityNameFormControl.setValue(selectedEntity.toString());
+    } else {
+      this.entityNameFormControl.setValue("");
     }
   }
 
