@@ -1,5 +1,5 @@
-<mat-form-field [formGroup]="formControl.parent">
-  <mat-label>{{ label }}</mat-label>
+<mat-form-field floatLabel="always" [formGroup]="formControl.parent">
+  <mat-label *ngIf="label">{{ label }}</mat-label>
   <input
     #inputField
     matInput
@@ -10,14 +10,17 @@
   />
   <mat-autocomplete
     #autoSuggestions="matAutocomplete"
+    (optionSelected)="select($event)"
   >
     <!-- Optional header -->
-    <ng-content select="mat-option"></ng-content>
-    <mat-option *ngFor="let entity of filteredEntities | async" [value]="entity.toString()" (click)="formControl.setValue(entity.getId())">
-      <app-display-entity
-        [entityToDisplay]="entity"
-        [linkDisabled]="true"
-      ></app-display-entity>
-    </mat-option>
+    <ng-container *ngIf="showEntities">
+      <ng-content select="mat-option"></ng-content>
+      <mat-option *ngFor="let entity of filteredEntities | async" [value]="entity.toString()" (click)="formControl.setValue(entity.getId())">
+        <app-display-entity
+          [entityToDisplay]="entity"
+          [linkDisabled]="true"
+        ></app-display-entity>
+      </mat-option>
+    </ng-container>
   </mat-autocomplete>
 </mat-form-field>
