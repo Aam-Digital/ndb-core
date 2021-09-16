@@ -70,10 +70,8 @@ describe("EditSingleEntityComponent", () => {
   }));
 
   it("should show name of the selected entity", fakeAsync(() => {
-    const child1 = new Child();
-    child1.name = "First Child";
-    const child2 = new Child();
-    child2.name = "Second Child";
+    const child1 = Child.create("First Child");
+    const child2 = Child.create("Second Child");
     component.formControl.setValue(child1.getId());
     mockEntityMapper.loadType.and.resolveTo([child1, child2]);
 
