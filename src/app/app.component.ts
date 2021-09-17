@@ -56,28 +56,36 @@ export class AppComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private router: Router
   ) {
+    this.initBasicServices();
+  }
+
+  private async initBasicServices() {
     // If loading the config earlier (in a module constructor or through APP_INITIALIZER) a runtime error occurs.
     // The EntityMapperService needs the SessionServiceProvider which needs the AppConfig to be set up.
     // If the EntityMapperService is requested to early (through DI), the AppConfig is not ready yet.
     // TODO fix this with https://github.com/Aam-Digital/ndb-core/issues/595
-    configService.loadConfig(entityMapper);
+    await this.configService.loadConfig(this.entityMapper);
+
+    this.analyticsService.init();
+
     // Reload config once the database is synced
-    sessionService.syncState
+    this.sessionService.syncState
       .pipe(waitForChangeTo(SyncState.COMPLETED))
       .toPromise()
-      .then(() => configService.loadConfig(entityMapper))
-      .then(() => router.navigate([], { relativeTo: this.activatedRoute }));
+      .then(() => this.configService.loadConfig(this.entityMapper))
+      .then(() =>
+        this.router.navigate([], { relativeTo: this.activatedRoute })
+      );
     // These functions will be executed whenever a new config is available
-    configService.configUpdates.subscribe(() => {
-      routerService.initRouting();
-      entityConfigService.addConfigAttributes(Child);
-      entityConfigService.addConfigAttributes(School);
-      entityConfigService.addConfigAttributes(RecurringActivity);
-      entityConfigService.addConfigAttributes(HistoricalEntityData);
-      entityConfigService.addConfigAttributes(Note);
-      entityConfigService.addConfigAttributes(EventNote);
+    this.configService.configUpdates.subscribe(() => {
+      this.routerService.initRouting();
+      this.entityConfigService.addConfigAttributes(Child);
+      this.entityConfigService.addConfigAttributes(School);
+      this.entityConfigService.addConfigAttributes(RecurringActivity);
+      this.entityConfigService.addConfigAttributes(HistoricalEntityData);
+      this.entityConfigService.addConfigAttributes(Note);
+      this.entityConfigService.addConfigAttributes(EventNote);
     });
-    this.analyticsService.init();
   }
 
   ngOnInit() {

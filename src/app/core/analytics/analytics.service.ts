@@ -2,8 +2,13 @@ import { Injectable } from "@angular/core";
 import { Angulartics2Piwik } from "angulartics2/piwik";
 import { environment } from "../../../environments/environment";
 import { AppConfig } from "../app-config/app-config";
+import { ConfigService } from "../config/config.service";
 import { SessionService } from "../session/session-service/session.service";
 import { LoginState } from "../session/session-states/login-state.enum";
+import {
+  USAGE_ANALYTICS_CONFIG_ID,
+  UsageAnalyticsConfig,
+} from "./usage-analytics-config";
 
 const md5 = require("md5");
 
@@ -22,6 +27,7 @@ export class AnalyticsService {
 
   constructor(
     private angulartics2Piwik: Angulartics2Piwik,
+    private configService: ConfigService,
     private sessionService: SessionService
   ) {
     this.subscribeToUserChanges();
@@ -59,19 +65,21 @@ export class AnalyticsService {
    * Set up usage analytics tracking - if the AppConfig specifies the required settings.
    */
   init(): void {
-    if (!AppConfig.settings.usage_analytics) {
+    const config = this.configService.getConfig<UsageAnalyticsConfig>(
+      USAGE_ANALYTICS_CONFIG_ID
+    );
+
+    if (!config || !config.url || !config.site_id) {
       // do not track
       return;
     }
 
-    this.setUpMatomo(
-      AppConfig.settings.usage_analytics.url,
-      AppConfig.settings.usage_analytics.site_id
-    );
+    this.setUpMatomo(config.url, config.site_id, config.no_cookies);
 
     this.setVersion();
     this.setOrganization(AppConfig.settings.site_name);
     this.setUser(undefined);
+
     this.angulartics2Piwik.startTracking();
   }
 
@@ -83,15 +91,20 @@ export class AnalyticsService {
    *
    * @param url The URL of the matomo backend
    * @param id The id of the Matomo site as which this app will be tracked
+   * @param disableCookies (Optional) flag whether to disable use of cookies to track sessions
    * @private
    */
-  private setUpMatomo(url: string, id: string) {
+  private setUpMatomo(
+    url: string,
+    id: string,
+    disableCookies: boolean = false
+  ) {
     window["_paq"] = window["_paq"] || [];
     window["_paq"].push([
       "setDocumentTitle",
       document.domain + "/" + document.title,
     ]);
-    if (AppConfig.settings.usage_analytics.no_cookies) {
+    if (disableCookies) {
       window["_paq"].push(["disableCookies"]);
     }
     window["_paq"].push(["trackPageView"]);
