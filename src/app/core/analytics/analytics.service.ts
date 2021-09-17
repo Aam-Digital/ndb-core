@@ -97,7 +97,10 @@ export class AnalyticsService {
     window["_paq"].push(["trackPageView"]);
     window["_paq"].push(["enableLinkTracking"]);
     (() => {
-      const u = url;
+      let u = url;
+      if (!u.endsWith("/")) {
+        u = u + "/";
+      }
       window["_paq"].push(["setTrackerUrl", u + "matomo.php"]);
       window["_paq"].push(["setSiteId", id]);
       const d = document;
@@ -120,7 +123,7 @@ export class AnalyticsService {
     action: string,
     properties: {
       category: string;
-      label: string;
+      label?: string;
       value?: number;
     } = {
       category: "no_category",
