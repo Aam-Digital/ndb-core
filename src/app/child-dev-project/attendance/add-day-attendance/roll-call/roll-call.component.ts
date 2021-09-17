@@ -14,6 +14,8 @@ import {
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { Child } from "../../../children/model/child";
 import { LoggingService } from "../../../../core/logging/logging.service";
+import { FormGroup } from "@angular/forms";
+import { ConfirmationDialogService } from "../../../../core/confirmation-dialog/confirmation-dialog.service";
 
 /**
  * Displays the participants of the given event one by one to mark attendance status.
@@ -53,11 +55,13 @@ export class RollCallComponent implements OnInit {
   availableStatus: AttendanceStatusType[];
 
   entries: { child: Child; attendance: EventAttendance }[];
+  form: FormGroup;
 
   constructor(
     private configService: ConfigService,
     private entityMapper: EntityMapperService,
-    private loggingService: LoggingService
+    private loggingService: LoggingService,
+    private confirmationDialog: ConfirmationDialogService
   ) {}
 
   async ngOnInit() {
@@ -115,5 +119,40 @@ export class RollCallComponent implements OnInit {
 
   isFinished(): boolean {
     return this.currentIndex >= this.entries?.length;
+  }
+
+  save() {
+    if (this.isFinished()) {
+      this.goToNextParticipant(this.entries?.length);
+    } else {
+      const remainingParticipant = this.entries.length - this.currentIndex;
+      const dialogRef = this.confirmationDialog.openDialog(
+        $localize`:Save & Next confirmation title: Save & Exit`,
+        $localize`:Save & Exit confirmation text:Are you sure you want to save, exit and skip the remaining ${remainingParticipant.toString()} participants?`
+      );
+
+      dialogRef.afterClosed().subscribe((confirmed) => {
+        if (confirmed) {
+          this.goToNextParticipant(this.entries?.length);
+        }
+      });
+    }
+  }
+
+  abort() {
+    if (this.isFinished()) {
+      this.exit.emit();
+    } else {
+      const dialogRef = this.confirmationDialog.openDialog(
+        $localize`:Abort confirmation title: Abort`,
+        $localize`:Abort confirmation text:Are you sure you want to exit and discard all recordings?`
+      );
+
+      dialogRef.afterClosed().subscribe((confirmed) => {
+        if (confirmed) {
+          this.exit.emit();
+        }
+      });
+    }
   }
 }

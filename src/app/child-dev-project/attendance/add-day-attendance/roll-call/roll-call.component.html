@@ -6,8 +6,8 @@
       mode="determinate"
       [value]="(currentIndex / entries.length) * 100"
     ></mat-progress-bar>
-  <app-child-block [entity]="entries[currentIndex].child"></app-child-block>
-  <div class="progress-label">{{ currentIndex }} / {{ entries.length }}</div>
+    <app-child-block [entity]="entries[currentIndex].child"></app-child-block>
+    <div class="progress-label">{{ currentIndex }} / {{ entries.length }}</div>
   </div>
 
   <div
@@ -50,6 +50,17 @@
 <!-- Control Buttons -->
 <div>
   <button
+    mat-stroked-button
+    [disabled]="isFinished()"
+    (click)="save()"
+    class="nav-button"
+    fxFlex
+    i18n="Save-Button|Button to finish roll call early"
+  >
+    Save & Exit
+  </button>
+
+  <button
     i18n="Back-button|Button to go to the previous child"
     mat-stroked-button
     [disabled]="currentIndex < 1"
@@ -72,7 +83,7 @@
   </button>
 </div>
 <div>
-  <button mat-stroked-button (click)="exit.emit()" class="nav-button" fxFlex>
+  <button mat-stroked-button (click)="abort()" class="nav-button" fxFlex>
     <span *ngIf="isFinished()" i18n="Finish entering the attendance of a child">
       Finish
     </span>
