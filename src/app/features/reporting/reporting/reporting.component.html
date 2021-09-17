@@ -51,6 +51,10 @@
       [disabled]="!selectedReport || (!fromDate && !toDate) || loading"
       (click)="calculateResults()"
       i18n="Calculate the results for a report"
+      angulartics2On="click"
+      angularticsCategory="Reporting"
+      angularticsAction="calculate"
+      [angularticsLabel]="selectedReport?.title"
     >
       Calculate
     </button>
@@ -60,6 +64,10 @@
       format="csv"
       filename="report"
       style="float: right"
+      angulartics2On="click"
+      angularticsCategory="Reporting"
+      angularticsAction="export"
+      [angularticsLabel]="selectedReport?.title"
     >
       <mat-icon
         class="button-icon"

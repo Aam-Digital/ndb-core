@@ -41,10 +41,8 @@
         color="accent"
         (click)="addNewClick.emit()"
         angulartics2On="click"
-        angularticsCategory="UserAction"
-        [angularticsAction]="
-          listName.toLowerCase().replace(' ', '_') + '_add_new'
-        "
+        [angularticsCategory]="entityConstructor.ENTITY_TYPE"
+        angularticsAction="list_add_entity"
         *appDisabledEntityOperation="{
           entity: entityConstructor,
           operation: operationType.CREATE
@@ -63,10 +61,8 @@
         format="csv"
         [filename]="listName.replace(' ', '')"
         angulartics2On="click"
-        angularticsCategory="UserAction"
-        [angularticsAction]="
-          listName.toLowerCase().replace(' ', '_') + '_csv_export'
-        "
+        [angularticsCategory]="entityConstructor.ENTITY_TYPE"
+        angularticsAction="list_csv_export"
       >
         <mat-icon
           class="button-icon"
@@ -92,6 +88,10 @@
       [(selectedOption)]="filter.selectedOption"
       [displayAsToggle]="filter.display !== 'dropdown'"
       (selectedOptionChange)="filterOptionSelected(filter, $event)"
+      angulartics2On="click"
+      [angularticsCategory]="entityConstructor.ENTITY_TYPE"
+      angularticsAction="list_filter"
+      [angularticsLabel]="filter.filterSettings.label"
     >
     </app-list-filter>
   </div>
@@ -109,6 +109,10 @@
         *ngFor="let item of columnGroups"
         [value]="item.name"
         (click)="columnGroupClick(item.name)"
+        angulartics2On="click"
+        [angularticsCategory]="entityConstructor.ENTITY_TYPE"
+        angularticsAction="list_column_view"
+        [angularticsLabel]="item.name"
       >
         {{ item.name }}
       </mat-button-toggle>

@@ -4,10 +4,17 @@ import { DashboardShortcutWidgetComponent } from "./dashboard-shortcut-widget/da
 import { MatCardModule } from "@angular/material/card";
 import { MatIconModule } from "@angular/material/icon";
 import { RouterModule } from "@angular/router";
+import { Angulartics2Module } from "angulartics2";
 
 @NgModule({
   declarations: [DashboardShortcutWidgetComponent],
-  imports: [CommonModule, MatCardModule, MatIconModule, RouterModule],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatIconModule,
+    RouterModule,
+    Angulartics2Module,
+  ],
   exports: [DashboardShortcutWidgetComponent],
 })
 export class DashboardShortcutWidgetModule {}

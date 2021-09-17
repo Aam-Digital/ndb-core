@@ -25,6 +25,7 @@ import { FilterGeneratorService } from "./filter-generator.service";
 import { FilterComponentSettings } from "./filter-component.settings";
 import { entityFilterPredicate } from "./filter-predicate";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { AnalyticsService } from "../../analytics/analytics.service";
 
 /**
  * This component allows to create a full blown table with pagination, filtering, searching and grouping.
@@ -69,6 +70,7 @@ export class EntityListComponent<T extends Entity>
     private media: MediaObserver,
     private router: Router,
     private activatedRoute: ActivatedRoute,
+    private analyticsService: AnalyticsService,
     private filterGeneratorService: FilterGeneratorService
   ) {}
 
@@ -176,6 +178,10 @@ export class EntityListComponent<T extends Entity>
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
     this.entityTable.recordsDataSource.filter = filterValue;
+
+    this.analyticsService.eventTrack("list_filter_freetext", {
+      category: this.entityConstructor?.ENTITY_TYPE,
+    });
   }
 
   filterOptionSelected(

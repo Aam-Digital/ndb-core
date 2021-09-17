@@ -56,6 +56,7 @@
     class="nav-button"
     fxFlex
     i18n="Save-Button|Button to finish roll call early"
+    angulartics2On="click" angularticsCategory="Record Attendance" angularticsAction="rollcall_save-exit"
   >
     Save & Exit
   </button>
@@ -67,6 +68,7 @@
     (click)="currentIndex = currentIndex - 1"
     class="nav-button"
     fxFlex
+    angulartics2On="click" angularticsCategory="Record Attendance" angularticsAction="rollcall_back"
   >
     Back
   </button>
@@ -78,12 +80,16 @@
     class="nav-button"
     fxFlex
     i18n="Skip-Button|Button to skip a step in the roll call"
+    angulartics2On="click" angularticsCategory="Record Attendance" angularticsAction="rollcall_skip"
   >
     Skip
   </button>
 </div>
 <div>
-  <button mat-stroked-button (click)="abort()" class="nav-button" fxFlex>
+  <button mat-stroked-button (click)="abort()" class="nav-button" fxFlex
+          angulartics2On="click"
+          angularticsCategory="Record Attendance"
+          [angularticsAction]="isFinished() ? 'rollcall_finish' : 'rollcall_abort'">
     <span *ngIf="isFinished()" i18n="Finish entering the attendance of a child">
       Finish
     </span>

@@ -17,6 +17,7 @@
         *ngFor="let entry of shortcuts"
         class="dashboard-table-row clickable"
         [routerLink]="[entry.link]"
+        angulartics2On="click" angularticsCategory="Dashboard" angularticsAction="shortcut-widget_click"
       >
         <td class="dashboard-table-cell">
           <mat-icon fontIcon="fa-{{ entry.icon }}"></mat-icon>
