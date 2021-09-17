@@ -225,11 +225,18 @@ mat-card.dashboard-widget {
 }
 
 /* Standard button styles */
+
+$standard-icon-size: 1.5em;
+
 .standard-add-button {
   background-color: white !important;
 }
 
+.standard-icon {
+  font-size: $standard-icon-size;
+}
+
 .standard-icon-with-text {
+  font-size: $standard-icon-size;
   margin-right: 5px;
-  font-size: 1.5em;
 }

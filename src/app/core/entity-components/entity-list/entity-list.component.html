@@ -146,9 +146,9 @@
               }"
     >
       <mat-icon
+        class="standard-icon"
         color="accent"
         aria-label="add element"
-        class="button-icon"
         fontIcon="fa-plus-circle"
       ></mat-icon>
       <span i18n="Add a new entity to a list of multiple entities"> Add New </span>
@@ -161,7 +161,7 @@
       <mat-icon
         color="accent"
         aria-label="filter"
-        class="button-icon"
+        class="standard-icon"
         fontIcon="fa-filter"
       >
       </mat-icon>
@@ -179,10 +179,11 @@
   >
     <mat-icon
       color="accent"
-      class="button-icon"
+      class="standard-icon"
       aria-label="download csv"
       fontIcon="fa-download"
     ></mat-icon>
     <span i18n="Download list contents as CSV"> Download CSV </span>
   </button>
+  <ng-content select="[mat-menu-item]"></ng-content>
 </mat-menu>
