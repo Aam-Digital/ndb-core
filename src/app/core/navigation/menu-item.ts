@@ -22,6 +22,16 @@ import { faDynamicIcons } from "../view/dynamic-components/fa-dynamic-icons";
  * Structure for menu items to be displayed.
  */
 export class MenuItem {
+  static fromConfigItems(configItems: object[]): MenuItem[] {
+    return configItems.map((o) => {
+      if (o["name"]) {
+        return new MenuItem(o["name"], o["icon"], o["link"]);
+      } else {
+        return new MenuItem(o["label"], o["icon"], o["link"]);
+      }
+    });
+  }
+
   faIcon: IconDefinition;
   /**
    * Create a menu item.

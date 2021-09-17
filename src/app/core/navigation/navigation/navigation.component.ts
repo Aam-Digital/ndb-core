@@ -58,13 +58,9 @@ export class NavigationComponent {
     const config: NavigationMenuConfig = this.configService.getConfig<NavigationMenuConfig>(
       this.CONFIG_ID
     );
-    for (const configItem of config.items) {
-      if (this.checkMenuItemPermissions(configItem.link)) {
-        this.menuItems.push(
-          new MenuItem(configItem.name, configItem.icon, configItem.link)
-        );
-      }
-    }
+    this.menuItems = MenuItem.fromConfigItems(config.items).filter((e) =>
+      this.checkMenuItemPermissions(e.link)
+    );
   }
 
   /**
