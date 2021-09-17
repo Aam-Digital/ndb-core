@@ -42,7 +42,7 @@ describe("EntitySubrecordComponent", () => {
       TestBed.configureTestingModule({
         imports: [
           EntitySubrecordModule,
-          RouterTestingModule,
+          RouterTestingModule.withRoutes([]),
           MatNativeDateModule,
           NoopAnimationsModule,
           MockSessionModule.withState(),
