@@ -1,7 +1,7 @@
 <mat-card class="dashboard-widget">
   <mat-card-header class="app-general">
     <div mat-card-avatar>
-      <fa-icon icon="external-link"></fa-icon>
+      <fa-icon icon="external-link-alt"></fa-icon>
     </div>
     <mat-card-title></mat-card-title>
     <mat-card-subtitle
@@ -19,7 +19,7 @@
         [routerLink]="[entry.link]"
       >
         <td class="dashboard-table-cell">
-          <fa-icon icon="{{entry.icon}}"></fa-icon>
+          <fa-icon [icon]="entry.faIcon"></fa-icon>
           {{ entry.label }}
         </td>
       </tr>
