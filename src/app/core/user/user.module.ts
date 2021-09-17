@@ -27,24 +27,26 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatListModule } from "@angular/material/list";
 import { FontAwesomeIconsModule } from "../icons/font-awesome-icons.module";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 /**
  * Provides a User functionality including user account forms.
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatTabsModule,
-    WebdavModule,
-    ReactiveFormsModule,
-    MatListModule,
-    FontAwesomeIconsModule,
-    MatAutocompleteModule,
-    FormsModule,
-  ],
+    imports: [
+        CommonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatTabsModule,
+        WebdavModule,
+        ReactiveFormsModule,
+        MatListModule,
+        FontAwesomeIconsModule,
+        MatAutocompleteModule,
+        FormsModule,
+        FontAwesomeModule,
+    ],
   declarations: [UserAccountComponent],
 })
 export class UserModule {}

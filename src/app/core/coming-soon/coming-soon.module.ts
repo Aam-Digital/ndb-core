@@ -5,6 +5,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { FlexModule } from "@angular/flex-layout";
 import { MatIconModule } from "@angular/material/icon";
 import { RouterModule } from "@angular/router";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 /**
  * Provides a generic page to announce features that are not implemented yet including tracking user interest to analytics.
@@ -27,18 +28,19 @@ import { RouterModule } from "@angular/router";
  */
 @NgModule({
   declarations: [ComingSoonComponent],
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    FlexModule,
-    MatIconModule,
-    RouterModule.forChild([
-      {
-        path: ":feature",
-        component: ComingSoonComponent,
-      },
-    ]),
-  ],
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        FlexModule,
+        MatIconModule,
+        RouterModule.forChild([
+            {
+                path: ":feature",
+                component: ComingSoonComponent,
+            },
+        ]),
+        FontAwesomeModule,
+    ],
   exports: [RouterModule],
 })
 export class ComingSoonModule {}

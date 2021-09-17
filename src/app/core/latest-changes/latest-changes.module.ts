@@ -33,6 +33,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatCardModule } from "@angular/material/card";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { LatestChangesService } from "./latest-changes.service";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 /**
  * Displaying app version and changelog information to the user
@@ -44,19 +45,20 @@ import { LatestChangesService } from "./latest-changes.service";
  * text (after markdown characters) with a ".".
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    AlertsModule,
-    SessionModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatSnackBarModule,
-    HttpClientModule,
-    FlexModule,
-    MarkdownModule,
-    MatIconModule,
-    MatCardModule,
-  ],
+    imports: [
+        CommonModule,
+        AlertsModule,
+        SessionModule,
+        MatDialogModule,
+        MatButtonModule,
+        MatSnackBarModule,
+        HttpClientModule,
+        FlexModule,
+        MarkdownModule,
+        MatIconModule,
+        MatCardModule,
+        FontAwesomeModule,
+    ],
   declarations: [AppVersionComponent, ChangelogComponent],
   exports: [AppVersionComponent],
   providers: [

@@ -27,20 +27,22 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { ChildrenModule } from "../children/children.module";
 import { ProgressDashboardComponent } from "./progress-dashboard/progress-dashboard.component";
 import { FormsModule } from "@angular/forms";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    FlexLayoutModule,
-    MatCardModule,
-    MatIconModule,
-    MatButtonModule,
-    MatProgressBarModule,
-    MatInputModule,
-    MatFormFieldModule,
-    ChildrenModule,
-  ],
+    imports: [
+        CommonModule,
+        FormsModule,
+        FlexLayoutModule,
+        MatCardModule,
+        MatIconModule,
+        MatButtonModule,
+        MatProgressBarModule,
+        MatInputModule,
+        MatFormFieldModule,
+        ChildrenModule,
+        FontAwesomeModule,
+    ],
   declarations: [ProgressDashboardComponent],
 })
 export class ProgressDashboardWidgetModule {}

@@ -21,7 +21,7 @@
           aria-label="Clear"
           (click)="filterString = ''; applyFilter('')"
         >
-          <mat-icon fontIcon="fa-times"></mat-icon>
+          <fa-icon icon="times"></fa-icon>
         </button>
       </mat-form-field>
     </div>
@@ -50,11 +50,11 @@
           operation: operationType.CREATE
         }"
       >
-        <mat-icon
+        <fa-icon
           class="button-icon"
           aria-label="add element"
-          fontIcon="fa-plus-circle"
-        ></mat-icon>
+          icon="plus-circle"
+        ></fa-icon>
         <span fxHide.lt-md="true" i18n="Add New Button"> Add New </span>
       </button>
       <app-export-data-button
@@ -68,11 +68,11 @@
           listName.toLowerCase().replace(' ', '_') + '_csv_export'
         "
       >
-        <mat-icon
+        <fa-icon
           class="button-icon"
           aria-label="download csv"
-          fontIcon="fa-download"
-        ></mat-icon>
+          icon="download"
+        ></fa-icon>
         <span fxHide.lt-md="true" i18n="Download list contents as CSV">
           Download CSV
         </span>

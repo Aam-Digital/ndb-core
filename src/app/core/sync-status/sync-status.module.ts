@@ -31,22 +31,24 @@ import { BackgroundProcessingIndicatorComponent } from "./background-processing-
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { FlexModule } from "@angular/flex-layout";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @NgModule({
-  imports: [
-    CommonModule,
-    SessionModule,
-    AlertsModule,
-    MatIconModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatProgressBarModule,
-    MatBadgeModule,
-    MatMenuModule,
-    MatProgressSpinnerModule,
-    FlexModule,
-    MatTooltipModule,
-  ],
+    imports: [
+        CommonModule,
+        SessionModule,
+        AlertsModule,
+        MatIconModule,
+        MatButtonModule,
+        MatDialogModule,
+        MatProgressBarModule,
+        MatBadgeModule,
+        MatMenuModule,
+        MatProgressSpinnerModule,
+        FlexModule,
+        MatTooltipModule,
+        FontAwesomeModule,
+    ],
   declarations: [
     InitialSyncDialogComponent,
     SyncStatusComponent,

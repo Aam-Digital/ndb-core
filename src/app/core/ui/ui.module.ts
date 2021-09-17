@@ -41,36 +41,38 @@ import { Angulartics2Module } from "angulartics2";
 import { PermissionsModule } from "../permissions/permissions.module";
 import { EntityUtilsModule } from "../entity-components/entity-utils/entity-utils.module";
 import { TranslationModule } from "../translation/translation.module";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 /**
  * The core user interface structure that ties different components together into the overall app layout.
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    LatestChangesModule,
-    NavigationModule,
-    RouterModule,
-    SessionModule,
-    SyncStatusModule,
-    MatSidenavModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatAutocompleteModule,
-    FlexLayoutModule,
-    ChildrenModule,
-    SchoolsModule,
-    NotesModule,
-    Angulartics2Module,
-    PermissionsModule,
-    EntityUtilsModule,
-    ReactiveFormsModule,
-    TranslationModule,
-  ],
+    imports: [
+        CommonModule,
+        FormsModule,
+        LatestChangesModule,
+        NavigationModule,
+        RouterModule,
+        SessionModule,
+        SyncStatusModule,
+        MatSidenavModule,
+        MatToolbarModule,
+        MatIconModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatAutocompleteModule,
+        FlexLayoutModule,
+        ChildrenModule,
+        SchoolsModule,
+        NotesModule,
+        Angulartics2Module,
+        PermissionsModule,
+        EntityUtilsModule,
+        ReactiveFormsModule,
+        TranslationModule,
+        FontAwesomeModule,
+    ],
   declarations: [SearchComponent, UiComponent, PrimaryActionComponent],
   exports: [UiComponent],
 })

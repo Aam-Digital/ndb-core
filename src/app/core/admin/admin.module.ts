@@ -18,29 +18,31 @@ import { MatIconModule } from "@angular/material/icon";
 import { UserListComponent } from "./user-list/user-list.component";
 import { BackupService } from "./services/backup.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 /**
  * GUI for administrative users to manage and maintain background and technical aspects of the app.
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    BrowserModule,
-    MatButtonModule,
-    MatSnackBarModule,
-    MatTableModule,
-    MatCheckboxModule,
-    AlertsModule,
-    EntityModule,
-    HttpClientModule,
-    FormsModule,
-    MatDialogModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
-    MatTooltipModule,
-  ],
+    imports: [
+        CommonModule,
+        BrowserModule,
+        MatButtonModule,
+        MatSnackBarModule,
+        MatTableModule,
+        MatCheckboxModule,
+        AlertsModule,
+        EntityModule,
+        HttpClientModule,
+        FormsModule,
+        MatDialogModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatIconModule,
+        MatTooltipModule,
+        FontAwesomeModule,
+    ],
   declarations: [AdminComponent, UserListComponent],
   providers: [ChildPhotoUpdateService, BackupService],
 })

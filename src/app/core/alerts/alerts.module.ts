@@ -24,18 +24,20 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatIconModule } from "@angular/material/icon";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 /**
  * Show alert message to the user informing about events or errors.
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    MatSnackBarModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-  ],
+    imports: [
+        CommonModule,
+        MatSnackBarModule,
+        MatCardModule,
+        MatButtonModule,
+        MatIconModule,
+        FontAwesomeModule,
+    ],
   declarations: [AlertComponent],
   exports: [AlertComponent],
   providers: [AlertService],

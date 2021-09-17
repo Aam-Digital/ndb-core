@@ -26,23 +26,25 @@ import { MatListModule } from "@angular/material/list";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Angulartics2Module } from "angulartics2";
 import { ConfigModule } from "../config/config.module";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 /**
  * Manages the main app navigation menu
  * which can dynamically be configured through the {@link NavigationItemsService}.
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    SessionModule,
-    RouterModule,
-    MatListModule,
-    MatIconModule,
-    MatButtonModule,
-    MatTooltipModule,
-    Angulartics2Module,
-    ConfigModule,
-  ],
+    imports: [
+        CommonModule,
+        SessionModule,
+        RouterModule,
+        MatListModule,
+        MatIconModule,
+        MatButtonModule,
+        MatTooltipModule,
+        Angulartics2Module,
+        ConfigModule,
+        FontAwesomeModule,
+    ],
   declarations: [NavigationComponent],
   exports: [NavigationComponent],
   providers: [],

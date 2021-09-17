@@ -5,24 +5,24 @@
   }"
 >
   <mat-card-title>
-    <mat-icon
+    <fa-icon
       *ngIf="!recurring"
-      fontIcon="fa-calendar-o"
+      icon="calendar"
       i18n-matTooltip="
         One-time event|Informs the user that this is a one-time event
       "
       matTooltip="one-time event"
     >
-    </mat-icon>
-    <mat-icon
+    </fa-icon>
+    <fa-icon
       *ngIf="recurring"
-      fontIcon="fa-calendar"
+      icon="calendar-alt"
       i18n-matTooltip="
         Recurring-event|Informs the user that this is a recurring event
       "
       matTooltip="recurring activity - record for one day"
     >
-    </mat-icon>
+    </fa-icon>
     {{ event?.subject }}
   </mat-card-title>
   <mat-card-content>

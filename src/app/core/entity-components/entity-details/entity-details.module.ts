@@ -16,26 +16,28 @@ import { AlertsModule } from "../../alerts/alerts.module";
 import { PermissionsModule } from "../../permissions/permissions.module";
 import { FormComponent } from "./form/form.component";
 import { EntityFormModule } from "../entity-form/entity-form.module";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @NgModule({
   declarations: [EntityDetailsComponent, FormComponent],
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatIconModule,
-    MatInputModule,
-    MatExpansionModule,
-    ViewModule,
-    FlexLayoutModule,
-    MatButtonModule,
-    MatSnackBarModule,
-    MatNativeDateModule,
-    EntityModule,
-    AlertsModule,
-    PermissionsModule,
-    MatTooltipModule,
-    EntityFormModule,
-  ],
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        MatIconModule,
+        MatInputModule,
+        MatExpansionModule,
+        ViewModule,
+        FlexLayoutModule,
+        MatButtonModule,
+        MatSnackBarModule,
+        MatNativeDateModule,
+        EntityModule,
+        AlertsModule,
+        PermissionsModule,
+        MatTooltipModule,
+        EntityFormModule,
+        FontAwesomeModule,
+    ],
   entryComponents: [FormComponent],
 })
 export class EntityDetailsModule {}

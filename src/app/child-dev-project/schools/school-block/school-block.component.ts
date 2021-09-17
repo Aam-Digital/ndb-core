@@ -34,9 +34,9 @@ export class SchoolBlockComponent
   ) {}
 
   ngOnInit() {
-    this.iconName =
-      "fa-" +
-      this.configService.getConfig<ViewConfig>("view:school/:id")?.config?.icon;
+    this.iconName = this.configService.getConfig<ViewConfig>(
+      "view:school/:id"
+    )?.config?.icon;
   }
 
   ngOnChanges(changes: SimpleChanges) {

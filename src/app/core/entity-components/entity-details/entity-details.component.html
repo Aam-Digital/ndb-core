@@ -25,7 +25,7 @@
         matTooltip="Back"
         style="vertical-align: middle"
       >
-        <mat-icon fontIcon="fa-backward"></mat-icon>
+        <fa-icon icon="backward"></fa-icon>
       </button>
 
       <i [className]="classNamesWithIcon"></i>
@@ -50,15 +50,15 @@
     [disabled]="creatingNew && i > 0"
   >
     <mat-expansion-panel-header class="section-header">
-      <mat-icon
-        fontIcon="fa-exclamation-triangle"
+      <fa-icon
+        icon="exclamation-triangle"
         *ngIf="creatingNew && i > 0"
         class="locked-icon"
         i18n-matTooltip
         matTooltip="Please save before entering further data"
         [matTooltipDisabled]="!creatingNew"
       >
-      </mat-icon>
+      </fa-icon>
       {{ panelConfig.title }}
     </mat-expansion-panel-header>
     <div *ngFor="let componentConfig of panelConfig.components; let j = index">

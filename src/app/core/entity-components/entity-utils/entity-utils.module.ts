@@ -33,6 +33,7 @@ import { MatChipsModule } from "@angular/material/chips";
 import { EditNumberComponent } from "./dynamic-form-components/edit-number/edit-number.component";
 import { EntityFunctionPipe } from "./view-components/readonly-function/entity-function.pipe";
 import { FlexLayoutModule } from "@angular/flex-layout";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @NgModule({
   declarations: [
@@ -57,22 +58,23 @@ import { FlexLayoutModule } from "@angular/flex-layout";
     EditNumberComponent,
     EntityFunctionPipe,
   ],
-  imports: [
-    CommonModule,
-    MatOptionModule,
-    MatSelectModule,
-    ReactiveFormsModule,
-    ConfigurableEnumModule,
-    MatIconModule,
-    MatTooltipModule,
-    MatInputModule,
-    ViewModule,
-    MatDatepickerModule,
-    MatCheckboxModule,
-    MatAutocompleteModule,
-    MatChipsModule,
-    FlexLayoutModule,
-  ],
+    imports: [
+        CommonModule,
+        MatOptionModule,
+        MatSelectModule,
+        ReactiveFormsModule,
+        ConfigurableEnumModule,
+        MatIconModule,
+        MatTooltipModule,
+        MatInputModule,
+        ViewModule,
+        MatDatepickerModule,
+        MatCheckboxModule,
+        MatAutocompleteModule,
+        MatChipsModule,
+        FlexLayoutModule,
+        FontAwesomeModule,
+    ],
   entryComponents: [
     EditTextComponent,
     EditDateComponent,
