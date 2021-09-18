@@ -12,6 +12,8 @@ import { School } from "../model/school";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { ConfigService } from "../../../core/config/config.service";
 import { ViewConfig } from "../../../core/view/dynamic-routing/view-config.interface";
+import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import { faDynamicIcons } from "../../../core/view/dynamic-components/fa-dynamic-icons";
 
 @Component({
   selector: "app-school-block",
@@ -20,7 +22,7 @@ import { ViewConfig } from "../../../core/view/dynamic-routing/view-config.inter
 })
 export class SchoolBlockComponent
   implements OnInitDynamicComponent, OnChanges, OnInit {
-  iconName: String;
+  icon: IconDefinition;
   @Input() entity: School = new School("");
   @Input() entityId: string;
   @Input() linkDisabled: boolean;
@@ -34,9 +36,9 @@ export class SchoolBlockComponent
   ) {}
 
   ngOnInit() {
-    this.iconName = this.configService.getConfig<ViewConfig>(
-      "view:school/:id"
-    )?.config?.icon;
+    const iconName = this.configService.getConfig<ViewConfig>("view:school/:id")
+      ?.config?.icon;
+    this.icon = faDynamicIcons.get(iconName);
   }
 
   ngOnChanges(changes: SimpleChanges) {
