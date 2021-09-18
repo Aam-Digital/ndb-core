@@ -10,7 +10,7 @@ import {
   ViewChild,
 } from "@angular/core";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Params, Router } from "@angular/router";
 import {
   ColumnGroupsConfig,
   EntityListConfig,
@@ -95,6 +95,9 @@ export class EntityListComponent<T extends Entity>
           }
         }
       });
+    this.activatedRoute.queryParams.subscribe((params) => {
+      this.loadUrlParams(params);
+    });
   }
 
   ngAfterViewInit() {
@@ -102,7 +105,7 @@ export class EntityListComponent<T extends Entity>
       entityFilterPredicate(data.record, filter);
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  async ngOnChanges(changes: SimpleChanges): Promise<void> {
     if (changes.hasOwnProperty("listConfig")) {
       this.listName = this.listConfig.title;
       this.addColumnsFromColumnGroups();
@@ -111,8 +114,8 @@ export class EntityListComponent<T extends Entity>
       this.displayColumnGroup(this.defaultColumnGroup);
     }
     if (changes.hasOwnProperty("allEntities")) {
-      this.filteredEntities = this.allEntities;
-      this.initFilterSelections();
+      await this.initFilterSelections();
+      this.applyFilterSelections();
     }
     this.loadUrlParams();
   }
@@ -152,21 +155,20 @@ export class EntityListComponent<T extends Entity>
     }
   }
 
-  private loadUrlParams() {
-    this.activatedRoute.queryParams.subscribe((params) => {
-      if (params["view"]) {
-        this.displayColumnGroup(params["view"]);
-      }
-      this.filterSelections.forEach((f) => {
-        if (params.hasOwnProperty(f.filterSettings.name)) {
-          f.selectedOption = params[f.filterSettings.name];
-        }
-      });
-      this.applyFilterSelections();
-      if (params["search"]) {
-        this.applyFilter(params["search"]);
+  private loadUrlParams(parameters?: Params) {
+    const params = parameters || this.activatedRoute.snapshot.queryParams;
+    if (params["view"]) {
+      this.displayColumnGroup(params["view"]);
+    }
+    this.filterSelections.forEach((f) => {
+      if (params.hasOwnProperty(f.filterSettings.name)) {
+        f.selectedOption = params[f.filterSettings.name];
       }
     });
+    this.applyFilterSelections();
+    if (params["search"]) {
+      this.applyFilter(params["search"]);
+    }
   }
 
   columnGroupClick(columnGroupName: string) {

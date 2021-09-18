@@ -55,10 +55,13 @@
         ></mat-icon>
         <span fxHide.lt-md="true" i18n="Add New Button"> Add New </span>
       </button>
-      <app-export-data-button
-        [data]="allEntities"
-        [exportConfig]="listConfig.exportConfig"
+      <button
+        mat-stroked-button
+        style="margin: 4px"
+        color="accent"
+        [appExportData]="allEntities"
         format="csv"
+        [exportConfig]="listConfig.exportConfig"
         [filename]="listName.replace(' ', '')"
         angulartics2On="click"
         [angularticsCategory]="entityConstructor.ENTITY_TYPE"
@@ -72,7 +75,7 @@
         <span fxHide.lt-md="true" i18n="Download list contents as CSV">
           Download CSV
         </span>
-      </app-export-data-button>
+      </button>
     </div>
   </div>
 
