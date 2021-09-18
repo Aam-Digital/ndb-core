@@ -565,8 +565,14 @@ export const defaultJsonConfig = {
                 "columns": [
                   "schoolId",
                   "schoolClass",
-                  "start",
-                  "end",
+                  {
+                    id: "start",
+                    visibleFrom: "sm",
+                  },
+                  {
+                    id: "end",
+                    visibleFrom: "sm",
+                  },
                   "result",
                 ],
               }
