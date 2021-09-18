@@ -1,5 +1,6 @@
 .main-list {
-  width: 100%;
+  // Mat chip list overflows a little bit without this hack
+  width: 98%;
 }
 
 .chip {
