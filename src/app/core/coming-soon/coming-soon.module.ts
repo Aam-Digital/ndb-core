@@ -3,7 +3,6 @@ import { CommonModule } from "@angular/common";
 import { ComingSoonComponent } from "./coming-soon/coming-soon.component";
 import { MatButtonModule } from "@angular/material/button";
 import { FlexModule } from "@angular/flex-layout";
-import { MatIconModule } from "@angular/material/icon";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
@@ -28,19 +27,18 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
  */
 @NgModule({
   declarations: [ComingSoonComponent],
-    imports: [
-        CommonModule,
-        MatButtonModule,
-        FlexModule,
-        MatIconModule,
-        RouterModule.forChild([
-            {
-                path: ":feature",
-                component: ComingSoonComponent,
-            },
-        ]),
-        FontAwesomeModule,
-    ],
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    FlexModule,
+    RouterModule.forChild([
+      {
+        path: ":feature",
+        component: ComingSoonComponent,
+      },
+    ]),
+    FontAwesomeModule,
+  ],
   exports: [RouterModule],
 })
 export class ComingSoonModule {}

@@ -21,7 +21,6 @@ import { MatOptionModule } from "@angular/material/core";
 import { MatSelectModule } from "@angular/material/select";
 import { ReactiveFormsModule } from "@angular/forms";
 import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enum.module";
-import { MatIconModule } from "@angular/material/icon";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatInputModule } from "@angular/material/input";
 import { ViewModule } from "../../view/view.module";
@@ -58,23 +57,22 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     EditNumberComponent,
     EntityFunctionPipe,
   ],
-    imports: [
-        CommonModule,
-        MatOptionModule,
-        MatSelectModule,
-        ReactiveFormsModule,
-        ConfigurableEnumModule,
-        MatIconModule,
-        MatTooltipModule,
-        MatInputModule,
-        ViewModule,
-        MatDatepickerModule,
-        MatCheckboxModule,
-        MatAutocompleteModule,
-        MatChipsModule,
-        FlexLayoutModule,
-        FontAwesomeModule,
-    ],
+  imports: [
+    CommonModule,
+    MatOptionModule,
+    MatSelectModule,
+    ReactiveFormsModule,
+    ConfigurableEnumModule,
+    MatTooltipModule,
+    MatInputModule,
+    ViewModule,
+    MatDatepickerModule,
+    MatCheckboxModule,
+    MatAutocompleteModule,
+    MatChipsModule,
+    FlexLayoutModule,
+    FontAwesomeModule,
+  ],
   entryComponents: [
     EditTextComponent,
     EditDateComponent,

@@ -3,7 +3,6 @@ import { CommonModule } from "@angular/common";
 import { EntityListComponent } from "./entity-list.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
-import { MatIconModule } from "@angular/material/icon";
 import { Angulartics2Module } from "angulartics2";
 import { MatButtonModule } from "@angular/material/button";
 import { ExtendedModule, FlexModule } from "@angular/flex-layout";
@@ -26,31 +25,30 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @NgModule({
   declarations: [EntityListComponent, ListFilterComponent],
-    imports: [
-        CommonModule,
-        FormsModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        ExportModule,
-        MatIconModule,
-        Angulartics2Module,
-        MatButtonModule,
-        FlexModule,
-        MatInputModule,
-        MatCheckboxModule,
-        MatExpansionModule,
-        ExtendedModule,
-        MatButtonToggleModule,
-        MatTableModule,
-        ViewModule,
-        MatSortModule,
-        MatPaginatorModule,
-        PermissionsModule,
-        EntitySubrecordModule,
-        EntityUtilsModule,
-        EntityFormModule,
-        FontAwesomeModule,
-    ],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    ExportModule,
+    Angulartics2Module,
+    MatButtonModule,
+    FlexModule,
+    MatInputModule,
+    MatCheckboxModule,
+    MatExpansionModule,
+    ExtendedModule,
+    MatButtonToggleModule,
+    MatTableModule,
+    ViewModule,
+    MatSortModule,
+    MatPaginatorModule,
+    PermissionsModule,
+    EntitySubrecordModule,
+    EntityUtilsModule,
+    EntityFormModule,
+    FontAwesomeModule,
+  ],
   exports: [EntityListComponent, ListFilterComponent],
 })
 export class EntityListModule {}

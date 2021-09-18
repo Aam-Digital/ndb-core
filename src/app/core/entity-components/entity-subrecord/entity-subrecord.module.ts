@@ -5,7 +5,6 @@ import { KeysPipe } from "./keys-pipe/keys.pipe";
 import { MatTableModule } from "@angular/material/table";
 import { MatSortModule } from "@angular/material/sort";
 import { MatPaginatorModule } from "@angular/material/paginator";
-import { MatIconModule } from "@angular/material/icon";
 import { EntityModule } from "../../entity/entity.module";
 import { AlertsModule } from "../../alerts/alerts.module";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
@@ -23,26 +22,25 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @NgModule({
   declarations: [EntitySubrecordComponent, KeysPipe, ListPaginatorComponent],
-    imports: [
-        CommonModule,
-        AlertsModule,
-        MatSnackBarModule,
-        EntityModule,
-        MatTableModule,
-        MatPaginatorModule,
-        MatSortModule,
-        ViewModule,
-        ReactiveFormsModule,
-        ConfirmationDialogModule,
-        MatTooltipModule,
-        MatButtonModule,
-        MatIconModule,
-        MatSlideToggleModule,
-        MatToolbarModule,
-        EntityDetailsModule,
-        EntityFormModule,
-        FontAwesomeModule,
-    ],
+  imports: [
+    CommonModule,
+    AlertsModule,
+    MatSnackBarModule,
+    EntityModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    ViewModule,
+    ReactiveFormsModule,
+    ConfirmationDialogModule,
+    MatTooltipModule,
+    MatButtonModule,
+    MatSlideToggleModule,
+    MatToolbarModule,
+    EntityDetailsModule,
+    EntityFormModule,
+    FontAwesomeModule,
+  ],
   exports: [EntitySubrecordComponent, KeysPipe],
 })
 export class EntitySubrecordModule {}

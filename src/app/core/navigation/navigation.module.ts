@@ -21,7 +21,6 @@ import { NavigationComponent } from "./navigation/navigation.component";
 import { SessionModule } from "../session/session.module";
 import { RouterModule } from "@angular/router";
 import { MatButtonModule } from "@angular/material/button";
-import { MatIconModule } from "@angular/material/icon";
 import { MatListModule } from "@angular/material/list";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Angulartics2Module } from "angulartics2";
@@ -33,18 +32,17 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
  * which can dynamically be configured through the {@link NavigationItemsService}.
  */
 @NgModule({
-    imports: [
-        CommonModule,
-        SessionModule,
-        RouterModule,
-        MatListModule,
-        MatIconModule,
-        MatButtonModule,
-        MatTooltipModule,
-        Angulartics2Module,
-        ConfigModule,
-        FontAwesomeModule,
-    ],
+  imports: [
+    CommonModule,
+    SessionModule,
+    RouterModule,
+    MatListModule,
+    MatButtonModule,
+    MatTooltipModule,
+    Angulartics2Module,
+    ConfigModule,
+    FontAwesomeModule,
+  ],
   declarations: [NavigationComponent],
   exports: [NavigationComponent],
   providers: [],

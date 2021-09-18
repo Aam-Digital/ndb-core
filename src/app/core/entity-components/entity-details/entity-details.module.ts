@@ -2,7 +2,6 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { EntityDetailsComponent } from "./entity-details.component";
 import { ReactiveFormsModule } from "@angular/forms";
-import { MatIconModule } from "@angular/material/icon";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatInputModule } from "@angular/material/input";
 import { MatExpansionModule } from "@angular/material/expansion";
@@ -20,24 +19,23 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @NgModule({
   declarations: [EntityDetailsComponent, FormComponent],
-    imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        MatIconModule,
-        MatInputModule,
-        MatExpansionModule,
-        ViewModule,
-        FlexLayoutModule,
-        MatButtonModule,
-        MatSnackBarModule,
-        MatNativeDateModule,
-        EntityModule,
-        AlertsModule,
-        PermissionsModule,
-        MatTooltipModule,
-        EntityFormModule,
-        FontAwesomeModule,
-    ],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatInputModule,
+    MatExpansionModule,
+    ViewModule,
+    FlexLayoutModule,
+    MatButtonModule,
+    MatSnackBarModule,
+    MatNativeDateModule,
+    EntityModule,
+    AlertsModule,
+    PermissionsModule,
+    MatTooltipModule,
+    EntityFormModule,
+    FontAwesomeModule,
+  ],
   entryComponents: [FormComponent],
 })
 export class EntityDetailsModule {}

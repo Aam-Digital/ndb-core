@@ -29,7 +29,6 @@ import { SwUpdate } from "@angular/service-worker";
 import { UpdateManagerService } from "./update-manager.service";
 import { FlexModule } from "@angular/flex-layout";
 import { MarkdownModule } from "ngx-markdown";
-import { MatIconModule } from "@angular/material/icon";
 import { MatCardModule } from "@angular/material/card";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { LatestChangesService } from "./latest-changes.service";
@@ -45,20 +44,19 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
  * text (after markdown characters) with a ".".
  */
 @NgModule({
-    imports: [
-        CommonModule,
-        AlertsModule,
-        SessionModule,
-        MatDialogModule,
-        MatButtonModule,
-        MatSnackBarModule,
-        HttpClientModule,
-        FlexModule,
-        MarkdownModule,
-        MatIconModule,
-        MatCardModule,
-        FontAwesomeModule,
-    ],
+  imports: [
+    CommonModule,
+    AlertsModule,
+    SessionModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatSnackBarModule,
+    HttpClientModule,
+    FlexModule,
+    MarkdownModule,
+    MatCardModule,
+    FontAwesomeModule,
+  ],
   declarations: [AppVersionComponent, ChangelogComponent],
   exports: [AppVersionComponent],
   providers: [

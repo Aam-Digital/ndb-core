@@ -26,7 +26,6 @@ import { LatestChangesModule } from "../latest-changes/latest-changes.module";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatToolbarModule } from "@angular/material/toolbar";
@@ -47,32 +46,31 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
  * The core user interface structure that ties different components together into the overall app layout.
  */
 @NgModule({
-    imports: [
-        CommonModule,
-        FormsModule,
-        LatestChangesModule,
-        NavigationModule,
-        RouterModule,
-        SessionModule,
-        SyncStatusModule,
-        MatSidenavModule,
-        MatToolbarModule,
-        MatIconModule,
-        MatButtonModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatAutocompleteModule,
-        FlexLayoutModule,
-        ChildrenModule,
-        SchoolsModule,
-        NotesModule,
-        Angulartics2Module,
-        PermissionsModule,
-        EntityUtilsModule,
-        ReactiveFormsModule,
-        TranslationModule,
-        FontAwesomeModule,
-    ],
+  imports: [
+    CommonModule,
+    FormsModule,
+    LatestChangesModule,
+    NavigationModule,
+    RouterModule,
+    SessionModule,
+    SyncStatusModule,
+    MatSidenavModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatAutocompleteModule,
+    FlexLayoutModule,
+    ChildrenModule,
+    SchoolsModule,
+    NotesModule,
+    Angulartics2Module,
+    PermissionsModule,
+    EntityUtilsModule,
+    ReactiveFormsModule,
+    TranslationModule,
+    FontAwesomeModule,
+  ],
   declarations: [SearchComponent, UiComponent, PrimaryActionComponent],
   exports: [UiComponent],
 })

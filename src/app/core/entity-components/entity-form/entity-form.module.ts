@@ -6,24 +6,22 @@ import { MatButtonModule } from "@angular/material/button";
 import { FlexModule } from "@angular/flex-layout";
 import { ViewModule } from "../../view/view.module";
 import { PermissionsModule } from "../../permissions/permissions.module";
-import { MatIconModule } from "@angular/material/icon";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @NgModule({
   declarations: [EntityFormComponent],
-    imports: [
-        CommonModule,
-        MatButtonModule,
-        FlexModule,
-        ViewModule,
-        PermissionsModule,
-        MatIconModule,
-        MatTooltipModule,
-        MatFormFieldModule,
-        FontAwesomeModule,
-    ],
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    FlexModule,
+    ViewModule,
+    PermissionsModule,
+    MatTooltipModule,
+    MatFormFieldModule,
+    FontAwesomeModule,
+  ],
   providers: [EntityFormService],
   exports: [EntityFormComponent],
 })

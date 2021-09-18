@@ -22,7 +22,6 @@ import { SessionModule } from "../session/session.module";
 import { AlertsModule } from "../alerts/alerts.module";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDialogModule } from "@angular/material/dialog";
-import { MatIconModule } from "@angular/material/icon";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { InitialSyncDialogComponent } from "./sync-status/initial-sync-dialog.component";
 import { MatBadgeModule } from "@angular/material/badge";
@@ -34,21 +33,20 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @NgModule({
-    imports: [
-        CommonModule,
-        SessionModule,
-        AlertsModule,
-        MatIconModule,
-        MatButtonModule,
-        MatDialogModule,
-        MatProgressBarModule,
-        MatBadgeModule,
-        MatMenuModule,
-        MatProgressSpinnerModule,
-        FlexModule,
-        MatTooltipModule,
-        FontAwesomeModule,
-    ],
+  imports: [
+    CommonModule,
+    SessionModule,
+    AlertsModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatProgressBarModule,
+    MatBadgeModule,
+    MatMenuModule,
+    MatProgressSpinnerModule,
+    FlexModule,
+    MatTooltipModule,
+    FontAwesomeModule,
+  ],
   declarations: [
     InitialSyncDialogComponent,
     SyncStatusComponent,
