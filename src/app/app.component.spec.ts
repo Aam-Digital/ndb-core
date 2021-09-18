@@ -32,6 +32,7 @@ import { Angulartics2Piwik } from "angulartics2/piwik";
 import { EntityMapperService } from "./core/entity/entity-mapper.service";
 import { Config } from "./core/config/config";
 import { USAGE_ANALYTICS_CONFIG_ID } from "./core/analytics/usage-analytics-config";
+import { environment } from "../environments/environment";
 
 describe("AppComponent", () => {
   let component: AppComponent;
@@ -74,6 +75,7 @@ describe("AppComponent", () => {
   });
 
   it("should start tracking with config from db", fakeAsync(() => {
+    environment.production = true; // tracking is only active in production mode
     const testConfig = {
       "appConfig:usage-analytics": {
         url: "matomo-test-endpoint",

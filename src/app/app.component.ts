@@ -34,6 +34,7 @@ import { HistoricalEntityData } from "./features/historical-data/historical-enti
 import { Note } from "./child-dev-project/notes/model/note";
 import { EventNote } from "./child-dev-project/attendance/model/event-note";
 import { waitForChangeTo } from "./core/session/session-states/session-utils";
+import { environment } from "../environments/environment";
 
 @Component({
   selector: "app-root",
@@ -60,13 +61,7 @@ export class AppComponent implements OnInit {
   }
 
   private async initBasicServices() {
-    // If loading the config earlier (in a module constructor or through APP_INITIALIZER) a runtime error occurs.
-    // The EntityMapperService needs the SessionServiceProvider which needs the AppConfig to be set up.
-    // If the EntityMapperService is requested to early (through DI), the AppConfig is not ready yet.
-    // TODO fix this with https://github.com/Aam-Digital/ndb-core/issues/595
-    await this.configService.loadConfig(this.entityMapper);
-
-    this.analyticsService.init();
+    // first register to events
 
     // Reload config once the database is synced
     this.sessionService.syncState
@@ -76,6 +71,7 @@ export class AppComponent implements OnInit {
       .then(() =>
         this.router.navigate([], { relativeTo: this.activatedRoute })
       );
+
     // These functions will be executed whenever a new config is available
     this.configService.configUpdates.subscribe(() => {
       this.routerService.initRouting();
@@ -86,6 +82,16 @@ export class AppComponent implements OnInit {
       this.entityConfigService.addConfigAttributes(Note);
       this.entityConfigService.addConfigAttributes(EventNote);
     });
+
+    // If loading the config earlier (in a module constructor or through APP_INITIALIZER) a runtime error occurs.
+    // The EntityMapperService needs the SessionServiceProvider which needs the AppConfig to be set up.
+    // If the EntityMapperService is requested to early (through DI), the AppConfig is not ready yet.
+    // TODO fix this with https://github.com/Aam-Digital/ndb-core/issues/595
+    await this.configService.loadConfig(this.entityMapper);
+
+    if (environment.production) {
+      this.analyticsService.init();
+    }
   }
 
   ngOnInit() {
