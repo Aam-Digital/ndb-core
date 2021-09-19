@@ -83,6 +83,7 @@ export class EditSingleEntityComponent extends EditComponent<string> {
 
   editSelectedEntity() {
     this.editingSelectedEntity = true;
+    this.selectedEntity = undefined;
     this.formControl.setValue(null);
     setTimeout(() => {
       this.input.nativeElement.focus();
