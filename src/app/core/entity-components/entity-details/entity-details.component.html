@@ -48,6 +48,7 @@
     *ngFor="let panelConfig of panels; let i = index"
     [expanded]="i == 0"
     [disabled]="creatingNew && i > 0"
+    (opened)="trackPanelOpen(panelConfig.title)"
   >
     <mat-expansion-panel-header class="section-header">
       <mat-icon
@@ -77,6 +78,9 @@
     entity: entity?.getConstructor(),
     operation: operationType.DELETE
   }"
+  angulartics2On="click"
+  [angularticsCategory]="config?.entity"
+  angularticsAction="entity_delete"
   i18n="Generic delete button"
 >
   Delete

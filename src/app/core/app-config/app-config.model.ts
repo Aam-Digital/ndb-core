@@ -65,20 +65,6 @@ export interface IAppConfig {
   };
 
   /**
-   * Optional configuration for usage analytics (e.g. Matomo)
-   */
-  usage_analytics?: {
-    /** url of the backend to report usage data to */
-    url: string;
-
-    /** the id by which this site is represented in the analytics backend */
-    site_id: string;
-
-    /** do not set any cookies for analytics */
-    no_cookies?: boolean;
-  };
-
-  /**
    * Optional flag to activate additional debugging output to troubleshoot problems on a user's device
    */
   debug?: boolean;
