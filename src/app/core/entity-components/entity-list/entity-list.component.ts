@@ -234,7 +234,6 @@ export class EntityListComponent<T extends Entity>
       this.entityConstructor,
       this.allEntities
     );
-    this.loadUrlParams();
   }
 
   private displayColumnGroupByName(columnGroupName: string) {
