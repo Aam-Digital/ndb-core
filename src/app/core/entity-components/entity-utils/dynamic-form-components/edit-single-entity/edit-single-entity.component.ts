@@ -6,7 +6,6 @@ import { Entity } from "../../../../entity/model/entity";
 import { Observable } from "rxjs";
 import { filter, map } from "rxjs/operators";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { MatAutocompleteSelectedEvent } from "@angular/material/autocomplete";
 import { FormControl } from "@angular/forms";
 
 @UntilDestroy()
@@ -71,20 +70,10 @@ export class EditSingleEntityComponent extends EditComponent<string> {
     }
   }
 
-  select(event: MatAutocompleteSelectedEvent) {
+  select(entityName: string) {
     const entity = this.entities.find(
-      (e) => e.toString().toLowerCase() === event.option.value.toLowerCase()
+      (e) => e.toString().toLowerCase() === entityName.toLowerCase()
     );
-    if (entity) {
-      this.selectedEntity = entity;
-      this.editingSelectedEntity = false;
-      this.formControl.setValue(entity.getId());
-    }
-  }
-
-  submit() {
-    const currentEntity = this.entityNameFormControl.value;
-    const entity = this.entities.find((e) => e.toString() === currentEntity);
     if (entity) {
       this.selectedEntity = entity;
       this.editingSelectedEntity = false;

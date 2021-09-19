@@ -7,12 +7,12 @@
     [placeholder]="placeholder"
     [formControl]="entityNameFormControl"
     [matAutocomplete]="autoSuggestions"
-    (keyup.enter)="submit()"
-    (focusout)="submit()"
+    (keyup.enter)="select(entityNameFormControl.value)"
+    (focusout)="select(entityNameFormControl.value)"
   />
   <mat-autocomplete
     #autoSuggestions="matAutocomplete"
-    (optionSelected)="select($event)"
+    (optionSelected)="select($event.option.value)"
   >
     <!-- Optional header -->
     <ng-content select="mat-option"></ng-content>
