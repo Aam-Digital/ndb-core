@@ -8,7 +8,6 @@ import {
 } from "@angular/core/testing";
 
 import { RollCallComponent } from "./roll-call.component";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Note } from "../../../notes/model/note";
 import { By } from "@angular/platform-browser";
 import { ConfigService } from "../../../../core/config/config.service";
@@ -19,6 +18,7 @@ import { LoggingService } from "../../../../core/logging/logging.service";
 import { defaultAttendanceStatusTypes } from "../../../../core/config/default-config/default-attendance-status-types";
 import { AttendanceModule } from "../../attendance.module";
 import { ChildrenService } from "../../../children/children.service";
+import { MockSessionModule } from "../../../../core/session/mock-session.module";
 import { ConfirmationDialogService } from "../../../../core/confirmation-dialog/confirmation-dialog.service";
 import { of } from "rxjs";
 
@@ -42,7 +42,7 @@ describe("RollCallComponent", () => {
       mockLoggingService = jasmine.createSpyObj(["warn"]);
 
       TestBed.configureTestingModule({
-        imports: [AttendanceModule, NoopAnimationsModule],
+        imports: [AttendanceModule, MockSessionModule],
         providers: [
           { provide: ConfigService, useValue: mockConfigService },
           { provide: EntityMapperService, useValue: mockEntityMapper },

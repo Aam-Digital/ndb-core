@@ -23,6 +23,7 @@ import { User } from "../../user/user";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { RouteData } from "../../view/dynamic-routing/view-config.interface";
+import { AnalyticsService } from "../../analytics/analytics.service";
 
 export const ENTITY_MAP: Map<string, EntityConstructor<Entity>> = new Map<
   string,
@@ -65,6 +66,7 @@ export class EntityDetailsComponent {
     private router: Router,
     private location: Location,
     private snackBar: MatSnackBar,
+    private analyticsService: AnalyticsService,
     private confirmationDialog: ConfirmationDialogService,
     private permissionService: EntityPermissionsService
   ) {
@@ -157,5 +159,17 @@ export class EntityDetailsComponent {
 
   navigateBack() {
     this.location.back();
+  }
+
+  /**
+   * Usage analytics tracking when a section is opened.
+   * (directive `angulartics2On="click"` doesn't work as it fires too often and blocks events within the panel)
+   * @param panelTitle
+   */
+  trackPanelOpen(panelTitle: string) {
+    this.analyticsService.eventTrack("details_section_expanded", {
+      category: this.config?.entity,
+      label: panelTitle,
+    });
   }
 }
