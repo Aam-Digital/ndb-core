@@ -55,6 +55,10 @@ Reports concern a group of for example children and include data about these chi
       [disabled]="!selectedReport || (!fromDate && !toDate) || loading"
       (click)="calculateResults()"
       i18n="Calculate the results for a report"
+      angulartics2On="click"
+      angularticsCategory="Reporting"
+      angularticsAction="calculate"
+      [angularticsLabel]="selectedReport?.title"
     >
       Calculate
     </button>
@@ -66,6 +70,10 @@ Reports concern a group of for example children and include data about these chi
       format="csv"
       filename="report"
       style="float: right; margin: 4px"
+      angulartics2On="click"
+      angularticsCategory="Reporting"
+      angularticsAction="export"
+      [angularticsLabel]="selectedReport?.title"
     >
       <mat-icon
         class="button-icon"

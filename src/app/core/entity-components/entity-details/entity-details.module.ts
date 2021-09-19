@@ -17,6 +17,7 @@ import { PermissionsModule } from "../../permissions/permissions.module";
 import { FormComponent } from "./form/form.component";
 import { EntityFormModule } from "../entity-form/entity-form.module";
 import { MatTabsModule } from "@angular/material/tabs";
+import { Angulartics2Module } from "angulartics2";
 
 @NgModule({
   declarations: [EntityDetailsComponent, FormComponent],
@@ -36,6 +37,7 @@ import { MatTabsModule } from "@angular/material/tabs";
     PermissionsModule,
     MatTooltipModule,
     EntityFormModule,
+    Angulartics2Module,
     MatTabsModule,
   ],
   entryComponents: [FormComponent],

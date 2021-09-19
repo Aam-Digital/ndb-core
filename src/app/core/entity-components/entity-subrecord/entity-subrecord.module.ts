@@ -20,6 +20,7 @@ import { ListPaginatorComponent } from "./list-paginator/list-paginator.componen
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { FlexLayoutModule } from "@angular/flex-layout";
+import { Angulartics2Module } from "angulartics2";
 
 @NgModule({
   declarations: [EntitySubrecordComponent, KeysPipe, ListPaginatorComponent],
@@ -42,6 +43,7 @@ import { FlexLayoutModule } from "@angular/flex-layout";
     EntityDetailsModule,
     EntityFormModule,
     FlexLayoutModule,
+    Angulartics2Module,
   ],
   exports: [EntitySubrecordComponent, KeysPipe],
 })
