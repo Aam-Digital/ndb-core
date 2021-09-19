@@ -8,6 +8,12 @@ export class School extends Entity {
     return "SchoolBlock";
   }
 
+  static create(params: Partial<School>): School {
+    const school = new School();
+    Object.assign(school, params);
+    return school;
+  }
+
   @DatabaseField({
     label: $localize`:Label for the name of a school:Name`,
     required: true,
