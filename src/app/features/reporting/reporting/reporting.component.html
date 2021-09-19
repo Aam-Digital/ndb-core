@@ -54,12 +54,14 @@
     >
       Calculate
     </button>
-    <app-export-data-button
+    <button
+      mat-stroked-button
+      color="accent"
+      [appExportData]="exportableTable"
       [disabled]="!exportableTable"
-      [data]="exportableTable"
       format="csv"
       filename="report"
-      style="float: right"
+      style="float: right; margin: 4px"
     >
       <fa-icon
         icon="download"
@@ -69,7 +71,7 @@
       <ng-container i18n="Button that allows to download a report">
         Download report
       </ng-container>
-    </app-export-data-button>
+    </button>
   </div>
 
   <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>

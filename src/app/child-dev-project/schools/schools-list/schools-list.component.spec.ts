@@ -40,6 +40,7 @@ describe("SchoolsListComponent", () => {
   const routeMock = {
     data: of({ config: routeData }),
     queryParams: of({}),
+    snapshot: { queryParams: {} },
   };
 
   beforeEach(

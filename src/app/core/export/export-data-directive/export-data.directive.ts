@@ -1,18 +1,35 @@
-import { Component, Input } from "@angular/core";
+import { Directive, HostListener, Input } from "@angular/core";
 import { ExportService } from "../export-service/export.service";
 import { ExportColumnConfig } from "../export-service/export-column-config";
 
+export type ExportDataFormat = "csv" | "json";
+
 /**
- * Generic export data button that allows the user to download a file of the given data.
+ * A directive that can be attached to a html element, commonly a button.
+ * Usage:
+ * ```html
+ *  <button
+ *    mat-stroked-button
+ *    [appExportData]="data"
+ *    format="csv"
+ *  >
+ *    Export CSV
+ *  </button
+ *
+ * ```
  */
-@Component({
-  selector: "app-export-data-button",
-  templateUrl: "./export-data-button.component.html",
-  styleUrls: ["./export-data-button.component.scss"],
+@Directive({
+  selector: "[appExportData]",
 })
-export class ExportDataButtonComponent {
+export class ExportDataDirective {
   /** data to be exported */
-  @Input() data: any = [];
+  @Input("appExportData") data: any = [];
+
+  /** What kind of data should be export? Currently implemented are 'json', 'csv' */
+  @Input() format: ExportDataFormat = "csv";
+
+  /** filename for the download of the exported data */
+  @Input() filename: string = "exportedData";
 
   /**
    * (Optional) definition of fields to be exported.
@@ -21,23 +38,17 @@ export class ExportDataButtonComponent {
    */
   @Input() exportConfig: ExportColumnConfig[];
 
-  /** What kind of data should be export? Currently implemented are 'json', 'csv' */
-  @Input() format: string = "csv";
-
-  /** filename for the download of the exported data */
-  @Input() filename: string = "exportedData";
-
-  @Input() disabled: boolean = false;
-
   constructor(private exportService: ExportService) {}
 
-  /**
-   * Trigger the download of the export file.
-   */
   async exportData() {
     const blobData = await this.getFormattedBlobData();
     const link = this.createDownloadLink(blobData);
     link.click();
+  }
+
+  @HostListener("click")
+  async click() {
+    await this.exportData();
   }
 
   private createDownloadLink(blobData): HTMLAnchorElement {
