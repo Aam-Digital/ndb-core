@@ -325,8 +325,18 @@ export const defaultJsonConfig = {
           "title": $localize`:Panel title:Students`,
           "components": [
             {
-              "title": "",
-              "component": "ChildrenOverview"
+              "title": $localize`:Title inside a panel:Child List`,
+              "component": "ChildrenOverview",
+              "config": {
+                "single": true,
+                "columns": [
+                  "childId",
+                  "schoolClass",
+                  "start",
+                  "end",
+                  "result",
+                ],
+              }
             }
           ]
         }
