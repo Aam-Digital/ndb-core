@@ -193,13 +193,17 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   }
 
   edit(row: TableRow<T>) {
-    if (!row.formGroup) {
-      row.formGroup = this.entityFormService.createFormGroup(
-        this._columns,
-        row.record
-      );
+    if (this.screenWidth === "xs") {
+      this.rowClick(row);
+    } else {
+      if (!row.formGroup) {
+        row.formGroup = this.entityFormService.createFormGroup(
+          this._columns,
+          row.record
+        );
+      }
+      row.formGroup.enable();
     }
-    row.formGroup.enable();
   }
 
   /**
