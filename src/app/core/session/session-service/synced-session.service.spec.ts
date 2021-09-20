@@ -32,6 +32,7 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { DatabaseUser } from "./local-user";
 import { TEST_PASSWORD, TEST_USER } from "../mock-session.module";
 import { testSessionServiceImplementation } from "./session.service.spec";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("SyncedSessionService", () => {
   let sessionService: SyncedSessionService;
@@ -52,7 +53,11 @@ describe("SyncedSessionService", () => {
     mockHttpClient = jasmine.createSpyObj(["post", "delete"]);
     mockHttpClient.delete.and.returnValue(of());
     TestBed.configureTestingModule({
-      imports: [MatSnackBarModule, NoopAnimationsModule],
+      imports: [
+        MatSnackBarModule,
+        NoopAnimationsModule,
+        FontAwesomeTestingModule,
+      ],
       providers: [
         EntitySchemaService,
         AlertService,

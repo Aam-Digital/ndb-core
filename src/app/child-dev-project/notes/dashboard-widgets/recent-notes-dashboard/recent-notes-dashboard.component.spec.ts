@@ -12,6 +12,7 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { RecentNotesDashboardComponent } from "./recent-notes-dashboard.component";
 import { ChildrenModule } from "../../../children/children.module";
 import { Angulartics2Module } from "angulartics2";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("RecentNotesDashboardComponent", () => {
   let component: RecentNotesDashboardComponent;
@@ -34,6 +35,7 @@ describe("RecentNotesDashboardComponent", () => {
           RouterTestingModule.withRoutes([]),
           EntityModule,
           Angulartics2Module.forRoot(),
+          FontAwesomeTestingModule,
         ],
         providers: [
           { provide: ChildrenService, useValue: mockChildrenService },

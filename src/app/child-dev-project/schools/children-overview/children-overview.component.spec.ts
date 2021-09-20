@@ -21,6 +21,7 @@ import { AlertService } from "../../../core/alerts/alert.service";
 import { EventEmitter } from "@angular/core";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("ChildrenOverviewComponent", () => {
   let component: ChildrenOverviewComponent;
@@ -38,6 +39,7 @@ describe("ChildrenOverviewComponent", () => {
           RouterTestingModule,
           NoopAnimationsModule,
           MockSessionModule.withState(),
+          FontAwesomeTestingModule,
         ],
         providers: [{ provide: SchoolsService, useValue: mockSchoolsService }],
       }).compileComponents();

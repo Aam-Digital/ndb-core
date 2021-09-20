@@ -19,6 +19,7 @@ import { EntityPermissionsService } from "../../permissions/entity-permissions.s
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
 import { MockEntityMapperService } from "../../entity/mock-entity-mapper-service";
 import { MockSessionModule } from "../../session/mock-session.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("EntityDetailsComponent", () => {
   let component: EntityDetailsComponent;
@@ -78,6 +79,7 @@ describe("EntityDetailsComponent", () => {
           MatNativeDateModule,
           RouterTestingModule,
           MockSessionModule.withState(),
+          FontAwesomeTestingModule,
         ],
         providers: [
           { provide: ActivatedRoute, useValue: mockedRoute },
