@@ -1,5 +1,10 @@
 <mat-form-field floatLabel="always" [formGroup]="formControl.parent">
-  <mat-label *ngIf="label">{{ label }}</mat-label>
+  <mat-label *ngIf="label"
+             [matTooltip]="tooltip"
+             [matTooltipDisabled]="!tooltip"
+  >
+    {{ label }}
+  </mat-label>
   <input
     #inputField
     matInput
