@@ -33,6 +33,7 @@ import { EditNumberComponent } from "./dynamic-form-components/edit-number/edit-
 import { EntityFunctionPipe } from "./view-components/readonly-function/entity-function.pipe";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatButtonModule } from "@angular/material/button";
 
 @NgModule({
   declarations: [
@@ -72,6 +73,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     MatChipsModule,
     FlexLayoutModule,
     FontAwesomeModule,
+    MatButtonModule,
   ],
   entryComponents: [
     EditTextComponent,

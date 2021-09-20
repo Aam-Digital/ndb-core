@@ -4,6 +4,7 @@ import { DashboardShortcutWidgetComponent } from "./dashboard-shortcut-widget/da
 import { MatCardModule } from "@angular/material/card";
 import { MatIconModule } from "@angular/material/icon";
 import { RouterModule } from "@angular/router";
+import { Angulartics2Module } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @NgModule({
@@ -14,6 +15,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     MatIconModule,
     RouterModule,
     FontAwesomeModule,
+    Angulartics2Module,
   ],
   exports: [DashboardShortcutWidgetComponent],
 })

@@ -81,6 +81,9 @@
             mat-icon-button
             *ngIf="rec.formGroup?.enabled"
             (click)="save(rec)"
+            angulartics2On="click"
+            [angularticsCategory]="rec?.record?.getType()"
+            angularticsAction="subrecord_inlineedit_save"
           >
             <fa-icon
               class="table-action-icon"
@@ -92,6 +95,9 @@
             mat-icon-button
             *ngIf="rec.formGroup?.enabled"
             (click)="resetChanges(rec)"
+            angulartics2On="click"
+            [angularticsCategory]="rec?.record?.getType()"
+            angularticsAction="subrecord_inlineedit_cancel"
           >
             <fa-icon
               class="table-action-icon"
@@ -103,6 +109,9 @@
             mat-icon-button
             *ngIf="rec.formGroup?.enabled"
             (click)="delete(rec)"
+            angulartics2On="click"
+            [angularticsCategory]="rec?.record?.getType()"
+            angularticsAction="subrecord_inlineedit_delete"
           >
             <fa-icon
               class="table-action-icon"

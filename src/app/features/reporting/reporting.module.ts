@@ -15,6 +15,7 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatSelectModule } from "@angular/material/select";
 import { FlexModule } from "@angular/flex-layout";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { Angulartics2Module } from "angulartics2";
 
 @NgModule({
   declarations: [ReportingComponent, ReportRowComponent],
@@ -33,6 +34,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     MatSelectModule,
     FlexModule,
     FontAwesomeModule,
+    Angulartics2Module,
   ],
 })
 export class ReportingModule {}

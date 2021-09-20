@@ -15,6 +15,7 @@ import { AlertsModule } from "../../alerts/alerts.module";
 import { PermissionsModule } from "../../permissions/permissions.module";
 import { FormComponent } from "./form/form.component";
 import { EntityFormModule } from "../entity-form/entity-form.module";
+import { Angulartics2Module } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @NgModule({
@@ -34,6 +35,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     PermissionsModule,
     MatTooltipModule,
     EntityFormModule,
+    Angulartics2Module,
     FontAwesomeModule,
   ],
   entryComponents: [FormComponent],
