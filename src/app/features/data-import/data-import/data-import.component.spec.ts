@@ -1,46 +1,24 @@
-import {ComponentFixture, fakeAsync, flush, TestBed, tick, waitForAsync} from "@angular/core/testing";
-
+import { ComponentFixture, fakeAsync, flush, TestBed, tick, waitForAsync} from "@angular/core/testing";
 import { DataImportComponent } from "./data-import.component";
-import {BackupService} from "../../../core/admin/services/backup.service";
-import {MatDialogRef} from "@angular/material/dialog";
-import {ConfirmationDialogService} from "../../../core/confirmation-dialog/confirmation-dialog.service";
+import { BackupService } from "../../../core/admin/services/backup.service";
+import { MatDialogRef } from "@angular/material/dialog";
+import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar, MatSnackBarModule, MatSnackBarRef } from "@angular/material/snack-bar";
-import {MatButtonModule} from "@angular/material/button";
-import {NoopAnimationsModule} from "@angular/platform-browser/animations";
-import {AppConfig} from "../../../core/app-config/app-config";
-import {SessionType} from "../../../core/session/session-type";
-import {DataImportService} from "../data-import.service";
+import { MatButtonModule } from "@angular/material/button";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { AppConfig } from "../../../core/app-config/app-config";
+import { SessionType } from "../../../core/session/session-type";
+import { DataImportService } from "../data-import.service";
 import {of} from "rxjs";
 
-describe("DataImportComponent", () => {
+fdescribe("DataImportComponent", () => {
   let component: DataImportComponent;
   let fixture: ComponentFixture<DataImportComponent>;
 
-  const mockDataImportService: jasmine.SpyObj<DataImportService> = jasmine.createSpyObj(
-    "DataImportService",
-    [
-      "importCsv"
-    ]
-  );
-
-  const mockBackupService: jasmine.SpyObj<BackupService> = jasmine.createSpyObj(
-    "BackupService",
-    [
-      "getJsonExport",
-      "clearDatabase",
-      "importJson"
-    ]
-  );
-
-  const confirmationDialogMock: jasmine.SpyObj<ConfirmationDialogService> = jasmine.createSpyObj(
-    "ConfirmationDialogService",
-    ["openDialog"]
-  );
-
-  const mockSnackBar: jasmine.SpyObj<MatSnackBar> = jasmine.createSpyObj(
-    "MatSnackBar",
-    ["open"]
-  );
+  let mockDataImportService: jasmine.SpyObj<DataImportService>;
+  let mockBackupService: jasmine.SpyObj<BackupService>
+  let confirmationDialogMock: jasmine.SpyObj<ConfirmationDialogService>;
+  let mockSnackBar: jasmine.SpyObj<MatSnackBar>;
 
   function createFileReaderMock(result: string = "") {
     const mockFileReader: any = {
@@ -87,6 +65,29 @@ describe("DataImportComponent", () => {
         },
       };
 
+      mockDataImportService = jasmine.createSpyObj(
+        "DataImportService",
+        [
+          "importCsv"
+        ]
+      );
+      mockBackupService = jasmine.createSpyObj(
+        "BackupService",
+        [
+          "getJsonExport",
+          "clearDatabase",
+          "importJson"
+        ]
+      );
+      confirmationDialogMock = jasmine.createSpyObj(
+        "ConfirmationDialogService",
+        ["openDialog"]
+      );
+      mockSnackBar = jasmine.createSpyObj(
+        "MatSnackBar",
+        ["open"]
+      );
+
       TestBed.configureTestingModule({
         imports: [
           MatSnackBarModule,
@@ -114,15 +115,14 @@ describe("DataImportComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DataImportComponent);
     component = fixture.componentInstance;
-    mockDataImportService.importCsv.calls.reset();
     fixture.detectChanges();
   });
 
-  fit("should create", () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 
-  fit("should open dialog and call backup service and data-import service when loading csv", fakeAsync(() => {
+  it("should open dialog and call backup service and data-import service when loading csv", fakeAsync(() => {
     const mockFileReader = createFileReaderMock();
     mockBackupService.getJsonExport.and.resolveTo(null);
     createDialogMock(true);
@@ -138,7 +138,7 @@ describe("DataImportComponent", () => {
     expect(mockDataImportService.importCsv).toHaveBeenCalled();
   }));
 
-  fit("should open dialog and abort data-import when cancelled", fakeAsync(() => {
+  it("should open dialog and abort data-import when cancelled", fakeAsync(() => {
     const mockFileReader = createFileReaderMock();
     mockBackupService.getJsonExport.and.resolveTo(null);
     createDialogMock(false);
@@ -153,10 +153,9 @@ describe("DataImportComponent", () => {
     expect(mockDataImportService.importCsv).not.toHaveBeenCalled();
   }));
 
-  fit("should restore database when undo button is clicked", fakeAsync(() => {
+  it("should restore database when undo button is clicked", fakeAsync(() => {
     createFileReaderMock();
-    // TO-DO: Hier statt null ein Mock-JSON-objekt übergeben und dann im expect testen, ob dies wieder importiert wird
-    mockBackupService.getJsonExport.and.resolveTo(null);
+    mockBackupService.getJsonExport.and.resolveTo("mockRestorePoint");
     mockBackupService.clearDatabase.and.callThrough();
     createDialogMock(true);
     createSnackBarMock(true);
@@ -165,7 +164,7 @@ describe("DataImportComponent", () => {
 
     tick();
     expect(mockBackupService.clearDatabase).toHaveBeenCalled();
-    expect(mockBackupService.importJson).toHaveBeenCalled();
+    expect(mockBackupService.importJson).toHaveBeenCalledWith("mockRestorePoint", true);
     flush();
   }));
 });
