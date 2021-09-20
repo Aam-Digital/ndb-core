@@ -8,7 +8,13 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @NgModule({
   declarations: [DashboardShortcutWidgetComponent],
-    imports: [CommonModule, MatCardModule, MatIconModule, RouterModule, FontAwesomeModule],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatIconModule,
+    RouterModule,
+    FontAwesomeModule,
+  ],
   exports: [DashboardShortcutWidgetComponent],
 })
 export class DashboardShortcutWidgetModule {}
