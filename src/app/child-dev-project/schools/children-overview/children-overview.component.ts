@@ -22,18 +22,10 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
   readonly addButtonLabel = ChildSchoolRelation.schema.get("childId").label;
 
   columns: FormFieldConfig[] = [
-    { id: "projectNumber" },
-    { id: "name" },
-    {
-      id: "schoolClass",
-      label: $localize`:The school-class of a child:Class`,
-      view: "DisplayText",
-    },
-    {
-      id: "age",
-      label: $localize`:The age of a child:Age`,
-      view: "DisplayText",
-    },
+    { id: "childId" },
+    { id: "schoolClass" },
+    { id: "start" },
+    { id: "result" },
   ];
 
   private popupColumns: (string | FormFieldConfig)[] = [
@@ -44,6 +36,7 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
 
   children: Child[] = [];
   entity: Entity;
+  records: ChildSchoolRelation[] = [];
 
   constructor(
     private schoolsService: SchoolsService,
@@ -60,6 +53,9 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
     }
     this.entity = config.entity;
     this.children = await this.schoolsService.getChildrenForSchool(
+      this.entity.getId()
+    );
+    this.records = await this.schoolsService.getRelationsForSchool(
       this.entity.getId()
     );
   }
@@ -86,5 +82,13 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
       );
     });
     dialogRef.componentInstance.onCancel.subscribe(() => dialogRef.close());
+  }
+
+  generateNewRecordFactory():() => ChildSchoolRelation{
+    return () => {
+      const newRelation = new ChildSchoolRelation();
+      newRelation.schoolId = this.entity.getId();
+      return newRelation
+    }
   }
 }

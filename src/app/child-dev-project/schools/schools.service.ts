@@ -5,6 +5,7 @@ import { from, Observable } from "rxjs";
 import { Child } from "../children/model/child";
 import { ChildrenService } from "../children/children.service";
 import { LoggingService } from "../../core/logging/logging.service";
+import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 
 @Injectable()
 export class SchoolsService {
@@ -34,5 +35,12 @@ export class SchoolsService {
       }
     }
     return children;
+  }
+
+  getRelationsForSchool(schoolId: string): Promise<ChildSchoolRelation[]> {
+    return this.childrenService.queryRelationsOf(
+      "school",
+      schoolId
+    );
   }
 }
