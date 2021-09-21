@@ -16,6 +16,7 @@ import { ConfigMigrationService } from "../../config/config-migration.service";
 import { PermissionsMigrationService } from "../../permissions/permissions-migration.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { DataImportComponent } from "app/features/data-import/data-import/data-import.component";
+import { DataImportService } from "app/features/data-import/data-import.service";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -49,7 +50,7 @@ export class AdminComponent implements OnInit {
     public childrenMigrationService: ChildrenMigrationService,
     public configMigrationService: ConfigMigrationService,
     public permissionsMigrationService: PermissionsMigrationService,
-    public dataImport: DataImportComponent
+    public dataImportService: DataImportService
   ) {}
 
   ngOnInit() {

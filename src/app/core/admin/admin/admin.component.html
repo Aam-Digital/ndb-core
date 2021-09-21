@@ -87,19 +87,7 @@
     Download whole database (.csv)
   </button>
   &nbsp;
-  <button
-    (click)="csvImport.click()"
-    mat-stroked-button
-    i18n="Import database button"
-  >
-    Import (.csv)
-  </button>
-  <input
-    #csvImport
-    type="file"
-    style="display: none"
-    (change)="dataImport.loadCsv($event.target.files[0])"
-  />
+  <app-data-import></app-data-import>
   &nbsp;
   <button
     (click)="csvImport.click()"
