@@ -27,12 +27,6 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
     { id: "result" },
   ];
 
-  private popupColumns: (string | FormFieldConfig)[] = [
-    "childId",
-    "start",
-    "end",
-  ];
-
   children: Child[] = [];
   entity: Entity;
   records: ChildSchoolRelation[] = [];
@@ -42,9 +36,6 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
   async onInitFromDynamicConfig(config: PanelConfig) {
     if (config?.config?.columns) {
       this.columns = config.config.columns;
-    }
-    if (config?.config?.popupColumns?.length > 0) {
-      this.popupColumns = config.config.popupColumns;
     }
     this.entity = config.entity;
     this.children = await this.schoolsService.getChildrenForSchool(
