@@ -5,6 +5,7 @@ import {
   OnChanges,
   SimpleChanges,
   AfterViewInit,
+  OnInit,
 } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
@@ -22,14 +23,14 @@ import { filter } from "rxjs/operators";
   styleUrls: ["./list-paginator.component.scss"],
 })
 export class ListPaginatorComponent<E extends Entity>
-  implements OnChanges, AfterViewInit {
+  implements OnChanges, AfterViewInit, OnInit {
   readonly pageSizeOptions = [10, 20, 50];
   readonly defaultPageSize = 10;
 
   @Input() dataSource: MatTableDataSource<E>;
   @Input() idForSavingPagination: string;
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild("paginator") paginator: MatPaginator;
 
   user: User;
   pageSize = this.defaultPageSize;
@@ -46,20 +47,21 @@ export class ListPaginatorComponent<E extends Entity>
     if (changes.hasOwnProperty("idForSavingPagination")) {
       this.applyUserPaginationSettings();
     }
-    if (changes.hasOwnProperty("dataSource")) {
-      this.dataSource
-        .connect()
-        .pipe(
-          untilDestroyed(this),
-          // When showingAll is false, nothing needs to be done -> filtered out
-          filter((updatedDataSource) => this.showingAll && !!this.paginator),
-          filter((updatedDataSource) => updatedDataSource.length > 0)
-        )
-        .subscribe(() => {
-          this.pageSize = this.dataSource.data.length;
-          this.paginator.pageSize = this.dataSource.data.length;
-        });
-    }
+  }
+
+  ngOnInit() {
+    this.dataSource
+      .connect()
+      .pipe(
+        untilDestroyed(this),
+        // When showingAll is false, nothing needs to be done -> filtered out
+        filter((updatedDataSource) => this.showingAll && !!this.paginator),
+        filter((updatedDataSource) => updatedDataSource.length > 0)
+      )
+      .subscribe(() => {
+        this.pageSize = this.dataSource.data.length;
+        this.paginator.pageSize = this.dataSource.data.length;
+      });
   }
 
   ngAfterViewInit() {
