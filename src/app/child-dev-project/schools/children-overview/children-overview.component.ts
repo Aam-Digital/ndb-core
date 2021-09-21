@@ -37,10 +37,7 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
   entity: Entity;
   records: ChildSchoolRelation[] = [];
 
-  constructor(
-    private schoolsService: SchoolsService,
-    private router: Router,
-  ) {}
+  constructor(private schoolsService: SchoolsService, private router: Router) {}
 
   async onInitFromDynamicConfig(config: PanelConfig) {
     if (config?.config?.columns) {
@@ -62,11 +59,11 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
     this.router.navigate([`/${child.getType().toLowerCase()}`, child.getId()]);
   }
 
-  generateNewRecordFactory():() => ChildSchoolRelation{
+  generateNewRecordFactory(): () => ChildSchoolRelation {
     return () => {
       const newRelation = new ChildSchoolRelation();
       newRelation.schoolId = this.entity.getId();
-      return newRelation
-    }
+      return newRelation;
+    };
   }
 }

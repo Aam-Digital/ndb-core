@@ -38,9 +38,6 @@ export class SchoolsService {
   }
 
   getRelationsForSchool(schoolId: string): Promise<ChildSchoolRelation[]> {
-    return this.childrenService.queryRelationsOf(
-      "school",
-      schoolId
-    );
+    return this.childrenService.queryRelationsOf("school", schoolId);
   }
 }
