@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FaDynamicIconComponent } from "./fa-dynamic-icon.component";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { faCoffee, faHome } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("FaDynamicIconComponent", () => {
   let component: FaDynamicIconComponent;
@@ -12,7 +11,6 @@ describe("FaDynamicIconComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FontAwesomeTestingModule],
       declarations: [FaDynamicIconComponent],
       providers: [{ provide: FaIconLibrary, useValue: mockIconLibrary }],
     }).compileComponents();
