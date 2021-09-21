@@ -1,0 +1,43 @@
+<div mat-dialog-content class="main-content">
+  <div
+    class="row-item"
+    *ngFor="let row of data.rows"
+  >
+    <div
+      [appDynamicComponent]="{
+          component: row.edit,
+          config: {
+            formFieldConfig: row,
+            propertySchema: data.record.getSchema().get(row.id),
+            formControl: form.get(row.id)
+          }
+        }"
+    ></div>
+    <mat-icon
+      (click)="tooltipElement.show()"
+      #tooltipElement="matTooltip"
+      *ngIf="row.tooltip"
+      matSuffix
+      fontIcon="fa-question-circle-o"
+      [matTooltip]="row.tooltip"
+    ></mat-icon>
+  </div>
+</div>
+<div mat-dialog-actions>
+  <button
+    mat-raised-button
+    mat-dialog-close
+    (click)="save()"
+    i18n="Save button for forms"
+  >
+    Save
+  </button>
+
+  <button
+    mat-raised-button
+    mat-dialog-close
+    i18n="Cancel button for forms"
+  >
+    Cancel
+  </button>
+</div>

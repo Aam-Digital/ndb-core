@@ -1,0 +1,21 @@
+@import "../../../../../styles";
+
+.main-content {
+  display: flex;
+  flex-flow: row wrap;
+  /*@media all and (max-width: 500px) {
+    flex-flow: column nowrap;
+  } */
+  gap: $standard-grid-gap;
+}
+
+.row-item {
+  // grow as needed; don't shrink; basis is the default's item size
+  flex: 1 0 auto;
+}
+
+// Hacky way to set the width of every form field
+// which are commonly found here to the maximum
+:host ::ng-deep .mat-form-field {
+  width: 100%;
+}

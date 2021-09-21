@@ -20,9 +20,9 @@ import { FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 import { MatDialog } from "@angular/material/dialog";
-import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
 import { LoggingService } from "../../../logging/logging.service";
 import { AnalyticsService } from "../../../analytics/analytics.service";
+import { RowDetailsComponent } from "../row-details/row-details.component";
 
 export interface TableRow<T> {
   record: T;
@@ -308,30 +308,21 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   }
 
   private showEntityInForm(entity: T) {
-    const dialogRef = this.dialog.open(EntityFormComponent, {
+    const columnsToDisplay = this._columns
+      .filter((col) => col.edit)
+      .map((col) => {
+        col.forTable = false;
+        return col;
+      })
+      .map((col) => Object.assign({}, col));
+    this.dialog.open(RowDetailsComponent, {
       width: "80%",
       maxHeight: "90vh",
-    }); // TODO: shouldn't this use FormDialogService rather than directly MatDialog? #921
-    // Making a copy of the editable columns before assigning them
-    dialogRef.componentInstance.columns = this._columns
-      .filter((col) => col.edit)
-      .map((col) => [Object.assign({}, col)]);
-    dialogRef.componentInstance.entity = entity;
-    dialogRef.componentInstance.editing = true;
-    dialogRef.componentInstance.onSave
-      .pipe(untilDestroyed(this))
-      .subscribe((updatedEntity: T) => {
-        dialogRef.close();
-        // Trigger the change detection
-        const rowIndex = this.recordsDataSource.data.findIndex(
-          (row) => row.record === entity
-        );
-        this.recordsDataSource.data[rowIndex] = { record: updatedEntity };
-        this.recordsDataSource._updateChangeSubscription();
-      });
-    dialogRef.componentInstance.onCancel
-      .pipe(untilDestroyed(this))
-      .subscribe(() => dialogRef.close());
+      data: {
+        record: entity,
+        rows: columnsToDisplay,
+      },
+    });
   }
 
   /**

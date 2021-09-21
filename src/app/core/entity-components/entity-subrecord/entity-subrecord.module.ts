@@ -21,9 +21,17 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { Angulartics2Module } from "angulartics2";
+import { RowDetailsComponent } from "./row-details/row-details.component";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatDialogModule } from "@angular/material/dialog";
 
 @NgModule({
-  declarations: [EntitySubrecordComponent, KeysPipe, ListPaginatorComponent],
+  declarations: [
+    EntitySubrecordComponent,
+    KeysPipe,
+    ListPaginatorComponent,
+    RowDetailsComponent,
+  ],
   imports: [
     CommonModule,
     AlertsModule,
@@ -44,6 +52,8 @@ import { Angulartics2Module } from "angulartics2";
     EntityFormModule,
     FlexLayoutModule,
     Angulartics2Module,
+    MatFormFieldModule,
+    MatDialogModule,
   ],
   exports: [EntitySubrecordComponent, KeysPipe],
 })
