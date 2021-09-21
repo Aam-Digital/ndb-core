@@ -5,8 +5,6 @@ import { Child } from "../../children/model/child";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { Router } from "@angular/router";
-import { MatDialog } from "@angular/material/dialog";
-import { EntityFormComponent } from "../../../core/entity-components/entity-form/entity-form/entity-form.component";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { Entity } from "../../../core/entity/model/entity";
 
@@ -25,6 +23,7 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
     { id: "childId" },
     { id: "schoolClass" },
     { id: "start" },
+    { id: "end" },
     { id: "result" },
   ];
 
@@ -41,7 +40,6 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
   constructor(
     private schoolsService: SchoolsService,
     private router: Router,
-    private dialog: MatDialog
   ) {}
 
   async onInitFromDynamicConfig(config: PanelConfig) {
@@ -62,26 +60,6 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
 
   routeToChild(child: Child) {
     this.router.navigate([`/${child.getType().toLowerCase()}`, child.getId()]);
-  }
-
-  addChildClick() {
-    const dialogRef = this.dialog.open(EntityFormComponent, {
-      width: "80%",
-      maxHeight: "90vh",
-    });
-
-    dialogRef.componentInstance.columns = this.popupColumns.map((col) => [col]);
-    const newRelation = new ChildSchoolRelation();
-    newRelation.schoolId = this.entity.getId();
-    dialogRef.componentInstance.entity = newRelation;
-    dialogRef.componentInstance.editing = true;
-    dialogRef.componentInstance.onSave.subscribe(async () => {
-      dialogRef.close();
-      this.children = await this.schoolsService.getChildrenForSchool(
-        this.entity.getId()
-      );
-    });
-    dialogRef.componentInstance.onCancel.subscribe(() => dialogRef.close());
   }
 
   generateNewRecordFactory():() => ChildSchoolRelation{
