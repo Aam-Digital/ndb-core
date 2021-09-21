@@ -14,6 +14,7 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Router } from "@angular/router";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 
 describe("ChildrenOverviewComponent", () => {
   let component: ChildrenOverviewComponent;
@@ -22,7 +23,7 @@ describe("ChildrenOverviewComponent", () => {
 
   beforeEach(
     waitForAsync(() => {
-      mockSchoolsService = jasmine.createSpyObj(["getChildrenForSchool"]);
+      mockSchoolsService = jasmine.createSpyObj(["getRelationsForSchool"]);
 
       TestBed.configureTestingModule({
         declarations: [],
@@ -40,6 +41,7 @@ describe("ChildrenOverviewComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ChildrenOverviewComponent);
     component = fixture.componentInstance;
+    component.entity = new School();
     fixture.detectChanges();
   });
 
@@ -49,18 +51,18 @@ describe("ChildrenOverviewComponent", () => {
 
   it("should load the children for a school", fakeAsync(() => {
     const school = new School("s1");
-    const child1 = new Child("c1");
-    const child2 = new Child("c2");
+    const child1 = new ChildSchoolRelation("c1");
+    const child2 = new ChildSchoolRelation("c2");
     const config = { entity: school };
-    mockSchoolsService.getChildrenForSchool.and.resolveTo([child1, child2]);
+    mockSchoolsService.getRelationsForSchool.and.resolveTo([child1, child2]);
 
     component.onInitFromDynamicConfig(config);
 
-    expect(mockSchoolsService.getChildrenForSchool).toHaveBeenCalledWith(
+    expect(mockSchoolsService.getRelationsForSchool).toHaveBeenCalledWith(
       school.getId()
     );
     tick();
-    expect(component.children).toEqual([child1, child2]);
+    expect(component.records).toEqual([child1, child2]);
   }));
 
   it("should route to a child when clicked", () => {

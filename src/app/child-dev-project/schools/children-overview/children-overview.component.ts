@@ -27,7 +27,6 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
     { id: "result" },
   ];
 
-  children: Child[] = [];
   entity: Entity;
   records: ChildSchoolRelation[] = [];
 
@@ -38,9 +37,6 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
       this.columns = config.config.columns;
     }
     this.entity = config.entity;
-    this.children = await this.schoolsService.getChildrenForSchool(
-      this.entity.getId()
-    );
     this.records = await this.schoolsService.getRelationsForSchool(
       this.entity.getId()
     );
