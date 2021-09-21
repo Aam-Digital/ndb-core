@@ -28,6 +28,7 @@ import { ChildrenOverviewComponent } from "./children-overview/children-overview
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
 import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { ViewModule } from "../../core/view/view.module";
 
 @NgModule({
   imports: [
@@ -69,6 +70,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     EntityListModule,
     EntitySubrecordModule,
     FontAwesomeModule,
+    ViewModule,
   ],
   declarations: [
     SchoolBlockComponent,

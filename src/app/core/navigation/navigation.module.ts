@@ -26,6 +26,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { Angulartics2Module } from "angulartics2";
 import { ConfigModule } from "../config/config.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { ViewModule } from "../view/view.module";
 
 /**
  * Manages the main app navigation menu
@@ -42,6 +43,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     Angulartics2Module,
     ConfigModule,
     FontAwesomeModule,
+    ViewModule,
   ],
   declarations: [NavigationComponent],
   exports: [NavigationComponent],

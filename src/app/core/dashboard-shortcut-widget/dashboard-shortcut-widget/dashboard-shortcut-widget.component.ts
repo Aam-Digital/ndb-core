@@ -16,6 +16,6 @@ export class DashboardShortcutWidgetComponent
   @Input() shortcuts: MenuItem[] = [];
 
   onInitFromDynamicConfig(config: any) {
-    this.shortcuts = MenuItem.fromConfigItems(config.shortcuts);
+    this.shortcuts = config.shortcuts;
   }
 }

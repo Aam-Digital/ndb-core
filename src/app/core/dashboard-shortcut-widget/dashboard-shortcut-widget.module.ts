@@ -6,6 +6,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { RouterModule } from "@angular/router";
 import { Angulartics2Module } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { ViewModule } from "../view/view.module";
 
 @NgModule({
   declarations: [DashboardShortcutWidgetComponent],
@@ -16,6 +17,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     RouterModule,
     FontAwesomeModule,
     Angulartics2Module,
+    ViewModule,
   ],
   exports: [DashboardShortcutWidgetComponent],
 })
