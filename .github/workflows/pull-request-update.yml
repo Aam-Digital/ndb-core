@@ -26,7 +26,7 @@ jobs:
             GIT_COMMITTED_AT=${{ env.TIME }}
             CC_TEST_REPORTER_ID=${{ secrets.CODE_CLIMATE_ID }}
             SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_TOKEN }}
-            SENTRY_ORG=${{ secrect.SENTRY_ORG }}
+            SENTRY_ORG=${{ secrets.SENTRY_ORG }}
             SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }}
             APP_VERSION=2.58.0-master.4
           cache-from: type=registry,ref=aamdigital/ndb-server:cache
