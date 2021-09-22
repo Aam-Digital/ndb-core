@@ -48,6 +48,7 @@ ARG GIT_COMMITTED_AT
 ARG CC_TEST_REPORTER_ID
 RUN if [ "$UPLOAD_COVERAGE" = true ] ; then ./cc-test-reporter after-build --debug ; fi
 
+RUN npm run build-localized -- --sourceMap=true --output-path=dist2
 
 ### PROD image
 
