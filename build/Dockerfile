@@ -19,8 +19,6 @@ ARG APP_VERSION="UNKNOWN"
 RUN sed -i "s/appVersion: \".*\"/appVersion: \"$APP_VERSION\"/g" src/environments/environment*.ts
 
 RUN npm run build-localized
-# Remove all the source map files to reduce bundle size
-RUN rm -rf dist/*.map
 
 # When set to true, tests are run and coverage will be uploaded to CodeClimate
 ARG UPLOAD_COVERAGE=false
@@ -58,7 +56,7 @@ ARG SENTRY_PROJECT
 RUN if [ "$SENTRY_AUTH_TOKEN" != "" ] ; then \
     npm install -g @sentry/cli &&\
     sentry-cli --auth-token=$SENTRY_AUTH_TOKEN releases --org=$SENTRY_ORG --project=$SENTRY_PROJECT files $APP_VERSION upload-sourcemaps dist  && \
-    rm -rf dist/*.map; fi
+    rm -rf dist/*.map ; fi
 
 ### PROD image
 
