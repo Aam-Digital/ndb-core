@@ -11,7 +11,7 @@ import { SessionType } from "../../../core/session/session-type";
 import { DataImportService } from "../data-import.service";
 import {of} from "rxjs";
 
-fdescribe("DataImportComponent", () => {
+describe("DataImportComponent", () => {
   let component: DataImportComponent;
   let fixture: ComponentFixture<DataImportComponent>;
 
