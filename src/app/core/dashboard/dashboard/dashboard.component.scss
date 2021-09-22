@@ -22,6 +22,7 @@
 $min-widget-width: 330px;
 // There will only be one column below this screen width, as defined by the media query
 $max-screen-width: $min-widget-width + $margin-main-view-right + $margin-main-view-left;
+$widget-height: 410px;
 
 .widget-wrapper {
   display: grid;
@@ -29,5 +30,7 @@ $max-screen-width: $min-widget-width + $margin-main-view-right + $margin-main-vi
   @media all and (max-width: $max-screen-width) {
     grid-template-columns: 1fr;
   }
+  // Make all rows be equal in height
+  grid-auto-rows: $widget-height;
   grid-gap: $standard-grid-gap;
 }
