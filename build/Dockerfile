@@ -62,6 +62,13 @@ ENV WEBDAV_URL="http://localhost"
 ENV COUCHDB_URL="http://localhost"
 # The language which should be loaded on default options are "en-US" and "de"
 ENV DEFAULT_LANGUAGE="en-US"
+
+# url to be reverse-proxied for logging endpoint (e.g. sentry.io)
+ENV LOGGING_URL=""
+
+ENV CSP_SRC_ALLOW=""
+ENV CSP_FRAME_ALLOW=""
+ENV CSP_REPORT_URI=""
 # variables are inserted into the nginx config
-CMD envsubst '$$PORT $$WEBDAV_URL $$COUCHDB_URL $$DEFAULT_LANGUAGE' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
+CMD envsubst '$$PORT $$WEBDAV_URL $$COUCHDB_URL $$DEFAULT_LANGUAGE $$LOGGING_URL $$CSP_SRC_ALLOW $$CSP_FRAME_ALLOW $$CSP_REPORT_URI' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
     nginx -g 'daemon off;'

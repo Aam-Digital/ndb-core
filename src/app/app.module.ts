@@ -163,6 +163,8 @@ export class AppModule {}
 
 // Initialize remote logging
 LoggingService.initRemoteLogging({
+
   dsn: environment.remoteLoggingDsn,
-  whitelistUrls: [/https?:\/\/(.*)\.?aam-digital\.com/],
+  tunnel: "/logging",
+  //TODO: reactivate before merge //whitelistUrls: [/https?:\/\/(.*)\.?aam-digital\.com/],
 });
