@@ -19,6 +19,8 @@ ARG APP_VERSION="UNKNOWN"
 RUN sed -i "s/appVersion: \".*\"/appVersion: \"$APP_VERSION\"/g" src/environments/environment*.ts
 
 RUN npm run build-localized
+# Remove all the source map files to reduce bundle size
+RUN rm -rf dist/*.map
 
 # When set to true, tests are run and coverage will be uploaded to CodeClimate
 ARG UPLOAD_COVERAGE=false
