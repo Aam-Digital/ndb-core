@@ -1,19 +1,38 @@
+$widget-header-height: 60px;
+$widget-content-height: 300px;
+
+$font-size-headline: 40pt;
+
+$padding-header: 24px;
+
 .widget-header {
+  /* Defines a grid that roughly looks like this:
+   * |-------|--------------------------------------|
+   * |       |                                      |
+   * |       |                                      |
+   * |-------|--------------------------------------|
+   * |       |                                      |
+   * |-------|--------------------------------------|
+   *
+   * The right-upper side is where the headline will be placed.
+   * On the lower right side, the subheadline is placed
+   * On the two left sides, the icon will be placed in a
+   * centered way
+   */
   display: grid;
-  grid-template: 2fr 1fr / 40pt 1fr;
+  grid-template: 2fr 1fr / $font-size-headline 1fr;
   grid-template-areas:
     "icon headline"
     "icon subheadline";
-  // background-color: #008f53;
-  padding: 24px;
-  height: 60px;
+  padding: $padding-header;
+  height: $widget-header-height;
 }
 
 .widget-icon {
   grid-area: icon;
   color: white;
   align-self: center;
-  font-size: 40pt;
+  font-size: $font-size-headline;
   // fixes the correct centering of this item
   display: table;
 }
@@ -31,12 +50,14 @@
 }
 
 .widget-content {
-  height: 300px;
+  height: $widget-content-height;
   overflow: hidden;
   display: flex;
   place-items: center;
 }
 
 .widget-total {
-  border-radius: 5px;
+  border-radius: 0 0 5px 5px;
+  // necessary for the border-radius to apply
+  overflow: auto;
 }
