@@ -67,6 +67,7 @@ import { ChildrenBmiDashboardComponent } from "./children-bmi-dashboard/children
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { PhotoDatatype } from "./child-photo-service/datatype-photo";
 import { EntityUtilsModule } from "../../core/entity-components/entity-utils/entity-utils.module";
+import { DashboardModule } from "../../core/dashboard/dashboard.module";
 
 @NgModule({
   imports: [
@@ -108,6 +109,7 @@ import { EntityUtilsModule } from "../../core/entity-components/entity-utils/ent
     EntitySubrecordModule,
     EntityListModule,
     EntityUtilsModule,
+    DashboardModule,
   ],
   declarations: [
     ChildBlockComponent,

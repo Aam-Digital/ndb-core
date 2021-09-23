@@ -1,17 +1,11 @@
-<mat-card class="dashboard-widget">
-  <mat-card-header class="app-attendance">
-    <div mat-card-avatar>
-      <mat-icon fontIcon="fa-exclamation-triangle"></mat-icon>
-    </div>
-    <mat-card-title>{{ dashboardRowGroups?.length }}</mat-card-title>
-    <mat-card-subtitle i18n="Dashbord attendance component subtitle">
-      Students more than one day absent
-      <em>{{ periodLabel }}</em>
-    </mat-card-subtitle
-    >
-  </mat-card-header>
-  <mat-card-content>
-    <table class="dashboard-table">
+<app-dashboard-widget icon="exclamation-triangle" theme="attendance">
+  <app-widget-headline>{{ dashboardRowGroups?.length }}</app-widget-headline>
+  <app-widget-subheadline i18n="Dashbord attendance component subtitle">
+    Students more than one day absent
+    <em>{{ periodLabel }}</em>
+  </app-widget-subheadline>
+  <app-widget-content>
+    <table>
       <tr
         *ngFor="
           let rowGroup of dashboardRowGroups;
@@ -41,5 +35,5 @@
         </td>
       </tr>
     </table>
-  </mat-card-content>
-</mat-card>
+  </app-widget-content>
+</app-dashboard-widget>

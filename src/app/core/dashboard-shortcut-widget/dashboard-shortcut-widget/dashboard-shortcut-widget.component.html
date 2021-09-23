@@ -1,17 +1,10 @@
-<mat-card class="dashboard-widget">
-  <mat-card-header class="app-general">
-    <div mat-card-avatar>
-      <mat-icon fontIcon="fa-external-link"></mat-icon>
-    </div>
-    <mat-card-title></mat-card-title>
-    <mat-card-subtitle
-      i18n="Shows a list of certain actions that a user can click on"
-    >
-      Quick actions
-    </mat-card-subtitle>
-  </mat-card-header>
-
-  <mat-card-content>
+<app-dashboard-widget icon="external-link" theme="general">
+  <app-widget-subheadline
+    i18n="Shows a list of certain actions that a user can click on"
+  >
+    Quick actions
+  </app-widget-subheadline>
+  <app-widget-content>
     <table class="dashboard-table">
       <tr
         *ngFor="let entry of shortcuts"
@@ -27,5 +20,5 @@
         </td>
       </tr>
     </table>
-  </mat-card-content>
-</mat-card>
+  </app-widget-content>
+</app-dashboard-widget>

@@ -20,9 +20,26 @@ import { CommonModule } from "@angular/common";
 import { DashboardComponent } from "./dashboard/dashboard.component";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { ViewModule } from "../view/view.module";
+import { DashboardWidgetComponent } from "./dashboard-widget/dashboard-widget.component";
+import { MatIconModule } from "@angular/material/icon";
+import { WidgetHeadlineComponent } from "./dashboard-widget/widget-headline/widget-header.component";
+import { WidgetSubheadlineComponent } from "./dashboard-widget/widget-subheadline/widget-subheadline.component";
+import { WidgetContentComponent } from "./dashboard-widget/widget-content/widget-content.component";
 
 @NgModule({
-  imports: [CommonModule, FlexLayoutModule, ViewModule],
-  declarations: [DashboardComponent],
+  imports: [CommonModule, FlexLayoutModule, ViewModule, MatIconModule],
+  declarations: [
+    DashboardComponent,
+    DashboardWidgetComponent,
+    WidgetHeadlineComponent,
+    WidgetSubheadlineComponent,
+    WidgetContentComponent,
+  ],
+  exports: [
+    DashboardWidgetComponent,
+    WidgetHeadlineComponent,
+    WidgetSubheadlineComponent,
+    WidgetContentComponent,
+  ],
 })
 export class DashboardModule {}

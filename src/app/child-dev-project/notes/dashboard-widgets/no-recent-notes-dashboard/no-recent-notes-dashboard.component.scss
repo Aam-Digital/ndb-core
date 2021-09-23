@@ -1,5 +1,3 @@
-@use 'src/app/core/dashboard/dashboard-widget-base';
-
 .dashboard-table-additional-info-cell {
   font-size: 0.8em;
 
@@ -17,21 +15,9 @@
   padding: 10px;
 }
 
-.loading-indicator {
-  position: absolute;
-  right: 0;
-  top: -12px;
-}
-
 .mat-paginator {
   font-size: x-small;
   padding: 0;
-}
-
-.spaceBetweenFlex {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
 }
 
 // override material paginator
@@ -44,18 +30,4 @@
   .mat-option {
     padding: 0 !important;
   }
-
-  // // override material paginator page switch
-  // .mat-paginator-range-label {
-  //     order: 2;
-
-  //     padding: 0;
-  // }
-
-  // .mat-paginator-navigation-previous {
-  //     order: 1;
-  // }
-  // .mat-paginator-navigation-next {
-  //     order: 3;
-  // }
 }

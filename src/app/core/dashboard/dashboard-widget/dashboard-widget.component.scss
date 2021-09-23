@@ -1,0 +1,42 @@
+.widget-header {
+  display: grid;
+  grid-template: 2fr 1fr / 40pt 1fr;
+  grid-template-areas:
+    "icon headline"
+    "icon subheadline";
+  // background-color: #008f53;
+  padding: 24px;
+  height: 60px;
+}
+
+.widget-icon {
+  grid-area: icon;
+  color: white;
+  align-self: center;
+  font-size: 40pt;
+  // fixes the correct centering of this item
+  display: table;
+}
+
+.widget-headline {
+  grid-area: headline;
+  text-align: end;
+  place-self: end;
+}
+
+.widget-subheadline {
+  grid-area: subheadline;
+  text-align: end;
+  place-self: end;
+}
+
+.widget-content {
+  height: 300px;
+  overflow: hidden;
+  display: flex;
+  place-items: center;
+}
+
+.widget-total {
+  border-radius: 5px;
+}

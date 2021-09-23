@@ -1,21 +1,16 @@
-<mat-card class="dashboard-widget">
-  <mat-card-header class="app-child">
-    <div mat-card-avatar>
-      <mat-icon fontIcon="fa-list"></mat-icon>
-    </div>
-    <mat-card-title>{{
-      data.getTotalPercentage() | percent: "1.0-0"
-    }}</mat-card-title>
-    <mat-card-subtitle>{{ data.title }}</mat-card-subtitle>
-  </mat-card-header>
-  <mat-card-content>
+<app-dashboard-widget icon="list" theme="child">
+  <app-widget-headline>{{
+    data.getTotalPercentage() | percent: "1.0-0"
+  }}</app-widget-headline>
+  <app-widget-subheadline>{{data.title}}</app-widget-subheadline>
+  <app-widget-content>
     <table class="dashboard-table">
       <tr *ngFor="let entry of data?.parts" class="dashboard-table-row">
         <td class="dashboard-table-cell">{{ entry.label }}</td>
         <td class="dashboard-table-cell filler">
           <mat-progress-bar style="height: 6px"
-            mode="determinate"
-            [value]="(entry.currentValue / entry.targetValue) * 100"
+                            mode="determinate"
+                            [value]="(entry.currentValue / entry.targetValue) * 100"
           ></mat-progress-bar>
         </td>
         <td class="align-right" style="white-space: nowrap">
@@ -111,5 +106,5 @@
         </tr>
       </table>
     </div>
-  </mat-card-content>
-</mat-card>
+  </app-widget-content>
+</app-dashboard-widget>

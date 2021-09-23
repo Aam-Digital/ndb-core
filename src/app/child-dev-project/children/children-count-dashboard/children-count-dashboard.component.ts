@@ -11,7 +11,6 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 @Component({
   selector: "app-children-count-dashboard",
   templateUrl: "./children-count-dashboard.component.html",
-  styleUrls: ["./children-count-dashboard.component.scss"],
 })
 export class ChildrenCountDashboardComponent
   implements OnInitDynamicComponent, OnInit {

@@ -1,0 +1,17 @@
+<div class="widget-total mat-elevation-z5">
+  <!-- Header -->
+  <div class="widget-header app-{{theme}}">
+    <div class="widget-headline">
+      <ng-content select="app-widget-headline"></ng-content>
+    </div>
+    <div class="widget-subheadline">
+      <ng-content select="app-widget-subheadline"></ng-content>
+    </div>
+    <mat-icon class="widget-icon" fontIcon="fa-{{icon}}"></mat-icon>
+  </div>
+
+  <!-- Content -->
+  <div class="widget-content">
+    <ng-content select="app-widget-content"></ng-content>
+  </div>
+</div>
