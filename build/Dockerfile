@@ -56,7 +56,7 @@ ARG SENTRY_PROJECT
 RUN if [ "$SENTRY_AUTH_TOKEN" != "" ] ; then \
     npm install -g @sentry/cli &&\
     sentry-cli --auth-token=$SENTRY_AUTH_TOKEN releases --org=$SENTRY_ORG --project=$SENTRY_PROJECT files $APP_VERSION upload-sourcemaps dist  && \
-    rm -rf dist/*.map ; fi
+    rm dist/*/*.map ; fi
 
 ### PROD image
 
