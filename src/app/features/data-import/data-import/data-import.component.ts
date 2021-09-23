@@ -19,7 +19,6 @@ export class DataImportComponent implements OnInit {
   }
 
   importCsvFile(file: Blob): void {
-    this.dataImportService?.loadCsv(file);
+    this.dataImportService.loadCsv(file);
   }
-
 }

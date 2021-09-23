@@ -97,6 +97,7 @@ describe('DataImportService', () => {
     });
     service = TestBed.inject(DataImportService);
     spyOn(service, "importCsv");
+    spyOn(db, "put");
   });
 
   afterEach(async () => {
@@ -152,4 +153,8 @@ describe('DataImportService', () => {
     expect(mockBackupService.importJson).toHaveBeenCalledWith("mockRestorePoint", true);
     flush();
   }));
+
+  it("should put csv into db", async() => {
+    // Todo, missing importCsv Function
+  });
 });
