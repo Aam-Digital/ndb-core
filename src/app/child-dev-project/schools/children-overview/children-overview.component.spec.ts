@@ -9,21 +9,21 @@ import { ChildrenOverviewComponent } from "./children-overview.component";
 import { SchoolsModule } from "../schools.module";
 import { School } from "../model/school";
 import { Child } from "../../children/model/child";
-import { SchoolsService } from "../schools.service";
 import { RouterTestingModule } from "@angular/router/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Router } from "@angular/router";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
+import { ChildrenService } from "../../children/children.service";
 
 describe("ChildrenOverviewComponent", () => {
   let component: ChildrenOverviewComponent;
   let fixture: ComponentFixture<ChildrenOverviewComponent>;
-  let mockSchoolsService: jasmine.SpyObj<SchoolsService>;
+  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
 
   beforeEach(
     waitForAsync(() => {
-      mockSchoolsService = jasmine.createSpyObj(["getRelationsForSchool"]);
+      mockChildrenService = jasmine.createSpyObj(["queryRelationsOf"]);
 
       TestBed.configureTestingModule({
         declarations: [],
@@ -33,7 +33,9 @@ describe("ChildrenOverviewComponent", () => {
           NoopAnimationsModule,
           MockSessionModule.withState(),
         ],
-        providers: [{ provide: SchoolsService, useValue: mockSchoolsService }],
+        providers: [
+          { provide: ChildrenService, useValue: mockChildrenService },
+        ],
       }).compileComponents();
     })
   );
@@ -49,20 +51,21 @@ describe("ChildrenOverviewComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should load the children for a school", fakeAsync(() => {
+  it("should load the relations for a school", fakeAsync(() => {
     const school = new School("s1");
-    const child1 = new ChildSchoolRelation("c1");
-    const child2 = new ChildSchoolRelation("c2");
+    const relation1 = new ChildSchoolRelation("r1");
+    const relation2 = new ChildSchoolRelation("r2");
     const config = { entity: school };
-    mockSchoolsService.getRelationsForSchool.and.resolveTo([child1, child2]);
+    mockChildrenService.queryRelationsOf.and.resolveTo([relation1, relation2]);
 
     component.onInitFromDynamicConfig(config);
+    tick();
 
-    expect(mockSchoolsService.getRelationsForSchool).toHaveBeenCalledWith(
+    expect(mockChildrenService.queryRelationsOf).toHaveBeenCalledWith(
+      "school",
       school.getId()
     );
-    tick();
-    expect(component.records).toEqual([child1, child2]);
+    expect(component.records).toEqual([relation1, relation2]);
   }));
 
   it("should route to a child when clicked", () => {
@@ -76,5 +79,14 @@ describe("ChildrenOverviewComponent", () => {
       `/${Child.ENTITY_TYPE.toLowerCase()}`,
       child.getId(),
     ]);
+  });
+
+  it("should create a relation with the school ID already been set", () => {
+    component.entity = new School("testID");
+
+    const newRelation = component.generateNewRecordFactory()();
+
+    expect(newRelation).toBeInstanceOf(ChildSchoolRelation);
+    expect(newRelation.schoolId).toBe("testID");
   });
 });
