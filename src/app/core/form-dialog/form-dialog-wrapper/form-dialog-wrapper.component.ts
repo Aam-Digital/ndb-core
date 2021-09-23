@@ -130,7 +130,6 @@ export class FormDialogWrapperComponent implements AfterViewInit {
   public delete() {
     const currentUrl = getUrlWithoutParams(this.router);
     this.entityRemoveService.remove(this.entity).subscribe((result) => {
-      console.log(result);
       switch (result) {
         case RemoveResult.REMOVED:
           this.onClose.emit(undefined);

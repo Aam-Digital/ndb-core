@@ -1,7 +1,6 @@
 import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Location } from "@angular/common";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import {
   EntityDetailsConfig,
   Panel,
@@ -13,7 +12,6 @@ import { School } from "../../../child-dev-project/schools/model/school";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
 import {
   EntityPermissionsService,
@@ -69,9 +67,7 @@ export class EntityDetailsComponent {
     private route: ActivatedRoute,
     private router: Router,
     private location: Location,
-    private snackBar: MatSnackBar,
     private analyticsService: AnalyticsService,
-    private confirmationDialog: ConfirmationDialogService,
     private permissionService: EntityPermissionsService,
     private entityRemoveService: EntityRemoveService
   ) {
@@ -135,7 +131,6 @@ export class EntityDetailsComponent {
   removeEntity() {
     const currentUrl = getUrlWithoutParams(this.router);
     this.entityRemoveService.remove(this.entity).subscribe((result) => {
-      console.log(result);
       switch (result) {
         case RemoveResult.REMOVED:
           this.navigateBack();
