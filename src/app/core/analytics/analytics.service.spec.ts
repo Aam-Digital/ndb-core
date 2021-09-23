@@ -1,4 +1,4 @@
-import { TestBed } from "@angular/core/testing";
+import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 
 import { AnalyticsService } from "./analytics.service";
 import { Angulartics2Module } from "angulartics2";
@@ -58,7 +58,7 @@ describe("AnalyticsService", () => {
     expect(mockAngulartics.startTracking).not.toHaveBeenCalled();
   });
 
-  it("should track correct site_id", () => {
+  it("should track correct site_id", fakeAsync(() => {
     const testAnalyticsConfig: UsageAnalyticsConfig = {
       site_id: "101",
       url: "test-endpoint",
@@ -66,13 +66,14 @@ describe("AnalyticsService", () => {
     mockConfigService.getConfig.and.returnValue(testAnalyticsConfig);
 
     service.init();
+    tick()
 
     expect(mockAngulartics.startTracking).toHaveBeenCalledTimes(1);
     expect(window["_paq"]).toContain([
       "setSiteId",
       testAnalyticsConfig.site_id,
     ]);
-  });
+  }));
 
   it("should set tracker url with or without trailing slash", () => {
     window["_paq"] = [];
