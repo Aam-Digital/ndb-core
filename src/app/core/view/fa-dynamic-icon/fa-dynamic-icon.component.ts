@@ -34,6 +34,11 @@ const faDynamicIcons = new Map<string, IconDefinition>([
   ["line-chart", faChartLine],
 ]);
 
+/**
+ * This component can be used to display dynamic Font-Awesome icons.
+ * The term 'dynamic icons' refers to icons that are injected at runtime,
+ * for example through the config.
+ */
 @Component({
   selector: "app-fa-dynamic-icon",
   template: `<fa-icon [icon]="_icon"></fa-icon>`,
@@ -41,9 +46,26 @@ const faDynamicIcons = new Map<string, IconDefinition>([
 export class FaDynamicIconComponent {
   /** The fallback icon if the given icon is neither known (inside the internal map)
    * nor registered as a font-awesome icon
-   * */
+   */
   static fallbackIcon = faQuestionCircle;
 
+  /**
+   * Sets the dynamic icon by name.
+   * You should make sure that the icon is registered inside the {@link faDynamicIcons}-map,
+   * or put it into this map if it isn't there.
+   * <br>
+   * If for some reason the icon is not inside the map or cannot be inserted into the map,
+   * the icon name has to match the <em>exact</em> icon name as provided by font-awesome.
+   * Prefixed icon names are not supported and the prefix is always assumed to be `far`
+   * (font awesome regular items).
+   * <br>
+   * In case the provided icon still doesn't exist, a question-mark-icon with circle
+   * (see {@link fallbackIcon}) will be shown.
+   * <br>
+   * Note that there is no getter and you should not attempt to get the icon name, for example via
+   * {@link _icon#iconName} since it is not guaranteed to be the same as the provided name
+   * @param icon the icon name
+   */
   @Input() set icon(icon: string) {
     let definition = faDynamicIcons.get(icon);
     if (!definition) {
@@ -56,6 +78,10 @@ export class FaDynamicIconComponent {
     }
     this._icon = definition;
   }
+
+  /**
+   * The font-awesome internal icon definition
+   */
   _icon: IconDefinition;
 
   constructor(private iconLibrary: FaIconLibrary) {}
