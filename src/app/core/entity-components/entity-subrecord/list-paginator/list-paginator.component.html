@@ -1,16 +1,13 @@
 <!-- Desktop Version -->
-<mat-toolbar fxHide.lt-md >
-  <ng-container *ngTemplateOutlet="slider"></ng-container>
-  <ng-container *ngTemplateOutlet="paginatorTemplate"></ng-container>
-</mat-toolbar>
-
-<!-- Mobile Version -->
-<div fxHide.gt-sm fxLayout="column" fxLayoutAlign="end">
-  <ng-container *ngTemplateOutlet="paginatorTemplate"></ng-container>
-  <ng-container *ngTemplateOutlet="slider"></ng-container>
-</div>
-
-<ng-template #paginatorTemplate>
+<div class="toolbar">
+  <mat-slide-toggle
+    class="slider"
+    [checked]="showingAll"
+    (change)="changeAllToggle()"
+    i18n="All toggle for paginator"
+  >
+    Show All
+  </mat-slide-toggle>
   <mat-paginator
     #paginator
     (page)="onPaginateChange($event)"
@@ -19,15 +16,4 @@
     [pageSizeOptions]="pageSizeOptions"
     [showFirstLastButtons]="true"
   ></mat-paginator>
-</ng-template>
-
-<ng-template #slider>
-  <mat-slide-toggle
-    [ngClass.lt-md]="'slider-lt-md'"
-    [checked]="showingAll"
-    (change)="changeAllToggle()"
-    i18n="All toggle for paginator"
-  >
-    Show All
-  </mat-slide-toggle>
-</ng-template>
+</div>
