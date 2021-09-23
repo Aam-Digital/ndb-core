@@ -15,33 +15,63 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<div fxLayout="row" fxLayoutAlign="space-between">
-  <div>
-    <h1 class="page-header section-child">
-      <button
-        mat-icon-button
-        (click)="navigateBack()"
-        i18n-matTooltip="Generic back button"
-        matTooltip="Back"
-        style="vertical-align: middle"
-      >
-        <mat-icon fontIcon="fa-backward"></mat-icon>
-      </button>
-
-      <i [className]="classNamesWithIcon"></i>
-      <span *ngIf="!creatingNew">{{ entity?.toString() }}</span>
-      <span
-        *ngIf="creatingNew"
-        i18n="
-          Title when adding a new entity|An entity is a child, note, school,
-          e.t.c
-        "
-      >
-        Adding new {{ config?.entity }}
-      </span>
-    </h1>
-  </div>
+<div class="header-row">
+  <button
+    mat-icon-button
+    (click)="navigateBack()"
+    i18n-matTooltip="Generic back button"
+    matTooltip="Back"
+  >
+    <mat-icon fontIcon="fa-backward"></mat-icon>
+  </button>
+  <h1 class="header-title">
+    <span [className]="classNamesWithIcon"></span>
+  </h1>
+  <h1 class="header-title" *ngIf="!creatingNew">{{ entity?.toString() }}</h1>
+  <h1
+    class="header-title"
+    *ngIf="creatingNew"
+    i18n="
+        Title when adding a new entity|An entity is a child, note, school,
+        e.t.c
+      "
+  >
+      Adding new {{ config?.entity }}
+  </h1>
+  <div class="header-spacer"></div>
+  <button
+    mat-icon-button
+    class="additional-button"
+    color="primary"
+    [matMenuTriggerFor]="additional"
+  >
+    <span class="material-icons">more_vert</span>
+  </button>
 </div>
+
+<mat-menu
+  #additional
+>
+  <button
+    mat-menu-item
+    (click)="removeEntity()"
+    *appDisabledEntityOperation="{
+      entity: entity?.getConstructor(),
+      operation: operationType.DELETE
+    }"
+    angulartics2On="click"
+    [angularticsCategory]="config?.entity"
+    angularticsAction="entity_delete"
+  >
+    <mat-icon
+      class="standard-icon"
+      color="warn"
+      aria-label="remove element"
+      fontIcon="fa-trash"
+    ></mat-icon>
+    <span i18n="Generic delete button"> Delete </span>
+  </button>
+</mat-menu>
 
 
 <div>

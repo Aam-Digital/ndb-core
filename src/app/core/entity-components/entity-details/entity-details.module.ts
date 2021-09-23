@@ -18,6 +18,7 @@ import { FormComponent } from "./form/form.component";
 import { EntityFormModule } from "../entity-form/entity-form.module";
 import { MatTabsModule } from "@angular/material/tabs";
 import { Angulartics2Module } from "angulartics2";
+import { MatMenuModule } from "@angular/material/menu";
 
 @NgModule({
   declarations: [EntityDetailsComponent, FormComponent],
@@ -39,6 +40,7 @@ import { Angulartics2Module } from "angulartics2";
     EntityFormModule,
     Angulartics2Module,
     MatTabsModule,
+    MatMenuModule,
   ],
   entryComponents: [FormComponent],
 })
