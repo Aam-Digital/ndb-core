@@ -10,20 +10,20 @@ describe("FaDynamicIconComponent", () => {
   let mockIconLibrary: jasmine.SpyObj<FaIconLibrary>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [FaDynamicIconComponent],
-      providers: [{ provide: FaIconLibrary, useValue: mockIconLibrary }],
-    }).compileComponents();
     mockIconLibrary = jasmine.createSpyObj<FaIconLibrary>([
       "getIconDefinition",
     ]);
-    mockIconLibrary.getIconDefinition.and.callFake((_, prefix) => {
-      if (prefix === "coffee") {
+    mockIconLibrary.getIconDefinition.and.callFake((prefix, icon) => {
+      if (icon === "coffee") {
         return faCoffee;
       } else {
         return undefined;
       }
     });
+    await TestBed.configureTestingModule({
+      declarations: [FaDynamicIconComponent],
+      providers: [{ provide: FaIconLibrary, useValue: mockIconLibrary }],
+    }).compileComponents();
   });
 
   beforeEach(() => {
