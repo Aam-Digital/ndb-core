@@ -34,7 +34,7 @@
     "@angular/platform-browser-dynamic": "^11.2.12",
     "@angular/router": "^11.2.12",
     "@angular/service-worker": "^11.2.12",
-    "@ngneat/until-destroy": "^8.1.1",
+    "@ngneat/until-destroy": "^8.1.4",
     "@sentry/browser": "^6.11.0",
     "angulartics2": "^10.0.0",
     "crypto-js": "^4.1.1",
@@ -58,7 +58,7 @@
     "stream": "0.0.2",
     "tslib": "^2.3.1",
     "uuid": "^8.3.2",
-    "webdav": "^4.6.1",
+    "webdav": "^4.7.0",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {

@@ -35,6 +35,7 @@ describe("ActivityListComponent", () => {
             useValue: {
               data: of({ config: mockConfig }),
               queryParams: of({}),
+              snapshot: { queryParams: {} },
             },
           },
         ],
