@@ -10,11 +10,13 @@ import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { Entity } from "../../entity/model/entity";
 import { MatDialogRef } from "@angular/material/dialog";
 import { getUrlWithoutParams } from "../../../utils/utils";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
-import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { OperationType } from "../../permissions/entity-permissions.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import {
+  EntityRemoveService,
+  RemoveResult,
+} from "../../entity/entity-remove.service";
 
 /**
  * Use `<app-form-dialog-wrapper>` in your form templates to handle the saving and resetting of the edited entity.
@@ -80,8 +82,7 @@ export class FormDialogWrapperComponent implements AfterViewInit {
     private entityMapper: EntityMapperService,
     private matDialogRef: MatDialogRef<any>,
     private router: Router,
-    private snackBar: MatSnackBar,
-    private confirmationDialog: ConfirmationDialogService
+    private entityRemoveService: EntityRemoveService
   ) {}
 
   ngAfterViewInit() {
@@ -126,30 +127,16 @@ export class FormDialogWrapperComponent implements AfterViewInit {
     this.onClose.emit(undefined);
   }
 
-  public async delete() {
-    const dialogRef = this.confirmationDialog.openDialog(
-      "Delete?",
-      "Are you sure you want to delete this object?"
-    );
-
-    dialogRef.afterClosed().subscribe(async (confirmed: any) => {
-      const currentUrl = getUrlWithoutParams(this.router);
-      if (confirmed) {
-        await this.entityMapper.remove<Entity>(this.entity);
-        this.onClose.emit(undefined);
-
-        const snackBarRef = this.snackBar.open(
-          $localize`:Deleted Entity information:Deleted Entity ${this.entity.toString()}`,
-          "Undo",
-          { duration: 8000 }
-        );
-        snackBarRef
-          .onAction()
-          .pipe(untilDestroyed(this))
-          .subscribe(() => {
-            this.entityMapper.save(this.entity, true);
-            this.router.navigate([currentUrl]);
-          });
+  public delete() {
+    const currentUrl = getUrlWithoutParams(this.router);
+    this.entityRemoveService.remove(this.entity).subscribe((result) => {
+      console.log(result);
+      switch (result) {
+        case RemoveResult.REMOVED:
+          this.onClose.emit(undefined);
+          break;
+        case RemoveResult.UNDONE:
+          this.router.navigate([currentUrl]);
       }
     });
   }
