@@ -48,13 +48,17 @@ describe("AnalyticsService", () => {
 
   it("should not track if no url or site_id", () => {
     mockConfigService.getConfig.and.returnValue({});
+
     service.init();
+
     expect(mockAngulartics.startTracking).not.toHaveBeenCalled();
   });
 
   it("should not track if no usage analytics config", () => {
     mockConfigService.getConfig.and.returnValue(undefined);
+
     service.init();
+
     expect(mockAngulartics.startTracking).not.toHaveBeenCalled();
   });
 
@@ -66,7 +70,7 @@ describe("AnalyticsService", () => {
     mockConfigService.getConfig.and.returnValue(testAnalyticsConfig);
 
     service.init();
-    tick()
+    tick();
 
     expect(mockAngulartics.startTracking).toHaveBeenCalledTimes(1);
     expect(window["_paq"]).toContain([
@@ -83,6 +87,7 @@ describe("AnalyticsService", () => {
     };
     mockConfigService.getConfig.and.returnValue(testAnalyticsConfig);
     service.init();
+
     expect(window["_paq"]).toContain([
       "setTrackerUrl",
       testAnalyticsConfig.url + "/matomo.php",
@@ -94,7 +99,9 @@ describe("AnalyticsService", () => {
       url: "test-endpoint/",
     };
     mockConfigService.getConfig.and.returnValue(testAnalyticsConfig2);
+
     service.init();
+
     expect(window["_paq"]).toContain([
       "setTrackerUrl",
       testAnalyticsConfig2.url + "matomo.php",
