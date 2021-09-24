@@ -1,6 +1,6 @@
 import { Component, Inject } from "@angular/core";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { Entity } from "../../../entity/model/entity";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 import { FormGroup } from "@angular/forms";
@@ -29,7 +29,6 @@ export class RowDetailsComponent<E extends Entity> {
   form: FormGroup;
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsComponentData<E>,
-    private dialogRef: MatDialogRef<RowDetailsComponent<E>>,
     private formsService: EntityFormService
   ) {
     this.form = this.formsService.createFormGroup(
@@ -42,7 +41,7 @@ export class RowDetailsComponent<E extends Entity> {
     this.data.operations.save(this.data.row);
   }
 
-  async delete() {
+  delete() {
     this.data.operations.delete(this.data.row);
   }
 }
