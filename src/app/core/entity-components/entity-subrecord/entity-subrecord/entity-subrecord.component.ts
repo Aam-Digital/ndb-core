@@ -22,7 +22,11 @@ import { EntityFormService } from "../../entity-form/entity-form.service";
 import { MatDialog } from "@angular/material/dialog";
 import { LoggingService } from "../../../logging/logging.service";
 import { AnalyticsService } from "../../../analytics/analytics.service";
-import { RowDetailsComponent } from "../row-details/row-details.component";
+import {
+  CanDelete,
+  CanSave,
+  RowDetailsComponent,
+} from "../row-details/row-details.component";
 import {
   EntityRemoveService,
   RemoveResult,
@@ -52,10 +56,8 @@ export interface TableRow<T> {
   templateUrl: "./entity-subrecord.component.html",
   styleUrls: ["./entity-subrecord.component.scss"],
 })
-export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
-  /** data to be displayed */
-  @Input() records: Array<T> = [];
-
+export class EntitySubrecordComponent<T extends Entity>
+  implements OnChanges, CanSave<TableRow<T>>, CanDelete<TableRow<T>> {
   /** configuration what kind of columns to be generated for the table */
   @Input() set columns(columns: (FormFieldConfig | string)[]) {
     this._columns = columns.map((col) => {
@@ -66,6 +68,8 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       }
     });
   }
+  /** data to be displayed */
+  @Input() records: Array<T> = [];
   _columns: FormFieldConfig[] = [];
 
   /**
@@ -92,6 +96,12 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
 
   @ViewChild(MatSort) sort: MatSort;
 
+  /**
+   * A function which should be executed when a row is clicked or a new entity created.
+   * @param entity The newly created or clicked entity.
+   */
+  @Input() showEntity?: (T) => void;
+
   constructor(
     private _entityMapper: EntityMapperService,
     private _snackBar: MatSnackBar,
@@ -114,12 +124,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
         }
       });
   }
-
-  /**
-   * A function which should be executed when a row is clicked or a new entity created.
-   * @param entity The newly created or clicked entity.
-   */
-  @Input() showEntity = (entity: T) => this.showEntityInForm(entity);
 
   /** function returns the background color for each row*/
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
@@ -291,15 +295,18 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    */
   rowClick(row: TableRow<T>) {
     if (!row.formGroup || row.formGroup.disabled) {
-      this.showEntity(row.record);
-
-      this.analyticsService.eventTrack("subrecord_show_popup", {
-        category: row.record.getType(),
-      });
+      if (this.showEntity) {
+        this.showEntity(row.record);
+      } else {
+        this.showEntityInForm(row);
+        this.analyticsService.eventTrack("subrecord_show_popup", {
+          category: row.record.getType(),
+        });
+      }
     }
   }
 
-  private showEntityInForm(entity: T) {
+  private showEntityInForm(row: TableRow<T>) {
     const columnsToDisplay = this._columns
       .filter((col) => col.edit)
       .map((col) => {
@@ -311,8 +318,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       width: "80%",
       maxHeight: "90vh",
       data: {
-        record: entity,
-        rows: columnsToDisplay,
+        row: row,
+        columns: columnsToDisplay,
+        operations: this,
       },
     });
   }

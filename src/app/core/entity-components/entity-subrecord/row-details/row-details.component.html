@@ -1,14 +1,14 @@
 <div mat-dialog-content class="main-content">
   <div
     class="row-item"
-    *ngFor="let row of data.rows"
+    *ngFor="let row of data.columns"
   >
     <div
       [appDynamicComponent]="{
           component: row.edit,
           config: {
             formFieldConfig: row,
-            propertySchema: data.record.getSchema().get(row.id),
+            propertySchema: data.row.record.getSchema().get(row.id),
             formControl: form.get(row.id)
           }
         }"

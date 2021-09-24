@@ -3,7 +3,8 @@ import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-d
 import { EntityMapperService } from "./entity-mapper.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Entity } from "./model/entity";
-import { Observable, Subject } from "rxjs";
+import { Observable, race, Subject } from "rxjs";
+import { map } from "rxjs/operators";
 
 /**
  * All possible results when removing an entity
@@ -130,13 +131,14 @@ export class EntityRemoveService {
         duration: 8000,
       }
     );
-    snackBarRef.onAction().subscribe(() => {
-      this.entityMapper.save(entity, true).then(() => {
+    race(
+      snackBarRef.onAction().pipe(map(() => true)),
+      snackBarRef.afterDismissed().pipe(map(() => false))
+    ).subscribe(async (next) => {
+      if (next) {
+        await this.entityMapper.save(entity, true);
         resultSender.next(RemoveResult.UNDONE);
-        resultSender.complete();
-      });
-    });
-    snackBarRef.afterDismissed().subscribe(() => {
+      }
       resultSender.complete();
     });
   }

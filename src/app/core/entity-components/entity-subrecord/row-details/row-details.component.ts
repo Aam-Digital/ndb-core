@@ -4,11 +4,20 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Entity } from "../../../entity/model/entity";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 import { FormGroup } from "@angular/forms";
-import { EntityRemoveService } from "../../../entity/entity-remove.service";
+import { TableRow } from "../entity-subrecord/entity-subrecord.component";
 
 export interface DetailsComponentData<E extends Entity> {
-  record: E;
-  rows: FormFieldConfig[];
+  row: TableRow<E>;
+  columns: FormFieldConfig[];
+  operations: CanSave<TableRow<E>> & CanDelete<TableRow<E>>;
+}
+
+export interface CanSave<T> {
+  save(T);
+}
+
+export interface CanDelete<T> {
+  delete(T);
 }
 
 @Component({
@@ -21,17 +30,19 @@ export class RowDetailsComponent<E extends Entity> {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsComponentData<E>,
     private dialogRef: MatDialogRef<RowDetailsComponent<E>>,
-    private formsService: EntityFormService,
-    private entityRemoveService: EntityRemoveService
+    private formsService: EntityFormService
   ) {
-    this.form = this.formsService.createFormGroup(data.rows, data.record);
+    this.form = this.formsService.createFormGroup(
+      data.columns,
+      data.row.record
+    );
   }
 
-  async save() {
-    await this.formsService.saveChanges(this.form, this.data.record);
+  save() {
+    this.data.operations.save(this.data.row);
   }
 
   async delete() {
-    this.entityRemoveService.remove(this.data.record);
+    this.data.operations.delete(this.data.row);
   }
 }
