@@ -220,7 +220,7 @@ export class EntitySubrecordComponent<T extends Entity>
    * @param row The entity to be saved.
    * @param isNew whether or not the record is new
    */
-  async save(row: TableRow<T>, isNew: boolean = false) {
+  async save(row: TableRow<T>, isNew: boolean = false): Promise<void> {
     try {
       row.record = await this.entityFormService.saveChanges(
         row.formGroup,

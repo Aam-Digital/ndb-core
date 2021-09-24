@@ -26,6 +26,7 @@ describe("RowDetailsComponent", () => {
     row: { record: new Entity() },
     columns: [],
     operations: {} as CanSave<TableRow<any>> & CanDelete<TableRow<any>>,
+    isNew: false,
   };
 
   beforeEach(async () => {
