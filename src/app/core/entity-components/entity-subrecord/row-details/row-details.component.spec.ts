@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import {
+  CanDelete,
+  CanSave,
   DetailsComponentData,
   RowDetailsComponent,
 } from "./row-details.component";
@@ -15,13 +17,15 @@ import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { Entity } from "../../../entity/model/entity";
+import { TableRow } from "../entity-subrecord/entity-subrecord.component";
 
 describe("RowDetailsComponent", () => {
   let component: RowDetailsComponent<any>;
   let fixture: ComponentFixture<RowDetailsComponent<any>>;
   const detailsComponentData: DetailsComponentData<any> = {
-    record: new Entity(),
-    rows: [],
+    row: { record: new Entity() },
+    columns: [],
+    operations: {} as CanSave<TableRow<any>> & CanDelete<TableRow<any>>,
   };
 
   beforeEach(async () => {
