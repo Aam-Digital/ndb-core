@@ -18,9 +18,11 @@
 
 /**
  * Can be used to create an adaptive grid-layout where the items will take
- * up all horizontal space with a minimum provided width.
+ * up all horizontal space given. The items won't shrink smaller
+ * than `$min-block-width` but instead create a new row. All items
+ * have the same width.
  * Below `$max-screen-width`, the grid will only contain a single
- * column and all items will be aligned like a row.
+ * column and all items will be aligned into a single column.
  */
 @mixin adaptive-grid($min-block-width, $max-screen-width: $min-block-width) {
   display: grid;
