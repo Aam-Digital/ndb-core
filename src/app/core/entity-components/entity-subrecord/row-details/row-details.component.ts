@@ -17,6 +17,7 @@ export interface DetailsComponentData<E extends Entity> {
   columns: FormFieldConfig[];
   /** The operations needed by this component; namely edit and delete */
   operations: CanSave<TableRow<E>> & CanDelete<TableRow<E>>;
+  isNew: boolean;
 }
 
 /**
@@ -26,7 +27,7 @@ export interface DetailsComponentData<E extends Entity> {
  * to allow it to save rows
  */
 export interface CanSave<T> {
-  save(T);
+  save(T, isNew: boolean);
 }
 
 /**
@@ -58,10 +59,17 @@ export class RowDetailsComponent<E extends Entity> {
       data.columns,
       data.row.record
     );
+    // this.data.row.formGroup = this.form;
   }
 
   save() {
-    this.data.operations.save(this.data.row);
+    this.data.operations.save(
+      {
+        record: this.data.row.record,
+        formGroup: this.form,
+      },
+      this.data.isNew
+    );
   }
 
   delete() {

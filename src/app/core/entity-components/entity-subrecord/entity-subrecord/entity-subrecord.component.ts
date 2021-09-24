@@ -202,7 +202,7 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 
   edit(row: TableRow<T>) {
-    if (this.screenWidth === "xs") {
+    if (this.media.isActive("lt-sm")) {
       this.rowClick(row);
     } else {
       if (!row.formGroup) {
@@ -218,13 +218,20 @@ export class EntitySubrecordComponent<T extends Entity>
   /**
    * Save an edited record to the database (if validation succeeds).
    * @param row The entity to be saved.
+   * @param isNew whether or not the record is new
    */
-  async save(row: TableRow<T>) {
+  async save(row: TableRow<T>, isNew: boolean = false) {
     try {
       row.record = await this.entityFormService.saveChanges(
         row.formGroup,
         row.record
       );
+      if (isNew) {
+        this.records.unshift(row.record);
+        this.recordsDataSource.data = [{ record: row.record }].concat(
+          this.recordsDataSource.data
+        );
+      }
       row.formGroup.disable();
     } catch (err) {
       this.alertService.addDanger(err.message);
@@ -275,14 +282,14 @@ export class EntitySubrecordComponent<T extends Entity>
    * Create a new entity.
    * The entity is only written to the database when the user saves this record which is newly added in edit mode.
    */
-  create() {
+  async create() {
     const newRecord = this.newRecordFactory();
 
-    this.records.unshift(newRecord);
-    this.recordsDataSource.data = [{ record: newRecord }].concat(
-      this.recordsDataSource.data
-    );
-    this._entityMapper.save(newRecord).then(() => this.showEntity(newRecord));
+    if (this.showEntity) {
+      this.showEntity(newRecord);
+    } else {
+      this.showRowDetails({ record: newRecord }, true);
+    }
 
     this.analyticsService.eventTrack("subrecord_add_new", {
       category: newRecord.getType(),
@@ -298,7 +305,7 @@ export class EntitySubrecordComponent<T extends Entity>
       if (this.showEntity) {
         this.showEntity(row.record);
       } else {
-        this.showEntityInForm(row);
+        this.showRowDetails(row, false);
         this.analyticsService.eventTrack("subrecord_show_popup", {
           category: row.record.getType(),
         });
@@ -306,7 +313,7 @@ export class EntitySubrecordComponent<T extends Entity>
     }
   }
 
-  private showEntityInForm(row: TableRow<T>) {
+  private showRowDetails(row: TableRow<T>, isNew: boolean) {
     const columnsToDisplay = this._columns
       .filter((col) => col.edit)
       .map((col) => {
@@ -314,6 +321,12 @@ export class EntitySubrecordComponent<T extends Entity>
         return col;
       })
       .map((col) => Object.assign({}, col));
+    if (isNew) {
+      row.formGroup = this.entityFormService.createFormGroup(
+        this._columns,
+        row.record
+      );
+    }
     this.dialog.open(RowDetailsComponent, {
       width: "80%",
       maxHeight: "90vh",
@@ -321,6 +334,7 @@ export class EntitySubrecordComponent<T extends Entity>
         row: row,
         columns: columnsToDisplay,
         operations: this,
+        isNew: isNew,
       },
     });
   }

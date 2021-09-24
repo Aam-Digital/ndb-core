@@ -278,10 +278,11 @@ describe("EntitySubrecordComponent", () => {
     expect(row.formGroup).toBeFalsy();
   });
 
-  it("should create new entities and call the show entity function", fakeAsync(() => {
+  it("should create new entities and call the show entity function when it is supplied", fakeAsync(() => {
     const child = new Child();
     component.newRecordFactory = () => child;
     component.columns = [{ id: "name" }, { id: "projectNumber" }];
+    component.showEntity = () => {};
     const showEntitySpy = spyOn(component, "showEntity");
 
     component.create();
@@ -292,6 +293,19 @@ describe("EntitySubrecordComponent", () => {
     expect(showEntitySpy).toHaveBeenCalledWith(child);
   }));
 
+  it("should create new entities and open it in a row when no show entity function is supplied", fakeAsync(() => {
+    const child = new Child();
+    component.newRecordFactory = () => child;
+    const spy = spyOn<any>(component, "showRowDetails");
+
+    component.create();
+    tick();
+
+    expect(component.records).toEqual([child]);
+    expect(component.recordsDataSource.data).toContain({ record: child });
+    expect(spy).toHaveBeenCalledWith({ record: child });
+  }));
+
   it("should notify when an entity is clicked", (done) => {
     const child = new Child();
     component.showEntity = (entity) => {
@@ -300,5 +314,14 @@ describe("EntitySubrecordComponent", () => {
     };
 
     component.rowClick({ record: child });
+  });
+
+  it("only saves a new entity into the list once saving is approved", async () => {
+    const entity = new Entity();
+    component.newRecordFactory = () => entity;
+    await component.create();
+    expect(component.records).toHaveSize(0);
+    await component.save({ record: entity });
+    expect(component.records).toHaveSize(1);
   });
 });
