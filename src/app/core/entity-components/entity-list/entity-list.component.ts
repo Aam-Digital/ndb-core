@@ -51,6 +51,10 @@ export class EntityListComponent<T extends Entity>
 
   @ViewChild(EntitySubrecordComponent) entityTable: EntitySubrecordComponent<T>;
 
+  get desktop(): boolean {
+    return this.media.isActive("gt-xs");
+  }
+
   listName = "";
   columns: (FormFieldConfig | string)[] = [];
   columnGroups: GroupConfig[] = [];

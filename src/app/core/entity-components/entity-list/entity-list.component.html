@@ -1,5 +1,5 @@
 <!-- Desktop version -->
-<div fxHide.lt-sm fxLayout="column">
+<div fxLayout="column" *ngIf="desktop">
 
     <div
       fxLayout="row"
@@ -82,15 +82,13 @@
         </mat-tab-group>
       </div>
 
-      <div class="mat-elevation-z2 table-list">
-        <div *ngTemplateOutlet="subrecord"></div>
-      </div>
+      <div *ngTemplateOutlet="subrecord"></div>
     </div>
 
 </div>
 
 <!-- Mobile Version -->
-<div fxHide.gt-xs>
+<div *ngIf="!desktop">
 
   <h2>{{listName}}</h2>
 
