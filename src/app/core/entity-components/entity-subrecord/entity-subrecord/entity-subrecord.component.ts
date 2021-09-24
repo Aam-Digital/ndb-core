@@ -240,16 +240,21 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    * @param row The entity to be deleted.
    */
   delete(row: TableRow<T>) {
-    this.entityRemoveService.remove(row.record).subscribe((result) => {
-      switch (result) {
-        case RemoveResult.REMOVED:
-          this.removeFromDataTable(row);
-          break;
-        case RemoveResult.UNDONE:
-          this.records.unshift(row.record);
-          this.initFormGroups();
-      }
-    });
+    this.entityRemoveService
+      .remove(row.record, {
+        deletedEntityInformation: $localize`:Record deleted info:Record deleted`,
+        dialogText: $localize`:Delete confirmation message:Are you sure you want to delete this record?`,
+      })
+      .subscribe((result) => {
+        switch (result) {
+          case RemoveResult.REMOVED:
+            this.removeFromDataTable(row);
+            break;
+          case RemoveResult.UNDONE:
+            this.records.unshift(row.record);
+            this.initFormGroups();
+        }
+      });
   }
 
   private removeFromDataTable(row: TableRow<T>) {

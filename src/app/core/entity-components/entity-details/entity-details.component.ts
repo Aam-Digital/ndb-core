@@ -130,13 +130,14 @@ export class EntityDetailsComponent {
 
   removeEntity() {
     const currentUrl = getUrlWithoutParams(this.router);
-    this.entityRemoveService.remove(this.entity).subscribe((result) => {
+    this.entityRemoveService.remove(this.entity).subscribe(async (result) => {
+      console.log(result);
       switch (result) {
         case RemoveResult.REMOVED:
           this.navigateBack();
           break;
         case RemoveResult.UNDONE:
-          this.router.navigate([currentUrl]);
+          await this.router.navigate([currentUrl]);
       }
     });
   }
