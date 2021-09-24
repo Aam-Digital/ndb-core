@@ -1,17 +1,9 @@
-@import "../../../../../styles";
+@import "../../../../utils/grid-layout";
+
+$min-block-width: 250px;
 
 .main-content {
-  display: flex;
-  flex-flow: row wrap;
-  /*@media all and (max-width: 500px) {
-    flex-flow: column nowrap;
-  } */
-  gap: $standard-grid-gap;
-}
-
-.row-item {
-  // grow as needed; don't shrink; basis is the default's item size
-  flex: 1 0 auto;
+  @include adaptive-grid($min-block-width);
 }
 
 // Hacky way to set the width of every form field
