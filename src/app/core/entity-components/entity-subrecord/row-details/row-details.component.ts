@@ -6,20 +6,41 @@ import { EntityFormService } from "../../entity-form/entity-form.service";
 import { FormGroup } from "@angular/forms";
 import { TableRow } from "../entity-subrecord/entity-subrecord.component";
 
+/**
+ * Data interface that must be given when opening the dialog
+ */
 export interface DetailsComponentData<E extends Entity> {
+  /** The row to edit / view */
   row: TableRow<E>;
+  /** The columns to edit / view */
   columns: FormFieldConfig[];
+  /** The operations needed by this component; namely edit and delete */
   operations: CanSave<TableRow<E>> & CanDelete<TableRow<E>>;
 }
 
+/**
+ * Simple interface that the `EntitySubrecordComponent` implements
+ * to allow this component to directly save it's data there.
+ * Can be used on another component in conjunction with this component
+ * to allow it to save rows
+ */
 export interface CanSave<T> {
   save(T);
 }
 
+/**
+ * Simple interface that the `EntitySubrecordComponent` implements
+ * to allow this component to directly delete it's data there.
+ * Can be used on another component in conjunction with this component
+ * to allow it to delete rows
+ */
 export interface CanDelete<T> {
   delete(T);
 }
 
+/**
+ * Displays a single row of a table as a dialog component
+ */
 @Component({
   selector: "app-row-details",
   templateUrl: "./row-details.component.html",
