@@ -1,4 +1,4 @@
-@import "../../../../../styles";
+@import "../../../../utils/grid-layout";
 
 $padding-block: 50px;
 
@@ -22,12 +22,7 @@ $max-screen-width: $min-block-width + $margin-main-view-right + $margin-main-vie
 }
 
 .columns-wrapper {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax($min-block-width, 1fr));
-  @media all and (max-width: $max-screen-width) {
-    grid-template-columns: 1fr;
-  }
-  grid-gap: $standard-grid-gap;
+  @include adaptive-grid($min-block-width, $max-screen-width);
 }
 
 .action-button {

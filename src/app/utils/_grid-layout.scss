@@ -14,19 +14,19 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
+@import "../../styles";
 
-@import "../../../../styles";
-@import "../../../utils/grid-layout";
-
-// The minimum size of a widget for big screens
-// The minimum size on small screens is whatever size is available
-$min-widget-width: 330px;
-// There will only be one column below this screen width, as defined by the media query
-$max-screen-width: $min-widget-width + $margin-main-view-right + $margin-main-view-left;
-$widget-height: 410px;
-
-.widget-wrapper {
-  @include adaptive-grid($min-widget-width, $max-screen-width);
-  // Make all rows be equal in height
-  grid-auto-rows: $widget-height;
+/**
+ * Can be used to create an adaptive grid-layout where the items will take
+ * up all horizontal space with a minimum provided width.
+ * Below `$max-screen-width`, the grid will only contain a single
+ * column and all items will be aligned like a row.
+ */
+@mixin adaptive-grid($min-block-width, $max-screen-width: $min-block-width) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax($min-block-width, 1fr));
+  @media all and (max-width: $max-screen-width) {
+    grid-template-columns: 1fr;
+  }
+  grid-gap: $standard-grid-gap;
 }
