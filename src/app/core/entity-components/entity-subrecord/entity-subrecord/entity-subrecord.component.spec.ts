@@ -1,7 +1,6 @@
 import {
   ComponentFixture,
   fakeAsync,
-  flush,
   TestBed,
   tick,
   waitForAsync,
@@ -25,9 +24,6 @@ import { Note } from "../../../../child-dev-project/notes/model/note";
 import { AlertService } from "../../../alerts/alert.service";
 import { FormBuilder, FormGroup } from "@angular/forms";
 import { EntityFormService } from "../../entity-form/entity-form.service";
-import { Subject } from "rxjs";
-import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { genders } from "../../../../child-dev-project/children/model/genders";
 import { LoggingService } from "../../../logging/logging.service";
 import { MockSessionModule } from "../../../session/mock-session.module";
@@ -281,38 +277,6 @@ describe("EntitySubrecordComponent", () => {
 
     expect(row.formGroup).toBeFalsy();
   });
-
-  it("should save a deleted entity when clicking the popup", fakeAsync(() => {
-    const dialogService = TestBed.inject(ConfirmationDialogService);
-    const dialogObservable = new Subject();
-    spyOn(dialogService, "openDialog").and.returnValue({
-      afterClosed: () => dialogObservable,
-    } as any);
-    const snackbarService = TestBed.inject(MatSnackBar);
-    const snackbarObservable = new Subject();
-    spyOn(snackbarService, "open").and.returnValue({
-      onAction: () => snackbarObservable,
-    } as any);
-    spyOn(entityMapper, "remove").and.resolveTo();
-    spyOn(entityMapper, "save").and.resolveTo();
-    const child = new Child();
-    component.records = [child];
-
-    component.delete({ record: child });
-    tick();
-    expect(component.records).toEqual([child]);
-
-    dialogObservable.next(true);
-    tick();
-    expect(entityMapper.remove).toHaveBeenCalledWith(child);
-    expect(component.records).toEqual([]);
-
-    snackbarObservable.next();
-    expect(entityMapper.save).toHaveBeenCalledWith(child, true);
-    expect(component.records).toEqual([child]);
-
-    flush();
-  }));
 
   it("should create new entities and call the show entity function", fakeAsync(() => {
     const child = new Child();
