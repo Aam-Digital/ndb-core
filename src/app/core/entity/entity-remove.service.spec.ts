@@ -63,7 +63,9 @@ describe("EntityRemoveService", () => {
         (next) => {
           expect(next).toEqual([RemoveResult.CANCELLED]);
         },
-        () => {},
+        () => {
+          // intentionally empty
+        },
         () => {
           expect(snackBarSpy.open).not.toHaveBeenCalled();
           expect(mockEntityMapper.remove).not.toHaveBeenCalled();
@@ -88,7 +90,9 @@ describe("EntityRemoveService", () => {
         (next) => {
           expect(next).toEqual([RemoveResult.REMOVED]);
         },
-        () => {},
+        () => {
+          // intentionally empty
+        },
         () => {
           expect(snackBarSpy.open).toHaveBeenCalled();
           expect(mockEntityMapper.remove).toHaveBeenCalled();
@@ -114,7 +118,9 @@ describe("EntityRemoveService", () => {
         (next) => {
           expect(next).toEqual([RemoveResult.REMOVED, RemoveResult.UNDONE]);
         },
-        () => {},
+        () => {
+          // intentionally empty
+        },
         () => {
           expect(mockEntityMapper.remove).toHaveBeenCalled();
           expect(mockEntityMapper.save).toHaveBeenCalledWith(entity, true);
