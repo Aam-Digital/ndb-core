@@ -23,11 +23,15 @@
     ></mat-icon>
   </div>
 </div>
-<div mat-dialog-actions>
+<div mat-dialog-actions fxLayoutGap="10px">
   <button
     mat-raised-button
     mat-dialog-close
     (click)="save()"
+    *appDisabledEntityOperation="{
+      operation: operationType.UPDATE,
+      entity: data.row.record
+    }"
     i18n="Save button for forms"
   >
     Save
@@ -44,6 +48,10 @@
     mat-raised-button
     mat-dialog-close
     (click)="delete()"
+    *appDisabledEntityOperation="{
+      operation: operationType.DELETE,
+      entity: data.row.record
+    }"
     color="warn"
     i18n="Delete button for forms"
   >

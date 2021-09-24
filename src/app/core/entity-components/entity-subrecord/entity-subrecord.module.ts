@@ -24,6 +24,7 @@ import { Angulartics2Module } from "angulartics2";
 import { RowDetailsComponent } from "./row-details/row-details.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDialogModule } from "@angular/material/dialog";
+import { PermissionsModule } from "../../permissions/permissions.module";
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { MatDialogModule } from "@angular/material/dialog";
     Angulartics2Module,
     MatFormFieldModule,
     MatDialogModule,
+    PermissionsModule,
   ],
   exports: [EntitySubrecordComponent, KeysPipe],
 })

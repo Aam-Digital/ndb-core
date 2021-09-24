@@ -5,6 +5,7 @@ import { Entity } from "../../../entity/model/entity";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 import { FormGroup } from "@angular/forms";
 import { TableRow } from "../entity-subrecord/entity-subrecord.component";
+import { OperationType } from "../../../permissions/entity-permissions.service";
 
 /**
  * Data interface that must be given when opening the dialog
@@ -48,6 +49,7 @@ export interface CanDelete<T> {
 })
 export class RowDetailsComponent<E extends Entity> {
   form: FormGroup;
+  operationType = OperationType;
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsComponentData<E>,
     private formsService: EntityFormService
