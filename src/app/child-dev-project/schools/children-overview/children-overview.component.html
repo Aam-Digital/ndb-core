@@ -1,21 +1,6 @@
-<button
-  mat-stroked-button
-  color="accent"
-  class="standard-add-button"
-  (click)="addChildClick()"
->
-  <mat-icon
-    class="standard-icon-with-text"
-    aria-label="add child"
-    fontIcon="fa-plus-circle"
-  ></mat-icon>
-  <span fxHide.lt-md="true" i18n="Add New Button"> Add {{ addButtonLabel }}</span>
-</button>
-<div class="spacer"></div>
 <app-entity-subrecord
-  [records]="children"
+  [records]="records"
   [columns]="columns"
-  [showEntity]="routeToChild.bind(this)"
-  [editable]="false"
+  [newRecordFactory]="generateNewRecordFactory()"
 ></app-entity-subrecord>
 
