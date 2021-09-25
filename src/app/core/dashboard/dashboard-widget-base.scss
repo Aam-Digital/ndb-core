@@ -8,6 +8,12 @@
   table-layout: fixed;
 }
 
+// TODO: fix this
+.mat-card-content {
+  overflow: auto;
+  max-height: 250px;
+}
+
 .dashboard-table tr:first-child {
   border-top: none;
 }
