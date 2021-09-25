@@ -4,10 +4,15 @@ $min-block-width: 250px;
 
 .main-content {
   @include adaptive-grid($min-block-width);
+  justify-items: stretch;
+}
+
+.row-element {
+  white-space: nowrap;
 }
 
 // Hacky way to set the width of every form field
 // which are commonly found here to the maximum
 :host ::ng-deep .mat-form-field {
-  width: 100%;
+  width: 95%;
 }
