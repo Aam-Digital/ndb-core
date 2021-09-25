@@ -3459,7 +3459,7 @@
       </trans-unit>
       <trans-unit id="1006138510285524819" datatype="html">
         <source>The date a child joins a school</source>
-        <target state="translated">Das Datum, an dem das Kind die Schule beigetreten ist</target>
+        <target state="translated">Das Datum, an dem das Kind der Schule beigetreten ist</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/model/childSchoolRelation.ts</context>
           <context context-type="linenumber">34</context>
@@ -3477,7 +3477,7 @@
       </trans-unit>
       <trans-unit id="5375469166722691449" datatype="html">
         <source>The date of a child leaving the school</source>
-        <target state="translated">Das Datum, an welchem das Kind die Schule verlässt</target>
+        <target state="translated">Das Datum, an dem das Kind die Schule verlassen hat</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/model/childSchoolRelation.ts</context>
           <context context-type="linenumber">40</context>
