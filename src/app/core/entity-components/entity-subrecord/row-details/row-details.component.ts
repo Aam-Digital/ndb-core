@@ -59,7 +59,6 @@ export class RowDetailsComponent<E extends Entity> {
       data.columns,
       data.row.record
     );
-    // this.data.row.formGroup = this.form;
   }
 
   save() {
