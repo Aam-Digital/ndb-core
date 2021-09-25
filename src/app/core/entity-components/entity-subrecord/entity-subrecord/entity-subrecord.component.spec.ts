@@ -282,13 +282,12 @@ describe("EntitySubrecordComponent", () => {
     const child = new Child();
     component.newRecordFactory = () => child;
     component.columns = [{ id: "name" }, { id: "projectNumber" }];
-    component.showEntity = () => {};
-    const showEntitySpy = spyOn(component, "showEntity");
+    component.showEntity = jasmine.createSpy("showEntity");
 
     component.create();
     tick();
 
-    expect(showEntitySpy).toHaveBeenCalledWith(child);
+    expect(component.showEntity).toHaveBeenCalledWith(child);
   }));
 
   it("should create new entities and open it in a row when no show entity function is supplied", fakeAsync(() => {
