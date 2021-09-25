@@ -53,17 +53,11 @@ body {
 }
 
 .sidenav-content {
-  margin-right: $margin-main-view-right;
-  margin-left: $margin-main-view-left;
-  margin-top: $margin-main-view-top;
-
-  /* make this fullscreen while respecting padding: https://stackoverflow.com/a/485887/1473411 */
-  position: absolute;
-  height: auto;
-  bottom: 0;
-  top: 0;
-  left: 0;
-  right: 0;
+  margin:
+    $margin-main-view-top
+    $margin-main-view-right
+    $margin-main-view-bottom
+    $margin-main-view-left;
 }
 
 .header-icon {

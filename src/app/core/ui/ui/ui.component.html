@@ -76,10 +76,7 @@
 
   <mat-sidenav-content>
     <div class="sidenav-content">
-      <div>
-        <router-outlet *ngIf="isLoggedIn()"></router-outlet>
-        <div style="height: 16px"></div>
-      </div>
+      <router-outlet *ngIf="isLoggedIn()"></router-outlet>
       <app-login *ngIf="!isLoggedIn()"></app-login>
     </div>
   </mat-sidenav-content>
