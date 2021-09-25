@@ -1,13 +1,13 @@
+@import "../common-styles";
+
 .main-list {
   // Mat chip list overflows a little bit without this hack
   width: 98%;
 }
 
 .chip {
-  padding: 7px;
+  @include entity-block-border;
   margin: 0.2em;
-  border-radius: 5px;
-  border: 1px solid lightgray;
 }
 
 .fa-minus-square-o {
