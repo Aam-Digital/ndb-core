@@ -22,9 +22,7 @@ describe("EducationalMaterialComponent", () => {
         "getEducationalMaterialsOfChild",
       ]);
       mockChildrenService.getChild.and.returnValue(of(child));
-      mockChildrenService.getEducationalMaterialsOfChild.and.returnValue(
-        of([])
-      );
+      mockChildrenService.getEducationalMaterialsOfChild.and.resolveTo([]);
       TestBed.configureTestingModule({
         declarations: [EducationalMaterialComponent],
         imports: [

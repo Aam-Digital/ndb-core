@@ -1,13 +1,11 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { EducationalMaterial } from "../model/educational-material";
 import { ChildrenService } from "../../children/children.service";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 
-@UntilDestroy()
 @Component({
   selector: "app-educational-material",
   templateUrl: "./educational-material.component.html",
@@ -15,7 +13,7 @@ import { FormFieldConfig } from "../../../core/entity-components/entity-form/ent
 export class EducationalMaterialComponent
   implements OnChanges, OnInitDynamicComponent {
   @Input() child: Child;
-  records = new Array<EducationalMaterial>();
+  records: EducationalMaterial[] = [];
   summary = "";
 
   columns: FormFieldConfig[] = [
@@ -27,32 +25,30 @@ export class EducationalMaterialComponent
 
   constructor(private childrenService: ChildrenService) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
+  async ngOnChanges(changes: SimpleChanges): Promise<void> {
     if (changes.hasOwnProperty("child")) {
-      this.loadData(this.child.getId());
+      await this.loadData(this.child.getId());
     }
   }
 
-  onInitFromDynamicConfig(config: PanelConfig) {
+  async onInitFromDynamicConfig(config: PanelConfig) {
     if (config?.config?.columns) {
       this.columns = config.config.columns;
     }
 
     this.child = config.entity as Child;
-    this.loadData(this.child.getId());
+    await this.loadData(this.child.getId());
   }
 
-  loadData(id: string) {
-    this.childrenService
-      .getEducationalMaterialsOfChild(id)
-      .pipe(untilDestroyed(this))
-      .subscribe((results) => {
-        this.records = results.sort(
-          (a, b) =>
-            (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0)
-        );
-        this.updateSummary();
-      });
+  async loadData(id: string) {
+    const results = await this.childrenService.getEducationalMaterialsOfChild(
+      id
+    );
+    this.records = results.sort(
+      (a, b) =>
+        (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0)
+    );
+    this.updateSummary();
   }
 
   generateNewRecordFactory() {
