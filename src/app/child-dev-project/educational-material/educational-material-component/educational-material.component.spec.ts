@@ -5,7 +5,6 @@ import { ChildrenService } from "../../children/children.service";
 import { Child } from "../../children/model/child";
 import { DatePipe } from "@angular/common";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { of } from "rxjs";
 import { ChildrenModule } from "../../children/children.module";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
 import { EducationalMaterial } from "../model/educational-material";
@@ -28,11 +27,8 @@ describe("EducationalMaterialComponent", () => {
   beforeEach(
     waitForAsync(() => {
       mockChildrenService = jasmine.createSpyObj([
-        "getChild",
         "getEducationalMaterialsOfChild",
       ]);
-      mockChildrenService.getChild.and.returnValue(of(child));
-      mockChildrenService.getEducationalMaterialsOfChild.and.resolveTo([]);
       TestBed.configureTestingModule({
         declarations: [EducationalMaterialComponent],
         imports: [
