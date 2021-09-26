@@ -21,7 +21,6 @@ import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatSelectModule } from "@angular/material/select";
 import { RouterModule } from "@angular/router";
-import { SchoolsService } from "./schools.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Angulartics2Module } from "angulartics2";
 import { ChildrenOverviewComponent } from "./children-overview/children-overview.component";
@@ -78,7 +77,7 @@ import { ViewModule } from "../../core/view/view.module";
     ChildrenOverviewComponent,
   ],
   exports: [SchoolBlockComponent],
-  providers: [SchoolsService, DatePipe],
+  providers: [DatePipe],
   entryComponents: [SchoolBlockComponent],
 })
 export class SchoolsModule {}
