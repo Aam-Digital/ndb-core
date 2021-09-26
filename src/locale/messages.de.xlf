@@ -157,7 +157,7 @@
         <note priority="1" from="meaning">Event-Record label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.html</context>
-          <context context-type="linenumber">9</context>
+          <context context-type="linenumber">9,15</context>
         </context-group>
       </trans-unit>
       <trans-unit id="611182c5ab4a8ff9b8dc639b9017d9b094f7fdaf" datatype="html">
@@ -177,7 +177,7 @@
         <note priority="1" from="meaning">Not listed</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.html</context>
-          <context context-type="linenumber">75</context>
+          <context context-type="linenumber">75,81</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9e6abcd71b45e3065a27dd6345db6b64b86b5463" datatype="html">
@@ -188,7 +188,7 @@
         <note priority="1" from="meaning">Record Attendance button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.html</context>
-          <context context-type="linenumber">93</context>
+          <context context-type="linenumber">93,99</context>
         </context-group>
       </trans-unit>
       <trans-unit id="67beb29a599fc9ce9ea95f0407cc99ec5742573c" datatype="html">
@@ -238,7 +238,7 @@
         <note priority="1" from="description">Finish entering the attendance of a child</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
-          <context context-type="linenumber">94</context>
+          <context context-type="linenumber">94,98</context>
         </context-group>
       </trans-unit>
       <trans-unit id="258b18886b42770303b23f052e7213217fe64513" datatype="html">
@@ -1811,7 +1811,7 @@
         <note priority="1" from="description">Download database button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
-          <context context-type="linenumber">87</context>
+          <context context-type="linenumber">87,93</context>
         </context-group>
       </trans-unit>
       <trans-unit id="b6b1680b930c768442bb1f44e8585bcb552da70e" datatype="html">
@@ -1865,7 +1865,7 @@
         <note priority="1" from="description">Debug PouchDB header</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
-          <context context-type="linenumber">139</context>
+          <context context-type="linenumber">139,142</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4d82f0fa1e7c8ef3386b6ae101ab19241989d682" datatype="html">
@@ -1883,7 +1883,7 @@
         <note priority="1" from="description">Empty database button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
-          <context context-type="linenumber">151</context>
+          <context context-type="linenumber">151,159</context>
         </context-group>
       </trans-unit>
       <trans-unit id="acd3b31fd509e5abd16d108c750e16cb696ed88f" datatype="html">
@@ -4944,7 +4944,7 @@
         <target state="translated">Bitte Passwort für diese App eingeben, sodass das obige Cloud-Service-Passwort verschlüsselt später verwendet werden kann.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/webdav/cloud-file-service-user-settings/cloud-file-service-user-settings.component.html</context>
-          <context context-type="linenumber">40</context>
+          <context context-type="linenumber">40,47</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3bcbc3c8283886202d0174f65658a8174c1cdd93" datatype="html">
@@ -4952,7 +4952,7 @@
         <target state="translated"> Das eingegebene Passwort stimmt nicht. Bitte das Benutzer-Passwort für diese App eingeben (nicht das Passwort für den obigen Cloud-Service). </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/webdav/cloud-file-service-user-settings/cloud-file-service-user-settings.component.html</context>
-          <context context-type="linenumber">58</context>
+          <context context-type="linenumber">58,64</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2a62a59d9424e9e869061ebf3e8f8b8f95411571" datatype="html">
@@ -4961,7 +4961,7 @@
         <note priority="1" from="description">Generic save button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/webdav/cloud-file-service-user-settings/cloud-file-service-user-settings.component.html</context>
-          <context context-type="linenumber">71</context>
+          <context context-type="linenumber">71,74</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8084830282937656857" datatype="html">
