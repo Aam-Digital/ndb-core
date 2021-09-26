@@ -55,7 +55,7 @@ export class EducationalMaterialComponent
     this.updateSummary();
   }
 
-  generateNewRecordFactory = () => {
+  newRecordFactory = () => {
     const newAtt = new EducationalMaterial(Date.now().toString());
 
     // use last entered date as default, otherwise today's date

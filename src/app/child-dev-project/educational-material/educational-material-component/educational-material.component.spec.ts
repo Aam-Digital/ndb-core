@@ -105,7 +105,7 @@ describe("EducationalMaterialComponent", () => {
 
   it("associates a new record with the current child", () => {
     component.child = child;
-    const newRecord = component.generateNewRecordFactory();
+    const newRecord = component.newRecordFactory();
     expect(newRecord.child).toBe(child.getId());
   });
 });
