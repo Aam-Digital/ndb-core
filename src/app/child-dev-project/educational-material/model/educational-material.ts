@@ -22,6 +22,12 @@ import { ConfigurableEnumValue } from "../../../core/configurable-enum/configura
 
 @DatabaseEntity("EducationalMaterial")
 export class EducationalMaterial extends Entity {
+  static create(params: Partial<EducationalMaterial>): EducationalMaterial {
+    const educationalMaterial = new EducationalMaterial();
+    Object.assign(educationalMaterial, params);
+    return educationalMaterial;
+  }
+
   @DatabaseField() child: string; // id of Child entity
   @DatabaseField({
     label: $localize`:Date on which the material has been borrowed:Date`,
