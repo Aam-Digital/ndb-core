@@ -20,8 +20,8 @@ export class EducationalMaterialComponent
 
   columns: FormFieldConfig[] = [
     { id: "date", visibleFrom: "xs" },
-    { id: "materialType", visibleFrom: "xs" },
-    { id: "materialAmount", visibleFrom: "md" },
+    { id: "materialType", visibleFrom: "xs", required: true },
+    { id: "materialAmount", visibleFrom: "md", required: true },
     { id: "description", visibleFrom: "md" },
   ];
 
@@ -62,6 +62,7 @@ export class EducationalMaterialComponent
       // use last entered date as default, otherwise today's date
       newAtt.date = this.records.length > 0 ? this.records[0].date : new Date();
       newAtt.child = this.child.getId();
+      newAtt.materialAmount = 1;
 
       return newAtt;
     };
