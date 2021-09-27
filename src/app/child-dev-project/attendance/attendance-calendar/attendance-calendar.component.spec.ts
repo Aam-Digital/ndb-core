@@ -14,6 +14,7 @@ import { MatNativeDateModule } from "@angular/material/core";
 import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
 import { EventNote } from "../model/event-note";
 import { AttendanceService } from "../attendance.service";
+import { AnalyticsService } from "../../../core/analytics/analytics.service";
 
 describe("AttendanceCalendarComponent", () => {
   let component: AttendanceCalendarComponent;
@@ -34,6 +35,10 @@ describe("AttendanceCalendarComponent", () => {
           {
             provide: EntityMapperService,
             useValue: mockEntityMapper(),
+          },
+          {
+            provide: AnalyticsService,
+            useValue: jasmine.createSpyObj(["eventTrack"]),
           },
           {
             provide: AttendanceService,

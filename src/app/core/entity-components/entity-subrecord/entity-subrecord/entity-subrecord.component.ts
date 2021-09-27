@@ -22,6 +22,7 @@ import { EntityFormService } from "../../entity-form/entity-form.service";
 import { MatDialog } from "@angular/material/dialog";
 import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
 import { LoggingService } from "../../../logging/logging.service";
+import { AnalyticsService } from "../../../analytics/analytics.service";
 
 export interface TableRow<T> {
   record: T;
@@ -95,6 +96,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     private media: MediaObserver,
     private entityFormService: EntityFormService,
     private dialog: MatDialog,
+    private analyticsService: AnalyticsService,
     private loggingService: LoggingService
   ) {
     this.mediaSubscription = this.media
@@ -281,6 +283,10 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       this.recordsDataSource.data
     );
     this._entityMapper.save(newRecord).then(() => this.showEntity(newRecord));
+
+    this.analyticsService.eventTrack("subrecord_add_new", {
+      category: newRecord.getType(),
+    });
   }
 
   /**
@@ -290,6 +296,10 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   rowClick(row: TableRow<T>) {
     if (!row.formGroup || row.formGroup.disabled) {
       this.showEntity(row.record);
+
+      this.analyticsService.eventTrack("subrecord_show_popup", {
+        category: row.record.getType(),
+      });
     }
   }
 

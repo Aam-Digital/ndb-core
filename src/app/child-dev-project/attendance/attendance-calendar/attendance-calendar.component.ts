@@ -22,6 +22,7 @@ import { RecurringActivity } from "../model/recurring-activity";
 import { applyUpdate } from "../../../core/entity/model/entity-update";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { AttendanceService } from "../attendance.service";
+import { AnalyticsService } from "../../../core/analytics/analytics.service";
 
 @Component({
   selector: "app-attendance-calendar",
@@ -47,6 +48,7 @@ export class AttendanceCalendarComponent implements OnChanges {
   constructor(
     private entityMapper: EntityMapperService,
     private formDialog: FormDialogService,
+    private analyticsService: AnalyticsService,
     private attendanceService: AttendanceService
   ) {
     this.entityMapper
@@ -148,6 +150,11 @@ export class AttendanceCalendarComponent implements OnChanges {
           this.selectedEvent
         );
       }
+
+      this.analyticsService.eventTrack("calendar_select_date", {
+        category: "Attendance",
+        label: this.selectedEvent ? "with event" : "without event",
+      });
     }
 
     this.calendar.updateTodaysDate();
@@ -165,6 +172,10 @@ export class AttendanceCalendarComponent implements OnChanges {
     }
 
     await this.entityMapper.save(this.selectedEvent);
+
+    this.analyticsService.eventTrack("calendar_save_event_changes", {
+      category: "Attendance",
+    });
   }
 
   createNewEvent() {

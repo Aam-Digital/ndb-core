@@ -17,6 +17,10 @@ export const defaultJsonConfig = {
   "appConfig": {
     displayLanguageSelect: true,
   },
+  "appConfig:usage-analytics": {
+    "url": "https://matomo.aam-digital.org",
+    "site_id": "8",
+  },
   "navigationMenu": {
     "items": [
       {
@@ -351,15 +355,6 @@ export const defaultJsonConfig = {
             {
               "title": "",
               "component": "ChildrenOverview",
-              "config": {
-                "popupColumns": [
-                  "childId",
-                  "start",
-                  "end",
-                  "schoolClass",
-                  "result",
-                ],
-              }
             }
           ]
         }
