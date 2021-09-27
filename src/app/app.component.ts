@@ -35,6 +35,7 @@ import { Note } from "./child-dev-project/notes/model/note";
 import { EventNote } from "./child-dev-project/attendance/model/event-note";
 import { waitForChangeTo } from "./core/session/session-states/session-utils";
 import { environment } from "../environments/environment";
+import { ChildSchoolRelation } from "./child-dev-project/children/model/childSchoolRelation";
 
 @Component({
   selector: "app-root",
@@ -81,6 +82,7 @@ export class AppComponent implements OnInit {
       this.entityConfigService.addConfigAttributes(HistoricalEntityData);
       this.entityConfigService.addConfigAttributes(Note);
       this.entityConfigService.addConfigAttributes(EventNote);
+      this.entityConfigService.addConfigAttributes(ChildSchoolRelation);
     });
 
     // If loading the config earlier (in a module constructor or through APP_INITIALIZER) a runtime error occurs.

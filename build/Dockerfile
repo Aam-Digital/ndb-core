@@ -48,6 +48,15 @@ ARG GIT_COMMITTED_AT
 ARG CC_TEST_REPORTER_ID
 RUN if [ "$UPLOAD_COVERAGE" = true ] ; then ./cc-test-reporter after-build --debug ; fi
 
+# Information required to upload the sourcemap to sentry
+# If not set, nothing is uploaded
+ARG SENTRY_AUTH_TOKEN
+ARG SENTRY_ORG
+ARG SENTRY_PROJECT
+RUN if [ "$SENTRY_AUTH_TOKEN" != "" ] ; then \
+    npm install -g @sentry/cli &&\
+    sentry-cli --auth-token=$SENTRY_AUTH_TOKEN releases --org=$SENTRY_ORG --project=$SENTRY_PROJECT files $APP_VERSION upload-sourcemaps dist  && \
+    rm dist/*/*.map ; fi
 
 ### PROD image
 
