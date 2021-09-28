@@ -109,19 +109,17 @@ export class AnalyticsService {
     }
     window["_paq"].push(["trackPageView"]);
     window["_paq"].push(["enableLinkTracking"]);
-    (() => {
-      const u = url.endsWith("/") ? url : url + "/";
-      window["_paq"].push(["setTrackerUrl", u + "matomo.php"]);
-      window["_paq"].push(["setSiteId", id]);
-      const d = document;
-      const g = d.createElement("script");
-      const s = d.getElementsByTagName("script")[0];
-      g.type = "text/javascript";
-      g.async = true;
-      g.defer = true;
-      g.src = u + "matomo.js";
-      s.parentNode.insertBefore(g, s);
-    })();
+    const u = url.endsWith("/") ? url : url + "/";
+    window["_paq"].push(["setTrackerUrl", u + "matomo.php"]);
+    window["_paq"].push(["setSiteId", id]);
+    const d = document;
+    const g = d.createElement("script");
+    const s = d.getElementsByTagName("script")[0];
+    g.type = "text/javascript";
+    g.async = true;
+    g.defer = true;
+    g.src = u + "matomo.js";
+    s.parentNode.insertBefore(g, s);
   }
 
   /**
