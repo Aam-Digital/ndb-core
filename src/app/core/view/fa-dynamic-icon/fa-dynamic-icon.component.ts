@@ -16,6 +16,7 @@ import {
   faUser,
 } from "@fortawesome/free-regular-svg-icons";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
+import { LoggingService } from "../../logging/logging.service";
 
 /**
  * font-awesome icons decoupled from the config
@@ -74,6 +75,7 @@ export class FaDynamicIconComponent {
     }
     if (!definition) {
       // Fallback if the icon is neither in the map nor a registered icon
+      this.loggingService.debug('Icon not found: ' + icon);
       definition = FaDynamicIconComponent.fallbackIcon;
     }
     this._icon = definition;
@@ -84,5 +86,5 @@ export class FaDynamicIconComponent {
    */
   _icon: IconDefinition;
 
-  constructor(private iconLibrary: FaIconLibrary) {}
+  constructor(private iconLibrary: FaIconLibrary, private loggingService: LoggingService) {}
 }
