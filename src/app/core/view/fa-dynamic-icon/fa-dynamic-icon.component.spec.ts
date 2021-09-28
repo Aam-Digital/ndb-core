@@ -1,8 +1,15 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { FaDynamicIconComponent } from "./fa-dynamic-icon.component";
-import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
-import { faCoffee, faHome } from "@fortawesome/free-solid-svg-icons";
+import {
+  FaIconLibrary,
+  FontAwesomeModule,
+} from "@fortawesome/angular-fontawesome";
+import {
+  faCoffee,
+  faHome,
+  faQuestion,
+} from "@fortawesome/free-solid-svg-icons";
 import { LoggingService } from "../../logging/logging.service";
 
 describe("FaDynamicIconComponent", () => {
@@ -25,6 +32,7 @@ describe("FaDynamicIconComponent", () => {
     });
     await TestBed.configureTestingModule({
       declarations: [FaDynamicIconComponent],
+      imports: [FontAwesomeModule],
       providers: [
         { provide: FaIconLibrary, useValue: mockIconLibrary },
         { provide: LoggingService, useValue: mockLoggingService },
@@ -35,6 +43,7 @@ describe("FaDynamicIconComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(FaDynamicIconComponent);
     component = fixture.componentInstance;
+    component._icon = faQuestion;
     fixture.detectChanges();
   });
 
