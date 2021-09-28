@@ -22,6 +22,10 @@ import { ConfigurableEnumValue } from "../../../core/configurable-enum/configura
 
 @DatabaseEntity("EducationalMaterial")
 export class EducationalMaterial extends Entity {
+  static create(params: Partial<EducationalMaterial>): EducationalMaterial {
+    return Object.assign(new EducationalMaterial(), params);
+  }
+
   @DatabaseField() child: string; // id of Child entity
   @DatabaseField({
     label: $localize`:Date on which the material has been borrowed:Date`,
@@ -31,10 +35,12 @@ export class EducationalMaterial extends Entity {
     label: $localize`:The material which has been borrowed:Material`,
     dataType: "configurable-enum",
     innerDataType: "materials",
+    required: true,
   })
   materialType: ConfigurableEnumValue;
   @DatabaseField({
     label: $localize`:The amount of the material which has been borrowed:Amount`,
+    required: true,
   })
   materialAmount: number;
   @DatabaseField({
