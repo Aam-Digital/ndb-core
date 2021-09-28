@@ -75,7 +75,7 @@ export class FaDynamicIconComponent {
       // Fallback if the icon is neither in the map nor a registered icon
       definition = FaDynamicIconComponent.fallbackIcon;
       this.loggingService.warn(
-        `Tried to set icon ${icon} but it is neither registered as dynamic icon` +
+        `Tried to set icon ${icon} but it is neither registered as dynamic icon ` +
           `nor does it exist as font-awesome regular item`
       );
     }
