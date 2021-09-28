@@ -23,7 +23,6 @@ import { MatButtonModule } from "@angular/material/button";
 import { CommonModule } from "@angular/common";
 import { ActivityCardComponent } from "./activity-card/activity-card.component";
 import { MatCardModule } from "@angular/material/card";
-import { MatIconModule } from "@angular/material/icon";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { RollCallSetupComponent } from "./add-day-attendance/roll-call-setup/roll-call-setup.component";
 import { MatListModule } from "@angular/material/list";
@@ -83,7 +82,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     MatButtonModule,
     CommonModule,
     MatCardModule,
-    MatIconModule,
     MatTooltipModule,
     MatListModule,
     MatInputModule,

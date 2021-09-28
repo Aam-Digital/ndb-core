@@ -2,8 +2,9 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EditBooleanComponent } from "./edit-boolean.component";
 import { EntityDetailsModule } from "../../../entity-details/entity-details.module";
-import { FormControl, FormGroup } from "@angular/forms";
+import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { MatCheckboxModule } from "@angular/material/checkbox";
 
 describe("EditBooleanComponent", () => {
   let component: EditBooleanComponent;
@@ -11,7 +12,12 @@ describe("EditBooleanComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EntityDetailsModule, NoopAnimationsModule],
+      imports: [
+        EntityDetailsModule,
+        NoopAnimationsModule,
+        MatCheckboxModule,
+        ReactiveFormsModule,
+      ],
       declarations: [EditBooleanComponent],
     }).compileComponents();
   });

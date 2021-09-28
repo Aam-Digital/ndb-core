@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ChildBlockComponent } from "./child-block.component";
 import { RouterTestingModule } from "@angular/router/testing";
-import { MatIconModule } from "@angular/material/icon";
 import { of } from "rxjs";
 import { SchoolBlockComponent } from "../../schools/school-block/school-block.component";
 import { ChildrenService } from "../children.service";
@@ -22,7 +21,7 @@ describe("ChildBlockComponent", () => {
 
       TestBed.configureTestingModule({
         declarations: [SchoolBlockComponent, ChildBlockComponent],
-        imports: [RouterTestingModule, MatIconModule],
+        imports: [RouterTestingModule],
         providers: [
           { provide: ChildrenService, useValue: mockChildrenService },
         ],

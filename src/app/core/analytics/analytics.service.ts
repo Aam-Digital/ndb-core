@@ -109,7 +109,6 @@ export class AnalyticsService {
     }
     window["_paq"].push(["trackPageView"]);
     window["_paq"].push(["enableLinkTracking"]);
-    (() => {
       const u = url.endsWith("/") ? url : url + "/";
       window["_paq"].push(["setTrackerUrl", u + "matomo.php"]);
       window["_paq"].push(["setSiteId", id]);
@@ -121,7 +120,6 @@ export class AnalyticsService {
       g.defer = true;
       g.src = u + "matomo.js";
       s.parentNode.insertBefore(g, s);
-    })();
   }
 
   /**
