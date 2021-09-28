@@ -1,5 +1,5 @@
 [![Release Version](https://img.shields.io/github/release/Aam-Digital/ndb-core.svg)](https://github.com/Aam-Digital/ndb-core/releases)
-[![Build Status](https://travis-ci.org/Aam-Digital/ndb-core.svg?branch=master)](https://travis-ci.org/Aam-Digital/ndb-core)
+[![Build Status](https://github.com/Aam-Digital/ndb-core/actions/workflows/master-push.yml/badge.svg)](https://github.com/Aam-Digital/ndb-core/actions/workflows/master-push.yml)
 [![Code Climate](https://codeclimate.com/github/Aam-Digital/ndb-core/badges/gpa.svg)](https://codeclimate.com/github/Aam-Digital/ndb-core)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/4e4a7a6301064019b2c9/test_coverage)](https://codeclimate.com/github/Aam-Digital/ndb-core/test_coverage)
 [![Guides](https://img.shields.io/badge/Tutorial%20%26%20Guides-20-blue)](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html)

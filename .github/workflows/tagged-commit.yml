@@ -31,3 +31,6 @@ jobs:
           cache-to: type=registry,ref=aamdigital/ndb-server:cache,mode=max
           build-args: |
             APP_VERSION=${{ env.TAG }}
+            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_TOKEN }}
+            SENTRY_ORG=${{ secrets.SENTRY_ORG }}
+            SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }}

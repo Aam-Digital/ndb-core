@@ -1,26 +1,21 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { FaDynamicIconComponent } from "./fa-dynamic-icon.component";
-import {
-  FaIconLibrary,
-  FontAwesomeModule,
-} from "@fortawesome/angular-fontawesome";
-import {
-  faCoffee,
-  faHome,
-  faQuestion,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
+import { faCoffee, faHome } from "@fortawesome/free-solid-svg-icons";
+import { LoggingService } from "../../logging/logging.service";
 
 describe("FaDynamicIconComponent", () => {
   let component: FaDynamicIconComponent;
   let fixture: ComponentFixture<FaDynamicIconComponent>;
   let mockIconLibrary: jasmine.SpyObj<FaIconLibrary>;
+  let mockLoggingService: jasmine.SpyObj<LoggingService>;
 
   beforeEach(async () => {
     mockIconLibrary = jasmine.createSpyObj<FaIconLibrary>([
       "getIconDefinition",
     ]);
+    mockLoggingService = jasmine.createSpyObj(["warn"]);
     mockIconLibrary.getIconDefinition.and.callFake((prefix, icon) => {
       if (icon === "coffee") {
         return faCoffee;
@@ -30,15 +25,16 @@ describe("FaDynamicIconComponent", () => {
     });
     await TestBed.configureTestingModule({
       declarations: [FaDynamicIconComponent],
-      imports: [FontAwesomeTestingModule, FontAwesomeModule],
-      providers: [{ provide: FaIconLibrary, useValue: mockIconLibrary }],
+      providers: [
+        { provide: FaIconLibrary, useValue: mockIconLibrary },
+        { provide: LoggingService, useValue: mockLoggingService },
+      ],
     }).compileComponents();
   });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(FaDynamicIconComponent);
     component = fixture.componentInstance;
-    component._icon = faQuestion;
     fixture.detectChanges();
   });
 
@@ -56,8 +52,9 @@ describe("FaDynamicIconComponent", () => {
     expect(component._icon).toEqual(faCoffee);
   });
 
-  it("should show the fallback icon when it is neither in the map nor exists as icon definition", () => {
+  it("should show the fallback icon and warn when it is neither in the map nor exists as icon definition", () => {
     component.icon = "I do not exist";
     expect(component._icon).toEqual(FaDynamicIconComponent.fallbackIcon);
+    expect(mockLoggingService.warn).toHaveBeenCalled();
   });
 });

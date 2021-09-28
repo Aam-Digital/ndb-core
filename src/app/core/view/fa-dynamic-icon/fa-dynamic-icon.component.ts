@@ -57,8 +57,8 @@ export class FaDynamicIconComponent {
    * <br>
    * If for some reason the icon is not inside the map or cannot be inserted into the map,
    * the icon name has to match the <em>exact</em> icon name as provided by font-awesome.
-   * Prefixed icon names are not supported and the prefix is always assumed to be `far`
-   * (font awesome regular items).
+   * Prefixed icon names are not supported and the prefix is always assumed to be `fas`
+   * (font awesome solid items).
    * <br>
    * In case the provided icon still doesn't exist, a question-mark-icon with circle
    * (see {@link fallbackIcon}) will be shown.
@@ -71,12 +71,15 @@ export class FaDynamicIconComponent {
     let definition = faDynamicIcons.get(icon);
     if (!definition) {
       // Fallback if the icon is not available: search through the icon definitions
-      definition = this.iconLibrary.getIconDefinition("far", icon as IconName);
+      definition = this.iconLibrary.getIconDefinition("fas", icon as IconName);
     }
     if (!definition) {
       // Fallback if the icon is neither in the map nor a registered icon
-      this.loggingService.debug('Icon not found: ' + icon);
       definition = FaDynamicIconComponent.fallbackIcon;
+      this.loggingService.warn(
+        `Tried to set icon ${icon} but it is neither registered as dynamic icon` +
+          `nor does it exist as font-awesome regular item`
+      );
     }
     this._icon = definition;
   }
@@ -86,5 +89,8 @@ export class FaDynamicIconComponent {
    */
   _icon: IconDefinition;
 
-  constructor(private iconLibrary: FaIconLibrary, private loggingService: LoggingService) {}
+  constructor(
+    private iconLibrary: FaIconLibrary,
+    private loggingService: LoggingService
+  ) {}
 }
