@@ -6,8 +6,17 @@
         stage (e.g. selecting the event, recording it)
       "
     >
-      Record Attendance: {{ stages[currentStage] }}
+      Record Attendance
     </h1>
+    <h2 *ngIf="currentStage === 0">
+      {{ stages[currentStage] }}
+    </h2>
+    <div fxLayout="row" *ngIf="currentStage !== 0">
+      <button mat-icon-button (click)="exit()">
+        <mat-icon style="margin-bottom: 12px;" fontIcon="fa-backward"></mat-icon>
+      </button>
+      <h2>{{event.subject}}</h2>
+    </div>
   </div>
 
   <div fxFlex="grow" class="flex-fill-section">

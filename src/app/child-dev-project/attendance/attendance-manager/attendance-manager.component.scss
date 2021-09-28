@@ -1,8 +1,10 @@
 @import "../../../../styles";
+@import "../../../utils/grid-layout";
 
 $margin-side: 16px;
 
 $min-width-content: 250px;
+$widget-height: 370px;
 
 .general-description {
   font-style: italic;
@@ -13,10 +15,12 @@ $min-width-content: 250px;
 }
 
 .cards-wrapper {
-  display: flex;
+  @include adaptive-grid($min-width-content);
+  grid-auto-rows: $widget-height;
+  /*display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: $standard-grid-gap;
+  gap: $standard-grid-gap; */
 }
 
 .mat-card {

@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { Note } from "../../notes/model/note";
+import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 
 @Component({
   selector: "app-add-day-attendance",
@@ -20,11 +21,18 @@ export class AddDayAttendanceComponent {
     $localize`:One of the stages while recording child-attendances:Record Attendance`,
   ];
 
-  constructor(private entityMapper: EntityMapperService) {}
+  constructor(
+    private entityMapper: EntityMapperService,
+    private confirmationDialog: ConfirmationDialogService
+  ) {}
 
   finishBasicInformationStage(event: Note) {
     this.event = event;
     this.currentStage = 1;
+  }
+
+  exit() {
+    this.confirmationDialog.openDialog("Exit", "Do you want to save or exit?");
   }
 
   finishRollCallState() {
