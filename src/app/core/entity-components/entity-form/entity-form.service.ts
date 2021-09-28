@@ -61,12 +61,9 @@ export class EntityFormService {
     const entitySchema = entity.getSchema();
     formFields.forEach((formField) => {
       const propertySchema = entitySchema.get(formField.id);
-      // Only properties with a schema are editable
-      if (propertySchema) {
-        formConfig[formField.id] = [entity[formField.id]];
-        if (formField.required || propertySchema?.required) {
-          formConfig[formField.id].push(Validators.required);
-        }
+      formConfig[formField.id] = [entity[formField.id]];
+      if (formField.required || propertySchema?.required) {
+        formConfig[formField.id].push(Validators.required);
       }
     });
     return this.fb.group(formConfig);
