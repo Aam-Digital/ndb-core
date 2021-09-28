@@ -108,6 +108,13 @@ export class NotesManagerComponent implements OnInit {
     return notes;
   }
 
+  public async testLoadEntities(includeEventNotes: boolean = true): Promise<Note[]> {
+    if(includeEventNotes)
+      this.includeEventNotes = true
+
+    return this.loadEntities();
+  }
+
   private subscribeEntityUpdates(
     entityType: EntityConstructor<Note | EventNote>
   ) {

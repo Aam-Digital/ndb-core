@@ -31,6 +31,7 @@ import { BehaviorSubject } from "rxjs";
 import { UpdatedEntity } from "../../../core/entity/model/entity-update";
 import { ExportService } from "../../../core/export/export-service/export.service";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
+import moment from "moment";
 
 describe("NotesManagerComponent", () => {
   let component: NotesManagerComponent;
@@ -53,7 +54,7 @@ describe("NotesManagerComponent", () => {
       groups: [
         {
           name: "Standard",
-          columns: ["date", "subject", "children"],
+          columns: ["date", "subject", "category", "children"],
         },
       ],
     },
@@ -216,6 +217,15 @@ describe("NotesManagerComponent", () => {
     expect(component.notes).toEqual([note]);
   });
 
+  it("benchmarks time for loading the notes list", async () => {
+    const currentTimer = new Timer();
+    const result = component.testLoadEntities();
+    const duration = currentTimer.stop();
+
+    expect(result !== null).toBeTruthy();
+    return duration;
+  });
+
   it("loads initial list including EventNotes if set in config", fakeAsync(() => {
     const note = Note.create(new Date("2020-01-01"), "test note");
     note.category = testInteractionTypes[0];
@@ -236,4 +246,36 @@ describe("NotesManagerComponent", () => {
 
     expect(component.notes).toEqual([note, eventNote]);
   }));
+
 });
+
+/**
+ * Utility class to calculate duration of an action.
+ */
+class Timer {
+  private startTime?: moment.Moment;
+  private stopTime?: moment.Moment;
+
+  constructor(start: boolean = true) {
+    if (start) {
+      this.start();
+    }
+  }
+
+  start() {
+    this.startTime = moment();
+  }
+
+  stop() {
+    this.stopTime = moment();
+    return this.getDuration();
+  }
+
+  getDuration(): number {
+    if (this.startTime == undefined) {
+      return 0;
+    } else {
+      return -this.startTime.diff(this.stopTime ?? moment(), "milliseconds");
+    }
+  }
+}
