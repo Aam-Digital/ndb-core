@@ -40,7 +40,7 @@ export const defaultJsonConfig = {
       },
       {
         "name": $localize`:Menu item:Recurring Activities`,
-        "icon": "calendar",
+        "icon": "calendar-alt",
         "link": "/recurring-activity"
       },
       {
@@ -706,7 +706,7 @@ export const defaultJsonConfig = {
           ]
         }
       ],
-      "icon": "calendar"
+      "icon": "calendar-alt"
     }
   },
   "view:report": {

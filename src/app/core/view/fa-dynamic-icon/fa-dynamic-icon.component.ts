@@ -8,13 +8,11 @@ import {
   faTable,
   faUniversity,
   faWrench,
-} from "@fortawesome/free-solid-svg-icons";
-import {
-  faCalendar,
   faCalendarCheck,
+  faCalendar,
   faFileAlt,
   faUser,
-} from "@fortawesome/free-regular-svg-icons";
+} from "@fortawesome/free-solid-svg-icons";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { LoggingService } from "../../logging/logging.service";
 
