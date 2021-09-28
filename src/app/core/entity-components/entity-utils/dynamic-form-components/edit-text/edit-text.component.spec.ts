@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EditTextComponent } from "./edit-text.component";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { EntityDetailsModule } from "../../../entity-details/entity-details.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -14,7 +13,6 @@ describe("EditTextComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        EntityDetailsModule,
         NoopAnimationsModule,
         MatFormFieldModule,
         ReactiveFormsModule,
