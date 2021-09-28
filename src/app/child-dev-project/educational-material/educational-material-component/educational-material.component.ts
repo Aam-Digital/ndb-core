@@ -22,8 +22,8 @@ export class EducationalMaterialComponent
 
   columns: FormFieldConfig[] = [
     { id: "date", visibleFrom: "xs" },
-    { id: "materialType", visibleFrom: "xs", required: true },
-    { id: "materialAmount", visibleFrom: "md", required: true },
+    { id: "materialType", visibleFrom: "xs" },
+    { id: "materialAmount", visibleFrom: "md" },
     { id: "description", visibleFrom: "md" },
   ];
 
