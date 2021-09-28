@@ -20,10 +20,10 @@ $padding-header: 24px;
    * centered way
    */
   display: grid;
-  grid-template: 2fr 1fr / $font-size-headline 1fr;
+  grid-template: 2fr 1fr / 40pt 1fr;
   grid-template-areas:
     "icon headline"
-    "icon subheadline";
+    "subheadline subheadline";
   padding: $padding-header;
   height: $widget-header-height;
 }
@@ -47,6 +47,7 @@ $padding-header: 24px;
   grid-area: subheadline;
   text-align: end;
   place-self: end;
+  margin-top: 8px;
 }
 
 .widget-content {
