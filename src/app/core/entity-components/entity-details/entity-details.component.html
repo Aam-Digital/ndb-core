@@ -28,7 +28,7 @@
         <fa-icon icon="backward"></fa-icon>
       </button>
 
-      <i [className]="classNamesWithIcon"></i>
+      <app-fa-dynamic-icon class="icon" [icon]="iconName"> </app-fa-dynamic-icon>
       <span *ngIf="!creatingNew">{{ entity?.toString() }}</span>
       <span
         *ngIf="creatingNew"

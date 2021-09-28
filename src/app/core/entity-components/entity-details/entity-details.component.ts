@@ -57,7 +57,7 @@ export class EntityDetailsComponent {
   operationType = OperationType;
 
   panels: Panel[] = [];
-  classNamesWithIcon: string;
+  iconName: string;
   config: EntityDetailsConfig;
 
   constructor(
@@ -72,7 +72,7 @@ export class EntityDetailsComponent {
   ) {
     this.route.data.subscribe((data: RouteData<EntityDetailsConfig>) => {
       this.config = data.config;
-      this.classNamesWithIcon = "fa fa-" + data.config.icon + " fa-fw";
+      this.iconName = data.config.icon;
       this.route.paramMap.subscribe((params) =>
         this.loadEntity(params.get("id"))
       );
