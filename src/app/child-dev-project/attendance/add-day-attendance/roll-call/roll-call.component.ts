@@ -67,6 +67,21 @@ export class RollCallComponent implements OnInit {
   async ngOnInit() {
     this.loadAttendanceStatusTypes();
     await this.loadParticipants();
+    this.setInitialIndex();
+  }
+
+  setInitialIndex() {
+    let index = 0;
+    for (const entry of this.entries) {
+      if (
+        this.eventEntity.getAttendance(entry.child.getId()).status.id
+          ?.length === 0
+      ) {
+        break;
+      }
+      index += 1;
+    }
+    this.currentIndex = index;
   }
 
   private loadAttendanceStatusTypes() {
