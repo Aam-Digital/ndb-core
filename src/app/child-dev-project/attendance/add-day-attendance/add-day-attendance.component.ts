@@ -2,6 +2,7 @@ import { Component } from "@angular/core";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { Note } from "../../notes/model/note";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
+import { ConfirmationDialogButton } from "../../../core/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 
 @Component({
   selector: "app-add-day-attendance",
@@ -15,6 +16,25 @@ export class AddDayAttendanceComponent {
   attendanceType: string;
 
   event: Note;
+
+  readonly buttons: ConfirmationDialogButton[] = [
+    {
+      text: "Save",
+      click: (): boolean => {
+        this.saveRollCallResult(this.event).then(() => {
+          this.finishRollCallState();
+        });
+        return true;
+      },
+    },
+    {
+      text: "Abort",
+      click: (): boolean => {
+        this.finishRollCallState();
+        return false;
+      },
+    },
+  ];
 
   stages = [
     $localize`:One of the stages while recording child-attendances:Select Event`,
@@ -32,7 +52,12 @@ export class AddDayAttendanceComponent {
   }
 
   exit() {
-    this.confirmationDialog.openDialog("Exit", "Do you want to save or exit?");
+    this.confirmationDialog.openDialog(
+      "Exit",
+      "Do you want to save your progress before going back?",
+      this.buttons,
+      true
+    );
   }
 
   finishRollCallState() {
