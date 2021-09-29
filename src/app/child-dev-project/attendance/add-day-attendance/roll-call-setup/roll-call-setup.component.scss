@@ -3,6 +3,7 @@
 // Total height of the bottom control with padding
 $bottom-control-height: 86px;
 $bottom-control-padding: 16px;
+$standard-gap: 8px;
 
 .overall-container {
   min-height: 100vh;
@@ -56,14 +57,16 @@ $bottom-control-padding: 16px;
 .cards-list {
   display: flex;
   flex-flow: row wrap;
-  gap: 8px;
+  gap: $standard-gap;
 }
 
 .flex-scroll-container {
   flex-grow: 1;
-  padding-bottom: 16px;
+  padding-bottom: $bottom-control-padding;
 }
 
 .actions {
-  margin-top: 8px;
+  margin-top: $standard-gap;
+  display: flex;
+  gap: $standard-gap;
 }
