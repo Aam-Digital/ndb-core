@@ -56,13 +56,13 @@
       <button
         i18n="Show more-button|Show more events to record the attendance"
         mat-stroked-button
-        (click)="showMore()"
-        [disabled]="visibleActivities.length === allActivities.length"
+        (click)="showingAll ? showLess() : showMore()"
         angulartics2On="click"
         angularticsCategory="Record Attendance"
         angularticsAction="show_more"
       >
-        Show more
+        <span *ngIf="showingAll">Show less</span>
+        <span *ngIf="!showingAll">Show more</span>
       </button>
       <button
         i18n="Not listed|Allows to create a new event"
