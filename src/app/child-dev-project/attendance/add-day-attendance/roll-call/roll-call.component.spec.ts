@@ -82,6 +82,7 @@ describe("RollCallComponent", () => {
       },
     ];
     mockConfigService.getConfig.and.returnValue(testStatusEnumConfig);
+    mockEntityMapper.load.and.resolveTo(Child.create("test"));
     component.eventEntity = Note.create(new Date());
     component.eventEntity.addChild("1");
     await component.ngOnInit();

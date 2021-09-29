@@ -73,10 +73,7 @@ export class RollCallComponent implements OnInit {
   setInitialIndex() {
     let index = 0;
     for (const entry of this.entries) {
-      if (
-        this.eventEntity.getAttendance(entry.child.getId()).status.id
-          ?.length === 0
-      ) {
+      if (!this.eventEntity.getAttendance(entry.child.getId())?.status?.id) {
         break;
       }
       index += 1;
