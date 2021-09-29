@@ -82,7 +82,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="5bb65d8104511ead0d6c14bf44eb98984e736ea5" datatype="html">
-        <source> Record Attendance: <x id="INTERPOLATION" equiv-text="{{ stages[currentStage] }"/> </source>
+        <source> Record Attendance: <x id="INTERPOLATION" equiv-text="{{ stages[currentStage] }}"/> </source>
         <target state="translated">Anwesenheiten aufnehmen: <x id="INTERPOLATION" equiv-text="{{ stages[currentStage] }}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/add-day-attendance.component.html</context>
@@ -287,7 +287,7 @@
         <note priority="1" from="description">Abort confirmation text</note>
       </trans-unit>
       <trans-unit id="828a009e2c01bece732333b25efb6b62ed46f6ec" datatype="html">
-        <source> attended <x id="INTERPOLATION" equiv-text="{{ attendanceDescription }"/> events </source>
+        <source> attended <x id="INTERPOLATION" equiv-text="{{ attendanceDescription }}"/> events </source>
         <target state="translated"> haben an <x id="INTERPOLATION" equiv-text="{{attendanceDescription}}"/> events teilgenommen </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-block/attendance-block.component.html</context>
@@ -298,7 +298,7 @@
         <note priority="1" from="meaning">Attended Tooltip</note>
       </trans-unit>
       <trans-unit id="ed036f51e8ff8249699a772878a12268f8764150" datatype="html">
-        <source> (excluding <x id="INTERPOLATION" equiv-text="{{ logicalCount[LStatus.IGNORE] }"/> events excused or unknown) </source>
+        <source> (excluding <x id="INTERPOLATION" equiv-text="{{ logicalCount[LStatus.IGNORE] }}"/> events excused or unknown) </source>
         <target state="translated"> (ausgenommene Events <x id="INTERPOLATION" equiv-text="{{ logicalCount[LStatus.IGNORE] }}"/>; entschuldigt oder unbekannt) </target>
         <note priority="1" from="description">How many events were excluded</note>
         <note priority="1" from="meaning">Attended Tooltip</note>
@@ -319,7 +319,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="06771f30e83b5987e80630effdd08b8ca509b8c6" datatype="html">
-        <source> All excused (out of <x id="INTERPOLATION" equiv-text="{{ selectedEvent.children.length }"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other
+        <source> All excused (out of <x id="INTERPOLATION" equiv-text="{{ selectedEvent.children.length }}"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other
       {participants} }"/>) </source>
         <target state="translated"> Alle entschuldigt (von <x id="INTERPOLATION" equiv-text="{{selectedEvent.children.length}}"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {Teilnehmer:in} other {Teilnehmer:innen} }"/>) </target>
         <context-group purpose="location">
@@ -343,7 +343,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="0dc97840c4fe5e03dfb822aed93db7b7bcc45b9b" datatype="html">
-        <source> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.average | percent: &quot;1.0-0&quot; }"/> attended (of <x id="INTERPOLATION_1" equiv-text="{{ selectedEvent.children.length"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other
+        <source> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.average | percent: &quot;1.0-0&quot; }}"/> attended (of <x id="INTERPOLATION_1" equiv-text="{{ selectedEvent.children.length }}"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other
       {participants} }"/>) </source>
         <target state="translated"> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.average | percent: &quot;1.0-0&quot; }}"/> haben teilgenommen (von <x id="INTERPOLATION_1" equiv-text="{{ selectedEvent.children.length }}"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, 1= {Teilnehmende/r} other {Teilnehmern} }"/>) </target>
         <context-group purpose="location">
@@ -352,7 +352,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="fcce2647ba7b1763c285341617aaf63f9edab746" datatype="html">
-        <source> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.excludedUnknown }"/> <x id="ICU" equiv-text="{ selectedEventStats.excludedUnknown, plural, one {participant} other
+        <source> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.excludedUnknown }}"/> <x id="ICU" equiv-text="{ selectedEventStats.excludedUnknown, plural, one {participant} other
       {participants} }"/> without recorded status </source>
         <target state="translated"> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.unknownStatus }}"/> <x id="ICU" equiv-text="{ selectedEventStats.unknownStatus, plural, 1={Teilnehmer:in} other {Teilnehmer:innen} }"/> ohne aufgenommenen Status </target>
         <context-group purpose="location">
@@ -407,7 +407,8 @@
           (focusedChild
             ? entity?.getAttendancePercentage(focusedChild)
             : entity?.getAttendancePercentageAverage()
-          ) | percent: &quot;1.0-0&quot;"/> </source>
+          ) | percent: &quot;1.0-0&quot;
+        }}"/> </source>
         <target state="translated"> Anwesenheit: <x id="INTERPOLATION" equiv-text="{{
           (focusedChild
             ? entity?.getAttendancePercentage(focusedChild)
@@ -918,7 +919,7 @@
             mat-cell
             *matCellDef=&quot;let childNoteInfo&quot;
             class=&quot;dashboard-table-additional-info-cell&quot;
-          >"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span *ngIf=&quot;childNoteInfo.moreThanDaysSince&quot;>"/>><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/> <x id="INTERPOLATION" equiv-text="{{ childNoteInfo.daysSinceLastNote | number: &quot;1.0-0&quot; }"/> days <x id="CLOSE_TABLE_CELL" ctype="x-td" equiv-text="&lt;/td>"/></source>
+          >"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span *ngIf=&quot;childNoteInfo.moreThanDaysSince&quot;>"/>><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/> <x id="INTERPOLATION" equiv-text="{{ childNoteInfo.daysSinceLastNote | number: &quot;1.0-0&quot; }}"/> days <x id="CLOSE_TABLE_CELL" ctype="x-td" equiv-text="&lt;/td>"/></source>
         <target state="translated"><x id="START_TABLE_HEADER_CELL" ctype="x-th" equiv-text="&lt;th mat-header-cell *matHeaderCellDef mat-sort-header scope=&quot;col&quot;>"/><x id="CLOSE_TABLE_HEADER_CELL" ctype="x-th" equiv-text="&lt;/th>"/><x id="START_TABLE_CELL" ctype="x-td" equiv-text="&lt;td
             mat-cell
             *matCellDef=&quot;let childNoteInfo&quot;
@@ -1527,7 +1528,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="f728c501e701d8d7aac7bf1a7cb85ed0b202029a" datatype="html">
-        <source> Currently attending class <x id="INTERPOLATION" equiv-text="{{ current.schoolClass }"/> <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngIf=&quot;current.schoolClass&quot;>"/>at <x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container>"/><x id="START_TAG_APP_SCHOOL_BLOCK" ctype="x-app_school_block" equiv-text="&lt;app-school-block [entityId]=&quot;current.schoolId&quot;>"/><x id="CLOSE_TAG_APP_SCHOOL_BLOCK" ctype="x-app_school_block" equiv-text="&lt;/app-school-block>"/></source>
+        <source> Currently attending class <x id="INTERPOLATION" equiv-text="{{ current.schoolClass }}"/> <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngIf=&quot;current.schoolClass&quot;>"/>at <x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container>"/><x id="START_TAG_APP_SCHOOL_BLOCK" ctype="x-app_school_block" equiv-text="&lt;app-school-block [entityId]=&quot;current.schoolId&quot;>"/><x id="CLOSE_TAG_APP_SCHOOL_BLOCK" ctype="x-app_school_block" equiv-text="&lt;/app-school-block>"/></source>
         <target state="translated"> Besucht derzeit die Klasse <x id="INTERPOLATION" equiv-text="{{ current.schoolClass }}"/> <x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngIf=&quot;current.schoolClass&quot;>"/> der Schule <x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container>"/><x id="START_TAG_APP_SCHOOL_BLOCK" ctype="x-app_school_block" equiv-text="&lt;app-school-block [entityId]=&quot;current.schoolId&quot;>"/><x id="CLOSE_TAG_APP_SCHOOL_BLOCK" ctype="x-app_school_block" equiv-text="&lt;/app-school-block>"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/previous-schools/previous-schools.component.html</context>
@@ -3539,7 +3540,7 @@
         <note priority="1" from="description">Label gender</note>
       </trans-unit>
       <trans-unit id="e64cd56b20854bd619f18d78c372a8ac9f788a8b" datatype="html">
-        <source> Total: <x id="INTERPOLATION" equiv-text="{{ summary }"/>
+        <source> Total: <x id="INTERPOLATION" equiv-text="{{ summary }}"/>
 </source>
         <target state="translated"> Insgesamt: <x id="INTERPOLATION" equiv-text="{{ getSummary() }}"/></target>
         <context-group purpose="location">
@@ -3702,7 +3703,7 @@
         <note priority="1" from="description">Label for the assigned user(s) of a recurring activity</note>
       </trans-unit>
       <trans-unit id="e0dc43b431d171971d708cb150a3fbce5d2530f1" datatype="html">
-        <source> class <x id="INTERPOLATION" equiv-text="{{ entity?.schoolClass }"/> </source>
+        <source> class <x id="INTERPOLATION" equiv-text="{{ entity?.schoolClass }}"/> </source>
         <target state="translated">Klasse <x id="INTERPOLATION" equiv-text="{{ entity?.schoolClass }}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/child-block/child-block.component.html</context>
@@ -4179,7 +4180,7 @@
         <note priority="1" from="description">Generic back button</note>
       </trans-unit>
       <trans-unit id="e7f9b2737dc7e6592a33d3713a94d278643722e1" datatype="html">
-        <source> Adding new <x id="INTERPOLATION" equiv-text="{{ config?.entity }"/> </source>
+        <source> Adding new <x id="INTERPOLATION" equiv-text="{{ config?.entity }}"/> </source>
         <target state="translated"> Neuer Eintrag </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-details/entity-details.component.html</context>
@@ -4212,35 +4213,36 @@
         <target state="translated">Löschen?</target>
         <note priority="1" from="description">Delete confirmation title</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-components/entity-details/entity-details.component.ts</context>
-          <context context-type="linenumber">132</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component.ts</context>
-          <context context-type="linenumber">235</context>
+          <context context-type="sourcefile">src/app/core/entity/entity-remove.service.ts</context>
+          <context context-type="linenumber">89</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="896137811865129024" datatype="html">
-        <source>Are you sure you want to delete this <x id="PH" equiv-text="this.config.entity"/> ?</source>
-        <target state="translated">Wollen Sie <x id="PH" equiv-text="this.config.entity"/> wirklich löschen ?</target>
-        <note priority="1" from="description">Delete confirmation text</note>
+      <trans-unit id="6337685423349700688" datatype="html">
+        <source>Are you sure you want to delete this <x id="PH" equiv-text="entity.getType()"/>?</source>
+        <target state="translated">Wollen sie wirklich dieses/dieses <x id="PH" equiv-text="entity.getType()"/> löschen?</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-components/entity-details/entity-details.component.ts</context>
-          <context context-type="linenumber">133</context>
+          <context context-type="sourcefile">src/app/core/entity/entity-remove.service.ts</context>
+          <context context-type="linenumber">92,90</context>
         </context-group>
+        <note priority="1" from="description">Delete confirmation text</note>
       </trans-unit>
       <trans-unit id="415542860636154559" datatype="html">
-        <source>Deleted Entity <x id="PH" equiv-text="this.entity.toString()"/></source>
+        <source>Deleted Entity <x id="PH" equiv-text="entity.toString()"/></source>
         <target state="translated"><x id="PH" equiv-text="this.entity.getId()"/> gelöscht</target>
         <note priority="1" from="description">Deleted Entity information</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-components/entity-details/entity-details.component.ts</context>
-          <context context-type="linenumber">145</context>
+          <context context-type="sourcefile">src/app/core/entity/entity-remove.service.ts</context>
+          <context context-type="linenumber">102</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="5775346636203685655" datatype="html">
+        <source>Undo</source>
+        <target state="translated">Zurück</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/form-dialog/form-dialog-wrapper/form-dialog-wrapper.component.ts</context>
-          <context context-type="linenumber">142</context>
+          <context context-type="sourcefile">src/app/core/entity/entity-remove.service.ts</context>
+          <context context-type="linenumber">129,127</context>
         </context-group>
+        <note priority="1" from="description">Undo deleting an entity</note>
       </trans-unit>
       <trans-unit id="9e0eaab2042cd18d46b66c7fafc914b7e54b91c3" datatype="html">
         <source> Save </source>
@@ -4288,7 +4290,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="411d33a9f9c498f8a057a66bd721e38d7ed96386" datatype="html">
-        <source> (Showing <x id="INTERPOLATION" equiv-text="{{ filteredEntities.length }"/> entries) </source>
+        <source> (Showing <x id="INTERPOLATION" equiv-text="{{ filteredEntities.length }}"/> entries) </source>
         <target state="translated"> (<x id="INTERPOLATION" equiv-text="{{ entityDataSource.filteredData.length }}"/> Einträge vorhanden) </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-list/entity-list.component.html</context>
@@ -4320,7 +4322,7 @@
         <note priority="1" from="description">Delete confirmation message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component.ts</context>
-          <context context-type="linenumber">236</context>
+          <context context-type="linenumber">242</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6568368650313555376" datatype="html">
@@ -4329,7 +4331,7 @@
         <note priority="1" from="description">Record deleted info</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component.ts</context>
-          <context context-type="linenumber">246</context>
+          <context context-type="linenumber">241</context>
         </context-group>
       </trans-unit>
       <trans-unit id="e26051095cf9572610ef63702b2260ae80f3b2d7" datatype="html">
@@ -4450,7 +4452,7 @@
         <note priority="1" from="description">A placeholder for the input element when select options are not loaded yet</note>
       </trans-unit>
       <trans-unit id="bff91547325db41ddc532740323020315227b440" datatype="html">
-        <source> <x id="INTERPOLATION" equiv-text="{{ entity[property]?.length }"/> in total
+        <source> <x id="INTERPOLATION" equiv-text="{{ entity[property]?.length }}"/> in total
 </source>
         <target state="translated"> <x id="INTERPOLATION" equiv-text="{{ entity[property]?.length }}"/> insgesamt
 </target>
@@ -4732,7 +4734,7 @@
         <note priority="1" from="description">Search label</note>
       </trans-unit>
       <trans-unit id="5a18ff86dec7316b0abcaa53685e042d9e417755" datatype="html">
-        <source> Insert at least <x id="INTERPOLATION" equiv-text="{{ MIN_CHARACTERS_FOR_SEARCH }"/> characters </source>
+        <source> Insert at least <x id="INTERPOLATION" equiv-text="{{ MIN_CHARACTERS_FOR_SEARCH }}"/> characters </source>
         <target state="translated"> Mindestens <x id="INTERPOLATION" equiv-text="{{ MIN_CHARACTERS_FOR_SEARCH }}"/> Buchstaben eingeben </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/search/search.component.html</context>
@@ -4888,7 +4890,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="65276aa6cba4b1cf77121125a2525a46fb0a5b1c" datatype="html">
-        <source> Failed to change password: <x id="INTERPOLATION" equiv-text="{{ passwordChangeResult.error }"/><x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br />"/> Please try again. If the problem persists contact Aam Digital support. </source>
+        <source> Failed to change password: <x id="INTERPOLATION" equiv-text="{{ passwordChangeResult.error }}"/><x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br />"/> Please try again. If the problem persists contact Aam Digital support. </source>
         <target state="translated"> Passwort konnte nicht geändert werden: <x id="INTERPOLATION" equiv-text="{{ passwordChangeResult.error }}"/><x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br />"/> Please try again. If the problem persists contact Aam Digital support. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
