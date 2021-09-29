@@ -1,3 +1,20 @@
 .mat-dialog-actions button {
   margin-right: 4px;
 }
+
+:host {
+  // position: relative !important;
+}
+
+::ng-deep .mat-dialog-container {
+  position: relative;
+}
+
+.cancel-icon {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: 0;
+  // padding applied on all sides for ripples
+  padding: 24px 12px 24px 24px;
+}

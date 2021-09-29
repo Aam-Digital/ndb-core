@@ -34,4 +34,9 @@ export interface ConfirmationDialogConfig {
 
   /** Whether to display an option of yes/no buttons or just a single "ok" button */
   yesNo: boolean;
+
+  /** Whether or not to specify a 'close' icon-button.
+   * This button is on the top-right of the dialog and closes it with no result
+   */
+  closeButton?: boolean;
 }
