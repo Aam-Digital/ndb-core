@@ -61,13 +61,17 @@ export class RollCallSetupComponent implements OnInit {
       RecurringActivity
     );
 
-    this.visibleActivities = this.allActivities.filter((a) =>
-      a.isAssignedTo(this.sessionService.getCurrentUser())
-    );
-    if (this.visibleActivities.length === 0) {
-      this.visibleActivities = this.allActivities.filter(
-        (a) => a.assignedTo.length === 0
+    if (this.showingAll) {
+      this.visibleActivities = this.allActivities;
+    } else {
+      this.visibleActivities = this.allActivities.filter((a) =>
+        a.isAssignedTo(this.sessionService.getCurrentUser())
       );
+      if (this.visibleActivities.length === 0) {
+        this.visibleActivities = this.allActivities.filter(
+          (a) => a.assignedTo.length === 0
+        );
+      }
     }
 
     for (const activity of this.visibleActivities) {
@@ -79,23 +83,13 @@ export class RollCallSetupComponent implements OnInit {
   }
 
   async showMore() {
-    const additionalActivities = this.allActivities.filter(
-      (a) => !this.visibleActivities.includes(a)
-    );
-    for (const activity of additionalActivities) {
-      const newEvent = await this.createEventForActivity(activity);
-      if (newEvent) {
-        this.existingEvents.push(newEvent);
-      }
-      this.visibleActivities.push(activity);
-    }
-    await this.updateEventsList();
     this.showingAll = !this.showingAll;
+    await this.initAvailableEvents();
   }
 
   async showLess() {
-    await this.initAvailableEvents();
     this.showingAll = !this.showingAll;
+    await this.initAvailableEvents();
   }
 
   async setNewDate(date: Date) {
