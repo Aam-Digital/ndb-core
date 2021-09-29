@@ -26,16 +26,16 @@
     [class.primary-background]="item.link === activeLink"
   >
     <a
-      ><mat-icon class="nav-icon" fontIcon="fa-{{ item.icon }}"></mat-icon
+      ><mat-icon fontIcon="fa-{{ item.icon }}"></mat-icon
       >{{ item.label }}</a
     >
     <mat-divider></mat-divider>
   </mat-list-item>
   <mat-list-item (click)="logout()">
-    <a>
-      <mat-icon class="nav-icon" fontIcon="fa-sign-out"></mat-icon>
-      Sign out
-    </a>
+    <a
+      ><mat-icon fontIcon="fa-sign-out"></mat-icon
+      >Sign out</a
+    >
     <mat-divider></mat-divider>
   </mat-list-item>
 </mat-nav-list>
