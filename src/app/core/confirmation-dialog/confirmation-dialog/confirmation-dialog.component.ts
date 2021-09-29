@@ -32,6 +32,9 @@ export interface ConfirmationDialogConfig {
   /** description text in the dialog box */
   text: string;
 
+  /** The buttons that should be displayed */
+  buttons: ConfirmationDialogButton[];
+
   /** Whether to display an option of yes/no buttons or just a single "ok" button */
   yesNo: boolean;
 
@@ -40,3 +43,30 @@ export interface ConfirmationDialogConfig {
    */
   closeButton?: boolean;
 }
+
+export interface ConfirmationDialogButton {
+  text: string;
+  dialogResult?: boolean;
+  click();
+}
+
+export const OkButton: ConfirmationDialogButton[] = [
+  {
+    text: $localize`:Confirmation dialog OK:OK`,
+    click() {},
+    dialogResult: true,
+  },
+];
+
+export const YesNoButtons: ConfirmationDialogButton[] = [
+  {
+    text: $localize`:Confirmation dialog Yes:Yes`,
+    click() {},
+    dialogResult: true,
+  },
+  {
+    text: $localize`:Confirmation dialog No:No`,
+    click() {},
+    dialogResult: false,
+  },
+];
