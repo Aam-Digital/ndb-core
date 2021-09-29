@@ -54,9 +54,9 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
   box-shadow: none;
 }
 
-
-
-
+.mat-dialog-container {
+  position: relative;
+}
 
 .dashboard-widget .mat-card-header {
   padding: 24px;
