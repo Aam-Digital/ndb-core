@@ -11,6 +11,7 @@ import {
   faQuestion,
 } from "@fortawesome/free-solid-svg-icons";
 import { LoggingService } from "../../logging/logging.service";
+import { faAddressBook } from "@fortawesome/free-regular-svg-icons";
 
 describe("FaDynamicIconComponent", () => {
   let component: FaDynamicIconComponent;
@@ -65,5 +66,17 @@ describe("FaDynamicIconComponent", () => {
     component.icon = "I do not exist";
     expect(component._icon).toEqual(FaDynamicIconComponent.fallbackIcon);
     expect(mockLoggingService.warn).toHaveBeenCalled();
+  });
+
+  it("should set an icon if a different prefix is specified", () => {
+    mockIconLibrary.getIconDefinition.and.callFake((prefix, name) => {
+      if (prefix === "far" && name === "address-book") {
+        return faAddressBook;
+      } else {
+        return undefined;
+      }
+    });
+    component.icon = "far address-book";
+    expect(component._icon).toEqual(faAddressBook);
   });
 });

@@ -1,5 +1,9 @@
 import { Component, Input } from "@angular/core";
-import { IconDefinition, IconName } from "@fortawesome/fontawesome-svg-core";
+import {
+  IconDefinition,
+  IconName,
+  IconPrefix,
+} from "@fortawesome/fontawesome-svg-core";
 import {
   faChartLine,
   faChild,
@@ -68,8 +72,19 @@ export class FaDynamicIconComponent {
   @Input() set icon(icon: string) {
     let definition = faDynamicIcons.get(icon);
     if (!definition) {
+      const iconAndDef = icon.split(" ");
+      if (iconAndDef.length === 1) {
+        definition = this.iconLibrary.getIconDefinition(
+          "fas",
+          icon as IconName
+        );
+      } else {
+        definition = this.iconLibrary.getIconDefinition(
+          iconAndDef[0] as IconPrefix,
+          iconAndDef[1] as IconName
+        );
+      }
       // Fallback if the icon is not available: search through the icon definitions
-      definition = this.iconLibrary.getIconDefinition("fas", icon as IconName);
     }
     if (!definition) {
       // Fallback if the icon is neither in the map nor a registered icon
