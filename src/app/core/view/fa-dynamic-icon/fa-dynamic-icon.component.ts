@@ -59,8 +59,9 @@ export class FaDynamicIconComponent {
    * <br>
    * If for some reason the icon is not inside the map or cannot be inserted into the map,
    * the icon name has to match the <em>exact</em> icon name as provided by font-awesome.
-   * Prefixed icon names are not supported and the prefix is always assumed to be `fas`
-   * (font awesome solid items).
+   * A prefix can be specified using the syntax "<prefix> <icon-name>", for example
+   * "far address-book". The default prefix, if not specified, is "fas"
+   * (font-awesome solid icons)
    * <br>
    * In case the provided icon still doesn't exist, a question-mark-icon with circle
    * (see {@link fallbackIcon}) will be shown.
