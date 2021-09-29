@@ -4213,35 +4213,36 @@
         <target state="translated">Löschen?</target>
         <note priority="1" from="description">Delete confirmation title</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-components/entity-details/entity-details.component.ts</context>
-          <context context-type="linenumber">132</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component.ts</context>
-          <context context-type="linenumber">235</context>
+          <context context-type="sourcefile">src/app/core/entity/entity-remove.service.ts</context>
+          <context context-type="linenumber">89</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="896137811865129024" datatype="html">
-        <source>Are you sure you want to delete this <x id="PH" equiv-text="this.config.entity"/> ?</source>
-        <target state="translated">Wollen Sie <x id="PH" equiv-text="this.config.entity"/> wirklich löschen ?</target>
-        <note priority="1" from="description">Delete confirmation text</note>
+      <trans-unit id="6337685423349700688" datatype="html">
+        <source>Are you sure you want to delete this <x id="PH" equiv-text="entity.getType()"/>?</source>
+        <target state="translated">Wollen sie wirklich dieses/dieses <x id="PH" equiv-text="entity.getType()"/> löschen?</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-components/entity-details/entity-details.component.ts</context>
-          <context context-type="linenumber">133</context>
+          <context context-type="sourcefile">src/app/core/entity/entity-remove.service.ts</context>
+          <context context-type="linenumber">92,90</context>
         </context-group>
+        <note priority="1" from="description">Delete confirmation text</note>
       </trans-unit>
       <trans-unit id="415542860636154559" datatype="html">
-        <source>Deleted Entity <x id="PH" equiv-text="this.entity.toString()"/></source>
+        <source>Deleted Entity <x id="PH" equiv-text="entity.toString()"/></source>
         <target state="translated"><x id="PH" equiv-text="this.entity.getId()"/> gelöscht</target>
         <note priority="1" from="description">Deleted Entity information</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-components/entity-details/entity-details.component.ts</context>
-          <context context-type="linenumber">145</context>
+          <context context-type="sourcefile">src/app/core/entity/entity-remove.service.ts</context>
+          <context context-type="linenumber">102</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="5775346636203685655" datatype="html">
+        <source>Undo</source>
+        <target state="translated">Zurück</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/form-dialog/form-dialog-wrapper/form-dialog-wrapper.component.ts</context>
-          <context context-type="linenumber">142</context>
+          <context context-type="sourcefile">src/app/core/entity/entity-remove.service.ts</context>
+          <context context-type="linenumber">129,127</context>
         </context-group>
+        <note priority="1" from="description">Undo deleting an entity</note>
       </trans-unit>
       <trans-unit id="9e0eaab2042cd18d46b66c7fafc914b7e54b91c3" datatype="html">
         <source> Save </source>
@@ -4321,7 +4322,7 @@
         <note priority="1" from="description">Delete confirmation message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component.ts</context>
-          <context context-type="linenumber">236</context>
+          <context context-type="linenumber">242</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6568368650313555376" datatype="html">
@@ -4330,7 +4331,7 @@
         <note priority="1" from="description">Record deleted info</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component.ts</context>
-          <context context-type="linenumber">246</context>
+          <context context-type="linenumber">241</context>
         </context-group>
       </trans-unit>
       <trans-unit id="e26051095cf9572610ef63702b2260ae80f3b2d7" datatype="html">
