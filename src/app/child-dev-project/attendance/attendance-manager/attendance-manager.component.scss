@@ -16,11 +16,6 @@ $widget-height: 370px;
 
 .cards-wrapper {
   @include adaptive-grid($min-width-content);
-  grid-auto-rows: $widget-height;
-  /*display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: $standard-grid-gap; */
 }
 
 .mat-card {
