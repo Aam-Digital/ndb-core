@@ -3,6 +3,7 @@
 .main-list {
   // Mat chip list overflows a little bit without this hack
   width: 98%;
+  padding-left: 1px;
 }
 
 .chip {
