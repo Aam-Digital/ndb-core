@@ -1,3 +1,10 @@
+<mat-icon
+  mat-dialog-close
+  class="cancel-icon"
+  fontIcon="fa-times"
+  mat-ripple
+>
+</mat-icon>
 <div mat-dialog-content class="main-content">
   <div
     *ngFor="let row of data.columns"
@@ -37,13 +44,6 @@
     Save
   </button>
 
-  <button
-    mat-raised-button
-    mat-dialog-close
-    i18n="Cancel button for forms"
-  >
-    Cancel
-  </button>
   <button
     mat-raised-button
     mat-dialog-close

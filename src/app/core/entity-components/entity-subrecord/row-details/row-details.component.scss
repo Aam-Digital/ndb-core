@@ -5,11 +5,23 @@ $min-block-width: 250px;
 .main-content {
   @include adaptive-grid($min-block-width);
   justify-items: stretch;
+  margin-top: 26px;
 }
 
 .row-element {
   white-space: nowrap;
 }
+
+.cancel-icon {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: 12px;
+  // padding applied on all sides for ripples
+  padding: 24px 12px 24px 24px;
+}
+
+
 
 // Hacky way to set the width of every form field
 // which are commonly found here to the maximum
