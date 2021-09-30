@@ -76,7 +76,6 @@ import { HistoricalDataModule } from "./features/historical-data/historical-data
 import { EntityUtilsModule } from "./core/entity-components/entity-utils/entity-utils.module";
 import { DemoHistoricalDataGenerator } from "./features/historical-data/demo-historical-data-generator";
 import { TranslatableMatPaginator } from "./core/translation/TranslatableMatPaginator";
-import { DataImportModule } from "./features/data-import/data-import.module";
 /**
  * Main entry point of the application.
  * Imports required modules and does basic setup.
@@ -91,7 +90,6 @@ import { DataImportModule } from "./features/data-import/data-import.module";
     Angulartics2Module.forRoot({
       developerMode: !environment.production,
     }),
-    DataImportModule,
     BrowserModule,
     BrowserAnimationsModule,
     FlexLayoutModule,
