@@ -1,9 +1,6 @@
-import { ComponentFixture, TestBed, waitForAsync} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { DataImportComponent } from "./data-import.component";
-import { AppConfig } from "../../../core/app-config/app-config";
-import { SessionType } from "../../../core/session/session-type";
 import { DataImportService } from "../data-import.service";
-
 
 describe("DataImportComponent", () => {
   let component: DataImportComponent;
@@ -13,18 +10,24 @@ describe("DataImportComponent", () => {
 
   beforeEach(
     waitForAsync(() => {
-      mockDataImportService = jasmine.createSpyObj(
-        DataImportService,
-        [
-          "handleCsvImport",
-        ]
-      );
+      // AppConfig.settings = {
+      //   site_name: "",
+      //   session_type: SessionType.mock,
+      //   database: {
+      //     name: "unit-tests",
+      //     remote_url: "",
+      //   },
+      // };
+
+      mockDataImportService = jasmine.createSpyObj(DataImportService, [
+        "handleCsvImport",
+      ]);
       TestBed.configureTestingModule({
-        declarations: [ DataImportComponent ],
+        declarations: [DataImportComponent],
         providers: [
           {
             provide: DataImportService,
-            useValue: mockDataImportService
+            useValue: mockDataImportService,
           },
         ],
       }).compileComponents();
@@ -43,7 +46,8 @@ describe("DataImportComponent", () => {
 
   it("should call handleCsvImport() in DataImportService", () => {
     component.importCsvFile(mockCsvFile);
-    expect(mockDataImportService.handleCsvImport).toHaveBeenCalledWith(mockCsvFile);
+    expect(mockDataImportService.handleCsvImport).toHaveBeenCalledWith(
+      mockCsvFile
+    );
   });
-
 });

@@ -1,15 +1,14 @@
 import { Injectable } from "@angular/core";
 import { Database } from "../../core/database/database";
 import { Papa } from "ngx-papaparse";
-import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
-import {BackupService} from "../../core/admin/services/backup.service";
-import {ConfirmationDialogService} from "../../core/confirmation-dialog/confirmation-dialog.service";
-import {MatSnackBar} from "@angular/material/snack-bar";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { BackupService } from "../../core/admin/services/backup.service";
+import { ConfirmationDialogService } from "../../core/confirmation-dialog/confirmation-dialog.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Injectable()
 @UntilDestroy()
 export class DataImportService {
-
   constructor(
     private db: Database,
     private papa: Papa,

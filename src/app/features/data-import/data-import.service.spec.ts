@@ -1,15 +1,20 @@
-import {fakeAsync, flush, TestBed, tick, waitForAsync} from '@angular/core/testing';
+import {
+  fakeAsync,
+  flush,
+  TestBed,
+  tick,
+} from "@angular/core/testing";
 
-import { DataImportService } from './data-import.service';
-import {PouchDatabase} from "../../core/database/pouch-database";
-import {Database} from "../../core/database/database";
-import {BackupService} from "../../core/admin/services/backup.service";
-import {ConfirmationDialogService} from "../../core/confirmation-dialog/confirmation-dialog.service";
-import {MatSnackBar, MatSnackBarRef} from "@angular/material/snack-bar";
-import {MatDialogRef} from "@angular/material/dialog";
-import {of} from "rxjs";
+import { DataImportService } from "./data-import.service";
+import { PouchDatabase } from "../../core/database/pouch-database";
+import { Database } from "../../core/database/database";
+import { BackupService } from "../../core/admin/services/backup.service";
+import { ConfirmationDialogService } from "../../core/confirmation-dialog/confirmation-dialog.service";
+import { MatSnackBar, MatSnackBarRef } from "@angular/material/snack-bar";
+import { MatDialogRef } from "@angular/material/dialog";
+import { of } from "rxjs";
 
-describe('DataImportService', () => {
+describe("DataImportService", () => {
   let db: PouchDatabase;
   let service: DataImportService;
 
@@ -29,19 +34,23 @@ describe('DataImportService', () => {
     return mockFileReader;
   }
 
-  function createDialogMock(confirm: boolean): jasmine.SpyObj<MatDialogRef<any>> {
+  function createDialogMock(
+    confirm: boolean
+  ): jasmine.SpyObj<MatDialogRef<any>> {
     const mockDialogRef: jasmine.SpyObj<
       MatDialogRef<any>
-      > = jasmine.createSpyObj("mockDialogRef", ["afterClosed"]);
+    > = jasmine.createSpyObj("mockDialogRef", ["afterClosed"]);
     mockDialogRef.afterClosed.and.returnValue(of(confirm));
     confirmationDialogMock.openDialog.and.returnValue(mockDialogRef);
     return mockDialogRef;
   }
 
-  function createSnackBarMock(clicked: boolean): jasmine.SpyObj<MatSnackBarRef<any>> {
+  function createSnackBarMock(
+    clicked: boolean
+  ): jasmine.SpyObj<MatSnackBarRef<any>> {
     const mockSnackBarRef: jasmine.SpyObj<
       MatSnackBarRef<any>
-      > = jasmine.createSpyObj("mockSnackBarRef", ["onAction"]);
+    > = jasmine.createSpyObj("mockSnackBarRef", ["onAction"]);
     if (clicked) {
       mockSnackBarRef.onAction.and.returnValue(of(null));
     } else {
@@ -53,47 +62,36 @@ describe('DataImportService', () => {
 
   beforeEach(() => {
     db = PouchDatabase.createWithInMemoryDB();
-    mockSnackBar = jasmine.createSpyObj(
-      "MatSnackBar",
-      [
-        "open"
-      ]
-    );
-    mockBackupService = jasmine.createSpyObj(
-      "BackupService",
-      [
-        "getJsonExport",
-        "importCsv",
-        "clearDatabase",
-        "importJson"
-      ]
-    );
-    confirmationDialogMock = jasmine.createSpyObj(
-      "ConfirmationDialogService",
-      [
-        "openDialog"
-      ]
-    );
+    mockSnackBar = jasmine.createSpyObj("MatSnackBar", ["open"]);
+    mockBackupService = jasmine.createSpyObj("BackupService", [
+      "getJsonExport",
+      "importCsv",
+      "clearDatabase",
+      "importJson",
+    ]);
+    confirmationDialogMock = jasmine.createSpyObj("ConfirmationDialogService", [
+      "openDialog",
+    ]);
     TestBed.configureTestingModule({
       providers: [
         DataImportService,
         {
           provide: Database,
-          useValue: db
+          useValue: db,
         },
         {
           provide: BackupService,
-          useValue: mockBackupService
+          useValue: mockBackupService,
         },
         {
           provide: ConfirmationDialogService,
-          useValue: confirmationDialogMock
+          useValue: confirmationDialogMock,
         },
         {
           provide: MatSnackBar,
-          useValue: mockSnackBar
-        }
-      ]
+          useValue: mockSnackBar,
+        },
+      ],
     });
     service = TestBed.inject(DataImportService);
     spyOn(service, "importCsvContentToDB");
@@ -104,7 +102,7 @@ describe('DataImportService', () => {
     await db.destroy();
   });
 
-  it('should be created', () => {
+  it("should be created", () => {
     expect(service).toBeTruthy();
   });
 
@@ -150,11 +148,14 @@ describe('DataImportService', () => {
 
     tick();
     expect(mockBackupService.clearDatabase).toHaveBeenCalled();
-    expect(mockBackupService.importJson).toHaveBeenCalledWith("mockRestorePoint", true);
+    expect(mockBackupService.importJson).toHaveBeenCalledWith(
+      "mockRestorePoint",
+      true
+    );
     flush();
   }));
 
-  it("should put csv into db", async() => {
+  it("should put csv into db", async () => {
     // Todo, missing importCsv Function
   });
 });
