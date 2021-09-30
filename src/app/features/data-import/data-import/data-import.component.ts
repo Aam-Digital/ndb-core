@@ -1,4 +1,4 @@
-import { Component, Injectable, OnInit } from '@angular/core';
+import { Component, Injectable } from '@angular/core';
 import {DataImportService} from "../data-import.service";
 
 @Component({
@@ -9,14 +9,11 @@ import {DataImportService} from "../data-import.service";
 @Injectable({
   providedIn: "root",
 })
-export class DataImportComponent implements OnInit {
+export class DataImportComponent {
 
   constructor(
     private dataImportService: DataImportService
   ) {  }
-
-  ngOnInit(): void {
-  }
 
   importCsvFile(file: Blob): void {
     this.dataImportService.handleCsvImport(file);
