@@ -35,12 +35,7 @@ describe("AdminComponent", () => {
   );
   const mockBackupService: jasmine.SpyObj<BackupService> = jasmine.createSpyObj(
     BackupService,
-    [
-      "getJsonExport",
-      "getCsvExport",
-      "clearDatabase",
-      "importJson"
-    ]
+    ["getJsonExport", "getCsvExport", "clearDatabase", "importJson"]
   );
 
   const confirmationDialogMock: jasmine.SpyObj<ConfirmationDialogService> = jasmine.createSpyObj(

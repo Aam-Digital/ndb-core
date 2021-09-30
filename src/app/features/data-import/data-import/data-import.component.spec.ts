@@ -6,19 +6,10 @@ describe("DataImportComponent", () => {
   let component: DataImportComponent;
   let fixture: ComponentFixture<DataImportComponent>;
   let mockDataImportService: jasmine.SpyObj<DataImportService>;
-  let mockCsvFile: Blob = new Blob(["1;2;3"]);
+  const mockCsvFile: Blob = new Blob(["1;2;3"]);
 
   beforeEach(
     waitForAsync(() => {
-      // AppConfig.settings = {
-      //   site_name: "",
-      //   session_type: SessionType.mock,
-      //   database: {
-      //     name: "unit-tests",
-      //     remote_url: "",
-      //   },
-      // };
-
       mockDataImportService = jasmine.createSpyObj(DataImportService, [
         "handleCsvImport",
       ]);

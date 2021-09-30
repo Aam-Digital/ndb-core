@@ -1,10 +1,4 @@
-import {
-  fakeAsync,
-  flush,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
-
+import { fakeAsync, flush, TestBed, tick } from "@angular/core/testing";
 import { DataImportService } from "./data-import.service";
 import { PouchDatabase } from "../../core/database/pouch-database";
 import { Database } from "../../core/database/database";
