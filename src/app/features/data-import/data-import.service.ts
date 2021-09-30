@@ -18,7 +18,7 @@ export class DataImportService {
     private snackBar: MatSnackBar
   ) {}
 
-  async importCsv(csv: string): Promise<void> {
+  async importCsvContentToDB(csv: string): Promise<void> {
     const parsedCsv = this.papa.parse(csv, {
       header: true,
       dynamicTyping: true,
@@ -41,7 +41,7 @@ export class DataImportService {
    * Add the data from the loaded file to the database, inserting and updating records.
    * @param file The file object of the csv data to be loaded
    */
-  async loadCsv(file: Blob) {
+  async handleCsvImport(file: Blob) {
     const restorePoint = await this.backupService.getJsonExport();
     const newData = await this.readFile(file);
 
@@ -57,7 +57,7 @@ export class DataImportService {
         return;
       }
 
-      await this.importCsv(newData);
+      await this.importCsvContentToDB(newData);
 
       const snackBarRef = this.snackBar.open(
         $localize`Import completed?`,

@@ -114,14 +114,14 @@ describe('DataImportService', () => {
     createDialogMock(true);
     createSnackBarMock(false);
 
-    service.loadCsv(null);
+    service.handleCsvImport(null);
 
     expect(mockBackupService.getJsonExport).toHaveBeenCalled();
     tick();
     expect(mockFileReader.readAsText).toHaveBeenCalled();
     expect(confirmationDialogMock.openDialog).toHaveBeenCalled();
     flush();
-    expect(service.importCsv).toHaveBeenCalled();
+    expect(service.importCsvContentToDB).toHaveBeenCalled();
   }));
 
   it("should open dialog and abort data-import when cancelled", fakeAsync(() => {
@@ -129,14 +129,14 @@ describe('DataImportService', () => {
     mockBackupService.getJsonExport.and.resolveTo(null);
     createDialogMock(false);
 
-    service.loadCsv(null);
+    service.handleCsvImport(null);
 
     expect(mockBackupService.getJsonExport).toHaveBeenCalled();
     tick();
     expect(mockFileReader.readAsText).toHaveBeenCalled();
     expect(confirmationDialogMock.openDialog).toHaveBeenCalled();
     flush();
-    expect(service.importCsv).not.toHaveBeenCalled();
+    expect(service.importCsvContentToDB).not.toHaveBeenCalled();
   }));
 
   it("should restore database when undo button is clicked", fakeAsync(() => {
@@ -146,7 +146,7 @@ describe('DataImportService', () => {
     createDialogMock(true);
     createSnackBarMock(true);
 
-    service.loadCsv(null);
+    service.handleCsvImport(null);
 
     tick();
     expect(mockBackupService.clearDatabase).toHaveBeenCalled();
