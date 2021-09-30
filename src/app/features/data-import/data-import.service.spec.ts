@@ -38,11 +38,11 @@ describe('DataImportService', () => {
     return mockDialogRef;
   }
 
-  function createSnackBarMock(readable: boolean): jasmine.SpyObj<MatSnackBarRef<any>> {
+  function createSnackBarMock(clicked: boolean): jasmine.SpyObj<MatSnackBarRef<any>> {
     const mockSnackBarRef: jasmine.SpyObj<
       MatSnackBarRef<any>
       > = jasmine.createSpyObj("mockSnackBarRef", ["onAction"]);
-    if (readable) {
+    if (clicked) {
       mockSnackBarRef.onAction.and.returnValue(of(null));
     } else {
       mockSnackBarRef.onAction.and.returnValue(of());
@@ -54,13 +54,13 @@ describe('DataImportService', () => {
   beforeEach(() => {
     db = PouchDatabase.createWithInMemoryDB();
     mockSnackBar = jasmine.createSpyObj(
-      MatSnackBar,
+      "MatSnackBar",
       [
         "open"
       ]
     );
     mockBackupService = jasmine.createSpyObj(
-      BackupService,
+      "BackupService",
       [
         "getJsonExport",
         "importCsv",
@@ -69,7 +69,7 @@ describe('DataImportService', () => {
       ]
     );
     confirmationDialogMock = jasmine.createSpyObj(
-      ConfirmationDialogService,
+      "ConfirmationDialogService",
       [
         "openDialog"
       ]
