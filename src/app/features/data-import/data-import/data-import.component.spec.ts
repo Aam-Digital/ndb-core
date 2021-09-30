@@ -13,15 +13,6 @@ describe("DataImportComponent", () => {
 
   beforeEach(
     waitForAsync(() => {
-      AppConfig.settings = {
-        site_name: "",
-        session_type: SessionType.mock,
-        database: {
-          name: "unit-tests",
-          remote_url: "",
-        },
-      };
-
       mockDataImportService = jasmine.createSpyObj(
         DataImportService,
         [
