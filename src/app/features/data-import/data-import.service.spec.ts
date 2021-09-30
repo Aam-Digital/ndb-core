@@ -96,7 +96,7 @@ describe('DataImportService', () => {
       ]
     });
     service = TestBed.inject(DataImportService);
-    spyOn(service, "importCsv");
+    spyOn(service, "importCsvContentToDB");
     spyOn(db, "put");
   });
 

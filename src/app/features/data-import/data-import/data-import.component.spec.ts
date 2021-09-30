@@ -25,15 +25,15 @@ describe("DataImportComponent", () => {
       mockDataImportService = jasmine.createSpyObj(
         DataImportService,
         [
-          "loadCsv",
+          "handleCsvImport",
         ]
       );
       TestBed.configureTestingModule({
         declarations: [ DataImportComponent ],
         providers: [
-          { 
-            provide: DataImportService, 
-            useValue: mockDataImportService 
+          {
+            provide: DataImportService,
+            useValue: mockDataImportService
           },
         ],
       }).compileComponents();
@@ -50,9 +50,9 @@ describe("DataImportComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should call loadCsv in DataImportService", () => {
+  it("should call handleCsvImport() in DataImportService", () => {
     component.importCsvFile(mockCsvFile);
-    expect(mockDataImportService.loadCsv).toHaveBeenCalledWith(mockCsvFile);
+    expect(mockDataImportService.handleCsvImport).toHaveBeenCalledWith(mockCsvFile);
   });
 
 });
