@@ -9,7 +9,6 @@
     "build-localized": "ng build --configuration=production,localized",
     "test": "ng test",
     "test-ci": "ng test --code-coverage --karmaConfig=build/karma-ci.conf.js ",
-    "test-cov": "ng test --code-coverage --karmaConfig=karma.conf.js ",
     "lint": "ng lint ndb-core --type-check",
     "e2e": "ng e2e",
     "compodoc": "npx compodoc -c doc/compodoc_sources/.compodocrc.json",
