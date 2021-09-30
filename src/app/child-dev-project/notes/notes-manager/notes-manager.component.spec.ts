@@ -31,7 +31,6 @@ import { BehaviorSubject } from "rxjs";
 import { UpdatedEntity } from "../../../core/entity/model/entity-update";
 import { ExportService } from "../../../core/export/export-service/export.service";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
-import moment from "moment";
 
 describe("NotesManagerComponent", () => {
   let component: NotesManagerComponent;
@@ -246,15 +245,14 @@ describe("NotesManagerComponent", () => {
 
     expect(component.notes).toEqual([note, eventNote]);
   }));
-
 });
 
 /**
  * Utility class to calculate duration of an action.
  */
 class Timer {
-  private startTime?: moment.Moment;
-  private stopTime?: moment.Moment;
+  private startTime?: Date;
+  private stopTime?: Date;
 
   constructor(start: boolean = true) {
     if (start) {
@@ -263,19 +261,22 @@ class Timer {
   }
 
   start() {
-    this.startTime = moment();
+    this.startTime = new Date();
   }
 
   stop() {
-    this.stopTime = moment();
+    this.stopTime = new Date();
     return this.getDuration();
   }
 
+  /**
+   * @returns number The duration between start and end (or start and now if timer is running) in milliseconds.
+   */
   getDuration(): number {
-    if (this.startTime == undefined) {
+    if (this.startTime === undefined) {
       return 0;
     } else {
-      return -this.startTime.diff(this.stopTime ?? moment(), "milliseconds");
+      return (this.stopTime ?? new Date()).getTime() - this.startTime.getTime();
     }
   }
 }
