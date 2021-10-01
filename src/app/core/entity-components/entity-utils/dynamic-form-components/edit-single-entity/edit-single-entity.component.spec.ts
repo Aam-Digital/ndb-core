@@ -7,7 +7,7 @@ import {
 
 import { EditSingleEntityComponent } from "./edit-single-entity.component";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
-import { FormControl } from "@angular/forms";
+import { FormControl, Validators } from "@angular/forms";
 import { EntitySchemaService } from "../../../../entity/schema/entity-schema.service";
 import { EntityFormService } from "../../../entity-form/entity-form.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -111,4 +111,16 @@ describe("EditSingleEntityComponent", () => {
 
     expect(inputSpy).toHaveBeenCalled();
   }));
+
+  it("should set the validators for the 'name' form field", async () => {
+    component.formControl.setValidators(Validators.required);
+
+    await component.onInitFromDynamicConfig({
+      formFieldConfig: { id: "childId" },
+      propertySchema: ChildSchoolRelation.schema.get("childId"),
+      formControl: component.formControl,
+    });
+
+    expect(component.entityNameFormControl.invalid).toBeTrue();
+  });
 });

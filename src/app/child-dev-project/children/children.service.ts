@@ -405,16 +405,11 @@ export class ChildrenService {
     return this.dbIndexing.createIndex(designDoc);
   }
 
-  getEducationalMaterialsOfChild(
+  async getEducationalMaterialsOfChild(
     childId: string
-  ): Observable<EducationalMaterial[]> {
-    return from(
-      this.entityMapper
-        .loadType<EducationalMaterial>(EducationalMaterial)
-        .then((loadedEntities) => {
-          return loadedEntities.filter((o) => o.child === childId);
-        })
-    );
+  ): Promise<EducationalMaterial[]> {
+    const allMaterials = await this.entityMapper.loadType(EducationalMaterial);
+    return allMaterials.filter((mat) => mat.child === childId);
   }
 
   /**
