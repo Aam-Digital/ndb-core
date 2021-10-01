@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { BackupService } from "../../core/admin/services/backup.service";
 import { ConfirmationDialogService } from "../../core/confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { readFile } from "../../utils/utils";
 
 @Injectable()
 @UntilDestroy()
@@ -42,7 +43,7 @@ export class DataImportService {
    */
   async handleCsvImport(file: Blob) {
     const restorePoint = await this.backupService.getJsonExport();
-    const newData = await this.readFile(file);
+    const newData = await readFile(file);
 
     const dialogRef = this.confirmationDialog.openDialog(
       $localize`Import new data?`,
@@ -72,16 +73,6 @@ export class DataImportService {
           await this.backupService.clearDatabase();
           await this.backupService.importJson(restorePoint, true);
         });
-    });
-  }
-
-  private readFile(file: Blob): Promise<string> {
-    return new Promise((resolve) => {
-      const fileReader = new FileReader();
-      fileReader.addEventListener("load", () =>
-        resolve(fileReader.result as string)
-      );
-      fileReader.readAsText(file);
     });
   }
 }

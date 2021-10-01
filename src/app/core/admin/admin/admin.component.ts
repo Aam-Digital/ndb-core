@@ -15,6 +15,7 @@ import { ChildrenMigrationService } from "../../../child-dev-project/children/ch
 import { ConfigMigrationService } from "../../config/config-migration.service";
 import { PermissionsMigrationService } from "../../permissions/permissions-migration.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { readFile } from "../../../utils/utils";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -97,7 +98,7 @@ export class AdminComponent implements OnInit {
   }
 
   async uploadConfigFile(file: Blob) {
-    const loadedFile = await this.readFile(file);
+    const loadedFile = await readFile(file);
     await this.configService.saveConfig(
       this.entityMapper,
       JSON.parse(loadedFile)
@@ -113,23 +114,13 @@ export class AdminComponent implements OnInit {
     tempLink.click();
   }
 
-  private readFile(file: Blob): Promise<string> {
-    return new Promise((resolve) => {
-      const fileReader = new FileReader();
-      fileReader.addEventListener("load", () =>
-        resolve(fileReader.result as string)
-      );
-      fileReader.readAsText(file);
-    });
-  }
-
   /**
    * Reset the database to the state from the loaded backup file.
    * @param file The file object of the backup to be restored
    */
   async loadBackup(file) {
     const restorePoint = await this.backupService.getJsonExport();
-    const newData = await this.readFile(file);
+    const newData = await readFile(file);
 
     const dialogRef = this.confirmationDialog.openDialog(
       $localize`Overwrite complete database?`,
