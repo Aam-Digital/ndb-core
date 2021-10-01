@@ -24,9 +24,7 @@ describe("HealthCheckupComponent", () => {
         "getHealthChecksOfChild",
       ]);
       mockChildrenService.getChild.and.returnValue(of(child));
-      mockChildrenService.getEducationalMaterialsOfChild.and.returnValue(
-        of([])
-      );
+      mockChildrenService.getEducationalMaterialsOfChild.and.resolveTo([]);
       mockChildrenService.getHealthChecksOfChild.and.returnValue(of([]));
 
       TestBed.configureTestingModule({
