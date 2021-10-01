@@ -26,7 +26,7 @@ locales.forEach((locale) => {
   // combine hash tables
   Object.assign(combined.hashTable, additional.hashTable);
   fs.unlinkSync(`${distFolder}/${locale}/ngsw.json`);
-  fs.unlinkSync(`${distFolder}/${locale}/ngsw-worker.json`);
+  fs.unlinkSync(`${distFolder}/${locale}/ngsw-worker.js`);
 });
 
 combined.index = "/index.html";
@@ -34,6 +34,6 @@ combined.index = "/index.html";
 fs.writeFileSync(`${distFolder}/ngsw.json`, JSON.stringify(combined));
 fs.unlinkSync(`${distFolder}/${firstLocale}/ngsw.json`);
 fs.renameSync(
-  `${distFolder}/${firstLocale}/ngsw-worker.json`,
-  `${distFolder}/ngsw-worker.json`
+  `${distFolder}/${firstLocale}/ngsw-worker.js`,
+  `${distFolder}/ngsw-worker.js`
 );
