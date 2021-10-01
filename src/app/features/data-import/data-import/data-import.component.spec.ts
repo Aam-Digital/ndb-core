@@ -10,7 +10,7 @@ describe("DataImportComponent", () => {
 
   beforeEach(
     waitForAsync(() => {
-      mockDataImportService = jasmine.createSpyObj(DataImportService, [
+      mockDataImportService = jasmine.createSpyObj("DataImportService", [
         "handleCsvImport",
       ]);
       TestBed.configureTestingModule({
