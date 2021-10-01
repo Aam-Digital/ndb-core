@@ -58,6 +58,7 @@ export class EditSingleEntityComponent extends EditComponent<string> {
       .then((entities) =>
         entities.sort((e1, e2) => e1.toString().localeCompare(e2.toString()))
       );
+    this.entityNameFormControl.setValidators(this.formControl.validator);
     const selectedEntity = this.entities.find(
       (entity) => entity.getId() === this.formControl.value
     );

@@ -23,6 +23,9 @@
       ></app-display-entity>
     </mat-option>
   </mat-autocomplete>
+  <mat-error *ngIf="formControl.errors?.required" i18n="Error message for any input">
+    This field is required
+  </mat-error>
 </mat-form-field>
 
 <div *ngIf="selectedEntity && !editingSelectedEntity" style="margin-top: 7px">
