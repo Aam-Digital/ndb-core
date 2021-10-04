@@ -11,6 +11,7 @@ const locales = fs
   .readdirSync(distFolder)
   .filter((locale) => fs.lstatSync(`${distFolder}/${locale}`).isDirectory());
 
+// Merge the ngsw.json files
 const firstLocale = locales.pop();
 const combined = getNgswConfig(firstLocale);
 locales.forEach((locale) => {
@@ -33,7 +34,12 @@ combined.index = "/index.html";
 
 fs.writeFileSync(`${distFolder}/ngsw.json`, JSON.stringify(combined));
 fs.unlinkSync(`${distFolder}/${firstLocale}/ngsw.json`);
-fs.renameSync(
-  `${distFolder}/${firstLocale}/ngsw-worker.js`,
-  `${distFolder}/ngsw-worker.js`
+
+// Adjust service worker to allow changing language offline
+const swFile = fs.readFileSync(`${distFolder}/${firstLocale}/ngsw-worker.js`).toString();
+const patchedSw = swFile.replace(
+  'return this.handleFetch(this.adapter.newRequest(this.indexUrl), context);',
+  'return this.handleFetch(this.adapter.newRequest(\'/\' + this.adapter.normalizeUrl(req.url).split(\'/\')[1] + \'/index.html\'), context);'
 );
+fs.writeFileSync(`${distFolder}/ngsw-worker.js`, patchedSw);
+fs.unlinkSync(`${distFolder}/${firstLocale}/ngsw-worker.js`);
