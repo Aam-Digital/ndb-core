@@ -7,7 +7,7 @@ import {
 } from "@fortawesome/angular-fontawesome";
 import {
   faCoffee,
-  faHome,
+  faFileAlt,
   faQuestion,
 } from "@fortawesome/free-solid-svg-icons";
 import { LoggingService } from "../../logging/logging.service";
@@ -53,8 +53,8 @@ describe("FaDynamicIconComponent", () => {
   });
 
   it("should show the correct icon when it is in the map", () => {
-    component.icon = "home";
-    expect(component._icon).toEqual(faHome);
+    component.icon = "file-text";
+    expect(component._icon).toEqual(faFileAlt);
   });
 
   it("should show the registered icon when it is not in the map but exists as icon definition", () => {
