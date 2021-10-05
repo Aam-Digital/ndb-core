@@ -3,7 +3,6 @@ import {
   HostListener,
   Input,
   OnChanges,
-  OnInit,
   SimpleChanges,
 } from "@angular/core";
 import { Router } from "@angular/router";
@@ -18,8 +17,7 @@ import { ViewConfig } from "../../../core/view/dynamic-routing/view-config.inter
   templateUrl: "./school-block.component.html",
   styleUrls: ["./school-block.component.scss"],
 })
-export class SchoolBlockComponent
-  implements OnInitDynamicComponent, OnChanges, OnInit {
+export class SchoolBlockComponent implements OnInitDynamicComponent, OnChanges {
   icon: string;
   @Input() entity: School = new School("");
   @Input() entityId: string;
@@ -31,9 +29,7 @@ export class SchoolBlockComponent
     private router: Router,
     private entityMapper: EntityMapperService,
     private configService: ConfigService
-  ) {}
-
-  ngOnInit() {
+  ) {
     this.icon = this.configService.getConfig<ViewConfig>(
       "view:school/:id"
     )?.config?.icon;
