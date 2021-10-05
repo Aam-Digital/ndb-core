@@ -25,10 +25,9 @@ export class PreviousSchoolsComponent
       id: "isActive",
       label: $localize`:Label for form field, Indicatind whether currenty active:Currently active`,
       view: "ReadonlyFunction",
-      edit: "EditBoolean",
       tooltip: "Change start or end date to modify the state of currently active",
-      forTable: true,
-      additional: (csr: ChildSchoolRelation) => csr.isActive,
+      hideFromTable: true,
+      additional: (csr: ChildSchoolRelation) => csr.isActive ? "Currently active" : "Currently inactive",
     },
   ];
   current: ChildSchoolRelation;
@@ -76,7 +75,5 @@ export class PreviousSchoolsComponent
       return newPreviousSchool;
     };
   }
-
-  getColor = (csr: ChildSchoolRelation) => csr.isActive ? "#90ee9040" : "";
 
 }

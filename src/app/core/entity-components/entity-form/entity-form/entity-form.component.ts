@@ -49,6 +49,8 @@ export class EntityFormComponent implements OnInit {
   }
   _columns: FormFieldConfig[][] = [];
 
+  @Input() uneditableColumns: FormFieldConfig[];
+
   /**
    * This will be emitted whenever changes have been successfully saved to the entity.
    */

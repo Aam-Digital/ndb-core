@@ -33,6 +33,19 @@
     </div>
   </div>
 </form>
+  <div *ngFor="let col of uneditableColumns" class="form-cell">
+    <ng-template
+      [appDynamicComponent]="{
+        component: col.view,
+        config: {
+          id: col.id,
+          entity: entity,
+          config: col.additional,
+          formGroup: form
+        }
+      }"
+    ></ng-template>
+  </div>
 <div>
   <button
     *ngIf="form?.enabled"

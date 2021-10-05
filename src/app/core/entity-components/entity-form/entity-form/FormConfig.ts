@@ -73,4 +73,6 @@ export interface FormFieldConfig {
    * A internal flag that will be automatically set in the entity subrecord in order to adapt the view/edit components.
    */
   forTable?: boolean;
+
+  hideFromTable?: boolean;
 }

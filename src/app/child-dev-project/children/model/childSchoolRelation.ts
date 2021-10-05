@@ -55,6 +55,8 @@ export class ChildSchoolRelation extends Entity {
     );
   }
 
+  getColor = () => this.isActive ? "#90ee9040" : "";
+
   assertValid() {
     super.assertValid();
     const startLabel = this.getSchema().get("start").label;

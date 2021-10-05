@@ -22,6 +22,7 @@ import { EntityFormService } from "../../entity-form/entity-form.service";
 import { MatDialog } from "@angular/material/dialog";
 import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
 import { LoggingService } from "../../../logging/logging.service";
+import { ThisReceiver } from "@angular/compiler";
 
 export interface TableRow<T> {
   record: T;
@@ -302,6 +303,8 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     dialogRef.componentInstance.columns = this._columns
       .filter((col) => col.edit)
       .map((col) => [Object.assign({}, col)]);
+    dialogRef.componentInstance.uneditableColumns = this._columns
+      .filter((col) => !col.edit);
     dialogRef.componentInstance.entity = entity;
     dialogRef.componentInstance.editing = true;
     dialogRef.componentInstance.onSave
@@ -339,6 +342,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    * @return returns true if column is visible
    */
   private isVisible(col: FormFieldConfig): boolean {
+    if (col.hideFromTable) {
+      return false;
+    }
     const visibilityGroups = ["sm", "md", "lg", "xl"];
     const visibleFromIndex = visibilityGroups.indexOf(col.visibleFrom);
     if (visibleFromIndex !== -1) {
@@ -348,4 +354,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       return true;
     }
   }
+
+  public getTableColumns() {
+    return this._columns.filter((col) => !col.hideFromTable)
+  }
+
 }

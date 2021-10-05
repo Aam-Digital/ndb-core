@@ -1,7 +1,7 @@
 {
   "site_name": "Aam Digital - DEV",
 
-  "session_type": "mock",
+  "session_type": "local",
   "demo_mode": true,
   "database": {
     "name": "app",

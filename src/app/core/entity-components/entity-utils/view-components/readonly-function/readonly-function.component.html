@@ -1,1 +1,7 @@
-{{ entity | entityFunction: displayFunction }}
+<div [ngStyle]="
+{
+  'background-color': entity.getColor()
+}
+  ">
+    {{ entity | entityFunction: displayFunction }}
+</div>
