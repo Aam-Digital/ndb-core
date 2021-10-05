@@ -170,6 +170,7 @@ describe("EntitySelectComponent", () => {
   });
 
   it("should add an unselected entity to the filtered entities array", (done) => {
+    // TODO this is still throwing object unsubscribe error
     component.allEntities = testUsers;
     const selectedUser = testUsers[1];
     let iteration = 0;
