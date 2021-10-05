@@ -55,7 +55,7 @@ export const defaultJsonConfig = {
       },
       {
         "name": $localize`:Menu item:Notes`,
-        "icon": "notes",
+        "icon": "file-alt",
         "link": "/note"
       },
       {

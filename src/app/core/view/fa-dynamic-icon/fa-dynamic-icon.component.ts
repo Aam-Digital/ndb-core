@@ -6,35 +6,23 @@ import {
 } from "@fortawesome/fontawesome-svg-core";
 import {
   faChartLine,
-  faChild,
-  faHome,
   faQuestionCircle,
-  faTable,
-  faUniversity,
-  faWrench,
   faCalendarCheck,
-  faCalendar,
   faFileAlt,
-  faUser,
+  faCalendarAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { LoggingService } from "../../logging/logging.service";
 
 /**
- * font-awesome icons decoupled from the config
+ * A map to prevent old configs to be broken
  */
-const faDynamicIcons = new Map<string, IconDefinition>([
-  ["home", faHome],
-  ["child", faChild],
-  ["university", faUniversity],
-  ["calendar", faCalendar],
-  ["calendar-check", faCalendarCheck],
-  ["table", faTable],
-  ["notes", faFileAlt],
-  ["wrench", faWrench],
-  ["user", faUser],
+const iconAliases = new Map<string, IconDefinition>([
+  ["calendar-check-o", faCalendarCheck],
+  ["file-text", faFileAlt],
   ["question", faQuestionCircle],
   ["line-chart", faChartLine],
+  ["calendar", faCalendarAlt],
 ]);
 
 /**
@@ -54,7 +42,7 @@ export class FaDynamicIconComponent {
 
   /**
    * Sets the dynamic icon by name.
-   * You should make sure that the icon is registered inside the {@link faDynamicIcons}-map,
+   * You should make sure that the icon is registered inside the {@link iconAliases}-map,
    * or put it into this map if it isn't there.
    * <br>
    * If for some reason the icon is not inside the map or cannot be inserted into the map,
@@ -71,7 +59,7 @@ export class FaDynamicIconComponent {
    * @param icon the icon name
    */
   @Input() set icon(icon: string) {
-    let definition = faDynamicIcons.get(icon);
+    let definition = iconAliases.get(icon);
     if (!definition) {
       const iconAndDef = icon.split(" ");
       if (iconAndDef.length === 1) {
@@ -91,8 +79,7 @@ export class FaDynamicIconComponent {
       // Fallback if the icon is neither in the map nor a registered icon
       definition = FaDynamicIconComponent.fallbackIcon;
       this.loggingService.warn(
-        `Tried to set icon ${icon} but it is neither registered as dynamic icon ` +
-          `nor does it exist as font-awesome regular item`
+        `Tried to set icon "${icon}" but it does not exist as a font awesome regular item nor is it registered as an alias.`
       );
     }
     this._icon = definition;
