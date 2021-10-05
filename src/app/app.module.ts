@@ -65,7 +65,6 @@ import { EntitySubrecordModule } from "./core/entity-components/entity-subrecord
 import { EntityListModule } from "./core/entity-components/entity-list/entity-list.module";
 import { AttendanceModule } from "./child-dev-project/attendance/attendance.module";
 import { DemoActivityGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-generator.service";
-import { FontAwesomeIconsModule } from "./core/icons/font-awesome-icons.module";
 import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-enum.module";
 import { ConfigModule } from "./core/config/config.module";
 import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-events-generator.service";
@@ -76,6 +75,9 @@ import { HistoricalDataModule } from "./features/historical-data/historical-data
 import { EntityUtilsModule } from "./core/entity-components/entity-utils/entity-utils.module";
 import { DemoHistoricalDataGenerator } from "./features/historical-data/demo-historical-data-generator";
 import { TranslatableMatPaginator } from "./core/translation/TranslatableMatPaginator";
+import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
+import { fas } from "@fortawesome/free-solid-svg-icons";
+import { far } from "@fortawesome/free-regular-svg-icons";
 
 /**
  * Main entry point of the application.
@@ -115,7 +117,6 @@ import { TranslatableMatPaginator } from "./core/translation/TranslatableMatPagi
     ChildrenModule,
     SchoolsModule,
     AdminModule,
-    FontAwesomeIconsModule,
     MarkdownPageModule,
     EntitySubrecordModule,
     EntityListModule,
@@ -159,7 +160,11 @@ import { TranslatableMatPaginator } from "./core/translation/TranslatableMatPagi
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(icons: FaIconLibrary) {
+    icons.addIconPacks(fas, far);
+  }
+}
 
 // Initialize remote logging
 LoggingService.initRemoteLogging({

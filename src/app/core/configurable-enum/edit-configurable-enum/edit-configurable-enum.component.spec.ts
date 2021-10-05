@@ -2,9 +2,12 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EditConfigurableEnumComponent } from "./edit-configurable-enum.component";
 import { EntityDetailsModule } from "../../entity-components/entity-details/entity-details.module";
-import { FormControl, FormGroup } from "@angular/forms";
+import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ConfigService } from "../../config/config.service";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatSelectModule } from "@angular/material/select";
+import { ConfigurableEnumModule } from "../configurable-enum.module";
 
 describe("EditConfigurableEnumComponent", () => {
   let component: EditConfigurableEnumComponent;
@@ -16,7 +19,14 @@ describe("EditConfigurableEnumComponent", () => {
     mockConfigService = jasmine.createSpyObj(["getConfig"]);
     mockConfigService.getConfig.and.returnValue([]);
     await TestBed.configureTestingModule({
-      imports: [EntityDetailsModule, NoopAnimationsModule],
+      imports: [
+        EntityDetailsModule,
+        NoopAnimationsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        ConfigurableEnumModule,
+      ],
       declarations: [EditConfigurableEnumComponent],
       providers: [{ provide: ConfigService, useValue: mockConfigService }],
     }).compileComponents();

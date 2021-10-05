@@ -26,6 +26,7 @@ import { BehaviorSubject } from "rxjs";
 import { take } from "rxjs/operators";
 import { BackgroundProcessState } from "../background-process-state.interface";
 import { SyncStatusModule } from "../sync-status.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("SyncStatusComponent", () => {
   let component: SyncStatusComponent;
@@ -52,7 +53,11 @@ describe("SyncStatusComponent", () => {
       mockIndexingService = { indicesRegistered: new BehaviorSubject([]) };
 
       TestBed.configureTestingModule({
-        imports: [SyncStatusModule, NoopAnimationsModule],
+        imports: [
+          SyncStatusModule,
+          NoopAnimationsModule,
+          FontAwesomeTestingModule,
+        ],
         providers: [
           { provide: SessionService, useValue: mockSessionService },
           { provide: DatabaseIndexingService, useValue: mockIndexingService },

@@ -25,7 +25,7 @@
     [routerLink]="[item.link]"
   >
     <a
-      ><mat-icon class="nav-icon" fontIcon="fa-{{ item.icon }}"></mat-icon
+      ><app-fa-dynamic-icon class="nav-icon" [icon]="item.icon"></app-fa-dynamic-icon
       >{{ item.label }}</a
     >
     <mat-divider></mat-divider>
