@@ -60,9 +60,9 @@ export class ComingSoonComponent implements OnChanges {
   }
 
   private track(action: string) {
-    this.analyticsService.eventTrack(action, {
+    this.analyticsService.eventTrack(this.featureId, {
       category: "feature_request",
-      label: this.featureId,
+      label: action,
     });
   }
 

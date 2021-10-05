@@ -77,6 +77,7 @@ describe("NotesManagerComponent", () => {
   const routeMock = {
     data: new BehaviorSubject({ config: routeData }),
     queryParams: of({}),
+    snapshot: { queryParams: {} },
   };
 
   const testInteractionTypes: InteractionType[] = [

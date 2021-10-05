@@ -12,7 +12,7 @@
     [disabled]="!contentForm.form.dirty"
     (click)="save()"
     angulartics2On="click"
-    angularticsCategory="UserAction"
+    [angularticsCategory]="entity?.getType()"
     angularticsAction="form_dialog_save"
     i18n="Generic save button"
   >
@@ -22,7 +22,7 @@
     mat-stroked-button
     (click)="cancel()"
     angulartics2On="click"
-    angularticsCategory="UserAction"
+    [angularticsCategory]="entity?.getType()"
     angularticsAction="form_dialog_cancel"
     i18n="Generic cancel button"
   >
@@ -34,7 +34,7 @@
     color="warn"
     (click)="delete()"
     angulartics2On="click"
-    angularticsCategory="UserAction"
+    [angularticsCategory]="entity?.getType()"
     angularticsAction="form_dialog_delete"
     i18n="Generic delete button"
     *appDisabledEntityOperation="{

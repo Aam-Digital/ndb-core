@@ -3,6 +3,7 @@ import { Papa } from "ngx-papaparse";
 import { entityListSortingAccessor } from "../../entity-components/entity-subrecord/entity-subrecord/sorting-accessor";
 import { ExportColumnConfig } from "./export-column-config";
 import { QueryService } from "../../../features/reporting/query.service";
+import moment from "moment";
 
 /**
  * Prepare data for export in csv format.
@@ -35,11 +36,10 @@ export class ExportService {
    * @param config (Optional) config specifying which fields should be exported
    * @returns string a valid CSV string of the input data
    */
-  async createCsv(data: any[], config?: ExportColumnConfig[]): Promise<string> {
-    if (!config) {
-      config = this.generateExportConfigFromData(data);
-    }
-
+  async createCsv(
+    data: any[],
+    config: ExportColumnConfig[] = this.generateExportConfigFromData(data)
+  ): Promise<string> {
     const flattenedExportRows: ExportRow[] = [];
     for (const dataRow of data) {
       const extendedExportableRows = await this.generateExportRows(
@@ -53,7 +53,12 @@ export class ExportService {
     const readableExportRow = flattenedExportRows.map((row) => {
       const readableRow = {};
       Object.keys(row).forEach((key) => {
-        readableRow[key] = entityListSortingAccessor(row, key);
+        if (row[key] instanceof Date) {
+          // Export data according to local timezone offset
+          readableRow[key] = moment(row[key]).toISOString(true);
+        } else {
+          readableRow[key] = entityListSortingAccessor(row, key);
+        }
       });
       return readableRow;
     });

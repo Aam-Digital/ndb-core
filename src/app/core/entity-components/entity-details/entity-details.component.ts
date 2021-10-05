@@ -1,19 +1,17 @@
 import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Location } from "@angular/common";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import {
-  PanelConfig,
   EntityDetailsConfig,
   Panel,
   PanelComponent,
+  PanelConfig,
 } from "./EntityDetailsConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
 import {
   EntityPermissionsService,
@@ -21,8 +19,13 @@ import {
 } from "../../permissions/entity-permissions.service";
 import { User } from "../../user/user";
 import { Note } from "../../../child-dev-project/notes/model/note";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { UntilDestroy } from "@ngneat/until-destroy";
 import { RouteData } from "../../view/dynamic-routing/view-config.interface";
+import { AnalyticsService } from "../../analytics/analytics.service";
+import {
+  EntityRemoveService,
+  RemoveResult,
+} from "../../entity/entity-remove.service";
 
 export const ENTITY_MAP: Map<string, EntityConstructor<Entity>> = new Map<
   string,
@@ -64,9 +67,9 @@ export class EntityDetailsComponent {
     private route: ActivatedRoute,
     private router: Router,
     private location: Location,
-    private snackBar: MatSnackBar,
-    private confirmationDialog: ConfirmationDialogService,
-    private permissionService: EntityPermissionsService
+    private analyticsService: AnalyticsService,
+    private permissionService: EntityPermissionsService,
+    private entityRemoveService: EntityRemoveService
   ) {
     this.route.data.subscribe((data: RouteData<EntityDetailsConfig>) => {
       this.config = data.config;
@@ -126,36 +129,31 @@ export class EntityDetailsComponent {
   }
 
   removeEntity() {
-    const dialogRef = this.confirmationDialog.openDialog(
-      $localize`:Delete confirmation title:Delete?`,
-      $localize`:Delete confirmation text:Are you sure you want to delete this ${this.config.entity} ?`
-    );
-
-    dialogRef.afterClosed().subscribe((confirmed) => {
-      const currentUrl = getUrlWithoutParams(this.router);
-      if (confirmed) {
-        this.entityMapperService
-          .remove<Entity>(this.entity)
-          .then(() => this.navigateBack())
-          .catch((err) => console.log("error", err));
-
-        const snackBarRef = this.snackBar.open(
-          $localize`:Deleted Entity information:Deleted Entity ${this.entity.toString()}`,
-          "Undo",
-          { duration: 8000 }
-        );
-        snackBarRef
-          .onAction()
-          .pipe(untilDestroyed(this))
-          .subscribe(() => {
-            this.entityMapperService.save(this.entity, true);
-            this.router.navigate([currentUrl]);
-          });
+    const currentUrl = getUrlWithoutParams(this.router);
+    this.entityRemoveService.remove(this.entity).subscribe(async (result) => {
+      switch (result) {
+        case RemoveResult.REMOVED:
+          this.navigateBack();
+          break;
+        case RemoveResult.UNDONE:
+          await this.router.navigate([currentUrl]);
       }
     });
   }
 
   navigateBack() {
     this.location.back();
+  }
+
+  /**
+   * Usage analytics tracking when a section is opened.
+   * (directive `angulartics2On="click"` doesn't work as it fires too often and blocks events within the panel)
+   * @param panelTitle
+   */
+  trackPanelOpen(panelTitle: string) {
+    this.analyticsService.eventTrack("details_section_expanded", {
+      category: this.config?.entity,
+      label: panelTitle,
+    });
   }
 }

@@ -15,6 +15,7 @@ import { ReportRowComponent } from "./reporting/report-row/report-row.component"
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatSelectModule } from "@angular/material/select";
 import { FlexModule } from "@angular/flex-layout";
+import { Angulartics2Module } from "angulartics2";
 
 @NgModule({
   declarations: [ReportingComponent, ReportRowComponent],
@@ -33,6 +34,7 @@ import { FlexModule } from "@angular/flex-layout";
     MatProgressBarModule,
     MatSelectModule,
     FlexModule,
+    Angulartics2Module,
   ],
 })
 export class ReportingModule {}

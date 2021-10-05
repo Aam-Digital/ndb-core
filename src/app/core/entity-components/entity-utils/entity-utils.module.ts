@@ -33,6 +33,7 @@ import { MatChipsModule } from "@angular/material/chips";
 import { EditNumberComponent } from "./dynamic-form-components/edit-number/edit-number.component";
 import { EntityFunctionPipe } from "./view-components/readonly-function/entity-function.pipe";
 import { FlexLayoutModule } from "@angular/flex-layout";
+import { MatButtonModule } from "@angular/material/button";
 
 @NgModule({
   declarations: [
@@ -72,6 +73,7 @@ import { FlexLayoutModule } from "@angular/flex-layout";
     MatAutocompleteModule,
     MatChipsModule,
     FlexLayoutModule,
+    MatButtonModule,
   ],
   entryComponents: [
     EditTextComponent,

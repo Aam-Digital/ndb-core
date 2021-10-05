@@ -8,6 +8,10 @@ import {
   MockEntityMapperService,
 } from "../entity/mock-entity-mapper-service";
 import { User } from "../user/user";
+import { AnalyticsService } from "../analytics/analytics.service";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { Angulartics2Module } from "angulartics2";
+import { RouterTestingModule } from "@angular/router/testing";
 
 export const TEST_USER = "test";
 export const TEST_PASSWORD = "pass";
@@ -23,7 +27,13 @@ export const TEST_PASSWORD = "pass";
  * This module provides the services `SessionService` `EntityMapperService` and `MockEntityMapperService`.
  * The later two refer to the same service but injecting the `MockEntityMapperService` allows to access further methods.
  */
-@NgModule()
+@NgModule({
+  imports: [
+    NoopAnimationsModule,
+    Angulartics2Module.forRoot(),
+    RouterTestingModule,
+  ],
+})
 export class MockSessionModule {
   static withState(
     loginState = LoginState.LOGGED_IN
@@ -38,6 +48,10 @@ export class MockSessionModule {
         },
         { provide: EntityMapperService, useValue: mockedEntityMapper },
         { provide: MockEntityMapperService, useValue: mockedEntityMapper },
+        {
+          provide: AnalyticsService,
+          useValue: jasmine.createSpyObj(["eventTrack"]),
+        },
       ],
     };
   }
