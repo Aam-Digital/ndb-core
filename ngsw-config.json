@@ -8,6 +8,7 @@
         "/favicon.ico",
         "/index.html",
         "/*.js",
+        "!/*-es5.js",
         "/*.css",
         "/*.woff2",
         "/*.tff"
@@ -25,7 +26,8 @@
         "/assets/config.default.json",
         "/assets/How_To.md",
         "/assets/locale/How_To.de.md",
-        "/assets/*/**"
+        "/assets/*/**",
+        "/*-es5.js"
       ]
     }
   }],
