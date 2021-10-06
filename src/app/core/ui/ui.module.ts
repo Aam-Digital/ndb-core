@@ -26,7 +26,6 @@ import { LatestChangesModule } from "../latest-changes/latest-changes.module";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatToolbarModule } from "@angular/material/toolbar";
@@ -41,6 +40,7 @@ import { Angulartics2Module } from "angulartics2";
 import { PermissionsModule } from "../permissions/permissions.module";
 import { EntityUtilsModule } from "../entity-components/entity-utils/entity-utils.module";
 import { TranslationModule } from "../translation/translation.module";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 /**
  * The core user interface structure that ties different components together into the overall app layout.
@@ -56,7 +56,6 @@ import { TranslationModule } from "../translation/translation.module";
     SyncStatusModule,
     MatSidenavModule,
     MatToolbarModule,
-    MatIconModule,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
@@ -70,6 +69,7 @@ import { TranslationModule } from "../translation/translation.module";
     EntityUtilsModule,
     ReactiveFormsModule,
     TranslationModule,
+    FontAwesomeModule,
   ],
   declarations: [SearchComponent, UiComponent, PrimaryActionComponent],
   exports: [UiComponent],

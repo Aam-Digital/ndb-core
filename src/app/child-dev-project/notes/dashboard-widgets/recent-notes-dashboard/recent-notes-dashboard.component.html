@@ -1,7 +1,7 @@
 <mat-card class="dashboard-widget">
   <mat-card-header class="app-note">
     <div mat-card-avatar>
-      <mat-icon fontIcon="fa-file-text-o"></mat-icon>
+      <fa-icon icon="file-alt"></fa-icon>
     </div>
     <mat-card-title style="position: relative">
       <span *ngIf="isLoading">
@@ -34,7 +34,7 @@
       [angularticsLabel]="'children-with-recent-report-count-' + count"
       i18n="Go to Notes Link|Link that will take the user to a list of notes"
     >
-      Go to Notes <span class="fa fa-external-link-square"></span>
+      Go to Notes <fa-icon icon="external-link-square-alt"></fa-icon>
     </div>
   </mat-card-content>
 </mat-card>

@@ -5,7 +5,6 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatSelectModule } from "@angular/material/select";
 import { NotesManagerComponent } from "./notes-manager/notes-manager.component";
-import { MatIconModule } from "@angular/material/icon";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatTableModule } from "@angular/material/table";
@@ -43,6 +42,7 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { ChildMeetingNoteAttendanceComponent } from "./note-details/child-meeting-attendance/child-meeting-note-attendance.component";
 import { EntityUtilsModule } from "../../core/entity-components/entity-utils/entity-utils.module";
 import { NoteAttendanceCountBlockComponent } from "./note-attendance-block/note-attendance-count-block.component";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @NgModule({
   declarations: [
@@ -68,7 +68,6 @@ import { NoteAttendanceCountBlockComponent } from "./note-attendance-block/note-
     MatSidenavModule,
     MatButtonModule,
     MatButtonToggleModule,
-    MatIconModule,
     MatCardModule,
     MatSnackBarModule,
     MatDialogModule,
@@ -97,6 +96,7 @@ import { NoteAttendanceCountBlockComponent } from "./note-attendance-block/note-
     AttendanceModule,
     MatSlideToggleModule,
     EntityUtilsModule,
+    FontAwesomeModule,
   ],
   providers: [],
   entryComponents: [NoteDetailsComponent],

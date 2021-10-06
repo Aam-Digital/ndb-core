@@ -40,6 +40,9 @@ describe("AnalyticsService", () => {
       ],
     });
     service = TestBed.inject(AnalyticsService);
+
+    // make _paq a array
+    window["_paq"] = [];
   });
 
   it("should be created", () => {
