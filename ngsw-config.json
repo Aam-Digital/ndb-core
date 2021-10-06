@@ -10,8 +10,7 @@
         "/*.js",
         "/*.css",
         "/*.woff2",
-        "/*.tff",
-        "/*.svg"
+        "/*.tff"
       ]
     }
   }, {
@@ -20,6 +19,7 @@
     "updateMode": "prefetch",
     "resources": {
       "files": [
+        "/*.svg",
         "/assets/changelog.json",
         "/assets/child.png",
         "/assets/config.default.json",
