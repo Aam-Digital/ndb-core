@@ -44,7 +44,6 @@ export class UpdateManagerService {
    * Display a notification to the user in case a new app version is detected by the ServiceWorker.
    */
   public notifyUserWhenUpdateAvailable() {
-    console.log("service worker is", this.updates.isEnabled);
     if (!this.updates.isEnabled) {
       return;
     }
