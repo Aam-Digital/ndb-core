@@ -25,15 +25,18 @@ import { MatIconModule } from "@angular/material/icon";
 import { WidgetHeadlineComponent } from "./dashboard-widget/widget-headline/widget-header.component";
 import { WidgetSubheadlineComponent } from "./dashboard-widget/widget-subheadline/widget-subheadline.component";
 import { WidgetContentComponent } from "./dashboard-widget/widget-content/widget-content.component";
+import { DashboardTableComponent } from './dashboard-widget/dashboard-table/dashboard-table.component';
+import { MatTableModule } from "@angular/material/table";
 
 @NgModule({
-  imports: [CommonModule, FlexLayoutModule, ViewModule, MatIconModule],
+    imports: [CommonModule, FlexLayoutModule, ViewModule, MatIconModule, MatTableModule],
   declarations: [
     DashboardComponent,
     DashboardWidgetComponent,
     WidgetHeadlineComponent,
     WidgetSubheadlineComponent,
     WidgetContentComponent,
+    DashboardTableComponent,
   ],
   exports: [
     DashboardWidgetComponent,
