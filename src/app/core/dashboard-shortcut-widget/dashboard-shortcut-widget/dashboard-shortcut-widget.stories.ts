@@ -2,7 +2,6 @@ import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { RouterTestingModule } from "@angular/router/testing";
 import { Angulartics2Module } from "angulartics2";
-import { FontAwesomeIconsModule } from "../../icons/font-awesome-icons.module";
 import { DashboardShortcutWidgetModule } from "../dashboard-shortcut-widget.module";
 import { DashboardShortcutWidgetComponent } from "./dashboard-shortcut-widget.component";
 import { MenuItem } from "../../navigation/menu-item";
@@ -14,7 +13,6 @@ export default {
     moduleMetadata({
       imports: [
         DashboardShortcutWidgetModule,
-        FontAwesomeIconsModule,
         RouterTestingModule,
         Angulartics2Module.forRoot(),
       ],

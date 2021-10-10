@@ -1566,8 +1566,8 @@
         recent reports</note>
         <note priority="1" from="meaning">Subtitle</note>
       </trans-unit>
-      <trans-unit id="e00803aa5acd9594a3b54386905ec896341e76bd" datatype="html">
-        <source> Go to Notes <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;fa fa-external-link-square&quot;&gt;"/><x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+      <trans-unit id="0f4c08108ca961748c14ba640c406764a61fa0c0" datatype="html">
+        <source> Go to Notes <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;external-link-square-alt&quot;&gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/recent-notes-dashboard/recent-notes-dashboard.component.html</context>
           <context context-type="linenumber">37,39</context>
@@ -2698,13 +2698,13 @@
         </context-group>
         <note priority="1" from="description">Coming Soon description</note>
       </trans-unit>
-      <trans-unit id="4f1ff7e2ea0da1e84aba4c29dddf8ec0ba6e60ce" datatype="html">
-        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon
+      <trans-unit id="ff313753acda8a724c57b422b64d854a2dbe3f6a" datatype="html">
+        <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon
           *ngIf=&quot;requested&quot;
           aria-label=&quot;requested&quot;
-          fontIcon=&quot;fa-check&quot;
+          icon=&quot;check&quot;
           class=&quot;requested-icon&quot;
-        &gt;"/><x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> I need this feature </source>
+        &gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/> I need this feature </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/coming-soon/coming-soon/coming-soon.component.html</context>
           <context context-type="linenumber">27,34</context>

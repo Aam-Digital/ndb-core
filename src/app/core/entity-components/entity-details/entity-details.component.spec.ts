@@ -21,6 +21,7 @@ import {
   EntityRemoveService,
   RemoveResult,
 } from "../../entity/entity-remove.service";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("EntityDetailsComponent", () => {
   let component: EntityDetailsComponent;
@@ -82,6 +83,7 @@ describe("EntityDetailsComponent", () => {
           MatNativeDateModule,
           RouterTestingModule,
           MockSessionModule.withState(),
+          FontAwesomeTestingModule,
         ],
         providers: [
           { provide: ActivatedRoute, useValue: mockedRoute },

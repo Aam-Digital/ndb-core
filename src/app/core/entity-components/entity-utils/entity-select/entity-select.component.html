@@ -24,12 +24,14 @@
           [entityToDisplay]="entity"
           [linkDisabled]="true"
         ></app-display-entity>
-        <div
+        <fa-icon
           *ngIf="removable && formControl.enabled"
           matTooltip="remove"
-          class="fa fa-minus-square-o"
+          class="remove-item"
+          icon="minus-square"
+          prefix="far"
           (click)="unselectEntity(entity)"
-        ></div>
+        ></fa-icon>
       </mat-basic-chip>
     </ng-container>
   </mat-chip-list>

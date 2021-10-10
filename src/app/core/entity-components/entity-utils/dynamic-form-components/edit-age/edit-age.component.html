@@ -13,13 +13,13 @@
     <mat-datepicker #dateOfBirthDatepicker></mat-datepicker>
   </mat-form-field>
   <mat-form-field style="width: 30%">
-    <mat-icon
+    <fa-icon
       *ngIf="formControl.enabled"
       matSuffix
-      fontIcon="fa-question-circle-o"
+      icon="question-circle"
       i18n-matTooltip="Tooltip for the disabled age field"
       matTooltip="This field is read-only. Edit Date of Birth to change age. Select Jan 1st if you only know the year of birth."
-    ></mat-icon>
+    ></fa-icon>
     <input
       matInput
       i18n-placeholder="Placeholder for the input that displays the age"

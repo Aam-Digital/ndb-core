@@ -26,7 +26,7 @@
     [class.primary-background]="item.link === activeLink"
   >
     <a
-      ><mat-icon fontIcon="fa-{{ item.icon }}"></mat-icon
+      ><app-fa-dynamic-icon [icon]="item.icon"></app-fa-dynamic-icon
       >{{ item.label }}</a
     >
     <mat-divider></mat-divider>

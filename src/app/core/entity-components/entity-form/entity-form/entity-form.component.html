@@ -50,14 +50,14 @@
           }
         }"
       >
-        <mat-icon
+        <fa-icon
           (click)="tooltipElement.show()"
           #tooltipElement="matTooltip"
           *ngIf="row.tooltip"
           matSuffix
-          fontIcon="fa-question-circle-o"
+          icon="question-circle"
           [matTooltip]="row.tooltip"
-        ></mat-icon>
+        ></fa-icon>
       </div>
 
     </div>

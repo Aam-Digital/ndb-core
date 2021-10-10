@@ -22,11 +22,9 @@
     i18n-matTooltip="Generic back button"
     matTooltip="Back"
   >
-    <mat-icon fontIcon="fa-backward"></mat-icon>
+    <fa-icon icon="backward"></fa-icon>
   </button>
-  <h1 class="header-title">
-    <span [className]="classNamesWithIcon"></span>
-  </h1>
+  <app-fa-dynamic-icon class="icon" [icon]="iconName"> </app-fa-dynamic-icon>
   <h1 class="header-title" *ngIf="!creatingNew">{{ entity?.toString() }}</h1>
   <h1
     class="header-title"
@@ -45,6 +43,7 @@
     color="primary"
     [matMenuTriggerFor]="additional"
   >
+    <!-- TODO: icon -->
     <span class="material-icons">more_vert</span>
   </button>
 </div>
@@ -63,12 +62,12 @@
     [angularticsCategory]="config?.entity"
     angularticsAction="entity_delete"
   >
-    <mat-icon
+    <fa-icon
       class="standard-icon"
       color="warn"
       aria-label="remove element"
-      fontIcon="fa-trash"
-    ></mat-icon>
+      icon="trash"
+    ></fa-icon>
     <span i18n="Generic delete button"> Delete </span>
   </button>
 </mat-menu>

@@ -5,7 +5,6 @@ import { KeysPipe } from "./keys-pipe/keys.pipe";
 import { MatTableModule } from "@angular/material/table";
 import { MatSortModule } from "@angular/material/sort";
 import { MatPaginatorModule } from "@angular/material/paginator";
-import { MatIconModule } from "@angular/material/icon";
 import { EntityModule } from "../../entity/entity.module";
 import { AlertsModule } from "../../alerts/alerts.module";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
@@ -21,6 +20,7 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { Angulartics2Module } from "angulartics2";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { RowDetailsComponent } from "./row-details/row-details.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDialogModule } from "@angular/material/dialog";
@@ -47,11 +47,11 @@ import { MatRippleModule } from "@angular/material/core";
     ConfirmationDialogModule,
     MatTooltipModule,
     MatButtonModule,
-    MatIconModule,
     MatSlideToggleModule,
     MatToolbarModule,
     EntityDetailsModule,
     EntityFormModule,
+    FontAwesomeModule,
     FlexLayoutModule,
     Angulartics2Module,
     MatFormFieldModule,

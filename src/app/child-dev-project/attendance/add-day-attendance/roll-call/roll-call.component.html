@@ -25,10 +25,10 @@
           : ''
       "
     >
-      <span
-        class="fa fa-check"
+      <fa-icon
         *ngIf="entries[currentIndex].attendance.status.id === option.id"
-      ></span>
+        icon="check"
+      ></fa-icon>
       {{ option.label }}
     </div>
   </div>
@@ -36,7 +36,7 @@
 
 <!-- Completion Page -->
 <div *ngIf="isFinished()" class="roll-call-complete" [@completeRollCall]>
-  <span class="fa fa-check-circle-o roll-call-complete-icon"></span>
+  <fa-icon icon="check-circle" class="roll-call-complete-icon"></fa-icon>
   <div
     i18n="
       Attendance completed|shows when the user has registered the attendance of

@@ -3,7 +3,6 @@ import { CommonModule } from "@angular/common";
 import { EntityListComponent } from "./entity-list.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
-import { MatIconModule } from "@angular/material/icon";
 import { Angulartics2Module } from "angulartics2";
 import { MatButtonModule } from "@angular/material/button";
 import { ExtendedModule, FlexModule } from "@angular/flex-layout";
@@ -22,6 +21,7 @@ import { PermissionsModule } from "../../permissions/permissions.module";
 import { EntitySubrecordModule } from "../entity-subrecord/entity-subrecord.module";
 import { EntityUtilsModule } from "../entity-utils/entity-utils.module";
 import { EntityFormModule } from "../entity-form/entity-form.module";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatTabsModule } from "@angular/material/tabs";
 import { FilterOverlayComponent } from "./filter-overlay/filter-overlay.component";
@@ -39,7 +39,6 @@ import { MatDialogModule } from "@angular/material/dialog";
     MatFormFieldModule,
     MatSelectModule,
     ExportModule,
-    MatIconModule,
     Angulartics2Module,
     MatButtonModule,
     FlexModule,
@@ -58,6 +57,7 @@ import { MatDialogModule } from "@angular/material/dialog";
     EntitySubrecordModule,
     EntityUtilsModule,
     EntityFormModule,
+    FontAwesomeModule,
     MatDialogModule,
   ],
   exports: [EntityListComponent, ListFilterComponent],

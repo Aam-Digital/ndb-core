@@ -21,7 +21,6 @@ import { NavigationComponent } from "./navigation.component";
 import { RouterTestingModule } from "@angular/router/testing";
 import { MenuItem } from "../menu-item";
 import { MatDividerModule } from "@angular/material/divider";
-import { MatIconModule } from "@angular/material/icon";
 import { MatListModule } from "@angular/material/list";
 import { ConfigService } from "../../config/config.service";
 import { BehaviorSubject } from "rxjs";
@@ -51,7 +50,6 @@ describe("NavigationComponent", () => {
       TestBed.configureTestingModule({
         imports: [
           RouterTestingModule,
-          MatIconModule,
           MatDividerModule,
           MatListModule,
           MockSessionModule.withState(),

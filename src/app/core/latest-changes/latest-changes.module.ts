@@ -29,10 +29,10 @@ import { SwUpdate } from "@angular/service-worker";
 import { UpdateManagerService } from "./update-manager.service";
 import { FlexModule } from "@angular/flex-layout";
 import { MarkdownModule } from "ngx-markdown";
-import { MatIconModule } from "@angular/material/icon";
 import { MatCardModule } from "@angular/material/card";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { LatestChangesService } from "./latest-changes.service";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 /**
  * Displaying app version and changelog information to the user
@@ -54,8 +54,8 @@ import { LatestChangesService } from "./latest-changes.service";
     HttpClientModule,
     FlexModule,
     MarkdownModule,
-    MatIconModule,
     MatCardModule,
+    FontAwesomeModule,
   ],
   declarations: [AppVersionComponent, ChangelogComponent],
   exports: [AppVersionComponent],

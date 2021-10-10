@@ -5,6 +5,8 @@ import { BehaviorSubject } from "rxjs";
 import { AlertService } from "../../alerts/alert.service";
 import { ActivatedRoute, convertToParamMap } from "@angular/router";
 import { AnalyticsService } from "../../analytics/analytics.service";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("ComingSoonComponent", () => {
   let component: ComingSoonComponent;
@@ -27,6 +29,7 @@ describe("ComingSoonComponent", () => {
 
       TestBed.configureTestingModule({
         declarations: [ComingSoonComponent],
+        imports: [FontAwesomeModule, FontAwesomeTestingModule],
         providers: [
           { provide: AnalyticsService, useValue: mockAnalytics },
           { provide: AlertService, useValue: { addInfo: () => {} } },
