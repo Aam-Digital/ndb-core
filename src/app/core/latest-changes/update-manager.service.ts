@@ -21,6 +21,7 @@ import { first } from "rxjs/operators";
 import { concat, interval } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { LoggingService } from "../logging/logging.service";
+import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 
 /**
  * Check with the server whether a new version of the app is available in order to notify the user.
@@ -38,7 +39,19 @@ export class UpdateManagerService {
     private updates: SwUpdate,
     private snackBar: MatSnackBar,
     private logger: LoggingService
-  ) {}
+  ) {
+    const currentVersion: string = window.localStorage.getItem(
+      LatestChangesDialogService.VERSION_KEY
+    );
+    if (currentVersion.startsWith("update-")) {
+      console.log("updating", currentVersion);
+      window.localStorage.setItem(
+        LatestChangesDialogService.VERSION_KEY,
+        currentVersion.replace("update-", "")
+      );
+      location.reload();
+    }
+  }
 
   /**
    * Display a notification to the user in case a new app version is detected by the ServiceWorker.
@@ -48,9 +61,11 @@ export class UpdateManagerService {
       return;
     }
 
-    this.updates.available.subscribe((update) => {
-      console.log('update found', update);
-      location.reload();
+    this.updates.available.subscribe(() => {
+      this.updates
+        .activateUpdate()
+        .then((res) => console.log("update activated", res));
+      this.showUpdateNotification();
     });
   }
 
@@ -79,11 +94,29 @@ export class UpdateManagerService {
   }
 
   private showUpdateNotification() {
+    const currentVersion: string = window.localStorage.getItem(
+      LatestChangesDialogService.VERSION_KEY
+    );
+    window.localStorage.setItem(
+      LatestChangesDialogService.VERSION_KEY,
+      "update-" + currentVersion
+    );
+    console.log("current version", currentVersion);
+
     this.notificationRef = this.snackBar.open(
       $localize`A new version of the app is available!`,
       $localize`:Action that a user can update the app with:Update`
     );
     this.notificationRef.onAction().subscribe(() => {
+      window.localStorage.setItem(
+        LatestChangesDialogService.VERSION_KEY,
+        currentVersion
+      );
+      console.log(
+        "resetting version",
+        window.localStorage.getItem(LatestChangesDialogService.VERSION_KEY)
+      );
+
       location.reload();
     });
   }

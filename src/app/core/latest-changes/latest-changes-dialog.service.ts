@@ -27,7 +27,7 @@ import { LatestChangesService } from "./latest-changes.service";
  */
 @Injectable()
 export class LatestChangesDialogService {
-  private static STORAGE_KEY = "AppVersion";
+  public static VERSION_KEY = "AppVersion";
 
   constructor(
     private dialog: MatDialog,
@@ -60,13 +60,14 @@ export class LatestChangesDialogService {
    */
   public showLatestChangesIfUpdated() {
     const previousVersion = window.localStorage.getItem(
-      LatestChangesDialogService.STORAGE_KEY
+      LatestChangesDialogService.VERSION_KEY
     );
     if (previousVersion && this.getCurrentVersion() !== previousVersion) {
       this.showLatestChanges(previousVersion);
     }
+    console.log("overwriting version", this.getCurrentVersion());
     window.localStorage.setItem(
-      LatestChangesDialogService.STORAGE_KEY,
+      LatestChangesDialogService.VERSION_KEY,
       this.getCurrentVersion()
     );
   }
