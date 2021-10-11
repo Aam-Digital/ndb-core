@@ -1,5 +1,5 @@
 {
-  "index": "/en-US/index.html",
+  "index": "/index.html",
   "assetGroups": [{
     "name": "app",
     "installMode": "prefetch",
