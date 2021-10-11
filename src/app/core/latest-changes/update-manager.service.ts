@@ -48,11 +48,9 @@ export class UpdateManagerService {
       return;
     }
 
-    this.updates.available.subscribe(() => {
-      this.updates
-        .activateUpdate()
-        .then((res) => console.log("update activated", res));
-      this.showUpdateNotification();
+    this.updates.available.subscribe((update) => {
+      console.log('update found', update);
+      location.reload();
     });
   }
 
