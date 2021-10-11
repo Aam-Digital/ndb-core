@@ -30,6 +30,8 @@ locales.forEach((locale) => {
   fs.unlinkSync(`${distFolder}/${locale}/ngsw-worker.js`);
 });
 
+combined.index = "/index.html";
+
 fs.writeFileSync(`${distFolder}/ngsw.json`, JSON.stringify(combined));
 fs.unlinkSync(`${distFolder}/${firstLocale}/ngsw.json`);
 
