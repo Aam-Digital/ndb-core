@@ -61,7 +61,8 @@ export class UpdateManagerService {
       return;
     }
 
-    this.updates.available.subscribe(() => {
+    this.updates.available.subscribe((update) => {
+      console.log("update detected", update);
       this.updates
         .activateUpdate()
         .then((res) => console.log("update activated", res));
