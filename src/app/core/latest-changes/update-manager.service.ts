@@ -43,7 +43,7 @@ export class UpdateManagerService {
     const currentVersion: string = window.localStorage.getItem(
       LatestChangesDialogService.VERSION_KEY
     );
-    if (currentVersion.startsWith("update-")) {
+    if (currentVersion && currentVersion.startsWith("update-")) {
       console.log("updating", currentVersion);
       window.localStorage.setItem(
         LatestChangesDialogService.VERSION_KEY,
