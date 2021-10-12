@@ -12,8 +12,8 @@
       {{ stages[currentStage] }}
     </h2>
     <div fxLayout="row" *ngIf="currentStage !== 0">
-      <button mat-icon-button (click)="exit()">
-        <fa-icon style="margin-bottom: 12px;" icon="backward"></fa-icon>
+      <button mat-icon-button style="margin-top: -4px" (click)="exit()">
+        <fa-icon icon="backward"></fa-icon>
       </button>
       <h2>{{event.subject}}</h2>
     </div>
