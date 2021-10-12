@@ -78,7 +78,6 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["EditLongText", EditLongTextComponent],
   ["EditPhoto", EditPhotoComponent],
   ["ReadonlyFunction", ReadonlyFunctionComponent],
-  ["ColoredReadonlyFunction", ColoredReadonlyFunctionComponent],
   ["DisplayEntity", DisplayEntityComponent],
   ["EditSingleEntity", EditSingleEntityComponent],
   ["DisplayEntityArray", DisplayEntityArrayComponent],
