@@ -16,6 +16,7 @@
  */
 
 @import "../../../../ndb-theme";
+@import "../../../../styles";
 
 .header-row {
   display: flex;
@@ -46,10 +47,8 @@
   margin: 0 0;
 }
 
-.icon {
-  margin-right: 10px;
-}
-
 .warn-icon {
   color: mat-color($ndb-app-warn);
+  padding-right: 8px;
+  min-width: $max-icon-width;
 }
