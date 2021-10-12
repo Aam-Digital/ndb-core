@@ -549,8 +549,7 @@ export const defaultJsonConfig = {
               "title": $localize`:Title inside a panel:School History`,
               "component": "PreviousSchools",
               "config": {
-                "single": true,
-              }
+                "single": true,              }
             },
             {
               "title": $localize`:Title inside a panel:ASER Results`,

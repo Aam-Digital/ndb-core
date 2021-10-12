@@ -69,7 +69,7 @@ describe("PreviousSchoolsComponent", () => {
     );
   }));
 
-  it("should only show columns which are defined by the config", fakeAsync(() => {
+  it("should allow to change the columns to be displayed by the config", fakeAsync(() => {
     const config: PanelConfig = {
       entity: new Child(),
       config: {
@@ -83,11 +83,13 @@ describe("PreviousSchoolsComponent", () => {
     };
     component.onInitFromDynamicConfig(config);
     tick();
-    expect(component.columns).toHaveSize(3);
+    
     let columnNames = component.columns.map((column) => column.label);
     expect(columnNames).toContain("Team");
     expect(columnNames).toContain("From");
     expect(columnNames).toContain("To");
+    expect(columnNames).not.toContain("Class");
+    expect(columnNames).not.toContain("Result");
 
     config.config.columns.push({
       id: "schoolClass",
@@ -102,7 +104,7 @@ describe("PreviousSchoolsComponent", () => {
 
     component.onInitFromDynamicConfig(config);
     tick();
-    expect(component.columns).toHaveSize(5);
+
     columnNames = component.columns.map((column) => column.label);
     expect(columnNames).toContain("Team");
     expect(columnNames).toContain("From");

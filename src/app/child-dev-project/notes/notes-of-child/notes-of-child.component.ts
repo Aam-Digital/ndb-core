@@ -90,10 +90,6 @@ export class NotesOfChildComponent
    * @param note note to get color for
    */
   getColor = (note: Note) => note?.getColorForId(this.child.getId());
-    // console.log(note?.getColorForId(this.child.getId()));
-    // "#fd727280";
-    //return "#90ee9040"
-  // }
 
   showNoteDetails(note: Note) {
     this.formDialog.openDialog(NoteDetailsComponent, note);

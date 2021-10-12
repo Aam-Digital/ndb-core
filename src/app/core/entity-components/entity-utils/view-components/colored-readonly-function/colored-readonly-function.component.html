@@ -1,1 +1,12 @@
-<p>colored-readonly-function works!</p>
+<mat-chip-list>
+    <mat-chip
+        [matTooltip]="tooltip"
+        [ngStyle]="
+            {
+            'background-color': entity.getColor()
+            }
+        "
+    >
+    <app-readonly-function [displayFunction]="displayFunction" [entity]="entity"></app-readonly-function>
+    </mat-chip>
+</mat-chip-list>

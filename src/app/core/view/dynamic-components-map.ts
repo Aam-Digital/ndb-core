@@ -41,6 +41,7 @@ import { DisplayUnitComponent } from "../entity-components/entity-utils/view-com
 import { FormComponent } from "../entity-components/entity-details/form/form.component";
 import { EditNumberComponent } from "../entity-components/entity-utils/dynamic-form-components/edit-number/edit-number.component";
 import { NoteAttendanceCountBlockComponent } from "../../child-dev-project/notes/note-attendance-block/note-attendance-count-block.component";
+import { ColoredReadonlyFunctionComponent } from "../entity-components/entity-utils/view-components/colored-readonly-function/colored-readonly-function.component";
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
@@ -78,6 +79,7 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["EditLongText", EditLongTextComponent],
   ["EditPhoto", EditPhotoComponent],
   ["ReadonlyFunction", ReadonlyFunctionComponent],
+  ["ColoredReadonlyFunction", ColoredReadonlyFunctionComponent],
   ["DisplayEntity", DisplayEntityComponent],
   ["EditSingleEntity", EditSingleEntityComponent],
   ["DisplayEntityArray", DisplayEntityArrayComponent],

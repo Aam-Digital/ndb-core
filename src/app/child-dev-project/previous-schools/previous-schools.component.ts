@@ -15,20 +15,21 @@ export class PreviousSchoolsComponent
   implements OnChanges, OnInitDynamicComponent {
   @Input() child: Child;
   records = new Array<ChildSchoolRelation>();
+  readonly isActiveIndicator = {
+    id: "isActive",
+    label: $localize`:Label for form field, Indicatind whether currenty active:Currently active`,
+    view: "ColoredReadonlyFunction",
+    hideFromTable: true,
+    tooltip: $localize`:Tooltip for the status of currently active or not:Change the start or end date to modify this status`,
+    additional: (csr: ChildSchoolRelation) => csr.isActive ? $localize`:Indication for the currently active status of an entry:Currently active` : $localize`:Indication for the currently inactive status of an entry:Not active`,
+  };
   columns: FormFieldConfig[] = [
     { id: "schoolId" },
     { id: "schoolClass" },
     { id: "start" },
     { id: "end" },
     { id: "result" },
-    {
-      id: "isActive",
-      label: $localize`:Label for form field, Indicatind whether currenty active:Currently active`,
-      view: "ReadonlyFunction",
-      tooltip: "Change start or end date to modify the state of currently active",
-      hideFromTable: true,
-      additional: (csr: ChildSchoolRelation) => csr.isActive ? "Currently active" : "Currently inactive",
-    },
+    this.isActiveIndicator,
   ];
   current: ChildSchoolRelation;
 
@@ -48,6 +49,7 @@ export class PreviousSchoolsComponent
     }
     if (panelConfig.config?.columns) {
       this.columns = panelConfig.config.columns;
+      this.columns.push(this.isActiveIndicator);
     }
     this.child = panelConfig.entity as Child;
     this.loadData(this.child.getId());

@@ -30,12 +30,12 @@ export class ChildSchoolRelation extends Entity {
   schoolClass: string = "";
   @DatabaseField({
     dataType: "date-only",
-    label: $localize`:Label for the start date of a relation:From`,
+    label: $localize`:Label for the start date of a relation:Start date`,
   })
   start: Date;
   @DatabaseField({
     dataType: "date-only",
-    label: $localize`:Label for the end date of a relation:To`,
+    label: $localize`:Label for the end date of a relation:End date`,
   })
   end: Date;
 
@@ -55,7 +55,9 @@ export class ChildSchoolRelation extends Entity {
     );
   }
 
-  getColor = () => this.isActive ? "#90ee9040" : "";
+  getColor(): string {
+    return this.isActive ? "#90ee9040" : "";
+  }
 
   assertValid() {
     super.assertValid();
