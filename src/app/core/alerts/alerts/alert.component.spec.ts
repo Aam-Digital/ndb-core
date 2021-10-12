@@ -20,10 +20,10 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { AlertComponent } from "./alert.component";
 import { AlertService } from "../alert.service";
 import { MatButtonModule } from "@angular/material/button";
-import { MatIconModule } from "@angular/material/icon";
 import { MAT_SNACK_BAR_DATA } from "@angular/material/snack-bar";
 import { Alert } from "../alert";
 import { AlertDisplay } from "../alert-display";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("AlertComponent", () => {
   let component: AlertComponent;
@@ -33,6 +33,7 @@ describe("AlertComponent", () => {
     waitForAsync(() => {
       TestBed.configureTestingModule({
         declarations: [AlertComponent],
+        imports: [FontAwesomeTestingModule, MatButtonModule],
         providers: [
           AlertService,
           {
@@ -40,7 +41,6 @@ describe("AlertComponent", () => {
             useValue: new Alert("test", Alert.WARNING, AlertDisplay.PERSISTENT),
           },
         ],
-        imports: [MatIconModule, MatButtonModule],
       }).compileComponents();
     })
   );

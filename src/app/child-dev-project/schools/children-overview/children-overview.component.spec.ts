@@ -9,27 +9,22 @@ import { ChildrenOverviewComponent } from "./children-overview.component";
 import { SchoolsModule } from "../schools.module";
 import { School } from "../model/school";
 import { Child } from "../../children/model/child";
-import { SchoolsService } from "../schools.service";
 import { RouterTestingModule } from "@angular/router/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Router } from "@angular/router";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
-import { MatDialog } from "@angular/material/dialog";
-import { EntityFormComponent } from "../../../core/entity-components/entity-form/entity-form/entity-form.component";
-import { EntityFormService } from "../../../core/entity-components/entity-form/entity-form.service";
-import { AlertService } from "../../../core/alerts/alert.service";
-import { EventEmitter } from "@angular/core";
-import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
+import { ChildrenService } from "../../children/children.service";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("ChildrenOverviewComponent", () => {
   let component: ChildrenOverviewComponent;
   let fixture: ComponentFixture<ChildrenOverviewComponent>;
-  let mockSchoolsService: jasmine.SpyObj<SchoolsService>;
+  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
 
   beforeEach(
     waitForAsync(() => {
-      mockSchoolsService = jasmine.createSpyObj(["getChildrenForSchool"]);
+      mockChildrenService = jasmine.createSpyObj(["queryRelationsOf"]);
 
       TestBed.configureTestingModule({
         declarations: [],
@@ -38,8 +33,11 @@ describe("ChildrenOverviewComponent", () => {
           RouterTestingModule,
           NoopAnimationsModule,
           MockSessionModule.withState(),
+          FontAwesomeTestingModule,
         ],
-        providers: [{ provide: SchoolsService, useValue: mockSchoolsService }],
+        providers: [
+          { provide: ChildrenService, useValue: mockChildrenService },
+        ],
       }).compileComponents();
     })
   );
@@ -47,6 +45,7 @@ describe("ChildrenOverviewComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ChildrenOverviewComponent);
     component = fixture.componentInstance;
+    component.entity = new School();
     fixture.detectChanges();
   });
 
@@ -54,20 +53,21 @@ describe("ChildrenOverviewComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should load the children for a school", fakeAsync(() => {
+  it("should load the relations for a school", fakeAsync(() => {
     const school = new School("s1");
-    const child1 = new Child("c1");
-    const child2 = new Child("c2");
+    const relation1 = new ChildSchoolRelation("r1");
+    const relation2 = new ChildSchoolRelation("r2");
     const config = { entity: school };
-    mockSchoolsService.getChildrenForSchool.and.resolveTo([child1, child2]);
+    mockChildrenService.queryRelationsOf.and.resolveTo([relation1, relation2]);
 
     component.onInitFromDynamicConfig(config);
+    tick();
 
-    expect(mockSchoolsService.getChildrenForSchool).toHaveBeenCalledWith(
+    expect(mockChildrenService.queryRelationsOf).toHaveBeenCalledWith(
+      "school",
       school.getId()
     );
-    tick();
-    expect(component.children).toEqual([child1, child2]);
+    expect(component.records).toEqual([relation1, relation2]);
   }));
 
   it("should route to a child when clicked", () => {
@@ -83,89 +83,12 @@ describe("ChildrenOverviewComponent", () => {
     ]);
   });
 
-  it("should open a dialog when clicking add new child with correct relation", () => {
-    component.entity = new School();
-    const dialog = TestBed.inject(MatDialog);
-    const entityFormService = TestBed.inject(EntityFormService);
-    const alertService = TestBed.inject(AlertService);
-    const dialogComponent = new EntityFormComponent(
-      entityFormService,
-      alertService
-    );
-    spyOn(dialog, "open").and.returnValues({
-      componentInstance: dialogComponent,
-    } as any);
+  it("should create a relation with the school ID already been set", () => {
+    component.entity = new School("testID");
 
-    component.addChildClick();
+    const newRelation = component.generateNewRecordFactory()();
 
-    expect(dialog.open).toHaveBeenCalled();
-    const relation = dialogComponent.entity as ChildSchoolRelation;
-    expect(relation.schoolId).toBe(component.entity.getId());
+    expect(newRelation).toBeInstanceOf(ChildSchoolRelation);
+    expect(newRelation.schoolId).toBe("testID");
   });
-
-  it("should add a newly added child to the list", fakeAsync(() => {
-    component.entity = new School();
-    const child = new Child();
-    const dialog = TestBed.inject(MatDialog);
-    const dialogComponent = {
-      onSave: new EventEmitter(),
-      onCancel: new EventEmitter(),
-    };
-    spyOn(dialog, "open").and.returnValues({
-      componentInstance: dialogComponent,
-      close: () => {},
-    } as any);
-    mockSchoolsService.getChildrenForSchool.and.resolveTo([child]);
-
-    component.addChildClick();
-    dialogComponent.onSave.emit(undefined);
-    tick();
-
-    expect(component.children).toContain(child);
-  }));
-
-  it("should close the dialog when cancel is clicked", fakeAsync(() => {
-    component.entity = new School();
-    const dialog = TestBed.inject(MatDialog);
-    const dialogComponent = {
-      onSave: new EventEmitter(),
-      onCancel: new EventEmitter(),
-    };
-    const closeSpy = jasmine.createSpy();
-    spyOn(dialog, "open").and.returnValues({
-      componentInstance: dialogComponent,
-      close: closeSpy,
-    } as any);
-
-    component.addChildClick();
-    dialogComponent.onCancel.emit(undefined);
-    tick();
-
-    expect(closeSpy).toHaveBeenCalled();
-  }));
-
-  it("should assign the popup columns from the config", fakeAsync(() => {
-    const dialog = TestBed.inject(MatDialog);
-    const dialogComponent = {
-      columns: [],
-      onSave: new EventEmitter(),
-      onCancel: new EventEmitter(),
-    };
-    spyOn(dialog, "open").and.returnValues({
-      componentInstance: dialogComponent,
-      close: () => {},
-    } as any);
-    const popupColumns = ["start", "end", "class"];
-    const config: PanelConfig = {
-      entity: new Child(),
-      config: { popupColumns: popupColumns },
-    };
-
-    component.onInitFromDynamicConfig(config);
-    tick();
-    component.addChildClick();
-    tick();
-
-    expect(dialogComponent.columns).toEqual(popupColumns.map((col) => [col]));
-  }));
 });

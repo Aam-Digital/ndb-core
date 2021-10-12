@@ -1,5 +1,5 @@
 <span (mouseenter)="showTooltip()" (mouseleave)="hideTooltip()">
-  <mat-icon class="school-pic" [fontIcon]="iconName"></mat-icon>
+  <app-fa-dynamic-icon [icon]="icon"></app-fa-dynamic-icon>
   {{ entity?.name }}
 </span>
 

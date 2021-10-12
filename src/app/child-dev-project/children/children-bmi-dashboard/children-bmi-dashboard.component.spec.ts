@@ -6,6 +6,7 @@ import { ChildrenService } from "../children.service";
 import { Child } from "../model/child";
 import { ChildrenBmiDashboardComponent } from "./children-bmi-dashboard.component";
 import { ChildrenModule } from "../children.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("ChildrenBmiDashboardComponent", () => {
   let component: ChildrenBmiDashboardComponent;
@@ -18,7 +19,11 @@ describe("ChildrenBmiDashboardComponent", () => {
   beforeEach(() => {
     mockChildrenService.getChildren.and.returnValue(of([]));
     TestBed.configureTestingModule({
-      imports: [ChildrenModule, RouterTestingModule.withRoutes([])],
+      imports: [
+        ChildrenModule,
+        RouterTestingModule.withRoutes([]),
+        FontAwesomeTestingModule,
+      ],
       providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
     }).compileComponents();
   });

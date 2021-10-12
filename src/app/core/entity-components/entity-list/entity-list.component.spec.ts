@@ -19,6 +19,7 @@ import { AttendanceService } from "../../../child-dev-project/attendance/attenda
 import { ExportModule } from "../../export/export.module";
 import { ExportService } from "../../export/export-service/export.service";
 import { MockSessionModule } from "../../session/mock-session.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -103,6 +104,7 @@ describe("EntityListComponent", () => {
             { path: "child", component: ChildrenListComponent },
           ]),
           MockSessionModule.withState(),
+          FontAwesomeTestingModule,
         ],
         providers: [
           DatePipe,

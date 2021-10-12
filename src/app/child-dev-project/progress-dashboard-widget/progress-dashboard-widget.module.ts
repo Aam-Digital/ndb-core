@@ -21,7 +21,6 @@ import { FlexLayoutModule } from "@angular/flex-layout";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { ChildrenModule } from "../children/children.module";
@@ -35,7 +34,6 @@ import { DashboardModule } from "../../core/dashboard/dashboard.module";
     FormsModule,
     FlexLayoutModule,
     MatCardModule,
-    MatIconModule,
     MatButtonModule,
     MatProgressBarModule,
     MatInputModule,

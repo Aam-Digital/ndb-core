@@ -3,7 +3,6 @@ import { CommonModule } from "@angular/common";
 import { ConflictResolutionListComponent } from "./conflict-resolution-list/conflict-resolution-list.component";
 import { MatTableModule } from "@angular/material/table";
 import { MatSortModule } from "@angular/material/sort";
-import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatExpansionModule } from "@angular/material/expansion";
@@ -43,7 +42,6 @@ routes: Routes = [
     CommonModule,
     MatTableModule,
     MatSortModule,
-    MatIconModule,
     MatButtonModule,
     MatPaginatorModule,
     MatExpansionModule,

@@ -11,6 +11,7 @@ import { Angulartics2Module } from "angulartics2";
 import { MatDialogRef } from "@angular/material/dialog";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 function generateTestNote(forChildren: Child[]) {
   const testNote = Note.create(new Date(), "test note");
@@ -57,6 +58,7 @@ describe("NoteDetailsComponent", () => {
         MatNativeDateModule,
         Angulartics2Module.forRoot(),
         MockSessionModule.withState(),
+        FontAwesomeTestingModule,
       ],
       providers: [
         { provide: MatDialogRef, useValue: dialogRefMock },
