@@ -26,8 +26,10 @@ import { DashboardTableComponent } from "./dashboard-widget/dashboard-table/dash
 import { MatTableModule } from "@angular/material/table";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DashboardTableWidgetComponent } from "./dashboard-table-widget/dashboard-table-widget.component";
+import { MatSortModule } from "@angular/material/sort";
+import { MatPaginatorModule } from "@angular/material/paginator";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @NgModule({
   imports: [
@@ -38,6 +40,8 @@ import { DashboardTableWidgetComponent } from "./dashboard-table-widget/dashboar
     MatProgressSpinnerModule,
     MatTooltipModule,
     FontAwesomeModule,
+    MatSortModule,
+    MatPaginatorModule,
   ],
   declarations: [
     DashboardComponent,
