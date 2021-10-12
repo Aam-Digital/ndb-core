@@ -85,7 +85,7 @@ export const defaultJsonConfig = {
       },
       {
         "name": $localize`:Menu item:Profile`,
-        "icon": "user-circle-o",
+        "icon": "user",
         "link": "/user"
       }
     ]

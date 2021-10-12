@@ -23,6 +23,10 @@
   margin-bottom: -1.25em;
 }
 
+.accent-icon {
+  color: mat-color($ndb-app-accent);
+}
+
 .additional-button-icon {
   font-size: 40px;
   margin-left: -6px;

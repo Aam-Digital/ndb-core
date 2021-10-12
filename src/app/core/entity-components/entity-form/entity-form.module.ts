@@ -21,7 +21,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     PermissionsModule,
     FlexLayoutModule,
     MatTabsModule,
-    MatIconModule,
     MatTooltipModule,
     MatFormFieldModule,
     FontAwesomeModule,

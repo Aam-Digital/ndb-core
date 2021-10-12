@@ -41,7 +41,7 @@
         <div *ngTemplateOutlet="filterDialog" style="padding-bottom: 0"></div>
 
         <button mat-icon-button class="additional-button" color="primary" [matMenuTriggerFor]="additional">
-          <span class="material-icons">more_vert</span>
+          <fa-icon class="standard-icon" icon="ellipsis-v"></fa-icon>
         </button>
       </div>
     </div>
@@ -96,7 +96,7 @@
     <div *ngTemplateOutlet="filterDialog"></div>
 
     <button mat-icon-button color="primary" [matMenuTriggerFor]="additional">
-      <span class="material-icons">more_vert</span>
+      <fa-icon class="standard-icon" icon="ellipsis-v"></fa-icon>
     </button>
 
   </div>
@@ -124,7 +124,7 @@
       aria-label="Clear"
       (click)="filterString = ''; applyFilter('')"
     >
-      <mat-icon fontIcon="fa-times"></mat-icon>
+      <fa-icon icon="times"></fa-icon>
     </button>
   </mat-form-field>
 </ng-template>
@@ -156,12 +156,11 @@
                 operation: operationType.CREATE
               }"
     >
-      <mat-icon
-        class="standard-icon"
-        color="accent"
+      <fa-icon
+        class="standard-icon accent-icon"
         aria-label="add element"
-        fontIcon="fa-plus-circle"
-      ></mat-icon>
+        icon="plus-circle"
+      ></fa-icon>
       <span i18n="Add a new entity to a list of multiple entities"> Add New </span>
     </button>
 
@@ -169,13 +168,12 @@
       mat-menu-item
       (click)="openFilterOverlay()"
     >
-      <mat-icon
-        color="accent"
+      <fa-icon
         aria-label="filter"
-        class="standard-icon"
-        fontIcon="fa-filter"
+        class="standard-icon accent-icon"
+        icon="filter"
       >
-      </mat-icon>
+      </fa-icon>
       <span>Filter options</span>
     </button>
 
@@ -188,15 +186,14 @@
     [exportConfig]="listConfig.exportConfig"
     [filename]="listName.replace(' ', '')"
   >
-    <mat-icon
-      color="accent"
-      class="standard-icon"
+    <fa-icon
+      class="standard-icon accent-icon"
       aria-label="download csv"
-      fontIcon="fa-download"
+      icon="download"
       angulartics2On="click"
       [angularticsCategory]="entityConstructor.ENTITY_TYPE"
       angularticsAction="list_csv_export"
-    ></mat-icon>
+    ></fa-icon>
     <span i18n="Download list contents as CSV"> Download CSV </span>
   </button>
   <ng-content select="[mat-menu-item]"></ng-content>
