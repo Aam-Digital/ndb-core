@@ -24,6 +24,8 @@ $margin-main-view-bottom: 16px;
 
 $standard-grid-gap: 25px;
 
+$max-icon-width: 22px;
+
 body {
   margin: 0;
 }
@@ -234,5 +236,15 @@ $standard-icon-size: 1.5em;
 
 .standard-icon-with-text {
   font-size: $standard-icon-size;
-  margin-right: 5px;
+  margin-right: 8px;
+}
+
+::ng-deep .mat-raised-button {
+  margin-right: 8px;
+}
+
+.truncate-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
