@@ -5,6 +5,8 @@ $font-size-headline: 40pt;
 
 $padding-header: 24px;
 
+$border-radius-card: 5px;
+
 .widget-header {
   /* Defines a grid that roughly looks like this:
    * |-------|--------------------------------------|
@@ -58,7 +60,7 @@ $padding-header: 24px;
 }
 
 .widget-total {
-  border-radius: 0 0 5px 5px;
+  border-radius: $border-radius-card;
   // necessary for the border-radius to apply
   overflow: auto;
 }
