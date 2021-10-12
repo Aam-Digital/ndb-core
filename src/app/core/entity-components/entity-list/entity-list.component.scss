@@ -1,4 +1,5 @@
 @import "../../../../ndb-theme";
+@import "../../../../styles";
 
 .table-list td {
   padding-left: 8px;
@@ -25,6 +26,8 @@
 
 .accent-icon {
   color: mat-color($ndb-app-accent);
+  min-width: $max-icon-width;
+  margin-right: 8px;
 }
 
 .additional-button-icon {
