@@ -65,7 +65,6 @@ export class LatestChangesDialogService {
     if (previousVersion && this.getCurrentVersion() !== previousVersion) {
       this.showLatestChanges(previousVersion);
     }
-    console.log("overwriting version", this.getCurrentVersion());
     window.localStorage.setItem(
       LatestChangesDialogService.VERSION_KEY,
       this.getCurrentVersion()

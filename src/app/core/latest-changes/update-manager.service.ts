@@ -61,11 +61,8 @@ export class UpdateManagerService {
       return;
     }
 
-    this.updates.available.subscribe((update) => {
-      console.log("update detected", update);
-      this.updates
-        .activateUpdate()
-        .then((res) => console.log("update activated", res));
+    this.updates.available.subscribe(() => {
+      this.updates.activateUpdate();
       this.showUpdateNotification();
     });
   }
@@ -102,7 +99,6 @@ export class UpdateManagerService {
       LatestChangesDialogService.VERSION_KEY,
       "update-" + currentVersion
     );
-    console.log("current version", currentVersion);
 
     this.notificationRef = this.snackBar.open(
       $localize`A new version of the app is available!`,
@@ -112,10 +108,6 @@ export class UpdateManagerService {
       window.localStorage.setItem(
         LatestChangesDialogService.VERSION_KEY,
         currentVersion
-      );
-      console.log(
-        "resetting version",
-        window.localStorage.getItem(LatestChangesDialogService.VERSION_KEY)
       );
 
       location.reload();
