@@ -65,7 +65,7 @@ export const defaultJsonConfig = {
       },
       {
         "name": $localize`:Menu item:Users`,
-        "icon": "user",
+        "icon": "users",
         "link": "/users"
       },
       {
