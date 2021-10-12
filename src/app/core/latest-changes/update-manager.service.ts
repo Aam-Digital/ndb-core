@@ -44,7 +44,6 @@ export class UpdateManagerService {
       LatestChangesDialogService.VERSION_KEY
     );
     if (currentVersion && currentVersion.startsWith("update-")) {
-      console.log("updating", currentVersion);
       window.localStorage.setItem(
         LatestChangesDialogService.VERSION_KEY,
         currentVersion.replace("update-", "")
