@@ -24,10 +24,9 @@
   >
     <fa-icon icon="backward"></fa-icon>
   </button>
-  <app-fa-dynamic-icon class="icon" [icon]="iconName"> </app-fa-dynamic-icon>
-  <h1 class="header-title" *ngIf="!creatingNew">{{ entity?.toString() }}</h1>
+  <h1 class="header-title truncate-text" *ngIf="!creatingNew">{{ entity?.toString() }}</h1>
   <h1
-    class="header-title"
+    class="header-title truncate-text"
     *ngIf="creatingNew"
     i18n="
         Title when adding a new entity|An entity is a child, note, school,

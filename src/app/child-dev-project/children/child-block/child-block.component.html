@@ -4,6 +4,7 @@
   (mouseleave)="hideTooltip()"
   (click)="showDetailsPage()"
   [ngClass]="{ inactive: !entity.isActive, clickable: !linkDisabled }"
+  class="truncate-text"
 >
   <img [src]="entity.photo?.photo?.value" class="child-pic" />
   {{ entity?.name }}
