@@ -21,15 +21,21 @@ import { DashboardComponent } from "./dashboard/dashboard.component";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { ViewModule } from "../view/view.module";
 import { DashboardWidgetComponent } from "./dashboard-widget/dashboard-widget.component";
-import { MatIconModule } from "@angular/material/icon";
 import { WidgetHeadlineComponent } from "./dashboard-widget/widget-headline/widget-header.component";
 import { WidgetSubheadlineComponent } from "./dashboard-widget/widget-subheadline/widget-subheadline.component";
 import { WidgetContentComponent } from "./dashboard-widget/widget-content/widget-content.component";
-import { DashboardTableComponent } from './dashboard-widget/dashboard-table/dashboard-table.component';
+import { DashboardTableComponent } from "./dashboard-widget/dashboard-table/dashboard-table.component";
 import { MatTableModule } from "@angular/material/table";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @NgModule({
-    imports: [CommonModule, FlexLayoutModule, ViewModule, MatIconModule, MatTableModule],
+  imports: [
+    CommonModule,
+    FlexLayoutModule,
+    ViewModule,
+    MatTableModule,
+    FontAwesomeModule,
+  ],
   declarations: [
     DashboardComponent,
     DashboardWidgetComponent,
