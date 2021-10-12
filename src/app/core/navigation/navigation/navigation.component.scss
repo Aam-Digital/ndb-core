@@ -14,8 +14,10 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
-$nav-link-gap: 5px;
-$nav-icon-width: 14px;
+
+@import "../../../../styles";
+
+$nav-link-gap: 8px;
 
 .divider {
   background-color: #e5e5e5;
@@ -29,7 +31,7 @@ $nav-icon-width: 14px;
 }
 
 .nav-icon {
-  margin-right: 6px;
+  margin-right: $nav-link-gap;
 }
 
 .nav-link {
@@ -38,5 +40,5 @@ $nav-icon-width: 14px;
 }
 
 .nav-icon {
-  width: $nav-icon-width;
+  min-width: $max-icon-width;
 }
