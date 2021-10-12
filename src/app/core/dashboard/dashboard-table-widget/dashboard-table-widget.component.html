@@ -1,0 +1,49 @@
+<app-dashboard-widget
+  icon="file-text-o"
+  theme="note"
+  [title]="data?.length"
+  [isLoading]="!data"
+  [subtitle]="subtitle"
+  [explanation]="explanation"
+>
+  <app-widget-content style="height: 100%">
+    <table
+      mat-table
+      [dataSource]="data"
+      style="width: 100%"
+    >
+      <ng-container matColumnDef="content-row">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          scope="col"
+        >
+
+        </th>
+        <td mat-cell *matCellDef="let dataItem">
+        </td>
+      </ng-container>
+
+      <tr
+        mat-header-row
+        *matHeaderRowDef="['content-row']"
+        style="display: none"
+      ></tr>
+      <tr
+        mat-row
+        *matRowDef="
+            let dataItem;
+            columns: ['content-row'];
+            let i = index
+          "
+        class="dashboard-table-row w-WARNING"
+      ></tr>
+    </table>
+    <mat-paginator
+      *ngIf="data?.length > 4"
+      [pageSize]="4"
+      [hidePageSize]="true"
+      [showFirstLastButtons]="true"
+    ></mat-paginator>
+  </app-widget-content>
+</app-dashboard-widget>

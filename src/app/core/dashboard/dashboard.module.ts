@@ -27,6 +27,7 @@ import { MatTableModule } from "@angular/material/table";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { DashboardTableWidgetComponent } from "./dashboard-table-widget/dashboard-table-widget.component";
 
 @NgModule({
   imports: [
@@ -43,7 +44,12 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     DashboardWidgetComponent,
     WidgetContentComponent,
     DashboardTableComponent,
+    DashboardTableWidgetComponent,
   ],
-  exports: [DashboardWidgetComponent, WidgetContentComponent],
+  exports: [
+    DashboardWidgetComponent,
+    WidgetContentComponent,
+    DashboardTableWidgetComponent,
+  ],
 })
 export class DashboardModule {}
