@@ -43,6 +43,9 @@ $border-radius-card: 5px;
   grid-area: headline;
   text-align: end;
   place-self: end;
+
+  font-size: 40pt;
+  color: white;
 }
 
 .widget-subheadline {
@@ -50,6 +53,9 @@ $border-radius-card: 5px;
   text-align: end;
   place-self: end;
   margin-top: 8px;
+
+  font-size: 14px;
+  color: white;
 }
 
 .widget-content {

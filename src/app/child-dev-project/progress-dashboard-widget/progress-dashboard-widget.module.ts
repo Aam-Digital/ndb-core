@@ -27,6 +27,7 @@ import { ChildrenModule } from "../children/children.module";
 import { ProgressDashboardComponent } from "./progress-dashboard/progress-dashboard.component";
 import { FormsModule } from "@angular/forms";
 import { DashboardModule } from "../../core/dashboard/dashboard.module";
+import { ViewModule } from "../../core/view/view.module";
 
 @NgModule({
   imports: [
@@ -40,6 +41,7 @@ import { DashboardModule } from "../../core/dashboard/dashboard.module";
     MatFormFieldModule,
     ChildrenModule,
     DashboardModule,
+    ViewModule,
   ],
   declarations: [ProgressDashboardComponent],
 })

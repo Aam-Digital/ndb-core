@@ -1,23 +1,12 @@
-<app-dashboard-widget icon="file-alt" theme="note">
-  <app-widget-headline>
-    <mat-spinner *ngIf="isLoading" diameter="40"></mat-spinner>
-    <span *ngIf="!isLoading">
-      {{ count }}
-    </span>
-  </app-widget-headline>
-  <app-widget-subheadline
-    i18n="
-        Subtitle|Subtitle informing the user that these are the children with
-        recent reports
-      "
-    [matTooltip]="tooltip"
-    style="cursor: help"
-  >
-    Children
-    <span class="subtitle-highlight">with</span>
-    recent report
-  </app-widget-subheadline>
-
+<app-dashboard-widget
+  icon="file-alt"
+  theme="note"
+  [isLoading]="isLoading"
+  [title]="count"
+  subtitle="Children with recent report"
+  i18n-subtitle="Subtitle|Subtitle informing the user that these are the children with recent reports"
+  [explanation]="tooltip"
+>
   <app-widget-content
     class="dashboard-content"
     [routerLink]="['/note']"

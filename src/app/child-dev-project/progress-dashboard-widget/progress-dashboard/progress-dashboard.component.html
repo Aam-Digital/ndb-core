@@ -1,8 +1,9 @@
-<app-dashboard-widget icon="list" theme="child">
-  <app-widget-headline>{{
-    data.getTotalPercentage() | percent: "1.0-0"
-  }}</app-widget-headline>
-  <app-widget-subheadline>{{data.title}}</app-widget-subheadline>
+<app-dashboard-widget
+  icon="list"
+  theme="child"
+  [title]="data.getTotalPercentage() | percent: '1.0-0'"
+  [subtitle]="data.title"
+>
   <app-widget-content>
     <table class="dashboard-table">
       <tr *ngFor="let entry of data?.parts" class="dashboard-table-row">
@@ -22,13 +23,13 @@
     <div [ngClass]="{ 'dashboard-config': configure }">
       <div style="text-align: left">
         <button mat-icon-button (click)="addPart()" *ngIf="configure">
-          <mat-icon aria-label="add part" fontIcon="fa-plus"></mat-icon>
+          <app-fa-dynamic-icon aria-label="add part" icon="fa-plus"></app-fa-dynamic-icon>
         </button>
         <button mat-icon-button (click)="save()" *ngIf="configure">
-          <mat-icon aria-label="save" fontIcon="fa-check"></mat-icon>
+          <app-fa-dynamic-icon aria-label="save" icon="fa-check"></app-fa-dynamic-icon>
         </button>
         <button mat-icon-button (click)="configure = true" *ngIf="!configure">
-          <mat-icon aria-label="configure" fontIcon="fa-wrench"></mat-icon>
+          <app-fa-dynamic-icon aria-label="configure" icon="fa-wrench"></app-fa-dynamic-icon>
         </button>
       </div>
 
@@ -100,7 +101,7 @@
           </td>
           <td>
             <button mat-icon-button (click)="data.parts.splice(i, 1)">
-              <mat-icon aria-label="remove" fontIcon="fa-trash"></mat-icon>
+              <app-fa-dynamic-icon aria-label="remove" icon="fa-trash"></app-fa-dynamic-icon>
             </button>
           </td>
         </tr>

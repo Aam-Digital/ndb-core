@@ -21,11 +21,11 @@ import { DashboardComponent } from "./dashboard/dashboard.component";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { ViewModule } from "../view/view.module";
 import { DashboardWidgetComponent } from "./dashboard-widget/dashboard-widget.component";
-import { WidgetHeadlineComponent } from "./dashboard-widget/widget-headline/widget-header.component";
-import { WidgetSubheadlineComponent } from "./dashboard-widget/widget-subheadline/widget-subheadline.component";
 import { WidgetContentComponent } from "./dashboard-widget/widget-content/widget-content.component";
 import { DashboardTableComponent } from "./dashboard-widget/dashboard-table/dashboard-table.component";
 import { MatTableModule } from "@angular/material/table";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @NgModule({
@@ -34,21 +34,16 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     FlexLayoutModule,
     ViewModule,
     MatTableModule,
+    MatProgressSpinnerModule,
+    MatTooltipModule,
     FontAwesomeModule,
   ],
   declarations: [
     DashboardComponent,
     DashboardWidgetComponent,
-    WidgetHeadlineComponent,
-    WidgetSubheadlineComponent,
     WidgetContentComponent,
     DashboardTableComponent,
   ],
-  exports: [
-    DashboardWidgetComponent,
-    WidgetHeadlineComponent,
-    WidgetSubheadlineComponent,
-    WidgetContentComponent,
-  ],
+  exports: [DashboardWidgetComponent, WidgetContentComponent],
 })
 export class DashboardModule {}

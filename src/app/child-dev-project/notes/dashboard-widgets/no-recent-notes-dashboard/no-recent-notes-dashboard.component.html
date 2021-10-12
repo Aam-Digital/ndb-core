@@ -1,23 +1,12 @@
-<app-dashboard-widget icon="file-alt" theme="note">
-  <app-widget-headline>
-    <mat-spinner *ngIf="isLoading" diameter="40"></mat-spinner>
-    <span *ngIf="!isLoading">
-      {{ concernedChildren?.length }}
-    </span>
-  </app-widget-headline>
-  <app-widget-subheadline
-    i18n="
-        Subtitle|Subtitle informing the user that these are the children without
-        recent reports
-      "
-    [matTooltip]="tooltip"
-    style="cursor: help"
-  >
-    Children
-    <span class="subtitle-highlight">without</span>
-    recent report
-  </app-widget-subheadline>
-
+<app-dashboard-widget
+  icon="file-alt"
+  theme="note"
+  [title]="concernedChildren?.length"
+  [isLoading]="isLoading"
+  i18n-subtitle="Subtitle|Subtitle informing the user that these are the children without recent reports"
+  subtitle="Children without recent report"
+  [explanation]="tooltip"
+>
   <app-widget-content>
     <table
       mat-table

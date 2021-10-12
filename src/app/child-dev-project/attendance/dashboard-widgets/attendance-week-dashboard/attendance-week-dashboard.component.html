@@ -1,9 +1,10 @@
-<app-dashboard-widget icon="exclamation-triangle" theme="attendance">
-  <app-widget-headline>{{ dashboardRowGroups?.length }}</app-widget-headline>
-  <app-widget-subheadline i18n="Dashbord attendance component subtitle">
-    Students more than one day absent
-    <em>{{ periodLabel }}</em>
-  </app-widget-subheadline>
+<app-dashboard-widget
+  icon="exclamation-triangle"
+  theme="attendance"
+  [title]="dashboardRowGroups?.length"
+  subtitle="Students more than one day absent {{ periodLabel }}"
+  i18n-subtitle="Dashboard attendance component subtitle"
+>
   <app-widget-content>
     <table>
       <tr

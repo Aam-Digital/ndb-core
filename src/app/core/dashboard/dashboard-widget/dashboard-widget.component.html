@@ -2,12 +2,11 @@
   <!-- Header -->
   <div class="widget-header app-{{theme}}">
     <div class="widget-headline">
-      <ng-content select="app-widget-headline"></ng-content>
+      <mat-spinner *ngIf="isLoading" diameter="40"></mat-spinner>
+      <span *ngIf="!isLoading">{{title}}</span>
     </div>
-    <div class="widget-subheadline">
-      <ng-content select="app-widget-subheadline"></ng-content>
-    </div>
-    <fa-icon class="widget-icon" icon="{{icon}}"></fa-icon>
+    <div class="widget-subheadline" [matTooltip]="explanation">{{subtitle}}</div>
+    <app-fa-dynamic-icon class="widget-icon" [icon]="icon"></app-fa-dynamic-icon>
   </div>
 
   <!-- Content -->

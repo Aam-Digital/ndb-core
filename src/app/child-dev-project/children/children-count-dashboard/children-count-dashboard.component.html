@@ -1,8 +1,10 @@
-<app-dashboard-widget icon="child" theme="child">
-  <app-widget-headline>{{totalChildren}}</app-widget-headline>
-  <app-widget-subheadline i18n="Total amount of children">
-    Children
-  </app-widget-subheadline>
+<app-dashboard-widget
+  icon="child"
+  theme="child"
+  [title]="totalChildren"
+  subtitle="Children"
+  i18n-subtitle="Total amount of children"
+>
   <app-widget-content>
     <table class="dashboard-table">
       <tr
