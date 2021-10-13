@@ -17,11 +17,17 @@ const combined = getNgswConfig(firstLocale);
 locales.forEach((locale) => {
   const additional = getNgswConfig(locale);
 
-  // combine asset groups
-  additional.assetGroups.forEach((group) => {
-    combined.assetGroups
-      .find((g) => g.name === group.name)
-      .urls.push(...group.urls);
+  // Merge data and asset groups
+  const toBeMergedGroups = [
+    { groupType: "dataGroups", property: "patterns" },
+    { groupType: "assetGroups", property: "urls" },
+  ];
+  toBeMergedGroups.forEach(({ groupType, property }) => {
+    additional[groupType].forEach((group) => {
+      combined[groupType]
+        .find((g) => g.name === group.name)
+        [property].push(...group[property]);
+    });
   });
 
   // combine hash tables
