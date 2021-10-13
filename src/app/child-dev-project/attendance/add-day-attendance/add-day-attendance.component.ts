@@ -1,8 +1,9 @@
-import { Component } from "@angular/core";
+import { Component, ViewChild } from "@angular/core";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { Note } from "../../notes/model/note";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 import { ConfirmationDialogButton } from "../../../core/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+import { RollCallComponent } from "./roll-call/roll-call.component";
 
 @Component({
   selector: "app-add-day-attendance",
@@ -17,6 +18,8 @@ export class AddDayAttendanceComponent {
 
   event: Note;
 
+  @ViewChild(RollCallComponent) rollCallComponent: RollCallComponent;
+
   readonly buttons: ConfirmationDialogButton[] = [
     {
       text: "Save",
@@ -28,7 +31,7 @@ export class AddDayAttendanceComponent {
       },
     },
     {
-      text: "Abort",
+      text: "Discard",
       click: (): boolean => {
         this.finishRollCallState();
         return false;
@@ -52,12 +55,16 @@ export class AddDayAttendanceComponent {
   }
 
   exit() {
-    this.confirmationDialog.openDialog(
-      "Exit",
-      "Do you want to save your progress before going back?",
-      this.buttons,
-      true
-    );
+    if (!this.rollCallComponent?.isDirty) {
+      this.finishRollCallState();
+    } else {
+      this.confirmationDialog.openDialog(
+        "Exit",
+        "Do you want to save your progress before going back?",
+        this.buttons,
+        true
+      );
+    }
   }
 
   finishRollCallState() {

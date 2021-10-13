@@ -23,7 +23,7 @@ $max-screen-width: $min-block-width + $margin-main-view-right + $margin-main-vie
 
 .columns-wrapper {
   @include adaptive-grid($min-block-width, $max-screen-width);
-  align-items: end;
+  align-items: start;
 }
 
 .action-button {

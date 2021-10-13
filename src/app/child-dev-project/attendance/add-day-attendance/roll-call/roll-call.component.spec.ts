@@ -11,25 +11,40 @@ import { RollCallComponent } from "./roll-call.component";
 import { Note } from "../../../notes/model/note";
 import { By } from "@angular/platform-browser";
 import { ConfigService } from "../../../../core/config/config.service";
-import { ConfigurableEnumConfig } from "../../../../core/configurable-enum/configurable-enum.interface";
 import { Child } from "../../../children/model/child";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { LoggingService } from "../../../../core/logging/logging.service";
-import { defaultAttendanceStatusTypes } from "../../../../core/config/default-config/default-attendance-status-types";
 import { AttendanceModule } from "../../attendance.module";
-import { ChildrenService } from "../../../children/children.service";
 import { MockSessionModule } from "../../../../core/session/mock-session.module";
 import { ConfirmationDialogService } from "../../../../core/confirmation-dialog/confirmation-dialog.service";
-import { of } from "rxjs";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { AttendanceLogicalStatus } from "../../model/attendance-status";
+import { EventAttendance } from "../../model/event-attendance";
+import { ChildrenService } from "../../../children/children.service";
+import { mockEntityMapper } from "../../../../core/entity/mock-entity-mapper-service";
+
+const PRESENT = {
+  id: "PRESENT",
+  shortName: "P",
+  label: "Present",
+  style: "attendance-P",
+  countAs: AttendanceLogicalStatus.PRESENT,
+};
+const ABSENT = {
+  id: "ABSENT",
+  shortName: "A",
+  label: "Absent",
+  style: "attendance-A",
+  countAs: AttendanceLogicalStatus.ABSENT,
+};
+
+const mockChildren = ["test1", "test2", "c", "d"].map(Child.create);
 
 describe("RollCallComponent", () => {
   let component: RollCallComponent;
   let fixture: ComponentFixture<RollCallComponent>;
 
-  const testEvent = Note.create(new Date());
   let mockConfigService: jasmine.SpyObj<ConfigService>;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let mockLoggingService: jasmine.SpyObj<LoggingService>;
 
   beforeEach(
@@ -38,8 +53,6 @@ describe("RollCallComponent", () => {
         "getConfig",
       ]);
       mockConfigService.getConfig.and.returnValue([]);
-      mockEntityMapper = jasmine.createSpyObj(["load"]);
-      mockEntityMapper.load.and.resolveTo();
       mockLoggingService = jasmine.createSpyObj(["warn"]);
 
       TestBed.configureTestingModule({
@@ -50,7 +63,10 @@ describe("RollCallComponent", () => {
         ],
         providers: [
           { provide: ConfigService, useValue: mockConfigService },
-          { provide: EntityMapperService, useValue: mockEntityMapper },
+          {
+            provide: EntityMapperService,
+            useValue: mockEntityMapper(mockChildren),
+          },
           { provide: LoggingService, useValue: mockLoggingService },
           { provide: ChildrenService, useValue: {} },
         ],
@@ -61,7 +77,7 @@ describe("RollCallComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(RollCallComponent);
     component = fixture.componentInstance;
-    component.eventEntity = testEvent;
+    component.eventEntity = Note.create(new Date());
     fixture.detectChanges();
   });
 
@@ -70,173 +86,111 @@ describe("RollCallComponent", () => {
   });
 
   it("should display all available attendance status to select", async () => {
-    const testStatusEnumConfig: ConfigurableEnumConfig = [
-      {
-        id: "PRESENT",
-        shortName: "P",
-        label: "Present",
-        style: "attendance-P",
-        countAs: "PRESENT",
-      },
-      {
-        id: "ABSENT",
-        shortName: "A",
-        label: "Absent",
-        style: "attendance-A",
-        countAs: "ABSENT",
-      },
-    ];
-    mockConfigService.getConfig.and.returnValue(testStatusEnumConfig);
-    mockEntityMapper.load.and.resolveTo(Child.create("test"));
+    const options = [PRESENT, ABSENT];
+    mockConfigService.getConfig.and.returnValue(options);
     component.eventEntity = Note.create(new Date());
-    component.eventEntity.addChild("1");
+    component.eventEntity.addChild(mockChildren[0]);
     await component.ngOnInit();
-    fixture.detectChanges();
-    await fixture.whenStable();
 
     const statusOptions = fixture.debugElement.queryAll(
       By.css(".group-select-option")
     );
-    expect(statusOptions.length).toBe(testStatusEnumConfig.length);
+    expect(statusOptions.length).toBe(options.length);
   });
 
   it("should not record attendance if childId does not exist", fakeAsync(() => {
-    const existingChild = new Child("existingChild");
     const noteWithNonExistingChild = new Note();
-    noteWithNonExistingChild.addChild(existingChild.getId());
+    noteWithNonExistingChild.addChild(mockChildren[0]);
     noteWithNonExistingChild.addChild("notExistingChild");
     component.eventEntity = noteWithNonExistingChild;
-
-    mockEntityMapper.load.and.callFake((con, id) =>
-      id === existingChild.getId()
-        ? Promise.resolve(existingChild as any)
-        : Promise.reject()
-    );
 
     component.ngOnInit();
     tick();
 
-    expect(component.entries.map((e) => e.child)).toEqual([existingChild]);
+    expect(component.entries.map((e) => e.child)).toEqual([mockChildren[0]]);
     expect(mockLoggingService.warn).toHaveBeenCalled();
     flush();
   }));
 
   it("should correctly assign the attendance", fakeAsync(() => {
-    const attendedStatus = defaultAttendanceStatusTypes.find(
-      (it) => it.countAs === "PRESENT"
-    );
-    const absentStatus = defaultAttendanceStatusTypes.find(
-      (it) => it.countAs === "ABSENT"
-    );
-    const attendedChild = new Child("attendedChild");
-    const absentChild = new Child("absentChild");
-    const note = new Note("noteWithAttendance");
-    note.addChild(attendedChild.getId());
-    note.addChild(absentChild.getId());
-    mockEntityMapper.load.and.callFake((t, id) => {
-      if (id === absentChild.getId()) {
-        return Promise.resolve(absentChild) as any;
-      }
-      if (id === attendedChild.getId()) {
-        return Promise.resolve(attendedChild) as any;
-      }
-    });
-    component.eventEntity = note;
+    component.eventEntity.addChild(mockChildren[0]);
+    component.eventEntity.addChild(mockChildren[1]);
     component.ngOnInit();
     tick();
+    component.markAttendance(PRESENT);
+    component.goToNext();
+    component.markAttendance(ABSENT);
 
-    const attendedChildAttendance = component.entries.find(
-      ({ child }) => child === attendedChild
-    ).attendance;
-    const absentChildAttendance = component.entries.find(
-      ({ child }) => child === absentChild
-    ).attendance;
-    component.markAttendance(attendedChildAttendance, attendedStatus);
-    component.markAttendance(absentChildAttendance, absentStatus);
-
-    expect(note.getAttendance(attendedChild.getId()).status).toEqual(
-      attendedStatus
+    expect(component.eventEntity.getAttendance(mockChildren[0]).status).toEqual(
+      PRESENT
     );
-    expect(note.getAttendance(absentChild.getId()).status).toEqual(
-      absentStatus
+    expect(component.eventEntity.getAttendance(mockChildren[1]).status).toEqual(
+      ABSENT
     );
     flush();
   }));
 
-  it("should mark roll call as done when all existing children are finished", fakeAsync(() => {
-    const existingChild1 = new Child("existingChild1");
-    const existingChild2 = new Child("existingChild2");
-    const note = new Note();
-    note.addChild(existingChild1.getId());
-    note.addChild("notExistingChild");
-    note.addChild(existingChild2.getId());
-    mockEntityMapper.load.and.returnValues(
-      Promise.resolve(existingChild2),
-      Promise.reject(),
-      Promise.resolve(existingChild1)
-    );
+  it("should mark roll call as done when all existing children are finished", async () => {
     spyOn(component.complete, "emit");
-    component.eventEntity = note;
-    component.ngOnInit();
-    tick();
+    component.eventEntity.addChild(mockChildren[0]);
+    component.eventEntity.addChild("notExistingChild");
+    component.eventEntity.addChild(mockChildren[1]);
+    await component.ngOnInit();
 
-    component.goToNextParticipant();
-    component.goToNextParticipant();
+    component.goToNext();
+    component.goToNext();
 
-    expect(component.complete.emit).toHaveBeenCalledWith(note);
-  }));
-
-  it("should only complete when clicking save and confirming in the dialog when roll call is not finished yet", fakeAsync(() => {
-    const note = new Note();
-    const confirmationDialogService = TestBed.inject(ConfirmationDialogService);
-    // Set component to be not finished
-    component.currentIndex = 0;
-    component.entries = [undefined, undefined];
-    spyOn(component.complete, "emit");
-    component.eventEntity = note;
-    spyOn(confirmationDialogService, "openDialog").and.returnValue({
-      afterClosed: () => of(true),
-    } as any);
-
-    component.save();
-    tick();
-
-    expect(component.complete.emit).toHaveBeenCalledWith(note);
-  }));
-
-  it("should directly complete when clicking save and the roll call finished", () => {
-    const note = new Note();
-    component.eventEntity = note;
-    const confirmationDialogService = TestBed.inject(ConfirmationDialogService);
-    spyOn(confirmationDialogService, "openDialog");
-    spyOn(component, "isFinished").and.returnValue(true);
-    spyOn(component.complete, "emit");
-
-    component.save();
-
-    expect(confirmationDialogService.openDialog).not.toHaveBeenCalled();
-    expect(component.complete.emit).toHaveBeenCalledWith(note);
+    expect(component.complete.emit).toHaveBeenCalledWith(component.eventEntity);
   });
 
   it("should not open the dialog when the roll call is finished", () => {
     const confirmationDialogService = TestBed.inject(ConfirmationDialogService);
     spyOn(confirmationDialogService, "openDialog");
-    spyOn(component, "isFinished").and.returnValue(true);
+    spyOnProperty(component, "isFinished").and.returnValue(true);
 
-    component.abort();
+    component.finish();
 
     expect(confirmationDialogService.openDialog).not.toHaveBeenCalled();
   });
 
-  it("should open the dialog when the roll call is not finished", () => {
-    const confirmationDialogService = TestBed.inject(ConfirmationDialogService);
-    spyOn(confirmationDialogService, "openDialog").and.returnValue({
-      afterClosed: () => of(true),
-    } as any);
-    spyOn(component, "isFinished").and.returnValue(false);
+  it("isn't dirty initially", () => {
+    expect(component.isDirty).toBeFalse();
+  });
 
-    component.abort();
+  it("isn't dirty when the user has skipped participants", () => {
+    component.goToNext();
+    component.goToNext();
+    component.goToPrevious();
+    expect(component.isDirty).toBeFalse();
+  });
 
-    expect(confirmationDialogService.openDialog).toHaveBeenCalled();
+  it("is dirty when the user has entered some attendance", async () => {
+    component.entries = [
+      {
+        child: mockChildren[0],
+        attendance: new EventAttendance(),
+      },
+    ];
+    component.markAttendance(undefined);
+    expect(component.isDirty).toBeTrue();
+  });
+
+  it("starts with the initial child if no attendance has been registered", async () => {
+    component.eventEntity.addChild(mockChildren[0]);
+    await component.ngOnInit();
+    expect(component.currentIndex).toBe(0);
+    expect(component.currentChild).toBe(mockChildren[0]);
+  });
+
+  it("starts with the first child that doesn't have an attendance status set", async () => {
+    for (const child of mockChildren) {
+      component.eventEntity.addChild(child);
+    }
+    component.eventEntity.getAttendance(mockChildren[0]).status = PRESENT;
+    component.eventEntity.getAttendance(mockChildren[1]).status = ABSENT;
+    component.eventEntity.getAttendance(mockChildren[3]).status = PRESENT;
+    await component.ngOnInit();
+    expect(component.currentChild).toBe(mockChildren[2]);
+    expect(component.currentIndex).toBe(2);
   });
 });
