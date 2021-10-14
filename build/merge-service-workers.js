@@ -17,11 +17,17 @@ const combined = getNgswConfig(firstLocale);
 locales.forEach((locale) => {
   const additional = getNgswConfig(locale);
 
-  // combine asset groups
-  additional.assetGroups.forEach((group) => {
-    combined.assetGroups
-      .find((g) => g.name === group.name)
-      .urls.push(...group.urls);
+  // Merge data and asset groups
+  const toBeMergedGroups = [
+    { groupType: "dataGroups", property: "patterns" },
+    { groupType: "assetGroups", property: "urls" },
+  ];
+  toBeMergedGroups.forEach(({ groupType, property }) => {
+    additional[groupType].forEach((group) => {
+      combined[groupType]
+        .find((g) => g.name === group.name)
+        [property].push(...group[property]);
+    });
   });
 
   // combine hash tables
@@ -36,10 +42,12 @@ fs.writeFileSync(`${distFolder}/ngsw.json`, JSON.stringify(combined));
 fs.unlinkSync(`${distFolder}/${firstLocale}/ngsw.json`);
 
 // Adjust service worker to allow changing language offline
-const swFile = fs.readFileSync(`${distFolder}/${firstLocale}/ngsw-worker.js`).toString();
+const swFile = fs
+  .readFileSync(`${distFolder}/${firstLocale}/ngsw-worker.js`)
+  .toString();
 const patchedSw = swFile.replace(
-  'return this.handleFetch(this.adapter.newRequest(this.indexUrl), context);',
-  'return this.handleFetch(this.adapter.newRequest(\'/\' + this.adapter.normalizeUrl(req.url).split(\'/\')[1] + \'/index.html\'), context);'
+  "return this.handleFetch(this.adapter.newRequest(this.indexUrl), context);",
+  "return this.handleFetch(this.adapter.newRequest('/' + this.adapter.normalizeUrl(req.url).split('/')[1] + '/index.html'), context);"
 );
 fs.writeFileSync(`${distFolder}/ngsw-worker.js`, patchedSw);
 fs.unlinkSync(`${distFolder}/${firstLocale}/ngsw-worker.js`);
