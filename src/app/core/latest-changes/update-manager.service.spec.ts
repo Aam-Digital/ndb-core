@@ -26,7 +26,7 @@ describe("UpdateManagerService", () => {
   beforeEach(() => {
     location = jasmine.createSpyObj(["reload"]);
     updateSubject = new Subject<UpdateActivatedEvent>();
-    swUpdate = jasmine.createSpyObj(["activateUpdate", "checkForUpdate"], {
+    swUpdate = jasmine.createSpyObj(["checkForUpdate"], {
       available: updateSubject,
       isEnabled: true,
     });
@@ -78,7 +78,7 @@ describe("UpdateManagerService", () => {
       "update-" + version
     );
 
-    // tslint:disable-next-line
+    // tslint:disable-next-line:no-unused-expression
     new UpdateManagerService(null, null, null, null, location);
 
     expect(location.reload).toHaveBeenCalled();
@@ -96,7 +96,6 @@ describe("UpdateManagerService", () => {
     service.notifyUserWhenUpdateAvailable();
     updateSubject.next();
 
-    expect(swUpdate.activateUpdate).toHaveBeenCalled();
     expect(
       window.localStorage.getItem(LatestChangesDialogService.VERSION_KEY)
     ).toBe("update-" + version);

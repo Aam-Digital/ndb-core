@@ -77,9 +77,9 @@ export class LatestChangesModule {
     private latestChangesDialogService: LatestChangesDialogService,
     private updateManagerService: UpdateManagerService
   ) {
-    this.latestChangesDialogService.showLatestChangesIfUpdated();
-
     this.updateManagerService.notifyUserWhenUpdateAvailable();
     this.updateManagerService.regularlyCheckForUpdates();
+
+    this.latestChangesDialogService.showLatestChangesIfUpdated();
   }
 }
