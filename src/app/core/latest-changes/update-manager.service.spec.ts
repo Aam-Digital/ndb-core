@@ -78,7 +78,7 @@ describe("UpdateManagerService", () => {
       "update-" + version
     );
 
-    // prettier-ignore
+    // tslint:disable-next-line
     new UpdateManagerService(null, null, null, null, location);
 
     expect(location.reload).toHaveBeenCalled();
