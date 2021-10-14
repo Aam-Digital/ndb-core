@@ -109,6 +109,14 @@ describe("LoginComponent", () => {
     expect(component.errorMessage).toBeTruthy();
   }));
 
+  it("should focus the first input element on initialization", () => {
+    component.ngOnInit();
+    fixture.detectChanges();
+
+    const firstInputElement = document.getElementsByTagName("input")[0];
+    expect(document.activeElement).toBe(firstInputElement);
+  });
+
   function expectErrorMessageOnState(loginState: LoginState) {
     mockSessionService.login.and.resolveTo(loginState);
     expect(component.errorMessage).toBeFalsy();
