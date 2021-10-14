@@ -71,7 +71,7 @@ describe("UpdateManagerService", () => {
     expect(location.reload).toHaveBeenCalled();
   }));
 
-  it("should reload the page when constructed if noted in the local storage", () => {
+  it("should reload the page during construction if noted in the local storage", () => {
     const version = "1.1.1";
     window.localStorage.setItem(
       LatestChangesDialogService.VERSION_KEY,
