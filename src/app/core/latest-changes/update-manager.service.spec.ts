@@ -78,7 +78,7 @@ describe("UpdateManagerService", () => {
       "update-" + version
     );
 
-    // prettier-ignore no-unused-expression
+    // prettier-ignore
     new UpdateManagerService(null, null, null, null, location);
 
     expect(location.reload).toHaveBeenCalled();
