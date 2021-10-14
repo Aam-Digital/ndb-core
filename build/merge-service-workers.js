@@ -34,12 +34,20 @@ locales.forEach((locale) => {
   Object.assign(combined.hashTable, additional.hashTable);
   fs.unlinkSync(`${distFolder}/${locale}/ngsw.json`);
   fs.unlinkSync(`${distFolder}/${locale}/ngsw-worker.js`);
+  fs.renameSync(
+    `${distFolder}/${locale}/safety-worker.js`,
+    `${distFolder}/${locale}/ngsw-worker.js`
+  );
 });
 
 combined.index = "/index.html";
 
 fs.writeFileSync(`${distFolder}/ngsw.json`, JSON.stringify(combined));
 fs.unlinkSync(`${distFolder}/${firstLocale}/ngsw.json`);
+fs.renameSync(
+  `${distFolder}/${firstLocale}/safety-worker.js`,
+  `${distFolder}/${firstLocale}/ngsw-worker.js`
+);
 
 // Adjust service worker to allow changing language offline
 const swFile = fs
