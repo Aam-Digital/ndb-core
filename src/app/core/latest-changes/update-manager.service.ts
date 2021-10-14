@@ -63,7 +63,6 @@ export class UpdateManagerService {
     }
 
     this.updates.available.subscribe(() => {
-      // this.updates.activateUpdate();
       this.showUpdateNotification();
     });
   }
