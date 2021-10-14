@@ -44,10 +44,6 @@ combined.index = "/index.html";
 
 fs.writeFileSync(`${distFolder}/ngsw.json`, JSON.stringify(combined));
 fs.unlinkSync(`${distFolder}/${firstLocale}/ngsw.json`);
-fs.renameSync(
-  `${distFolder}/${firstLocale}/safety-worker.js`,
-  `${distFolder}/${firstLocale}/ngsw-worker.js`
-);
 
 // Adjust service worker to allow changing language offline
 const swFile = fs
@@ -59,3 +55,7 @@ const patchedSw = swFile.replace(
 );
 fs.writeFileSync(`${distFolder}/ngsw-worker.js`, patchedSw);
 fs.unlinkSync(`${distFolder}/${firstLocale}/ngsw-worker.js`);
+fs.renameSync(
+  `${distFolder}/${firstLocale}/safety-worker.js`,
+  `${distFolder}/${firstLocale}/ngsw-worker.js`
+);
