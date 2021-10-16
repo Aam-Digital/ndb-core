@@ -1,7 +1,7 @@
 <app-dashboard-widget
   icon="exclamation-triangle"
   theme="attendance"
-  [title]="dashboardRowGroups?.length"
+  [title]="rowGroupCount"
   subtitle="Students more than one day absent {{ periodLabel }}"
   i18n-subtitle="Dashboard attendance component subtitle"
 >
@@ -9,7 +9,7 @@
     <table>
       <tr
         *ngFor="
-          let rowGroup of dashboardRowGroups;
+          let rowGroup of dashboardRowGroups | async;
           trackBy: recordTrackByFunction;
           let i = index
         "

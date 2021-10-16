@@ -2,8 +2,8 @@
   <!-- Header -->
   <div class="widget-header app-{{theme}}">
     <div class="widget-headline">
-      <mat-spinner *ngIf="isLoading" diameter="40"></mat-spinner>
-      <span *ngIf="!isLoading">{{title}}</span>
+      <span *ngIf="!_loading">{{_title}}</span>
+      <mat-spinner *ngIf="_loading" diameter="40"></mat-spinner>
     </div>
     <div class="widget-subheadline" [matTooltip]="explanation">{{subtitle}}</div>
     <app-fa-dynamic-icon class="widget-icon" [icon]="icon"></app-fa-dynamic-icon>

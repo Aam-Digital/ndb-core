@@ -1,7 +1,6 @@
 <app-dashboard-widget
   icon="file-alt"
   theme="note"
-  [isLoading]="isLoading"
   [title]="count"
   subtitle="Children with recent report"
   i18n-subtitle="Subtitle|Subtitle informing the user that these are the children with recent reports"
@@ -16,6 +15,6 @@
     [angularticsLabel]="'children-with-recent-report-count-' + count"
     i18n="Go to Notes Link|Link that will take the user to a list of notes"
   >
-      Go to Notes <span class="fa fa-external-link-square"></span>
+      Go to Notes <fa-icon icon="external-link-square-alt"></fa-icon>
   </app-widget-content>
 </app-dashboard-widget>

@@ -50,7 +50,9 @@ export class AttendanceWeekDashboardComponent
    */
   @Input() absentWarningThreshold: number = 1;
 
-  dashboardRowGroups: AttendanceWeekRow[][];
+  dashboardRowGroups: Promise<AttendanceWeekRow[][]>;
+
+  rowGroupCount: Promise<number>;
 
   constructor(
     private attendanceService: AttendanceService,
@@ -85,30 +87,30 @@ export class AttendanceWeekDashboardComponent
       previousMonday.getDate() + 5
     );
 
-    const activityAttendances = await this.attendanceService.getAllActivityAttendancesForPeriod(
-      previousMonday,
-      previousSaturday
-    );
+    this.dashboardRowGroups = this.attendanceService
+      .getAllActivityAttendancesForPeriod(previousMonday, previousSaturday)
+      .then((activityAttendances) => {
+        const lowAttendanceCases = new Set<string>();
+        const records: AttendanceWeekRow[] = [];
+        for (const att of activityAttendances) {
+          const rows = this.generateRowsFromActivityAttendance(
+            att,
+            moment(previousMonday),
+            moment(previousSaturday)
+          );
+          records.push(...rows);
 
-    const lowAttendanceCases = new Set<string>();
-    const records: AttendanceWeekRow[] = [];
-    for (const att of activityAttendances) {
-      const rows = this.generateRowsFromActivityAttendance(
-        att,
-        moment(previousMonday),
-        moment(previousSaturday)
-      );
-      records.push(...rows);
+          rows
+            .filter((r) => this.filterLowAttendance(r))
+            .forEach((r) => lowAttendanceCases.add(r.childId));
+        }
 
-      rows
-        .filter((r) => this.filterLowAttendance(r))
-        .forEach((r) => lowAttendanceCases.add(r.childId));
-    }
-
-    const groupedRecords = groupBy(records, "childId");
-    this.dashboardRowGroups = Array.from(
-      lowAttendanceCases.values()
-    ).map((childId) => groupedRecords.get(childId));
+        const groupedRecords = groupBy(records, "childId");
+        return Array.from(lowAttendanceCases.values()).map((childId) =>
+          groupedRecords.get(childId)
+        );
+      });
+    this.rowGroupCount = this.dashboardRowGroups.then((value) => value.length);
   }
 
   private generateRowsFromActivityAttendance(

@@ -33,13 +33,11 @@ export class NoRecentNotesDashboardComponent
   /** Whether an additional offset should be automatically added to include notes from the beginning of the week */
   @Input() fromBeginningOfWeek = true;
 
-  /** true while data is not ready/available yet */
-  isLoading: boolean;
-
   /** children displayed in the template
    * Child entities with additional "daysSinceLastNote" field
    */
-  concernedChildren: ChildWithRecentNoteInfo[] = [];
+  concernedChildren: Promise<ChildWithRecentNoteInfo[]>;
+  amountOfConcernedChildren: Promise<number>;
 
   columnsToDisplay: string[] = ["name", "daysSinceLastNote"];
   childrenWithNoteInfoDataSource: MatTableDataSource<ChildWithRecentNoteInfo> = new MatTableDataSource<ChildWithRecentNoteInfo>();
@@ -57,9 +55,14 @@ export class NoRecentNotesDashboardComponent
     }
   }
 
-  async ngOnInit() {
-    await this.loadConcernedChildrenFromIndex();
-    this.childrenWithNoteInfoDataSource.data = this.concernedChildren;
+  ngOnInit() {
+    this.loadConcernedChildrenFromIndex();
+    this.concernedChildren.then((children) => {
+      this.childrenWithNoteInfoDataSource.data = children;
+    });
+    this.amountOfConcernedChildren = this.concernedChildren.then(
+      (ch) => ch.length
+    );
   }
 
   ngAfterViewInit() {
@@ -67,23 +70,21 @@ export class NoRecentNotesDashboardComponent
     this.childrenWithNoteInfoDataSource.paginator = this.paginator;
   }
 
-  private async loadConcernedChildrenFromIndex() {
-    this.isLoading = true;
-
+  private loadConcernedChildrenFromIndex() {
     let dayRangeBoundary = this.sinceDays;
     if (this.fromBeginningOfWeek) {
       dayRangeBoundary += moment().diff(moment().startOf("week"), "days");
     }
     const queryRange = Math.round((dayRangeBoundary * 3) / 10) * 10; // query longer range to be able to display exact date of last note for recent
 
-    this.concernedChildren = Array.from(
-      await this.childrenService.getDaysSinceLastNoteOfEachChild(queryRange)
-    )
-      .filter((stat) => stat[1] >= dayRangeBoundary)
-      .map((stat) => statsToChildWithRecentNoteInfo(stat, queryRange))
-      .sort((a, b) => b.daysSinceLastNote - a.daysSinceLastNote);
-
-    this.isLoading = false;
+    this.concernedChildren = this.childrenService
+      .getDaysSinceLastNoteOfEachChild(queryRange)
+      .then((children) => {
+        return Array.from(children)
+          .filter((stat) => stat[1] >= dayRangeBoundary)
+          .map((stat) => statsToChildWithRecentNoteInfo(stat, queryRange))
+          .sort((a, b) => b.daysSinceLastNote - a.daysSinceLastNote);
+      });
   }
 
   get tooltip(): string {

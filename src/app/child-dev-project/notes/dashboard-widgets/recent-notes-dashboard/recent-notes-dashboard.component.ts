@@ -21,11 +21,8 @@ export class RecentNotesDashboardComponent
   /** Whether an additional offset should be automatically added to include notes from the beginning of the week */
   @Input() fromBeginningOfWeek = true;
 
-  /** true while data is not ready/available yet */
-  isLoading: boolean;
-
   /** number of children with recent notes */
-  count: number = 0;
+  count: Promise<number>;
 
   constructor(private childrenService: ChildrenService) {}
 
@@ -38,25 +35,22 @@ export class RecentNotesDashboardComponent
     }
   }
 
-  async ngOnInit() {
-    await this.loadConcernedChildrenFromIndex();
+  ngOnInit() {
+    this.loadConcernedChildrenFromIndex();
   }
 
-  private async loadConcernedChildrenFromIndex() {
-    this.isLoading = true;
-
+  private loadConcernedChildrenFromIndex() {
     let dayRangeBoundary = this.sinceDays;
     if (this.fromBeginningOfWeek) {
       dayRangeBoundary += moment().diff(moment().startOf("week"), "days");
     }
 
-    this.count = Array.from(
-      await this.childrenService.getDaysSinceLastNoteOfEachChild(
-        dayRangeBoundary
-      )
-    ).filter((stat) => stat[1] <= dayRangeBoundary).length;
-
-    this.isLoading = false;
+    this.count = this.childrenService
+      .getDaysSinceLastNoteOfEachChild(dayRangeBoundary)
+      .then((days) => {
+        return Array.from(days).filter((stat) => stat[1] <= dayRangeBoundary)
+          .length;
+      });
   }
 
   get tooltip(): string {

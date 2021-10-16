@@ -1,20 +1,16 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { FontAwesomeIconsModule } from "../../icons/font-awesome-icons.module";
 import { DashboardModule } from "../dashboard.module";
 import { DashboardWidgetComponent } from "./dashboard-widget.component";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 export default {
   title: "Core/Dashboard Base Widget",
   component: DashboardWidgetComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        DashboardModule,
-        BrowserAnimationsModule,
-        FontAwesomeIconsModule,
-      ],
+      imports: [DashboardModule, BrowserAnimationsModule, FontAwesomeModule],
     }),
   ],
 } as Meta;
