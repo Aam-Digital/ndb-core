@@ -27,6 +27,7 @@ import { EntityFormService } from "../../entity-form/entity-form.service";
 import { genders } from "../../../../child-dev-project/children/model/genders";
 import { LoggingService } from "../../../logging/logging.service";
 import { MockSessionModule } from "../../../session/mock-session.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -42,6 +43,7 @@ describe("EntitySubrecordComponent", () => {
           MatNativeDateModule,
           NoopAnimationsModule,
           MockSessionModule.withState(),
+          FontAwesomeTestingModule,
         ],
         providers: [DatePipe, PercentPipe],
       }).compileComponents();
