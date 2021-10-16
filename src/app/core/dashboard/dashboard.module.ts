@@ -30,6 +30,8 @@ import { DashboardTableWidgetComponent } from "./dashboard-table-widget/dashboar
 import { MatSortModule } from "@angular/material/sort";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { GridModule } from "../../utils/grid/grid.module";
+import { MatButtonModule } from "@angular/material/button";
 
 @NgModule({
   imports: [
@@ -42,6 +44,8 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     FontAwesomeModule,
     MatSortModule,
     MatPaginatorModule,
+    GridModule,
+    MatButtonModule,
   ],
   declarations: [
     DashboardComponent,

@@ -14,14 +14,17 @@
   ~     You should have received a copy of the GNU General Public License
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
+<button mat-stroked-button (click)="isEditing = !isEditing">{{isEditing ? 'stop editing' : 'edit'}}</button>
 
-<div
-  fxLayout="row wrap"
-  fxLayout.xs="column wrap"
-  fxLayoutGap="20px"
-  class="widget-wrapper"
+<app-movable-grid
+  [(model)]="widgets"
+  [view]="widgetRef"
+  [dragDisabled]="!isEditing"
 >
-  <div fxFlex="30" *ngFor="let widgetConfig of widgets">
-    <ng-template [appDynamicComponent]="widgetConfig"></ng-template>
+</app-movable-grid>
+
+<ng-template #widgetRef let-item>
+  <div>
+    <ng-template [appDynamicComponent]="item"></ng-template>
   </div>
-</div>
+</ng-template>

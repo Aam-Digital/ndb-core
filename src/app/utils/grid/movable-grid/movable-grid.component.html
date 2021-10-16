@@ -1,0 +1,16 @@
+<div class="main-grid">
+  <div
+    [@listAnimation]="currentDragItemIndex"
+    #gridItemContainer
+    *ngFor="let item of model"
+    class="grid-item"
+    cdkDrag
+    cdkDragBoundary=".main-grid"
+    [cdkDragDisabled]="dragDisabled"
+    (cdkDragMoved)="dragMoved($event)"
+    (cdkDragStarted)="dragStarted($event)"
+    (cdkDragEnded)="dragEnded($event)"
+  >
+    <ng-container *ngTemplateOutlet="view; context: { $implicit: item }"></ng-container>
+  </div>
+</div>
