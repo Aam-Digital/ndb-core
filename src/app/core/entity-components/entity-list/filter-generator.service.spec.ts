@@ -66,7 +66,10 @@ describe("FilterGeneratorService", () => {
   });
 
   it("should create a configurable enum filter", async () => {
-    const getConfigSpy = spyOn(TestBed.inject(ConfigService), "getConfig");
+    const getConfigSpy = spyOn(
+      TestBed.inject(ConfigService),
+      "getConfigurableEnumValues"
+    );
     getConfigSpy.and.returnValue(defaultInteractionTypes);
     const interactionTypes = defaultInteractionTypes.map((it) => {
       return { key: it.id, label: it.label };

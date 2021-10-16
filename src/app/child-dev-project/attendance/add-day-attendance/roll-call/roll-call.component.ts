@@ -7,10 +7,6 @@ import {
 import { Note } from "../../../notes/model/note";
 import { EventAttendance } from "../../model/event-attendance";
 import { ConfigService } from "../../../../core/config/config.service";
-import {
-  CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnumConfig,
-} from "../../../../core/configurable-enum/configurable-enum.interface";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { Child } from "../../../children/model/child";
 import { LoggingService } from "../../../../core/logging/logging.service";
@@ -110,9 +106,9 @@ export class RollCallComponent implements OnInit {
   }
 
   private loadAttendanceStatusTypes() {
-    this.availableStatus = this.configService.getConfig<
-      ConfigurableEnumConfig<AttendanceStatusType>
-    >(CONFIGURABLE_ENUM_CONFIG_PREFIX + ATTENDANCE_STATUS_CONFIG_ID);
+    this.availableStatus = this.configService.getConfigurableEnumValues<AttendanceStatusType>(
+      ATTENDANCE_STATUS_CONFIG_ID
+    );
   }
 
   private async loadParticipants() {

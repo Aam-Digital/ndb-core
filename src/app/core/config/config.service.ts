@@ -4,6 +4,11 @@ import { Config } from "./config";
 import { LoggingService } from "../logging/logging.service";
 import { BehaviorSubject } from "rxjs";
 import { defaultJsonConfig } from "./config-fix";
+import {
+  CONFIGURABLE_ENUM_CONFIG_PREFIX,
+  ConfigurableEnumConfig,
+  ConfigurableEnumValue,
+} from "../configurable-enum/configurable-enum.interface";
 
 @Injectable({
   providedIn: "root",
@@ -58,6 +63,12 @@ export class ConfigService {
 
   public getConfig<T>(id: string): T {
     return this.configData[id];
+  }
+
+  public getConfigurableEnumValues<T extends ConfigurableEnumValue>(
+    id: string
+  ): ConfigurableEnumConfig<T> {
+    return this.getConfig(CONFIGURABLE_ENUM_CONFIG_PREFIX + id);
   }
 
   public getAllConfigs<T>(prefix: string): T[] {

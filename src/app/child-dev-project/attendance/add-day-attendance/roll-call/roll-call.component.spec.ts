@@ -50,9 +50,9 @@ describe("RollCallComponent", () => {
   beforeEach(
     waitForAsync(() => {
       mockConfigService = jasmine.createSpyObj("mockConfigService", [
-        "getConfig",
+        "getConfigurableEnumValues",
       ]);
-      mockConfigService.getConfig.and.returnValue([]);
+      mockConfigService.getConfigurableEnumValues.and.returnValue([]);
       mockLoggingService = jasmine.createSpyObj(["warn"]);
 
       TestBed.configureTestingModule({
@@ -87,15 +87,15 @@ describe("RollCallComponent", () => {
 
   it("should display all available attendance status to select", async () => {
     const options = [PRESENT, ABSENT];
-    mockConfigService.getConfig.and.returnValue(options);
-    component.eventEntity = Note.create(new Date());
+    mockConfigService.getConfigurableEnumValues.and.returnValue(options);
     component.eventEntity.addChild(mockChildren[0]);
     await component.ngOnInit();
+    fixture.detectChanges();
 
     const statusOptions = fixture.debugElement.queryAll(
       By.css(".group-select-option")
     );
-    expect(statusOptions.length).toBe(options.length);
+    expect(statusOptions).toHaveSize(options.length);
   });
 
   it("should not record attendance if childId does not exist", fakeAsync(() => {
