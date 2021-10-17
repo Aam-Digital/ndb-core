@@ -352,6 +352,10 @@ export class EntitySubrecordComponent<T extends Entity>
    * @return returns true if column is visible
    */
   private isVisible(col: FormFieldConfig): boolean {
-    return this.media.isActive(col.visibleFrom);
+    if (col.visibleFrom) {
+      return this.media.isActive("gt-" + col.visibleFrom);
+    } else {
+      return true;
+    }
   }
 }
