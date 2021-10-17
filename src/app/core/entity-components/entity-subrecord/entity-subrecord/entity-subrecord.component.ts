@@ -5,14 +5,11 @@ import {
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatSort, MatSortable } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { Entity } from "../../../entity/model/entity";
-import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "../../../alerts/alert.service";
 import { Subscription } from "rxjs";
 import { entityListSortingAccessor } from "./sorting-accessor";
@@ -103,9 +100,6 @@ export class EntitySubrecordComponent<T extends Entity>
   @Input() showEntity?: (T) => void;
 
   constructor(
-    private _entityMapper: EntityMapperService,
-    private _snackBar: MatSnackBar,
-    private _confirmationDialog: ConfirmationDialogService,
     private alertService: AlertService,
     private media: MediaObserver,
     private entityFormService: EntityFormService,
@@ -358,13 +352,6 @@ export class EntitySubrecordComponent<T extends Entity>
    * @return returns true if column is visible
    */
   private isVisible(col: FormFieldConfig): boolean {
-    const visibilityGroups = ["sm", "md", "lg", "xl"];
-    const visibleFromIndex = visibilityGroups.indexOf(col.visibleFrom);
-    if (visibleFromIndex !== -1) {
-      const regex = visibilityGroups.slice(visibleFromIndex).join("|");
-      return !!this.screenWidth.match(regex);
-    } else {
-      return true;
-    }
+    return this.media.isActive(col.visibleFrom);
   }
 }
