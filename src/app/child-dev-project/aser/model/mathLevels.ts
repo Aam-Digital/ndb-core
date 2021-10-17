@@ -1,14 +1,12 @@
 import {
   ConfigurableEnumConfig,
   ConfigurableEnumValue,
+  EMPTY,
 } from "../../../core/configurable-enum/configurable-enum.interface";
 
 export type MathLevel = ConfigurableEnumValue;
 export const mathLevels: ConfigurableEnumConfig<MathLevel> = [
-  {
-    id: "",
-    label: "",
-  },
+  EMPTY,
   {
     id: "Nothing",
     label: $localize`:Label math level:Nothing`,

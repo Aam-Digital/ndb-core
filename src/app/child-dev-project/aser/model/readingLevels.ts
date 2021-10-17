@@ -1,14 +1,12 @@
 import {
   ConfigurableEnumConfig,
   ConfigurableEnumValue,
+  EMPTY,
 } from "../../../core/configurable-enum/configurable-enum.interface";
 
 export type ReadingLevel = ConfigurableEnumValue;
 export const readingLevels: ConfigurableEnumConfig<ReadingLevel> = [
-  {
-    id: "",
-    label: "",
-  },
+  EMPTY,
   {
     id: "Nothing",
     label: $localize`:Label reading level:Nothing`,
