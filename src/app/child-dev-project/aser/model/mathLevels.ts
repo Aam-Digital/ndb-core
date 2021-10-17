@@ -1,6 +1,10 @@
-import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
+import {
+  ConfigurableEnumConfig,
+  ConfigurableEnumValue,
+} from "../../../core/configurable-enum/configurable-enum.interface";
 
-export const mathLevels: ConfigurableEnumValue[] = [
+export type MathLevel = ConfigurableEnumValue;
+export const mathLevels: ConfigurableEnumConfig<MathLevel> = [
   {
     id: "",
     label: "",

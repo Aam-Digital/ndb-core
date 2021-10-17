@@ -1,6 +1,10 @@
-import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
+import {
+  ConfigurableEnumConfig,
+  ConfigurableEnumValue,
+} from "../../../core/configurable-enum/configurable-enum.interface";
 
-export const readingLevels: ConfigurableEnumValue[] = [
+export type ReadingLevel = ConfigurableEnumValue;
+export const readingLevels: ConfigurableEnumConfig<ReadingLevel> = [
   {
     id: "",
     label: "",
