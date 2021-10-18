@@ -15,7 +15,6 @@ import {
 } from "../../configurable-enum/configurable-enum.interface";
 import { ConfigService } from "../../config/config.service";
 import { LoggingService } from "../../logging/logging.service";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { FilterComponentSettings } from "./filter-component.settings";
 import { DynamicEntityService } from "../../entity/dynamic-entity.service";
@@ -27,7 +26,6 @@ export class FilterGeneratorService {
   constructor(
     private configService: ConfigService,
     private loggingService: LoggingService,
-    private entityMapperService: EntityMapperService,
     private dynamicEntityService: DynamicEntityService
   ) {}
 
