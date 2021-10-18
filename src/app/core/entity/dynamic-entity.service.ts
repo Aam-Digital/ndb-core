@@ -48,6 +48,10 @@ export class DynamicEntityService {
     return ctor as EntityConstructor<E>;
   }
 
+  get allConstructors(): Iterable<EntityConstructor<Entity>> {
+    return DynamicEntityService.ENTITY_MAP.values();
+  }
+
   /**
    * Utility method to instantiate an entity using initial, raw parameters
    * @param entityType The type to instantiate an entity by
