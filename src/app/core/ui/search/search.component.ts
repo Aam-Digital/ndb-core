@@ -1,6 +1,5 @@
 import { Component } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Observable } from "rxjs";
 import { concatMap, debounceTime, skipUntil, tap } from "rxjs/operators";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
@@ -39,7 +38,6 @@ export class SearchComponent {
 
   constructor(
     private indexingService: DatabaseIndexingService,
-    private entitySchemaService: EntitySchemaService,
     private router: Router,
     private dynamicEntityService: DynamicEntityService
   ) {
