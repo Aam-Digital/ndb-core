@@ -3,6 +3,12 @@ import { Injectable } from "@angular/core";
 import { EntityMapperService } from "./entity-mapper.service";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 
+/**
+ * A service that can be used to get the entity-constructors (see {@link EntityConstructor})
+ * from their string-types.
+ * This also contains utility methods that deal with creating, loading,
+ * checking on the existence and instantiating entities based on the string-types
+ */
 @Injectable({
   providedIn: "root",
 })
@@ -10,9 +16,9 @@ export class DynamicEntityService {
   private static ENTITY_MAP = new Map<string, EntityConstructor<Entity>>();
 
   /**
-   * Register a new entity so that it can be used dynamically.
-   * Generally, all relevant entities are already registered implicitly
-   * via the {@link DatabaseEntity}-Decorator
+   * Registers a new entity so that it can be used using this service.
+   * This method should generally never be used other than from the
+   * {@link DatabaseEntity}-Decorator
    *
    * @param type The entity-type as string
    * @param constructor The constructor of the entity
@@ -48,12 +54,16 @@ export class DynamicEntityService {
     return ctor as EntityConstructor<E>;
   }
 
+  /**
+   * returns all registered entity-constructors
+   */
   get allConstructors(): Iterable<EntityConstructor<Entity>> {
     return DynamicEntityService.ENTITY_MAP.values();
   }
 
   /**
-   * Utility method to instantiate an entity using initial, raw parameters
+   * Utility method to instantiate an entity using initial, raw parameters as they
+   * would appear in the database
    * @param entityType The type to instantiate an entity by
    * @param id The id that the entity should have
    * @param initialParameters The initial parameters as they would appear in the database
@@ -83,7 +93,7 @@ export class DynamicEntityService {
 
   /**
    * returns {@code true}, when any of the given entities are registered
-   * and could this be instantiated
+   * and could be instantiated
    * @param entityTypes The types of entities to look up
    */
   hasAnyRegisteredEntity(...entityTypes: string[]): boolean {
