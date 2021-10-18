@@ -4,6 +4,8 @@ import { DisplayEntityArrayComponent } from "./display-entity-array.component";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 import { Child } from "../../../../../child-dev-project/children/model/child";
 import { Note } from "../../../../../child-dev-project/notes/model/note";
+import { EntitySchemaService } from "../../../../entity/schema/entity-schema.service";
+import { DynamicEntityService } from "../../../../entity/dynamic-entity.service";
 
 describe("DisplayEntityArrayComponent", () => {
   let component: DisplayEntityArrayComponent;
@@ -15,7 +17,11 @@ describe("DisplayEntityArrayComponent", () => {
     mockEntityMapper.load.and.resolveTo(new Child());
     await TestBed.configureTestingModule({
       declarations: [DisplayEntityArrayComponent],
-      providers: [{ provide: EntityMapperService, useValue: mockEntityMapper }],
+      providers: [
+        { provide: EntityMapperService, useValue: mockEntityMapper },
+        EntitySchemaService,
+        DynamicEntityService,
+      ],
     }).compileComponents();
   });
 
