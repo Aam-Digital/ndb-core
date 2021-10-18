@@ -7,18 +7,13 @@ import {
   PanelComponent,
   PanelConfig,
 } from "./EntityDetailsConfig";
-import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { School } from "../../../child-dev-project/schools/model/school";
+import { Entity } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { getUrlWithoutParams } from "../../../utils/utils";
-import { Child } from "../../../child-dev-project/children/model/child";
-import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
 import {
   EntityPermissionsService,
   OperationType,
 } from "../../permissions/entity-permissions.service";
-import { User } from "../../user/user";
-import { Note } from "../../../child-dev-project/notes/model/note";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { RouteData } from "../../view/dynamic-routing/view-config.interface";
 import { AnalyticsService } from "../../analytics/analytics.service";
@@ -26,19 +21,7 @@ import {
   EntityRemoveService,
   RemoveResult,
 } from "../../entity/entity-remove.service";
-
-export const ENTITY_MAP: Map<string, EntityConstructor<Entity>> = new Map<
-  string,
-  EntityConstructor<Entity>
->([
-  ["Child", Child],
-  ["Participant", Child],
-  ["School", School],
-  ["Team", School],
-  ["RecurringActivity", RecurringActivity],
-  ["Note", Note],
-  ["User", User],
-]);
+import { DynamicEntityService } from "../../entity/dynamic-entity.service";
 
 /**
  * This component can be used to display a entity in more detail.
@@ -69,7 +52,8 @@ export class EntityDetailsComponent {
     private location: Location,
     private analyticsService: AnalyticsService,
     private permissionService: EntityPermissionsService,
-    private entityRemoveService: EntityRemoveService
+    private entityRemoveService: EntityRemoveService,
+    private dynamicEntityService: DynamicEntityService
   ) {
     this.route.data.subscribe((data: RouteData<EntityDetailsConfig>) => {
       this.config = data.config;
@@ -81,7 +65,7 @@ export class EntityDetailsComponent {
   }
 
   private loadEntity(id: string) {
-    const constr: EntityConstructor<Entity> = ENTITY_MAP.get(
+    const constr = this.dynamicEntityService.getEntityConstructor(
       this.config.entity
     );
     if (id === "new") {
