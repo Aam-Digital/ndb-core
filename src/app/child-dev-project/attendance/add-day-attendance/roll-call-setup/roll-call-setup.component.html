@@ -42,7 +42,7 @@
   <div class="flex-scroll-container">
     <div class="cards-list">
       <app-activity-card
-        style="max-width: 500px"
+        class="activity-card"
         *ngFor="let event of filteredExistingEvents"
         [event]="event"
         (click)="eventSelected.emit(event)"
