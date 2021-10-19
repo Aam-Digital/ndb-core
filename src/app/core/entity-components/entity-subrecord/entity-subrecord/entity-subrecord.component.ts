@@ -352,8 +352,11 @@ export class EntitySubrecordComponent<T extends Entity>
    * @return returns true if column is visible
    */
   private isVisible(col: FormFieldConfig): boolean {
-    if (col.visibleFrom) {
-      return this.media.isActive("gt-" + col.visibleFrom);
+    const visibilityGroups = ["sm", "md", "lg", "xl"];
+    const visibleFromIndex = visibilityGroups.indexOf(col.visibleFrom);
+    if (visibleFromIndex !== -1) {
+      const regex = visibilityGroups.slice(visibleFromIndex).join("|");
+      return !!this.screenWidth.match(regex);
     } else {
       return true;
     }
