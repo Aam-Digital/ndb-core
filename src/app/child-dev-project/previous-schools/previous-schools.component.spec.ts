@@ -83,7 +83,7 @@ describe("PreviousSchoolsComponent", () => {
     };
     component.onInitFromDynamicConfig(config);
     tick();
-    
+
     let columnNames = component.columns.map((column) => column.label);
     expect(columnNames).toContain("Team");
     expect(columnNames).toContain("From");

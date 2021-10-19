@@ -19,7 +19,7 @@ export abstract class ViewComponent implements OnInitDynamicComponent {
       this.formGroup.valueChanges.subscribe((value) => {
         const dynamicConstructor: any = this.entity.getConstructor();
         this.entity = Object.assign(new dynamicConstructor(), value);
-      })  
+      });
     }
   }
 }

@@ -23,7 +23,10 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
     view: "ColoredReadonlyFunction",
     hideFromTable: true,
     tooltip: $localize`:Tooltip for the status of currently active or not:Only shown in the table if active. Change the start or end date to modify this status.`,
-    additional: (csr: ChildSchoolRelation) => csr.isActive ? $localize`:Indication for the currently active status of an entry:Currently active` : $localize`:Indication for the currently inactive status of an entry:Not active`,
+    additional: (csr: ChildSchoolRelation) =>
+      csr.isActive
+        ? $localize`:Indication for the currently active status of an entry:Currently active`
+        : $localize`:Indication for the currently inactive status of an entry:Not active`,
   };
   columns: FormFieldConfig[] = [
     { id: "childId" },
@@ -64,5 +67,4 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
       return newRelation;
     };
   }
-
 }

@@ -304,8 +304,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     dialogRef.componentInstance.columns = this._columns
       .filter((col) => col.edit)
       .map((col) => [Object.assign({}, col)]);
-    dialogRef.componentInstance.uneditableColumns = this._columns
-      .filter((col) => !col.edit);
+    dialogRef.componentInstance.uneditableColumns = this._columns.filter(
+      (col) => !col.edit
+    );
     dialogRef.componentInstance.entity = entity;
     dialogRef.componentInstance.editing = true;
     dialogRef.componentInstance.onSave
@@ -357,7 +358,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   }
 
   public getTableColumns() {
-    return this._columns.filter((col) => !col.hideFromTable)
+    return this._columns.filter((col) => !col.hideFromTable);
   }
-
 }

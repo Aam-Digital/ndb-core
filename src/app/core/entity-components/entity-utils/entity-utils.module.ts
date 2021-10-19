@@ -32,7 +32,7 @@ import { MatChipsModule } from "@angular/material/chips";
 import { EditNumberComponent } from "./dynamic-form-components/edit-number/edit-number.component";
 import { EntityFunctionPipe } from "./view-components/readonly-function/entity-function.pipe";
 import { FlexLayoutModule } from "@angular/flex-layout";
-import { ColoredReadonlyFunctionComponent } from './view-components/colored-readonly-function/colored-readonly-function.component';
+import { ColoredReadonlyFunctionComponent } from "./view-components/colored-readonly-function/colored-readonly-function.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 

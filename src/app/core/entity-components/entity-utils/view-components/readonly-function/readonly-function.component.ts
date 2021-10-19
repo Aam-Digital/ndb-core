@@ -8,7 +8,6 @@ import { Entity } from "../../../../entity/model/entity";
   templateUrl: "./readonly-function.component.html",
   styleUrls: ["./readonly-function.component.scss"],
 })
-
 export class ReadonlyFunctionComponent extends ViewComponent {
   @Input() displayFunction: (entity: Entity) => any;
   onInitFromDynamicConfig(config: ViewPropertyConfig) {
@@ -16,4 +15,3 @@ export class ReadonlyFunctionComponent extends ViewComponent {
     this.displayFunction = config.config;
   }
 }
-  

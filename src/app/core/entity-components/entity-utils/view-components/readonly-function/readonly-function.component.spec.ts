@@ -36,13 +36,14 @@ describe("ReadonlyFunctionComponent", () => {
   });
 
   it("should display a new name as soon as it is entered into the corresponding form group entry", () => {
-    const displayElement: HTMLDivElement = fixture.debugElement.nativeElement.querySelector('div');
+    const displayElement: HTMLDivElement = fixture.debugElement.nativeElement.querySelector(
+      "div"
+    );
     expect(displayElement.textContent).toBe(" nameBefore\n");
-    
-    component.formGroup.setValue({name: "nameAfter"});
+
+    component.formGroup.setValue({ name: "nameAfter" });
     fixture.detectChanges();
 
     expect(displayElement.textContent).toBe(" nameAfter\n");
   });
-
 });
