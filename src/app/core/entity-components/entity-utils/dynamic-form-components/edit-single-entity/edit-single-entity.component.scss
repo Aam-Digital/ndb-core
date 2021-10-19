@@ -1,5 +1,5 @@
+@import "../../common-styles";
+
 .block-wrapper {
-  padding: 12px;
-  border-radius: 5px;
-  border: 1px solid lightgray;
+  @include entity-block-border;
 }

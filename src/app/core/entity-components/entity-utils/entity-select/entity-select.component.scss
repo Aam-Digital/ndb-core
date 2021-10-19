@@ -1,12 +1,14 @@
+@import "../common-styles";
+
 .main-list {
-  width: 100%;
+  // Mat chip list overflows a little bit without this hack
+  width: 98%;
+  padding-left: 1px;
 }
 
 .chip {
-  padding: 7px;
+  @include entity-block-border;
   margin: 0.2em;
-  border-radius: 5px;
-  border: 1px solid lightgray;
 }
 
 .remove-item {

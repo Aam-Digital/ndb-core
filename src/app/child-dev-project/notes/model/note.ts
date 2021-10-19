@@ -155,9 +155,10 @@ export class Note extends Entity {
 
   /**
    * adds a new child to this note
-   * @param childId The id of the child to add to the notes
+   * @param child The child or the id of the child to add to the notes
    */
-  addChild(childId: string) {
+  addChild(child: Child | string) {
+    const childId = typeof child === "string" ? child : child.getId();
     if (this.children.includes(childId)) {
       return;
     }
@@ -171,9 +172,10 @@ export class Note extends Entity {
    * This method returns a default object that can be used and updated even if no attendance has been recorded yet.
    * Returns undefined if the child is not added to this event/note instance.
    *
-   * @param childId
+   * @param child: The child or the id of the child to look for
    */
-  getAttendance(childId: string): EventAttendance {
+  getAttendance(child: string | Child): EventAttendance {
+    const childId = typeof child === "string" ? child : child.getId();
     if (!this.children.includes(childId)) {
       return undefined;
     }

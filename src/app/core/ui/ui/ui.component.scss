@@ -15,6 +15,8 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import "../../../../styles";
+
 html,
 body {
   height: 100%;
@@ -51,18 +53,11 @@ body {
 }
 
 .sidenav-content {
-  padding: 24px;
-  @media (max-width: 599px) {
-    padding: 12px;
-  }
-
-  /* make this fullscreen while respecting padding: https://stackoverflow.com/a/485887/1473411 */
-  position: absolute;
-  height: auto;
-  bottom: 0;
-  top: 0;
-  left: 0;
-  right: 0;
+  margin:
+    $margin-main-view-top
+    $margin-main-view-right
+    $margin-main-view-bottom
+    $margin-main-view-left;
 }
 
 .header-icon {
@@ -81,4 +76,8 @@ body {
 
 app-search {
   max-height: 100%;
+}
+
+.mat-drawer-side {
+  border-right: 0;
 }

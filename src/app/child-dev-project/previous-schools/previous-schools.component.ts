@@ -18,8 +18,8 @@ export class PreviousSchoolsComponent
   columns: FormFieldConfig[] = [
     { id: "schoolId" },
     { id: "schoolClass" },
-    { id: "start" },
-    { id: "end" },
+    { id: "start", visibleFrom: "md" },
+    { id: "end", visibleFrom: "md" },
     { id: "result" },
   ];
   current: ChildSchoolRelation;

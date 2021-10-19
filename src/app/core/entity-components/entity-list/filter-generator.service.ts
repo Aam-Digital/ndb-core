@@ -10,10 +10,6 @@ import {
 } from "./EntityListConfig";
 import { ENTITY_MAP } from "../entity-details/entity-details.component";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import {
-  CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnumConfig,
-} from "../../configurable-enum/configurable-enum.interface";
 import { ConfigService } from "../../config/config.service";
 import { LoggingService } from "../../logging/logging.service";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
@@ -140,9 +136,7 @@ export class FilterGeneratorService {
       },
     ];
 
-    const enumValues = this.configService.getConfig<ConfigurableEnumConfig>(
-      CONFIGURABLE_ENUM_CONFIG_PREFIX + enumId
-    );
+    const enumValues = this.configService.getConfigurableEnumValues(enumId);
 
     for (const enumValue of enumValues) {
       options.push({

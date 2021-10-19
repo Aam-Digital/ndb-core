@@ -81,14 +81,26 @@
 
         <app-entity-select
           fxFlex
-          entityType="User"
+          entityType="Child"
+          [(selection)]="entity.children"
           (selectionChange)="entityForm.form.markAsDirty()"
-          [(selection)]="entity.authors"
-          i18n-placeholder="placeholder when adding multiple authors"
-          placeholder="Add Author..."
-          i18n-label="Authors of a note"
-          label="Authors"
+          [additionalFilter]="filterInactiveChildren"
+          [showEntities]="!entity.category.isMeeting"
+          label="Participants"
+          i18n-label="Participants of a note"
+          placeholder="Add participant ..."
+          i18n-placeholder="Add participants of a note"
         >
+          <!-- Header for autocomplete -->
+          <mat-option>
+            <mat-checkbox
+              labelPosition="before"
+              (change)="toggleIncludeInactiveChildren()"
+              [checked]="includeInactiveChildren"
+            >
+              Include Inactive Children
+            </mat-checkbox>
+          </mat-option>
         </app-entity-select>
       </div>
     </div>
@@ -132,28 +144,18 @@
     </div>
 
     <div fxLayout="column" fxLayoutGap="20px">
+
       <app-entity-select
-        entityType="Child"
-        [(selection)]="entity.children"
+        entityType="User"
         (selectionChange)="entityForm.form.markAsDirty()"
-        [additionalFilter]="filterInactiveChildren"
-        [showEntities]="!entity.category.isMeeting"
-        label="Participants"
-        i18n-label="Participants of a note"
-        placeholder="Add participant ..."
-        i18n-placeholder="Add participants of a note"
+        [(selection)]="entity.authors"
+        i18n-placeholder="placeholder when adding multiple authors"
+        placeholder="Add Author..."
+        i18n-label="Authors of a note"
+        label="Authors"
       >
-        <!-- Header for autocomplete -->
-        <mat-option>
-          <mat-checkbox
-            labelPosition="before"
-            (change)="toggleIncludeInactiveChildren()"
-            [checked]="includeInactiveChildren"
-          >
-            Include Inactive Children
-          </mat-checkbox>
-        </mat-option>
       </app-entity-select>
+
 
       <div *ngIf="entity.category.isMeeting">
         <app-child-meeting-note-attendance

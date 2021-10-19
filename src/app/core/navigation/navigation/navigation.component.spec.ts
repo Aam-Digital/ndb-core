@@ -27,6 +27,8 @@ import { BehaviorSubject } from "rxjs";
 import { Config } from "../../config/config";
 import { UserRoleGuard } from "../../permissions/user-role.guard";
 import { ActivatedRouteSnapshot } from "@angular/router";
+import { SessionService } from "../../session/session-service/session.service";
+import { MockSessionModule } from "../../session/mock-session.module";
 
 describe("NavigationComponent", () => {
   let component: NavigationComponent;
@@ -46,11 +48,17 @@ describe("NavigationComponent", () => {
       mockUserRoleGuard.canActivate.and.returnValue(true);
 
       TestBed.configureTestingModule({
-        imports: [RouterTestingModule, MatDividerModule, MatListModule],
+        imports: [
+          RouterTestingModule,
+          MatDividerModule,
+          MatListModule,
+          MockSessionModule.withState(),
+        ],
         declarations: [NavigationComponent],
         providers: [
           { provide: UserRoleGuard, useValue: mockUserRoleGuard },
           { provide: ConfigService, useValue: mockConfigService },
+          SessionService,
         ],
       }).compileComponents();
     })

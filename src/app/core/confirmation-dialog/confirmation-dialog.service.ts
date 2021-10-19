@@ -1,6 +1,10 @@
 import { Injectable } from "@angular/core";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
-import { ConfirmationDialogComponent } from "./confirmation-dialog/confirmation-dialog.component";
+import {
+  ConfirmationDialogButton,
+  ConfirmationDialogComponent,
+  YesNoButtons,
+} from "./confirmation-dialog/confirmation-dialog.component";
 
 /**
  * Inject this service instead of MatDialog if you need a simple, configurable confirmation dialog box
@@ -24,7 +28,9 @@ export class ConfirmationDialogService {
    * Open a dialog with the given configuration.
    * @param title The title displayed for the dialog
    * @param text The text displayed for the dialog
-   * @param yesNoButtons Whether two buttons (yes/no) are shown to the user. Otherwise only an "Ok" button will be shown.
+   * @param buttons The buttons to show. Defaults to 'yes' and 'no', but can be
+   * arbitrary
+   * @param closeButton Whether a single icon-button with an 'x' is shown to the user
    * @return The reference to the opened MatDialog.
    *          You can use this to control the dialog or subscribe to its result:
    *          (`ref.afterClosed().subscribe(confirmed => myAction(confirmed));`
@@ -32,10 +38,16 @@ export class ConfirmationDialogService {
   openDialog(
     title: string,
     text: string,
-    yesNoButtons = true
+    buttons: ConfirmationDialogButton[] = YesNoButtons,
+    closeButton = true
   ): MatDialogRef<ConfirmationDialogComponent> {
     return this.dialog.open(ConfirmationDialogComponent, {
-      data: { title: title, text: text, yesNo: yesNoButtons },
+      data: {
+        title: title,
+        text: text,
+        buttons: buttons,
+        closeButton: closeButton,
+      },
     });
   }
 }
