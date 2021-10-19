@@ -42,10 +42,10 @@
   <div class="flex-scroll-container">
     <div class="cards-list">
       <app-activity-card
+        style="max-width: 500px"
         *ngFor="let event of filteredExistingEvents"
         [event]="event"
-        (click)="selectedEvent = event"
-        [highlighted]="selectedEvent === event"
+        (click)="eventSelected.emit(event)"
         [recurring]="event.isNewFromActivity"
       >
       </app-activity-card>
@@ -74,27 +74,5 @@
         My event is not listed ...
       </button>
     </div>
-  </div>
-
-  <div class="mat-elevation-z5 bottom-control primary-background">
-    <button
-      i18n="
-        Record Attendance button|Start recording the attendance of a child at
-        an event
-      "
-      mat-raised-button
-      color="primary"
-      [disabled]="!selectedEvent"
-      (click)="eventSelected.emit(selectedEvent)"
-    >
-      Record Attendance
-    </button>
-
-    <app-activity-card
-      *ngIf="selectedEvent"
-      [event]="selectedEvent"
-      class="mat-elevation-z0 selected-card"
-    >
-    </app-activity-card>
   </div>
 </div>
