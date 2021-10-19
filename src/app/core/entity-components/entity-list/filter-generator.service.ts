@@ -128,7 +128,7 @@ export class FilterGeneratorService {
     property: string,
     enumId: string
   ): FilterSelectionOption<T>[] {
-    const options = [
+    const options: FilterSelectionOption<T>[] = [
       {
         key: "all",
         label: $localize`:Filter label:All`,
@@ -142,6 +142,7 @@ export class FilterGeneratorService {
       options.push({
         key: enumValue.id,
         label: enumValue.label,
+        color: enumValue.color,
         filterFun: (entity) => entity[property]?.id === enumValue.id,
       });
     }
