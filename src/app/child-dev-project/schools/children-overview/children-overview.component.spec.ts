@@ -15,6 +15,7 @@ import { Router } from "@angular/router";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { ChildrenService } from "../../children/children.service";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("ChildrenOverviewComponent", () => {
   let component: ChildrenOverviewComponent;
@@ -32,6 +33,7 @@ describe("ChildrenOverviewComponent", () => {
           RouterTestingModule,
           NoopAnimationsModule,
           MockSessionModule.withState(),
+          FontAwesomeTestingModule,
         ],
         providers: [
           { provide: ChildrenService, useValue: mockChildrenService },

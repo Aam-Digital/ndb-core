@@ -31,6 +31,7 @@ import { UiModule } from "../ui.module";
 import { Angulartics2Module } from "angulartics2";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { ConfigService } from "../../config/config.service";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("UiComponent", () => {
   let component: UiComponent;
@@ -55,6 +56,7 @@ describe("UiComponent", () => {
           UiModule,
           NoopAnimationsModule,
           Angulartics2Module.forRoot(),
+          FontAwesomeTestingModule,
         ],
         providers: [
           { provide: SessionService, useValue: mockSession },

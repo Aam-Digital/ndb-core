@@ -2,10 +2,11 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { SchoolBlockComponent } from "./school-block.component";
 import { RouterTestingModule } from "@angular/router/testing";
-import { MatIconModule } from "@angular/material/icon";
 import { School } from "../model/school";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { ConfigService } from "../../../core/config/config.service";
+import { FaDynamicIconComponent } from "../../../core/view/fa-dynamic-icon/fa-dynamic-icon.component";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("SchoolBlockComponent", () => {
   let component: SchoolBlockComponent;
@@ -19,8 +20,8 @@ describe("SchoolBlockComponent", () => {
       mockConfigService = jasmine.createSpyObj(["getConfig"]);
 
       TestBed.configureTestingModule({
-        declarations: [SchoolBlockComponent],
-        imports: [RouterTestingModule, MatIconModule],
+        declarations: [SchoolBlockComponent, FaDynamicIconComponent],
+        imports: [RouterTestingModule, FontAwesomeTestingModule],
         providers: [
           { provide: EntityMapperService, useValue: mockEntityMapper },
           { provide: ConfigService, useValue: mockConfigService },
@@ -33,6 +34,7 @@ describe("SchoolBlockComponent", () => {
     fixture = TestBed.createComponent(SchoolBlockComponent);
     component = fixture.componentInstance;
     component.entity = new School("");
+    component.icon = "university";
     fixture.detectChanges();
   });
 

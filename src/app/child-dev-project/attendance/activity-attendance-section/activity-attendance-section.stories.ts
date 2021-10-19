@@ -3,7 +3,6 @@ import { moduleMetadata } from "@storybook/angular";
 import { RecurringActivity } from "../model/recurring-activity";
 import { ActivityAttendanceSectionComponent } from "./activity-attendance-section.component";
 import { AttendanceModule } from "../attendance.module";
-import { FontAwesomeIconsModule } from "../../../core/icons/font-awesome-icons.module";
 import { RouterTestingModule } from "@angular/router/testing";
 import { AttendanceService } from "../attendance.service";
 import {
@@ -74,7 +73,6 @@ export default {
       imports: [
         AttendanceModule,
         EntitySubrecordModule,
-        FontAwesomeIconsModule,
         RouterTestingModule,
         MatNativeDateModule,
         Angulartics2Module.forRoot(),

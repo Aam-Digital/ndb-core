@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from "@angular/core";
+import { InjectionToken, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { AppVersionComponent } from "./app-version/app-version.component";
 import { AlertsModule } from "../alerts/alerts.module";
@@ -29,10 +29,15 @@ import { SwUpdate } from "@angular/service-worker";
 import { UpdateManagerService } from "./update-manager.service";
 import { FlexModule } from "@angular/flex-layout";
 import { MarkdownModule } from "ngx-markdown";
-import { MatIconModule } from "@angular/material/icon";
 import { MatCardModule } from "@angular/material/card";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { LatestChangesService } from "./latest-changes.service";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+
+// Following this post to allow testing of the location object: https://itnext.io/testing-browser-window-location-in-angular-application-e4e8388508ff
+export const LOCATION_TOKEN = new InjectionToken<Location>(
+  "Window location object"
+);
 
 /**
  * Displaying app version and changelog information to the user
@@ -54,8 +59,8 @@ import { LatestChangesService } from "./latest-changes.service";
     HttpClientModule,
     FlexModule,
     MarkdownModule,
-    MatIconModule,
     MatCardModule,
+    FontAwesomeModule,
   ],
   declarations: [AppVersionComponent, ChangelogComponent],
   exports: [AppVersionComponent],
@@ -63,6 +68,7 @@ import { LatestChangesService } from "./latest-changes.service";
     LatestChangesService,
     LatestChangesDialogService,
     UpdateManagerService,
+    { provide: LOCATION_TOKEN, useValue: window.location },
   ],
 })
 export class LatestChangesModule {
@@ -71,9 +77,9 @@ export class LatestChangesModule {
     private latestChangesDialogService: LatestChangesDialogService,
     private updateManagerService: UpdateManagerService
   ) {
-    this.latestChangesDialogService.showLatestChangesIfUpdated();
-
     this.updateManagerService.notifyUserWhenUpdateAvailable();
     this.updateManagerService.regularlyCheckForUpdates();
+
+    this.latestChangesDialogService.showLatestChangesIfUpdated();
   }
 }

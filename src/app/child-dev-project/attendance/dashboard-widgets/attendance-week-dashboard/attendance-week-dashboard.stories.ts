@@ -3,7 +3,6 @@ import { moduleMetadata } from "@storybook/angular";
 import { AttendanceWeekDashboardComponent } from "./attendance-week-dashboard.component";
 import { AttendanceModule } from "../../attendance.module";
 import { RecurringActivity } from "../../model/recurring-activity";
-import { FontAwesomeIconsModule } from "../../../../core/icons/font-awesome-icons.module";
 import { Child } from "../../../children/model/child";
 import { generateEventWithAttendance } from "../../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
@@ -58,7 +57,6 @@ export default {
     moduleMetadata({
       imports: [
         AttendanceModule,
-        FontAwesomeIconsModule,
         RouterTestingModule,
         Angulartics2Module.forRoot(),
       ],
