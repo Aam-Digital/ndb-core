@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ViewComponent } from '../view-component';
 import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
 import { Entity } from "../../../../entity/model/entity";
@@ -14,5 +14,4 @@ export class ColoredReadonlyFunctionComponent extends ViewComponent {
     super.onInitFromDynamicConfig(config);
     this.displayFunction = config.config;
   }
-
 }

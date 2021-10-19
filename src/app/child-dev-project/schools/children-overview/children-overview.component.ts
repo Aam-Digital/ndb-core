@@ -17,12 +17,21 @@ import { ChildrenService } from "../../children/children.service";
   styleUrls: ["./children-overview.component.scss"],
 })
 export class ChildrenOverviewComponent implements OnInitDynamicComponent {
+  readonly isActiveIndicator = {
+    id: "isActive",
+    label: $localize`:Label for form field, Indicatind whether currenty active:Currently active`,
+    view: "ColoredReadonlyFunction",
+    hideFromTable: true,
+    tooltip: $localize`:Tooltip for the status of currently active or not:Only shown in the table if active. Change the start or end date to modify this status.`,
+    additional: (csr: ChildSchoolRelation) => csr.isActive ? $localize`:Indication for the currently active status of an entry:Currently active` : $localize`:Indication for the currently inactive status of an entry:Not active`,
+  };
   columns: FormFieldConfig[] = [
     { id: "childId" },
     { id: "schoolClass" },
     { id: "start" },
     { id: "end" },
     { id: "result" },
+    this.isActiveIndicator,
   ];
 
   entity: Entity;
@@ -55,4 +64,5 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
       return newRelation;
     };
   }
+
 }

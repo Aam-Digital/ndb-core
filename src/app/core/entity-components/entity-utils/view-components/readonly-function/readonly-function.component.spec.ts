@@ -21,9 +21,9 @@ describe("ReadonlyFunctionComponent", () => {
     component = fixture.componentInstance;
     const formGroup = new FormGroup({});
     const formControl = new FormControl();
-    formGroup.registerControl('name', formControl);
+    formGroup.registerControl("name", formControl);
     component.onInitFromDynamicConfig({
-      entity: Child.create('nameBefore'),
+      entity: Child.create("nameBefore"),
       id: "",
       formGroup: formGroup,
       config: (entity) => entity.name,
