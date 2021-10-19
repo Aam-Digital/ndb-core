@@ -99,6 +99,13 @@ describe("ChildSchoolRelation Entity", () => {
     expect(relation.isActive).toBeTrue();
   });
 
+  fit("should mark relation with end date being today as active", () => {
+    const relation = new ChildSchoolRelation();
+    relation.start = moment().subtract(1, "week").toDate();
+    relation.end = new Date();
+    expect(relation.isActive).toBeTrue();
+  });
+
   it("should fail validation when end date but no start date is defined", () => {
     const relation = new ChildSchoolRelation();
     relation.schoolId = "someId";
