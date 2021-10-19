@@ -23,11 +23,19 @@
     [angularticsLabel]="item.label"
     *ngFor="let item of menuItems"
     [routerLink]="[item.link]"
+    [class.primary-background]="item.link === activeLink"
   >
-    <a
-      ><app-fa-dynamic-icon class="nav-icon" [icon]="item.icon"></app-fa-dynamic-icon
-      >{{ item.label }}</a
-    >
+    <a class="nav-link">
+      <app-fa-dynamic-icon class="nav-icon" [icon]="item.icon"></app-fa-dynamic-icon>
+      <div>{{ item.label }}</div>
+    </a>
+    <mat-divider></mat-divider>
+  </mat-list-item>
+  <mat-list-item (click)="logout()">
+    <a class="nav-link">
+      <fa-icon icon="sign-out-alt" class="nav-icon"></fa-icon>
+      <div i18n="Sign out of the app">Sign out</div>
+    </a>
     <mat-divider></mat-divider>
   </mat-list-item>
 </mat-nav-list>

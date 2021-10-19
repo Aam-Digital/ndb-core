@@ -26,6 +26,7 @@ import {
 import { User } from "../../../core/user/user";
 import { Child } from "../../children/model/child";
 import { School } from "../../schools/model/school";
+import { DatabaseUser } from "../../../core/session/session-service/local-user";
 
 @DatabaseEntity("RecurringActivity")
 export class RecurringActivity extends Entity {
@@ -88,6 +89,10 @@ export class RecurringActivity extends Entity {
     additional: User.ENTITY_TYPE,
   })
   assignedTo: string[] = [];
+
+  isAssignedTo(user: DatabaseUser): boolean {
+    return !!this.assignedTo.find((name) => user.name === name);
+  }
 
   toString(): string {
     return this.title;

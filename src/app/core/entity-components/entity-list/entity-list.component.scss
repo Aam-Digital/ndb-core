@@ -1,19 +1,12 @@
-.filter-panel {
-  padding-top: 10px;
-  border-radius: 0;
-}
-
-.toggle-selection-section {
-  margin-top: 10px;
-}
+@import "../../../../ndb-theme";
+@import "../../../../styles";
 
 .table-list td {
   padding-left: 8px;
 }
 
-.button-icon {
-  font-size: 1.5em;
-  margin-right: 5px;
+.list-header {
+  margin: 0 25px 0 0;
 }
 
 .align-form-field {
@@ -23,4 +16,22 @@
 .cell-with-blocks {
   white-space: nowrap;
   overflow: hidden;
+}
+
+.filter-field {
+  color: mat-color($ndb-app-accent);
+  width: 100%;
+  margin-bottom: -1.25em;
+}
+
+.accent-icon {
+  color: mat-color($ndb-app-accent);
+  min-width: $max-icon-width;
+  margin-right: 8px;
+}
+
+.additional-button-icon {
+  font-size: 40px;
+  margin-left: -6px;
+  margin-top: -3px;
 }

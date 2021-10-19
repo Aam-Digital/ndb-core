@@ -65,7 +65,7 @@ export const defaultJsonConfig = {
       },
       {
         "name": $localize`:Menu item:Users`,
-        "icon": "user",
+        "icon": "users",
         "link": "/users"
       },
       {
@@ -82,6 +82,11 @@ export const defaultJsonConfig = {
         "name": $localize`:Menu item:Help`,
         "icon": "question",
         "link": "/help"
+      },
+      {
+        "name": $localize`:Menu item:Profile`,
+        "icon": "user",
+        "link": "/user"
       }
     ]
   },
@@ -309,8 +314,9 @@ export const defaultJsonConfig = {
       "filters": [
         {
           "id": "privateSchool",
-          "true": $localize`:Label for private schools filter - true case:Private School`,
-          "false": $localize`:Label for private schools filter - false case:Government School`,
+          "label": $localize`Schools`,
+          "true": $localize`:Label for private schools filter - true case:Private`,
+          "false": $localize`:Label for private schools filter - false case:Government`,
           "all": $localize`:Label for disabling the filter:All`
         }
       ]
@@ -473,8 +479,7 @@ export const defaultJsonConfig = {
             "columns": [
               "projectNumber",
               "name",
-              "age",
-              "schoolId"
+              "age"
             ]
           }
         ]
@@ -484,7 +489,8 @@ export const defaultJsonConfig = {
           "id": "isActive",
           "type": "boolean",
           "default": "true",
-          "true": $localize`:Active children filter label - true case:Active Children`,
+          "label": $localize`Children`,
+          "true": $localize`:Active children filter label - true case:Active`,
           "false": $localize`:Active children filter label - false case:Inactive`,
           "all": $localize`:Active children unselect option:All`
         },
@@ -531,6 +537,13 @@ export const defaultJsonConfig = {
                     "status",
                     "address",
                   ],
+                ],
+                "headers": [
+                  null,
+                  "Personal Information",
+                  "Additional",
+                  "Scholar activities",
+                  "Address"
                 ]
               }
             }
@@ -547,8 +560,14 @@ export const defaultJsonConfig = {
                 "columns": [
                   "schoolId",
                   "schoolClass",
-                  "start",
-                  "end",
+                  {
+                    id: "start",
+                    visibleFrom: "sm",
+                  },
+                  {
+                    id: "end",
+                    visibleFrom: "sm",
+                  },
                   "result",
                 ],
               }

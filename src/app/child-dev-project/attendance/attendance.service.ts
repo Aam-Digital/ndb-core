@@ -12,7 +12,6 @@ import {
 } from "../notes/model/interaction-type.interface";
 import { EventNote } from "./model/event-note";
 import { ChildrenService } from "../children/children.service";
-import { CONFIGURABLE_ENUM_CONFIG_PREFIX } from "../../core/configurable-enum/configurable-enum.interface";
 
 @Injectable({
   providedIn: "root",
@@ -29,9 +28,7 @@ export class AttendanceService {
 
   private createIndices() {
     const meetingInteractionTypes = this.configService
-      .getConfig<InteractionType[]>(
-        CONFIGURABLE_ENUM_CONFIG_PREFIX + INTERACTION_TYPE_CONFIG_ID
-      )
+      .getConfigurableEnumValues<InteractionType>(INTERACTION_TYPE_CONFIG_ID)
       .filter((t) => t.isMeeting)
       .map((t) => t.id);
     this.createEventsIndex(meetingInteractionTypes);

@@ -21,8 +21,9 @@ import {
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { School } from "../../schools/model/school";
 import { LoggingService } from "../../../core/logging/logging.service";
-import { ExportService } from "../../../core/export/export-service/export.service";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { ExportDataDirective } from "../../../core/export/export-data-directive/export-data.directive";
+import { ExportService } from "../../../core/export/export-service/export.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("ChildrenListComponent", () => {
@@ -30,6 +31,8 @@ describe("ChildrenListComponent", () => {
   let fixture: ComponentFixture<ChildrenListComponent>;
   const routeData: EntityListConfig = {
     title: "Children List",
+    addNew: "Add child",
+    filterPlaceholder: "i.e. Participant name",
     columns: [
       { view: "DisplayText", label: "PN", id: "projectNumber" },
       { view: "ChildBlock", label: "Name", id: "name" },
@@ -88,7 +91,7 @@ describe("ChildrenListComponent", () => {
     waitForAsync(() => {
       mockChildrenService.getChildren.and.returnValue(of([]));
       TestBed.configureTestingModule({
-        declarations: [ChildrenListComponent],
+        declarations: [ChildrenListComponent, ExportDataDirective],
 
         imports: [
           ChildrenModule,

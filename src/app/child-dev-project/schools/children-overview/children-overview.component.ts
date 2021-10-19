@@ -20,8 +20,8 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
   columns: FormFieldConfig[] = [
     { id: "childId" },
     { id: "schoolClass" },
-    { id: "start" },
-    { id: "end" },
+    { id: "start", visibleFrom: "md" },
+    { id: "end", visibleFrom: "md" },
     { id: "result" },
   ];
 

@@ -18,11 +18,22 @@ import { EntityFormModule } from "../entity-form/entity-form.module";
 import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatToolbarModule } from "@angular/material/toolbar";
+import { FlexLayoutModule } from "@angular/flex-layout";
 import { Angulartics2Module } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { RowDetailsComponent } from "./row-details/row-details.component";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatDialogModule } from "@angular/material/dialog";
+import { PermissionsModule } from "../../permissions/permissions.module";
+import { MatRippleModule } from "@angular/material/core";
 
 @NgModule({
-  declarations: [EntitySubrecordComponent, KeysPipe, ListPaginatorComponent],
+  declarations: [
+    EntitySubrecordComponent,
+    KeysPipe,
+    ListPaginatorComponent,
+    RowDetailsComponent,
+  ],
   imports: [
     CommonModule,
     AlertsModule,
@@ -41,7 +52,12 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     EntityDetailsModule,
     EntityFormModule,
     FontAwesomeModule,
+    FlexLayoutModule,
     Angulartics2Module,
+    MatFormFieldModule,
+    MatDialogModule,
+    PermissionsModule,
+    MatRippleModule,
   ],
   exports: [EntitySubrecordComponent, KeysPipe],
 })

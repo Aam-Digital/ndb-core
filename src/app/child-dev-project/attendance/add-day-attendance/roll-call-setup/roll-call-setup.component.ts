@@ -27,6 +27,8 @@ export class RollCallSetupComponent implements OnInit {
   visibleActivities: RecurringActivity[] = [];
   filterSettings: FilterComponentSettings<Note>[] = [];
 
+  showingAll: boolean = false;
+
   /**
    * filters are displayed in the UI only if at least this many events are listed.
    *
@@ -59,13 +61,17 @@ export class RollCallSetupComponent implements OnInit {
       RecurringActivity
     );
 
-    this.visibleActivities = this.allActivities.filter((a) =>
-      a.assignedTo.includes(this.sessionService.getCurrentUser().name)
-    );
-    if (this.visibleActivities.length === 0) {
-      this.visibleActivities = this.allActivities.filter(
-        (a) => a.assignedTo.length === 0
+    if (this.showingAll) {
+      this.visibleActivities = this.allActivities;
+    } else {
+      this.visibleActivities = this.allActivities.filter((a) =>
+        a.isAssignedTo(this.sessionService.getCurrentUser())
       );
+      if (this.visibleActivities.length === 0) {
+        this.visibleActivities = this.allActivities.filter(
+          (a) => a.assignedTo.length === 0
+        );
+      }
     }
 
     for (const activity of this.visibleActivities) {
@@ -77,17 +83,13 @@ export class RollCallSetupComponent implements OnInit {
   }
 
   async showMore() {
-    const additionalActivities = this.allActivities.filter(
-      (a) => !this.visibleActivities.includes(a)
-    );
-    for (const activity of additionalActivities) {
-      const newEvent = await this.createEventForActivity(activity);
-      if (newEvent) {
-        this.existingEvents.push(newEvent);
-      }
-      this.visibleActivities.push(activity);
-    }
-    await this.updateEventsList();
+    this.showingAll = !this.showingAll;
+    await this.initAvailableEvents();
+  }
+
+  async showLess() {
+    this.showingAll = !this.showingAll;
+    await this.initAvailableEvents();
   }
 
   async setNewDate(date: Date) {

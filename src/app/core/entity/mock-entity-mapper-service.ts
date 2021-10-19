@@ -85,7 +85,12 @@ export class MockEntityMapperService extends EntityMapperService {
     id: string
   ): Promise<T> {
     const type = new entityType().getType();
-    return this.get(type, id) as T;
+    const entity = this.get(type, id);
+    if (!entity) {
+      throw Error(`Entity ${id} does not exist in MockEntityMapper`);
+    } else {
+      return this.get(type, id) as T;
+    }
   }
 
   async loadType<T extends Entity>(

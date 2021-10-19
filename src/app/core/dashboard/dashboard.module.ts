@@ -18,7 +18,6 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { DashboardComponent } from "./dashboard/dashboard.component";
-import { FlexLayoutModule } from "@angular/flex-layout";
 import { ViewModule } from "../view/view.module";
 import { DashboardWidgetComponent } from "./dashboard-widget/dashboard-widget.component";
 import { WidgetContentComponent } from "./dashboard-widget/widget-content/widget-content.component";
@@ -36,7 +35,6 @@ import { MatButtonModule } from "@angular/material/button";
 @NgModule({
   imports: [
     CommonModule,
-    FlexLayoutModule,
     ViewModule,
     MatTableModule,
     MatProgressSpinnerModule,

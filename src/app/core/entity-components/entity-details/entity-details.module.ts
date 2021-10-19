@@ -15,8 +15,10 @@ import { AlertsModule } from "../../alerts/alerts.module";
 import { PermissionsModule } from "../../permissions/permissions.module";
 import { FormComponent } from "./form/form.component";
 import { EntityFormModule } from "../entity-form/entity-form.module";
+import { MatTabsModule } from "@angular/material/tabs";
 import { Angulartics2Module } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatMenuModule } from "@angular/material/menu";
 
 @NgModule({
   declarations: [EntityDetailsComponent, FormComponent],
@@ -36,6 +38,8 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     MatTooltipModule,
     EntityFormModule,
     Angulartics2Module,
+    MatTabsModule,
+    MatMenuModule,
     FontAwesomeModule,
   ],
   entryComponents: [FormComponent],

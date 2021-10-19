@@ -15,12 +15,28 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.section-header {
+@import "../../../../ndb-theme";
+@import "../../../../styles";
+
+.header-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   font-weight: bold;
 }
+
 .mat-expansion-panel {
   padding: 0;
   margin-top: 0;
+}
+
+.header-title {
+  margin-bottom: 0;
+  padding-right: 8px;
+}
+
+.header-spacer {
+  flex-grow: 1;
 }
 
 .delete-button {
@@ -31,6 +47,8 @@
   margin: 0 0;
 }
 
-.icon {
-  margin-right: 10px;
+.warn-icon {
+  color: mat-color($ndb-app-warn);
+  padding-right: 8px;
+  min-width: $max-icon-width;
 }

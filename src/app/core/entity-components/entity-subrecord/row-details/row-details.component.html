@@ -1,0 +1,60 @@
+<fa-icon
+  mat-dialog-close
+  class="cancel-icon"
+  icon="times"
+  mat-ripple
+>
+</fa-icon>
+<div mat-dialog-content class="main-content">
+  <div
+    *ngFor="let row of data.columns"
+    class="row-element"
+  >
+    <div
+      [appDynamicComponent]="{
+          component: row.edit,
+          config: {
+            formFieldConfig: row,
+            propertySchema: data.row.record.getSchema().get(row.id),
+            formControl: form.get(row.id)
+          }
+        }"
+    ></div>
+    <fa-icon
+      (click)="tooltipElement.show()"
+      #tooltipElement="matTooltip"
+      *ngIf="row.tooltip"
+      matSuffix
+      icon="question-circle"
+      [matTooltip]="row.tooltip"
+    ></fa-icon>
+  </div>
+</div>
+<div mat-dialog-actions fxLayoutGap="10px">
+  <button
+    mat-raised-button
+    mat-dialog-close
+    (click)="save()"
+    *appDisabledEntityOperation="{
+      operation: operationType.UPDATE,
+      entity: data.row.record
+    }"
+    i18n="Save button for forms"
+  >
+    Save
+  </button>
+
+  <button
+    mat-raised-button
+    mat-dialog-close
+    (click)="delete()"
+    *appDisabledEntityOperation="{
+      operation: operationType.DELETE,
+      entity: data.row.record
+    }"
+    color="warn"
+    i18n="Delete button for forms"
+  >
+    Delete
+  </button>
+</div>

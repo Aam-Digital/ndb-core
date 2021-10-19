@@ -17,6 +17,15 @@
 
 /* You can add global styles to this file, and also import other style files */
 
+$margin-main-view-right: 28px;
+$margin-main-view-left: 28px;
+$margin-main-view-top: 10px;
+$margin-main-view-bottom: 16px;
+
+$standard-grid-gap: 25px;
+
+$max-icon-width: 22px;
+
 body {
   margin: 0;
 }
@@ -47,9 +56,9 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
   box-shadow: none;
 }
 
-
-
-
+.mat-dialog-container {
+  position: relative;
+}
 
 .dashboard-widget .mat-card-header {
   padding: 24px;
@@ -84,11 +93,6 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
   font-size: 40pt;
 }
 
-.dashboard-widget .mat-card-content {
-  max-height: 250px;
-  overflow: auto;
-}
-
 .dashboard-widget .dashboard-desc {
   padding-left: 10px;
   padding-right: 10px;
@@ -96,8 +100,6 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
 }
 
 mat-card.dashboard-widget {
-  min-width: 250px;
-  margin: 10px;
   padding: 0;
 }
 
@@ -106,6 +108,7 @@ mat-card.dashboard-widget {
 .dashboard-widget .dashboard-table-cell {
   padding: 10px;
 }
+
 
 
 .app-general {
@@ -177,6 +180,10 @@ mat-card.dashboard-widget {
   background-color: #fd7272 !important;
 }
 
+.primary-background {
+  background-color: #fceeda !important;
+}
+
 
 .attendance-P {
   background-color: #C8E6C9 !important;
@@ -213,4 +220,31 @@ mat-card.dashboard-widget {
 }
 .mat-select-disabled .mat-select-value {
   color: black;
+}
+
+/* Standard button styles */
+
+$standard-icon-size: 1.5em;
+
+.standard-add-button {
+  background-color: white !important;
+}
+
+.standard-icon {
+  font-size: $standard-icon-size;
+}
+
+.standard-icon-with-text {
+  font-size: $standard-icon-size;
+  margin-right: 8px;
+}
+
+::ng-deep .mat-raised-button {
+  margin-right: 8px;
+}
+
+.truncate-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
