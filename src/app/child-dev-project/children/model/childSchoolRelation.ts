@@ -53,7 +53,7 @@ export class ChildSchoolRelation extends Entity {
     return (
       this.start &&
       moment(this.start).isSameOrBefore(moment(), "day") &&
-      (!this.end || moment(this.end).isAfter(moment(), "day"))
+      (!this.end || moment(this.end).isSameOrAfter(moment(), "day"))
     );
   }
 
