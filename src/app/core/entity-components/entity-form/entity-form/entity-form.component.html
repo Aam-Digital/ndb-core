@@ -8,14 +8,14 @@
     <div *ngFor="let col of _columns" fxFlex>
       <div *ngFor="let row of col" class="form-cell">
         <div class="form-icon">
-          <mat-icon
+          <fa-icon
             (click)="tooltipElement.show()"
             #tooltipElement="matTooltip"
             *ngIf="row.tooltip"
             matSuffix
-            fontIcon="fa-question-circle-o"
+            icon="question-circle"
             [matTooltip]="row.tooltip"
-          ></mat-icon>
+          ></fa-icon>
         </div>
         <div class="form-field">
           <ng-template

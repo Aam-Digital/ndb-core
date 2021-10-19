@@ -1,7 +1,6 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { AttendanceModule } from "../attendance.module";
-import { FontAwesomeIconsModule } from "../../../core/icons/font-awesome-icons.module";
 import { RouterTestingModule } from "@angular/router/testing";
 import { MatNativeDateModule } from "@angular/material/core";
 import { FormDialogModule } from "../../../core/form-dialog/form-dialog.module";
@@ -16,7 +15,6 @@ export default {
       imports: [
         AttendanceModule,
         FormDialogModule,
-        FontAwesomeIconsModule,
         RouterTestingModule,
         MatNativeDateModule,
       ],

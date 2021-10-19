@@ -1,7 +1,7 @@
 <mat-card class="dashboard-widget">
   <mat-card-header class="app-general">
     <div mat-card-avatar>
-      <mat-icon fontIcon="fa-external-link"></mat-icon>
+      <fa-icon icon="external-link-alt"></fa-icon>
     </div>
     <mat-card-title></mat-card-title>
     <mat-card-subtitle
@@ -17,9 +17,12 @@
         *ngFor="let entry of shortcuts"
         class="dashboard-table-row clickable"
         [routerLink]="[entry.link]"
+        angulartics2On="click" angularticsCategory="Dashboard"
+        angularticsAction="shortcut-widget_click"
+        [angularticsLabel]="entry.link"
       >
         <td class="dashboard-table-cell">
-          <mat-icon fontIcon="fa-{{ entry.icon }}"></mat-icon>
+          <app-fa-dynamic-icon [icon]="entry.icon"></app-fa-dynamic-icon>
           {{ entry.label }}
         </td>
       </tr>

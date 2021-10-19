@@ -5,7 +5,6 @@ import { KeysPipe } from "./keys-pipe/keys.pipe";
 import { MatTableModule } from "@angular/material/table";
 import { MatSortModule } from "@angular/material/sort";
 import { MatPaginatorModule } from "@angular/material/paginator";
-import { MatIconModule } from "@angular/material/icon";
 import { EntityModule } from "../../entity/entity.module";
 import { AlertsModule } from "../../alerts/alerts.module";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
@@ -19,6 +18,8 @@ import { EntityFormModule } from "../entity-form/entity-form.module";
 import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatToolbarModule } from "@angular/material/toolbar";
+import { Angulartics2Module } from "angulartics2";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @NgModule({
   declarations: [EntitySubrecordComponent, KeysPipe, ListPaginatorComponent],
@@ -35,11 +36,12 @@ import { MatToolbarModule } from "@angular/material/toolbar";
     ConfirmationDialogModule,
     MatTooltipModule,
     MatButtonModule,
-    MatIconModule,
     MatSlideToggleModule,
     MatToolbarModule,
     EntityDetailsModule,
     EntityFormModule,
+    FontAwesomeModule,
+    Angulartics2Module,
   ],
   exports: [EntitySubrecordComponent, KeysPipe],
 })

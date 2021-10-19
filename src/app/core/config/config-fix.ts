@@ -18,6 +18,10 @@ export const defaultJsonConfig = {
   "appConfig": {
     displayLanguageSelect: true,
   },
+  "appConfig:usage-analytics": {
+    "url": "https://matomo.aam-digital.org",
+    "site_id": "8",
+  },
   "navigationMenu": {
     "items": [
       {
@@ -37,12 +41,12 @@ export const defaultJsonConfig = {
       },
       {
         "name": $localize`:Menu item:Recurring Activities`,
-        "icon": "calendar",
+        "icon": "calendar-alt",
         "link": "/recurring-activity"
       },
       {
         "name": $localize`:Menu item|Record attendance menu item:Record Attendance`,
-        "icon": "calendar-check-o",
+        "icon": "calendar-check",
         "link": "/attendance/add/day"
       },
       {
@@ -52,7 +56,7 @@ export const defaultJsonConfig = {
       },
       {
         "name": $localize`:Menu item:Notes`,
-        "icon": "file-text",
+        "icon": "file-alt",
         "link": "/note"
       },
       {
@@ -77,7 +81,7 @@ export const defaultJsonConfig = {
       },
       {
         "name": $localize`:Menu item:Help`,
-        "icon": "question-circle",
+        "icon": "question",
         "link": "/help"
       }
     ]
@@ -147,7 +151,7 @@ export const defaultJsonConfig = {
             "shortcuts": [
               {
                 "label": $localize`:Dashboard shortcut widget|record attendance shortcut:Record Attendance`,
-                "icon": "calendar-check-o",
+                "icon": "calendar-check",
                 "link": "/attendance/add/day",
               }
             ]
@@ -352,15 +356,6 @@ export const defaultJsonConfig = {
             {
               "title": "",
               "component": "ChildrenOverview",
-              "config": {
-                "popupColumns": [
-                  "childId",
-                  "start",
-                  "end",
-                  "schoolClass",
-                  "result",
-                ],
-              }
             }
           ]
         }
@@ -704,7 +699,7 @@ export const defaultJsonConfig = {
           ]
         }
       ],
-      "icon": "calendar"
+      "icon": "calendar-alt"
     }
   },
   "view:report": {

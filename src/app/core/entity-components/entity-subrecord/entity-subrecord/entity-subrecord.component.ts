@@ -22,7 +22,11 @@ import { EntityFormService } from "../../entity-form/entity-form.service";
 import { MatDialog } from "@angular/material/dialog";
 import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
 import { LoggingService } from "../../../logging/logging.service";
-import { ThisReceiver } from "@angular/compiler";
+import { AnalyticsService } from "../../../analytics/analytics.service";
+import {
+  EntityRemoveService,
+  RemoveResult,
+} from "../../../entity/entity-remove.service";
 
 export interface TableRow<T> {
   record: T;
@@ -96,7 +100,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     private media: MediaObserver,
     private entityFormService: EntityFormService,
     private dialog: MatDialog,
-    private loggingService: LoggingService
+    private analyticsService: AnalyticsService,
+    private loggingService: LoggingService,
+    private entityRemoveService: EntityRemoveService
   ) {
     this.mediaSubscription = this.media
       .asObservable()
@@ -230,34 +236,21 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    * @param row The entity to be deleted.
    */
   delete(row: TableRow<T>) {
-    const dialogRef = this._confirmationDialog.openDialog(
-      $localize`:Confirmation dialog delete header:Delete?`,
-      $localize`:Delete confirmation message:Are you sure you want to delete this record?`
-    );
-
-    dialogRef.afterClosed().subscribe((confirmed) => {
-      if (confirmed) {
-        this._entityMapper
-          .remove(row.record)
-          .then(() => this.removeFromDataTable(row));
-
-        const snackBarRef = this._snackBar.open(
-          $localize`:Record deleted info:Record deleted`,
-          "Undo",
-          {
-            duration: 8000,
-          }
-        );
-        snackBarRef
-          .onAction()
-          .pipe(untilDestroyed(this))
-          .subscribe(() => {
-            this._entityMapper.save(row.record, true);
+    this.entityRemoveService
+      .remove(row.record, {
+        deletedEntityInformation: $localize`:Record deleted info:Record deleted`,
+        dialogText: $localize`:Delete confirmation message:Are you sure you want to delete this record?`,
+      })
+      .subscribe((result) => {
+        switch (result) {
+          case RemoveResult.REMOVED:
+            this.removeFromDataTable(row);
+            break;
+          case RemoveResult.UNDONE:
             this.records.unshift(row.record);
             this.initFormGroups();
-          });
-      }
-    });
+        }
+      });
   }
 
   private removeFromDataTable(row: TableRow<T>) {
@@ -282,6 +275,10 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       this.recordsDataSource.data
     );
     this._entityMapper.save(newRecord).then(() => this.showEntity(newRecord));
+
+    this.analyticsService.eventTrack("subrecord_add_new", {
+      category: newRecord.getType(),
+    });
   }
 
   /**
@@ -291,6 +288,10 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   rowClick(row: TableRow<T>) {
     if (!row.formGroup || row.formGroup.disabled) {
       this.showEntity(row.record);
+
+      this.analyticsService.eventTrack("subrecord_show_popup", {
+        category: row.record.getType(),
+      });
     }
   }
 

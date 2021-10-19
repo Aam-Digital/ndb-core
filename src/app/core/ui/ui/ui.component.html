@@ -20,7 +20,7 @@
   <mat-toolbar-row fxLayout="row">
     <span fxFlex *ngIf="isLoggedIn() && sideNavMode == 'over'">
       <button mat-icon-button (click)="sideNav.toggle()">
-        <mat-icon class="header-icon" fontIcon="fa-bars"></mat-icon>
+        <fa-icon class="header-icon" icon="bars"></fa-icon>
       </button>
     </span>
 
@@ -58,11 +58,11 @@
       angularticsCategory="Navigation"
       angularticsAction="navbar_profile_link"
     >
-      <mat-icon class="header-icon" fontIcon="fa-user-circle-o"></mat-icon>
+      <fa-icon class="header-icon" icon="user"></fa-icon>
     </button>
 
     <button mat-icon-button (click)="logout()" *ngIf="isLoggedIn()">
-      <mat-icon class="header-icon" fontIcon="fa-sign-out"></mat-icon>
+      <fa-icon class="header-icon" icon="sign-out-alt"></fa-icon>
     </button>
   </mat-toolbar-row>
 </mat-toolbar>

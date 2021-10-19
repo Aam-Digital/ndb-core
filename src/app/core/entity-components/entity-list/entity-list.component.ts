@@ -10,7 +10,7 @@ import {
   ViewChild,
 } from "@angular/core";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Params, Router } from "@angular/router";
 import {
   ColumnGroupsConfig,
   EntityListConfig,
@@ -25,6 +25,7 @@ import { FilterGeneratorService } from "./filter-generator.service";
 import { FilterComponentSettings } from "./filter-component.settings";
 import { entityFilterPredicate } from "./filter-predicate";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { AnalyticsService } from "../../analytics/analytics.service";
 
 /**
  * This component allows to create a full blown table with pagination, filtering, searching and grouping.
@@ -69,6 +70,7 @@ export class EntityListComponent<T extends Entity>
     private media: MediaObserver,
     private router: Router,
     private activatedRoute: ActivatedRoute,
+    private analyticsService: AnalyticsService,
     private filterGeneratorService: FilterGeneratorService
   ) {}
 
@@ -93,6 +95,9 @@ export class EntityListComponent<T extends Entity>
           }
         }
       });
+    this.activatedRoute.queryParams.subscribe((params) => {
+      this.loadUrlParams(params);
+    });
   }
 
   ngAfterViewInit() {
@@ -100,7 +105,7 @@ export class EntityListComponent<T extends Entity>
       entityFilterPredicate(data.record, filter);
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  async ngOnChanges(changes: SimpleChanges): Promise<void> {
     if (changes.hasOwnProperty("listConfig")) {
       this.listName = this.listConfig.title;
       this.addColumnsFromColumnGroups();
@@ -109,8 +114,8 @@ export class EntityListComponent<T extends Entity>
       this.displayColumnGroup(this.defaultColumnGroup);
     }
     if (changes.hasOwnProperty("allEntities")) {
-      this.filteredEntities = this.allEntities;
-      this.initFilterSelections();
+      await this.initFilterSelections();
+      this.applyFilterSelections();
     }
     this.loadUrlParams();
   }
@@ -150,21 +155,20 @@ export class EntityListComponent<T extends Entity>
     }
   }
 
-  private loadUrlParams() {
-    this.activatedRoute.queryParams.subscribe((params) => {
-      if (params["view"]) {
-        this.displayColumnGroup(params["view"]);
-      }
-      this.filterSelections.forEach((f) => {
-        if (params.hasOwnProperty(f.filterSettings.name)) {
-          f.selectedOption = params[f.filterSettings.name];
-        }
-      });
-      this.applyFilterSelections();
-      if (params["search"]) {
-        this.applyFilter(params["search"]);
+  private loadUrlParams(parameters?: Params) {
+    const params = parameters || this.activatedRoute.snapshot.queryParams;
+    if (params["view"]) {
+      this.displayColumnGroup(params["view"]);
+    }
+    this.filterSelections.forEach((f) => {
+      if (params.hasOwnProperty(f.filterSettings.name)) {
+        f.selectedOption = params[f.filterSettings.name];
       }
     });
+    this.applyFilterSelections();
+    if (params["search"]) {
+      this.applyFilter(params["search"]);
+    }
   }
 
   columnGroupClick(columnGroupName: string) {
@@ -176,6 +180,10 @@ export class EntityListComponent<T extends Entity>
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
     this.entityTable.recordsDataSource.filter = filterValue;
+
+    this.analyticsService.eventTrack("list_filter_freetext", {
+      category: this.entityConstructor?.ENTITY_TYPE,
+    });
   }
 
   filterOptionSelected(

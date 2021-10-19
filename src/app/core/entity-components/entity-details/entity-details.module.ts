@@ -2,7 +2,6 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { EntityDetailsComponent } from "./entity-details.component";
 import { ReactiveFormsModule } from "@angular/forms";
-import { MatIconModule } from "@angular/material/icon";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatInputModule } from "@angular/material/input";
 import { MatExpansionModule } from "@angular/material/expansion";
@@ -16,13 +15,14 @@ import { AlertsModule } from "../../alerts/alerts.module";
 import { PermissionsModule } from "../../permissions/permissions.module";
 import { FormComponent } from "./form/form.component";
 import { EntityFormModule } from "../entity-form/entity-form.module";
+import { Angulartics2Module } from "angulartics2";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @NgModule({
   declarations: [EntityDetailsComponent, FormComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatIconModule,
     MatInputModule,
     MatExpansionModule,
     ViewModule,
@@ -35,6 +35,8 @@ import { EntityFormModule } from "../entity-form/entity-form.module";
     PermissionsModule,
     MatTooltipModule,
     EntityFormModule,
+    Angulartics2Module,
+    FontAwesomeModule,
   ],
   entryComponents: [FormComponent],
 })

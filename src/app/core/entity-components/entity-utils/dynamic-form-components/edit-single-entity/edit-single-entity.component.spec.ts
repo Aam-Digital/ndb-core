@@ -7,7 +7,7 @@ import {
 
 import { EditSingleEntityComponent } from "./edit-single-entity.component";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
-import { FormControl } from "@angular/forms";
+import { FormControl, Validators } from "@angular/forms";
 import { EntitySchemaService } from "../../../../entity/schema/entity-schema.service";
 import { EntityFormService } from "../../../entity-form/entity-form.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -70,10 +70,8 @@ describe("EditSingleEntityComponent", () => {
   }));
 
   it("should show name of the selected entity", fakeAsync(() => {
-    const child1 = new Child();
-    child1.name = "First Child";
-    const child2 = new Child();
-    child2.name = "Second Child";
+    const child1 = Child.create("First Child");
+    const child2 = Child.create("Second Child");
     component.formControl.setValue(child1.getId());
     mockEntityMapper.loadType.and.resolveTo([child1, child2]);
 
@@ -86,4 +84,43 @@ describe("EditSingleEntityComponent", () => {
 
     expect(component.entityNameFormControl.value).toEqual("First Child");
   }));
+
+  it("Should have the correct entity selected when it's name is entered", () => {
+    const child1 = Child.create("First Child");
+    const child2 = Child.create("Second Child");
+    component.entities = [child1, child2];
+    component.select("First Child");
+    expect(component.selectedEntity).toBe(child1);
+    expect(component.formControl.value).toEqual(child1.getId());
+    expect(component.editingSelectedEntity).toBeFalse();
+  });
+
+  it("Should edit the selected entity", fakeAsync(() => {
+    const input: HTMLInputElement = fixture.elementRef.nativeElement.querySelector(
+      "input"
+    );
+    const inputSpy = spyOn(input, "focus");
+    component.entities = [School.create({ name: "High School" })];
+    component.select("High School");
+    expect(inputSpy).not.toHaveBeenCalled();
+    component.editSelectedEntity();
+    tick();
+    expect(component.selectedEntity).toBeUndefined();
+    expect(component.editingSelectedEntity).toBeTrue();
+    expect(component.formControl.value).toBeNull();
+
+    expect(inputSpy).toHaveBeenCalled();
+  }));
+
+  it("should set the validators for the 'name' form field", async () => {
+    component.formControl.setValidators(Validators.required);
+
+    await component.onInitFromDynamicConfig({
+      formFieldConfig: { id: "childId" },
+      propertySchema: ChildSchoolRelation.schema.get("childId"),
+      formControl: component.formControl,
+    });
+
+    expect(component.entityNameFormControl.invalid).toBeTrue();
+  });
 });

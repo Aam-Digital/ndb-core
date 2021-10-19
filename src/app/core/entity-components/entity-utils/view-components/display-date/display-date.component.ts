@@ -10,7 +10,7 @@ import { ViewComponent } from "../view-component";
   template: `{{ entity[property] | date: format }}`,
 })
 export class DisplayDateComponent extends ViewComponent {
-  format = "YYYY-MM-dd";
+  format = "yyyy-MM-dd";
 
   onInitFromDynamicConfig(config: ViewPropertyConfig) {
     super.onInitFromDynamicConfig(config);

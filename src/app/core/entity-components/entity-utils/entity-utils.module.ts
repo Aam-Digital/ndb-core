@@ -21,7 +21,6 @@ import { MatOptionModule } from "@angular/material/core";
 import { MatSelectModule } from "@angular/material/select";
 import { ReactiveFormsModule } from "@angular/forms";
 import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enum.module";
-import { MatIconModule } from "@angular/material/icon";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatInputModule } from "@angular/material/input";
 import { ViewModule } from "../../view/view.module";
@@ -34,6 +33,8 @@ import { EditNumberComponent } from "./dynamic-form-components/edit-number/edit-
 import { EntityFunctionPipe } from "./view-components/readonly-function/entity-function.pipe";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { ColoredReadonlyFunctionComponent } from './view-components/colored-readonly-function/colored-readonly-function.component';
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatButtonModule } from "@angular/material/button";
 
 @NgModule({
   declarations: [
@@ -65,7 +66,6 @@ import { ColoredReadonlyFunctionComponent } from './view-components/colored-read
     MatSelectModule,
     ReactiveFormsModule,
     ConfigurableEnumModule,
-    MatIconModule,
     MatTooltipModule,
     MatInputModule,
     ViewModule,
@@ -74,6 +74,8 @@ import { ColoredReadonlyFunctionComponent } from './view-components/colored-read
     MatAutocompleteModule,
     MatChipsModule,
     FlexLayoutModule,
+    FontAwesomeModule,
+    MatButtonModule,
   ],
   entryComponents: [
     EditTextComponent,

@@ -12,7 +12,7 @@
   </h3>
 
   <button mat-icon-button class="form-close" (click)="selectDay()">
-    <span class="fa fa-times"></span>
+    <fa-icon icon="times"></fa-icon>
   </button>
 
   <div *ngIf="selectedEvent && highlightForChild">
@@ -74,6 +74,7 @@
       "
       mat-stroked-button
       (click)="showEventDetails(selectedEvent)"
+      angulartics2On="click" angularticsCategory="Attendance" angularticsAction="calendar_show_event_details"
     >
       Details
     </button>
@@ -94,6 +95,7 @@
         Add New Event Button|Allows the user to create a new event for the
         selected date
       "
+      angulartics2On="click" angularticsCategory="Attendance" angularticsAction="calendar_create_event"
     >
       Add new event
     </button>

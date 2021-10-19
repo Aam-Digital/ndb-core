@@ -40,7 +40,6 @@ describe('ColoredReadonlyFunctionComponent', () => {
     fixture.detectChanges();
     
     const chip = fixture.debugElement.query(By.css('mat-chip')).nativeElement;
-    console.log(chip);
     expect(chip.style.backgroundColor).toBe(colorCode);
   });
 

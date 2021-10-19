@@ -26,6 +26,7 @@ import { LatestChangesModule } from "../latest-changes.module";
 import { SwUpdate } from "@angular/service-worker";
 import { MarkdownModule } from "ngx-markdown";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("ChangelogComponent", () => {
   let component: ChangelogComponent;
@@ -51,6 +52,7 @@ describe("ChangelogComponent", () => {
           LatestChangesModule,
           MarkdownModule.forRoot(),
           NoopAnimationsModule,
+          FontAwesomeTestingModule,
         ],
         providers: [
           { provide: MatDialogRef, useValue: {} },
