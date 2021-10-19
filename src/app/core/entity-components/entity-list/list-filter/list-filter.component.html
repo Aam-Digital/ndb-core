@@ -9,6 +9,8 @@
       *ngFor="let option of filterConfig.options"
       [value]="option.key"
       (click)="selectOption(option.key)"
+      class="border-left-highlight"
+      [style.border-color]="option.color"
     >
       {{ option.label }}
     </mat-option>

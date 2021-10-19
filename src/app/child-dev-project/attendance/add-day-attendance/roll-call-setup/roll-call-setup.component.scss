@@ -4,7 +4,6 @@
 // Total height of the bottom control with padding
 $bottom-control-height: 86px;
 $bottom-control-padding: 16px;
-$standard-gap: 8px;
 
 .overall-container {
   min-height: 100vh;
@@ -48,9 +47,9 @@ $standard-gap: 8px;
 }
 
 .actions {
-  margin-top: $standard-gap;
+  margin-top: $standard-margin-small;
   display: flex;
-  gap: $standard-gap;
+  gap: $standard-margin-small;
 }
 
 .activity-card {

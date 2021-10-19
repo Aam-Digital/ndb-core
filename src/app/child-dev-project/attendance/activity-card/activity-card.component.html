@@ -1,7 +1,9 @@
 <mat-card
+  class="border-left-highlight"
   [ngClass]="{
-    'recurring-container': recurring,
-    'highlighted-container': highlighted
+    'border-warning': recurring,
+    'border-urgent': isUrgent,
+    'border-ok': isComplete
   }"
 >
   <mat-card-title>

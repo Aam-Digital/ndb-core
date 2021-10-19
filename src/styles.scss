@@ -26,6 +26,8 @@ $standard-grid-gap: 25px;
 
 $max-icon-width: 22px;
 
+$standard-margin-small: 8px;
+
 body {
   margin: 0;
 }
@@ -240,15 +242,25 @@ $standard-icon-size: 1.5em;
 
 .standard-icon-with-text {
   font-size: $standard-icon-size;
-  margin-right: 8px;
+  margin-right: $standard-margin-small;
 }
 
 ::ng-deep .mat-raised-button {
-  margin-right: 8px;
+  margin-right: $standard-margin-small;
 }
 
 .truncate-text {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/**
+ * adds a standard-margin wide border to the left side
+ * that can be used to highlight things.
+ * This itself does not actually change the appearance,
+ * but specifying a border-color will do so.
+ */
+.border-left-highlight {
+  border-left: $standard-margin-small solid;
 }

@@ -34,4 +34,12 @@ export class ActivityCardComponent {
       return RecurringActivity.isActivityEventNote(this.event);
     }
   }
+
+  get isUrgent(): boolean {
+    return !this.recurring && this.event.hasUnknownAttendances();
+  }
+
+  get isComplete(): boolean {
+    return !this.event.hasUnknownAttendances();
+  }
 }

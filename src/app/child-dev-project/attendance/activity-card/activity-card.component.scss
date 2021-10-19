@@ -1,9 +1,21 @@
+@import "../../../../styles";
+
 .recurring-container {
   background-color: #fdfdb7;
 }
-.highlighted-container {
-  border: solid 2px darkgray;
+
+.border-ok {
+  border-color: $color-warning-ok;
 }
+
+.border-warning {
+  border-color: $color-warning-warning;
+}
+
+.border-urgent {
+  border-color: $color-warning-urgent;
+}
+
 
 mat-card-title {
   font-size: 16px;
