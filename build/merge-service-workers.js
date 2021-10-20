@@ -34,6 +34,10 @@ locales.forEach((locale) => {
   Object.assign(combined.hashTable, additional.hashTable);
   fs.unlinkSync(`${distFolder}/${locale}/ngsw.json`);
   fs.unlinkSync(`${distFolder}/${locale}/ngsw-worker.js`);
+  fs.renameSync(
+    `${distFolder}/${locale}/safety-worker.js`,
+    `${distFolder}/${locale}/ngsw-worker.js`
+  );
 });
 
 combined.index = "/index.html";
@@ -51,3 +55,7 @@ const patchedSw = swFile.replace(
 );
 fs.writeFileSync(`${distFolder}/ngsw-worker.js`, patchedSw);
 fs.unlinkSync(`${distFolder}/${firstLocale}/ngsw-worker.js`);
+fs.renameSync(
+  `${distFolder}/${firstLocale}/safety-worker.js`,
+  `${distFolder}/${firstLocale}/ngsw-worker.js`
+);
