@@ -3,14 +3,14 @@ import { Entity } from "../../../../entity/model/entity";
 import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 import { ENTITY_MAP } from "../../../entity-details/entity-details.component";
-import { ViewComponent } from "../view-component";
+import { ViewDirective } from "../view.directive";
 
 @Component({
   selector: "app-display-entity",
   templateUrl: "./display-entity.component.html",
   styleUrls: ["./display-entity.component.scss"],
 })
-export class DisplayEntityComponent extends ViewComponent implements OnInit {
+export class DisplayEntityComponent extends ViewDirective implements OnInit {
   @Input() entityToDisplay: Entity;
   @Input() linkDisabled = false;
   entityBlockComponent: string;

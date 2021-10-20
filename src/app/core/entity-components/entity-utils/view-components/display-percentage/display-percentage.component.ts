@@ -1,12 +1,12 @@
 import { Component } from "@angular/core";
-import { ViewComponent } from "../view-component";
+import { ViewDirective } from "../view.directive";
 
 @Component({
   selector: "app-display-percentage",
   templateUrl: "./display-percentage.component.html",
   styleUrls: ["./display-percentage.component.scss"],
 })
-export class DisplayPercentageComponent extends ViewComponent {
+export class DisplayPercentageComponent extends ViewDirective {
   /**
    * returns a css-compatible color value from green to red using the given
    * input value

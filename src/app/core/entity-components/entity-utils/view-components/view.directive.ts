@@ -2,10 +2,10 @@ import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init
 import { ViewPropertyConfig } from "../../entity-list/EntityListConfig";
 import { Entity } from "../../../entity/model/entity";
 import { FormGroup } from "@angular/forms";
-import { Component, Input } from "@angular/core";
+import { Directive, Input } from "@angular/core";
 
-@Component({})
-export abstract class ViewComponent implements OnInitDynamicComponent {
+@Directive()
+export abstract class ViewDirective implements OnInitDynamicComponent {
   @Input() entity: Entity;
   property: string;
   tooltip: string;

@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { ViewComponent } from "../view-component";
+import { ViewDirective } from "../view.directive";
 import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
 import { Entity } from "../../../../entity/model/entity";
 
@@ -8,7 +8,7 @@ import { Entity } from "../../../../entity/model/entity";
   templateUrl: "./colored-readonly-function.component.html",
   styleUrls: ["./colored-readonly-function.component.scss"],
 })
-export class ColoredReadonlyFunctionComponent extends ViewComponent {
+export class ColoredReadonlyFunctionComponent extends ViewDirective {
   displayFunction: (entity: Entity) => any;
   onInitFromDynamicConfig(config: ViewPropertyConfig) {
     super.onInitFromDynamicConfig(config);

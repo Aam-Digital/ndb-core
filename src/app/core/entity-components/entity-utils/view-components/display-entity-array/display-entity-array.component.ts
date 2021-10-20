@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { Entity } from "../../../../entity/model/entity";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
-import { ViewComponent } from "../view-component";
+import { ViewDirective } from "../view.directive";
 import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
 import { ENTITY_MAP } from "../../../entity-details/entity-details.component";
 
@@ -10,7 +10,7 @@ import { ENTITY_MAP } from "../../../entity-details/entity-details.component";
   templateUrl: "./display-entity-array.component.html",
   styleUrls: ["./display-entity-array.component.scss"],
 })
-export class DisplayEntityArrayComponent extends ViewComponent {
+export class DisplayEntityArrayComponent extends ViewDirective {
   readonly aggregationThreshold = 5;
   entities: Entity[];
   constructor(private entityMapper: EntityMapperService) {
