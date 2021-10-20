@@ -1,10 +1,5 @@
 <mat-card
-  class="border-left-highlight"
-  [ngClass]="{
-    'border-warning': recurring,
-    'border-urgent': isUrgent,
-    'border-ok': isComplete
-  }"
+  class="main-card border-left-highlight border-{{warningLevel}}"
 >
   <mat-card-title>
     <fa-icon

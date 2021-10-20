@@ -35,11 +35,13 @@ export class ActivityCardComponent {
     }
   }
 
-  get isUrgent(): boolean {
-    return !this.recurring && this.event.hasUnknownAttendances();
-  }
-
-  get isComplete(): boolean {
-    return !this.event.hasUnknownAttendances();
+  get warningLevel(): "ok" | "warning" | "urgent" {
+    if (!this.event.hasUnknownAttendances()) {
+      return "ok";
+    } else if (!this.recurring && this.event.hasUnknownAttendances()) {
+      return "urgent";
+    } else {
+      return "warning";
+    }
   }
 }

@@ -16,6 +16,9 @@
   border-color: $color-warning-urgent;
 }
 
+.main-card {
+  max-width: 500px;
+}
 
 mat-card-title {
   font-size: 16px;
