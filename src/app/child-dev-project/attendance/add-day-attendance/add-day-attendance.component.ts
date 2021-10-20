@@ -55,15 +55,15 @@ export class AddDayAttendanceComponent {
   }
 
   exit() {
-    if (!this.rollCallComponent?.isDirty) {
-      this.finishRollCallState();
-    } else {
+    if (this.rollCallComponent?.isDirty) {
       this.confirmationDialog.openDialog(
         "Exit",
         "Do you want to save your progress before going back?",
         this.buttons,
         true
       );
+    } else {
+      this.finishRollCallState();
     }
   }
 
