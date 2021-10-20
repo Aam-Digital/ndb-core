@@ -14,7 +14,6 @@ export class AddDayAttendanceComponent {
   currentStage = 0;
 
   day = new Date();
-  attendanceType: string;
 
   event: Note;
 
