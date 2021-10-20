@@ -4,6 +4,12 @@ import { FormComponent } from "./form.component";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { Router } from "@angular/router";
 import { RouterTestingModule } from "@angular/router/testing";
+import { EntityFormModule } from "../../entity-form/entity-form.module";
+import { ReactiveFormsModule } from "@angular/forms";
+import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
+import { AlertService } from "../../../alerts/alert.service";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { MockSessionModule } from "../../../session/mock-session.module";
 
 describe("FormComponent", () => {
   let component: FormComponent;
@@ -12,13 +18,21 @@ describe("FormComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [FormComponent],
-      imports: [RouterTestingModule],
+      imports: [
+        RouterTestingModule,
+        EntityFormModule,
+        ReactiveFormsModule,
+        MockSessionModule.withState(),
+        MatSnackBarModule,
+      ],
+      providers: [EntitySchemaService, AlertService],
     }).compileComponents();
   });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(FormComponent);
     component = fixture.componentInstance;
+    component.entity = new Child();
     fixture.detectChanges();
   });
 

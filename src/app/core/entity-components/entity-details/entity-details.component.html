@@ -25,10 +25,10 @@
         matTooltip="Back"
         style="vertical-align: middle"
       >
-        <mat-icon fontIcon="fa-backward"></mat-icon>
+        <fa-icon icon="backward"></fa-icon>
       </button>
 
-      <i [className]="classNamesWithIcon"></i>
+      <app-fa-dynamic-icon class="icon" [icon]="iconName"> </app-fa-dynamic-icon>
       <span *ngIf="!creatingNew">{{ entity?.toString() }}</span>
       <span
         *ngIf="creatingNew"
@@ -48,17 +48,18 @@
     *ngFor="let panelConfig of panels; let i = index"
     [expanded]="i == 0"
     [disabled]="creatingNew && i > 0"
+    (opened)="trackPanelOpen(panelConfig.title)"
   >
     <mat-expansion-panel-header class="section-header">
-      <mat-icon
-        fontIcon="fa-exclamation-triangle"
+      <fa-icon
+        icon="exclamation-triangle"
         *ngIf="creatingNew && i > 0"
         class="locked-icon"
         i18n-matTooltip
         matTooltip="Please save before entering further data"
         [matTooltipDisabled]="!creatingNew"
       >
-      </mat-icon>
+      </fa-icon>
       {{ panelConfig.title }}
     </mat-expansion-panel-header>
     <div *ngFor="let componentConfig of panelConfig.components; let j = index">
@@ -77,6 +78,9 @@
     entity: entity?.getConstructor(),
     operation: operationType.DELETE
   }"
+  angulartics2On="click"
+  [angularticsCategory]="config?.entity"
+  angularticsAction="entity_delete"
   i18n="Generic delete button"
 >
   Delete

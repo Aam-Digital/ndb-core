@@ -16,10 +16,12 @@ import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 import { User } from "../../../user/user";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { FlexLayoutModule } from "@angular/flex-layout";
+import { Subscription } from "rxjs";
 
 describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any>;
   let fixture: ComponentFixture<EntitySelectComponent<any>>;
+  let subscription: Subscription = null;
 
   const testUsers: Entity[] = ["Abc", "Bcd", "Abd", "Aba"].map((s) => {
     const user = new User();
@@ -54,6 +56,10 @@ describe("EntitySelectComponent", () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    subscription?.unsubscribe();
+  });
+
   it("should create", () => {
     expect(component).toBeTruthy();
   });
@@ -72,9 +78,8 @@ describe("EntitySelectComponent", () => {
   }));
 
   it("should suggest all entities after an initial load", (done) => {
-    const subscription = component.filteredEntities.subscribe((next) => {
+    subscription = component.filteredEntities.subscribe((next) => {
       expect(next.length).toBe(testUsers.length);
-      subscription.unsubscribe();
       done();
     });
     component.entityType = User.ENTITY_TYPE;
@@ -143,16 +148,14 @@ describe("EntitySelectComponent", () => {
   });
 
   it("autocompletes with the default accessor", (done) => {
-    // TODO sometimes this tests fails with `ObjectUnsubscribedError: object unsubscribed`
     component.allEntities = testUsers;
     component.loading.next(false);
     let iterations = 0;
     let expectedLength = 4;
-    const subscription = component.filteredEntities.subscribe((next) => {
+    subscription = component.filteredEntities.subscribe((next) => {
       iterations++;
       expect(next.length).toEqual(expectedLength);
       if (iterations === 4) {
-        subscription.unsubscribe();
         done();
       }
     });
@@ -167,18 +170,18 @@ describe("EntitySelectComponent", () => {
   });
 
   it("should add an unselected entity to the filtered entities array", (done) => {
+    // TODO this is still throwing object unsubscribe error
     component.allEntities = testUsers;
     const selectedUser = testUsers[1];
     let iteration = 0;
 
-    const subscription = component.filteredEntities.subscribe(
+    subscription = component.filteredEntities.subscribe(
       (autocompleteEntities) => {
         iteration++;
         if (iteration === 1) {
           expect(autocompleteEntities).not.toContain(selectedUser);
         } else if (iteration === 2) {
           expect(autocompleteEntities).toContain(selectedUser);
-          subscription.unsubscribe();
           done();
         }
       }

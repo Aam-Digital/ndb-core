@@ -18,6 +18,7 @@
       <mat-datepicker-toggle
         matSuffix
         [for]="datePicker"
+        angulartics2On="click" angularticsCategory="Record Attendance" angularticsAction="select_date"
       ></mat-datepicker-toggle>
       <mat-datepicker #datePicker></mat-datepicker>
     </mat-form-field>
@@ -30,6 +31,10 @@
       [filterConfig]="filter.filterSettings"
       [(selectedOption)]="filter.selectedOption"
       (selectedOptionChange)="applyFilter(filter, $event)"
+      angulartics2On="click"
+      angularticsCategory="Record Attendance"
+      angularticsAction="filter"
+      [angularticsLabel]="filter.filterSettings.label"
     >
     </app-list-filter>
   </div>
@@ -53,6 +58,9 @@
         mat-stroked-button
         (click)="showMore()"
         [disabled]="visibleActivities.length === allActivities.length"
+        angulartics2On="click"
+        angularticsCategory="Record Attendance"
+        angularticsAction="show_more"
       >
         Show more
       </button>
@@ -60,6 +68,9 @@
         i18n="Not listed|Allows to create a new event"
         mat-button
         (click)="createOneTimeEvent()"
+        angulartics2On="click"
+        angularticsCategory="Record Attendance"
+        angularticsAction="create_onetime_event"
       >
         My event is not listed ...
       </button>

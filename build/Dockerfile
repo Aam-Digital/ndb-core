@@ -20,6 +20,9 @@ RUN sed -i "s/appVersion: \".*\"/appVersion: \"$APP_VERSION\"/g" src/environment
 
 RUN npm run build-localized
 
+# Merge the service workers for the different locales
+RUN node build/merge-service-workers.js
+
 # When set to true, tests are run and coverage will be uploaded to CodeClimate
 ARG UPLOAD_COVERAGE=false
 RUN if [ "$UPLOAD_COVERAGE" = true ] ; then \
@@ -48,6 +51,15 @@ ARG GIT_COMMITTED_AT
 ARG CC_TEST_REPORTER_ID
 RUN if [ "$UPLOAD_COVERAGE" = true ] ; then ./cc-test-reporter after-build --debug ; fi
 
+# Information required to upload the sourcemap to sentry
+# If not set, nothing is uploaded
+ARG SENTRY_AUTH_TOKEN
+ARG SENTRY_ORG
+ARG SENTRY_PROJECT
+RUN if [ "$SENTRY_AUTH_TOKEN" != "" ] ; then \
+    npm install -g @sentry/cli &&\
+    sentry-cli --auth-token=$SENTRY_AUTH_TOKEN releases --org=$SENTRY_ORG --project=$SENTRY_PROJECT files ndb-core@$APP_VERSION upload-sourcemaps dist  && \
+    rm dist/*/*.map ; fi
 
 ### PROD image
 

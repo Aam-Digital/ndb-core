@@ -8,7 +8,6 @@ import {
 } from "@angular/core/testing";
 
 import { RollCallComponent } from "./roll-call.component";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Note } from "../../../notes/model/note";
 import { By } from "@angular/platform-browser";
 import { ConfigService } from "../../../../core/config/config.service";
@@ -19,6 +18,10 @@ import { LoggingService } from "../../../../core/logging/logging.service";
 import { defaultAttendanceStatusTypes } from "../../../../core/config/default-config/default-attendance-status-types";
 import { AttendanceModule } from "../../attendance.module";
 import { ChildrenService } from "../../../children/children.service";
+import { MockSessionModule } from "../../../../core/session/mock-session.module";
+import { ConfirmationDialogService } from "../../../../core/confirmation-dialog/confirmation-dialog.service";
+import { of } from "rxjs";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("RollCallComponent", () => {
   let component: RollCallComponent;
@@ -40,7 +43,11 @@ describe("RollCallComponent", () => {
       mockLoggingService = jasmine.createSpyObj(["warn"]);
 
       TestBed.configureTestingModule({
-        imports: [AttendanceModule, NoopAnimationsModule],
+        imports: [
+          AttendanceModule,
+          MockSessionModule,
+          FontAwesomeTestingModule,
+        ],
         providers: [
           { provide: ConfigService, useValue: mockConfigService },
           { provide: EntityMapperService, useValue: mockEntityMapper },
@@ -177,4 +184,58 @@ describe("RollCallComponent", () => {
 
     expect(component.complete.emit).toHaveBeenCalledWith(note);
   }));
+
+  it("should only complete when clicking save and confirming in the dialog when roll call is not finished yet", fakeAsync(() => {
+    const note = new Note();
+    const confirmationDialogService = TestBed.inject(ConfirmationDialogService);
+    // Set component to be not finished
+    component.currentIndex = 0;
+    component.entries = [undefined, undefined];
+    spyOn(component.complete, "emit");
+    component.eventEntity = note;
+    spyOn(confirmationDialogService, "openDialog").and.returnValue({
+      afterClosed: () => of(true),
+    } as any);
+
+    component.save();
+    tick();
+
+    expect(component.complete.emit).toHaveBeenCalledWith(note);
+  }));
+
+  it("should directly complete when clicking save and the roll call finished", () => {
+    const note = new Note();
+    component.eventEntity = note;
+    const confirmationDialogService = TestBed.inject(ConfirmationDialogService);
+    spyOn(confirmationDialogService, "openDialog");
+    spyOn(component, "isFinished").and.returnValue(true);
+    spyOn(component.complete, "emit");
+
+    component.save();
+
+    expect(confirmationDialogService.openDialog).not.toHaveBeenCalled();
+    expect(component.complete.emit).toHaveBeenCalledWith(note);
+  });
+
+  it("should not open the dialog when the roll call is finished", () => {
+    const confirmationDialogService = TestBed.inject(ConfirmationDialogService);
+    spyOn(confirmationDialogService, "openDialog");
+    spyOn(component, "isFinished").and.returnValue(true);
+
+    component.abort();
+
+    expect(confirmationDialogService.openDialog).not.toHaveBeenCalled();
+  });
+
+  it("should open the dialog when the roll call is not finished", () => {
+    const confirmationDialogService = TestBed.inject(ConfirmationDialogService);
+    spyOn(confirmationDialogService, "openDialog").and.returnValue({
+      afterClosed: () => of(true),
+    } as any);
+    spyOn(component, "isFinished").and.returnValue(false);
+
+    component.abort();
+
+    expect(confirmationDialogService.openDialog).toHaveBeenCalled();
+  });
 });

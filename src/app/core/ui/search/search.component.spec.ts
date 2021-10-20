@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { SearchComponent } from "./search.component";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -37,7 +36,6 @@ describe("SearchComponent", () => {
 
       TestBed.configureTestingModule({
         imports: [
-          MatIconModule,
           MatFormFieldModule,
           MatInputModule,
           MatAutocompleteModule,
@@ -116,7 +114,6 @@ describe("SearchComponent", () => {
     );
 
     subscription = component.results.subscribe((next) => {
-      console.log(next);
       expect(next).toHaveSize(1);
       expect(next[0].getId()).toEqual(result.getId());
       expect(mockIndexService.queryIndexRaw).toHaveBeenCalled();

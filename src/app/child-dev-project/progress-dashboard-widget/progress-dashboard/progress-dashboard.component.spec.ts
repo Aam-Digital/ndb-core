@@ -4,6 +4,7 @@ import { ProgressDashboardComponent } from "./progress-dashboard.component";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { ProgressDashboardWidgetModule } from "../progress-dashboard-widget.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("ProgressDashboardComponent", () => {
   let component: ProgressDashboardComponent;
@@ -18,7 +19,7 @@ describe("ProgressDashboardComponent", () => {
       mockEntityService.load.and.resolveTo({ title: "test", parts: [] });
 
       TestBed.configureTestingModule({
-        imports: [ProgressDashboardWidgetModule],
+        imports: [ProgressDashboardWidgetModule, FontAwesomeTestingModule],
         providers: [
           { provide: EntityMapperService, useValue: mockEntityService },
           {

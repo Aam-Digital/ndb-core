@@ -23,7 +23,6 @@ import { MatButtonModule } from "@angular/material/button";
 import { CommonModule } from "@angular/common";
 import { ActivityCardComponent } from "./activity-card/activity-card.component";
 import { MatCardModule } from "@angular/material/card";
-import { MatIconModule } from "@angular/material/icon";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { RollCallSetupComponent } from "./add-day-attendance/roll-call-setup/roll-call-setup.component";
 import { MatListModule } from "@angular/material/list";
@@ -57,6 +56,7 @@ import { Angulartics2Module } from "angulartics2";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { AttendanceManagerComponent } from "./attendance-manager/attendance-manager.component";
 import { EntityUtilsModule } from "../../core/entity-components/entity-utils/entity-utils.module";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @NgModule({
   declarations: [
@@ -82,7 +82,6 @@ import { EntityUtilsModule } from "../../core/entity-components/entity-utils/ent
     MatButtonModule,
     CommonModule,
     MatCardModule,
-    MatIconModule,
     MatTooltipModule,
     MatListModule,
     MatInputModule,
@@ -103,6 +102,7 @@ import { EntityUtilsModule } from "../../core/entity-components/entity-utils/ent
     Angulartics2Module,
     MatSlideToggleModule,
     EntityUtilsModule,
+    FontAwesomeModule,
   ],
   exports: [
     ActivityCardComponent,

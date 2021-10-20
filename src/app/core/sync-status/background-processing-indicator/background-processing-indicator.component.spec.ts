@@ -3,11 +3,12 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { BackgroundProcessingIndicatorComponent } from "./background-processing-indicator.component";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatIconModule } from "@angular/material/icon";
 import { MatBadgeModule } from "@angular/material/badge";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EMPTY, of } from "rxjs";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("BackgroundProcessingIndicatorComponent", () => {
   let component: BackgroundProcessingIndicatorComponent;
@@ -19,10 +20,11 @@ describe("BackgroundProcessingIndicatorComponent", () => {
         imports: [
           MatMenuModule,
           MatTooltipModule,
-          MatIconModule,
           MatBadgeModule,
           MatProgressSpinnerModule,
           NoopAnimationsModule,
+          FontAwesomeModule,
+          FontAwesomeTestingModule,
         ],
         declarations: [BackgroundProcessingIndicatorComponent],
       }).compileComponents();
