@@ -47,7 +47,6 @@
     "idb": "^6.1.2",
     "json-query": "^2.2.2",
     "lodash": "^4.17.21",
-    "material-design-icons": "^3.0.1",
     "md5": "^2.3.0",
     "moment": "^2.29.1",
     "ngx-filter-pipe": "^2.1.2",
