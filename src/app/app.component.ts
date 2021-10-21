@@ -35,6 +35,8 @@ import { environment } from "../environments/environment";
 import { DynamicEntityService } from "./core/entity/dynamic-entity.service";
 import { ENTITY_CONFIG_PREFIX } from "./core/entity/model/entity";
 import { LoggingService } from "./core/logging/logging.service";
+import { Child } from "./child-dev-project/children/model/child";
+import { School } from "./child-dev-project/schools/model/school";
 
 @Component({
   selector: "app-root",
@@ -63,6 +65,11 @@ export class AppComponent implements OnInit {
   }
 
   private async initBasicServices() {
+    // TODO: remove this with issue #886
+    // This needs to be in the app module (as opposed to the dynamic entity service)
+    // to prevent circular dependencies
+    DynamicEntityService.registerNewEntity("Participant", Child);
+    DynamicEntityService.registerNewEntity("Team", School);
     // first register to events
 
     // Reload config once the database is synced
