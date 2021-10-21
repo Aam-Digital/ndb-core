@@ -20,6 +20,9 @@ RUN sed -i "s/appVersion: \".*\"/appVersion: \"$APP_VERSION\"/g" src/environment
 
 RUN npm run build-localized
 
+# Merge the service workers for the different locales
+RUN node build/merge-service-workers.js
+
 # When set to true, tests are run and coverage will be uploaded to CodeClimate
 ARG UPLOAD_COVERAGE=false
 RUN if [ "$UPLOAD_COVERAGE" = true ] ; then \

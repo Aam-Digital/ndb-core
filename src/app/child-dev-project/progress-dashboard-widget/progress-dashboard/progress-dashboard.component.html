@@ -1,7 +1,7 @@
 <mat-card class="dashboard-widget">
   <mat-card-header class="app-child">
     <div mat-card-avatar>
-      <mat-icon fontIcon="fa-list"></mat-icon>
+      <fa-icon icon="list"></fa-icon>
     </div>
     <mat-card-title>{{
       data.getTotalPercentage() | percent: "1.0-0"
@@ -27,13 +27,13 @@
     <div [ngClass]="{ 'dashboard-config': configure }">
       <div style="text-align: left">
         <button mat-icon-button (click)="addPart()" *ngIf="configure">
-          <mat-icon aria-label="add part" fontIcon="fa-plus"></mat-icon>
+          <fa-icon icon="plus" aria-label="add part"></fa-icon>
         </button>
         <button mat-icon-button (click)="save()" *ngIf="configure">
-          <mat-icon aria-label="save" fontIcon="fa-check"></mat-icon>
+          <fa-icon icon="check" aria-label="save"></fa-icon>
         </button>
         <button mat-icon-button (click)="configure = true" *ngIf="!configure">
-          <mat-icon aria-label="configure" fontIcon="fa-wrench"></mat-icon>
+          <fa-icon icon="wrench" aria-label="configure"></fa-icon>
         </button>
       </div>
 
@@ -105,7 +105,7 @@
           </td>
           <td>
             <button mat-icon-button (click)="data.parts.splice(i, 1)">
-              <mat-icon aria-label="remove" fontIcon="fa-trash"></mat-icon>
+              <fa-icon icon="trash" aria-label="remove"></fa-icon>
             </button>
           </td>
         </tr>

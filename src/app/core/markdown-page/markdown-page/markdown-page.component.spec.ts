@@ -5,6 +5,8 @@ import { ActivatedRoute } from "@angular/router";
 import { BehaviorSubject } from "rxjs";
 import { MarkdownPageConfig } from "../MarkdownPageConfig";
 import { RouteData } from "../../view/dynamic-routing/view-config.interface";
+import { MarkdownModule } from "ngx-markdown";
+import { HttpClient, HttpClientModule } from "@angular/common/http";
 
 describe("HowToComponent", () => {
   let component: MarkdownPageComponent;
@@ -20,6 +22,10 @@ describe("HowToComponent", () => {
 
       TestBed.configureTestingModule({
         declarations: [MarkdownPageComponent],
+        imports: [
+          HttpClientModule,
+          MarkdownModule.forRoot({ loader: HttpClient }),
+        ],
         providers: [
           { provide: ActivatedRoute, useValue: { data: mockRouteData } },
         ],

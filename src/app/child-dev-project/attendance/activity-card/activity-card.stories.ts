@@ -6,7 +6,6 @@ import { DemoChildGenerator } from "../../children/demo-data-generators/demo-chi
 import { addDefaultChildPhoto } from "../../../../../.storybook/utils/addDefaultChildPhoto";
 import { MatCardModule } from "@angular/material/card";
 import { RecurringActivity } from "../model/recurring-activity";
-import { FontAwesomeIconsModule } from "../../../core/icons/font-awesome-icons.module";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
@@ -15,12 +14,7 @@ export default {
   component: ActivityCardComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        MatCardModule,
-        MatTooltipModule,
-        BrowserAnimationsModule,
-        FontAwesomeIconsModule,
-      ],
+      imports: [MatCardModule, MatTooltipModule, BrowserAnimationsModule],
     }),
   ],
 } as Meta;

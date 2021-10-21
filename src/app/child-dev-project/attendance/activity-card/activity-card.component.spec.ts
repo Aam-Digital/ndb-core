@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ActivityCardComponent } from "./activity-card.component";
 import { MatCardModule } from "@angular/material/card";
-import { FontAwesomeIconsModule } from "../../../core/icons/font-awesome-icons.module";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Note } from "../../notes/model/note";
@@ -15,12 +14,7 @@ describe("ActivityCardComponent", () => {
     waitForAsync(() => {
       TestBed.configureTestingModule({
         declarations: [ActivityCardComponent],
-        imports: [
-          MatCardModule,
-          MatTooltipModule,
-          NoopAnimationsModule,
-          FontAwesomeIconsModule,
-        ],
+        imports: [MatCardModule, MatTooltipModule, NoopAnimationsModule],
       }).compileComponents();
     })
   );

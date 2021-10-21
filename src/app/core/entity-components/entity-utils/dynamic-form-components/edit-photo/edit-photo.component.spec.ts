@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EditPhotoComponent } from "./edit-photo.component";
-import { EntityDetailsModule } from "../../../entity-details/entity-details.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FormControl, FormGroup } from "@angular/forms";
 import { SessionService } from "../../../../session/session-service/session.service";
@@ -14,7 +13,7 @@ describe("EditPhotoComponent", () => {
   beforeEach(async () => {
     mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
     await TestBed.configureTestingModule({
-      imports: [EntityDetailsModule, NoopAnimationsModule],
+      imports: [NoopAnimationsModule],
       providers: [{ provide: SessionService, useValue: mockSessionService }],
       declarations: [EditPhotoComponent],
     }).compileComponents();
