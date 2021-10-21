@@ -8,7 +8,6 @@ import {
 import { ChildrenService } from "../../../children/children.service";
 import moment from "moment";
 import { MatTableDataSource } from "@angular/material/table";
-import { MatSort } from "@angular/material/sort";
 import { MatPaginator } from "@angular/material/paginator";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 
@@ -36,12 +35,11 @@ export class NoRecentNotesDashboardComponent
   /** children displayed in the template
    * Child entities with additional "daysSinceLastNote" field
    */
-  concernedChildren: Promise<ChildWithRecentNoteInfo[]>;
+  concernedChildren: ChildWithRecentNoteInfo[] = [];
   amountOfConcernedChildren: Promise<number>;
 
   columnsToDisplay: string[] = ["name", "daysSinceLastNote"];
-  childrenWithNoteInfoDataSource: MatTableDataSource<ChildWithRecentNoteInfo> = new MatTableDataSource<ChildWithRecentNoteInfo>();
-  @ViewChild(MatSort) sort: MatSort;
+  childrenWithNoteInfoDataSource = new MatTableDataSource<ChildWithRecentNoteInfo>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(private childrenService: ChildrenService) {}
@@ -57,16 +55,9 @@ export class NoRecentNotesDashboardComponent
 
   ngOnInit() {
     this.loadConcernedChildrenFromIndex();
-    this.concernedChildren.then((children) => {
-      this.childrenWithNoteInfoDataSource.data = children;
-    });
-    this.amountOfConcernedChildren = this.concernedChildren.then(
-      (ch) => ch.length
-    );
   }
 
   ngAfterViewInit() {
-    this.childrenWithNoteInfoDataSource.sort = this.sort;
     this.childrenWithNoteInfoDataSource.paginator = this.paginator;
   }
 
@@ -77,14 +68,15 @@ export class NoRecentNotesDashboardComponent
     }
     const queryRange = Math.round((dayRangeBoundary * 3) / 10) * 10; // query longer range to be able to display exact date of last note for recent
 
-    this.concernedChildren = this.childrenService
+    this.childrenService
       .getDaysSinceLastNoteOfEachChild(queryRange)
       .then((children) => {
         return Array.from(children)
           .filter((stat) => stat[1] >= dayRangeBoundary)
           .map((stat) => statsToChildWithRecentNoteInfo(stat, queryRange))
           .sort((a, b) => b.daysSinceLastNote - a.daysSinceLastNote);
-      });
+      })
+      .then((children) => (this.concernedChildren = children));
   }
 
   get tooltip(): string {
