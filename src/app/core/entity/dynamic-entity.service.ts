@@ -23,9 +23,18 @@ export class DynamicEntityService {
    * @param type The entity-type as string
    * @param constructor The constructor of the entity
    */
-  static registerNewEntity(type: string, constructor: EntityConstructor<any>) {
+  static registerNewEntity(
+    type: string,
+    constructor: EntityConstructor<Entity>
+  ) {
+    if (!(new constructor() instanceof Entity)) {
+      throw Error(
+        `Tried to register an entity-type that is not a subclass of Entity\n` +
+          `type: ${type}; constructor: ${constructor}`
+      );
+    }
     if (this.ENTITY_MAP.has(type)) {
-      console.warn(
+      throw Error(
         `Duplicate entity definition: ${type} is already registered with constructor ${this.ENTITY_MAP.get(
           type
         )}`
@@ -40,8 +49,8 @@ export class DynamicEntityService {
   ) {}
 
   /**
-   * returns the entity-constructor given the string-name (i.e. the type)
-   * of the entity. If the name is illegal, this method throws an error
+   * returns the entity-constructor for a given string-name (i.e. the type)
+   * of the entity. If the name is not registered, this method throws an error
    * @param entityType The type to get the entity from
    */
   getEntityConstructor<E extends Entity = any>(
