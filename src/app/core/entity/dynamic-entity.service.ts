@@ -55,13 +55,6 @@ export class DynamicEntityService {
   }
 
   /**
-   * returns all registered entity-constructors
-   */
-  get allConstructors(): Iterable<EntityConstructor<Entity>> {
-    return DynamicEntityService.ENTITY_MAP.values();
-  }
-
-  /**
    * Utility method to instantiate an entity using initial, raw parameters as they
    * would appear in the database
    * @param entityType The type to instantiate an entity by

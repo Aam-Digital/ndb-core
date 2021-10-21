@@ -23,13 +23,18 @@ import { AnalyticsService } from "./core/analytics/analytics.service";
 import { EntityMapperService } from "./core/entity/entity-mapper.service";
 import { ConfigService } from "./core/config/config.service";
 import { RouterService } from "./core/view/dynamic-routing/router.service";
-import { EntityConfigService } from "./core/entity/entity-config.service";
+import {
+  EntityConfig,
+  EntityConfigService,
+} from "./core/entity/entity-config.service";
 import { SessionService } from "./core/session/session-service/session.service";
 import { SyncState } from "./core/session/session-states/sync-state.enum";
 import { ActivatedRoute, Router } from "@angular/router";
 import { waitForChangeTo } from "./core/session/session-states/session-utils";
 import { environment } from "../environments/environment";
 import { DynamicEntityService } from "./core/entity/dynamic-entity.service";
+import { ENTITY_CONFIG_PREFIX } from "./core/entity/model/entity";
+import { LoggingService } from "./core/logging/logging.service";
 
 @Component({
   selector: "app-root",
@@ -51,7 +56,8 @@ export class AppComponent implements OnInit {
     private sessionService: SessionService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private dynamicEntityService: DynamicEntityService
+    private dynamicEntityService: DynamicEntityService,
+    private loggingService: LoggingService
   ) {
     this.initBasicServices();
   }
@@ -71,8 +77,25 @@ export class AppComponent implements OnInit {
     // These functions will be executed whenever a new config is available
     this.configService.configUpdates.subscribe(() => {
       this.routerService.initRouting();
-      for (const ctor of this.dynamicEntityService.allConstructors) {
-        this.entityConfigService.addConfigAttributes(ctor);
+      const entitiesNotFound: string[] = [];
+      for (const config of this.configService.getAllConfigs<
+        EntityConfig & { _id: string }
+      >(ENTITY_CONFIG_PREFIX)) {
+        const id = config._id.substring(ENTITY_CONFIG_PREFIX.length);
+        try {
+          const ctor = this.dynamicEntityService.getEntityConstructor(id);
+          this.entityConfigService.addConfigAttributes(ctor);
+        } catch (err) {
+          entitiesNotFound.push(id);
+        }
+      }
+      if (entitiesNotFound.length > 0) {
+        this.loggingService.error(
+          `The following entities were defined in the config but are not registered properly: ${entitiesNotFound.join(
+            ", "
+          )}.\n` +
+            `Make sure they exist as a class and are properly registered (see the how-to guides for more info on this topic)`
+        );
       }
     });
 
