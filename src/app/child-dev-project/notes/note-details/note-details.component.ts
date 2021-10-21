@@ -51,4 +51,8 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
       .beforeClosed()
       .subscribe(() => this.matDialogRef.close(entity));
   }
+
+  get isMeeting(): boolean {
+    return this.entity.category?.isMeeting || false;
+  }
 }
