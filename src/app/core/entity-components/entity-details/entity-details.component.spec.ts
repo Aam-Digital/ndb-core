@@ -13,7 +13,6 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { EntityDetailsConfig, PanelConfig } from "./EntityDetailsConfig";
 import { ChildrenModule } from "../../../child-dev-project/children/children.module";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { EntityPermissionsService } from "../../permissions/entity-permissions.service";
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
 import { MockEntityMapperService } from "../../entity/mock-entity-mapper-service";
 import { MockSessionModule } from "../../session/mock-session.module";
@@ -22,6 +21,7 @@ import {
   RemoveResult,
 } from "../../entity/entity-remove.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { EntityAbility } from "../../permissions/ability.service";
 
 describe("EntityDetailsComponent", () => {
   let component: EntityDetailsComponent;
@@ -60,13 +60,10 @@ describe("EntityDetailsComponent", () => {
     data: of({ config: routeConfig }),
   };
 
-  const mockEntityPermissionsService: jasmine.SpyObj<EntityPermissionsService> = jasmine.createSpyObj(
-    ["userIsPermitted"]
-  );
-
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
   let mockedEntityMapper: MockEntityMapperService;
   let mockEntityRemoveService: jasmine.SpyObj<EntityRemoveService>;
+  let mockAbility: jasmine.SpyObj<EntityAbility>;
 
   beforeEach(
     waitForAsync(() => {
@@ -77,6 +74,8 @@ describe("EntityDetailsComponent", () => {
       mockEntityRemoveService = jasmine.createSpyObj(["remove"]);
       mockChildrenService.getSchoolRelationsFor.and.resolveTo([]);
       mockChildrenService.getAserResultsOfChild.and.returnValue(of([]));
+      mockAbility = jasmine.createSpyObj(["cannot"]);
+      mockAbility.cannot.and.returnValue(false);
       TestBed.configureTestingModule({
         imports: [
           ChildrenModule,
@@ -87,12 +86,9 @@ describe("EntityDetailsComponent", () => {
         ],
         providers: [
           { provide: ActivatedRoute, useValue: mockedRoute },
-          {
-            provide: EntityPermissionsService,
-            useValue: mockEntityPermissionsService,
-          },
           { provide: ChildrenService, useValue: mockChildrenService },
           { provide: EntityRemoveService, useValue: mockEntityRemoveService },
+          { provide: EntityAbility, useValue: mockAbility },
         ],
       }).compileComponents();
       mockedEntityMapper = TestBed.inject(MockEntityMapperService);
@@ -166,7 +162,7 @@ describe("EntityDetailsComponent", () => {
   }));
 
   it("should call router when user is not permitted to create entities", () => {
-    mockEntityPermissionsService.userIsPermitted.and.returnValue(false);
+    mockAbility.cannot.and.returnValue(true);
     const router = fixture.debugElement.injector.get(Router);
     spyOn(router, "navigate");
     routeObserver.next({ get: () => "new" });

@@ -11,7 +11,6 @@ import { Entity } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import {
-  EntityPermissionsService,
   OperationType,
 } from "../../permissions/entity-permissions.service";
 import { UntilDestroy } from "@ngneat/until-destroy";
@@ -22,6 +21,7 @@ import {
   RemoveResult,
 } from "../../entity/entity-remove.service";
 import { DynamicEntityService } from "../../entity/dynamic-entity.service";
+import { EntityAbility } from "../../permissions/ability.service";
 
 /**
  * This component can be used to display a entity in more detail.
@@ -51,7 +51,7 @@ export class EntityDetailsComponent {
     private router: Router,
     private location: Location,
     private analyticsService: AnalyticsService,
-    private permissionService: EntityPermissionsService,
+    private ability: EntityAbility,
     private entityRemoveService: EntityRemoveService,
     private dynamicEntityService: DynamicEntityService
   ) {
@@ -69,15 +69,11 @@ export class EntityDetailsComponent {
       this.config.entity
     );
     if (id === "new") {
-      this.entity = new constr();
-      if (
-        !this.permissionService.userIsPermitted(
-          this.entity.getConstructor(),
-          this.operationType.CREATE
-        )
-      ) {
+      if (this.ability.cannot("create", constr)) {
         this.router.navigate([""]);
+        return;
       }
+      this.entity = new constr();
       this.creatingNew = true;
       this.setPanelsConfig();
     } else {
