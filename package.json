@@ -33,6 +33,8 @@
     "@angular/platform-browser-dynamic": "^11.2.12",
     "@angular/router": "^11.2.12",
     "@angular/service-worker": "^11.2.12",
+    "@casl/ability": "^5.4.3",
+    "@casl/angular": "^5.1.1",
     "@fortawesome/angular-fontawesome": "^0.8.2",
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-regular-svg-icons": "^5.15.2",
