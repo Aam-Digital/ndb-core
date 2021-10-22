@@ -1,6 +1,10 @@
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 
-import { AbilityService, DatabaseRules, EntityAbility } from "./ability.service";
+import {
+  AbilityService,
+  DatabaseRules,
+  EntityAbility,
+} from "./ability.service";
 import { HttpClient } from "@angular/common/http";
 import { of } from "rxjs";
 import { AppConfig } from "../app-config/app-config";
@@ -10,14 +14,13 @@ describe("AbilityService", () => {
   let service: AbilityService;
   let mockHttpClient: jasmine.SpyObj<HttpClient>;
   const mockDBEndpoint = "https://example.com/db/";
-  let mockAbility: jasmine.SpyObj<EntityAbility>;
   let mockSessionService: jasmine.SpyObj<SessionService>;
+  let ability: EntityAbility;
 
   beforeEach(() => {
     AppConfig.settings = { database: { remote_url: mockDBEndpoint } } as any;
     mockHttpClient = jasmine.createSpyObj(["get"]);
     mockHttpClient.get.and.returnValue(of(testRules));
-    mockAbility = jasmine.createSpyObj(["update"]);
     mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
     mockSessionService.getCurrentUser.and.returnValue({
       name: "testUser",
@@ -27,11 +30,12 @@ describe("AbilityService", () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: HttpClient, useValue: mockHttpClient },
-        { provide: EntityAbility, useValue: mockAbility },
+        { provide: EntityAbility, useValue: new EntityAbility() },
         { provide: SessionService, useValue: mockSessionService },
       ],
     });
     service = TestBed.inject(AbilityService);
+    ability = TestBed.inject(EntityAbility);
   });
 
   it("should be created", () => {
@@ -47,13 +51,16 @@ describe("AbilityService", () => {
   });
 
   it("should update the ability with the received rules for the logged in user", fakeAsync(() => {
+    spyOn(ability, "update");
+
     service.initRules();
     tick();
 
-    expect(mockAbility.update).toHaveBeenCalledWith(testRules.user_app);
+    expect(ability.update).toHaveBeenCalledWith(testRules.user_app);
   }));
 
   it("should update the ability with rules for all roles the logged in user has", fakeAsync(() => {
+    spyOn(ability, "update");
     mockSessionService.getCurrentUser.and.returnValue({
       name: "testAdmin",
       roles: ["user_app", "admin_app"],
@@ -62,7 +69,7 @@ describe("AbilityService", () => {
     service.initRules();
     tick();
 
-    expect(mockAbility.update).toHaveBeenCalledWith(
+    expect(ability.update).toHaveBeenCalledWith(
       testRules.user_app.concat(testRules.admin_app)
     );
   }));
