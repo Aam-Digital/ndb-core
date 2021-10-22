@@ -3,12 +3,14 @@ import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 import {
   AbilityService,
   DatabaseRules,
+  detectSubjectType,
   EntityAbility,
 } from "./ability.service";
 import { HttpClient } from "@angular/common/http";
 import { of } from "rxjs";
 import { AppConfig } from "../app-config/app-config";
 import { SessionService } from "../session/session-service/session.service";
+import { Child } from "../../child-dev-project/children/model/child";
 
 describe("AbilityService", () => {
   let service: AbilityService;
@@ -30,7 +32,12 @@ describe("AbilityService", () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: HttpClient, useValue: mockHttpClient },
-        { provide: EntityAbility, useValue: new EntityAbility() },
+        {
+          provide: EntityAbility,
+          useValue: new EntityAbility([], {
+            detectSubjectType: detectSubjectType,
+          }),
+        },
         { provide: SessionService, useValue: mockSessionService },
       ],
     });
@@ -72,6 +79,13 @@ describe("AbilityService", () => {
     expect(ability.update).toHaveBeenCalledWith(
       testRules.user_app.concat(testRules.admin_app)
     );
+  }));
+
+  it("should create an ability that correctly uses the defined rules", fakeAsync(() => {
+    service.initRules();
+    tick();
+
+    expect(ability.can("read", Child)).toBeTrue();
   }));
 
   const testRules: DatabaseRules = {
