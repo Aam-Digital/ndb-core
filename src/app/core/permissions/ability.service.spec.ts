@@ -1,4 +1,4 @@
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 
 import {
   AbilityService,
@@ -47,6 +47,7 @@ describe("AbilityService", () => {
         { provide: EntityMapperService, useValue: undefined },
         EntitySchemaService,
         DynamicEntityService,
+        AbilityService,
       ],
     });
     service = TestBed.inject(AbilityService);
@@ -65,33 +66,30 @@ describe("AbilityService", () => {
     });
   });
 
-  it("should update the ability with the received rules for the logged in user", fakeAsync(() => {
+  it("should update the ability with the received rules for the logged in user", async () => {
     spyOn(ability, "update");
 
-    service.initRules();
-    tick();
+    await service.initRules();
 
     expect(ability.update).toHaveBeenCalledWith(getParsedRules().user_app);
-  }));
+  });
 
-  it("should update the ability with rules for all roles the logged in user has", fakeAsync(() => {
+  it("should update the ability with rules for all roles the logged in user has", async () => {
     spyOn(ability, "update");
     mockSessionService.getCurrentUser.and.returnValue({
       name: "testAdmin",
       roles: ["user_app", "admin_app"],
     });
 
-    service.initRules();
-    tick();
+    await service.initRules();
 
     expect(ability.update).toHaveBeenCalledWith(
       getParsedRules().user_app.concat(getParsedRules().admin_app)
     );
-  }));
+  });
 
-  it("should create an ability that correctly uses the defined rules", fakeAsync(() => {
-    service.initRules();
-    tick();
+  it("should create an ability that correctly uses the defined rules", async () => {
+    await service.initRules();
 
     expect(ability.can("read", Child)).toBeTrue();
     expect(ability.can("write", Child)).toBeFalse();
@@ -106,25 +104,21 @@ describe("AbilityService", () => {
       name: "testAdmin",
       roles: ["user_app", "admin_app"],
     });
-    service.initRules();
-    tick();
+    await service.initRules();
 
     expect(ability.can("manage", Child)).toBeTrue();
     expect(ability.can("manage", new Child())).toBeTrue();
     expect(ability.can("manage", Note)).toBeTrue();
     expect(ability.can("manage", new Note())).toBeTrue();
-  }));
+  });
 
-  it("should throw an error if the subject has wrong format is unknown", fakeAsync(() => {
+  it("should throw an error if the subject has wrong format is unknown", () => {
     mockHttpClient.get.and.returnValue(
       of({ user_app: [{ subject: Child, action: "read" }] })
     );
 
-    expect(() => {
-      service.initRules();
-      tick();
-    }).toThrowError();
-  }));
+    return expectAsync(service.initRules()).toBeRejected();
+  });
 
   function getRawRules(): DatabaseRules {
     return {

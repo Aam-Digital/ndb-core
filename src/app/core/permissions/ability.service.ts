@@ -29,9 +29,7 @@ export function detectSubjectType(subject: Entity): EntityConstructor<any> {
   }
 }
 
-@Injectable({
-  providedIn: "root",
-})
+@Injectable()
 export class AbilityService {
   constructor(
     private httpClient: HttpClient,
@@ -40,12 +38,13 @@ export class AbilityService {
     private dynamicEntityService: DynamicEntityService
   ) {}
 
-  initRules() {
-    this.httpClient
-      .get<DatabaseRules>(`${AppConfig.settings.database.remote_url}rules`, {
+  async initRules() {
+    const rules = await this.httpClient
+      .get<DatabaseRules>(AppConfig.settings.database.remote_url + "rules", {
         withCredentials: true,
       })
-      .subscribe((rules) => this.updateAbilityWithRules(rules));
+      .toPromise();
+    this.updateAbilityWithRules(rules);
   }
 
   private updateAbilityWithRules(rules: DatabaseRules) {
