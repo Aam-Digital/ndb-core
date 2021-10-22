@@ -8,7 +8,9 @@ import { DynamicEntityService } from "../entity/dynamic-entity.service";
 
 const actions = [
   "read",
-  "write", // Could be replaced with more granular distinction (create,update,delete)
+  "create",
+  "update",
+  "delete",
   "manage", // Matches any actions
 ] as const;
 

@@ -92,13 +92,13 @@ describe("AbilityService", () => {
     await service.initRules();
 
     expect(ability.can("read", Child)).toBeTrue();
-    expect(ability.can("write", Child)).toBeFalse();
+    expect(ability.can("create", Child)).toBeFalse();
     expect(ability.can("manage", Child)).toBeFalse();
     expect(ability.can("read", new Child())).toBeTrue();
-    expect(ability.can("write", new Child())).toBeFalse();
+    expect(ability.can("create", new Child())).toBeFalse();
     expect(ability.can("manage", Note)).toBeFalse();
     expect(ability.can("manage", new Note())).toBeFalse();
-    expect(ability.can("write", new Note())).toBeFalse();
+    expect(ability.can("create", new Note())).toBeFalse();
 
     mockSessionService.getCurrentUser.and.returnValue({
       name: "testAdmin",
