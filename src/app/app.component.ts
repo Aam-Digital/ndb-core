@@ -23,19 +23,20 @@ import { AnalyticsService } from "./core/analytics/analytics.service";
 import { EntityMapperService } from "./core/entity/entity-mapper.service";
 import { ConfigService } from "./core/config/config.service";
 import { RouterService } from "./core/view/dynamic-routing/router.service";
-import { EntityConfigService } from "./core/entity/entity-config.service";
-import { Child } from "./child-dev-project/children/model/child";
+import {
+  EntityConfig,
+  EntityConfigService,
+} from "./core/entity/entity-config.service";
 import { SessionService } from "./core/session/session-service/session.service";
 import { SyncState } from "./core/session/session-states/sync-state.enum";
 import { ActivatedRoute, Router } from "@angular/router";
-import { RecurringActivity } from "./child-dev-project/attendance/model/recurring-activity";
-import { School } from "./child-dev-project/schools/model/school";
-import { HistoricalEntityData } from "./features/historical-data/historical-entity-data";
-import { Note } from "./child-dev-project/notes/model/note";
-import { EventNote } from "./child-dev-project/attendance/model/event-note";
 import { waitForChangeTo } from "./core/session/session-states/session-utils";
 import { environment } from "../environments/environment";
-import { ChildSchoolRelation } from "./child-dev-project/children/model/childSchoolRelation";
+import { DynamicEntityService } from "./core/entity/dynamic-entity.service";
+import { ENTITY_CONFIG_PREFIX } from "./core/entity/model/entity";
+import { LoggingService } from "./core/logging/logging.service";
+import { Child } from "./child-dev-project/children/model/child";
+import { School } from "./child-dev-project/schools/model/school";
 
 @Component({
   selector: "app-root",
@@ -56,12 +57,19 @@ export class AppComponent implements OnInit {
     private entityConfigService: EntityConfigService,
     private sessionService: SessionService,
     private activatedRoute: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private dynamicEntityService: DynamicEntityService,
+    private loggingService: LoggingService
   ) {
     this.initBasicServices();
   }
 
   private async initBasicServices() {
+    // TODO: remove this with issue #886
+    // This needs to be in the app module (as opposed to the dynamic entity service)
+    // to prevent circular dependencies
+    DynamicEntityService.registerNewEntity("Participant", Child);
+    DynamicEntityService.registerNewEntity("Team", School);
     // first register to events
 
     // Reload config once the database is synced
@@ -76,13 +84,26 @@ export class AppComponent implements OnInit {
     // These functions will be executed whenever a new config is available
     this.configService.configUpdates.subscribe(() => {
       this.routerService.initRouting();
-      this.entityConfigService.addConfigAttributes(Child);
-      this.entityConfigService.addConfigAttributes(School);
-      this.entityConfigService.addConfigAttributes(RecurringActivity);
-      this.entityConfigService.addConfigAttributes(HistoricalEntityData);
-      this.entityConfigService.addConfigAttributes(Note);
-      this.entityConfigService.addConfigAttributes(EventNote);
-      this.entityConfigService.addConfigAttributes(ChildSchoolRelation);
+      const entitiesNotFound: string[] = [];
+      for (const config of this.configService.getAllConfigs<
+        EntityConfig & { _id: string }
+      >(ENTITY_CONFIG_PREFIX)) {
+        const id = config._id.substring(ENTITY_CONFIG_PREFIX.length);
+        try {
+          const ctor = this.dynamicEntityService.getEntityConstructor(id);
+          this.entityConfigService.addConfigAttributes(ctor);
+        } catch (err) {
+          entitiesNotFound.push(id);
+        }
+      }
+      if (entitiesNotFound.length > 0) {
+        this.loggingService.error(
+          `The following entities were defined in the config but are not registered properly: ${entitiesNotFound.join(
+            ", "
+          )}.\n` +
+            `Make sure they exist as a class and are properly registered (see the how-to guides for more info on this topic)`
+        );
+      }
     });
 
     // If loading the config earlier (in a module constructor or through APP_INITIALIZER) a runtime error occurs.
