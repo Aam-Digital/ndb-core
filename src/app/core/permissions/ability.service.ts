@@ -4,6 +4,7 @@ import { AppConfig } from "../app-config/app-config";
 import { Ability, AbilityClass, InferSubjects, RawRuleOf } from "@casl/ability";
 import { Entity, EntityConstructor } from "../entity/model/entity";
 import { SessionService } from "../session/session-service/session.service";
+import { DynamicEntityService } from "../entity/dynamic-entity.service";
 
 const actions = [
   "read",
@@ -12,25 +13,19 @@ const actions = [
 ] as const;
 
 type Actions = typeof actions[number];
-type Subjects = InferSubjects<typeof Entity> | string;
+type Subjects = InferSubjects<typeof Entity> | "all";
 export type EntityAbility = Ability<[Actions, Subjects]>;
 export type EntityRule = RawRuleOf<EntityAbility>;
-export type DatabaseRules = { [key in string]: EntityRule[] };
 export const EntityAbility = Ability as AbilityClass<EntityAbility>;
+export type DatabaseRule = RawRuleOf<Ability<[Actions, string]>>;
+export type DatabaseRules = { [key in string]: DatabaseRule[] };
 
-export function detectSubjectType(
-  subject: Entity | EntityConstructor<any> | string
-): string {
-  console.log("subject", subject);
+export function detectSubjectType(subject: Entity): EntityConstructor<any> {
   if (subject instanceof Entity) {
-    console.log("entity", subject);
-    return subject.getType();
-  } else if (subject.hasOwnProperty("ENTITY_TYPE")) {
-    console.log("constr", subject);
-    return (subject as EntityConstructor<any>).ENTITY_TYPE;
+    return subject.getConstructor();
   } else {
-    console.log("other");
-    return subject as string;
+    // This should never happen because CASL already ensures correct subject types internally
+    throw Error("Checking rule for invalid subject " + subject);
   }
 }
 
@@ -41,7 +36,8 @@ export class AbilityService {
   constructor(
     private httpClient: HttpClient,
     private ability: EntityAbility,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private dynamicEntityService: DynamicEntityService
   ) {}
 
   initRules() {
@@ -53,11 +49,30 @@ export class AbilityService {
   }
 
   private updateAbilityWithRules(rules: DatabaseRules) {
-    const userRules: EntityRule[] = [];
+    const rawUserRules: DatabaseRule[] = [];
     this.sessionService.getCurrentUser().roles.forEach((role) => {
       const rulesForRole = rules[role] || [];
-      userRules.push(...rulesForRole);
+      rawUserRules.push(...rulesForRole);
     });
+    const userRules: EntityRule[] = rawUserRules.map((rawRule) =>
+      Object.assign(rawRule, {
+        subject: this.parseStringToConstructor(rawRule.subject),
+      })
+    );
     this.ability.update(userRules);
+  }
+
+  private parseStringToConstructor(
+    rawSubject: string | string[] | "all"
+  ): EntityConstructor<any> | "all" {
+    if (typeof rawSubject === "string") {
+      if (rawSubject === "all") {
+        return "all";
+      } else {
+        return this.dynamicEntityService.getEntityConstructor(rawSubject);
+      }
+    } else {
+      throw Error("Creating rule for invalid subject" + rawSubject);
+    }
   }
 }

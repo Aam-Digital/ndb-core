@@ -5,12 +5,17 @@ import {
   DatabaseRules,
   detectSubjectType,
   EntityAbility,
+  EntityRule,
 } from "./ability.service";
 import { HttpClient } from "@angular/common/http";
 import { of } from "rxjs";
 import { AppConfig } from "../app-config/app-config";
 import { SessionService } from "../session/session-service/session.service";
 import { Child } from "../../child-dev-project/children/model/child";
+import { Note } from "../../child-dev-project/notes/model/note";
+import { EntityMapperService } from "../entity/entity-mapper.service";
+import { EntitySchemaService } from "../entity/schema/entity-schema.service";
+import { DynamicEntityService } from "../entity/dynamic-entity.service";
 
 describe("AbilityService", () => {
   let service: AbilityService;
@@ -22,7 +27,7 @@ describe("AbilityService", () => {
   beforeEach(() => {
     AppConfig.settings = { database: { remote_url: mockDBEndpoint } } as any;
     mockHttpClient = jasmine.createSpyObj(["get"]);
-    mockHttpClient.get.and.returnValue(of(testRules));
+    mockHttpClient.get.and.callFake(() => of(getRawRules() as any));
     mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
     mockSessionService.getCurrentUser.and.returnValue({
       name: "testUser",
@@ -39,6 +44,9 @@ describe("AbilityService", () => {
           }),
         },
         { provide: SessionService, useValue: mockSessionService },
+        { provide: EntityMapperService, useValue: undefined },
+        EntitySchemaService,
+        DynamicEntityService,
       ],
     });
     service = TestBed.inject(AbilityService);
@@ -63,7 +71,7 @@ describe("AbilityService", () => {
     service.initRules();
     tick();
 
-    expect(ability.update).toHaveBeenCalledWith(testRules.user_app);
+    expect(ability.update).toHaveBeenCalledWith(getParsedRules().user_app);
   }));
 
   it("should update the ability with rules for all roles the logged in user has", fakeAsync(() => {
@@ -77,7 +85,7 @@ describe("AbilityService", () => {
     tick();
 
     expect(ability.update).toHaveBeenCalledWith(
-      testRules.user_app.concat(testRules.admin_app)
+      getParsedRules().user_app.concat(getParsedRules().admin_app)
     );
   }));
 
@@ -86,13 +94,55 @@ describe("AbilityService", () => {
     tick();
 
     expect(ability.can("read", Child)).toBeTrue();
+    expect(ability.can("write", Child)).toBeFalse();
+    expect(ability.can("manage", Child)).toBeFalse();
+    expect(ability.can("read", new Child())).toBeTrue();
+    expect(ability.can("write", new Child())).toBeFalse();
+    expect(ability.can("manage", Note)).toBeFalse();
+    expect(ability.can("manage", new Note())).toBeFalse();
+    expect(ability.can("write", new Note())).toBeFalse();
+
+    mockSessionService.getCurrentUser.and.returnValue({
+      name: "testAdmin",
+      roles: ["user_app", "admin_app"],
+    });
+    service.initRules();
+    tick();
+
+    expect(ability.can("manage", Child)).toBeTrue();
+    expect(ability.can("manage", new Child())).toBeTrue();
+    expect(ability.can("manage", Note)).toBeTrue();
+    expect(ability.can("manage", new Note())).toBeTrue();
   }));
 
-  const testRules: DatabaseRules = {
-    user_app: [
-      { subject: "Child", action: "read" },
-      { subject: "Note", action: "manage", inverted: true },
-    ],
-    admin_app: [{ subject: "all", action: "manage" }],
-  };
+  it("should throw an error if the subject has wrong format is unknown", fakeAsync(() => {
+    mockHttpClient.get.and.returnValue(
+      of({ user_app: [{ subject: Child, action: "read" }] })
+    );
+
+    expect(() => {
+      service.initRules();
+      tick();
+    }).toThrowError();
+  }));
+
+  function getRawRules(): DatabaseRules {
+    return {
+      user_app: [
+        { subject: "Child", action: "read" },
+        { subject: "Note", action: "manage", inverted: true },
+      ],
+      admin_app: [{ subject: "all", action: "manage" }],
+    };
+  }
+
+  function getParsedRules(): { [key in string]: EntityRule[] } {
+    return {
+      user_app: [
+        { subject: Child, action: "read" },
+        { subject: Note, action: "manage", inverted: true },
+      ],
+      admin_app: [{ subject: "all", action: "manage" }],
+    };
+  }
 });
