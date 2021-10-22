@@ -1,17 +1,16 @@
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 
-import { AbilityService, DatabaseRules } from "./ability.service";
+import { AbilityService, DatabaseRules, EntityAbility } from "./ability.service";
 import { HttpClient } from "@angular/common/http";
 import { of } from "rxjs";
 import { AppConfig } from "../app-config/app-config";
-import { Ability } from "@casl/ability";
 import { SessionService } from "../session/session-service/session.service";
 
 describe("AbilityService", () => {
   let service: AbilityService;
   let mockHttpClient: jasmine.SpyObj<HttpClient>;
   const mockDBEndpoint = "https://example.com/db/";
-  let mockAbility: jasmine.SpyObj<Ability>;
+  let mockAbility: jasmine.SpyObj<EntityAbility>;
   let mockSessionService: jasmine.SpyObj<SessionService>;
 
   beforeEach(() => {
@@ -28,7 +27,7 @@ describe("AbilityService", () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: HttpClient, useValue: mockHttpClient },
-        { provide: Ability, useValue: mockAbility },
+        { provide: EntityAbility, useValue: mockAbility },
         { provide: SessionService, useValue: mockSessionService },
       ],
     });

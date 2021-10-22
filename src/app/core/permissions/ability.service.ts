@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { AppConfig } from "../app-config/app-config";
-import { Ability, InferSubjects, RawRuleOf } from "@casl/ability";
+import { Ability, AbilityClass, InferSubjects, RawRuleOf } from "@casl/ability";
 import { Entity } from "../entity/model/entity";
 import { SessionService } from "../session/session-service/session.service";
 
@@ -16,6 +16,7 @@ type Subjects = InferSubjects<typeof Entity> | string;
 export type EntityAbility = Ability<[Actions, Subjects]>;
 export type EntityRule = RawRuleOf<EntityAbility>;
 export type DatabaseRules = { [key in string]: EntityRule[] };
+export const EntityAbility = Ability as AbilityClass<EntityAbility>;
 
 @Injectable({
   providedIn: "root",
@@ -23,7 +24,7 @@ export type DatabaseRules = { [key in string]: EntityRule[] };
 export class AbilityService {
   constructor(
     private httpClient: HttpClient,
-    private ability: Ability,
+    private ability: EntityAbility,
     private sessionService: SessionService
   ) {}
 
