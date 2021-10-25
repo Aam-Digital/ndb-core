@@ -26,7 +26,7 @@ import { getWarningLevelColor, WarningLevel } from "./warning-level";
  * It can also be used to check the ENTITY_TYPE of a class
  * For example usage check the {@link EntityMapperService}.
  */
-export type EntityConstructor<T extends Entity> = (new (id?: string) => T) &
+export type EntityConstructor<T extends Entity = Entity> = (new (id?: string) => T) &
   typeof Entity;
 
 export const ENTITY_CONFIG_PREFIX = "entity:";

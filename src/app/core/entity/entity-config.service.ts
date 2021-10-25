@@ -35,7 +35,7 @@ export class EntityConfigService {
    * @param configAttributes The attributes to add
    */
   public addConfigAttributes<T extends Entity>(
-    entityType: typeof Entity,
+    entityType: EntityConstructor,
     configAttributes?: EntityConfig
   ) {
     const entityConfig = configAttributes || this.getEntityConfig(entityType);
@@ -55,7 +55,7 @@ export class EntityConfigService {
    * fields for a certain entity
    * @param entityType The type to get the config for
    */
-  public getEntityConfig(entityType: EntityConstructor<any>): EntityConfig {
+  public getEntityConfig(entityType: EntityConstructor): EntityConfig {
     const configName =
       EntityConfigService.PREFIX_ENTITY_CONFIG + entityType.ENTITY_TYPE;
     return this.configService.getConfig<EntityConfig>(configName);
@@ -91,7 +91,25 @@ export class EntityConfigService {
   }
 }
 
+/**
+ * Dynamic configuration for a entity.
+ * This allows to change entity metadata based on the configuration.
+ */
 export interface EntityConfig {
   permissions?: { [key in OperationType]?: string[] };
-  attributes?: { name: string; schema: EntitySchemaField }[];
+
+  /**
+   * A list of attributes that will be dynamically added/overwritten to the entity.
+   */
+  attributes?: {
+    /**
+     * The name of the attribute (class variable) to be added/overwritten.
+     */
+    name: string;
+
+    /**
+     * The (new) schema configuration for this attribute.
+     */
+    schema: EntitySchemaField
+  }[];
 }
