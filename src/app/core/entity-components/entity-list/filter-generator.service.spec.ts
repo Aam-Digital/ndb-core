@@ -12,6 +12,8 @@ import { ChildSchoolRelation } from "../../../child-dev-project/children/model/c
 import { Child } from "../../../child-dev-project/children/model/child";
 import moment from "moment";
 import { EntityConfigService } from "app/core/entity/entity-config.service";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { DynamicEntityService } from "../../entity/dynamic-entity.service";
 
 describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
@@ -23,7 +25,9 @@ describe("FilterGeneratorService", () => {
     TestBed.configureTestingModule({
       providers: [
         ConfigService,
+        EntitySchemaService,
         { provide: EntityMapperService, useValue: mockEntityMapper },
+        DynamicEntityService,
         LoggingService,
         EntityConfigService,
       ],
