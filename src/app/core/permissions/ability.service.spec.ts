@@ -132,7 +132,7 @@ describe("AbilityService", () => {
     expect(ability.can("manage", new Note())).toBeTrue();
   });
 
-  it("should throw an error if the subject has wrong format is unknown", () => {
+  it("should throw an error if the subject is unknown", () => {
     mockHttpClient.get.and.returnValue(
       of({ user_app: [{ subject: Child, action: "read" }] })
     );
