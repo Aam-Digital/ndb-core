@@ -110,6 +110,6 @@ export interface EntityConfig {
     /**
      * The (new) schema configuration for this attribute.
      */
-    schema: EntitySchemaField
+    schema: EntitySchemaField;
   }[];
 }
