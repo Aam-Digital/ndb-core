@@ -5,6 +5,10 @@ import { Ability, AbilityClass, InferSubjects, RawRuleOf } from "@casl/ability";
 import { Entity, EntityConstructor } from "../entity/model/entity";
 import { SessionService } from "../session/session-service/session.service";
 import { DynamicEntityService } from "../entity/dynamic-entity.service";
+import { catchError, mergeMap } from "rxjs/operators";
+import { waitForChangeTo } from "../session/session-states/session-utils";
+import { SyncState } from "../session/session-states/sync-state.enum";
+import { Observable } from "rxjs";
 
 const actions = [
   "read",
@@ -22,7 +26,7 @@ export const EntityAbility = Ability as AbilityClass<EntityAbility>;
 export type DatabaseRule = RawRuleOf<Ability<[Actions, string]>>;
 export type DatabaseRules = { [key in string]: DatabaseRule[] };
 
-export function detectSubjectType(subject: Entity): EntityConstructor<any> {
+export function detectEntityType(subject: Entity): EntityConstructor<any> {
   if (subject instanceof Entity) {
     return subject.getConstructor();
   } else {
@@ -41,12 +45,24 @@ export class AbilityService {
   ) {}
 
   async initRules() {
-    const rules = await this.httpClient
-      .get<DatabaseRules>(AppConfig.settings.database.remote_url + "rules", {
-        withCredentials: true,
-      })
+    const rules = await this.fetchRules()
+      .pipe(
+        catchError(() =>
+          this.sessionService.syncState.pipe(
+            waitForChangeTo(SyncState.STARTED),
+            mergeMap(() => this.fetchRules())
+          )
+        )
+      )
       .toPromise();
     this.updateAbilityWithRules(rules);
+  }
+
+  private fetchRules(): Observable<DatabaseRules> {
+    const rulesUrl = AppConfig.settings.database.remote_url + "rules";
+    return this.httpClient.get<DatabaseRules>(rulesUrl, {
+      withCredentials: true,
+    });
   }
 
   private updateAbilityWithRules(rules: DatabaseRules) {

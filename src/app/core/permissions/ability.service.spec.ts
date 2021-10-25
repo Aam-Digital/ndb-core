@@ -3,12 +3,12 @@ import { TestBed } from "@angular/core/testing";
 import {
   AbilityService,
   DatabaseRules,
-  detectSubjectType,
+  detectEntityType,
   EntityAbility,
   EntityRule,
 } from "./ability.service";
 import { HttpClient } from "@angular/common/http";
-import { of } from "rxjs";
+import { of, Subject, throwError } from "rxjs";
 import { AppConfig } from "../app-config/app-config";
 import { SessionService } from "../session/session-service/session.service";
 import { Child } from "../../child-dev-project/children/model/child";
@@ -16,6 +16,7 @@ import { Note } from "../../child-dev-project/notes/model/note";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { DynamicEntityService } from "../entity/dynamic-entity.service";
+import { SyncState } from "../session/session-states/sync-state.enum";
 
 describe("AbilityService", () => {
   let service: AbilityService;
@@ -23,12 +24,16 @@ describe("AbilityService", () => {
   const mockDBEndpoint = "https://example.com/db/";
   let mockSessionService: jasmine.SpyObj<SessionService>;
   let ability: EntityAbility;
+  let mockSyncState: Subject<SyncState>;
 
   beforeEach(() => {
     AppConfig.settings = { database: { remote_url: mockDBEndpoint } } as any;
     mockHttpClient = jasmine.createSpyObj(["get"]);
     mockHttpClient.get.and.callFake(() => of(getRawRules() as any));
-    mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
+    mockSyncState = new Subject<SyncState>();
+    mockSessionService = jasmine.createSpyObj(["getCurrentUser"], {
+      syncState: mockSyncState,
+    });
     mockSessionService.getCurrentUser.and.returnValue({
       name: "testUser",
       roles: ["user_app"],
@@ -40,7 +45,7 @@ describe("AbilityService", () => {
         {
           provide: EntityAbility,
           useValue: new EntityAbility([], {
-            detectSubjectType: detectSubjectType,
+            detectSubjectType: detectEntityType,
           }),
         },
         { provide: SessionService, useValue: mockSessionService },
@@ -64,6 +69,21 @@ describe("AbilityService", () => {
     expect(mockHttpClient.get).toHaveBeenCalledWith(mockDBEndpoint + "rules", {
       withCredentials: true,
     });
+  });
+
+  it("should retry fetching the rules after the sync has started", () => {
+    mockHttpClient.get.and.returnValues(
+      throwError("first error"),
+      of(getRawRules())
+    );
+
+    service.initRules();
+
+    expect(mockHttpClient.get).toHaveBeenCalledTimes(1);
+
+    mockSyncState.next(SyncState.STARTED);
+
+    expect(mockHttpClient.get).toHaveBeenCalledTimes(2);
   });
 
   it("should update the ability with the received rules for the logged in user", async () => {
