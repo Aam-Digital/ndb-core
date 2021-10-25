@@ -32,7 +32,7 @@ describe("session-utils", () => {
   it("(waitForChangeTo) should emit all matching states when onlyFirst is false", (done) => {
     const stream = of("A", "B", "C", "B");
     let counter = 0;
-    stream.pipe(waitForChangeTo("B")).subscribe(
+    stream.pipe(waitForChangeTo("B", false)).subscribe(
       (next) => {
         expect(next).toBe("B");
         counter++;

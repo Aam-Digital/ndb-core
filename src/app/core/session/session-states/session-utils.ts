@@ -20,6 +20,6 @@ export function waitForChangeTo<State>(
       first()
     );
   } else {
-    return pipe(filter((nextState) => nextState === this.state));
+    return pipe(filter((nextState) => nextState === state));
   }
 }
