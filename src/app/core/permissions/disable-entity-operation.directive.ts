@@ -12,6 +12,9 @@ import { OperationType } from "./entity-permissions.service";
 import { Entity } from "../entity/model/entity";
 import { DisabledWrapperComponent } from "./disabled-wrapper/disabled-wrapper.component";
 import { EntityAbility } from "./ability.service";
+import { SessionService } from "../session/session-service/session.service";
+import { waitForChangeTo } from "../session/session-states/session-utils";
+import { LoginState } from "../session/session-states/login-state.enum";
 
 /**
  * This directive can be used to disable a element (e.g. button) based on the current users permissions.
@@ -38,17 +41,15 @@ export class DisableEntityOperationDirective implements OnInit, OnChanges {
     private templateRef: TemplateRef<HTMLButtonElement>,
     private viewContainerRef: ViewContainerRef,
     private componentFactoryResolver: ComponentFactoryResolver,
-    private ability: EntityAbility
-  ) {}
+    private ability: EntityAbility,
+    private sessionService: SessionService
+  ) {
+    this.sessionService.loginState
+      .pipe(waitForChangeTo(LoginState.LOGGED_IN, false))
+      .subscribe(() => this.applyPermissions());
+  }
 
   ngOnInit() {
-    let disabled = false;
-    if (this.arguments?.operation && this.arguments?.entity) {
-      disabled = this.ability.cannot(
-        this.arguments.operation,
-        this.arguments.entity
-      );
-    }
     const containerFactory = this.componentFactoryResolver.resolveComponentFactory(
       DisabledWrapperComponent
     );
@@ -57,10 +58,14 @@ export class DisableEntityOperationDirective implements OnInit, OnChanges {
     );
     this.wrapperComponent.instance.template = this.templateRef;
     this.wrapperComponent.instance.text = this.text;
-    this.wrapperComponent.instance.elementDisabled = disabled;
+    this.applyPermissions();
   }
 
   ngOnChanges() {
+    this.applyPermissions();
+  }
+
+  private applyPermissions() {
     if (
       this.wrapperComponent &&
       this.arguments?.operation &&

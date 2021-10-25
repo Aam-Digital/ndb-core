@@ -46,11 +46,17 @@ export class DisabledWrapperComponent implements AfterViewInit {
   constructor(private renderer: Renderer2) {}
 
   ngAfterViewInit() {
-    if (this.elementDisabled) {
+    if (this.wrapper) {
       // Disable the element that is rendered inside the div
       const innerElement = this.wrapper.nativeElement.children[0];
-      this.renderer.setAttribute(innerElement, "disabled", "true");
-      this.renderer.addClass(innerElement, "mat-button-disabled");
+
+      if (this.elementDisabled) {
+        this.renderer.addClass(innerElement, "mat-button-disabled");
+        this.renderer.setAttribute(innerElement, "disabled", "true");
+      } else {
+        this.renderer.removeAttribute(innerElement, "disabled");
+        this.renderer.removeClass(innerElement, "mat-button-disabled");
+      }
     }
   }
 }
