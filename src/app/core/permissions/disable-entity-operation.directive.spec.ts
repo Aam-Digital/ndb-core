@@ -5,6 +5,7 @@ import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { Entity } from "../entity/model/entity";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { EntityAbility } from "./ability.service";
+import { Child } from "../../child-dev-project/children/model/child";
 
 describe("DisableEntityOperationDirective", () => {
   let mockAbility: jasmine.SpyObj<EntityAbility>;
@@ -44,6 +45,24 @@ describe("DisableEntityOperationDirective", () => {
       component.componentInstance.buttonRef.nativeElement.disabled
     ).toBeFalse();
   }));
+
+  it("should re-rest the disabled property when a new value arrives", () => {
+    mockAbility.cannot.and.returnValue(false);
+    const component = TestBed.createComponent(TestComponent);
+    component.detectChanges();
+
+    expect(
+      component.componentInstance.buttonRef.nativeElement.disabled
+    ).toBeFalse();
+
+    mockAbility.cannot.and.returnValue(true);
+    component.componentInstance.entityConstructor = Child;
+    component.detectChanges();
+
+    expect(
+      component.componentInstance.buttonRef.nativeElement.disabled
+    ).toBeTrue();
+  });
 });
 
 @Component({

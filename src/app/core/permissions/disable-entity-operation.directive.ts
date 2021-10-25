@@ -3,6 +3,7 @@ import {
   ComponentRef,
   Directive,
   Input,
+  OnChanges,
   OnInit,
   TemplateRef,
   ViewContainerRef,
@@ -19,7 +20,7 @@ import { EntityAbility } from "./ability.service";
 @Directive({
   selector: "[appDisabledEntityOperation]",
 })
-export class DisableEntityOperationDirective implements OnInit {
+export class DisableEntityOperationDirective implements OnInit, OnChanges {
   /**
    * These arguments are required to check whether the user has permissions to perform the operation.
    * The operation property defines to what kind of operation a element belongs, e.g. OperationType.CREATE
@@ -57,5 +58,20 @@ export class DisableEntityOperationDirective implements OnInit {
     this.wrapperComponent.instance.template = this.templateRef;
     this.wrapperComponent.instance.text = this.text;
     this.wrapperComponent.instance.elementDisabled = disabled;
+  }
+
+  ngOnChanges() {
+    if (
+      this.wrapperComponent &&
+      this.arguments?.operation &&
+      this.arguments?.entity
+    ) {
+      // Update the disabled property whenever the input values change
+      this.wrapperComponent.instance.elementDisabled = this.ability.cannot(
+        this.arguments.operation,
+        this.arguments.entity
+      );
+      this.wrapperComponent.instance.ngAfterViewInit();
+    }
   }
 }
