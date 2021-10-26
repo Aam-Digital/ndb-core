@@ -1,3 +1,5 @@
+@use "../../../../core/dashboard/dashboard-widget-base";
+
 .day-box {
   display: table;
   width: 15px;
@@ -8,4 +10,11 @@
 
 .attendance-week-table {
   border-spacing: 0;
+  width: 100%;
+}
+
+.activities-record {
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
 }

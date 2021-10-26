@@ -1,4 +1,10 @@
-import { Component, Input, OnInit } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  Input,
+  OnInit,
+  ViewChild,
+} from "@angular/core";
 import { Router } from "@angular/router";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
@@ -10,6 +16,8 @@ import { ActivityAttendance } from "../../model/activity-attendance";
 import { RecurringActivity } from "../../model/recurring-activity";
 import moment, { Moment } from "moment";
 import { groupBy } from "../../../../utils/utils";
+import { MatTableDataSource } from "@angular/material/table";
+import { MatPaginator } from "@angular/material/paginator";
 
 interface AttendanceWeekRow {
   childId: string;
@@ -24,7 +32,7 @@ interface AttendanceWeekRow {
   styleUrls: ["./attendance-week-dashboard.component.scss"],
 })
 export class AttendanceWeekDashboardComponent
-  implements OnInitDynamicComponent, OnInit {
+  implements OnInitDynamicComponent, OnInit, AfterViewInit {
   /**
    * The offset from the default time period, which is the last complete week.
    *
@@ -51,6 +59,9 @@ export class AttendanceWeekDashboardComponent
   @Input() absentWarningThreshold: number = 1;
 
   dashboardRowGroups: Promise<AttendanceWeekRow[][]>;
+
+  @ViewChild("paginator") paginator: MatPaginator;
+  tableDataSource = new MatTableDataSource<AttendanceWeekRow[]>();
 
   rowGroupCount: Promise<number>;
 
@@ -111,6 +122,9 @@ export class AttendanceWeekDashboardComponent
         );
       });
     this.rowGroupCount = this.dashboardRowGroups.then((value) => value.length);
+    this.dashboardRowGroups.then((groups) => {
+      this.tableDataSource.data = groups;
+    });
   }
 
   private generateRowsFromActivityAttendance(
@@ -159,5 +173,9 @@ export class AttendanceWeekDashboardComponent
   goToChild(childId: string) {
     const path = "/" + Child.ENTITY_TYPE.toLowerCase();
     this.router.navigate([path, childId]);
+  }
+
+  ngAfterViewInit() {
+    this.tableDataSource.paginator = this.paginator;
   }
 }

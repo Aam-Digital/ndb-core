@@ -6,6 +6,8 @@ import { MatIconModule } from "@angular/material/icon";
 import { RouterModule } from "@angular/router";
 import { Angulartics2Module } from "angulartics2";
 import { DashboardModule } from "../dashboard/dashboard.module";
+import { ViewModule } from "../view/view.module";
+import { MatDividerModule } from "@angular/material/divider";
 
 @NgModule({
   declarations: [DashboardShortcutWidgetComponent],
@@ -16,6 +18,8 @@ import { DashboardModule } from "../dashboard/dashboard.module";
     RouterModule,
     Angulartics2Module,
     DashboardModule,
+    ViewModule,
+    MatDividerModule,
   ],
   exports: [DashboardShortcutWidgetComponent],
 })

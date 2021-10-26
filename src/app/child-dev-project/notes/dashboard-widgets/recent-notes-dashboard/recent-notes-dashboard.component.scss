@@ -1,16 +1,1 @@
-.dashboard-content {
-  font-size: large;
-  text-align: center;
-  cursor: pointer;
-}
-
-.subtitle-highlight {
-  font-weight: bold;
-  font-style: italic;
-}
-
-.loading-indicator {
-  position: absolute;
-  right: 0;
-  top: -12px;
-}
+@use "../../../../core/dashboard/dashboard-widget-base";

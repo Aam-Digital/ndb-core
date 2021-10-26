@@ -6,35 +6,40 @@
   i18n-subtitle="Dashboard attendance component subtitle"
 >
   <app-widget-content>
-    <table>
-      <tr
-        *ngFor="
-          let rowGroup of dashboardRowGroups | async;
-          trackBy: recordTrackByFunction;
-          let i = index
-        "
-        class="dashboard-table-row w-WARNING"
-        (click)="goToChild(rowGroup[0].childId)"
-        style="cursor: pointer"
-        angulartics2On="click"
-        angularticsCategory="Navigation"
-        angularticsAction="dashboard_attendance_warnings_list_link"
-        [angularticsLabel]="'list-entry-' + i"
-      >
-        <td class="dashboard-table-first-cell dashboard-table-cell">
+    <table
+      mat-table
+      [dataSource]="tableDataSource"
+      class="attendance-week-table"
+    >
+      <ng-container matColumnDef="child">
+        <td
+          *matCellDef="let rowGroup"
+          (click)="goToChild(rowGroup[0].childId)"
+          style="cursor: pointer; padding-left: 5px"
+          class="dashboard-table-row"
+        >
           <app-child-block [entityId]="rowGroup[0].childId"></app-child-block>
         </td>
-        <td class="dashboard-table-last-cell dashboard-table-cell">
-          <table class="attendance-week-table">
-            <tr *ngFor="let activityRecord of rowGroup">
-              <td *ngFor="let day of activityRecord.attendanceDays">
-                <app-attendance-day-block [attendance]="day">
-                </app-attendance-day-block>
-              </td>
-            </tr>
-          </table>
+      </ng-container>
+
+      <ng-container matColumnDef="attendance">
+        <td *matCellDef="let rowGroup" class="dashboard-table-row">
+          <div *ngFor="let activityRecord of rowGroup" class="activities-record">
+            <div *ngFor="let day of activityRecord.attendanceDays">
+              <app-attendance-day-block [attendance]="day">
+              </app-attendance-day-block>
+            </div>
+          </div>
         </td>
-      </tr>
+      </ng-container>
+
+      <tr mat-row *matRowDef="let row; columns: ['child', 'attendance'];" class="w-WARNING"></tr>
     </table>
+    <mat-paginator
+      #paginator
+      [pageSizeOptions]="[5]"
+      [hidePageSize]="true"
+    >
+    </mat-paginator>
   </app-widget-content>
 </app-dashboard-widget>

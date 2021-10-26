@@ -28,6 +28,7 @@ import { ProgressDashboardComponent } from "./progress-dashboard/progress-dashbo
 import { FormsModule } from "@angular/forms";
 import { DashboardModule } from "../../core/dashboard/dashboard.module";
 import { ViewModule } from "../../core/view/view.module";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @NgModule({
   imports: [
@@ -42,6 +43,7 @@ import { ViewModule } from "../../core/view/view.module";
     ChildrenModule,
     DashboardModule,
     ViewModule,
+    FontAwesomeModule,
   ],
   declarations: [ProgressDashboardComponent],
 })

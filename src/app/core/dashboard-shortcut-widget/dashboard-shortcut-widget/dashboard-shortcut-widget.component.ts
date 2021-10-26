@@ -8,6 +8,7 @@ import { OnInitDynamicComponent } from "../../view/dynamic-components/on-init-dy
 @Component({
   selector: "app-dashboard-shortcut-widget",
   templateUrl: "./dashboard-shortcut-widget.component.html",
+  styleUrls: ["dashboard-shortcut-widget.component.scss"],
 })
 export class DashboardShortcutWidgetComponent
   implements OnInitDynamicComponent {

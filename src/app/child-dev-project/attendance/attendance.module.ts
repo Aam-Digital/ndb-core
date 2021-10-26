@@ -58,6 +58,7 @@ import { AttendanceManagerComponent } from "./attendance-manager/attendance-mana
 import { EntityUtilsModule } from "../../core/entity-components/entity-utils/entity-utils.module";
 import { DashboardModule } from "../../core/dashboard/dashboard.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatPaginatorModule } from "@angular/material/paginator";
 
 @NgModule({
   declarations: [
@@ -105,6 +106,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     EntityUtilsModule,
     FontAwesomeModule,
     DashboardModule,
+    MatPaginatorModule,
   ],
   exports: [
     ActivityCardComponent,

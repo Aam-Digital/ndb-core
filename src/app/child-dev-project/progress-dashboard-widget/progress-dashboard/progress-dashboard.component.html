@@ -23,13 +23,13 @@
     <div [ngClass]="{ 'dashboard-config': configure }">
       <div style="text-align: left">
         <button mat-icon-button (click)="addPart()" *ngIf="configure">
-          <app-fa-dynamic-icon aria-label="add part" icon="fa-plus"></app-fa-dynamic-icon>
+          <fa-icon aria-label="add part" icon="plus"></fa-icon>
         </button>
         <button mat-icon-button (click)="save()" *ngIf="configure">
-          <app-fa-dynamic-icon aria-label="save" icon="fa-check"></app-fa-dynamic-icon>
+          <fa-icon aria-label="save" icon="check"></fa-icon>
         </button>
         <button mat-icon-button (click)="configure = true" *ngIf="!configure">
-          <app-fa-dynamic-icon aria-label="configure" icon="fa-wrench"></app-fa-dynamic-icon>
+          <fa-icon aria-label="configure" icon="wrench"></fa-icon>
         </button>
       </div>
 

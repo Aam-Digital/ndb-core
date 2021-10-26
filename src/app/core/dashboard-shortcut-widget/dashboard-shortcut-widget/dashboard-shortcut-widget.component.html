@@ -5,20 +5,20 @@
   i18n-subtitle="Title of dashboard widget that shows a list of certain actions a user can click on"
 >
   <app-widget-content>
-    <table class="dashboard-table">
-      <tr
-        *ngFor="let entry of shortcuts"
-        class="dashboard-table-row clickable"
-        [routerLink]="[entry.link]"
-        angulartics2On="click" angularticsCategory="Dashboard"
-        angularticsAction="shortcut-widget_click"
-        [angularticsLabel]="entry.link"
-      >
-        <td class="dashboard-table-cell">
-          <mat-icon fontIcon="fa-{{ entry.icon }}"></mat-icon>
+    <div
+      *ngFor="let entry of shortcuts"
+      [routerLink]="[entry.link]"
+      angulartics2On="click" angularticsCategory="Dashboard"
+      angularticsAction="shortcut-widget_click"
+      [angularticsLabel]="entry.link"
+      class="clickable"
+    >
+      <div class="link-content">
+        <h2>
+          <app-fa-dynamic-icon [icon]="entry.icon"></app-fa-dynamic-icon>
           {{ entry.label }}
-        </td>
-      </tr>
-    </table>
+        </h2>
+      </div>
+    </div>
   </app-widget-content>
 </app-dashboard-widget>
