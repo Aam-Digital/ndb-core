@@ -1519,48 +1519,66 @@
           <context context-type="linenumber">71</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="9f16eb852e79a33c7dac9d9c98535fb61718f905" datatype="html">
+        <source>Currently there is no active entry. To add a new entry, click on the</source>
+        <target state="translated">Es gibt keinen momentan aktiven Eintrag. Klicken Sie auf den</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/previous-schools/previous-schools.component.html</context>
+          <context context-type="linenumber">3,9</context>
+        </context-group>
+        <note priority="1" from="description">Explanation for missing currently active entry - part 1 of 2</note>
+      </trans-unit>
+      <trans-unit id="f9021226a79be9c2565fd0d2959d4e21757ae5da" datatype="html">
+        <source>button</source>
+        <target state="translated">Button, um einen Eintrag hinzuzufügen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/previous-schools/previous-schools.component.html</context>
+          <context context-type="linenumber">13,21</context>
+        </context-group>
+        <note priority="1" from="description">Explanation for missing currently active entry - part 2 of 2:</note>
+      </trans-unit>
       <trans-unit id="2617770989260729968" datatype="html">
         <source>Currently active</source>
         <target state="translated">Derzeit aktiv</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/previous-schools/previous-schools.component.ts</context>
-          <context context-type="linenumber">20,18</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/previous-schools/previous-schools.component.ts</context>
-          <context context-type="linenumber">24</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/schools/children-overview/children-overview.component.ts</context>
-          <context context-type="linenumber">22,20</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/schools/children-overview/children-overview.component.ts</context>
-          <context context-type="linenumber">26</context>
-        </context-group>
         <note priority="1" from="description">Label for form field, Indicatind whether currenty active</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/previous-schools/previous-schools.component.ts</context>
+          <context context-type="linenumber">25</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/previous-schools/previous-schools.component.ts</context>
+          <context context-type="linenumber">31</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/schools/children-overview/children-overview.component.ts</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/schools/children-overview/children-overview.component.ts</context>
+          <context context-type="linenumber">28</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="2982631026642563549" datatype="html">
         <source>Change the start or end date to modify this status</source>
         <target state="translated">Ändere das Start- oder Enddatum, um diesen Status zu ändern</target>
+        <note priority="1" from="description">Tooltip for the status of currently active or not</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/previous-schools/previous-schools.component.ts</context>
-          <context context-type="linenumber">23,18</context>
+          <context context-type="linenumber">28</context>
         </context-group>
-        <note priority="1" from="description">Tooltip for the status of currently active or not</note>
       </trans-unit>
       <trans-unit id="7404918417747104340" datatype="html">
         <source>Not active</source>
         <target state="translated">Nicht aktiv</target>
+        <note priority="1" from="description">Indication for the currently inactive status of an entry</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/previous-schools/previous-schools.component.ts</context>
-          <context context-type="linenumber">24</context>
+          <context context-type="linenumber">32</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/schools/children-overview/children-overview.component.ts</context>
-          <context context-type="linenumber">26</context>
+          <context context-type="linenumber">29</context>
         </context-group>
-        <note priority="1" from="description">Indication for the currently inactive status of an entry</note>
       </trans-unit>
       <trans-unit id="fdf7cbdc140d0aab0f0b6c06065a0fd448ed6a2e" datatype="html">
         <source>Title</source>
@@ -3055,7 +3073,7 @@
         <note from="description" priority="1">Label for date of the ASER results</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/aser.ts</context>
-          <context context-type="linenumber">46</context>
+          <context context-type="linenumber">53</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/educational-material/model/educational-material.ts</context>
@@ -3080,7 +3098,7 @@
         <note priority="1" from="description">Label of the Math ASER result</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/aser.ts</context>
-          <context context-type="linenumber">68</context>
+          <context context-type="linenumber">75</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5866254605255506989" datatype="html">
@@ -3089,7 +3107,7 @@
         <note priority="1" from="description">Label of the English ASER result</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/aser.ts</context>
-          <context context-type="linenumber">62</context>
+          <context context-type="linenumber">69</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7941090461604249190" datatype="html">
@@ -3098,7 +3116,7 @@
         <note priority="1" from="description">Label of the Hindi ASER result</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/aser.ts</context>
-          <context context-type="linenumber">50</context>
+          <context context-type="linenumber">57</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8836042473971054084" datatype="html">
@@ -3107,7 +3125,7 @@
         <note priority="1" from="description">Label of the Bengali ASER result</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/aser.ts</context>
-          <context context-type="linenumber">56</context>
+          <context context-type="linenumber">63</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8953033926734869941" datatype="html">
@@ -3165,11 +3183,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-list/filter-generator.service.ts</context>
-          <context context-type="linenumber">138</context>
+          <context context-type="linenumber">139</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-list/filter-generator.service.ts</context>
-          <context context-type="linenumber">170</context>
+          <context context-type="linenumber">168</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/filter/filter-selection/filter-selection.ts</context>
@@ -3182,7 +3200,7 @@
         <note from="description" priority="1">Label for the remarks of a ASER result</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/aser.ts</context>
-          <context context-type="linenumber">74</context>
+          <context context-type="linenumber">81</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
@@ -3192,87 +3210,87 @@
       <trans-unit id="7508893828342265603" datatype="html">
         <source>Nothing</source>
         <target state="translated">Nichts</target>
+        <note priority="1" from="description">Label math level</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/mathLevels.ts</context>
-          <context context-type="linenumber">10</context>
+          <context context-type="linenumber">12</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/readingLevels.ts</context>
-          <context context-type="linenumber">10</context>
+          <context context-type="linenumber">12</context>
         </context-group>
-        <note priority="1" from="description">Label math level</note>
       </trans-unit>
       <trans-unit id="6715091384891564900" datatype="html">
         <source>Numbers 1-9</source>
         <target state="translated">Zahlen 1-9</target>
+        <note priority="1" from="description">Label math level</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/mathLevels.ts</context>
-          <context context-type="linenumber">14</context>
+          <context context-type="linenumber">16</context>
         </context-group>
-        <note priority="1" from="description">Label math level</note>
       </trans-unit>
       <trans-unit id="8450675310727988109" datatype="html">
         <source>Numbers 10-99</source>
         <target state="translated">Zahlen 10-99</target>
+        <note priority="1" from="description">Label math level</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/mathLevels.ts</context>
-          <context context-type="linenumber">18</context>
+          <context context-type="linenumber">20</context>
         </context-group>
-        <note priority="1" from="description">Label math level</note>
       </trans-unit>
       <trans-unit id="8408946425042149613" datatype="html">
         <source>Subtraction</source>
         <target state="translated">Subtraktion</target>
+        <note priority="1" from="description">Label math level</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/mathLevels.ts</context>
-          <context context-type="linenumber">22</context>
+          <context context-type="linenumber">24</context>
         </context-group>
-        <note priority="1" from="description">Label math level</note>
       </trans-unit>
       <trans-unit id="2230231798402415493" datatype="html">
         <source>Division</source>
         <target state="translated">Division</target>
+        <note priority="1" from="description">Label math level</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/mathLevels.ts</context>
-          <context context-type="linenumber">26</context>
+          <context context-type="linenumber">28</context>
         </context-group>
-        <note priority="1" from="description">Label math level</note>
       </trans-unit>
       <trans-unit id="5197025786058849273" datatype="html">
         <source>Read Letters</source>
         <target state="translated">Kann Buchstaben lsen</target>
+        <note priority="1" from="description">Label reading level</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/readingLevels.ts</context>
-          <context context-type="linenumber">14</context>
+          <context context-type="linenumber">16</context>
         </context-group>
-        <note priority="1" from="description">Label reading level</note>
       </trans-unit>
       <trans-unit id="8696262430890381171" datatype="html">
         <source>Read Words</source>
         <target state="translated">Kann Wörter lesen</target>
+        <note priority="1" from="description">Label reading level</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/readingLevels.ts</context>
-          <context context-type="linenumber">18</context>
+          <context context-type="linenumber">20</context>
         </context-group>
-        <note priority="1" from="description">Label reading level</note>
       </trans-unit>
       <trans-unit id="7009426919987237401" datatype="html">
         <source>Read Sentence</source>
         <target state="translated">Kann Sätze lesen</target>
+        <note priority="1" from="description">Label reading level</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/readingLevels.ts</context>
-          <context context-type="linenumber">22</context>
+          <context context-type="linenumber">24</context>
         </context-group>
-        <note priority="1" from="description">Label reading level</note>
       </trans-unit>
       <trans-unit id="4081619604664648774" datatype="html">
         <source>Read Paragraph</source>
         <target state="translated">Kann Absätze lesen</target>
+        <note priority="1" from="description">Label reading level</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/readingLevels.ts</context>
-          <context context-type="linenumber">26</context>
+          <context context-type="linenumber">28</context>
         </context-group>
-        <note priority="1" from="description">Label reading level</note>
       </trans-unit>
       <trans-unit id="2283054349785348898" datatype="html">
         <source>PN</source>
@@ -4473,21 +4491,21 @@
       <trans-unit id="4668912478133095886" datatype="html">
         <source>Select <x id="PH" equiv-text="this.label"/></source>
         <target state="translated"><x id="PH" equiv-text="this.label"/> auswählen</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-single-entity/edit-single-entity.component.ts</context>
-          <context context-type="linenumber">49</context>
-        </context-group>
         <note priority="1" from="description">context Select User</note>
         <note priority="1" from="meaning">Placeholder for input to set an entity</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-single-entity/edit-single-entity.component.ts</context>
+          <context context-type="linenumber">48</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="2849064100927111571" datatype="html">
         <source>loading...</source>
         <target state="translated">lädt...</target>
+        <note priority="1" from="description">A placeholder for the input element when select options are not loaded yet</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-utils/entity-select/entity-select.component.ts</context>
-          <context context-type="linenumber">30</context>
+          <context context-type="linenumber">29</context>
         </context-group>
-        <note priority="1" from="description">A placeholder for the input element when select options are not loaded yet</note>
       </trans-unit>
       <trans-unit id="bff91547325db41ddc532740323020315227b440" datatype="html">
         <source> <x id="INTERPOLATION" equiv-text="{{ entity[property]?.length }}"/> in total

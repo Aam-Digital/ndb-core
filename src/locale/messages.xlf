@@ -6,7 +6,7 @@
         <source>Date</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/aser.ts</context>
-          <context context-type="linenumber">46</context>
+          <context context-type="linenumber">53</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/educational-material/model/educational-material.ts</context>
@@ -30,7 +30,7 @@
         <source>Hindi</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/aser.ts</context>
-          <context context-type="linenumber">50</context>
+          <context context-type="linenumber">57</context>
         </context-group>
         <note priority="1" from="description">Label of the Hindi ASER result</note>
       </trans-unit>
@@ -38,7 +38,7 @@
         <source>Bengali</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/aser.ts</context>
-          <context context-type="linenumber">56</context>
+          <context context-type="linenumber">63</context>
         </context-group>
         <note priority="1" from="description">Label of the Bengali ASER result</note>
       </trans-unit>
@@ -46,7 +46,7 @@
         <source>English</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/aser.ts</context>
-          <context context-type="linenumber">62</context>
+          <context context-type="linenumber">69</context>
         </context-group>
         <note priority="1" from="description">Label of the English ASER result</note>
       </trans-unit>
@@ -54,7 +54,7 @@
         <source>Math</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/aser.ts</context>
-          <context context-type="linenumber">68</context>
+          <context context-type="linenumber">75</context>
         </context-group>
         <note priority="1" from="description">Label of the Math ASER result</note>
       </trans-unit>
@@ -62,7 +62,7 @@
         <source>Remarks</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/aser.ts</context>
-          <context context-type="linenumber">74</context>
+          <context context-type="linenumber">81</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
@@ -74,11 +74,11 @@
         <source>Nothing</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/mathLevels.ts</context>
-          <context context-type="linenumber">10</context>
+          <context context-type="linenumber">12</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/readingLevels.ts</context>
-          <context context-type="linenumber">10</context>
+          <context context-type="linenumber">12</context>
         </context-group>
         <note priority="1" from="description">Label math level</note>
       </trans-unit>
@@ -86,7 +86,7 @@
         <source>Numbers 1-9</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/mathLevels.ts</context>
-          <context context-type="linenumber">14</context>
+          <context context-type="linenumber">16</context>
         </context-group>
         <note priority="1" from="description">Label math level</note>
       </trans-unit>
@@ -94,7 +94,7 @@
         <source>Numbers 10-99</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/mathLevels.ts</context>
-          <context context-type="linenumber">18</context>
+          <context context-type="linenumber">20</context>
         </context-group>
         <note priority="1" from="description">Label math level</note>
       </trans-unit>
@@ -102,7 +102,7 @@
         <source>Subtraction</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/mathLevels.ts</context>
-          <context context-type="linenumber">22</context>
+          <context context-type="linenumber">24</context>
         </context-group>
         <note priority="1" from="description">Label math level</note>
       </trans-unit>
@@ -110,7 +110,7 @@
         <source>Division</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/mathLevels.ts</context>
-          <context context-type="linenumber">26</context>
+          <context context-type="linenumber">28</context>
         </context-group>
         <note priority="1" from="description">Label math level</note>
       </trans-unit>
@@ -118,7 +118,7 @@
         <source>Read Letters</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/readingLevels.ts</context>
-          <context context-type="linenumber">14</context>
+          <context context-type="linenumber">16</context>
         </context-group>
         <note priority="1" from="description">Label reading level</note>
       </trans-unit>
@@ -126,7 +126,7 @@
         <source>Read Words</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/readingLevels.ts</context>
-          <context context-type="linenumber">18</context>
+          <context context-type="linenumber">20</context>
         </context-group>
         <note priority="1" from="description">Label reading level</note>
       </trans-unit>
@@ -134,7 +134,7 @@
         <source>Read Sentence</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/readingLevels.ts</context>
-          <context context-type="linenumber">22</context>
+          <context context-type="linenumber">24</context>
         </context-group>
         <note priority="1" from="description">Label reading level</note>
       </trans-unit>
@@ -142,7 +142,7 @@
         <source>Read Paragraph</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/aser/model/readingLevels.ts</context>
-          <context context-type="linenumber">26</context>
+          <context context-type="linenumber">28</context>
         </context-group>
         <note priority="1" from="description">Label reading level</note>
       </trans-unit>
@@ -837,11 +837,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-list/filter-generator.service.ts</context>
-          <context context-type="linenumber">138,136</context>
+          <context context-type="linenumber">139,137</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-list/filter-generator.service.ts</context>
-          <context context-type="linenumber">170,168</context>
+          <context context-type="linenumber">168,166</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/filter/filter-selection/filter-selection.ts</context>
@@ -2085,15 +2085,31 @@
         </context-group>
         <note priority="1" from="description">Filter-option for notes</note>
       </trans-unit>
+      <trans-unit id="9f16eb852e79a33c7dac9d9c98535fb61718f905" datatype="html">
+        <source>Currently there is no active entry. To add a new entry, click on the</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/previous-schools/previous-schools.component.html</context>
+          <context context-type="linenumber">3,9</context>
+        </context-group>
+        <note priority="1" from="description">Explanation for missing currently active entry - part 1 of 2</note>
+      </trans-unit>
+      <trans-unit id="f9021226a79be9c2565fd0d2959d4e21757ae5da" datatype="html">
+        <source>button</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/previous-schools/previous-schools.component.html</context>
+          <context context-type="linenumber">13,21</context>
+        </context-group>
+        <note priority="1" from="description">Explanation for missing currently active entry - part 2 of 2:</note>
+      </trans-unit>
       <trans-unit id="2617770989260729968" datatype="html">
         <source>Currently active</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/previous-schools/previous-schools.component.ts</context>
-          <context context-type="linenumber">20,18</context>
+          <context context-type="linenumber">25,23</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/previous-schools/previous-schools.component.ts</context>
-          <context context-type="linenumber">24</context>
+          <context context-type="linenumber">31,30</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/schools/children-overview/children-overview.component.ts</context>
@@ -2101,7 +2117,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/schools/children-overview/children-overview.component.ts</context>
-          <context context-type="linenumber">26</context>
+          <context context-type="linenumber">28,27</context>
         </context-group>
         <note priority="1" from="description">Label for form field, Indicatind whether currenty active</note>
       </trans-unit>
@@ -2109,7 +2125,7 @@
         <source>Change the start or end date to modify this status</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/previous-schools/previous-schools.component.ts</context>
-          <context context-type="linenumber">23,18</context>
+          <context context-type="linenumber">28,23</context>
         </context-group>
         <note priority="1" from="description">Tooltip for the status of currently active or not</note>
       </trans-unit>
@@ -2117,11 +2133,11 @@
         <source>Not active</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/previous-schools/previous-schools.component.ts</context>
-          <context context-type="linenumber">24</context>
+          <context context-type="linenumber">32</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/schools/children-overview/children-overview.component.ts</context>
-          <context context-type="linenumber">26</context>
+          <context context-type="linenumber">29</context>
         </context-group>
         <note priority="1" from="description">Indication for the currently inactive status of an entry</note>
       </trans-unit>
@@ -3931,7 +3947,7 @@
         <source>Select <x id="PH" equiv-text="this.label"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-single-entity/edit-single-entity.component.ts</context>
-          <context context-type="linenumber">49</context>
+          <context context-type="linenumber">48</context>
         </context-group>
         <note priority="1" from="description">context Select User</note>
         <note priority="1" from="meaning">Placeholder for input to set an entity</note>
@@ -3940,7 +3956,7 @@
         <source>loading...</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-utils/entity-select/entity-select.component.ts</context>
-          <context context-type="linenumber">30</context>
+          <context context-type="linenumber">29</context>
         </context-group>
         <note priority="1" from="description">A placeholder for the input element when select options are not loaded yet</note>
       </trans-unit>
