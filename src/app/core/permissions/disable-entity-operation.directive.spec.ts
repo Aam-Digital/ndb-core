@@ -1,7 +1,7 @@
 import { DisableEntityOperationDirective } from "./disable-entity-operation.directive";
 import { OperationType } from "./entity-permissions.service";
 import { Component, ElementRef, ViewChild } from "@angular/core";
-import {TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { Entity } from "../entity/model/entity";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { EntityAbility } from "./ability.service";
@@ -11,6 +11,7 @@ import { LoginState } from "../session/session-states/login-state.enum";
 import { Subject } from "rxjs";
 
 describe("DisableEntityOperationDirective", () => {
+  let testComponent: ComponentFixture<TestComponent>;
   let mockAbility: jasmine.SpyObj<EntityAbility>;
   let mockSessionService: jasmine.SpyObj<SessionService>;
   let mockLoginState: Subject<LoginState>;
@@ -33,65 +34,63 @@ describe("DisableEntityOperationDirective", () => {
   });
 
   it("should create a component that is using the directive", () => {
-    const component = TestBed.createComponent(TestComponent);
-    expect(component).toBeTruthy();
+    createComponent();
+    expect(testComponent).toBeTruthy();
   });
 
   it("should disable an element when operation is not permitted", () => {
-    mockAbility.cannot.and.returnValue(true);
-    const component = TestBed.createComponent(TestComponent);
-    component.detectChanges();
+    createComponent(true);
 
     expect(
-      component.componentInstance.buttonRef.nativeElement.disabled
+      testComponent.componentInstance.buttonRef.nativeElement.disabled
     ).toBeTrue();
   });
 
   it("should enable a component when operation is permitted", () => {
-    mockAbility.cannot.and.returnValue(false);
-    const component = TestBed.createComponent(TestComponent);
-    component.detectChanges();
+    createComponent(false);
 
     expect(
-      component.componentInstance.buttonRef.nativeElement.disabled
+      testComponent.componentInstance.buttonRef.nativeElement.disabled
     ).toBeFalse();
   });
 
   it("should re-rest the disabled property when a new value arrives", () => {
-    mockAbility.cannot.and.returnValue(false);
-    const component = TestBed.createComponent(TestComponent);
-    component.detectChanges();
+    createComponent(false);
 
     expect(
-      component.componentInstance.buttonRef.nativeElement.disabled
+      testComponent.componentInstance.buttonRef.nativeElement.disabled
     ).toBeFalse();
 
     mockAbility.cannot.and.returnValue(true);
-    component.componentInstance.entityConstructor = Child;
-    component.detectChanges();
+    testComponent.componentInstance.entityConstructor = Child;
+    testComponent.detectChanges();
 
     expect(
-      component.componentInstance.buttonRef.nativeElement.disabled
+      testComponent.componentInstance.buttonRef.nativeElement.disabled
     ).toBeTrue();
   });
 
   it("should re-evaluate the ability whenever a new user is logged in", () => {
-    mockAbility.cannot.and.returnValue(true);
-    const component = TestBed.createComponent(TestComponent);
-    component.detectChanges();
+    createComponent(true);
 
     expect(
-      component.componentInstance.buttonRef.nativeElement.disabled
+      testComponent.componentInstance.buttonRef.nativeElement.disabled
     ).toBeTrue();
 
     mockAbility.cannot.and.returnValue(false);
     mockLoginState.next(LoginState.LOGGED_IN);
-    component.detectChanges();
+    testComponent.detectChanges();
 
     expect(
-      component.componentInstance.buttonRef.nativeElement.disabled
+      testComponent.componentInstance.buttonRef.nativeElement.disabled
     ).toBeFalse();
   });
+
+  function createComponent(disabled: boolean = true) {
+    mockAbility.cannot.and.returnValue(disabled);
+    testComponent = TestBed.createComponent(TestComponent);
+    testComponent.detectChanges();
+  }
 });
 
 @Component({
