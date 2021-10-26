@@ -51,9 +51,9 @@ export class EntityDetailsComponent {
     private router: Router,
     private location: Location,
     private analyticsService: AnalyticsService,
-    private ability: EntityAbility,
     private entityRemoveService: EntityRemoveService,
-    private dynamicEntityService: DynamicEntityService
+    private dynamicEntityService: DynamicEntityService,
+    private ability: EntityAbility
   ) {
     this.route.data.subscribe((data: RouteData<EntityDetailsConfig>) => {
       this.config = data.config;
