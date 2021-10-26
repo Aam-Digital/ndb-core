@@ -33,6 +33,8 @@ import { EntityMapperService } from "./core/entity/entity-mapper.service";
 import { Config } from "./core/config/config";
 import { USAGE_ANALYTICS_CONFIG_ID } from "./core/analytics/usage-analytics-config";
 import { environment } from "../environments/environment";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { DynamicEntityService } from "./core/entity/dynamic-entity.service";
 
 describe("AppComponent", () => {
   let component: AppComponent;
@@ -49,11 +51,15 @@ describe("AppComponent", () => {
       AppConfig.settings = mockAppSettings;
 
       TestBed.configureTestingModule({
-        imports: [AppModule],
+        imports: [AppModule, HttpClientTestingModule],
         providers: [
           { provide: AppConfig, useValue: jasmine.createSpyObj(["load"]) },
         ],
       }).compileComponents();
+
+      // Otherwise multiple registrations throw an error
+      spyOn(DynamicEntityService, "registerNewEntity");
+
       TestBed.inject(ApplicationInitStatus); // This ensures that the AppConfig is loaded before test execution
     })
   );

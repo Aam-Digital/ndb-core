@@ -12,6 +12,8 @@ import { MatDialogRef } from "@angular/material/dialog";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { By } from "@angular/platform-browser";
+import { ChildMeetingNoteAttendanceComponent } from "./child-meeting-attendance/child-meeting-note-attendance.component";
 
 function generateTestNote(forChildren: Child[]) {
   const testNote = Note.create(new Date(), "test note");
@@ -74,5 +76,22 @@ describe("NoteDetailsComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should show the child meeting note attendance component when the event is a meeting", () => {
+    component.entity.category.isMeeting = true;
+    const element = fixture.debugElement.query(
+      By.directive(ChildMeetingNoteAttendanceComponent)
+    );
+    expect(element).toBeTruthy();
+  });
+
+  it("should not show the child meeting note attendance component when the event's category is undefined", () => {
+    component.entity.category = undefined;
+    fixture.detectChanges();
+    const element = fixture.debugElement.query(
+      By.directive(ChildMeetingNoteAttendanceComponent)
+    );
+    expect(element).toBeFalsy();
   });
 });
