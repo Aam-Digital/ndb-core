@@ -1,15 +1,15 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { Entity } from "../../../../entity/model/entity";
 import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
-import { ViewComponent } from "../view-component";
-import { DynamicEntityService } from "../../../../entity/dynamic-entity.service";
+import { ViewDirective } from "../view.directive";
+import { DynamicEntityService } from "app/core/entity/dynamic-entity.service";
 
 @Component({
   selector: "app-display-entity",
   templateUrl: "./display-entity.component.html",
   styleUrls: ["./display-entity.component.scss"],
 })
-export class DisplayEntityComponent extends ViewComponent implements OnInit {
+export class DisplayEntityComponent extends ViewDirective implements OnInit {
   @Input() entityToDisplay: Entity;
   @Input() linkDisabled = false;
   entityBlockComponent: string;

@@ -1,6 +1,6 @@
 import { Component, Input } from "@angular/core";
 import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
-import { ViewComponent } from "../view-component";
+import { ViewDirective } from "../view.directive";
 import { Entity } from "../../../../entity/model/entity";
 
 @Component({
@@ -8,7 +8,7 @@ import { Entity } from "../../../../entity/model/entity";
   templateUrl: "./readonly-function.component.html",
   styleUrls: ["./readonly-function.component.scss"],
 })
-export class ReadonlyFunctionComponent extends ViewComponent {
+export class ReadonlyFunctionComponent extends ViewDirective {
   @Input() displayFunction: (entity: Entity) => any;
   onInitFromDynamicConfig(config: ViewPropertyConfig) {
     super.onInitFromDynamicConfig(config);
