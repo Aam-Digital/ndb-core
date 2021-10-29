@@ -134,7 +134,7 @@ describe("AbilityService", () => {
 
   it("should throw an error if the subject is unknown", () => {
     mockHttpClient.get.and.returnValue(
-      of({ user_app: [{ subject: Child, action: "read" }] })
+      of({ user_app: [{ subject: "NotAEntity", action: "read" }] })
     );
 
     return expectAsync(service.initRules()).toBeRejected();

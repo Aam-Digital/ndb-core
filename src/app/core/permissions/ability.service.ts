@@ -27,12 +27,7 @@ export type DatabaseRule = RawRuleOf<Ability<[Actions, string]>>;
 export type DatabaseRules = { [key in string]: DatabaseRule[] };
 
 export function detectEntityType(subject: Entity): EntityConstructor<any> {
-  if (subject instanceof Entity) {
-    return subject.getConstructor();
-  } else {
-    // This should never happen because CASL already ensures correct subject types internally
-    throw Error("Checking rule for invalid subject " + subject);
-  }
+  return subject.getConstructor();
 }
 
 @Injectable()
