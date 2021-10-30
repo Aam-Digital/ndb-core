@@ -18,12 +18,12 @@ const actions = [
   "manage", // Matches any actions
 ] as const;
 
-type Actions = typeof actions[number];
+export type EntityAction = typeof actions[number];
 type Subjects = InferSubjects<typeof Entity> | "all";
-export type EntityAbility = Ability<[Actions, Subjects]>;
+export type EntityAbility = Ability<[EntityAction, Subjects]>;
 export type EntityRule = RawRuleOf<EntityAbility>;
 export const EntityAbility = Ability as AbilityClass<EntityAbility>;
-export type DatabaseRule = RawRuleOf<Ability<[Actions, string]>>;
+export type DatabaseRule = RawRuleOf<Ability<[EntityAction, string]>>;
 export type DatabaseRules = { [key in string]: DatabaseRule[] };
 
 export function detectEntityType(subject: Entity): EntityConstructor<any> {
