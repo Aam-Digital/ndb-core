@@ -20,7 +20,6 @@ export class RollCallSetupComponent implements OnInit {
   existingEvents: NoteForActivitySetup[] = [];
   filteredExistingEvents: NoteForActivitySetup[] = [];
 
-  selectedEvent: NoteForActivitySetup;
   @Output() eventSelected = new EventEmitter<Note>();
 
   allActivities: RecurringActivity[] = [];
@@ -96,10 +95,6 @@ export class RollCallSetupComponent implements OnInit {
     this.date = date;
 
     await this.initAvailableEvents();
-
-    if (!RecurringActivity.isActivityEventNote(this.selectedEvent)) {
-      this.selectedEvent = null;
-    }
   }
 
   private async createEventForActivity(
@@ -155,7 +150,6 @@ export class RollCallSetupComponent implements OnInit {
       .subscribe((createdNote: Note) => {
         if (createdNote) {
           this.existingEvents.push(createdNote);
-          this.selectedEvent = createdNote;
         }
       });
   }

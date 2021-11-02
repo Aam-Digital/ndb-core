@@ -4,7 +4,6 @@
 // Total height of the bottom control with padding
 $bottom-control-height: 86px;
 $bottom-control-padding: 16px;
-$standard-gap: 8px;
 
 .overall-container {
   min-height: 100vh;
@@ -13,19 +12,6 @@ $standard-gap: 8px;
   // remove the bottom margin so that scrolling to the bottom
   // doesn't overflow
   margin-bottom: -$margin-main-view-bottom;
-}
-
-.bottom-control {
-  // remove the global margins
-  margin-right: -$margin-main-view-right;
-  margin-left: -$margin-main-view-left;
-  position: sticky;
-  bottom: 0;
-  height: $bottom-control-height;
-  padding: $bottom-control-padding;
-  gap: $standard-grid-gap;
-  display: flex;
-  flex-direction: row;
 }
 
 .top-control {
@@ -61,7 +47,12 @@ $standard-gap: 8px;
 }
 
 .actions {
-  margin-top: $standard-gap;
+  margin-top: $standard-margin-small;
   display: flex;
-  gap: $standard-gap;
+  gap: $standard-margin-small;
+}
+
+.activity-card {
+  max-width: 500px;
+  display: contents;
 }

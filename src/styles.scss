@@ -26,6 +26,8 @@ $standard-grid-gap: 25px;
 
 $max-icon-width: 22px;
 
+$standard-margin-small: 8px;
+
 body {
   margin: 0;
 }
@@ -135,15 +137,19 @@ mat-card.dashboard-widget {
   background-color: #9E9D24 !important;
 }
 
+$color-warning-ok: #90ee90;
+$color-warning-warning: #ffa500;
+$color-warning-urgent: #fd7272;
+
 
 .w-OK {
-  background-color: #90ee9040 !important;
+  background-color: adjust-color($color-warning-warning, $alpha: -0.75);
 }
 .w-WARNING {
-  background-color: #ffa50080 !important;
+  background-color: adjust-color($color-warning-warning, $alpha: -0.5);
 }
 .w-URGENT {
-  background-color: #fd727280 !important;
+  background-color: adjust-color($color-warning-urgent, $alpha: -0.5);
 }
 
 .w-100 {
@@ -236,15 +242,30 @@ $standard-icon-size: 1.5em;
 
 .standard-icon-with-text {
   font-size: $standard-icon-size;
-  margin-right: 8px;
+  margin-right: $standard-margin-small;
 }
 
 ::ng-deep .mat-raised-button {
-  margin-right: 8px;
+  margin-right: $standard-margin-small;
 }
 
 .truncate-text {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/**
+ * adds a standard-margin wide border to the left side
+ * that can be used to highlight things.
+ * This itself does not actually change the appearance,
+ * but specifying a border-color will do so.
+ */
+.border-left-highlight {
+  border-left: $standard-margin-small solid;
+}
+
+.underline-on-hover:hover {
+  text-decoration: underline;
+  cursor: pointer;
 }
