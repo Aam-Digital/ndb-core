@@ -119,62 +119,121 @@
             ],
             "exclude": []
           }
-        },
-        "cypress-run": {
-          "builder": "@cypress/schematic:cypress",
-          "options": {
-            "devServerTarget": "ndb-core:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "ndb-core:serve:production"
-            }
-          }
-        },
-        "cypress-open": {
-          "builder": "@cypress/schematic:cypress",
-          "options": {
-            "watch": true,
-            "headless": false
-          }
-        },
-        "e2e": {
-          "builder": "@cypress/schematic:cypress",
-          "options": {
-            "devServerTarget": "ndb-core:serve",
-            "watch": true,
-            "headless": false
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "ndb-core:serve:production"
-            }
-          }
         }
       }
     },
     "ndb-core-e2e": {
       "root": "",
-      "sourceRoot": "",
+      "sourceRoot": "src",
       "projectType": "application",
+      "i18n": {
+        "sourceLocale": "en-US",
+        "locales": {
+          "de": "src/locale/messages.de.xlf"
+        }
+      },
       "architect": {
-        "e2e": {
-          "builder": "@cypress/schematic:cypress",
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "devServerTarget": "ndb-core-e2e:serve",
-            "watch": true,
-            "headless": false
+            "aot": true,
+            "outputPath": "dist",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "tsConfig": "src/tsconfig.app.json",
+            "polyfills": "src/polyfills.ts",
+            "i18nMissingTranslation": "warning",
+            "assets": [
+              "src/assets",
+              "src/favicon.ico",
+              "src/manifest.json"
+            ],
+            "styles": [
+              "node_modules/font-awesome/scss/font-awesome.scss",
+              "src/ndb-theme.scss",
+              "src/styles.scss",
+              "node_modules/flag-icon-css/css/flag-icon.min.css"
+            ],
+            "scripts": [
+              "node_modules/marked/lib/marked.js"
+            ]
           },
           "configurations": {
             "production": {
-              "devServerTarget": "ndb-core-e2e:serve:production"
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "serviceWorker": true
+            },
+            "localized": {
+              "localize": [
+                "de",
+                "en-US"
+              ]
             }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "ndb-core-e2e:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "ndb-core-e2e:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "ndb-core-e2e:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "src/test.ts",
+            "karmaConfig": "./karma.conf.js",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "src/tsconfig.spec.json",
+            "scripts": [
+              "node_modules/marked/lib/marked.js"
+            ],
+            "styles": [
+              "src/ndb-theme.scss",
+              "src/styles.scss"
+            ],
+            "assets": [
+              "src/assets",
+              "src/favicon.ico",
+              "src/manifest.json"
+            ]
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
+              "src/tsconfig.app.json",
+              "src/tsconfig.spec.json",
               "e2e/tsconfig.json"
             ],
             "exclude": []
@@ -195,7 +254,21 @@
           "builder": "@cypress/schematic:cypress",
           "options": {
             "watch": true,
+            "headless": false,
+            "devServerTarget": "ndb-core-e2e:serve"
+          }
+        },
+        "e2e": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "devServerTarget": "ndb-core-e2e:serve",
+            "watch": true,
             "headless": false
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "ndb-core-e2e:serve:production"
+            }
           }
         }
       }
