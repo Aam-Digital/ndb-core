@@ -1,0 +1,37 @@
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons"rel="stylesheet">
+<mat-horizontal-stepper linear #stepper>
+    <mat-step [stepControl]="firstFormGroup" [editable]="true">
+      <form [formGroup]="firstFormGroup">
+        <ng-template matStepLabel>Import Type</ng-template>
+        <mat-form-field>
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="firstCtrl" placeholder="Last name, First name" required>
+        </mat-form-field>
+        <div>
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="secondFormGroup" [editable]="true">
+      <form [formGroup]="secondFormGroup">
+        <ng-template matStepLabel>Import File</ng-template>
+        <mat-form-field>
+          <mat-label>Address</mat-label>
+          <input matInput formControlName="secondCtrl" placeholder="Ex. 1 Main St, New York, NY"
+                 required>
+        </mat-form-field>
+        <div>
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Excecute</ng-template>
+      <p>You are now done.</p>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button (click)="stepper.reset()">Reset</button>
+      </div>
+    </mat-step>
+  </mat-horizontal-stepper>

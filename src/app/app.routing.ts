@@ -32,6 +32,7 @@ import { ConflictResolutionListComponent } from "./conflict-resolution/conflict-
 import { ActivityListComponent } from "./child-dev-project/attendance/activity-list/activity-list.component";
 import { ReportingComponent } from "./features/reporting/reporting/reporting.component";
 import { UserRoleGuard } from "./core/permissions/user-role.guard";
+import { ImportComponent } from "./core/admin/import/import.component";
 
 export const COMPONENT_MAP = {
   Dashboard: DashboardComponent,
@@ -45,7 +46,7 @@ export const COMPONENT_MAP = {
   ChildrenList: ChildrenListComponent,
   ActivityList: ActivityListComponent,
   Admin: AdminComponent,
-  Import: AdminComponent,
+  Import: ImportComponent,
   ConflictResolution: ConflictResolutionListComponent,
   EntityDetails: EntityDetailsComponent,
   Reporting: ReportingComponent,
