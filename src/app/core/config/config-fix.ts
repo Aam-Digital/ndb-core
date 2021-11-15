@@ -64,6 +64,11 @@ export const defaultJsonConfig = {
         "link": "/admin"
       },
       {
+        "name": $localize`:Menu item:Import`,
+        "icon": "file-import",
+        "link": "/import"
+      },
+      {
         "name": $localize`:Menu item:Users`,
         "icon": "user",
         "link": "/users"
@@ -274,6 +279,10 @@ export const defaultJsonConfig = {
   },
   "view:admin": {
     "component": "Admin",
+    "permittedUserRoles": ["admin_app"]
+  },
+  "view:import": {
+    "component": "Import",
     "permittedUserRoles": ["admin_app"]
   },
   "view:users": {

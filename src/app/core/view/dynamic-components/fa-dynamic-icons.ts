@@ -6,6 +6,7 @@ import {
   faUniversity,
   faQuestionCircle,
   faWrench,
+  faFileImport,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faCalendar,
@@ -30,4 +31,5 @@ export const faDynamicIcons = new Map<string, IconDefinition>([
   ["user", faUser],
   ["question", faQuestionCircle],
   ["line-chart", faChartLine],
+  ["file-import", faFileImport]
 ]);

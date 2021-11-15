@@ -45,6 +45,7 @@ export const COMPONENT_MAP = {
   ChildrenList: ChildrenListComponent,
   ActivityList: ActivityListComponent,
   Admin: AdminComponent,
+  Import: AdminComponent,
   ConflictResolution: ConflictResolutionListComponent,
   EntityDetails: EntityDetailsComponent,
   Reporting: ReportingComponent,
