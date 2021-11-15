@@ -1,11 +1,15 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons"rel="stylesheet">
-<mat-horizontal-stepper linear #stepper>
+<mat-vertical-stepper linear #stepper>
     <mat-step [stepControl]="firstFormGroup" [editable]="true">
       <form [formGroup]="firstFormGroup">
         <ng-template matStepLabel>Import Type</ng-template>
         <mat-form-field>
-          <mat-label>Name</mat-label>
-          <input matInput formControlName="firstCtrl" placeholder="Last name, First name" required>
+            <mat-label>Entity Type</mat-label>
+            <select matNativeControl formControlName="firstCtrl" required>
+                <option *ngFor="let entity of entities" [value]="entity.value">
+                    {{entity.viewValue}}
+                </option>
+            </select>
         </mat-form-field>
         <div>
           <button mat-button matStepperNext>Next</button>
@@ -34,4 +38,4 @@
         <button mat-button (click)="stepper.reset()">Reset</button>
       </div>
     </mat-step>
-  </mat-horizontal-stepper>
+  </mat-vertical-stepper>
