@@ -18,39 +18,15 @@ Some information about Cypress:
 * [Migrating from Protractor to Cypress](https://docs.cypress.io/guides/migrating-to-cypress/protractor)
 
 
-## Uninstall Protractor
-If the protractor is still installed, uninstall it.
+## How to install Cypress
 
-1. Run `npm uninstall protractor` this uninstalls a package, completely removing everything npm installed on its behalf.
- It also removes the package from the dependencies, `devDependencies`, `optionalDependencies`, and `peerDependencies` objects in your `package.json`.
- Futher, if you have an `npm-shrinkwrap.json` or `package-lock.json`, npm will update those files as well.
-2. Remove `ndb-core/protractor.conf.js` if exists.
-3. Remove `ndb-core/e2e` folder if exists and all test inside, if there any.
+By using the npm install or npm ci command cypress will be automatically installed with all the necessary dependencies. No further actions need to be done.
 
+## How to use Cypress for E2E tests
 
-## Recommended Installation: <br> Installing Cypress using ng 
+Using the ng e2e command, Cypress will be started in headless terminal mode. All written tests will be executed and their results will be shown in the terminal window.
 
-The following resources may be helpful: 
-* [Cypress Angular Schematic](https://github.com/cypress-io/cypress/tree/develop/npm/cypress-schematic)
-* [Getting Started](https://docs.cypress.io/guides/migrating-to-cypress/protractor#Getting-Started)
+Using the npm run e2e-open command, Cypress will be started in a browser mode with an additional UI to track the single e2e tests. With the help of the UI it is possible to have a better overview for the single E2E tests and further on to have the possibility of finding every element of a certain angular component.
 
-1. Run `ng add @cypress/schematic`. This will install Cypress, add scripts for running Cypress in run and open mode,
- scaffold base Cypress files and directories.
-2. It would ask you **Would you like the default _ng e2e_ command to use Cypress?** Type "Y" to accept.
-3. Next Step is [configure-cypress-to-project.md]() _TODO:Add the link as soon as the documentation is written_
-4. Finish
------
+## How to write an E2E test
 
-## Manual Installation: <br> Installing Cypress using npm
-
-The following resources may be helpful: 
-* [Installing Cypress](https://docs.cypress.io/guides/getting-started/installing-cypress)
-* [Manual Installation](https://docs.cypress.io/guides/migrating-to-cypress/protractor#Manual-Installation)
-
-
-1. Run `npm install --save-dev cypress`. This will install Cypress locally as a dev dependency for your project.
-2. Run `npm install --save-dev concurrently` to install [concurrently](https://www.npmjs.com/package/concurrently) to simplify our npm script so that Cypress can work with the application in parallel.
-This is optional; however, you will need another way to serve your Angular app for Cypress to run tests against your application.
-3. Run `node_modules\.bin\cypress open` or `npx cypress open`. When we run Cypress for the first time, it generates a bunch of examples that we can learn from, also 
-it create a sub-directory named cypress with a scaffold for your tests.
-4. Finish
