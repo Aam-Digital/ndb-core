@@ -10,6 +10,7 @@ import {
 } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { FORM_CONTROL_NAME, setupEditComponent } from "../edit-component.spec";
 
 describe("EditPercentageComponent", () => {
   let component: EditPercentageComponent;
@@ -31,13 +32,7 @@ describe("EditPercentageComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EditPercentageComponent);
     component = fixture.componentInstance;
-    const formControl = new FormControl();
-    formGroup = new FormGroup({ testProperty: formControl });
-    component.onInitFromDynamicConfig({
-      formControl: formControl,
-      propertySchema: {},
-      formFieldConfig: { id: "testProperty" },
-    });
+    formGroup = setupEditComponent(component);
     fixture.detectChanges();
   });
 
@@ -74,11 +69,11 @@ describe("EditPercentageComponent", () => {
     expect(formGroup.valid).toBeTrue();
 
     const control = new FormControl(0, [Validators.required]);
-    formGroup.setControl("testProperty", control);
+    formGroup.setControl(FORM_CONTROL_NAME, control);
     component.onInitFromDynamicConfig({
       formControl: control,
       propertySchema: {},
-      formFieldConfig: { id: "testProperty" },
+      formFieldConfig: { id: FORM_CONTROL_NAME },
     });
 
     component.formControl.setValue(null);

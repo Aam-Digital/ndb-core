@@ -2,10 +2,10 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EditLongTextComponent } from "./edit-long-text.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { TypedFormControl } from "../edit-component";
+import { setupEditComponent } from "../edit-component.spec";
 
 describe("EditLongTextComponent", () => {
   let component: EditLongTextComponent;
@@ -26,11 +26,7 @@ describe("EditLongTextComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EditLongTextComponent);
     component = fixture.componentInstance;
-    const formControl = new FormControl();
-    const formGroup = new FormGroup({});
-    component.formControlName = "testControl";
-    component.formControl = formControl as TypedFormControl<string>;
-    formGroup.registerControl(component.formControlName, formControl);
+    setupEditComponent(component);
     fixture.detectChanges();
   });
 
