@@ -262,8 +262,8 @@
           "builder": "@cypress/schematic:cypress",
           "options": {
             "devServerTarget": "ndb-core-e2e:serve",
-            "watch": true,
-            "headless": false
+            "watch": false,
+            "headless": true
           },
           "configurations": {
             "production": {

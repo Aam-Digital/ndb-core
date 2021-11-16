@@ -11,6 +11,7 @@
     "test-ci": "ng test --code-coverage --karmaConfig=build/karma-ci.conf.js ",
     "lint": "ng lint ndb-core --type-check",
     "e2e": "ng e2e",
+    "e2e-open": "ng run ndb-core-e2e:cypress-open",
     "compodoc": "npx compodoc -c doc/compodoc_sources/.compodocrc.json",
     "postinstall": "ngcc && node patch-webpack.js",
     "docs:json": "compodoc -p ./tsconfig.json -e json -d .",

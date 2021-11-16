@@ -9,7 +9,8 @@ describe("Scenario: Linking a child to a school - E2E test", () => {
     cy.get(".page-header > .ng-star-inserted").invoke("text").as("studentName");
   });
 
-  // WHEN I add an entry in the 'Previous Schools' section with a specific school and the date today
+  // WHEN I add an entry in the 'Previous Schools' section with a specific school
+  // (with todays date - that might be added to this e2e test later)
   it("Add an entry in the Previous School section", function () {
     // get the Education button and click on it
     cy.get("#mat-expansion-panel-header-1 > .mat-content")
