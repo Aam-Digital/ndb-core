@@ -1,15 +1,12 @@
 import { Component } from "@angular/core";
 import { EditComponent, EditPropertyConfig } from "../edit-component";
-import { Entity } from "../../../../entity/model/entity";
 
 @Component({
   selector: "app-edit-entity-array",
   templateUrl: "./edit-entity-array.component.html",
   styleUrls: ["./edit-entity-array.component.scss"],
 })
-export class EditEntityArrayComponent extends EditComponent<
-  (string | Entity)[]
-> {
+export class EditEntityArrayComponent extends EditComponent<string[]> {
   placeholder: string;
   entityName: string;
   onInitFromDynamicConfig(config: EditPropertyConfig) {
