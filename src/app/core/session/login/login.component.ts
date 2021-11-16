@@ -90,6 +90,7 @@ export class LoginComponent {
 
   private async onLoginSuccess() {
     // Initialize permissions for logged in user
+    // TODO move to PermissionModule constructor
     await this.abilityService.initRules();
     // New routes are added at runtime
     await this.router.navigate([], {

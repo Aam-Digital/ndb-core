@@ -8,13 +8,12 @@ import {
   TemplateRef,
   ViewContainerRef,
 } from "@angular/core";
-import { OperationType } from "./entity-permissions.service";
 import { Entity } from "../entity/model/entity";
 import { DisabledWrapperComponent } from "./disabled-wrapper/disabled-wrapper.component";
-import { EntityAbility } from "./ability.service";
+import { EntityAbility, EntityAction } from "./ability.service";
 import { SessionService } from "../session/session-service/session.service";
-import { waitForChangeTo } from "../session/session-states/session-utils";
 import { LoginState } from "../session/session-states/login-state.enum";
+import { filter } from "rxjs/operators";
 
 /**
  * This directive can be used to disable a element (e.g. button) based on the current users permissions.
@@ -30,8 +29,8 @@ export class DisableEntityOperationDirective implements OnInit, OnChanges {
    * The entity property defines for which kind of entity the operation will be performed, e.g. Child
    */
   @Input("appDisabledEntityOperation") arguments: {
-    operation: OperationType;
-    entity: typeof Entity;
+    operation: EntityAction;
+    entity: typeof Entity | Entity;
   };
 
   private wrapperComponent: ComponentRef<DisabledWrapperComponent>;
@@ -45,7 +44,7 @@ export class DisableEntityOperationDirective implements OnInit, OnChanges {
     private sessionService: SessionService
   ) {
     this.sessionService.loginState
-      .pipe(waitForChangeTo(LoginState.LOGGED_IN, false))
+      .pipe(filter((state) => state === LoginState.LOGGED_IN))
       .subscribe(() => this.applyPermissions());
   }
 

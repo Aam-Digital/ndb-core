@@ -60,7 +60,7 @@
       class="edit-button"
       (click)="switchEdit()"
       *appDisabledEntityOperation="{
-        entity: entity?.getConstructor(),
+        entity: entity,
         operation: operationType.UPDATE
       }"
       i18n="Edit button for forms"

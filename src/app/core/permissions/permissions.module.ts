@@ -24,4 +24,6 @@ import {
     },
   ],
 })
-export class PermissionsModule {}
+export class PermissionsModule {
+  //  TODO use LoginState change to init rules
+}

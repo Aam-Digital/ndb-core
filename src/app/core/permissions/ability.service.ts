@@ -18,12 +18,13 @@ const actions = [
   "manage", // Matches any actions
 ] as const;
 
+// TODO explain types in comments
 export type EntityAction = typeof actions[number];
 type Subjects = InferSubjects<typeof Entity> | "all";
 export type EntityAbility = Ability<[EntityAction, Subjects]>;
 export type EntityRule = RawRuleOf<EntityAbility>;
 export const EntityAbility = Ability as AbilityClass<EntityAbility>;
-export type DatabaseRule = RawRuleOf<Ability<[EntityAction, string]>>;
+type DatabaseRule = RawRuleOf<Ability<[EntityAction, string]>>;
 export type DatabaseRules = { [key in string]: DatabaseRule[] };
 
 export function detectEntityType(subject: Entity): EntityConstructor<any> {
@@ -40,6 +41,7 @@ export class AbilityService {
   ) {}
 
   async initRules() {
+    // TODO make this optional, in case no `/rules` endpoint exists, give all permission
     const rules = await this.fetchRules()
       .pipe(
         catchError(() =>

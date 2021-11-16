@@ -75,7 +75,7 @@
   class="delete-button"
   (click)="removeEntity()"
   *appDisabledEntityOperation="{
-    entity: entity?.getConstructor(),
+    entity: entity,
     operation: operationType.DELETE
   }"
   angulartics2On="click"

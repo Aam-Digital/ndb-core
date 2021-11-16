@@ -3,6 +3,7 @@ import { Entity, EntityConstructor } from "../entity/model/entity";
 import { SessionService } from "../session/session-service/session.service";
 import { EntityConfigService } from "../entity/entity-config.service";
 
+// TODO remove enum and replace by EntityAction type
 export enum OperationType {
   CREATE = "create",
   READ = "read",
