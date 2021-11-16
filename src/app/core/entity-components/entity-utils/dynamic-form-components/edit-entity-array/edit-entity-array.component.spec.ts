@@ -7,6 +7,7 @@ import { Child } from "../../../../../child-dev-project/children/model/child";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityUtilsModule } from "../../entity-utils.module";
 import { EntitySchemaService } from "../../../../entity/schema/entity-schema.service";
+import { TypedFormControl } from "../edit-component";
 
 describe("EditEntityArrayComponent", () => {
   let component: EditEntityArrayComponent;
@@ -29,7 +30,7 @@ describe("EditEntityArrayComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EditEntityArrayComponent);
     component = fixture.componentInstance;
-    component.formControl = new FormControl();
+    component.formControl = new FormControl() as TypedFormControl<string[]>;
     component.entityName = Child.ENTITY_TYPE;
     fixture.detectChanges();
   });

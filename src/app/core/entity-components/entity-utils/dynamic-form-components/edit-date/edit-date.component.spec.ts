@@ -7,6 +7,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatInputModule } from "@angular/material/input";
 import { MatNativeDateModule } from "@angular/material/core";
+import { TypedFormControl } from "../edit-component";
 
 describe("EditDateComponent", () => {
   let component: EditDateComponent;
@@ -32,7 +33,7 @@ describe("EditDateComponent", () => {
     const formControl = new FormControl();
     const formGroup = new FormGroup({});
     component.formControlName = "testControl";
-    component.formControl = formControl;
+    component.formControl = formControl as TypedFormControl<Date>;
     formGroup.registerControl(component.formControlName, formControl);
     fixture.detectChanges();
   });

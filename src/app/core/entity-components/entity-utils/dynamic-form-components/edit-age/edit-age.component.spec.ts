@@ -9,6 +9,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatNativeDateModule } from "@angular/material/core";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { MatInputModule } from "@angular/material/input";
+import { TypedFormControl } from "../edit-component";
 
 describe("EditAgeComponent", () => {
   let component: EditAgeComponent;
@@ -36,7 +37,7 @@ describe("EditAgeComponent", () => {
     const formControl = new FormControl();
     const formGroup = new FormGroup({});
     component.formControlName = "testControl";
-    component.formControl = formControl;
+    component.formControl = formControl as TypedFormControl<Date>;
     formGroup.registerControl(component.formControlName, formControl);
     fixture.detectChanges();
   });

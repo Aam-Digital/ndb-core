@@ -5,6 +5,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
+import { TypedFormControl } from "../edit-component";
 
 describe("EditTextComponent", () => {
   let component: EditTextComponent;
@@ -28,7 +29,7 @@ describe("EditTextComponent", () => {
     const formControl = new FormControl();
     const formGroup = new FormGroup({});
     component.formControlName = "testControl";
-    component.formControl = formControl;
+    component.formControl = formControl as TypedFormControl<string>;
     formGroup.registerControl(component.formControlName, formControl);
     fixture.detectChanges();
   });

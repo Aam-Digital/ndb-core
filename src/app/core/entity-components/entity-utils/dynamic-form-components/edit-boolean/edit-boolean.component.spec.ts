@@ -4,6 +4,7 @@ import { EditBooleanComponent } from "./edit-boolean.component";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatCheckboxModule } from "@angular/material/checkbox";
+import { TypedFormControl } from "../edit-component";
 
 describe("EditBooleanComponent", () => {
   let component: EditBooleanComponent;
@@ -22,7 +23,7 @@ describe("EditBooleanComponent", () => {
     const formControl = new FormControl();
     const formGroup = new FormGroup({});
     component.formControlName = "testControl";
-    component.formControl = formControl;
+    component.formControl = formControl as TypedFormControl<boolean>;
     formGroup.registerControl(component.formControlName, formControl);
     fixture.detectChanges();
   });

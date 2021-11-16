@@ -7,7 +7,7 @@ import {
 
 import { EditSingleEntityComponent } from "./edit-single-entity.component";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
-import { FormControl, Validators } from "@angular/forms";
+import { Validators } from "@angular/forms";
 import { EntitySchemaService } from "../../../../entity/schema/entity-schema.service";
 import { EntityFormService } from "../../../entity-form/entity-form.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -15,6 +15,7 @@ import { ChildSchoolRelation } from "../../../../../child-dev-project/children/m
 import { School } from "../../../../../child-dev-project/schools/model/school";
 import { EntityUtilsModule } from "../../entity-utils.module";
 import { Child } from "../../../../../child-dev-project/children/model/child";
+import { TypedFormControl } from "../edit-component";
 
 describe("EditSingleEntityComponent", () => {
   let component: EditSingleEntityComponent;
@@ -42,7 +43,7 @@ describe("EditSingleEntityComponent", () => {
     const entityFormService = TestBed.inject(EntityFormService);
     component.formControl = entityFormService
       .createFormGroup([{ id: "schoolId" }], new ChildSchoolRelation())
-      .get("schoolId") as FormControl;
+      .get("schoolId") as TypedFormControl<string>;
     component.formControlName = "schoolId";
     fixture.detectChanges();
   });
