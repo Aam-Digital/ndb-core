@@ -97,7 +97,7 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
 
 ### Running end-to-end tests
 
-Run `ng e2e` to execute the end-to-end tests via [Cypress](http://www.cypress.io/) in the terminal.
+Run `npm run e2e` to execute the end-to-end tests via [Cypress](http://www.cypress.io/) in the terminal.
 
 Run `npm run e2e-open` to execute the end-to-end tests via Cypress own User Interface.
 
