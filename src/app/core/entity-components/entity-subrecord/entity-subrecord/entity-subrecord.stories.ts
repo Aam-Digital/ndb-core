@@ -19,7 +19,6 @@ import { ChildrenModule } from "../../../../child-dev-project/children/children.
 import { ChildrenService } from "../../../../child-dev-project/children/children.service";
 import { of } from "rxjs";
 import * as faker from "faker";
-import { EntityPermissionsService } from "../../../permissions/entity-permissions.service";
 import { AttendanceLogicalStatus } from "../../../../child-dev-project/attendance/model/attendance-status";
 import { MockSessionModule } from "../../../session/mock-session.module";
 
@@ -73,10 +72,6 @@ export default {
             getChild: () =>
               of(faker.random.arrayElement(childGenerator.entities)),
           },
-        },
-        {
-          provide: EntityPermissionsService,
-          useValue: { userIsPermitted: () => true },
         },
       ],
     }),

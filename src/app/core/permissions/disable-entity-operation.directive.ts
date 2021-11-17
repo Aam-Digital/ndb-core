@@ -8,9 +8,8 @@ import {
   TemplateRef,
   ViewContainerRef,
 } from "@angular/core";
-import { Entity } from "../entity/model/entity";
 import { DisabledWrapperComponent } from "./disabled-wrapper/disabled-wrapper.component";
-import { EntityAbility, EntityAction } from "./ability.service";
+import { EntityAbility, EntityAction, EntitySubject } from "./ability.service";
 import { SessionService } from "../session/session-service/session.service";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { filter } from "rxjs/operators";
@@ -30,7 +29,7 @@ export class DisableEntityOperationDirective implements OnInit, OnChanges {
    */
   @Input("appDisabledEntityOperation") arguments: {
     operation: EntityAction;
-    entity: typeof Entity | Entity;
+    entity: EntitySubject;
   };
 
   private wrapperComponent: ComponentRef<DisabledWrapperComponent>;

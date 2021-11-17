@@ -10,7 +10,6 @@ import {
 import { Entity } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { getUrlWithoutParams } from "../../../utils/utils";
-import { OperationType } from "../../permissions/entity-permissions.service";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { RouteData } from "../../view/dynamic-routing/view-config.interface";
 import { AnalyticsService } from "../../analytics/analytics.service";
@@ -36,8 +35,6 @@ import { EntityAbility } from "../../permissions/ability.service";
 export class EntityDetailsComponent {
   entity: Entity;
   creatingNew = false;
-
-  operationType = OperationType;
 
   panels: Panel[] = [];
   iconName: string;

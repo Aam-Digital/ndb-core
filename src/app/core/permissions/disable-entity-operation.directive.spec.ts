@@ -1,5 +1,4 @@
 import { DisableEntityOperationDirective } from "./disable-entity-operation.directive";
-import { OperationType } from "./entity-permissions.service";
 import { Component, ElementRef, ViewChild } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { Entity } from "../entity/model/entity";
@@ -96,14 +95,13 @@ describe("DisableEntityOperationDirective", () => {
 @Component({
   template: `<button
     *appDisabledEntityOperation="{
-      operation: operationTypes.CREATE,
+      operation: 'create',
       entity: entityConstructor
     }"
     #button
   ></button>`,
 })
 class TestComponent {
-  public operationTypes = OperationType;
   public entityConstructor = Entity;
   @ViewChild("button") public buttonRef: ElementRef;
 }

@@ -12,7 +12,6 @@ import { HistoricalEntityData } from "../historical-entity-data";
 import { HistoricalDataComponent } from "./historical-data.component";
 import { HistoricalDataModule } from "../historical-data.module";
 import { HistoricalDataService } from "../historical-data.service";
-import { EntityPermissionsService } from "../../../core/permissions/entity-permissions.service";
 import { ratingAnswers } from "../rating-answers";
 
 export default {
@@ -46,10 +45,6 @@ export default {
             getHistoricalDataFor: () =>
               Promise.resolve([new Test(), new Test(), new Test()]),
           },
-        },
-        {
-          provide: EntityPermissionsService,
-          useValue: { userIsPermitted: () => true },
         },
       ],
     }),

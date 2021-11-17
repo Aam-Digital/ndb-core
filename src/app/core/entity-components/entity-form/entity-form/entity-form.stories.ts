@@ -6,7 +6,6 @@ import { ChildPhotoService } from "../../../../child-dev-project/children/child-
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { RouterTestingModule } from "@angular/router/testing";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { EntityPermissionsService } from "../../../permissions/entity-permissions.service";
 import { ChildrenModule } from "../../../../child-dev-project/children/children.module";
 import { Router } from "@angular/router";
 import { EntityFormModule } from "../entity-form.module";
@@ -44,10 +43,6 @@ export default {
           useValue: { addDanger: () => null, addInfo: () => null },
         },
         { provide: ChildPhotoService, useValue: { canSetImage: () => true } },
-        {
-          provide: EntityPermissionsService,
-          useValue: { userIsPermitted: () => true },
-        },
         {
           provide: Router,
           useValue: {

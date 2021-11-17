@@ -11,7 +11,6 @@ import { Entity } from "../../entity/model/entity";
 import { MatDialogRef } from "@angular/material/dialog";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { Router } from "@angular/router";
-import { OperationType } from "../../permissions/entity-permissions.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import {
   EntityRemoveService,
@@ -41,8 +40,6 @@ import {
   styleUrls: ["./form-dialog-wrapper.component.scss"],
 })
 export class FormDialogWrapperComponent implements AfterViewInit {
-  readonly operationType = OperationType;
-
   /** entity to be edited */
   @Input() set entity(value: Entity) {
     this.originalEntity = Object.assign({}, value);

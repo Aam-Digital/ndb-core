@@ -20,8 +20,8 @@ const actions = [
 
 // TODO explain types in comments
 export type EntityAction = typeof actions[number];
-type Subjects = InferSubjects<typeof Entity> | "all";
-export type EntityAbility = Ability<[EntityAction, Subjects]>;
+export type EntitySubject = InferSubjects<typeof Entity> | "all";
+export type EntityAbility = Ability<[EntityAction, EntitySubject]>;
 export type EntityRule = RawRuleOf<EntityAbility>;
 export const EntityAbility = Ability as AbilityClass<EntityAbility>;
 type DatabaseRule = RawRuleOf<Ability<[EntityAction, string]>>;

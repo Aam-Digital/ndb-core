@@ -11,7 +11,6 @@ import { AlertsModule } from "../../../../alerts/alerts.module";
 import { Entity } from "../../../../entity/model/entity";
 import { DatabaseField } from "../../../../entity/database-field.decorator";
 import { DatabaseEntity } from "../../../../entity/database-entity.decorator";
-import { EntityPermissionsService } from "../../../../permissions/entity-permissions.service";
 
 export default {
   title: "Core/Entity Property Fields/Number",
@@ -29,10 +28,6 @@ export default {
         {
           provide: EntityMapperService,
           useValue: { save: () => Promise.resolve() },
-        },
-        {
-          provide: EntityPermissionsService,
-          useValue: { userIsPermitted: () => true },
         },
       ],
     }),
