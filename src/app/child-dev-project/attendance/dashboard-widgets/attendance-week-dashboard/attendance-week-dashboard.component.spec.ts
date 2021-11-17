@@ -5,6 +5,7 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { ChildPhotoService } from "../../../children/child-photo-service/child-photo.service";
 import { AttendanceModule } from "../../attendance.module";
 import { AttendanceService } from "../../attendance.service";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("AttendanceWeekDashboardComponent", () => {
   let component: AttendanceWeekDashboardComponent;
@@ -20,7 +21,11 @@ describe("AttendanceWeekDashboardComponent", () => {
         []
       );
       TestBed.configureTestingModule({
-        imports: [AttendanceModule, RouterTestingModule.withRoutes([])],
+        imports: [
+          AttendanceModule,
+          RouterTestingModule.withRoutes([]),
+          FontAwesomeTestingModule,
+        ],
         providers: [
           {
             provide: ChildPhotoService,

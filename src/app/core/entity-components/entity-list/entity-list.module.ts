@@ -3,7 +3,6 @@ import { CommonModule } from "@angular/common";
 import { EntityListComponent } from "./entity-list.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
-import { MatIconModule } from "@angular/material/icon";
 import { Angulartics2Module } from "angulartics2";
 import { MatButtonModule } from "@angular/material/button";
 import { ExtendedModule, FlexModule } from "@angular/flex-layout";
@@ -22,6 +21,7 @@ import { PermissionsModule } from "../../permissions/permissions.module";
 import { EntitySubrecordModule } from "../entity-subrecord/entity-subrecord.module";
 import { EntityUtilsModule } from "../entity-utils/entity-utils.module";
 import { EntityFormModule } from "../entity-form/entity-form.module";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @NgModule({
   declarations: [EntityListComponent, ListFilterComponent],
@@ -31,7 +31,6 @@ import { EntityFormModule } from "../entity-form/entity-form.module";
     MatFormFieldModule,
     MatSelectModule,
     ExportModule,
-    MatIconModule,
     Angulartics2Module,
     MatButtonModule,
     FlexModule,
@@ -48,6 +47,7 @@ import { EntityFormModule } from "../entity-form/entity-form.module";
     EntitySubrecordModule,
     EntityUtilsModule,
     EntityFormModule,
+    FontAwesomeModule,
   ],
   exports: [EntityListComponent, ListFilterComponent],
 })

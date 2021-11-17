@@ -16,7 +16,6 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { MatStepperModule } from "@angular/material/stepper";
 import { ChildrenService } from "../../../children/children.service";
 import { MatSelectModule } from "@angular/material/select";
-import { MatIconModule } from "@angular/material/icon";
 import { MatListModule } from "@angular/material/list";
 import { AttendanceService } from "../../attendance.service";
 import moment from "moment";
@@ -28,7 +27,6 @@ import { MatCardModule } from "@angular/material/card";
 import { Note } from "../../../notes/model/note";
 import { ActivityCardComponent } from "../../activity-card/activity-card.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { FontAwesomeIconsModule } from "../../../../core/icons/font-awesome-icons.module";
 import { DemoActivityGeneratorService } from "../../demo-data/demo-activity-generator.service";
 import { FormDialogModule } from "../../../../core/form-dialog/form-dialog.module";
 import { PouchDatabase } from "../../../../core/database/pouch-database";
@@ -80,11 +78,9 @@ export default {
         MatNativeDateModule,
         MatStepperModule,
         MatSelectModule,
-        MatIconModule,
         MatListModule,
         MatCardModule,
         MatTooltipModule,
-        FontAwesomeIconsModule,
         ReactiveFormsModule,
         FlexLayoutModule,
         EntityModule,

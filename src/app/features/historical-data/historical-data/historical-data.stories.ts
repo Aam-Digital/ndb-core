@@ -3,7 +3,6 @@ import { moduleMetadata } from "@storybook/angular";
 import { RouterTestingModule } from "@angular/router/testing";
 import { MatNativeDateModule } from "@angular/material/core";
 import { Angulartics2Module } from "angulartics2";
-import { FontAwesomeIconsModule } from "../../../core/icons/font-awesome-icons.module";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { CommonModule, DatePipe } from "@angular/common";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -23,7 +22,6 @@ export default {
     moduleMetadata({
       imports: [
         HistoricalDataModule,
-        FontAwesomeIconsModule,
         RouterTestingModule,
         MatNativeDateModule,
         Angulartics2Module.forRoot(),

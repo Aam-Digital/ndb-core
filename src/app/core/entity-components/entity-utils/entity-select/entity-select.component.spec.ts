@@ -17,6 +17,8 @@ import { User } from "../../../user/user";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { Subscription } from "rxjs";
+import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
+import { DynamicEntityService } from "../../../entity/dynamic-entity.service";
 
 describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any>;
@@ -38,6 +40,8 @@ describe("EntitySelectComponent", () => {
           provide: EntityMapperService,
           useValue: mockEntityMapper(testUsers.concat(otherEntities)),
         },
+        EntitySchemaService,
+        DynamicEntityService,
       ],
       imports: [
         MatAutocompleteModule,
@@ -170,6 +174,7 @@ describe("EntitySelectComponent", () => {
   });
 
   it("should add an unselected entity to the filtered entities array", (done) => {
+    // TODO this is still throwing object unsubscribe error
     component.allEntities = testUsers;
     const selectedUser = testUsers[1];
     let iteration = 0;

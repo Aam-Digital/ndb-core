@@ -69,3 +69,13 @@ export function sortByAttribute<OBJECT, PROPERTY extends keyof OBJECT>(
     }
   };
 }
+
+export function readFile(file: Blob): Promise<string> {
+  return new Promise((resolve) => {
+    const fileReader = new FileReader();
+    fileReader.addEventListener("load", () =>
+      resolve(fileReader.result as string)
+    );
+    fileReader.readAsText(file);
+  });
+}

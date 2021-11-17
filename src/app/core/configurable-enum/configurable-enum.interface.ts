@@ -32,6 +32,11 @@ export interface ConfigurableEnumValue {
   [x: string]: any;
 }
 
+export const EMPTY: ConfigurableEnumValue = {
+  id: "",
+  label: "",
+};
+
 /**
  * The prefix of all enum collection entries in the config database.
  *

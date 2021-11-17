@@ -9,7 +9,6 @@ import {
   FilterConfig,
 } from "../entity-components/entity-list/EntityListConfig";
 import { FormFieldConfig } from "../entity-components/entity-form/entity-form/FormConfig";
-import { ENTITY_MAP } from "../entity-components/entity-details/entity-details.component";
 import { Entity, EntityConstructor } from "../entity/model/entity";
 import {
   EntityConfig,
@@ -33,6 +32,7 @@ import {
 } from "../configurable-enum/configurable-enum.interface";
 import { warningLevels } from "../../child-dev-project/warning-levels";
 import { User } from "../user/user";
+import { DynamicEntityService } from "../entity/dynamic-entity.service";
 
 @Injectable({
   providedIn: "root",
@@ -41,7 +41,8 @@ export class ConfigMigrationService {
   private config: Config;
   constructor(
     private configService: ConfigService,
-    private entityMapper: EntityMapperService
+    private entityMapper: EntityMapperService,
+    private dynamicEntityService: DynamicEntityService
   ) {}
 
   async migrateConfig(): Promise<Config> {
@@ -92,7 +93,7 @@ export class ConfigMigrationService {
       .split("-")
       .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
       .join("");
-    return ENTITY_MAP.get(entityType);
+    return this.dynamicEntityService.getEntityConstructor(entityType);
   }
 
   private migrateEntityListConfig(
