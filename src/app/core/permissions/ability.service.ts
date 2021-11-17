@@ -28,7 +28,12 @@ type DatabaseRule = RawRuleOf<Ability<[EntityAction, string]>>;
 export type DatabaseRules = { [key in string]: DatabaseRule[] };
 
 export function detectEntityType(subject: Entity): EntityConstructor<any> {
-  return subject.getConstructor();
+  if (subject instanceof Entity) {
+    return subject.getConstructor();
+  } else {
+    // This happens when trying to check permissions on a object that is not a subtype of Entity
+    throw Error("Checking rule for invalid subject " + subject);
+  }
 }
 
 @Injectable()

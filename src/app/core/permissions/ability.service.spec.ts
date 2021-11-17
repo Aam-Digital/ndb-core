@@ -132,12 +132,19 @@ describe("AbilityService", () => {
     expect(ability.can("manage", new Note())).toBeTrue();
   });
 
-  it("should throw an error if the subject is unknown", () => {
+  it("should throw an error if the subject from the config is unknown", () => {
     mockHttpClient.get.and.returnValue(
       of({ user_app: [{ subject: "NotAEntity", action: "read" }] })
     );
 
     return expectAsync(service.initRules()).toBeRejected();
+  });
+
+  it("should throw an error when checking permissions on a object that is not a Entity", async () => {
+    await service.initRules();
+    class TestClass {}
+
+    expect(() => ability.can("read", new TestClass() as any)).toThrowError();
   });
 
   function getRawRules(): DatabaseRules {
