@@ -44,7 +44,7 @@
     "deep-object-diff": "^1.1.0",
     "faker": "^5.5.3",
     "flag-icon-css": "^3.5.0",
-    "idb": "^6.1.2",
+    "idb": "^6.1.5",
     "json-query": "^2.2.2",
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
