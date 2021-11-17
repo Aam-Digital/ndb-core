@@ -28,7 +28,7 @@ import { ApplicationInitStatus } from "@angular/core";
 import { AppModule } from "./app.module";
 import { AppConfig } from "./core/app-config/app-config";
 import { IAppConfig } from "./core/app-config/app-config.model";
-import { Angulartics2Piwik } from "angulartics2/piwik";
+import { Angulartics2Matomo } from "angulartics2/matomo";
 import { EntityMapperService } from "./core/entity/entity-mapper.service";
 import { Config } from "./core/config/config";
 import { USAGE_ANALYTICS_CONFIG_ID } from "./core/analytics/usage-analytics-config";
@@ -90,7 +90,7 @@ describe("AppComponent", () => {
     };
     const entityMapper = TestBed.inject(EntityMapperService);
     spyOn(entityMapper, "load").and.resolveTo(new Config(testConfig));
-    const angulartics = TestBed.inject(Angulartics2Piwik);
+    const angulartics = TestBed.inject(Angulartics2Matomo);
     const startTrackingSpy = spyOn(angulartics, "startTracking");
 
     createComponent();
