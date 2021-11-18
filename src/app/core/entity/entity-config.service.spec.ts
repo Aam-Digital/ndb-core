@@ -83,7 +83,7 @@ describe("EntityConfigService", () => {
   });
 
   it("should load a given EntityType", () => {
-    const config: EntityConfig = { permissions: {}, attributes: [] };
+    const config: EntityConfig = { attributes: [] };
     mockConfigService.getConfig.and.returnValue(config);
     const result = service.getEntityConfig(Test);
     expect(mockConfigService.getConfig).toHaveBeenCalledWith("entity:Test");
@@ -94,7 +94,7 @@ describe("EntityConfigService", () => {
     const configWithInvalidEntities: (EntityConfig & { _id: string })[] = [
       {
         _id: "entity:IDoNotExist",
-        permissions: {},
+        attributes: [],
       },
     ];
     mockConfigService.getAllConfigs.and.returnValue(configWithInvalidEntities);
