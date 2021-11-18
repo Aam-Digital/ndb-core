@@ -1,4 +1,4 @@
-import { TestBed } from "@angular/core/testing";
+import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 
 import {
   AbilityService,
@@ -7,7 +7,7 @@ import {
   EntityAbility,
   EntityRule,
 } from "./ability.service";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { of, Subject, throwError } from "rxjs";
 import { AppConfig } from "../app-config/app-config";
 import { SessionService } from "../session/session-service/session.service";
@@ -146,6 +146,28 @@ describe("AbilityService", () => {
 
     expect(() => ability.can("read", new TestClass() as any)).toThrowError();
   });
+
+  it("should give all permissions if no rules object can be fetched", fakeAsync(() => {
+    mockHttpClient.get.and.returnValue(
+      throwError(() => new HttpErrorResponse({}))
+    );
+
+    service.initRules();
+    tick();
+
+    // Request failed, sync not started - offline without cached rules object
+    expect(ability.can("read", Child)).toBeTrue();
+    expect(ability.can("update", Child)).toBeTrue();
+    expect(ability.can("manage", new Note())).toBeTrue();
+
+    mockSyncState.next(SyncState.STARTED);
+    tick();
+
+    // Request failed, sync started - no rules object exists
+    expect(ability.can("read", Child)).toBeTrue();
+    expect(ability.can("update", Child)).toBeTrue();
+    expect(ability.can("manage", new Note())).toBeTrue();
+  }));
 
   function getRawRules(): DatabaseRules {
     return {

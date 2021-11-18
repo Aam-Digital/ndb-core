@@ -45,18 +45,17 @@ export class AbilityService {
     private dynamicEntityService: DynamicEntityService
   ) {}
 
-  async initRules() {
-    // TODO make this optional, in case no `/rules` endpoint exists, give all permission
-    const rules = await this.fetchRules()
-      .pipe(
-        catchError(() =>
-          this.sessionService.syncState.pipe(
-            waitForChangeTo(SyncState.STARTED),
-            mergeMap(() => this.fetchRules())
-          )
-        )
-      )
-      .toPromise();
+  async initRules(): Promise<void> {
+    this.ability.update([{ action: "manage", subject: "all" }]);
+    let rules: DatabaseRules;
+    try {
+      rules = await this.fetchRules()
+        .pipe(catchError(() => this.retryAfterSync()))
+        .toPromise();
+    } catch (e) {
+      // If no rule is found, allow everything
+      return;
+    }
     this.updateAbilityWithRules(rules);
   }
 
@@ -65,6 +64,13 @@ export class AbilityService {
     return this.httpClient.get<DatabaseRules>(rulesUrl, {
       withCredentials: true,
     });
+  }
+
+  private retryAfterSync(): Observable<DatabaseRules> {
+    return this.sessionService.syncState.pipe(
+      waitForChangeTo(SyncState.STARTED),
+      mergeMap(() => this.fetchRules())
+    );
   }
 
   private updateAbilityWithRules(rules: DatabaseRules) {
