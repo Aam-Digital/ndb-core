@@ -1,5 +1,5 @@
 import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init-dynamic-component.interface";
-import { AbstractControl, FormControl } from "@angular/forms";
+import { AbstractControl, FormControl, FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 
@@ -39,6 +39,10 @@ export class TypedFormControl<T> extends FormControl {
     }
   ) {
     super.setValue(value, options);
+  }
+
+  get parent(): FormGroup {
+    return super.parent as FormGroup;
   }
 }
 

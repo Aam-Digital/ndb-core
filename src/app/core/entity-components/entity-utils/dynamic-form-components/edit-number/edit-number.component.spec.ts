@@ -1,10 +1,11 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EditNumberComponent } from "./edit-number.component";
-import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { setupEditComponent } from "../edit-component.spec";
 
 describe("EditNumberComponent", () => {
   let component: EditNumberComponent;
@@ -26,13 +27,7 @@ describe("EditNumberComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EditNumberComponent);
     component = fixture.componentInstance;
-    const formControl = new FormControl();
-    formGroup = new FormGroup({ testProperty: formControl });
-    component.onInitFromDynamicConfig({
-      formControl: formControl,
-      propertySchema: {},
-      formFieldConfig: { id: "testProperty" },
-    });
+    formGroup = setupEditComponent(component);
     fixture.detectChanges();
   });
 
