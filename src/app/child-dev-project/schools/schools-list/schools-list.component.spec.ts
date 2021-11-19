@@ -18,6 +18,7 @@ import { ExportService } from "../../../core/export/export-service/export.servic
 import { MockSessionModule } from "../../../core/session/mock-session.module";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
 
 describe("SchoolsListComponent", () => {
   let component: SchoolsListComponent;
@@ -55,6 +56,7 @@ describe("SchoolsListComponent", () => {
           NoopAnimationsModule,
           MockSessionModule.withState(),
           FontAwesomeTestingModule,
+          HttpClientTestingModule,
         ],
         providers: [
           { provide: ActivatedRoute, useValue: routeMock },

@@ -4,22 +4,21 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { Entity } from "../entity/model/entity";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Child } from "../../child-dev-project/children/model/child";
-import { SessionService } from "../session/session-service/session.service";
-import { LoginState } from "../session/session-states/login-state.enum";
 import { Subject } from "rxjs";
 import { EntityAbility } from "./permission-types";
+import { AbilityService } from "./ability.service";
 
 describe("DisableEntityOperationDirective", () => {
   let testComponent: ComponentFixture<TestComponent>;
   let mockAbility: jasmine.SpyObj<EntityAbility>;
-  let mockSessionService: jasmine.SpyObj<SessionService>;
-  let mockLoginState: Subject<LoginState>;
+  let mockAbilityService: jasmine.SpyObj<AbilityService>;
+  let mockUpdateNotifier: Subject<void>;
 
   beforeEach(() => {
     mockAbility = jasmine.createSpyObj(["cannot"]);
-    mockLoginState = new Subject<LoginState>();
-    mockSessionService = jasmine.createSpyObj([], {
-      loginState: mockLoginState,
+    mockUpdateNotifier = new Subject();
+    mockAbilityService = jasmine.createSpyObj([], {
+      abilityUpdateNotifier: mockUpdateNotifier,
     });
 
     TestBed.configureTestingModule({
@@ -27,7 +26,7 @@ describe("DisableEntityOperationDirective", () => {
       imports: [MatTooltipModule],
       providers: [
         { provide: EntityAbility, useValue: mockAbility },
-        { provide: SessionService, useValue: mockSessionService },
+        { provide: AbilityService, useValue: mockAbilityService },
       ],
     });
   });
@@ -69,7 +68,7 @@ describe("DisableEntityOperationDirective", () => {
     ).toBeTrue();
   });
 
-  it("should re-evaluate the ability whenever a new user is logged in", () => {
+  it("should re-evaluate the ability whenever it is updated", () => {
     createComponent(true);
 
     expect(
@@ -77,7 +76,7 @@ describe("DisableEntityOperationDirective", () => {
     ).toBeTrue();
 
     mockAbility.cannot.and.returnValue(false);
-    mockLoginState.next(LoginState.LOGGED_IN);
+    mockUpdateNotifier.next();
     testComponent.detectChanges();
 
     expect(

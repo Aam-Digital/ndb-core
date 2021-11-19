@@ -11,6 +11,7 @@ import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MockSessionModule } from "../../session/mock-session.module";
 import { DynamicEntityService } from "../../entity/dynamic-entity.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
 
 describe("FormDialogWrapperComponent", () => {
   let component: FormDialogWrapperComponent;
@@ -27,6 +28,7 @@ describe("FormDialogWrapperComponent", () => {
           RouterTestingModule,
           MatSnackBarModule,
           MockSessionModule.withState(),
+          HttpClientTestingModule,
         ],
         providers: [
           { provide: MatDialogRef, useValue: {} },

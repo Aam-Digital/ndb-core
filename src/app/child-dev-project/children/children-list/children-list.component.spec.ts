@@ -24,6 +24,7 @@ import { LoggingService } from "../../../core/logging/logging.service";
 import { ExportService } from "../../../core/export/export-service/export.service";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
 
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;
@@ -96,6 +97,7 @@ describe("ChildrenListComponent", () => {
           Angulartics2Module.forRoot(),
           MockSessionModule.withState(),
           FontAwesomeTestingModule,
+          HttpClientTestingModule,
         ],
         providers: [
           {

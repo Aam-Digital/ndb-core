@@ -25,13 +25,14 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { PrimaryActionComponent } from "../primary-action/primary-action.component";
 import { SessionService } from "../../session/session-service/session.service";
 import { SwUpdate } from "@angular/service-worker";
-import { BehaviorSubject, of } from "rxjs";
+import { BehaviorSubject, of, Subject } from "rxjs";
 import { ApplicationInitStatus } from "@angular/core";
 import { UiModule } from "../ui.module";
 import { Angulartics2Module } from "angulartics2";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { ConfigService } from "../../config/config.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { AbilityService } from "../../permissions/ability.service";
 
 describe("UiComponent", () => {
   let component: UiComponent;
@@ -64,6 +65,12 @@ describe("UiComponent", () => {
           {
             provide: ConfigService,
             useValue: mockConfig,
+          },
+          {
+            provide: AbilityService,
+            useValue: jasmine.createSpyObj([], {
+              abilityUpdateNotifier: new Subject(),
+            }),
           },
         ],
       }).compileComponents();

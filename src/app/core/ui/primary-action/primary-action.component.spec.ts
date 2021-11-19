@@ -9,6 +9,7 @@ import { MockSessionModule } from "../../session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { DynamicEntityService } from "../../entity/dynamic-entity.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
 
 describe("PrimaryActionComponent", () => {
   let component: PrimaryActionComponent;
@@ -23,6 +24,7 @@ describe("PrimaryActionComponent", () => {
         FormDialogModule,
         PermissionsModule,
         FontAwesomeTestingModule,
+        HttpClientTestingModule,
         MockSessionModule.withState(),
       ],
       providers: [DynamicEntityService, EntitySchemaService],

@@ -20,7 +20,6 @@ import { SessionService } from "../session-service/session.service";
 import { LoginState } from "../session-states/login-state.enum";
 import { ActivatedRoute, Router } from "@angular/router";
 import { LoggingService } from "../../logging/logging.service";
-import { AbilityService } from "../../permissions/ability.service";
 
 /**
  * Form to allow users to enter their credentials and log in.
@@ -47,8 +46,7 @@ export class LoginComponent {
     private _sessionService: SessionService,
     private loggingService: LoggingService,
     private router: Router,
-    private route: ActivatedRoute,
-    private abilityService: AbilityService
+    private route: ActivatedRoute
   ) {}
 
   /**
@@ -89,9 +87,6 @@ export class LoginComponent {
   }
 
   private async onLoginSuccess() {
-    // Initialize permissions for logged in user
-    // TODO move to PermissionModule constructor
-    await this.abilityService.initRules();
     // New routes are added at runtime
     await this.router.navigate([], {
       relativeTo: this.route,

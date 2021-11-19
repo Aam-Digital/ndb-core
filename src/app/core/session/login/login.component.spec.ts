@@ -35,18 +35,15 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FormsModule } from "@angular/forms";
 import { LoginState } from "../session-states/login-state.enum";
 import { Router } from "@angular/router";
-import { AbilityService } from "../../permissions/ability.service";
 
 describe("LoginComponent", () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
   let mockSessionService: jasmine.SpyObj<SessionService>;
-  let mockAbilityService: jasmine.SpyObj<AbilityService>;
 
   beforeEach(
     waitForAsync(() => {
       mockSessionService = jasmine.createSpyObj(["login"]);
-      mockAbilityService = jasmine.createSpyObj(["initRules"]);
       TestBed.configureTestingModule({
         declarations: [LoginComponent],
         imports: [
@@ -61,7 +58,6 @@ describe("LoginComponent", () => {
         providers: [
           LoggingService,
           { provide: SessionService, useValue: mockSessionService },
-          { provide: AbilityService, useValue: mockAbilityService },
         ],
       }).compileComponents();
     })
@@ -84,7 +80,6 @@ describe("LoginComponent", () => {
     component.login();
     tick();
 
-    expect(mockAbilityService.initRules).toHaveBeenCalled();
     expect(routerSpy).toHaveBeenCalled();
   }));
 

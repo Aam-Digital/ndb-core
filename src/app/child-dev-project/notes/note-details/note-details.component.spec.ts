@@ -14,6 +14,7 @@ import { MockSessionModule } from "../../../core/session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { By } from "@angular/platform-browser";
 import { ChildMeetingNoteAttendanceComponent } from "./child-meeting-attendance/child-meeting-note-attendance.component";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
 
 function generateTestNote(forChildren: Child[]) {
   const testNote = Note.create(new Date(), "test note");
@@ -61,6 +62,7 @@ describe("NoteDetailsComponent", () => {
         Angulartics2Module.forRoot(),
         MockSessionModule.withState(),
         FontAwesomeTestingModule,
+        HttpClientTestingModule,
       ],
       providers: [
         { provide: MatDialogRef, useValue: dialogRefMock },

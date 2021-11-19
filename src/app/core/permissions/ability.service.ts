@@ -4,16 +4,17 @@ import { AppConfig } from "../app-config/app-config";
 import { Entity, EntityConstructor } from "../entity/model/entity";
 import { SessionService } from "../session/session-service/session.service";
 import { DynamicEntityService } from "../entity/dynamic-entity.service";
-import { catchError, mergeMap } from "rxjs/operators";
+import { catchError, filter, mergeMap } from "rxjs/operators";
 import { waitForChangeTo } from "../session/session-states/session-utils";
 import { SyncState } from "../session/session-states/sync-state.enum";
-import { Observable } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import {
   DatabaseRule,
   DatabaseRules,
   EntityAbility,
   EntityRule,
 } from "./permission-types";
+import { LoginState } from "../session/session-states/login-state.enum";
 
 export function detectEntityType(subject: Entity): EntityConstructor<any> {
   if (subject instanceof Entity) {
@@ -25,18 +26,28 @@ export function detectEntityType(subject: Entity): EntityConstructor<any> {
 }
 
 /**
- * This service sets up the `Ability` injectable with the JSON defined rules for the currently logged in user.
+ * This service sets up the `EntityAbility` injectable with the JSON defined rules for the currently logged in user.
  */
 @Injectable()
 export class AbilityService {
+  private _abilityUpdateNotifier = new Subject<void>();
+
+  get abilityUpdateNotifier(): Observable<void> {
+    return this._abilityUpdateNotifier.asObservable();
+  }
+
   constructor(
     private httpClient: HttpClient,
     private ability: EntityAbility,
     private sessionService: SessionService,
     private dynamicEntityService: DynamicEntityService
-  ) {}
+  ) {
+    this.sessionService.loginState
+      .pipe(filter((state) => state === LoginState.LOGGED_IN))
+      .subscribe(() => this.initRules());
+  }
 
-  async initRules(): Promise<void> {
+  private async initRules(): Promise<void> {
     this.ability.update([{ action: "manage", subject: "all" }]);
     let rules: DatabaseRules;
     try {
@@ -76,6 +87,7 @@ export class AbilityService {
       })
     );
     this.ability.update(userRules);
+    this._abilityUpdateNotifier.next();
   }
 
   private parseStringToConstructor(

@@ -15,6 +15,7 @@ import { FormBuilder } from "@angular/forms";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { EntityFormService } from "../entity-form.service";
 import { MockSessionModule } from "../../../session/mock-session.module";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
 
 describe("EntityFormComponent", () => {
   let component: EntityFormComponent;
@@ -46,6 +47,7 @@ describe("EntityFormComponent", () => {
           NoopAnimationsModule,
           RouterTestingModule,
           MatSnackBarModule,
+          HttpClientTestingModule,
           MockSessionModule.withState(),
         ],
         providers: [

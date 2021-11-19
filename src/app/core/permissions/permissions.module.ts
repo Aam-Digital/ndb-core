@@ -21,6 +21,4 @@ import { EntityAbility } from "./permission-types";
     },
   ],
 })
-export class PermissionsModule {
-  //  TODO use LoginState change to init rules
-}
+export class PermissionsModule {}

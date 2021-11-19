@@ -10,6 +10,7 @@ import { EntitySchemaService } from "../../../entity/schema/entity-schema.servic
 import { AlertService } from "../../../alerts/alert.service";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MockSessionModule } from "../../../session/mock-session.module";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
 
 describe("FormComponent", () => {
   let component: FormComponent;
@@ -24,6 +25,7 @@ describe("FormComponent", () => {
         ReactiveFormsModule,
         MockSessionModule.withState(),
         MatSnackBarModule,
+        HttpClientTestingModule,
       ],
       providers: [EntitySchemaService, AlertService],
     }).compileComponents();

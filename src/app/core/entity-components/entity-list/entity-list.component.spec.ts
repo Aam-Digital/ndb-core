@@ -20,6 +20,7 @@ import { ExportModule } from "../../export/export.module";
 import { ExportService } from "../../export/export-service/export.service";
 import { MockSessionModule } from "../../session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -100,6 +101,7 @@ describe("EntityListComponent", () => {
           ExportModule,
           Angulartics2Module.forRoot(),
           ReactiveFormsModule,
+          HttpClientTestingModule,
           RouterTestingModule.withRoutes([
             { path: "child", component: ChildrenListComponent },
           ]),

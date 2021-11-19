@@ -12,6 +12,7 @@ import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { DynamicEntityService } from "../entity/dynamic-entity.service";
 import { SyncState } from "../session/session-states/sync-state.enum";
 import { DatabaseRules, EntityAbility, EntityRule } from "./permission-types";
+import { LoginState } from "../session/session-states/login-state.enum";
 
 describe("AbilityService", () => {
   let service: AbilityService;
@@ -20,14 +21,17 @@ describe("AbilityService", () => {
   let mockSessionService: jasmine.SpyObj<SessionService>;
   let ability: EntityAbility;
   let mockSyncState: Subject<SyncState>;
+  let mockLoginState: Subject<LoginState>;
 
   beforeEach(() => {
     AppConfig.settings = { database: { remote_url: mockDBEndpoint } } as any;
     mockHttpClient = jasmine.createSpyObj(["get"]);
     mockHttpClient.get.and.callFake(() => of(getRawRules() as any));
     mockSyncState = new Subject<SyncState>();
+    mockLoginState = new Subject<LoginState>();
     mockSessionService = jasmine.createSpyObj(["getCurrentUser"], {
       syncState: mockSyncState,
+      loginState: mockLoginState,
     });
     mockSessionService.getCurrentUser.and.returnValue({
       name: "testUser",
@@ -54,12 +58,17 @@ describe("AbilityService", () => {
     ability = TestBed.inject(EntityAbility);
   });
 
+  afterEach(() => {
+    mockLoginState.complete();
+    mockSyncState.complete();
+  });
+
   it("should be created", () => {
     expect(service).toBeTruthy();
   });
 
   it("should fetch the rules object from the backend", () => {
-    service.initRules();
+    mockLoginState.next(LoginState.LOGGED_IN);
 
     expect(mockHttpClient.get).toHaveBeenCalledWith(mockDBEndpoint + "rules", {
       withCredentials: true,
@@ -72,7 +81,7 @@ describe("AbilityService", () => {
       of(getRawRules())
     );
 
-    service.initRules();
+    mockLoginState.next(LoginState.LOGGED_IN);
 
     expect(mockHttpClient.get).toHaveBeenCalledTimes(1);
 
@@ -84,7 +93,7 @@ describe("AbilityService", () => {
   it("should update the ability with the received rules for the logged in user", async () => {
     spyOn(ability, "update");
 
-    await service.initRules();
+    await mockLoginState.next(LoginState.LOGGED_IN);
 
     expect(ability.update).toHaveBeenCalledWith(getParsedRules().user_app);
   });
@@ -96,7 +105,7 @@ describe("AbilityService", () => {
       roles: ["user_app", "admin_app"],
     });
 
-    await service.initRules();
+    await mockLoginState.next(LoginState.LOGGED_IN);
 
     expect(ability.update).toHaveBeenCalledWith(
       getParsedRules().user_app.concat(getParsedRules().admin_app)
@@ -104,7 +113,7 @@ describe("AbilityService", () => {
   });
 
   it("should create an ability that correctly uses the defined rules", async () => {
-    await service.initRules();
+    await mockLoginState.next(LoginState.LOGGED_IN);
 
     expect(ability.can("read", Child)).toBeTrue();
     expect(ability.can("create", Child)).toBeFalse();
@@ -119,7 +128,7 @@ describe("AbilityService", () => {
       name: "testAdmin",
       roles: ["user_app", "admin_app"],
     });
-    await service.initRules();
+    await mockLoginState.next(LoginState.LOGGED_IN);
 
     expect(ability.can("manage", Child)).toBeTrue();
     expect(ability.can("manage", new Child())).toBeTrue();
@@ -127,16 +136,8 @@ describe("AbilityService", () => {
     expect(ability.can("manage", new Note())).toBeTrue();
   });
 
-  it("should throw an error if the subject from the config is unknown", () => {
-    mockHttpClient.get.and.returnValue(
-      of({ user_app: [{ subject: "NotAEntity", action: "read" }] })
-    );
-
-    return expectAsync(service.initRules()).toBeRejected();
-  });
-
   it("should throw an error when checking permissions on a object that is not a Entity", async () => {
-    await service.initRules();
+    await mockLoginState.next(LoginState.LOGGED_IN);
     class TestClass {}
 
     expect(() => ability.can("read", new TestClass() as any)).toThrowError();
@@ -147,7 +148,7 @@ describe("AbilityService", () => {
       throwError(() => new HttpErrorResponse({}))
     );
 
-    service.initRules();
+    mockLoginState.next(LoginState.LOGGED_IN);
     tick();
 
     // Request failed, sync not started - offline without cached rules object
@@ -163,6 +164,16 @@ describe("AbilityService", () => {
     expect(ability.can("update", Child)).toBeTrue();
     expect(ability.can("manage", new Note())).toBeTrue();
   }));
+
+  it("should notify when the rules are updated", (done) => {
+    spyOn(ability, "update");
+    service.abilityUpdateNotifier.subscribe(() => {
+      expect(ability.update).toHaveBeenCalled();
+      done();
+    });
+
+    mockLoginState.next(LoginState.LOGGED_IN);
+  });
 
   function getRawRules(): DatabaseRules {
     return {
