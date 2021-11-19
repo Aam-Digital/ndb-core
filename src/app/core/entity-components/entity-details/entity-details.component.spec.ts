@@ -21,7 +21,7 @@ import {
   RemoveResult,
 } from "../../entity/entity-remove.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { EntityAbility } from "../../permissions/ability.service";
+import { EntityAbility } from "../../permissions/permission-types";
 
 describe("EntityDetailsComponent", () => {
   let component: EntityDetailsComponent;

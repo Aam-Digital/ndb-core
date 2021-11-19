@@ -4,11 +4,8 @@ import { DisableEntityOperationDirective } from "./disable-entity-operation.dire
 import { DisabledWrapperComponent } from "./disabled-wrapper/disabled-wrapper.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { UserRoleGuard } from "./user-role.guard";
-import {
-  AbilityService,
-  detectEntityType,
-  EntityAbility,
-} from "./ability.service";
+import { AbilityService, detectEntityType } from "./ability.service";
+import { EntityAbility } from "./permission-types";
 
 @NgModule({
   declarations: [DisableEntityOperationDirective, DisabledWrapperComponent],

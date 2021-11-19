@@ -3,11 +3,11 @@ import { Component, ElementRef, ViewChild } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { Entity } from "../entity/model/entity";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { EntityAbility } from "./ability.service";
 import { Child } from "../../child-dev-project/children/model/child";
 import { SessionService } from "../session/session-service/session.service";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { Subject } from "rxjs";
+import { EntityAbility } from "./permission-types";
 
 describe("DisableEntityOperationDirective", () => {
   let testComponent: ComponentFixture<TestComponent>;

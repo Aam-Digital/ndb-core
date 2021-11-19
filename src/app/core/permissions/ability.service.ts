@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { AppConfig } from "../app-config/app-config";
-import { Ability, AbilityClass, InferSubjects, RawRuleOf } from "@casl/ability";
 import { Entity, EntityConstructor } from "../entity/model/entity";
 import { SessionService } from "../session/session-service/session.service";
 import { DynamicEntityService } from "../entity/dynamic-entity.service";
@@ -9,23 +8,12 @@ import { catchError, mergeMap } from "rxjs/operators";
 import { waitForChangeTo } from "../session/session-states/session-utils";
 import { SyncState } from "../session/session-states/sync-state.enum";
 import { Observable } from "rxjs";
-
-const actions = [
-  "read",
-  "create",
-  "update",
-  "delete",
-  "manage", // Matches any actions
-] as const;
-
-// TODO explain types in comments
-export type EntityAction = typeof actions[number];
-export type EntitySubject = InferSubjects<typeof Entity> | "all";
-export type EntityAbility = Ability<[EntityAction, EntitySubject]>;
-export type EntityRule = RawRuleOf<EntityAbility>;
-export const EntityAbility = Ability as AbilityClass<EntityAbility>;
-type DatabaseRule = RawRuleOf<Ability<[EntityAction, string]>>;
-export type DatabaseRules = { [key in string]: DatabaseRule[] };
+import {
+  DatabaseRule,
+  DatabaseRules,
+  EntityAbility,
+  EntityRule,
+} from "./permission-types";
 
 export function detectEntityType(subject: Entity): EntityConstructor<any> {
   if (subject instanceof Entity) {
@@ -36,6 +24,9 @@ export function detectEntityType(subject: Entity): EntityConstructor<any> {
   }
 }
 
+/**
+ * This service sets up the `Ability` injectable with the JSON defined rules for the currently logged in user.
+ */
 @Injectable()
 export class AbilityService {
   constructor(

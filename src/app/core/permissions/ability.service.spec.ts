@@ -1,12 +1,6 @@
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 
-import {
-  AbilityService,
-  DatabaseRules,
-  detectEntityType,
-  EntityAbility,
-  EntityRule,
-} from "./ability.service";
+import { AbilityService, detectEntityType } from "./ability.service";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { of, Subject, throwError } from "rxjs";
 import { AppConfig } from "../app-config/app-config";
@@ -17,6 +11,7 @@ import { EntityMapperService } from "../entity/entity-mapper.service";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { DynamicEntityService } from "../entity/dynamic-entity.service";
 import { SyncState } from "../session/session-states/sync-state.enum";
+import { DatabaseRules, EntityAbility, EntityRule } from "./permission-types";
 
 describe("AbilityService", () => {
   let service: AbilityService;
