@@ -125,4 +125,12 @@ export class DynamicEntityService {
     const ctor = this.getEntityConstructor(entityType);
     return this.entityMapper.loadType<E>(ctor);
   }
+
+  /**
+   * returns the current {@code Map<string, EntityConstructor<Entity>}
+   * map of entities present
+   */
+  get EntityMap(): Map<string, EntityConstructor<Entity>> {
+    return DynamicEntityService.ENTITY_MAP;
+  }
 }

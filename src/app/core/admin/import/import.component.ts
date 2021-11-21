@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-
-interface Entity {
-  value: string;
-  viewValue: string;
-}
+import { DynamicEntityService } from 'app/core/entity/dynamic-entity.service';
+import { Entity, EntityConstructor } from 'app/core/entity/model/entity';
 
 @Component({
   selector: 'app-import',
@@ -15,13 +12,10 @@ export class ImportComponent implements OnInit {
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
 
-  entities: Entity[] = [
-    {value: 'steak-0', viewValue: 'Steak'},
-    {value: 'pizza-1', viewValue: 'Pizza'},
-    {value: 'tacos-2', viewValue: 'Tacos'}
-  ];
-
-  constructor(private _formBuilder: FormBuilder) {}
+  constructor(
+    private _formBuilder: FormBuilder,
+    private dynamicEntityService: DynamicEntityService
+    ) {}
 
   ngOnInit() {
     this.firstFormGroup = this._formBuilder.group({
@@ -32,4 +26,7 @@ export class ImportComponent implements OnInit {
     });
   }
 
+  getEntitiesMap(): Map<string, EntityConstructor<Entity>> {
+    return this.dynamicEntityService.EntityMap;
+  }
 }

@@ -6,8 +6,8 @@
         <mat-form-field>
             <mat-label>Entity Type</mat-label>
             <select matNativeControl formControlName="firstCtrl" required>
-                <option *ngFor="let entity of entities" [value]="entity.value">
-                    {{entity.viewValue}}
+                <option *ngFor="let entity of getEntitiesMap() | keyvalue" [value]="entity.key">
+                    {{entity.key}}
                 </option>
             </select>
         </mat-form-field>
