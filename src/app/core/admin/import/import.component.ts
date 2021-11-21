@@ -12,6 +12,8 @@ export class ImportComponent implements OnInit {
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
 
+  csvFile: Blob = undefined;
+
   constructor(
     private _formBuilder: FormBuilder,
     private dynamicEntityService: DynamicEntityService
@@ -28,5 +30,10 @@ export class ImportComponent implements OnInit {
 
   getEntitiesMap(): Map<string, EntityConstructor<Entity>> {
     return this.dynamicEntityService.EntityMap;
+  }
+
+  setCsvFile(file: File): void {
+    this.csvFile = file;
+    this.secondFormGroup.setValue({ secondCtrl: file.name});
   }
 }

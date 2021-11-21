@@ -20,10 +20,15 @@
       <form [formGroup]="secondFormGroup">
         <ng-template matStepLabel>Import File</ng-template>
         <mat-form-field>
-          <mat-label>Address</mat-label>
-          <input matInput formControlName="secondCtrl" placeholder="Ex. 1 Main St, New York, NY"
-                 required>
+          <mat-label>Selected File: </mat-label>
+          <input matInput formControlName="secondCtrl" readonly placeholder="No file selected" required/>
         </mat-form-field>
+        <div>
+          <button (click)="csvImport.click()" mat-stroked-button>
+            Select File (*.csv)
+          </button>
+          <input #csvImport type="file" style="display: none" (change)="setCsvFile($event.target.files[0])"/>
+        </div>
         <div>
           <button mat-button matStepperPrevious>Back</button>
           <button mat-button matStepperNext>Next</button>
