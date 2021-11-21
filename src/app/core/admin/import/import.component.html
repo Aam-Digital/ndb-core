@@ -37,7 +37,10 @@
     </mat-step>
     <mat-step>
       <ng-template matStepLabel>Excecute</ng-template>
-      <p>You are now done.</p>
+      <p>Click import to import the selected file.</p>
+      <button (click)="importSelectedFile()" mat-stroked-button>
+        Start Import
+      </button>
       <div>
         <button mat-button matStepperPrevious>Back</button>
         <button mat-button (click)="stepper.reset()">Reset</button>

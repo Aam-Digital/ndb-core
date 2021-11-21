@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { DynamicEntityService } from 'app/core/entity/dynamic-entity.service';
 import { Entity, EntityConstructor } from 'app/core/entity/model/entity';
+import { DataImportService } from 'app/features/data-import/data-import.service';
 
 @Component({
   selector: 'app-import',
@@ -16,7 +17,8 @@ export class ImportComponent implements OnInit {
 
   constructor(
     private _formBuilder: FormBuilder,
-    private dynamicEntityService: DynamicEntityService
+    private dynamicEntityService: DynamicEntityService,
+    private dataImportService: DataImportService
     ) {}
 
   ngOnInit() {
@@ -35,5 +37,13 @@ export class ImportComponent implements OnInit {
   setCsvFile(file: File): void {
     this.csvFile = file;
     this.secondFormGroup.setValue({ secondCtrl: file.name});
+  }
+
+  importSelectedFile(): void {
+    if(this.csvFile === undefined) {
+      return;
+    }
+
+    this.dataImportService.handleCsvImport(this.csvFile);
   }
 }
