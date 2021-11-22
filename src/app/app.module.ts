@@ -81,6 +81,7 @@ import { far } from "@fortawesome/free-regular-svg-icons";
 import { EntityAbility } from "./core/permissions/permission-types";
 import { detectEntityType } from "./core/permissions/ability.service";
 import { PureAbility } from "@casl/ability";
+import { DemoPermissionGeneratorService } from "./core/permissions/demo-permission-generator.service";
 
 /**
  * Main entry point of the application.
@@ -150,6 +151,7 @@ import { PureAbility } from "@casl/ability";
         minCountAttributes: 2,
         maxCountAttributes: 5,
       }),
+      ...DemoPermissionGeneratorService.provide(),
     ]),
     AttendanceModule,
     DashboardShortcutWidgetModule,
