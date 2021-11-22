@@ -22,8 +22,6 @@ export class SchoolBlockComponent implements OnInitDynamicComponent, OnChanges {
   @Input() entity: School = new School("");
   @Input() entityId: string;
   @Input() linkDisabled: boolean;
-  tooltip = false;
-  tooltipTimeout;
 
   constructor(
     private router: Router,
@@ -55,19 +53,6 @@ export class SchoolBlockComponent implements OnInitDynamicComponent, OnChanges {
       return;
     }
     this.entity = await this.entityMapper.load(School, this.entityId);
-  }
-
-  showTooltip() {
-    if (this.tooltipTimeout) {
-      clearTimeout(this.tooltipTimeout);
-    }
-    this.tooltipTimeout = setTimeout(() => (this.tooltip = true), 1000);
-  }
-  hideTooltip() {
-    if (this.tooltipTimeout) {
-      clearTimeout(this.tooltipTimeout);
-    }
-    this.tooltipTimeout = setTimeout(() => (this.tooltip = false), 150);
   }
 
   @HostListener("click") onClick() {

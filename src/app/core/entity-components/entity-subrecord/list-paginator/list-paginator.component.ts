@@ -6,7 +6,6 @@ import {
   SimpleChanges,
   AfterViewInit,
 } from "@angular/core";
-import { Entity } from "../../../entity/model/entity";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { User } from "../../../user/user";
@@ -21,12 +20,11 @@ import { filter } from "rxjs/operators";
   templateUrl: "./list-paginator.component.html",
   styleUrls: ["./list-paginator.component.scss"],
 })
-export class ListPaginatorComponent<E extends Entity>
-  implements OnChanges, AfterViewInit {
+export class ListPaginatorComponent implements OnChanges, AfterViewInit {
   readonly pageSizeOptions = [10, 20, 50];
   readonly defaultPageSize = 10;
 
-  @Input() dataSource: MatTableDataSource<E>;
+  @Input() dataSource: MatTableDataSource<any>;
   @Input() idForSavingPagination: string;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;

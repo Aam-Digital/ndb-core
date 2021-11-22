@@ -38,6 +38,11 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
     child.dateOfBirth = faker.dateOfBirth(5, 20);
     child["motherTongue"] = faker.random.arrayElement(languages);
     child.center = faker.random.arrayElement(centersWithProbability);
+    child.phone =
+      "+" +
+      faker.datatype.number({ min: 10, max: 99 }) +
+      " " +
+      faker.datatype.number({ min: 10000000, max: 99999999 });
 
     child.admissionDate = faker.date.past(child.age - 4);
 
