@@ -1,13 +1,10 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { AppConfig } from "../app-config/app-config";
 import { Entity, EntityConstructor } from "../entity/model/entity";
 import { SessionService } from "../session/session-service/session.service";
 import { DynamicEntityService } from "../entity/dynamic-entity.service";
-import { catchError, filter, mergeMap } from "rxjs/operators";
-import { waitForChangeTo } from "../session/session-states/session-utils";
+import { filter } from "rxjs/operators";
 import { SyncState } from "../session/session-states/sync-state.enum";
-import { Observable, Subject } from "rxjs";
+import { merge, Observable, Subject } from "rxjs";
 import {
   DatabaseRule,
   DatabaseRules,
@@ -15,6 +12,8 @@ import {
   EntityRule,
 } from "./permission-types";
 import { LoginState } from "../session/session-states/login-state.enum";
+import { EntityMapperService } from "../entity/entity-mapper.service";
+import { Permission } from "./permission";
 
 export function detectEntityType(subject: Entity): EntityConstructor<any> {
   if (subject instanceof Entity) {
@@ -37,42 +36,36 @@ export class AbilityService {
   }
 
   constructor(
-    private httpClient: HttpClient,
     private ability: EntityAbility,
     private sessionService: SessionService,
-    private dynamicEntityService: DynamicEntityService
+    private dynamicEntityService: DynamicEntityService,
+    private entityMapper: EntityMapperService
   ) {
-    this.sessionService.loginState
-      .pipe(filter((state) => state === LoginState.LOGGED_IN))
-      .subscribe(() => this.initRules());
+    merge(
+      this.sessionService.loginState.pipe(
+        filter((state) => state === LoginState.LOGGED_IN)
+      ),
+      this.sessionService.syncState.pipe(
+        filter((state) => state === SyncState.COMPLETED)
+      )
+    ).subscribe(() => this.initRules());
   }
 
   private async initRules(): Promise<void> {
+    // Initially allow everything until rules object can be fetched
     this.ability.update([{ action: "manage", subject: "all" }]);
-    let rules: DatabaseRules;
+
+    let permission: Permission;
     try {
-      rules = await this.fetchRules()
-        .pipe(catchError(() => this.retryAfterSync()))
-        .toPromise();
+      permission = await this.entityMapper.load(
+        Permission,
+        Permission.PERMISSION_KEY
+      );
     } catch (e) {
-      // If no rule is found, allow everything
+      // If no rule is found, keep allowing everything
       return;
     }
-    this.updateAbilityWithRules(rules);
-  }
-
-  private fetchRules(): Observable<DatabaseRules> {
-    const rulesUrl = AppConfig.settings.database.remote_url + "rules";
-    return this.httpClient.get<DatabaseRules>(rulesUrl, {
-      withCredentials: true,
-    });
-  }
-
-  private retryAfterSync(): Observable<DatabaseRules> {
-    return this.sessionService.syncState.pipe(
-      waitForChangeTo(SyncState.STARTED),
-      mergeMap(() => this.fetchRules())
-    );
+    this.updateAbilityWithRules(permission.rulesConfig);
   }
 
   private updateAbilityWithRules(rules: DatabaseRules) {
@@ -100,7 +93,7 @@ export class AbilityService {
         return this.dynamicEntityService.getEntityConstructor(rawSubject);
       }
     } else {
-      throw Error("Creating rule for invalid subject" + rawSubject);
+      throw Error("Creating rule for invalid subject " + rawSubject);
     }
   }
 }
