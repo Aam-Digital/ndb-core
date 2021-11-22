@@ -11,6 +11,7 @@ import { AlertService } from "../../../alerts/alert.service";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MockSessionModule } from "../../../session/mock-session.module";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { PermissionsModule } from "../../../permissions/permissions.module";
 
 describe("FormComponent", () => {
   let component: FormComponent;
@@ -26,6 +27,7 @@ describe("FormComponent", () => {
         MockSessionModule.withState(),
         MatSnackBarModule,
         HttpClientTestingModule,
+        PermissionsModule.withAbility(),
       ],
       providers: [EntitySchemaService, AlertService],
     }).compileComponents();

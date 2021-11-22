@@ -21,6 +21,7 @@ import { ExportService } from "../../export/export-service/export.service";
 import { MockSessionModule } from "../../session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { PermissionsModule } from "../../permissions/permissions.module";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -107,6 +108,7 @@ describe("EntityListComponent", () => {
           ]),
           MockSessionModule.withState(),
           FontAwesomeTestingModule,
+          PermissionsModule.withAbility(),
         ],
         providers: [
           DatePipe,

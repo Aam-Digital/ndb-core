@@ -65,7 +65,9 @@ export class AbilityService {
       // If no rule is found, keep allowing everything
       return;
     }
-    this.updateAbilityWithRules(permission.rulesConfig);
+    if (permission) {
+      this.updateAbilityWithRules(permission.rulesConfig);
+    }
   }
 
   private updateAbilityWithRules(rules: DatabaseRules) {

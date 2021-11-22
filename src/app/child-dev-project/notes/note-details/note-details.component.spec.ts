@@ -15,6 +15,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { By } from "@angular/platform-browser";
 import { ChildMeetingNoteAttendanceComponent } from "./child-meeting-attendance/child-meeting-note-attendance.component";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { PermissionsModule } from "../../../core/permissions/permissions.module";
 
 function generateTestNote(forChildren: Child[]) {
   const testNote = Note.create(new Date(), "test note");
@@ -63,6 +64,7 @@ describe("NoteDetailsComponent", () => {
         MockSessionModule.withState(),
         FontAwesomeTestingModule,
         HttpClientTestingModule,
+        PermissionsModule.withAbility(),
       ],
       providers: [
         { provide: MatDialogRef, useValue: dialogRefMock },

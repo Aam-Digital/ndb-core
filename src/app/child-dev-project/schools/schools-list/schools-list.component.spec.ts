@@ -19,6 +19,7 @@ import { MockSessionModule } from "../../../core/session/mock-session.module";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { PermissionsModule } from "../../../core/permissions/permissions.module";
 
 describe("SchoolsListComponent", () => {
   let component: SchoolsListComponent;
@@ -57,6 +58,7 @@ describe("SchoolsListComponent", () => {
           MockSessionModule.withState(),
           FontAwesomeTestingModule,
           HttpClientTestingModule,
+          PermissionsModule.withAbility(),
         ],
         providers: [
           { provide: ActivatedRoute, useValue: routeMock },

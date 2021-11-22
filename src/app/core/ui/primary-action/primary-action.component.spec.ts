@@ -26,6 +26,7 @@ describe("PrimaryActionComponent", () => {
         FontAwesomeTestingModule,
         HttpClientTestingModule,
         MockSessionModule.withState(),
+        PermissionsModule.withAbility(),
       ],
       providers: [DynamicEntityService, EntitySchemaService],
     }).compileComponents();

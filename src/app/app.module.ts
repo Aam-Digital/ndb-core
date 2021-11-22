@@ -78,10 +78,8 @@ import { TranslatableMatPaginator } from "./core/translation/TranslatableMatPagi
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
-import { EntityAbility } from "./core/permissions/permission-types";
-import { detectEntityType } from "./core/permissions/ability.service";
-import { PureAbility } from "@casl/ability";
 import { DemoPermissionGeneratorService } from "./core/permissions/demo-permission-generator.service";
+import { PermissionsModule } from "./core/permissions/permissions.module";
 
 /**
  * Main entry point of the application.
@@ -156,20 +154,13 @@ import { DemoPermissionGeneratorService } from "./core/permissions/demo-permissi
     AttendanceModule,
     DashboardShortcutWidgetModule,
     HistoricalDataModule,
+    PermissionsModule.withAbility(),
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
     { provide: MatPaginatorIntl, useValue: TranslatableMatPaginator() },
     AnalyticsService,
     Angulartics2Matomo,
-    {
-      provide: EntityAbility,
-      useValue: new EntityAbility([], { detectSubjectType: detectEntityType }),
-    },
-    {
-      provide: PureAbility,
-      useExisting: EntityAbility,
-    },
   ],
   bootstrap: [AppComponent],
 })

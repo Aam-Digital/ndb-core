@@ -25,6 +25,7 @@ import { ExportService } from "../../../core/export/export-service/export.servic
 import { MockSessionModule } from "../../../core/session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { PermissionsModule } from "../../../core/permissions/permissions.module";
 
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;
@@ -98,6 +99,7 @@ describe("ChildrenListComponent", () => {
           MockSessionModule.withState(),
           FontAwesomeTestingModule,
           HttpClientTestingModule,
+          PermissionsModule.withAbility(),
         ],
         providers: [
           {
