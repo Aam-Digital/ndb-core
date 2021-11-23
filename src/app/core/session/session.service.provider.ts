@@ -20,7 +20,6 @@ import { AppConfig } from "../app-config/app-config";
 import { SessionService } from "./session-service/session.service";
 import { AlertService } from "../alerts/alert.service";
 import { LoggingService } from "../logging/logging.service";
-import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { LoginState } from "./session-states/login-state.enum";
 import { SessionType } from "./session-type";
 import { PouchDatabase } from "../database/pouch-database";
@@ -35,7 +34,6 @@ import { LocalSession } from "./session-service/local-session";
 export function sessionServiceFactory(
   alertService: AlertService,
   loggingService: LoggingService,
-  entitySchemaService: EntitySchemaService,
   httpClient: HttpClient
 ): SessionService {
   let sessionService: SessionService;
@@ -52,7 +50,6 @@ export function sessionServiceFactory(
       sessionService = new SyncedSessionService(
         alertService,
         loggingService,
-        entitySchemaService,
         httpClient
       );
       break;
@@ -97,5 +94,5 @@ function updateLoggingServiceWithUserContext(sessionService: SessionService) {
 export const sessionServiceProvider = {
   provide: SessionService,
   useFactory: sessionServiceFactory,
-  deps: [AlertService, LoggingService, EntitySchemaService, HttpClient],
+  deps: [AlertService, LoggingService, HttpClient],
 };

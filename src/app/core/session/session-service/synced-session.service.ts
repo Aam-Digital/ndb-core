@@ -25,7 +25,6 @@ import { LoginState } from "../session-states/login-state.enum";
 import { Database } from "../../database/database";
 import { PouchDatabase } from "../../database/pouch-database";
 import { SyncState } from "../session-states/sync-state.enum";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { LoggingService } from "../../logging/logging.service";
 import { HttpClient } from "@angular/common/http";
 import PouchDB from "pouchdb-browser";
@@ -56,7 +55,6 @@ export class SyncedSessionService extends SessionService {
   constructor(
     private _alertService: AlertService,
     private _loggingService: LoggingService,
-    private _entitySchemaService: EntitySchemaService,
     private _httpClient: HttpClient
   ) {
     super();
