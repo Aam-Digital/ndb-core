@@ -40,6 +40,15 @@ $border-radius-card: 5px;
 }
 
 .widget-headline {
+  grid-area:headline;
+  text-align: end;
+  place-self: end;
+
+  font-size: 28pt;
+  color: white;
+}
+
+.widget-title {
   grid-area: headline;
   text-align: end;
   place-self: end;
@@ -61,10 +70,15 @@ $border-radius-card: 5px;
 .widget-content {
   height: $widget-content-height;
   overflow: hidden;
+  display: flex;
 }
 
 .widget-total {
   border-radius: $border-radius-card;
   // necessary for the border-radius to apply
   overflow: auto;
+}
+
+.mat-button-wrapper {
+  display: flex;
 }

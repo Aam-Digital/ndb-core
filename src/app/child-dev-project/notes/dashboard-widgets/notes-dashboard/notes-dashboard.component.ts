@@ -19,10 +19,10 @@ import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components
  */
 @Component({
   selector: "app-no-recent-notes-dashboard",
-  templateUrl: "./no-recent-notes-dashboard.component.html",
-  styleUrls: ["./no-recent-notes-dashboard.component.scss"],
+  templateUrl: "./notes-dashboard.component.html",
+  styleUrls: ["./notes-dashboard.component.scss"],
 })
-export class NoRecentNotesDashboardComponent
+export class NotesDashboardComponent
   implements OnInitDynamicComponent, OnInit, AfterViewInit {
   /**
    * number of days since last note that children should be considered having a "recent" note.
@@ -37,10 +37,12 @@ export class NoRecentNotesDashboardComponent
    */
   concernedChildren: ChildWithRecentNoteInfo[] = [];
   amountOfConcernedChildren: Promise<number>;
+  mode: "with-recent-notes" | "without-recent-notes";
 
-  columnsToDisplay: string[] = ["name", "daysSinceLastNote"];
   childrenWithNoteInfoDataSource = new MatTableDataSource<ChildWithRecentNoteInfo>();
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild("paginator") paginator: MatPaginator;
+
+  isLoading: boolean = true;
 
   constructor(private childrenService: ChildrenService) {}
 
@@ -51,36 +53,74 @@ export class NoRecentNotesDashboardComponent
     if (config?.fromBeginningOfWeek) {
       this.fromBeginningOfWeek = config.fromBeginningOfWeek;
     }
+    this.mode = config?.mode;
   }
 
   ngOnInit() {
-    this.loadConcernedChildrenFromIndex();
+    let dayRangeBoundary = this.sinceDays;
+    if (this.fromBeginningOfWeek) {
+      dayRangeBoundary += moment().diff(moment().startOf("week"), "days");
+    }
+    switch (this.mode) {
+      // (stat) => stat[1] >= dayRangeBoundary
+      case "with-recent-notes":
+        this.loadConcernedChildren(
+          (stat) => stat[1] >= dayRangeBoundary,
+          dayRangeBoundary
+        );
+        break;
+      case "without-recent-notes":
+        this.loadConcernedChildren(
+          (stat) => stat[1] < dayRangeBoundary,
+          dayRangeBoundary
+        );
+    }
+  }
+
+  get subtitle(): string {
+    switch (this.mode) {
+      case "without-recent-notes":
+        return $localize`:Subtitle|Subtitle informing the user that these are the children without recent reports:Children without recent report`;
+      case "with-recent-notes":
+        return $localize`:Subtitle|Subtitle informing the user that these are the children with recent reports:Children with recent report`;
+    }
   }
 
   ngAfterViewInit() {
     this.childrenWithNoteInfoDataSource.paginator = this.paginator;
   }
 
-  private loadConcernedChildrenFromIndex() {
-    let dayRangeBoundary = this.sinceDays;
-    if (this.fromBeginningOfWeek) {
-      dayRangeBoundary += moment().diff(moment().startOf("week"), "days");
-    }
+  private loadConcernedChildren(
+    filter: (stat: [string, number]) => boolean,
+    dayRangeBoundary: number
+  ) {
     const queryRange = Math.round((dayRangeBoundary * 3) / 10) * 10; // query longer range to be able to display exact date of last note for recent
 
-    this.childrenService
+    const promise = this.childrenService
       .getDaysSinceLastNoteOfEachChild(queryRange)
       .then((children) => {
         return Array.from(children)
-          .filter((stat) => stat[1] >= dayRangeBoundary)
+          .filter(filter)
           .map((stat) => statsToChildWithRecentNoteInfo(stat, queryRange))
           .sort((a, b) => b.daysSinceLastNote - a.daysSinceLastNote);
-      })
-      .then((children) => (this.concernedChildren = children));
+      });
+    promise.then((children) => {
+      this.concernedChildren = children;
+      this.childrenWithNoteInfoDataSource.data = children;
+      this.isLoading = false;
+    });
+    this.amountOfConcernedChildren = promise.then(
+      (children) => children.length
+    );
   }
 
   get tooltip(): string {
-    return $localize`:Tooltip|Spaces in front of the variables are added automatically:includes children without a note${this.sinceBeginningOfTheWeek}:sinceBeginningOfWeek:${this.withinTheLastNDays}:withinTheLastDays:`;
+    switch (this.mode) {
+      case "with-recent-notes":
+        return $localize`:Tooltip|Spaces in front of the variables are added automatically:includes children with a note${this.sinceBeginningOfTheWeek}:sinceBeginningOfWeek:${this.withinTheLastNDays}:withinTheLastDays:`;
+      case "without-recent-notes":
+        return $localize`:Tooltip|Spaces in front of the variables are added automatically:includes children without a note${this.sinceBeginningOfTheWeek}:sinceBeginningOfWeek:${this.withinTheLastNDays}:withinTheLastDays:`;
+    }
   }
 
   get sinceBeginningOfTheWeek(): string {

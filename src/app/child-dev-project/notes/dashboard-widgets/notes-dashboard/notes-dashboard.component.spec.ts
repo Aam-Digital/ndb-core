@@ -9,14 +9,14 @@ import {
 import { ChildrenService } from "../../../children/children.service";
 import { EntityModule } from "../../../../core/entity/entity.module";
 import { RouterTestingModule } from "@angular/router/testing";
-import { NoRecentNotesDashboardComponent } from "./no-recent-notes-dashboard.component";
+import { NotesDashboardComponent } from "./notes-dashboard.component";
 import { ChildrenModule } from "../../../children/children.module";
 import { Angulartics2Module } from "angulartics2";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("NoRecentNotesDashboardComponent", () => {
-  let component: NoRecentNotesDashboardComponent;
-  let fixture: ComponentFixture<NoRecentNotesDashboardComponent>;
+  let component: NotesDashboardComponent;
+  let fixture: ComponentFixture<NotesDashboardComponent>;
 
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
 
@@ -45,7 +45,7 @@ describe("NoRecentNotesDashboardComponent", () => {
   );
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(NoRecentNotesDashboardComponent);
+    fixture = TestBed.createComponent(NotesDashboardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

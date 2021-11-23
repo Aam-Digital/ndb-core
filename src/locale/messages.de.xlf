@@ -1375,7 +1375,7 @@
         <note priority="1" from="description">Spaces in front of the variables are added automatically</note>
         <note priority="1" from="meaning">Tooltip</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/no-recent-notes-dashboard/no-recent-notes-dashboard.component.ts</context>
+          <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/no-recent-notes-dashboard/notes-dashboard.component.ts</context>
           <context context-type="linenumber">90</context>
         </context-group>
         <context-group purpose="location">
@@ -1389,7 +1389,7 @@
         <note priority="1" from="description">'includes children without a note since the beginning of the week'</note>
         <note priority="1" from="meaning">Tooltip-part</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/no-recent-notes-dashboard/no-recent-notes-dashboard.component.ts</context>
+          <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/no-recent-notes-dashboard/notes-dashboard.component.ts</context>
           <context context-type="linenumber">97</context>
         </context-group>
         <context-group purpose="location">
@@ -1403,7 +1403,7 @@
         <note priority="1" from="description">'includes children without a note within the last x days'</note>
         <note priority="1" from="meaning">Tooltip-part</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/no-recent-notes-dashboard/no-recent-notes-dashboard.component.ts</context>
+          <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/no-recent-notes-dashboard/notes-dashboard.component.ts</context>
           <context context-type="linenumber">106</context>
         </context-group>
         <context-group purpose="location">

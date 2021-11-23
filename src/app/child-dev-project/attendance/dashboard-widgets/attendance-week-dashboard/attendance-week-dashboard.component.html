@@ -6,36 +6,39 @@
   i18n-subtitle="Dashboard attendance component subtitle"
 >
   <app-widget-content>
-    <table
-      mat-table
-      [dataSource]="tableDataSource"
-      class="attendance-week-table"
-    >
-      <ng-container matColumnDef="child">
-        <td
-          *matCellDef="let rowGroup"
-          (click)="goToChild(rowGroup[0].childId)"
-          style="cursor: pointer; padding-left: 5px"
-          class="dashboard-table-row"
-        >
-          <app-child-block [entityId]="rowGroup[0].childId"></app-child-block>
-        </td>
-      </ng-container>
+    <h2 *ngIf="!loadingDone" class="headline">Loading...</h2>
+    <div *ngIf="tableDataSource.data.length > 0 && loadingDone" class="table-wrapper">
+      <table
+        mat-table
+        [dataSource]="tableDataSource"
+      >
+        <ng-container matColumnDef="child">
+          <td
+            *matCellDef="let rowGroup"
+            (click)="goToChild(rowGroup[0].childId)"
+            style="cursor: pointer"
+          >
+            <app-child-block [entityId]="rowGroup[0].childId"></app-child-block>
+          </td>
+        </ng-container>
 
-      <ng-container matColumnDef="attendance">
-        <td *matCellDef="let rowGroup" class="dashboard-table-row">
-          <div *ngFor="let activityRecord of rowGroup" class="activities-record">
-            <div *ngFor="let day of activityRecord.attendanceDays">
-              <app-attendance-day-block [attendance]="day">
-              </app-attendance-day-block>
+        <ng-container matColumnDef="attendance">
+          <td *matCellDef="let rowGroup">
+            <div *ngFor="let activityRecord of rowGroup; let first=first" class="activities-record">
+              <div *ngFor="let day of activityRecord.attendanceDays">
+                <app-attendance-day-block [attendance]="day">
+                </app-attendance-day-block>
+              </div>
             </div>
-          </div>
-        </td>
-      </ng-container>
+          </td>
+        </ng-container>
 
-      <tr mat-row *matRowDef="let row; columns: ['child', 'attendance'];" class="w-WARNING"></tr>
-    </table>
+        <tr mat-row *matRowDef="let row; columns: ['child', 'attendance'];" class="dashboard-table-row"></tr>
+      </table>
+    </div>
+    <h2 *ngIf="tableDataSource.data.length === 0 && loadingDone" class="headline">No students absent</h2>
     <mat-paginator
+      [style.display]="paginator.getNumberOfPages() === 0 ? 'none' : ''"
       #paginator
       [pageSizeOptions]="[5]"
       [hidePageSize]="true"

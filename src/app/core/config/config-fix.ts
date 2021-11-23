@@ -157,6 +157,11 @@ export const defaultJsonConfig = {
                 "label": $localize`:Dashboard shortcut widget|record attendance shortcut:Record Attendance`,
                 "icon": "calendar-check",
                 "link": "/attendance/add/day",
+              },
+              {
+                "label": $localize`:Dashboard shortcut widget|record attendance shortcut:Add Child`,
+                "icon": "plus",
+                "link": "/child/new",
               }
             ]
           }
@@ -165,13 +170,19 @@ export const defaultJsonConfig = {
           "component": "ChildrenCountDashboard"
         },
         {
-          "component": "RecentNotesDashboard"
-        },
-        {
-          "component": "NoRecentNotesDashboard",
+          "component": "NotesDashboard",
           "config": {
             "sinceDays": 28,
-            "fromBeginningOfWeek": false
+            "fromBeginningOfWeek": false,
+            "mode": "with-recent-notes"
+          }
+        },
+        {
+          "component": "NotesDashboard",
+          "config": {
+            "sinceDays": 28,
+            "fromBeginningOfWeek": false,
+            "mode": "without-recent-notes"
           }
         },
         {

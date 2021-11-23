@@ -65,6 +65,8 @@ export class AttendanceWeekDashboardComponent
 
   rowGroupCount: Promise<number>;
 
+  loadingDone = false;
+
   constructor(
     private attendanceService: AttendanceService,
     private router: Router
@@ -124,6 +126,7 @@ export class AttendanceWeekDashboardComponent
     this.rowGroupCount = this.dashboardRowGroups.then((value) => value.length);
     this.dashboardRowGroups.then((groups) => {
       this.tableDataSource.data = groups;
+      this.loadingDone = true;
     });
   }
 

@@ -8,6 +8,8 @@ import { Angulartics2Module } from "angulartics2";
 import { DashboardModule } from "../dashboard/dashboard.module";
 import { ViewModule } from "../view/view.module";
 import { MatDividerModule } from "@angular/material/divider";
+import { MatButtonModule } from "@angular/material/button";
+import { MatTableModule } from "@angular/material/table";
 
 @NgModule({
   declarations: [DashboardShortcutWidgetComponent],
@@ -20,6 +22,8 @@ import { MatDividerModule } from "@angular/material/divider";
     DashboardModule,
     ViewModule,
     MatDividerModule,
+    MatButtonModule,
+    MatTableModule,
   ],
   exports: [DashboardShortcutWidgetComponent],
 })

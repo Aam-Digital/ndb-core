@@ -34,4 +34,5 @@ export class DashboardWidgetComponent {
       this._title = title;
     }
   }
+  @Input() headline: string;
 }

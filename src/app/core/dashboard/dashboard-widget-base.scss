@@ -1,12 +1,14 @@
 .dashboard-table-row {
   border-top: 1px solid black;
+  padding-left: 8px;
+  padding-right: 8px;
 }
 
 .dashboard-table {
-  width: 100%;
+  margin-right: 10px;
+  margin-left: 10px;
   border-collapse: collapse;
   table-layout: fixed;
-  background-color: white;
 }
 
 .dashboard-table tr:first-child {
@@ -14,9 +16,7 @@
 }
 
 .dashboard-table-cell {
-  padding-top: 10px;
-  padding-bottom: 10px;
-  background-color: white;
+  padding: 12px;
 }
 .dashboard-table-first-cell {
   white-space: nowrap;
@@ -28,12 +28,40 @@
 }
 
 .link-content {
-  margin-top: 0.83em;
   display: flex;
   justify-content: center;
-  border-bottom: 1px solid black;
+  font-size: xx-large;
+  place-self: center;
+  flex-grow: 1;
 }
 
 .clickable {
   cursor: pointer;
+}
+
+.content-button {
+  margin: 8px 30px;
+  display: flex;
+  justify-content: center;
+  padding: 25px;
+  flex-grow: 1;
+}
+
+.mat-paginator {
+  background: none;
+}
+
+.table-wrapper {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.mat-table {
+  background: none;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.mat-table tr:first-child {
+  border-top: none;
 }
