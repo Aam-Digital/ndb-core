@@ -167,7 +167,7 @@ describe("AdminComponent", () => {
   it("should save and apply new configuration", fakeAsync(() => {
     const mockFileReader = createFileReaderMock("{}");
     mockConfigService.saveConfig.and.returnValue(Promise.resolve(null));
-    component.uploadConfigFile(null);
+    component.uploadConfigFile({ target: { files: [] } } as any);
     tick();
     expect(mockFileReader.readAsText).toHaveBeenCalled();
     expect(mockConfigService.saveConfig).toHaveBeenCalled();
@@ -178,7 +178,7 @@ describe("AdminComponent", () => {
     mockBackupService.getJsonExport.and.returnValue(Promise.resolve("[]"));
     createDialogMock();
 
-    component.loadBackup(null);
+    component.loadBackup({ target: { files: [] } } as any);
     expect(mockBackupService.getJsonExport).toHaveBeenCalled();
     tick();
     expect(mockFileReader.readAsText).toHaveBeenCalled();
