@@ -19,8 +19,6 @@ import { BackupService } from "./services/backup.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DataImportModule } from "../../features/data-import/data-import.module";
-import { ImportComponent } from './import/import.component';
-import { MatStepperModule } from "@angular/material/stepper";
 
 /**
  * GUI for administrative users to manage and maintain background and technical aspects of the app.
@@ -43,10 +41,9 @@ import { MatStepperModule } from "@angular/material/stepper";
     MatInputModule,
     MatTooltipModule,
     FontAwesomeModule,
-    DataImportModule,
-    MatStepperModule
+    DataImportModule
   ],
-  declarations: [AdminComponent, UserListComponent, ImportComponent],
+  declarations: [AdminComponent, UserListComponent],
   providers: [ChildPhotoUpdateService, BackupService],
 })
 export class AdminModule {}
