@@ -33,6 +33,7 @@ import { DatabaseUser } from "./local-user";
 import { TEST_PASSWORD, TEST_USER } from "../mock-session.module";
 import { testSessionServiceImplementation } from "./session.service.spec";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { PouchDatabase } from "../../database/pouch-database";
 
 describe("SyncedSessionService", () => {
   let sessionService: SyncedSessionService;
@@ -63,6 +64,7 @@ describe("SyncedSessionService", () => {
         AlertService,
         LoggingService,
         SyncedSessionService,
+        PouchDatabase,
         { provide: HttpClient, useValue: mockHttpClient },
       ],
     });

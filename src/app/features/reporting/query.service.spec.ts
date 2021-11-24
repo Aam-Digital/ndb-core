@@ -50,7 +50,7 @@ describe("QueryService", () => {
   let twoDaysAgoEventWithoutRelation: EventNote;
 
   beforeEach(async () => {
-    database = PouchDatabase.createWithInMemoryDB();
+    database = new PouchDatabase().initInMemoryDB();
     TestBed.configureTestingModule({
       imports: [ConfigurableEnumModule],
       providers: [

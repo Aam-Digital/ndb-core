@@ -12,6 +12,10 @@ import { AnalyticsService } from "../analytics/analytics.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Angulartics2Module } from "angulartics2";
 import { RouterTestingModule } from "@angular/router/testing";
+import { Database } from "../database/database";
+import { AppConfig } from "../app-config/app-config";
+import { SessionType } from "./session-type";
+import { PouchDatabase } from "../database/pouch-database";
 
 export const TEST_USER = "test";
 export const TEST_PASSWORD = "pass";
@@ -38,13 +42,22 @@ export class MockSessionModule {
   static withState(
     loginState = LoginState.LOGGED_IN
   ): ModuleWithProviders<MockSessionModule> {
+    AppConfig.settings = {
+      site_name: "Aam Digital - DEV",
+      session_type: SessionType.mock,
+      database: {
+        name: "test-db-name",
+        remote_url: "https://demo.aam-digital.com/db/",
+      },
+    };
     const mockedEntityMapper = mockEntityMapper([new User(TEST_USER)]);
+    const session = createLocalSession(loginState === LoginState.LOGGED_IN);
     return {
       ngModule: MockSessionModule,
       providers: [
         {
           provide: SessionService,
-          useValue: createLocalSession(loginState === LoginState.LOGGED_IN),
+          useValue: session,
         },
         { provide: EntityMapperService, useValue: mockedEntityMapper },
         { provide: MockEntityMapperService, useValue: mockedEntityMapper },
@@ -52,13 +65,17 @@ export class MockSessionModule {
           provide: AnalyticsService,
           useValue: jasmine.createSpyObj(["eventTrack"]),
         },
+        {
+          provide: Database,
+          useValue: session.getDatabase(),
+        },
       ],
     };
   }
 }
 
 function createLocalSession(andLogin?: boolean): SessionService {
-  const localSession = new LocalSession(null);
+  const localSession = new LocalSession(new PouchDatabase());
   localSession.saveUser(
     { name: TEST_USER, roles: ["user_app"] },
     TEST_PASSWORD

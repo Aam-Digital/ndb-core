@@ -15,7 +15,7 @@ describe("HistoricalDataService", () => {
   let database: PouchDatabase;
 
   beforeEach(() => {
-    database = PouchDatabase.createWithInMemoryDB();
+    database = new PouchDatabase().initInMemoryDB();
     TestBed.configureTestingModule({
       providers: [
         HistoricalDataService,

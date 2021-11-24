@@ -18,25 +18,28 @@
 import { AppConfig } from "../../app-config/app-config";
 import { LocalSession } from "./local-session";
 import { SessionType } from "../session-type";
-import { passwordEqualsEncrypted, DatabaseUser, LocalUser } from "./local-user";
+import { DatabaseUser, LocalUser, passwordEqualsEncrypted } from "./local-user";
 import { LoginState } from "../session-states/login-state.enum";
 import { testSessionServiceImplementation } from "./session.service.spec";
 import { TEST_PASSWORD, TEST_USER } from "../mock-session.module";
+import { PouchDatabase } from "../../database/pouch-database";
 
 describe("LocalSessionService", () => {
   let localSession: LocalSession;
   let testUser: DatabaseUser;
+  let database: PouchDatabase;
 
   beforeEach(() => {
     AppConfig.settings = {
       site_name: "Aam Digital - DEV",
-      session_type: SessionType.synced,
+      session_type: SessionType.mock,
       database: {
-        name: "integration_tests",
+        name: "test-db-name",
         remote_url: "https://demo.aam-digital.com/db/",
       },
     };
-    localSession = new LocalSession(null);
+    database = new PouchDatabase();
+    localSession = new LocalSession(database);
   });
 
   beforeEach(() => {
@@ -102,6 +105,41 @@ describe("LocalSessionService", () => {
 
     expect(localSession.loginState.value).toBe(LoginState.UNAVAILABLE);
     expect(localSession.getCurrentUser()).toBeUndefined();
+  });
+
+  it("should create a pouchdb with the username of the logged in user", async () => {
+    spyOn(database, "initInMemoryDB");
+
+    await localSession.login(TEST_USER, TEST_PASSWORD);
+
+    expect(database.initInMemoryDB).toHaveBeenCalledWith(
+      TEST_USER + "-" + AppConfig.settings.database.name
+    );
+    expect(localSession.getDatabase()).toBe(database);
+  });
+
+  it("should create the database according to the session type in the AppConfig", async () => {
+    const inMemorySpy = spyOn(database, "initInMemoryDB");
+    const indexedDBSpy = spyOn(database, "initIndexedDB");
+
+    AppConfig.settings.session_type = SessionType.mock;
+    await localSession.login(TEST_USER, TEST_PASSWORD);
+    expect(inMemorySpy).toHaveBeenCalled();
+    expect(indexedDBSpy).not.toHaveBeenCalled();
+
+    inMemorySpy.calls.reset();
+    indexedDBSpy.calls.reset();
+    AppConfig.settings.session_type = SessionType.local;
+    await localSession.login(TEST_USER, TEST_PASSWORD);
+    expect(inMemorySpy).not.toHaveBeenCalled();
+    expect(indexedDBSpy).toHaveBeenCalled();
+
+    inMemorySpy.calls.reset();
+    indexedDBSpy.calls.reset();
+    AppConfig.settings.session_type = SessionType.synced;
+    await localSession.login(TEST_USER, TEST_PASSWORD);
+    expect(inMemorySpy).not.toHaveBeenCalled();
+    expect(indexedDBSpy).toHaveBeenCalled();
   });
 
   testSessionServiceImplementation(() => Promise.resolve(localSession));

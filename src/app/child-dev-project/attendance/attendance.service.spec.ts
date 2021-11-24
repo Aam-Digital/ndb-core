@@ -44,7 +44,7 @@ describe("AttendanceService", () => {
     activity1 = RecurringActivity.create("activity 1");
     activity2 = RecurringActivity.create("activity 2");
 
-    database = PouchDatabase.createWithInMemoryDB();
+    database = new PouchDatabase().initInMemoryDB();
 
     e1_1 = createEvent(new Date("2020-01-01"), activity1._id);
     e1_2 = createEvent(new Date("2020-01-02"), activity1._id);

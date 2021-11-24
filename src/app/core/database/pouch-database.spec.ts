@@ -21,7 +21,7 @@ describe("PouchDatabase tests", () => {
   let database: PouchDatabase;
 
   beforeEach(() => {
-    database = PouchDatabase.createWithInMemoryDB();
+    database = new PouchDatabase().initInMemoryDB();
   });
 
   afterEach(async () => {
@@ -162,9 +162,8 @@ describe("PouchDatabase tests", () => {
       _rev: "01",
       views: { a: {} },
     };
-    // @ts-ignore
-    const pouchDB = database._pouchDB;
-    spyOn(pouchDB, "get").and.resolveTo(existingIndex);
+    const pouchDB = database.getPouchDB();
+    const getSpy = spyOn(pouchDB, "get").and.resolveTo(existingIndex as any);
     spyOn(database, "put").and.resolveTo();
     const spyOnQuery = spyOn(database, "query").and.resolveTo();
 
@@ -183,7 +182,7 @@ describe("PouchDatabase tests", () => {
     ]);
 
     // reset pouchDB function
-    pouchDB.get.and.callThrough();
+    getSpy.and.callThrough();
   });
 
   it("saveDatabaseIndex does not update unchanged index", async () => {
@@ -193,24 +192,22 @@ describe("PouchDatabase tests", () => {
       _rev: "01",
       views: testIndex.views,
     };
-    // @ts-ignore
-    const pouchDB = database._pouchDB;
-    spyOn(pouchDB, "get").and.resolveTo(existingIndex);
+    const pouchDB = database.getPouchDB();
+    const getSpy = spyOn(pouchDB, "get").and.resolveTo(existingIndex as any);
     spyOn(database, "put").and.resolveTo();
 
     await database.saveDatabaseIndex(testIndex);
     expect(database.put).not.toHaveBeenCalled();
 
     // reset pouchDB function
-    pouchDB.get.and.callThrough();
+    getSpy.and.callThrough();
   });
 
   it("query simply calls through to query", async () => {
     const testQuery = "testquery";
     const testQueryResults = { rows: [] };
-    // @ts-ignore
-    const pouchDB = database._pouchDB;
-    spyOn(pouchDB, "query").and.resolveTo(testQueryResults);
+    const pouchDB = database.getPouchDB();
+    spyOn(pouchDB, "query").and.resolveTo(testQueryResults as any);
     const result = await database.query(testQuery, {});
     expect(result).toEqual(testQueryResults);
     expect(pouchDB.query).toHaveBeenCalledWith(testQuery, {});

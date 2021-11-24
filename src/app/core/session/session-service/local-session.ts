@@ -22,19 +22,22 @@ import {
   LocalUser,
   passwordEqualsEncrypted,
 } from "./local-user";
-import { Database } from "../../database/database";
 import { SessionService } from "./session.service";
+import { PouchDatabase } from "../../database/pouch-database";
+import { AppConfig } from "../../app-config/app-config";
+import { SessionType } from "../session-type";
 
 /**
  * Responsibilities:
  * - Manage local authentication
  * - Save users in local storage
+ * - Create local PouchDB according to session type and logged in user
  */
 @Injectable()
 export class LocalSession extends SessionService {
   private currentDBUser: DatabaseUser;
 
-  constructor(private database: Database) {
+  constructor(private database: PouchDatabase) {
     super();
   }
 
@@ -49,6 +52,7 @@ export class LocalSession extends SessionService {
     if (user) {
       if (passwordEqualsEncrypted(password, user.encryptedPassword)) {
         this.currentDBUser = user;
+        this.createLocalPouchDB();
         this.loginState.next(LoginState.LOGGED_IN);
       } else {
         this.loginState.next(LoginState.LOGIN_FAILED);
@@ -57,6 +61,15 @@ export class LocalSession extends SessionService {
       this.loginState.next(LoginState.UNAVAILABLE);
     }
     return this.loginState.value;
+  }
+
+  private createLocalPouchDB() {
+    const dbName = `${this.currentDBUser.name}-${AppConfig.settings.database.name}`;
+    if (AppConfig.settings.session_type === SessionType.mock) {
+      this.database.initInMemoryDB(dbName);
+    } else {
+      this.database.initIndexedDB(dbName);
+    }
   }
 
   /**
@@ -103,7 +116,7 @@ export class LocalSession extends SessionService {
     this.loginState.next(LoginState.LOGGED_OUT);
   }
 
-  getDatabase(): Database {
+  getDatabase(): PouchDatabase {
     return this.database;
   }
 

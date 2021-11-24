@@ -10,7 +10,7 @@ describe("ChildrenMigrationService", () => {
   let database: PouchDatabase;
 
   beforeEach(() => {
-    database = PouchDatabase.createWithInMemoryDB();
+    database = new PouchDatabase().initInMemoryDB();
     TestBed.configureTestingModule({
       providers: [{ provide: Database, useValue: database }],
     });

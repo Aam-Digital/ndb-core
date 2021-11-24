@@ -23,14 +23,12 @@ import { LocalSession } from "./local-session";
 import { RemoteSession } from "./remote-session";
 import { LoginState } from "../session-states/login-state.enum";
 import { Database } from "../../database/database";
-import { PouchDatabase } from "../../database/pouch-database";
 import { SyncState } from "../session-states/sync-state.enum";
 import { LoggingService } from "../../logging/logging.service";
 import { HttpClient } from "@angular/common/http";
-import PouchDB from "pouchdb-browser";
-import { AppConfig } from "../../app-config/app-config";
 import { DatabaseUser } from "./local-user";
 import { waitForChangeTo } from "../session-states/session-utils";
+import { PouchDatabase } from "../../database/pouch-database";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -46,8 +44,6 @@ export class SyncedSessionService extends SessionService {
 
   private readonly _localSession: LocalSession;
   private readonly _remoteSession: RemoteSession;
-  private readonly pouchDB: PouchDB.Database;
-  private readonly database: Database;
   private _liveSyncHandle: any;
   private _liveSyncScheduledHandle: any;
   private _offlineRetryLoginScheduleHandle: any;
@@ -55,12 +51,11 @@ export class SyncedSessionService extends SessionService {
   constructor(
     private _alertService: AlertService,
     private _loggingService: LoggingService,
-    private _httpClient: HttpClient
+    private _httpClient: HttpClient,
+    pouchDatabase: PouchDatabase
   ) {
     super();
-    this.pouchDB = new PouchDB(AppConfig.settings.database.name);
-    this.database = new PouchDatabase(this.pouchDB, this._loggingService);
-    this._localSession = new LocalSession(this.database);
+    this._localSession = new LocalSession(pouchDatabase);
     this._remoteSession = new RemoteSession(this._httpClient, _loggingService);
   }
 
@@ -165,7 +160,9 @@ export class SyncedSessionService extends SessionService {
   public async sync(): Promise<any> {
     this.syncState.next(SyncState.STARTED);
     try {
-      const result = await this.pouchDB.sync(this._remoteSession.pouchDB, {
+      const localPouchDB = this._localSession.getDatabase().getPouchDB();
+      const remotePouchDB = this._remoteSession.getDatabase().getPouchDB();
+      const result = await localPouchDB.sync(remotePouchDB, {
         batch_size: this.POUCHDB_SYNC_BATCH_SIZE,
       });
       this.syncState.next(SyncState.COMPLETED);
@@ -182,7 +179,9 @@ export class SyncedSessionService extends SessionService {
   public liveSync() {
     this.cancelLiveSync(); // cancel any liveSync that may have been alive before
     this.syncState.next(SyncState.STARTED);
-    this._liveSyncHandle = (this.pouchDB.sync(this._remoteSession.pouchDB, {
+    const localPouchDB = this._localSession.getDatabase().getPouchDB();
+    const remotePouchDB = this._remoteSession.getDatabase().getPouchDB();
+    this._liveSyncHandle = (localPouchDB.sync(remotePouchDB, {
       live: true,
       retry: true,
     }) as any)
@@ -250,7 +249,7 @@ export class SyncedSessionService extends SessionService {
    * als see {@link SessionService}
    */
   public getDatabase(): Database {
-    return this.database;
+    return this._localSession.getDatabase();
   }
 
   /**

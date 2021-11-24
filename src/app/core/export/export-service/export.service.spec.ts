@@ -26,7 +26,7 @@ describe("ExportService", () => {
   let db: PouchDatabase;
 
   beforeEach(() => {
-    db = PouchDatabase.createWithInMemoryDB("export-service-tests");
+    db = new PouchDatabase().initInMemoryDB();
 
     TestBed.configureTestingModule({
       providers: [

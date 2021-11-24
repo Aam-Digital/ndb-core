@@ -23,7 +23,6 @@ import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { DatabaseUser } from "./local-user";
 import { SessionService } from "./session.service";
 import { LoginState } from "../session-states/login-state.enum";
-import { Database } from "../../database/database";
 import { PouchDatabase } from "../../database/pouch-database";
 import { LoggingService } from "../../logging/logging.service";
 
@@ -39,7 +38,7 @@ export class RemoteSession extends SessionService {
   readonly UNAUTHORIZED_STATUS_CODE = 401;
   /** remote (!) database PouchDB */
   public pouchDB: PouchDB.Database;
-  private readonly database: Database;
+  private readonly database: PouchDatabase;
   private currentDBUser: DatabaseUser;
 
   /**
@@ -56,7 +55,7 @@ export class RemoteSession extends SessionService {
         skip_setup: true,
       }
     );
-    this.database = new PouchDatabase(this.pouchDB, this.loggingService);
+    this.database = new PouchDatabase(this.loggingService);
   }
 
   /**
@@ -115,7 +114,7 @@ export class RemoteSession extends SessionService {
     throw Error("Can't check password in remote session");
   }
 
-  getDatabase(): Database {
+  getDatabase(): PouchDatabase {
     return this.database;
   }
 

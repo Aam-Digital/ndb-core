@@ -22,9 +22,9 @@ import { AlertService } from "../alerts/alert.service";
 import { LoggingService } from "../logging/logging.service";
 import { LoginState } from "./session-states/login-state.enum";
 import { SessionType } from "./session-type";
-import { PouchDatabase } from "../database/pouch-database";
 import { HttpClient } from "@angular/common/http";
 import { LocalSession } from "./session-service/local-session";
+import { PouchDatabase } from "../database/pouch-database";
 
 /**
  * Factory method for Angular DI provider of SessionService.
@@ -36,31 +36,17 @@ export function sessionServiceFactory(
   loggingService: LoggingService,
   httpClient: HttpClient
 ): SessionService {
+  const database = new PouchDatabase(loggingService);
   let sessionService: SessionService;
-  switch (AppConfig.settings.session_type) {
-    case SessionType.local:
-      sessionService = new LocalSession(
-        PouchDatabase.createWithIndexedDB(
-          AppConfig.settings.database.name,
-          loggingService
-        )
-      );
-      break;
-    case SessionType.synced:
-      sessionService = new SyncedSessionService(
-        alertService,
-        loggingService,
-        httpClient
-      );
-      break;
-    default:
-      sessionService = new LocalSession(
-        PouchDatabase.createWithInMemoryDB(
-          AppConfig.settings.database.name,
-          loggingService
-        )
-      );
-      break;
+  if (AppConfig.settings.session_type === SessionType.synced) {
+    sessionService = new SyncedSessionService(
+      alertService,
+      loggingService,
+      httpClient,
+      database
+    );
+  } else {
+    sessionService = new LocalSession(database);
   }
   // TODO: requires a configuration or UI option to select RemoteSession: https://github.com/Aam-Digital/ndb-core/issues/434
   // return new RemoteSession(httpClient, loggingService);

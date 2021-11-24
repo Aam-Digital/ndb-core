@@ -17,7 +17,7 @@ describe("ChildrenService", () => {
   let database: PouchDatabase;
 
   beforeEach(async () => {
-    database = PouchDatabase.createWithInMemoryDB();
+    database = new PouchDatabase().initInMemoryDB();
     TestBed.configureTestingModule({
       providers: [
         ChildrenService,

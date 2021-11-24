@@ -12,17 +12,18 @@ import { School } from "../schools/model/school";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { SchoolsModule } from "../schools/schools.module";
 import { Child } from "../children/model/child";
-import { PouchDatabase } from "../../core/database/pouch-database";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
-import { Database } from "../../core/database/database";
 import { ChildrenModule } from "../children/children.module";
 import { SessionService } from "../../core/session/session-service/session.service";
 import { LocalSession } from "../../core/session/session-service/local-session";
+import { PouchDatabase } from "../../core/database/pouch-database";
 
-const database = PouchDatabase.createWithInMemoryDB();
+const sessionService = new LocalSession(new PouchDatabase());
 const schemaService = new EntitySchemaService();
-const entityMapper = new EntityMapperService(database, schemaService);
-const sessionService = new LocalSession(database);
+const entityMapper = new EntityMapperService(
+  sessionService.getDatabase(),
+  schemaService
+);
 
 const child = new Child("testChild");
 const school1 = new School("1");
@@ -72,7 +73,6 @@ export default {
       ],
       declarations: [],
       providers: [
-        { provide: Database, useValue: database },
         { provide: EntitySchemaService, useValue: schemaService },
         { provide: EntityMapperService, useValue: entityMapper },
         { provide: SessionService, useValue: sessionService },
