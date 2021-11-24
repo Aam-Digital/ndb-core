@@ -26,6 +26,7 @@ import {
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatDialogModule } from "@angular/material/dialog";
+import { DemoModeService } from "./demo-mode.service";
 
 /**
  * Generate realist mock entities for testing and demo purposes.
@@ -70,6 +71,7 @@ export class DemoDataModule {
       ngModule: DemoDataModule,
       providers: [
         DemoDataService,
+        DemoModeService,
         {
           provide: DemoDataServiceConfig,
           useValue: { dataGeneratorProviders: demoDataGeneratorProviders },

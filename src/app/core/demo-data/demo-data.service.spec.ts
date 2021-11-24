@@ -7,6 +7,7 @@ import {
   DemoChildConfig,
   DemoChildGenerator,
 } from "../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
+import { PouchDatabase } from "../database/pouch-database";
 
 describe("DemoDataService", () => {
   let mockEntityMapper;
@@ -37,17 +38,22 @@ describe("DemoDataService", () => {
   });
 
   it("should be created", () => {
-    const service: DemoDataService = TestBed.inject<DemoDataService>(
-      DemoDataService
-    );
+    const service: DemoDataService = TestBed.inject(DemoDataService);
     expect(service).toBeTruthy();
   });
 
   it("should register generator but not config providers", () => {
-    const service: DemoDataService = TestBed.inject<DemoDataService>(
-      DemoDataService
-    );
+    const service: DemoDataService = TestBed.inject(DemoDataService);
 
     expect(service.dataGenerators.length).toBe(1);
+  });
+
+  it("should remember a database that has already been created", async () => {
+    const first = new PouchDatabase().initInMemoryDB("test");
+    await first.put({ _id: "MyObj" });
+    console.log("loading", await first.get("MyObj"));
+
+    const second = new PouchDatabase().initInMemoryDB("test");
+    console.log("loading again", await second.get("MyObj"));
   });
 });
