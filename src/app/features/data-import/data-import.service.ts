@@ -6,6 +6,8 @@ import { BackupService } from "../../core/admin/services/backup.service";
 import { ConfirmationDialogService } from "../../core/confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { readFile } from "../../utils/utils";
+import { Entity } from "../../core/entity/model/entity";
+import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 
 @Injectable()
 @UntilDestroy()
@@ -32,7 +34,9 @@ export class DataImportService {
           delete record[propertyName];
         }
       }
-
+      if (record["name"] !== undefined) {
+        record["searchIndices"] = record["name"].split(" ");
+      }
       await this.db.put(record, true);
     }
   }
