@@ -38,9 +38,7 @@ export class EntityMapperService {
   constructor(
     private _db: Database,
     private entitySchemaService: EntitySchemaService
-  ) {
-    console.log("database", this._db);
-  }
+  ) {}
 
   /**
    * Load an Entity from the database with the given id.
