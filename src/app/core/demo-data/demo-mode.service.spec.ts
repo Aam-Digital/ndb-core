@@ -1,4 +1,4 @@
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
 
 import { DemoModeService } from "./demo-mode.service";
 import { SessionService } from "../session/session-service/session.service";
@@ -10,37 +10,25 @@ import {
 import { DemoDataService } from "./demo-data.service";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
-import { Subject } from "rxjs";
-import { LoginState } from "../session/session-states/login-state.enum";
 import { PouchDatabase } from "../database/pouch-database";
 import { AppConfig } from "../app-config/app-config";
-import { SessionType } from "../session/session-type";
 import { Database } from "../database/database";
+import { LocalSession } from "../session/session-service/local-session";
+import { LoggingService } from "../logging/logging.service";
+import { SessionType } from "../session/session-type";
 
 describe("DemoModeService", () => {
   const demoUsername = DemoUserGeneratorService.DEFAULT_USERNAME;
   const adminUsername = DemoUserGeneratorService.ADMIN_USERNAME;
   const demoPassword = DemoUserGeneratorService.DEFAULT_PASSWORD;
   let service: DemoModeService;
-  let mockLoginState: Subject<LoginState>;
-  let mockSession: jasmine.SpyObj<SessionService>;
   let mockDemoDataService: jasmine.SpyObj<DemoDataService>;
-  let dialogRef: MatDialogRef<DemoDataGeneratingProgressDialogComponent>;
-  let mockDialog: jasmine.SpyObj<MatDialog>;
-  let mockPouchDB: jasmine.SpyObj<PouchDatabase>;
+  let mockMatDialog: jasmine.SpyObj<MatDialog>;
+  let mockDialogRef: jasmine.SpyObj<
+    MatDialogRef<DemoDataGeneratingProgressDialogComponent>
+  >;
 
   beforeEach(() => {
-    mockLoginState = new Subject<LoginState>();
-    mockSession = jasmine.createSpyObj(["login", "getCurrentUser"], {
-      loginState: mockLoginState,
-    });
-    mockDemoDataService = jasmine.createSpyObj(["publishDemoData"]);
-    dialogRef = {
-      close: jasmine.createSpy(),
-      disableClose: false,
-    } as any;
-    mockDialog = jasmine.createSpyObj(["open"]);
-    mockDialog.open.and.returnValue(dialogRef);
     AppConfig.settings = {
       site_name: "Aam Digital - DEV",
       session_type: SessionType.mock,
@@ -49,30 +37,44 @@ describe("DemoModeService", () => {
         remote_url: "https://demo.aam-digital.com/db/",
       },
     };
-    mockPouchDB = jasmine.createSpyObj(["initInMemoryDB", "getPouchDB"]);
+    mockDemoDataService = jasmine.createSpyObj(["publishDemoData"]);
+    mockDemoDataService.publishDemoData.and.resolveTo();
+    mockDialogRef = jasmine.createSpyObj(["close"]);
+    mockDialogRef.disableClose = false;
+    mockMatDialog = jasmine.createSpyObj(["open"]);
+    mockMatDialog.open.and.returnValue(mockDialogRef);
 
     TestBed.configureTestingModule({
       providers: [
-        { provide: SessionService, useValue: mockSession },
         { provide: DemoDataService, useValue: mockDemoDataService },
-        { provide: MatDialog, useValue: mockDialog },
-        { provide: Database, useValue: mockPouchDB },
+        { provide: SessionService, useClass: LocalSession },
+        { provide: PouchDatabase, useClass: PouchDatabase },
+        { provide: Database, useExisting: PouchDatabase },
+        { provide: MatDialog, useValue: mockMatDialog },
+        LoggingService,
         DemoModeService,
       ],
     });
     service = TestBed.inject(DemoModeService);
   });
 
-  afterEach(() => {
-    mockLoginState.complete();
-  });
+  afterEach(
+    waitForAsync(() => {
+      const db = TestBed.inject(PouchDatabase);
+      if (db.getPouchDB()) {
+        db.destroy();
+      }
+      window.localStorage.removeItem(demoUsername);
+      window.localStorage.removeItem(adminUsername);
+    })
+  );
 
   it("should be created", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should automatically register the default users in the local storage", () => {
-    service.start();
+  it("should automatically register the default users in the local storage", async () => {
+    await service.start();
 
     const demoUser: LocalUser = JSON.parse(
       window.localStorage.getItem(demoUsername)
@@ -91,10 +93,13 @@ describe("DemoModeService", () => {
     ).toBeTrue();
   });
 
-  it("should automatically login the default user", () => {
-    service.start();
+  it("should automatically login the default user", async () => {
+    const session = TestBed.inject(SessionService);
+    spyOn(session, "login");
 
-    expect(mockSession.login).toHaveBeenCalledWith(demoUsername, demoPassword);
+    await service.start();
+
+    expect(session.login).toHaveBeenCalledWith(demoUsername, demoPassword);
   });
 
   it("should initialize the demo data on first login", async () => {
@@ -106,79 +111,69 @@ describe("DemoModeService", () => {
   it("should show a un-closable progress dialog while generating demo data", fakeAsync(() => {
     service.start();
 
-    expect(mockDialog.open).toHaveBeenCalledWith(
+    expect(mockMatDialog.open).toHaveBeenCalledWith(
       DemoDataGeneratingProgressDialogComponent
     );
-    expect(dialogRef.disableClose).toBeTrue();
+    expect(mockDialogRef.disableClose).toBeTrue();
 
     tick();
-    expect(dialogRef.close).toHaveBeenCalled();
+    expect(mockDialogRef.close).toHaveBeenCalled();
   }));
 
-  it("should sync with existing demo data if another user is logged in", fakeAsync(() => {
+  it("should sync with existing demo data when another user logs in", fakeAsync(() => {
     service.start();
     tick();
 
-    mockDemoDataService.publishDemoData.calls.reset();
     const demoUserDBName = `${demoUsername}-${AppConfig.settings.database.name}`;
+    const database = TestBed.inject(PouchDatabase);
+    const userPouch = database.getPouchDB();
+    expect(userPouch.name).toBe(demoUserDBName);
+
+    mockDemoDataService.publishDemoData.calls.reset();
     const testDoc = { _id: "testDoc" };
-    const demoUserDB = new PouchDatabase().initInMemoryDB(demoUserDBName);
-    demoUserDB.put(testDoc);
+    database.put(testDoc);
     tick();
 
-    mockSession.getCurrentUser.and.returnValue({ name: adminUsername } as any);
-    const adminPouch = jasmine.createSpyObj<PouchDB.Database>(["sync", "info"]);
-    mockPouchDB.getPouchDB.and.returnValue(adminPouch);
-    adminPouch.info.and.resolveTo({ doc_count: 0 } as any);
-    mockLoginState.next(LoginState.LOGGED_IN);
+    const session = TestBed.inject(SessionService);
+    session.login(adminUsername, demoPassword);
     tick();
 
     expect(mockDemoDataService.publishDemoData).not.toHaveBeenCalled();
-    expect(mockPouchDB.getPouchDB).toHaveBeenCalled();
-    const syncedPouch = adminPouch.sync.calls.mostRecent()
-      .args[0] as PouchDB.Database;
-    expect(syncedPouch.name).toBe(demoUserDBName);
-    expect(adminPouch.sync).toHaveBeenCalledWith(syncedPouch, {
-      batch_size: 500,
-    });
-    expect(adminPouch.sync).toHaveBeenCalledWith(syncedPouch, {
-      live: true,
-      retry: true,
-    });
+    const adminDBName = `${adminUsername}-${AppConfig.settings.database.name}`;
+    expect(database.getPouchDB().name).toBe(adminDBName);
+    expectAsync(database.get(testDoc._id)).toBeResolved();
+    tick();
 
-    demoUserDB.destroy();
+    userPouch.destroy();
     tick();
   }));
 
-  it("should only sync if a database with more docs than the current one exists", fakeAsync(() => {
+  it("should not  sync if current database has more documents than all the other databases", fakeAsync(() => {
     service.start();
     tick();
 
-    const testDoc = { _id: "testDoc" };
-    const anotherDoc = { _id: "anotherDoc" };
-    const demoUserDBName = `${demoUsername}-${AppConfig.settings.database.name}`;
-    const demoUserDB = new PouchDatabase().initInMemoryDB(demoUserDBName);
-    demoUserDB.put(testDoc);
+    const userDoc = { _id: "userDoc" };
+    const database = TestBed.inject(PouchDatabase);
+    const userPouch = database.getPouchDB();
+    userPouch.put(userDoc);
+
     const adminUserDBName = `${adminUsername}-${AppConfig.settings.database.name}`;
     const adminDB = new PouchDatabase().initInMemoryDB(adminUserDBName);
-    adminDB.put(testDoc);
-    adminDB.put(anotherDoc);
-    tick();
-    spyOn(adminDB.getPouchDB(), "sync");
-    mockPouchDB.getPouchDB.and.returnValue(adminDB.getPouchDB());
-
-    mockSession.getCurrentUser.and.returnValue({ name: adminUsername } as any);
-    mockLoginState.next(LoginState.LOGGED_IN);
+    const adminDoc1 = { _id: "adminDoc1" };
+    const adminDoc2 = { _id: "adminDoc2" };
+    adminDB.put(adminDoc1);
+    adminDB.put(adminDoc2);
     tick();
 
-    const newDB = mockPouchDB.getPouchDB();
-    expect(newDB.sync).not.toHaveBeenCalled();
-    expectAsync(newDB.get(testDoc._id)).toBeResolved();
-    expectAsync(newDB.get(anotherDoc._id)).toBeResolved();
+    TestBed.inject(SessionService).login(adminUsername, demoPassword);
     tick();
 
-    demoUserDB.destroy();
-    adminDB.destroy();
+    expectAsync(database.get(adminDoc1._id)).toBeResolved();
+    expectAsync(database.get(adminDoc2._id)).toBeResolved();
+    expectAsync(database.get(userDoc._id)).toBeRejected();
+    tick();
+
+    userPouch.destroy();
     tick();
   }));
 });
