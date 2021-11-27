@@ -32,7 +32,6 @@ export class ProgressDashboardComponent
   }
 
   ngOnInit() {
-    //TODO this does not work in the new demo mode, demo data is only available after sync is finished
     this.data = new ProgressDashboardConfig(this.dashboardConfigId);
     this.entityMapper
       .load(ProgressDashboardConfig, this.dashboardConfigId)
