@@ -16,6 +16,7 @@ import { Database } from "../database/database";
 import { LocalSession } from "../session/session-service/local-session";
 import { LoggingService } from "../logging/logging.service";
 import { SessionType } from "../session/session-type";
+import { SyncState } from "../session/session-states/sync-state.enum";
 
 describe("DemoModeService", () => {
   const demoUsername = DemoUserGeneratorService.DEFAULT_USERNAME;
@@ -175,5 +176,33 @@ describe("DemoModeService", () => {
 
     userPouch.destroy();
     tick();
+  }));
+
+  it("should set sync status during demo data generation", fakeAsync(() => {
+    const session = TestBed.inject(SessionService);
+
+    service.start();
+
+    expect(session.syncState.value).toBe(SyncState.STARTED);
+
+    tick();
+
+    expect(session.syncState.value).toBe(SyncState.COMPLETED);
+  }));
+
+  it("should set sync status during sync with existing db", fakeAsync(() => {
+    service.start();
+    tick();
+    TestBed.inject(Database).put({ _id: "someDoc" });
+    tick();
+    const session = TestBed.inject(SessionService);
+    spyOn(session.syncState, "next").and.callThrough();
+
+    session.login(adminUsername, demoPassword);
+    tick();
+
+    expect(session.syncState.next).toHaveBeenCalledWith(SyncState.STARTED);
+    expect(session.syncState.next).toHaveBeenCalledWith(SyncState.COMPLETED);
+    expect(session.syncState.value).toBe(SyncState.COMPLETED);
   }));
 });

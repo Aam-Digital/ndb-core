@@ -14,6 +14,7 @@ import { SessionType } from "../session/session-type";
 import PouchDB from "pouchdb-browser";
 import memory from "pouchdb-adapter-memory";
 import { LocalUser } from "../session/session-service/local-user";
+import { SyncState } from "../session/session-states/sync-state.enum";
 
 @Injectable()
 export class DemoModeService {
@@ -25,6 +26,7 @@ export class DemoModeService {
   ) {}
 
   async start() {
+    this.sessionService.syncState.next(SyncState.STARTED);
     const progressDialog = this.dialog.open(
       DemoDataGeneratingProgressDialogComponent
     );
@@ -37,6 +39,7 @@ export class DemoModeService {
     );
     await this.demoDataService.publishDemoData();
     progressDialog.close();
+    this.sessionService.syncState.next(SyncState.COMPLETED);
 
     this.sessionService.loginState
       .pipe(filter((state) => state === LoginState.LOGGED_IN))
@@ -67,7 +70,9 @@ export class DemoModeService {
       newUserDBInfo.doc_count
     );
     if (existingDatabase) {
+      this.sessionService.syncState.next(SyncState.STARTED);
       await newUserPouch.sync(existingDatabase, { batch_size: 500 });
+      this.sessionService.syncState.next(SyncState.COMPLETED);
       newUserPouch.sync(existingDatabase, {
         live: true,
         retry: true,
