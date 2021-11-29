@@ -13,17 +13,43 @@ import { AppConfig } from "../app-config/app-config";
 import { SessionType } from "../session/session-type";
 import PouchDB from "pouchdb-browser";
 import memory from "pouchdb-adapter-memory";
-import { LocalUser } from "../session/session-service/local-user";
+import { DatabaseUser, LocalUser } from "../session/session-service/local-user";
 import { SyncState } from "../session/session-states/sync-state.enum";
 
 @Injectable()
-export class DemoModeService {
+export class DemoSession extends SessionService{
   constructor(
     private sessionService: SessionService,
     private demoDataService: DemoDataService,
     private dialog: MatDialog,
     private database: Database
-  ) {}
+  ) {
+    super();
+  }
+
+  checkPassword(username: string, password: string): boolean {
+    return false;
+  }
+
+  getCurrentUser(): DatabaseUser {
+    return undefined;
+  }
+
+  getDatabase(): Database {
+    return undefined;
+  }
+
+  login(username: string, password: string): Promise<LoginState> {
+    return Promise.resolve(undefined);
+  }
+
+  logout() {
+  }
+
+  sync(): Promise<any> {
+    return Promise.resolve(undefined);
+  }
+
 
   async start() {
     this.sessionService.syncState.next(SyncState.STARTED);

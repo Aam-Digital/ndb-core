@@ -30,7 +30,7 @@ import { environment } from "../environments/environment";
 import { DynamicEntityService } from "./core/entity/dynamic-entity.service";
 import { Child } from "./child-dev-project/children/model/child";
 import { School } from "./child-dev-project/schools/model/school";
-import { DemoModeService } from "./core/demo-data/demo-mode.service";
+import { DemoSession } from "./core/demo-data/demo-session.service";
 
 @Component({
   selector: "app-root",
@@ -43,7 +43,7 @@ import { DemoModeService } from "./core/demo-data/demo-mode.service";
 export class AppComponent implements OnInit {
   constructor(
     private viewContainerRef: ViewContainerRef, // need this small hack in order to catch application root view container ref
-    private demoMode: DemoModeService,
+    private demoMode: DemoSession,
     private analyticsService: AnalyticsService,
     private configService: ConfigService,
     private entityMapper: EntityMapperService,

@@ -1,6 +1,6 @@
 import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
 
-import { DemoModeService } from "./demo-mode.service";
+import { DemoSession } from "./demo-session.service";
 import { SessionService } from "../session/session-service/session.service";
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
 import {
@@ -18,11 +18,11 @@ import { LoggingService } from "../logging/logging.service";
 import { SessionType } from "../session/session-type";
 import { SyncState } from "../session/session-states/sync-state.enum";
 
-describe("DemoModeService", () => {
+describe("DemoSession", () => {
   const demoUsername = DemoUserGeneratorService.DEFAULT_USERNAME;
   const adminUsername = DemoUserGeneratorService.ADMIN_USERNAME;
   const demoPassword = DemoUserGeneratorService.DEFAULT_PASSWORD;
-  let service: DemoModeService;
+  let service: DemoSession;
   let mockDemoDataService: jasmine.SpyObj<DemoDataService>;
   let mockMatDialog: jasmine.SpyObj<MatDialog>;
   let mockDialogRef: jasmine.SpyObj<
@@ -53,10 +53,10 @@ describe("DemoModeService", () => {
         { provide: Database, useExisting: PouchDatabase },
         { provide: MatDialog, useValue: mockMatDialog },
         LoggingService,
-        DemoModeService,
+        DemoSession,
       ],
     });
-    service = TestBed.inject(DemoModeService);
+    service = TestBed.inject(DemoSession);
   });
 
   afterEach(
