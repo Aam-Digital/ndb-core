@@ -70,7 +70,6 @@ export class DemoDataService {
     private injector: Injector,
     private config: DemoDataServiceConfig
   ) {
-    this.registerAllProvidedDemoDataGenerators();
   }
 
   private registerAllProvidedDemoDataGenerators() {
@@ -90,6 +89,7 @@ export class DemoDataService {
     if (!(await this.hasEmptyDatabase())) {
       return;
     }
+    this.registerAllProvidedDemoDataGenerators();
 
     // completely generate all data (i.e. call every generator) before starting to save the data
     // to allow generators to delete unwanted entities of other generators before they are saved

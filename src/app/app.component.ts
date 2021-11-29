@@ -15,8 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit, ViewContainerRef } from "@angular/core";
-import { AppConfig } from "./core/app-config/app-config";
+import { Component, ViewContainerRef } from "@angular/core";
 import { AnalyticsService } from "./core/analytics/analytics.service";
 import { EntityMapperService } from "./core/entity/entity-mapper.service";
 import { ConfigService } from "./core/config/config.service";
@@ -30,7 +29,6 @@ import { environment } from "../environments/environment";
 import { DynamicEntityService } from "./core/entity/dynamic-entity.service";
 import { Child } from "./child-dev-project/children/model/child";
 import { School } from "./child-dev-project/schools/model/school";
-import { DemoSession } from "./core/demo-data/demo-session.service";
 
 @Component({
   selector: "app-root",
@@ -40,10 +38,9 @@ import { DemoSession } from "./core/demo-data/demo-session.service";
  * Component as the main entry point for the app.
  * Actual logic and UI structure is defined in other modules.
  */
-export class AppComponent implements OnInit {
+export class AppComponent {
   constructor(
     private viewContainerRef: ViewContainerRef, // need this small hack in order to catch application root view container ref
-    private demoMode: DemoSession,
     private analyticsService: AnalyticsService,
     private configService: ConfigService,
     private entityMapper: EntityMapperService,
@@ -87,17 +84,6 @@ export class AppComponent implements OnInit {
 
     if (environment.production) {
       this.analyticsService.init();
-    }
-  }
-
-  ngOnInit() {
-    this.loadDemoData();
-  }
-
-  // TODO: move loading of demo data to a more suitable place
-  private loadDemoData() {
-    if (AppConfig.settings.demo_mode) {
-      this.demoMode.start();
     }
   }
 }

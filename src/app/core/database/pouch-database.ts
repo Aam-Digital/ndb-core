@@ -20,7 +20,9 @@ import { LoggingService } from "../logging/logging.service";
 import PouchDB from "pouchdb-browser";
 import memory from "pouchdb-adapter-memory";
 import { PerformanceAnalysisLogging } from "../../utils/performance-analysis-logging";
+import { Injectable } from "@angular/core";
 
+@Injectable()
 /**
  * Wrapper for a PouchDB instance to decouple the code from
  * that external library.
@@ -49,7 +51,7 @@ export class PouchDatabase extends Database {
    * Create a PouchDB database manager.
    * @param loggingService The LoggingService instance of the app to log and report problems.
    */
-  constructor(private loggingService = new LoggingService()) {
+  constructor(private loggingService: LoggingService = new LoggingService()) {
     super();
   }
 

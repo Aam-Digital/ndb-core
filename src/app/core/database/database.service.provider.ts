@@ -16,7 +16,7 @@
  */
 
 import { Database } from "./database";
-import { SessionService } from "../session/session-service/session.service";
+import { PouchDatabase } from "./pouch-database";
 
 /**
  * Provider of Database service for the Angular dependency injection.
@@ -26,8 +26,5 @@ import { SessionService } from "../session/session-service/session.service";
  */
 export let databaseServiceProvider = {
   provide: Database,
-  useFactory: function (_sessionService: SessionService) {
-    return _sessionService.getDatabase();
-  },
-  deps: [SessionService],
+  useClass: PouchDatabase,
 };
