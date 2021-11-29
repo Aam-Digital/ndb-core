@@ -28,5 +28,5 @@ Using the ng e2e command, Cypress will be started in headless terminal mode. All
 
 Using the npm run e2e-open command, Cypress will be started in a browser mode with an additional UI to track the single e2e tests. With the help of the UI it is possible to have a better overview for the single E2E tests and further on to have the possibility of finding every element of a certain angular component.
 
-## How to write an E2E test
+## [How to write an E2E test](./create-e2e-test.md)
 
