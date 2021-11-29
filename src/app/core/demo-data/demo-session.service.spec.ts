@@ -98,8 +98,8 @@ describe("DemoSession", () => {
     expect(userPouch.name).toBe(demoUserDBName);
 
     mockDemoDataService.publishDemoData.calls.reset();
-    const testDoc = { _id: "testDoc" };
-    database.put(testDoc);
+    const userDoc = { _id: "userDoc" };
+    database.put(userDoc);
     tick();
 
     service.login(adminUsername, demoPassword);
@@ -108,42 +108,28 @@ describe("DemoSession", () => {
     expect(mockDemoDataService.publishDemoData).not.toHaveBeenCalled();
     const adminDBName = `${adminUsername}-${AppConfig.settings.database.name}`;
     expect(database.getPouchDB().name).toBe(adminDBName);
-    expectAsync(database.get(testDoc._id)).toBeResolved();
+    expectAsync(database.get(userDoc._id)).toBeResolved();
     tick();
 
-    userPouch.destroy();
-    tick();
-  }));
-
-  it("should not  sync if current database has more documents than all the other databases", fakeAsync(() => {
-    const userDoc = { _id: "userDoc" };
-    const database = TestBed.inject(PouchDatabase);
-    const userPouch = database.getPouchDB();
-    userPouch.put(userDoc);
-
-    const adminUserDBName = `${adminUsername}-${AppConfig.settings.database.name}`;
-    const adminDB = new PouchDatabase().initInMemoryDB(adminUserDBName);
     const adminDoc1 = { _id: "adminDoc1" };
     const adminDoc2 = { _id: "adminDoc2" };
-    adminDB.put(adminDoc1);
-    adminDB.put(adminDoc2);
-    tick();
-
-    service.login(adminUsername, demoPassword);
+    database.put(adminDoc1);
+    database.put(adminDoc2);
     tick();
 
     expectAsync(database.get(adminDoc1._id)).toBeResolved();
     expectAsync(database.get(adminDoc2._id)).toBeResolved();
-    expectAsync(database.get(userDoc._id)).toBeRejected();
+    expectAsync(userPouch.get(adminDoc1._id)).toBeResolved();
+    expectAsync(userPouch.get(adminDoc2._id)).toBeResolved();
+    expectAsync(userPouch.get(userDoc._id)).toBeResolved();
     tick();
 
     userPouch.destroy();
     tick();
   }));
 
-  it("should set sync status during demo data generation", () => {
+  it("should have a finished sync after initial login", () => {
     expect(service.syncState.value).toBe(SyncState.COMPLETED);
-    console.log("checking");
   });
 
   it("should set sync status during sync with existing db", fakeAsync(() => {
@@ -158,5 +144,25 @@ describe("DemoSession", () => {
     expect(service.syncState.next).toHaveBeenCalledWith(SyncState.STARTED);
     expect(service.syncState.next).toHaveBeenCalledWith(SyncState.COMPLETED);
     expect(service.syncState.value).toBe(SyncState.COMPLETED);
+  }));
+
+  it("should stop syncing after logout", fakeAsync(() => {
+    service.login(adminUsername, demoPassword);
+    tick();
+    const adminUserDB = service.getDatabase().getPouchDB();
+    const syncedDoc = { _id: "syncedDoc" };
+    adminUserDB.put(syncedDoc);
+    tick();
+
+    service.logout();
+    const unsyncedDoc = { _id: "unsncedDoc" };
+    adminUserDB.put(unsyncedDoc);
+    tick();
+    service.login(demoUsername, demoPassword);
+    tick();
+
+    expectAsync(service.getDatabase().get(syncedDoc._id)).toBeResolved();
+    expectAsync(service.getDatabase().get(unsyncedDoc._id)).toBeRejected();
+    tick();
   }));
 });

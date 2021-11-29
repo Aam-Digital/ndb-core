@@ -9,12 +9,14 @@ import { AppConfig } from "../app-config/app-config";
 import { SessionType } from "../session/session-type";
 import PouchDB from "pouchdb-browser";
 import memory from "pouchdb-adapter-memory";
-import { DatabaseUser, LocalUser } from "../session/session-service/local-user";
+import { DatabaseUser } from "../session/session-service/local-user";
 import { SyncState } from "../session/session-states/sync-state.enum";
 
 @Injectable()
 export class DemoSession extends SessionService {
   private localSession: LocalSession;
+  private liveSyncHandle: PouchDB.Replication.Sync<any>;
+
   constructor(
     database: PouchDatabase,
     private demoDataService: DemoDataService
@@ -49,6 +51,7 @@ export class DemoSession extends SessionService {
 
   logout() {
     this.localSession.logout();
+    this.liveSyncHandle.cancel();
     this.loginState.next(LoginState.LOGGED_OUT);
     this.syncState.next(SyncState.UNSYNCED);
   }
@@ -73,61 +76,30 @@ export class DemoSession extends SessionService {
 
   private async initUserDemoData() {
     this.syncState.next(SyncState.STARTED);
-    const newUserPouch = this.getDatabase().getPouchDB();
-    const newUserDBInfo = await newUserPouch.info();
-    const existingDatabase = await this.findExistingDBWithMostDocs(
-      newUserDBInfo.doc_count
-    );
-    if (existingDatabase) {
-      await newUserPouch.sync(existingDatabase, { batch_size: 500 });
-      newUserPouch.sync(existingDatabase, {
-        live: true,
-        retry: true,
-      });
-    } else {
+    const currentUser = this.getCurrentUser();
+    const demoUserName = DemoUserGeneratorService.DEFAULT_USERNAME;
+    if (currentUser.name === demoUserName) {
       await this.demoDataService.publishDemoData();
+    } else {
+      await this.syncWithDemoUserDB(demoUserName);
     }
     this.syncState.next(SyncState.COMPLETED);
   }
 
-  private async findExistingDBWithMostDocs(
-    currentDBDocs: number
-  ): Promise<PouchDB.Database> {
-    let foundDatabase: PouchDB.Database;
-    let maxDocs = currentDBDocs;
-    for (let i = 0; i < window.localStorage.length; i++) {
-      const key = window.localStorage.key(i);
-      if (
-        this.getCurrentUser().name !== key &&
-        this.isLocalUser(window.localStorage.getItem(key))
-      ) {
-        const db = this.createPouchDBForUser(key);
-        const info = await db.info();
-        if (info.doc_count > maxDocs) {
-          foundDatabase = db;
-          maxDocs = info.doc_count;
-        }
-      }
-    }
-    return foundDatabase;
-  }
-
-  private isLocalUser(value: string): boolean {
-    try {
-      const obj: LocalUser = JSON.parse(value);
-      return !!(obj && obj.name && obj.encryptedPassword && obj.roles);
-    } catch (e) {
-      return false;
-    }
-  }
-
-  private createPouchDBForUser(username: string): PouchDB.Database {
-    const dbName = `${username}-${AppConfig.settings.database.name}`;
+  private async syncWithDemoUserDB(demoUserName: string) {
+    const dbName = `${demoUserName}-${AppConfig.settings.database.name}`;
+    let demoUserDB: PouchDB.Database;
     if (AppConfig.settings.session_type === SessionType.mock) {
       PouchDB.plugin(memory);
-      return new PouchDB(dbName, { adapter: "memory" });
+      demoUserDB = new PouchDB(dbName, { adapter: "memory" });
     } else {
-      return new PouchDB(dbName);
+      demoUserDB = new PouchDB(dbName);
     }
+    const currentUserDB = this.getDatabase().getPouchDB();
+    await currentUserDB.sync(demoUserDB, { batch_size: 500 });
+    this.liveSyncHandle = currentUserDB.sync(demoUserDB, {
+      live: true,
+      retry: true,
+    });
   }
 }
