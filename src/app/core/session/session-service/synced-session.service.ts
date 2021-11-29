@@ -185,9 +185,6 @@ export class SyncedSessionService extends SessionService {
       live: true,
       retry: true,
     }) as any)
-      .on("change", (change) => {
-        // after sync. change has direction and changes with info on errors etc
-      })
       .on("paused", (info) => {
         // replication was paused: either because sync is finished or because of a failed sync (mostly due to lost connection). info is empty.
         if (this._remoteSession.loginState.value === LoginState.LOGGED_IN) {
@@ -202,7 +199,7 @@ export class SyncedSessionService extends SessionService {
       })
       .on("error", (err) => {
         // totally unhandled error (shouldn't happen)
-        console.error("sync failed", err);
+        this._loggingService.error("sync failed" + err);
         this.syncState.next(SyncState.FAILED);
       })
       .on("complete", (info) => {

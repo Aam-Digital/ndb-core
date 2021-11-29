@@ -35,17 +35,7 @@ export class ProgressDashboardComponent
     this.data = new ProgressDashboardConfig(this.dashboardConfigId);
     this.entityMapper
       .load(ProgressDashboardConfig, this.dashboardConfigId)
-      .catch(() =>
-        this.sessionService.syncState
-          .pipe(waitForChangeTo(SyncState.COMPLETED))
-          .toPromise()
-          .then(() =>
-            this.entityMapper.load(
-              ProgressDashboardConfig,
-              this.dashboardConfigId
-            )
-          )
-      )
+      .catch(() => this.retryAfterSync())
       .then((config) => {
         this.data = config;
       })
@@ -61,6 +51,15 @@ export class ProgressDashboardComponent
           );
         }
       });
+  }
+
+  private retryAfterSync(): Promise<ProgressDashboardConfig> {
+    return this.sessionService.syncState
+      .pipe(waitForChangeTo(SyncState.COMPLETED))
+      .toPromise()
+      .then(() =>
+        this.entityMapper.load(ProgressDashboardConfig, this.dashboardConfigId)
+      );
   }
 
   private createDefaultConfig() {
