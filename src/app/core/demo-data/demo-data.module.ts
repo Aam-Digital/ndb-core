@@ -23,7 +23,6 @@ import {
   NgModule,
   ValueProvider,
 } from "@angular/core";
-import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatDialogModule } from "@angular/material/dialog";
 import { DemoSession } from "./demo-session.service";
@@ -51,8 +50,6 @@ import { DemoSession } from "./demo-session.service";
  */
 @NgModule({
   imports: [MatProgressBarModule, MatDialogModule],
-  declarations: [DemoDataGeneratingProgressDialogComponent],
-  exports: [DemoDataGeneratingProgressDialogComponent],
 })
 export class DemoDataModule {
   /**
