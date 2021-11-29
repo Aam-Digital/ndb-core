@@ -97,8 +97,10 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
 
 ### Running end-to-end tests
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-Before running the tests make sure you are serving the app via `ng serve`.
+Run `npm run e2e` to execute the end-to-end tests via [Cypress](http://www.cypress.io/) in the terminal.
+
+Run `npm run e2e-open` to execute the end-to-end tests via Cypress own User Interface.
+
 
 ### Build a docker image locally
 Deployment on a server can be done through a docker image, our [ndb-setup project](https://github.com/Aam-Digital/ndb-setup) provides tools and a starting point to run the system using docker.
