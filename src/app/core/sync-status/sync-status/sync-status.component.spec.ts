@@ -87,8 +87,6 @@ describe("SyncStatusComponent", () => {
     expect(component.dialogRef).toBeDefined();
 
     mockSessionService.syncState.next(SyncState.COMPLETED);
-    // @ts-ignore
-    component.dialogRef.close();
 
     fixture.detectChanges();
     await fixture.whenStable();

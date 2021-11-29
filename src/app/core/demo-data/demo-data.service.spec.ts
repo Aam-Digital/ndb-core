@@ -7,14 +7,14 @@ import {
   DemoChildConfig,
   DemoChildGenerator,
 } from "../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
-import { PouchDatabase } from "../database/pouch-database";
 
 describe("DemoDataService", () => {
-  let mockEntityMapper;
+  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let mockGeneratorsProviders;
 
   beforeEach(() => {
-    mockEntityMapper = jasmine.createSpyObj(["save"]);
+    mockEntityMapper = jasmine.createSpyObj(["save", "loadType"]);
+    mockEntityMapper.loadType.and.resolveTo([]);
     mockGeneratorsProviders = [
       { provide: DemoChildGenerator, useClass: DemoChildGenerator },
       { provide: DemoChildConfig, useValue: { count: 10 } },
@@ -42,18 +42,10 @@ describe("DemoDataService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should register generator but not config providers", () => {
+  it("should register generator but not config providers", async () => {
     const service: DemoDataService = TestBed.inject(DemoDataService);
+    await service.publishDemoData();
 
     expect(service.dataGenerators.length).toBe(1);
-  });
-
-  it("should remember a database that has already been created", async () => {
-    const first = new PouchDatabase().initInMemoryDB("test");
-    await first.put({ _id: "MyObj" });
-    console.log("loading", await first.get("MyObj"));
-
-    const second = new PouchDatabase().initInMemoryDB("test");
-    console.log("loading again", await second.get("MyObj"));
   });
 });
