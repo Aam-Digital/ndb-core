@@ -20,8 +20,6 @@ export class DataImportComponent implements OnInit{
 
   csvFile: Blob = undefined;
 
-  parsedCsvFile: ParseResult = undefined;
-
   constructor(
     private dataImportService: DataImportService,
     private _formBuilder: FormBuilder,
