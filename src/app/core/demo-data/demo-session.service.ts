@@ -51,7 +51,10 @@ export class DemoSession extends SessionService {
 
   logout() {
     this.localSession.logout();
-    this.liveSyncHandle.cancel();
+    if (this.liveSyncHandle) {
+      this.liveSyncHandle.cancel();
+      this.liveSyncHandle = undefined;
+    }
     this.loginState.next(LoginState.LOGGED_OUT);
     this.syncState.next(SyncState.UNSYNCED);
   }
