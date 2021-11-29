@@ -2,6 +2,8 @@ import { Component, Injectable, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { DynamicEntityService } from "app/core/entity/dynamic-entity.service";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
+import { readFile } from "app/utils/utils";
+import { ParseResult } from "ngx-papaparse";
 import { DataImportService } from "../data-import.service";
 
 @Component({
@@ -17,6 +19,8 @@ export class DataImportComponent implements OnInit{
   secondFormGroup: FormGroup;
 
   csvFile: Blob = undefined;
+
+  parsedCsvFile: ParseResult = undefined;
 
   constructor(
     private dataImportService: DataImportService,
@@ -36,9 +40,27 @@ export class DataImportComponent implements OnInit{
       return this.dynamicEntityService.EntityMap;
     }
   
-    setCsvFile(file: File): void {
-      this.csvFile = file;
-      this.secondFormGroup.setValue({ secondCtrl: file.name});
+    get hasValidFile(): boolean {
+      return this.csvFile !== undefined;
+    }
+
+    entitySelectionChanged(): void {
+      // whenver the selection changes, the file can't be valid (if there was one)
+      this.csvFile = undefined;
+      this.secondFormGroup.setValue({ secondCtrl: ''});
+    }
+
+    async setCsvFile(file: File): Promise<void> {
+      const entityType = this.firstFormGroup.get('firstCtrl').value;
+      const isValidCsv = await this.dataImportService.validateCsvFile(file, entityType);
+
+      if(!isValidCsv) {
+        this.csvFile = undefined;
+        this.secondFormGroup.setValue({ secondCtrl: ''});
+      } else {
+        this.csvFile = file;
+        this.secondFormGroup.setValue({ secondCtrl: file.name});
+      }
     }
   
     importSelectedFile(): void {
