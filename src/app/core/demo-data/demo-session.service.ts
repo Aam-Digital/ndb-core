@@ -4,11 +4,7 @@ import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
 import { LocalSession } from "../session/session-service/local-session";
 import { PouchDatabase } from "../database/pouch-database";
 import { DemoDataService } from "./demo-data.service";
-import { MatDialog } from "@angular/material/dialog";
-import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
 import { LoginState } from "../session/session-states/login-state.enum";
-import { filter } from "rxjs/operators";
-import { Database } from "../database/database";
 import { AppConfig } from "../app-config/app-config";
 import { SessionType } from "../session/session-type";
 import PouchDB from "pouchdb-browser";
@@ -17,69 +13,56 @@ import { DatabaseUser, LocalUser } from "../session/session-service/local-user";
 import { SyncState } from "../session/session-states/sync-state.enum";
 
 @Injectable()
-export class DemoSession extends SessionService{
+export class DemoSession extends SessionService {
+  private localSession: LocalSession;
   constructor(
-    private sessionService: SessionService,
-    private demoDataService: DemoDataService,
-    private dialog: MatDialog,
-    private database: Database
+    database: PouchDatabase,
+    private demoDataService: DemoDataService
   ) {
     super();
-  }
-
-  checkPassword(username: string, password: string): boolean {
-    return false;
-  }
-
-  getCurrentUser(): DatabaseUser {
-    return undefined;
-  }
-
-  getDatabase(): Database {
-    return undefined;
-  }
-
-  login(username: string, password: string): Promise<LoginState> {
-    return Promise.resolve(undefined);
-  }
-
-  logout() {
-  }
-
-  sync(): Promise<any> {
-    return Promise.resolve(undefined);
-  }
-
-
-  async start() {
-    this.sessionService.syncState.next(SyncState.STARTED);
-    const progressDialog = this.dialog.open(
-      DemoDataGeneratingProgressDialogComponent
-    );
-    progressDialog.disableClose = true;
-
+    this.localSession = new LocalSession(database);
     this.registerDemoUsers();
-    await this.sessionService.login(
+    this.login(
       DemoUserGeneratorService.DEFAULT_USERNAME,
       DemoUserGeneratorService.DEFAULT_PASSWORD
     );
-    await this.demoDataService.publishDemoData();
-    progressDialog.close();
-    this.sessionService.syncState.next(SyncState.COMPLETED);
+  }
 
-    this.sessionService.loginState
-      .pipe(filter((state) => state === LoginState.LOGGED_IN))
-      .subscribe(() => this.initNewUserData());
+  checkPassword(username: string, password: string): boolean {
+    return this.localSession.checkPassword(username, password);
+  }
+
+  getCurrentUser(): DatabaseUser {
+    return this.localSession.getCurrentUser();
+  }
+
+  getDatabase(): PouchDatabase {
+    return this.localSession.getDatabase();
+  }
+
+  async login(username: string, password: string): Promise<LoginState> {
+    const state = await this.localSession.login(username, password);
+    await this.initUserDemoData();
+    this.loginState.next(state);
+    return state;
+  }
+
+  logout() {
+    this.localSession.logout();
+    this.loginState.next(LoginState.LOGGED_OUT);
+    this.syncState.next(SyncState.UNSYNCED);
+  }
+
+  sync(): Promise<any> {
+    return Promise.reject(undefined);
   }
 
   private registerDemoUsers() {
-    // Create temporary session to save users to local storage
-    const tmpLocalSession = new LocalSession(new PouchDatabase());
-    tmpLocalSession.saveUser(
+    this.localSession.saveUser(
       { name: DemoUserGeneratorService.DEFAULT_USERNAME, roles: ["user_app"] },
       DemoUserGeneratorService.DEFAULT_PASSWORD
     );
-    tmpLocalSession.saveUser(
+    this.localSession.saveUser(
       {
         name: DemoUserGeneratorService.ADMIN_USERNAME,
         roles: ["user_app", "admin_app"],
@@ -88,22 +71,23 @@ export class DemoSession extends SessionService{
     );
   }
 
-  private async initNewUserData() {
-    const pouchDatabase = this.database as PouchDatabase;
-    const newUserPouch = pouchDatabase.getPouchDB();
+  private async initUserDemoData() {
+    this.syncState.next(SyncState.STARTED);
+    const newUserPouch = this.getDatabase().getPouchDB();
     const newUserDBInfo = await newUserPouch.info();
     const existingDatabase = await this.findExistingDBWithMostDocs(
       newUserDBInfo.doc_count
     );
     if (existingDatabase) {
-      this.sessionService.syncState.next(SyncState.STARTED);
       await newUserPouch.sync(existingDatabase, { batch_size: 500 });
-      this.sessionService.syncState.next(SyncState.COMPLETED);
       newUserPouch.sync(existingDatabase, {
         live: true,
         retry: true,
       });
+    } else {
+      await this.demoDataService.publishDemoData();
     }
+    this.syncState.next(SyncState.COMPLETED);
   }
 
   private async findExistingDBWithMostDocs(
@@ -114,7 +98,7 @@ export class DemoSession extends SessionService{
     for (let i = 0; i < window.localStorage.length; i++) {
       const key = window.localStorage.key(i);
       if (
-        this.sessionService.getCurrentUser().name !== key &&
+        this.getCurrentUser().name !== key &&
         this.isLocalUser(window.localStorage.getItem(key))
       ) {
         const db = this.createPouchDBForUser(key);
