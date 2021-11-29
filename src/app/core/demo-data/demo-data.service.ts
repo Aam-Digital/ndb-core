@@ -69,8 +69,7 @@ export class DemoDataService {
     private loggingService: LoggingService,
     private injector: Injector,
     private config: DemoDataServiceConfig
-  ) {
-  }
+  ) {}
 
   private registerAllProvidedDemoDataGenerators() {
     for (const provider of this.config.dataGeneratorProviders) {
