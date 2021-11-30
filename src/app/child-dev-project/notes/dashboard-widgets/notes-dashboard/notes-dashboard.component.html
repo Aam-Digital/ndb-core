@@ -13,7 +13,7 @@
         [dataSource]="childrenWithNoteInfoDataSource"
       >
         <ng-container matColumnDef="child">
-          <td mat-cell *matCellDef="let childNoteInfo">
+          <td *matCellDef="let childNoteInfo">
             <app-child-block
               [entityId]="childNoteInfo.childId"
             ></app-child-block>
@@ -24,10 +24,7 @@
           matColumnDef="daysSinceLastNote"
           i18n="Amount of days back|Format like 'Days passed > 5 days'"
         >
-          <td
-            mat-cell
-            *matCellDef="let childNoteInfo"
-          >
+          <td *matCellDef="let childNoteInfo">
             <span
               *ngIf="childNoteInfo.moreThanDaysSince"
               class="dashboard-table-additional-info-cell"
