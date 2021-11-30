@@ -8,30 +8,10 @@
   font-size: smaller;
 }
 
-.attendance-week-table {
-  border-spacing: 0;
-  width: 100%;
-}
-
-.table-wrapper {
-  margin-left: 10px;
-  margin-right: 10px;
-}
-
 .activities-record {
   display: flex;
   flex-direction: row;
   gap: 2px;
-}
-
-.mat-table {
-  background: none;
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.mat-table tr:first-child {
-  border-top: none;
 }
 
 .headline {
