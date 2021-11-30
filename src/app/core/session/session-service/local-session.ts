@@ -56,6 +56,7 @@ export class LocalSession extends SessionService {
       if (passwordEqualsEncrypted(password, user.encryptedPassword)) {
         this.currentDBUser = user;
         this.createLocalPouchDB();
+        await this.databaseMigrationService.migrateToDatabasePerUser();
         this.loginState.next(LoginState.LOGGED_IN);
       } else {
         this.loginState.next(LoginState.LOGIN_FAILED);

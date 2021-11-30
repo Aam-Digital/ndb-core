@@ -23,7 +23,6 @@ import { LoginState } from "../session-states/login-state.enum";
 import { testSessionServiceImplementation } from "./session.service.spec";
 import { TEST_PASSWORD, TEST_USER } from "../mock-session.module";
 import { PouchDatabase } from "../../database/pouch-database";
-import { DatabaseMigrationService } from "./database-migration.service";
 import { fakeAsync, tick } from "@angular/core/testing";
 
 describe("LocalSessionService", () => {
