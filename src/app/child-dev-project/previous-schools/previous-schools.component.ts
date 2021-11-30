@@ -1,4 +1,10 @@
-import { Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  ViewChild,
+} from "@angular/core";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import { ChildrenService } from "../children/children.service";
 import { Child } from "../children/model/child";
@@ -42,11 +48,11 @@ export class PreviousSchoolsComponent
   ];
   hasCurrentlyActiveEntry: boolean;
   @ViewChild(EntitySubrecordComponent)
-  entitySubrecord : EntitySubrecordComponent<ChildSchoolRelation>;
+  entitySubrecord: EntitySubrecordComponent<ChildSchoolRelation>;
 
   single = true;
 
-    constructor(
+  constructor(
     private childrenService: ChildrenService,
     private entityMapperService: EntityMapperService
   ) {}
@@ -76,7 +82,7 @@ export class PreviousSchoolsComponent
     }
 
     this.records = await this.childrenService.getSchoolRelationsFor(id);
-    this.hasCurrentlyActiveEntry = _.some(this.records, ['isActive', true]);
+    this.hasCurrentlyActiveEntry = _.some(this.records, ["isActive", true]);
   }
 
   generateNewRecordFactory() {
@@ -99,7 +105,7 @@ export class PreviousSchoolsComponent
     this.entityMapperService
       .receiveUpdates<ChildSchoolRelation>(entityType)
       .pipe(untilDestroyed(this))
-      .subscribe(async (updatedEntry) => {
+      .subscribe(async () => {
         this.loadData(this.child.getId());
       });
   }
