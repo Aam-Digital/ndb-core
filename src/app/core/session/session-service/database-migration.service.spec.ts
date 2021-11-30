@@ -55,4 +55,18 @@ describe("DatabaseMigrationService", () => {
     await expectAsync(oldDB.get(testDoc._id)).toBeRejected();
     await expectAsync(newDB.get(testDoc._id)).toBeResolved();
   });
+
+  it("should not replicate if the database has already been closed", async () => {
+    let oldDB = new PouchDatabase().initInMemoryDB(oldDBName);
+    await oldDB.destroy();
+
+    await service.migrateToDatabasePerUser();
+
+    oldDB = new PouchDatabase().initInMemoryDB(oldDBName);
+    await expectAsync(oldDB.get(testDoc._id)).toBeRejected();
+    const newDB = new PouchDatabase().initInMemoryDB(newDBName);
+    await expectAsync(newDB.get(testDoc._id)).toBeRejected();
+    const info = await newDB.getPouchDB().info();
+    expect(info.doc_count).toBe(0);
+  });
 });
