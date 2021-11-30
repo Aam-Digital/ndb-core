@@ -8,13 +8,12 @@ import {
   FilterConfig,
   PrebuiltFilterConfig,
 } from "./EntityListConfig";
-import { ENTITY_MAP } from "../entity-details/entity-details.component";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { ConfigService } from "../../config/config.service";
 import { LoggingService } from "../../logging/logging.service";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { FilterComponentSettings } from "./filter-component.settings";
+import { DynamicEntityService } from "../../entity/dynamic-entity.service";
 
 @Injectable({
   providedIn: "root",
@@ -23,7 +22,7 @@ export class FilterGeneratorService {
   constructor(
     private configService: ConfigService,
     private loggingService: LoggingService,
-    private entityMapperService: EntityMapperService
+    private dynamicEntityService: DynamicEntityService
   ) {}
 
   /**
@@ -93,8 +92,10 @@ export class FilterGeneratorService {
         schema.innerDataType
       );
     } else if (
-      ENTITY_MAP.has(config.type) ||
-      ENTITY_MAP.has(schema.additional)
+      this.dynamicEntityService.hasAnyRegisteredEntity(
+        config.type,
+        schema.additional
+      )
     ) {
       return await this.createEntityFilterOption(
         config.id,
@@ -154,10 +155,7 @@ export class FilterGeneratorService {
     property: string,
     entityType: string
   ): Promise<FilterSelectionOption<T>[]> {
-    const entityConstructor = ENTITY_MAP.get(entityType);
-    const filterEntities = await this.entityMapperService.loadType(
-      entityConstructor
-    );
+    const filterEntities = await this.dynamicEntityService.loadType(entityType);
 
     const options = [
       {

@@ -9,15 +9,14 @@ import {
   ViewChild,
 } from "@angular/core";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
-import { Entity, EntityConstructor } from "../../../entity/model/entity";
-import { EntityMapperService } from "../../../entity/entity-mapper.service";
+import { Entity } from "../../../entity/model/entity";
 import { BehaviorSubject, Observable } from "rxjs";
 import { FormControl } from "@angular/forms";
 import { filter, map } from "rxjs/operators";
 import { MatChipInputEvent } from "@angular/material/chips";
 import { MatAutocompleteTrigger } from "@angular/material/autocomplete";
-import { ENTITY_MAP } from "../../entity-details/entity-details.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { DynamicEntityService } from "../../../entity/dynamic-entity.service";
 
 @Component({
   selector: "app-entity-select",
@@ -31,18 +30,13 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
 
   /**
    * The entity-type (e.g. 'Child', 'School', e.t.c.) to set.
-   * The entity-type has to be inside {@link ENTITY_MAP}
    * @param type The ENTITY_TYPE of a Entity. This affects the entities which will be loaded and the component
    *             that displays the entities.
    * @throws Error when `type` is not in the entity-map
    */
   @Input() set entityType(type: string) {
-    const entityConstructor = ENTITY_MAP.get(type) as EntityConstructor<E>;
-    if (!entityConstructor) {
-      throw new Error(`Entity-Type ${type} not in EntityMap`);
-    }
     this.loading.next(true);
-    this.entityMapperService.loadType(entityConstructor).then((entities) => {
+    this.dynamicEntityService.loadType<E>(type).then((entities) => {
       this.allEntities = entities;
       this.loading.next(false);
       this.formControl.setValue(null);
@@ -51,45 +45,33 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
 
   /**
    * The (initial) selection. Can be used in combination with {@link selectionChange}
-   * to enable two-way binding to either an array of entities or an array of strings
-   * corresponding to the id's of the entities.
-   * The type (id's or entities) will be determined by the setting of the
-   * {@link selectionInputType}
+   * to enable two-way binding to an array of strings corresponding to the id's of the entities.
    * @param sel The initial selection
    */
-  @Input() set selection(sel: (string | E)[]) {
+  @Input() set selection(sel: string[]) {
     if (!Array.isArray(sel)) {
-      this.selection_ = [];
+      this.selectedEntities = [];
       return;
     }
-    if (this.selectionInputType === "id") {
-      this.loading
-        .pipe(
-          untilDestroyed(this),
-          filter((isLoading) => !isLoading)
-        )
-        .subscribe((_) => {
-          this.selection_ = this.allEntities.filter((e) =>
-            sel.find((s) => s === e.getId())
-          );
-        });
-    } else {
-      this.selection_ = sel as E[];
-    }
+    this.loading
+      .pipe(
+        untilDestroyed(this),
+        filter((isLoading) => !isLoading)
+      )
+      .subscribe((_) => {
+        this.selectedEntities = this.allEntities.filter((e) =>
+          sel.find((s) => s === e.getId())
+        );
+      });
   }
   /** Underlying data-array */
-  selection_: E[] = [];
-  /**
-   * The type to publish and receive; either string-id's or entities
-   * Defaults to string-id's
-   */
-  @Input() selectionInputType: "id" | "entity" = "id";
+  selectedEntities: E[] = [];
   /**
    * called whenever the selection changes.
    * This happens when a new entity is being added or an existing
    * one is removed
    */
-  @Output() selectionChange = new EventEmitter<(string | E)[]>();
+  @Output() selectionChange = new EventEmitter<string[]>();
   /**
    * The label is what is seen above the list. For example when used
    * in the note-details-view, this is "Children"
@@ -149,7 +131,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   @ViewChild("inputField") inputField: ElementRef<HTMLInputElement>;
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
-  constructor(private entityMapperService: EntityMapperService) {
+  constructor(private dynamicEntityService: DynamicEntityService) {
     this.filteredEntities = this.formControl.valueChanges.pipe(
       untilDestroyed(this),
       filter((value) => value === null || typeof value === "string"), // sometimes produces entities
@@ -184,7 +166,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * @param entity the entity to select
    */
   selectEntity(entity: E) {
-    this.selection_.push(entity);
+    this.selectedEntities.push(entity);
     this.emitChange();
     this.inputField.nativeElement.value = "";
     this.formControl.setValue(null);
@@ -236,11 +218,11 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * @param entity The entity to remove
    */
   unselectEntity(entity: E) {
-    const index = this.selection_.findIndex(
+    const index = this.selectedEntities.findIndex(
       (e) => e.getId() === entity.getId()
     );
     if (index !== -1) {
-      this.selection_.splice(index, 1);
+      this.selectedEntities.splice(index, 1);
       this.emitChange();
       // Update the form control to re-run the filter function
       this.formControl.updateValueAndValidity();
@@ -248,14 +230,10 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   }
 
   private emitChange() {
-    if (this.selectionInputType === "id") {
-      this.selectionChange.emit(this.selection_.map((e) => e.getId()));
-    } else {
-      this.selectionChange.emit(this.selection_);
-    }
+    this.selectionChange.emit(this.selectedEntities.map((e) => e.getId()));
   }
 
   private isSelected(entity: E): boolean {
-    return this.selection_.some((e) => e.getId() === entity.getId());
+    return this.selectedEntities.some((e) => e.getId() === entity.getId());
   }
 }

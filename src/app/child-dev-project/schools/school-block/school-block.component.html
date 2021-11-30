@@ -1,14 +1,4 @@
-<span (mouseenter)="showTooltip()" (mouseleave)="hideTooltip()">
+<span>
   <app-fa-dynamic-icon [icon]="icon" class="icon"></app-fa-dynamic-icon>
   <span class="underline-on-hover">{{ entity?.name }}</span>
 </span>
-
-<div style="position: absolute" *ngIf="tooltip">
-  <div
-    class="mat-elevation-z3 school-tooltip"
-    (mouseenter)="showTooltip()"
-    (mouseleave)="hideTooltip()"
-  >
-    <div>{{ entity?.language || entity?.medium}}</div>
-  </div>
-</div>

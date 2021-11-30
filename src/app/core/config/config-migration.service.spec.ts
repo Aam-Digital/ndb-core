@@ -16,6 +16,8 @@ import { genders } from "../../child-dev-project/children/model/genders";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { Child } from "../../child-dev-project/children/model/child";
 import { HistoricalEntityData } from "../../features/historical-data/historical-entity-data";
+import { DynamicEntityService } from "../entity/dynamic-entity.service";
+import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 
 describe("ConfigMigrationService", () => {
   let service: ConfigMigrationService;
@@ -344,6 +346,8 @@ describe("ConfigMigrationService", () => {
       providers: [
         EntityConfigService,
         ConfigService,
+        EntitySchemaService,
+        DynamicEntityService,
         { provide: EntityMapperService, useValue: mockEntityMapper },
       ],
     });
