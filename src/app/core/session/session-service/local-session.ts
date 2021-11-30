@@ -26,6 +26,7 @@ import { SessionService } from "./session.service";
 import { PouchDatabase } from "../../database/pouch-database";
 import { AppConfig } from "../../app-config/app-config";
 import { SessionType } from "../session-type";
+import { DatabaseMigrationService } from "./database-migration.service";
 
 /**
  * Responsibilities:
@@ -36,9 +37,11 @@ import { SessionType } from "../session-type";
 @Injectable()
 export class LocalSession extends SessionService {
   private currentDBUser: DatabaseUser;
+  public databaseMigrationService: DatabaseMigrationService;
 
   constructor(private database: PouchDatabase) {
     super();
+    this.databaseMigrationService = new DatabaseMigrationService(this);
   }
 
   /**

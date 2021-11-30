@@ -29,13 +29,7 @@ describe("DatabaseMigrationService", () => {
     sessionService.getDatabase.and.returnValue(
       new PouchDatabase().initInMemoryDB(newDBName)
     );
-    TestBed.configureTestingModule({
-      providers: [
-        DatabaseMigrationService,
-        { provide: SessionService, useValue: sessionService },
-      ],
-    });
-    service = TestBed.inject(DatabaseMigrationService);
+    service = new DatabaseMigrationService(sessionService);
   });
 
   it("should be created", () => {

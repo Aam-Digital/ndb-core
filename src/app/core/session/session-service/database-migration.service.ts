@@ -1,10 +1,8 @@
-import { Injectable } from "@angular/core";
 import { AppConfig } from "../../app-config/app-config";
 import { SessionService } from "./session.service";
 import { PouchDatabase } from "../../database/pouch-database";
 import { SessionType } from "../session-type";
 
-@Injectable()
 export class DatabaseMigrationService {
   constructor(private sessionService: SessionService) {}
 

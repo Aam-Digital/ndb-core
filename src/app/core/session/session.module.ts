@@ -30,7 +30,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { RouterModule } from "@angular/router";
 import { HttpClientModule } from "@angular/common/http";
-import { DatabaseMigrationService } from "./session-service/database-migration.service";
 
 /**
  * The core session logic handling user login as well as connection and synchronization with the remote database.
@@ -54,10 +53,6 @@ import { DatabaseMigrationService } from "./session-service/database-migration.s
   ],
   declarations: [LoginComponent],
   exports: [LoginComponent],
-  providers: [
-    sessionServiceProvider,
-    databaseServiceProvider,
-    DatabaseMigrationService,
-  ],
+  providers: [sessionServiceProvider, databaseServiceProvider],
 })
 export class SessionModule {}
