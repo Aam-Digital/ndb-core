@@ -17,7 +17,7 @@
       <mat-basic-chip
         [selectable]="selectable && formControl.enabled"
         [removable]="removable && formControl.enabled"
-        *ngFor="let entity of selection_"
+        *ngFor="let entity of selectedEntities"
         class="chip"
       >
         <app-display-entity [entityToDisplay]="entity"></app-display-entity>

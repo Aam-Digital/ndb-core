@@ -97,8 +97,8 @@ export class AdminComponent implements OnInit {
     this.startDownload(configString, "text/json", "config.json");
   }
 
-  async uploadConfigFile(file: Blob) {
-    const loadedFile = await readFile(file);
+  async uploadConfigFile(inputEvent: Event) {
+    const loadedFile = await readFile(this.getFileFromInputEvent(inputEvent));
     await this.configService.saveConfig(
       this.entityMapper,
       JSON.parse(loadedFile)
@@ -116,11 +116,11 @@ export class AdminComponent implements OnInit {
 
   /**
    * Reset the database to the state from the loaded backup file.
-   * @param file The file object of the backup to be restored
+   * @param inputEvent for the input where a file has been selected
    */
-  async loadBackup(file) {
+  async loadBackup(inputEvent: Event) {
     const restorePoint = await this.backupService.getJsonExport();
-    const newData = await readFile(file);
+    const newData = await readFile(this.getFileFromInputEvent(inputEvent));
 
     const dialogRef = this.confirmationDialog.openDialog(
       $localize`Overwrite complete database?`,
@@ -152,6 +152,11 @@ export class AdminComponent implements OnInit {
           await this.backupService.importJson(restorePoint, true);
         });
     });
+  }
+
+  private getFileFromInputEvent(inputEvent: Event): Blob {
+    const target = inputEvent.target as HTMLInputElement;
+    return target.files[0];
   }
 
   /**

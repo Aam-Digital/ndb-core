@@ -1,10 +1,11 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EditTextComponent } from "./edit-text.component";
-import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
+import { setupEditComponent } from "../edit-component.spec";
 
 describe("EditTextComponent", () => {
   let component: EditTextComponent;
@@ -25,11 +26,7 @@ describe("EditTextComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EditTextComponent);
     component = fixture.componentInstance;
-    const formControl = new FormControl();
-    const formGroup = new FormGroup({});
-    component.formControlName = "testControl";
-    component.formControl = formControl;
-    formGroup.registerControl(component.formControlName, formControl);
+    setupEditComponent(component);
     fixture.detectChanges();
   });
 
