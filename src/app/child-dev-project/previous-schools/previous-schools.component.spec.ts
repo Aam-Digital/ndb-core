@@ -17,6 +17,7 @@ import { PanelConfig } from "../../core/entity-components/entity-details/EntityD
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import moment from "moment";
 import { MockSessionModule } from "../../core/session/mock-session.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("PreviousSchoolsComponent", () => {
   let component: PreviousSchoolsComponent;
@@ -40,6 +41,7 @@ describe("PreviousSchoolsComponent", () => {
           ChildrenModule,
           ConfirmationDialogModule,
           MockSessionModule.withState(),
+          FontAwesomeTestingModule,
         ],
         providers: [
           { provide: ChildrenService, useValue: mockChildrenService },
