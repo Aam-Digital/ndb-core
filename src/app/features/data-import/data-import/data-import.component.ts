@@ -41,15 +41,14 @@ export class DataImportComponent implements OnInit{
       this.secondFormGroup.setValue({ secondCtrl: file.name});
     }
 
-    importSelectedFile(): void {
+    async importSelectedFile(): Promise<void> {
       if(this.csvFile === undefined) {
         return;
       }
-
-      this.dataImportService.handleCsvImport(this.csvFile);
+      await this.dataImportService.handleCsvImport(this.csvFile);
     }
 
-  importCsvFile(file: Blob): void {
-    this.dataImportService.handleCsvImport(file);
+  importCsvFile(file: Blob): Promise<void> {
+    return this.dataImportService.handleCsvImport(file);
   }
 }
