@@ -16,12 +16,7 @@
  */
 import { Injectable } from "@angular/core";
 import { LoginState } from "../session-states/login-state.enum";
-import {
-  DatabaseUser,
-  encryptPassword,
-  LocalUser,
-  passwordEqualsEncrypted,
-} from "./local-user";
+import { DatabaseUser, encryptPassword, LocalUser, passwordEqualsEncrypted, } from "./local-user";
 import { SessionService } from "./session.service";
 import { PouchDatabase } from "../../database/pouch-database";
 import { AppConfig } from "../../app-config/app-config";
