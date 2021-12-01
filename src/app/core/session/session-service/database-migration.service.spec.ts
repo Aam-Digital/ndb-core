@@ -1,8 +1,5 @@
-import { TestBed } from "@angular/core/testing";
-
 import { DatabaseMigrationService } from "./database-migration.service";
 import { PouchDatabase } from "../../database/pouch-database";
-import { SessionService } from "./session.service";
 import { AppConfig } from "../../app-config/app-config";
 import { SessionType } from "../session-type";
 import { LocalSession } from "./local-session";
@@ -62,5 +59,19 @@ describe("DatabaseMigrationService", () => {
     await expectAsync(newDB.get(testDoc._id)).toBeRejected();
     const info = await newDB.getPouchDB().info();
     expect(info.doc_count).toBe(0);
+  });
+
+  it("should remove the design docs before sync so they will be correctly re-created", async () => {
+    let oldDB = new PouchDatabase().initInMemoryDB(oldDBName);
+    const designDoc = { _id: "_design/search_index" };
+    const normalDoc = { _id: "Child:someChild" };
+    await oldDB.put(designDoc);
+    await oldDB.put(normalDoc);
+
+    await service.migrateToDatabasePerUser();
+
+    const newDB = new PouchDatabase().initInMemoryDB(newDBName);
+    await expectAsync(newDB.get(designDoc._id)).toBeRejected();
+    await expectAsync(newDB.get(normalDoc._id)).toBeResolved();
   });
 });
