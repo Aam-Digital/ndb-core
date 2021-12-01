@@ -32,6 +32,7 @@ export class ChildrenService {
     this.createNotesIndex();
     this.createAttendancesIndex();
     this.createChildSchoolRelationIndex();
+    console.log("creating design docs")
   }
 
   /**

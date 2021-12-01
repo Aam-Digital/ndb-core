@@ -36,6 +36,7 @@ export class AttendanceService {
       .map((t) => t.id);
     this.createEventsIndex(meetingInteractionTypes);
     this.createRecurringActivitiesIndex();
+    console.log("creating attendance indices")
   }
 
   private createEventsIndex(meetingInteractionTypes: string[]): Promise<void> {
