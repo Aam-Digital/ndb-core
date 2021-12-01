@@ -218,12 +218,12 @@ describe("NotesManagerComponent", () => {
   });
 
   it("benchmarks time for loading the notes list", async () => {
-    const currentTimer = new Timer();
-    const result = component.testLoadEntities();
-    const duration = currentTimer.stop();
+    console.time("NoteList");
+    const result = await component.testLoadEntities();
+    console.timeEnd("NoteList");
+    console.log(result);
 
     expect(result !== null).toBeTruthy();
-    return duration;
   });
 
   it("loads initial list including EventNotes if set in config", fakeAsync(() => {
