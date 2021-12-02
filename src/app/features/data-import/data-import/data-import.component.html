@@ -5,7 +5,7 @@
         <ng-template matStepLabel>Import Type</ng-template>
         <mat-form-field>
             <mat-label>Entity Type</mat-label>
-            <mat-select formControlName="firstCtrl" required>
+            <mat-select formControlName="firstCtrl" required (selectionChange)="entitySelectionChanged()">
                 <mat-option *ngFor="let entity of getEntitiesMap() | keyvalue" [value]="entity.key">
                     {{entity.key}}
                 </mat-option>
@@ -16,7 +16,7 @@
         </div>
       </form>
     </mat-step>
-    <mat-step [stepControl]="secondFormGroup" [editable]="true">
+    <mat-step [stepControl]="secondFormGroup" [editable]="true" [completed]="hasValidFile">
       <form [formGroup]="secondFormGroup">
         <ng-template matStepLabel>Import File</ng-template>
         <mat-form-field>

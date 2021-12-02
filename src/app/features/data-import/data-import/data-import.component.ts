@@ -35,10 +35,28 @@ export class DataImportComponent implements OnInit{
     getEntitiesMap(): Map<string, EntityConstructor<Entity>> {
       return this.dynamicEntityService.EntityMap;
     }
+  
+    get hasValidFile(): boolean {
+      return this.csvFile !== undefined;
+    }
 
-    setCsvFile(file: File): void {
-      this.csvFile = file;
-      this.secondFormGroup.setValue({ secondCtrl: file.name});
+    entitySelectionChanged(): void {
+      // whenver the selection changes, the file can't be valid (if there was one)
+      this.csvFile = undefined;
+      this.secondFormGroup.setValue({ secondCtrl: ''});
+    }
+
+    async setCsvFile(file: File): Promise<void> {
+      const entityType = this.firstFormGroup.get('firstCtrl').value;
+      const isValidCsv = await this.dataImportService.validateCsvFile(file, entityType);
+
+      if(!isValidCsv) {
+        this.csvFile = undefined;
+        this.secondFormGroup.setValue({ secondCtrl: ''});
+      } else {
+        this.csvFile = file;
+        this.secondFormGroup.setValue({ secondCtrl: file.name});
+      }
     }
 
     async importSelectedFile(): Promise<void> {
