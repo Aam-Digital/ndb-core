@@ -2,8 +2,6 @@ import { Component, Injectable, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { DynamicEntityService } from "app/core/entity/dynamic-entity.service";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
-import { readFile } from "app/utils/utils";
-import { ParseResult } from "ngx-papaparse";
 import { DataImportService } from "../data-import.service";
 
 @Component({
