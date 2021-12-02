@@ -76,7 +76,7 @@ export class DataImportService {
    * Add the data from the loaded file to the database, inserting and updating records.
    * @param file The file object of the csv data to be loaded
    */
-  async handleCsvImport(file: Blob) {
+  async handleCsvImport(file: Blob): Promise<void> {
     const restorePoint = await this.backupService.getJsonExport();
     const newData = await readFile(file);
 

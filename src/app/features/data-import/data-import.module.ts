@@ -8,18 +8,20 @@ import { MatStepperModule } from "@angular/material/stepper";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 @NgModule({
   declarations: [DataImportComponent],
   imports: [
-    CommonModule, 
-    MatButtonModule,
+    BrowserAnimationsModule,
+    CommonModule,
     FormsModule,
+    MatButtonModule,
     MatFormFieldModule,
-    ReactiveFormsModule,
     MatInputModule,
     MatSelectModule,
-    MatStepperModule
+    MatStepperModule,
+    ReactiveFormsModule,
   ],
   exports: [DataImportComponent],
   providers: [DataImportService],

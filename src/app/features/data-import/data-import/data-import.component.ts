@@ -1,4 +1,4 @@
-import { Component, Injectable, OnInit } from "@angular/core";
+import {Component, Injectable, Input, OnInit} from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { DynamicEntityService } from "app/core/entity/dynamic-entity.service";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
@@ -13,8 +13,8 @@ import { DataImportService } from "../data-import.service";
   providedIn: "root",
 })
 export class DataImportComponent implements OnInit{
-  firstFormGroup: FormGroup;
-  secondFormGroup: FormGroup;
+  @Input() firstFormGroup: FormGroup;
+  @Input() secondFormGroup: FormGroup;
 
   csvFile: Blob = undefined;
 
@@ -31,7 +31,7 @@ export class DataImportComponent implements OnInit{
         secondCtrl: ['', Validators.required],
       });
     }
-  
+
     getEntitiesMap(): Map<string, EntityConstructor<Entity>> {
       return this.dynamicEntityService.EntityMap;
     }
@@ -58,16 +58,15 @@ export class DataImportComponent implements OnInit{
         this.secondFormGroup.setValue({ secondCtrl: file.name});
       }
     }
-  
-    importSelectedFile(): void {
+
+    async importSelectedFile(): Promise<void> {
       if(this.csvFile === undefined) {
         return;
       }
-  
-      this.dataImportService.handleCsvImport(this.csvFile);
+      await this.dataImportService.handleCsvImport(this.csvFile);
     }
 
-  importCsvFile(file: Blob): void {
-    this.dataImportService.handleCsvImport(file);
+  importCsvFile(file: Blob): Promise<void> {
+    return this.dataImportService.handleCsvImport(file);
   }
 }
