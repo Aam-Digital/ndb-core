@@ -22,7 +22,7 @@ import { concat, interval } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { LoggingService } from "../logging/logging.service";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
-import { LOCATION_TOKEN } from "./latest-changes.module";
+import { LOCATION_TOKEN } from "../../utils/di-tokens";
 
 /**
  * Check with the server whether a new version of the app is available in order to notify the user.
