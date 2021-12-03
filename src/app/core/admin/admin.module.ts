@@ -41,7 +41,7 @@ import { DataImportModule } from "../../features/data-import/data-import.module"
     MatInputModule,
     MatTooltipModule,
     FontAwesomeModule,
-    DataImportModule
+    DataImportModule,
   ],
   declarations: [AdminComponent, UserListComponent],
   providers: [ChildPhotoUpdateService, BackupService],

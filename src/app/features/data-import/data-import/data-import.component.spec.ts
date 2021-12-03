@@ -19,20 +19,20 @@ describe("DataImportComponent", () => {
       mockDataImportService = jasmine.createSpyObj("DataImportService", [
         "handleCsvImport",
       ]);
-      mockEntityMapperService =jasmine.createSpyObj("EntityMapperService", [
+      mockEntityMapperService = jasmine.createSpyObj("EntityMapperService", [
         "load",
         "loadType",
         "receiveUpdates",
         "save",
         "remove",
-        "sendUpdate"
+        "sendUpdate",
       ]);
-      mockEntitySchemaService =jasmine.createSpyObj("EntitySchemaService", [
+      mockEntitySchemaService = jasmine.createSpyObj("EntitySchemaService", [
         "registerSchemaDatatype",
         "getDatatypeOrDefault",
         "loadDataIntoEntity",
         "transformEntityToDatabaseFormat",
-        "getComponent"
+        "getComponent",
       ]);
       TestBed.configureTestingModule({
         declarations: [DataImportComponent],
@@ -67,19 +67,19 @@ describe("DataImportComponent", () => {
       recipientTypes: new FormControl(
         {
           value: ["mockControl1"],
-          disabled: true
+          disabled: true,
         },
         Validators.required
-      )
+      ),
     });
     component.secondFormGroup = formBuilder.group({
       recipientTypes: new FormControl(
         {
           value: ["mockControl2"],
-          disabled: true
+          disabled: true,
         },
         Validators.required
-      )
+      ),
     });
     // this fixture.detectChanges will kick off the ngOnInit
     fixture.detectChanges();

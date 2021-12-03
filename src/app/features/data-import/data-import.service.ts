@@ -18,44 +18,42 @@ export class DataImportService {
     private snackBar: MatSnackBar
   ) {}
 
-    async validateCsvFile(file: File, entityType: string): Promise<boolean> {
-      const csvData = await readFile(file);
-      const parsedCsvFile = this.parseCsvFile(csvData);
+  async validateCsvFile(file: File, entityType: string): Promise<boolean> {
+    const csvData = await readFile(file);
+    const parsedCsvFile = this.parseCsvFile(csvData);
 
-      // an empty csv file is not valid
-      if (parsedCsvFile.data.length === 0) {
-        // TODO: Either open a popup here which seems missplaced
-        // Better: Have validation results, so any component can handle the result
+    // an empty csv file is not valid
+    if (parsedCsvFile.data.length === 0) {
+      // TODO: Either open a popup here which seems missplaced
+      // Better: Have validation results, so any component can handle the result
+      return false;
+    }
+
+    const record = parsedCsvFile.data[0];
+
+    // check all properties, if there is an _id, make sure it fits
+    for (const propertyName in record) {
+      if (propertyName !== "_id") {
+        continue;
+      }
+
+      if (!record[propertyName].startsWith(entityType)) {
         return false;
       }
 
-      const record = parsedCsvFile.data[0];
-
-      // check all properties, if there is an _id, make sure it fits
-      for (const propertyName in record) {
-        if (propertyName !== "_id") {
-          continue
-        }
-
-        if (!record[propertyName].startsWith(entityType)) {
-          return false;
-        }
-
-        break;
-      }
-
-      return true;
+      break;
     }
 
-    parseCsvFile(csv: string): ParseResult {
-      const parsedCsv: ParseResult = this.papa.parse(csv, {
-        header: true,
-        dynamicTyping: true,
-        skipEmptyLines: true,
-      });
+    return true;
+  }
 
-      return parsedCsv;
-    }
+  parseCsvFile(csv: string): ParseResult {
+    return this.papa.parse(csv, {
+      header: true,
+      dynamicTyping: true,
+      skipEmptyLines: true,
+    });
+  }
 
   async importCsvContentToDB(csv: string): Promise<void> {
     const parsedCsv = this.parseCsvFile(csv);
