@@ -5,7 +5,6 @@ import { DatabaseRule, DatabaseRules, EntityAbility } from "./permission-types";
 import { SessionService } from "../session/session-service/session.service";
 import { TEST_USER } from "../session/mock-session.module";
 import { EntityMapperService } from "../entity/entity-mapper.service";
-import { PouchDatabase } from "../database/pouch-database";
 import { Database } from "../database/database";
 import { Child } from "../../child-dev-project/children/model/child";
 import { School } from "../../child-dev-project/schools/model/school";
@@ -15,15 +14,19 @@ import { DynamicEntityService } from "../entity/dynamic-entity.service";
 import { Permission } from "./permission";
 import { Subject } from "rxjs";
 import { LoginState } from "../session/session-states/login-state.enum";
+import { SyncedSessionService } from "../session/session-service/synced-session.service";
+import { mockEntityMapper } from "../entity/mock-entity-mapper-service";
+import { LOCATION_TOKEN } from "../../utils/di-tokens";
 
 describe("PermissionEnforcerService", () => {
   let service: PermissionEnforcerService;
-  let mockSession: jasmine.SpyObj<SessionService>;
+  let mockSession: jasmine.SpyObj<SyncedSessionService>;
   const userRules: DatabaseRule[] = [
     { subject: "any", action: "manage" },
     { subject: "Child", action: "read", inverted: true },
   ];
-  let database: PouchDatabase;
+  let mockDatabase: jasmine.SpyObj<Database>;
+  let mockLocation: jasmine.SpyObj<Location>;
 
   beforeEach(fakeAsync(() => {
     mockSession = jasmine.createSpyObj(["getCurrentUser"], {
@@ -31,12 +34,13 @@ describe("PermissionEnforcerService", () => {
       syncState: new Subject(),
     });
     mockSession.getCurrentUser.and.returnValue({ name: TEST_USER, roles: [] });
-    database = new PouchDatabase().initIndexedDB();
+    mockDatabase = jasmine.createSpyObj(["destroy"]);
+    mockLocation = jasmine.createSpyObj(["reload"]);
 
     TestBed.configureTestingModule({
       providers: [
         PermissionEnforcerService,
-        EntityMapperService,
+        { provide: EntityMapperService, useValue: mockEntityMapper() },
         EntitySchemaService,
         DynamicEntityService,
         AbilityService,
@@ -46,8 +50,9 @@ describe("PermissionEnforcerService", () => {
             detectSubjectType: detectEntityType,
           }),
         },
-        { provide: Database, useValue: database },
+        { provide: Database, useValue: mockDatabase },
         { provide: SessionService, useValue: mockSession },
+        { provide: LOCATION_TOKEN, useValue: mockLocation },
       ],
     });
     const dbRules: DatabaseRules = {};
@@ -61,7 +66,6 @@ describe("PermissionEnforcerService", () => {
   }));
 
   afterEach(async () => {
-    // await database.destroy();
     window.localStorage.removeItem(
       TEST_USER + "-" + PermissionEnforcerService.STORAGE_KEY
     );
@@ -80,61 +84,49 @@ describe("PermissionEnforcerService", () => {
     expect(JSON.parse(storedRules)).toEqual(userRules);
   });
 
-  it("should remove all entities if a read restriction for this entity is defined and no rules are in local storage", async () => {
+  it("should reset page when no permissions were previously defined and entities without permissions exist", async () => {
     const entityMapper = TestBed.inject(EntityMapperService);
-    const child = Child.create("TestChild");
-    const school = School.create({ name: "TestSchool" });
+    const child = new Child();
     await entityMapper.save(child);
-    await entityMapper.save(school);
-    const simpleQuery = {
-      _id: "_design/test",
-      views: {
-        by_name: { map: "(doc) => doc.name ? emit(doc.name) : undefined " },
-      },
-    };
-    const res = await database.put(simpleQuery);
-    console.log("res", res);
-    simpleQuery["_rev"] = res.rev;
-    console.log("after", simpleQuery);
-    const queryResultBefore = await database.query("test/by_name", {});
-    expect(queryResultBefore.rows).toHaveSize(2);
 
     await service.enforcePermissionsOnLocalData(userRules);
 
-    await expectAsync(entityMapper.load(Child, child._id)).toBeRejected();
-    await expectAsync(entityMapper.load(School, school._id)).toBeResolved();
-    const schoolDoc = await entityMapper.load(School, school._id);
-    schoolDoc.name = "AnotherName";
-    await entityMapper.save(schoolDoc);
-
-    // TODO the `Child` documents is still found in the indices
-    const queryResultAfter = await database.query("test/by_name", {
-      include_docs: true,
-    });
-    console.log("queryresultsafter", queryResultAfter);
-    expect(queryResultAfter.rows).toHaveSize(1);
+    expect(mockDatabase.destroy).toHaveBeenCalled();
+    expect(mockLocation.reload).toHaveBeenCalled();
   });
 
-  it("should fail when writing deleted doc", async () => {
-    const remoteDB = new PouchDatabase().initIndexedDB("remote-db");
+  it("should not reset if roles didnt change since last check", async () => {
+    await service.enforcePermissionsOnLocalData(userRules);
+
+    const entityMapper = TestBed.inject(EntityMapperService);
     const child = new Child();
-    const school = new School();
-    await remoteDB.put(child);
-    await remoteDB.put(school);
-    await remoteDB.getPouchDB().sync(database.getPouchDB());
-    await expectAsync(database.get(child._id)).toBeResolved();
-    await expectAsync(database.get(school._id)).toBeResolved();
+    await entityMapper.save(child);
 
     await service.enforcePermissionsOnLocalData(userRules);
 
-    await expectAsync(database.get(child._id)).toBeRejected();
-    await expectAsync(database.get(school._id)).toBeResolved();
+    expect(mockDatabase.destroy).not.toHaveBeenCalled();
+    expect(mockLocation.reload).not.toHaveBeenCalled();
+  });
 
-    // TODO probably some local documents have to be cleaned up first before the sync starts from the beginning
-    await remoteDB.getPouchDB().sync(database.getPouchDB());
-    await expectAsync(database.get(child._id)).toBeResolved();
-    await expectAsync(database.get(school._id)).toBeResolved();
-    await remoteDB.destroy();
-    // fail();
+  it("should reset if roles changed since last check and entities without permissions exist", async () => {
+    const entityMapper = TestBed.inject(EntityMapperService);
+    const school = new School();
+    await entityMapper.save(school);
+
+    await service.enforcePermissionsOnLocalData(userRules);
+
+    expect(mockDatabase.destroy).not.toHaveBeenCalled();
+    expect(mockLocation.reload).not.toHaveBeenCalled();
+
+    const extendedRules = userRules.concat({
+      subject: "School",
+      action: "manage",
+      inverted: true,
+    });
+
+    await service.enforcePermissionsOnLocalData(extendedRules);
+
+    expect(mockDatabase.destroy).toHaveBeenCalled();
+    expect(mockLocation.reload).toHaveBeenCalled();
   });
 });
