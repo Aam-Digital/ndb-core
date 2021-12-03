@@ -539,6 +539,7 @@ export const defaultJsonConfig = {
                     "center",
                     "status",
                     "address",
+                    "phone"
                   ],
                 ]
               }

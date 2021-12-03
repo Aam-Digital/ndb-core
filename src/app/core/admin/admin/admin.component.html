@@ -71,7 +71,7 @@
     #backupImport
     type="file"
     style="display: none"
-    (change)="loadBackup($event.target.files[0])"
+    (change)="loadBackup($event)"
   />
 </p>
 
@@ -111,7 +111,7 @@
     #configImport
     type="file"
     style="display: none"
-    (change)="uploadConfigFile($event.target.files[0])"
+    (change)="uploadConfigFile($event)"
   />
 </p>
 

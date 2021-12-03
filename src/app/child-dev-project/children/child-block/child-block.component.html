@@ -28,9 +28,6 @@
       <p><fa-icon icon="phone"></fa-icon> {{ entity?.phone }}</p>
       <ng-container *ngIf="entity?.schoolId || entity?.schoolClass">
         <p>
-          <app-school-block [entityId]="entity?.schoolId"></app-school-block>,
-        </p>
-        <p>
           <app-school-block
             [entityId]="entity?.schoolId"
             [linkDisabled]="true"

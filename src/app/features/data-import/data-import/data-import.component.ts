@@ -35,7 +35,7 @@ export class DataImportComponent implements OnInit{
     getEntitiesMap(): Map<string, EntityConstructor<Entity>> {
       return this.dynamicEntityService.EntityMap;
     }
-  
+
     get hasValidFile(): boolean {
       return this.csvFile !== undefined;
     }

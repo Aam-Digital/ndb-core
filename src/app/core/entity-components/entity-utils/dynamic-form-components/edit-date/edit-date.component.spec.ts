@@ -1,12 +1,13 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EditDateComponent } from "./edit-date.component";
-import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatInputModule } from "@angular/material/input";
 import { MatNativeDateModule } from "@angular/material/core";
+import { setupEditComponent } from "../edit-component.spec";
 
 describe("EditDateComponent", () => {
   let component: EditDateComponent;
@@ -29,11 +30,7 @@ describe("EditDateComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EditDateComponent);
     component = fixture.componentInstance;
-    const formControl = new FormControl();
-    const formGroup = new FormGroup({});
-    component.formControlName = "testControl";
-    component.formControl = formControl;
-    formGroup.registerControl(component.formControlName, formControl);
+    setupEditComponent(component);
     fixture.detectChanges();
   });
 
