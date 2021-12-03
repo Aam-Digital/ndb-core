@@ -21,7 +21,7 @@ export class TranslationService {
     this.availableLocales = [
       { locale: "de", regionCode: "de" },
       { locale: "en-US", regionCode: "us" },
-      { locale: "fr", regionCode: "fr" }
+      { locale: "fr", regionCode: "fr" },
     ];
   }
 
