@@ -27,7 +27,7 @@
           <button (click)="csvImport.click()" mat-stroked-button>
             Select File (*.csv)
           </button>
-          <input #csvImport type="file" style="display: none" (change)="setCsvFile($event.target.files[0])"/>
+          <input #csvImport type="file" style="display: none" (change)="setCsvFile($event)"/>
         </div>
         <div>
           <button mat-button matStepperPrevious>Back</button>
