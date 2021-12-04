@@ -14,6 +14,7 @@ import {
 import { LoginState } from "../session/session-states/login-state.enum";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Permission } from "./permission";
+import { PermissionEnforcerService } from "./permission-enforcer.service";
 
 export function detectEntityType(subject: Entity): EntityConstructor<any> {
   if (subject instanceof Entity) {
@@ -39,7 +40,8 @@ export class AbilityService {
     private ability: EntityAbility,
     private sessionService: SessionService,
     private dynamicEntityService: DynamicEntityService,
-    private entityMapper: EntityMapperService
+    private entityMapper: EntityMapperService,
+    private permissionEnforcer: PermissionEnforcerService
   ) {
     merge(
       this.sessionService.loginState.pipe(
@@ -66,17 +68,26 @@ export class AbilityService {
       return;
     }
     if (permission) {
-      this.updateAbilityWithRules(permission.rulesConfig);
+      const userRules = this.getRulesForUser(permission.rulesConfig);
+      const userRulesCopy = JSON.parse(JSON.stringify(userRules));
+      this.updateAbilityWithRules(userRules);
+      await this.permissionEnforcer.enforcePermissionsOnLocalData(
+        userRulesCopy
+      );
     }
   }
 
-  private updateAbilityWithRules(rules: DatabaseRules) {
+  private getRulesForUser(rules: DatabaseRules): DatabaseRule[] {
     const rawUserRules: DatabaseRule[] = [];
     this.sessionService.getCurrentUser().roles.forEach((role) => {
       const rulesForRole = rules[role] || [];
       rawUserRules.push(...rulesForRole);
     });
-    const userRules: EntityRule[] = rawUserRules.map((rawRule) =>
+    return rawUserRules;
+  }
+
+  private updateAbilityWithRules(rules: DatabaseRule[]) {
+    const userRules: EntityRule[] = rules.map((rawRule) =>
       Object.assign(rawRule, {
         subject: this.parseStringToConstructor(rawRule.subject),
       })

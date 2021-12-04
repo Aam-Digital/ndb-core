@@ -7,13 +7,14 @@ import { UserRoleGuard } from "./user-role.guard";
 import { AbilityService, detectEntityType } from "./ability.service";
 import { EntityAbility } from "./permission-types";
 import { PureAbility } from "@casl/ability";
+import { PermissionEnforcerService } from "./permission-enforcer.service";
 
 @NgModule({
   declarations: [DisableEntityOperationDirective, DisabledWrapperComponent],
   imports: [CommonModule, MatTooltipModule],
   exports: [DisableEntityOperationDirective],
   entryComponents: [DisabledWrapperComponent],
-  providers: [UserRoleGuard, AbilityService],
+  providers: [UserRoleGuard, AbilityService, PermissionEnforcerService],
 })
 export class PermissionsModule {
   static withAbility(): ModuleWithProviders<PermissionsModule> {

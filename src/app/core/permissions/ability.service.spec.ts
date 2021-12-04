@@ -12,6 +12,7 @@ import { SyncState } from "../session/session-states/sync-state.enum";
 import { EntityAbility, EntityRule } from "./permission-types";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { Permission } from "./permission";
+import { PermissionEnforcerService } from "./permission-enforcer.service";
 
 describe("AbilityService", () => {
   let service: AbilityService;
@@ -20,6 +21,7 @@ describe("AbilityService", () => {
   let mockSyncState: Subject<SyncState>;
   let mockLoginState: Subject<LoginState>;
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockPermissionEnforcer: jasmine.SpyObj<PermissionEnforcerService>;
 
   beforeEach(() => {
     mockEntityMapper = jasmine.createSpyObj(["load"]);
@@ -36,6 +38,9 @@ describe("AbilityService", () => {
       name: "testUser",
       roles: ["user_app"],
     });
+    mockPermissionEnforcer = jasmine.createSpyObj([
+      "enforcePermissionsOnLocalData",
+    ]);
 
     TestBed.configureTestingModule({
       providers: [
@@ -47,6 +52,10 @@ describe("AbilityService", () => {
         },
         { provide: SessionService, useValue: mockSessionService },
         { provide: EntityMapperService, useValue: mockEntityMapper },
+        {
+          provide: PermissionEnforcerService,
+          useValue: mockPermissionEnforcer,
+        },
         EntitySchemaService,
         DynamicEntityService,
         AbilityService,
@@ -173,6 +182,15 @@ describe("AbilityService", () => {
 
     mockLoginState.next(LoginState.LOGGED_IN);
   });
+
+  it("should call the ability enforcer after updating the rules", fakeAsync(() => {
+    mockLoginState.next(LoginState.LOGGED_IN);
+    tick();
+
+    expect(
+      mockPermissionEnforcer.enforcePermissionsOnLocalData
+    ).toHaveBeenCalled();
+  }));
 
   function getRawRules(): Permission {
     return new Permission({
