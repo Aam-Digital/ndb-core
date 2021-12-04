@@ -58,7 +58,6 @@ export class DatabaseIndexingService {
       details: designDoc._id.replace(/_design\//, ""),
       pending: true,
     };
-    console.log("creating index", designDoc);
     const indexCreationPromise = this.db.saveDatabaseIndex(designDoc);
     this._indicesRegistered.next([
       ...this._indicesRegistered.value,

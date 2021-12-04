@@ -208,9 +208,7 @@ export class PouchDatabase extends Database {
   }
 
   private async createOrUpdateDesignDoc(designDoc): Promise<void> {
-    console.log("fetching design docs", designDoc)
     const existingDesignDoc = await this.get(designDoc._id, {}, true);
-    console.log("fetched doc", existingDesignDoc)
     if (!existingDesignDoc) {
       this.loggingService.debug("creating new database index");
     } else if (
@@ -225,9 +223,7 @@ export class PouchDatabase extends Database {
     }
 
     await this.put(designDoc);
-    console.log("put new doc", designDoc)
     await this.prebuildViewsOfDesignDoc(designDoc);
-    console.log("prebuilt done", designDoc)
   }
 
   @PerformanceAnalysisLogging
