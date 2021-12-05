@@ -36,7 +36,7 @@ export class DataImportComponent implements OnInit {
       secondCtrl: ["", Validators.required],
     });
     this.thirdFormGroup = this._formBuilder.group({
-      thirdCtrl: ["", [Validators.required, Validators.pattern('^$|^[A-Za-z0-9]{8}$')]],
+      thirdCtrl: ["", [Validators.required, Validators.pattern('^$|^[A-Fa-f0-9]{8}$')]],
     })
   }
 
