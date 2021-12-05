@@ -1,11 +1,10 @@
 import { Component, Input, OnInit } from "@angular/core";
-import {
-  ProgressDashboardConfig,
-  ProgressDashboardPart,
-} from "./progress-dashboard-config";
+import { ProgressDashboardConfig } from "./progress-dashboard-config";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { LoggingService } from "../../../core/logging/logging.service";
+import { MatDialog } from "@angular/material/dialog";
+import { EditProgressDashboardComponent } from "../edit-progress-dashboard/edit-progress-dashboard.component";
 
 @Component({
   selector: "app-progress-dashboard",
@@ -20,7 +19,8 @@ export class ProgressDashboardComponent
 
   constructor(
     private entityMapper: EntityMapperService,
-    private loggingService: LoggingService
+    private loggingService: LoggingService,
+    private dialog: MatDialog
   ) {}
 
   onInitFromDynamicConfig(config: any) {
@@ -53,22 +53,24 @@ export class ProgressDashboardComponent
 
   private createDefaultConfig() {
     this.data.title = $localize`:The progress, e.g. of a certain activity:Progress of X`;
-    this.addPart();
-    this.addPart();
+    // this.addPart();
+    // this.addPart();
     this.save();
-  }
-
-  addPart() {
-    const newPart: ProgressDashboardPart = {
-      label: $localize`:Part of a whole:Part`,
-      currentValue: 1,
-      targetValue: 10,
-    };
-    this.data.parts.push(newPart);
   }
 
   async save() {
     await this.entityMapper.save(this.data);
     this.configure = false;
+  }
+
+  showEditComponent() {
+    const dialog = this.dialog.open(EditProgressDashboardComponent, {
+      data: this.data,
+    });
+    dialog.afterClosed().subscribe((next) => {
+      if (next) {
+        this.data.parts = next;
+      }
+    });
   }
 }

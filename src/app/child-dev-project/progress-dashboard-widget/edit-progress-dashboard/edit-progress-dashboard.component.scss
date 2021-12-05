@@ -1,0 +1,33 @@
+@import "../../../../styles";
+
+.entry-wrapper {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr) 40px;
+  grid-template-rows: repeat(2, 1fr);
+  grid-gap: $standard-margin-small;
+  grid-template-areas:
+    "header header trash"
+    "current target trash";
+}
+
+.entry-wrapper:not(:last-child) {
+  margin-bottom: $standard-grid-gap;
+}
+
+.header-field {
+  grid-area: header;
+}
+
+.current-field {
+  grid-area: current;
+}
+
+.target-field {
+  grid-area: target;
+}
+
+.trash-field {
+  grid-area: trash;
+  align-self: end;
+  margin-bottom: 12px;
+}

@@ -25,10 +25,14 @@ import { MatInputModule } from "@angular/material/input";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { ChildrenModule } from "../children/children.module";
 import { ProgressDashboardComponent } from "./progress-dashboard/progress-dashboard.component";
-import { FormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { DashboardModule } from "../../core/dashboard/dashboard.module";
 import { ViewModule } from "../../core/view/view.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { EditProgressDashboardComponent } from "./edit-progress-dashboard/edit-progress-dashboard.component";
+import { MatDialogModule } from "@angular/material/dialog";
+import { MatDividerModule } from "@angular/material/divider";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @NgModule({
   imports: [
@@ -44,7 +48,11 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     DashboardModule,
     ViewModule,
     FontAwesomeModule,
+    MatDialogModule,
+    MatDividerModule,
+    ReactiveFormsModule,
+    MatTooltipModule,
   ],
-  declarations: [ProgressDashboardComponent],
+  declarations: [ProgressDashboardComponent, EditProgressDashboardComponent],
 })
 export class ProgressDashboardWidgetModule {}

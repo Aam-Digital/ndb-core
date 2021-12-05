@@ -1,0 +1,72 @@
+<div mat-dialog-title style="display: flex">
+  <h1>Edit Progress</h1>
+  <div style="flex-grow: 1"></div>
+  <button mat-icon-button (click)="addPart()">
+    <fa-icon icon="plus"></fa-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  <div *ngFor="let control of forms.controls; let index=index" class="entry-wrapper" [formGroup]="control">
+    <mat-form-field class="header-field">
+      <input
+        formControlName="label"
+        matInput
+        type="text"
+        i18n-placeholder="Process Label|The label of a process"
+        placeholder="Label"
+      />
+    </mat-form-field>
+
+    <mat-form-field class="current-field">
+      <input
+        formControlName="currentValue"
+        matInput
+        type="number"
+        i18n-placeholder="
+              Current process|The Current amount of a process
+            "
+        placeholder="Current"
+        [errorStateMatcher]="currentErrorStateMatcher"
+      />
+      <mat-error *ngIf="control.hasError('required','currentValue')">
+        This field is required
+      </mat-error>
+      <mat-error *ngIf="control.hasError('min','currentValue')">
+        Must be greater than 0
+      </mat-error>
+      <mat-error *ngIf="control.hasError('currentGtTarget')">
+        Must not be greater than target
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="target-field">
+      <input
+        formControlName="targetValue"
+        matInput
+        type="number"
+        i18n-placeholder="Target process|The target amount of a process"
+        placeholder="Target"
+      />
+      <mat-error *ngIf="control.hasError('required','targetValue')">
+        This field is required
+      </mat-error>
+      <mat-error *ngIf="control.hasError('min','targetValue')">
+        Must be greater than 0
+      </mat-error>
+    </mat-form-field>
+    <button mat-icon-button (click)="removePart(index)" color="warn" class="trash-field">
+      <fa-icon aria-label="remove" icon="trash"></fa-icon>
+    </button>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button
+      mat-stroked-button
+      [mat-dialog-close]="forms.value"
+      [disabled]="!forms.valid"
+    >
+      <span [matTooltip]="forms.valid ? '' : 'Fix the errors to save the form'">Save</span>
+    </button>
+  <button mat-stroked-button mat-dialog-close>Cancel</button>
+</mat-dialog-actions>

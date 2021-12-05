@@ -22,13 +22,7 @@
 
     <div [ngClass]="{ 'dashboard-config': configure }">
       <div style="text-align: left">
-        <button mat-icon-button (click)="addPart()" *ngIf="configure">
-          <fa-icon aria-label="add part" icon="plus"></fa-icon>
-        </button>
-        <button mat-icon-button (click)="save()" *ngIf="configure">
-          <fa-icon aria-label="save" icon="check"></fa-icon>
-        </button>
-        <button mat-icon-button (click)="configure = true" *ngIf="!configure">
+        <button mat-icon-button (click)="showEditComponent()" *ngIf="!configure">
           <fa-icon aria-label="configure" icon="wrench"></fa-icon>
         </button>
       </div>
@@ -49,63 +43,6 @@
           />
         </mat-form-field>
       </div>
-
-      <table class="dashboard-table" *ngIf="configure">
-        <tr
-          *ngFor="let entry of data.parts; let i = index"
-          class="dashboard-table-row"
-        >
-          <td
-            class="dashboard-table-cell"
-            style="width: calc(100% - 20px); display: inline-block"
-          >
-            <mat-form-field class="filler">
-              <input
-                matInput
-                type="text"
-                i18n-placeholder="Process Label|The label of a process"
-                placeholder="Label"
-                [(ngModel)]="entry.label"
-              />
-            </mat-form-field>
-          </td>
-          <td
-            class="dashboard-table-cell"
-            style="
-              display: inline-block;
-              margin-top: -20px;
-              margin-bottom: -10px;
-            "
-          >
-            <mat-form-field class="small">
-              <input
-                matInput
-                type="number"
-                i18n-placeholder="
-                  Current process|The Current amount of a process
-                "
-                placeholder="Current"
-                [(ngModel)]="entry.currentValue"
-              />
-            </mat-form-field>
-
-            <mat-form-field class="small" style="margin: 0 10px">
-              <input
-                matInput
-                type="number"
-                i18n-placeholder="Target process|The target amount of a process"
-                placeholder="Target"
-                [(ngModel)]="entry.targetValue"
-              />
-            </mat-form-field>
-          </td>
-          <td>
-            <button mat-icon-button (click)="data.parts.splice(i, 1)">
-              <app-fa-dynamic-icon aria-label="remove" icon="fa-trash"></app-fa-dynamic-icon>
-            </button>
-          </td>
-        </tr>
-      </table>
     </div>
   </app-widget-content>
 </app-dashboard-widget>
