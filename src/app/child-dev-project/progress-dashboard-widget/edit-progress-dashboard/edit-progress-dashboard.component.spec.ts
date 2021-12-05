@@ -162,16 +162,7 @@ describe("EditProgressDashboardComponent", () => {
     group.get("currentValue").setValue(3);
     group.get("targetValue").setValue(2);
     expect(group).not.toBeValid();
-  });
-
-  it("should clear the error flag after a current and target value mismatch has been solved", () => {
-    const group = getGroup(0);
-    group.get("currentValue").setValue(6);
-    group.get("targetValue").setValue(5);
-    expect(group).not.toBeValid();
-    expect(group.get("currentValue")).toContainError("currentGtTarget");
-    group.get("currentValue").setValue(5);
-    expect(group.get("currentValue")).not.toContainError("currentGtTarget");
+    expect(group).toContainError("currentGtTarget");
   });
 
   it("should clear only one error when only one is resolved", () => {
@@ -187,5 +178,12 @@ describe("EditProgressDashboardComponent", () => {
     expect(group).not.toContainError("currentGtTarget");
     expect(group.get("currentValue")).toContainError("min");
     expect(group.get("targetValue")).not.toContainError("min");
+  });
+
+  it("correctly sets errors when the target is 0", () => {
+    const group = getGroup(0);
+    group.get("currentValue").setValue(1);
+    group.get("targetValue").setValue(0);
+    expect(group).not.toBeValid();
   });
 });

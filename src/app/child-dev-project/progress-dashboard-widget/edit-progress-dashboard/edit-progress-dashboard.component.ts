@@ -55,9 +55,6 @@ export class EditProgressDashboardComponent {
   currentLessThanTarget(control: FormGroup): ValidationErrors | null {
     const current = control.get("currentValue");
     const target = control.get("targetValue");
-    if (!target?.value || !current?.value) {
-      return null;
-    }
     if (current.value > target.value) {
       return {
         currentGtTarget: true,
