@@ -88,11 +88,4 @@ describe("DataImportComponent", () => {
   it("should create", () => {
     expect(component).toBeTruthy();
   });
-
-  it("should call handleCsvImport() in DataImportService", () => {
-    component.importCsvFile({ target: { files: [mockCsvFile] } } as any);
-    expect(mockDataImportService.handleCsvImport).toHaveBeenCalledWith(
-      mockCsvFile
-    );
-  });
 });

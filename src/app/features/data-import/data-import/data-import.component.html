@@ -35,6 +35,20 @@
         </div>
       </form>
     </mat-step>
+    <mat-step [stepControl]="thirdFormGroup" [editable]="true" [optional]=true>
+      <p>Enter a Transaction ID if you reimport the same data. If you keep this field empty, a new Transaction ID is generated.</p>
+      <form [formGroup]="thirdFormGroup">
+        <ng-template matStepLabel>Transaction ID</ng-template>
+        <mat-form-field>
+          <mat-label>Transaction ID:</mat-label>
+          <input matInput formControlName="thirdCtrl" placeholder="Enter TransactionID if any" required/>
+        </mat-form-field>
+        <div>
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </form>
+    </mat-step>
     <mat-step>
       <ng-template matStepLabel>Excecute</ng-template>
       <p>Click 'Start Import' to import the selected file.</p>

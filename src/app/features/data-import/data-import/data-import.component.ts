@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { DynamicEntityService } from "app/core/entity/dynamic-entity.service";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { DataImportService } from "../data-import.service";
+import { v4 as uuid } from "uuid";
 
 @Component({
   selector: "app-data-import",
@@ -15,8 +16,10 @@ import { DataImportService } from "../data-import.service";
 export class DataImportComponent implements OnInit {
   @Input() firstFormGroup: FormGroup;
   @Input() secondFormGroup: FormGroup;
+  @Input() thirdFormGroup: FormGroup;
 
   csvFile: Blob = undefined;
+  transactionId: string = '';
 
   constructor(
     private dataImportService: DataImportService,
@@ -31,6 +34,9 @@ export class DataImportComponent implements OnInit {
     this.secondFormGroup = this._formBuilder.group({
       secondCtrl: ["", Validators.required],
     });
+    this.thirdFormGroup = this._formBuilder.group({
+      thirdCtrl: ["", [Validators.required, Validators.pattern('^$|^[A-Za-z0-9]{8}$')]],
+    })
   }
 
   getEntitiesMap(): Map<string, EntityConstructor<Entity>> {
@@ -67,12 +73,18 @@ export class DataImportComponent implements OnInit {
 
   async importSelectedFile(): Promise<void> {
     if (this.csvFile === undefined) {
-      return;
+      return Promise.resolve(undefined);
     }
-    await this.dataImportService.handleCsvImport(this.csvFile);
-  }
 
-  importCsvFile(file: Blob): Promise<void> {
-    return this.dataImportService.handleCsvImport(file);
+    // use transaction id or generate a new one
+    const transIdCtrl = this.thirdFormGroup.get("thirdCtrl");
+    if (transIdCtrl.valid) {
+      this.transactionId = transIdCtrl.value;
+    } else {
+      this.transactionId = uuid().substring(0, 8);
+      this.thirdFormGroup.setValue({ thirdCtrl: this.transactionId});
+    }
+
+    await this.dataImportService.handleCsvImport(this.csvFile, this.transactionId);
   }
 }

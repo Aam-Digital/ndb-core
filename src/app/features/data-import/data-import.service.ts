@@ -74,20 +74,23 @@ export class DataImportService {
    * Add the data from the loaded file to the database, inserting and updating records.
    * @param file The file object of the csv data to be loaded
    */
-  async handleCsvImport(file: Blob): Promise<void> {
+  async handleCsvImport(file: Blob, transactionId: string): Promise<void> {
     const restorePoint = await this.backupService.getJsonExport();
     const newData = await readFile(file);
 
-    const dialogRef = this.confirmationDialog.openDialog(
-      $localize`Import new data?`,
-      $localize`Are you sure you want to import this file? This will add or update ${
+    const refTitle = $localize`Import new data?`;
+    const refText = $localize`Are you sure you want to import this file? This will add or update ${
         newData.trim().split("\n").length - 1
-      } records from the loaded file. Existing records with same "_id" in the database will be overwritten!`
+      } records from the loaded file. All existing records imported with the transaction id '${transactionId}' will be deleted!`;
+
+    const dialogRef = this.confirmationDialog.openDialog(
+      refTitle,
+      refText
     );
 
     dialogRef.afterClosed().subscribe(async (confirmed) => {
       if (!confirmed) {
-        return;
+        return Promise.resolve(undefined);
       }
 
       await this.importCsvContentToDB(newData);
