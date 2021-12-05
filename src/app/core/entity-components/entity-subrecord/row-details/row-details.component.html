@@ -37,7 +37,7 @@
     (click)="save()"
     *appDisabledEntityOperation="{
       operation: operationType.UPDATE,
-      entity: data.row.record
+      entity: data.row.record.getConstructor()
     }"
     i18n="Save button for forms"
   >
@@ -50,7 +50,7 @@
     (click)="delete()"
     *appDisabledEntityOperation="{
       operation: operationType.DELETE,
-      entity: data.row.record
+      entity: data.row.record.getConstructor()
     }"
     color="warn"
     i18n="Delete button for forms"
