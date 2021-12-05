@@ -106,7 +106,7 @@ describe("DataImportService", () => {
     createDialogMock(true);
     createSnackBarMock(false);
 
-    service.handleCsvImport(null);
+    service.handleCsvImport(null, null);
 
     expect(mockBackupService.getJsonExport).toHaveBeenCalled();
     tick();
@@ -121,7 +121,7 @@ describe("DataImportService", () => {
     mockBackupService.getJsonExport.and.resolveTo(null);
     createDialogMock(false);
 
-    service.handleCsvImport(null);
+    service.handleCsvImport(null, null);
 
     expect(mockBackupService.getJsonExport).toHaveBeenCalled();
     tick();
@@ -138,7 +138,7 @@ describe("DataImportService", () => {
     createDialogMock(true);
     createSnackBarMock(true);
 
-    service.handleCsvImport(null);
+    service.handleCsvImport(null, null);
 
     tick();
     expect(mockBackupService.clearDatabase).toHaveBeenCalled();

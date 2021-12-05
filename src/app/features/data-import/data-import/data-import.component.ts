@@ -4,6 +4,7 @@ import { DynamicEntityService } from "app/core/entity/dynamic-entity.service";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { DataImportService } from "../data-import.service";
 import { v4 as uuid } from "uuid";
+import { ImportMetaData } from "../import-meta-data.type";
 
 @Component({
   selector: "app-data-import",
@@ -85,6 +86,10 @@ export class DataImportComponent implements OnInit {
       this.thirdFormGroup.setValue({ thirdCtrl: this.transactionId});
     }
 
-    await this.dataImportService.handleCsvImport(this.csvFile, this.transactionId);
+    const entityType = this.firstFormGroup.get("firstCtrl").value;
+
+    const importMeta: ImportMetaData = {transactionId: this.transactionId, entityType: entityType};
+
+    await this.dataImportService.handleCsvImport(this.csvFile, importMeta);
   }
 }
