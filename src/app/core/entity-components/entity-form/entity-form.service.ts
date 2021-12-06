@@ -99,6 +99,7 @@ export class EntityFormService {
     form.markAllAsTouched();
     if (form.invalid) {
       const invalidFields = this.getInvalidFields(form);
+      // TODO add localize function
       throw new Error(`Fields: "${invalidFields}" are invalid`);
     }
   }
