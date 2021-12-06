@@ -7,8 +7,9 @@ import { ConfirmationDialogService } from "../../core/confirmation-dialog/confir
 import { MatSnackBar, MatSnackBarRef } from "@angular/material/snack-bar";
 import { MatDialogRef } from "@angular/material/dialog";
 import { of } from "rxjs";
+import { CsvValidationStatus } from "./csv-validation-Status.enum";
 
-describe("DataImportService", () => {
+fdescribe("DataImportService", () => {
   let db: PouchDatabase;
   let service: DataImportService;
 
@@ -151,5 +152,49 @@ describe("DataImportService", () => {
 
   it("should put csv into db", async () => {
     // Todo, missing importCsv Function
+  });
+
+  it("should validate csv with matching _id and content", async () => {
+    const mockFileReader = createFileReaderMock("_id,value\nChild:123,123");
+    const valResult = await service.validateCsvFile(null, "Child");
+
+    expect(mockFileReader.readAsText).toHaveBeenCalled();
+    expect(valResult.status).toEqual(CsvValidationStatus.Valid);
+  });
+
+  it("should validate csv without _id", async () => {
+    const mockFileReader = createFileReaderMock("value\n123");
+    const valResult = await service.validateCsvFile(null, "Child");
+
+    expect(mockFileReader.readAsText).toHaveBeenCalled();
+    expect(valResult.status).toEqual(CsvValidationStatus.Valid);
+  });
+
+  it("should reject csv when _id and content don't match", async () => {
+    const mockFileReader = createFileReaderMock("_id,value\nNotAChild:123,123");
+    const valResult = await service.validateCsvFile(null, "Child");
+
+    expect(mockFileReader.readAsText).toHaveBeenCalled();
+    expect(valResult.status).toEqual(CsvValidationStatus.ErrorWrongType);
+  });
+
+  it("should reject empty csv file", async () => {
+    const mockFileReader = createFileReaderMock("_id,value");
+    const valResult = await service.validateCsvFile(null, "Child");
+
+    expect(mockFileReader.readAsText).toHaveBeenCalled();
+    expect(valResult.status).toEqual(CsvValidationStatus.ErrorEmpty);
+  });
+
+  it("should reject empty csv without _id", async () => {
+    const mockFileReader = createFileReaderMock("value");
+    const valResult = await service.validateCsvFile(null, "Child");
+
+    expect(mockFileReader.readAsText).toHaveBeenCalled();
+    expect(valResult.status).toEqual(CsvValidationStatus.ErrorEmpty);
+  });
+
+  it("should reject invalid csv", async () => {
+    // I'm unable to break the csv import
   });
 });

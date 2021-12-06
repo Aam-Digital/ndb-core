@@ -63,7 +63,7 @@ describe("DataImportComponent", () => {
     component = fixture.componentInstance;
     formBuilder = TestBed.inject(FormBuilder); // get a handle on formBuilder
     // add the mock data here
-    component.firstFormGroup = formBuilder.group({
+    component.entitySelectionFormGroup = formBuilder.group({
       recipientTypes: new FormControl(
         {
           value: ["mockControl1"],
@@ -72,7 +72,7 @@ describe("DataImportComponent", () => {
         Validators.required
       ),
     });
-    component.secondFormGroup = formBuilder.group({
+    component.fileSelectionFormGroup = formBuilder.group({
       recipientTypes: new FormControl(
         {
           value: ["mockControl2"],
