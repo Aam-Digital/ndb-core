@@ -87,7 +87,7 @@ export class DataImportComponent implements OnInit {
 
   async importSelectedFile(): Promise<void> {
     if (this.csvFile === undefined) {
-      return Promise.resolve(undefined);
+      return;
     }
 
     // use transaction id or generate a new one

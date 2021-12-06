@@ -114,7 +114,7 @@ export class DataImportService {
 
     dialogRef.afterClosed().subscribe(async (confirmed) => {
       if (!confirmed) {
-        return Promise.resolve(undefined);
+        return;
       }
 
       await this.importCsvContentToDB(newData, importMeta);
