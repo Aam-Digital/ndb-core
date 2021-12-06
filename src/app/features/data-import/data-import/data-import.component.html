@@ -6,7 +6,7 @@
         <mat-form-field>
             <mat-label>Entity Type</mat-label>
             <mat-select formControlName="entitySelectionCtrl" required (selectionChange)="entitySelectionChanged()">
-                <mat-option *ngFor="let entity of getEntitiesMap() | keyvalue" [value]="entity.key">
+                <mat-option *ngFor="let entity of entitiesMap | keyvalue" [value]="entity.key">
                     {{entity.key}}
                 </mat-option>
             </mat-select>

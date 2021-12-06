@@ -26,6 +26,8 @@ export class DataImportComponent implements OnInit {
   csvFile: Blob = undefined;
   transactionId: string = '';
 
+  entitiesMap: Map<string, EntityConstructor<Entity>>;
+
   constructor(
     private dataImportService: DataImportService,
     private formBuilder: FormBuilder,
@@ -34,6 +36,8 @@ export class DataImportComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.entitiesMap = this.dynamicEntityService.EntityMap;
+
     this.entitySelectionFormGroup = this.formBuilder.group({
       entitySelectionCtrl: ["", Validators.required],
     });
@@ -43,10 +47,6 @@ export class DataImportComponent implements OnInit {
     this.transactionIdFormGroup = this.formBuilder.group({
       transactionIdInputCtrl: ["", [Validators.required, Validators.pattern('^$|^[A-Fa-f0-9]{8}$')]],
     })
-  }
-
-  getEntitiesMap(): Map<string, EntityConstructor<Entity>> {
-    return this.dynamicEntityService.EntityMap;
   }
 
   get hasValidFile(): boolean {
