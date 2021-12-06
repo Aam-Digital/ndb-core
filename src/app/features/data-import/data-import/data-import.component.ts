@@ -5,6 +5,10 @@ import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { DataImportService } from "../data-import.service";
 import { v4 as uuid } from "uuid";
 import { ImportMetaData } from "../import-meta-data.type";
+import { AlertService } from "app/core/alerts/alert.service";
+import { Alert } from "app/core/alerts/alert";
+import { AlertDisplay } from "app/core/alerts/alert-display";
+import { CsvValidationStatus } from "../csv-validation-Status.enum";
 
 @Component({
   selector: "app-data-import",
@@ -25,7 +29,8 @@ export class DataImportComponent implements OnInit {
   constructor(
     private dataImportService: DataImportService,
     private _formBuilder: FormBuilder,
-    private dynamicEntityService: DynamicEntityService
+    private dynamicEntityService: DynamicEntityService,
+    private alertService: AlertService
   ) {}
 
   ngOnInit() {
@@ -58,14 +63,22 @@ export class DataImportComponent implements OnInit {
     const target = inputEvent.target as HTMLInputElement;
     const file = target.files[0];
     const entityType = this.firstFormGroup.get("firstCtrl").value;
-    const isValidCsv = await this.dataImportService.validateCsvFile(
+    const csvValidationResult = await this.dataImportService.validateCsvFile(
       file,
       entityType
     );
 
-    if (!isValidCsv) {
+    if (csvValidationResult.status !== CsvValidationStatus.Valid) {
       this.csvFile = undefined;
       this.secondFormGroup.setValue({ secondCtrl: "" });
+
+      this.alertService.addAlert(
+        new Alert(
+          csvValidationResult.resultMessage,
+          Alert.DANGER,
+          AlertDisplay.TEMPORARY
+        )
+      );
     } else {
       this.csvFile = file;
       this.secondFormGroup.setValue({ secondCtrl: file.name });

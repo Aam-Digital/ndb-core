@@ -8,6 +8,8 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { readFile } from "../../utils/utils";
 import { ImportMetaData } from "./import-meta-data.type";
 import { v4 as uuid } from "uuid";
+import { CsvValidationStatus } from "./csv-validation-Status.enum";
+import { CsvValidationResult } from "./csv-validation-result.type";
 
 @Injectable()
 @UntilDestroy()
@@ -20,33 +22,27 @@ export class DataImportService {
     private snackBar: MatSnackBar
   ) {}
 
-  async validateCsvFile(file: File, entityType: string): Promise<boolean> {
+  async validateCsvFile(file: File, entityType: string): Promise<CsvValidationResult> {
     const csvData = await readFile(file);
     const parsedCsvFile = this.parseCsvFile(csvData);
 
-    // an empty csv file is not valid
+    if (parsedCsvFile === undefined || parsedCsvFile.data === undefined) {
+      return {status: CsvValidationStatus.ErrorNoData, resultMessage: 'The file provided is invalid, parsing was not possible!'};
+    }
+
     if (parsedCsvFile.data.length === 0) {
-      // TODO: Either open a popup here which seems missplaced
-      // Better: Have validation results, so any component can handle the result
-      return false;
+      return {status: CsvValidationStatus.ErrorEmpty, resultMessage: 'The file provided is invalid, it has no content!'};
     }
 
-    const record = parsedCsvFile.data[0];
+    if (parsedCsvFile.meta.fields.includes("_id")) {
+      const record = parsedCsvFile.data[0];
 
-    // check all properties, if there is an _id, make sure it fits
-    for (const propertyName in record) {
-      if (propertyName !== "_id") {
-        continue;
+      if (!record["_id"].startsWith(entityType + ":")) {
+        return {status: CsvValidationStatus.ErrorWrongType, resultMessage: 'The file provided is invalid, it contains an _id column but the given type does not match the selected type!'};
       }
-
-      if (!record[propertyName].startsWith(entityType)) {
-        return false;
-      }
-
-      break;
     }
 
-    return true;
+    return {status: CsvValidationStatus.Valid, resultMessage: 'The file provided is valid.'};
   }
 
   parseCsvFile(csv: string): ParseResult {
@@ -79,8 +75,6 @@ export class DataImportService {
     }
 
     for (const record of parsedCsv.data) {
-      
-
       // remove undefined properties
       for (const propertyName in record) {
         if (record[propertyName] === null || propertyName === "_rev") {
