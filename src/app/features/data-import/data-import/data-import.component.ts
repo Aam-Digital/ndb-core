@@ -19,9 +19,9 @@ import { CsvValidationStatus } from "../csv-validation-Status.enum";
   providedIn: "root",
 })
 export class DataImportComponent implements OnInit {
-  firstFormGroup: FormGroup;
-  secondFormGroup: FormGroup;
-  thirdFormGroup: FormGroup;
+  entitySelectionFormGroup: FormGroup;
+  fileSelectionFormGroup: FormGroup;
+  transactionIdFormGroup: FormGroup;
 
   csvFile: Blob = undefined;
   transactionId: string = '';
@@ -34,14 +34,14 @@ export class DataImportComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.firstFormGroup = this.formBuilder.group({
-      firstCtrl: ["", Validators.required],
+    this.entitySelectionFormGroup = this.formBuilder.group({
+      entitySelectionCtrl: ["", Validators.required],
     });
-    this.secondFormGroup = this.formBuilder.group({
-      secondCtrl: ["", Validators.required],
+    this.fileSelectionFormGroup = this.formBuilder.group({
+      fileNameCtrl: [{value: "", disabled: true}, Validators.required],
     });
-    this.thirdFormGroup = this.formBuilder.group({
-      thirdCtrl: ["", [Validators.required, Validators.pattern('^$|^[A-Fa-f0-9]{8}$')]],
+    this.transactionIdFormGroup = this.formBuilder.group({
+      transactionIdInputCtrl: ["", [Validators.required, Validators.pattern('^$|^[A-Fa-f0-9]{8}$')]],
     })
   }
 
@@ -53,16 +53,20 @@ export class DataImportComponent implements OnInit {
     return this.csvFile !== undefined;
   }
 
+  get hasTransactionId(): boolean {
+    return this.transactionId !== '';
+  }
+
   entitySelectionChanged(): void {
     // whenver the selection changes, the file can't be valid (if there was one)
     this.csvFile = undefined;
-    this.secondFormGroup.setValue({ secondCtrl: "" });
+    this.fileSelectionFormGroup.setValue({ fileNameCtrl: "" });
   }
 
   async setCsvFile(inputEvent: Event): Promise<void> {
     const target = inputEvent.target as HTMLInputElement;
     const file = target.files[0];
-    const entityType = this.firstFormGroup.get("firstCtrl").value;
+    const entityType = this.entitySelectionFormGroup.get("entitySelectionCtrl").value;
     const csvValidationResult = await this.dataImportService.validateCsvFile(
       file,
       entityType
@@ -70,7 +74,7 @@ export class DataImportComponent implements OnInit {
 
     if (csvValidationResult.status !== CsvValidationStatus.Valid) {
       this.csvFile = undefined;
-      this.secondFormGroup.setValue({ secondCtrl: "" });
+      this.fileSelectionFormGroup.setValue({ fileNameCtrl: "" });
 
       this.alertService.addAlert(
         new Alert(
@@ -81,7 +85,7 @@ export class DataImportComponent implements OnInit {
       );
     } else {
       this.csvFile = file;
-      this.secondFormGroup.setValue({ secondCtrl: file.name });
+      this.fileSelectionFormGroup.setValue({ fileNameCtrl: file.name });
     }
   }
 
@@ -91,15 +95,15 @@ export class DataImportComponent implements OnInit {
     }
 
     // use transaction id or generate a new one
-    const transIdCtrl = this.thirdFormGroup.get("thirdCtrl");
+    const transIdCtrl = this.transactionIdFormGroup.get("transactionIdInputCtrl");
     if (transIdCtrl.valid) {
       this.transactionId = transIdCtrl.value;
     } else {
       this.transactionId = uuid().substring(0, 8);
-      this.thirdFormGroup.setValue({ thirdCtrl: this.transactionId});
+      this.transactionIdFormGroup.setValue({ transactionIdInputCtrl: this.transactionId});
     }
 
-    const entityType = this.firstFormGroup.get("firstCtrl").value;
+    const entityType = this.entitySelectionFormGroup.get("entitySelectionCtrl").value;
 
     const importMeta: ImportMetaData = {transactionId: this.transactionId, entityType: entityType};
 
