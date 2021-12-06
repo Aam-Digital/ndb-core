@@ -8,6 +8,8 @@ import { ConfigService } from "../../config/config.service";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { ConfigurableEnumModule } from "../configurable-enum.module";
+import { TypedFormControl } from "../../entity-components/entity-utils/dynamic-form-components/edit-component";
+import { ConfigurableEnumValue } from "../configurable-enum.interface";
 
 describe("EditConfigurableEnumComponent", () => {
   let component: EditConfigurableEnumComponent;
@@ -38,7 +40,7 @@ describe("EditConfigurableEnumComponent", () => {
     const formControl = new FormControl();
     const formGroup = new FormGroup({});
     component.formControlName = "testControl";
-    component.formControl = formControl;
+    component.formControl = formControl as TypedFormControl<ConfigurableEnumValue>;
     formGroup.registerControl(component.formControlName, formControl);
     component.enumId = "";
     fixture.detectChanges();

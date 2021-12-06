@@ -12,7 +12,8 @@ import { DataImportService } from "../data-import.service";
 export class DataImportComponent {
   constructor(private dataImportService: DataImportService) {}
 
-  importCsvFile(file: Blob): void {
-    this.dataImportService.handleCsvImport(file);
+  importCsvFile(inputEvent: Event): void {
+    const target = inputEvent.target as HTMLInputElement;
+    this.dataImportService.handleCsvImport(target.files[0]);
   }
 }
