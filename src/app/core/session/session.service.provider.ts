@@ -28,6 +28,7 @@ import { DemoSession } from "../demo-data/demo-session.service";
 import { DemoDataService } from "../demo-data/demo-data.service";
 import { Database } from "../database/database";
 import { PouchDatabase } from "../database/pouch-database";
+import { AnalyticsService } from "../analytics/analytics.service";
 
 /**
  * Factory method for Angular DI provider of SessionService.
@@ -39,7 +40,8 @@ export function sessionServiceFactory(
   loggingService: LoggingService,
   httpClient: HttpClient,
   demoDataService: DemoDataService,
-  database: Database
+  database: Database,
+  analyticsService: AnalyticsService
 ): SessionService {
   const pouchDatabase = database as PouchDatabase;
   let sessionService: SessionService;
@@ -50,10 +52,11 @@ export function sessionServiceFactory(
       alertService,
       loggingService,
       httpClient,
-      pouchDatabase
+      pouchDatabase,
+      analyticsService
     );
   } else {
-    sessionService = new LocalSession(pouchDatabase);
+    sessionService = new LocalSession(pouchDatabase, analyticsService);
   }
   // TODO: requires a configuration or UI option to select RemoteSession: https://github.com/Aam-Digital/ndb-core/issues/434
   // return new RemoteSession(httpClient, loggingService);
@@ -87,5 +90,12 @@ function updateLoggingServiceWithUserContext(sessionService: SessionService) {
 export const sessionServiceProvider = {
   provide: SessionService,
   useFactory: sessionServiceFactory,
-  deps: [AlertService, LoggingService, HttpClient, DemoDataService, Database],
+  deps: [
+    AlertService,
+    LoggingService,
+    HttpClient,
+    DemoDataService,
+    Database,
+    AnalyticsService,
+  ],
 };

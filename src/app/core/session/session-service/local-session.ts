@@ -27,6 +27,7 @@ import { PouchDatabase } from "../../database/pouch-database";
 import { AppConfig } from "../../app-config/app-config";
 import { SessionType } from "../session-type";
 import { DatabaseMigrationService } from "./database-migration.service";
+import { AnalyticsService } from "../../analytics/analytics.service";
 
 /**
  * Responsibilities:
@@ -39,9 +40,15 @@ export class LocalSession extends SessionService {
   private currentDBUser: DatabaseUser;
   public databaseMigrationService: DatabaseMigrationService;
 
-  constructor(private database: PouchDatabase) {
+  constructor(
+    private database: PouchDatabase,
+    analyticsService: AnalyticsService = { eventTrack: () => {} } as any
+  ) {
     super();
-    this.databaseMigrationService = new DatabaseMigrationService(this);
+    this.databaseMigrationService = new DatabaseMigrationService(
+      this,
+      analyticsService
+    );
   }
 
   /**

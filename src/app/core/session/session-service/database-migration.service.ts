@@ -2,9 +2,13 @@ import { AppConfig } from "../../app-config/app-config";
 import { SessionService } from "./session.service";
 import { PouchDatabase } from "../../database/pouch-database";
 import { SessionType } from "../session-type";
+import { AnalyticsService } from "../../analytics/analytics.service";
 
 export class DatabaseMigrationService {
-  constructor(private sessionService: SessionService) {}
+  constructor(
+    private sessionService: SessionService,
+    private analyticsService: AnalyticsService
+  ) {}
 
   async migrateToDatabasePerUser(): Promise<void> {
     const oldDBName = AppConfig.settings.database.name;
@@ -19,6 +23,9 @@ export class DatabaseMigrationService {
     if (info.doc_count > 0) {
       await this.removeDesignDocs(oldDB);
       await this.syncDatabase(oldPouch);
+      this.analyticsService.eventTrack("migrated db to db-per-user", {
+        category: "Migration",
+      });
     }
     await oldPouch.destroy();
   }

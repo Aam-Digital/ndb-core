@@ -3,10 +3,12 @@ import { PouchDatabase } from "../../database/pouch-database";
 import { AppConfig } from "../../app-config/app-config";
 import { SessionType } from "../session-type";
 import { LocalSession } from "./local-session";
+import { AnalyticsService } from "../../analytics/analytics.service";
 
 describe("DatabaseMigrationService", () => {
   let service: DatabaseMigrationService;
   let sessionService: jasmine.SpyObj<LocalSession>;
+  let mockAnalytics: jasmine.SpyObj<AnalyticsService>;
   let oldDBName: string;
   let newDBName: string;
   const testDoc = { _id: "doc" };
@@ -26,7 +28,8 @@ describe("DatabaseMigrationService", () => {
     sessionService.getDatabase.and.returnValue(
       new PouchDatabase().initInMemoryDB(newDBName)
     );
-    service = new DatabaseMigrationService(sessionService);
+    mockAnalytics = jasmine.createSpyObj(["eventTrack"]);
+    service = new DatabaseMigrationService(sessionService, mockAnalytics);
   });
 
   it("should be created", () => {
@@ -73,5 +76,20 @@ describe("DatabaseMigrationService", () => {
     const newDB = new PouchDatabase().initInMemoryDB(newDBName);
     await expectAsync(newDB.get(designDoc._id)).toBeRejected();
     await expectAsync(newDB.get(normalDoc._id)).toBeResolved();
+  });
+
+  it("should track a matomo event when migration happens", async () => {
+    let oldDB = new PouchDatabase().initInMemoryDB(oldDBName);
+    const normalDoc = { _id: "Child:someChild" };
+    await oldDB.put(normalDoc);
+
+    await service.migrateToDatabasePerUser();
+
+    expect(mockAnalytics.eventTrack).toHaveBeenCalledWith(
+      "migrated db to db-per-user",
+      {
+        category: "Migration",
+      }
+    );
   });
 });

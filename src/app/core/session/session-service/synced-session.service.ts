@@ -29,6 +29,7 @@ import { HttpClient } from "@angular/common/http";
 import { DatabaseUser } from "./local-user";
 import { waitForChangeTo } from "../session-states/session-utils";
 import { PouchDatabase } from "../../database/pouch-database";
+import { AnalyticsService } from "../../analytics/analytics.service";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -52,10 +53,11 @@ export class SyncedSessionService extends SessionService {
     private _alertService: AlertService,
     private _loggingService: LoggingService,
     private _httpClient: HttpClient,
-    pouchDatabase: PouchDatabase
+    pouchDatabase: PouchDatabase,
+    analyticsService: AnalyticsService
   ) {
     super();
-    this._localSession = new LocalSession(pouchDatabase);
+    this._localSession = new LocalSession(pouchDatabase, analyticsService);
     this._remoteSession = new RemoteSession(this._httpClient, _loggingService);
   }
 
