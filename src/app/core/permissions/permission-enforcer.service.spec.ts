@@ -17,6 +17,7 @@ import { LoginState } from "../session/session-states/login-state.enum";
 import { SyncedSessionService } from "../session/session-service/synced-session.service";
 import { mockEntityMapper } from "../entity/mock-entity-mapper-service";
 import { LOCATION_TOKEN } from "../../utils/di-tokens";
+import { AnalyticsService } from "../analytics/analytics.service";
 
 describe("PermissionEnforcerService", () => {
   let service: PermissionEnforcerService;
@@ -27,6 +28,7 @@ describe("PermissionEnforcerService", () => {
   ];
   let mockDatabase: jasmine.SpyObj<Database>;
   let mockLocation: jasmine.SpyObj<Location>;
+  let mockAnalytics: jasmine.SpyObj<AnalyticsService>;
 
   beforeEach(fakeAsync(() => {
     mockSession = jasmine.createSpyObj(["getCurrentUser"], {
@@ -36,6 +38,7 @@ describe("PermissionEnforcerService", () => {
     mockSession.getCurrentUser.and.returnValue({ name: TEST_USER, roles: [] });
     mockDatabase = jasmine.createSpyObj(["destroy"]);
     mockLocation = jasmine.createSpyObj(["reload"]);
+    mockAnalytics = jasmine.createSpyObj(["eventTrack"]);
 
     TestBed.configureTestingModule({
       providers: [
@@ -53,6 +56,7 @@ describe("PermissionEnforcerService", () => {
         { provide: Database, useValue: mockDatabase },
         { provide: SessionService, useValue: mockSession },
         { provide: LOCATION_TOKEN, useValue: mockLocation },
+        { provide: AnalyticsService, useValue: mockAnalytics },
       ],
     });
     const dbRules: DatabaseRules = {};
@@ -85,9 +89,7 @@ describe("PermissionEnforcerService", () => {
   });
 
   it("should reset page when no permissions were previously defined and entities without permissions exist", async () => {
-    const entityMapper = TestBed.inject(EntityMapperService);
-    const child = new Child();
-    await entityMapper.save(child);
+    await TestBed.inject(EntityMapperService).save(new Child());
 
     await service.enforcePermissionsOnLocalData(userRules);
 
@@ -98,9 +100,7 @@ describe("PermissionEnforcerService", () => {
   it("should not reset if roles didnt change since last check", async () => {
     await service.enforcePermissionsOnLocalData(userRules);
 
-    const entityMapper = TestBed.inject(EntityMapperService);
-    const child = new Child();
-    await entityMapper.save(child);
+    await TestBed.inject(EntityMapperService).save(new Child());
 
     await service.enforcePermissionsOnLocalData(userRules);
 
@@ -109,9 +109,7 @@ describe("PermissionEnforcerService", () => {
   });
 
   it("should reset if roles changed since last check and entities without permissions exist", async () => {
-    const entityMapper = TestBed.inject(EntityMapperService);
-    const school = new School();
-    await entityMapper.save(school);
+    await TestBed.inject(EntityMapperService).save(new School());
 
     await service.enforcePermissionsOnLocalData(userRules);
 
@@ -128,5 +126,18 @@ describe("PermissionEnforcerService", () => {
 
     expect(mockDatabase.destroy).toHaveBeenCalled();
     expect(mockLocation.reload).toHaveBeenCalled();
+  });
+
+  it("should track a migration event in analytics service when destroying the local db", async () => {
+    await TestBed.inject(EntityMapperService).save(new Child());
+
+    await service.enforcePermissionsOnLocalData(userRules);
+
+    expect(mockAnalytics.eventTrack).toHaveBeenCalledWith(
+      "destroying local db due to lost permissions",
+      {
+        category: "Migration",
+      }
+    );
   });
 });

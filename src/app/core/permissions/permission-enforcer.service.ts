@@ -6,6 +6,7 @@ import { DynamicEntityService } from "../entity/dynamic-entity.service";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Database } from "../database/database";
 import { LOCATION_TOKEN } from "../../utils/di-tokens";
+import { AnalyticsService } from "../analytics/analytics.service";
 
 @Injectable()
 export class PermissionEnforcerService {
@@ -16,6 +17,7 @@ export class PermissionEnforcerService {
     private ability: EntityAbility,
     private entityMapper: EntityMapperService,
     private database: Database,
+    private analyticsService: AnalyticsService,
     @Inject(LOCATION_TOKEN) private location: Location
   ) {}
 
@@ -30,6 +32,12 @@ export class PermissionEnforcerService {
       // TODO maybe only do this with SyncedSession
       const subjects = this.getSubjectsWithReadRestrictions(userRules);
       if (await this.dbHasEntitiesWithoutPermissions(subjects)) {
+        this.analyticsService.eventTrack(
+          "destroying local db due to lost permissions",
+          {
+            category: "Migration",
+          }
+        );
         await this.database.destroy();
         this.location.reload();
       }
