@@ -9,7 +9,7 @@ import { MatDialogRef } from "@angular/material/dialog";
 import { of } from "rxjs";
 import { CsvValidationStatus } from "./csv-validation-Status.enum";
 
-fdescribe("DataImportService", () => {
+describe("DataImportService", () => {
   let db: PouchDatabase;
   let service: DataImportService;
 
