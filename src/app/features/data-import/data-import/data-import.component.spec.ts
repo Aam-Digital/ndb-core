@@ -4,6 +4,14 @@ import { DataImportService } from "../data-import.service";
 import { FormBuilder, FormControl, Validators } from "@angular/forms";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import { AlertService } from "app/core/alerts/alert.service";
+import { MatButtonModule } from "@angular/material/button";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatStepperModule } from "@angular/material/stepper";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { MatInputModule } from "@angular/material/input";
+import { MatSelectModule } from "@angular/material/select";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 describe("DataImportComponent", () => {
   let component: DataImportComponent;
@@ -12,7 +20,7 @@ describe("DataImportComponent", () => {
   let mockDataImportService: jasmine.SpyObj<DataImportService>;
   let mockEntityMapperService: jasmine.SpyObj<EntityMapperService>;
   let mockEntitySchemaService: jasmine.SpyObj<EntitySchemaService>;
-  const mockCsvFile: Blob = new Blob(["1;2;3"]);
+  let alertService: AlertService;
 
   beforeEach(
     waitForAsync(() => {
@@ -36,7 +44,18 @@ describe("DataImportComponent", () => {
       ]);
       TestBed.configureTestingModule({
         declarations: [DataImportComponent],
+        imports: [
+          FormsModule,
+          MatButtonModule,
+          MatFormFieldModule,
+          MatInputModule,
+          MatSelectModule,
+          MatStepperModule,
+          ReactiveFormsModule,
+          BrowserAnimationsModule,
+        ],
         providers: [
+          FormBuilder,
           {
             provide: DataImportService,
             useValue: mockDataImportService,
@@ -50,8 +69,8 @@ describe("DataImportComponent", () => {
             useValue: mockEntitySchemaService,
           },
           {
-            provide: FormBuilder,
-            useValue: formBuilder,
+            provide: AlertService,
+            useValue: alertService,
           },
         ],
       }).compileComponents();
