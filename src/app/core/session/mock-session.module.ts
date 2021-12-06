@@ -16,6 +16,7 @@ import { Database } from "../database/database";
 import { AppConfig } from "../app-config/app-config";
 import { SessionType } from "./session-type";
 import { PouchDatabase } from "../database/pouch-database";
+import { LOCATION_TOKEN } from "../../utils/di-tokens";
 
 export const TEST_USER = "test";
 export const TEST_PASSWORD = "pass";
@@ -68,6 +69,10 @@ export class MockSessionModule {
         {
           provide: Database,
           useValue: session.getDatabase(),
+        },
+        {
+          provide: LOCATION_TOKEN,
+          useValue: window.location,
         },
       ],
     };

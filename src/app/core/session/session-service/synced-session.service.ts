@@ -142,11 +142,12 @@ export class SyncedSessionService extends SessionService {
 
     return this.sync()
       .then(() => this.liveSyncDeferred())
-      .catch(() => {
-        if (this._localSession.loginState.value === LoginState.LOGGED_IN) {
-          this.liveSyncDeferred();
-        }
-      });
+      .catch(() =>
+        // Retry sync if/once logged in
+        this._localSession.loginState
+          .pipe(waitForChangeTo(LoginState.LOGGED_IN))
+          .subscribe(() => this.liveSyncDeferred())
+      );
   }
 
   public getCurrentUser(): DatabaseUser {

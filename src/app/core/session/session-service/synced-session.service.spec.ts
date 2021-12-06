@@ -34,6 +34,7 @@ import { TEST_PASSWORD, TEST_USER } from "../mock-session.module";
 import { testSessionServiceImplementation } from "./session.service.spec";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { PouchDatabase } from "../../database/pouch-database";
+import { AnalyticsService } from "../../analytics/analytics.service";
 
 describe("SyncedSessionService", () => {
   let sessionService: SyncedSessionService;
@@ -66,6 +67,10 @@ describe("SyncedSessionService", () => {
         SyncedSessionService,
         PouchDatabase,
         { provide: HttpClient, useValue: mockHttpClient },
+        {
+          provide: AnalyticsService,
+          useValue: jasmine.createSpyObj(["eventTrack"]),
+        },
       ],
     });
     AppConfig.settings = {

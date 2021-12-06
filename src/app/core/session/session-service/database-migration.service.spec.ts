@@ -32,6 +32,11 @@ describe("DatabaseMigrationService", () => {
     service = new DatabaseMigrationService(sessionService, mockAnalytics);
   });
 
+  afterEach(async () => {
+    await new PouchDatabase().initInMemoryDB(oldDBName).destroy();
+    await new PouchDatabase().initInMemoryDB(newDBName).destroy();
+  });
+
   it("should be created", () => {
     expect(service).toBeTruthy();
   });

@@ -3,8 +3,6 @@ import { Angulartics2Matomo } from "angulartics2/matomo";
 import { environment } from "../../../environments/environment";
 import { AppConfig } from "../app-config/app-config";
 import { ConfigService } from "../config/config.service";
-import { SessionService } from "../session/session-service/session.service";
-import { LoginState } from "../session/session-states/login-state.enum";
 import {
   USAGE_ANALYTICS_CONFIG_ID,
   UsageAnalyticsConfig,
@@ -29,13 +27,10 @@ export class AnalyticsService {
   constructor(
     private angulartics2: Angulartics2,
     private angulartics2Matomo: Angulartics2Matomo,
-    private configService: ConfigService,
-    private sessionService: SessionService
-  ) {
-    this.subscribeToUserChanges();
-  }
+    private configService: ConfigService
+  ) {}
 
-  private setUser(username: string): void {
+  public setUser(username: string): void {
     this.angulartics2Matomo.setUsername(
       AnalyticsService.getUserHash(username ?? "")
     );
@@ -50,16 +45,6 @@ export class AnalyticsService {
   private setOrganization(orgName: string): void {
     this.angulartics2.setUserProperties.next({
       dimension2: orgName,
-    });
-  }
-
-  private subscribeToUserChanges() {
-    this.sessionService.loginState.subscribe((newState) => {
-      if (newState === LoginState.LOGGED_IN) {
-        this.setUser(this.sessionService.getCurrentUser().name);
-      } else {
-        this.setUser(undefined);
-      }
     });
   }
 

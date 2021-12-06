@@ -61,21 +61,25 @@ export function sessionServiceFactory(
   // TODO: requires a configuration or UI option to select RemoteSession: https://github.com/Aam-Digital/ndb-core/issues/434
   // return new RemoteSession(httpClient, loggingService);
 
-  updateLoggingServiceWithUserContext(sessionService);
+  updateServicesWithUserContexts(sessionService, analyticsService);
 
   return sessionService;
 }
 
-function updateLoggingServiceWithUserContext(sessionService: SessionService) {
-  // update the user context for remote error logging
+function updateServicesWithUserContexts(
+  sessionService: SessionService,
+  analyticsService: AnalyticsService
+) {
+  // update the user context for remote error logging and tracking
   // cannot subscribe within LoggingService itself because of cyclic dependencies, therefore doing this here
   sessionService.loginState.subscribe((newState) => {
     if (newState === LoginState.LOGGED_IN) {
-      LoggingService.setLoggingContextUser(
-        sessionService.getCurrentUser().name
-      );
+      const username = sessionService.getCurrentUser().name;
+      LoggingService.setLoggingContextUser(username);
+      analyticsService.setUser(username);
     } else {
       LoggingService.setLoggingContextUser(undefined);
+      analyticsService.setUser(undefined);
     }
   });
 }

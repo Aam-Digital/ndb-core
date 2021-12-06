@@ -3,7 +3,6 @@ import { TestBed } from "@angular/core/testing";
 import { AnalyticsService } from "./analytics.service";
 import { Angulartics2Module } from "angulartics2";
 import { RouterTestingModule } from "@angular/router/testing";
-import { MockSessionModule } from "../session/mock-session.module";
 import { ConfigService } from "../config/config.service";
 import { UsageAnalyticsConfig } from "./usage-analytics-config";
 import { Angulartics2Matomo } from "angulartics2/matomo";
@@ -27,11 +26,7 @@ describe("AnalyticsService", () => {
     ]);
 
     TestBed.configureTestingModule({
-      imports: [
-        Angulartics2Module.forRoot(),
-        RouterTestingModule,
-        MockSessionModule.withState(),
-      ],
+      imports: [Angulartics2Module.forRoot(), RouterTestingModule],
       providers: [
         AnalyticsService,
         { provide: ConfigService, useValue: mockConfigService },
