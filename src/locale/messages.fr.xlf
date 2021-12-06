@@ -1880,7 +1880,7 @@
         Will discuss further together with the child.
       </source>
         <target state="translated">
-        Discussion sur l'avenir de l'enfant avec ses parents. Ils sont d'accord sur l'idée que changer d'école peut être une bonne option. 
+        Discussion sur l'avenir de l'enfant avec ses parents. Ils sont d'accord sur l'idée que changer d'école peut être une bonne option.
         Continuerons d'en discuter avec l'enfant.
       </target>
         <context-group purpose="location">
@@ -2493,7 +2493,7 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.html</context>
           <context context-type="linenumber">91,96</context>
-        </context-group> 
+        </context-group>
         <note priority="1" from="description">The Current amount of a process</note>
         <note priority="1" from="meaning">Current process</note>
       </trans-unit>
@@ -3295,7 +3295,7 @@
       </trans-unit>
       <trans-unit id="7910125616758063638" datatype="html">
         <source>assets/help/help.en.md</source>
-        <target state="translated">assets/help/help.en.md</target>
+        <target state="translated">assets/help/help.fr.md</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
           <context context-type="linenumber">291</context>
