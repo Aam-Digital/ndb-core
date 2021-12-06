@@ -7,7 +7,7 @@
 </div>
 
 <mat-dialog-content>
-  <div *ngFor="let control of forms.controls; let index=index" class="entry-wrapper" [formGroup]="control">
+  <div *ngFor="let control of forms.controls; let index=index" class="entry-wrapper" [formGroup]="$any(control)">
     <mat-form-field class="header-field">
       <input
         formControlName="label"
@@ -24,8 +24,8 @@
         matInput
         type="number"
         i18n-placeholder="
-              Current process|The Current amount of a process
-            "
+            Current process|The Current amount of a process
+          "
         placeholder="Current"
         [errorStateMatcher]="currentErrorStateMatcher"
       />
