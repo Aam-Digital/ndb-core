@@ -1,4 +1,4 @@
-import { Component, Injectable, Input, OnInit } from "@angular/core";
+import { Component, Injectable, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { DynamicEntityService } from "app/core/entity/dynamic-entity.service";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
@@ -19,28 +19,28 @@ import { CsvValidationStatus } from "../csv-validation-Status.enum";
   providedIn: "root",
 })
 export class DataImportComponent implements OnInit {
-  @Input() firstFormGroup: FormGroup;
-  @Input() secondFormGroup: FormGroup;
-  @Input() thirdFormGroup: FormGroup;
+  firstFormGroup: FormGroup;
+  secondFormGroup: FormGroup;
+  thirdFormGroup: FormGroup;
 
   csvFile: Blob = undefined;
   transactionId: string = '';
 
   constructor(
     private dataImportService: DataImportService,
-    private _formBuilder: FormBuilder,
+    private formBuilder: FormBuilder,
     private dynamicEntityService: DynamicEntityService,
     private alertService: AlertService
   ) {}
 
   ngOnInit() {
-    this.firstFormGroup = this._formBuilder.group({
+    this.firstFormGroup = this.formBuilder.group({
       firstCtrl: ["", Validators.required],
     });
-    this.secondFormGroup = this._formBuilder.group({
+    this.secondFormGroup = this.formBuilder.group({
       secondCtrl: ["", Validators.required],
     });
-    this.thirdFormGroup = this._formBuilder.group({
+    this.thirdFormGroup = this.formBuilder.group({
       thirdCtrl: ["", [Validators.required, Validators.pattern('^$|^[A-Fa-f0-9]{8}$')]],
     })
   }
