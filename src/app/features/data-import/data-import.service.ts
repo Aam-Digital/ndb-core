@@ -61,9 +61,9 @@ export class DataImportService {
 
     // remove existing records, if any
     // there is a chance of collision
-    const existingRecord = await this.db.getAll(recordIdPrefix);
+    const existingRecords = await this.db.getAll(recordIdPrefix);
 
-    for (const record of existingRecord) {
+    for (const record of existingRecords) {
       await this.db.remove(record);
     }
 
