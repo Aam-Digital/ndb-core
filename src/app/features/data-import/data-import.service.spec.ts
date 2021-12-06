@@ -107,7 +107,7 @@ fdescribe("DataImportService", () => {
     createDialogMock(true);
     createSnackBarMock(false);
 
-    service.handleCsvImport(null, null);
+    service.handleCsvImport(null, {entityType: "Child", transactionId: "a1b2c3d4"});
 
     expect(mockBackupService.getJsonExport).toHaveBeenCalled();
     tick();
@@ -122,7 +122,7 @@ fdescribe("DataImportService", () => {
     mockBackupService.getJsonExport.and.resolveTo(null);
     createDialogMock(false);
 
-    service.handleCsvImport(null, null);
+    service.handleCsvImport(null, {entityType: "Child", transactionId: "a1b2c3d4"});
 
     expect(mockBackupService.getJsonExport).toHaveBeenCalled();
     tick();
@@ -139,7 +139,7 @@ fdescribe("DataImportService", () => {
     createDialogMock(true);
     createSnackBarMock(true);
 
-    service.handleCsvImport(null, null);
+    service.handleCsvImport(null, {entityType: "Child", transactionId: "a1b2c3d4"});
 
     tick();
     expect(mockBackupService.clearDatabase).toHaveBeenCalled();
