@@ -44,32 +44,49 @@ describe("NotesDashboardComponent", () => {
     })
   );
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(NotesDashboardComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  describe("Note dashboard component with recent notes", () => {
-    beforeAll(() => {
+  describe("with recent notes", () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(NotesDashboardComponent);
+      component = fixture.componentInstance;
       component.mode = "with-recent-notes";
+      fixture.detectChanges();
     });
 
-    it("should create", fakeAsync(() => {
+    it("should create", () => {
       expect(component).toBeTruthy();
+    });
+
+    it("should only count children with recent note", fakeAsync(() => {
+      mockChildrenService.getDaysSinceLastNoteOfEachChild.and.resolveTo(
+        new Map([
+          ["1", 2],
+          ["2", 29],
+          ["3", 30],
+          ["4", 31],
+          ["5", Number.POSITIVE_INFINITY],
+        ])
+      );
+
+      component.sinceDays = 30;
+      component.fromBeginningOfWeek = false;
+      component.ngOnInit();
       tick();
+
+      expect(component.concernedChildren).toHaveSize(3);
     }));
   });
 
-  describe("Note dashboard component without recent notes", () => {
-    beforeAll(() => {
+  describe("without recent notes", () => {
+    beforeEach(() => {
+      fixture = TestBed.createComponent(NotesDashboardComponent);
+      component = fixture.componentInstance;
       component.mode = "without-recent-notes";
+      fixture.detectChanges();
     });
 
-    it("should create", fakeAsync(() => {
+    it("should create", () => {
       expect(component).toBeTruthy();
-      tick();
-    }));
+    });
 
     it("should add only children without recent note", fakeAsync(() => {
       mockChildrenService.getDaysSinceLastNoteOfEachChild.and.resolveTo(
@@ -86,9 +103,7 @@ describe("NotesDashboardComponent", () => {
       component.fromBeginningOfWeek = false;
       component.ngOnInit();
 
-      while (component.isLoading) {
-        tick();
-      }
+      tick();
 
       expect(component.concernedChildren.length).toBe(3);
 
@@ -106,10 +121,7 @@ describe("NotesDashboardComponent", () => {
       );
 
       component.ngOnInit();
-
-      while (component.isLoading) {
-        tick();
-      }
+      tick();
 
       expect(component.concernedChildren.length).toBe(1);
 

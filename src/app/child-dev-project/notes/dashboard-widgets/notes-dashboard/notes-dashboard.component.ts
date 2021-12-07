@@ -62,16 +62,15 @@ export class NotesDashboardComponent
       dayRangeBoundary += moment().diff(moment().startOf("week"), "days");
     }
     switch (this.mode) {
-      // (stat) => stat[1] >= dayRangeBoundary
       case "with-recent-notes":
         this.loadConcernedChildren(
-          (stat) => stat[1] >= dayRangeBoundary,
+          (stat) => stat[1] <= dayRangeBoundary,
           dayRangeBoundary
         );
         break;
       case "without-recent-notes":
         this.loadConcernedChildren(
-          (stat) => stat[1] < dayRangeBoundary,
+          (stat) => stat[1] >= dayRangeBoundary,
           dayRangeBoundary
         );
     }
