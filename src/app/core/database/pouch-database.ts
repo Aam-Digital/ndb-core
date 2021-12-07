@@ -70,9 +70,13 @@ export class PouchDatabase extends Database {
    * Initialize the PouchDB with the IndexedDB/in-browser adapter (default).
    * See {link https://github.com/pouchdb/pouchdb/tree/master/packages/node_modules/pouchdb-browser}
    * @param dbName the name for the database under which the IndexedDB entries will be created
+   * @param options PouchDB options which are directly passed to the constructor
    */
-  initIndexedDB(dbName = "indexed-database"): PouchDatabase {
-    this.pouchDB = new PouchDB(dbName);
+  initIndexedDB(
+    dbName = "indexed-database",
+    options?: PouchDB.Configuration.DatabaseConfiguration
+  ): PouchDatabase {
+    this.pouchDB = new PouchDB(dbName, options);
     return this;
   }
 

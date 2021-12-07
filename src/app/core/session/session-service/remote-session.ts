@@ -14,9 +14,6 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-import PouchDB from "pouchdb-browser";
-
 import { AppConfig } from "../../app-config/app-config";
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
@@ -36,8 +33,7 @@ import { LoggingService } from "../../logging/logging.service";
 export class RemoteSession extends SessionService {
   // See https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
   readonly UNAUTHORIZED_STATUS_CODE = 401;
-  /** remote (!) database PouchDB */
-  public pouchDB: PouchDB.Database;
+  /** remote (!) PouchDB  */
   private readonly database: PouchDatabase;
   private currentDBUser: DatabaseUser;
 
@@ -49,13 +45,12 @@ export class RemoteSession extends SessionService {
     private loggingService: LoggingService
   ) {
     super();
-    this.pouchDB = new PouchDB(
+    this.database = new PouchDatabase(this.loggingService).initIndexedDB(
       AppConfig.settings.database.remote_url + AppConfig.settings.database.name,
       {
         skip_setup: true,
       }
     );
-    this.database = new PouchDatabase(this.loggingService);
   }
 
   /**
