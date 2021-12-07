@@ -35,10 +35,10 @@ export class DataImportService {
           delete record[propertyName];
         }
       }
-      let ctor = undefined;
+
       if (record["_id"] !== undefined) {
         const entityType = record["_id"].split(":")[0];
-        ctor = this.dynamicEntityService.getEntityConstructor(entityType);
+        const ctor = this.dynamicEntityService.getEntityConstructor(entityType);
         record["searchIndices"] = Object.assign(
           new ctor(),
           record
