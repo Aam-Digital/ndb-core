@@ -53,8 +53,6 @@ export class ProgressDashboardComponent
 
   private createDefaultConfig() {
     this.data.title = $localize`:The progress, e.g. of a certain activity:Progress of X`;
-    // this.addPart();
-    // this.addPart();
     this.save();
   }
 

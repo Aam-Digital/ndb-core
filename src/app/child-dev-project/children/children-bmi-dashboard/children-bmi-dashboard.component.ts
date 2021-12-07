@@ -17,7 +17,6 @@ interface BmiRow {
 @Component({
   selector: "app-children-bmi-dashboard",
   templateUrl: "./children-bmi-dashboard.component.html",
-  styleUrls: ["./children-bmi-dashboard.component.scss"],
 })
 export class ChildrenBmiDashboardComponent
   implements OnInit, OnInitDynamicComponent {

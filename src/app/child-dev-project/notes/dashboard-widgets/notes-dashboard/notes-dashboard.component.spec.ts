@@ -14,7 +14,7 @@ import { ChildrenModule } from "../../../children/children.module";
 import { Angulartics2Module } from "angulartics2";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
-describe("NoRecentNotesDashboardComponent", () => {
+describe("NotesDashboardComponent", () => {
   let component: NotesDashboardComponent;
   let fixture: ComponentFixture<NotesDashboardComponent>;
 
@@ -50,49 +50,74 @@ describe("NoRecentNotesDashboardComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", fakeAsync(() => {
-    expect(component).toBeTruthy();
-    tick();
-  }));
-
-  it("should add only children without recent note", async () => {
-    mockChildrenService.getDaysSinceLastNoteOfEachChild.and.resolveTo(
-      new Map([
-        ["1", 2],
-        ["2", 29],
-        ["3", 30],
-        ["4", 31],
-        ["5", 50],
-      ])
-    );
-
-    component.sinceDays = 30;
-    component.fromBeginningOfWeek = false;
-    await component.ngOnInit();
-
-    expect(component.concernedChildren.length).toBe(3);
-
-    expect(component.concernedChildren[0]).toEqual({
-      childId: "5",
-      daysSinceLastNote: 50,
-      moreThanDaysSince: false,
+  describe("Note dashboard component with recent notes", () => {
+    beforeAll(() => {
+      component.mode = "with-recent-notes";
     });
+
+    it("should create", fakeAsync(() => {
+      expect(component).toBeTruthy();
+      tick();
+    }));
   });
 
-  it("should mark children without stats on last note", async () => {
-    const childId1 = "1";
-    mockChildrenService.getDaysSinceLastNoteOfEachChild.and.resolveTo(
-      new Map([[childId1, Number.POSITIVE_INFINITY]])
-    );
+  describe("Note dashboard component without recent notes", () => {
+    beforeAll(() => {
+      component.mode = "without-recent-notes";
+    });
 
-    await component.ngOnInit();
+    it("should create", fakeAsync(() => {
+      expect(component).toBeTruthy();
+      tick();
+    }));
 
-    expect(component.concernedChildren.length).toBe(1);
+    it("should add only children without recent note", fakeAsync(() => {
+      mockChildrenService.getDaysSinceLastNoteOfEachChild.and.resolveTo(
+        new Map([
+          ["1", 2],
+          ["2", 29],
+          ["3", 30],
+          ["4", 31],
+          ["5", 50],
+        ])
+      );
 
-    expect(component.concernedChildren[0].childId).toBe(childId1);
-    expect(component.concernedChildren[0].moreThanDaysSince).toBe(true);
-    expect(component.concernedChildren[0].daysSinceLastNote).toBeLessThan(
-      Number.POSITIVE_INFINITY
-    );
+      component.sinceDays = 30;
+      component.fromBeginningOfWeek = false;
+      component.ngOnInit();
+
+      while (component.isLoading) {
+        tick();
+      }
+
+      expect(component.concernedChildren.length).toBe(3);
+
+      expect(component.concernedChildren[0]).toEqual({
+        childId: "5",
+        daysSinceLastNote: 50,
+        moreThanDaysSince: false,
+      });
+    }));
+
+    it("should mark children without stats on last note", fakeAsync(() => {
+      const childId1 = "1";
+      mockChildrenService.getDaysSinceLastNoteOfEachChild.and.resolveTo(
+        new Map([[childId1, Number.POSITIVE_INFINITY]])
+      );
+
+      component.ngOnInit();
+
+      while (component.isLoading) {
+        tick();
+      }
+
+      expect(component.concernedChildren.length).toBe(1);
+
+      expect(component.concernedChildren[0].childId).toBe(childId1);
+      expect(component.concernedChildren[0].moreThanDaysSince).toBe(true);
+      expect(component.concernedChildren[0].daysSinceLastNote).toBeLessThan(
+        Number.POSITIVE_INFINITY
+      );
+    }));
   });
 });

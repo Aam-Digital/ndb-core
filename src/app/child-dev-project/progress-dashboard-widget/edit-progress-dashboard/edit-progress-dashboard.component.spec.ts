@@ -105,7 +105,7 @@ describe("EditProgressDashboardComponent", () => {
   });
 
   function getGroup(index: number): FormGroup {
-    return component.forms.at(index) as FormGroup;
+    return <FormGroup>component.forms.at(index);
   }
 
   beforeEach(() => {

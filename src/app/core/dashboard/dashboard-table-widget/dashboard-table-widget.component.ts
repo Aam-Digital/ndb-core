@@ -13,7 +13,6 @@ import { MatPaginator } from "@angular/material/paginator";
 @Component({
   selector: "app-dashboard-table-widget",
   templateUrl: "./dashboard-table-widget.component.html",
-  styleUrls: ["./dashboard-table-widget.component.scss"],
 })
 export class DashboardTableWidgetComponent implements AfterViewInit, OnChanges {
   @Input() subtitle: string;

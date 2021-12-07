@@ -1,16 +1,13 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { MatTableDataSource } from "@angular/material/table";
 
 @Component({
   selector: "app-dashboard-table",
   templateUrl: "./dashboard-table.component.html",
-  styleUrls: ["./dashboard-table.component.scss"],
 })
-export class DashboardTableComponent implements OnInit {
+export class DashboardTableComponent {
   @Input() dataSource: MatTableDataSource<any>;
   @Input() columnCount: number;
-
-  constructor() {}
 
   count(numberOfTimes: number): number[] {
     return Array(numberOfTimes).map((value, idx) => idx);
@@ -19,6 +16,4 @@ export class DashboardTableComponent implements OnInit {
   intToString(num: number): string {
     return `${num}`;
   }
-
-  ngOnInit(): void {}
 }
