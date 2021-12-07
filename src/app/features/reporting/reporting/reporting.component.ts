@@ -37,7 +37,7 @@ export class ReportingComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.data.subscribe(
       (data: RouteData<ReportingComponentConfig>) => {
-        this.availableReports = data.config.reports;
+        this.availableReports = data.config?.reports;
         if (this.availableReports?.length === 1) {
           this.selectedReport = this.availableReports[0];
         }
