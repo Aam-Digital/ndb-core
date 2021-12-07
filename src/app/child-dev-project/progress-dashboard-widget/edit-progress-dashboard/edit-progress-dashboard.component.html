@@ -1,13 +1,13 @@
 <div mat-dialog-title style="display: flex">
   <h1 i18n="Edit the progress of one or multiple tasks">Edit Progress</h1>
   <div style="flex-grow: 1"></div>
-  <button mat-icon-button (click)="addPart()">
+  <button mat-icon-button (click)="addPart()" color="accent">
     <fa-icon icon="plus"></fa-icon>
   </button>
 </div>
 
 <mat-dialog-content>
-  <div *ngFor="let control of forms.controls; let index=index" class="entry-wrapper" [formGroup]="$any(control)">
+  <div *ngFor="let control of forms.controls; let index=index" class="entry-wrapper mat-elevation-z1" [formGroup]="$any(control)">
     <mat-form-field class="header-field">
       <input
         formControlName="label"
@@ -64,7 +64,7 @@
         Must be greater than 0
       </mat-error>
     </mat-form-field>
-    <button mat-icon-button (click)="removePart(index)" color="warn" class="trash-field">
+    <button mat-icon-button (click)="removePart(index)" class="trash-field">
       <fa-icon aria-label="remove" icon="trash"></fa-icon>
     </button>
   </div>

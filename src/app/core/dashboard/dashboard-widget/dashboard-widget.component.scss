@@ -1,11 +1,11 @@
-$widget-header-height: 60px;
+$widget-header-height: 64px;
 $widget-content-height: 300px;
 
 $font-size-headline: 40pt;
 
 $padding-header: 24px;
 
-$border-radius-card: 5px;
+$border-radius-card: 4px;
 
 .widget-header {
   /* Defines a grid that roughly looks like this:
@@ -51,7 +51,7 @@ $border-radius-card: 5px;
 .widget-title {
   grid-area: headline;
   text-align: end;
-  place-self: end;
+  place-self: center end;
 
   font-size: 40pt;
   color: white;
@@ -71,6 +71,7 @@ $border-radius-card: 5px;
   height: $widget-content-height;
   overflow: hidden;
   display: flex;
+  background-color: white;
 }
 
 .widget-total {

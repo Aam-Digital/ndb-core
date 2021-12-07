@@ -41,20 +41,13 @@
         ></tr>
       </table>
     </div>
-    <h2
-      *ngIf="childrenWithNoteInfoDataSource.data.length === 0 && !isLoading && mode==='without-recent-notes'"
+    <div
+      *ngIf="childrenWithNoteInfoDataSource.data.length === 0 && !isLoading"
       class="headline"
-      i18n="There are no children that don't have a recent report to be shown here"
     >
-      No children without recent report
-    </h2>
-    <h2
-      *ngIf="childrenWithNoteInfoDataSource.data.length === 0 && !isLoading && mode==='with-recent-notes'"
-      class="headline"
-      i18n="There are no children that have a recent report to be shown here"
-    >
-      No children with recent report
-    </h2>
+      <span *ngIf="mode==='without-recent-notes'" i18n="There are no children that don't have a recent report to be shown here">No children without recent report</span>
+      <span *ngIf="mode==='with-recent-notes'" i18n="There are no children that have a recent report to be shown here">No children with recent report</span>
+    </div>
     <mat-paginator
       #paginator
       [style.display]="paginator.getNumberOfPages() === 0 ? 'none' : ''"

@@ -15,7 +15,6 @@ export class ProgressDashboardComponent
   implements OnInitDynamicComponent, OnInit {
   @Input() dashboardConfigId = "";
   data: ProgressDashboardConfig;
-  configure = false;
 
   constructor(
     private entityMapper: EntityMapperService,
@@ -58,7 +57,6 @@ export class ProgressDashboardComponent
 
   async save() {
     await this.entityMapper.save(this.data);
-    this.configure = false;
   }
 
   showEditComponent() {

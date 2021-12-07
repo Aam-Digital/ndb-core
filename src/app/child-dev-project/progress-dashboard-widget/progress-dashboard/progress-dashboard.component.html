@@ -4,7 +4,7 @@
   [title]="data.getTotalPercentage() | percent: '1.0-0'"
   [subtitle]="data.title"
 >
-  <app-widget-content>
+  <app-widget-content style="position: relative">
     <table class="dashboard-table">
       <tr *ngFor="let entry of data?.parts" class="dashboard-table-row">
         <td class="dashboard-table-cell">{{ entry.label }}</td>
@@ -21,29 +21,10 @@
       </tr>
     </table>
 
-    <div [ngClass]="{ 'dashboard-config': configure }">
-      <div style="text-align: left">
-        <button mat-icon-button (click)="showEditComponent()" *ngIf="!configure">
-          <fa-icon aria-label="configure" icon="wrench"></fa-icon>
-        </button>
-      </div>
-
-      <!-- TODO: remove ugly negative margins -->
-      <div
-        class="dashboard-table-cell"
-        *ngIf="configure"
-        style="border-bottom: 1px solid black"
-      >
-        <mat-form-field style="margin-bottom: -10px">
-          <input
-            matInput
-            type="text"
-            i18n-placeholder="Input placeholder"
-            placeholder="Title"
-            [(ngModel)]="data.title"
-          />
-        </mat-form-field>
-      </div>
+    <div class="config-panel">
+      <button mat-icon-button (click)="showEditComponent()">
+        <fa-icon aria-label="configure" icon="wrench"></fa-icon>
+      </button>
     </div>
   </app-widget-content>
 </app-dashboard-widget>
