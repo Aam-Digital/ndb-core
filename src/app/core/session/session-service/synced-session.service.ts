@@ -30,6 +30,7 @@ import { DatabaseUser } from "./local-user";
 import { waitForChangeTo } from "../session-states/session-utils";
 import { PouchDatabase } from "../../database/pouch-database";
 import { AnalyticsService } from "../../analytics/analytics.service";
+import { zip } from "rxjs";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -82,7 +83,13 @@ export class SyncedSessionService extends SessionService {
     const syncPromise = this._remoteSession.loginState
       .pipe(waitForChangeTo(LoginState.LOGGED_IN))
       .toPromise()
-      .then(() => this.updateLocalUserAndStartSync(password));
+      .then(() => this.updateLocalUser(password));
+
+    // TODO test this shit
+    zip(
+      this._localSession.loginState.pipe(waitForChangeTo(LoginState.LOGGED_IN)),
+      this._remoteSession.loginState.pipe(waitForChangeTo(LoginState.LOGGED_IN))
+    ).subscribe(() => this.startSync());
 
     const localLoginState = await this._localSession.login(username, password);
 
@@ -135,11 +142,13 @@ export class SyncedSessionService extends SessionService {
     }, this.LOGIN_RETRY_TIMEOUT);
   }
 
-  private updateLocalUserAndStartSync(password: string) {
+  private updateLocalUser(password: string) {
     // Update local user object
     const remoteUser = this._remoteSession.getCurrentUser();
     this._localSession.saveUser(remoteUser, password);
+  }
 
+  private startSync() {
     return this.sync()
       .then(() => this.liveSyncDeferred())
       .catch(() =>
