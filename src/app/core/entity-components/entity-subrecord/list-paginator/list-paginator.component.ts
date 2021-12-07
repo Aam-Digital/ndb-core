@@ -21,12 +21,12 @@ import { filter } from "rxjs/operators";
   templateUrl: "./list-paginator.component.html",
   styleUrls: ["./list-paginator.component.scss"],
 })
-export class ListPaginatorComponent
+export class ListPaginatorComponent<E>
   implements OnChanges, AfterViewInit, OnInit {
   readonly pageSizeOptions = [10, 20, 50];
   readonly defaultPageSize = 10;
 
-  @Input() dataSource: MatTableDataSource<any>;
+  @Input() dataSource: MatTableDataSource<E>;
   @Input() idForSavingPagination: string;
 
   @ViewChild("paginator") paginator: MatPaginator;
@@ -54,7 +54,7 @@ export class ListPaginatorComponent
       .pipe(
         untilDestroyed(this),
         // When showingAll is false, nothing needs to be done -> filtered out
-        filter((updatedDataSource) => this.showingAll && !!this.paginator),
+        filter(() => this.showingAll && !!this.paginator),
         filter((updatedDataSource) => updatedDataSource.length > 0)
       )
       .subscribe(() => {

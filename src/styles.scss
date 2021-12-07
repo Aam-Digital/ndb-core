@@ -263,6 +263,7 @@ $standard-icon-size: 1.5em;
  */
 .border-left-highlight {
   border-left: $standard-margin-small solid;
+  border-color: transparent;
 }
 
 .underline-on-hover:hover {
