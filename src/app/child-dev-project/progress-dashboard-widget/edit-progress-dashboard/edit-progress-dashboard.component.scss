@@ -8,10 +8,14 @@
   grid-template-areas:
     "header header trash"
     "current target trash";
+  padding: 12px;
 }
 
 .entry-wrapper:not(:last-child) {
   margin-bottom: $standard-grid-gap;
+}
+.entry-wrapper:last-child {
+ margin-bottom: 12px;
 }
 
 .header-field {
