@@ -6,6 +6,7 @@ import { FormGroup } from "@angular/forms";
 import { EntityFormService } from "../entity-form.service";
 import { AlertService } from "../../../alerts/alert.service";
 
+
 @Component({
   selector: "app-entity-form",
   templateUrl: "./entity-form.component.html",
@@ -63,6 +64,7 @@ export class EntityFormComponent implements OnInit {
 
   operationType = OperationType;
   form: FormGroup;
+  tempEntity: Entity;
 
   constructor(
     private entityFormService: EntityFormService,
@@ -74,6 +76,10 @@ export class EntityFormComponent implements OnInit {
     if (this.editing) {
       this.switchEdit();
     }
+    this.form.valueChanges.subscribe((value) => {
+      const dynamicConstructor: any = this.entity.getConstructor();
+      this.tempEntity = Object.assign(new dynamicConstructor(), value);
+    });
   }
 
   switchEdit() {

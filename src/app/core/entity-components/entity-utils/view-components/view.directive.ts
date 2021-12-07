@@ -9,17 +9,9 @@ export abstract class ViewDirective implements OnInitDynamicComponent {
   @Input() entity: Entity;
   property: string;
   tooltip: string;
-  formGroup: FormGroup;
   onInitFromDynamicConfig(config: ViewPropertyConfig) {
     this.entity = config.entity;
     this.property = config.id;
     this.tooltip = config.tooltip;
-    if (config.formGroup) {
-      this.formGroup = config.formGroup;
-      this.formGroup.valueChanges.subscribe((value) => {
-        const dynamicConstructor: any = this.entity.getConstructor();
-        this.entity = Object.assign(new dynamicConstructor(), value);
-      });
-    }
   }
 }

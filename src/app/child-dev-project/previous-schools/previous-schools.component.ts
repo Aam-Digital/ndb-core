@@ -30,7 +30,7 @@ export class PreviousSchoolsComponent
   readonly isActiveIndicator = {
     id: "isActive",
     label: $localize`:Label for form field, Indicatind whether currenty active:Currently active`,
-    view: "ColoredReadonlyFunction",
+    view: "ReadonlyFunction",
     hideFromTable: true,
     tooltip: $localize`:Tooltip for the status of currently active or not:Change the start or end date to modify this status`,
     additional: (csr: ChildSchoolRelation) =>

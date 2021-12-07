@@ -5,7 +5,6 @@ import { By } from "@angular/platform-browser";
 import { ChildSchoolRelation } from "app/child-dev-project/children/model/childSchoolRelation";
 import { EntityFunctionPipe } from "../readonly-function/entity-function.pipe";
 import { ReadonlyFunctionComponent } from "../readonly-function/readonly-function.component";
-import { ColoredReadonlyFunctionComponent } from "./colored-readonly-function.component";
 
 describe("ColoredReadonlyFunctionComponent", () => {
   let component: ColoredReadonlyFunctionComponent;

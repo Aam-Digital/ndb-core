@@ -34,18 +34,25 @@
   </div>
 </form>
   <div *ngFor="let col of uneditableColumns" class="form-cell">
-    <ng-template
+    <mat-chip-list>
+      <mat-chip
+        [matTooltip]="col.tooltip"
+        [ngStyle]="{
+          'background-color': tempEntity.getColor()
+        }"
+      >
+      <ng-template
       [appDynamicComponent]="{
         component: col.view,
         config: {
           id: col.id,
-          entity: entity,
-          config: col.additional,
-          tooltip: col.tooltip,
-          formGroup: form
+          entity: tempEntity,
+          config: col.additional
         }
       }"
     ></ng-template>
+      </mat-chip>
+    </mat-chip-list>
   </div>
 <div>
   <button

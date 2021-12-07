@@ -74,5 +74,4 @@ export interface ViewPropertyConfig {
   id: string;
   config?: any;
   tooltip?: string;
-  formGroup?: FormGroup;
 }
