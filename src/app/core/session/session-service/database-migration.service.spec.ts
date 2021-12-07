@@ -23,6 +23,7 @@ describe("DatabaseMigrationService", () => {
       },
     };
     oldDBName = AppConfig.settings.database.name;
+    newDBName = "user-" + oldDBName;
     await new PouchDatabase().initInMemoryDB(oldDBName).put(testDoc);
     sessionService = jasmine.createSpyObj(["getDatabase"]);
     sessionService.getDatabase.and.returnValue(
@@ -42,7 +43,7 @@ describe("DatabaseMigrationService", () => {
   });
 
   it("should add the username the the name of the old database", async () => {
-    let newDB = new PouchDatabase().initInMemoryDB(newDBName);
+    const newDB = new PouchDatabase().initInMemoryDB(newDBName);
     let oldDB = new PouchDatabase().initInMemoryDB(oldDBName);
     await expectAsync(oldDB.get(testDoc._id)).toBeResolved();
     await expectAsync(newDB.get(testDoc._id)).toBeRejected();
@@ -70,7 +71,7 @@ describe("DatabaseMigrationService", () => {
   });
 
   it("should remove the design docs before sync so they will be correctly re-created", async () => {
-    let oldDB = new PouchDatabase().initInMemoryDB(oldDBName);
+    const oldDB = new PouchDatabase().initInMemoryDB(oldDBName);
     const designDoc = { _id: "_design/search_index" };
     const normalDoc = { _id: "Child:someChild" };
     await oldDB.put(designDoc);
@@ -84,7 +85,7 @@ describe("DatabaseMigrationService", () => {
   });
 
   it("should track a matomo event when migration happens", async () => {
-    let oldDB = new PouchDatabase().initInMemoryDB(oldDBName);
+    const oldDB = new PouchDatabase().initInMemoryDB(oldDBName);
     const normalDoc = { _id: "Child:someChild" };
     await oldDB.put(normalDoc);
 

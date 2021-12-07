@@ -75,9 +75,9 @@ export class PermissionEnforcerService {
   private async dbHasEntitiesWithoutPermissions(
     subjects: EntityConstructor[]
   ): Promise<boolean> {
-    for (let subject of subjects) {
+    for (const subject of subjects) {
       const entities = await this.entityMapper.loadType(subject);
-      for (let entity of entities) {
+      for (const entity of entities) {
         if (this.ability.cannot("read", entity)) {
           return true;
         }
