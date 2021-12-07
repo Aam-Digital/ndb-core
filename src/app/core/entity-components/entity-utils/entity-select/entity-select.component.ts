@@ -45,45 +45,33 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
 
   /**
    * The (initial) selection. Can be used in combination with {@link selectionChange}
-   * to enable two-way binding to either an array of entities or an array of strings
-   * corresponding to the id's of the entities.
-   * The type (id's or entities) will be determined by the setting of the
-   * {@link selectionInputType}
+   * to enable two-way binding to an array of strings corresponding to the id's of the entities.
    * @param sel The initial selection
    */
-  @Input() set selection(sel: (string | E)[]) {
+  @Input() set selection(sel: string[]) {
     if (!Array.isArray(sel)) {
-      this.selection_ = [];
+      this.selectedEntities = [];
       return;
     }
-    if (this.selectionInputType === "id") {
-      this.loading
-        .pipe(
-          untilDestroyed(this),
-          filter((isLoading) => !isLoading)
-        )
-        .subscribe((_) => {
-          this.selection_ = this.allEntities.filter((e) =>
-            sel.find((s) => s === e.getId())
-          );
-        });
-    } else {
-      this.selection_ = sel as E[];
-    }
+    this.loading
+      .pipe(
+        untilDestroyed(this),
+        filter((isLoading) => !isLoading)
+      )
+      .subscribe((_) => {
+        this.selectedEntities = this.allEntities.filter((e) =>
+          sel.find((s) => s === e.getId())
+        );
+      });
   }
   /** Underlying data-array */
-  selection_: E[] = [];
-  /**
-   * The type to publish and receive; either string-id's or entities
-   * Defaults to string-id's
-   */
-  @Input() selectionInputType: "id" | "entity" = "id";
+  selectedEntities: E[] = [];
   /**
    * called whenever the selection changes.
    * This happens when a new entity is being added or an existing
    * one is removed
    */
-  @Output() selectionChange = new EventEmitter<(string | E)[]>();
+  @Output() selectionChange = new EventEmitter<string[]>();
   /**
    * The label is what is seen above the list. For example when used
    * in the note-details-view, this is "Children"
@@ -178,7 +166,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * @param entity the entity to select
    */
   selectEntity(entity: E) {
-    this.selection_.push(entity);
+    this.selectedEntities.push(entity);
     this.emitChange();
     this.inputField.nativeElement.value = "";
     this.formControl.setValue(null);
@@ -230,11 +218,11 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * @param entity The entity to remove
    */
   unselectEntity(entity: E) {
-    const index = this.selection_.findIndex(
+    const index = this.selectedEntities.findIndex(
       (e) => e.getId() === entity.getId()
     );
     if (index !== -1) {
-      this.selection_.splice(index, 1);
+      this.selectedEntities.splice(index, 1);
       this.emitChange();
       // Update the form control to re-run the filter function
       this.formControl.updateValueAndValidity();
@@ -242,14 +230,10 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   }
 
   private emitChange() {
-    if (this.selectionInputType === "id") {
-      this.selectionChange.emit(this.selection_.map((e) => e.getId()));
-    } else {
-      this.selectionChange.emit(this.selection_);
-    }
+    this.selectionChange.emit(this.selectedEntities.map((e) => e.getId()));
   }
 
   private isSelected(entity: E): boolean {
-    return this.selection_.some((e) => e.getId() === entity.getId());
+    return this.selectedEntities.some((e) => e.getId() === entity.getId());
   }
 }

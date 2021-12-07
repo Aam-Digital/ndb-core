@@ -36,7 +36,7 @@ describe("DataImportComponent", () => {
   });
 
   it("should call handleCsvImport() in DataImportService", () => {
-    component.importCsvFile(mockCsvFile);
+    component.importCsvFile({ target: { files: [mockCsvFile] } } as any);
     expect(mockDataImportService.handleCsvImport).toHaveBeenCalledWith(
       mockCsvFile
     );
