@@ -9,9 +9,10 @@
       <tr *ngFor="let entry of data?.parts" class="dashboard-table-row">
         <td class="dashboard-table-cell">{{ entry.label }}</td>
         <td class="dashboard-table-cell filler">
-          <mat-progress-bar style="height: 6px"
-                            mode="determinate"
-                            [value]="(entry.currentValue / entry.targetValue) * 100"
+          <mat-progress-bar
+            style="height: 6px"
+            mode="determinate"
+            [value]="(entry.currentValue / entry.targetValue) * 100"
           ></mat-progress-bar>
         </td>
         <td class="align-right" style="white-space: nowrap">

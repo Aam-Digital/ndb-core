@@ -73,6 +73,12 @@ export class EditProgressDashboardComponent {
     this.forms.push(this.formGroup(newPart));
   }
 
+  get tooltipOnSave(): string {
+    return this.forms.valid
+      ? ""
+      : $localize`:Shown when there are errors that prevent saving:Fix the errors to save the form`;
+  }
+
   removePart(index: number) {
     this.forms.removeAt(index);
   }

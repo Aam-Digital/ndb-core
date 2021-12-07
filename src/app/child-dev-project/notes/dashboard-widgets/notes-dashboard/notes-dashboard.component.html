@@ -6,7 +6,7 @@
   [explanation]="tooltip"
 >
   <app-widget-content>
-    <h2 *ngIf="isLoading" class="headline">Loading...</h2>
+    <h2 *ngIf="isLoading" class="headline" i18n>Loading...</h2>
     <div *ngIf="childrenWithNoteInfoDataSource.data.length > 0 && !isLoading" class="table-wrapper">
       <table
         mat-table
@@ -44,12 +44,14 @@
     <h2
       *ngIf="childrenWithNoteInfoDataSource.data.length === 0 && !isLoading && mode==='without-recent-notes'"
       class="headline"
+      i18n="There are no children that don't have a recent report to be shown here"
     >
       No children without recent report
     </h2>
     <h2
       *ngIf="childrenWithNoteInfoDataSource.data.length === 0 && !isLoading && mode==='with-recent-notes'"
       class="headline"
+      i18n="There are no children that have a recent report to be shown here"
     >
       No children with recent report
     </h2>

@@ -1,5 +1,5 @@
 <div mat-dialog-title style="display: flex">
-  <h1>Edit Progress</h1>
+  <h1 i18n="Edit the progress of one or multiple tasks">Edit Progress</h1>
   <div style="flex-grow: 1"></div>
   <button mat-icon-button (click)="addPart()">
     <fa-icon icon="plus"></fa-icon>
@@ -13,7 +13,7 @@
         formControlName="label"
         matInput
         type="text"
-        i18n-placeholder="Process Label|The label of a process"
+        i18n-placeholder="Process Label|The label of a process or task"
         placeholder="Label"
       />
     </mat-form-field>
@@ -24,18 +24,21 @@
         matInput
         type="number"
         i18n-placeholder="
-            Current process|The Current amount of a process
+            Current process|The Current value of a process or task
           "
         placeholder="Current"
         [errorStateMatcher]="currentErrorStateMatcher"
       />
-      <mat-error *ngIf="control.hasError('required','currentValue')">
+      <mat-error *ngIf="control.hasError('required','currentValue')" i18n>
         This field is required
       </mat-error>
-      <mat-error *ngIf="control.hasError('min','currentValue')">
+      <mat-error *ngIf="control.hasError('min','currentValue')" i18n>
         Must be greater than 0
       </mat-error>
-      <mat-error *ngIf="control.hasError('currentGtTarget')">
+      <mat-error
+        *ngIf="control.hasError('currentGtTarget')"
+        i18n="The number entered in this form is less than another field but should not be"
+      >
         Must not be greater than target
       </mat-error>
     </mat-form-field>
@@ -48,10 +51,16 @@
         i18n-placeholder="Target process|The target amount of a process"
         placeholder="Target"
       />
-      <mat-error *ngIf="control.hasError('required','targetValue')">
+      <mat-error
+        *ngIf="control.hasError('required','targetValue')"
+        i18n="A field entered in a form is required and wasn't provided"
+      >
         This field is required
       </mat-error>
-      <mat-error *ngIf="control.hasError('min','targetValue')">
+      <mat-error
+        *ngIf="control.hasError('min','targetValue')"
+        i18n="A field entered in a form must be greater than 0"
+      >
         Must be greater than 0
       </mat-error>
     </mat-form-field>
@@ -66,7 +75,7 @@
       [mat-dialog-close]="forms.value"
       [disabled]="!forms.valid"
     >
-      <span [matTooltip]="forms.valid ? '' : 'Fix the errors to save the form'">Save</span>
+      <span [matTooltip]="tooltipOnSave" i18n>Save</span>
     </button>
-  <button mat-stroked-button mat-dialog-close>Cancel</button>
+  <button mat-stroked-button mat-dialog-close i18n>Cancel</button>
 </mat-dialog-actions>
