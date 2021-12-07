@@ -30,3 +30,7 @@ $widget-height: 410px;
   // Make all rows be equal in height
   grid-auto-rows: $widget-height;
 }
+
+.grid-item {
+  transition: all 1s;
+}

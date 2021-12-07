@@ -21,7 +21,7 @@ export class AddDayAttendanceComponent {
 
   readonly buttons: ConfirmationDialogButton[] = [
     {
-      text: "Save",
+      text: $localize`Save`,
       click: (): boolean => {
         this.saveRollCallResult(this.event).then(() => {
           this.finishRollCallState();
@@ -30,7 +30,7 @@ export class AddDayAttendanceComponent {
       },
     },
     {
-      text: "Discard",
+      text: $localize`:Discard changes made to a form:Discard`,
       click: (): boolean => {
         this.finishRollCallState();
         return false;
@@ -56,8 +56,8 @@ export class AddDayAttendanceComponent {
   exit() {
     if (this.rollCallComponent?.isDirty) {
       this.confirmationDialog.openDialog(
-        "Exit",
-        "Do you want to save your progress before going back?",
+        $localize`:Exit from the current screen:Exit`,
+        $localize`Do you want to save your progress before going back?`,
         this.buttons,
         true
       );

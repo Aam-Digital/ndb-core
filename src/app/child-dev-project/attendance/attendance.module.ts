@@ -56,7 +56,9 @@ import { Angulartics2Module } from "angulartics2";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { AttendanceManagerComponent } from "./attendance-manager/attendance-manager.component";
 import { EntityUtilsModule } from "../../core/entity-components/entity-utils/entity-utils.module";
+import { DashboardModule } from "../../core/dashboard/dashboard.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatPaginatorModule } from "@angular/material/paginator";
 
 @NgModule({
   declarations: [
@@ -103,6 +105,8 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     MatSlideToggleModule,
     EntityUtilsModule,
     FontAwesomeModule,
+    DashboardModule,
+    MatPaginatorModule,
   ],
   exports: [
     ActivityCardComponent,

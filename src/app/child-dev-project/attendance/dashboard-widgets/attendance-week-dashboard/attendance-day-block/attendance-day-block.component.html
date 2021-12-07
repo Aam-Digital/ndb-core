@@ -5,7 +5,7 @@
   <span
     *ngIf="attendance"
     [matTooltipShowDelay]="200"
-    [matTooltip]="attendance.remarks"
+    [matTooltip]="tooltip"
     matTooltipPosition="above"
   >
     {{ attendance.status.shortName }}

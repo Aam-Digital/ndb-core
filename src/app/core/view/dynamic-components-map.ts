@@ -1,7 +1,6 @@
 import { AttendanceWeekDashboardComponent } from "../../child-dev-project/attendance/dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component";
 import { ChildrenCountDashboardComponent } from "../../child-dev-project/children/children-count-dashboard/children-count-dashboard.component";
-import { NoRecentNotesDashboardComponent } from "../../child-dev-project/notes/dashboard-widgets/no-recent-notes-dashboard/no-recent-notes-dashboard.component";
-import { RecentNotesDashboardComponent } from "../../child-dev-project/notes/dashboard-widgets/recent-notes-dashboard/recent-notes-dashboard.component";
+import { NotesDashboardComponent } from "../../child-dev-project/notes/dashboard-widgets/notes-dashboard/notes-dashboard.component";
 import { ProgressDashboardComponent } from "../../child-dev-project/progress-dashboard-widget/progress-dashboard/progress-dashboard.component";
 import { PreviousSchoolsComponent } from "../../child-dev-project/previous-schools/previous-schools.component";
 import { AserComponent } from "../../child-dev-project/aser/aser-component/aser.component";
@@ -44,8 +43,7 @@ import { NoteAttendanceCountBlockComponent } from "../../child-dev-project/notes
 
 export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["ChildrenCountDashboard", ChildrenCountDashboardComponent],
-  ["RecentNotesDashboard", RecentNotesDashboardComponent],
-  ["NoRecentNotesDashboard", NoRecentNotesDashboardComponent],
+  ["NotesDashboard", NotesDashboardComponent],
   ["AttendanceWeekDashboard", AttendanceWeekDashboardComponent],
   ["ProgressDashboard", ProgressDashboardComponent],
   ["PreviousSchools", PreviousSchoolsComponent],

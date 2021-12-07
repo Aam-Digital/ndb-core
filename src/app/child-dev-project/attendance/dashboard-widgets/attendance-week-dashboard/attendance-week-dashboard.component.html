@@ -1,45 +1,48 @@
-<mat-card class="dashboard-widget">
-  <mat-card-header class="app-attendance">
-    <div mat-card-avatar>
-      <fa-icon icon="exclamation-triangle"></fa-icon>
-    </div>
-    <mat-card-title>{{ dashboardRowGroups?.length }}</mat-card-title>
-    <mat-card-subtitle i18n="Dashbord attendance component subtitle">
-      Students more than one day absent
-      <em>{{ periodLabel }}</em>
-    </mat-card-subtitle
-    >
-  </mat-card-header>
-  <mat-card-content>
-    <table class="dashboard-table">
-      <tr
-        *ngFor="
-          let rowGroup of dashboardRowGroups;
-          trackBy: recordTrackByFunction;
-          let i = index
-        "
-        class="dashboard-table-row w-WARNING"
-        (click)="goToChild(rowGroup[0].childId)"
-        style="cursor: pointer"
-        angulartics2On="click"
-        angularticsCategory="Navigation"
-        angularticsAction="dashboard_attendance_warnings_list_link"
-        [angularticsLabel]="'list-entry-' + i"
+<app-dashboard-widget
+  icon="exclamation-triangle"
+  theme="attendance"
+  [title]="rowGroupCount"
+  subtitle="Students more than one day absent {{ periodLabel }}"
+  i18n-subtitle="Dashboard attendance component subtitle"
+>
+  <app-widget-content>
+    <h2 *ngIf="!loadingDone" class="headline">Loading...</h2>
+    <div *ngIf="tableDataSource.data.length > 0 && loadingDone" class="table-wrapper">
+      <table
+        mat-table
+        [dataSource]="tableDataSource"
       >
-        <td class="dashboard-table-first-cell dashboard-table-cell">
-          <app-child-block [entityId]="rowGroup[0].childId"></app-child-block>
-        </td>
-        <td class="dashboard-table-last-cell dashboard-table-cell">
-          <table class="attendance-week-table">
-            <tr *ngFor="let activityRecord of rowGroup">
-              <td *ngFor="let day of activityRecord.attendanceDays">
+        <ng-container matColumnDef="child">
+          <td
+            *matCellDef="let rowGroup"
+            (click)="goToChild(rowGroup[0].childId)"
+            style="cursor: pointer"
+          >
+            <app-child-block [entityId]="rowGroup[0].childId"></app-child-block>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="attendance">
+          <td *matCellDef="let rowGroup">
+            <div *ngFor="let activityRecord of rowGroup; let first=first" class="activities-record">
+              <div *ngFor="let day of activityRecord.attendanceDays">
                 <app-attendance-day-block [attendance]="day">
                 </app-attendance-day-block>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </mat-card-content>
-</mat-card>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-row *matRowDef="let row; columns: ['child', 'attendance'];" class="dashboard-table-row"></tr>
+      </table>
+    </div>
+    <div *ngIf="tableDataSource.data.length === 0 && loadingDone" class="headline">No students absent</div>
+    <mat-paginator
+      [style.display]="paginator.getNumberOfPages() === 0 ? 'none' : ''"
+      #paginator
+      [pageSizeOptions]="[5]"
+      [hidePageSize]="true"
+    >
+    </mat-paginator>
+  </app-widget-content>
+</app-dashboard-widget>
