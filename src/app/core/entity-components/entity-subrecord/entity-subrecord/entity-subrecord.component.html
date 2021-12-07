@@ -5,7 +5,7 @@
     matSort
     class="mat-elevation-z1 subrecord-table"
   >
-    <ng-container *ngFor="let col of getTableColumns()" [matColumnDef]="col.id">
+    <ng-container *ngFor="let col of filteredColumns" [matColumnDef]="col.id">
       <th
         mat-header-cell
         mat-sort-header

@@ -65,8 +65,11 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
         return col;
       }
     });
+    this.filteredColumns = this._columns.filter((col) => !col.hideFromTable );
   }
+  
   _columns: FormFieldConfig[] = [];
+  filteredColumns: FormFieldConfig[] = [];
 
   /**
    * factory method to create a new instance of the displayed Entity type
@@ -355,9 +358,5 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     } else {
       return true;
     }
-  }
-
-  public getTableColumns() {
-    return this._columns.filter((col) => !col.hideFromTable);
   }
 }
