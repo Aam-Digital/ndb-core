@@ -50,7 +50,7 @@ export class RollCallComponent implements OnInit {
    */
   private _currentIndex: number;
   /**
-   * whether or not any changes have been made to the model
+   * whether any changes have been made to the model
    */
   isDirty: boolean = false;
   /**
