@@ -24,7 +24,7 @@ import {
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
 import { EntityAbility } from "../permissions/permission-types";
-import { defineAbility } from "@casl/ability";
+import { defineAbility, PureAbility } from "@casl/ability";
 import { detectEntityType } from "../permissions/ability.service";
 
 export const TEST_USER = "test";
@@ -92,6 +92,10 @@ export class MockSessionModule {
         {
           provide: EntityAbility,
           useValue: ability,
+        },
+        {
+          provide: PureAbility,
+          useExisting: EntityAbility,
         },
         FontAwesomeModule,
       ],

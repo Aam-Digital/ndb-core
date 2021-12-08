@@ -29,8 +29,6 @@ import { ApplicationInitStatus } from "@angular/core";
 import { UiModule } from "../ui.module";
 import { Angulartics2Module } from "angulartics2";
 import { ConfigService } from "../../config/config.service";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { PermissionsModule } from "../../permissions/permissions.module";
 import { MockSessionModule } from "../../session/mock-session.module";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
@@ -58,9 +56,7 @@ describe("UiComponent", () => {
           UiModule,
           NoopAnimationsModule,
           Angulartics2Module.forRoot(),
-          FontAwesomeTestingModule,
           MockSessionModule.withState(),
-          PermissionsModule.withAbility(),
         ],
         providers: [
           { provide: SwUpdate, useValue: mockSwUpdate },

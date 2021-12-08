@@ -73,7 +73,7 @@ export class SyncedSessionService extends SessionService {
    * to abort the local login and prevent a deadlock.
    * @param username Username
    * @param password Password
-   * @returns a promise resolving with the local LoginState
+   * @returns promise resolving with the local LoginState
    */
   public async login(username: string, password: string): Promise<LoginState> {
     this.cancelLoginOfflineRetry(); // in case this is running in the background
@@ -85,7 +85,6 @@ export class SyncedSessionService extends SessionService {
       .toPromise()
       .then(() => this.updateLocalUser(password));
 
-    // TODO test this shit
     zip(
       this._localSession.loginState.pipe(waitForChangeTo(LoginState.LOGGED_IN)),
       this._remoteSession.loginState.pipe(waitForChangeTo(LoginState.LOGGED_IN))
@@ -149,14 +148,8 @@ export class SyncedSessionService extends SessionService {
   }
 
   private startSync() {
-    return this.sync()
-      .then(() => this.liveSyncDeferred())
-      .catch(() =>
-        // Retry sync if/once logged in
-        this._localSession.loginState
-          .pipe(waitForChangeTo(LoginState.LOGGED_IN))
-          .subscribe(() => this.liveSyncDeferred())
-      );
+    // Call live syn even when initial sync fails
+    return this.sync().finally(() => this.liveSyncDeferred());
   }
 
   public getCurrentUser(): DatabaseUser {

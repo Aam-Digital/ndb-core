@@ -21,7 +21,6 @@ import { ChildrenService } from "../../../children/children.service";
 import { MockSessionModule } from "../../../../core/session/mock-session.module";
 import { ConfirmationDialogService } from "../../../../core/confirmation-dialog/confirmation-dialog.service";
 import { of } from "rxjs";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("RollCallComponent", () => {
   let component: RollCallComponent;
@@ -43,11 +42,7 @@ describe("RollCallComponent", () => {
       mockLoggingService = jasmine.createSpyObj(["warn"]);
 
       TestBed.configureTestingModule({
-        imports: [
-          AttendanceModule,
-          MockSessionModule,
-          FontAwesomeTestingModule,
-        ],
+        imports: [AttendanceModule, MockSessionModule],
         providers: [
           { provide: ConfigService, useValue: mockConfigService },
           { provide: EntityMapperService, useValue: mockEntityMapper },

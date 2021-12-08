@@ -20,7 +20,6 @@ import {
   EntityRemoveService,
   RemoveResult,
 } from "../../entity/entity-remove.service";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { EntityAbility } from "../../permissions/permission-types";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
 
@@ -83,7 +82,6 @@ describe("EntityDetailsComponent", () => {
           MatNativeDateModule,
           RouterTestingModule,
           MockSessionModule.withState(),
-          FontAwesomeTestingModule,
           HttpClientTestingModule,
         ],
         providers: [

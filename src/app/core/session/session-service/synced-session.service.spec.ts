@@ -116,11 +116,11 @@ describe("SyncedSessionService", () => {
   });
 
   it("Remote and local fail (normal login with wrong password)", fakeAsync(() => {
-    const result = sessionService.login(TEST_USER, "wrongPassword");
+    const result = sessionService.login("anotherUser", "wrongPassword");
     tick();
 
-    expect(localLoginSpy).toHaveBeenCalledWith(TEST_USER, "wrongPassword");
-    expect(remoteLoginSpy).toHaveBeenCalledWith(TEST_USER, "wrongPassword");
+    expect(localLoginSpy).toHaveBeenCalledWith("anotherUser", "wrongPassword");
+    expect(remoteLoginSpy).toHaveBeenCalledWith("anotherUser", "wrongPassword");
     expect(syncSpy).not.toHaveBeenCalled();
     expectAsync(result).toBeResolvedTo(LoginState.LOGIN_FAILED);
     flush();
@@ -213,9 +213,8 @@ describe("SyncedSessionService", () => {
     flush();
   }));
 
-  it("Remote succeeds, local fails, sync fails", fakeAsync(() => {
+  it("Remote succeeds, local fails", fakeAsync(() => {
     passRemoteLogin();
-    syncSpy.and.rejectWith();
 
     const result = sessionService.login(TEST_USER, "anotherPassword");
     tick();
@@ -224,7 +223,7 @@ describe("SyncedSessionService", () => {
     expect(localLoginSpy).toHaveBeenCalledTimes(2);
     expect(remoteLoginSpy).toHaveBeenCalledWith(TEST_USER, "anotherPassword");
     expect(remoteLoginSpy).toHaveBeenCalledTimes(1);
-    expect(syncSpy).toHaveBeenCalled();
+    expect(syncSpy).not.toHaveBeenCalled();
     expect(liveSyncSpy).not.toHaveBeenCalled();
     expectAsync(result).toBeResolvedTo(LoginState.LOGIN_FAILED);
     tick();
