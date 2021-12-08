@@ -20,6 +20,7 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { Angulartics2Module } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { PermissionsModule } from "../../permissions/permissions.module";
 
 @NgModule({
   declarations: [EntitySubrecordComponent, KeysPipe, ListPaginatorComponent],
@@ -42,6 +43,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     EntityFormModule,
     FontAwesomeModule,
     Angulartics2Module,
+    PermissionsModule,
   ],
   exports: [EntitySubrecordComponent, KeysPipe],
 })

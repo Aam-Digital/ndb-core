@@ -11,7 +11,7 @@ import { MatTableDataSource } from "@angular/material/table";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { Entity } from "../../../entity/model/entity";
+import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "../../../alerts/alert.service";
 import { Subscription } from "rxjs";
@@ -27,6 +27,7 @@ import {
   EntityRemoveService,
   RemoveResult,
 } from "../../../entity/entity-remove.service";
+import { EntityAbility } from "../../../permissions/permission-types";
 
 export interface TableRow<T> {
   record: T;
@@ -88,7 +89,8 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   private mediaSubscription: Subscription;
   private screenWidth = "";
 
-  public idForSavingPagination = "startWert";
+  idForSavingPagination = "startWert";
+  entityConstructor: EntityConstructor<T>;
 
   @ViewChild(MatSort) sort: MatSort;
 
@@ -102,7 +104,8 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     private dialog: MatDialog,
     private analyticsService: AnalyticsService,
     private loggingService: LoggingService,
-    private entityRemoveService: EntityRemoveService
+    private entityRemoveService: EntityRemoveService,
+    private ability: EntityAbility
   ) {
     this.mediaSubscription = this.media
       .asObservable()
@@ -129,6 +132,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    * @param changes
    */
   ngOnChanges(changes: SimpleChanges) {
+    if (changes.hasOwnProperty("newRecordFactory")) {
+      this.entityConstructor = this.newRecordFactory().getConstructor() as EntityConstructor<T>;
+    }
     if (
       changes.hasOwnProperty("columns") ||
       changes.hasOwnProperty("records")
@@ -305,7 +311,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       .filter((col) => col.edit)
       .map((col) => [Object.assign({}, col)]);
     dialogRef.componentInstance.entity = entity;
-    dialogRef.componentInstance.editing = true;
+    dialogRef.componentInstance.editing = this.ability.can("update", entity);
     dialogRef.componentInstance.onSave
       .pipe(untilDestroyed(this))
       .subscribe((updatedEntity: T) => {

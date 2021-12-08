@@ -301,4 +301,15 @@ describe("EntitySubrecordComponent", () => {
 
     component.rowClick({ record: child });
   });
+
+  it("should initialize the entity constructor", () => {
+    const newRecordSpy = jasmine.createSpy().and.returnValue(new Child());
+    component.newRecordFactory = newRecordSpy;
+    expect(component.entityConstructor).toBe(undefined);
+
+    component.ngOnChanges({ newRecordFactory: undefined });
+
+    expect(newRecordSpy).toHaveBeenCalled();
+    expect(component.entityConstructor).toBe(Child);
+  });
 });

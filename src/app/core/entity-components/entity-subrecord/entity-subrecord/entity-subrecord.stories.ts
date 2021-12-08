@@ -21,6 +21,13 @@ import { of } from "rxjs";
 import * as faker from "faker";
 import { AttendanceLogicalStatus } from "../../../../child-dev-project/attendance/model/attendance-status";
 import { MockSessionModule } from "../../../session/mock-session.module";
+import { defineAbility } from "@casl/ability";
+import { EntityAbility } from "../../../permissions/permission-types";
+import { Subject } from "rxjs";
+import {
+  AbilityService,
+  detectEntityType,
+} from "../../../permissions/ability.service";
 
 const configService = new ConfigService();
 const schemaService = new EntitySchemaService();
@@ -36,6 +43,15 @@ const data = new DemoNoteGeneratorService(
   schemaService,
   configService
 ).generateEntities();
+// Change this to alter the permission settings
+const ability = defineAbility<EntityAbility>(
+  (can, cannot) => {
+    can("update", Note);
+    cannot("create", Note);
+    cannot("delete", Note);
+  },
+  { detectSubjectType: detectEntityType }
+);
 
 export default {
   title: "Core/EntitySubrecord",
@@ -54,8 +70,8 @@ export default {
         {
           provide: EntityMapperService,
           useValue: {
-            save: () => null,
-            remove: () => null,
+            save: () => Promise.resolve(),
+            remove: () => Promise.resolve(),
             load: () =>
               Promise.resolve(
                 faker.random.arrayElement(childGenerator.entities)
@@ -73,6 +89,11 @@ export default {
               of(faker.random.arrayElement(childGenerator.entities)),
           },
         },
+        { provide: EntityAbility, useValue: ability },
+        {
+          provide: AbilityService,
+          useValue: { abilityUpdateNotifier: new Subject() },
+        },
       ],
     }),
   ],
@@ -80,10 +101,14 @@ export default {
 
 const Template: Story<EntitySubrecordComponent<Note>> = (
   args: EntitySubrecordComponent<Note>
-) => ({
-  component: EntitySubrecordComponent,
-  props: args,
-});
+) => {
+  EntitySubrecordComponent.prototype.newRecordFactory = () => new Note();
+  EntitySubrecordComponent.prototype.entityConstructor = Note;
+  return {
+    component: EntitySubrecordComponent,
+    props: args,
+  };
+};
 
 export const Primary = Template.bind({});
 Primary.args = {
@@ -94,7 +119,6 @@ Primary.args = {
     { id: "children" },
   ],
   records: data,
-  newRecordFactory: () => new Note(),
 };
 
 export const WithAttendance = Template.bind({});
@@ -120,5 +144,4 @@ WithAttendance.args = {
     },
   ],
   records: data,
-  newRecordFactory: () => new Note(),
 };

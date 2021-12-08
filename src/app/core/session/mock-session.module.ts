@@ -17,6 +17,15 @@ import { AppConfig } from "../app-config/app-config";
 import { SessionType } from "./session-type";
 import { PouchDatabase } from "../database/pouch-database";
 import { LOCATION_TOKEN } from "../../utils/di-tokens";
+import {
+  FaIconLibrary,
+  FontAwesomeModule,
+} from "@fortawesome/angular-fontawesome";
+import { fas } from "@fortawesome/free-solid-svg-icons";
+import { far } from "@fortawesome/free-regular-svg-icons";
+import { EntityAbility } from "../permissions/permission-types";
+import { defineAbility } from "@casl/ability";
+import { detectEntityType } from "../permissions/ability.service";
 
 export const TEST_USER = "test";
 export const TEST_PASSWORD = "pass";
@@ -53,6 +62,12 @@ export class MockSessionModule {
     };
     const mockedEntityMapper = mockEntityMapper([new User(TEST_USER)]);
     const session = createLocalSession(loginState === LoginState.LOGGED_IN);
+    const ability = defineAbility<EntityAbility>(
+      (can) => {
+        can("manage", "all");
+      },
+      { detectSubjectType: detectEntityType }
+    );
     return {
       ngModule: MockSessionModule,
       providers: [
@@ -64,7 +79,7 @@ export class MockSessionModule {
         { provide: MockEntityMapperService, useValue: mockedEntityMapper },
         {
           provide: AnalyticsService,
-          useValue: jasmine.createSpyObj(["eventTrack"]),
+          useValue: { eventTrack: () => undefined },
         },
         {
           provide: Database,
@@ -74,8 +89,16 @@ export class MockSessionModule {
           provide: LOCATION_TOKEN,
           useValue: window.location,
         },
+        {
+          provide: EntityAbility,
+          useValue: ability,
+        },
+        FontAwesomeModule,
       ],
     };
+  }
+  constructor(iconLibrary: FaIconLibrary) {
+    iconLibrary.addIconPacks(fas, far);
   }
 }
 
