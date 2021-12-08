@@ -57,7 +57,7 @@ export const TEST_PASSWORD = "pass";
       provide: LOCATION_TOKEN,
       useValue: window.location,
     },
-  ]
+  ],
 })
 export class MockSessionModule {
   static withState(
