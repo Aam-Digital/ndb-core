@@ -77,10 +77,8 @@ export class PermissionEnforcerService {
   ): Promise<boolean> {
     for (const subject of subjects) {
       const entities = await this.entityMapper.loadType(subject);
-      for (const entity of entities) {
-        if (this.ability.cannot("read", entity)) {
-          return true;
-        }
+      if (entities.some((entity) => this.ability.cannot("read", entity))) {
+        return true;
       }
     }
     return false;

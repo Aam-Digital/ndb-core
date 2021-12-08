@@ -46,7 +46,18 @@ export const TEST_PASSWORD = "pass";
     NoopAnimationsModule,
     Angulartics2Module.forRoot(),
     RouterTestingModule,
+    FontAwesomeModule,
   ],
+  providers: [
+    {
+      provide: AnalyticsService,
+      useValue: { eventTrack: () => undefined },
+    },
+    {
+      provide: LOCATION_TOKEN,
+      useValue: window.location,
+    },
+  ]
 })
 export class MockSessionModule {
   static withState(
@@ -78,16 +89,8 @@ export class MockSessionModule {
         { provide: EntityMapperService, useValue: mockedEntityMapper },
         { provide: MockEntityMapperService, useValue: mockedEntityMapper },
         {
-          provide: AnalyticsService,
-          useValue: { eventTrack: () => undefined },
-        },
-        {
           provide: Database,
           useValue: session.getDatabase(),
-        },
-        {
-          provide: LOCATION_TOKEN,
-          useValue: window.location,
         },
         {
           provide: EntityAbility,
@@ -97,7 +100,6 @@ export class MockSessionModule {
           provide: PureAbility,
           useExisting: EntityAbility,
         },
-        FontAwesomeModule,
       ],
     };
   }
