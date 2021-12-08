@@ -29,7 +29,6 @@ export class PermissionEnforcerService {
     const storedRules = window.localStorage.getItem(userStorageKey);
     const userRulesString = JSON.stringify(userRules);
     if (userRulesString !== storedRules) {
-      // TODO maybe only do this with SyncedSession
       const subjects = this.getSubjectsWithReadRestrictions(userRules);
       if (await this.dbHasEntitiesWithoutPermissions(subjects)) {
         this.analyticsService.eventTrack(

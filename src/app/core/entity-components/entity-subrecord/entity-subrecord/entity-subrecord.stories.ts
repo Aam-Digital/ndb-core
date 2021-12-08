@@ -17,13 +17,12 @@ import { MatNativeDateModule } from "@angular/material/core";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { ChildrenModule } from "../../../../child-dev-project/children/children.module";
 import { ChildrenService } from "../../../../child-dev-project/children/children.service";
-import { of } from "rxjs";
+import { of, Subject } from "rxjs";
 import * as faker from "faker";
 import { AttendanceLogicalStatus } from "../../../../child-dev-project/attendance/model/attendance-status";
 import { MockSessionModule } from "../../../session/mock-session.module";
 import { defineAbility } from "@casl/ability";
 import { EntityAbility } from "../../../permissions/permission-types";
-import { Subject } from "rxjs";
 import {
   AbilityService,
   detectEntityType,

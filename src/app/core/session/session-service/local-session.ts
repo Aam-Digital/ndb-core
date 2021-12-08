@@ -42,7 +42,7 @@ export class LocalSession extends SessionService {
 
   constructor(
     private database: PouchDatabase,
-    analyticsService: AnalyticsService = { eventTrack: () => {} } as any
+    analyticsService: AnalyticsService = { eventTrack: () => undefined } as any
   ) {
     super();
     this.databaseMigrationService = new DatabaseMigrationService(
