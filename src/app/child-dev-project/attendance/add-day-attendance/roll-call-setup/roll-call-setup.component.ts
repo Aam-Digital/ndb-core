@@ -56,9 +56,7 @@ export class RollCallSetupComponent implements OnInit {
   }
 
   private async loadActivities() {
-    this.allActivities = await this.entityMapper.loadType<RecurringActivity>(
-      RecurringActivity
-    );
+    this.allActivities = await this.entityMapper.loadType(RecurringActivity);
 
     if (this.showingAll) {
       this.visibleActivities = this.allActivities;
