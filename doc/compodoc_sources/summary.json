@@ -120,6 +120,10 @@
         "file": "concepts/configuration.md"
       },
       {
+        "title": "User Roles and Permissions",
+        "file": "concepts/permissions.md"
+      },
+      {
         "title": "UX Guidelines",
         "file": "concepts/ux-guidelines.md"
       },

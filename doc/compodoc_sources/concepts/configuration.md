@@ -66,7 +66,7 @@ On the top level of the config file, there are four different kinds of entries:
 1. The main navigation menu (`navigationMenu`)
 1. Views defining the UI of each page (`view:<path>`)
 1. Lists of select options for dropdown fields (`enum:<category-id>`, including available Note categories, etc.)
-1. Entity configuration to define [schemas](entity-schema-system.md) or permissions  (`entity:<entity-id>`)
+1. Entity configuration to define [schemas](entity-schema-system.md)  (`entity:<entity-id>`)
 
 
 ### Navigation Menu
@@ -110,7 +110,9 @@ The only mandatory field for each view is `"component":` telling the app which c
 The component part has to refer to an existing angular component within the app.
 Components currently have to be registered additionally in the [COMPONENT_MAP](../../miscellaneous/variables.html#COMPONENT_MAP).
 
-The two optional fields of each view are `"config":` and `"requiresAdmin":`. The latter is a boolean telling the app whether the user has to be logged in as an administrator in order to be able the see the component. 
+The two optional fields of each view are `"config":` and `"permittedUserRoles":`.
+`"permittedUserRoles"` expects an array of user role strings.
+If one or more roles are specified, only users with these roles are able to see this menu item and visit this page in the app.
 
 What comes within the `"config":` object depends on the component being used.
 The Dashboard-Component for example takes as `"widgets:"` an array of subcomponents, where every entry has to have a `"component:"` and may have an own `"config:"` object.
