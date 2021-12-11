@@ -68,6 +68,7 @@ export class AbilityService {
       return;
     }
     if (permission) {
+      // TODO what happens if there are no rules for a user
       const userRules = this.getRulesForUser(permission.rulesConfig);
       const userRulesCopy = JSON.parse(JSON.stringify(userRules));
       this.updateAbilityWithRules(userRules);
