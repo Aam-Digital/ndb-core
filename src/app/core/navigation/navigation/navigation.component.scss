@@ -32,13 +32,10 @@ $nav-link-gap: 8px;
 
 .nav-icon {
   margin-right: $nav-link-gap;
+  min-width: $max-icon-width;
 }
 
 .nav-link {
   display: flex;
   flex-direction: row;
-}
-
-.nav-icon {
-  min-width: $max-icon-width;
 }
