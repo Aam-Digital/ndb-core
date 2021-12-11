@@ -53,7 +53,10 @@ export interface ConfirmationDialogButton {
 export const OkButton: ConfirmationDialogButton[] = [
   {
     text: $localize`:Confirmation dialog OK:OK`,
-    click() {},
+    click() {
+      // Intentionally blank
+      // To react to emissions from this button, use the `MatDialogRef.beforeClosed()` hook
+    },
     dialogResult: true,
   },
 ];
@@ -61,12 +64,18 @@ export const OkButton: ConfirmationDialogButton[] = [
 export const YesNoButtons: ConfirmationDialogButton[] = [
   {
     text: $localize`:Confirmation dialog Yes:Yes`,
-    click() {},
+    click() {
+      // Intentionally blank
+      // To react to emissions from this button, use the `MatDialogRef.beforeClosed()` hook
+    },
     dialogResult: true,
   },
   {
     text: $localize`:Confirmation dialog No:No`,
-    click() {},
+    click() {
+      // Intentionally blank
+      // To react to emissions from this button, use the `MatDialogRef.beforeClosed()` hook
+    },
     dialogResult: false,
   },
 ];
