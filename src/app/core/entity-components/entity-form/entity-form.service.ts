@@ -27,7 +27,7 @@ export class EntityFormService {
         this.addFormFields(formField, entity, forTable);
       } catch (err) {
         throw new Error(
-          $localize`Could not create form config for ${formField.id}: ${err}`
+          $localize`Could not create form config for ${formField.id}\: ${err}`
         );
       }
     });
@@ -90,7 +90,7 @@ export class EntityFormService {
       .save(entityCopy)
       .then(() => Object.assign(entity, entityCopy))
       .catch((err) => {
-        throw new Error($localize`Could not save ${entity.getType()}: ${err}`);
+        throw new Error($localize`Could not save ${entity.getType()}\: ${err}`);
       });
   }
 
