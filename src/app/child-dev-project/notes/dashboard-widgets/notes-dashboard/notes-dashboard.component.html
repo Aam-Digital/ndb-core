@@ -11,7 +11,13 @@
       <table
         mat-table
         [dataSource]="childrenWithNoteInfoDataSource"
+        [attr.aria-label]="subtitle"
       >
+        <!-- Table header only for assistive technologies like screen readers -->
+        <tr hidden="true">
+          <th scope="col">Child</th>
+          <th scope="col">Days since last note</th>
+        </tr>
         <ng-container matColumnDef="child">
           <td *matCellDef="let childNoteInfo">
             <app-child-block

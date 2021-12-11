@@ -11,7 +11,13 @@
       <table
         mat-table
         [dataSource]="tableDataSource"
+        aria-label="Students with high absence"
       >
+        <!-- Table header only for assistive technologies like screen readers -->
+        <tr hidden="true">
+          <th scope="col">Child</th>
+          <th scope="col">Attendance</th>
+        </tr>
         <ng-container matColumnDef="child">
           <td
             *matCellDef="let rowGroup"

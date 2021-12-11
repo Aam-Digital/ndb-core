@@ -9,7 +9,13 @@
       <table
         mat-table
         [dataSource]="tableDataSource"
+        aria-label="Quick actions"
       >
+        <!-- Table header only for assistive technologies like screen readers -->
+        <tr hidden="true">
+          <th scope="col">Icon</th>
+          <th scope="col">Label</th>
+        </tr>
         <ng-container matColumnDef="icon">
           <td
             *matCellDef="let row"
