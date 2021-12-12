@@ -1,11 +1,12 @@
 describe("Scenario: Linking a child to a school - E2E test", () => {
   before(() => {
-    // GIVEN I am on the details page of a child
-    cy.wrap("Aaditya School").as("schoolName");
-    // cy.wrap(0).as('studentsCount')
-    cy.visit("http://localhost:4200/child/1");
-    cy.wait(10000);
 
+
+    // GIVEN I am on the details page of a child
+    cy.visit("http://localhost:4200/school/1");
+    cy.get(".page-header > .ng-star-inserted").invoke("text").as("schoolName");
+
+    cy.visit("http://localhost:4200/child/1");
     cy.get(".page-header > .ng-star-inserted").invoke("text").as("studentName");
   });
 
