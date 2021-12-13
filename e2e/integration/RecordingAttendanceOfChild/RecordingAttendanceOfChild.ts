@@ -14,7 +14,7 @@ describe("Scenario: Recording attendance of a child - E2E test", () => {
   it("set the attendance of the specific child to 'present'", function () {
     cy.get(".options-wrapper > :nth-child(1)").click();
     cy.get('[angularticsaction="rollcall_save-exit"]').click();
-    cy.get('[cdkfocusinitial=""]').click();
+    cy.contains("button", "Yes").click();
     cy.contains("button", "Finish").click();
   });
 
