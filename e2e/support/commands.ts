@@ -11,13 +11,13 @@ declare namespace Cypress {
 }
 
 function createChild(name: string): void {
-  cy.visit("http://localhost:4200/child/new");
+  cy.visit("child/new");
   cy.get('[ng-reflect-name="name"]').type(name);
   cy.contains("button", "Save").click();
 }
 
 function createSchool(name: string): void {
-  cy.visit("http://localhost:4200/school/new");
+  cy.visit("school/new");
   cy.get('[ng-reflect-name="name"]').type(name);
   cy.contains("button", "Save").click();
 }

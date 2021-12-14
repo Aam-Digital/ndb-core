@@ -2,7 +2,7 @@ describe("Scenario: Marking a child as dropout - E2E test", () => {
   before(() => {
     // GIVEN I am on the details page of a specific child
     // go to the url with the Child
-    cy.visit("http://localhost:4200/child/1");
+    cy.visit("child/1");
     // save the name of this Child to the variable
     cy.get(".page-header > .ng-star-inserted").invoke("text").as("childName");
   });
