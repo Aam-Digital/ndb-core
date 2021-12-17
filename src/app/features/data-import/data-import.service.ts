@@ -18,8 +18,7 @@ export class DataImportService {
     private confirmationDialog: ConfirmationDialogService,
     private snackBar: MatSnackBar,
     private dynamicEntityService: DynamicEntityService
-  ) {
-  }
+  ) {}
 
   async importCsvContentToDB(csv: string): Promise<void> {
     const parsedCsv = this.papa.parse(csv, {
