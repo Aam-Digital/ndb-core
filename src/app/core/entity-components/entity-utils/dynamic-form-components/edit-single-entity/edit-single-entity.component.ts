@@ -1,12 +1,11 @@
 import { Component, ElementRef, ViewChild } from "@angular/core";
 import { EditComponent, EditPropertyConfig } from "../edit-component";
-import { ENTITY_MAP } from "../../../entity-details/entity-details.component";
-import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 import { Entity } from "../../../../entity/model/entity";
 import { Observable } from "rxjs";
 import { filter, map } from "rxjs/operators";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FormControl } from "@angular/forms";
+import { DynamicEntityService } from "../../../../entity/dynamic-entity.service";
 
 @UntilDestroy()
 @Component({
@@ -24,7 +23,7 @@ export class EditSingleEntityComponent extends EditComponent<string> {
 
   @ViewChild("inputElement") input: ElementRef;
 
-  constructor(private entityMapper: EntityMapperService) {
+  constructor(private dynamicEntityService: DynamicEntityService) {
     super();
     this.filteredEntities = this.entityNameFormControl.valueChanges.pipe(
       untilDestroyed(this),
@@ -49,12 +48,8 @@ export class EditSingleEntityComponent extends EditComponent<string> {
     this.placeholder = $localize`:Placeholder for input to set an entity|context Select User:Select ${this.label}`;
     const entityType: string =
       config.formFieldConfig.additional || config.propertySchema.additional;
-    const entityConstructor = ENTITY_MAP.get(entityType);
-    if (!entityConstructor) {
-      throw new Error(`Entity-Type ${entityType} not in EntityMap`);
-    }
-    this.entities = await this.entityMapper
-      .loadType(entityConstructor)
+    this.entities = await this.dynamicEntityService
+      .loadType(entityType)
       .then((entities) =>
         entities.sort((e1, e2) => e1.toString().localeCompare(e2.toString()))
       );

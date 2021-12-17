@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Angulartics2Piwik } from "angulartics2/piwik";
+import { Angulartics2Matomo } from "angulartics2/matomo";
 import { environment } from "../../../environments/environment";
 import { AppConfig } from "../app-config/app-config";
 import { ConfigService } from "../config/config.service";
@@ -9,6 +9,7 @@ import {
   USAGE_ANALYTICS_CONFIG_ID,
   UsageAnalyticsConfig,
 } from "./usage-analytics-config";
+import { Angulartics2 } from "angulartics2";
 
 const md5 = require("md5");
 
@@ -26,7 +27,8 @@ export class AnalyticsService {
   }
 
   constructor(
-    private angulartics2Piwik: Angulartics2Piwik,
+    private angulartics2: Angulartics2,
+    private angulartics2Matomo: Angulartics2Matomo,
     private configService: ConfigService,
     private sessionService: SessionService
   ) {
@@ -34,19 +36,19 @@ export class AnalyticsService {
   }
 
   private setUser(username: string): void {
-    this.angulartics2Piwik.setUsername(
+    this.angulartics2Matomo.setUsername(
       AnalyticsService.getUserHash(username ?? "")
     );
   }
 
   private setVersion(): void {
-    this.angulartics2Piwik.setUserProperties({
+    this.angulartics2.setUserProperties.next({
       dimension1: "ndb-core@" + environment.appVersion,
     });
   }
 
   private setOrganization(orgName: string): void {
-    this.angulartics2Piwik.setUserProperties({
+    this.angulartics2.setUserProperties.next({
       dimension2: orgName,
     });
   }
@@ -80,7 +82,7 @@ export class AnalyticsService {
     this.setOrganization(AppConfig.settings.site_name);
     this.setUser(undefined);
 
-    this.angulartics2Piwik.startTracking();
+    this.angulartics2Matomo.startTracking();
   }
 
   /**
@@ -138,6 +140,9 @@ export class AnalyticsService {
       label: "no_label",
     }
   ): void {
-    this.angulartics2Piwik.eventTrack(action, properties);
+    this.angulartics2.eventTrack.next({
+      action: action,
+      properties: properties,
+    });
   }
 }

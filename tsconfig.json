@@ -19,5 +19,8 @@
       "dom"
     ],
     "resolveJsonModule": true
+  },
+  "angularCompilerOptions": {
+    "strictTemplates": true
   }
 }

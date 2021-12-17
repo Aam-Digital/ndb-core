@@ -57,7 +57,7 @@ import { FormDialogModule } from "./core/form-dialog/form-dialog.module";
 import { LoggingService } from "./core/logging/logging.service";
 import { Angulartics2Module } from "angulartics2";
 import { AnalyticsService } from "./core/analytics/analytics.service";
-import { Angulartics2Piwik } from "angulartics2/piwik";
+import { Angulartics2Matomo } from "angulartics2/matomo";
 import { ViewModule } from "./core/view/view.module";
 import { DashboardModule } from "./core/dashboard/dashboard.module";
 import { EntityDetailsModule } from "./core/entity-components/entity-details/entity-details.module";
@@ -156,7 +156,7 @@ import { far } from "@fortawesome/free-regular-svg-icons";
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
     { provide: MatPaginatorIntl, useValue: TranslatableMatPaginator() },
     AnalyticsService,
-    Angulartics2Piwik,
+    Angulartics2Matomo,
   ],
   bootstrap: [AppComponent],
 })
