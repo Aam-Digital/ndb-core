@@ -100,10 +100,11 @@ describe("RollCallComponent", () => {
   });
 
   it("should not record attendance if childId does not exist", fakeAsync(() => {
+    const nonExistingChildId = "notExistingChild";
     const existingChild = new Child("existingChild");
     const noteWithNonExistingChild = new Note();
     noteWithNonExistingChild.addChild(existingChild.getId());
-    noteWithNonExistingChild.addChild("notExistingChild");
+    noteWithNonExistingChild.addChild(nonExistingChildId);
     component.eventEntity = noteWithNonExistingChild;
 
     mockEntityMapper.load.and.callFake((con, id) =>
@@ -116,6 +117,9 @@ describe("RollCallComponent", () => {
     tick();
 
     expect(component.entries.map((e) => e.child)).toEqual([existingChild]);
+    expect(
+      component.eventEntity.children.includes(nonExistingChildId)
+    ).toBeFalse();
     expect(mockLoggingService.warn).toHaveBeenCalled();
     flush();
   }));
