@@ -89,6 +89,7 @@ export class RollCallComponent implements OnInit {
             " for event " +
             this.eventEntity.getId()
         );
+        this.eventEntity.removeChild(childId);
         continue;
       }
       this.entries.push({
