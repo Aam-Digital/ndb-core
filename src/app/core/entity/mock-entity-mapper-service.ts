@@ -58,7 +58,11 @@ export class MockEntityMapperService extends EntityMapperService {
    * @param id
    */
   public get(entityType: string, id: string): Entity {
-    return this.data.get(entityType)?.get(id);
+    const result = this.data.get(entityType)?.get(id);
+    if (!result) {
+      throw { status: 404 };
+    }
+    return result;
   }
 
   /**

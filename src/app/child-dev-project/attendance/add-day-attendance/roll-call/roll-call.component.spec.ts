@@ -13,7 +13,6 @@ import { By } from "@angular/platform-browser";
 import { ConfigService } from "../../../../core/config/config.service";
 import { ConfigurableEnumConfig } from "../../../../core/configurable-enum/configurable-enum.interface";
 import { Child } from "../../../children/model/child";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { LoggingService } from "../../../../core/logging/logging.service";
 import { defaultAttendanceStatusTypes } from "../../../../core/config/default-config/default-attendance-status-types";
 import { AttendanceModule } from "../../attendance.module";
@@ -22,6 +21,8 @@ import { MockSessionModule } from "../../../../core/session/mock-session.module"
 import { ConfirmationDialogService } from "../../../../core/confirmation-dialog/confirmation-dialog.service";
 import { of } from "rxjs";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { LoginState } from "../../../../core/session/session-states/login-state.enum";
+import { SimpleChange } from "@angular/core";
 
 describe("RollCallComponent", () => {
   let component: RollCallComponent;
@@ -29,28 +30,36 @@ describe("RollCallComponent", () => {
 
   const testEvent = Note.create(new Date());
   let mockConfigService: jasmine.SpyObj<ConfigService>;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let mockLoggingService: jasmine.SpyObj<LoggingService>;
+
+  let participant1, participant2: Child;
+
+  const dummyChanges = {
+    eventEntity: new SimpleChange(undefined, {}, true),
+  };
 
   beforeEach(
     waitForAsync(() => {
+      participant1 = new Child("child1");
+      participant2 = new Child("child2");
+
       mockConfigService = jasmine.createSpyObj("mockConfigService", [
         "getConfig",
       ]);
       mockConfigService.getConfig.and.returnValue([]);
-      mockEntityMapper = jasmine.createSpyObj(["load"]);
-      mockEntityMapper.load.and.resolveTo();
       mockLoggingService = jasmine.createSpyObj(["warn"]);
 
       TestBed.configureTestingModule({
         imports: [
           AttendanceModule,
-          MockSessionModule,
+          MockSessionModule.withState(LoginState.LOGGED_IN, [
+            participant1,
+            participant2,
+          ]),
           FontAwesomeTestingModule,
         ],
         providers: [
           { provide: ConfigService, useValue: mockConfigService },
-          { provide: EntityMapperService, useValue: mockEntityMapper },
           { provide: LoggingService, useValue: mockLoggingService },
           { provide: ChildrenService, useValue: {} },
         ],
@@ -87,9 +96,9 @@ describe("RollCallComponent", () => {
       },
     ];
     mockConfigService.getConfig.and.returnValue(testStatusEnumConfig);
-    component.eventEntity = Note.create(new Date());
-    component.eventEntity.addChild("1");
-    await component.ngOnInit();
+    component.eventEntity = new Note();
+    component.eventEntity.addChild(participant1.getId());
+    await component.ngOnChanges(dummyChanges);
     fixture.detectChanges();
     await fixture.whenStable();
 
@@ -101,22 +110,15 @@ describe("RollCallComponent", () => {
 
   it("should not record attendance if childId does not exist", fakeAsync(() => {
     const nonExistingChildId = "notExistingChild";
-    const existingChild = new Child("existingChild");
     const noteWithNonExistingChild = new Note();
-    noteWithNonExistingChild.addChild(existingChild.getId());
+    noteWithNonExistingChild.addChild(participant1.getId());
     noteWithNonExistingChild.addChild(nonExistingChildId);
     component.eventEntity = noteWithNonExistingChild;
 
-    mockEntityMapper.load.and.callFake((con, id) =>
-      id === existingChild.getId()
-        ? Promise.resolve(existingChild as any)
-        : Promise.reject()
-    );
-
-    component.ngOnInit();
+    component.ngOnChanges(dummyChanges);
     tick();
 
-    expect(component.entries.map((e) => e.child)).toEqual([existingChild]);
+    expect(component.entries.map((e) => e.child)).toEqual([participant1]);
     expect(
       component.eventEntity.children.includes(nonExistingChildId)
     ).toBeFalse();
@@ -131,56 +133,41 @@ describe("RollCallComponent", () => {
     const absentStatus = defaultAttendanceStatusTypes.find(
       (it) => it.countAs === "ABSENT"
     );
-    const attendedChild = new Child("attendedChild");
-    const absentChild = new Child("absentChild");
     const note = new Note("noteWithAttendance");
-    note.addChild(attendedChild.getId());
-    note.addChild(absentChild.getId());
-    mockEntityMapper.load.and.callFake((t, id) => {
-      if (id === absentChild.getId()) {
-        return Promise.resolve(absentChild) as any;
-      }
-      if (id === attendedChild.getId()) {
-        return Promise.resolve(attendedChild) as any;
-      }
-    });
+    note.addChild(participant1.getId());
+    note.addChild(participant2.getId());
+
     component.eventEntity = note;
-    component.ngOnInit();
+    component.ngOnChanges(dummyChanges);
     tick();
 
     const attendedChildAttendance = component.entries.find(
-      ({ child }) => child === attendedChild
+      ({ child }) => child === participant1
     ).attendance;
     const absentChildAttendance = component.entries.find(
-      ({ child }) => child === absentChild
+      ({ child }) => child === participant2
     ).attendance;
     component.markAttendance(attendedChildAttendance, attendedStatus);
     component.markAttendance(absentChildAttendance, absentStatus);
 
-    expect(note.getAttendance(attendedChild.getId()).status).toEqual(
+    expect(note.getAttendance(participant1.getId()).status).toEqual(
       attendedStatus
     );
-    expect(note.getAttendance(absentChild.getId()).status).toEqual(
+    expect(note.getAttendance(participant2.getId()).status).toEqual(
       absentStatus
     );
     flush();
   }));
 
   it("should mark roll call as done when all existing children are finished", fakeAsync(() => {
-    const existingChild1 = new Child("existingChild1");
-    const existingChild2 = new Child("existingChild2");
     const note = new Note();
-    note.addChild(existingChild1.getId());
+    note.addChild(participant1.getId());
     note.addChild("notExistingChild");
-    note.addChild(existingChild2.getId());
-    mockEntityMapper.load.and.returnValues(
-      Promise.resolve(existingChild2),
-      Promise.reject(),
-      Promise.resolve(existingChild1)
-    );
+    note.addChild(participant2.getId());
+
     spyOn(component.complete, "emit");
     component.eventEntity = note;
-    component.ngOnInit();
+    component.ngOnChanges(dummyChanges);
     tick();
 
     component.goToNextParticipant();
