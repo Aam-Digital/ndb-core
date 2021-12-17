@@ -12,6 +12,7 @@ import { AnalyticsService } from "../analytics/analytics.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Angulartics2Module } from "angulartics2";
 import { RouterTestingModule } from "@angular/router/testing";
+import { Entity } from "../entity/model/entity";
 
 export const TEST_USER = "test";
 export const TEST_PASSWORD = "pass";
@@ -36,9 +37,10 @@ export const TEST_PASSWORD = "pass";
 })
 export class MockSessionModule {
   static withState(
-    loginState = LoginState.LOGGED_IN
+    loginState = LoginState.LOGGED_IN,
+    data: Entity[] = []
   ): ModuleWithProviders<MockSessionModule> {
-    const mockedEntityMapper = mockEntityMapper([new User(TEST_USER)]);
+    const mockedEntityMapper = mockEntityMapper([new User(TEST_USER), ...data]);
     return {
       ngModule: MockSessionModule,
       providers: [
