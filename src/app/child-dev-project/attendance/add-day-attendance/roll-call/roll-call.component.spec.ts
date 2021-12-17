@@ -32,7 +32,7 @@ describe("RollCallComponent", () => {
   let mockConfigService: jasmine.SpyObj<ConfigService>;
   let mockLoggingService: jasmine.SpyObj<LoggingService>;
 
-  let participant1, participant2: Child;
+  let participant1: Child, participant2: Child, participant3: Child;
 
   const dummyChanges = {
     eventEntity: new SimpleChange(undefined, {}, true),
@@ -42,6 +42,7 @@ describe("RollCallComponent", () => {
     waitForAsync(() => {
       participant1 = new Child("child1");
       participant2 = new Child("child2");
+      participant3 = new Child("child3");
 
       mockConfigService = jasmine.createSpyObj("mockConfigService", [
         "getConfig",
@@ -55,6 +56,7 @@ describe("RollCallComponent", () => {
           MockSessionModule.withState(LoginState.LOGGED_IN, [
             participant1,
             participant2,
+            participant3,
           ]),
           FontAwesomeTestingModule,
         ],
@@ -119,9 +121,7 @@ describe("RollCallComponent", () => {
     tick();
 
     expect(component.entries.map((e) => e.child)).toEqual([participant1]);
-    expect(
-      component.eventEntity.children.includes(nonExistingChildId)
-    ).toBeFalse();
+    expect(component.eventEntity.children).not.toContain(nonExistingChildId);
     expect(mockLoggingService.warn).toHaveBeenCalled();
     flush();
   }));
@@ -229,4 +229,68 @@ describe("RollCallComponent", () => {
 
     expect(confirmationDialogService.openDialog).toHaveBeenCalled();
   });
+
+  it("should not sort participants without sortParticipantsBy configured", fakeAsync(() => {
+    participant1.name = "Zoey";
+    participant2.name = "Adam";
+
+    testParticipantsAreSorted(
+      [participant1, participant2],
+      [participant1, participant2],
+      undefined
+    );
+  }));
+
+  it("should sort participants alphabetically for sortParticipantsBy", fakeAsync(() => {
+    participant1.name = "Zoey";
+    participant2.name = undefined;
+    participant3.name = "Adam";
+
+    testParticipantsAreSorted(
+      [participant1, participant2, participant3],
+      [participant3, participant1, participant2],
+      "name"
+    );
+  }));
+
+  it("should sort participants numerically for sortParticipantsBy", fakeAsync(() => {
+    // @ts-ignore
+    participant1.priority = 99;
+    // @ts-ignore
+    participant2.priority = 1;
+
+    testParticipantsAreSorted(
+      [participant1, participant2],
+      [participant2, participant1],
+      "priority"
+    );
+  }));
+
+  function testParticipantsAreSorted(
+    participantsInput: Child[],
+    expectedParticipantsOrder: Child[],
+    sortParticipantsBy: string
+  ) {
+    const event = new Note();
+    for (const p of participantsInput) {
+      event.addChild(p.getId());
+    }
+    component.eventEntity = event;
+    component.ngOnChanges(dummyChanges);
+    tick();
+
+    component.sortParticipantsBy = sortParticipantsBy;
+    component.ngOnChanges({
+      sortParticipantsBy: new SimpleChange(undefined, "name", false),
+    });
+    tick();
+
+    expect(component.entries.map((e) => e.child)).toEqual(
+      expectedParticipantsOrder
+    );
+    expect(component.eventEntity.children).toEqual(
+      expectedParticipantsOrder.map((p) => p.getId())
+    );
+    flush();
+  }
 });
