@@ -9,6 +9,8 @@ import { MatDialogRef } from "@angular/material/dialog";
 import { Subject } from "rxjs";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MockSessionModule } from "../../session/mock-session.module";
+import { DynamicEntityService } from "../../entity/dynamic-entity.service";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
 describe("FormDialogWrapperComponent", () => {
   let component: FormDialogWrapperComponent;
@@ -26,7 +28,11 @@ describe("FormDialogWrapperComponent", () => {
           MatSnackBarModule,
           MockSessionModule.withState(),
         ],
-        providers: [{ provide: MatDialogRef, useValue: {} }],
+        providers: [
+          { provide: MatDialogRef, useValue: {} },
+          DynamicEntityService,
+          EntitySchemaService,
+        ],
       }).compileComponents();
 
       saveEntitySpy = spyOn(TestBed.inject(EntityMapperService), "save");

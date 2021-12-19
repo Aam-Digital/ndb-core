@@ -100,6 +100,11 @@ export class Child extends Entity {
   })
   photo: Photo;
 
+  @DatabaseField({
+    label: $localize`:Label for the phone number of a child:Phone Number`,
+  })
+  phone: string;
+
   get age(): number {
     return this.dateOfBirth ? calculateAge(this.dateOfBirth) : null;
   }

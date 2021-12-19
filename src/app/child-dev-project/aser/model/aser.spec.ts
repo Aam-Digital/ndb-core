@@ -16,7 +16,6 @@
  */
 
 import { Aser } from "./aser";
-import { waitForAsync } from "@angular/core/testing";
 import { Entity } from "../../../core/entity/model/entity";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { mathLevels } from "./mathLevels";
@@ -26,8 +25,6 @@ import { WarningLevel } from "../../../core/entity/model/warning-level";
 describe("Aser", () => {
   const ENTITY_TYPE = "Aser";
   const entitySchemaService = new EntitySchemaService();
-
-  beforeEach(waitForAsync(() => {}));
 
   it("has correct _id and entityId and type", function () {
     const id = "test1";
@@ -89,5 +86,22 @@ describe("Aser", () => {
     entity.math = readingLevels[2];
 
     expect(entity.getWarningLevel()).toBe(WarningLevel.WARNING);
+  });
+
+  it("has a warning level of OK if english is at it's highest level", () => {
+    const entity = new Aser();
+    entity.english = readingLevels[readingLevels.length - 1];
+
+    expect(entity.getWarningLevel()).toBe(WarningLevel.OK);
+  });
+
+  it("has a warning level of OK if all values are at it's highest level", () => {
+    const entity = new Aser();
+    entity.math = mathLevels[mathLevels.length - 1];
+    entity.english = readingLevels[readingLevels.length - 1];
+    entity.hindi = readingLevels[readingLevels.length - 1];
+    entity.bengali = readingLevels[readingLevels.length - 1];
+
+    expect(entity.getWarningLevel()).toBe(WarningLevel.OK);
   });
 });
