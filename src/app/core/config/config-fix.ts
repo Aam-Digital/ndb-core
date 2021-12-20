@@ -40,18 +40,8 @@ export const defaultJsonConfig = {
         "link": "/school"
       },
       {
-        "name": $localize`:Menu item:Recurring Activities`,
-        "icon": "calendar-alt",
-        "link": "/recurring-activity"
-      },
-      {
-        "name": $localize`:Menu item|Record attendance menu item:Record Attendance`,
+        "name": $localize`:Menu item:Attendance`,
         "icon": "calendar-check",
-        "link": "/attendance/add/day"
-      },
-      {
-        "name": $localize`:Menu item:Manage Attendance`,
-        "icon": "table",
         "link": "/attendance"
       },
       {
@@ -674,7 +664,7 @@ export const defaultJsonConfig = {
     }
   },
 
-  "view:recurring-activity": {
+  "view:attendance/recurring-activity": {
     "component": "ActivityList",
     "config": {
       "title": $localize`:Title of recurring activities overview:Recurring Activities`,
@@ -690,7 +680,7 @@ export const defaultJsonConfig = {
       ]
     }
   },
-  "view:recurring-activity/:id": {
+  "view:attendance/recurring-activity/:id": {
     "component": "EntityDetails",
     "config": {
       "entity": "RecurringActivity",
