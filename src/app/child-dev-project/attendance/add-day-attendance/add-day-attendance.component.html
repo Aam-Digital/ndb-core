@@ -29,6 +29,7 @@
     <app-roll-call
       *ngIf="currentStage === 1"
       [eventEntity]="event"
+      [sortParticipantsBy]="config?.sortParticipantsBy"
       (exit)="finishRollCallState()"
       (complete)="saveRollCallResult($event)"
     >

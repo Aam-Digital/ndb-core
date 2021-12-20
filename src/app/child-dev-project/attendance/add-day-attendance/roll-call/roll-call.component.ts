@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from "@angular/core";
 import { animate, style, transition, trigger } from "@angular/animations";
 import {
   ATTENDANCE_STATUS_CONFIG_ID,
@@ -11,6 +18,7 @@ import { EntityMapperService } from "../../../../core/entity/entity-mapper.servi
 import { Child } from "../../../children/model/child";
 import { LoggingService } from "../../../../core/logging/logging.service";
 import { FormGroup } from "@angular/forms";
+import { sortByAttribute } from "../../../../utils/utils";
 
 /**
  * Displays the participants of the given event one by one to mark attendance status.
@@ -28,11 +36,16 @@ import { FormGroup } from "@angular/forms";
     ]),
   ],
 })
-export class RollCallComponent implements OnInit {
+export class RollCallComponent implements OnChanges {
   /**
    * The event to be displayed and edited.
    */
   @Input() eventEntity: Note;
+
+  /**
+   * (optional) property name of the participant entities by which they are sorted
+   */
+  @Input() sortParticipantsBy?: string;
 
   /**
    * Emitted when the roll call is finished and results can be saved.
@@ -81,10 +94,15 @@ export class RollCallComponent implements OnInit {
     private loggingService: LoggingService
   ) {}
 
-  async ngOnInit() {
-    this.loadAttendanceStatusTypes();
-    await this.loadParticipants();
-    this.setInitialIndex();
+  async ngOnChanges(changes: SimpleChanges) {
+    if (changes.eventEntity) {
+      this.loadAttendanceStatusTypes();
+      await this.loadParticipants();
+      this.setInitialIndex();
+    }
+    if (changes.sortParticipantsBy) {
+      this.sortParticipants();
+    }
   }
 
   /**
@@ -114,26 +132,38 @@ export class RollCallComponent implements OnInit {
   private async loadParticipants() {
     this.entries = [];
     this._currentIndex = 0;
-    const childrenNotFound: string[] = [];
     for (const childId of this.eventEntity.children) {
       let child;
       try {
         child = await this.entityMapper.load(Child, childId);
-        this.entries.push({
-          child: child,
-          attendance: this.eventEntity.getAttendance(childId),
-        });
       } catch (e) {
-        childrenNotFound.push(childId);
+        this.loggingService.warn(
+          "Could not find child " +
+            childId +
+            " for event " +
+            this.eventEntity.getId()
+        );
+        this.eventEntity.removeChild(childId);
+        continue;
       }
+      this.entries.push({
+        child: child,
+        attendance: this.eventEntity.getAttendance(childId),
+      });
     }
-    if (childrenNotFound.length > 0) {
-      this.loggingService.warn(
-        `Could not find children [${childrenNotFound.join(
-          ", "
-        )}] for event ${this.eventEntity.getId()}`
-      );
+    this.sortParticipants();
+  }
+
+  private sortParticipants() {
+    if (!this.sortParticipantsBy) {
+      return;
     }
+
+    this.entries.sort((a, b) =>
+      sortByAttribute<any>(this.sortParticipantsBy, "asc")(a.child, b.child)
+    );
+    // also sort the participants in the Note entity itself for display in details view later
+    this.eventEntity.children = this.entries.map((e) => e.child.getId());
   }
 
   markAttendance(status: AttendanceStatusType) {

@@ -4,6 +4,16 @@ import { Note } from "../../notes/model/note";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 import { ConfirmationDialogButton } from "../../../core/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { RollCallComponent } from "./roll-call/roll-call.component";
+import { ActivatedRoute } from "@angular/router";
+import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
+
+/**
+ * additional config specifically for AddDayAttendanceComponent
+ */
+export interface AddDayAttendanceConfig {
+  /** (optional) property name of the participant entities by which they are sorted for the roll call */
+  sortParticipantsBy?: string;
+}
 
 @Component({
   selector: "app-add-day-attendance",
@@ -11,6 +21,8 @@ import { RollCallComponent } from "./roll-call/roll-call.component";
   styleUrls: ["./add-day-attendance.component.scss"],
 })
 export class AddDayAttendanceComponent {
+  config?: AddDayAttendanceConfig;
+
   currentStage = 0;
 
   day = new Date();
@@ -45,8 +57,13 @@ export class AddDayAttendanceComponent {
 
   constructor(
     private entityMapper: EntityMapperService,
+    private route: ActivatedRoute,
     private confirmationDialog: ConfirmationDialogService
-  ) {}
+  ) {
+    this.route.data.subscribe((data: RouteData<AddDayAttendanceConfig>) => {
+      this.config = data.config;
+    });
+  }
 
   finishBasicInformationStage(event: Note) {
     this.event = event;
