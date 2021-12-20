@@ -15,7 +15,8 @@ import { Note } from "../../child-dev-project/notes/model/note";
 // prettier-ignore
 export const defaultJsonConfig = {
   "appConfig": {
-    displayLanguageSelect: true,
+    "displayLanguageSelect": true,
+    "logo_path": null
   },
   "appConfig:usage-analytics": {
     "url": "https://matomo.aam-digital.org",
@@ -82,11 +83,6 @@ export const defaultJsonConfig = {
         "name": $localize`:Menu item:Help`,
         "icon": "question",
         "link": "/help"
-      },
-      {
-        "name": $localize`:Menu item:Profile`,
-        "icon": "user",
-        "link": "/user"
       }
     ]
   },

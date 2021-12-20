@@ -81,3 +81,17 @@ app-search {
 .mat-drawer-side {
   border-right: 0;
 }
+
+.site-logo {
+  width: 180px;
+  padding: 8px;
+}
+
+.user-nav-button {
+  border: solid 1px rgba(0, 0, 0, 0.12);
+  border-right: 0;
+  border-radius: 0;
+}
+.user-nav-button-first {
+  border-left: 0;
+}
