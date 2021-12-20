@@ -1,9 +1,5 @@
 <div mat-dialog-title style="display: flex">
   <h1 i18n="Edit the progress of one or multiple tasks">Edit Progress</h1>
-  <div style="flex-grow: 1"></div>
-  <button mat-icon-button (click)="addPart()" color="accent">
-    <fa-icon icon="plus"></fa-icon>
-  </button>
 </div>
 
 <mat-dialog-content>
@@ -14,7 +10,7 @@
         matInput
         type="text"
         i18n-placeholder="Process Label|The label of a process or task"
-        placeholder="Label"
+        placeholder="Task"
       />
     </mat-form-field>
 
@@ -64,8 +60,20 @@
         Must be greater than 0
       </mat-error>
     </mat-form-field>
-    <button mat-icon-button (click)="removePart(index)" class="trash-field">
-      <fa-icon aria-label="remove" icon="trash"></fa-icon>
+  </div>
+
+  <div>
+    <button
+      mat-button
+      color="accent"
+      (click)="addPart()"
+    >
+      <fa-icon
+        class="button-icon"
+        aria-label="add element"
+        icon="plus-circle"
+      ></fa-icon>
+      <span i18n="Add a task to the progress dashboard list"> Add New Task </span>
     </button>
   </div>
 </mat-dialog-content>
