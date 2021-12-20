@@ -15,7 +15,7 @@
       >
         <!-- Table header only for assistive technologies like screen readers -->
         <tr hidden="true">
-          <th scope="col">Child</th>
+          <th scope="col">Participant</th>
           <th scope="col">Days since last note</th>
         </tr>
         <ng-container matColumnDef="child">
@@ -53,8 +53,12 @@
       *ngIf="childrenWithNoteInfoDataSource.data.length === 0 && !isLoading"
       class="headline"
     >
-      <span *ngIf="mode==='without-recent-notes'" i18n="There are no children that don't have a recent report to be shown here">No children without recent report</span>
-      <span *ngIf="mode==='with-recent-notes'" i18n="There are no children that have a recent report to be shown here">No children with recent report</span>
+      <span *ngIf="mode==='without-recent-notes'" i18n="There are no participants that don't have a recent report to be shown here">
+        no records without recent report
+      </span>
+      <span *ngIf="mode==='with-recent-notes'" i18n="There are no participants that have a recent report to be shown here">
+        no records with recent report
+      </span>
     </div>
     <mat-paginator
       #paginator

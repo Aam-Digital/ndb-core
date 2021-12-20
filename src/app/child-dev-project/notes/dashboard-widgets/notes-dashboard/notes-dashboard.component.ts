@@ -79,9 +79,9 @@ export class NotesDashboardComponent
   get subtitle(): string {
     switch (this.mode) {
       case "without-recent-notes":
-        return $localize`:Subtitle|Subtitle informing the user that these are the children without recent reports:Children without recent report`;
+        return $localize`:Subtitle|Subtitle informing the user that these are the children without recent reports:Cases without recent report`;
       case "with-recent-notes":
-        return $localize`:Subtitle|Subtitle informing the user that these are the children with recent reports:Children with recent report`;
+        return $localize`:Subtitle|Subtitle informing the user that these are the children with recent reports:Cases with recent report`;
     }
   }
 
@@ -116,9 +116,9 @@ export class NotesDashboardComponent
   get tooltip(): string {
     switch (this.mode) {
       case "with-recent-notes":
-        return $localize`:Tooltip|Spaces in front of the variables are added automatically:includes children with a note${this.sinceBeginningOfTheWeek}:sinceBeginningOfWeek:${this.withinTheLastNDays}:withinTheLastDays:`;
+        return $localize`:Tooltip|Spaces in front of the variables are added automatically:includes cases with a note${this.sinceBeginningOfTheWeek}:sinceBeginningOfWeek:${this.withinTheLastNDays}:withinTheLastDays:`;
       case "without-recent-notes":
-        return $localize`:Tooltip|Spaces in front of the variables are added automatically:includes children without a note${this.sinceBeginningOfTheWeek}:sinceBeginningOfWeek:${this.withinTheLastNDays}:withinTheLastDays:`;
+        return $localize`:Tooltip|Spaces in front of the variables are added automatically:includes cases without a note${this.sinceBeginningOfTheWeek}:sinceBeginningOfWeek:${this.withinTheLastNDays}:withinTheLastDays:`;
     }
   }
 
@@ -126,7 +126,7 @@ export class NotesDashboardComponent
     if (this.fromBeginningOfWeek) {
       return (
         " " +
-        $localize`:Tooltip-part|'includes children without a note since the beginning of the week':since the beginning of the week`
+        $localize`:Tooltip-part|'includes cases without a note since the beginning of the week':since the beginning of the week`
       );
     }
   }
@@ -135,7 +135,7 @@ export class NotesDashboardComponent
     if (this.sinceDays > 0) {
       return (
         " " +
-        $localize`:Tooltip-part|'includes children without a note within the last x days':without a note within the last ${this.sinceDays} days`
+        $localize`:Tooltip-part|'includes cases without a note within the last x days':without a note within the last ${this.sinceDays} days`
       );
     }
   }

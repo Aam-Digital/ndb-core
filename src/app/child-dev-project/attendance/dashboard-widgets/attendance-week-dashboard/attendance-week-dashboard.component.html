@@ -2,7 +2,7 @@
   icon="exclamation-triangle"
   theme="attendance"
   [title]="rowGroupCount"
-  subtitle="Students more than one day absent {{ periodLabel }}"
+  subtitle="Cases absent multiple times {{ periodLabel }}"
   i18n-subtitle="Dashboard attendance component subtitle"
 >
   <app-widget-content>
@@ -11,11 +11,11 @@
       <table
         mat-table
         [dataSource]="tableDataSource"
-        aria-label="Students with high absence"
+        aria-label="cases absent multiple times"
       >
         <!-- Table header only for assistive technologies like screen readers -->
         <tr hidden="true">
-          <th scope="col">Child</th>
+          <th scope="col">Participant</th>
           <th scope="col">Attendance</th>
         </tr>
         <ng-container matColumnDef="child">
@@ -42,7 +42,7 @@
         <tr mat-row *matRowDef="let row; columns: ['child', 'attendance'];" class="dashboard-table-row"></tr>
       </table>
     </div>
-    <div *ngIf="tableDataSource.data.length === 0 && loadingDone" class="headline">No students absent</div>
+    <div *ngIf="tableDataSource.data.length === 0 && loadingDone" class="headline">no absences recorded</div>
     <mat-paginator
       [style.display]="paginator.getNumberOfPages() === 0 ? 'none' : ''"
       #paginator
