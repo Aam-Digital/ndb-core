@@ -17,6 +17,7 @@ import { EntityConstructor } from "app/core/entity/model/entity";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { EntityMapperService } from "app/core/entity/entity-mapper.service";
 import { EntitySubrecordComponent } from "app/core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { ParseTreeResult } from "@angular/compiler";
 
 @Component({
   selector: "app-previous-schools",
@@ -29,14 +30,13 @@ export class PreviousSchoolsComponent
   records = new Array<ChildSchoolRelation>();
   readonly isActiveIndicator = {
     id: "isActive",
-    label: $localize`:Label for form field, Indicatind whether currenty active:Currently active`,
     view: "ReadonlyFunction",
     hideFromTable: true,
     tooltip: $localize`:Tooltip for the status of currently active or not:Change the start or end date to modify this status`,
     additional: (csr: ChildSchoolRelation) =>
       csr.isActive
         ? $localize`:Indication for the currently active status of an entry:Currently active`
-        : $localize`:Indication for the currently inactive status of an entry:Not active`,
+        : $localize`:Indication for the currently inactive status of an entry:Currently not active`,
   };
   columns: FormFieldConfig[] = [
     { id: "schoolId" },

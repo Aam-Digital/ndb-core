@@ -4,7 +4,6 @@ import { ReadonlyFunctionComponent } from "./readonly-function.component";
 import { Child } from "../../../../../child-dev-project/children/model/child";
 import { EntityFunctionPipe } from "./entity-function.pipe";
 import { FormControl, FormGroup } from "@angular/forms";
-import { By } from "@angular/platform-browser";
 
 describe("ReadonlyFunctionComponent", () => {
   let component: ReadonlyFunctionComponent;

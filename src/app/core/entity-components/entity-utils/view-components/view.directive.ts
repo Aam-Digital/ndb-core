@@ -1,7 +1,6 @@
 import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init-dynamic-component.interface";
 import { ViewPropertyConfig } from "../../entity-list/EntityListConfig";
 import { Entity } from "../../../entity/model/entity";
-import { FormGroup } from "@angular/forms";
 import { Directive, Input } from "@angular/core";
 
 @Directive()
