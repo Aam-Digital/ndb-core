@@ -5,7 +5,6 @@ import { DynamicValidatorsService } from "../../entity-form/dynamic-form-validat
 @Component({
   selector: "app-error-hint",
   templateUrl: "./error-hint.component.html",
-  styleUrls: ["./error-hint.component.scss"],
 })
 export class ErrorHintComponent {
   @Input() form: FormControl;
