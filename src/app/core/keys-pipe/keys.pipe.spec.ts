@@ -16,4 +16,10 @@ describe("KeysPipe", () => {
       { key: "second", value: "Second" },
     ]);
   });
+
+  it("should return undefined for null or undefined input", () => {
+    [null, undefined].map((obj) => {
+      expect(new KeysPipe().transform(obj)).toBeFalsy();
+    });
+  });
 });
