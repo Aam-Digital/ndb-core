@@ -53,7 +53,9 @@ export class EntityFormService {
       formField.label =
         formField.label || propertySchema.label || propertySchema.labelShort;
     }
-    formField.validators = propertySchema.validators;
+    if (propertySchema?.validators) {
+      formField.validators = propertySchema?.validators;
+    }
   }
 
   public createFormGroup(
@@ -72,7 +74,6 @@ export class EntityFormService {
             formField.validators
           );
           formConfig[formField.id].push(validators);
-          console.log(formConfig);
         }
       }
     });
