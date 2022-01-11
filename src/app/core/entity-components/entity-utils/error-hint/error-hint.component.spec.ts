@@ -2,7 +2,8 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ErrorHintComponent } from "./error-hint.component";
 import { KeysPipeModule } from "../../../keys-pipe/keys-pipe.module";
-import { FormControl } from "@angular/forms";
+import { FormControl, Validators } from "@angular/forms";
+import { By } from "@angular/platform-browser";
 
 describe("ErrorHintComponent", () => {
   let component: ErrorHintComponent;
@@ -24,5 +25,18 @@ describe("ErrorHintComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should be empty when there are no errors", () => {
+    const ellElements = fixture.debugElement.queryAll(By.css("div"));
+    expect(ellElements).toHaveSize(0);
+  });
+
+  it("should contain an entry when there is one error", async () => {
+    component.form = new FormControl("", Validators.required);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const ellElements = fixture.debugElement.queryAll(By.css("div"));
+    expect(ellElements).toHaveSize(1);
   });
 });
