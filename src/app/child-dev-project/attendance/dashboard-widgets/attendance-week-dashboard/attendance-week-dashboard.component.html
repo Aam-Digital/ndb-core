@@ -2,8 +2,10 @@
   icon="exclamation-triangle"
   theme="attendance"
   [title]="rowGroupCount"
-  subtitle="Cases absent multiple times {{ periodLabel }}"
+  subtitle="Absences {{ periodLabel }}"
   i18n-subtitle="Dashboard attendance component subtitle"
+  explanation="Cases absent multiple times in the given week"
+  i18n-explanation="Dashboard attendance component explanation tooltip"
 >
   <app-widget-content>
     <h2 *ngIf="!loadingDone" class="headline">Loading...</h2>
