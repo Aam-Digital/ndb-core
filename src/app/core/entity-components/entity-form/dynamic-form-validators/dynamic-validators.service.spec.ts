@@ -59,7 +59,7 @@ describe("DynamicValidatorsService", () => {
       ["something", undefined],
       ["foo@bar.com", "I'm an email I swear"],
       ["foo", "bar"],
-    ].map(([successState, failureState], index) => {
+    ].forEach(([successState, failureState], index) => {
       testValidator(validators[index], successState, failureState);
     });
   });
