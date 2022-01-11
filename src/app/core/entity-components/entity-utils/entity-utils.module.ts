@@ -34,6 +34,8 @@ import { EntityFunctionPipe } from "./view-components/readonly-function/entity-f
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
+import { EntitySubrecordModule } from "../entity-subrecord/entity-subrecord.module";
+import { ErrorHintComponent } from "./error-hint/error-hint.component";
 
 @NgModule({
   declarations: [
@@ -57,6 +59,7 @@ import { MatButtonModule } from "@angular/material/button";
     EntitySelectComponent,
     EditNumberComponent,
     EntityFunctionPipe,
+    ErrorHintComponent,
   ],
   imports: [
     CommonModule,
@@ -74,6 +77,7 @@ import { MatButtonModule } from "@angular/material/button";
     FlexLayoutModule,
     FontAwesomeModule,
     MatButtonModule,
+    EntitySubrecordModule,
   ],
   entryComponents: [
     EditTextComponent,
