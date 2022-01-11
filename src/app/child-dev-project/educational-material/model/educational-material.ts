@@ -35,12 +35,16 @@ export class EducationalMaterial extends Entity {
     label: $localize`:The material which has been borrowed:Material`,
     dataType: "configurable-enum",
     innerDataType: "materials",
-    required: true,
+    validators: {
+      required: true,
+    },
   })
   materialType: ConfigurableEnumValue;
   @DatabaseField({
     label: $localize`:The amount of the material which has been borrowed:Amount`,
-    required: true,
+    validators: {
+      required: true,
+    },
   })
   materialAmount: number;
   @DatabaseField({

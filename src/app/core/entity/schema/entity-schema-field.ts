@@ -93,10 +93,5 @@ export interface EntitySchemaField {
    */
   description?: string;
 
-  /**
-   * If set to true, the entity cannot be saved without setting a value for this property.
-   */
-  required?: boolean;
-
   validators?: FormValidatorConfig;
 }
