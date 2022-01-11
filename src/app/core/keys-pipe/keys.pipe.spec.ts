@@ -18,7 +18,7 @@ describe("KeysPipe", () => {
   });
 
   it("should return undefined for null or undefined input", () => {
-    [null, undefined].map((obj) => {
+    [null, undefined].forEach((obj) => {
       expect(new KeysPipe().transform(obj)).toBeFalsy();
     });
   });
