@@ -30,12 +30,15 @@ export class DynamicValidatorsService {
     return validators;
   }
 
-  public descriptionForValidator(validator: DynamicValidator): string {
+  public descriptionForValidator(
+    validator: DynamicValidator,
+    validationValue: any
+  ): string {
     switch (validator) {
       case "min":
-        return $localize`Please enter a greater value`;
+        return $localize`Must be greater than ${validationValue.min}`;
       case "max":
-        return $localize`Please enter a smaller value`;
+        return $localize`Cannot be greater than ${validationValue.max}`;
       case "pattern":
         return $localize`Please enter a valid pattern`;
       case "required":

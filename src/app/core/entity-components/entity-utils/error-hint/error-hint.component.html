@@ -1,3 +1,3 @@
 <div *ngFor="let err of form.errors | keys">
-  {{validatorService.descriptionForValidator(err.key)}}
+  {{validatorService.descriptionForValidator(err.key, err.value)}}
 </div>
