@@ -2,10 +2,7 @@
 
 $padding-block: 50px;
 
-$padding-buttons-top: 0.5cm;
-$padding-buttons-bottom: 1cm;
-
-$button-margin: 10px;
+$padding-buttons-bottom: 0.25em;
 
 $min-block-width: 330px;
 $max-screen-width: $min-block-width + $margin-main-view-right + $margin-main-view-left;
@@ -26,11 +23,13 @@ $max-screen-width: $min-block-width + $margin-main-view-right + $margin-main-vie
   align-items: start;
 }
 
+.column-group {
+  margin-right: 0.5em;
+}
+
 .action-button {
-  margin-left: $button-margin;
 }
 
 .buttons-wrapper {
-  padding-top: $padding-buttons-top;
   padding-bottom: $padding-buttons-bottom;
 }

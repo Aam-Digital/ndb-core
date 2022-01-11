@@ -37,7 +37,7 @@
   </div>
 
   <form class="columns-wrapper">
-    <div *ngFor="let col of _columns; let i=index">
+    <div *ngFor="let col of _columns; let i=index" class="column-group">
       <h2 *ngIf="columnHeaders && columnHeaders[i]">{{columnHeaders[i]}}</h2>
       <div
         *ngFor="let row of col"
