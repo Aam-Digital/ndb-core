@@ -686,7 +686,7 @@ export const defaultJsonConfig = {
       "entity": "RecurringActivity",
       "panels": [
         {
-          "title": $localize`:Panel title:Activity`,
+          "title": $localize`:Panel title:Basic Information`,
           "components": [
             {
               "component": "Form",
