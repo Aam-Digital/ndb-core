@@ -15,6 +15,8 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { FormValidatorConfig } from "../../entity-components/entity-form/dynamic-form-validators/form-validator-config";
+
 /**
  * Interface for additional configuration about a DatabaseField schema.
  *
@@ -76,7 +78,7 @@ export interface EntitySchemaField {
   editComponent?: string;
 
   /**
-   * A label which explains this value in a human readable way
+   * A label which explains this value in a human-readable way
    */
   label?: string;
 
@@ -95,4 +97,6 @@ export interface EntitySchemaField {
    * If set to true, the entity cannot be saved without setting a value for this property.
    */
   required?: boolean;
+
+  validators?: FormValidatorConfig;
 }

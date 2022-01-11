@@ -1,9 +1,10 @@
 import { Injectable } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { FormBuilder, FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "./entity-form/FormConfig";
 import { Entity } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { DynamicValidatorsService } from "./dynamic-form-validators/dynamic-validators.service";
 
 @Injectable()
 /**
@@ -14,7 +15,8 @@ export class EntityFormService {
   constructor(
     private fb: FormBuilder,
     private entityMapper: EntityMapperService,
-    private entitySchemaService: EntitySchemaService
+    private entitySchemaService: EntitySchemaService,
+    private dynamicValidator: DynamicValidatorsService
   ) {}
 
   public extendFormFieldConfig(
@@ -51,6 +53,7 @@ export class EntityFormService {
       formField.label =
         formField.label || propertySchema.label || propertySchema.labelShort;
     }
+    formField.validators = propertySchema.validators;
   }
 
   public createFormGroup(
@@ -64,8 +67,12 @@ export class EntityFormService {
       // Only properties with a schema are editable
       if (propertySchema) {
         formConfig[formField.id] = [entity[formField.id]];
-        if (formField.required || propertySchema?.required) {
-          formConfig[formField.id].push(Validators.required);
+        if (formField.validators) {
+          const validators = this.dynamicValidator.buildValidators(
+            formField.validators
+          );
+          formConfig[formField.id].push(validators);
+          console.log(formConfig);
         }
       }
     });
