@@ -3,12 +3,15 @@ import { TestBed } from "@angular/core/testing";
 import { DynamicValidatorsService } from "./dynamic-validators.service";
 import { FormValidatorConfig } from "./form-validator-config";
 import { FormControl, ValidatorFn } from "@angular/forms";
+import { LoggingService } from "../../../logging/logging.service";
 
 describe("DynamicValidatorsService", () => {
   let service: DynamicValidatorsService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      imports: [LoggingService],
+    });
     service = TestBed.inject(DynamicValidatorsService);
   });
 
