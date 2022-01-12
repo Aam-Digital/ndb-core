@@ -21,15 +21,19 @@ export type DynamicValidator =
  * For example, the `max` validator requires a number while the `pattern`
  * validator requires a string or regex.
  * Compliant examples:
- * `{
+ * <pre>
+ * {
  *   min: 5,
  *   pattern: "[a-z]*",
- * }`
+ * }
+ * </pre>
  * Non-compliant examples:
- * `{
+ * <pre>
+ * {
  *   min: "abc",
  *   rabbit: true
- * }`
+ * }
+ * </pre>
  */
 export type FormValidatorConfig = {
   [key in DynamicValidator]?: any;
