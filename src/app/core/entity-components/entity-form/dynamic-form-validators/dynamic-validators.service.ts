@@ -34,7 +34,7 @@ export class DynamicValidatorsService {
    * @param config The raw configuration object
    * @example
    * >>> buildValidators({ required: true, max: 5 })
-   * [ Validators.required, Validators.min(5) ]
+   * [ Validators.required, Validators.max(5) ]
    * @see ValidatorFn
    */
   public buildValidators(config: FormValidatorConfig): ValidatorFn[] {
