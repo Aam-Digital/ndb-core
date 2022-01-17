@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component } from "@angular/core";
+import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
 import { SessionService } from "../session-service/session.service";
 import { LoginState } from "../session-states/login-state.enum";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -29,7 +29,7 @@ import { LoggingService } from "../../logging/logging.service";
   templateUrl: "./login.component.html",
   styleUrls: ["./login.component.scss"],
 })
-export class LoginComponent {
+export class LoginComponent implements AfterViewInit {
   /** true while a login is started but result is not received yet */
   loginInProgress = false;
 
@@ -42,12 +42,18 @@ export class LoginComponent {
   /** errorMessage displayed in form */
   errorMessage: string;
 
+  @ViewChild("usernameInput") usernameInput: ElementRef;
+
   constructor(
     private _sessionService: SessionService,
     private loggingService: LoggingService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
+
+  ngAfterViewInit(): void {
+    setTimeout(() => this.usernameInput?.nativeElement.focus());
+  }
 
   /**
    * Do a login with the SessionService.
