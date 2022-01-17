@@ -1,10 +1,4 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  ViewChild,
-} from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import { ChildrenService } from "../children/children.service";
 import { Child } from "../children/model/child";
@@ -14,7 +8,6 @@ import { FormFieldConfig } from "../../core/entity-components/entity-form/entity
 import moment from "moment";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { EntityMapperService } from "app/core/entity/entity-mapper.service";
-import { EntitySubrecordComponent } from "app/core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { isActiveIndicator } from "../schools/children-overview/children-overview.component";
 
 @Component({
@@ -35,8 +28,6 @@ export class PreviousSchoolsComponent
     isActiveIndicator,
   ];
   hasCurrentlyActiveEntry: boolean;
-  @ViewChild(EntitySubrecordComponent)
-  entitySubrecord: EntitySubrecordComponent<ChildSchoolRelation>;
 
   single = true;
 
