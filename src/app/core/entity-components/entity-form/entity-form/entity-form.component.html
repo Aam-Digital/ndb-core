@@ -41,16 +41,17 @@
           'background-color': tempEntity.getColor()
         }"
       >
-      <ng-template
-      [appDynamicComponent]="{
-        component: col.view,
-        config: {
-          id: col.id,
-          entity: tempEntity,
-          config: col.additional
-        }
-      }"
-    ></ng-template>
+        <p *ngIf="col.label">{{ col.label }}:&nbsp;</p>
+        <ng-template
+        [appDynamicComponent]="{
+          component: col.view,
+          config: {
+            id: col.id,
+            entity: tempEntity,
+            config: col.additional
+          }
+        }"
+        ></ng-template>
       </mat-chip>
     </mat-chip-list>
   </div>
