@@ -29,7 +29,8 @@ export class HealthCheckupComponent
       id: "bmi",
       label: $localize`:Table header, Short for Body Mass Index:BMI`,
       view: "ReadonlyFunction",
-      additional: (entity: HealthCheck) => "BMI: " + entity.bmi.toFixed(2),
+      tooltip: $localize`Tooltip for BMI info:This is calculated using the height and the weight measure`,
+      additional: (entity: HealthCheck) => entity.bmi.toFixed(2),
     },
   ];
   @Input() child: Child;
