@@ -65,9 +65,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
         return col;
       }
     });
-    this.filteredColumns = this._columns.filter((col) => !col.hideFromTable );
+    this.filteredColumns = this._columns.filter((col) => !col.hideFromTable);
   }
-  
+
   _columns: FormFieldConfig[] = [];
   filteredColumns: FormFieldConfig[] = [];
 

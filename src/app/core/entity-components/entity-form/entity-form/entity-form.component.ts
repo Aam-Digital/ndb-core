@@ -6,7 +6,6 @@ import { FormGroup } from "@angular/forms";
 import { EntityFormService } from "../entity-form.service";
 import { AlertService } from "../../../alerts/alert.service";
 
-
 @Component({
   selector: "app-entity-form",
   templateUrl: "./entity-form.component.html",

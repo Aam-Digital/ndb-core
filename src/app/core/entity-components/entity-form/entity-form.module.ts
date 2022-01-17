@@ -11,7 +11,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatChipsModule } from "@angular/material/chips";
 
-
 @NgModule({
   declarations: [EntityFormComponent],
   imports: [
