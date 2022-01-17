@@ -12,12 +12,10 @@ import { OnInitDynamicComponent } from "../../core/view/dynamic-components/on-in
 import { PanelConfig } from "../../core/entity-components/entity-details/EntityDetailsConfig";
 import { FormFieldConfig } from "../../core/entity-components/entity-form/entity-form/FormConfig";
 import moment from "moment";
-import _ from "lodash";
-import { EntityConstructor } from "app/core/entity/model/entity";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { EntityMapperService } from "app/core/entity/entity-mapper.service";
 import { EntitySubrecordComponent } from "app/core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
-import { ParseTreeResult } from "@angular/compiler";
+import { isActiveIndicator } from "../schools/children-overview/children-overview.component";
 
 @Component({
   selector: "app-previous-schools",
@@ -28,23 +26,13 @@ export class PreviousSchoolsComponent
   implements OnChanges, OnInitDynamicComponent {
   @Input() child: Child;
   records = new Array<ChildSchoolRelation>();
-  readonly isActiveIndicator = {
-    id: "isActive",
-    view: "ReadonlyFunction",
-    hideFromTable: true,
-    tooltip: $localize`:Tooltip for the status of currently active or not:Change the start or end date to modify this status`,
-    additional: (csr: ChildSchoolRelation) =>
-      csr.isActive
-        ? $localize`:Indication for the currently active status of an entry:Currently active`
-        : $localize`:Indication for the currently inactive status of an entry:Currently not active`,
-  };
   columns: FormFieldConfig[] = [
     { id: "schoolId" },
     { id: "schoolClass" },
     { id: "start" },
     { id: "end" },
     { id: "result" },
-    this.isActiveIndicator,
+    isActiveIndicator,
   ];
   hasCurrentlyActiveEntry: boolean;
   @ViewChild(EntitySubrecordComponent)
@@ -69,11 +57,11 @@ export class PreviousSchoolsComponent
     }
     if (panelConfig.config?.columns) {
       this.columns = panelConfig.config.columns;
-      this.columns.push(this.isActiveIndicator);
+      this.columns.push(isActiveIndicator);
     }
     this.child = panelConfig.entity as Child;
     this.loadData(this.child.getId());
-    this.subscribeEntityUpdates(ChildSchoolRelation);
+    this.subscribeToChildSchoolRelationUpdates();
   }
 
   async loadData(id: string) {
@@ -82,7 +70,9 @@ export class PreviousSchoolsComponent
     }
 
     this.records = await this.childrenService.getSchoolRelationsFor(id);
-    this.hasCurrentlyActiveEntry = _.some(this.records, ["isActive", true]);
+    this.hasCurrentlyActiveEntry = this.records.some(
+      (record) => record.isActive
+    );
   }
 
   generateNewRecordFactory() {
@@ -99,14 +89,10 @@ export class PreviousSchoolsComponent
     };
   }
 
-  private subscribeEntityUpdates(
-    entityType: EntityConstructor<ChildSchoolRelation>
-  ) {
+  private subscribeToChildSchoolRelationUpdates() {
     this.entityMapperService
-      .receiveUpdates<ChildSchoolRelation>(entityType)
+      .receiveUpdates<ChildSchoolRelation>(ChildSchoolRelation)
       .pipe(untilDestroyed(this))
-      .subscribe(async () => {
-        this.loadData(this.child.getId());
-      });
+      .subscribe(() => this.loadData(this.child.getId()));
   }
 }

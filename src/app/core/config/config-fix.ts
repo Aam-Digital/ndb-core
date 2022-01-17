@@ -11,7 +11,6 @@ import { readingLevels } from "../../child-dev-project/aser/model/readingLevels"
 import { warningLevels } from "../../child-dev-project/warning-levels";
 import { ratingAnswers } from "../../features/historical-data/rating-answers";
 import { Note } from "../../child-dev-project/notes/model/note";
-import { ReadonlyFunctionComponent } from "../entity-components/entity-utils/view-components/readonly-function/readonly-function.component";
 
 // prettier-ignore
 export const defaultJsonConfig = {

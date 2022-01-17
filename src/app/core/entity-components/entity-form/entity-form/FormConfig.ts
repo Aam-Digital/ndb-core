@@ -70,9 +70,12 @@ export interface FormFieldConfig {
   visibleFrom?: string;
 
   /**
+   * If true, the field will only be shown in forms and popups, but not in tables.
+   */
+  hideFromTable?: boolean;
+
+  /**
    * A internal flag that will be automatically set in the entity subrecord in order to adapt the view/edit components.
    */
   forTable?: boolean;
-
-  hideFromTable?: boolean;
 }

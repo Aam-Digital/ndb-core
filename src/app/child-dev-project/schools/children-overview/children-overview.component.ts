@@ -8,6 +8,17 @@ import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { Entity } from "../../../core/entity/model/entity";
 import { ChildrenService } from "../../children/children.service";
 
+export const isActiveIndicator = {
+  id: "isActive",
+  view: "ReadonlyFunction",
+  hideFromTable: true,
+  tooltip: $localize`:Tooltip for the status of currently active or not:Only shown in the table if active. Change the start or end date to modify this status.`,
+  additional: (csr: ChildSchoolRelation) =>
+    csr.isActive
+      ? $localize`:Indication for the currently active status of an entry:Currently active`
+      : $localize`:Indication for the currently inactive status of an entry:Currently not active`,
+};
+
 /**
  * This component creates a table containing all children currently attending this school.
  */
@@ -17,23 +28,13 @@ import { ChildrenService } from "../../children/children.service";
   styleUrls: ["./children-overview.component.scss"],
 })
 export class ChildrenOverviewComponent implements OnInitDynamicComponent {
-  readonly isActiveIndicator = {
-    id: "isActive",
-    view: "ReadonlyFunction",
-    hideFromTable: true,
-    tooltip: $localize`:Tooltip for the status of currently active or not:Only shown in the table if active. Change the start or end date to modify this status.`,
-    additional: (csr: ChildSchoolRelation) =>
-      csr.isActive
-        ? $localize`:Indication for the currently active status of an entry:Currently active`
-        : $localize`:Indication for the currently inactive status of an entry:Currently not active`,
-  };
   columns: FormFieldConfig[] = [
     { id: "childId" },
     { id: "schoolClass" },
     { id: "start" },
     { id: "end" },
     { id: "result" },
-    this.isActiveIndicator,
+    isActiveIndicator,
   ];
 
   entity: Entity;

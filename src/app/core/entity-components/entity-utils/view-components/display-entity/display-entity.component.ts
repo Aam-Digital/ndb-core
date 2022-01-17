@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from "@angular/core";
 import { Entity } from "../../../../entity/model/entity";
 import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
 import { ViewDirective } from "../view.directive";
-import { DynamicEntityService } from "app/core/entity/dynamic-entity.service";
+import { DynamicEntityService } from "../../../../entity/dynamic-entity.service";
 
 @Component({
   selector: "app-display-entity",
