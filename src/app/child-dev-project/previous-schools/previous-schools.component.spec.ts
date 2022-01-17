@@ -137,8 +137,8 @@ describe("PreviousSchoolsComponent", () => {
   });
 
   it("should reload data when a new record is saved", fakeAsync(() => {
-    let updateSubject = new Subject<UpdatedEntity<ChildSchoolRelation>>();
-    let entityMapper = TestBed.inject(EntityMapperService);
+    const updateSubject = new Subject<UpdatedEntity<ChildSchoolRelation>>();
+    const entityMapper = TestBed.inject(EntityMapperService);
     spyOn(entityMapper, "receiveUpdates").and.returnValue(updateSubject);
     component.onInitFromDynamicConfig({ entity: testChild });
     tick();
