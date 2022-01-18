@@ -1,4 +1,4 @@
 export interface ImportMetaData {
-    entityType: string,
-    transactionId: string
+  entityType: string;
+  transactionId: string;
 }
