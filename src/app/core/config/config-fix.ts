@@ -634,12 +634,7 @@ export const defaultJsonConfig = {
                 {id: "isParticipatingInClass", visibleFrom: "lg" },
                 {id: "isInteractingWithOthers", visibleFrom: "lg" },
                 {id: "doesHomework", visibleFrom: "lg" },
-                {id: "isOnTime", visibleFrom: "lg" },
                 {id: "asksQuestions", visibleFrom: "lg" },
-                {id: "listens", visibleFrom: "lg" },
-                {id: "canWorkOnBoard", visibleFrom: "lg" },
-                {id: "isConcentrated", visibleFrom: "lg" },
-                {id: "doesNotDisturb", visibleFrom: "lg" },
               ]
             }
           ]
@@ -945,7 +940,7 @@ export const defaultJsonConfig = {
         "schema": {
           "dataType": "configurable-enum",
           "innerDataType": "rating-answer",
-          label: $localize`:Label for a child attribute:Participates`,
+          label: $localize`:Label for a child attribute:Participating`,
           description: $localize`:Description for a child attribute:The child is actively participating in the class.`
         }
       },
@@ -954,7 +949,7 @@ export const defaultJsonConfig = {
         "schema": {
           "dataType": "configurable-enum",
           "innerDataType": "rating-answer",
-          label: $localize`:Label for a child attribute:Interacts`,
+          label: $localize`:Label for a child attribute:Interacting`,
           description: $localize`:Description for a child attribute:The child interacts with other students during the class.`
         }
       },
@@ -968,57 +963,12 @@ export const defaultJsonConfig = {
         }
       },
       {
-        "name": "isOnTime",
-        "schema": {
-          "dataType": "configurable-enum",
-          "innerDataType": "rating-answer",
-          label: $localize`:Label for a child attribute:On time`,
-          description: $localize`:Description for a child attribute:The child is always on time for the class.`
-        }
-      },
-      {
         "name": "asksQuestions",
         "schema": {
           "dataType": "configurable-enum",
           "innerDataType": "rating-answer",
-          label: $localize`:Label for a child attribute:Asks`,
+          label: $localize`:Label for a child attribute:Asking Questions`,
           description: $localize`:Description for a child attribute:The child is asking questions during the class.`
-        }
-      },
-      {
-        "name": "listens",
-        "schema": {
-          "dataType": "configurable-enum",
-          "innerDataType": "rating-answer",
-          label: $localize`:Label for a child attribute:Listens`,
-          description: $localize`:Description for a child attribute:The child is listening during the class.`
-        }
-      },
-      {
-        "name": "canWorkOnBoard",
-        "schema": {
-          "dataType": "configurable-enum",
-          "innerDataType": "rating-answer",
-          label: $localize`:Label for a child attribute:Solves on board`,
-          description: $localize`:Description for a child attribute:The child can solve exercises on the board.`
-        }
-      },
-      {
-        "name": "isConcentrated",
-        "schema": {
-          "dataType": "configurable-enum",
-          "innerDataType": "rating-answer",
-          label: $localize`:Label for a child attribute:Concentrated`,
-          description: $localize`:Description for a child attribute:The child is concentrated during the class.`
-        }
-      },
-      {
-        "name": "doesNotDisturb",
-        "schema": {
-          "dataType": "configurable-enum",
-          "innerDataType": "rating-answer",
-          label: $localize`:Label for a child attribute:Not disturbing`,
-          description: $localize`:Description for a child attribute:The child does not disturb the class.`
         }
       },
     ]

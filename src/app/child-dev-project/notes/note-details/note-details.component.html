@@ -19,7 +19,7 @@
   #dialogForm
   [entity]="entity"
 >
-  <h1>{{ entity.date?.toLocaleDateString() }}: {{ entity.subject }}</h1>
+  <h1>{{ entity.date | date }}: {{ entity.subject }}</h1>
 
   <form #entityForm="ngForm" class="form-wrapper">
     <!-- General context of Note -->
