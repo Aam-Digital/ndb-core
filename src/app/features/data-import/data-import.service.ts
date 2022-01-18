@@ -24,27 +24,43 @@ export class DataImportService {
     private dynamicEntityService: DynamicEntityService
   ) {}
 
-  async validateCsvFile(file: File, entityType: string): Promise<CsvValidationResult> {
+  async validateCsvFile(
+    file: File,
+    entityType: string
+  ): Promise<CsvValidationResult> {
     const csvData = await readFile(file);
     const parsedCsvFile = this.parseCsvFile(csvData);
 
     if (parsedCsvFile === undefined || parsedCsvFile.data === undefined) {
-      return {status: CsvValidationStatus.ErrorNoData, resultMessage: 'The file provided is invalid, parsing was not possible!'};
+      return {
+        status: CsvValidationStatus.ErrorNoData,
+        message: "The file provided is invalid, parsing was not possible!",
+      };
     }
 
     if (parsedCsvFile.data.length === 0) {
-      return {status: CsvValidationStatus.ErrorEmpty, resultMessage: 'The file provided is invalid, it has no content!'};
+      return {
+        status: CsvValidationStatus.ErrorEmpty,
+        message: "The file provided is invalid, it has no content!",
+      };
     }
 
     if (parsedCsvFile.meta.fields.includes("_id")) {
       const record = parsedCsvFile.data[0];
 
       if (!record["_id"].startsWith(entityType + ":")) {
-        return {status: CsvValidationStatus.ErrorWrongType, resultMessage: 'The file provided is invalid, it contains an _id column but the given type does not match the selected type!'};
+        return {
+          status: CsvValidationStatus.ErrorWrongType,
+          message:
+            "The file provided is invalid, it contains an _id column but the given type does not match the selected type!",
+        };
       }
     }
 
-    return {status: CsvValidationStatus.Valid, resultMessage: 'The file provided is valid.'};
+    return {
+      status: CsvValidationStatus.Valid,
+      message: "The file provided is valid.",
+    };
   }
 
   parseCsvFile(csv: string): ParseResult {
@@ -55,11 +71,15 @@ export class DataImportService {
     });
   }
 
-  async importCsvContentToDB(csv: string, importMeta: ImportMetaData): Promise<void> {
+  async importCsvContentToDB(
+    csv: string,
+    importMeta: ImportMetaData
+  ): Promise<void> {
     const parsedCsv = this.parseCsvFile(csv);
 
     // e.g. Child:abcd1234
-    const recordIdPrefix = importMeta.entityType + ":" + importMeta.transactionId;
+    const recordIdPrefix =
+      importMeta.entityType + ":" + importMeta.transactionId;
 
     // remove existing records, if any
     // there is a chance of collision
@@ -87,9 +107,7 @@ export class DataImportService {
       // generate new _id as there is none
       if (!hasIdProperty) {
         const newUUID = uuid();
-        const idProperty = recordIdPrefix + newUUID.substring(8);
-
-        record["_id"] = idProperty;
+        record["_id"] = recordIdPrefix + newUUID.substring(8);
       }
 
       if (record["_id"] !== undefined) {
@@ -107,6 +125,7 @@ export class DataImportService {
   /**
    * Add the data from the loaded file to the database, inserting and updating records.
    * @param file The file object of the csv data to be loaded
+   * @param importMeta Additional information required for importing the file
    */
   async handleCsvImport(file: Blob, importMeta: ImportMetaData): Promise<void> {
     const restorePoint = await this.backupService.getJsonExport();
@@ -114,13 +133,12 @@ export class DataImportService {
 
     const refTitle = $localize`Import new data?`;
     const refText = $localize`Are you sure you want to import this file? This will add or update ${
-        newData.trim().split("\n").length - 1
-      } records from the loaded file. All existing records imported with the transaction id '${importMeta.transactionId}' will be deleted!`;
+      newData.trim().split("\n").length - 1
+    } records from the loaded file. All existing records imported with the transaction id '${
+      importMeta.transactionId
+    }' will be deleted!`;
 
-    const dialogRef = this.confirmationDialog.openDialog(
-      refTitle,
-      refText
-    );
+    const dialogRef = this.confirmationDialog.openDialog(refTitle, refText);
 
     dialogRef.afterClosed().subscribe(async (confirmed) => {
       if (!confirmed) {

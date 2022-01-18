@@ -1,10 +1,18 @@
-import { fakeAsync, flush, TestBed, tick } from "@angular/core/testing";
+import {
+  fakeAsync,
+  flush,
+  TestBed,
+  tick,
+} from "@angular/core/testing";
 import { DataImportService } from "./data-import.service";
 import { PouchDatabase } from "../../core/database/pouch-database";
 import { Database } from "../../core/database/database";
 import { BackupService } from "../../core/admin/services/backup.service";
 import { ConfirmationDialogService } from "../../core/confirmation-dialog/confirmation-dialog.service";
-import { MatSnackBar, MatSnackBarRef } from "@angular/material/snack-bar";
+import {
+  MatSnackBar,
+  MatSnackBarRef,
+} from "@angular/material/snack-bar";
 import { MatDialogRef } from "@angular/material/dialog";
 import { of } from "rxjs";
 import { CsvValidationStatus } from "./csv-validation-Status.enum";
@@ -34,9 +42,10 @@ describe("DataImportService", () => {
   function createDialogMock(
     confirm: boolean
   ): jasmine.SpyObj<MatDialogRef<any>> {
-    const mockDialogRef: jasmine.SpyObj<
-      MatDialogRef<any>
-    > = jasmine.createSpyObj("mockDialogRef", ["afterClosed"]);
+    const mockDialogRef = jasmine.createSpyObj<MatDialogRef<any>>(
+      "mockDialogRef",
+      ["afterClosed"]
+    );
     mockDialogRef.afterClosed.and.returnValue(of(confirm));
     confirmationDialogMock.openDialog.and.returnValue(mockDialogRef);
     return mockDialogRef;
@@ -45,9 +54,10 @@ describe("DataImportService", () => {
   function createSnackBarMock(
     clicked: boolean
   ): jasmine.SpyObj<MatSnackBarRef<any>> {
-    const mockSnackBarRef: jasmine.SpyObj<
-      MatSnackBarRef<any>
-    > = jasmine.createSpyObj("mockSnackBarRef", ["onAction"]);
+    const mockSnackBarRef = jasmine.createSpyObj<MatSnackBarRef<any>>(
+      "mockSnackBarRef",
+      ["onAction"]
+    );
     if (clicked) {
       mockSnackBarRef.onAction.and.returnValue(of(null));
     } else {
@@ -111,7 +121,10 @@ describe("DataImportService", () => {
     createSnackBarMock(false);
     spyOn(service, "importCsvContentToDB");
 
-    service.handleCsvImport(null, {entityType: "Child", transactionId: "a1b2c3d4"});
+    service.handleCsvImport(null, {
+      entityType: "Child",
+      transactionId: "a1b2c3d4",
+    });
 
     expect(mockBackupService.getJsonExport).toHaveBeenCalled();
     tick();
@@ -127,7 +140,10 @@ describe("DataImportService", () => {
     createDialogMock(false);
     spyOn(service, "importCsvContentToDB");
 
-    service.handleCsvImport(null, {entityType: "Child", transactionId: "a1b2c3d4"});
+    service.handleCsvImport(null, {
+      entityType: "Child",
+      transactionId: "a1b2c3d4",
+    });
 
     expect(mockBackupService.getJsonExport).toHaveBeenCalled();
     tick();
@@ -140,11 +156,15 @@ describe("DataImportService", () => {
   it("should restore database when undo button is clicked", fakeAsync(() => {
     createFileReaderMock();
     mockBackupService.getJsonExport.and.resolveTo("mockRestorePoint");
-    mockBackupService.clearDatabase.and.callThrough();
+    mockBackupService.clearDatabase.and.resolveTo();
     createDialogMock(true);
     createSnackBarMock(true);
+    spyOn(db, "getAll").and.resolveTo([]);
 
-    service.handleCsvImport(null, {entityType: "Child", transactionId: "a1b2c3d4"});
+    service.handleCsvImport(null, {
+      entityType: "Child",
+      transactionId: "a1b2c3d4",
+    });
 
     tick();
     expect(mockBackupService.clearDatabase).toHaveBeenCalled();
@@ -158,7 +178,10 @@ describe("DataImportService", () => {
   it("should import csv file and generate searchIndices", async () => {
     const csvString = "_id,name,projectNumber\n" + 'Child:1,"John Doe",123';
 
-    await service.importCsvContentToDB(csvString, undefined);
+    await service.importCsvContentToDB(csvString, {
+      entityType: "Child",
+      transactionId: "transactionID",
+    });
 
     expect(db.put).toHaveBeenCalledWith(
       jasmine.objectContaining({

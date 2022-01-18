@@ -24,7 +24,7 @@ export class DataImportComponent implements OnInit {
   transactionIdFormGroup: FormGroup;
 
   csvFile: Blob = undefined;
-  transactionId: string = '';
+  transactionId: string = "";
 
   entitiesMap: Map<string, EntityConstructor<Entity>>;
 
@@ -42,11 +42,14 @@ export class DataImportComponent implements OnInit {
       entitySelectionCtrl: ["", Validators.required],
     });
     this.fileSelectionFormGroup = this.formBuilder.group({
-      fileNameCtrl: [{value: "", disabled: true}, Validators.required],
+      fileNameCtrl: [{ value: "", disabled: true }, Validators.required],
     });
     this.transactionIdFormGroup = this.formBuilder.group({
-      transactionIdInputCtrl: ["", [Validators.required, Validators.pattern('^$|^[A-Fa-f0-9]{8}$')]],
-    })
+      transactionIdInputCtrl: [
+        "",
+        [Validators.required, Validators.pattern("^$|^[A-Fa-f0-9]{8}$")],
+      ],
+    });
   }
 
   get hasValidFile(): boolean {
@@ -54,7 +57,7 @@ export class DataImportComponent implements OnInit {
   }
 
   get hasTransactionId(): boolean {
-    return this.transactionId !== '';
+    return this.transactionId !== "";
   }
 
   entitySelectionChanged(): void {
@@ -66,7 +69,8 @@ export class DataImportComponent implements OnInit {
   async setCsvFile(inputEvent: Event): Promise<void> {
     const target = inputEvent.target as HTMLInputElement;
     const file = target.files[0];
-    const entityType = this.entitySelectionFormGroup.get("entitySelectionCtrl").value;
+    const entityType = this.entitySelectionFormGroup.get("entitySelectionCtrl")
+      .value;
     const csvValidationResult = await this.dataImportService.validateCsvFile(
       file,
       entityType
@@ -78,7 +82,7 @@ export class DataImportComponent implements OnInit {
 
       this.alertService.addAlert(
         new Alert(
-          csvValidationResult.resultMessage,
+          csvValidationResult.message,
           Alert.DANGER,
           AlertDisplay.TEMPORARY
         )
@@ -95,17 +99,25 @@ export class DataImportComponent implements OnInit {
     }
 
     // use transaction id or generate a new one
-    const transIdCtrl = this.transactionIdFormGroup.get("transactionIdInputCtrl");
+    const transIdCtrl = this.transactionIdFormGroup.get(
+      "transactionIdInputCtrl"
+    );
     if (transIdCtrl.valid) {
       this.transactionId = transIdCtrl.value;
     } else {
       this.transactionId = uuid().substring(0, 8);
-      this.transactionIdFormGroup.setValue({ transactionIdInputCtrl: this.transactionId});
+      this.transactionIdFormGroup.setValue({
+        transactionIdInputCtrl: this.transactionId,
+      });
     }
 
-    const entityType = this.entitySelectionFormGroup.get("entitySelectionCtrl").value;
+    const entityType = this.entitySelectionFormGroup.get("entitySelectionCtrl")
+      .value;
 
-    const importMeta: ImportMetaData = {transactionId: this.transactionId, entityType: entityType};
+    const importMeta: ImportMetaData = {
+      transactionId: this.transactionId,
+      entityType: entityType,
+    };
 
     await this.dataImportService.handleCsvImport(this.csvFile, importMeta);
   }
