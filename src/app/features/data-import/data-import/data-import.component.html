@@ -1,4 +1,5 @@
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons"rel="stylesheet">
+<fa-icon icon="pen"></fa-icon>
+
 <mat-vertical-stepper linear #stepper>
     <mat-step [stepControl]="entitySelectionFormGroup" [editable]="true">
       <form [formGroup]="entitySelectionFormGroup">
@@ -60,4 +61,7 @@
         <button mat-button (click)="stepper.reset()">Reset</button>
       </div>
     </mat-step>
+    <ng-template matStepperIcon="edit">
+      <fa-icon icon="pen"></fa-icon>
+    </ng-template>
   </mat-vertical-stepper>
