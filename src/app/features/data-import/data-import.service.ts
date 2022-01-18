@@ -10,6 +10,7 @@ import { ImportMetaData } from "./import-meta-data.type";
 import { v4 as uuid } from "uuid";
 import { CsvValidationStatus } from "./csv-validation-Status.enum";
 import { CsvValidationResult } from "./csv-validation-result.type";
+import { DynamicEntityService } from "../../core/entity/dynamic-entity.service";
 
 @Injectable()
 @UntilDestroy()
@@ -19,7 +20,8 @@ export class DataImportService {
     private papa: Papa,
     private backupService: BackupService,
     private confirmationDialog: ConfirmationDialogService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dynamicEntityService: DynamicEntityService
   ) {}
 
   async validateCsvFile(file: File, entityType: string): Promise<CsvValidationResult> {
@@ -90,6 +92,14 @@ export class DataImportService {
         record["_id"] = idProperty;
       }
 
+      if (record["_id"] !== undefined) {
+        const entityType = record["_id"].split(":")[0];
+        const ctor = this.dynamicEntityService.getEntityConstructor(entityType);
+        record["searchIndices"] = Object.assign(
+          new ctor(),
+          record
+        ).searchIndices;
+      }
       await this.db.put(record, true);
     }
   }
