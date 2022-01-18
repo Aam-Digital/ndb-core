@@ -1,6 +1,9 @@
 import { TestBed } from "@angular/core/testing";
 
-import { DynamicValidatorsService } from "./dynamic-validators.service";
+import {
+  DynamicValidatorsService,
+  patternWithMessage,
+} from "./dynamic-validators.service";
 import { FormValidatorConfig } from "./form-validator-config";
 import { FormControl, ValidatorFn } from "@angular/forms";
 
@@ -62,5 +65,44 @@ describe("DynamicValidatorsService", () => {
     ].forEach(([successState, failureState], index) => {
       testValidator(validators[index], successState, failureState);
     });
+  });
+
+  it("can generate a validator with custom message for patterns", () => {
+    const validators = service.buildValidators({
+      pattern: {
+        message: "M",
+        pattern: "[a-z]",
+      },
+    });
+    expect(validators).toHaveSize(1);
+    const invalidForm = new FormControl("09");
+    const validationErrors = validators[0](invalidForm);
+    expect(validationErrors.pattern).toEqual(
+      jasmine.objectContaining({
+        message: "M",
+      })
+    );
+  });
+});
+
+describe("patternWithMessage", () => {
+  const CUSTOM_MESSAGE = "Custom error message";
+
+  it("contains a custom error message a form field contains an invalid pattern", () => {
+    const validationFn = patternWithMessage("[0-9]+", CUSTOM_MESSAGE);
+    const invalidFormControl = new FormControl("ab");
+    const validationErrors = validationFn(invalidFormControl);
+    expect(validationErrors.pattern).toEqual(
+      jasmine.objectContaining({
+        message: CUSTOM_MESSAGE,
+      })
+    );
+  });
+
+  it("returns an empty error message when the form field is valid", () => {
+    const validationFn = patternWithMessage("[0-9]+", CUSTOM_MESSAGE);
+    const validFormControl = new FormControl("098");
+    const validationErrors = validationFn(validFormControl);
+    expect(validationErrors).toBeNull();
   });
 });

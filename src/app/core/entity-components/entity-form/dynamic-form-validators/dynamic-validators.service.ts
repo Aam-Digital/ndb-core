@@ -21,7 +21,7 @@ type ValidatorFactory = (value: any, name: string) => ValidatorFn;
  * }
  * </pre>
  */
-function patternWithMessage(
+export function patternWithMessage(
   pattern: string | RegExp,
   message: string
 ): ValidatorFn {
@@ -33,6 +33,8 @@ function patternWithMessage(
       Object.assign(errors.pattern, {
         message: message,
       });
+      return errors;
+    } else {
       return errors;
     }
   };
