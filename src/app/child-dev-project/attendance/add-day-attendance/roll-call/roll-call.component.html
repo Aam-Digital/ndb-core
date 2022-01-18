@@ -6,7 +6,9 @@
       mode="determinate"
       [value]="(currentIndex / entries.length) * 100"
     ></mat-progress-bar>
-    <div class="progress-label">{{ currentIndex }} / {{ entries.length }}</div>
+    <div class="progress-label" [style.visibility]="currentIndex < entries.length ? 'visible' : 'hidden'">
+      {{ currentIndex+1 }} / {{ entries.length }}
+    </div>
 
     <div class="navigation-bar">
       <button mat-icon-button (click)="goToPrevious()" [disabled]="isFirst">
@@ -51,7 +53,7 @@
 </div>
 
 <!-- Completion Page -->
-<div *ngIf="isFinished" class="roll-call-complete mat-elevation-z10" [@completeRollCall] (click)="finish()">
+<div *ngIf="isFinished" class="roll-call-complete" [@completeRollCall] (click)="finish()">
   <fa-icon icon="check-circle" class="roll-call-complete-icon"></fa-icon>
   <div
     i18n="

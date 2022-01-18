@@ -30,7 +30,7 @@ import { sortByAttribute } from "../../../../utils/utils";
   animations: [
     trigger("completeRollCall", [
       transition("void => *", [
-        style({ backgroundColor: "white" }),
+        style({ backgroundColor: "transparent" }),
         animate(1000),
       ]),
     ]),
