@@ -5,8 +5,24 @@ import { LoggingService } from "../../../logging/logging.service";
 
 type ValidatorFactory = (value: any, name: string) => ValidatorFn;
 
-export function patternWithMessage(
-  pattern: string,
+/**
+ * creates a pattern validator that also carries a predefined
+ * message
+ * @param pattern The pattern to check
+ * @param message The custom message to display when the pattern fails
+ * @example
+ * >>> validator = patternWithMessage(/foo/, "Can only be foo");
+ * >>> validator(invalidFormField);
+ * <pre>
+ * {
+ *   message: "Can only be foo",
+ *   requiredPattern: "foo",
+ *   actualValue: "bar"
+ * }
+ * </pre>
+ */
+function patternWithMessage(
+  pattern: string | RegExp,
   message: string
 ): ValidatorFn {
   const patternValidator = Validators.pattern(pattern);
