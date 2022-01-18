@@ -4,7 +4,6 @@ import { DataImportService } from "../data-import.service";
 import { FormBuilder, FormControl, Validators } from "@angular/forms";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
-import { AlertService } from "app/core/alerts/alert.service";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatStepperModule } from "@angular/material/stepper";
@@ -12,6 +11,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { AlertsModule } from "../../../core/alerts/alerts.module";
 
 describe("DataImportComponent", () => {
   let component: DataImportComponent;
@@ -20,7 +20,6 @@ describe("DataImportComponent", () => {
   let mockDataImportService: jasmine.SpyObj<DataImportService>;
   let mockEntityMapperService: jasmine.SpyObj<EntityMapperService>;
   let mockEntitySchemaService: jasmine.SpyObj<EntitySchemaService>;
-  let alertService: AlertService;
 
   beforeEach(
     waitForAsync(() => {
@@ -53,6 +52,7 @@ describe("DataImportComponent", () => {
           MatStepperModule,
           ReactiveFormsModule,
           BrowserAnimationsModule,
+          AlertsModule,
         ],
         providers: [
           FormBuilder,
@@ -67,10 +67,6 @@ describe("DataImportComponent", () => {
           {
             provide: EntitySchemaService,
             useValue: mockEntitySchemaService,
-          },
-          {
-            provide: AlertService,
-            useValue: alertService,
           },
         ],
       }).compileComponents();
