@@ -8,7 +8,7 @@ import { ImportMetaData } from "../import-meta-data.type";
 import { AlertService } from "app/core/alerts/alert.service";
 import { Alert } from "app/core/alerts/alert";
 import { AlertDisplay } from "app/core/alerts/alert-display";
-import { CsvValidationStatus } from "../csv-validation-Status.enum";
+import { CsvValidationStatus } from "../csv-validation-status.enum";
 
 @Component({
   selector: "app-data-import",

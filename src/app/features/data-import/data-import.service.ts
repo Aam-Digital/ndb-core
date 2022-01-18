@@ -8,7 +8,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { readFile } from "../../utils/utils";
 import { ImportMetaData } from "./import-meta-data.type";
 import { v4 as uuid } from "uuid";
-import { CsvValidationStatus } from "./csv-validation-Status.enum";
+import { CsvValidationStatus } from "./csv-validation-status.enum";
 import { CsvValidationResult } from "./csv-validation-result.type";
 import { DynamicEntityService } from "../../core/entity/dynamic-entity.service";
 

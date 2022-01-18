@@ -1,4 +1,4 @@
-import { CsvValidationStatus } from "./csv-validation-Status.enum";
+import { CsvValidationStatus } from "./csv-validation-status.enum";
 
 export interface CsvValidationResult {
   status: CsvValidationStatus;

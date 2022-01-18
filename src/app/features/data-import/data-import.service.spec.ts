@@ -1,21 +1,13 @@
-import {
-  fakeAsync,
-  flush,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { fakeAsync, flush, TestBed, tick } from "@angular/core/testing";
 import { DataImportService } from "./data-import.service";
 import { PouchDatabase } from "../../core/database/pouch-database";
 import { Database } from "../../core/database/database";
 import { BackupService } from "../../core/admin/services/backup.service";
 import { ConfirmationDialogService } from "../../core/confirmation-dialog/confirmation-dialog.service";
-import {
-  MatSnackBar,
-  MatSnackBarRef,
-} from "@angular/material/snack-bar";
+import { MatSnackBar, MatSnackBarRef } from "@angular/material/snack-bar";
 import { MatDialogRef } from "@angular/material/dialog";
 import { of } from "rxjs";
-import { CsvValidationStatus } from "./csv-validation-Status.enum";
+import { CsvValidationStatus } from "./csv-validation-status.enum";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 
