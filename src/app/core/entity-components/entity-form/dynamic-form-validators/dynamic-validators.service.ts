@@ -1,9 +1,26 @@
 import { Injectable } from "@angular/core";
 import { DynamicValidator, FormValidatorConfig } from "./form-validator-config";
-import { ValidatorFn, Validators } from "@angular/forms";
+import { AbstractControl, ValidatorFn, Validators } from "@angular/forms";
 import { LoggingService } from "../../../logging/logging.service";
 
 type ValidatorFactory = (value: any, name: string) => ValidatorFn;
+
+export function patternWithMessage(
+  pattern: string,
+  message: string
+): ValidatorFn {
+  const patternValidator = Validators.pattern(pattern);
+
+  return (control: AbstractControl) => {
+    const errors = patternValidator(control);
+    if (errors !== null) {
+      Object.assign(errors.pattern, {
+        message: message,
+      });
+      return errors;
+    }
+  };
+}
 
 @Injectable({
   providedIn: "root",
@@ -19,7 +36,13 @@ export class DynamicValidatorsService {
   } = {
     min: (value) => Validators.min(value as number),
     max: (value) => Validators.max(value as number),
-    pattern: (value) => Validators.pattern(value as string),
+    pattern: (value) => {
+      if (typeof value === "object") {
+        return patternWithMessage(value.pattern, value.message);
+      } else {
+        return Validators.pattern(value as string);
+      }
+    },
     validEmail: (value) => (value ? Validators.email : null),
     required: (value) => (value ? Validators.required : null),
   };
@@ -74,7 +97,11 @@ export class DynamicValidatorsService {
       case "max":
         return $localize`Cannot be greater than ${validationValue.max}`;
       case "pattern":
-        return $localize`Please enter a valid pattern`;
+        if (validationValue.message) {
+          return validationValue.message;
+        } else {
+          return $localize`Please enter a valid pattern`;
+        }
       case "required":
         return $localize`This field is required`;
       case "validEmail":

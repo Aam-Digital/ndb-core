@@ -1,10 +1,7 @@
 <mat-form-field [formGroup]="formControl.parent">
   <input
     matInput
-    type="number"
-    [min]="minValue"
-    [max]="maxValue"
-    [formControlName]="formControlName"
+    [formControl]="formControl"
     [placeholder]="label"
     [title]="label"
   />
