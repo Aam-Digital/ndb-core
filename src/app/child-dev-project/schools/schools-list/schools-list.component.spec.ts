@@ -17,6 +17,7 @@ import { EntityListConfig } from "../../../core/entity-components/entity-list/En
 import { ExportService } from "../../../core/export/export-service/export.service";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("SchoolsListComponent", () => {
   let component: SchoolsListComponent;
@@ -53,6 +54,7 @@ describe("SchoolsListComponent", () => {
           Angulartics2Module.forRoot(),
           NoopAnimationsModule,
           MockSessionModule.withState(),
+          FontAwesomeTestingModule,
         ],
         providers: [
           { provide: ActivatedRoute, useValue: routeMock },

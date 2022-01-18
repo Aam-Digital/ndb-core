@@ -7,8 +7,9 @@
       "files": [
         "/favicon.ico",
         "/index.html",
-        "/*.css",
         "/*.js",
+        "!/*-es5.*.js",
+        "/*.css",
         "/*.woff2",
         "/*.tff"
       ]
@@ -19,12 +20,14 @@
     "updateMode": "prefetch",
     "resources": {
       "files": [
-        "/assets/*/**",
+        "/*.svg",
         "/assets/changelog.json",
         "/assets/child.png",
         "/assets/config.default.json",
         "/assets/How_To.md",
-        "assets/locale/How_To.de.md"
+        "/assets/locale/How_To.de.md",
+        "/assets/*/**",
+        "/*-es5.*.js"
       ]
     }
   }],

@@ -6,7 +6,7 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { MockSessionModule } from "../session/mock-session.module";
 import { ConfigService } from "../config/config.service";
 import { UsageAnalyticsConfig } from "./usage-analytics-config";
-import { Angulartics2Piwik } from "angulartics2/piwik";
+import { Angulartics2Matomo } from "angulartics2/matomo";
 import { AppConfig } from "../app-config/app-config";
 import { IAppConfig } from "../app-config/app-config.model";
 
@@ -14,17 +14,16 @@ describe("AnalyticsService", () => {
   let service: AnalyticsService;
 
   let mockConfigService: jasmine.SpyObj<ConfigService>;
-  let mockAngulartics: jasmine.SpyObj<Angulartics2Piwik>;
+  let mockMatomo: jasmine.SpyObj<Angulartics2Matomo>;
 
   beforeEach(() => {
     AppConfig.settings = { site_name: "unit-testing" } as IAppConfig;
     mockConfigService = jasmine.createSpyObj("mockConfigService", [
       "getConfig",
     ]);
-    mockAngulartics = jasmine.createSpyObj("mockAngulartics", [
-      "startTracking",
-      "setUserProperties",
+    mockMatomo = jasmine.createSpyObj("mockMatomo", [
       "setUsername",
+      "startTracking",
     ]);
 
     TestBed.configureTestingModule({
@@ -36,10 +35,13 @@ describe("AnalyticsService", () => {
       providers: [
         AnalyticsService,
         { provide: ConfigService, useValue: mockConfigService },
-        { provide: Angulartics2Piwik, useValue: mockAngulartics },
+        { provide: Angulartics2Matomo, useValue: mockMatomo },
       ],
     });
     service = TestBed.inject(AnalyticsService);
+
+    // make _paq a array
+    window["_paq"] = [];
   });
 
   it("should be created", () => {
@@ -49,13 +51,13 @@ describe("AnalyticsService", () => {
   it("should not track if no url or site_id", () => {
     mockConfigService.getConfig.and.returnValue({});
     service.init();
-    expect(mockAngulartics.startTracking).not.toHaveBeenCalled();
+    expect(mockMatomo.startTracking).not.toHaveBeenCalled();
   });
 
   it("should not track if no usage analytics config", () => {
     mockConfigService.getConfig.and.returnValue(undefined);
     service.init();
-    expect(mockAngulartics.startTracking).not.toHaveBeenCalled();
+    expect(mockMatomo.startTracking).not.toHaveBeenCalled();
   });
 
   it("should track correct site_id", () => {
@@ -67,7 +69,7 @@ describe("AnalyticsService", () => {
 
     service.init();
 
-    expect(mockAngulartics.startTracking).toHaveBeenCalledTimes(1);
+    expect(mockMatomo.startTracking).toHaveBeenCalledTimes(1);
     expect(window["_paq"]).toContain([
       "setSiteId",
       testAnalyticsConfig.site_id,

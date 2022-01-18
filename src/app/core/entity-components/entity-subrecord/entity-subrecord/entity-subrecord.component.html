@@ -57,11 +57,11 @@
           color="accent"
           (click)="create()"
         >
-          <mat-icon
+          <fa-icon
             class="table-action-icon"
             aria-label="add"
-            fontIcon="fa-plus-circle"
-          ></mat-icon>
+            icon="plus-circle"
+          ></fa-icon>
         </button>
       </th>
       <td mat-cell *matCellDef="let rec">
@@ -71,11 +71,11 @@
             *ngIf="!rec.formGroup || rec.formGroup.disabled"
             (click)="edit(rec)"
           >
-            <mat-icon
+            <fa-icon
               class="table-action-icon"
               aria-label="edit"
-              fontIcon="fa-pencil"
-            ></mat-icon>
+              icon="pen"
+            ></fa-icon>
           </button>
           <button
             mat-icon-button
@@ -85,11 +85,11 @@
             [angularticsCategory]="rec?.record?.getType()"
             angularticsAction="subrecord_inlineedit_save"
           >
-            <mat-icon
+            <fa-icon
               class="table-action-icon"
               aria-label="save"
-              fontIcon="fa-check-circle"
-            ></mat-icon>
+              icon="check-circle"
+            ></fa-icon>
           </button>
           <button
             mat-icon-button
@@ -99,11 +99,11 @@
             [angularticsCategory]="rec?.record?.getType()"
             angularticsAction="subrecord_inlineedit_cancel"
           >
-            <mat-icon
+            <fa-icon
               class="table-action-icon"
               aria-label="cancel"
-              fontIcon="fa-times-circle"
-            ></mat-icon>
+              icon="times-circle"
+            ></fa-icon>
           </button>
           <button
             mat-icon-button
@@ -113,11 +113,11 @@
             [angularticsCategory]="rec?.record?.getType()"
             angularticsAction="subrecord_inlineedit_delete"
           >
-            <mat-icon
+            <fa-icon
               class="table-action-icon"
               aria-label="delete"
-              fontIcon="fa-trash"
-            ></mat-icon>
+              icon="trash"
+            ></fa-icon>
           </button>
         </div>
       </td>

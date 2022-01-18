@@ -3,7 +3,6 @@ import {
   HostListener,
   Input,
   OnChanges,
-  OnInit,
   SimpleChanges,
 } from "@angular/core";
 import { Router } from "@angular/router";
@@ -18,25 +17,20 @@ import { ViewConfig } from "../../../core/view/dynamic-routing/view-config.inter
   templateUrl: "./school-block.component.html",
   styleUrls: ["./school-block.component.scss"],
 })
-export class SchoolBlockComponent
-  implements OnInitDynamicComponent, OnChanges, OnInit {
-  iconName: String;
+export class SchoolBlockComponent implements OnInitDynamicComponent, OnChanges {
+  icon: string;
   @Input() entity: School = new School("");
   @Input() entityId: string;
   @Input() linkDisabled: boolean;
-  tooltip = false;
-  tooltipTimeout;
 
   constructor(
     private router: Router,
     private entityMapper: EntityMapperService,
     private configService: ConfigService
-  ) {}
-
-  ngOnInit() {
-    this.iconName =
-      "fa-" +
-      this.configService.getConfig<ViewConfig>("view:school/:id")?.config?.icon;
+  ) {
+    this.icon = this.configService.getConfig<ViewConfig>(
+      "view:school/:id"
+    )?.config?.icon;
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -59,19 +53,6 @@ export class SchoolBlockComponent
       return;
     }
     this.entity = await this.entityMapper.load(School, this.entityId);
-  }
-
-  showTooltip() {
-    if (this.tooltipTimeout) {
-      clearTimeout(this.tooltipTimeout);
-    }
-    this.tooltipTimeout = setTimeout(() => (this.tooltip = true), 1000);
-  }
-  hideTooltip() {
-    if (this.tooltipTimeout) {
-      clearTimeout(this.tooltipTimeout);
-    }
-    this.tooltipTimeout = setTimeout(() => (this.tooltip = false), 150);
   }
 
   @HostListener("click") onClick() {

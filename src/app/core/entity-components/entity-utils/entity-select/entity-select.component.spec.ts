@@ -17,6 +17,8 @@ import { User } from "../../../user/user";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { Subscription } from "rxjs";
+import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
+import { DynamicEntityService } from "../../../entity/dynamic-entity.service";
 
 describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any>;
@@ -38,6 +40,8 @@ describe("EntitySelectComponent", () => {
           provide: EntityMapperService,
           useValue: mockEntityMapper(testUsers.concat(otherEntities)),
         },
+        EntitySchemaService,
+        DynamicEntityService,
       ],
       imports: [
         MatAutocompleteModule,
@@ -86,47 +90,44 @@ describe("EntitySelectComponent", () => {
     fixture.detectChanges();
   });
 
-  it("contains the initial selection when passed as entity-arguments", fakeAsync(() => {
+  it("contains the initial selection as entities", fakeAsync(() => {
     component.entityType = User.ENTITY_TYPE;
-    fixture.detectChanges();
-    tick();
-    component.selectionInputType = "entity";
-    const expectation = testUsers.slice(2, 3);
-    component.selection = expectation;
-    expect(component.selection_).toEqual(expectation);
-  }));
+    const expectation = testUsers.slice(2, 3).map((user) => user.getId());
 
-  it("contains the initial selection when passed as id-arguments", fakeAsync(() => {
-    component.entityType = User.ENTITY_TYPE;
-    component.selectionInputType = "id";
-    const expectation = testUsers.slice(2, 3).map((child) => child.getId());
     component.selection = expectation;
     fixture.detectChanges();
     tick();
-    expect(component.selection_.every((s) => typeof s === "object")).toBeTrue();
-    expect(component.selection_.map((s) => s.getId())).toEqual(expectation);
+
+    component.selectedEntities.forEach((s) => expect(s).toBeInstanceOf(User));
+    expect(component.selectedEntities.map((s) => s.getId())).toEqual(
+      expectation
+    );
   }));
 
   it("emits whenever a new entity is selected", fakeAsync(() => {
     spyOn(component.selectionChange, "emit");
     component.entityType = User.ENTITY_TYPE;
     tick();
-    component.selectionInputType = "entity";
+
     component.selectEntity(testUsers[0]);
-    expect(component.selectionChange.emit).toHaveBeenCalledWith([testUsers[0]]);
+    expect(component.selectionChange.emit).toHaveBeenCalledWith([
+      testUsers[0].getId(),
+    ]);
+
     component.selectEntity(testUsers[1]);
     expect(component.selectionChange.emit).toHaveBeenCalledWith([
-      testUsers[0],
-      testUsers[1],
+      testUsers[0].getId(),
+      testUsers[1].getId(),
     ]);
     tick();
   }));
 
   it("emits whenever a selected entity is removed", () => {
     spyOn(component.selectionChange, "emit");
-    component.selection_ = [...testUsers];
-    component.selectionInputType = "id";
+    component.selectedEntities = [...testUsers];
+
     component.unselectEntity(testUsers[0]);
+
     const remainingChildren = testUsers
       .filter((c) => c.getId() !== testUsers[0].getId())
       .map((c) => c.getId());
@@ -138,13 +139,13 @@ describe("EntitySelectComponent", () => {
   it("adds a new entity if it matches a known entity", () => {
     component.allEntities = testUsers;
     component.select({ input: null, value: testUsers[0]["name"] });
-    expect(component.selection_).toEqual([testUsers[0]]);
+    expect(component.selectedEntities).toEqual([testUsers[0]]);
   });
 
   it("does not add anything if a new entity doesn't match", () => {
     component.allEntities = testUsers;
     component.select({ input: null, value: "ZZ" });
-    expect(component.selection_).toEqual([]);
+    expect(component.selectedEntities).toEqual([]);
   });
 
   it("autocompletes with the default accessor", (done) => {
@@ -170,6 +171,7 @@ describe("EntitySelectComponent", () => {
   });
 
   it("should add an unselected entity to the filtered entities array", (done) => {
+    // TODO this is still throwing object unsubscribe error
     component.allEntities = testUsers;
     const selectedUser = testUsers[1];
     let iteration = 0;

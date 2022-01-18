@@ -53,8 +53,8 @@ export function calculateAge(dateOfBirth: Date): number {
   return age;
 }
 
-export function sortByAttribute<OBJECT, PROPERTY extends keyof OBJECT>(
-  attribute: PROPERTY,
+export function sortByAttribute<OBJECT>(
+  attribute: keyof OBJECT,
   order: "asc" | "desc" = "asc"
 ): (e1: OBJECT, e2: OBJECT) => number {
   return (e1, e2) => {
@@ -62,10 +62,30 @@ export function sortByAttribute<OBJECT, PROPERTY extends keyof OBJECT>(
     const value2 = e2[attribute];
     if (value1 === value2) {
       return 0;
-    } else if (value1 < value2) {
+    }
+
+    // treat undefined specifically as greatest value (otherwise they remain stuck at their original position)
+    if (value1 === undefined) {
+      return order === "asc" ? 1 : -1;
+    }
+    if (value2 === undefined) {
+      return order === "asc" ? -1 : 1;
+    }
+
+    if (value1 < value2) {
       return order === "asc" ? -1 : 1;
     } else {
       return order === "asc" ? 1 : -1;
     }
   };
+}
+
+export function readFile(file: Blob): Promise<string> {
+  return new Promise((resolve) => {
+    const fileReader = new FileReader();
+    fileReader.addEventListener("load", () =>
+      resolve(fileReader.result as string)
+    );
+    fileReader.readAsText(file);
+  });
 }

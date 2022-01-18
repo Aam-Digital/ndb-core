@@ -17,16 +17,18 @@
       <mat-basic-chip
         [selectable]="selectable && formControl.enabled"
         [removable]="removable && formControl.enabled"
-        *ngFor="let entity of selection_"
+        *ngFor="let entity of selectedEntities"
         class="chip"
       >
         <app-display-entity [entityToDisplay]="entity"></app-display-entity>
-        <div
+        <fa-icon
           *ngIf="removable && formControl.enabled"
           matTooltip="remove"
-          class="fa fa-minus-square-o"
+          class="remove-item"
+          icon="minus-square"
+          prefix="far"
           (click)="unselectEntity(entity)"
-        ></div>
+        ></fa-icon>
       </mat-basic-chip>
     </ng-container>
   </mat-chip-list>

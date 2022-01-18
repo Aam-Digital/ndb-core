@@ -57,7 +57,7 @@ import { FormDialogModule } from "./core/form-dialog/form-dialog.module";
 import { LoggingService } from "./core/logging/logging.service";
 import { Angulartics2Module } from "angulartics2";
 import { AnalyticsService } from "./core/analytics/analytics.service";
-import { Angulartics2Piwik } from "angulartics2/piwik";
+import { Angulartics2Matomo } from "angulartics2/matomo";
 import { ViewModule } from "./core/view/view.module";
 import { DashboardModule } from "./core/dashboard/dashboard.module";
 import { EntityDetailsModule } from "./core/entity-components/entity-details/entity-details.module";
@@ -65,7 +65,6 @@ import { EntitySubrecordModule } from "./core/entity-components/entity-subrecord
 import { EntityListModule } from "./core/entity-components/entity-list/entity-list.module";
 import { AttendanceModule } from "./child-dev-project/attendance/attendance.module";
 import { DemoActivityGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-generator.service";
-import { FontAwesomeIconsModule } from "./core/icons/font-awesome-icons.module";
 import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-enum.module";
 import { ConfigModule } from "./core/config/config.module";
 import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-events-generator.service";
@@ -76,6 +75,9 @@ import { HistoricalDataModule } from "./features/historical-data/historical-data
 import { EntityUtilsModule } from "./core/entity-components/entity-utils/entity-utils.module";
 import { DemoHistoricalDataGenerator } from "./features/historical-data/demo-historical-data-generator";
 import { TranslatableMatPaginator } from "./core/translation/TranslatableMatPaginator";
+import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
+import { fas } from "@fortawesome/free-solid-svg-icons";
+import { far } from "@fortawesome/free-regular-svg-icons";
 
 /**
  * Main entry point of the application.
@@ -85,7 +87,7 @@ import { TranslatableMatPaginator } from "./core/translation/TranslatableMatPagi
 @NgModule({
   declarations: [AppComponent],
   imports: [
-    ServiceWorkerModule.register("ngsw-worker.js", {
+    ServiceWorkerModule.register("/ngsw-worker.js", {
       enabled: environment.production,
     }),
     Angulartics2Module.forRoot({
@@ -115,7 +117,6 @@ import { TranslatableMatPaginator } from "./core/translation/TranslatableMatPagi
     ChildrenModule,
     SchoolsModule,
     AdminModule,
-    FontAwesomeIconsModule,
     MarkdownPageModule,
     EntitySubrecordModule,
     EntityListModule,
@@ -155,11 +156,15 @@ import { TranslatableMatPaginator } from "./core/translation/TranslatableMatPagi
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
     { provide: MatPaginatorIntl, useValue: TranslatableMatPaginator() },
     AnalyticsService,
-    Angulartics2Piwik,
+    Angulartics2Matomo,
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(icons: FaIconLibrary) {
+    icons.addIconPacks(fas, far);
+  }
+}
 
 // Initialize remote logging
 LoggingService.initRemoteLogging({

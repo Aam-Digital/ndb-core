@@ -7,7 +7,6 @@ import { of } from "rxjs";
 import { ReportingService } from "../reporting.service";
 import { MatNativeDateModule } from "@angular/material/core";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { FontAwesomeIconsModule } from "../../../core/icons/font-awesome-icons.module";
 import { ReportingModule } from "../reporting.module";
 import { genders } from "../../../child-dev-project/children/model/genders";
 import { ExportService } from "../../../core/export/export-service/export.service";
@@ -193,7 +192,6 @@ export default {
         RouterTestingModule,
         MatNativeDateModule,
         BrowserAnimationsModule,
-        FontAwesomeIconsModule,
       ],
       providers: [
         {

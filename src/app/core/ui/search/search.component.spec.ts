@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { SearchComponent } from "./search.component";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -19,6 +18,8 @@ import { DatabaseIndexingService } from "../../entity/database-indexing/database
 import { EntityUtilsModule } from "../../entity-components/entity-utils/entity-utils.module";
 import { Subscription } from "rxjs";
 import { Entity } from "../../entity/model/entity";
+import { DynamicEntityService } from "../../entity/dynamic-entity.service";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
 
 describe("SearchComponent", () => {
   let component: SearchComponent;
@@ -37,7 +38,6 @@ describe("SearchComponent", () => {
 
       TestBed.configureTestingModule({
         imports: [
-          MatIconModule,
           MatFormFieldModule,
           MatInputModule,
           MatAutocompleteModule,
@@ -54,6 +54,8 @@ describe("SearchComponent", () => {
         providers: [
           { provide: EntitySchemaService, useValue: entitySchemaService },
           { provide: DatabaseIndexingService, useValue: mockIndexService },
+          { provide: EntityMapperService, useValue: {} },
+          DynamicEntityService,
         ],
         declarations: [SearchComponent],
       }).compileComponents();
@@ -116,7 +118,6 @@ describe("SearchComponent", () => {
     );
 
     subscription = component.results.subscribe((next) => {
-      console.log(next);
       expect(next).toHaveSize(1);
       expect(next[0].getId()).toEqual(result.getId());
       expect(mockIndexService.queryIndexRaw).toHaveBeenCalled();

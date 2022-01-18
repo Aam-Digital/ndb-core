@@ -28,11 +28,13 @@ import { ApplicationInitStatus } from "@angular/core";
 import { AppModule } from "./app.module";
 import { AppConfig } from "./core/app-config/app-config";
 import { IAppConfig } from "./core/app-config/app-config.model";
-import { Angulartics2Piwik } from "angulartics2/piwik";
+import { Angulartics2Matomo } from "angulartics2/matomo";
 import { EntityMapperService } from "./core/entity/entity-mapper.service";
 import { Config } from "./core/config/config";
 import { USAGE_ANALYTICS_CONFIG_ID } from "./core/analytics/usage-analytics-config";
 import { environment } from "../environments/environment";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { DynamicEntityService } from "./core/entity/dynamic-entity.service";
 
 describe("AppComponent", () => {
   let component: AppComponent;
@@ -49,11 +51,15 @@ describe("AppComponent", () => {
       AppConfig.settings = mockAppSettings;
 
       TestBed.configureTestingModule({
-        imports: [AppModule],
+        imports: [AppModule, HttpClientTestingModule],
         providers: [
           { provide: AppConfig, useValue: jasmine.createSpyObj(["load"]) },
         ],
       }).compileComponents();
+
+      // Otherwise multiple registrations throw an error
+      spyOn(DynamicEntityService, "registerNewEntity");
+
       TestBed.inject(ApplicationInitStatus); // This ensures that the AppConfig is loaded before test execution
     })
   );
@@ -84,7 +90,7 @@ describe("AppComponent", () => {
     };
     const entityMapper = TestBed.inject(EntityMapperService);
     spyOn(entityMapper, "load").and.resolveTo(new Config(testConfig));
-    const angulartics = TestBed.inject(Angulartics2Piwik);
+    const angulartics = TestBed.inject(Angulartics2Matomo);
     const startTrackingSpy = spyOn(angulartics, "startTracking");
 
     createComponent();

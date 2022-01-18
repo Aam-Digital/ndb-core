@@ -24,6 +24,7 @@ import { NotesMigrationService } from "../../../child-dev-project/notes/notes-mi
 import { AttendanceMigrationService } from "../../../child-dev-project/attendance/attendance-migration/attendance-migration.service";
 import { ChildrenMigrationService } from "../../../child-dev-project/children/child-photo-service/children-migration.service";
 import { PermissionsMigrationService } from "../../permissions/permissions-migration.service";
+import { ConfigMigrationService } from "../../config/config-migration.service";
 
 describe("AdminComponent", () => {
   let component: AdminComponent;
@@ -35,13 +36,7 @@ describe("AdminComponent", () => {
   );
   const mockBackupService: jasmine.SpyObj<BackupService> = jasmine.createSpyObj(
     BackupService,
-    [
-      "getJsonExport",
-      "getCsvExport",
-      "clearDatabase",
-      "importJson",
-      "importCsv",
-    ]
+    ["getJsonExport", "getCsvExport", "clearDatabase", "importJson"]
   );
 
   const confirmationDialogMock: jasmine.SpyObj<ConfirmationDialogService> = jasmine.createSpyObj(
@@ -124,6 +119,10 @@ describe("AdminComponent", () => {
             provide: PermissionsMigrationService,
             useValue: {},
           },
+          {
+            provide: ConfigMigrationService,
+            useValue: {},
+          },
         ],
       }).compileComponents();
     })
@@ -168,7 +167,7 @@ describe("AdminComponent", () => {
   it("should save and apply new configuration", fakeAsync(() => {
     const mockFileReader = createFileReaderMock("{}");
     mockConfigService.saveConfig.and.returnValue(Promise.resolve(null));
-    component.uploadConfigFile(null);
+    component.uploadConfigFile({ target: { files: [] } } as any);
     tick();
     expect(mockFileReader.readAsText).toHaveBeenCalled();
     expect(mockConfigService.saveConfig).toHaveBeenCalled();
@@ -179,7 +178,7 @@ describe("AdminComponent", () => {
     mockBackupService.getJsonExport.and.returnValue(Promise.resolve("[]"));
     createDialogMock();
 
-    component.loadBackup(null);
+    component.loadBackup({ target: { files: [] } } as any);
     expect(mockBackupService.getJsonExport).toHaveBeenCalled();
     tick();
     expect(mockFileReader.readAsText).toHaveBeenCalled();
@@ -187,20 +186,6 @@ describe("AdminComponent", () => {
     flush();
     expect(mockBackupService.clearDatabase).toHaveBeenCalled();
     expect(mockBackupService.importJson).toHaveBeenCalled();
-  }));
-
-  it("should open dialog and call backup service when loading csv", fakeAsync(() => {
-    const mockFileReader = createFileReaderMock();
-    mockBackupService.getJsonExport.and.returnValue(Promise.resolve(null));
-    createDialogMock();
-
-    component.loadCsv(null);
-    expect(mockBackupService.getJsonExport).toHaveBeenCalled();
-    tick();
-    expect(mockFileReader.readAsText).toHaveBeenCalled();
-    expect(confirmationDialogMock.openDialog).toHaveBeenCalled();
-    flush();
-    expect(mockBackupService.importCsv).toHaveBeenCalled();
   }));
 
   it("should open dialog when clearing database", fakeAsync(() => {

@@ -6,6 +6,9 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { FormDialogModule } from "../../form-dialog/form-dialog.module";
 import { PermissionsModule } from "../../permissions/permissions.module";
 import { MockSessionModule } from "../../session/mock-session.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { DynamicEntityService } from "../../entity/dynamic-entity.service";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
 describe("PrimaryActionComponent", () => {
   let component: PrimaryActionComponent;
@@ -19,8 +22,10 @@ describe("PrimaryActionComponent", () => {
         MatButtonModule,
         FormDialogModule,
         PermissionsModule,
+        FontAwesomeTestingModule,
         MockSessionModule.withState(),
       ],
+      providers: [DynamicEntityService, EntitySchemaService],
     }).compileComponents();
   });
 

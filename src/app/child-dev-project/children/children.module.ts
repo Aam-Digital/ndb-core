@@ -28,7 +28,6 @@ import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatCardModule } from "@angular/material/card";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatDialogModule } from "@angular/material/dialog";
-import { MatIconModule } from "@angular/material/icon";
 import { MatListModule } from "@angular/material/list";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatSidenavModule } from "@angular/material/sidenav";
@@ -67,6 +66,7 @@ import { ChildrenBmiDashboardComponent } from "./children-bmi-dashboard/children
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { PhotoDatatype } from "./child-photo-service/datatype-photo";
 import { EntityUtilsModule } from "../../core/entity-components/entity-utils/entity-utils.module";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @NgModule({
   imports: [
@@ -86,7 +86,6 @@ import { EntityUtilsModule } from "../../core/entity-components/entity-utils/ent
     MatSidenavModule,
     MatButtonModule,
     MatButtonToggleModule,
-    MatIconModule,
     MatCardModule,
     MatSnackBarModule,
     MatProgressBarModule,
@@ -108,6 +107,7 @@ import { EntityUtilsModule } from "../../core/entity-components/entity-utils/ent
     EntitySubrecordModule,
     EntityListModule,
     EntityUtilsModule,
+    FontAwesomeModule,
   ],
   declarations: [
     ChildBlockComponent,

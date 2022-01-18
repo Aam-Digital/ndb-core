@@ -11,7 +11,6 @@ import { AttendanceModule } from "../attendance.module";
 import { RouterTestingModule } from "@angular/router/testing";
 import { FormDialogModule } from "../../../core/form-dialog/form-dialog.module";
 import { Angulartics2Module } from "angulartics2";
-import { FontAwesomeIconsModule } from "../../../core/icons/font-awesome-icons.module";
 import { MatNativeDateModule } from "@angular/material/core";
 import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { MatDialogRef } from "@angular/material/dialog";
@@ -64,7 +63,6 @@ export default {
         AttendanceModule,
         EntitySubrecordModule,
         FormDialogModule,
-        FontAwesomeIconsModule,
         RouterTestingModule,
         MatNativeDateModule,
         NotesModule,

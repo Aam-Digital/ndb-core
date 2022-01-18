@@ -23,6 +23,7 @@ import { School } from "../../schools/model/school";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { ExportService } from "../../../core/export/export-service/export.service";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;
@@ -94,6 +95,7 @@ describe("ChildrenListComponent", () => {
           RouterTestingModule,
           Angulartics2Module.forRoot(),
           MockSessionModule.withState(),
+          FontAwesomeTestingModule,
         ],
         providers: [
           {

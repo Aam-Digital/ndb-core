@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EditBooleanComponent } from "./edit-boolean.component";
-import { EntityDetailsModule } from "../../../entity-details/entity-details.module";
-import { FormControl, FormGroup } from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { setupEditComponent } from "../edit-component.spec";
 
 describe("EditBooleanComponent", () => {
   let component: EditBooleanComponent;
@@ -11,7 +12,7 @@ describe("EditBooleanComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EntityDetailsModule, NoopAnimationsModule],
+      imports: [NoopAnimationsModule, MatCheckboxModule, ReactiveFormsModule],
       declarations: [EditBooleanComponent],
     }).compileComponents();
   });
@@ -19,11 +20,7 @@ describe("EditBooleanComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EditBooleanComponent);
     component = fixture.componentInstance;
-    const formControl = new FormControl();
-    const formGroup = new FormGroup({});
-    component.formControlName = "testControl";
-    component.formControl = formControl;
-    formGroup.registerControl(component.formControlName, formControl);
+    setupEditComponent(component);
     fixture.detectChanges();
   });
 
