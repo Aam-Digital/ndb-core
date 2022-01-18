@@ -42,6 +42,7 @@ export class NavigationComponent {
   public menuItems: MenuItem[] = [];
 
   public installText: String = '';
+  public installText2: String = '';
 
   constructor(
     private userRoleGuard: UserRoleGuard,
@@ -50,10 +51,11 @@ export class NavigationComponent {
     this.configService.configUpdates
       .pipe(untilDestroyed(this))
       .subscribe(() => this.initMenuItemsFromConfig());
-    
+
+    const userAgent = window.navigator.userAgent;
+
     const whichOS = () => {
       let OS = "";
-      const userAgent = window.navigator.userAgent;
       if (/iphone|ipad|ipod|macintosh/i.test(userAgent)) {
         if (window.innerWidth < 1025) {
           OS = "iOS";
@@ -61,6 +63,9 @@ export class NavigationComponent {
         else {
           OS = "MacOS";
         }
+      }
+      else if (/android/i.test(userAgent)) {
+        OS = "Android";
       }
       else if (/windows|win32|win64|WinCE/i.test(userAgent)) {
         OS = "Windows";
@@ -73,58 +78,75 @@ export class NavigationComponent {
 
     const whichBrowser = () => {
       let browser = "";
-      if (navigator.userAgent.indexOf('Opera') != -1) {
+      if (/opera/i.test(userAgent)) {
         browser = "Opera";
       }
-      else if (navigator.userAgent.indexOf('MSIE') != -1) {
+      else if (/msie|trident/i.test(userAgent)) {
         browser = "Microsoft Internet Explorer";
       }
-      else if (navigator.userAgent.indexOf('MSIE') != -1) {
-        browser = "Microsoft Internet Explorer";
+      else if (/edg/i.test(userAgent)) {
+        browser = "Edge";
       }
-      else if (navigator.userAgent.indexOf('Trident') != -1) {
-        browser = "Microsoft Internet Explorer";
-      }
-      else if (navigator.userAgent.indexOf('Chrome') != -1) {
+      else if (/chrome/i.test(userAgent)) {
         browser = "Chrome";
       }
-      else if (navigator.userAgent.indexOf('Safari') != -1) {
+      else if (/safari/i.test(userAgent)) {
         browser = "Safari";
-        if (navigator.userAgent.indexOf('CriOS') != -1) {
+        if (/crios|fxios/i.test(userAgent)) {
           browser = "Chrome";
         }
       }
-      else if (navigator.userAgent.indexOf('Firefox') != -1) {
+      else if (/firefox/i.test(userAgent)) {
         browser = "Firefox";
+      }
+      else {
+        browser = "other";
       }
       return browser;
     }
     
 
+    const isInStandaloneMode = ('standalone' in window.navigator) && (window.navigator['standalone']);
 
-    // Detects if device is in standalone mode
-    const isInStandaloneMode = () => ('standalone' in window.navigator); // && (window.navigator.standalone);
-    
-    // Detects if device is on iOS
-    const isSafari = () => {
-      return navigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&
-          navigator.userAgent &&
-          navigator.userAgent.indexOf('CriOS') === -1 &&
-          navigator.userAgent.indexOf('FxiOS') === -1;
-    }       
-
-    const isMobile = () => {
-      return window.innerWidth < 1025
-    }  
-
-
-    if (!isInStandaloneMode()) {
-      this.installText = this.installText + ", kein Standalone";
+    const isInStandaloneText = () => {
+      if (isInStandaloneMode) {
+        return "standalone"
+      }
+      else {
+        return "no standalone";
+      }
     }
+    // const isMobile = () => {
+    //   return window.innerWidth < 1025
+    // }  
 
-    this.installText = whichOS() + ", " + whichBrowser(); // window.navigator.userAgent + " ---isMobile: " + isMobile();
-    console.log("UserAgent: "+  window.navigator.userAgent);
-
+    this.installText = whichOS() + ", " + whichBrowser() + ", " + isInStandaloneText();
+    
+    if (!isInStandaloneMode) {
+      if (whichOS() === 'Android') {
+        this.installText2 = 'Install directly'
+      }
+      else if (whichOS() === 'iOS') {
+        if (whichBrowser() === 'Safari') {
+          this.installText2 = 'Install instructions'
+        }
+      }
+      else if (whichOS() === 'Windows') {
+        if (whichBrowser() === 'Chrome' || whichBrowser() === 'Edge' ) {
+          this.installText2 = 'Install directly'
+        }
+      }
+      else if (whichOS() === 'MacOS') {
+        if (whichBrowser() === 'Chrome' || whichBrowser() === 'Edge' ) {
+          this.installText2 = 'Install directly'
+        }
+      }
+      else if (whichOS() === 'Linux') {
+        if (whichBrowser() === 'Chrome') {
+          this.installText2 = 'Install directly'
+        }
+      }
+    }
   }
 
   /**
