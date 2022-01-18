@@ -16,25 +16,14 @@
   -->
 
 <div class="header-row">
-  <button
-    mat-icon-button
-    (click)="navigateBack()"
-    i18n-matTooltip="Generic back button"
-    matTooltip="Back"
-  >
-    <fa-icon icon="arrow-left"></fa-icon>
-  </button>
-  <h1 class="header-title truncate-text" *ngIf="!creatingNew">{{ entity?.toString() }}</h1>
-  <h1
-    class="header-title truncate-text"
-    *ngIf="creatingNew"
-    i18n="
-        Title when adding a new entity|An entity is a child, note, school,
-        e.t.c
-      "
-  >
-      Adding new {{ config?.entity }}
-  </h1>
+  <app-view-title *ngIf="!creatingNew">
+    {{ entity?.toString() }}
+  </app-view-title>
+  <app-view-title *ngIf="creatingNew"
+                  i18n="Title when adding a new entity|An entity is a child, note, school, etc.">
+    Adding new {{ config?.entity }}
+  </app-view-title>
+
   <div class="header-spacer"></div>
   <button
     mat-icon-button

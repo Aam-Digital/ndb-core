@@ -19,6 +19,7 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { Angulartics2Module } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatMenuModule } from "@angular/material/menu";
+import { EntityUtilsModule } from "../entity-utils/entity-utils.module";
 
 @NgModule({
   declarations: [EntityDetailsComponent, FormComponent],
@@ -41,6 +42,7 @@ import { MatMenuModule } from "@angular/material/menu";
     MatTabsModule,
     MatMenuModule,
     FontAwesomeModule,
+    EntityUtilsModule,
   ],
   entryComponents: [FormComponent],
 })

@@ -1,3 +1,7 @@
+<app-view-title i18n="Reports concern a group of for example children and include data about these children in a certain date range">
+  Reports
+</app-view-title>
+
 <div *ngIf="!availableReports || availableReports.length === 0">
   <p i18n>Reports have not been configured for you yet.</p>
   <a
@@ -9,15 +13,8 @@
   </a>
 </div>
 
-<h2 i18n="
-Reports concern a group of for example children and include data about these children in a certain date range "
->Reports</h2>
-
-<mat-expansion-panel
-  expanded="true"
-  class="work-panel mat-elevation-z2"
-  *ngIf="availableReports?.length > 0"
->
+<div *ngIf="availableReports?.length > 0"
+  class="work-panel">
   <div fxLayout="row wrap" fxLayoutGap="1rem">
     <mat-form-field>
       <mat-label i18n>Select Report</mat-label>
@@ -52,6 +49,8 @@ Reports concern a group of for example children and include data about these chi
   <div>
     <button
       mat-stroked-button
+      color="accent"
+      class="primary-button"
       [disabled]="!selectedReport || (!fromDate && !toDate) || loading"
       (click)="calculateResults()"
       i18n="Calculate the results for a report"
@@ -65,6 +64,7 @@ Reports concern a group of for example children and include data about these chi
     <button
       mat-stroked-button
       color="accent"
+      class="primary-button"
       [appExportData]="exportableTable"
       [disabled]="!exportableTable"
       format="csv"
@@ -87,6 +87,6 @@ Reports concern a group of for example children and include data about these chi
   </div>
 
   <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
-</mat-expansion-panel>
+</div>
 
 <app-report-row *ngIf="results?.length > 0" [rows]="results"></app-report-row>

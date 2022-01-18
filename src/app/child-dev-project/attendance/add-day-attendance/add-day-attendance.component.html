@@ -1,13 +1,15 @@
 <div class="container" fxLayout="column">
   <div fxFlex>
-    <h1
+    <app-view-title
+      [disableBackButton]="currentStage !== 0"
       i18n="
         Record Attendance|Title when recording the attendance at a particular
         stage (e.g. selecting the event, recording it)
       "
     >
       Record Attendance
-    </h1>
+    </app-view-title>
+
     <h2 *ngIf="currentStage === 0">
       {{ stages[currentStage] }}
     </h2>

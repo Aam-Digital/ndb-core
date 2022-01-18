@@ -142,7 +142,7 @@ export const defaultJsonConfig = {
               {
                 "label": $localize`:Dashboard shortcut widget|record attendance shortcut:Record Attendance`,
                 "icon": "calendar-check",
-                "link": "/attendance/add/day",
+                "link": "/attendance/add-day",
               },
               {
                 "label": $localize`:Dashboard shortcut widget|record attendance shortcut:Add Child`,
@@ -296,7 +296,7 @@ export const defaultJsonConfig = {
   "view:attendance": {
     "component": "AttendanceManager"
   },
-  "view:attendance/add/day": {
+  "view:attendance/add-day": {
     "component": "AddDayAttendance"
   },
   "view:school": {

@@ -20,6 +20,7 @@ import {
   ReportingComponentConfig,
 } from "./reporting-component-config";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
+import { RouterTestingModule } from "@angular/router/testing";
 
 describe("ReportingComponent", () => {
   let component: ReportingComponent;
@@ -49,6 +50,7 @@ describe("ReportingComponent", () => {
         ReportingModule,
         NoopAnimationsModule,
         MatNativeDateModule,
+        RouterTestingModule,
       ],
       providers: [
         { provide: ActivatedRoute, useValue: { data: mockRouteData } },

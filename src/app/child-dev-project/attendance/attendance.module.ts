@@ -59,6 +59,7 @@ import { EntityUtilsModule } from "../../core/entity-components/entity-utils/ent
 import { DashboardModule } from "../../core/dashboard/dashboard.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatPaginatorModule } from "@angular/material/paginator";
+import { ViewModule } from "../../core/view/view.module";
 
 @NgModule({
   declarations: [
@@ -107,6 +108,7 @@ import { MatPaginatorModule } from "@angular/material/paginator";
     FontAwesomeModule,
     DashboardModule,
     MatPaginatorModule,
+    ViewModule,
   ],
   exports: [
     ActivityCardComponent,

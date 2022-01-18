@@ -6,8 +6,9 @@
       fxLayoutAlign="space-between end"
       [ngStyle]="offsetFilterStyle"
     >
-
-      <h2 class="list-header">{{listName}}</h2>
+      <app-view-title>
+        {{ listName }}
+      </app-view-title>
 
       <button
         mat-stroked-button
