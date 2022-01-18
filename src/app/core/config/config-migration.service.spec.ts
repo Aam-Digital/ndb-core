@@ -663,8 +663,8 @@ const expectedChildDetailsConfig = {
                 },
                 {
                   id: "result",
-                  view: "DisplayPercentage",
-                  edit: "EditPercentage",
+                  view: "DisplayText",
+                  edit: "EditText",
                 },
               ],
             },

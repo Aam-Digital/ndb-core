@@ -430,8 +430,8 @@ export class ConfigMigrationService {
         break;
       }
       case "percentageResult": {
-        formField.view = "DisplayPercentage";
-        formField.edit = "EditPercentage";
+        formField.view = "DisplayText";
+        formField.edit = "EditText";
         break;
       }
       case "configurable_enum": {
