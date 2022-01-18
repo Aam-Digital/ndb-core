@@ -8,7 +8,6 @@ import { EditLongTextComponent } from "./dynamic-form-components/edit-long-text/
 import { EditPhotoComponent } from "./dynamic-form-components/edit-photo/edit-photo.component";
 import { EditEntityArrayComponent } from "./dynamic-form-components/edit-entity-array/edit-entity-array.component";
 import { EditSingleEntityComponent } from "./dynamic-form-components/edit-single-entity/edit-single-entity.component";
-import { EditPercentageComponent } from "./dynamic-form-components/edit-percentage/edit-percentage.component";
 import { DisplayEntityComponent } from "./view-components/display-entity/display-entity.component";
 import { DisplayEntityArrayComponent } from "./view-components/display-entity-array/display-entity-array.component";
 import { DisplayTextComponent } from "./view-components/display-text/display-text.component";
@@ -48,7 +47,6 @@ import { KeysPipeModule } from "../../keys-pipe/keys-pipe.module";
     EditPhotoComponent,
     EditEntityArrayComponent,
     EditSingleEntityComponent,
-    EditPercentageComponent,
     DisplayEntityComponent,
     DisplayEntityArrayComponent,
     DisplayTextComponent,
@@ -90,7 +88,6 @@ import { KeysPipeModule } from "../../keys-pipe/keys-pipe.module";
     EditPhotoComponent,
     EditEntityArrayComponent,
     EditSingleEntityComponent,
-    EditPercentageComponent,
     DisplayEntityComponent,
     DisplayEntityArrayComponent,
     DisplayTextComponent,
