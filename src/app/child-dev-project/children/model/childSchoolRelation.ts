@@ -49,12 +49,8 @@ export class ChildSchoolRelation extends Entity {
   @DatabaseField({
     label: $localize`:Label for the percentage result of a relation:Result`,
     viewComponent: "DisplayPercentage",
-    editComponent: "EditText",
+    editComponent: "EditNumber",
     validators: {
-      pattern: {
-        pattern: "[0-9]*",
-        message: "Only numbers are allowed",
-      },
       min: 0,
       max: 100,
     },
