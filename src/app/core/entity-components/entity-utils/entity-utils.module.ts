@@ -8,7 +8,6 @@ import { EditLongTextComponent } from "./dynamic-form-components/edit-long-text/
 import { EditPhotoComponent } from "./dynamic-form-components/edit-photo/edit-photo.component";
 import { EditEntityArrayComponent } from "./dynamic-form-components/edit-entity-array/edit-entity-array.component";
 import { EditSingleEntityComponent } from "./dynamic-form-components/edit-single-entity/edit-single-entity.component";
-import { EditPercentageComponent } from "./dynamic-form-components/edit-percentage/edit-percentage.component";
 import { DisplayEntityComponent } from "./view-components/display-entity/display-entity.component";
 import { DisplayEntityArrayComponent } from "./view-components/display-entity-array/display-entity-array.component";
 import { DisplayTextComponent } from "./view-components/display-text/display-text.component";
@@ -34,6 +33,9 @@ import { EntityFunctionPipe } from "./view-components/readonly-function/entity-f
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
+import { EntitySubrecordModule } from "../entity-subrecord/entity-subrecord.module";
+import { ErrorHintComponent } from "./error-hint/error-hint.component";
+import { KeysPipeModule } from "../../keys-pipe/keys-pipe.module";
 
 @NgModule({
   declarations: [
@@ -45,7 +47,6 @@ import { MatButtonModule } from "@angular/material/button";
     EditPhotoComponent,
     EditEntityArrayComponent,
     EditSingleEntityComponent,
-    EditPercentageComponent,
     DisplayEntityComponent,
     DisplayEntityArrayComponent,
     DisplayTextComponent,
@@ -57,6 +58,7 @@ import { MatButtonModule } from "@angular/material/button";
     EntitySelectComponent,
     EditNumberComponent,
     EntityFunctionPipe,
+    ErrorHintComponent,
   ],
   imports: [
     CommonModule,
@@ -74,6 +76,8 @@ import { MatButtonModule } from "@angular/material/button";
     FlexLayoutModule,
     FontAwesomeModule,
     MatButtonModule,
+    EntitySubrecordModule,
+    KeysPipeModule,
   ],
   entryComponents: [
     EditTextComponent,
@@ -84,7 +88,6 @@ import { MatButtonModule } from "@angular/material/button";
     EditPhotoComponent,
     EditEntityArrayComponent,
     EditSingleEntityComponent,
-    EditPercentageComponent,
     DisplayEntityComponent,
     DisplayEntityArrayComponent,
     DisplayTextComponent,
