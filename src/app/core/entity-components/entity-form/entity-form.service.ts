@@ -65,9 +65,8 @@ export class EntityFormService {
     const formConfig = {};
     const entitySchema = entity.getSchema();
     formFields
-      .filter((formField) => formField.edit || entitySchema.get(formField.id))
+      .filter((formField) => entitySchema.get(formField.id))
       .forEach((formField) => {
-        const propertySchema = entitySchema.get(formField.id);
         formConfig[formField.id] = [entity[formField.id]];
         if (formField.validators) {
           const validators = this.dynamicValidator.buildValidators(
