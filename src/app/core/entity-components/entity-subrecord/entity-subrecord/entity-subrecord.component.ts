@@ -65,8 +65,11 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
         return col;
       }
     });
+    this.filteredColumns = this._columns.filter((col) => !col.hideFromTable);
   }
+
   _columns: FormFieldConfig[] = [];
+  filteredColumns: FormFieldConfig[] = [];
 
   /**
    * factory method to create a new instance of the displayed Entity type
@@ -304,6 +307,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     dialogRef.componentInstance.columns = this._columns
       .filter((col) => col.edit)
       .map((col) => [Object.assign({}, col)]);
+    dialogRef.componentInstance.viewOnlyColumns = this._columns.filter(
+      (col) => !col.edit
+    );
     dialogRef.componentInstance.entity = entity;
     dialogRef.componentInstance.editing = true;
     dialogRef.componentInstance.onSave
@@ -341,6 +347,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    * @return returns true if column is visible
    */
   private isVisible(col: FormFieldConfig): boolean {
+    if (col.hideFromTable) {
+      return false;
+    }
     const visibilityGroups = ["sm", "md", "lg", "xl"];
     const visibleFromIndex = visibilityGroups.indexOf(col.visibleFrom);
     if (visibleFromIndex !== -1) {

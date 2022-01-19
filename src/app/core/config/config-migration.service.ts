@@ -519,7 +519,7 @@ export class ConfigMigrationService {
         id: "bmi",
         label: "BMI",
         view: "ReadonlyFunction",
-        additional: (entity: HealthCheck) => entity.bmi.toFixed(2),
+        additional: (entity: HealthCheck) => "BMI: " + entity.bmi.toFixed(2),
       },
     ];
     config.columns = config.displayedColumns.map((col: string) => {

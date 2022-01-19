@@ -34,13 +34,13 @@ export class ChildSchoolRelation extends Entity {
   schoolClass: string = "";
   @DatabaseField({
     dataType: "date-only",
-    label: $localize`:Label for the start date of a relation:From`,
+    label: $localize`:Label for the start date of a relation:Start date`,
     description: $localize`:Description of the start date of a relation:The date a child joins a school`,
   })
   start: Date;
   @DatabaseField({
     dataType: "date-only",
-    label: $localize`:Label for the end date of a relation:To`,
+    label: $localize`:Label for the end date of a relation:End date`,
     description: $localize`:Description of the end date of a relation:The date of a child leaving the school`,
   })
   end: Date;
@@ -65,8 +65,12 @@ export class ChildSchoolRelation extends Entity {
     return (
       this.start &&
       moment(this.start).isSameOrBefore(moment(), "day") &&
-      (!this.end || moment(this.end).isAfter(moment(), "day"))
+      (!this.end || moment(this.end).isSameOrAfter(moment(), "day"))
     );
+  }
+
+  getColor(): string {
+    return this.isActive ? "#90ee9040" : "";
   }
 
   assertValid() {
