@@ -15,7 +15,9 @@ export class ChildSchoolRelation extends Entity {
     viewComponent: "DisplayEntity",
     editComponent: "EditSingleEntity",
     additional: Child.ENTITY_TYPE,
-    required: true,
+    validators: {
+      required: true,
+    },
   })
   childId: string;
   @DatabaseField({
@@ -23,7 +25,9 @@ export class ChildSchoolRelation extends Entity {
     viewComponent: "DisplayEntity",
     editComponent: "EditSingleEntity",
     additional: School.ENTITY_TYPE,
-    required: true,
+    validators: {
+      required: true,
+    },
   })
   schoolId: string;
   @DatabaseField({ label: $localize`:Label for the class of a relation:Class` })
@@ -45,7 +49,11 @@ export class ChildSchoolRelation extends Entity {
   @DatabaseField({
     label: $localize`:Label for the percentage result of a relation:Result`,
     viewComponent: "DisplayPercentage",
-    editComponent: "EditPercentage",
+    editComponent: "EditNumber",
+    validators: {
+      min: 0,
+      max: 100,
+    },
   })
   result: number;
 

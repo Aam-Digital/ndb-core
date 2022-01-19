@@ -11,6 +11,9 @@
       [for]="dateOfBirthDatepicker"
     ></mat-datepicker-toggle>
     <mat-datepicker #dateOfBirthDatepicker></mat-datepicker>
+    <mat-error>
+      <app-error-hint [form]="formControl"></app-error-hint>
+    </mat-error>
   </mat-form-field>
   <mat-form-field style="width: 50px">
     <fa-icon
@@ -27,5 +30,8 @@
       [value]="getAge(formControl.value)"
       [disabled]="true"
     />
+    <mat-error>
+      <app-error-hint [form]="formControl"></app-error-hint>
+    </mat-error>
   </mat-form-field>
 </div>
