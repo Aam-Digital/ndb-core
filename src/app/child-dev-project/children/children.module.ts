@@ -35,6 +35,7 @@ import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatSortModule } from "@angular/material/sort";
 import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatChipsModule } from "@angular/material/chips";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { ChildrenService } from "./children.service";
 import { ChildrenCountDashboardComponent } from "./children-count-dashboard/children-count-dashboard.component";
@@ -91,6 +92,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     MatProgressBarModule,
     MatAutocompleteModule,
     MatTooltipModule,
+    MatChipsModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
     FilterPipeModule,

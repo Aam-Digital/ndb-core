@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ReadonlyFunctionComponent } from "./readonly-function.component";
 import { Child } from "../../../../../child-dev-project/children/model/child";
 import { EntityFunctionPipe } from "./entity-function.pipe";
+import { FormControl, FormGroup } from "@angular/forms";
 
 describe("ReadonlyFunctionComponent", () => {
   let component: ReadonlyFunctionComponent;
@@ -17,8 +18,11 @@ describe("ReadonlyFunctionComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ReadonlyFunctionComponent);
     component = fixture.componentInstance;
+    const formGroup = new FormGroup({});
+    const formControl = new FormControl();
+    formGroup.registerControl("name", formControl);
     component.onInitFromDynamicConfig({
-      entity: new Child(),
+      entity: Child.create("nameBefore"),
       id: "",
       config: (entity) => entity.name,
     });

@@ -17,6 +17,10 @@ import { PanelConfig } from "../../core/entity-components/entity-details/EntityD
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import moment from "moment";
 import { MockSessionModule } from "../../core/session/mock-session.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { Subject } from "rxjs";
+import { UpdatedEntity } from "../../core/entity/model/entity-update";
 
 describe("PreviousSchoolsComponent", () => {
   let component: PreviousSchoolsComponent;
@@ -40,6 +44,7 @@ describe("PreviousSchoolsComponent", () => {
           ChildrenModule,
           ConfirmationDialogModule,
           MockSessionModule.withState(),
+          FontAwesomeTestingModule,
         ],
         providers: [
           { provide: ChildrenService, useValue: mockChildrenService },
@@ -69,7 +74,7 @@ describe("PreviousSchoolsComponent", () => {
     );
   }));
 
-  it("should only show columns which are defined by the config", fakeAsync(() => {
+  it("should allow to change the columns to be displayed by the config", fakeAsync(() => {
     const config: PanelConfig = {
       entity: new Child(),
       config: {
@@ -83,11 +88,13 @@ describe("PreviousSchoolsComponent", () => {
     };
     component.onInitFromDynamicConfig(config);
     tick();
-    expect(component.columns).toHaveSize(3);
+
     let columnNames = component.columns.map((column) => column.label);
     expect(columnNames).toContain("Team");
     expect(columnNames).toContain("From");
     expect(columnNames).toContain("To");
+    expect(columnNames).not.toContain("Class");
+    expect(columnNames).not.toContain("Result");
 
     config.config.columns.push({
       id: "schoolClass",
@@ -102,7 +109,7 @@ describe("PreviousSchoolsComponent", () => {
 
     component.onInitFromDynamicConfig(config);
     tick();
-    expect(component.columns).toHaveSize(5);
+
     columnNames = component.columns.map((column) => column.label);
     expect(columnNames).toContain("Team");
     expect(columnNames).toContain("From");
@@ -128,4 +135,20 @@ describe("PreviousSchoolsComponent", () => {
         .isSame(newRelation.start, "day")
     ).toBeTrue();
   });
+
+  it("should reload data when a new record is saved", fakeAsync(() => {
+    const updateSubject = new Subject<UpdatedEntity<ChildSchoolRelation>>();
+    const entityMapper = TestBed.inject(EntityMapperService);
+    spyOn(entityMapper, "receiveUpdates").and.returnValue(updateSubject);
+    component.onInitFromDynamicConfig({ entity: testChild });
+    tick();
+    mockChildrenService.getSchoolRelationsFor.calls.reset();
+
+    updateSubject.next();
+    tick();
+
+    expect(mockChildrenService.getSchoolRelationsFor).toHaveBeenCalledWith(
+      testChild.getId()
+    );
+  }));
 });

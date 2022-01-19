@@ -33,6 +33,28 @@
     </div>
   </div>
 </form>
+  <div *ngFor="let col of viewOnlyColumns" class="form-cell">
+    <mat-chip-list>
+      <mat-chip
+        [matTooltip]="col.tooltip"
+        [ngStyle]="{
+          'background-color': tempEntity.getColor()
+        }"
+      >
+        <p *ngIf="col.label">{{ col.label }}:&nbsp;</p>
+        <ng-template
+        [appDynamicComponent]="{
+          component: col.view,
+          config: {
+            id: col.id,
+            entity: tempEntity,
+            config: col.additional
+          }
+        }"
+        ></ng-template>
+      </mat-chip>
+    </mat-chip-list>
+  </div>
 <div>
   <button
     *ngIf="form?.enabled"

@@ -13,7 +13,7 @@ import {
 import { RouterTestingModule } from "@angular/router/testing";
 import { EntitySubrecordModule } from "../entity-subrecord.module";
 import { Entity } from "../../../entity/model/entity";
-import { SimpleChange } from "@angular/core";
+import { EventEmitter, SimpleChange } from "@angular/core";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatNativeDateModule } from "@angular/material/core";
 import { DatePipe, PercentPipe } from "@angular/common";
@@ -27,6 +27,8 @@ import { EntityFormService } from "../../entity-form/entity-form.service";
 import { genders } from "../../../../child-dev-project/children/model/genders";
 import { LoggingService } from "../../../logging/logging.service";
 import { MockSessionModule } from "../../../session/mock-session.module";
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -301,4 +303,43 @@ describe("EntitySubrecordComponent", () => {
 
     component.rowClick({ record: child });
   });
+
+  it("should open a dialog with buttons that close it", fakeAsync(() => {
+    const columns = [
+      { id: "name", edit: "editComponent" },
+      { id: "projectNumber", edit: "editComponent" },
+    ];
+    component.columns = columns;
+    const child = Child.create("test child");
+    child.projectNumber = "1";
+    component.recordsDataSource.data = [{ record: child }];
+    const onSaveEmitter = new EventEmitter();
+    const onCancelEmitter = new EventEmitter();
+    const closeSpy = jasmine.createSpy();
+    const mockDialog: MatDialogRef<EntityFormComponent> = {
+      componentInstance: {
+        onSave: onSaveEmitter,
+        onCancel: onCancelEmitter,
+      },
+      close: closeSpy,
+    } as any;
+    spyOn(TestBed.inject(MatDialog), "open").and.returnValue(mockDialog);
+
+    component.rowClick(component.recordsDataSource.data[0]);
+
+    const col2D = columns.map((col) => [col]);
+    expect(mockDialog.componentInstance.columns).toEqual(col2D);
+    expect(mockDialog.componentInstance.viewOnlyColumns).toEqual([]);
+    expect(mockDialog.componentInstance.entity).toBe(child);
+    expect(mockDialog.componentInstance.editing).toBe(true);
+
+    onCancelEmitter.emit(child);
+    tick();
+    expect(closeSpy).toHaveBeenCalled();
+
+    closeSpy.calls.reset();
+    onSaveEmitter.emit(child);
+    tick();
+    expect(closeSpy).toHaveBeenCalled();
+  }));
 });
