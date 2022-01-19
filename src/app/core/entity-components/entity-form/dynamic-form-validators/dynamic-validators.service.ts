@@ -33,10 +33,8 @@ export function patternWithMessage(
       Object.assign(errors.pattern, {
         message: message,
       });
-      return errors;
-    } else {
-      return errors;
     }
+    return errors;
   };
 }
 
