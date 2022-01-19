@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { ViewComponent } from "../view-component";
+import { ViewDirective } from "../view.directive";
 
 /**
  * This component displays a text attribute.
@@ -8,4 +8,4 @@ import { ViewComponent } from "../view-component";
   selector: "app-display-text",
   template: `{{ entity[property] }}`,
 })
-export class DisplayTextComponent extends ViewComponent {}
+export class DisplayTextComponent extends ViewDirective {}

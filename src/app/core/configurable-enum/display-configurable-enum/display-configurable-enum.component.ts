@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { ViewComponent } from "../../entity-components/entity-utils/view-components/view-component";
+import { ViewDirective } from "../../entity-components/entity-utils/view-components/view.directive";
 
 /**
  * This component displays a text attribute.
@@ -8,4 +8,4 @@ import { ViewComponent } from "../../entity-components/entity-utils/view-compone
   selector: "app-display-configurable-enum",
   template: `{{ entity[property]?.label }}`,
 })
-export class DisplayConfigurableEnumComponent extends ViewComponent {}
+export class DisplayConfigurableEnumComponent extends ViewDirective {}
