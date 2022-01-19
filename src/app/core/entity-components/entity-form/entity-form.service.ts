@@ -59,13 +59,15 @@ export class EntityFormService {
   ): FormGroup {
     const formConfig = {};
     const entitySchema = entity.getSchema();
-    formFields.forEach((formField) => {
-      const propertySchema = entitySchema.get(formField.id);
-      formConfig[formField.id] = [entity[formField.id]];
-      if (formField.required || propertySchema?.required) {
-        formConfig[formField.id].push(Validators.required);
-      }
-    });
+    formFields
+      .filter((formField) => formField.edit)
+      .forEach((formField) => {
+        const propertySchema = entitySchema.get(formField.id);
+        formConfig[formField.id] = [entity[formField.id]];
+        if (formField.required || propertySchema?.required) {
+          formConfig[formField.id].push(Validators.required);
+        }
+      });
     return this.fb.group(formConfig);
   }
 
