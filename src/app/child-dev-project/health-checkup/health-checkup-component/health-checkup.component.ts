@@ -36,7 +36,7 @@ export class HealthCheckupComponent
   @Input() child: Child;
   constructor(private childrenService: ChildrenService) {}
 
-  getBMI(healthCheck: HealthCheck): string {
+  private getBMI(healthCheck: HealthCheck): string {
     const bmi = healthCheck.bmi;
     if (Number.isNaN(bmi)) {
       return "-";
