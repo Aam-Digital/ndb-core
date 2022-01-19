@@ -10,6 +10,10 @@ import {
   ConfigurableEnumValue,
 } from "../configurable-enum/configurable-enum.interface";
 
+/**
+ * Access dynamic app configuration retrieved from the database
+ * that defines how the interface and data models should look.
+ */
 @Injectable({
   providedIn: "root",
 })
@@ -65,10 +69,17 @@ export class ConfigService {
     return this.configData[id];
   }
 
+  /**
+   * Get the array of pre-defined values for the given configurable enum id.
+   * @param id
+   */
   public getConfigurableEnumValues<T extends ConfigurableEnumValue>(
     id: string
   ): ConfigurableEnumConfig<T> {
-    return this.getConfig(CONFIGURABLE_ENUM_CONFIG_PREFIX + id);
+    if (!id.startsWith(CONFIGURABLE_ENUM_CONFIG_PREFIX)) {
+      id = CONFIGURABLE_ENUM_CONFIG_PREFIX + id;
+    }
+    return this.getConfig(id);
   }
 
   public getAllConfigs<T>(prefix: string): T[] {

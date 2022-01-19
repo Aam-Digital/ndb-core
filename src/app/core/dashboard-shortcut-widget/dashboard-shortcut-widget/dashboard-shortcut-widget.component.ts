@@ -9,7 +9,7 @@ import { MatTableDataSource } from "@angular/material/table";
 @Component({
   selector: "app-dashboard-shortcut-widget",
   templateUrl: "./dashboard-shortcut-widget.component.html",
-  styleUrls: ["dashboard-shortcut-widget.component.scss"],
+  styleUrls: ["./dashboard-shortcut-widget.component.scss"],
 })
 export class DashboardShortcutWidgetComponent
   implements OnInitDynamicComponent {

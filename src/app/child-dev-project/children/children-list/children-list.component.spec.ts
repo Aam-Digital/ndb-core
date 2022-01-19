@@ -32,7 +32,7 @@ describe("ChildrenListComponent", () => {
   const routeData: EntityListConfig = {
     title: "Children List",
     addNew: "Add child",
-    filterPlaceholder: "i.e. Participant name",
+    filterPlaceholder: "e.g. participant name",
     columns: [
       { view: "DisplayText", label: "PN", id: "projectNumber" },
       { view: "ChildBlock", label: "Name", id: "name" },

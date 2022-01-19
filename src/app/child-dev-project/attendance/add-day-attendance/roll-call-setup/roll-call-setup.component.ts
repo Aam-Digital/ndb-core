@@ -62,7 +62,7 @@ export class RollCallSetupComponent implements OnInit {
       this.visibleActivities = this.allActivities;
     } else {
       this.visibleActivities = this.allActivities.filter((a) =>
-        a.isAssignedTo(this.sessionService.getCurrentUser())
+        a.isAssignedTo(this.sessionService.getCurrentUser().name)
       );
       if (this.visibleActivities.length === 0) {
         this.visibleActivities = this.allActivities.filter(

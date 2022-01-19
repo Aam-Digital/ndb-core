@@ -29,13 +29,16 @@ dialogRef.afterClosed().subscribe(confirmed => {
 ```
 
 You can also display dialogs with only one "OK" button rather than the yes/no option
-by setting the optional third parameter (`yesNoButtons`) to false:
+by setting the optional 'buttons' parameter:
 ```
 this.confirmationDialog
-  .openDialog('Info', 'No options here, just some text.', false);
+  .openDialog('Info', 'No options here, just some text.', OkButton);
 ```
 In this case also consider whether you really want to use a "blocking" dialog box
 or if a simple "alert" notification may be the better choice.
+
+Check the definitions of those button presets in `confirmation-dialog.component.ts` to see
+how you can also create fully custom choices of buttons.
 
 
 ## Display a notification
