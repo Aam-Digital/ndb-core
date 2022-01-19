@@ -3,6 +3,8 @@
  * This defines which property is displayed and how it should be displayed.
  * Most information does not need to be provided if a property with schema definitions is displayed.
  */
+import { FormValidatorConfig } from "../dynamic-form-validators/form-validator-config";
+
 export interface FormFieldConfig {
   /**
    * The id of the entity which should be accessed
@@ -75,7 +77,12 @@ export interface FormFieldConfig {
   hideFromTable?: boolean;
 
   /**
-   * A internal flag that will be automatically set in the entity subrecord in order to adapt the view/edit components.
+   * An internal flag that will be automatically set in the entity subrecord in order to adapt the view/edit components.
    */
   forTable?: boolean;
+
+  /**
+   * Additional validators that can be used to determine the validity of the form
+   */
+  validators?: FormValidatorConfig;
 }

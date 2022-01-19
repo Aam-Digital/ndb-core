@@ -35,7 +35,6 @@ import { SchoolBlockComponent } from "../../child-dev-project/schools/school-blo
 import { DisplayEntityComponent } from "../entity-components/entity-utils/view-components/display-entity/display-entity.component";
 import { EditSingleEntityComponent } from "../entity-components/entity-utils/dynamic-form-components/edit-single-entity/edit-single-entity.component";
 import { DisplayEntityArrayComponent } from "../entity-components/entity-utils/view-components/display-entity-array/display-entity-array.component";
-import { EditPercentageComponent } from "../entity-components/entity-utils/dynamic-form-components/edit-percentage/edit-percentage.component";
 import { DisplayPercentageComponent } from "../entity-components/entity-utils/view-components/display-percentage/display-percentage.component";
 import { DisplayUnitComponent } from "../entity-components/entity-utils/view-components/display-unit/display-unit.component";
 import { FormComponent } from "../entity-components/entity-details/form/form.component";
@@ -81,7 +80,6 @@ export const DYNAMIC_COMPONENTS_MAP = new Map<string, any>([
   ["DisplayEntity", DisplayEntityComponent],
   ["EditSingleEntity", EditSingleEntityComponent],
   ["DisplayEntityArray", DisplayEntityArrayComponent],
-  ["EditPercentage", EditPercentageComponent],
   ["DisplayPercentage", DisplayPercentageComponent],
   ["DisplayUnit", DisplayUnitComponent],
   ["EditNumber", EditNumberComponent],

@@ -1,7 +1,6 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { EntitySubrecordComponent } from "./entity-subrecord/entity-subrecord.component";
-import { KeysPipe } from "./keys-pipe/keys.pipe";
 import { MatTableModule } from "@angular/material/table";
 import { MatSortModule } from "@angular/material/sort";
 import { MatPaginatorModule } from "@angular/material/paginator";
@@ -20,9 +19,10 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { Angulartics2Module } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { KeysPipeModule } from "../../keys-pipe/keys-pipe.module";
 
 @NgModule({
-  declarations: [EntitySubrecordComponent, KeysPipe, ListPaginatorComponent],
+  declarations: [EntitySubrecordComponent, ListPaginatorComponent],
   imports: [
     CommonModule,
     AlertsModule,
@@ -42,7 +42,8 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     EntityFormModule,
     FontAwesomeModule,
     Angulartics2Module,
+    KeysPipeModule,
   ],
-  exports: [EntitySubrecordComponent, KeysPipe],
+  exports: [EntitySubrecordComponent],
 })
 export class EntitySubrecordModule {}
