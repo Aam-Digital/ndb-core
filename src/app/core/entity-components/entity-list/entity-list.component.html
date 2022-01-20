@@ -10,36 +10,33 @@
         {{ listName }}
       </app-view-title>
 
-      <button
-        mat-stroked-button
-        color="accent"
-        class="standard-add-button"
-        (click)="addNewClick.emit()"
-        angulartics2On="click"
-        angularticsCategory="UserAction"
-        [angularticsAction]="
-              listName.toLowerCase().replace(' ', '_') + '_add_new'
-            "
-        [angularticsCategory]="entityConstructor.ENTITY_TYPE"
-        angularticsAction="list_add_entity"
-        *appDisabledEntityOperation="{
-              entity: entityConstructor,
-              operation: operationType.CREATE
-            }"
-      >
-        <fa-icon
-          class="button-icon"
-          aria-label="add element"
-          icon="plus-circle"
-        ></fa-icon>
-        <span i18n="Add a new entity to a list of multiple entities"> Add New </span>
-      </button>
-
       <div fxFlex></div>
 
       <div fxLayoutGap="25px" fxLayoutAlign="end end" fxFlex>
-
-        <div *ngTemplateOutlet="filterDialog" style="padding-bottom: 0"></div>
+        <button
+          mat-stroked-button
+          color="accent"
+          class="standard-add-button"
+          (click)="addNewClick.emit()"
+          angulartics2On="click"
+          angularticsCategory="UserAction"
+          [angularticsAction]="
+              listName.toLowerCase().replace(' ', '_') + '_add_new'
+            "
+          [angularticsCategory]="entityConstructor.ENTITY_TYPE"
+          angularticsAction="list_add_entity"
+          *appDisabledEntityOperation="{
+              entity: entityConstructor,
+              operation: operationType.CREATE
+            }"
+        >
+          <fa-icon
+            class="button-icon"
+            aria-label="add element"
+            icon="plus-circle"
+          ></fa-icon>
+          <span i18n="Add a new entity to a list of multiple entities"> Add New </span>
+        </button>
 
         <button mat-icon-button class="additional-button" color="primary" [matMenuTriggerFor]="additional">
           <fa-icon class="standard-icon" icon="ellipsis-v"></fa-icon>
@@ -53,6 +50,8 @@
       fxLayout="row wrap"
       fxLayoutGap="10px"
     >
+      <div *ngTemplateOutlet="filterDialog"></div>
+
       <app-list-filter
         *ngFor="let filter of filterSelections"
         [filterConfig]="filter.filterSettings"
@@ -63,7 +62,6 @@
         [angularticsCategory]="entityConstructor.ENTITY_TYPE"
         angularticsAction="list_filter"
         [angularticsLabel]="filter.filterSettings.label"
-
       >
       </app-list-filter>
     </div>

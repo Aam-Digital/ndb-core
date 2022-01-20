@@ -20,8 +20,7 @@
 
 .filter-field {
   color: mat-color($ndb-app-accent);
-  width: 100%;
-  margin-bottom: -1.25em;
+  width: calc(2*(180px + 2*0.75em) + 10px); // span the width of two other filter elements
 }
 
 .accent-icon {
