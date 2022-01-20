@@ -32,7 +32,7 @@
     </div>
   </div>
 
-  <div *ngFor="let col of viewOnlyColumns" class="form-cell">
+  <div *ngFor="let col of viewOnlyColumns" class="viewonly-section">
     <mat-chip-list>
       <mat-chip
         [matTooltip]="col.tooltip"
@@ -53,6 +53,7 @@
         ></ng-template>
       </mat-chip>
     </mat-chip-list>
+    <!-- avoid scroll bar + move delete into [...] menu -->
   </div>
 </div>
 <div mat-dialog-actions fxLayoutGap="10px">

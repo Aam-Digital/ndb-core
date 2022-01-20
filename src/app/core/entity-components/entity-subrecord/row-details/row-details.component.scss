@@ -12,6 +12,10 @@ $min-block-width: 250px;
   white-space: nowrap;
 }
 
+.viewonly-section {
+  padding-bottom: 4px; // needed to avoid scrollbar
+}
+
 .cancel-icon {
   cursor: pointer;
   position: absolute;

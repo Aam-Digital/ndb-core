@@ -13,6 +13,7 @@ import { isActiveIndicator } from "../schools/children-overview/children-overvie
 @Component({
   selector: "app-previous-schools",
   templateUrl: "./previous-schools.component.html",
+  styleUrls: ["./previous-schools.component.scss"],
 })
 @UntilDestroy()
 export class PreviousSchoolsComponent
