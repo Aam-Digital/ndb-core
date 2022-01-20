@@ -10,6 +10,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatTabsModule } from "@angular/material/tabs";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatChipsModule } from "@angular/material/chips";
 
 @NgModule({
   declarations: [EntityFormComponent],
@@ -24,6 +25,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     MatTooltipModule,
     MatFormFieldModule,
     FontAwesomeModule,
+    MatChipsModule,
   ],
   providers: [EntityFormService],
   exports: [EntityFormComponent],

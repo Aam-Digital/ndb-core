@@ -64,10 +64,12 @@ export class EntitySubrecordComponent<T extends Entity>
         return col;
       }
     });
+    this.filteredColumns = this._columns.filter((col) => !col.hideFromTable);
   }
   /** data to be displayed */
   @Input() records: Array<T> = [];
   _columns: FormFieldConfig[] = [];
+  filteredColumns: FormFieldConfig[] = [];
 
   /**
    * factory method to create a new instance of the displayed Entity type
@@ -327,6 +329,7 @@ export class EntitySubrecordComponent<T extends Entity>
       data: {
         row: row,
         columns: columnsToDisplay,
+        viewOnlyColumns: this._columns.filter((col) => !col.edit),
         operations: this,
         isNew: isNew,
       },
@@ -352,6 +355,9 @@ export class EntitySubrecordComponent<T extends Entity>
    * @return returns true if column is visible
    */
   private isVisible(col: FormFieldConfig): boolean {
+    if (col.hideFromTable) {
+      return false;
+    }
     const visibilityGroups = ["sm", "md", "lg", "xl"];
     const visibleFromIndex = visibilityGroups.indexOf(col.visibleFrom);
     if (visibleFromIndex !== -1) {

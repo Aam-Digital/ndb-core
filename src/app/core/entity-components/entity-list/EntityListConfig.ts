@@ -74,4 +74,5 @@ export interface ViewPropertyConfig {
   entity: Entity;
   id: string;
   config?: any;
+  tooltip?: string;
 }

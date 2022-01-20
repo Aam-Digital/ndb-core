@@ -33,3 +33,9 @@ $max-screen-width: $min-block-width + $margin-main-view-right + $margin-main-vie
 .buttons-wrapper {
   padding-bottom: $padding-buttons-bottom;
 }
+
+.mat-chip {
+  margin-left: 20px !important;
+  margin-bottom: 20px !important;
+  font-family: sans-serif;
+}

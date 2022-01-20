@@ -21,6 +21,9 @@ export class DemoSchoolGenerator extends DemoDataGenerator<School> {
     ];
   }
 
+  private readonly normalSchool = $localize`:School demo name that is connected with a school name:School`;
+  private readonly highSchool = $localize`:School demo name that is connected with a school name:High School`;
+
   constructor(public config: DemoSchoolConfig) {
     super();
   }
@@ -31,17 +34,20 @@ export class DemoSchoolGenerator extends DemoDataGenerator<School> {
     for (let i = 1; i <= this.config.count; i++) {
       const school = new School(String(i));
       school["language"] = faker.random.arrayElement([
-        "Hindi",
-        "English",
-        "Bengali",
+        $localize`:Language of a school:Hindi`,
+        $localize`:Language of a school:English`,
+        $localize`:Language of a school:Bengali`,
       ]);
-      const schoolName = faker.name.firstName();
-      const schoolPrefix = faker.random.arrayElement([
-        $localize`:A simple school:School`,
-        $localize`:A high school:High School`,
-        $localize`:A language school, i.e. Hindi Language:${school["language"]} Language`,
+      const schoolNameWithType = $localize`:School demo name order for connecting the school name and (High) School|e.g. Example School:${faker.name.firstName()} ${faker.random.arrayElement(
+        [this.normalSchool, this.highSchool]
+      )}`;
+      const schoolNameWithLanguage = $localize`${faker.name.firstName()} ${
+        school["language"]
+      } Language`;
+      school.name = faker.random.arrayElement([
+        schoolNameWithType,
+        schoolNameWithLanguage,
       ]);
-      school.name = $localize`:School name + prefix, i.e. Balachendra School or Aryan High School:${schoolName} ${schoolPrefix}`;
       school["address"] = faker.address.streetAddress();
       school["phone"] = faker.phone.phoneNumberFormat();
       school["privateSchool"] = faker.datatype.boolean();

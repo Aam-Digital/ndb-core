@@ -1,7 +1,6 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { EntitySubrecordComponent } from "./entity-subrecord/entity-subrecord.component";
-import { KeysPipe } from "./keys-pipe/keys.pipe";
 import { MatTableModule } from "@angular/material/table";
 import { MatSortModule } from "@angular/material/sort";
 import { MatPaginatorModule } from "@angular/material/paginator";
@@ -13,7 +12,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { ViewModule } from "../../view/view.module";
 import { ReactiveFormsModule } from "@angular/forms";
 import { ConfirmationDialogModule } from "../../confirmation-dialog/confirmation-dialog.module";
-import { EntityDetailsModule } from "../entity-details/entity-details.module";
 import { EntityFormModule } from "../entity-form/entity-form.module";
 import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
@@ -26,11 +24,12 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDialogModule } from "@angular/material/dialog";
 import { PermissionsModule } from "../../permissions/permissions.module";
 import { MatRippleModule } from "@angular/material/core";
+import { KeysPipeModule } from "../../keys-pipe/keys-pipe.module";
+import { MatChipsModule } from "@angular/material/chips";
 
 @NgModule({
   declarations: [
     EntitySubrecordComponent,
-    KeysPipe,
     ListPaginatorComponent,
     RowDetailsComponent,
   ],
@@ -49,16 +48,17 @@ import { MatRippleModule } from "@angular/material/core";
     MatButtonModule,
     MatSlideToggleModule,
     MatToolbarModule,
-    EntityDetailsModule,
     EntityFormModule,
     FontAwesomeModule,
     FlexLayoutModule,
     Angulartics2Module,
+    KeysPipeModule,
     MatFormFieldModule,
     MatDialogModule,
     PermissionsModule,
     MatRippleModule,
+    MatChipsModule,
   ],
-  exports: [EntitySubrecordComponent, KeysPipe],
+  exports: [EntitySubrecordComponent],
 })
 export class EntitySubrecordModule {}

@@ -46,7 +46,9 @@ export class RecurringActivity extends Entity {
   /** primary name to identify the activity */
   @DatabaseField({
     label: $localize`:Label for the title of a recurring activity:Title`,
-    required: true,
+    validators: {
+      required: true,
+    },
   })
   title: string = "";
 

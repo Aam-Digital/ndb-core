@@ -15,6 +15,8 @@ export interface DetailsComponentData<E extends Entity> {
   row: TableRow<E>;
   /** The columns to edit / view */
   columns: FormFieldConfig[];
+  /** Additional columns that only provide context information */
+  viewOnlyColumns?: FormFieldConfig[];
   /** The operations needed by this component; namely edit and delete */
   operations: CanSave<TableRow<E>> & CanDelete<TableRow<E>>;
   isNew: boolean;
@@ -51,6 +53,10 @@ export interface CanDelete<T> {
 export class RowDetailsComponent<E extends Entity> {
   form: FormGroup;
   operationType = OperationType;
+
+  viewOnlyColumns: FormFieldConfig[];
+  tempEntity: Entity;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsComponentData<E>,
     private formsService: EntityFormService
@@ -59,6 +65,11 @@ export class RowDetailsComponent<E extends Entity> {
       data.columns,
       data.row.record
     );
+    this.form.valueChanges.subscribe((value) => {
+      const dynamicConstructor: any = data.row.record.getConstructor();
+      this.tempEntity = Object.assign(new dynamicConstructor(), value);
+    });
+    this.viewOnlyColumns = data.viewOnlyColumns;
   }
 
   save() {

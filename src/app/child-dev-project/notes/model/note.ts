@@ -231,6 +231,10 @@ export class Note extends Entity {
   copy(): Note {
     const note: Note = super.copy() as Note;
     note.children = [...this.children];
+    note.childrenAttendance = new Map();
+    this.childrenAttendance.forEach((value, key) => {
+      note.childrenAttendance.set(key, value.copy());
+    });
     return note;
   }
 }
