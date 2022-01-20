@@ -26,6 +26,7 @@ import { PermissionsModule } from "../../permissions/permissions.module";
 import { MatRippleModule } from "@angular/material/core";
 import { KeysPipeModule } from "../../keys-pipe/keys-pipe.module";
 import { MatChipsModule } from "@angular/material/chips";
+import { MatMenuModule } from "@angular/material/menu";
 
 @NgModule({
   declarations: [
@@ -58,6 +59,7 @@ import { MatChipsModule } from "@angular/material/chips";
     PermissionsModule,
     MatRippleModule,
     MatChipsModule,
+    MatMenuModule,
   ],
   exports: [EntitySubrecordComponent],
 })

@@ -71,16 +71,32 @@
   </button>
 
   <button
-    mat-raised-button
-    mat-dialog-close
-    (click)="delete()"
-    *appDisabledEntityOperation="{
-      operation: operationType.DELETE,
-      entity: data.row.record.getConstructor()
-    }"
-    color="warn"
-    i18n="Delete button for forms"
+    mat-icon-button
+    [matMenuTriggerFor]="additional"
   >
-    Delete
+    <fa-icon icon="ellipsis-v" class="standard-icon"></fa-icon>
   </button>
+  <mat-menu
+    #additional
+  >
+    <button
+      mat-menu-item
+      mat-dialog-close
+      (click)="delete()"
+      *appDisabledEntityOperation="{
+        operation: operationType.DELETE,
+        entity: data.row.record.getConstructor()
+      }"
+      angulartics2On="click"
+      [angularticsCategory]="data.row.record.getConstructor()?.ENTITY_TYPE"
+      angularticsAction="entity_delete"
+    >
+      <fa-icon
+        class="standard-icon-with-text warn-icon"
+        aria-label="remove element"
+        icon="trash"
+      ></fa-icon>
+      <span i18n="Generic delete button"> Delete </span>
+    </button>
+  </mat-menu>
 </div>
