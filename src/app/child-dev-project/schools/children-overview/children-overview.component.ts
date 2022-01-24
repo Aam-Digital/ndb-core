@@ -48,7 +48,7 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
 
   async onInitFromDynamicConfig(config: PanelConfig) {
     if (config?.config?.columns) {
-      this.columns = config.config.columns;
+      this.columns = config.config.columns.concat(isActiveIndicator);
     }
     this.entity = config.entity;
     this.records = await this.childrenService.queryRelationsOf(

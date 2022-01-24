@@ -48,8 +48,7 @@ export class PreviousSchoolsComponent
       this.single = panelConfig.config.single;
     }
     if (panelConfig.config?.columns) {
-      this.columns = panelConfig.config.columns;
-      this.columns.push(isActiveIndicator);
+      this.columns = panelConfig.config.columns.concat(isActiveIndicator);
     }
     this.child = panelConfig.entity as Child;
     this.loadData(this.child.getId());
