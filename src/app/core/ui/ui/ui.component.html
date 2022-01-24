@@ -72,7 +72,7 @@
       <img *ngIf="logo_path" alt="site logo of user organisation" class="site-logo" [src]="logo_path" fxFlex/>
 
       <app-navigation
-        (click)="sideNavMode == 'over' && sideNav.close()"
+        (click)="closeSidenavOnMobile()"
         fxFlex="grow"
         style="overflow-y: auto"
       ></app-navigation>
@@ -80,7 +80,14 @@
 
       <div fxFlex>
         <div fxLayout="row">
-          <button mat-button routerLink="user" i18n="Navigate to user profile page" class="user-nav-button user-nav-button-first" fxFlex="50">
+          <button
+            (click)="closeSidenavOnMobile()"
+            mat-button
+            routerLink="user"
+            i18n="Navigate to user profile page"
+            class="user-nav-button user-nav-button-first"
+            fxFlex="50"
+          >
             <fa-icon icon="user" class="nav-icon"></fa-icon>
             Profile
           </button>
