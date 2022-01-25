@@ -17,6 +17,7 @@ import { MatInputModule } from "@angular/material/input";
 import { UserListComponent } from "./user-list/user-list.component";
 import { BackupService } from "./services/backup.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { FlexModule } from "@angular/flex-layout";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DataImportModule } from "../../features/data-import/data-import.module";
 
@@ -40,6 +41,7 @@ import { DataImportModule } from "../../features/data-import/data-import.module"
     MatFormFieldModule,
     MatInputModule,
     MatTooltipModule,
+    FlexModule,
     FontAwesomeModule,
     DataImportModule,
   ],

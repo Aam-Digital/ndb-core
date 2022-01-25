@@ -1,4 +1,4 @@
-<mat-form-field floatLabel="always" style="width: 100%">
+<mat-form-field floatLabel="always" class="main-list">
   <mat-label *ngIf="label">{{ label }}</mat-label>
 
   <input
@@ -20,7 +20,10 @@
         *ngFor="let entity of selectedEntities"
         class="chip"
       >
-        <app-display-entity [entityToDisplay]="entity"></app-display-entity>
+        <app-display-entity
+          [entityToDisplay]="entity"
+          [linkDisabled]="true"
+        ></app-display-entity>
         <fa-icon
           *ngIf="removable && formControl.enabled"
           matTooltip="remove"

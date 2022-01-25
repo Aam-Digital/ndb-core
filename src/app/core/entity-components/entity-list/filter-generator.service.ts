@@ -9,10 +9,6 @@ import {
   PrebuiltFilterConfig,
 } from "./EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import {
-  CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnumConfig,
-} from "../../configurable-enum/configurable-enum.interface";
 import { ConfigService } from "../../config/config.service";
 import { LoggingService } from "../../logging/logging.service";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
@@ -133,7 +129,7 @@ export class FilterGeneratorService {
     property: string,
     enumId: string
   ): FilterSelectionOption<T>[] {
-    const options = [
+    const options: FilterSelectionOption<T>[] = [
       {
         key: "all",
         label: $localize`:Filter label:All`,
@@ -141,14 +137,13 @@ export class FilterGeneratorService {
       },
     ];
 
-    const enumValues = this.configService.getConfig<ConfigurableEnumConfig>(
-      CONFIGURABLE_ENUM_CONFIG_PREFIX + enumId
-    );
+    const enumValues = this.configService.getConfigurableEnumValues(enumId);
 
     for (const enumValue of enumValues) {
       options.push({
         key: enumValue.id,
         label: enumValue.label,
+        color: enumValue.color,
         filterFun: (entity) => entity[property]?.id === enumValue.id,
       });
     }

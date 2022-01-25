@@ -144,12 +144,13 @@ describe("EntityDetailsComponent", () => {
     const mockRemoveResult = of(RemoveResult.REMOVED);
     mockEntityRemoveService.remove.and.returnValue(mockRemoveResult);
     component.entity = new Child("Test-Child");
-    spyOn(component, "navigateBack");
+    // @ts-ignore
+    const routerNavigateSpy = spyOn(component.router, "navigate");
 
     component.removeEntity();
     tick();
 
-    expect(component.navigateBack).toHaveBeenCalled();
+    expect(routerNavigateSpy).toHaveBeenCalled();
   }));
 
   it("should route back when deleting is undone", fakeAsync(() => {

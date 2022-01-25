@@ -32,8 +32,8 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
   columns: FormFieldConfig[] = [
     { id: "childId" },
     { id: "schoolClass" },
-    { id: "start" },
-    { id: "end" },
+    { id: "start", visibleFrom: "md" },
+    { id: "end", visibleFrom: "md" },
     { id: "result" },
     isActiveIndicator,
   ];
@@ -48,7 +48,7 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
 
   async onInitFromDynamicConfig(config: PanelConfig) {
     if (config?.config?.columns) {
-      this.columns = config.config.columns;
+      this.columns = config.config.columns.concat(isActiveIndicator);
     }
     this.entity = config.entity;
     this.records = await this.childrenService.queryRelationsOf(
