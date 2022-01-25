@@ -21,6 +21,7 @@ import {
 } from "./reporting-component-config";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 import { RouterTestingModule } from "@angular/router/testing";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("ReportingComponent", () => {
   let component: ReportingComponent;
@@ -49,6 +50,7 @@ describe("ReportingComponent", () => {
         CommonModule,
         ReportingModule,
         NoopAnimationsModule,
+        FontAwesomeTestingModule,
         MatNativeDateModule,
         RouterTestingModule,
       ],

@@ -96,7 +96,7 @@ export class UiComponent implements OnInit {
   }
 
   closeSidenavOnMobile() {
-    if (this.sideNavMode == 'over') {
+    if (this.sideNavMode === "over") {
       this.sideNav.close();
     }
   }
