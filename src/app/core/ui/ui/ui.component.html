@@ -56,7 +56,10 @@
 <app-primary-action *ngIf="isLoggedIn()"></app-primary-action>
 
 <!-- MAIN NAVIGATION + CONTENT -->
-<mat-sidenav-container class="app-content mat-typography primary-background">
+<mat-sidenav-container
+  class="app-content mat-typography primary-background"
+  (backdropClick)="closeSidenavOnMobile()"
+>
   <mat-sidenav
     #sideNav
     *ngIf="isLoggedIn()"
