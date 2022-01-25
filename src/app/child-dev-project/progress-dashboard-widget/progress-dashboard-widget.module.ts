@@ -54,5 +54,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatTooltipModule,
   ],
   declarations: [ProgressDashboardComponent, EditProgressDashboardComponent],
+  exports: [ProgressDashboardComponent],
 })
 export class ProgressDashboardWidgetModule {}

@@ -14,6 +14,18 @@
       />
     </mat-form-field>
 
+    <button
+      mat-button
+      color="accent"
+      (click)="removePart(index)"
+    >
+      <fa-icon
+        class="button-icon"
+        aria-label="remove element"
+        icon="trash"
+      ></fa-icon>
+    </button>
+
     <mat-form-field class="current-field">
       <input
         formControlName="currentValue"
