@@ -1,6 +1,7 @@
 import { Component, Input } from "@angular/core";
 import { getUrlWithoutParams } from "../../../../utils/utils";
 import { Router } from "@angular/router";
+import { Location } from "@angular/common";
 
 @Component({
   selector: "app-view-title",
@@ -14,9 +15,14 @@ export class ViewTitleComponent {
   /** (Optional) do not show button to navigate back to the parent page */
   @Input() disableBackButton: boolean = false;
 
+  /**
+   * whether instead of a basic back to previous page navigation the back button should navigate to logical parent page
+   */
+  navigateToParentBehaviour: boolean = false;
+
   readonly parentUrl: string;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private location: Location) {
     this.parentUrl = this.findParentUrl();
   }
 
@@ -31,11 +37,11 @@ export class ViewTitleComponent {
     return currentUrl.substring(0, lastUrlSegmentStart);
   }
 
-  async navigateToParent() {
-    if (!this.parentUrl) {
-      return;
+  async navigateBack() {
+    if (this.navigateToParentBehaviour && this.parentUrl) {
+      await this.router.navigate([this.parentUrl]);
+    } else {
+      this.location.back();
     }
-
-    await this.router.navigate([this.parentUrl]);
   }
 }

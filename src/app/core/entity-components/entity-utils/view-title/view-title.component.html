@@ -1,8 +1,8 @@
 <div class="header-row">
   <button
-    *ngIf="parentUrl && !disableBackButton"
+    *ngIf="(parentUrl || !navigateToParentBehaviour) && !disableBackButton"
     mat-icon-button
-    (click)="navigateToParent()"
+    (click)="navigateBack()"
     i18n-matTooltip="Generic back button"
     matTooltip="Back"
   >
