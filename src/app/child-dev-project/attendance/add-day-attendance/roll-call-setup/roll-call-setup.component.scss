@@ -1,39 +1,59 @@
+@import "../../../../../styles";
+@import "../../../../utils/grid-layout";
+
+// Total height of the bottom control with padding
+$bottom-control-height: 86px;
+$bottom-control-padding: 16px;
+
 .overall-container {
-  height: 100%;
-  min-height: 300px;
-  padding-left: 16px;
-  padding-right: 16px;
-  padding-bottom: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  // remove the bottom margin so that scrolling to the bottom
+  // doesn't overflow
+  margin-bottom: -$margin-main-view-bottom;
 }
 
-.bottom-control {
-  margin-top: 8px;
-  margin-left: calc(-16px - 24px); /* global content container has 24/12px margin */
-  margin-right: calc(-16px - 24px);
-  margin-bottom: -24px;
-  @media (max-width: 599px) {
-    margin-left: calc(-16px - 12px); /* global content container has 24/12px margin */
-    margin-right: calc(-16px - 12px);
-    margin-bottom: -12px;
-  }
-  padding: 16px;
-}
-
-.confirm-button {
-  height: calc(112px - 2 * 16px);
+.top-control {
+  position: sticky;
+  top: 0;
+  // make this visible while other contents go "under"
+  // this top control
+  z-index: 1;
+  // These small hacks remove the global margin
+  // and re-apply them as padding.
+  // This way, the margin stays consistent and scrolling works
+  // as intended (there is no overflow left or right)
+  margin-left: -$margin-main-view-left;
+  padding-left: $margin-main-view-left;
+  margin-right: -$margin-main-view-right;
+  padding-right: $margin-main-view-right;
+  margin-top: -$margin-main-view-top;
+  padding-top: $margin-main-view-top;
 }
 
 .selected-card {
-  max-height: calc(112px - 2 * 16px);
   overflow: auto;
+  flex-grow: 1;
 }
 
-.event-card {
-  margin-bottom: 8px;
-  width: 300px;
+.cards-list {
+  @include adaptive-grid(270px);
 }
 
 .flex-scroll-container {
-  min-height: 100px;
-  overflow: auto;
+  flex-grow: 1;
+  padding-bottom: $bottom-control-padding;
+}
+
+.actions {
+  margin-top: $standard-margin-small;
+  display: flex;
+  gap: $standard-margin-small;
+}
+
+.activity-card {
+  max-width: 500px;
+  display: contents;
+  cursor: pointer;
 }

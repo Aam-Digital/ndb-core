@@ -29,7 +29,7 @@ export class EntityFormService {
         this.addFormFields(formField, entity, forTable);
       } catch (err) {
         throw new Error(
-          `Could not create form config for ${formField.id}: ${err}`
+          $localize`Could not create form config for ${formField.id}\: ${err}`
         );
       }
     });
@@ -96,7 +96,7 @@ export class EntityFormService {
       .save(entityCopy)
       .then(() => Object.assign(entity, entityCopy))
       .catch((err) => {
-        throw new Error(`Could not save ${entity.getType()}: ${err}`);
+        throw new Error($localize`Could not save ${entity.getType()}\: ${err}`);
       });
   }
 
@@ -105,7 +105,7 @@ export class EntityFormService {
     form.markAllAsTouched();
     if (form.invalid) {
       const invalidFields = this.getInvalidFields(form);
-      throw new Error(`Fields: "${invalidFields}" are invalid`);
+      throw new Error($localize`Fields: "${invalidFields}" are invalid`);
     }
   }
 

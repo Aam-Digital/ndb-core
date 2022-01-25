@@ -50,27 +50,16 @@
 
     <app-language-select *ngIf="showLanguageSelect"></app-language-select>
 
-    <button
-      mat-icon-button
-      [routerLink]="['/user']"
-      *ngIf="isLoggedIn()"
-      angulartics2On="click"
-      angularticsCategory="Navigation"
-      angularticsAction="navbar_profile_link"
-    >
-      <fa-icon class="header-icon" icon="user"></fa-icon>
-    </button>
-
-    <button mat-icon-button (click)="logout()" *ngIf="isLoggedIn()">
-      <fa-icon class="header-icon" icon="sign-out-alt"></fa-icon>
-    </button>
   </mat-toolbar-row>
 </mat-toolbar>
 
 <app-primary-action *ngIf="isLoggedIn()"></app-primary-action>
 
 <!-- MAIN NAVIGATION + CONTENT -->
-<mat-sidenav-container class="app-content mat-typography">
+<mat-sidenav-container
+  class="app-content mat-typography primary-background"
+  (backdropClick)="closeSidenavOnMobile()"
+>
   <mat-sidenav
     #sideNav
     *ngIf="isLoggedIn()"
@@ -79,13 +68,43 @@
     [opened]="sideNavMode == 'side'"
     disableClose
     fixedInViewport="true"
-    class="sidenav-menu mat-elevation-z1"
+    class="sidenav-menu"
   >
-    <img *ngIf="logo_path" style="width: 180px" [src]="logo_path" />
-    <app-navigation
-      (click)="sideNavMode == 'over' && sideNav.close()"
-    ></app-navigation>
-    <app-version style="position: absolute; bottom: 0"></app-version>
+    <div fxLayout="column" fxFlexFill>
+
+      <img *ngIf="logo_path" alt="site logo of user organisation" class="site-logo" [src]="logo_path" fxFlex/>
+
+      <app-navigation
+        (click)="closeSidenavOnMobile()"
+        fxFlex="grow"
+        style="overflow-y: auto"
+      ></app-navigation>
+
+
+      <div fxFlex>
+        <div fxLayout="row">
+          <button
+            (click)="closeSidenavOnMobile()"
+            mat-button
+            routerLink="user"
+            i18n="Navigate to user profile page"
+            class="user-nav-button user-nav-button-first"
+            fxFlex="50"
+          >
+            <fa-icon icon="user" class="nav-icon"></fa-icon>
+            Profile
+          </button>
+
+          <button mat-button (click)="logout()" i18n="Sign out of the app" class="user-nav-button" fxFlex="50">
+            <fa-icon icon="sign-out-alt" class="nav-icon"></fa-icon>
+            Sign out
+          </button>
+        </div>
+
+        <app-version></app-version>
+      </div>
+
+    </div>
   </mat-sidenav>
 
   <mat-sidenav-content>

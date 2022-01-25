@@ -1,7 +1,15 @@
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import {
+  Component,
+  Inject,
+  Input,
+  OnChanges,
+  Optional,
+  SimpleChanges,
+} from "@angular/core";
 import { AlertService } from "../../alerts/alert.service";
 import { ActivatedRoute } from "@angular/router";
 import { AnalyticsService } from "../../analytics/analytics.service";
+import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 
 /**
  * Placeholder page to announce that a feature is not available yet.
@@ -35,8 +43,12 @@ export class ComingSoonComponent implements OnChanges {
   constructor(
     private alertService: AlertService,
     private analyticsService: AnalyticsService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    @Optional() @Inject(MAT_DIALOG_DATA) dialogData: { featureId: string }
   ) {
+    if (dialogData) {
+      this.init(dialogData.featureId);
+    }
     this.activatedRoute.paramMap.subscribe((params) => {
       if (params.has("feature")) {
         this.init(params.get("feature"));
