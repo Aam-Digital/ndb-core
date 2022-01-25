@@ -20,12 +20,15 @@
 
 .header-field {
   grid-area: header;
+  min-width: 0;
 }
 
 .current-field {
   grid-area: current;
+  min-width: 0;
 }
 
 .target-field {
   grid-area: target;
+  min-width: 0;
 }
