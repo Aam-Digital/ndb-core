@@ -15,7 +15,13 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+  waitForAsync,
+} from "@angular/core/testing";
 
 import { NavigationComponent } from "./navigation.component";
 import { RouterTestingModule } from "@angular/router/testing";
@@ -23,12 +29,18 @@ import { MenuItem } from "../menu-item";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatListModule } from "@angular/material/list";
 import { ConfigService } from "../../config/config.service";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Subject } from "rxjs";
 import { Config } from "../../config/config";
 import { UserRoleGuard } from "../../permissions/user-role.guard";
-import { ActivatedRouteSnapshot } from "@angular/router";
+import {
+  ActivatedRouteSnapshot,
+  Event,
+  NavigationEnd,
+  Router,
+} from "@angular/router";
 import { SessionService } from "../../session/session-service/session.service";
 import { MockSessionModule } from "../../session/mock-session.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("NavigationComponent", () => {
   let component: NavigationComponent;
@@ -53,6 +65,7 @@ describe("NavigationComponent", () => {
           MatDividerModule,
           MatListModule,
           MockSessionModule.withState(),
+          FontAwesomeTestingModule,
         ],
         declarations: [NavigationComponent],
         providers: [
@@ -134,4 +147,24 @@ describe("NavigationComponent", () => {
       new MenuItem("Children", "child", "/child"),
     ]);
   });
+
+  it("should highlight active menu item", fakeAsync(() => {
+    const routerEvents = TestBed.inject(Router).events as Subject<Event>;
+    component.menuItems = [
+      { label: "Home", icon: "home", link: "/" },
+      { label: "Children", icon: "child", link: "/child" },
+    ];
+
+    routerEvents.next(new NavigationEnd(42, "/child/1", "/child/1"));
+    tick();
+    expect(component.activeLink).toBe("/child", "url should match parent menu");
+
+    routerEvents.next(new NavigationEnd(42, "/", "/"));
+    tick();
+    expect(component.activeLink).toBe("/", "root url should match");
+
+    routerEvents.next(new NavigationEnd(42, "/other", "/other"));
+    tick();
+    expect(component.activeLink).toBe("", "unknown url should not match");
+  }));
 });

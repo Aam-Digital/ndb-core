@@ -27,7 +27,7 @@ import {
 } from "../../view/dynamic-routing/view-config.interface";
 import { SessionService } from "../../session/session-service/session.service";
 import { NavigationEnd, Router } from "@angular/router";
-import { filter, map, startWith } from "rxjs/operators";
+import { filter, startWith } from "rxjs/operators";
 
 /**
  * Main app menu listing.
@@ -58,14 +58,10 @@ export class NavigationComponent {
     this.router.events
       .pipe(
         startWith(new NavigationEnd(0, this.router.url, "")),
-        filter((event) => event instanceof NavigationEnd),
-        map((event: NavigationEnd) =>
-          // conservative filter matching all items that could fit to the given url
-          this.menuItems.filter((item) => event.url.startsWith(item.link))
-        )
+        filter((event) => event instanceof NavigationEnd)
       )
-      .subscribe((items) => {
-        this.activeLink = this.computeActiveLink(items);
+      .subscribe((event: NavigationEnd) => {
+        this.activeLink = this.computeActiveLink(event.url);
       });
   }
 
@@ -73,17 +69,21 @@ export class NavigationComponent {
    * Computes the active link from a set of MenuItems.
    * The active link is the link with the most "overlap", i.e.
    * the most specific link that can be found given the array.
-   * @param items The items that belong to a certain link. All items
-   * must have a common prefix
+   * @param newUrl The new url for which the navigation item should be highlighted
    * @return the most specific link
    * @private
    */
-  private computeActiveLink(items: MenuItem[]): string {
+  private computeActiveLink(newUrl: string): string {
+    // conservative filter matching all items that could fit to the given url
+    const items: MenuItem[] = this.menuItems.filter((item) =>
+      newUrl.startsWith(item.link)
+    );
     switch (items.length) {
       case 0:
         return "";
       case 1:
-        return items[0].link;
+        // for root "/" only return on exact match to avoid confusing highlighting of unrelated items
+        return newUrl === items[0].link ? items[0].link : "";
       default:
         // If there are multiple matches (A user navigates with a URL that starts with
         // multiple links from a MenuItem), use the element where the length is bigger.
