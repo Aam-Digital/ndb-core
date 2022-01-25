@@ -47,12 +47,11 @@ import { EducationalMaterialComponent } from "../educational-material/educationa
 import { AserComponent } from "../aser/aser-component/aser.component";
 import { FilterPipeModule } from "ngx-filter-pipe";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { NoRecentNotesDashboardComponent } from "../notes/dashboard-widgets/no-recent-notes-dashboard/no-recent-notes-dashboard.component";
+import { NotesDashboardComponent } from "../notes/dashboard-widgets/notes-dashboard/notes-dashboard.component";
 import { HealthCheckupComponent } from "../health-checkup/health-checkup-component/health-checkup.component";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { PreviousSchoolsComponent } from "../previous-schools/previous-schools.component";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { RecentNotesDashboardComponent } from "../notes/dashboard-widgets/recent-notes-dashboard/recent-notes-dashboard.component";
 import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
 import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirmation-dialog.module";
 import { MatPaginatorModule } from "@angular/material/paginator";
@@ -67,7 +66,9 @@ import { ChildrenBmiDashboardComponent } from "./children-bmi-dashboard/children
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { PhotoDatatype } from "./child-photo-service/datatype-photo";
 import { EntityUtilsModule } from "../../core/entity-components/entity-utils/entity-utils.module";
+import { DashboardModule } from "../../core/dashboard/dashboard.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { ExportModule } from "../../core/export/export.module";
 
 @NgModule({
   imports: [
@@ -109,7 +110,9 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     EntitySubrecordModule,
     EntityListModule,
     EntityUtilsModule,
+    DashboardModule,
     FontAwesomeModule,
+    ExportModule,
   ],
   declarations: [
     ChildBlockComponent,
@@ -118,8 +121,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     ChildrenCountDashboardComponent,
     EducationalMaterialComponent,
     AserComponent,
-    NoRecentNotesDashboardComponent,
-    RecentNotesDashboardComponent,
+    NotesDashboardComponent,
     HealthCheckupComponent,
     PreviousSchoolsComponent,
     BmiBlockComponent,
@@ -129,8 +131,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
   exports: [
     ChildBlockComponent,
     ChildrenCountDashboardComponent,
-    NoRecentNotesDashboardComponent,
-    RecentNotesDashboardComponent,
+    NotesDashboardComponent,
     BmiBlockComponent,
   ],
   entryComponents: [ChildBlockComponent],

@@ -1,9 +1,12 @@
 .dashboard-table-row {
-  border-top: 1px solid black;
+  border-bottom: 1px solid #c8c8c8;
+  padding-left: 8px;
+  padding-right: 8px;
 }
 
 .dashboard-table {
-  width: 100%;
+  margin-right: 10px;
+  margin-left: 10px;
   border-collapse: collapse;
   table-layout: fixed;
 }
@@ -13,8 +16,7 @@
 }
 
 .dashboard-table-cell {
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding: 12px;
 }
 .dashboard-table-first-cell {
   white-space: nowrap;
@@ -23,4 +25,43 @@
 .dashboard-table-last-cell {
   width: 108px;
   text-align: right;
+}
+
+.link-content {
+  display: flex;
+  justify-content: center;
+  font-size: xx-large;
+  place-self: center;
+  flex-grow: 1;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.content-button {
+  margin: 8px 30px;
+  display: flex;
+  justify-content: center;
+  padding: 25px;
+  flex-grow: 1;
+}
+
+.mat-paginator {
+  background: none;
+}
+
+.table-wrapper {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.mat-table {
+  background: none;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.mat-table tr:first-child {
+  border-top: none;
 }

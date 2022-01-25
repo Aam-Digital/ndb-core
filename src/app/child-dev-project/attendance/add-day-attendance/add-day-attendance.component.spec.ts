@@ -10,6 +10,7 @@ import { of } from "rxjs";
 import { MatNativeDateModule } from "@angular/material/core";
 import { AttendanceService } from "../attendance.service";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("AddDayAttendanceComponent", () => {
   let component: AddDayAttendanceComponent;
@@ -29,6 +30,7 @@ describe("AddDayAttendanceComponent", () => {
           AttendanceModule,
           RouterTestingModule,
           MatNativeDateModule,
+          FontAwesomeTestingModule,
           MockSessionModule.withState(),
         ],
         providers: [

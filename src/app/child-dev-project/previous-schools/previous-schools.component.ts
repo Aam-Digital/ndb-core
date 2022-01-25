@@ -13,6 +13,7 @@ import { isActiveIndicator } from "../schools/children-overview/children-overvie
 @Component({
   selector: "app-previous-schools",
   templateUrl: "./previous-schools.component.html",
+  styleUrls: ["./previous-schools.component.scss"],
 })
 @UntilDestroy()
 export class PreviousSchoolsComponent
@@ -22,8 +23,8 @@ export class PreviousSchoolsComponent
   columns: FormFieldConfig[] = [
     { id: "schoolId" },
     { id: "schoolClass" },
-    { id: "start" },
-    { id: "end" },
+    { id: "start", visibleFrom: "md" },
+    { id: "end", visibleFrom: "md" },
     { id: "result" },
     isActiveIndicator,
   ];
@@ -47,8 +48,7 @@ export class PreviousSchoolsComponent
       this.single = panelConfig.config.single;
     }
     if (panelConfig.config?.columns) {
-      this.columns = panelConfig.config.columns;
-      this.columns.push(isActiveIndicator);
+      this.columns = panelConfig.config.columns.concat(isActiveIndicator);
     }
     this.child = panelConfig.entity as Child;
     this.loadData(this.child.getId());

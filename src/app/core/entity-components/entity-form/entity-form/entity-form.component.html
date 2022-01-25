@@ -1,93 +1,65 @@
-<form>
-  <div
-    fxLayout="row wrap"
-    fxLayout.xs="row wrap"
-    fxLayout.md="row wrap"
-    fxLayout.sm="row wrap"
-  >
-    <div *ngFor="let col of _columns" fxFlex>
-      <div *ngFor="let row of col" class="form-cell">
-        <div class="form-icon">
-          <fa-icon
-            (click)="tooltipElement.show()"
-            #tooltipElement="matTooltip"
-            *ngIf="row.tooltip"
-            matSuffix
-            icon="question-circle"
-            [matTooltip]="row.tooltip"
-          ></fa-icon>
-        </div>
-        <div class="form-field">
-          <ng-template
-            [appDynamicComponent]="{
-              component: row.edit,
-              config: {
-                formFieldConfig: row,
-                propertySchema: entity.getSchema().get(row.id),
-                formControl: form.get(row.id)
-              }
-            }">
-          </ng-template>
-        </div>
-      </div>
-    </div>
-  </div>
-</form>
-  <div *ngFor="let col of viewOnlyColumns" class="form-cell">
-    <mat-chip-list>
-      <mat-chip
-        [matTooltip]="col.tooltip"
-        [ngStyle]="{
-          'background-color': tempEntity.getColor()
+<div fxLayout="column">
+  <div fxFlexAlign="end" class="buttons-wrapper">
+    <button
+      *ngIf="form?.enabled"
+      mat-raised-button
+      class="action-button"
+      (click)="save()"
+      i18n="Save button for forms"
+    >
+      Save
+    </button>
+
+    <button
+      *ngIf="form?.enabled"
+      mat-raised-button
+      class="action-button"
+      (click)="cancel()"
+      i18n="Cancel button for forms"
+    >
+      Cancel
+    </button>
+
+    <ng-container *ngIf="form?.disabled">
+      <button
+        mat-raised-button
+        class="action-button"
+        (click)="switchEdit()"
+        *appDisabledEntityOperation="{
+          entity: entity?.getConstructor(),
+          operation: operationType.UPDATE
         }"
+        i18n="Edit button for forms"
       >
-        <p *ngIf="col.label">{{ col.label }}:&nbsp;</p>
-        <ng-template
+        Edit
+      </button>
+    </ng-container>
+  </div>
+
+  <form class="columns-wrapper">
+    <div *ngFor="let col of _columns; let i=index" class="column-group">
+      <h2 *ngIf="columnHeaders && columnHeaders[i]">{{columnHeaders[i]}}</h2>
+      <div
+        *ngFor="let row of col"
         [appDynamicComponent]="{
-          component: col.view,
+          component: row.edit,
           config: {
-            id: col.id,
-            entity: tempEntity,
-            config: col.additional
+            formFieldConfig: row,
+            propertySchema: entity.getSchema().get(row.id),
+            formControl: form.get(row.id)
           }
         }"
-        ></ng-template>
-      </mat-chip>
-    </mat-chip-list>
-  </div>
-<div>
-  <button
-    *ngIf="form?.enabled"
-    mat-stroked-button
-    class="edit-button"
-    (click)="save()"
-    i18n="Save button for forms"
-  >
-    Save
-  </button>
+      >
+        <fa-icon
+          (click)="tooltipElement.show()"
+          #tooltipElement="matTooltip"
+          *ngIf="row.tooltip"
+          matSuffix
+          icon="question-circle"
+          [matTooltip]="row.tooltip"
+        ></fa-icon>
+      </div>
 
-  <button
-    *ngIf="form?.enabled"
-    mat-stroked-button
-    class="edit-button"
-    (click)="cancel()"
-    i18n="Cancel button for forms"
-  >
-    Cancel
-  </button>
-
-  <ng-container *ngIf="form?.disabled">
-    <button
-      mat-stroked-button
-      class="edit-button"
-      (click)="switchEdit()"
-      *appDisabledEntityOperation="{
-        entity: entity?.getConstructor(),
-        operation: operationType.UPDATE
-      }"
-      i18n="Edit button for forms"
-    >
-      Edit
-    </button>
-  </ng-container>
+    </div>
+  </form>
 </div>

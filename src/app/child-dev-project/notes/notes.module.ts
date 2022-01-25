@@ -42,6 +42,7 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { ChildMeetingNoteAttendanceComponent } from "./note-details/child-meeting-attendance/child-meeting-note-attendance.component";
 import { EntityUtilsModule } from "../../core/entity-components/entity-utils/entity-utils.module";
 import { NoteAttendanceCountBlockComponent } from "./note-attendance-block/note-attendance-count-block.component";
+import { MatMenuModule } from "@angular/material/menu";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @NgModule({
@@ -97,6 +98,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     MatSlideToggleModule,
     EntityUtilsModule,
     FontAwesomeModule,
+    MatMenuModule,
   ],
   providers: [],
   entryComponents: [NoteDetailsComponent],

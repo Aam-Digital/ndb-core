@@ -1,13 +1,24 @@
-.mat-toolbar-row {
-  justify-content: space-between;
-  background-color: blue;
-}
+// The paginator is usually a little smaller than this
+$approx-width-paginator: 450px;
+$slider-padding-all: 16px;
 
-.mat-toolbar {
+.toolbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  @media all and (max-width: $approx-width-paginator) {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+  }
+  justify-content: flex-start;
   background-color: white;
 }
 
-.mat-slide-toggle {
+.slider {
+  padding-left: $slider-padding-all;
+  @media all and (max-width: $approx-width-paginator) {
+    padding-bottom: $slider-padding-all;
+  }
   font-size: small;
 }
 
