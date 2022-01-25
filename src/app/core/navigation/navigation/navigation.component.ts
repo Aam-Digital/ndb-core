@@ -105,9 +105,7 @@ export class NavigationComponent {
       return browser;
     }
     
-
     const isInStandaloneMode = ('standalone' in window.navigator) && (window.navigator['standalone']);
-
     const isInStandaloneText = () => {
       if (isInStandaloneMode) {
         return "standalone"
@@ -147,6 +145,43 @@ export class NavigationComponent {
         }
       }
     }
+
+    let deferredPrompt; // Variable should be out of scope of addEventListener method
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      console.log("Ich bin hier2");
+        e.preventDefault();	// This prevents default chrome prompt from appearing
+                                
+        deferredPrompt = e;	 // Save for later
+        if (this.installText2 === 'Install directly') {
+          console.log("Ich bin hier1");
+        //     infoBar.style.display = '';
+          let installBtn = document.getElementById('PWAInstallButton')  
+                                
+            installBtn.addEventListener('click', (e) => {
+              console.log("Button gedrückt");
+              //This prompt window
+              deferredPrompt.prompt();
+              // Here we wait for user interaction
+              deferredPrompt.userChoice
+                  .then((choiceResult) => {
+                      if (choiceResult.outcome === 'accepted') {
+                          installBtn.textContent = 'PWA Installed'; // Hide info bar
+                          console.log("PWA-Install-Button pressed");
+                          deferredPrompt = null; // not need anymore
+                      }
+                  });
+            });
+        }
+    });
+
+    window.addEventListener("appinstalled", evt => {
+      console.log("PWA-Install fired", evt);
+    });
+  }
+
+  public geklickt() {
+    console.log("Peter");
   }
 
   /**
