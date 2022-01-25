@@ -32,3 +32,10 @@
   grid-area: target;
   min-width: 0;
 }
+
+.dialog-content {
+  @media (max-height: 800px) {
+    height: 40vh;
+  }
+}
+

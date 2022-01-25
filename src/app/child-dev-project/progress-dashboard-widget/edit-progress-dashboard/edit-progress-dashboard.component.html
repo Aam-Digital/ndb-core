@@ -2,7 +2,7 @@
   <h1 i18n="Edit the progress of one or multiple tasks">Edit Progress</h1>
 </div>
 
-<mat-dialog-content>
+<mat-dialog-content class="dialog-content">
   <div *ngFor="let control of forms.controls; let index=index" class="entry-wrapper mat-elevation-z1" [formGroup]="$any(control)">
     <mat-form-field class="header-field">
       <input
