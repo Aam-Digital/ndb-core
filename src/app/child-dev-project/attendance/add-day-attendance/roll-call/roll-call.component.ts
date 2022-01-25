@@ -120,6 +120,12 @@ export class RollCallComponent implements OnChanges {
       }
       index += 1;
     }
+
+    // do not jump to end - if all participants are recorded, start with first instead
+    if (index >= this.entries.length) {
+      index = 0;
+    }
+
     this._currentIndex = index;
   }
 
