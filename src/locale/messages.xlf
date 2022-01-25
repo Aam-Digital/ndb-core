@@ -361,7 +361,7 @@
         <source> Attendance completed. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
-          <context context-type="linenumber">64,67</context>
+          <context context-type="linenumber">64,72</context>
         </context-group>
         <note priority="1" from="description">shows when the user has registered the attendance of
       all children</note>
@@ -541,8 +541,8 @@
         </context-group>
         <note priority="1" from="description">Record attendance title</note>
       </trans-unit>
-      <trans-unit id="1a72a6d8cd833ce479b055c3d98b1e117ed4fa57" datatype="html">
-        <source> Record attendance for an activity on a certain day. Optimized for use smartphones. </source>
+      <trans-unit id="6aad5c9281f606e15f030fc1b732b3185cbd0e53" datatype="html">
+        <source> Record attendance for an activity on a certain day. Optimized for smartphones. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html</context>
           <context context-type="linenumber">24,26</context>
@@ -565,8 +565,8 @@
         </context-group>
         <note priority="1" from="description">Manage Activities title</note>
       </trans-unit>
-      <trans-unit id="4529004ee9774f32f450bff88e4bc8d749b2f767" datatype="html">
-        <source> Manage &quot;recurring activities&quot; for which you regularly record attendance. You can assign participants to these activities and analyze their attendance across time. </source>
+      <trans-unit id="9fe528c96e00963830b80749682755506d1bba47" datatype="html">
+        <source> Manage &quot;recurring activities&quot; for which you regularly record attendance. You can assign participants and users to these activities and analyze their attendance across time. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html</context>
           <context context-type="linenumber">46,48</context>
@@ -589,8 +589,8 @@
         </context-group>
         <note priority="1" from="description">Monthly attendance title</note>
       </trans-unit>
-      <trans-unit id="11e844014259bfccf5dfd11c803f623a33aac64a" datatype="html">
-        <source> Document attendance totals for a whole month that was collected on paper. </source>
+      <trans-unit id="816057bee46d2a8adcaca6830766a45e63523645" datatype="html">
+        <source> Document attendance totals for a whole month that were collected on paper. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html</context>
           <context context-type="linenumber">68,69</context>
@@ -744,15 +744,11 @@
         </context-group>
         <note priority="1" from="description">Subtitle of the child-bmi dashboard-component</note>
       </trans-unit>
-      <trans-unit id="303cf04ca5c12a60d676b6a00ceaf852799c1af4" datatype="html">
-        <source>Participants</source>
+      <trans-unit id="a81e4ab5857585c63385222425268b9562bbd7a8" datatype="html">
+        <source>Cases</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/children-count-dashboard/children-count-dashboard.component.html</context>
           <context context-type="linenumber">5</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">129</context>
         </context-group>
         <note priority="1" from="description">Dashboard title naming total number of beneficiaries in the system</note>
       </trans-unit>
@@ -1868,6 +1864,14 @@
             note can be entered into</note>
         <note priority="1" from="meaning">Placeholder</note>
       </trans-unit>
+      <trans-unit id="303cf04ca5c12a60d676b6a00ceaf852799c1af4" datatype="html">
+        <source>Participants</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
+          <context context-type="linenumber">129</context>
+        </context-group>
+        <note priority="1" from="description">Participants of a note</note>
+      </trans-unit>
       <trans-unit id="781e08965bad0a6de4dc79d832da4ec55bcd3d85" datatype="html">
         <source>Add participant ...</source>
         <context-group purpose="location">
@@ -2039,7 +2043,7 @@
         <source>Current</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html</context>
-          <context context-type="linenumber">25</context>
+          <context context-type="linenumber">37</context>
         </context-group>
         <note priority="1" from="description">The Current value of a process or task</note>
         <note priority="1" from="meaning">Current process</note>
@@ -2048,29 +2052,29 @@
         <source> This field is required </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html</context>
-          <context context-type="linenumber">29,30</context>
+          <context context-type="linenumber">41,42</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html</context>
-          <context context-type="linenumber">54,55</context>
+          <context context-type="linenumber">66,67</context>
         </context-group>
       </trans-unit>
       <trans-unit id="656e7f8e1c7ab76fb2cb712811419e07ce1c78f1" datatype="html">
         <source> Must be greater than 0 </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html</context>
-          <context context-type="linenumber">32,33</context>
+          <context context-type="linenumber">44,45</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html</context>
-          <context context-type="linenumber">60,61</context>
+          <context context-type="linenumber">72,73</context>
         </context-group>
       </trans-unit>
       <trans-unit id="c3c0d99915d3709313f424190bfea891a30c8076" datatype="html">
         <source> Must not be greater than target </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html</context>
-          <context context-type="linenumber">38,39</context>
+          <context context-type="linenumber">50,51</context>
         </context-group>
         <note priority="1" from="description">The number entered in this form is less than another field but should not be</note>
       </trans-unit>
@@ -2078,7 +2082,7 @@
         <source>Target</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html</context>
-          <context context-type="linenumber">48</context>
+          <context context-type="linenumber">60</context>
         </context-group>
         <note priority="1" from="description">The target amount of a process</note>
         <note priority="1" from="meaning">Target process</note>
@@ -2087,7 +2091,7 @@
         <source> Add New Task </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html</context>
-          <context context-type="linenumber">76</context>
+          <context context-type="linenumber">88</context>
         </context-group>
         <note priority="1" from="description">Add a task to the progress dashboard list</note>
       </trans-unit>
@@ -2095,14 +2099,14 @@
         <source>Save</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html</context>
-          <context context-type="linenumber">86</context>
+          <context context-type="linenumber">98</context>
         </context-group>
       </trans-unit>
       <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html">
         <source>Cancel</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html</context>
-          <context context-type="linenumber">88</context>
+          <context context-type="linenumber">100</context>
         </context-group>
       </trans-unit>
       <trans-unit id="339729126805226016" datatype="html">
@@ -3927,13 +3931,13 @@
           <context context-type="linenumber">19,24</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="5d49ee389add9351d1a4e56d4c8200eff140b932" datatype="html">
-        <source> Close </source>
+      <trans-unit id="b2faec5fbaafbf9a09932bfe7aee0ca759a05941" datatype="html">
+        <source> Continue in background </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/sync-status/background-processing-indicator/background-processing-indicator.component.html</context>
           <context context-type="linenumber">53,57</context>
         </context-group>
-        <note priority="1" from="description">Generic close button</note>
+        <note priority="1" from="description">Hide sync details</note>
       </trans-unit>
       <trans-unit id="c68d894ec13eb14a16009f6bd625a76f919eed01" datatype="html">
         <source> Downloading Initial Database ...
@@ -4067,7 +4071,7 @@
         <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;user&quot; class=&quot;nav-icon&quot;&gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/> Profile </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/ui/ui.component.html</context>
-          <context context-type="linenumber">84,86</context>
+          <context context-type="linenumber">94,96</context>
         </context-group>
         <note priority="1" from="description">Navigate to user profile page</note>
       </trans-unit>
@@ -4075,7 +4079,7 @@
         <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;sign-out-alt&quot; class=&quot;nav-icon&quot;&gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/> Sign out </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/ui/ui.component.html</context>
-          <context context-type="linenumber">89,91</context>
+          <context context-type="linenumber">99,101</context>
         </context-group>
         <note priority="1" from="description">Sign out of the app</note>
       </trans-unit>
