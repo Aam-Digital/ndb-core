@@ -1,56 +1,41 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from "@angular/core";
+import { ChangeDetectorRef, Component, ViewChild } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
 import { DynamicEntityService } from "app/core/entity/dynamic-entity.service";
-import { EntityConstructor } from "app/core/entity/model/entity";
 import { DataImportService } from "../data-import.service";
-import { v4 as uuid } from "uuid";
 import { ImportMetaData } from "../import-meta-data.type";
 import { AlertService } from "app/core/alerts/alert.service";
-import { Alert } from "app/core/alerts/alert";
-import { AlertDisplay } from "app/core/alerts/alert-display";
-import { CsvValidationStatus } from "../csv-validation-status.enum";
 import { MatStepper } from "@angular/material/stepper";
+import { ParseResult } from "ngx-papaparse";
+import { v4 as uuid } from "uuid";
 
 @Component({
   selector: "app-data-import",
   templateUrl: "./data-import.component.html",
   styleUrls: ["./data-import.component.scss"],
 })
-export class DataImportComponent implements OnInit {
+export class DataImportComponent {
   entityForm = this.formBuilder.group({ entity: ["", Validators.required] });
   fileNameForm = this.formBuilder.group({
     fileName: ["", Validators.required],
   });
   transactionIDForm = this.formBuilder.group({
-    transactionID: ["", Validators.pattern("^$|^[A-Fa-f0-9]{8}$")],
+    transactionID: [
+      "",
+      [Validators.required, Validators.pattern("^$|^[A-Fa-f0-9]{8}$")],
+    ],
   });
 
-  csvFile: Blob = undefined;
-  transactionId: string = "";
-
-  entitiesMap: Map<string, EntityConstructor>;
+  csvFile: ParseResult;
 
   @ViewChild(MatStepper) stepper: MatStepper;
 
   constructor(
     private dataImportService: DataImportService,
     private formBuilder: FormBuilder,
-    private dynamicEntityService: DynamicEntityService,
+    public dynamicEntityService: DynamicEntityService,
     private alertService: AlertService,
     private changeDetectorRef: ChangeDetectorRef
   ) {}
-
-  ngOnInit() {
-    this.entitiesMap = this.dynamicEntityService.EntityMap;
-  }
-
-  get hasValidFile(): boolean {
-    return this.csvFile !== undefined;
-  }
-
-  get hasTransactionId(): boolean {
-    return this.transactionId !== "";
-  }
 
   entitySelectionChanged(): void {
     // whenever the selection changes, the file can't be valid (if there was one)
@@ -63,28 +48,38 @@ export class DataImportComponent implements OnInit {
     const target = inputEvent.target as HTMLInputElement;
     const file = target.files[0];
     const entityType = this.entityForm.get("entity").value;
-    const csvValidationResult = await this.dataImportService.validateCsvFile(
-      file,
-      entityType
-    );
-
-    if (csvValidationResult.status !== CsvValidationStatus.Valid) {
-      this.csvFile = undefined;
-      this.fileNameForm.patchValue({ fileName: "" });
-
-      this.alertService.addAlert(
-        new Alert(
-          csvValidationResult.message,
-          Alert.DANGER,
-          AlertDisplay.TEMPORARY
-        )
-      );
-    } else {
-      this.csvFile = file;
+    try {
+      this.csvFile = await this.loadCSVFile(file, entityType);
       this.fileNameForm.setValue({ fileName: file.name });
       this.stepper.next();
-      this.changeDetectorRef.detectChanges();
+    } catch (e) {
+      this.fileNameForm.setErrors({ fileInvalid: e.message });
     }
+    this.changeDetectorRef.detectChanges();
+  }
+
+  private async loadCSVFile(file: File, entityType: string) {
+    const csvFile = await this.dataImportService.validateCsvFile(file);
+    if (csvFile.meta.fields.includes("_id")) {
+      const record = csvFile.data[0];
+      const [type, id] = record["_id"].split(":") as string[];
+      if (type != entityType) {
+        throw new Error("Wrong entity type in file");
+      }
+      if (id) {
+        this.transactionIDForm.setValue({ transactionID: id.substr(0, 8) });
+        this.transactionIDForm.disable();
+      } else {
+        this.transactionIDForm.setValue({ transactionID: "" });
+        this.transactionIDForm.enable();
+      }
+    }
+    return csvFile;
+  }
+
+  setRandomTransactionID() {
+    const transactionID = uuid().substr(0, 8);
+    this.transactionIDForm.setValue({ transactionID: transactionID });
   }
 
   async importSelectedFile(): Promise<void> {
@@ -93,20 +88,11 @@ export class DataImportComponent implements OnInit {
     }
 
     // use transaction id or generate a new one
-    const transIdCtrl = this.transactionIDForm.get("transactionID");
-    if (transIdCtrl.valid) {
-      this.transactionId = transIdCtrl.value;
-    } else {
-      this.transactionId = uuid().substring(0, 8);
-      this.transactionIDForm.patchValue({
-        transactionID: this.transactionId,
-      });
-    }
-
+    const transactionId = this.transactionIDForm.get("transactionID").value;
     const entityType = this.entityForm.get("entity").value;
 
     const importMeta: ImportMetaData = {
-      transactionId: this.transactionId,
+      transactionId: transactionId,
       entityType: entityType,
     };
 

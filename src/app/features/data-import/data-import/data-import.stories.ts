@@ -7,7 +7,12 @@ import { DynamicEntityService } from "../../../core/entity/dynamic-entity.servic
 import { Child } from "../../../child-dev-project/children/model/child";
 import { EntityConstructor } from "../../../core/entity/model/entity";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { CsvValidationStatus } from "../csv-validation-status.enum";
+import { PouchDatabase } from "../../../core/database/pouch-database";
+import { Database } from "../../../core/database/database";
+import { MatDialogModule } from "@angular/material/dialog";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { BackupService } from "../../../core/admin/services/backup.service";
+import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 
 let mockEntityMap: Map<string, EntityConstructor>;
 mockEntityMap = new Map<"Participant", EntityConstructor<Child>>();
@@ -17,15 +22,23 @@ export default {
   component: DataImportComponent,
   decorators: [
     moduleMetadata({
-      imports: [DataImportModule, FontAwesomeTestingModule],
+      imports: [
+        DataImportModule,
+        FontAwesomeTestingModule,
+        MatDialogModule,
+        MatSnackBarModule,
+      ],
       declarations: [],
       providers: [
+        DataImportService,
+        ConfirmationDialogService,
+        { provide: Database, useValue: PouchDatabase.createWithInMemoryDB() },
         {
-          provide: DataImportService,
+          provide: BackupService,
           useValue: {
-            handleCsvImport: () => Promise.resolve(),
-            validateCsvFile: () =>
-              Promise.resolve({ status: CsvValidationStatus.Valid }),
+            getJsonExport: () => Promise.resolve(),
+            clearDatabase: () => Promise.resolve(),
+            importJson: () => Promise.resolve(),
           },
         },
         {

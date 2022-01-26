@@ -4,7 +4,7 @@
         <mat-form-field>
           <mat-label>Entity Type</mat-label>
           <mat-select formControlName="entity" required (selectionChange)="entitySelectionChanged()">
-            <mat-option *ngFor="let entity of entitiesMap | keyvalue" [value]="entity.key">
+            <mat-option *ngFor="let entity of dynamicEntityService.EntityMap | keyvalue" [value]="entity.key">
               {{entity.key}}
             </mat-option>
           </mat-select>
@@ -20,6 +20,7 @@
         <mat-form-field>
           <mat-label>Selected File:</mat-label>
           <input matInput formControlName="fileName" (click)="csvImport.click()" placeholder="No file selected"/>
+          <mat-error *ngIf="fileNameForm.errors?.fileInvalid">{{ fileNameForm.errors.fileInvalid }}</mat-error>
         </mat-form-field>
         <div>
           <button mat-button matStepperPrevious>Back</button>
@@ -27,14 +28,14 @@
         </div>
       </form>
     </mat-step>
-    <mat-step [optional]=true label="Transaction ID" [stepControl]="transactionIDForm">
+    <mat-step label="Transaction ID" [stepControl]="transactionIDForm">
       <form [formGroup]="transactionIDForm">
-        <p>Enter a Transaction ID if you reimport the same data. If you keep this field empty, a new Transaction ID is generated.</p>
+        <p *ngIf="transactionIDForm.disabled">IDs are specified in CSV file</p>
         <mat-form-field>
           <mat-label>Transaction ID:</mat-label>
-          <input matInput formControlName="transactionID" placeholder="Enter TransactionID if any" required/>
-          <button mat-button>Generate</button>
+          <input matInput formControlName="transactionID" placeholder="Enter TransactionID" required/>
         </mat-form-field>
+        <button *ngIf="transactionIDForm.enabled" mat-button (click)="setRandomTransactionID()">Generate ID</button>
         <div>
           <button mat-button matStepperPrevious>Back</button>
           <button mat-button matStepperNext>Next</button>

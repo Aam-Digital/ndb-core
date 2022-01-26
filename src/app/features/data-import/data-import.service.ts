@@ -8,8 +8,6 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { readFile } from "../../utils/utils";
 import { ImportMetaData } from "./import-meta-data.type";
 import { v4 as uuid } from "uuid";
-import { CsvValidationStatus } from "./csv-validation-status.enum";
-import { CsvValidationResult } from "./csv-validation-result.type";
 import { DynamicEntityService } from "../../core/entity/dynamic-entity.service";
 
 @Injectable()
@@ -24,47 +22,25 @@ export class DataImportService {
     private dynamicEntityService: DynamicEntityService
   ) {}
 
-  async validateCsvFile(
-    file: File,
-    entityType: string
-  ): Promise<CsvValidationResult> {
+  async validateCsvFile(file: File): Promise<ParseResult> {
+    if (!file.name.endsWith(".csv")) {
+      throw new Error("Only .csv files are supported");
+    }
     const csvData = await readFile(file);
     const parsedCsvFile = this.parseCsvFile(csvData);
 
     if (parsedCsvFile === undefined || parsedCsvFile.data === undefined) {
-      return {
-        status: CsvValidationStatus.ErrorNoData,
-        message: "The file provided is invalid, parsing was not possible!",
-      };
+      throw new Error("File could not be parsed");
     }
-
     if (parsedCsvFile.data.length === 0) {
-      return {
-        status: CsvValidationStatus.ErrorEmpty,
-        message: "The file provided is invalid, it has no content!",
-      };
+      throw new Error("File has no content");
     }
 
-    if (parsedCsvFile.meta.fields.includes("_id")) {
-      const record = parsedCsvFile.data[0];
-
-      if (!record["_id"].startsWith(entityType + ":")) {
-        return {
-          status: CsvValidationStatus.ErrorWrongType,
-          message:
-            "The file provided is invalid, it contains an _id column but the given type does not match the selected type!",
-        };
-      }
-    }
-
-    return {
-      status: CsvValidationStatus.Valid,
-      message: "The file provided is valid.",
-    };
+    return parsedCsvFile;
   }
 
-  parseCsvFile(csv: string): ParseResult {
-    return this.papa.parse(csv, {
+  private parseCsvFile(csvString: string): ParseResult {
+    return this.papa.parse(csvString, {
       header: true,
       dynamicTyping: true,
       skipEmptyLines: true,
@@ -72,11 +48,9 @@ export class DataImportService {
   }
 
   async importCsvContentToDB(
-    csv: string,
+    csv: ParseResult,
     importMeta: ImportMetaData
   ): Promise<void> {
-    const parsedCsv = this.parseCsvFile(csv);
-
     // e.g. Child:abcd1234
     const recordIdPrefix =
       importMeta.entityType + ":" + importMeta.transactionId;
@@ -91,12 +65,12 @@ export class DataImportService {
 
     let hasIdProperty = true;
 
-    if (!parsedCsv.meta.fields.includes("_id")) {
+    if (!csv.meta.fields.includes("_id")) {
       hasIdProperty = false;
-      parsedCsv.meta.fields.push("_id");
+      csv.meta.fields.push("_id");
     }
 
-    for (const record of parsedCsv.data) {
+    for (const record of csv.data) {
       // remove undefined properties
       for (const propertyName in record) {
         if (record[propertyName] === null || propertyName === "_rev") {
@@ -124,19 +98,18 @@ export class DataImportService {
 
   /**
    * Add the data from the loaded file to the database, inserting and updating records.
-   * @param file The file object of the csv data to be loaded
+   * @param csvFile The file object of the csv data to be loaded
    * @param importMeta Additional information required for importing the file
    */
-  async handleCsvImport(file: Blob, importMeta: ImportMetaData): Promise<void> {
+  async handleCsvImport(
+    csvFile: ParseResult,
+    importMeta: ImportMetaData
+  ): Promise<void> {
     const restorePoint = await this.backupService.getJsonExport();
-    const newData = await readFile(file);
-
     const refTitle = $localize`Import new data?`;
-    const refText = $localize`Are you sure you want to import this file? This will add or update ${
-      newData.trim().split("\n").length - 1
-    } records from the loaded file. All existing records imported with the transaction id '${
-      importMeta.transactionId
-    }' will be deleted!`;
+    const refText = $localize`Are you sure you want to import this file?
+      This will add or update ${csvFile.data.length} records from the loaded file.
+      All existing records imported with the transaction id '${importMeta.transactionId}' will be deleted!`;
 
     const dialogRef = this.confirmationDialog.openDialog(refTitle, refText);
 
@@ -145,7 +118,7 @@ export class DataImportService {
         return;
       }
 
-      await this.importCsvContentToDB(newData, importMeta);
+      await this.importCsvContentToDB(csvFile, importMeta);
 
       const snackBarRef = this.snackBar.open(
         $localize`Import completed?`,
