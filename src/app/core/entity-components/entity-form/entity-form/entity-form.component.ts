@@ -48,8 +48,7 @@ export class EntityFormComponent implements OnInit {
     );
   }
   _columns: FormFieldConfig[][] = [];
-
-  @Input() viewOnlyColumns: FormFieldConfig[];
+  @Input() columnHeaders?: (string | null)[];
 
   /**
    * This will be emitted whenever changes have been successfully saved to the entity.
@@ -63,7 +62,6 @@ export class EntityFormComponent implements OnInit {
 
   operationType = OperationType;
   form: FormGroup;
-  tempEntity: Entity;
 
   constructor(
     private entityFormService: EntityFormService,
@@ -75,10 +73,6 @@ export class EntityFormComponent implements OnInit {
     if (this.editing) {
       this.switchEdit();
     }
-    this.form.valueChanges.subscribe((value) => {
-      const dynamicConstructor: any = this.entity.getConstructor();
-      this.tempEntity = Object.assign(new dynamicConstructor(), value);
-    });
   }
 
   switchEdit() {

@@ -69,7 +69,7 @@ export interface FormFieldConfig {
    *           lg  'screen and (min-width: 1280px) and (max-width: 1919px)'
    *           xl  'screen and (min-width: 1920px) and (max-width: 5000px)'
    */
-  visibleFrom?: string;
+  visibleFrom?: "xs" | "sm" | "md" | "lg" | "xl";
 
   /**
    * If true, the field will only be shown in forms and popups, but not in tables.

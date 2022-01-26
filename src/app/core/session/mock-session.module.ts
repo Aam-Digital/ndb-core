@@ -52,7 +52,7 @@ export class MockSessionModule {
         { provide: MockEntityMapperService, useValue: mockedEntityMapper },
         {
           provide: AnalyticsService,
-          useValue: { eventTrack: () => {} },
+          useValue: { eventTrack: () => null },
         },
       ],
     };

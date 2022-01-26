@@ -13,7 +13,7 @@ import {
 import { RouterTestingModule } from "@angular/router/testing";
 import { EntitySubrecordModule } from "../entity-subrecord.module";
 import { Entity } from "../../../entity/model/entity";
-import { EventEmitter, SimpleChange } from "@angular/core";
+import { SimpleChange } from "@angular/core";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatNativeDateModule } from "@angular/material/core";
 import { DatePipe, PercentPipe } from "@angular/common";
@@ -27,8 +27,7 @@ import { EntityFormService } from "../../entity-form/entity-form.service";
 import { genders } from "../../../../child-dev-project/children/model/genders";
 import { LoggingService } from "../../../logging/logging.service";
 import { MockSessionModule } from "../../../session/mock-session.module";
-import { MatDialog, MatDialogRef } from "@angular/material/dialog";
-import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -44,6 +43,7 @@ describe("EntitySubrecordComponent", () => {
           MatNativeDateModule,
           NoopAnimationsModule,
           MockSessionModule.withState(),
+          FontAwesomeTestingModule,
         ],
         providers: [DatePipe, PercentPipe],
       }).compileComponents();
@@ -280,18 +280,27 @@ describe("EntitySubrecordComponent", () => {
     expect(row.formGroup).toBeFalsy();
   });
 
-  it("should create new entities and call the show entity function", fakeAsync(() => {
+  it("should create new entities and call the show entity function when it is supplied", fakeAsync(() => {
     const child = new Child();
     component.newRecordFactory = () => child;
     component.columns = [{ id: "name" }, { id: "projectNumber" }];
-    const showEntitySpy = spyOn(component, "showEntity");
+    component.showEntity = jasmine.createSpy("showEntity");
 
     component.create();
     tick();
 
-    expect(component.records).toEqual([child]);
-    expect(component.recordsDataSource.data).toContain({ record: child });
-    expect(showEntitySpy).toHaveBeenCalledWith(child);
+    expect(component.showEntity).toHaveBeenCalledWith(child);
+  }));
+
+  it("should create new entities and open it in a row when no show entity function is supplied", fakeAsync(() => {
+    const child = new Child();
+    component.newRecordFactory = () => child;
+    const spy = spyOn<any>(component, "showRowDetails");
+
+    component.create();
+    tick();
+
+    expect(spy).toHaveBeenCalledWith({ record: child }, true);
   }));
 
   it("should notify when an entity is clicked", (done) => {
@@ -304,42 +313,18 @@ describe("EntitySubrecordComponent", () => {
     component.rowClick({ record: child });
   });
 
-  it("should open a dialog with buttons that close it", fakeAsync(() => {
-    const columns = [
-      { id: "name", edit: "editComponent" },
-      { id: "projectNumber", edit: "editComponent" },
-    ];
-    component.columns = columns;
-    const child = Child.create("test child");
-    child.projectNumber = "1";
-    component.recordsDataSource.data = [{ record: child }];
-    const onSaveEmitter = new EventEmitter();
-    const onCancelEmitter = new EventEmitter();
-    const closeSpy = jasmine.createSpy();
-    const mockDialog: MatDialogRef<EntityFormComponent> = {
-      componentInstance: {
-        onSave: onSaveEmitter,
-        onCancel: onCancelEmitter,
-      },
-      close: closeSpy,
-    } as any;
-    spyOn(TestBed.inject(MatDialog), "open").and.returnValue(mockDialog);
+  it("appends a new entity to the end of the records when it's new", async () => {
+    const entityFormService = TestBed.inject(EntityFormService);
+    spyOn(entityFormService, "saveChanges").and.resolveTo();
+    const entity = new Entity();
+    await component.save({ record: entity }, true);
+    expect(component.records).toHaveSize(1);
+  });
 
-    component.rowClick(component.recordsDataSource.data[0]);
-
-    const col2D = columns.map((col) => [col]);
-    expect(mockDialog.componentInstance.columns).toEqual(col2D);
-    expect(mockDialog.componentInstance.viewOnlyColumns).toEqual([]);
-    expect(mockDialog.componentInstance.entity).toBe(child);
-    expect(mockDialog.componentInstance.editing).toBe(true);
-
-    onCancelEmitter.emit(child);
-    tick();
-    expect(closeSpy).toHaveBeenCalled();
-
-    closeSpy.calls.reset();
-    onSaveEmitter.emit(child);
-    tick();
-    expect(closeSpy).toHaveBeenCalled();
-  }));
+  it("does not change the size of it's records when not saving a new record", async () => {
+    const entity = new Entity();
+    component.records.push(entity);
+    await component.save({ record: entity }, false);
+    expect(component.records).toHaveSize(1);
+  });
 });

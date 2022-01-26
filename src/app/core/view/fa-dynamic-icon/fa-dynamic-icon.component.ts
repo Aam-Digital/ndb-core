@@ -10,6 +10,7 @@ import {
   faCalendarCheck,
   faFileAlt,
   faCalendarAlt,
+  faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { LoggingService } from "../../logging/logging.service";
@@ -23,6 +24,7 @@ const iconAliases = new Map<string, IconDefinition>([
   ["question", faQuestionCircle],
   ["line-chart", faChartLine],
   ["calendar", faCalendarAlt],
+  ["users", faUsers],
 ]);
 
 /**

@@ -114,6 +114,9 @@ export interface FilterSelectionOption<T> {
   /** label displayed for this option to the user in the UI */
   label: string;
 
+  /** Optional color */
+  color?: string;
+
   /**
    * function that filters a dataset.
    * This filter logic will be applied to data when this option is selected.

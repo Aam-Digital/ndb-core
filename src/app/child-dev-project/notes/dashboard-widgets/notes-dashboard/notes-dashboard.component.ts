@@ -8,7 +8,6 @@ import {
 import { ChildrenService } from "../../../children/children.service";
 import moment from "moment";
 import { MatTableDataSource } from "@angular/material/table";
-import { MatSort } from "@angular/material/sort";
 import { MatPaginator } from "@angular/material/paginator";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 
@@ -20,10 +19,10 @@ import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components
  */
 @Component({
   selector: "app-no-recent-notes-dashboard",
-  templateUrl: "./no-recent-notes-dashboard.component.html",
-  styleUrls: ["./no-recent-notes-dashboard.component.scss"],
+  templateUrl: "./notes-dashboard.component.html",
+  styleUrls: ["./notes-dashboard.component.scss"],
 })
-export class NoRecentNotesDashboardComponent
+export class NotesDashboardComponent
   implements OnInitDynamicComponent, OnInit, AfterViewInit {
   /**
    * number of days since last note that children should be considered having a "recent" note.
@@ -33,18 +32,17 @@ export class NoRecentNotesDashboardComponent
   /** Whether an additional offset should be automatically added to include notes from the beginning of the week */
   @Input() fromBeginningOfWeek = true;
 
-  /** true while data is not ready/available yet */
-  isLoading: boolean;
-
   /** children displayed in the template
    * Child entities with additional "daysSinceLastNote" field
    */
   concernedChildren: ChildWithRecentNoteInfo[] = [];
+  amountOfConcernedChildren: Promise<number>;
+  mode: "with-recent-notes" | "without-recent-notes";
 
-  columnsToDisplay: string[] = ["name", "daysSinceLastNote"];
-  childrenWithNoteInfoDataSource: MatTableDataSource<ChildWithRecentNoteInfo> = new MatTableDataSource<ChildWithRecentNoteInfo>();
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  childrenWithNoteInfoDataSource = new MatTableDataSource<ChildWithRecentNoteInfo>();
+  @ViewChild("paginator") paginator: MatPaginator;
+
+  isLoading: boolean = true;
 
   constructor(private childrenService: ChildrenService) {}
 
@@ -55,46 +53,80 @@ export class NoRecentNotesDashboardComponent
     if (config?.fromBeginningOfWeek) {
       this.fromBeginningOfWeek = config.fromBeginningOfWeek;
     }
+    this.mode = config?.mode;
   }
 
-  async ngOnInit() {
-    await this.loadConcernedChildrenFromIndex();
-    this.childrenWithNoteInfoDataSource.data = this.concernedChildren;
-  }
-
-  ngAfterViewInit() {
-    this.childrenWithNoteInfoDataSource.sort = this.sort;
-    this.childrenWithNoteInfoDataSource.paginator = this.paginator;
-  }
-
-  private async loadConcernedChildrenFromIndex() {
-    this.isLoading = true;
-
+  ngOnInit() {
     let dayRangeBoundary = this.sinceDays;
     if (this.fromBeginningOfWeek) {
       dayRangeBoundary += moment().diff(moment().startOf("week"), "days");
     }
+    switch (this.mode) {
+      case "with-recent-notes":
+        this.loadConcernedChildren(
+          (stat) => stat[1] <= dayRangeBoundary,
+          dayRangeBoundary
+        );
+        break;
+      case "without-recent-notes":
+        this.loadConcernedChildren(
+          (stat) => stat[1] >= dayRangeBoundary,
+          dayRangeBoundary
+        );
+    }
+  }
+
+  get subtitle(): string {
+    switch (this.mode) {
+      case "without-recent-notes":
+        return $localize`:Subtitle|Subtitle informing the user that these are the children without recent reports:Having no recent reports`;
+      case "with-recent-notes":
+        return $localize`:Subtitle|Subtitle informing the user that these are the children with recent reports:Cases with recent report`;
+    }
+  }
+
+  ngAfterViewInit() {
+    this.childrenWithNoteInfoDataSource.paginator = this.paginator;
+  }
+
+  private loadConcernedChildren(
+    filter: (stat: [string, number]) => boolean,
+    dayRangeBoundary: number
+  ) {
     const queryRange = Math.round((dayRangeBoundary * 3) / 10) * 10; // query longer range to be able to display exact date of last note for recent
 
-    this.concernedChildren = Array.from(
-      await this.childrenService.getDaysSinceLastNoteOfEachChild(queryRange)
-    )
-      .filter((stat) => stat[1] >= dayRangeBoundary)
-      .map((stat) => statsToChildWithRecentNoteInfo(stat, queryRange))
-      .sort((a, b) => b.daysSinceLastNote - a.daysSinceLastNote);
-
-    this.isLoading = false;
+    const promise = this.childrenService
+      .getDaysSinceLastNoteOfEachChild(queryRange)
+      .then((children) => {
+        return Array.from(children)
+          .filter(filter)
+          .map((stat) => statsToChildWithRecentNoteInfo(stat, queryRange))
+          .sort((a, b) => b.daysSinceLastNote - a.daysSinceLastNote);
+      });
+    promise.then((children) => {
+      this.concernedChildren = children;
+      this.childrenWithNoteInfoDataSource.data = children;
+      this.isLoading = false;
+    });
+    this.amountOfConcernedChildren = promise.then(
+      (children) => children.length
+    );
   }
 
   get tooltip(): string {
-    return $localize`:Tooltip|Spaces in front of the variables are added automatically:includes children without a note${this.sinceBeginningOfTheWeek}:sinceBeginningOfWeek:${this.withinTheLastNDays}:withinTheLastDays:`;
+    switch (this.mode) {
+      case "with-recent-notes":
+        return $localize`:Tooltip|Spaces in front of the variables are added automatically:includes cases with a note${this.sinceBeginningOfTheWeek}:sinceBeginningOfWeek:${this.withinTheLastNDays}:withinTheLastDays:`;
+      case "without-recent-notes":
+        return $localize`:Tooltip|Spaces in front of the variables are added automatically:includes cases without a note${this.sinceBeginningOfTheWeek}:sinceBeginningOfWeek:${this.withinTheLastNDays}:withinTheLastDays:`;
+    }
   }
 
   get sinceBeginningOfTheWeek(): string {
     if (this.fromBeginningOfWeek) {
       return (
         " " +
-        $localize`:Tooltip-part|'includes children without a note since the beginning of the week':since the beginning of the week`
+        $localize`:Tooltip-part|'includes cases without a note since the beginning of the week':since the beginning of the week`
       );
     }
   }
@@ -103,7 +135,7 @@ export class NoRecentNotesDashboardComponent
     if (this.sinceDays > 0) {
       return (
         " " +
-        $localize`:Tooltip-part|'includes children without a note within the last x days':without a note within the last ${this.sinceDays} days`
+        $localize`:Tooltip-part|'includes cases without a note within the last x days':without a note within the last ${this.sinceDays} days`
       );
     }
   }

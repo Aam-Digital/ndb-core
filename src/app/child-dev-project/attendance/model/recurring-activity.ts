@@ -91,6 +91,10 @@ export class RecurringActivity extends Entity {
   })
   assignedTo: string[] = [];
 
+  isAssignedTo(username: string): boolean {
+    return !!this.assignedTo.find((name) => username === name);
+  }
+
   toString(): string {
     return this.title;
   }

@@ -17,3 +17,8 @@
   width: 120px;
   background: white;
 }
+
+// This centers the picture horizontally in the host
+:host {
+  margin-left: 25%;
+}

@@ -15,13 +15,8 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<div
-  fxLayout="row wrap"
-  fxLayout.xs="column wrap"
-  fxLayoutGap="20px"
-  class="widget-wrapper"
->
-  <div fxFlex="30" *ngFor="let widgetConfig of widgets">
+<div class="widget-wrapper">
+  <div *ngFor="let widgetConfig of widgets" >
     <ng-template [appDynamicComponent]="widgetConfig"></ng-template>
   </div>
 </div>

@@ -1,0 +1,102 @@
+<fa-icon
+  mat-dialog-close
+  class="cancel-icon"
+  icon="times"
+  mat-ripple
+>
+</fa-icon>
+<div mat-dialog-content>
+  <div class="main-content">
+    <div
+      *ngFor="let row of data.columns"
+      class="row-element"
+    >
+      <div
+        [appDynamicComponent]="{
+            component: row.edit,
+            config: {
+              formFieldConfig: row,
+              propertySchema: data.row.record.getSchema().get(row.id),
+              formControl: form.get(row.id)
+            }
+          }"
+      ></div>
+      <fa-icon
+        (click)="tooltipElement.show()"
+        #tooltipElement="matTooltip"
+        *ngIf="row.tooltip"
+        matSuffix
+        icon="question-circle"
+        [matTooltip]="row.tooltip"
+      ></fa-icon>
+    </div>
+  </div>
+
+  <div *ngFor="let col of viewOnlyColumns" class="viewonly-section">
+    <mat-chip-list>
+      <mat-chip
+        [matTooltip]="col.tooltip"
+        [ngStyle]="{
+          'background-color': tempEntity.getColor()
+        }"
+      >
+        <p *ngIf="col.label">{{ col.label }}:&nbsp;</p>
+        <ng-template
+          [appDynamicComponent]="{
+          component: col.view,
+          config: {
+            id: col.id,
+            entity: tempEntity,
+            config: col.additional
+          }
+        }"
+        ></ng-template>
+      </mat-chip>
+    </mat-chip-list>
+    <!-- avoid scroll bar + move delete into [...] menu -->
+  </div>
+</div>
+<div mat-dialog-actions fxLayoutGap="10px">
+  <button
+    mat-raised-button
+    mat-dialog-close
+    (click)="save()"
+    *appDisabledEntityOperation="{
+      operation: operationType.UPDATE,
+      entity: data.row.record.getConstructor()
+    }"
+    i18n="Save button for forms"
+  >
+    Save
+  </button>
+
+  <button
+    mat-icon-button
+    [matMenuTriggerFor]="additional"
+  >
+    <fa-icon icon="ellipsis-v" class="standard-icon"></fa-icon>
+  </button>
+  <mat-menu
+    #additional
+  >
+    <button
+      mat-menu-item
+      mat-dialog-close
+      (click)="delete()"
+      *appDisabledEntityOperation="{
+        operation: operationType.DELETE,
+        entity: data.row.record.getConstructor()
+      }"
+      angulartics2On="click"
+      [angularticsCategory]="data.row.record.getConstructor()?.ENTITY_TYPE"
+      angularticsAction="entity_delete"
+    >
+      <fa-icon
+        class="standard-icon-with-text warn-icon"
+        aria-label="remove element"
+        icon="trash"
+      ></fa-icon>
+      <span i18n="Generic delete button"> Delete </span>
+    </button>
+  </mat-menu>
+</div>

@@ -16,6 +16,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { FlexModule } from "@angular/flex-layout";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Angulartics2Module } from "angulartics2";
+import { ViewModule } from "../../core/view/view.module";
 
 @NgModule({
   declarations: [ReportingComponent, ReportRowComponent],
@@ -35,6 +36,7 @@ import { Angulartics2Module } from "angulartics2";
     FlexModule,
     FontAwesomeModule,
     Angulartics2Module,
+    ViewModule,
   ],
 })
 export class ReportingModule {}
