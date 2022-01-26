@@ -1,46 +1,39 @@
 <mat-vertical-stepper linear #stepper>
-    <mat-step [stepControl]="entitySelectionFormGroup" [editable]="true">
-      <form [formGroup]="entitySelectionFormGroup">
-        <ng-template matStepLabel>Import Type</ng-template>
+    <mat-step label="Import Type" [stepControl]="entityForm">
+      <form [formGroup]="entityForm">
         <mat-form-field>
-            <mat-label>Entity Type</mat-label>
-            <mat-select formControlName="entitySelectionCtrl" required (selectionChange)="entitySelectionChanged()">
-                <mat-option *ngFor="let entity of entitiesMap | keyvalue" [value]="entity.key">
-                    {{entity.key}}
-                </mat-option>
-            </mat-select>
+          <mat-label>Entity Type</mat-label>
+          <mat-select formControlName="entity" required (selectionChange)="entitySelectionChanged()">
+            <mat-option *ngFor="let entity of entitiesMap | keyvalue" [value]="entity.key">
+              {{entity.key}}
+            </mat-option>
+          </mat-select>
         </mat-form-field>
         <div>
           <button mat-button matStepperNext>Next</button>
         </div>
       </form>
     </mat-step>
-    <mat-step [stepControl]="fileSelectionFormGroup" [editable]="true" [completed]="hasValidFile">
-      <form [formGroup]="fileSelectionFormGroup">
-        <ng-template matStepLabel>Import File</ng-template>
+    <mat-step label="Select File" [stepControl]="fileNameForm">
+      <form [formGroup]="fileNameForm">
+        <input #csvImport type="file" style="display: none" (change)="setCsvFile($event)"/>
         <mat-form-field>
           <mat-label>Selected File:</mat-label>
-          <input matInput formControlName="fileNameCtrl" readonly placeholder="No file selected"/>
+          <input matInput formControlName="fileName" (click)="csvImport.click()" placeholder="No file selected"/>
         </mat-form-field>
-        <div>
-          <button (click)="csvImport.click()" mat-stroked-button>
-            Select File (*.csv)
-          </button>
-          <input #csvImport type="file" style="display: none" (change)="setCsvFile($event)"/>
-        </div>
         <div>
           <button mat-button matStepperPrevious>Back</button>
           <button mat-button matStepperNext>Next</button>
         </div>
       </form>
     </mat-step>
-    <mat-step [stepControl]="transactionIdFormGroup" [editable]="true" [optional]=true [completed]="hasTransactionId">
-      <p>Enter a Transaction ID if you reimport the same data. If you keep this field empty, a new Transaction ID is generated.</p>
-      <form [formGroup]="transactionIdFormGroup">
-        <ng-template matStepLabel>Transaction ID</ng-template>
+    <mat-step [optional]=true label="Transaction ID" [stepControl]="transactionIDForm">
+      <form [formGroup]="transactionIDForm">
+        <p>Enter a Transaction ID if you reimport the same data. If you keep this field empty, a new Transaction ID is generated.</p>
         <mat-form-field>
           <mat-label>Transaction ID:</mat-label>
-          <input matInput formControlName="transactionIdInputCtrl" placeholder="Enter TransactionID if any" required/>
+          <input matInput formControlName="transactionID" placeholder="Enter TransactionID if any" required/>
+          <button mat-button>Generate</button>
         </mat-form-field>
         <div>
           <button mat-button matStepperPrevious>Back</button>
@@ -48,9 +41,10 @@
         </div>
       </form>
     </mat-step>
-    <mat-step>
-      <ng-template matStepLabel>Excecute</ng-template>
-      <p>Click 'Start Import' to import the selected file.</p>
+    <mat-step label="Start Import">
+      <p>Entity Type:    <i>{{ entityForm.get('entity').value }}</i></p>
+      <p>CSV File:       <i>{{ fileNameForm.get('fileName').value }}</i></p>
+      <p>TransactionID:  <i>{{ transactionIDForm.get('transactionID').value }}</i></p>
       <button (click)="importSelectedFile()" mat-stroked-button>
         Start Import
       </button>
