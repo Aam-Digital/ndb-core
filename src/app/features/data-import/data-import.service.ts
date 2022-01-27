@@ -10,10 +10,19 @@ import { ImportMetaData } from "./import-meta-data.type";
 import { v4 as uuid } from "uuid";
 import { DynamicEntityService } from "../../core/entity/dynamic-entity.service";
 import { Entity } from "../../core/entity/model/entity";
+import { dateEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-date";
+import { dateOnlyEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-date-only";
+import { monthEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-month";
+import moment from "moment";
 
 @Injectable()
 @UntilDestroy()
 export class DataImportService {
+  private readonly dateDataTypes = [
+    dateEntitySchemaDatatype,
+    dateOnlyEntitySchemaDatatype,
+    monthEntitySchemaDatatype,
+  ].map((dataType) => dataType.name);
   constructor(
     private db: Database,
     private papa: Papa,
@@ -126,7 +135,10 @@ export class DataImportService {
   }
 
   private createEntityWithRowData(row: any, importMeta: ImportMetaData): any {
-    const entity = {}
+    const entity = {};
+    const schema = this.dynamicEntityService.getEntityConstructor(
+      importMeta.entityType
+    ).schema;
     for (const col in row) {
       const property = importMeta.columnMap[col];
       if (property) {
@@ -134,6 +146,13 @@ export class DataImportService {
           entity[property] = Entity.createPrefixedId(
             importMeta.entityType,
             row[col]
+          );
+        } else if (
+          importMeta.dateFormat &&
+          this.dateDataTypes.includes(schema.get(property).dataType)
+        ) {
+          entity[property] = moment(row[col], importMeta.dateFormat).format(
+            "YYYY-MM-DD"
           );
         } else {
           entity[property] = row[col];

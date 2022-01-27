@@ -286,4 +286,28 @@ describe("DataImportService", () => {
       true
     );
   });
+
+  it("should use the provided date format to parse dates", async () => {
+    confirmDialog();
+    const csvData = {
+      meta: { fields: ["ID", "Birthday"] },
+      data: [
+        { ID: "test1", Birthday: "17/12/2010" },
+        { ID: "test2", Birthday: "7/6/2011" },
+      ],
+    } as ParseResult;
+    const importMeta: ImportMetaData = {
+      entityType: "Child",
+      columnMap: { ID: "_id", Birthday: "dateOfBirth" },
+      dateFormat: "D/M/YYYY",
+    };
+
+    await service.handleCsvImport(csvData, importMeta);
+
+    const entityMapper = TestBed.inject(EntityMapperService);
+    const test1 = await entityMapper.load(Child, "test1");
+    expect(test1.dateOfBirth).toEqual(new Date("2010-12-17"));
+    const test2 = await entityMapper.load(Child, "test2");
+    expect(test2.dateOfBirth).toEqual(new Date("2011-06-07"));
+  });
 });
