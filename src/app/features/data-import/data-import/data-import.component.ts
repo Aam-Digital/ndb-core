@@ -1,5 +1,12 @@
-import { ChangeDetectorRef, Component, ViewChild } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
+import {
+  ChangeDetectorRef,
+  Component,
+  ViewChild,
+} from "@angular/core";
+import {
+  FormBuilder,
+  Validators,
+} from "@angular/forms";
 import { DynamicEntityService } from "app/core/entity/dynamic-entity.service";
 import { DataImportService } from "../data-import.service";
 import { ImportMetaData } from "../import-meta-data.type";
@@ -7,6 +14,7 @@ import { AlertService } from "app/core/alerts/alert.service";
 import { MatStepper } from "@angular/material/stepper";
 import { ParseResult } from "ngx-papaparse";
 import { v4 as uuid } from "uuid";
+import { BehaviorSubject } from "rxjs";
 
 @Component({
   selector: "app-data-import",
@@ -26,6 +34,9 @@ export class DataImportComponent {
   });
 
   csvFile: ParseResult;
+  columnMap: { [key in string]: string };
+  properties: string[] = [];
+  filteredProperties = new BehaviorSubject<string[]>([]);
 
   @ViewChild(MatStepper) stepper: MatStepper;
 
@@ -38,7 +49,11 @@ export class DataImportComponent {
   ) {}
 
   entitySelectionChanged(): void {
-    // whenever the selection changes, the file can't be valid (if there was one)
+    const entityName = this.entityForm.get("entity").value;
+    const propertyKeys = this.dynamicEntityService.EntityMap.get(
+      entityName
+    ).schema.keys();
+    this.properties = [...propertyKeys];
     this.csvFile = undefined;
     this.fileNameForm.patchValue({ fileName: "" });
     this.stepper.next();
@@ -51,6 +66,8 @@ export class DataImportComponent {
     try {
       this.csvFile = await this.loadCSVFile(file, entityType);
       this.fileNameForm.setValue({ fileName: file.name });
+      this.columnMap = {};
+      this.csvFile.meta.fields.forEach((field) => (this.columnMap[field] = ""));
       this.stepper.next();
     } catch (e) {
       this.fileNameForm.setErrors({ fileInvalid: e.message });
@@ -82,18 +99,34 @@ export class DataImportComponent {
     this.transactionIDForm.setValue({ transactionID: transactionID });
   }
 
+  processChange(value: string) {
+    const usedProperties = Object.values(this.columnMap);
+    this.filteredProperties.next(
+      this.properties.filter(
+        (property) =>
+          property.includes(value) && !usedProperties.includes(property)
+      )
+    );
+  }
+
+  selectProperty(columnName: string, property: string) {
+    this.processChange("");
+    if (this.filteredProperties.value.includes(property)) {
+      this.columnMap[columnName] = property;
+    } else {
+      this.columnMap[columnName] = "";
+    }
+  }
+
   async importSelectedFile(): Promise<void> {
     if (this.csvFile === undefined) {
       return;
     }
 
-    // use transaction id or generate a new one
-    const transactionId = this.transactionIDForm.get("transactionID").value;
-    const entityType = this.entityForm.get("entity").value;
-
     const importMeta: ImportMetaData = {
-      transactionId: transactionId,
-      entityType: entityType,
+      transactionId: this.transactionIDForm.get("transactionID").value,
+      entityType: this.entityForm.get("entity").value,
+      columnMap: this.columnMap,
     };
 
     await this.dataImportService.handleCsvImport(this.csvFile, importMeta);

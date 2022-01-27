@@ -9,6 +9,7 @@ import { readFile } from "../../utils/utils";
 import { ImportMetaData } from "./import-meta-data.type";
 import { v4 as uuid } from "uuid";
 import { DynamicEntityService } from "../../core/entity/dynamic-entity.service";
+import { Entity } from "../../core/entity/model/entity";
 
 @Injectable()
 @UntilDestroy()
@@ -47,55 +48,6 @@ export class DataImportService {
     });
   }
 
-  async importCsvContentToDB(
-    csv: ParseResult,
-    importMeta: ImportMetaData
-  ): Promise<void> {
-    // e.g. Child:abcd1234
-    const recordIdPrefix =
-      importMeta.entityType + ":" + importMeta.transactionId;
-
-    // remove existing records, if any
-    // there is a chance of collision
-    const existingRecords = await this.db.getAll(recordIdPrefix);
-
-    for (const record of existingRecords) {
-      await this.db.remove(record);
-    }
-
-    let hasIdProperty = true;
-
-    if (!csv.meta.fields.includes("_id")) {
-      hasIdProperty = false;
-      csv.meta.fields.push("_id");
-    }
-
-    for (const record of csv.data) {
-      // remove undefined properties
-      for (const propertyName in record) {
-        if (record[propertyName] === null || propertyName === "_rev") {
-          delete record[propertyName];
-        }
-      }
-
-      // generate new _id as there is none
-      if (!hasIdProperty) {
-        const newUUID = uuid();
-        record["_id"] = recordIdPrefix + newUUID.substring(8);
-      }
-
-      if (record["_id"] !== undefined) {
-        const entityType = record["_id"].split(":")[0];
-        const ctor = this.dynamicEntityService.getEntityConstructor(entityType);
-        record["searchIndices"] = Object.assign(
-          new ctor(),
-          record
-        ).searchIndices;
-      }
-      await this.db.put(record, true);
-    }
-  }
-
   /**
    * Add the data from the loaded file to the database, inserting and updating records.
    * @param csvFile The file object of the csv data to be loaded
@@ -106,34 +58,95 @@ export class DataImportService {
     importMeta: ImportMetaData
   ): Promise<void> {
     const restorePoint = await this.backupService.getJsonExport();
-    const refTitle = $localize`Import new data?`;
-    const refText = $localize`Are you sure you want to import this file?
-      This will add or update ${csvFile.data.length} records from the loaded file.
-      All existing records imported with the transaction id '${importMeta.transactionId}' will be deleted!`;
+    const confirmed = await this.getUserConfirmation(csvFile, importMeta);
+    if (!confirmed) {
+      return;
+    }
 
+    if (importMeta.transactionId) {
+      await this.deleteExistingRecords(importMeta);
+    }
+
+    await this.importCsvContentToDB(csvFile, importMeta);
+
+    const snackBarRef = this.snackBar.open(
+      $localize`Import completed?`,
+      "Undo",
+      {
+        duration: 8000,
+      }
+    );
+    snackBarRef
+      .onAction()
+      .pipe(untilDestroyed(this))
+      .subscribe(async () => {
+        await this.backupService.clearDatabase();
+        await this.backupService.importJson(restorePoint, true);
+      });
+  }
+
+  private getUserConfirmation(
+    csvFile: ParseResult,
+    importMeta: ImportMetaData
+  ): Promise<boolean> {
+    const refTitle = $localize`Import new data?`;
+    let refText = $localize`Are you sure you want to import this file?
+      This will add or update ${csvFile.data.length} records from the loaded file.`;
+    if (importMeta.transactionId) {
+      refText = $localize`${refText} All existing records imported with the transaction id '${importMeta.transactionId}' will be deleted!`;
+    }
     const dialogRef = this.confirmationDialog.openDialog(refTitle, refText);
 
-    dialogRef.afterClosed().subscribe(async (confirmed) => {
-      if (!confirmed) {
-        return;
-      }
-
-      await this.importCsvContentToDB(csvFile, importMeta);
-
-      const snackBarRef = this.snackBar.open(
-        $localize`Import completed?`,
-        "Undo",
-        {
-          duration: 8000,
-        }
-      );
-      snackBarRef
-        .onAction()
-        .pipe(untilDestroyed(this))
-        .subscribe(async () => {
-          await this.backupService.clearDatabase();
-          await this.backupService.importJson(restorePoint, true);
-        });
+    return new Promise<boolean>((resolve) => {
+      dialogRef.afterClosed().subscribe((confirmed) => resolve(confirmed));
     });
+  }
+
+  private async deleteExistingRecords(importMeta: ImportMetaData) {
+    const existing = await this.db.getAll(
+      Entity.createPrefixedId(importMeta.entityType, importMeta.transactionId)
+    );
+    return Promise.all(existing.map((entity) => this.db.remove(entity)));
+  }
+
+  private async importCsvContentToDB(
+    csv: ParseResult,
+    importMeta: ImportMetaData
+  ): Promise<void> {
+    for (const row of csv.data) {
+      const entity = this.createEntityWithRowData(row, importMeta);
+      this.createSearchIndices(importMeta, entity);
+      if (!entity["_id"]) {
+        entity["_id"] = `${importMeta.entityType}:${
+          importMeta.transactionId
+        }-${uuid().substr(9)}`;
+      }
+      await this.db.put(entity, true);
+    }
+  }
+
+  private createEntityWithRowData(row: any, importMeta: ImportMetaData): any {
+    const entity = {}
+    for (const col in row) {
+      const property = importMeta.columnMap[col];
+      if (property) {
+        if (property === "_id") {
+          entity[property] = Entity.createPrefixedId(
+            importMeta.entityType,
+            row[col]
+          );
+        } else {
+          entity[property] = row[col];
+        }
+      }
+    }
+    return entity;
+  }
+
+  private createSearchIndices(importMeta: ImportMetaData, entity) {
+    const ctor = this.dynamicEntityService.getEntityConstructor(
+      importMeta.entityType
+    );
+    entity["searchIndices"] = Object.assign(new ctor(), entity).searchIndices;
   }
 }

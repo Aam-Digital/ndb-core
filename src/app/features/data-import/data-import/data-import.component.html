@@ -1,60 +1,92 @@
 <mat-vertical-stepper linear #stepper>
-    <mat-step label="Import Type" [stepControl]="entityForm">
-      <form [formGroup]="entityForm">
-        <mat-form-field>
-          <mat-label>Entity Type</mat-label>
-          <mat-select formControlName="entity" required (selectionChange)="entitySelectionChanged()">
-            <mat-option *ngFor="let entity of dynamicEntityService.EntityMap | keyvalue" [value]="entity.key">
-              {{entity.key}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-        <div>
-          <button mat-button matStepperNext>Next</button>
-        </div>
-      </form>
-    </mat-step>
-    <mat-step label="Select File" [stepControl]="fileNameForm">
-      <form [formGroup]="fileNameForm">
-        <input #csvImport type="file" style="display: none" (change)="setCsvFile($event)"/>
-        <mat-form-field>
-          <mat-label>Selected File:</mat-label>
-          <input matInput formControlName="fileName" (click)="csvImport.click()" placeholder="No file selected"/>
-          <mat-error *ngIf="fileNameForm.errors?.fileInvalid">{{ fileNameForm.errors.fileInvalid }}</mat-error>
-        </mat-form-field>
-        <div>
-          <button mat-button matStepperPrevious>Back</button>
-          <button mat-button matStepperNext>Next</button>
-        </div>
-      </form>
-    </mat-step>
-    <mat-step label="Transaction ID" [stepControl]="transactionIDForm">
-      <form [formGroup]="transactionIDForm">
-        <p *ngIf="transactionIDForm.disabled">IDs are specified in CSV file</p>
-        <mat-form-field>
-          <mat-label>Transaction ID:</mat-label>
-          <input matInput formControlName="transactionID" placeholder="Enter TransactionID" required/>
-        </mat-form-field>
-        <button *ngIf="transactionIDForm.enabled" mat-button (click)="setRandomTransactionID()">Generate ID</button>
-        <div>
-          <button mat-button matStepperPrevious>Back</button>
-          <button mat-button matStepperNext>Next</button>
-        </div>
-      </form>
-    </mat-step>
-    <mat-step label="Start Import">
-      <p>Entity Type:    <i>{{ entityForm.get('entity').value }}</i></p>
-      <p>CSV File:       <i>{{ fileNameForm.get('fileName').value }}</i></p>
-      <p>TransactionID:  <i>{{ transactionIDForm.get('transactionID').value }}</i></p>
-      <button (click)="importSelectedFile()" mat-stroked-button>
-        Start Import
-      </button>
+  <mat-step label="Select type" [stepControl]="entityForm">
+    <form [formGroup]="entityForm">
+      <mat-form-field>
+        <mat-label>Entity Type</mat-label>
+        <mat-select formControlName="entity" required (selectionChange)="entitySelectionChanged()">
+          <mat-option *ngFor="let entity of dynamicEntityService.EntityMap | keyvalue" [value]="entity.key">
+            {{entity.key}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step label="Select file" [stepControl]="fileNameForm">
+    <form [formGroup]="fileNameForm">
+      <input #csvImport type="file" style="display: none" (change)="setCsvFile($event)"/>
+      <mat-form-field>
+        <mat-label>Selected File:</mat-label>
+        <input matInput formControlName="fileName" (click)="csvImport.click()" placeholder="No file selected"/>
+        <mat-error *ngIf="fileNameForm.errors?.fileInvalid">{{ fileNameForm.errors.fileInvalid }}</mat-error>
+      </mat-form-field>
       <div>
         <button mat-button matStepperPrevious>Back</button>
-        <button mat-button (click)="stepper.reset()">Reset</button>
+        <button mat-button matStepperNext>Next</button>
       </div>
-    </mat-step>
-    <ng-template matStepperIcon="edit">
-      <fa-icon icon="pen"></fa-icon>
-    </ng-template>
-  </mat-vertical-stepper>
+    </form>
+  </mat-step>
+  <mat-step label="Transaction ID" [stepControl]="transactionIDForm">
+    <form [formGroup]="transactionIDForm">
+      <p *ngIf="transactionIDForm.disabled">IDs are specified in CSV file</p>
+      <mat-form-field>
+        <mat-label>Transaction ID:</mat-label>
+        <input matInput formControlName="transactionID" placeholder="Enter TransactionID" required/>
+      </mat-form-field>
+      <button *ngIf="transactionIDForm.enabled" mat-button (click)="setRandomTransactionID()">Generate ID</button>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step label="Assign columns">
+    <form>
+      <div *ngFor="let col of columnMap | keyvalue; index as i" #div>
+        <mat-form-field>
+          <mat-label>{{ col.key }}</mat-label>
+          <input
+            id="{{ 'input-' + i }}"
+            type="text"
+            placeholder="Select property"
+            aria-label="Select property"
+            matInput
+            (input)="processChange($event.target.value.toLowerCase())"
+            (focusin)="processChange('')"
+            (focusout)="selectProperty(col.key, propertyInput.value)"
+            [matAutocomplete]="auto"
+            [(ngModel)]="col.value"
+            [ngModelOptions]="{ standalone: true }"
+            #propertyInput
+          >
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option
+              *ngFor="let property of filteredProperties | async"
+              [value]="property"
+              (onSelectionChange)="selectProperty(col.key, property)"
+            >
+              {{ property }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step label="Start import">
+    <p>Entity Type:    <i>{{ entityForm.get('entity').value }}</i></p>
+    <p>CSV File:       <i>{{ fileNameForm.get('fileName').value }}</i></p>
+    <p>TransactionID:  <i>{{ transactionIDForm.get('transactionID').value }}</i></p>
+    <button (click)="importSelectedFile()" mat-stroked-button>
+      Start Import
+    </button>
+    <div>
+      <button mat-button matStepperPrevious>Back</button>
+      <button mat-button (click)="stepper.reset()">Reset</button>
+    </div>
+  </mat-step>
+  <ng-template matStepperIcon="edit">
+    <fa-icon icon="pen"></fa-icon>
+  </ng-template>
+</mat-vertical-stepper>

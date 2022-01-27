@@ -11,6 +11,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { AlertsModule } from "../../core/alerts/alerts.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
 
 @NgModule({
   declarations: [DataImportComponent],
@@ -26,6 +27,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     ReactiveFormsModule,
     AlertsModule,
     FontAwesomeModule,
+    MatAutocompleteModule,
   ],
   exports: [DataImportComponent],
   providers: [DataImportService],
