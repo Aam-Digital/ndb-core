@@ -131,7 +131,7 @@ describe("QueryService", () => {
       (i) => i.id === "SCHOOL_CLASS"
     );
     const lifeSkills = defaultInteractionTypes.find(
-      (i) => i.id === "LIFE_SKILLS"
+      (i) => i.id === "COACHING_CLASS"
     );
     privateSchoolClassActivity = new RecurringActivity(
       "privateSchoolClassActivity"
@@ -384,7 +384,7 @@ describe("QueryService", () => {
     );
     expectEntitiesToMatch(schoolClassActivities, [privateSchoolClassActivity]);
 
-    const otherActivitiesQuery = `${RecurringActivity.ENTITY_TYPE}:toArray:filterByObjectAttribute(type, id, LIFE_SKILLS)`;
+    const otherActivitiesQuery = `${RecurringActivity.ENTITY_TYPE}:toArray:filterByObjectAttribute(type, id, COACHING_CLASS)`;
     const otherActivities = await service.queryData(otherActivitiesQuery);
     expectEntitiesToMatch(otherActivities, [
       lifeSkillsActivityWithoutLink,

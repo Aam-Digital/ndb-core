@@ -1,11 +1,11 @@
-<div class="container">
+<div class="mat-elevation-z1 container">
   <table
     mat-table
     [dataSource]="recordsDataSource"
     matSort
-    class="mat-elevation-z1 subrecord-table"
+    class="subrecord-table"
   >
-    <ng-container *ngFor="let col of _columns" [matColumnDef]="col.id">
+    <ng-container *ngFor="let col of filteredColumns" [matColumnDef]="col.id">
       <th
         mat-header-cell
         mat-sort-header

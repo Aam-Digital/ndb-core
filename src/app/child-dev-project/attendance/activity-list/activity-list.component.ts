@@ -38,6 +38,6 @@ export class ActivityListComponent implements OnInit {
   }
 
   routeTo(route: string) {
-    this.router.navigate(["/recurring-activity", route]);
+    this.router.navigate([route], { relativeTo: this.route });
   }
 }

@@ -1,8 +1,5 @@
 <mat-card
-  [ngClass]="{
-    'recurring-container': recurring,
-    'highlighted-container': highlighted
-  }"
+  class="main-card border-left-highlight border-{{warningLevel}}"
 >
   <mat-card-title>
     <fa-icon

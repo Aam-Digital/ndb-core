@@ -94,9 +94,12 @@ describe("NotesManagerComponent", () => {
 
   beforeEach(() => {
     const mockConfigService = jasmine.createSpyObj("mockConfigService", [
+      "getConfigurableEnumValues",
       "getConfig",
     ]);
-    mockConfigService.getConfig.and.returnValue(testInteractionTypes);
+    mockConfigService.getConfigurableEnumValues.and.returnValue(
+      testInteractionTypes
+    );
     mockNoteObservable = new Subject<UpdatedEntity<Note>>();
     mockEventNoteObservable = new Subject<UpdatedEntity<EventNote>>();
 
@@ -176,7 +179,7 @@ describe("NotesManagerComponent", () => {
       (f) => f.filterSettings.name === "category"
     );
 
-    expect(filterSettings.filterSettings.options.length).toEqual(
+    expect(filterSettings.filterSettings.options).toHaveSize(
       testInteractionTypes.length + 1
     );
   }));

@@ -33,6 +33,7 @@ import { MatCardModule } from "@angular/material/card";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { LatestChangesService } from "./latest-changes.service";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+
 import { LOCATION_TOKEN } from "../../utils/di-tokens";
 
 /**

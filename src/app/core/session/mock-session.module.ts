@@ -26,6 +26,7 @@ import { far } from "@fortawesome/free-regular-svg-icons";
 import { EntityAbility } from "../permissions/permission-types";
 import { defineAbility, PureAbility } from "@casl/ability";
 import { detectEntityType } from "../permissions/ability.service";
+import { Entity } from "../entity/model/entity";
 
 export const TEST_USER = "test";
 export const TEST_PASSWORD = "pass";
@@ -61,7 +62,8 @@ export const TEST_PASSWORD = "pass";
 })
 export class MockSessionModule {
   static withState(
-    loginState = LoginState.LOGGED_IN
+    loginState = LoginState.LOGGED_IN,
+    data: Entity[] = []
   ): ModuleWithProviders<MockSessionModule> {
     AppConfig.settings = {
       site_name: "Aam Digital - DEV",
@@ -71,7 +73,7 @@ export class MockSessionModule {
         remote_url: "https://demo.aam-digital.com/db/",
       },
     };
-    const mockedEntityMapper = mockEntityMapper([new User(TEST_USER)]);
+    const mockedEntityMapper = mockEntityMapper([new User(TEST_USER), ...data]);
     const session = createLocalSession(loginState === LoginState.LOGGED_IN);
     const ability = defineAbility<EntityAbility>(
       (can) => {

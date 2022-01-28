@@ -34,4 +34,14 @@ export class ActivityCardComponent {
       return RecurringActivity.isActivityEventNote(this.event);
     }
   }
+
+  get warningLevel(): "ok" | "warning" | "urgent" {
+    if (!this.event.hasUnknownAttendances()) {
+      return "ok";
+    } else if (!this.recurring && this.event.hasUnknownAttendances()) {
+      return "urgent";
+    } else {
+      return "warning";
+    }
+  }
 }

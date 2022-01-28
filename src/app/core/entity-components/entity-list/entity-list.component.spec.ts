@@ -140,17 +140,19 @@ describe("EntityListComponent", () => {
 
   it("should create column groups from config and set correct one", () => {
     expect(component.columnGroups).toEqual(testConfig.columnGroups.groups);
-    const defaultGroup = testConfig.columnGroups.groups.find(
+    const defaultGroup = testConfig.columnGroups.groups.findIndex(
       (g) => g.name === testConfig.columnGroups.default
     );
-    expect(component.selectedColumnGroup).toEqual(defaultGroup.name);
-    expect(component.columnsToDisplay).toEqual(defaultGroup.columns);
+    expect(component.selectedColumnGroupIndex).toEqual(defaultGroup);
+    expect(component.columnsToDisplay).toEqual(
+      testConfig.columnGroups.groups[defaultGroup].columns
+    );
   });
 
   it("should set the clicked column group", () => {
     const clickedColumnGroup = testConfig.columnGroups.groups[0];
     component.columnGroupClick(clickedColumnGroup.name);
-    expect(component.selectedColumnGroup).toEqual(clickedColumnGroup.name);
+    expect(component.selectedColumnGroupIndex).toEqual(0);
     expect(component.columnsToDisplay).toEqual(clickedColumnGroup.columns);
   });
 

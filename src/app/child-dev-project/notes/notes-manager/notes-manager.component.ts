@@ -31,7 +31,6 @@ export interface NotesManagerConfig {
 @Component({
   selector: "app-notes-manager",
   templateUrl: "./notes-manager.component.html",
-  styleUrls: ["./notes-manager.component.scss"],
 })
 @UntilDestroy()
 export class NotesManagerComponent implements OnInit {

@@ -1,9 +1,10 @@
 import { Injectable } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { FormBuilder, FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "./entity-form/FormConfig";
 import { Entity } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { DynamicValidatorsService } from "./dynamic-form-validators/dynamic-validators.service";
 
 @Injectable()
 /**
@@ -14,7 +15,8 @@ export class EntityFormService {
   constructor(
     private fb: FormBuilder,
     private entityMapper: EntityMapperService,
-    private entitySchemaService: EntitySchemaService
+    private entitySchemaService: EntitySchemaService,
+    private dynamicValidator: DynamicValidatorsService
   ) {}
 
   public extendFormFieldConfig(
@@ -27,7 +29,7 @@ export class EntityFormService {
         this.addFormFields(formField, entity, forTable);
       } catch (err) {
         throw new Error(
-          `Could not create form config for ${formField.id}: ${err}`
+          $localize`Could not create form config for ${formField.id}\: ${err}`
         );
       }
     });
@@ -51,6 +53,9 @@ export class EntityFormService {
       formField.label =
         formField.label || propertySchema.label || propertySchema.labelShort;
     }
+    if (propertySchema?.validators) {
+      formField.validators = propertySchema?.validators;
+    }
   }
 
   public createFormGroup(
@@ -59,16 +64,17 @@ export class EntityFormService {
   ): FormGroup {
     const formConfig = {};
     const entitySchema = entity.getSchema();
-    formFields.forEach((formField) => {
-      const propertySchema = entitySchema.get(formField.id);
-      // Only properties with a schema are editable
-      if (propertySchema) {
+    formFields
+      .filter((formField) => entitySchema.get(formField.id))
+      .forEach((formField) => {
         formConfig[formField.id] = [entity[formField.id]];
-        if (formField.required || propertySchema?.required) {
-          formConfig[formField.id].push(Validators.required);
+        if (formField.validators) {
+          const validators = this.dynamicValidator.buildValidators(
+            formField.validators
+          );
+          formConfig[formField.id].push(validators);
         }
-      }
-    });
+      });
     return this.fb.group(formConfig);
   }
 
@@ -90,7 +96,7 @@ export class EntityFormService {
       .save(entityCopy)
       .then(() => Object.assign(entity, entityCopy))
       .catch((err) => {
-        throw new Error(`Could not save ${entity.getType()}: ${err}`);
+        throw new Error($localize`Could not save ${entity.getType()}\: ${err}`);
       });
   }
 
@@ -99,7 +105,7 @@ export class EntityFormService {
     form.markAllAsTouched();
     if (form.invalid) {
       const invalidFields = this.getInvalidFields(form);
-      throw new Error(`Fields: "${invalidFields}" are invalid`);
+      throw new Error($localize`Fields: "${invalidFields}" are invalid`);
     }
   }
 

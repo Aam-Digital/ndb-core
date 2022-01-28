@@ -34,4 +34,8 @@ export class EventAttendance {
     this.status = status;
     this.remarks = remarks;
   }
+
+  public copy(): EventAttendance {
+    return Object.assign(new EventAttendance(), this);
+  }
 }

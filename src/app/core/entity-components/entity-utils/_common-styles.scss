@@ -1,0 +1,9 @@
+$block-padding: 7px;
+$block-corner-radius: 5px;
+$block-border: 1px solid lightgray;
+
+@mixin entity-block-border {
+  padding: $block-padding;
+  border-radius: $block-corner-radius;
+  border: $block-border;
+}

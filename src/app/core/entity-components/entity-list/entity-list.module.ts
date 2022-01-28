@@ -22,9 +22,17 @@ import { EntitySubrecordModule } from "../entity-subrecord/entity-subrecord.modu
 import { EntityUtilsModule } from "../entity-utils/entity-utils.module";
 import { EntityFormModule } from "../entity-form/entity-form.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatMenuModule } from "@angular/material/menu";
+import { MatTabsModule } from "@angular/material/tabs";
+import { FilterOverlayComponent } from "./filter-overlay/filter-overlay.component";
+import { MatDialogModule } from "@angular/material/dialog";
 
 @NgModule({
-  declarations: [EntityListComponent, ListFilterComponent],
+  declarations: [
+    EntityListComponent,
+    ListFilterComponent,
+    FilterOverlayComponent,
+  ],
   imports: [
     CommonModule,
     FormsModule,
@@ -44,10 +52,13 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     MatSortModule,
     MatPaginatorModule,
     PermissionsModule,
+    MatMenuModule,
+    MatTabsModule,
     EntitySubrecordModule,
     EntityUtilsModule,
     EntityFormModule,
     FontAwesomeModule,
+    MatDialogModule,
   ],
   exports: [EntityListComponent, ListFilterComponent],
 })

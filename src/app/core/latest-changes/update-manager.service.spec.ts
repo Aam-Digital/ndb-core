@@ -1,4 +1,4 @@
-import { UpdateManagerService } from "./update-manager.service";
+import { LOCATION_TOKEN, UpdateManagerService } from "./update-manager.service";
 import {
   discardPeriodicTasks,
   fakeAsync,

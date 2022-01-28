@@ -137,9 +137,11 @@ export class AttendanceCalendarComponent implements OnChanges {
       this.selectedEvent = this.records.find((e) =>
         this.selectedDate.isSame(e.date, "day")
       );
-      this.selectedEventAttendance = this.selectedEvent?.getAttendance(
-        this.highlightForChild
-      );
+      if (this.highlightForChild) {
+        this.selectedEventAttendance = this.selectedEvent?.getAttendance(
+          this.highlightForChild
+        );
+      }
       // clone attendance information to allow detecting and reverting changes
       this.selectedEventAttendanceOriginal = Object.assign(
         {},
