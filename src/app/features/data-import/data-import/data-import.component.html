@@ -42,8 +42,21 @@
       </div>
     </form>
   </mat-step>
+  <mat-step label="Date format" [optional]="true" [stepControl]="dateFormatForm">
+    <form [formGroup]="dateFormatForm">
+      <mat-form-field>
+        <mat-label>Date format</mat-label>
+        <input matInput formControlName="dateFormat" placeholder="Enter a date format"/>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
   <mat-step label="Assign columns">
     <form>
+<!--      TODO tab-navigation is not properly working and elements cant be clicked in autocomplete-->
       <div *ngFor="let col of columnMap | keyvalue; index as i" #div>
         <mat-form-field>
           <mat-label>{{ col.key }}</mat-label>
@@ -53,7 +66,7 @@
             placeholder="Select property"
             aria-label="Select property"
             matInput
-            (input)="processChange($event.target.value.toLowerCase())"
+            (input)="processChange($event.target['value'].toLowerCase())"
             (focusin)="processChange('')"
             (focusout)="selectProperty(col.key, propertyInput.value)"
             [matAutocomplete]="auto"

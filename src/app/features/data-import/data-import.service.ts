@@ -33,7 +33,7 @@ export class DataImportService {
   ) {}
 
   async validateCsvFile(file: File): Promise<ParseResult> {
-    if (!file.name.endsWith(".csv")) {
+    if (!file.name.toLowerCase().endsWith(".csv")) {
       throw new Error("Only .csv files are supported");
     }
     const csvData = await readFile(file);
@@ -151,9 +151,10 @@ export class DataImportService {
           importMeta.dateFormat &&
           this.dateDataTypes.includes(schema.get(property).dataType)
         ) {
-          entity[property] = moment(row[col], importMeta.dateFormat).format(
-            "YYYY-MM-DD"
-          );
+          const date = moment(row[col], importMeta.dateFormat);
+          if (date.isValid()) {
+            entity[property] = date.format("YYYY-MM-DD");
+          }
         } else {
           entity[property] = row[col];
         }

@@ -1,12 +1,5 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  ViewChild,
-} from "@angular/core";
-import {
-  FormBuilder,
-  Validators,
-} from "@angular/forms";
+import { ChangeDetectorRef, Component, ViewChild } from "@angular/core";
+import { FormBuilder, Validators } from "@angular/forms";
 import { DynamicEntityService } from "app/core/entity/dynamic-entity.service";
 import { DataImportService } from "../data-import.service";
 import { ImportMetaData } from "../import-meta-data.type";
@@ -31,6 +24,9 @@ export class DataImportComponent {
       "",
       [Validators.required, Validators.pattern("^$|^[A-Fa-f0-9]{8}$")],
     ],
+  });
+  dateFormatForm = this.formBuilder.group({
+    dateFormat: [""],
   });
 
   csvFile: ParseResult;
@@ -83,11 +79,10 @@ export class DataImportComponent {
       if (type != entityType) {
         throw new Error("Wrong entity type in file");
       }
+      this.transactionIDForm.setValue({ transactionID: "" });
       if (id) {
-        this.transactionIDForm.setValue({ transactionID: id.substr(0, 8) });
         this.transactionIDForm.disable();
       } else {
-        this.transactionIDForm.setValue({ transactionID: "" });
         this.transactionIDForm.enable();
       }
     }
@@ -123,10 +118,12 @@ export class DataImportComponent {
       return;
     }
 
+    // TODO give option to save this as a file together with option to import
     const importMeta: ImportMetaData = {
       transactionId: this.transactionIDForm.get("transactionID").value,
       entityType: this.entityForm.get("entity").value,
       columnMap: this.columnMap,
+      dateFormat: this.dateFormatForm.get("dateFormat").value,
     };
 
     await this.dataImportService.handleCsvImport(this.csvFile, importMeta);
