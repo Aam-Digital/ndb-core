@@ -38,7 +38,7 @@ export class AdminComponent implements OnInit {
     private snackBar: MatSnackBar,
     private childPhotoUpdateService: ChildPhotoUpdateService,
     private configService: ConfigService,
-    private entityMapper: EntityMapperService,
+    private entityMapper: EntityMapperService
   ) {}
 
   ngOnInit() {
