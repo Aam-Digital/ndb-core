@@ -20,7 +20,6 @@ import { of } from "rxjs";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatDialogRef } from "@angular/material/dialog";
 import { SessionType } from "../../session/session-type";
-import { ChildrenMigrationService } from "../../../child-dev-project/children/child-photo-service/children-migration.service";
 import { PermissionsMigrationService } from "../../permissions/permissions-migration.service";
 import { ConfigMigrationService } from "../../config/config-migration.service";
 
@@ -100,10 +99,6 @@ describe("AdminComponent", () => {
           {
             provide: ConfirmationDialogService,
             useValue: confirmationDialogMock,
-          },
-          {
-            provide: ChildrenMigrationService,
-            useValue: {},
           },
           {
             provide: PermissionsMigrationService,

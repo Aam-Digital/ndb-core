@@ -9,7 +9,6 @@ import PouchDB from "pouchdb-browser";
 import { ChildPhotoUpdateService } from "../services/child-photo-update.service";
 import { ConfigService } from "../../config/config.service";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { ChildrenMigrationService } from "../../../child-dev-project/children/child-photo-service/children-migration.service";
 import { ConfigMigrationService } from "../../config/config-migration.service";
 import { PermissionsMigrationService } from "../../permissions/permissions-migration.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -42,7 +41,6 @@ export class AdminComponent implements OnInit {
     private childPhotoUpdateService: ChildPhotoUpdateService,
     private configService: ConfigService,
     private entityMapper: EntityMapperService,
-    public childrenMigrationService: ChildrenMigrationService,
     public configMigrationService: ConfigMigrationService,
     public permissionsMigrationService: PermissionsMigrationService
   ) {}
