@@ -10,7 +10,6 @@ import { ChildPhotoUpdateService } from "../services/child-photo-update.service"
 import { ConfigService } from "../../config/config.service";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { ConfigMigrationService } from "../../config/config-migration.service";
-import { PermissionsMigrationService } from "../../permissions/permissions-migration.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { readFile } from "../../../utils/utils";
 
@@ -42,7 +41,6 @@ export class AdminComponent implements OnInit {
     private configService: ConfigService,
     private entityMapper: EntityMapperService,
     public configMigrationService: ConfigMigrationService,
-    public permissionsMigrationService: PermissionsMigrationService
   ) {}
 
   ngOnInit() {
