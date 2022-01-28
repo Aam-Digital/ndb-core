@@ -24,7 +24,6 @@ import {
 } from "@angular/core/testing";
 
 import { NavigationComponent } from "./navigation.component";
-import { RouterTestingModule } from "@angular/router/testing";
 import { MenuItem } from "../menu-item";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatListModule } from "@angular/material/list";
@@ -40,7 +39,6 @@ import {
 } from "@angular/router";
 import { SessionService } from "../../session/session-service/session.service";
 import { MockSessionModule } from "../../session/mock-session.module";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("NavigationComponent", () => {
   let component: NavigationComponent;
@@ -61,11 +59,9 @@ describe("NavigationComponent", () => {
 
       TestBed.configureTestingModule({
         imports: [
-          RouterTestingModule,
           MatDividerModule,
           MatListModule,
           MockSessionModule.withState(),
-          FontAwesomeTestingModule,
         ],
         declarations: [NavigationComponent],
         providers: [

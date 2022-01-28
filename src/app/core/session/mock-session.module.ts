@@ -24,9 +24,9 @@ import {
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
 import { EntityAbility } from "../permissions/permission-types";
-import { defineAbility, PureAbility } from "@casl/ability";
 import { detectEntityType } from "../permissions/ability.service";
 import { Entity } from "../entity/model/entity";
+import { defineAbility, PureAbility } from "@casl/ability";
 
 export const TEST_USER = "test";
 export const TEST_PASSWORD = "pass";

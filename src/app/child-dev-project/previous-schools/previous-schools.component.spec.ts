@@ -9,7 +9,6 @@ import {
 import { PreviousSchoolsComponent } from "./previous-schools.component";
 import { ChildrenService } from "../children/children.service";
 import { ChildrenModule } from "../children/children.module";
-import { RouterTestingModule } from "@angular/router/testing";
 import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirmation-dialog.module";
 import { SimpleChange } from "@angular/core";
 import { Child } from "../children/model/child";
@@ -17,7 +16,6 @@ import { PanelConfig } from "../../core/entity-components/entity-details/EntityD
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import moment from "moment";
 import { MockSessionModule } from "../../core/session/mock-session.module";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { Subject } from "rxjs";
 import { UpdatedEntity } from "../../core/entity/model/entity-update";
@@ -40,11 +38,9 @@ describe("PreviousSchoolsComponent", () => {
       TestBed.configureTestingModule({
         declarations: [PreviousSchoolsComponent],
         imports: [
-          RouterTestingModule,
           ChildrenModule,
           ConfirmationDialogModule,
           MockSessionModule.withState(),
-          FontAwesomeTestingModule,
         ],
         providers: [
           { provide: ChildrenService, useValue: mockChildrenService },

@@ -62,8 +62,8 @@
     mat-dialog-close
     (click)="save()"
     *appDisabledEntityOperation="{
-      operation: operationType.UPDATE,
-      entity: data.row.record.getConstructor()
+      operation: 'update',
+      entity: data.row.record
     }"
     i18n="Save button for forms"
   >
@@ -84,8 +84,8 @@
       mat-dialog-close
       (click)="delete()"
       *appDisabledEntityOperation="{
-        operation: operationType.DELETE,
-        entity: data.row.record.getConstructor()
+        operation: 'delete',
+        entity: data.row.record
       }"
       angulartics2On="click"
       [angularticsCategory]="data.row.record.getConstructor()?.ENTITY_TYPE"

@@ -14,7 +14,6 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { EntitySubrecordModule } from "../entity-subrecord.module";
 import { Entity } from "../../../entity/model/entity";
 import { SimpleChange } from "@angular/core";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatNativeDateModule } from "@angular/material/core";
 import { DatePipe, PercentPipe } from "@angular/common";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
@@ -27,7 +26,6 @@ import { EntityFormService } from "../../entity-form/entity-form.service";
 import { genders } from "../../../../child-dev-project/children/model/genders";
 import { LoggingService } from "../../../logging/logging.service";
 import { MockSessionModule } from "../../../session/mock-session.module";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -41,9 +39,7 @@ describe("EntitySubrecordComponent", () => {
           EntitySubrecordModule,
           RouterTestingModule.withRoutes([]),
           MatNativeDateModule,
-          NoopAnimationsModule,
           MockSessionModule.withState(),
-          FontAwesomeTestingModule,
         ],
         providers: [DatePipe, PercentPipe],
       }).compileComponents();

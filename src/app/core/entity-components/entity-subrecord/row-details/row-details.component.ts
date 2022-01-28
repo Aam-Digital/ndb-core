@@ -5,7 +5,7 @@ import { Entity } from "../../../entity/model/entity";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 import { FormGroup } from "@angular/forms";
 import { TableRow } from "../entity-subrecord/entity-subrecord.component";
-import { OperationType } from "../../../permissions/entity-permissions.service";
+import { EntityAbility } from "../../../permissions/permission-types";
 
 /**
  * Data interface that must be given when opening the dialog
@@ -52,19 +52,22 @@ export interface CanDelete<T> {
 })
 export class RowDetailsComponent<E extends Entity> {
   form: FormGroup;
-  operationType = OperationType;
 
   viewOnlyColumns: FormFieldConfig[];
   tempEntity: Entity;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsComponentData<E>,
-    private formsService: EntityFormService
+    private formsService: EntityFormService,
+    private ability: EntityAbility
   ) {
     this.form = this.formsService.createFormGroup(
       data.columns,
       data.row.record
     );
+    if (this.ability.cannot("update", data.row.record)) {
+      this.form.disable();
+    }
     this.form.valueChanges.subscribe((value) => {
       const dynamicConstructor: any = data.row.record.getConstructor();
       this.tempEntity = Object.assign(new dynamicConstructor(), value);

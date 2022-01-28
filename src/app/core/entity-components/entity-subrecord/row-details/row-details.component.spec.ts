@@ -12,12 +12,12 @@ import {
   MatDialogRef,
 } from "@angular/material/dialog";
 import { EntityFormService } from "../../entity-form/entity-form.service";
-import { FormBuilder } from "@angular/forms";
-import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
+import { ReactiveFormsModule } from "@angular/forms";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { Entity } from "../../../entity/model/entity";
 import { TableRow } from "../entity-subrecord/entity-subrecord.component";
+import { MockSessionModule } from "../../../session/mock-session.module";
+import { MatMenuModule } from "@angular/material/menu";
 
 describe("RowDetailsComponent", () => {
   let component: RowDetailsComponent<any>;
@@ -32,12 +32,15 @@ describe("RowDetailsComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [RowDetailsComponent],
-      imports: [MatDialogModule],
+      imports: [
+        MatDialogModule,
+        ReactiveFormsModule,
+        MockSessionModule.withState(),
+        MatMenuModule,
+      ],
       providers: [
         EntityFormService,
-        FormBuilder,
         EntitySchemaService,
-        { provide: EntityMapperService, useValue: mockEntityMapper() },
         { provide: MAT_DIALOG_DATA, useValue: detailsComponentData },
         { provide: MatDialogRef, useValue: {} },
       ],
