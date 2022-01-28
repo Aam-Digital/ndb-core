@@ -9,7 +9,6 @@ import PouchDB from "pouchdb-browser";
 import { ChildPhotoUpdateService } from "../services/child-photo-update.service";
 import { ConfigService } from "../../config/config.service";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { ConfigMigrationService } from "../../config/config-migration.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { readFile } from "../../../utils/utils";
 
@@ -40,7 +39,6 @@ export class AdminComponent implements OnInit {
     private childPhotoUpdateService: ChildPhotoUpdateService,
     private configService: ConfigService,
     private entityMapper: EntityMapperService,
-    public configMigrationService: ConfigMigrationService,
   ) {}
 
   ngOnInit() {
@@ -53,10 +51,6 @@ export class AdminComponent implements OnInit {
    */
   updatePhotoFilenames() {
     this.childPhotoUpdateService.updateChildrenPhotoFilenames();
-  }
-
-  async migrateConfigChanges() {
-    await this.configMigrationService.migrateConfig();
   }
 
   /**
