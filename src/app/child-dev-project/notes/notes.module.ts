@@ -23,7 +23,6 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { FilterPipeModule } from "ngx-filter-pipe";
 import { SchoolsModule } from "../schools/schools.module";
 import { MatListModule } from "@angular/material/list";
 import { ChildrenModule } from "../children/children.module";
@@ -79,7 +78,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     MatSlideToggleModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
-    FilterPipeModule,
     SchoolsModule,
     ReactiveFormsModule,
     MatDialogModule,
