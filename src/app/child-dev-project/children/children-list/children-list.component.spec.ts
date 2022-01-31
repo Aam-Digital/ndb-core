@@ -24,7 +24,6 @@ import { LoggingService } from "../../../core/logging/logging.service";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
 import { ExportDataDirective } from "../../../core/export/export-data-directive/export-data.directive";
 import { ExportService } from "../../../core/export/export-service/export.service";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
 
 describe("ChildrenListComponent", () => {
