@@ -109,7 +109,7 @@ export class EntitySubrecordComponent<T extends Entity>
     private dialog: MatDialog,
     private analyticsService: AnalyticsService,
     private loggingService: LoggingService,
-    private entityRemoveService: EntityRemoveService,
+    private entityRemoveService: EntityRemoveService
   ) {
     this.mediaSubscription = this.media
       .asObservable()
