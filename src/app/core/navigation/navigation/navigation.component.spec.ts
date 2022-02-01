@@ -157,14 +157,18 @@ describe("NavigationComponent", () => {
 
     routerEvents.next(new NavigationEnd(42, "/child/1", "/child/1"));
     tick();
-    expect(component.activeLink).toBe("/child", "url should match parent menu");
+    expect(component.activeLink)
+      .withContext("url should match parent menu")
+      .toBe("/child");
 
     routerEvents.next(new NavigationEnd(42, "/", "/"));
     tick();
-    expect(component.activeLink).toBe("/", "root url should match");
+    expect(component.activeLink).withContext("root url should match").toBe("/");
 
     routerEvents.next(new NavigationEnd(42, "/other", "/other"));
     tick();
-    expect(component.activeLink).toBe("", "unknown url should not match");
+    expect(component.activeLink)
+      .withContext("unknown url should not match")
+      .toBe("");
   }));
 });

@@ -123,8 +123,10 @@ describe("LatestChangesService", () => {
     const alertSpy = spyOn(alertService, "addAlert");
     service.getChangelogsBetweenVersions("1.0").subscribe(
       () => {},
-      (err) => {
-        expect(alertSpy.calls.count()).toBe(1, "no Alert message created");
+      () => {
+        expect(alertSpy.calls.count())
+          .withContext('"not found" error not defined')
+          .toBe(1);
         done();
       }
     );

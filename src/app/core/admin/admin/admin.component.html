@@ -19,33 +19,6 @@
   >
     Auto-Update children's photo filenames
   </button>
-  <button
-    (click)="attendanceMigration.createEventsForAllAttendanceMonths()"
-    mat-stroked-button
-    i18n="Data migration"
-  >
-    Migration
-  </button>
-  <button
-    (click)="notesMigration.migrateToMultiUser()"
-    mat-stroked-button
-    i18n="Data migration for notes"
-  >
-    Migrate Notes to new author users
-  </button>
-  <button
-    (click)="childrenMigrationService.migratePhotoFormat()"
-    mat-stroked-button
-    i18n="Data migration for photos"
-  >
-    Migrate Children to correct photo format
-  </button>
-  <button (click)="migrateConfigChanges()" mat-stroked-button>
-    Migrate Config to new format
-  </button>
-  <button (click)="permissionsMigrationService.migrateRoutePermissions()" mat-stroked-button>
-    Migrate Permissions to new Format
-  </button>
 </p>
 
 <br />
