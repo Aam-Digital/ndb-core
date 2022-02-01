@@ -55,9 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: install dependencies
-        run: npm ci
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
-          start: npm start
+          command: npm run e2e
