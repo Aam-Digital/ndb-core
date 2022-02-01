@@ -1,4 +1,5 @@
 @import "../../../../styles";
+@import "../../../utils/grid-layout";
 
 .input-medium {
   width: 100%;
@@ -12,9 +13,7 @@
 }
 
 .content-header {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-  gap: $standard-grid-gap;
+  @include adaptive-grid(450px);
 }
 
 .information-body {
