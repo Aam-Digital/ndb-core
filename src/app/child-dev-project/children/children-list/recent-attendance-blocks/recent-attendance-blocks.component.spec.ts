@@ -7,7 +7,6 @@ import {
 } from "@angular/core/testing";
 
 import { RecentAttendanceBlocksComponent } from "./recent-attendance-blocks.component";
-import { FilterPipeModule } from "ngx-filter-pipe";
 import { Child } from "../../model/child";
 import { AttendanceService } from "../../../attendance/attendance.service";
 import { ActivityAttendance } from "../../../attendance/model/activity-attendance";
@@ -29,7 +28,6 @@ describe("RecentAttendanceBlocksComponent", () => {
 
       TestBed.configureTestingModule({
         declarations: [RecentAttendanceBlocksComponent],
-        imports: [FilterPipeModule],
         providers: [
           { provide: AttendanceService, useValue: mockAttendanceService },
         ],

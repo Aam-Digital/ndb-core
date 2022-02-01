@@ -50,10 +50,9 @@ export function expectEntitiesToMatch(
 
   for (let i = 0; i < cleanExpected.length; i++) {
     const data = cleanExpected[i];
-    expect(cleanActual).toContain(
-      data,
-      "expected object not found: index " + i
-    );
+    expect(cleanActual)
+      .withContext("expected object not found: index " + i)
+      .toContain(data);
   }
 }
 
