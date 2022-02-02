@@ -13,6 +13,7 @@ import { MatStepper } from "@angular/material/stepper";
 import { ParseResult } from "ngx-papaparse";
 import { v4 as uuid } from "uuid";
 import { BehaviorSubject } from "rxjs";
+import { DownloadDialogService } from "../../../core/export/download-dialog/download-dialog.service";
 
 @Component({
   selector: "app-data-import",
@@ -49,7 +50,8 @@ export class DataImportComponent {
     private formBuilder: FormBuilder,
     public dynamicEntityService: DynamicEntityService,
     private alertService: AlertService,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private downloadDialogService: DownloadDialogService
   ) {}
 
   entitySelectionChanged(): void {
@@ -114,19 +116,30 @@ export class DataImportComponent {
     );
   }
 
-  async importSelectedFile(): Promise<void> {
+  importSelectedFile(): Promise<void> {
     if (this.csvFile === undefined) {
       return;
     }
+    return this.dataImportService.handleCsvImport(
+      this.csvFile,
+      this.createImportMetaData()
+    );
+  }
 
-    // TODO give option to save this as a file together with option to import
-    const importMeta: ImportMetaData = {
+  private createImportMetaData(): ImportMetaData {
+    return {
       transactionId: this.transactionIDForm.get("transactionID").value,
       entityType: this.entityForm.get("entity").value,
       columnMap: this.columnMappingForm.getRawValue(),
       dateFormat: this.dateFormatForm.get("dateFormat").value,
     };
+  }
 
-    await this.dataImportService.handleCsvImport(this.csvFile, importMeta);
+  saveConfig() {
+    return this.downloadDialogService.openDownloadDialog(
+      this.createImportMetaData(),
+      "json",
+      "import-config"
+    );
   }
 }

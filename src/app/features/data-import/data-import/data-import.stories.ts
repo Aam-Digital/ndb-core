@@ -13,6 +13,7 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { BackupService } from "../../../core/admin/services/backup.service";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
+import { QueryService } from "../../reporting/query.service";
 
 let mockEntityMap: Map<string, EntityConstructor>;
 mockEntityMap = new Map<"Participant", EntityConstructor<Child>>();
@@ -39,6 +40,12 @@ export default {
             getJsonExport: () => Promise.resolve(),
             clearDatabase: () => Promise.resolve(),
             importJson: () => Promise.resolve(),
+          },
+        },
+        {
+          provide: QueryService,
+          useValue: {
+            queryData: () => undefined,
           },
         },
         {

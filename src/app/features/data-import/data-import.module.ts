@@ -12,6 +12,7 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { AlertsModule } from "../../core/alerts/alerts.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { ExportModule } from "../../core/export/export.module";
 
 @NgModule({
   declarations: [DataImportComponent],
@@ -28,6 +29,7 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
     AlertsModule,
     FontAwesomeModule,
     MatAutocompleteModule,
+    ExportModule,
   ],
   exports: [DataImportComponent],
   providers: [DataImportService],
