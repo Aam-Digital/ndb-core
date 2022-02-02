@@ -35,7 +35,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { EntitySubrecordModule } from "../entity-subrecord/entity-subrecord.module";
 import { ErrorHintComponent } from "./error-hint/error-hint.component";
-import { KeysPipeModule } from "../../keys-pipe/keys-pipe.module";
 
 @NgModule({
   declarations: [
@@ -77,7 +76,6 @@ import { KeysPipeModule } from "../../keys-pipe/keys-pipe.module";
     FontAwesomeModule,
     MatButtonModule,
     EntitySubrecordModule,
-    KeysPipeModule,
   ],
   entryComponents: [
     EditTextComponent,
