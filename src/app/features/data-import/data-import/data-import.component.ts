@@ -1,5 +1,10 @@
 import { ChangeDetectorRef, Component, ViewChild } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from "@angular/forms";
 import { DynamicEntityService } from "app/core/entity/dynamic-entity.service";
 import { DataImportService } from "../data-import.service";
 import { ImportMetaData } from "../import-meta-data.type";
@@ -16,21 +21,24 @@ import { BehaviorSubject } from "rxjs";
 })
 export class DataImportComponent {
   entityForm = this.formBuilder.group({ entity: ["", Validators.required] });
+
   fileNameForm = this.formBuilder.group({
     fileName: ["", Validators.required],
   });
+  csvFile: ParseResult;
+
   transactionIDForm = this.formBuilder.group({
     transactionID: [
       "",
       [Validators.required, Validators.pattern("^$|^[A-Fa-f0-9]{8}$")],
     ],
   });
+
   dateFormatForm = this.formBuilder.group({
     dateFormat: [""],
   });
 
-  csvFile: ParseResult;
-  columnMap: { [key in string]: string };
+  columnMappingForm = new FormGroup({});
   properties: string[] = [];
   filteredProperties = new BehaviorSubject<string[]>([]);
 
@@ -62,8 +70,10 @@ export class DataImportComponent {
     try {
       this.csvFile = await this.loadCSVFile(file, entityType);
       this.fileNameForm.setValue({ fileName: file.name });
-      this.columnMap = {};
-      this.csvFile.meta.fields.forEach((field) => (this.columnMap[field] = ""));
+      this.columnMappingForm = new FormGroup({});
+      this.csvFile.meta.fields.forEach((field) =>
+        this.columnMappingForm.addControl(field, new FormControl())
+      );
       this.stepper.next();
     } catch (e) {
       this.fileNameForm.setErrors({ fileInvalid: e.message });
@@ -95,22 +105,13 @@ export class DataImportComponent {
   }
 
   processChange(value: string) {
-    const usedProperties = Object.values(this.columnMap);
+    const usedProperties = Object.values(this.columnMappingForm.getRawValue());
     this.filteredProperties.next(
       this.properties.filter(
         (property) =>
           property.includes(value) && !usedProperties.includes(property)
       )
     );
-  }
-
-  selectProperty(columnName: string, property: string) {
-    this.processChange("");
-    if (this.filteredProperties.value.includes(property)) {
-      this.columnMap[columnName] = property;
-    } else {
-      this.columnMap[columnName] = "";
-    }
   }
 
   async importSelectedFile(): Promise<void> {
@@ -122,7 +123,7 @@ export class DataImportComponent {
     const importMeta: ImportMetaData = {
       transactionId: this.transactionIDForm.get("transactionID").value,
       entityType: this.entityForm.get("entity").value,
-      columnMap: this.columnMap,
+      columnMap: this.columnMappingForm.getRawValue(),
       dateFormat: this.dateFormatForm.get("dateFormat").value,
     };
 

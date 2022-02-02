@@ -55,30 +55,24 @@
     </form>
   </mat-step>
   <mat-step label="Assign columns">
-    <form>
-<!--      TODO tab-navigation is not properly working and elements cant be clicked in autocomplete-->
-      <div *ngFor="let col of columnMap | keyvalue; index as i" #div>
+    <form [formGroup]="columnMappingForm">
+      <div *ngFor="let control of columnMappingForm.controls | keyvalue">
         <mat-form-field>
-          <mat-label>{{ col.key }}</mat-label>
+          <mat-label>{{ control.key }}</mat-label>
           <input
-            id="{{ 'input-' + i }}"
             type="text"
             placeholder="Select property"
             aria-label="Select property"
             matInput
             (input)="processChange($event.target['value'].toLowerCase())"
             (focusin)="processChange('')"
-            (focusout)="selectProperty(col.key, propertyInput.value)"
             [matAutocomplete]="auto"
-            [(ngModel)]="col.value"
-            [ngModelOptions]="{ standalone: true }"
-            #propertyInput
+            [formControlName]="control.key"
           >
           <mat-autocomplete #auto="matAutocomplete">
             <mat-option
               *ngFor="let property of filteredProperties | async"
               [value]="property"
-              (onSelectionChange)="selectProperty(col.key, property)"
             >
               {{ property }}
             </mat-option>
@@ -86,6 +80,10 @@
         </mat-form-field>
       </div>
     </form>
+    <div>
+      <button mat-button matStepperPrevious>Back</button>
+      <button mat-button matStepperNext>Next</button>
+    </div>
   </mat-step>
   <mat-step label="Start import">
     <p>Entity Type:    <i>{{ entityForm.get('entity').value }}</i></p>
