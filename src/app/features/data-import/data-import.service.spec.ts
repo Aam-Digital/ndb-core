@@ -263,7 +263,7 @@ describe("DataImportService", () => {
     expect(secondChild.age).toBe(12);
   });
 
-  it("should delete existing records and set a fallback _id if a transactionID is provided", async () => {
+  it("should delete existing records and set a fallback _id if a transactionId is provided", async () => {
     confirmDialog();
     const csvData = {
       meta: { fields: ["Name"] },

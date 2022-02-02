@@ -1,5 +1,31 @@
+
 <mat-vertical-stepper linear #stepper>
-  <mat-step label="Select type" [stepControl]="entityForm">
+  <mat-step label="Select file" [stepControl]="fileNameForm">
+    <form [formGroup]="fileNameForm">
+      <input #csvImport type="file" style="display: none" (change)="setCsvFile($event)"/>
+      <mat-form-field>
+        <mat-label>Selected File:</mat-label>
+        <input matInput formControlName="fileName" (click)="csvImport.click()" placeholder="No file selected"/>
+        <mat-error *ngIf="fileNameForm.errors?.fileInvalid">{{ fileNameForm.errors.fileInvalid }}</mat-error>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step label="Load config" [optional]="true">
+    <div>
+      <mat-form-field>
+        <input #configImport type="file" style="display: none" (change)="loadConfig($event)"/>
+        <input matInput placeholder="No config selected" (click)="configImport.click()"/>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </div>
+  </mat-step>
+  <mat-step label="Select type" [stepControl]="entityForm" [optional]="entityForm.disabled">
     <form [formGroup]="entityForm">
       <mat-form-field>
         <mat-label>Entity Type</mat-label>
@@ -10,30 +36,17 @@
         </mat-select>
       </mat-form-field>
       <div>
-        <button mat-button matStepperNext>Next</button>
-      </div>
-    </form>
-  </mat-step>
-  <mat-step label="Select file" [stepControl]="fileNameForm">
-    <form [formGroup]="fileNameForm">
-      <input #csvImport type="file" style="display: none" (change)="setCsvFile($event)"/>
-      <mat-form-field>
-        <mat-label>Selected File:</mat-label>
-        <input matInput formControlName="fileName" (click)="csvImport.click()" placeholder="No file selected"/>
-        <mat-error *ngIf="fileNameForm.errors?.fileInvalid">{{ fileNameForm.errors.fileInvalid }}</mat-error>
-      </mat-form-field>
-      <div>
         <button mat-button matStepperPrevious>Back</button>
         <button mat-button matStepperNext>Next</button>
       </div>
     </form>
   </mat-step>
-  <mat-step label="Transaction ID" [stepControl]="transactionIDForm">
+  <mat-step label="Transaction ID" [stepControl]="transactionIDForm" [optional]="transactionIDForm.disabled">
     <form [formGroup]="transactionIDForm">
       <p *ngIf="transactionIDForm.disabled">IDs are specified in CSV file</p>
       <mat-form-field>
         <mat-label>Transaction ID:</mat-label>
-        <input matInput formControlName="transactionID" placeholder="Enter TransactionID" required/>
+        <input matInput formControlName="transactionId" placeholder="Enter TransactionID" required/>
       </mat-form-field>
       <button *ngIf="transactionIDForm.enabled" mat-button (click)="setRandomTransactionID()">Generate ID</button>
       <div>
@@ -88,7 +101,7 @@
   <mat-step label="Start import">
     <p>Entity Type:    <i>{{ entityForm.get('entity').value }}</i></p>
     <p>CSV File:       <i>{{ fileNameForm.get('fileName').value }}</i></p>
-    <p>TransactionID:  <i>{{ transactionIDForm.get('transactionID').value }}</i></p>
+    <p>TransactionID:  <i>{{ transactionIDForm.get('transactionId').value }}</i></p>
     <button (click)="importSelectedFile()" mat-stroked-button>
       Start Import
     </button>
