@@ -54,7 +54,7 @@ export class DataImportComponent {
     private changeDetectorRef: ChangeDetectorRef,
     private downloadDialogService: DownloadDialogService
   ) {}
-
+  // TODO add supported types for file select
   async setCsvFile(inputEvent: Event): Promise<void> {
     const file = this.getSelectedFile(inputEvent);
     try {
@@ -142,6 +142,7 @@ export class DataImportComponent {
     };
   }
 
+  // TODO correctly set value of input element
   async loadConfig(inputEvent: Event) {
     const file = this.getSelectedFile(inputEvent);
     const fileContent = await readFile(file);
