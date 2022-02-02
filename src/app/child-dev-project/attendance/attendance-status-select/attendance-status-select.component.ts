@@ -17,6 +17,7 @@ import {
 })
 export class AttendanceStatusSelectComponent {
   @Input() value: AttendanceStatusType = NullAttendanceStatusType;
+  @Input() disabled: boolean = false;
   @Output() valueChange = new EventEmitter<AttendanceStatusType>();
 
   statusValues: AttendanceStatusType[];
