@@ -10,7 +10,8 @@
       "i18n": {
         "sourceLocale": "en-US",
         "locales": {
-          "de": "src/locale/messages.de.xlf"
+          "de": "src/locale/messages.de.xlf",
+          "fr": "src/locale/messages.fr.xlf"
         }
       },
       "architect": {
@@ -24,6 +25,7 @@
             "tsConfig": "src/tsconfig.app.json",
             "polyfills": "src/polyfills.ts",
             "i18nMissingTranslation": "warning",
+            "localize": ["en-US"],
             "assets": [
               "src/assets",
               "src/favicon.ico",
@@ -65,7 +67,8 @@
             "localized": {
               "localize": [
                 "de",
-                "en-US"
+                "en-US",
+                "fr"
               ]
             }
           }

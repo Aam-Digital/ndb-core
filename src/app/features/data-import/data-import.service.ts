@@ -6,6 +6,7 @@ import { BackupService } from "../../core/admin/services/backup.service";
 import { ConfirmationDialogService } from "../../core/confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { readFile } from "../../utils/utils";
+import { DynamicEntityService } from "../../core/entity/dynamic-entity.service";
 
 @Injectable()
 @UntilDestroy()
@@ -15,7 +16,8 @@ export class DataImportService {
     private papa: Papa,
     private backupService: BackupService,
     private confirmationDialog: ConfirmationDialogService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dynamicEntityService: DynamicEntityService
   ) {}
 
   async importCsvContentToDB(csv: string): Promise<void> {
@@ -33,6 +35,14 @@ export class DataImportService {
         }
       }
 
+      if (record["_id"] !== undefined) {
+        const entityType = record["_id"].split(":")[0];
+        const ctor = this.dynamicEntityService.getEntityConstructor(entityType);
+        record["searchIndices"] = Object.assign(
+          new ctor(),
+          record
+        ).searchIndices;
+      }
       await this.db.put(record, true);
     }
   }

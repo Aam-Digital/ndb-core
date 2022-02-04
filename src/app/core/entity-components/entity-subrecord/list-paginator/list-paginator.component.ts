@@ -5,6 +5,7 @@ import {
   OnChanges,
   SimpleChanges,
   AfterViewInit,
+  OnInit,
 } from "@angular/core";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
@@ -20,14 +21,15 @@ import { filter } from "rxjs/operators";
   templateUrl: "./list-paginator.component.html",
   styleUrls: ["./list-paginator.component.scss"],
 })
-export class ListPaginatorComponent implements OnChanges, AfterViewInit {
+export class ListPaginatorComponent<E>
+  implements OnChanges, AfterViewInit, OnInit {
   readonly pageSizeOptions = [10, 20, 50];
   readonly defaultPageSize = 10;
 
-  @Input() dataSource: MatTableDataSource<any>;
+  @Input() dataSource: MatTableDataSource<E>;
   @Input() idForSavingPagination: string;
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild("paginator") paginator: MatPaginator;
 
   user: User;
   pageSize = this.defaultPageSize;
@@ -44,20 +46,21 @@ export class ListPaginatorComponent implements OnChanges, AfterViewInit {
     if (changes.hasOwnProperty("idForSavingPagination")) {
       this.applyUserPaginationSettings();
     }
-    if (changes.hasOwnProperty("dataSource")) {
-      this.dataSource
-        .connect()
-        .pipe(
-          untilDestroyed(this),
-          // When showingAll is false, nothing needs to be done -> filtered out
-          filter((updatedDataSource) => this.showingAll && !!this.paginator),
-          filter((updatedDataSource) => updatedDataSource.length > 0)
-        )
-        .subscribe(() => {
-          this.pageSize = this.dataSource.data.length;
-          this.paginator.pageSize = this.dataSource.data.length;
-        });
-    }
+  }
+
+  ngOnInit() {
+    this.dataSource
+      .connect()
+      .pipe(
+        untilDestroyed(this),
+        // When showingAll is false, nothing needs to be done -> filtered out
+        filter(() => this.showingAll && !!this.paginator),
+        filter((updatedDataSource) => updatedDataSource.length > 0)
+      )
+      .subscribe(() => {
+        this.pageSize = this.dataSource.data.length;
+        this.paginator.pageSize = this.dataSource.data.length;
+      });
   }
 
   ngAfterViewInit() {

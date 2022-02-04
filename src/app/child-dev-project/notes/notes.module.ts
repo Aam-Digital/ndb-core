@@ -23,7 +23,6 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { FilterPipeModule } from "ngx-filter-pipe";
 import { SchoolsModule } from "../schools/schools.module";
 import { MatListModule } from "@angular/material/list";
 import { ChildrenModule } from "../children/children.module";
@@ -42,6 +41,7 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { ChildMeetingNoteAttendanceComponent } from "./note-details/child-meeting-attendance/child-meeting-note-attendance.component";
 import { EntityUtilsModule } from "../../core/entity-components/entity-utils/entity-utils.module";
 import { NoteAttendanceCountBlockComponent } from "./note-attendance-block/note-attendance-count-block.component";
+import { MatMenuModule } from "@angular/material/menu";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @NgModule({
@@ -78,7 +78,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     MatSlideToggleModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
-    FilterPipeModule,
     SchoolsModule,
     ReactiveFormsModule,
     MatDialogModule,
@@ -97,6 +96,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     MatSlideToggleModule,
     EntityUtilsModule,
     FontAwesomeModule,
+    MatMenuModule,
   ],
   providers: [],
   entryComponents: [NoteDetailsComponent],

@@ -1,19 +1,41 @@
-.edit-button {
-  margin-left: 10px;
-}
+@import "../../../../utils/grid-layout";
 
-.form-cell {
-  min-width: 224px;
-  width: 100%;
-  white-space: nowrap;
-}
+$padding-block: 50px;
 
-.form-icon {
-  float: left;
-  width: 20px;
-  padding-top: 20px;
-}
+$padding-buttons-bottom: 0.25em;
+
+$min-block-width: 330px;
+$max-screen-width: $min-block-width + $margin-main-view-right + $margin-main-view-left;
 
 .form-field {
+  display: inline-block;
+  margin-left: 20px;
+}
+
+// Hacky way to set the width of each form field
+// to 100% in every form component
+:host ::ng-deep .mat-form-field {
   width: 100%;
+}
+
+.columns-wrapper {
+  @include adaptive-grid($min-block-width, $max-screen-width);
+  align-items: start;
+}
+
+.column-group {
+  margin-right: 0.5em;
+}
+
+.action-button {
+}
+
+.buttons-wrapper {
+  padding-bottom: $padding-buttons-bottom;
+}
+
+.mat-chip {
+  margin-left: 20px !important;
+  margin-bottom: 20px !important;
+  font-family: sans-serif;
 }

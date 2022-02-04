@@ -15,29 +15,26 @@
   margin-top: 16px;
 }
 
-.hidden {
-  display: none;
-}
-
 .nav-button {
   margin: 10px;
   flex: none;
 }
 
 .roll-call-complete {
-  text-align: center;
-  line-height: 2em;
-
-  padding-top: 20px;
+  display: flex;
+  place-content: center;
+  place-items: center;
+  height: 200px;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+  margin-top: 16px;
 
   background-color: #c8e6c9;
-  border-radius: 5px;
+  border-radius: 4px;
 }
 .roll-call-complete-icon {
   font-size: 40px;
-}
-.roll-call-complete-save {
-  height: 72px;
 }
 
 .filler {
@@ -45,7 +42,26 @@
 }
 
 .progress-label {
-  display: inline-block;
-  position: relative;
-  float: right;
+  align-self: flex-end;
+}
+
+.attendance-progress-bar {
+  display: flex;
+  flex-direction: column;
+}
+
+.navigation-bar {
+  margin-top: 12px;
+  display: flex;
+  place-items: center;
+}
+
+.child-block {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.completed-button {
+  margin-top: 1em;
 }

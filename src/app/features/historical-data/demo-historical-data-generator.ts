@@ -3,10 +3,6 @@ import { HistoricalEntityData } from "./historical-entity-data";
 import { Injectable } from "@angular/core";
 import { DemoChildGenerator } from "../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
 import { ConfigService } from "../../core/config/config.service";
-import {
-  CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnumConfig,
-} from "../../core/configurable-enum/configurable-enum.interface";
 import { faker } from "../../core/demo-data/faker";
 import { ENTITY_CONFIG_PREFIX } from "../../core/entity/model/entity";
 
@@ -39,8 +35,8 @@ export class DemoHistoricalDataGenerator extends DemoDataGenerator<HistoricalEnt
     const attributes: any[] = this.configService
       .getConfig<any>(ENTITY_CONFIG_PREFIX + HistoricalEntityData.ENTITY_TYPE)
       .attributes.map((attr) => attr.name);
-    const ratingAnswer = this.configService.getConfig<ConfigurableEnumConfig>(
-      CONFIGURABLE_ENUM_CONFIG_PREFIX + "rating-answer"
+    const ratingAnswer = this.configService.getConfigurableEnumValues(
+      "rating-answer"
     );
     const entities: HistoricalEntityData[] = [];
     for (const child of this.childrenGenerator.entities) {

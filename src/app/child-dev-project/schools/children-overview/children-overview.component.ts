@@ -8,6 +8,18 @@ import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { Entity } from "../../../core/entity/model/entity";
 import { ChildrenService } from "../../children/children.service";
 
+export const isActiveIndicator = {
+  id: "isActive",
+  label: $localize`:Label for the currently active status|e.g. Currently active:Currently`,
+  view: "ReadonlyFunction",
+  hideFromTable: true,
+  tooltip: $localize`:Tooltip for the status of currently active or not:Only added to school/group if active.Change the start or end date to modify this status.`,
+  additional: (csr: ChildSchoolRelation) =>
+    csr.isActive
+      ? $localize`:Indication for the currently active status of an entry:active`
+      : $localize`:Indication for the currently inactive status of an entry:not active`,
+};
+
 /**
  * This component creates a table containing all children currently attending this school.
  */
@@ -20,9 +32,10 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
   columns: FormFieldConfig[] = [
     { id: "childId" },
     { id: "schoolClass" },
-    { id: "start" },
-    { id: "end" },
+    { id: "start", visibleFrom: "md" },
+    { id: "end", visibleFrom: "md" },
     { id: "result" },
+    isActiveIndicator,
   ];
 
   entity: Entity;
@@ -35,7 +48,7 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
 
   async onInitFromDynamicConfig(config: PanelConfig) {
     if (config?.config?.columns) {
-      this.columns = config.config.columns;
+      this.columns = config.config.columns.concat(isActiveIndicator);
     }
     this.entity = config.entity;
     this.records = await this.childrenService.queryRelationsOf(

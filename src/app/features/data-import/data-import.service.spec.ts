@@ -7,6 +7,8 @@ import { ConfirmationDialogService } from "../../core/confirmation-dialog/confir
 import { MatSnackBar, MatSnackBarRef } from "@angular/material/snack-bar";
 import { MatDialogRef } from "@angular/material/dialog";
 import { of } from "rxjs";
+import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 
 describe("DataImportService", () => {
   let db: PouchDatabase;
@@ -85,10 +87,11 @@ describe("DataImportService", () => {
           provide: MatSnackBar,
           useValue: mockSnackBar,
         },
+        EntityMapperService,
+        EntitySchemaService,
       ],
     });
     service = TestBed.inject(DataImportService);
-    spyOn(service, "importCsvContentToDB");
     spyOn(db, "put");
   });
 
@@ -105,6 +108,7 @@ describe("DataImportService", () => {
     mockBackupService.getJsonExport.and.resolveTo(null);
     createDialogMock(true);
     createSnackBarMock(false);
+    spyOn(service, "importCsvContentToDB");
 
     service.handleCsvImport(null);
 
@@ -120,6 +124,7 @@ describe("DataImportService", () => {
     const mockFileReader = createFileReaderMock();
     mockBackupService.getJsonExport.and.resolveTo(null);
     createDialogMock(false);
+    spyOn(service, "importCsvContentToDB");
 
     service.handleCsvImport(null);
 
@@ -149,7 +154,16 @@ describe("DataImportService", () => {
     flush();
   }));
 
-  it("should put csv into db", async () => {
-    // Todo, missing importCsv Function
+  it("should import csv file and generate searchIndices", async () => {
+    const csvString = "_id,name,projectNumber\n" + 'Child:1,"John Doe",123';
+
+    await service.importCsvContentToDB(csvString);
+
+    expect(db.put).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        searchIndices: ["John", "Doe", 123],
+      }),
+      jasmine.anything()
+    );
   });
 });

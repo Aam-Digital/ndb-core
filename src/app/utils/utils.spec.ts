@@ -44,4 +44,22 @@ describe("Utils", () => {
 
     expect(sortedDesc).toEqual([forth, third, second, first]);
   });
+
+  it("should sort undefined last", () => {
+    const first = { number: 1 };
+    const second = { number: 10 };
+    const third = { number: undefined };
+
+    const sorted = [second, third, first].sort(
+      sortByAttribute("number", "asc")
+    );
+
+    expect(sorted).toEqual([first, second, third]);
+
+    const sortedDesc = [second, third, first].sort(
+      sortByAttribute("number", "desc")
+    );
+
+    expect(sortedDesc).toEqual([third, second, first]);
+  });
 });

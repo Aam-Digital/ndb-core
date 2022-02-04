@@ -1,13 +1,24 @@
 <div class="container" fxLayout="column">
   <div fxFlex>
-    <h1
+    <app-view-title
+      [disableBackButton]="currentStage !== 0"
       i18n="
         Record Attendance|Title when recording the attendance at a particular
         stage (e.g. selecting the event, recording it)
       "
     >
-      Record Attendance: {{ stages[currentStage] }}
-    </h1>
+      Record Attendance
+    </app-view-title>
+
+    <h2 *ngIf="currentStage === 0">
+      {{ stages[currentStage] }}
+    </h2>
+    <div fxLayout="row" *ngIf="currentStage !== 0">
+      <button mat-icon-button style="margin-top: -4px" (click)="exit()">
+        <fa-icon icon="arrow-left"></fa-icon>
+      </button>
+      <h2>{{event.subject}}</h2>
+    </div>
   </div>
 
   <div fxFlex="grow" class="flex-fill-section">
@@ -20,6 +31,7 @@
     <app-roll-call
       *ngIf="currentStage === 1"
       [eventEntity]="event"
+      [sortParticipantsBy]="config?.sortParticipantsBy"
       (exit)="finishRollCallState()"
       (complete)="saveRollCallResult($event)"
     >

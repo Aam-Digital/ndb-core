@@ -33,7 +33,7 @@ Primary.args = {
     {
       label: "Record Attendance",
       icon: "calendar-check-o",
-      link: "/attendance/add/day",
+      link: "/attendance/add-day",
     },
     {
       label: "All Notes",
