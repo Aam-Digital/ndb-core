@@ -4,12 +4,11 @@ import {
   EventEmitter,
   Input,
   OnChanges,
-  OnInit,
   Output,
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import { MediaChange, MediaObserver } from "@angular/flex-layout";
+import { MediaObserver } from "@angular/flex-layout";
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import {
   ColumnGroupsConfig,
@@ -24,7 +23,9 @@ import { EntitySubrecordComponent } from "../entity-subrecord/entity-subrecord/e
 import { FilterGeneratorService } from "./filter-generator.service";
 import { FilterComponentSettings } from "./filter-component.settings";
 import { entityFilterPredicate } from "./filter-predicate";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { map } from "rxjs/operators";
+import { MatDialog } from "@angular/material/dialog";
+import { FilterOverlayComponent } from "./filter-overlay/filter-overlay.component";
 import { AnalyticsService } from "../../analytics/analytics.service";
 
 /**
@@ -34,14 +35,13 @@ import { AnalyticsService } from "../../analytics/analytics.service";
  * The columns can be any kind of component.
  * The column components will be provided with the Entity object, the id for this column, as well as its static config.
  */
-@UntilDestroy()
 @Component({
   selector: "app-entity-list",
   templateUrl: "./entity-list.component.html",
   styleUrls: ["./entity-list.component.scss"],
 })
 export class EntityListComponent<T extends Entity>
-  implements OnChanges, OnInit, AfterViewInit {
+  implements OnChanges, AfterViewInit {
   @Input() allEntities: T[] = [];
   filteredEntities: T[] = [];
   @Input() listConfig: EntityListConfig;
@@ -50,6 +50,10 @@ export class EntityListComponent<T extends Entity>
   @Output() addNewClick = new EventEmitter();
 
   @ViewChild(EntitySubrecordComponent) entityTable: EntitySubrecordComponent<T>;
+
+  get desktop(): boolean {
+    return this.media.isActive("gt-xs");
+  }
 
   listName = "";
   columns: (FormFieldConfig | string)[] = [];
@@ -61,38 +65,55 @@ export class EntityListComponent<T extends Entity>
   operationType = OperationType;
 
   columnsToDisplay: string[] = [];
-  selectedColumnGroup: string = "";
 
   filterSelections: FilterComponentSettings<T>[] = [];
   filterString = "";
+
+  get selectedColumnGroupIndex(): number {
+    return this.selectedColumnGroupIndex_;
+  }
+
+  set selectedColumnGroupIndex(newValue: number) {
+    this.selectedColumnGroupIndex_ = newValue;
+    this.columnsToDisplay = this.columnGroups[newValue].columns;
+  }
+
+  selectedColumnGroupIndex_: number = 0;
+
+  /**
+   * defines the bottom margin of the topmost row in the
+   * desktop version. This has to be bigger when there are
+   * several column groups since there are
+   * tabs with zero top-padding in this case
+   */
+  get offsetFilterStyle(): object {
+    const bottomMargin = this.columnGroups.length > 1 ? 29 : 14;
+    return {
+      "margin-bottom": `${bottomMargin}px`,
+    };
+  }
 
   constructor(
     private media: MediaObserver,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private analyticsService: AnalyticsService,
-    private filterGeneratorService: FilterGeneratorService
-  ) {}
-
-  ngOnInit() {
+    private filterGeneratorService: FilterGeneratorService,
+    private dialog: MatDialog
+  ) {
     this.media
       .asObservable()
-      .pipe(untilDestroyed(this))
-      .subscribe((change: MediaChange[]) => {
-        switch (change[0].mqAlias) {
-          case "xs":
-          case "sm": {
-            this.displayColumnGroup(this.mobileColumnGroup);
-            break;
-          }
-          case "md": {
-            this.displayColumnGroup(this.defaultColumnGroup);
-            break;
-          }
-          case "lg":
-          case "xl": {
-            break;
-          }
+      .pipe(
+        map(
+          (changes) =>
+            changes[0].mqAlias !== "xs" && changes[0].mqAlias !== "md"
+        )
+      )
+      .subscribe((isBigScreen) => {
+        if (isBigScreen) {
+          this.displayColumnGroupByName(this.defaultColumnGroup);
+        } else {
+          this.displayColumnGroupByName(this.mobileColumnGroup);
         }
       });
     this.activatedRoute.queryParams.subscribe((params) => {
@@ -111,7 +132,7 @@ export class EntityListComponent<T extends Entity>
       this.addColumnsFromColumnGroups();
       this.initColumnGroups(this.listConfig.columnGroups);
       this.filtersConfig = this.listConfig.filters || [];
-      this.displayColumnGroup(this.defaultColumnGroup);
+      this.displayColumnGroupByName(this.defaultColumnGroup);
     }
     if (changes.hasOwnProperty("allEntities")) {
       await this.initFilterSelections();
@@ -158,7 +179,7 @@ export class EntityListComponent<T extends Entity>
   private loadUrlParams(parameters?: Params) {
     const params = parameters || this.activatedRoute.snapshot.queryParams;
     if (params["view"]) {
-      this.displayColumnGroup(params["view"]);
+      this.displayColumnGroupByName(params["view"]);
     }
     this.filterSelections.forEach((f) => {
       if (params.hasOwnProperty(f.filterSettings.name)) {
@@ -172,7 +193,7 @@ export class EntityListComponent<T extends Entity>
   }
 
   columnGroupClick(columnGroupName: string) {
-    this.displayColumnGroup(columnGroupName);
+    this.displayColumnGroupByName(columnGroupName);
     this.updateUrl("view", columnGroupName);
   }
 
@@ -225,17 +246,30 @@ export class EntityListComponent<T extends Entity>
     );
   }
 
-  private displayColumnGroup(columnGroupName: string) {
-    const selectedColumns = this.columnGroups.find(
+  private displayColumnGroupByName(columnGroupName: string) {
+    const selectedColumnIndex = this.columnGroups.findIndex(
       (c) => c.name === columnGroupName
-    )?.columns;
-    if (selectedColumns) {
-      this.columnsToDisplay = selectedColumns;
-      this.selectedColumnGroup = columnGroupName;
+    );
+    if (selectedColumnIndex !== -1) {
+      this.selectedColumnGroupIndex = selectedColumnIndex;
     }
   }
 
   getNewRecordFactory(): () => T {
     return () => new this.entityConstructor();
+  }
+
+  openFilterOverlay() {
+    this.dialog.open(FilterOverlayComponent, {
+      data: {
+        filterSelections: this.filterSelections,
+        filterChangeCallback: (
+          filter: FilterComponentSettings<T>,
+          option: string
+        ) => {
+          this.filterOptionSelected(filter, option);
+        },
+      },
+    });
   }
 }

@@ -5,6 +5,8 @@ import { ExportColumnConfig } from "../../export/export-service/export-column-co
 
 export interface EntityListConfig {
   title: string;
+  addNew?: string;
+  filterPlaceholder?: string;
   columns: (FormFieldConfig | string)[];
 
   /**
@@ -72,4 +74,5 @@ export interface ViewPropertyConfig {
   entity: Entity;
   id: string;
   config?: any;
+  tooltip?: string;
 }

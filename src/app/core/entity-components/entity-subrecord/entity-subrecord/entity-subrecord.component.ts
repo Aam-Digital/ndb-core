@@ -5,14 +5,11 @@ import {
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatSort, MatSortable } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { Entity } from "../../../entity/model/entity";
-import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "../../../alerts/alert.service";
 import { Subscription } from "rxjs";
 import { entityListSortingAccessor } from "./sorting-accessor";
@@ -20,9 +17,13 @@ import { FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 import { MatDialog } from "@angular/material/dialog";
-import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
 import { LoggingService } from "../../../logging/logging.service";
 import { AnalyticsService } from "../../../analytics/analytics.service";
+import {
+  CanDelete,
+  CanSave,
+  RowDetailsComponent,
+} from "../row-details/row-details.component";
 import {
   EntityRemoveService,
   RemoveResult,
@@ -52,10 +53,8 @@ export interface TableRow<T> {
   templateUrl: "./entity-subrecord.component.html",
   styleUrls: ["./entity-subrecord.component.scss"],
 })
-export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
-  /** data to be displayed */
-  @Input() records: Array<T> = [];
-
+export class EntitySubrecordComponent<T extends Entity>
+  implements OnChanges, CanSave<TableRow<T>>, CanDelete<TableRow<T>> {
   /** configuration what kind of columns to be generated for the table */
   @Input() set columns(columns: (FormFieldConfig | string)[]) {
     this._columns = columns.map((col) => {
@@ -65,8 +64,12 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
         return col;
       }
     });
+    this.filteredColumns = this._columns.filter((col) => !col.hideFromTable);
   }
+  /** data to be displayed */
+  @Input() records: Array<T> = [];
   _columns: FormFieldConfig[] = [];
+  filteredColumns: FormFieldConfig[] = [];
 
   /**
    * factory method to create a new instance of the displayed Entity type
@@ -92,10 +95,13 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
 
   @ViewChild(MatSort) sort: MatSort;
 
+  /**
+   * A function which should be executed when a row is clicked or a new entity created.
+   * @param entity The newly created or clicked entity.
+   */
+  @Input() showEntity?: (T) => void;
+
   constructor(
-    private _entityMapper: EntityMapperService,
-    private _snackBar: MatSnackBar,
-    private _confirmationDialog: ConfirmationDialogService,
     private alertService: AlertService,
     private media: MediaObserver,
     private entityFormService: EntityFormService,
@@ -114,12 +120,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
         }
       });
   }
-
-  /**
-   * A function which should be executed when a row is clicked or a new entity created.
-   * @param entity The newly created or clicked entity.
-   */
-  @Input() showEntity = (entity: T) => this.showEntityInForm(entity);
 
   /** function returns the background color for each row*/
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
@@ -198,25 +198,36 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   }
 
   edit(row: TableRow<T>) {
-    if (!row.formGroup) {
-      row.formGroup = this.entityFormService.createFormGroup(
-        this._columns,
-        row.record
-      );
+    if (this.media.isActive("lt-sm")) {
+      this.rowClick(row);
+    } else {
+      if (!row.formGroup) {
+        row.formGroup = this.entityFormService.createFormGroup(
+          this._columns,
+          row.record
+        );
+      }
+      row.formGroup.enable();
     }
-    row.formGroup.enable();
   }
 
   /**
    * Save an edited record to the database (if validation succeeds).
    * @param row The entity to be saved.
+   * @param isNew whether or not the record is new
    */
-  async save(row: TableRow<T>) {
+  async save(row: TableRow<T>, isNew: boolean = false): Promise<void> {
     try {
       row.record = await this.entityFormService.saveChanges(
         row.formGroup,
         row.record
       );
+      if (isNew) {
+        this.records.unshift(row.record);
+        this.recordsDataSource.data = [{ record: row.record }].concat(
+          this.recordsDataSource.data
+        );
+      }
       row.formGroup.disable();
     } catch (err) {
       this.alertService.addDanger(err.message);
@@ -267,14 +278,14 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    * Create a new entity.
    * The entity is only written to the database when the user saves this record which is newly added in edit mode.
    */
-  create() {
+  async create() {
     const newRecord = this.newRecordFactory();
 
-    this.records.unshift(newRecord);
-    this.recordsDataSource.data = [{ record: newRecord }].concat(
-      this.recordsDataSource.data
-    );
-    this._entityMapper.save(newRecord).then(() => this.showEntity(newRecord));
+    if (this.showEntity) {
+      this.showEntity(newRecord);
+    } else {
+      this.showRowDetails({ record: newRecord }, true);
+    }
 
     this.analyticsService.eventTrack("subrecord_add_new", {
       category: newRecord.getType(),
@@ -287,39 +298,42 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    */
   rowClick(row: TableRow<T>) {
     if (!row.formGroup || row.formGroup.disabled) {
-      this.showEntity(row.record);
-
-      this.analyticsService.eventTrack("subrecord_show_popup", {
-        category: row.record.getType(),
-      });
+      if (this.showEntity) {
+        this.showEntity(row.record);
+      } else {
+        this.showRowDetails(row, false);
+        this.analyticsService.eventTrack("subrecord_show_popup", {
+          category: row.record.getType(),
+        });
+      }
     }
   }
 
-  private showEntityInForm(entity: T) {
-    const dialogRef = this.dialog.open(EntityFormComponent, {
+  private showRowDetails(row: TableRow<T>, isNew: boolean) {
+    const columnsToDisplay = this._columns
+      .filter((col) => col.edit)
+      .map((col) => {
+        col.forTable = false;
+        return col;
+      })
+      .map((col) => Object.assign({}, col));
+    if (isNew) {
+      row.formGroup = this.entityFormService.createFormGroup(
+        this._columns,
+        row.record
+      );
+    }
+    this.dialog.open(RowDetailsComponent, {
       width: "80%",
       maxHeight: "90vh",
-    }); // TODO: shouldn't this use FormDialogService rather than directly MatDialog? #921
-    // Making a copy of the editable columns before assigning them
-    dialogRef.componentInstance.columns = this._columns
-      .filter((col) => col.edit)
-      .map((col) => [Object.assign({}, col)]);
-    dialogRef.componentInstance.entity = entity;
-    dialogRef.componentInstance.editing = true;
-    dialogRef.componentInstance.onSave
-      .pipe(untilDestroyed(this))
-      .subscribe((updatedEntity: T) => {
-        dialogRef.close();
-        // Trigger the change detection
-        const rowIndex = this.recordsDataSource.data.findIndex(
-          (row) => row.record === entity
-        );
-        this.recordsDataSource.data[rowIndex] = { record: updatedEntity };
-        this.recordsDataSource._updateChangeSubscription();
-      });
-    dialogRef.componentInstance.onCancel
-      .pipe(untilDestroyed(this))
-      .subscribe(() => dialogRef.close());
+      data: {
+        row: row,
+        columns: columnsToDisplay,
+        viewOnlyColumns: this._columns.filter((col) => !col.edit),
+        operations: this,
+        isNew: isNew,
+      },
+    });
   }
 
   /**
@@ -341,6 +355,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    * @return returns true if column is visible
    */
   private isVisible(col: FormFieldConfig): boolean {
+    if (col.hideFromTable) {
+      return false;
+    }
     const visibilityGroups = ["sm", "md", "lg", "xl"];
     const visibleFromIndex = visibilityGroups.indexOf(col.visibleFrom);
     if (visibleFromIndex !== -1) {

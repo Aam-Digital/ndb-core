@@ -37,7 +37,9 @@ export class Child extends Entity {
 
   @DatabaseField({
     label: $localize`:Label for the name of a child:Name`,
-    required: true,
+    validators: {
+      required: true,
+    },
   })
   name: string;
   @DatabaseField({

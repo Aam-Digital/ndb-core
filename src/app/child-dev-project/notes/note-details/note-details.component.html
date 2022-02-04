@@ -18,167 +18,151 @@
 <app-form-dialog-wrapper
   #dialogForm
   [entity]="entity"
-  (onClose)="closeDialog($event)"
 >
-  <h1>{{ entity.date?.toLocaleDateString() }}: {{ entity.subject }}</h1>
+  <h1>{{ entity.date | date }}: {{ entity.subject }}</h1>
 
-  <form #entityForm="ngForm">
+  <form #entityForm="ngForm" class="form-wrapper">
     <!-- General context of Note -->
-    <div class="form-section-secondary">
-      <div fxLayout="row wrap" fxLayoutGap="20px">
-        <div fxFlex>
-          <mat-form-field>
-            <input
-              matInput
-              i18n-placeholder="Date input|Placeholder for a date-input"
-              placeholder="Date"
-              name="date"
-              [(ngModel)]="entity.date"
-              [matDatepicker]="picker"
-            />
-            <mat-datepicker-toggle
-              matSuffix
-              [for]="picker"
-            ></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-          </mat-form-field>
-        </div>
+    <div class="content-header">
+      <mat-form-field>
+        <input
+          matInput
+          i18n-placeholder="Date input|Placeholder for a date-input"
+          placeholder="Date"
+          name="date"
+          [(ngModel)]="entity.date"
+          [matDatepicker]="picker"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="picker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
 
-        <div fxFlex>
-          <mat-form-field>
-            <mat-label i18n="Status of a note"> Status </mat-label>
-            <mat-select name="followup" [(ngModel)]="entity.warningLevel">
-              <mat-option
-                *appConfigurableEnum="let warningLevel of 'warning-levels'"
-                [value]="warningLevel"
-              >
-                {{ warningLevel.label }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-      </div>
-      <div fxLayout="row wrap" fxLayoutGap="20px">
-        <div fxFlex>
-          <mat-form-field class="input-medium">
-            <mat-select
-              i18n-placeholder="Type of Interaction when adding event"
-              placeholder="Type of Interaction"
-              name="type"
-              [(ngModel)]="entity.category"
-            >
-              <mat-option
-                *appConfigurableEnum="
-                  let interaction of INTERACTION_TYPE_CONFIG
-                "
-                [value]="interaction"
-              >
-                {{ interaction.label }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
+      <mat-form-field>
+        <mat-label i18n="Status of a note"> Status </mat-label>
+        <mat-select name="followup" [(ngModel)]="entity.warningLevel">
+          <mat-option
+            *appConfigurableEnum="let warningLevel of 'warning-levels'"
+            [value]="warningLevel"
+          >
+            {{ warningLevel.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
-        <app-entity-select
-          fxFlex
-          entityType="User"
-          (selectionChange)="entityForm.form.markAsDirty()"
-          [(selection)]="entity.authors"
-          i18n-placeholder="placeholder when adding multiple authors"
-          placeholder="Add Author..."
-          i18n-label="Authors of a note"
-          label="Authors"
+      <mat-form-field>
+        <mat-select
+          i18n-placeholder="Type of Interaction when adding event"
+          placeholder="Type of Interaction"
+          name="type"
+          [(ngModel)]="entity.category"
         >
-        </app-entity-select>
-      </div>
+          <mat-option
+            *appConfigurableEnum="
+              let interaction of INTERACTION_TYPE_CONFIG
+            "
+            [value]="interaction"
+            class="border-left-highlight"
+            [style.border-color]="interaction.color"
+          >
+            {{ interaction.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <app-entity-select
+        entityType="User"
+        (selectionChange)="entityForm.form.markAsDirty()"
+        [(selection)]="entity.authors"
+        i18n-placeholder="placeholder when adding multiple authors"
+        placeholder="Add Author..."
+        i18n-label="Authors of a note"
+        label="Authors"
+      >
+      </app-entity-select>
+
     </div>
 
     <!-- Primary information of Note -->
-    <div class="mat-elevation-z2 primary-section-elevated form-section-primary">
-      <div fxLayout="row wrap" fxLayoutGap="20px">
-        <div fxFlex>
-          <mat-form-field class="input-medium">
-            <input
-              matInput
-              i18n-placeholder="
-                Placeholder|Placeholder informing that this is the Topic/Summary
-                of the note
-              "
-              placeholder="Topic / Summary"
-              name="subject"
-              type="text"
-              cdkFocusInitial
-              [(ngModel)]="entity.subject"
-            />
-          </mat-form-field>
-        </div>
-      </div>
+    <div class="mat-elevation-z2 information-body">
+      <mat-form-field class="input-medium">
+        <input
+          matInput
+          i18n-placeholder="
+            Placeholder|Placeholder informing that this is the Topic/Summary
+            of the note
+          "
+          placeholder="Topic / Summary"
+          name="subject"
+          type="text"
+          cdkFocusInitial
+          [(ngModel)]="entity.subject"
+        />
+      </mat-form-field>
 
-      <div fxLayout="row wrap" fxLayoutGap="20px">
-        <mat-form-field class="input-max">
-          <textarea
-            matInput
-            i18n-placeholder="
-              Placeholder|Placeholder informing that this is textarea the actual
-              note can be entered into
-            "
-            placeholder="Notes"
-            name="notes"
-            [(ngModel)]="entity.text"
-            cdkTextareaAutosize
-            cdkAutosizeMinRows="4"
-          ></textarea>
-        </mat-form-field>
-      </div>
+      <mat-form-field>
+        <textarea
+          matInput
+          i18n-placeholder="
+            Placeholder|Placeholder informing that this is textarea the actual
+            note can be entered into
+          "
+          placeholder="Notes"
+          name="notes"
+          [(ngModel)]="entity.text"
+          cdkTextareaAutosize
+          cdkAutosizeMinRows="4"
+        ></textarea>
+      </mat-form-field>
     </div>
 
-    <div fxLayout="column" fxLayoutGap="20px">
-      <app-entity-select
-        entityType="Child"
-        [(selection)]="entity.children"
-        (selectionChange)="entityForm.form.markAsDirty()"
-        [additionalFilter]="filterInactiveChildren"
-        [showEntities]="!isMeeting"
-        label="Participants"
-        i18n-label="Participants of a note"
-        placeholder="Add participant ..."
-        i18n-placeholder="Add participants of a note"
+    <!-- Participants and groups -->
+    <app-entity-select
+      style="margin-top: 12px"
+      entityType="Child"
+      [(selection)]="entity.children"
+      (selectionChange)="entityForm.form.markAsDirty()"
+      [additionalFilter]="filterInactiveChildren"
+      [showEntities]="!isMeeting"
+      label="Participants"
+      i18n-label="Participants of a note"
+      placeholder="Add participant ..."
+      i18n-placeholder="Add participants of a note"
+    >
+      <!-- Header for autocomplete -->
+      <mat-option>
+        <mat-checkbox
+          labelPosition="before"
+          (change)="toggleIncludeInactiveChildren()"
+          [checked]="includeInactiveChildren"
+        >
+          Include Inactive Children
+        </mat-checkbox>
+      </mat-option>
+    </app-entity-select>
+
+    <div *ngIf="isMeeting">
+      <app-child-meeting-note-attendance
+        *ngFor="let childId of entity.children"
+        [childId]="childId"
+        [attendance]="entity.getAttendance(childId)"
+        (change)="entityForm.form.markAsDirty()"
+        (remove)="entity.removeChild(childId); entityForm.form.markAsDirty()"
       >
-        <!-- Header for autocomplete -->
-        <mat-option>
-          <mat-checkbox
-            labelPosition="before"
-            (change)="toggleIncludeInactiveChildren()"
-            [checked]="includeInactiveChildren"
-          >
-            Include Inactive Children
-          </mat-checkbox>
-        </mat-option>
-      </app-entity-select>
-
-      <div *ngIf="isMeeting">
-        <app-child-meeting-note-attendance
-          *ngFor="let childId of entity.children"
-          [childId]="childId"
-          [attendance]="entity.getAttendance(childId)"
-          (change)="entityForm.form.markAsDirty()"
-          (remove)="entity.removeChild(childId); entityForm.form.markAsDirty()"
-        >
-        </app-child-meeting-note-attendance>
-      </div>
-
-      <div fxFlex>
-        <app-entity-select
-          entityType="School"
-          [(selection)]="entity.schools"
-          (selectionChange)="entityForm.form.markAsDirty()"
-          i18n-label="Groups that belong to a note"
-          label="Groups"
-          i18n-placeholder="Add a group to a note"
-          placeholder="Add group ..."
-        >
-        </app-entity-select>
-      </div>
+      </app-child-meeting-note-attendance>
     </div>
+
+    <app-entity-select
+      entityType="School"
+      [(selection)]="entity.schools"
+      (selectionChange)="entityForm.form.markAsDirty()"
+      i18n-label="Groups that belong to a note"
+      label="Groups"
+      i18n-placeholder="Add a group to a note"
+      placeholder="Add group ..."
+    >
+    </app-entity-select>
   </form>
 </app-form-dialog-wrapper>

@@ -86,13 +86,12 @@ async function getExecutionDiff<R>(
   const improvedTimer = new Timer();
   const improvedResult = await improvedFunction();
   const improvedDuration = improvedTimer.getDuration();
-  expect(improvedResult).toEqual(
-    currentResult,
-    "current " +
-      JSON.stringify(currentResult) +
-      " improved " +
-      JSON.stringify(improvedResult)
-  );
+  expect(improvedResult)
+    .withContext(
+      `current ${JSON.stringify(currentResult)}
+      improved ${JSON.stringify(improvedResult)}`
+    )
+    .toEqual(currentResult);
   return currentDuration - improvedDuration;
 }
 

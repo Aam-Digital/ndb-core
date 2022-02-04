@@ -31,6 +31,8 @@ import { DemoActivityGeneratorService } from "../../demo-data/demo-activity-gene
 import { FormDialogModule } from "../../../../core/form-dialog/form-dialog.module";
 import { PouchDatabase } from "../../../../core/database/pouch-database";
 import { SessionService } from "../../../../core/session/session-service/session.service";
+import { Angulartics2Module } from "angulartics2";
+import { RouterTestingModule } from "@angular/router/testing";
 
 const demoEvents: Note[] = [
   Note.create(new Date(), "Class 5a Parents Meeting"),
@@ -85,6 +87,8 @@ export default {
         FlexLayoutModule,
         EntityModule,
         FormDialogModule,
+        Angulartics2Module.forRoot(),
+        RouterTestingModule,
       ],
       declarations: [ActivityCardComponent],
       providers: [

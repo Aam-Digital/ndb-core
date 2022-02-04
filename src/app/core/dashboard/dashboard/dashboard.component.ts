@@ -27,6 +27,7 @@ import { RouteData } from "../../view/dynamic-routing/view-config.interface";
 })
 export class DashboardComponent implements OnInit {
   widgets: DynamicComponentConfig[] = [];
+  isEditing: boolean = false;
 
   constructor(private activatedRoute: ActivatedRoute) {}
 

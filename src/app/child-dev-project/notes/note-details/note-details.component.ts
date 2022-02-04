@@ -1,8 +1,7 @@
-import { Component, Input, Optional, ViewChild } from "@angular/core";
+import { Component, Input, ViewChild } from "@angular/core";
 import { Note } from "../model/note";
 import { ShowsEntity } from "../../../core/form-dialog/shows-entity.interface";
-import { MatDialogRef } from "@angular/material/dialog";
-import { Entity, EntityConstructor } from "../../../core/entity/model/entity";
+import { EntityConstructor } from "../../../core/entity/model/entity";
 import { INTERACTION_TYPE_CONFIG_ID } from "../model/interaction-type.interface";
 import { Child } from "../../children/model/child";
 import { User } from "../../../core/user/user";
@@ -24,12 +23,8 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
   readonly School: EntityConstructor<School> = School;
   readonly User: EntityConstructor<User> = User;
 
-  INTERACTION_TYPE_CONFIG = INTERACTION_TYPE_CONFIG_ID;
+  readonly INTERACTION_TYPE_CONFIG = INTERACTION_TYPE_CONFIG_ID;
   includeInactiveChildren: boolean = false;
-
-  constructor(
-    @Optional() private matDialogRef: MatDialogRef<NoteDetailsComponent>
-  ) {}
 
   toggleIncludeInactiveChildren() {
     this.includeInactiveChildren = !this.includeInactiveChildren;
@@ -40,17 +35,6 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
   }
 
   filterInactiveChildren: (Child) => boolean = (c: Child) => c.isActive;
-
-  closeDialog(entity: Entity) {
-    if (!this.matDialogRef) {
-      return;
-    }
-
-    // Return the entity which has been saved
-    this.matDialogRef
-      .beforeClosed()
-      .subscribe(() => this.matDialogRef.close(entity));
-  }
 
   get isMeeting(): boolean {
     return this.entity.category?.isMeeting || false;

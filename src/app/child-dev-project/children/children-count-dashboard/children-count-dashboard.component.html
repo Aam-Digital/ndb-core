@@ -1,14 +1,11 @@
-<mat-card class="dashboard-widget">
-  <mat-card-header class="app-child">
-    <div mat-card-avatar>
-      <fa-icon icon="child"></fa-icon>
-    </div>
-    <mat-card-title>{{ totalChildren }}</mat-card-title>
-    <mat-card-subtitle i18n="Total amount of children">
-      Children
-    </mat-card-subtitle>
-  </mat-card-header>
-  <mat-card-content>
+<app-dashboard-widget
+  icon="child"
+  theme="child"
+  [title]="totalChildren"
+  subtitle="Cases"
+  i18n-subtitle="Dashboard title naming total number of beneficiaries in the system"
+>
+  <app-widget-content>
     <table class="dashboard-table">
       <tr
         *ngFor="let entry of childrenGroupCounts; let i = index"
@@ -27,5 +24,5 @@
         </td>
       </tr>
     </table>
-  </mat-card-content>
-</mat-card>
+  </app-widget-content>
+</app-dashboard-widget>

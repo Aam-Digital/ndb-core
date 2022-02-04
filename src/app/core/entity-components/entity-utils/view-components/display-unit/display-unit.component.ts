@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { ViewComponent } from "../view-component";
+import { ViewDirective } from "../view.directive";
 import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
 
 @Component({
@@ -7,7 +7,7 @@ import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
   templateUrl: "./display-unit.component.html",
   styleUrls: ["./display-unit.component.scss"],
 })
-export class DisplayUnitComponent extends ViewComponent {
+export class DisplayUnitComponent extends ViewDirective {
   unit: string;
   onInitFromDynamicConfig(config: ViewPropertyConfig) {
     super.onInitFromDynamicConfig(config);

@@ -1,5 +1,5 @@
 <div [formGroup]="formControl.parent">
-  <mat-form-field style="width: 120px">
+  <mat-form-field style="width: 70%">
     <input
       matInput
       [formControlName]="formControlName"
@@ -11,8 +11,11 @@
       [for]="dateOfBirthDatepicker"
     ></mat-datepicker-toggle>
     <mat-datepicker #dateOfBirthDatepicker></mat-datepicker>
+    <mat-error>
+      <app-error-hint [form]="formControl"></app-error-hint>
+    </mat-error>
   </mat-form-field>
-  <mat-form-field style="width: 50px">
+  <mat-form-field style="width: 30%">
     <fa-icon
       *ngIf="formControl.enabled"
       matSuffix
@@ -27,5 +30,8 @@
       [value]="getAge(formControl.value)"
       [disabled]="true"
     />
+    <mat-error>
+      <app-error-hint [form]="formControl"></app-error-hint>
+    </mat-error>
   </mat-form-field>
 </div>

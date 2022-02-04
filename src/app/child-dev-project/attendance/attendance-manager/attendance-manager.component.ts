@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { ComingSoonDialogService } from "../../../core/coming-soon/coming-soon-dialog.service";
 
 @Component({
   selector: "app-attendance-manager",
@@ -6,5 +7,5 @@ import { Component } from "@angular/core";
   styleUrls: ["./attendance-manager.component.scss"],
 })
 export class AttendanceManagerComponent {
-  constructor() {}
+  constructor(public comingSoonDialog: ComingSoonDialogService) {}
 }
