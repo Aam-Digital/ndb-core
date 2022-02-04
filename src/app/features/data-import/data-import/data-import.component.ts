@@ -22,12 +22,12 @@ import { readFile } from "../../../utils/utils";
   styleUrls: ["./data-import.component.scss"],
 })
 export class DataImportComponent {
-  entityForm = this.formBuilder.group({ entity: ["", Validators.required] });
-
   fileNameForm = this.formBuilder.group({
     fileName: ["", Validators.required],
   });
   csvFile: ParseResult;
+
+  entityForm = this.formBuilder.group({ entity: ["", Validators.required] });
 
   transactionIDForm = this.formBuilder.group({
     transactionId: [
@@ -103,8 +103,6 @@ export class DataImportComponent {
       entityName
     ).schema.keys();
     this.properties = [...propertyKeys];
-    this.csvFile = undefined;
-    this.fileNameForm.patchValue({ fileName: "" });
     this.stepper.next();
   }
 
