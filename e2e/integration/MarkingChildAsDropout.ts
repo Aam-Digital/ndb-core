@@ -4,21 +4,21 @@ describe("Scenario: Marking a child as dropout - E2E test", () => {
     // go to the url with the Child
     cy.visit("child/1");
     // save the name of this Child to the variable
-    cy.get(".page-header > .ng-star-inserted").invoke("text").as("childName");
+    cy.get(".header-row > .header-title").invoke("text").as("childName");
   });
 
   // WHEN I select a dropout date for this child
   it("Select a dropout date for the child", function () {
     // click on "Dropout" menu
     cy.contains("Dropout").click();
+    cy.get("#mat-tab-label-0-7").click();
     // click on button with the content "Edit" in Dropout menu.
-    cy.get('[ng-reflect-columns="dropoutDate,dropoutType,dropou"]')
-      .contains("Edit")
-      .click();
+    cy.contains("span", "Edit").should("be.visible").click();
     // type to the Dropout Date some date. It could be 12/12/2021 or something else
-    cy.get('[ng-reflect-name="dropoutDate"]').type("12/12/2021");
+    cy.get(".mat-datepicker-toggle-default-icon").click();
+    cy.get(".mat-calendar-body-active").click();
     // click on button with the content "Save"
-    cy.contains("button", "Save").click();
+    cy.contains("span", "Save").should("be.visible").click();
   });
 
   // THEN I should not see this child in the list of all children at first
@@ -26,20 +26,17 @@ describe("Scenario: Marking a child as dropout - E2E test", () => {
     // click on "Children" menu in navigation
     cy.get('[ng-reflect-angulartics-label="Children"]').click();
     // type to the input "Filter" the name of child
-    cy.get('[ng-reflect-placeholder="Filter"]').type(this.childName);
+    cy.get('[data-placeholder="e.g. name, age"]').type(this.childName);
     // find at this table the name of child and it should not exist
-    cy.get('[ng-reflect-columns-to-display="projectNumber,name,age,schoolC"]')
-      .contains(this.childName)
-      .should("not.exist");
+    cy.get("table").contains(this.childName.trim()).should("not.exist");
   });
 
   // AND I should see the child when I activate the 'inactive' filter
   it("The child is seen when the 'inactive' filter activated", function () {
     // click on the button with the content "Inactive"
-    cy.contains("button", "Inactive").click();
+    cy.get('[ng-reflect-placeholder="isActive"]').click();
+    cy.contains("span", "Inactive").should("be.visible").click();
     // find at this table the name of child and it should exist
-    cy.get('[ng-reflect-columns-to-display="projectNumber,name,age,schoolC"]')
-      .contains(this.childName)
-      .should("exist");
+    cy.get("table").contains(this.childName.trim()).should("exist");
   });
 });
