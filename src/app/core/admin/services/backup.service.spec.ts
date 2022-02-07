@@ -71,10 +71,11 @@ describe("BackupService", () => {
 
     const res = await db.getAll();
     expect(res).toHaveSize(2);
-    expect(res.map(ignoreRevProperty)).toEqual(
-      originalData.map(ignoreRevProperty),
-      "restored records not identical to original records (_rev ignored)"
-    );
+    expect(res.map(ignoreRevProperty))
+      .withContext(
+        "restored records not identical to original records (_rev ignored)"
+      )
+      .toEqual(originalData.map(ignoreRevProperty));
   });
 
   it("getCsvExport should contain a line for every record", async () => {
@@ -131,7 +132,9 @@ describe("BackupService", () => {
 
     const res = await db.getAll();
     expect(res).toHaveSize(1);
-    expect(res[0].other).toBeUndefined("empty property was added anyway");
+    expect(res[0].other)
+      .withContext("empty property was added anyway")
+      .toBeUndefined();
     expect(res.map(ignoreRevProperty)).toEqual([{ _id: "Test:1", test: 1 }]);
   });
 

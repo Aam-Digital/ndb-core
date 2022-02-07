@@ -45,7 +45,6 @@ import { NotesOfChildComponent } from "../notes/notes-of-child/notes-of-child.co
 import { SchoolsModule } from "../schools/schools.module";
 import { EducationalMaterialComponent } from "../educational-material/educational-material-component/educational-material.component";
 import { AserComponent } from "../aser/aser-component/aser.component";
-import { FilterPipeModule } from "ngx-filter-pipe";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NotesDashboardComponent } from "../notes/dashboard-widgets/notes-dashboard/notes-dashboard.component";
 import { HealthCheckupComponent } from "../health-checkup/health-checkup-component/health-checkup.component";
@@ -96,7 +95,6 @@ import { ExportModule } from "../../core/export/export.module";
     MatChipsModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
-    FilterPipeModule,
     SchoolsModule,
     ReactiveFormsModule,
     MatDialogModule,

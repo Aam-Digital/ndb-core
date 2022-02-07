@@ -86,7 +86,7 @@ describe("EntityMapperService", () => {
 
   it("rejects promise when loading nonexistent entity", async () => {
     return entityMapper.load<Entity>(Entity, "nonexistent_id").catch((err) => {
-      expect(err).toBeDefined('"not found" error not defined');
+      expect(err).withContext('"not found" error not defined').toBeDefined();
     });
   });
 
