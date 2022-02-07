@@ -13,6 +13,8 @@ import { EntityAbility, EntityRule } from "./permission-types";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { Permission } from "./permission";
 import { PermissionEnforcerService } from "./permission-enforcer.service";
+import { DatabaseUser } from "../session/session-service/local-user";
+import { User } from "../user/user";
 
 describe("AbilityService", () => {
   let service: AbilityService;
@@ -22,6 +24,7 @@ describe("AbilityService", () => {
   let mockLoginState: Subject<LoginState>;
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let mockPermissionEnforcer: jasmine.SpyObj<PermissionEnforcerService>;
+  let user: DatabaseUser = { name: "testUser", roles: ["user_app"] };
 
   beforeEach(() => {
     mockEntityMapper = jasmine.createSpyObj(["load"]);
@@ -34,10 +37,7 @@ describe("AbilityService", () => {
       syncState: mockSyncState,
       loginState: mockLoginState,
     });
-    mockSessionService.getCurrentUser.and.returnValue({
-      name: "testUser",
-      roles: ["user_app"],
-    });
+    mockSessionService.getCurrentUser.and.returnValue(user);
     mockPermissionEnforcer = jasmine.createSpyObj([
       "enforcePermissionsOnLocalData",
     ]);
@@ -190,6 +190,28 @@ describe("AbilityService", () => {
     expect(
       mockPermissionEnforcer.enforcePermissionsOnLocalData
     ).toHaveBeenCalled();
+  }));
+
+  it("should allow to access user properties in the rules", fakeAsync(() => {
+    mockEntityMapper.load.and.resolveTo(
+      new Permission({
+        user_app: [
+          {
+            subject: "User",
+            action: "manage",
+            conditions: { name: "${user.name}" },
+          },
+        ],
+      })
+    );
+    mockLoginState.next(LoginState.LOGGED_IN);
+    tick();
+
+    const userEntity = new User();
+    userEntity.name = user.name;
+    expect(ability.can("manage", userEntity)).toBeTrue();
+    userEntity.name = "another user";
+    expect(ability.cannot("manage", userEntity)).toBeTrue();
   }));
 
   function getRawRules(): Permission {

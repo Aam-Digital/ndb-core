@@ -15,6 +15,8 @@ import { LoginState } from "../session/session-states/login-state.enum";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Permission } from "./permission";
 import { PermissionEnforcerService } from "./permission-enforcer.service";
+import { DatabaseUser } from "../session/session-service/local-user";
+import * as _ from "lodash";
 
 export function detectEntityType(subject: Entity): EntityConstructor<any> {
   if (subject instanceof Entity) {
@@ -80,11 +82,32 @@ export class AbilityService {
 
   private getRulesForUser(rules: DatabaseRules): DatabaseRule[] {
     const rawUserRules: DatabaseRule[] = [];
-    this.sessionService.getCurrentUser().roles.forEach((role) => {
+    const currentUser = this.sessionService.getCurrentUser();
+    currentUser.roles.forEach((role) => {
       const rulesForRole = rules[role] || [];
       rawUserRules.push(...rulesForRole);
     });
-    return rawUserRules;
+    return this.interpolateUser(rawUserRules, currentUser);
+  }
+
+  private interpolateUser(
+    rules: DatabaseRule[],
+    user: DatabaseUser
+  ): DatabaseRule[] {
+    return JSON.parse(JSON.stringify(rules), (that, rawValue) => {
+      if (rawValue[0] !== "$") {
+        return rawValue;
+      }
+
+      const name = rawValue.slice(2, -1);
+      const value = _.get({ user }, name);
+
+      if (typeof value === "undefined") {
+        throw new ReferenceError(`Variable ${name} is not defined`);
+      }
+
+      return value;
+    });
   }
 
   private updateAbilityWithRules(rules: DatabaseRule[]) {
