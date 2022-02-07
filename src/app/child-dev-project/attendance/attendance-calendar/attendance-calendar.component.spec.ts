@@ -15,6 +15,7 @@ import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-servic
 import { EventNote } from "../model/event-note";
 import { AttendanceService } from "../attendance.service";
 import { AnalyticsService } from "../../../core/analytics/analytics.service";
+import { EntityAbility } from "../../../core/permissions/permission-types";
 
 describe("AttendanceCalendarComponent", () => {
   let component: AttendanceCalendarComponent;
@@ -43,6 +44,10 @@ describe("AttendanceCalendarComponent", () => {
           {
             provide: AttendanceService,
             useValue: mockAttendanceService,
+          },
+          {
+            provide: EntityAbility,
+            useValue: jasmine.createSpyObj(["cannot"]),
           },
         ],
       }).compileComponents();
