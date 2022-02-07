@@ -161,7 +161,7 @@ export class ExportService {
       // queryData() always returns an array, simple queries should be a direct value however
       return value[0];
     }
-    return value;
+    return value.filter((val) => val !== undefined);
   }
 
   /**
