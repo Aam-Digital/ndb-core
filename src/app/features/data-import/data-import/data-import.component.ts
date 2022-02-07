@@ -27,6 +27,7 @@ export class DataImportComponent {
   });
   csvFile: ParseResult;
 
+  entityMap = DynamicEntityService.ENTITY_MAP;
   entityForm = this.formBuilder.group({ entity: ["", Validators.required] });
 
   transactionIDForm = this.formBuilder.group({
@@ -49,7 +50,6 @@ export class DataImportComponent {
   constructor(
     private dataImportService: DataImportService,
     private formBuilder: FormBuilder,
-    public dynamicEntityService: DynamicEntityService,
     private alertService: AlertService,
     private changeDetectorRef: ChangeDetectorRef,
     private downloadDialogService: DownloadDialogService
@@ -77,6 +77,8 @@ export class DataImportComponent {
   }
 
   private async loadCSVFile(file: File) {
+    this.entityForm.enable();
+    this.transactionIDForm.enable();
     const csvFile = await this.dataImportService.validateCsvFile(file);
     if (csvFile.meta.fields.includes("_id")) {
       const record = csvFile.data[0];
@@ -87,21 +89,14 @@ export class DataImportComponent {
       this.transactionIDForm.patchValue({ transactionID: "" });
       if (id) {
         this.transactionIDForm.disable();
-      } else {
-        this.transactionIDForm.enable();
       }
-    } else {
-      this.entityForm.enable();
-      this.transactionIDForm.enable();
     }
     return csvFile;
   }
 
   entitySelectionChanged(): void {
     const entityName = this.entityForm.get("entity").value;
-    const propertyKeys = this.dynamicEntityService.EntityMap.get(
-      entityName
-    ).schema.keys();
+    const propertyKeys = this.entityMap.get(entityName).schema.keys();
     this.properties = [...propertyKeys];
     this.stepper.next();
   }
@@ -158,7 +153,6 @@ export class DataImportComponent {
   private patchIfPossible(form: FormGroup, patch: { [key in string]: any }) {
     if (form.enabled) {
       form.patchValue(patch);
-      console.log("form", form, patch);
     }
   }
 

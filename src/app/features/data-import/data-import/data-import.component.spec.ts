@@ -11,6 +11,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { AlertsModule } from "../../../core/alerts/alerts.module";
 import { DynamicEntityService } from "../../../core/entity/dynamic-entity.service";
+import { DownloadDialogService } from "../../../core/export/download-dialog/download-dialog.service";
 
 describe("DataImportComponent", () => {
   let component: DataImportComponent;
@@ -44,6 +45,10 @@ describe("DataImportComponent", () => {
           {
             provide: DynamicEntityService,
             useValue: new DynamicEntityService(undefined, undefined),
+          },
+          {
+            provide: DownloadDialogService,
+            useValue: jasmine.createSpyObj(["openDownloadDialog"]),
           },
         ],
       }).compileComponents();

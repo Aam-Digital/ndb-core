@@ -30,7 +30,7 @@
       <mat-form-field>
         <mat-label>Entity Type</mat-label>
         <mat-select formControlName="entity" required (selectionChange)="entitySelectionChanged()">
-          <mat-option *ngFor="let entity of dynamicEntityService.EntityMap | keyvalue" [value]="entity.key">
+          <mat-option *ngFor="let entity of entityMap | keyvalue" [value]="entity.key">
             {{entity.key}}
           </mat-option>
         </mat-select>
