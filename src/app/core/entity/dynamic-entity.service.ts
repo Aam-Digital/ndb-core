@@ -13,7 +13,7 @@ import { EntitySchemaService } from "./schema/entity-schema.service";
   providedIn: "root",
 })
 export class DynamicEntityService {
-  private static ENTITY_MAP = new Map<string, EntityConstructor<Entity>>();
+  static ENTITY_MAP = new Map<string, EntityConstructor>();
 
   /**
    * Registers a new entity so that it can be used using this service.
@@ -23,10 +23,7 @@ export class DynamicEntityService {
    * @param type The entity-type as string
    * @param constructor The constructor of the entity
    */
-  static registerNewEntity(
-    type: string,
-    constructor: EntityConstructor<Entity>
-  ) {
+  static registerNewEntity(type: string, constructor: EntityConstructor) {
     if (!(new constructor() instanceof Entity)) {
       throw Error(
         `Tried to register an entity-type that is not a subclass of Entity\n` +

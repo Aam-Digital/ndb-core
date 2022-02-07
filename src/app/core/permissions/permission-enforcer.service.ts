@@ -47,28 +47,38 @@ export class PermissionEnforcerService {
   private getSubjectsWithReadRestrictions(
     rules: DatabaseRule[]
   ): EntityConstructor[] {
-    const subjects = new Set<string>();
-    rules.forEach((rule) => {
-      if (this.hasReadRestriction(rule)) {
-        if (Array.isArray(rule.subject)) {
-          rule.subject.forEach((subj) => subjects.add(subj));
+    const subjects = new Set<string>(DynamicEntityService.ENTITY_MAP.keys());
+    rules
+      .filter((rule) => this.isReadRule(rule))
+      .forEach((rule) => {
+        const relevantSubjects = this.getRelevantSubjects(rule);
+        if (rule.inverted) {
+          relevantSubjects.forEach((subject) => subjects.add(subject));
         } else {
-          subjects.add(rule.subject);
+          relevantSubjects.forEach((subject) => subjects.delete(subject));
         }
-      }
-    });
+      });
     return [...subjects].map((subj) =>
       this.dynamicEntityService.getEntityConstructor(subj)
     );
   }
 
-  private hasReadRestriction(rule: DatabaseRule): boolean {
+  private isReadRule(rule: DatabaseRule): boolean {
     return (
-      (rule.action === "read" ||
-        rule.action.includes("read") ||
-        rule.action === "manage") &&
-      rule.inverted === true
+      rule.action === "read" ||
+      rule.action.includes("read") ||
+      rule.action === "manage"
     );
+  }
+
+  private getRelevantSubjects(rule: DatabaseRule): string[] {
+    if (rule.subject === "any") {
+      return [...DynamicEntityService.ENTITY_MAP.keys()];
+    } else if (Array.isArray(rule.subject)) {
+      return rule.subject;
+    } else {
+      return [rule.subject];
+    }
   }
 
   private async dbHasEntitiesWithoutPermissions(
