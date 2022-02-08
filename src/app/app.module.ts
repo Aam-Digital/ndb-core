@@ -88,7 +88,7 @@ import { far } from "@fortawesome/free-regular-svg-icons";
   declarations: [AppComponent],
   imports: [
     ServiceWorkerModule.register("/ngsw-worker.js", {
-      enabled: environment.production,
+      enabled: true,
     }),
     Angulartics2Module.forRoot({
       developerMode: !environment.production,
