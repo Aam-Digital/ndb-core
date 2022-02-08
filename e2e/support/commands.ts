@@ -3,18 +3,28 @@
 // with Intellisense and code completion in your
 // IDE or Text Editor.
 // ***********************************************
-// declare namespace Cypress {
-//   interface Chainable<Subject = any> {
-//     customCommand(param: any): typeof customCommand;
-//   }
-// }
-//
-// function customCommand(param: any): void {
-//   console.warn(param);
-// }
+declare namespace Cypress {
+  interface Chainable<Subject = any> {
+    createChild(name: string): typeof createChild;
+    createSchool(name: string): typeof createSchool;
+  }
+}
+
+function createChild(name: string): void {
+  cy.visit("child/new");
+  cy.get('[ng-reflect-name="name"]').type(name);
+  cy.contains("button", "Save").click();
+}
+
+function createSchool(name: string): void {
+  cy.visit("school/new");
+  cy.get('[ng-reflect-name="name"]').type(name);
+  cy.contains("button", "Save").click();
+}
 //
 // NOTE: You can use it like so:
-// Cypress.Commands.add('customCommand', customCommand);
+Cypress.Commands.add('createChild', createChild);
+Cypress.Commands.add('createSchool', createSchool);
 //
 // ***********************************************
 // This example commands.js shows you how to
