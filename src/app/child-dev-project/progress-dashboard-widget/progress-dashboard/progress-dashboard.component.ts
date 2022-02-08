@@ -5,12 +5,14 @@ import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on
 import { LoggingService } from "../../../core/logging/logging.service";
 import { MatDialog } from "@angular/material/dialog";
 import { EditProgressDashboardComponent } from "../edit-progress-dashboard/edit-progress-dashboard.component";
+import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 
 @Component({
   selector: "app-progress-dashboard",
   templateUrl: "./progress-dashboard.component.html",
   styleUrls: ["./progress-dashboard.component.scss"],
 })
+@DynamicComponent()
 export class ProgressDashboardComponent
   implements OnInitDynamicComponent, OnInit {
   @Input() dashboardConfigId = "";

@@ -1,6 +1,8 @@
 import { Component } from "@angular/core";
 import { EditComponent, EditPropertyConfig } from "../edit-component";
+import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 
+@DynamicComponent()
 @Component({
   selector: "app-edit-entity-array",
   templateUrl: "./edit-entity-array.component.html",

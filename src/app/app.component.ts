@@ -62,8 +62,8 @@ export class AppComponent implements OnInit {
     // TODO: remove this with issue #886
     // This needs to be in the app module (as opposed to the dynamic entity service)
     // to prevent circular dependencies
-    this.registry.ENTITY.addAlias("Participant", Child);
-    this.registry.ENTITY.addAlias("Team", School);
+    this.registry.ENTITY.add("Participant", Child);
+    this.registry.ENTITY.add("Team", School);
     // first register to events
 
     // Reload config once the database is synced

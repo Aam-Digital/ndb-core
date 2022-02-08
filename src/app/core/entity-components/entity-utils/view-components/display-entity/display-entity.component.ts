@@ -3,7 +3,9 @@ import { Entity } from "../../../../entity/model/entity";
 import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
 import { ViewDirective } from "../view.directive";
 import { DynamicEntityService } from "../../../../entity/dynamic-entity.service";
+import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 
+@DynamicComponent()
 @Component({
   selector: "app-display-entity",
   templateUrl: "./display-entity.component.html",

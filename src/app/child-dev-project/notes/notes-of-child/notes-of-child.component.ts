@@ -10,11 +10,13 @@ import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
+import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain child
  */
 @UntilDestroy()
+@DynamicComponent()
 @Component({
   selector: "app-notes-of-child",
   templateUrl: "./notes-of-child.component.html",

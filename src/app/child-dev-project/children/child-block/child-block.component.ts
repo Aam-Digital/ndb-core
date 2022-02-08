@@ -11,8 +11,10 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { ChildrenService } from "../children.service";
 import { Child } from "../model/child";
+import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 
 @UntilDestroy()
+@DynamicComponent()
 @Component({
   selector: "app-child-block",
   templateUrl: "./child-block.component.html",

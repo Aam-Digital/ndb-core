@@ -1,7 +1,9 @@
 import { Component } from "@angular/core";
 import { ViewDirective } from "../view.directive";
 import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
+import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 
+@DynamicComponent()
 @Component({
   selector: "app-display-unit",
   templateUrl: "./display-unit.component.html",

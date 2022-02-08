@@ -5,11 +5,13 @@ import { Child } from "../../children/model/child";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
+import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 
 /**
  * Displays educational materials of a child, such as a pencil, rulers, e.t.c
  * as well as a summary
  */
+@DynamicComponent()
 @Component({
   selector: "app-educational-material",
   templateUrl: "./educational-material.component.html",

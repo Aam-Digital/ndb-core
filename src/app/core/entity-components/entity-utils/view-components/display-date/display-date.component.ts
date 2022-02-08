@@ -1,10 +1,12 @@
 import { Component } from "@angular/core";
 import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
 import { ViewDirective } from "../view.directive";
+import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 
 /**
  * This component displays a date attribute using the shortDate format.
  */
+@DynamicComponent()
 @Component({
   selector: "app-display-date",
   template: `{{ entity[property] | date: format }}`,

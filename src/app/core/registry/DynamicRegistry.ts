@@ -1,13 +1,15 @@
 import { Entity, EntityConstructor } from "../entity/model/entity";
 import { InjectionToken } from "@angular/core";
+import { ComponentType } from "@angular/cdk/overlay";
+import { OnInitDynamicComponent } from "../view/dynamic-components/on-init-dynamic-component.interface";
 
 export class Registry<T> {
   private map = new Map<string, T>();
 
-  constructor(private beforeAddCheck: (key: string, mapping: T) => void) {}
+  constructor(private beforeAddCheck?: (key: string, mapping: T) => void) {}
 
   public add(key: string, mapping: T) {
-    this.beforeAddCheck(key, mapping);
+    this.beforeAddCheck?.(key, mapping);
     if (this.map.has(key)) {
       throw Error(
         `Duplicate entity definition: ${key} is already registered with constructor ${this.map.get(
@@ -18,8 +20,10 @@ export class Registry<T> {
     this.map.set(key, mapping);
   }
 
-  public addAlias(key: string, mapping: T) {
-    this.map.set(key, mapping);
+  public addAliases(keys: string[], mapping: T) {
+    keys.forEach((key) => {
+      this.add(key, mapping);
+    });
   }
 
   public lookup(key: string) {
@@ -33,6 +37,7 @@ export class Registry<T> {
 
 export interface Registries {
   ENTITY: Registry<EntityConstructor>;
+  VIEW: Registry<ComponentType<OnInitDynamicComponent>>;
 }
 
 export const REGISTRY = new InjectionToken<Registries>("app.registries");
@@ -54,4 +59,5 @@ export const DynamicRegistry: Registries = {
       );
     }
   }),
+  VIEW: new Registry(),
 };

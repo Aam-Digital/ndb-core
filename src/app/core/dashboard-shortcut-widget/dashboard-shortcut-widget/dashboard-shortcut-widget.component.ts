@@ -2,10 +2,12 @@ import { Component, Input } from "@angular/core";
 import { MenuItem } from "../../navigation/menu-item";
 import { OnInitDynamicComponent } from "../../view/dynamic-components/on-init-dynamic-component.interface";
 import { MatTableDataSource } from "@angular/material/table";
+import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
 
 /**
  * A simple list of shortcuts displayed as a dashboard widget for easy access to important navigation.
  */
+@DynamicComponent()
 @Component({
   selector: "app-dashboard-shortcut-widget",
   templateUrl: "./dashboard-shortcut-widget.component.html",

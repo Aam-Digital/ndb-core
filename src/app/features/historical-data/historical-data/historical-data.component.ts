@@ -5,12 +5,14 @@ import { PanelConfig } from "../../../core/entity-components/entity-details/Enti
 import { Entity } from "../../../core/entity/model/entity";
 import { HistoricalDataService } from "../historical-data.service";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
+import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 
 /**
  * A general component that can be included on a entity details page through the config.
  * It loads all historical data related to that entity and displays it in a table.
  * The columns that are displayed can be configured according to the `ColumnDescription` interface
  */
+@DynamicComponent()
 @Component({
   selector: "app-historical-data",
   template: ` <app-entity-subrecord

@@ -1,7 +1,9 @@
 import { Component } from "@angular/core";
 import { EditComponent, EditPropertyConfig } from "../edit-component";
 import { CustomNumberValidators } from "../../../../../utils/custom-number-validators";
+import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 
+@DynamicComponent()
 @Component({
   selector: "app-edit-number",
   templateUrl: "./edit-number.component.html",

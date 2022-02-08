@@ -4,7 +4,9 @@ import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 import { ViewDirective } from "../view.directive";
 import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
 import { DynamicEntityService } from "../../../../entity/dynamic-entity.service";
+import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 
+@DynamicComponent()
 @Component({
   selector: "app-display-entity-array",
   templateUrl: "./display-entity-array.component.html",

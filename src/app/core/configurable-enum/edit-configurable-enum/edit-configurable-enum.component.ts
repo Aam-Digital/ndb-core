@@ -4,7 +4,9 @@ import {
   EditPropertyConfig,
 } from "../../entity-components/entity-utils/dynamic-form-components/edit-component";
 import { ConfigurableEnumValue } from "../configurable-enum.interface";
+import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
 
+@DynamicComponent()
 @Component({
   selector: "app-edit-configurable-enum",
   templateUrl: "./edit-configurable-enum.component.html",

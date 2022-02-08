@@ -6,8 +6,10 @@ import { filter, map } from "rxjs/operators";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FormControl } from "@angular/forms";
 import { DynamicEntityService } from "../../../../entity/dynamic-entity.service";
+import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 
 @UntilDestroy()
+@DynamicComponent()
 @Component({
   selector: "app-edit-single-entity",
   templateUrl: "./edit-single-entity.component.html",

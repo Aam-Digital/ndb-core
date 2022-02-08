@@ -6,7 +6,9 @@ import { Child } from "../../children/model/child";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
+import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 
+@DynamicComponent()
 @UntilDestroy()
 @Component({
   selector: "app-health-checkup",

@@ -9,13 +9,15 @@ import moment from "moment";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { EntityMapperService } from "app/core/entity/entity-mapper.service";
 import { isActiveIndicator } from "../schools/children-overview/children-overview.component";
+import { DynamicComponent } from "../../core/view/dynamic-components/dynamic-component.decorator";
 
+@UntilDestroy()
 @Component({
   selector: "app-previous-schools",
   templateUrl: "./previous-schools.component.html",
   styleUrls: ["./previous-schools.component.scss"],
 })
-@UntilDestroy()
+@DynamicComponent()
 export class PreviousSchoolsComponent
   implements OnChanges, OnInitDynamicComponent {
   @Input() child: Child;

@@ -10,6 +10,7 @@ import moment from "moment";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatPaginator } from "@angular/material/paginator";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 
 /**
  * Dashboard Widget displaying children that do not have a recently added Note.
@@ -17,6 +18,7 @@ import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components
  * If you do not set "sinceDays" of "fromBeginningOfWeek" inputs
  * by default notes since beginning of the current week are considered.
  */
+@DynamicComponent()
 @Component({
   selector: "app-no-recent-notes-dashboard",
   templateUrl: "./notes-dashboard.component.html",

@@ -9,7 +9,9 @@ import { Note } from "../../notes/model/note";
 import moment from "moment";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
+import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 
+@DynamicComponent()
 @Component({
   selector: "app-activity-attendance-section",
   templateUrl: "./activity-attendance-section.component.html",

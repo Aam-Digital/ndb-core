@@ -6,8 +6,10 @@ import { take } from "rxjs/operators";
 import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 import { Child } from "../model/child";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 
 @UntilDestroy()
+@DynamicComponent()
 @Component({
   selector: "app-children-count-dashboard",
   templateUrl: "./children-count-dashboard.component.html",

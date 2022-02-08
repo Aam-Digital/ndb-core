@@ -4,8 +4,10 @@ import { HealthCheck } from "../../../health-checkup/model/health-check";
 import { ViewPropertyConfig } from "../../../../core/entity-components/entity-list/EntityListConfig";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { ChildrenService } from "../../children.service";
+import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 
 @UntilDestroy()
+@DynamicComponent()
 @Component({
   selector: "app-bmi-block",
   template: `<span

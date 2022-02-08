@@ -4,7 +4,9 @@ import { Photo } from "../../../../../child-dev-project/children/child-photo-ser
 import { BehaviorSubject } from "rxjs";
 import { ChildPhotoService } from "../../../../../child-dev-project/children/child-photo-service/child-photo.service";
 import { SessionService } from "../../../../session/session-service/session.service";
+import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 
+@DynamicComponent()
 @Component({
   selector: "app-edit-photo",
   templateUrl: "./edit-photo.component.html",

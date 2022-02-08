@@ -6,7 +6,9 @@ import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { getParentUrl } from "../../../../utils/utils";
 import { Router } from "@angular/router";
 import { Location } from "@angular/common";
+import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
 
+@DynamicComponent()
 @Component({
   selector: "app-form",
   template: ` <app-entity-form
