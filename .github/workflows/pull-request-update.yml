@@ -62,10 +62,7 @@ jobs:
           record: true
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          # - if the event is push, the title will be undefined
-          # and Cypress will get the commit message from Git information
-          # - if the event is pull_request, then we set the commit
-          # message to the pull request title
+          # We set the commit message to the pull request title
           COMMIT_INFO_MESSAGE: ${{ github.event.pull_request.title }}
           # pass GitHub token to allow accurately detecting a build vs a re-run build
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
