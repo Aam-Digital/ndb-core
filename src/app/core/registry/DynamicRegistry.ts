@@ -38,6 +38,7 @@ export class Registry<T> {
 export interface Registries {
   ENTITY: Registry<EntityConstructor>;
   VIEW: Registry<ComponentType<OnInitDynamicComponent>>;
+  ROUTE: Registry<ComponentType<any>>;
 }
 
 export const REGISTRY = new InjectionToken<Registries>("app.registries");
@@ -60,4 +61,5 @@ export const DynamicRegistry: Registries = {
     }
   }),
   VIEW: new Registry(),
+  ROUTE: new Registry(),
 };

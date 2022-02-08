@@ -21,14 +21,16 @@ import {
   RemoveResult,
 } from "../../entity/entity-remove.service";
 import { DynamicEntityService } from "../../entity/dynamic-entity.service";
+import { RouteTarget } from "../../../app.routing";
 
 /**
- * This component can be used to display a entity in more detail.
+ * This component can be used to display an entity in more detail.
  * It groups subcomponents in panels.
- * Any component from the DYNAMIC_COMPONENT_MAP can be used as a subcomponent.
- * The subcomponents will be provided with the Entity object and the creating new status, as well as it's static config.
+ * Any component that is registered (has the `DynamicComponent` decorator) can be used as a subcomponent.
+ * The subcomponents will be provided with the Entity object and the creating new status, as well as its static config.
  */
 @UntilDestroy()
+@RouteTarget()
 @Component({
   selector: "app-entity-details",
   templateUrl: "./entity-details.component.html",

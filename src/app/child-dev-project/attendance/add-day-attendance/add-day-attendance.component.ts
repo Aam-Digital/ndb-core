@@ -6,6 +6,7 @@ import { ConfirmationDialogButton } from "../../../core/confirmation-dialog/conf
 import { RollCallComponent } from "./roll-call/roll-call.component";
 import { ActivatedRoute } from "@angular/router";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
+import { RouteTarget } from "../../../app.routing";
 
 /**
  * additional config specifically for AddDayAttendanceComponent
@@ -15,6 +16,7 @@ export interface AddDayAttendanceConfig {
   sortParticipantsBy?: string;
 }
 
+@RouteTarget()
 @Component({
   selector: "app-add-day-attendance",
   templateUrl: "./add-day-attendance.component.html",

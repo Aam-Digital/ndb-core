@@ -1,6 +1,5 @@
-import { Injectable } from "@angular/core";
+import { Inject, Injectable } from "@angular/core";
 import { Route, Router } from "@angular/router";
-import { COMPONENT_MAP } from "../../../app.routing";
 import { ConfigService } from "../../config/config.service";
 import { LoggingService } from "../../logging/logging.service";
 import {
@@ -9,6 +8,7 @@ import {
   ViewConfig,
 } from "./view-config.interface";
 import { UserRoleGuard } from "../../permissions/user-role.guard";
+import { Registries, REGISTRY } from "../../registry/DynamicRegistry";
 
 /**
  * The RouterService dynamically sets up Angular routing from config loaded through the {@link ConfigService}.
@@ -23,7 +23,8 @@ export class RouterService {
   constructor(
     private configService: ConfigService,
     private router: Router,
-    private loggingService: LoggingService
+    private loggingService: LoggingService,
+    @Inject(REGISTRY) private registry: Registries
   ) {}
 
   /**
@@ -85,7 +86,7 @@ export class RouterService {
 
     const route: Route = {
       path: path,
-      component: COMPONENT_MAP[view.component],
+      component: this.registry.ROUTE.lookup(view.component),
     };
 
     const routeData: RouteData = {};

@@ -4,10 +4,12 @@ import { MatTableDataSource } from "@angular/material/table";
 import { Component, OnInit } from "@angular/core";
 import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
 import { OnInitDynamicComponent } from "../../view/dynamic-components/on-init-dynamic-component.interface";
+import { RouteTarget } from "../../../app.routing";
 
 /**
  * Display all available users.
  */
+@RouteTarget()
 @DynamicComponent()
 @Component({
   selector: "app-user-list",

@@ -17,38 +17,19 @@
 
 import { RouterModule, Routes } from "@angular/router";
 import { ModuleWithProviders } from "@angular/core";
-import { DashboardComponent } from "./core/dashboard/dashboard/dashboard.component";
-import { SchoolsListComponent } from "./child-dev-project/schools/schools-list/schools-list.component";
-import { UserAccountComponent } from "./core/user/user-account/user-account.component";
-import { ChildrenListComponent } from "./child-dev-project/children/children-list/children-list.component";
-import { AdminComponent } from "./core/admin/admin/admin.component";
-import { NotesManagerComponent } from "./child-dev-project/notes/notes-manager/notes-manager.component";
-import { AddDayAttendanceComponent } from "./child-dev-project/attendance/add-day-attendance/add-day-attendance.component";
-import { AttendanceManagerComponent } from "./child-dev-project/attendance/attendance-manager/attendance-manager.component";
-import { MarkdownPageComponent } from "./core/markdown-page/markdown-page/markdown-page.component";
-import { UserListComponent } from "./core/admin/user-list/user-list.component";
-import { EntityDetailsComponent } from "./core/entity-components/entity-details/entity-details.component";
-import { ConflictResolutionListComponent } from "./conflict-resolution/conflict-resolution-list/conflict-resolution-list.component";
-import { ActivityListComponent } from "./child-dev-project/attendance/activity-list/activity-list.component";
-import { ReportingComponent } from "./features/reporting/reporting/reporting.component";
 import { UserRoleGuard } from "./core/permissions/user-role.guard";
+import { DynamicRegistry } from "./core/registry/DynamicRegistry";
+import { ComponentType } from "@angular/cdk/overlay";
 
-export const COMPONENT_MAP = {
-  Dashboard: DashboardComponent,
-  UserAccount: UserAccountComponent,
-  NotesManager: NotesManagerComponent,
-  UserList: UserListComponent,
-  MarkdownPage: MarkdownPageComponent,
-  AttendanceManager: AttendanceManagerComponent,
-  AddDayAttendance: AddDayAttendanceComponent,
-  SchoolsList: SchoolsListComponent,
-  ChildrenList: ChildrenListComponent,
-  ActivityList: ActivityListComponent,
-  Admin: AdminComponent,
-  ConflictResolution: ConflictResolutionListComponent,
-  EntityDetails: EntityDetailsComponent,
-  Reporting: ReportingComponent,
-};
+/**
+ * Marks a class to be the target when routing
+ * @constructor
+ */
+export function RouteTarget() {
+  return (ctor: ComponentType<any>) => {
+    DynamicRegistry.ROUTE.add(ctor.name.replace("Component", ""), ctor);
+  };
+}
 
 /**
  * All routes configured for the main app routing.

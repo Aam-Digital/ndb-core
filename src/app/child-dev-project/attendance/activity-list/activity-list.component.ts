@@ -4,7 +4,9 @@ import { RecurringActivity } from "../model/recurring-activity";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
+import { RouteTarget } from "../../../app.routing";
 
+@RouteTarget()
 @Component({
   selector: "app-activity-list",
   template: `

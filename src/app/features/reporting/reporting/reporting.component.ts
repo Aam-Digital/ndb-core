@@ -12,7 +12,9 @@ import {
 } from "./reporting-component-config";
 import moment from "moment";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
+import { RouteTarget } from "../../../app.routing";
 
+@RouteTarget()
 @Component({
   selector: "app-reporting",
   templateUrl: "./reporting.component.html",
