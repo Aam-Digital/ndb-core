@@ -1,7 +1,8 @@
 import { Entity, EntityConstructor } from "./model/entity";
-import { Injectable } from "@angular/core";
+import { Inject, Injectable } from "@angular/core";
 import { EntityMapperService } from "./entity-mapper.service";
 import { EntitySchemaService } from "./schema/entity-schema.service";
+import { Registries, REGISTRY } from "../registry/DynamicRegistry";
 
 /**
  * A service that can be used to get the entity-constructors (see {@link EntityConstructor})
@@ -13,39 +14,10 @@ import { EntitySchemaService } from "./schema/entity-schema.service";
   providedIn: "root",
 })
 export class DynamicEntityService {
-  private static ENTITY_MAP = new Map<string, EntityConstructor<Entity>>();
-
-  /**
-   * Registers a new entity so that it can be used using this service.
-   * This method should generally never be used other than from the
-   * {@link DatabaseEntity}-Decorator
-   *
-   * @param type The entity-type as string
-   * @param constructor The constructor of the entity
-   */
-  static registerNewEntity(
-    type: string,
-    constructor: EntityConstructor<Entity>
-  ) {
-    if (!(new constructor() instanceof Entity)) {
-      throw Error(
-        `Tried to register an entity-type that is not a subclass of Entity\n` +
-          `type: ${type}; constructor: ${constructor}`
-      );
-    }
-    if (this.ENTITY_MAP.has(type)) {
-      throw Error(
-        `Duplicate entity definition: ${type} is already registered with constructor ${this.ENTITY_MAP.get(
-          type
-        )}`
-      );
-    }
-    this.ENTITY_MAP.set(type, constructor);
-  }
-
   constructor(
     private entityMapper: EntityMapperService,
-    private entitySchemaService: EntitySchemaService
+    private entitySchemaService: EntitySchemaService,
+    @Inject(REGISTRY) private registry: Registries
   ) {}
 
   /**
@@ -56,7 +28,7 @@ export class DynamicEntityService {
   getEntityConstructor<E extends Entity = any>(
     entityType: string
   ): EntityConstructor<E> {
-    const ctor = DynamicEntityService.ENTITY_MAP.get(entityType);
+    const ctor = this.registry.ENTITY.lookup(entityType);
     if (!ctor) {
       throw new Error(`Entity-type ${entityType} does not exist!`);
     }
@@ -90,7 +62,7 @@ export class DynamicEntityService {
    * @param entityType The type to look up
    */
   isRegisteredEntity(entityType: string): boolean {
-    return DynamicEntityService.ENTITY_MAP.has(entityType);
+    return this.registry.ENTITY.has(entityType);
   }
 
   /**

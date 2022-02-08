@@ -5,11 +5,11 @@
  *
  * @param entityType The string key for this Entity Type, used as id prefix.
  */
-import { DynamicEntityService } from "./dynamic-entity.service";
+import { DynamicRegistry } from "../registry/DynamicRegistry";
 
 export function DatabaseEntity(entityType: string) {
   return (constructor) => {
-    DynamicEntityService.registerNewEntity(entityType, constructor);
+    DynamicRegistry.ENTITY.add(entityType, constructor);
     constructor.ENTITY_TYPE = entityType;
 
     // append parent schema definitions
