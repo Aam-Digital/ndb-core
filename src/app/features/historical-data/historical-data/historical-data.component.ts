@@ -12,7 +12,7 @@ import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-
  * It loads all historical data related to that entity and displays it in a table.
  * The columns that are displayed can be configured according to the `ColumnDescription` interface
  */
-@DynamicComponent()
+@DynamicComponent("HistoricalDataComponent")
 @Component({
   selector: "app-historical-data",
   template: ` <app-entity-subrecord
