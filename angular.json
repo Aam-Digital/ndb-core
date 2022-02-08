@@ -270,6 +270,20 @@
               "devServerTarget": "ndb-core-e2e:serve:production"
             }
           }
+        },
+        "e2e-ci": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "devServerTarget": "ndb-core-e2e:serve",
+            "watch": false,
+            "headless": true,
+            "record": true
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "ndb-core-e2e:serve:production"
+            }
+          }
         }
       }
     }
