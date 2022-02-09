@@ -5,18 +5,14 @@ import { DynamicEntityService } from "../entity/dynamic-entity.service";
 import { filter } from "rxjs/operators";
 import { SyncState } from "../session/session-states/sync-state.enum";
 import { merge, Observable, Subject } from "rxjs";
-import {
-  DatabaseRule,
-  DatabaseRules,
-  EntityAbility,
-  EntityRule,
-} from "./permission-types";
+import { DatabaseRule, DatabaseRules } from "./permission-types";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Permission } from "./permission";
 import { PermissionEnforcerService } from "./permission-enforcer.service";
 import { DatabaseUser } from "../session/session-service/local-user";
 import * as _ from "lodash";
+import { EntityAbility } from "./entity-ability";
 
 export function detectEntityType(subject: Entity): EntityConstructor<any> {
   if (subject instanceof Entity) {
@@ -45,9 +41,13 @@ export class AbilityService {
     private entityMapper: EntityMapperService,
     private permissionEnforcer: PermissionEnforcerService
   ) {
+    console.log("created");
     merge(
       this.sessionService.loginState.pipe(
-        filter((state) => state === LoginState.LOGGED_IN)
+        filter((state) => {
+          console.log("filter", state);
+          return state === LoginState.LOGGED_IN;
+        })
       ),
       this.sessionService.syncState.pipe(
         filter((state) => state === SyncState.COMPLETED)
@@ -56,6 +56,7 @@ export class AbilityService {
   }
 
   private async initRules(): Promise<void> {
+    console.log("init rules");
     // Initially allow everything until rules object can be fetched
     this.ability.update([{ action: "manage", subject: "all" }]);
 
@@ -71,6 +72,7 @@ export class AbilityService {
     }
     if (permission) {
       // TODO what happens if there are no rules for a user
+      console.log("creating ability", permission);
       const userRules = this.getRulesForUser(permission.rulesConfig);
       const userRulesCopy = JSON.parse(JSON.stringify(userRules));
       this.updateAbilityWithRules(userRules);
@@ -111,31 +113,8 @@ export class AbilityService {
   }
 
   private updateAbilityWithRules(rules: DatabaseRule[]) {
-    const userRules: EntityRule[] = rules.map(
-      (rawRule) =>
-        Object.assign(rawRule, {
-          subject: this.parseStringToConstructor(rawRule.subject),
-        }) as EntityRule
-    );
-    this.ability.update(userRules);
+    this.ability.update(rules as any);
     this._abilityUpdateNotifier.next();
-  }
-
-  private parseStringToConstructor(
-    rawSubject: string | string[] | "all"
-  ): EntityRule["subject"] {
-    if (typeof rawSubject === "string") {
-      return this.getSubjectConstructor(rawSubject);
-    } else {
-      return rawSubject.map((subject) => this.getSubjectConstructor(subject));
-    }
-  }
-
-  private getSubjectConstructor(rawSubject: string): EntityConstructor | "all" {
-    if (rawSubject === "all") {
-      return "all";
-    } else {
-      return this.dynamicEntityService.getEntityConstructor(rawSubject);
-    }
+    console.log("updated rules", this.ability.rules);
   }
 }
