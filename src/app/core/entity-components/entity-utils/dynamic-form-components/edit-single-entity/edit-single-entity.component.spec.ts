@@ -16,6 +16,8 @@ import { School } from "../../../../../child-dev-project/schools/model/school";
 import { EntityUtilsModule } from "../../entity-utils.module";
 import { Child } from "../../../../../child-dev-project/children/model/child";
 import { TypedFormControl } from "../edit-component";
+import { EntityAbility } from "../../../../permissions/permission-types";
+import { detectEntityType } from "../../../../permissions/ability.service";
 
 describe("EditSingleEntityComponent", () => {
   let component: EditSingleEntityComponent;
@@ -33,6 +35,12 @@ describe("EditSingleEntityComponent", () => {
         EntityFormService,
         EntitySchemaService,
         { provide: EntityMapperService, useValue: mockEntityMapper },
+        {
+          provide: EntityAbility,
+          useValue: new EntityAbility([{ subject: "all", action: "manage" }], {
+            detectSubjectType: detectEntityType,
+          }),
+        },
       ],
     }).compileComponents();
   });
