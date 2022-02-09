@@ -5,6 +5,7 @@ import { Entity } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DynamicValidatorsService } from "./dynamic-form-validators/dynamic-validators.service";
+import { EntityAbility } from "../../permissions/permission-types";
 
 @Injectable()
 /**
@@ -16,7 +17,8 @@ export class EntityFormService {
     private fb: FormBuilder,
     private entityMapper: EntityMapperService,
     private entitySchemaService: EntitySchemaService,
-    private dynamicValidator: DynamicValidatorsService
+    private dynamicValidator: DynamicValidatorsService,
+    private ability: EntityAbility
   ) {}
 
   public extendFormFieldConfig(
@@ -86,11 +88,19 @@ export class EntityFormService {
    * @param entity The entity on which the changes should be applied.
    * @returns a copy of the input entity with the changes from the form group
    */
-  public saveChanges<T extends Entity>(form: FormGroup, entity: T): Promise<T> {
+  public async saveChanges<T extends Entity>(
+    form: FormGroup,
+    entity: T
+  ): Promise<T> {
     this.checkFormValidity(form);
     const entityCopy = entity.copy() as T;
-    this.assignFormValuesToEntity(form, entityCopy);
+    Object.assign(entityCopy, form.getRawValue());
     entityCopy.assertValid();
+    if (!this.canSave(entityCopy)) {
+      throw new Error(
+        $localize`Current user is not permitted to save these changes`
+      );
+    }
 
     return this.entityMapper
       .save(entityCopy)
@@ -120,9 +130,12 @@ export class EntityFormService {
     return invalid.join(", ");
   }
 
-  private assignFormValuesToEntity(form: FormGroup, entity: Entity) {
-    Object.keys(form.controls).forEach((key) => {
-      entity[key] = form.get(key).value;
-    });
+  private canSave(entity: Entity): boolean {
+    // no _rev means a new entity is created
+    if (entity._rev) {
+      return this.ability.can("update", entity);
+    } else {
+      return this.ability.can("create", entity);
+    }
   }
 }
