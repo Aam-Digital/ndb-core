@@ -4,7 +4,6 @@ import { PrimaryActionComponent } from "./primary-action.component";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDialogModule } from "@angular/material/dialog";
 import { FormDialogModule } from "../../form-dialog/form-dialog.module";
-import { PermissionsModule } from "../../permissions/permissions.module";
 import { MockSessionModule } from "../../session/mock-session.module";
 import { DynamicEntityService } from "../../entity/dynamic-entity.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
@@ -21,7 +20,6 @@ describe("PrimaryActionComponent", () => {
         MatDialogModule,
         MatButtonModule,
         FormDialogModule,
-        PermissionsModule,
         HttpClientTestingModule,
         MockSessionModule.withState(),
       ],

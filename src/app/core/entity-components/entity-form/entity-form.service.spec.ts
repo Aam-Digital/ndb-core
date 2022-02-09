@@ -6,17 +6,13 @@ import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntityFormModule } from "./entity-form.module";
 import { Entity } from "../../entity/model/entity";
-import { EntityAbility } from "../../permissions/permission-types";
-import { detectEntityType } from "../../permissions/ability.service";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
+import { EntityAbility } from "../../permissions/entity-ability";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
-  let ability = new EntityAbility([{ subject: "all", action: "manage" }], {
-    detectSubjectType: detectEntityType,
-  });
 
   beforeEach(() => {
     mockEntityMapper = jasmine.createSpyObj(["save"]);
@@ -27,7 +23,10 @@ describe("EntityFormService", () => {
         FormBuilder,
         EntitySchemaService,
         { provide: EntityMapperService, useValue: mockEntityMapper },
-        { provide: EntityAbility, useValue: ability },
+        {
+          provide: EntityAbility,
+          useValue: EntityAbility.with([{ subject: "all", action: "manage" }]),
+        },
       ],
     });
     service = TestBed.inject(EntityFormService);
@@ -57,10 +56,10 @@ describe("EntityFormService", () => {
   });
 
   it("should throw an error when trying to save a entity with missing permissions", async () => {
-    ability.update([
+    TestBed.inject(EntityAbility).update([
       { subject: "all", action: "manage" },
       {
-        subject: School,
+        subject: "School",
         action: "create",
         inverted: true,
         conditions: { name: "un-permitted school" },

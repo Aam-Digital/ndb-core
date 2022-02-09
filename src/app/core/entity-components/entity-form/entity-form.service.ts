@@ -5,7 +5,7 @@ import { Entity } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DynamicValidatorsService } from "./dynamic-form-validators/dynamic-validators.service";
-import { EntityAbility } from "../../permissions/permission-types";
+import { EntityAbility } from "../../permissions/entity-ability";
 
 @Injectable()
 /**

@@ -16,7 +16,6 @@ import { MatDialogRef } from "@angular/material/dialog";
 import { EventNote } from "../model/event-note";
 import { AttendanceService } from "../attendance.service";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
-import { PermissionsModule } from "../../../core/permissions/permissions.module";
 
 describe("AttendanceDetailsComponent", () => {
   let component: AttendanceDetailsComponent;
@@ -59,7 +58,6 @@ describe("AttendanceDetailsComponent", () => {
           RouterTestingModule,
           MatNativeDateModule,
           MockSessionModule.withState(),
-          PermissionsModule.withAbility(),
         ],
         providers: [
           { provide: MatDialogRef, useValue: {} },

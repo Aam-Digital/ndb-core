@@ -1,14 +1,14 @@
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 
 import { PermissionEnforcerService } from "./permission-enforcer.service";
-import { DatabaseRule, EntityAbility } from "./permission-types";
+import { DatabaseRule } from "./permission-types";
 import { SessionService } from "../session/session-service/session.service";
 import { TEST_USER } from "../session/mock-session.module";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Database } from "../database/database";
 import { Child } from "../../child-dev-project/children/model/child";
 import { School } from "../../child-dev-project/schools/model/school";
-import { AbilityService, detectEntityType } from "./ability.service";
+import { AbilityService } from "./ability.service";
 import { DynamicEntityService } from "../entity/dynamic-entity.service";
 import { SyncedSessionService } from "../session/session-service/synced-session.service";
 import { mockEntityMapper } from "../entity/mock-entity-mapper-service";
@@ -18,6 +18,7 @@ import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { BehaviorSubject, Subject } from "rxjs";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { Permission } from "./permission";
+import { EntityAbility } from "./entity-ability";
 
 describe("PermissionEnforcerService", () => {
   let service: PermissionEnforcerService;
@@ -51,12 +52,7 @@ describe("PermissionEnforcerService", () => {
         { provide: EntityMapperService, useValue: mockEntityMapper() },
         DynamicEntityService,
         EntitySchemaService,
-        {
-          provide: EntityAbility,
-          useValue: new EntityAbility([], {
-            detectSubjectType: detectEntityType,
-          }),
-        },
+        EntityAbility,
         { provide: Database, useValue: mockDatabase },
         { provide: SessionService, useValue: mockSession },
         { provide: LOCATION_TOKEN, useValue: mockLocation },

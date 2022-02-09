@@ -20,8 +20,8 @@ import {
   EntityRemoveService,
   RemoveResult,
 } from "../../entity/entity-remove.service";
-import { EntityAbility } from "../../permissions/permission-types";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { EntityAbility } from "../../permissions/entity-ability";
 
 describe("EntityDetailsComponent", () => {
   let component: EntityDetailsComponent;

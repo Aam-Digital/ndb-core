@@ -1,5 +1,5 @@
-import { Ability, AbilityClass, InferSubjects, RawRuleOf } from "@casl/ability";
-import { Entity } from "../entity/model/entity";
+import { Ability, RawRuleOf } from "@casl/ability";
+import { Entity, EntityConstructor } from "../entity/model/entity";
 
 /**
  * The list of action strings that can be used for permissions
@@ -24,24 +24,7 @@ export type EntityAction = typeof actions[number];
  * This matches any entity classes, entity objects and the wildcard string "all"
  * E.g. `Child`, `new Note()` or `all`
  */
-export type EntitySubject = InferSubjects<typeof Entity> | "all";
-
-/**
- * The type of the Ability service that ensures only valid actions and subjects can be used.
- */
-export type EntityAbility = Ability<[EntityAction, EntitySubject]>;
-
-/**
- * The type of a rule that can be passed to the `update` function of the Ability service.
- * The type only allows subjects and actions defined in `EntityAction` and `EntitySubject`.
- */
-export type EntityRule = RawRuleOf<EntityAbility>;
-
-/**
- * This const is required for correctly typed dependency injection.
- * See {@link https://casl.js.org/v5/en/package/casl-angular#type-script-support}
- */
-export const EntityAbility = Ability as AbilityClass<EntityAbility>;
+export type EntitySubject = EntityConstructor | Entity | string;
 
 /**
  * The format that the JSON defined rules need to have.

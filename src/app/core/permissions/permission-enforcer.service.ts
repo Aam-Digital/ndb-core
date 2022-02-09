@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@angular/core";
-import { DatabaseRule, EntityAbility } from "./permission-types";
+import { DatabaseRule } from "./permission-types";
 import { SessionService } from "../session/session-service/session.service";
 import { EntityConstructor } from "../entity/model/entity";
 import { DynamicEntityService } from "../entity/dynamic-entity.service";
@@ -7,6 +7,7 @@ import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Database } from "../database/database";
 import { LOCATION_TOKEN } from "../../utils/di-tokens";
 import { AnalyticsService } from "../analytics/analytics.service";
+import { EntityAbility } from "./entity-ability";
 
 @Injectable()
 export class PermissionEnforcerService {

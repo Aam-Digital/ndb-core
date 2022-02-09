@@ -17,7 +17,7 @@ import {
   RemoveResult,
 } from "../../entity/entity-remove.service";
 import { DynamicEntityService } from "../../entity/dynamic-entity.service";
-import { EntityAbility } from "../../permissions/permission-types";
+import { EntityAbility } from "../../permissions/entity-ability";
 
 /**
  * This component can be used to display a entity in more detail.

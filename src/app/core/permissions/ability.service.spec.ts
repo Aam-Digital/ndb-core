@@ -9,7 +9,6 @@ import { EntityMapperService } from "../entity/entity-mapper.service";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { DynamicEntityService } from "../entity/dynamic-entity.service";
 import { SyncState } from "../session/session-states/sync-state.enum";
-import { EntityRule } from "./permission-types";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { Permission } from "./permission";
 import { PermissionEnforcerService } from "./permission-enforcer.service";
@@ -18,6 +17,7 @@ import { User } from "../user/user";
 import { defaultInteractionTypes } from "../config/default-config/default-interaction-types";
 import { EntityAbility } from "./entity-ability";
 import { ConfigurableEnumModule } from "../configurable-enum/configurable-enum.module";
+import { DatabaseRules } from "./permission-types";
 
 describe("AbilityService", () => {
   let service: AbilityService;
@@ -28,12 +28,17 @@ describe("AbilityService", () => {
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let mockPermissionEnforcer: jasmine.SpyObj<PermissionEnforcerService>;
   let user: DatabaseUser = { name: "testUser", roles: ["user_app"] };
+  const rules: DatabaseRules = {
+    user_app: [
+      { subject: "Child", action: "read" },
+      { subject: "Note", action: "manage", inverted: true },
+    ],
+    admin_app: [{ subject: "all", action: "manage" }],
+  };
 
   beforeEach(() => {
     mockEntityMapper = jasmine.createSpyObj(["load"]);
-    mockEntityMapper.load.and.callFake(() =>
-      Promise.resolve(getRawRules() as any)
-    );
+    mockEntityMapper.load.and.resolveTo(new Permission(rules));
     mockSyncState = new Subject<SyncState>();
     mockLoginState = new Subject<LoginState>();
     mockSessionService = jasmine.createSpyObj(["getCurrentUser"], {
@@ -85,7 +90,7 @@ describe("AbilityService", () => {
   it("should retry fetching the rules after the sync has completed", () => {
     mockEntityMapper.load.and.returnValues(
       Promise.reject("first error"),
-      Promise.resolve(getRawRules())
+      Promise.resolve(new Permission(rules))
     );
 
     mockLoginState.next(LoginState.LOGGED_IN);
@@ -103,7 +108,7 @@ describe("AbilityService", () => {
     mockLoginState.next(LoginState.LOGGED_IN);
     tick();
 
-    expect(ability.update).toHaveBeenCalledWith(getParsedRules().user_app);
+    expect(ability.update).toHaveBeenCalledWith(rules.user_app);
   }));
 
   it("should update the ability with rules for all roles the logged in user has", fakeAsync(() => {
@@ -117,7 +122,7 @@ describe("AbilityService", () => {
     tick();
 
     expect(ability.update).toHaveBeenCalledWith(
-      getParsedRules().user_app.concat(getParsedRules().admin_app)
+      rules.user_app.concat(rules.admin_app)
     );
   }));
 
@@ -236,24 +241,4 @@ describe("AbilityService", () => {
     note.category = classInteraction;
     expect(ability.can("read", note)).toBeTrue();
   }));
-
-  function getRawRules(): Permission {
-    return new Permission({
-      user_app: [
-        { subject: "Child", action: "read" },
-        { subject: "Note", action: "manage", inverted: true },
-      ],
-      admin_app: [{ subject: "all", action: "manage" }],
-    });
-  }
-
-  function getParsedRules(): { [key in string]: EntityRule[] } {
-    return {
-      user_app: [
-        { subject: Child, action: "read" },
-        { subject: Note, action: "manage", inverted: true },
-      ],
-      admin_app: [{ subject: "all", action: "manage" }],
-    };
-  }
 });

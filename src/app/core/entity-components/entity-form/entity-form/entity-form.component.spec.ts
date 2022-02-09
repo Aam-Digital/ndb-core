@@ -16,7 +16,6 @@ import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { EntityFormService } from "../entity-form.service";
 import { MockSessionModule } from "../../../session/mock-session.module";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { PermissionsModule } from "../../../permissions/permissions.module";
 
 describe("EntityFormComponent", () => {
   let component: EntityFormComponent;
@@ -24,7 +23,6 @@ describe("EntityFormComponent", () => {
 
   let mockChildPhotoService: jasmine.SpyObj<ChildPhotoService>;
   let mockConfigService: jasmine.SpyObj<ConfigService>;
-  let mockEntitySchemaService: jasmine.SpyObj<EntitySchemaService>;
 
   const testChild = new Child("Test Name");
 
@@ -36,10 +34,6 @@ describe("EntityFormComponent", () => {
         "getImage",
       ]);
       mockConfigService = jasmine.createSpyObj(["getConfig"]);
-      mockEntitySchemaService = jasmine.createSpyObj([
-        "getComponent",
-        "registerSchemaDatatype",
-      ]);
 
       TestBed.configureTestingModule({
         declarations: [EntityFormComponent],
@@ -50,14 +44,13 @@ describe("EntityFormComponent", () => {
           MatSnackBarModule,
           HttpClientTestingModule,
           MockSessionModule.withState(),
-          PermissionsModule.withAbility(),
         ],
         providers: [
           FormBuilder,
           AlertService,
           { provide: ChildPhotoService, useValue: mockChildPhotoService },
           { provide: ConfigService, useValue: mockConfigService },
-          { provide: EntitySchemaService, useValue: mockEntitySchemaService },
+          EntitySchemaService,
         ],
       }).compileComponents();
     })
@@ -105,7 +98,9 @@ describe("EntityFormComponent", () => {
       @DatabaseField({ description: "Property description" })
       propertyField: string;
     }
-    mockEntitySchemaService.getComponent.and.returnValue("PredefinedComponent");
+    spyOn(TestBed.inject(EntitySchemaService), "getComponent").and.returnValue(
+      "PredefinedComponent"
+    );
     component.entity = new Test();
     component.columns = [
       [

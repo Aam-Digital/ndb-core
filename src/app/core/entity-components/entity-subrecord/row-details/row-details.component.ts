@@ -5,7 +5,7 @@ import { Entity } from "../../../entity/model/entity";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 import { FormGroup } from "@angular/forms";
 import { TableRow } from "../entity-subrecord/entity-subrecord.component";
-import { EntityAbility } from "../../../permissions/permission-types";
+import { EntityAbility } from "../../../permissions/entity-ability";
 
 /**
  * Data interface that must be given when opening the dialog

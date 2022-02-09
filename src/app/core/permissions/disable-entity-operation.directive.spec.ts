@@ -5,8 +5,8 @@ import { Entity } from "../entity/model/entity";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Child } from "../../child-dev-project/children/model/child";
 import { Subject } from "rxjs";
-import { EntityAbility } from "./permission-types";
 import { AbilityService } from "./ability.service";
+import { EntityAbility } from "./entity-ability";
 
 describe("DisableEntityOperationDirective", () => {
   let testComponent: ComponentFixture<TestComponent>;

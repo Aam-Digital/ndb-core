@@ -9,8 +9,9 @@ import {
   ViewContainerRef,
 } from "@angular/core";
 import { DisabledWrapperComponent } from "./disabled-wrapper/disabled-wrapper.component";
-import { EntityAbility, EntityAction, EntitySubject } from "./permission-types";
+import { EntityAction, EntitySubject } from "./permission-types";
 import { AbilityService } from "./ability.service";
+import { EntityAbility } from "./entity-ability";
 
 /**
  * This directive can be used to disable a element (e.g. button) based on the current users permissions.

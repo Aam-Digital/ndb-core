@@ -23,10 +23,10 @@ import {
 } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
-import { EntityAbility } from "../permissions/permission-types";
-import { detectEntityType } from "../permissions/ability.service";
 import { Entity } from "../entity/model/entity";
-import { defineAbility, PureAbility } from "@casl/ability";
+import { PureAbility } from "@casl/ability";
+import { EntityAbility } from "../permissions/entity-ability";
+import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 
 export const TEST_USER = "test";
 export const TEST_PASSWORD = "pass";
@@ -58,6 +58,12 @@ export const TEST_PASSWORD = "pass";
       provide: LOCATION_TOKEN,
       useValue: window.location,
     },
+    EntitySchemaService,
+    {
+      provide: EntityAbility,
+      useValue: EntityAbility.with([{ subject: "all", action: "manage" }]),
+    },
+    { provide: PureAbility, useExisting: EntityAbility },
   ],
 })
 export class MockSessionModule {
@@ -75,12 +81,6 @@ export class MockSessionModule {
     };
     const mockedEntityMapper = mockEntityMapper([new User(TEST_USER), ...data]);
     const session = createLocalSession(loginState === LoginState.LOGGED_IN);
-    const ability = defineAbility<EntityAbility>(
-      (can) => {
-        can("manage", "all");
-      },
-      { detectSubjectType: detectEntityType }
-    );
     return {
       ngModule: MockSessionModule,
       providers: [
@@ -90,18 +90,7 @@ export class MockSessionModule {
         },
         { provide: EntityMapperService, useValue: mockedEntityMapper },
         { provide: MockEntityMapperService, useValue: mockedEntityMapper },
-        {
-          provide: Database,
-          useValue: session.getDatabase(),
-        },
-        {
-          provide: EntityAbility,
-          useValue: ability,
-        },
-        {
-          provide: PureAbility,
-          useExisting: EntityAbility,
-        },
+        { provide: Database, useValue: session.getDatabase() },
       ],
     };
   }

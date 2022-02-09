@@ -154,7 +154,7 @@ import { PermissionsModule } from "./core/permissions/permissions.module";
     AttendanceModule,
     DashboardShortcutWidgetModule,
     HistoricalDataModule,
-    PermissionsModule.withAbility(),
+    PermissionsModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
