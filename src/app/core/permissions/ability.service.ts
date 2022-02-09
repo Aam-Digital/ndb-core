@@ -10,7 +10,6 @@ import {
   DatabaseRules,
   EntityAbility,
   EntityRule,
-  EntitySubject,
 } from "./permission-types";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { EntityMapperService } from "../entity/entity-mapper.service";
@@ -124,7 +123,7 @@ export class AbilityService {
 
   private parseStringToConstructor(
     rawSubject: string | string[] | "all"
-  ): EntitySubject | EntitySubject[] {
+  ): EntityRule["subject"] {
     if (typeof rawSubject === "string") {
       return this.getSubjectConstructor(rawSubject);
     } else {
