@@ -10,6 +10,7 @@ import {
   DatabaseRules,
   EntityAbility,
   EntityRule,
+  EntitySubject,
 } from "./permission-types";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { EntityMapperService } from "../entity/entity-mapper.service";
@@ -111,10 +112,11 @@ export class AbilityService {
   }
 
   private updateAbilityWithRules(rules: DatabaseRule[]) {
-    const userRules: EntityRule[] = rules.map((rawRule) =>
-      Object.assign(rawRule, {
-        subject: this.parseStringToConstructor(rawRule.subject),
-      })
+    const userRules: EntityRule[] = rules.map(
+      (rawRule) =>
+        Object.assign(rawRule, {
+          subject: this.parseStringToConstructor(rawRule.subject),
+        }) as EntityRule
     );
     this.ability.update(userRules);
     this._abilityUpdateNotifier.next();
@@ -122,15 +124,19 @@ export class AbilityService {
 
   private parseStringToConstructor(
     rawSubject: string | string[] | "all"
-  ): EntityConstructor<any> | "all" {
+  ): EntitySubject | EntitySubject[] {
     if (typeof rawSubject === "string") {
-      if (rawSubject === "all") {
-        return "all";
-      } else {
-        return this.dynamicEntityService.getEntityConstructor(rawSubject);
-      }
+      return this.getSubjectConstructor(rawSubject);
     } else {
-      throw Error("Creating rule for invalid subject " + rawSubject);
+      return rawSubject.map((subject) => this.getSubjectConstructor(subject));
+    }
+  }
+
+  private getSubjectConstructor(rawSubject: string): EntityConstructor | "all" {
+    if (rawSubject === "all") {
+      return "all";
+    } else {
+      return this.dynamicEntityService.getEntityConstructor(rawSubject);
     }
   }
 }
