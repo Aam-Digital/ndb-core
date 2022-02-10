@@ -41,13 +41,9 @@ export class AbilityService {
     private entityMapper: EntityMapperService,
     private permissionEnforcer: PermissionEnforcerService
   ) {
-    console.log("created");
     merge(
       this.sessionService.loginState.pipe(
-        filter((state) => {
-          console.log("filter", state);
-          return state === LoginState.LOGGED_IN;
-        })
+        filter((state) => state === LoginState.LOGGED_IN)
       ),
       this.sessionService.syncState.pipe(
         filter((state) => state === SyncState.COMPLETED)
@@ -56,7 +52,6 @@ export class AbilityService {
   }
 
   private async initRules(): Promise<void> {
-    console.log("init rules");
     // Initially allow everything until rules object can be fetched
     this.ability.update([{ action: "manage", subject: "all" }]);
 
@@ -72,7 +67,6 @@ export class AbilityService {
     }
     if (permission) {
       // TODO what happens if there are no rules for a user
-      console.log("creating ability", permission);
       const userRules = this.getRulesForUser(permission.rulesConfig);
       const userRulesCopy = JSON.parse(JSON.stringify(userRules));
       this.updateAbilityWithRules(userRules);
@@ -115,6 +109,5 @@ export class AbilityService {
   private updateAbilityWithRules(rules: DatabaseRule[]) {
     this.ability.update(rules as any);
     this._abilityUpdateNotifier.next();
-    console.log("updated rules", this.ability.rules);
   }
 }

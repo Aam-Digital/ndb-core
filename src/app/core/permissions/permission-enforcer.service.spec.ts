@@ -91,7 +91,6 @@ describe("PermissionEnforcerService", () => {
     updateRulesAndTriggerEnforcer(userRules);
     tick();
 
-    console.log("checking");
     expect(mockDatabase.destroy).toHaveBeenCalled();
     expect(mockLocation.reload).toHaveBeenCalled();
   }));
