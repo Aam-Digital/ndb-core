@@ -10,7 +10,6 @@ import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
-import { DialogResult } from "../../../core/entity-components/entity-subrecord/row-details/row-details.component";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain child
@@ -92,10 +91,7 @@ export class NotesOfChildComponent
    */
   getColor = (note: Note) => note?.getColorForId(this.child.getId());
 
-  showNoteDetails(note: Note): Promise<DialogResult<Note>> {
-    return new Promise((resolve) => {
-      const dialogRef = this.formDialog.openDialog(NoteDetailsComponent, note);
-      dialogRef.afterClosed().subscribe((res) => resolve(res));
-    });
+  showNoteDetails(note: Note) {
+    this.formDialog.openDialog(NoteDetailsComponent, note);
   }
 }

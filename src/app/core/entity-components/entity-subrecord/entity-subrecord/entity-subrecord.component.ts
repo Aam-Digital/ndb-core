@@ -20,9 +20,7 @@ import { EntityFormService } from "../../entity-form/entity-form.service";
 import { MatDialog } from "@angular/material/dialog";
 import { LoggingService } from "../../../logging/logging.service";
 import { AnalyticsService } from "../../../analytics/analytics.service";
-import {
-  RowDetailsComponent,
-} from "../row-details/row-details.component";
+import { RowDetailsComponent } from "../row-details/row-details.component";
 import {
   EntityRemoveService,
   RemoveResult,

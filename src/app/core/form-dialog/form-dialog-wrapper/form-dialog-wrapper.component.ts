@@ -9,14 +9,12 @@ import {
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { Entity } from "../../entity/model/entity";
 import { MatDialogRef } from "@angular/material/dialog";
-import { getUrlWithoutParams } from "../../../utils/utils";
 import { Router } from "@angular/router";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import {
   EntityRemoveService,
   RemoveResult,
 } from "../../entity/entity-remove.service";
-import { DialogResult } from "../../entity-components/entity-subrecord/row-details/row-details.component";
 
 /**
  * Use `<app-form-dialog-wrapper>` in your form templates to handle the saving and resetting of the edited entity.
@@ -72,7 +70,7 @@ export class FormDialogWrapperComponent<E extends Entity>
    *
    * This emits the saved entity or undefined if the form was canceled.
    */
-  @Output() onClose = new EventEmitter<DialogResult<E>>();
+  @Output() onClose = new EventEmitter<E>();
 
   /** ngForm component of the child component that is set through the ng-content */
   @ContentChild("entityForm", { static: true }) contentForm;
@@ -127,15 +125,9 @@ export class FormDialogWrapperComponent<E extends Entity>
   }
 
   public delete() {
-    const currentUrl = getUrlWithoutParams(this.router);
     this.entityRemoveService.remove(this.entity).subscribe((result) => {
-      switch (result) {
-        case RemoveResult.REMOVED:
-          this.onClose.emit("deleted");
-          break;
-        case RemoveResult.UNDONE:
-          // TODO this reload doesnt work
-          this.router.navigate([currentUrl]);
+      if (result === RemoveResult.REMOVED) {
+        this.onClose.emit();
       }
     });
   }

@@ -19,8 +19,6 @@ export interface DetailsComponentData<E extends Entity> {
   viewOnlyColumns?: FormFieldConfig[];
 }
 
-export type DialogResult<E extends Entity> = E | "deleted";
-
 /**
  * Displays a single row of a table as a dialog component
  */
@@ -37,7 +35,7 @@ export class RowDetailsComponent<E extends Entity> {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsComponentData<E>,
-    private dialogRef: MatDialogRef<RowDetailsComponent<E>, DialogResult<E>>,
+    private dialogRef: MatDialogRef<RowDetailsComponent<E>>,
     private formsService: EntityFormService,
     private ability: EntityAbility,
     private entityMapper: EntityMapperService
@@ -62,6 +60,6 @@ export class RowDetailsComponent<E extends Entity> {
   delete() {
     this.entityMapper
       .remove(this.data.entity)
-      .then(() => this.dialogRef.close("deleted"));
+      .then(() => this.dialogRef.close());
   }
 }
