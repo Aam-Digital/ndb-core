@@ -16,6 +16,7 @@ import {
   EntityRemoveService,
   RemoveResult,
 } from "../../entity/entity-remove.service";
+import { DialogResult } from "../../entity-components/entity-subrecord/row-details/row-details.component";
 
 /**
  * Use `<app-form-dialog-wrapper>` in your form templates to handle the saving and resetting of the edited entity.
@@ -39,13 +40,14 @@ import {
   templateUrl: "./form-dialog-wrapper.component.html",
   styleUrls: ["./form-dialog-wrapper.component.scss"],
 })
-export class FormDialogWrapperComponent implements AfterViewInit {
+export class FormDialogWrapperComponent<E extends Entity>
+  implements AfterViewInit {
   /** entity to be edited */
-  @Input() set entity(value: Entity) {
+  @Input() set entity(value: E) {
     this.originalEntity = Object.assign({}, value);
     this._entity = value;
   }
-  get entity(): Entity {
+  get entity(): E {
     return this._entity;
   }
 
@@ -53,9 +55,9 @@ export class FormDialogWrapperComponent implements AfterViewInit {
   @Input() readonly: boolean = false;
 
   /** actual reference to the entity to be edited in the form used by the getter/setter */
-  private _entity: Entity;
+  private _entity: E;
   /** clone of the initially given entity as backup for resetting changes */
-  private originalEntity: Entity;
+  private originalEntity: E;
 
   /**
    * (Optional) callback before saving the entity to the database.
@@ -63,14 +65,14 @@ export class FormDialogWrapperComponent implements AfterViewInit {
    * You can here do any prerequisites or editing of the entity object if required.
    * You can abort the saving by returning undefined.
    */
-  @Input() beforeSave?: (entity: Entity) => Promise<Entity>;
+  @Input() beforeSave?: (entity: E) => Promise<E>;
 
   /**
    * Triggered when the form should be closed (after save or reset is completed).
    *
    * This emits the saved entity or undefined if the form was canceled.
    */
-  @Output() onClose = new EventEmitter<Entity>();
+  @Output() onClose = new EventEmitter<DialogResult<E>>();
 
   /** ngForm component of the child component that is set through the ng-content */
   @ContentChild("entityForm", { static: true }) contentForm;
@@ -129,7 +131,7 @@ export class FormDialogWrapperComponent implements AfterViewInit {
     this.entityRemoveService.remove(this.entity).subscribe((result) => {
       switch (result) {
         case RemoveResult.REMOVED:
-          this.onClose.emit(undefined);
+          this.onClose.emit("deleted");
           break;
         case RemoveResult.UNDONE:
           this.router.navigate([currentUrl]);

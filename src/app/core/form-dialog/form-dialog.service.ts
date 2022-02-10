@@ -7,6 +7,7 @@ import { ShowsEntity } from "./shows-entity.interface";
 import { OnInitDynamicComponent } from "../view/dynamic-components/on-init-dynamic-component.interface";
 import { Entity } from "../entity/model/entity";
 import { EntityAbility } from "../permissions/entity-ability";
+import { DialogResult } from "../entity-components/entity-subrecord/row-details/row-details.component";
 
 /**
  * Inject this service instead of MatDialog to display a form or details view as a modal
@@ -35,11 +36,14 @@ export class FormDialogService {
     entityDetailsComponent: ComponentType<T>,
     entity: E,
     componentConfig?: any
-  ): MatDialogRef<T> {
-    const dialogRef = this.dialog.open(entityDetailsComponent, {
-      width: "80%",
-      maxHeight: "90vh",
-    });
+  ): MatDialogRef<T, DialogResult<E>> {
+    const dialogRef = this.dialog.open<T, undefined, DialogResult<E>>(
+      entityDetailsComponent,
+      {
+        width: "80%",
+        maxHeight: "90vh",
+      }
+    );
 
     dialogRef.componentInstance.entity = entity;
     if (

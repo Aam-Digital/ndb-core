@@ -19,7 +19,7 @@ export interface DetailsComponentData<E extends Entity> {
   viewOnlyColumns?: FormFieldConfig[];
 }
 
-export type DialogResult<T> = T | "deleted" | void;
+export type DialogResult<E extends Entity> = E | "deleted";
 
 /**
  * Displays a single row of a table as a dialog component
