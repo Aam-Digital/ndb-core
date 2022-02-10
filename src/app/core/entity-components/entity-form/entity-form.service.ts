@@ -93,18 +93,18 @@ export class EntityFormService {
     entity: T
   ): Promise<T> {
     this.checkFormValidity(form);
-    const entityCopy = entity.copy() as T;
-    Object.assign(entityCopy, form.getRawValue());
-    entityCopy.assertValid();
-    if (!this.canSave(entityCopy)) {
+    const updatedEntity = entity.copy() as T;
+    Object.assign(updatedEntity, form.getRawValue());
+    updatedEntity.assertValid();
+    if (!this.canSave(entity, updatedEntity)) {
       throw new Error(
         $localize`Current user is not permitted to save these changes`
       );
     }
 
     return this.entityMapper
-      .save(entityCopy)
-      .then(() => Object.assign(entity, entityCopy))
+      .save(updatedEntity)
+      .then(() => Object.assign(entity, updatedEntity))
       .catch((err) => {
         throw new Error($localize`Could not save ${entity.getType()}\: ${err}`);
       });
@@ -130,12 +130,12 @@ export class EntityFormService {
     return invalid.join(", ");
   }
 
-  private canSave(entity: Entity): boolean {
+  private canSave(oldEntity: Entity, newEntity: Entity): boolean {
     // no _rev means a new entity is created
-    if (entity._rev) {
-      return this.ability.can("update", entity);
+    if (oldEntity._rev) {
+      return this.ability.can("update", oldEntity);
     } else {
-      return this.ability.can("create", entity);
+      return this.ability.can("create", newEntity);
     }
   }
 }
