@@ -79,7 +79,6 @@ import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
 import { DemoPermissionGeneratorService } from "./core/permissions/demo-permission-generator.service";
-import { PermissionsModule } from "./core/permissions/permissions.module";
 
 /**
  * Main entry point of the application.
@@ -154,7 +153,6 @@ import { PermissionsModule } from "./core/permissions/permissions.module";
     AttendanceModule,
     DashboardShortcutWidgetModule,
     HistoricalDataModule,
-    PermissionsModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
