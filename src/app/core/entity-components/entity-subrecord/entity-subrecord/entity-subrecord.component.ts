@@ -2,6 +2,7 @@ import {
   Component,
   Input,
   OnChanges,
+  OnInit,
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
@@ -20,14 +21,13 @@ import { MatDialog } from "@angular/material/dialog";
 import { LoggingService } from "../../../logging/logging.service";
 import { AnalyticsService } from "../../../analytics/analytics.service";
 import {
-  DetailsComponentData,
-  DialogResult,
   RowDetailsComponent,
 } from "../row-details/row-details.component";
 import {
   EntityRemoveService,
   RemoveResult,
 } from "../../../entity/entity-remove.service";
+import { EntityMapperService } from "../../../entity/entity-mapper.service";
 
 export interface TableRow<T> {
   record: T;
@@ -53,7 +53,8 @@ export interface TableRow<T> {
   templateUrl: "./entity-subrecord.component.html",
   styleUrls: ["./entity-subrecord.component.scss"],
 })
-export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
+export class EntitySubrecordComponent<T extends Entity>
+  implements OnChanges, OnInit {
   /** configuration what kind of columns to be generated for the table */
   @Input() set columns(columns: (FormFieldConfig | string)[]) {
     this._columns = columns.map((col) => {
@@ -99,10 +100,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    * A function which should be executed when a row is clicked or a new entity created.
    * @param entity The newly created or clicked entity.
    */
-  @Input() showEntity?: (
-    entity: T,
-    isNew?: boolean
-  ) => Promise<DialogResult<T>> = this.showRowDetails;
+  @Input() showEntity?: (entity: T) => void = this.showRowDetails;
 
   constructor(
     private alertService: AlertService,
@@ -111,7 +109,8 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     private dialog: MatDialog,
     private analyticsService: AnalyticsService,
     private loggingService: LoggingService,
-    private entityRemoveService: EntityRemoveService
+    private entityRemoveService: EntityRemoveService,
+    private entityMapper: EntityMapperService
   ) {
     this.mediaSubscription = this.media
       .asObservable()
@@ -127,14 +126,31 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   /** function returns the background color for each row*/
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
 
+  ngOnInit() {
+    if (this.newRecordFactory) {
+      this.entityConstructor = this.newRecordFactory().getConstructor() as EntityConstructor<T>;
+      this.entityMapper
+        .receiveUpdates(this.entityConstructor)
+        .subscribe(({ entity, type }) => {
+          if (type === "new") {
+            this.addToTable(entity);
+          } else if (type === "remove") {
+            this.removeFromDataTable(entity);
+          } else if (
+            type === "update" &&
+            !this.records.find((rec) => rec.getId() === entity.getId())
+          ) {
+            this.addToTable(entity);
+          }
+        });
+    }
+  }
+
   /**
    * Update the component if any of the @Input properties were changed from outside.
    * @param changes
    */
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.hasOwnProperty("newRecordFactory")) {
-      this.entityConstructor = this.newRecordFactory().getConstructor() as EntityConstructor<T>;
-    }
     if (
       changes.hasOwnProperty("columns") ||
       changes.hasOwnProperty("records")
@@ -284,13 +300,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    */
   create() {
     const newRecord = this.newRecordFactory();
-
-    this.showEntity(newRecord, true).then((res) => {
-      if (res instanceof Entity) {
-        this.addToTable(res);
-      }
-    });
-
+    this.showEntity(newRecord);
     this.analyticsService.eventTrack("subrecord_add_new", {
       category: newRecord.getType(),
     });
@@ -302,40 +312,29 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    */
   rowClick(row: TableRow<T>) {
     if (!row.formGroup || row.formGroup.disabled) {
-      this.showEntity(row.record, false).then((res) => {
-        if (res === "deleted") {
-          this.removeFromDataTable(row.record);
-        }
-      });
+      this.showEntity(row.record);
       this.analyticsService.eventTrack("subrecord_show_popup", {
         category: row.record.getType(),
       });
     }
   }
 
-  private showRowDetails(entity: T): Promise<DialogResult<T>> {
-    return new Promise((resolve) => {
-      const columnsToDisplay = this._columns
-        .filter((col) => col.edit)
-        .map((col) => {
-          col.forTable = false;
-          return col;
-        })
-        .map((col) => Object.assign({}, col));
-      const dialogRef = this.dialog.open<
-        RowDetailsComponent<T>,
-        DetailsComponentData<T>,
-        DialogResult<T>
-      >(RowDetailsComponent, {
-        width: "80%",
-        maxHeight: "90vh",
-        data: {
-          entity: entity,
-          columns: columnsToDisplay,
-          viewOnlyColumns: this._columns.filter((col) => !col.edit),
-        },
-      });
-      dialogRef.afterClosed().subscribe((res) => resolve(res));
+  private showRowDetails(entity: T) {
+    const columnsToDisplay = this._columns
+      .filter((col) => col.edit)
+      .map((col) => {
+        col.forTable = false;
+        return col;
+      })
+      .map((col) => Object.assign({}, col));
+    this.dialog.open(RowDetailsComponent, {
+      width: "80%",
+      maxHeight: "90vh",
+      data: {
+        entity: entity,
+        columns: columnsToDisplay,
+        viewOnlyColumns: this._columns.filter((col) => !col.edit),
+      },
     });
   }
 
