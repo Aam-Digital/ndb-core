@@ -27,7 +27,7 @@ describe("AbilityService", () => {
   let mockLoginState: Subject<LoginState>;
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let mockPermissionEnforcer: jasmine.SpyObj<PermissionEnforcerService>;
-  let user: DatabaseUser = { name: "testUser", roles: ["user_app"] };
+  const user: DatabaseUser = { name: "testUser", roles: ["user_app"] };
   const rules: DatabaseRules = {
     user_app: [
       { subject: "Child", action: "read" },

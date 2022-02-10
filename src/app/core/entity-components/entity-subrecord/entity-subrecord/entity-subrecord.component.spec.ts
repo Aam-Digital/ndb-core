@@ -32,7 +32,6 @@ import { UpdatedEntity } from "../../../entity/model/entity-update";
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
   let fixture: ComponentFixture<EntitySubrecordComponent<Entity>>;
-  let entityMapper: EntityMapperService;
 
   beforeEach(
     waitForAsync(() => {
@@ -45,8 +44,6 @@ describe("EntitySubrecordComponent", () => {
         ],
         providers: [DatePipe, PercentPipe],
       }).compileComponents();
-
-      entityMapper = TestBed.inject(EntityMapperService);
     })
   );
 
@@ -237,6 +234,7 @@ describe("EntitySubrecordComponent", () => {
   });
 
   it("should correctly save changes to an entity", fakeAsync(() => {
+    const entityMapper = TestBed.inject(EntityMapperService);
     spyOn(entityMapper, "save").and.resolveTo();
     const fb = TestBed.inject(FormBuilder);
     const child = new Child();
