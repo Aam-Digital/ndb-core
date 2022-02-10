@@ -134,6 +134,7 @@ export class FormDialogWrapperComponent<E extends Entity>
           this.onClose.emit("deleted");
           break;
         case RemoveResult.UNDONE:
+          // TODO this reload doesnt work
           this.router.navigate([currentUrl]);
       }
     });
