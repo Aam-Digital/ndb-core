@@ -20,8 +20,8 @@ import { MatDialog } from "@angular/material/dialog";
 import { LoggingService } from "../../../logging/logging.service";
 import { AnalyticsService } from "../../../analytics/analytics.service";
 import {
-  CanDelete,
-  CanSave,
+  DetailsComponentData,
+  DialogResult,
   RowDetailsComponent,
 } from "../row-details/row-details.component";
 import {
@@ -53,8 +53,7 @@ export interface TableRow<T> {
   templateUrl: "./entity-subrecord.component.html",
   styleUrls: ["./entity-subrecord.component.scss"],
 })
-export class EntitySubrecordComponent<T extends Entity>
-  implements OnChanges, CanSave<TableRow<T>>, CanDelete<TableRow<T>> {
+export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   /** configuration what kind of columns to be generated for the table */
   @Input() set columns(columns: (FormFieldConfig | string)[]) {
     this._columns = columns.map((col) => {
@@ -100,7 +99,10 @@ export class EntitySubrecordComponent<T extends Entity>
    * A function which should be executed when a row is clicked or a new entity created.
    * @param entity The newly created or clicked entity.
    */
-  @Input() showEntity?: (T) => void;
+  @Input() showEntity?: (
+    entity: T,
+    isNew?: boolean
+  ) => Promise<DialogResult<T>> = this.showRowDetails;
 
   constructor(
     private alertService: AlertService,
@@ -218,20 +220,13 @@ export class EntitySubrecordComponent<T extends Entity>
   /**
    * Save an edited record to the database (if validation succeeds).
    * @param row The entity to be saved.
-   * @param isNew whether or not the record is new
    */
-  async save(row: TableRow<T>, isNew: boolean = false): Promise<void> {
+  async save(row: TableRow<T>): Promise<void> {
     try {
       row.record = await this.entityFormService.saveChanges(
         row.formGroup,
         row.record
       );
-      if (isNew) {
-        this.records.unshift(row.record);
-        this.recordsDataSource.data = [{ record: row.record }].concat(
-          this.recordsDataSource.data
-        );
-      }
       row.formGroup.disable();
     } catch (err) {
       this.alertService.addDanger(err.message);
@@ -259,7 +254,7 @@ export class EntitySubrecordComponent<T extends Entity>
       .subscribe((result) => {
         switch (result) {
           case RemoveResult.REMOVED:
-            this.removeFromDataTable(row);
+            this.removeFromDataTable(row.record);
             break;
           case RemoveResult.UNDONE:
             this.records.unshift(row.record);
@@ -268,14 +263,19 @@ export class EntitySubrecordComponent<T extends Entity>
       });
   }
 
-  private removeFromDataTable(row: TableRow<T>) {
-    const index = this.records.findIndex(
-      (a) => a.getId() === row.record.getId()
-    );
+  private removeFromDataTable(record: T) {
+    const index = this.records.findIndex((a) => a.getId() === record.getId());
     if (index > -1) {
       this.records.splice(index, 1);
       this.initFormGroups();
     }
+  }
+
+  private addToTable(record: T) {
+    this.records.unshift(record);
+    this.recordsDataSource.data = [{ record: record }].concat(
+      this.recordsDataSource.data
+    );
   }
 
   /**
@@ -285,11 +285,11 @@ export class EntitySubrecordComponent<T extends Entity>
   create() {
     const newRecord = this.newRecordFactory();
 
-    if (this.showEntity) {
-      this.showEntity(newRecord);
-    } else {
-      this.showRowDetails({ record: newRecord }, true);
-    }
+    this.showEntity(newRecord, true).then((res) => {
+      if (res instanceof Entity) {
+        this.addToTable(res);
+      }
+    });
 
     this.analyticsService.eventTrack("subrecord_add_new", {
       category: newRecord.getType(),
@@ -302,41 +302,40 @@ export class EntitySubrecordComponent<T extends Entity>
    */
   rowClick(row: TableRow<T>) {
     if (!row.formGroup || row.formGroup.disabled) {
-      if (this.showEntity) {
-        this.showEntity(row.record);
-      } else {
-        this.showRowDetails(row, false);
-        this.analyticsService.eventTrack("subrecord_show_popup", {
-          category: row.record.getType(),
-        });
-      }
+      this.showEntity(row.record, false).then((res) => {
+        if (res === "deleted") {
+          this.removeFromDataTable(row.record);
+        }
+      });
+      this.analyticsService.eventTrack("subrecord_show_popup", {
+        category: row.record.getType(),
+      });
     }
   }
 
-  private showRowDetails(row: TableRow<T>, isNew: boolean) {
-    const columnsToDisplay = this._columns
-      .filter((col) => col.edit)
-      .map((col) => {
-        col.forTable = false;
-        return col;
-      })
-      .map((col) => Object.assign({}, col));
-    if (isNew) {
-      row.formGroup = this.entityFormService.createFormGroup(
-        this._columns,
-        row.record
-      );
-    }
-    this.dialog.open(RowDetailsComponent, {
-      width: "80%",
-      maxHeight: "90vh",
-      data: {
-        row: row,
-        columns: columnsToDisplay,
-        viewOnlyColumns: this._columns.filter((col) => !col.edit),
-        operations: this,
-        isNew: isNew,
-      },
+  private showRowDetails(entity: T): Promise<DialogResult<T>> {
+    return new Promise((resolve) => {
+      const columnsToDisplay = this._columns
+        .filter((col) => col.edit)
+        .map((col) => {
+          col.forTable = false;
+          return col;
+        })
+        .map((col) => Object.assign({}, col));
+      const dialogRef = this.dialog.open<
+        RowDetailsComponent<T>,
+        DetailsComponentData<T>,
+        DialogResult<T>
+      >(RowDetailsComponent, {
+        width: "80%",
+        maxHeight: "90vh",
+        data: {
+          entity: entity,
+          columns: columnsToDisplay,
+          viewOnlyColumns: this._columns.filter((col) => !col.edit),
+        },
+      });
+      dialogRef.afterClosed().subscribe((res) => resolve(res));
     });
   }
 

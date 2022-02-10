@@ -86,7 +86,7 @@ export class NotesOfChildComponent
   }
 
   /**
-   * returns the color for a note; passed to the entity subrecored component
+   * returns the color for a note; passed to the entity subrecord component
    * @param note note to get color for
    */
   getColor = (note: Note) => note?.getColorForId(this.child.getId());
