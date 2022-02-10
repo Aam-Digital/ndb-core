@@ -5,7 +5,10 @@ import { Entity } from "../../../entity/model/entity";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 import { FormGroup } from "@angular/forms";
 import { EntityAbility } from "../../../permissions/entity-ability";
-import { EntityMapperService } from "../../../entity/entity-mapper.service";
+import {
+  EntityRemoveService,
+  RemoveResult,
+} from "../../../entity/entity-remove.service";
 
 /**
  * Data interface that must be given when opening the dialog
@@ -38,7 +41,7 @@ export class RowDetailsComponent<E extends Entity> {
     private dialogRef: MatDialogRef<RowDetailsComponent<E>>,
     private formsService: EntityFormService,
     private ability: EntityAbility,
-    private entityMapper: EntityMapperService
+    private entityRemoveService: EntityRemoveService
   ) {
     this.form = this.formsService.createFormGroup(data.columns, data.entity);
     if (this.ability.cannot("update", data.entity)) {
@@ -58,8 +61,10 @@ export class RowDetailsComponent<E extends Entity> {
   }
 
   delete() {
-    this.entityMapper
-      .remove(this.data.entity)
-      .then(() => this.dialogRef.close());
+    this.entityRemoveService.remove(this.data.entity).subscribe((res) => {
+      if (res === RemoveResult.REMOVED) {
+        this.dialogRef.close();
+      }
+    });
   }
 }
