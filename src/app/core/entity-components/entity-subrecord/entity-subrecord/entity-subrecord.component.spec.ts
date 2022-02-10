@@ -26,6 +26,8 @@ import { EntityFormService } from "../../entity-form/entity-form.service";
 import { genders } from "../../../../child-dev-project/children/model/genders";
 import { LoggingService } from "../../../logging/logging.service";
 import { MockSessionModule } from "../../../session/mock-session.module";
+import { Subject } from "rxjs";
+import { UpdatedEntity } from "../../../entity/model/entity-update";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -288,15 +290,16 @@ describe("EntitySubrecordComponent", () => {
     expect(component.showEntity).toHaveBeenCalledWith(child);
   }));
 
-  it("should create new entities and open it in a row when no show entity function is supplied", fakeAsync(() => {
+  it("should create new entities and open it with the default showEntity function", fakeAsync(() => {
     const child = new Child();
     component.newRecordFactory = () => child;
-    const spy = spyOn<any>(component, "showRowDetails");
+    component.ngOnInit();
+    const spy = spyOn(component, "showEntity");
 
     component.create();
     tick();
 
-    expect(spy).toHaveBeenCalledWith({ record: child }, true);
+    expect(spy).toHaveBeenCalledWith(child);
   }));
 
   it("should notify when an entity is clicked", (done) => {
@@ -309,18 +312,24 @@ describe("EntitySubrecordComponent", () => {
     component.rowClick({ record: child });
   });
 
-  it("appends a new entity to the end of the records when it's new", async () => {
-    const entityFormService = TestBed.inject(EntityFormService);
-    spyOn(entityFormService, "saveChanges").and.resolveTo();
+  it("should append an entity that was created after the initial loading", async () => {
+    const entityUpdates = new Subject<UpdatedEntity<Entity>>();
+    const entityMapper = TestBed.inject(EntityMapperService);
+    spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
+    component.newRecordFactory = () => new Entity();
+    component.ngOnInit();
+
     const entity = new Entity();
-    await component.save({ record: entity }, true);
+    entityUpdates.next({ entity: entity, type: "new" });
+
     expect(component.records).toHaveSize(1);
+    expect(component.records).toContain(entity);
   });
 
   it("does not change the size of it's records when not saving a new record", async () => {
     const entity = new Entity();
     component.records.push(entity);
-    await component.save({ record: entity }, false);
+    await component.save({ record: entity });
     expect(component.records).toHaveSize(1);
   });
 
@@ -329,7 +338,7 @@ describe("EntitySubrecordComponent", () => {
     component.newRecordFactory = newRecordSpy;
     expect(component.entityConstructor).toBe(undefined);
 
-    component.ngOnChanges({ newRecordFactory: undefined });
+    component.ngOnInit();
 
     expect(newRecordSpy).toHaveBeenCalled();
     expect(component.entityConstructor).toBe(Child);

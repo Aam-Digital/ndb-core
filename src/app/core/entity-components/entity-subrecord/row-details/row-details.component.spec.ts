@@ -15,6 +15,7 @@ import { EntitySchemaService } from "../../../entity/schema/entity-schema.servic
 import { Entity } from "../../../entity/model/entity";
 import { MockSessionModule } from "../../../session/mock-session.module";
 import { MatMenuModule } from "@angular/material/menu";
+import { EntityRemoveService } from "../../../entity/entity-remove.service";
 
 describe("RowDetailsComponent", () => {
   let component: RowDetailsComponent<any>;
@@ -38,6 +39,10 @@ describe("RowDetailsComponent", () => {
         EntitySchemaService,
         { provide: MAT_DIALOG_DATA, useValue: detailsComponentData },
         { provide: MatDialogRef, useValue: {} },
+        {
+          provide: EntityRemoveService,
+          useValue: jasmine.createSpyObj(["remove"]),
+        },
       ],
     }).compileComponents();
   });

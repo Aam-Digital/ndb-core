@@ -38,7 +38,7 @@ import {
   templateUrl: "./form-dialog-wrapper.component.html",
   styleUrls: ["./form-dialog-wrapper.component.scss"],
 })
-export class FormDialogWrapperComponent<E extends Entity>
+export class FormDialogWrapperComponent<E extends Entity = Entity>
   implements AfterViewInit {
   /** entity to be edited */
   @Input() set entity(value: E) {

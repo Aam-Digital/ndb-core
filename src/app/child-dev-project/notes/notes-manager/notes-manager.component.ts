@@ -13,9 +13,9 @@ import { EntityListComponent } from "../../../core/entity-components/entity-list
 import { applyUpdate } from "../../../core/entity/model/entity-update";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { EventNote } from "../../attendance/model/event-note";
-import { EntityConstructor } from "../../../core/entity/model/entity";
 import { WarningLevel } from "../../../core/entity/model/warning-level";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
+import { merge } from "rxjs";
 
 /**
  * additional config specifically for NotesManagerComponent
@@ -94,8 +94,7 @@ export class NotesManagerComponent implements OnInit {
       }
     );
 
-    this.subscribeEntityUpdates(Note);
-    this.subscribeEntityUpdates(EventNote);
+    this.subscribeEntityUpdates();
   }
 
   private async loadEntities(): Promise<Note[]> {
@@ -107,11 +106,11 @@ export class NotesManagerComponent implements OnInit {
     return notes;
   }
 
-  private subscribeEntityUpdates(
-    entityType: EntityConstructor<Note | EventNote>
-  ) {
-    this.entityMapperService
-      .receiveUpdates<Note>(entityType)
+  private subscribeEntityUpdates() {
+    merge(
+      this.entityMapperService.receiveUpdates(Note),
+      this.entityMapperService.receiveUpdates(EventNote)
+    )
       .pipe(untilDestroyed(this))
       .subscribe((updatedNote) => {
         if (

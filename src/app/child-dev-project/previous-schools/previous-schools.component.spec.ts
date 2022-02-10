@@ -16,9 +16,6 @@ import { PanelConfig } from "../../core/entity-components/entity-details/EntityD
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import moment from "moment";
 import { MockSessionModule } from "../../core/session/mock-session.module";
-import { EntityMapperService } from "../../core/entity/entity-mapper.service";
-import { Subject } from "rxjs";
-import { UpdatedEntity } from "../../core/entity/model/entity-update";
 
 describe("PreviousSchoolsComponent", () => {
   let component: PreviousSchoolsComponent;
@@ -131,20 +128,4 @@ describe("PreviousSchoolsComponent", () => {
         .isSame(newRelation.start, "day")
     ).toBeTrue();
   });
-
-  it("should reload data when a new record is saved", fakeAsync(() => {
-    const updateSubject = new Subject<UpdatedEntity<ChildSchoolRelation>>();
-    const entityMapper = TestBed.inject(EntityMapperService);
-    spyOn(entityMapper, "receiveUpdates").and.returnValue(updateSubject);
-    component.onInitFromDynamicConfig({ entity: testChild });
-    tick();
-    mockChildrenService.getSchoolRelationsFor.calls.reset();
-
-    updateSubject.next();
-    tick();
-
-    expect(mockChildrenService.getSchoolRelationsFor).toHaveBeenCalledWith(
-      testChild.getId()
-    );
-  }));
 });

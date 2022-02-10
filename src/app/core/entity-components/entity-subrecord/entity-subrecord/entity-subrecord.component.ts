@@ -129,6 +129,7 @@ export class EntitySubrecordComponent<T extends Entity>
       this.entityConstructor = this.newRecordFactory().getConstructor() as EntityConstructor<T>;
       this.entityMapper
         .receiveUpdates(this.entityConstructor)
+        .pipe(untilDestroyed(this))
         .subscribe(({ entity, type }) => {
           if (type === "new") {
             this.addToTable(entity);
