@@ -8,10 +8,18 @@ import { Database } from "../database/database";
 import { LOCATION_TOKEN } from "../../utils/di-tokens";
 import { AnalyticsService } from "../analytics/analytics.service";
 import { EntityAbility } from "./entity-ability";
+import { Permission } from "./permission";
+import { User } from "../user/user";
+import { ProgressDashboardConfig } from "../../child-dev-project/progress-dashboard-widget/progress-dashboard/progress-dashboard-config";
 
 @Injectable()
 export class PermissionEnforcerService {
   static readonly STORAGE_KEY = "RULES";
+  private readonly ignoredSubject = [
+    Permission.ENTITY_TYPE,
+    User.ENTITY_TYPE,
+    ProgressDashboardConfig.ENTITY_TYPE,
+  ];
   constructor(
     private sessionService: SessionService,
     private dynamicEntityService: DynamicEntityService,
@@ -59,9 +67,9 @@ export class PermissionEnforcerService {
           relevantSubjects.forEach((subject) => subjects.delete(subject));
         }
       });
-    return [...subjects].map((subj) =>
-      this.dynamicEntityService.getEntityConstructor(subj)
-    );
+    return [...subjects]
+      .filter((subject) => !this.ignoredSubject.includes(subject))
+      .map((subj) => this.dynamicEntityService.getEntityConstructor(subj));
   }
 
   private isReadRule(rule: DatabaseRule): boolean {
