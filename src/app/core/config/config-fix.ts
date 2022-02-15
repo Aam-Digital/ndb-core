@@ -828,8 +828,6 @@ export const defaultJsonConfig = {
   },
 
   "entity:Child": {
-    "permissions": {
-    },
     "attributes": [
       {
         "name": "address",
@@ -869,8 +867,6 @@ export const defaultJsonConfig = {
     ]
   },
   "entity:School": {
-    "permissions": {
-    },
     "attributes": [
       {
         "name": "name",
@@ -971,13 +967,5 @@ export const defaultJsonConfig = {
         }
       },
     ]
-  },
-  "entity:Note": {
-    permissions: {
-    }
-  },
-  "entity:EventNote": {
-    permission: {
-    }
   }
 }
