@@ -107,6 +107,10 @@ export class PwaInstallComponent implements OnInit {
         this.installText2 = 'PWA not possible'
     }
 
+    console.log("PWA Install Information:")
+    console.log("--- " + this.installText);
+    console.log("--- " + this.installText2);
+
     let deferredPrompt; // Variable should be out of scope of addEventListener method
 
     window.addEventListener('beforeinstallprompt', (e) => {

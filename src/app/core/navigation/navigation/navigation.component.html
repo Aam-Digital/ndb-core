@@ -16,10 +16,7 @@
   -->
 
 <mat-nav-list>
-  <mat-list-item>
-    {{ installText }}<br>
-    {{ installText2 }} <button id="PWAInstallButton" style='display:none'>Install</button>
-  </mat-list-item>
+  <app-pwa-install></app-pwa-install>
   <mat-list-item
     angulartics2On="click"
     angularticsCategory="Navigation"

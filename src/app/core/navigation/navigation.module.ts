@@ -27,6 +27,7 @@ import { Angulartics2Module } from "angulartics2";
 import { ConfigModule } from "../config/config.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ViewModule } from "../view/view.module";
+import { PwaInstallModule } from "app/pwa-install/pwa-install.module";
 
 /**
  * Manages the main app navigation menu
@@ -44,6 +45,7 @@ import { ViewModule } from "../view/view.module";
     ConfigModule,
     FontAwesomeModule,
     ViewModule,
+    PwaInstallModule
   ],
   declarations: [NavigationComponent],
   exports: [NavigationComponent],
