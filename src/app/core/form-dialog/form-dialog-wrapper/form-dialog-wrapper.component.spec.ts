@@ -11,6 +11,7 @@ import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MockSessionModule } from "../../session/mock-session.module";
 import { DynamicEntityService } from "../../entity/dynamic-entity.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { ENTITIES, entityRegistry } from "../../registry/dynamic-registry";
 
 describe("FormDialogWrapperComponent", () => {
   let component: FormDialogWrapperComponent;
@@ -32,6 +33,7 @@ describe("FormDialogWrapperComponent", () => {
           { provide: MatDialogRef, useValue: {} },
           DynamicEntityService,
           EntitySchemaService,
+          { provide: ENTITIES, useValue: entityRegistry },
         ],
       }).compileComponents();
 

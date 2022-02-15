@@ -12,12 +12,12 @@ import { isActiveIndicator } from "../schools/children-overview/children-overvie
 import { DynamicComponent } from "../../core/view/dynamic-components/dynamic-component.decorator";
 
 @UntilDestroy()
+@DynamicComponent()
 @Component({
   selector: "app-previous-schools",
   templateUrl: "./previous-schools.component.html",
   styleUrls: ["./previous-schools.component.scss"],
 })
-@DynamicComponent()
 export class PreviousSchoolsComponent
   implements OnChanges, OnInitDynamicComponent {
   @Input() child: Child;

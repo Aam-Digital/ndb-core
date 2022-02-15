@@ -2,7 +2,7 @@ import { Entity, EntityConstructor } from "./model/entity";
 import { Inject, Injectable } from "@angular/core";
 import { EntityMapperService } from "./entity-mapper.service";
 import { EntitySchemaService } from "./schema/entity-schema.service";
-import { Registries, REGISTRY } from "../registry/DynamicRegistry";
+import { ENTITIES, EntityRegistry } from "../registry/dynamic-registry";
 
 /**
  * A service that can be used to get the entity-constructors (see {@link EntityConstructor})
@@ -17,7 +17,7 @@ export class DynamicEntityService {
   constructor(
     private entityMapper: EntityMapperService,
     private entitySchemaService: EntitySchemaService,
-    @Inject(REGISTRY) private registry: Registries
+    @Inject(ENTITIES) private registry: EntityRegistry
   ) {}
 
   /**
@@ -28,7 +28,7 @@ export class DynamicEntityService {
   getEntityConstructor<E extends Entity = any>(
     entityType: string
   ): EntityConstructor<E> {
-    const ctor = this.registry.ENTITY.lookup(entityType);
+    const ctor = this.registry.lookup(entityType);
     if (!ctor) {
       throw new Error(`Entity-type ${entityType} does not exist!`);
     }
@@ -62,7 +62,7 @@ export class DynamicEntityService {
    * @param entityType The type to look up
    */
   isRegisteredEntity(entityType: string): boolean {
-    return this.registry.ENTITY.has(entityType);
+    return this.registry.has(entityType);
   }
 
   /**

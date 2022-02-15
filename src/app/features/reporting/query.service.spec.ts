@@ -22,6 +22,7 @@ import { Note } from "../../child-dev-project/notes/model/note";
 import { genders } from "../../child-dev-project/children/model/genders";
 import { EntityConfigService } from "app/core/entity/entity-config.service";
 import { ConfigService } from "app/core/config/config.service";
+import { ENTITIES, entityRegistry } from "../../core/registry/dynamic-registry";
 
 describe("QueryService", () => {
   let service: QueryService;
@@ -62,6 +63,10 @@ describe("QueryService", () => {
         ConfigService,
         EntityConfigService,
         { provide: Database, useValue: database },
+        {
+          provide: ENTITIES,
+          useValue: entityRegistry,
+        },
       ],
     });
     service = TestBed.inject(QueryService);

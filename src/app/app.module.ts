@@ -78,7 +78,14 @@ import { TranslatableMatPaginator } from "./core/translation/TranslatableMatPagi
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
-import { DynamicRegistry, REGISTRY } from "./core/registry/DynamicRegistry";
+import {
+  ENTITIES,
+  entityRegistry,
+  ROUTES,
+  routesRegistry,
+  viewRegistry,
+  VIEWS,
+} from "./core/registry/dynamic-registry";
 
 /**
  * Main entry point of the application.
@@ -156,7 +163,9 @@ import { DynamicRegistry, REGISTRY } from "./core/registry/DynamicRegistry";
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
     { provide: MatPaginatorIntl, useValue: TranslatableMatPaginator() },
-    { provide: REGISTRY, useValue: DynamicRegistry },
+    { provide: ENTITIES, useValue: entityRegistry },
+    { provide: VIEWS, useValue: viewRegistry },
+    { provide: ROUTES, useValue: routesRegistry },
     AnalyticsService,
     Angulartics2Matomo,
   ],

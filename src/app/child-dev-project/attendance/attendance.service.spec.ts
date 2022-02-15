@@ -16,6 +16,7 @@ import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import { Child } from "../children/model/child";
 import { Note } from "../notes/model/note";
 import { PouchDatabase } from "../../core/database/pouch-database";
+import { ENTITIES, entityRegistry } from "../../core/registry/dynamic-registry";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
@@ -59,6 +60,7 @@ describe("AttendanceService", () => {
         EntitySchemaService,
         ChildrenService,
         { provide: Database, useValue: database },
+        { provide: ENTITIES, useValue: entityRegistry },
       ],
     });
     service = TestBed.inject(AttendanceService);

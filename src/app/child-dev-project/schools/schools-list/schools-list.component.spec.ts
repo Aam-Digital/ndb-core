@@ -18,6 +18,10 @@ import { ExportService } from "../../../core/export/export-service/export.servic
 import { MockSessionModule } from "../../../core/session/mock-session.module";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import {
+  ENTITIES,
+  entityRegistry,
+} from "../../../core/registry/dynamic-registry";
 
 describe("SchoolsListComponent", () => {
   let component: SchoolsListComponent;
@@ -59,6 +63,7 @@ describe("SchoolsListComponent", () => {
         providers: [
           { provide: ActivatedRoute, useValue: routeMock },
           { provide: ExportService, useValue: {} },
+          { provide: ENTITIES, useValue: entityRegistry },
         ],
       }).compileComponents();
     })

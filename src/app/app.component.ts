@@ -31,7 +31,8 @@ import { waitForChangeTo } from "./core/session/session-states/session-utils";
 import { environment } from "../environments/environment";
 import { Child } from "./child-dev-project/children/model/child";
 import { School } from "./child-dev-project/schools/model/school";
-import { Registries, REGISTRY } from "./core/registry/DynamicRegistry";
+import { ENTITIES, Registry } from "./core/registry/dynamic-registry";
+import { EntityConstructor } from "./core/entity/model/entity";
 
 @Component({
   selector: "app-root",
@@ -53,7 +54,7 @@ export class AppComponent implements OnInit {
     private sessionService: SessionService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    @Inject(REGISTRY) private registry: Registries
+    @Inject(ENTITIES) private entities: Registry<EntityConstructor>
   ) {
     this.initBasicServices();
   }
@@ -62,8 +63,8 @@ export class AppComponent implements OnInit {
     // TODO: remove this with issue #886
     // This needs to be in the app module (as opposed to the dynamic entity service)
     // to prevent circular dependencies
-    this.registry.ENTITY.add("Participant", Child);
-    this.registry.ENTITY.add("Team", School);
+    this.entities.add("Participant", Child);
+    this.entities.add("Team", School);
     // first register to events
 
     // Reload config once the database is synced

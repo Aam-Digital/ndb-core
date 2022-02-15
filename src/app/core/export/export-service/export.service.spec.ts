@@ -20,6 +20,7 @@ import { ChildSchoolRelation } from "../../../child-dev-project/children/model/c
 import { ExportColumnConfig } from "./export-column-config";
 import { defaultAttendanceStatusTypes } from "../../config/default-config/default-attendance-status-types";
 import moment from "moment";
+import { ENTITIES, entityRegistry } from "../../registry/dynamic-registry";
 
 describe("ExportService", () => {
   let service: ExportService;
@@ -38,6 +39,10 @@ describe("ExportService", () => {
         AttendanceService,
         DatabaseIndexingService,
         { provide: Database, useValue: db },
+        {
+          provide: ENTITIES,
+          useValue: entityRegistry,
+        },
       ],
     });
 

@@ -32,6 +32,10 @@ import { UpdatedEntity } from "../../../core/entity/model/entity-update";
 import { ExportService } from "../../../core/export/export-service/export.service";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import {
+  ENTITIES,
+  entityRegistry,
+} from "../../../core/registry/dynamic-registry";
 
 describe("NotesManagerComponent", () => {
   let component: NotesManagerComponent;
@@ -117,6 +121,7 @@ describe("NotesManagerComponent", () => {
         { provide: ActivatedRoute, useValue: routeMock },
         { provide: ConfigService, useValue: mockConfigService },
         { provide: ExportService, useValue: {} },
+        { provide: ENTITIES, useValue: entityRegistry },
       ],
     }).compileComponents();
 

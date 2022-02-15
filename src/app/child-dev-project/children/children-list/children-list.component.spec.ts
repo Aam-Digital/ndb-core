@@ -25,6 +25,10 @@ import { MockSessionModule } from "../../../core/session/mock-session.module";
 import { ExportDataDirective } from "../../../core/export/export-data-directive/export-data.directive";
 import { ExportService } from "../../../core/export/export-service/export.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import {
+  ENTITIES,
+  entityRegistry,
+} from "../../../core/registry/dynamic-registry";
 
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;
@@ -111,6 +115,7 @@ describe("ChildrenListComponent", () => {
             useValue: jasmine.createSpyObj(["warn"]),
           },
           { provide: ExportService, useValue: {} },
+          { provide: ENTITIES, useValue: entityRegistry },
         ],
       }).compileComponents();
     })

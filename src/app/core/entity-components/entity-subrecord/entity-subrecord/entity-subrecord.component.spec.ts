@@ -28,6 +28,7 @@ import { genders } from "../../../../child-dev-project/children/model/genders";
 import { LoggingService } from "../../../logging/logging.service";
 import { MockSessionModule } from "../../../session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { ENTITIES, entityRegistry } from "../../../registry/dynamic-registry";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -45,7 +46,14 @@ describe("EntitySubrecordComponent", () => {
           MockSessionModule.withState(),
           FontAwesomeTestingModule,
         ],
-        providers: [DatePipe, PercentPipe],
+        providers: [
+          DatePipe,
+          PercentPipe,
+          {
+            provide: ENTITIES,
+            useValue: entityRegistry,
+          },
+        ],
       }).compileComponents();
 
       entityMapper = TestBed.inject(EntityMapperService);

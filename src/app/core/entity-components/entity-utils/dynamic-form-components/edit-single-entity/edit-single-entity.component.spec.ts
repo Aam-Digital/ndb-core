@@ -16,6 +16,10 @@ import { School } from "../../../../../child-dev-project/schools/model/school";
 import { EntityUtilsModule } from "../../entity-utils.module";
 import { Child } from "../../../../../child-dev-project/children/model/child";
 import { TypedFormControl } from "../edit-component";
+import {
+  ENTITIES,
+  entityRegistry,
+} from "../../../../registry/dynamic-registry";
 
 describe("EditSingleEntityComponent", () => {
   let component: EditSingleEntityComponent;
@@ -33,6 +37,10 @@ describe("EditSingleEntityComponent", () => {
         EntityFormService,
         EntitySchemaService,
         { provide: EntityMapperService, useValue: mockEntityMapper },
+        {
+          provide: ENTITIES,
+          useValue: entityRegistry,
+        },
       ],
     }).compileComponents();
   });

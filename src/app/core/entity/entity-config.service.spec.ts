@@ -10,6 +10,7 @@ import { LoggingService } from "../logging/logging.service";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 import { EntityMapperService } from "./entity-mapper.service";
 import { mockEntityMapper } from "./mock-entity-mapper-service";
+import { ENTITIES, entityRegistry } from "../registry/dynamic-registry";
 
 declare global {
   namespace jasmine {
@@ -59,6 +60,10 @@ describe("EntityConfigService", () => {
         { provide: ConfigService, useValue: mockConfigService },
         { provide: LoggingService, useValue: mockLogger },
         { provide: EntityMapperService, useValue: mockEntityMapper() },
+        {
+          provide: ENTITIES,
+          useValue: entityRegistry,
+        },
         DynamicEntityService,
         EntitySchemaService,
       ],

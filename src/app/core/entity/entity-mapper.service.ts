@@ -15,12 +15,13 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from "@angular/core";
+import { Inject, Injectable } from "@angular/core";
 import { Database } from "../database/database";
 import { Entity, EntityConstructor } from "./model/entity";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 import { Observable, Subject } from "rxjs";
 import { UpdatedEntity } from "./model/entity-update";
+import { ENTITIES, EntityRegistry } from "../registry/dynamic-registry";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -37,45 +38,55 @@ export class EntityMapperService {
   private publishers: Map<string, Subject<any>> = new Map();
   constructor(
     private _db: Database,
-    private entitySchemaService: EntitySchemaService
+    private entitySchemaService: EntitySchemaService,
+    @Inject(ENTITIES) protected registry: EntityRegistry
   ) {}
 
   /**
    * Load an Entity from the database with the given id.
+   * <em>Important:</em> Loading via the constructor is always preferred compared to loading via string. The latter
+   * doesn't allow strict type-checking and errors can only be discovered later
    *
    * @param entityType Class that implements Entity, which is the type of Entity the results should be transformed to
+   * or the registered name of that class.
    * @param id The id of the entity to load
    * @returns A Promise resolving to an instance of entityType filled with its data.
    */
   public async load<T extends Entity>(
-    entityType: EntityConstructor<T>,
+    entityType: EntityConstructor<T> | string,
     id: string
   ): Promise<T> {
-    const resultEntity = new entityType("");
+    let resultEntity: Entity;
+    if (typeof entityType === "string") {
+      resultEntity = new (this.registry.lookup(id))();
+    } else {
+      resultEntity = new entityType("");
+    }
     const result = await this._db.get(
       Entity.createPrefixedId(resultEntity.getType(), id)
     );
     this.entitySchemaService.loadDataIntoEntity(resultEntity, result);
-    return resultEntity;
+    return resultEntity as T;
   }
 
   /**
    * Load all entities from the database of the given type (for example a list of entities of the type User).
+   * <em>Important:</em> Loading via the constructor is always preferred compared to loading via string. The latter
+   * doesn't allow strict type-checking and errors can only be discovered later
    *
    * @param entityType Class that implements Entity, which is the type of Entity the results should be transformed to
+   * or the registered name of that class.
    * @returns A Promise resolving to an array of instances of entityType with the data of the loaded entities.
    */
   public async loadType<T extends Entity>(
-    entityType: EntityConstructor<T>
+    entityType: EntityConstructor<T> | string
   ): Promise<T[]> {
     const resultArray: Array<T> = [];
+    const entity = this.createEntity(entityType);
 
-    const allRecordsOfType = await this._db.getAll(
-      new entityType("").getType() + ":"
-    );
+    const allRecordsOfType = await this._db.getAll(entity.getType() + ":");
 
     for (const record of allRecordsOfType) {
-      const entity = new entityType("");
       this.entitySchemaService.loadDataIntoEntity(entity, record);
       resultArray.push(entity);
     }
@@ -92,14 +103,17 @@ export class EntityMapperService {
    * This can be used in collaboration with the update(UpdatedEntity, Entities)-function
    * to update a list of entities
    * <br>
+   *
+   * <em>Important:</em> Loading via the constructor is always preferred compared to loading via string. The latter
+   * doesn't allow strict type-checking and errors can only be discovered later
    * The first update that one will receive - immediately after subscribing - is <code>null</code>.
    * The <code>update</code>-function takes this into account.
-   * @param entityType the type of the entity
+   * @param entityType the type of the entity or the registered name of that class.
    */
   public receiveUpdates<T extends Entity>(
-    entityType: EntityConstructor<T>
+    entityType: EntityConstructor<T> | string
   ): Observable<UpdatedEntity<T>> {
-    const type = new entityType().getType();
+    const type = this.createEntity(entityType).getType();
     let publisher = this.publishers[type];
     // subject doesn't exist yet or is closed
     if (!publisher || publisher.closed) {
@@ -152,6 +166,17 @@ export class EntityMapperService {
     const publisher = this.publishers[entity.getType()];
     if (publisher && !publisher.closed) {
       publisher.next({ entity: entity, type: type });
+    }
+  }
+
+  protected createEntity<T extends Entity>(
+    constructible: EntityConstructor<T> | string
+  ): T {
+    if (typeof constructible === "string") {
+      const constructor = this.registry.lookup(constructible);
+      return new constructor() as T;
+    } else {
+      return new constructible();
     }
   }
 }

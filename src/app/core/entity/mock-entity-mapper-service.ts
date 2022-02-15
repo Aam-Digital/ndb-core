@@ -2,6 +2,7 @@ import { Entity, EntityConstructor } from "./model/entity";
 import { EntityMapperService } from "./entity-mapper.service";
 import { UpdatedEntity } from "./model/entity-update";
 import { NEVER, Observable } from "rxjs";
+import { Registry } from "../registry/dynamic-registry";
 
 export function mockEntityMapper(
   withData: Entity[] = []
@@ -18,7 +19,11 @@ export function mockEntityMapper(
 export class MockEntityMapperService extends EntityMapperService {
   private data: Map<string, Map<string, Entity>> = new Map();
   constructor() {
-    super(null, null);
+    super(null, null, {
+      ROUTE: new Registry(),
+      VIEW: new Registry(),
+      ENTITY: new Registry(),
+    });
   }
 
   /**
@@ -85,10 +90,10 @@ export class MockEntityMapperService extends EntityMapperService {
   }
 
   public async load<T extends Entity>(
-    entityType: EntityConstructor<T>,
+    entityType: EntityConstructor<T> | string,
     id: string
   ): Promise<T> {
-    const type = new entityType().getType();
+    const type = this.createEntity(entityType).getType();
     const entity = this.get(type, id);
     if (!entity) {
       throw Error(`Entity ${id} does not exist in MockEntityMapper`);
@@ -98,9 +103,9 @@ export class MockEntityMapperService extends EntityMapperService {
   }
 
   async loadType<T extends Entity>(
-    entityType: EntityConstructor<T>
+    entityType: EntityConstructor<T> | string
   ): Promise<T[]> {
-    const type = new entityType().getType();
+    const type = this.createEntity(entityType).getType();
     return this.getAll(type) as T[];
   }
 
@@ -118,7 +123,7 @@ export class MockEntityMapperService extends EntityMapperService {
   }
 
   receiveUpdates<T extends Entity>(
-    entityType: EntityConstructor<T>
+    entityType: EntityConstructor<T> | string
   ): Observable<UpdatedEntity<T>> {
     return NEVER;
   }

@@ -10,6 +10,7 @@ import { EntitySchemaService } from "../../../entity/schema/entity-schema.servic
 import { AlertService } from "../../../alerts/alert.service";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MockSessionModule } from "../../../session/mock-session.module";
+import { ENTITIES, entityRegistry } from "../../../registry/dynamic-registry";
 
 describe("FormComponent", () => {
   let component: FormComponent;
@@ -25,7 +26,11 @@ describe("FormComponent", () => {
         MockSessionModule.withState(),
         MatSnackBarModule,
       ],
-      providers: [EntitySchemaService, AlertService],
+      providers: [
+        EntitySchemaService,
+        AlertService,
+        { provide: ENTITIES, useValue: entityRegistry },
+      ],
     }).compileComponents();
   });
 

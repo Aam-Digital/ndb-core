@@ -20,6 +20,7 @@ import { Subscription } from "rxjs";
 import { Entity } from "../../entity/model/entity";
 import { DynamicEntityService } from "../../entity/dynamic-entity.service";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { ENTITIES, entityRegistry } from "../../registry/dynamic-registry";
 
 describe("SearchComponent", () => {
   let component: SearchComponent;
@@ -55,6 +56,10 @@ describe("SearchComponent", () => {
           { provide: EntitySchemaService, useValue: entitySchemaService },
           { provide: DatabaseIndexingService, useValue: mockIndexService },
           { provide: EntityMapperService, useValue: {} },
+          {
+            provide: ENTITIES,
+            useValue: entityRegistry,
+          },
           DynamicEntityService,
         ],
         declarations: [SearchComponent],

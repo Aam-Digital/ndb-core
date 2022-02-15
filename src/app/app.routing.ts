@@ -18,8 +18,8 @@
 import { RouterModule, Routes } from "@angular/router";
 import { ModuleWithProviders } from "@angular/core";
 import { UserRoleGuard } from "./core/permissions/user-role.guard";
-import { DynamicRegistry } from "./core/registry/DynamicRegistry";
 import { ComponentType } from "@angular/cdk/overlay";
+import { routesRegistry } from "./core/registry/dynamic-registry";
 
 /**
  * Marks a class to be the target when routing
@@ -27,7 +27,7 @@ import { ComponentType } from "@angular/cdk/overlay";
  */
 export function RouteTarget() {
   return (ctor: ComponentType<any>) => {
-    DynamicRegistry.ROUTE.add(ctor.name.replace("Component", ""), ctor);
+    routesRegistry.add(ctor.name.replace("Component", ""), ctor);
   };
 }
 

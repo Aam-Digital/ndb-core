@@ -7,6 +7,10 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityUtilsModule } from "../../entity-utils.module";
 import { EntitySchemaService } from "../../../../entity/schema/entity-schema.service";
 import { setupEditComponent } from "../edit-component.spec";
+import {
+  ENTITIES,
+  entityRegistry,
+} from "../../../../registry/dynamic-registry";
 
 describe("EditEntityArrayComponent", () => {
   let component: EditEntityArrayComponent;
@@ -21,6 +25,7 @@ describe("EditEntityArrayComponent", () => {
       declarations: [EditEntityArrayComponent],
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper },
+        { provide: ENTITIES, useValue: entityRegistry },
         EntitySchemaService,
       ],
     }).compileComponents();

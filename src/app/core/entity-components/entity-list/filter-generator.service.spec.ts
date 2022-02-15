@@ -14,6 +14,7 @@ import moment from "moment";
 import { EntityConfigService } from "app/core/entity/entity-config.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DynamicEntityService } from "../../entity/dynamic-entity.service";
+import { ENTITIES, entityRegistry } from "../../registry/dynamic-registry";
 
 describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
@@ -30,6 +31,10 @@ describe("FilterGeneratorService", () => {
         DynamicEntityService,
         LoggingService,
         EntityConfigService,
+        {
+          provide: ENTITIES,
+          useValue: entityRegistry,
+        },
       ],
     });
     service = TestBed.inject(FilterGeneratorService);

@@ -9,6 +9,7 @@ import { MockSessionModule } from "../../session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { DynamicEntityService } from "../../entity/dynamic-entity.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { ENTITIES, entityRegistry } from "../../registry/dynamic-registry";
 
 describe("PrimaryActionComponent", () => {
   let component: PrimaryActionComponent;
@@ -25,7 +26,11 @@ describe("PrimaryActionComponent", () => {
         FontAwesomeTestingModule,
         MockSessionModule.withState(),
       ],
-      providers: [DynamicEntityService, EntitySchemaService],
+      providers: [
+        DynamicEntityService,
+        EntitySchemaService,
+        { provide: ENTITIES, useValue: entityRegistry },
+      ],
     }).compileComponents();
   });
 

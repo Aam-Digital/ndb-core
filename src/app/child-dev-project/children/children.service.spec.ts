@@ -10,6 +10,7 @@ import { Database } from "../../core/database/database";
 import { Note } from "../notes/model/note";
 import { PouchDatabase } from "../../core/database/pouch-database";
 import { genders } from "./model/genders";
+import { ENTITIES, entityRegistry } from "../../core/registry/dynamic-registry";
 
 describe("ChildrenService", () => {
   let service: ChildrenService;
@@ -24,6 +25,7 @@ describe("ChildrenService", () => {
         EntityMapperService,
         EntitySchemaService,
         { provide: Database, useValue: database },
+        { provide: ENTITIES, useValue: entityRegistry },
       ],
     });
 

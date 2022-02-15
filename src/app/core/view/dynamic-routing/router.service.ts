@@ -8,7 +8,7 @@ import {
   ViewConfig,
 } from "./view-config.interface";
 import { UserRoleGuard } from "../../permissions/user-role.guard";
-import { Registries, REGISTRY } from "../../registry/DynamicRegistry";
+import { RouteRegistry, ROUTES } from "../../registry/dynamic-registry";
 
 /**
  * The RouterService dynamically sets up Angular routing from config loaded through the {@link ConfigService}.
@@ -24,7 +24,7 @@ export class RouterService {
     private configService: ConfigService,
     private router: Router,
     private loggingService: LoggingService,
-    @Inject(REGISTRY) private registry: Registries
+    @Inject(ROUTES) private registry: RouteRegistry
   ) {}
 
   /**
@@ -86,7 +86,7 @@ export class RouterService {
 
     const route: Route = {
       path: path,
-      component: this.registry.ROUTE.lookup(view.component),
+      component: this.registry.lookup(view.component),
     };
 
     const routeData: RouteData = {};

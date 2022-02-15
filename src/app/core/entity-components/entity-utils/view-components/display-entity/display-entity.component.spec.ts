@@ -12,6 +12,10 @@ import { ChildSchoolRelation } from "../../../../../child-dev-project/children/m
 import { School } from "../../../../../child-dev-project/schools/model/school";
 import { EntitySchemaService } from "../../../../entity/schema/entity-schema.service";
 import { DynamicEntityService } from "../../../../entity/dynamic-entity.service";
+import {
+  ENTITIES,
+  entityRegistry,
+} from "../../../../registry/dynamic-registry";
 
 describe("DisplayEntityComponent", () => {
   let component: DisplayEntityComponent;
@@ -25,6 +29,10 @@ describe("DisplayEntityComponent", () => {
       declarations: [DisplayEntityComponent],
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper },
+        {
+          provide: ENTITIES,
+          useValue: entityRegistry,
+        },
         EntitySchemaService,
         DynamicEntityService,
       ],

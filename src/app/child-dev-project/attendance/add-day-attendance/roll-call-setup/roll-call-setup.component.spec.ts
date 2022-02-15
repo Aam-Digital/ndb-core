@@ -17,6 +17,10 @@ import {
   MockSessionModule,
   TEST_USER,
 } from "../../../../core/session/mock-session.module";
+import {
+  ENTITIES,
+  entityRegistry,
+} from "../../../../core/registry/dynamic-registry";
 
 describe("RollCallSetupComponent", () => {
   let component: RollCallSetupComponent;
@@ -44,6 +48,7 @@ describe("RollCallSetupComponent", () => {
       providers: [
         { provide: ChildrenService, useValue: mockChildrenService },
         { provide: AttendanceService, useValue: mockAttendanceService },
+        { provide: ENTITIES, useValue: entityRegistry },
       ],
     }).compileComponents();
   });

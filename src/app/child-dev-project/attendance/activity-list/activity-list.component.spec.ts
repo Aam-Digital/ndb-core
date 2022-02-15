@@ -10,6 +10,10 @@ import { EntityListConfig } from "../../../core/entity-components/entity-list/En
 import { ExportService } from "../../../core/export/export-service/export.service";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import {
+  ENTITIES,
+  entityRegistry,
+} from "../../../core/registry/dynamic-registry";
 
 describe("ActivityListComponent", () => {
   let component: ActivityListComponent;
@@ -40,6 +44,7 @@ describe("ActivityListComponent", () => {
               snapshot: { queryParams: {} },
             },
           },
+          { provide: ENTITIES, useValue: entityRegistry },
         ],
       }).compileComponents();
     })

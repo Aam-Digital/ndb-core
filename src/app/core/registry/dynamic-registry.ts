@@ -27,6 +27,9 @@ export class Registry<T> {
   }
 
   public lookup(key: string) {
+    if (!this.has(key)) {
+      console.warn(`Requested item is not registered`);
+    }
     return this.map.get(key);
   }
 
@@ -35,31 +38,29 @@ export class Registry<T> {
   }
 }
 
-export interface Registries {
-  ENTITY: Registry<EntityConstructor>;
-  VIEW: Registry<ComponentType<OnInitDynamicComponent>>;
-  ROUTE: Registry<ComponentType<any>>;
-}
-
-export const REGISTRY = new InjectionToken<Registries>("app.registries");
-
-/**
- * Contains all registries that exist.
- * You should commonly avoid using this directly, unless nothing else is possible.
- * Instead, use the {@link REGISTRY} injection token like so:
- * <pre>
- *   constructor(@Inject(REGISTRY) private registry: Registries) {...}
- * </pre>
- */
-export const DynamicRegistry: Registries = {
-  ENTITY: new Registry((key, constructor) => {
+export type EntityRegistry = Registry<EntityConstructor>;
+export const ENTITIES = new InjectionToken<EntityRegistry>(
+  "app.registries.entities"
+);
+export const entityRegistry = new Registry<EntityConstructor>(
+  (key, constructor) => {
     if (!(new constructor() instanceof Entity)) {
       throw Error(
         `Tried to register an entity-type that is not a subclass of Entity\n` +
           `type: ${key}; constructor: ${constructor}`
       );
     }
-  }),
-  VIEW: new Registry(),
-  ROUTE: new Registry(),
-};
+  }
+);
+
+export type ViewRegistry = Registry<ComponentType<OnInitDynamicComponent>>;
+export const VIEWS = new InjectionToken<ViewRegistry>("app.registries.views");
+export const viewRegistry = new Registry<
+  ComponentType<OnInitDynamicComponent>
+>();
+
+export type RouteRegistry = Registry<ComponentType<any>>;
+export const ROUTES = new InjectionToken<RouteRegistry>(
+  "app.registries.routes"
+);
+export const routesRegistry = new Registry<ComponentType<any>>();

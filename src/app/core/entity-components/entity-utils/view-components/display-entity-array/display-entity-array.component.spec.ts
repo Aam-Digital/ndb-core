@@ -6,6 +6,10 @@ import { Child } from "../../../../../child-dev-project/children/model/child";
 import { Note } from "../../../../../child-dev-project/notes/model/note";
 import { EntitySchemaService } from "../../../../entity/schema/entity-schema.service";
 import { DynamicEntityService } from "../../../../entity/dynamic-entity.service";
+import {
+  ENTITIES,
+  entityRegistry,
+} from "../../../../registry/dynamic-registry";
 
 describe("DisplayEntityArrayComponent", () => {
   let component: DisplayEntityArrayComponent;
@@ -19,6 +23,7 @@ describe("DisplayEntityArrayComponent", () => {
       declarations: [DisplayEntityArrayComponent],
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper },
+        { provide: ENTITIES, useValue: entityRegistry },
         EntitySchemaService,
         DynamicEntityService,
       ],
