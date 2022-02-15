@@ -47,6 +47,7 @@ export class RowDetailsComponent<E extends Entity> {
     if (this.ability.cannot("update", data.entity)) {
       this.form.disable();
     }
+    this.tempEntity = this.data.entity;
     this.form.valueChanges.subscribe((value) => {
       const dynamicConstructor: any = data.entity.getConstructor();
       this.tempEntity = Object.assign(new dynamicConstructor(), value);
