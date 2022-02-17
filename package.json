@@ -44,7 +44,7 @@
     "@sentry/browser": "^6.17.2",
     "angulartics2": "^10.1.0",
     "crypto-js": "^4.1.1",
-    "deep-object-diff": "^1.1.0",
+    "deep-object-diff": "^1.1.7",
     "faker": "^5.5.3",
     "flag-icon-css": "^3.5.0",
     "json-query": "^2.2.2",
