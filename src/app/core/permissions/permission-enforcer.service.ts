@@ -11,6 +11,7 @@ import { EntityAbility } from "./entity-ability";
 import { Permission } from "./permission";
 import { User } from "../user/user";
 import { ProgressDashboardConfig } from "../../child-dev-project/progress-dashboard-widget/progress-dashboard/progress-dashboard-config";
+import { Config } from "../config/config";
 
 @Injectable()
 export class PermissionEnforcerService {
@@ -19,6 +20,7 @@ export class PermissionEnforcerService {
     Permission.ENTITY_TYPE,
     User.ENTITY_TYPE,
     ProgressDashboardConfig.ENTITY_TYPE,
+    Config.ENTITY_TYPE
   ];
   constructor(
     private sessionService: SessionService,
