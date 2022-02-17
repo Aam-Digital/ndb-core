@@ -20,7 +20,7 @@ export class PermissionEnforcerService {
     Permission.ENTITY_TYPE,
     User.ENTITY_TYPE,
     ProgressDashboardConfig.ENTITY_TYPE,
-    Config.ENTITY_TYPE
+    Config.ENTITY_TYPE,
   ];
   constructor(
     private sessionService: SessionService,
