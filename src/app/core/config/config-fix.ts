@@ -547,10 +547,9 @@ export const defaultJsonConfig = {
                 ],
                 "headers": [
                   null,
-                  "Personal Information",
-                  "Additional",
-                  "Scholar activities",
-                  "Address"
+                  $localize`:Header for form section:Personal Information`,
+                  $localize`:Header for form section:Additional`,
+                  $localize`:Header for form section:Scholar activities`,
                 ]
               }
             }
