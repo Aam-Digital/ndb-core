@@ -171,7 +171,7 @@ describe("QueryService", () => {
     twoWeeksAgoPrivateEvent.addChild(maleChild.getId());
     twoWeeksAgoPrivateEvent.getAttendance(
       maleChild.getId()
-    ).status = absentAttendanceStatus;
+    ).status = presentAttendanceStatus;
     twoWeeksAgoPrivateEvent.addChild(femaleChristianChild.getId());
     twoWeeksAgoPrivateEvent.getAttendance(
       femaleChristianChild.getId()
@@ -186,7 +186,7 @@ describe("QueryService", () => {
     threeDaysAgoPrivateEvent.addChild(maleChild.getId());
     threeDaysAgoPrivateEvent.getAttendance(
       maleChild.getId()
-    ).status = presentAttendanceStatus;
+    ).status = absentAttendanceStatus;
     await entityMapper.save(threeDaysAgoPrivateEvent);
 
     sixDaysAgoNormalEvent = new EventNote("sixDaysAgoNormalEvent");
@@ -322,24 +322,13 @@ describe("QueryService", () => {
   });
 
   it("should return attended children in timespan", async () => {
-    const eventsLastWeekQuery = `${EventNote.ENTITY_TYPE}:toArray[*date > ?]`;
-    const eventsLastWeek = await service.queryData(
-      eventsLastWeekQuery,
-      moment().subtract(1, "week").toDate()
-    );
-    expectEntitiesToMatch(eventsLastWeek, [
-      threeDaysAgoPrivateEvent,
-      todayEventWithoutSchool,
-      twoDaysAgoEventWithoutRelation,
-      sixDaysAgoNormalEvent,
-    ]);
-
     const childrenThatAttendedSomethingQuery = `
-      ${EventNote.ENTITY_TYPE}:toArray
+      ${EventNote.ENTITY_TYPE}:toArray[*date > ?]
       :getParticipantsWithAttendance(PRESENT)
       :addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`;
     const childrenThatAttendedSomething = await service.queryData(
-      childrenThatAttendedSomethingQuery
+      childrenThatAttendedSomethingQuery,
+      moment().subtract(1, "week").toDate()
     );
     expectEntitiesToMatch(childrenThatAttendedSomething, [
       femaleChristianChild,
@@ -381,6 +370,7 @@ describe("QueryService", () => {
       attendedParticipantsQuery
     );
     expectEntitiesToMatch(attendedParticipants, [
+      maleChild,
       maleChristianChild,
       femaleChristianChild,
       femaleMuslimChild,
@@ -403,16 +393,21 @@ describe("QueryService", () => {
   });
 
   it("should not load all data if a from date is provided", async () => {
-    const eventsQuery = `${EventNote.ENTITY_TYPE}:toArray`;
+    const eventsQuery = `${EventNote.ENTITY_TYPE}:toArray.entityId`;
     const date = moment().subtract(1, "week").toDate();
 
-    const allEventsLastWeek = await service.queryData(eventsQuery, date);
-    expectEntitiesToMatch(allEventsLastWeek, [
-      threeDaysAgoPrivateEvent,
-      sixDaysAgoNormalEvent,
-      todayEventWithoutSchool,
-      twoDaysAgoEventWithoutRelation,
-    ]);
+    const allEventsLastWeek: string[] = await service.queryData(
+      eventsQuery,
+      date
+    );
+    expect(allEventsLastWeek).toEqual(
+      jasmine.arrayWithExactContents([
+        threeDaysAgoPrivateEvent.getId(),
+        sixDaysAgoNormalEvent.getId(),
+        todayEventWithoutSchool.getId(),
+        twoDaysAgoEventWithoutRelation.getId(),
+      ])
+    );
   });
 
   it("should load more notes if a later date is provided", async () => {
@@ -490,7 +485,7 @@ describe("QueryService", () => {
     expect(attendanceResult).toContain({
       participant: "maleChild",
       school: "privateSchool",
-      status: new EventAttendance(absentAttendanceStatus),
+      status: new EventAttendance(presentAttendanceStatus),
     });
     expect(attendanceResult).toContain({
       participant: "femaleChristianChild",
@@ -499,7 +494,7 @@ describe("QueryService", () => {
     expect(attendanceResult).toContain({
       participant: "maleChild",
       school: "privateSchool",
-      status: new EventAttendance(presentAttendanceStatus),
+      status: new EventAttendance(absentAttendanceStatus),
     });
     expect(attendanceResult).toContain({
       participant: "femaleMuslimChild",
