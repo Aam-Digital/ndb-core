@@ -135,32 +135,45 @@ export class DataImportService {
   }
 
   private createEntityWithRowData(row: any, importMeta: ImportMetaData): any {
-    const entity = {};
+    const rawEntity = {};
     const schema = this.dynamicEntityService.getEntityConstructor(
       importMeta.entityType
     ).schema;
-    for (const col in row) {
-      const property = importMeta.columnMap[col];
-      if (property) {
-        if (property === "_id") {
-          entity[property] = Entity.createPrefixedId(
-            importMeta.entityType,
-            row[col]
-          );
-        } else if (
-          importMeta.dateFormat &&
-          this.dateDataTypes.includes(schema.get(property).dataType)
-        ) {
-          const date = moment(row[col], importMeta.dateFormat);
-          if (date.isValid()) {
-            entity[property] = date.format("YYYY-MM-DD");
-          }
-        } else {
-          entity[property] = row[col];
+    Object.keys(row)
+      .filter((col) => importMeta.hasOwnProperty(col))
+      .forEach((col) => {
+        const property = importMeta.columnMap[col];
+        const propertyValue = this.getPropertyValue(
+          property,
+          row[col],
+          importMeta,
+          schema.get(property).dataType
+        );
+        if (propertyValue !== undefined) {
+          rawEntity[property] = propertyValue;
         }
+      });
+    return rawEntity;
+  }
+
+  private getPropertyValue(
+    property: string,
+    value: any,
+    importMeta: ImportMetaData,
+    dataType: string
+  ): any {
+    if (property === "_id") {
+      return Entity.createPrefixedId(importMeta.entityType, value);
+    } else if (importMeta.dateFormat && this.dateDataTypes.includes(dataType)) {
+      const date = moment(value, importMeta.dateFormat);
+      if (date.isValid()) {
+        return date.format("YYYY-MM-DD");
+      } else {
+        return undefined;
       }
+    } else {
+      return value;
     }
-    return entity;
   }
 
   private createSearchIndices(importMeta: ImportMetaData, entity) {

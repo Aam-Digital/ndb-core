@@ -99,9 +99,9 @@
     </div>
   </mat-step>
   <mat-step label="Start import">
-    <p>Entity Type:    <i>{{ entityForm.get('entity').value }}</i></p>
-    <p>CSV File:       <i>{{ fileNameForm.get('fileName').value }}</i></p>
-    <p>TransactionID:  <i>{{ transactionIDForm.get('transactionId').value }}</i></p>
+    <p>Entity Type:    <em>{{ entityForm.get('entity').value }}</em></p>
+    <p>CSV File:       <em>{{ fileNameForm.get('fileName').value }}</em></p>
+    <p>TransactionID:  <em>{{ transactionIDForm.get('transactionId').value }}</em></p>
     <button (click)="importSelectedFile()" mat-stroked-button>
       Start Import
     </button>

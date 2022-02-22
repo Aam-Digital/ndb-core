@@ -207,15 +207,15 @@ describe("DataImportService", () => {
   function mockFileReader(
     result = '_id,name,projectNumber\nChild:1,"John Doe",123'
   ) {
-    const mockFileReader: any = {
+    const fileReader: any = {
       result: result,
       addEventListener: (str: string, fun: () => any) => fun(),
       readAsText: () => {},
     };
-    spyOn(mockFileReader, "readAsText");
+    spyOn(fileReader, "readAsText");
     // mock FileReader constructor
-    spyOn(window, "FileReader").and.returnValue(mockFileReader);
-    return mockFileReader;
+    spyOn(window, "FileReader").and.returnValue(fileReader);
+    return fileReader;
   }
 
   function mockDialog(
