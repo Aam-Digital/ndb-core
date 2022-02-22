@@ -4,6 +4,9 @@ import { ConfirmationDialogComponent } from "./confirmation-dialog/confirmation-
 import { MatButtonModule } from "@angular/material/button";
 import { MatDialogModule } from "@angular/material/dialog";
 import { ConfirmationDialogService } from "./confirmation-dialog.service";
+import { MatIconModule } from "@angular/material/icon";
+import { MatRippleModule } from "@angular/material/core";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 /**
  * A helper utility module helping to display configurable confirmation dialog boxes
@@ -12,7 +15,14 @@ import { ConfirmationDialogService } from "./confirmation-dialog.service";
  * Use the {@link ConfirmationDialogService} for this.
  */
 @NgModule({
-  imports: [CommonModule, MatDialogModule, MatButtonModule],
+  imports: [
+    CommonModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatIconModule,
+    MatRippleModule,
+    FontAwesomeModule,
+  ],
   declarations: [ConfirmationDialogComponent],
   providers: [ConfirmationDialogService],
 })

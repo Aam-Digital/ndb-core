@@ -17,6 +17,17 @@
 
 /* You can add global styles to this file, and also import other style files */
 
+$margin-main-view-right: 28px;
+$margin-main-view-left: 28px;
+$margin-main-view-top: 10px;
+$margin-main-view-bottom: 16px;
+
+$standard-grid-gap: 25px;
+
+$max-icon-width: 22px;
+
+$standard-margin-small: 8px;
+
 body {
   margin: 0;
 }
@@ -47,9 +58,9 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
   box-shadow: none;
 }
 
-
-
-
+.mat-dialog-container {
+  position: relative;
+}
 
 .dashboard-widget .mat-card-header {
   padding: 24px;
@@ -84,11 +95,6 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
   font-size: 40pt;
 }
 
-.dashboard-widget .mat-card-content {
-  max-height: 250px;
-  overflow: auto;
-}
-
 .dashboard-widget .dashboard-desc {
   padding-left: 10px;
   padding-right: 10px;
@@ -96,8 +102,6 @@ td.mat-cell, td.mat-footer-cell, th.mat-header-cell {
 }
 
 mat-card.dashboard-widget {
-  min-width: 250px;
-  margin: 10px;
   padding: 0;
 }
 
@@ -106,6 +110,7 @@ mat-card.dashboard-widget {
 .dashboard-widget .dashboard-table-cell {
   padding: 10px;
 }
+
 
 
 .app-general {
@@ -132,15 +137,19 @@ mat-card.dashboard-widget {
   background-color: #9E9D24 !important;
 }
 
+$color-warning-ok: #90ee90;
+$color-warning-warning: #ffa500;
+$color-warning-urgent: #fd7272;
+
 
 .w-OK {
-  background-color: #90ee9040 !important;
+  background-color: adjust-color($color-warning-warning, $alpha: -0.75);
 }
 .w-WARNING {
-  background-color: #ffa50080 !important;
+  background-color: adjust-color($color-warning-warning, $alpha: -0.5);
 }
 .w-URGENT {
-  background-color: #fd727280 !important;
+  background-color: adjust-color($color-warning-urgent, $alpha: -0.5);
 }
 
 .w-100 {
@@ -175,6 +184,10 @@ mat-card.dashboard-widget {
 }
 .w-0 {
   background-color: #fd7272 !important;
+}
+
+.primary-background {
+  background-color: #fff5e6 !important;
 }
 
 
@@ -213,4 +226,47 @@ mat-card.dashboard-widget {
 }
 .mat-select-disabled .mat-select-value {
   color: black;
+}
+
+/* Standard button styles */
+
+$standard-icon-size: 1.5em;
+
+.standard-add-button {
+  background-color: white !important;
+}
+
+.standard-icon {
+  font-size: $standard-icon-size;
+}
+
+.standard-icon-with-text {
+  font-size: $standard-icon-size;
+  margin-right: $standard-margin-small;
+}
+
+::ng-deep .mat-raised-button {
+  margin-right: $standard-margin-small;
+}
+
+.truncate-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/**
+ * adds a standard-margin wide border to the left side
+ * that can be used to highlight things.
+ * This itself does not actually change the appearance,
+ * but specifying a border-color will do so.
+ */
+.border-left-highlight {
+  border-left: $standard-margin-small solid;
+  border-color: transparent;
+}
+
+.underline-on-hover:hover {
+  text-decoration: underline;
+  cursor: pointer;
 }

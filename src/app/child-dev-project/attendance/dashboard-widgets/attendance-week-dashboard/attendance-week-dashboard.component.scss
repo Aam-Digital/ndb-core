@@ -1,8 +1,4 @@
-@use 'src/app/core/dashboard/dashboard-widget-base';
-
-.attendance-day {
-  width: 10px;
-}
+@use "../../../../core/dashboard/dashboard-widget-base";
 
 .day-box {
   display: table;
@@ -12,6 +8,15 @@
   font-size: smaller;
 }
 
-.attendance-week-table {
-  border-spacing: 0;
+.activities-record {
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+}
+
+.headline {
+  height: 100%;
+  display: flex;
+  place-content: center;
+  place-items: center;
 }

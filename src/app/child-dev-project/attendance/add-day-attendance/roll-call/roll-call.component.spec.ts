@@ -11,24 +11,36 @@ import { RollCallComponent } from "./roll-call.component";
 import { Note } from "../../../notes/model/note";
 import { By } from "@angular/platform-browser";
 import { ConfigService } from "../../../../core/config/config.service";
-import { ConfigurableEnumConfig } from "../../../../core/configurable-enum/configurable-enum.interface";
 import { Child } from "../../../children/model/child";
 import { LoggingService } from "../../../../core/logging/logging.service";
-import { defaultAttendanceStatusTypes } from "../../../../core/config/default-config/default-attendance-status-types";
 import { AttendanceModule } from "../../attendance.module";
-import { ChildrenService } from "../../../children/children.service";
 import { MockSessionModule } from "../../../../core/session/mock-session.module";
 import { ConfirmationDialogService } from "../../../../core/confirmation-dialog/confirmation-dialog.service";
-import { of } from "rxjs";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { LoginState } from "../../../../core/session/session-states/login-state.enum";
 import { SimpleChange } from "@angular/core";
+import { AttendanceLogicalStatus } from "../../model/attendance-status";
+import { ChildrenService } from "../../../children/children.service";
+
+const PRESENT = {
+  id: "PRESENT",
+  shortName: "P",
+  label: "Present",
+  style: "attendance-P",
+  countAs: AttendanceLogicalStatus.PRESENT,
+};
+const ABSENT = {
+  id: "ABSENT",
+  shortName: "A",
+  label: "Absent",
+  style: "attendance-A",
+  countAs: AttendanceLogicalStatus.ABSENT,
+};
 
 describe("RollCallComponent", () => {
   let component: RollCallComponent;
   let fixture: ComponentFixture<RollCallComponent>;
 
-  const testEvent = Note.create(new Date());
   let mockConfigService: jasmine.SpyObj<ConfigService>;
   let mockLoggingService: jasmine.SpyObj<LoggingService>;
 
@@ -45,9 +57,9 @@ describe("RollCallComponent", () => {
       participant3 = new Child("child3");
 
       mockConfigService = jasmine.createSpyObj("mockConfigService", [
-        "getConfig",
+        "getConfigurableEnumValues",
       ]);
-      mockConfigService.getConfig.and.returnValue([]);
+      mockConfigService.getConfigurableEnumValues.and.returnValue([]);
       mockLoggingService = jasmine.createSpyObj(["warn"]);
 
       TestBed.configureTestingModule({
@@ -72,7 +84,7 @@ describe("RollCallComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(RollCallComponent);
     component = fixture.componentInstance;
-    component.eventEntity = testEvent;
+    component.eventEntity = Note.create(new Date());
     fixture.detectChanges();
   });
 
@@ -81,25 +93,9 @@ describe("RollCallComponent", () => {
   });
 
   it("should display all available attendance status to select", async () => {
-    const testStatusEnumConfig: ConfigurableEnumConfig = [
-      {
-        id: "PRESENT",
-        shortName: "P",
-        label: "Present",
-        style: "attendance-P",
-        countAs: "PRESENT",
-      },
-      {
-        id: "ABSENT",
-        shortName: "A",
-        label: "Absent",
-        style: "attendance-A",
-        countAs: "ABSENT",
-      },
-    ];
-    mockConfigService.getConfig.and.returnValue(testStatusEnumConfig);
-    component.eventEntity = new Note();
-    component.eventEntity.addChild(participant1.getId());
+    const options = [PRESENT, ABSENT];
+    mockConfigService.getConfigurableEnumValues.and.returnValue(options);
+    component.eventEntity.addChild(participant1);
     await component.ngOnChanges(dummyChanges);
     fixture.detectChanges();
     await fixture.whenStable();
@@ -107,7 +103,7 @@ describe("RollCallComponent", () => {
     const statusOptions = fixture.debugElement.queryAll(
       By.css(".group-select-option")
     );
-    expect(statusOptions.length).toBe(testStatusEnumConfig.length);
+    expect(statusOptions).toHaveSize(options.length);
   });
 
   it("should not record attendance if childId does not exist", fakeAsync(() => {
@@ -127,12 +123,6 @@ describe("RollCallComponent", () => {
   }));
 
   it("should correctly assign the attendance", fakeAsync(() => {
-    const attendedStatus = defaultAttendanceStatusTypes.find(
-      (it) => it.countAs === "PRESENT"
-    );
-    const absentStatus = defaultAttendanceStatusTypes.find(
-      (it) => it.countAs === "ABSENT"
-    );
     const note = new Note("noteWithAttendance");
     note.addChild(participant1.getId());
     note.addChild(participant2.getId());
@@ -141,21 +131,12 @@ describe("RollCallComponent", () => {
     component.ngOnChanges(dummyChanges);
     tick();
 
-    const attendedChildAttendance = component.entries.find(
-      ({ child }) => child === participant1
-    ).attendance;
-    const absentChildAttendance = component.entries.find(
-      ({ child }) => child === participant2
-    ).attendance;
-    component.markAttendance(attendedChildAttendance, attendedStatus);
-    component.markAttendance(absentChildAttendance, absentStatus);
+    component.markAttendance(PRESENT);
+    component.goToNext();
+    component.markAttendance(ABSENT);
 
-    expect(note.getAttendance(participant1.getId()).status).toEqual(
-      attendedStatus
-    );
-    expect(note.getAttendance(participant2.getId()).status).toEqual(
-      absentStatus
-    );
+    expect(note.getAttendance(participant1.getId()).status).toEqual(PRESENT);
+    expect(note.getAttendance(participant2.getId()).status).toEqual(ABSENT);
     flush();
   }));
 
@@ -170,64 +151,66 @@ describe("RollCallComponent", () => {
     component.ngOnChanges(dummyChanges);
     tick();
 
-    component.goToNextParticipant();
-    component.goToNextParticipant();
+    component.goToNext();
+    component.goToNext();
 
     expect(component.complete.emit).toHaveBeenCalledWith(note);
   }));
-
-  it("should only complete when clicking save and confirming in the dialog when roll call is not finished yet", fakeAsync(() => {
-    const note = new Note();
-    const confirmationDialogService = TestBed.inject(ConfirmationDialogService);
-    // Set component to be not finished
-    component.currentIndex = 0;
-    component.entries = [undefined, undefined];
-    spyOn(component.complete, "emit");
-    component.eventEntity = note;
-    spyOn(confirmationDialogService, "openDialog").and.returnValue({
-      afterClosed: () => of(true),
-    } as any);
-
-    component.save();
-    tick();
-
-    expect(component.complete.emit).toHaveBeenCalledWith(note);
-  }));
-
-  it("should directly complete when clicking save and the roll call finished", () => {
-    const note = new Note();
-    component.eventEntity = note;
-    const confirmationDialogService = TestBed.inject(ConfirmationDialogService);
-    spyOn(confirmationDialogService, "openDialog");
-    spyOn(component, "isFinished").and.returnValue(true);
-    spyOn(component.complete, "emit");
-
-    component.save();
-
-    expect(confirmationDialogService.openDialog).not.toHaveBeenCalled();
-    expect(component.complete.emit).toHaveBeenCalledWith(note);
-  });
 
   it("should not open the dialog when the roll call is finished", () => {
     const confirmationDialogService = TestBed.inject(ConfirmationDialogService);
     spyOn(confirmationDialogService, "openDialog");
-    spyOn(component, "isFinished").and.returnValue(true);
+    spyOnProperty(component, "isFinished").and.returnValue(true);
 
-    component.abort();
+    component.finish();
 
     expect(confirmationDialogService.openDialog).not.toHaveBeenCalled();
   });
 
-  it("should open the dialog when the roll call is not finished", () => {
-    const confirmationDialogService = TestBed.inject(ConfirmationDialogService);
-    spyOn(confirmationDialogService, "openDialog").and.returnValue({
-      afterClosed: () => of(true),
-    } as any);
-    spyOn(component, "isFinished").and.returnValue(false);
+  it("isn't dirty initially", () => {
+    expect(component.isDirty).toBeFalse();
+  });
 
-    component.abort();
+  it("isn't dirty when the user has skipped participants", async () => {
+    component.eventEntity = Note.create(new Date(), "test", [
+      participant1.getId(),
+      participant2.getId(),
+    ]);
+    await component.ngOnChanges(dummyChanges);
 
-    expect(confirmationDialogService.openDialog).toHaveBeenCalled();
+    component.goToNext();
+    component.goToNext();
+    component.goToPrevious();
+    expect(component.isDirty).toBeFalse();
+  });
+
+  it("is dirty when the user has entered some attendance", async () => {
+    component.eventEntity = Note.create(new Date(), "test", [
+      participant1.getId(),
+    ]);
+    await component.ngOnChanges(dummyChanges);
+
+    component.markAttendance(undefined);
+    expect(component.isDirty).toBeTrue();
+  });
+
+  it("starts with the initial child if no attendance has been registered", async () => {
+    component.eventEntity.addChild(participant1);
+    await component.ngOnChanges(dummyChanges);
+
+    expect(component.currentIndex).toBe(0);
+    expect(component.currentChild).toBe(participant1);
+  });
+
+  it("starts with the first child that doesn't have an attendance status set", async () => {
+    for (const child of [participant1, participant2, participant3]) {
+      component.eventEntity.addChild(child);
+    }
+    component.eventEntity.getAttendance(participant1).status = PRESENT;
+    component.eventEntity.getAttendance(participant3).status = ABSENT;
+    await component.ngOnChanges(dummyChanges);
+    expect(component.currentChild).toBe(participant2);
+    expect(component.currentIndex).toBe(1);
   });
 
   it("should not sort participants without sortParticipantsBy configured", fakeAsync(() => {

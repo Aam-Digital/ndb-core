@@ -1,18 +1,6 @@
 import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 
 /**
- * @deprecated
- */
-export enum AttendanceStatus {
-  UNKNOWN = "?",
-  HOLIDAY = "H",
-  ABSENT = "A",
-  PRESENT = "P",
-  LATE = "L",
-  EXCUSED = "E",
-}
-
-/**
  * logical type of an attendance status, i.e. how it will be considered for statistics and analysis.
  */
 export enum AttendanceLogicalStatus {

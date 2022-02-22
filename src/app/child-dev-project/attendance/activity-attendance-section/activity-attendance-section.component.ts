@@ -33,7 +33,7 @@ export class ActivityAttendanceSectionComponent
     },
     {
       id: "presentEvents",
-      label: $localize`:How many children are present at a meeting:Present`,
+      label: $localize`:How many children are present at a meeting|Title of table column:Present`,
       view: "ReadonlyFunction",
       additional: (e: ActivityAttendance) =>
         this.forChild

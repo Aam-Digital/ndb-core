@@ -4,6 +4,7 @@ import { AttendanceManagerComponent } from "./attendance-manager.component";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { RouterTestingModule } from "@angular/router/testing";
+import { ComingSoonDialogService } from "../../../core/coming-soon/coming-soon-dialog.service";
 
 describe("AttendanceManagerComponent", () => {
   let component: AttendanceManagerComponent;
@@ -14,6 +15,7 @@ describe("AttendanceManagerComponent", () => {
       TestBed.configureTestingModule({
         declarations: [AttendanceManagerComponent],
         imports: [MatButtonModule, MatCardModule, RouterTestingModule],
+        providers: [{ provide: ComingSoonDialogService, useValue: null }],
       }).compileComponents();
     })
   );

@@ -18,10 +18,10 @@ import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { ChildrenModule } from "../../../../child-dev-project/children/children.module";
 import { ChildrenService } from "../../../../child-dev-project/children/children.service";
 import { of } from "rxjs";
-import * as faker from "faker";
 import { EntityPermissionsService } from "../../../permissions/entity-permissions.service";
 import { AttendanceLogicalStatus } from "../../../../child-dev-project/attendance/model/attendance-status";
 import { MockSessionModule } from "../../../session/mock-session.module";
+import { faker } from "../../../demo-data/faker";
 
 const configService = new ConfigService();
 const schemaService = new EntitySchemaService();

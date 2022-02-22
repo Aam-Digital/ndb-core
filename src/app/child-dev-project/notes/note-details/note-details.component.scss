@@ -1,46 +1,24 @@
+@import "../../../../styles";
+@import "../../../utils/grid-layout";
+
 .input-medium {
   width: 100%;
   max-width: 500px;
 }
 
-.input-max {
-  width: 100%;
+.form-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.primary-section-elevated {
-  margin-left: -12px;
-  margin-right: -12px;
-
-  padding: 12px;
-
-  margin-bottom: 12px;
+.content-header {
+  @include adaptive-grid(450px);
 }
 
-.form-section-primary {
-}
-
-.form-section-secondary {
-  font-size: 0.9em;
-}
-.list-container-left {
-  max-width: 45%;
-  align-self: start;
-}
-
-.padding-container {
-  padding-right: 20px;
-  padding-left: 20px;
-}
-
-.padding-bottom {
-  padding-bottom: 15px;
-}
-
-.bottom-spacing {
-  padding-bottom: 20px;
-}
-
-.list-container-right {
-  max-width: 45%;
-  align-self: end;
+.information-body {
+  display: flex;
+  flex-direction: column;
+  gap: $standard-margin-small;
+  padding: $standard-margin-small;
 }

@@ -52,7 +52,7 @@ export class MockSessionModule {
         { provide: MockEntityMapperService, useValue: mockedEntityMapper },
         {
           provide: AnalyticsService,
-          useValue: jasmine.createSpyObj(["eventTrack"]),
+          useValue: { eventTrack: () => null },
         },
       ],
     };

@@ -15,8 +15,8 @@ import { MockSessionModule } from "../../../session/mock-session.module";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 
 describe("ListPaginatorComponent", () => {
-  let component: ListPaginatorComponent;
-  let fixture: ComponentFixture<ListPaginatorComponent>;
+  let component: ListPaginatorComponent<any>;
+  let fixture: ComponentFixture<ListPaginatorComponent<any>>;
 
   beforeEach(
     waitForAsync(() => {

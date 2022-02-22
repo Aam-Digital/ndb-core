@@ -1,6 +1,5 @@
 import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Location } from "@angular/common";
 import {
   EntityDetailsConfig,
   Panel,
@@ -49,7 +48,6 @@ export class EntityDetailsComponent {
     private entityMapperService: EntityMapperService,
     private route: ActivatedRoute,
     private router: Router,
-    private location: Location,
     private analyticsService: AnalyticsService,
     private permissionService: EntityPermissionsService,
     private entityRemoveService: EntityRemoveService,
@@ -114,19 +112,16 @@ export class EntityDetailsComponent {
 
   removeEntity() {
     const currentUrl = getUrlWithoutParams(this.router);
+    const parentUrl = currentUrl.substring(0, currentUrl.lastIndexOf("/"));
     this.entityRemoveService.remove(this.entity).subscribe(async (result) => {
       switch (result) {
         case RemoveResult.REMOVED:
-          this.navigateBack();
+          await this.router.navigate([parentUrl]);
           break;
         case RemoveResult.UNDONE:
           await this.router.navigate([currentUrl]);
       }
     });
-  }
-
-  navigateBack() {
-    this.location.back();
   }
 
   /**

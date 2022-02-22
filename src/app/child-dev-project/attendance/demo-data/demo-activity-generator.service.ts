@@ -9,7 +9,7 @@ import { User } from "../../../core/user/user";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 
 /**
- * Generate AttendanceMonth entities for the last 15 months
+ * Generate RecurringActivity entities
  * Builds upon the generated demo Child entities.
  */
 @Injectable()
