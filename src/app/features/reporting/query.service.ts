@@ -67,7 +67,7 @@ export class QueryService {
         filterByObjectAttribute: this.filterByObjectAttribute,
         getIds: this.getIds,
         getParticipantsWithAttendance: this.getParticipantsWithAttendance,
-        getAttendanceArray: this.getAttendanceArray,
+        getAttendanceArray: this.getAttendanceArray.bind(this),
         addEntities: this.addEntities.bind(this),
       },
     }).value;
@@ -272,17 +272,35 @@ export class QueryService {
     return attendedChildren;
   }
 
-  getAttendanceArray(
-    events: Note[]
-  ): { participant: string; status: EventAttendance }[] {
-    return events
-      .map((e) =>
-        e.children.map((childId) => ({
-          participant: childId,
-          status: e.getAttendance(childId),
-        }))
-      )
-      .reduce((acc, val) => acc.concat(val), []);
+  getAttendanceArray(events: Note[], includeSchool: true): AttendanceInfo[] {
+    const attendances: AttendanceInfo[] = [];
+    for (const event of events) {
+      let linkedSchoolRelations: ChildSchoolRelation[] = [];
+      if (includeSchool) {
+        const relations: ChildSchoolRelation[] = this.toArray(
+          this.entities[ChildSchoolRelation.ENTITY_TYPE]
+        );
+        linkedSchoolRelations = relations.filter(
+          (relation) =>
+            event.schools.includes(relation.schoolId) &&
+            relation.isActiveAt(event.date)
+        );
+      }
+      for (const child of event.children) {
+        const attendance: AttendanceInfo = {
+          participant: child,
+          status: event.getAttendance(child),
+        };
+        const relation = linkedSchoolRelations.find(
+          (relation) => relation.childId === child
+        );
+        if (relation) {
+          attendance.school = relation.schoolId;
+        }
+        attendances.push(attendance);
+      }
+    }
+    return attendances;
   }
 
   /**
@@ -295,3 +313,8 @@ export class QueryService {
     return entities.concat(...this.toArray(this.entities[entityType]));
   }
 }
+type AttendanceInfo = {
+  participant: string;
+  status: EventAttendance;
+  school?: string;
+};

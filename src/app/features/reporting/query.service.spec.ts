@@ -22,10 +22,18 @@ import { Note } from "../../child-dev-project/notes/model/note";
 import { genders } from "../../child-dev-project/children/model/genders";
 import { EntityConfigService } from "app/core/entity/entity-config.service";
 import { ConfigService } from "app/core/config/config.service";
+import { EventAttendance } from "../../child-dev-project/attendance/model/event-attendance";
 
 describe("QueryService", () => {
   let service: QueryService;
   let database: PouchDatabase;
+
+  const presentAttendanceStatus = defaultAttendanceStatusTypes.find(
+    (status) => status.countAs === "PRESENT"
+  );
+  const absentAttendanceStatus = defaultAttendanceStatusTypes.find(
+    (status) => status.countAs === "ABSENT"
+  );
 
   let maleChristianChild: Child;
   let femaleChristianChild: Child;
@@ -76,18 +84,22 @@ describe("QueryService", () => {
   beforeEach(async () => {
     const entityMapper = TestBed.inject(EntityMapperService);
     maleChristianChild = new Child("maleChristianChild");
+    maleChristianChild.name = "Male Christian";
     maleChristianChild.gender = genders[1];
     maleChristianChild["religion"] = "christian";
     await entityMapper.save(maleChristianChild);
     femaleChristianChild = new Child("femaleChristianChild");
+    femaleChristianChild.name = "Female Christian";
     femaleChristianChild.gender = genders[2];
     femaleChristianChild["religion"] = "christian";
     await entityMapper.save(femaleChristianChild);
     femaleMuslimChild = new Child("femaleMuslimChild");
+    femaleMuslimChild.name = "Female Muslim";
     femaleMuslimChild.gender = genders[2];
     femaleMuslimChild["religion"] = "muslim";
     await entityMapper.save(femaleMuslimChild);
     maleChild = new Child("maleChild");
+    maleChild.name = "Male";
     maleChild.gender = genders[1];
     await entityMapper.save(maleChild);
 
@@ -151,16 +163,10 @@ describe("QueryService", () => {
     lifeSkillsActivityWithoutLink.type = lifeSkills;
     await entityMapper.save(lifeSkillsActivityWithoutLink);
 
-    const presentAttendanceStatus = defaultAttendanceStatusTypes.find(
-      (status) => status.countAs === "PRESENT"
-    );
-    const absentAttendanceStatus = defaultAttendanceStatusTypes.find(
-      (status) => status.countAs === "ABSENT"
-    );
-
     twoWeeksAgoPrivateEvent = new EventNote("twoWeeksAgoPrivateEvent");
     twoWeeksAgoPrivateEvent.date = moment().subtract(2, "weeks").toDate();
     twoWeeksAgoPrivateEvent.relatesTo = privateSchoolClassActivity._id;
+    twoWeeksAgoPrivateEvent.schools = privateSchoolClassActivity.linkedGroups;
     twoWeeksAgoPrivateEvent.category = schoolClass;
     twoWeeksAgoPrivateEvent.addChild(maleChild.getId());
     twoWeeksAgoPrivateEvent.getAttendance(
@@ -175,16 +181,18 @@ describe("QueryService", () => {
     threeDaysAgoPrivateEvent = new EventNote("threeDaysAgoPrivateEvent");
     threeDaysAgoPrivateEvent.date = moment().subtract(3, "days").toDate();
     threeDaysAgoPrivateEvent.relatesTo = privateSchoolClassActivity._id;
+    threeDaysAgoPrivateEvent.schools = privateSchoolClassActivity.linkedGroups;
     threeDaysAgoPrivateEvent.category = schoolClass;
     threeDaysAgoPrivateEvent.addChild(maleChild.getId());
     threeDaysAgoPrivateEvent.getAttendance(
       maleChild.getId()
-    ).status = absentAttendanceStatus;
+    ).status = presentAttendanceStatus;
     await entityMapper.save(threeDaysAgoPrivateEvent);
 
     sixDaysAgoNormalEvent = new EventNote("sixDaysAgoNormalEvent");
     sixDaysAgoNormalEvent.date = moment().subtract(6, "days").toDate();
     sixDaysAgoNormalEvent.relatesTo = normalLifeSkillsActivity._id;
+    sixDaysAgoNormalEvent.schools = normalLifeSkillsActivity.linkedGroups;
     sixDaysAgoNormalEvent.category = lifeSkills;
     sixDaysAgoNormalEvent.addChild(femaleMuslimChild.getId());
     sixDaysAgoNormalEvent.getAttendance(
@@ -195,6 +203,8 @@ describe("QueryService", () => {
     todayEventWithoutSchool = new EventNote("todayEventWithoutSchool");
     todayEventWithoutSchool.date = new Date();
     todayEventWithoutSchool.relatesTo = lifeSkillsActivityWithoutLink._id;
+    todayEventWithoutSchool.schools =
+      lifeSkillsActivityWithoutLink.linkedGroups;
     todayEventWithoutSchool.category = lifeSkills;
     todayEventWithoutSchool.addChild(femaleChristianChild.getId());
     todayEventWithoutSchool.getAttendance(
@@ -455,25 +465,61 @@ describe("QueryService", () => {
 
   it("should do addPrefix as part of toEntities if optional parameter is given", async () => {
     const queryWithAddPrefix = `
-      ${School.ENTITY_TYPE}:toArray[*privateSchool=true]
+      ${School.ENTITY_TYPE}:toArray
       :getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)
       .childId:addPrefix(${Child.ENTITY_TYPE}):toEntities.name`;
     const queryWithoutAddPrefix = `
-      ${School.ENTITY_TYPE}:toArray[*privateSchool=true]
+      ${School.ENTITY_TYPE}:toArray
       :getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)
       .childId:toEntities(${Child.ENTITY_TYPE}).name`;
 
-    const resultWithAddPrefix = await service.queryData(
-      queryWithAddPrefix,
-      null,
-      null
-    );
+    const resultWithAddPrefix = await service.queryData(queryWithAddPrefix);
     const resultWithoutAddPrefix = await service.queryData(
-      queryWithoutAddPrefix,
-      null,
-      null
+      queryWithoutAddPrefix
     );
 
+    expect(resultWithoutAddPrefix).toHaveSize(3);
     expect(resultWithoutAddPrefix).toEqual(resultWithAddPrefix);
+  });
+
+  it("should create an attendance array with the current school", async () => {
+    const attendanceArrayQuery = `${EventNote.ENTITY_TYPE}:toArray:getAttendanceArray(true)`;
+
+    const attendanceResult = await service.queryData(attendanceArrayQuery);
+
+    expect(attendanceResult).toContain({
+      participant: "maleChild",
+      school: "privateSchool",
+      status: new EventAttendance(absentAttendanceStatus),
+    });
+    expect(attendanceResult).toContain({
+      participant: "femaleChristianChild",
+      status: new EventAttendance(presentAttendanceStatus),
+    });
+    expect(attendanceResult).toContain({
+      participant: "maleChild",
+      school: "privateSchool",
+      status: new EventAttendance(presentAttendanceStatus),
+    });
+    expect(attendanceResult).toContain({
+      participant: "femaleMuslimChild",
+      status: new EventAttendance(presentAttendanceStatus),
+    });
+    expect(attendanceResult).toContain({
+      participant: "femaleChristianChild",
+      status: new EventAttendance(presentAttendanceStatus),
+    });
+    expect(attendanceResult).toContain({
+      participant: "maleChild",
+      status: new EventAttendance(absentAttendanceStatus),
+    });
+    expect(attendanceResult).toContain({
+      participant: "femaleChristianChild",
+      status: new EventAttendance(absentAttendanceStatus),
+    });
+    expect(attendanceResult).toContain({
+      participant: "maleChristianChild",
+      status: new EventAttendance(presentAttendanceStatus),
+    });
   });
 });
