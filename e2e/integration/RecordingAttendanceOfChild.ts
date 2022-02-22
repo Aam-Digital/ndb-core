@@ -31,7 +31,7 @@ describe("Scenario: Recording attendance of a child - E2E test", () => {
     cy.get(".navigation-bar > :nth-child(1)").click();
     cy.get(".child-block").click();
     cy.get("#mat-tab-label-0-2").click();
-    cy.get(":nth-child(3) > .attendance-P").should(
+    cy.get('.attendance-P').should(
       "have.css",
       "background-color",
       "rgb(200, 230, 201)"
