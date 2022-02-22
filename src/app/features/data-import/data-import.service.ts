@@ -80,7 +80,7 @@ export class DataImportService {
 
     const snackBarRef = this.snackBar.open(
       $localize`Import completed?`,
-      "Undo",
+      $localize`Undo`,
       {
         duration: 8000,
       }
