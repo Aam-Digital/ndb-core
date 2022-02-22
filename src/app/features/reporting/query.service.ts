@@ -273,6 +273,12 @@ export class QueryService {
     return attendedChildren;
   }
 
+  /**
+   * Transforms a list of notes or event-notes into a flattened list of participants and their attendance for each event.
+   * @param events the input list of type Note or EventNote
+   * @param includeSchool (optional) also include the school to which a participant belongs
+   * @returns AttendanceInfo[] a list holding information about the attendance of a single participant
+   */
   getAttendanceArray(events: Note[], includeSchool = true): AttendanceInfo[] {
     const attendances: AttendanceInfo[] = [];
     for (const event of events) {
@@ -304,6 +310,11 @@ export class QueryService {
     return attendances;
   }
 
+  /**
+   * Transforms a list of attendances infos into an aggregated report for each participant
+   * @param attendances an array of AttendanceInfo objects
+   * @returns AttendanceReport[] for each participant the ID, the number of present and total absences as well as the attendance percentage.
+   */
   getAttendanceReport(attendances: AttendanceInfo[]): AttendanceReport[] {
     const participantMap: { [key in string]: AttendanceReport } = {};
     attendances.forEach((attendance) => {
@@ -339,6 +350,7 @@ export class QueryService {
     return entities.concat(...this.toArray(this.entities[entityType]));
   }
 }
+
 export type AttendanceInfo = {
   participant: string;
   status: EventAttendance;

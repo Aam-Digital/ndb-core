@@ -57,10 +57,17 @@ export class ChildSchoolRelation extends Entity {
   })
   result: number;
 
+  /**
+   * Returns true if this relation is currently active
+   */
   get isActive(): boolean {
     return this.isActiveAt(new Date());
   }
 
+  /**
+   * Checks whether this relation was active on a specific date
+   * @param date on which the active status should be checked
+   */
   isActiveAt(date: Date): boolean {
     return (
       this.start &&
