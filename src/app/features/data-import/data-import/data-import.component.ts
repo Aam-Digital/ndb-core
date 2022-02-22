@@ -25,7 +25,7 @@ export class DataImportComponent {
   fileNameForm = this.formBuilder.group({
     fileName: ["", Validators.required],
   });
-  csvFile: ParseResult;
+  private csvFile: ParseResult;
 
   entityMap = DynamicEntityService.ENTITY_MAP;
   entityForm = this.formBuilder.group({ entity: ["", Validators.required] });
@@ -42,10 +42,10 @@ export class DataImportComponent {
   });
 
   columnMappingForm = new FormGroup({});
-  properties: string[] = [];
+  private properties: string[] = [];
   filteredProperties = new BehaviorSubject<string[]>([]);
 
-  @ViewChild(MatStepper) stepper: MatStepper;
+  @ViewChild(MatStepper) private stepper: MatStepper;
 
   constructor(
     private dataImportService: DataImportService,
@@ -117,13 +117,12 @@ export class DataImportComponent {
   }
 
   importSelectedFile(): Promise<void> {
-    if (this.csvFile === undefined) {
-      return;
+    if (this.csvFile) {
+      return this.dataImportService.handleCsvImport(
+        this.csvFile,
+        this.createImportMetaData()
+      );
     }
-    return this.dataImportService.handleCsvImport(
-      this.csvFile,
-      this.createImportMetaData()
-    );
   }
 
   private createImportMetaData(): ImportMetaData {

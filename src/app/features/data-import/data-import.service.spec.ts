@@ -212,7 +212,6 @@ describe("DataImportService", () => {
       addEventListener: (str: string, fun: () => any) => fun(),
       readAsText: () => {},
     };
-    spyOn(fileReader, "readAsText");
     // mock FileReader constructor
     spyOn(window, "FileReader").and.returnValue(fileReader);
     return fileReader;
