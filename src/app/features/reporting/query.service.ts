@@ -68,6 +68,7 @@ export class QueryService {
         getIds: this.getIds,
         getParticipantsWithAttendance: this.getParticipantsWithAttendance,
         getAttendanceArray: this.getAttendanceArray.bind(this),
+        getAttendanceReport: this.getAttendanceReport,
         addEntities: this.addEntities.bind(this),
       },
     }).value;
@@ -272,7 +273,7 @@ export class QueryService {
     return attendedChildren;
   }
 
-  getAttendanceArray(events: Note[], includeSchool: true): AttendanceInfo[] {
+  getAttendanceArray(events: Note[], includeSchool = true): AttendanceInfo[] {
     const attendances: AttendanceInfo[] = [];
     for (const event of events) {
       let linkedSchoolRelations: ChildSchoolRelation[] = [];
@@ -303,6 +304,31 @@ export class QueryService {
     return attendances;
   }
 
+  getAttendanceReport(attendances: AttendanceInfo[]): AttendanceReport[] {
+    const participantMap: { [key in string]: AttendanceReport } = {};
+    attendances.forEach((attendance) => {
+      if (!participantMap.hasOwnProperty(attendance.participant)) {
+        participantMap[attendance.participant] = {
+          participant: attendance.participant,
+          total: 0,
+          present: 0,
+          percentage: 0,
+        };
+      }
+      const report = participantMap[attendance.participant];
+      if (attendance.status.status.countAs === "PRESENT") {
+        report.present++;
+      }
+      if (attendance.status.status.countAs !== "IGNORE") {
+        report.total++;
+      }
+      if (report.total > 0) {
+        report.percentage = report.present / report.total;
+      }
+    });
+    return Object.values(participantMap);
+  }
+
   /**
    * Adds all entities of the given type to the input array
    * @param entities the array before
@@ -313,8 +339,15 @@ export class QueryService {
     return entities.concat(...this.toArray(this.entities[entityType]));
   }
 }
-type AttendanceInfo = {
+export type AttendanceInfo = {
   participant: string;
   status: EventAttendance;
   school?: string;
+};
+
+export type AttendanceReport = {
+  participant: string;
+  total: number;
+  present: number;
+  percentage: number;
 };

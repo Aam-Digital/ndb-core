@@ -1,6 +1,10 @@
 import { TestBed } from "@angular/core/testing";
 
-import { QueryService } from "./query.service";
+import {
+  AttendanceInfo,
+  AttendanceReport,
+  QueryService,
+} from "./query.service";
 import { Child } from "../../child-dev-project/children/model/child";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { School } from "../../child-dev-project/schools/model/school";
@@ -480,7 +484,9 @@ describe("QueryService", () => {
   it("should create an attendance array with the current school", async () => {
     const attendanceArrayQuery = `${EventNote.ENTITY_TYPE}:toArray:getAttendanceArray(true)`;
 
-    const attendanceResult = await service.queryData(attendanceArrayQuery);
+    const attendanceResult: AttendanceInfo = await service.queryData(
+      attendanceArrayQuery
+    );
 
     expect(attendanceResult).toContain({
       participant: "maleChild",
@@ -515,6 +521,37 @@ describe("QueryService", () => {
     expect(attendanceResult).toContain({
       participant: "maleChristianChild",
       status: new EventAttendance(presentAttendanceStatus),
+    });
+  });
+
+  it("should create a attendance report with percentages", async () => {
+    const reportQuery = `${EventNote.ENTITY_TYPE}:toArray:getAttendanceArray:getAttendanceReport`;
+
+    const report: AttendanceReport[] = await service.queryData(reportQuery);
+
+    expect(report).toContain({
+      participant: "maleChristianChild",
+      present: 1,
+      total: 1,
+      percentage: 1,
+    });
+    expect(report).toContain({
+      participant: "femaleChristianChild",
+      present: 2,
+      total: 3,
+      percentage: 2 / 3,
+    });
+    expect(report).toContain({
+      participant: "femaleMuslimChild",
+      present: 1,
+      total: 1,
+      percentage: 1,
+    });
+    expect(report).toContain({
+      participant: "maleChild",
+      present: 1,
+      total: 3,
+      percentage: 1 / 3,
     });
   });
 });
