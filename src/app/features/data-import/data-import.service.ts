@@ -140,7 +140,7 @@ export class DataImportService {
       importMeta.entityType
     ).schema;
     Object.keys(row)
-      .filter((col) => importMeta.hasOwnProperty(col))
+      .filter((col) => importMeta.columnMap[col])
       .forEach((col) => {
         const property = importMeta.columnMap[col];
         const propertyValue = this.getPropertyValue(
