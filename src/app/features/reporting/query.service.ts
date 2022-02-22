@@ -282,12 +282,12 @@ export class QueryService {
   getAttendanceArray(events: Note[], includeSchool = true): AttendanceInfo[] {
     const attendances: AttendanceInfo[] = [];
     for (const event of events) {
-      let linkedSchoolRelations: ChildSchoolRelation[] = [];
+      let linkedRelations: ChildSchoolRelation[] = [];
       if (includeSchool) {
         const relations: ChildSchoolRelation[] = this.toArray(
           this.entities[ChildSchoolRelation.ENTITY_TYPE]
         );
-        linkedSchoolRelations = relations.filter(
+        linkedRelations = relations.filter(
           (relation) =>
             event.schools.includes(relation.schoolId) &&
             relation.isActiveAt(event.date)
@@ -298,9 +298,7 @@ export class QueryService {
           participant: child,
           status: event.getAttendance(child),
         };
-        const relation = linkedSchoolRelations.find(
-          (relation) => relation.childId === child
-        );
+        const relation = linkedRelations.find((rel) => rel.childId === child);
         if (relation) {
           attendance.school = relation.schoolId;
         }
