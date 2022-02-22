@@ -1,6 +1,13 @@
-<!-- <button id="PWAInstallButton" style='display:none'>Install App</button> -->
 
-<button *ngIf=" installText2==='Install directly' " mat-icon-button id="PWAInstallButton" style='display:none'>
+<button           
+    mat-button
+    routerLink="user"
+    i18n="Install the app on the device"
+    class="user-nav-button user-nav-button-first"
+    id="PWAInstallButton"
+    style='display:none; background-color: #ff9800'
+    fxFlex
+    >
+    <fa-icon icon="cloud-download-alt" class="nav-icon"></fa-icon>
     Install App
 </button>
-<!-- <fa-icon icon="wrench" aria-label="configure"></fa-icon> -->
