@@ -349,15 +349,15 @@ export class QueryService {
   }
 }
 
-export type AttendanceInfo = {
+export interface AttendanceInfo {
   participant: string;
   status: EventAttendance;
   school?: string;
-};
+}
 
-export type AttendanceReport = {
+export interface AttendanceReport {
   participant: string;
   total: number;
   present: number;
   percentage: number;
-};
+}
