@@ -130,9 +130,7 @@ export class ExportService {
     const value = await this.getValueForQuery(exportColumnConfig, object);
 
     if (!exportColumnConfig.subQueries) {
-      const result = {};
-      result[label] = value;
-      return [result];
+      return [{ [label]: value }];
     } else if (value.length === 0) {
       return this.generateExportRows({}, exportColumnConfig.subQueries);
     } else {
