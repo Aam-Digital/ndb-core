@@ -321,7 +321,7 @@ export class QueryService {
           participant: attendance.participant,
           total: 0,
           present: 0,
-          percentage: 0,
+          percentage: "",
         };
       }
       const report = participantMap[attendance.participant];
@@ -332,7 +332,7 @@ export class QueryService {
         report.total++;
       }
       if (report.total > 0) {
-        report.percentage = report.present / report.total;
+        report.percentage = (report.present / report.total).toFixed(2);
       }
     });
     return Object.values(participantMap);
@@ -359,5 +359,5 @@ export interface AttendanceReport {
   participant: string;
   total: number;
   present: number;
-  percentage: number;
+  percentage: string;
 }
