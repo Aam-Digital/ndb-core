@@ -40,6 +40,10 @@ export class ExportService {
     data: any[],
     config: ExportColumnConfig[] = this.generateExportConfigFromData(data)
   ): Promise<string> {
+    if (!data) {
+      const newData = await this.queryService.queryData(config[0].query);
+      return this.createCsv(newData, config[0].subQueries);
+    }
     const flattenedExportRows: ExportRow[] = [];
     for (const dataRow of data) {
       const extendedExportableRows = await this.generateExportRows(
