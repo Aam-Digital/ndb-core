@@ -65,6 +65,11 @@ export const defaultJsonConfig = {
         "link": "/report"
       },
       {
+        "name": $localize`:Menu item:Exports`,
+        "icon": "file-export",
+        "link": "/export"
+      },
+      {
         "name": $localize`:Menu item:Database Conflicts`,
         "icon": "wrench",
         "link": "/admin/conflicts"
@@ -254,7 +259,7 @@ export const defaultJsonConfig = {
         { "label": "event type", "query": "category" },
         { "label": "event description", "query": "text" },
         {
-          "query": ":getAttendanceArray",
+          "query": ":getAttendanceArray(true)",
           "subQueries": [
             {
               "query": ".participant:toEntities(Child)",
@@ -269,6 +274,13 @@ export const defaultJsonConfig = {
               "label": "status",
               "query": ".status._status.id",
             },
+            {
+              "query": ".school:toEntities(School)",
+              "subQueries": [
+                { "label": "school_name", "query": "name" },
+                { "label": "school_id", "query": "entityId" }
+              ]
+            }
           ],
         },
       ]
@@ -823,6 +835,39 @@ export const defaultJsonConfig = {
             }
           ],
         }
+      ]
+    }
+  },
+  "view:export": {
+    "component": "Exporting",
+    "config": {
+      "reports": [
+        {
+          "title": $localize`:Name of a report:Attendance Report`,
+          "aggregationDefinitions": [
+            {
+              "query": `${EventNote.ENTITY_TYPE}:toArray[* date >= ? & date <= ?]:getAttendanceArray:getAttendanceReport`,
+              "subQueries": [
+                {
+                "label": $localize`:Name of a column of a report:Name`,
+                "query": `.participant:toEntities(Child).name`
+              },
+                {
+                  "label": $localize`:Name of a column of a report:Total`,
+                  "query": `total`
+                },
+                {
+                  "label": $localize`:Name of a column of a report:Present`,
+                  "query": `present`
+                },
+                {
+                  "label": $localize`:Name of a column of a report:Rate`,
+                  "query": `percentage`
+                }
+              ]
+            },
+          ],
+        },
       ]
     }
   },
