@@ -15,7 +15,8 @@ import { ExportService } from "../../../core/export/export-service/export.servic
 export class ExportingComponent implements OnInit {
   availableReports: ReportConfig[];
   loading = false;
-  result: any;
+  result: any[];
+  columns: string[];
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -31,9 +32,14 @@ export class ExportingComponent implements OnInit {
   }
 
   async createExport(report: ReportConfig, from: Date, to: Date) {
-    this.result = await this.exportService.createCsv(
+    this.result = await this.exportService.runExportQuery(
       undefined,
-      report.aggregationDefinitions
+      report.aggregationDefinitions,
+      from,
+      to
     );
+    if (this.result.length > 0) {
+      this.columns = Object.keys(this.result[0]);
+    }
   }
 }
