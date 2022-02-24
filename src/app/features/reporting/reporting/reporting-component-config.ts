@@ -1,4 +1,5 @@
 import { Aggregation } from "../reporting.service";
+import { ExportColumnConfig } from "../../../core/export/export-service/export-column-config";
 
 /**
  * The config object format that can be set for this component in the config database
@@ -17,5 +18,5 @@ export interface ReportConfig {
   title: string;
 
   /** the definitions to calculate the report's aggregations */
-  aggregationDefinitions?: Aggregation[];
+  aggregationDefinitions?: Aggregation[] | ExportColumnConfig[];
 }

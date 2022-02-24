@@ -83,7 +83,7 @@ describe("ReportingComponent", () => {
 
     expect(mockReportingService.calculateReport).toHaveBeenCalledWith(
       testReport.aggregationDefinitions,
-      undefined,
+      jasmine.any(Date),
       jasmine.any(Date)
     );
   }));

@@ -21,4 +21,13 @@ describe("SelectReportComponent", () => {
   it("should create", () => {
     expect(component).toBeTruthy();
   });
+
+  it("should select the first report if only one exists", () => {
+    const report = { title: "someReport", aggregationDefinitions: [] };
+    component.reports = [report];
+
+    component.ngOnChanges({ reports: undefined });
+
+    expect(component.selectedReport).toBe(report);
+  });
 });

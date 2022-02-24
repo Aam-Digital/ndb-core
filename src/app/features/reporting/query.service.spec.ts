@@ -533,25 +533,25 @@ describe("QueryService", () => {
       participant: "maleChristianChild",
       present: 1,
       total: 1,
-      percentage: 1,
+      percentage: "1.00",
     });
     expect(report).toContain({
       participant: "femaleChristianChild",
       present: 2,
       total: 3,
-      percentage: 2 / 3,
+      percentage: "0.67",
     });
     expect(report).toContain({
       participant: "femaleMuslimChild",
       present: 1,
       total: 1,
-      percentage: 1,
+      percentage: "1.00",
     });
     expect(report).toContain({
       participant: "maleChild",
       present: 1,
       total: 3,
-      percentage: 1 / 3,
+      percentage: "0.33",
     });
   });
 });
