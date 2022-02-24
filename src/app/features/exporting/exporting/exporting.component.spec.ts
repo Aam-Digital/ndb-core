@@ -7,7 +7,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { ActivatedRoute } from "@angular/router";
 import { BehaviorSubject } from "rxjs";
 import { RouterTestingModule } from "@angular/router/testing";
-import { ReportingComponentConfig, } from "../../reporting/reporting/reporting-component-config";
+import { ReportingComponentConfig } from "../../reporting/reporting/reporting-component-config";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 import { MatNativeDateModule } from "@angular/material/core";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
