@@ -1,0 +1,10 @@
+<app-view-title i18n="Title for component the allows to export certain data tables">
+  Exports
+</app-view-title>
+
+<app-select-report
+  [reports]="availableReports"
+  [loading]="loading"
+  (calculateClick)="createExport($event.report, $event.from, $event.to)"
+  [exportableData]="result"
+></app-select-report>

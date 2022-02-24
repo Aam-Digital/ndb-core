@@ -39,5 +39,6 @@ import { SelectReportComponent } from "./reporting/select-report/select-report.c
     Angulartics2Module,
     ViewModule,
   ],
+  exports: [SelectReportComponent],
 })
 export class ReportingModule {}

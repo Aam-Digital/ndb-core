@@ -73,14 +73,9 @@ describe("ReportingComponent", () => {
   });
 
   it("should call the reporting service with the aggregation config", fakeAsync(() => {
-    const aggregationConfig: ReportingComponentConfig = {
-      reports: [testReport],
-    };
-    mockRouteData.next({ config: aggregationConfig });
-
     expect(component.loading).toBeFalsy();
 
-    component.calculateResults();
+    component.calculateResults(testReport, new Date(), new Date());
 
     expect(component.loading).toBeTrue();
     tick();
@@ -94,7 +89,6 @@ describe("ReportingComponent", () => {
   }));
 
   it("should display the report results", fakeAsync(() => {
-    component.selectedReport = testReport;
     const results: ReportRow[] = [
       {
         header: { label: "test label", groupedBy: [], result: 1 },
@@ -103,14 +97,13 @@ describe("ReportingComponent", () => {
     ];
     mockReportingService.calculateReport.and.resolveTo(results);
 
-    component.calculateResults();
+    component.calculateResults(testReport, new Date(), new Date());
 
     tick();
     expect(component.results).toEqual(results);
   }));
 
   it("should create a table that can be exported", fakeAsync(() => {
-    component.selectedReport = testReport;
     const schoolClass = defaultInteractionTypes.find(
       (it) => it.id === "SCHOOL_CLASS"
     );
@@ -183,7 +176,7 @@ describe("ReportingComponent", () => {
       },
     ]);
 
-    component.calculateResults();
+    component.calculateResults(testReport, new Date(), new Date());
     tick();
 
     expect(component.exportableTable).toEqual([

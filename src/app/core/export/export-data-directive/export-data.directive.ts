@@ -68,10 +68,14 @@ export class ExportDataDirective {
         result = this.exportService.createJson(this.data); // TODO: support exportConfig for json format
         return new Blob([result], { type: "application/json" });
       case "csv":
-        result = await this.exportService.createCsv(
-          this.data,
-          this.exportConfig
-        );
+        if (typeof this.data === "string") {
+          result = this.data;
+        } else {
+          result = await this.exportService.createCsv(
+            this.data,
+            this.exportConfig
+          );
+        }
         return new Blob([result], { type: "text/csv" });
       default:
         console.warn("Not supported format:", this.format);

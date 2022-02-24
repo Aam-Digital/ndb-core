@@ -16,7 +16,7 @@ import { ReportConfig } from "../reporting-component-config";
 export class SelectReportComponent implements OnChanges {
   @Input() reports: ReportConfig[];
   @Input() loading: boolean;
-  @Input() exportableTable: { label: string; result: any }[];
+  @Input() exportableData: any;
   @Output() calculateClick = new EventEmitter<CalculateReportOptions>();
 
   selectedReport: ReportConfig;
