@@ -24,10 +24,11 @@ export class SelectReportComponent implements OnChanges {
   toDate: Date;
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.hasOwnProperty("reports"))
+    if (changes.hasOwnProperty("reports")) {
       if (this.reports?.length === 1) {
         this.selectedReport = this.reports[0];
       }
+    }
   }
 }
 

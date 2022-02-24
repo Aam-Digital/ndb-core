@@ -32,8 +32,10 @@ export class ExportService {
   /**
    * Creates a CSV string of the input data
    *
-   * @param data an array of elements
+   * @param data (Optional) an array of elements. If not provided, the first query in `config` will be used to get the data.
    * @param config (Optional) config specifying which fields should be exported
+   * @param from (Optional) limits the data which is fetched from the database and is also available inside the query. If not provided, all data is fetched.
+   * @param to (Optional) same as from.If not provided, today is used.
    * @returns string a valid CSV string of the input data
    */
   async createCsv(
@@ -44,13 +46,27 @@ export class ExportService {
   ): Promise<string> {
     const readableExportRow = await this.runExportQuery(data, config, from, to);
 
-    return this.papa.unparse(
-      { data: readableExportRow },
-      { quotes: true, header: true, newline: ExportService.SEPARATOR_ROW }
-    );
+    return this.papa.unparse(readableExportRow, {
+      quotes: true,
+      header: true,
+      newline: ExportService.SEPARATOR_ROW,
+    });
   }
 
-  async runExportQuery(data: any[], config: ExportColumnConfig[], from: Date, to: Date): Promise<any[]> {
+  /**
+   * Creates a dataset with the provided values that can be used for a simple table or export.
+   * @param data (Optional) an array of elements. If not provided, the first query in `config` will be used to get the data.
+   * @param config (Optional) config specifying which fields should be exported
+   * @param from (Optional) limits the data which is fetched from the database and is also available inside the query. If not provided, all data is fetched.
+   * @param to (Optional) same as from.If not provided, today is used.
+   * @returns array with the result of the queries and sub queries
+   */
+  async runExportQuery(
+    data: any[],
+    config: ExportColumnConfig[],
+    from: Date,
+    to: Date
+  ): Promise<any[]> {
     if (!data) {
       const newData = await this.queryService.queryData(
         config[0].query,
@@ -110,6 +126,8 @@ export class ExportService {
    * Generate one or more export row objects from the given data object and config.
    * @param object A single data object to be exported as one or more export row objects
    * @param config
+   * @param from
+   * @param to
    * @returns array of one or more export row objects (as simple {key: value})
    * @private
    */
@@ -140,6 +158,8 @@ export class ExportService {
    * Generate one or more (partial) export row objects from a single property of the data object
    * @param object
    * @param exportColumnConfig
+   * @param from
+   * @param to
    * @private
    */
   private async getExportRowsForColumn(
