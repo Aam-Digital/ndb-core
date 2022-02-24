@@ -293,6 +293,47 @@ describe("ExportService", () => {
     ]);
   });
 
+  it("should not omit rows where the subQueries are run on an empty array", async () => {
+    const childWithoutSchool = await createChildInDB("child without school");
+    const childWithSchool = await createChildInDB("child with school");
+    const school = await createSchoolInDB("test school", [childWithSchool]);
+    const note = await createNoteInDB(
+      "Note",
+      [childWithoutSchool, childWithSchool],
+      ["PRESENT", "ABSENT"]
+    );
+    note.schools = [school.getId()];
+    await db.put(note);
+
+    const exportConfig: ExportColumnConfig[] = [
+      {
+        query: ":getAttendanceArray(true)",
+        subQueries: [
+          {
+            label: "participant",
+            query: ".participant:toEntities(Child).name",
+          },
+          {
+            query: ".school:toEntities(School)",
+            subQueries: [
+              { label: "Name", query: "name" },
+              { label: "School ID", query: "entityId" },
+            ],
+          },
+        ],
+      },
+    ];
+
+    const result = await service.createCsv([note], exportConfig);
+
+    const resultRows = result.split(ExportService.SEPARATOR_ROW);
+    expect(resultRows).toEqual([
+      '"participant","Name","School ID"',
+      '"child without school","",""',
+      `"child with school","${school.name}","${school.getId()}"`,
+    ]);
+  });
+
   async function createChildInDB(name: string): Promise<Child> {
     const child = new Child();
     child.name = name;
@@ -332,6 +373,7 @@ describe("ExportService", () => {
       const childSchoolRel = new ChildSchoolRelation();
       childSchoolRel.childId = child.getId();
       childSchoolRel.schoolId = school.getId();
+      childSchoolRel.start = new Date();
       await db.put(childSchoolRel);
     }
 

@@ -133,6 +133,8 @@ export class ExportService {
       const result = {};
       result[label] = value;
       return [result];
+    } else if (value.length === 0) {
+      return this.generateExportRows({}, exportColumnConfig.subQueries);
     } else {
       const additionalRows: ExportRow[] = [];
       for (const v of value) {
@@ -166,7 +168,7 @@ export class ExportService {
 
   /**
    * Combine two arrays of export row objects.
-   * Every additional row is merge with every row of the first array (combining properties),
+   * Every additional row is merged with every row of the first array (combining properties),
    * resulting in n*m export rows.
    *
    * @param exportRows
