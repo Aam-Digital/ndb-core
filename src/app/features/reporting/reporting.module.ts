@@ -17,9 +17,10 @@ import { FlexModule } from "@angular/flex-layout";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Angulartics2Module } from "angulartics2";
 import { ViewModule } from "../../core/view/view.module";
+import { SelectReportComponent } from "./reporting/select-report/select-report.component";
 
 @NgModule({
-  declarations: [ReportingComponent, ReportRowComponent],
+  declarations: [ReportingComponent, ReportRowComponent, SelectReportComponent],
   imports: [
     CommonModule,
     MatButtonModule,

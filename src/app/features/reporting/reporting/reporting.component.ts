@@ -20,11 +20,8 @@ import { RouteData } from "../../../core/view/dynamic-routing/view-config.interf
 })
 export class ReportingComponent implements OnInit {
   availableReports: ReportConfig[];
-  selectedReport: ReportConfig;
 
   results: ReportRow[];
-  fromDate: Date;
-  toDate: Date;
   exportableTable: { label: string; result: any }[];
 
   loading: boolean;
@@ -38,22 +35,23 @@ export class ReportingComponent implements OnInit {
     this.activatedRoute.data.subscribe(
       (data: RouteData<ReportingComponentConfig>) => {
         this.availableReports = data.config?.reports;
-        if (this.availableReports?.length === 1) {
-          this.selectedReport = this.availableReports[0];
-        }
       }
     );
   }
 
-  async calculateResults() {
+  async calculateResults(
+    selectedReport: ReportConfig,
+    fromDate: Date,
+    toDate: Date
+  ) {
     this.loading = true;
 
     // Add one day because to date is exclusive
-    const dayAfterToDate = moment(this.toDate).add(1, "day").toDate();
+    const dayAfterToDate = moment(toDate).add(1, "day").toDate();
 
     this.results = await this.reportingService.calculateReport(
-      this.selectedReport.aggregationDefinitions,
-      this.fromDate,
+      selectedReport.aggregationDefinitions,
+      fromDate,
       dayAfterToDate
     );
     this.exportableTable = this.flattenReportRows();
