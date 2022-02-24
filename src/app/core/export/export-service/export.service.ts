@@ -38,23 +38,41 @@ export class ExportService {
    */
   async createCsv(
     data: any[],
-    config: ExportColumnConfig[] = this.generateExportConfigFromData(data)
+    config: ExportColumnConfig[] = this.generateExportConfigFromData(data),
+    from?: Date,
+    to?: Date
   ): Promise<string> {
+    const readableExportRow = await this.runExportQuery(data, config, from, to);
+
+    return this.papa.unparse(
+      { data: readableExportRow },
+      { quotes: true, header: true, newline: ExportService.SEPARATOR_ROW }
+    );
+  }
+
+  async runExportQuery(data: any[], config: ExportColumnConfig[], from: Date, to: Date): Promise<any[]> {
     if (!data) {
-      const newData = await this.queryService.queryData(config[0].query);
-      return this.createCsv(newData, config[0].subQueries);
+      const newData = await this.queryService.queryData(
+        config[0].query,
+        from,
+        to
+      );
+      return this.runExportQuery(newData, config[0].subQueries, from, to);
     }
+
     const flattenedExportRows: ExportRow[] = [];
     for (const dataRow of data) {
       const extendedExportableRows = await this.generateExportRows(
         dataRow,
-        config
+        config,
+        from,
+        to
       );
       flattenedExportRows.push(...extendedExportableRows);
     }
 
     // Apply entitySortingDataAccessor to transform values into human readable format
-    const readableExportRow = flattenedExportRows.map((row) => {
+    return flattenedExportRows.map((row) => {
       const readableRow = {};
       Object.keys(row).forEach((key) => {
         if (row[key] instanceof Date) {
@@ -66,11 +84,6 @@ export class ExportService {
       });
       return readableRow;
     });
-
-    return this.papa.unparse(
-      { data: readableExportRow },
-      { quotes: true, header: true, newline: ExportService.SEPARATOR_ROW }
-    );
   }
 
   /**
@@ -102,13 +115,17 @@ export class ExportService {
    */
   private async generateExportRows(
     object: Object,
-    config: ExportColumnConfig[]
+    config: ExportColumnConfig[],
+    from: Date,
+    to: Date
   ): Promise<ExportRow[]> {
     let exportRows: ExportRow[] = [{}];
     for (const exportColumnConfig of config) {
       const partialExportObjects: ExportRow[] = await this.getExportRowsForColumn(
         object,
-        exportColumnConfig
+        exportColumnConfig,
+        from,
+        to
       );
 
       exportRows = this.mergePartialExportRows(
@@ -127,22 +144,36 @@ export class ExportService {
    */
   private async getExportRowsForColumn(
     object: Object,
-    exportColumnConfig: ExportColumnConfig
+    exportColumnConfig: ExportColumnConfig,
+    from: Date,
+    to: Date
   ): Promise<ExportRow[]> {
     const label =
       exportColumnConfig.label ?? exportColumnConfig.query.replace(".", "");
-    const value = await this.getValueForQuery(exportColumnConfig, object);
+    const value = await this.getValueForQuery(
+      exportColumnConfig,
+      object,
+      from,
+      to
+    );
 
     if (!exportColumnConfig.subQueries) {
       return [{ [label]: value }];
     } else if (value.length === 0) {
-      return this.generateExportRows({}, exportColumnConfig.subQueries);
+      return this.generateExportRows(
+        {},
+        exportColumnConfig.subQueries,
+        from,
+        to
+      );
     } else {
       const additionalRows: ExportRow[] = [];
       for (const v of value) {
         const addRows = await this.generateExportRows(
           v,
-          exportColumnConfig.subQueries
+          exportColumnConfig.subQueries,
+          from,
+          to
         );
         additionalRows.push(...addRows);
       }
@@ -152,12 +183,14 @@ export class ExportService {
 
   private async getValueForQuery(
     exportColumnConfig: ExportColumnConfig,
-    object: Object
+    object: Object,
+    from: Date,
+    to: Date
   ): Promise<any> {
     const value = await this.queryService.queryData(
       exportColumnConfig.query,
-      null,
-      null,
+      from,
+      to,
       [object]
     );
 

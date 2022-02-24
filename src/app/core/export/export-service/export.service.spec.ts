@@ -364,6 +364,65 @@ describe("ExportService", () => {
     ]);
   });
 
+  it("should support time spans for data export", async () => {
+    const child = await createChildInDB("Child");
+    const oneWeekAgoNote = await createNoteInDB("one week ago", [child]);
+    oneWeekAgoNote.date = moment().subtract(1, "week").toDate();
+    await entityMapper.save(oneWeekAgoNote);
+    const yesterdayNote = await createNoteInDB("yesterday", [child]);
+    yesterdayNote.date = moment().subtract(1, "day").toDate();
+    await entityMapper.save(yesterdayNote);
+    const todayNote = await createNoteInDB("today", [child]);
+    todayNote.date = new Date();
+    await entityMapper.save(todayNote);
+    const query = [
+      { query: "name" },
+      {
+        query: ":getRelated(Note, children)[* date > ?]",
+        subQueries: [{ query: "subject" }],
+      },
+    ];
+
+    let result = await service.createCsv(
+      undefined,
+      [
+        {
+          query: `${Note.ENTITY_TYPE}:toArray`,
+          subQueries: [{ query: "subject" }],
+        },
+      ],
+      moment().subtract(5, "days").toDate()
+    );
+    let resultRows = result.split(ExportService.SEPARATOR_ROW);
+    expect(resultRows).toEqual(['"subject"', '"yesterday"', '"today"']);
+
+    result = await service.createCsv(
+      [child],
+      query,
+      moment().subtract(5, "days").toDate()
+    );
+    resultRows = result.split(ExportService.SEPARATOR_ROW);
+    expect(resultRows).toEqual([
+      '"name","subject"',
+      '"Child","yesterday"',
+      '"Child","today"',
+    ]);
+
+    query[1].query = ":getRelated(Note, children)[* date > ? & date <= ?]";
+    result = await service.createCsv(
+      [child],
+      query,
+      moment().subtract(1, "weeks").subtract(1, "day").toDate(),
+      moment().subtract(1, "day").toDate()
+    );
+    resultRows = result.split(ExportService.SEPARATOR_ROW);
+    expect(resultRows).toEqual([
+      '"name","subject"',
+      '"Child","one week ago"',
+      '"Child","yesterday"',
+    ]);
+  });
+
   async function createChildInDB(name: string): Promise<Child> {
     const child = new Child();
     child.name = name;
