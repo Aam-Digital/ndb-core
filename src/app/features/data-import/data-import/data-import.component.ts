@@ -80,16 +80,16 @@ export class DataImportComponent {
     this.entityForm.enable();
     this.transactionIDForm.enable();
     const csvFile = await this.dataImportService.validateCsvFile(file);
-    if (csvFile.meta.fields.includes("_id")) {
-      const record = csvFile.data[0];
-      const [type, id] = record["_id"].split(":") as string[];
-      this.entityForm.patchValue({ entity: type });
-      this.entityForm.disable();
-      this.entitySelectionChanged();
-      this.transactionIDForm.patchValue({ transactionID: "" });
-      if (id) {
-        this.transactionIDForm.disable();
+    if (csvFile.meta.fields.includes("_id") && csvFile.data[0]["_id"]) {
+      const record = csvFile.data[0] as { _id: string };
+      if (record._id.includes(":")) {
+        const type = record["_id"].split(":")[0] as string;
+        this.entityForm.patchValue({ entity: type });
+        this.entityForm.disable();
+        this.entitySelectionChanged();
       }
+      this.transactionIDForm.patchValue({ transactionID: "" });
+      this.transactionIDForm.disable();
     }
     return csvFile;
   }
@@ -146,7 +146,12 @@ export class DataImportComponent {
     this.patchIfPossible(this.dateFormatForm, {
       dateFormat: importMeta.dateFormat,
     });
-    this.patchIfPossible(this.columnMappingForm, importMeta.columnMap);
+    // TODO make sure to create a map that ONLY contains valid columns
+    const combinedMap = Object.assign(
+      this.columnMappingForm.getRawValue(),
+      importMeta.columnMap
+    );
+    this.patchIfPossible(this.columnMappingForm, combinedMap);
   }
 
   private patchIfPossible(form: FormGroup, patch: { [key in string]: any }) {
