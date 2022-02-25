@@ -150,10 +150,10 @@ export class EntitySubrecordComponent<T extends Entity>
    * @param changes
    */
   ngOnChanges(changes: SimpleChanges) {
-    if (
-      changes.hasOwnProperty("columns") ||
-      changes.hasOwnProperty("records")
-    ) {
+    if (changes.hasOwnProperty("columns")) {
+      this.initFormGroups();
+    }
+    if (changes.hasOwnProperty("records") && this.records.length > 0) {
       this.initFormGroups();
       this.initDefaultSort();
       if (this.columnsToDisplay.length < 2) {
@@ -200,8 +200,11 @@ export class EntitySubrecordComponent<T extends Entity>
       return;
     }
 
-    // initial sorting by first column
-    const sortBy = this.columnsToDisplay[0];
+    // initial sorting by first column, ensure that not the 'action' column is used
+    const sortBy =
+      this.columnsToDisplay[0] === "actions"
+        ? this.columnsToDisplay[1]
+        : this.columnsToDisplay[0];
     const sortByColumn = this._columns.find((c) => c.id === sortBy);
     let sortDirection = "asc";
     if (
