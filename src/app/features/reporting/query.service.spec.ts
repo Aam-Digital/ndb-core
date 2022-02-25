@@ -505,7 +505,7 @@ describe("QueryService", () => {
     const school = new School();
     school["privateSchool"] = privateSchool;
     await entityMapper.save(school);
-    for (let child of children) {
+    for (const child of children) {
       const relation = new ChildSchoolRelation();
       relation.childId = child.getId();
       relation.schoolId = school.getId();
