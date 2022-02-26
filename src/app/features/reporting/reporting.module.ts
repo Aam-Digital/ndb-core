@@ -18,6 +18,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Angulartics2Module } from "angulartics2";
 import { ViewModule } from "../../core/view/view.module";
 import { SelectReportComponent } from "./reporting/select-report/select-report.component";
+import { MatSortModule } from "@angular/material/sort";
 
 @NgModule({
   declarations: [ReportingComponent, ReportRowComponent, SelectReportComponent],
@@ -38,6 +39,7 @@ import { SelectReportComponent } from "./reporting/select-report/select-report.c
     FontAwesomeModule,
     Angulartics2Module,
     ViewModule,
+    MatSortModule,
   ],
   exports: [SelectReportComponent],
 })

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { Aggregation, ReportingService } from "../reporting.service";
 import {
@@ -21,18 +21,17 @@ import { ExportColumnConfig } from "../../../core/export/export-service/export-c
   templateUrl: "./reporting.component.html",
   styleUrls: ["./reporting.component.scss"],
 })
-export class ReportingComponent implements OnInit {
+export class ReportingComponent implements OnInit, AfterViewInit {
   availableReports: ReportConfig[];
   mode: "exporting" | "reporting" = "exporting";
+  loading: boolean;
 
   data: any[];
   exportableData: any[];
-  columns: string[];
 
   @ViewChild(MatSort) sort: MatSort;
   dataSource = new MatTableDataSource([]);
-
-  loading: boolean;
+  columns: string[];
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -46,6 +45,10 @@ export class ReportingComponent implements OnInit {
         this.availableReports = data.config?.reports;
       }
     );
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
   }
 
   async calculateResults(
