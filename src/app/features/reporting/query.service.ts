@@ -282,7 +282,7 @@ export class QueryService {
    */
   private getAttendanceArray(
     events: Note[],
-    includeSchool = true
+    includeSchool = false
   ): AttendanceInfo[] {
     const attendances: AttendanceInfo[] = [];
     for (const event of events) {
