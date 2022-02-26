@@ -63,17 +63,19 @@ export class ExportService {
    */
   async runExportQuery(
     data: any[],
-    config: ExportColumnConfig[],
-    from: Date,
-    to: Date
-  ): Promise<any[]> {
+    config?: ExportColumnConfig[],
+    from?: Date,
+    to?: Date
+  ): Promise<ExportRow[]> {
     if (!data) {
-      const newData = await this.queryService.queryData(
-        config[0].query,
-        from,
-        to
-      );
-      return this.runExportQuery(newData, config[0].subQueries, from, to);
+      // The query of each first level ExportColumnConfig is used as data-basis for the further subQueries
+      const combinedResults: ExportRow[] = [];
+      for (const c of config) {
+        const data = await this.queryService.queryData(c.query, from, to);
+        const result = await this.runExportQuery(data, c.subQueries, from, to);
+        combinedResults.push(...result);
+      }
+      return combinedResults;
     }
 
     const flattenedExportRows: ExportRow[] = [];

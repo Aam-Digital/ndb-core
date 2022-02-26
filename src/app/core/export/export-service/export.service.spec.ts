@@ -336,13 +336,27 @@ describe("ExportService", () => {
     ]);
   });
 
-  it("should use first query to fetch data if no data is provided", async () => {
+  it("should use first level queries to fetch data if no data is provided", async () => {
     const child = await createChildInDB("some child");
-    await createNoteInDB("note1", [child], ["PRESENT"]);
-    await createNoteInDB("note1", [child], ["ABSENT"]);
+    await createNoteInDB("school", [child], ["PRESENT"]);
+    await createNoteInDB("school", [child], ["ABSENT"]);
+    await createNoteInDB("coaching", [child], ["PRESENT"]);
     const exportConfig: ExportColumnConfig[] = [
       {
-        query: `${Note.ENTITY_TYPE}:toArray:getAttendanceArray:getAttendanceReport`,
+        query: `${Note.ENTITY_TYPE}:toArray[* subject = school]:getAttendanceArray:getAttendanceReport`,
+        subQueries: [
+          {
+            label: "Name",
+            query: `.participant:toEntities(Child).name`,
+          },
+          {
+            label: "Participation",
+            query: `percentage`,
+          },
+        ],
+      },
+      {
+        query: `${Note.ENTITY_TYPE}:toArray[* subject = coaching]:getAttendanceArray:getAttendanceReport`,
         subQueries: [
           {
             label: "Name",
@@ -361,6 +375,7 @@ describe("ExportService", () => {
     expect(resultRows).toEqual([
       '"Name","Participation"',
       '"some child","0.5"',
+      '"some child","1"',
     ]);
   });
 
