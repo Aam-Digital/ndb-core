@@ -71,8 +71,8 @@ export class ExportService {
       // The query of each first level ExportColumnConfig is used as data-basis for the further subQueries
       const combinedResults: ExportRow[] = [];
       for (const c of config) {
-        const data = await this.queryService.queryData(c.query, from, to);
-        const result = await this.runExportQuery(data, c.subQueries, from, to);
+        const baseData = await this.queryService.queryData(c.query, from, to);
+        const result = await this.runExportQuery(baseData, c.subQueries, from, to);
         combinedResults.push(...result);
       }
       return combinedResults;
