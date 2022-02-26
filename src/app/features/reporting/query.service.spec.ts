@@ -487,6 +487,17 @@ describe("QueryService", () => {
     });
   });
 
+  it("should allow to set custom strings", async () => {
+    await createChild();
+    await createChild();
+
+    const result = await service.queryData(
+      `${Child.ENTITY_TYPE}:toArray:setString(custom-string)`
+    );
+
+    expect(result).toEqual(["custom-string", "custom-string"]);
+  });
+
   async function createChild(
     gender: "M" | "F" = "F",
     religion?: "muslim" | "christian"
