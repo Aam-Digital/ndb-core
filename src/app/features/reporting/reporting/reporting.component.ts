@@ -1,10 +1,9 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { ReportingService } from "../reporting.service";
+import { Aggregation, ReportingService } from "../reporting.service";
 import {
   getGroupingInformationString,
   GroupByDescription,
-  ReportRow,
 } from "../report-row";
 import {
   ReportConfig,
@@ -12,6 +11,10 @@ import {
 } from "./reporting-component-config";
 import moment from "moment";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
+import { MatTableDataSource } from "@angular/material/table";
+import { MatSort } from "@angular/material/sort";
+import { ExportService } from "../../../core/export/export-service/export.service";
+import { ExportColumnConfig } from "../../../core/export/export-service/export-column-config";
 
 @Component({
   selector: "app-reporting",
@@ -20,15 +23,21 @@ import { RouteData } from "../../../core/view/dynamic-routing/view-config.interf
 })
 export class ReportingComponent implements OnInit {
   availableReports: ReportConfig[];
+  mode: "exporting" | "reporting" = "exporting";
 
-  results: ReportRow[];
-  exportableTable: { label: string; result: any }[];
+  data: any[];
+  exportableData: any[];
+  columns: string[];
+
+  @ViewChild(MatSort) sort: MatSort;
+  dataSource = new MatTableDataSource([]);
 
   loading: boolean;
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private reportingService: ReportingService
+    private reportingService: ReportingService,
+    private exportService: ExportService
   ) {}
 
   ngOnInit() {
@@ -49,18 +58,58 @@ export class ReportingComponent implements OnInit {
     // Add one day because to date is exclusive
     const dayAfterToDate = moment(toDate).add(1, "day").toDate();
 
-    this.results = await this.reportingService.calculateReport(
-      selectedReport.aggregationDefinitions,
-      fromDate,
-      dayAfterToDate
-    );
-    this.exportableTable = this.flattenReportRows();
+    if (selectedReport.mode === "exporting") {
+      await this.createExport(
+        selectedReport.aggregationDefinitions,
+        fromDate,
+        dayAfterToDate
+      );
+      this.mode = "exporting";
+    } else {
+      await this.createReport(
+        selectedReport.aggregationDefinitions,
+        fromDate,
+        dayAfterToDate
+      );
+      this.mode = "reporting";
+    }
 
     this.loading = false;
   }
 
+  private async createExport(
+    exportConfig: ExportColumnConfig[],
+    fromDate: Date,
+    toDate: Date
+  ) {
+    this.data = await this.exportService.runExportQuery(
+      undefined,
+      exportConfig,
+      fromDate,
+      toDate
+    );
+    this.dataSource.data = this.data;
+    if (this.data.length > 0) {
+      this.columns = Object.keys(this.data[0]);
+    }
+    this.exportableData = this.data;
+  }
+
+  private async createReport(
+    aggregationDefinitions: Aggregation[],
+    fromDate: Date,
+    toDate: Date
+  ) {
+    this.data = await this.reportingService.calculateReport(
+      aggregationDefinitions,
+      fromDate,
+      toDate
+    );
+    this.exportableData = this.flattenReportRows();
+  }
+
   private flattenReportRows(
-    rows = this.results
+    rows = this.data
   ): { label: string; result: any }[] {
     const tableRows: { label: string; result: any }[] = [];
     rows.forEach((result) => {

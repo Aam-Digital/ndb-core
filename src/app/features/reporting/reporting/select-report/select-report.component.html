@@ -65,7 +65,7 @@
       [disabled]="!exportableData"
       format="csv"
       filename="report"
-      style="float: right; margin: 4px"
+      style="float: right;"
       angulartics2On="click"
       angularticsCategory="Reporting"
       angularticsAction="export"
@@ -81,6 +81,7 @@
       </ng-container>
     </button>
   </div>
+  <div style="clear: both; padding-bottom: 5px"></div>
 
   <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
 </div>
