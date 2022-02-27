@@ -72,7 +72,12 @@ export class ExportService {
       const combinedResults: ExportRow[] = [];
       for (const c of config) {
         const baseData = await this.queryService.queryData(c.query, from, to);
-        const result = await this.runExportQuery(baseData, c.subQueries, from, to);
+        const result = await this.runExportQuery(
+          baseData,
+          c.subQueries,
+          from,
+          to
+        );
         combinedResults.push(...result);
       }
       return combinedResults;
