@@ -1,22 +1,24 @@
 describe("Scenario: Linking a child to a school - E2E test", () => {
   before(() => {
     // GIVEN I am on the details page of a child
-    cy.visit("school/1");
-    cy.get(".header-row > .header-title").invoke("text").as("schoolName");
-
-    cy.visit("child/1");
-    cy.get(".header-row > .header-title").invoke("text").as("studentName");
+    cy.initChildAndSchool("E2E Child", "E2E School");
   });
 
   // WHEN I add an entry in the 'Previous Schools' section with a specific school
   // (with todays date - that might be added to this e2e test later)
   it("Add an entry in the Previous School section", function () {
+    // Click "Schools" button at navbar
+    cy.get("[ng-reflect-angulartics-label=Children]").click();
+
+    // type to the input "Filter" the name of child
+    cy.get('[data-placeholder="e.g. name, age"]').type("E2E Child");
+
+    // Click on the Child in Table list
+    cy.get("tbody > :nth-child(1)").click();
+
     // get the Education button and click on it
-    cy.get("#mat-tab-label-0-1").should("contain", "Education").click();
-    // get the Show All button and toggle it, forcing the click is needed because the element has a hidden feature
-    cy.get(
-      "#mat-slide-toggle-1 > .mat-slide-toggle-label > .mat-slide-toggle-bar > .mat-slide-toggle-thumb-container > .mat-slide-toggle-thumb"
-    ).click({ force: true });
+    cy.contains("div", "Education").should("be.visible").click();
+
     // get the Add School button and click on it
     cy.get(
       "app-previous-schools.ng-star-inserted > app-entity-subrecord > .container > .mat-table > thead > .mat-header-row > .cdk-column-actions > .mat-focus-indicator"
@@ -24,8 +26,9 @@ describe("Scenario: Linking a child to a school - E2E test", () => {
 
     // choose the school to add
     cy.get('[ng-reflect-placeholder="Select School"]')
-      .type(this.schoolName.trim())
+      .type("E2E School")
       .click();
+
     // save school in child profile
     cy.contains("button", "Save").click();
   });
@@ -38,19 +41,12 @@ describe("Scenario: Linking a child to a school - E2E test", () => {
     // Choose the school that was added to the child profile "app-previous-schools.ng-star-inserted > app-entity-subrecord"
     cy.contains(
       ":nth-child(1) > .cdk-column-schoolId > app-display-entity.ng-star-inserted > .ng-star-inserted > :nth-child(1) > .underline-on-hover",
-      this.schoolName.trim()
+      "E2E School"
     ).click();
     // Open the students overview
-    cy.contains("#mat-tab-label-2-1", "Students").click();
-
-    // Choose Items per page: 50 to display all students
-    cy.get(".mat-select-arrow-wrapper").click();
-    cy.get("[ng-reflect-value=50]").click();
+    cy.contains("div", "Students").should("be.visible").click();
 
     // Check if student is in the school students list
-    cy.contains(
-      "app-children-overview > app-entity-subrecord",
-      this.studentName.trim()
-    );
+    cy.contains("app-children-overview > app-entity-subrecord", "E2E Child");
   });
 });
