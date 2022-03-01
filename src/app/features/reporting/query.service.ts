@@ -67,8 +67,10 @@ export class QueryService {
         filterByObjectAttribute: this.filterByObjectAttribute,
         getIds: this.getIds,
         getParticipantsWithAttendance: this.getParticipantsWithAttendance,
-        getAttendanceArray: this.getAttendanceArray,
+        getAttendanceArray: this.getAttendanceArray.bind(this),
+        getAttendanceReport: this.getAttendanceReport,
         addEntities: this.addEntities.bind(this),
+        setString: this.setString,
       },
     }).value;
   }
@@ -120,7 +122,7 @@ export class QueryService {
    * @param prefix the prefix which should be added to the string
    * @returns a list where every string has the prefix
    */
-  addPrefix(ids: string[], prefix: string): string[] {
+  private addPrefix(ids: string[], prefix: string): string[] {
     return ids.map((id) => (id.startsWith(prefix) ? id : prefix + ":" + id));
   }
 
@@ -132,7 +134,7 @@ export class QueryService {
    * @param obj the object which should be transformed to an array
    * @returns the values of the input object as a list
    */
-  toArray(obj): any[] {
+  private toArray(obj): any[] {
     return Object.values(obj);
   }
 
@@ -141,7 +143,7 @@ export class QueryService {
    * @param data the array where duplicates should be removed
    * @returns a list without duplicates
    */
-  unique(data: any[]): any[] {
+  private unique(data: any[]): any[] {
     return new Array(...new Set(data));
   }
 
@@ -150,7 +152,7 @@ export class QueryService {
    * @param data the data for which the length should be returned
    * @returns the length of the input array or 0 if no array is provided
    */
-  count(data: any[]): number {
+  private count(data: any[]): number {
     return data ? data.length : 0;
   }
 
@@ -160,7 +162,7 @@ export class QueryService {
    * @param entityPrefix (Optional) entity type prefix that should be added to the given ids where prefix is still missing
    * @returns a list of entity objects
    */
-  toEntities(ids: string[], entityPrefix?: string): Entity[] {
+  private toEntities(ids: string[], entityPrefix?: string): Entity[] {
     if (!ids) {
       return [];
     }
@@ -183,7 +185,7 @@ export class QueryService {
    *                    The attribute can be a string or a list of strings
    * @returns a list of the related unique entities
    */
-  getRelated(
+  private getRelated(
     srcEntities: Entity[],
     entityType: string,
     relationKey: string
@@ -218,7 +220,7 @@ export class QueryService {
    *              If it is a list of values, then the object is returned if its value matches any of the given values.
    * @returns the filtered objects
    */
-  filterByObjectAttribute(
+  private filterByObjectAttribute(
     objs: any[],
     attr: string,
     key: string,
@@ -240,7 +242,7 @@ export class QueryService {
    * @returns a one dimensional string array holding all IDs which are held by the objects.
    *            This list may contain duplicate IDs. If this is not desired, use `:unique` afterwards.
    */
-  getIds(objs: any[], key: string): string[] {
+  private getIds(objs: any[], key: string): string[] {
     const ids: string[] = [];
     objs.forEach((obj) => {
       if (obj.hasOwnProperty(key)) {
@@ -257,7 +259,7 @@ export class QueryService {
    * @param attendanceStatus the status for which should be looked for
    * @returns the ids of children which have the specified attendance in an event
    */
-  getParticipantsWithAttendance(
+  private getParticipantsWithAttendance(
     events: EventNote[],
     attendanceStatus: string
   ): string[] {
@@ -272,17 +274,77 @@ export class QueryService {
     return attendedChildren;
   }
 
-  getAttendanceArray(
-    events: Note[]
-  ): { participant: string; status: EventAttendance }[] {
-    return events
-      .map((e) =>
-        e.children.map((childId) => ({
-          participant: childId,
-          status: e.getAttendance(childId),
-        }))
-      )
-      .reduce((acc, val) => acc.concat(val), []);
+  /**
+   * Transforms a list of notes or event-notes into a flattened list of participants and their attendance for each event.
+   * @param events the input list of type Note or EventNote
+   * @param includeSchool (optional) also include the school to which a participant belongs
+   * @returns AttendanceInfo[] a list holding information about the attendance of a single participant
+   */
+  private getAttendanceArray(
+    events: Note[],
+    includeSchool = false
+  ): AttendanceInfo[] {
+    const attendances: AttendanceInfo[] = [];
+    for (const event of events) {
+      const linkedRelations = includeSchool
+        ? this.getMembersOfGroupsForEvent(event)
+        : [];
+
+      for (const child of event.children) {
+        const attendance: AttendanceInfo = {
+          participant: child,
+          status: event.getAttendance(child),
+        };
+
+        const relation = linkedRelations.find((rel) => rel.childId === child);
+        if (relation) {
+          attendance.school = relation.schoolId;
+        }
+
+        attendances.push(attendance);
+      }
+    }
+    return attendances;
+  }
+
+  private getMembersOfGroupsForEvent(event: Note) {
+    return this.toArray(this.entities[ChildSchoolRelation.ENTITY_TYPE]).filter(
+      (relation) =>
+        event.schools.includes(relation.schoolId) &&
+        relation.isActiveAt(event.date)
+    );
+  }
+
+  /**
+   * Transforms a list of attendances infos into an aggregated report for each participant
+   * @param attendances an array of AttendanceInfo objects
+   * @returns AttendanceReport[] for each participant the ID, the number of present and total absences as well as the attendance percentage.
+   */
+  private getAttendanceReport(
+    attendances: AttendanceInfo[]
+  ): AttendanceReport[] {
+    const participantMap: { [key in string]: AttendanceReport } = {};
+    attendances.forEach((attendance) => {
+      if (!participantMap.hasOwnProperty(attendance.participant)) {
+        participantMap[attendance.participant] = {
+          participant: attendance.participant,
+          total: 0,
+          present: 0,
+          percentage: "",
+        };
+      }
+      const report = participantMap[attendance.participant];
+      if (attendance.status.status.countAs === "PRESENT") {
+        report.present++;
+      }
+      if (attendance.status.status.countAs !== "IGNORE") {
+        report.total++;
+      }
+      if (report.total > 0) {
+        report.percentage = (report.present / report.total).toFixed(2);
+      }
+    });
+    return Object.values(participantMap);
   }
 
   /**
@@ -291,7 +353,30 @@ export class QueryService {
    * @param entityType the type of entities which should be added
    * @returns the input array concatenated with all entities of the entityType
    */
-  addEntities(entities: Entity[], entityType: string): Entity[] {
+  private addEntities(entities: Entity[], entityType: string): Entity[] {
     return entities.concat(...this.toArray(this.entities[entityType]));
   }
+
+  /**
+   * Replaces all input values by the string provided
+   * @param data the data which will be replaced
+   * @param value the string which should replace initial data
+   * @returns array of same length as data where every input is value
+   */
+  private setString(data: any[], value: string): string[] {
+    return data.map(() => value);
+  }
+}
+
+export interface AttendanceInfo {
+  participant: string;
+  status: EventAttendance;
+  school?: string;
+}
+
+export interface AttendanceReport {
+  participant: string;
+  total: number;
+  present: number;
+  percentage: string;
 }
