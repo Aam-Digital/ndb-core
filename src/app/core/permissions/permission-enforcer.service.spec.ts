@@ -17,8 +17,8 @@ import { AnalyticsService } from "../analytics/analytics.service";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { BehaviorSubject, Subject } from "rxjs";
 import { LoginState } from "../session/session-states/login-state.enum";
-import { Permission } from "./permission";
 import { EntityAbility } from "./entity-ability";
+import { Config } from "../config/config";
 
 describe("PermissionEnforcerService", () => {
   let service: PermissionEnforcerService;
@@ -210,7 +210,7 @@ describe("PermissionEnforcerService", () => {
 
   async function updateRulesAndTriggerEnforcer(rules: DatabaseRule[]) {
     const role = mockSession.getCurrentUser().roles[0];
-    loadSpy.and.resolveTo(new Permission({ [role]: rules }));
+    loadSpy.and.resolveTo(new Config(Config.PERMISSION_KEY, { [role]: rules }));
     mockLoginState.next(LoginState.LOGGED_IN);
   }
 });

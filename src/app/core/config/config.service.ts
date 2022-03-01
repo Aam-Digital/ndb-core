@@ -29,7 +29,9 @@ export class ConfigService {
 
   constructor(@Optional() private loggingService?: LoggingService) {
     const defaultConfig = JSON.parse(JSON.stringify(defaultJsonConfig));
-    this.configUpdates = new BehaviorSubject<Config>(new Config(defaultConfig));
+    this.configUpdates = new BehaviorSubject(
+      new Config(Config.CONFIG_KEY, defaultConfig)
+    );
   }
 
   public async loadConfig(entityMapper: EntityMapperService): Promise<Config> {
@@ -45,7 +47,7 @@ export class ConfigService {
         "No configuration found in the database, using default one"
       );
       const defaultConfig = JSON.parse(JSON.stringify(defaultJsonConfig));
-      return new Config(defaultConfig);
+      return new Config(Config.CONFIG_KEY, defaultConfig);
     });
   }
 
@@ -53,7 +55,7 @@ export class ConfigService {
     entityMapper: EntityMapperService,
     config: any
   ): Promise<Config> {
-    this.configUpdates.next(new Config(config));
+    this.configUpdates.next(new Config(Config.CONFIG_KEY, config));
     await entityMapper.save<Config>(this.configUpdates.value, true);
     return this.configUpdates.value;
   }
@@ -96,6 +98,8 @@ export class ConfigService {
 
 export function createTestingConfigService(configsObject: any): ConfigService {
   const configService = new ConfigService(null);
-  configService.configUpdates.next(new Config(configsObject));
+  configService.configUpdates.next(
+    new Config(Config.CONFIG_KEY, configsObject)
+  );
   return configService;
 }

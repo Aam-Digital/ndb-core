@@ -32,7 +32,7 @@ export class EntityAbility extends Ability<[EntityAction, string | any]> {
       typeof entity === "string" ||
       entity["__caslSubjectType__"]
     ) {
-      // This happens in case the subject has alredy been processed
+      // This happens in case the subject has already been processed
       return entity;
     } else if (entity instanceof Entity) {
       return subject(

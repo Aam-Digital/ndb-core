@@ -8,7 +8,6 @@ import { Database } from "../database/database";
 import { LOCATION_TOKEN } from "../../utils/di-tokens";
 import { AnalyticsService } from "../analytics/analytics.service";
 import { EntityAbility } from "./entity-ability";
-import { Permission } from "./permission";
 import { User } from "../user/user";
 import { ProgressDashboardConfig } from "../../child-dev-project/progress-dashboard-widget/progress-dashboard/progress-dashboard-config";
 import { Config } from "../config/config";
@@ -17,7 +16,6 @@ import { Config } from "../config/config";
 export class PermissionEnforcerService {
   static readonly STORAGE_KEY = "RULES";
   private readonly ignoredSubject = [
-    Permission.ENTITY_TYPE,
     User.ENTITY_TYPE,
     ProgressDashboardConfig.ENTITY_TYPE,
     Config.ENTITY_TYPE,

@@ -1,10 +1,12 @@
 import { Injectable } from "@angular/core";
 import { DemoDataGenerator } from "../demo-data/demo-data-generator";
-import { Permission } from "./permission";
 import { DatabaseRules } from "./permission-types";
+import { Config } from "../config/config";
 
 @Injectable()
-export class DemoPermissionGeneratorService extends DemoDataGenerator<Permission> {
+export class DemoPermissionGeneratorService extends DemoDataGenerator<
+  Config<DatabaseRules>
+> {
   static provide() {
     return [
       {
@@ -14,13 +16,13 @@ export class DemoPermissionGeneratorService extends DemoDataGenerator<Permission
     ];
   }
 
-  protected generateEntities(): Permission[] {
+  protected generateEntities(): Config<DatabaseRules>[] {
     // This can be changed to experiment with different permission setups locally.
     // For the general demo mode everything is allowed
     const rules: DatabaseRules = {
       user_app: [{ subject: "all", action: "manage" }],
       admin_app: [{ subject: "all", action: "manage" }],
     };
-    return [new Permission(rules)];
+    return [new Config(Config.PERMISSION_KEY, rules)];
   }
 }

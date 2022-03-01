@@ -89,7 +89,9 @@ describe("AppComponent", () => {
       },
     };
     const entityMapper = TestBed.inject(EntityMapperService);
-    spyOn(entityMapper, "load").and.resolveTo(new Config(testConfig));
+    spyOn(entityMapper, "load").and.resolveTo(
+      new Config(Config.CONFIG_KEY, testConfig)
+    );
     const angulartics = TestBed.inject(Angulartics2Matomo);
     const startTrackingSpy = spyOn(angulartics, "startTracking");
 

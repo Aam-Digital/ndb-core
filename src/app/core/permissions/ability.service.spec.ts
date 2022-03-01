@@ -10,7 +10,6 @@ import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { DynamicEntityService } from "../entity/dynamic-entity.service";
 import { SyncState } from "../session/session-states/sync-state.enum";
 import { LoginState } from "../session/session-states/login-state.enum";
-import { Permission } from "./permission";
 import { PermissionEnforcerService } from "./permission-enforcer.service";
 import { DatabaseUser } from "../session/session-service/local-user";
 import { User } from "../user/user";
@@ -18,6 +17,7 @@ import { defaultInteractionTypes } from "../config/default-config/default-intera
 import { EntityAbility } from "./entity-ability";
 import { ConfigurableEnumModule } from "../configurable-enum/configurable-enum.module";
 import { DatabaseRules } from "./permission-types";
+import { Config } from "../config/config";
 
 describe("AbilityService", () => {
   let service: AbilityService;
@@ -38,7 +38,9 @@ describe("AbilityService", () => {
 
   beforeEach(() => {
     mockEntityMapper = jasmine.createSpyObj(["load"]);
-    mockEntityMapper.load.and.resolveTo(new Permission(rules));
+    mockEntityMapper.load.and.resolveTo(
+      new Config(Config.PERMISSION_KEY, rules)
+    );
     mockSyncState = new Subject<SyncState>();
     mockLoginState = new Subject<LoginState>();
     mockSessionService = jasmine.createSpyObj(["getCurrentUser"], {
@@ -82,15 +84,15 @@ describe("AbilityService", () => {
     mockLoginState.next(LoginState.LOGGED_IN);
 
     expect(mockEntityMapper.load).toHaveBeenCalledWith(
-      Permission,
-      Permission.PERMISSION_KEY
+      Config,
+      Config.PERMISSION_KEY
     );
   });
 
   it("should retry fetching the rules after the sync has completed", () => {
     mockEntityMapper.load.and.returnValues(
       Promise.reject("first error"),
-      Promise.resolve(new Permission(rules))
+      Promise.resolve(new Config(Config.PERMISSION_KEY, rules))
     );
 
     mockLoginState.next(LoginState.LOGGED_IN);
@@ -198,7 +200,7 @@ describe("AbilityService", () => {
 
   it("should allow to access user properties in the rules", fakeAsync(() => {
     mockEntityMapper.load.and.resolveTo(
-      new Permission({
+      new Config(Config.PERMISSION_KEY, {
         user_app: [
           {
             subject: "User",
@@ -223,7 +225,7 @@ describe("AbilityService", () => {
       (type) => type.id === "SCHOOL_CLASS"
     );
     mockEntityMapper.load.and.resolveTo(
-      new Permission({
+      new Config(Config.PERMISSION_KEY, {
         user_app: [
           {
             subject: "Note",

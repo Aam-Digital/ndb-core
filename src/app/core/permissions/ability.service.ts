@@ -8,11 +8,11 @@ import { merge, Observable, Subject } from "rxjs";
 import { DatabaseRule, DatabaseRules } from "./permission-types";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { EntityMapperService } from "../entity/entity-mapper.service";
-import { Permission } from "./permission";
 import { PermissionEnforcerService } from "./permission-enforcer.service";
 import { DatabaseUser } from "../session/session-service/local-user";
 import * as _ from "lodash";
 import { EntityAbility } from "./entity-ability";
+import { Config } from "../config/config";
 
 export function detectEntityType(subject: Entity): EntityConstructor<any> {
   if (subject instanceof Entity) {
@@ -55,11 +55,11 @@ export class AbilityService {
     // Initially allow everything until rules object can be fetched
     this.ability.update([{ action: "manage", subject: "all" }]);
 
-    let permission: Permission;
+    let permission: Config<DatabaseRules>;
     try {
-      permission = await this.entityMapper.load(
-        Permission,
-        Permission.PERMISSION_KEY
+      permission = await this.entityMapper.load<Config<DatabaseRules>>(
+        Config,
+        Config.PERMISSION_KEY
       );
     } catch (e) {
       // If no rule is found, keep allowing everything
@@ -67,7 +67,7 @@ export class AbilityService {
     }
     if (permission) {
       // TODO what happens if there are no rules for a user
-      const userRules = this.getRulesForUser(permission.rulesConfig);
+      const userRules = this.getRulesForUser(permission.data);
       const userRulesCopy = JSON.parse(JSON.stringify(userRules));
       this.updateAbilityWithRules(userRules);
       await this.permissionEnforcer.enforcePermissionsOnLocalData(
