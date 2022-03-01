@@ -28,10 +28,11 @@ describe("Scenario: Recording attendance of a child - E2E test", () => {
       .should("be.visible")
       .eq(0)
       .click({ force: true });
+    // Click on ChildBlock inside roll-call to navigate to child
     cy.get(".navigation-bar > :nth-child(1)").click();
     cy.get(".child-block").click();
     cy.get("#mat-tab-label-0-2").click();
-    cy.get('.attendance-P').should(
+    cy.get(".attendance-P").should(
       "have.css",
       "background-color",
       "rgb(200, 230, 201)"

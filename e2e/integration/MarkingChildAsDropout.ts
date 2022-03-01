@@ -14,7 +14,7 @@ describe("Scenario: Marking a child as dropout - E2E test", () => {
     cy.get("#mat-tab-label-0-7").click();
     // click on button with the content "Edit" in Dropout menu.
     cy.contains("span", "Edit").should("be.visible").click();
-    // type to the Dropout Date some date. It could be 12/12/2021 or something else
+    // select today as the dropout date (which is initially marked as active)
     cy.get(".mat-datepicker-toggle-default-icon").click();
     cy.get(".mat-calendar-body-active").click();
     // click on button with the content "Save"
