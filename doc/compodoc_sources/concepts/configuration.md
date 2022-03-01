@@ -66,7 +66,9 @@ On the top level of the config file, there are four different kinds of entries:
 1. The main navigation menu (`navigationMenu`)
 1. Views defining the UI of each page (`view:<path>`)
 1. Lists of select options for dropdown fields (`enum:<category-id>`, including available Note categories, etc.)
-1. Entity configuration to define [schemas](entity-schema-system.md)  (`entity:<entity-id>`)
+1. Entity configuration to define [schemas](./entity-schema.html  (`entity:<entity-id>`)
+
+_also see [User Roles & Permissions](user-roles-and-permissions.html)_
 
 
 ### Navigation Menu
