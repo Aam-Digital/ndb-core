@@ -32,7 +32,7 @@ export class ExportService {
   /**
    * Creates a CSV string of the input data
    *
-   * @param data (Optional) an array of elements. If not provided, the first query in `config` will be used to get the data.
+   * @param data (Optional) an array of elements. If not provided, the queries in `config` will be used to get the initial data.
    * @param config (Optional) config specifying which fields should be exported
    * @param from (Optional) limits the data which is fetched from the database and is also available inside the query. If not provided, all data is fetched.
    * @param to (Optional) same as from.If not provided, today is used.
