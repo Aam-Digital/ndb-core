@@ -24,6 +24,11 @@ function create(menuItem: string, name: string): void {
 //
 // NOTE: You can use it like so:
 Cypress.Commands.add("create", create);
+// Overwriting default visit function to wait for index creation
+Cypress.Commands.overwrite("visit", (originalFun, url, options) => {
+  originalFun(url, options);
+  cy.contains("button", "Continue in background", { timeout: 10000 }).click();
+});
 
 // ***********************************************
 // This example commands.js shows you how to
