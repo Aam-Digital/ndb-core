@@ -46,7 +46,9 @@ export class RecurringActivity extends Entity {
   /** primary name to identify the activity */
   @DatabaseField({
     label: $localize`:Label for the title of a recurring activity:Title`,
-    required: true,
+    validators: {
+      required: true,
+    },
   })
   title: string = "";
 
@@ -88,6 +90,10 @@ export class RecurringActivity extends Entity {
     additional: User.ENTITY_TYPE,
   })
   assignedTo: string[] = [];
+
+  isAssignedTo(username: string): boolean {
+    return !!this.assignedTo.find((name) => username === name);
+  }
 
   toString(): string {
     return this.title;

@@ -16,9 +16,18 @@ import { MatSelectModule } from "@angular/material/select";
 import { FlexModule } from "@angular/flex-layout";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Angulartics2Module } from "angulartics2";
+import { ViewModule } from "../../core/view/view.module";
+import { SelectReportComponent } from "./reporting/select-report/select-report.component";
+import { MatSortModule } from "@angular/material/sort";
+import { ObjectTableComponent } from "./reporting/object-table/object-table.component";
 
 @NgModule({
-  declarations: [ReportingComponent, ReportRowComponent],
+  declarations: [
+    ReportingComponent,
+    ReportRowComponent,
+    SelectReportComponent,
+    ObjectTableComponent,
+  ],
   imports: [
     CommonModule,
     MatButtonModule,
@@ -35,6 +44,9 @@ import { Angulartics2Module } from "angulartics2";
     FlexModule,
     FontAwesomeModule,
     Angulartics2Module,
+    ViewModule,
+    MatSortModule,
   ],
+  exports: [SelectReportComponent],
 })
 export class ReportingModule {}

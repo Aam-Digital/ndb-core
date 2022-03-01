@@ -6,10 +6,7 @@
     [placeholder]="label"
     [title]="label"
   />
-  <mat-error *ngIf="formControl.errors?.isNumber" i18n="Error message for number input">
-    Only numbers are allowed
-  </mat-error>
-  <mat-error *ngIf="formControl.errors?.required" i18n="Error message for any input">
-    This field is required
+  <mat-error>
+    <app-error-hint [form]="formControl"></app-error-hint>
   </mat-error>
 </mat-form-field>

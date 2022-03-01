@@ -27,6 +27,14 @@ export const heightRangeForAge = new Map<number, any>([
   [13.5, { min: 146, max: 171 }],
   [14, { min: 148, max: 172 }],
   [14.5, { min: 148, max: 173 }],
+  [15, { min: 150, max: 174 }],
+  [15.5, { min: 152, max: 174 }],
+  [16, { min: 154, max: 175 }],
+  [16.5, { min: 156, max: 176 }],
+  [17, { min: 158, max: 177 }],
+  [17.5, { min: 158, max: 177 }],
+  [18, { min: 158, max: 177 }],
+  [18.5, { min: 158, max: 177 }],
 ]);
 
 export const weightRangeForAge = new Map<number, any>([
@@ -56,4 +64,12 @@ export const weightRangeForAge = new Map<number, any>([
   [13.5, { min: 34, max: 74 }],
   [14, { min: 36, max: 77 }],
   [14.5, { min: 38, max: 79 }],
+  [15, { min: 40, max: 80 }],
+  [15.5, { min: 42, max: 85 }],
+  [16, { min: 44, max: 90 }],
+  [16.5, { min: 46, max: 95 }],
+  [17, { min: 48, max: 100 }],
+  [17.5, { min: 48, max: 100 }],
+  [18, { min: 48, max: 100 }],
+  [18.5, { min: 48, max: 100 }],
 ]);

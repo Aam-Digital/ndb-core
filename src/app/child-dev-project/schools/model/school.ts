@@ -16,7 +16,9 @@ export class School extends Entity {
 
   @DatabaseField({
     label: $localize`:Label for the name of a school:Name`,
-    required: true,
+    validators: {
+      required: true,
+    },
   })
   name: string = "";
 

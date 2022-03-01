@@ -18,11 +18,34 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { DashboardComponent } from "./dashboard/dashboard.component";
-import { FlexLayoutModule } from "@angular/flex-layout";
 import { ViewModule } from "../view/view.module";
+import { DashboardWidgetComponent } from "./dashboard-widget/dashboard-widget.component";
+import { WidgetContentComponent } from "./dashboard-widget/widget-content/widget-content.component";
+import { MatTableModule } from "@angular/material/table";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatSortModule } from "@angular/material/sort";
+import { MatPaginatorModule } from "@angular/material/paginator";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatButtonModule } from "@angular/material/button";
 
 @NgModule({
-  imports: [CommonModule, FlexLayoutModule, ViewModule],
-  declarations: [DashboardComponent],
+  imports: [
+    CommonModule,
+    ViewModule,
+    MatTableModule,
+    MatProgressSpinnerModule,
+    MatTooltipModule,
+    FontAwesomeModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatButtonModule,
+  ],
+  declarations: [
+    DashboardComponent,
+    DashboardWidgetComponent,
+    WidgetContentComponent,
+  ],
+  exports: [DashboardWidgetComponent, WidgetContentComponent],
 })
 export class DashboardModule {}

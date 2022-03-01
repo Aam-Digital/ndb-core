@@ -25,6 +25,7 @@
             "tsConfig": "src/tsconfig.app.json",
             "polyfills": "src/polyfills.ts",
             "i18nMissingTranslation": "warning",
+            "localize": ["en-US"],
             "assets": [
               "src/assets",
               "src/favicon.ico",
@@ -238,17 +239,6 @@
             "exclude": []
           }
         },
-        "cypress-run": {
-          "builder": "@cypress/schematic:cypress",
-          "options": {
-            "devServerTarget": "ndb-core-e2e:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "ndb-core-e2e:serve:production"
-            }
-          }
-        },
         "cypress-open": {
           "builder": "@cypress/schematic:cypress",
           "options": {
@@ -267,6 +257,9 @@
           "configurations": {
             "production": {
               "devServerTarget": "ndb-core-e2e:serve:production"
+            },
+            "ci": {
+              "record": true
             }
           }
         }

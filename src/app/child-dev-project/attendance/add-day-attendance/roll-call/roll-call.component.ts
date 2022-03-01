@@ -14,15 +14,10 @@ import {
 import { Note } from "../../../notes/model/note";
 import { EventAttendance } from "../../model/event-attendance";
 import { ConfigService } from "../../../../core/config/config.service";
-import {
-  CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnumConfig,
-} from "../../../../core/configurable-enum/configurable-enum.interface";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { Child } from "../../../children/model/child";
 import { LoggingService } from "../../../../core/logging/logging.service";
 import { FormGroup } from "@angular/forms";
-import { ConfirmationDialogService } from "../../../../core/confirmation-dialog/confirmation-dialog.service";
 import { sortByAttribute } from "../../../../utils/utils";
 
 /**
@@ -35,7 +30,7 @@ import { sortByAttribute } from "../../../../utils/utils";
   animations: [
     trigger("completeRollCall", [
       transition("void => *", [
-        style({ backgroundColor: "white" }),
+        style({ backgroundColor: "transparent" }),
         animate(1000),
       ]),
     ]),
@@ -62,40 +57,87 @@ export class RollCallComponent implements OnChanges {
    */
   @Output() exit = new EventEmitter();
 
-  currentIndex: number;
+  /**
+   * private model; should only be set within this component
+   * @private
+   */
+  private _currentIndex: number;
+  /**
+   * whether any changes have been made to the model
+   */
+  isDirty: boolean = false;
+  /**
+   * The index of the child that is currently being processed
+   */
+  get currentIndex(): number {
+    return this._currentIndex;
+  }
+  get currentStatus(): AttendanceStatusType {
+    return this.entries[this.currentIndex].attendance.status;
+  }
+  set currentStatus(newStatus: AttendanceStatusType) {
+    this.entries[this.currentIndex].attendance.status = newStatus;
+  }
+  get currentChild(): Child {
+    return this.entries[this.currentIndex].child;
+  }
 
   /** options available for selecting an attendance status */
   availableStatus: AttendanceStatusType[];
 
-  entries: { child: Child; attendance: EventAttendance }[];
+  entries: { child: Child; attendance: EventAttendance }[] = [];
   form: FormGroup;
 
   constructor(
     private configService: ConfigService,
     private entityMapper: EntityMapperService,
-    private loggingService: LoggingService,
-    private confirmationDialog: ConfirmationDialogService
+    private loggingService: LoggingService
   ) {}
 
   async ngOnChanges(changes: SimpleChanges) {
     if (changes.eventEntity) {
       this.loadAttendanceStatusTypes();
       await this.loadParticipants();
+      this.setInitialIndex();
     }
     if (changes.sortParticipantsBy) {
       this.sortParticipants();
     }
   }
 
+  /**
+   * Set the index of the first child that expects user input.
+   * This is the first entry of the list, if the user has never recorded attendance
+   * for this event. Else it is the first child without any attendance information
+   * (i.e. got skipped or the user left at this child)
+   * @private
+   */
+  private setInitialIndex() {
+    let index = 0;
+    for (const entry of this.entries) {
+      if (!this.eventEntity.getAttendance(entry.child.getId())?.status?.id) {
+        break;
+      }
+      index += 1;
+    }
+
+    // do not jump to end - if all participants are recorded, start with first instead
+    if (index >= this.entries.length) {
+      index = 0;
+    }
+
+    this._currentIndex = index;
+  }
+
   private loadAttendanceStatusTypes() {
-    this.availableStatus = this.configService.getConfig<
-      ConfigurableEnumConfig<AttendanceStatusType>
-    >(CONFIGURABLE_ENUM_CONFIG_PREFIX + ATTENDANCE_STATUS_CONFIG_ID);
+    this.availableStatus = this.configService.getConfigurableEnumValues<AttendanceStatusType>(
+      ATTENDANCE_STATUS_CONFIG_ID
+    );
   }
 
   private async loadParticipants() {
     this.entries = [];
-    this.currentIndex = 0;
+    this._currentIndex = 0;
     for (const childId of this.eventEntity.children) {
       let child;
       try {
@@ -130,61 +172,43 @@ export class RollCallComponent implements OnChanges {
     this.eventEntity.children = this.entries.map((e) => e.child.getId());
   }
 
-  markAttendance(attendance: EventAttendance, status: AttendanceStatusType) {
-    attendance.status = status;
+  markAttendance(status: AttendanceStatusType) {
+    this.currentStatus = status;
+    this.isDirty = true;
 
     // automatically move to next participant after a short delay giving the user visual feedback on the selected status
-    setTimeout(() => this.goToNextParticipant(), 750);
+    setTimeout(() => this.goToNext(), 750);
   }
 
-  goToNextParticipant(newIndex?: number) {
-    if (newIndex !== undefined) {
-      this.currentIndex = newIndex;
-    } else {
-      this.currentIndex++;
-    }
+  goToParticipantWithIndex(newIndex: number) {
+    this._currentIndex = newIndex;
 
-    if (this.isFinished()) {
+    if (this.isFinished) {
       this.complete.emit(this.eventEntity);
     }
   }
 
-  isFinished(): boolean {
-    return this.currentIndex >= this.entries?.length;
+  goToPrevious() {
+    this.goToParticipantWithIndex(this.currentIndex - 1);
   }
 
-  save() {
-    if (this.isFinished()) {
-      this.goToNextParticipant(this.entries?.length);
-    } else {
-      const remainingParticipant = this.entries.length - this.currentIndex;
-      const dialogRef = this.confirmationDialog.openDialog(
-        $localize`:Save & Next confirmation title: Save & Exit`,
-        $localize`:Save & Exit confirmation text:Are you sure you want to save, exit and skip the remaining ${remainingParticipant.toString()} participants?`
-      );
-
-      dialogRef.afterClosed().subscribe((confirmed) => {
-        if (confirmed) {
-          this.goToNextParticipant(this.entries?.length);
-        }
-      });
-    }
+  goToNext() {
+    this.goToParticipantWithIndex(this.currentIndex + 1);
   }
 
-  abort() {
-    if (this.isFinished()) {
-      this.exit.emit();
-    } else {
-      const dialogRef = this.confirmationDialog.openDialog(
-        $localize`:Abort confirmation title: Abort`,
-        $localize`:Abort confirmation text:Are you sure you want to exit and discard all recordings?`
-      );
+  get isFirst(): boolean {
+    return this.currentIndex === 0;
+  }
 
-      dialogRef.afterClosed().subscribe((confirmed) => {
-        if (confirmed) {
-          this.exit.emit();
-        }
-      });
-    }
+  get isLast(): boolean {
+    return this.currentIndex === this.entries.length - 1;
+  }
+
+  get isFinished(): boolean {
+    return this.currentIndex >= this.entries.length;
+  }
+
+  finish() {
+    this.exit.emit();
   }
 }

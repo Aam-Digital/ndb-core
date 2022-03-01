@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { InjectionToken, NgModule } from "@angular/core";
+import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { AppVersionComponent } from "./app-version/app-version.component";
 import { AlertsModule } from "../alerts/alerts.module";
@@ -26,18 +26,13 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { ChangelogComponent } from "./changelog/changelog.component";
 import { SwUpdate } from "@angular/service-worker";
-import { UpdateManagerService } from "./update-manager.service";
+import { LOCATION_TOKEN, UpdateManagerService } from "./update-manager.service";
 import { FlexModule } from "@angular/flex-layout";
 import { MarkdownModule } from "ngx-markdown";
 import { MatCardModule } from "@angular/material/card";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { LatestChangesService } from "./latest-changes.service";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-
-// Following this post to allow testing of the location object: https://itnext.io/testing-browser-window-location-in-angular-application-e4e8388508ff
-export const LOCATION_TOKEN = new InjectionToken<Location>(
-  "Window location object"
-);
 
 /**
  * Displaying app version and changelog information to the user

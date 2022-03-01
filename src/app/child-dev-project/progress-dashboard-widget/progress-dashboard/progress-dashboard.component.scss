@@ -1,4 +1,4 @@
-@use 'src/app/core/dashboard/dashboard-widget-base';
+@use "../../../core/dashboard/dashboard-widget-base";
 
 .filler {
   width: 45%;
@@ -22,4 +22,10 @@
 
 .dashboard-widget mat-form-field.small {
   width: 40px;
+}
+
+.config-panel {
+  text-align: left;
+  position: absolute;
+  bottom: 0;
 }

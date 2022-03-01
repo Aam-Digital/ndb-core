@@ -13,7 +13,6 @@ import {
 import { RouterTestingModule } from "@angular/router/testing";
 import { EntitySubrecordModule } from "../entity-subrecord.module";
 import { Entity } from "../../../entity/model/entity";
-import { SimpleChange } from "@angular/core";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatNativeDateModule } from "@angular/material/core";
 import { DatePipe, PercentPipe } from "@angular/common";
@@ -27,6 +26,7 @@ import { EntityFormService } from "../../entity-form/entity-form.service";
 import { genders } from "../../../../child-dev-project/children/model/genders";
 import { LoggingService } from "../../../logging/logging.service";
 import { MockSessionModule } from "../../../session/mock-session.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -42,6 +42,7 @@ describe("EntitySubrecordComponent", () => {
           MatNativeDateModule,
           NoopAnimationsModule,
           MockSessionModule.withState(),
+          FontAwesomeTestingModule,
         ],
         providers: [DatePipe, PercentPipe],
       }).compileComponents();
@@ -79,10 +80,7 @@ describe("EntitySubrecordComponent", () => {
         view: "DisplayConfigurableEnum",
       },
     ];
-    component.ngOnChanges({
-      records: new SimpleChange(undefined, component.records, true),
-      columns: new SimpleChange(undefined, component.columns, true),
-    });
+    component.ngOnChanges({ records: undefined, columns: undefined });
     fixture.detectChanges();
 
     component.recordsDataSource.sort.sort({
@@ -101,18 +99,10 @@ describe("EntitySubrecordComponent", () => {
     const children = [Child.create("C"), Child.create("A"), Child.create("B")];
     component.columnsToDisplay = ["name", "projectNumber"];
     component.records = children;
-    // trigger ngOnChanges for manually updated property
-    component.ngOnChanges({
-      records: new SimpleChange(undefined, children, true),
-    });
+    component.ngOnChanges({ records: undefined });
 
     const sortedChildren = component.recordsDataSource
-      .sortData(
-        children.map((child) => {
-          return { record: child };
-        }),
-        component.sort
-      )
+      .sortData(component.recordsDataSource.data, component.sort)
       .map((c) => c.record["name"]);
 
     expect(sortedChildren).toEqual(["A", "B", "C"]);
@@ -140,17 +130,11 @@ describe("EntitySubrecordComponent", () => {
       },
     ];
 
-    component.ngOnChanges({
-      records: new SimpleChange(undefined, children, true),
-    });
+    component.ngOnChanges({ records: undefined });
     fixture.detectChanges();
 
     const sortedChildren = component.recordsDataSource
-      ._orderData(
-        children.map((child) => {
-          return { record: child };
-        })
-      )
+      .sortData(component.recordsDataSource.data, component.sort)
       .map((c) => c.record["name"]);
 
     expect(sortedChildren).toEqual(["2", "1", "0"]);
@@ -167,16 +151,12 @@ describe("EntitySubrecordComponent", () => {
     children[3].name = "AB";
     children[2].name = "Z";
     children[1].name = "C";
-    component.ngOnChanges({ records: null });
-    component.sort.sort({ id: "name", start: "asc", disableClear: false });
+    component.records = children;
+    component.ngOnChanges({ records: undefined });
 
+    component.sort.sort({ id: "name", start: "asc", disableClear: false });
     const sortedIds = component.recordsDataSource
-      .sortData(
-        children.map((child) => {
-          return { record: child };
-        }),
-        component.sort
-      )
+      .sortData(component.recordsDataSource.data, component.sort)
       .map((c) => c.record.getId());
 
     expect(sortedIds).toEqual(["0", "3", "1", "2"]);
@@ -188,16 +168,12 @@ describe("EntitySubrecordComponent", () => {
     notes[3].category = { id: "1", label: "AB" };
     notes[2].category = { id: "2", label: "Z" };
     notes[1].category = { id: "3", label: "C" };
+    component.records = notes;
     component.ngOnChanges({ records: null });
 
     component.sort.sort({ id: "category", start: "asc", disableClear: false });
     const sortedIds = component.recordsDataSource
-      .sortData(
-        notes.map((note) => {
-          return { record: note };
-        }),
-        component.sort
-      )
+      .sortData(component.recordsDataSource.data, component.sort)
       .map((note) => note.record.getId());
 
     expect(sortedIds).toEqual(["0", "3", "1", "2"]);
@@ -278,18 +254,27 @@ describe("EntitySubrecordComponent", () => {
     expect(row.formGroup).toBeFalsy();
   });
 
-  it("should create new entities and call the show entity function", fakeAsync(() => {
+  it("should create new entities and call the show entity function when it is supplied", fakeAsync(() => {
     const child = new Child();
     component.newRecordFactory = () => child;
     component.columns = [{ id: "name" }, { id: "projectNumber" }];
-    const showEntitySpy = spyOn(component, "showEntity");
+    component.showEntity = jasmine.createSpy("showEntity");
 
     component.create();
     tick();
 
-    expect(component.records).toEqual([child]);
-    expect(component.recordsDataSource.data).toContain({ record: child });
-    expect(showEntitySpy).toHaveBeenCalledWith(child);
+    expect(component.showEntity).toHaveBeenCalledWith(child);
+  }));
+
+  it("should create new entities and open it in a row when no show entity function is supplied", fakeAsync(() => {
+    const child = new Child();
+    component.newRecordFactory = () => child;
+    const spy = spyOn<any>(component, "showRowDetails");
+
+    component.create();
+    tick();
+
+    expect(spy).toHaveBeenCalledWith({ record: child }, true);
   }));
 
   it("should notify when an entity is clicked", (done) => {
@@ -300,5 +285,20 @@ describe("EntitySubrecordComponent", () => {
     };
 
     component.rowClick({ record: child });
+  });
+
+  it("appends a new entity to the end of the records when it's new", async () => {
+    const entityFormService = TestBed.inject(EntityFormService);
+    spyOn(entityFormService, "saveChanges").and.resolveTo();
+    const entity = new Entity();
+    await component.save({ record: entity }, true);
+    expect(component.records).toHaveSize(1);
+  });
+
+  it("does not change the size of it's records when not saving a new record", async () => {
+    const entity = new Entity();
+    component.records.push(entity);
+    await component.save({ record: entity }, false);
+    expect(component.records).toHaveSize(1);
   });
 });
