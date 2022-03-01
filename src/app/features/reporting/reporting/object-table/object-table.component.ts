@@ -21,8 +21,6 @@ export class ObjectTableComponent implements OnChanges, AfterViewInit {
   dataSource = new MatTableDataSource();
   columns: string[];
 
-  constructor() {}
-
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("objects") && this.objects.length > 0) {
       this.dataSource.data = this.objects;
