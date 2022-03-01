@@ -196,7 +196,7 @@ describe("ReportingComponent", () => {
     ]);
   }));
 
-  it("should use the export service and display a table when aggregation has mode 'exporting'", async () => {
+  it("should use the export service when aggregation has mode 'exporting'", async () => {
     const data = [
       { First: 1, Second: 2 },
       { First: 3, Second: 4 },
@@ -215,8 +215,7 @@ describe("ReportingComponent", () => {
       jasmine.any(Date),
       jasmine.any(Date)
     );
-    expect(component.dataSource.data).toEqual(data);
-    expect(component.columns).toEqual(["First", "Second"]);
+    expect(component.data).toEqual(data);
     expect(component.mode).toBe("exporting");
   });
 });
