@@ -1,4 +1,6 @@
-<app-view-title i18n="Reports concern a group of for example children and include data about these children in a certain date range">
+<app-view-title
+  class="view-section"
+  i18n="Reports concern a group of for example children and include data about these children in a certain date range">
   Reports
 </app-view-title>
 
@@ -7,6 +9,7 @@
   [loading]="loading"
   [exportableData]="exportableData"
   (calculateClick)="calculateResults($event.report, $event.from, $event.to)"
+  class="view-section"
 ></app-select-report>
 
 <app-report-row *ngIf="data?.length > 0 && mode === 'reporting'" [rows]="data"></app-report-row>
