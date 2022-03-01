@@ -32,13 +32,16 @@ export class User extends Entity {
   /** username used for login and identification */
   @DatabaseField() name: string;
 
-  /** settings for the mat-paginator for tables
+  /**
+   * settings for the mat-paginator for tables.
+   * map of ids (uniquely identifying a table) to pageSize or pageIndex.
+   *
    * pageSizeOptions is set in the corresponding html of the component,
    * pageSize is stored persistently in the database and
    * pageIndex is saved only temporarily for the session
    */
-  @DatabaseField() paginatorSettingsPageSize: any = {};
-  public paginatorSettingsPageIndex: any = {};
+  @DatabaseField() paginatorSettingsPageSize: { [id: string]: number } = {};
+  public paginatorSettingsPageIndex: { [id: string]: number } = {};
 
   /** password for webdav account (encrypted) */
   @DatabaseField() private cloudPasswordEnc: any;

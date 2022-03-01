@@ -13,6 +13,7 @@ import { MatTableDataSource } from "@angular/material/table";
 import { PageEvent } from "@angular/material/paginator";
 import { MockSessionModule } from "../../../session/mock-session.module";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
+import { User } from "../../../user/user";
 
 describe("ListPaginatorComponent", () => {
   let component: ListPaginatorComponent<any>;
@@ -69,4 +70,27 @@ describe("ListPaginatorComponent", () => {
     expect(component.pageSize).toBe(20);
     expect(component.showingAll).toBeFalse();
   });
+
+  it("should update pagination when the idForSavingPagination changed", fakeAsync(() => {
+    const userPaginationSettings = {
+      c1: 11,
+      c2: 12,
+    };
+    component.user = ({
+      paginatorSettingsPageSize: userPaginationSettings,
+      paginatorSettingsPageIndex: {},
+    } as Partial<User>) as User;
+
+    component.idForSavingPagination = "c1";
+    component.ngOnChanges({ idForSavingPagination: {} as any });
+    tick();
+    expect(component.pageSize).toBe(userPaginationSettings.c1);
+    expect(component.paginator.pageSize).toBe(userPaginationSettings.c1);
+
+    component.idForSavingPagination = "c2";
+    component.ngOnChanges({ idForSavingPagination: {} as any });
+    tick();
+    expect(component.pageSize).toBe(userPaginationSettings.c2);
+    expect(component.paginator.pageSize).toBe(userPaginationSettings.c2);
+  }));
 });
