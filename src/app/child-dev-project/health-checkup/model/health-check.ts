@@ -59,4 +59,12 @@ export class HealthCheck extends Entity {
       return WarningLevel.WARNING;
     }
   }
+
+  getColor(): string {
+    if (!this.height) {
+      return "#DEDEDE";
+    } else {
+      return super.getColor();
+    }
+  }
 }

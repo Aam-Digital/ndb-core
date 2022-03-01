@@ -12,6 +12,7 @@ import { Location } from "@angular/common";
   template: ` <app-entity-form
     [entity]="entity"
     [columns]="columns"
+    [columnHeaders]="headers"
     [editing]="creatingNew"
     (onSave)="saveClicked($event)"
     (onCancel)="cancelClicked()"
@@ -24,6 +25,7 @@ import { Location } from "@angular/common";
 export class FormComponent implements OnInitDynamicComponent {
   entity: Entity;
   columns: FormFieldConfig[][] = [];
+  headers?: string[] = [];
   creatingNew = false;
 
   constructor(private router: Router, private location: Location) {}
@@ -31,6 +33,7 @@ export class FormComponent implements OnInitDynamicComponent {
   onInitFromDynamicConfig(config: PanelConfig) {
     this.entity = config.entity;
     this.columns = config.config?.cols;
+    this.headers = config.config?.headers;
     if (config.creatingNew) {
       this.creatingNew = true;
     }

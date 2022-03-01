@@ -22,32 +22,8 @@ export const materials: ConfigurableEnumValue[] = [
     label: $localize`:Label school material:pen (black)`,
   },
   {
-    id: "oil pastels",
-    label: $localize`:Label school material:oil pastels`,
-  },
-  {
     id: "crayons",
     label: $localize`:Label school material:crayons`,
-  },
-  {
-    id: "sketch pens",
-    label: $localize`:Label school material:sketch pens`,
-  },
-  {
-    id: "scale (big)",
-    label: $localize`:Label school material:scale (big)`,
-  },
-  {
-    id: "scale (small)",
-    label: $localize`:Label school material:scale (small)`,
-  },
-  {
-    id: "geometry box",
-    label: $localize`:Label school material:geometry box`,
-  },
-  {
-    id: "copy (single line, small)",
-    label: $localize`:Label school material:copy (single line, small)`,
   },
   {
     id: "copy (single line, big)",
@@ -58,36 +34,8 @@ export const materials: ConfigurableEnumValue[] = [
     label: $localize`:Label school material:copy (four line)`,
   },
   {
-    id: "copy (squared)",
-    label: $localize`:Label school material:copy (squared)`,
-  },
-  {
     id: "copy (plain)",
     label: $localize`:Label school material:copy (plain)`,
-  },
-  {
-    id: "copy (line-plain)",
-    label: $localize`:Label school material:copy (line-plain)`,
-  },
-  {
-    id: "copy (drawing)",
-    label: $localize`:Label school material:copy (drawing)`,
-  },
-  {
-    id: "copy (practical)",
-    label: $localize`:Label school material:copy (practical)`,
-  },
-  {
-    id: "graph book",
-    label: $localize`:Label school material:graph book`,
-  },
-  {
-    id: "project papers",
-    label: $localize`:Label school material:project papers`,
-  },
-  {
-    id: "project file",
-    label: $localize`:Label school material:project file`,
   },
   {
     id: "scrap book",

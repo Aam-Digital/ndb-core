@@ -4,7 +4,7 @@
   class="child-pic"
   alt="child's photo"
 />
-<p *ngIf="!formControl.value?.photo">No photo set</p>
+<p *ngIf="!formControl.value?.photo" i18n="Placeholer if no photo is available">No photo set</p>
 <mat-form-field
   *ngIf="formControl.enabled && editPhotoAllowed"
   class="child-pic-photofile"

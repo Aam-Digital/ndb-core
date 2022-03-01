@@ -2,7 +2,6 @@ import { Injectable, Optional } from "@angular/core";
 import { from, Observable, Subject } from "rxjs";
 import { Child } from "./model/child";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
-import { AttendanceMonth } from "../attendance/model/attendance-month";
 import { Note } from "../notes/model/note";
 import { EducationalMaterial } from "../educational-material/model/educational-material";
 import { Aser } from "../aser/model/aser";
@@ -28,9 +27,7 @@ export class ChildrenService {
   }
 
   public createDatabaseIndices() {
-    this.createAttendanceAnalysisIndex();
     this.createNotesIndex();
-    this.createAttendancesIndex();
     this.createChildSchoolRelationIndex();
   }
 
@@ -47,10 +44,6 @@ export class ChildrenService {
         const childCurrentSchoolInfo = await this.getCurrentSchoolInfoForChild(
           loadedChild.getId()
         );
-        await this.migrateToNewChildSchoolRelationModel(
-          loadedChild,
-          childCurrentSchoolInfo
-        );
         loadedChild.schoolClass = childCurrentSchoolInfo.schoolClass;
         loadedChild.schoolId = childCurrentSchoolInfo.schoolId;
       }
@@ -59,43 +52,6 @@ export class ChildrenService {
     });
 
     return results;
-  }
-
-  /**
-   * DATA MODEL UPGRADE
-   * Check if the Child Entity still contains direct links to schoolId and schoolClass
-   * and create a new ChildSchoolRelation if necessary.
-   * @param loadedChild Child entity to be checked and migrated
-   * @param childCurrentSchoolInfo Currently available school information according to new data model from ChildSchoolRelation entities
-   */
-  private async migrateToNewChildSchoolRelationModel(
-    loadedChild: Child,
-    childCurrentSchoolInfo: { schoolId: string; schoolClass: string }
-  ) {
-    if (!loadedChild.schoolClass && !loadedChild.schoolId) {
-      // no data from old model -> skip migration
-      return;
-    }
-
-    if (
-      loadedChild.schoolId !== childCurrentSchoolInfo.schoolId ||
-      loadedChild.schoolClass !== childCurrentSchoolInfo.schoolClass
-    ) {
-      // generate a ChildSchoolRelation entity from the information of the previous data model
-      const autoMigratedChildSchoolRelation = new ChildSchoolRelation();
-      autoMigratedChildSchoolRelation.childId = loadedChild.getId();
-      autoMigratedChildSchoolRelation.schoolId = loadedChild.schoolId;
-      autoMigratedChildSchoolRelation.schoolClass = loadedChild.schoolClass;
-      await this.entityMapper.save(autoMigratedChildSchoolRelation);
-      this.logger?.debug(
-        "migrated Child entity to new ChildSchoolRelation model " +
-          loadedChild._id
-      );
-      console.log(autoMigratedChildSchoolRelation);
-    }
-
-    // save the Child entity to remove the deprecated attributes from the doc in the database
-    await this.entityMapper.save(loadedChild);
   }
 
   /**
@@ -115,64 +71,6 @@ export class ChildrenService {
         );
       });
     return from(promise);
-  }
-
-  getAttendances(): Observable<AttendanceMonth[]> {
-    return from(this.entityMapper.loadType<AttendanceMonth>(AttendanceMonth));
-  }
-
-  getAttendancesOfChild(childId: string): Observable<AttendanceMonth[]> {
-    const promise = this.dbIndexing.queryIndexDocs(
-      AttendanceMonth,
-      "attendances_index/by_child",
-      childId
-    );
-
-    return from(promise);
-  }
-
-  getAttendancesOfMonth(month: Date): Observable<AttendanceMonth[]> {
-    const monthString =
-      month.getFullYear().toString() + "-" + (month.getMonth() + 1).toString();
-    const promise = this.dbIndexing.queryIndexDocs(
-      AttendanceMonth,
-      "attendances_index/by_month",
-      monthString
-    );
-
-    return from(promise);
-  }
-
-  /**
-   * @deprecated use AttendanceService instead. This can be removed after all AttendanceMigrationService tasks are completed.
-   * @private
-   */
-  private createAttendancesIndex(): Promise<any> {
-    const designDoc = {
-      _id: "_design/attendances_index",
-      views: {
-        by_child: {
-          map:
-            "(doc) => { " +
-            'if (!doc._id.startsWith("' +
-            AttendanceMonth.ENTITY_TYPE +
-            '")) return;' +
-            "emit(doc.student); " +
-            "}",
-        },
-        by_month: {
-          map:
-            "(doc) => { " +
-            'if (!doc._id.startsWith("' +
-            AttendanceMonth.ENTITY_TYPE +
-            '")) return;' +
-            "emit(doc.month); " +
-            "}",
-        },
-      },
-    };
-
-    return this.dbIndexing.createIndex(designDoc);
   }
 
   private createChildSchoolRelationIndex(): Promise<any> {
@@ -245,69 +143,6 @@ export class ChildrenService {
       ChildSchoolRelation,
       "childSchoolRelations_index/by_" + queryType,
       id
-    );
-  }
-
-  async queryAttendanceLast3Months() {
-    return this.dbIndexing.queryIndexStats("avg_attendance_index/three_months");
-  }
-
-  async queryAttendanceLastMonth() {
-    return this.dbIndexing.queryIndexStats("avg_attendance_index/last_month");
-  }
-
-  private createAttendanceAnalysisIndex(): Promise<any> {
-    const designDoc = {
-      _id: "_design/avg_attendance_index",
-      views: {
-        three_months: {
-          map: this.getAverageAttendanceMapFunction(),
-          reduce: "_stats",
-        },
-        last_month: {
-          map: this.getLastAverageAttendanceMapFunction(),
-          reduce: "_stats",
-        },
-      },
-    };
-
-    return this.dbIndexing.createIndex(designDoc);
-  }
-
-  private getAverageAttendanceMapFunction() {
-    return (
-      "(doc) => {" +
-      'if (!doc._id.startsWith("AttendanceMonth:") ) { return; }' +
-      "if (!isWithinLast3Months(new Date(doc.month), new Date())) { return; }" +
-      "var attendance = (doc.daysAttended / (doc.daysWorking - doc.daysExcused));" +
-      "if (!Number.isNaN(attendance)) { emit(doc.student, attendance); }" +
-      "function isWithinLast3Months(date, now) {" +
-      "  let months;" +
-      "  months = (now.getFullYear() - date.getFullYear()) * 12;" +
-      "  months -= date.getMonth();" +
-      "  months += now.getMonth();" +
-      "  if (months < 0) { return false; }" +
-      "  return months <= 3;" +
-      "}" +
-      "}"
-    );
-  }
-
-  private getLastAverageAttendanceMapFunction() {
-    return (
-      "(doc) => {" +
-      'if (!doc._id.startsWith("AttendanceMonth:")) { return; }' +
-      "if (!isWithinLastMonth(new Date(doc.month), new Date())) { return; }" +
-      "var attendance = (doc.daysAttended / (doc.daysWorking - doc.daysExcused));" +
-      "if (!Number.isNaN(attendance)) { emit(doc.student, attendance); }" +
-      "function isWithinLastMonth(date, now) {" +
-      "  let months;" +
-      "  months = (now.getFullYear() - date.getFullYear()) * 12;" +
-      "  months -= date.getMonth();" +
-      "  months += now.getMonth();" +
-      "  return months === 1;" +
-      "}" +
-      "}"
     );
   }
 

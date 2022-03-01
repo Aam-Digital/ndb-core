@@ -10,12 +10,12 @@ import { mathLevels } from "../../child-dev-project/aser/model/mathLevels";
 import { readingLevels } from "../../child-dev-project/aser/model/readingLevels";
 import { warningLevels } from "../../child-dev-project/warning-levels";
 import { ratingAnswers } from "../../features/historical-data/rating-answers";
-import { Note } from "../../child-dev-project/notes/model/note";
 
 // prettier-ignore
 export const defaultJsonConfig = {
   "appConfig": {
-    displayLanguageSelect: true,
+    "displayLanguageSelect": true,
+    "logo_path": null
   },
   "appConfig:usage-analytics": {
     "url": "https://matomo.aam-digital.org",
@@ -39,18 +39,8 @@ export const defaultJsonConfig = {
         "link": "/school"
       },
       {
-        "name": $localize`:Menu item:Recurring Activities`,
-        "icon": "calendar-alt",
-        "link": "/recurring-activity"
-      },
-      {
-        "name": $localize`:Menu item|Record attendance menu item:Record Attendance`,
+        "name": $localize`:Menu item:Attendance`,
         "icon": "calendar-check",
-        "link": "/attendance/add/day"
-      },
-      {
-        "name": $localize`:Menu item:Manage Attendance`,
-        "icon": "table",
         "link": "/attendance"
       },
       {
@@ -65,7 +55,7 @@ export const defaultJsonConfig = {
       },
       {
         "name": $localize`:Menu item:Users`,
-        "icon": "user",
+        "icon": "users",
         "link": "/users"
       },
       {
@@ -151,7 +141,12 @@ export const defaultJsonConfig = {
               {
                 "label": $localize`:Dashboard shortcut widget|record attendance shortcut:Record Attendance`,
                 "icon": "calendar-check",
-                "link": "/attendance/add/day",
+                "link": "/attendance/add-day",
+              },
+              {
+                "label": $localize`:Dashboard shortcut widget|record attendance shortcut:Add Child`,
+                "icon": "plus",
+                "link": "/child/new",
               }
             ]
           }
@@ -160,13 +155,19 @@ export const defaultJsonConfig = {
           "component": "ChildrenCountDashboard"
         },
         {
-          "component": "RecentNotesDashboard"
-        },
-        {
-          "component": "NoRecentNotesDashboard",
+          "component": "NotesDashboard",
           "config": {
             "sinceDays": 28,
-            "fromBeginningOfWeek": false
+            "fromBeginningOfWeek": false,
+            "mode": "with-recent-notes"
+          }
+        },
+        {
+          "component": "NotesDashboard",
+          "config": {
+            "sinceDays": 28,
+            "fromBeginningOfWeek": false,
+            "mode": "without-recent-notes"
           }
         },
         {
@@ -252,7 +253,7 @@ export const defaultJsonConfig = {
         { "label": "event type", "query": "category" },
         { "label": "event description", "query": "text" },
         {
-          "query": ":getAttendanceArray",
+          "query": ":getAttendanceArray(true)",
           "subQueries": [
             {
               "query": ".participant:toEntities(Child)",
@@ -267,6 +268,13 @@ export const defaultJsonConfig = {
               "label": "status",
               "query": ".status._status.id",
             },
+            {
+              "query": ".school:toEntities(School)",
+              "subQueries": [
+                { "label": "school_name", "query": "name" },
+                { "label": "school_id", "query": "entityId" }
+              ]
+            }
           ],
         },
       ]
@@ -294,7 +302,7 @@ export const defaultJsonConfig = {
   "view:attendance": {
     "component": "AttendanceManager"
   },
-  "view:attendance/add/day": {
+  "view:attendance/add-day": {
     "component": "AddDayAttendance"
   },
   "view:school": {
@@ -309,8 +317,9 @@ export const defaultJsonConfig = {
       "filters": [
         {
           "id": "privateSchool",
-          "true": $localize`:Label for private schools filter - true case:Private School`,
-          "false": $localize`:Label for private schools filter - false case:Government School`,
+          "label": $localize`Schools`,
+          "true": $localize`:Label for private schools filter - true case:Private`,
+          "false": $localize`:Label for private schools filter - false case:Government`,
           "all": $localize`:Label for disabling the filter:All`
         }
       ]
@@ -473,8 +482,7 @@ export const defaultJsonConfig = {
             "columns": [
               "projectNumber",
               "name",
-              "age",
-              "schoolId"
+              "age"
             ]
           }
         ]
@@ -484,7 +492,8 @@ export const defaultJsonConfig = {
           "id": "isActive",
           "type": "boolean",
           "default": "true",
-          "true": $localize`:Active children filter label - true case:Active Children`,
+          "label": $localize`Children`,
+          "true": $localize`:Active children filter label - true case:Active`,
           "false": $localize`:Active children filter label - false case:Inactive`,
           "all": $localize`:Active children unselect option:All`
         },
@@ -532,6 +541,12 @@ export const defaultJsonConfig = {
                     "address",
                     "phone"
                   ],
+                ],
+                "headers": [
+                  null,
+                  $localize`:Header for form section:Personal Information`,
+                  $localize`:Header for form section:Additional`,
+                  $localize`:Header for form section:Scholar activities`,
                 ]
               }
             }
@@ -548,8 +563,14 @@ export const defaultJsonConfig = {
                 "columns": [
                   "schoolId",
                   "schoolClass",
-                  "start",
-                  "end",
+                  {
+                    id: "start",
+                    visibleFrom: "sm",
+                  },
+                  {
+                    id: "end",
+                    visibleFrom: "sm",
+                  },
                   "result",
                 ],
               }
@@ -618,12 +639,7 @@ export const defaultJsonConfig = {
                 {id: "isParticipatingInClass", visibleFrom: "lg" },
                 {id: "isInteractingWithOthers", visibleFrom: "lg" },
                 {id: "doesHomework", visibleFrom: "lg" },
-                {id: "isOnTime", visibleFrom: "lg" },
                 {id: "asksQuestions", visibleFrom: "lg" },
-                {id: "listens", visibleFrom: "lg" },
-                {id: "canWorkOnBoard", visibleFrom: "lg" },
-                {id: "isConcentrated", visibleFrom: "lg" },
-                {id: "doesNotDisturb", visibleFrom: "lg" },
               ]
             }
           ]
@@ -648,7 +664,7 @@ export const defaultJsonConfig = {
     }
   },
 
-  "view:recurring-activity": {
+  "view:attendance/recurring-activity": {
     "component": "ActivityList",
     "config": {
       "title": $localize`:Title of recurring activities overview:Recurring Activities`,
@@ -664,13 +680,13 @@ export const defaultJsonConfig = {
       ]
     }
   },
-  "view:recurring-activity/:id": {
+  "view:attendance/recurring-activity/:id": {
     "component": "EntityDetails",
     "config": {
       "entity": "RecurringActivity",
       "panels": [
         {
-          "title": $localize`:Panel title:Activity`,
+          "title": $localize`:Panel title:Basic Information`,
           "components": [
             {
               "component": "Form",
@@ -797,22 +813,61 @@ export const defaultJsonConfig = {
           ],
         },
         {
-          "title": $localize`:Name of a report:Overall Activity Report`,
+          "title": $localize`:Name of a report:Attendance Report`,
+          "mode": "exporting",
           "aggregationDefinitions": [
             {
-              "query": `${EventNote.ENTITY_TYPE}:toArray:addEntities(${Note.ENTITY_TYPE})[*date >= ? & date <= ?]`,
-              "groupBy": ["category"],
-              "label": $localize`:Label for a report query:Events`,
-              "aggregations": [
+              "query": `${EventNote.ENTITY_TYPE}:toArray:filterByObjectAttribute(category, id, SCHOOL_CLASS)[* date >= ? & date <= ?]:getAttendanceArray:getAttendanceReport`,
+              "subQueries": [
                 {
-                  "query": `:getParticipantsWithAttendance(PRESENT):unique:addPrefix(${Child.ENTITY_TYPE}):toEntities`,
-                  "groupBy": ["gender", "religion"],
-                  "label": $localize`:Label for a report query:Participants`
+                  "label": $localize`:Name of column of a report:Type`,
+                  "query": ":setString(School Class)"
+                },
+                {
+                  "label": $localize`:Name of a column of a report:Name`,
+                  "query": `.participant:toEntities(Child).name`
+                },
+                {
+                  "label": $localize`:Name of a column of a report:Total`,
+                  "query": `total`
+                },
+                {
+                  "label": $localize`:Name of a column of a report:Present`,
+                  "query": `present`
+                },
+                {
+                  "label": $localize`:Name of a column of a report:Rate`,
+                  "query": `percentage`
                 }
               ]
-            }
+            },
+            {
+              "query": `${EventNote.ENTITY_TYPE}:toArray:filterByObjectAttribute(category, id, COACHING_CLASS)[* date >= ? & date <= ?]:getAttendanceArray:getAttendanceReport`,
+              "subQueries": [
+                {
+                  "label": $localize`:Name of column of a report:Type`,
+                  "query": ":setString(Coaching Class)"
+                },
+                {
+                  "label": $localize`:Name of a column of a report:Name`,
+                  "query": `.participant:toEntities(Child).name`
+                },
+                {
+                  "label": $localize`:Name of a column of a report:Total`,
+                  "query": `total`
+                },
+                {
+                  "label": $localize`:Name of a column of a report:Present`,
+                  "query": `present`
+                },
+                {
+                  "label": $localize`:Name of a column of a report:Rate`,
+                  "query": `percentage`
+                }
+              ]
+            },
           ],
-        }
+        },
       ]
     }
   },
@@ -929,7 +984,7 @@ export const defaultJsonConfig = {
         "schema": {
           "dataType": "configurable-enum",
           "innerDataType": "rating-answer",
-          label: $localize`:Label for a child attribute:Participates`,
+          label: $localize`:Label for a child attribute:Participating`,
           description: $localize`:Description for a child attribute:The child is actively participating in the class.`
         }
       },
@@ -938,7 +993,7 @@ export const defaultJsonConfig = {
         "schema": {
           "dataType": "configurable-enum",
           "innerDataType": "rating-answer",
-          label: $localize`:Label for a child attribute:Interacts`,
+          label: $localize`:Label for a child attribute:Interacting`,
           description: $localize`:Description for a child attribute:The child interacts with other students during the class.`
         }
       },
@@ -952,57 +1007,12 @@ export const defaultJsonConfig = {
         }
       },
       {
-        "name": "isOnTime",
-        "schema": {
-          "dataType": "configurable-enum",
-          "innerDataType": "rating-answer",
-          label: $localize`:Label for a child attribute:On time`,
-          description: $localize`:Description for a child attribute:The child is always on time for the class.`
-        }
-      },
-      {
         "name": "asksQuestions",
         "schema": {
           "dataType": "configurable-enum",
           "innerDataType": "rating-answer",
-          label: $localize`:Label for a child attribute:Asks`,
+          label: $localize`:Label for a child attribute:Asking Questions`,
           description: $localize`:Description for a child attribute:The child is asking questions during the class.`
-        }
-      },
-      {
-        "name": "listens",
-        "schema": {
-          "dataType": "configurable-enum",
-          "innerDataType": "rating-answer",
-          label: $localize`:Label for a child attribute:Listens`,
-          description: $localize`:Description for a child attribute:The child is listening during the class.`
-        }
-      },
-      {
-        "name": "canWorkOnBoard",
-        "schema": {
-          "dataType": "configurable-enum",
-          "innerDataType": "rating-answer",
-          label: $localize`:Label for a child attribute:Solves on board`,
-          description: $localize`:Description for a child attribute:The child can solve exercises on the board.`
-        }
-      },
-      {
-        "name": "isConcentrated",
-        "schema": {
-          "dataType": "configurable-enum",
-          "innerDataType": "rating-answer",
-          label: $localize`:Label for a child attribute:Concentrated`,
-          description: $localize`:Description for a child attribute:The child is concentrated during the class.`
-        }
-      },
-      {
-        "name": "doesNotDisturb",
-        "schema": {
-          "dataType": "configurable-enum",
-          "innerDataType": "rating-answer",
-          label: $localize`:Label for a child attribute:Not disturbing`,
-          description: $localize`:Description for a child attribute:The child does not disturb the class.`
         }
       },
     ]

@@ -1,4 +1,4 @@
-import { UpdateManagerService } from "./update-manager.service";
+import { LOCATION_TOKEN, UpdateManagerService } from "./update-manager.service";
 import {
   discardPeriodicTasks,
   fakeAsync,
@@ -10,7 +10,6 @@ import { SwUpdate, UpdateActivatedEvent } from "@angular/service-worker";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { LoggingService } from "../logging/logging.service";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
-import { LOCATION_TOKEN } from "./latest-changes.module";
 import { Subject } from "rxjs";
 
 describe("UpdateManagerService", () => {

@@ -6,11 +6,16 @@ import { OnInitDynamicComponent } from "../../core/view/dynamic-components/on-in
 import { PanelConfig } from "../../core/entity-components/entity-details/EntityDetailsConfig";
 import { FormFieldConfig } from "../../core/entity-components/entity-form/entity-form/FormConfig";
 import moment from "moment";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { EntityMapperService } from "app/core/entity/entity-mapper.service";
+import { isActiveIndicator } from "../schools/children-overview/children-overview.component";
 
 @Component({
   selector: "app-previous-schools",
   templateUrl: "./previous-schools.component.html",
+  styleUrls: ["./previous-schools.component.scss"],
 })
+@UntilDestroy()
 export class PreviousSchoolsComponent
   implements OnChanges, OnInitDynamicComponent {
   @Input() child: Child;
@@ -18,15 +23,19 @@ export class PreviousSchoolsComponent
   columns: FormFieldConfig[] = [
     { id: "schoolId" },
     { id: "schoolClass" },
-    { id: "start" },
-    { id: "end" },
+    { id: "start", visibleFrom: "md" },
+    { id: "end", visibleFrom: "md" },
     { id: "result" },
+    isActiveIndicator,
   ];
-  current: ChildSchoolRelation;
+  hasCurrentlyActiveEntry: boolean;
 
   single = true;
 
-  constructor(private childrenService: ChildrenService) {}
+  constructor(
+    private childrenService: ChildrenService,
+    private entityMapperService: EntityMapperService
+  ) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.hasOwnProperty("child")) {
@@ -39,10 +48,11 @@ export class PreviousSchoolsComponent
       this.single = panelConfig.config.single;
     }
     if (panelConfig.config?.columns) {
-      this.columns = panelConfig.config.columns;
+      this.columns = panelConfig.config.columns.concat(isActiveIndicator);
     }
     this.child = panelConfig.entity as Child;
     this.loadData(this.child.getId());
+    this.subscribeToChildSchoolRelationUpdates();
   }
 
   async loadData(id: string) {
@@ -51,7 +61,9 @@ export class PreviousSchoolsComponent
     }
 
     this.records = await this.childrenService.getSchoolRelationsFor(id);
-    this.current = this.records.find((record) => record.isActive);
+    this.hasCurrentlyActiveEntry = this.records.some(
+      (record) => record.isActive
+    );
   }
 
   generateNewRecordFactory() {
@@ -66,5 +78,12 @@ export class PreviousSchoolsComponent
           : new Date();
       return newPreviousSchool;
     };
+  }
+
+  private subscribeToChildSchoolRelationUpdates() {
+    this.entityMapperService
+      .receiveUpdates<ChildSchoolRelation>(ChildSchoolRelation)
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.loadData(this.child.getId()));
   }
 }

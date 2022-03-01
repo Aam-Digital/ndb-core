@@ -1,6 +1,9 @@
-import { Component } from "@angular/core";
+import { Component, ViewChild } from "@angular/core";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { Note } from "../../notes/model/note";
+import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
+import { ConfirmationDialogButton } from "../../../core/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+import { RollCallComponent } from "./roll-call/roll-call.component";
 import { ActivatedRoute } from "@angular/router";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 
@@ -23,9 +26,29 @@ export class AddDayAttendanceComponent {
   currentStage = 0;
 
   day = new Date();
-  attendanceType: string;
 
   event: Note;
+
+  @ViewChild(RollCallComponent) rollCallComponent: RollCallComponent;
+
+  readonly buttons: ConfirmationDialogButton[] = [
+    {
+      text: $localize`Save`,
+      click: (): boolean => {
+        this.saveRollCallResult(this.event).then(() => {
+          this.finishRollCallState();
+        });
+        return true;
+      },
+    },
+    {
+      text: $localize`:Discard changes made to a form:Discard`,
+      click: (): boolean => {
+        this.finishRollCallState();
+        return false;
+      },
+    },
+  ];
 
   stages = [
     $localize`:One of the stages while recording child-attendances:Select Event`,
@@ -34,7 +57,8 @@ export class AddDayAttendanceComponent {
 
   constructor(
     private entityMapper: EntityMapperService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private confirmationDialog: ConfirmationDialogService
   ) {
     this.route.data.subscribe((data: RouteData<AddDayAttendanceConfig>) => {
       this.config = data.config;
@@ -44,6 +68,19 @@ export class AddDayAttendanceComponent {
   finishBasicInformationStage(event: Note) {
     this.event = event;
     this.currentStage = 1;
+  }
+
+  exit() {
+    if (this.rollCallComponent?.isDirty) {
+      this.confirmationDialog.openDialog(
+        $localize`:Exit from the current screen:Exit`,
+        $localize`Do you want to save your progress before going back?`,
+        this.buttons,
+        true
+      );
+    } else {
+      this.finishRollCallState();
+    }
   }
 
   finishRollCallState() {

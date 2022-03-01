@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { ViewComponent } from "../view-component";
+import { ViewDirective } from "../view.directive";
 
 /**
  * This component allows to display a boolean attribute of an entity.
@@ -9,4 +9,4 @@ import { ViewComponent } from "../view-component";
   selector: "app-display-tick",
   template: `{{ entity[property] ? "✓" : "" }}`,
 })
-export class DisplayCheckmarkComponent extends ViewComponent {}
+export class DisplayCheckmarkComponent extends ViewDirective {}

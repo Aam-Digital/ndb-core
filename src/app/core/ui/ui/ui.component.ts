@@ -94,4 +94,10 @@ export class UiComponent implements OnInit {
   logout() {
     this._sessionService.logout();
   }
+
+  closeSidenavOnMobile() {
+    if (this.sideNavMode === "over") {
+      this.sideNav.close();
+    }
+  }
 }
