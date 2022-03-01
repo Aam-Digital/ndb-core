@@ -286,30 +286,33 @@ export class QueryService {
   ): AttendanceInfo[] {
     const attendances: AttendanceInfo[] = [];
     for (const event of events) {
-      let linkedRelations: ChildSchoolRelation[] = [];
-      if (includeSchool) {
-        const relations: ChildSchoolRelation[] = this.toArray(
-          this.entities[ChildSchoolRelation.ENTITY_TYPE]
-        );
-        linkedRelations = relations.filter(
-          (relation) =>
-            event.schools.includes(relation.schoolId) &&
-            relation.isActiveAt(event.date)
-        );
-      }
+      const linkedRelations = includeSchool
+        ? this.getMembersOfGroupsForEvent(event)
+        : [];
+
       for (const child of event.children) {
         const attendance: AttendanceInfo = {
           participant: child,
           status: event.getAttendance(child),
         };
+
         const relation = linkedRelations.find((rel) => rel.childId === child);
         if (relation) {
           attendance.school = relation.schoolId;
         }
+
         attendances.push(attendance);
       }
     }
     return attendances;
+  }
+
+  private getMembersOfGroupsForEvent(event: Note) {
+    return this.toArray(this.entities[ChildSchoolRelation.ENTITY_TYPE]).filter(
+      (relation) =>
+        event.schools.includes(relation.schoolId) &&
+        relation.isActiveAt(event.date)
+    );
   }
 
   /**
