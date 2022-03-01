@@ -281,7 +281,7 @@ export class AttendanceService {
     const childIdPromises = linkedGroups.map((groupId) =>
       this.childrenService
         .queryRelationsOf("school", groupId)
-        .then((relations) => relations.map((r) => r.childId))
+        .then((relations) => relations.map((r) => r.childId).filter((r) => !!r))
     );
     const allParticipants = await Promise.all(childIdPromises);
     // flatten and remove duplicates
