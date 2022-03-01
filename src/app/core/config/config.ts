@@ -15,7 +15,7 @@ export class Config<T = any> extends Entity {
   /**
    * The ID for the permission configuration
    */
-  static readonly PERMISSION_KEY = "permissions";
+  static readonly PERMISSION_KEY = "Permissions";
 
   /**
    * This field contains all the configuration and does not have a predefined type.
