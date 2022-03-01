@@ -63,7 +63,7 @@ export class PermissionEnforcerService {
       .filter((rule) => this.isReadRule(rule))
       .forEach((rule) => {
         const relevantSubjects = this.getRelevantSubjects(rule);
-        if (rule.inverted) {
+        if (rule.inverted || rule.conditions) {
           relevantSubjects.forEach((subject) => subjects.add(subject));
         } else {
           relevantSubjects.forEach((subject) => subjects.delete(subject));

@@ -32,6 +32,7 @@ describe("PermissionEnforcerService", () => {
   let mockAnalytics: jasmine.SpyObj<AnalyticsService>;
   const mockLoginState = new BehaviorSubject(LoginState.LOGGED_IN);
   let loadSpy: jasmine.Spy<EntityMapperService["load"]>;
+  let entityMapper: EntityMapperService;
 
   beforeEach(fakeAsync(() => {
     mockSession = jasmine.createSpyObj(["getCurrentUser"], {
@@ -62,7 +63,8 @@ describe("PermissionEnforcerService", () => {
     });
     service = TestBed.inject(PermissionEnforcerService);
     TestBed.inject(AbilityService);
-    loadSpy = spyOn(TestBed.inject(EntityMapperService), "load");
+    entityMapper = TestBed.inject(EntityMapperService);
+    loadSpy = spyOn(entityMapper, "load");
   }));
 
   afterEach(async () => {
@@ -85,7 +87,7 @@ describe("PermissionEnforcerService", () => {
   });
 
   it("should reset page if entity with write restriction exists (inverted)", fakeAsync(() => {
-    TestBed.inject(EntityMapperService).save(new Child());
+    entityMapper.save(new Child());
     tick();
 
     updateRulesAndTriggerEnforcer(userRules);
@@ -96,7 +98,7 @@ describe("PermissionEnforcerService", () => {
   }));
 
   it("should reset page if entity with without read permission exists (non-inverted)", fakeAsync(() => {
-    TestBed.inject(EntityMapperService).save(new Child());
+    entityMapper.save(new Child());
     tick();
 
     updateRulesAndTriggerEnforcer([{ subject: "School", action: "manage" }]);
@@ -107,7 +109,7 @@ describe("PermissionEnforcerService", () => {
   }));
 
   it("should reset page if entity exists for which relevant rule is a read restriction ", fakeAsync(() => {
-    TestBed.inject(EntityMapperService).save(new Child());
+    entityMapper.save(new Child());
     tick();
 
     updateRulesAndTriggerEnforcer([
@@ -126,8 +128,8 @@ describe("PermissionEnforcerService", () => {
   }));
 
   it("should not reset page if only entities with read permission exist", fakeAsync(() => {
-    TestBed.inject(EntityMapperService).save(new Child());
-    TestBed.inject(EntityMapperService).save(new School());
+    entityMapper.save(new Child());
+    entityMapper.save(new School());
     tick();
 
     updateRulesAndTriggerEnforcer([
@@ -145,7 +147,7 @@ describe("PermissionEnforcerService", () => {
     updateRulesAndTriggerEnforcer(userRules);
     tick();
 
-    TestBed.inject(EntityMapperService).save(new Child());
+    entityMapper.save(new Child());
     tick();
 
     updateRulesAndTriggerEnforcer(userRules);
@@ -156,7 +158,7 @@ describe("PermissionEnforcerService", () => {
   }));
 
   it("should reset if roles changed since last check and entities without permissions exist", fakeAsync(() => {
-    TestBed.inject(EntityMapperService).save(new School());
+    entityMapper.save(new School());
     tick();
 
     updateRulesAndTriggerEnforcer(userRules);
@@ -178,8 +180,21 @@ describe("PermissionEnforcerService", () => {
     expect(mockLocation.reload).toHaveBeenCalled();
   }));
 
+  it("should reset if read rule with condition is added", fakeAsync(() => {
+    entityMapper.save(Child.create("permitted"));
+    entityMapper.save(Child.create("not-permitted"));
+
+    updateRulesAndTriggerEnforcer([
+      { subject: "Child", action: "read", conditions: { name: "permitted" } },
+    ]);
+    tick();
+
+    expect(mockDatabase.destroy).toHaveBeenCalled();
+    expect(mockLocation.reload).toHaveBeenCalled();
+  }));
+
   it("should track a migration event in analytics service when destroying the local db", fakeAsync(() => {
-    TestBed.inject(EntityMapperService).save(new Child());
+    entityMapper.save(new Child());
     tick();
 
     updateRulesAndTriggerEnforcer(userRules);
