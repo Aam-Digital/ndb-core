@@ -132,7 +132,7 @@ export class EntitySubrecordComponent<T extends Entity>
     if (changes.hasOwnProperty("columns")) {
       this.initFormGroups();
     }
-    if (changes.hasOwnProperty("records") && this.records.length > 0) {
+    if (changes.hasOwnProperty("records")) {
       this.initFormGroups();
       this.initDefaultSort();
       if (this.columnsToDisplay.length < 2) {
