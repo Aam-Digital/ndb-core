@@ -88,7 +88,7 @@ describe("ListPaginatorComponent", () => {
     expect(component.paginator.pageSize).toBe(userPaginationSettings.c1);
 
     component.idForSavingPagination = "c2";
-    component.ngOnChanges({ idForSavingPagination: {} as any });
+    component.ngOnChanges({ idForSavingPagination: undefined });
     tick();
     expect(component.pageSize).toBe(userPaginationSettings.c2);
     expect(component.paginator.pageSize).toBe(userPaginationSettings.c2);
