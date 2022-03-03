@@ -171,10 +171,12 @@ export class QueryService {
       ids = this.addPrefix(ids, entityPrefix);
     }
 
-    return ids.map((id) => {
+    const i = ids.map((id) => {
       const prefix = id.split(":")[0];
       return this.entities[prefix][id];
     });
+    console.log("ids", i);
+    return i;
   }
 
   /**

@@ -222,6 +222,7 @@ export class ExportService {
     );
 
     if (!exportColumnConfig.subQueries && value.length === 1) {
+      console.log("result", value);
       // queryData() always returns an array, simple queries should be a direct value however
       return value[0];
     }
