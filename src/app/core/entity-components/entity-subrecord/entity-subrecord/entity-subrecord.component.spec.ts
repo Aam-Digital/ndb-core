@@ -287,18 +287,19 @@ describe("EntitySubrecordComponent", () => {
     component.rowClick({ record: child });
   });
 
-  it("appends a new entity to the end of the records when it's new", async () => {
+  it("should add a new entity to the the table when it's new", async () => {
     const entityFormService = TestBed.inject(EntityFormService);
     spyOn(entityFormService, "saveChanges").and.resolveTo();
+    component.records = [];
     const entity = new Entity();
     await component.save({ record: entity }, true);
-    expect(component.records).toHaveSize(1);
+    expect(component.recordsDataSource.data).toHaveSize(1);
   });
 
   it("does not change the size of it's records when not saving a new record", async () => {
     const entity = new Entity();
-    component.records.push(entity);
+    component.records = [entity];
     await component.save({ record: entity }, false);
-    expect(component.records).toHaveSize(1);
+    expect(component.recordsDataSource.data).toHaveSize(1);
   });
 });
