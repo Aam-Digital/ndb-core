@@ -123,7 +123,7 @@ export class QueryService {
    * @returns a list where every string has the prefix
    */
   private addPrefix(ids: string[], prefix: string): string[] {
-    return ids.map((id) => (id.startsWith(prefix) ? id : prefix + ":" + id));
+    return ids.map((id) => Entity.createPrefixedId(prefix, id));
   }
 
   /**
@@ -171,12 +171,12 @@ export class QueryService {
       ids = this.addPrefix(ids, entityPrefix);
     }
 
-    const i = ids.map((id) => {
-      const prefix = id.split(":")[0];
-      return this.entities[prefix][id];
-    });
-    console.log("ids", i);
-    return i;
+    return ids
+      .map((id) => {
+        const prefix = id.split(":")[0];
+        return this.entities[prefix][id];
+      })
+      .filter((entity) => !!entity);
   }
 
   /**

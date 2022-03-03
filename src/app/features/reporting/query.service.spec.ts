@@ -499,15 +499,19 @@ describe("QueryService", () => {
   });
 
   it("should omit participants which can be found anymore (e.g. deleted participants)", async () => {
-    const child1 = await createChild();
-    const child2 = await createChild();
+    const maleChild = await createChild("M");
+    const femaleChild = await createChild("F");
     await createNote(new Date(), [
-      { child: child1, status: presentAttendanceStatus },
-      { child: child2, status: presentAttendanceStatus },
+      { child: maleChild, status: presentAttendanceStatus },
+      { child: femaleChild, status: presentAttendanceStatus },
     ]);
-    await entityMapper.remove(child2);
+    await entityMapper.remove(femaleChild);
 
-    const result = await service.queryData(`${EventNote.ENTITY_TYPE}:toArray`);
+    const result = await service.queryData(
+      `${EventNote.ENTITY_TYPE}:toArray:getIds(children):toEntities(${Child.ENTITY_TYPE}).gender`
+    );
+
+    expect(result).toEqual([maleChild.gender]);
   });
 
   async function createChild(
