@@ -144,10 +144,10 @@ export class EntitySubrecordComponent<T extends Entity>
     }
     if (changes.hasOwnProperty("records") && this._records.length > 0) {
       this.initFormGroups();
-      this.initDefaultSort();
       if (this.columnsToDisplay.length < 2) {
         this.setupTable();
       }
+      this.initDefaultSort();
     }
     if (changes.hasOwnProperty("columnsToDisplay")) {
       this.mediaSubscription.unsubscribe();
