@@ -104,6 +104,7 @@ export class ListPaginatorComponent<E>
       } else {
         this.pageSize = pageSize;
       }
+      this.paginator._changePageSize(this.pageSize);
     }
     this.currentPageIndex =
       this.user.paginatorSettingsPageIndex[this.idForSavingPagination] ||

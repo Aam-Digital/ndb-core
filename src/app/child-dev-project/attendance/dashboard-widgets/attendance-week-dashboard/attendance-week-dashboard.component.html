@@ -44,7 +44,11 @@
         <tr mat-row *matRowDef="let row; columns: ['child', 'attendance'];" class="dashboard-table-row"></tr>
       </table>
     </div>
-    <div *ngIf="tableDataSource.data.length === 0 && loadingDone" class="headline">no absences recorded</div>
+    <div
+      *ngIf="tableDataSource.data.length === 0 && loadingDone"
+      class="headline"
+      i18n="Placeholder if no absences are visible in dashboar"
+    >no absences recorded</div>
     <mat-paginator
       [style.display]="paginator.getNumberOfPages() === 0 ? 'none' : ''"
       #paginator

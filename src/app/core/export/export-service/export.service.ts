@@ -32,25 +32,70 @@ export class ExportService {
   /**
    * Creates a CSV string of the input data
    *
-   * @param data an array of elements
+   * @param data (Optional) an array of elements. If not provided, the queries in `config` will be used to get the initial data.
    * @param config (Optional) config specifying which fields should be exported
+   * @param from (Optional) limits the data which is fetched from the database and is also available inside the query. If not provided, all data is fetched.
+   * @param to (Optional) same as from.If not provided, today is used.
    * @returns string a valid CSV string of the input data
    */
   async createCsv(
     data: any[],
-    config: ExportColumnConfig[] = this.generateExportConfigFromData(data)
+    config: ExportColumnConfig[] = this.generateExportConfigFromData(data),
+    from?: Date,
+    to?: Date
   ): Promise<string> {
+    const readableExportRow = await this.runExportQuery(data, config, from, to);
+
+    return this.papa.unparse(readableExportRow, {
+      quotes: true,
+      header: true,
+      newline: ExportService.SEPARATOR_ROW,
+    });
+  }
+
+  /**
+   * Creates a dataset with the provided values that can be used for a simple table or export.
+   * @param data (Optional) an array of elements. If not provided, the first query in `config` will be used to get the data.
+   * @param config (Optional) config specifying which fields should be exported
+   * @param from (Optional) limits the data which is fetched from the database and is also available inside the query. If not provided, all data is fetched.
+   * @param to (Optional) same as from.If not provided, today is used.
+   * @returns array with the result of the queries and sub queries
+   */
+  async runExportQuery(
+    data: any[],
+    config?: ExportColumnConfig[],
+    from?: Date,
+    to?: Date
+  ): Promise<ExportRow[]> {
+    if (!data) {
+      // The query of each first level ExportColumnConfig is used as data-basis for the further subQueries
+      const combinedResults: ExportRow[] = [];
+      for (const c of config) {
+        const baseData = await this.queryService.queryData(c.query, from, to);
+        const result = await this.runExportQuery(
+          baseData,
+          c.subQueries,
+          from,
+          to
+        );
+        combinedResults.push(...result);
+      }
+      return combinedResults;
+    }
+
     const flattenedExportRows: ExportRow[] = [];
     for (const dataRow of data) {
       const extendedExportableRows = await this.generateExportRows(
         dataRow,
-        config
+        config,
+        from,
+        to
       );
       flattenedExportRows.push(...extendedExportableRows);
     }
 
     // Apply entitySortingDataAccessor to transform values into human readable format
-    const readableExportRow = flattenedExportRows.map((row) => {
+    return flattenedExportRows.map((row) => {
       const readableRow = {};
       Object.keys(row).forEach((key) => {
         if (row[key] instanceof Date) {
@@ -62,11 +107,6 @@ export class ExportService {
       });
       return readableRow;
     });
-
-    return this.papa.unparse(
-      { data: readableExportRow },
-      { quotes: true, header: true, newline: ExportService.SEPARATOR_ROW }
-    );
   }
 
   /**
@@ -93,18 +133,24 @@ export class ExportService {
    * Generate one or more export row objects from the given data object and config.
    * @param object A single data object to be exported as one or more export row objects
    * @param config
+   * @param from
+   * @param to
    * @returns array of one or more export row objects (as simple {key: value})
    * @private
    */
   private async generateExportRows(
     object: Object,
-    config: ExportColumnConfig[]
+    config: ExportColumnConfig[],
+    from: Date,
+    to: Date
   ): Promise<ExportRow[]> {
     let exportRows: ExportRow[] = [{}];
     for (const exportColumnConfig of config) {
       const partialExportObjects: ExportRow[] = await this.getExportRowsForColumn(
         object,
-        exportColumnConfig
+        exportColumnConfig,
+        from,
+        to
       );
 
       exportRows = this.mergePartialExportRows(
@@ -119,26 +165,42 @@ export class ExportService {
    * Generate one or more (partial) export row objects from a single property of the data object
    * @param object
    * @param exportColumnConfig
+   * @param from
+   * @param to
    * @private
    */
   private async getExportRowsForColumn(
     object: Object,
-    exportColumnConfig: ExportColumnConfig
+    exportColumnConfig: ExportColumnConfig,
+    from: Date,
+    to: Date
   ): Promise<ExportRow[]> {
     const label =
       exportColumnConfig.label ?? exportColumnConfig.query.replace(".", "");
-    const value = await this.getValueForQuery(exportColumnConfig, object);
+    const value = await this.getValueForQuery(
+      exportColumnConfig,
+      object,
+      from,
+      to
+    );
 
     if (!exportColumnConfig.subQueries) {
-      const result = {};
-      result[label] = value;
-      return [result];
+      return [{ [label]: value }];
+    } else if (value.length === 0) {
+      return this.generateExportRows(
+        {},
+        exportColumnConfig.subQueries,
+        from,
+        to
+      );
     } else {
       const additionalRows: ExportRow[] = [];
       for (const v of value) {
         const addRows = await this.generateExportRows(
           v,
-          exportColumnConfig.subQueries
+          exportColumnConfig.subQueries,
+          from,
+          to
         );
         additionalRows.push(...addRows);
       }
@@ -148,12 +210,14 @@ export class ExportService {
 
   private async getValueForQuery(
     exportColumnConfig: ExportColumnConfig,
-    object: Object
+    object: Object,
+    from: Date,
+    to: Date
   ): Promise<any> {
     const value = await this.queryService.queryData(
       exportColumnConfig.query,
-      null,
-      null,
+      from,
+      to,
       [object]
     );
 
@@ -161,12 +225,12 @@ export class ExportService {
       // queryData() always returns an array, simple queries should be a direct value however
       return value[0];
     }
-    return value;
+    return value.filter((val) => val !== undefined);
   }
 
   /**
    * Combine two arrays of export row objects.
-   * Every additional row is merge with every row of the first array (combining properties),
+   * Every additional row is merged with every row of the first array (combining properties),
    * resulting in n*m export rows.
    *
    * @param exportRows

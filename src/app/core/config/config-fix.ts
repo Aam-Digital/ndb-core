@@ -10,7 +10,6 @@ import { mathLevels } from "../../child-dev-project/aser/model/mathLevels";
 import { readingLevels } from "../../child-dev-project/aser/model/readingLevels";
 import { warningLevels } from "../../child-dev-project/warning-levels";
 import { ratingAnswers } from "../../features/historical-data/rating-answers";
-import { Note } from "../../child-dev-project/notes/model/note";
 
 // prettier-ignore
 export const defaultJsonConfig = {
@@ -254,7 +253,7 @@ export const defaultJsonConfig = {
         { "label": "event type", "query": "category" },
         { "label": "event description", "query": "text" },
         {
-          "query": ":getAttendanceArray",
+          "query": ":getAttendanceArray(true)",
           "subQueries": [
             {
               "query": ".participant:toEntities(Child)",
@@ -269,6 +268,13 @@ export const defaultJsonConfig = {
               "label": "status",
               "query": ".status._status.id",
             },
+            {
+              "query": ".school:toEntities(School)",
+              "subQueries": [
+                { "label": "school_name", "query": "name" },
+                { "label": "school_id", "query": "entityId" }
+              ]
+            }
           ],
         },
       ]
@@ -538,10 +544,9 @@ export const defaultJsonConfig = {
                 ],
                 "headers": [
                   null,
-                  "Personal Information",
-                  "Additional",
-                  "Scholar activities",
-                  "Address"
+                  $localize`:Header for form section:Personal Information`,
+                  $localize`:Header for form section:Additional`,
+                  $localize`:Header for form section:Scholar activities`,
                 ]
               }
             }
@@ -808,22 +813,61 @@ export const defaultJsonConfig = {
           ],
         },
         {
-          "title": $localize`:Name of a report:Overall Activity Report`,
+          "title": $localize`:Name of a report:Attendance Report`,
+          "mode": "exporting",
           "aggregationDefinitions": [
             {
-              "query": `${EventNote.ENTITY_TYPE}:toArray:addEntities(${Note.ENTITY_TYPE})[*date >= ? & date <= ?]`,
-              "groupBy": ["category"],
-              "label": $localize`:Label for a report query:Events`,
-              "aggregations": [
+              "query": `${EventNote.ENTITY_TYPE}:toArray:filterByObjectAttribute(category, id, SCHOOL_CLASS)[* date >= ? & date <= ?]:getAttendanceArray:getAttendanceReport`,
+              "subQueries": [
                 {
-                  "query": `:getParticipantsWithAttendance(PRESENT):unique:addPrefix(${Child.ENTITY_TYPE}):toEntities`,
-                  "groupBy": ["gender", "religion"],
-                  "label": $localize`:Label for a report query:Participants`
+                  "label": $localize`:Name of column of a report:Type`,
+                  "query": ":setString(School Class)"
+                },
+                {
+                  "label": $localize`:Name of a column of a report:Name`,
+                  "query": `.participant:toEntities(Child).name`
+                },
+                {
+                  "label": $localize`:Name of a column of a report:Total`,
+                  "query": `total`
+                },
+                {
+                  "label": $localize`:Name of a column of a report:Present`,
+                  "query": `present`
+                },
+                {
+                  "label": $localize`:Name of a column of a report:Rate`,
+                  "query": `percentage`
                 }
               ]
-            }
+            },
+            {
+              "query": `${EventNote.ENTITY_TYPE}:toArray:filterByObjectAttribute(category, id, COACHING_CLASS)[* date >= ? & date <= ?]:getAttendanceArray:getAttendanceReport`,
+              "subQueries": [
+                {
+                  "label": $localize`:Name of column of a report:Type`,
+                  "query": ":setString(Coaching Class)"
+                },
+                {
+                  "label": $localize`:Name of a column of a report:Name`,
+                  "query": `.participant:toEntities(Child).name`
+                },
+                {
+                  "label": $localize`:Name of a column of a report:Total`,
+                  "query": `total`
+                },
+                {
+                  "label": $localize`:Name of a column of a report:Present`,
+                  "query": `present`
+                },
+                {
+                  "label": $localize`:Name of a column of a report:Rate`,
+                  "query": `percentage`
+                }
+              ]
+            },
           ],
-        }
+        },
       ]
     }
   },
