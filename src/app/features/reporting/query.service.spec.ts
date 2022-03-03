@@ -498,6 +498,22 @@ describe("QueryService", () => {
     expect(result).toEqual(["custom-string", "custom-string"]);
   });
 
+  it("should omit participants which can be found anymore (e.g. deleted participants)", async () => {
+    const maleChild = await createChild("M");
+    const femaleChild = await createChild("F");
+    await createNote(new Date(), [
+      { child: maleChild, status: presentAttendanceStatus },
+      { child: femaleChild, status: presentAttendanceStatus },
+    ]);
+    await entityMapper.remove(femaleChild);
+
+    const result = await service.queryData(
+      `${EventNote.ENTITY_TYPE}:toArray:getIds(children):toEntities(${Child.ENTITY_TYPE}).gender`
+    );
+
+    expect(result).toEqual([maleChild.gender]);
+  });
+
   async function createChild(
     gender: "M" | "F" = "F",
     religion?: "muslim" | "christian"
