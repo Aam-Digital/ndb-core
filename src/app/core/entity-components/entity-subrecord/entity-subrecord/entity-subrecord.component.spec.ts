@@ -27,6 +27,7 @@ import { genders } from "../../../../child-dev-project/children/model/genders";
 import { LoggingService } from "../../../logging/logging.service";
 import { MockSessionModule } from "../../../session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import moment from "moment";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -95,49 +96,20 @@ describe("EntitySubrecordComponent", () => {
     expect(sortedData).toEqual([first, second, third]);
   });
 
-  it("should apply default sort on first column", async () => {
-    const children = [Child.create("C"), Child.create("A"), Child.create("B")];
-    component.columnsToDisplay = ["name", "projectNumber"];
-    component.records = children;
+  it("should apply default sort on first column and order dates descending", () => {
+    component.columns = ["date", "subject"];
+    component.columnsToDisplay = ["date", "subject"];
+    component.records = [];
+    // Trigger a change with empty columns first as this is what some components do that init data asynchronously
+    component.ngOnChanges({ columns: undefined, records: undefined });
+
+    const oldNote = Note.create(moment().subtract(1, "day").toDate());
+    const newNote = Note.create(new Date());
+    component.records = [oldNote, newNote];
     component.ngOnChanges({ records: undefined });
 
-    const sortedChildren = component.recordsDataSource
-      .sortData(component.recordsDataSource.data, component.sort)
-      .map((c) => c.record["name"]);
-
-    expect(sortedChildren).toEqual(["A", "B", "C"]);
-  });
-
-  it("should apply default sort on first column, ordering dates descending", async () => {
-    const children = [Child.create("0"), Child.create("1"), Child.create("2")];
-    children[0].admissionDate = new Date(2010, 1, 1);
-    children[1].admissionDate = new Date(2011, 1, 1);
-    children[2].admissionDate = new Date(2012, 1, 1);
-
-    component.columnsToDisplay = ["admissionDate", "name"];
-    component.records = children;
-    // define the columns to mark "admissionDate" as a Date value
-    component.columns = [
-      {
-        view: "DisplayDate",
-        label: "Admission",
-        id: "admissionDate",
-      },
-      {
-        view: "DisplayText",
-        label: "Name",
-        id: "name",
-      },
-    ];
-
-    component.ngOnChanges({ records: undefined });
-    fixture.detectChanges();
-
-    const sortedChildren = component.recordsDataSource
-      .sortData(component.recordsDataSource.data, component.sort)
-      .map((c) => c.record["name"]);
-
-    expect(sortedChildren).toEqual(["2", "1", "0"]);
+    expect(component.recordsDataSource.sort.direction).toBe("desc");
+    expect(component.recordsDataSource.sort.active).toBe("date");
   });
 
   it("should sort standard objects", () => {
@@ -287,18 +259,19 @@ describe("EntitySubrecordComponent", () => {
     component.rowClick({ record: child });
   });
 
-  it("appends a new entity to the end of the records when it's new", async () => {
+  it("should add a new entity to the the table when it's new", async () => {
     const entityFormService = TestBed.inject(EntityFormService);
     spyOn(entityFormService, "saveChanges").and.resolveTo();
+    component.records = [];
     const entity = new Entity();
     await component.save({ record: entity }, true);
-    expect(component.records).toHaveSize(1);
+    expect(component.recordsDataSource.data).toHaveSize(1);
   });
 
   it("does not change the size of it's records when not saving a new record", async () => {
     const entity = new Entity();
-    component.records.push(entity);
+    component.records = [entity];
     await component.save({ record: entity }, false);
-    expect(component.records).toHaveSize(1);
+    expect(component.recordsDataSource.data).toHaveSize(1);
   });
 });
