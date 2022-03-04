@@ -146,7 +146,6 @@ export class DataImportComponent {
     this.patchIfPossible(this.dateFormatForm, {
       dateFormat: importMeta.dateFormat,
     });
-    // TODO make sure to create a map that ONLY contains valid columns
     const combinedMap = Object.assign(
       this.columnMappingForm.getRawValue(),
       importMeta.columnMap

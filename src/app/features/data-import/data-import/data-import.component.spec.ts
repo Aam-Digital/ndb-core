@@ -126,12 +126,7 @@ describe("DataImportComponent", () => {
   });
 
   it("should initialize forms when loading a config", async () => {
-    const fileReader: any = {
-      result: JSON.stringify(importMeta),
-      addEventListener: (str: string, fun: () => any) => fun(),
-      readAsText: () => {},
-    };
-    spyOn(window, "FileReader").and.returnValue(fileReader);
+    mockFileReader(importMeta);
     component.columnMappingForm.addControl("Name", new FormControl());
     component.columnMappingForm.addControl("PN", new FormControl());
 
@@ -150,4 +145,37 @@ describe("DataImportComponent", () => {
       importMeta.columnMap
     );
   });
+
+  it("should have correct columns in the column map if a config for different/less columns has been imported", async () => {
+    mockFileReader({
+      columnMap: {
+        existingColumn: "existing column value",
+        missingColumn: "missing column value",
+        existingEmptyColumn: null,
+      },
+    });
+    component.columnMappingForm.addControl("existingColumn", new FormControl());
+    component.columnMappingForm.addControl(
+      "existingEmptyColumn",
+      new FormControl()
+    );
+    component.columnMappingForm.addControl("newColumn", new FormControl());
+
+    await component.loadConfig({ target: { files: [undefined] } } as any);
+
+    expect(component.columnMappingForm.getRawValue()).toEqual({
+      existingColumn: "existing column value",
+      existingEmptyColumn: null,
+      newColumn: null,
+    });
+  });
+
+  function mockFileReader(data: Partial<ImportMetaData>) {
+    const fileReader: any = {
+      result: JSON.stringify(data),
+      addEventListener: (str: string, fun: () => any) => fun(),
+      readAsText: () => {},
+    };
+    spyOn(window, "FileReader").and.returnValue(fileReader);
+  }
 });
