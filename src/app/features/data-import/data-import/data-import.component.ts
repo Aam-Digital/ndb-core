@@ -138,8 +138,8 @@ export class DataImportComponent {
     const file = this.getSelectedFile(inputEvent);
     const fileContent = await readFile(file);
     const importMeta = JSON.parse(fileContent) as ImportMetaData;
-    // TODO this.properties also needs to be initialized
     this.patchIfPossible(this.entityForm, { entity: importMeta.entityType });
+    this.entitySelectionChanged();
     this.patchIfPossible(this.transactionIDForm, {
       transactionId: importMeta.transactionId,
     });
