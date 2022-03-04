@@ -14,6 +14,9 @@ import { DataImportModule } from "../data-import.module";
 import { ParseResult } from "ngx-papaparse";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { ImportMetaData } from "../import-meta-data.type";
+import { Entity } from "../../../core/entity/model/entity";
+import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
+import { DatabaseField } from "../../../core/entity/database-field.decorator";
 
 describe("DataImportComponent", () => {
   let component: DataImportComponent;
@@ -168,6 +171,27 @@ describe("DataImportComponent", () => {
       existingEmptyColumn: null,
       newColumn: null,
     });
+  });
+
+  it("should correctly initialize the entity type and available properties from the imported config", async () => {
+    @DatabaseEntity("TestEntity")
+    class TestEntity extends Entity {
+      @DatabaseField() databaseString: string;
+      @DatabaseField() databaseDate: Date;
+      nonDatabaseString: string;
+    }
+    mockFileReader({ entityType: "TestEntity" });
+
+    await component.loadConfig({ target: { files: [undefined] } } as any);
+
+    expect(component.entityForm.get("entity").value).toBe("TestEntity");
+
+    component.processChange("");
+    expect(component.filteredProperties.value).toContain("databaseString");
+    expect(component.filteredProperties.value).toContain("databaseDate");
+    expect(component.filteredProperties.value).not.toContain(
+      "nonDatabaseString"
+    );
   });
 
   function mockFileReader(data: Partial<ImportMetaData>) {
