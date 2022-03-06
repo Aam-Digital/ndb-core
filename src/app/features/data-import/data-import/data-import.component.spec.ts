@@ -156,6 +156,7 @@ describe("DataImportComponent", () => {
         missingColumn: "missing column value",
         existingEmptyColumn: null,
       },
+      entityType: "Child",
     });
     component.columnMappingForm.addControl("existingColumn", new FormControl());
     component.columnMappingForm.addControl(
@@ -174,17 +175,17 @@ describe("DataImportComponent", () => {
   });
 
   it("should correctly initialize the entity type and available properties from the imported config", async () => {
-    @DatabaseEntity("TestEntity")
-    class TestEntity extends Entity {
+    @DatabaseEntity("Testing")
+    class Testing extends Entity {
       @DatabaseField() databaseString: string;
       @DatabaseField() databaseDate: Date;
       nonDatabaseString: string;
     }
-    mockFileReader({ entityType: "TestEntity" });
+    mockFileReader({ entityType: "Testing" });
 
     await component.loadConfig({ target: { files: [undefined] } } as any);
 
-    expect(component.entityForm.get("entity").value).toBe("TestEntity");
+    expect(component.entityForm.get("entity").value).toBe("Testing");
 
     component.processChange("");
     expect(component.filteredProperties.value).toContain("databaseString");
