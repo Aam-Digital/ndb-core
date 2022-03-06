@@ -10,7 +10,6 @@ import {
   EntitySubrecordComponent,
   TableRow,
 } from "./entity-subrecord.component";
-import { RouterTestingModule } from "@angular/router/testing";
 import { EntitySubrecordModule } from "../entity-subrecord.module";
 import { Entity } from "../../../entity/model/entity";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -28,6 +27,7 @@ import { LoggingService } from "../../../logging/logging.service";
 import { MockSessionModule } from "../../../session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import moment from "moment";
+import { MediaObserver } from "@angular/flex-layout";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -39,7 +39,6 @@ describe("EntitySubrecordComponent", () => {
       TestBed.configureTestingModule({
         imports: [
           EntitySubrecordModule,
-          RouterTestingModule.withRoutes([]),
           MatNativeDateModule,
           NoopAnimationsModule,
           MockSessionModule.withState(),
@@ -170,6 +169,7 @@ describe("EntitySubrecordComponent", () => {
   });
 
   it("should create a formGroup when editing a row", () => {
+    spyOn(TestBed.inject(MediaObserver), "isActive").and.returnValue(false);
     component.columns = [{ id: "name" }, { id: "projectNumber" }];
     const child = new Child();
     child.name = "Child Name";
