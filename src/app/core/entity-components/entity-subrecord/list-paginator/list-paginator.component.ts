@@ -94,14 +94,7 @@ export class ListPaginatorComponent<E>
   }
 
   private async applyUserPaginationSettings() {
-    try {
-      await this.ensureUserIsLoaded();
-    } catch (e) {
-      this.loggingService.warn(
-        `Could not load user entity for ${
-          this.sessionService.getCurrentUser().name
-        }`
-      );
+    if (!(await this.ensureUserIsLoaded())) {
       return;
     }
 
@@ -123,14 +116,7 @@ export class ListPaginatorComponent<E>
   }
 
   private async updateUserPaginationSettings() {
-    try {
-      await this.ensureUserIsLoaded();
-    } catch (e) {
-      this.loggingService.warn(
-        `Could not load user entity for ${
-          this.sessionService.getCurrentUser().name
-        }`
-      );
+    if (!(await this.ensureUserIsLoaded())) {
       return;
     }
 
@@ -154,10 +140,17 @@ export class ListPaginatorComponent<E>
     }
   }
 
-  private async ensureUserIsLoaded() {
-    if (!this.user) {
+  private async ensureUserIsLoaded(): Promise<boolean> {
+    if (!this.user)  {
       const currentUser = this.sessionService.getCurrentUser();
-      this.user = await this.entityMapperService.load(User, currentUser.name);
+      try {
+        this.user = await this.entityMapperService.load(User, currentUser.name);
+      } catch (e) {
+        this.loggingService.warn(
+          `Could not load user entity for ${currentUser.name}`
+        );
+      }
     }
+    return !!this.user
   }
 }
