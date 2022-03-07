@@ -5,9 +5,6 @@ import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on
 import { LoggingService } from "../../../core/logging/logging.service";
 import { MatDialog } from "@angular/material/dialog";
 import { EditProgressDashboardComponent } from "../edit-progress-dashboard/edit-progress-dashboard.component";
-import { SessionService } from "../../../core/session/session-service/session.service";
-import { waitForChangeTo } from "../../../core/session/session-states/session-utils";
-import { SyncState } from "../../../core/session/session-states/sync-state.enum";
 
 @Component({
   selector: "app-progress-dashboard",
@@ -22,8 +19,7 @@ export class ProgressDashboardComponent
   constructor(
     private entityMapper: EntityMapperService,
     private loggingService: LoggingService,
-    private dialog: MatDialog,
-    private sessionService: SessionService
+    private dialog: MatDialog
   ) {}
 
   onInitFromDynamicConfig(config: any) {
@@ -33,8 +29,10 @@ export class ProgressDashboardComponent
   ngOnInit() {
     this.data = new ProgressDashboardConfig(this.dashboardConfigId);
     this.entityMapper
-      .load(ProgressDashboardConfig, this.dashboardConfigId)
-      .catch(() => this.retryAfterSync())
+      .load<ProgressDashboardConfig>(
+        ProgressDashboardConfig,
+        this.dashboardConfigId
+      )
       .then((config) => {
         this.data = config;
       })
@@ -50,15 +48,6 @@ export class ProgressDashboardComponent
           );
         }
       });
-  }
-
-  private retryAfterSync(): Promise<ProgressDashboardConfig> {
-    return this.sessionService.syncState
-      .pipe(waitForChangeTo(SyncState.COMPLETED))
-      .toPromise()
-      .then(() =>
-        this.entityMapper.load(ProgressDashboardConfig, this.dashboardConfigId)
-      );
   }
 
   private createDefaultConfig() {
