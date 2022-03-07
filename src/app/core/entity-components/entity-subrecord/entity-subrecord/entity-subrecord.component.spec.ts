@@ -28,6 +28,8 @@ import { MockSessionModule } from "../../../session/mock-session.module";
 import moment from "moment";
 import { Subject } from "rxjs";
 import { UpdatedEntity } from "../../../entity/model/entity-update";
+import { MatDialog } from "@angular/material/dialog";
+import { RowDetailsComponent } from "../row-details/row-details.component";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -234,17 +236,25 @@ describe("EntitySubrecordComponent", () => {
     expect(component.showEntity).toHaveBeenCalledWith(child);
   }));
 
-  it("should create new entities and open it with the default showEntity function", fakeAsync(() => {
+  it("should create a new entity and open a dialog on default when clicking create", () => {
     const child = new Child();
     component.newRecordFactory = () => child;
     component.ngOnInit();
-    const spy = spyOn(component, "showEntity");
+    const dialog = TestBed.inject(MatDialog);
+    spyOn(dialog, "open");
 
     component.create();
-    tick();
 
-    expect(spy).toHaveBeenCalledWith(child);
-  }));
+    expect(dialog.open).toHaveBeenCalledWith(RowDetailsComponent, {
+      width: "80%",
+      maxHeight: "90vh",
+      data: {
+        entity: child,
+        columns: [],
+        viewOnlyColumns: [],
+      },
+    });
+  });
 
   it("should notify when an entity is clicked", (done) => {
     const child = new Child();
