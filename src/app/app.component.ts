@@ -29,6 +29,8 @@ import { environment } from "../environments/environment";
 import { DynamicEntityService } from "./core/entity/dynamic-entity.service";
 import { Child } from "./child-dev-project/children/model/child";
 import { School } from "./child-dev-project/schools/model/school";
+import { DemoDataInitializerService } from "./core/demo-data/demo-data-initializer.service";
+import { AppConfig } from "./core/app-config/app-config";
 
 @Component({
   selector: "app-root",
@@ -48,7 +50,8 @@ export class AppComponent {
     private entityConfigService: EntityConfigService,
     private sessionService: SessionService,
     private activatedRoute: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private demoDataInitializer: DemoDataInitializerService
   ) {
     this.initBasicServices();
   }
@@ -84,6 +87,10 @@ export class AppComponent {
 
     if (environment.production) {
       this.analyticsService.init();
+    }
+
+    if (AppConfig.settings.demo_mode) {
+      await this.demoDataInitializer.run();
     }
   }
 }

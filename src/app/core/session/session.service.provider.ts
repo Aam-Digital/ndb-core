@@ -24,8 +24,6 @@ import { LoginState } from "./session-states/login-state.enum";
 import { SessionType } from "./session-type";
 import { HttpClient } from "@angular/common/http";
 import { LocalSession } from "./session-service/local-session";
-import { DemoSession } from "../demo-data/demo-session.service";
-import { DemoDataService } from "../demo-data/demo-data.service";
 import { Database } from "../database/database";
 import { PouchDatabase } from "../database/pouch-database";
 import { AnalyticsService } from "../analytics/analytics.service";
@@ -39,15 +37,12 @@ export function sessionServiceFactory(
   alertService: AlertService,
   loggingService: LoggingService,
   httpClient: HttpClient,
-  demoDataService: DemoDataService,
   database: Database,
   analyticsService: AnalyticsService
 ): SessionService {
   const pouchDatabase = database as PouchDatabase;
   let sessionService: SessionService;
-  if (AppConfig.settings.demo_mode === true) {
-    sessionService = new DemoSession(pouchDatabase, demoDataService);
-  } else if (AppConfig.settings.session_type === SessionType.synced) {
+  if (AppConfig.settings.session_type === SessionType.synced) {
     sessionService = new SyncedSessionService(
       alertService,
       loggingService,
@@ -98,7 +93,6 @@ export const sessionServiceProvider = {
     AlertService,
     LoggingService,
     HttpClient,
-    DemoDataService,
     Database,
     AnalyticsService,
   ],
