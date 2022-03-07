@@ -74,9 +74,8 @@ export class AbilityService {
         `no rules found for user "${name}" with roles "${roles}"`
       );
     }
-    const userRulesCopy = JSON.parse(JSON.stringify(userRules));
     this.updateAbilityWithRules(userRules);
-    await this.permissionEnforcer.enforcePermissionsOnLocalData(userRulesCopy);
+    await this.permissionEnforcer.enforcePermissionsOnLocalData(userRules);
   }
 
   private getRulesForUser(rules: DatabaseRules): DatabaseRule[] {
