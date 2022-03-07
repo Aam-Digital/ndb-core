@@ -89,20 +89,25 @@ describe("AbilityService", () => {
     );
   });
 
-  it("should retry fetching the rules after the sync has completed", () => {
+  it("should retry fetching the rules after the sync has completed", fakeAsync(() => {
     mockEntityMapper.load.and.returnValues(
       Promise.reject("first error"),
       Promise.resolve(new Config(Config.PERMISSION_KEY, rules))
     );
+    const ability = TestBed.inject(EntityAbility);
 
     mockLoginState.next(LoginState.LOGGED_IN);
 
     expect(mockEntityMapper.load).toHaveBeenCalledTimes(1);
+    // Default rule
+    expect(ability.rules).toEqual([{ action: "manage", subject: "all" }]);
 
     mockSyncState.next(SyncState.COMPLETED);
 
     expect(mockEntityMapper.load).toHaveBeenCalledTimes(2);
-  });
+    tick();
+    expect(ability.rules).toEqual(rules[user.roles[0]]);
+  }));
 
   it("should update the ability with the received rules for the logged in user", fakeAsync(() => {
     spyOn(ability, "update");
