@@ -28,10 +28,14 @@ export function detectEntityType(subject: Entity): EntityConstructor<any> {
  */
 @Injectable()
 export class AbilityService {
-  private _abilityUpdateNotifier = new Subject<void>();
+  private _abilityUpdated = new Subject<void>();
 
-  get abilityUpdateNotifier(): Observable<void> {
-    return this._abilityUpdateNotifier.asObservable();
+  /**
+   * Get notified whenever the permissions of the current user are updated.
+   * Use this to re-evaluate the permissions of the currently logged-in user.
+   */
+  get abilityUpdated(): Observable<void> {
+    return this._abilityUpdated.asObservable();
   }
 
   constructor(
@@ -108,6 +112,6 @@ export class AbilityService {
 
   private updateAbilityWithRules(rules: DatabaseRule[]) {
     this.ability.update(rules as any);
-    this._abilityUpdateNotifier.next();
+    this._abilityUpdated.next();
   }
 }

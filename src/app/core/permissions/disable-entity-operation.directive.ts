@@ -41,9 +41,7 @@ export class DisableEntityOperationDirective implements OnInit, OnChanges {
     private ability: EntityAbility,
     private abilityService: AbilityService
   ) {
-    this.abilityService.abilityUpdateNotifier.subscribe(() =>
-      this.applyPermissions()
-    );
+    this.abilityService.abilityUpdated.subscribe(() => this.applyPermissions());
   }
 
   ngOnInit() {

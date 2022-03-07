@@ -186,7 +186,7 @@ describe("AbilityService", () => {
 
   it("should notify when the rules are updated", (done) => {
     spyOn(ability, "update");
-    service.abilityUpdateNotifier.subscribe(() => {
+    service.abilityUpdated.subscribe(() => {
       expect(ability.update).toHaveBeenCalled();
       done();
     });
