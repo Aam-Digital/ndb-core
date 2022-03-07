@@ -6,29 +6,56 @@ import { SessionService } from "../session/session-service/session.service";
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
 import { LocalSession } from "../session/session-service/local-session";
 import { DatabaseUser } from "../session/session-service/local-user";
-import { MatDialog, MatDialogModule } from "@angular/material/dialog";
+import { MatDialog } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { AppConfig } from "../app-config/app-config";
+import { PouchDatabase } from "../database/pouch-database";
+import { Subject } from "rxjs";
+import { LoginState } from "../session/session-states/login-state.enum";
+import { IAppConfig } from "../app-config/app-config.model";
+import { Database } from "../database/database";
+import { SessionType } from "../session/session-type";
 
 describe("DemoDataInitializerService", () => {
   let service: DemoDataInitializerService;
   let mockDemoDataService: jasmine.SpyObj<DemoDataService>;
   let mockSessionService: jasmine.SpyObj<LocalSession>;
+  let mockDialog: jasmine.SpyObj<MatDialog>;
+  let loginState: Subject<LoginState>;
+  AppConfig.settings = {
+    database: { name: "test-db" },
+    session_type: SessionType.mock,
+  } as IAppConfig;
+  const demoUserDBName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${AppConfig.settings.database.name}`;
+  const adminDBName = `${DemoUserGeneratorService.ADMIN_USERNAME}-${AppConfig.settings.database.name}`;
+
   beforeEach(() => {
     mockDemoDataService = jasmine.createSpyObj(["publishDemoData"]);
     mockDemoDataService.publishDemoData.and.resolveTo();
-    mockSessionService = jasmine.createSpyObj(["login", "saveUser"]);
+    mockDialog = jasmine.createSpyObj(["open"]);
+    mockDialog.open.and.returnValue({ close: () => {} } as any);
+    loginState = new Subject();
+    mockSessionService = jasmine.createSpyObj(
+      ["login", "saveUser", "getCurrentUser"],
+      { loginState: loginState }
+    );
     // @ts-ignore this makes the spy pass the instanceof check
     mockSessionService.__proto__ = LocalSession.prototype;
 
     TestBed.configureTestingModule({
-      imports: [MatDialogModule, NoopAnimationsModule],
       providers: [
+        DemoDataInitializerService,
+        { provide: MatDialog, useValue: mockDialog },
+        { provide: Database, useClass: PouchDatabase },
         { provide: DemoDataService, useValue: mockDemoDataService },
         { provide: SessionService, useValue: mockSessionService },
       ],
     });
     service = TestBed.inject(DemoDataInitializerService);
+  });
+
+  afterEach(() => {
+    loginState.complete();
   });
 
   it("should be created", () => {
@@ -70,12 +97,11 @@ describe("DemoDataInitializerService", () => {
   }));
 
   it("should show a dialog while generating demo data", fakeAsync(() => {
-    const dialog = TestBed.inject(MatDialog);
     const closeSpy = jasmine.createSpy();
-    spyOn(dialog, "open").and.returnValue({ close: closeSpy } as any);
+    mockDialog.open.and.returnValue({ close: closeSpy } as any);
     service.run();
 
-    expect(dialog.open).toHaveBeenCalledWith(
+    expect(mockDialog.open).toHaveBeenCalledWith(
       DemoDataGeneratingProgressDialogComponent
     );
     expect(closeSpy).not.toHaveBeenCalled();
@@ -83,5 +109,83 @@ describe("DemoDataInitializerService", () => {
     tick();
 
     expect(closeSpy).toHaveBeenCalled();
+  }));
+
+  it("should initialize the database before publishing", () => {
+    const database = TestBed.inject(Database) as PouchDatabase;
+    expect(database.getPouchDB()).toBeUndefined();
+
+    service.run();
+
+    expect(database.getPouchDB()).toBeDefined();
+    expect(database.getPouchDB().name).toBe(demoUserDBName);
+  });
+
+  it("should sync with existing demo data when another user logs in", fakeAsync(() => {
+    const database = TestBed.inject(Database) as PouchDatabase;
+    database.initInMemoryDB(demoUserDBName);
+    const defaultUserDB = database.getPouchDB();
+
+    const userDoc = { _id: "userDoc" };
+    database.put(userDoc);
+    tick();
+
+    mockSessionService.getCurrentUser.and.returnValue({
+      name: DemoUserGeneratorService.ADMIN_USERNAME,
+      roles: [],
+    });
+    database.initInMemoryDB(adminDBName);
+    loginState.next(LoginState.LOGGED_IN);
+    tick();
+
+    expectAsync(database.get(userDoc._id)).toBeResolved();
+    tick();
+
+    const adminDoc1 = { _id: "adminDoc1" };
+    const adminDoc2 = { _id: "adminDoc2" };
+    database.put(adminDoc1);
+    database.put(adminDoc2);
+    tick();
+
+    expect(database.getPouchDB().name).toBe(adminDBName);
+    expectAsync(database.get(adminDoc1._id)).toBeResolved();
+    expectAsync(database.get(adminDoc2._id)).toBeResolved();
+    expectAsync(defaultUserDB.get(adminDoc1._id)).toBeResolved();
+    expectAsync(defaultUserDB.get(adminDoc2._id)).toBeResolved();
+    expectAsync(defaultUserDB.get(userDoc._id)).toBeResolved();
+    tick();
+
+    defaultUserDB.destroy();
+    database.destroy();
+    tick();
+  }));
+
+  it("should stop syncing after logout", fakeAsync(() => {
+    const database = TestBed.inject(Database) as PouchDatabase;
+
+    mockSessionService.getCurrentUser.and.returnValue({
+      name: DemoUserGeneratorService.ADMIN_USERNAME,
+      roles: [],
+    });
+    database.initInMemoryDB(adminDBName);
+    loginState.next(LoginState.LOGGED_IN);
+    const adminUserDB = database.getPouchDB();
+    tick();
+
+    const syncedDoc = { _id: "syncedDoc" };
+    adminUserDB.put(syncedDoc);
+    tick();
+
+    loginState.next(LoginState.LOGGED_OUT);
+
+    const unsyncedDoc = { _id: "unsncedDoc" };
+    adminUserDB.put(unsyncedDoc);
+    tick();
+
+    database.initInMemoryDB(demoUserDBName);
+    const defaultUserDB = database.getPouchDB();
+    expectAsync(defaultUserDB.get(syncedDoc._id)).toBeResolved();
+    expectAsync(defaultUserDB.get(unsyncedDoc._id)).toBeRejected();
+    tick();
   }));
 });
