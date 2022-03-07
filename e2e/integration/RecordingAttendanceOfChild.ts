@@ -12,7 +12,7 @@ describe("Scenario: Recording attendance of a child - E2E test", () => {
 
   // AND I set the attendance of the specific child to 'present'
   it("set the attendance of the specific child to 'present'", function () {
-    cy.contains("button", "Show more").click();
+    cy.contains("button", "Show more").click({ scrollBehavior: "center" });
     cy.contains("mat-card", "School Class")
       .eq(0)
       .click({ scrollBehavior: "center" });

@@ -20,7 +20,7 @@ describe("Scenario: Linking a child to a school - E2E test", () => {
 
     // get the Add School button and click on it
     cy.get(
-      "app-previous-schools.ng-star-inserted > app-entity-subrecord > .mat-elevation-z1 > .mat-table > thead > .mat-header-row > .cdk-column-actions > app-disabled-wrapper.ng-star-inserted > .mat-tooltip-trigger > .mat-focus-indicator"
+      "app-previous-schools.ng-star-inserted > app-entity-subrecord > .mat-elevation-z1 > .mat-table > thead > .mat-header-row > .cdk-column-actions > .mat-focus-indicator"
     )
       .should("be.visible")
       .click();

@@ -64,8 +64,18 @@ export class EntitySubrecordComponent<T extends Entity>
     });
     this.filteredColumns = this._columns.filter((col) => !col.hideFromTable);
   }
+
   /** data to be displayed */
-  @Input() records: Array<T> = [];
+  @Input()
+  set records(value: Array<T>) {
+    this._records = value;
+    this.recordsDataSource.data = this._records.map((rec) => {
+      return {
+        record: rec,
+      };
+    });
+  }
+  private _records: Array<T> = [];
   _columns: FormFieldConfig[] = [];
   filteredColumns: FormFieldConfig[] = [];
 
@@ -153,12 +163,12 @@ export class EntitySubrecordComponent<T extends Entity>
     if (changes.hasOwnProperty("columns")) {
       this.initFormGroups();
     }
-    if (changes.hasOwnProperty("records") && this.records.length > 0) {
+    if (changes.hasOwnProperty("records") && this._records.length > 0) {
       this.initFormGroups();
-      this.initDefaultSort();
       if (this.columnsToDisplay.length < 2) {
         this.setupTable();
       }
+      this.initDefaultSort();
     }
     if (changes.hasOwnProperty("columnsToDisplay")) {
       this.mediaSubscription.unsubscribe();
@@ -166,9 +176,9 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 
   private initFormGroups() {
-    if (this.records.length > 0 || this.newRecordFactory) {
+    if (this._records.length > 0 || this.newRecordFactory) {
       const entity =
-        this.records.length > 0 ? this.records[0] : this.newRecordFactory();
+        this._records.length > 0 ? this._records[0] : this.newRecordFactory();
       try {
         this.entityFormService.extendFormFieldConfig(
           this._columns,
@@ -182,11 +192,6 @@ export class EntitySubrecordComponent<T extends Entity>
         this.loggingService.warn(`Error creating form definitions: ${err}`);
       }
     }
-    this.recordsDataSource.data = this.records.map((rec) => {
-      return {
-        record: rec,
-      };
-    });
   }
 
   private initDefaultSort() {
@@ -275,7 +280,7 @@ export class EntitySubrecordComponent<T extends Entity>
             this.removeFromDataTable(row.record);
             break;
           case RemoveResult.UNDONE:
-            this.records.unshift(row.record);
+            this._records.unshift(row.record);
             this.initFormGroups();
         }
       });
@@ -284,7 +289,7 @@ export class EntitySubrecordComponent<T extends Entity>
   private removeFromDataTable(record: T) {
     const index = this.records.findIndex((a) => a.getId() === record.getId());
     if (index > -1) {
-      this.records.splice(index, 1);
+      this._records.splice(index, 1);
       this.initFormGroups();
     }
   }
