@@ -41,6 +41,9 @@ export class DemoDataInitializerService {
         this.sessionService.getCurrentUser().name !==
           DemoUserGeneratorService.DEFAULT_USERNAME
       ) {
+        // There is a slight race-condition with session type local
+        // It throws an error because it can't find the view-documents which are not yet synced
+        // Navigating in the app solves this problem
         this.syncWithDemoUserDB();
       } else if (state === LoginState.LOGGED_OUT) {
         this.stopLiveSync();
