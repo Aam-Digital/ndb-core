@@ -13,6 +13,7 @@ import { DatabaseUser } from "../session/session-service/local-user";
 import * as _ from "lodash";
 import { EntityAbility } from "./entity-ability";
 import { Config } from "../config/config";
+import { LoggingService } from "../logging/logging.service";
 
 export function detectEntityType(subject: Entity): EntityConstructor<any> {
   if (subject instanceof Entity) {
@@ -43,7 +44,8 @@ export class AbilityService {
     private sessionService: SessionService,
     private dynamicEntityService: DynamicEntityService,
     private entityMapper: EntityMapperService,
-    private permissionEnforcer: PermissionEnforcerService
+    private permissionEnforcer: PermissionEnforcerService,
+    private logger: LoggingService
   ) {
     merge(
       this.sessionService.loginState.pipe(
@@ -55,29 +57,26 @@ export class AbilityService {
     ).subscribe(() => this.initRules());
   }
 
-  private async initRules(): Promise<void> {
-    // Initially allow everything until rules object can be fetched
+  private initRules(): Promise<void> {
+    // Initially allow everything until permission document could be fetched
     this.ability.update([{ action: "manage", subject: "all" }]);
+    return this.entityMapper
+      .load<Config<DatabaseRules>>(Config, Config.PERMISSION_KEY)
+      .then((permissions) => this.updateAbilityWithUserRules(permissions.data))
+      .catch(() => {});
+  }
 
-    let permission: Config<DatabaseRules>;
-    try {
-      permission = await this.entityMapper.load<Config<DatabaseRules>>(
-        Config,
-        Config.PERMISSION_KEY
-      );
-    } catch (e) {
-      // If no rule is found, keep allowing everything
-      return;
-    }
-    if (permission) {
-      // TODO what happens if there are no rules for a user
-      const userRules = this.getRulesForUser(permission.data);
-      const userRulesCopy = JSON.parse(JSON.stringify(userRules));
-      this.updateAbilityWithRules(userRules);
-      await this.permissionEnforcer.enforcePermissionsOnLocalData(
-        userRulesCopy
+  private async updateAbilityWithUserRules(rules: DatabaseRules) {
+    const userRules = this.getRulesForUser(rules);
+    if (userRules.length === 0) {
+      const { name, roles } = this.sessionService.getCurrentUser();
+      this.logger.warn(
+        `no rules found for user "${name}" with roles "${roles}"`
       );
     }
+    const userRulesCopy = JSON.parse(JSON.stringify(userRules));
+    this.updateAbilityWithRules(userRules);
+    await this.permissionEnforcer.enforcePermissionsOnLocalData(userRulesCopy);
   }
 
   private getRulesForUser(rules: DatabaseRules): DatabaseRule[] {

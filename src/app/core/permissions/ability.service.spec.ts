@@ -18,6 +18,7 @@ import { EntityAbility } from "./entity-ability";
 import { ConfigurableEnumModule } from "../configurable-enum/configurable-enum.module";
 import { DatabaseRules } from "./permission-types";
 import { Config } from "../config/config";
+import { LoggingService } from "../logging/logging.service";
 
 describe("AbilityService", () => {
   let service: AbilityService;
@@ -27,6 +28,7 @@ describe("AbilityService", () => {
   let mockLoginState: Subject<LoginState>;
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let mockPermissionEnforcer: jasmine.SpyObj<PermissionEnforcerService>;
+  let mockLoggingService: jasmine.SpyObj<LoggingService>;
   const user: DatabaseUser = { name: "testUser", roles: ["user_app"] };
   const rules: DatabaseRules = {
     user_app: [
@@ -51,6 +53,7 @@ describe("AbilityService", () => {
     mockPermissionEnforcer = jasmine.createSpyObj([
       "enforcePermissionsOnLocalData",
     ]);
+    mockLoggingService = jasmine.createSpyObj(["warn"]);
 
     TestBed.configureTestingModule({
       imports: [ConfigurableEnumModule],
@@ -62,6 +65,7 @@ describe("AbilityService", () => {
           provide: PermissionEnforcerService,
           useValue: mockPermissionEnforcer,
         },
+        { provide: LoggingService, useValue: mockLoggingService },
         EntitySchemaService,
         DynamicEntityService,
         AbilityService,
@@ -247,5 +251,16 @@ describe("AbilityService", () => {
     expect(ability.can("read", note)).toBeFalse();
     note.category = classInteraction;
     expect(ability.can("read", note)).toBeTrue();
+  }));
+
+  it("should log a warning if no rules are found for a user", fakeAsync(() => {
+    mockSessionService.getCurrentUser.and.returnValue({
+      name: "new-user",
+      roles: ["invalid_role"],
+    });
+    mockLoginState.next(LoginState.LOGGED_IN);
+    tick();
+
+    expect(mockLoggingService.warn).toHaveBeenCalled();
   }));
 });
