@@ -267,7 +267,7 @@ describe("EntitySubrecordComponent", () => {
     const entity = new Entity();
     entityUpdates.next({ entity: entity, type: "new" });
 
-    expect(component.recordsDataSource.data).toEqual([entity]);
+    expect(component.recordsDataSource.data).toEqual([{ record: entity }]);
   });
 
   it("does not change the size of it's records when not saving a new record", async () => {

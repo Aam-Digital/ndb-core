@@ -295,7 +295,7 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 
   private addToTable(record: T) {
-    this.records.unshift(record);
+    this._records.unshift(record);
     this.recordsDataSource.data = [{ record: record }].concat(
       this.recordsDataSource.data
     );
