@@ -52,12 +52,6 @@ export class DemoDataServiceConfig {
  *
  * To add more demo data generators, refer the documentation
  * [How to Generate Demo Data]{@link /additional-documentation/how-to-guides/generate-demo-data.html}
- *
- * Idea:
- * Create demo data after logging in (use sessionService.loginState)
- * Check if a database for a user registered in the local storage does already exist
- * If a database for another user exists - sync with that database instead of creating new demo data
- * Remove demo data generation logic from progress dialog
  */
 @Injectable()
 export class DemoDataService {

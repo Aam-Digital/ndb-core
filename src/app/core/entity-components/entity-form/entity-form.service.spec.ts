@@ -55,7 +55,7 @@ describe("EntityFormService", () => {
     expect(entity.getId()).toBe("newId");
   });
 
-  it("should throw an error when trying to save a entity with missing permissions", async () => {
+  it("should throw an error when trying to create a entity with missing permissions", async () => {
     TestBed.inject(EntityAbility).update([
       { subject: "all", action: "manage" },
       {

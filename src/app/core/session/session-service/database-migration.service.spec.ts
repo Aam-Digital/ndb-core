@@ -42,7 +42,7 @@ describe("DatabaseMigrationService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should add the username the the name of the old database", async () => {
+  it("should add the username to the name of the old database", async () => {
     const newDB = new PouchDatabase().initInMemoryDB(newDBName);
     let oldDB = new PouchDatabase().initInMemoryDB(oldDBName);
     await expectAsync(oldDB.get(testDoc._id)).toBeResolved();

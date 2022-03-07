@@ -97,7 +97,7 @@ describe("PermissionEnforcerService", () => {
     expect(mockLocation.reload).toHaveBeenCalled();
   }));
 
-  it("should reset page if entity with without read permission exists (non-inverted)", fakeAsync(() => {
+  it("should reset page if entity without read permission exists (non-inverted)", fakeAsync(() => {
     entityMapper.save(new Child());
     tick();
 
