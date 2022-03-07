@@ -148,7 +148,7 @@ import { DemoPermissionGeneratorService } from "./core/permissions/demo-permissi
         minCountAttributes: 2,
         maxCountAttributes: 5,
       }),
-      ...DemoPermissionGeneratorService.provide(),
+      ...DemoPermissionGeneratorService.provider(),
     ]),
     AttendanceModule,
     DashboardShortcutWidgetModule,

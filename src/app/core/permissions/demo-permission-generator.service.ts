@@ -7,7 +7,7 @@ import { Config } from "../config/config";
 export class DemoPermissionGeneratorService extends DemoDataGenerator<
   Config<DatabaseRules>
 > {
-  static provide() {
+  static provider() {
     return [
       {
         provide: DemoPermissionGeneratorService,
