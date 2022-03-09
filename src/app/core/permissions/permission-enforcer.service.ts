@@ -64,17 +64,21 @@ export class PermissionEnforcerService {
     const subjects = new Set<string>(DynamicEntityService.ENTITY_MAP.keys());
     rules
       .filter((rule) => this.isReadRule(rule))
-      .forEach((rule) => {
-        const relevantSubjects = this.getRelevantSubjects(rule);
-        if (rule.inverted || rule.conditions) {
-          relevantSubjects.forEach((subject) => subjects.add(subject));
-        } else {
-          relevantSubjects.forEach((subject) => subjects.delete(subject));
-        }
-      });
+      .forEach((rule) => this.collectSubjectsFromRule(rule, subjects));
     return [...subjects]
       .filter((subject) => !this.ignoredSubject.includes(subject))
       .map((subj) => this.dynamicEntityService.getEntityConstructor(subj));
+  }
+
+  private collectSubjectsFromRule(rule: DatabaseRule, subjects: Set<string>) {
+    const relevantSubjects = this.getRelevantSubjects(rule);
+    if (rule.inverted || rule.conditions) {
+      // Add subject if the rule can prevent someone from having access
+      relevantSubjects.forEach((subject) => subjects.add(subject));
+    } else {
+      // Remove subject if rule gives access
+      relevantSubjects.forEach((subject) => subjects.delete(subject));
+    }
   }
 
   private isReadRule(rule: DatabaseRule): boolean {
