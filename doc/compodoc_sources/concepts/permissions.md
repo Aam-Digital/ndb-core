@@ -1,7 +1,7 @@
 # Permissions
 Aam Digital allows to specify permissions to restrict access of certain user roles to the various entity types.
 Permissions are defined using the [CASL JSON syntax](https://casl.js.org/v5/en/guide/define-rules#the-shape-of-raw-rule).
-The permissions are stored in the [Permission class](../../classes/Permission.html) which is persisted together with other entities in the database.
+The permissions are stored in a [config object](../../classes/Config.html) which is persisted together with other entities in the database.
 
 ## Permission structure
 As an example, we will define a permission object which allows users with the role `user_app` *not* to *create*, *read*, *update* and *delete* `HealthCheck` entities and *not* *create* and *delete* `School` and `Child` entities.
