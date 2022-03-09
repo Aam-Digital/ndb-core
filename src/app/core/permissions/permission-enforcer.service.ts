@@ -31,26 +31,31 @@ export class PermissionEnforcerService {
   ) {}
 
   async enforcePermissionsOnLocalData(userRules: DatabaseRule[]) {
-    const userStorageKey =
-      this.sessionService.getCurrentUser().name +
-      "-" +
-      PermissionEnforcerService.STORAGE_KEY;
-    const storedRules = window.localStorage.getItem(userStorageKey);
     const userRulesString = JSON.stringify(userRules);
-    if (userRulesString !== storedRules) {
-      const subjects = this.getSubjectsWithReadRestrictions(userRules);
-      if (await this.dbHasEntitiesWithoutPermissions(subjects)) {
-        this.analyticsService.eventTrack(
-          "destroying local db due to lost permissions",
-          {
-            category: "Migration",
-          }
-        );
-        await this.database.destroy();
-        this.location.reload();
-      }
+    if (!this.userRulesChanged(userRulesString)) {
+      return;
     }
-    window.localStorage.setItem(userStorageKey, userRulesString);
+    const subjects = this.getSubjectsWithReadRestrictions(userRules);
+    if (await this.dbHasEntitiesWithoutPermissions(subjects)) {
+      this.analyticsService.eventTrack(
+        "destroying local db due to lost permissions",
+        { category: "Migration" }
+      );
+      await this.database.destroy();
+      this.location.reload();
+    }
+    window.localStorage.setItem(this.getUserStorageKey(), userRulesString);
+  }
+
+  private userRulesChanged(newRules: string): boolean {
+    const storedRules = window.localStorage.getItem(this.getUserStorageKey());
+    return storedRules !== newRules;
+  }
+
+  private getUserStorageKey() {
+    return `${this.sessionService.getCurrentUser().name}-${
+      PermissionEnforcerService.STORAGE_KEY
+    }`;
   }
 
   private getSubjectsWithReadRestrictions(
