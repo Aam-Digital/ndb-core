@@ -18,7 +18,7 @@ describe("DisableEntityOperationDirective", () => {
     mockAbility = jasmine.createSpyObj(["cannot"]);
     mockUpdateNotifier = new Subject();
     mockAbilityService = jasmine.createSpyObj([], {
-      abilityUpdateNotifier: mockUpdateNotifier,
+      abilityUpdated: mockUpdateNotifier,
     });
 
     TestBed.configureTestingModule({
