@@ -28,7 +28,7 @@ import { fakeAsync, tick } from "@angular/core/testing";
 describe("LocalSessionService", () => {
   let localSession: LocalSession;
   let testUser: DatabaseUser;
-  let database: PouchDatabase;
+  let database: jasmine.SpyObj<PouchDatabase>;
 
   beforeEach(() => {
     AppConfig.settings = {
@@ -39,7 +39,7 @@ describe("LocalSessionService", () => {
         remote_url: "https://demo.aam-digital.com/db/",
       },
     };
-    database = new PouchDatabase();
+    database = jasmine.createSpyObj(["initInMemoryDB", "initIndexedDB"]);
     localSession = new LocalSession(database);
   });
 
@@ -109,8 +109,6 @@ describe("LocalSessionService", () => {
   });
 
   it("should create a pouchdb with the username of the logged in user", async () => {
-    spyOn(database, "initInMemoryDB");
-
     await localSession.login(TEST_USER, TEST_PASSWORD);
 
     expect(database.initInMemoryDB).toHaveBeenCalledWith(
@@ -120,27 +118,26 @@ describe("LocalSessionService", () => {
   });
 
   it("should create the database according to the session type in the AppConfig", async () => {
-    const inMemorySpy = spyOn(database, "initInMemoryDB");
-    const indexedDBSpy = spyOn(database, "initIndexedDB");
+    async function testDatabaseCreation(
+      sessionType: SessionType,
+      expectedDB: "inMemory" | "indexed"
+    ) {
+      database.initInMemoryDB.calls.reset();
+      database.initIndexedDB.calls.reset();
+      AppConfig.settings.session_type = sessionType;
+      await localSession.login(TEST_USER, TEST_PASSWORD);
+      if (expectedDB === "inMemory") {
+        expect(database.initInMemoryDB).toHaveBeenCalled();
+        expect(database.initIndexedDB).not.toHaveBeenCalled();
+      } else {
+        expect(database.initInMemoryDB).not.toHaveBeenCalled();
+        expect(database.initIndexedDB).toHaveBeenCalled();
+      }
+    }
 
-    AppConfig.settings.session_type = SessionType.mock;
-    await localSession.login(TEST_USER, TEST_PASSWORD);
-    expect(inMemorySpy).toHaveBeenCalled();
-    expect(indexedDBSpy).not.toHaveBeenCalled();
-
-    inMemorySpy.calls.reset();
-    indexedDBSpy.calls.reset();
-    AppConfig.settings.session_type = SessionType.local;
-    await localSession.login(TEST_USER, TEST_PASSWORD);
-    expect(inMemorySpy).not.toHaveBeenCalled();
-    expect(indexedDBSpy).toHaveBeenCalled();
-
-    inMemorySpy.calls.reset();
-    indexedDBSpy.calls.reset();
-    AppConfig.settings.session_type = SessionType.synced;
-    await localSession.login(TEST_USER, TEST_PASSWORD);
-    expect(inMemorySpy).not.toHaveBeenCalled();
-    expect(indexedDBSpy).toHaveBeenCalled();
+    await testDatabaseCreation(SessionType.mock, "inMemory");
+    await testDatabaseCreation(SessionType.local, "indexed");
+    await testDatabaseCreation(SessionType.synced, "indexed");
   });
 
   it("should call migration before setting login status", fakeAsync(() => {
