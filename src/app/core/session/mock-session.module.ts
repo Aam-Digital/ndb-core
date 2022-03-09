@@ -13,8 +13,6 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Angulartics2Module } from "angulartics2";
 import { RouterTestingModule } from "@angular/router/testing";
 import { Database } from "../database/database";
-import { AppConfig } from "../app-config/app-config";
-import { SessionType } from "./session-type";
 import { PouchDatabase } from "../database/pouch-database";
 import { LOCATION_TOKEN } from "../../utils/di-tokens";
 import {
@@ -68,14 +66,6 @@ export class MockSessionModule {
     loginState = LoginState.LOGGED_IN,
     data: Entity[] = []
   ): ModuleWithProviders<MockSessionModule> {
-    AppConfig.settings = {
-      site_name: "Aam Digital - DEV",
-      session_type: SessionType.mock,
-      database: {
-        name: "test-db-name",
-        remote_url: "https://demo.aam-digital.com/db/",
-      },
-    };
     const mockedEntityMapper = mockEntityMapper([new User(TEST_USER), ...data]);
     const session = createLocalSession(loginState === LoginState.LOGGED_IN);
     return {
