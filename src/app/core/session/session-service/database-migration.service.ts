@@ -4,6 +4,9 @@ import { PouchDatabase } from "../../database/pouch-database";
 import { SessionType } from "../session-type";
 import { AnalyticsService } from "../../analytics/analytics.service";
 
+/**
+ * This service migrates a (old) local database to the new database-per-user structure
+ */
 export class DatabaseMigrationService {
   constructor(
     private sessionService: SessionService,
