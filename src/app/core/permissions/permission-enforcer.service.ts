@@ -13,6 +13,12 @@ import { ProgressDashboardConfig } from "../../child-dev-project/progress-dashbo
 import { Config } from "../config/config";
 
 @Injectable()
+/**
+ * This service checks whether the relevant rules for the current user changed.
+ * If it detects a change, all Entity types that have read restrictions are collected.
+ * All entities of these entity types are loaded and checked whether the currently logged-in user has read permissions.
+ * If one entity is found for which the user does **not** have read permissions, then the local database is destroyed and a new sync has to start.
+ */
 export class PermissionEnforcerService {
   /**
    * This is a suffix used to persist the user-relevant rules in local storage to later check for changes.
