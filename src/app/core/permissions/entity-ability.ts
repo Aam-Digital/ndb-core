@@ -1,20 +1,12 @@
 import { Injectable } from "@angular/core";
-import { DatabaseRule, EntityAction, EntitySubject } from "./permission-types";
+import { EntityAction, EntitySubject } from "./permission-types";
 import { Ability, subject } from "@casl/ability";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { Entity } from "../entity/model/entity";
 
 @Injectable()
 export class EntityAbility extends Ability<[EntityAction, string | any]> {
-  static with(rules: DatabaseRule[]): EntityAbility {
-    const ability = new EntityAbility();
-    ability.update(rules);
-    return ability;
-  }
-
-  constructor(
-    private entitySchemaService: EntitySchemaService = new EntitySchemaService()
-  ) {
+  constructor(private entitySchemaService: EntitySchemaService) {
     super([]);
   }
 

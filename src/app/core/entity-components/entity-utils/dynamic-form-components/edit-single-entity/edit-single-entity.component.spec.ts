@@ -34,10 +34,7 @@ describe("EditSingleEntityComponent", () => {
         EntityFormService,
         EntitySchemaService,
         { provide: EntityMapperService, useValue: mockEntityMapper },
-        {
-          provide: EntityAbility,
-          useValue: EntityAbility.with([{ subject: "all", action: "manage" }]),
-        },
+        EntityAbility,
       ],
     }).compileComponents();
   });

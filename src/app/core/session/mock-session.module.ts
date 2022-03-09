@@ -59,10 +59,7 @@ export const TEST_PASSWORD = "pass";
       useValue: window.location,
     },
     EntitySchemaService,
-    {
-      provide: EntityAbility,
-      useValue: EntityAbility.with([{ subject: "all", action: "manage" }]),
-    },
+    EntityAbility,
     { provide: PureAbility, useExisting: EntityAbility },
   ],
 })

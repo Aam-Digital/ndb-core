@@ -30,6 +30,7 @@ import { Subject } from "rxjs";
 import { UpdatedEntity } from "../../../entity/model/entity-update";
 import { MatDialog } from "@angular/material/dialog";
 import { RowDetailsComponent } from "../row-details/row-details.component";
+import { EntityAbility } from "../../../permissions/entity-ability";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -182,6 +183,9 @@ describe("EntitySubrecordComponent", () => {
   });
 
   it("should correctly save changes to an entity", fakeAsync(() => {
+    TestBed.inject(EntityAbility).update([
+      { subject: "Child", action: "create" },
+    ]);
     const entityMapper = TestBed.inject(EntityMapperService);
     spyOn(entityMapper, "save").and.resolveTo();
     const fb = TestBed.inject(FormBuilder);

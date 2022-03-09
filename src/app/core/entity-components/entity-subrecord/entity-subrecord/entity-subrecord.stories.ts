@@ -22,7 +22,6 @@ import { AttendanceLogicalStatus } from "../../../../child-dev-project/attendanc
 import { MockSessionModule } from "../../../session/mock-session.module";
 import { AbilityService } from "../../../permissions/ability.service";
 import { faker } from "../../../demo-data/faker";
-import { EntityAbility } from "../../../permissions/entity-ability";
 
 const configService = new ConfigService();
 const schemaService = new EntitySchemaService();
@@ -75,7 +74,6 @@ export default {
               of(faker.random.arrayElement(childGenerator.entities)),
           },
         },
-        { provide: EntityAbility, useValue: EntityAbility.with([]) },
         {
           provide: AbilityService,
           useValue: { abilityUpdateNotifier: new Subject() },

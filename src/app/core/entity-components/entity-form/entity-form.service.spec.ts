@@ -23,10 +23,7 @@ describe("EntityFormService", () => {
         FormBuilder,
         EntitySchemaService,
         { provide: EntityMapperService, useValue: mockEntityMapper },
-        {
-          provide: EntityAbility,
-          useValue: EntityAbility.with([{ subject: "all", action: "manage" }]),
-        },
+        EntityAbility,
       ],
     });
     service = TestBed.inject(EntityFormService);
@@ -49,6 +46,9 @@ describe("EntityFormService", () => {
   it("should update entity if saving is successful", async () => {
     const entity = new Entity("initialId");
     const formGroup = new FormGroup({ _id: new FormControl("newId") });
+    TestBed.inject(EntityAbility).update([
+      { subject: "Entity", action: "create" },
+    ]);
 
     await service.saveChanges(formGroup, entity);
 

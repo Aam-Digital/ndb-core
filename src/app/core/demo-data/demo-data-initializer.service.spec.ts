@@ -22,14 +22,16 @@ describe("DemoDataInitializerService", () => {
   let mockSessionService: jasmine.SpyObj<LocalSession>;
   let mockDialog: jasmine.SpyObj<MatDialog>;
   let loginState: Subject<LoginState>;
-  AppConfig.settings = {
-    database: { name: "test-db" },
-    session_type: SessionType.mock,
-  } as IAppConfig;
-  const demoUserDBName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${AppConfig.settings.database.name}`;
-  const adminDBName = `${DemoUserGeneratorService.ADMIN_USERNAME}-${AppConfig.settings.database.name}`;
+  let demoUserDBName: string;
+  let adminDBName: string;
 
   beforeEach(() => {
+    AppConfig.settings = {
+      database: { name: "test-db" },
+      session_type: SessionType.mock,
+    } as IAppConfig;
+    demoUserDBName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${AppConfig.settings.database.name}`;
+    adminDBName = `${DemoUserGeneratorService.ADMIN_USERNAME}-${AppConfig.settings.database.name}`;
     mockDemoDataService = jasmine.createSpyObj(["publishDemoData"]);
     mockDemoDataService.publishDemoData.and.resolveTo();
     mockDialog = jasmine.createSpyObj(["open"]);
