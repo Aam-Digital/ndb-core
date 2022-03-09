@@ -5,6 +5,20 @@ import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { Entity } from "../entity/model/entity";
 
 @Injectable()
+/**
+ * An extension of the Ability class which can check permissions on Entities.
+ * Inject this class in your component to check for permissions.
+ *
+ * e.g.
+ * ```
+ * export class ExampleComponent {
+ *   constructor(private ability: EntityAbility) {
+ *     this.ability.can("update", new Child());
+ *   }
+ * }
+ * ```
+ * Entities are transformed to the database format and permissions are evaluated based on the configuration found in the database.
+ */
 export class EntityAbility extends Ability<[EntityAction, string | any]> {
   constructor(private entitySchemaService: EntitySchemaService) {
     super([]);
