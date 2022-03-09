@@ -69,7 +69,7 @@ describe("PermissionEnforcerService", () => {
 
   afterEach(async () => {
     window.localStorage.removeItem(
-      TEST_USER + "-" + PermissionEnforcerService.STORAGE_KEY
+      TEST_USER + "-" + PermissionEnforcerService.LOCALSTORAGE_KEY
     );
   });
 
@@ -81,7 +81,7 @@ describe("PermissionEnforcerService", () => {
     await service.enforcePermissionsOnLocalData(userRules);
 
     const storedRules = window.localStorage.getItem(
-      TEST_USER + "-" + PermissionEnforcerService.STORAGE_KEY
+      TEST_USER + "-" + PermissionEnforcerService.LOCALSTORAGE_KEY
     );
     expect(JSON.parse(storedRules)).toEqual(userRules);
   });

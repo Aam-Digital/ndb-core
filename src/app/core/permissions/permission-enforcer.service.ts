@@ -14,7 +14,11 @@ import { Config } from "../config/config";
 
 @Injectable()
 export class PermissionEnforcerService {
-  static readonly STORAGE_KEY = "RULES";
+  /**
+   * This is a suffix used to persist the user-relevant rules in local storage to later check for changes.
+   */
+  static readonly LOCALSTORAGE_KEY = "RULES";
+
   private readonly ignoredSubject = [
     User.ENTITY_TYPE,
     ProgressDashboardConfig.ENTITY_TYPE,
@@ -54,7 +58,7 @@ export class PermissionEnforcerService {
 
   private getUserStorageKey() {
     return `${this.sessionService.getCurrentUser().name}-${
-      PermissionEnforcerService.STORAGE_KEY
+      PermissionEnforcerService.LOCALSTORAGE_KEY
     }`;
   }
 
