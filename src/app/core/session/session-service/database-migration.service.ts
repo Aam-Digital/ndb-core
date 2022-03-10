@@ -2,15 +2,19 @@ import { AppConfig } from "../../app-config/app-config";
 import { PouchDatabase } from "../../database/pouch-database";
 import { SessionType } from "../session-type";
 import { AnalyticsService } from "../../analytics/analytics.service";
-import { Injectable } from "@angular/core";
+import { Inject, Injectable } from "@angular/core";
 import { LoggingService } from "../../logging/logging.service";
+import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 
 @Injectable()
 /**
  * This service migrates a (old) local database to the new database-per-user structure
  */
 export class DatabaseMigrationService {
-  constructor(private analyticsService: AnalyticsService) {}
+  constructor(
+    private analyticsService: AnalyticsService,
+    @Inject(LOCATION_TOKEN) private location: Location
+  ) {}
 
   async migrateOldDatabaseTo(newDatabase: PouchDatabase): Promise<void> {
     const oldDBName = AppConfig.settings.database.name;
@@ -29,8 +33,11 @@ export class DatabaseMigrationService {
       this.analyticsService.eventTrack("migrated db to db-per-user", {
         category: "Migration",
       });
+      await oldPouch.destroy();
+      this.location.reload();
+    } else {
+      await oldPouch.destroy();
     }
-    await oldPouch.destroy();
   }
 
   private async removeDesignDocs(database: PouchDatabase): Promise<void> {

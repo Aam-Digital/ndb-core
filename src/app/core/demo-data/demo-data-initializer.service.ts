@@ -24,22 +24,43 @@ export class DemoDataInitializerService {
     private sessionService: SessionService,
     private dialog: MatDialog,
     private loggingService: LoggingService,
-    database: Database
-  ) {
-    if (database instanceof PouchDatabase) {
-      this.pouchDatabase = database;
+    private database: Database
+  ) {}
+
+  async run() {
+    const dialogRef = this.dialog.open(
+      DemoDataGeneratingProgressDialogComponent
+    );
+
+    if (this.database instanceof PouchDatabase) {
+      this.pouchDatabase = this.database;
     } else {
       this.loggingService.warn(
         "Cannot create demo data with session: " +
-          AppConfig.settings.session_type
+        AppConfig.settings.session_type
       );
     }
     this.registerDemoUsers();
+
+    this.initializeDefaultDatabase();
+    await this.demoDataService.publishDemoData();
+
+    dialogRef.close();
+
+    await this.sessionService.login(
+      DemoUserGeneratorService.DEFAULT_USERNAME,
+      DemoUserGeneratorService.DEFAULT_PASSWORD
+    );
+    this.syncDatabaseOnUserChange();
+  }
+
+
+  private syncDatabaseOnUserChange() {
     this.sessionService.loginState.subscribe((state) => {
       if (
         state === LoginState.LOGGED_IN &&
         this.sessionService.getCurrentUser().name !==
-          DemoUserGeneratorService.DEFAULT_USERNAME
+        DemoUserGeneratorService.DEFAULT_USERNAME
       ) {
         // There is a slight race-condition with session type local
         // It throws an error because it can't find the view-documents which are not yet synced
@@ -91,22 +112,6 @@ export class DemoDataInitializerService {
       this.liveSyncHandle.cancel();
       this.liveSyncHandle = undefined;
     }
-  }
-
-  async run() {
-    const dialogRef = this.dialog.open(
-      DemoDataGeneratingProgressDialogComponent
-    );
-
-    this.initializeDefaultDatabase();
-    await this.demoDataService.publishDemoData();
-
-    dialogRef.close();
-
-    await this.sessionService.login(
-      DemoUserGeneratorService.DEFAULT_USERNAME,
-      DemoUserGeneratorService.DEFAULT_PASSWORD
-    );
   }
 
   private initializeDefaultDatabase() {
