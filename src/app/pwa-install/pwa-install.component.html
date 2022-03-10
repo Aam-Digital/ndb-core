@@ -11,3 +11,14 @@
     <fa-icon icon="cloud-download-alt" class="nav-icon"></fa-icon>
     Install App
 </button>
+
+<ng-template #template>
+    To install the app
+    <button mat-button style='position:absolute; right:-10px; top:0px' (click)="snackBar.dismiss()">
+        <fa-icon icon="window-close" class="nav-icon"></fa-icon>
+    </button>
+    <ol>
+        <li>tap on <fa-icon icon="share-square" class="nav-icon"></fa-icon> at the bottom</li>
+        <li>and then tap on <fa-icon icon="plus-square" class="nav-icon"></fa-icon> (Add to Homescreen).</li>
+    </ol>
+</ng-template>
