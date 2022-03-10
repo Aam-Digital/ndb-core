@@ -11,7 +11,6 @@ import { Child } from "../../../../../child-dev-project/children/model/child";
 import { ChildSchoolRelation } from "../../../../../child-dev-project/children/model/childSchoolRelation";
 import { School } from "../../../../../child-dev-project/schools/model/school";
 import { EntitySchemaService } from "../../../../entity/schema/entity-schema.service";
-import { DynamicEntityService } from "../../../../entity/dynamic-entity.service";
 import {
   ENTITIES,
   entityRegistry,
@@ -34,7 +33,6 @@ describe("DisplayEntityComponent", () => {
           useValue: entityRegistry,
         },
         EntitySchemaService,
-        DynamicEntityService,
       ],
     }).compileComponents();
   });
@@ -63,7 +61,7 @@ describe("DisplayEntityComponent", () => {
 
     expect(component.entityBlockComponent).toEqual(School.getBlockComponent());
     expect(mockEntityMapper.load).toHaveBeenCalledWith(
-      School,
+      school.getType(),
       relation.schoolId
     );
     expect(component.entityToDisplay).toEqual(school);

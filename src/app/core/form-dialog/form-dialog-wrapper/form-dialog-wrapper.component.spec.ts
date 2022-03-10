@@ -9,7 +9,6 @@ import { MatDialogRef } from "@angular/material/dialog";
 import { Subject } from "rxjs";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MockSessionModule } from "../../session/mock-session.module";
-import { DynamicEntityService } from "../../entity/dynamic-entity.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { ENTITIES, entityRegistry } from "../../registry/dynamic-registry";
 
@@ -31,7 +30,6 @@ describe("FormDialogWrapperComponent", () => {
         ],
         providers: [
           { provide: MatDialogRef, useValue: {} },
-          DynamicEntityService,
           EntitySchemaService,
           { provide: ENTITIES, useValue: entityRegistry },
         ],

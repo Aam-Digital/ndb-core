@@ -16,7 +16,7 @@ import { filter, map } from "rxjs/operators";
 import { MatChipInputEvent } from "@angular/material/chips";
 import { MatAutocompleteTrigger } from "@angular/material/autocomplete";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { DynamicEntityService } from "../../../entity/dynamic-entity.service";
+import { EntityMapperService } from "../../../entity/entity-mapper.service";
 
 @Component({
   selector: "app-entity-select",
@@ -36,7 +36,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    */
   @Input() set entityType(type: string) {
     this.loading.next(true);
-    this.dynamicEntityService.loadType<E>(type).then((entities) => {
+    this.entityMapperService.loadType<E>(type).then((entities) => {
       this.allEntities = entities;
       this.loading.next(false);
       this.formControl.setValue(null);
@@ -131,7 +131,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   @ViewChild("inputField") inputField: ElementRef<HTMLInputElement>;
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
-  constructor(private dynamicEntityService: DynamicEntityService) {
+  constructor(private entityMapperService: EntityMapperService) {
     this.filteredEntities = this.formControl.valueChanges.pipe(
       untilDestroyed(this),
       filter((value) => value === null || typeof value === "string"), // sometimes produces entities

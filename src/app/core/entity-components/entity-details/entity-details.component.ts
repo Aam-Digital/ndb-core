@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, Inject } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import {
   EntityDetailsConfig,
@@ -20,8 +20,8 @@ import {
   EntityRemoveService,
   RemoveResult,
 } from "../../entity/entity-remove.service";
-import { DynamicEntityService } from "../../entity/dynamic-entity.service";
 import { RouteTarget } from "../../../app.routing";
+import { ENTITIES, EntityRegistry } from "../../registry/dynamic-registry";
 
 /**
  * This component can be used to display an entity in more detail.
@@ -53,7 +53,7 @@ export class EntityDetailsComponent {
     private analyticsService: AnalyticsService,
     private permissionService: EntityPermissionsService,
     private entityRemoveService: EntityRemoveService,
-    private dynamicEntityService: DynamicEntityService
+    @Inject(ENTITIES) private entities: EntityRegistry
   ) {
     this.route.data.subscribe((data: RouteData<EntityDetailsConfig>) => {
       this.config = data.config;
@@ -65,9 +65,7 @@ export class EntityDetailsComponent {
   }
 
   private loadEntity(id: string) {
-    const constr = this.dynamicEntityService.getEntityConstructor(
-      this.config.entity
-    );
+    const constr = this.entities.get(this.config.entity);
     if (id === "new") {
       this.entity = new constr();
       if (

@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, Inject } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { Observable } from "rxjs";
 import { concatMap, debounceTime, skipUntil, tap } from "rxjs/operators";
@@ -6,7 +6,8 @@ import { DatabaseIndexingService } from "../../entity/database-indexing/database
 import { Router } from "@angular/router";
 import { fromPromise } from "rxjs/internal-compatibility";
 import { FormControl } from "@angular/forms";
-import { DynamicEntityService } from "../../entity/dynamic-entity.service";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { ENTITIES, EntityRegistry } from "../../registry/dynamic-registry";
 
 /**
  * General search box that provides results out of any kind of entities from the system
@@ -39,7 +40,8 @@ export class SearchComponent {
   constructor(
     private indexingService: DatabaseIndexingService,
     private router: Router,
-    private dynamicEntityService: DynamicEntityService
+    private entitySchemaService: EntitySchemaService,
+    @Inject(ENTITIES) private entities: EntityRegistry
   ) {
     this.results = this.formControl.valueChanges.pipe(
       debounceTime(this.INPUT_DEBOUNCE_TIME_MS),
@@ -156,10 +158,11 @@ export class SearchComponent {
     id: string;
     doc: object;
   }): Entity {
-    return this.dynamicEntityService.instantiateEntity(
-      Entity.extractTypeFromId(doc.id),
-      doc.id,
-      doc.doc
-    );
+    const ctor = this.entities.get(Entity.extractTypeFromId(doc.id));
+    const entity = doc.id ? new ctor(doc.id) : new ctor();
+    if (doc.doc) {
+      this.entitySchemaService.loadDataIntoEntity(entity, doc.doc);
+    }
+    return entity;
   }
 }

@@ -2,8 +2,8 @@ import { Component, Input, OnInit } from "@angular/core";
 import { Entity } from "../../../../entity/model/entity";
 import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
 import { ViewDirective } from "../view.directive";
-import { DynamicEntityService } from "../../../../entity/dynamic-entity.service";
 import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
+import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 
 @DynamicComponent()
 @Component({
@@ -15,7 +15,7 @@ export class DisplayEntityComponent extends ViewDirective implements OnInit {
   @Input() entityToDisplay: Entity;
   @Input() linkDisabled = false;
   entityBlockComponent: string;
-  constructor(private dynamicEntityService: DynamicEntityService) {
+  constructor(private entityMapperService: EntityMapperService) {
     super();
   }
 
@@ -32,8 +32,8 @@ export class DisplayEntityComponent extends ViewDirective implements OnInit {
     if (this.entity[this.property]) {
       const type =
         config.config || this.entity.getSchema().get(this.property).additional;
-      this.entityToDisplay = await this.dynamicEntityService
-        .loadEntity(type, this.entity[this.property])
+      this.entityToDisplay = await this.entityMapperService
+        .load(type, this.entity[this.property])
         .catch(() => undefined);
       this.ngOnInit();
     }

@@ -18,7 +18,6 @@ import { Child } from "../../../../child-dev-project/children/model/child";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { Subscription } from "rxjs";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
-import { DynamicEntityService } from "../../../entity/dynamic-entity.service";
 import { ENTITIES, entityRegistry } from "../../../registry/dynamic-registry";
 
 describe("EntitySelectComponent", () => {
@@ -46,7 +45,6 @@ describe("EntitySelectComponent", () => {
           useValue: entityRegistry,
         },
         EntitySchemaService,
-        DynamicEntityService,
       ],
       imports: [
         MatAutocompleteModule,

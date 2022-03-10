@@ -7,7 +7,6 @@ import { FormDialogModule } from "../../form-dialog/form-dialog.module";
 import { PermissionsModule } from "../../permissions/permissions.module";
 import { MockSessionModule } from "../../session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { DynamicEntityService } from "../../entity/dynamic-entity.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { ENTITIES, entityRegistry } from "../../registry/dynamic-registry";
 
@@ -27,7 +26,6 @@ describe("PrimaryActionComponent", () => {
         MockSessionModule.withState(),
       ],
       providers: [
-        DynamicEntityService,
         EntitySchemaService,
         { provide: ENTITIES, useValue: entityRegistry },
       ],

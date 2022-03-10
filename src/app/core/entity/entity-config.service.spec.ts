@@ -5,7 +5,6 @@ import { DatabaseEntity } from "./database-entity.decorator";
 import { DatabaseField } from "./database-field.decorator";
 import { Entity } from "./model/entity";
 import { ConfigService } from "../config/config.service";
-import { DynamicEntityService } from "./dynamic-entity.service";
 import { LoggingService } from "../logging/logging.service";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 import { EntityMapperService } from "./entity-mapper.service";
@@ -64,7 +63,6 @@ describe("EntityConfigService", () => {
           provide: ENTITIES,
           useValue: entityRegistry,
         },
-        DynamicEntityService,
         EntitySchemaService,
       ],
     });
