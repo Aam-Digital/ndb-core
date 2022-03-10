@@ -22,7 +22,8 @@ import { ComponentType } from "@angular/cdk/overlay";
 import { routesRegistry } from "./core/registry/dynamic-registry";
 
 /**
- * Marks a class to be the target when routing
+ * Marks a class to be the target when routing.
+ * Use this as an annotation to component classes adding `@RouteTarget()` before the class definition.
  * @constructor
  */
 export function RouteTarget() {
