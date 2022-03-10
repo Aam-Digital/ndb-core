@@ -35,5 +35,9 @@ export type DatabaseRule = RawRuleOf<Ability<[EntityAction, string]>>;
 /**
  * The format which the JSON document needs to have which defines the rules for each role.
  * The format is `<user-role>: <array of DatabaseRule>`, meaning for each role an array of rules can be defined.
+ * The rules defined in 'default' will be prepended to any other rules defined for a user
  */
-export type DatabaseRules = { [key in string]: DatabaseRule[] };
+export type DatabaseRules = {
+  default?: DatabaseRule[];
+  [key: string]: DatabaseRule[];
+};

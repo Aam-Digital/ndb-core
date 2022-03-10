@@ -31,6 +31,7 @@ import { UpdatedEntity } from "../../../entity/model/entity-update";
 import { MatDialog } from "@angular/material/dialog";
 import { RowDetailsComponent } from "../row-details/row-details.component";
 import { EntityAbility } from "../../../permissions/entity-ability";
+import { MediaObserver } from "@angular/flex-layout";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -168,11 +169,13 @@ describe("EntitySubrecordComponent", () => {
   });
 
   it("should create a formGroup when editing a row", () => {
-    component.columns = [{ id: "name" }, { id: "projectNumber" }];
+    component.columns = ["name", "projectNumber"];
     const child = new Child();
     child.name = "Child Name";
     child.projectNumber = "01";
     const tableRow: TableRow<Child> = { record: child };
+    const media = TestBed.inject(MediaObserver);
+    spyOn(media, "isActive").and.returnValue(false);
 
     component.edit(tableRow);
 

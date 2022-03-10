@@ -16,7 +16,7 @@ import { User } from "../user/user";
 import { defaultInteractionTypes } from "../config/default-config/default-interaction-types";
 import { EntityAbility } from "./entity-ability";
 import { ConfigurableEnumModule } from "../configurable-enum/configurable-enum.module";
-import { DatabaseRules } from "./permission-types";
+import { DatabaseRule, DatabaseRules } from "./permission-types";
 import { Config } from "../config/config";
 import { LoggingService } from "../logging/logging.service";
 
@@ -262,5 +262,32 @@ describe("AbilityService", () => {
     tick();
 
     expect(mockLoggingService.warn).toHaveBeenCalled();
+  }));
+
+  it("should prepend default rules to all users", fakeAsync(() => {
+    const defaultRules: DatabaseRule[] = [
+      { subject: "Config", action: "read" },
+      { subject: "ProgressDashboardConfig", action: "manage" },
+    ];
+    mockEntityMapper.load.and.resolveTo(
+      new Config(
+        Config.PERMISSION_KEY,
+        Object.assign({ default: defaultRules } as DatabaseRules, rules)
+      )
+    );
+
+    mockLoginState.next(LoginState.LOGGED_IN);
+    tick();
+    expect(ability.rules).toEqual(defaultRules.concat(...rules.user_app));
+
+    mockSessionService.getCurrentUser.and.returnValue({
+      name: "admin",
+      roles: ["user_app", "admin_app"],
+    });
+    mockLoginState.next(LoginState.LOGGED_IN);
+    tick();
+    expect(ability.rules).toEqual(
+      defaultRules.concat(...rules.user_app, ...rules.admin_app)
+    );
   }));
 });

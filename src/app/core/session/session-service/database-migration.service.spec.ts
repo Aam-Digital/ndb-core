@@ -3,6 +3,7 @@ import { PouchDatabase } from "../../database/pouch-database";
 import { AppConfig } from "../../app-config/app-config";
 import { SessionType } from "../session-type";
 import { AnalyticsService } from "../../analytics/analytics.service";
+import { waitForAsync } from "@angular/core/testing";
 
 describe("DatabaseMigrationService", () => {
   let service: DatabaseMigrationService;
@@ -31,10 +32,12 @@ describe("DatabaseMigrationService", () => {
     service = new DatabaseMigrationService(mockAnalytics);
   });
 
-  afterEach(async () => {
-    await newDB.destroy();
-    await oldDB.destroy();
-  });
+  afterEach(
+    waitForAsync(() => {
+      new PouchDatabase(undefined).initInMemoryDB(newDBName).destroy();
+      new PouchDatabase(undefined).initInMemoryDB(oldDBName).destroy();
+    })
+  );
 
   it("should be created", () => {
     expect(service).toBeTruthy();

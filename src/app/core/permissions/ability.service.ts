@@ -68,7 +68,8 @@ export class AbilityService {
 
   private async updateAbilityWithUserRules(rules: DatabaseRules) {
     const userRules = this.getRulesForUser(rules);
-    if (userRules.length === 0) {
+    if (userRules.length === 0 || userRules.length === rules.default?.length) {
+      // No rules or only default rules defined
       const { name, roles } = this.sessionService.getCurrentUser();
       this.logger.warn(
         `no rules found for user "${name}" with roles "${roles}"`
@@ -80,6 +81,9 @@ export class AbilityService {
 
   private getRulesForUser(rules: DatabaseRules): DatabaseRule[] {
     const rawUserRules: DatabaseRule[] = [];
+    if (rules.default) {
+      rawUserRules.push(...rules.default);
+    }
     const currentUser = this.sessionService.getCurrentUser();
     currentUser.roles.forEach((role) => {
       const rulesForRole = rules[role] || [];
