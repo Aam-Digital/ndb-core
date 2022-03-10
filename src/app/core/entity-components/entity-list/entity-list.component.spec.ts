@@ -20,7 +20,7 @@ import { ExportModule } from "../../export/export.module";
 import { ExportService } from "../../export/export-service/export.service";
 import { MockSessionModule } from "../../session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { entityRegistry } from "../../registry/dynamic-registry";
+import { ENTITIES, entityRegistry } from "../../registry/dynamic-registry";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -114,7 +114,7 @@ describe("EntityListComponent", () => {
           { provide: ExportService, useValue: {} },
           { provide: EntitySchemaService, useValue: mockEntitySchemaService },
           { provide: AttendanceService, useValue: mockAttendanceService },
-          { provide: Entity, useValue: entityRegistry },
+          { provide: ENTITIES, useValue: entityRegistry },
         ],
       }).compileComponents();
     })

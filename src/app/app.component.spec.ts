@@ -34,7 +34,8 @@ import { Config } from "./core/config/config";
 import { USAGE_ANALYTICS_CONFIG_ID } from "./core/analytics/usage-analytics-config";
 import { environment } from "../environments/environment";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { ENTITIES, entityRegistry } from "./core/registry/dynamic-registry";
+import { ENTITIES, Registry } from "./core/registry/dynamic-registry";
+import { LoggingService } from "./core/logging/logging.service";
 
 describe("AppComponent", () => {
   let component: AppComponent;
@@ -53,10 +54,11 @@ describe("AppComponent", () => {
       TestBed.configureTestingModule({
         imports: [AppModule, HttpClientTestingModule],
         providers: [
+          LoggingService,
           { provide: AppConfig, useValue: jasmine.createSpyObj(["load"]) },
           {
             provide: ENTITIES,
-            useValue: entityRegistry,
+            useValue: new Registry(), // use a new registry to avoid duplicate registration
           },
         ],
       }).compileComponents();

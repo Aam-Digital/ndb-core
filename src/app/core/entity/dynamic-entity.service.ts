@@ -28,7 +28,7 @@ export class DynamicEntityService {
   getEntityConstructor<E extends Entity = any>(
     entityType: string
   ): EntityConstructor<E> {
-    const ctor = this.registry.lookup(entityType);
+    const ctor = this.registry.get(entityType);
     if (!ctor) {
       throw new Error(`Entity-type ${entityType} does not exist!`);
     }

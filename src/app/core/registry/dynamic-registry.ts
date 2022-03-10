@@ -26,7 +26,7 @@ export class Registry<T> {
     });
   }
 
-  public lookup(key: string) {
+  public get(key: string): T | undefined {
     if (!this.has(key)) {
       console.warn(`Requested item is not registered`);
     }

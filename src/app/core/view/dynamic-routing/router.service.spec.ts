@@ -11,6 +11,7 @@ import { RouterService } from "./router.service";
 import { EntityDetailsComponent } from "../../entity-components/entity-details/entity-details.component";
 import { ViewConfig } from "./view-config.interface";
 import { UserRoleGuard } from "../../permissions/user-role.guard";
+import { ROUTES, routesRegistry } from "../../registry/dynamic-registry";
 
 class TestComponent extends Component {}
 
@@ -28,6 +29,7 @@ describe("RouterService", () => {
       providers: [
         { provide: ConfigService, useValue: mockConfigService },
         { provide: LoggingService, useValue: jasmine.createSpyObj(["warn"]) },
+        { provide: ROUTES, useValue: routesRegistry },
       ],
     });
     service = TestBed.inject(RouterService);

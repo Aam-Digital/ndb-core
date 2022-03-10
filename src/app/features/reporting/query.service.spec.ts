@@ -63,10 +63,7 @@ describe("QueryService", () => {
         ConfigService,
         EntityConfigService,
         { provide: Database, useValue: database },
-        {
-          provide: ENTITIES,
-          useValue: entityRegistry,
-        },
+        { provide: ENTITIES, useValue: entityRegistry },
       ],
     });
     service = TestBed.inject(QueryService);

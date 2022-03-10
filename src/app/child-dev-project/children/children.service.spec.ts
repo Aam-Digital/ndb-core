@@ -10,7 +10,15 @@ import { Database } from "../../core/database/database";
 import { Note } from "../notes/model/note";
 import { PouchDatabase } from "../../core/database/pouch-database";
 import { genders } from "./model/genders";
-import { ENTITIES, entityRegistry } from "../../core/registry/dynamic-registry";
+import {
+  ENTITIES,
+  entityRegistry,
+  ROUTES,
+  routesRegistry,
+  viewRegistry,
+  VIEWS,
+} from "../../core/registry/dynamic-registry";
+import { skip } from "rxjs/operators";
 
 describe("ChildrenService", () => {
   let service: ChildrenService;
@@ -21,11 +29,13 @@ describe("ChildrenService", () => {
     database = PouchDatabase.createWithInMemoryDB();
     TestBed.configureTestingModule({
       providers: [
+        { provide: ENTITIES, useValue: entityRegistry },
+        { provide: VIEWS, useValue: viewRegistry },
+        { provide: ROUTES, useValue: routesRegistry },
         ChildrenService,
         EntityMapperService,
         EntitySchemaService,
         { provide: Database, useValue: database },
-        { provide: ENTITIES, useValue: entityRegistry },
       ],
     });
 
@@ -149,7 +159,7 @@ describe("ChildrenService", () => {
   });
 
   it("should load all children with school info", async () => {
-    const children = await service.getChildren().toPromise();
+    const children = await service.getChildren().pipe(skip(1)).toPromise();
     const child1 = children.find((child) => child.getId() === "1");
     expect(child1.schoolClass).toBe("2");
     expect(child1.schoolId).toBe("1");

@@ -15,13 +15,14 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Inject, Injectable } from "@angular/core";
+import { Inject, Injectable, Optional } from "@angular/core";
 import { Database } from "../database/database";
 import { Entity, EntityConstructor } from "./model/entity";
 import { EntitySchemaService } from "./schema/entity-schema.service";
-import { Observable, Subject } from "rxjs";
+import { EMPTY, Observable, Subject } from "rxjs";
 import { UpdatedEntity } from "./model/entity-update";
 import { ENTITIES, EntityRegistry } from "../registry/dynamic-registry";
+import { LoggingService } from "../logging/logging.service";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -39,16 +40,14 @@ export class EntityMapperService {
   constructor(
     private _db: Database,
     private entitySchemaService: EntitySchemaService,
-    @Inject(ENTITIES) protected registry: EntityRegistry
+    @Inject(ENTITIES) protected registry: EntityRegistry,
+    @Optional() private loggingService: LoggingService
   ) {}
 
   /**
    * Load an Entity from the database with the given id.
-   * <em>Important:</em> Loading via the constructor is always preferred compared to loading via string. The latter
-   * doesn't allow strict type-checking and errors can only be discovered later
    *
    * @param entityType Class that implements Entity, which is the type of Entity the results should be transformed to
-   * or the registered name of that class.
    * @param id The id of the entity to load
    * @returns A Promise resolving to an instance of entityType filled with its data.
    */
@@ -56,17 +55,16 @@ export class EntityMapperService {
     entityType: EntityConstructor<T> | string,
     id: string
   ): Promise<T> {
-    let resultEntity: Entity;
-    if (typeof entityType === "string") {
-      resultEntity = new (this.registry.lookup(id))();
-    } else {
-      resultEntity = new entityType("");
+    const ctor = this.resolveConstructor(entityType);
+    if (ctor === undefined) {
+      throw Error("Entity by id not found");
     }
+    const resultEntity = new ctor("");
     const result = await this._db.get(
       Entity.createPrefixedId(resultEntity.getType(), id)
     );
     this.entitySchemaService.loadDataIntoEntity(resultEntity, result);
-    return resultEntity as T;
+    return resultEntity;
   }
 
   /**
@@ -82,11 +80,17 @@ export class EntityMapperService {
     entityType: EntityConstructor<T> | string
   ): Promise<T[]> {
     const resultArray: Array<T> = [];
-    const entity = this.createEntity(entityType);
+    const ctor = this.resolveConstructor(entityType);
+    if (!ctor) {
+      return [];
+    }
 
-    const allRecordsOfType = await this._db.getAll(entity.getType() + ":");
+    const allRecordsOfType = await this._db.getAll(
+      new ctor("").getType() + ":"
+    );
 
     for (const record of allRecordsOfType) {
+      const entity = new ctor("");
       this.entitySchemaService.loadDataIntoEntity(entity, record);
       resultArray.push(entity);
     }
@@ -113,7 +117,11 @@ export class EntityMapperService {
   public receiveUpdates<T extends Entity>(
     entityType: EntityConstructor<T> | string
   ): Observable<UpdatedEntity<T>> {
-    const type = this.createEntity(entityType).getType();
+    const ctor = this.resolveConstructor(entityType);
+    if (ctor === undefined) {
+      return EMPTY;
+    }
+    const type = new ctor().getType();
     let publisher = this.publishers[type];
     // subject doesn't exist yet or is closed
     if (!publisher || publisher.closed) {
@@ -169,14 +177,21 @@ export class EntityMapperService {
     }
   }
 
-  protected createEntity<T extends Entity>(
+  protected resolveConstructor<T extends Entity>(
     constructible: EntityConstructor<T> | string
-  ): T {
+  ): EntityConstructor<T> | undefined {
     if (typeof constructible === "string") {
-      const constructor = this.registry.lookup(constructible);
-      return new constructor() as T;
+      const ctor = this.registry.get(constructible) as
+        | EntityConstructor<T>
+        | undefined;
+      if (ctor === undefined) {
+        this.loggingService.warn(
+          `Cannot find entity corresponding to identifier ${constructible}`
+        );
+      }
+      return ctor;
     } else {
-      return new constructible();
+      return constructible;
     }
   }
 }

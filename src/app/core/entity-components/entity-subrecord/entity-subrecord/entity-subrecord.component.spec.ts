@@ -28,7 +28,12 @@ import { genders } from "../../../../child-dev-project/children/model/genders";
 import { LoggingService } from "../../../logging/logging.service";
 import { MockSessionModule } from "../../../session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { ENTITIES, entityRegistry } from "../../../registry/dynamic-registry";
+import {
+  ENTITIES,
+  entityRegistry,
+  viewRegistry,
+  VIEWS,
+} from "../../../registry/dynamic-registry";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -49,10 +54,8 @@ describe("EntitySubrecordComponent", () => {
         providers: [
           DatePipe,
           PercentPipe,
-          {
-            provide: ENTITIES,
-            useValue: entityRegistry,
-          },
+          { provide: ENTITIES, useValue: entityRegistry },
+          { provide: VIEWS, useValue: viewRegistry },
         ],
       }).compileComponents();
 
@@ -73,11 +76,13 @@ describe("EntitySubrecordComponent", () => {
   it("should sort enums by the label", () => {
     class Test extends Entity {
       public enumValue: ConfigurableEnumValue;
+
       constructor(label: string, id: string) {
         super();
         this.enumValue = { label: label, id: id };
       }
     }
+
     const first = new Test("aaa", "first");
     const second = new Test("aab", "second");
     const third = new Test("c", "third");

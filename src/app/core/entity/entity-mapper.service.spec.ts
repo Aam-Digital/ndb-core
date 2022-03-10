@@ -21,6 +21,7 @@ import { EntitySchemaService } from "./schema/entity-schema.service";
 import { waitForAsync } from "@angular/core/testing";
 import { PouchDatabase } from "../database/pouch-database";
 import { entityRegistry } from "../registry/dynamic-registry";
+import { LoggingService } from "../logging/logging.service";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
@@ -44,7 +45,8 @@ describe("EntityMapperService", () => {
       entityMapper = new EntityMapperService(
         testDatabase,
         new EntitySchemaService(),
-        entityRegistry
+        entityRegistry,
+        new LoggingService()
       );
 
       return Promise.all([

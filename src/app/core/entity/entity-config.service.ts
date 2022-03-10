@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Inject, Injectable } from "@angular/core";
 import {
   Entity,
   ENTITY_CONFIG_PREFIX,
@@ -8,8 +8,8 @@ import { ConfigService } from "../config/config.service";
 import { EntitySchemaField } from "./schema/entity-schema-field";
 import { addPropertySchema } from "./database-field.decorator";
 import { OperationType } from "../permissions/entity-permissions.service";
-import { DynamicEntityService } from "./dynamic-entity.service";
 import { LoggingService } from "../logging/logging.service";
+import { ENTITIES, EntityRegistry } from "../registry/dynamic-registry";
 
 /**
  * A service that allows to work with configuration-objects
@@ -24,7 +24,7 @@ export class EntityConfigService {
 
   constructor(
     private configService: ConfigService,
-    private dynamicEntityService: DynamicEntityService,
+    @Inject(ENTITIES) private entities: EntityRegistry,
     private loggingService: LoggingService
   ) {}
 
@@ -73,11 +73,11 @@ export class EntityConfigService {
       EntityConfig & { _id: string }
     >(ENTITY_CONFIG_PREFIX)) {
       const id = config._id.substring(ENTITY_CONFIG_PREFIX.length);
-      try {
-        const ctor = this.dynamicEntityService.getEntityConstructor(id);
-        this.addConfigAttributes(ctor, config);
-      } catch (err) {
+      const ctor = this.entities.get(id);
+      if (ctor === undefined) {
         entitiesNotFound.push(id);
+      } else {
+        this.addConfigAttributes(ctor, config);
       }
     }
     if (entitiesNotFound.length > 0) {
