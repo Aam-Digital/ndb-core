@@ -27,7 +27,6 @@ import { PouchDatabase } from "../../database/pouch-database";
 import { AppConfig } from "../../app-config/app-config";
 import { SessionType } from "../session-type";
 import { DatabaseMigrationService } from "./database-migration.service";
-import { AnalyticsService } from "../../analytics/analytics.service";
 
 /**
  * Responsibilities:
@@ -40,15 +39,8 @@ export class LocalSession extends SessionService {
   private currentDBUser: DatabaseUser;
   public databaseMigrationService: DatabaseMigrationService;
 
-  constructor(
-    private database: PouchDatabase,
-    analyticsService: AnalyticsService = { eventTrack: () => undefined } as any
-  ) {
+  constructor(private database: PouchDatabase) {
     super();
-    this.databaseMigrationService = new DatabaseMigrationService(
-      this,
-      analyticsService
-    );
   }
 
   /**
@@ -57,13 +49,12 @@ export class LocalSession extends SessionService {
    * @param username Username
    * @param password Password
    */
-  public async login(username: string, password: string): Promise<LoginState> {
+  public login(username: string, password: string): Promise<LoginState> {
     const user: LocalUser = JSON.parse(window.localStorage.getItem(username));
     if (user) {
       if (passwordEqualsEncrypted(password, user.encryptedPassword)) {
         this.currentDBUser = user;
         this.createLocalPouchDB();
-        await this.databaseMigrationService.migrateToDatabasePerUser();
         this.loginState.next(LoginState.LOGGED_IN);
       } else {
         this.loginState.next(LoginState.LOGIN_FAILED);
@@ -71,7 +62,7 @@ export class LocalSession extends SessionService {
     } else {
       this.loginState.next(LoginState.UNAVAILABLE);
     }
-    return this.loginState.value;
+    return Promise.resolve(this.loginState.value);
   }
 
   private createLocalPouchDB() {

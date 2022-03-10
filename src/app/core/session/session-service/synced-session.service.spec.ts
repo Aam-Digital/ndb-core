@@ -34,7 +34,7 @@ import { TEST_PASSWORD, TEST_USER } from "../mock-session.module";
 import { testSessionServiceImplementation } from "./session.service.spec";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { PouchDatabase } from "../../database/pouch-database";
-import { AnalyticsService } from "../../analytics/analytics.service";
+import { DatabaseMigrationService } from "./database-migration.service";
 
 describe("SyncedSessionService", () => {
   let sessionService: SyncedSessionService;
@@ -50,10 +50,13 @@ describe("SyncedSessionService", () => {
   let syncSpy: jasmine.Spy<() => Promise<void>>;
   let liveSyncSpy: jasmine.Spy<() => void>;
   let mockHttpClient: jasmine.SpyObj<HttpClient>;
+  let mockDatabaseMigration: jasmine.SpyObj<DatabaseMigrationService>;
 
   beforeEach(() => {
     mockHttpClient = jasmine.createSpyObj(["post", "delete"]);
     mockHttpClient.delete.and.returnValue(of());
+    mockDatabaseMigration = jasmine.createSpyObj(["migrateOldDatabaseTo"]);
+    mockDatabaseMigration.migrateOldDatabaseTo.and.resolveTo();
     TestBed.configureTestingModule({
       imports: [
         MatSnackBarModule,
@@ -67,10 +70,7 @@ describe("SyncedSessionService", () => {
         SyncedSessionService,
         PouchDatabase,
         { provide: HttpClient, useValue: mockHttpClient },
-        {
-          provide: AnalyticsService,
-          useValue: jasmine.createSpyObj(["eventTrack"]),
-        },
+        { provide: DatabaseMigrationService, useValue: mockDatabaseMigration },
       ],
     });
     AppConfig.settings = {
@@ -270,6 +270,14 @@ describe("SyncedSessionService", () => {
     expectAsync(result).toBeResolvedTo(LoginState.LOGGED_IN);
     tick();
   }));
+
+  it("should call database migration after successful login", async () => {
+    expect(mockDatabaseMigration.migrateOldDatabaseTo).not.toHaveBeenCalled();
+
+    await sessionService.login(TEST_USER, TEST_PASSWORD);
+
+    expect(mockDatabaseMigration.migrateOldDatabaseTo).toHaveBeenCalled();
+  });
 
   testSessionServiceImplementation(() => Promise.resolve(sessionService));
 

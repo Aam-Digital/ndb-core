@@ -20,13 +20,12 @@ import { AppConfig } from "../app-config/app-config";
 import { SessionService } from "./session-service/session.service";
 import { AlertService } from "../alerts/alert.service";
 import { LoggingService } from "../logging/logging.service";
-import { LoginState } from "./session-states/login-state.enum";
 import { SessionType } from "./session-type";
 import { HttpClient } from "@angular/common/http";
 import { LocalSession } from "./session-service/local-session";
 import { Database } from "../database/database";
 import { PouchDatabase } from "../database/pouch-database";
-import { AnalyticsService } from "../analytics/analytics.service";
+import { DatabaseMigrationService } from "./session-service/database-migration.service";
 
 /**
  * Factory method for Angular DI provider of SessionService.
@@ -38,45 +37,22 @@ export function sessionServiceFactory(
   loggingService: LoggingService,
   httpClient: HttpClient,
   database: Database,
-  analyticsService: AnalyticsService
+  databaseMigrationService: DatabaseMigrationService
 ): SessionService {
   const pouchDatabase = database as PouchDatabase;
-  let sessionService: SessionService;
   if (AppConfig.settings.session_type === SessionType.synced) {
-    sessionService = new SyncedSessionService(
+    return new SyncedSessionService(
       alertService,
       loggingService,
       httpClient,
-      pouchDatabase,
-      analyticsService
+      databaseMigrationService,
+      pouchDatabase
     );
   } else {
-    sessionService = new LocalSession(pouchDatabase, analyticsService);
+    return new LocalSession(pouchDatabase);
   }
   // TODO: requires a configuration or UI option to select RemoteSession: https://github.com/Aam-Digital/ndb-core/issues/434
   // return new RemoteSession(httpClient, loggingService);
-
-  updateServicesWithUserContexts(sessionService, analyticsService);
-
-  return sessionService;
-}
-
-function updateServicesWithUserContexts(
-  sessionService: SessionService,
-  analyticsService: AnalyticsService
-) {
-  // update the user context for remote error logging and tracking
-  // cannot subscribe within LoggingService itself because of cyclic dependencies, therefore doing this here
-  sessionService.loginState.subscribe((newState) => {
-    if (newState === LoginState.LOGGED_IN) {
-      const username = sessionService.getCurrentUser().name;
-      LoggingService.setLoggingContextUser(username);
-      analyticsService.setUser(username);
-    } else {
-      LoggingService.setLoggingContextUser(undefined);
-      analyticsService.setUser(undefined);
-    }
-  });
 }
 
 /**
@@ -94,6 +70,6 @@ export const sessionServiceProvider = {
     LoggingService,
     HttpClient,
     Database,
-    AnalyticsService,
+    DatabaseMigrationService,
   ],
 };

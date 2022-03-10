@@ -2,15 +2,14 @@ import { DatabaseMigrationService } from "./database-migration.service";
 import { PouchDatabase } from "../../database/pouch-database";
 import { AppConfig } from "../../app-config/app-config";
 import { SessionType } from "../session-type";
-import { LocalSession } from "./local-session";
 import { AnalyticsService } from "../../analytics/analytics.service";
 
 describe("DatabaseMigrationService", () => {
   let service: DatabaseMigrationService;
-  let sessionService: jasmine.SpyObj<LocalSession>;
   let mockAnalytics: jasmine.SpyObj<AnalyticsService>;
   let oldDBName: string;
   let newDBName: string;
+  let newDB: PouchDatabase;
   const testDoc = { _id: "doc" };
 
   beforeEach(async () => {
@@ -24,13 +23,10 @@ describe("DatabaseMigrationService", () => {
     };
     oldDBName = AppConfig.settings.database.name;
     newDBName = "user-" + oldDBName;
+    newDB = new PouchDatabase().initInMemoryDB(newDBName);
     await new PouchDatabase().initInMemoryDB(oldDBName).put(testDoc);
-    sessionService = jasmine.createSpyObj(["getDatabase"]);
-    sessionService.getDatabase.and.returnValue(
-      new PouchDatabase().initInMemoryDB(newDBName)
-    );
     mockAnalytics = jasmine.createSpyObj(["eventTrack"]);
-    service = new DatabaseMigrationService(sessionService, mockAnalytics);
+    service = new DatabaseMigrationService(mockAnalytics);
   });
 
   afterEach(async () => {
@@ -43,12 +39,11 @@ describe("DatabaseMigrationService", () => {
   });
 
   it("should add the username to the name of the old database", async () => {
-    const newDB = new PouchDatabase().initInMemoryDB(newDBName);
     let oldDB = new PouchDatabase().initInMemoryDB(oldDBName);
     await expectAsync(oldDB.get(testDoc._id)).toBeResolved();
     await expectAsync(newDB.get(testDoc._id)).toBeRejected();
 
-    await service.migrateToDatabasePerUser();
+    await service.migrateOldDatabaseTo(newDB);
 
     // oldDB has to be re-created because it was deleted inside migration script
     oldDB = new PouchDatabase().initInMemoryDB(oldDBName);
@@ -60,11 +55,10 @@ describe("DatabaseMigrationService", () => {
     let oldDB = new PouchDatabase().initInMemoryDB(oldDBName);
     await oldDB.destroy();
 
-    await service.migrateToDatabasePerUser();
+    await service.migrateOldDatabaseTo(newDB);
 
     oldDB = new PouchDatabase().initInMemoryDB(oldDBName);
     await expectAsync(oldDB.get(testDoc._id)).toBeRejected();
-    const newDB = new PouchDatabase().initInMemoryDB(newDBName);
     await expectAsync(newDB.get(testDoc._id)).toBeRejected();
     const info = await newDB.getPouchDB().info();
     expect(info.doc_count).toBe(0);
@@ -77,9 +71,8 @@ describe("DatabaseMigrationService", () => {
     await oldDB.put(designDoc);
     await oldDB.put(normalDoc);
 
-    await service.migrateToDatabasePerUser();
+    await service.migrateOldDatabaseTo(newDB);
 
-    const newDB = new PouchDatabase().initInMemoryDB(newDBName);
     await expectAsync(newDB.get(designDoc._id)).toBeRejected();
     await expectAsync(newDB.get(normalDoc._id)).toBeResolved();
   });
@@ -89,7 +82,7 @@ describe("DatabaseMigrationService", () => {
     const normalDoc = { _id: "Child:someChild" };
     await oldDB.put(normalDoc);
 
-    await service.migrateToDatabasePerUser();
+    await service.migrateOldDatabaseTo(newDB);
 
     expect(mockAnalytics.eventTrack).toHaveBeenCalledWith(
       "migrated db to db-per-user",

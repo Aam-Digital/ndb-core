@@ -23,7 +23,6 @@ import { LoginState } from "../session-states/login-state.enum";
 import { testSessionServiceImplementation } from "./session.service.spec";
 import { TEST_PASSWORD, TEST_USER } from "../mock-session.module";
 import { PouchDatabase } from "../../database/pouch-database";
-import { fakeAsync, tick } from "@angular/core/testing";
 
 describe("LocalSessionService", () => {
   let localSession: LocalSession;
@@ -139,23 +138,6 @@ describe("LocalSessionService", () => {
     await testDatabaseCreation(SessionType.local, "indexed");
     await testDatabaseCreation(SessionType.synced, "indexed");
   });
-
-  it("should call migration before setting login status", fakeAsync(() => {
-    spyOn(
-      localSession.databaseMigrationService,
-      "migrateToDatabasePerUser"
-    ).and.resolveTo();
-
-    localSession.login(TEST_USER, TEST_PASSWORD);
-
-    expect(
-      localSession.databaseMigrationService.migrateToDatabasePerUser
-    ).toHaveBeenCalled();
-    expect(localSession.loginState.value).toBe(LoginState.LOGGED_OUT);
-
-    tick();
-    expect(localSession.loginState.value).toBe(LoginState.LOGGED_IN);
-  }));
 
   testSessionServiceImplementation(() => Promise.resolve(localSession));
 });

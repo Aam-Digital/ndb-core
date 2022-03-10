@@ -31,6 +31,8 @@ import { Child } from "./child-dev-project/children/model/child";
 import { School } from "./child-dev-project/schools/model/school";
 import { DemoDataInitializerService } from "./core/demo-data/demo-data-initializer.service";
 import { AppConfig } from "./core/app-config/app-config";
+import { LoginState } from "./core/session/session-states/login-state.enum";
+import { LoggingService } from "./core/logging/logging.service";
 
 @Component({
   selector: "app-root",
@@ -77,6 +79,18 @@ export class AppComponent {
     this.configService.configUpdates.subscribe(() => {
       this.routerService.initRouting();
       this.entityConfigService.setupEntitiesFromConfig();
+    });
+
+    // update the user context for remote error logging and tracking
+    this.sessionService.loginState.subscribe((newState) => {
+      if (newState === LoginState.LOGGED_IN) {
+        const username = this.sessionService.getCurrentUser().name;
+        LoggingService.setLoggingContextUser(username);
+        this.analyticsService.setUser(username);
+      } else {
+        LoggingService.setLoggingContextUser(undefined);
+        this.analyticsService.setUser(undefined);
+      }
     });
 
     // If loading the config earlier (in a module constructor or through APP_INITIALIZER) a runtime error occurs.
