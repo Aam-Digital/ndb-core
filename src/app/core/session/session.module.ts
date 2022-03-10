@@ -22,7 +22,6 @@ import { FormsModule } from "@angular/forms";
 import { EntityModule } from "../entity/entity.module";
 import { AlertsModule } from "../alerts/alerts.module";
 import { sessionServiceProvider } from "./session.service.provider";
-import { databaseServiceProvider } from "../database/database.service.provider";
 import { UserModule } from "../user/user.module";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
@@ -31,6 +30,8 @@ import { MatInputModule } from "@angular/material/input";
 import { RouterModule } from "@angular/router";
 import { HttpClientModule } from "@angular/common/http";
 import { DatabaseMigrationService } from "./session-service/database-migration.service";
+import { Database } from "../database/database";
+import { PouchDatabase } from "../database/pouch-database";
 
 /**
  * The core session logic handling user login as well as connection and synchronization with the remote database.
@@ -56,7 +57,7 @@ import { DatabaseMigrationService } from "./session-service/database-migration.s
   exports: [LoginComponent],
   providers: [
     sessionServiceProvider,
-    databaseServiceProvider,
+    { provide: Database, useClass: PouchDatabase },
     DatabaseMigrationService,
   ],
 })
