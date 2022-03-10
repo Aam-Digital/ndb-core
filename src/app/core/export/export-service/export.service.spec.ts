@@ -25,6 +25,7 @@ import { ENTITIES, entityRegistry } from "../../registry/dynamic-registry";
 describe("ExportService", () => {
   let service: ExportService;
   let db: PouchDatabase;
+  let entityMapper: EntityMapperService;
 
   beforeEach(() => {
     db = PouchDatabase.createWithInMemoryDB("export-service-tests");
@@ -47,6 +48,7 @@ describe("ExportService", () => {
     });
 
     service = TestBed.inject<ExportService>(ExportService);
+    entityMapper = TestBed.inject(EntityMapperService);
   });
 
   afterEach(async () => {
@@ -298,10 +300,153 @@ describe("ExportService", () => {
     ]);
   });
 
+  it("should not omit rows where the subQueries are run on an empty array", async () => {
+    const childWithoutSchool = await createChildInDB("child without school");
+    const childWithSchool = await createChildInDB("child with school");
+    const school = await createSchoolInDB("test school", [childWithSchool]);
+    const note = await createNoteInDB(
+      "Note",
+      [childWithoutSchool, childWithSchool],
+      ["PRESENT", "ABSENT"]
+    );
+    note.schools = [school.getId()];
+    await entityMapper.save(note);
+
+    const exportConfig: ExportColumnConfig[] = [
+      {
+        query: ":getAttendanceArray(true)",
+        subQueries: [
+          {
+            label: "participant",
+            query: ".participant:toEntities(Child).name",
+          },
+          {
+            query: ".school:toEntities(School)",
+            subQueries: [
+              { label: "Name", query: "name" },
+              { label: "School ID", query: "entityId" },
+            ],
+          },
+        ],
+      },
+    ];
+
+    const result = await service.createCsv([note], exportConfig);
+
+    const resultRows = result.split(ExportService.SEPARATOR_ROW);
+    expect(resultRows).toEqual([
+      '"participant","Name","School ID"',
+      '"child without school","",""',
+      `"child with school","${school.name}","${school.getId()}"`,
+    ]);
+  });
+
+  it("should use first level queries to fetch data if no data is provided", async () => {
+    const child = await createChildInDB("some child");
+    await createNoteInDB("school", [child], ["PRESENT"]);
+    await createNoteInDB("school", [child], ["ABSENT"]);
+    await createNoteInDB("coaching", [child], ["PRESENT"]);
+    const exportConfig: ExportColumnConfig[] = [
+      {
+        query: `${Note.ENTITY_TYPE}:toArray[* subject = school]:getAttendanceArray:getAttendanceReport`,
+        subQueries: [
+          {
+            label: "Name",
+            query: `.participant:toEntities(Child).name`,
+          },
+          {
+            label: "Participation",
+            query: `percentage`,
+          },
+        ],
+      },
+      {
+        query: `${Note.ENTITY_TYPE}:toArray[* subject = coaching]:getAttendanceArray:getAttendanceReport`,
+        subQueries: [
+          {
+            label: "Name",
+            query: `.participant:toEntities(Child).name`,
+          },
+          {
+            label: "Participation",
+            query: `percentage`,
+          },
+        ],
+      },
+    ];
+    const result = await service.createCsv(undefined, exportConfig);
+
+    const resultRows = result.split(ExportService.SEPARATOR_ROW);
+    expect(resultRows).toEqual([
+      '"Name","Participation"',
+      '"some child","0.5"',
+      '"some child","1"',
+    ]);
+  });
+
+  it("should support time spans for data export", async () => {
+    const child = await createChildInDB("Child");
+    const oneWeekAgoNote = await createNoteInDB("one week ago", [child]);
+    oneWeekAgoNote.date = moment().subtract(1, "week").toDate();
+    await entityMapper.save(oneWeekAgoNote);
+    const yesterdayNote = await createNoteInDB("yesterday", [child]);
+    yesterdayNote.date = moment().subtract(1, "day").toDate();
+    await entityMapper.save(yesterdayNote);
+    const todayNote = await createNoteInDB("today", [child]);
+    todayNote.date = new Date();
+    await entityMapper.save(todayNote);
+    const query = [
+      { query: "name" },
+      {
+        query: ":getRelated(Note, children)[* date > ?]",
+        subQueries: [{ query: "subject" }],
+      },
+    ];
+
+    let result = await service.createCsv(
+      undefined,
+      [
+        {
+          query: `${Note.ENTITY_TYPE}:toArray`,
+          subQueries: [{ query: "subject" }],
+        },
+      ],
+      moment().subtract(5, "days").toDate()
+    );
+    let resultRows = result.split(ExportService.SEPARATOR_ROW);
+    expect(resultRows).toEqual(['"subject"', '"yesterday"', '"today"']);
+
+    result = await service.createCsv(
+      [child],
+      query,
+      moment().subtract(5, "days").toDate()
+    );
+    resultRows = result.split(ExportService.SEPARATOR_ROW);
+    expect(resultRows).toEqual([
+      '"name","subject"',
+      '"Child","yesterday"',
+      '"Child","today"',
+    ]);
+
+    query[1].query = ":getRelated(Note, children)[* date > ? & date <= ?]";
+    result = await service.createCsv(
+      [child],
+      query,
+      moment().subtract(1, "weeks").subtract(1, "day").toDate(),
+      moment().subtract(1, "day").toDate()
+    );
+    resultRows = result.split(ExportService.SEPARATOR_ROW);
+    expect(resultRows).toEqual([
+      '"name","subject"',
+      '"Child","one week ago"',
+      '"Child","yesterday"',
+    ]);
+  });
+
   async function createChildInDB(name: string): Promise<Child> {
     const child = new Child();
     child.name = name;
-    await db.put(child);
+    await entityMapper.save(child);
     return child;
   }
 
@@ -312,6 +457,7 @@ describe("ExportService", () => {
   ): Promise<Note> {
     const note = new Note();
     note.subject = subject;
+    note.date = new Date();
     note.children = children.map((child) => child.getId());
 
     for (let i = 0; i < attendanceStatus.length; i++) {
@@ -321,7 +467,7 @@ describe("ExportService", () => {
         (s) => s.id === attendanceStatus[i]
       );
     }
-    await db.put(note);
+    await entityMapper.save(note);
     return note;
   }
 
@@ -331,13 +477,14 @@ describe("ExportService", () => {
   ): Promise<School> {
     const school = new School();
     school.name = schoolName;
-    await db.put(school);
+    await entityMapper.save(school);
 
     for (const child of students) {
       const childSchoolRel = new ChildSchoolRelation();
       childSchoolRel.childId = child.getId();
       childSchoolRel.schoolId = school.getId();
-      await db.put(childSchoolRel);
+      childSchoolRel.start = new Date();
+      await entityMapper.save(childSchoolRel);
     }
 
     return school;

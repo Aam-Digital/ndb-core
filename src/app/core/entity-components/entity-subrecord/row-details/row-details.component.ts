@@ -65,6 +65,7 @@ export class RowDetailsComponent<E extends Entity> {
       data.columns,
       data.row.record
     );
+    this.tempEntity = this.data.row.record;
     this.form.valueChanges.subscribe((value) => {
       const dynamicConstructor: any = data.row.record.getConstructor();
       this.tempEntity = Object.assign(new dynamicConstructor(), value);
