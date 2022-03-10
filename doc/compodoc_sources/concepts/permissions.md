@@ -7,18 +7,47 @@ The permissions are stored in a [config object](../../classes/Config.html) which
 As an example, we will define a permission object which allows users with the role `user_app` *not* to *create*, *read*, *update* and *delete* `HealthCheck` entities and *not* *create* and *delete* `School` and `Child` entities.
 Besides that, the role is allowed to do everything.
 A second role `admin_app` is allowed to do everything.
+Additionally, we add a `default` rule which allows each user (independent of role) to read the `Config` entities.
+Default rules are prepended to the rules of any user and allow to configure user-agnostic permissions.
+The default rules can be overwritten in the role-specific rules.
 
 ```JSON
 {
   "_id": "Config:Permissions",
   "data": {
+    "default": [
+      {
+        "subject": "Config",
+        "action": "read"
+      }
+    ],
     "user_app": [
-      { "subject":  "all", "action": "manage" },
-      { "subject":  "HealthCheck", "action": "manage", "inverted": true },
-      { "subject":  ["School", "Child"], "action": ["create", "delete"], "inverted": true }
+      {
+        "subject": "all",
+        "action": "manage"
+      },
+      {
+        "subject": "HealthCheck",
+        "action": "manage",
+        "inverted": true
+      },
+      {
+        "subject": [
+          "School",
+          "Child"
+        ],
+        "action": [
+          "create",
+          "delete"
+        ],
+        "inverted": true
+      }
     ],
     "admin_app": [
-      { "subject":  "all", "action": "manage" }
+      {
+        "subject": "all",
+        "action": "manage"
+      }
     ]
   }
 }
