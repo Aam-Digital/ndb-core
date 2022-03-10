@@ -10,6 +10,7 @@ describe("DatabaseMigrationService", () => {
   let oldDBName: string;
   let newDBName: string;
   let newDB: PouchDatabase;
+  let oldDB: PouchDatabase;
   const testDoc = { _id: "doc" };
 
   beforeEach(async () => {
@@ -23,15 +24,16 @@ describe("DatabaseMigrationService", () => {
     };
     oldDBName = AppConfig.settings.database.name;
     newDBName = "user-" + oldDBName;
-    newDB = new PouchDatabase().initInMemoryDB(newDBName);
-    await new PouchDatabase().initInMemoryDB(oldDBName).put(testDoc);
+    newDB = new PouchDatabase(undefined).initInMemoryDB(newDBName);
+    oldDB = new PouchDatabase(undefined).initInMemoryDB(oldDBName);
+    await oldDB.put(testDoc);
     mockAnalytics = jasmine.createSpyObj(["eventTrack"]);
     service = new DatabaseMigrationService(mockAnalytics);
   });
 
   afterEach(async () => {
-    await new PouchDatabase().initInMemoryDB(oldDBName).destroy();
-    await new PouchDatabase().initInMemoryDB(newDBName).destroy();
+    await newDB.destroy();
+    await oldDB.destroy();
   });
 
   it("should be created", () => {
@@ -39,25 +41,23 @@ describe("DatabaseMigrationService", () => {
   });
 
   it("should add the username to the name of the old database", async () => {
-    let oldDB = new PouchDatabase().initInMemoryDB(oldDBName);
     await expectAsync(oldDB.get(testDoc._id)).toBeResolved();
     await expectAsync(newDB.get(testDoc._id)).toBeRejected();
 
     await service.migrateOldDatabaseTo(newDB);
 
     // oldDB has to be re-created because it was deleted inside migration script
-    oldDB = new PouchDatabase().initInMemoryDB(oldDBName);
+    oldDB = new PouchDatabase(undefined).initInMemoryDB(oldDBName);
     await expectAsync(oldDB.get(testDoc._id)).toBeRejected();
     await expectAsync(newDB.get(testDoc._id)).toBeResolved();
   });
 
   it("should not replicate if the database has already been closed", async () => {
-    let oldDB = new PouchDatabase().initInMemoryDB(oldDBName);
     await oldDB.destroy();
 
     await service.migrateOldDatabaseTo(newDB);
 
-    oldDB = new PouchDatabase().initInMemoryDB(oldDBName);
+    oldDB = new PouchDatabase(undefined).initInMemoryDB(oldDBName);
     await expectAsync(oldDB.get(testDoc._id)).toBeRejected();
     await expectAsync(newDB.get(testDoc._id)).toBeRejected();
     const info = await newDB.getPouchDB().info();
@@ -65,7 +65,6 @@ describe("DatabaseMigrationService", () => {
   });
 
   it("should remove the design docs before sync so they will be correctly re-created", async () => {
-    const oldDB = new PouchDatabase().initInMemoryDB(oldDBName);
     const designDoc = { _id: "_design/search_index" };
     const normalDoc = { _id: "Child:someChild" };
     await oldDB.put(designDoc);
@@ -78,7 +77,6 @@ describe("DatabaseMigrationService", () => {
   });
 
   it("should track a matomo event when migration happens", async () => {
-    const oldDB = new PouchDatabase().initInMemoryDB(oldDBName);
     const normalDoc = { _id: "Child:someChild" };
     await oldDB.put(normalDoc);
 

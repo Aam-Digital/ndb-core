@@ -27,7 +27,7 @@ describe("ExportService", () => {
   let entityMapper: EntityMapperService;
 
   beforeEach(() => {
-    db = new PouchDatabase().initInMemoryDB();
+    db = PouchDatabase.createWithData();
 
     TestBed.configureTestingModule({
       providers: [

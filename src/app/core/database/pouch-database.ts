@@ -37,8 +37,8 @@ export class PouchDatabase extends Database {
    * In tests use `tick()` or `waitForAsync()` to prevent accessing documents before they are saved.
    * @param data an array of documents
    */
-  static createWithData(data: any[]): PouchDatabase {
-    const instance = new PouchDatabase();
+  static createWithData(data = []): PouchDatabase {
+    const instance = new PouchDatabase(new LoggingService());
     instance.initInMemoryDB();
     data.forEach((doc) => instance.put(doc, true));
     return instance;
@@ -51,7 +51,7 @@ export class PouchDatabase extends Database {
    * Create a PouchDB database manager.
    * @param loggingService The LoggingService instance of the app to log and report problems.
    */
-  constructor(private loggingService: LoggingService = new LoggingService()) {
+  constructor(private loggingService: LoggingService) {
     super();
   }
 

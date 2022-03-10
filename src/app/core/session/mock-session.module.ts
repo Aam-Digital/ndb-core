@@ -97,7 +97,7 @@ export class MockSessionModule {
 }
 
 function createLocalSession(andLogin?: boolean): SessionService {
-  const localSession = new LocalSession(new PouchDatabase());
+  const localSession = new LocalSession(PouchDatabase.createWithData());
   localSession.saveUser(
     { name: TEST_USER, roles: ["user_app"] },
     TEST_PASSWORD

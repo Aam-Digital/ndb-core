@@ -3,6 +3,7 @@ import { PouchDatabase } from "../../database/pouch-database";
 import { SessionType } from "../session-type";
 import { AnalyticsService } from "../../analytics/analytics.service";
 import { Injectable } from "@angular/core";
+import { LoggingService } from "../../logging/logging.service";
 
 @Injectable()
 /**
@@ -13,7 +14,7 @@ export class DatabaseMigrationService {
 
   async migrateOldDatabaseTo(newDatabase: PouchDatabase): Promise<void> {
     const oldDBName = AppConfig.settings.database.name;
-    const oldDB = new PouchDatabase();
+    const oldDB = new PouchDatabase(new LoggingService());
     if (AppConfig.settings.session_type === SessionType.mock) {
       oldDB.initInMemoryDB(oldDBName);
     } else {

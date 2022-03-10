@@ -49,7 +49,7 @@ describe("QueryService", () => {
   );
 
   beforeEach(async () => {
-    database = new PouchDatabase().initInMemoryDB();
+    database = PouchDatabase.createWithData();
     TestBed.configureTestingModule({
       imports: [ConfigurableEnumModule],
       providers: [

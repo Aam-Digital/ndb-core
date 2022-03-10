@@ -57,7 +57,7 @@ describe("DataImportService", () => {
   }
 
   beforeEach(() => {
-    db = new PouchDatabase().initInMemoryDB();
+    db = PouchDatabase.createWithData();
     mockSnackBar = jasmine.createSpyObj("MatSnackBar", ["open"]);
     mockBackupService = jasmine.createSpyObj("BackupService", [
       "getJsonExport",

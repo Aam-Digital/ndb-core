@@ -18,7 +18,7 @@ import { SessionService } from "../../core/session/session-service/session.servi
 import { LocalSession } from "../../core/session/session-service/local-session";
 import { PouchDatabase } from "../../core/database/pouch-database";
 
-const sessionService = new LocalSession(new PouchDatabase());
+const sessionService = new LocalSession(PouchDatabase.createWithData());
 const schemaService = new EntitySchemaService();
 const entityMapper = new EntityMapperService(
   sessionService.getDatabase(),
