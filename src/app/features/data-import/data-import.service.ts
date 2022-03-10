@@ -165,14 +165,18 @@ export class DataImportService {
     if (property === "_id") {
       return Entity.createPrefixedId(importMeta.entityType, value);
     } else if (importMeta.dateFormat && this.dateDataTypes.includes(dataType)) {
-      const date = moment(value, importMeta.dateFormat);
-      if (date.isValid()) {
-        return date.format("YYYY-MM-DD");
-      } else {
-        return undefined;
-      }
+      return this.transform2Date(value, importMeta.dateFormat);
     } else {
       return value;
+    }
+  }
+
+  private transform2Date(value: any, dateFormat: string) {
+    const date = moment(value, dateFormat);
+    if (date.isValid()) {
+      return date.format("YYYY-MM-DD");
+    } else {
+      return undefined;
     }
   }
 
