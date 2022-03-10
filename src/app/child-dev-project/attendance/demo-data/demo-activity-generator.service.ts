@@ -69,9 +69,6 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<RecurringAct
   generateEntities(): RecurringActivity[] {
     const data = [];
     const children = this.demoChildren.entities.filter((c) => c.isActive);
-    const users = this.demoUser.entities.filter(
-      (user) => user instanceof User
-    ) as User[];
 
     let i = 0;
     while (i < children.length) {
@@ -83,7 +80,7 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<RecurringAct
       data.push(
         DemoActivityGeneratorService.generateActivityForChildren(
           participatingChildren,
-          faker.random.arrayElement(users)
+          faker.random.arrayElement(this.demoUser.entities)
         )
       );
       i += groupSize;
