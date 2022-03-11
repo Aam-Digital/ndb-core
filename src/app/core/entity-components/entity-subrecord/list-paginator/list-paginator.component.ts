@@ -141,7 +141,7 @@ export class ListPaginatorComponent<E>
   }
 
   private async ensureUserIsLoaded(): Promise<boolean> {
-    if (!this.user)  {
+    if (!this.user) {
       const currentUser = this.sessionService.getCurrentUser();
       try {
         this.user = await this.entityMapperService.load(User, currentUser.name);
@@ -151,6 +151,6 @@ export class ListPaginatorComponent<E>
         );
       }
     }
-    return !!this.user
+    return !!this.user;
   }
 }

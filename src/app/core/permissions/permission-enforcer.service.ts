@@ -67,8 +67,9 @@ export class PermissionEnforcerService {
     rules
       .filter((rule) => this.isReadRule(rule))
       .forEach((rule) => this.collectSubjectsFromRule(rule, subjects));
-    return [...subjects]
-      .map((subj) => this.dynamicEntityService.getEntityConstructor(subj));
+    return [...subjects].map((subj) =>
+      this.dynamicEntityService.getEntityConstructor(subj)
+    );
   }
 
   private collectSubjectsFromRule(rule: DatabaseRule, subjects: Set<string>) {

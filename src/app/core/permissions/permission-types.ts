@@ -37,7 +37,7 @@ export type DatabaseRule = RawRuleOf<Ability<[EntityAction, string]>>;
  * The format is `<user-role>: <array of DatabaseRule>`, meaning for each role an array of rules can be defined.
  * The rules defined in 'default' will be prepended to any other rules defined for a user
  */
-export type DatabaseRules = {
+export interface DatabaseRules {
   default?: DatabaseRule[];
   [key: string]: DatabaseRule[];
-};
+}

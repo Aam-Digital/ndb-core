@@ -98,7 +98,6 @@ describe("AbilityService", () => {
       Promise.reject("first error"),
       Promise.resolve(new Config(Config.PERMISSION_KEY, rules))
     );
-    const ability = TestBed.inject(EntityAbility);
 
     mockLoginState.next(LoginState.LOGGED_IN);
 
