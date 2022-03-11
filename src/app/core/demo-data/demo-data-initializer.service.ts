@@ -37,7 +37,7 @@ export class DemoDataInitializerService {
     } else {
       this.loggingService.warn(
         "Cannot create demo data with session: " +
-        AppConfig.settings.session_type
+          AppConfig.settings.session_type
       );
     }
     this.registerDemoUsers();
@@ -54,13 +54,12 @@ export class DemoDataInitializerService {
     this.syncDatabaseOnUserChange();
   }
 
-
   private syncDatabaseOnUserChange() {
     this.sessionService.loginState.subscribe((state) => {
       if (
         state === LoginState.LOGGED_IN &&
         this.sessionService.getCurrentUser().name !==
-        DemoUserGeneratorService.DEFAULT_USERNAME
+          DemoUserGeneratorService.DEFAULT_USERNAME
       ) {
         // There is a slight race-condition with session type local
         // It throws an error because it can't find the view-documents which are not yet synced
