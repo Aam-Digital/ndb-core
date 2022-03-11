@@ -6,10 +6,12 @@
           Event-Record label|Record an event for a particular date that is to be
           inputted
         "
-        >Date</mat-label
+      >Date
+      </mat-label
       >
       <input
         matInput
+        #dateField="ngModel"
         [(ngModel)]="date"
         required
         [matDatepicker]="datePicker"
@@ -45,8 +47,8 @@
         class="activity-card"
         *ngFor="let event of filteredExistingEvents"
         [event]="event"
-        (click)="eventSelected.emit(event)"
         [recurring]="event.isNewFromActivity"
+        (click)="selectEvent(event)"
       >
       </app-activity-card>
     </div>
