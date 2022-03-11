@@ -65,6 +65,8 @@ describe("DemoDataInitializerService", () => {
   });
 
   it("should save the default users", () => {
+    service.run();
+
     const normalUser: DatabaseUser = {
       name: DemoUserGeneratorService.DEFAULT_USERNAME,
       roles: ["user_app"],
@@ -124,6 +126,7 @@ describe("DemoDataInitializerService", () => {
   });
 
   it("should sync with existing demo data when another user logs in", fakeAsync(() => {
+    service.run();
     const database = TestBed.inject(Database) as PouchDatabase;
     database.initInMemoryDB(demoUserDBName);
     const defaultUserDB = database.getPouchDB();
@@ -163,8 +166,10 @@ describe("DemoDataInitializerService", () => {
   }));
 
   it("should stop syncing after logout", fakeAsync(() => {
-    const database = TestBed.inject(Database) as PouchDatabase;
+    service.run();
+    tick();
 
+    const database = TestBed.inject(Database) as PouchDatabase;
     mockSessionService.getCurrentUser.and.returnValue({
       name: DemoUserGeneratorService.ADMIN_USERNAME,
       roles: [],

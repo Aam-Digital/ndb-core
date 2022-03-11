@@ -8,6 +8,7 @@ import { waitForAsync } from "@angular/core/testing";
 describe("DatabaseMigrationService", () => {
   let service: DatabaseMigrationService;
   let mockAnalytics: jasmine.SpyObj<AnalyticsService>;
+  let mockLocation: jasmine.SpyObj<Location>;
   let oldDBName: string;
   let newDBName: string;
   let newDB: PouchDatabase;
@@ -29,7 +30,8 @@ describe("DatabaseMigrationService", () => {
     oldDB = new PouchDatabase(undefined).initInMemoryDB(oldDBName);
     await oldDB.put(testDoc);
     mockAnalytics = jasmine.createSpyObj(["eventTrack"]);
-    service = new DatabaseMigrationService(mockAnalytics);
+    mockLocation = jasmine.createSpyObj(["reload"]);
+    service = new DatabaseMigrationService(mockAnalytics, mockLocation);
   });
 
   afterEach(
@@ -91,5 +93,11 @@ describe("DatabaseMigrationService", () => {
         category: "Migration",
       }
     );
+  });
+
+  it("should reload page when migration is done", async () => {
+    await service.migrateOldDatabaseTo(newDB);
+
+    expect(mockLocation.reload).toHaveBeenCalled();
   });
 });
