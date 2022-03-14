@@ -203,7 +203,10 @@ export class RollCallSetupComponent implements OnInit {
     if (this.dateField.valid) {
       this.eventSelected.emit(event);
     } else {
-      this.alertService.addWarning("Invalid Date", AlertDisplay.TEMPORARY);
+      this.alertService.addWarning(
+        $localize`:Alert when selected date is invalid:Invalid Date`,
+        AlertDisplay.TEMPORARY
+      );
     }
   }
 }
