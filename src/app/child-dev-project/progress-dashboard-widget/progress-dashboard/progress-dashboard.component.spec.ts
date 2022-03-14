@@ -28,7 +28,6 @@ describe("ProgressDashboardComponent", () => {
       ]);
       mockEntityService.load.and.resolveTo({ title: "test", parts: [] });
       mockEntityService.save.and.resolveTo();
-      // mockEntityService.save.and.callFake((next) => console.log("called with ", next));
 
       TestBed.configureTestingModule({
         imports: [ProgressDashboardWidgetModule, FontAwesomeTestingModule],
