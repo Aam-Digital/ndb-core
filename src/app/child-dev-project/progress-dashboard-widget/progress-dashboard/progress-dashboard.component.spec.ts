@@ -82,7 +82,6 @@ describe("ProgressDashboardComponent", () => {
     expect(mockEntityMapper.save).toHaveBeenCalledWith(component.data);
   }));
 
-
   it("saves data after the dialog was closed", fakeAsync(() => {
     const closeNotifier = new Subject();
     mockDialog.open.and.returnValue({
