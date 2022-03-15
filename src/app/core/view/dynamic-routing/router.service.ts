@@ -8,7 +8,7 @@ import {
   ViewConfig,
 } from "./view-config.interface";
 import { UserRoleGuard } from "../../permissions/user-role.guard";
-import { RouteRegistry, ROUTES } from "../../registry/dynamic-registry";
+import { RouteRegistry, ROUTES } from "../../../app.routing";
 
 /**
  * The RouterService dynamically sets up Angular routing from config loaded through the {@link ConfigService}.

@@ -16,10 +16,16 @@
  */
 
 import { RouterModule, Routes } from "@angular/router";
-import { ModuleWithProviders } from "@angular/core";
+import { InjectionToken, ModuleWithProviders } from "@angular/core";
 import { UserRoleGuard } from "./core/permissions/user-role.guard";
 import { ComponentType } from "@angular/cdk/overlay";
-import { routesRegistry } from "./core/registry/dynamic-registry";
+import { Registry } from "./core/registry/dynamic-registry";
+
+export type RouteRegistry = Registry<ComponentType<any>>;
+export const ROUTES = new InjectionToken<RouteRegistry>(
+  "app.registries.allRoutes"
+);
+export const routesRegistry = new Registry<ComponentType<any>>();
 
 /**
  * Marks a class to be the target when routing.
@@ -35,7 +41,7 @@ export function RouteTarget() {
 /**
  * All routes configured for the main app routing.
  */
-export const routes: Routes = [
+export const allRoutes: Routes = [
   // routes are added dynamically by the RouterService
   {
     path: "admin/conflicts",
@@ -56,9 +62,9 @@ export const routes: Routes = [
 ];
 
 /**
- * Main app RouterModule with centrally configured routes.
+ * Main app RouterModule with centrally configured allRoutes.
  */
 export const routing: ModuleWithProviders<RouterModule> = RouterModule.forRoot(
-  routes,
+  allRoutes,
   { relativeLinkResolution: "legacy" }
 );

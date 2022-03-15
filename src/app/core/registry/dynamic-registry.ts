@@ -1,6 +1,3 @@
-import { InjectionToken } from "@angular/core";
-import { ComponentType } from "@angular/cdk/overlay";
-
 export class Registry<T> extends Map<string, T> {
   constructor(private beforeAddCheck?: (key: string, mapping: T) => void) {
     super();
@@ -31,9 +28,3 @@ export class Registry<T> extends Map<string, T> {
     return super.get(key);
   }
 }
-
-export type RouteRegistry = Registry<ComponentType<any>>;
-export const ROUTES = new InjectionToken<RouteRegistry>(
-  "app.registries.routes"
-);
-export const routesRegistry = new Registry<ComponentType<any>>();

@@ -24,7 +24,7 @@ import { HttpClientModule } from "@angular/common/http";
 import { AppComponent } from "./app.component";
 import { UiModule } from "./core/ui/ui.module";
 import { AppConfigModule } from "./core/app-config/app-config.module";
-import { routing } from "./app.routing";
+import { ROUTES, routesRegistry, routing } from "./app.routing";
 import { AlertsModule } from "./core/alerts/alerts.module";
 import { SessionModule } from "./core/session/session.module";
 import { SyncStatusModule } from "./core/sync-status/sync-status.module";
@@ -78,7 +78,6 @@ import { TranslatableMatPaginator } from "./core/translation/TranslatableMatPagi
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
-import { ROUTES, routesRegistry } from "./core/registry/dynamic-registry";
 import {
   viewRegistry,
   VIEWS,
