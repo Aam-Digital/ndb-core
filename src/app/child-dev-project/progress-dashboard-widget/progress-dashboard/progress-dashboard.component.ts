@@ -29,10 +29,7 @@ export class ProgressDashboardComponent
   ngOnInit() {
     this.data = new ProgressDashboardConfig(this.dashboardConfigId);
     this.entityMapper
-      .load<ProgressDashboardConfig>(
-        ProgressDashboardConfig,
-        this.dashboardConfigId
-      )
+      .load(ProgressDashboardConfig, this.dashboardConfigId)
       .then((config) => {
         this.data = config;
       })
@@ -60,13 +57,16 @@ export class ProgressDashboardComponent
   }
 
   showEditComponent() {
-    const dialog = this.dialog.open(EditProgressDashboardComponent, {
-      data: this.data,
-    });
-    dialog.afterClosed().subscribe((next) => {
-      if (next) {
-        this.data.parts = next;
-      }
-    });
+    this.dialog
+      .open(EditProgressDashboardComponent, {
+        data: this.data,
+      })
+      .afterClosed()
+      .subscribe(async (next) => {
+        if (next) {
+          this.data.parts = next;
+          await this.save();
+        }
+      });
   }
 }
