@@ -3,21 +3,21 @@ import { InjectionToken } from "@angular/core";
 import { ComponentType } from "@angular/cdk/overlay";
 import { OnInitDynamicComponent } from "../view/dynamic-components/on-init-dynamic-component.interface";
 
-export class Registry<T> {
-  private map = new Map<string, T>();
-
-  constructor(private beforeAddCheck?: (key: string, mapping: T) => void) {}
+export class Registry<T> extends Map<string, T> {
+  constructor(private beforeAddCheck?: (key: string, mapping: T) => void) {
+    super();
+  }
 
   public add(key: string, mapping: T) {
     this.beforeAddCheck?.(key, mapping);
-    if (this.map.has(key)) {
+    if (this.has(key)) {
       throw Error(
-        `Duplicate entity definition: ${key} is already registered with constructor ${this.map.get(
+        `Duplicate entity definition: ${key} is already registered with constructor ${this.get(
           key
         )}`
       );
     }
-    this.map.set(key, mapping);
+    this.set(key, mapping);
   }
 
   public addAliases(keys: string[], mapping: T) {
@@ -30,11 +30,7 @@ export class Registry<T> {
     if (!this.has(key)) {
       console.warn(`Requested item is not registered`);
     }
-    return this.map.get(key);
-  }
-
-  public has(key: string) {
-    return this.map.has(key);
+    return super.get(key);
   }
 }
 
