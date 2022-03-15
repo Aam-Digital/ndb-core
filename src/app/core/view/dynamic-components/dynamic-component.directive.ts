@@ -10,7 +10,7 @@ import {
 import { DynamicComponentConfig } from "./dynamic-component-config.interface";
 import { OnInitDynamicComponent } from "./on-init-dynamic-component.interface";
 import { LoggingService } from "../../logging/logging.service";
-import { ViewRegistry, VIEWS } from "../../registry/dynamic-registry";
+import { ViewRegistry, VIEWS } from "./dynamic-component.decorator";
 
 /**
  * Directive to mark a template into which a component that is dynamically injected from config should be loaded

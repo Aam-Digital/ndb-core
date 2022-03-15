@@ -83,9 +83,11 @@ import {
   entityRegistry,
   ROUTES,
   routesRegistry,
+} from "./core/registry/dynamic-registry";
+import {
   viewRegistry,
   VIEWS,
-} from "./core/registry/dynamic-registry";
+} from "./core/view/dynamic-components/dynamic-component.decorator";
 
 /**
  * Main entry point of the application.

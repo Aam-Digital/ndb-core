@@ -1,7 +1,6 @@
 import { Entity, EntityConstructor } from "../entity/model/entity";
 import { InjectionToken } from "@angular/core";
 import { ComponentType } from "@angular/cdk/overlay";
-import { OnInitDynamicComponent } from "../view/dynamic-components/on-init-dynamic-component.interface";
 
 export class Registry<T> extends Map<string, T> {
   constructor(private beforeAddCheck?: (key: string, mapping: T) => void) {
@@ -48,12 +47,6 @@ export const entityRegistry = new Registry<EntityConstructor>(
     }
   }
 );
-
-export type ViewRegistry = Registry<ComponentType<OnInitDynamicComponent>>;
-export const VIEWS = new InjectionToken<ViewRegistry>("app.registries.views");
-export const viewRegistry = new Registry<
-  ComponentType<OnInitDynamicComponent>
->();
 
 export type RouteRegistry = Registry<ComponentType<any>>;
 export const ROUTES = new InjectionToken<RouteRegistry>(

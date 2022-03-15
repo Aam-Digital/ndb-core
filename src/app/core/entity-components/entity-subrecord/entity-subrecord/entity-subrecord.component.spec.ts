@@ -27,13 +27,12 @@ import { genders } from "../../../../child-dev-project/children/model/genders";
 import { LoggingService } from "../../../logging/logging.service";
 import { MockSessionModule } from "../../../session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { ENTITIES, entityRegistry } from "../../../registry/dynamic-registry";
+import moment from "moment";
 import {
-  ENTITIES,
-  entityRegistry,
   viewRegistry,
   VIEWS,
-} from "../../../registry/dynamic-registry";
-import moment from "moment";
+} from "../../../view/dynamic-components/dynamic-component.decorator";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;

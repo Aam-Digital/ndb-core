@@ -15,10 +15,12 @@ import {
   entityRegistry,
   ROUTES,
   routesRegistry,
-  viewRegistry,
-  VIEWS,
 } from "../../core/registry/dynamic-registry";
 import { skip } from "rxjs/operators";
+import {
+  viewRegistry,
+  VIEWS,
+} from "../../core/view/dynamic-components/dynamic-component.decorator";
 
 describe("ChildrenService", () => {
   let service: ChildrenService;
