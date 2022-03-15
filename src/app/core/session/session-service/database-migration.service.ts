@@ -27,22 +27,14 @@ export class DatabaseMigrationService {
     const oldPouch = oldDB.getPouchDB();
     const info = await oldPouch.info();
     if (info.doc_count > 0) {
-      await this.removeDesignDocs(oldDB);
       const newPouch = newDatabase.getPouchDB();
       await oldPouch.replicate.to(newPouch, { batch_size: 500 });
       this.analyticsService.eventTrack("migrated db to db-per-user", {
         category: "Migration",
       });
       await oldPouch.destroy();
-      this.location.reload();
     } else {
       await oldPouch.destroy();
     }
-  }
-
-  private async removeDesignDocs(database: PouchDatabase): Promise<void> {
-    const designDocs = await database.getAll("_design/");
-    const removePromises = designDocs.map((doc) => database.remove(doc));
-    await Promise.all(removePromises);
   }
 }

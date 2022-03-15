@@ -69,18 +69,6 @@ describe("DatabaseMigrationService", () => {
     expect(info.doc_count).toBe(0);
   });
 
-  it("should remove the design docs before sync so they will be correctly re-created", async () => {
-    const designDoc = { _id: "_design/search_index" };
-    const normalDoc = { _id: "Child:someChild" };
-    await oldDB.put(designDoc);
-    await oldDB.put(normalDoc);
-
-    await service.migrateOldDatabaseTo(newDB);
-
-    await expectAsync(newDB.get(designDoc._id)).toBeRejected();
-    await expectAsync(newDB.get(normalDoc._id)).toBeResolved();
-  });
-
   it("should track a matomo event when migration happens", async () => {
     const normalDoc = { _id: "Child:someChild" };
     await oldDB.put(normalDoc);
@@ -93,11 +81,5 @@ describe("DatabaseMigrationService", () => {
         category: "Migration",
       }
     );
-  });
-
-  it("should reload page when migration is done", async () => {
-    await service.migrateOldDatabaseTo(newDB);
-
-    expect(mockLocation.reload).toHaveBeenCalled();
   });
 });
