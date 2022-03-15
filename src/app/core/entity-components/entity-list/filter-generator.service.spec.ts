@@ -13,7 +13,10 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import moment from "moment";
 import { EntityConfigService } from "app/core/entity/entity-config.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { ENTITIES, entityRegistry } from "../../registry/dynamic-registry";
+import {
+  ENTITIES,
+  entityRegistry,
+} from "../../entity/database-entity.decorator";
 
 describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;

@@ -21,8 +21,8 @@ import { Entity, EntityConstructor } from "./model/entity";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 import { EMPTY, Observable, Subject } from "rxjs";
 import { UpdatedEntity } from "./model/entity-update";
-import { ENTITIES, EntityRegistry } from "../registry/dynamic-registry";
 import { LoggingService } from "../logging/logging.service";
+import { ENTITIES, EntityRegistry } from "./database-entity.decorator";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.

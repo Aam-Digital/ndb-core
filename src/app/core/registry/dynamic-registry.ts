@@ -1,4 +1,3 @@
-import { Entity, EntityConstructor } from "../entity/model/entity";
 import { InjectionToken } from "@angular/core";
 import { ComponentType } from "@angular/cdk/overlay";
 
@@ -32,21 +31,6 @@ export class Registry<T> extends Map<string, T> {
     return super.get(key);
   }
 }
-
-export type EntityRegistry = Registry<EntityConstructor>;
-export const ENTITIES = new InjectionToken<EntityRegistry>(
-  "app.registries.entities"
-);
-export const entityRegistry = new Registry<EntityConstructor>(
-  (key, constructor) => {
-    if (!(new constructor() instanceof Entity)) {
-      throw Error(
-        `Tried to register an entity-type that is not a subclass of Entity\n` +
-          `type: ${key}; constructor: ${constructor}`
-      );
-    }
-  }
-);
 
 export type RouteRegistry = Registry<ComponentType<any>>;
 export const ROUTES = new InjectionToken<RouteRegistry>(

@@ -28,7 +28,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import {
   ENTITIES,
   entityRegistry,
-} from "../../../core/registry/dynamic-registry";
+} from "../../../core/entity/database-entity.decorator";
 
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;

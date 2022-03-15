@@ -6,7 +6,10 @@ import { BackupService } from "../../core/admin/services/backup.service";
 import { ConfirmationDialogService } from "../../core/confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { readFile } from "../../utils/utils";
-import { ENTITIES, EntityRegistry } from "../../core/registry/dynamic-registry";
+import {
+  ENTITIES,
+  EntityRegistry,
+} from "../../core/entity/database-entity.decorator";
 
 @Injectable()
 @UntilDestroy()

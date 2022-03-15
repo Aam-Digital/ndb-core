@@ -10,7 +10,10 @@ import { Subject } from "rxjs";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MockSessionModule } from "../../session/mock-session.module";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { ENTITIES, entityRegistry } from "../../registry/dynamic-registry";
+import {
+  ENTITIES,
+  entityRegistry,
+} from "../../entity/database-entity.decorator";
 
 describe("FormDialogWrapperComponent", () => {
   let component: FormDialogWrapperComponent;

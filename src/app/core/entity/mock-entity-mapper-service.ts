@@ -2,8 +2,8 @@ import { Entity, EntityConstructor } from "./model/entity";
 import { EntityMapperService } from "./entity-mapper.service";
 import { UpdatedEntity } from "./model/entity-update";
 import { NEVER, Observable } from "rxjs";
-import { entityRegistry } from "../registry/dynamic-registry";
 import { LoggingService } from "../logging/logging.service";
+import { entityRegistry } from "./database-entity.decorator";
 
 export function mockEntityMapper(
   withData: Entity[] = []

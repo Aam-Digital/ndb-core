@@ -17,7 +17,7 @@ import { ChildMeetingNoteAttendanceComponent } from "./child-meeting-attendance/
 import {
   ENTITIES,
   entityRegistry,
-} from "../../../core/registry/dynamic-registry";
+} from "../../../core/entity/database-entity.decorator";
 
 function generateTestNote(forChildren: Child[]) {
   const testNote = Note.create(new Date(), "test note");

@@ -9,7 +9,10 @@ import { PouchDatabase } from "../../core/database/pouch-database";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { Database } from "../../core/database/database";
 import moment from "moment";
-import { ENTITIES, entityRegistry } from "../../core/registry/dynamic-registry";
+import {
+  ENTITIES,
+  entityRegistry,
+} from "../../core/entity/database-entity.decorator";
 
 describe("HistoricalDataService", () => {
   let service: HistoricalDataService;

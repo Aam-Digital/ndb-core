@@ -78,16 +78,15 @@ import { TranslatableMatPaginator } from "./core/translation/TranslatableMatPagi
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
-import {
-  ENTITIES,
-  entityRegistry,
-  ROUTES,
-  routesRegistry,
-} from "./core/registry/dynamic-registry";
+import { ROUTES, routesRegistry } from "./core/registry/dynamic-registry";
 import {
   viewRegistry,
   VIEWS,
 } from "./core/view/dynamic-components/dynamic-component.decorator";
+import {
+  ENTITIES,
+  entityRegistry,
+} from "./core/entity/database-entity.decorator";
 
 /**
  * Main entry point of the application.

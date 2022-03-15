@@ -16,7 +16,10 @@ import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import { Child } from "../children/model/child";
 import { Note } from "../notes/model/note";
 import { PouchDatabase } from "../../core/database/pouch-database";
-import { ENTITIES, entityRegistry } from "../../core/registry/dynamic-registry";
+import {
+  ENTITIES,
+  entityRegistry,
+} from "../../core/entity/database-entity.decorator";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;

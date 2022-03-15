@@ -1,3 +1,22 @@
+import { Entity, EntityConstructor } from "./model/entity";
+import { InjectionToken } from "@angular/core";
+import { Registry } from "../registry/dynamic-registry";
+
+export type EntityRegistry = Registry<EntityConstructor>;
+export const ENTITIES = new InjectionToken<EntityRegistry>(
+  "app.registries.entities"
+);
+export const entityRegistry = new Registry<EntityConstructor>(
+  (key, constructor) => {
+    if (!(new constructor() instanceof Entity)) {
+      throw Error(
+        `Tried to register an entity-type that is not a subclass of Entity\n` +
+          `type: ${key}; constructor: ${constructor}`
+      );
+    }
+  }
+);
+
 /**
  * Decorator (Annotation `@DatabaseEntity()`) to set the string ENTITY_TYPE to an Entity Type.
  *
@@ -5,8 +24,6 @@
  *
  * @param entityType The string key for this Entity Type, used as id prefix.
  */
-import { entityRegistry } from "../registry/dynamic-registry";
-
 export function DatabaseEntity(entityType: string) {
   return (constructor) => {
     entityRegistry.add(entityType, constructor);

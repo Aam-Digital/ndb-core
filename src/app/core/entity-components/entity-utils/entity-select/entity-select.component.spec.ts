@@ -18,7 +18,10 @@ import { Child } from "../../../../child-dev-project/children/model/child";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { Subscription } from "rxjs";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
-import { ENTITIES, entityRegistry } from "../../../registry/dynamic-registry";
+import {
+  ENTITIES,
+  entityRegistry,
+} from "../../../entity/database-entity.decorator";
 
 describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any>;

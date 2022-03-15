@@ -20,7 +20,7 @@ import {
 import {
   ENTITIES,
   entityRegistry,
-} from "../../../../core/registry/dynamic-registry";
+} from "../../../../core/entity/database-entity.decorator";
 
 describe("RollCallSetupComponent", () => {
   let component: RollCallSetupComponent;

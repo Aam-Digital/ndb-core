@@ -22,11 +22,14 @@ import {
   RemoveResult,
 } from "../../entity/entity-remove.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { ENTITIES, entityRegistry } from "../../registry/dynamic-registry";
 import {
   viewRegistry,
   VIEWS,
 } from "../../view/dynamic-components/dynamic-component.decorator";
+import {
+  ENTITIES,
+  entityRegistry,
+} from "../../entity/database-entity.decorator";
 
 describe("EntityDetailsComponent", () => {
   let component: EntityDetailsComponent;

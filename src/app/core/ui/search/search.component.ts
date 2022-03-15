@@ -7,7 +7,10 @@ import { Router } from "@angular/router";
 import { fromPromise } from "rxjs/internal-compatibility";
 import { FormControl } from "@angular/forms";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { ENTITIES, EntityRegistry } from "../../registry/dynamic-registry";
+import {
+  ENTITIES,
+  EntityRegistry,
+} from "../../entity/database-entity.decorator";
 
 /**
  * General search box that provides results out of any kind of entities from the system

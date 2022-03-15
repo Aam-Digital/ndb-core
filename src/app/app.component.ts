@@ -31,8 +31,10 @@ import { waitForChangeTo } from "./core/session/session-states/session-utils";
 import { environment } from "../environments/environment";
 import { Child } from "./child-dev-project/children/model/child";
 import { School } from "./child-dev-project/schools/model/school";
-import { ENTITIES, Registry } from "./core/registry/dynamic-registry";
-import { EntityConstructor } from "./core/entity/model/entity";
+import {
+  ENTITIES,
+  EntityRegistry,
+} from "./core/entity/database-entity.decorator";
 
 @Component({
   selector: "app-root",
@@ -54,7 +56,7 @@ export class AppComponent implements OnInit {
     private sessionService: SessionService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    @Inject(ENTITIES) private entities: Registry<EntityConstructor>
+    @Inject(ENTITIES) private entities: EntityRegistry
   ) {
     this.initBasicServices();
   }

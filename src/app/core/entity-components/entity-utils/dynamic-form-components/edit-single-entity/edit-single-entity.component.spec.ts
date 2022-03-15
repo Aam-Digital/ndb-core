@@ -19,7 +19,7 @@ import { TypedFormControl } from "../edit-component";
 import {
   ENTITIES,
   entityRegistry,
-} from "../../../../registry/dynamic-registry";
+} from "../../../../entity/database-entity.decorator";
 
 describe("EditSingleEntityComponent", () => {
   let component: EditSingleEntityComponent;

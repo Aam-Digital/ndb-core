@@ -10,7 +10,10 @@ import { EntitySchemaService } from "../../../entity/schema/entity-schema.servic
 import { AlertService } from "../../../alerts/alert.service";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MockSessionModule } from "../../../session/mock-session.module";
-import { ENTITIES, entityRegistry } from "../../../registry/dynamic-registry";
+import {
+  ENTITIES,
+  entityRegistry,
+} from "../../../entity/database-entity.decorator";
 
 describe("FormComponent", () => {
   let component: FormComponent;

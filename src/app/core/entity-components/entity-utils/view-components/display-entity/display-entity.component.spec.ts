@@ -14,7 +14,7 @@ import { EntitySchemaService } from "../../../../entity/schema/entity-schema.ser
 import {
   ENTITIES,
   entityRegistry,
-} from "../../../../registry/dynamic-registry";
+} from "../../../../entity/database-entity.decorator";
 
 describe("DisplayEntityComponent", () => {
   let component: DisplayEntityComponent;

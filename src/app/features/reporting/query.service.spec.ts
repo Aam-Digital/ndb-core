@@ -28,7 +28,10 @@ import { EntityConfigService } from "app/core/entity/entity-config.service";
 import { ConfigService } from "app/core/config/config.service";
 import { EventAttendance } from "../../child-dev-project/attendance/model/event-attendance";
 import { AttendanceStatusType } from "../../child-dev-project/attendance/model/attendance-status";
-import { ENTITIES, entityRegistry } from "../../core/registry/dynamic-registry";
+import {
+  ENTITIES,
+  entityRegistry,
+} from "../../core/entity/database-entity.decorator";
 
 describe("QueryService", () => {
   let service: QueryService;

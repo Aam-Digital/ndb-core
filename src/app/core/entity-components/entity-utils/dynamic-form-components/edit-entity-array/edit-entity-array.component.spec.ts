@@ -10,7 +10,7 @@ import { setupEditComponent } from "../edit-component.spec";
 import {
   ENTITIES,
   entityRegistry,
-} from "../../../../registry/dynamic-registry";
+} from "../../../../entity/database-entity.decorator";
 
 describe("EditEntityArrayComponent", () => {
   let component: EditEntityArrayComponent;

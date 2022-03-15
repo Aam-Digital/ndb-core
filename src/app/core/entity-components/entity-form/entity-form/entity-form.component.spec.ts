@@ -15,7 +15,10 @@ import { FormBuilder } from "@angular/forms";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { EntityFormService } from "../entity-form.service";
 import { MockSessionModule } from "../../../session/mock-session.module";
-import { ENTITIES, entityRegistry } from "../../../registry/dynamic-registry";
+import {
+  ENTITIES,
+  entityRegistry,
+} from "../../../entity/database-entity.decorator";
 
 describe("EntityFormComponent", () => {
   let component: EntityFormComponent;

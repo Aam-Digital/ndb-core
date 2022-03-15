@@ -9,7 +9,7 @@ import { EntitySchemaField } from "./schema/entity-schema-field";
 import { addPropertySchema } from "./database-field.decorator";
 import { OperationType } from "../permissions/entity-permissions.service";
 import { LoggingService } from "../logging/logging.service";
-import { ENTITIES, EntityRegistry } from "../registry/dynamic-registry";
+import { ENTITIES, EntityRegistry } from "./database-entity.decorator";
 
 /**
  * A service that allows to work with configuration-objects

@@ -13,8 +13,11 @@ import { ConfigService } from "../../config/config.service";
 import { LoggingService } from "../../logging/logging.service";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { FilterComponentSettings } from "./filter-component.settings";
-import { ENTITIES, EntityRegistry } from "../../registry/dynamic-registry";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
+import {
+  ENTITIES,
+  EntityRegistry,
+} from "../../entity/database-entity.decorator";
 
 @Injectable({
   providedIn: "root",

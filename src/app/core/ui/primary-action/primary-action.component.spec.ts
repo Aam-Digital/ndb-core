@@ -8,7 +8,10 @@ import { PermissionsModule } from "../../permissions/permissions.module";
 import { MockSessionModule } from "../../session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { ENTITIES, entityRegistry } from "../../registry/dynamic-registry";
+import {
+  ENTITIES,
+  entityRegistry,
+} from "../../entity/database-entity.decorator";
 
 describe("PrimaryActionComponent", () => {
   let component: PrimaryActionComponent;

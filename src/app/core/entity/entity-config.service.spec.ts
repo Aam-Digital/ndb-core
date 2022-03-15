@@ -1,7 +1,11 @@
 import { TestBed } from "@angular/core/testing";
 
 import { EntityConfig, EntityConfigService } from "./entity-config.service";
-import { DatabaseEntity } from "./database-entity.decorator";
+import {
+  DatabaseEntity,
+  ENTITIES,
+  entityRegistry,
+} from "./database-entity.decorator";
 import { DatabaseField } from "./database-field.decorator";
 import { Entity } from "./model/entity";
 import { ConfigService } from "../config/config.service";
@@ -9,7 +13,6 @@ import { LoggingService } from "../logging/logging.service";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 import { EntityMapperService } from "./entity-mapper.service";
 import { mockEntityMapper } from "./mock-entity-mapper-service";
-import { ENTITIES, entityRegistry } from "../registry/dynamic-registry";
 
 declare global {
   namespace jasmine {

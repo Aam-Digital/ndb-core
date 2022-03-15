@@ -27,7 +27,10 @@ import { take } from "rxjs/operators";
 import { BackgroundProcessState } from "../background-process-state.interface";
 import { SyncStatusModule } from "../sync-status.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { ENTITIES, entityRegistry } from "../../registry/dynamic-registry";
+import {
+  ENTITIES,
+  entityRegistry,
+} from "../../entity/database-entity.decorator";
 
 describe("SyncStatusComponent", () => {
   let component: SyncStatusComponent;

@@ -21,7 +21,10 @@ import {
   RemoveResult,
 } from "../../entity/entity-remove.service";
 import { RouteTarget } from "../../../app.routing";
-import { ENTITIES, EntityRegistry } from "../../registry/dynamic-registry";
+import {
+  ENTITIES,
+  EntityRegistry,
+} from "../../entity/database-entity.decorator";
 
 /**
  * This component can be used to display an entity in more detail.
