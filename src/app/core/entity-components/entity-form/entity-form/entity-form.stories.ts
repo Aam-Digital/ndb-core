@@ -12,6 +12,9 @@ import { Router } from "@angular/router";
 import { EntityFormModule } from "../entity-form.module";
 import { EntityFormComponent } from "./entity-form.component";
 import { School } from "../../../../child-dev-project/schools/model/school";
+import { MockSessionModule } from "../../../session/mock-session.module";
+import { MatNativeDateModule } from "@angular/material/core";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 const s1 = new School();
 s1.name = "First School";
@@ -30,6 +33,9 @@ export default {
         RouterTestingModule,
         BrowserAnimationsModule,
         ChildrenModule,
+        MockSessionModule.withState(),
+        MatNativeDateModule,
+        FontAwesomeTestingModule,
       ],
       providers: [
         {
@@ -106,6 +112,7 @@ const cols = [
       label: "Assigned school(s)",
     },
   ],
+  ["school"],
 ];
 
 Child.schema.set("has_rationCard", {
@@ -113,6 +120,13 @@ Child.schema.set("has_rationCard", {
   innerDataType: "document-status",
 });
 Child.schema.set("assignedTo", { dataType: "array", innerDataType: "string" });
+Child.schema.set("school", {
+  dataType: "string",
+  label: "Assigned School",
+  additional: School.ENTITY_TYPE,
+  viewComponent: "DisplayEntity",
+  editComponent: "EditSingleEntity",
+});
 
 const Template: Story<EntityFormComponent> = (args: EntityFormComponent) => ({
   component: EntityFormComponent,

@@ -3,7 +3,6 @@
   <input
     #inputElement
     matInput
-    [fxHide]="!formControl.enabled"
     [placeholder]="placeholder"
     [formControl]="entityNameFormControl"
     [matAutocomplete]="autoSuggestions"
@@ -32,9 +31,8 @@
   <app-display-entity
     class="block-wrapper"
     [entityToDisplay]="selectedEntity"
-    [linkDisabled]="true"
   ></app-display-entity>
-  <button mat-icon-button (click)="editSelectedEntity()">
+  <button *ngIf="formControl.enabled" mat-icon-button (click)="editSelectedEntity()">
     <fa-icon icon="pen"></fa-icon>
   </button>
 </div>

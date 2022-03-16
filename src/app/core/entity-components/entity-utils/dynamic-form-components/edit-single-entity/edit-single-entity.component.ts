@@ -1,4 +1,9 @@
-import { Component, ElementRef, ViewChild } from "@angular/core";
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  ViewChild,
+} from "@angular/core";
 import { EditComponent, EditPropertyConfig } from "../edit-component";
 import { Entity } from "../../../../entity/model/entity";
 import { Observable } from "rxjs";
@@ -23,7 +28,10 @@ export class EditSingleEntityComponent extends EditComponent<string> {
 
   @ViewChild("inputElement") input: ElementRef;
 
-  constructor(private dynamicEntityService: DynamicEntityService) {
+  constructor(
+    private dynamicEntityService: DynamicEntityService,
+    private changeDetection: ChangeDetectorRef
+  ) {
     super();
     this.filteredEntities = this.entityNameFormControl.valueChanges.pipe(
       untilDestroyed(this),
@@ -45,6 +53,7 @@ export class EditSingleEntityComponent extends EditComponent<string> {
 
   async onInitFromDynamicConfig(config: EditPropertyConfig) {
     super.onInitFromDynamicConfig(config);
+    this.connectFormControlDisabledStatus();
     this.placeholder = $localize`:Placeholder for input to set an entity|context Select User:Select ${this.label}`;
     const entityType: string =
       config.formFieldConfig.additional || config.propertySchema.additional;
@@ -64,6 +73,20 @@ export class EditSingleEntityComponent extends EditComponent<string> {
     } else {
       this.entityNameFormControl.setValue("");
     }
+    this.changeDetection.detectChanges();
+  }
+
+  private connectFormControlDisabledStatus() {
+    if (this.formControl.disabled) {
+      this.entityNameFormControl.disable();
+    }
+    this.formControl.registerOnDisabledChange((isDisabled) => {
+      if (isDisabled) {
+        this.entityNameFormControl.disable();
+      } else {
+        this.entityNameFormControl.enable();
+      }
+    });
   }
 
   select(entityName: string) {
