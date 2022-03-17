@@ -45,7 +45,7 @@ export class EntityMapperService {
   ) {}
 
   /**
-   * Load an Entity from the database with the given id.
+   * Load an Entity from the database with the given id or the registered name of that class.
    *
    * @param entityType Class that implements Entity, which is the type of Entity the results should be transformed to
    * @param id The id of the entity to load
