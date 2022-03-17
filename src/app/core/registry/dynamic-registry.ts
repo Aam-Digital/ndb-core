@@ -15,7 +15,9 @@ export abstract class Registry<T> extends Map<string, T> {
     this.beforeAddCheck?.(key, mapping);
     if (this.has(key)) {
       throw Error(
-        `Duplicate entity definition: ${key} is already registered with constructor ${this.get(
+        `${
+          this.constructor.name
+        }: Duplicate entity definition: ${key} is already registered with element ${this.get(
           key
         )}`
       );
@@ -31,7 +33,9 @@ export abstract class Registry<T> extends Map<string, T> {
 
   public get(key: string): T {
     if (!this.has(key)) {
-      throw Error(`Requested item ${key} is not registered`);
+      throw Error(
+        `${this.constructor.name}: Requested item ${key} is not registered`
+      );
     }
     return super.get(key);
   }

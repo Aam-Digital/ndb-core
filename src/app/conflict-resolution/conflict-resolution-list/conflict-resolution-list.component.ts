@@ -9,7 +9,7 @@ import { RouteTarget } from "../../app.routing";
 /**
  * List all document conflicts and allow the user to expand for details and manual resolution.
  */
-@RouteTarget()
+@RouteTarget("ConflictResolution")
 @Component({
   selector: "app-conflict-resolution-list",
   templateUrl: "./conflict-resolution-list.component.html",

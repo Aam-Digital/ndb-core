@@ -52,12 +52,12 @@ export class RouterService {
     const routes: Route[] = [];
 
     for (const view of viewConfigs) {
-      const route = this.generateRouteFromConfig(view);
-
       if (view.lazyLoaded) {
         // lazy-loaded views' routing is still hardcoded in the app.routing
         continue;
       }
+      const route = this.generateRouteFromConfig(view);
+
       if (
         !overwriteExistingRoutes &&
         additionalRoutes.find((r) => r.path === route.path)
