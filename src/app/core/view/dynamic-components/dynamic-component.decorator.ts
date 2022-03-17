@@ -31,10 +31,8 @@ export const viewRegistry = new Registry<
  * @param aliases Aliases that the component is also known under
  * @constructor
  */
-export function DynamicComponent<
-  Constructor extends new (...args: any[]) => OnInitDynamicComponent
->(...aliases: string[]) {
-  return (ctor: Constructor) => {
+export function DynamicComponent(...aliases: string[]) {
+  return (ctor: ComponentType<OnInitDynamicComponent>) => {
     viewRegistry.add(ctor.name.replace("Component", ""), ctor);
     viewRegistry.addAliases(aliases, ctor);
   };
