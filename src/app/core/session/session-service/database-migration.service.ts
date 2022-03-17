@@ -5,6 +5,8 @@ import { AnalyticsService } from "../../analytics/analytics.service";
 import { Inject, Injectable } from "@angular/core";
 import { LoggingService } from "../../logging/logging.service";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
+import { MatDialog } from "@angular/material/dialog";
+import { DatabaseMigrationDialogComponent } from "./database-migration-dialog.component";
 
 @Injectable()
 /**
@@ -13,6 +15,7 @@ import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 export class DatabaseMigrationService {
   constructor(
     private analyticsService: AnalyticsService,
+    private dialog: MatDialog,
     @Inject(LOCATION_TOKEN) private location: Location
   ) {}
 
@@ -27,12 +30,14 @@ export class DatabaseMigrationService {
     const oldPouch = oldDB.getPouchDB();
     const info = await oldPouch.info();
     if (info.doc_count > 0) {
+      const dialogRef = this.dialog.open(DatabaseMigrationDialogComponent);
       const newPouch = newDatabase.getPouchDB();
       await oldPouch.replicate.to(newPouch, { batch_size: 500 });
       this.analyticsService.eventTrack("migrated db to db-per-user", {
         category: "Migration",
       });
       await oldPouch.destroy();
+      dialogRef.close();
     } else {
       await oldPouch.destroy();
     }

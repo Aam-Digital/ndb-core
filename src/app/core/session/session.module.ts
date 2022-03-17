@@ -32,6 +32,9 @@ import { HttpClientModule } from "@angular/common/http";
 import { DatabaseMigrationService } from "./session-service/database-migration.service";
 import { Database } from "../database/database";
 import { PouchDatabase } from "../database/pouch-database";
+import { DatabaseMigrationDialogComponent } from "./session-service/database-migration-dialog.component";
+import { MatDialogModule } from "@angular/material/dialog";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
 
 /**
  * The core session logic handling user login as well as connection and synchronization with the remote database.
@@ -52,8 +55,10 @@ import { PouchDatabase } from "../database/pouch-database";
     RouterModule,
     UserModule,
     HttpClientModule,
+    MatDialogModule,
+    MatProgressBarModule,
   ],
-  declarations: [LoginComponent],
+  declarations: [LoginComponent, DatabaseMigrationDialogComponent],
   exports: [LoginComponent],
   providers: [
     sessionServiceProvider,

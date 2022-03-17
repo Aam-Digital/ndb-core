@@ -4,10 +4,12 @@ import { AppConfig } from "../../app-config/app-config";
 import { SessionType } from "../session-type";
 import { AnalyticsService } from "../../analytics/analytics.service";
 import { waitForAsync } from "@angular/core/testing";
+import { MatDialog } from "@angular/material/dialog";
 
 describe("DatabaseMigrationService", () => {
   let service: DatabaseMigrationService;
   let mockAnalytics: jasmine.SpyObj<AnalyticsService>;
+  let mockDialog: jasmine.SpyObj<MatDialog>;
   let mockLocation: jasmine.SpyObj<Location>;
   let oldDBName: string;
   let newDBName: string;
@@ -31,7 +33,13 @@ describe("DatabaseMigrationService", () => {
     await oldDB.put(testDoc);
     mockAnalytics = jasmine.createSpyObj(["eventTrack"]);
     mockLocation = jasmine.createSpyObj(["reload"]);
-    service = new DatabaseMigrationService(mockAnalytics, mockLocation);
+    mockDialog = jasmine.createSpyObj(["open"]);
+    mockDialog.open.and.returnValue({ close: () => {} } as any);
+    service = new DatabaseMigrationService(
+      mockAnalytics,
+      mockDialog,
+      mockLocation
+    );
   });
 
   afterEach(
