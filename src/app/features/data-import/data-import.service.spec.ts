@@ -114,13 +114,13 @@ describe("DataImportService", () => {
           ID: 1,
           Name: "First",
           Birthday: birthday1.format("YYYY-MM-DD"),
-          age: "6",
+          notExistingProperty: "some value",
         },
         {
           ID: 2,
           Name: "Second",
           Birthday: birthday2.format("YYYY-MM-DD"),
-          age: "7",
+          notExistingProperty: "another value",
         },
       ],
     } as ParseResult;
@@ -128,7 +128,7 @@ describe("DataImportService", () => {
       ID: "_id",
       Name: "name",
       Birthday: "dateOfBirth",
-      age: "",
+      notExistingProperty: "",
     };
     const importMeta: ImportMetaData = {
       entityType: "Child",
@@ -143,14 +143,16 @@ describe("DataImportService", () => {
     expect(firstChild.name).toBe("First");
     expect(birthday1.isSame(firstChild.dateOfBirth, "day")).toBeTrue();
     expect(firstChild.age).toBe(10);
+    expect(firstChild.hasOwnProperty("notExistingProperty")).toBeFalse();
     const secondChild = await entityMapper.load(Child, "2");
     expect(secondChild._id).toBe("Child:2");
     expect(secondChild.name).toBe("Second");
     expect(birthday2.isSame(secondChild.dateOfBirth, "day")).toBeTrue();
     expect(secondChild.age).toBe(12);
+    expect(secondChild.hasOwnProperty("notExistingProperty")).toBeFalse();
   });
 
-  it("should delete existing records and set the transaction ID to the newly uploaded entities", async () => {
+  it("should delete existing records and prepend the transactionID to ID's of the newly uploaded entities", async () => {
     mockDialog();
     const csvData = {
       meta: { fields: ["Name"] },

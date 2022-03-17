@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Database } from "../../core/database/database";
 import { Papa, ParseResult } from "ngx-papaparse";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { BackupService } from "../../core/admin/services/backup.service";
 import { ConfirmationDialogService } from "../../core/confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -16,7 +15,9 @@ import { monthEntitySchemaDatatype } from "../../core/entity/schema-datatypes/da
 import moment from "moment";
 
 @Injectable()
-@UntilDestroy()
+/**
+ * This service handels the parsing of CSV files and importing of data
+ */
 export class DataImportService {
   private readonly dateDataTypes = [
     dateEntitySchemaDatatype,
@@ -32,6 +33,10 @@ export class DataImportService {
     private dynamicEntityService: DynamicEntityService
   ) {}
 
+  /**
+   * Validates and reads a CSV
+   * @param file a File Blob
+   */
   async validateCsvFile(file: File): Promise<ParseResult> {
     if (!file.name.toLowerCase().endsWith(".csv")) {
       throw new Error("Only .csv files are supported");
@@ -59,6 +64,7 @@ export class DataImportService {
 
   /**
    * Add the data from the loaded file to the database, inserting and updating records.
+   * If a transactionId is provided in the ImportMetaData, all records starting with this ID will be deleted from the database before importing
    * @param csvFile The file object of the csv data to be loaded
    * @param importMeta Additional information required for importing the file
    */
@@ -85,13 +91,10 @@ export class DataImportService {
         duration: 8000,
       }
     );
-    snackBarRef
-      .onAction()
-      .pipe(untilDestroyed(this))
-      .subscribe(async () => {
-        await this.backupService.clearDatabase();
-        await this.backupService.importJson(restorePoint, true);
-      });
+    snackBarRef.onAction().subscribe(async () => {
+      await this.backupService.clearDatabase();
+      await this.backupService.importJson(restorePoint, true);
+    });
   }
 
   private getUserConfirmation(
