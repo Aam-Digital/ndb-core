@@ -12,7 +12,7 @@ import { AttendanceService } from "../attendance.service";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import {
-  ENTITIES,
+  EntityRegistry,
   entityRegistry,
 } from "../../../core/entity/database-entity.decorator";
 
@@ -43,7 +43,7 @@ describe("AddDayAttendanceComponent", () => {
             provide: AttendanceService,
             useValue: { getEventsOnDate: () => Promise.resolve([]) },
           },
-          { provide: ENTITIES, useValue: entityRegistry },
+          { provide: EntityRegistry, useValue: entityRegistry },
         ],
       }).compileComponents();
     })

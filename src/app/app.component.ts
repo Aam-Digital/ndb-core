@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, Inject, OnInit, ViewContainerRef } from "@angular/core";
+import { Component, OnInit, ViewContainerRef } from "@angular/core";
 import { AppConfig } from "./core/app-config/app-config";
 import { MatDialog } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./core/demo-data/demo-data-generating-progress-dialog.component";
@@ -31,10 +31,7 @@ import { waitForChangeTo } from "./core/session/session-states/session-utils";
 import { environment } from "../environments/environment";
 import { Child } from "./child-dev-project/children/model/child";
 import { School } from "./child-dev-project/schools/model/school";
-import {
-  ENTITIES,
-  EntityRegistry,
-} from "./core/entity/database-entity.decorator";
+import { EntityRegistry } from "./core/entity/database-entity.decorator";
 
 @Component({
   selector: "app-root",
@@ -56,7 +53,7 @@ export class AppComponent implements OnInit {
     private sessionService: SessionService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    @Inject(ENTITIES) private entities: EntityRegistry
+    private entities: EntityRegistry
   ) {
     this.initBasicServices();
   }

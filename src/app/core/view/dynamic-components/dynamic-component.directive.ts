@@ -1,7 +1,6 @@
 import {
   ComponentFactoryResolver,
   Directive,
-  Inject,
   Input,
   OnChanges,
   SimpleChanges,
@@ -10,7 +9,7 @@ import {
 import { DynamicComponentConfig } from "./dynamic-component-config.interface";
 import { OnInitDynamicComponent } from "./on-init-dynamic-component.interface";
 import { LoggingService } from "../../logging/logging.service";
-import { ViewRegistry, VIEWS } from "./dynamic-component.decorator";
+import { ViewRegistry } from "./dynamic-component.decorator";
 
 /**
  * Directive to mark a template into which a component that is dynamically injected from config should be loaded
@@ -30,7 +29,7 @@ export class DynamicComponentDirective implements OnChanges {
     public viewContainerRef: ViewContainerRef,
     private componentFactoryResolver: ComponentFactoryResolver,
     private loggingService: LoggingService,
-    @Inject(VIEWS) private registry: ViewRegistry
+    private registry: ViewRegistry
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {

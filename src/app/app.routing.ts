@@ -16,16 +16,13 @@
  */
 
 import { RouterModule, Routes } from "@angular/router";
-import { InjectionToken, ModuleWithProviders } from "@angular/core";
+import { ModuleWithProviders } from "@angular/core";
 import { UserRoleGuard } from "./core/permissions/user-role.guard";
 import { ComponentType } from "@angular/cdk/overlay";
 import { Registry } from "./core/registry/dynamic-registry";
 
-export type RouteRegistry = Registry<ComponentType<any>>;
-export const ROUTES = new InjectionToken<RouteRegistry>(
-  "app.registries.allRoutes"
-);
-export const routesRegistry = new Registry<ComponentType<any>>();
+export class RouteRegistry extends Registry<ComponentType<any>> {}
+export const routesRegistry = new RouteRegistry();
 
 /**
  * Marks a class to be the target when routing.

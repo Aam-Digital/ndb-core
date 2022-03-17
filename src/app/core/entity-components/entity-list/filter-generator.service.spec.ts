@@ -14,7 +14,7 @@ import moment from "moment";
 import { EntityConfigService } from "app/core/entity/entity-config.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import {
-  ENTITIES,
+  EntityRegistry,
   entityRegistry,
 } from "../../entity/database-entity.decorator";
 
@@ -33,7 +33,7 @@ describe("FilterGeneratorService", () => {
         LoggingService,
         EntityConfigService,
         {
-          provide: ENTITIES,
+          provide: EntityRegistry,
           useValue: entityRegistry,
         },
       ],

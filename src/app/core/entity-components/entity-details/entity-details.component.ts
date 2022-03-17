@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import {
   EntityDetailsConfig,
@@ -21,10 +21,7 @@ import {
   RemoveResult,
 } from "../../entity/entity-remove.service";
 import { RouteTarget } from "../../../app.routing";
-import {
-  ENTITIES,
-  EntityRegistry,
-} from "../../entity/database-entity.decorator";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
 
 /**
  * This component can be used to display an entity in more detail.
@@ -56,7 +53,7 @@ export class EntityDetailsComponent {
     private analyticsService: AnalyticsService,
     private permissionService: EntityPermissionsService,
     private entityRemoveService: EntityRemoveService,
-    @Inject(ENTITIES) private entities: EntityRegistry
+    private entities: EntityRegistry
   ) {
     this.route.data.subscribe((data: RouteData<EntityDetailsConfig>) => {
       this.config = data.config;

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@angular/core";
+import { Injectable } from "@angular/core";
 import {
   FilterSelection,
   FilterSelectionOption,
@@ -14,10 +14,7 @@ import { LoggingService } from "../../logging/logging.service";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { FilterComponentSettings } from "./filter-component.settings";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
-import {
-  ENTITIES,
-  EntityRegistry,
-} from "../../entity/database-entity.decorator";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
 
 @Injectable({
   providedIn: "root",
@@ -26,7 +23,7 @@ export class FilterGeneratorService {
   constructor(
     private configService: ConfigService,
     private loggingService: LoggingService,
-    @Inject(ENTITIES) private entities: EntityRegistry,
+    private entities: EntityRegistry,
     private entityMapperService: EntityMapperService
   ) {}
 

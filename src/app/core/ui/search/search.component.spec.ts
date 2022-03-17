@@ -20,7 +20,7 @@ import { Subscription } from "rxjs";
 import { Entity } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import {
-  ENTITIES,
+  EntityRegistry,
   entityRegistry,
 } from "../../entity/database-entity.decorator";
 
@@ -59,7 +59,7 @@ describe("SearchComponent", () => {
           { provide: DatabaseIndexingService, useValue: mockIndexService },
           { provide: EntityMapperService, useValue: {} },
           {
-            provide: ENTITIES,
+            provide: EntityRegistry,
             useValue: entityRegistry,
           },
         ],

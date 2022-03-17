@@ -19,7 +19,7 @@ import { FlexLayoutModule } from "@angular/flex-layout";
 import { Subscription } from "rxjs";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import {
-  ENTITIES,
+  EntityRegistry,
   entityRegistry,
 } from "../../../entity/database-entity.decorator";
 
@@ -44,7 +44,7 @@ describe("EntitySelectComponent", () => {
           useValue: mockEntityMapper(testUsers.concat(otherEntities)),
         },
         {
-          provide: ENTITIES,
+          provide: EntityRegistry,
           useValue: entityRegistry,
         },
         EntitySchemaService,

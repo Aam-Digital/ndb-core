@@ -26,7 +26,7 @@ import { ExportDataDirective } from "../../../core/export/export-data-directive/
 import { ExportService } from "../../../core/export/export-service/export.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import {
-  ENTITIES,
+  EntityRegistry,
   entityRegistry,
 } from "../../../core/entity/database-entity.decorator";
 
@@ -115,7 +115,7 @@ describe("ChildrenListComponent", () => {
             useValue: jasmine.createSpyObj(["warn"]),
           },
           { provide: ExportService, useValue: {} },
-          { provide: ENTITIES, useValue: entityRegistry },
+          { provide: EntityRegistry, useValue: entityRegistry },
         ],
       }).compileComponents();
     })

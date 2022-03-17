@@ -5,7 +5,7 @@ import { ConfigurableEnumValue } from "../../configurable-enum/configurable-enum
 import { DatabaseField } from "../../entity/database-field.decorator";
 import {
   DatabaseEntity,
-  ENTITIES,
+  EntityRegistry,
   entityRegistry,
 } from "../../entity/database-entity.decorator";
 import { Entity } from "../../entity/model/entity";
@@ -44,7 +44,7 @@ describe("ExportService", () => {
         DatabaseIndexingService,
         { provide: Database, useValue: db },
         {
-          provide: ENTITIES,
+          provide: EntityRegistry,
           useValue: entityRegistry,
         },
       ],

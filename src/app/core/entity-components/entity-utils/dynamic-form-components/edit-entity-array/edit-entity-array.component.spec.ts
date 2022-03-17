@@ -8,7 +8,7 @@ import { EntityUtilsModule } from "../../entity-utils.module";
 import { EntitySchemaService } from "../../../../entity/schema/entity-schema.service";
 import { setupEditComponent } from "../edit-component.spec";
 import {
-  ENTITIES,
+  EntityRegistry,
   entityRegistry,
 } from "../../../../entity/database-entity.decorator";
 
@@ -25,7 +25,7 @@ describe("EditEntityArrayComponent", () => {
       declarations: [EditEntityArrayComponent],
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper },
-        { provide: ENTITIES, useValue: entityRegistry },
+        { provide: EntityRegistry, useValue: entityRegistry },
         EntitySchemaService,
       ],
     }).compileComponents();

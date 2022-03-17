@@ -9,7 +9,7 @@ import { MockSessionModule } from "../../session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import {
-  ENTITIES,
+  EntityRegistry,
   entityRegistry,
 } from "../../entity/database-entity.decorator";
 
@@ -30,7 +30,7 @@ describe("PrimaryActionComponent", () => {
       ],
       providers: [
         EntitySchemaService,
-        { provide: ENTITIES, useValue: entityRegistry },
+        { provide: EntityRegistry, useValue: entityRegistry },
       ],
     }).compileComponents();
   });

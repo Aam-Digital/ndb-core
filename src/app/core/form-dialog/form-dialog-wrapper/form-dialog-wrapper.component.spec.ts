@@ -11,7 +11,7 @@ import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MockSessionModule } from "../../session/mock-session.module";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import {
-  ENTITIES,
+  EntityRegistry,
   entityRegistry,
 } from "../../entity/database-entity.decorator";
 
@@ -34,7 +34,7 @@ describe("FormDialogWrapperComponent", () => {
         providers: [
           { provide: MatDialogRef, useValue: {} },
           EntitySchemaService,
-          { provide: ENTITIES, useValue: entityRegistry },
+          { provide: EntityRegistry, useValue: entityRegistry },
         ],
       }).compileComponents();
 

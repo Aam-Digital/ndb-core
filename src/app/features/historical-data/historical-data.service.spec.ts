@@ -10,7 +10,7 @@ import { EntitySchemaService } from "../../core/entity/schema/entity-schema.serv
 import { Database } from "../../core/database/database";
 import moment from "moment";
 import {
-  ENTITIES,
+  EntityRegistry,
   entityRegistry,
 } from "../../core/entity/database-entity.decorator";
 
@@ -26,7 +26,7 @@ describe("HistoricalDataService", () => {
         EntityMapperService,
         EntitySchemaService,
         { provide: Database, useValue: database },
-        { provide: ENTITIES, useValue: entityRegistry },
+        { provide: EntityRegistry, useValue: entityRegistry },
       ],
     });
     service = TestBed.inject(HistoricalDataService);

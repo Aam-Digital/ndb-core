@@ -19,7 +19,7 @@ import { MockSessionModule } from "../../../core/session/mock-session.module";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import {
-  ENTITIES,
+  EntityRegistry,
   entityRegistry,
 } from "app/core/entity/database-entity.decorator";
 
@@ -63,7 +63,7 @@ describe("SchoolsListComponent", () => {
         providers: [
           { provide: ActivatedRoute, useValue: routeMock },
           { provide: ExportService, useValue: {} },
-          { provide: ENTITIES, useValue: entityRegistry },
+          { provide: EntityRegistry, useValue: entityRegistry },
         ],
       }).compileComponents();
     })

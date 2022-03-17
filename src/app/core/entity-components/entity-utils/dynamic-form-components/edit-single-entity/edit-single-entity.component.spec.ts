@@ -17,7 +17,7 @@ import { EntityUtilsModule } from "../../entity-utils.module";
 import { Child } from "../../../../../child-dev-project/children/model/child";
 import { TypedFormControl } from "../edit-component";
 import {
-  ENTITIES,
+  EntityRegistry,
   entityRegistry,
 } from "../../../../entity/database-entity.decorator";
 
@@ -38,7 +38,7 @@ describe("EditSingleEntityComponent", () => {
         EntitySchemaService,
         { provide: EntityMapperService, useValue: mockEntityMapper },
         {
-          provide: ENTITIES,
+          provide: EntityRegistry,
           useValue: entityRegistry,
         },
       ],
