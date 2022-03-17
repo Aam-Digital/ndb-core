@@ -113,9 +113,14 @@ import { ViewModule } from "../../core/view/view.module";
   exports: [
     ActivityCardComponent,
     RollCallSetupComponent,
+    RollCallComponent,
     AttendanceStatusSelectComponent,
     AttendanceDayBlockComponent,
     AttendanceWeekDashboardComponent,
+    ActivityAttendanceSectionComponent,
+    AttendanceBlockComponent,
+    AttendanceCalendarComponent,
+    AttendanceDetailsComponent,
   ],
   entryComponents: [AttendanceDetailsComponent],
 })

@@ -131,6 +131,8 @@ import { ExportModule } from "../../core/export/export.module";
     ChildrenCountDashboardComponent,
     NotesDashboardComponent,
     BmiBlockComponent,
+    HealthCheckupComponent,
+    PreviousSchoolsComponent,
   ],
   entryComponents: [ChildBlockComponent],
 })
