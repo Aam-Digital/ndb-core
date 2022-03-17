@@ -2,18 +2,13 @@ import { moduleMetadata } from "@storybook/angular";
 import { Meta, Story } from "@storybook/angular/types-6-0";
 import { LanguageSelectComponent } from "./language-select.component";
 import { TranslationModule } from "../translation.module";
-import { RouterTestingModule } from "@angular/router/testing";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
 export default {
   title: "Core/LanguageSelect",
   decorators: [
     moduleMetadata({
-      imports: [
-        TranslationModule,
-        RouterTestingModule,
-        BrowserAnimationsModule,
-      ],
+      imports: [TranslationModule, StorybookBaseModule],
     }),
   ],
 } as Meta;

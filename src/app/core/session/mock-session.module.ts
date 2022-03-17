@@ -13,6 +13,8 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Angulartics2Module } from "angulartics2";
 import { RouterTestingModule } from "@angular/router/testing";
 import { Entity } from "../entity/model/entity";
+import { DatabaseIndexingService } from "../entity/database-indexing/database-indexing.service";
+import { EntityPermissionsService } from "../permissions/entity-permissions.service";
 
 export const TEST_USER = "test";
 export const TEST_PASSWORD = "pass";
@@ -51,8 +53,20 @@ export class MockSessionModule {
         { provide: EntityMapperService, useValue: mockedEntityMapper },
         { provide: MockEntityMapperService, useValue: mockedEntityMapper },
         {
+          provide: DatabaseIndexingService,
+          useValue: {
+            createIndex: () => {},
+            queryIndexDocsRange: () => Promise.resolve([]),
+            queryIndexDocs: () => Promise.resolve([]),
+          },
+        },
+        {
           provide: AnalyticsService,
           useValue: { eventTrack: () => null },
+        },
+        {
+          provide: EntityPermissionsService,
+          useValue: { userIsPermitted: () => true },
         },
       ],
     };

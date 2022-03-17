@@ -1,28 +1,13 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
-import { RouterTestingModule } from "@angular/router/testing";
-import { CommonModule } from "@angular/common";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { MatFormFieldModule } from "@angular/material/form-field";
 import { PreviousSchoolsComponent } from "./previous-schools.component";
-import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
-import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import { School } from "../schools/model/school";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { SchoolsModule } from "../schools/schools.module";
 import { Child } from "../children/model/child";
-import { PouchDatabase } from "../../core/database/pouch-database";
-import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
-import { Database } from "../../core/database/database";
 import { ChildrenModule } from "../children/children.module";
-import { SessionService } from "../../core/session/session-service/session.service";
-import { LocalSession } from "../../core/session/session-service/local-session";
-
-const database = PouchDatabase.createWithInMemoryDB();
-const schemaService = new EntitySchemaService();
-const entityMapper = new EntityMapperService(database, schemaService);
-const sessionService = new LocalSession(database);
+import { StorybookBaseModule } from "../../utils/storybook-base.module";
+import { MockSessionModule } from "../../core/session/mock-session.module";
+import { LoginState } from "../../core/session/session-states/login-state.enum";
 
 const child = new Child("testChild");
 const school1 = new School("1");
@@ -49,33 +34,21 @@ rel3.start = new Date();
 rel3.end = new Date();
 rel3.result = 23;
 
-entityMapper.save(school1, true);
-entityMapper.save(school2, true);
-entityMapper.save(rel1, true);
-entityMapper.save(rel2, true);
-entityMapper.save(rel3, true);
-
 export default {
   title: "child-dev-project/Previous Schools",
   component: PreviousSchoolsComponent,
   decorators: [
     moduleMetadata({
       imports: [
-        RouterTestingModule,
-        EntitySubrecordModule,
-        CommonModule,
-        NoopAnimationsModule,
-        MatFormFieldModule,
-        MatTooltipModule,
-        SchoolsModule,
         ChildrenModule,
-      ],
-      declarations: [],
-      providers: [
-        { provide: Database, useValue: database },
-        { provide: EntitySchemaService, useValue: schemaService },
-        { provide: EntityMapperService, useValue: entityMapper },
-        { provide: SessionService, useValue: sessionService },
+        StorybookBaseModule,
+        MockSessionModule.withState(LoginState.LOGGED_IN, [
+          school1,
+          school2,
+          rel1,
+          rel2,
+          rel3,
+        ]),
       ],
     }),
   ],

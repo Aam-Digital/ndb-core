@@ -1,18 +1,16 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { BehaviorSubject } from "rxjs";
-import { RouterTestingModule } from "@angular/router/testing";
 import { BackupService } from "../../../../admin/services/backup.service";
-import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 import { ChildrenModule } from "../../../../../child-dev-project/children/children.module";
-import { Database } from "../../../../database/database";
-import { ChildrenService } from "../../../../../child-dev-project/children/children.service";
 import { Child } from "../../../../../child-dev-project/children/model/child";
 import { CloudFileService } from "../../../../webdav/cloud-file-service.service";
 import { EntityUtilsModule } from "../../entity-utils.module";
 import { EditSingleEntityComponent } from "./edit-single-entity.component";
 import { FormControl, FormGroup } from "@angular/forms";
+import { StorybookBaseModule } from "../../../../../utils/storybook-base.module";
+import { MockSessionModule } from "../../../../session/mock-session.module";
+import { LoginState } from "../../../../session/session-states/login-state.enum";
 
 const child1 = new Child();
 child1.name = "First Child";
@@ -36,7 +34,6 @@ child3.photo = {
   photo: new BehaviorSubject("assets/child.png"),
 };
 
-
 export default {
   title: "Core/EntityComponents/EditSingleEntity",
   component: EditSingleEntityComponent,
@@ -44,22 +41,17 @@ export default {
     moduleMetadata({
       imports: [
         EntityUtilsModule,
-        NoopAnimationsModule,
-        RouterTestingModule,
+        StorybookBaseModule,
         ChildrenModule,
+        MockSessionModule.withState(LoginState.LOGGED_IN, [
+          child1,
+          child2,
+          child3,
+        ]),
       ],
-      declarations: [],
       providers: [
         { provide: BackupService, useValue: {} },
         { provide: CloudFileService, useValue: {} },
-        {
-          provide: EntityMapperService,
-          useValue: {
-            loadType: () => Promise.resolve([child1, child2, child3]),
-          },
-        },
-        { provide: Database, useValue: {} },
-        { provide: ChildrenService, useValue: {} },
       ],
     }),
   ],
@@ -72,8 +64,7 @@ const Template: Story<EditSingleEntityComponent> = (
   props: args,
 });
 
-const formGroup = new FormGroup({child:new FormControl()
-  })
+const formGroup = new FormGroup({ child: new FormControl() });
 formGroup.get("child").enable();
 
 export const primary = Template.bind({});
@@ -83,5 +74,5 @@ primary.args = {
   formControl: formGroup.get("child"),
   formControlName: "child",
   entities: [child1, child2, child3],
-  placeholder: "add child"
+  placeholder: "add child",
 };
