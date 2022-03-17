@@ -8,6 +8,7 @@ import moment from "moment";
 import { Child } from "../../children/model/child";
 import { of } from "rxjs";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
 const hc1 = new HealthCheck();
 hc1.date = new Date();
@@ -27,7 +28,11 @@ export default {
   component: HealthCheckupComponent,
   decorators: [
     moduleMetadata({
-      imports: [ChildrenModule, MockSessionModule.withState()],
+      imports: [
+        ChildrenModule,
+        StorybookBaseModule,
+        MockSessionModule.withState(),
+      ],
       declarations: [],
       providers: [
         {

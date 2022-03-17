@@ -1,20 +1,15 @@
 import { moduleMetadata } from "@storybook/angular";
 import { Meta, Story } from "@storybook/angular/types-6-0";
-import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { AlertService } from "../../../alerts/alert.service";
 import { ChildPhotoService } from "../../../../child-dev-project/children/child-photo-service/child-photo.service";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { RouterTestingModule } from "@angular/router/testing";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { EntityPermissionsService } from "../../../permissions/entity-permissions.service";
 import { ChildrenModule } from "../../../../child-dev-project/children/children.module";
-import { Router } from "@angular/router";
 import { EntityFormModule } from "../entity-form.module";
 import { EntityFormComponent } from "./entity-form.component";
 import { School } from "../../../../child-dev-project/schools/model/school";
+import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { MockSessionModule } from "../../../session/mock-session.module";
-import { MatNativeDateModule } from "@angular/material/core";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { LoginState } from "../../../session/session-states/login-state.enum";
 
 const s1 = new School();
 s1.name = "First School";
@@ -30,39 +25,16 @@ export default {
     moduleMetadata({
       imports: [
         EntityFormModule,
-        RouterTestingModule,
-        BrowserAnimationsModule,
+        StorybookBaseModule,
         ChildrenModule,
-        MockSessionModule.withState(),
-        MatNativeDateModule,
-        FontAwesomeTestingModule,
+        MockSessionModule.withState(LoginState.LOGGED_IN, [s1, s2, s3]),
       ],
       providers: [
-        {
-          provide: EntityMapperService,
-          useValue: {
-            save: () => Promise.resolve(),
-            loadType: () => Promise.resolve([s1, s2, s3]),
-          },
-        },
         {
           provide: AlertService,
           useValue: { addDanger: () => null, addInfo: () => null },
         },
         { provide: ChildPhotoService, useValue: { canSetImage: () => true } },
-        {
-          provide: EntityPermissionsService,
-          useValue: { userIsPermitted: () => true },
-        },
-        {
-          provide: Router,
-          useValue: {
-            navigate: () => null,
-            parseUrl: () => {
-              return {};
-            },
-          },
-        },
       ],
     }),
   ],

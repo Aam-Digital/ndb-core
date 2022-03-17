@@ -1,4 +1,4 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { AttendanceWeekDashboardComponent } from "./attendance-week-dashboard.component";
 import { AttendanceModule } from "../../attendance.module";
@@ -8,11 +8,9 @@ import { generateEventWithAttendance } from "../../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { Note } from "../../../notes/model/note";
 import moment from "moment";
-import { RouterTestingModule } from "@angular/router/testing";
-import { Angulartics2Module } from "angulartics2";
-import { Database } from "../../../../core/database/database";
-import { PouchDatabase } from "../../../../core/database/pouch-database";
-import { SessionService } from "../../../../core/session/session-service/session.service";
+import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
+import { MockSessionModule } from "../../../../core/session/mock-session.module";
+import { LoginState } from "../../../../core/session/session-states/login-state.enum";
 
 const child1 = Child.create("Jack");
 const child2 = Child.create("Jane");
@@ -57,24 +55,14 @@ export default {
     moduleMetadata({
       imports: [
         AttendanceModule,
-        RouterTestingModule,
-        Angulartics2Module.forRoot(),
-      ],
-      providers: [
-        {
-          provide: SessionService,
-          useValue: null,
-        },
-        {
-          provide: Database,
-          useValue: PouchDatabase.createWithData([
-            act1,
-            act2,
-            child1,
-            child2,
-            ...events,
-          ]),
-        },
+        StorybookBaseModule,
+        MockSessionModule.withState(LoginState.LOGGED_IN, [
+          act1,
+          act2,
+          child1,
+          child2,
+          ...events,
+        ]),
       ],
     }),
   ],
