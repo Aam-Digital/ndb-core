@@ -31,7 +31,7 @@ export abstract class Registry<T> extends Map<string, T> {
 
   public get(key: string): T | undefined {
     if (!this.has(key)) {
-      console.warn(`Requested item is not registered`);
+      throw Error(`Requested item ${key} is not registered`);
     }
     return super.get(key);
   }
