@@ -2,12 +2,16 @@ import { Injectable } from "@angular/core";
 import { ExportColumnConfig } from "../export-service/export-column-config";
 import { ExportDataFormat } from "../export-data-directive/export-data.directive";
 import { ExportService } from "../export-service/export.service";
+import { LoggingService } from "../../logging/logging.service";
 
 @Injectable()
-export class DownloadDialogService {
-  constructor(private exportService: ExportService) {}
+export class DownloadService {
+  constructor(
+    private exportService: ExportService,
+    private loggingService: LoggingService
+  ) {}
 
-  async openDownloadDialog(
+  async triggerDownload(
     data: any,
     format: ExportDataFormat,
     filename: string,
@@ -21,16 +25,6 @@ export class DownloadDialogService {
     const filenameWithExtension = filename + "." + format.toLowerCase();
     const link = this.createDownloadLink(blobData, filenameWithExtension);
     link.click();
-  }
-
-  private createDownloadLink(blobData, filename: string): HTMLAnchorElement {
-    const link = document.createElement("a");
-    link.setAttribute("style", "display:none;");
-    document.body.appendChild(link);
-    link.href = window.URL.createObjectURL(blobData);
-    link.download = filename;
-    link.addEventListener("click", () => window.URL.revokeObjectURL(blobData));
-    return link;
   }
 
   private async getFormattedBlobData(
@@ -47,8 +41,18 @@ export class DownloadDialogService {
         result = await this.exportService.createCsv(data, exportConfig);
         return new Blob([result], { type: "text/csv" });
       default:
-        console.warn("Not supported format:", format);
+        this.loggingService.warn(`Not supported format: ${format}`);
         return new Blob([""]);
     }
+  }
+
+  private createDownloadLink(blobData, filename: string): HTMLAnchorElement {
+    const link = document.createElement("a");
+    link.setAttribute("style", "display:none;");
+    document.body.appendChild(link);
+    link.href = window.URL.createObjectURL(blobData);
+    link.download = filename;
+    link.addEventListener("click", () => window.URL.revokeObjectURL(blobData));
+    return link;
   }
 }

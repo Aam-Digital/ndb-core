@@ -1,6 +1,6 @@
 import { Directive, HostListener, Input } from "@angular/core";
 import { ExportColumnConfig } from "../export-service/export-column-config";
-import { DownloadDialogService } from "../download-dialog/download-dialog.service";
+import { DownloadService } from "../download-service/download.service";
 
 export type ExportDataFormat = "csv" | "json";
 
@@ -38,11 +38,11 @@ export class ExportDataDirective {
    */
   @Input() exportConfig: ExportColumnConfig[];
 
-  constructor(private downloadDialogService: DownloadDialogService) {}
+  constructor(private downloadService: DownloadService) {}
 
   @HostListener("click")
   click() {
-    return this.downloadDialogService.openDownloadDialog(
+    return this.downloadService.triggerDownload(
       this.data,
       this.format,
       this.filename,

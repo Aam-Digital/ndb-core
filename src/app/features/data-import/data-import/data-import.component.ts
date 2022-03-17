@@ -13,7 +13,7 @@ import { MatStepper } from "@angular/material/stepper";
 import { ParseResult } from "ngx-papaparse";
 import { v4 as uuid } from "uuid";
 import { BehaviorSubject } from "rxjs";
-import { DownloadDialogService } from "../../../core/export/download-dialog/download-dialog.service";
+import { DownloadService } from "../../../core/export/download-service/download.service";
 import { readFile } from "../../../utils/utils";
 
 @Component({
@@ -52,7 +52,7 @@ export class DataImportComponent {
     private formBuilder: FormBuilder,
     private alertService: AlertService,
     private changeDetectorRef: ChangeDetectorRef,
-    private downloadDialogService: DownloadDialogService
+    private downloadService: DownloadService
   ) {}
   // TODO add supported types for file select
   async setCsvFile(inputEvent: Event): Promise<void> {
@@ -160,7 +160,7 @@ export class DataImportComponent {
   }
 
   saveConfig() {
-    return this.downloadDialogService.openDownloadDialog(
+    return this.downloadService.triggerDownload(
       this.createImportMetaData(),
       "json",
       "import-config"

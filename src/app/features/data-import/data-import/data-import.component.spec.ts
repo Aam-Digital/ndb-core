@@ -9,7 +9,7 @@ import { DataImportService } from "../data-import.service";
 import { FormControl } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { DynamicEntityService } from "../../../core/entity/dynamic-entity.service";
-import { DownloadDialogService } from "../../../core/export/download-dialog/download-dialog.service";
+import { DownloadService } from "../../../core/export/download-service/download.service";
 import { DataImportModule } from "../data-import.module";
 import { ParseResult } from "ngx-papaparse";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -55,8 +55,8 @@ describe("DataImportComponent", () => {
             useValue: new DynamicEntityService(undefined, undefined),
           },
           {
-            provide: DownloadDialogService,
-            useValue: jasmine.createSpyObj(["openDownloadDialog"]),
+            provide: DownloadService,
+            useValue: jasmine.createSpyObj(["triggerDownload"]),
           },
         ],
       }).compileComponents();

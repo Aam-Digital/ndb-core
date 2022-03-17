@@ -1,21 +1,23 @@
 import { TestBed } from "@angular/core/testing";
 
-import { DownloadDialogService } from "./download-dialog.service";
+import { DownloadService } from "./download.service";
 import { ExportService } from "../export-service/export.service";
+import { LoggingService } from "../../logging/logging.service";
 
-describe("DownloadDialogService", () => {
-  let service: DownloadDialogService;
+describe("DownloadService", () => {
+  let service: DownloadService;
   let mockExportService: jasmine.SpyObj<ExportService>;
 
   beforeEach(() => {
     mockExportService = jasmine.createSpyObj(["createJson", "createCsv"]);
     TestBed.configureTestingModule({
       providers: [
-        DownloadDialogService,
+        DownloadService,
         { provide: ExportService, useValue: mockExportService },
+        LoggingService,
       ],
     });
-    service = TestBed.inject(DownloadDialogService);
+    service = TestBed.inject(DownloadService);
   });
 
   it("should be created", () => {
@@ -32,7 +34,7 @@ describe("DownloadDialogService", () => {
       .and.returnValue(link);
 
     expect(clickSpy).not.toHaveBeenCalled();
-    await service.openDownloadDialog([], "csv", "someFileName");
+    await service.triggerDownload([], "csv", "someFileName");
     expect(clickSpy).toHaveBeenCalled();
     // reset createElement otherwise results in: 'an Error was thrown after all'
     document.createElement = oldCreateElement;
