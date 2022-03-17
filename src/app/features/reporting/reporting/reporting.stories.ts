@@ -1,15 +1,13 @@
 import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
-import { RouterTestingModule } from "@angular/router/testing";
 import { ReportingComponent } from "./reporting.component";
 import { ActivatedRoute } from "@angular/router";
 import { of } from "rxjs";
 import { ReportingService } from "../reporting.service";
-import { MatNativeDateModule } from "@angular/material/core";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ReportingModule } from "../reporting.module";
 import { genders } from "../../../child-dev-project/children/model/genders";
 import { ExportService } from "../../../core/export/export-service/export.service";
+import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
 const reportingService = {
   calculateReport: () => {
@@ -187,12 +185,7 @@ export default {
   component: ReportingComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        ReportingModule,
-        RouterTestingModule,
-        MatNativeDateModule,
-        BrowserAnimationsModule,
-      ],
+      imports: [ReportingModule, StorybookBaseModule],
       providers: [
         {
           provide: ActivatedRoute,
