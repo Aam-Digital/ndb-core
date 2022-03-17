@@ -28,15 +28,6 @@ import { LoggingService } from "../../../logging/logging.service";
 import { MockSessionModule } from "../../../session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import moment from "moment";
-import {
-  ViewRegistry,
-  viewRegistry,
-} from "../../../view/dynamic-components/dynamic-component.decorator";
-import {
-  EntityRegistry,
-  entityRegistry,
-} from "../../../entity/database-entity.decorator";
-import { RouteRegistry, routesRegistry } from "../../../../app.routing";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -54,17 +45,10 @@ describe("EntitySubrecordComponent", () => {
           MockSessionModule.withState(),
           FontAwesomeTestingModule,
         ],
-        providers: [
-          DatePipe,
-          PercentPipe,
-          { provide: EntityRegistry, useValue: entityRegistry },
-          { provide: RouteRegistry, useValue: routesRegistry },
-          { provide: ViewRegistry, useValue: viewRegistry },
-        ],
+        providers: [DatePipe, PercentPipe],
       }).compileComponents();
 
       entityMapper = TestBed.inject(EntityMapperService);
-      console.log(TestBed.inject(RouteRegistry), TestBed.inject(ViewRegistry));
     })
   );
 

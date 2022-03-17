@@ -1,5 +1,8 @@
 /**
- * doc!
+ * A registry is an affordance to register dynamic objects to strings.
+ * It is commonly used to dynamically load entities, views or routes from the config
+ *
+ * A registry cannot be instantiated directly. Instead, you should
  */
 export abstract class Registry<T> extends Map<string, T> {
   constructor(private beforeAddCheck?: (key: string, mapping: T) => void) {
