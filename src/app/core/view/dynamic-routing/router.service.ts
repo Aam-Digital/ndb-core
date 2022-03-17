@@ -83,13 +83,6 @@ export class RouterService {
 
   private generateRouteFromConfig(view: ViewConfig): Route {
     const path = view._id.substring(PREFIX_VIEW_CONFIG.length); // remove prefix to get actual path
-    const component = this.registry.get(view.component);
-
-    if (component === undefined) {
-      this.loggingService.warn(
-        `Cannot find component ${view.component} from config ${view}`
-      );
-    }
 
     const route: Route = {
       path: path,

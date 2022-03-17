@@ -10,10 +10,6 @@ import { Subject } from "rxjs";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MockSessionModule } from "../../session/mock-session.module";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import {
-  EntityRegistry,
-  entityRegistry,
-} from "../../entity/database-entity.decorator";
 
 describe("FormDialogWrapperComponent", () => {
   let component: FormDialogWrapperComponent;
@@ -34,7 +30,6 @@ describe("FormDialogWrapperComponent", () => {
         providers: [
           { provide: MatDialogRef, useValue: {} },
           EntitySchemaService,
-          { provide: EntityRegistry, useValue: entityRegistry },
         ],
       }).compileComponents();
 

@@ -8,7 +8,6 @@ import {
 } from "@angular/core";
 import { DynamicComponentConfig } from "./dynamic-component-config.interface";
 import { OnInitDynamicComponent } from "./on-init-dynamic-component.interface";
-import { LoggingService } from "../../logging/logging.service";
 import { ViewRegistry } from "./dynamic-component.decorator";
 
 /**
@@ -28,7 +27,6 @@ export class DynamicComponentDirective implements OnChanges {
   constructor(
     public viewContainerRef: ViewContainerRef,
     private componentFactoryResolver: ComponentFactoryResolver,
-    private loggingService: LoggingService,
     private registry: ViewRegistry
   ) {}
 
@@ -42,14 +40,6 @@ export class DynamicComponentDirective implements OnChanges {
     }
 
     const component = this.registry.get(this.appDynamicComponent.component);
-    if (!component) {
-      this.loggingService.warn(
-        "Could not load dashboard widget - component not found: " +
-          this.appDynamicComponent.component
-      );
-      return;
-    }
-
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory<OnInitDynamicComponent>(
       component
     );

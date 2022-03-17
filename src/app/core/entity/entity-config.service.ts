@@ -8,7 +8,6 @@ import { ConfigService } from "../config/config.service";
 import { EntitySchemaField } from "./schema/entity-schema-field";
 import { addPropertySchema } from "./database-field.decorator";
 import { OperationType } from "../permissions/entity-permissions.service";
-import { LoggingService } from "../logging/logging.service";
 import { EntityRegistry } from "./database-entity.decorator";
 
 /**
@@ -24,8 +23,7 @@ export class EntityConfigService {
 
   constructor(
     private configService: ConfigService,
-    private entities: EntityRegistry,
-    private loggingService: LoggingService
+    private entities: EntityRegistry
   ) {}
 
   /**
@@ -68,25 +66,12 @@ export class EntityConfigService {
    * trigger an error message
    */
   setupEntitiesFromConfig() {
-    const entitiesNotFound: string[] = [];
     for (const config of this.configService.getAllConfigs<
       EntityConfig & { _id: string }
     >(ENTITY_CONFIG_PREFIX)) {
       const id = config._id.substring(ENTITY_CONFIG_PREFIX.length);
       const ctor = this.entities.get(id);
-      if (ctor === undefined) {
-        entitiesNotFound.push(id);
-      } else {
-        this.addConfigAttributes(ctor, config);
-      }
-    }
-    if (entitiesNotFound.length > 0) {
-      this.loggingService.error(
-        `The following entities were defined in the config but are not registered properly: ${entitiesNotFound.join(
-          ", "
-        )}.\n` +
-          `Make sure they exist as a class and are properly registered (see the how-to guides for more info on this topic)`
-      );
+      this.addConfigAttributes(ctor, config);
     }
   }
 }

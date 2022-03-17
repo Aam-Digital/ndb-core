@@ -14,10 +14,6 @@ import { MockSessionModule } from "../../../core/session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { By } from "@angular/platform-browser";
 import { ChildMeetingNoteAttendanceComponent } from "./child-meeting-attendance/child-meeting-note-attendance.component";
-import {
-  EntityRegistry,
-  entityRegistry,
-} from "../../../core/entity/database-entity.decorator";
 
 function generateTestNote(forChildren: Child[]) {
   const testNote = Note.create(new Date(), "test note");
@@ -69,7 +65,6 @@ describe("NoteDetailsComponent", () => {
       providers: [
         { provide: MatDialogRef, useValue: dialogRefMock },
         { provide: ChildrenService, useValue: mockChildrenService },
-        { provide: EntityRegistry, useValue: entityRegistry },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(NoteDetailsComponent);

@@ -11,10 +11,6 @@ import { MatNativeDateModule } from "@angular/material/core";
 import { AttendanceService } from "../attendance.service";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import {
-  EntityRegistry,
-  entityRegistry,
-} from "../../../core/entity/database-entity.decorator";
 
 describe("AddDayAttendanceComponent", () => {
   let component: AddDayAttendanceComponent;
@@ -43,7 +39,6 @@ describe("AddDayAttendanceComponent", () => {
             provide: AttendanceService,
             useValue: { getEventsOnDate: () => Promise.resolve([]) },
           },
-          { provide: EntityRegistry, useValue: entityRegistry },
         ],
       }).compileComponents();
     })
