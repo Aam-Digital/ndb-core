@@ -39,7 +39,7 @@ export class EntityMapperService {
   constructor(
     private _db: Database,
     private entitySchemaService: EntitySchemaService,
-    protected registry: EntityRegistry
+    private registry: EntityRegistry
   ) {}
 
   /**
