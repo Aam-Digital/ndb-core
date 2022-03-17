@@ -11,7 +11,7 @@ import { AlertService } from "../../../alerts/alert.service";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MockSessionModule } from "../../../session/mock-session.module";
 import {
-  ENTITIES,
+  EntityRegistry,
   entityRegistry,
 } from "../../../entity/database-entity.decorator";
 
@@ -32,7 +32,7 @@ describe("FormComponent", () => {
       providers: [
         EntitySchemaService,
         AlertService,
-        { provide: ENTITIES, useValue: entityRegistry },
+        { provide: EntityRegistry, useValue: entityRegistry },
       ],
     }).compileComponents();
   });

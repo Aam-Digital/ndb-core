@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@angular/core";
+import { Injectable } from "@angular/core";
 import {
   Entity,
   ENTITY_CONFIG_PREFIX,
@@ -9,7 +9,7 @@ import { EntitySchemaField } from "./schema/entity-schema-field";
 import { addPropertySchema } from "./database-field.decorator";
 import { OperationType } from "../permissions/entity-permissions.service";
 import { LoggingService } from "../logging/logging.service";
-import { ENTITIES, EntityRegistry } from "./database-entity.decorator";
+import { EntityRegistry } from "./database-entity.decorator";
 
 /**
  * A service that allows to work with configuration-objects
@@ -24,7 +24,7 @@ export class EntityConfigService {
 
   constructor(
     private configService: ConfigService,
-    @Inject(ENTITIES) private entities: EntityRegistry,
+    private entities: EntityRegistry,
     private loggingService: LoggingService
   ) {}
 

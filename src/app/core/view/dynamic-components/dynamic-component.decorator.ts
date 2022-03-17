@@ -1,13 +1,11 @@
 import { OnInitDynamicComponent } from "./on-init-dynamic-component.interface";
 import { Registry } from "../../registry/dynamic-registry";
 import { ComponentType } from "@angular/cdk/overlay";
-import { InjectionToken } from "@angular/core";
 
-export type ViewRegistry = Registry<ComponentType<OnInitDynamicComponent>>;
-export const VIEWS = new InjectionToken<ViewRegistry>("app.registries.views");
-export const viewRegistry = new Registry<
+export class ViewRegistry extends Registry<
   ComponentType<OnInitDynamicComponent>
->();
+> {}
+export const viewRegistry = new ViewRegistry();
 
 /**
  * Decorator to annotate a class that serves as dynamic component

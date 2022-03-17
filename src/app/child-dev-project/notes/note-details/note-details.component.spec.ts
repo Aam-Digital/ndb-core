@@ -15,7 +15,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { By } from "@angular/platform-browser";
 import { ChildMeetingNoteAttendanceComponent } from "./child-meeting-attendance/child-meeting-note-attendance.component";
 import {
-  ENTITIES,
+  EntityRegistry,
   entityRegistry,
 } from "../../../core/entity/database-entity.decorator";
 
@@ -69,7 +69,7 @@ describe("NoteDetailsComponent", () => {
       providers: [
         { provide: MatDialogRef, useValue: dialogRefMock },
         { provide: ChildrenService, useValue: mockChildrenService },
-        { provide: ENTITIES, useValue: entityRegistry },
+        { provide: EntityRegistry, useValue: entityRegistry },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(NoteDetailsComponent);

@@ -21,7 +21,7 @@ import { ExportService } from "../../export/export-service/export.service";
 import { MockSessionModule } from "../../session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import {
-  ENTITIES,
+  EntityRegistry,
   entityRegistry,
 } from "../../entity/database-entity.decorator";
 
@@ -117,7 +117,7 @@ describe("EntityListComponent", () => {
           { provide: ExportService, useValue: {} },
           { provide: EntitySchemaService, useValue: mockEntitySchemaService },
           { provide: AttendanceService, useValue: mockAttendanceService },
-          { provide: ENTITIES, useValue: entityRegistry },
+          { provide: EntityRegistry, useValue: entityRegistry },
         ],
       }).compileComponents();
     })

@@ -29,7 +29,7 @@ import { ConfigService } from "app/core/config/config.service";
 import { EventAttendance } from "../../child-dev-project/attendance/model/event-attendance";
 import { AttendanceStatusType } from "../../child-dev-project/attendance/model/attendance-status";
 import {
-  ENTITIES,
+  EntityRegistry,
   entityRegistry,
 } from "../../core/entity/database-entity.decorator";
 
@@ -65,7 +65,7 @@ describe("QueryService", () => {
         ConfigService,
         EntityConfigService,
         { provide: Database, useValue: database },
-        { provide: ENTITIES, useValue: entityRegistry },
+        { provide: EntityRegistry, useValue: entityRegistry },
       ],
     });
     service = TestBed.inject(QueryService);

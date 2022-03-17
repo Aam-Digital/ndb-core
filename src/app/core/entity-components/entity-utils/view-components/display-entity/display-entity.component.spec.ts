@@ -12,7 +12,7 @@ import { ChildSchoolRelation } from "../../../../../child-dev-project/children/m
 import { School } from "../../../../../child-dev-project/schools/model/school";
 import { EntitySchemaService } from "../../../../entity/schema/entity-schema.service";
 import {
-  ENTITIES,
+  EntityRegistry,
   entityRegistry,
 } from "../../../../entity/database-entity.decorator";
 
@@ -29,7 +29,7 @@ describe("DisplayEntityComponent", () => {
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper },
         {
-          provide: ENTITIES,
+          provide: EntityRegistry,
           useValue: entityRegistry,
         },
         EntitySchemaService,

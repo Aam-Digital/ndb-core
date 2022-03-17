@@ -22,14 +22,6 @@ import {
   RemoveResult,
 } from "../../entity/entity-remove.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import {
-  viewRegistry,
-  VIEWS,
-} from "../../view/dynamic-components/dynamic-component.decorator";
-import {
-  ENTITIES,
-  entityRegistry,
-} from "../../entity/database-entity.decorator";
 
 describe("EntityDetailsComponent", () => {
   let component: EntityDetailsComponent;
@@ -101,8 +93,6 @@ describe("EntityDetailsComponent", () => {
           },
           { provide: ChildrenService, useValue: mockChildrenService },
           { provide: EntityRemoveService, useValue: mockEntityRemoveService },
-          { provide: ENTITIES, useValue: entityRegistry },
-          { provide: VIEWS, useValue: viewRegistry },
         ],
       }).compileComponents();
       mockedEntityMapper = TestBed.inject(MockEntityMapperService);

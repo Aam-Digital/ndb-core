@@ -16,7 +16,7 @@ import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { EntityFormService } from "../entity-form.service";
 import { MockSessionModule } from "../../../session/mock-session.module";
 import {
-  ENTITIES,
+  EntityRegistry,
   entityRegistry,
 } from "../../../entity/database-entity.decorator";
 
@@ -58,7 +58,7 @@ describe("EntityFormComponent", () => {
           { provide: ChildPhotoService, useValue: mockChildPhotoService },
           { provide: ConfigService, useValue: mockConfigService },
           { provide: EntitySchemaService, useValue: mockEntitySchemaService },
-          { provide: ENTITIES, useValue: entityRegistry },
+          { provide: EntityRegistry, useValue: entityRegistry },
         ],
       }).compileComponents();
     })

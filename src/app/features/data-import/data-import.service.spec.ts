@@ -10,7 +10,7 @@ import { of } from "rxjs";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import {
-  ENTITIES,
+  EntityRegistry,
   entityRegistry,
 } from "../../core/entity/database-entity.decorator";
 
@@ -92,7 +92,7 @@ describe("DataImportService", () => {
           useValue: mockSnackBar,
         },
         {
-          provide: ENTITIES,
+          provide: EntityRegistry,
           useValue: entityRegistry,
         },
         EntityMapperService,

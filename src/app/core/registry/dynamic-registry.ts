@@ -1,4 +1,7 @@
-export class Registry<T> extends Map<string, T> {
+/**
+ * doc!
+ */
+export abstract class Registry<T> extends Map<string, T> {
   constructor(private beforeAddCheck?: (key: string, mapping: T) => void) {
     super();
   }

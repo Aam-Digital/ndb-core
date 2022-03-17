@@ -11,7 +11,7 @@ import { ExportService } from "../../../core/export/export-service/export.servic
 import { MockSessionModule } from "../../../core/session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import {
-  ENTITIES,
+  EntityRegistry,
   entityRegistry,
 } from "../../../core/entity/database-entity.decorator";
 
@@ -44,7 +44,7 @@ describe("ActivityListComponent", () => {
               snapshot: { queryParams: {} },
             },
           },
-          { provide: ENTITIES, useValue: entityRegistry },
+          { provide: EntityRegistry, useValue: entityRegistry },
         ],
       }).compileComponents();
     })

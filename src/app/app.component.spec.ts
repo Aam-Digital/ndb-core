@@ -34,9 +34,8 @@ import { Config } from "./core/config/config";
 import { USAGE_ANALYTICS_CONFIG_ID } from "./core/analytics/usage-analytics-config";
 import { environment } from "../environments/environment";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { Registry } from "./core/registry/dynamic-registry";
 import { LoggingService } from "./core/logging/logging.service";
-import { ENTITIES } from "./core/entity/database-entity.decorator";
+import { EntityRegistry } from "./core/entity/database-entity.decorator";
 
 describe("AppComponent", () => {
   let component: AppComponent;
@@ -58,8 +57,8 @@ describe("AppComponent", () => {
           LoggingService,
           { provide: AppConfig, useValue: jasmine.createSpyObj(["load"]) },
           {
-            provide: ENTITIES,
-            useValue: new Registry(), // use a new registry to avoid duplicate registration
+            provide: EntityRegistry,
+            useValue: new EntityRegistry(), // use a new registry to avoid duplicate registration
           },
         ],
       }).compileComponents();

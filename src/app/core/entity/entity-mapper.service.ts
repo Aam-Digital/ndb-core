@@ -15,14 +15,13 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Inject, Injectable, Optional } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { Database } from "../database/database";
 import { Entity, EntityConstructor } from "./model/entity";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 import { Observable, Subject } from "rxjs";
 import { UpdatedEntity } from "./model/entity-update";
-import { LoggingService } from "../logging/logging.service";
-import { ENTITIES, EntityRegistry } from "./database-entity.decorator";
+import { EntityRegistry } from "./database-entity.decorator";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -40,8 +39,7 @@ export class EntityMapperService {
   constructor(
     private _db: Database,
     private entitySchemaService: EntitySchemaService,
-    @Inject(ENTITIES) protected registry: EntityRegistry,
-    @Optional() private loggingService: LoggingService
+    protected registry: EntityRegistry
   ) {}
 
   /**

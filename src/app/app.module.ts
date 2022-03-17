@@ -24,7 +24,7 @@ import { HttpClientModule } from "@angular/common/http";
 import { AppComponent } from "./app.component";
 import { UiModule } from "./core/ui/ui.module";
 import { AppConfigModule } from "./core/app-config/app-config.module";
-import { ROUTES, routesRegistry, routing } from "./app.routing";
+import { RouteRegistry, routesRegistry, routing } from "./app.routing";
 import { AlertsModule } from "./core/alerts/alerts.module";
 import { SessionModule } from "./core/session/session.module";
 import { SyncStatusModule } from "./core/sync-status/sync-status.module";
@@ -79,11 +79,11 @@ import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
 import {
+  ViewRegistry,
   viewRegistry,
-  VIEWS,
 } from "./core/view/dynamic-components/dynamic-component.decorator";
 import {
-  ENTITIES,
+  EntityRegistry,
   entityRegistry,
 } from "./core/entity/database-entity.decorator";
 
@@ -163,9 +163,9 @@ import {
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
     { provide: MatPaginatorIntl, useValue: TranslatableMatPaginator() },
-    { provide: ENTITIES, useValue: entityRegistry },
-    { provide: VIEWS, useValue: viewRegistry },
-    { provide: ROUTES, useValue: routesRegistry },
+    { provide: EntityRegistry, useValue: entityRegistry },
+    { provide: ViewRegistry, useValue: viewRegistry },
+    { provide: RouteRegistry, useValue: routesRegistry },
     AnalyticsService,
     Angulartics2Matomo,
   ],

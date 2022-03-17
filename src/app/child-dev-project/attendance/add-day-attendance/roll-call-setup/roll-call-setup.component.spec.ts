@@ -18,7 +18,7 @@ import {
   TEST_USER,
 } from "../../../../core/session/mock-session.module";
 import {
-  ENTITIES,
+  EntityRegistry,
   entityRegistry,
 } from "../../../../core/entity/database-entity.decorator";
 
@@ -48,7 +48,7 @@ describe("RollCallSetupComponent", () => {
       providers: [
         { provide: ChildrenService, useValue: mockChildrenService },
         { provide: AttendanceService, useValue: mockAttendanceService },
-        { provide: ENTITIES, useValue: entityRegistry },
+        { provide: EntityRegistry, useValue: entityRegistry },
       ],
     }).compileComponents();
   });

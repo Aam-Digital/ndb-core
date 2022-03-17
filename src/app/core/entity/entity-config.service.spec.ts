@@ -3,7 +3,7 @@ import { TestBed } from "@angular/core/testing";
 import { EntityConfig, EntityConfigService } from "./entity-config.service";
 import {
   DatabaseEntity,
-  ENTITIES,
+  EntityRegistry,
   entityRegistry,
 } from "./database-entity.decorator";
 import { DatabaseField } from "./database-field.decorator";
@@ -63,7 +63,7 @@ describe("EntityConfigService", () => {
         { provide: LoggingService, useValue: mockLogger },
         { provide: EntityMapperService, useValue: mockEntityMapper() },
         {
-          provide: ENTITIES,
+          provide: EntityRegistry,
           useValue: entityRegistry,
         },
         EntitySchemaService,

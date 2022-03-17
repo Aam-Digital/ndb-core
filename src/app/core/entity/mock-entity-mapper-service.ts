@@ -2,7 +2,6 @@ import { Entity, EntityConstructor } from "./model/entity";
 import { EntityMapperService } from "./entity-mapper.service";
 import { UpdatedEntity } from "./model/entity-update";
 import { NEVER, Observable } from "rxjs";
-import { LoggingService } from "../logging/logging.service";
 import { entityRegistry } from "./database-entity.decorator";
 
 export function mockEntityMapper(
@@ -20,7 +19,7 @@ export function mockEntityMapper(
 export class MockEntityMapperService extends EntityMapperService {
   private data: Map<string, Map<string, Entity>> = new Map();
   constructor() {
-    super(null, null, entityRegistry, new LoggingService());
+    super(null, null, entityRegistry);
   }
 
   /**

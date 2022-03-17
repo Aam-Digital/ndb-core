@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { Route, Router } from "@angular/router";
 import { ConfigService } from "../../config/config.service";
 import { LoggingService } from "../../logging/logging.service";
@@ -8,7 +8,7 @@ import {
   ViewConfig,
 } from "./view-config.interface";
 import { UserRoleGuard } from "../../permissions/user-role.guard";
-import { RouteRegistry, ROUTES } from "../../../app.routing";
+import { RouteRegistry } from "../../../app.routing";
 
 /**
  * The RouterService dynamically sets up Angular routing from config loaded through the {@link ConfigService}.
@@ -24,7 +24,7 @@ export class RouterService {
     private configService: ConfigService,
     private router: Router,
     private loggingService: LoggingService,
-    @Inject(ROUTES) private registry: RouteRegistry
+    private registry: RouteRegistry
   ) {}
 
   /**
