@@ -170,15 +170,7 @@ export class EntityMapperService {
     constructible: EntityConstructor<T> | string
   ): EntityConstructor<T> | undefined {
     if (typeof constructible === "string") {
-      const ctor = this.registry.get(constructible) as
-        | EntityConstructor<T>
-        | undefined;
-      if (ctor === undefined) {
-        throw Error(
-          `Cannot find entity corresponding to identifier ${constructible}`
-        );
-      }
-      return ctor;
+      return this.registry.get(constructible) as EntityConstructor<T>;
     } else {
       return constructible;
     }
