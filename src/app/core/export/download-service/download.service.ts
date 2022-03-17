@@ -5,12 +5,23 @@ import { ExportService } from "../export-service/export.service";
 import { LoggingService } from "../../logging/logging.service";
 
 @Injectable()
+/**
+ * This service allows to start a download process from the browser.
+ * Depending on the browser and the setting this might open a popup or directly download the file.
+ */
 export class DownloadService {
   constructor(
     private exportService: ExportService,
     private loggingService: LoggingService
   ) {}
 
+  /**
+   * Starts the download process with the provided data
+   * @param data content of the file that will be downloaded
+   * @param format extension of the file that will be downloaded, support is 'csv' and 'json'
+   * @param filename of the file that will be downloaded
+   * @param exportConfig special configuration that will be applied to the 'data' before triggering the download
+   */
   async triggerDownload(
     data: any,
     format: ExportDataFormat,
