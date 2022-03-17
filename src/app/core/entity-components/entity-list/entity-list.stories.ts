@@ -5,13 +5,10 @@ import { EntityListModule } from "./entity-list.module";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { DemoChildGenerator } from "../../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
 import { User } from "../../user/user";
-import { RouterTestingModule } from "@angular/router/testing";
-import { BackupService } from "../../admin/services/backup.service";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { Angulartics2Module } from "angulartics2";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enum.module";
-import { DatePipe } from "@angular/common";
+import { StorybookBaseModule } from "../../../utils/storybook-base.module";
+import { MockSessionModule } from "../../session/mock-session.module";
+import { ChildrenModule } from "../../../child-dev-project/children/children.module";
 
 const user = new User();
 user.paginatorSettingsPageSize["ageprojectNumbernamegendercenterstatus"] = 13;
@@ -23,18 +20,10 @@ export default {
     moduleMetadata({
       imports: [
         EntityListModule,
-        RouterTestingModule,
-        Angulartics2Module.forRoot(),
-        BrowserAnimationsModule,
+        StorybookBaseModule,
+        MockSessionModule.withState(),
         ConfigurableEnumModule,
-      ],
-      providers: [
-        DatePipe,
-        { provide: BackupService, useValue: {} },
-        {
-          provide: EntityMapperService,
-          useValue: { save: () => Promise.resolve() },
-        },
+        ChildrenModule,
       ],
     }),
   ],

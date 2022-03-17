@@ -182,8 +182,17 @@
         <note priority="1" from="meaning">Not listed</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.html</context>
-          <context context-type="linenumber">81</context>
+          <context context-type="linenumber">83</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="5765050500477761549" datatype="html">
+        <source>Invalid Date</source>
+        <target state="translated">Ungültiges Datum</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.ts</context>
+          <context context-type="linenumber">207,206</context>
+        </context-group>
+        <note priority="1" from="description">Alert when selected date is invalid</note>
       </trans-unit>
       <trans-unit id="67beb29a599fc9ce9ea95f0407cc99ec5742573c" datatype="html">
         <source> Attendance completed. </source>
@@ -2895,12 +2904,12 @@
           <context context-type="linenumber">77,75</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="9c00f41dcd57e401bbfc793d515647b1a357df88" datatype="html">
-        <source>Date</source>
+      <trans-unit id="252cd5ef769c41f0160173268d14e13286e117f2" datatype="html">
+        <source>Date </source>
         <target state="translated">Datum</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.html</context>
-          <context context-type="linenumber">9,14</context>
+          <context context-type="linenumber">9,15</context>
         </context-group>
         <note priority="1" from="description">Record an event for a particular date that is to be
           inputted</note>
@@ -2909,20 +2918,20 @@
       <trans-unit id="a83874208b1b8fdf59818f3350613530e4a2f286" datatype="html">
         <source> Show less </source>
         <target state="translated"> Weniger anzeigen </target>
+        <note priority="1" from="description">Show less entries of a list</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.html</context>
-          <context context-type="linenumber">65,69</context>
+          <context context-type="linenumber">67</context>
         </context-group>
-        <note priority="1" from="description">Show less entries of a list</note>
       </trans-unit>
       <trans-unit id="2bd16e97fe2b587c1bd3f4144a56edcb113c77fc" datatype="html">
         <source> Show more </source>
         <target state="translated"> Mehr anzeigen </target>
+        <note priority="1" from="description">Show more entries of a list</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.html</context>
-          <context context-type="linenumber">70,74</context>
+          <context context-type="linenumber">72</context>
         </context-group>
-        <note priority="1" from="description">Show more entries of a list</note>
       </trans-unit>
       <trans-unit id="8104421162933956065" datatype="html">
         <source>Notes</source>
@@ -4194,7 +4203,7 @@
         <note priority="1" from="description">Delete confirmation message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component.ts</context>
-          <context context-type="linenumber">256</context>
+          <context context-type="linenumber">261</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6568368650313555376" datatype="html">
@@ -4203,7 +4212,7 @@
         <note priority="1" from="description">Record deleted info</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component.ts</context>
-          <context context-type="linenumber">255</context>
+          <context context-type="linenumber">260</context>
         </context-group>
       </trans-unit>
       <trans-unit id="e26051095cf9572610ef63702b2260ae80f3b2d7" datatype="html">

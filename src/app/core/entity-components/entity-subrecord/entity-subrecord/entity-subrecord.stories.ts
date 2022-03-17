@@ -1,6 +1,4 @@
 import { moduleMetadata } from "@storybook/angular";
-import { RouterTestingModule } from "@angular/router/testing";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { Meta, Story } from "@storybook/angular/types-6-0";
 import { EntitySubrecordComponent } from "./entity-subrecord.component";
 import { EntitySubrecordModule } from "../entity-subrecord.module";
@@ -13,7 +11,6 @@ import { EntitySchemaService } from "../../../entity/schema/entity-schema.servic
 import { DemoChildGenerator } from "../../../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
 import { DemoUserGeneratorService } from "../../../user/demo-user-generator.service";
 import { ConfigurableEnumDatatype } from "../../../configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
-import { MatNativeDateModule } from "@angular/material/core";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { ChildrenModule } from "../../../../child-dev-project/children/children.module";
 import { ChildrenService } from "../../../../child-dev-project/children/children.service";
@@ -22,6 +19,7 @@ import { EntityPermissionsService } from "../../../permissions/entity-permission
 import { AttendanceLogicalStatus } from "../../../../child-dev-project/attendance/model/attendance-status";
 import { MockSessionModule } from "../../../session/mock-session.module";
 import { faker } from "../../../demo-data/faker";
+import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 
 const configService = new ConfigService();
 const schemaService = new EntitySchemaService();
@@ -45,9 +43,7 @@ export default {
     moduleMetadata({
       imports: [
         EntitySubrecordModule,
-        RouterTestingModule,
-        BrowserAnimationsModule,
-        MatNativeDateModule,
+        StorybookBaseModule,
         ChildrenModule,
         MockSessionModule.withState(),
       ],
