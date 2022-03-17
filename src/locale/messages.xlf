@@ -3802,6 +3802,30 @@
           <context context-type="sourcefile">src/app/core/entity-components/entity-utils/view-title/view-title.component.html</context>
           <context context-type="linenumber">7,12</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">33,34</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">49,50</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">69,70</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">86,87</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">119,120</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">134,135</context>
+        </context-group>
         <note priority="1" from="description">Generic back button</note>
       </trans-unit>
       <trans-unit id="7532581571486706488" datatype="html">
@@ -4355,6 +4379,22 @@
           <context context-type="linenumber">108</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="9fbe8a9c4b787e9cc6760fd43aae0e430838e698" datatype="html">
+        <source>Select file</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">2,4</context>
+        </context-group>
+        <note priority="1" from="description">Data import wizard label</note>
+      </trans-unit>
+      <trans-unit id="935c3e0cb8e8cf457c80d898982c85e98223c8dc" datatype="html">
+        <source>Selected File:</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">6,10</context>
+        </context-group>
+        <note priority="1" from="description">Label for file select input</note>
+      </trans-unit>
       <trans-unit id="4f6c6525fa323dd97afe70a2cedf2cfc7bdc4f4a" datatype="html">
         <source>No file selected</source>
         <context-group purpose="location">
@@ -4363,13 +4403,81 @@
         </context-group>
         <note priority="1" from="description">Placeholder for file-input where the .csv file can be seleceted as part of the import process</note>
       </trans-unit>
+      <trans-unit id="f732c304c7433e5a83ffcd862c3dce709a0f4982" datatype="html">
+        <source>Next</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">17,21</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">34,38</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">50,54</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">70,74</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">87,91</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">120,123</context>
+        </context-group>
+        <note priority="1" from="description">Button to proceed in import wizard</note>
+      </trans-unit>
+      <trans-unit id="b3535b75df54ae4c60e203c668171024f11a2793" datatype="html">
+        <source>Load config</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">21,24</context>
+        </context-group>
+        <note priority="1" from="description">Data import wizard label</note>
+      </trans-unit>
       <trans-unit id="e07c633829d564621661c41684eab09ef9a0d574" datatype="html">
         <source>No config selected</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
-          <context context-type="linenumber">28,34</context>
+          <context context-type="linenumber">28,33</context>
         </context-group>
         <note priority="1" from="description">Placeholder for file-input where a config file can be selected as part of the import process</note>
+      </trans-unit>
+      <trans-unit id="47810d5084759b2668fc39b1a69e72cc391a7ae9" datatype="html">
+        <source>Select type</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">38,39</context>
+        </context-group>
+        <note priority="1" from="description">Data import wizard label</note>
+      </trans-unit>
+      <trans-unit id="86d3519a5cbe6335bb7dcea8772fafaa953d8fc1" datatype="html">
+        <source>Transaction ID</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">54,55</context>
+        </context-group>
+        <note priority="1" from="description">Data import wizard label</note>
+      </trans-unit>
+      <trans-unit id="114a546c736cedfd562a553f136aa5dda0db753f" datatype="html">
+        <source>IDs are specified in CSV file</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">56,59</context>
+        </context-group>
+        <note priority="1" from="description">Hint in import wizard when transaction ID is not necessary</note>
+      </trans-unit>
+      <trans-unit id="d322814f284b87e6b3f817f258b5d4a36ef8cee7" datatype="html">
+        <source>Transaction ID:</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">58,61</context>
+        </context-group>
+        <note priority="1" from="description">Unique ID for this import</note>
       </trans-unit>
       <trans-unit id="6a81cc9239d3d8dd0d6d677c32a3ac447fed949d" datatype="html">
         <source>Enter TransactionID</source>
@@ -4379,13 +4487,41 @@
         </context-group>
         <note priority="1" from="description">Placeholder for input for transactionId as part of the import process</note>
       </trans-unit>
+      <trans-unit id="3e3fb96c2bdacec00d1da1ec42942d5d757d2d81" datatype="html">
+        <source>Generate ID</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">67,69</context>
+        </context-group>
+        <note priority="1" from="description">Button to generate a random ID</note>
+      </trans-unit>
+      <trans-unit id="7df4de0d0704a06a302d853e31f2580eba98f127" datatype="html">
+        <source>Date format</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">74,75</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">77,81</context>
+        </context-group>
+        <note priority="1" from="description">Data import wizard label</note>
+      </trans-unit>
       <trans-unit id="e706ec5424be44e018704cc77f0b5e3767d1f7dd" datatype="html">
         <source>Enter a date format</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
-          <context context-type="linenumber">82,87</context>
+          <context context-type="linenumber">82,86</context>
         </context-group>
         <note priority="1" from="description">Placeholdr for input where date format as part of the import process</note>
+      </trans-unit>
+      <trans-unit id="4f7b55e067162509cd429fc865c9a2eda209180f" datatype="html">
+        <source>Assign columns</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">91,93</context>
+        </context-group>
+        <note priority="1" from="description">Data import wizard label</note>
       </trans-unit>
       <trans-unit id="f2d676a6583f9bb59688a77043ccdcf01a357106" datatype="html">
         <source>Select property</source>
@@ -4394,6 +4530,62 @@
           <context context-type="linenumber">99,103</context>
         </context-group>
         <note priority="1" from="description">Placeholder for input where a property can be selected during the import process</note>
+      </trans-unit>
+      <trans-unit id="68dd5278b389d5e5de492833751b42883a167fbb" datatype="html">
+        <source>Start import</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">123,124</context>
+        </context-group>
+        <note priority="1" from="description">Data import wizard label</note>
+      </trans-unit>
+      <trans-unit id="4070d57ccfda9eb8bbb92f62ccaae86b2bf93540" datatype="html">
+        <source>Entity Type: <x id="START_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;em&gt;"/><x id="INTERPOLATION" equiv-text="{{ entityForm.get(&apos;entity&apos;).value }}"/><x id="CLOSE_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;/em&gt;"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">124,125</context>
+        </context-group>
+        <note priority="1" from="description">Data import Final overview</note>
+      </trans-unit>
+      <trans-unit id="e7f81aa1b0a304e8f5ff3c913ccfa2f59d11ef46" datatype="html">
+        <source>CSV File: <x id="START_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;em&gt;"/><x id="INTERPOLATION" equiv-text="{{ fileNameForm.get(&apos;fileName&apos;).value }}"/><x id="CLOSE_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;/em&gt;"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">125,126</context>
+        </context-group>
+        <note priority="1" from="description">Data import Final overview</note>
+      </trans-unit>
+      <trans-unit id="f2b7dfb937e21305612cb86c9a8793835c80e486" datatype="html">
+        <source>TransactionID: <x id="START_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;em&gt;"/><x id="INTERPOLATION" equiv-text="{{ transactionIDForm.get(&apos;transactionId&apos;).value }}"/><x id="CLOSE_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;/em&gt;"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">126,127</context>
+        </context-group>
+        <note priority="1" from="description">Data import Final overview</note>
+      </trans-unit>
+      <trans-unit id="a249509745fc3b29bc78aa00617c38cb30dfe3b5" datatype="html">
+        <source> Start Import </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">128,130</context>
+        </context-group>
+        <note priority="1" from="description">Button to start import</note>
+      </trans-unit>
+      <trans-unit id="72055718220347b781527a712323a202806ec3f7" datatype="html">
+        <source> Save config </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">131,134</context>
+        </context-group>
+        <note priority="1" from="description">Button to save import configuration</note>
+      </trans-unit>
+      <trans-unit id="06c663bf1474713f57551123a46b34318543b67d" datatype="html">
+        <source>Reset</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/data-import/data-import/data-import.component.html</context>
+          <context context-type="linenumber">135,139</context>
+        </context-group>
+        <note priority="1" from="description">Button to reset import wizard</note>
       </trans-unit>
       <trans-unit id="3193639537347911590" datatype="html">
         <source>not at all</source>
