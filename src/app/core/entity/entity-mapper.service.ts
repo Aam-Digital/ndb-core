@@ -19,7 +19,7 @@ import { Inject, Injectable, Optional } from "@angular/core";
 import { Database } from "../database/database";
 import { Entity, EntityConstructor } from "./model/entity";
 import { EntitySchemaService } from "./schema/entity-schema.service";
-import { EMPTY, Observable, Subject } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import { UpdatedEntity } from "./model/entity-update";
 import { LoggingService } from "../logging/logging.service";
 import { ENTITIES, EntityRegistry } from "./database-entity.decorator";
@@ -56,9 +56,6 @@ export class EntityMapperService {
     id: string
   ): Promise<T> {
     const ctor = this.resolveConstructor(entityType);
-    if (ctor === undefined) {
-      throw Error("Entity by id not found");
-    }
     const resultEntity = new ctor("");
     const result = await this._db.get(
       Entity.createPrefixedId(resultEntity.getType(), id)
@@ -81,9 +78,6 @@ export class EntityMapperService {
   ): Promise<T[]> {
     const resultArray: Array<T> = [];
     const ctor = this.resolveConstructor(entityType);
-    if (!ctor) {
-      return [];
-    }
 
     const allRecordsOfType = await this._db.getAll(
       new ctor("").getType() + ":"
@@ -118,9 +112,6 @@ export class EntityMapperService {
     entityType: EntityConstructor<T> | string
   ): Observable<UpdatedEntity<T>> {
     const ctor = this.resolveConstructor(entityType);
-    if (ctor === undefined) {
-      return EMPTY;
-    }
     const type = new ctor().getType();
     let publisher = this.publishers[type];
     // subject doesn't exist yet or is closed
@@ -185,7 +176,7 @@ export class EntityMapperService {
         | EntityConstructor<T>
         | undefined;
       if (ctor === undefined) {
-        this.loggingService.warn(
+        throw Error(
           `Cannot find entity corresponding to identifier ${constructible}`
         );
       }
