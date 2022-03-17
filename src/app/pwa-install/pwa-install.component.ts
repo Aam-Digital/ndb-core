@@ -1,148 +1,188 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { MatSnackBar, MatSnackBarConfig, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 
+enum PWAInstallType {InstallDirectly, ShowiOSInstallInstructions, RunningAsPWA, NotAvailable}
+enum Browser {Opera, MicrosoftInternetExplorer, Edge, Safari, Chrome, Firefox, Other}
+enum OS {iOS, MacOS, Android, Linux, Windows, Other}
 @Component({
   selector: 'app-pwa-install',
   templateUrl: './pwa-install.component.html',
   styleUrls: ['./pwa-install.component.scss']
 })
+
 export class PwaInstallComponent implements OnInit {
-
-  public installText: String = '';
-  public installText2: String = '';
   
-  constructor() {
-    const userAgent = window.navigator.userAgent;
+  @ViewChild('iOSInstallInstructions') templateiOSInstallInstructions: TemplateRef<any>;
+  @ViewChild('pwaAlreadyInstalled') templatepwaAlreadyInstalled: TemplateRef<any>;
+  setAutoHide = false;
+  autoHide = 10000;
+  horizontalPosition: MatSnackBarHorizontalPosition = 'center';
+  verticalPosition: MatSnackBarVerticalPosition = 'bottom';
+  matSnackBarConfig = new MatSnackBarConfig();
 
-    const whichOS = () => {
-      let OS = "";
-      if (/iphone|ipad|ipod|macintosh/i.test(userAgent)) {
-        if (window.innerWidth < 1025) {
-          OS = "iOS";
-        }
-        else {
-          OS = "MacOS";
-        }
-      }
-      else if (/android/i.test(userAgent)) {
-        OS = "Android";
-      }
-      else if (/windows|win32|win64|WinCE/i.test(userAgent)) {
-        OS = "Windows";
-      }
-      else if (/linux|X11/i.test(userAgent)) {
-        OS = "Linux";
-      }
-      return OS;
-    }
+  
+  public showPWAInstallButton: Boolean = false;
+  public pwaInstallButtonText: String; 
+  public pwaInstallType: PWAInstallType;
+  public deferredInstallPrompt;
+  public userAgent: string;
+  public beforeInstallPromptFired: Boolean = false;
+  
+  constructor(
+      public snackBar: MatSnackBar,
+  ) {
 
-    const whichBrowser = () => {
-      let browser = "";
-      if (/opera/i.test(userAgent)) {
-        browser = "Opera";
-      }
-      else if (/msie|trident/i.test(userAgent)) {
-        browser = "Microsoft Internet Explorer";
-      }
-      else if (/edg/i.test(userAgent)) {
-        browser = "Edge";
-      }
-      else if (/chrome/i.test(userAgent)) {
-        browser = "Chrome";
-      }
-      else if (/safari/i.test(userAgent)) {
-        browser = "Safari";
-        if (/crios|fxios/i.test(userAgent)) {
-          browser = "Chrome";
-        }
-      }
-      else if (/firefox/i.test(userAgent)) {
-        browser = "Firefox";
-      }
-      else {
-        browser = "other";
-      }
-      return browser;
-    }
-    
-    //const isInStandaloneMode = ('standalone' in window.navigator) && (window.navigator['standalone']);
-    const isInStandaloneMode = (("standalone" in window.navigator && window.navigator['standalone']) || window.matchMedia('(display-mode: standalone)').matches);
-    const isInStandaloneText = () => {
-      if (isInStandaloneMode) {
-        return "standalone"
-      }
-      else {
-        return "no standalone";
-      }
-    }
+    this.matSnackBarConfig.verticalPosition = this.verticalPosition;
+    this.matSnackBarConfig.horizontalPosition = this.horizontalPosition;
+    this.matSnackBarConfig.duration = this.setAutoHide ? this.autoHide : 0;
 
-    this.installText = whichOS() + ", " + whichBrowser() + ", " + isInStandaloneText();
-    
-    if (isInStandaloneMode) {
-      this.installText2 = 'Already installed as PWA'
-    } else
-      if (whichOS() === 'Android') {
-        this.installText2 = 'Install directly'
-      }
-      else if (whichOS() === 'iOS') {
-        if (whichBrowser() === 'Safari') {
-          this.installText2 = 'Install instructions'
-        }
-      }
-      else if (whichOS() === 'Windows') {
-        if (whichBrowser() === 'Chrome' || whichBrowser() === 'Edge' ) {
-          this.installText2 = 'Install directly'
-        }
-      }
-      else if (whichOS() === 'MacOS') {
-        if (whichBrowser() === 'Chrome' || whichBrowser() === 'Edge' ) {
-          this.installText2 = 'Install directly'
-        }
-      }
-      else if (whichOS() === 'Linux') {
-        if (whichBrowser() === 'Chrome') {
-          this.installText2 = 'Install directly'
-        }
-      }
-      else {
-        this.installText2 = 'PWA not possible'
-    }
+    this.userAgent = window.navigator.userAgent; 
+    const os: OS = this.detectOS();
+    const browser: Browser = this.detectBrowser();
+    const standaloneMode: Boolean = this.detectStandaloneMode();
+    this.pwaInstallType = this.detectPWAInstallType(os, browser, standaloneMode);
 
     console.log("PWA Install Information:")
-    console.log("--- " + this.installText);
-    console.log("--- " + this.installText2);
+    console.log("--- " + os + ", " + browser + ", standalone: " + standaloneMode);
+    console.log("--- " + this.pwaInstallType);
 
-    let deferredPrompt; // Variable should be out of scope of addEventListener method
+    if (this.pwaInstallType === PWAInstallType.ShowiOSInstallInstructions) {
+      this.showPWAInstallButton = true;
+      this.pwaInstallButtonText = "Install App";
+    } else this.showDelayedPWAInstallButton();
 
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();	// This prevents default chrome prompt from appearing                             
-      deferredPrompt = e;	 // Save for later
-      const installBtn = document.getElementById('PWAInstallButton');
-      installBtn.style.display = 'block';
-      installBtn.addEventListener('click', () => {
-        // Update the install UI to remove the install button
-        installBtn.style.display = 'none';
-        // Show the modal add to home screen dialog
-        deferredPrompt.prompt();
-        // Wait for the user to respond to the prompt
-        deferredPrompt.userChoice.then((choice) => {
+  }
+
+  private sleep(miliseconds: number) {
+    return new Promise(resolve => setTimeout(resolve, miliseconds));
+  }
+  
+  private async showDelayedPWAInstallButton() {
+    await this.sleep(5000);
+    if (this.pwaInstallType === PWAInstallType.InstallDirectly && !this.beforeInstallPromptFired) {
+      this.showPWAInstallButton = true;  
+      this.pwaInstallButtonText = "App already installed";
+    }   
+  }
+
+  detectOS() : OS {
+    let os: OS;
+    if (/iphone|ipad|ipod|macintosh/i.test(this.userAgent)) {
+      if (window.innerWidth < 1025) {
+        os = OS.iOS;
+      }
+      else {
+        os = OS.MacOS;
+      }
+    }
+    else if (/android/i.test(this.userAgent)) {
+      os = OS.Android;
+    }
+    else if (/windows|win32|win64|WinCE/i.test(this.userAgent)) {
+      os = OS.Windows
+    }
+    else if (/linux|X11/i.test(this.userAgent)) {
+      os = OS.Linux;
+    }
+    return os;
+  }
+
+  detectBrowser() : Browser {
+    let browser: Browser;
+    if (/opera/i.test(this.userAgent)) {
+      browser = Browser.Opera;
+    }
+    else if (/msie|trident/i.test(this.userAgent)) {
+      browser = Browser.MicrosoftInternetExplorer;
+    }
+    else if (/edg/i.test(this.userAgent)) {
+      browser = Browser.Edge;
+    }
+    else if (/chrome/i.test(this.userAgent)) {
+      browser = Browser.Chrome;
+    }
+    else if (/safari/i.test(this.userAgent)) {
+      browser = Browser.Safari;
+      if (/crios|fxios/i.test(this.userAgent)) {
+        browser = Browser.Chrome;
+      }
+    }
+    else if (/firefox/i.test(this.userAgent)) {
+      browser = Browser.Firefox;
+    }
+    else {
+      browser = Browser.Other;
+    }
+    return browser;
+  }
+
+  detectStandaloneMode() : Boolean {
+    return (("standalone" in window.navigator && window.navigator['standalone']) || window.matchMedia('(display-mode: standalone)').matches);
+  }
+
+  detectPWAInstallType(os, browser, standaloneMode) : PWAInstallType {
+    if (standaloneMode) {
+      this.pwaInstallType = PWAInstallType.RunningAsPWA;
+    } else
+      if (os === OS.Android) {
+        this.pwaInstallType = PWAInstallType.InstallDirectly;
+      }
+      else if (os === OS.iOS) {
+        if (browser === Browser.Safari) {
+          this.pwaInstallType = PWAInstallType.ShowiOSInstallInstructions;
+        }
+      }
+      else if (os === OS.Windows || os === OS.MacOS) {
+        if (browser === Browser.Chrome || browser === Browser.Edge ) {
+          this.pwaInstallType = PWAInstallType.InstallDirectly;
+        }
+      }
+      else if (os === OS.Linux) {
+        if (browser === Browser.Chrome) {
+          this.pwaInstallType = PWAInstallType.InstallDirectly;
+        }
+      }
+      else {
+        this.pwaInstallType = PWAInstallType.NotAvailable;
+    }
+    return this.pwaInstallType;
+  }
+
+  pwaInstallButtonClicked() {
+    if (this.pwaInstallType === PWAInstallType.ShowiOSInstallInstructions) {
+      this.snackBar.openFromTemplate(this.templateiOSInstallInstructions, this.matSnackBarConfig);
+    }
+    else if (this.pwaInstallType === PWAInstallType.InstallDirectly) {
+      if (!this.beforeInstallPromptFired) {
+        this.snackBar.openFromTemplate(this.templatepwaAlreadyInstalled, this.matSnackBarConfig);
+      } else {
+        this.deferredInstallPrompt.prompt();
+        this.deferredInstallPrompt.userChoice.then((choice) => {
           if (choice.outcome === 'accepted') {
             console.log('User accepted the PWA-install prompt');
+            this.showPWAInstallButton = false;
           } else {
             console.log('User dismissed the pwa-install prompt');
           }
-          // Clear the saved prompt since it can't be used again
-          deferredPrompt = null;
+          this.deferredInstallPrompt = null;
         });
-      });
-    });
-
-    window.addEventListener("appinstalled", evt => {
-      console.log("PWA-Install fired", evt);
-    });
+      }
+    }
   }
 
   ngOnInit(): void {
+    window.addEventListener('beforeinstallprompt', (e) => {
+      this.beforeInstallPromptFired = true;
+      this.showPWAInstallButton = true;
+      this.pwaInstallButtonText = "Install app";
+      e.preventDefault();                         
+      this.deferredInstallPrompt = e;
+    });
+
+    window.addEventListener("appinstalled", evt => {
+      console.log("App has been installed as PWA.", evt);
+    });
+
   }
-
-
 }
+
