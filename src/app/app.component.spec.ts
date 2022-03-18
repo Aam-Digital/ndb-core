@@ -56,14 +56,11 @@ describe("AppComponent", () => {
         providers: [
           LoggingService,
           { provide: AppConfig, useValue: jasmine.createSpyObj(["load"]) },
-          {
-            provide: EntityRegistry,
-            useValue: new EntityRegistry(), // use a new registry to avoid duplicate registration
-          },
         ],
       }).compileComponents();
 
       TestBed.inject(ApplicationInitStatus); // This ensures that the AppConfig is loaded before test execution
+      spyOn(TestBed.inject(EntityRegistry), "add"); // Prevent error with duplicate registration
     })
   );
 
