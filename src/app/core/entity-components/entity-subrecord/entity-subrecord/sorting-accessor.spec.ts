@@ -65,4 +65,14 @@ describe("entityListSortingAccessor", () => {
       value2: "hello",
     });
   });
+
+  it("should return strings as lower case", () => {
+    const values = ["b", "A", "C"];
+
+    const result = values
+      .map((val) => entityListSortingAccessor({ key: val }, "key"))
+      .sort();
+
+    expect(result).toEqual(["a", "b", "c"]);
+  });
 });
