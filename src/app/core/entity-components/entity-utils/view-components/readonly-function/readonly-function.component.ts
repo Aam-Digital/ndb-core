@@ -4,7 +4,7 @@ import { ViewDirective } from "../view.directive";
 import { Entity } from "../../../../entity/model/entity";
 import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 
-@DynamicComponent()
+@DynamicComponent("ReadonlyFunction")
 @Component({
   selector: "app-readonly-function",
   templateUrl: "./readonly-function.component.html",

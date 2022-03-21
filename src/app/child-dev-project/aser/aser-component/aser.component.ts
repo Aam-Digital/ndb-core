@@ -9,7 +9,7 @@ import { FormFieldConfig } from "../../../core/entity-components/entity-form/ent
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 
 @UntilDestroy()
-@DynamicComponent()
+@DynamicComponent("Aser")
 @Component({
   selector: "app-aser",
   template: `<app-entity-subrecord

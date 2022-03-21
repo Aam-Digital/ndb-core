@@ -12,7 +12,7 @@ import { isActiveIndicator } from "../schools/children-overview/children-overvie
 import { DynamicComponent } from "../../core/view/dynamic-components/dynamic-component.decorator";
 
 @UntilDestroy()
-@DynamicComponent()
+@DynamicComponent("PreviousSchools")
 @Component({
   selector: "app-previous-schools",
   templateUrl: "./previous-schools.component.html",

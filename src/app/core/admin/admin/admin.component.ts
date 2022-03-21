@@ -17,7 +17,7 @@ import { RouteTarget } from "../../../app.routing";
  * Admin GUI giving administrative users different options/actions.
  */
 @UntilDestroy()
-@RouteTarget()
+@RouteTarget("Admin")
 @Component({
   selector: "app-admin",
   templateUrl: "./admin.component.html",

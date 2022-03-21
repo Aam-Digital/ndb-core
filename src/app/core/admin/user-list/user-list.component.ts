@@ -2,21 +2,18 @@ import { User } from "../../user/user";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { MatTableDataSource } from "@angular/material/table";
 import { Component, OnInit } from "@angular/core";
-import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
-import { OnInitDynamicComponent } from "../../view/dynamic-components/on-init-dynamic-component.interface";
 import { RouteTarget } from "../../../app.routing";
 
 /**
  * Display all available users.
  */
-@RouteTarget()
-@DynamicComponent()
+@RouteTarget("UserList")
 @Component({
   selector: "app-user-list",
   templateUrl: "./user-list.component.html",
   styleUrls: ["./user-list.component.scss"],
 })
-export class UserListComponent implements OnInit, OnInitDynamicComponent {
+export class UserListComponent implements OnInit {
   /** displayed columns for the list table in the template */
   displayedColumns = ["id", "name", "details"];
   /** datasource for the list table in the template */
@@ -36,9 +33,5 @@ export class UserListComponent implements OnInit, OnInitDynamicComponent {
     this.dataSource.data.forEach((user) =>
       this.debugDetails.set(user.getId(), JSON.stringify(user))
     );
-  }
-
-  async onInitFromDynamicConfig(config: any) {
-    await this.loadData();
   }
 }

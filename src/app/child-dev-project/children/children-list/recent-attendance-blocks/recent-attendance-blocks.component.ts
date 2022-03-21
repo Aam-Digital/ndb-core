@@ -15,7 +15,7 @@ import { DynamicComponent } from "../../../../core/view/dynamic-components/dynam
  * It also implements a flexible layout to display less attendance blocks on a smaller layout.
  */
 @UntilDestroy()
-@DynamicComponent()
+@DynamicComponent("AttendanceBlock")
 @Component({
   selector: "app-recent-attendance-blocks",
   template: `

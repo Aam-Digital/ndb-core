@@ -5,7 +5,7 @@ import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-co
 /**
  * This component displays a text attribute.
  */
-@DynamicComponent()
+@DynamicComponent("DisplayText")
 @Component({
   selector: "app-display-text",
   template: `{{ entity[property] }}`,

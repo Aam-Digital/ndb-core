@@ -30,7 +30,7 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
  * The subcomponents will be provided with the Entity object and the creating new status, as well as its static config.
  */
 @UntilDestroy()
-@RouteTarget()
+@RouteTarget("EntityDetails")
 @Component({
   selector: "app-entity-details",
   templateUrl: "./entity-details.component.html",

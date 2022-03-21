@@ -27,7 +27,7 @@ interface AttendanceWeekRow {
 }
 
 @UntilDestroy()
-@DynamicComponent()
+@DynamicComponent("AttendanceWeekDashboard")
 @Component({
   selector: "app-attendance-week-dashboard",
   templateUrl: "./attendance-week-dashboard.component.html",

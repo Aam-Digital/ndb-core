@@ -16,7 +16,7 @@ import { RouteData } from "../../../core/view/dynamic-routing/view-config.interf
 import { RouteTarget } from "../../../app.routing";
 
 @UntilDestroy()
-@RouteTarget()
+@RouteTarget("ChildrenList")
 @Component({
   selector: "app-children-list",
   template: `

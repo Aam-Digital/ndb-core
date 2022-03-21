@@ -15,7 +15,7 @@ import { ExportService } from "../../../core/export/export-service/export.servic
 import { ExportColumnConfig } from "../../../core/export/export-service/export-column-config";
 import { RouteTarget } from "../../../app.routing";
 
-@RouteTarget()
+@RouteTarget("Reporting")
 @Component({
   selector: "app-reporting",
   templateUrl: "./reporting.component.html",

@@ -11,7 +11,7 @@ import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-
  * Displays educational materials of a child, such as a pencil, rulers, e.t.c
  * as well as a summary
  */
-@DynamicComponent()
+@DynamicComponent("EducationalMaterial")
 @Component({
   selector: "app-educational-material",
   templateUrl: "./educational-material.component.html",

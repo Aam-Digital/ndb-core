@@ -24,7 +24,7 @@ import { RouteTarget } from "../../../app.routing";
 /**
  * Display markdown formatted page that is dynamically loaded based on the file defined in config.
  */
-@RouteTarget()
+@RouteTarget("MarkdownPage")
 @Component({
   selector: "app-markdown-page",
   templateUrl: "./markdown-page.component.html",

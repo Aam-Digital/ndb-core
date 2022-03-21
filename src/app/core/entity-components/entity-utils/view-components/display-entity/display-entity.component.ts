@@ -5,7 +5,7 @@ import { ViewDirective } from "../view.directive";
 import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 
-@DynamicComponent()
+@DynamicComponent("DisplayEntity")
 @Component({
   selector: "app-display-entity",
   templateUrl: "./display-entity.component.html",

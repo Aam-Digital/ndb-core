@@ -9,7 +9,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 
 @UntilDestroy()
-@DynamicComponent()
+@DynamicComponent("ChildrenCountDashboard")
 @Component({
   selector: "app-children-count-dashboard",
   templateUrl: "./children-count-dashboard.component.html",

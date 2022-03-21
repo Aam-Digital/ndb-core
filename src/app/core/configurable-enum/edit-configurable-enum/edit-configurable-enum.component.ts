@@ -6,7 +6,7 @@ import {
 import { ConfigurableEnumValue } from "../configurable-enum.interface";
 import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
 
-@DynamicComponent()
+@DynamicComponent("EditConfigurableEnum")
 @Component({
   selector: "app-edit-configurable-enum",
   templateUrl: "./edit-configurable-enum.component.html",

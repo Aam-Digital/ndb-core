@@ -7,7 +7,7 @@ import { ChildrenService } from "../../children.service";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 
 @UntilDestroy()
-@DynamicComponent()
+@DynamicComponent("BmiBlock")
 @Component({
   selector: "app-bmi-block",
   template: `<span

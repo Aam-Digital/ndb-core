@@ -7,7 +7,7 @@ import { DynamicComponent } from "../../view/dynamic-components/dynamic-componen
 /**
  * A simple list of shortcuts displayed as a dashboard widget for easy access to important navigation.
  */
-@DynamicComponent()
+@DynamicComponent("DashboardShortcutWidget")
 @Component({
   selector: "app-dashboard-shortcut-widget",
   templateUrl: "./dashboard-shortcut-widget.component.html",

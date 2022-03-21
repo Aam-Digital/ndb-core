@@ -26,12 +26,11 @@ export const viewRegistry = new ViewRegistry();
  *   view: "DoSomething"
  * }
  * ```
- * @param aliases Aliases that the component is also known under
+ * @param name Name that the component registered under
  * @constructor
  */
-export function DynamicComponent(...aliases: string[]) {
+export function DynamicComponent(name: string) {
   return (ctor: ComponentType<OnInitDynamicComponent>) => {
-    viewRegistry.add(ctor.name.replace("Component", ""), ctor);
-    viewRegistry.addAliases(aliases, ctor);
+    viewRegistry.add(name, ctor);
   };
 }

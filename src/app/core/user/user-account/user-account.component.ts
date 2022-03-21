@@ -28,7 +28,7 @@ import { RouteTarget } from "../../../app.routing";
 /**
  * User account form to allow the user to view and edit information.
  */
-@RouteTarget()
+@RouteTarget("UserAccount")
 @Component({
   selector: "app-user-account",
   templateUrl: "./user-account.component.html",

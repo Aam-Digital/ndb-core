@@ -5,7 +5,7 @@ import { ViewDirective } from "../view.directive";
 import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
 import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 
-@DynamicComponent()
+@DynamicComponent("DisplayEntityArray")
 @Component({
   selector: "app-display-entity-array",
   templateUrl: "./display-entity-array.component.html",

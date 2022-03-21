@@ -5,7 +5,7 @@ import { Note } from "../model/note";
 import { AttendanceLogicalStatus } from "../../attendance/model/attendance-status";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 
-@DynamicComponent()
+@DynamicComponent("NoteAttendanceCountBlock")
 @Component({
   selector: "app-note-attendance-count-block",
   templateUrl: "./note-attendance-count-block.component.html",

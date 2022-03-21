@@ -29,7 +29,7 @@ export interface NotesManagerConfig {
   showEventNotesToggle?: boolean;
 }
 
-@RouteTarget()
+@RouteTarget("NotesManager")
 @Component({
   selector: "app-notes-manager",
   templateUrl: "./notes-manager.component.html",

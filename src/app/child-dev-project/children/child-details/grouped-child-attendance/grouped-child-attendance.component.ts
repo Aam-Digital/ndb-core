@@ -6,7 +6,7 @@ import { AttendanceService } from "../../../attendance/attendance.service";
 import { RecurringActivity } from "../../../attendance/model/recurring-activity";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 
-@DynamicComponent()
+@DynamicComponent("GroupedChildAttendance")
 @Component({
   selector: "app-grouped-child-attendance",
   templateUrl: "./grouped-child-attendance.component.html",

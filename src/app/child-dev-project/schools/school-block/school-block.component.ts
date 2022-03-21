@@ -13,7 +13,7 @@ import { ConfigService } from "../../../core/config/config.service";
 import { ViewConfig } from "../../../core/view/dynamic-routing/view-config.interface";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 
-@DynamicComponent()
+@DynamicComponent("SchoolBlock")
 @Component({
   selector: "app-school-block",
   templateUrl: "./school-block.component.html",

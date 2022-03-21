@@ -12,7 +12,7 @@ import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-
   templateUrl: "./progress-dashboard.component.html",
   styleUrls: ["./progress-dashboard.component.scss"],
 })
-@DynamicComponent()
+@DynamicComponent("ProgressDashboard")
 export class ProgressDashboardComponent
   implements OnInitDynamicComponent, OnInit {
   @Input() dashboardConfigId = "";

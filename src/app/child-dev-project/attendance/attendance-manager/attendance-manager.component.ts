@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { ComingSoonDialogService } from "../../../core/coming-soon/coming-soon-dialog.service";
 import { RouteTarget } from "../../../app.routing";
 
-@RouteTarget()
+@RouteTarget("AttendanceManager")
 @Component({
   selector: "app-attendance-manager",
   templateUrl: "./attendance-manager.component.html",

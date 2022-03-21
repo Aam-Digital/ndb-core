@@ -6,7 +6,7 @@ import { EntityListConfig } from "../../../core/entity-components/entity-list/En
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 import { RouteTarget } from "../../../app.routing";
 
-@RouteTarget()
+@RouteTarget("ActivityList")
 @Component({
   selector: "app-activity-list",
   template: `

@@ -27,12 +27,10 @@ export const routesRegistry = new RouteRegistry();
 /**
  * Marks a class to be the target when routing.
  * Use this as an annotation to component classes adding `@RouteTarget()` before the class definition.
- * @constructor
  */
-export function RouteTarget(name?: string) {
+export function RouteTarget(name: string) {
   return (ctor: ComponentType<any>) => {
-    const registryName = name ?? ctor.name.replace("Component", "");
-    routesRegistry.add(registryName, ctor);
+    routesRegistry.add(name, ctor);
   };
 }
 

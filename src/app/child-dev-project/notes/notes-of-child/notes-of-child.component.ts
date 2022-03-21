@@ -16,7 +16,7 @@ import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-
  * The component that is responsible for listing the Notes that are related to a certain child
  */
 @UntilDestroy()
-@DynamicComponent()
+@DynamicComponent("NotesOfChild")
 @Component({
   selector: "app-notes-of-child",
   templateUrl: "./notes-of-child.component.html",

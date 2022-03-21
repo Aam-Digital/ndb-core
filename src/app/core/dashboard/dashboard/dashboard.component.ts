@@ -21,7 +21,7 @@ import { DynamicComponentConfig } from "../../view/dynamic-components/dynamic-co
 import { RouteData } from "../../view/dynamic-routing/view-config.interface";
 import { RouteTarget } from "../../../app.routing";
 
-@RouteTarget()
+@RouteTarget("Dashboard")
 @Component({
   selector: "app-dashboard",
   templateUrl: "./dashboard.component.html",

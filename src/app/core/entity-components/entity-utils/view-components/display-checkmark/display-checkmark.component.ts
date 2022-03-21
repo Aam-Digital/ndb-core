@@ -6,7 +6,7 @@ import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-co
  * This component allows to display a boolean attribute of an entity.
  * It will display a checkmark when the attribute is true.
  */
-@DynamicComponent()
+@DynamicComponent("DisplayCheckmark")
 @Component({
   selector: "app-display-tick",
   template: `{{ entity[property] ? "✓" : "" }}`,

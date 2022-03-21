@@ -8,7 +8,7 @@ import { PanelConfig } from "../../../core/entity-components/entity-details/Enti
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 
-@DynamicComponent()
+@DynamicComponent("HealthCheckup")
 @UntilDestroy()
 @Component({
   selector: "app-health-checkup",

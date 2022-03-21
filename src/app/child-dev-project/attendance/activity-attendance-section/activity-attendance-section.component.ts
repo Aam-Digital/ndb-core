@@ -11,7 +11,7 @@ import { FormFieldConfig } from "../../../core/entity-components/entity-form/ent
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 
-@DynamicComponent()
+@DynamicComponent("ActivityAttendanceSection")
 @Component({
   selector: "app-activity-attendance-section",
   templateUrl: "./activity-attendance-section.component.html",

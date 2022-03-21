@@ -14,7 +14,7 @@ import { Child } from "../model/child";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 
 @UntilDestroy()
-@DynamicComponent()
+@DynamicComponent("ChildBlock")
 @Component({
   selector: "app-child-block",
   templateUrl: "./child-block.component.html",

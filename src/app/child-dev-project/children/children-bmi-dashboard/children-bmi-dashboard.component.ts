@@ -14,7 +14,7 @@ interface BmiRow {
   bmi: number;
 }
 
-@DynamicComponent()
+@DynamicComponent("ChildrenBmiDashboard")
 @UntilDestroy()
 @Component({
   selector: "app-children-bmi-dashboard",

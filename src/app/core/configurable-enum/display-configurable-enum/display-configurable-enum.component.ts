@@ -5,7 +5,7 @@ import { DynamicComponent } from "../../view/dynamic-components/dynamic-componen
 /**
  * This component displays a text attribute.
  */
-@DynamicComponent()
+@DynamicComponent("DisplayConfigurableEnum")
 @Component({
   selector: "app-display-configurable-enum",
   template: `{{ entity[property]?.label }}`,

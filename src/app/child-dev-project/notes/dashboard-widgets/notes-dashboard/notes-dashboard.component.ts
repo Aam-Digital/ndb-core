@@ -18,7 +18,7 @@ import { DynamicComponent } from "../../../../core/view/dynamic-components/dynam
  * If you do not set "sinceDays" of "fromBeginningOfWeek" inputs
  * by default notes since beginning of the current week are considered.
  */
-@DynamicComponent()
+@DynamicComponent("NotesDashboard")
 @Component({
   selector: "app-no-recent-notes-dashboard",
   templateUrl: "./notes-dashboard.component.html",

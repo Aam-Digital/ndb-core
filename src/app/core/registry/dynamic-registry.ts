@@ -25,12 +25,6 @@ export abstract class Registry<T> extends Map<string, T> {
     this.set(key, mapping);
   }
 
-  public addAliases(keys: string[], mapping: T) {
-    keys.forEach((key) => {
-      this.add(key, mapping);
-    });
-  }
-
   public get(key: string): T {
     if (!this.has(key)) {
       throw Error(

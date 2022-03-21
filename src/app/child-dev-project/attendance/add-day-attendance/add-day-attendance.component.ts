@@ -16,7 +16,7 @@ export interface AddDayAttendanceConfig {
   sortParticipantsBy?: string;
 }
 
-@RouteTarget()
+@RouteTarget("AddDayAttendance")
 @Component({
   selector: "app-add-day-attendance",
   templateUrl: "./add-day-attendance.component.html",

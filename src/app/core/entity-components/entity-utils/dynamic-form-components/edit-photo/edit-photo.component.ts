@@ -6,7 +6,7 @@ import { ChildPhotoService } from "../../../../../child-dev-project/children/chi
 import { SessionService } from "../../../../session/session-service/session.service";
 import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 
-@DynamicComponent()
+@DynamicComponent("EditPhoto")
 @Component({
   selector: "app-edit-photo",
   templateUrl: "./edit-photo.component.html",

@@ -3,7 +3,7 @@ import { EditComponent } from "../edit-component";
 import { calculateAge } from "../../../../../utils/utils";
 import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 
-@DynamicComponent()
+@DynamicComponent("EditAge")
 @Component({
   selector: "app-edit-age",
   templateUrl: "./edit-age.component.html",

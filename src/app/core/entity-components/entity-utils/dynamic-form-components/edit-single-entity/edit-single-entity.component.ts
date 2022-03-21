@@ -9,7 +9,7 @@ import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-co
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 
 @UntilDestroy()
-@DynamicComponent()
+@DynamicComponent("EditSingleEntity")
 @Component({
   selector: "app-edit-single-entity",
   templateUrl: "./edit-single-entity.component.html",

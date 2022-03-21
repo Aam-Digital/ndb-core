@@ -6,7 +6,7 @@ import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-co
 /**
  * This component displays a date attribute using the shortDate format.
  */
-@DynamicComponent()
+@DynamicComponent("DisplayDate")
 @Component({
   selector: "app-display-date",
   template: `{{ entity[property] | date: format }}`,

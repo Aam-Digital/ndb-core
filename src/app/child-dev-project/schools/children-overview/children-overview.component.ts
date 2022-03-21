@@ -24,7 +24,7 @@ export const isActiveIndicator = {
 /**
  * This component creates a table containing all children currently attending this school.
  */
-@DynamicComponent()
+@DynamicComponent("ChildrenOverview")
 @Component({
   selector: "app-children-overview",
   templateUrl: "children-overview.component.html",
