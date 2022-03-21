@@ -13,7 +13,9 @@ import moment from "moment";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 import { ExportService } from "../../../core/export/export-service/export.service";
 import { ExportColumnConfig } from "../../../core/export/export-service/export-column-config";
+import { RouteTarget } from "../../../app.routing";
 
+@RouteTarget("Reporting")
 @Component({
   selector: "app-reporting",
   templateUrl: "./reporting.component.html",

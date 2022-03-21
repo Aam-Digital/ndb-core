@@ -3,7 +3,11 @@ import { TestBed } from "@angular/core/testing";
 import { ExportService } from "./export.service";
 import { ConfigurableEnumValue } from "../../configurable-enum/configurable-enum.interface";
 import { DatabaseField } from "../../entity/database-field.decorator";
-import { DatabaseEntity } from "../../entity/database-entity.decorator";
+import {
+  DatabaseEntity,
+  EntityRegistry,
+  entityRegistry,
+} from "../../entity/database-entity.decorator";
 import { Entity } from "../../entity/model/entity";
 import { QueryService } from "../../../features/reporting/query.service";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
@@ -39,6 +43,10 @@ describe("ExportService", () => {
         AttendanceService,
         DatabaseIndexingService,
         { provide: Database, useValue: db },
+        {
+          provide: EntityRegistry,
+          useValue: entityRegistry,
+        },
       ],
     });
 

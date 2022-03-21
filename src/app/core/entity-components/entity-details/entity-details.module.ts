@@ -44,6 +44,7 @@ import { EntityUtilsModule } from "../entity-utils/entity-utils.module";
     FontAwesomeModule,
     EntityUtilsModule,
   ],
-  entryComponents: [FormComponent],
 })
-export class EntityDetailsModule {}
+export class EntityDetailsModule {
+  static dynamicComponents = [EntityDetailsComponent, FormComponent];
+}

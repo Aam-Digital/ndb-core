@@ -9,6 +9,10 @@ import { PouchDatabase } from "../../core/database/pouch-database";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { Database } from "../../core/database/database";
 import moment from "moment";
+import {
+  EntityRegistry,
+  entityRegistry,
+} from "../../core/entity/database-entity.decorator";
 
 describe("HistoricalDataService", () => {
   let service: HistoricalDataService;
@@ -22,6 +26,7 @@ describe("HistoricalDataService", () => {
         EntityMapperService,
         EntitySchemaService,
         { provide: Database, useValue: database },
+        { provide: EntityRegistry, useValue: entityRegistry },
       ],
     });
     service = TestBed.inject(HistoricalDataService);

@@ -7,6 +7,7 @@ import { Router } from "@angular/router";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { Entity } from "../../../core/entity/model/entity";
 import { ChildrenService } from "../../children/children.service";
+import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 
 export const isActiveIndicator = {
   id: "isActive",
@@ -23,6 +24,7 @@ export const isActiveIndicator = {
 /**
  * This component creates a table containing all children currently attending this school.
  */
+@DynamicComponent("ChildrenOverview")
 @Component({
   selector: "app-children-overview",
   templateUrl: "children-overview.component.html",

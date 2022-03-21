@@ -7,6 +7,7 @@ import { ActivityAttendance } from "../../../attendance/model/activity-attendanc
 import { AttendanceService } from "../../../attendance/attendance.service";
 import moment from "moment";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 
 /**
  * This component lists attendance blocks for a child for recent months filtered by institutions.
@@ -14,6 +15,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
  * It also implements a flexible layout to display less attendance blocks on a smaller layout.
  */
 @UntilDestroy()
+@DynamicComponent("RecentAttendanceBlocks")
 @Component({
   selector: "app-recent-attendance-blocks",
   template: `

@@ -65,11 +65,13 @@ describe("EntitySubrecordComponent", () => {
   it("should sort enums by the label", () => {
     class Test extends Entity {
       public enumValue: ConfigurableEnumValue;
+
       constructor(label: string, id: string) {
         super();
         this.enumValue = { label: label, id: id };
       }
     }
+
     const first = new Test("aaa", "first");
     const second = new Test("aab", "second");
     const third = new Test("c", "third");

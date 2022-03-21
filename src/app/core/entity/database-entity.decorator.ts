@@ -1,3 +1,16 @@
+import { Entity, EntityConstructor } from "./model/entity";
+import { Registry } from "../registry/dynamic-registry";
+
+export class EntityRegistry extends Registry<EntityConstructor> {}
+export const entityRegistry = new EntityRegistry((key, constructor) => {
+  if (!(new constructor() instanceof Entity)) {
+    throw Error(
+      `Tried to register an entity-type that is not a subclass of Entity\n` +
+        `type: ${key}; constructor: ${constructor}`
+    );
+  }
+});
+
 /**
  * Decorator (Annotation `@DatabaseEntity()`) to set the string ENTITY_TYPE to an Entity Type.
  *
@@ -5,11 +18,9 @@
  *
  * @param entityType The string key for this Entity Type, used as id prefix.
  */
-import { DynamicEntityService } from "./dynamic-entity.service";
-
 export function DatabaseEntity(entityType: string) {
   return (constructor) => {
-    DynamicEntityService.registerNewEntity(entityType, constructor);
+    entityRegistry.add(entityType, constructor);
     constructor.ENTITY_TYPE = entityType;
 
     // append parent schema definitions
