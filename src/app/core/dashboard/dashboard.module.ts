@@ -49,5 +49,5 @@ import { MatButtonModule } from "@angular/material/button";
   exports: [DashboardWidgetComponent, WidgetContentComponent],
 })
 export class DashboardModule {
-  static dynamicComponents = [DashboardComponent]
+  static dynamicComponents = [DashboardComponent];
 }

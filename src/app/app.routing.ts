@@ -26,7 +26,12 @@ export const routesRegistry = new RouteRegistry();
 
 /**
  * Marks a class to be the target when routing.
- * Use this as an annotation to component classes adding `@RouteTarget()` before the class definition.
+ * Use this by adding the annotation `@RouteTarget("...")` to a component.
+ * The name provided to the annotation can then be used in the configuration.
+ *
+ * IMPORTANT:
+ *  Angular ignores all components without references in the code in a production build.
+ *  Dynamic components should therefore be added to a static array in the module where they are declared.
  */
 export function RouteTarget(name: string) {
   return (ctor: ComponentType<any>) => {

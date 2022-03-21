@@ -9,15 +9,24 @@ export const viewRegistry = new ViewRegistry();
 
 /**
  * Decorator to annotate a class that serves as dynamic component
- * A dynamic component can be referenced from the config.
- * The name to reference the component from is the name of the class without the
- * `Component`, or one of the registered aliases
+ * A dynamic component can be referenced from the config with the name defined on the decorator.
+ *
+ * IMPORTANT:
+ *  Angular ignores all components without references in the code in a production build.
+ *  Dynamic components should therefore be added to a static array in the module where they are declared.
+ *
  * @example
  * ```
- * @DynamicComponent()
+ * @DynamicComponent("DoSomething")
  * @Component(...)
  * class DoSomethingComponent {
  *   // Component definition
+ * }
+ *
+ * // In the module
+ * @NgModule({declaration: [DoSomethingComponent]})
+ * export class DoSomethingModule {
+ *   static dynamicComponents = [DoSomethingComponent];
  * }
  *
  * // Later in some config:
@@ -26,8 +35,7 @@ export const viewRegistry = new ViewRegistry();
  *   view: "DoSomething"
  * }
  * ```
- * @param name Name that the component registered under
- * @constructor
+ * @param name with which the component can be accessed
  */
 export function DynamicComponent(name: string) {
   return (ctor: ComponentType<OnInitDynamicComponent>) => {

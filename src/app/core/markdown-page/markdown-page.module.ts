@@ -33,5 +33,5 @@ import { MarkdownModule } from "ngx-markdown";
   ],
 })
 export class MarkdownPageModule {
-  static dynamicComponents = [MarkdownPageComponent]
+  static dynamicComponents = [MarkdownPageComponent];
 }

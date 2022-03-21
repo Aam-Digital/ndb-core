@@ -50,5 +50,5 @@ import { ObjectTableComponent } from "./reporting/object-table/object-table.comp
   exports: [SelectReportComponent, ReportingComponent],
 })
 export class ReportingModule {
-  static dynamicComponents = [ReportingComponent]
+  static dynamicComponents = [ReportingComponent];
 }

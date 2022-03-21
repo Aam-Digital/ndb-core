@@ -48,5 +48,5 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
   declarations: [UserAccountComponent],
 })
 export class UserModule {
-  static dynamicComponents = [UserAccountComponent]
+  static dynamicComponents = [UserAccountComponent];
 }
