@@ -43,13 +43,13 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { NotesOfChildComponent } from "../notes/notes-of-child/notes-of-child.component";
 import { SchoolsModule } from "../schools/schools.module";
-import { EducationalMaterialComponent } from "../educational-material/educational-material-component/educational-material.component";
-import { AserComponent } from "../aser/aser-component/aser.component";
+import { EducationalMaterialComponent } from "./educational-material/educational-material-component/educational-material.component";
+import { AserComponent } from "./aser/aser-component/aser.component";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NotesDashboardComponent } from "../notes/dashboard-widgets/notes-dashboard/notes-dashboard.component";
-import { HealthCheckupComponent } from "../health-checkup/health-checkup-component/health-checkup.component";
+import { HealthCheckupComponent } from "./health-checkup/health-checkup-component/health-checkup.component";
 import { MatDatepickerModule } from "@angular/material/datepicker";
-import { PreviousSchoolsComponent } from "../previous-schools/previous-schools.component";
+import { PreviousSchoolsComponent } from "./previous-schools/previous-schools.component";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
 import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirmation-dialog.module";
@@ -136,7 +136,19 @@ import { ExportModule } from "../../core/export/export.module";
   ],
 })
 export class ChildrenModule {
-  static dynamicComponents = [ChildrenListComponent];
+  static dynamicComponents = [
+    ChildrenListComponent,
+    AserComponent,
+    ChildBlockComponent,
+    ChildrenCountDashboardComponent,
+    ChildrenBmiDashboardComponent,
+    BmiBlockComponent,
+    EducationalMaterialComponent,
+    HealthCheckupComponent,
+    NotesDashboardComponent,
+    NotesOfChildComponent,
+    PreviousSchoolsComponent,
+  ];
   constructor(entitySchemaService: EntitySchemaService) {
     entitySchemaService.registerSchemaDatatype(new PhotoDatatype());
   }

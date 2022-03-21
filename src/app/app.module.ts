@@ -47,9 +47,9 @@ import { DemoChildGenerator } from "./child-dev-project/children/demo-data-gener
 import { DemoSchoolGenerator } from "./child-dev-project/schools/demo-school-generator.service";
 import { DemoChildSchoolRelationGenerator } from "./child-dev-project/children/demo-data-generators/demo-child-school-relation-generator.service";
 import { DemoNoteGeneratorService } from "./child-dev-project/notes/demo-data/demo-note-generator.service";
-import { DemoAserGeneratorService } from "./child-dev-project/aser/demo-aser-generator.service";
-import { DemoEducationalMaterialGeneratorService } from "./child-dev-project/educational-material/demo-educational-material-generator.service";
-import { DemoHealthCheckGeneratorService } from "./child-dev-project/health-checkup/demo-data/demo-health-check-generator.service";
+import { DemoAserGeneratorService } from "./child-dev-project/children/aser/demo-aser-generator.service";
+import { DemoEducationalMaterialGeneratorService } from "./child-dev-project/children/educational-material/demo-educational-material-generator.service";
+import { DemoHealthCheckGeneratorService } from "./child-dev-project/children/health-checkup/demo-data/demo-health-check-generator.service";
 import { DemoProgressDashboardWidgetGeneratorService } from "./child-dev-project/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service";
 import { DemoUserGeneratorService } from "./core/user/demo-user-generator.service";
 import { ConfirmationDialogModule } from "./core/confirmation-dialog/confirmation-dialog.module";

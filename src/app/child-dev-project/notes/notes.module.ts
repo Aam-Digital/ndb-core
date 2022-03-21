@@ -101,5 +101,8 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
   exports: [NoteDetailsComponent],
 })
 export class NotesModule {
-  static dynamicComponents = [NotesManagerComponent]
+  static dynamicComponents = [
+    NotesManagerComponent,
+    NoteAttendanceCountBlockComponent,
+  ];
 }

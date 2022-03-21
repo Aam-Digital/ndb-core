@@ -128,5 +128,10 @@ export class AttendanceModule {
     ActivityListComponent,
     AddDayAttendanceComponent,
     AttendanceManagerComponent,
+    ActivityAttendanceSectionComponent,
+    AttendanceWeekDashboardComponent,
+    GroupedChildAttendanceComponent,
+    AttendanceBlockComponent,
+    RecentAttendanceBlocksComponent,
   ];
 }

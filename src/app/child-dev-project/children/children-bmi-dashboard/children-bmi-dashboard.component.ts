@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { HealthCheck } from "../../health-checkup/model/health-check";
+import { HealthCheck } from "../health-checkup/model/health-check";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { take } from "rxjs/operators";
 import { ChildrenService } from "../children.service";

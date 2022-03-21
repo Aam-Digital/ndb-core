@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { DisplayUnitComponent } from "./display-unit.component";
-import { HealthCheck } from "../../../../../child-dev-project/health-checkup/model/health-check";
+import { HealthCheck } from "../../../../../child-dev-project/children/health-checkup/model/health-check";
 
 describe("DisplayUnitComponent", () => {
   let component: DisplayUnitComponent;

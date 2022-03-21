@@ -43,8 +43,8 @@ import { EntityUtilsModule } from "../entity-utils/entity-utils.module";
     MatMenuModule,
     FontAwesomeModule,
     EntityUtilsModule,
-  ]
+  ],
 })
 export class EntityDetailsModule {
-  static dynamicComponents = [EntityDetailsComponent]
+  static dynamicComponents = [EntityDetailsComponent, FormComponent];
 }

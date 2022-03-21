@@ -80,5 +80,9 @@ import { ViewModule } from "../../core/view/view.module";
   providers: [DatePipe],
 })
 export class SchoolsModule {
-  static dynamicComponents = [SchoolsListComponent]
+  static dynamicComponents = [
+    SchoolsListComponent,
+    ChildrenOverviewComponent,
+    SchoolBlockComponent,
+  ];
 }

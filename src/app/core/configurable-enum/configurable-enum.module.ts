@@ -66,12 +66,12 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatTooltipModule,
   ],
   exports: [ConfigurableEnumDirective],
-  entryComponents: [
-    EditConfigurableEnumComponent,
-    DisplayConfigurableEnumComponent,
-  ],
 })
 export class ConfigurableEnumModule {
+  static dynamicComponents = [
+    DisplayConfigurableEnumComponent,
+    EditConfigurableEnumComponent,
+  ];
   constructor(
     private configService: ConfigService,
     private entitySchemaService: EntitySchemaService

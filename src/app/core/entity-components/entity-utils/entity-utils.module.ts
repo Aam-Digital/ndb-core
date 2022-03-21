@@ -79,25 +79,6 @@ import { KeysPipeModule } from "../../keys-pipe/keys-pipe.module";
     EntitySubrecordModule,
     KeysPipeModule,
   ],
-  entryComponents: [
-    EditTextComponent,
-    EditDateComponent,
-    EditAgeComponent,
-    EditBooleanComponent,
-    EditLongTextComponent,
-    EditPhotoComponent,
-    EditEntityArrayComponent,
-    EditSingleEntityComponent,
-    DisplayEntityComponent,
-    DisplayEntityArrayComponent,
-    DisplayTextComponent,
-    DisplayDateComponent,
-    DisplayCheckmarkComponent,
-    ReadonlyFunctionComponent,
-    DisplayPercentageComponent,
-    DisplayUnitComponent,
-    EditNumberComponent,
-  ],
   exports: [
     DisplayEntityComponent,
     DisplayEntityArrayComponent,
@@ -105,4 +86,24 @@ import { KeysPipeModule } from "../../keys-pipe/keys-pipe.module";
     EditSingleEntityComponent,
   ],
 })
-export class EntityUtilsModule {}
+export class EntityUtilsModule {
+  static dynamicComponents = [
+    EditAgeComponent,
+    EditBooleanComponent,
+    EditEntityArrayComponent,
+    EditLongTextComponent,
+    EditNumberComponent,
+    EditPhotoComponent,
+    EditSingleEntityComponent,
+    EditTextComponent,
+    EditDateComponent,
+    DisplayCheckmarkComponent,
+    DisplayDateComponent,
+    DisplayEntityComponent,
+    DisplayEntityArrayComponent,
+    DisplayPercentageComponent,
+    DisplayTextComponent,
+    DisplayUnitComponent,
+    ReadonlyFunctionComponent,
+  ];
+}
