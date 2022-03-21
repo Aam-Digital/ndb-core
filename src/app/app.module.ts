@@ -32,7 +32,7 @@ import { NavigationModule } from "./core/navigation/navigation.module";
 import { LatestChangesModule } from "./core/latest-changes/latest-changes.module";
 import { UserModule } from "./core/user/user.module";
 
-import { ProgressDashboardWidgetModule } from "./child-dev-project/progress-dashboard-widget/progress-dashboard-widget.module";
+import { ProgressDashboardWidgetModule } from "./features/progress-dashboard-widget/progress-dashboard-widget.module";
 import { ChildrenModule } from "./child-dev-project/children/children.module";
 import { SchoolsModule } from "./child-dev-project/schools/schools.module";
 import { FlexLayoutModule } from "@angular/flex-layout";
@@ -50,7 +50,7 @@ import { DemoNoteGeneratorService } from "./child-dev-project/notes/demo-data/de
 import { DemoAserGeneratorService } from "./child-dev-project/children/aser/demo-aser-generator.service";
 import { DemoEducationalMaterialGeneratorService } from "./child-dev-project/children/educational-material/demo-educational-material-generator.service";
 import { DemoHealthCheckGeneratorService } from "./child-dev-project/children/health-checkup/demo-data/demo-health-check-generator.service";
-import { DemoProgressDashboardWidgetGeneratorService } from "./child-dev-project/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service";
+import { DemoProgressDashboardWidgetGeneratorService } from "./features/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service";
 import { DemoUserGeneratorService } from "./core/user/demo-user-generator.service";
 import { ConfirmationDialogModule } from "./core/confirmation-dialog/confirmation-dialog.module";
 import { FormDialogModule } from "./core/form-dialog/form-dialog.module";

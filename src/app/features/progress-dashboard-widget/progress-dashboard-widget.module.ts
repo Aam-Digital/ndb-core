@@ -23,7 +23,7 @@ import { MatCardModule } from "@angular/material/card";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
-import { ChildrenModule } from "../children/children.module";
+import { ChildrenModule } from "../../child-dev-project/children/children.module";
 import { ProgressDashboardComponent } from "./progress-dashboard/progress-dashboard.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { DashboardModule } from "../../core/dashboard/dashboard.module";

@@ -116,7 +116,6 @@ import { ViewModule } from "../../core/view/view.module";
     RollCallComponent,
     AttendanceStatusSelectComponent,
     AttendanceDayBlockComponent,
-    AttendanceWeekDashboardComponent,
     ActivityAttendanceSectionComponent,
     AttendanceBlockComponent,
     AttendanceCalendarComponent,
