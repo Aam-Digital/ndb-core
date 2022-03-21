@@ -134,9 +134,9 @@ import { ExportModule } from "../../core/export/export.module";
     HealthCheckupComponent,
     PreviousSchoolsComponent,
   ],
-  entryComponents: [ChildBlockComponent],
 })
 export class ChildrenModule {
+  static dynamicComponents = [ChildrenListComponent];
   constructor(entitySchemaService: EntitySchemaService) {
     entitySchemaService.registerSchemaDatatype(new PhotoDatatype());
   }

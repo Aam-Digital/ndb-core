@@ -53,4 +53,6 @@ routes: Routes = [
   ],
   declarations: [ConflictResolutionListComponent, CompareRevComponent],
 })
-export class ConflictResolutionModule {}
+export class ConflictResolutionModule {
+  static dynamicComponents = [ConflictResolutionListComponent]
+}

@@ -122,6 +122,11 @@ import { ViewModule } from "../../core/view/view.module";
     AttendanceCalendarComponent,
     AttendanceDetailsComponent,
   ],
-  entryComponents: [AttendanceDetailsComponent],
 })
-export class AttendanceModule {}
+export class AttendanceModule {
+  static dynamicComponents = [
+    ActivityListComponent,
+    AddDayAttendanceComponent,
+    AttendanceManagerComponent,
+  ];
+}

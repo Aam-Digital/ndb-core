@@ -78,6 +78,7 @@ import { ViewModule } from "../../core/view/view.module";
   ],
   exports: [SchoolBlockComponent],
   providers: [DatePipe],
-  entryComponents: [SchoolBlockComponent],
 })
-export class SchoolsModule {}
+export class SchoolsModule {
+  static dynamicComponents = [SchoolsListComponent]
+}

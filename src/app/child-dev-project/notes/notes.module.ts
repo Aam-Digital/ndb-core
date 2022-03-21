@@ -98,8 +98,8 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     FontAwesomeModule,
     MatMenuModule,
   ],
-  providers: [],
   exports: [NoteDetailsComponent],
-  entryComponents: [NoteDetailsComponent],
 })
-export class NotesModule {}
+export class NotesModule {
+  static dynamicComponents = [NotesManagerComponent]
+}
