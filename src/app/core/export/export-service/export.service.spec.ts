@@ -382,8 +382,8 @@ describe("ExportService", () => {
     const resultRows = result.split(ExportService.SEPARATOR_ROW);
     expect(resultRows).toEqual([
       '"Name","Participation"',
-      '"some child","0.5"',
-      '"some child","1"',
+      '"some child","0.50"',
+      '"some child","1.00"',
     ]);
   });
 

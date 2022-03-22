@@ -1,4 +1,4 @@
-import { getReadableValue } from "./sorting-accessor";
+import { getReadableValue } from "./value-accessor";
 
 export function tableSort<OBJECT, PROPERTY extends keyof OBJECT>(
   data: OBJECT[],

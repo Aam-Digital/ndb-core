@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Papa } from "ngx-papaparse";
-import { getReadableValue } from "../../entity-components/entity-subrecord/entity-subrecord/sorting-accessor";
+import { getReadableValue } from "../../entity-components/entity-subrecord/entity-subrecord/value-accessor";
 import { ExportColumnConfig } from "./export-column-config";
 import { QueryService } from "../../../features/reporting/query.service";
 import moment from "moment";

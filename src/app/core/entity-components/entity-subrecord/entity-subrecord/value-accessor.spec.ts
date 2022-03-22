@@ -1,9 +1,13 @@
-import { getReadableValue } from "./sorting-accessor";
+import { getReadableValue } from "./value-accessor";
 
 describe("getReadableValue", () => {
-  function expectObjectToContain(obj: object, expected: any[], type: string) {
+  function expectObjectToContain<OBJECT, PROPERTY extends keyof OBJECT>(
+    obj: OBJECT,
+    expected: (OBJECT[PROPERTY] | "string")[],
+    type: string
+  ) {
     let index = 0;
-    for (const key of Object.keys(obj)) {
+    for (const key of Object.keys(obj) as PROPERTY[]) {
       const accessed = getReadableValue(obj, key);
       expect(accessed).toEqual(expected[index]);
       expect(typeof accessed).toBe(type);
@@ -26,16 +30,6 @@ describe("getReadableValue", () => {
       c: 10e3,
     };
     expectObjectToContain(obj, [1, 2.0, 10e3], "number");
-  });
-
-  it("should return numbers when a string is parsable", () => {
-    const obj = {
-      a: "1",
-      b: "2.0",
-      c: "10e3",
-      d: "0x1",
-    };
-    expectObjectToContain(obj, [1, 2.0, 10e3, 0x1], "number");
   });
 
   it("should return the label when the queried object has a 'label' key", () => {
@@ -64,15 +58,5 @@ describe("getReadableValue", () => {
       value1: 123,
       value2: "hello",
     });
-  });
-
-  it("should return strings as lower case", () => {
-    const values = ["b", "A", "C"];
-
-    const result = values
-      .map((val) => getReadableValue({ key: val }, "key"))
-      .sort();
-
-    expect(result).toEqual(["a", "b", "c"]);
   });
 });
