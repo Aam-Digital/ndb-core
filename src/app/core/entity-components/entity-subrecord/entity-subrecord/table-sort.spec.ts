@@ -37,13 +37,15 @@ describe("TableSort", () => {
   });
 
   it("should return input array if not sort direction is defined", () => {
-    const values = ["3", 1, 2, undefined, "ten"].map((val) => ({ key: val }));
+    const values = ["3", 1, 2, undefined, "ten"].map((val) => ({
+      record: { key: val },
+    }));
     const result = tableSort([...values], { direction: "", active: "key" });
     expect(result).toEqual(values);
   });
 
   it("should return input array if no active property is defined", () => {
-    const values = [{ key: 2 }, { key: 1 }, { key: 3 }];
+    const values = [2, 1, 3].map((val) => ({ record: { key: val } }));
     const result = tableSort([...values], { direction: "asc", active: "" });
     expect(result).toEqual(values);
   });
@@ -52,11 +54,11 @@ describe("TableSort", () => {
     sortedArray: any[],
     direction: "asc" | "desc" | "" = "asc"
   ) {
-    const objectArray = sortedArray.map((val) => ({ key: val }));
+    const objectArray = sortedArray.map((val) => ({ record: { key: val } }));
     for (let i = 0; i < sortedArray.length; i++) {
       const shuffled = shuffle(objectArray);
       const result = tableSort(shuffled, { direction, active: "key" });
-      const resultValues = result.map((row) => row.key);
+      const resultValues = result.map((row) => row.record.key);
       console.log("result", resultValues, sortedArray);
       expect(resultValues).toEqual(sortedArray);
     }

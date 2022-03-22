@@ -1,18 +1,19 @@
 import { getReadableValue } from "./value-accessor";
+import { TableRow } from "./entity-subrecord.component";
 
 export function tableSort<OBJECT, PROPERTY extends keyof OBJECT>(
-  data: OBJECT[],
+  data: TableRow<OBJECT>[],
   {
     direction,
     active,
   }: { direction: "asc" | "desc" | ""; active: PROPERTY | "" }
-): OBJECT[] {
+): TableRow<OBJECT>[] {
   if (direction === "" || !active) {
     return data;
   }
   data.sort((objA, objB) => {
-    const valueA = getComparableValue(objA, active);
-    const valueB = getComparableValue(objB, active);
+    const valueA = getComparableValue(objA.record, active);
+    const valueB = getComparableValue(objB.record, active);
     return compareValues(valueA, valueB);
   });
   if (direction === "desc") {
