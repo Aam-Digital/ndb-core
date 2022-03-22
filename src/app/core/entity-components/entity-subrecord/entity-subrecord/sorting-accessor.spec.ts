@@ -1,10 +1,10 @@
-import { entityListSortingAccessor } from "./sorting-accessor";
+import { getReadableValue } from "./sorting-accessor";
 
-describe("entityListSortingAccessor", () => {
+describe("getReadableValue", () => {
   function expectObjectToContain(obj: object, expected: any[], type: string) {
     let index = 0;
     for (const key of Object.keys(obj)) {
-      const accessed = entityListSortingAccessor(obj, key);
+      const accessed = getReadableValue(obj, key);
       expect(accessed).toEqual(expected[index]);
       expect(typeof accessed).toBe(type);
       index += 1;
@@ -46,7 +46,7 @@ describe("entityListSortingAccessor", () => {
         value2: "hello",
       },
     };
-    const accessed = entityListSortingAccessor(object, "data");
+    const accessed = getReadableValue(object, "data");
     expect(typeof accessed).toBe("string");
     expect(accessed).toBe("data label");
   });
@@ -58,7 +58,7 @@ describe("entityListSortingAccessor", () => {
         value2: "hello",
       },
     };
-    const accessed = entityListSortingAccessor(object, "data");
+    const accessed = getReadableValue(object, "data");
     expect(typeof accessed).toBe("object");
     expect(accessed).toEqual({
       value1: 123,
@@ -70,7 +70,7 @@ describe("entityListSortingAccessor", () => {
     const values = ["b", "A", "C"];
 
     const result = values
-      .map((val) => entityListSortingAccessor({ key: val }, "key"))
+      .map((val) => getReadableValue({ key: val }, "key"))
       .sort();
 
     expect(result).toEqual(["a", "b", "c"]);

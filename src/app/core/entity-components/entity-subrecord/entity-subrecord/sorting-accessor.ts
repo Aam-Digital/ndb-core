@@ -5,7 +5,7 @@
  * @param data The object (table row); passed in by the data source
  * @param key The active sorting header key; passed in by the data source
  */
-export function entityListSortingAccessor(data: Object, key: any): any {
+export function getReadableValue(data: Object, key: any): any {
   if (isConfigurableEnum(data, key)) {
     return data[key].label;
   } else {

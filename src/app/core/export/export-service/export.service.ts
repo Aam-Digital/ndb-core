@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Papa } from "ngx-papaparse";
-import { entityListSortingAccessor } from "../../entity-components/entity-subrecord/entity-subrecord/sorting-accessor";
+import { getReadableValue } from "../../entity-components/entity-subrecord/entity-subrecord/sorting-accessor";
 import { ExportColumnConfig } from "./export-column-config";
 import { QueryService } from "../../../features/reporting/query.service";
 import moment from "moment";
@@ -102,7 +102,7 @@ export class ExportService {
           // Export data according to local timezone offset
           readableRow[key] = moment(row[key]).toISOString(true);
         } else {
-          readableRow[key] = entityListSortingAccessor(row, key);
+          readableRow[key] = getReadableValue(row, key);
         }
       });
       return readableRow;

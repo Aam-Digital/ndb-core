@@ -12,7 +12,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Entity } from "../../../entity/model/entity";
 import { AlertService } from "../../../alerts/alert.service";
 import { Subscription } from "rxjs";
-import { entityListSortingAccessor } from "./sorting-accessor";
+import { getReadableValue } from "./sorting-accessor";
 import { FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { EntityFormService } from "../../entity-form/entity-form.service";
@@ -178,7 +178,7 @@ export class EntitySubrecordComponent<T extends Entity>
     this.recordsDataSource.sortingDataAccessor = (
       row: TableRow<T>,
       id: string
-    ) => entityListSortingAccessor(row.record, id);
+    ) => getReadableValue(row.record, id);
     if (!this.sort || this.sort.active) {
       // do not overwrite existing sort
       return;

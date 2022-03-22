@@ -1,5 +1,5 @@
 import { Entity } from "../../entity/model/entity";
-import { entityListSortingAccessor } from "../entity-subrecord/entity-subrecord/sorting-accessor";
+import { getReadableValue } from "../entity-subrecord/entity-subrecord/sorting-accessor";
 
 export function entityFilterPredicate<T extends Entity>(
   data: T,
@@ -7,7 +7,7 @@ export function entityFilterPredicate<T extends Entity>(
 ): boolean {
   const keys = Object.keys(data);
   return keys.some((property) =>
-    entityListSortingAccessor(data, property)
+    getReadableValue(data, property)
       ?.toString()
       .toLowerCase()
       .includes(filter)
