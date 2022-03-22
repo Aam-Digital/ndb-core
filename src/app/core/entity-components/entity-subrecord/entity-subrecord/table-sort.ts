@@ -43,10 +43,10 @@ function getComparableValue<OBJECT, PROPERTY extends keyof OBJECT>(
   }
 }
 
-function compareValues(a: any, b: any) {
+function compareValues(a, b) {
   let result = 0;
   if (a === b) {
-    result = 0;
+    // keep result 0
   } else if (typeof a === "string" && typeof b === "string") {
     result = a.localeCompare(b, undefined, { numeric: true });
   } else if (a > b || b === null || b === undefined) {
