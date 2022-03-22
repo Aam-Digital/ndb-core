@@ -59,21 +59,15 @@ describe("TableSort", () => {
       const shuffled = shuffle(objectArray);
       const result = tableSort(shuffled, { direction, active: "key" });
       const resultValues = result.map((row) => row.record.key);
-      console.log("result", resultValues, sortedArray);
       expect(resultValues).toEqual(sortedArray);
     }
   }
 
   function shuffle<OBJECT>(array: OBJECT[]): OBJECT[] {
-    let currentIndex = array.length;
     const result = [...array];
-    let randomIndex;
-
-    // While there remain elements to shuffle...
-    while (currentIndex != 0) {
+    for (let currentIndex = 0; currentIndex < array.length; currentIndex++) {
       // Pick a remaining element...
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
+      const randomIndex = Math.floor(Math.random() * currentIndex);
 
       // And swap it with the current element.
       [result[currentIndex], result[randomIndex]] = [

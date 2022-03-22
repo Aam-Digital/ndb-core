@@ -1,6 +1,13 @@
 import { getReadableValue } from "./value-accessor";
 import { TableRow } from "./entity-subrecord.component";
 
+/**
+ * Custom sort implementation for a MatTableDataSource<TableRow<T>>
+ * @param data The data of the data source
+ * @param direction direction "asc", "desc" or "" meaning none
+ * @param active the property of T for which it should be sorted
+ * @returns the sorted table rows
+ */
 export function tableSort<OBJECT, PROPERTY extends keyof OBJECT>(
   data: TableRow<OBJECT>[],
   {
@@ -37,16 +44,15 @@ function getComparableValue<OBJECT, PROPERTY extends keyof OBJECT>(
 }
 
 function compareValues(a: any, b: any) {
-  // Handle null values
+  let result = 0;
   if (a === b) {
-    return 0;
+    result = 0;
   } else if (typeof a === "string" && typeof b === "string") {
-    return a.localeCompare(b, undefined, { numeric: true });
+    result = a.localeCompare(b, undefined, { numeric: true });
   } else if (a > b || b === null || b === undefined) {
-    return -1;
+    result = -1;
   } else if (a < b || a === null || a === undefined) {
-    return 1;
-  } else {
-    return 0;
+    result = 1;
   }
+  return result;
 }
