@@ -3,10 +3,8 @@ import { moduleMetadata } from "@storybook/angular";
 import { DataImportModule } from "../data-import.module";
 import { DataImportComponent } from "./data-import.component";
 import { DataImportService } from "../data-import.service";
-import { DynamicEntityService } from "../../../core/entity/dynamic-entity.service";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { EntityConstructor } from "../../../core/entity/model/entity";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { PouchDatabase } from "../../../core/database/pouch-database";
 import { Database } from "../../../core/database/database";
 import { MatDialogModule } from "@angular/material/dialog";
@@ -14,6 +12,7 @@ import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { BackupService } from "../../../core/admin/services/backup.service";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 import { QueryService } from "../../reporting/query.service";
+import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
 let mockEntityMap: Map<string, EntityConstructor>;
 mockEntityMap = new Map<"Participant", EntityConstructor<Child>>();
@@ -25,7 +24,7 @@ export default {
     moduleMetadata({
       imports: [
         DataImportModule,
-        FontAwesomeTestingModule,
+        StorybookBaseModule,
         MatDialogModule,
         MatSnackBarModule,
       ],
@@ -47,10 +46,6 @@ export default {
           useValue: {
             queryData: () => undefined,
           },
-        },
-        {
-          provide: DynamicEntityService,
-          useValue: new DynamicEntityService(undefined, undefined),
         },
       ],
     }),
