@@ -81,8 +81,7 @@ describe("UpdateManagerService", () => {
       "update-" + version
     );
 
-    // tslint:disable-next-line:no-unused-expression
-    new UpdateManagerService(null, null, null, null, null, location);
+    createService();
 
     expect(location.reload).toHaveBeenCalled();
     expect(
@@ -144,7 +143,36 @@ describe("UpdateManagerService", () => {
     discardPeriodicTasks();
   }));
 
-  it("should trigger the latest changes dialog on startup", () => {
+  it("should trigger the latest changes dialog on startup if update note is not se", () => {
+    latestChangesDialog.showLatestChangesIfUpdated.calls.reset();
+    window.localStorage.setItem(
+      LatestChangesDialogService.VERSION_KEY,
+      "update-1.0.0"
+    );
+
+    createService();
+
+    expect(
+      latestChangesDialog.showLatestChangesIfUpdated
+    ).not.toHaveBeenCalled();
+
+    window.localStorage.setItem(
+      LatestChangesDialogService.VERSION_KEY,
+      "1.0.0"
+    );
+    createService();
+
     expect(latestChangesDialog.showLatestChangesIfUpdated).toHaveBeenCalled();
   });
+
+  function createService() {
+    return new UpdateManagerService(
+      appRef,
+      swUpdate,
+      snackBar,
+      undefined,
+      latestChangesDialog,
+      location
+    );
+  }
 });
