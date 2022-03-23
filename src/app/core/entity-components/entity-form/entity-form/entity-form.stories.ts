@@ -84,6 +84,7 @@ const cols = [
       label: "Assigned school(s)",
     },
   ],
+  ["school"],
 ];
 
 Child.schema.set("has_rationCard", {
@@ -91,6 +92,13 @@ Child.schema.set("has_rationCard", {
   innerDataType: "document-status",
 });
 Child.schema.set("assignedTo", { dataType: "array", innerDataType: "string" });
+Child.schema.set("school", {
+  dataType: "string",
+  label: "Assigned School",
+  additional: School.ENTITY_TYPE,
+  viewComponent: "DisplayEntity",
+  editComponent: "EditSingleEntity",
+});
 
 const Template: Story<EntityFormComponent> = (args: EntityFormComponent) => ({
   component: EntityFormComponent,
