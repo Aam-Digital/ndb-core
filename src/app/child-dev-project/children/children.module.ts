@@ -41,15 +41,13 @@ import { ChildrenService } from "./children.service";
 import { ChildrenCountDashboardComponent } from "./children-count-dashboard/children-count-dashboard.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { NotesOfChildComponent } from "../notes/notes-of-child/notes-of-child.component";
 import { SchoolsModule } from "../schools/schools.module";
-import { EducationalMaterialComponent } from "../educational-material/educational-material-component/educational-material.component";
-import { AserComponent } from "../aser/aser-component/aser.component";
+import { EducationalMaterialComponent } from "./educational-material/educational-material-component/educational-material.component";
+import { AserComponent } from "./aser/aser-component/aser.component";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { NotesDashboardComponent } from "../notes/dashboard-widgets/notes-dashboard/notes-dashboard.component";
-import { HealthCheckupComponent } from "../health-checkup/health-checkup-component/health-checkup.component";
+import { HealthCheckupComponent } from "./health-checkup/health-checkup-component/health-checkup.component";
 import { MatDatepickerModule } from "@angular/material/datepicker";
-import { PreviousSchoolsComponent } from "../previous-schools/previous-schools.component";
+import { PreviousSchoolsComponent } from "./previous-schools/previous-schools.component";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
 import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirmation-dialog.module";
@@ -114,27 +112,30 @@ import { ExportModule } from "../../core/export/export.module";
   ],
   declarations: [
     ChildBlockComponent,
-    NotesOfChildComponent,
     ChildrenListComponent,
     ChildrenCountDashboardComponent,
     EducationalMaterialComponent,
     AserComponent,
-    NotesDashboardComponent,
     HealthCheckupComponent,
     PreviousSchoolsComponent,
     BmiBlockComponent,
     ChildrenBmiDashboardComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
-  exports: [
-    ChildBlockComponent,
-    ChildrenCountDashboardComponent,
-    NotesDashboardComponent,
-    BmiBlockComponent,
-  ],
-  entryComponents: [ChildBlockComponent],
+  exports: [ChildBlockComponent],
 })
 export class ChildrenModule {
+  static dynamicComponents = [
+    ChildrenListComponent,
+    AserComponent,
+    ChildBlockComponent,
+    ChildrenCountDashboardComponent,
+    ChildrenBmiDashboardComponent,
+    BmiBlockComponent,
+    EducationalMaterialComponent,
+    HealthCheckupComponent,
+    PreviousSchoolsComponent,
+  ];
   constructor(entitySchemaService: EntitySchemaService) {
     entitySchemaService.registerSchemaDatatype(new PhotoDatatype());
   }

@@ -1,12 +1,14 @@
 import { TestBed } from "@angular/core/testing";
 
 import { EntityConfig, EntityConfigService } from "./entity-config.service";
-import { DatabaseEntity } from "./database-entity.decorator";
+import {
+  DatabaseEntity,
+  EntityRegistry,
+  entityRegistry,
+} from "./database-entity.decorator";
 import { DatabaseField } from "./database-field.decorator";
 import { Entity } from "./model/entity";
 import { ConfigService } from "../config/config.service";
-import { DynamicEntityService } from "./dynamic-entity.service";
-import { LoggingService } from "../logging/logging.service";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 import { EntityMapperService } from "./entity-mapper.service";
 import { mockEntityMapper } from "./mock-entity-mapper-service";
@@ -22,7 +24,6 @@ declare global {
 describe("EntityConfigService", () => {
   let service: EntityConfigService;
   let mockConfigService: jasmine.SpyObj<ConfigService>;
-  let mockLogger: jasmine.SpyObj<LoggingService>;
   const testConfig: EntityConfig = {
     attributes: [{ name: "testAttribute", schema: { dataType: "string" } }],
   };
@@ -52,14 +53,15 @@ describe("EntityConfigService", () => {
 
   beforeEach(() => {
     mockConfigService = jasmine.createSpyObj(["getConfig", "getAllConfigs"]);
-    mockLogger = jasmine.createSpyObj(["error"]);
     mockConfigService.getConfig.and.returnValue(testConfig);
     TestBed.configureTestingModule({
       providers: [
         { provide: ConfigService, useValue: mockConfigService },
-        { provide: LoggingService, useValue: mockLogger },
         { provide: EntityMapperService, useValue: mockEntityMapper() },
-        DynamicEntityService,
+        {
+          provide: EntityRegistry,
+          useValue: entityRegistry,
+        },
         EntitySchemaService,
       ],
     });
@@ -90,7 +92,7 @@ describe("EntityConfigService", () => {
     expect(result).toBe(config);
   });
 
-  it("warns when trying to setting the entities up from config and they are not registered", () => {
+  it("throws an error when trying to setting the entities up from config and they are not registered", () => {
     const configWithInvalidEntities: (EntityConfig & { _id: string })[] = [
       {
         _id: "entity:IDoNotExist",
@@ -98,8 +100,8 @@ describe("EntityConfigService", () => {
       },
     ];
     mockConfigService.getAllConfigs.and.returnValue(configWithInvalidEntities);
-    service.setupEntitiesFromConfig();
-    expect(mockLogger.error).toHaveBeenCalled();
+
+    expect(() => service.setupEntitiesFromConfig()).toThrowError();
   });
 
   it("appends custom definitions for each entity from the config", () => {
@@ -131,7 +133,6 @@ describe("EntityConfigService", () => {
     ];
     mockConfigService.getAllConfigs.and.returnValue(mockEntityConfigs);
     service.setupEntitiesFromConfig();
-    expect(mockLogger.error).not.toHaveBeenCalled();
     expect(Test.schema).toContainKey(ATTRIBUTE_1_NAME);
     expect(Test2.schema).toContainKey(ATTRIBUTE_2_NAME);
   });

@@ -5,7 +5,10 @@ import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 import { Child } from "../../../../../child-dev-project/children/model/child";
 import { Note } from "../../../../../child-dev-project/notes/model/note";
 import { EntitySchemaService } from "../../../../entity/schema/entity-schema.service";
-import { DynamicEntityService } from "../../../../entity/dynamic-entity.service";
+import {
+  EntityRegistry,
+  entityRegistry,
+} from "../../../../entity/database-entity.decorator";
 
 describe("DisplayEntityArrayComponent", () => {
   let component: DisplayEntityArrayComponent;
@@ -19,8 +22,8 @@ describe("DisplayEntityArrayComponent", () => {
       declarations: [DisplayEntityArrayComponent],
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper },
+        { provide: EntityRegistry, useValue: entityRegistry },
         EntitySchemaService,
-        DynamicEntityService,
       ],
     }).compileComponents();
   });

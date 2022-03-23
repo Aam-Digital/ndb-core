@@ -7,7 +7,6 @@ import { Child } from "../../child-dev-project/children/model/child";
 import { Note } from "../../child-dev-project/notes/model/note";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
-import { DynamicEntityService } from "../entity/dynamic-entity.service";
 import { SyncState } from "../session/session-states/sync-state.enum";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { PermissionEnforcerService } from "./permission-enforcer.service";
@@ -67,7 +66,6 @@ describe("AbilityService", () => {
         },
         { provide: LoggingService, useValue: mockLoggingService },
         EntitySchemaService,
-        DynamicEntityService,
         AbilityService,
       ],
     });

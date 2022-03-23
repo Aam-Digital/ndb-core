@@ -5,7 +5,6 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatDialogModule } from "@angular/material/dialog";
 import { FormDialogModule } from "../../form-dialog/form-dialog.module";
 import { MockSessionModule } from "../../session/mock-session.module";
-import { DynamicEntityService } from "../../entity/dynamic-entity.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
 
@@ -23,7 +22,7 @@ describe("PrimaryActionComponent", () => {
         HttpClientTestingModule,
         MockSessionModule.withState(),
       ],
-      providers: [DynamicEntityService, EntitySchemaService],
+      providers: [EntitySchemaService],
     }).compileComponents();
   });
 

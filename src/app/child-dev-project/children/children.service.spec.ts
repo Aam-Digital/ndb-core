@@ -10,6 +10,11 @@ import { Database } from "../../core/database/database";
 import { Note } from "../notes/model/note";
 import { PouchDatabase } from "../../core/database/pouch-database";
 import { genders } from "./model/genders";
+import { skip } from "rxjs/operators";
+import {
+  EntityRegistry,
+  entityRegistry,
+} from "../../core/entity/database-entity.decorator";
 
 describe("ChildrenService", () => {
   let service: ChildrenService;
@@ -20,6 +25,7 @@ describe("ChildrenService", () => {
     database = PouchDatabase.createWithData();
     TestBed.configureTestingModule({
       providers: [
+        { provide: EntityRegistry, useValue: entityRegistry },
         ChildrenService,
         EntityMapperService,
         EntitySchemaService,
@@ -147,7 +153,7 @@ describe("ChildrenService", () => {
   });
 
   it("should load all children with school info", async () => {
-    const children = await service.getChildren().toPromise();
+    const children = await service.getChildren().pipe(skip(1)).toPromise();
     const child1 = children.find((child) => child.getId() === "1");
     expect(child1.schoolClass).toBe("2");
     expect(child1.schoolId).toBe("1");

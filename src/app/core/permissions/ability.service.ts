@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Entity, EntityConstructor } from "../entity/model/entity";
 import { SessionService } from "../session/session-service/session.service";
-import { DynamicEntityService } from "../entity/dynamic-entity.service";
 import { filter } from "rxjs/operators";
 import { SyncState } from "../session/session-states/sync-state.enum";
 import { merge, Observable, Subject } from "rxjs";
@@ -42,7 +41,6 @@ export class AbilityService {
   constructor(
     private ability: EntityAbility,
     private sessionService: SessionService,
-    private dynamicEntityService: DynamicEntityService,
     private entityMapper: EntityMapperService,
     private permissionEnforcer: PermissionEnforcerService,
     private logger: LoggingService

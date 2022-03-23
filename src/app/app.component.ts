@@ -26,13 +26,13 @@ import { SyncState } from "./core/session/session-states/sync-state.enum";
 import { ActivatedRoute, Router } from "@angular/router";
 import { waitForChangeTo } from "./core/session/session-states/session-utils";
 import { environment } from "../environments/environment";
-import { DynamicEntityService } from "./core/entity/dynamic-entity.service";
 import { Child } from "./child-dev-project/children/model/child";
 import { School } from "./child-dev-project/schools/model/school";
 import { DemoDataInitializerService } from "./core/demo-data/demo-data-initializer.service";
 import { AppConfig } from "./core/app-config/app-config";
 import { LoginState } from "./core/session/session-states/login-state.enum";
 import { LoggingService } from "./core/logging/logging.service";
+import { EntityRegistry } from "./core/entity/database-entity.decorator";
 
 @Component({
   selector: "app-root",
@@ -53,7 +53,8 @@ export class AppComponent {
     private sessionService: SessionService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private demoDataInitializer: DemoDataInitializerService
+    private demoDataInitializer: DemoDataInitializerService,
+    private entities: EntityRegistry
   ) {
     this.initBasicServices();
   }
@@ -62,8 +63,8 @@ export class AppComponent {
     // TODO: remove this with issue #886
     // This needs to be in the app module (as opposed to the dynamic entity service)
     // to prevent circular dependencies
-    DynamicEntityService.registerNewEntity("Participant", Child);
-    DynamicEntityService.registerNewEntity("Team", School);
+    this.entities.add("Participant", Child);
+    this.entities.add("Team", School);
     // first register to events
 
     // Reload config once the database is synced

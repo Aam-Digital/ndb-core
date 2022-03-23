@@ -2,12 +2,12 @@ import { Inject, Injectable } from "@angular/core";
 import { DatabaseRule } from "./permission-types";
 import { SessionService } from "../session/session-service/session.service";
 import { EntityConstructor } from "../entity/model/entity";
-import { DynamicEntityService } from "../entity/dynamic-entity.service";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Database } from "../database/database";
 import { LOCATION_TOKEN } from "../../utils/di-tokens";
 import { AnalyticsService } from "../analytics/analytics.service";
 import { EntityAbility } from "./entity-ability";
+import { EntityRegistry } from "../entity/database-entity.decorator";
 
 @Injectable()
 /**
@@ -24,11 +24,11 @@ export class PermissionEnforcerService {
 
   constructor(
     private sessionService: SessionService,
-    private dynamicEntityService: DynamicEntityService,
     private ability: EntityAbility,
     private entityMapper: EntityMapperService,
     private database: Database,
     private analyticsService: AnalyticsService,
+    private entities: EntityRegistry,
     @Inject(LOCATION_TOKEN) private location: Location
   ) {}
 
@@ -63,13 +63,11 @@ export class PermissionEnforcerService {
   private getSubjectsWithReadRestrictions(
     rules: DatabaseRule[]
   ): EntityConstructor[] {
-    const subjects = new Set<string>(DynamicEntityService.ENTITY_MAP.keys());
+    const subjects = new Set<string>(this.entities.keys());
     rules
       .filter((rule) => this.isReadRule(rule))
       .forEach((rule) => this.collectSubjectsFromRule(rule, subjects));
-    return [...subjects].map((subj) =>
-      this.dynamicEntityService.getEntityConstructor(subj)
-    );
+    return [...subjects].map((subj) => this.entities.get(subj));
   }
 
   private collectSubjectsFromRule(rule: DatabaseRule, subjects: Set<string>) {
@@ -93,7 +91,7 @@ export class PermissionEnforcerService {
 
   private getRelevantSubjects(rule: DatabaseRule): string[] {
     if (rule.subject === "any") {
-      return [...DynamicEntityService.ENTITY_MAP.keys()];
+      return [...this.entities.keys()];
     } else if (Array.isArray(rule.subject)) {
       return rule.subject;
     } else {

@@ -13,7 +13,6 @@ import { EntityAbility } from "./entity-ability";
   declarations: [DisableEntityOperationDirective, DisabledWrapperComponent],
   imports: [CommonModule, MatTooltipModule],
   exports: [DisableEntityOperationDirective],
-  entryComponents: [DisabledWrapperComponent],
   providers: [
     UserRoleGuard,
     AbilityService,

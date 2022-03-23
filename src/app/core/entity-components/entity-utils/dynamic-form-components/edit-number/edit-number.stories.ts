@@ -1,6 +1,5 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityUtilsModule } from "../../entity-utils.module";
 import { EntitySchemaService } from "../../../../entity/schema/entity-schema.service";
 import { EntityFormComponent } from "../../../entity-form/entity-form/entity-form.component";
@@ -11,6 +10,8 @@ import { AlertsModule } from "../../../../alerts/alerts.module";
 import { Entity } from "../../../../entity/model/entity";
 import { DatabaseField } from "../../../../entity/database-field.decorator";
 import { DatabaseEntity } from "../../../../entity/database-entity.decorator";
+import { EntityPermissionsService } from "../../../../permissions/entity-permissions.service";
+import { StorybookBaseModule } from "../../../../../utils/storybook-base.module";
 
 export default {
   title: "Core/Entity Property Fields/Number",
@@ -21,7 +22,7 @@ export default {
         EntityFormModule,
         EntityUtilsModule,
         AlertsModule,
-        BrowserAnimationsModule,
+        StorybookBaseModule,
       ],
       providers: [
         EntitySchemaService,

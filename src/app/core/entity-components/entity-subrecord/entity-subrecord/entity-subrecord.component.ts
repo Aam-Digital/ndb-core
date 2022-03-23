@@ -13,7 +13,6 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { AlertService } from "../../../alerts/alert.service";
 import { Subscription } from "rxjs";
-import { entityListSortingAccessor } from "./sorting-accessor";
 import { FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { EntityFormService } from "../../entity-form/entity-form.service";
@@ -26,6 +25,7 @@ import {
   RemoveResult,
 } from "../../../entity/entity-remove.service";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
+import { tableSort } from "./table-sort";
 
 export interface TableRow<T> {
   record: T;
@@ -196,10 +196,11 @@ export class EntitySubrecordComponent<T extends Entity>
 
   private initDefaultSort() {
     this.recordsDataSource.sort = this.sort;
-    this.recordsDataSource.sortingDataAccessor = (
-      row: TableRow<T>,
-      id: string
-    ) => entityListSortingAccessor(row.record, id);
+    this.recordsDataSource.sortData = (data, sort) =>
+      tableSort(data, {
+        active: sort.active as keyof T | "",
+        direction: sort.direction,
+      });
     if (!this.sort || this.sort.active) {
       // do not overwrite existing sort
       return;

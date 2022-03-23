@@ -8,15 +8,10 @@ import {
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { AttendanceDetailsComponent } from "./attendance-details.component";
 import { AttendanceModule } from "../attendance.module";
-import { RouterTestingModule } from "@angular/router/testing";
-import { FormDialogModule } from "../../../core/form-dialog/form-dialog.module";
-import { Angulartics2Module } from "angulartics2";
-import { MatNativeDateModule } from "@angular/material/core";
-import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { MatDialogRef } from "@angular/material/dialog";
-import { NotesModule } from "../../notes/notes.module";
 import { AttendanceService } from "../attendance.service";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
 const demoActivity = RecurringActivity.create("Coaching Batch C");
 const activityAttendance = ActivityAttendance.create(new Date("2020-01-01"), [
@@ -61,12 +56,7 @@ export default {
     moduleMetadata({
       imports: [
         AttendanceModule,
-        EntitySubrecordModule,
-        FormDialogModule,
-        RouterTestingModule,
-        MatNativeDateModule,
-        NotesModule,
-        Angulartics2Module.forRoot(),
+        StorybookBaseModule,
         MockSessionModule.withState(),
       ],
       declarations: [],

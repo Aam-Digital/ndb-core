@@ -13,8 +13,10 @@ import { School } from "../../schools/model/school";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
+import { RouteTarget } from "../../../app.routing";
 
 @UntilDestroy()
+@RouteTarget("ChildrenList")
 @Component({
   selector: "app-children-list",
   template: `

@@ -9,6 +9,10 @@ import { MatDialogRef } from "@angular/material/dialog";
 import { of } from "rxjs";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
+import {
+  EntityRegistry,
+  entityRegistry,
+} from "../../core/entity/database-entity.decorator";
 
 describe("DataImportService", () => {
   let db: PouchDatabase;
@@ -86,6 +90,10 @@ describe("DataImportService", () => {
         {
           provide: MatSnackBar,
           useValue: mockSnackBar,
+        },
+        {
+          provide: EntityRegistry,
+          useValue: entityRegistry,
         },
         EntityMapperService,
         EntitySchemaService,

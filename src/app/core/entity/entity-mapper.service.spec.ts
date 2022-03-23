@@ -20,6 +20,7 @@ import { Entity } from "./model/entity";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 import { waitForAsync } from "@angular/core/testing";
 import { PouchDatabase } from "../database/pouch-database";
+import { entityRegistry } from "./database-entity.decorator";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
@@ -42,7 +43,8 @@ describe("EntityMapperService", () => {
       testDatabase = PouchDatabase.createWithData();
       entityMapper = new EntityMapperService(
         testDatabase,
-        new EntitySchemaService()
+        new EntitySchemaService(),
+        entityRegistry
       );
 
       return Promise.all([

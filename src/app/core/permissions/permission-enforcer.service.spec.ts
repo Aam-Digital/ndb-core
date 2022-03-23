@@ -9,7 +9,6 @@ import { Database } from "../database/database";
 import { Child } from "../../child-dev-project/children/model/child";
 import { School } from "../../child-dev-project/schools/model/school";
 import { AbilityService } from "./ability.service";
-import { DynamicEntityService } from "../entity/dynamic-entity.service";
 import { SyncedSessionService } from "../session/session-service/synced-session.service";
 import { mockEntityMapper } from "../entity/mock-entity-mapper-service";
 import { LOCATION_TOKEN } from "../../utils/di-tokens";
@@ -19,6 +18,10 @@ import { BehaviorSubject, Subject } from "rxjs";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { EntityAbility } from "./entity-ability";
 import { Config } from "../config/config";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "../entity/database-entity.decorator";
 
 describe("PermissionEnforcerService", () => {
   let service: PermissionEnforcerService;
@@ -51,13 +54,13 @@ describe("PermissionEnforcerService", () => {
       providers: [
         PermissionEnforcerService,
         { provide: EntityMapperService, useValue: mockEntityMapper() },
-        DynamicEntityService,
         EntitySchemaService,
         EntityAbility,
         { provide: Database, useValue: mockDatabase },
         { provide: SessionService, useValue: mockSession },
         { provide: LOCATION_TOKEN, useValue: mockLocation },
         { provide: AnalyticsService, useValue: mockAnalytics },
+        { provide: EntityRegistry, useValue: entityRegistry },
         AbilityService,
       ],
     });

@@ -3,19 +3,12 @@ import { moduleMetadata } from "@storybook/angular";
 import { RecurringActivity } from "../model/recurring-activity";
 import { ActivityAttendanceSectionComponent } from "./activity-attendance-section.component";
 import { AttendanceModule } from "../attendance.module";
-import { RouterTestingModule } from "@angular/router/testing";
-import { AttendanceService } from "../attendance.service";
 import {
   ActivityAttendance,
   generateEventWithAttendance,
 } from "../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
-import { MatNativeDateModule } from "@angular/material/core";
-import { ChildrenService } from "../../children/children.service";
-import { of } from "rxjs";
-import { Child } from "../../children/model/child";
-import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
-import { Angulartics2Module } from "angulartics2";
+import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
 
 const demoActivity = RecurringActivity.create("Coaching Batch C");
@@ -72,24 +65,8 @@ export default {
     moduleMetadata({
       imports: [
         AttendanceModule,
-        EntitySubrecordModule,
-        RouterTestingModule,
-        MatNativeDateModule,
-        Angulartics2Module.forRoot(),
+        StorybookBaseModule,
         MockSessionModule.withState(),
-      ],
-      declarations: [],
-      providers: [
-        {
-          provide: AttendanceService,
-          useValue: {
-            getActivityAttendances: () => Promise.resolve(attendanceRecords),
-          },
-        },
-        {
-          provide: ChildrenService,
-          useValue: { getChild: () => of(Child.create("John Doe")) },
-        },
       ],
     }),
   ],

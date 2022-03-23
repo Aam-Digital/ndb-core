@@ -17,16 +17,21 @@ import { AppConfig } from "../app-config/app-config";
 import { SessionType } from "./session-type";
 import { PouchDatabase } from "../database/pouch-database";
 import { LOCATION_TOKEN } from "../../utils/di-tokens";
-import {
-  FaIconLibrary,
-  FontAwesomeModule,
-} from "@fortawesome/angular-fontawesome";
-import { fas } from "@fortawesome/free-solid-svg-icons";
-import { far } from "@fortawesome/free-regular-svg-icons";
 import { Entity } from "../entity/model/entity";
 import { PureAbility } from "@casl/ability";
 import { EntityAbility } from "../permissions/entity-ability";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
+import { DatabaseIndexingService } from "../entity/database-indexing/database-indexing.service";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "../entity/database-entity.decorator";
+import {
+  viewRegistry,
+  ViewRegistry,
+} from "../view/dynamic-components/dynamic-component.decorator";
+import { RouteRegistry, routesRegistry } from "../../app.routing";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 export const TEST_USER = "test";
 export const TEST_PASSWORD = "pass";
@@ -47,7 +52,7 @@ export const TEST_PASSWORD = "pass";
     NoopAnimationsModule,
     Angulartics2Module.forRoot(),
     RouterTestingModule,
-    FontAwesomeModule,
+    FontAwesomeTestingModule,
   ],
   providers: [
     {
@@ -61,6 +66,9 @@ export const TEST_PASSWORD = "pass";
     EntitySchemaService,
     EntityAbility,
     { provide: PureAbility, useExisting: EntityAbility },
+    { provide: EntityRegistry, useValue: entityRegistry },
+    { provide: ViewRegistry, useValue: viewRegistry },
+    { provide: RouteRegistry, useValue: routesRegistry },
   ],
 })
 export class MockSessionModule {
@@ -88,11 +96,16 @@ export class MockSessionModule {
         { provide: EntityMapperService, useValue: mockedEntityMapper },
         { provide: MockEntityMapperService, useValue: mockedEntityMapper },
         { provide: Database, useValue: session.getDatabase() },
+        {
+          provide: DatabaseIndexingService,
+          useValue: {
+            createIndex: () => {},
+            queryIndexDocsRange: () => Promise.resolve([]),
+            queryIndexDocs: () => Promise.resolve([]),
+          },
+        },
       ],
     };
-  }
-  constructor(iconLibrary: FaIconLibrary) {
-    iconLibrary.addIconPacks(fas, far);
   }
 }
 

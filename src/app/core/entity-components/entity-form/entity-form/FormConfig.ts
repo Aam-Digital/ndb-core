@@ -14,7 +14,7 @@ export interface FormFieldConfig {
   /**
    * Defines the component that should display this form field.
    *
-   * The name has to match one of the strings in the DYNAMIC_COMPONENT_MAP.
+   * This has to be a properly configured component.
    * If nothing is defined, the component specified in the schema for this property or the default component of the
    * property's datatype will be used.
    */
@@ -23,7 +23,8 @@ export interface FormFieldConfig {
   /**
    * Defines the component which allows to edit this form field.
    *
-   * The name has to match one of the strings in the DYNAMIC_COMPONENT_MAP.
+   * The edit component has to be a registered component. Components that are registered contain the `DynamicComponent`
+   * decorator
    * If nothing is defined, the component specified in the schema for this property or the default component of the
    * property's datatype will be used. If nothing is found, the form field will be displayed in the "view" mode.
    */

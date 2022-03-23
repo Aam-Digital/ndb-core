@@ -1,6 +1,8 @@
 import { Component } from "@angular/core";
 import { ViewDirective } from "../view.directive";
+import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 
+@DynamicComponent("DisplayPercentage")
 @Component({
   selector: "app-display-percentage",
   templateUrl: "./display-percentage.component.html",
