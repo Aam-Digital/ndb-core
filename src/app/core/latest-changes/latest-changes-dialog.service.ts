@@ -63,6 +63,10 @@ export class LatestChangesDialogService {
       LatestChangesDialogService.VERSION_KEY
     );
     console.log("LatestChangesDialogService reading version", previousVersion);
+    if (previousVersion.includes("update")) {
+      console.log("LatestChangesDialogService backing up");
+      return;
+    }
     if (previousVersion && this.getCurrentVersion() !== previousVersion) {
       this.showLatestChanges(previousVersion);
       console.log("LatestChangesDialogService showing popup");
