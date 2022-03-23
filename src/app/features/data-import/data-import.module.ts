@@ -32,4 +32,6 @@ import { ExportModule } from "../../core/export/export.module";
   exports: [DataImportComponent],
   providers: [DataImportService],
 })
-export class DataImportModule {}
+export class DataImportModule {
+  static dynamicComponents = [DataImportComponent];
+}
