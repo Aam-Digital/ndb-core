@@ -107,8 +107,8 @@ Paths can have multiple parts, e.g. `view:admin/conflicts`.
 If we append `:id`, then this is used as a parameter directly from the app, e.g. `view:child/:id` is the path for the child details view where the app provides the child entity id to be viewed to the component.
 
 The only mandatory field for each view is `"component":` telling the app which component to use for the respective view.
-The component part has to refer to an existing angular component within the app.
-Components currently have to be registered additionally in the [COMPONENT_MAP](../../miscellaneous/variables.html#COMPONENT_MAP).
+The component part has to refer to an existing angular component within the app. Components that are valid and may
+be used for the view have the `@DynamicComponent` decorator present
 
 The two optional fields of each view are `"config":` and `"requiresAdmin":`. The latter is a boolean telling the app whether the user has to be logged in as an administrator in order to be able the see the component. 
 

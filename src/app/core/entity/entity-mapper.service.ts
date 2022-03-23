@@ -21,6 +21,7 @@ import { Entity, EntityConstructor } from "./model/entity";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 import { Observable, Subject } from "rxjs";
 import { UpdatedEntity } from "./model/entity-update";
+import { EntityRegistry } from "./database-entity.decorator";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -37,21 +38,23 @@ export class EntityMapperService {
   private publishers: Map<string, Subject<any>> = new Map();
   constructor(
     private _db: Database,
-    private entitySchemaService: EntitySchemaService
+    private entitySchemaService: EntitySchemaService,
+    private registry: EntityRegistry
   ) {}
 
   /**
-   * Load an Entity from the database with the given id.
+   * Load an Entity from the database with the given id or the registered name of that class.
    *
    * @param entityType Class that implements Entity, which is the type of Entity the results should be transformed to
    * @param id The id of the entity to load
    * @returns A Promise resolving to an instance of entityType filled with its data.
    */
   public async load<T extends Entity>(
-    entityType: EntityConstructor<T>,
+    entityType: EntityConstructor<T> | string,
     id: string
   ): Promise<T> {
-    const resultEntity = new entityType("");
+    const ctor = this.resolveConstructor(entityType);
+    const resultEntity = new ctor("");
     const result = await this._db.get(
       Entity.createPrefixedId(resultEntity.getType(), id)
     );
@@ -61,21 +64,25 @@ export class EntityMapperService {
 
   /**
    * Load all entities from the database of the given type (for example a list of entities of the type User).
+   * <em>Important:</em> Loading via the constructor is always preferred compared to loading via string. The latter
+   * doesn't allow strict type-checking and errors can only be discovered later
    *
    * @param entityType Class that implements Entity, which is the type of Entity the results should be transformed to
+   * or the registered name of that class.
    * @returns A Promise resolving to an array of instances of entityType with the data of the loaded entities.
    */
   public async loadType<T extends Entity>(
-    entityType: EntityConstructor<T>
+    entityType: EntityConstructor<T> | string
   ): Promise<T[]> {
     const resultArray: Array<T> = [];
+    const ctor = this.resolveConstructor(entityType);
 
     const allRecordsOfType = await this._db.getAll(
-      new entityType("").getType() + ":"
+      new ctor("").getType() + ":"
     );
 
     for (const record of allRecordsOfType) {
-      const entity = new entityType("");
+      const entity = new ctor("");
       this.entitySchemaService.loadDataIntoEntity(entity, record);
       resultArray.push(entity);
     }
@@ -92,14 +99,18 @@ export class EntityMapperService {
    * This can be used in collaboration with the update(UpdatedEntity, Entities)-function
    * to update a list of entities
    * <br>
+   *
+   * <em>Important:</em> Loading via the constructor is always preferred compared to loading via string. The latter
+   * doesn't allow strict type-checking and errors can only be discovered later
    * The first update that one will receive - immediately after subscribing - is <code>null</code>.
    * The <code>update</code>-function takes this into account.
-   * @param entityType the type of the entity
+   * @param entityType the type of the entity or the registered name of that class.
    */
   public receiveUpdates<T extends Entity>(
-    entityType: EntityConstructor<T>
+    entityType: EntityConstructor<T> | string
   ): Observable<UpdatedEntity<T>> {
-    const type = new entityType().getType();
+    const ctor = this.resolveConstructor(entityType);
+    const type = new ctor().getType();
     let publisher = this.publishers[type];
     // subject doesn't exist yet or is closed
     if (!publisher || publisher.closed) {
@@ -152,6 +163,16 @@ export class EntityMapperService {
     const publisher = this.publishers[entity.getType()];
     if (publisher && !publisher.closed) {
       publisher.next({ entity: entity, type: type });
+    }
+  }
+
+  protected resolveConstructor<T extends Entity>(
+    constructible: EntityConstructor<T> | string
+  ): EntityConstructor<T> | undefined {
+    if (typeof constructible === "string") {
+      return this.registry.get(constructible) as EntityConstructor<T>;
+    } else {
+      return constructible;
     }
   }
 }

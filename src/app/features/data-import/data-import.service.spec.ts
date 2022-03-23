@@ -19,6 +19,10 @@ import { Child } from "../../child-dev-project/children/model/child";
 import moment from "moment";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { QueryService } from "../reporting/query.service";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "../../core/entity/database-entity.decorator";
 
 describe("DataImportService", () => {
   let db: PouchDatabase;
@@ -35,6 +39,7 @@ describe("DataImportService", () => {
           useValue: db,
         },
         { provide: QueryService, useValue: {} },
+        { provide: EntityRegistry, useValue: entityRegistry },
         ConfirmationDialogService,
         EntityMapperService,
         EntitySchemaService,

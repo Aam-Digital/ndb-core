@@ -6,6 +6,10 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ViewTitleComponent } from "../entity-components/entity-utils/view-title/view-title.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
+import {
+  viewRegistry,
+  ViewRegistry,
+} from "./dynamic-components/dynamic-component.decorator";
 
 /**
  * Generic components and services to allow assembling the app dynamically from config objects.
@@ -17,6 +21,7 @@ import { MatButtonModule } from "@angular/material/button";
     ViewTitleComponent,
   ],
   imports: [CommonModule, FontAwesomeModule, MatTooltipModule, MatButtonModule],
+  providers: [{ provide: ViewRegistry, useValue: viewRegistry }],
   exports: [
     DynamicComponentDirective,
     FaDynamicIconComponent,

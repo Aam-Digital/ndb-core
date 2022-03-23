@@ -19,7 +19,9 @@ import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { DynamicComponentConfig } from "../../view/dynamic-components/dynamic-component-config.interface";
 import { RouteData } from "../../view/dynamic-routing/view-config.interface";
+import { RouteTarget } from "../../../app.routing";
 
+@RouteTarget("Dashboard")
 @Component({
   selector: "app-dashboard",
   templateUrl: "./dashboard.component.html",

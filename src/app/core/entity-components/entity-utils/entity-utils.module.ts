@@ -77,25 +77,6 @@ import { ErrorHintComponent } from "./error-hint/error-hint.component";
     MatButtonModule,
     EntitySubrecordModule,
   ],
-  entryComponents: [
-    EditTextComponent,
-    EditDateComponent,
-    EditAgeComponent,
-    EditBooleanComponent,
-    EditLongTextComponent,
-    EditPhotoComponent,
-    EditEntityArrayComponent,
-    EditSingleEntityComponent,
-    DisplayEntityComponent,
-    DisplayEntityArrayComponent,
-    DisplayTextComponent,
-    DisplayDateComponent,
-    DisplayCheckmarkComponent,
-    ReadonlyFunctionComponent,
-    DisplayPercentageComponent,
-    DisplayUnitComponent,
-    EditNumberComponent,
-  ],
   exports: [
     DisplayEntityComponent,
     DisplayEntityArrayComponent,
@@ -103,4 +84,24 @@ import { ErrorHintComponent } from "./error-hint/error-hint.component";
     EditSingleEntityComponent,
   ],
 })
-export class EntityUtilsModule {}
+export class EntityUtilsModule {
+  static dynamicComponents = [
+    EditAgeComponent,
+    EditBooleanComponent,
+    EditEntityArrayComponent,
+    EditLongTextComponent,
+    EditNumberComponent,
+    EditPhotoComponent,
+    EditSingleEntityComponent,
+    EditTextComponent,
+    EditDateComponent,
+    DisplayCheckmarkComponent,
+    DisplayDateComponent,
+    DisplayEntityComponent,
+    DisplayEntityArrayComponent,
+    DisplayPercentageComponent,
+    DisplayTextComponent,
+    DisplayUnitComponent,
+    ReadonlyFunctionComponent,
+  ];
+}

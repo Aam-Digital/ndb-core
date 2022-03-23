@@ -9,7 +9,6 @@ import { UserRoleGuard } from "./user-role.guard";
   declarations: [DisableEntityOperationDirective, DisabledWrapperComponent],
   imports: [CommonModule, MatTooltipModule],
   exports: [DisableEntityOperationDirective],
-  entryComponents: [DisabledWrapperComponent],
   providers: [UserRoleGuard],
 })
 export class PermissionsModule {}

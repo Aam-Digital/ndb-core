@@ -7,12 +7,12 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { readFile } from "../../utils/utils";
 import { ImportMetaData } from "./import-meta-data.type";
 import { v4 as uuid } from "uuid";
-import { DynamicEntityService } from "../../core/entity/dynamic-entity.service";
 import { Entity } from "../../core/entity/model/entity";
 import { dateEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-date";
 import { dateOnlyEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-date-only";
 import { monthEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-month";
 import moment from "moment";
+import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 
 @Injectable()
 /**
@@ -30,7 +30,7 @@ export class DataImportService {
     private backupService: BackupService,
     private confirmationDialog: ConfirmationDialogService,
     private snackBar: MatSnackBar,
-    private dynamicEntityService: DynamicEntityService
+    private entities: EntityRegistry
   ) {}
 
   /**
@@ -139,9 +139,7 @@ export class DataImportService {
 
   private createEntityWithRowData(row: any, importMeta: ImportMetaData): any {
     const rawEntity = {};
-    const schema = this.dynamicEntityService.getEntityConstructor(
-      importMeta.entityType
-    ).schema;
+    const schema = this.entities.get(importMeta.entityType).schema;
     Object.keys(row)
       .filter((col) => importMeta.columnMap[col])
       .forEach((col) => {
@@ -184,9 +182,7 @@ export class DataImportService {
   }
 
   private createSearchIndices(importMeta: ImportMetaData, entity) {
-    const ctor = this.dynamicEntityService.getEntityConstructor(
-      importMeta.entityType
-    );
+    const ctor = this.entities.get(importMeta.entityType);
     entity["searchIndices"] = Object.assign(new ctor(), entity).searchIndices;
   }
 }

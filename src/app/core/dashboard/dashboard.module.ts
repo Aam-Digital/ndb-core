@@ -48,4 +48,6 @@ import { MatButtonModule } from "@angular/material/button";
   ],
   exports: [DashboardWidgetComponent, WidgetContentComponent],
 })
-export class DashboardModule {}
+export class DashboardModule {
+  static dynamicComponents = [DashboardComponent];
+}

@@ -5,7 +5,6 @@ import {
   FormGroup,
   Validators,
 } from "@angular/forms";
-import { DynamicEntityService } from "app/core/entity/dynamic-entity.service";
 import { DataImportService } from "../data-import.service";
 import { ImportMetaData } from "../import-meta-data.type";
 import { AlertService } from "app/core/alerts/alert.service";
@@ -15,7 +14,10 @@ import { v4 as uuid } from "uuid";
 import { BehaviorSubject } from "rxjs";
 import { DownloadService } from "../../../core/export/download-service/download.service";
 import { readFile } from "../../../utils/utils";
+import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
+import { RouteTarget } from "../../../app.routing";
 
+@RouteTarget("Import")
 @Component({
   selector: "app-data-import",
   templateUrl: "./data-import.component.html",
@@ -27,7 +29,6 @@ export class DataImportComponent {
   });
   private csvFile: ParseResult;
 
-  entityMap = DynamicEntityService.ENTITY_MAP;
   entityForm = this.formBuilder.group({ entity: ["", Validators.required] });
 
   transactionIDForm = this.formBuilder.group({
@@ -52,7 +53,8 @@ export class DataImportComponent {
     private formBuilder: FormBuilder,
     private alertService: AlertService,
     private changeDetectorRef: ChangeDetectorRef,
-    private downloadService: DownloadService
+    private downloadService: DownloadService,
+    public entities: EntityRegistry
   ) {}
   // TODO add supported types for file select
   async setCsvFile(inputEvent: Event): Promise<void> {
@@ -96,7 +98,7 @@ export class DataImportComponent {
 
   entitySelectionChanged(): void {
     const entityName = this.entityForm.get("entity").value;
-    const propertyKeys = this.entityMap.get(entityName).schema.keys();
+    const propertyKeys = this.entities.get(entityName).schema.keys();
     this.properties = [...propertyKeys];
     this.stepper.next();
   }

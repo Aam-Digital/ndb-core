@@ -20,6 +20,7 @@ import { CommonModule } from "@angular/common";
 import { EntityMapperService } from "./entity-mapper.service";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 import { EntityConfigService } from "./entity-config.service";
+import { entityRegistry, EntityRegistry } from "./database-entity.decorator";
 
 /**
  * Generic system to manage saving and loading documents with the database
@@ -41,7 +42,11 @@ import { EntityConfigService } from "./entity-config.service";
  */
 @NgModule({
   imports: [CommonModule],
-  declarations: [],
-  providers: [EntityMapperService, EntitySchemaService, EntityConfigService],
+  providers: [
+    EntityMapperService,
+    EntitySchemaService,
+    EntityConfigService,
+    { provide: EntityRegistry, useValue: entityRegistry },
+  ],
 })
 export class EntityModule {}
