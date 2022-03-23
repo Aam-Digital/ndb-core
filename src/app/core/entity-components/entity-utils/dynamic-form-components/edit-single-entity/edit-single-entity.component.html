@@ -27,7 +27,7 @@
   </mat-error>
 </mat-form-field>
 
-<div *ngIf="selectedEntity && !editingSelectedEntity" style="margin-top: 7px">
+<div *ngIf="selectedEntity && !editingSelectedEntity" class="wrapper-readonly">
   <app-display-entity
     class="block-wrapper"
     [entityToDisplay]="selectedEntity"
