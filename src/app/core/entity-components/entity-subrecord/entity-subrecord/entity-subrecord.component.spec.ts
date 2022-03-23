@@ -93,7 +93,7 @@ describe("EntitySubrecordComponent", () => {
     });
 
     const sortedData = component.recordsDataSource
-      .sortData(component.recordsDataSource.data, component.sort)
+      ._orderData(component.recordsDataSource.data)
       .map((row) => row.record);
     expect(sortedData).toEqual([first, second, third]);
   });
@@ -130,7 +130,7 @@ describe("EntitySubrecordComponent", () => {
 
     component.sort.sort({ id: "name", start: "asc", disableClear: false });
     const sortedIds = component.recordsDataSource
-      .sortData(component.recordsDataSource.data, component.sort)
+      ._orderData(component.recordsDataSource.data)
       .map((c) => c.record.getId());
 
     expect(sortedIds).toEqual(["0", "3", "1", "2"]);
@@ -143,14 +143,27 @@ describe("EntitySubrecordComponent", () => {
     notes[2].category = { id: "2", label: "Z" };
     notes[1].category = { id: "3", label: "C" };
     component.records = notes;
-    component.ngOnChanges({ records: null });
+    component.ngOnChanges({ records: undefined });
 
     component.sort.sort({ id: "category", start: "asc", disableClear: false });
     const sortedIds = component.recordsDataSource
-      .sortData(component.recordsDataSource.data, component.sort)
+      ._orderData(component.recordsDataSource.data)
       .map((note) => note.record.getId());
 
     expect(sortedIds).toEqual(["0", "3", "1", "2"]);
+  });
+
+  it("should sort strings ignoring case", () => {
+    const names = ["C", "b", "A"];
+    component.records = names.map((name) => Child.create(name));
+    component.ngOnChanges({ records: undefined });
+    component.sort.sort({ id: "name", start: "asc", disableClear: false });
+
+    const sortedNames = component.recordsDataSource
+      ._orderData(component.recordsDataSource.data)
+      .map((row: TableRow<Child>) => row.record.name);
+
+    expect(sortedNames).toEqual(["A", "b", "C"]);
   });
 
   it("should log a warning when the column definition can not be initialized", () => {

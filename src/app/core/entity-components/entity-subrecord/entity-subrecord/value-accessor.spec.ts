@@ -1,10 +1,14 @@
-import { entityListSortingAccessor } from "./sorting-accessor";
+import { getReadableValue } from "./value-accessor";
 
-describe("entityListSortingAccessor", () => {
-  function expectObjectToContain(obj: object, expected: any[], type: string) {
+describe("getReadableValue", () => {
+  function expectObjectToContain<OBJECT, PROPERTY extends keyof OBJECT>(
+    obj: OBJECT,
+    expected: (OBJECT[PROPERTY] | "string")[],
+    type: string
+  ) {
     let index = 0;
-    for (const key of Object.keys(obj)) {
-      const accessed = entityListSortingAccessor(obj, key);
+    for (const key of Object.keys(obj) as PROPERTY[]) {
+      const accessed = getReadableValue(obj, key);
       expect(accessed).toEqual(expected[index]);
       expect(typeof accessed).toBe(type);
       index += 1;
@@ -28,16 +32,6 @@ describe("entityListSortingAccessor", () => {
     expectObjectToContain(obj, [1, 2.0, 10e3], "number");
   });
 
-  it("should return numbers when a string is parsable", () => {
-    const obj = {
-      a: "1",
-      b: "2.0",
-      c: "10e3",
-      d: "0x1",
-    };
-    expectObjectToContain(obj, [1, 2.0, 10e3, 0x1], "number");
-  });
-
   it("should return the label when the queried object has a 'label' key", () => {
     const object = {
       data: {
@@ -46,7 +40,7 @@ describe("entityListSortingAccessor", () => {
         value2: "hello",
       },
     };
-    const accessed = entityListSortingAccessor(object, "data");
+    const accessed = getReadableValue(object, "data");
     expect(typeof accessed).toBe("string");
     expect(accessed).toBe("data label");
   });
@@ -58,7 +52,7 @@ describe("entityListSortingAccessor", () => {
         value2: "hello",
       },
     };
-    const accessed = entityListSortingAccessor(object, "data");
+    const accessed = getReadableValue(object, "data");
     expect(typeof accessed).toBe("object");
     expect(accessed).toEqual({
       value1: 123,
