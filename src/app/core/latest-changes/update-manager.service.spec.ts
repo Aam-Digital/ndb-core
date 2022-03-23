@@ -1,14 +1,8 @@
-import { LOCATION_TOKEN, UpdateManagerService } from "./update-manager.service";
-import {
-  discardPeriodicTasks,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { UpdateManagerService } from "./update-manager.service";
+import { discardPeriodicTasks, fakeAsync, tick } from "@angular/core/testing";
 import { ApplicationRef } from "@angular/core";
 import { SwUpdate, UpdateActivatedEvent } from "@angular/service-worker";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { LoggingService } from "../logging/logging.service";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { Subject } from "rxjs";
 
@@ -40,19 +34,7 @@ describe("UpdateManagerService", () => {
     appRef = jasmine.createSpyObj([], { isStable: stableSubject });
     latestChangesDialog = jasmine.createSpyObj(["showLatestChangesIfUpdated"]);
 
-    TestBed.configureTestingModule({
-      providers: [
-        UpdateManagerService,
-        { provide: ApplicationRef, useValue: appRef },
-        { provide: SwUpdate, useValue: swUpdate },
-        { provide: MatSnackBar, useValue: snackBar },
-        { provide: LoggingService, useValue: {} },
-        { provide: LOCATION_TOKEN, useValue: location },
-        { provide: LatestChangesDialogService, useValue: latestChangesDialog },
-      ],
-    });
-
-    service = TestBed.inject(UpdateManagerService);
+    service = createService();
   });
 
   it("should create", () => {
@@ -143,13 +125,13 @@ describe("UpdateManagerService", () => {
     discardPeriodicTasks();
   }));
 
-  it("should trigger the latest changes dialog on startup if update note is not se", () => {
+  it("should trigger the latest changes dialog on startup if update note is not set", () => {
     latestChangesDialog.showLatestChangesIfUpdated.calls.reset();
+
     window.localStorage.setItem(
       LatestChangesDialogService.VERSION_KEY,
       "update-1.0.0"
     );
-
     createService();
 
     expect(

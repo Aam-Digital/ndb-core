@@ -43,7 +43,6 @@ export const LOCATION_TOKEN = new InjectionToken<Location>(
 @Injectable()
 export class UpdateManagerService {
   private notificationRef;
-
   private readonly UPDATE_PREFIX = "update-";
 
   constructor(
@@ -62,7 +61,7 @@ export class UpdateManagerService {
         LatestChangesDialogService.VERSION_KEY,
         currentVersion.replace(this.UPDATE_PREFIX, "")
       );
-      location.reload();
+      this.location.reload();
     } else {
       this.latestChangesDialogService.showLatestChangesIfUpdated();
     }
