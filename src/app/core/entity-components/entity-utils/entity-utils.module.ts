@@ -96,6 +96,11 @@ import { ErrorHintComponent } from "./error-hint/error-hint.component";
     DisplayUnitComponent,
     EditNumberComponent,
   ],
-  exports: [DisplayEntityComponent, EntitySelectComponent],
+  exports: [
+    DisplayEntityComponent,
+    DisplayEntityArrayComponent,
+    EntitySelectComponent,
+    EditSingleEntityComponent,
+  ],
 })
 export class EntityUtilsModule {}

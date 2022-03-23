@@ -1,16 +1,15 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { DashboardModule } from "../dashboard.module";
 import { DashboardWidgetComponent } from "./dashboard-widget.component";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
 export default {
   title: "Core/Dashboard Base Widget",
   component: DashboardWidgetComponent,
   decorators: [
     moduleMetadata({
-      imports: [DashboardModule, BrowserAnimationsModule, FontAwesomeModule],
+      imports: [DashboardModule, StorybookBaseModule],
     }),
   ],
 } as Meta;
@@ -37,5 +36,5 @@ Loading.args = {
   subtitle: "of all numbers",
   icon: "child",
   theme: "child",
-  isLoading: true,
+  _loading: true,
 };

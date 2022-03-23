@@ -99,6 +99,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     MatMenuModule,
   ],
   providers: [],
+  exports: [NoteDetailsComponent],
   entryComponents: [NoteDetailsComponent],
 })
 export class NotesModule {}

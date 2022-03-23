@@ -47,6 +47,6 @@ import { ObjectTableComponent } from "./reporting/object-table/object-table.comp
     ViewModule,
     MatSortModule,
   ],
-  exports: [SelectReportComponent],
+  exports: [SelectReportComponent, ReportingComponent],
 })
 export class ReportingModule {}
