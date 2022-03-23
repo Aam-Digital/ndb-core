@@ -23,10 +23,10 @@ export class PreviousSchoolsComponent
   @Input() child: Child;
   records = new Array<ChildSchoolRelation>();
   columns: FormFieldConfig[] = [
-    { id: "schoolId" },
-    { id: "schoolClass" },
     { id: "start", visibleFrom: "md" },
     { id: "end", visibleFrom: "md" },
+    { id: "schoolId" },
+    { id: "schoolClass" },
     { id: "result" },
     isActiveIndicator,
   ];
