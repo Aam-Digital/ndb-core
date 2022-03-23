@@ -67,6 +67,7 @@ export class UpdateManagerService {
         "UpdateManagerService writing version",
         currentVersion.replace("update-", "")
       );
+      location.reload();
       console.log("UpdateManagerService reloading");
     } else {
       console.log("UpdateManagerService checking for latest changes");
