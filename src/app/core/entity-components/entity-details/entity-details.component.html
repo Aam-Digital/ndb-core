@@ -61,7 +61,7 @@
 
 <div>
   <mat-tab-group>
-    <mat-tab *ngFor="let panelConfig of panels; let i = index" [label]="panelConfig.title">
+    <mat-tab *ngFor="let panelConfig of panels; let i = index" [label]="panelConfig.title" [disabled]="creatingNew">
       <div *ngFor="let componentConfig of panelConfig.components; let j = index" style="padding-top: 20px">
           <h3 *ngIf="componentConfig.title && componentConfig.title !== ''">{{ componentConfig.title }}</h3>
           <ng-template [appDynamicComponent]="componentConfig"></ng-template>
