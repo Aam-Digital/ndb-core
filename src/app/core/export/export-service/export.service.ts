@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Papa } from "ngx-papaparse";
-import { entityListSortingAccessor } from "../../entity-components/entity-subrecord/entity-subrecord/sorting-accessor";
+import { getReadableValue } from "../../entity-components/entity-subrecord/entity-subrecord/value-accessor";
 import { ExportColumnConfig } from "./export-column-config";
 import { QueryService } from "../../../features/reporting/query.service";
 import moment from "moment";
@@ -33,30 +33,36 @@ export class ExportService {
    * Creates a CSV string of the input data
    *
    * @param data (Optional) an array of elements. If not provided, the queries in `config` will be used to get the initial data.
-   * @param config (Optional) config specifying which fields should be exported
+   * @param config (Optional) config specifying how export should look
    * @param from (Optional) limits the data which is fetched from the database and is also available inside the query. If not provided, all data is fetched.
    * @param to (Optional) same as from.If not provided, today is used.
    * @returns string a valid CSV string of the input data
    */
   async createCsv(
     data: any[],
-    config: ExportColumnConfig[] = this.generateExportConfigFromData(data),
+    config?: ExportColumnConfig[],
     from?: Date,
     to?: Date
   ): Promise<string> {
     const readableExportRow = await this.runExportQuery(data, config, from, to);
 
+    // Collect all properties because papa only uses the properties of the first object
+    const keys = new Set<string>();
+    readableExportRow.forEach((row) =>
+      Object.keys(row).forEach((key) => keys.add(key))
+    );
     return this.papa.unparse(readableExportRow, {
       quotes: true,
       header: true,
       newline: ExportService.SEPARATOR_ROW,
+      columns: [...keys],
     });
   }
 
   /**
    * Creates a dataset with the provided values that can be used for a simple table or export.
    * @param data (Optional) an array of elements. If not provided, the first query in `config` will be used to get the data.
-   * @param config (Optional) config specifying which fields should be exported
+   * @param config (Optional) config specifying how export should look
    * @param from (Optional) limits the data which is fetched from the database and is also available inside the query. If not provided, all data is fetched.
    * @param to (Optional) same as from.If not provided, today is used.
    * @returns array with the result of the queries and sub queries
@@ -84,17 +90,23 @@ export class ExportService {
     }
 
     const flattenedExportRows: ExportRow[] = [];
-    for (const dataRow of data) {
-      const extendedExportableRows = await this.generateExportRows(
-        dataRow,
-        config,
-        from,
-        to
-      );
-      flattenedExportRows.push(...extendedExportableRows);
+    if (config) {
+      for (const dataRow of data) {
+        const extendedExportableRows = await this.generateExportRows(
+          dataRow,
+          config,
+          from,
+          to
+        );
+        flattenedExportRows.push(...extendedExportableRows);
+      }
+    } else {
+      flattenedExportRows.push(...data);
     }
+    return this.transformToReadableFormat(flattenedExportRows);
+  }
 
-    // Apply entitySortingDataAccessor to transform values into human readable format
+  private transformToReadableFormat(flattenedExportRows: ExportRow[]) {
     return flattenedExportRows.map((row) => {
       const readableRow = {};
       Object.keys(row).forEach((key) => {
@@ -102,31 +114,11 @@ export class ExportService {
           // Export data according to local timezone offset
           readableRow[key] = moment(row[key]).toISOString(true);
         } else {
-          readableRow[key] = entityListSortingAccessor(row, key);
+          readableRow[key] = getReadableValue(row, key);
         }
       });
       return readableRow;
     });
-  }
-
-  /**
-   * Infer a column export config from the given data.
-   * Includes all properties of the data objects,
-   * if different objects are in the data a config for the superset across all objects' properties is returned.
-   *
-   * @param data objects to be exported, each object can have different properties
-   * @private
-   */
-  private generateExportConfigFromData(data: Object[]): ExportColumnConfig[] {
-    const uniqueKeys = new Set<string>();
-    data.forEach((obj) =>
-      Object.keys(obj).forEach((key) => uniqueKeys.add(key))
-    );
-
-    const columnConfigs: ExportColumnConfig[] = [];
-    uniqueKeys.forEach((key) => columnConfigs.push({ query: "." + key }));
-
-    return columnConfigs;
   }
 
   /**

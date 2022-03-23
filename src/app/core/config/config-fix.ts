@@ -561,8 +561,6 @@ export const defaultJsonConfig = {
               "config": {
                 "single": true,
                 "columns": [
-                  "schoolId",
-                  "schoolClass",
                   {
                     id: "start",
                     visibleFrom: "sm",
@@ -571,6 +569,8 @@ export const defaultJsonConfig = {
                     id: "end",
                     visibleFrom: "sm",
                   },
+                  "schoolId",
+                  "schoolClass",
                   "result",
                 ],
               }
