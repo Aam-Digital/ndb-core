@@ -125,7 +125,7 @@ describe("ExportService", () => {
     const resultRows = csvResult.split(ExportService.SEPARATOR_ROW);
     expect(resultRows).toEqual([
       '"name","age","extra"',
-      '"foo","12",""',
+      '"foo","12",',
       '"bar","15","true"',
     ]);
   });
@@ -444,6 +444,19 @@ describe("ExportService", () => {
       '"Child","one week ago"',
       '"Child","yesterday"',
     ]);
+  });
+
+  it("should not use query service if no export config is provided", async () => {
+    const data = [{ key: "some" }, { key: "data" }];
+    const queryService = TestBed.inject(QueryService);
+    spyOn(queryService, "queryData").and.callThrough();
+
+    const result = await service.createCsv(data);
+
+    expect(queryService.queryData).not.toHaveBeenCalled();
+    expect(result).toBe(
+      `"key"${ExportService.SEPARATOR_ROW}"some"${ExportService.SEPARATOR_ROW}"data"`
+    );
   });
 
   async function createChildInDB(name: string): Promise<Child> {
