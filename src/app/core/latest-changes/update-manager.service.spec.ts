@@ -21,6 +21,7 @@ describe("UpdateManagerService", () => {
   let snackBarAction: Subject<void>;
   let appRef: jasmine.SpyObj<ApplicationRef>;
   let stableSubject: Subject<boolean>;
+  let latestChangesDialog: jasmine.SpyObj<LatestChangesDialogService>;
 
   beforeEach(() => {
     location = jasmine.createSpyObj(["reload"]);
@@ -29,6 +30,7 @@ describe("UpdateManagerService", () => {
       available: updateSubject,
       isEnabled: true,
     });
+    swUpdate.checkForUpdate.and.resolveTo();
     snackBar = jasmine.createSpyObj(["open"]);
     snackBarAction = new Subject();
     snackBar.open.and.returnValue({
@@ -36,6 +38,7 @@ describe("UpdateManagerService", () => {
     } as any);
     stableSubject = new Subject<boolean>();
     appRef = jasmine.createSpyObj([], { isStable: stableSubject });
+    latestChangesDialog = jasmine.createSpyObj(["showLatestChangesIfUpdated"]);
 
     TestBed.configureTestingModule({
       providers: [
@@ -45,6 +48,7 @@ describe("UpdateManagerService", () => {
         { provide: MatSnackBar, useValue: snackBar },
         { provide: LoggingService, useValue: {} },
         { provide: LOCATION_TOKEN, useValue: location },
+        { provide: LatestChangesDialogService, useValue: latestChangesDialog },
       ],
     });
 
@@ -55,7 +59,7 @@ describe("UpdateManagerService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should show a popup that allows to reload the page when an update is available", fakeAsync(() => {
+  it("should show a snackBar that allows to reload the page when an update is available", fakeAsync(() => {
     service.notifyUserWhenUpdateAvailable();
     // notify about new update
     updateSubject.next();
@@ -78,7 +82,7 @@ describe("UpdateManagerService", () => {
     );
 
     // tslint:disable-next-line:no-unused-expression
-    new UpdateManagerService(null, null, null, null, location);
+    new UpdateManagerService(null, null, null, null, null, location);
 
     expect(location.reload).toHaveBeenCalled();
     expect(
@@ -139,4 +143,8 @@ describe("UpdateManagerService", () => {
 
     discardPeriodicTasks();
   }));
+
+  it("should trigger the latest changes dialog on startup", () => {
+    expect(latestChangesDialog.showLatestChangesIfUpdated).toHaveBeenCalled();
+  });
 });

@@ -57,20 +57,13 @@ export class UpdateManagerService {
     const currentVersion = window.localStorage.getItem(
       LatestChangesDialogService.VERSION_KEY
     );
-    console.log("UpdateManagerService reading version", currentVersion);
     if (currentVersion && currentVersion.startsWith(this.UPDATE_PREFIX)) {
       window.localStorage.setItem(
         LatestChangesDialogService.VERSION_KEY,
-        currentVersion.replace("update-", "")
-      );
-      console.log(
-        "UpdateManagerService writing version",
-        currentVersion.replace("update-", "")
+        currentVersion.replace(this.UPDATE_PREFIX, "")
       );
       location.reload();
-      console.log("UpdateManagerService reloading");
     } else {
-      console.log("UpdateManagerService checking for latest changes");
       this.latestChangesDialogService.showLatestChangesIfUpdated();
     }
   }
@@ -82,14 +75,7 @@ export class UpdateManagerService {
     if (!this.updates.isEnabled) {
       return;
     }
-
-    this.updates.available.subscribe((next) => {
-      console.log("UpdateManagerService update available", next);
-      this.showUpdateNotification();
-    });
-    this.updates.activated.subscribe((next) => {
-      console.log("UpdateManagerService update activated", next);
-    });
+    this.updates.available.subscribe(() => this.showUpdateNotification());
   }
 
   /**
@@ -107,13 +93,9 @@ export class UpdateManagerService {
     const everyHours$ = interval(60 * 60 * 1000);
     const everyHoursOnceAppIsStable$ = concat(appIsStable$, everyHours$);
 
-    everyHoursOnceAppIsStable$.subscribe(async () => {
-      try {
-        await this.updates.checkForUpdate();
-      } catch (err) {
-        this.logger.error(err);
-      }
-    });
+    everyHoursOnceAppIsStable$.subscribe(() =>
+      this.updates.checkForUpdate().catch((err) => this.logger.error(err))
+    );
   }
 
   private showUpdateNotification() {
@@ -124,6 +106,7 @@ export class UpdateManagerService {
       // Sometimes this is triggered multiple times for one update
       return;
     }
+
     window.localStorage.setItem(
       LatestChangesDialogService.VERSION_KEY,
       this.UPDATE_PREFIX + currentVersion

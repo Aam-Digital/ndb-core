@@ -27,7 +27,7 @@ import { LatestChangesService } from "./latest-changes.service";
  */
 @Injectable()
 export class LatestChangesDialogService {
-  public static VERSION_KEY = "AppVersion";
+  public static readonly VERSION_KEY = "AppVersion";
 
   constructor(
     private dialog: MatDialog,
@@ -62,21 +62,11 @@ export class LatestChangesDialogService {
     const previousVersion = window.localStorage.getItem(
       LatestChangesDialogService.VERSION_KEY
     );
-    console.log("LatestChangesDialogService reading version", previousVersion);
-    if (previousVersion.includes("update")) {
-      console.log("LatestChangesDialogService backing up");
-      return;
-    }
     if (previousVersion && this.getCurrentVersion() !== previousVersion) {
       this.showLatestChanges(previousVersion);
-      console.log("LatestChangesDialogService showing popup");
     }
     window.localStorage.setItem(
       LatestChangesDialogService.VERSION_KEY,
-      this.getCurrentVersion()
-    );
-    console.log(
-      "LatestChangesDialogService writing version",
       this.getCurrentVersion()
     );
   }
