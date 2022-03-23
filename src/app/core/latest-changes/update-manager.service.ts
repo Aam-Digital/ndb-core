@@ -54,12 +54,15 @@ export class UpdateManagerService {
     const currentVersion: string = window.localStorage.getItem(
       LatestChangesDialogService.VERSION_KEY
     );
+    console.log("UpdateManagerService reading version", currentVersion);
     if (currentVersion && currentVersion.startsWith("update-")) {
       window.localStorage.setItem(
         LatestChangesDialogService.VERSION_KEY,
         currentVersion.replace("update-", "")
       );
+      console.log("UpdateManagerService writing version", currentVersion.replace("update-", ""));
       this.location.reload();
+      console.log("UpdateManagerService reloading");
     }
   }
 
@@ -71,9 +74,13 @@ export class UpdateManagerService {
       return;
     }
 
-    this.updates.available.subscribe(() => {
+    this.updates.available.subscribe((next) => {
+      console.log("UpdateManagerService update available", next)
       this.showUpdateNotification();
     });
+    this.updates.activated.subscribe((next) => {
+      console.log("UpdateManagerService update activated", next)
+    })
   }
 
   /**

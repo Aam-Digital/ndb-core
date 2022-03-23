@@ -62,12 +62,15 @@ export class LatestChangesDialogService {
     const previousVersion = window.localStorage.getItem(
       LatestChangesDialogService.VERSION_KEY
     );
+    console.log("LatestChangesDialogService reading version", previousVersion)
     if (previousVersion && this.getCurrentVersion() !== previousVersion) {
       this.showLatestChanges(previousVersion);
+      console.log("LatestChangesDialogService showing popup")
     }
     window.localStorage.setItem(
       LatestChangesDialogService.VERSION_KEY,
       this.getCurrentVersion()
     );
+    console.log("LatestChangesDialogService writing version", this.getCurrentVersion());
   }
 }
