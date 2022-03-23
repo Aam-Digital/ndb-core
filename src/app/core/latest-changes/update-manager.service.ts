@@ -44,6 +44,8 @@ export const LOCATION_TOKEN = new InjectionToken<Location>(
 export class UpdateManagerService {
   private notificationRef;
 
+  private readonly UPDATE_PREFIX = "update-";
+
   constructor(
     private appRef: ApplicationRef,
     private updates: SwUpdate,
@@ -52,11 +54,11 @@ export class UpdateManagerService {
     private latestChangesDialogService: LatestChangesDialogService,
     @Inject(LOCATION_TOKEN) private location: Location
   ) {
-    const currentVersion: string = window.localStorage.getItem(
+    const currentVersion = window.localStorage.getItem(
       LatestChangesDialogService.VERSION_KEY
     );
     console.log("UpdateManagerService reading version", currentVersion);
-    if (currentVersion && currentVersion.startsWith("update-")) {
+    if (currentVersion && currentVersion.startsWith(this.UPDATE_PREFIX)) {
       window.localStorage.setItem(
         LatestChangesDialogService.VERSION_KEY,
         currentVersion.replace("update-", "")
@@ -67,7 +69,7 @@ export class UpdateManagerService {
       );
       console.log("UpdateManagerService reloading");
     } else {
-      console.log("UpdateManagerService checking for latest changes")
+      console.log("UpdateManagerService checking for latest changes");
       this.latestChangesDialogService.showLatestChangesIfUpdated();
     }
   }
@@ -114,12 +116,16 @@ export class UpdateManagerService {
   }
 
   private showUpdateNotification() {
-    const currentVersion: string = window.localStorage.getItem(
+    const currentVersion = window.localStorage.getItem(
       LatestChangesDialogService.VERSION_KEY
     );
+    if (currentVersion.startsWith(this.UPDATE_PREFIX)) {
+      // Sometimes this is triggered multiple times for one update
+      return;
+    }
     window.localStorage.setItem(
       LatestChangesDialogService.VERSION_KEY,
-      "update-" + currentVersion
+      this.UPDATE_PREFIX + currentVersion
     );
 
     this.notificationRef = this.snackBar.open(
