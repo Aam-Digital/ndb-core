@@ -28,6 +28,10 @@ import { EntityConfigService } from "app/core/entity/entity-config.service";
 import { ConfigService } from "app/core/config/config.service";
 import { EventAttendance } from "../../child-dev-project/attendance/model/event-attendance";
 import { AttendanceStatusType } from "../../child-dev-project/attendance/model/attendance-status";
+import {
+  EntityRegistry,
+  entityRegistry,
+} from "../../core/entity/database-entity.decorator";
 
 describe("QueryService", () => {
   let service: QueryService;
@@ -61,6 +65,7 @@ describe("QueryService", () => {
         ConfigService,
         EntityConfigService,
         { provide: Database, useValue: database },
+        { provide: EntityRegistry, useValue: entityRegistry },
       ],
     });
     service = TestBed.inject(QueryService);

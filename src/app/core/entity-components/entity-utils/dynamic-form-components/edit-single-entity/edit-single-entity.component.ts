@@ -10,9 +10,11 @@ import { Observable } from "rxjs";
 import { filter, map } from "rxjs/operators";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FormControl } from "@angular/forms";
-import { DynamicEntityService } from "../../../../entity/dynamic-entity.service";
+import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
+import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 
 @UntilDestroy()
+@DynamicComponent("EditSingleEntity")
 @Component({
   selector: "app-edit-single-entity",
   templateUrl: "./edit-single-entity.component.html",
@@ -29,8 +31,8 @@ export class EditSingleEntityComponent extends EditComponent<string> {
   @ViewChild("inputElement") input: ElementRef;
 
   constructor(
-    private dynamicEntityService: DynamicEntityService,
-    private changeDetection: ChangeDetectorRef
+    private changeDetection: ChangeDetectorRef,
+    private entityMapperService: EntityMapperService
   ) {
     super();
     this.filteredEntities = this.entityNameFormControl.valueChanges.pipe(
@@ -57,7 +59,7 @@ export class EditSingleEntityComponent extends EditComponent<string> {
     this.placeholder = $localize`:Placeholder for input to set an entity|context Select User:Select ${this.label}`;
     const entityType: string =
       config.formFieldConfig.additional || config.propertySchema.additional;
-    this.entities = await this.dynamicEntityService
+    this.entities = await this.entityMapperService
       .loadType(entityType)
       .then((entities) =>
         entities.sort((e1, e2) => e1.toString().localeCompare(e2.toString()))

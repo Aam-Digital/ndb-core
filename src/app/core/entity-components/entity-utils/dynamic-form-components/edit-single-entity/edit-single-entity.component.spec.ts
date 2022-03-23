@@ -19,6 +19,10 @@ import { TypedFormControl } from "../edit-component";
 import { ChangeDetectorRef } from "@angular/core";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { RouterTestingModule } from "@angular/router/testing";
+import {
+  EntityRegistry,
+  entityRegistry,
+} from "../../../../entity/database-entity.decorator";
 
 describe("EditSingleEntityComponent", () => {
   let component: EditSingleEntityComponent;
@@ -41,6 +45,10 @@ describe("EditSingleEntityComponent", () => {
         EntityFormService,
         EntitySchemaService,
         { provide: EntityMapperService, useValue: mockEntityMapper },
+        {
+          provide: EntityRegistry,
+          useValue: entityRegistry,
+        },
         {
           provide: ChangeDetectorRef,
           useValue: jasmine.createSpyObj(["detectChanges"]),

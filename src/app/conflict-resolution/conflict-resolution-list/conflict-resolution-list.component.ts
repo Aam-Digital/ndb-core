@@ -4,10 +4,12 @@ import { QueryDataSource } from "../../core/database/query-data-source";
 import { Entity } from "../../core/entity/model/entity";
 import { Database } from "../../core/database/database";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
+import { RouteTarget } from "../../app.routing";
 
 /**
  * List all document conflicts and allow the user to expand for details and manual resolution.
  */
+@RouteTarget("ConflictResolution")
 @Component({
   selector: "app-conflict-resolution-list",
   templateUrl: "./conflict-resolution-list.component.html",

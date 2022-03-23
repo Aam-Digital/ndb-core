@@ -18,6 +18,7 @@ import moment, { Moment } from "moment";
 import { groupBy } from "../../../../utils/utils";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatPaginator } from "@angular/material/paginator";
+import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 
 interface AttendanceWeekRow {
   childId: string;
@@ -26,6 +27,7 @@ interface AttendanceWeekRow {
 }
 
 @UntilDestroy()
+@DynamicComponent("AttendanceWeekDashboard")
 @Component({
   selector: "app-attendance-week-dashboard",
   templateUrl: "./attendance-week-dashboard.component.html",

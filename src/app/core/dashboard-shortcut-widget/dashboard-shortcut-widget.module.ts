@@ -27,4 +27,6 @@ import { MatTableModule } from "@angular/material/table";
   ],
   exports: [DashboardShortcutWidgetComponent],
 })
-export class DashboardShortcutWidgetModule {}
+export class DashboardShortcutWidgetModule {
+  static dynamicComponents = [DashboardShortcutWidgetComponent];
+}

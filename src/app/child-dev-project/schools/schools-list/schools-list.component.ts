@@ -6,8 +6,10 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
+import { RouteTarget } from "../../../app.routing";
 
 @UntilDestroy()
+@RouteTarget("SchoolsList")
 @Component({
   selector: "app-schools-list",
   template: `

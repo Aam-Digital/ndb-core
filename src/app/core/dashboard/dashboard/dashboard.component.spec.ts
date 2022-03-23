@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { DashboardComponent } from "./dashboard.component";
 import { ActivatedRoute } from "@angular/router";
 import { BehaviorSubject } from "rxjs";
-import { ProgressDashboardComponent } from "../../../child-dev-project/progress-dashboard-widget/progress-dashboard/progress-dashboard.component";
+import { ProgressDashboardComponent } from "../../../features/progress-dashboard-widget/progress-dashboard/progress-dashboard.component";
 import { RouteData } from "../../view/dynamic-routing/view-config.interface";
 import { DynamicComponentConfig } from "../../view/dynamic-components/dynamic-component-config.interface";
 
