@@ -15,7 +15,7 @@ RUN $(npm bin)/ng version
 
 COPY . .
 
-ARG APP_VERSION="UNKNOWN"
+ARG APP_VERSION="3.1.0"
 RUN sed -i "s/appVersion: \".*\"/appVersion: \"$APP_VERSION\"/g" src/environments/environment*.ts
 
 RUN npm run build-localized

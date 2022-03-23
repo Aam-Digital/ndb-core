@@ -60,7 +60,10 @@ export class UpdateManagerService {
         LatestChangesDialogService.VERSION_KEY,
         currentVersion.replace("update-", "")
       );
-      console.log("UpdateManagerService writing version", currentVersion.replace("update-", ""));
+      console.log(
+        "UpdateManagerService writing version",
+        currentVersion.replace("update-", "")
+      );
       this.location.reload();
       console.log("UpdateManagerService reloading");
     }
@@ -75,12 +78,12 @@ export class UpdateManagerService {
     }
 
     this.updates.available.subscribe((next) => {
-      console.log("UpdateManagerService update available", next)
+      console.log("UpdateManagerService update available", next);
       this.showUpdateNotification();
     });
     this.updates.activated.subscribe((next) => {
-      console.log("UpdateManagerService update activated", next)
-    })
+      console.log("UpdateManagerService update activated", next);
+    });
   }
 
   /**
