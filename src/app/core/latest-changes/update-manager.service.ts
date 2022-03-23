@@ -49,6 +49,7 @@ export class UpdateManagerService {
     private updates: SwUpdate,
     private snackBar: MatSnackBar,
     private logger: LoggingService,
+    private latestChangesDialogService: LatestChangesDialogService,
     @Inject(LOCATION_TOKEN) private location: Location
   ) {
     const currentVersion: string = window.localStorage.getItem(
@@ -64,8 +65,10 @@ export class UpdateManagerService {
         "UpdateManagerService writing version",
         currentVersion.replace("update-", "")
       );
-      this.location.reload();
       console.log("UpdateManagerService reloading");
+    } else {
+      console.log("UpdateManagerService checking for latest changes")
+      this.latestChangesDialogService.showLatestChangesIfUpdated();
     }
   }
 
