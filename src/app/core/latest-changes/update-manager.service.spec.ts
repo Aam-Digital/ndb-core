@@ -125,7 +125,7 @@ describe("UpdateManagerService", () => {
     discardPeriodicTasks();
   }));
 
-  it("should trigger the latest changes dialog on startup if update note is not set", () => {
+  it("should trigger the latest changes dialog on startup only if update note is set", () => {
     latestChangesDialog.showLatestChangesIfUpdated.calls.reset();
 
     window.localStorage.setItem(
