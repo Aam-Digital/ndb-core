@@ -13,9 +13,9 @@ enum OS {iOS, MacOS, Android, Linux, Windows, Other}
 export class PwaInstallComponent implements OnInit {
   
   @ViewChild('iOSInstallInstructions') templateiOSInstallInstructions: TemplateRef<any>;
-  @ViewChild('pwaAlreadyInstalled') templatepwaAlreadyInstalled: TemplateRef<any>;
-  setAutoHide = false;
-  autoHide = 10000;
+  @ViewChild('pwaAlreadyInstalled') templatePWAAlreadyInstalled: TemplateRef<any>;
+  smackbarSetAutoHide = false;
+  snackbarAutoHide = 10000;
   horizontalPosition: MatSnackBarHorizontalPosition = 'center';
   verticalPosition: MatSnackBarVerticalPosition = 'bottom';
   matSnackBarConfig = new MatSnackBarConfig();
@@ -26,7 +26,7 @@ export class PwaInstallComponent implements OnInit {
   public pwaInstallType: PWAInstallType;
   public deferredInstallPrompt;
   public userAgent: string;
-  public beforeInstallPromptFired: Boolean = false;
+  // public beforeInstallPromptFired: Boolean = false;
   
   constructor(
       public snackBar: MatSnackBar,
@@ -34,7 +34,7 @@ export class PwaInstallComponent implements OnInit {
 
     this.matSnackBarConfig.verticalPosition = this.verticalPosition;
     this.matSnackBarConfig.horizontalPosition = this.horizontalPosition;
-    this.matSnackBarConfig.duration = this.setAutoHide ? this.autoHide : 0;
+    this.matSnackBarConfig.duration = this.smackbarSetAutoHide ? this.snackbarAutoHide : 0;
 
     this.userAgent = window.navigator.userAgent; 
     const os: OS = this.detectOS();
@@ -42,28 +42,25 @@ export class PwaInstallComponent implements OnInit {
     const standaloneMode: Boolean = this.detectStandaloneMode();
     this.pwaInstallType = this.detectPWAInstallType(os, browser, standaloneMode);
 
-    console.log("PWA Install Information:")
-    console.log("--- " + os + ", " + browser + ", standalone: " + standaloneMode);
-    console.log("--- " + this.pwaInstallType);
-
     if (this.pwaInstallType === PWAInstallType.ShowiOSInstallInstructions) {
       this.showPWAInstallButton = true;
       this.pwaInstallButtonText = "Install App";
-    } else this.showDelayedPWAInstallButton();
-
-  }
-
-  private sleep(miliseconds: number) {
-    return new Promise(resolve => setTimeout(resolve, miliseconds));
-  }
+    }
+    // else if (this.pwaInstallType === PWAInstallType.InstallDirectly) this.showDelayedPWAInstallButton();
   
-  private async showDelayedPWAInstallButton() {
-    await this.sleep(5000);
-    if (this.pwaInstallType === PWAInstallType.InstallDirectly && !this.beforeInstallPromptFired) {
-      this.showPWAInstallButton = true;  
-      this.pwaInstallButtonText = "App already installed";
-    }   
   }
+
+  // private sleep(miliseconds: number) {
+  //   return new Promise(resolve => setTimeout(resolve, miliseconds));
+  // }
+  
+  // private async showDelayedPWAInstallButton() {
+  //   await this.sleep(5000);
+  //   if (this.pwaInstallType === PWAInstallType.InstallDirectly && !this.beforeInstallPromptFired) {
+  //     this.showPWAInstallButton = true;  
+  //     this.pwaInstallButtonText = "App already installed";
+  //   }   
+  // }
 
   detectOS() : OS {
     let os: OS;
@@ -153,26 +150,23 @@ export class PwaInstallComponent implements OnInit {
       this.snackBar.openFromTemplate(this.templateiOSInstallInstructions, this.matSnackBarConfig);
     }
     else if (this.pwaInstallType === PWAInstallType.InstallDirectly) {
-      if (!this.beforeInstallPromptFired) {
-        this.snackBar.openFromTemplate(this.templatepwaAlreadyInstalled, this.matSnackBarConfig);
-      } else {
+      // if (!this.beforeInstallPromptFired) {
+      //   this.snackBar.openFromTemplate(this.templatePWAAlreadyInstalled, this.matSnackBarConfig);
+      // } else {
         this.deferredInstallPrompt.prompt();
         this.deferredInstallPrompt.userChoice.then((choice) => {
           if (choice.outcome === 'accepted') {
-            console.log('User accepted the PWA-install prompt');
             this.showPWAInstallButton = false;
-          } else {
-            console.log('User dismissed the pwa-install prompt');
           }
           this.deferredInstallPrompt = null;
         });
-      }
+      // }
     }
   }
 
   ngOnInit(): void {
     window.addEventListener('beforeinstallprompt', (e) => {
-      this.beforeInstallPromptFired = true;
+      // this.beforeInstallPromptFired = true;
       this.showPWAInstallButton = true;
       this.pwaInstallButtonText = "Install app";
       e.preventDefault();                         
