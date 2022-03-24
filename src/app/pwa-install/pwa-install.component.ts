@@ -44,7 +44,7 @@ export class PwaInstallComponent implements OnInit {
 
     if (this.pwaInstallType === PWAInstallType.ShowiOSInstallInstructions) {
       this.showPWAInstallButton = true;
-      this.pwaInstallButtonText = "Install App";
+      this.pwaInstallButtonText = $localize`:PWA Install Button Label:Install App`;
     }
     // else if (this.pwaInstallType === PWAInstallType.InstallDirectly) this.showDelayedPWAInstallButton();
   
@@ -168,13 +168,9 @@ export class PwaInstallComponent implements OnInit {
     window.addEventListener('beforeinstallprompt', (e) => {
       // this.beforeInstallPromptFired = true;
       this.showPWAInstallButton = true;
-      this.pwaInstallButtonText = "Install app";
+      this.pwaInstallButtonText = $localize`:PWA Install Button Label:Install App`;
       e.preventDefault();                         
       this.deferredInstallPrompt = e;
-    });
-
-    window.addEventListener("appinstalled", evt => {
-      console.log("App has been installed as PWA.", evt);
     });
 
   }

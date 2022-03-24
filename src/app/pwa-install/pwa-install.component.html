@@ -2,7 +2,6 @@
 <button *ngIf="showPWAInstallButton"
     mat-button
     routerLink="user"
-    i18n="Install the app on the device"
     class="user-nav-button user-nav-button-first"
     id="PWAInstallButton"
     style='background-color: #ff9800'
@@ -14,21 +13,28 @@
 </button>
 
 <ng-template #iOSInstallInstructions>
-    To install the app
+    <ng-container i18n="PWA iOS Install Instractions - Line 1">To install the app</ng-container>
     <button mat-button style='position:absolute; right:-10px; top:0px' (click)="snackBar.dismiss()">
         <fa-icon icon="window-close" class="nav-icon"></fa-icon>
     </button>
     <ol>
-        <li>tap on <fa-icon icon="share-square" class="nav-icon"></fa-icon> at the bottom</li>
-        <li>and then tap on <fa-icon icon="plus-square" class="nav-icon"></fa-icon> (Add to Homescreen).</li>
+        <li>
+            <ng-container i18n="PWA iOS Install Instractions - Line 2-1">tap on </ng-container>
+            <fa-icon icon="share-square" class="nav-icon"></fa-icon> 
+            <ng-container i18n="PWA iOS Install Instractions - Line 2-2">at the bottom</ng-container></li>
+        <li>
+            <ng-container i18n="PWA iOS Install Instractions - Line 3-1">and then tap on </ng-container>
+            <fa-icon icon="plus-square" class="nav-icon"></fa-icon>
+            <ng-container i18n="PWA iOS Install Instractions - Line 3-2">(Add to Homescreen).</ng-container>
+        </li>
     </ol>
 </ng-template>
 
-<ng-template #pwaAlreadyInstalled>
+<!-- <ng-template #PWAAlreadyInstalled>
     The Aam Digital app is already installed.
     <button mat-button style='position:absolute; right:-10px; top:0px' (click)="snackBar.dismiss()">
         <fa-icon icon="window-close" class="nav-icon"></fa-icon>
     </button>
     <br>
     Open it directly from your operating system.
-</ng-template>
+</ng-template> -->
