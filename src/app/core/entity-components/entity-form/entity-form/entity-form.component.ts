@@ -37,6 +37,7 @@ export class EntityFormComponent implements OnInit {
    * @param columns The columns which should be displayed
    */
   @Input() set columns(columns: (FormFieldConfig | string)[][]) {
+    console.log("called", columns);
     this._columns = columns.map((row) =>
       row.map((field) => {
         if (typeof field === "string") {
@@ -106,6 +107,7 @@ export class EntityFormComponent implements OnInit {
       flattenedFormFields,
       this.entity
     );
+    console.log("config", flattenedFormFields);
     this.form = this.entityFormService.createFormGroup(
       flattenedFormFields,
       this.entity

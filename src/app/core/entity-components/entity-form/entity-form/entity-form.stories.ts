@@ -84,7 +84,7 @@ const cols = [
       label: "Assigned school(s)",
     },
   ],
-  ["school", "configurable-enum-array"],
+  [{ id: "school" }, { id: "configurable-enum-array" }],
 ];
 
 Child.schema.set("has_rationCard", {
@@ -114,6 +114,5 @@ const Template: Story<EntityFormComponent> = (args: EntityFormComponent) => ({
 export const Primary = Template.bind({});
 Primary.args = {
   entity: new Child(),
-  columns: cols,
   creatingNew: true,
 };
