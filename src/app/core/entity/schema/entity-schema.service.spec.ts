@@ -20,6 +20,7 @@ import { waitForAsync } from "@angular/core/testing";
 import { EntitySchemaService } from "./entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
 import { EntitySchemaDatatype } from "./entity-schema-datatype";
+import { dateOnlyEntitySchemaDatatype } from "../schema-datatypes/datatype-date-only";
 
 describe("EntitySchemaService", () => {
   let entitySchemaService: EntitySchemaService;
@@ -234,5 +235,25 @@ describe("EntitySchemaService", () => {
     );
 
     expect(displayComponent).toEqual("DisplayText");
+  });
+
+  it("should return the display and edit component for the innerDataType if dataType  is array", () => {
+    class TestEntity extends Entity {
+      @DatabaseField({ innerDataType: dateOnlyEntitySchemaDatatype.name })
+      dates: Date[];
+    }
+    const propertySchema = TestEntity.schema.get("dates");
+
+    const displayComponent = entitySchemaService.getComponent(
+      propertySchema,
+      "view"
+    );
+    expect(displayComponent).toBe(dateOnlyEntitySchemaDatatype.viewComponent);
+
+    const editComponent = entitySchemaService.getComponent(
+      propertySchema,
+      "edit"
+    );
+    expect(editComponent).toBe(dateOnlyEntitySchemaDatatype.editComponent);
   });
 });
