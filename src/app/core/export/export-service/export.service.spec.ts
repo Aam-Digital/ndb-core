@@ -463,7 +463,7 @@ describe("ExportService", () => {
     await createNoteInDB("first", [new Child(), new Child()]);
     await createNoteInDB("second", [new Child()]);
 
-    let result = await service.createCsv(undefined, [
+    const result = await service.createCsv(undefined, [
       {
         query: `${Note.ENTITY_TYPE}:toArray`,
         subQueries: [
