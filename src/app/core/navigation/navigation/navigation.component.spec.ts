@@ -15,13 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { NavigationComponent } from "./navigation.component";
 import { RouterTestingModule } from "@angular/router/testing";
@@ -148,7 +142,7 @@ describe("NavigationComponent", () => {
     ]);
   });
 
-  it("should highlight active menu item", fakeAsync(() => {
+  it("should highlight active menu item", () => {
     const routerEvents = TestBed.inject(Router).events as Subject<Event>;
     component.menuItems = [
       { label: "Home", icon: "home", link: "/" },
@@ -156,19 +150,24 @@ describe("NavigationComponent", () => {
     ];
 
     routerEvents.next(new NavigationEnd(42, "/child/1", "/child/1"));
-    tick();
     expect(component.activeLink)
       .withContext("url should match parent menu")
       .toBe("/child");
 
     routerEvents.next(new NavigationEnd(42, "/", "/"));
-    tick();
     expect(component.activeLink).withContext("root url should match").toBe("/");
 
     routerEvents.next(new NavigationEnd(42, "/other", "/other"));
-    tick();
     expect(component.activeLink)
       .withContext("unknown url should not match")
       .toBe("");
-  }));
+  });
+
+  it("should correctly highlight nested menu items", () => {
+    const routerEvents = TestBed.inject(Router).events as Subject<Event>;
+    component.menuItems = [{ label: "Children", icon: "", link: "/child" }];
+
+    routerEvents.next(new NavigationEnd(42, "/child/1", "/child/1"));
+    expect(component.activeLink).toBe("/child");
+  });
 });

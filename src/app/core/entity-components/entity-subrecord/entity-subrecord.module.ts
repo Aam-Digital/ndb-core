@@ -24,7 +24,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDialogModule } from "@angular/material/dialog";
 import { PermissionsModule } from "../../permissions/permissions.module";
 import { MatRippleModule } from "@angular/material/core";
-import { KeysPipeModule } from "../../keys-pipe/keys-pipe.module";
 import { MatChipsModule } from "@angular/material/chips";
 import { MatMenuModule } from "@angular/material/menu";
 
@@ -53,7 +52,6 @@ import { MatMenuModule } from "@angular/material/menu";
     FontAwesomeModule,
     FlexLayoutModule,
     Angulartics2Module,
-    KeysPipeModule,
     MatFormFieldModule,
     MatDialogModule,
     PermissionsModule,
