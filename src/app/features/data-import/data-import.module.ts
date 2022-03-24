@@ -12,6 +12,7 @@ import { AlertsModule } from "../../core/alerts/alerts.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { ExportModule } from "../../core/export/export.module";
+import { FlexModule } from "@angular/flex-layout";
 
 @NgModule({
   declarations: [DataImportComponent],
@@ -28,6 +29,7 @@ import { ExportModule } from "../../core/export/export.module";
     FontAwesomeModule,
     MatAutocompleteModule,
     ExportModule,
+    FlexModule,
   ],
   exports: [DataImportComponent],
   providers: [DataImportService],

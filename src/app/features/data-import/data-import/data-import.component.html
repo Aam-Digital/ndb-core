@@ -124,18 +124,21 @@
     <p i18n="Data import Final overview">Entity Type:    <em>{{ entityForm.get('entity').value }}</em></p>
     <p i18n="Data import Final overview">CSV File:       <em>{{ fileNameForm.get('fileName').value }}</em></p>
     <p i18n="Data import Final overview">TransactionID:  <em>{{ transactionIDForm.get('transactionId').value }}</em></p>
-    <button (click)="importSelectedFile()" mat-stroked-button i18n="Button to start import">
-      Start Import
-    </button>
-    <button (click)="saveConfig()" mat-stroked-button i18n="Button to save import configuration">
-      Save config
-    </button>
+
+    <div fxLayout="row" fxLayoutGap="10px">
+      <button (click)="importSelectedFile()" mat-stroked-button i18n="Button to start import">
+        Start Import
+      </button>
+      <button (click)="saveConfig()" mat-stroked-button i18n="Button to save import configuration">
+        Save config
+      </button>
+    </div>
     <div>
       <button mat-button matStepperPrevious i18n="Button to go back in import wizard">Back</button>
       <button mat-button (click)="stepper.reset()" i18n="Button to reset import wizard">Reset</button>
     </div>
   </mat-step>
   <ng-template matStepperIcon="edit">
-    <fa-icon icon="pen"></fa-icon>
+    <fa-icon class="stepper-icon" icon="check"></fa-icon>
   </ng-template>
 </mat-vertical-stepper>
