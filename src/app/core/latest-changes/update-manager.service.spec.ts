@@ -1,14 +1,8 @@
-import { LOCATION_TOKEN, UpdateManagerService } from "./update-manager.service";
-import {
-  discardPeriodicTasks,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { UpdateManagerService } from "./update-manager.service";
+import { discardPeriodicTasks, fakeAsync, tick } from "@angular/core/testing";
 import { ApplicationRef } from "@angular/core";
 import { SwUpdate, UpdateActivatedEvent } from "@angular/service-worker";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { LoggingService } from "../logging/logging.service";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { Subject } from "rxjs";
 
@@ -21,6 +15,7 @@ describe("UpdateManagerService", () => {
   let snackBarAction: Subject<void>;
   let appRef: jasmine.SpyObj<ApplicationRef>;
   let stableSubject: Subject<boolean>;
+  let latestChangesDialog: jasmine.SpyObj<LatestChangesDialogService>;
 
   beforeEach(() => {
     location = jasmine.createSpyObj(["reload"]);
@@ -29,6 +24,7 @@ describe("UpdateManagerService", () => {
       available: updateSubject,
       isEnabled: true,
     });
+    swUpdate.checkForUpdate.and.resolveTo();
     snackBar = jasmine.createSpyObj(["open"]);
     snackBarAction = new Subject();
     snackBar.open.and.returnValue({
@@ -36,26 +32,16 @@ describe("UpdateManagerService", () => {
     } as any);
     stableSubject = new Subject<boolean>();
     appRef = jasmine.createSpyObj([], { isStable: stableSubject });
+    latestChangesDialog = jasmine.createSpyObj(["showLatestChangesIfUpdated"]);
 
-    TestBed.configureTestingModule({
-      providers: [
-        UpdateManagerService,
-        { provide: ApplicationRef, useValue: appRef },
-        { provide: SwUpdate, useValue: swUpdate },
-        { provide: MatSnackBar, useValue: snackBar },
-        { provide: LoggingService, useValue: {} },
-        { provide: LOCATION_TOKEN, useValue: location },
-      ],
-    });
-
-    service = TestBed.inject(UpdateManagerService);
+    service = createService();
   });
 
   it("should create", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should show a popup that allows to reload the page when an update is available", fakeAsync(() => {
+  it("should show a snackBar that allows to reload the page when an update is available", fakeAsync(() => {
     service.notifyUserWhenUpdateAvailable();
     // notify about new update
     updateSubject.next();
@@ -77,8 +63,7 @@ describe("UpdateManagerService", () => {
       "update-" + version
     );
 
-    // tslint:disable-next-line:no-unused-expression
-    new UpdateManagerService(null, null, null, null, location);
+    createService();
 
     expect(location.reload).toHaveBeenCalled();
     expect(
@@ -139,4 +124,37 @@ describe("UpdateManagerService", () => {
 
     discardPeriodicTasks();
   }));
+
+  it("should trigger the latest changes dialog on startup only if update note is set", () => {
+    latestChangesDialog.showLatestChangesIfUpdated.calls.reset();
+
+    window.localStorage.setItem(
+      LatestChangesDialogService.VERSION_KEY,
+      "update-1.0.0"
+    );
+    createService();
+
+    expect(
+      latestChangesDialog.showLatestChangesIfUpdated
+    ).not.toHaveBeenCalled();
+
+    window.localStorage.setItem(
+      LatestChangesDialogService.VERSION_KEY,
+      "1.0.0"
+    );
+    createService();
+
+    expect(latestChangesDialog.showLatestChangesIfUpdated).toHaveBeenCalled();
+  });
+
+  function createService() {
+    return new UpdateManagerService(
+      appRef,
+      swUpdate,
+      snackBar,
+      undefined,
+      latestChangesDialog,
+      location
+    );
+  }
 });

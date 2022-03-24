@@ -10,7 +10,6 @@ import {
   EntitySubrecordComponent,
   TableRow,
 } from "./entity-subrecord.component";
-import { RouterTestingModule } from "@angular/router/testing";
 import { EntitySubrecordModule } from "../entity-subrecord.module";
 import { Entity } from "../../../entity/model/entity";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -28,6 +27,7 @@ import { LoggingService } from "../../../logging/logging.service";
 import { MockSessionModule } from "../../../session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import moment from "moment";
+import { MediaObserver } from "@angular/flex-layout";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -39,7 +39,6 @@ describe("EntitySubrecordComponent", () => {
       TestBed.configureTestingModule({
         imports: [
           EntitySubrecordModule,
-          RouterTestingModule.withRoutes([]),
           MatNativeDateModule,
           NoopAnimationsModule,
           MockSessionModule.withState(),
@@ -65,11 +64,13 @@ describe("EntitySubrecordComponent", () => {
   it("should sort enums by the label", () => {
     class Test extends Entity {
       public enumValue: ConfigurableEnumValue;
+
       constructor(label: string, id: string) {
         super();
         this.enumValue = { label: label, id: id };
       }
     }
+
     const first = new Test("aaa", "first");
     const second = new Test("aab", "second");
     const third = new Test("c", "third");
@@ -91,7 +92,7 @@ describe("EntitySubrecordComponent", () => {
     });
 
     const sortedData = component.recordsDataSource
-      .sortData(component.recordsDataSource.data, component.sort)
+      ._orderData(component.recordsDataSource.data)
       .map((row) => row.record);
     expect(sortedData).toEqual([first, second, third]);
   });
@@ -128,7 +129,7 @@ describe("EntitySubrecordComponent", () => {
 
     component.sort.sort({ id: "name", start: "asc", disableClear: false });
     const sortedIds = component.recordsDataSource
-      .sortData(component.recordsDataSource.data, component.sort)
+      ._orderData(component.recordsDataSource.data)
       .map((c) => c.record.getId());
 
     expect(sortedIds).toEqual(["0", "3", "1", "2"]);
@@ -141,14 +142,27 @@ describe("EntitySubrecordComponent", () => {
     notes[2].category = { id: "2", label: "Z" };
     notes[1].category = { id: "3", label: "C" };
     component.records = notes;
-    component.ngOnChanges({ records: null });
+    component.ngOnChanges({ records: undefined });
 
     component.sort.sort({ id: "category", start: "asc", disableClear: false });
     const sortedIds = component.recordsDataSource
-      .sortData(component.recordsDataSource.data, component.sort)
+      ._orderData(component.recordsDataSource.data)
       .map((note) => note.record.getId());
 
     expect(sortedIds).toEqual(["0", "3", "1", "2"]);
+  });
+
+  it("should sort strings ignoring case", () => {
+    const names = ["C", "b", "A"];
+    component.records = names.map((name) => Child.create(name));
+    component.ngOnChanges({ records: undefined });
+    component.sort.sort({ id: "name", start: "asc", disableClear: false });
+
+    const sortedNames = component.recordsDataSource
+      ._orderData(component.recordsDataSource.data)
+      .map((row: TableRow<Child>) => row.record.name);
+
+    expect(sortedNames).toEqual(["A", "b", "C"]);
   });
 
   it("should log a warning when the column definition can not be initialized", () => {
@@ -170,6 +184,7 @@ describe("EntitySubrecordComponent", () => {
   });
 
   it("should create a formGroup when editing a row", () => {
+    spyOn(TestBed.inject(MediaObserver), "isActive").and.returnValue(false);
     component.columns = [{ id: "name" }, { id: "projectNumber" }];
     const child = new Child();
     child.name = "Child Name";

@@ -18,7 +18,7 @@ import { AlertService } from "../../../alerts/alert.service";
  * the name of this property (and not an FormFieldConfig object).
  *
  * This component can be used directly or in a popup.
- * Inside the entity details component use the FormComponent which is part of the DYNAMIC_COMPONENT_MAP.
+ * Inside the entity details component use the FormComponent which is registered as dynamic component.
  */
 export class EntityFormComponent implements OnInit {
   /**

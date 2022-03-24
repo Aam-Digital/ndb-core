@@ -24,7 +24,7 @@ import { HttpClientModule } from "@angular/common/http";
 import { AppComponent } from "./app.component";
 import { UiModule } from "./core/ui/ui.module";
 import { AppConfigModule } from "./core/app-config/app-config.module";
-import { routing } from "./app.routing";
+import { RouteRegistry, routesRegistry, routing } from "./app.routing";
 import { AlertsModule } from "./core/alerts/alerts.module";
 import { SessionModule } from "./core/session/session.module";
 import { SyncStatusModule } from "./core/sync-status/sync-status.module";
@@ -32,7 +32,7 @@ import { NavigationModule } from "./core/navigation/navigation.module";
 import { LatestChangesModule } from "./core/latest-changes/latest-changes.module";
 import { UserModule } from "./core/user/user.module";
 
-import { ProgressDashboardWidgetModule } from "./child-dev-project/progress-dashboard-widget/progress-dashboard-widget.module";
+import { ProgressDashboardWidgetModule } from "./features/progress-dashboard-widget/progress-dashboard-widget.module";
 import { ChildrenModule } from "./child-dev-project/children/children.module";
 import { SchoolsModule } from "./child-dev-project/schools/schools.module";
 import { FlexLayoutModule } from "@angular/flex-layout";
@@ -47,10 +47,10 @@ import { DemoChildGenerator } from "./child-dev-project/children/demo-data-gener
 import { DemoSchoolGenerator } from "./child-dev-project/schools/demo-school-generator.service";
 import { DemoChildSchoolRelationGenerator } from "./child-dev-project/children/demo-data-generators/demo-child-school-relation-generator.service";
 import { DemoNoteGeneratorService } from "./child-dev-project/notes/demo-data/demo-note-generator.service";
-import { DemoAserGeneratorService } from "./child-dev-project/aser/demo-aser-generator.service";
-import { DemoEducationalMaterialGeneratorService } from "./child-dev-project/educational-material/demo-educational-material-generator.service";
-import { DemoHealthCheckGeneratorService } from "./child-dev-project/health-checkup/demo-data/demo-health-check-generator.service";
-import { DemoProgressDashboardWidgetGeneratorService } from "./child-dev-project/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service";
+import { DemoAserGeneratorService } from "./child-dev-project/children/aser/demo-aser-generator.service";
+import { DemoEducationalMaterialGeneratorService } from "./child-dev-project/children/educational-material/demo-educational-material-generator.service";
+import { DemoHealthCheckGeneratorService } from "./child-dev-project/children/health-checkup/demo-data/demo-health-check-generator.service";
+import { DemoProgressDashboardWidgetGeneratorService } from "./features/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service";
 import { DemoUserGeneratorService } from "./core/user/demo-user-generator.service";
 import { ConfirmationDialogModule } from "./core/confirmation-dialog/confirmation-dialog.module";
 import { FormDialogModule } from "./core/form-dialog/form-dialog.module";
@@ -155,6 +155,7 @@ import { far } from "@fortawesome/free-regular-svg-icons";
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
     { provide: MatPaginatorIntl, useValue: TranslatableMatPaginator() },
+    { provide: RouteRegistry, useValue: routesRegistry },
     AnalyticsService,
     Angulartics2Matomo,
   ],

@@ -1,18 +1,20 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { HealthCheck } from "../../health-checkup/model/health-check";
+import { HealthCheck } from "../health-checkup/model/health-check";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { take } from "rxjs/operators";
 import { ChildrenService } from "../children.service";
 import { Child } from "../model/child";
 import { WarningLevel } from "../../../core/entity/model/warning-level";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 
 interface BmiRow {
   childId: string;
   bmi: number;
 }
 
+@DynamicComponent("ChildrenBmiDashboard")
 @UntilDestroy()
 @Component({
   selector: "app-children-bmi-dashboard",

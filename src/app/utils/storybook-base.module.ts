@@ -10,6 +10,10 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatNativeDateModule } from "@angular/material/core";
 import { Angulartics2Module } from "angulartics2";
 import { RouterTestingModule } from "@angular/router/testing";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "../core/entity/database-entity.decorator";
 
 /**
  * Utility module to be imported in Storybook stories to ensure central setup like fontawesome icons are available.
@@ -24,6 +28,7 @@ import { RouterTestingModule } from "@angular/router/testing";
     Angulartics2Module.forRoot(),
     RouterTestingModule,
   ],
+  providers: [{ provide: EntityRegistry, useValue: entityRegistry }],
 })
 export class StorybookBaseModule {
   constructor(icons: FaIconLibrary) {

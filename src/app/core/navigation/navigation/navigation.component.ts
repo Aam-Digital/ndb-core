@@ -82,8 +82,9 @@ export class NavigationComponent {
       case 0:
         return "";
       case 1:
+        const link = items[0].link;
         // for root "/" only return on exact match to avoid confusing highlighting of unrelated items
-        return newUrl === items[0].link ? items[0].link : "";
+        return newUrl === link || link.length > 1 ? link : "";
       default:
         // If there are multiple matches (A user navigates with a URL that starts with
         // multiple links from a MenuItem), use the element where the length is bigger.
