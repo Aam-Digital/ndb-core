@@ -107,7 +107,6 @@ export class EntityFormComponent implements OnInit {
       flattenedFormFields,
       this.entity
     );
-    console.log("config", flattenedFormFields);
     this.form = this.entityFormService.createFormGroup(
       flattenedFormFields,
       this.entity

@@ -114,5 +114,7 @@ const Template: Story<EntityFormComponent> = (args: EntityFormComponent) => ({
 export const Primary = Template.bind({});
 Primary.args = {
   entity: new Child(),
+  columns: cols,
+  _columns: cols,
   creatingNew: true,
 };
