@@ -23,7 +23,10 @@ export class HistoricalDataService {
         },
       },
     };
-    return this.dbIndexingService.createIndex(designDoc);
+    return this.dbIndexingService.createIndex(
+      designDoc,
+      HistoricalEntityData.ENTITY_TYPE
+    );
   }
 
   getHistoricalDataFor(entityId: string): Promise<HistoricalEntityData[]> {

@@ -108,7 +108,10 @@ export class ChildrenService {
         },
       },
     };
-    return this.dbIndexing.createIndex(designDoc);
+    return this.dbIndexing.createIndex(
+      designDoc,
+      ChildSchoolRelation.ENTITY_TYPE
+    );
   }
 
   queryLatestRelation(childId: string): Promise<ChildSchoolRelation> {
@@ -237,7 +240,7 @@ export class ChildrenService {
       },
     };
 
-    return this.dbIndexing.createIndex(designDoc);
+    return this.dbIndexing.createIndex(designDoc, Note.ENTITY_TYPE);
   }
 
   async getEducationalMaterialsOfChild(

@@ -64,7 +64,7 @@ export class AttendanceService {
       },
     };
 
-    return this.dbIndexing.createIndex(designDoc);
+    return this.dbIndexing.createIndex(designDoc, EventNote.ENTITY_TYPE);
   }
 
   private createRecurringActivitiesIndex(): Promise<void> {
@@ -92,7 +92,7 @@ export class AttendanceService {
       },
     };
 
-    return this.dbIndexing.createIndex(designDoc);
+    return this.dbIndexing.createIndex(designDoc, EventNote.ENTITY_TYPE);
   }
 
   /**

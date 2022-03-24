@@ -8,6 +8,7 @@ import { fromPromise } from "rxjs/internal-compatibility";
 import { FormControl } from "@angular/forms";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { Child } from "../../../child-dev-project/children/model/child";
 
 /**
  * General search box that provides results out of any kind of entities from the system
@@ -77,7 +78,9 @@ export class SearchComponent {
         startkey: searchTerms[0],
         endkey: searchTerms[0] + "\ufff0",
         include_docs: true,
-      }
+      },
+      false,
+      Child.ENTITY_TYPE
     );
     const filtered = this.prepareResults(entities.rows, searchTerms);
     const uniques = this.uniquify(filtered);
@@ -123,7 +126,9 @@ export class SearchComponent {
       },
     };
 
-    return fromPromise(this.indexingService.createIndex(designDoc));
+    return fromPromise(
+      this.indexingService.createIndex(designDoc, Child.ENTITY_TYPE)
+    );
   }
 
   private prepareResults(

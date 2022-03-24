@@ -52,13 +52,16 @@ export class DatabaseIndexingService {
    *
    * @param designDoc The design document (see @link{Database}) describing the query/index.
    */
-  async createIndex(designDoc: any): Promise<void> {
+  async createIndex(designDoc: any, entityType?: string): Promise<void> {
     const indexState: BackgroundProcessState = {
       title: $localize`Preparing data (Indexing)`,
       details: designDoc._id.replace(/_design\//, ""),
       pending: true,
     };
-    const indexCreationPromise = this.db.saveDatabaseIndex(designDoc);
+    const indexCreationPromise = this.db.saveDatabaseIndex(
+      designDoc,
+      entityType
+    );
     this._indicesRegistered.next([
       ...this._indicesRegistered.value,
       indexState,
@@ -93,7 +96,12 @@ export class DatabaseIndexingService {
     }
     options.include_docs = true;
 
-    const rawResults = await this.queryIndexRaw(indexName, options);
+    const rawResults = await this.queryIndexRaw(
+      indexName,
+      options,
+      false,
+      entityConstructor.ENTITY_TYPE
+    );
     return rawResults.rows.map((loadedRecord) => {
       const entity = new entityConstructor("");
       this.entitySchemaService.loadDataIntoEntity(entity, loadedRecord.doc);
@@ -143,13 +151,14 @@ export class DatabaseIndexingService {
   async queryIndexRaw(
     indexName: string,
     options: QueryOptions,
-    doNotWaitForIndexCreation?: boolean
+    doNotWaitForIndexCreation?: boolean,
+    entityType?: string
   ): Promise<any> {
     if (!doNotWaitForIndexCreation) {
       await this.waitForIndexAvailable(indexName);
     }
 
-    return await this.db.query(indexName, options);
+    return await this.db.query(indexName, options, entityType);
   }
 
   /**

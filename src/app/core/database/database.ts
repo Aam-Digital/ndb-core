@@ -63,7 +63,11 @@ export abstract class Database {
    * @param fun The name of a previously saved database index
    * @param options Additional options for the query, like a `key`. See the PouchDB docs for details.
    */
-  abstract query(fun: any, options?: QueryOptions): Promise<any>;
+  abstract query(
+    fun: any,
+    options?: QueryOptions,
+    entityType?: string
+  ): Promise<any>;
 
   /**
    * Create a database index to `query()` certain data more efficiently in the future.
@@ -72,7 +76,7 @@ export abstract class Database {
    *
    * @param designDoc The PouchDB style design document for the map/reduce query
    */
-  abstract saveDatabaseIndex(designDoc: any): Promise<any>;
+  abstract saveDatabaseIndex(designDoc: any, entityType: string): Promise<any>;
 
   /**
    * Load all documents (with the given prefix) from the database.

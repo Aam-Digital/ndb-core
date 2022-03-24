@@ -21,6 +21,10 @@ import PouchDB from "pouchdb-browser";
 import memory from "pouchdb-adapter-memory";
 import { PerformanceAnalysisLogging } from "../../utils/performance-analysis-logging";
 import { Injectable } from "@angular/core";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "../entity/database-entity.decorator";
 
 @Injectable()
 /**
@@ -46,12 +50,17 @@ export class PouchDatabase extends Database {
 
   private pouchDB: PouchDB.Database;
   private indexPromises: Promise<any>[] = [];
+  private databases: { [key: string]: PouchDB.Database } = {};
 
   /**
    * Create a PouchDB database manager.
    * @param loggingService The LoggingService instance of the app to log and report problems.
+   * @param entities
    */
-  constructor(private loggingService: LoggingService) {
+  constructor(
+    private loggingService: LoggingService,
+    private entities: EntityRegistry = entityRegistry
+  ) {
     super();
   }
 
@@ -62,7 +71,11 @@ export class PouchDatabase extends Database {
    */
   initInMemoryDB(dbName = "in-memory-database"): PouchDatabase {
     PouchDB.plugin(memory);
-    this.pouchDB = new PouchDB(dbName, { adapter: "memory" });
+    for (const entity of this.entities.values()) {
+      this.databases[
+        entity.ENTITY_TYPE
+      ] = new PouchDB(`${entity.ENTITY_TYPE}-${dbName}`, { adapter: "memory" });
+    }
     return this;
   }
 
@@ -76,7 +89,12 @@ export class PouchDatabase extends Database {
     dbName = "indexed-database",
     options?: PouchDB.Configuration.DatabaseConfiguration
   ): PouchDatabase {
-    this.pouchDB = new PouchDB(dbName, options);
+    for (const entity of this.entities.values()) {
+      this.databases[entity.ENTITY_TYPE] = new PouchDB(
+        `${entity.ENTITY_TYPE}-${dbName}`,
+        options
+      );
+    }
     return this;
   }
 
@@ -97,9 +115,10 @@ export class PouchDatabase extends Database {
   get(
     id: string,
     options: GetOptions = {},
-    returnUndefined?: boolean
+    returnUndefined?: boolean,
+    entityType = id.split(":")[0]
   ): Promise<any> {
-    return this.pouchDB.get(id, options).catch((err) => {
+    return this.databases[entityType].get(id, options).catch((err) => {
       if (err.status === 404) {
         this.loggingService.debug("Doc not found in database: " + id);
         if (returnUndefined) {
@@ -120,8 +139,9 @@ export class PouchDatabase extends Database {
    *
    * @param options PouchDB options object as in the normal PouchDB library
    */
-  allDocs(options?: GetAllOptions) {
-    return this.pouchDB.allDocs(options).then((result) => {
+  allDocs(options?: GetAllOptions & { startkey: string }) {
+    const entityType = options.startkey.split(":")[0];
+    return this.databases[entityType].allDocs(options).then((result) => {
       const resultArray = [];
       for (const row of result.rows) {
         resultArray.push(row.doc);
@@ -137,13 +157,16 @@ export class PouchDatabase extends Database {
    * @param object The document to be saved
    * @param forceOverwrite (Optional) Whether conflicts should be ignored and an existing conflicting document forcefully overwritten.
    */
-  put(object: any, forceOverwrite?: boolean): Promise<any> {
+  put(
+    object: any,
+    forceOverwrite?: boolean,
+    entityType = object._id.split(":")[0]
+  ): Promise<any> {
     const options: any = {};
     if (forceOverwrite) {
       object._rev = undefined;
     }
-
-    return this.pouchDB.put(object, options).catch((err) => {
+    return this.databases[entityType].put(object, options).catch((err) => {
       if (err.status === 409) {
         return this.resolveConflict(object, forceOverwrite, err);
       } else {
@@ -159,7 +182,8 @@ export class PouchDatabase extends Database {
    * @param object The document to be deleted (usually this object must at least contain the _id and _rev)
    */
   remove(object: any) {
-    return this.pouchDB.remove(object).catch((err) => {
+    const entityType = object._id.split(":")[0];
+    return this.databases[entityType].remove(object).catch((err) => {
       throw err;
     });
   }
@@ -177,7 +201,9 @@ export class PouchDatabase extends Database {
 
   public async destroy(): Promise<any> {
     await Promise.all(this.indexPromises);
-    return this.pouchDB.destroy();
+    return Object.values(this.databases).forEach((database) =>
+      database.destroy()
+    );
   }
 
   /**
@@ -192,9 +218,10 @@ export class PouchDatabase extends Database {
    */
   query(
     fun: string | ((doc: any, emit: any) => void),
-    options: QueryOptions
+    options: QueryOptions,
+    entityType?: string
   ): Promise<any> {
-    return this.pouchDB.query(fun, options);
+    return this.databases[entityType].query(fun, options);
   }
 
   /**
@@ -205,14 +232,22 @@ export class PouchDatabase extends Database {
    *
    * @param designDoc The PouchDB style design document for the map/reduce query
    */
-  saveDatabaseIndex(designDoc: any): Promise<void> {
-    const creationPromise = this.createOrUpdateDesignDoc(designDoc);
+  saveDatabaseIndex(designDoc: any, entityType?: string): Promise<void> {
+    const creationPromise = this.createOrUpdateDesignDoc(designDoc, entityType);
     this.indexPromises.push(creationPromise);
     return creationPromise;
   }
 
-  private async createOrUpdateDesignDoc(designDoc): Promise<void> {
-    const existingDesignDoc = await this.get(designDoc._id, {}, true);
+  private async createOrUpdateDesignDoc(
+    designDoc,
+    entityType: string
+  ): Promise<void> {
+    const existingDesignDoc = await this.get(
+      designDoc._id,
+      {},
+      true,
+      entityType
+    );
     if (!existingDesignDoc) {
       this.loggingService.debug("creating new database index");
     } else if (
@@ -226,15 +261,18 @@ export class PouchDatabase extends Database {
       return;
     }
 
-    await this.put(designDoc);
-    await this.prebuildViewsOfDesignDoc(designDoc);
+    await this.put(designDoc, false, entityType);
+    await this.prebuildViewsOfDesignDoc(designDoc, entityType);
   }
 
   @PerformanceAnalysisLogging
-  private async prebuildViewsOfDesignDoc(designDoc: any): Promise<void> {
+  private async prebuildViewsOfDesignDoc(
+    designDoc: any,
+    entityType: string
+  ): Promise<void> {
     for (const viewName of Object.keys(designDoc.views)) {
       const queryName = designDoc._id.replace(/_design\//, "") + "/" + viewName;
-      await this.query(queryName, { key: "1" });
+      await this.query(queryName, { key: "1" }, entityType);
     }
   }
 

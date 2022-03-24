@@ -52,6 +52,6 @@ export class ConflictResolutionListComponent implements AfterViewInit {
       },
     };
 
-    return this.db.saveDatabaseIndex(designDoc);
+    return this.db.saveDatabaseIndex(designDoc, "Child");
   }
 }
