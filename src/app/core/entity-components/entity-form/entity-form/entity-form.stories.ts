@@ -84,7 +84,7 @@ const cols = [
       label: "Assigned school(s)",
     },
   ],
-  ["school"],
+  ["school", "configurable-enum-array"],
 ];
 
 Child.schema.set("has_rationCard", {
@@ -98,6 +98,12 @@ Child.schema.set("school", {
   additional: School.ENTITY_TYPE,
   viewComponent: "DisplayEntity",
   editComponent: "EditSingleEntity",
+});
+Child.schema.set("configurable-enum-array", {
+  dataType: "array",
+  innerDataType: "configurable-enum",
+  additional: "document-status",
+  label: "Enum Multi Select",
 });
 
 const Template: Story<EntityFormComponent> = (args: EntityFormComponent) => ({

@@ -18,6 +18,8 @@ export class EditConfigurableEnumComponent extends EditComponent<ConfigurableEnu
   onInitFromDynamicConfig(config: EditPropertyConfig) {
     super.onInitFromDynamicConfig(config);
     this.enumId =
-      config.formFieldConfig.additional || config.propertySchema.innerDataType;
+      config.formFieldConfig.additional ||
+      config.propertySchema.additional ||
+      config.propertySchema.innerDataType;
   }
 }
