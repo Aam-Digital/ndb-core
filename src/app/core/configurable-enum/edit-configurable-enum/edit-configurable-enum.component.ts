@@ -5,6 +5,7 @@ import {
 } from "../../entity-components/entity-utils/dynamic-form-components/edit-component";
 import { ConfigurableEnumValue } from "../configurable-enum.interface";
 import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
+import { arrayEntitySchemaDatatype } from "../../entity/schema-datatypes/datatype-array";
 
 @DynamicComponent("EditConfigurableEnum")
 @Component({
@@ -14,9 +15,13 @@ import { DynamicComponent } from "../../view/dynamic-components/dynamic-componen
 })
 export class EditConfigurableEnumComponent extends EditComponent<ConfigurableEnumValue> {
   enumId: string;
+  multi = false;
 
   onInitFromDynamicConfig(config: EditPropertyConfig) {
     super.onInitFromDynamicConfig(config);
+    if (config.propertySchema.dataType === arrayEntitySchemaDatatype.name) {
+      this.multi = true;
+    }
     this.enumId =
       config.formFieldConfig.additional ||
       config.propertySchema.additional ||
