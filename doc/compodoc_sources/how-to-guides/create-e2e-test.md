@@ -8,25 +8,86 @@
 ## Instruction
 ### First Step
 #### Create a file
-All tests are located under `ndb-core/e2e/integration` directory. Good practice is to create for every single test his own directory. The name of test and directory should have the same name.
+All tests are located under `ndb-core/e2e/integration` directory. 
 <br />
-e.g. `/../integration/LinkingChildToSchool/LinkingChildToSchool.ts`
+File extension could be `.spec.ts` or just `.ts`
 <br />
-It does not matter how to create this file.
+You can use any tool in your operating system to create the file, or you can use the `ng generate @cypress/schematic:e2e` command
+
+In order to bypass the prompt asking for your e2e spec name, simply add a `--name=` flag like this:
+<br />
+`ng generate @cypress/schematic:e2e --name=login`
+<br />
+This will create a new spec file named `login.spec.ts` in the default Cypress folder location(`ndb-core/cypress/integration`).
+
+**Specify Path for command**
+<br />
+Add a `--path=` flag to specify the project:
+<br />
+`ng generate @cypress/schematic:e2e --name=login --path=e2e/integration`
+<br />
+This will create the e2e spec file in your specific location, creating folders as needed.
+
+**Specify Project for command**
+<br />
+Add a `--project=` flag to specify the project:
+<br />
+`ng generate @cypress/schematic:e2e --name=login --project=ndb-core-e2e`
+
+If you have tests that fit together, create a separate folder inside for them. This grouping will help you navigate through them better.
+<br />
+e.g. `/../integration/childTests/`
+<br />
 
 ### Second Step
 #### Gherkin Template
-Create/Define a User Story with Gherkin Template. With the help of this template an e2e-test can be created step-by-step and you would not lose your attention.
+##### How does Gherkin help with writing Cypress tests?
+
+As a barely formal language, Gherkin primarily serves as a communication language in agile teams for describing system behaviour based on the concrete examples and thus supports the following goals:
+
+- Creation of understandable and executable specification for all stakeholders in agile teams.
+- Starting point for the automation of tests
+- Documentation of the system behaviour
 <br />
-e.g.
-####Scenario: Linking a child to a school
+
+More about Gherkin: [Gherkin](https://cucumber.io/docs/gherkin/)
+
+The specification of the scenarios with Gherkin is normally stored in so-called Feature Files. These files are human-readable text files.
+<br />
+It makes sense to use [cypress-cucumber-preprocessor](https://github.com/TheBrainFamily/cypress-cucumber-preprocessor) in the future (status 24.03.2022: Not in use).
+<br />
+This or a similar framework can speed up test creation because it allows Feature Files to be interpreted into Cypress code
+#### Example of a test:
 ```
+Scenario: Linking a child to a school
 Given I am on the details page of a child
 When I add an entry in the 'Previous Schools' section with a specific school
 Then I can see that child in the 'Children Overview' of the details page of this school
 ```
+
+Gherkin uses a set of special keywords to give structure and meaning to executable specifications.
+<br />
+The primary keywords are:
+- Given 
+- When
+- Then 
+- And 
+- But
+
+More info here: [Keywords](https://cucumber.io/docs/gherkin/reference/#keywords)
+
+
+
+
 ### Third Step
 #### Implement E2E-Test
+
+##### Some useful links
+* [API: Table of Contents](https://docs.cypress.io/api/table-of-contents)
+* [Setup and Teardown: Hooks](https://docs.cypress.io/guides/core-concepts/writing-and-organizing-tests#Hooks)
+* [Cookies](https://docs.cypress.io/api/cypress-api/cookies)
+* [Assertions](https://docs.cypress.io/guides/references/assertions)
+* [Catalog of Events](https://docs.cypress.io/api/events/catalog-of-events)
 ```
 describe("Scenario of the Test", () => {
   before(() => {
@@ -59,3 +120,41 @@ describe("Scenario of the Test", () => {
 <li>Take an action.</li>
 <li>Make an assertion about the resulting application state.</li>
 </ol>
+
+##### What role does Gherkin play?
+
+We take this Scenario as example:
+```
+Scenario: Linking a child to a school
+Given I am on the details page of a child
+When I add an entry in the 'Previous Schools' section with a specific school
+Then I can see that child in the 'Children Overview' of the details page of this school
+```
+Separate it into separate parts:
+
+`Given I am on the details page of a child`
+<br />
+`When I add an entry in the 'Previous Schools' section with a specific school`
+<br />
+`Then I can see that child in the 'Children Overview' of the details page of this school`
+
+
+We can build this template:
+```
+describe("Linking a child to a school", () => {
+  before(() => {
+  
+  });
+
+  it("I add an entry in the 'Previous Schools' section with a specific school", function () {
+      
+  });
+  
+  it("I can see that child in the 'Children Overview' of the details page of this school", function () {
+      
+  });
+  
+});
+```
+Now it is worth deciding how to achieve each of the goals we have described in each part. As example the `before()` section would fit perfectly with ``Given I am on the details page of a child``.
+
