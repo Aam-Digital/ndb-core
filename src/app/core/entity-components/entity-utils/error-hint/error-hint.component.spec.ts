@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ErrorHintComponent } from "./error-hint.component";
-import { KeysPipeModule } from "../../../keys-pipe/keys-pipe.module";
 import { FormControl, Validators } from "@angular/forms";
 import { By } from "@angular/platform-browser";
 
@@ -12,7 +11,6 @@ describe("ErrorHintComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ErrorHintComponent],
-      imports: [KeysPipeModule],
     }).compileComponents();
   });
 

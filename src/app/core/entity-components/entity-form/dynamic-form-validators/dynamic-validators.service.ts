@@ -104,7 +104,7 @@ export class DynamicValidatorsService {
    * @param validationValue The value associated with the validator
    */
   public descriptionForValidator(
-    validator: DynamicValidator,
+    validator: DynamicValidator | string,
     validationValue: any
   ): string {
     switch (validator) {
@@ -122,6 +122,8 @@ export class DynamicValidatorsService {
         return $localize`This field is required`;
       case "validEmail":
         return $localize`Please enter a valid email`;
+      default:
+        throw new Error("No description defined for validator " + validator);
     }
   }
 }
