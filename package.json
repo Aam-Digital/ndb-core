@@ -84,6 +84,7 @@
     "@types/lodash": "^4.14.168",
     "@types/node": "^14.14.31",
     "@types/pouchdb": "^6.4.0",
+    "@types/uuid": "^8.3.4",
     "babel-loader": "^8.2.2",
     "codelyzer": "6.0.1",
     "cypress": "8.5.0",

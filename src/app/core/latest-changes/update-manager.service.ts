@@ -34,23 +34,27 @@ import { LOCATION_TOKEN } from "../../utils/di-tokens";
 @Injectable()
 export class UpdateManagerService {
   private notificationRef;
+  private readonly UPDATE_PREFIX = "update-";
 
   constructor(
     private appRef: ApplicationRef,
     private updates: SwUpdate,
     private snackBar: MatSnackBar,
     private logger: LoggingService,
+    private latestChangesDialogService: LatestChangesDialogService,
     @Inject(LOCATION_TOKEN) private location: Location
   ) {
-    const currentVersion: string = window.localStorage.getItem(
+    const currentVersion = window.localStorage.getItem(
       LatestChangesDialogService.VERSION_KEY
     );
-    if (currentVersion && currentVersion.startsWith("update-")) {
+    if (currentVersion && currentVersion.startsWith(this.UPDATE_PREFIX)) {
       window.localStorage.setItem(
         LatestChangesDialogService.VERSION_KEY,
-        currentVersion.replace("update-", "")
+        currentVersion.replace(this.UPDATE_PREFIX, "")
       );
       this.location.reload();
+    } else {
+      this.latestChangesDialogService.showLatestChangesIfUpdated();
     }
   }
 
@@ -61,10 +65,7 @@ export class UpdateManagerService {
     if (!this.updates.isEnabled) {
       return;
     }
-
-    this.updates.available.subscribe(() => {
-      this.showUpdateNotification();
-    });
+    this.updates.available.subscribe(() => this.showUpdateNotification());
   }
 
   /**
@@ -82,22 +83,22 @@ export class UpdateManagerService {
     const everyHours$ = interval(60 * 60 * 1000);
     const everyHoursOnceAppIsStable$ = concat(appIsStable$, everyHours$);
 
-    everyHoursOnceAppIsStable$.subscribe(async () => {
-      try {
-        await this.updates.checkForUpdate();
-      } catch (err) {
-        this.logger.error(err);
-      }
-    });
+    everyHoursOnceAppIsStable$.subscribe(() =>
+      this.updates.checkForUpdate().catch((err) => this.logger.error(err))
+    );
   }
 
   private showUpdateNotification() {
-    const currentVersion: string = window.localStorage.getItem(
-      LatestChangesDialogService.VERSION_KEY
-    );
+    const currentVersion =
+      window.localStorage.getItem(LatestChangesDialogService.VERSION_KEY) || "";
+    if (currentVersion.startsWith(this.UPDATE_PREFIX)) {
+      // Sometimes this is triggered multiple times for one update
+      return;
+    }
+
     window.localStorage.setItem(
       LatestChangesDialogService.VERSION_KEY,
-      "update-" + currentVersion
+      this.UPDATE_PREFIX + currentVersion
     );
 
     this.notificationRef = this.snackBar.open(

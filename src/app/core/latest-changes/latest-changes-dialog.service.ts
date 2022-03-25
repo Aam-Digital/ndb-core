@@ -27,7 +27,7 @@ import { LatestChangesService } from "./latest-changes.service";
  */
 @Injectable()
 export class LatestChangesDialogService {
-  public static VERSION_KEY = "AppVersion";
+  public static readonly VERSION_KEY = "AppVersion";
 
   constructor(
     private dialog: MatDialog,

@@ -213,11 +213,13 @@ export class ExportService {
       [object]
     );
 
-    if (!exportColumnConfig.subQueries && value.length === 1) {
-      // queryData() always returns an array, simple queries should be a direct value however
+    if (!Array.isArray(value)) {
+      return value;
+    } else if (!exportColumnConfig.subQueries && value.length === 1) {
       return value[0];
+    } else {
+      return value.filter((val) => val !== undefined);
     }
-    return value.filter((val) => val !== undefined);
   }
 
   /**

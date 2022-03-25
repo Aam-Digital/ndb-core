@@ -16,6 +16,9 @@ import { School } from "../../../../../child-dev-project/schools/model/school";
 import { EntityUtilsModule } from "../../entity-utils.module";
 import { Child } from "../../../../../child-dev-project/children/model/child";
 import { TypedFormControl } from "../edit-component";
+import { ChangeDetectorRef } from "@angular/core";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { RouterTestingModule } from "@angular/router/testing";
 import { EntityAbility } from "../../../../permissions/entity-ability";
 import {
   EntityRegistry,
@@ -32,7 +35,12 @@ describe("EditSingleEntityComponent", () => {
     mockEntityMapper.loadType.and.resolveTo([]);
 
     await TestBed.configureTestingModule({
-      imports: [EntityUtilsModule, NoopAnimationsModule],
+      imports: [
+        EntityUtilsModule,
+        NoopAnimationsModule,
+        FontAwesomeTestingModule,
+        RouterTestingModule,
+      ],
       declarations: [EditSingleEntityComponent],
       providers: [
         EntityFormService,
@@ -41,6 +49,10 @@ describe("EditSingleEntityComponent", () => {
         {
           provide: EntityRegistry,
           useValue: entityRegistry,
+        },
+        {
+          provide: ChangeDetectorRef,
+          useValue: jasmine.createSpyObj(["detectChanges"]),
         },
         EntityAbility,
       ],

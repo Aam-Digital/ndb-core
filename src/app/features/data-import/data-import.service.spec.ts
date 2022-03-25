@@ -1,106 +1,51 @@
-import { fakeAsync, flush, TestBed, tick } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 import { DataImportService } from "./data-import.service";
 import { PouchDatabase } from "../../core/database/pouch-database";
 import { Database } from "../../core/database/database";
-import { BackupService } from "../../core/admin/services/backup.service";
 import { ConfirmationDialogService } from "../../core/confirmation-dialog/confirmation-dialog.service";
-import { MatSnackBar, MatSnackBarRef } from "@angular/material/snack-bar";
-import { MatDialogRef } from "@angular/material/dialog";
-import { of } from "rxjs";
+import {
+  MatSnackBar,
+  MatSnackBarModule,
+  MatSnackBarRef,
+} from "@angular/material/snack-bar";
+import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";
+import { NEVER, of } from "rxjs";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
+import { Papa, ParseResult } from "ngx-papaparse";
+import { ImportMetaData } from "./import-meta-data.type";
+import { expectEntitiesToBeInDatabase } from "../../utils/expect-entity-data.spec";
+import { Child } from "../../child-dev-project/children/model/child";
+import moment from "moment";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { QueryService } from "../reporting/query.service";
 import {
-  EntityRegistry,
   entityRegistry,
+  EntityRegistry,
 } from "../../core/entity/database-entity.decorator";
 
 describe("DataImportService", () => {
   let db: PouchDatabase;
   let service: DataImportService;
 
-  let mockBackupService: jasmine.SpyObj<BackupService>;
-  let confirmationDialogMock: jasmine.SpyObj<ConfirmationDialogService>;
-  let mockSnackBar: jasmine.SpyObj<MatSnackBar>;
-
-  function createFileReaderMock(result: string = "") {
-    const mockFileReader: any = {
-      result: result,
-      addEventListener: (str: string, fun: () => any) => fun(),
-      readAsText: () => {},
-    };
-    spyOn(mockFileReader, "readAsText");
-    // mock FileReader constructor
-    spyOn(window, "FileReader").and.returnValue(mockFileReader);
-    return mockFileReader;
-  }
-
-  function createDialogMock(
-    confirm: boolean
-  ): jasmine.SpyObj<MatDialogRef<any>> {
-    const mockDialogRef: jasmine.SpyObj<
-      MatDialogRef<any>
-    > = jasmine.createSpyObj("mockDialogRef", ["afterClosed"]);
-    mockDialogRef.afterClosed.and.returnValue(of(confirm));
-    confirmationDialogMock.openDialog.and.returnValue(mockDialogRef);
-    return mockDialogRef;
-  }
-
-  function createSnackBarMock(
-    clicked: boolean
-  ): jasmine.SpyObj<MatSnackBarRef<any>> {
-    const mockSnackBarRef: jasmine.SpyObj<
-      MatSnackBarRef<any>
-    > = jasmine.createSpyObj("mockSnackBarRef", ["onAction"]);
-    if (clicked) {
-      mockSnackBarRef.onAction.and.returnValue(of(null));
-    } else {
-      mockSnackBarRef.onAction.and.returnValue(of());
-    }
-    mockSnackBar.open.and.returnValue(mockSnackBarRef);
-    return mockSnackBarRef;
-  }
-
   beforeEach(() => {
     db = PouchDatabase.createWithData();
-    mockSnackBar = jasmine.createSpyObj("MatSnackBar", ["open"]);
-    mockBackupService = jasmine.createSpyObj("BackupService", [
-      "getJsonExport",
-      "importCsv",
-      "clearDatabase",
-      "importJson",
-    ]);
-    confirmationDialogMock = jasmine.createSpyObj("ConfirmationDialogService", [
-      "openDialog",
-    ]);
     TestBed.configureTestingModule({
+      imports: [MatDialogModule, MatSnackBarModule, NoopAnimationsModule],
       providers: [
         DataImportService,
         {
           provide: Database,
           useValue: db,
         },
-        {
-          provide: BackupService,
-          useValue: mockBackupService,
-        },
-        {
-          provide: ConfirmationDialogService,
-          useValue: confirmationDialogMock,
-        },
-        {
-          provide: MatSnackBar,
-          useValue: mockSnackBar,
-        },
-        {
-          provide: EntityRegistry,
-          useValue: entityRegistry,
-        },
+        { provide: QueryService, useValue: {} },
+        { provide: EntityRegistry, useValue: entityRegistry },
+        ConfirmationDialogService,
         EntityMapperService,
         EntitySchemaService,
       ],
     });
     service = TestBed.inject(DataImportService);
-    spyOn(db, "put");
   });
 
   afterEach(async () => {
@@ -111,67 +56,221 @@ describe("DataImportService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should open dialog and call backup service and data-import service when loading csv", fakeAsync(() => {
-    const mockFileReader = createFileReaderMock();
-    mockBackupService.getJsonExport.and.resolveTo(null);
-    createDialogMock(true);
-    createSnackBarMock(false);
-    spyOn(service, "importCsvContentToDB");
+  it("should only allow files that have a .csv extension", async () => {
+    mockFileReader();
 
-    service.handleCsvImport(null);
+    const file = { name: "wrong_extension.xlsx" };
+    await expectAsync(service.validateCsvFile(file as File)).toBeRejected();
 
-    expect(mockBackupService.getJsonExport).toHaveBeenCalled();
-    tick();
-    expect(mockFileReader.readAsText).toHaveBeenCalled();
-    expect(confirmationDialogMock.openDialog).toHaveBeenCalled();
-    flush();
-    expect(service.importCsvContentToDB).toHaveBeenCalled();
-  }));
+    file.name = "good_extension.csv";
+    await expectAsync(service.validateCsvFile(file as File)).toBeResolved();
+  });
 
-  it("should open dialog and abort data-import when cancelled", fakeAsync(() => {
-    const mockFileReader = createFileReaderMock();
-    mockBackupService.getJsonExport.and.resolveTo(null);
-    createDialogMock(false);
-    spyOn(service, "importCsvContentToDB");
+  it("should throw error if file cannot be parsed", async () => {
+    mockFileReader();
+    const papa = TestBed.inject(Papa);
+    spyOn(papa, "parse").and.returnValue(undefined);
+    const file = { name: "file.csv" } as File;
 
-    service.handleCsvImport(null);
+    await expectAsync(service.validateCsvFile(file)).toBeRejected();
+  });
 
-    expect(mockBackupService.getJsonExport).toHaveBeenCalled();
-    tick();
-    expect(mockFileReader.readAsText).toHaveBeenCalled();
-    expect(confirmationDialogMock.openDialog).toHaveBeenCalled();
-    flush();
-    expect(service.importCsvContentToDB).not.toHaveBeenCalled();
-  }));
+  it("should throw error if file is empty", async () => {
+    mockFileReader("");
+    const file = { name: "file.csv" } as File;
 
-  it("should restore database when undo button is clicked", fakeAsync(() => {
-    createFileReaderMock();
-    mockBackupService.getJsonExport.and.resolveTo("mockRestorePoint");
-    mockBackupService.clearDatabase.and.callThrough();
-    createDialogMock(true);
-    createSnackBarMock(true);
+    await expectAsync(service.validateCsvFile(file)).toBeRejected();
+  });
 
-    service.handleCsvImport(null);
+  it("should restore database if snackbar is clicked", async () => {
+    const doc1 = { _id: "Doc:1" };
+    const doc2 = { _id: "Doc:2" };
+    await db.put(doc1);
+    await db.put(doc2);
+    mockFileReader();
+    mockDialog(true);
+    mockSnackbar(true);
+    const importMeta: ImportMetaData = {
+      entityType: "Child",
+      columnMap: {
+        _id: "_id",
+        projectNumber: "projectNumber",
+        name: "name",
+      },
+    };
+    const file = { name: "some.csv" } as File;
+    const parseResult = await service.validateCsvFile(file);
 
-    tick();
-    expect(mockBackupService.clearDatabase).toHaveBeenCalled();
-    expect(mockBackupService.importJson).toHaveBeenCalledWith(
-      "mockRestorePoint",
+    await service.handleCsvImport(parseResult, importMeta);
+
+    await expectAsync(db.get(doc1._id)).toBeResolved();
+    await expectAsync(db.get(doc2._id)).toBeResolved();
+    await expectAsync(db.get("Child:1")).toBeRejected();
+  });
+
+  it("should use the passed component map to create the entity", async () => {
+    mockDialog();
+    const birthday1 = moment().subtract("10", "years");
+    const birthday2 = moment().subtract("12", "years");
+    const csvData = {
+      meta: { fields: ["ID", "Name", "Birthday", "Age"] },
+      data: [
+        {
+          ID: 1,
+          Name: "First",
+          Birthday: birthday1.format("YYYY-MM-DD"),
+          notExistingProperty: "some value",
+        },
+        {
+          ID: 2,
+          Name: "Second",
+          Birthday: birthday2.format("YYYY-MM-DD"),
+          notExistingProperty: "another value",
+        },
+      ],
+    } as ParseResult;
+    const columnMap = {
+      ID: "_id",
+      Name: "name",
+      Birthday: "dateOfBirth",
+      notExistingProperty: "",
+    };
+    const importMeta: ImportMetaData = {
+      entityType: "Child",
+      columnMap: columnMap,
+    };
+
+    await service.handleCsvImport(csvData, importMeta);
+
+    const entityMapper = TestBed.inject(EntityMapperService);
+    const firstChild = await entityMapper.load(Child, "1");
+    expect(firstChild._id).toBe("Child:1");
+    expect(firstChild.name).toBe("First");
+    expect(birthday1.isSame(firstChild.dateOfBirth, "day")).toBeTrue();
+    expect(firstChild.age).toBe(10);
+    expect(firstChild.hasOwnProperty("notExistingProperty")).toBeFalse();
+    const secondChild = await entityMapper.load(Child, "2");
+    expect(secondChild._id).toBe("Child:2");
+    expect(secondChild.name).toBe("Second");
+    expect(birthday2.isSame(secondChild.dateOfBirth, "day")).toBeTrue();
+    expect(secondChild.age).toBe(12);
+    expect(secondChild.hasOwnProperty("notExistingProperty")).toBeFalse();
+  });
+
+  it("should delete existing records and prepend the transactionID to ID's of the newly uploaded entities", async () => {
+    mockDialog();
+    const csvData = {
+      meta: { fields: ["Name"] },
+      data: [{ Name: "test1" }, { Name: "test2" }],
+    } as ParseResult;
+    const transactionID = "12345678";
+    const importMeta: ImportMetaData = {
+      entityType: "Child",
+      columnMap: { Name: "name" },
+      transactionId: transactionID,
+    };
+    await db.put({ _id: `Child:${transactionID}-123` });
+    await db.put({ _id: `Child:${transactionID}-124` });
+
+    await service.handleCsvImport(csvData, importMeta);
+
+    await expectEntitiesToBeInDatabase(
+      [Child.create("test1"), Child.create("test2")],
+      true,
       true
     );
-    flush();
-  }));
+    const imported = await db.getAll(`Child:${transactionID}`);
+    expect(imported).toHaveSize(2);
+    const ids = imported.map((doc) => doc._id as string);
+    ids.forEach((id) =>
+      expect(id.startsWith(`Child:${transactionID}`)).toBeTrue()
+    );
+  });
+
+  it("should use the provided date format to parse dates", async () => {
+    mockDialog();
+    const csvData = {
+      meta: { fields: ["ID", "Birthday"] },
+      data: [
+        { ID: "test1", Birthday: "17/12/2010" },
+        { ID: "test2", Birthday: "7/6/2011" },
+      ],
+    } as ParseResult;
+    const importMeta: ImportMetaData = {
+      entityType: "Child",
+      columnMap: { ID: "_id", Birthday: "dateOfBirth" },
+      dateFormat: "D/M/YYYY",
+    };
+
+    await service.handleCsvImport(csvData, importMeta);
+
+    const entityMapper = TestBed.inject(EntityMapperService);
+    const test1 = await entityMapper.load(Child, "test1");
+    expect(test1.dateOfBirth).toEqual(new Date("2010-12-17"));
+    const test2 = await entityMapper.load(Child, "test2");
+    expect(test2.dateOfBirth).toEqual(new Date("2011-06-07"));
+  });
 
   it("should import csv file and generate searchIndices", async () => {
-    const csvString = "_id,name,projectNumber\n" + 'Child:1,"John Doe",123';
+    mockDialog();
+    spyOn(db, "put");
+    const csvData = {
+      meta: { fields: ["ID", "Birthday"] },
+      data: [{ name: "John Doe", projectNumber: "123" }],
+    } as ParseResult;
+    const importMeta: ImportMetaData = {
+      entityType: "Child",
+      columnMap: { name: "name", projectNumber: "projectNumber" },
+    };
 
-    await service.importCsvContentToDB(csvString);
+    await service.handleCsvImport(csvData, importMeta);
 
     expect(db.put).toHaveBeenCalledWith(
       jasmine.objectContaining({
-        searchIndices: ["John", "Doe", 123],
+        searchIndices: ["John", "Doe", "123"],
       }),
       jasmine.anything()
     );
   });
+
+  function mockFileReader(
+    result = '_id,name,projectNumber\nChild:1,"John Doe",123'
+  ) {
+    const fileReader: any = {
+      result: result,
+      addEventListener: (str: string, fun: () => any) => fun(),
+      readAsText: () => {},
+    };
+    // mock FileReader constructor
+    spyOn(window, "FileReader").and.returnValue(fileReader);
+    return fileReader;
+  }
+
+  function mockDialog(
+    confirm: boolean = true
+  ): jasmine.SpyObj<MatDialogRef<any>> {
+    const mockDialogRef = jasmine.createSpyObj<MatDialogRef<any>>(
+      "mockDialogRef",
+      ["afterClosed"]
+    );
+    mockDialogRef.afterClosed.and.returnValue(of(confirm));
+    const confirmationDialog = TestBed.inject(ConfirmationDialogService);
+    spyOn(confirmationDialog, "openDialog").and.returnValue(mockDialogRef);
+    return mockDialogRef;
+  }
+
+  function mockSnackbar(clicked: boolean): jasmine.SpyObj<MatSnackBarRef<any>> {
+    const mockSnackBarRef = jasmine.createSpyObj<MatSnackBarRef<any>>(
+      "mockSnackBarRef",
+      ["onAction"]
+    );
+    if (clicked) {
+      mockSnackBarRef.onAction.and.returnValue(of(null));
+    } else {
+      mockSnackBarRef.onAction.and.returnValue(NEVER);
+    }
+    const snackBar = TestBed.inject(MatSnackBar);
+    spyOn(snackBar, "open").and.returnValue(mockSnackBarRef);
+    return mockSnackBarRef;
+  }
 });

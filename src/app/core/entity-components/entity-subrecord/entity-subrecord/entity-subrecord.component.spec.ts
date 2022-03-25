@@ -10,7 +10,6 @@ import {
   EntitySubrecordComponent,
   TableRow,
 } from "./entity-subrecord.component";
-import { RouterTestingModule } from "@angular/router/testing";
 import { EntitySubrecordModule } from "../entity-subrecord.module";
 import { Entity } from "../../../entity/model/entity";
 import { MatNativeDateModule } from "@angular/material/core";
@@ -26,12 +25,12 @@ import { genders } from "../../../../child-dev-project/children/model/genders";
 import { LoggingService } from "../../../logging/logging.service";
 import { MockSessionModule } from "../../../session/mock-session.module";
 import moment from "moment";
+import { MediaObserver } from "@angular/flex-layout";
 import { Subject } from "rxjs";
 import { UpdatedEntity } from "../../../entity/model/entity-update";
 import { MatDialog } from "@angular/material/dialog";
 import { RowDetailsComponent } from "../row-details/row-details.component";
 import { EntityAbility } from "../../../permissions/entity-ability";
-import { MediaObserver } from "@angular/flex-layout";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -42,7 +41,6 @@ describe("EntitySubrecordComponent", () => {
       TestBed.configureTestingModule({
         imports: [
           EntitySubrecordModule,
-          RouterTestingModule.withRoutes([]),
           MatNativeDateModule,
           MockSessionModule.withState(),
         ],
