@@ -118,7 +118,7 @@ export function testEntitySubclass(
 
     schemaService.loadDataIntoEntity(
       entity,
-      Object.assign({}, expectedDatabaseFormat)
+      JSON.parse(JSON.stringify(expectedDatabaseFormat))
     );
     const rawData = schemaService.transformEntityToDatabaseFormat(entity);
     if (rawData.searchIndices.length === 0) {

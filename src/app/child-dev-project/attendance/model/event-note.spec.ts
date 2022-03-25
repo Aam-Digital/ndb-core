@@ -44,5 +44,8 @@ describe("EventNote", () => {
     authors: ["some-coach"],
     relatesTo: "RecurringActivity:some-id",
     date: new Date(),
+    schools: [],
+    subject: "some subject",
+    text: "some text about the event",
   });
 });
