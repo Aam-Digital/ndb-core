@@ -32,48 +32,7 @@ describe("Entity", () => {
     })
   );
 
-  it("has ID and entityId", function () {
-    const id = "test1";
-    const entity = new Entity(id);
-
-    expect(entity.getId()).toBe(id);
-    expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
-  });
-
-  it("has correct type/prefix", function () {
-    const entity = new Entity();
-
-    expect(entity.getType()).toBe("Entity");
-    expect(Entity.extractTypeFromId(entity._id)).toBe("Entity");
-  });
-
-  it("all schema fields exist", function () {
-    const id = "test1";
-    const entity = new Entity(id);
-    entity._rev = "XYZ";
-
-    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-
-    expect(rawData._id).toBe(Entity.createPrefixedId(Entity.ENTITY_TYPE, id));
-    expect(rawData._rev).toBe("XYZ");
-  });
-
-  it("load() assigns all data", function () {
-    const id = "test1";
-    const entity = new Entity(id);
-
-    const data = {
-      _id: "test2",
-      _rev: "1.2.3",
-      other: "x",
-    };
-    entitySchemaService.loadDataIntoEntity(entity, data);
-
-    expect(entity._id).toBe(data._id);
-    expect(entity._rev).toBe(data._rev);
-    // @ts-ignore   because other is not a defined property of the class (-> TypeScript error) and only added from load(data)
-    expect(entity.other).toBe(data.other);
-  });
+  testEntitySubclass("Entity", Entity, { _id: "someId", _rev: "some_rev" });
 
   it("rawData() returns only data matching the schema", function () {
     class TestEntity extends Entity {
@@ -162,6 +121,9 @@ export function testEntitySubclass(
       Object.assign({}, expectedDatabaseFormat)
     );
     const rawData = schemaService.transformEntityToDatabaseFormat(entity);
+    if (rawData.searchIndices.length === 0) {
+      delete rawData.searchIndices;
+    }
     expect(rawData).toEqual(expectedDatabaseFormat);
   });
 }
