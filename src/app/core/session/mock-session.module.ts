@@ -13,6 +13,17 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Angulartics2Module } from "angulartics2";
 import { RouterTestingModule } from "@angular/router/testing";
 import { Entity } from "../entity/model/entity";
+import { DatabaseIndexingService } from "../entity/database-indexing/database-indexing.service";
+import { EntityPermissionsService } from "../permissions/entity-permissions.service";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "../entity/database-entity.decorator";
+import {
+  viewRegistry,
+  ViewRegistry,
+} from "../view/dynamic-components/dynamic-component.decorator";
+import { RouteRegistry, routesRegistry } from "../../app.routing";
 
 export const TEST_USER = "test";
 export const TEST_PASSWORD = "pass";
@@ -34,6 +45,11 @@ export const TEST_PASSWORD = "pass";
     Angulartics2Module.forRoot(),
     RouterTestingModule,
   ],
+  providers: [
+    { provide: EntityRegistry, useValue: entityRegistry },
+    { provide: ViewRegistry, useValue: viewRegistry },
+    { provide: RouteRegistry, useValue: routesRegistry },
+  ],
 })
 export class MockSessionModule {
   static withState(
@@ -51,8 +67,20 @@ export class MockSessionModule {
         { provide: EntityMapperService, useValue: mockedEntityMapper },
         { provide: MockEntityMapperService, useValue: mockedEntityMapper },
         {
+          provide: DatabaseIndexingService,
+          useValue: {
+            createIndex: () => {},
+            queryIndexDocsRange: () => Promise.resolve([]),
+            queryIndexDocs: () => Promise.resolve([]),
+          },
+        },
+        {
           provide: AnalyticsService,
           useValue: { eventTrack: () => null },
+        },
+        {
+          provide: EntityPermissionsService,
+          useValue: { userIsPermitted: () => true },
         },
       ],
     };

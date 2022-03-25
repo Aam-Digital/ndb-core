@@ -13,7 +13,10 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import moment from "moment";
 import { EntityConfigService } from "app/core/entity/entity-config.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { DynamicEntityService } from "../../entity/dynamic-entity.service";
+import {
+  EntityRegistry,
+  entityRegistry,
+} from "../../entity/database-entity.decorator";
 
 describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
@@ -27,9 +30,12 @@ describe("FilterGeneratorService", () => {
         ConfigService,
         EntitySchemaService,
         { provide: EntityMapperService, useValue: mockEntityMapper },
-        DynamicEntityService,
         LoggingService,
         EntityConfigService,
+        {
+          provide: EntityRegistry,
+          useValue: entityRegistry,
+        },
       ],
     });
     service = TestBed.inject(FilterGeneratorService);

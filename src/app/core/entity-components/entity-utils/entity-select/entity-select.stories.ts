@@ -1,6 +1,5 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { Database } from "../../../database/database";
 import { BackupService } from "../../../admin/services/backup.service";
@@ -8,10 +7,10 @@ import { CloudFileService } from "../../../webdav/cloud-file-service.service";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { ChildrenService } from "../../../../child-dev-project/children/children.service";
 import { BehaviorSubject } from "rxjs";
-import { RouterTestingModule } from "@angular/router/testing";
 import { EntitySelectComponent } from "./entity-select.component";
 import { ChildrenModule } from "../../../../child-dev-project/children/children.module";
 import { EntityUtilsModule } from "../entity-utils.module";
+import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 
 const child1 = new Child();
 child1.name = "First Child";
@@ -40,12 +39,7 @@ export default {
   component: EntitySelectComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        EntityUtilsModule,
-        NoopAnimationsModule,
-        RouterTestingModule,
-        ChildrenModule,
-      ],
+      imports: [EntityUtilsModule, StorybookBaseModule, ChildrenModule],
       declarations: [],
       providers: [
         { provide: BackupService, useValue: {} },

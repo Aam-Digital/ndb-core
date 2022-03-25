@@ -32,4 +32,6 @@ import { MarkdownModule } from "ngx-markdown";
     MarkdownModule.forRoot({ loader: HttpClient }),
   ],
 })
-export class MarkdownPageModule {}
+export class MarkdownPageModule {
+  static dynamicComponents = [MarkdownPageComponent];
+}

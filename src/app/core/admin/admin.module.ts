@@ -48,4 +48,6 @@ import { DataImportModule } from "../../features/data-import/data-import.module"
   declarations: [AdminComponent, UserListComponent],
   providers: [ChildPhotoUpdateService, BackupService],
 })
-export class AdminModule {}
+export class AdminModule {
+  static dynamicComponents = [AdminComponent, UserListComponent];
+}

@@ -18,8 +18,11 @@ import { DatabaseIndexingService } from "../../entity/database-indexing/database
 import { EntityUtilsModule } from "../../entity-components/entity-utils/entity-utils.module";
 import { Subscription } from "rxjs";
 import { Entity } from "../../entity/model/entity";
-import { DynamicEntityService } from "../../entity/dynamic-entity.service";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
+import {
+  EntityRegistry,
+  entityRegistry,
+} from "../../entity/database-entity.decorator";
 
 describe("SearchComponent", () => {
   let component: SearchComponent;
@@ -55,7 +58,10 @@ describe("SearchComponent", () => {
           { provide: EntitySchemaService, useValue: entitySchemaService },
           { provide: DatabaseIndexingService, useValue: mockIndexService },
           { provide: EntityMapperService, useValue: {} },
-          DynamicEntityService,
+          {
+            provide: EntityRegistry,
+            useValue: entityRegistry,
+          },
         ],
         declarations: [SearchComponent],
       }).compileComponents();

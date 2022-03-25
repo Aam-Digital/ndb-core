@@ -113,10 +113,24 @@ import { ViewModule } from "../../core/view/view.module";
   exports: [
     ActivityCardComponent,
     RollCallSetupComponent,
+    RollCallComponent,
     AttendanceStatusSelectComponent,
     AttendanceDayBlockComponent,
-    AttendanceWeekDashboardComponent,
+    ActivityAttendanceSectionComponent,
+    AttendanceBlockComponent,
+    AttendanceCalendarComponent,
+    AttendanceDetailsComponent,
   ],
-  entryComponents: [AttendanceDetailsComponent],
 })
-export class AttendanceModule {}
+export class AttendanceModule {
+  static dynamicComponents = [
+    ActivityListComponent,
+    AddDayAttendanceComponent,
+    AttendanceManagerComponent,
+    ActivityAttendanceSectionComponent,
+    AttendanceWeekDashboardComponent,
+    GroupedChildAttendanceComponent,
+    AttendanceBlockComponent,
+    RecentAttendanceBlocksComponent,
+  ];
+}

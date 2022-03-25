@@ -16,6 +16,7 @@ import { EventNote } from "../../attendance/model/event-note";
 import { EntityConstructor } from "../../../core/entity/model/entity";
 import { WarningLevel } from "../../../core/entity/model/warning-level";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
+import { RouteTarget } from "../../../app.routing";
 
 /**
  * additional config specifically for NotesManagerComponent
@@ -28,6 +29,7 @@ export interface NotesManagerConfig {
   showEventNotesToggle?: boolean;
 }
 
+@RouteTarget("NotesManager")
 @Component({
   selector: "app-notes-manager",
   templateUrl: "./notes-manager.component.html",

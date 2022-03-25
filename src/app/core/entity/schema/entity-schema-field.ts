@@ -64,7 +64,8 @@ export interface EntitySchemaField {
   /**
    * (Optional) Define using which component this property should be displayed in lists and forms.
    *
-   * The name has to match one of the strings in the DYNAMIC_COMPONENT_MAP.
+   * The edit component has to be a registered component. Components that are registered contain the `DynamicComponent`
+   * decorator
    * If nothing is defined, the default component for this datatype will be used.
    */
   viewComponent?: string;
@@ -72,7 +73,8 @@ export interface EntitySchemaField {
   /**
    * (Optional) Define using which component this property should be editable in lists and forms.
    *
-   * The name has to match one of the strings in the DYNAMIC_COMPONENT_MAP.
+   * The edit component has to be a registered component. Components that are registered contain the `DynamicComponent`
+   * decorator
    * If nothing is defined, the default component for this datatype will be used.
    */
   editComponent?: string;

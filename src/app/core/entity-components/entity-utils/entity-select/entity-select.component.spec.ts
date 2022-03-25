@@ -18,7 +18,10 @@ import { Child } from "../../../../child-dev-project/children/model/child";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { Subscription } from "rxjs";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
-import { DynamicEntityService } from "../../../entity/dynamic-entity.service";
+import {
+  EntityRegistry,
+  entityRegistry,
+} from "../../../entity/database-entity.decorator";
 
 describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any>;
@@ -40,8 +43,11 @@ describe("EntitySelectComponent", () => {
           provide: EntityMapperService,
           useValue: mockEntityMapper(testUsers.concat(otherEntities)),
         },
+        {
+          provide: EntityRegistry,
+          useValue: entityRegistry,
+        },
         EntitySchemaService,
-        DynamicEntityService,
       ],
       imports: [
         MatAutocompleteModule,

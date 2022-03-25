@@ -43,6 +43,9 @@ import { EntityUtilsModule } from "../../core/entity-components/entity-utils/ent
 import { NoteAttendanceCountBlockComponent } from "./note-attendance-block/note-attendance-count-block.component";
 import { MatMenuModule } from "@angular/material/menu";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { NotesDashboardComponent } from "./dashboard-widgets/notes-dashboard/notes-dashboard.component";
+import { NotesOfChildComponent } from "./notes-of-child/notes-of-child.component";
+import { DashboardModule } from "../../core/dashboard/dashboard.module";
 
 @NgModule({
   declarations: [
@@ -50,6 +53,8 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     NotesManagerComponent,
     ChildMeetingNoteAttendanceComponent,
     NoteAttendanceCountBlockComponent,
+    NotesDashboardComponent,
+    NotesOfChildComponent,
   ],
   imports: [
     CommonModule,
@@ -97,8 +102,15 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     EntityUtilsModule,
     FontAwesomeModule,
     MatMenuModule,
+    DashboardModule,
   ],
-  providers: [],
-  entryComponents: [NoteDetailsComponent],
+  exports: [NoteDetailsComponent],
 })
-export class NotesModule {}
+export class NotesModule {
+  static dynamicComponents = [
+    NotesManagerComponent,
+    NoteAttendanceCountBlockComponent,
+    NotesDashboardComponent,
+    NotesOfChildComponent,
+  ];
+}

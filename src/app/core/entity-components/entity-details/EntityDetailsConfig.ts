@@ -47,7 +47,8 @@ export interface PanelComponent {
   title: string;
 
   /**
-   * The name of the component according to the DYNAMIC_COMPONENT_MAP.
+   * The name of the component. When registered, this usually is the name of the
+   * component without the `component` suffix
    */
   component: string;
 

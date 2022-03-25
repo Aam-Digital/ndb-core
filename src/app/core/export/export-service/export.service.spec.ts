@@ -3,7 +3,11 @@ import { TestBed } from "@angular/core/testing";
 import { ExportService } from "./export.service";
 import { ConfigurableEnumValue } from "../../configurable-enum/configurable-enum.interface";
 import { DatabaseField } from "../../entity/database-field.decorator";
-import { DatabaseEntity } from "../../entity/database-entity.decorator";
+import {
+  DatabaseEntity,
+  EntityRegistry,
+  entityRegistry,
+} from "../../entity/database-entity.decorator";
 import { Entity } from "../../entity/model/entity";
 import { QueryService } from "../../../features/reporting/query.service";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
@@ -39,6 +43,10 @@ describe("ExportService", () => {
         AttendanceService,
         DatabaseIndexingService,
         { provide: Database, useValue: db },
+        {
+          provide: EntityRegistry,
+          useValue: entityRegistry,
+        },
       ],
     });
 
@@ -117,7 +125,7 @@ describe("ExportService", () => {
     const resultRows = csvResult.split(ExportService.SEPARATOR_ROW);
     expect(resultRows).toEqual([
       '"name","age","extra"',
-      '"foo","12",""',
+      '"foo","12",',
       '"bar","15","true"',
     ]);
   });
@@ -374,8 +382,8 @@ describe("ExportService", () => {
     const resultRows = result.split(ExportService.SEPARATOR_ROW);
     expect(resultRows).toEqual([
       '"Name","Participation"',
-      '"some child","0.5"',
-      '"some child","1"',
+      '"some child","0.50"',
+      '"some child","1.00"',
     ]);
   });
 
@@ -390,13 +398,6 @@ describe("ExportService", () => {
     const todayNote = await createNoteInDB("today", [child]);
     todayNote.date = new Date();
     await entityMapper.save(todayNote);
-    const query = [
-      { query: "name" },
-      {
-        query: ":getRelated(Note, children)[* date > ?]",
-        subQueries: [{ query: "subject" }],
-      },
-    ];
 
     let result = await service.createCsv(
       undefined,
@@ -411,6 +412,13 @@ describe("ExportService", () => {
     let resultRows = result.split(ExportService.SEPARATOR_ROW);
     expect(resultRows).toEqual(['"subject"', '"yesterday"', '"today"']);
 
+    const query = [
+      { query: "name" },
+      {
+        query: ":getRelated(Note, children)[* date > ?]",
+        subQueries: [{ query: "subject" }],
+      },
+    ];
     result = await service.createCsv(
       [child],
       query,
@@ -436,6 +444,43 @@ describe("ExportService", () => {
       '"Child","one week ago"',
       '"Child","yesterday"',
     ]);
+  });
+
+  it("should not use query service if no export config is provided", async () => {
+    const data = [{ key: "some" }, { key: "data" }];
+    const queryService = TestBed.inject(QueryService);
+    spyOn(queryService, "queryData").and.callThrough();
+
+    const result = await service.createCsv(data);
+
+    expect(queryService.queryData).not.toHaveBeenCalled();
+    expect(result).toBe(
+      `"key"${ExportService.SEPARATOR_ROW}"some"${ExportService.SEPARATOR_ROW}"data"`
+    );
+  });
+
+  it("should work when using the count function", async () => {
+    await createNoteInDB("first", [new Child(), new Child()]);
+    await createNoteInDB("second", [new Child()]);
+
+    const result = await service.createCsv(undefined, [
+      {
+        query: `${Note.ENTITY_TYPE}:toArray`,
+        subQueries: [
+          { query: "subject" },
+          { query: ".children:count", label: "Children" },
+        ],
+      },
+    ]);
+
+    const resultRows = result.split(ExportService.SEPARATOR_ROW);
+    expect(resultRows).toEqual(
+      jasmine.arrayWithExactContents([
+        '"subject","Children"',
+        '"first","2"',
+        '"second","1"',
+      ])
+    );
   });
 
   async function createChildInDB(name: string): Promise<Child> {

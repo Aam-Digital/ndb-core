@@ -8,8 +8,7 @@ import { ConfigService } from "../config/config.service";
 import { EntitySchemaField } from "./schema/entity-schema-field";
 import { addPropertySchema } from "./database-field.decorator";
 import { OperationType } from "../permissions/entity-permissions.service";
-import { DynamicEntityService } from "./dynamic-entity.service";
-import { LoggingService } from "../logging/logging.service";
+import { EntityRegistry } from "./database-entity.decorator";
 
 /**
  * A service that allows to work with configuration-objects
@@ -24,8 +23,7 @@ export class EntityConfigService {
 
   constructor(
     private configService: ConfigService,
-    private dynamicEntityService: DynamicEntityService,
-    private loggingService: LoggingService
+    private entities: EntityRegistry
   ) {}
 
   /**
@@ -68,25 +66,12 @@ export class EntityConfigService {
    * trigger an error message
    */
   setupEntitiesFromConfig() {
-    const entitiesNotFound: string[] = [];
     for (const config of this.configService.getAllConfigs<
       EntityConfig & { _id: string }
     >(ENTITY_CONFIG_PREFIX)) {
       const id = config._id.substring(ENTITY_CONFIG_PREFIX.length);
-      try {
-        const ctor = this.dynamicEntityService.getEntityConstructor(id);
-        this.addConfigAttributes(ctor, config);
-      } catch (err) {
-        entitiesNotFound.push(id);
-      }
-    }
-    if (entitiesNotFound.length > 0) {
-      this.loggingService.error(
-        `The following entities were defined in the config but are not registered properly: ${entitiesNotFound.join(
-          ", "
-        )}.\n` +
-          `Make sure they exist as a class and are properly registered (see the how-to guides for more info on this topic)`
-      );
+      const ctor = this.entities.get(id);
+      this.addConfigAttributes(ctor, config);
     }
   }
 }
