@@ -98,9 +98,8 @@ export class UpdateManagerService {
   }
 
   private showUpdateNotification() {
-    const currentVersion = window.localStorage.getItem(
-      LatestChangesDialogService.VERSION_KEY
-    );
+    const currentVersion =
+      window.localStorage.getItem(LatestChangesDialogService.VERSION_KEY) || "";
     if (currentVersion.startsWith(this.UPDATE_PREFIX)) {
       // Sometimes this is triggered multiple times for one update
       return;
