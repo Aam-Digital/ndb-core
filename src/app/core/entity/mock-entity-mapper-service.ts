@@ -3,6 +3,7 @@ import { EntityMapperService } from "./entity-mapper.service";
 import { UpdatedEntity } from "./model/entity-update";
 import { NEVER, Observable } from "rxjs";
 import { entityRegistry } from "./database-entity.decorator";
+import { HttpErrorResponse } from "@angular/common/http";
 
 export function mockEntityMapper(
   withData: Entity[] = []
@@ -61,7 +62,7 @@ export class MockEntityMapperService extends EntityMapperService {
   public get(entityType: string, id: string): Entity {
     const result = this.data.get(entityType)?.get(id);
     if (!result) {
-      throw { status: 404 };
+      throw new HttpErrorResponse({ status: 404 });
     }
     return result;
   }
@@ -104,7 +105,7 @@ export class MockEntityMapperService extends EntityMapperService {
   ): Promise<T[]> {
     const ctor = this.resolveConstructor(entityType);
     const type = new ctor().getType();
-    return this.getAll(type) as T[];
+    return this.getAll(type);
   }
 
   async save<T extends Entity>(
