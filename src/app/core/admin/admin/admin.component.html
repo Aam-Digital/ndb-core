@@ -114,7 +114,7 @@
 <br />
 <hr />
 <h2 i18n="Alert log header">Alert Log</h2>
-<table>
+<table aria-label="Table showing alerts">
   <tr *ngFor="let alert of alerts.reverse()">
     <td>{{ alert.type }}</td>
     <td>{{ alert.message }}</td>
