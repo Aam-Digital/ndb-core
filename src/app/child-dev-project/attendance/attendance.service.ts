@@ -87,7 +87,10 @@ export class AttendanceService {
       },
     };
 
-    return this.dbIndexing.createIndex(designDoc, EventNote.ENTITY_TYPE);
+    return this.dbIndexing.createIndex(
+      designDoc,
+      RecurringActivity.ENTITY_TYPE
+    );
   }
 
   /**
