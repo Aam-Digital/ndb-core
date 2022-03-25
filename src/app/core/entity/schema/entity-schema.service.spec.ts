@@ -237,7 +237,7 @@ describe("EntitySchemaService", () => {
     expect(displayComponent).toEqual("DisplayText");
   });
 
-  it("should return the display and edit component for the innerDataType if dataType  is array", () => {
+  it("should return the display and edit component for the innerDataType if dataType is array", () => {
     class TestEntity extends Entity {
       @DatabaseField({ innerDataType: dateOnlyEntitySchemaDatatype.name })
       dates: Date[];

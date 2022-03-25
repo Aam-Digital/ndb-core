@@ -393,7 +393,7 @@ Example:
         "id": "DROPPED",
         "label": "dropped out of the programme"
     }
-}
+]
 ```
 
 #### Defining configurable enum properties
@@ -444,7 +444,7 @@ and additionally define the "enumId" of the enum config it refers to:
 #### Allowing multi select
 
 A property can also be defined in a way that multiple values can be selected.
-To all multiple selection, the `dataType` needs to be `array`, the `innerDataType` `configurable-enum` and the name of the configurable enum has to be in the `additional` field.
+To allow multiple selection, the `dataType` needs to be `array`, the `innerDataType` `configurable-enum` and the name of the configurable enum has to be in the `additional` field.
 The following example creates a property `materials` where multiple values from the `materials` configurable enum can be selected.
 
 ```json

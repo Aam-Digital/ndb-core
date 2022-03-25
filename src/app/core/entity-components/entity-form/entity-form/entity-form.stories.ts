@@ -114,6 +114,7 @@ const Template: Story<EntityFormComponent> = (args: EntityFormComponent) => ({
 export const Primary = Template.bind({});
 Primary.args = {
   entity: new Child(),
+  // Both need to be set otherwise story breaks
   columns: cols,
   _columns: cols,
   creatingNew: true,
