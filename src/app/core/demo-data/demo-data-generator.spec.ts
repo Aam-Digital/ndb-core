@@ -1,4 +1,3 @@
-import { DemoDataGenerator } from "./demo-data-generator";
 import { faker } from "./faker";
 
 describe("DemoDataGenerator", () => {
