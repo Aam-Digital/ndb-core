@@ -41,10 +41,9 @@ export class AttendanceService {
       views: {
         by_date: {
           map: `(doc) => {
-            if (doc._id.startsWith("${EventNote.ENTITY_TYPE}") &&
-                ${JSON.stringify(
-                  meetingInteractionTypes
-                )}.includes(doc.category)
+            if (${JSON.stringify(
+              meetingInteractionTypes
+            )}.includes(doc.category)
             ) {
               var d = new Date(doc.date || null);
               var dString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0")
@@ -54,7 +53,7 @@ export class AttendanceService {
         },
         by_activity: {
           map: `(doc) => {
-            if (doc._id.startsWith("${EventNote.ENTITY_TYPE}") && doc.relatesTo) {
+            if (doc.relatesTo) {
               var d = new Date(doc.date || null);
               var dString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0")
               emit(doc.relatesTo + "_" + dString);
@@ -73,19 +72,15 @@ export class AttendanceService {
       views: {
         by_participant: {
           map: `(doc) => {
-            if (doc._id.startsWith("${RecurringActivity.ENTITY_TYPE}")) {
-              for (var p of (doc.participants || [])) {
-                emit(p);
-              }
+            for (var p of (doc.participants || [])) {
+              emit(p);
             }
           }`,
         },
         by_school: {
           map: `(doc) => {
-            if (doc._id.startsWith("${RecurringActivity.ENTITY_TYPE}")) {
-              for (var g of (doc.linkedGroups || [])) {
-                emit(g);
-              }
+            for (var g of (doc.linkedGroups || [])) {
+              emit(g);
             }
           }`,
         },

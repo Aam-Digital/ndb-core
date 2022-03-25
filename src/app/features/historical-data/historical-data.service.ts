@@ -16,9 +16,7 @@ export class HistoricalDataService {
       views: {
         by_entity: {
           map: `(doc) => {
-            if (doc._id.startsWith("${HistoricalEntityData.ENTITY_TYPE}")) {
-              emit([doc.relatedEntity, new Date(doc.date).getTime()]);
-            }
+            emit([doc.relatedEntity, new Date(doc.date).getTime()]);
           }`,
         },
       },

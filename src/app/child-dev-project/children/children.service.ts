@@ -85,8 +85,7 @@ export class ChildrenService {
         },
         by_school: {
           map: `(doc) => {
-            if ( (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) ||
-                (doc.start && isAfterToday(new Date(doc.start))) ||
+            if ((doc.start && isAfterToday(new Date(doc.start))) ||
                 (doc.end && !isAfterToday(new Date(doc.end))) ) {
               return;
             }
@@ -101,7 +100,6 @@ export class ChildrenService {
         },
         by_date: {
           map: `(doc) => {
-            if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
             let timestamp = (new Date(doc.start || '3000-01-01')).getTime().toString().padStart(14, "0");
             emit(doc.childId + '_' + timestamp);
             }`,
@@ -221,16 +219,12 @@ export class ChildrenService {
         by_child: {
           map:
             "(doc) => { " +
-            'if (!doc._id.startsWith("' +
-            Note.ENTITY_TYPE +
-            '")) return;' +
             "if (!Array.isArray(doc.children)) return;" +
             "doc.children.forEach(childId => emit(childId)); " +
             "}",
         },
         note_child_by_date: {
           map: `(doc) => {
-            if (!doc._id.startsWith("${Note.ENTITY_TYPE}")) return;
             if (!Array.isArray(doc.children) || !doc.date) return;
             var d = new Date(doc.date || null);
             var dString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0")
