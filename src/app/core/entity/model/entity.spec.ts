@@ -15,10 +15,13 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from "./entity";
+import { Entity, EntityConstructor } from "./entity";
 import { waitForAsync } from "@angular/core/testing";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
+import { ConfigurableEnumDatatype } from "../../configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
+import { ConfigService } from "../../config/config.service";
+import { LoggingService } from "../../logging/logging.service";
 
 describe("Entity", () => {
   let entitySchemaService: EntitySchemaService;
@@ -124,3 +127,41 @@ describe("Entity", () => {
     expect(otherEntity).toBeInstanceOf(TestEntity);
   });
 });
+
+export function testEntitySubclass(
+  entityType: string,
+  entityClass: EntityConstructor,
+  expectedDatabaseFormat: any
+) {
+  it("should be a valid entity subclass", () => {
+    const id = "test1";
+    const entity = new entityClass(id);
+
+    // correct ID
+    expect(entity.getId()).toBe(id);
+    expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
+
+    // correct Type
+    expect(entity).toBeInstanceOf(entityClass);
+    expect(entity).toBeInstanceOf(Entity);
+    expect(entity.getType()).toBe(entityType);
+    expect(Entity.extractTypeFromId(entity._id)).toBe(entityType);
+  });
+
+  it("should only load and store properties defined in the schema", () => {
+    const schemaService = new EntitySchemaService();
+    const configService = new ConfigService(new LoggingService());
+    configService.loadConfig({ load: () => Promise.reject() } as any);
+    schemaService.registerSchemaDatatype(
+      new ConfigurableEnumDatatype(configService)
+    );
+    const entity = new entityClass();
+
+    schemaService.loadDataIntoEntity(
+      entity,
+      Object.assign({}, expectedDatabaseFormat)
+    );
+    const rawData = schemaService.transformEntityToDatabaseFormat(entity);
+    expect(rawData).toEqual(expectedDatabaseFormat);
+  });
+}

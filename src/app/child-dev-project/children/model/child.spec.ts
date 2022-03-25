@@ -21,6 +21,7 @@ import { Entity } from "../../../core/entity/model/entity";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { PhotoDatatype } from "../child-photo-service/datatype-photo";
 import { genders } from "./genders";
+import { testEntitySubclass } from "../../../core/entity/model/entity.spec";
 
 describe("Child", () => {
   const ENTITY_TYPE = "Child";
@@ -32,6 +33,26 @@ describe("Child", () => {
       entitySchemaService.registerSchemaDatatype(new PhotoDatatype());
     })
   );
+
+  testEntitySubclass("Child", Child, {
+    _id: "Child:some-id",
+
+    name: "Max",
+    projectNumber: "projectNumber01",
+    gender: genders[1].id,
+    dateOfBirth: "2010-01-01",
+
+    photo: "..",
+    center: "alipore",
+    admissionDate: new Date("2021-03-1"),
+    status: "Active",
+
+    dropoutDate: new Date("2022-03-31"),
+    dropoutType: "unknown",
+    dropoutRemarks: "no idea what happened",
+
+    searchIndices: ["Max", "projectNumber01"],
+  });
 
   it("has correct _id and entityId and type", function () {
     const id = "test1";
