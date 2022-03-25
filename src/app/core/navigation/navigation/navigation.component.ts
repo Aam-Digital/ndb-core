@@ -102,6 +102,7 @@ export class NavigationComponent {
         ).link;
     }
   }
+
   /**
    * Load menu items from config file
    */
