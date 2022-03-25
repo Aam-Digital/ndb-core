@@ -398,13 +398,6 @@ describe("ExportService", () => {
     const todayNote = await createNoteInDB("today", [child]);
     todayNote.date = new Date();
     await entityMapper.save(todayNote);
-    const query = [
-      { query: "name" },
-      {
-        query: ":getRelated(Note, children)[* date > ?]",
-        subQueries: [{ query: "subject" }],
-      },
-    ];
 
     let result = await service.createCsv(
       undefined,
@@ -419,6 +412,13 @@ describe("ExportService", () => {
     let resultRows = result.split(ExportService.SEPARATOR_ROW);
     expect(resultRows).toEqual(['"subject"', '"yesterday"', '"today"']);
 
+    const query = [
+      { query: "name" },
+      {
+        query: ":getRelated(Note, children)[* date > ?]",
+        subQueries: [{ query: "subject" }],
+      },
+    ];
     result = await service.createCsv(
       [child],
       query,
@@ -456,6 +456,30 @@ describe("ExportService", () => {
     expect(queryService.queryData).not.toHaveBeenCalled();
     expect(result).toBe(
       `"key"${ExportService.SEPARATOR_ROW}"some"${ExportService.SEPARATOR_ROW}"data"`
+    );
+  });
+
+  it("should work when using the count function", async () => {
+    await createNoteInDB("first", [new Child(), new Child()]);
+    await createNoteInDB("second", [new Child()]);
+
+    const result = await service.createCsv(undefined, [
+      {
+        query: `${Note.ENTITY_TYPE}:toArray`,
+        subQueries: [
+          { query: "subject" },
+          { query: ".children:count", label: "Children" },
+        ],
+      },
+    ]);
+
+    const resultRows = result.split(ExportService.SEPARATOR_ROW);
+    expect(resultRows).toEqual(
+      jasmine.arrayWithExactContents([
+        '"subject","Children"',
+        '"first","2"',
+        '"second","1"',
+      ])
     );
   });
 

@@ -198,9 +198,20 @@ export class EntitySchemaService {
     }
     const componentAttribute =
       mode === "view" ? "viewComponent" : "editComponent";
-    return (
-      propertySchema[componentAttribute] ||
-      this.getDatatypeOrDefault(propertySchema.dataType)[componentAttribute]
+    if (propertySchema[componentAttribute]) {
+      return propertySchema[componentAttribute];
+    }
+
+    const dataType = this.getDatatypeOrDefault(propertySchema.dataType);
+    if (dataType?.[componentAttribute]) {
+      return dataType[componentAttribute];
+    }
+
+    const innerDataType = this.getDatatypeOrDefault(
+      propertySchema.innerDataType
     );
+    if (innerDataType?.[componentAttribute]) {
+      return innerDataType[componentAttribute];
+    }
   }
 }
