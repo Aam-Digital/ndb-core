@@ -32,10 +32,7 @@ export class ConfigurableEnumDatatype
     value: string,
     schemaField: EntitySchemaField
   ): ConfigurableEnumValue {
-    const isInnerDataType = schemaField.innerDataType === this.name;
-    let enumId = isInnerDataType
-      ? schemaField.additional
-      : schemaField.innerDataType;
+    let enumId = schemaField.additional || schemaField.innerDataType;
     if (!enumId.startsWith(CONFIGURABLE_ENUM_CONFIG_PREFIX)) {
       enumId = CONFIGURABLE_ENUM_CONFIG_PREFIX + enumId;
     }
