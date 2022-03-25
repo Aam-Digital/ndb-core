@@ -38,6 +38,11 @@ describe("ConfigurableEnumDatatype", () => {
       innerDataType: "test-enum",
     })
     option: ConfigurableEnumValue;
+    @DatabaseField({
+      dataType: "configurable-enum",
+      additional: "test-enum",
+    })
+    optionInAdditional: ConfigurableEnumValue;
   }
 
   let entitySchemaService: EntitySchemaService;
@@ -94,5 +99,18 @@ describe("ConfigurableEnumDatatype", () => {
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
     expect(rawData.option).toEqual(testOptionKey);
+  });
+
+  it("should also support the name of the enum in the 'additional' field", () => {
+    const data = {
+      _id: "Test",
+      optionInAdditional: "TEST_3",
+    };
+    const entity = new TestEntity();
+
+    entitySchemaService.loadDataIntoEntity(entity, data);
+
+    expect(entity.optionInAdditional).toEqual(TEST_CONFIG[2]);
+    expect(entity.getId()).toBe("Test");
   });
 });
