@@ -61,7 +61,7 @@
     "tslib": "^2.3.1",
     "uuid": "^8.3.2",
     "webdav": "^4.8.0",
-    "zone.js": "~0.11.4"
+    "zone.js": "~0.11.5"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.1102.14",
