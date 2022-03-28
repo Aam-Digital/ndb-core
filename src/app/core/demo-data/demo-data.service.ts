@@ -25,7 +25,7 @@ import {
 import { DemoDataGenerator } from "./demo-data-generator";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { LoggingService } from "../logging/logging.service";
-import { User } from "../user/user";
+import { Database } from "../database/database";
 
 /**
  * General config object to pass all initially register DemoDataGenerators
@@ -62,7 +62,8 @@ export class DemoDataService {
     private entityMapper: EntityMapperService,
     private loggingService: LoggingService,
     private injector: Injector,
-    private config: DemoDataServiceConfig
+    private config: DemoDataServiceConfig,
+    private database: Database
   ) {}
 
   private registerAllProvidedDemoDataGenerators() {
@@ -79,7 +80,7 @@ export class DemoDataService {
    * and add all the generated entities to the Database.
    */
   async publishDemoData() {
-    if (!(await this.hasEmptyDatabase())) {
+    if (!(await this.database.isEmpty())) {
       return;
     }
     this.registerAllProvidedDemoDataGenerators();
@@ -99,10 +100,5 @@ export class DemoDataService {
         }
       }
     }
-  }
-
-  async hasEmptyDatabase(): Promise<boolean> {
-    const existingUsers = await this.entityMapper.loadType(User);
-    return existingUsers.length === 0;
   }
 }

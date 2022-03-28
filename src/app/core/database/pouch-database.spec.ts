@@ -212,4 +212,12 @@ describe("PouchDatabase tests", () => {
     expect(result).toEqual(testQueryResults);
     expect(pouchDB.query).toHaveBeenCalledWith(testQuery, {});
   });
+
+  it("should correctly determine if database is empty", async () => {
+    await expectAsync(database.isEmpty()).toBeResolvedTo(true);
+
+    await database.put({ _id: "User:test" });
+
+    await expectAsync(database.isEmpty()).toBeResolvedTo(false);
+  });
 });

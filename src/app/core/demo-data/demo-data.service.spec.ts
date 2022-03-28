@@ -7,14 +7,17 @@ import {
   DemoChildConfig,
   DemoChildGenerator,
 } from "../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
+import { Database } from "../database/database";
 
 describe("DemoDataService", () => {
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockDatabase: jasmine.SpyObj<Database>;
   let mockGeneratorsProviders;
 
   beforeEach(() => {
-    mockEntityMapper = jasmine.createSpyObj(["save", "loadType"]);
-    mockEntityMapper.loadType.and.resolveTo([]);
+    mockEntityMapper = jasmine.createSpyObj(["save"]);
+    mockDatabase = jasmine.createSpyObj(["isEmpty"]);
+    mockDatabase.isEmpty.and.resolveTo(true);
     mockGeneratorsProviders = [
       { provide: DemoChildGenerator, useClass: DemoChildGenerator },
       { provide: DemoChildConfig, useValue: { count: 10 } },
@@ -32,6 +35,7 @@ describe("DemoDataService", () => {
           provide: DemoDataServiceConfig,
           useValue: { dataGeneratorProviders: mockGeneratorsProviders },
         },
+        { provide: Database, useValue: mockDatabase },
         mockGeneratorsProviders,
       ],
     });

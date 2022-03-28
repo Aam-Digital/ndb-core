@@ -86,6 +86,14 @@ export abstract class Database {
     });
   }
 
+  /**
+   * @returns true if there are no documents in the database
+   */
+  abstract isEmpty(): Promise<boolean>;
+
+  /**
+   * Closes all open connections to the database base and destroys it (clearing all data)
+   */
   abstract destroy(): Promise<any>;
 }
 

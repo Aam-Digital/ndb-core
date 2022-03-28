@@ -121,13 +121,9 @@ export class PouchDatabase extends Database {
    * @param options PouchDB options object as in the normal PouchDB library
    */
   allDocs(options?: GetAllOptions) {
-    return this.pouchDB.allDocs(options).then((result) => {
-      const resultArray = [];
-      for (const row of result.rows) {
-        resultArray.push(row.doc);
-      }
-      return resultArray;
-    });
+    return this.pouchDB
+      .allDocs(options)
+      .then((result) => result.rows.map((row) => row.doc));
   }
 
   /**
@@ -160,6 +156,10 @@ export class PouchDatabase extends Database {
    */
   remove(object: any) {
     return this.pouchDB.remove(object);
+  }
+
+  isEmpty(): Promise<boolean> {
+    return this.getAll("User:").then((res) => res.length === 0);
   }
 
   public async destroy(): Promise<any> {
