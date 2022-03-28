@@ -128,9 +128,6 @@ export class SyncedSessionService extends SessionService {
       this._localSession.loginState.pipe(waitForChangeTo(LoginState.LOGGED_IN)),
       this._remoteSession.loginState.pipe(waitForChangeTo(LoginState.LOGGED_IN))
     ).subscribe(async () => {
-      await this.databaseMigration.migrateOldDatabaseTo(
-        this._localSession.getDatabase()
-      );
       await this.startSync();
     });
   }
