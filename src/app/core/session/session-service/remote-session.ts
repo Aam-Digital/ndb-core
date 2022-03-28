@@ -112,8 +112,4 @@ export class RemoteSession extends SessionService {
   getDatabase(): PouchDatabase {
     return this.database;
   }
-
-  sync(): Promise<any> {
-    return Promise.reject(new Error("Cannot sync remote session"));
-  }
 }
