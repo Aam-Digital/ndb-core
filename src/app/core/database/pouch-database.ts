@@ -159,20 +159,7 @@ export class PouchDatabase extends Database {
    * @param object The document to be deleted (usually this object must at least contain the _id and _rev)
    */
   remove(object: any) {
-    return this.pouchDB.remove(object).catch((err) => {
-      throw err;
-    });
-  }
-
-  /**
-   * Sync the local database with a remote database.
-   * See {@Link https://pouchdb.com/guides/replication.html}
-   * @param remoteDatabase the PouchDB instance of the remote database
-   */
-  sync(remoteDatabase) {
-    return this.pouchDB.sync(remoteDatabase, {
-      batch_size: 500,
-    });
+    return this.pouchDB.remove(object);
   }
 
   public async destroy(): Promise<any> {

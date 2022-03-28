@@ -161,8 +161,8 @@ export class SyncedSessionService extends SessionService {
   private startSync(): Promise<any> {
     // Call live syn even when initial sync fails
     return this.sync()
-      .catch(() => {})
-      .then(() => this.liveSyncDeferred());
+      .catch((err) => this.loggingService.error(`Sync failed: ${err}`))
+      .finally(() => this.liveSyncDeferred());
   }
 
   public getCurrentUser(): DatabaseUser {
