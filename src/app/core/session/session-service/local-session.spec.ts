@@ -38,7 +38,11 @@ describe("LocalSessionService", () => {
         remote_url: "https://demo.aam-digital.com/db/",
       },
     };
-    database = jasmine.createSpyObj(["initInMemoryDB", "initIndexedDB"]);
+    database = jasmine.createSpyObj([
+      "initInMemoryDB",
+      "initIndexedDB",
+      "isEmpty",
+    ]);
     localSession = new LocalSession(database);
   });
 
@@ -52,6 +56,7 @@ describe("LocalSessionService", () => {
 
   afterEach(() => {
     localSession.removeUser(TEST_USER);
+    window.localStorage.removeItem(LocalSession.DEPRECATED_DB_KEY);
   });
 
   it("should be created", () => {
@@ -138,6 +143,63 @@ describe("LocalSessionService", () => {
     await testDatabaseCreation(SessionType.local, "indexed");
     await testDatabaseCreation(SessionType.synced, "indexed");
   });
+
+  it("should use current user db if database has content", async () => {
+    defineExistingDatabases(true, false);
+
+    await localSession.login(TEST_USER, TEST_PASSWORD);
+
+    const dbName = database.initInMemoryDB.calls.mostRecent().args[0];
+    expect(dbName).toBe(`${TEST_USER}-${AppConfig.settings.database.name}`);
+  });
+
+  it("should use and reserve a deprecated db if it exists and current db has no content", async () => {
+    defineExistingDatabases(false, true);
+
+    await localSession.login(TEST_USER, TEST_PASSWORD);
+
+    const dbName = database.initInMemoryDB.calls.mostRecent().args[0];
+    expect(dbName).toBe(AppConfig.settings.database.name);
+    const dbReservation = window.localStorage.getItem(
+      LocalSession.DEPRECATED_DB_KEY
+    );
+    expect(dbReservation).toBe(TEST_USER);
+  });
+
+  it("should open a new database if deprecated db is already in use", async () => {
+    defineExistingDatabases(false, true, "other-user");
+
+    await localSession.login(TEST_USER, TEST_PASSWORD);
+
+    const dbName = database.initInMemoryDB.calls.mostRecent().args[0];
+    expect(dbName).toBe(`${TEST_USER}-${AppConfig.settings.database.name}`);
+  });
+
+  it("should use the deprecated database if it is reserved by the current user", async () => {
+    defineExistingDatabases(false, true, TEST_USER);
+
+    await localSession.login(TEST_USER, TEST_PASSWORD);
+
+    const dbName = database.initInMemoryDB.calls.mostRecent().args[0];
+    expect(dbName).toBe(AppConfig.settings.database.name);
+  });
+
+  function defineExistingDatabases(userDB, deprecatedDB, reserved?: string) {
+    if (reserved) {
+      window.localStorage.setItem(LocalSession.DEPRECATED_DB_KEY, reserved);
+    }
+    database.isEmpty.and.callFake(() => {
+      const dbName = database.initInMemoryDB.calls.mostRecent().args[0];
+      if (dbName === AppConfig.settings.database.name) {
+        return Promise.resolve(!deprecatedDB);
+      }
+      if (dbName === `${TEST_USER}-${AppConfig.settings.database.name}`) {
+        return Promise.resolve(!userDB);
+      } else {
+        return Promise.reject("unexpected database name");
+      }
+    });
+  }
 
   testSessionServiceImplementation(() => Promise.resolve(localSession));
 });

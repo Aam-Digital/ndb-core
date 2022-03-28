@@ -36,6 +36,7 @@ import { DatabaseMigrationService } from "./database-migration.service";
  */
 @Injectable()
 export class LocalSession extends SessionService {
+  static readonly DEPRECATED_DB_KEY = "RESERVED_FOR";
   private currentDBUser: DatabaseUser;
   public databaseMigrationService: DatabaseMigrationService;
 
@@ -49,12 +50,12 @@ export class LocalSession extends SessionService {
    * @param username Username
    * @param password Password
    */
-  public login(username: string, password: string): Promise<LoginState> {
+  public async login(username: string, password: string): Promise<LoginState> {
     const user: LocalUser = JSON.parse(window.localStorage.getItem(username));
     if (user) {
       if (passwordEqualsEncrypted(password, user.encryptedPassword)) {
         this.currentDBUser = user;
-        this.createLocalPouchDB();
+        await this.createLocalPouchDB();
         this.loginState.next(LoginState.LOGGED_IN);
       } else {
         this.loginState.next(LoginState.LOGIN_FAILED);
@@ -62,11 +63,35 @@ export class LocalSession extends SessionService {
     } else {
       this.loginState.next(LoginState.UNAVAILABLE);
     }
-    return Promise.resolve(this.loginState.value);
+    return this.loginState.value;
   }
 
-  private createLocalPouchDB() {
-    const dbName = `${this.currentDBUser.name}-${AppConfig.settings.database.name}`;
+  private async createLocalPouchDB() {
+    await this.getDatabaseNameForCurrentUser();
+  }
+
+  private async getDatabaseNameForCurrentUser() {
+    const userDBName = `${this.currentDBUser.name}-${AppConfig.settings.database.name}`;
+    this.initDatabase(userDBName);
+    if (!(await this.database.isEmpty())) {
+      return;
+    }
+    this.initDatabase(AppConfig.settings.database.name);
+    const dbFallback = window.localStorage.getItem(
+      LocalSession.DEPRECATED_DB_KEY
+    );
+    const dbAvailable = !dbFallback || dbFallback === this.currentDBUser.name;
+    if (!(await this.database.isEmpty()) && dbAvailable) {
+      window.localStorage.setItem(
+        LocalSession.DEPRECATED_DB_KEY,
+        this.currentDBUser.name
+      );
+      return;
+    }
+    this.initDatabase(userDBName);
+  }
+
+  private initDatabase(dbName: string) {
     if (AppConfig.settings.session_type === SessionType.mock) {
       this.database.initInMemoryDB(dbName);
     } else {
