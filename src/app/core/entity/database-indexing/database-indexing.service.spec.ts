@@ -28,16 +28,21 @@ describe("DatabaseIndexingService", () => {
   let service: DatabaseIndexingService;
   let mockDb: jasmine.SpyObj<Database>;
   let mockSession: jasmine.SpyObj<SessionService>;
-  let loginState = new BehaviorSubject(LoginState.LOGGED_OUT);
+  let loginState: BehaviorSubject<LoginState>;
 
   beforeEach(() => {
     mockDb = jasmine.createSpyObj("mockDb", ["saveDatabaseIndex", "query"]);
+    loginState = new BehaviorSubject(LoginState.LOGGED_OUT);
     mockSession = jasmine.createSpyObj([], { loginState });
     service = new DatabaseIndexingService(
       mockDb,
       new EntitySchemaService(),
       mockSession
     );
+  });
+
+  afterEach(() => {
+    loginState.complete();
   });
 
   it("should pass through any query to the database", async () => {
