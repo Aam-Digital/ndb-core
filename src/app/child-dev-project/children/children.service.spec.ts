@@ -2,35 +2,23 @@ import { ChildrenService } from "./children.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { ChildSchoolRelation } from "./model/childSchoolRelation";
 import { Child } from "./model/child";
-import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { School } from "../schools/model/school";
 import { TestBed } from "@angular/core/testing";
 import moment from "moment";
 import { Database } from "../../core/database/database";
 import { Note } from "../notes/model/note";
-import { PouchDatabase } from "../../core/database/pouch-database";
 import { genders } from "./model/genders";
 import { skip } from "rxjs/operators";
-import {
-  EntityRegistry,
-  entityRegistry,
-} from "../../core/entity/database-entity.decorator";
+import { DatabaseTestingModule } from "../../utils/database-testing.module";
 
 describe("ChildrenService", () => {
   let service: ChildrenService;
   let entityMapper: EntityMapperService;
-  let database: PouchDatabase;
 
   beforeEach(async () => {
-    database = PouchDatabase.createWithData();
     TestBed.configureTestingModule({
-      providers: [
-        { provide: EntityRegistry, useValue: entityRegistry },
-        ChildrenService,
-        EntityMapperService,
-        EntitySchemaService,
-        { provide: Database, useValue: database },
-      ],
+      imports: [DatabaseTestingModule],
+      providers: [ChildrenService],
     });
 
     entityMapper = TestBed.inject(EntityMapperService);
@@ -44,7 +32,7 @@ describe("ChildrenService", () => {
   });
 
   afterEach(async () => {
-    await database.destroy();
+    await TestBed.inject(Database).destroy();
   });
 
   it("should be created", () => {

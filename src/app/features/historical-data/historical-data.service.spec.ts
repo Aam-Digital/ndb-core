@@ -5,35 +5,23 @@ import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { Entity } from "../../core/entity/model/entity";
 import { HistoricalEntityData } from "./historical-entity-data";
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
-import { PouchDatabase } from "../../core/database/pouch-database";
-import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { Database } from "../../core/database/database";
 import moment from "moment";
-import {
-  EntityRegistry,
-  entityRegistry,
-} from "../../core/entity/database-entity.decorator";
+import { DatabaseTestingModule } from "../../utils/database-testing.module";
 
 describe("HistoricalDataService", () => {
   let service: HistoricalDataService;
-  let database: PouchDatabase;
 
   beforeEach(() => {
-    database = PouchDatabase.createWithData();
     TestBed.configureTestingModule({
-      providers: [
-        HistoricalDataService,
-        EntityMapperService,
-        EntitySchemaService,
-        { provide: Database, useValue: database },
-        { provide: EntityRegistry, useValue: entityRegistry },
-      ],
+      imports: [DatabaseTestingModule],
+      providers: [HistoricalDataService],
     });
     service = TestBed.inject(HistoricalDataService);
   });
 
   afterEach(async () => {
-    await database.destroy();
+    await TestBed.inject(Database).destroy();
   });
 
   it("should be created", () => {
