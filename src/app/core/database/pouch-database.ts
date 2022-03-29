@@ -76,9 +76,7 @@ export class PouchDatabase extends Database {
     dbName = "indexed-database",
     options?: PouchDB.Configuration.DatabaseConfiguration
   ): PouchDatabase {
-    console.log("initializing", dbName);
     this.pouchDB = new PouchDB(dbName, options);
-    console.log("done initializing", this.pouchDB);
     return this;
   }
 
@@ -164,7 +162,7 @@ export class PouchDatabase extends Database {
     return this.pouchDB
       .info()
       .then((res) => {
-        console.log("info", res);
+        console.log("info", res, res.doc_count === 0);
         return res.doc_count === 0;
       })
       .catch((err) => {
