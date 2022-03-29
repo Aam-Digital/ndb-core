@@ -19,8 +19,6 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { NavigationComponent } from "./navigation.component";
 import { MenuItem } from "../menu-item";
-import { MatDividerModule } from "@angular/material/divider";
-import { MatListModule } from "@angular/material/list";
 import { ConfigService } from "../../config/config.service";
 import { BehaviorSubject, Subject } from "rxjs";
 import { Config } from "../../config/config";
@@ -31,8 +29,8 @@ import {
   NavigationEnd,
   Router,
 } from "@angular/router";
-import { SessionService } from "../../session/session-service/session.service";
-import { MockSessionModule } from "../../session/mock-session.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { NavigationModule } from "../navigation.module";
 
 describe("NavigationComponent", () => {
   let component: NavigationComponent;
@@ -52,16 +50,10 @@ describe("NavigationComponent", () => {
       mockUserRoleGuard.canActivate.and.returnValue(true);
 
       TestBed.configureTestingModule({
-        imports: [
-          MatDividerModule,
-          MatListModule,
-          MockSessionModule.withState(),
-        ],
-        declarations: [NavigationComponent],
+        imports: [NavigationModule, MockedTestingModule.withState()],
         providers: [
           { provide: UserRoleGuard, useValue: mockUserRoleGuard },
           { provide: ConfigService, useValue: mockConfigService },
-          SessionService,
         ],
       }).compileComponents();
     })

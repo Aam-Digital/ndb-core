@@ -9,15 +9,11 @@ import { SchoolsListComponent } from "./schools-list.component";
 import { ActivatedRoute, Router } from "@angular/router";
 import { of } from "rxjs";
 import { SchoolsModule } from "../schools.module";
-import { RouterTestingModule } from "@angular/router/testing";
-import { Angulartics2Module } from "angulartics2";
 import { School } from "../model/school";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { ExportService } from "../../../core/export/export-service/export.service";
-import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
 
 describe("SchoolsListComponent", () => {
   let component: SchoolsListComponent;
@@ -47,15 +43,7 @@ describe("SchoolsListComponent", () => {
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        declarations: [],
-        imports: [
-          SchoolsModule,
-          RouterTestingModule,
-          Angulartics2Module.forRoot(),
-          NoopAnimationsModule,
-          MockSessionModule.withState(),
-          HttpClientTestingModule,
-        ],
+        imports: [SchoolsModule, MockedTestingModule.withState()],
         providers: [
           { provide: ActivatedRoute, useValue: routeMock },
           { provide: ExportService, useValue: {} },

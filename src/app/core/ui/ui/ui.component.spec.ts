@@ -18,18 +18,12 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { UiComponent } from "./ui.component";
-import { RouterTestingModule } from "@angular/router/testing";
-import { SearchComponent } from "../search/search.component";
-import { CommonModule } from "@angular/common";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { PrimaryActionComponent } from "../primary-action/primary-action.component";
 import { SwUpdate } from "@angular/service-worker";
 import { of, Subject } from "rxjs";
 import { ApplicationInitStatus } from "@angular/core";
 import { UiModule } from "../ui.module";
-import { Angulartics2Module } from "angulartics2";
 import { ConfigService } from "../../config/config.service";
-import { MockSessionModule } from "../../session/mock-session.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 
@@ -49,22 +43,13 @@ describe("UiComponent", () => {
       mockIndexingService.createIndex.and.resolveTo();
 
       TestBed.configureTestingModule({
-        declarations: [SearchComponent, PrimaryActionComponent, UiComponent],
-        imports: [
-          RouterTestingModule,
-          CommonModule,
-          UiModule,
-          NoopAnimationsModule,
-          Angulartics2Module.forRoot(),
-          MockSessionModule.withState(),
-        ],
+        imports: [UiModule, MockedTestingModule.withState()],
         providers: [
           { provide: SwUpdate, useValue: mockSwUpdate },
           {
             provide: DatabaseIndexingService,
             useValue: mockIndexingService,
           },
-          ConfigService,
         ],
       }).compileComponents();
       TestBed.inject(ApplicationInitStatus); // This ensures that the AppConfig is loaded before test execution

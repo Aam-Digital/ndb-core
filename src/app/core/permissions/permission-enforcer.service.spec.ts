@@ -3,7 +3,7 @@ import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { PermissionEnforcerService } from "./permission-enforcer.service";
 import { DatabaseRule } from "./permission-types";
 import { SessionService } from "../session/session-service/session.service";
-import { TEST_USER } from "../session/mock-session.module";
+import { TEST_USER } from "../../utils/mocked-testing.module";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Database } from "../database/database";
 import { Child } from "../../child-dev-project/children/model/child";

@@ -9,18 +9,12 @@ import {
 import { PreviousSchoolsComponent } from "./previous-schools.component";
 import { ChildrenService } from "../children.service";
 import { ChildrenModule } from "../children.module";
-import { RouterTestingModule } from "@angular/router/testing";
-import { ConfirmationDialogModule } from "../../../core/confirmation-dialog/confirmation-dialog.module";
 import { SimpleChange } from "@angular/core";
 import { Child } from "../model/child";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { ChildSchoolRelation } from "../model/childSchoolRelation";
 import moment from "moment";
-import { MockSessionModule } from "../../../core/session/mock-session.module";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { Subject } from "rxjs";
-import { UpdatedEntity } from "../../../core/entity/model/entity-update";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("PreviousSchoolsComponent", () => {
   let component: PreviousSchoolsComponent;
@@ -38,12 +32,7 @@ describe("PreviousSchoolsComponent", () => {
       ]);
 
       TestBed.configureTestingModule({
-        declarations: [PreviousSchoolsComponent],
-        imports: [
-          ChildrenModule,
-          ConfirmationDialogModule,
-          MockSessionModule.withState(),
-        ],
+        imports: [ChildrenModule, MockedTestingModule.withState()],
         providers: [
           { provide: ChildrenService, useValue: mockChildrenService },
         ],

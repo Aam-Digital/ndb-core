@@ -1,25 +1,17 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { EntityListComponent } from "./entity-list.component";
-import { CommonModule, DatePipe } from "@angular/common";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { RouterTestingModule } from "@angular/router/testing";
 import { SimpleChange } from "@angular/core";
 import { BooleanFilterConfig, EntityListConfig } from "./EntityListConfig";
 import { Entity } from "../../entity/model/entity";
-import { ChildrenListComponent } from "../../../child-dev-project/children/children-list/children-list.component";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ConfigService } from "../../config/config.service";
 import { LoggingService } from "../../logging/logging.service";
 import { EntityListModule } from "./entity-list.module";
-import { Angulartics2Module } from "angulartics2";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DatabaseField } from "../../entity/database-field.decorator";
-import { ReactiveFormsModule } from "@angular/forms";
 import { AttendanceService } from "../../../child-dev-project/attendance/attendance.service";
-import { ExportModule } from "../../export/export.module";
 import { ExportService } from "../../export/export-service/export.service";
-import { MockSessionModule } from "../../session/mock-session.module";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -92,22 +84,8 @@ describe("EntityListComponent", () => {
       );
 
       TestBed.configureTestingModule({
-        declarations: [EntityListComponent],
-        imports: [
-          CommonModule,
-          NoopAnimationsModule,
-          EntityListModule,
-          ExportModule,
-          Angulartics2Module.forRoot(),
-          ReactiveFormsModule,
-          HttpClientTestingModule,
-          RouterTestingModule.withRoutes([
-            { path: "child", component: ChildrenListComponent },
-          ]),
-          MockSessionModule.withState(),
-        ],
+        imports: [EntityListModule, MockedTestingModule.withState()],
         providers: [
-          DatePipe,
           { provide: ConfigService, useValue: mockConfigService },
           { provide: LoggingService, useValue: mockLoggingService },
           { provide: ExportService, useValue: {} },

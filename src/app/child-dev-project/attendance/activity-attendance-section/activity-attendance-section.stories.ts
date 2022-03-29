@@ -9,7 +9,7 @@ import {
 } from "../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
-import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 const demoActivity = RecurringActivity.create("Coaching Batch C");
 const attendanceRecords = [
@@ -66,7 +66,7 @@ export default {
       imports: [
         AttendanceModule,
         StorybookBaseModule,
-        MockSessionModule.withState(),
+        MockedTestingModule.withState(),
       ],
     }),
   ],

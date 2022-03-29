@@ -30,7 +30,7 @@ import { of, throwError } from "rxjs";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { DatabaseUser } from "./local-user";
-import { TEST_PASSWORD, TEST_USER } from "../mock-session.module";
+import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
 import { testSessionServiceImplementation } from "./session.service.spec";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { PouchDatabase } from "../../database/pouch-database";

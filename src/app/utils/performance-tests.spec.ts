@@ -3,9 +3,9 @@ import { AppModule } from "../app.module";
 import moment from "moment";
 import { Database } from "../core/database/database";
 import { DemoDataService } from "../core/demo-data/demo-data.service";
-import { MockSessionModule } from "../core/session/mock-session.module";
 import { AppConfig } from "../core/app-config/app-config";
 import { SessionType } from "../core/session/session-type";
+import { DatabaseTestingModule } from "./database-testing.module";
 
 xdescribe("Performance Tests", () => {
   beforeEach(async () => {
@@ -21,7 +21,7 @@ xdescribe("Performance Tests", () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [AppModule, MockSessionModule.withState()],
+      imports: [AppModule, DatabaseTestingModule],
     }).compileComponents();
     const demoDataService = TestBed.inject(DemoDataService);
     const setup = new Timer();

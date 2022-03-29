@@ -1,13 +1,10 @@
 import { NotesOfChildComponent } from "./notes-of-child.component";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { NotesModule } from "../notes.module";
-import { MatNativeDateModule } from "@angular/material/core";
 import { ChildrenService } from "../../children/children.service";
-import { DatePipe } from "@angular/common";
 import { Note } from "../model/note";
 import { Child } from "../../children/model/child";
-import { RouterTestingModule } from "@angular/router/testing";
-import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 const allChildren: Array<Note> = [];
 
@@ -22,16 +19,8 @@ describe("NotesOfChildComponent", () => {
       "getNotesOfChild",
     ]);
     TestBed.configureTestingModule({
-      imports: [
-        NotesModule,
-        MatNativeDateModule,
-        RouterTestingModule,
-        MockSessionModule.withState(),
-      ],
-      providers: [
-        { provide: ChildrenService, useValue: mockChildrenService },
-        { provide: DatePipe, useValue: new DatePipe("medium") },
-      ],
+      imports: [NotesModule, MockedTestingModule.withState()],
+      providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
     }).compileComponents();
   });
 

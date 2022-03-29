@@ -13,7 +13,7 @@ import { ConfigService } from "../../../../core/config/config.service";
 import { Child } from "../../../children/model/child";
 import { LoggingService } from "../../../../core/logging/logging.service";
 import { AttendanceModule } from "../../attendance.module";
-import { MockSessionModule } from "../../../../core/session/mock-session.module";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { ConfirmationDialogService } from "../../../../core/confirmation-dialog/confirmation-dialog.service";
 import { LoginState } from "../../../../core/session/session-states/login-state.enum";
 import { SimpleChange } from "@angular/core";
@@ -63,7 +63,7 @@ describe("RollCallComponent", () => {
       TestBed.configureTestingModule({
         imports: [
           AttendanceModule,
-          MockSessionModule.withState(LoginState.LOGGED_IN, [
+          MockedTestingModule.withState(LoginState.LOGGED_IN, [
             participant1,
             participant2,
             participant3,

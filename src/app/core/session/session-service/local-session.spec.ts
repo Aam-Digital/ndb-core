@@ -21,7 +21,7 @@ import { SessionType } from "../session-type";
 import { DatabaseUser, LocalUser, passwordEqualsEncrypted } from "./local-user";
 import { LoginState } from "../session-states/login-state.enum";
 import { testSessionServiceImplementation } from "./session.service.spec";
-import { TEST_PASSWORD, TEST_USER } from "../mock-session.module";
+import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
 import { PouchDatabase } from "../../database/pouch-database";
 
 describe("LocalSessionService", () => {

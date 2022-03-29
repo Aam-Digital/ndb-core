@@ -6,9 +6,8 @@ import { Note } from "../../notes/model/note";
 import { AttendanceModule } from "../attendance.module";
 import { ChildrenService } from "../../children/children.service";
 import { of } from "rxjs";
-import { MatNativeDateModule } from "@angular/material/core";
 import { AttendanceService } from "../attendance.service";
-import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("AddDayAttendanceComponent", () => {
   let component: AddDayAttendanceComponent;
@@ -24,11 +23,7 @@ describe("AddDayAttendanceComponent", () => {
       mockChildrenService.getChildren.and.returnValue(of([]));
 
       TestBed.configureTestingModule({
-        imports: [
-          AttendanceModule,
-          MatNativeDateModule,
-          MockSessionModule.withState(),
-        ],
+        imports: [AttendanceModule, MockedTestingModule.withState()],
         providers: [
           { provide: ChildrenService, useValue: mockChildrenService },
           {

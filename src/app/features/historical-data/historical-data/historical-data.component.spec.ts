@@ -6,14 +6,12 @@ import {
 } from "@angular/core/testing";
 
 import { HistoricalDataComponent } from "./historical-data.component";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { HistoricalDataModule } from "../historical-data.module";
 import { Entity } from "../../../core/entity/model/entity";
 import { HistoricalEntityData } from "../historical-entity-data";
 import moment from "moment";
-import { DatePipe } from "@angular/common";
 import { HistoricalDataService } from "../historical-data.service";
-import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("HistoricalDataComponent", () => {
   let component: HistoricalDataComponent;
@@ -25,15 +23,9 @@ describe("HistoricalDataComponent", () => {
     mockHistoricalDataService.getHistoricalDataFor.and.resolveTo([]);
 
     await TestBed.configureTestingModule({
-      declarations: [HistoricalDataComponent],
-      imports: [
-        HistoricalDataModule,
-        NoopAnimationsModule,
-        MockSessionModule.withState(),
-      ],
+      imports: [HistoricalDataModule, MockedTestingModule.withState()],
       providers: [
         { provide: HistoricalDataService, useValue: mockHistoricalDataService },
-        DatePipe,
       ],
     }).compileComponents();
   });

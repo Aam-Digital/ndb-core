@@ -12,8 +12,6 @@ import {
 } from "./entity-subrecord.component";
 import { EntitySubrecordModule } from "../entity-subrecord.module";
 import { Entity } from "../../../entity/model/entity";
-import { MatNativeDateModule } from "@angular/material/core";
-import { DatePipe, PercentPipe } from "@angular/common";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { ConfigurableEnumValue } from "../../../configurable-enum/configurable-enum.interface";
 import { Child } from "../../../../child-dev-project/children/model/child";
@@ -23,7 +21,7 @@ import { FormBuilder, FormGroup } from "@angular/forms";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 import { genders } from "../../../../child-dev-project/children/model/genders";
 import { LoggingService } from "../../../logging/logging.service";
-import { MockSessionModule } from "../../../session/mock-session.module";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import moment from "moment";
 import { MediaObserver } from "@angular/flex-layout";
 import { Subject } from "rxjs";
@@ -39,12 +37,7 @@ describe("EntitySubrecordComponent", () => {
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        imports: [
-          EntitySubrecordModule,
-          MatNativeDateModule,
-          MockSessionModule.withState(),
-        ],
-        providers: [DatePipe, PercentPipe],
+        imports: [EntitySubrecordModule, MockedTestingModule.withState()],
       }).compileComponents();
     })
   );

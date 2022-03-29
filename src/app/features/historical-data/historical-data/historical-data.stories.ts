@@ -8,7 +8,7 @@ import { HistoricalDataModule } from "../historical-data.module";
 import { HistoricalDataService } from "../historical-data.service";
 import { ratingAnswers } from "../rating-answers";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
-import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 export default {
   title: "Features/HistoricalDataComponent",
@@ -18,7 +18,7 @@ export default {
       imports: [
         HistoricalDataModule,
         StorybookBaseModule,
-        MockSessionModule.withState(),
+        MockedTestingModule.withState(),
       ],
       declarations: [],
       providers: [

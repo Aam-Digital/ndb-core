@@ -8,7 +8,7 @@ import { LoggingService } from "../../logging/logging.service";
 import { testSessionServiceImplementation } from "./session.service.spec";
 import { DatabaseUser } from "./local-user";
 import { LoginState } from "../session-states/login-state.enum";
-import { TEST_PASSWORD, TEST_USER } from "../mock-session.module";
+import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
 
 describe("RemoteSessionService", () => {
   let service: RemoteSession;

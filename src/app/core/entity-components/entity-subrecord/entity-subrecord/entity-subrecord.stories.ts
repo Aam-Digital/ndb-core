@@ -16,7 +16,7 @@ import { ChildrenModule } from "../../../../child-dev-project/children/children.
 import { ChildrenService } from "../../../../child-dev-project/children/children.service";
 import { of, Subject } from "rxjs";
 import { AttendanceLogicalStatus } from "../../../../child-dev-project/attendance/model/attendance-status";
-import { MockSessionModule } from "../../../session/mock-session.module";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { AbilityService } from "../../../permissions/ability.service";
 import { faker } from "../../../demo-data/faker";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
@@ -45,7 +45,7 @@ export default {
         EntitySubrecordModule,
         StorybookBaseModule,
         ChildrenModule,
-        MockSessionModule.withState(),
+        MockedTestingModule.withState(),
       ],
       providers: [
         {
