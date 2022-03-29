@@ -20,14 +20,24 @@ import { Database } from "../../database/database";
 import { take } from "rxjs/operators";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { fakeAsync, tick } from "@angular/core/testing";
+import { SessionService } from "../../session/session-service/session.service";
+import { BehaviorSubject } from "rxjs";
+import { LoginState } from "../../session/session-states/login-state.enum";
 
 describe("DatabaseIndexingService", () => {
   let service: DatabaseIndexingService;
   let mockDb: jasmine.SpyObj<Database>;
+  let mockSession: jasmine.SpyObj<SessionService>;
+  let loginState = new BehaviorSubject(LoginState.LOGGED_OUT);
 
   beforeEach(() => {
     mockDb = jasmine.createSpyObj("mockDb", ["saveDatabaseIndex", "query"]);
-    service = new DatabaseIndexingService(mockDb, new EntitySchemaService());
+    mockSession = jasmine.createSpyObj([], { loginState });
+    service = new DatabaseIndexingService(
+      mockDb,
+      new EntitySchemaService(),
+      mockSession
+    );
   });
 
   it("should pass through any query to the database", async () => {
@@ -133,4 +143,24 @@ describe("DatabaseIndexingService", () => {
       },
     ]);
   });
+
+  it("should re-create indices whenever a new user logs in", fakeAsync(() => {
+    const testDesignDoc = {
+      _id: "_design/test-index",
+      views: {},
+    };
+
+    service.createIndex(testDesignDoc);
+    tick();
+
+    expect(mockDb.saveDatabaseIndex.calls.allArgs()).toEqual([[testDesignDoc]]);
+
+    loginState.next(LoginState.LOGGED_IN);
+
+    tick();
+    expect(mockDb.saveDatabaseIndex.calls.allArgs()).toEqual([
+      [testDesignDoc],
+      [testDesignDoc],
+    ]);
+  }));
 });
