@@ -190,7 +190,10 @@ export class PouchDatabase extends Database {
     fun: string | ((doc: any, emit: any) => void),
     options: QueryOptions
   ): Promise<any> {
-    return this.pouchDB.query(fun, options);
+    return this.pouchDB.query(fun, options).catch((err) => {
+      console.log("query error", err, fun, options);
+      throw err;
+    });
   }
 
   /**
