@@ -30,7 +30,6 @@ import { DatabaseUser } from "./local-user";
 import { waitForChangeTo } from "../session-states/session-utils";
 import { PouchDatabase } from "../../database/pouch-database";
 import { zip } from "rxjs";
-import { DatabaseMigrationService } from "./database-migration.service";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -54,7 +53,6 @@ export class SyncedSessionService extends SessionService {
     private alertService: AlertService,
     private loggingService: LoggingService,
     private httpClient: HttpClient,
-    private databaseMigration: DatabaseMigrationService,
     pouchDatabase: PouchDatabase
   ) {
     super();

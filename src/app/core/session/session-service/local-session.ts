@@ -26,7 +26,6 @@ import { SessionService } from "./session.service";
 import { PouchDatabase } from "../../database/pouch-database";
 import { AppConfig } from "../../app-config/app-config";
 import { SessionType } from "../session-type";
-import { DatabaseMigrationService } from "./database-migration.service";
 
 /**
  * Responsibilities:
@@ -38,7 +37,6 @@ import { DatabaseMigrationService } from "./database-migration.service";
 export class LocalSession extends SessionService {
   static readonly DEPRECATED_DB_KEY = "RESERVED_FOR";
   private currentDBUser: DatabaseUser;
-  public databaseMigrationService: DatabaseMigrationService;
 
   constructor(private database: PouchDatabase) {
     super();

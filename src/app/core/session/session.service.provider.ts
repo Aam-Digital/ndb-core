@@ -25,7 +25,6 @@ import { HttpClient } from "@angular/common/http";
 import { LocalSession } from "./session-service/local-session";
 import { Database } from "../database/database";
 import { PouchDatabase } from "../database/pouch-database";
-import { DatabaseMigrationService } from "./session-service/database-migration.service";
 
 /**
  * Factory method for Angular DI provider of SessionService.
@@ -36,8 +35,7 @@ export function sessionServiceFactory(
   alertService: AlertService,
   loggingService: LoggingService,
   httpClient: HttpClient,
-  database: Database,
-  databaseMigrationService: DatabaseMigrationService
+  database: Database
 ): SessionService {
   const pouchDatabase = database as PouchDatabase;
   if (AppConfig.settings.session_type === SessionType.synced) {
@@ -45,7 +43,6 @@ export function sessionServiceFactory(
       alertService,
       loggingService,
       httpClient,
-      databaseMigrationService,
       pouchDatabase
     );
   } else {
@@ -65,11 +62,5 @@ export function sessionServiceFactory(
 export const sessionServiceProvider = {
   provide: SessionService,
   useFactory: sessionServiceFactory,
-  deps: [
-    AlertService,
-    LoggingService,
-    HttpClient,
-    Database,
-    DatabaseMigrationService,
-  ],
+  deps: [AlertService, LoggingService, HttpClient, Database],
 };

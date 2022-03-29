@@ -29,7 +29,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { RouterModule } from "@angular/router";
 import { HttpClientModule } from "@angular/common/http";
-import { DatabaseMigrationService } from "./session-service/database-migration.service";
 import { Database } from "../database/database";
 import { PouchDatabase } from "../database/pouch-database";
 import { DatabaseMigrationDialogComponent } from "./session-service/database-migration-dialog.component";
@@ -63,7 +62,6 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
   providers: [
     sessionServiceProvider,
     { provide: Database, useClass: PouchDatabase },
-    DatabaseMigrationService,
   ],
 })
 export class SessionModule {}
