@@ -19,7 +19,7 @@ import { DatabaseIndexingService } from "./database-indexing.service";
 import { Database } from "../../database/database";
 import { take } from "rxjs/operators";
 import { EntitySchemaService } from "../schema/entity-schema.service";
-import { fakeAsync, tick } from "@angular/core/testing";
+import { fakeAsync, flush, tick } from "@angular/core/testing";
 import { SessionService } from "../../session/session-service/session.service";
 import { BehaviorSubject } from "rxjs";
 import { LoginState } from "../../session/session-states/login-state.enum";
@@ -94,6 +94,7 @@ describe("DatabaseIndexingService", () => {
         title: "Preparing data (Indexing)",
         details: testIndexName,
         pending: true,
+        designDoc: testDesignDoc,
       },
     ]);
 
@@ -104,6 +105,7 @@ describe("DatabaseIndexingService", () => {
         title: "Preparing data (Indexing)",
         details: testIndexName,
         pending: false,
+        designDoc: testDesignDoc,
       },
     ]);
 
@@ -129,6 +131,7 @@ describe("DatabaseIndexingService", () => {
         title: "Preparing data (Indexing)",
         details: testIndexName,
         pending: true,
+        designDoc: testDesignDoc,
       },
     ]);
 
@@ -140,6 +143,7 @@ describe("DatabaseIndexingService", () => {
         details: testIndexName,
         pending: false,
         error: testErr,
+        designDoc: testDesignDoc,
       },
     ]);
   });
@@ -162,5 +166,6 @@ describe("DatabaseIndexingService", () => {
       [testDesignDoc],
       [testDesignDoc],
     ]);
+    flush();
   }));
 });

@@ -40,7 +40,7 @@ export class DatabaseIndexingService {
   private _indicesRegistered = new BehaviorSubject<IndexState[]>([]);
 
   /** All currently registered indices with their status */
-  get indicesRegistered(): Observable<BackgroundProcessState[]> {
+  get indicesRegistered(): Observable<IndexState[]> {
     return this._indicesRegistered.asObservable();
   }
 
