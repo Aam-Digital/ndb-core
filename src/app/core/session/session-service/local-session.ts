@@ -55,7 +55,6 @@ export class LocalSession extends SessionService {
     if (user) {
       if (passwordEqualsEncrypted(password, user.encryptedPassword)) {
         this.currentDBUser = user;
-        console.log("current", this.currentDBUser);
         await this.createLocalPouchDB();
         this.loginState.next(LoginState.LOGGED_IN);
       } else {
@@ -73,10 +72,8 @@ export class LocalSession extends SessionService {
 
   private async getDatabaseNameForCurrentUser() {
     const userDBName = `${this.currentDBUser.name}-${AppConfig.settings.database.name}`;
-    console.log("initing db", userDBName);
     this.initDatabase(userDBName);
     if (!(await this.database.isEmpty())) {
-      console.log("user user db directly");
       return;
     }
     this.initDatabase(AppConfig.settings.database.name);
@@ -84,22 +81,13 @@ export class LocalSession extends SessionService {
       LocalSession.DEPRECATED_DB_KEY
     );
     const dbAvailable = !dbFallback || dbFallback === this.currentDBUser.name;
-    const deprecatedEmpty = await this.database.isEmpty();
-    console.log(
-      "checking deprecated",
-      this.database.getPouchDB().name,
-      deprecatedEmpty,
-      dbAvailable
-    );
-    if (!deprecatedEmpty && dbAvailable) {
-      console.log("using deprecated");
+    if (dbAvailable && !(await this.database.isEmpty())) {
       window.localStorage.setItem(
         LocalSession.DEPRECATED_DB_KEY,
         this.currentDBUser.name
       );
       return;
     }
-    console.log("using userDB", this.database.getPouchDB().name);
     this.initDatabase(userDBName);
   }
 

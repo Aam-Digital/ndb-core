@@ -32,7 +32,6 @@ export class AutoResolutionService {
     currentDoc: any,
     conflictingDoc: any
   ): boolean {
-    console.log("this resolutionStrategy", this.resolutionStrategies);
     for (const resolutionStrategy of this.resolutionStrategies || []) {
       if (
         resolutionStrategy.autoDeleteConflictingRevision(

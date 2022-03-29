@@ -159,16 +159,7 @@ export class PouchDatabase extends Database {
   }
 
   isEmpty(): Promise<boolean> {
-    return this.pouchDB
-      .info()
-      .then((res) => {
-        console.log("info", res, res.doc_count === 0);
-        return res.doc_count === 0;
-      })
-      .catch((err) => {
-        console.log("err", err);
-        throw err;
-      });
+    return this.pouchDB.info().then((res) => res.doc_count === 0);
   }
 
   public async destroy(): Promise<any> {
@@ -190,10 +181,7 @@ export class PouchDatabase extends Database {
     fun: string | ((doc: any, emit: any) => void),
     options: QueryOptions
   ): Promise<any> {
-    return this.pouchDB.query(fun, options).catch((err) => {
-      console.log("query error", err, fun, options);
-      throw err;
-    });
+    return this.pouchDB.query(fun, options);
   }
 
   /**

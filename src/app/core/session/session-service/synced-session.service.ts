@@ -125,11 +125,9 @@ export class SyncedSessionService extends SessionService {
 
   private startSyncAfterLocalAndRemoteLogin() {
     zip(
-      this._localSession.loginState.pipe(waitForChangeTo(LoginState.LOGGED_IN)),
+      this.loginState.pipe(waitForChangeTo(LoginState.LOGGED_IN)),
       this._remoteSession.loginState.pipe(waitForChangeTo(LoginState.LOGGED_IN))
-    ).subscribe(async () => {
-      await this.startSync();
-    });
+    ).subscribe(() => this.startSync());
   }
 
   private handleRemotePasswordChange(username: string) {
