@@ -123,6 +123,7 @@ export class SearchComponent {
       },
     };
 
+    //TODO move this to a service so it is not executed whenever a user logs in
     return fromPromise(this.indexingService.createIndex(designDoc));
   }
 
