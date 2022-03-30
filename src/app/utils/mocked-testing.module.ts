@@ -35,15 +35,17 @@ export const TEST_USER = "test";
 export const TEST_PASSWORD = "pass";
 
 /**
- * A simple module that can be imported in test files or stories to have mock implementations of the SessionService
+ * Utility module that can be imported in test files or stories to have mock implementations of the SessionService
  * and the EntityMapper. To use it put `imports: [MockedTestingModule.withState()]` into the module definition of the
  * test or the story.
  * The static method automatically initializes the SessionService and the EntityMapper with a demo user using the
  * TEST_USER and TEST_PASSWORD constants. On default the user will also be logged in. This behavior can be changed
  * by passing a different state to the method e.g. `MockedTestingModule.withState(LoginState.LOGGED_OUT)`.
+ * The EntityMapper can be initialized with Entities that are passed as the second argument to the static function.
  *
- * This module provides the services `SessionService` `EntityMapperService` and `MockEntityMapperService`.
- * The later two refer to the same service but injecting the `MockEntityMapperService` allows to access further methods.
+ * This module provides the services `SessionService` `EntityMapperService` together with other often needed services.
+ *
+ * If you need a REAL database (e.g. for indices/views) then use the {@link DatabaseTestingModule} instead.
  */
 @NgModule({
   imports: [

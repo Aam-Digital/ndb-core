@@ -17,6 +17,16 @@ import {
 } from "../core/view/dynamic-components/dynamic-component.decorator";
 import { RouteRegistry, routesRegistry } from "../app.routing";
 
+/**
+ * Utility module that creates a simple environment where a correctly configured database and session is set up.
+ * This can be used in tests where it is important to access a REAL database (e.g. for testing indices/views).
+ * If you only use some functions of the EntityMapper then you should rather use the {@link MockedTestingModule}.
+ *
+ * When using this module, make sure to destroy the Database in `afterEach` in order to have a fresh database in each test:
+ * ```javascript
+ *  afterEach(() => TestBed.inject(Database).destroy());
+ * ```
+ */
 @NgModule({
   providers: [
     LoggingService,
