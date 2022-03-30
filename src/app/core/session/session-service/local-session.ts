@@ -53,7 +53,7 @@ export class LocalSession extends SessionService {
     if (user) {
       if (passwordEqualsEncrypted(password, user.encryptedPassword)) {
         this.currentDBUser = user;
-        await this.createLocalPouchDB();
+        await this.initializeDatabaseForCurrentUser();
         this.loginState.next(LoginState.LOGGED_IN);
       } else {
         this.loginState.next(LoginState.LOGIN_FAILED);
@@ -64,28 +64,29 @@ export class LocalSession extends SessionService {
     return this.loginState.value;
   }
 
-  private async createLocalPouchDB() {
-    await this.getDatabaseNameForCurrentUser();
-  }
-
-  private async getDatabaseNameForCurrentUser() {
+  private async initializeDatabaseForCurrentUser() {
     const userDBName = `${this.currentDBUser.name}-${AppConfig.settings.database.name}`;
     this.initDatabase(userDBName);
     if (!(await this.database.isEmpty())) {
+      // Current user has own database, were done here
       return;
     }
+
     this.initDatabase(AppConfig.settings.database.name);
     const dbFallback = window.localStorage.getItem(
       LocalSession.DEPRECATED_DB_KEY
     );
     const dbAvailable = !dbFallback || dbFallback === this.currentDBUser.name;
     if (dbAvailable && !(await this.database.isEmpty())) {
+      // Old database is available and can be used by the current user
       window.localStorage.setItem(
         LocalSession.DEPRECATED_DB_KEY,
         this.currentDBUser.name
       );
       return;
     }
+
+    // Create a new database for the current user
     this.initDatabase(userDBName);
   }
 
