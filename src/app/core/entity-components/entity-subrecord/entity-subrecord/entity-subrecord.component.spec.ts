@@ -279,7 +279,7 @@ describe("EntitySubrecordComponent", () => {
     component.rowClick({ record: child });
   });
 
-  it("should add a new entity that was created after the initial loading to the table ", async () => {
+  it("should add a new entity that was created after the initial loading to the table", () => {
     const entityUpdates = new Subject<UpdatedEntity<Entity>>();
     const entityMapper = TestBed.inject(EntityMapperService);
     spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
@@ -291,6 +291,21 @@ describe("EntitySubrecordComponent", () => {
     entityUpdates.next({ entity: entity, type: "new" });
 
     expect(component.recordsDataSource.data).toEqual([{ record: entity }]);
+  });
+
+  it("should remove a entity from the table when it has been deleted", async () => {
+    const entityUpdates = new Subject<UpdatedEntity<Entity>>();
+    const entityMapper = TestBed.inject(EntityMapperService);
+    spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
+    const entity = new Entity();
+    component.records = [entity];
+    component.ngOnInit();
+
+    expect(component.recordsDataSource.data).toEqual([{ record: entity }]);
+
+    entityUpdates.next({ entity: entity, type: "remove" });
+
+    expect(component.recordsDataSource.data).toEqual([]);
   });
 
   it("does not change the size of it's records when not saving a new record", async () => {

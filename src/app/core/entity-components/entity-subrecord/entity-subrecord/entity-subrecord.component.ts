@@ -74,6 +74,10 @@ export class EntitySubrecordComponent<T extends Entity>
         record: rec,
       };
     });
+    if (!this.newRecordFactory && this._records.length > 0) {
+      this.newRecordFactory = () =>
+        new (this._records[0].getConstructor() as EntityConstructor<T>)();
+    }
   }
   private _records: Array<T> = [];
   _columns: FormFieldConfig[] = [];
@@ -147,7 +151,7 @@ export class EntitySubrecordComponent<T extends Entity>
             this.removeFromDataTable(entity);
           } else if (
             type === "update" &&
-            !this.records.find((rec) => rec.getId() === entity.getId())
+            !this._records.find((rec) => rec.getId() === entity.getId())
           ) {
             this.addToTable(entity);
           }
@@ -287,19 +291,16 @@ export class EntitySubrecordComponent<T extends Entity>
       });
   }
 
-  private removeFromDataTable(record: T) {
-    const index = this.records.findIndex((a) => a.getId() === record.getId());
-    if (index > -1) {
-      this._records.splice(index, 1);
-      this.initFormGroups();
-    }
+  private removeFromDataTable(deleted: T) {
+    // use setter so datasource is also updated
+    this.records = this._records.filter(
+      (rec) => rec.getId() !== deleted.getId()
+    );
   }
 
   private addToTable(record: T) {
-    this._records.unshift(record);
-    this.recordsDataSource.data = [{ record: record }].concat(
-      this.recordsDataSource.data
-    );
+    // use setter so datasource is also updated
+    this.records = [record].concat(this._records);
   }
 
   /**
@@ -349,7 +350,7 @@ export class EntitySubrecordComponent<T extends Entity>
   /**
    * resets columnsToDisplay depending on current screensize
    */
-  setupTable() {
+  private setupTable() {
     if (this._columns !== undefined && this.screenWidth !== "") {
       this.columnsToDisplay = this._columns
         .filter((col) => this.isVisible(col))
