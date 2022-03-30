@@ -102,7 +102,7 @@ export class EntityFormComponent implements OnInit {
     );
     this.entityFormService.extendFormFieldConfig(
       flattenedFormFields,
-      this.entity
+      this.entity.getConstructor()
     );
     this.form = this.entityFormService.createFormGroup(
       flattenedFormFields,

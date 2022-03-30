@@ -104,7 +104,6 @@ export class EntitySubrecordComponent<T extends Entity>
   private screenWidth = "";
 
   idForSavingPagination = "startWert";
-  entityConstructor: EntityConstructor<T>;
 
   @ViewChild(MatSort) sort: MatSort;
 
@@ -139,10 +138,9 @@ export class EntitySubrecordComponent<T extends Entity>
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
 
   ngOnInit() {
-    if (this.newRecordFactory) {
-      this.entityConstructor = this.newRecordFactory().getConstructor() as EntityConstructor<T>;
+    if (this.entityConstructorIsAvailable()) {
       this.entityMapper
-        .receiveUpdates(this.entityConstructor)
+        .receiveUpdates(this.getEntityConstructor())
         .pipe(untilDestroyed(this))
         .subscribe(({ entity, type }) => {
           if (type === "new") {
@@ -156,6 +154,20 @@ export class EntitySubrecordComponent<T extends Entity>
             this.addToTable(entity);
           }
         });
+    }
+  }
+
+  private entityConstructorIsAvailable(): boolean {
+    return this._records.length > 0 || !!this.newRecordFactory;
+  }
+
+  getEntityConstructor(): EntityConstructor<T> {
+    if (this.entityConstructorIsAvailable()) {
+      const record =
+        this._records.length > 0 ? this._records[0] : this.newRecordFactory();
+      return record.getConstructor() as EntityConstructor<T>;
+    } else {
+      throw new Error("No constructor is available");
     }
   }
 
@@ -180,13 +192,11 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 
   private initFormGroups() {
-    if (this._records.length > 0 || this.newRecordFactory) {
-      const entity =
-        this._records.length > 0 ? this._records[0] : this.newRecordFactory();
+    if (this.entityConstructorIsAvailable()) {
       try {
         this.entityFormService.extendFormFieldConfig(
           this._columns,
-          entity,
+          this.getEntityConstructor(),
           true
         );
         this.idForSavingPagination = this._columns

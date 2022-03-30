@@ -79,7 +79,7 @@ describe("EntityFormService", () => {
 
   it("should create forms with the validators included", () => {
     const formFields = [{ id: "schoolId" }, { id: "result" }];
-    service.extendFormFieldConfig(formFields, new ChildSchoolRelation());
+    service.extendFormFieldConfig(formFields, ChildSchoolRelation);
     const formGroup = service.createFormGroup(
       formFields,
       new ChildSchoolRelation()

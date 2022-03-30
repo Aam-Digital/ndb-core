@@ -53,7 +53,7 @@
         <ng-container *ngIf="editable">
           <button
             *appDisabledEntityOperation="{
-              entity: entityConstructor,
+              entity: getEntityConstructor(),
               operation: 'create'
             }"
             mat-stroked-button
@@ -75,9 +75,9 @@
             <button
               mat-icon-button
               *appDisabledEntityOperation="{
-              entity: rec.record,
-              operation: 'update'
-            }"
+                entity: rec.record,
+                operation: 'update'
+              }"
               (click)="edit(rec)"
             >
               <fa-icon
@@ -117,9 +117,9 @@
             <button
               mat-icon-button
               *appDisabledEntityOperation="{
-              entity: rec.record,
-              operation: 'delete'
-            }"
+                entity: rec.record,
+                operation: 'delete'
+              }"
               (click)="delete(rec)"
               angulartics2On="click"
               [angularticsCategory]="rec?.record?.getType()"

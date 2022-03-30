@@ -83,7 +83,6 @@ const Template: Story<EntitySubrecordComponent<Note>> = (
   args: EntitySubrecordComponent<Note>
 ) => {
   EntitySubrecordComponent.prototype.newRecordFactory = () => new Note();
-  EntitySubrecordComponent.prototype.entityConstructor = Note;
   return {
     component: EntitySubrecordComponent,
     props: args,

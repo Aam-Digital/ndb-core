@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { FormBuilder, FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "./entity-form/FormConfig";
-import { Entity } from "../../entity/model/entity";
+import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DynamicValidatorsService } from "./dynamic-form-validators/dynamic-validators.service";
@@ -23,12 +23,12 @@ export class EntityFormService {
 
   public extendFormFieldConfig(
     formFields: FormFieldConfig[],
-    entity: Entity,
+    entityType: EntityConstructor,
     forTable = false
   ) {
     formFields.forEach((formField) => {
       try {
-        this.addFormFields(formField, entity, forTable);
+        this.addFormFields(formField, entityType, forTable);
       } catch (err) {
         throw new Error(
           $localize`Could not create form config for ${formField.id}\: ${err}`
@@ -37,8 +37,12 @@ export class EntityFormService {
     });
   }
 
-  private addFormFields(formField: FormFieldConfig, entity: Entity, forTable) {
-    const propertySchema = entity.getSchema().get(formField.id);
+  private addFormFields(
+    formField: FormFieldConfig,
+    entityType: EntityConstructor,
+    forTable: boolean
+  ) {
+    const propertySchema = entityType.schema.get(formField.id);
     formField.edit =
       formField.edit ||
       this.entitySchemaService.getComponent(propertySchema, "edit");
