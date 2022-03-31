@@ -53,7 +53,7 @@ export abstract class Database {
    * @param objects The documents to be saved
    * @param options PouchDB options object as in the normal PouchDB library
    */
-  abstract putAll(objects: any[], options?: any): Promise<any[]>;
+  abstract putAll(objects: any[], options?: PutAllOptions): Promise<any[]>;
 
   /**
    * Delete a document from the database
