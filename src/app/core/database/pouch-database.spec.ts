@@ -157,22 +157,19 @@ describe("PouchDatabase tests", () => {
 
   it("saveDatabaseIndex updates existing index", async () => {
     const testIndex = { _id: "_design/test_index", views: { a: {}, b: {} } };
-    const existingIndex = {
-      _id: "_design/test_index",
-      _rev: "01",
+    await database.put({
+      _id: testIndex._id,
       views: { a: {} },
-    };
-    // @ts-ignore
-    const pouchDB = database._pouchDB;
-    spyOn(pouchDB, "get").and.resolveTo(existingIndex);
+    });
+    const existingIndex = await database.get(testIndex._id);
     spyOn(database, "put").and.resolveTo();
     const spyOnQuery = spyOn(database, "query").and.resolveTo();
 
     await database.saveDatabaseIndex(testIndex);
     expect(database.put).toHaveBeenCalledWith({
       _id: testIndex._id,
-      views: testIndex.views,
       _rev: existingIndex._rev,
+      views: testIndex.views,
     });
 
     // expect all indices to be queried
@@ -181,33 +178,24 @@ describe("PouchDatabase tests", () => {
       ["test_index/a", { key: "1" }],
       ["test_index/b", { key: "1" }],
     ]);
-
-    // reset pouchDB function
-    pouchDB.get.and.callThrough();
   });
 
   it("saveDatabaseIndex does not update unchanged index", async () => {
     const testIndex = { _id: "_design/test_index", views: { a: {}, b: {} } };
     const existingIndex = {
       _id: "_design/test_index",
-      _rev: "01",
       views: testIndex.views,
     };
-    // @ts-ignore
-    const pouchDB = database._pouchDB;
-    spyOn(pouchDB, "get").and.resolveTo(existingIndex);
+    await database.put(existingIndex);
     spyOn(database, "put").and.resolveTo();
 
     await database.saveDatabaseIndex(testIndex);
     expect(database.put).not.toHaveBeenCalled();
-
-    // reset pouchDB function
-    pouchDB.get.and.callThrough();
   });
 
-  it("query simply calls through to query", async () => {
+  it("query simply calls through to pouchDB query", async () => {
     const testQuery = "testquery";
-    const testQueryResults = { rows: [] };
+    const testQueryResults = { rows: [] } as any;
     // @ts-ignore
     const pouchDB = database._pouchDB;
     spyOn(pouchDB, "query").and.resolveTo(testQueryResults);

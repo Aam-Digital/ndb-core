@@ -144,22 +144,20 @@ export class PouchDatabase extends Database {
     });
   }
 
-  async putAll(objects: any[], options?: PutAllOptions): Promise<any> {
+  putAll(objects: any[], options?: PutAllOptions): Promise<any> {
     if (options?.force) {
       objects.forEach((obj) => (obj._rev = undefined));
     }
-    try {
-      await this._pouchDB.bulkDocs(objects, options);
-    } catch (errors) {
-      return errors.map((err: PouchDB.Core.Error) => {
+    return this._pouchDB.bulkDocs(objects, options).catch((errors) =>
+      errors.map((err: PouchDB.Core.Error) => {
         if (err.status === 409) {
           const object = objects.find((obj) => obj.id === err.id);
           return this.resolveConflict(object, options?.force, err);
         } else {
           throw err;
         }
-      });
-    }
+      })
+    );
   }
 
   /**

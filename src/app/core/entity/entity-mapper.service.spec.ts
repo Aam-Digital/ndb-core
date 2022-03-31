@@ -180,7 +180,6 @@ describe("EntityMapperService", () => {
 
   it("publishes updates to any listeners", () => {
     const testId = "t1";
-
     const testEntity = new Entity(testId);
     entityMapper
       .save(testEntity, true)
@@ -190,31 +189,27 @@ describe("EntityMapperService", () => {
   });
 
   it("publishes when an existing entity is updated", () => {
-    const testPromise = receiveUpdatesAndTestTypeAndId(
-      "update",
-      existingEntity.entityId
-    );
-
     entityMapper
       .load<Entity>(Entity, existingEntity.entityId)
       .then((loadedEntity) => entityMapper.save<Entity>(loadedEntity));
-    return testPromise;
+
+    return receiveUpdatesAndTestTypeAndId("update", existingEntity.entityId);
   });
 
   it("publishes when an existing entity is deleted", () => {
-    receiveUpdatesAndTestTypeAndId("remove", existingEntity.entityId);
-
     entityMapper
       .load<Entity>(Entity, existingEntity.entityId)
       .then((loadedEntity) => entityMapper.remove<Entity>(loadedEntity));
+
+    return receiveUpdatesAndTestTypeAndId("remove", existingEntity.entityId);
   });
 
   it("publishes when a new entity is being saved", () => {
     const testId = "t1";
-    receiveUpdatesAndTestTypeAndId("new", testId);
-
     const testEntity = new Entity(testId);
     entityMapper.save(testEntity, true);
+
+    return receiveUpdatesAndTestTypeAndId("new", testId);
   });
 
   it("correctly behaves when en empty array is given to the saveAll function", async () => {
