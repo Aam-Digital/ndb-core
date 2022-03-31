@@ -1,9 +1,6 @@
 import { Component, OnInit, TemplateRef, ViewChild } from "@angular/core";
 import {
-  MatSnackBar,
-  MatSnackBarConfig,
-  MatSnackBarHorizontalPosition,
-  MatSnackBarVerticalPosition,
+  MatSnackBar
 } from "@angular/material/snack-bar";
 
 enum PWAInstallType {
@@ -37,32 +34,18 @@ enum OS {
 export class PwaInstallComponent implements OnInit {
   @ViewChild("iOSInstallInstructions")
   templateIOSInstallInstructions: TemplateRef<any>;
-  // @ViewChild("pwaAlreadyInstalled")
-  // templatePWAAlreadyInstalled: TemplateRef<any>;
-  snackbarSetAutoHide = false;
-  snackbarAutoHide = 10000;
-  horizontalPosition: MatSnackBarHorizontalPosition = "center";
-  verticalPosition: MatSnackBarVerticalPosition = "bottom";
-  matSnackBarConfig = new MatSnackBarConfig();
 
-  public showPWAInstallButton: Boolean = false;
-  public pwaInstallButtonText: String;
+  public showPWAInstallButton: boolean = false;
+  public pwaInstallButtonText: string;
   public pwaInstallType: PWAInstallType;
   public deferredInstallPrompt;
   public userAgent: string;
-  // public beforeInstallPromptFired: Boolean = false;
 
   constructor(public snackBar: MatSnackBar) {
-    this.matSnackBarConfig.verticalPosition = this.verticalPosition;
-    this.matSnackBarConfig.horizontalPosition = this.horizontalPosition;
-    this.matSnackBarConfig.duration = this.snackbarSetAutoHide
-      ? this.snackbarAutoHide
-      : 0;
-
     this.userAgent = window.navigator.userAgent;
     const os: OS = this.detectOS();
     const browser: Browser = this.detectBrowser();
-    const standaloneMode: Boolean = this.detectStandaloneMode();
+    const standaloneMode: boolean = this.detectStandaloneMode();
     this.pwaInstallType = this.detectPWAInstallType(
       os,
       browser,
@@ -73,20 +56,7 @@ export class PwaInstallComponent implements OnInit {
       this.showPWAInstallButton = true;
       this.pwaInstallButtonText = $localize`:PWA Install Button Label:Install App`;
     }
-    // else if (this.pwaInstallType === PWAInstallType.InstallDirectly) this.showDelayedPWAInstallButton();
   }
-
-  // private sleep(miliseconds: number) {
-  //   return new Promise(resolve => setTimeout(resolve, miliseconds));
-  // }
-
-  // private async showDelayedPWAInstallButton() {
-  //   await this.sleep(5000);
-  //   if (this.pwaInstallType === PWAInstallType.InstallDirectly && !this.beforeInstallPromptFired) {
-  //     this.showPWAInstallButton = true;
-  //     this.pwaInstallButtonText = "App already installed";
-  //   }
-  // }
 
   detectOS(): OS {
     let os: OS;
@@ -129,7 +99,7 @@ export class PwaInstallComponent implements OnInit {
     return browser;
   }
 
-  detectStandaloneMode(): Boolean {
+  detectStandaloneMode(): boolean {
     return (
       ("standalone" in window.navigator && window.navigator["standalone"]) ||
       window.matchMedia("(display-mode: standalone)").matches
@@ -162,13 +132,9 @@ export class PwaInstallComponent implements OnInit {
   pwaInstallButtonClicked() {
     if (this.pwaInstallType === PWAInstallType.ShowiOSInstallInstructions) {
       this.snackBar.openFromTemplate(
-        this.templateIOSInstallInstructions,
-        this.matSnackBarConfig
+        this.templateIOSInstallInstructions
       );
     } else if (this.pwaInstallType === PWAInstallType.InstallDirectly) {
-      // if (!this.beforeInstallPromptFired) {
-      //   this.snackBar.openFromTemplate(this.templatePWAAlreadyInstalled, this.matSnackBarConfig);
-      // } else {
       this.deferredInstallPrompt.prompt();
       this.deferredInstallPrompt.userChoice.then((choice) => {
         if (choice.outcome === "accepted") {
@@ -176,13 +142,11 @@ export class PwaInstallComponent implements OnInit {
         }
         this.deferredInstallPrompt = null;
       });
-      // }
     }
   }
 
   ngOnInit(): void {
     window.addEventListener("beforeinstallprompt", (e) => {
-      // this.beforeInstallPromptFired = true;
       this.showPWAInstallButton = true;
       this.pwaInstallButtonText = $localize`:PWA Install Button Label:Install App`;
       e.preventDefault();
