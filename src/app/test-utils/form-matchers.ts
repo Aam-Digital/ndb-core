@@ -40,4 +40,17 @@ export const formMatchers: jasmine.CustomMatcherFactories = {
       },
     };
   },
+  toBeEnabled: () => {
+    return {
+      compare: (form: AbstractControl) => {
+        const result = { pass: false, message: "" };
+        if (form.enabled) {
+          result.pass = true;
+        } else {
+          result.message = "Expected form to be enabled";
+        }
+        return result;
+      },
+    };
+  },
 };

@@ -32,6 +32,7 @@ import { UserModule } from "../user.module";
 import { SessionType } from "../../session/session-type";
 import { IAppConfig } from "../../app-config/app-config.model";
 import { LoggingService } from "../../logging/logging.service";
+import { formMatchers } from "../../../test-utils/form-matchers";
 
 describe("UserAccountComponent", () => {
   let component: UserAccountComponent;
@@ -72,6 +73,10 @@ describe("UserAccountComponent", () => {
     })
   );
 
+  beforeAll(() => {
+    jasmine.addMatchers(formMatchers);
+  });
+
   beforeEach(() => {
     fixture = TestBed.createComponent(UserAccountComponent);
     component = fixture.componentInstance;
@@ -83,18 +88,18 @@ describe("UserAccountComponent", () => {
   });
 
   it("should enable password form", () => {
-    expect(component.passwordForm.enabled).toBeTrue();
+    expect(component.passwordForm).toBeEnabled();
   });
 
   it("should set error when password is incorrect", () => {
     component.passwordForm.get("currentPassword").setValue("wrongPW");
     mockSessionService.checkPassword.and.returnValue(false);
 
-    expect(component.passwordForm.get("currentPassword").valid).toBeTrue();
+    expect(component.passwordForm.get("currentPassword")).toBeValidForm();
 
     component.changePassword();
 
-    expect(component.passwordForm.get("currentPassword").valid).toBeFalse();
+    expect(component.passwordForm.get("currentPassword")).toBeValidForm();
   });
 
   it("should set error when password change fails", fakeAsync(() => {

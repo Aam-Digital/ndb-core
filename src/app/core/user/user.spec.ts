@@ -19,6 +19,7 @@ import { User } from "./user";
 import { waitForAsync } from "@angular/core/testing";
 import { Entity } from "../entity/model/entity";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
+import { entityMatchers } from "../../test-utils/entity-matchers";
 
 describe("User", () => {
   const ENTITY_TYPE = "User";
@@ -30,11 +31,15 @@ describe("User", () => {
     })
   );
 
+  beforeAll(() => {
+    jasmine.addMatchers(entityMatchers);
+  });
+
   it("has correct _id and entityId and type", function () {
     const id = "test1";
     const entity = new User(id);
 
-    expect(entity.getId()).toBe(id);
+    expect(entity).toHaveId(id);
     expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
   });
 
@@ -42,7 +47,7 @@ describe("User", () => {
     const id = "test1";
     const entity = new User(id);
 
-    expect(entity.getType()).toBe(ENTITY_TYPE);
+    expect(entity).toHaveType(ENTITY_TYPE);
     expect(Entity.extractTypeFromId(entity._id)).toBe(ENTITY_TYPE);
   });
 
