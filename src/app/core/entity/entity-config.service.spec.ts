@@ -12,14 +12,7 @@ import { ConfigService } from "../config/config.service";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 import { EntityMapperService } from "./entity-mapper.service";
 import { mockEntityMapper } from "./mock-entity-mapper-service";
-
-declare global {
-  namespace jasmine {
-    interface Matchers<T> {
-      toContainKey(key: any);
-    }
-  }
-}
+import { mapMatchers } from "../../test-utils/map-matchers";
 
 describe("EntityConfigService", () => {
   let service: EntityConfigService;
@@ -29,26 +22,7 @@ describe("EntityConfigService", () => {
   };
 
   beforeAll(() => {
-    jasmine.addMatchers({
-      toContainKey: () => {
-        return {
-          compare: <T>(actual: Map<T, any>, expected: T) => {
-            if (actual.has(expected)) {
-              return {
-                pass: true,
-              };
-            } else {
-              return {
-                pass: false,
-                message: `Expected Map ${[...actual].join(
-                  ","
-                )} to contain key '${expected}'`,
-              };
-            }
-          },
-        };
-      },
-    });
+    jasmine.addMatchers(mapMatchers);
   });
 
   beforeEach(() => {
@@ -75,8 +49,8 @@ describe("EntityConfigService", () => {
   it("should add attributes to a entity class schema", () => {
     expect(Test.schema.has("name")).toBeTrue();
     service.addConfigAttributes<Test>(Test);
-    expect(Test.schema).toContainKey("testAttribute");
-    expect(Test.schema).toContainKey("name");
+    expect("testAttribute").toBeKeyOf(Test.schema);
+    expect("name").toBeKeyOf(Test.schema);
   });
 
   it("should assign the correct schema", () => {
@@ -133,8 +107,8 @@ describe("EntityConfigService", () => {
     ];
     mockConfigService.getAllConfigs.and.returnValue(mockEntityConfigs);
     service.setupEntitiesFromConfig();
-    expect(Test.schema).toContainKey(ATTRIBUTE_1_NAME);
-    expect(Test2.schema).toContainKey(ATTRIBUTE_2_NAME);
+    expect(ATTRIBUTE_1_NAME).toBeKeyOf(Test.schema);
+    expect(ATTRIBUTE_2_NAME).toBeKeyOf(Test2.schema);
   });
 });
 
