@@ -72,7 +72,10 @@ export class PouchDatabase extends Database {
    * @param _pouchDB An (initialized) PouchDB database instance from the PouchDB library.
    * @param loggingService The LoggingService instance of the app to log and report problems.
    */
-  constructor(private _pouchDB: any, private loggingService: LoggingService) {
+  constructor(
+    private _pouchDB: PouchDB.Database,
+    private loggingService: LoggingService
+  ) {
     super();
   }
 
