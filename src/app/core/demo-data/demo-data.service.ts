@@ -92,12 +92,10 @@ export class DemoDataService {
 
     // save the generated data
     for (const generator of this.dataGenerators) {
-      for (const entity of generator.entities) {
-        try {
-          await this.entityMapper.save(entity);
-        } catch (e) {
-          this.loggingService.warn(e);
-        }
+      try {
+        await this.entityMapper.saveAll(generator.entities);
+      } catch (e) {
+        this.loggingService.warn(e);
       }
     }
   }

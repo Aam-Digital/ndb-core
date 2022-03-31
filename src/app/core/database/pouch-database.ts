@@ -135,6 +135,16 @@ export class PouchDatabase extends Database {
     });
   }
 
+  putAll(object: any[], options?: any): Promise<any> {
+    return this._pouchDB.bulkDocs(object, options).catch((err) => {
+      if (err.status === 409) {
+        return this.resolveConflict(object, false, err);
+      } else {
+        throw err;
+      }
+    });
+  }
+
   /**
    * Delete a document from the database
    * (see {@link Database})

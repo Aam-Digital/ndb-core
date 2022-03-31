@@ -20,7 +20,7 @@ import { Entity } from "./model/entity";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 import { waitForAsync } from "@angular/core/testing";
 import { PouchDatabase } from "../database/pouch-database";
-import { entityRegistry } from "./database-entity.decorator";
+import { DatabaseEntity, entityRegistry } from "./database-entity.decorator";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
@@ -212,6 +212,55 @@ describe("EntityMapperService", () => {
     entityMapper.save(testEntity, true);
   });
 
+  it("correctly behaves when en empty array is given to the saveAll function", async () => {
+    const result = await entityMapper.saveAll([]);
+    expect(result).toHaveSize(0);
+  });
+
+  it("correctly saves an array of heterogeneous entities", async () => {
+    const result = await entityMapper.saveAll([
+      new MockEntityA("1"),
+      new MockEntityA("10"),
+      new MockEntityA("42"),
+    ]);
+    expect(result).toEqual([
+      jasmine.objectContaining({
+        ok: true,
+        id: "EntityA:1",
+      }),
+      jasmine.objectContaining({
+        ok: true,
+        id: "EntityA:10",
+      }),
+      jasmine.objectContaining({
+        ok: true,
+        id: "EntityA:42",
+      }),
+    ]);
+  });
+
+  it("correctly saves an array of homogeneous entities", async () => {
+    const result = await entityMapper.saveAll([
+      new MockEntityA("1"),
+      new MockEntityB("10"),
+      new MockEntityA("42"),
+    ]);
+    expect(result).toEqual([
+      jasmine.objectContaining({
+        ok: true,
+        id: "EntityA:1",
+      }),
+      jasmine.objectContaining({
+        ok: true,
+        id: "EntityB:10",
+      }),
+      jasmine.objectContaining({
+        ok: true,
+        id: "EntityA:42",
+      }),
+    ]);
+  });
+
   function receiveUpdatesAndTestTypeAndId(
     done: any,
     type?: string,
@@ -230,3 +279,9 @@ describe("EntityMapperService", () => {
     });
   }
 });
+
+@DatabaseEntity("EntityA")
+class MockEntityA extends Entity {}
+
+@DatabaseEntity("EntityB")
+class MockEntityB extends Entity {}

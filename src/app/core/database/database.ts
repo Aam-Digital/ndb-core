@@ -49,6 +49,13 @@ export abstract class Database {
   abstract put(object: any, forceUpdate?: boolean): Promise<any>;
 
   /**
+   * Save a bunch of documents at once to the database
+   * @param object The document to be saved
+   * @param options PouchDB options object as in the normal PouchDB library
+   */
+  abstract putAll(object: any[], options?: any): Promise<any[]>;
+
+  /**
    * Delete a document from the database
    * @param object The document to be deleted (usually this object must at least contain the _id and _rev)
    */
