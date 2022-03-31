@@ -1,9 +1,15 @@
-<app-attendance-calendar
-  [records]="displayedEvents"
-  [highlightForChild]="forChild"
-  [activity]="activity"
->
-</app-attendance-calendar>
+<div fxLayout="row">
+  <app-attendance-calendar
+    [records]="displayedEvents"
+    [highlightForChild]="forChild"
+    [activity]="activity"
+  ></app-attendance-calendar>
+  <app-attendance-summary
+    [attendance]="combinedAttendance"
+    [forChild]="forChild"
+    [columns]="columns"
+  ></app-attendance-summary>
+</div>
 
 <app-entity-subrecord
   [records]="records"

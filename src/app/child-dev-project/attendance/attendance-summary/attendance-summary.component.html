@@ -1,0 +1,14 @@
+<table *ngIf="attendance">
+  <tr *ngFor="let col of _columns">
+    <td>{{ col.label }}:</td>
+    <td [appDynamicComponent]="{
+      component: col.view,
+      config: {
+        id: col.id,
+        entity: attendance,
+        config: col.additional
+      }
+    }"
+    ></td>
+  </tr>
+</table>

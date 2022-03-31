@@ -14,53 +14,61 @@ import { AttendanceService } from "../attendance.service";
 import { ChildrenService } from "../../children/children.service";
 import { of } from "rxjs";
 import { Child } from "../../children/model/child";
+import moment from "moment";
 
 const demoActivity = RecurringActivity.create("Coaching Batch C");
 const attendanceRecords = [
-  ActivityAttendance.create(new Date("2020-01-01"), [
+  ActivityAttendance.create(
+    moment().subtract(1, "month").startOf("month").toDate(),
+    [
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.ABSENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ]),
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ]),
+    ]
+  ),
+
+  ActivityAttendance.create(moment().startOf("month").toDate(), [
     generateEventWithAttendance(
       [
         ["1", AttendanceLogicalStatus.PRESENT],
         ["2", AttendanceLogicalStatus.PRESENT],
         ["3", AttendanceLogicalStatus.ABSENT],
       ],
-      new Date("2020-01-01")
+      moment().subtract(5, "days").toDate()
     ),
     generateEventWithAttendance(
       [
         ["1", AttendanceLogicalStatus.PRESENT],
         ["2", AttendanceLogicalStatus.ABSENT],
       ],
-      new Date("2020-01-02")
+      moment().subtract(4, "days").toDate()
     ),
     generateEventWithAttendance(
       [
         ["1", AttendanceLogicalStatus.ABSENT],
         ["2", AttendanceLogicalStatus.ABSENT],
       ],
-      new Date("2020-01-03")
+      moment().subtract(3, "days").toDate()
     ),
     generateEventWithAttendance(
       [
         ["1", AttendanceLogicalStatus.PRESENT],
         ["2", AttendanceLogicalStatus.ABSENT],
       ],
-      new Date("2020-01-04")
+      moment().subtract(2, "days").toDate()
     ),
   ]),
-
-  ActivityAttendance.create(new Date("2020-02-01"), [
-    generateEventWithAttendance([
-      ["1", AttendanceLogicalStatus.ABSENT],
-      ["2", AttendanceLogicalStatus.ABSENT],
-    ]),
-    generateEventWithAttendance([
-      ["1", AttendanceLogicalStatus.PRESENT],
-      ["2", AttendanceLogicalStatus.ABSENT],
-    ]),
-  ]),
 ];
-attendanceRecords.forEach((a) => (a.activity = demoActivity));
+attendanceRecords.forEach((a) => {
+  a.activity = demoActivity;
+  a.periodTo = moment(a.periodFrom).endOf("month").toDate();
+  console.log("period", a.periodFrom, a.periodTo);
+});
 
 export default {
   title: "Attendance/Sections/ActivityAttendanceSection",
