@@ -31,37 +31,12 @@ export function getParentUrl(router: Router): string {
  */
 export function groupBy<T>(
   array: T[],
-  propertyToGroupBy: keyof T | ((t: T) => string)
-): Map<string, T[]> {
-  if (typeof propertyToGroupBy === "string") {
-    return groupByProperty(array, propertyToGroupBy);
-  } else {
-    return groupByFunction(array, propertyToGroupBy as (t: T) => string);
-  }
-}
-
-function groupByProperty<T>(
-  array: T[],
   propertyToGroupBy: keyof T
 ): Map<string, T[]> {
   return array.reduce(
     (entryMap, element) =>
       entryMap.set(element[propertyToGroupBy], [
         ...(entryMap.get(element[propertyToGroupBy]) || []),
-        element,
-      ]),
-    new Map()
-  );
-}
-
-function groupByFunction<T>(
-  array: T[],
-  propertyToGroupBy: (t: T) => string
-): Map<string, T[]> {
-  return array.reduce(
-    (entryMap, element) =>
-      entryMap.set(propertyToGroupBy(element), [
-        ...(entryMap.get(propertyToGroupBy(element)) || []),
         element,
       ]),
     new Map()
