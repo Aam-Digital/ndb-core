@@ -27,14 +27,14 @@ export const formMatchers: jasmine.CustomMatcherFactories = {
       },
     };
   },
-  toBeValidForm: () => {
+  toBeValidForm: (util) => {
     return {
       compare: (form: AbstractControl) => {
         const result = { pass: false, message: "" };
         if (form.valid) {
           result.pass = true;
         } else {
-          result.message = "Expected form to be valid";
+          result.message = `Expected form ${util.pp(form.value)} to be valid`;
         }
         return result;
       },

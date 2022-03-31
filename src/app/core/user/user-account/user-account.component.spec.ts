@@ -99,7 +99,7 @@ describe("UserAccountComponent", () => {
 
     component.changePassword();
 
-    expect(component.passwordForm.get("currentPassword")).toBeValidForm();
+    expect(component.passwordForm.get("currentPassword")).not.toBeValidForm();
   });
 
   it("should set error when password change fails", fakeAsync(() => {
