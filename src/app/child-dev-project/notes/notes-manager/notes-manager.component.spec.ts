@@ -145,9 +145,9 @@ describe("NotesManagerComponent", () => {
     component.ngOnInit();
     tick();
     expect(component.config.filters.length).toEqual(3);
-    expect(component.config.filters[0].hasOwnProperty("options")).toBeTrue();
-    expect(component.config.filters[1].hasOwnProperty("options")).toBeTrue();
-    expect(component.config.filters[2].hasOwnProperty("options")).toBeFalse();
+    expect(component.config.filters[0]).toHaveOwnProperty("options");
+    expect(component.config.filters[1]).toHaveOwnProperty("options");
+    expect(component.config.filters[2]).not.toHaveOwnProperty("options");
   }));
 
   it("should open the dialog when clicking details", () => {

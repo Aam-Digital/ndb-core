@@ -6,15 +6,10 @@ import {
 } from "./edit-progress-dashboard.component";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { formMatchers } from "../../../test-utils/form-matchers";
 
 describe("EditProgressDashboardComponent", () => {
   let component: EditProgressDashboardComponent;
   let fixture: ComponentFixture<EditProgressDashboardComponent>;
-
-  beforeAll(() => {
-    jasmine.addMatchers(formMatchers);
-  });
 
   const mockDialogData: EditProgressDashboardComponentData = {
     parts: [

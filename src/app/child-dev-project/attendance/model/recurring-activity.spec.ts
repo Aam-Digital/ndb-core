@@ -54,7 +54,7 @@ describe("RecurringActivity", () => {
     const id = "test1";
     const entity = new RecurringActivity(id);
 
-    expect(entity.getId()).toBe(id);
+    expect(entity).toHaveId(id);
     expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
   });
 
@@ -62,7 +62,7 @@ describe("RecurringActivity", () => {
     const id = "test1";
     const entity = new RecurringActivity(id);
 
-    expect(entity.getType()).toBe(ENTITY_TYPE);
+    expect(entity).toHaveType(ENTITY_TYPE);
     expect(Entity.extractTypeFromId(entity._id)).toBe(ENTITY_TYPE);
   });
 

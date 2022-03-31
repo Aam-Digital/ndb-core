@@ -12,7 +12,6 @@ import { ConfigService } from "../config/config.service";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 import { EntityMapperService } from "./entity-mapper.service";
 import { mockEntityMapper } from "./mock-entity-mapper-service";
-import { mapMatchers } from "../../test-utils/map-matchers";
 
 describe("EntityConfigService", () => {
   let service: EntityConfigService;
@@ -20,10 +19,6 @@ describe("EntityConfigService", () => {
   const testConfig: EntityConfig = {
     attributes: [{ name: "testAttribute", schema: { dataType: "string" } }],
   };
-
-  beforeAll(() => {
-    jasmine.addMatchers(mapMatchers);
-  });
 
   beforeEach(() => {
     mockConfigService = jasmine.createSpyObj(["getConfig", "getAllConfigs"]);

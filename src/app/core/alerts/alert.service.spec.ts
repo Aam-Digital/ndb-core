@@ -76,6 +76,6 @@ describe("AlertService", () => {
     alertService.addAlert(alert);
     alertService.removeAlert(alert);
 
-    expect(alertService.alerts.length).toBe(0);
+    expect(alertService.alerts).toBeEmpty();
   });
 });

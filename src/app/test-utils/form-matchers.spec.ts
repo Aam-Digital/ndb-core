@@ -54,3 +54,7 @@ export const formMatchers: jasmine.CustomMatcherFactories = {
     };
   },
 };
+
+beforeAll(() => {
+  jasmine.addMatchers(formMatchers);
+});

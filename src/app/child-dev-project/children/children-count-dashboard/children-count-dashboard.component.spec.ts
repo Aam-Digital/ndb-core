@@ -114,7 +114,7 @@ describe("ChildrenCountDashboardComponent", () => {
     childrenObserver.next(children);
     flush();
 
-    expect(component.childrenGroupCounts.length).toBe(3);
+    expect(component.childrenGroupCounts).toHaveSize(3);
     expect(component.childrenGroupCounts).toContain({
       label: c1.label,
       value: 2,

@@ -32,7 +32,6 @@ import { UserModule } from "../user.module";
 import { SessionType } from "../../session/session-type";
 import { IAppConfig } from "../../app-config/app-config.model";
 import { LoggingService } from "../../logging/logging.service";
-import { formMatchers } from "../../../test-utils/form-matchers";
 
 describe("UserAccountComponent", () => {
   let component: UserAccountComponent;
@@ -72,10 +71,6 @@ describe("UserAccountComponent", () => {
       });
     })
   );
-
-  beforeAll(() => {
-    jasmine.addMatchers(formMatchers);
-  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(UserAccountComponent);

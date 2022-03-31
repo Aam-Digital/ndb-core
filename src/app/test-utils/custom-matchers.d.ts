@@ -41,7 +41,7 @@ declare namespace jasmine {
      * It is computed via `Entity#entityId`
      * @param entityId
      */
-    toHaveEntityId(entityId: string);
+    toBeEntityType(entityId: string);
 
     /**
      * expects an entity to have a given type
@@ -50,5 +50,21 @@ declare namespace jasmine {
      * @param entityType
      */
     toHaveType(entityType: string);
+
+    /**
+     * Expects an array-like object to be empty
+     */
+    toBeEmpty();
+
+    /**
+     * expects a number to be finite as defined via `Number#isFinite`
+     */
+    toBeFinite();
+
+    /**
+     * expects an object to have an own property
+     * @param property
+     */
+    toHaveOwnProperty(property: string);
   }
 }

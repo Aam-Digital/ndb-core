@@ -33,14 +33,14 @@ describe("Entity", () => {
     const id = "test1";
     const entity = new Entity(id);
 
-    expect(entity.getId()).toBe(id);
+    expect(entity).toHaveId(id);
     expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
   });
 
   it("has correct type/prefix", function () {
     const entity = new Entity();
 
-    expect(entity.getType()).toBe("Entity");
+    expect(entity).toHaveType("Entity");
     expect(Entity.extractTypeFromId(entity._id)).toBe("Entity");
   });
 

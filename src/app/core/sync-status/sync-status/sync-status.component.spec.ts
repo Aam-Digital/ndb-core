@@ -23,7 +23,7 @@ import { SessionService } from "../../session/session-service/session.service";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 import { BehaviorSubject } from "rxjs";
-import { take } from "rxjs/operators";
+import { first } from "rxjs/operators";
 import { BackgroundProcessState } from "../background-process-state.interface";
 import { SyncStatusModule } from "../sync-status.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -104,17 +104,17 @@ describe("SyncStatusComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(
-      await component.backgroundProcesses.pipe(take(1)).toPromise()
-    ).toEqual([DATABASE_SYNCING_STATE]);
+    await expectAsync(
+      component.backgroundProcesses.pipe(first()).toPromise()
+    ).toBeResolvedTo([DATABASE_SYNCING_STATE]);
 
     mockSessionService.syncState.next(SyncState.COMPLETED);
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(
-      await component.backgroundProcesses.pipe(take(1)).toPromise()
-    ).toEqual([DATABASE_SYNCED_STATE]);
+    await expectAsync(
+      component.backgroundProcesses.pipe(first()).toPromise()
+    ).toBeResolvedTo([DATABASE_SYNCED_STATE]);
   });
 
   it("should update backgroundProcesses with indexing", async () => {
@@ -126,8 +126,8 @@ describe("SyncStatusComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(
-      await component.backgroundProcesses.pipe(take(1)).toPromise()
-    ).toEqual([DATABASE_SYNCED_STATE, testIndexState]);
+    await expectAsync(
+      component.backgroundProcesses.pipe(first()).toPromise()
+    ).toBeResolvedTo([DATABASE_SYNCED_STATE, testIndexState]);
   });
 });

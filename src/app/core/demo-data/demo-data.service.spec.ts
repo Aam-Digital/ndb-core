@@ -48,6 +48,6 @@ describe("DemoDataService", () => {
       DemoDataService
     );
 
-    expect(service.dataGenerators.length).toBe(1);
+    expect(service.dataGenerators).toHaveSize(1);
   });
 });

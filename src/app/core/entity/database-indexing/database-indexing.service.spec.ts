@@ -17,7 +17,7 @@
 
 import { DatabaseIndexingService } from "./database-indexing.service";
 import { Database } from "../../database/database";
-import { take } from "rxjs/operators";
+import { first } from "rxjs/operators";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { fakeAsync, tick } from "@angular/core/testing";
 
@@ -73,13 +73,13 @@ describe("DatabaseIndexingService", () => {
     );
 
     // initially no registered indices
-    expect(await service.indicesRegistered.pipe(take(1)).toPromise()).toEqual(
+    expect(await service.indicesRegistered.pipe(first()).toPromise()).toEqual(
       []
     );
 
     // calling `createIndex` triggers a pending index state immediately
     const indexCreationPromise = service.createIndex(testDesignDoc);
-    expect(await service.indicesRegistered.pipe(take(1)).toPromise()).toEqual([
+    expect(await service.indicesRegistered.pipe(first()).toPromise()).toEqual([
       {
         title: "Preparing data (Indexing)",
         details: testIndexName,
@@ -89,7 +89,7 @@ describe("DatabaseIndexingService", () => {
 
     // after the index creation is done, registered indices are updated
     await indexCreationPromise;
-    expect(await service.indicesRegistered.pipe(take(1)).toPromise()).toEqual([
+    expect(await service.indicesRegistered.pipe(first()).toPromise()).toEqual([
       {
         title: "Preparing data (Indexing)",
         details: testIndexName,
@@ -114,7 +114,7 @@ describe("DatabaseIndexingService", () => {
 
     // calling `createIndex` triggers a pending index state immediately
     const indexCreationPromise = service.createIndex(testDesignDoc);
-    expect(await service.indicesRegistered.pipe(take(1)).toPromise()).toEqual([
+    expect(await service.indicesRegistered.pipe(first()).toPromise()).toEqual([
       {
         title: "Preparing data (Indexing)",
         details: testIndexName,
@@ -124,7 +124,7 @@ describe("DatabaseIndexingService", () => {
 
     // after the index creation failed, registered indices are updated with error state
     await expectAsync(indexCreationPromise).toBeRejectedWith(testErr);
-    expect(await service.indicesRegistered.pipe(take(1)).toPromise()).toEqual([
+    expect(await service.indicesRegistered.pipe(first()).toPromise()).toEqual([
       {
         title: "Preparing data (Indexing)",
         details: testIndexName,

@@ -1,6 +1,6 @@
 import { Entity } from "../core/entity/model/entity";
 
-export const entityMatchers: jasmine.CustomMatcherFactories = {
+const entityMatchers: jasmine.CustomMatcherFactories = {
   toHaveId: (util) => {
     return {
       compare: (entity: Entity, id: string) => {
@@ -47,3 +47,7 @@ export const entityMatchers: jasmine.CustomMatcherFactories = {
     };
   },
 };
+
+beforeAll(() => {
+  jasmine.addMatchers(entityMatchers);
+});

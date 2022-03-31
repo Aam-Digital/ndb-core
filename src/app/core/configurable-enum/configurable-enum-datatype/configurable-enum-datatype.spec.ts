@@ -111,6 +111,6 @@ describe("ConfigurableEnumDatatype", () => {
     entitySchemaService.loadDataIntoEntity(entity, data);
 
     expect(entity.optionInAdditional).toEqual(TEST_CONFIG[2]);
-    expect(entity.getId()).toBe("Test");
+    expect(entity).toHaveId("Test");
   });
 });

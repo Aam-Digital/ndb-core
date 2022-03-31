@@ -64,7 +64,7 @@ describe("EntityMapperService", () => {
       Entity.createPrefixedId(actualEntity.getType(), actualEntity.getId())
     ).toBe(expectedEntity._id);
 
-    expect(actualEntity instanceof Entity).toBe(true);
+    expect(actualEntity).toBeInstanceOf(Entity);
   }
 
   it("loads existing entity", async () => {
@@ -98,7 +98,7 @@ describe("EntityMapperService", () => {
     }
 
     const result = await entityMapper.loadType<TestEntity>(TestEntity);
-    expect(result.length).toBe(0);
+    expect(result).toBeEmpty();
   });
 
   it("saves new entity and loads it", async () => {
@@ -130,7 +130,7 @@ describe("EntityMapperService", () => {
       Entity,
       existingEntity.entityId
     );
-    expect(loadedEntity.getId()).toBe(existingEntity.entityId);
+    expect(loadedEntity).toHaveId(existingEntity.entityId);
 
     await entityMapper.save<Entity>(loadedEntity);
   });

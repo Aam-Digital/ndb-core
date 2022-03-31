@@ -15,3 +15,7 @@ export const mapMatchers: jasmine.CustomMatcherFactories = {
     };
   },
 };
+
+beforeAll(() => {
+  jasmine.addMatchers(mapMatchers);
+});

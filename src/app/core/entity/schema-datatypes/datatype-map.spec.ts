@@ -107,11 +107,11 @@ describe("Schema data type: map", () => {
     const loadedEntity = new TestEntity();
     entitySchemaService.loadDataIntoEntity(loadedEntity, rawData);
 
-    expect(loadedEntity.dateMap.size).toEqual(originalEntity.dateMap.size);
+    expect(loadedEntity.dateMap).toHaveSize(originalEntity.dateMap.size);
 
     const loadedEntity2 = new TestEntity();
     entitySchemaService.loadDataIntoEntity(loadedEntity2, rawData);
 
-    expect(loadedEntity2.dateMap.size).toEqual(originalEntity.dateMap.size);
+    expect(loadedEntity2.dateMap).toHaveSize(originalEntity.dateMap.size);
   });
 });

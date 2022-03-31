@@ -19,7 +19,6 @@ import { User } from "./user";
 import { waitForAsync } from "@angular/core/testing";
 import { Entity } from "../entity/model/entity";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
-import { entityMatchers } from "../../test-utils/entity-matchers";
 
 describe("User", () => {
   const ENTITY_TYPE = "User";
@@ -30,10 +29,6 @@ describe("User", () => {
       entitySchemaService = new EntitySchemaService();
     })
   );
-
-  beforeAll(() => {
-    jasmine.addMatchers(entityMatchers);
-  });
 
   it("has correct _id and entityId and type", function () {
     const id = "test1";

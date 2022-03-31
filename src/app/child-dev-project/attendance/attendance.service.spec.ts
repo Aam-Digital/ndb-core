@@ -153,7 +153,9 @@ describe("AttendanceService", () => {
 
     const actualEvents = await service.getEventsOnDate(new Date("2021-01-01"));
     expect(actualEvents.length).toBe(1);
-    expect(actualEvents[0].children.sort()).toEqual(["1", "2", "3"].sort());
+    expect(actualEvents[0].children).toEqual(
+      jasmine.arrayWithExactContents(["1", "2", "3"])
+    );
   });
 
   it("gets events for an activity", async () => {
@@ -164,7 +166,7 @@ describe("AttendanceService", () => {
   it("getActivityAttendances creates record for each month when there is at least one event", async () => {
     const actualAttendances = await service.getActivityAttendances(activity1);
 
-    expect(actualAttendances.length).toBe(2);
+    expect(actualAttendances).toHaveSize(2);
 
     expect(
       moment(actualAttendances[0].periodFrom).isSame(
@@ -191,7 +193,7 @@ describe("AttendanceService", () => {
       new Date("2020-01-05")
     );
 
-    expect(actualAttendences.length).toBe(2);
+    expect(actualAttendences).toHaveSize(2);
     expectEntitiesToMatch(
       actualAttendences.find((t) => t.activity._id === activity1._id).events,
       [e1_1, e1_2]
