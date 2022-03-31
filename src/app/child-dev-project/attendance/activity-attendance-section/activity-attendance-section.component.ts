@@ -25,6 +25,7 @@ export class ActivityAttendanceSectionComponent
   records: ActivityAttendance[] = [];
   allRecords: ActivityAttendance[] = [];
   displayedEvents: Note[] = [];
+  combinedAttendance: ActivityAttendance;
 
   columns: FormFieldConfig[] = [
     {
@@ -94,6 +95,31 @@ export class ActivityAttendanceSectionComponent
       );
     }
     this.updateDisplayedRecords(false);
+    this.createCombinedAttendance();
+  }
+
+  private createCombinedAttendance() {
+    this.combinedAttendance = new ActivityAttendance();
+    this.combinedAttendance.activity = this.activity;
+    this.allRecords.forEach((record) => {
+      this.combinedAttendance.events.push(...record.events);
+      if (
+        !this.combinedAttendance.periodFrom ||
+        moment(record.periodFrom).isBefore(
+          this.combinedAttendance.periodFrom,
+          "day"
+        )
+      ) {
+        this.combinedAttendance.periodFrom = record.periodFrom;
+      }
+
+      if (
+        !this.combinedAttendance.periodTo ||
+        moment(record.periodTo).isAfter(this.combinedAttendance.periodTo, "day")
+      ) {
+        this.combinedAttendance.periodTo = record.periodTo;
+      }
+    });
   }
 
   updateDisplayedRecords(includeRecordsWithoutParticipation: boolean) {
