@@ -43,11 +43,6 @@ export class PwaInstallService {
         resolve();
       });
     });
-    // this.deferredInstallPrompt = {
-    //   prompt: () =>  console.log("Installed"),
-    //   userChoice: Promise.resolve({outcome: "accepted"})
-    // } as any;
-    // this.waitForPWAInstallPrompt = Promise.resolve();
   }
 
   getPWAInstallType(): PWAInstallType {
@@ -57,25 +52,14 @@ export class PwaInstallService {
     let pwaInstallType: PWAInstallType;
     if (standaloneMode) {
       pwaInstallType = PWAInstallType.RunningAsPWA;
-    } else if (os === OS.Android) {
-      pwaInstallType = PWAInstallType.InstallDirectly;
-    } else if (os === OS.iOS) {
-      if (browser === Browser.Safari) {
-        pwaInstallType = PWAInstallType.ShowiOSInstallInstructions;
-      }
-    } else if (os === OS.Windows || os === OS.MacOS) {
-      if (browser === Browser.Chrome || browser === Browser.Edge) {
-        pwaInstallType = PWAInstallType.InstallDirectly;
-      }
-    } else if (os === OS.Linux) {
-      if (browser === Browser.Chrome) {
-        pwaInstallType = PWAInstallType.InstallDirectly;
-      }
+    } else if (os === OS.iOS && browser === Browser.Safari) {
+      pwaInstallType = PWAInstallType.ShowiOSInstallInstructions;
     } else {
       pwaInstallType = PWAInstallType.NotAvailable;
     }
     return pwaInstallType;
   }
+ 
 
   private detectOS(): OS {
     let os: OS;
@@ -126,6 +110,9 @@ export class PwaInstallService {
   }
 
   installPWA() : Promise <any> {
+    if (!this.deferredInstallPrompt) {
+      throw new Error("InstallPWA called, but PWA install prompt has not fired.") 
+    }
     this.deferredInstallPrompt.prompt();
     return this.deferredInstallPrompt.userChoice;
   }

@@ -8,10 +8,6 @@ import { TranslationModule } from 'app/core/translation/translation.module';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { PwaInstallService } from './pwa-install.service';
-import pwaInstallStories from './pwa-install.stories';
-
-
-
 @NgModule({
   declarations: [PwaInstallComponent],
   imports: [

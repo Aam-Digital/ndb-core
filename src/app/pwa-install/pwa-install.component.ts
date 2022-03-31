@@ -36,7 +36,7 @@ export class PwaInstallComponent {
       this.snackBar.openFromTemplate(
         this.templateIOSInstallInstructions
       );
-    } else if (this.pwaInstallType === PWAInstallType.InstallDirectly) {
+    } else {
       this.pwaInstallService.installPWA().then((choice) => {
         if (choice.outcome === "accepted") {
           this.showPWAInstallButton = false;
