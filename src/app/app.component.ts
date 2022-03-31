@@ -35,7 +35,7 @@ import { EntityRegistry } from "./core/entity/database-entity.decorator";
 
 @Component({
   selector: "app-root",
-  template: "<app-ui></app-ui>",
+  template: "<app-ui dir='rtl'></app-ui>",
 })
 /**
  * Component as the main entry point for the app.
