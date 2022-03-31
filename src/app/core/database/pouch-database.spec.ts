@@ -215,4 +215,68 @@ describe("PouchDatabase tests", () => {
     expect(result).toEqual(testQueryResults);
     expect(pouchDB.query).toHaveBeenCalledWith(testQuery, {});
   });
+
+  it("writes all the docs to the database with putAll", async () => {
+    await database.putAll([
+      {
+        _id: "5",
+        name: "The Grinch",
+      },
+      {
+        _id: "8",
+        name: "Santa Claus",
+      },
+    ]);
+    const grinch = await database.get("5");
+    expect(grinch).toEqual(
+      jasmine.objectContaining({
+        _id: "5",
+        name: "The Grinch",
+      })
+    );
+    const santa = await database.get("8");
+    expect(santa).toEqual(
+      jasmine.objectContaining({
+        _id: "8",
+        name: "Santa Claus",
+      })
+    );
+  });
+
+  it("Throws errors for each conflict individually", async () => {
+    spyOn<any>(database, "resolveConflict");
+    await database.put({
+      _id: "3",
+      name: "Rudolph, the Red-Nosed Reindeer",
+      _rev: "1-x",
+    });
+    try {
+      await database.putAll([
+        {
+          _id: "3",
+          name: "Rudolph, the Pink-Nosed Reindeer",
+          _rev: "1-y",
+        },
+        {
+          _id: "4",
+          name: "Dasher",
+          _rev: "1-x",
+        },
+        {
+          _id: "5",
+          name: "Dancer",
+          _rev: "1-x",
+        },
+      ]);
+    } catch (e) {}
+    expect((database as any).resolveConflict).toHaveBeenCalledWith(
+      {
+        _id: "3",
+        name: "Rudolph, the Red-Nosed Reindeer",
+        _rev: "1-x",
+      },
+      undefined,
+      jasmine.anything()
+    );
+  });
 });

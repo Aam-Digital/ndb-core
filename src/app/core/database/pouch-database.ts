@@ -72,10 +72,7 @@ export class PouchDatabase extends Database {
    * @param _pouchDB An (initialized) PouchDB database instance from the PouchDB library.
    * @param loggingService The LoggingService instance of the app to log and report problems.
    */
-  constructor(
-    private _pouchDB: PouchDB.Database,
-    private loggingService: LoggingService
-  ) {
+  constructor(private _pouchDB: any, private loggingService: LoggingService) {
     super();
   }
 
@@ -149,7 +146,7 @@ export class PouchDatabase extends Database {
       objects.forEach((obj) => (obj._rev = undefined));
     }
     try {
-      await this._pouchDB.bulkDocs(objects, options);
+      return await this._pouchDB.bulkDocs(objects, options);
     } catch (errors) {
       return errors.map((err: PouchDB.Core.Error) => {
         if (err.status === 409) {
