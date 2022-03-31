@@ -158,7 +158,7 @@ export class EntityMapperService {
     const results = await this._db.putAll(rawData);
     results
       .filter((res) => res?.ok)
-      .map((res, idx) => {
+      .forEach((res, idx) => {
         entities[idx]._rev = res.rev;
       });
     return results;
