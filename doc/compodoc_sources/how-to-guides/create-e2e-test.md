@@ -158,3 +158,12 @@ describe("Linking a child to a school", () => {
 ```
 Now it is worth deciding how to achieve each of the goals we have described in each part. As example the `before()` section would fit perfectly with ``Given I am on the details page of a child``.
 
+### How to use the Cypress interface
+
+Run `npm run e2e-open` command from project root to open Cypress in "Open-Mode". This will start the [browser](https://docs.cypress.io/guides/guides/launching-browsers) with Cypress Interface.
+This Interface is called [Test Runners](https://docs.cypress.io/guides/core-concepts/test-runner), that allows you to see commands as they execute while also viewing the application under test.
+
+Run the test you are currently working on. It is recommended to use [Selector Playground](https://docs.cypress.io/guides/core-concepts/test-runner#Selector-Playground) to search for items in the DOM.
+
+### Aam Digital specific best practices
+TBD.
