@@ -1,4 +1,4 @@
-const mapMatchers: jasmine.CustomMatcherFactories = {
+export const mapMatchers: jasmine.CustomMatcherFactories = {
   toBeKeyOf: (util) => {
     return {
       compare: (key: any, mapPossiblyContainingKey: Map<any, any>) => {
@@ -15,5 +15,3 @@ const mapMatchers: jasmine.CustomMatcherFactories = {
     };
   },
 };
-
-export { mapMatchers };

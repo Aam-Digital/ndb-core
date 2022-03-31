@@ -1,6 +1,6 @@
 import { AbstractControl } from "@angular/forms";
 
-const formMatchers: jasmine.CustomMatcherFactories = {
+export const formMatchers: jasmine.CustomMatcherFactories = {
   toContainFormError: () => {
     return {
       compare: (form: AbstractControl, expectedError: string) => {
@@ -41,5 +41,3 @@ const formMatchers: jasmine.CustomMatcherFactories = {
     };
   },
 };
-
-export { formMatchers };
