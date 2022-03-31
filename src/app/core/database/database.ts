@@ -50,10 +50,10 @@ export abstract class Database {
 
   /**
    * Save a bunch of documents at once to the database
-   * @param object The document to be saved
+   * @param objects The documents to be saved
    * @param options PouchDB options object as in the normal PouchDB library
    */
-  abstract putAll(object: any[], options?: any): Promise<any[]>;
+  abstract putAll(objects: any[], options?: any): Promise<any[]>;
 
   /**
    * Delete a document from the database
@@ -113,6 +113,8 @@ export type GetAllOptions =
   | PouchDB.Core.AllDocsWithKeysOptions
   | PouchDB.Core.AllDocsWithinRangeOptions
   | PouchDB.Core.AllDocsOptions;
+
+export type PutAllOptions = PouchDB.Core.PutOptions;
 
 /**
  * Basic database read options supported by {@link Database}.

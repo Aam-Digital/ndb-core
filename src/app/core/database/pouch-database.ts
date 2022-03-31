@@ -15,7 +15,13 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Database, GetAllOptions, GetOptions, QueryOptions } from "./database";
+import {
+  Database,
+  GetAllOptions,
+  GetOptions,
+  PutAllOptions,
+  QueryOptions,
+} from "./database";
 import { LoggingService } from "../logging/logging.service";
 import PouchDB from "pouchdb-browser";
 import memory from "pouchdb-adapter-memory";
@@ -135,10 +141,13 @@ export class PouchDatabase extends Database {
     });
   }
 
-  putAll(object: any[], options?: any): Promise<any> {
-    return this._pouchDB.bulkDocs(object, options).catch((err) => {
+  putAll(objects: any[], options?: PutAllOptions): Promise<any> {
+    if (options?.force) {
+      objects.forEach((obj) => (obj._rev = undefined));
+    }
+    return this._pouchDB.bulkDocs(objects, options).catch((err) => {
       if (err.status === 409) {
-        return this.resolveConflict(object, false, err);
+        return this.resolveConflict(objects, false, err);
       } else {
         throw err;
       }
