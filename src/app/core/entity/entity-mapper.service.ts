@@ -153,13 +153,13 @@ export class EntityMapperService {
       this.entitySchemaService.transformEntityToDatabaseFormat(e)
     );
     const results = await this._db.putAll(rawData);
-    results
-      .filter((res) => res?.ok)
-      .forEach((res, idx) => {
+    results.forEach((res, idx) => {
+      if (res.ok) {
         const entity = entities[idx];
         this.sendUpdate(entity, entity._rev === undefined ? "new" : "update");
         entity._rev = res.rev;
-      });
+      }
+    });
     return results;
   }
 
