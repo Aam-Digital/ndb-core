@@ -122,7 +122,6 @@ import { AttendanceSummaryComponent } from "./attendance-summary/attendance-summ
     AttendanceBlockComponent,
     AttendanceCalendarComponent,
     AttendanceDetailsComponent,
-    AttendanceSummaryComponent,
   ],
 })
 export class AttendanceModule {

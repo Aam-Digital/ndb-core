@@ -67,7 +67,6 @@ const attendanceRecords = [
 attendanceRecords.forEach((a) => {
   a.activity = demoActivity;
   a.periodTo = moment(a.periodFrom).endOf("month").toDate();
-  console.log("period", a.periodFrom, a.periodTo);
 });
 
 export default {
