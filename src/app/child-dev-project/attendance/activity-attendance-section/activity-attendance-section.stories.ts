@@ -10,6 +10,10 @@ import {
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { AttendanceService } from "../attendance.service";
+import { ChildrenService } from "../../children/children.service";
+import { of } from "rxjs";
+import { Child } from "../../children/model/child";
 
 const demoActivity = RecurringActivity.create("Coaching Batch C");
 const attendanceRecords = [
@@ -67,6 +71,18 @@ export default {
         AttendanceModule,
         StorybookBaseModule,
         MockSessionModule.withState(),
+      ],
+      providers: [
+        {
+          provide: AttendanceService,
+          useValue: {
+            getActivityAttendances: () => Promise.resolve(attendanceRecords),
+          },
+        },
+        {
+          provide: ChildrenService,
+          useValue: { getChild: () => of(Child.create("John Doe")) },
+        },
       ],
     }),
   ],
