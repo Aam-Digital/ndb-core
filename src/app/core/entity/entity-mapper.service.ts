@@ -133,8 +133,8 @@ export class EntityMapperService {
     const rawData = this.entitySchemaService.transformEntityToDatabaseFormat(
       entity
     );
-    this.sendUpdate(entity, entity._rev === undefined ? "new" : "update");
     const result = await this._db.put(rawData, forceUpdate);
+    this.sendUpdate(entity, entity._rev === undefined ? "new" : "update");
     if (result?.ok) {
       entity._rev = result.rev;
     }
