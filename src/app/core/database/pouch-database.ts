@@ -72,7 +72,10 @@ export class PouchDatabase extends Database {
    * @param _pouchDB An (initialized) PouchDB database instance from the PouchDB library.
    * @param loggingService The LoggingService instance of the app to log and report problems.
    */
-  constructor(private _pouchDB: any, private loggingService: LoggingService) {
+  constructor(
+    private _pouchDB: PouchDB.Database,
+    private loggingService: LoggingService
+  ) {
     super();
   }
 
@@ -141,17 +144,22 @@ export class PouchDatabase extends Database {
     });
   }
 
-  putAll(objects: any[], options?: PutAllOptions): Promise<any> {
+  async putAll(objects: any[], options?: PutAllOptions): Promise<any> {
     if (options?.force) {
       objects.forEach((obj) => (obj._rev = undefined));
     }
-    return this._pouchDB.bulkDocs(objects, options).catch((err) => {
-      if (err.status === 409) {
-        return this.resolveConflict(objects, false, err);
-      } else {
-        throw err;
-      }
-    });
+    try {
+      await this._pouchDB.bulkDocs(objects, options);
+    } catch (errors) {
+      return errors.map((err: PouchDB.Core.Error) => {
+        if (err.status === 409) {
+          const object = objects.find((obj) => obj.id === err.id);
+          return this.resolveConflict(object, options?.force, err);
+        } else {
+          throw err;
+        }
+      });
+    }
   }
 
   /**
