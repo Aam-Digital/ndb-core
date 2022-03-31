@@ -1,14 +1,13 @@
 <button *ngIf="showPWAInstallButton"
     mat-button
-    routerLink="user"
-    class="user-nav-button user-nav-button-first"
-    id="PWAInstallButton"
+    class="pwa-install-button"
     style='background-color: #ff9800'
     fxFlex
     (click)="pwaInstallButtonClicked()"
+    i18n="PWA Install Button Label"
     >
     <fa-icon icon="cloud-download-alt" class="nav-icon"></fa-icon>
-    {{ pwaInstallButtonText }}
+    Install App
 </button>
 
 <ng-template #iOSInstallInstructions>

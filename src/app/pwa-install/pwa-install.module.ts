@@ -7,6 +7,8 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { TranslationModule } from 'app/core/translation/translation.module';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { PwaInstallService } from './pwa-install.service';
+import pwaInstallStories from './pwa-install.stories';
 
 
 
@@ -19,8 +21,17 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     FlexLayoutModule,
     TranslationModule,
     MatSidenavModule,
-    MatToolbarModule
+    MatToolbarModule,
+  ],
+  providers: [
+    PwaInstallService
   ],
   exports: [PwaInstallComponent]
 })
-export class PwaInstallModule { }
+export class PwaInstallModule { 
+  constructor(
+    pwaInstallService: PwaInstallService
+  ) {
+    pwaInstallService.registerPWAInstallListener();
+  }
+}
