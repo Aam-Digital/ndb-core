@@ -115,8 +115,6 @@ export type GetAllOptions =
   | PouchDB.Core.AllDocsWithinRangeOptions
   | PouchDB.Core.AllDocsOptions;
 
-export type PutAllOptions = PouchDB.Core.PutOptions;
-
 /**
  * Basic database read options supported by {@link Database}.
  *
