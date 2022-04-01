@@ -201,7 +201,7 @@ describe("DataImportComponent", () => {
   function mockFileReader(data: Partial<ImportMetaData>) {
     const fileReader: any = {
       result: JSON.stringify(data),
-      addEventListener: (str: string, fun: () => any) => fun(),
+      addEventListener: (_str: string, fun: () => any) => fun(),
       readAsText: () => {},
     };
     spyOn(window, "FileReader").and.returnValue(fileReader);

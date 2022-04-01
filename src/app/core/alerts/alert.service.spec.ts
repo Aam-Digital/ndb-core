@@ -22,15 +22,15 @@ import { LoggingService } from "../logging/logging.service";
 import { AlertDisplay } from "./alert-display";
 
 class MockLoggingService extends LoggingService {
-  public log(message: string, logLevel: LogLevel) {}
+  public log(_message: string, _logLevel: LogLevel) {}
 
-  public debug(message: string) {}
+  public debug(_message: string) {}
 
-  public info(message: string) {}
+  public info(_message: string) {}
 
-  public warn(message: string) {}
+  public warn(_message: string) {}
 
-  public error(message: string) {}
+  public error(_message: string) {}
 }
 
 describe("AlertService", () => {

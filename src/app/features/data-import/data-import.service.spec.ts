@@ -238,7 +238,7 @@ describe("DataImportService", () => {
   ) {
     const fileReader: any = {
       result: result,
-      addEventListener: (str: string, fun: () => any) => fun(),
+      addEventListener: (_str: string, fun: () => any) => fun(),
       readAsText: () => {},
     };
     // mock FileReader constructor

@@ -30,7 +30,7 @@ class TestClass {
   }
 
   @PerformanceAnalysisLogging
-  other(obj?: any) {}
+  other(_obj?: any) {}
 }
 
 describe("PerformanceAnalysisLogging Util Tests", () => {
