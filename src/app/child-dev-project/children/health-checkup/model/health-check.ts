@@ -26,8 +26,8 @@ import { WarningLevel } from "../../../../core/entity/model/warning-level";
  */
 @DatabaseEntity("HealthCheck")
 export class HealthCheck extends Entity {
-  static create(contents: Partial<HealthCheck> & { id?: string }) {
-    return Object.assign(new HealthCheck(contents.id), contents);
+  static create(contents: Partial<HealthCheck>) {
+    return Object.assign(new HealthCheck(), contents);
   }
 
   @DatabaseField() child: string;

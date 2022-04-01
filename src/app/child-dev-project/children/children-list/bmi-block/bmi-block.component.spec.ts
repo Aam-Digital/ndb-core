@@ -44,19 +44,19 @@ describe("BmiBlockComponent", () => {
   it("should load the BMI data for the child", fakeAsync(() => {
     const testChild = new Child("testID");
     const healthCheck1 = HealthCheck.create({
-      id: "hc1",
+      _id: "hc1",
       date: new Date("2020-10-30"),
       height: 1.3,
       weight: 60,
     });
     const healthCheck2 = HealthCheck.create({
-      id: "hc2",
+      _id: "hc2",
       date: new Date("2020-11-30"),
       height: 1.5,
       weight: 77,
     });
     const healthCheck3 = HealthCheck.create({
-      id: "hc3",
+      _id: "hc3",
       date: new Date("2020-09-30"),
       height: 1.15,
       weight: 50,

@@ -46,14 +46,14 @@ describe("ChildrenBmiDashboardComponent", () => {
   it("should load the BMI data for the childs, but only display the unhealthy one", fakeAsync(() => {
     const testChild = new Child("testID");
     const healthCheck1 = HealthCheck.create({
-      id: "hc1",
+      _id: "hc1",
       child: "testID",
       date: new Date("2020-10-30"),
       height: 130,
       weight: 60,
     });
     const healthCheck2 = HealthCheck.create({
-      id: "hc2",
+      _id: "hc2",
       child: "testID",
       date: new Date("2020-11-30"),
       height: 150,
@@ -61,7 +61,7 @@ describe("ChildrenBmiDashboardComponent", () => {
     });
     const testChild2 = new Child("testID2");
     const healthCheck3 = HealthCheck.create({
-      id: "hc3",
+      _id: "hc3",
       child: "testID2",
       date: new Date("2020-09-30"),
       height: 115,
