@@ -24,7 +24,6 @@ import {
 } from "@angular/core";
 import { DemoDataGenerator } from "./demo-data-generator";
 import { EntityMapperService } from "../entity/entity-mapper.service";
-import { LoggingService } from "../logging/logging.service";
 import { User } from "../user/user";
 
 /**
@@ -60,7 +59,6 @@ export class DemoDataService {
 
   constructor(
     private entityMapper: EntityMapperService,
-    private loggingService: LoggingService,
     private injector: Injector,
     private config: DemoDataServiceConfig
   ) {
@@ -92,11 +90,7 @@ export class DemoDataService {
 
     // save the generated data
     for (const generator of this.dataGenerators) {
-      try {
-        await this.entityMapper.saveAll(generator.entities);
-      } catch (e) {
-        this.loggingService.warn(e);
-      }
+      await this.entityMapper.saveAll(generator.entities);
     }
   }
 

@@ -154,9 +154,8 @@ export class PouchDatabase extends Database {
       // Check if document update conflicts happened in the request
       const result = results[i] as PouchDB.Core.Error;
       if (result.status === 409) {
-        const idx = objects.findIndex((obj) => obj._id === result.id);
         results[i] = await this.resolveConflict(
-          objects[idx],
+          objects.find((obj) => obj._id === result.id),
           false,
           result
         ).catch((e) => e);
