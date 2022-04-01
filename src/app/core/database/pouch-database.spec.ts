@@ -215,15 +215,14 @@ describe("PouchDatabase tests", () => {
         name: "Santa Claus",
       },
     ]);
-    const grinch = await database.get("5");
-    expect(grinch).toEqual(
+
+    await expectAsync(database.get("5")).toBeResolvedTo(
       jasmine.objectContaining({
         _id: "5",
         name: "The Grinch",
       })
     );
-    const santa = await database.get("8");
-    expect(santa).toEqual(
+    await expectAsync(database.get("8")).toBeResolvedTo(
       jasmine.objectContaining({
         _id: "8",
         name: "Santa Claus",
@@ -232,39 +231,45 @@ describe("PouchDatabase tests", () => {
   });
 
   it("Throws errors for each conflict individually", async () => {
-    spyOn<any>(database, "resolveConflict");
+    const resolveConflictSpy = spyOn<any>(database, "resolveConflict");
+    const conflictError = new Error();
+    resolveConflictSpy.and.rejectWith(conflictError);
     await database.put({
       _id: "3",
       name: "Rudolph, the Red-Nosed Reindeer",
-      _rev: "1-x",
     });
-    try {
-      await database.putAll([
+    const dataWithConflicts = [
+      {
+        _id: "3",
+        name: "Rudolph, the Pink-Nosed Reindeer",
+        _rev: "1-invalid-rev",
+      },
+      {
+        _id: "4",
+        name: "Dasher",
+      },
+      {
+        _id: "5",
+        name: "Dancer",
+      },
+    ];
+
+    const results = await database.putAll(dataWithConflicts);
+    expect(resolveConflictSpy.calls.allArgs()).toEqual([
+      [
         {
           _id: "3",
           name: "Rudolph, the Pink-Nosed Reindeer",
-          _rev: "1-y",
+          _rev: "1-invalid-rev",
         },
-        {
-          _id: "4",
-          name: "Dasher",
-          _rev: "1-x",
-        },
-        {
-          _id: "5",
-          name: "Dancer",
-          _rev: "1-x",
-        },
-      ]);
-    } catch (e) {}
-    expect((database as any).resolveConflict).toHaveBeenCalledWith(
-      {
-        _id: "3",
-        name: "Rudolph, the Red-Nosed Reindeer",
-        _rev: "1-x",
-      },
-      undefined,
-      jasmine.anything()
-    );
+        false,
+        jasmine.objectContaining({ status: 409 }),
+      ],
+    ]);
+    expect(results).toEqual([
+      conflictError,
+      jasmine.objectContaining({ id: "4", ok: true }),
+      jasmine.objectContaining({ id: "5", ok: true }),
+    ]);
   });
 });

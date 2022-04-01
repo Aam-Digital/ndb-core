@@ -51,9 +51,10 @@ export abstract class Database {
   /**
    * Save a bunch of documents at once to the database
    * @param objects The documents to be saved
-   * @param options PouchDB options object as in the normal PouchDB library
+   * @param forceUpdate (Optional) Whether conflicts should be ignored and existing conflicting documents forcefully overwritten.
+   * @returns array holding success responses or errors depending on the success of the operation
    */
-  abstract putAll(objects: any[], options?: PutAllOptions): Promise<any[]>;
+  abstract putAll(objects: any[], forceUpdate?: boolean): Promise<any[]>;
 
   /**
    * Delete a document from the database
