@@ -84,7 +84,7 @@ const cols = [
       label: "Assigned school(s)",
     },
   ],
-  ["school"],
+  [{ id: "school" }, { id: "configurable-enum-array" }],
 ];
 
 Child.schema.set("has_rationCard", {
@@ -99,6 +99,12 @@ Child.schema.set("school", {
   viewComponent: "DisplayEntity",
   editComponent: "EditSingleEntity",
 });
+Child.schema.set("configurable-enum-array", {
+  dataType: "array",
+  innerDataType: "configurable-enum",
+  additional: "document-status",
+  label: "Enum Multi Select",
+});
 
 const Template: Story<EntityFormComponent> = (args: EntityFormComponent) => ({
   component: EntityFormComponent,
@@ -108,6 +114,8 @@ const Template: Story<EntityFormComponent> = (args: EntityFormComponent) => ({
 export const Primary = Template.bind({});
 Primary.args = {
   entity: new Child(),
+  // Both need to be set otherwise story breaks
   columns: cols,
+  _columns: cols,
   creatingNew: true,
 };

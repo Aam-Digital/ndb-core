@@ -92,15 +92,14 @@ export class ChildrenListComponent implements OnInit {
     const options: FilterSelectionOption<Child>[] = [
       { key: "", label: $localize`All`, filterFun: () => true },
     ];
-    schools
-      .sort((s1, s2) => s1.name.localeCompare(s2.name))
-      .forEach((school) =>
-        options.push({
-          key: school.getId(),
-          label: school.name,
-          filterFun: (c) => c.schoolId === school.getId(),
-        })
-      );
+    schools.sort((s1, s2) => s1.name.localeCompare(s2.name));
+    schools.forEach((school) =>
+      options.push({
+        key: school.getId(),
+        label: school.name,
+        filterFun: (c) => c.schoolId === school.getId(),
+      })
+    );
     return options;
   }
 }

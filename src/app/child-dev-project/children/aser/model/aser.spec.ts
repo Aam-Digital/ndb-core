@@ -16,60 +16,22 @@
  */
 
 import { Aser } from "./aser";
-import { Entity } from "../../../../core/entity/model/entity";
-import { EntitySchemaService } from "../../../../core/entity/schema/entity-schema.service";
 import { mathLevels } from "./mathLevels";
 import { readingLevels } from "./readingLevels";
 import { WarningLevel } from "../../../../core/entity/model/warning-level";
+import { testEntitySubclass } from "../../../../core/entity/model/entity.spec";
 
 describe("Aser", () => {
-  const ENTITY_TYPE = "Aser";
-  const entitySchemaService = new EntitySchemaService();
+  testEntitySubclass("Aser", Aser, {
+    _id: "Aser:some-id",
 
-  it("has correct _id and entityId and type", function () {
-    const id = "test1";
-    const entity = new Aser(id);
-
-    expect(entity.getId()).toBe(id);
-    expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
-  });
-
-  it("has correct type/prefix", function () {
-    const id = "test1";
-    const entity = new Aser(id);
-
-    expect(entity.getType()).toBe(ENTITY_TYPE);
-    expect(Entity.extractTypeFromId(entity._id)).toBe(ENTITY_TYPE);
-  });
-
-  it("has all and only defined schema fields in rawData", function () {
-    const id = "test1";
-    const expectedData = {
-      _id: ENTITY_TYPE + ":" + id,
-
-      child: "1",
-      date: new Date(),
-      hindi: readingLevels[2],
-      bengali: readingLevels[1],
-      english: readingLevels[2],
-      math: mathLevels[4],
-      remarks: "nothing to remark",
-
-      searchIndices: [],
-    };
-
-    const entity = new Aser(id);
-    entity.child = expectedData.child;
-    entity.date = expectedData.date;
-    entity.hindi = expectedData.hindi;
-    entity.bengali = expectedData.bengali;
-    entity.english = expectedData.english;
-    entity.math = expectedData.math;
-    entity.remarks = expectedData.remarks;
-
-    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-
-    expect(rawData).toEqual(expectedData);
+    child: "1",
+    date: new Date(),
+    hindi: readingLevels[2].id,
+    bengali: readingLevels[1].id,
+    english: readingLevels[2].id,
+    math: mathLevels[4].id,
+    remarks: "nothing to remark",
   });
 
   it("warning level OK if no results", function () {

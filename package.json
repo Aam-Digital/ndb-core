@@ -42,7 +42,7 @@
     "@fortawesome/free-regular-svg-icons": "^5.15.2",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@ngneat/until-destroy": "^8.1.4",
-    "@sentry/browser": "^6.18.1",
+    "@sentry/browser": "^6.18.2",
     "angulartics2": "^10.1.0",
     "crypto-js": "^4.1.1",
     "deep-object-diff": "^1.1.7",
@@ -61,7 +61,7 @@
     "tslib": "^2.3.1",
     "uuid": "^8.3.2",
     "webdav": "^4.8.0",
-    "zone.js": "~0.11.4"
+    "zone.js": "~0.11.5"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.1102.14",
