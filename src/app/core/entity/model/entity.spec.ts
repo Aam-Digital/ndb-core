@@ -97,13 +97,13 @@ export function testEntitySubclass(
     const entity = new entityClass(id);
 
     // correct ID
-    expect(entity.getId()).toBe(id);
+    expect(entity).toHaveId(id);
     expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
 
     // correct Type
     expect(entity).toBeInstanceOf(entityClass);
     expect(entity).toBeInstanceOf(Entity);
-    expect(entity.getType()).toBe(entityType);
+    expect(entity).toHaveType(entityType);
     expect(Entity.extractTypeFromId(entity._id)).toBe(entityType);
   });
 
