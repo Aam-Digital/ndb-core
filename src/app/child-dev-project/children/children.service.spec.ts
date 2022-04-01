@@ -297,15 +297,11 @@ async function verifyChildRelationsOrder(
     "child",
     child.getId()
   );
-  const sorted = relations.sort((a, b) => {
-    const aValue = new Date(a.start);
-    const bValue = new Date(b.start);
-    return aValue > bValue ? -1 : aValue === bValue ? 0 : 1;
-  });
+  relations.sort((a, b) => compareStartDate(a, b));
   const res = await childrenService.querySortedRelations(child.getId());
-  expect(res.length).toBe(sorted.length);
+  expect(res.length).toBe(relations.length);
   for (let i = 0; i < res.length; i++) {
-    compareRelations(res[i], sorted[i]);
+    compareRelations(res[i], relations[i]);
   }
 }
 
@@ -317,11 +313,17 @@ async function verifyLatestChildRelations(
     "child",
     child.getId()
   );
-  const latest: ChildSchoolRelation = relations.sort((a, b) => {
-    const aValue = new Date(a.start);
-    const bValue = new Date(b.start);
-    return aValue > bValue ? -1 : aValue === bValue ? 0 : 1;
-  })[0];
+
+  relations.sort((a, b) => compareStartDate(a, b));
   const res = await childrenService.queryLatestRelation(child.getId());
-  compareRelations(res, latest);
+  compareRelations(res, relations[0]);
+}
+
+function compareStartDate(a: ChildSchoolRelation, b: ChildSchoolRelation) {
+  const aValue = new Date(a.start);
+  const bValue = new Date(b.start);
+  if (aValue === bValue) {
+    return 0;
+  }
+  return aValue > bValue ? -1 : 1;
 }

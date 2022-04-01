@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HistoricalEntityData } from "./historical-entity-data";
+import { HistoricalEntityData } from "./model/historical-entity-data";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 
 @Injectable({

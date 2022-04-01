@@ -2,7 +2,6 @@ import { Note } from "./note";
 import { warningLevels } from "../../warning-levels";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { waitForAsync } from "@angular/core/testing";
-import { Entity } from "../../../core/entity/model/entity";
 import {
   ATTENDANCE_STATUS_CONFIG_ID,
   AttendanceLogicalStatus,
@@ -23,6 +22,8 @@ import {
   getWarningLevelColor,
   WarningLevel,
 } from "../../../core/entity/model/warning-level";
+import { testEntitySubclass } from "../../../core/entity/model/entity.spec";
+import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 
 const testStatusTypes: ConfigurableEnumConfig<AttendanceStatusType> = [
   {
@@ -92,43 +93,18 @@ describe("Note", () => {
     })
   );
 
-  it("has correct _id and entityId", function () {
-    const id = "test1";
-    const entity = new Note(id);
+  testEntitySubclass("Note", Note, {
+    _id: "Note:some-id",
 
-    expect(entity).toHaveId(id);
-    expect(entity).toHaveType(ENTITY_TYPE);
-    expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
-  });
-
-  it("has all and only defined schema fields in rawData", function () {
-    const id = "1";
-    const expectedData = {
-      _id: ENTITY_TYPE + ":" + id,
-
-      children: ["1", "2", "5"],
-      childrenAttendance: [],
-      schools: [],
-      date: new Date(),
-      subject: "Note Subject",
-      text: "Note text",
-      authors: ["1"],
-      category: "GUARDIAN_TALK",
-      warningLevel: "OK",
-
-      searchIndices: [],
-    };
-
-    const entity = new Note(id);
-    Object.assign(entity, expectedData);
-    entity.category = testInteractionTypes.find(
-      (c) => c.id === "GUARDIAN_TALK"
-    );
-    entity.warningLevel = warningLevels.find((level) => level.id === "OK");
-
-    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-
-    expect(rawData).toEqual(expectedData);
+    children: ["1", "2", "5"],
+    childrenAttendance: [],
+    schools: [],
+    date: new Date(),
+    subject: "Note Subject",
+    text: "Note text",
+    authors: ["1"],
+    category: defaultInteractionTypes[1].id,
+    warningLevel: warningLevels[2].id,
   });
 
   it("should return the correct childIds", function () {

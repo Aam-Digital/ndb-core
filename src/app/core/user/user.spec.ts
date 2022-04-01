@@ -16,58 +16,18 @@
  */
 
 import { User } from "./user";
-import { waitForAsync } from "@angular/core/testing";
-import { Entity } from "../entity/model/entity";
-import { EntitySchemaService } from "../entity/schema/entity-schema.service";
+import { testEntitySubclass } from "../entity/model/entity.spec";
 
 describe("User", () => {
-  const ENTITY_TYPE = "User";
-  let entitySchemaService: EntitySchemaService;
+  testEntitySubclass("User", User, {
+    _id: "User:some-id",
 
-  beforeEach(
-    waitForAsync(() => {
-      entitySchemaService = new EntitySchemaService();
-    })
-  );
+    name: "tester",
+    cloudPasswordEnc: "encryptedPassword",
+    cloudBaseFolder: "/aam-digital/",
+    paginatorSettingsPageSize: {},
 
-  it("has correct _id and entityId and type", function () {
-    const id = "test1";
-    const entity = new User(id);
-
-    expect(entity).toHaveId(id);
-    expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
-  });
-
-  it("has correct type/prefix", function () {
-    const id = "test1";
-    const entity = new User(id);
-
-    expect(entity).toHaveType(ENTITY_TYPE);
-    expect(Entity.extractTypeFromId(entity._id)).toBe(ENTITY_TYPE);
-  });
-
-  it("has all and only defined schema fields in rawData", function () {
-    const id = "test1";
-    const expectedData = {
-      _id: ENTITY_TYPE + ":" + id,
-
-      name: "tester",
-      cloudPasswordEnc: "encryptedPassword",
-      cloudBaseFolder: "/aam-digital/",
-      paginatorSettingsPageSize: {},
-
-      searchIndices: [],
-    };
-    expectedData.searchIndices.push(expectedData.name);
-
-    const entity = new User(id);
-    entity.name = expectedData.name;
-    // @ts-ignore
-    entity.cloudPasswordEnc = expectedData.cloudPasswordEnc;
-
-    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-
-    expect(rawData).toEqual(expectedData);
+    searchIndices: ["tester"],
   });
 
   it("sets cloud passwords", () => {

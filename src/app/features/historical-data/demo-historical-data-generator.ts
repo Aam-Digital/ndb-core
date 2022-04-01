@@ -1,5 +1,5 @@
 import { DemoDataGenerator } from "../../core/demo-data/demo-data-generator";
-import { HistoricalEntityData } from "./historical-entity-data";
+import { HistoricalEntityData } from "./model/historical-entity-data";
 import { Injectable } from "@angular/core";
 import { DemoChildGenerator } from "../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
 import { ConfigService } from "../../core/config/config.service";

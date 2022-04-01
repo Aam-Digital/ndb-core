@@ -15,63 +15,19 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { waitForAsync } from "@angular/core/testing";
 import { EducationalMaterial } from "./educational-material";
-import { Entity } from "../../../../core/entity/model/entity";
-import { EntitySchemaService } from "../../../../core/entity/schema/entity-schema.service";
 import { materials } from "./materials";
+import { testEntitySubclass } from "../../../../core/entity/model/entity.spec";
 
 describe("EducationalMaterial Entity", () => {
-  const ENTITY_TYPE = "EducationalMaterial";
-  let entitySchemaService: EntitySchemaService;
+  testEntitySubclass("EducationalMaterial", EducationalMaterial, {
+    _id: "EducationalMaterial:some-id",
+    _rev: "XYZ",
 
-  beforeEach(
-    waitForAsync(() => {
-      entitySchemaService = new EntitySchemaService();
-    })
-  );
-
-  it("has correct _id and entityId and type", function () {
-    const id = "test1";
-    const entity = new EducationalMaterial(id);
-
-    expect(entity).toHaveId(id);
-    expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
-  });
-
-  it("has correct type/prefix", function () {
-    const id = "test1";
-    const entity = new EducationalMaterial(id);
-
-    expect(entity).toHaveType(ENTITY_TYPE);
-    expect(Entity.extractTypeFromId(entity._id)).toBe(ENTITY_TYPE);
-  });
-
-  it("has all and only defined schema fields in rawData", function () {
-    const id = "test1";
-    const expectedData = {
-      _id: ENTITY_TYPE + ":" + id,
-      _rev: "XYZ",
-
-      child: "1",
-      date: new Date(),
-      materialType: materials[1],
-      materialAmount: 2,
-      description: "bar",
-
-      searchIndices: [],
-    };
-
-    const entity = new EducationalMaterial(id);
-    entity._rev = expectedData._rev;
-    entity.child = expectedData.child;
-    entity.date = expectedData.date;
-    entity.materialType = expectedData.materialType;
-    entity.materialAmount = expectedData.materialAmount;
-    entity.description = expectedData.description;
-
-    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-
-    expect(rawData).toEqual(expectedData);
+    child: "1",
+    date: new Date(),
+    materialType: materials[1].id,
+    materialAmount: 2,
+    description: "bar",
   });
 });

@@ -52,12 +52,12 @@ describe("FormComponent", () => {
     expect(component.creatingNew).toBeTrue();
   });
 
-  it("calls router once a new child is saved", async () => {
+  it("calls router once a new child is saved", () => {
     const testChild = new Child();
     const router = fixture.debugElement.injector.get(Router);
     spyOn(router, "navigate");
     component.creatingNew = true;
-    await component.saveClicked(testChild);
+    component.saveClicked(testChild);
     expect(router.navigate).toHaveBeenCalledWith(["", testChild.getId()]);
   });
 });
