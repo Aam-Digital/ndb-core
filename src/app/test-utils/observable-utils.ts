@@ -2,8 +2,16 @@ import { Observable } from "rxjs";
 import { first, toArray } from "rxjs/operators";
 
 export interface ObservableMatchers<T> {
+  /**
+   * only check for the first value if an observable
+   * and discard the rest
+   */
   first: jasmine.AsyncMatchers<T, any>;
 
+  /**
+   * check for all observables in the sequence that they
+   * arrived
+   */
   inSequence: jasmine.AsyncMatchers<T[], any>;
 }
 
