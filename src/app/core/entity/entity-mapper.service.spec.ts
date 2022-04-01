@@ -77,7 +77,7 @@ describe("EntityMapperService", () => {
 
   it("load multiple entities", async () => {
     const loadedEntities = await entityMapper.loadType<Entity>(Entity);
-    expect(loadedEntities.length).toBe(2);
+    expect(loadedEntities).toHaveSize(2);
 
     const entity1 = loadedEntities[0];
     const entity2 = loadedEntities[1];
@@ -169,7 +169,7 @@ describe("EntityMapperService", () => {
     );
     expect(loadedByEntityId).toBeDefined();
 
-    expect(loadedByEntityId._id.startsWith(Entity.ENTITY_TYPE)).toBeTruthy();
+    expect(loadedByEntityId._id.startsWith(Entity.ENTITY_TYPE)).toBeTrue();
     const loadedByFullId = await entityMapper.load<Entity>(
       Entity,
       loadedByEntityId._id

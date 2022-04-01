@@ -96,8 +96,8 @@ describe("Note", () => {
     const id = "test1";
     const entity = new Note(id);
 
-    expect(entity.getId()).toBe(id);
-    expect(entity.getType()).toBe(ENTITY_TYPE);
+    expect(entity).toHaveId(id);
+    expect(entity).toHaveType(ENTITY_TYPE);
     expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
   });
 
@@ -141,7 +141,7 @@ describe("Note", () => {
     const n4 = createTestModel();
     const previousLength = n4.children.length;
     n4.removeChild("1");
-    expect(n4.children.length).toBe(previousLength - 1);
+    expect(n4.children).toHaveSize(previousLength - 1);
     expect(n4.getAttendance("1")).toBeUndefined();
   });
 
@@ -149,7 +149,7 @@ describe("Note", () => {
     const n5 = createTestModel();
     const previousLength = n5.children.length;
     n5.addChild("2");
-    expect(n5.children.length).toBe(previousLength + 1);
+    expect(n5.children).toHaveSize(previousLength + 1);
   });
 
   it("should not add same twice", function () {
@@ -157,7 +157,7 @@ describe("Note", () => {
     const previousLength = n5.children.length;
     n5.addChild("2");
     n5.addChild("2");
-    expect(n5.children.length).toBe(previousLength + 1);
+    expect(n5.children).toHaveSize(previousLength + 1);
   });
 
   it("should return colors", function () {
@@ -233,7 +233,7 @@ describe("Note", () => {
     expect(otherNote).toEqual(note);
     expect(otherNote).toBeInstanceOf(Note);
     otherNote.removeChild("5");
-    expect(otherNote.children.length).toBe(note.children.length - 1);
+    expect(otherNote.children).toHaveSize(note.children.length - 1);
   });
 
   it("should count children with a given attendance", () => {

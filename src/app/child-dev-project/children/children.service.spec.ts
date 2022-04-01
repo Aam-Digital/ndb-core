@@ -87,7 +87,7 @@ describe("ChildrenService", () => {
   it("should find latest ChildSchoolRelation of a child", async () => {
     const children = await service.getChildren().toPromise();
     const promises: Promise<any>[] = [];
-    expect(children.length).toBeGreaterThan(0);
+    expect(children).not.toBeEmpty();
     children.forEach((child) =>
       promises.push(verifyLatestChildRelations(child, service))
     );
@@ -100,7 +100,7 @@ describe("ChildrenService", () => {
       .toPromise()
       .then((children) => {
         const promises: Promise<any>[] = [];
-        expect(children.length).toBeGreaterThan(0);
+        expect(children).not.toBeEmpty();
         children.forEach((child) =>
           promises.push(verifyChildRelationsOrder(child, service))
         );

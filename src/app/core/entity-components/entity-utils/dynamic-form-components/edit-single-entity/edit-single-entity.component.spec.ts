@@ -103,7 +103,7 @@ describe("EditSingleEntityComponent", () => {
     });
     tick();
 
-    expect(component.entityNameFormControl.value).toEqual("First Child");
+    expect(component.entityNameFormControl).toHaveValue("First Child");
   }));
 
   it("Should have the correct entity selected when it's name is entered", () => {
@@ -112,7 +112,7 @@ describe("EditSingleEntityComponent", () => {
     component.entities = [child1, child2];
     component.select("First Child");
     expect(component.selectedEntity).toBe(child1);
-    expect(component.formControl.value).toEqual(child1.getId());
+    expect(component.formControl).toHaveValue(child1.getId());
     expect(component.editingSelectedEntity).toBeFalse();
   });
 
@@ -142,6 +142,6 @@ describe("EditSingleEntityComponent", () => {
       formControl: component.formControl,
     });
 
-    expect(component.entityNameFormControl.invalid).toBeTrue();
+    expect(component.entityNameFormControl).not.toBeValidForm();
   });
 });

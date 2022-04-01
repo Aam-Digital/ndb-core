@@ -169,8 +169,8 @@ describe("EntityListComponent", () => {
       expect(component.filterSelections[0].selectedOption).toEqual(
         clickedOption
       );
-      expect(component.allEntities.length).toEqual(2);
-      expect(component.filteredEntities.length).toEqual(1);
+      expect(component.allEntities).toHaveSize(2);
+      expect(component.filteredEntities).toHaveSize(1);
       expect(component.filteredEntities[0]).toEqual(child1);
       done();
     });
@@ -213,6 +213,6 @@ describe("EntityListComponent", () => {
 
     const res = component.getNewRecordFactory()();
 
-    expect(res.getType()).toEqual(Child.ENTITY_TYPE);
+    expect(res).toHaveType(Child.ENTITY_TYPE);
   });
 });

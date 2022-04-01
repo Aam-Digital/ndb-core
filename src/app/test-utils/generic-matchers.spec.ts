@@ -40,6 +40,26 @@ const genericMatchers: jasmine.CustomMatcherFactories = {
       },
     };
   },
+  toBeDate: (util, matchers) => {
+    return {
+      compare: (
+        expected: string | number | Date,
+        actual: string | number | Date
+      ) => {
+        const result = { pass: false, message: "" };
+        const expectedDate = new Date(expected);
+        const actualDate = new Date(actual);
+        if (util.equals(expectedDate, actualDate, matchers)) {
+          result.pass = true;
+        } else {
+          result.message = `Expected date ${util.pp(
+            expectedDate
+          )} to be the same date as ${actualDate}`;
+        }
+        return result;
+      },
+    };
+  },
 };
 
 beforeAll(() => {

@@ -66,5 +66,11 @@ declare namespace jasmine {
      * @param property
      */
     toHaveOwnProperty(property: string);
+
+    /**
+     * expects a date to be the same as the given date
+     * @param date
+     */
+    toBeDate(date: number | string | Date);
   }
 }

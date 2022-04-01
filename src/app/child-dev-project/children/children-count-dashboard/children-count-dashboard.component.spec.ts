@@ -80,24 +80,21 @@ describe("ChildrenCountDashboardComponent", () => {
     childrenObserver.next(children);
     flush();
 
-    expect(component.childrenGroupCounts.length).toBe(
-      2,
-      "unexpected number of centersWithProbability"
-    );
+    expect(component.childrenGroupCounts)
+      .withContext("unexpected number of centersWithProbability")
+      .toHaveSize(2);
     const actualCenterAEntry = component.childrenGroupCounts.filter(
       (e) => e.label === centerA.label
     )[0];
-    expect(actualCenterAEntry.value).toBe(
-      2,
-      "child count of CenterA not correct"
-    );
+    expect(actualCenterAEntry.value)
+      .withContext("child count of CenterA not correct")
+      .toBe(2);
     const actualCenterBEntry = component.childrenGroupCounts.filter(
       (e) => e.label === centerB.label
     )[0];
-    expect(actualCenterBEntry.value).toBe(
-      1,
-      "child count of CenterB not correct"
-    );
+    expect(actualCenterBEntry.value)
+      .withContext("child count of CenterB not correct")
+      .toBe(1);
   }));
 
   it("should groupBy enum values and display label", fakeAsync(() => {

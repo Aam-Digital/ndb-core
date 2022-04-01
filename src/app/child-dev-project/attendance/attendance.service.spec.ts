@@ -127,7 +127,7 @@ describe("AttendanceService", () => {
 
   it("gets empty array for a date without events", async () => {
     const actualEvents = await service.getEventsOnDate(new Date("2007-01-01"));
-    expect(actualEvents).toEqual([]);
+    expect(actualEvents).toBeEmpty();
   });
 
   it("gets events and loads additional participants from linked schools", async () => {
@@ -152,7 +152,7 @@ describe("AttendanceService", () => {
     await entityMapper.save(testNoteWithSchool);
 
     const actualEvents = await service.getEventsOnDate(new Date("2021-01-01"));
-    expect(actualEvents.length).toBe(1);
+    expect(actualEvents).toHaveSize(1);
     expect(actualEvents[0].children).toEqual(
       jasmine.arrayWithExactContents(["1", "2", "3"])
     );
@@ -203,10 +203,10 @@ describe("AttendanceService", () => {
       [e2_1]
     );
 
-    expect(actualAttendences[0].periodFrom).toEqual(new Date("2020-01-01"));
-    expect(actualAttendences[0].periodTo).toEqual(new Date("2020-01-05"));
-    expect(actualAttendences[1].periodFrom).toEqual(new Date("2020-01-01"));
-    expect(actualAttendences[1].periodTo).toEqual(new Date("2020-01-05"));
+    expect(actualAttendences[0].periodFrom).toBeDate("2020-01-01");
+    expect(actualAttendences[0].periodTo).toBeDate("2020-01-05");
+    expect(actualAttendences[1].periodFrom).toBeDate("2020-01-01");
+    expect(actualAttendences[1].periodTo).toBeDate("2020-01-05");
   });
 
   it("getActivitiesForChild gets all existing RecurringActivities where it is a participant", async () => {

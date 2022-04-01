@@ -63,8 +63,8 @@ describe("Schema data type: map", () => {
     };
     entitySchemaService.loadDataIntoEntity(entity, data);
 
-    expect(entity.dateMap.get("a")).toEqual(new Date("2020-01-01"));
-    expect(entity.dateMap.get("b")).toEqual(new Date("1999-01-01"));
+    expect(entity.dateMap.get("a")).toBeDate("2020-01-01");
+    expect(entity.dateMap.get("b")).toBeDate("1999-01-01");
   });
 
   it("reproduces exact same values after save and load", () => {

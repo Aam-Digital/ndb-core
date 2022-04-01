@@ -42,7 +42,7 @@ describe("EntityConfigService", () => {
   });
 
   it("should add attributes to a entity class schema", () => {
-    expect(Test.schema.has("name")).toBeTrue();
+    expect("name").toBeKeyOf(Test.schema);
     service.addConfigAttributes<Test>(Test);
     expect("testAttribute").toBeKeyOf(Test.schema);
     expect("name").toBeKeyOf(Test.schema);

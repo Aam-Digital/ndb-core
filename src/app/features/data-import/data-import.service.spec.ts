@@ -148,13 +148,13 @@ describe("DataImportService", () => {
     expect(firstChild.name).toBe("First");
     expect(birthday1.isSame(firstChild.dateOfBirth, "day")).toBeTrue();
     expect(firstChild.age).toBe(10);
-    expect(firstChild.hasOwnProperty("notExistingProperty")).toBeFalse();
+    expect(firstChild).not.toHaveOwnProperty("notExistingProperty");
     const secondChild = await entityMapper.load(Child, "2");
     expect(secondChild._id).toBe("Child:2");
     expect(secondChild.name).toBe("Second");
     expect(birthday2.isSame(secondChild.dateOfBirth, "day")).toBeTrue();
     expect(secondChild.age).toBe(12);
-    expect(secondChild.hasOwnProperty("notExistingProperty")).toBeFalse();
+    expect(secondChild).not.toHaveOwnProperty("notExistingProperty");
   });
 
   it("should delete existing records and prepend the transactionID to ID's of the newly uploaded entities", async () => {
@@ -206,9 +206,9 @@ describe("DataImportService", () => {
 
     const entityMapper = TestBed.inject(EntityMapperService);
     const test1 = await entityMapper.load(Child, "test1");
-    expect(test1.dateOfBirth).toEqual(new Date("2010-12-17"));
+    expect(test1.dateOfBirth).toBeDate("2010-12-17");
     const test2 = await entityMapper.load(Child, "test2");
-    expect(test2.dateOfBirth).toEqual(new Date("2011-06-07"));
+    expect(test2.dateOfBirth).toBeDate("2011-06-07");
   });
 
   it("should import csv file and generate searchIndices", async () => {

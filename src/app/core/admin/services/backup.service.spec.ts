@@ -83,7 +83,7 @@ describe("BackupService", () => {
     await db.put({ _id: "Test:2", test: 2 });
 
     const res = await db.getAll();
-    expect(res.length).toBe(2);
+    expect(res).toHaveSize(2);
 
     const csvExport = await service.getCsvExport();
 
