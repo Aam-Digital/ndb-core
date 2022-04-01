@@ -190,16 +190,16 @@ describe("EntityMapperService", () => {
 
   it("publishes when an existing entity is updated", () => {
     entityMapper
-      .load<Entity>(Entity, existingEntity.entityId)
-      .then((loadedEntity) => entityMapper.save<Entity>(loadedEntity));
+      .load(Entity, existingEntity.entityId)
+      .then((loadedEntity) => entityMapper.save(loadedEntity));
 
     return receiveUpdatesAndTestTypeAndId("update", existingEntity.entityId);
   });
 
   it("publishes when an existing entity is deleted", () => {
     entityMapper
-      .load<Entity>(Entity, existingEntity.entityId)
-      .then((loadedEntity) => entityMapper.remove<Entity>(loadedEntity));
+      .load(Entity, existingEntity.entityId)
+      .then((loadedEntity) => entityMapper.remove(loadedEntity));
 
     return receiveUpdatesAndTestTypeAndId("remove", existingEntity.entityId);
   });
