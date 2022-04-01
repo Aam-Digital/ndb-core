@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { HistoricalEntityData } from "../historical-entity-data";
+import { HistoricalEntityData } from "../model/historical-entity-data";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { Entity } from "../../../core/entity/model/entity";
 import { HistoricalDataService } from "../historical-data.service";
