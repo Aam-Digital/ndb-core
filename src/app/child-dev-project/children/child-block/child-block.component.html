@@ -6,7 +6,7 @@
   [ngClass]="{ inactive: !entity.isActive, clickable: !linkDisabled }"
   class="truncate-text"
 >
-  <img [src]="entity.photo?.photo?.value" class="child-pic" i18n-alt="Alt text for small picture" alt="Picture of a child"/>
+  <img [src]="entity.photo?.photo?.value" class="child-pic" i18n-alt="Alternative text for small picture" alt="Picture of a child"/>
   <span class="underline-on-hover mat-body-1">{{ entity?.name }}</span>
   <span style="font-size: x-small" *ngIf="entity?.projectNumber"
     > ({{ entity?.projectNumber }})</span
