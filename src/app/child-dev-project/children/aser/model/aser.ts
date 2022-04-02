@@ -18,36 +18,12 @@
 import { Entity } from "../../../../core/entity/model/entity";
 import { DatabaseField } from "../../../../core/entity/database-field.decorator";
 import { DatabaseEntity } from "../../../../core/entity/database-entity.decorator";
-import {
-  ConfigurableEnumConfig,
-  ConfigurableEnumValue,
-} from "../../../../core/configurable-enum/configurable-enum.interface";
-import { MathLevel, mathLevels } from "./mathLevels";
-import { ReadingLevel, readingLevels } from "./readingLevels";
+import { SkillLevel } from "./skill-levels";
 import { WarningLevel } from "../../../../core/entity/model/warning-level";
+import { ConfigurableEnumDatatype } from "../../../../core/configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
 
 @DatabaseEntity("Aser")
 export class Aser extends Entity {
-  static isReadingPassedOrNA(level: ConfigurableEnumValue): boolean {
-    return this.isHighestLevelOrNA(level, readingLevels);
-  }
-
-  static isMathPassedOrNA(level: ConfigurableEnumValue): boolean {
-    return this.isHighestLevelOrNA(level, mathLevels);
-  }
-
-  static isHighestLevelOrNA(
-    level: ConfigurableEnumValue,
-    source: ConfigurableEnumConfig
-  ): boolean {
-    if (!level || level.id === "") {
-      // not applicable
-      return true;
-    }
-    const index = source.findIndex((cEnumValue) => cEnumValue.id === level.id);
-    return index === source.length - 1;
-  }
-
   @DatabaseField() child: string; // id of Child entity
   @DatabaseField({
     label: $localize`:Label for date of the ASER results:Date`,
@@ -58,40 +34,44 @@ export class Aser extends Entity {
     dataType: "configurable-enum",
     innerDataType: "reading-levels",
   })
-  hindi: ReadingLevel;
+  hindi: SkillLevel;
   @DatabaseField({
     label: $localize`:Label of the Bengali ASER result:Bengali`,
     dataType: "configurable-enum",
     innerDataType: "reading-levels",
   })
-  bengali: ReadingLevel;
+  bengali: SkillLevel;
   @DatabaseField({
     label: $localize`:Label of the English ASER result:English`,
     dataType: "configurable-enum",
     innerDataType: "reading-levels",
   })
-  english: ReadingLevel;
+  english: SkillLevel;
   @DatabaseField({
     label: $localize`:Label of the Math ASER result:Math`,
     dataType: "configurable-enum",
     innerDataType: "math-levels",
   })
-  math: MathLevel;
+  math: SkillLevel;
   @DatabaseField({
     label: $localize`:Label for the remarks of a ASER result:Remarks`,
   })
   remarks: string = "";
 
+  otherProp = "otherProp";
   getWarningLevel(): WarningLevel {
-    if (
-      Aser.isReadingPassedOrNA(this.english) &&
-      Aser.isReadingPassedOrNA(this.hindi) &&
-      Aser.isReadingPassedOrNA(this.bengali) &&
-      Aser.isMathPassedOrNA(this.math)
-    ) {
+    if (this.hasPassedEverything()) {
       return WarningLevel.OK;
     } else {
       return WarningLevel.WARNING;
     }
+  }
+
+  private hasPassedEverything(): boolean {
+    const configurableEnum = new ConfigurableEnumDatatype(undefined).name;
+    const schema = this.getSchema();
+    return Object.keys(this)
+      .filter((key) => schema.get(key)?.dataType === configurableEnum)
+      .every((key) => !!(this[key] as SkillLevel).passed);
   }
 }

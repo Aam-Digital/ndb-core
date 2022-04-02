@@ -5,8 +5,7 @@ import { Child } from "../model/child";
 import { faker } from "../../../core/demo-data/faker";
 import { Aser } from "./model/aser";
 import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
-import { mathLevels } from "./model/mathLevels";
-import { readingLevels } from "./model/readingLevels";
+import { mathLevels, readingLevels } from "./model/skill-levels";
 import { WarningLevel } from "../../../core/entity/model/warning-level";
 
 /**
