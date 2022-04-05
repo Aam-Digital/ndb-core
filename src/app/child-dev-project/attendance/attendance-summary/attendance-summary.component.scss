@@ -1,5 +1,29 @@
-table {
-  margin: 20px;
-  padding: 5px;
-  background: #90ee9040;
+.wrapper {
+  padding: 1em;
 }
+
+.summary-title {
+  margin-bottom: 0.25em;
+}
+
+.summary-period {
+  color: #606060;
+  margin: 0;
+}
+
+.summary-table {
+  border-spacing: 0 8px;
+}
+
+.summary-row {
+  background-color: #b0b0b040;
+}
+
+.summary-cell-label {
+  padding: 0.5em;
+}
+.summary-cell {
+   font-size: 1.5em;
+   text-align: right;
+   padding: 0.5em;
+ }

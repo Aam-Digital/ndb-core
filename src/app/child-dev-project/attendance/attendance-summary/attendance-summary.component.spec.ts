@@ -23,20 +23,18 @@ describe("AttendanceSummaryComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should set/overwrite the from and to column", () => {
+  it("should remove the from and to column", () => {
     component.columns = [
       { id: "periodFrom", label: "Month" },
       { id: "totalEvents", label: "Total" },
       { id: "attendancePercentage", label: "Attendance" },
     ];
 
-    expect(component._columns).toEqual([
-      jasmine.objectContaining({ id: "periodFrom" }),
-      jasmine.objectContaining({ id: "periodTo" }),
-      { id: "totalEvents", label: "Total" },
+    expect(component.columns).toEqual([
       { id: "attendancePercentage", label: "Attendance" },
+      { id: "totalEvents", label: "Total" },
     ]);
-    expect(component._columns).not.toContain({
+    expect(component.columns).not.toContain({
       id: "periodFrom",
       label: "Month",
     });

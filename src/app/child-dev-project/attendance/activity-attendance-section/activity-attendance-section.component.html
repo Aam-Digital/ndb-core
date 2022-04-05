@@ -1,13 +1,16 @@
-<div fxLayout="row">
+<div fxLayout="row wrap">
   <app-attendance-calendar
     [records]="displayedEvents"
     [highlightForChild]="forChild"
     [activity]="activity"
+    fxFlex
   ></app-attendance-calendar>
   <app-attendance-summary
     [attendance]="combinedAttendance"
     [forChild]="forChild"
     [columns]="columns"
+    style="margin-top: 1em;"
+    fxFlex
   ></app-attendance-summary>
 </div>
 
