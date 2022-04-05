@@ -5,7 +5,7 @@
   [subtitle]="data.title"
 >
   <app-widget-content style="position: relative">
-    <table class="dashboard-table">
+    <table class="dashboard-table" i18n-aria-label="Label for progress dashboard" aria-label="Table showing organization progress">
       <tr *ngFor="let entry of data?.parts" class="dashboard-table-row">
         <td class="dashboard-table-cell">{{ entry.label }}</td>
         <td class="dashboard-table-cell filler">

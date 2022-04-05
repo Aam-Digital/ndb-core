@@ -9,7 +9,7 @@ import { materials } from "../../child-dev-project/children/educational-material
 import { mathLevels } from "../../child-dev-project/children/aser/model/mathLevels";
 import { readingLevels } from "../../child-dev-project/children/aser/model/readingLevels";
 import { warningLevels } from "../../child-dev-project/warning-levels";
-import { ratingAnswers } from "../../features/historical-data/rating-answers";
+import { ratingAnswers } from "../../features/historical-data/model/rating-answers";
 
 // prettier-ignore
 export const defaultJsonConfig = {

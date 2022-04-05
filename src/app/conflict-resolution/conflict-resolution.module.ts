@@ -12,7 +12,6 @@ import { MatInputModule } from "@angular/material/input";
 import { FormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { ConflictResolutionRoutingModule } from "./conflict-resolution-routing.module";
-import { ConflictResolutionStrategy } from "./auto-resolution/conflict-resolution-strategy";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 
 /**
