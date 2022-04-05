@@ -13,8 +13,6 @@ export class ListFilterComponent<E extends Entity> {
   @Input() selectedOption: string;
   @Output() selectedOptionChange = new EventEmitter<string>();
 
-  constructor() {}
-
   selectOption(selectedOptionKey: string) {
     this.selectedOption = selectedOptionKey;
     this.selectedOptionChange.emit(selectedOptionKey);

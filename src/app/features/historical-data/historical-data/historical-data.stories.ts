@@ -2,12 +2,12 @@ import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { DatePipe } from "@angular/common";
 import { ConfigService } from "../../../core/config/config.service";
-import { HistoricalEntityData } from "../historical-entity-data";
+import { HistoricalEntityData } from "../model/historical-entity-data";
 import { HistoricalDataComponent } from "./historical-data.component";
 import { HistoricalDataModule } from "../historical-data.module";
 import { HistoricalDataService } from "../historical-data.service";
 import { EntityPermissionsService } from "../../../core/permissions/entity-permissions.service";
-import { ratingAnswers } from "../rating-answers";
+import { ratingAnswers } from "../model/rating-answers";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { MockSessionModule } from "../../../core/session/mock-session.module";
 

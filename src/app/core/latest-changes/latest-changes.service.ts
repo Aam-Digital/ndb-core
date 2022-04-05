@@ -62,10 +62,10 @@ export class LatestChangesService {
     }
 
     if (previousVersion) {
-      const releasesBackToPreviousVersion = releasesUpToCurrentVersion.filter(
+      relevantReleases = releasesUpToCurrentVersion.filter(
         (r) => r.tag_name > previousVersion
       );
-      relevantReleases = releasesBackToPreviousVersion.sort((a, b) =>
+      relevantReleases.sort((a, b) =>
         (b.tag_name as string).localeCompare(a.tag_name, "en")
       );
     } else {
@@ -94,8 +94,6 @@ export class LatestChangesService {
     version: string,
     count: number
   ) {
-    let relevantReleases;
-
     const releasesUpToCurrentVersion = releases.filter(
       (r) => r.tag_name < version
     );
@@ -103,17 +101,19 @@ export class LatestChangesService {
       return [];
     }
 
-    relevantReleases = releasesUpToCurrentVersion.sort((a, b) =>
+    releasesUpToCurrentVersion.sort((a, b) =>
       (b.tag_name as string).localeCompare(a.tag_name, "en")
     );
-    return relevantReleases.slice(0, count);
+    return releasesUpToCurrentVersion.slice(0, count);
   }
 
   /**
    * Load release information from GitHub based on a given filter to select relevant releases.
    * @param releaseFilter Filter function that is selecting relevant objects from the array of GitHub releases
    */
-  private getChangelogs(releaseFilter: ([]) => any[]): Observable<Changelog[]> {
+  private getChangelogs(
+    releaseFilter: (releases: any[]) => any[]
+  ): Observable<Changelog[]> {
     return this.http
       .get<any[]>(
         LatestChangesService.GITHUB_API + environment.repositoryId + "/releases"
