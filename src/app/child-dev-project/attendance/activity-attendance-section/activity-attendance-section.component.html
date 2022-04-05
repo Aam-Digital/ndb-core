@@ -1,6 +1,6 @@
 <div fxLayout="row wrap">
   <app-attendance-calendar
-    [records]="displayedEvents"
+    [records]="combinedAttendance?.events || []"
     [highlightForChild]="forChild"
     [activity]="activity"
     fxFlex
