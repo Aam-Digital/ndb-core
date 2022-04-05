@@ -11,7 +11,7 @@ import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-d
 import { Angulartics2Module } from "angulartics2";
 import { RouterTestingModule } from "@angular/router/testing";
 import { OnInitDynamicComponent } from "../view/dynamic-components/on-init-dynamic-component.interface";
-import { EntityAbility } from "../permissions/entity-ability";
+import { EntityAbility } from "../permissions/ability/entity-ability";
 
 describe("FormDialogService", () => {
   let service: FormDialogService;

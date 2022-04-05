@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Entity } from "../../../entity/model/entity";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 import { FormGroup } from "@angular/forms";
-import { EntityAbility } from "../../../permissions/entity-ability";
+import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import {
   EntityRemoveService,
   RemoveResult,

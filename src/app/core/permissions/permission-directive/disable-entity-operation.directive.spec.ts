@@ -1,12 +1,12 @@
 import { DisableEntityOperationDirective } from "./disable-entity-operation.directive";
 import { Component, ElementRef, ViewChild } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { Entity } from "../entity/model/entity";
+import { Entity } from "../../entity/model/entity";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { Child } from "../../child-dev-project/children/model/child";
+import { Child } from "../../../child-dev-project/children/model/child";
 import { Subject } from "rxjs";
-import { AbilityService } from "./ability.service";
-import { EntityAbility } from "./entity-ability";
+import { AbilityService } from "../ability/ability.service";
+import { EntityAbility } from "../ability/entity-ability";
 
 describe("DisableEntityOperationDirective", () => {
   let testComponent: ComponentFixture<TestComponent>;

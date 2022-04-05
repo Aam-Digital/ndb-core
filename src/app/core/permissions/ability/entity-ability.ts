@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
-import { EntityAction, EntitySubject } from "./permission-types";
+import { EntityAction, EntitySubject } from "../permission-types";
 import { Ability, subject } from "@casl/ability";
-import { EntitySchemaService } from "../entity/schema/entity-schema.service";
-import { Entity } from "../entity/model/entity";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { Entity } from "../../entity/model/entity";
 
 @Injectable()
 /**

@@ -7,7 +7,7 @@ import {
   RouteData,
   ViewConfig,
 } from "./view-config.interface";
-import { UserRoleGuard } from "../../permissions/user-role.guard";
+import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { RouteRegistry } from "../../../app.routing";
 
 /**

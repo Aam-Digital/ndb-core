@@ -17,7 +17,7 @@ import { ChildrenService } from "../../../../child-dev-project/children/children
 import { of, Subject } from "rxjs";
 import { AttendanceLogicalStatus } from "../../../../child-dev-project/attendance/model/attendance-status";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { AbilityService } from "../../../permissions/ability.service";
+import { AbilityService } from "../../../permissions/ability/ability.service";
 import { faker } from "../../../demo-data/faker";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 

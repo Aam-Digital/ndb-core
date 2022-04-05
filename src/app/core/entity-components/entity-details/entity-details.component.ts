@@ -16,7 +16,7 @@ import {
   EntityRemoveService,
   RemoveResult,
 } from "../../entity/entity-remove.service";
-import { EntityAbility } from "../../permissions/entity-ability";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { RouteTarget } from "../../../app.routing";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 

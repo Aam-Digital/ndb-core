@@ -28,7 +28,7 @@ import { Subject } from "rxjs";
 import { UpdatedEntity } from "../../../entity/model/entity-update";
 import { MatDialog } from "@angular/material/dialog";
 import { RowDetailsComponent } from "../row-details/row-details.component";
-import { EntityAbility } from "../../../permissions/entity-ability";
+import { EntityAbility } from "../../../permissions/ability/entity-ability";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;

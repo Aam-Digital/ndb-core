@@ -2,22 +2,22 @@ import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 
 import { AbilityService } from "./ability.service";
 import { Subject } from "rxjs";
-import { SessionService } from "../session/session-service/session.service";
-import { Child } from "../../child-dev-project/children/model/child";
-import { Note } from "../../child-dev-project/notes/model/note";
-import { EntityMapperService } from "../entity/entity-mapper.service";
-import { EntitySchemaService } from "../entity/schema/entity-schema.service";
-import { SyncState } from "../session/session-states/sync-state.enum";
-import { LoginState } from "../session/session-states/login-state.enum";
-import { PermissionEnforcerService } from "./permission-enforcer.service";
-import { DatabaseUser } from "../session/session-service/local-user";
-import { User } from "../user/user";
-import { defaultInteractionTypes } from "../config/default-config/default-interaction-types";
+import { SessionService } from "../../session/session-service/session.service";
+import { Child } from "../../../child-dev-project/children/model/child";
+import { Note } from "../../../child-dev-project/notes/model/note";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { SyncState } from "../../session/session-states/sync-state.enum";
+import { LoginState } from "../../session/session-states/login-state.enum";
+import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
+import { DatabaseUser } from "../../session/session-service/local-user";
+import { User } from "../../user/user";
+import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 import { EntityAbility } from "./entity-ability";
-import { ConfigurableEnumModule } from "../configurable-enum/configurable-enum.module";
-import { DatabaseRule, DatabaseRules } from "./permission-types";
-import { Config } from "../config/config";
-import { LoggingService } from "../logging/logging.service";
+import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enum.module";
+import { DatabaseRule, DatabaseRules } from "../permission-types";
+import { Config } from "../../config/config";
+import { LoggingService } from "../../logging/logging.service";
 
 describe("AbilityService", () => {
   let service: AbilityService;

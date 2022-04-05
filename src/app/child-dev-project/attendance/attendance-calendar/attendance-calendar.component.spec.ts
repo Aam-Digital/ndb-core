@@ -15,7 +15,7 @@ import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-servic
 import { EventNote } from "../model/event-note";
 import { AttendanceService } from "../attendance.service";
 import { AnalyticsService } from "../../../core/analytics/analytics.service";
-import { EntityAbility } from "../../../core/permissions/entity-ability";
+import { EntityAbility } from "../../../core/permissions/ability/entity-ability";
 
 describe("AttendanceCalendarComponent", () => {
   let component: AttendanceCalendarComponent;

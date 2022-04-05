@@ -8,7 +8,7 @@ import { EntityFormModule } from "./entity-form.module";
 import { Entity } from "../../entity/model/entity";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
-import { EntityAbility } from "../../permissions/entity-ability";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;

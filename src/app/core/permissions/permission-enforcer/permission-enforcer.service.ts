@@ -1,13 +1,13 @@
 import { Inject, Injectable } from "@angular/core";
-import { DatabaseRule } from "./permission-types";
-import { SessionService } from "../session/session-service/session.service";
-import { EntityConstructor } from "../entity/model/entity";
-import { EntityMapperService } from "../entity/entity-mapper.service";
-import { Database } from "../database/database";
-import { LOCATION_TOKEN } from "../../utils/di-tokens";
-import { AnalyticsService } from "../analytics/analytics.service";
-import { EntityAbility } from "./entity-ability";
-import { EntityRegistry } from "../entity/database-entity.decorator";
+import { DatabaseRule } from "../permission-types";
+import { SessionService } from "../../session/session-service/session.service";
+import { EntityConstructor } from "../../entity/model/entity";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { Database } from "../../database/database";
+import { LOCATION_TOKEN } from "../../../utils/di-tokens";
+import { AnalyticsService } from "../../analytics/analytics.service";
+import { EntityAbility } from "../ability/entity-ability";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
 
 @Injectable()
 /**

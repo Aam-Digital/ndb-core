@@ -17,7 +17,7 @@ import {
   EntityRemoveService,
   RemoveResult,
 } from "../../entity/entity-remove.service";
-import { EntityAbility } from "../../permissions/entity-ability";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 
 describe("EntityDetailsComponent", () => {

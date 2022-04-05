@@ -1,27 +1,27 @@
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 
 import { PermissionEnforcerService } from "./permission-enforcer.service";
-import { DatabaseRule } from "./permission-types";
-import { SessionService } from "../session/session-service/session.service";
-import { TEST_USER } from "../../utils/mocked-testing.module";
-import { EntityMapperService } from "../entity/entity-mapper.service";
-import { Database } from "../database/database";
-import { Child } from "../../child-dev-project/children/model/child";
-import { School } from "../../child-dev-project/schools/model/school";
-import { AbilityService } from "./ability.service";
-import { SyncedSessionService } from "../session/session-service/synced-session.service";
-import { mockEntityMapper } from "../entity/mock-entity-mapper-service";
-import { LOCATION_TOKEN } from "../../utils/di-tokens";
-import { AnalyticsService } from "../analytics/analytics.service";
-import { EntitySchemaService } from "../entity/schema/entity-schema.service";
+import { DatabaseRule } from "../permission-types";
+import { SessionService } from "../../session/session-service/session.service";
+import { TEST_USER } from "../../../utils/mocked-testing.module";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { Database } from "../../database/database";
+import { Child } from "../../../child-dev-project/children/model/child";
+import { School } from "../../../child-dev-project/schools/model/school";
+import { AbilityService } from "../ability/ability.service";
+import { SyncedSessionService } from "../../session/session-service/synced-session.service";
+import { mockEntityMapper } from "../../entity/mock-entity-mapper-service";
+import { LOCATION_TOKEN } from "../../../utils/di-tokens";
+import { AnalyticsService } from "../../analytics/analytics.service";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { BehaviorSubject, Subject } from "rxjs";
-import { LoginState } from "../session/session-states/login-state.enum";
-import { EntityAbility } from "./entity-ability";
-import { Config } from "../config/config";
+import { LoginState } from "../../session/session-states/login-state.enum";
+import { EntityAbility } from "../ability/entity-ability";
+import { Config } from "../../config/config";
 import {
   entityRegistry,
   EntityRegistry,
-} from "../entity/database-entity.decorator";
+} from "../../entity/database-entity.decorator";
 
 describe("PermissionEnforcerService", () => {
   let service: PermissionEnforcerService;

@@ -16,7 +16,7 @@ import { PouchDatabase } from "../core/database/pouch-database";
 import { LOCATION_TOKEN } from "./di-tokens";
 import { Entity } from "../core/entity/model/entity";
 import { PureAbility } from "@casl/ability";
-import { EntityAbility } from "../core/permissions/entity-ability";
+import { EntityAbility } from "../core/permissions/ability/entity-ability";
 import { EntitySchemaService } from "../core/entity/schema/entity-schema.service";
 import { DatabaseIndexingService } from "../core/entity/database-indexing/database-indexing.service";
 import {

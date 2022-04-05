@@ -6,7 +6,7 @@ import { FormDialogWrapperComponent } from "./form-dialog-wrapper/form-dialog-wr
 import { ShowsEntity } from "./shows-entity.interface";
 import { OnInitDynamicComponent } from "../view/dynamic-components/on-init-dynamic-component.interface";
 import { Entity } from "../entity/model/entity";
-import { EntityAbility } from "../permissions/entity-ability";
+import { EntityAbility } from "../permissions/ability/entity-ability";
 
 /**
  * Inject this service instead of MatDialog to display a form or details view as a modal

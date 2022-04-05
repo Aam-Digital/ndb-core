@@ -19,7 +19,7 @@ import { TypedFormControl } from "../edit-component";
 import { ChangeDetectorRef } from "@angular/core";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { RouterTestingModule } from "@angular/router/testing";
-import { EntityAbility } from "../../../../permissions/entity-ability";
+import { EntityAbility } from "../../../../permissions/ability/entity-ability";
 import {
   EntityRegistry,
   entityRegistry,
