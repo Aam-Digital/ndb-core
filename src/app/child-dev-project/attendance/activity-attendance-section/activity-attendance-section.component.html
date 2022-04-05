@@ -1,4 +1,8 @@
-<div fxLayout="row wrap">
+<div *ngIf="loading">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</div>
+
+<div fxLayout="row wrap" *ngIf="!loading">
   <app-attendance-calendar
     [records]="combinedAttendance?.events || []"
     [highlightForChild]="forChild"

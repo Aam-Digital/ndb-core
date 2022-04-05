@@ -22,6 +22,7 @@ export class ActivityAttendanceSectionComponent
   @Input() activity: RecurringActivity;
   @Input() forChild?: string;
 
+  loading: boolean = true;
   records: ActivityAttendance[] = [];
   allRecords: ActivityAttendance[] = [];
   displayedEvents: Note[] = [];
@@ -84,6 +85,7 @@ export class ActivityAttendanceSectionComponent
   }
 
   async init(loadAll: boolean = false) {
+    this.loading = true;
     if (loadAll) {
       this.allRecords = await this.attendanceService.getActivityAttendances(
         this.activity
@@ -96,6 +98,7 @@ export class ActivityAttendanceSectionComponent
     }
     this.updateDisplayedRecords(false);
     this.createCombinedAttendance();
+    this.loading = false;
   }
 
   private createCombinedAttendance() {
