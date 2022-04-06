@@ -104,15 +104,18 @@ export class PouchDatabase extends Database {
    * @param options PouchDB options object as in the normal PouchDB library
    */
   allDocs(options?: GetAllOptions) {
-    return this._pouchDB.allDocs(options).then((result) => {
-      const resultArray = [];
-      for (const row of result.rows) {
-        resultArray.push(row.doc);
-      }
-      return resultArray;
-    }).catch((err) => {
-      throw new DatabaseException(err)
-    });
+    return this._pouchDB
+      .allDocs(options)
+      .then((result) => {
+        const resultArray = [];
+        for (const row of result.rows) {
+          resultArray.push(row.doc);
+        }
+        return resultArray;
+      })
+      .catch((err) => {
+        throw new DatabaseException(err);
+      });
   }
 
   /**
