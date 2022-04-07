@@ -77,10 +77,6 @@ export class ActivityAttendance extends Entity {
     return this.countIndividual(childId, AttendanceLogicalStatus.ABSENT);
   }
 
-  countEventsIgnored(childId: string): number {
-    return this.countIndividual(childId, AttendanceLogicalStatus.IGNORE);
-  }
-
   private countIndividual(
     childId: string,
     countingType: AttendanceLogicalStatus
@@ -104,10 +100,6 @@ export class ActivityAttendance extends Entity {
 
   countTotalAbsent() {
     return this.countWithStatus(AttendanceLogicalStatus.ABSENT);
-  }
-
-  countTotalIgnored(): number {
-    return this.countWithStatus(AttendanceLogicalStatus.IGNORE);
   }
 
   private countWithStatus(matchingType: AttendanceLogicalStatus) {
