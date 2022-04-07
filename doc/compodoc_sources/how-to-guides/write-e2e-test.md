@@ -52,12 +52,8 @@ As a barely formal language, Gherkin primarily serves as a communication languag
 
 More about Gherkin: [Gherkin](https://cucumber.io/docs/gherkin/)
 
-The specification of the scenarios with Gherkin is normally stored in so-called Feature Files. These files are human-readable text files.
-<br />
-It makes sense to use [cypress-cucumber-preprocessor](https://github.com/TheBrainFamily/cypress-cucumber-preprocessor) in the future (status 24.03.2022: Not in use).
-<br />
-This or a similar framework can speed up test creation because it allows Feature Files to be interpreted into Cypress code
-#### Example of a test:
+
+#### Example of a test description:
 ```
 Scenario: Linking a child to a school
 Given I am on the details page of a child
@@ -76,7 +72,14 @@ The primary keywords are:
 
 More info here: [Keywords](https://cucumber.io/docs/gherkin/reference/#keywords)
 
+Each action from Gherkin is written in the test description - it("description", function{}).
+##### Possible uses for Gherkin
 
+The specification of the scenarios with Gherkin is normally stored in so-called Feature Files. These files are human-readable text files.
+<br />
+It makes sense to use [cypress-cucumber-preprocessor](https://github.com/TheBrainFamily/cypress-cucumber-preprocessor) in the future (status 24.03.2022: Not in use).
+<br />
+This or a similar framework can speed up test creation because it allows Feature Files to be interpreted into Cypress code
 
 
 ### Third Step
@@ -85,12 +88,11 @@ More info here: [Keywords](https://cucumber.io/docs/gherkin/reference/#keywords)
 ##### Some useful links
 * [API: Table of Contents](https://docs.cypress.io/api/table-of-contents)
 * [Setup and Teardown: Hooks](https://docs.cypress.io/guides/core-concepts/writing-and-organizing-tests#Hooks)
-* [Cookies](https://docs.cypress.io/api/cypress-api/cookies)
 * [Assertions](https://docs.cypress.io/guides/references/assertions)
 * [Catalog of Events](https://docs.cypress.io/api/events/catalog-of-events)
 ```
 describe("Scenario of the Test", () => {
-  before(() => {
+  before("Given I am at login page", function () {
   // In the before() function we can describe our start Point and specific variables
   //e.g.
     cy.visit("http://localhost:4200");
@@ -130,35 +132,29 @@ Given I am on the details page of a child
 When I add an entry in the 'Previous Schools' section with a specific school
 Then I can see that child in the 'Children Overview' of the details page of this school
 ```
-Separate it into separate parts:
 
-`Given I am on the details page of a child`
-<br />
-`When I add an entry in the 'Previous Schools' section with a specific school`
-<br />
-`Then I can see that child in the 'Children Overview' of the details page of this school`
-
+it(" ", function{}) responds to each Gherkin Action.
 
 We can build this template:
 ```
 describe("Linking a child to a school", () => {
-  before(() => {
+  before("Given I am on the details page of a child", function() {
   
   });
 
-  it("I add an entry in the 'Previous Schools' section with a specific school", function () {
+  it("When I add an entry in the 'Previous Schools' section with a specific school", function () {
       
   });
   
-  it("I can see that child in the 'Children Overview' of the details page of this school", function () {
+  it("Then I can see that child in the 'Children Overview' of the details page of this school", function () {
       
   });
   
 });
 ```
-Now it is worth deciding how to achieve each of the goals we have described in each part. As example the `before()` section would fit perfectly with ``Given I am on the details page of a child``.
+Now it is worth deciding how to achieve each of the goals we have described in each part.
 
-### How to use the Cypress interface
+### How to run E2E-Tests
 
 Run `npm run e2e-open` command from project root to open Cypress in "Open-Mode". This will start the [browser](https://docs.cypress.io/guides/guides/launching-browsers) with Cypress Interface.
 This Interface is called [Test Runners](https://docs.cypress.io/guides/core-concepts/test-runner), that allows you to see commands as they execute while also viewing the application under test.
