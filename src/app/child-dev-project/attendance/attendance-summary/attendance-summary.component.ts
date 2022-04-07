@@ -18,8 +18,5 @@ export class AttendanceSummaryComponent {
       // start with most summative column, usually displayed right-most in table
       .reverse();
   }
-  get columns() {
-    return this._columns;
-  }
   _columns: FormFieldConfig[] = [];
 }

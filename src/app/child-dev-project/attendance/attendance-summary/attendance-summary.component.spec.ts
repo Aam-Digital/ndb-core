@@ -30,11 +30,11 @@ describe("AttendanceSummaryComponent", () => {
       { id: "attendancePercentage", label: "Attendance" },
     ];
 
-    expect(component.columns).toEqual([
+    expect(component._columns).toEqual([
       { id: "attendancePercentage", label: "Attendance" },
       { id: "totalEvents", label: "Total" },
     ]);
-    expect(component.columns).not.toContain({
+    expect(component._columns).not.toContain({
       id: "periodFrom",
       label: "Month",
     });
