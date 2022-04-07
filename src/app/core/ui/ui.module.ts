@@ -71,7 +71,7 @@ import { PwaInstallModule } from "app/pwa-install/pwa-install.module";
     ReactiveFormsModule,
     TranslationModule,
     FontAwesomeModule,
-    PwaInstallModule
+    PwaInstallModule,
   ],
   declarations: [SearchComponent, UiComponent, PrimaryActionComponent],
   exports: [UiComponent],
