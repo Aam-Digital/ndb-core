@@ -181,4 +181,25 @@ describe("ActivityAttendance", () => {
       record.individualStatusTypeCounts.get("2")[StatusLate.id]
     ).toBeUndefined();
   });
+
+  it("calculates events containing unknown/undefined attendance status", () => {
+    const attendance = ActivityAttendance.create(new Date(), [
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.IGNORE],
+      ]),
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.PRESENT],
+      ]),
+    ]);
+
+    // adding participants without attendance to one event
+    attendance.events[1].children.push("3");
+    attendance.events[1].children.push("4");
+
+    expect(attendance.countEventsWithUnknownStatus()).toBe(1); // one unique event with undefined attendances
+    expect(attendance.countEventsWithUnknownStatus("2")).toBe(0);
+    expect(attendance.countEventsWithUnknownStatus("3")).toBe(1);
+  });
 });

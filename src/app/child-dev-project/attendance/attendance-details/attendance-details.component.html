@@ -74,7 +74,7 @@
             type="number"
             i18n-placeholder="days absent|How many days the presence or absence of a child is unknown"
             placeholder="unknown status"
-            [value]="entity.countEventsUnknown(focusedChild)"
+            [value]="entity.countEventsWithUnknownStatus(focusedChild)"
             readonly
           />
         </mat-form-field>
@@ -115,7 +115,7 @@
             type="number"
             i18n-placeholder="Total unknown|How many children have an unknown presence or absence status"
             placeholder="Total unknown"
-            [value]="entity.countTotalUnknown()"
+            [value]="entity.countEventsWithUnknownStatus()"
             readonly
           />
         </mat-form-field>

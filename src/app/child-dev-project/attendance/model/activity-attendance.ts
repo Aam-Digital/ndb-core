@@ -93,7 +93,7 @@ export class ActivityAttendance extends Entity {
     return this.countIndividual(childId, AttendanceLogicalStatus.ABSENT);
   }
 
-  countEventsUnknown(childId: string): number {
+  countEventsIgnored(childId: string): number {
     return this.countIndividual(childId, AttendanceLogicalStatus.IGNORE);
   }
 
@@ -122,7 +122,7 @@ export class ActivityAttendance extends Entity {
     return this.countWithStatus(AttendanceLogicalStatus.ABSENT);
   }
 
-  countTotalUnknown(): number {
+  countTotalIgnored(): number {
     return this.countWithStatus(AttendanceLogicalStatus.IGNORE);
   }
 
@@ -173,6 +173,23 @@ export class ActivityAttendance extends Entity {
     } else {
       return result;
     }
+  }
+
+  /**
+   * The number of events that have at least one participant with an undefined status.
+   * This may occur when the user does not complete the full roll call or skips participants.
+   * The count of unknown status can indicate if manual checking and corrections are required.
+   *
+   * @param forChildId filter the calculation to only include status of the given participant id
+   */
+  countEventsWithUnknownStatus(forChildId?: string): number {
+    return this.events
+      .filter((e) => !forChildId || e.children.includes(forChildId))
+      .reduce(
+        (count: number, e: EventNote) =>
+          e.hasUnknownAttendances(forChildId) ? count + 1 : count,
+        0
+      );
   }
 
   recalculateStats() {
