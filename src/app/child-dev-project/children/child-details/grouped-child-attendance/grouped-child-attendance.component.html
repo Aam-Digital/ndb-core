@@ -1,3 +1,7 @@
+<div *ngIf="loading">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</div>
+
 <mat-tab-group>
   <mat-tab *ngFor="let activity of activities" [label]="activity.title">
     <app-activity-attendance-section
