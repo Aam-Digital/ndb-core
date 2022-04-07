@@ -85,14 +85,6 @@ export class ActivityAttendance extends Entity {
     );
   }
 
-  countEventsWithUnknownStatus(): number {
-    return this.events.reduce(
-      (prev: number, currentEvent: EventNote) =>
-        currentEvent.hasUnknownAttendances() ? prev + 1 : prev,
-      0
-    );
-  }
-
   countEventsPresent(childId: string): number {
     return this.countIndividual(childId, AttendanceLogicalStatus.PRESENT);
   }
@@ -101,24 +93,8 @@ export class ActivityAttendance extends Entity {
     return this.countIndividual(childId, AttendanceLogicalStatus.ABSENT);
   }
 
-  getAttendancePercentage(childId: string): number {
-    const present = this.countEventsPresent(childId);
-    const absent = this.countEventsAbsent(childId);
-
-    return present / (present + absent);
-  }
-
-  getAttendancePercentageAverage(): number {
-    // TODO calculate overall averaged attendance percentage
-    return NaN;
-  }
-
-  countEventsPresentAverage(rounded: boolean = false) {
-    return this.countAverage(AttendanceLogicalStatus.PRESENT, rounded);
-  }
-
-  countEventsAbsentAverage(rounded: boolean = false) {
-    return this.countAverage(AttendanceLogicalStatus.ABSENT, rounded);
+  countEventsUnknown(childId: string): number {
+    return this.countIndividual(childId, AttendanceLogicalStatus.IGNORE);
   }
 
   private countIndividual(
@@ -131,7 +107,37 @@ export class ActivityAttendance extends Entity {
     ).length;
   }
 
-  private countAverage(
+  getAttendancePercentage(childId: string): number {
+    const present = this.countEventsPresent(childId);
+    const absent = this.countEventsAbsent(childId);
+
+    return present / (present + absent);
+  }
+
+  countTotalPresent() {
+    return this.countWithStatus(AttendanceLogicalStatus.PRESENT);
+  }
+
+  countTotalAbsent() {
+    return this.countWithStatus(AttendanceLogicalStatus.ABSENT);
+  }
+
+  countTotalUnknown(): number {
+    return this.countWithStatus(AttendanceLogicalStatus.IGNORE);
+  }
+
+  private countWithStatus(matchingType: AttendanceLogicalStatus) {
+    return this.events.reduce(
+      (total, event) => total + event.countWithStatus(matchingType),
+      0
+    );
+  }
+
+  getAttendancePercentageAverage(): number {
+    return this.countPercentage(AttendanceLogicalStatus.PRESENT, false);
+  }
+
+  private countPercentage(
     matchingType: AttendanceLogicalStatus,
     rounded: boolean = false
   ) {
@@ -161,8 +167,7 @@ export class ActivityAttendance extends Entity {
         { total: 0, matching: 0 }
       );
 
-    const result =
-      calculatedStats.matching / (calculatedStats.total / this.events.length);
+    const result = calculatedStats.matching / calculatedStats.total;
     if (rounded) {
       return Math.round(result * 10) / 10;
     } else {

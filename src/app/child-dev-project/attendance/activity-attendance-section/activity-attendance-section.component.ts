@@ -42,7 +42,7 @@ export class ActivityAttendanceSectionComponent
       additional: (e: ActivityAttendance) =>
         this.forChild
           ? e.countEventsPresent(this.forChild)
-          : e.countEventsPresentAverage(true),
+          : e.countTotalPresent(),
     },
     {
       id: "totalEvents",
