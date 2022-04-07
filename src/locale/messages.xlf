@@ -6,7 +6,7 @@
         <source>Activate to also show entries for the activity that do not have any events with actual participation of this person</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.html</context>
-          <context context-type="linenumber">27,37</context>
+          <context context-type="linenumber">40,50</context>
         </context-group>
         <note priority="1" from="description">Tooltip that will appear when hovered over the
       show-unrelated button</note>
@@ -16,7 +16,7 @@
         <source> Also show unrelated </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.html</context>
-          <context context-type="linenumber">29,34</context>
+          <context context-type="linenumber">42,47</context>
         </context-group>
         <note priority="1" from="description">show unrelated attendance-entries for an activity that are not
       linked to the child of interest</note>
@@ -26,7 +26,7 @@
         <source> Load all records </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.html</context>
-          <context context-type="linenumber">39,42</context>
+          <context context-type="linenumber">52,55</context>
         </context-group>
         <note priority="1" from="description">load all records, not only the ones from the last 6 months</note>
         <note priority="1" from="meaning">load-all button</note>
@@ -35,7 +35,7 @@
         <source>Month</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.ts</context>
-          <context context-type="linenumber">32,30</context>
+          <context context-type="linenumber">34,32</context>
         </context-group>
         <note priority="1" from="description">The month something took place</note>
       </trans-unit>
@@ -43,7 +43,7 @@
         <source>Present</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.ts</context>
-          <context context-type="linenumber">38,36</context>
+          <context context-type="linenumber">40,38</context>
         </context-group>
         <note priority="1" from="description">Title of table column</note>
         <note priority="1" from="meaning">How many children are present at a meeting</note>
@@ -52,7 +52,7 @@
         <source>Events</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.ts</context>
-          <context context-type="linenumber">47,45</context>
+          <context context-type="linenumber">49,47</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
@@ -64,7 +64,7 @@
         <source>Attended</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.ts</context>
-          <context context-type="linenumber">53,51</context>
+          <context context-type="linenumber">55,53</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.ts</context>
@@ -347,29 +347,55 @@
         <source>days present</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html</context>
-          <context context-type="linenumber">53</context>
+          <context context-type="linenumber">50</context>
         </context-group>
-        <note priority="1" from="description">How many days a child or a class was present</note>
+        <note priority="1" from="description">How many days a child was present</note>
         <note priority="1" from="meaning">days present</note>
       </trans-unit>
       <trans-unit id="62488d81b723a73aceac5fddc63664477555b904" datatype="html">
         <source>days absent</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html</context>
-          <context context-type="linenumber">73</context>
+          <context context-type="linenumber">63</context>
         </context-group>
-        <note priority="1" from="description">How many days a child or a class was absent</note>
+        <note priority="1" from="description">How many days a child was absent</note>
         <note priority="1" from="meaning">days absent</note>
       </trans-unit>
       <trans-unit id="bf0e9e3f6eb7c8caa683635f6ecb2a127271d717" datatype="html">
         <source>unknown status</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html</context>
-          <context context-type="linenumber">94</context>
+          <context context-type="linenumber">76</context>
         </context-group>
-        <note priority="1" from="description">How many days the presence or absence of a child is
-              unknown</note>
+        <note priority="1" from="description">How many days the presence or absence of a child is unknown</note>
         <note priority="1" from="meaning">days absent</note>
+      </trans-unit>
+      <trans-unit id="ed56e53cf1fe27a3a6c434d5b1d5a39482201d51" datatype="html">
+        <source>Total present</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html</context>
+          <context context-type="linenumber">91</context>
+        </context-group>
+        <note priority="1" from="description">How many children were present</note>
+        <note priority="1" from="meaning">Total present</note>
+      </trans-unit>
+      <trans-unit id="948ae029dd444396078d5108e603c8ed60700fcd" datatype="html">
+        <source>Total absent</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html</context>
+          <context context-type="linenumber">104</context>
+        </context-group>
+        <note priority="1" from="description">How many children were absent</note>
+        <note priority="1" from="meaning">Total absent</note>
+      </trans-unit>
+      <trans-unit id="2d7c93db26d5bd410977cbc70fe5852ba57517c0" datatype="html">
+        <source>Total unknown</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html</context>
+          <context context-type="linenumber">117</context>
+        </context-group>
+        <note priority="1" from="description">How many children have an unknown presence or absence status</note>
+        <note priority="1" from="meaning">Total unknown</note>
       </trans-unit>
       <trans-unit id="3304972143698843178" datatype="html">
         <source>Event</source>
@@ -584,7 +610,7 @@
           <context context-type="linenumber">72</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/historical-data/historical-entity-data.ts</context>
+          <context context-type="sourcefile">src/app/features/historical-data/model/historical-entity-data.ts</context>
           <context context-type="linenumber">11</context>
         </context-group>
         <note priority="1" from="description">Label for date of the ASER results</note>
@@ -721,6 +747,18 @@
         </context-group>
         <note priority="1" from="description">Label reading level</note>
       </trans-unit>
+      <trans-unit id="394bc3d433575a9568c49d094894a1a13bff3552" datatype="html">
+        <source>Picture of a child</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/child-block/child-block.component.html</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/child-block/child-block.component.html</context>
+          <context context-type="linenumber">25</context>
+        </context-group>
+        <note priority="1" from="description">Alternative text for small picture</note>
+      </trans-unit>
       <trans-unit id="e0dc43b431d171971d708cb150a3fbce5d2530f1" datatype="html">
         <source> class <x id="INTERPOLATION" equiv-text="{{ entity?.schoolClass }}"/> </source>
         <context-group purpose="location">
@@ -738,6 +776,14 @@
         </context-group>
         <note priority="1" from="description">Subtitle of the child-bmi dashboard-component</note>
       </trans-unit>
+      <trans-unit id="5e267d910fc504b64b65531503ba5a22e6323cf5" datatype="html">
+        <source>Table showing the most critical BMI results</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/children-bmi-dashboard/children-bmi-dashboard.component.html</context>
+          <context context-type="linenumber">12</context>
+        </context-group>
+        <note priority="1" from="description">Label for BMI dashboard</note>
+      </trans-unit>
       <trans-unit id="a81e4ab5857585c63385222425268b9562bbd7a8" datatype="html">
         <source>Cases</source>
         <context-group purpose="location">
@@ -745,6 +791,23 @@
           <context context-type="linenumber">5</context>
         </context-group>
         <note priority="1" from="description">Dashboard title naming total number of beneficiaries in the system</note>
+      </trans-unit>
+      <trans-unit id="a7c22c82873cd836ac94eee130dbb7f8fb42a358" datatype="html">
+        <source><x id="START_TABLE_ROW" ctype="x-tr" equiv-text="&lt;tr
+        *ngFor=&quot;let entry of childrenGroupCounts; let i = index&quot;
+        class=&quot;dashboard-table-row&quot;
+        (click)=&quot;goToChildrenList(entry.label)&quot;
+        style=&quot;cursor: pointer&quot;
+        angulartics2On=&quot;click&quot;
+        angularticsCategory=&quot;Navigation&quot;
+        angularticsAction=&quot;dashboard_children_count_school_link&quot;
+        [angularticsLabel]=&quot;&apos;list-entry-&apos; + i&quot;
+      &gt;"/><x id="START_TABLE_CELL" ctype="x-td" equiv-text="&lt;td class=&quot;dashboard-table-cell&quot;&gt;"/><x id="INTERPOLATION" equiv-text="{{ entry.label }}"/><x id="CLOSE_TABLE_CELL" ctype="x-td" equiv-text="&lt;/td&gt;"/><x id="START_TABLE_CELL" ctype="x-td" equiv-text="&lt;td class=&quot;dashboard-table-cell&quot;&gt;"/><x id="INTERPOLATION_1" equiv-text="{{ entry.value }}"/><x id="CLOSE_TABLE_CELL" ctype="x-td" equiv-text="&lt;/td&gt;"/><x id="START_TABLE_CELL" ctype="x-td" equiv-text="&lt;td class=&quot;dashboard-table-cell&quot;&gt;"/><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;external-link-square-alt&quot;&gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/><x id="CLOSE_TABLE_CELL" ctype="x-td" equiv-text="&lt;/td&gt;"/><x id="CLOSE_TABLE_ROW" ctype="x-tr" equiv-text="&lt;/tr&gt;"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/children-count-dashboard/children-count-dashboard.component.html</context>
+          <context context-type="linenumber">10,25</context>
+        </context-group>
+        <note priority="1" from="description">Label for children count dashboard</note>
       </trans-unit>
       <trans-unit id="1616102757855967475" datatype="html">
         <source>All</source>
@@ -2203,6 +2266,14 @@
     resolved</note>
         <note priority="1" from="meaning">Conflicts to be resolved</note>
       </trans-unit>
+      <trans-unit id="6ecae9f46ccd58a54afcff459491c365f5424ccd" datatype="html">
+        <source>Table showing the conflicts</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/conflict-resolution/conflict-resolution-list/conflict-resolution-list.component.html</context>
+          <context context-type="linenumber">15,17</context>
+        </context-group>
+        <note priority="1" from="description">A table showing conflicts between sets of data</note>
+      </trans-unit>
       <trans-unit id="eb24700c8ea13217647018eddd861387c601a29d" datatype="html">
         <source> Data </source>
         <context-group purpose="location">
@@ -2344,9 +2415,16 @@
         <source>Alert Log</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
-          <context context-type="linenumber">116,119</context>
+          <context context-type="linenumber">116,118</context>
         </context-group>
         <note priority="1" from="description">Alert log header</note>
+      </trans-unit>
+      <trans-unit id="1dd02ebe0907f68228f736b9fa604c02e8bb3ef6" datatype="html">
+        <source>Table showing alerts</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
+          <context context-type="linenumber">117,119</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="3541904604316250483" datatype="html">
         <source>Overwrite complete database?</source>
@@ -2392,6 +2470,13 @@
           <context context-type="linenumber">171,170</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="e87cea2a90c76be6c55240595acec01b8b3be221" datatype="html">
+        <source>Table showing a list of all users</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/user-list/user-list.component.html</context>
+          <context context-type="linenumber">1,3</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="45cc8ca94b5a50842a9a8ef804a5ab089a38ae5c" datatype="html">
         <source>ID</source>
         <context-group purpose="location">
@@ -2422,15 +2507,6 @@
           <context context-type="linenumber">12,16</context>
         </context-group>
         <note priority="1" from="description">Details of a certain User</note>
-      </trans-unit>
-      <trans-unit id="966753073810376145" datatype="html">
-        <source>Could not load file &apos;<x id="PH" equiv-text="jsonFileLocation"/>&apos;: <x id="PH_1" equiv-text="JSON.stringify(
-              response
-            )"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/app-config/app-config.ts</context>
-          <context context-type="linenumber">82,84</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="54fdb618c658224c6fbd4e10a947f91ea7611913" datatype="html">
         <source>Coming Soon</source>
@@ -3419,13 +3495,6 @@
           <context context-type="linenumber">124</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="4423207365023981661" datatype="html">
-        <source>Could not create form config for <x id="PH" equiv-text="formField.id"/>: <x id="PH_1" equiv-text="err"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-components/entity-form/entity-form.service.ts</context>
-          <context context-type="linenumber">32</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="848068633991631534" datatype="html">
         <source>Could not save <x id="PH" equiv-text="entity.getType()"/>: <x id="PH_1" equiv-text="err"/></source>
         <context-group purpose="location">
@@ -3718,7 +3787,7 @@
         <source>Save Changes?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/form-dialog/form-dialog.service.ts</context>
-          <context context-type="linenumber">59</context>
+          <context context-type="linenumber">58</context>
         </context-group>
         <note priority="1" from="description">Save changes header</note>
       </trans-unit>
@@ -3726,7 +3795,7 @@
         <source>Do you want to save the changes you made to the record?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/form-dialog/form-dialog.service.ts</context>
-          <context context-type="linenumber">60</context>
+          <context context-type="linenumber">59</context>
         </context-group>
         <note priority="1" from="description">Save changes message</note>
       </trans-unit>
@@ -4417,7 +4486,7 @@
       <trans-unit id="3193639537347911590" datatype="html">
         <source>not at all</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/historical-data/rating-answers.ts</context>
+          <context context-type="sourcefile">src/app/features/historical-data/model/rating-answers.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
         <note priority="1" from="description">Rating answer</note>
@@ -4425,7 +4494,7 @@
       <trans-unit id="5354795254143721363" datatype="html">
         <source>rarely</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/historical-data/rating-answers.ts</context>
+          <context context-type="sourcefile">src/app/features/historical-data/model/rating-answers.ts</context>
           <context context-type="linenumber">8</context>
         </context-group>
         <note priority="1" from="description">Rating answer</note>
@@ -4433,7 +4502,7 @@
       <trans-unit id="6010292635237662102" datatype="html">
         <source>usually</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/historical-data/rating-answers.ts</context>
+          <context context-type="sourcefile">src/app/features/historical-data/model/rating-answers.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
         <note priority="1" from="description">Rating answer</note>
@@ -4441,7 +4510,7 @@
       <trans-unit id="8286349098437101242" datatype="html">
         <source>absolutely</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/historical-data/rating-answers.ts</context>
+          <context context-type="sourcefile">src/app/features/historical-data/model/rating-answers.ts</context>
           <context context-type="linenumber">16</context>
         </context-group>
         <note priority="1" from="description">Rating answer</note>
@@ -4449,7 +4518,7 @@
       <trans-unit id="6811901802533648897" datatype="html">
         <source>N/A</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/historical-data/rating-answers.ts</context>
+          <context context-type="sourcefile">src/app/features/historical-data/model/rating-answers.ts</context>
           <context context-type="linenumber">20</context>
         </context-group>
         <note priority="1" from="description">Rating answer</note>
@@ -4628,6 +4697,14 @@
           <context context-type="linenumber">24</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="a9204584e19088a7c79ae49520961340bf555754" datatype="html">
+        <source>Table showing organization progress</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.html</context>
+          <context context-type="linenumber">8,10</context>
+        </context-group>
+        <note priority="1" from="description">Label for progress dashboard</note>
+      </trans-unit>
       <trans-unit id="6120058133616490580" datatype="html">
         <source>Progress of X</source>
         <context-group purpose="location">
@@ -4653,6 +4730,14 @@
         </context-group>
         <note priority="1" from="description">e.g. &apos;without religion&apos;</note>
         <note priority="1" from="meaning">Excluding a certain property</note>
+      </trans-unit>
+      <trans-unit id="a00d4bb0ec71154a3ec8913e099f484cc9990571" datatype="html">
+        <source>Table showing the report results</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/reporting/reporting/object-table/object-table.component.html</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+        <note priority="1" from="description">Label for table showing report result</note>
       </trans-unit>
       <trans-unit id="80c9d1a92bdc4d984372b8a38a1e5078645f4af5" datatype="html">
         <source> Reports

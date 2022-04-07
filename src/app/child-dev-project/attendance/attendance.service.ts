@@ -155,7 +155,7 @@ export class AttendanceService {
         String(sinceDate.getDate()).padStart(2, "0");
     }
 
-    return await this.dbIndexing.queryIndexDocsRange(
+    return this.dbIndexing.queryIndexDocsRange(
       EventNote,
       "events_index/by_activity",
       activityId + dateLimit,

@@ -89,6 +89,7 @@ export class PouchDatabase extends Database {
           return undefined;
         }
       }
+      err.affectedDocument = id;
       throw err;
     });
   }
@@ -130,6 +131,7 @@ export class PouchDatabase extends Database {
       if (err.status === 409) {
         return this.resolveConflict(object, forceOverwrite, err);
       } else {
+        err.affectedDocument = object._id;
         throw err;
       }
     });
@@ -143,6 +145,7 @@ export class PouchDatabase extends Database {
    */
   remove(object: any) {
     return this._pouchDB.remove(object).catch((err) => {
+      err.affectedDocument = object._id;
       throw err;
     });
   }
@@ -177,7 +180,10 @@ export class PouchDatabase extends Database {
     fun: string | ((doc: any, emit: any) => void),
     options: QueryOptions
   ): Promise<any> {
-    return this._pouchDB.query(fun, options);
+    return this._pouchDB.query(fun, options).catch((err) => {
+      err.affectedDocument = fun;
+      throw err;
+    });
   }
 
   /**

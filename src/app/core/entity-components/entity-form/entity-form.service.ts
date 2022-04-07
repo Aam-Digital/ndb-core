@@ -29,7 +29,7 @@ export class EntityFormService {
         this.addFormFields(formField, entity, forTable);
       } catch (err) {
         throw new Error(
-          $localize`Could not create form config for ${formField.id}\: ${err}`
+          `Could not create form config for ${formField.id}\: ${err}`
         );
       }
     });

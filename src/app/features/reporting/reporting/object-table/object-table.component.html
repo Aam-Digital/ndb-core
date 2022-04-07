@@ -1,6 +1,8 @@
 <table
   mat-table [dataSource]="dataSource" matSort
   style="width: 100%"
+  i18n-aria-label="Label for table showing report result"
+  aria-label="Table showing the report results"
 >
   <ng-container *ngFor="let col of columns" [matColumnDef]="col">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ col }}</th>

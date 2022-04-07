@@ -28,8 +28,6 @@ export class NoteAttendanceCountBlockComponent
 
   participantsWithStatus: number;
 
-  constructor() {}
-
   ngOnInit() {
     if (this.note) {
       this.participantsWithStatus = this.note.countWithStatus(

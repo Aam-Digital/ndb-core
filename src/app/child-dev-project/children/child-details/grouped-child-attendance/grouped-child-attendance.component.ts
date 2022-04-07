@@ -16,6 +16,7 @@ export class GroupedChildAttendanceComponent
   implements OnChanges, OnInitDynamicComponent {
   @Input() child: Child = new Child("");
 
+  loading: boolean = true;
   activities: RecurringActivity[] = [];
 
   constructor(private attendanceService: AttendanceService) {}
@@ -30,8 +31,10 @@ export class GroupedChildAttendanceComponent
   }
 
   private async loadActivities() {
+    this.loading = true;
     this.activities = await this.attendanceService.getActivitiesForChild(
       this.child.getId()
     );
+    this.loading = false;
   }
 }
