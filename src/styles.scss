@@ -29,6 +29,7 @@ $max-icon-width: 22px;
 $standard-margin-small: 8px;
 
 body {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
   margin: 0;
 }
 
@@ -143,7 +144,7 @@ $color-warning-urgent: #fd7272;
 
 
 .w-OK {
-  background-color: adjust-color($color-warning-warning, $alpha: -0.75);
+  background-color: adjust-color($color-warning-ok, $alpha: -0.75);
 }
 .w-WARNING {
   background-color: adjust-color($color-warning-warning, $alpha: -0.5);
