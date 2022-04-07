@@ -8,6 +8,7 @@ import { TranslationModule } from "app/core/translation/translation.module";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { PwaInstallService } from "./pwa-install.service";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
 @NgModule({
   declarations: [PwaInstallComponent],
   imports: [
@@ -18,6 +19,7 @@ import { PwaInstallService } from "./pwa-install.service";
     TranslationModule,
     MatSidenavModule,
     MatToolbarModule,
+    MatSnackBarModule,
   ],
   providers: [PwaInstallService],
   exports: [PwaInstallComponent],

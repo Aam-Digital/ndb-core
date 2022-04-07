@@ -1,16 +1,19 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed } from "@angular/core/testing";
+import { PwaInstallModule } from "./pwa-install.module";
 
-import { PwaInstallService } from './pwa-install.service';
+import { PwaInstallService } from "./pwa-install.service";
 
-describe('PwaInstallService', () => {
+describe("PwaInstallService", () => {
   let service: PwaInstallService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      imports: [PwaInstallModule],
+    });
     service = TestBed.inject(PwaInstallService);
   });
 
-  it('should be created', () => {
+  it("should be created", () => {
     expect(service).toBeTruthy();
   });
 });

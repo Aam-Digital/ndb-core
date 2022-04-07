@@ -1,16 +1,16 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { PwaInstallComponent } from './pwa-install.component';
+import { PwaInstallComponent } from "./pwa-install.component";
+import { PwaInstallModule } from "./pwa-install.module";
 
-describe('PwaInstallComponent', () => {
+describe("PwaInstallComponent", () => {
   let component: PwaInstallComponent;
   let fixture: ComponentFixture<PwaInstallComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PwaInstallComponent ]
-    })
-    .compileComponents();
+      imports: [PwaInstallModule],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +19,7 @@ describe('PwaInstallComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });
