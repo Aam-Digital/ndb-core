@@ -1,7 +1,5 @@
 import { Component, TemplateRef, ViewChild } from "@angular/core";
-import {
-  MatSnackBar
-} from "@angular/material/snack-bar";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { PwaInstallService, PWAInstallType } from "./pwa-install.service";
 @Component({
   selector: "app-pwa-install",
@@ -26,23 +24,20 @@ export class PwaInstallComponent {
     if (this.pwaInstallType === PWAInstallType.ShowiOSInstallInstructions) {
       this.showPWAInstallButton = true;
     }
-    pwaInstallService.waitForPWAInstallPrompt.then( () => {
+    pwaInstallService.waitForPWAInstallPrompt.then(() => {
       this.showPWAInstallButton = true;
-    } ); 
+    });
   }
 
   pwaInstallButtonClicked() {
     if (this.pwaInstallType === PWAInstallType.ShowiOSInstallInstructions) {
-      this.snackBar.openFromTemplate(
-        this.templateIOSInstallInstructions
-      );
+      this.snackBar.openFromTemplate(this.templateIOSInstallInstructions);
     } else {
       this.pwaInstallService.installPWA().then((choice) => {
         if (choice.outcome === "accepted") {
           this.showPWAInstallButton = false;
         }
       });
-
     }
   }
 }

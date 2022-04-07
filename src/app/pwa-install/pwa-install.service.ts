@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 
 export enum PWAInstallType {
   InstallDirectly,
@@ -26,17 +26,16 @@ enum OS {
 
 @Injectable()
 export class PwaInstallService {
-
   private deferredInstallPrompt: any;
   private readonly userAgent: string;
-  waitForPWAInstallPrompt: Promise <void>;
+  waitForPWAInstallPrompt: Promise<void>;
 
   constructor() {
     this.userAgent = window.navigator.userAgent;
   }
 
   registerPWAInstallListener() {
-    this.waitForPWAInstallPrompt = new Promise (resolve => {
+    this.waitForPWAInstallPrompt = new Promise((resolve) => {
       window.addEventListener("beforeinstallprompt", (e) => {
         e.preventDefault();
         this.deferredInstallPrompt = e;
@@ -59,7 +58,6 @@ export class PwaInstallService {
     }
     return pwaInstallType;
   }
- 
 
   private detectOS(): OS {
     let os: OS;
@@ -109,12 +107,13 @@ export class PwaInstallService {
     );
   }
 
-  installPWA() : Promise <any> {
+  installPWA(): Promise<any> {
     if (!this.deferredInstallPrompt) {
-      throw new Error("InstallPWA called, but PWA install prompt has not fired.") 
+      throw new Error(
+        "InstallPWA called, but PWA install prompt has not fired."
+      );
     }
     this.deferredInstallPrompt.prompt();
     return this.deferredInstallPrompt.userChoice;
   }
-
 }
