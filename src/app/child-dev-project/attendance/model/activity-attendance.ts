@@ -1,7 +1,4 @@
-import {
-  AttendanceLogicalStatus,
-  AttendanceStatusType,
-} from "./attendance-status";
+import { AttendanceLogicalStatus } from "./attendance-status";
 import { RecurringActivity } from "./recurring-activity";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { EventNote } from "./event-note";
@@ -70,19 +67,6 @@ export class ActivityAttendance extends Entity {
 
   countEventsTotal(): number {
     return this.events.length;
-  }
-
-  countEventsWithStatusForChild(
-    status: AttendanceStatusType,
-    childId: string
-  ): number {
-    return this.events.reduce(
-      (prev: number, currentEvent: EventNote) =>
-        currentEvent.getAttendance(childId)?.status === status
-          ? prev + 1
-          : prev,
-      0
-    );
   }
 
   countEventsPresent(childId: string): number {
