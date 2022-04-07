@@ -4,10 +4,9 @@
     style='background-color: #ff9800'
     fxFlex
     (click)="pwaInstallButtonClicked()"
-    i18n="PWA Install Button Label"
     >
     <fa-icon icon="cloud-download-alt" class="nav-icon"></fa-icon>
-    Install App
+    <span i18n="PWA Install Button Label">Install App</span>
 </button>
 
 <ng-template #iOSInstallInstructions>
@@ -17,13 +16,14 @@
     </button>
     <ol>
         <li>
-            <ng-container i18n="PWA iOS Install Instractions - Line 2-1">tap on </ng-container>
+            <ng-container i18n="PWA iOS Install Instriuctions - Line 2-1">tap on </ng-container>
+            <!-- TODO: Icon should be "arrow-up-from-square" as soon as FontAweseome v6 is available -->
             <fa-icon icon="share-square" class="nav-icon"></fa-icon>
-            <ng-container i18n="PWA iOS Install Instractions - Line 2-2"> at the bottom</ng-container></li>
+            <ng-container i18n="PWA iOS Install Instructions - Line 2-2"> at the bottom</ng-container></li>
         <li>
-            <ng-container i18n="PWA iOS Install Instractions - Line 3-1">and then tap on </ng-container>
+            <ng-container i18n="PWA iOS Install Instructions - Line 3-1">and then tap on </ng-container>
             <fa-icon icon="plus-square" class="nav-icon"></fa-icon>
-            <ng-container i18n="PWA iOS Install Instractions - Line 3-2"> (Add to Homescreen).</ng-container>
+            <ng-container i18n="PWA iOS Install Instructions - Line 3-2"> (Add to Homescreen).</ng-container>
         </li>
     </ol>
 </ng-template>
