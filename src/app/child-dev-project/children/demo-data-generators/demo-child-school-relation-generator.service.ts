@@ -38,7 +38,7 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
     const data = [];
 
     for (const child of this.demoChildren.entities) {
-      data.push(...this.generateChildSchoolRecordsForChild(child as Child));
+      data.push(...this.generateChildSchoolRecordsForChild(child));
     }
 
     return data;

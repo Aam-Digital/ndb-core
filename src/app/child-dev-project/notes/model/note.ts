@@ -197,7 +197,13 @@ export class Note extends Entity {
    * While getAttendance will always set and return at least a default value `hasUnknownAttendances` can be used
    * to flag events with incomplete data.
    */
-  hasUnknownAttendances(): boolean {
+  hasUnknownAttendances(childId?: string): boolean {
+    if (childId) {
+      return (
+        this.getAttendance(childId).status.id === NullAttendanceStatusType.id
+      );
+    }
+
     if (this.childrenAttendance.size < this.children.length) {
       return true;
     } else {

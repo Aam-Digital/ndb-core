@@ -5,7 +5,6 @@ import { AttendanceDetailsComponent } from "../attendance-details/attendance-det
 import { AttendanceService } from "../attendance.service";
 import { PercentPipe } from "@angular/common";
 import { ActivityAttendance } from "../model/activity-attendance";
-import { Note } from "../../notes/model/note";
 import moment from "moment";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
@@ -22,9 +21,10 @@ export class ActivityAttendanceSectionComponent
   @Input() activity: RecurringActivity;
   @Input() forChild?: string;
 
+  loading: boolean = true;
   records: ActivityAttendance[] = [];
   allRecords: ActivityAttendance[] = [];
-  displayedEvents: Note[] = [];
+  combinedAttendance: ActivityAttendance;
 
   columns: FormFieldConfig[] = [
     {
@@ -40,7 +40,7 @@ export class ActivityAttendanceSectionComponent
       additional: (e: ActivityAttendance) =>
         this.forChild
           ? e.countEventsPresent(this.forChild)
-          : e.countEventsPresentAverage(true),
+          : e.countTotalPresent(),
     },
     {
       id: "totalEvents",
@@ -83,6 +83,7 @@ export class ActivityAttendanceSectionComponent
   }
 
   async init(loadAll: boolean = false) {
+    this.loading = true;
     if (loadAll) {
       this.allRecords = await this.attendanceService.getActivityAttendances(
         this.activity
@@ -94,6 +95,32 @@ export class ActivityAttendanceSectionComponent
       );
     }
     this.updateDisplayedRecords(false);
+    this.createCombinedAttendance();
+    this.loading = false;
+  }
+
+  private createCombinedAttendance() {
+    this.combinedAttendance = new ActivityAttendance();
+    this.combinedAttendance.activity = this.activity;
+    this.allRecords.forEach((record) => {
+      this.combinedAttendance.events.push(...record.events);
+      if (
+        !this.combinedAttendance.periodFrom ||
+        moment(record.periodFrom).isBefore(
+          this.combinedAttendance.periodFrom,
+          "day"
+        )
+      ) {
+        this.combinedAttendance.periodFrom = record.periodFrom;
+      }
+
+      if (
+        !this.combinedAttendance.periodTo ||
+        moment(record.periodTo).isAfter(this.combinedAttendance.periodTo, "day")
+      ) {
+        this.combinedAttendance.periodTo = record.periodTo;
+      }
+    });
   }
 
   updateDisplayedRecords(includeRecordsWithoutParticipation: boolean) {
@@ -112,7 +139,6 @@ export class ActivityAttendanceSectionComponent
       this.records.sort(
         (a, b) => b.periodFrom.getTime() - a.periodFrom.getTime()
       );
-      this.displayedEvents = this.records[0].events;
     }
   }
 
