@@ -5,7 +5,6 @@ import { AttendanceDetailsComponent } from "../attendance-details/attendance-det
 import { AttendanceService } from "../attendance.service";
 import { PercentPipe } from "@angular/common";
 import { ActivityAttendance } from "../model/activity-attendance";
-import { Note } from "../../notes/model/note";
 import moment from "moment";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
@@ -25,7 +24,6 @@ export class ActivityAttendanceSectionComponent
   loading: boolean = true;
   records: ActivityAttendance[] = [];
   allRecords: ActivityAttendance[] = [];
-  displayedEvents: Note[] = [];
   combinedAttendance: ActivityAttendance;
 
   columns: FormFieldConfig[] = [
@@ -141,7 +139,6 @@ export class ActivityAttendanceSectionComponent
       this.records.sort(
         (a, b) => b.periodFrom.getTime() - a.periodFrom.getTime()
       );
-      this.displayedEvents = this.records[0].events;
     }
   }
 
