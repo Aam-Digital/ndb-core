@@ -10,7 +10,7 @@ export class PwaInstallComponent {
   @ViewChild("iOSInstallInstructions")
   templateIOSInstallInstructions: TemplateRef<any>;
 
-  public showPWAInstallButton: boolean = false;
+  public showPWAInstallButton = false;
   public pwaInstallButtonText: string;
   public pwaInstallType: PWAInstallType;
   public deferredInstallPrompt;
