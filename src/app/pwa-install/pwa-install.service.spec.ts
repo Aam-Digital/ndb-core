@@ -69,6 +69,6 @@ describe("PwaInstallService", () => {
   });
 
   it("should throw an error when trying to install without install prompt", () => {
-    expect(service.installPWA).toThrowError();
+    expect(() => service.installPWA()).toThrowError();
   });
 });
