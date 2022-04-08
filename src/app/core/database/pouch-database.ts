@@ -269,7 +269,6 @@ export class PouchDatabase extends Database {
     existingError: any = {}
   ): Promise<any> {
     const existingObject = await this.get(newObject._id);
-    console.log("resolving", newObject, existingObject);
     const resolvedObject = this.mergeObjects(existingObject, newObject);
     if (resolvedObject) {
       this.loggingService.debug(

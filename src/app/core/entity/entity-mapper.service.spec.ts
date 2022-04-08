@@ -263,7 +263,7 @@ describe("EntityMapperService", () => {
 
   function receiveUpdatesAndTestTypeAndId(type?: string, entityId?: string) {
     return new Promise<void>((resolve) => {
-      entityMapper.receiveUpdates<Entity>(Entity).subscribe((e) => {
+      entityMapper.receiveUpdates(Entity).subscribe((e) => {
         if (e) {
           if (type) {
             expect(e.type).toBe(type);
@@ -276,10 +276,10 @@ describe("EntityMapperService", () => {
       });
     });
   }
+
+  @DatabaseEntity("EntityA")
+  class MockEntityA extends Entity {}
+
+  @DatabaseEntity("EntityB")
+  class MockEntityB extends Entity {}
 });
-
-@DatabaseEntity("EntityA")
-class MockEntityA extends Entity {}
-
-@DatabaseEntity("EntityB")
-class MockEntityB extends Entity {}
