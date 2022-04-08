@@ -111,8 +111,8 @@ export class AdminComponent implements OnInit {
     const newData = await readFile(this.getFileFromInputEvent(inputEvent));
 
     const dialogRef = this.confirmationDialog.openDialog(
-      $localize`Overwrite complete database?`,
-      $localize`Are you sure you want to restore this backup? This will
+      `Overwrite complete database?`,
+      `Are you sure you want to restore this backup? This will
       delete all ${JSON.parse(restorePoint).length} existing records,
       restoring ${JSON.parse(newData).length} records from the loaded file.`
     );
@@ -125,13 +125,9 @@ export class AdminComponent implements OnInit {
       await this.backupService.clearDatabase();
       await this.backupService.importJson(newData, true);
 
-      const snackBarRef = this.snackBar.open(
-        $localize`Backup restored`,
-        "Undo",
-        {
-          duration: 8000,
-        }
-      );
+      const snackBarRef = this.snackBar.open(`Backup restored`, "Undo", {
+        duration: 8000,
+      });
       snackBarRef
         .onAction()
         .pipe(untilDestroyed(this))
@@ -154,8 +150,8 @@ export class AdminComponent implements OnInit {
     const restorePoint = await this.backupService.getJsonExport();
 
     const dialogRef = this.confirmationDialog.openDialog(
-      $localize`Empty complete database?`,
-      $localize`Are you sure you want to clear the database? This will delete all ${
+      `Empty complete database?`,
+      `Are you sure you want to clear the database? This will delete all ${
         restorePoint.split("\n").length
       } existing records in the database!`
     );
@@ -167,13 +163,9 @@ export class AdminComponent implements OnInit {
 
       await this.backupService.clearDatabase();
 
-      const snackBarRef = this.snackBar.open(
-        $localize`Import completed`,
-        "Undo",
-        {
-          duration: 8000,
-        }
-      );
+      const snackBarRef = this.snackBar.open(`Import completed`, "Undo", {
+        duration: 8000,
+      });
       snackBarRef
         .onAction()
         .pipe(untilDestroyed(this))
