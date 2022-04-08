@@ -10,11 +10,9 @@ export class PwaInstallComponent {
   @ViewChild("iOSInstallInstructions")
   templateIOSInstallInstructions: TemplateRef<any>;
 
-  public showPWAInstallButton = false;
-  public pwaInstallButtonText: string;
-  public pwaInstallType: PWAInstallType;
-  public deferredInstallPrompt;
-  public userAgent: string;
+  showPWAInstallButton = false;
+
+  private readonly pwaInstallType: PWAInstallType;
 
   constructor(
     public snackBar: MatSnackBar,
@@ -24,7 +22,7 @@ export class PwaInstallComponent {
     if (this.pwaInstallType === PWAInstallType.ShowiOSInstallInstructions) {
       this.showPWAInstallButton = true;
     }
-    pwaInstallService.waitForPWAInstallPrompt.then(() => {
+    pwaInstallService.canInstallDirectly.then(() => {
       this.showPWAInstallButton = true;
     });
   }

@@ -26,16 +26,20 @@ enum OS {
 
 @Injectable()
 export class PwaInstallService {
+  /**
+   * Resolves once/if it is possible to directly install the app
+   */
+  canInstallDirectly: Promise<void>;
+
   private deferredInstallPrompt: any;
   private readonly userAgent: string;
-  waitForPWAInstallPrompt: Promise<void>;
 
   constructor() {
     this.userAgent = window.navigator.userAgent;
   }
 
   registerPWAInstallListener() {
-    this.waitForPWAInstallPrompt = new Promise((resolve) => {
+    this.canInstallDirectly = new Promise((resolve) => {
       window.addEventListener("beforeinstallprompt", (e) => {
         e.preventDefault();
         this.deferredInstallPrompt = e;
