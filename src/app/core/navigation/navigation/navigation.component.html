@@ -26,7 +26,10 @@
     [class.primary-background]="item.link === activeLink"
   >
     <a class="nav-link">
-      <app-fa-dynamic-icon class="nav-icon" [icon]="item.icon"></app-fa-dynamic-icon>
+      <app-fa-dynamic-icon
+        class="nav-icon"
+        [icon]="item.icon"
+      ></app-fa-dynamic-icon>
       <div>{{ item.label }}</div>
     </a>
     <mat-divider></mat-divider>

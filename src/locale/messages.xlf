@@ -35,7 +35,7 @@
         <source>Month</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.ts</context>
-          <context context-type="linenumber">34,32</context>
+          <context context-type="linenumber">32,30</context>
         </context-group>
         <note priority="1" from="description">The month something took place</note>
       </trans-unit>
@@ -43,7 +43,7 @@
         <source>Present</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.ts</context>
-          <context context-type="linenumber">40,38</context>
+          <context context-type="linenumber">38,36</context>
         </context-group>
         <note priority="1" from="description">Title of table column</note>
         <note priority="1" from="meaning">How many children are present at a meeting</note>
@@ -52,7 +52,7 @@
         <source>Events</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.ts</context>
-          <context context-type="linenumber">49,47</context>
+          <context context-type="linenumber">47,45</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
@@ -64,7 +64,7 @@
         <source>Attended</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.ts</context>
-          <context context-type="linenumber">55,53</context>
+          <context context-type="linenumber">53,51</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.ts</context>
@@ -4067,7 +4067,7 @@
         <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;user&quot; class=&quot;nav-icon&quot;&gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/> Profile </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/ui/ui.component.html</context>
-          <context context-type="linenumber">94,96</context>
+          <context context-type="linenumber">98,100</context>
         </context-group>
         <note priority="1" from="description">Navigate to user profile page</note>
       </trans-unit>
@@ -4075,7 +4075,7 @@
         <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;sign-out-alt&quot; class=&quot;nav-icon&quot;&gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/> Sign out </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/ui/ui.component.html</context>
-          <context context-type="linenumber">99,101</context>
+          <context context-type="linenumber">103,105</context>
         </context-group>
         <note priority="1" from="description">Sign out of the app</note>
       </trans-unit>
@@ -4807,6 +4807,54 @@
           <context context-type="linenumber">80,81</context>
         </context-group>
         <note priority="1" from="description">Button to download data</note>
+      </trans-unit>
+      <trans-unit id="5e589ae47ed0c90beb209018a8f60ed492d8ad8d" datatype="html">
+        <source>Install App</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pwa-install/pwa-install.component.html</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+        <note priority="1" from="description">PWA Install Button Label</note>
+      </trans-unit>
+      <trans-unit id="240687bf23ceecb815aa0788691b36fc61468b53" datatype="html">
+        <source> To install the app </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pwa-install/pwa-install.component.html</context>
+          <context context-type="linenumber">15,16</context>
+        </context-group>
+        <note priority="1" from="description">PWA iOS Install Instractions - Line 1</note>
+      </trans-unit>
+      <trans-unit id="8beef6deafdec7914c3971782faad2ac1e66604d" datatype="html">
+        <source> tap on </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pwa-install/pwa-install.component.html</context>
+          <context context-type="linenumber">27,28</context>
+        </context-group>
+        <note priority="1" from="description">PWA iOS Install Instriuctions - Line 2-1</note>
+      </trans-unit>
+      <trans-unit id="5e1fef8419bb00629ae0fe59c98feced66824e11" datatype="html">
+        <source> at the bottom </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pwa-install/pwa-install.component.html</context>
+          <context context-type="linenumber">32,33</context>
+        </context-group>
+        <note priority="1" from="description">PWA iOS Install Instructions - Line 2-2</note>
+      </trans-unit>
+      <trans-unit id="6ac57c355739ba746bcfb893197082f53ac6ee75" datatype="html">
+        <source> and then tap on </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pwa-install/pwa-install.component.html</context>
+          <context context-type="linenumber">37,38</context>
+        </context-group>
+        <note priority="1" from="description">PWA iOS Install Instructions - Line 3-1</note>
+      </trans-unit>
+      <trans-unit id="26c649bd93b5051b07a9aed12f707cfa401553d7" datatype="html">
+        <source> (Add to Homescreen). </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/pwa-install/pwa-install.component.html</context>
+          <context context-type="linenumber">41,42</context>
+        </context-group>
+        <note priority="1" from="description">PWA iOS Install Instructions - Line 3-2</note>
       </trans-unit>
     </body>
   </file>
