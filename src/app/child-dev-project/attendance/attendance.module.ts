@@ -60,6 +60,7 @@ import { DashboardModule } from "../../core/dashboard/dashboard.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { ViewModule } from "../../core/view/view.module";
+import { AttendanceSummaryComponent } from "./attendance-summary/attendance-summary.component";
 
 @NgModule({
   declarations: [
@@ -78,6 +79,7 @@ import { ViewModule } from "../../core/view/view.module";
     AttendanceStatusSelectComponent,
     AttendanceWeekDashboardComponent,
     AttendanceManagerComponent,
+    AttendanceSummaryComponent,
   ],
   imports: [
     EntityListModule,
