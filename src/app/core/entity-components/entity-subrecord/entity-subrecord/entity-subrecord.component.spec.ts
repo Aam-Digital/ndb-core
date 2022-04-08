@@ -10,7 +10,6 @@ import {
   EntitySubrecordComponent,
   TableRow,
 } from "./entity-subrecord.component";
-import { RouterTestingModule } from "@angular/router/testing";
 import { EntitySubrecordModule } from "../entity-subrecord.module";
 import { Entity } from "../../../entity/model/entity";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -27,6 +26,8 @@ import { genders } from "../../../../child-dev-project/children/model/genders";
 import { LoggingService } from "../../../logging/logging.service";
 import { MockSessionModule } from "../../../session/mock-session.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import moment from "moment";
+import { MediaObserver } from "@angular/flex-layout";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -38,7 +39,6 @@ describe("EntitySubrecordComponent", () => {
       TestBed.configureTestingModule({
         imports: [
           EntitySubrecordModule,
-          RouterTestingModule.withRoutes([]),
           MatNativeDateModule,
           NoopAnimationsModule,
           MockSessionModule.withState(),
@@ -64,11 +64,13 @@ describe("EntitySubrecordComponent", () => {
   it("should sort enums by the label", () => {
     class Test extends Entity {
       public enumValue: ConfigurableEnumValue;
+
       constructor(label: string, id: string) {
         super();
         this.enumValue = { label: label, id: id };
       }
     }
+
     const first = new Test("aaa", "first");
     const second = new Test("aab", "second");
     const third = new Test("c", "third");
@@ -90,54 +92,25 @@ describe("EntitySubrecordComponent", () => {
     });
 
     const sortedData = component.recordsDataSource
-      .sortData(component.recordsDataSource.data, component.sort)
+      ._orderData(component.recordsDataSource.data)
       .map((row) => row.record);
     expect(sortedData).toEqual([first, second, third]);
   });
 
-  it("should apply default sort on first column", async () => {
-    const children = [Child.create("C"), Child.create("A"), Child.create("B")];
-    component.columnsToDisplay = ["name", "projectNumber"];
-    component.records = children;
+  it("should apply default sort on first column and order dates descending", () => {
+    component.columns = ["date", "subject"];
+    component.columnsToDisplay = ["date", "subject"];
+    component.records = [];
+    // Trigger a change with empty columns first as this is what some components do that init data asynchronously
+    component.ngOnChanges({ columns: undefined, records: undefined });
+
+    const oldNote = Note.create(moment().subtract(1, "day").toDate());
+    const newNote = Note.create(new Date());
+    component.records = [oldNote, newNote];
     component.ngOnChanges({ records: undefined });
 
-    const sortedChildren = component.recordsDataSource
-      .sortData(component.recordsDataSource.data, component.sort)
-      .map((c) => c.record["name"]);
-
-    expect(sortedChildren).toEqual(["A", "B", "C"]);
-  });
-
-  it("should apply default sort on first column, ordering dates descending", async () => {
-    const children = [Child.create("0"), Child.create("1"), Child.create("2")];
-    children[0].admissionDate = new Date(2010, 1, 1);
-    children[1].admissionDate = new Date(2011, 1, 1);
-    children[2].admissionDate = new Date(2012, 1, 1);
-
-    component.columnsToDisplay = ["admissionDate", "name"];
-    component.records = children;
-    // define the columns to mark "admissionDate" as a Date value
-    component.columns = [
-      {
-        view: "DisplayDate",
-        label: "Admission",
-        id: "admissionDate",
-      },
-      {
-        view: "DisplayText",
-        label: "Name",
-        id: "name",
-      },
-    ];
-
-    component.ngOnChanges({ records: undefined });
-    fixture.detectChanges();
-
-    const sortedChildren = component.recordsDataSource
-      .sortData(component.recordsDataSource.data, component.sort)
-      .map((c) => c.record["name"]);
-
-    expect(sortedChildren).toEqual(["2", "1", "0"]);
+    expect(component.recordsDataSource.sort.direction).toBe("desc");
+    expect(component.recordsDataSource.sort.active).toBe("date");
   });
 
   it("should sort standard objects", () => {
@@ -156,7 +129,7 @@ describe("EntitySubrecordComponent", () => {
 
     component.sort.sort({ id: "name", start: "asc", disableClear: false });
     const sortedIds = component.recordsDataSource
-      .sortData(component.recordsDataSource.data, component.sort)
+      ._orderData(component.recordsDataSource.data)
       .map((c) => c.record.getId());
 
     expect(sortedIds).toEqual(["0", "3", "1", "2"]);
@@ -169,14 +142,27 @@ describe("EntitySubrecordComponent", () => {
     notes[2].category = { id: "2", label: "Z" };
     notes[1].category = { id: "3", label: "C" };
     component.records = notes;
-    component.ngOnChanges({ records: null });
+    component.ngOnChanges({ records: undefined });
 
     component.sort.sort({ id: "category", start: "asc", disableClear: false });
     const sortedIds = component.recordsDataSource
-      .sortData(component.recordsDataSource.data, component.sort)
+      ._orderData(component.recordsDataSource.data)
       .map((note) => note.record.getId());
 
     expect(sortedIds).toEqual(["0", "3", "1", "2"]);
+  });
+
+  it("should sort strings ignoring case", () => {
+    const names = ["C", "b", "A"];
+    component.records = names.map((name) => Child.create(name));
+    component.ngOnChanges({ records: undefined });
+    component.sort.sort({ id: "name", start: "asc", disableClear: false });
+
+    const sortedNames = component.recordsDataSource
+      ._orderData(component.recordsDataSource.data)
+      .map((row: TableRow<Child>) => row.record.name);
+
+    expect(sortedNames).toEqual(["A", "b", "C"]);
   });
 
   it("should log a warning when the column definition can not be initialized", () => {
@@ -198,6 +184,7 @@ describe("EntitySubrecordComponent", () => {
   });
 
   it("should create a formGroup when editing a row", () => {
+    spyOn(TestBed.inject(MediaObserver), "isActive").and.returnValue(false);
     component.columns = [{ id: "name" }, { id: "projectNumber" }];
     const child = new Child();
     child.name = "Child Name";
@@ -287,18 +274,19 @@ describe("EntitySubrecordComponent", () => {
     component.rowClick({ record: child });
   });
 
-  it("appends a new entity to the end of the records when it's new", async () => {
+  it("should add a new entity to the the table when it's new", async () => {
     const entityFormService = TestBed.inject(EntityFormService);
     spyOn(entityFormService, "saveChanges").and.resolveTo();
+    component.records = [];
     const entity = new Entity();
     await component.save({ record: entity }, true);
-    expect(component.records).toHaveSize(1);
+    expect(component.recordsDataSource.data).toHaveSize(1);
   });
 
   it("does not change the size of it's records when not saving a new record", async () => {
     const entity = new Entity();
-    component.records.push(entity);
+    component.records = [entity];
     await component.save({ record: entity }, false);
-    expect(component.records).toHaveSize(1);
+    expect(component.recordsDataSource.data).toHaveSize(1);
   });
 });

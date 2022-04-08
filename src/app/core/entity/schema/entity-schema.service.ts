@@ -182,7 +182,8 @@ export class EntitySchemaService {
 
   /**
    * Get the name of the component that should display this property.
-   * The names will be one of the DYNAMIC_COMPONENT_MAP.
+   * The edit component has to be a registered component. Components that are registered contain the `DynamicComponent`
+   * decorator
    *
    * @param propertySchema The schema definition of the attribute for which a component should be get
    * @param mode (Optional) The mode for which a component is required. Default is "view".
@@ -197,9 +198,20 @@ export class EntitySchemaService {
     }
     const componentAttribute =
       mode === "view" ? "viewComponent" : "editComponent";
-    return (
-      propertySchema[componentAttribute] ||
-      this.getDatatypeOrDefault(propertySchema.dataType)[componentAttribute]
+    if (propertySchema[componentAttribute]) {
+      return propertySchema[componentAttribute];
+    }
+
+    const dataType = this.getDatatypeOrDefault(propertySchema.dataType);
+    if (dataType?.[componentAttribute]) {
+      return dataType[componentAttribute];
+    }
+
+    const innerDataType = this.getDatatypeOrDefault(
+      propertySchema.innerDataType
     );
+    if (innerDataType?.[componentAttribute]) {
+      return innerDataType[componentAttribute];
+    }
   }
 }

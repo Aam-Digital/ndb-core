@@ -28,6 +28,10 @@ import { EntityConfigService } from "app/core/entity/entity-config.service";
 import { ConfigService } from "app/core/config/config.service";
 import { EventAttendance } from "../../child-dev-project/attendance/model/event-attendance";
 import { AttendanceStatusType } from "../../child-dev-project/attendance/model/attendance-status";
+import {
+  EntityRegistry,
+  entityRegistry,
+} from "../../core/entity/database-entity.decorator";
 
 describe("QueryService", () => {
   let service: QueryService;
@@ -61,6 +65,7 @@ describe("QueryService", () => {
         ConfigService,
         EntityConfigService,
         { provide: Database, useValue: database },
+        { provide: EntityRegistry, useValue: entityRegistry },
       ],
     });
     service = TestBed.inject(QueryService);
@@ -496,6 +501,22 @@ describe("QueryService", () => {
     );
 
     expect(result).toEqual(["custom-string", "custom-string"]);
+  });
+
+  it("should omit participants which can be found anymore (e.g. deleted participants)", async () => {
+    const maleChild = await createChild("M");
+    const femaleChild = await createChild("F");
+    await createNote(new Date(), [
+      { child: maleChild, status: presentAttendanceStatus },
+      { child: femaleChild, status: presentAttendanceStatus },
+    ]);
+    await entityMapper.remove(femaleChild);
+
+    const result = await service.queryData(
+      `${EventNote.ENTITY_TYPE}:toArray:getIds(children):toEntities(${Child.ENTITY_TYPE}).gender`
+    );
+
+    expect(result).toEqual([maleChild.gender]);
   });
 
   async function createChild(

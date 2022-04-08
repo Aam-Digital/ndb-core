@@ -3,7 +3,9 @@ import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on
 import { ViewPropertyConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { Note } from "../model/note";
 import { AttendanceLogicalStatus } from "../../attendance/model/attendance-status";
+import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 
+@DynamicComponent("NoteAttendanceCountBlock")
 @Component({
   selector: "app-note-attendance-count-block",
   templateUrl: "./note-attendance-count-block.component.html",
@@ -25,8 +27,6 @@ export class NoteAttendanceCountBlockComponent
   @Input() attendanceStatus: AttendanceLogicalStatus;
 
   participantsWithStatus: number;
-
-  constructor() {}
 
   ngOnInit() {
     if (this.note) {

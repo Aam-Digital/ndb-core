@@ -25,7 +25,6 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { ChangelogComponent } from "./changelog/changelog.component";
-import { SwUpdate } from "@angular/service-worker";
 import { LOCATION_TOKEN, UpdateManagerService } from "./update-manager.service";
 import { FlexModule } from "@angular/flex-layout";
 import { MarkdownModule } from "ngx-markdown";
@@ -67,14 +66,8 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
   ],
 })
 export class LatestChangesModule {
-  constructor(
-    private updates: SwUpdate,
-    private latestChangesDialogService: LatestChangesDialogService,
-    private updateManagerService: UpdateManagerService
-  ) {
+  constructor(private updateManagerService: UpdateManagerService) {
     this.updateManagerService.notifyUserWhenUpdateAvailable();
     this.updateManagerService.regularlyCheckForUpdates();
-
-    this.latestChangesDialogService.showLatestChangesIfUpdated();
   }
 }

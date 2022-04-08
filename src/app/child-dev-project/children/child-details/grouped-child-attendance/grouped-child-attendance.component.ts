@@ -4,7 +4,9 @@ import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components
 import { PanelConfig } from "../../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { AttendanceService } from "../../../attendance/attendance.service";
 import { RecurringActivity } from "../../../attendance/model/recurring-activity";
+import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 
+@DynamicComponent("GroupedChildAttendance")
 @Component({
   selector: "app-grouped-child-attendance",
   templateUrl: "./grouped-child-attendance.component.html",
@@ -14,6 +16,7 @@ export class GroupedChildAttendanceComponent
   implements OnChanges, OnInitDynamicComponent {
   @Input() child: Child = new Child("");
 
+  loading: boolean = true;
   activities: RecurringActivity[] = [];
 
   constructor(private attendanceService: AttendanceService) {}
@@ -28,8 +31,10 @@ export class GroupedChildAttendanceComponent
   }
 
   private async loadActivities() {
+    this.loading = true;
     this.activities = await this.attendanceService.getActivitiesForChild(
       this.child.getId()
     );
+    this.loading = false;
   }
 }

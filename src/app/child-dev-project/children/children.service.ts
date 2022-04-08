@@ -3,10 +3,10 @@ import { from, Observable, Subject } from "rxjs";
 import { Child } from "./model/child";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { Note } from "../notes/model/note";
-import { EducationalMaterial } from "../educational-material/model/educational-material";
-import { Aser } from "../aser/model/aser";
+import { EducationalMaterial } from "./educational-material/model/educational-material";
+import { Aser } from "./aser/model/aser";
 import { ChildSchoolRelation } from "./model/childSchoolRelation";
-import { HealthCheck } from "../health-checkup/model/health-check";
+import { HealthCheck } from "./health-checkup/model/health-check";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { ChildPhotoService } from "./child-photo-service/child-photo.service";
 import moment, { Moment } from "moment";
@@ -292,7 +292,7 @@ export class ChildrenService {
     };
   }
 
-  async getSchoolRelationsFor(childId: string): Promise<ChildSchoolRelation[]> {
-    return await this.querySortedRelations(childId);
+  getSchoolRelationsFor(childId: string): Promise<ChildSchoolRelation[]> {
+    return this.querySortedRelations(childId);
   }
 }

@@ -5,13 +5,14 @@ import { moduleMetadata } from "@storybook/angular";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { CommonModule } from "@angular/common";
 import { addDefaultChildPhoto } from "../../../../../.storybook/utils/addDefaultChildPhoto";
+import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
 export default {
   title: "Child Dev Project/ChildBlock",
   component: ChildBlockComponent,
   decorators: [
     moduleMetadata({
-      imports: [CommonModule, FlexLayoutModule],
+      imports: [CommonModule, FlexLayoutModule, StorybookBaseModule],
     }),
   ],
 } as Meta;

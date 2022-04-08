@@ -5,11 +5,11 @@ import { School } from "../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
 import { genders } from "../../child-dev-project/children/model/genders";
-import { materials } from "../../child-dev-project/educational-material/model/materials";
-import { mathLevels } from "../../child-dev-project/aser/model/mathLevels";
-import { readingLevels } from "../../child-dev-project/aser/model/readingLevels";
+import { materials } from "../../child-dev-project/children/educational-material/model/materials";
+import { mathLevels } from "../../child-dev-project/children/aser/model/mathLevels";
+import { readingLevels } from "../../child-dev-project/children/aser/model/readingLevels";
 import { warningLevels } from "../../child-dev-project/warning-levels";
-import { ratingAnswers } from "../../features/historical-data/rating-answers";
+import { ratingAnswers } from "../../features/historical-data/model/rating-answers";
 
 // prettier-ignore
 export const defaultJsonConfig = {
@@ -52,6 +52,11 @@ export const defaultJsonConfig = {
         "name": $localize`:Menu item:Admin`,
         "icon": "wrench",
         "link": "/admin"
+      },
+      {
+        "name": $localize`:Menu item:Import`,
+        "icon": "file-import",
+        "link": "/import"
       },
       {
         "name": $localize`:Menu item:Users`,
@@ -282,6 +287,10 @@ export const defaultJsonConfig = {
   },
   "view:admin": {
     "component": "Admin",
+    "permittedUserRoles": ["admin_app"]
+  },
+  "view:import": {
+    "component": "Import",
     "permittedUserRoles": ["admin_app"]
   },
   "view:users": {
@@ -561,8 +570,6 @@ export const defaultJsonConfig = {
               "config": {
                 "single": true,
                 "columns": [
-                  "schoolId",
-                  "schoolClass",
                   {
                     id: "start",
                     visibleFrom: "sm",
@@ -571,6 +578,8 @@ export const defaultJsonConfig = {
                     id: "end",
                     visibleFrom: "sm",
                   },
+                  "schoolId",
+                  "schoolClass",
                   "result",
                 ],
               }

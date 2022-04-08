@@ -155,7 +155,7 @@ export class AttendanceService {
         String(sinceDate.getDate()).padStart(2, "0");
     }
 
-    return await this.dbIndexing.queryIndexDocsRange(
+    return this.dbIndexing.queryIndexDocsRange(
       EventNote,
       "events_index/by_activity",
       activityId + dateLimit,
@@ -281,7 +281,9 @@ export class AttendanceService {
     const childIdPromises = linkedGroups.map((groupId) =>
       this.childrenService
         .queryRelationsOf("school", groupId)
-        .then((relations) => relations.map((r) => r.childId))
+        .then((relations) =>
+          relations.map((r) => r.childId).filter((id) => !!id)
+        )
     );
     const allParticipants = await Promise.all(childIdPromises);
     // flatten and remove duplicates

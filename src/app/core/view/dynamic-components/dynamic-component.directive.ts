@@ -8,8 +8,7 @@ import {
 } from "@angular/core";
 import { DynamicComponentConfig } from "./dynamic-component-config.interface";
 import { OnInitDynamicComponent } from "./on-init-dynamic-component.interface";
-import { DYNAMIC_COMPONENTS_MAP } from "../dynamic-components-map";
-import { LoggingService } from "../../logging/logging.service";
+import { ViewRegistry } from "./dynamic-component.decorator";
 
 /**
  * Directive to mark a template into which a component that is dynamically injected from config should be loaded
@@ -28,7 +27,7 @@ export class DynamicComponentDirective implements OnChanges {
   constructor(
     public viewContainerRef: ViewContainerRef,
     private componentFactoryResolver: ComponentFactoryResolver,
-    private loggingService: LoggingService
+    private registry: ViewRegistry
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -40,17 +39,7 @@ export class DynamicComponentDirective implements OnChanges {
       return;
     }
 
-    const component = DYNAMIC_COMPONENTS_MAP.get(
-      this.appDynamicComponent.component
-    );
-    if (!component) {
-      this.loggingService.warn(
-        "Could not load dashboard widget - component not found: " +
-          this.appDynamicComponent.component
-      );
-      return;
-    }
-
+    const component = this.registry.get(this.appDynamicComponent.component);
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory<OnInitDynamicComponent>(
       component
     );

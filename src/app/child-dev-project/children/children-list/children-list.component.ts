@@ -13,8 +13,10 @@ import { School } from "../../schools/model/school";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
+import { RouteTarget } from "../../../app.routing";
 
 @UntilDestroy()
+@RouteTarget("ChildrenList")
 @Component({
   selector: "app-children-list",
   template: `
@@ -90,15 +92,14 @@ export class ChildrenListComponent implements OnInit {
     const options: FilterSelectionOption<Child>[] = [
       { key: "", label: $localize`All`, filterFun: () => true },
     ];
-    schools
-      .sort((s1, s2) => s1.name.localeCompare(s2.name))
-      .forEach((school) =>
-        options.push({
-          key: school.getId(),
-          label: school.name,
-          filterFun: (c) => c.schoolId === school.getId(),
-        })
-      );
+    schools.sort((s1, s2) => s1.name.localeCompare(s2.name));
+    schools.forEach((school) =>
+      options.push({
+        key: school.getId(),
+        label: school.name,
+        filterFun: (c) => c.schoolId === school.getId(),
+      })
+    );
     return options;
   }
 }

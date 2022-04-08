@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
-import { HealthCheck } from "../../../health-checkup/model/health-check";
+import { HealthCheck } from "../../health-checkup/model/health-check";
 import { of } from "rxjs";
 import { ChildrenService } from "../../children.service";
 import { Child } from "../../model/child";

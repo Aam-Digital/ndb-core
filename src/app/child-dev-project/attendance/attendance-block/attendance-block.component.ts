@@ -18,8 +18,6 @@ export class AttendanceBlockComponent implements OnChanges {
   LStatus = AttendanceLogicalStatus;
   logicalCount: { [key in AttendanceLogicalStatus]?: number };
 
-  constructor() {}
-
   ngOnChanges() {
     this.logicalCount =
       this.attendanceData.individualLogicalStatusCounts.get(this.forChild) ??

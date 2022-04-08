@@ -1,38 +1,16 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { DemoChildGenerator } from "../../../children/demo-data-generators/demo-child-generator.service";
 import { addDefaultChildPhoto } from "../../../../../../.storybook/utils/addDefaultChildPhoto";
 import { moduleMetadata } from "@storybook/angular";
-import { CommonModule } from "@angular/common";
-import { MatButtonModule } from "@angular/material/button";
 import { RollCallSetupComponent } from "./roll-call-setup.component";
-import { MatInputModule } from "@angular/material/input";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatDatepickerModule } from "@angular/material/datepicker";
-import { FlexLayoutModule } from "@angular/flex-layout";
-import { MatButtonToggleModule } from "@angular/material/button-toggle";
-import { MatNativeDateModule } from "@angular/material/core";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { ReactiveFormsModule } from "@angular/forms";
-import { MatStepperModule } from "@angular/material/stepper";
-import { ChildrenService } from "../../../children/children.service";
-import { MatSelectModule } from "@angular/material/select";
-import { MatListModule } from "@angular/material/list";
-import { AttendanceService } from "../../attendance.service";
 import moment from "moment";
-import { Database } from "../../../../core/database/database";
-import { EntityModule } from "../../../../core/entity/entity.module";
-import { DatabaseIndexingService } from "../../../../core/entity/database-indexing/database-indexing.service";
-import { ChildPhotoService } from "../../../children/child-photo-service/child-photo.service";
-import { MatCardModule } from "@angular/material/card";
 import { Note } from "../../../notes/model/note";
-import { ActivityCardComponent } from "../../activity-card/activity-card.component";
-import { MatTooltipModule } from "@angular/material/tooltip";
 import { DemoActivityGeneratorService } from "../../demo-data/demo-activity-generator.service";
-import { FormDialogModule } from "../../../../core/form-dialog/form-dialog.module";
-import { PouchDatabase } from "../../../../core/database/pouch-database";
 import { SessionService } from "../../../../core/session/session-service/session.service";
-import { Angulartics2Module } from "angulartics2";
-import { RouterTestingModule } from "@angular/router/testing";
+import { AttendanceModule } from "../../attendance.module";
+import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
+import { MockSessionModule } from "../../../../core/session/mock-session.module";
+import { LoginState } from "../../../../core/session/session-states/login-state.enum";
 
 const demoEvents: Note[] = [
   Note.create(new Date(), "Class 5a Parents Meeting"),
@@ -70,40 +48,15 @@ export default {
   decorators: [
     moduleMetadata({
       imports: [
-        CommonModule,
-        BrowserAnimationsModule,
-        MatButtonModule,
-        MatButtonToggleModule,
-        MatInputModule,
-        MatFormFieldModule,
-        MatDatepickerModule,
-        MatNativeDateModule,
-        MatStepperModule,
-        MatSelectModule,
-        MatListModule,
-        MatCardModule,
-        MatTooltipModule,
-        ReactiveFormsModule,
-        FlexLayoutModule,
-        EntityModule,
-        FormDialogModule,
-        Angulartics2Module.forRoot(),
-        RouterTestingModule,
+        AttendanceModule,
+        StorybookBaseModule,
+        MockSessionModule.withState(LoginState.LOGGED_IN, [
+          ...demoChildren,
+          ...demoEvents,
+          ...demoActivities,
+        ]),
       ],
-      declarations: [ActivityCardComponent],
       providers: [
-        ChildrenService,
-        AttendanceService,
-        {
-          provide: Database,
-          useValue: PouchDatabase.createWithData([
-            ...demoChildren,
-            ...demoEvents,
-            ...demoActivities,
-          ]),
-        },
-        DatabaseIndexingService,
-        ChildPhotoService,
         {
           provide: SessionService,
           useValue: {

@@ -1,4 +1,10 @@
-import { Component, EventEmitter, OnInit, Output } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  ViewChild,
+} from "@angular/core";
 import { AttendanceService } from "../../attendance.service";
 import { Note } from "../../../notes/model/note";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
@@ -8,6 +14,9 @@ import { NoteDetailsComponent } from "../../../notes/note-details/note-details.c
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
 import { FilterComponentSettings } from "../../../../core/entity-components/entity-list/filter-component.settings";
 import { FilterGeneratorService } from "../../../../core/entity-components/entity-list/filter-generator.service";
+import { AlertService } from "../../../../core/alerts/alert.service";
+import { AlertDisplay } from "../../../../core/alerts/alert-display";
+import { NgModel } from "@angular/forms";
 
 @Component({
   selector: "app-roll-call-setup",
@@ -28,6 +37,8 @@ export class RollCallSetupComponent implements OnInit {
 
   showingAll: boolean = false;
 
+  @ViewChild("dateField") dateField: NgModel;
+
   /**
    * filters are displayed in the UI only if at least this many events are listed.
    *
@@ -40,7 +51,8 @@ export class RollCallSetupComponent implements OnInit {
     private attendanceService: AttendanceService,
     private sessionService: SessionService,
     private formDialog: FormDialogService,
-    private filterGenerator: FilterGeneratorService
+    private filterGenerator: FilterGeneratorService,
+    private alertService: AlertService
   ) {}
 
   async ngOnInit() {
@@ -133,7 +145,7 @@ export class RollCallSetupComponent implements OnInit {
       return score;
     };
 
-    this.existingEvents = this.existingEvents.sort(
+    this.existingEvents.sort(
       (a, b) => calculateEventPriority(b) - calculateEventPriority(a)
     );
   }
@@ -185,6 +197,17 @@ export class RollCallSetupComponent implements OnInit {
   ) {
     selectedFilter.selectedOption = optionKey;
     this.filterExistingEvents();
+  }
+
+  selectEvent(event: NoteForActivitySetup) {
+    if (this.dateField.valid) {
+      this.eventSelected.emit(event);
+    } else {
+      this.alertService.addWarning(
+        $localize`:Alert when selected date is invalid:Invalid Date`,
+        AlertDisplay.TEMPORARY
+      );
+    }
   }
 }
 

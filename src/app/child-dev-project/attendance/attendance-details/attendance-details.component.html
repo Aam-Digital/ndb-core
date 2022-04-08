@@ -40,22 +40,15 @@
       </div>
     </div>
 
-    <div fxLayout="row wrap" fxLayoutGap="20px">
+    <div fxLayout="row wrap" fxLayoutGap="20px" *ngIf="focusedChild">
       <div fxFlex>
         <mat-form-field>
           <input
             matInput
             type="number"
-            min="0"
-            i18n-placeholder="
-              days present|How many days a child or a class was present
-            "
+            i18n-placeholder="days present|How many days a child was present"
             placeholder="days present"
-            [value]="
-              focusedChild
-                ? entity.countEventsPresent(focusedChild)
-                : entity.countEventsPresentAverage(true)
-            "
+            [value]="entity.countEventsPresent(focusedChild)"
             readonly
           />
         </mat-form-field>
@@ -66,16 +59,9 @@
           <input
             matInput
             type="number"
-            min="0"
-            i18n-placeholder="
-              days absent|How many days a child or a class was absent
-            "
+            i18n-placeholder="days absent|How many days a child was absent"
             placeholder="days absent"
-            [value]="
-              focusedChild
-                ? entity.countEventsAbsent(focusedChild)
-                : entity.countEventsAbsentAverage(true)
-            "
+            [value]="entity.countEventsAbsent(focusedChild)"
             readonly
           />
         </mat-form-field>
@@ -86,20 +72,50 @@
           <input
             matInput
             type="number"
-            min="0"
-            i18n-placeholder="
-              days absent|How many days the presence or absence of a child is
-              unknown
-            "
+            i18n-placeholder="days absent|How many days the presence or absence of a child is unknown"
             placeholder="unknown status"
-            [value]="
-              focusedChild
-                ? entity.countEventsWithStatusForChild(
-                    UnknownStatus,
-                    focusedChild
-                  )
-                : entity.countEventsWithUnknownStatus()
-            "
+            [value]="entity.countEventsWithUnknownStatus(focusedChild)"
+            readonly
+          />
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div fxLayout="row wrap" fxLayoutGap="20px" *ngIf="!focusedChild">
+      <div fxFlex>
+        <mat-form-field>
+          <input
+            matInput
+            type="number"
+            i18n-placeholder="Total present|How many children were present"
+            placeholder="Total present"
+            [value]="entity.countTotalPresent()"
+            readonly
+          />
+        </mat-form-field>
+      </div>
+
+      <div fxFlex>
+        <mat-form-field>
+          <input
+            matInput
+            type="number"
+            i18n-placeholder="Total absent|How many children were absent"
+            placeholder="Total absent"
+            [value]="entity.countTotalAbsent()"
+            readonly
+          />
+        </mat-form-field>
+      </div>
+
+      <div fxFlex>
+        <mat-form-field>
+          <input
+            matInput
+            type="number"
+            i18n-placeholder="Total unknown|How many children have an unknown presence or absence status"
+            placeholder="Total unknown"
+            [value]="entity.countEventsWithUnknownStatus()"
             readonly
           />
         </mat-form-field>

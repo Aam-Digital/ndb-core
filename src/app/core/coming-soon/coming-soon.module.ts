@@ -39,6 +39,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     ]),
     FontAwesomeModule,
   ],
-  exports: [RouterModule],
+  exports: [RouterModule, ComingSoonComponent],
 })
 export class ComingSoonModule {}

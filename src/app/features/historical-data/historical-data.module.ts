@@ -9,4 +9,6 @@ import { EntityUtilsModule } from "../../core/entity-components/entity-utils/ent
   imports: [CommonModule, EntitySubrecordModule, EntityUtilsModule],
   exports: [HistoricalDataComponent],
 })
-export class HistoricalDataModule {}
+export class HistoricalDataModule {
+  static dynamicComponents = [HistoricalDataComponent];
+}

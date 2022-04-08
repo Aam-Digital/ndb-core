@@ -12,11 +12,10 @@ describe("Scenario: Recording attendance of a child - E2E test", () => {
 
   // AND I set the attendance of the specific child to 'present'
   it("set the attendance of the specific child to 'present'", function () {
-    cy.contains("button", "Show more").click({ force: true });
-    cy.get(".mat-card", { timeout: 10000 })
-      .should("be.visible")
+    cy.contains("button", "Show more").click({ scrollBehavior: "center" });
+    cy.contains("mat-card", "School Class")
       .eq(0)
-      .click({ force: true });
+      .click({ scrollBehavior: "center" });
     cy.get(".options-wrapper > :nth-child(1)").click();
     cy.get('[fxflex=""] > .ng-star-inserted > .mat-focus-indicator').click();
     cy.contains("button", "Save").click();

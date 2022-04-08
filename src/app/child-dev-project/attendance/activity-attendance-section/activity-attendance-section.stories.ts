@@ -3,67 +3,71 @@ import { moduleMetadata } from "@storybook/angular";
 import { RecurringActivity } from "../model/recurring-activity";
 import { ActivityAttendanceSectionComponent } from "./activity-attendance-section.component";
 import { AttendanceModule } from "../attendance.module";
-import { RouterTestingModule } from "@angular/router/testing";
-import { AttendanceService } from "../attendance.service";
 import {
   ActivityAttendance,
   generateEventWithAttendance,
 } from "../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
-import { MatNativeDateModule } from "@angular/material/core";
+import { StorybookBaseModule } from "../../../utils/storybook-base.module";
+import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { AttendanceService } from "../attendance.service";
 import { ChildrenService } from "../../children/children.service";
 import { of } from "rxjs";
 import { Child } from "../../children/model/child";
-import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
-import { Angulartics2Module } from "angulartics2";
-import { MockSessionModule } from "../../../core/session/mock-session.module";
+import moment from "moment";
 
 const demoActivity = RecurringActivity.create("Coaching Batch C");
 const attendanceRecords = [
-  ActivityAttendance.create(new Date("2020-01-01"), [
+  ActivityAttendance.create(
+    moment().subtract(1, "month").startOf("month").toDate(),
+    [
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.ABSENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ]),
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ]),
+    ]
+  ),
+
+  ActivityAttendance.create(moment().startOf("month").toDate(), [
     generateEventWithAttendance(
       [
         ["1", AttendanceLogicalStatus.PRESENT],
         ["2", AttendanceLogicalStatus.PRESENT],
         ["3", AttendanceLogicalStatus.ABSENT],
       ],
-      new Date("2020-01-01")
+      moment().subtract(5, "days").toDate()
     ),
     generateEventWithAttendance(
       [
         ["1", AttendanceLogicalStatus.PRESENT],
         ["2", AttendanceLogicalStatus.ABSENT],
       ],
-      new Date("2020-01-02")
+      moment().subtract(4, "days").toDate()
     ),
     generateEventWithAttendance(
       [
         ["1", AttendanceLogicalStatus.ABSENT],
         ["2", AttendanceLogicalStatus.ABSENT],
       ],
-      new Date("2020-01-03")
+      moment().subtract(3, "days").toDate()
     ),
     generateEventWithAttendance(
       [
         ["1", AttendanceLogicalStatus.PRESENT],
         ["2", AttendanceLogicalStatus.ABSENT],
       ],
-      new Date("2020-01-04")
+      moment().subtract(2, "days").toDate()
     ),
   ]),
-
-  ActivityAttendance.create(new Date("2020-02-01"), [
-    generateEventWithAttendance([
-      ["1", AttendanceLogicalStatus.ABSENT],
-      ["2", AttendanceLogicalStatus.ABSENT],
-    ]),
-    generateEventWithAttendance([
-      ["1", AttendanceLogicalStatus.PRESENT],
-      ["2", AttendanceLogicalStatus.ABSENT],
-    ]),
-  ]),
 ];
-attendanceRecords.forEach((a) => (a.activity = demoActivity));
+attendanceRecords.forEach((a) => {
+  a.activity = demoActivity;
+  a.periodTo = moment(a.periodFrom).endOf("month").toDate();
+});
 
 export default {
   title: "Attendance/Sections/ActivityAttendanceSection",
@@ -72,13 +76,9 @@ export default {
     moduleMetadata({
       imports: [
         AttendanceModule,
-        EntitySubrecordModule,
-        RouterTestingModule,
-        MatNativeDateModule,
-        Angulartics2Module.forRoot(),
+        StorybookBaseModule,
         MockSessionModule.withState(),
       ],
-      declarations: [],
       providers: [
         {
           provide: AttendanceService,

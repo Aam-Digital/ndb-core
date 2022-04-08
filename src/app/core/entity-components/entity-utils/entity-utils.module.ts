@@ -35,7 +35,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { EntitySubrecordModule } from "../entity-subrecord/entity-subrecord.module";
 import { ErrorHintComponent } from "./error-hint/error-hint.component";
-import { KeysPipeModule } from "../../keys-pipe/keys-pipe.module";
 
 @NgModule({
   declarations: [
@@ -77,27 +76,32 @@ import { KeysPipeModule } from "../../keys-pipe/keys-pipe.module";
     FontAwesomeModule,
     MatButtonModule,
     EntitySubrecordModule,
-    KeysPipeModule,
   ],
-  entryComponents: [
-    EditTextComponent,
-    EditDateComponent,
-    EditAgeComponent,
-    EditBooleanComponent,
-    EditLongTextComponent,
-    EditPhotoComponent,
-    EditEntityArrayComponent,
-    EditSingleEntityComponent,
+  exports: [
     DisplayEntityComponent,
     DisplayEntityArrayComponent,
-    DisplayTextComponent,
-    DisplayDateComponent,
-    DisplayCheckmarkComponent,
-    ReadonlyFunctionComponent,
-    DisplayPercentageComponent,
-    DisplayUnitComponent,
-    EditNumberComponent,
+    EntitySelectComponent,
+    EditSingleEntityComponent,
   ],
-  exports: [DisplayEntityComponent, EntitySelectComponent],
 })
-export class EntityUtilsModule {}
+export class EntityUtilsModule {
+  static dynamicComponents = [
+    EditAgeComponent,
+    EditBooleanComponent,
+    EditEntityArrayComponent,
+    EditLongTextComponent,
+    EditNumberComponent,
+    EditPhotoComponent,
+    EditSingleEntityComponent,
+    EditTextComponent,
+    EditDateComponent,
+    DisplayCheckmarkComponent,
+    DisplayDateComponent,
+    DisplayEntityComponent,
+    DisplayEntityArrayComponent,
+    DisplayPercentageComponent,
+    DisplayTextComponent,
+    DisplayUnitComponent,
+    ReadonlyFunctionComponent,
+  ];
+}
