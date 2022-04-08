@@ -9,6 +9,7 @@ import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { PwaInstallService } from "./pwa-install.service";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { WINDOW_TOKEN } from "../utils/di-tokens";
 @NgModule({
   declarations: [PwaInstallComponent],
   imports: [
@@ -21,7 +22,7 @@ import { MatSnackBarModule } from "@angular/material/snack-bar";
     MatToolbarModule,
     MatSnackBarModule,
   ],
-  providers: [PwaInstallService],
+  providers: [PwaInstallService, { provide: WINDOW_TOKEN, useValue: window }],
   exports: [PwaInstallComponent],
 })
 export class PwaInstallModule {

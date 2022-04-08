@@ -1,7 +1,7 @@
-import { Injectable } from "@angular/core";
+import { Inject, Injectable } from "@angular/core";
+import { WINDOW_TOKEN } from "../utils/di-tokens";
 
 export enum PWAInstallType {
-  InstallDirectly,
   ShowiOSInstallInstructions,
   RunningAsPWA,
   NotAvailable,
@@ -32,20 +32,27 @@ export class PwaInstallService {
   canInstallDirectly: Promise<void>;
 
   private deferredInstallPrompt: any;
-  private readonly userAgent: string;
 
-  constructor() {
-    this.userAgent = window.navigator.userAgent;
-  }
+  constructor(@Inject(WINDOW_TOKEN) private window: Window) {}
 
   registerPWAInstallListener() {
     this.canInstallDirectly = new Promise((resolve) => {
-      window.addEventListener("beforeinstallprompt", (e) => {
+      this.window.addEventListener("beforeinstallprompt", (e) => {
         e.preventDefault();
         this.deferredInstallPrompt = e;
         resolve();
       });
     });
+  }
+
+  installPWA(): Promise<any> {
+    if (!this.deferredInstallPrompt) {
+      throw new Error(
+        "InstallPWA called, but PWA install prompt has not fired."
+      );
+    }
+    this.deferredInstallPrompt.prompt();
+    return this.deferredInstallPrompt.userChoice;
   }
 
   getPWAInstallType(): PWAInstallType {
@@ -65,17 +72,18 @@ export class PwaInstallService {
 
   private detectOS(): OS {
     let os: OS;
-    if (/iphone|ipad|ipod|macintosh/i.test(this.userAgent)) {
-      if (window.innerWidth < 1025) {
+    const userAgent = this.window.navigator.userAgent;
+    if (/iphone|ipad|ipod|macintosh/i.test(userAgent)) {
+      if (this.window.innerWidth < 1025) {
         os = OS.iOS;
       } else {
         os = OS.MacOS;
       }
-    } else if (/android/i.test(this.userAgent)) {
+    } else if (/android/i.test(userAgent)) {
       os = OS.Android;
-    } else if (/windows|win32|win64|WinCE/i.test(this.userAgent)) {
+    } else if (/windows|win32|win64|WinCE/i.test(userAgent)) {
       os = OS.Windows;
-    } else if (/linux|X11/i.test(this.userAgent)) {
+    } else if (/linux|X11/i.test(userAgent)) {
       os = OS.Linux;
     }
     return os;
@@ -83,20 +91,21 @@ export class PwaInstallService {
 
   private detectBrowser(): Browser {
     let browser: Browser;
-    if (/opera/i.test(this.userAgent)) {
+    const userAgent = this.window.navigator.userAgent;
+    if (/opera/i.test(userAgent)) {
       browser = Browser.Opera;
-    } else if (/msie|trident/i.test(this.userAgent)) {
+    } else if (/msie|trident/i.test(userAgent)) {
       browser = Browser.MicrosoftInternetExplorer;
-    } else if (/edg/i.test(this.userAgent)) {
+    } else if (/edg/i.test(userAgent)) {
       browser = Browser.Edge;
-    } else if (/chrome/i.test(this.userAgent)) {
+    } else if (/chrome/i.test(userAgent)) {
       browser = Browser.Chrome;
-    } else if (/safari/i.test(this.userAgent)) {
+    } else if (/safari/i.test(userAgent)) {
       browser = Browser.Safari;
-      if (/crios|fxios/i.test(this.userAgent)) {
+      if (/crios|fxios/i.test(userAgent)) {
         browser = Browser.Chrome;
       }
-    } else if (/firefox/i.test(this.userAgent)) {
+    } else if (/firefox/i.test(userAgent)) {
       browser = Browser.Firefox;
     } else {
       browser = Browser.Other;
@@ -106,18 +115,9 @@ export class PwaInstallService {
 
   private detectStandaloneMode(): boolean {
     return (
-      ("standalone" in window.navigator && window.navigator["standalone"]) ||
-      window.matchMedia("(display-mode: standalone)").matches
+      ("standalone" in this.window.navigator &&
+        this.window.navigator["standalone"]) ||
+      this.window.matchMedia("(display-mode: standalone)").matches
     );
-  }
-
-  installPWA(): Promise<any> {
-    if (!this.deferredInstallPrompt) {
-      throw new Error(
-        "InstallPWA called, but PWA install prompt has not fired."
-      );
-    }
-    this.deferredInstallPrompt.prompt();
-    return this.deferredInstallPrompt.userChoice;
   }
 }
