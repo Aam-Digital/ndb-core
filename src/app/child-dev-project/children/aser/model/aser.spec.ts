@@ -16,8 +16,7 @@
  */
 
 import { Aser } from "./aser";
-import { mathLevels } from "./mathLevels";
-import { readingLevels } from "./readingLevels";
+import { mathLevels, readingLevels } from "./skill-levels";
 import { WarningLevel } from "../../../../core/entity/model/warning-level";
 import { testEntitySubclass } from "../../../../core/entity/model/entity.spec";
 
@@ -41,7 +40,7 @@ describe("Aser", () => {
     expect(entity.getWarningLevel()).toBe(WarningLevel.OK);
   });
 
-  it("warning level WARNING if some bad results", function () {
+  it("warning level WARNING if some results are not passed", function () {
     const id = "test1";
     const entity = new Aser(id);
     entity.english = readingLevels[1];
@@ -50,19 +49,29 @@ describe("Aser", () => {
     expect(entity.getWarningLevel()).toBe(WarningLevel.WARNING);
   });
 
-  it("has a warning level of OK if english is at it's highest level", () => {
+  it("has a warning level of OK if english is passed", () => {
     const entity = new Aser();
-    entity.english = readingLevels[readingLevels.length - 1];
+    entity.english = readingLevels.find((l) => l.passed);
 
     expect(entity.getWarningLevel()).toBe(WarningLevel.OK);
   });
 
-  it("has a warning level of OK if all values are at it's highest level", () => {
+  it("has a warning level of OK if all skills are passed", () => {
     const entity = new Aser();
-    entity.math = mathLevels[mathLevels.length - 1];
-    entity.english = readingLevels[readingLevels.length - 1];
-    entity.hindi = readingLevels[readingLevels.length - 1];
-    entity.bengali = readingLevels[readingLevels.length - 1];
+    entity.math = mathLevels.find((l) => l.passed);
+    entity.english = readingLevels.find((l) => l.passed);
+    entity.hindi = readingLevels.find((l) => l.passed);
+    entity.bengali = readingLevels.find((l) => l.passed);
+
+    expect(entity.getWarningLevel()).toBe(WarningLevel.OK);
+  });
+
+  it("has warning level OK if some subjects are passed and others are empty", () => {
+    const entity = new Aser();
+    entity.math = mathLevels.find((l) => l.passed);
+    entity.english = readingLevels.find((l) => l.passed);
+    entity.hindi = readingLevels.find((l) => l.id === "");
+    entity.bengali = undefined;
 
     expect(entity.getWarningLevel()).toBe(WarningLevel.OK);
   });

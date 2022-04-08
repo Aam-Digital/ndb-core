@@ -41,6 +41,7 @@ import { PermissionsModule } from "../permissions/permissions.module";
 import { EntityUtilsModule } from "../entity-components/entity-utils/entity-utils.module";
 import { TranslationModule } from "../translation/translation.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { PwaInstallModule } from "app/pwa-install/pwa-install.module";
 
 /**
  * The core user interface structure that ties different components together into the overall app layout.
@@ -70,6 +71,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     ReactiveFormsModule,
     TranslationModule,
     FontAwesomeModule,
+    PwaInstallModule,
   ],
   declarations: [SearchComponent, UiComponent, PrimaryActionComponent],
   exports: [UiComponent],

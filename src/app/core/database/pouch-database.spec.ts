@@ -272,37 +272,4 @@ describe("PouchDatabase tests", () => {
       jasmine.objectContaining({ id: "5", ok: true }),
     ]);
   });
-
-  it("should log the ID when putting a doc with wrong rev", async () => {
-    const doc = {
-      _id: "someId",
-      _rev: "1-invalidRev",
-    };
-    return expectPromiseToRejectWithDocId(database.put(doc), doc._id);
-  });
-
-  it("should log the ID when removing a not existing doc", () => {
-    const notExistingDoc = {
-      _id: "not_existing_id",
-      _rev: "1-someRev",
-    };
-    return expectPromiseToRejectWithDocId(
-      database.remove(notExistingDoc),
-      notExistingDoc._id
-    );
-  });
-
-  it("should log the view name when querying a not existing view", () => {
-    const notExistingView = "search_index/by_name";
-    return expectPromiseToRejectWithDocId(
-      database.query(notExistingView, {}),
-      notExistingView
-    );
-  });
-
-  function expectPromiseToRejectWithDocId(prom: Promise<any>, id: string) {
-    return prom
-      .then(() => fail())
-      .catch((e) => expect(e.affectedDocument).toBe(id));
-  }
 });
