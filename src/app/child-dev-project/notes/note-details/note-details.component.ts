@@ -19,9 +19,6 @@ import { EntityListConfig } from "../../../core/entity-components/entity-list/En
   styleUrls: ["./note-details.component.scss"],
 })
 export class NoteDetailsComponent implements ShowsEntity<Note> {
-  get isMeeting(): boolean {
-    return this.entity.category?.isMeeting || false;
-  }
   @Input() entity: Note;
   @ViewChild("dialogForm", { static: true }) formDialogWrapper;
 

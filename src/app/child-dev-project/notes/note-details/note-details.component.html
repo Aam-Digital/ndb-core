@@ -156,7 +156,7 @@
       [(selection)]="entity.children"
       (selectionChange)="entityForm.form.markAsDirty()"
       [additionalFilter]="filterInactiveChildren"
-      [showEntities]="!isMeeting"
+      [showEntities]="!entity.category?.isMeeting"
       label="Participants"
       i18n-label="Participants of a note"
       placeholder="Add participant ..."
@@ -174,7 +174,7 @@
       </mat-option>
     </app-entity-select>
 
-    <div *ngIf="isMeeting">
+    <div *ngIf="entity.category?.isMeeting">
       <app-child-meeting-note-attendance
         *ngFor="let childId of entity.children"
         [childId]="childId"
