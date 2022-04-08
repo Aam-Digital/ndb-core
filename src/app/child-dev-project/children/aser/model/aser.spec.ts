@@ -65,4 +65,14 @@ describe("Aser", () => {
 
     expect(entity.getWarningLevel()).toBe(WarningLevel.OK);
   });
+
+  it("has warning level OK if some subjects are passed and others are empty", () => {
+    const entity = new Aser();
+    entity.math = mathLevels.find((l) => l.passed);
+    entity.english = readingLevels.find((l) => l.passed);
+    entity.hindi = readingLevels.find((l) => l.id === "");
+    entity.bengali = undefined;
+
+    expect(entity.getWarningLevel()).toBe(WarningLevel.OK);
+  });
 });

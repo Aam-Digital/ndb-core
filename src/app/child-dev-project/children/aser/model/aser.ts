@@ -58,7 +58,6 @@ export class Aser extends Entity {
   })
   remarks: string = "";
 
-  otherProp = "otherProp";
   getWarningLevel(): WarningLevel {
     if (this.hasPassedEverything()) {
       return WarningLevel.OK;
@@ -72,6 +71,10 @@ export class Aser extends Entity {
     const schema = this.getSchema();
     return Object.keys(this)
       .filter((key) => schema.get(key)?.dataType === configurableEnum)
-      .every((key) => !!(this[key] as SkillLevel).passed);
+      .every((key) => this.isPassed(this[key]));
+  }
+
+  private isPassed(value: SkillLevel): boolean {
+    return !value || value.id === "" || value.passed;
   }
 }
