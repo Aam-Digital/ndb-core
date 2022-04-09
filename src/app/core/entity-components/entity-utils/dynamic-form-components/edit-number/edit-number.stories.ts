@@ -14,7 +14,7 @@ import { EntityPermissionsService } from "../../../../permissions/entity-permiss
 import { StorybookBaseModule } from "../../../../../utils/storybook-base.module";
 
 export default {
-  title: "Core/Entity Property Fields/Number",
+  title: "Core/EntityComponents/Entity Property Fields/Number",
   component: EntityFormComponent,
   decorators: [
     moduleMetadata({

@@ -5,7 +5,7 @@ import { DashboardWidgetComponent } from "./dashboard-widget.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
 export default {
-  title: "Core/Dashboard Base Widget",
+  title: "Core/Dashboards/Dashboard Base Widget",
   component: DashboardWidgetComponent,
   decorators: [
     moduleMetadata({

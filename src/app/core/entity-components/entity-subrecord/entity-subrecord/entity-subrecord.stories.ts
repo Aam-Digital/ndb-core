@@ -37,7 +37,7 @@ const data = new DemoNoteGeneratorService(
 ).generateEntities();
 
 export default {
-  title: "Core/EntitySubrecord",
+  title: "Core/EntityComponents/EntitySubrecord",
   component: EntitySubrecordComponent,
   decorators: [
     moduleMetadata({
