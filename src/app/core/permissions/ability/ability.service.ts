@@ -61,7 +61,7 @@ export class AbilityService {
     return this.entityMapper
       .load<Config<DatabaseRules>>(Config, Config.PERMISSION_KEY)
       .then((permissions) => this.updateAbilityWithUserRules(permissions.data))
-      .catch(() => {});
+      .catch(() => undefined);
   }
 
   private async updateAbilityWithUserRules(rules: DatabaseRules) {
@@ -94,7 +94,7 @@ export class AbilityService {
     rules: DatabaseRule[],
     user: DatabaseUser
   ): DatabaseRule[] {
-    return JSON.parse(JSON.stringify(rules), (that, rawValue) => {
+    return JSON.parse(JSON.stringify(rules), (_that, rawValue) => {
       if (rawValue[0] !== "$") {
         return rawValue;
       }

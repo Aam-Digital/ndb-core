@@ -10,7 +10,6 @@ import { AlertsModule } from "../../../../alerts/alerts.module";
 import { Entity } from "../../../../entity/model/entity";
 import { DatabaseField } from "../../../../entity/database-field.decorator";
 import { DatabaseEntity } from "../../../../entity/database-entity.decorator";
-import { EntityPermissionsService } from "../../../../permissions/entity-permissions.service";
 import { StorybookBaseModule } from "../../../../../utils/storybook-base.module";
 
 export default {
