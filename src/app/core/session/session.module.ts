@@ -31,7 +31,6 @@ import { RouterModule } from "@angular/router";
 import { HttpClientModule } from "@angular/common/http";
 import { Database } from "../database/database";
 import { PouchDatabase } from "../database/pouch-database";
-import { DatabaseMigrationDialogComponent } from "./session-service/database-migration-dialog.component";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 
@@ -57,7 +56,7 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
     MatDialogModule,
     MatProgressBarModule,
   ],
-  declarations: [LoginComponent, DatabaseMigrationDialogComponent],
+  declarations: [LoginComponent],
   exports: [LoginComponent],
   providers: [
     sessionServiceProvider,
