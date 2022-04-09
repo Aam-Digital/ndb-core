@@ -2,7 +2,6 @@ import { Injectable } from "@angular/core";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { ComponentType } from "@angular/cdk/overlay";
 import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
-import { FormDialogWrapperComponent } from "./form-dialog-wrapper/form-dialog-wrapper.component";
 import { ShowsEntity } from "./shows-entity.interface";
 import { OnInitDynamicComponent } from "../view/dynamic-components/on-init-dynamic-component.interface";
 import { Entity } from "../entity/model/entity";

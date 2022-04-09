@@ -15,7 +15,7 @@ describe("DemoDataService", () => {
   let mockGeneratorsProviders;
 
   beforeEach(() => {
-    mockEntityMapper = jasmine.createSpyObj(["save"]);
+    mockEntityMapper = jasmine.createSpyObj(["saveAll"]);
     mockDatabase = jasmine.createSpyObj(["isEmpty"]);
     mockDatabase.isEmpty.and.resolveTo(true);
     mockGeneratorsProviders = [

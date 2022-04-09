@@ -8,7 +8,7 @@ import {
 import { HistoricalDataComponent } from "./historical-data.component";
 import { HistoricalDataModule } from "../historical-data.module";
 import { Entity } from "../../../core/entity/model/entity";
-import { HistoricalEntityData } from "../historical-entity-data";
+import { HistoricalEntityData } from "../model/historical-entity-data";
 import moment from "moment";
 import { HistoricalDataService } from "../historical-data.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";

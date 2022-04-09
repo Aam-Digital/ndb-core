@@ -97,7 +97,7 @@ export class FilterGeneratorService {
       this.entities.has(config.type) ||
       this.entities.has(schema.additional)
     ) {
-      return await this.createEntityFilterOption(
+      return this.createEntityFilterOption(
         config.id,
         config.type || schema.additional
       );

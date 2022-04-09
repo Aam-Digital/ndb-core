@@ -1,6 +1,6 @@
-import { Entity } from "../../core/entity/model/entity";
-import { DatabaseEntity } from "../../core/entity/database-entity.decorator";
-import { DatabaseField } from "../../core/entity/database-field.decorator";
+import { Entity } from "../../../core/entity/model/entity";
+import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
+import { DatabaseField } from "../../../core/entity/database-field.decorator";
 
 /**
  * A general class that represents data that is collected for a entity over time.

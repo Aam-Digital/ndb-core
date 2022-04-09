@@ -10,6 +10,7 @@ import { defaultAttendanceStatusTypes } from "../../../core/config/default-confi
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { AttendanceModule } from "../attendance.module";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import moment from "moment";
 
 describe("ActivityAttendanceSectionComponent", () => {
   let component: ActivityAttendanceSectionComponent;
@@ -96,5 +97,49 @@ describe("ActivityAttendanceSectionComponent", () => {
 
     component.updateDisplayedRecords(true);
     expect(component.records).toEqual(component.allRecords);
+  });
+
+  it("should combine all activity attendances to have an all-time overview", async () => {
+    const oldestEvent = EventNote.create(
+      moment().subtract(2, "months").toDate()
+    );
+    const someEvent1 = EventNote.create(
+      moment().subtract(1, "months").toDate()
+    );
+    const someEvent2 = EventNote.create(
+      moment().subtract(1, "months").toDate()
+    );
+    const latestEvent = EventNote.create(new Date());
+    const oldestAttendance = ActivityAttendance.create(oldestEvent.date, [
+      oldestEvent,
+    ]);
+    oldestAttendance.periodTo = oldestEvent.date;
+    const middleAttendance = ActivityAttendance.create(someEvent1.date, [
+      someEvent1,
+      someEvent2,
+    ]);
+    middleAttendance.periodTo = someEvent2.date;
+    const latestAttendance = ActivityAttendance.create(latestEvent.date, [
+      latestEvent,
+    ]);
+    latestAttendance.periodTo = latestEvent.date;
+    mockAttendanceService.getActivityAttendances.and.resolveTo([
+      oldestAttendance,
+      middleAttendance,
+      latestAttendance,
+    ]);
+
+    await component.init();
+
+    expect(component.combinedAttendance.periodFrom).toBe(oldestEvent.date);
+    expect(component.combinedAttendance.periodTo).toBe(latestEvent.date);
+    expect(component.combinedAttendance.events).toEqual(
+      jasmine.arrayWithExactContents([
+        oldestEvent,
+        someEvent1,
+        someEvent2,
+        latestEvent,
+      ])
+    );
   });
 });

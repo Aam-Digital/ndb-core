@@ -292,7 +292,7 @@ export class ChildrenService {
     };
   }
 
-  async getSchoolRelationsFor(childId: string): Promise<ChildSchoolRelation[]> {
-    return await this.querySortedRelations(childId);
+  getSchoolRelationsFor(childId: string): Promise<ChildSchoolRelation[]> {
+    return this.querySortedRelations(childId);
   }
 }

@@ -22,6 +22,37 @@
   <h1>{{ entity.date | date }}: {{ entity.subject }}</h1>
 
   <form #entityForm="ngForm" class="form-wrapper">
+    <div class="additional-actions-menu">
+      <button
+        mat-icon-button
+        [matMenuTriggerFor]="additional"
+        color="primary"
+      >
+        <fa-icon icon="ellipsis-v" class="standard-icon"></fa-icon>
+      </button>
+      <mat-menu
+        #additional
+      >
+        <button
+          mat-menu-item
+          [appExportData]="[entity]"
+          format="csv"
+          [exportConfig]="exportConfig"
+          [filename]="'event_' + entity.subject.replace(' ', '-') + '_' + (entity.date | date:'YYYY-MM-dd')"
+        >
+          <fa-icon
+            class="standard-icon"
+            aria-label="download csv"
+            icon="download"
+            angulartics2On="click"
+            angularticsCategory="Note"
+            angularticsAction="single_note_csv_export"
+          ></fa-icon>
+          <span i18n="Download note details as CSV"> Download details </span>
+        </button>
+      </mat-menu>
+    </div>
+
     <!-- General context of Note -->
     <div class="content-header">
       <mat-form-field>
@@ -130,7 +161,7 @@
       [(selection)]="entity.children"
       (selectionChange)="entityForm.form.markAsDirty()"
       [additionalFilter]="filterInactiveChildren"
-      [showEntities]="!isMeeting"
+      [showEntities]="!entity.category?.isMeeting"
       [disabled]="formDialogWrapper.readonly"
       label="Participants"
       i18n-label="Participants of a note"
@@ -148,7 +179,7 @@
       </mat-option>
     </app-entity-select>
 
-    <div *ngIf="isMeeting">
+    <div *ngIf="entity.category?.isMeeting">
       <app-child-meeting-note-attendance
         *ngFor="let childId of entity.children"
         [childId]="childId"

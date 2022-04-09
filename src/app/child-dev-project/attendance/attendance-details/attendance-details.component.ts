@@ -33,7 +33,7 @@ export class AttendanceDetailsComponent
           return note.getAttendance(this.focusedChild).status.label;
         } else {
           return (
-            Math.round(calculateAverageAttendance(note).average * 10) / 10 ||
+            (calculateAverageAttendance(note).average * 100).toFixed(0) + "%" ||
             "N/A"
           );
         }

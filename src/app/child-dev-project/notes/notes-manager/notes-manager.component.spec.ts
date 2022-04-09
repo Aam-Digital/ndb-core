@@ -13,7 +13,7 @@ import { NotesModule } from "../notes.module";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { of, Subject } from "rxjs";
+import { BehaviorSubject, of, Subject } from "rxjs";
 import { Note } from "../model/note";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import {
@@ -25,7 +25,6 @@ import { ConfigService } from "../../../core/config/config.service";
 import { By } from "@angular/platform-browser";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
 import { EventNote } from "../../attendance/model/event-note";
-import { BehaviorSubject } from "rxjs";
 import { UpdatedEntity } from "../../../core/entity/model/entity-update";
 import { ExportService } from "../../../core/export/export-service/export.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";

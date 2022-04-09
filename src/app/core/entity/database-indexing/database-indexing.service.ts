@@ -134,14 +134,14 @@ export class DatabaseIndexingService {
     });
   }
 
-  async queryIndexStats(
+  queryIndexStats(
     indexName: string,
     options: QueryOptions = {
       reduce: true,
       group: true,
     }
   ): Promise<any> {
-    return await this.queryIndexRaw(indexName, options);
+    return this.queryIndexRaw(indexName, options);
   }
 
   /**
@@ -163,7 +163,7 @@ export class DatabaseIndexingService {
       await this.waitForIndexAvailable(indexName);
     }
 
-    return await this.db.query(indexName, options);
+    return this.db.query(indexName, options);
   }
 
   /**

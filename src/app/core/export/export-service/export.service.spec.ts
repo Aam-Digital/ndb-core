@@ -160,9 +160,7 @@ describe("ExportService", () => {
     const columnValues = rows[1].split(ExportService.SEPARATOR_COL);
     expect(columnValues).toHaveSize(3 + 1); // Properties + _id
     expect(columnValues).toContain('"' + testEnumValue.label + '"');
-    expect(columnValues).toContain(
-      '"' + moment(new Date(testDate)).toISOString(true) + '"'
-    );
+    expect(columnValues).toContain('"' + testDate + '"');
     expect(columnValues).toContain('"true"');
   });
 
@@ -261,11 +259,10 @@ describe("ExportService", () => {
     ]);
   });
 
-  it("should export a date according to the local format", async () => {
-    // Create date at midnight on first of january 2021
+  it("should export a date as YYYY-MM-dd only", async () => {
     const dateString = "2021-01-01";
     const dateObject = new Date(dateString);
-    dateObject.setHours(0, 0, 0);
+    dateObject.setHours(10, 11, 12);
 
     const exportData = [
       {
@@ -278,12 +275,9 @@ describe("ExportService", () => {
     const csv = await service.createCsv(exportData);
 
     const results = csv.split(ExportService.SEPARATOR_ROW);
-    // Format: yyyy-mm-ddThh:mm:ss.mmm+hh:mm
-    const expectedDateFormat =
-      dateString + "T00:00:00.000" + getTimezoneOffset(dateObject);
     expect(results).toEqual([
       '"date","number","string"',
-      `"${expectedDateFormat}","10","someString"`,
+      `"${dateString}","10","someString"`,
     ]);
   });
 
@@ -512,24 +506,5 @@ describe("ExportService", () => {
     }
 
     return school;
-  }
-
-  /**
-   * Returns the timezone offset in hours and minutes.
-   * E.g. german date object => "+02:00" or "+01:00" depending on time of the year
-   * @param date object for which the offset should be calculated
-   */
-  function getTimezoneOffset(date: Date): string {
-    // from https://usefulangle.com/post/30/javascript-get-date-time-with-offset-hours-minutes
-    const offset = date.getTimezoneOffset();
-
-    const offsetHrs = parseInt(Math.abs(offset / 60).toString(), 10);
-    const offsetMin = Math.abs(offset % 60);
-
-    const hrsString = offsetHrs > 10 ? offsetHrs.toString() : "0" + offsetHrs;
-    const minString = offsetMin > 10 ? offsetMin.toString() : "0" + offsetMin;
-
-    const sign = offset > 0 ? "-" : "+";
-    return sign + hrsString + ":" + minString;
   }
 });

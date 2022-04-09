@@ -133,12 +133,34 @@ export class EntityMapperService {
     const rawData = this.entitySchemaService.transformEntityToDatabaseFormat(
       entity
     );
-    this.sendUpdate(entity, entity._rev === undefined ? "new" : "update");
     const result = await this._db.put(rawData, forceUpdate);
     if (result?.ok) {
+      this.sendUpdate(entity, entity._rev === undefined ? "new" : "update");
       entity._rev = result.rev;
     }
     return result;
+  }
+
+  /**
+   * Saves an array of entities that are possibly heterogeneous, i.e.
+   * the entity-type of all the entities does not have to be the same.
+   * This method should be chosen whenever a bigger number of entities needs to be
+   * saved
+   * @param entities The entities to save
+   */
+  public async saveAll(entities: Entity[]): Promise<any> {
+    const rawData = entities.map((e) =>
+      this.entitySchemaService.transformEntityToDatabaseFormat(e)
+    );
+    const results = await this._db.putAll(rawData);
+    results.forEach((res, idx) => {
+      if (res.ok) {
+        const entity = entities[idx];
+        this.sendUpdate(entity, entity._rev === undefined ? "new" : "update");
+        entity._rev = res.rev;
+      }
+    });
+    return results;
   }
 
   /**

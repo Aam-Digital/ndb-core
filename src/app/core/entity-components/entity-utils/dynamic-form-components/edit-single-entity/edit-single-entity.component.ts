@@ -59,11 +59,8 @@ export class EditSingleEntityComponent extends EditComponent<string> {
     this.placeholder = $localize`:Placeholder for input to set an entity|context Select User:Select ${this.label}`;
     const entityType: string =
       config.formFieldConfig.additional || config.propertySchema.additional;
-    this.entities = await this.entityMapperService
-      .loadType(entityType)
-      .then((entities) =>
-        entities.sort((e1, e2) => e1.toString().localeCompare(e2.toString()))
-      );
+    this.entities = await this.entityMapperService.loadType(entityType);
+    this.entities.sort((e1, e2) => e1.toString().localeCompare(e2.toString()));
     this.entityNameFormControl.setValidators(this.formControl.validator);
     const selectedEntity = this.entities.find(
       (entity) => entity.getId() === this.formControl.value

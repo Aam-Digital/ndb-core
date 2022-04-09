@@ -3,7 +3,7 @@ import { TestBed } from "@angular/core/testing";
 import { HistoricalDataService } from "./historical-data.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { Entity } from "../../core/entity/model/entity";
-import { HistoricalEntityData } from "./historical-entity-data";
+import { HistoricalEntityData } from "./model/historical-entity-data";
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
 import { Database } from "../../core/database/database";
 import moment from "moment";
