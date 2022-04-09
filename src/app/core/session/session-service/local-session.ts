@@ -68,7 +68,7 @@ export class LocalSession extends SessionService {
     const userDBName = `${this.currentDBUser.name}-${AppConfig.settings.database.name}`;
     this.initDatabase(userDBName);
     if (!(await this.database.isEmpty())) {
-      // Current user has own database, were done here
+      // Current user has own database, we are done here
       return;
     }
 
