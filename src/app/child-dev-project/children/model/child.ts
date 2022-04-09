@@ -21,6 +21,9 @@ import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 import { calculateAge } from "../../../utils/utils";
 import { Photo } from "../child-photo-service/photo";
+import { BehaviorSubject } from "rxjs";
+import { SafeUrl } from "@angular/platform-browser";
+import { ChildPhotoService } from "../child-photo-service/child-photo.service";
 
 export type Center = ConfigurableEnumValue;
 @DatabaseEntity("Child")
@@ -100,7 +103,12 @@ export class Child extends Entity {
     defaultValue: "",
     label: $localize`:Label for the filename of a photo of a child:Photo Filename`,
   })
-  photo: Photo;
+  photo: Photo = {
+    path: undefined,
+    photo: new BehaviorSubject<SafeUrl>(
+      ChildPhotoService.getImageFromAssets(undefined)
+    ),
+  };
 
   @DatabaseField({
     label: $localize`:Label for the phone number of a child:Phone Number`,

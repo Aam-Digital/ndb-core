@@ -69,10 +69,10 @@ formGroup.get("child").enable();
 
 export const primary = Template.bind({});
 primary.args = {
-  entityType: Child.ENTITY_TYPE,
-  label: "child",
-  formControl: formGroup.get("child"),
-  formControlName: "child",
-  entities: [child1, child2, child3],
-  placeholder: "add child",
+  // entityType: Child.ENTITY_TYPE,
+  // label: "child",
+  // formControl: formGroup.get("child"),
+  // formControlName: "child",
+  // entities: [child1, child2, child3],
+  // placeholder: "add child",
 };
