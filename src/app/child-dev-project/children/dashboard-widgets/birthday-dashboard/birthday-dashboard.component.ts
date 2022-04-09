@@ -14,7 +14,7 @@ export class BirthdayDashboardComponent implements OnInitDynamicComponent {
   children: Child[] = [];
 
   constructor(private entityMapper: EntityMapperService) {
-    // TODO sort the children based on the birthday
+    // TODO sort the children based on the date of birth
     this.entityMapper.loadType(Child).then((res) => (this.children = res));
   }
 
