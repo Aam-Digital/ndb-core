@@ -145,7 +145,7 @@ export class RollCallSetupComponent implements OnInit {
       return score;
     };
 
-    this.existingEvents = this.existingEvents.sort(
+    this.existingEvents.sort(
       (a, b) => calculateEventPriority(b) - calculateEventPriority(a)
     );
   }

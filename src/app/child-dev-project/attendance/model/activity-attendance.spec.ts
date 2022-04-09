@@ -69,36 +69,7 @@ describe("ActivityAttendance", () => {
         ["2", AttendanceLogicalStatus.PRESENT],
       ]),
     ]);
-    expect(everyoneInOneEventAbsent.countEventsAbsentAverage()).toBe(1);
-
-    const allAbsent = ActivityAttendance.create(new Date(), [
-      generateEventWithAttendance([
-        ["1", AttendanceLogicalStatus.ABSENT],
-        ["2", AttendanceLogicalStatus.ABSENT],
-        ["2", AttendanceLogicalStatus.ABSENT],
-      ]),
-      generateEventWithAttendance([
-        ["1", AttendanceLogicalStatus.ABSENT],
-        ["2", AttendanceLogicalStatus.ABSENT],
-      ]),
-    ]);
-    expect(allAbsent.countEventsAbsentAverage()).toBe(2);
-  });
-
-  // TODO: what should be the excepted averaged result here?
-  xit("calculates average present", () => {
-    const presentAct = ActivityAttendance.create(new Date(), [
-      generateEventWithAttendance([
-        ["1", AttendanceLogicalStatus.PRESENT],
-        ["2", AttendanceLogicalStatus.PRESENT],
-      ]),
-      generateEventWithAttendance([
-        ["1", AttendanceLogicalStatus.PRESENT],
-        ["2", AttendanceLogicalStatus.PRESENT],
-      ]),
-      generateEventWithAttendance([["1", AttendanceLogicalStatus.PRESENT]]),
-    ]);
-    expect(presentAct.countEventsPresentAverage()).toBe(2.5);
+    expect(everyoneInOneEventAbsent.countTotalAbsent()).toBe(2);
 
     const allAbsent = ActivityAttendance.create(new Date(), [
       generateEventWithAttendance([
@@ -111,7 +82,48 @@ describe("ActivityAttendance", () => {
         ["2", AttendanceLogicalStatus.ABSENT],
       ]),
     ]);
-    expect(allAbsent.countEventsPresentAverage()).toBe(0);
+    expect(allAbsent.countTotalAbsent()).toBe(5);
+  });
+
+  it("calculates average present", () => {
+    const presentAct = ActivityAttendance.create(new Date(), [
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.PRESENT],
+      ]),
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.PRESENT],
+      ]),
+      generateEventWithAttendance([["1", AttendanceLogicalStatus.PRESENT]]),
+    ]);
+    expect(presentAct.countTotalPresent()).toBe(5);
+
+    const allAbsent = ActivityAttendance.create(new Date(), [
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.ABSENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+        ["3", AttendanceLogicalStatus.ABSENT],
+      ]),
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.ABSENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ]),
+    ]);
+    expect(allAbsent.countTotalPresent()).toBe(0);
+
+    const halfAbsent = ActivityAttendance.create(new Date(), [
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.ABSENT],
+        ["2", AttendanceLogicalStatus.PRESENT],
+      ]),
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+        ["3", AttendanceLogicalStatus.IGNORE],
+      ]),
+    ]);
+    expect(halfAbsent.countTotalPresent()).toBe(2);
   });
 
   it("calculates logical stats on set of events", () => {
@@ -168,5 +180,26 @@ describe("ActivityAttendance", () => {
     expect(
       record.individualStatusTypeCounts.get("2")[StatusLate.id]
     ).toBeUndefined();
+  });
+
+  it("calculates events containing unknown/undefined attendance status", () => {
+    const attendance = ActivityAttendance.create(new Date(), [
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.IGNORE],
+      ]),
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.PRESENT],
+      ]),
+    ]);
+
+    // adding participants without attendance to one event
+    attendance.events[1].children.push("3");
+    attendance.events[1].children.push("4");
+
+    expect(attendance.countEventsWithUnknownStatus()).toBe(1); // one unique event with undefined attendances
+    expect(attendance.countEventsWithUnknownStatus("2")).toBe(0);
+    expect(attendance.countEventsWithUnknownStatus("3")).toBe(1);
   });
 });

@@ -111,8 +111,9 @@ export class ExportService {
       const readableRow = {};
       Object.keys(row).forEach((key) => {
         if (row[key] instanceof Date) {
-          // Export data according to local timezone offset
-          readableRow[key] = moment(row[key]).toISOString(true);
+          // Export data according to local timezone offset - data is loaded through Entity Schema system and thereby has the correct date in the current device's timezone
+          // TODO: make this output format configurable or use the different date schema types [GITHUB #1185]
+          readableRow[key] = moment(row[key]).format("YYYY-MM-DD");
         } else {
           readableRow[key] = getReadableValue(row, key);
         }

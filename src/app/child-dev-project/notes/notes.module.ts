@@ -46,6 +46,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { NotesDashboardComponent } from "./dashboard-widgets/notes-dashboard/notes-dashboard.component";
 import { NotesOfChildComponent } from "./notes-of-child/notes-of-child.component";
 import { DashboardModule } from "../../core/dashboard/dashboard.module";
+import { ExportModule } from "../../core/export/export.module";
 
 @NgModule({
   declarations: [
@@ -103,6 +104,7 @@ import { DashboardModule } from "../../core/dashboard/dashboard.module";
     FontAwesomeModule,
     MatMenuModule,
     DashboardModule,
+    ExportModule,
   ],
   exports: [NoteDetailsComponent],
 })

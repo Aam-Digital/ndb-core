@@ -16,60 +16,21 @@
  */
 
 import { Aser } from "./aser";
-import { Entity } from "../../../../core/entity/model/entity";
-import { EntitySchemaService } from "../../../../core/entity/schema/entity-schema.service";
-import { mathLevels } from "./mathLevels";
-import { readingLevels } from "./readingLevels";
+import { mathLevels, readingLevels } from "./skill-levels";
 import { WarningLevel } from "../../../../core/entity/model/warning-level";
+import { testEntitySubclass } from "../../../../core/entity/model/entity.spec";
 
 describe("Aser", () => {
-  const ENTITY_TYPE = "Aser";
-  const entitySchemaService = new EntitySchemaService();
+  testEntitySubclass("Aser", Aser, {
+    _id: "Aser:some-id",
 
-  it("has correct _id and entityId and type", function () {
-    const id = "test1";
-    const entity = new Aser(id);
-
-    expect(entity.getId()).toBe(id);
-    expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
-  });
-
-  it("has correct type/prefix", function () {
-    const id = "test1";
-    const entity = new Aser(id);
-
-    expect(entity.getType()).toBe(ENTITY_TYPE);
-    expect(Entity.extractTypeFromId(entity._id)).toBe(ENTITY_TYPE);
-  });
-
-  it("has all and only defined schema fields in rawData", function () {
-    const id = "test1";
-    const expectedData = {
-      _id: ENTITY_TYPE + ":" + id,
-
-      child: "1",
-      date: new Date(),
-      hindi: readingLevels[2],
-      bengali: readingLevels[1],
-      english: readingLevels[2],
-      math: mathLevels[4],
-      remarks: "nothing to remark",
-
-      searchIndices: [],
-    };
-
-    const entity = new Aser(id);
-    entity.child = expectedData.child;
-    entity.date = expectedData.date;
-    entity.hindi = expectedData.hindi;
-    entity.bengali = expectedData.bengali;
-    entity.english = expectedData.english;
-    entity.math = expectedData.math;
-    entity.remarks = expectedData.remarks;
-
-    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-
-    expect(rawData).toEqual(expectedData);
+    child: "1",
+    date: new Date(),
+    hindi: readingLevels[2].id,
+    bengali: readingLevels[1].id,
+    english: readingLevels[2].id,
+    math: mathLevels[4].id,
+    remarks: "nothing to remark",
   });
 
   it("warning level OK if no results", function () {
@@ -79,7 +40,7 @@ describe("Aser", () => {
     expect(entity.getWarningLevel()).toBe(WarningLevel.OK);
   });
 
-  it("warning level WARNING if some bad results", function () {
+  it("warning level WARNING if some results are not passed", function () {
     const id = "test1";
     const entity = new Aser(id);
     entity.english = readingLevels[1];
@@ -88,19 +49,29 @@ describe("Aser", () => {
     expect(entity.getWarningLevel()).toBe(WarningLevel.WARNING);
   });
 
-  it("has a warning level of OK if english is at it's highest level", () => {
+  it("has a warning level of OK if english is passed", () => {
     const entity = new Aser();
-    entity.english = readingLevels[readingLevels.length - 1];
+    entity.english = readingLevels.find((l) => l.passed);
 
     expect(entity.getWarningLevel()).toBe(WarningLevel.OK);
   });
 
-  it("has a warning level of OK if all values are at it's highest level", () => {
+  it("has a warning level of OK if all skills are passed", () => {
     const entity = new Aser();
-    entity.math = mathLevels[mathLevels.length - 1];
-    entity.english = readingLevels[readingLevels.length - 1];
-    entity.hindi = readingLevels[readingLevels.length - 1];
-    entity.bengali = readingLevels[readingLevels.length - 1];
+    entity.math = mathLevels.find((l) => l.passed);
+    entity.english = readingLevels.find((l) => l.passed);
+    entity.hindi = readingLevels.find((l) => l.passed);
+    entity.bengali = readingLevels.find((l) => l.passed);
+
+    expect(entity.getWarningLevel()).toBe(WarningLevel.OK);
+  });
+
+  it("has warning level OK if some subjects are passed and others are empty", () => {
+    const entity = new Aser();
+    entity.math = mathLevels.find((l) => l.passed);
+    entity.english = readingLevels.find((l) => l.passed);
+    entity.hindi = readingLevels.find((l) => l.id === "");
+    entity.bengali = undefined;
 
     expect(entity.getWarningLevel()).toBe(WarningLevel.OK);
   });

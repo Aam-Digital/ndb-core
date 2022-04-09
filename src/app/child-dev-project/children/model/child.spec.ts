@@ -16,80 +16,28 @@
  */
 
 import { Child } from "./child";
-import { waitForAsync } from "@angular/core/testing";
-import { Entity } from "../../../core/entity/model/entity";
-import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
-import { PhotoDatatype } from "../child-photo-service/datatype-photo";
 import { genders } from "./genders";
+import { testEntitySubclass } from "../../../core/entity/model/entity.spec";
+import { centersUnique } from "../demo-data-generators/fixtures/centers";
 
 describe("Child", () => {
-  const ENTITY_TYPE = "Child";
-  let entitySchemaService: EntitySchemaService;
+  testEntitySubclass("Child", Child, {
+    _id: "Child:some-id",
 
-  beforeEach(
-    waitForAsync(() => {
-      entitySchemaService = new EntitySchemaService();
-      entitySchemaService.registerSchemaDatatype(new PhotoDatatype());
-    })
-  );
+    name: "Max",
+    projectNumber: "projectNumber01",
+    gender: genders[1].id,
+    dateOfBirth: "2010-01-01",
 
-  it("has correct _id and entityId and type", function () {
-    const id = "test1";
-    const entity = new Child(id);
+    photo: "..",
+    center: centersUnique[0].id,
+    admissionDate: new Date("2021-03-1"),
+    status: "Active",
 
-    expect(entity.getId()).toBe(id);
-    expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
-  });
+    dropoutDate: new Date("2022-03-31"),
+    dropoutType: "unknown",
+    dropoutRemarks: "no idea what happened",
 
-  it("has correct type/prefix", function () {
-    const id = "test1";
-    const entity = new Child(id);
-
-    expect(entity.getType()).toBe(ENTITY_TYPE);
-    expect(Entity.extractTypeFromId(entity._id)).toBe(ENTITY_TYPE);
-  });
-
-  it("has all and only defined schema fields in rawData", function () {
-    const id = "test1";
-    const expectedData = {
-      _id: ENTITY_TYPE + ":" + id,
-
-      name: "Max",
-      projectNumber: "1",
-      gender: genders[1],
-      dateOfBirth: "2010-01-01",
-
-      photo: "..",
-      center: { id: "alpha", label: "Alpha" },
-      admissionDate: new Date(),
-      status: "Active",
-
-      dropoutDate: new Date(),
-      dropoutType: "unknown",
-      dropoutRemarks: "no idea what happened",
-
-      searchIndices: [],
-    };
-    expectedData.searchIndices.push(expectedData.name);
-    expectedData.searchIndices.push(expectedData.projectNumber);
-
-    const entity = new Child(id);
-    entity.name = expectedData.name;
-    entity.projectNumber = expectedData.projectNumber;
-    entity.gender = expectedData.gender;
-    entity.dateOfBirth = new Date(expectedData.dateOfBirth);
-
-    entity.photo = { path: expectedData.photo, photo: null };
-    entity.center = expectedData.center;
-    entity.admissionDate = expectedData.admissionDate;
-    entity.status = expectedData.status;
-
-    entity.dropoutDate = expectedData.dropoutDate;
-    entity.dropoutType = expectedData.dropoutType;
-    entity.dropoutRemarks = expectedData.dropoutRemarks;
-
-    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-
-    expect(rawData).toEqual(expectedData);
+    searchIndices: ["Max", "projectNumber01"],
   });
 });

@@ -49,6 +49,14 @@ export abstract class Database {
   abstract put(object: any, forceUpdate?: boolean): Promise<any>;
 
   /**
+   * Save a bunch of documents at once to the database
+   * @param objects The documents to be saved
+   * @param forceUpdate (Optional) Whether conflicts should be ignored and existing conflicting documents forcefully overwritten.
+   * @returns array holding success responses or errors depending on the success of the operation
+   */
+  abstract putAll(objects: any[], forceUpdate?: boolean): Promise<any[]>;
+
+  /**
    * Delete a document from the database
    * @param object The document to be deleted (usually this object must at least contain the _id and _rev)
    */

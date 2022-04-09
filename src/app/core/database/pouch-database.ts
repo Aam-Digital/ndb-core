@@ -66,7 +66,10 @@ export class PouchDatabase extends Database {
    * @param _pouchDB An (initialized) PouchDB database instance from the PouchDB library.
    * @param loggingService The LoggingService instance of the app to log and report problems.
    */
-  constructor(private _pouchDB: any, private loggingService: LoggingService) {
+  constructor(
+    private _pouchDB: PouchDB.Database,
+    private loggingService: LoggingService
+  ) {
     super();
   }
 
@@ -89,7 +92,7 @@ export class PouchDatabase extends Database {
           return undefined;
         }
       }
-      throw err;
+      throw new DatabaseException(err);
     });
   }
 
@@ -104,13 +107,18 @@ export class PouchDatabase extends Database {
    * @param options PouchDB options object as in the normal PouchDB library
    */
   allDocs(options?: GetAllOptions) {
-    return this._pouchDB.allDocs(options).then((result) => {
-      const resultArray = [];
-      for (const row of result.rows) {
-        resultArray.push(row.doc);
-      }
-      return resultArray;
-    });
+    return this._pouchDB
+      .allDocs(options)
+      .then((result) => {
+        const resultArray = [];
+        for (const row of result.rows) {
+          resultArray.push(row.doc);
+        }
+        return resultArray;
+      })
+      .catch((err) => {
+        throw new DatabaseException(err);
+      });
   }
 
   /**
@@ -120,19 +128,45 @@ export class PouchDatabase extends Database {
    * @param object The document to be saved
    * @param forceOverwrite (Optional) Whether conflicts should be ignored and an existing conflicting document forcefully overwritten.
    */
-  put(object: any, forceOverwrite?: boolean): Promise<any> {
-    const options: any = {};
+  put(object: any, forceOverwrite = false): Promise<any> {
     if (forceOverwrite) {
       object._rev = undefined;
     }
 
-    return this._pouchDB.put(object, options).catch((err) => {
+    return this._pouchDB.put(object).catch((err) => {
       if (err.status === 409) {
         return this.resolveConflict(object, forceOverwrite, err);
       } else {
-        throw err;
+        throw new DatabaseException(err);
       }
     });
+  }
+
+  /**
+   * Save an array of documents to the database
+   * @param objects the documents to be saved
+   * @param forceOverwrite whether conflicting versions should be overwritten
+   * @returns array holding `{ ok: true, ... }` or `{ error: true, ... }` depending on whether the document could be saved
+   */
+  async putAll(objects: any[], forceOverwrite = false): Promise<any> {
+    if (forceOverwrite) {
+      objects.forEach((obj) => (obj._rev = undefined));
+    }
+
+    const results = await this._pouchDB.bulkDocs(objects);
+
+    for (let i = 0; i < results.length; i++) {
+      // Check if document update conflicts happened in the request
+      const result = results[i] as PouchDB.Core.Error;
+      if (result.status === 409) {
+        results[i] = await this.resolveConflict(
+          objects.find((obj) => obj._id === result.id),
+          false,
+          result
+        ).catch((e) => e);
+      }
+    }
+    return results;
   }
 
   /**
@@ -143,7 +177,7 @@ export class PouchDatabase extends Database {
    */
   remove(object: any) {
     return this._pouchDB.remove(object).catch((err) => {
-      throw err;
+      throw new DatabaseException(err);
     });
   }
 
@@ -153,9 +187,13 @@ export class PouchDatabase extends Database {
    * @param remoteDatabase the PouchDB instance of the remote database
    */
   sync(remoteDatabase) {
-    return this._pouchDB.sync(remoteDatabase, {
-      batch_size: 500,
-    });
+    return this._pouchDB
+      .sync(remoteDatabase, {
+        batch_size: 500,
+      })
+      .catch((err) => {
+        throw new DatabaseException(err);
+      });
   }
 
   public async destroy(): Promise<any> {
@@ -177,7 +215,9 @@ export class PouchDatabase extends Database {
     fun: string | ((doc: any, emit: any) => void),
     options: QueryOptions
   ): Promise<any> {
-    return this._pouchDB.query(fun, options);
+    return this._pouchDB.query(fun, options).catch((err) => {
+      throw new DatabaseException(err);
+    });
   }
 
   /**
@@ -230,8 +270,8 @@ export class PouchDatabase extends Database {
    */
   private async resolveConflict(
     newObject: any,
-    overwriteChanges: boolean,
-    existingError: any
+    overwriteChanges = false,
+    existingError: any = {}
   ): Promise<any> {
     const existingObject = await this.get(newObject._id);
     const resolvedObject = this.mergeObjects(existingObject, newObject);
@@ -248,13 +288,21 @@ export class PouchDatabase extends Database {
       return this.put(newObject);
     } else {
       existingError.message = existingError.message + " (unable to resolve)";
-      existingError.affectedDocument = newObject._id;
-      throw existingError;
+      throw new DatabaseException(existingError);
     }
   }
 
   private mergeObjects(existingObject: any, newObject: any) {
     // TODO: implement automatic merging of conflicting entity versions
     return undefined;
+  }
+}
+
+/**
+ * This overwrites PouchDB's error class which only logs limited information
+ */
+class DatabaseException {
+  constructor(error: PouchDB.Core.Error) {
+    Object.assign(this, error);
   }
 }
