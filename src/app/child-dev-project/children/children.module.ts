@@ -38,7 +38,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatChipsModule } from "@angular/material/chips";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { ChildrenService } from "./children.service";
-import { ChildrenCountDashboardComponent } from "./children-count-dashboard/children-count-dashboard.component";
+import { ChildrenCountDashboardComponent } from "./dashboard-widgets/children-count-dashboard/children-count-dashboard.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { SchoolsModule } from "../schools/schools.module";
@@ -59,7 +59,7 @@ import { EntitySubrecordModule } from "../../core/entity-components/entity-subre
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
 import { WebdavModule } from "../../core/webdav/webdav.module";
 import { BmiBlockComponent } from "./children-list/bmi-block/bmi-block.component";
-import { ChildrenBmiDashboardComponent } from "./children-bmi-dashboard/children-bmi-dashboard.component";
+import { ChildrenBmiDashboardComponent } from "./dashboard-widgets/children-bmi-dashboard/children-bmi-dashboard.component";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { PhotoDatatype } from "./child-photo-service/datatype-photo";
 import { EntityUtilsModule } from "../../core/entity-components/entity-utils/entity-utils.module";

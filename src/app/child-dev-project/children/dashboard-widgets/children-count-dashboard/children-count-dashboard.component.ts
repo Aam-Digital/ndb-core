@@ -1,12 +1,12 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { ChildrenService } from "../children.service";
+import { ChildrenService } from "../../children.service";
 import { Router } from "@angular/router";
-import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { take } from "rxjs/operators";
-import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
-import { Child } from "../model/child";
+import { ConfigurableEnumValue } from "../../../../core/configurable-enum/configurable-enum.interface";
+import { Child } from "../../model/child";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
+import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 
 @UntilDestroy()
 @DynamicComponent("ChildrenCountDashboard")

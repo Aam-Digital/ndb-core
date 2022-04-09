@@ -1,11 +1,11 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { RouterTestingModule } from "@angular/router/testing";
-import { HealthCheck } from "../health-checkup/model/health-check";
+import { HealthCheck } from "../../health-checkup/model/health-check";
 import { of } from "rxjs";
-import { ChildrenService } from "../children.service";
-import { Child } from "../model/child";
+import { ChildrenService } from "../../children.service";
+import { Child } from "../../model/child";
 import { ChildrenBmiDashboardComponent } from "./children-bmi-dashboard.component";
-import { ChildrenModule } from "../children.module";
+import { ChildrenModule } from "../../children.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("ChildrenBmiDashboardComponent", () => {
