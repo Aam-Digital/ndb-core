@@ -1,0 +1,27 @@
+<!--
+  TODO
+  - Look for a better icon here https://fontawesome.com/v5/search
+  - Set right title, subtitle, explanation
+-->
+<app-dashboard-widget
+  icon="question"
+  theme="child"
+  title="Temporary title"
+  subtitle="Temporary subtitle"
+  explanation="Temporary explanation"
+>
+  <app-widget-content>
+<!--
+  TODO
+  - replace this by a table similar to `AttendanceWeekDashboard` (for more info see https://v11.material.angular.io/components/table/overview)
+  - display the child using the `ChildBlockComponent`
+  - display the birthday
+  - display the age the child will have after his birthday
+-->
+    <app-child-block
+      *ngFor="let child of children"
+      [entity]="child"
+    ></app-child-block>
+  </app-widget-content>
+
+</app-dashboard-widget>
