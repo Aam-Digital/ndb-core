@@ -1,7 +1,9 @@
 <app-dashboard-widget
   icon="weight"
   theme="note"
+  i18n-title="Title of the BMI dashboard component"
   title="BMI"
+  i18n-subtitle="Subtitle of the BMI dashboard component"
   subtitle="Students with unhealthy BMI"
 >
   <app-widget-content>
@@ -10,12 +12,13 @@
       <table
         mat-table
         [dataSource]="bmiDataSource"
-        attr.aria-label="Students with unhealthy BMI"
+        i18n-aria-label="Label for BMI table"
+        aria-label="Students with unhealthy BMI"
       >
         <!-- Table header only for assistive technologies like screen readers -->
         <tr hidden="true">
-          <th scope="col">Child</th>
-          <th scope="col">Last BMI result</th>
+          <th scope="col" i18n="Column description for children column">Child</th>
+          <th scope="col" i18n="Column description for BMI result column">Last BMI result</th>
         </tr>
         <ng-container matColumnDef="child">
           <td *matCellDef="let row">
@@ -25,9 +28,9 @@
           </td>
         </ng-container>
 
-        <ng-container matColumnDef="bmi" i18n="Displaying the BMI result of a child|BMI: 21.02">
+        <ng-container matColumnDef="bmi">
           <td *matCellDef="let row">
-            <span  class="dashboard-table-additional-info-cell">
+            <span  class="dashboard-table-additional-info-cell" i18n="Displaying the BMI result of a child|BMI: 21.02">
               BMI: {{ row.bmi.toFixed(2) }}
             </span>
           </td>
