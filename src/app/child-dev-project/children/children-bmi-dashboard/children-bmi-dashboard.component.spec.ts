@@ -5,7 +5,6 @@ import {
   tick,
 } from "@angular/core/testing";
 import { HealthCheck } from "../health-checkup/model/health-check";
-import { Child } from "../model/child";
 import { ChildrenBmiDashboardComponent } from "./children-bmi-dashboard.component";
 import { ChildrenModule } from "../children.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
