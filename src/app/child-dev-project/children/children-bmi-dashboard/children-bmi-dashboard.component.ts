@@ -25,11 +25,11 @@ export class ChildrenBmiDashboardComponent
   isLoading = false;
   @ViewChild("paginator") paginator: MatPaginator;
 
-  constructor(private entityMapper: EntityMapperService) {
-    this.loadBMIData();
-  }
+  constructor(private entityMapper: EntityMapperService) {}
 
-  onInitFromDynamicConfig(config: any) {}
+  onInitFromDynamicConfig() {
+    return this.loadBMIData();
+  }
 
   ngAfterViewInit() {
     this.bmiDataSource.paginator = this.paginator;
