@@ -66,15 +66,19 @@ export class DatabaseIndexingService {
    * @param designDoc The design document (see @link{Database}) describing the query/index.
    */
   async createIndex(designDoc: any): Promise<void> {
+    const indexDetails = designDoc._id.replace(/_design\//, "");
     const indexState: IndexState = {
       title: $localize`Preparing data (Indexing)`,
-      details: designDoc._id.replace(/_design\//, ""),
+      details: indexDetails,
       pending: true,
       designDoc,
     };
+
     const indexCreationPromise = this.db.saveDatabaseIndex(designDoc);
     this._indicesRegistered.next([
-      ...this._indicesRegistered.value,
+      ...this._indicesRegistered.value.filter(
+        (state) => state.details !== indexDetails
+      ),
       indexState,
     ]);
 

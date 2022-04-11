@@ -173,4 +173,27 @@ describe("DatabaseIndexingService", () => {
     ]);
     flush();
   }));
+
+  it("should only register indices once", async () => {
+    const testDesignDoc = {
+      _id: "_design/test-index",
+      views: {},
+    };
+
+    await service.createIndex(testDesignDoc);
+    let registeredIndices = await service.indicesRegistered
+      .pipe(take(1))
+      .toPromise();
+    expect(registeredIndices).toEqual([
+      jasmine.objectContaining({ details: "test-index" }),
+    ]);
+
+    await service.createIndex(testDesignDoc);
+    registeredIndices = await service.indicesRegistered
+      .pipe(take(1))
+      .toPromise();
+    expect(registeredIndices).toEqual([
+      jasmine.objectContaining({ details: "test-index" }),
+    ]);
+  });
 });
