@@ -27,22 +27,23 @@ export class ConfigService {
     return this.configUpdates.value.data;
   }
 
-  constructor(@Optional() private loggingService?: LoggingService) {
+  constructor(
+    private entityMapper: EntityMapperService,
+    @Optional() private loggingService?: LoggingService
+  ) {
     const defaultConfig = JSON.parse(JSON.stringify(defaultJsonConfig));
     this.configUpdates = new BehaviorSubject(
       new Config(Config.CONFIG_KEY, defaultConfig)
     );
   }
 
-  public async loadConfig(entityMapper: EntityMapperService): Promise<Config> {
-    this.configUpdates.next(await this.getConfigOrDefault(entityMapper));
+  public async loadConfig(): Promise<Config> {
+    this.configUpdates.next(await this.getConfigOrDefault());
     return this.configUpdates.value;
   }
 
-  private getConfigOrDefault(
-    entityMapper: EntityMapperService
-  ): Promise<Config> {
-    return entityMapper.load(Config, Config.CONFIG_KEY).catch(() => {
+  private getConfigOrDefault(): Promise<Config> {
+    return this.entityMapper.load(Config, Config.CONFIG_KEY).catch(() => {
       this.loggingService.info(
         "No configuration found in the database, using default one"
       );
@@ -51,19 +52,14 @@ export class ConfigService {
     });
   }
 
-  public async saveConfig(
-    entityMapper: EntityMapperService,
-    config: any
-  ): Promise<Config> {
+  public async saveConfig(config: any): Promise<Config> {
     this.configUpdates.next(new Config(Config.CONFIG_KEY, config));
-    await entityMapper.save<Config>(this.configUpdates.value, true);
+    await this.entityMapper.save<Config>(this.configUpdates.value, true);
     return this.configUpdates.value;
   }
 
-  public async exportConfig(
-    entityMapper: EntityMapperService
-  ): Promise<string> {
-    const config = await this.getConfigOrDefault(entityMapper);
+  public async exportConfig(): Promise<string> {
+    const config = await this.getConfigOrDefault();
     return JSON.stringify(config.data);
   }
 

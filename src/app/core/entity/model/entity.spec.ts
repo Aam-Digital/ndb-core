@@ -16,21 +16,19 @@
  */
 
 import { Entity, EntityConstructor } from "./entity";
-import { waitForAsync } from "@angular/core/testing";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
 import { ConfigurableEnumDatatype } from "../../configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
 import { ConfigService } from "../../config/config.service";
 import { LoggingService } from "../../logging/logging.service";
+import { mockEntityMapper } from "../mock-entity-mapper-service";
 
 describe("Entity", () => {
   let entitySchemaService: EntitySchemaService;
 
-  beforeEach(
-    waitForAsync(() => {
+  beforeEach(() => {
       entitySchemaService = new EntitySchemaService();
-    })
-  );
+  });
 
   testEntitySubclass("Entity", Entity, { _id: "someId", _rev: "some_rev" });
 
@@ -109,8 +107,11 @@ export function testEntitySubclass(
 
   it("should only load and store properties defined in the schema", () => {
     const schemaService = new EntitySchemaService();
-    const configService = new ConfigService(new LoggingService());
-    configService.loadConfig({ load: () => Promise.reject() } as any);
+    const configService = new ConfigService(
+      mockEntityMapper(),
+      new LoggingService()
+    );
+    configService.loadConfig();
     schemaService.registerSchemaDatatype(
       new ConfigurableEnumDatatype(configService)
     );

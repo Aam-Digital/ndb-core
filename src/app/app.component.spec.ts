@@ -130,39 +130,37 @@ describe("AppComponent", () => {
     const routeSpy = spyOn(TestBed.inject(Router), "navigate");
     const configSpy = spyOn(TestBed.inject(ConfigService), "loadConfig");
     createComponent();
-    expect(routeSpy).not.toHaveBeenCalled();
-    expect(configSpy).toHaveBeenCalledTimes(1);
 
     loginState.next(LoginState.LOGGED_IN);
     tick();
     expect(routeSpy).not.toHaveBeenCalled();
+    expect(configSpy).not.toHaveBeenCalled();
+
+    syncState.next(SyncState.COMPLETED);
+    tick();
+    expect(routeSpy).toHaveBeenCalledTimes(1);
     expect(configSpy).toHaveBeenCalledTimes(1);
 
     syncState.next(SyncState.COMPLETED);
     tick();
     expect(routeSpy).toHaveBeenCalledTimes(1);
-    expect(configSpy).toHaveBeenCalledTimes(2);
-
-    syncState.next(SyncState.COMPLETED);
-    tick();
-    expect(routeSpy).toHaveBeenCalledTimes(1);
-    expect(configSpy).toHaveBeenCalledTimes(2);
+    expect(configSpy).toHaveBeenCalledTimes(1);
 
     loginState.next(LoginState.LOGGED_OUT);
     tick();
     expect(routeSpy).toHaveBeenCalledTimes(1);
-    expect(configSpy).toHaveBeenCalledTimes(2);
+    expect(configSpy).toHaveBeenCalledTimes(1);
 
     loginState.next(LoginState.LOGGED_IN);
     // No new calls
     tick();
     expect(routeSpy).toHaveBeenCalledTimes(1);
-    expect(configSpy).toHaveBeenCalledTimes(2);
+    expect(configSpy).toHaveBeenCalledTimes(1);
 
     syncState.next(SyncState.COMPLETED);
     tick();
     expect(routeSpy).toHaveBeenCalledTimes(2);
-    expect(configSpy).toHaveBeenCalledTimes(3);
+    expect(configSpy).toHaveBeenCalledTimes(2);
     discardPeriodicTasks();
   }));
 });

@@ -59,7 +59,7 @@ describe("QueryService", () => {
     const configService = TestBed.inject(ConfigService);
     const entityConfigService = TestBed.inject(EntityConfigService);
     entityMapper = TestBed.inject(EntityMapperService);
-    await configService.loadConfig(entityMapper);
+    await configService.loadConfig();
     entityConfigService.addConfigAttributes(School);
     entityConfigService.addConfigAttributes(Child);
   });

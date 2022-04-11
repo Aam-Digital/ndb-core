@@ -7,19 +7,15 @@ import {
   waitForAsync,
 } from "@angular/core/testing";
 import { AdminComponent } from "./admin.component";
-import { AlertsModule } from "../../alerts/alerts.module";
-import { MatButtonModule } from "@angular/material/button";
-import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { BackupService } from "../services/backup.service";
 import { AppConfig } from "../../app-config/app-config";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { ConfigService } from "../../config/config.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { of } from "rxjs";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatDialogRef } from "@angular/material/dialog";
 import { SessionType } from "../../session/session-type";
+import { AdminModule } from "../admin.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("AdminComponent", () => {
   let component: AdminComponent;
@@ -78,21 +74,9 @@ describe("AdminComponent", () => {
       };
 
       TestBed.configureTestingModule({
-        imports: [
-          MatSnackBarModule,
-          MatButtonModule,
-          HttpClientTestingModule,
-          AlertsModule,
-          NoopAnimationsModule,
-        ],
-        declarations: [AdminComponent],
+        imports: [AdminModule, MockedTestingModule.withState()],
         providers: [
           { provide: BackupService, useValue: mockBackupService },
-          { provide: AppConfig, useValue: { load: () => {} } },
-          {
-            provide: EntityMapperService,
-            useValue: jasmine.createSpyObj(["loadType", "save"]),
-          },
           { provide: ConfigService, useValue: mockConfigService },
           {
             provide: ConfirmationDialogService,

@@ -8,7 +8,6 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import PouchDB from "pouchdb-browser";
 import { ChildPhotoUpdateService } from "../services/child-photo-update.service";
 import { ConfigService } from "../../config/config.service";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { readFile } from "../../../utils/utils";
 import { RouteTarget } from "../../../app.routing";
@@ -39,8 +38,7 @@ export class AdminComponent implements OnInit {
     private confirmationDialog: ConfirmationDialogService,
     private snackBar: MatSnackBar,
     private childPhotoUpdateService: ChildPhotoUpdateService,
-    private configService: ConfigService,
-    private entityMapper: EntityMapperService
+    private configService: ConfigService
   ) {}
 
   ngOnInit() {
@@ -79,18 +77,13 @@ export class AdminComponent implements OnInit {
   }
 
   async downloadConfigClick() {
-    const configString = await this.configService.exportConfig(
-      this.entityMapper
-    );
+    const configString = await this.configService.exportConfig();
     this.startDownload(configString, "text/json", "config.json");
   }
 
   async uploadConfigFile(inputEvent: Event) {
     const loadedFile = await readFile(this.getFileFromInputEvent(inputEvent));
-    await this.configService.saveConfig(
-      this.entityMapper,
-      JSON.parse(loadedFile)
-    );
+    await this.configService.saveConfig(JSON.parse(loadedFile));
   }
 
   private startDownload(data: string, type: string, name: string) {

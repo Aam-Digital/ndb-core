@@ -24,7 +24,6 @@ import { ApplicationInitStatus } from "@angular/core";
 import { UiModule } from "../ui.module";
 import { ConfigService } from "../../config/config.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 
 describe("UiComponent", () => {
@@ -54,9 +53,8 @@ describe("UiComponent", () => {
       }).compileComponents();
       TestBed.inject(ApplicationInitStatus); // This ensures that the AppConfig is loaded before test execution
 
-      const entityMapper = TestBed.inject(EntityMapperService);
       const configService = TestBed.inject(ConfigService);
-      configService.saveConfig(entityMapper, { navigationMenu: { items: [] } });
+      configService.saveConfig({ navigationMenu: { items: [] } });
     })
   );
 
