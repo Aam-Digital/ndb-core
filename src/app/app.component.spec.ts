@@ -35,10 +35,19 @@ import { USAGE_ANALYTICS_CONFIG_ID } from "./core/analytics/usage-analytics-conf
 import { environment } from "../environments/environment";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { EntityRegistry } from "./core/entity/database-entity.decorator";
+import { BehaviorSubject } from "rxjs";
+import { SyncState } from "./core/session/session-states/sync-state.enum";
+import { LoginState } from "./core/session/session-states/login-state.enum";
+import { SessionService } from "./core/session/session-service/session.service";
+import { Router } from "@angular/router";
+import { ConfigService } from "./core/config/config.service";
 
 describe("AppComponent", () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
+  const syncState = new BehaviorSubject(SyncState.UNSYNCED);
+  const loginState = new BehaviorSubject(LoginState.LOGGED_OUT);
+  let mockSessionService: jasmine.SpyObj<SessionService>;
 
   const mockAppSettings: IAppConfig = {
     database: { name: "", remote_url: "" },
@@ -48,12 +57,24 @@ describe("AppComponent", () => {
 
   beforeEach(
     waitForAsync(() => {
+      mockSessionService = jasmine.createSpyObj(
+        ["getCurrentUser", "isLoggedIn"],
+        {
+          syncState: syncState,
+          loginState: loginState,
+        }
+      );
+      mockSessionService.getCurrentUser.and.returnValue({
+        name: "test user",
+        roles: [],
+      });
       AppConfig.settings = mockAppSettings;
 
       TestBed.configureTestingModule({
         imports: [AppModule, HttpClientTestingModule],
         providers: [
           { provide: AppConfig, useValue: jasmine.createSpyObj(["load"]) },
+          { provide: SessionService, useValue: mockSessionService },
         ],
       }).compileComponents();
 
@@ -102,6 +123,46 @@ describe("AppComponent", () => {
       testConfig[USAGE_ANALYTICS_CONFIG_ID].site_id,
     ]);
 
+    discardPeriodicTasks();
+  }));
+
+  it("should reload routes whenever a new user logs in once the sync is completed for this user", fakeAsync(() => {
+    const routeSpy = spyOn(TestBed.inject(Router), "navigate");
+    const configSpy = spyOn(TestBed.inject(ConfigService), "loadConfig");
+    createComponent();
+    expect(routeSpy).not.toHaveBeenCalled();
+    expect(configSpy).toHaveBeenCalledTimes(1);
+
+    loginState.next(LoginState.LOGGED_IN);
+    tick();
+    expect(routeSpy).not.toHaveBeenCalled();
+    expect(configSpy).toHaveBeenCalledTimes(1);
+
+    syncState.next(SyncState.COMPLETED);
+    tick();
+    expect(routeSpy).toHaveBeenCalledTimes(1);
+    expect(configSpy).toHaveBeenCalledTimes(2);
+
+    syncState.next(SyncState.COMPLETED);
+    tick();
+    expect(routeSpy).toHaveBeenCalledTimes(1);
+    expect(configSpy).toHaveBeenCalledTimes(2);
+
+    loginState.next(LoginState.LOGGED_OUT);
+    tick();
+    expect(routeSpy).toHaveBeenCalledTimes(1);
+    expect(configSpy).toHaveBeenCalledTimes(2);
+
+    loginState.next(LoginState.LOGGED_IN);
+    // No new calls
+    tick();
+    expect(routeSpy).toHaveBeenCalledTimes(1);
+    expect(configSpy).toHaveBeenCalledTimes(2);
+
+    syncState.next(SyncState.COMPLETED);
+    tick();
+    expect(routeSpy).toHaveBeenCalledTimes(2);
+    expect(configSpy).toHaveBeenCalledTimes(3);
     discardPeriodicTasks();
   }));
 });
