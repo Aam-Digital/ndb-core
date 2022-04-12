@@ -40,6 +40,8 @@ import { LoginState } from "./core/session/session-states/login-state.enum";
 import { SessionService } from "./core/session/session-service/session.service";
 import { Router } from "@angular/router";
 import { ConfigService } from "./core/config/config.service";
+import { PouchDatabase } from "./core/database/pouch-database";
+import { Database } from "./core/database/database";
 
 describe("AppComponent", () => {
   let component: AppComponent;
@@ -74,6 +76,7 @@ describe("AppComponent", () => {
         providers: [
           { provide: AppConfig, useValue: jasmine.createSpyObj(["load"]) },
           { provide: SessionService, useValue: mockSessionService },
+          { provide: Database, useValue: PouchDatabase.create() },
         ],
       }).compileComponents();
 
@@ -122,44 +125,39 @@ describe("AppComponent", () => {
     discardPeriodicTasks();
   }));
 
-  it("should reload routes whenever the config changes", fakeAsync(() => {
+  it("should navigate on same page only when the config changes", fakeAsync(() => {
     const routeSpy = spyOn(TestBed.inject(Router), "navigate");
+    mockSessionService.isLoggedIn.and.returnValue(true);
     createComponent();
     tick();
     expect(routeSpy).toHaveBeenCalledTimes(1);
 
-    const config = new Config(Config.CONFIG_KEY, {});
     const configService = TestBed.inject(ConfigService);
+    const config = configService.configUpdates.value;
+    configService.configUpdates.next(config);
+    tick();
+    expect(routeSpy).toHaveBeenCalledTimes(1);
+
+    config.data["someProp"] = "some change";
     configService.configUpdates.next(config);
     tick();
     expect(routeSpy).toHaveBeenCalledTimes(2);
-
-    configService.configUpdates.next(config);
-    tick();
-    expect(routeSpy).toHaveBeenCalledTimes(2);
-
-    configService.configUpdates.next(new Config(Config.CONFIG_KEY, {}));
-    tick();
-    expect(routeSpy).toHaveBeenCalledTimes(3);
     discardPeriodicTasks();
   }));
 
-  it("should reload the config whenever somebody logs in or the sync completes", () => {
+  it("should reload the config whenever the sync completes", () => {
     const configSpy = spyOn(TestBed.inject(ConfigService), "loadConfig");
     createComponent();
 
     expect(configSpy).not.toHaveBeenCalled();
 
-    loginState.next(LoginState.LOGGED_IN);
-    expect(configSpy).toHaveBeenCalledTimes(1);
-
     syncState.next(SyncState.STARTED);
+    expect(configSpy).not.toHaveBeenCalled();
+
+    syncState.next(SyncState.COMPLETED);
     expect(configSpy).toHaveBeenCalledTimes(1);
 
     syncState.next(SyncState.COMPLETED);
     expect(configSpy).toHaveBeenCalledTimes(2);
-
-    syncState.next(SyncState.COMPLETED);
-    expect(configSpy).toHaveBeenCalledTimes(3);
   });
 });
