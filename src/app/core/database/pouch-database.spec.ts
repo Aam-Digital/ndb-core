@@ -21,7 +21,7 @@ describe("PouchDatabase tests", () => {
   let database: PouchDatabase;
 
   beforeEach(() => {
-    database = PouchDatabase.createWithData();
+    database = PouchDatabase.create();
   });
 
   afterEach(async () => {

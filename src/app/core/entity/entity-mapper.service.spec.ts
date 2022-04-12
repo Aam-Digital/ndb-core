@@ -40,7 +40,7 @@ describe("EntityMapperService", () => {
 
   beforeEach(
     waitForAsync(() => {
-      testDatabase = PouchDatabase.createWithData();
+      testDatabase = PouchDatabase.create();
       entityMapper = new EntityMapperService(
         testDatabase,
         new EntitySchemaService(),

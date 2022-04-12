@@ -32,16 +32,10 @@ import { Injectable } from "@angular/core";
  */
 export class PouchDatabase extends Database {
   /**
-   * Creates a PouchDB in-memory instance in which the passed documents are saved.
-   * The functions returns immediately but the documents are saved asynchronously.
-   * In tests use `tick()` or `waitForAsync()` to prevent accessing documents before they are saved.
-   * @param data an array of documents
+   * Small helper function which creates a database with in-memory PouchDB initialized
    */
-  static createWithData(data = []): PouchDatabase {
-    const instance = new PouchDatabase(new LoggingService());
-    instance.initInMemoryDB();
-    data.forEach((doc) => instance.put(doc, true));
-    return instance;
+  static create(): PouchDatabase {
+    return new PouchDatabase(new LoggingService()).initInMemoryDB();
   }
 
   private pouchDB: PouchDB.Database;
