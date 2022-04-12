@@ -111,6 +111,7 @@ describe("AppComponent", () => {
     });
     const angulartics = TestBed.inject(Angulartics2Matomo);
     const startTrackingSpy = spyOn(angulartics, "startTracking");
+    window["_paq"] = [];
 
     createComponent();
     tick();
