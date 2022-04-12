@@ -25,16 +25,10 @@ import {
 
 import { LoginComponent } from "./login.component";
 import { LoggingService } from "../../logging/logging.service";
-import { RouterTestingModule } from "@angular/router/testing";
 import { SessionService } from "../session-service/session.service";
-import { MatCardModule } from "@angular/material/card";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
-import { MatButtonModule } from "@angular/material/button";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { FormsModule } from "@angular/forms";
 import { LoginState } from "../session-states/login-state.enum";
-import { Router } from "@angular/router";
+import { SessionModule } from "../session.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("LoginComponent", () => {
   let component: LoginComponent;
@@ -45,20 +39,8 @@ describe("LoginComponent", () => {
     waitForAsync(() => {
       mockSessionService = jasmine.createSpyObj(["login"]);
       TestBed.configureTestingModule({
-        declarations: [LoginComponent],
-        imports: [
-          RouterTestingModule,
-          MatCardModule,
-          MatFormFieldModule,
-          MatInputModule,
-          MatButtonModule,
-          NoopAnimationsModule,
-          FormsModule,
-        ],
-        providers: [
-          LoggingService,
-          { provide: SessionService, useValue: mockSessionService },
-        ],
+        imports: [SessionModule, MockedTestingModule],
+        providers: [{ provide: SessionService, useValue: mockSessionService }],
       }).compileComponents();
     })
   );
@@ -72,16 +54,6 @@ describe("LoginComponent", () => {
   it("should be created", () => {
     expect(component).toBeTruthy();
   });
-
-  it("should init permissions and call router on successful login", fakeAsync(() => {
-    mockSessionService.login.and.resolveTo(LoginState.LOGGED_IN);
-    const routerSpy = spyOn(TestBed.inject(Router), "navigate");
-
-    component.login();
-    tick();
-
-    expect(routerSpy).toHaveBeenCalled();
-  }));
 
   it("should show a message when login is unavailable", fakeAsync(() => {
     expectErrorMessageOnState(LoginState.UNAVAILABLE);

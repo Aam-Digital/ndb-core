@@ -27,7 +27,7 @@ describe("Entity", () => {
   let entitySchemaService: EntitySchemaService;
 
   beforeEach(() => {
-      entitySchemaService = new EntitySchemaService();
+    entitySchemaService = new EntitySchemaService();
   });
 
   testEntitySubclass("Entity", Entity, { _id: "someId", _rev: "some_rev" });
