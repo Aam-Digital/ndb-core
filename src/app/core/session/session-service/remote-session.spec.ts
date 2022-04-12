@@ -92,5 +92,10 @@ describe("RemoteSessionService", () => {
     });
   });
 
+  it("should not throw error when remote logout is not possible", () => {
+    mockHttpClient.delete.and.returnValue(throwError(new Error()));
+    return expectAsync(service.logout()).not.toBeRejected();
+  });
+
   testSessionServiceImplementation(() => Promise.resolve(service));
 });

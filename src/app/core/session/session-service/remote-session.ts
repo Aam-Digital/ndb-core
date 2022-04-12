@@ -95,7 +95,8 @@ export class RemoteSession extends SessionService {
       .delete(`${AppConfig.settings.database.remote_url}_session`, {
         withCredentials: true,
       })
-      .toPromise();
+      .toPromise()
+      .catch(() => undefined);
     this.currentDBUser = undefined;
     this.loginState.next(LoginState.LOGGED_OUT);
   }
