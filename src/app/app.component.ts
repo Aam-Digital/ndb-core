@@ -32,6 +32,7 @@ import { LoginState } from "./core/session/session-states/login-state.enum";
 import { LoggingService } from "./core/logging/logging.service";
 import { EntityRegistry } from "./core/entity/database-entity.decorator";
 import { filter } from "rxjs/operators";
+import { Config } from "./core/config/config";
 
 @Component({
   selector: "app-root",
@@ -66,28 +67,26 @@ export class AppComponent {
 
     // first register to events
 
-    // Reload config once the database is synced after someone logged in
-    let shouldLoadAgain = true;
-    this.sessionService.loginState
-      .pipe(filter((state) => state === LoginState.LOGGED_OUT))
-      .subscribe(() => (shouldLoadAgain = true));
+    // Reload config after the database is synced
     this.sessionService.syncState
-      .pipe(filter((state) => shouldLoadAgain && state === SyncState.COMPLETED))
-      .subscribe(async () => {
-        await this.configService.loadConfig();
-        await this.router.navigate([], { relativeTo: this.activatedRoute });
-        shouldLoadAgain = false;
-      });
+      .pipe(filter((state) => state === SyncState.COMPLETED))
+      .subscribe(() => this.configService.loadConfig());
 
-    // These functions will be executed whenever a new config is available
-    this.configService.configUpdates.subscribe(() => {
-      this.routerService.initRouting();
-      this.entityConfigService.setupEntitiesFromConfig();
+    // Re-trigger services that depend on the config when something changes
+    let lastConfig: Config;
+    this.configService.configUpdates.subscribe((value) => {
+      if (value !== lastConfig) {
+        this.routerService.initRouting();
+        this.entityConfigService.setupEntitiesFromConfig();
+        this.router.navigate([], { relativeTo: this.activatedRoute });
+      }
+      lastConfig = value;
     });
 
-    // update the user context for remote error logging and tracking
+    // update the user context for remote error logging and tracking and load config initially
     this.sessionService.loginState.subscribe((newState) => {
       if (newState === LoginState.LOGGED_IN) {
+        this.configService.loadConfig();
         const username = this.sessionService.getCurrentUser().name;
         LoggingService.setLoggingContextUser(username);
         this.analyticsService.setUser(username);

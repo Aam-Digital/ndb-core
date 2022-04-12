@@ -29,7 +29,6 @@ import { AppModule } from "./app.module";
 import { AppConfig } from "./core/app-config/app-config";
 import { IAppConfig } from "./core/app-config/app-config.model";
 import { Angulartics2Matomo } from "angulartics2/matomo";
-import { EntityMapperService } from "./core/entity/entity-mapper.service";
 import { Config } from "./core/config/config";
 import { USAGE_ANALYTICS_CONFIG_ID } from "./core/analytics/usage-analytics-config";
 import { environment } from "../environments/environment";
@@ -101,66 +100,66 @@ describe("AppComponent", () => {
 
   it("should start tracking with config from db", fakeAsync(() => {
     environment.production = true; // tracking is only active in production mode
-    const testConfig = {
+    const testConfig = new Config(Config.CONFIG_KEY, {
       "appConfig:usage-analytics": {
         url: "matomo-test-endpoint",
         site_id: "101",
       },
-    };
-    const entityMapper = TestBed.inject(EntityMapperService);
-    spyOn(entityMapper, "load").and.resolveTo(
-      new Config(Config.CONFIG_KEY, testConfig)
-    );
+    });
     const angulartics = TestBed.inject(Angulartics2Matomo);
     const startTrackingSpy = spyOn(angulartics, "startTracking");
 
     createComponent();
     tick();
+    TestBed.inject(ConfigService).configUpdates.next(testConfig);
 
     expect(startTrackingSpy).toHaveBeenCalledTimes(1);
     expect(window["_paq"]).toContain([
       "setSiteId",
-      testConfig[USAGE_ANALYTICS_CONFIG_ID].site_id,
+      testConfig.data[USAGE_ANALYTICS_CONFIG_ID].site_id,
     ]);
 
     discardPeriodicTasks();
   }));
 
-  it("should reload routes whenever a new user logs in once the sync is completed for this user", fakeAsync(() => {
+  it("should reload routes whenever the config changes", fakeAsync(() => {
     const routeSpy = spyOn(TestBed.inject(Router), "navigate");
+    createComponent();
+    tick();
+    expect(routeSpy).toHaveBeenCalledTimes(1);
+
+    const config = new Config(Config.CONFIG_KEY, {});
+    const configService = TestBed.inject(ConfigService);
+    configService.configUpdates.next(config);
+    tick();
+    expect(routeSpy).toHaveBeenCalledTimes(2);
+
+    configService.configUpdates.next(config);
+    tick();
+    expect(routeSpy).toHaveBeenCalledTimes(2);
+
+    configService.configUpdates.next(new Config(Config.CONFIG_KEY, {}));
+    tick();
+    expect(routeSpy).toHaveBeenCalledTimes(3);
+    discardPeriodicTasks();
+  }));
+
+  it("should reload the config whenever somebody logs in or the sync completes", () => {
     const configSpy = spyOn(TestBed.inject(ConfigService), "loadConfig");
     createComponent();
 
-    loginState.next(LoginState.LOGGED_IN);
-    tick();
-    expect(routeSpy).not.toHaveBeenCalled();
     expect(configSpy).not.toHaveBeenCalled();
 
-    syncState.next(SyncState.COMPLETED);
-    tick();
-    expect(routeSpy).toHaveBeenCalledTimes(1);
-    expect(configSpy).toHaveBeenCalledTimes(1);
-
-    syncState.next(SyncState.COMPLETED);
-    tick();
-    expect(routeSpy).toHaveBeenCalledTimes(1);
-    expect(configSpy).toHaveBeenCalledTimes(1);
-
-    loginState.next(LoginState.LOGGED_OUT);
-    tick();
-    expect(routeSpy).toHaveBeenCalledTimes(1);
-    expect(configSpy).toHaveBeenCalledTimes(1);
-
     loginState.next(LoginState.LOGGED_IN);
-    // No new calls
-    tick();
-    expect(routeSpy).toHaveBeenCalledTimes(1);
+    expect(configSpy).toHaveBeenCalledTimes(1);
+
+    syncState.next(SyncState.STARTED);
     expect(configSpy).toHaveBeenCalledTimes(1);
 
     syncState.next(SyncState.COMPLETED);
-    tick();
-    expect(routeSpy).toHaveBeenCalledTimes(2);
     expect(configSpy).toHaveBeenCalledTimes(2);
-    discardPeriodicTasks();
-  }));
+
+    syncState.next(SyncState.COMPLETED);
+    expect(configSpy).toHaveBeenCalledTimes(3);
+  });
 });
