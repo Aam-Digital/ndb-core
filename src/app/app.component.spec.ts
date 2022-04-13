@@ -94,6 +94,7 @@ describe("AppComponent", () => {
   afterEach(() => {
     // hide angular component so that test results are visible in test browser window
     fixture.debugElement.nativeElement.style.visibility = "hidden";
+    return TestBed.inject(Database).destroy();
   });
 
   it("should be created", () => {
