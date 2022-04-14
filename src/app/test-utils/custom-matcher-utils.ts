@@ -17,7 +17,7 @@ export function makeCustomMatcher<T>(
   return {
     compare: (value: T, ...expected: any[]) => {
       const result = { pass: false, message: "" };
-      if (condition(value, expected)) {
+      if (condition(value, ...expected)) {
         result.pass = true;
       } else {
         result.message = compareMessage(value, expected);
@@ -26,7 +26,7 @@ export function makeCustomMatcher<T>(
     },
     negativeCompare: (value: T, ...expected: any[]) => {
       const result = { pass: false, message: "" };
-      if (!condition(value, expected)) {
+      if (!condition(value, ...expected)) {
         result.pass = true;
       } else {
         result.message = negativeCompareMessage(value, expected);
