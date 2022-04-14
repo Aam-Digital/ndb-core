@@ -21,7 +21,7 @@ export const formMatchers: jasmine.CustomMatcherFactories = {
         if (util.equals(form.value, expected)) {
           result.pass = true;
         } else {
-          result.message = "Form does not contain value " + expected;
+          result.message = `Form ${util.pp(form.value)} does not contain value ${expected}`;
         }
         return result;
       },
