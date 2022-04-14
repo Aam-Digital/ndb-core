@@ -21,7 +21,8 @@ import PouchDB from "pouchdb-browser";
 import memory from "pouchdb-adapter-memory";
 import { PerformanceAnalysisLogging } from "../../utils/performance-analysis-logging";
 import { Injectable } from "@angular/core";
-import { Observable, Subject } from "rxjs";
+import { fromEvent, Observable } from "rxjs";
+import { map } from "rxjs/operators";
 
 @Injectable()
 /**
@@ -210,16 +211,15 @@ export class PouchDatabase extends Database {
   changes(prefix: string): Observable<any> {
     // Somehow the events need to be cleaned up when no-one listens to them any more
     // Maybe just use one changes feed and then create the further observables only with a filter pipe
-    const changeEmitter = new Subject();
-    this.pouchDB
-      .changes({
+    return fromEvent(
+      this.pouchDB.changes({
         live: true,
         since: "now",
         include_docs: true,
         filter: (doc) => doc._id.startsWith(prefix),
-      })
-      .on("change", (change) => changeEmitter.next(change.doc));
-    return changeEmitter.asObservable();
+      }),
+      "change"
+    ).pipe(map((change) => change[0].doc));
   }
 
   public async destroy(): Promise<any> {
