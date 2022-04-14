@@ -87,7 +87,7 @@ const genericMatchers: jasmine.CustomMatcherFactories = {
         } else {
           result.message = `Expected date ${util.pp(
             expectedDate
-          )} to be the same date as ${actualDate}`;
+          )} to equal ${actualDate}`;
         }
         return result;
       },

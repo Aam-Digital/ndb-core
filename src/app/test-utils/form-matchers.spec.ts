@@ -34,7 +34,7 @@ export const formMatchers: jasmine.CustomMatcherFactories = {
         if (util.equals(form.value, expected)) {
           result.pass = true;
         } else {
-          result.message = "Form does not contain value " + expected;
+          result.message = `Form ${util.pp(form.value)} does not contain value ${expected}`;
         }
         return result;
       },
@@ -80,7 +80,7 @@ export const formMatchers: jasmine.CustomMatcherFactories = {
         if (form.enabled) {
           result.pass = true;
         } else {
-          result.message = "Expected form to be enabled";
+          result.message = `Expected form ${util.pp(form.value)} to be enabled`;
         }
         return result;
       },
