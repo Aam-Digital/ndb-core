@@ -11,12 +11,10 @@ import {
 } from "@angular/core/testing";
 import { NotesModule } from "../notes.module";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { RouterTestingModule } from "@angular/router/testing";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BehaviorSubject, of, Subject } from "rxjs";
 import { Note } from "../model/note";
-import { Angulartics2Module } from "angulartics2";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import {
   ConfigurableEnumFilterConfig,
@@ -29,8 +27,7 @@ import { EntityListComponent } from "../../../core/entity-components/entity-list
 import { EventNote } from "../../attendance/model/event-note";
 import { UpdatedEntity } from "../../../core/entity/model/entity-update";
 import { ExportService } from "../../../core/export/export-service/export.service";
-import { MockSessionModule } from "../../../core/session/mock-session.module";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("NotesManagerComponent", () => {
   let component: NotesManagerComponent;
@@ -103,14 +100,7 @@ describe("NotesManagerComponent", () => {
     mockEventNoteObservable = new Subject<UpdatedEntity<EventNote>>();
 
     TestBed.configureTestingModule({
-      declarations: [],
-      imports: [
-        NotesModule,
-        RouterTestingModule,
-        Angulartics2Module.forRoot(),
-        MockSessionModule.withState(),
-        FontAwesomeTestingModule,
-      ],
+      imports: [NotesModule, MockedTestingModule.withState()],
       providers: [
         { provide: FormDialogService, useValue: dialogMock },
         { provide: ActivatedRoute, useValue: routeMock },

@@ -14,6 +14,7 @@ import { SessionService } from "../../../session/session-service/session.service
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { filter } from "rxjs/operators";
+import { LoggingService } from "../../../logging/logging.service";
 
 @UntilDestroy()
 @Component({
@@ -39,7 +40,8 @@ export class ListPaginatorComponent<E>
 
   constructor(
     private sessionService: SessionService,
-    private entityMapperService: EntityMapperService
+    private entityMapperService: EntityMapperService,
+    private loggingService: LoggingService
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -92,7 +94,9 @@ export class ListPaginatorComponent<E>
   }
 
   private async applyUserPaginationSettings() {
-    await this.ensureUserIsLoaded();
+    if (!(await this.ensureUserIsLoaded())) {
+      return;
+    }
 
     const pageSize = this.user.paginatorSettingsPageSize[
       this.idForSavingPagination
@@ -112,7 +116,9 @@ export class ListPaginatorComponent<E>
   }
 
   private async updateUserPaginationSettings() {
-    await this.ensureUserIsLoaded();
+    if (!(await this.ensureUserIsLoaded())) {
+      return;
+    }
 
     // save "all" as -1
     const sizeToBeSaved = this.showingAll ? -1 : this.pageSize;
@@ -134,10 +140,17 @@ export class ListPaginatorComponent<E>
     }
   }
 
-  private async ensureUserIsLoaded() {
+  private async ensureUserIsLoaded(): Promise<boolean> {
     if (!this.user) {
       const currentUser = this.sessionService.getCurrentUser();
-      this.user = await this.entityMapperService.load(User, currentUser.name);
+      try {
+        this.user = await this.entityMapperService.load(User, currentUser.name);
+      } catch (e) {
+        this.loggingService.warn(
+          `Could not load user entity for ${currentUser.name}`
+        );
+      }
     }
+    return !!this.user;
   }
 }

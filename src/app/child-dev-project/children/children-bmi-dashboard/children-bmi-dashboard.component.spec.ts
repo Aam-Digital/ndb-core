@@ -4,14 +4,13 @@ import {
   TestBed,
   tick,
 } from "@angular/core/testing";
-import { RouterTestingModule } from "@angular/router/testing";
 import { HealthCheck } from "../health-checkup/model/health-check";
 import { of } from "rxjs";
 import { ChildrenService } from "../children.service";
 import { Child } from "../model/child";
 import { ChildrenBmiDashboardComponent } from "./children-bmi-dashboard.component";
 import { ChildrenModule } from "../children.module";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("ChildrenBmiDashboardComponent", () => {
   let component: ChildrenBmiDashboardComponent;
@@ -24,11 +23,7 @@ describe("ChildrenBmiDashboardComponent", () => {
   beforeEach(() => {
     mockChildrenService.getChildren.and.returnValue(of([]));
     TestBed.configureTestingModule({
-      imports: [
-        ChildrenModule,
-        RouterTestingModule.withRoutes([]),
-        FontAwesomeTestingModule,
-      ],
+      imports: [ChildrenModule, MockedTestingModule.withState()],
       providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
     }).compileComponents();
   });

@@ -8,7 +8,6 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import PouchDB from "pouchdb-browser";
 import { ChildPhotoUpdateService } from "../services/child-photo-update.service";
 import { ConfigService } from "../../config/config.service";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { readFile } from "../../../utils/utils";
 import { RouteTarget } from "../../../app.routing";
@@ -39,8 +38,7 @@ export class AdminComponent implements OnInit {
     private confirmationDialog: ConfirmationDialogService,
     private snackBar: MatSnackBar,
     private childPhotoUpdateService: ChildPhotoUpdateService,
-    private configService: ConfigService,
-    private entityMapper: EntityMapperService
+    private configService: ConfigService
   ) {}
 
   ngOnInit() {
@@ -79,18 +77,13 @@ export class AdminComponent implements OnInit {
   }
 
   async downloadConfigClick() {
-    const configString = await this.configService.exportConfig(
-      this.entityMapper
-    );
+    const configString = await this.configService.exportConfig();
     this.startDownload(configString, "text/json", "config.json");
   }
 
   async uploadConfigFile(inputEvent: Event) {
     const loadedFile = await readFile(this.getFileFromInputEvent(inputEvent));
-    await this.configService.saveConfig(
-      this.entityMapper,
-      JSON.parse(loadedFile)
-    );
+    await this.configService.saveConfig(JSON.parse(loadedFile));
   }
 
   private startDownload(data: string, type: string, name: string) {
@@ -111,8 +104,8 @@ export class AdminComponent implements OnInit {
     const newData = await readFile(this.getFileFromInputEvent(inputEvent));
 
     const dialogRef = this.confirmationDialog.openDialog(
-      $localize`Overwrite complete database?`,
-      $localize`Are you sure you want to restore this backup? This will
+      `Overwrite complete database?`,
+      `Are you sure you want to restore this backup? This will
       delete all ${JSON.parse(restorePoint).length} existing records,
       restoring ${JSON.parse(newData).length} records from the loaded file.`
     );
@@ -125,13 +118,9 @@ export class AdminComponent implements OnInit {
       await this.backupService.clearDatabase();
       await this.backupService.importJson(newData, true);
 
-      const snackBarRef = this.snackBar.open(
-        $localize`Backup restored`,
-        "Undo",
-        {
-          duration: 8000,
-        }
-      );
+      const snackBarRef = this.snackBar.open(`Backup restored`, "Undo", {
+        duration: 8000,
+      });
       snackBarRef
         .onAction()
         .pipe(untilDestroyed(this))
@@ -154,8 +143,8 @@ export class AdminComponent implements OnInit {
     const restorePoint = await this.backupService.getJsonExport();
 
     const dialogRef = this.confirmationDialog.openDialog(
-      $localize`Empty complete database?`,
-      $localize`Are you sure you want to clear the database? This will delete all ${
+      `Empty complete database?`,
+      `Are you sure you want to clear the database? This will delete all ${
         restorePoint.split("\n").length
       } existing records in the database!`
     );
@@ -167,13 +156,9 @@ export class AdminComponent implements OnInit {
 
       await this.backupService.clearDatabase();
 
-      const snackBarRef = this.snackBar.open(
-        $localize`Import completed`,
-        "Undo",
-        {
-          duration: 8000,
-        }
-      );
+      const snackBarRef = this.snackBar.open(`Import completed`, "Undo", {
+        duration: 8000,
+      });
       snackBarRef
         .onAction()
         .pipe(untilDestroyed(this))

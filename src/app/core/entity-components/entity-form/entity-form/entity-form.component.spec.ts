@@ -3,18 +3,17 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { EntityFormComponent } from "./entity-form.component";
 import { ChildPhotoService } from "../../../../child-dev-project/children/child-photo-service/child-photo.service";
 import { Entity } from "../../../entity/model/entity";
-import { RouterTestingModule } from "@angular/router/testing";
 import { ConfigService } from "../../../config/config.service";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { AlertService } from "../../../alerts/alert.service";
 import { DatabaseField } from "../../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { EntityFormModule } from "../entity-form.module";
-import { FormBuilder } from "@angular/forms";
-import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { EntityFormService } from "../entity-form.service";
-import { MockSessionModule } from "../../../session/mock-session.module";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { AlertsModule } from "../../../alerts/alerts.module";
+import { ReactiveFormsModule } from "@angular/forms";
 
 describe("EntityFormComponent", () => {
   let component: EntityFormComponent;
@@ -22,7 +21,6 @@ describe("EntityFormComponent", () => {
 
   let mockChildPhotoService: jasmine.SpyObj<ChildPhotoService>;
   let mockConfigService: jasmine.SpyObj<ConfigService>;
-  let mockEntitySchemaService: jasmine.SpyObj<EntitySchemaService>;
 
   const testChild = new Child("Test Name");
 
@@ -34,26 +32,18 @@ describe("EntityFormComponent", () => {
         "getImage",
       ]);
       mockConfigService = jasmine.createSpyObj(["getConfig"]);
-      mockEntitySchemaService = jasmine.createSpyObj([
-        "getComponent",
-        "registerSchemaDatatype",
-      ]);
 
       TestBed.configureTestingModule({
-        declarations: [EntityFormComponent],
         imports: [
           EntityFormModule,
-          NoopAnimationsModule,
-          RouterTestingModule,
+          MockedTestingModule.withState(),
           MatSnackBarModule,
-          MockSessionModule.withState(),
+          AlertsModule,
+          ReactiveFormsModule,
         ],
         providers: [
-          FormBuilder,
-          AlertService,
           { provide: ChildPhotoService, useValue: mockChildPhotoService },
           { provide: ConfigService, useValue: mockConfigService },
-          { provide: EntitySchemaService, useValue: mockEntitySchemaService },
         ],
       }).compileComponents();
     })
@@ -101,7 +91,9 @@ describe("EntityFormComponent", () => {
       @DatabaseField({ description: "Property description" })
       propertyField: string;
     }
-    mockEntitySchemaService.getComponent.and.returnValue("PredefinedComponent");
+    spyOn(TestBed.inject(EntitySchemaService), "getComponent").and.returnValue(
+      "PredefinedComponent"
+    );
     component.entity = new Test();
     component.columns = [
       [

@@ -83,6 +83,7 @@ export class SyncStatusComponent implements OnInit {
         this.syncInProgress = false;
         if (this.dialogRef) {
           this.dialogRef.close();
+          this.dialogRef = undefined;
         }
         this.loggingService.debug("Database sync completed.");
         break;
@@ -90,6 +91,7 @@ export class SyncStatusComponent implements OnInit {
         this.syncInProgress = false;
         if (this.dialogRef) {
           this.dialogRef.close();
+          this.dialogRef = undefined;
         }
         break;
     }

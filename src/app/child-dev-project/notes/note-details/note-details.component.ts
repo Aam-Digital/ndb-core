@@ -6,6 +6,9 @@ import { INTERACTION_TYPE_CONFIG_ID } from "../model/interaction-type.interface"
 import { Child } from "../../children/model/child";
 import { User } from "../../../core/user/user";
 import { School } from "../../schools/model/school";
+import { ExportColumnConfig } from "../../../core/export/export-service/export-column-config";
+import { ConfigService } from "../../../core/config/config.service";
+import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -26,6 +29,15 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
   readonly INTERACTION_TYPE_CONFIG = INTERACTION_TYPE_CONFIG_ID;
   includeInactiveChildren: boolean = false;
 
+  /** export format for notes to be used for downloading the individual details */
+  exportConfig: ExportColumnConfig[];
+
+  constructor(private configService: ConfigService) {
+    this.exportConfig = this.configService.getConfig<{
+      config: EntityListConfig;
+    }>("view:note").config.exportConfig;
+  }
+
   toggleIncludeInactiveChildren() {
     this.includeInactiveChildren = !this.includeInactiveChildren;
     // This needs to be set so that the filtering will start immediately
@@ -35,8 +47,4 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
   }
 
   filterInactiveChildren: (Child) => boolean = (c: Child) => c.isActive;
-
-  get isMeeting(): boolean {
-    return this.entity.category?.isMeeting || false;
-  }
 }

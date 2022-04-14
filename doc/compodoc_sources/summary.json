@@ -55,7 +55,11 @@
       },
       {
         "title": "Write Automated Unit Tests",
-        "file": "how-to-guides/write-tests.md"
+        "file": "how-to-guides/write-unit-tests.md"
+      },
+      {
+        "title": "Write E2E Tests",
+        "file": "how-to-guides/write-e2e-tests.md"
       },
       {
         "title": "Document Code",
@@ -118,6 +122,10 @@
       {
         "title": "Configuration",
         "file": "concepts/configuration.md"
+      },
+      {
+        "title": "User Roles and Permissions",
+        "file": "concepts/permissions.md"
       },
       {
         "title": "UX Guidelines",

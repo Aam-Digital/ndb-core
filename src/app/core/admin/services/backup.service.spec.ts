@@ -11,7 +11,7 @@ describe("BackupService", () => {
   let service: BackupService;
 
   beforeEach(() => {
-    db = PouchDatabase.createWithInMemoryDB();
+    db = PouchDatabase.create();
     TestBed.configureTestingModule({
       providers: [
         BackupService,

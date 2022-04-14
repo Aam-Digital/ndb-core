@@ -7,7 +7,7 @@ import { HealthCheck } from "../model/health-check";
 import moment from "moment";
 import { Child } from "../../model/child";
 import { of } from "rxjs";
-import { MockSessionModule } from "../../../../core/session/mock-session.module";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 
 const hc1 = new HealthCheck();
@@ -31,7 +31,7 @@ export default {
       imports: [
         ChildrenModule,
         StorybookBaseModule,
-        MockSessionModule.withState(),
+        MockedTestingModule.withState(),
       ],
       declarations: [],
       providers: [

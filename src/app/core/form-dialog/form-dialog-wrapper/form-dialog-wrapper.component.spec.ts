@@ -3,13 +3,10 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { FormDialogWrapperComponent } from "./form-dialog-wrapper.component";
 import { FormDialogModule } from "../form-dialog.module";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { Angulartics2Module } from "angulartics2";
-import { RouterTestingModule } from "@angular/router/testing";
 import { MatDialogRef } from "@angular/material/dialog";
 import { Subject } from "rxjs";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
-import { MockSessionModule } from "../../session/mock-session.module";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
 describe("FormDialogWrapperComponent", () => {
   let component: FormDialogWrapperComponent;
@@ -22,15 +19,10 @@ describe("FormDialogWrapperComponent", () => {
       TestBed.configureTestingModule({
         imports: [
           FormDialogModule,
-          Angulartics2Module.forRoot(),
-          RouterTestingModule,
+          MockedTestingModule.withState(),
           MatSnackBarModule,
-          MockSessionModule.withState(),
         ],
-        providers: [
-          { provide: MatDialogRef, useValue: {} },
-          EntitySchemaService,
-        ],
+        providers: [{ provide: MatDialogRef, useValue: {} }],
       }).compileComponents();
 
       saveEntitySpy = spyOn(TestBed.inject(EntityMapperService), "save");

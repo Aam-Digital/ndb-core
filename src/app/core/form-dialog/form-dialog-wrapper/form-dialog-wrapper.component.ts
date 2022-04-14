@@ -9,9 +9,7 @@ import {
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { Entity } from "../../entity/model/entity";
 import { MatDialogRef } from "@angular/material/dialog";
-import { getUrlWithoutParams } from "../../../utils/utils";
 import { Router } from "@angular/router";
-import { OperationType } from "../../permissions/entity-permissions.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import {
   EntityRemoveService,
@@ -40,15 +38,14 @@ import {
   templateUrl: "./form-dialog-wrapper.component.html",
   styleUrls: ["./form-dialog-wrapper.component.scss"],
 })
-export class FormDialogWrapperComponent implements AfterViewInit {
-  readonly operationType = OperationType;
-
+export class FormDialogWrapperComponent<E extends Entity = Entity>
+  implements AfterViewInit {
   /** entity to be edited */
-  @Input() set entity(value: Entity) {
+  @Input() set entity(value: E) {
     this.originalEntity = Object.assign({}, value);
     this._entity = value;
   }
-  get entity(): Entity {
+  get entity(): E {
     return this._entity;
   }
 
@@ -56,9 +53,9 @@ export class FormDialogWrapperComponent implements AfterViewInit {
   @Input() readonly: boolean = false;
 
   /** actual reference to the entity to be edited in the form used by the getter/setter */
-  private _entity: Entity;
+  private _entity: E;
   /** clone of the initially given entity as backup for resetting changes */
-  private originalEntity: Entity;
+  private originalEntity: E;
 
   /**
    * (Optional) callback before saving the entity to the database.
@@ -66,14 +63,14 @@ export class FormDialogWrapperComponent implements AfterViewInit {
    * You can here do any prerequisites or editing of the entity object if required.
    * You can abort the saving by returning undefined.
    */
-  @Input() beforeSave?: (entity: Entity) => Promise<Entity>;
+  @Input() beforeSave?: (entity: E) => Promise<E>;
 
   /**
    * Triggered when the form should be closed (after save or reset is completed).
    *
    * This emits the saved entity or undefined if the form was canceled.
    */
-  @Output() onClose = new EventEmitter<Entity>();
+  @Output() onClose = new EventEmitter<E>();
 
   /** ngForm component of the child component that is set through the ng-content */
   @ContentChild("entityForm", { static: true }) contentForm;
@@ -128,14 +125,9 @@ export class FormDialogWrapperComponent implements AfterViewInit {
   }
 
   public delete() {
-    const currentUrl = getUrlWithoutParams(this.router);
     this.entityRemoveService.remove(this.entity).subscribe((result) => {
-      switch (result) {
-        case RemoveResult.REMOVED:
-          this.onClose.emit(undefined);
-          break;
-        case RemoveResult.UNDONE:
-          this.router.navigate([currentUrl]);
+      if (result === RemoveResult.REMOVED) {
+        this.onClose.emit();
       }
     });
   }

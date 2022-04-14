@@ -6,8 +6,10 @@ import { ChildSchoolRelation } from "../../child-dev-project/children/model/chil
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
 import { genders } from "../../child-dev-project/children/model/genders";
 import { materials } from "../../child-dev-project/children/educational-material/model/materials";
-import { mathLevels } from "../../child-dev-project/children/aser/model/mathLevels";
-import { readingLevels } from "../../child-dev-project/children/aser/model/readingLevels";
+import {
+  mathLevels,
+  readingLevels,
+} from "../../child-dev-project/children/aser/model/skill-levels";
 import { warningLevels } from "../../child-dev-project/warning-levels";
 import { ratingAnswers } from "../../features/historical-data/model/rating-answers";
 
@@ -882,8 +884,6 @@ export const defaultJsonConfig = {
   },
 
   "entity:Child": {
-    "permissions": {
-    },
     "attributes": [
       {
         "name": "address",
@@ -923,8 +923,6 @@ export const defaultJsonConfig = {
     ]
   },
   "entity:School": {
-    "permissions": {
-    },
     "attributes": [
       {
         "name": "name",
@@ -1025,13 +1023,5 @@ export const defaultJsonConfig = {
         }
       },
     ]
-  },
-  "entity:Note": {
-    permissions: {
-    }
-  },
-  "entity:EventNote": {
-    permission: {
-    }
   }
 }

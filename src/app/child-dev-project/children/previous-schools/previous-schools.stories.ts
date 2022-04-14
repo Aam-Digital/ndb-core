@@ -6,7 +6,7 @@ import { School } from "../../schools/model/school";
 import { Child } from "../model/child";
 import { ChildrenModule } from "../children.module";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
-import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { LoginState } from "../../../core/session/session-states/login-state.enum";
 
 const child = new Child("testChild");
@@ -42,7 +42,7 @@ export default {
       imports: [
         ChildrenModule,
         StorybookBaseModule,
-        MockSessionModule.withState(LoginState.LOGGED_IN, [
+        MockedTestingModule.withState(LoginState.LOGGED_IN, [
           school1,
           school2,
           rel1,

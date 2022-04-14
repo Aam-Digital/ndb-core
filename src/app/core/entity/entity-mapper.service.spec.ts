@@ -20,7 +20,7 @@ import { Entity } from "./model/entity";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 import { waitForAsync } from "@angular/core/testing";
 import { PouchDatabase } from "../database/pouch-database";
-import { entityRegistry } from "./database-entity.decorator";
+import { DatabaseEntity, entityRegistry } from "./database-entity.decorator";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
@@ -40,7 +40,7 @@ describe("EntityMapperService", () => {
 
   beforeEach(
     waitForAsync(() => {
-      testDatabase = PouchDatabase.createWithInMemoryDB();
+      testDatabase = PouchDatabase.create();
       entityMapper = new EntityMapperService(
         testDatabase,
         new EntitySchemaService(),
@@ -178,55 +178,108 @@ describe("EntityMapperService", () => {
     expect(loadedByFullId._rev).toBe(loadedByEntityId._rev);
   });
 
-  it("publishes updates to any listeners", (done) => {
+  it("publishes updates to any listeners", () => {
     const testId = "t1";
-    receiveUpdatesAndTestTypeAndId(done, undefined, testId);
-
     const testEntity = new Entity(testId);
     entityMapper
       .save(testEntity, true)
       .then(() => entityMapper.remove(testEntity));
+
+    return receiveUpdatesAndTestTypeAndId(undefined, testId);
   });
 
-  it("publishes when an existing entity is updated", (done) => {
-    receiveUpdatesAndTestTypeAndId(done, "update", existingEntity.entityId);
-
+  it("publishes when an existing entity is updated", () => {
     entityMapper
-      .load<Entity>(Entity, existingEntity.entityId)
-      .then((loadedEntity) => entityMapper.save<Entity>(loadedEntity));
+      .load(Entity, existingEntity.entityId)
+      .then((loadedEntity) => entityMapper.save(loadedEntity));
+
+    return receiveUpdatesAndTestTypeAndId("update", existingEntity.entityId);
   });
 
-  it("publishes when an existing entity is deleted", (done) => {
-    receiveUpdatesAndTestTypeAndId(done, "remove", existingEntity.entityId);
-
+  it("publishes when an existing entity is deleted", () => {
     entityMapper
-      .load<Entity>(Entity, existingEntity.entityId)
-      .then((loadedEntity) => entityMapper.remove<Entity>(loadedEntity));
+      .load(Entity, existingEntity.entityId)
+      .then((loadedEntity) => entityMapper.remove(loadedEntity));
+
+    return receiveUpdatesAndTestTypeAndId("remove", existingEntity.entityId);
   });
 
-  it("publishes when a new entity is being saved", (done) => {
+  it("publishes when a new entity is being saved", () => {
     const testId = "t1";
-    receiveUpdatesAndTestTypeAndId(done, "new", testId);
-
     const testEntity = new Entity(testId);
     entityMapper.save(testEntity, true);
+
+    return receiveUpdatesAndTestTypeAndId("new", testId);
   });
 
-  function receiveUpdatesAndTestTypeAndId(
-    done: any,
-    type?: string,
-    entityId?: string
-  ) {
-    entityMapper.receiveUpdates<Entity>(Entity).subscribe((e) => {
-      if (e) {
-        if (type) {
-          expect(e.type).toBe(type);
+  it("correctly behaves when en empty array is given to the saveAll function", async () => {
+    const result = await entityMapper.saveAll([]);
+    expect(result).toHaveSize(0);
+  });
+
+  it("correctly saves an array of heterogeneous entities", async () => {
+    const result = await entityMapper.saveAll([
+      new MockEntityA("1"),
+      new MockEntityA("10"),
+      new MockEntityA("42"),
+    ]);
+    expect(result).toEqual([
+      jasmine.objectContaining({
+        ok: true,
+        id: "EntityA:1",
+      }),
+      jasmine.objectContaining({
+        ok: true,
+        id: "EntityA:10",
+      }),
+      jasmine.objectContaining({
+        ok: true,
+        id: "EntityA:42",
+      }),
+    ]);
+  });
+
+  it("correctly saves an array of homogeneous entities", async () => {
+    const result = await entityMapper.saveAll([
+      new MockEntityA("1"),
+      new MockEntityB("10"),
+      new MockEntityA("42"),
+    ]);
+    expect(result).toEqual([
+      jasmine.objectContaining({
+        ok: true,
+        id: "EntityA:1",
+      }),
+      jasmine.objectContaining({
+        ok: true,
+        id: "EntityB:10",
+      }),
+      jasmine.objectContaining({
+        ok: true,
+        id: "EntityA:42",
+      }),
+    ]);
+  });
+
+  function receiveUpdatesAndTestTypeAndId(type?: string, entityId?: string) {
+    return new Promise<void>((resolve) => {
+      entityMapper.receiveUpdates(Entity).subscribe((e) => {
+        if (e) {
+          if (type) {
+            expect(e.type).toBe(type);
+          }
+          if (entityId) {
+            expect(e.entity.entityId).toBe(entityId);
+          }
+          resolve();
         }
-        if (entityId) {
-          expect(e.entity.entityId).toBe(entityId);
-        }
-        done();
-      }
+      });
     });
   }
+
+  @DatabaseEntity("EntityA")
+  class MockEntityA extends Entity {}
+
+  @DatabaseEntity("EntityB")
+  class MockEntityB extends Entity {}
 });

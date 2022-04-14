@@ -8,10 +8,9 @@ import {
 
 import { ListPaginatorComponent } from "./list-paginator.component";
 import { EntityListModule } from "../../entity-list/entity-list.module";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatTableDataSource } from "@angular/material/table";
 import { PageEvent } from "@angular/material/paginator";
-import { MockSessionModule } from "../../../session/mock-session.module";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { User } from "../../../user/user";
 
@@ -22,11 +21,7 @@ describe("ListPaginatorComponent", () => {
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        imports: [
-          EntityListModule,
-          NoopAnimationsModule,
-          MockSessionModule.withState(),
-        ],
+        imports: [EntityListModule, MockedTestingModule.withState()],
       }).compileComponents();
     })
   );

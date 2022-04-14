@@ -10,7 +10,7 @@ import { LoggingService } from "../../logging/logging.service";
 import { RouterService } from "./router.service";
 import { EntityDetailsComponent } from "../../entity-components/entity-details/entity-details.component";
 import { ViewConfig } from "./view-config.interface";
-import { UserRoleGuard } from "../../permissions/user-role.guard";
+import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { RouteRegistry, routesRegistry } from "../../../app.routing";
 
 class TestComponent extends Component {}

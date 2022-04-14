@@ -5,6 +5,7 @@ import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-d
 import { ShowsEntity } from "./shows-entity.interface";
 import { OnInitDynamicComponent } from "../view/dynamic-components/on-init-dynamic-component.interface";
 import { Entity } from "../entity/model/entity";
+import { EntityAbility } from "../permissions/ability/entity-ability";
 
 /**
  * Inject this service instead of MatDialog to display a form or details view as a modal
@@ -22,7 +23,8 @@ import { Entity } from "../entity/model/entity";
 export class FormDialogService {
   constructor(
     private dialog: MatDialog,
-    private confirmationDialog: ConfirmationDialogService
+    private confirmationDialog: ConfirmationDialogService,
+    private ability: EntityAbility
   ) {}
 
   openDialog<
@@ -49,6 +51,8 @@ export class FormDialogService {
     }
 
     const dialogWrapper = dialogRef.componentInstance.formDialogWrapper;
+    dialogWrapper.readonly = this.ability.cannot("update", entity);
+
     dialogWrapper.onClose.subscribe((res) => dialogRef.close(res));
 
     dialogRef.beforeClosed().subscribe((activelyClosed) => {

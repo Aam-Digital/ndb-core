@@ -78,6 +78,7 @@ import { TranslatableMatPaginator } from "./core/translation/TranslatableMatPagi
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
+import { DemoPermissionGeneratorService } from "./core/permissions/demo-permission-generator.service";
 
 /**
  * Main entry point of the application.
@@ -147,6 +148,7 @@ import { far } from "@fortawesome/free-regular-svg-icons";
         minCountAttributes: 2,
         maxCountAttributes: 5,
       }),
+      ...DemoPermissionGeneratorService.provider(),
     ]),
     AttendanceModule,
     DashboardShortcutWidgetModule,

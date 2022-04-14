@@ -9,10 +9,6 @@ import {
 import { Entity } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { getUrlWithoutParams } from "../../../utils/utils";
-import {
-  EntityPermissionsService,
-  OperationType,
-} from "../../permissions/entity-permissions.service";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { RouteData } from "../../view/dynamic-routing/view-config.interface";
 import { AnalyticsService } from "../../analytics/analytics.service";
@@ -20,6 +16,7 @@ import {
   EntityRemoveService,
   RemoveResult,
 } from "../../entity/entity-remove.service";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { RouteTarget } from "../../../app.routing";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 
@@ -40,8 +37,6 @@ export class EntityDetailsComponent {
   entity: Entity;
   creatingNew = false;
 
-  operationType = OperationType;
-
   panels: Panel[] = [];
   iconName: string;
   config: EntityDetailsConfig;
@@ -51,8 +46,8 @@ export class EntityDetailsComponent {
     private route: ActivatedRoute,
     private router: Router,
     private analyticsService: AnalyticsService,
-    private permissionService: EntityPermissionsService,
     private entityRemoveService: EntityRemoveService,
+    private ability: EntityAbility,
     private entities: EntityRegistry
   ) {
     this.route.data.subscribe((data: RouteData<EntityDetailsConfig>) => {
@@ -67,15 +62,11 @@ export class EntityDetailsComponent {
   private loadEntity(id: string) {
     const constr = this.entities.get(this.config.entity);
     if (id === "new") {
-      this.entity = new constr();
-      if (
-        !this.permissionService.userIsPermitted(
-          this.entity.getConstructor(),
-          this.operationType.CREATE
-        )
-      ) {
+      if (this.ability.cannot("create", constr)) {
         this.router.navigate([""]);
+        return;
       }
+      this.entity = new constr();
       this.creatingNew = true;
       this.setPanelsConfig();
     } else {

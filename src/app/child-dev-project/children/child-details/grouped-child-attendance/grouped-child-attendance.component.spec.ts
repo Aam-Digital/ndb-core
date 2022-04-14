@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { GroupedChildAttendanceComponent } from "./grouped-child-attendance.component";
-import { AttendanceService } from "../../../attendance/attendance.service";
 import { AttendanceModule } from "../../../attendance/attendance.module";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 
 describe("GroupedChildAttendanceComponent", () => {
   let component: GroupedChildAttendanceComponent;
@@ -11,13 +11,7 @@ describe("GroupedChildAttendanceComponent", () => {
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        imports: [AttendanceModule],
-        providers: [
-          {
-            provide: AttendanceService,
-            useValue: { getActivityAttendances: () => Promise.resolve([]) },
-          },
-        ],
+        imports: [AttendanceModule, MockedTestingModule.withState()],
       }).compileComponents();
     })
   );
