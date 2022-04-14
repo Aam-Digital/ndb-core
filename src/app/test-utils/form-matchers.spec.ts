@@ -1,14 +1,16 @@
 import { AbstractControl } from "@angular/forms";
 
 export const formMatchers: jasmine.CustomMatcherFactories = {
-  toContainFormError: () => {
+  toContainFormError: (util) => {
     return {
       compare: (form: AbstractControl, expectedError: string) => {
         const result = { pass: false, message: "" };
         if (form.hasError(expectedError)) {
           result.pass = true;
         } else {
-          result.message = `Expected form ${util.pp(form.value)} to contain error ${expectedError}`;
+          result.message = `Expected form ${util.pp(
+            form.value
+          )} to contain error ${expectedError}`;
         }
         return result;
       },

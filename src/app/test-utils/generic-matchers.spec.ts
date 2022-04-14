@@ -1,12 +1,14 @@
 const genericMatchers: jasmine.CustomMatcherFactories = {
-  toBeEmpty: () => {
+  toBeEmpty: (util) => {
     return {
       compare: (value: ArrayLike<any>) => {
         const result = { pass: false, message: "" };
         if (value.length === 0) {
           result.pass = true;
         } else {
-          result.message = `Expected array ${util.pp(value)} to be empty but it has size ${value.length}`;
+          result.message = `Expected array ${util.pp(
+            value
+          )} to be empty but it has size ${value.length}`;
         }
         return result;
       },
