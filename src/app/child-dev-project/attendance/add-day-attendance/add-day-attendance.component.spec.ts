@@ -4,13 +4,10 @@ import { AddDayAttendanceComponent } from "./add-day-attendance.component";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { Note } from "../../notes/model/note";
 import { AttendanceModule } from "../attendance.module";
-import { RouterTestingModule } from "@angular/router/testing";
 import { ChildrenService } from "../../children/children.service";
 import { of } from "rxjs";
-import { MatNativeDateModule } from "@angular/material/core";
 import { AttendanceService } from "../attendance.service";
-import { MockSessionModule } from "../../../core/session/mock-session.module";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("AddDayAttendanceComponent", () => {
   let component: AddDayAttendanceComponent;
@@ -26,13 +23,7 @@ describe("AddDayAttendanceComponent", () => {
       mockChildrenService.getChildren.and.returnValue(of([]));
 
       TestBed.configureTestingModule({
-        imports: [
-          AttendanceModule,
-          RouterTestingModule,
-          MatNativeDateModule,
-          FontAwesomeTestingModule,
-          MockSessionModule.withState(),
-        ],
+        imports: [AttendanceModule, MockedTestingModule.withState()],
         providers: [
           { provide: ChildrenService, useValue: mockChildrenService },
           {

@@ -3,8 +3,6 @@ import { Angulartics2Matomo } from "angulartics2/matomo";
 import { environment } from "../../../environments/environment";
 import { AppConfig } from "../app-config/app-config";
 import { ConfigService } from "../config/config.service";
-import { SessionService } from "../session/session-service/session.service";
-import { LoginState } from "../session/session-states/login-state.enum";
 import {
   USAGE_ANALYTICS_CONFIG_ID,
   UsageAnalyticsConfig,
@@ -29,13 +27,10 @@ export class AnalyticsService {
   constructor(
     private angulartics2: Angulartics2,
     private angulartics2Matomo: Angulartics2Matomo,
-    private configService: ConfigService,
-    private sessionService: SessionService
-  ) {
-    this.subscribeToUserChanges();
-  }
+    private configService: ConfigService
+  ) {}
 
-  private setUser(username: string): void {
+  public setUser(username: string): void {
     this.angulartics2Matomo.setUsername(
       AnalyticsService.getUserHash(username ?? "")
     );
@@ -53,34 +48,33 @@ export class AnalyticsService {
     });
   }
 
-  private subscribeToUserChanges() {
-    this.sessionService.loginState.subscribe((newState) => {
-      if (newState === LoginState.LOGGED_IN) {
-        this.setUser(this.sessionService.getCurrentUser().name);
-      } else {
-        this.setUser(undefined);
-      }
-    });
+  private setConfigValues() {
+    const { url, site_id, no_cookies } =
+      this.configService.getConfig<UsageAnalyticsConfig>(
+        USAGE_ANALYTICS_CONFIG_ID
+      ) || {};
+    if (no_cookies) {
+      window["_paq"].push(["disableCookies"]);
+    }
+    if (url) {
+      const u = url.endsWith("/") ? url : url + "/";
+      window["_paq"].push(["setTrackerUrl", u + "matomo.php"]);
+    }
+    if (site_id) {
+      window["_paq"].push(["setSiteId", site_id]);
+    }
   }
 
   /**
    * Set up usage analytics tracking - if the AppConfig specifies the required settings.
    */
   init(): void {
-    const config = this.configService.getConfig<UsageAnalyticsConfig>(
-      USAGE_ANALYTICS_CONFIG_ID
-    );
-
-    if (!config || !config.url || !config.site_id) {
-      // do not track
-      return;
-    }
-
-    this.setUpMatomo(config.url, config.site_id, config.no_cookies);
+    this.setUpMatomo();
 
     this.setVersion();
     this.setOrganization(AppConfig.settings.site_name);
     this.setUser(undefined);
+    this.configService.configUpdates.subscribe(() => this.setConfigValues());
 
     this.angulartics2Matomo.startTracking();
   }
@@ -90,37 +84,24 @@ export class AnalyticsService {
    *
    * The code is inspired by:
    * https://github.com/Arnaud73/ngx-matomo/blob/master/projects/ngx-matomo/src/lib/matomo-injector.service.ts
-   *
-   * @param url The URL of the matomo backend
-   * @param id The id of the Matomo site as which this app will be tracked
-   * @param disableCookies (Optional) flag whether to disable use of cookies to track sessions
    * @private
    */
-  private setUpMatomo(
-    url: string,
-    id: string,
-    disableCookies: boolean = false
-  ) {
+  private setUpMatomo() {
     window["_paq"] = window["_paq"] || [];
     window["_paq"].push([
       "setDocumentTitle",
       document.domain + "/" + document.title,
     ]);
-    if (disableCookies) {
-      window["_paq"].push(["disableCookies"]);
-    }
     window["_paq"].push(["trackPageView"]);
     window["_paq"].push(["enableLinkTracking"]);
-    const u = url.endsWith("/") ? url : url + "/";
-    window["_paq"].push(["setTrackerUrl", u + "matomo.php"]);
-    window["_paq"].push(["setSiteId", id]);
     const d = document;
     const g = d.createElement("script");
     const s = d.getElementsByTagName("script")[0];
     g.type = "text/javascript";
     g.async = true;
     g.defer = true;
-    g.src = u + "matomo.js";
+    // TODO this should be configurable
+    g.src = "https://matomo.aam-digital.org/matomo.js";
     s.parentNode.insertBefore(g, s);
   }
 

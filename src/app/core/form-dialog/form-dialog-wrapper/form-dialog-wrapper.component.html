@@ -6,7 +6,7 @@
   <ng-content select="form"></ng-content>
 </mat-dialog-content>
 
-<mat-dialog-actions *ngIf="!readonly">
+<mat-dialog-actions *ngIf="!readonly && ('update' | able: entity)">
   <button
     mat-stroked-button
     [disabled]="!contentForm.form.dirty"
@@ -38,8 +38,8 @@
     angularticsAction="form_dialog_delete"
     i18n="Generic delete button"
     *appDisabledEntityOperation="{
-      entity: entity?.getConstructor(),
-      operation: operationType.DELETE
+      entity: entity,
+      operation: 'delete'
     }"
   >
     Delete

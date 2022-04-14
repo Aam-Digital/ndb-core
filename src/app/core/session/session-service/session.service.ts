@@ -87,11 +87,6 @@ export abstract class SessionService {
   }
 
   /**
-   * Start a synchronization process.
-   */
-  abstract sync(): Promise<any>;
-
-  /**
    * Get the database for the current session.
    */
   abstract getDatabase(): Database;

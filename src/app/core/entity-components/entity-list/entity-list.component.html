@@ -27,7 +27,7 @@
           angularticsAction="list_add_entity"
           *appDisabledEntityOperation="{
               entity: entityConstructor,
-              operation: operationType.CREATE
+              operation: 'create'
             }"
         >
           <fa-icon
@@ -45,7 +45,6 @@
     </div>
 
     <div
-      *ngIf="filterSelections.length > 0"
       class="toggle-selection-section"
       fxLayout="row wrap"
       fxLayoutGap="10px"
@@ -152,7 +151,7 @@
               "
       *appDisabledEntityOperation="{
                 entity: entityConstructor,
-                operation: operationType.CREATE
+                operation: 'create'
               }"
     >
       <fa-icon

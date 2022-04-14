@@ -3,20 +3,13 @@ import { TestBed } from "@angular/core/testing";
 import { ExportService } from "./export.service";
 import { ConfigurableEnumValue } from "../../configurable-enum/configurable-enum.interface";
 import { DatabaseField } from "../../entity/database-field.decorator";
-import {
-  DatabaseEntity,
-  EntityRegistry,
-  entityRegistry,
-} from "../../entity/database-entity.decorator";
+import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { Entity } from "../../entity/model/entity";
 import { QueryService } from "../../../features/reporting/query.service";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
 import { AttendanceService } from "../../../child-dev-project/attendance/attendance.service";
-import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 import { Database } from "../../database/database";
-import { PouchDatabase } from "../../database/pouch-database";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { School } from "../../../child-dev-project/schools/model/school";
@@ -24,29 +17,20 @@ import { ChildSchoolRelation } from "../../../child-dev-project/children/model/c
 import { ExportColumnConfig } from "./export-column-config";
 import { defaultAttendanceStatusTypes } from "../../config/default-config/default-attendance-status-types";
 import moment from "moment";
+import { DatabaseTestingModule } from "../../../utils/database-testing.module";
 
 describe("ExportService", () => {
   let service: ExportService;
-  let db: PouchDatabase;
   let entityMapper: EntityMapperService;
 
   beforeEach(() => {
-    db = PouchDatabase.createWithInMemoryDB("export-service-tests");
-
     TestBed.configureTestingModule({
+      imports: [DatabaseTestingModule],
       providers: [
         ExportService,
         QueryService,
-        EntityMapperService,
-        EntitySchemaService,
         ChildrenService,
         AttendanceService,
-        DatabaseIndexingService,
-        { provide: Database, useValue: db },
-        {
-          provide: EntityRegistry,
-          useValue: entityRegistry,
-        },
       ],
     });
 
@@ -55,7 +39,7 @@ describe("ExportService", () => {
   });
 
   afterEach(async () => {
-    await db.destroy();
+    await TestBed.inject(Database).destroy();
   });
 
   it("should be created", () => {

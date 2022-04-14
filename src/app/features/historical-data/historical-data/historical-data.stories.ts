@@ -6,10 +6,9 @@ import { HistoricalEntityData } from "../model/historical-entity-data";
 import { HistoricalDataComponent } from "./historical-data.component";
 import { HistoricalDataModule } from "../historical-data.module";
 import { HistoricalDataService } from "../historical-data.service";
-import { EntityPermissionsService } from "../../../core/permissions/entity-permissions.service";
 import { ratingAnswers } from "../model/rating-answers";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
-import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 export default {
   title: "Features/HistoricalDataComponent",
@@ -19,7 +18,7 @@ export default {
       imports: [
         HistoricalDataModule,
         StorybookBaseModule,
-        MockSessionModule.withState(),
+        MockedTestingModule.withState(),
       ],
       declarations: [],
       providers: [
@@ -34,10 +33,6 @@ export default {
             getHistoricalDataFor: () =>
               Promise.resolve([new Test(), new Test(), new Test()]),
           },
-        },
-        {
-          provide: EntityPermissionsService,
-          useValue: { userIsPermitted: () => true },
         },
       ],
     }),

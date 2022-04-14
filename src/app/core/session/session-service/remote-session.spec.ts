@@ -8,7 +8,7 @@ import { LoggingService } from "../../logging/logging.service";
 import { testSessionServiceImplementation } from "./session.service.spec";
 import { DatabaseUser } from "./local-user";
 import { LoginState } from "../session-states/login-state.enum";
-import { TEST_PASSWORD, TEST_USER } from "../mock-session.module";
+import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
 
 describe("RemoteSessionService", () => {
   let service: RemoteSession;
@@ -90,6 +90,11 @@ describe("RemoteSessionService", () => {
       name: dbUser.name,
       roles: dbUser.roles,
     });
+  });
+
+  it("should not throw error when remote logout is not possible", () => {
+    mockHttpClient.delete.and.returnValue(throwError(new Error()));
+    return expectAsync(service.logout()).not.toBeRejected();
   });
 
   testSessionServiceImplementation(() => Promise.resolve(service));
