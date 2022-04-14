@@ -17,7 +17,7 @@
 
 import { RouterModule, Routes } from "@angular/router";
 import { ModuleWithProviders } from "@angular/core";
-import { UserRoleGuard } from "./core/permissions/user-role.guard";
+import { UserRoleGuard } from "./core/permissions/permission-guard/user-role.guard";
 import { ComponentType } from "@angular/cdk/overlay";
 import { Registry } from "./core/registry/dynamic-registry";
 

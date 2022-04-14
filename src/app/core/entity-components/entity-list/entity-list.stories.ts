@@ -7,7 +7,7 @@ import { DemoChildGenerator } from "../../../child-dev-project/children/demo-dat
 import { User } from "../../user/user";
 import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enum.module";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
-import { MockSessionModule } from "../../session/mock-session.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ChildrenModule } from "../../../child-dev-project/children/children.module";
 
 const user = new User();
@@ -21,7 +21,7 @@ export default {
       imports: [
         EntityListModule,
         StorybookBaseModule,
-        MockSessionModule.withState(),
+        MockedTestingModule.withState(),
         ConfigurableEnumModule,
         ChildrenModule,
       ],

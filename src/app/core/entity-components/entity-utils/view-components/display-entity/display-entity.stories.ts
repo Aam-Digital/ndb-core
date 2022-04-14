@@ -8,7 +8,7 @@ import { User } from "../../../../user/user";
 import { SchoolsModule } from "../../../../../child-dev-project/schools/schools.module";
 import { ChildrenModule } from "../../../../../child-dev-project/children/children.module";
 import { StorybookBaseModule } from "../../../../../utils/storybook-base.module";
-import { MockSessionModule } from "../../../../session/mock-session.module";
+import { MockedTestingModule } from "../../../../../utils/mocked-testing.module";
 import { EntityUtilsModule } from "../../entity-utils.module";
 
 export default {
@@ -19,7 +19,7 @@ export default {
       imports: [
         EntityUtilsModule,
         StorybookBaseModule,
-        MockSessionModule.withState(),
+        MockedTestingModule.withState(),
         SchoolsModule,
         ChildrenModule,
       ],

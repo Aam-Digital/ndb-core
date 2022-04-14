@@ -5,7 +5,7 @@ import { moduleMetadata } from "@storybook/angular";
 import { Note } from "../../../notes/model/note";
 import { AttendanceModule } from "../../attendance.module";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
-import { MockSessionModule } from "../../../../core/session/mock-session.module";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { LoginState } from "../../../../core/session/session-states/login-state.enum";
 
 const demoEvent = Note.create(new Date(), "coaching");
@@ -24,7 +24,7 @@ export default {
       imports: [
         AttendanceModule,
         StorybookBaseModule,
-        MockSessionModule.withState(LoginState.LOGGED_IN, demoChildren),
+        MockedTestingModule.withState(LoginState.LOGGED_IN, demoChildren),
       ],
     }),
   ],

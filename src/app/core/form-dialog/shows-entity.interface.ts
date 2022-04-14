@@ -17,5 +17,5 @@ export interface ShowsEntity<T extends Entity> {
    *
    * This is used to access certain generic hooks of the form logic.
    */
-  formDialogWrapper: FormDialogWrapperComponent;
+  formDialogWrapper: FormDialogWrapperComponent<T>;
 }

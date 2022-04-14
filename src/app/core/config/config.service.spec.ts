@@ -12,7 +12,9 @@ describe("ConfigService", () => {
   );
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [{ provide: EntityMapperService, useValue: entityMapper }],
+    });
     service = TestBed.inject(ConfigService);
   });
 
@@ -24,7 +26,7 @@ describe("ConfigService", () => {
     const testConfig: Config = new Config();
     testConfig.data = { testKey: "testValue" };
     entityMapper.load.and.returnValue(Promise.resolve(testConfig));
-    service.loadConfig(entityMapper);
+    service.loadConfig();
     expect(entityMapper.load).toHaveBeenCalled();
     tick();
     expect(service.getConfig("testKey")).toEqual("testValue");
@@ -36,7 +38,7 @@ describe("ConfigService", () => {
       return defaultJsonConfig[key];
     });
     entityMapper.load.and.rejectWith("No config found");
-    service.loadConfig(entityMapper);
+    service.loadConfig();
     tick();
     const configAfter = service.getAllConfigs("");
     expect(configAfter).toEqual(defaultConfig);
@@ -50,7 +52,7 @@ describe("ConfigService", () => {
       "test:2": { name: "second" },
     };
     entityMapper.load.and.returnValue(Promise.resolve(testConfig));
-    service.loadConfig(entityMapper);
+    service.loadConfig();
     tick();
     const result = service.getAllConfigs<any>("test:");
     expect(result.length).toBe(2);
@@ -63,7 +65,7 @@ describe("ConfigService", () => {
     const testConfig = new Config();
     testConfig.data = { first: "correct", second: "wrong" };
     entityMapper.load.and.returnValue(Promise.resolve(testConfig));
-    service.loadConfig(entityMapper);
+    service.loadConfig();
     tick();
     const result = service.getConfig<any>("first");
     expect(result).toBe("correct");
@@ -71,7 +73,7 @@ describe("ConfigService", () => {
 
   it("should save a new config", () => {
     const newConfig = { test: "data" };
-    service.saveConfig(entityMapper, newConfig);
+    service.saveConfig(newConfig);
     expect(entityMapper.save).toHaveBeenCalled();
     expect(entityMapper.save.calls.mostRecent().args[0]).toBeInstanceOf(Config);
     expect(
@@ -84,7 +86,7 @@ describe("ConfigService", () => {
     config.data = { first: "foo", second: "bar" };
     const expected = JSON.stringify(config.data);
     entityMapper.load.and.returnValue(Promise.resolve(config));
-    const result = await service.exportConfig(entityMapper);
+    const result = await service.exportConfig();
     expect(result).toEqual(expected);
   });
 
@@ -92,7 +94,7 @@ describe("ConfigService", () => {
     spyOn(service.configUpdates, "next");
     entityMapper.load.and.returnValue(Promise.resolve(new Config()));
     expect(service.configUpdates.next).not.toHaveBeenCalled();
-    service.loadConfig(entityMapper);
+    service.loadConfig();
     tick();
     expect(service.configUpdates.next).toHaveBeenCalled();
   }));

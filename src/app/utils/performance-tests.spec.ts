@@ -1,35 +1,27 @@
 import { TestBed, waitForAsync } from "@angular/core/testing";
-import { SessionService } from "../core/session/session-service/session.service";
 import { AppModule } from "../app.module";
 import moment from "moment";
-import { LoggingService } from "../core/logging/logging.service";
 import { Database } from "../core/database/database";
 import { DemoDataService } from "../core/demo-data/demo-data.service";
-import { PouchDatabase } from "../core/database/pouch-database";
-import { LocalSession } from "app/core/session/session-service/local-session";
+import { AppConfig } from "../core/app-config/app-config";
+import { SessionType } from "../core/session/session-type";
+import { DatabaseTestingModule } from "./database-testing.module";
 
 xdescribe("Performance Tests", () => {
-  let mockDatabase: PouchDatabase;
-
   beforeEach(async () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 150000;
 
-    const loggingService = new LoggingService();
-    // Uncomment this line to run performance tests with the InBrowser database.
-    // mockDatabase = PouchDatabase.createWithIndexedDB(
-    mockDatabase = PouchDatabase.createWithInMemoryDB(
-      "performance_db",
-      loggingService
-    );
-    const mockSessionService = new LocalSession(mockDatabase);
+    AppConfig.settings = {
+      site_name: "Aam Digital - DEV",
+      session_type: SessionType.mock, // change to SessionType.local to run performance tests with the InBrowser database
+      database: {
+        name: "test-db-name",
+        remote_url: "https://demo.aam-digital.com/db/",
+      },
+    };
 
     await TestBed.configureTestingModule({
-      imports: [AppModule],
-      providers: [
-        { provide: Database, useValue: mockDatabase },
-        { provide: SessionService, useValue: mockSessionService },
-        { provide: LoggingService, useValue: loggingService },
-      ],
+      imports: [AppModule, DatabaseTestingModule],
     }).compileComponents();
     const demoDataService = TestBed.inject(DemoDataService);
     const setup = new Timer();
@@ -39,7 +31,7 @@ xdescribe("Performance Tests", () => {
 
   afterEach(
     waitForAsync(() => {
-      return mockDatabase.destroy();
+      return TestBed.inject(Database).destroy();
     })
   );
 

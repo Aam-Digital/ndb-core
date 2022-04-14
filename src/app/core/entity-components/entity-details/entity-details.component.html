@@ -42,8 +42,8 @@
     mat-menu-item
     (click)="removeEntity()"
     *appDisabledEntityOperation="{
-      entity: entity?.getConstructor(),
-      operation: operationType.DELETE
+      entity: entity,
+      operation: 'delete'
     }"
     angulartics2On="click"
     [angularticsCategory]="config?.entity"

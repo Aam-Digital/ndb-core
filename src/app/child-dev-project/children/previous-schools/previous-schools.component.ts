@@ -6,12 +6,9 @@ import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import moment from "moment";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { EntityMapperService } from "app/core/entity/entity-mapper.service";
 import { isActiveIndicator } from "../../schools/children-overview/children-overview.component";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 
-@UntilDestroy()
 @DynamicComponent("PreviousSchools")
 @Component({
   selector: "app-previous-schools",
@@ -34,10 +31,7 @@ export class PreviousSchoolsComponent
 
   single = true;
 
-  constructor(
-    private childrenService: ChildrenService,
-    private entityMapperService: EntityMapperService
-  ) {}
+  constructor(private childrenService: ChildrenService) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.hasOwnProperty("child")) {
@@ -54,7 +48,6 @@ export class PreviousSchoolsComponent
     }
     this.child = panelConfig.entity as Child;
     this.loadData(this.child.getId());
-    this.subscribeToChildSchoolRelationUpdates();
   }
 
   async loadData(id: string) {
@@ -80,12 +73,5 @@ export class PreviousSchoolsComponent
           : new Date();
       return newPreviousSchool;
     };
-  }
-
-  private subscribeToChildSchoolRelationUpdates() {
-    this.entityMapperService
-      .receiveUpdates<ChildSchoolRelation>(ChildSchoolRelation)
-      .pipe(untilDestroyed(this))
-      .subscribe(() => this.loadData(this.child.getId()));
   }
 }

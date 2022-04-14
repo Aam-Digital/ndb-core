@@ -8,7 +8,7 @@ import { Note } from "../../notes/model/note";
 import moment from "moment";
 import { FormDialogModule } from "../../../core/form-dialog/form-dialog.module";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
-import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 const demoEvents: Note[] = [
   generateEventWithAttendance(
@@ -54,7 +54,7 @@ export default {
         AttendanceModule,
         FormDialogModule,
         StorybookBaseModule,
-        MockSessionModule.withState(),
+        MockedTestingModule.withState(),
       ],
     }),
   ],

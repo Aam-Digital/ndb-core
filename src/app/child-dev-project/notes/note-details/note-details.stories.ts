@@ -7,7 +7,7 @@ import { Child } from "../../children/model/child";
 import { MatDialogRef } from "@angular/material/dialog";
 import { ChildrenService } from "../../children/children.service";
 import { of } from "rxjs";
-import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
 const demoChildren: Child[] = [Child.create("Joe"), Child.create("Jane")];
@@ -20,7 +20,7 @@ export default {
       imports: [
         NotesModule,
         StorybookBaseModule,
-        MockSessionModule.withState(),
+        MockedTestingModule.withState(),
       ],
       providers: [
         { provide: MatDialogRef, useValue: {} },

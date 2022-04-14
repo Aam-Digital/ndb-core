@@ -61,6 +61,7 @@
           i18n-placeholder="Date input|Placeholder for a date-input"
           placeholder="Date"
           name="date"
+          [disabled]="formDialogWrapper.readonly"
           [(ngModel)]="entity.date"
           [matDatepicker]="picker"
         />
@@ -73,7 +74,7 @@
 
       <mat-form-field>
         <mat-label i18n="Status of a note"> Status </mat-label>
-        <mat-select name="followup" [(ngModel)]="entity.warningLevel">
+        <mat-select name="followup" [(ngModel)]="entity.warningLevel" [disabled]="formDialogWrapper.readonly">
           <mat-option
             *appConfigurableEnum="let warningLevel of 'warning-levels'"
             [value]="warningLevel"
@@ -89,6 +90,7 @@
           placeholder="Type of Interaction"
           name="type"
           [(ngModel)]="entity.category"
+          [disabled]="formDialogWrapper.readonly"
         >
           <mat-option
             *appConfigurableEnum="
@@ -107,6 +109,7 @@
         entityType="User"
         (selectionChange)="entityForm.form.markAsDirty()"
         [(selection)]="entity.authors"
+        [disabled]="formDialogWrapper.readonly"
         i18n-placeholder="placeholder when adding multiple authors"
         placeholder="Add Author..."
         i18n-label="Authors of a note"
@@ -130,6 +133,7 @@
           type="text"
           cdkFocusInitial
           [(ngModel)]="entity.subject"
+          [disabled]="formDialogWrapper.readonly"
         />
       </mat-form-field>
 
@@ -143,6 +147,7 @@
           placeholder="Notes"
           name="notes"
           [(ngModel)]="entity.text"
+          [disabled]="formDialogWrapper.readonly"
           cdkTextareaAutosize
           cdkAutosizeMinRows="4"
         ></textarea>
@@ -157,12 +162,12 @@
       (selectionChange)="entityForm.form.markAsDirty()"
       [additionalFilter]="filterInactiveChildren"
       [showEntities]="!entity.category?.isMeeting"
+      [disabled]="formDialogWrapper.readonly"
       label="Participants"
       i18n-label="Participants of a note"
       placeholder="Add participant ..."
       i18n-placeholder="Add participants of a note"
     >
-      <!-- Header for autocomplete -->
       <mat-option>
         <mat-checkbox
           labelPosition="before"
@@ -181,6 +186,7 @@
         [attendance]="entity.getAttendance(childId)"
         (change)="entityForm.form.markAsDirty()"
         (remove)="entity.removeChild(childId); entityForm.form.markAsDirty()"
+        [disabled]="formDialogWrapper.readonly"
       >
       </app-child-meeting-note-attendance>
     </div>
@@ -189,6 +195,7 @@
       entityType="School"
       [(selection)]="entity.schools"
       (selectionChange)="entityForm.form.markAsDirty()"
+      [disabled]="formDialogWrapper.readonly"
       i18n-label="Groups that belong to a note"
       label="Groups"
       i18n-placeholder="Add a group to a note"

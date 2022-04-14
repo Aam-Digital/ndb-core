@@ -29,7 +29,7 @@ describe("DataImportService", () => {
   let service: DataImportService;
 
   beforeEach(() => {
-    db = PouchDatabase.createWithInMemoryDB();
+    db = PouchDatabase.create();
     TestBed.configureTestingModule({
       imports: [MatDialogModule, MatSnackBarModule, NoopAnimationsModule],
       providers: [

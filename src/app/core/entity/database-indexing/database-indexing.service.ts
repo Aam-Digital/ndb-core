@@ -21,7 +21,13 @@ import { BehaviorSubject, Observable } from "rxjs";
 import { BackgroundProcessState } from "../../sync-status/background-process-state.interface";
 import { Entity, EntityConstructor } from "../model/entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
-import { first } from "rxjs/operators";
+import { filter, first } from "rxjs/operators";
+import { SessionService } from "../../session/session-service/session.service";
+import { LoginState } from "../../session/session-states/login-state.enum";
+
+interface IndexState extends BackgroundProcessState {
+  designDoc: any;
+}
 
 /**
  * Manage database query index creation and use, working as a facade in front of the Database service.
@@ -31,19 +37,26 @@ import { first } from "rxjs/operators";
   providedIn: "root",
 })
 export class DatabaseIndexingService {
-  private _indicesRegistered = new BehaviorSubject<BackgroundProcessState[]>(
-    []
-  );
+  private _indicesRegistered = new BehaviorSubject<IndexState[]>([]);
 
   /** All currently registered indices with their status */
-  get indicesRegistered(): Observable<BackgroundProcessState[]> {
+  get indicesRegistered(): Observable<IndexState[]> {
     return this._indicesRegistered.asObservable();
   }
 
   constructor(
     private db: Database,
-    private entitySchemaService: EntitySchemaService
-  ) {}
+    private entitySchemaService: EntitySchemaService,
+    private sessionService: SessionService
+  ) {
+    sessionService.loginState
+      .pipe(filter((state) => state === LoginState.LOGGED_IN))
+      .subscribe(() =>
+        this._indicesRegistered.value.forEach(({ designDoc }) =>
+          this.createIndex(designDoc)
+        )
+      );
+  }
 
   /**
    * Register a new database query to be created/updated and indexed.
@@ -53,14 +66,19 @@ export class DatabaseIndexingService {
    * @param designDoc The design document (see @link{Database}) describing the query/index.
    */
   async createIndex(designDoc: any): Promise<void> {
-    const indexState: BackgroundProcessState = {
+    const indexDetails = designDoc._id.replace(/_design\//, "");
+    const indexState: IndexState = {
       title: $localize`Preparing data (Indexing)`,
-      details: designDoc._id.replace(/_design\//, ""),
+      details: indexDetails,
       pending: true,
+      designDoc,
     };
+
     const indexCreationPromise = this.db.saveDatabaseIndex(designDoc);
     this._indicesRegistered.next([
-      ...this._indicesRegistered.value,
+      ...this._indicesRegistered.value.filter(
+        (state) => state.details !== indexDetails
+      ),
       indexState,
     ]);
 

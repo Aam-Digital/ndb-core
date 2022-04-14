@@ -9,7 +9,7 @@ import { DemoActivityGeneratorService } from "../../demo-data/demo-activity-gene
 import { SessionService } from "../../../../core/session/session-service/session.service";
 import { AttendanceModule } from "../../attendance.module";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
-import { MockSessionModule } from "../../../../core/session/mock-session.module";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { LoginState } from "../../../../core/session/session-states/login-state.enum";
 
 const demoEvents: Note[] = [
@@ -50,7 +50,7 @@ export default {
       imports: [
         AttendanceModule,
         StorybookBaseModule,
-        MockSessionModule.withState(LoginState.LOGGED_IN, [
+        MockedTestingModule.withState(LoginState.LOGGED_IN, [
           ...demoChildren,
           ...demoEvents,
           ...demoActivities,

@@ -21,7 +21,7 @@ describe("PouchDatabase tests", () => {
   let database: PouchDatabase;
 
   beforeEach(() => {
-    database = PouchDatabase.createWithInMemoryDB();
+    database = PouchDatabase.create();
   });
 
   afterEach(async () => {
@@ -196,9 +196,9 @@ describe("PouchDatabase tests", () => {
   it("query simply calls through to pouchDB query", async () => {
     const testQuery = "testquery";
     const testQueryResults = { rows: [] } as any;
-    // @ts-ignore
-    const pouchDB = database._pouchDB;
+    const pouchDB = database.getPouchDB();
     spyOn(pouchDB, "query").and.resolveTo(testQueryResults);
+
     const result = await database.query(testQuery, {});
     expect(result).toEqual(testQueryResults);
     expect(pouchDB.query).toHaveBeenCalledWith(testQuery, {});
@@ -271,5 +271,13 @@ describe("PouchDatabase tests", () => {
       jasmine.objectContaining({ id: "4", ok: true }),
       jasmine.objectContaining({ id: "5", ok: true }),
     ]);
+  });
+
+  it("should correctly determine if database is empty", async () => {
+    await expectAsync(database.isEmpty()).toBeResolvedTo(true);
+
+    await database.put({ _id: "User:test" });
+
+    await expectAsync(database.isEmpty()).toBeResolvedTo(false);
   });
 });

@@ -14,10 +14,10 @@ import { ConfigurableEnumDatatype } from "../../../configurable-enum/configurabl
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { ChildrenModule } from "../../../../child-dev-project/children/children.module";
 import { ChildrenService } from "../../../../child-dev-project/children/children.service";
-import { of } from "rxjs";
-import { EntityPermissionsService } from "../../../permissions/entity-permissions.service";
+import { of, Subject } from "rxjs";
 import { AttendanceLogicalStatus } from "../../../../child-dev-project/attendance/model/attendance-status";
-import { MockSessionModule } from "../../../session/mock-session.module";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
+import { AbilityService } from "../../../permissions/ability/ability.service";
 import { faker } from "../../../demo-data/faker";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 
@@ -45,14 +45,14 @@ export default {
         EntitySubrecordModule,
         StorybookBaseModule,
         ChildrenModule,
-        MockSessionModule.withState(),
+        MockedTestingModule.withState(),
       ],
       providers: [
         {
           provide: EntityMapperService,
           useValue: {
-            save: () => null,
-            remove: () => null,
+            save: () => Promise.resolve(),
+            remove: () => Promise.resolve(),
             load: () =>
               Promise.resolve(
                 faker.random.arrayElement(childGenerator.entities)
@@ -71,8 +71,8 @@ export default {
           },
         },
         {
-          provide: EntityPermissionsService,
-          useValue: { userIsPermitted: () => true },
+          provide: AbilityService,
+          useValue: { abilityUpdateNotifier: new Subject() },
         },
       ],
     }),
@@ -81,10 +81,13 @@ export default {
 
 const Template: Story<EntitySubrecordComponent<Note>> = (
   args: EntitySubrecordComponent<Note>
-) => ({
-  component: EntitySubrecordComponent,
-  props: args,
-});
+) => {
+  EntitySubrecordComponent.prototype.newRecordFactory = () => new Note();
+  return {
+    component: EntitySubrecordComponent,
+    props: args,
+  };
+};
 
 export const Primary = Template.bind({});
 Primary.args = {
@@ -95,7 +98,6 @@ Primary.args = {
     { id: "children" },
   ],
   records: data,
-  newRecordFactory: () => new Note(),
 };
 
 export const WithAttendance = Template.bind({});
@@ -121,5 +123,4 @@ WithAttendance.args = {
     },
   ],
   records: data,
-  newRecordFactory: () => new Note(),
 };

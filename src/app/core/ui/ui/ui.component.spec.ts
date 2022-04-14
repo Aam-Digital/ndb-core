@@ -18,20 +18,13 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { UiComponent } from "./ui.component";
-import { RouterTestingModule } from "@angular/router/testing";
-import { SearchComponent } from "../search/search.component";
-import { CommonModule } from "@angular/common";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { PrimaryActionComponent } from "../primary-action/primary-action.component";
-import { SessionService } from "../../session/session-service/session.service";
 import { SwUpdate } from "@angular/service-worker";
-import { BehaviorSubject, of } from "rxjs";
+import { of, Subject } from "rxjs";
 import { ApplicationInitStatus } from "@angular/core";
 import { UiModule } from "../ui.module";
-import { Angulartics2Module } from "angulartics2";
-import { SyncState } from "../../session/session-states/sync-state.enum";
 import { ConfigService } from "../../config/config.service";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 
 describe("UiComponent", () => {
   let component: UiComponent;
@@ -40,34 +33,28 @@ describe("UiComponent", () => {
   beforeEach(
     waitForAsync(() => {
       const mockSwUpdate = { available: of(), checkForUpdate: () => {} };
-      const mockSession: jasmine.SpyObj<SessionService> = jasmine.createSpyObj(
-        ["isLoggedIn", "logout", "getDatabase"],
-        { syncState: new BehaviorSubject(SyncState.UNSYNCED) }
+      const mockIndexingService = jasmine.createSpyObj<DatabaseIndexingService>(
+        ["createIndex"],
+        {
+          indicesRegistered: new Subject(),
+        }
       );
-
-      const mockConfig = jasmine.createSpyObj<ConfigService>(["getConfig"]);
-      mockConfig.configUpdates = new BehaviorSubject({} as any);
+      mockIndexingService.createIndex.and.resolveTo();
 
       TestBed.configureTestingModule({
-        declarations: [SearchComponent, PrimaryActionComponent, UiComponent],
-        imports: [
-          RouterTestingModule,
-          CommonModule,
-          UiModule,
-          NoopAnimationsModule,
-          Angulartics2Module.forRoot(),
-          FontAwesomeTestingModule,
-        ],
+        imports: [UiModule, MockedTestingModule.withState()],
         providers: [
-          { provide: SessionService, useValue: mockSession },
           { provide: SwUpdate, useValue: mockSwUpdate },
           {
-            provide: ConfigService,
-            useValue: mockConfig,
+            provide: DatabaseIndexingService,
+            useValue: mockIndexingService,
           },
         ],
       }).compileComponents();
       TestBed.inject(ApplicationInitStatus); // This ensures that the AppConfig is loaded before test execution
+
+      const configService = TestBed.inject(ConfigService);
+      configService.saveConfig({ navigationMenu: { items: [] } });
     })
   );
 

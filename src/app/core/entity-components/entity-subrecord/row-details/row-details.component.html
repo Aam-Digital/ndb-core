@@ -16,7 +16,7 @@
             component: row.edit,
             config: {
               formFieldConfig: row,
-              propertySchema: data.row.record.getSchema().get(row.id),
+              propertySchema: data.entity.getSchema().get(row.id),
               formControl: form.get(row.id)
             }
           }"
@@ -59,11 +59,10 @@
 <div mat-dialog-actions fxLayoutGap="10px">
   <button
     mat-raised-button
-    mat-dialog-close
     (click)="save()"
     *appDisabledEntityOperation="{
-      operation: operationType.UPDATE,
-      entity: data.row.record.getConstructor()
+      operation: 'update',
+      entity: data.entity
     }"
     i18n="Save button for forms"
   >
@@ -81,14 +80,13 @@
   >
     <button
       mat-menu-item
-      mat-dialog-close
       (click)="delete()"
       *appDisabledEntityOperation="{
-        operation: operationType.DELETE,
-        entity: data.row.record.getConstructor()
+        operation: 'delete',
+        entity: data.entity
       }"
       angulartics2On="click"
-      [angularticsCategory]="data.row.record.getConstructor()?.ENTITY_TYPE"
+      [angularticsCategory]="data.entity.getType()"
       angularticsAction="entity_delete"
     >
       <fa-icon
