@@ -103,7 +103,7 @@ describe("EntityConfigService", () => {
     mockConfigService.getAllConfigs.and.returnValue(mockEntityConfigs);
     service.setupEntitiesFromConfig();
     expect(Test.schema).toHaveKey(ATTRIBUTE_1_NAME);
-    expect(Test.schema).toHaveKey(ATTRIBUTE_2_NAME);
+    expect(Test2.schema).toHaveKey(ATTRIBUTE_2_NAME);
   });
 });
 
