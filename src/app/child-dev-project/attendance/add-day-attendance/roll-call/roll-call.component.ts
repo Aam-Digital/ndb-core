@@ -184,7 +184,7 @@ export class RollCallComponent implements OnChanges {
     this.transitionInProgress = setTimeout(() => {
       this.goToNext();
       this.transitionInProgress = undefined;
-    }, 750);
+    }, 500);
   }
 
   goToParticipantWithIndex(newIndex: number) {
