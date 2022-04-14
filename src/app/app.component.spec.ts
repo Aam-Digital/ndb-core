@@ -18,7 +18,8 @@
 import {
   ComponentFixture,
   discardPeriodicTasks,
-  fakeAsync, flush,
+  fakeAsync,
+  flush,
   TestBed,
   tick,
   waitForAsync,
