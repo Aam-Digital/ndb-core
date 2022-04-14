@@ -12,6 +12,17 @@ export const mapMatchers: jasmine.CustomMatcherFactories = {
         }
         return result;
       },
+      negativeCompare: (key: any, mapPossiblyContainingKey: Map<any, any>) => {
+        const result = { pass: false, message: "" };
+        if (!mapPossiblyContainingKey.has(key)) {
+          result.pass = true;
+        } else {
+          result.message = `Expected map ${util.pp(
+            mapPossiblyContainingKey
+          )} not to contain '${key}'`;
+        }
+        return result;
+      },
     };
   },
 };

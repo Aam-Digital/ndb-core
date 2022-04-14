@@ -12,6 +12,17 @@ const genericMatchers: jasmine.CustomMatcherFactories = {
         }
         return result;
       },
+      negativeCompare: (value: ArrayLike<any>) => {
+        const result = { pass: false, message: "" };
+        if (!(value.length === 0)) {
+          result.pass = true;
+        } else {
+          result.message = `Expected array ${util.pp(
+            value
+          )} is unexpectedly empty`;
+        }
+        return result;
+      },
     };
   },
   toBeFinite: () => {
@@ -22,6 +33,15 @@ const genericMatchers: jasmine.CustomMatcherFactories = {
           result.pass = true;
         } else {
           result.message = `Expected number ${value} to be finite`;
+        }
+        return result;
+      },
+      negativeCompare: (value: number) => {
+        const result = { pass: false, message: "" };
+        if (!Number.isFinite(value)) {
+          result.pass = true;
+        } else {
+          result.message = `Expected number ${value} not to be finite`;
         }
         return result;
       },
@@ -37,6 +57,17 @@ const genericMatchers: jasmine.CustomMatcherFactories = {
           result.message = `Expected object ${util.pp(
             obj
           )} to to contain own property ${value}`;
+        }
+        return result;
+      },
+      negativeCompare: (obj: object, value: string) => {
+        const result = { pass: false, message: "" };
+        if (!obj.hasOwnProperty(value)) {
+          result.pass = true;
+        } else {
+          result.message = `Expected object ${util.pp(
+            obj
+          )} not to to contain own property ${value}`;
         }
         return result;
       },
@@ -57,6 +88,22 @@ const genericMatchers: jasmine.CustomMatcherFactories = {
           result.message = `Expected date ${util.pp(
             expectedDate
           )} to be the same date as ${actualDate}`;
+        }
+        return result;
+      },
+      negativeCompare: (
+        expected: string | number | Date,
+        actual: string | number | Date
+      ) => {
+        const result = { pass: false, message: "" };
+        const expectedDate = new Date(expected);
+        const actualDate = new Date(actual);
+        if (!util.equals(expectedDate, actualDate, matchers)) {
+          result.pass = true;
+        } else {
+          result.message = `Expected date ${util.pp(
+            expectedDate
+          )} to be different from date ${actualDate}`;
         }
         return result;
       },

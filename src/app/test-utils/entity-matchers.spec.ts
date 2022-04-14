@@ -14,6 +14,17 @@ const entityMatchers: jasmine.CustomMatcherFactories = {
         }
         return result;
       },
+      negativeCompare: (entity: Entity, id: string) => {
+        const result = { pass: false, message: "" };
+        if (entity.getId() !== id) {
+          result.pass = true;
+        } else {
+          result.message = `Expected entity ${util.pp(
+            entity
+          )} not to have ID '${id}' but it actually has ID ${entity.getId()}`;
+        }
+        return result;
+      },
     };
   },
   toHaveType: (util) => {
@@ -26,6 +37,17 @@ const entityMatchers: jasmine.CustomMatcherFactories = {
           result.message = `Expected entity ${util.pp(
             entity
           )} to have type '${type}' but it has type ${entity.getId()}`;
+        }
+        return result;
+      },
+      negativeCompare: (entity: Entity, type: string) => {
+        const result = { pass: false, message: "" };
+        if (entity.getType() !== type) {
+          result.pass = true;
+        } else {
+          result.message = `Expected entity ${util.pp(
+            entity
+          )} not to have type '${type}' but it actually has type ${entity.getId()}`;
         }
         return result;
       },
