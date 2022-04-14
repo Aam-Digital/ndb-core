@@ -7,7 +7,7 @@ import { DisplayEntityArrayComponent } from "./display-entity-array.component";
 import { BehaviorSubject } from "rxjs";
 import { StorybookBaseModule } from "../../../../../utils/storybook-base.module";
 import { EntityUtilsModule } from "../../entity-utils.module";
-import { MockSessionModule } from "../../../../session/mock-session.module";
+import { MockedTestingModule } from "../../../../../utils/mocked-testing.module";
 
 const child1 = new Child();
 child1.name = "Test Name";
@@ -53,7 +53,7 @@ export default {
       imports: [
         EntityUtilsModule,
         StorybookBaseModule,
-        MockSessionModule.withState(),
+        MockedTestingModule.withState(),
         SchoolsModule,
         ChildrenModule,
       ],

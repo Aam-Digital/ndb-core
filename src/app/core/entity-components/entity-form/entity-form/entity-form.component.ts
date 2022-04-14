@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
-import { OperationType } from "../../../permissions/entity-permissions.service";
 import { FormFieldConfig } from "./FormConfig";
 import { FormGroup } from "@angular/forms";
 import { EntityFormService } from "../entity-form.service";
@@ -60,7 +59,6 @@ export class EntityFormComponent implements OnInit {
    */
   @Output() onCancel = new EventEmitter<void>();
 
-  operationType = OperationType;
   form: FormGroup;
 
   constructor(
@@ -104,7 +102,7 @@ export class EntityFormComponent implements OnInit {
     );
     this.entityFormService.extendFormFieldConfig(
       flattenedFormFields,
-      this.entity
+      this.entity.getConstructor()
     );
     this.form = this.entityFormService.createFormGroup(
       flattenedFormFields,

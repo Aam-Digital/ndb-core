@@ -30,9 +30,10 @@ import { of, throwError } from "rxjs";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { DatabaseUser } from "./local-user";
-import { TEST_PASSWORD, TEST_USER } from "../mock-session.module";
+import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
 import { testSessionServiceImplementation } from "./session.service.spec";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { PouchDatabase } from "../../database/pouch-database";
 
 describe("SyncedSessionService", () => {
   let sessionService: SyncedSessionService;
@@ -63,6 +64,7 @@ describe("SyncedSessionService", () => {
         AlertService,
         LoggingService,
         SyncedSessionService,
+        PouchDatabase,
         { provide: HttpClient, useValue: mockHttpClient },
       ],
     });
@@ -109,11 +111,11 @@ describe("SyncedSessionService", () => {
   });
 
   it("Remote and local fail (normal login with wrong password)", fakeAsync(() => {
-    const result = sessionService.login(TEST_USER, "wrongPassword");
+    const result = sessionService.login("anotherUser", "wrongPassword");
     tick();
 
-    expect(localLoginSpy).toHaveBeenCalledWith(TEST_USER, "wrongPassword");
-    expect(remoteLoginSpy).toHaveBeenCalledWith(TEST_USER, "wrongPassword");
+    expect(localLoginSpy).toHaveBeenCalledWith("anotherUser", "wrongPassword");
+    expect(remoteLoginSpy).toHaveBeenCalledWith("anotherUser", "wrongPassword");
     expect(syncSpy).not.toHaveBeenCalled();
     expectAsync(result).toBeResolvedTo(LoginState.LOGIN_FAILED);
     flush();
@@ -206,9 +208,8 @@ describe("SyncedSessionService", () => {
     flush();
   }));
 
-  it("Remote succeeds, local fails, sync fails", fakeAsync(() => {
+  it("Remote succeeds, local fails", fakeAsync(() => {
     passRemoteLogin();
-    syncSpy.and.rejectWith();
 
     const result = sessionService.login(TEST_USER, "anotherPassword");
     tick();
@@ -217,7 +218,7 @@ describe("SyncedSessionService", () => {
     expect(localLoginSpy).toHaveBeenCalledTimes(2);
     expect(remoteLoginSpy).toHaveBeenCalledWith(TEST_USER, "anotherPassword");
     expect(remoteLoginSpy).toHaveBeenCalledTimes(1);
-    expect(syncSpy).toHaveBeenCalled();
+    expect(syncSpy).not.toHaveBeenCalled();
     expect(liveSyncSpy).not.toHaveBeenCalled();
     expectAsync(result).toBeResolvedTo(LoginState.LOGIN_FAILED);
     tick();

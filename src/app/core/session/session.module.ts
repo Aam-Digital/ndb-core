@@ -22,7 +22,6 @@ import { FormsModule } from "@angular/forms";
 import { EntityModule } from "../entity/entity.module";
 import { AlertsModule } from "../alerts/alerts.module";
 import { sessionServiceProvider } from "./session.service.provider";
-import { databaseServiceProvider } from "../database/database.service.provider";
 import { UserModule } from "../user/user.module";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
@@ -30,6 +29,10 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { RouterModule } from "@angular/router";
 import { HttpClientModule } from "@angular/common/http";
+import { Database } from "../database/database";
+import { PouchDatabase } from "../database/pouch-database";
+import { MatDialogModule } from "@angular/material/dialog";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
 
 /**
  * The core session logic handling user login as well as connection and synchronization with the remote database.
@@ -50,9 +53,14 @@ import { HttpClientModule } from "@angular/common/http";
     RouterModule,
     UserModule,
     HttpClientModule,
+    MatDialogModule,
+    MatProgressBarModule,
   ],
   declarations: [LoginComponent],
   exports: [LoginComponent],
-  providers: [sessionServiceProvider, databaseServiceProvider],
+  providers: [
+    sessionServiceProvider,
+    { provide: Database, useClass: PouchDatabase },
+  ],
 })
 export class SessionModule {}

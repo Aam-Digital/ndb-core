@@ -1,5 +1,5 @@
 <div fxLayout="col" fxLayoutGap="4px" fxLayoutAlign="start baseline">
-  <div class="actions" fxFlex="40px">
+  <div class="actions" fxFlex="40px" *ngIf="!disabled">
     <button mat-icon-button (click)="remove.emit()">
       <fa-icon icon="times"></fa-icon>
     </button>
@@ -9,6 +9,7 @@
     <app-attendance-status-select
       [(value)]="attendance.status"
       (valueChange)="change.emit(attendance)"
+      [disabled]="disabled"
     >
     </app-attendance-status-select>
   </div>
@@ -23,6 +24,7 @@
       name="remarks"
       type="text"
       [(ngModel)]="attendance.remarks"
+      [disabled]="disabled"
     />
   </mat-form-field>
 </div>
