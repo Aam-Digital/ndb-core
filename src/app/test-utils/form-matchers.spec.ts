@@ -47,7 +47,7 @@ export const formMatchers: jasmine.CustomMatcherFactories = {
         if (form.enabled) {
           result.pass = true;
         } else {
-          result.message = "Expected form to be enabled";
+          result.message = `Expected form ${util.pp(form.value)} to be enabled`;
         }
         return result;
       },
