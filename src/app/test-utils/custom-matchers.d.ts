@@ -4,36 +4,36 @@ declare namespace jasmine {
      * expects a form to contain a certain error
      * @param error
      */
-    toContainFormError(error: string): boolean;
+    toContainFormError(error: string): void;
 
     /**
      * expects a form, form-group or form-array to have a certain value
      * @param formValue
      */
-    toHaveValue(formValue: any): boolean;
+    toHaveValue(formValue: any): void;
 
     /**
      * expects a form to be valid
      */
-    toBeValidForm(): boolean;
+    toBeValidForm(): void;
 
     /**
      * expects a form to be enabled
      */
-    toBeEnabled(): boolean;
+    toBeEnabled(): void;
 
     /**
      * expects a key to be in a map
      * @param map
      */
-    toBeKeyOf(map: Map<T, any>);
+    toBeKeyOf(map: Map<T, any>): void;
 
     /**
      * expects an entity to have the given ID
      * The ID is computed via `Entity#getId()`
      * @param id
      */
-    toHaveId(id: string);
+    toHaveId(id: string): void;
 
     /**
      * expects an entity to have a given type
@@ -41,28 +41,28 @@ declare namespace jasmine {
      * It is computed via `Entity#getType()`
      * @param entityType
      */
-    toHaveType(entityType: string);
+    toHaveType(entityType: string): void;
 
     /**
      * Expects an array-like object to be empty
      */
-    toBeEmpty();
+    toBeEmpty(): void;
 
     /**
      * expects a number to be finite as defined via `Number#isFinite`
      */
-    toBeFinite();
+    toBeFinite(): void;
 
     /**
      * expects an object to have an own property
      * @param property
      */
-    toHaveOwnProperty(property: string);
+    toHaveOwnProperty(property: string): void;
 
     /**
      * expects a date to be the same as the given date
      * @param date
      */
-    toBeDate(date: number | string | Date);
+    toBeDate(date: number | string | Date): void;
   }
 }
