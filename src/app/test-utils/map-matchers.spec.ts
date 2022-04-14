@@ -1,29 +1,14 @@
+import { makeCustomMatcher } from "./custom-matcher-utils";
+
 export const mapMatchers: jasmine.CustomMatcherFactories = {
-  toBeKeyOf: (util) => {
-    return {
-      compare: (key: any, mapPossiblyContainingKey: Map<any, any>) => {
-        const result = { pass: false, message: "" };
-        if (mapPossiblyContainingKey.has(key)) {
-          result.pass = true;
-        } else {
-          result.message = `Expected map ${util.pp(
-            mapPossiblyContainingKey
-          )} to contain '${key}'`;
-        }
-        return result;
-      },
-      negativeCompare: (key: any, mapPossiblyContainingKey: Map<any, any>) => {
-        const result = { pass: false, message: "" };
-        if (!mapPossiblyContainingKey.has(key)) {
-          result.pass = true;
-        } else {
-          result.message = `Expected map ${util.pp(
-            mapPossiblyContainingKey
-          )} not to contain '${key}'`;
-        }
-        return result;
-      },
-    };
+  toHaveKey: (util) => {
+    return makeCustomMatcher(
+      (expected: Map<any, any>, key: any) => expected.has(key),
+      (expected, key) =>
+        `Expected map ${util.pp(expected)} to contain '${key}'`,
+      (expected, key) =>
+        `Expected map ${util.pp(expected)} not to contain '${key}'`
+    );
   },
 };
 

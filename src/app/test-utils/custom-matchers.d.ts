@@ -23,10 +23,9 @@ declare namespace jasmine {
     toBeEnabled(): void;
 
     /**
-     * expects a key to be in a map
-     * @param map
+     * expects a map to contain a key
      */
-    toBeKeyOf(map: Map<T, any>): void;
+    toHaveKey(key: any): void;
 
     /**
      * expects an entity to have the given ID

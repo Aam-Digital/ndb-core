@@ -1,99 +1,44 @@
 import { AbstractControl } from "@angular/forms";
+import { makeCustomMatcher } from "./custom-matcher-utils";
 
 export const formMatchers: jasmine.CustomMatcherFactories = {
   toContainFormError: (util) => {
-    return {
-      compare: (form: AbstractControl, expectedError: string) => {
-        const result = { pass: false, message: "" };
-        if (form.hasError(expectedError)) {
-          result.pass = true;
-        } else {
-          result.message = `Expected form ${util.pp(
-            form.value
-          )} to contain error ${expectedError}`;
-        }
-        return result;
-      },
-      negativeCompare: (form: AbstractControl, expectedError: string) => {
-        const result = { pass: false, message: "" };
-        if (!form.hasError(expectedError)) {
-          result.pass = true;
-        } else {
-          result.message = `Expected form ${util.pp(
-            form.value
-          )} not to contain error ${expectedError}`;
-        }
-        return result;
-      },
-    };
+    return makeCustomMatcher(
+      (form: AbstractControl, expectedError: string) =>
+        form.hasError(expectedError),
+      (form: AbstractControl, expectedError: string) =>
+        `Expected form ${util.pp(
+          form.value
+        )} to contain error ${expectedError}`,
+      (form: AbstractControl, expectedError: string) =>
+        `Expected form ${util.pp(
+          form.value
+        )} not to contain error ${expectedError}`
+    );
   },
   toHaveValue: (util) => {
-    return {
-      compare: (form: AbstractControl, expected: any) => {
-        const result = { pass: false, message: "" };
-        if (util.equals(form.value, expected)) {
-          result.pass = true;
-        } else {
-          result.message = `Form ${util.pp(form.value)} does not contain value ${expected}`;
-        }
-        return result;
-      },
-      negativeCompare: (form: AbstractControl, expected: any) => {
-        const result = { pass: false, message: "" };
-        if (!util.equals(form.value, expected)) {
-          result.pass = true;
-        } else {
-          result.message = `Form unexpectedly contains value ${expected}`;
-        }
-        return result;
-      },
-    };
+    return makeCustomMatcher(
+      (form: AbstractControl, expected: any) =>
+        util.equals(form.value, expected),
+      (form, expected) =>
+        `Form ${util.pp(form.value)} does not contain value ${expected}`,
+      (form, expected) =>
+        `Form ${util.pp(form.value)} unexpectedly contains value ${expected}`
+    );
   },
   toBeValidForm: (util) => {
-    return {
-      compare: (form: AbstractControl) => {
-        const result = { pass: false, message: "" };
-        if (form.valid) {
-          result.pass = true;
-        } else {
-          result.message = `Expected form ${util.pp(form.value)} to be valid`;
-        }
-        return result;
-      },
-      negativeCompare: (form: AbstractControl) => {
-        const result = { pass: false, message: "" };
-        if (!form.valid) {
-          result.pass = true;
-        } else {
-          result.message = `Expected form ${util.pp(
-            form.value
-          )} not to be valid`;
-        }
-        return result;
-      },
-    };
+    return makeCustomMatcher(
+      (form: AbstractControl) => form.valid,
+      (form) => `Expected form ${util.pp(form.value)} to be valid`,
+      (form) => `Expected form ${util.pp(form.value)} not to be valid`
+    );
   },
-  toBeEnabled: () => {
-    return {
-      compare: (form: AbstractControl) => {
-        const result = { pass: false, message: "" };
-        if (form.enabled) {
-          result.pass = true;
-        } else {
-          result.message = `Expected form ${util.pp(form.value)} to be enabled`;
-        }
-        return result;
-      },
-      negativeCompare: (form: AbstractControl) => {
-        const result = { pass: false, message: "" };
-        if (!form.enabled) {
-          result.pass = true;
-        } else {
-          result.message = "Expected form not to be enabled";
-        }
-        return result;
-      },
-    };
+  toBeEnabled: (util) => {
+    return makeCustomMatcher(
+      (form: AbstractControl) => form.enabled,
+      (form) => `Expected form ${util.pp(form.value)} to be enabled`,
+      (form) => `Expected form ${util.pp(form.value)} not to be enabled`
+    );
   },
 };
 

@@ -42,10 +42,10 @@ describe("EntityConfigService", () => {
   });
 
   it("should add attributes to a entity class schema", () => {
-    expect("name").toBeKeyOf(Test.schema);
+    expect(Test.schema).toHaveKey("name");
     service.addConfigAttributes<Test>(Test);
-    expect("testAttribute").toBeKeyOf(Test.schema);
-    expect("name").toBeKeyOf(Test.schema);
+    expect(Test.schema).toHaveKey("testAttribute");
+    expect(Test.schema).toHaveKey("name");
   });
 
   it("should assign the correct schema", () => {
@@ -102,8 +102,8 @@ describe("EntityConfigService", () => {
     ];
     mockConfigService.getAllConfigs.and.returnValue(mockEntityConfigs);
     service.setupEntitiesFromConfig();
-    expect(ATTRIBUTE_1_NAME).toBeKeyOf(Test.schema);
-    expect(ATTRIBUTE_2_NAME).toBeKeyOf(Test2.schema);
+    expect(Test.schema).toHaveKey(ATTRIBUTE_1_NAME);
+    expect(Test.schema).toHaveKey(ATTRIBUTE_2_NAME);
   });
 });
 

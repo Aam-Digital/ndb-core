@@ -1,57 +1,32 @@
 import { Entity } from "../core/entity/model/entity";
+import { makeCustomMatcher } from "./custom-matcher-utils";
 
 const entityMatchers: jasmine.CustomMatcherFactories = {
   toHaveId: (util) => {
-    return {
-      compare: (entity: Entity, id: string) => {
-        const result = { pass: false, message: "" };
-        if (entity.getId() === id) {
-          result.pass = true;
-        } else {
-          result.message = `Expected entity ${util.pp(
-            entity
-          )} to have ID '${id}' but it has ID ${entity.getId()}`;
-        }
-        return result;
-      },
-      negativeCompare: (entity: Entity, id: string) => {
-        const result = { pass: false, message: "" };
-        if (entity.getId() !== id) {
-          result.pass = true;
-        } else {
-          result.message = `Expected entity ${util.pp(
-            entity
-          )} not to have ID '${id}' but it actually has ID ${entity.getId()}`;
-        }
-        return result;
-      },
-    };
+    return makeCustomMatcher(
+      (entity: Entity, id: string) => entity.getId() === id,
+      (entity, id) =>
+        `Expected entity ${util.pp(
+          entity
+        )} to have ID '${id}' but it has ID ${entity.getId()}`,
+      (entity, id) =>
+        `Expected entity ${util.pp(
+          entity
+        )} not to have ID '${id}' but it actually has ID ${entity.getId()}`
+    );
   },
   toHaveType: (util) => {
-    return {
-      compare: (entity: Entity, type: string) => {
-        const result = { pass: false, message: "" };
-        if (entity.getType() === type) {
-          result.pass = true;
-        } else {
-          result.message = `Expected entity ${util.pp(
-            entity
-          )} to have type '${type}' but it has type ${entity.getId()}`;
-        }
-        return result;
-      },
-      negativeCompare: (entity: Entity, type: string) => {
-        const result = { pass: false, message: "" };
-        if (entity.getType() !== type) {
-          result.pass = true;
-        } else {
-          result.message = `Expected entity ${util.pp(
-            entity
-          )} not to have type '${type}' but it actually has type ${entity.getId()}`;
-        }
-        return result;
-      },
-    };
+    return makeCustomMatcher(
+      (entity: Entity, type: string) => entity.getType() === type,
+      (entity, type) =>
+        `Expected entity ${util.pp(
+          entity
+        )} to have type '${type}' but it has type ${entity.getId()}`,
+      (entity, type) =>
+        `Expected entity ${util.pp(
+          entity
+        )} not to have type '${type}' but it actually has type ${entity.getId()}`
+    );
   },
 };
 
