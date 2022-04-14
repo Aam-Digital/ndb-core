@@ -8,7 +8,7 @@ export const formMatchers: jasmine.CustomMatcherFactories = {
         if (form.hasError(expectedError)) {
           result.pass = true;
         } else {
-          result.message = "Expected form to contain error";
+          result.message = `Expected form ${util.pp(form.value)} to contain error ${expectedError}`;
         }
         return result;
       },
