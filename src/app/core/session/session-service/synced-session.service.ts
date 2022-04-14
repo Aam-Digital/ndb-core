@@ -31,6 +31,7 @@ import { waitForChangeTo } from "../session-states/session-utils";
 import { PouchDatabase } from "../../database/pouch-database";
 import { zip } from "rxjs";
 import { CookieService } from "ngx-cookie-service";
+import { Router } from "@angular/router";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -49,19 +50,34 @@ export class SyncedSessionService extends SessionService {
   private _liveSyncHandle: any;
   private _liveSyncScheduledHandle: any;
   private _offlineRetryLoginScheduleHandle: any;
-
-  private cookieService: CookieService;
+  private router: Router;
 
   constructor(
     private alertService: AlertService,
     private loggingService: LoggingService,
     private httpClient: HttpClient,
-    pouchDatabase: PouchDatabase
+    pouchDatabase: PouchDatabase,
+    private cookieService: CookieService
   ) {
     super();
     this._localSession = new LocalSession(pouchDatabase);
     this._remoteSession = new RemoteSession(this.httpClient, loggingService);
-    console.log(this.cookieService.getAll());
+    var date = new Date();
+    date.setTime(date.getTime() + 3 * 1000);
+    this.cookieService.set("3-Sekunden-Cookie", "Inhalt des Cookies", {
+      expires: date,
+    });
+    console.log("Vergangene Sekunden: " + 0);
+    console.log("Cookie: " + this.cookieService.get("3-Sekunden-Cookie"));
+    const that = this;
+    setTimeout(function () {
+      console.log("Vergangene Sekunden: 3");
+      console.log("Cookie: " + that.cookieService.get("3-Sekunden-Cookie"));
+      setTimeout(function () {
+        console.log("Vergangene Sekunden: 6");
+        console.log("Cookie: " + that.cookieService.get("3-Sekunden-Cookie"));
+      }, 6000);
+    }, 3000);
   }
 
   /**
