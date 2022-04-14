@@ -87,6 +87,7 @@ export class RollCallComponent implements OnChanges {
 
   entries: { child: Child; attendance: EventAttendance }[] = [];
   form: FormGroup;
+  private transitionInProgress;
 
   constructor(
     private configService: ConfigService,
@@ -173,11 +174,17 @@ export class RollCallComponent implements OnChanges {
   }
 
   markAttendance(status: AttendanceStatusType) {
+    if (this.transitionInProgress) {
+      return;
+    }
     this.currentStatus = status;
     this.isDirty = true;
 
     // automatically move to next participant after a short delay giving the user visual feedback on the selected status
-    setTimeout(() => this.goToNext(), 750);
+    this.transitionInProgress = setTimeout(() => {
+      this.goToNext();
+      this.transitionInProgress = undefined;
+    }, 750);
   }
 
   goToParticipantWithIndex(newIndex: number) {
