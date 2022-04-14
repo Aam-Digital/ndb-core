@@ -30,6 +30,7 @@ import { DatabaseUser } from "./local-user";
 import { waitForChangeTo } from "../session-states/session-utils";
 import { PouchDatabase } from "../../database/pouch-database";
 import { zip } from "rxjs";
+import { CookieService } from "ngx-cookie-service";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -49,6 +50,8 @@ export class SyncedSessionService extends SessionService {
   private _liveSyncScheduledHandle: any;
   private _offlineRetryLoginScheduleHandle: any;
 
+  private cookieService: CookieService;
+
   constructor(
     private alertService: AlertService,
     private loggingService: LoggingService,
@@ -58,6 +61,7 @@ export class SyncedSessionService extends SessionService {
     super();
     this._localSession = new LocalSession(pouchDatabase);
     this._remoteSession = new RemoteSession(this.httpClient, loggingService);
+    console.log(this.cookieService.getAll());
   }
 
   /**
