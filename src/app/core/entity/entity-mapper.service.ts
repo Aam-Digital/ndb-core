@@ -19,9 +19,10 @@ import { Injectable } from "@angular/core";
 import { Database } from "../database/database";
 import { Entity, EntityConstructor } from "./model/entity";
 import { EntitySchemaService } from "./schema/entity-schema.service";
-import { Observable, Subject } from "rxjs";
+import { Observable } from "rxjs";
 import { UpdatedEntity } from "./model/entity-update";
 import { EntityRegistry } from "./database-entity.decorator";
+import { map } from "rxjs/operators";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -35,7 +36,6 @@ import { EntityRegistry } from "./database-entity.decorator";
  */
 @Injectable()
 export class EntityMapperService {
-  private publishers: Map<string, Subject<any>> = new Map();
   constructor(
     private _db: Database,
     private entitySchemaService: EntitySchemaService,
@@ -111,13 +111,20 @@ export class EntityMapperService {
   ): Observable<UpdatedEntity<T>> {
     const ctor = this.resolveConstructor(entityType);
     const type = new ctor().getType();
-    let publisher = this.publishers[type];
-    // subject doesn't exist yet or is closed
-    if (!publisher || publisher.closed) {
-      publisher = new Subject<T>();
-      this.publishers[type] = publisher;
-    }
-    return publisher.asObservable();
+    return this._db.changes(type + ":").pipe(
+      map((doc) => {
+        const entity = new ctor();
+        this.entitySchemaService.loadDataIntoEntity(entity, doc);
+        if (doc._deleted) {
+          return { type: "remove", entity: entity };
+        } else if (doc._rev.startsWith("1-")) {
+          return { type: "new", entity: entity };
+        } else {
+          // This is not necessarily true as docs with higher rev-number might be synchronized for the first time
+          return { type: "update", entity: entity };
+        }
+      })
+    );
   }
 
   /**
@@ -135,7 +142,6 @@ export class EntityMapperService {
     );
     const result = await this._db.put(rawData, forceUpdate);
     if (result?.ok) {
-      this.sendUpdate(entity, entity._rev === undefined ? "new" : "update");
       entity._rev = result.rev;
     }
     return result;
@@ -156,7 +162,6 @@ export class EntityMapperService {
     results.forEach((res, idx) => {
       if (res.ok) {
         const entity = entities[idx];
-        this.sendUpdate(entity, entity._rev === undefined ? "new" : "update");
         entity._rev = res.rev;
       }
     });
@@ -168,24 +173,7 @@ export class EntityMapperService {
    * @param entity The entity to be deleted
    */
   public remove<T extends Entity>(entity: T): Promise<any> {
-    this.sendUpdate(entity, "remove");
     return this._db.remove(entity);
-  }
-
-  /**
-   * publishes a new entity update to all subscribing listeners
-   *
-   * @param entity The entity to update
-   * @param type The type, see {@link UpdatedEntity#type}
-   */
-  private sendUpdate<T extends Entity>(
-    entity: T,
-    type: "new" | "update" | "remove"
-  ) {
-    const publisher = this.publishers[entity.getType()];
-    if (publisher && !publisher.closed) {
-      publisher.next({ entity: entity, type: type });
-    }
   }
 
   protected resolveConstructor<T extends Entity>(
