@@ -6,7 +6,7 @@ const genericMatchers: jasmine.CustomMatcherFactories = {
         if (value.length === 0) {
           result.pass = true;
         } else {
-          result.message = `Expected value to contain be empty but it has size ${value.length}`;
+          result.message = `Expected array ${util.pp(value)} to be empty but it has size ${value.length}`;
         }
         return result;
       },
