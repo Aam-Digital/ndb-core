@@ -9,13 +9,10 @@ import { ChildrenOverviewComponent } from "./children-overview.component";
 import { SchoolsModule } from "../schools.module";
 import { School } from "../model/school";
 import { Child } from "../../children/model/child";
-import { RouterTestingModule } from "@angular/router/testing";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Router } from "@angular/router";
-import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { ChildrenService } from "../../children/children.service";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("ChildrenOverviewComponent", () => {
   let component: ChildrenOverviewComponent;
@@ -27,14 +24,7 @@ describe("ChildrenOverviewComponent", () => {
       mockChildrenService = jasmine.createSpyObj(["queryRelationsOf"]);
 
       TestBed.configureTestingModule({
-        declarations: [],
-        imports: [
-          SchoolsModule,
-          RouterTestingModule,
-          NoopAnimationsModule,
-          MockSessionModule.withState(),
-          FontAwesomeTestingModule,
-        ],
+        imports: [SchoolsModule, MockedTestingModule.withState()],
         providers: [
           { provide: ChildrenService, useValue: mockChildrenService },
         ],

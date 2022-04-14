@@ -29,16 +29,26 @@ import { AppModule } from "./app.module";
 import { AppConfig } from "./core/app-config/app-config";
 import { IAppConfig } from "./core/app-config/app-config.model";
 import { Angulartics2Matomo } from "angulartics2/matomo";
-import { EntityMapperService } from "./core/entity/entity-mapper.service";
 import { Config } from "./core/config/config";
 import { USAGE_ANALYTICS_CONFIG_ID } from "./core/analytics/usage-analytics-config";
 import { environment } from "../environments/environment";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { EntityRegistry } from "./core/entity/database-entity.decorator";
+import { BehaviorSubject } from "rxjs";
+import { SyncState } from "./core/session/session-states/sync-state.enum";
+import { LoginState } from "./core/session/session-states/login-state.enum";
+import { SessionService } from "./core/session/session-service/session.service";
+import { Router } from "@angular/router";
+import { ConfigService } from "./core/config/config.service";
+import { PouchDatabase } from "./core/database/pouch-database";
+import { Database } from "./core/database/database";
 
 describe("AppComponent", () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
+  const syncState = new BehaviorSubject(SyncState.UNSYNCED);
+  const loginState = new BehaviorSubject(LoginState.LOGGED_OUT);
+  let mockSessionService: jasmine.SpyObj<SessionService>;
 
   const mockAppSettings: IAppConfig = {
     database: { name: "", remote_url: "" },
@@ -48,12 +58,25 @@ describe("AppComponent", () => {
 
   beforeEach(
     waitForAsync(() => {
+      mockSessionService = jasmine.createSpyObj(
+        ["getCurrentUser", "isLoggedIn"],
+        {
+          syncState: syncState,
+          loginState: loginState,
+        }
+      );
+      mockSessionService.getCurrentUser.and.returnValue({
+        name: "test user",
+        roles: [],
+      });
       AppConfig.settings = mockAppSettings;
 
       TestBed.configureTestingModule({
         imports: [AppModule, HttpClientTestingModule],
         providers: [
           { provide: AppConfig, useValue: jasmine.createSpyObj(["load"]) },
+          { provide: SessionService, useValue: mockSessionService },
+          { provide: Database, useValue: PouchDatabase.create() },
         ],
       }).compileComponents();
 
@@ -71,6 +94,7 @@ describe("AppComponent", () => {
   afterEach(() => {
     // hide angular component so that test results are visible in test browser window
     fixture.debugElement.nativeElement.style.visibility = "hidden";
+    return TestBed.inject(Database).destroy();
   });
 
   it("should be created", () => {
@@ -80,26 +104,62 @@ describe("AppComponent", () => {
 
   it("should start tracking with config from db", fakeAsync(() => {
     environment.production = true; // tracking is only active in production mode
-    const testConfig = {
+    const testConfig = new Config(Config.CONFIG_KEY, {
       "appConfig:usage-analytics": {
         url: "matomo-test-endpoint",
         site_id: "101",
       },
-    };
-    const entityMapper = TestBed.inject(EntityMapperService);
-    spyOn(entityMapper, "load").and.resolveTo(new Config(testConfig));
+    });
     const angulartics = TestBed.inject(Angulartics2Matomo);
     const startTrackingSpy = spyOn(angulartics, "startTracking");
+    window["_paq"] = [];
 
     createComponent();
     tick();
+    TestBed.inject(ConfigService).configUpdates.next(testConfig);
 
     expect(startTrackingSpy).toHaveBeenCalledTimes(1);
     expect(window["_paq"]).toContain([
       "setSiteId",
-      testConfig[USAGE_ANALYTICS_CONFIG_ID].site_id,
+      testConfig.data[USAGE_ANALYTICS_CONFIG_ID].site_id,
     ]);
 
     discardPeriodicTasks();
   }));
+
+  it("should navigate on same page only when the config changes", fakeAsync(() => {
+    const routeSpy = spyOn(TestBed.inject(Router), "navigate");
+    mockSessionService.isLoggedIn.and.returnValue(true);
+    createComponent();
+    tick();
+    expect(routeSpy).toHaveBeenCalledTimes(1);
+
+    const configService = TestBed.inject(ConfigService);
+    const config = configService.configUpdates.value;
+    configService.configUpdates.next(config);
+    tick();
+    expect(routeSpy).toHaveBeenCalledTimes(1);
+
+    config.data["someProp"] = "some change";
+    configService.configUpdates.next(config);
+    tick();
+    expect(routeSpy).toHaveBeenCalledTimes(2);
+    discardPeriodicTasks();
+  }));
+
+  it("should reload the config whenever the sync completes", () => {
+    const configSpy = spyOn(TestBed.inject(ConfigService), "loadConfig");
+    createComponent();
+
+    expect(configSpy).not.toHaveBeenCalled();
+
+    syncState.next(SyncState.STARTED);
+    expect(configSpy).not.toHaveBeenCalled();
+
+    syncState.next(SyncState.COMPLETED);
+    expect(configSpy).toHaveBeenCalledTimes(1);
+
+    syncState.next(SyncState.COMPLETED);
+    expect(configSpy).toHaveBeenCalledTimes(2);
+  });
 });

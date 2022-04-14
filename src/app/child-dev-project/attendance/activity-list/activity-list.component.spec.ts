@@ -1,15 +1,12 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ActivityListComponent } from "./activity-list.component";
-import { RouterTestingModule } from "@angular/router/testing";
 import { ActivatedRoute } from "@angular/router";
 import { of } from "rxjs";
 import { AttendanceModule } from "../attendance.module";
-import { Angulartics2Module } from "angulartics2";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { ExportService } from "../../../core/export/export-service/export.service";
-import { MockSessionModule } from "../../../core/session/mock-session.module";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("ActivityListComponent", () => {
   let component: ActivityListComponent;
@@ -23,13 +20,7 @@ describe("ActivityListComponent", () => {
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        imports: [
-          AttendanceModule,
-          RouterTestingModule,
-          Angulartics2Module.forRoot(),
-          MockSessionModule.withState(),
-          FontAwesomeTestingModule,
-        ],
+        imports: [AttendanceModule, MockedTestingModule.withState()],
         providers: [
           { provide: ExportService, useValue: {} },
           {

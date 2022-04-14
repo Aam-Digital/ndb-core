@@ -10,13 +10,12 @@ import { EntityMapperService } from "../../../../core/entity/entity-mapper.servi
 import { RecurringActivity } from "../../model/recurring-activity";
 import { ChildrenService } from "../../../children/children.service";
 import { AttendanceModule } from "../../attendance.module";
-import { MatNativeDateModule } from "@angular/material/core";
 import { AttendanceService } from "../../attendance.service";
 import { EventNote } from "../../model/event-note";
 import {
-  MockSessionModule,
+  MockedTestingModule,
   TEST_USER,
-} from "../../../../core/session/mock-session.module";
+} from "../../../../utils/mocked-testing.module";
 
 describe("RollCallSetupComponent", () => {
   let component: RollCallSetupComponent;
@@ -36,11 +35,7 @@ describe("RollCallSetupComponent", () => {
 
     TestBed.configureTestingModule({
       declarations: [RollCallSetupComponent],
-      imports: [
-        AttendanceModule,
-        MatNativeDateModule,
-        MockSessionModule.withState(),
-      ],
+      imports: [AttendanceModule, MockedTestingModule.withState()],
       providers: [
         { provide: ChildrenService, useValue: mockChildrenService },
         { provide: AttendanceService, useValue: mockAttendanceService },

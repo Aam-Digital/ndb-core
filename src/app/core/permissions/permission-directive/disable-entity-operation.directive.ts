@@ -3,16 +3,15 @@ import {
   ComponentRef,
   Directive,
   Input,
+  OnChanges,
   OnInit,
   TemplateRef,
   ViewContainerRef,
 } from "@angular/core";
-import {
-  EntityPermissionsService,
-  OperationType,
-} from "./entity-permissions.service";
-import { Entity } from "../entity/model/entity";
-import { DisabledWrapperComponent } from "./disabled-wrapper/disabled-wrapper.component";
+import { DisabledWrapperComponent } from "./disabled-wrapper.component";
+import { EntityAction, EntitySubject } from "../permission-types";
+import { AbilityService } from "../ability/ability.service";
+import { EntityAbility } from "../ability/entity-ability";
 
 /**
  * This directive can be used to disable a element (e.g. button) based on the current users permissions.
@@ -21,15 +20,15 @@ import { DisabledWrapperComponent } from "./disabled-wrapper/disabled-wrapper.co
 @Directive({
   selector: "[appDisabledEntityOperation]",
 })
-export class DisableEntityOperationDirective implements OnInit {
+export class DisableEntityOperationDirective implements OnInit, OnChanges {
   /**
    * These arguments are required to check whether the user has permissions to perform the operation.
    * The operation property defines to what kind of operation a element belongs, e.g. OperationType.CREATE
    * The entity property defines for which kind of entity the operation will be performed, e.g. Child
    */
   @Input("appDisabledEntityOperation") arguments: {
-    operation: OperationType;
-    entity: typeof Entity;
+    operation: EntityAction;
+    entity: EntitySubject;
   };
 
   private wrapperComponent: ComponentRef<DisabledWrapperComponent>;
@@ -39,17 +38,13 @@ export class DisableEntityOperationDirective implements OnInit {
     private templateRef: TemplateRef<HTMLButtonElement>,
     private viewContainerRef: ViewContainerRef,
     private componentFactoryResolver: ComponentFactoryResolver,
-    private entityPermissionService: EntityPermissionsService
-  ) {}
+    private ability: EntityAbility,
+    private abilityService: AbilityService
+  ) {
+    this.abilityService.abilityUpdated.subscribe(() => this.applyPermissions());
+  }
 
   ngOnInit() {
-    let permitted = true;
-    if (this.arguments?.operation && this.arguments?.entity) {
-      permitted = this.entityPermissionService.userIsPermitted(
-        this.arguments.entity,
-        this.arguments.operation
-      );
-    }
     const containerFactory = this.componentFactoryResolver.resolveComponentFactory(
       DisabledWrapperComponent
     );
@@ -58,6 +53,25 @@ export class DisableEntityOperationDirective implements OnInit {
     );
     this.wrapperComponent.instance.template = this.templateRef;
     this.wrapperComponent.instance.text = this.text;
-    this.wrapperComponent.instance.elementDisabled = !permitted;
+    this.applyPermissions();
+  }
+
+  ngOnChanges() {
+    this.applyPermissions();
+  }
+
+  private applyPermissions() {
+    if (
+      this.wrapperComponent &&
+      this.arguments?.operation &&
+      this.arguments?.entity
+    ) {
+      // Update the disabled property whenever the input values change
+      this.wrapperComponent.instance.elementDisabled = this.ability.cannot(
+        this.arguments.operation,
+        this.arguments.entity
+      );
+      this.wrapperComponent.instance.ngAfterViewInit();
+    }
   }
 }

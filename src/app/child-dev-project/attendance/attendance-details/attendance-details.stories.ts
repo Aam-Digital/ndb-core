@@ -10,7 +10,7 @@ import { AttendanceDetailsComponent } from "./attendance-details.component";
 import { AttendanceModule } from "../attendance.module";
 import { MatDialogRef } from "@angular/material/dialog";
 import { AttendanceService } from "../attendance.service";
-import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
 const demoActivity = RecurringActivity.create("Coaching Batch C");
@@ -57,7 +57,7 @@ export default {
       imports: [
         AttendanceModule,
         StorybookBaseModule,
-        MockSessionModule.withState(),
+        MockedTestingModule.withState(),
       ],
       declarations: [],
       providers: [

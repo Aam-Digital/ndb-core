@@ -23,9 +23,10 @@ import {
   NgModule,
   ValueProvider,
 } from "@angular/core";
-import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatDialogModule } from "@angular/material/dialog";
+import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
+import { DemoDataInitializerService } from "./demo-data-initializer.service";
 
 /**
  * Generate realist mock entities for testing and demo purposes.
@@ -50,6 +51,7 @@ import { MatDialogModule } from "@angular/material/dialog";
  */
 @NgModule({
   imports: [MatProgressBarModule, MatDialogModule],
+  providers: [DemoDataInitializerService],
   declarations: [DemoDataGeneratingProgressDialogComponent],
   exports: [DemoDataGeneratingProgressDialogComponent],
 })

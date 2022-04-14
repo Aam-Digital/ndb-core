@@ -20,12 +20,11 @@ import { AppConfig } from "../app-config/app-config";
 import { SessionService } from "./session-service/session.service";
 import { AlertService } from "../alerts/alert.service";
 import { LoggingService } from "../logging/logging.service";
-import { EntitySchemaService } from "../entity/schema/entity-schema.service";
-import { LoginState } from "./session-states/login-state.enum";
 import { SessionType } from "./session-type";
-import { PouchDatabase } from "../database/pouch-database";
 import { HttpClient } from "@angular/common/http";
 import { LocalSession } from "./session-service/local-session";
+import { Database } from "../database/database";
+import { PouchDatabase } from "../database/pouch-database";
 
 /**
  * Factory method for Angular DI provider of SessionService.
@@ -35,56 +34,22 @@ import { LocalSession } from "./session-service/local-session";
 export function sessionServiceFactory(
   alertService: AlertService,
   loggingService: LoggingService,
-  entitySchemaService: EntitySchemaService,
-  httpClient: HttpClient
+  httpClient: HttpClient,
+  database: Database
 ): SessionService {
-  let sessionService: SessionService;
-  switch (AppConfig.settings.session_type) {
-    case SessionType.local:
-      sessionService = new LocalSession(
-        PouchDatabase.createWithIndexedDB(
-          AppConfig.settings.database.name,
-          loggingService
-        )
-      );
-      break;
-    case SessionType.synced:
-      sessionService = new SyncedSessionService(
-        alertService,
-        loggingService,
-        entitySchemaService,
-        httpClient
-      );
-      break;
-    default:
-      sessionService = new LocalSession(
-        PouchDatabase.createWithInMemoryDB(
-          AppConfig.settings.database.name,
-          loggingService
-        )
-      );
-      break;
+  const pouchDatabase = database as PouchDatabase;
+  if (AppConfig.settings.session_type === SessionType.synced) {
+    return new SyncedSessionService(
+      alertService,
+      loggingService,
+      httpClient,
+      pouchDatabase
+    );
+  } else {
+    return new LocalSession(pouchDatabase);
   }
   // TODO: requires a configuration or UI option to select RemoteSession: https://github.com/Aam-Digital/ndb-core/issues/434
   // return new RemoteSession(httpClient, loggingService);
-
-  updateLoggingServiceWithUserContext(sessionService);
-
-  return sessionService;
-}
-
-function updateLoggingServiceWithUserContext(sessionService: SessionService) {
-  // update the user context for remote error logging
-  // cannot subscribe within LoggingService itself because of cyclic dependencies, therefore doing this here
-  sessionService.loginState.subscribe((newState) => {
-    if (newState === LoginState.LOGGED_IN) {
-      LoggingService.setLoggingContextUser(
-        sessionService.getCurrentUser().name
-      );
-    } else {
-      LoggingService.setLoggingContextUser(undefined);
-    }
-  });
 }
 
 /**
@@ -97,5 +62,5 @@ function updateLoggingServiceWithUserContext(sessionService: SessionService) {
 export const sessionServiceProvider = {
   provide: SessionService,
   useFactory: sessionServiceFactory,
-  deps: [AlertService, LoggingService, EntitySchemaService, HttpClient],
+  deps: [AlertService, LoggingService, HttpClient, Database],
 };

@@ -3,10 +3,8 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { EducationalMaterialComponent } from "./educational-material.component";
 import { ChildrenService } from "../../children.service";
 import { Child } from "../../model/child";
-import { DatePipe } from "@angular/common";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ChildrenModule } from "../../children.module";
-import { MockSessionModule } from "../../../../core/session/mock-session.module";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { EducationalMaterial } from "../model/educational-material";
 import { ConfigurableEnumValue } from "../../../../core/configurable-enum/configurable-enum.interface";
 
@@ -30,14 +28,8 @@ describe("EducationalMaterialComponent", () => {
         "getEducationalMaterialsOfChild",
       ]);
       TestBed.configureTestingModule({
-        declarations: [EducationalMaterialComponent],
-        imports: [
-          ChildrenModule,
-          NoopAnimationsModule,
-          MockSessionModule.withState(),
-        ],
+        imports: [ChildrenModule, MockedTestingModule.withState()],
         providers: [
-          DatePipe,
           { provide: ChildrenService, useValue: mockChildrenService },
         ],
       }).compileComponents();

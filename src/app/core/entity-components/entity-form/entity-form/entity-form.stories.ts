@@ -8,7 +8,7 @@ import { EntityFormModule } from "../entity-form.module";
 import { EntityFormComponent } from "./entity-form.component";
 import { School } from "../../../../child-dev-project/schools/model/school";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
-import { MockSessionModule } from "../../../session/mock-session.module";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { LoginState } from "../../../session/session-states/login-state.enum";
 
 const s1 = new School();
@@ -27,7 +27,7 @@ export default {
         EntityFormModule,
         StorybookBaseModule,
         ChildrenModule,
-        MockSessionModule.withState(LoginState.LOGGED_IN, [s1, s2, s3]),
+        MockedTestingModule.withState(LoginState.LOGGED_IN, [s1, s2, s3]),
       ],
       providers: [
         {

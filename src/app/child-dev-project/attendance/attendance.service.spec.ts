@@ -2,7 +2,6 @@ import { TestBed } from "@angular/core/testing";
 
 import { AttendanceService } from "./attendance.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
-import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { Database } from "../../core/database/database";
 import { RecurringActivity } from "./model/recurring-activity";
 import moment from "moment";
@@ -15,17 +14,12 @@ import { School } from "../schools/model/school";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import { Child } from "../children/model/child";
 import { Note } from "../notes/model/note";
-import { PouchDatabase } from "../../core/database/pouch-database";
-import {
-  EntityRegistry,
-  entityRegistry,
-} from "../../core/entity/database-entity.decorator";
+import { DatabaseTestingModule } from "../../utils/database-testing.module";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
 
   let entityMapper: EntityMapperService;
-  let database: PouchDatabase;
 
   const meetingInteractionCategory = defaultInteractionTypes.find(
     (it) => it.isMeeting
@@ -48,23 +42,14 @@ describe("AttendanceService", () => {
     activity1 = RecurringActivity.create("activity 1");
     activity2 = RecurringActivity.create("activity 2");
 
-    database = PouchDatabase.createWithInMemoryDB();
-
     e1_1 = createEvent(new Date("2020-01-01"), activity1._id);
     e1_2 = createEvent(new Date("2020-01-02"), activity1._id);
     e1_3 = createEvent(new Date("2020-03-02"), activity1._id);
     e2_1 = createEvent(new Date("2020-01-01"), activity2._id);
 
     TestBed.configureTestingModule({
-      imports: [ConfigurableEnumModule],
-      providers: [
-        AttendanceService,
-        EntityMapperService,
-        EntitySchemaService,
-        ChildrenService,
-        { provide: Database, useValue: database },
-        { provide: EntityRegistry, useValue: entityRegistry },
-      ],
+      imports: [ConfigurableEnumModule, DatabaseTestingModule],
+      providers: [AttendanceService, ChildrenService],
     });
     service = TestBed.inject(AttendanceService);
 
@@ -85,7 +70,7 @@ describe("AttendanceService", () => {
   });
 
   afterEach(async () => {
-    await database.destroy();
+    await TestBed.inject(Database).destroy();
   });
 
   it("should be created", () => {

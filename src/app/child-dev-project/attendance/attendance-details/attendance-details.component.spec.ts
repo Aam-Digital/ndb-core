@@ -1,8 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceDetailsComponent } from "./attendance-details.component";
-import { RouterTestingModule } from "@angular/router/testing";
-import { Angulartics2Module } from "angulartics2";
 import {
   ActivityAttendance,
   generateEventWithAttendance,
@@ -10,12 +8,10 @@ import {
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { RecurringActivity } from "../model/recurring-activity";
 import { AttendanceModule } from "../attendance.module";
-import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
-import { MatNativeDateModule } from "@angular/material/core";
 import { MatDialogRef } from "@angular/material/dialog";
 import { EventNote } from "../model/event-note";
 import { AttendanceService } from "../attendance.service";
-import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("AttendanceDetailsComponent", () => {
   let component: AttendanceDetailsComponent;
@@ -50,15 +46,7 @@ describe("AttendanceDetailsComponent", () => {
       entity.activity = RecurringActivity.create("Test Activity");
 
       TestBed.configureTestingModule({
-        imports: [
-          AttendanceModule,
-          EntitySubrecordModule,
-          RouterTestingModule,
-          Angulartics2Module.forRoot(),
-          RouterTestingModule,
-          MatNativeDateModule,
-          MockSessionModule.withState(),
-        ],
+        imports: [AttendanceModule, MockedTestingModule.withState()],
         providers: [
           { provide: MatDialogRef, useValue: {} },
           { provide: AttendanceService, useValue: mockAttendanceService },

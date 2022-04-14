@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot, CanActivate } from "@angular/router";
-import { SessionService } from "../session/session-service/session.service";
-import { RouteData } from "../view/dynamic-routing/view-config.interface";
+import { SessionService } from "../../session/session-service/session.service";
+import { RouteData } from "../../view/dynamic-routing/view-config.interface";
 
 @Injectable()
 /**
