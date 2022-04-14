@@ -18,7 +18,7 @@
 import {
   ComponentFixture,
   discardPeriodicTasks,
-  fakeAsync,
+  fakeAsync, flush,
   TestBed,
   tick,
   waitForAsync,
@@ -144,6 +144,8 @@ describe("AppComponent", () => {
     configService.configUpdates.next(config);
     tick();
     expect(routeSpy).toHaveBeenCalledTimes(2);
+
+    flush();
     discardPeriodicTasks();
   }));
 
