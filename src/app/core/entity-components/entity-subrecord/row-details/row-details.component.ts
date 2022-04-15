@@ -9,6 +9,7 @@ import {
   EntityRemoveService,
   RemoveResult,
 } from "../../../entity/entity-remove.service";
+import { AlertService } from "../../../alerts/alert.service";
 
 /**
  * Data interface that must be given when opening the dialog
@@ -41,7 +42,8 @@ export class RowDetailsComponent<E extends Entity> {
     private dialogRef: MatDialogRef<RowDetailsComponent<E>>,
     private formsService: EntityFormService,
     private ability: EntityAbility,
-    private entityRemoveService: EntityRemoveService
+    private entityRemoveService: EntityRemoveService,
+    private alertService: AlertService
   ) {
     this.form = this.formsService.createFormGroup(data.columns, data.entity);
     if (this.ability.cannot("update", data.entity)) {
@@ -58,7 +60,8 @@ export class RowDetailsComponent<E extends Entity> {
   save() {
     this.formsService
       .saveChanges(this.form, this.data.entity)
-      .then((res) => this.dialogRef.close(res));
+      .then((res) => this.dialogRef.close(res))
+      .catch((err) => this.alertService.addWarning(err.message));
   }
 
   delete() {
