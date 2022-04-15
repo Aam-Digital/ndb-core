@@ -83,26 +83,26 @@ describe("PreviousSchoolsComponent", () => {
     expect(columnNames).not.toContain("Class");
     expect(columnNames).not.toContain("Result");
 
-    config.config.columns.push({
-      id: "schoolClass",
-      label: "Class",
-      input: "text",
-    });
-    config.config.columns.push({
-      id: "result",
-      label: "Result",
-      input: "percentageResult",
-    });
+    config.config.columns.push(
+      {
+        id: "schoolClass",
+        label: "Class",
+        input: "text",
+      },
+      {
+        id: "result",
+        label: "Result",
+        input: "percentageResult",
+      }
+    );
 
     component.onInitFromDynamicConfig(config);
     tick();
 
     columnNames = component.columns.map((column) => column.label);
-    expect(columnNames).toContain("Team");
-    expect(columnNames).toContain("From");
-    expect(columnNames).toContain("To");
-    expect(columnNames).toContain("Class");
-    expect(columnNames).toContain("Result");
+    expect(columnNames).toEqual(
+      jasmine.arrayContaining(["Team", "From", "To", "Class", "Result"])
+    );
   }));
 
   it("should create new records with preset data", () => {

@@ -46,7 +46,7 @@ describe("AutoResolutionService", () => {
     expect(
       mockResolutionStrategy.autoDeleteConflictingRevision
     ).toHaveBeenCalled();
-    expect(result).toBe(true);
+    expect(result).toBeTrue();
   });
 
   it("should not suggest auto delete conflicts if no strategy applies", () => {
@@ -63,6 +63,6 @@ describe("AutoResolutionService", () => {
     expect(
       mockResolutionStrategy.autoDeleteConflictingRevision
     ).toHaveBeenCalled();
-    expect(result).toBe(false);
+    expect(result).toBeFalse();
   });
 });

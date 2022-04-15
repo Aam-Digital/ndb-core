@@ -186,9 +186,9 @@ describe("EntitySubrecordComponent", () => {
     component.edit(tableRow);
 
     const formGroup = tableRow.formGroup;
-    expect(formGroup.get("name").value).toBe("Child Name");
-    expect(formGroup.get("projectNumber").value).toBe("01");
-    expect(formGroup.enabled).toBeTrue();
+    expect(formGroup.get("name")).toHaveValue("Child Name");
+    expect(formGroup.get("projectNumber")).toHaveValue("01");
+    expect(formGroup).toBeEnabled();
   });
 
   it("should correctly save changes to an entity", fakeAsync(() => {
@@ -212,7 +212,7 @@ describe("EntitySubrecordComponent", () => {
     expect(entityMapper.save).toHaveBeenCalledWith(tableRow.record);
     expect(tableRow.record.name).toBe("New Name");
     expect(tableRow.record.gender).toBe(genders[2]);
-    expect(tableRow.formGroup.disabled).toBeTrue();
+    expect(tableRow.formGroup).not.toBeEnabled();
   }));
 
   it("should show a error message when saving fails", fakeAsync(() => {
