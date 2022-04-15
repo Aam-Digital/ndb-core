@@ -154,12 +154,20 @@ describe("ChildrenListComponent", () => {
     const schoolFilter = component.listConfig.filters.find(
       (f) => f.id === "school"
     ) as PrebuiltFilterConfig<Child>;
-    expect(schoolFilter.options.length).toBe(3);
-    expect(schoolFilter.options[0].key).toBe("");
-    expect(schoolFilter.options[0].label).toBe("All");
-    expect(schoolFilter.options[1].key).toBe("a test");
-    expect(schoolFilter.options[1].label).toBe("A Test");
-    expect(schoolFilter.options[2].key).toBe("test");
-    expect(schoolFilter.options[2].label).toBe("Test");
+    expect(schoolFilter.options).toHaveSize(3);
+    expect(schoolFilter.options).toEqual([
+      jasmine.objectContaining({
+        key: "",
+        label: "All",
+      }),
+      jasmine.objectContaining({
+        key: "a test",
+        label: "A Test",
+      }),
+      jasmine.objectContaining({
+        key: "test",
+        label: "Test",
+      }),
+    ]);
   }));
 });

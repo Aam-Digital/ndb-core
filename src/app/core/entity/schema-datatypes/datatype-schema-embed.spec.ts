@@ -66,7 +66,7 @@ describe("Schema data type: schema-embed", () => {
     const loadedEntity = new TestEntity();
     entitySchemaService.loadDataIntoEntity(loadedEntity, data);
 
-    expect(loadedEntity.embedded.value).toEqual(new Date("2020-01-01"));
+    expect(loadedEntity.embedded.value).toBeDate("2020-01-01");
   });
 
   it("creates instance of embedded class when loading", () => {

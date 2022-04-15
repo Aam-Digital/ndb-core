@@ -28,7 +28,7 @@ describe("FormComponent", () => {
   });
 
   it("should change the creating state", () => {
-    expect(component.creatingNew).toBe(false);
+    expect(component.creatingNew).toBeFalse();
 
     component.onInitFromDynamicConfig({
       entity: new Child(),
@@ -36,7 +36,7 @@ describe("FormComponent", () => {
       creatingNew: true,
     });
 
-    expect(component.creatingNew).toBe(true);
+    expect(component.creatingNew).toBeTrue();
   });
 
   it("calls router once a new child is saved", () => {

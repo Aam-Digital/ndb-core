@@ -96,7 +96,7 @@ describe("EditSingleEntityComponent", () => {
     component.select("First Child");
 
     expect(component.selectedEntity).toBe(child1);
-    expect(component.formControl.value).toEqual(child1.getId());
+    expect(component.formControl).toHaveValue(child1.getId());
     expect(component.editingSelectedEntity).toBeFalse();
   });
 
