@@ -7,23 +7,14 @@ import {
 
 import { EditSingleEntityComponent } from "./edit-single-entity.component";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
-import { Validators } from "@angular/forms";
-import { EntitySchemaService } from "../../../../entity/schema/entity-schema.service";
 import { EntityFormService } from "../../../entity-form/entity-form.service";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ChildSchoolRelation } from "../../../../../child-dev-project/children/model/childSchoolRelation";
 import { School } from "../../../../../child-dev-project/schools/model/school";
 import { EntityUtilsModule } from "../../entity-utils.module";
 import { Child } from "../../../../../child-dev-project/children/model/child";
 import { TypedFormControl } from "../edit-component";
-import { ChangeDetectorRef } from "@angular/core";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { RouterTestingModule } from "@angular/router/testing";
-import { EntityAbility } from "../../../../permissions/ability/entity-ability";
-import {
-  EntityRegistry,
-  entityRegistry,
-} from "../../../../entity/database-entity.decorator";
+import { MockedTestingModule } from "../../../../../utils/mocked-testing.module";
 
 describe("EditSingleEntityComponent", () => {
   let component: EditSingleEntityComponent;
@@ -37,25 +28,10 @@ describe("EditSingleEntityComponent", () => {
     await TestBed.configureTestingModule({
       imports: [
         EntityUtilsModule,
-        NoopAnimationsModule,
         FontAwesomeTestingModule,
-        RouterTestingModule,
+        MockedTestingModule,
       ],
-      declarations: [EditSingleEntityComponent],
-      providers: [
-        EntityFormService,
-        EntitySchemaService,
-        { provide: EntityMapperService, useValue: mockEntityMapper },
-        {
-          provide: EntityRegistry,
-          useValue: entityRegistry,
-        },
-        {
-          provide: ChangeDetectorRef,
-          useValue: jasmine.createSpyObj(["detectChanges"]),
-        },
-        EntityAbility,
-      ],
+      providers: [{ provide: EntityMapperService, useValue: mockEntityMapper }],
     }).compileComponents();
   });
 
@@ -104,46 +80,37 @@ describe("EditSingleEntityComponent", () => {
       propertySchema: ChildSchoolRelation.schema.get("childId"),
     });
     tick();
+    expect(component.selectedEntity).toBe(child1);
 
-    expect(component.entityNameFormControl.value).toEqual("First Child");
+    component.editSelectedEntity();
+    tick();
+    fixture.detectChanges();
+    expect(component.input.nativeElement.value).toEqual("First Child");
   }));
 
   it("Should have the correct entity selected when it's name is entered", () => {
     const child1 = Child.create("First Child");
     const child2 = Child.create("Second Child");
     component.entities = [child1, child2];
+
     component.select("First Child");
+
     expect(component.selectedEntity).toBe(child1);
     expect(component.formControl.value).toEqual(child1.getId());
     expect(component.editingSelectedEntity).toBeFalse();
   });
 
   it("Should edit the selected entity", fakeAsync(() => {
-    const input: HTMLInputElement = fixture.elementRef.nativeElement.querySelector(
-      "input"
-    );
+    const input: HTMLInputElement = component.input.nativeElement;
     const inputSpy = spyOn(input, "focus");
     component.entities = [School.create({ name: "High School" })];
     component.select("High School");
     expect(inputSpy).not.toHaveBeenCalled();
-    component.editSelectedEntity();
-    tick();
-    expect(component.selectedEntity).toBeUndefined();
-    expect(component.editingSelectedEntity).toBeTrue();
-    expect(component.formControl.value).toBeNull();
 
+    component.editSelectedEntity();
+
+    expect(component.editingSelectedEntity).toBeTrue();
+    tick();
     expect(inputSpy).toHaveBeenCalled();
   }));
-
-  it("should set the validators for the 'name' form field", async () => {
-    component.formControl.setValidators(Validators.required);
-
-    await component.onInitFromDynamicConfig({
-      formFieldConfig: { id: "childId" },
-      propertySchema: ChildSchoolRelation.schema.get("childId"),
-      formControl: component.formControl,
-    });
-
-    expect(component.entityNameFormControl.invalid).toBeTrue();
-  });
 });
