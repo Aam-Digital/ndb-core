@@ -20,8 +20,9 @@ import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { AbilityService } from "../../../permissions/ability/ability.service";
 import { faker } from "../../../demo-data/faker";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
+import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 
-const configService = new ConfigService();
+const configService = new ConfigService(mockEntityMapper());
 const schemaService = new EntitySchemaService();
 schemaService.registerSchemaDatatype(
   new ConfigurableEnumDatatype(configService)
