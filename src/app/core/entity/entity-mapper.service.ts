@@ -102,8 +102,6 @@ export class EntityMapperService {
    *
    * <em>Important:</em> Loading via the constructor is always preferred compared to loading via string. The latter
    * doesn't allow strict type-checking and errors can only be discovered later
-   * The first update that one will receive - immediately after subscribing - is <code>null</code>.
-   * The <code>update</code>-function takes this into account.
    * @param entityType the type of the entity or the registered name of that class.
    */
   public receiveUpdates<T extends Entity>(
@@ -118,9 +116,9 @@ export class EntityMapperService {
         if (doc._deleted) {
           return { type: "remove", entity: entity };
         } else if (doc._rev.startsWith("1-")) {
+          // This does not cover all the cases as docs with higher rev-number might be synchronized for the first time
           return { type: "new", entity: entity };
         } else {
-          // This is not necessarily true as docs with higher rev-number might be synchronized for the first time
           return { type: "update", entity: entity };
         }
       })

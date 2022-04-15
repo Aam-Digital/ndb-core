@@ -22,7 +22,7 @@ import memory from "pouchdb-adapter-memory";
 import { PerformanceAnalysisLogging } from "../../utils/performance-analysis-logging";
 import { Injectable } from "@angular/core";
 import { fromEvent, Observable } from "rxjs";
-import { map } from "rxjs/operators";
+import { filter, map } from "rxjs/operators";
 
 @Injectable()
 /**
@@ -40,8 +40,24 @@ export class PouchDatabase extends Database {
     return new PouchDatabase(new LoggingService()).initInMemoryDB();
   }
 
+  /**
+   * The reference to the PouchDB instance
+   * @private
+   */
   private pouchDB: PouchDB.Database;
+
+  /**
+   * A list of promises that resolve once all the (until now saved) indexes are created
+   * @private
+   */
   private indexPromises: Promise<any>[] = [];
+
+  /**
+   * An observable that emits a value whenever the PouchDB receives a new change.
+   * This change can come from the current user or remotely from the (live) synchronization
+   * @private
+   */
+  private changesFeed: Observable<any>;
 
   /**
    * Create a PouchDB database manager.
@@ -208,21 +224,30 @@ export class PouchDatabase extends Database {
       });
   }
 
+  /**
+   * Listen to changes to documents which have an _id with the given prefix
+   * @param prefix for which document changes are emitted
+   * @returns observable which emits the filtered changes
+   */
   changes(prefix: string): Observable<any> {
-    // Somehow the events need to be cleaned up when no-one listens to them any more
-    // Maybe just use one changes feed and then create the further observables only with a filter pipe
-    return fromEvent(
-      this.pouchDB.changes({
-        live: true,
-        since: "now",
-        include_docs: true,
-        filter: (doc) => doc._id.startsWith(prefix),
-      }),
-      "change"
-    ).pipe(map((change) => change[0].doc));
+    if (!this.changesFeed) {
+      // Only maintain one changes feed for the whole app live-cycle
+      this.changesFeed = fromEvent(
+        this.pouchDB.changes({
+          live: true,
+          since: "now",
+          include_docs: true,
+        }),
+        "change"
+      ).pipe(map((change) => change[0].doc));
+    }
+    return this.changesFeed.pipe(filter((doc) => doc._id.startsWith(prefix)));
   }
 
-  public async destroy(): Promise<any> {
+  /**
+   * Destroy the database and all saved data
+   */
+  async destroy(): Promise<any> {
     await Promise.all(this.indexPromises);
     return this.pouchDB.destroy();
   }
@@ -317,7 +342,7 @@ export class PouchDatabase extends Database {
     }
   }
 
-  private mergeObjects(existingObject: any, newObject: any) {
+  private mergeObjects(_existingObject: any, _newObject: any) {
     // TODO: implement automatic merging of conflicting entity versions
     return undefined;
   }
