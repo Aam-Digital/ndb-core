@@ -86,11 +86,11 @@ describe("DataImportComponent", () => {
     await component.setCsvFile({ target: { files: [file] } } as any);
 
     expect(mockDataImportService.validateCsvFile).toHaveBeenCalledWith(file);
-    expect(component.fileNameForm.get("fileName").value).toBe(file.name);
+    expect(component.fileNameForm.get("fileName")).toHaveValue(file.name);
     const columns = Object.keys(component.columnMappingForm.getRawValue());
     expect(columns).toEqual(["_id", "name"]);
-    expect(component.entityForm.get("entity").value).toBe("Child");
-    expect(component.transactionIDForm.disabled).toBeTrue();
+    expect(component.entityForm.get("entity")).toHaveValue("Child");
+    expect(component.transactionIDForm).not.toBeEnabled();
   });
 
   it("should only show properties that havent been used yet", fakeAsync(() => {
@@ -138,13 +138,13 @@ describe("DataImportComponent", () => {
 
     await component.loadConfig({ target: { files: [undefined] } } as any);
 
-    expect(component.entityForm.get("entity").value).toBe(
+    expect(component.entityForm.get("entity")).toHaveValue(
       importMeta.entityType
     );
-    expect(component.transactionIDForm.get("transactionId").value).toBe(
+    expect(component.transactionIDForm.get("transactionId")).toHaveValue(
       importMeta.transactionId
     );
-    expect(component.dateFormatForm.get("dateFormat").value).toBe(
+    expect(component.dateFormatForm.get("dateFormat")).toHaveValue(
       importMeta.dateFormat
     );
     expect(component.columnMappingForm.getRawValue()).toEqual(
@@ -188,7 +188,7 @@ describe("DataImportComponent", () => {
 
     await component.loadConfig({ target: { files: [undefined] } } as any);
 
-    expect(component.entityForm.get("entity").value).toBe("Testing");
+    expect(component.entityForm.get("entity")).toHaveValue("Testing");
 
     component.processChange("");
     expect(component.filteredProperties.value).toContain("databaseString");
@@ -201,7 +201,7 @@ describe("DataImportComponent", () => {
   function mockFileReader(data: Partial<ImportMetaData>) {
     const fileReader: any = {
       result: JSON.stringify(data),
-      addEventListener: (str: string, fun: () => any) => fun(),
+      addEventListener: (_str: string, fun: () => any) => fun(),
       readAsText: () => {},
     };
     spyOn(window, "FileReader").and.returnValue(fileReader);

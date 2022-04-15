@@ -80,9 +80,9 @@ describe("ChildrenCountDashboardComponent", () => {
     childrenObserver.next(children);
     flush();
 
-    expect(component.childrenGroupCounts.length)
+    expect(component.childrenGroupCounts)
       .withContext("unexpected number of centersWithProbability")
-      .toBe(2);
+      .toHaveSize(2);
     const actualCenterAEntry = component.childrenGroupCounts.filter(
       (e) => e.label === centerA.label
     )[0];
@@ -111,7 +111,7 @@ describe("ChildrenCountDashboardComponent", () => {
     childrenObserver.next(children);
     flush();
 
-    expect(component.childrenGroupCounts.length).toBe(3);
+    expect(component.childrenGroupCounts).toHaveSize(3);
     expect(component.childrenGroupCounts).toContain({
       label: c1.label,
       value: 2,

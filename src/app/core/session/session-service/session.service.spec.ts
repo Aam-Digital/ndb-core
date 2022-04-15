@@ -101,7 +101,7 @@ export function testSessionServiceImplementation(
 
     expect(sessionService.isLoggedIn())
       .withContext("unexpected isLoggedIn")
-      .toEqual(false);
-    expect(sessionService.getCurrentUser()).not.toBeDefined();
+      .toBeFalse();
+    expect(sessionService.getCurrentUser()).toBeUndefined();
   }
 }

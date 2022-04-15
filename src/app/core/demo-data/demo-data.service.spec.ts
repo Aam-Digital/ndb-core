@@ -50,6 +50,6 @@ describe("DemoDataService", () => {
     const service: DemoDataService = TestBed.inject(DemoDataService);
     await service.publishDemoData();
 
-    expect(service.dataGenerators.length).toBe(1);
+    expect(service.dataGenerators).toHaveSize(1);
   });
 });

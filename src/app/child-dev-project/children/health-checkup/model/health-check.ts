@@ -26,6 +26,10 @@ import { WarningLevel } from "../../../../core/entity/model/warning-level";
  */
 @DatabaseEntity("HealthCheck")
 export class HealthCheck extends Entity {
+  static create(contents: Partial<HealthCheck>) {
+    return Object.assign(new HealthCheck(), contents);
+  }
+
   @DatabaseField() child: string;
   @DatabaseField({ label: $localize`:Label for date of a health check:Date` })
   date: Date;
