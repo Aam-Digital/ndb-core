@@ -15,6 +15,7 @@ import { PanelConfig } from "../../../core/entity-components/entity-details/Enti
 import { ChildSchoolRelation } from "../model/childSchoolRelation";
 import moment from "moment";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("PreviousSchoolsComponent", () => {
   let component: PreviousSchoolsComponent;
@@ -32,7 +33,11 @@ describe("PreviousSchoolsComponent", () => {
       ]);
 
       TestBed.configureTestingModule({
-        imports: [ChildrenModule, MockedTestingModule.withState()],
+        imports: [
+          ChildrenModule,
+          MockedTestingModule.withState(),
+          FontAwesomeTestingModule,
+        ],
         providers: [
           { provide: ChildrenService, useValue: mockChildrenService },
         ],

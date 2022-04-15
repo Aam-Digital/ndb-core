@@ -21,6 +21,7 @@ import { School } from "../../schools/model/school";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ExportService } from "../../../core/export/export-service/export.service";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;
@@ -87,7 +88,11 @@ describe("ChildrenListComponent", () => {
     waitForAsync(() => {
       mockChildrenService.getChildren.and.returnValue(of([]));
       TestBed.configureTestingModule({
-        imports: [ChildrenModule, MockedTestingModule.withState()],
+        imports: [
+          ChildrenModule,
+          MockedTestingModule.withState(),
+          FontAwesomeTestingModule,
+        ],
         providers: [
           {
             provide: ChildrenService,

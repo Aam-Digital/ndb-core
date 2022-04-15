@@ -7,6 +7,7 @@ import { AttendanceModule } from "../attendance.module";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { ExportService } from "../../../core/export/export-service/export.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("ActivityListComponent", () => {
   let component: ActivityListComponent;
@@ -20,7 +21,11 @@ describe("ActivityListComponent", () => {
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        imports: [AttendanceModule, MockedTestingModule.withState()],
+        imports: [
+          AttendanceModule,
+          MockedTestingModule.withState(),
+          FontAwesomeTestingModule,
+        ],
         providers: [
           { provide: ExportService, useValue: {} },
           {

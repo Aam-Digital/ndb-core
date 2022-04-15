@@ -12,6 +12,7 @@ import { DatabaseField } from "../../entity/database-field.decorator";
 import { AttendanceService } from "../../../child-dev-project/attendance/attendance.service";
 import { ExportService } from "../../export/export-service/export.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -84,7 +85,11 @@ describe("EntityListComponent", () => {
       );
 
       TestBed.configureTestingModule({
-        imports: [EntityListModule, MockedTestingModule.withState()],
+        imports: [
+          EntityListModule,
+          MockedTestingModule.withState(),
+          FontAwesomeTestingModule,
+        ],
         providers: [
           { provide: ConfigService, useValue: mockConfigService },
           { provide: LoggingService, useValue: mockLoggingService },

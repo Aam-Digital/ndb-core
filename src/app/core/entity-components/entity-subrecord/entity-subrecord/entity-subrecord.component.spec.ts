@@ -29,6 +29,7 @@ import { UpdatedEntity } from "../../../entity/model/entity-update";
 import { MatDialog } from "@angular/material/dialog";
 import { RowDetailsComponent } from "../row-details/row-details.component";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -37,7 +38,11 @@ describe("EntitySubrecordComponent", () => {
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        imports: [EntitySubrecordModule, MockedTestingModule.withState()],
+        imports: [
+          EntitySubrecordModule,
+          MockedTestingModule.withState(),
+          FontAwesomeTestingModule,
+        ],
       }).compileComponents();
     })
   );
