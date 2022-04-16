@@ -10,6 +10,7 @@ import { defaultAttendanceStatusTypes } from "../../../core/config/default-confi
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { By } from "@angular/platform-browser";
 import { ChildMeetingNoteAttendanceComponent } from "./child-meeting-attendance/child-meeting-note-attendance.component";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 function generateTestNote(forChildren: Child[]) {
   const testNote = Note.create(new Date(), "test note");
@@ -49,7 +50,11 @@ describe("NoteDetailsComponent", () => {
     const dialogRefMock = { beforeClosed: () => of(), close: () => {} };
 
     TestBed.configureTestingModule({
-      imports: [NotesModule, MockedTestingModule.withState()],
+      imports: [
+        NotesModule,
+        MockedTestingModule.withState(),
+        FontAwesomeTestingModule,
+      ],
       providers: [
         { provide: MatDialogRef, useValue: dialogRefMock },
         { provide: ChildrenService, useValue: mockChildrenService },
