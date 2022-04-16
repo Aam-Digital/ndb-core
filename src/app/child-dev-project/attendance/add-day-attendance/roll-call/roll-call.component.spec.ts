@@ -19,6 +19,7 @@ import { LoginState } from "../../../../core/session/session-states/login-state.
 import { SimpleChange } from "@angular/core";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { ChildrenService } from "../../../children/children.service";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 const PRESENT = {
   id: "PRESENT",
@@ -68,6 +69,7 @@ describe("RollCallComponent", () => {
             participant2,
             participant3,
           ]),
+          FontAwesomeTestingModule,
         ],
         providers: [
           { provide: ConfigService, useValue: mockConfigService },

@@ -28,6 +28,7 @@ import { EventNote } from "../../attendance/model/event-note";
 import { UpdatedEntity } from "../../../core/entity/model/entity-update";
 import { ExportService } from "../../../core/export/export-service/export.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("NotesManagerComponent", () => {
   let component: NotesManagerComponent;
@@ -100,7 +101,11 @@ describe("NotesManagerComponent", () => {
     mockEventNoteObservable = new Subject<UpdatedEntity<EventNote>>();
 
     TestBed.configureTestingModule({
-      imports: [NotesModule, MockedTestingModule.withState()],
+      imports: [
+        NotesModule,
+        MockedTestingModule.withState(),
+        FontAwesomeTestingModule,
+      ],
       providers: [
         { provide: FormDialogService, useValue: dialogMock },
         { provide: ActivatedRoute, useValue: routeMock },
