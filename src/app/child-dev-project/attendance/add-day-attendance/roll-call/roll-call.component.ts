@@ -5,8 +5,15 @@ import {
   OnChanges,
   Output,
   SimpleChanges,
+  ViewChild,
 } from "@angular/core";
-import { animate, style, transition, trigger } from "@angular/animations";
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger,
+} from "@angular/animations";
 import {
   ATTENDANCE_STATUS_CONFIG_ID,
   AttendanceStatusType,
@@ -19,6 +26,7 @@ import { Child } from "../../../children/model/child";
 import { LoggingService } from "../../../../core/logging/logging.service";
 import { FormGroup } from "@angular/forms";
 import { sortByAttribute } from "../../../../utils/utils";
+import { MatTabGroup } from "@angular/material/tabs";
 
 /**
  * Displays the participants of the given event one by one to mark attendance status.
@@ -34,9 +42,54 @@ import { sortByAttribute } from "../../../../utils/utils";
         animate(1000),
       ]),
     ]),
+    trigger("translateTab", [
+      // Transitions to `none` instead of 0, because some browsers might blur the content.
+      state(
+        "center, void, left-origin-center, right-origin-center",
+        style({ transform: "none" })
+      ),
+
+      // If the tab is either on the left or right, we additionally add a `min-height` of 1px
+      // in order to ensure that the element has a height before its state changes. This is
+      // necessary because Chrome does seem to skip the transition in RTL mode if the element does
+      // not have a static height and is not rendered. See related issue: #9465
+      state(
+        "left",
+        style({
+          transform: "translate3d(-100%, 0, 0)",
+          minHeight: "1px",
+
+          // Normally this is redundant since we detach the content from the DOM, but if the user
+          // opted into keeping the content in the DOM, we have to hide it, so it isn't focusable.
+          visibility: "hidden",
+        })
+      ),
+      state(
+        "right",
+        style({
+          transform: "translate3d(100%, 0, 0)",
+          minHeight: "1px",
+          visibility: "hidden",
+        })
+      ),
+
+      transition(
+        "* => left, * => right, left => center, right => center",
+        animate("{{animationDuration}} cubic-bezier(0.35, 0, 0.25, 1)")
+      ),
+      transition("void => left-origin-center", [
+        style({ transform: "translate3d(-100%, 0, 0)", visibility: "hidden" }),
+        animate("{{animationDuration}} cubic-bezier(0.35, 0, 0.25, 1)"),
+      ]),
+      transition("void => right-origin-center", [
+        style({ transform: "translate3d(100%, 0, 0)", visibility: "hidden" }),
+        animate("{{animationDuration}} cubic-bezier(0.35, 0, 0.25, 1)"),
+      ]),
+    ]),
   ],
 })
 export class RollCallComponent implements OnChanges {
+  @ViewChild("tabGroup") tabGroup: MatTabGroup;
   /**
    * The event to be displayed and edited.
    */
@@ -59,9 +112,8 @@ export class RollCallComponent implements OnChanges {
 
   /**
    * private model; should only be set within this component
-   * @private
    */
-  private _currentIndex: number;
+  public _currentIndex: number;
   /**
    * whether any changes have been made to the model
    */
@@ -177,7 +229,7 @@ export class RollCallComponent implements OnChanges {
     this.isDirty = true;
 
     // automatically move to next participant after a short delay giving the user visual feedback on the selected status
-    setTimeout(() => this.goToNext(), 750);
+    this.goToNext();
   }
 
   goToParticipantWithIndex(newIndex: number) {
@@ -186,6 +238,7 @@ export class RollCallComponent implements OnChanges {
     if (this.isFinished) {
       this.complete.emit(this.eventEntity);
     }
+    this.tabGroup.selectedIndex = newIndex;
   }
 
   goToPrevious() {

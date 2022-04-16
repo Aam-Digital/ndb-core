@@ -1,54 +1,17 @@
 <!-- Individual Student's Page -->
 <div *ngIf="entries?.length > 0">
-  <div class="attendance-progress-bar">
-    <mat-progress-bar
-      class="filler"
-      mode="determinate"
-      [value]="(currentIndex / entries.length) * 100"
-    ></mat-progress-bar>
-    <div class="progress-label" [style.visibility]="currentIndex < entries.length ? 'visible' : 'hidden'">
-      {{ currentIndex+1 }} / {{ entries.length }}
+  <div style="display: flex; flex-direction: row; width: 100%">
+    <button mat-icon-button (click)="goToPrevious()" [disabled]="isFirst">
+      <fa-icon icon="chevron-left"></fa-icon>
+    </button>
+    <div style="flex-grow: 1; place-self: center">
+      <div *ngFor="let entry of entries; let i = index" style="display: flex; place-content: center">
+        <p *ngIf="i === currentIndex">{{i}}</p>
+      </div>
     </div>
-
-    <div class="navigation-bar">
-      <button mat-icon-button (click)="goToPrevious()" [disabled]="isFirst">
-        <fa-icon icon="chevron-left"></fa-icon>
-      </button>
-      <div *ngIf="isFinished" style="flex-grow: 1"></div>
-      <app-child-block
-        *ngIf="!isFinished"
-        [entity]="currentChild"
-        class="child-block">
-      </app-child-block>
-      <button mat-icon-button (click)="goToNext()" [disabled]="isFinished">
-        <fa-icon icon="chevron-right"></fa-icon>
-      </button>
-    </div>
-
-  </div>
-
-  <div
-    *ngIf="!isFinished"
-    fxLayout="column"
-    fxLayoutAlign="space-between stretch"
-    class="options-wrapper"
-  >
-    <div
-      class="group-select-option"
-      *ngFor="let option of availableStatus"
-      (click)="markAttendance(option)"
-      [ngClass]="
-        currentStatus.id === option.id
-          ? option.style
-          : ''
-      "
-    >
-      <fa-icon
-        *ngIf="currentStatus.id === option.id"
-        icon="check"
-      ></fa-icon>
-      {{ option.label }}
-    </div>
+    <button mat-icon-button (click)="goToNext()" [disabled]="isFinished">
+      <fa-icon icon="chevron-right"></fa-icon>
+    </button>
   </div>
 </div>
 
