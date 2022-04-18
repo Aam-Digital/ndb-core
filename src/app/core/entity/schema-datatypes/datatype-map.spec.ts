@@ -63,8 +63,8 @@ describe("Schema data type: map", () => {
     };
     entitySchemaService.loadDataIntoEntity(entity, data);
 
-    expect(entity.dateMap.get("a")).toEqual(new Date("2020-01-01"));
-    expect(entity.dateMap.get("b")).toEqual(new Date("1999-01-01"));
+    expect(entity.dateMap.get("a")).toBeDate("2020-01-01");
+    expect(entity.dateMap.get("b")).toBeDate("1999-01-01");
   });
 
   it("reproduces exact same values after save and load", () => {
@@ -107,11 +107,11 @@ describe("Schema data type: map", () => {
     const loadedEntity = new TestEntity();
     entitySchemaService.loadDataIntoEntity(loadedEntity, rawData);
 
-    expect(loadedEntity.dateMap.size).toEqual(originalEntity.dateMap.size);
+    expect(loadedEntity.dateMap).toHaveSize(originalEntity.dateMap.size);
 
     const loadedEntity2 = new TestEntity();
     entitySchemaService.loadDataIntoEntity(loadedEntity2, rawData);
 
-    expect(loadedEntity2.dateMap.size).toEqual(originalEntity.dateMap.size);
+    expect(loadedEntity2.dateMap).toHaveSize(originalEntity.dateMap.size);
   });
 });

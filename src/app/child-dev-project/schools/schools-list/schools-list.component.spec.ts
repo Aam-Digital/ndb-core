@@ -14,6 +14,7 @@ import { EntityListConfig } from "../../../core/entity-components/entity-list/En
 import { ExportService } from "../../../core/export/export-service/export.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("SchoolsListComponent", () => {
   let component: SchoolsListComponent;
@@ -43,7 +44,11 @@ describe("SchoolsListComponent", () => {
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        imports: [SchoolsModule, MockedTestingModule.withState()],
+        imports: [
+          SchoolsModule,
+          MockedTestingModule.withState(),
+          FontAwesomeTestingModule,
+        ],
         providers: [
           { provide: ActivatedRoute, useValue: routeMock },
           { provide: ExportService, useValue: {} },

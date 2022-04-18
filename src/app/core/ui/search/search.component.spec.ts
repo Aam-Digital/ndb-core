@@ -89,7 +89,7 @@ describe("SearchComponent", () => {
     let iteration = 0;
     subscription = component.results.subscribe((next) => {
       iteration++;
-      expect(next).toHaveSize(0);
+      expect(next).toBeEmpty();
       expect(mockIndexService.queryIndexRaw).not.toHaveBeenCalled();
       if (iteration === 2) {
         done();
@@ -102,7 +102,7 @@ describe("SearchComponent", () => {
 
   function expectResultToBeEmpty(done: DoneFn) {
     subscription = component.results.subscribe((next) => {
-      expect(next).toHaveSize(0);
+      expect(next).toBeEmpty();
       expect(mockIndexService.queryIndexRaw).not.toHaveBeenCalled();
       done();
     });
@@ -125,7 +125,7 @@ describe("SearchComponent", () => {
 
     subscription = component.results.subscribe((next) => {
       expect(next).toHaveSize(1);
-      expect(next[0].getId()).toEqual(result.getId());
+      expect(next[0]).toHaveId(result.getId());
       expect(mockIndexService.queryIndexRaw).toHaveBeenCalled();
       done();
     });
