@@ -70,19 +70,24 @@
                 "en-US",
                 "fr"
               ]
-            }
-          }
+            },
+            "development": {}
+          },
+          "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "ndb-core:build"
           },
           "configurations": {
             "production": {
               "browserTarget": "ndb-core:build:production"
+            },
+            "development": {
+              "browserTarget": "ndb-core:build:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
@@ -187,19 +192,24 @@
                 "de",
                 "en-US"
               ]
-            }
-          }
+            },
+            "development": {}
+          },
+          "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "ndb-core-e2e:build"
           },
           "configurations": {
             "production": {
               "browserTarget": "ndb-core-e2e:build:production"
+            },
+            "development": {
+              "browserTarget": "ndb-core-e2e:build:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
