@@ -115,16 +115,6 @@
               "src/manifest.json"
             ]
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "src/tsconfig.app.json",
-              "src/tsconfig.spec.json"
-            ],
-            "exclude": []
-          }
         }
       }
     },
@@ -236,17 +226,6 @@
               "src/favicon.ico",
               "src/manifest.json"
             ]
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "src/tsconfig.app.json",
-              "src/tsconfig.spec.json",
-              "e2e/tsconfig.json"
-            ],
-            "exclude": []
           }
         },
         "cypress-open": {
