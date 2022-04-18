@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Angulartics2Matomo } from "angulartics2/matomo";
+import { Angulartics2Matomo } from "angulartics2";
 import { environment } from "../../../environments/environment";
 import { AppConfig } from "../app-config/app-config";
 import { ConfigService } from "../config/config.service";

@@ -1,10 +1,9 @@
 import { Component } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
-import { Observable } from "rxjs";
+import { from, Observable } from "rxjs";
 import { concatMap, debounceTime, skipUntil, tap } from "rxjs/operators";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 import { Router } from "@angular/router";
-import { fromPromise } from "rxjs/internal-compatibility";
 import { FormControl } from "@angular/forms";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
@@ -124,7 +123,7 @@ export class SearchComponent {
     };
 
     // TODO move this to a service so it is not executed whenever a user logs in
-    return fromPromise(this.indexingService.createIndex(designDoc));
+    return from(this.indexingService.createIndex(designDoc));
   }
 
   private prepareResults(

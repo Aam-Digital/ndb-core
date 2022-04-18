@@ -1,4 +1,4 @@
-import * as originalFaker from "faker";
+import { faker as originalFaker } from "@faker-js/faker";
 
 /**
  * Extension of faker.js implementing additional data generation methods.

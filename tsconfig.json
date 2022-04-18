@@ -26,7 +26,9 @@
       "path": [
         "../node_modules/path-browserify"
       ]
-    }
+    },
+    "esModuleInterop": true,
+    "skipLibCheck": true
   },
   "angularCompilerOptions": {
     "strictTemplates": true

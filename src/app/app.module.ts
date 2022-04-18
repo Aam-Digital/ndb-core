@@ -57,7 +57,7 @@ import { FormDialogModule } from "./core/form-dialog/form-dialog.module";
 import { LoggingService } from "./core/logging/logging.service";
 import { Angulartics2Module } from "angulartics2";
 import { AnalyticsService } from "./core/analytics/analytics.service";
-import { Angulartics2Matomo } from "angulartics2/matomo";
+import { Angulartics2Matomo } from "angulartics2";
 import { ViewModule } from "./core/view/view.module";
 import { DashboardModule } from "./core/dashboard/dashboard.module";
 import { EntityDetailsModule } from "./core/entity-components/entity-details/entity-details.module";
