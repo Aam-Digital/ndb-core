@@ -79,7 +79,7 @@ describe("LatestChangesService", () => {
     spyOn(http, "get").and.returnValue(of(testReleases));
 
     service.getChangelogsBetweenVersions("1.1").subscribe((result) => {
-      expect(result.length).toBe(1);
+      expect(result).toHaveSize(1);
       expect(result[0].name).toBe(testReleases[1].name);
       done();
     });
@@ -89,7 +89,7 @@ describe("LatestChangesService", () => {
     spyOn(http, "get").and.returnValue(of(testReleases));
 
     service.getChangelogsBetweenVersions("2.0", "1.0").subscribe((result) => {
-      expect(result.length).toBe(2);
+      expect(result).toHaveSize(2);
       expect(result[0].name).toBe(testReleases[0].name);
       expect(result[1].name).toBe(testReleases[1].name);
       done();
@@ -111,7 +111,7 @@ describe("LatestChangesService", () => {
     spyOn(http, "get").and.returnValue(of([]));
 
     service.getChangelogsBetweenVersions("1.0").subscribe((result) => {
-      expect(result.length).toBe(0);
+      expect(result).toBeEmpty();
       done();
     });
   });
@@ -124,9 +124,9 @@ describe("LatestChangesService", () => {
     service.getChangelogsBetweenVersions("1.0").subscribe(
       () => {},
       () => {
-        expect(alertSpy.calls.count())
+        expect(alertSpy)
           .withContext('"not found" error not defined')
-          .toBe(1);
+          .toHaveBeenCalledTimes(1);
         done();
       }
     );

@@ -8,6 +8,7 @@ import { ChildrenService } from "../../children/children.service";
 import { of } from "rxjs";
 import { AttendanceService } from "../attendance.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("AddDayAttendanceComponent", () => {
   let component: AddDayAttendanceComponent;
@@ -23,7 +24,11 @@ describe("AddDayAttendanceComponent", () => {
       mockChildrenService.getChildren.and.returnValue(of([]));
 
       TestBed.configureTestingModule({
-        imports: [AttendanceModule, MockedTestingModule.withState()],
+        imports: [
+          AttendanceModule,
+          MockedTestingModule.withState(),
+          FontAwesomeTestingModule,
+        ],
         providers: [
           { provide: ChildrenService, useValue: mockChildrenService },
           {

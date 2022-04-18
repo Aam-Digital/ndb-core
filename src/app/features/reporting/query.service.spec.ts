@@ -26,6 +26,7 @@ import { ConfigService } from "app/core/config/config.service";
 import { EventAttendance } from "../../child-dev-project/attendance/model/event-attendance";
 import { AttendanceStatusType } from "../../child-dev-project/attendance/model/attendance-status";
 import { DatabaseTestingModule } from "../../utils/database-testing.module";
+import { ChildrenModule } from "../../child-dev-project/children/children.module";
 
 describe("QueryService", () => {
   let service: QueryService;
@@ -47,7 +48,7 @@ describe("QueryService", () => {
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
-      imports: [ConfigurableEnumModule, DatabaseTestingModule],
+      imports: [ConfigurableEnumModule, DatabaseTestingModule, ChildrenModule],
       providers: [
         ChildrenService,
         AttendanceService,

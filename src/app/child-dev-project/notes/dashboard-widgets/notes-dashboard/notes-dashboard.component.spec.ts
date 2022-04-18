@@ -96,7 +96,7 @@ describe("NotesDashboardComponent", () => {
 
       tick();
 
-      expect(component.concernedChildren.length).toBe(3);
+      expect(component.concernedChildren).toHaveSize(3);
 
       expect(component.concernedChildren[0]).toEqual({
         childId: "5",
@@ -114,13 +114,11 @@ describe("NotesDashboardComponent", () => {
       component.ngOnInit();
       tick();
 
-      expect(component.concernedChildren.length).toBe(1);
+      expect(component.concernedChildren).toHaveSize(1);
 
       expect(component.concernedChildren[0].childId).toBe(childId1);
-      expect(component.concernedChildren[0].moreThanDaysSince).toBe(true);
-      expect(component.concernedChildren[0].daysSinceLastNote).toBeLessThan(
-        Number.POSITIVE_INFINITY
-      );
+      expect(component.concernedChildren[0].moreThanDaysSince).toBeTrue();
+      expect(component.concernedChildren[0].daysSinceLastNote).toBeFinite();
     }));
   });
 });

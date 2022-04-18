@@ -8,11 +8,11 @@ import {
 
 import { ChildrenCountDashboardComponent } from "./children-count-dashboard.component";
 import { MatCardModule } from "@angular/material/card";
-import { ChildrenService } from "../children.service";
+import { ChildrenService } from "../../children.service";
 import { RouterTestingModule } from "@angular/router/testing";
-import { Center, Child } from "../model/child";
+import { Center, Child } from "../../model/child";
 import { Observable } from "rxjs";
-import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
+import { ConfigurableEnumValue } from "../../../../core/configurable-enum/configurable-enum.interface";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("ChildrenCountDashboardComponent", () => {
@@ -80,9 +80,9 @@ describe("ChildrenCountDashboardComponent", () => {
     childrenObserver.next(children);
     flush();
 
-    expect(component.childrenGroupCounts.length)
+    expect(component.childrenGroupCounts)
       .withContext("unexpected number of centersWithProbability")
-      .toBe(2);
+      .toHaveSize(2);
     const actualCenterAEntry = component.childrenGroupCounts.filter(
       (e) => e.label === centerA.label
     )[0];
@@ -111,7 +111,7 @@ describe("ChildrenCountDashboardComponent", () => {
     childrenObserver.next(children);
     flush();
 
-    expect(component.childrenGroupCounts.length).toBe(3);
+    expect(component.childrenGroupCounts).toHaveSize(3);
     expect(component.childrenGroupCounts).toContain({
       label: c1.label,
       value: 2,
