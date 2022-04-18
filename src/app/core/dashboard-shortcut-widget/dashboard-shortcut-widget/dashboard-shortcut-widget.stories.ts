@@ -7,7 +7,7 @@ import { MenuItem } from "../../navigation/menu-item";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
 export default {
-  title: "Core/ShortcutDashboardWidget",
+  title: "Core/Dashboards/ShortcutDashboardWidget",
   component: DashboardShortcutWidgetComponent,
   decorators: [
     moduleMetadata({

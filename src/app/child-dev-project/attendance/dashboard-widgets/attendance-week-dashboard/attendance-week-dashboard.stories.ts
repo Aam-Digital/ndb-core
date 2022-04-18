@@ -11,6 +11,7 @@ import moment from "moment";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { LoginState } from "../../../../core/session/session-states/login-state.enum";
+import { DatabaseIndexingService } from "../../../../core/entity/database-indexing/database-indexing.service";
 
 const child1 = Child.create("Jack");
 const child2 = Child.create("Jane");
@@ -62,7 +63,18 @@ export default {
           child1,
           child2,
           ...events,
+          act1,
         ]),
+      ],
+      providers: [
+        {
+          provide: DatabaseIndexingService,
+          useValue: {
+            queryIndexDocsRange: () => Promise.resolve(events),
+            createIndex: () => Promise.resolve(),
+            queryIndexDocs: () => Promise.resolve([]),
+          },
+        },
       ],
     }),
   ],
@@ -78,5 +90,5 @@ const Template: Story<AttendanceWeekDashboardComponent> = (
 export const Primary = Template.bind({});
 Primary.args = {
   daysOffset: 7,
-  periodLabel: "foo",
+  periodLabel: "since last week",
 };
