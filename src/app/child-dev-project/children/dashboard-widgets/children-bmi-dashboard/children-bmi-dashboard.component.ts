@@ -1,12 +1,12 @@
 import { AfterViewInit, Component, ViewChild } from "@angular/core";
-import { HealthCheck } from "../health-checkup/model/health-check";
-import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { groupBy } from "../../../utils/utils";
 import { MatTableDataSource } from "@angular/material/table";
-import { WarningLevel } from "../../../core/entity/model/warning-level";
 import { MatPaginator } from "@angular/material/paginator";
+import { OnInitDynamicComponent } from "app/core/view/dynamic-components/on-init-dynamic-component.interface";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
+import { WarningLevel } from "../../../../core/entity/model/warning-level";
+import { HealthCheck } from "../../health-checkup/model/health-check";
+import { groupBy } from "../../../../utils/utils";
 
 interface BmiRow {
   childId: string;
