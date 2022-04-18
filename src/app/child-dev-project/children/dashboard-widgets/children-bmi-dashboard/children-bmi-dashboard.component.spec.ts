@@ -4,13 +4,14 @@ import {
   TestBed,
   tick,
 } from "@angular/core/testing";
-import { HealthCheck } from "../health-checkup/model/health-check";
 import { of } from "rxjs";
-import { ChildrenService } from "../children.service";
-import { Child } from "../model/child";
+import { ChildrenModule } from "../../children.module";
+import { ChildrenService } from "../../children.service";
+import { Child } from "../../model/child";
 import { ChildrenBmiDashboardComponent } from "./children-bmi-dashboard.component";
-import { ChildrenModule } from "../children.module";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { HealthCheck } from "../../health-checkup/model/health-check";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("ChildrenBmiDashboardComponent", () => {
   let component: ChildrenBmiDashboardComponent;
@@ -23,7 +24,11 @@ describe("ChildrenBmiDashboardComponent", () => {
   beforeEach(() => {
     mockChildrenService.getChildren.and.returnValue(of([]));
     TestBed.configureTestingModule({
-      imports: [ChildrenModule, MockedTestingModule.withState()],
+      imports: [
+        ChildrenModule,
+        MockedTestingModule.withState(),
+        FontAwesomeTestingModule,
+      ],
       providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
     }).compileComponents();
   });

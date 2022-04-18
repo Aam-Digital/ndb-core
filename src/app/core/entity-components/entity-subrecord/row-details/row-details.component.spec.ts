@@ -9,6 +9,7 @@ import { Entity } from "../../../entity/model/entity";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { EntityRemoveService } from "../../../entity/entity-remove.service";
 import { EntitySubrecordModule } from "../entity-subrecord.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("RowDetailsComponent", () => {
   let component: RowDetailsComponent<any>;
@@ -20,7 +21,11 @@ describe("RowDetailsComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EntitySubrecordModule, MockedTestingModule.withState()],
+      imports: [
+        EntitySubrecordModule,
+        MockedTestingModule.withState(),
+        FontAwesomeTestingModule,
+      ],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: detailsComponentData },
         { provide: MatDialogRef, useValue: {} },

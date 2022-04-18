@@ -33,7 +33,7 @@ import { RouteRegistry, routesRegistry } from "../app.routing";
     {
       provide: Database,
       useFactory: (loggingService: LoggingService) =>
-        new PouchDatabase(loggingService).initIndexedDB(),
+        new PouchDatabase(loggingService).initInMemoryDB(),
       deps: [LoggingService],
     },
     EntityMapperService,

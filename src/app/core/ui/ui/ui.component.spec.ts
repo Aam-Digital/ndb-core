@@ -25,6 +25,7 @@ import { UiModule } from "../ui.module";
 import { ConfigService } from "../../config/config.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("UiComponent", () => {
   let component: UiComponent;
@@ -42,7 +43,11 @@ describe("UiComponent", () => {
       mockIndexingService.createIndex.and.resolveTo();
 
       TestBed.configureTestingModule({
-        imports: [UiModule, MockedTestingModule.withState()],
+        imports: [
+          UiModule,
+          MockedTestingModule.withState(),
+          FontAwesomeTestingModule,
+        ],
         providers: [
           { provide: SwUpdate, useValue: mockSwUpdate },
           {
