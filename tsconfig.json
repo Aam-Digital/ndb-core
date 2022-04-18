@@ -18,7 +18,15 @@
       "es2016",
       "dom"
     ],
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "stream": [
+        "../node_modules/stream-browserify"
+      ],
+      "path": [
+        "../node_modules/path-browserify"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "strictTemplates": true

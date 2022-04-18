@@ -14,7 +14,7 @@
     "e2e": "ng e2e",
     "e2e-open": "ng run ndb-core-e2e:cypress-open",
     "compodoc": "npx compodoc -c doc/compodoc_sources/.compodocrc.json",
-    "postinstall": "ngcc && node patch-webpack.js",
+    "postinstall": "ngcc",
     "docs:json": "compodoc -p ./tsconfig.json -e json -d .",
     "storybook": "npm run docs:json && start-storybook -p 6006",
     "build-storybook": "npm run docs:json && build-storybook",

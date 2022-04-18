@@ -43,7 +43,7 @@ import "core-js/es/reflect";
 /***************************************************************************************************
  * Zone JS is required by Angular itself.
  */
-import "zone.js/dist/zone"; // Included with Angular CLI.
+import "zone.js"; // Included with Angular CLI.
 
 /***************************************************************************************************
  * APPLICATION IMPORTS
@@ -63,3 +63,10 @@ import "@angular/localize/init";
 (window as any).global = window;
 (window as any).process = {};
 (window as any).process.nextTick = setTimeout;
+(window as any).process.version = "";
+(window as any).process.env = {};
+
+// workaround to allow buffer in Webpack https://github.com/isaacs/core-util-is/issues/27#issuecomment-516127815
+import * as buffer from "buffer";
+
+(window as any).Buffer = buffer.Buffer;
