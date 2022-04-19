@@ -29,7 +29,7 @@ import { ApplicationInitStatus } from "@angular/core";
 import { AppModule } from "./app.module";
 import { AppConfig } from "./core/app-config/app-config";
 import { IAppConfig } from "./core/app-config/app-config.model";
-import { Angulartics2Matomo } from "angulartics2/matomo";
+import { Angulartics2Matomo } from "angulartics2";
 import { Config } from "./core/config/config";
 import { USAGE_ANALYTICS_CONFIG_ID } from "./core/analytics/usage-analytics-config";
 import { environment } from "../environments/environment";
