@@ -1,7 +1,7 @@
 import {
   ComponentFixture,
+  discardPeriodicTasks,
   fakeAsync,
-  flush,
   TestBed,
   tick,
 } from "@angular/core/testing";
@@ -88,7 +88,7 @@ describe("EditSingleEntityComponent", () => {
     fixture.detectChanges();
     expect(component.input.nativeElement.value).toEqual("First Child");
 
-    flush();
+    discardPeriodicTasks();
   }));
 
   it("Should have the correct entity selected when it's name is entered", () => {
