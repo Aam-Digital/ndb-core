@@ -66,7 +66,7 @@ export class EditSingleEntityComponent extends EditComponent<string> {
       this.formControl.setValue(entity.getId());
     } else {
       this.selectedEntity = undefined;
-      this.formControl.setValue(null);
+      this.formControl.setValue(undefined);
     }
   }
 

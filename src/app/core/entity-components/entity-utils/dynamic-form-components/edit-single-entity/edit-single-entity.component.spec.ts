@@ -52,22 +52,36 @@ describe("EditSingleEntityComponent", () => {
   });
 
   it("should show all entities of the given type", fakeAsync(() => {
-    const school1 = new School();
-    school1.name = "First School";
-    const school2 = new School();
-    school2.name = "Second School";
+    const school1 = School.create({ name: "First School" });
+    const school2 = School.create({ name: "Second School " });
     mockEntityMapper.loadType.and.resolveTo([school1, school2]);
 
-    component.onInitFromDynamicConfig({
-      formFieldConfig: { id: "schoolId" },
-      formControl: component.formControl,
-      propertySchema: ChildSchoolRelation.schema.get("schoolId"),
-    });
+    initComponent();
     tick();
 
     expect(mockEntityMapper.loadType).toHaveBeenCalled();
     expect(component.entities).toEqual([school1, school2]);
+    component.updateAutocomplete("");
+    expect(component.autocompleteEntities.value).toEqual([school1, school2]);
   }));
+
+  it("should correctly show the autocomplete values", () => {
+    const school1 = School.create({ name: "Aaa" });
+    const school2 = School.create({ name: "aab" });
+    const school3 = School.create({ name: "cde" });
+    component.entities = [school1, school2, school3];
+
+    component.updateAutocomplete("");
+    expect(component.autocompleteEntities.value).toEqual([
+      school1,
+      school2,
+      school3,
+    ]);
+    component.updateAutocomplete("Aa");
+    expect(component.autocompleteEntities.value).toEqual([school1, school2]);
+    component.updateAutocomplete("Aab");
+    expect(component.autocompleteEntities.value).toEqual([school2]);
+  });
 
   it("should show name of the selected entity", fakeAsync(() => {
     const child1 = Child.create("First Child");
@@ -75,11 +89,7 @@ describe("EditSingleEntityComponent", () => {
     component.formControl.setValue(child1.getId());
     mockEntityMapper.loadType.and.resolveTo([child1, child2]);
 
-    component.onInitFromDynamicConfig({
-      formFieldConfig: { id: "childId" },
-      formControl: component.formControl,
-      propertySchema: ChildSchoolRelation.schema.get("childId"),
-    });
+    initComponent();
     tick();
     expect(component.selectedEntity).toBe(child1);
 
@@ -103,6 +113,24 @@ describe("EditSingleEntityComponent", () => {
     expect(component.editingSelectedEntity).toBeFalse();
   });
 
+  it("Should unselect if no entity can be matched", () => {
+    const first = Child.create("First");
+    const second = Child.create("Second");
+    component.entities = [first, second];
+
+    component.select(first);
+    expect(component.selectedEntity).toBe(first);
+    expect(component.formControl.value).toBe(first.getId());
+
+    component.select("second");
+    expect(component.selectedEntity).toBe(second);
+    expect(component.formControl.value).toBe(second.getId());
+
+    component.select("NonExistent");
+    expect(component.selectedEntity).toBe(undefined);
+    expect(component.formControl.value).toBe(undefined);
+  });
+
   it("Should edit the selected entity", fakeAsync(() => {
     const input: HTMLInputElement = component.input.nativeElement;
     const inputSpy = spyOn(input, "focus");
@@ -116,4 +144,12 @@ describe("EditSingleEntityComponent", () => {
     tick();
     expect(inputSpy).toHaveBeenCalled();
   }));
+
+  function initComponent(): Promise<any> {
+    return component.onInitFromDynamicConfig({
+      formFieldConfig: { id: "childId" },
+      formControl: component.formControl,
+      propertySchema: ChildSchoolRelation.schema.get("childId"),
+    });
+  }
 });
