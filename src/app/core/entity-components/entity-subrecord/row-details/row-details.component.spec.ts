@@ -1,4 +1,9 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from "@angular/core/testing";
 
 import {
   DetailsComponentData,
@@ -7,9 +12,10 @@ import {
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Entity } from "../../../entity/model/entity";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { EntityRemoveService } from "../../../entity/entity-remove.service";
 import { EntitySubrecordModule } from "../entity-subrecord.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { EntityFormService } from "../../entity-form/entity-form.service";
+import { AlertService } from "../../../alerts/alert.service";
 
 describe("RowDetailsComponent", () => {
   let component: RowDetailsComponent<any>;
@@ -29,10 +35,6 @@ describe("RowDetailsComponent", () => {
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: detailsComponentData },
         { provide: MatDialogRef, useValue: {} },
-        {
-          provide: EntityRemoveService,
-          useValue: jasmine.createSpyObj(["remove"]),
-        },
       ],
     }).compileComponents();
   });
@@ -46,4 +48,30 @@ describe("RowDetailsComponent", () => {
   it("should create", () => {
     expect(component).toBeTruthy();
   });
+
+  it("should close the dialog when saving is successful", fakeAsync(() => {
+    const formService = TestBed.inject(EntityFormService);
+    const result = new Entity();
+    spyOn(formService, "saveChanges").and.resolveTo(result);
+    const closeSpy = jasmine.createSpy();
+    TestBed.inject(MatDialogRef).close = closeSpy;
+
+    component.save();
+    tick();
+
+    expect(closeSpy).toHaveBeenCalledWith(result);
+  }));
+
+  it("should show an alert when saving fails", fakeAsync(() => {
+    const formService = TestBed.inject(EntityFormService);
+    const message = "Error message";
+    spyOn(formService, "saveChanges").and.rejectWith(new Error(message));
+    const alertSpy = jasmine.createSpy();
+    TestBed.inject(AlertService).addWarning = alertSpy;
+
+    component.save();
+    tick();
+
+    expect(alertSpy).toHaveBeenCalledWith(message);
+  }));
 });
