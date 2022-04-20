@@ -1,7 +1,12 @@
 import { TestBed } from "@angular/core/testing";
 
 import { EntityFormService } from "./entity-form.service";
-import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from "@angular/forms";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntityFormModule } from "./entity-form.module";
@@ -93,5 +98,36 @@ describe("EntityFormService", () => {
     expect(formGroup.invalid).toBeTrue();
     formGroup.patchValue({ result: "100" });
     expect(formGroup.valid).toBeTrue();
+  });
+
+  it("should create a error including the labels of the invalid fields", async () => {
+    const formFields = [{ id: "schoolId" }, { id: "start" }];
+    service.extendFormFieldConfig(formFields, ChildSchoolRelation);
+    const formGroup = service.createFormGroup(
+      formFields,
+      new ChildSchoolRelation()
+    );
+    const schema = ChildSchoolRelation.schema;
+    console.log("fromGroup", formGroup.getRawValue());
+
+    try {
+      await service.saveChanges(formGroup, new ChildSchoolRelation());
+      fail();
+    } catch (e) {
+      expect(e.message).toContain(schema.get("schoolId").label);
+    }
+
+    const control = formGroup.get("start");
+    control.setValidators(Validators.required);
+    control.updateValueAndValidity({ onlySelf: true });
+
+    try {
+      await service.saveChanges(formGroup, new ChildSchoolRelation());
+      fail();
+    } catch (e) {
+      expect(e.message).toContain(
+        `${schema.get("schoolId").label}, ${schema.get("start").label}`
+      );
+    }
   });
 });
