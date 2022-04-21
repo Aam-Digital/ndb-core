@@ -48,6 +48,13 @@ export abstract class SessionService {
   abstract login(username: string, password: string): Promise<LoginState>;
 
   /**
+   * Do the necessary steps after the login has been successful.
+   * i.e. set the current user and change the login state
+   * @param userObject the user that is sucessfully loged in
+   */
+  abstract handeSucessfulLogin(userObject: DatabaseUser): Promise<void>;
+
+  /**
    * Logout the current user.
    */
   abstract logout();

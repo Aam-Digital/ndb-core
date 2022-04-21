@@ -67,7 +67,7 @@ export class RemoteSession extends SessionService {
           { withCredentials: true }
         )
         .toPromise();
-      this.loginUser(response);
+      await this.handeSucessfulLogin(response);
     } catch (error) {
       const httpError = error as HttpErrorResponse;
       if (httpError?.status === this.UNAUTHORIZED_STATUS_CODE) {
@@ -79,7 +79,7 @@ export class RemoteSession extends SessionService {
     return this.loginState.value;
   }
 
-  public loginUser(userObject: DatabaseUser) {
+  public async handeSucessfulLogin(userObject: DatabaseUser) {
     this.currentDBUser = userObject;
     this.loginState.next(LoginState.LOGGED_IN);
   }

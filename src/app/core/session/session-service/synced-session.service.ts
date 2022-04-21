@@ -68,15 +68,15 @@ export class SyncedSessionService extends SessionService {
       })
       .subscribe((res: any) => {
         if (res.userCtx.name) {
-          this.loginByCookie(res.userCtx);
+          this.handeSucessfulLogin(res.userCtx);
         }
       });
   }
 
-  private async loginByCookie(userObject: DatabaseUser) {
+  async handeSucessfulLogin(userObject: DatabaseUser) {
     this.startSyncAfterLocalAndRemoteLogin();
-    this._remoteSession.loginUser(userObject);
-    await this._localSession.loginUser(userObject);
+    this._remoteSession.handeSucessfulLogin(userObject);
+    await this._localSession.handeSucessfulLogin(userObject);
     this.loginState.next(LoginState.LOGGED_IN);
   }
 
