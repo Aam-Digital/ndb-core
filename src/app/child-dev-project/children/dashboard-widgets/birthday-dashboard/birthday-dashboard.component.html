@@ -4,13 +4,31 @@
   - Set right title, subtitle, explanation
 -->
 <app-dashboard-widget
-  icon="question"
+  icon="birthday-cake"
   theme="child"
-  title="Temporary title"
-  subtitle="Temporary subtitle"
+  title="Birthday"
+  subtitle="Upcoming Birthdays"
   explanation="Temporary explanation"
 >
   <app-widget-content>
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="dataSource" matSort>
+        <ng-container matColumnDef="entityId">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Child Name</th>
+          <td mat-cell *matCellDef="let children">{{ children.entityId}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Birthdays">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Birthday Date</th>
+          <td mat-cell *matCellDef="let children">{{children.Birthday}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="age">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>After Birthday Age</th>
+          <td mat-cell *matCellDef="let children">{{children.age}}</td>
+        </ng-container>
+
+    
 <!--
   TODO
   - replace this by a table similar to `AttendanceWeekDashboard` (for more info see https://v11.material.angular.io/components/table/overview)
@@ -18,10 +36,14 @@
   - display the birthday
   - display the age the child will have after its birthday
 -->
-    <app-child-block
-      *ngFor="let child of children"
-      [entity]="child"
-    ></app-child-block>
+      <app-child-block
+       *ngFor="let child of children"
+       [entity]="child"
+      ></app-child-block>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      </table>
+    </div>
+    
   </app-widget-content>
 
 </app-dashboard-widget>
