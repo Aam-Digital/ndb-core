@@ -28,13 +28,11 @@ export class BirthdayDashboardComponent implements OnInitDynamicComponent {
     this.dataSource.sort = this.sort;
     
 
-
-    this.entityMapper.loadType(Child).then((res) => (this.children = res));
-  
+    this.entityMapper.loadType(Child).then((res) => {
+      this.children = res;
+      //  Now the children are set
+    });
   }
 
-  onInitFromDynamicConfig(config: any) {
-   
-  }
- 
+  onInitFromDynamicConfig(config: any) {}
 }
