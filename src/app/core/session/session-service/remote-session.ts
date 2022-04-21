@@ -61,14 +61,13 @@ export class RemoteSession extends SessionService {
   public async login(username: string, password: string): Promise<LoginState> {
     try {
       const response = await this.httpClient
-        .post(
+        .post<DatabaseUser>(
           `${AppConfig.settings.database.remote_url}_session`,
           { name: username, password: password },
           { withCredentials: true }
         )
         .toPromise();
-      this.assignDatabaseUser(response);
-      this.loginState.next(LoginState.LOGGED_IN);
+      this.loginUser(response);
     } catch (error) {
       const httpError = error as HttpErrorResponse;
       if (httpError?.status === this.UNAUTHORIZED_STATUS_CODE) {
@@ -80,11 +79,9 @@ export class RemoteSession extends SessionService {
     return this.loginState.value;
   }
 
-  private assignDatabaseUser(couchDBResponse: any) {
-    this.currentDBUser = {
-      name: couchDBResponse.name,
-      roles: couchDBResponse.roles,
-    };
+  public loginUser(userObject: DatabaseUser) {
+    this.currentDBUser = userObject;
+    this.loginState.next(LoginState.LOGGED_IN);
   }
 
   /**

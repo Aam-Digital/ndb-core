@@ -30,8 +30,8 @@ import { DatabaseUser } from "./local-user";
 import { waitForChangeTo } from "../session-states/session-utils";
 import { PouchDatabase } from "../../database/pouch-database";
 import { zip } from "rxjs";
-import { CookieService } from "ngx-cookie-service";
 import { Router } from "@angular/router";
+import { AppConfig } from "app/core/app-config/app-config";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -56,28 +56,28 @@ export class SyncedSessionService extends SessionService {
     private alertService: AlertService,
     private loggingService: LoggingService,
     private httpClient: HttpClient,
-    pouchDatabase: PouchDatabase,
-    private cookieService: CookieService
+    pouchDatabase: PouchDatabase
   ) {
     super();
     this._localSession = new LocalSession(pouchDatabase);
     this._remoteSession = new RemoteSession(this.httpClient, loggingService);
-    var date = new Date();
-    date.setTime(date.getTime() + 3 * 1000);
-    this.cookieService.set("3-Sekunden-Cookie", "Inhalt des Cookies", {
-      expires: date,
-    });
-    console.log("Vergangene Sekunden: " + 0);
-    console.log("Cookie: " + this.cookieService.get("3-Sekunden-Cookie"));
-    const that = this;
-    setTimeout(function () {
-      console.log("Vergangene Sekunden: 3");
-      console.log("Cookie: " + that.cookieService.get("3-Sekunden-Cookie"));
-      setTimeout(function () {
-        console.log("Vergangene Sekunden: 6");
-        console.log("Cookie: " + that.cookieService.get("3-Sekunden-Cookie"));
-      }, 6000);
-    }, 3000);
+
+    this.httpClient
+      .get(`${AppConfig.settings.database.remote_url}_session`, {
+        withCredentials: true,
+      })
+      .subscribe((res: any) => {
+        if (res.userCtx.name) {
+          this.loginByCookie(res.userCtx);
+        }
+      });
+  }
+
+  private async loginByCookie(userObject: DatabaseUser) {
+    this.startSyncAfterLocalAndRemoteLogin();
+    this._remoteSession.loginUser(userObject);
+    await this._localSession.loginUser(userObject);
+    this.loginState.next(LoginState.LOGGED_IN);
   }
 
   /**
