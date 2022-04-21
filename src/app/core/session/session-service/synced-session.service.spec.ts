@@ -51,8 +51,9 @@ describe("SyncedSessionService", () => {
   let mockHttpClient: jasmine.SpyObj<HttpClient>;
 
   beforeEach(() => {
-    mockHttpClient = jasmine.createSpyObj(["post", "delete"]);
+    mockHttpClient = jasmine.createSpyObj(["post", "delete", "get"]);
     mockHttpClient.delete.and.returnValue(of());
+    mockHttpClient.get.and.returnValue(of());
     TestBed.configureTestingModule({
       imports: [
         MatSnackBarModule,

@@ -30,7 +30,6 @@ import { DatabaseUser } from "./local-user";
 import { waitForChangeTo } from "../session-states/session-utils";
 import { PouchDatabase } from "../../database/pouch-database";
 import { zip } from "rxjs";
-import { Router } from "@angular/router";
 import { AppConfig } from "app/core/app-config/app-config";
 
 /**
@@ -50,7 +49,6 @@ export class SyncedSessionService extends SessionService {
   private _liveSyncHandle: any;
   private _liveSyncScheduledHandle: any;
   private _offlineRetryLoginScheduleHandle: any;
-  private router: Router;
 
   constructor(
     private alertService: AlertService,
@@ -68,15 +66,15 @@ export class SyncedSessionService extends SessionService {
       })
       .subscribe((res: any) => {
         if (res.userCtx.name) {
-          this.handeSucessfulLogin(res.userCtx);
+          this.handleSucessfulLogin(res.userCtx);
         }
       });
   }
 
-  async handeSucessfulLogin(userObject: DatabaseUser) {
+  async handleSucessfulLogin(userObject: DatabaseUser) {
     this.startSyncAfterLocalAndRemoteLogin();
-    this._remoteSession.handeSucessfulLogin(userObject);
-    await this._localSession.handeSucessfulLogin(userObject);
+    await this._remoteSession.handleSucessfulLogin(userObject);
+    await this._localSession.handleSucessfulLogin(userObject);
     this.loginState.next(LoginState.LOGGED_IN);
   }
 
