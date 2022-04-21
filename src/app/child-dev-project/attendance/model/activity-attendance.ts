@@ -2,7 +2,10 @@ import { AttendanceLogicalStatus } from "./attendance-status";
 import { RecurringActivity } from "./recurring-activity";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { EventNote } from "./event-note";
-import { WarningLevel } from "../../../core/entity/model/warning-level";
+import {
+  getWarningLevelColor,
+  WarningLevel,
+} from "../../../core/entity/model/warning-level";
 import { Entity } from "../../../core/entity/model/entity";
 
 /**
@@ -213,6 +216,10 @@ export class ActivityAttendance extends Entity {
     } else {
       return WarningLevel.OK;
     }
+  }
+
+  public getColor(forChildId?: string): string {
+    return getWarningLevelColor(this.getWarningLevel(forChildId));
   }
 }
 

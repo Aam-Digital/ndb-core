@@ -60,7 +60,8 @@ export class MockEntityMapperService extends EntityMapperService {
    * @param id
    */
   public get(entityType: string, id: string): Entity {
-    const result = this.data.get(entityType)?.get(id);
+    const entityId = id.includes(":") ? id.split(":")[1] : id;
+    const result = this.data.get(entityType)?.get(entityId);
     if (!result) {
       throw new HttpErrorResponse({ status: 404 });
     }
@@ -92,11 +93,11 @@ export class MockEntityMapperService extends EntityMapperService {
   ): Promise<T> {
     const ctor = this.resolveConstructor(entityType);
     const type = new ctor().getType();
-    const entity = this.get(type, id);
+    const entity = this.get(type, id) as T;
     if (!entity) {
       throw Error(`Entity ${id} does not exist in MockEntityMapper`);
     } else {
-      return this.get(type, id) as T;
+      return entity;
     }
   }
 

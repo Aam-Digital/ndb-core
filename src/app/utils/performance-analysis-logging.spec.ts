@@ -30,7 +30,7 @@ class TestClass {
   }
 
   @PerformanceAnalysisLogging
-  other(obj?: any) {}
+  other(_obj?: any) {}
 }
 
 describe("PerformanceAnalysisLogging Util Tests", () => {
@@ -45,9 +45,7 @@ describe("PerformanceAnalysisLogging Util Tests", () => {
     instance.result = testResult;
     const actualResult = await instance.testFun(testArg1, testArg2);
 
-    expect(actualResult[0]).toBe(testResult);
-    expect(actualResult[1]).toBe(testArg1);
-    expect(actualResult[2]).toBe(testArg2);
+    expect(actualResult).toEqual([testResult, testArg1, testArg2]);
   });
 
   it("should log performance measure including function and params", async () => {

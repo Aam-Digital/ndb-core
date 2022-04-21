@@ -19,6 +19,7 @@ import {
 } from "../../entity/entity-remove.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("EntityDetailsComponent", () => {
   let component: EntityDetailsComponent;
@@ -73,7 +74,11 @@ describe("EntityDetailsComponent", () => {
       mockAbility = jasmine.createSpyObj(["cannot", "update"]);
       mockAbility.cannot.and.returnValue(false);
       TestBed.configureTestingModule({
-        imports: [ChildrenModule, MockedTestingModule.withState()],
+        imports: [
+          ChildrenModule,
+          MockedTestingModule.withState(),
+          FontAwesomeTestingModule,
+        ],
         providers: [
           { provide: ActivatedRoute, useValue: mockedRoute },
           { provide: ChildrenService, useValue: mockChildrenService },
