@@ -11,6 +11,7 @@ import { EventAttendance } from "../../../attendance/model/event-attendance";
 })
 export class ChildMeetingNoteAttendanceComponent {
   @Input() childId: string;
+  @Input() disabled: boolean = false;
   @Input() attendance: EventAttendance;
   @Output() change = new EventEmitter();
   @Output() remove = new EventEmitter();

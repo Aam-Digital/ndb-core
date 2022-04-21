@@ -3,13 +3,8 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormComponent } from "./form.component";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { Router } from "@angular/router";
-import { RouterTestingModule } from "@angular/router/testing";
-import { EntityFormModule } from "../../entity-form/entity-form.module";
-import { ReactiveFormsModule } from "@angular/forms";
-import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
-import { AlertService } from "../../../alerts/alert.service";
-import { MatSnackBarModule } from "@angular/material/snack-bar";
-import { MockSessionModule } from "../../../session/mock-session.module";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
+import { EntityDetailsModule } from "../entity-details.module";
 
 describe("FormComponent", () => {
   let component: FormComponent;
@@ -17,15 +12,7 @@ describe("FormComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [FormComponent],
-      imports: [
-        RouterTestingModule,
-        EntityFormModule,
-        ReactiveFormsModule,
-        MockSessionModule.withState(),
-        MatSnackBarModule,
-      ],
-      providers: [EntitySchemaService, AlertService],
+      imports: [EntityDetailsModule, MockedTestingModule.withState()],
     }).compileComponents();
   });
 
@@ -41,7 +28,7 @@ describe("FormComponent", () => {
   });
 
   it("should change the creating state", () => {
-    expect(component.creatingNew).toBe(false);
+    expect(component.creatingNew).toBeFalse();
 
     component.onInitFromDynamicConfig({
       entity: new Child(),
@@ -49,7 +36,7 @@ describe("FormComponent", () => {
       creatingNew: true,
     });
 
-    expect(component.creatingNew).toBe(true);
+    expect(component.creatingNew).toBeTrue();
   });
 
   it("calls router once a new child is saved", () => {

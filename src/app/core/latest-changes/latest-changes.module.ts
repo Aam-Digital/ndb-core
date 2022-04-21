@@ -25,13 +25,15 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { ChangelogComponent } from "./changelog/changelog.component";
-import { LOCATION_TOKEN, UpdateManagerService } from "./update-manager.service";
+import { UpdateManagerService } from "./update-manager.service";
 import { FlexModule } from "@angular/flex-layout";
 import { MarkdownModule } from "ngx-markdown";
 import { MatCardModule } from "@angular/material/card";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { LatestChangesService } from "./latest-changes.service";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+
+import { LOCATION_TOKEN } from "../../utils/di-tokens";
 
 /**
  * Displaying app version and changelog information to the user

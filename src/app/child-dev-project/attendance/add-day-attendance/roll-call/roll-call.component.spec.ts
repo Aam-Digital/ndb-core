@@ -6,7 +6,6 @@ import {
   tick,
   waitForAsync,
 } from "@angular/core/testing";
-
 import { RollCallComponent } from "./roll-call.component";
 import { Note } from "../../../notes/model/note";
 import { By } from "@angular/platform-browser";
@@ -14,13 +13,13 @@ import { ConfigService } from "../../../../core/config/config.service";
 import { Child } from "../../../children/model/child";
 import { LoggingService } from "../../../../core/logging/logging.service";
 import { AttendanceModule } from "../../attendance.module";
-import { MockSessionModule } from "../../../../core/session/mock-session.module";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { ConfirmationDialogService } from "../../../../core/confirmation-dialog/confirmation-dialog.service";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { LoginState } from "../../../../core/session/session-states/login-state.enum";
 import { SimpleChange } from "@angular/core";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { ChildrenService } from "../../../children/children.service";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 const PRESENT = {
   id: "PRESENT",
@@ -65,7 +64,7 @@ describe("RollCallComponent", () => {
       TestBed.configureTestingModule({
         imports: [
           AttendanceModule,
-          MockSessionModule.withState(LoginState.LOGGED_IN, [
+          MockedTestingModule.withState(LoginState.LOGGED_IN, [
             participant1,
             participant2,
             participant3,
@@ -132,7 +131,7 @@ describe("RollCallComponent", () => {
     tick();
 
     component.markAttendance(PRESENT);
-    component.goToNext();
+    tick(1000);
     component.markAttendance(ABSENT);
 
     expect(note.getAttendance(participant1.getId()).status).toEqual(PRESENT);
@@ -212,6 +211,23 @@ describe("RollCallComponent", () => {
     expect(component.currentChild).toBe(participant2);
     expect(component.currentIndex).toBe(1);
   });
+
+  it("should not allow to mark attendance again while transition to next participant is in progress", fakeAsync(() => {
+    component.eventEntity.addChild(participant1);
+    component.eventEntity.addChild(participant2);
+    component.ngOnChanges(dummyChanges);
+    tick();
+
+    expect(component.currentIndex).toBe(0);
+    component.markAttendance(PRESENT);
+    component.markAttendance(PRESENT);
+    tick(1000);
+
+    expect(component.currentIndex).toBe(1);
+    component.markAttendance(ABSENT);
+    tick(1000);
+    expect(component.currentIndex).toBe(2);
+  }));
 
   it("should not sort participants without sortParticipantsBy configured", fakeAsync(() => {
     participant1.name = "Zoey";

@@ -2,7 +2,6 @@ import { TestBed } from "@angular/core/testing";
 
 import { AttendanceService } from "./attendance.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
-import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { Database } from "../../core/database/database";
 import { RecurringActivity } from "./model/recurring-activity";
 import moment from "moment";
@@ -15,17 +14,12 @@ import { School } from "../schools/model/school";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import { Child } from "../children/model/child";
 import { Note } from "../notes/model/note";
-import { PouchDatabase } from "../../core/database/pouch-database";
-import {
-  EntityRegistry,
-  entityRegistry,
-} from "../../core/entity/database-entity.decorator";
+import { DatabaseTestingModule } from "../../utils/database-testing.module";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
 
   let entityMapper: EntityMapperService;
-  let database: PouchDatabase;
 
   const meetingInteractionCategory = defaultInteractionTypes.find(
     (it) => it.isMeeting
@@ -48,23 +42,14 @@ describe("AttendanceService", () => {
     activity1 = RecurringActivity.create("activity 1");
     activity2 = RecurringActivity.create("activity 2");
 
-    database = PouchDatabase.createWithInMemoryDB();
-
     e1_1 = createEvent(new Date("2020-01-01"), activity1._id);
     e1_2 = createEvent(new Date("2020-01-02"), activity1._id);
     e1_3 = createEvent(new Date("2020-03-02"), activity1._id);
     e2_1 = createEvent(new Date("2020-01-01"), activity2._id);
 
     TestBed.configureTestingModule({
-      imports: [ConfigurableEnumModule],
-      providers: [
-        AttendanceService,
-        EntityMapperService,
-        EntitySchemaService,
-        ChildrenService,
-        { provide: Database, useValue: database },
-        { provide: EntityRegistry, useValue: entityRegistry },
-      ],
+      imports: [ConfigurableEnumModule, DatabaseTestingModule],
+      providers: [AttendanceService, ChildrenService],
     });
     service = TestBed.inject(AttendanceService);
 
@@ -85,7 +70,7 @@ describe("AttendanceService", () => {
   });
 
   afterEach(async () => {
-    await database.destroy();
+    await TestBed.inject(Database).destroy();
   });
 
   it("should be created", () => {
@@ -127,7 +112,7 @@ describe("AttendanceService", () => {
 
   it("gets empty array for a date without events", async () => {
     const actualEvents = await service.getEventsOnDate(new Date("2007-01-01"));
-    expect(actualEvents).toEqual([]);
+    expect(actualEvents).toBeEmpty();
   });
 
   it("gets events and loads additional participants from linked schools", async () => {
@@ -152,8 +137,10 @@ describe("AttendanceService", () => {
     await entityMapper.save(testNoteWithSchool);
 
     const actualEvents = await service.getEventsOnDate(new Date("2021-01-01"));
-    expect(actualEvents.length).toBe(1);
-    expect(actualEvents[0].children.sort()).toEqual(["1", "2", "3"].sort());
+    expect(actualEvents).toHaveSize(1);
+    expect(actualEvents[0].children).toEqual(
+      jasmine.arrayWithExactContents(["1", "2", "3"])
+    );
   });
 
   it("gets events for an activity", async () => {
@@ -164,7 +151,7 @@ describe("AttendanceService", () => {
   it("getActivityAttendances creates record for each month when there is at least one event", async () => {
     const actualAttendances = await service.getActivityAttendances(activity1);
 
-    expect(actualAttendances.length).toBe(2);
+    expect(actualAttendances).toHaveSize(2);
 
     expect(
       moment(actualAttendances[0].periodFrom).isSame(
@@ -191,7 +178,7 @@ describe("AttendanceService", () => {
       new Date("2020-01-05")
     );
 
-    expect(actualAttendences.length).toBe(2);
+    expect(actualAttendences).toHaveSize(2);
     expectEntitiesToMatch(
       actualAttendences.find((t) => t.activity._id === activity1._id).events,
       [e1_1, e1_2]
@@ -201,10 +188,10 @@ describe("AttendanceService", () => {
       [e2_1]
     );
 
-    expect(actualAttendences[0].periodFrom).toEqual(new Date("2020-01-01"));
-    expect(actualAttendences[0].periodTo).toEqual(new Date("2020-01-05"));
-    expect(actualAttendences[1].periodFrom).toEqual(new Date("2020-01-01"));
-    expect(actualAttendences[1].periodTo).toEqual(new Date("2020-01-05"));
+    expect(actualAttendences[0].periodFrom).toBeDate("2020-01-01");
+    expect(actualAttendences[0].periodTo).toBeDate("2020-01-05");
+    expect(actualAttendences[1].periodFrom).toBeDate("2020-01-01");
+    expect(actualAttendences[1].periodTo).toBeDate("2020-01-05");
   });
 
   it("getActivitiesForChild gets all existing RecurringActivities where it is a participant", async () => {

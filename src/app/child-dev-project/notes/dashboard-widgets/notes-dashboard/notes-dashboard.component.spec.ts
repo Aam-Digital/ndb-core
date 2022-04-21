@@ -7,12 +7,9 @@ import {
 } from "@angular/core/testing";
 
 import { ChildrenService } from "../../../children/children.service";
-import { EntityModule } from "../../../../core/entity/entity.module";
-import { RouterTestingModule } from "@angular/router/testing";
 import { NotesDashboardComponent } from "./notes-dashboard.component";
 import { ChildrenModule } from "../../../children/children.module";
-import { Angulartics2Module } from "angulartics2";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 
 describe("NotesDashboardComponent", () => {
   let component: NotesDashboardComponent;
@@ -30,13 +27,7 @@ describe("NotesDashboardComponent", () => {
       );
 
       TestBed.configureTestingModule({
-        imports: [
-          ChildrenModule,
-          RouterTestingModule.withRoutes([]),
-          EntityModule,
-          Angulartics2Module.forRoot(),
-          FontAwesomeTestingModule,
-        ],
+        imports: [ChildrenModule, MockedTestingModule.withState()],
         providers: [
           { provide: ChildrenService, useValue: mockChildrenService },
         ],
@@ -105,7 +96,7 @@ describe("NotesDashboardComponent", () => {
 
       tick();
 
-      expect(component.concernedChildren.length).toBe(3);
+      expect(component.concernedChildren).toHaveSize(3);
 
       expect(component.concernedChildren[0]).toEqual({
         childId: "5",
@@ -123,13 +114,11 @@ describe("NotesDashboardComponent", () => {
       component.ngOnInit();
       tick();
 
-      expect(component.concernedChildren.length).toBe(1);
+      expect(component.concernedChildren).toHaveSize(1);
 
       expect(component.concernedChildren[0].childId).toBe(childId1);
-      expect(component.concernedChildren[0].moreThanDaysSince).toBe(true);
-      expect(component.concernedChildren[0].daysSinceLastNote).toBeLessThan(
-        Number.POSITIVE_INFINITY
-      );
+      expect(component.concernedChildren[0].moreThanDaysSince).toBeTrue();
+      expect(component.concernedChildren[0].daysSinceLastNote).toBeFinite();
     }));
   });
 });

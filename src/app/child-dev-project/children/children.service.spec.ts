@@ -2,35 +2,23 @@ import { ChildrenService } from "./children.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { ChildSchoolRelation } from "./model/childSchoolRelation";
 import { Child } from "./model/child";
-import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { School } from "../schools/model/school";
 import { TestBed } from "@angular/core/testing";
 import moment from "moment";
 import { Database } from "../../core/database/database";
 import { Note } from "../notes/model/note";
-import { PouchDatabase } from "../../core/database/pouch-database";
 import { genders } from "./model/genders";
 import { skip } from "rxjs/operators";
-import {
-  EntityRegistry,
-  entityRegistry,
-} from "../../core/entity/database-entity.decorator";
+import { DatabaseTestingModule } from "../../utils/database-testing.module";
 
 describe("ChildrenService", () => {
   let service: ChildrenService;
   let entityMapper: EntityMapperService;
-  let database: PouchDatabase;
 
   beforeEach(async () => {
-    database = PouchDatabase.createWithInMemoryDB();
     TestBed.configureTestingModule({
-      providers: [
-        { provide: EntityRegistry, useValue: entityRegistry },
-        ChildrenService,
-        EntityMapperService,
-        EntitySchemaService,
-        { provide: Database, useValue: database },
-      ],
+      imports: [DatabaseTestingModule],
+      providers: [ChildrenService],
     });
 
     entityMapper = TestBed.inject(EntityMapperService);
@@ -44,7 +32,7 @@ describe("ChildrenService", () => {
   });
 
   afterEach(async () => {
-    await database.destroy();
+    await TestBed.inject(Database).destroy();
   });
 
   it("should be created", () => {
@@ -62,8 +50,8 @@ describe("ChildrenService", () => {
 
     find = childrenAfter.find((c) => c.getId() === child.getId());
     expect(find).toBeDefined();
-    expect(find.getId()).toBe(child.getId());
-    expect(childrenBefore.length).toBe(childrenAfter.length - 1);
+    expect(find).toHaveId(child.getId());
+    expect(childrenBefore).toHaveSize(childrenAfter.length - 1);
   });
 
   it("should find a newly saved child", async () => {
@@ -79,7 +67,7 @@ describe("ChildrenService", () => {
     await entityMapper.save<Child>(child);
     const childAfter = await service.getChild(child.getId()).toPromise();
     expect(childAfter).toBeDefined();
-    expect(childAfter.getId()).toBe(child.getId());
+    expect(childAfter).toHaveId(child.getId());
   });
 
   // TODO: test getAttendances
@@ -87,7 +75,7 @@ describe("ChildrenService", () => {
   it("should find latest ChildSchoolRelation of a child", async () => {
     const children = await service.getChildren().toPromise();
     const promises: Promise<any>[] = [];
-    expect(children.length).toBeGreaterThan(0);
+    expect(children).not.toBeEmpty();
     children.forEach((child) =>
       promises.push(verifyLatestChildRelations(child, service))
     );
@@ -100,7 +88,7 @@ describe("ChildrenService", () => {
       .toPromise()
       .then((children) => {
         const promises: Promise<any>[] = [];
-        expect(children.length).toBeGreaterThan(0);
+        expect(children).not.toBeEmpty();
         children.forEach((child) =>
           promises.push(verifyChildRelationsOrder(child, service))
         );
@@ -126,7 +114,7 @@ describe("ChildrenService", () => {
 
     expect(recentNotesMap).toHaveSize(allChildren.length);
     expect(recentNotesMap.get(c0)).toBe(5);
-    expect(recentNotesMap.get(c1)).toBe(Number.POSITIVE_INFINITY);
+    expect(recentNotesMap.get(c1)).toBePositiveInfinity();
   });
 
   it("calculates days since last note as infinity if above cut-off period for better performance", async () => {
@@ -139,7 +127,7 @@ describe("ChildrenService", () => {
 
     const recentNotesMap = await service.getDaysSinceLastNoteOfEachChild(49);
 
-    expect(recentNotesMap.get(c0)).toBe(Number.POSITIVE_INFINITY);
+    expect(recentNotesMap.get(c0)).toBePositiveInfinity();
   });
 
   it("should set school class and id", async () => {
@@ -191,7 +179,7 @@ describe("ChildrenService", () => {
     await entityMapper.save(todayRelation);
     const relations = await service.queryRelationsOf("school", "3");
     expect(relations).toHaveSize(1);
-    expect(relations[0].getId()).toEqual(todayRelation.getId());
+    expect(relations[0]).toHaveId(todayRelation.getId());
   });
 });
 

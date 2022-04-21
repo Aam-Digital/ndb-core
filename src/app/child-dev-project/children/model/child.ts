@@ -104,7 +104,7 @@ export class Child extends Entity {
     label: $localize`:Label for the filename of a photo of a child:Photo Filename`,
   })
   photo: Photo = {
-    path: undefined,
+    path: "",
     photo: new BehaviorSubject<SafeUrl>(
       ChildPhotoService.getImageFromAssets(undefined)
     ),

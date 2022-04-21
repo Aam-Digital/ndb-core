@@ -18,7 +18,6 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
 import { SessionService } from "../session-service/session.service";
 import { LoginState } from "../session-states/login-state.enum";
-import { ActivatedRoute, Router } from "@angular/router";
 import { LoggingService } from "../../logging/logging.service";
 
 /**
@@ -46,9 +45,7 @@ export class LoginComponent implements AfterViewInit {
 
   constructor(
     private _sessionService: SessionService,
-    private loggingService: LoggingService,
-    private router: Router,
-    private route: ActivatedRoute
+    private loggingService: LoggingService
   ) {}
 
   ngAfterViewInit(): void {
@@ -67,7 +64,7 @@ export class LoginComponent implements AfterViewInit {
       .then((loginState) => {
         switch (loginState) {
           case LoginState.LOGGED_IN:
-            this.onLoginSuccess();
+            this.reset();
             break;
           case LoginState.UNAVAILABLE:
             this.onLoginFailure(
@@ -90,15 +87,6 @@ export class LoginComponent implements AfterViewInit {
           If you keep seeing this error message, please contact your system administrator.
         `);
       });
-  }
-
-  private onLoginSuccess() {
-    // New routes are added at runtime
-    this.router.navigate([], {
-      relativeTo: this.route,
-    });
-    this.reset();
-    // login component is automatically hidden based on _sessionService.isLoggedIn()
   }
 
   private onLoginFailure(reason: string) {

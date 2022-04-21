@@ -1,45 +1,38 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import {
-  CanDelete,
-  CanSave,
   DetailsComponentData,
   RowDetailsComponent,
 } from "./row-details.component";
-import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef,
-} from "@angular/material/dialog";
-import { EntityFormService } from "../../entity-form/entity-form.service";
-import { FormBuilder } from "@angular/forms";
-import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
-import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Entity } from "../../../entity/model/entity";
-import { TableRow } from "../entity-subrecord/entity-subrecord.component";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
+import { EntityRemoveService } from "../../../entity/entity-remove.service";
+import { EntitySubrecordModule } from "../entity-subrecord.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("RowDetailsComponent", () => {
   let component: RowDetailsComponent<any>;
   let fixture: ComponentFixture<RowDetailsComponent<any>>;
   const detailsComponentData: DetailsComponentData<any> = {
-    row: { record: new Entity() },
+    entity: new Entity(),
     columns: [],
-    operations: {} as CanSave<TableRow<any>> & CanDelete<TableRow<any>>,
-    isNew: false,
   };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [RowDetailsComponent],
-      imports: [MatDialogModule],
+      imports: [
+        EntitySubrecordModule,
+        MockedTestingModule.withState(),
+        FontAwesomeTestingModule,
+      ],
       providers: [
-        EntityFormService,
-        FormBuilder,
-        EntitySchemaService,
-        { provide: EntityMapperService, useValue: mockEntityMapper() },
         { provide: MAT_DIALOG_DATA, useValue: detailsComponentData },
         { provide: MatDialogRef, useValue: {} },
+        {
+          provide: EntityRemoveService,
+          useValue: jasmine.createSpyObj(["remove"]),
+        },
       ],
     }).compileComponents();
   });

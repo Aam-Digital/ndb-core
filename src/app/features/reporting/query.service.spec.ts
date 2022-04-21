@@ -16,9 +16,6 @@ import { ChildSchoolRelation } from "../../child-dev-project/children/model/chil
 import { defaultInteractionTypes } from "../../core/config/default-config/default-interaction-types";
 import { ChildrenService } from "../../child-dev-project/children/children.service";
 import { AttendanceService } from "../../child-dev-project/attendance/attendance.service";
-import { PouchDatabase } from "../../core/database/pouch-database";
-import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
-import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
 import { Database } from "../../core/database/database";
 import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
@@ -28,14 +25,11 @@ import { EntityConfigService } from "app/core/entity/entity-config.service";
 import { ConfigService } from "app/core/config/config.service";
 import { EventAttendance } from "../../child-dev-project/attendance/model/event-attendance";
 import { AttendanceStatusType } from "../../child-dev-project/attendance/model/attendance-status";
-import {
-  EntityRegistry,
-  entityRegistry,
-} from "../../core/entity/database-entity.decorator";
+import { DatabaseTestingModule } from "../../utils/database-testing.module";
+import { ChildrenModule } from "../../child-dev-project/children/children.module";
 
 describe("QueryService", () => {
   let service: QueryService;
-  let database: PouchDatabase;
   let entityMapper: EntityMapperService;
 
   const presentAttendanceStatus = defaultAttendanceStatusTypes.find(
@@ -53,32 +47,26 @@ describe("QueryService", () => {
   );
 
   beforeEach(async () => {
-    database = PouchDatabase.createWithInMemoryDB();
     TestBed.configureTestingModule({
-      imports: [ConfigurableEnumModule],
+      imports: [ConfigurableEnumModule, DatabaseTestingModule, ChildrenModule],
       providers: [
-        EntityMapperService,
-        EntitySchemaService,
         ChildrenService,
         AttendanceService,
-        DatabaseIndexingService,
         ConfigService,
         EntityConfigService,
-        { provide: Database, useValue: database },
-        { provide: EntityRegistry, useValue: entityRegistry },
       ],
     });
     service = TestBed.inject(QueryService);
     const configService = TestBed.inject(ConfigService);
     const entityConfigService = TestBed.inject(EntityConfigService);
     entityMapper = TestBed.inject(EntityMapperService);
-    await configService.loadConfig(entityMapper);
+    await configService.loadConfig();
     entityConfigService.addConfigAttributes(School);
     entityConfigService.addConfigAttributes(Child);
   });
 
   afterEach(async () => {
-    await database.destroy();
+    await TestBed.inject(Database).destroy();
   });
 
   it("should be created", () => {

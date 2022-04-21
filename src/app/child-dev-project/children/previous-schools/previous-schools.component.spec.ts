@@ -9,18 +9,13 @@ import {
 import { PreviousSchoolsComponent } from "./previous-schools.component";
 import { ChildrenService } from "../children.service";
 import { ChildrenModule } from "../children.module";
-import { RouterTestingModule } from "@angular/router/testing";
-import { ConfirmationDialogModule } from "../../../core/confirmation-dialog/confirmation-dialog.module";
 import { SimpleChange } from "@angular/core";
 import { Child } from "../model/child";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { ChildSchoolRelation } from "../model/childSchoolRelation";
 import moment from "moment";
-import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { Subject } from "rxjs";
-import { UpdatedEntity } from "../../../core/entity/model/entity-update";
 
 describe("PreviousSchoolsComponent", () => {
   let component: PreviousSchoolsComponent;
@@ -38,12 +33,9 @@ describe("PreviousSchoolsComponent", () => {
       ]);
 
       TestBed.configureTestingModule({
-        declarations: [PreviousSchoolsComponent],
         imports: [
-          RouterTestingModule,
           ChildrenModule,
-          ConfirmationDialogModule,
-          MockSessionModule.withState(),
+          MockedTestingModule.withState(),
           FontAwesomeTestingModule,
         ],
         providers: [
@@ -96,26 +88,26 @@ describe("PreviousSchoolsComponent", () => {
     expect(columnNames).not.toContain("Class");
     expect(columnNames).not.toContain("Result");
 
-    config.config.columns.push({
-      id: "schoolClass",
-      label: "Class",
-      input: "text",
-    });
-    config.config.columns.push({
-      id: "result",
-      label: "Result",
-      input: "percentageResult",
-    });
+    config.config.columns.push(
+      {
+        id: "schoolClass",
+        label: "Class",
+        input: "text",
+      },
+      {
+        id: "result",
+        label: "Result",
+        input: "percentageResult",
+      }
+    );
 
     component.onInitFromDynamicConfig(config);
     tick();
 
     columnNames = component.columns.map((column) => column.label);
-    expect(columnNames).toContain("Team");
-    expect(columnNames).toContain("From");
-    expect(columnNames).toContain("To");
-    expect(columnNames).toContain("Class");
-    expect(columnNames).toContain("Result");
+    expect(columnNames).toEqual(
+      jasmine.arrayContaining(["Team", "From", "To", "Class", "Result"])
+    );
   }));
 
   it("should create new records with preset data", () => {
@@ -135,20 +127,4 @@ describe("PreviousSchoolsComponent", () => {
         .isSame(newRelation.start, "day")
     ).toBeTrue();
   });
-
-  it("should reload data when a new record is saved", fakeAsync(() => {
-    const updateSubject = new Subject<UpdatedEntity<ChildSchoolRelation>>();
-    const entityMapper = TestBed.inject(EntityMapperService);
-    spyOn(entityMapper, "receiveUpdates").and.returnValue(updateSubject);
-    component.onInitFromDynamicConfig({ entity: testChild });
-    tick();
-    mockChildrenService.getSchoolRelationsFor.calls.reset();
-
-    updateSubject.next();
-    tick();
-
-    expect(mockChildrenService.getSchoolRelationsFor).toHaveBeenCalledWith(
-      testChild.getId()
-    );
-  }));
 });

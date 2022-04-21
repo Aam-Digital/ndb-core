@@ -7,20 +7,18 @@ import {
 } from "@angular/core/testing";
 import { EntityDetailsComponent } from "./entity-details.component";
 import { Observable, of, Subscriber } from "rxjs";
-import { MatNativeDateModule } from "@angular/material/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { RouterTestingModule } from "@angular/router/testing";
 import { EntityDetailsConfig, PanelConfig } from "./EntityDetailsConfig";
 import { ChildrenModule } from "../../../child-dev-project/children/children.module";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { EntityPermissionsService } from "../../permissions/entity-permissions.service";
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
-import { MockEntityMapperService } from "../../entity/mock-entity-mapper-service";
-import { MockSessionModule } from "../../session/mock-session.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import {
   EntityRemoveService,
   RemoveResult,
 } from "../../entity/entity-remove.service";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("EntityDetailsComponent", () => {
@@ -60,13 +58,9 @@ describe("EntityDetailsComponent", () => {
     data: of({ config: routeConfig }),
   };
 
-  const mockEntityPermissionsService: jasmine.SpyObj<EntityPermissionsService> = jasmine.createSpyObj(
-    ["userIsPermitted"]
-  );
-
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
-  let mockedEntityMapper: MockEntityMapperService;
   let mockEntityRemoveService: jasmine.SpyObj<EntityRemoveService>;
+  let mockAbility: jasmine.SpyObj<EntityAbility>;
 
   beforeEach(
     waitForAsync(() => {
@@ -77,25 +71,21 @@ describe("EntityDetailsComponent", () => {
       mockEntityRemoveService = jasmine.createSpyObj(["remove"]);
       mockChildrenService.getSchoolRelationsFor.and.resolveTo([]);
       mockChildrenService.getAserResultsOfChild.and.returnValue(of([]));
+      mockAbility = jasmine.createSpyObj(["cannot", "update"]);
+      mockAbility.cannot.and.returnValue(false);
       TestBed.configureTestingModule({
         imports: [
           ChildrenModule,
-          MatNativeDateModule,
-          RouterTestingModule,
-          MockSessionModule.withState(),
+          MockedTestingModule.withState(),
           FontAwesomeTestingModule,
         ],
         providers: [
           { provide: ActivatedRoute, useValue: mockedRoute },
-          {
-            provide: EntityPermissionsService,
-            useValue: mockEntityPermissionsService,
-          },
           { provide: ChildrenService, useValue: mockChildrenService },
           { provide: EntityRemoveService, useValue: mockEntityRemoveService },
+          { provide: EntityAbility, useValue: mockAbility },
         ],
       }).compileComponents();
-      mockedEntityMapper = TestBed.inject(MockEntityMapperService);
     })
   );
 
@@ -111,7 +101,8 @@ describe("EntityDetailsComponent", () => {
 
   it("sets the panels config with child and creating status", fakeAsync(() => {
     const testChild = new Child("Test-Child");
-    mockedEntityMapper.add(testChild);
+    TestBed.inject(EntityMapperService).save(testChild);
+    tick();
     component.creatingNew = false;
     routeObserver.next({ get: () => testChild.getId() });
     tick();
@@ -127,16 +118,15 @@ describe("EntityDetailsComponent", () => {
 
   it("should load the correct child on startup", fakeAsync(() => {
     const testChild = new Child("Test-Child");
-    mockedEntityMapper.add(testChild);
-    spyOn(mockedEntityMapper, "load").and.callThrough();
+    const entityMapper = TestBed.inject(EntityMapperService);
+    entityMapper.save(testChild);
+    tick();
+    spyOn(entityMapper, "load").and.callThrough();
 
     routeObserver.next({ get: () => testChild.getId() });
     tick();
 
-    expect(mockedEntityMapper.load).toHaveBeenCalledWith(
-      Child,
-      testChild.getId()
-    );
+    expect(entityMapper.load).toHaveBeenCalledWith(Child, testChild.getId());
     expect(component.entity).toBe(testChild);
   }));
 
@@ -167,7 +157,7 @@ describe("EntityDetailsComponent", () => {
   }));
 
   it("should call router when user is not permitted to create entities", () => {
-    mockEntityPermissionsService.userIsPermitted.and.returnValue(false);
+    mockAbility.cannot.and.returnValue(true);
     const router = fixture.debugElement.injector.get(Router);
     spyOn(router, "navigate");
     routeObserver.next({ get: () => "new" });

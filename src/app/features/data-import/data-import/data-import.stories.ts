@@ -32,7 +32,7 @@ export default {
       providers: [
         DataImportService,
         ConfirmationDialogService,
-        { provide: Database, useValue: PouchDatabase.createWithInMemoryDB() },
+        { provide: Database, useValue: PouchDatabase.create() },
         {
           provide: BackupService,
           useValue: {

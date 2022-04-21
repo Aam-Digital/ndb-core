@@ -3,10 +3,10 @@ import { moduleMetadata } from "@storybook/angular";
 import { BirthdayDashboardComponent } from "./birthday-dashboard.component";
 import { ChildrenModule } from "../../children.module";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
-import { MockSessionModule } from "../../../../core/session/mock-session.module";
 import { LoginState } from "../../../../core/session/session-states/login-state.enum";
 import { Child } from "../../model/child";
 import moment from "moment";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 
 const child1 = Child.create("First Child");
 child1.dateOfBirth = moment().subtract(10, "years").add("10", "days").toDate();
@@ -27,7 +27,7 @@ export default {
       imports: [
         ChildrenModule,
         StorybookBaseModule,
-        MockSessionModule.withState(LoginState.LOGGED_IN, [
+        MockedTestingModule.withState(LoginState.LOGGED_IN, [
           child2,
           child1,
           child4,

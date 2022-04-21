@@ -11,7 +11,7 @@ describe("BackupService", () => {
   let service: BackupService;
 
   beforeEach(() => {
-    db = PouchDatabase.createWithInMemoryDB();
+    db = PouchDatabase.create();
     TestBed.configureTestingModule({
       providers: [
         BackupService,
@@ -41,7 +41,7 @@ describe("BackupService", () => {
     await service.clearDatabase();
 
     const resAfter = await db.getAll();
-    expect(resAfter).toHaveSize(0);
+    expect(resAfter).toBeEmpty();
   });
 
   it("getJsonExport should return all records", async () => {
@@ -83,7 +83,7 @@ describe("BackupService", () => {
     await db.put({ _id: "Test:2", test: 2 });
 
     const res = await db.getAll();
-    expect(res.length).toBe(2);
+    expect(res).toHaveSize(2);
 
     const csvExport = await service.getCsvExport();
 

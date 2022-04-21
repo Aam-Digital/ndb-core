@@ -9,7 +9,7 @@ import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { Note } from "../../../notes/model/note";
 import moment from "moment";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
-import { MockSessionModule } from "../../../../core/session/mock-session.module";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { LoginState } from "../../../../core/session/session-states/login-state.enum";
 import { DatabaseIndexingService } from "../../../../core/entity/database-indexing/database-indexing.service";
 
@@ -57,7 +57,7 @@ export default {
       imports: [
         AttendanceModule,
         StorybookBaseModule,
-        MockSessionModule.withState(LoginState.LOGGED_IN, [
+        MockedTestingModule.withState(LoginState.LOGGED_IN, [
           act1,
           act2,
           child1,

@@ -2,18 +2,15 @@ import { NoteDetailsComponent } from "./note-details.component";
 import { Note } from "../model/note";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { of } from "rxjs";
-import { MatNativeDateModule } from "@angular/material/core";
 import { ChildrenService } from "../../children/children.service";
 import { NotesModule } from "../notes.module";
 import { Child } from "../../children/model/child";
-import { RouterTestingModule } from "@angular/router/testing";
-import { Angulartics2Module } from "angulartics2";
 import { MatDialogRef } from "@angular/material/dialog";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
-import { MockSessionModule } from "../../../core/session/mock-session.module";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { By } from "@angular/platform-browser";
 import { ChildMeetingNoteAttendanceComponent } from "./child-meeting-attendance/child-meeting-note-attendance.component";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 function generateTestNote(forChildren: Child[]) {
   const testNote = Note.create(new Date(), "test note");
@@ -53,13 +50,9 @@ describe("NoteDetailsComponent", () => {
     const dialogRefMock = { beforeClosed: () => of(), close: () => {} };
 
     TestBed.configureTestingModule({
-      declarations: [],
       imports: [
         NotesModule,
-        RouterTestingModule,
-        MatNativeDateModule,
-        Angulartics2Module.forRoot(),
-        MockSessionModule.withState(),
+        MockedTestingModule.withState(),
         FontAwesomeTestingModule,
       ],
       providers: [

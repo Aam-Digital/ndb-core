@@ -19,7 +19,7 @@ import { Component } from "@angular/core";
 import { MenuItem } from "../menu-item";
 import { NavigationMenuConfig } from "../navigation-menu-config.interface";
 import { ConfigService } from "../../config/config.service";
-import { UserRoleGuard } from "../../permissions/user-role.guard";
+import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import {
   PREFIX_VIEW_CONFIG,

@@ -18,7 +18,7 @@
 import { LoginState } from "../session-states/login-state.enum";
 import { SessionService } from "./session.service";
 import { SyncState } from "../session-states/sync-state.enum";
-import { TEST_PASSWORD, TEST_USER } from "../mock-session.module";
+import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
 
 /**
  * Default tests for testing basic functionality of any SessionService implementation.
@@ -101,7 +101,7 @@ export function testSessionServiceImplementation(
 
     expect(sessionService.isLoggedIn())
       .withContext("unexpected isLoggedIn")
-      .toEqual(false);
-    expect(sessionService.getCurrentUser()).not.toBeDefined();
+      .toBeFalse();
+    expect(sessionService.getCurrentUser()).toBeUndefined();
   }
 }

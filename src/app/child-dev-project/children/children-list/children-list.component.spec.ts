@@ -7,11 +7,9 @@ import {
 } from "@angular/core/testing";
 import { ChildrenListComponent } from "./children-list.component";
 import { ChildrenService } from "../children.service";
-import { RouterTestingModule } from "@angular/router/testing";
 import { of } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ChildrenModule } from "../children.module";
-import { Angulartics2Module } from "angulartics2";
 import { Child } from "../model/child";
 import {
   BooleanFilterConfig,
@@ -21,8 +19,7 @@ import {
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { School } from "../../schools/model/school";
 import { LoggingService } from "../../../core/logging/logging.service";
-import { MockSessionModule } from "../../../core/session/mock-session.module";
-import { ExportDataDirective } from "../../../core/export/export-data-directive/export-data.directive";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ExportService } from "../../../core/export/export-service/export.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
@@ -91,13 +88,9 @@ describe("ChildrenListComponent", () => {
     waitForAsync(() => {
       mockChildrenService.getChildren.and.returnValue(of([]));
       TestBed.configureTestingModule({
-        declarations: [ChildrenListComponent, ExportDataDirective],
-
         imports: [
           ChildrenModule,
-          RouterTestingModule,
-          Angulartics2Module.forRoot(),
-          MockSessionModule.withState(),
+          MockedTestingModule.withState(),
           FontAwesomeTestingModule,
         ],
         providers: [
@@ -161,12 +154,20 @@ describe("ChildrenListComponent", () => {
     const schoolFilter = component.listConfig.filters.find(
       (f) => f.id === "school"
     ) as PrebuiltFilterConfig<Child>;
-    expect(schoolFilter.options.length).toBe(3);
-    expect(schoolFilter.options[0].key).toBe("");
-    expect(schoolFilter.options[0].label).toBe("All");
-    expect(schoolFilter.options[1].key).toBe("a test");
-    expect(schoolFilter.options[1].label).toBe("A Test");
-    expect(schoolFilter.options[2].key).toBe("test");
-    expect(schoolFilter.options[2].label).toBe("Test");
+    expect(schoolFilter.options).toHaveSize(3);
+    expect(schoolFilter.options).toEqual([
+      jasmine.objectContaining({
+        key: "",
+        label: "All",
+      }),
+      jasmine.objectContaining({
+        key: "a test",
+        label: "A Test",
+      }),
+      jasmine.objectContaining({
+        key: "test",
+        label: "Test",
+      }),
+    ]);
   }));
 });

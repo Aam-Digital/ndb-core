@@ -1,14 +1,12 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ActivityListComponent } from "./activity-list.component";
-import { RouterTestingModule } from "@angular/router/testing";
 import { ActivatedRoute } from "@angular/router";
 import { of } from "rxjs";
 import { AttendanceModule } from "../attendance.module";
-import { Angulartics2Module } from "angulartics2";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { ExportService } from "../../../core/export/export-service/export.service";
-import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("ActivityListComponent", () => {
@@ -25,9 +23,7 @@ describe("ActivityListComponent", () => {
       TestBed.configureTestingModule({
         imports: [
           AttendanceModule,
-          RouterTestingModule,
-          Angulartics2Module.forRoot(),
-          MockSessionModule.withState(),
+          MockedTestingModule.withState(),
           FontAwesomeTestingModule,
         ],
         providers: [

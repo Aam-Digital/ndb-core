@@ -1,56 +1,35 @@
-import { TestBed } from "@angular/core/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
 import { DataImportService } from "./data-import.service";
-import { PouchDatabase } from "../../core/database/pouch-database";
 import { Database } from "../../core/database/database";
 import { ConfirmationDialogService } from "../../core/confirmation-dialog/confirmation-dialog.service";
-import {
-  MatSnackBar,
-  MatSnackBarModule,
-  MatSnackBarRef,
-} from "@angular/material/snack-bar";
-import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";
+import { MatSnackBar, MatSnackBarRef } from "@angular/material/snack-bar";
+import { MatDialogRef } from "@angular/material/dialog";
 import { NEVER, of } from "rxjs";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
-import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { Papa, ParseResult } from "ngx-papaparse";
 import { ImportMetaData } from "./import-meta-data.type";
 import { expectEntitiesToBeInDatabase } from "../../utils/expect-entity-data.spec";
 import { Child } from "../../child-dev-project/children/model/child";
 import moment from "moment";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { QueryService } from "../reporting/query.service";
-import {
-  entityRegistry,
-  EntityRegistry,
-} from "../../core/entity/database-entity.decorator";
+import { DataImportModule } from "./data-import.module";
+import { DatabaseTestingModule } from "../../utils/database-testing.module";
+import { ChildrenModule } from "../../child-dev-project/children/children.module";
 
 describe("DataImportService", () => {
-  let db: PouchDatabase;
+  let db: Database;
   let service: DataImportService;
 
-  beforeEach(() => {
-    db = PouchDatabase.createWithInMemoryDB();
-    TestBed.configureTestingModule({
-      imports: [MatDialogModule, MatSnackBarModule, NoopAnimationsModule],
-      providers: [
-        DataImportService,
-        {
-          provide: Database,
-          useValue: db,
-        },
-        { provide: QueryService, useValue: {} },
-        { provide: EntityRegistry, useValue: entityRegistry },
-        ConfirmationDialogService,
-        EntityMapperService,
-        EntitySchemaService,
-      ],
-    });
-    service = TestBed.inject(DataImportService);
-  });
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        imports: [DataImportModule, DatabaseTestingModule, ChildrenModule],
+      });
+      service = TestBed.inject(DataImportService);
+      db = TestBed.inject(Database);
+    })
+  );
 
-  afterEach(async () => {
-    await db.destroy();
-  });
+  afterEach(() => db.destroy());
 
   it("should be created", () => {
     expect(service).toBeTruthy();
@@ -148,13 +127,13 @@ describe("DataImportService", () => {
     expect(firstChild.name).toBe("First");
     expect(birthday1.isSame(firstChild.dateOfBirth, "day")).toBeTrue();
     expect(firstChild.age).toBe(10);
-    expect(firstChild.hasOwnProperty("notExistingProperty")).toBeFalse();
+    expect(firstChild).not.toHaveOwnProperty("notExistingProperty");
     const secondChild = await entityMapper.load(Child, "2");
     expect(secondChild._id).toBe("Child:2");
     expect(secondChild.name).toBe("Second");
     expect(birthday2.isSame(secondChild.dateOfBirth, "day")).toBeTrue();
     expect(secondChild.age).toBe(12);
-    expect(secondChild.hasOwnProperty("notExistingProperty")).toBeFalse();
+    expect(secondChild).not.toHaveOwnProperty("notExistingProperty");
   });
 
   it("should delete existing records and prepend the transactionID to ID's of the newly uploaded entities", async () => {
@@ -206,9 +185,9 @@ describe("DataImportService", () => {
 
     const entityMapper = TestBed.inject(EntityMapperService);
     const test1 = await entityMapper.load(Child, "test1");
-    expect(test1.dateOfBirth).toEqual(new Date("2010-12-17"));
+    expect(test1.dateOfBirth).toBeDate("2010-12-17");
     const test2 = await entityMapper.load(Child, "test2");
-    expect(test2.dateOfBirth).toEqual(new Date("2011-06-07"));
+    expect(test2.dateOfBirth).toBeDate("2011-06-07");
   });
 
   it("should import csv file and generate searchIndices", async () => {
@@ -238,7 +217,7 @@ describe("DataImportService", () => {
   ) {
     const fileReader: any = {
       result: result,
-      addEventListener: (str: string, fun: () => any) => fun(),
+      addEventListener: (_str: string, fun: () => any) => fun(),
       readAsText: () => {},
     };
     // mock FileReader constructor

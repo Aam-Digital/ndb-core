@@ -1,38 +1,17 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceWeekDashboardComponent } from "./attendance-week-dashboard.component";
-import { RouterTestingModule } from "@angular/router/testing";
-import { ChildPhotoService } from "../../../children/child-photo-service/child-photo.service";
 import { AttendanceModule } from "../../attendance.module";
-import { AttendanceService } from "../../attendance.service";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 
 describe("AttendanceWeekDashboardComponent", () => {
   let component: AttendanceWeekDashboardComponent;
   let fixture: ComponentFixture<AttendanceWeekDashboardComponent>;
-  let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
 
   beforeEach(
     waitForAsync(() => {
-      mockAttendanceService = jasmine.createSpyObj([
-        "getAllActivityAttendancesForPeriod",
-      ]);
-      mockAttendanceService.getAllActivityAttendancesForPeriod.and.resolveTo(
-        []
-      );
       TestBed.configureTestingModule({
-        imports: [
-          AttendanceModule,
-          RouterTestingModule.withRoutes([]),
-          FontAwesomeTestingModule,
-        ],
-        providers: [
-          {
-            provide: ChildPhotoService,
-            useValue: jasmine.createSpyObj(["getImage"]),
-          },
-          { provide: AttendanceService, useValue: mockAttendanceService },
-        ],
+        imports: [AttendanceModule, MockedTestingModule.withState()],
       }).compileComponents();
     })
   );

@@ -18,23 +18,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { NavigationComponent } from "./navigation.component";
-import { RouterTestingModule } from "@angular/router/testing";
 import { MenuItem } from "../menu-item";
-import { MatDividerModule } from "@angular/material/divider";
-import { MatListModule } from "@angular/material/list";
 import { ConfigService } from "../../config/config.service";
 import { BehaviorSubject, Subject } from "rxjs";
 import { Config } from "../../config/config";
-import { UserRoleGuard } from "../../permissions/user-role.guard";
+import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import {
   ActivatedRouteSnapshot,
   Event,
   NavigationEnd,
   Router,
 } from "@angular/router";
-import { SessionService } from "../../session/session-service/session.service";
-import { MockSessionModule } from "../../session/mock-session.module";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { NavigationModule } from "../navigation.module";
 
 describe("NavigationComponent", () => {
   let component: NavigationComponent;
@@ -54,18 +50,10 @@ describe("NavigationComponent", () => {
       mockUserRoleGuard.canActivate.and.returnValue(true);
 
       TestBed.configureTestingModule({
-        imports: [
-          RouterTestingModule,
-          MatDividerModule,
-          MatListModule,
-          MockSessionModule.withState(),
-          FontAwesomeTestingModule,
-        ],
-        declarations: [NavigationComponent],
+        imports: [NavigationModule, MockedTestingModule.withState()],
         providers: [
           { provide: UserRoleGuard, useValue: mockUserRoleGuard },
           { provide: ConfigService, useValue: mockConfigService },
-          SessionService,
         ],
       }).compileComponents();
     })

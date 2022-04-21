@@ -2,6 +2,7 @@ import {
   Component,
   Input,
   OnChanges,
+  OnInit,
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
@@ -9,7 +10,7 @@ import { MatSort, MatSortable } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { Entity } from "../../../entity/model/entity";
+import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { AlertService } from "../../../alerts/alert.service";
 import { Subscription } from "rxjs";
 import { FormGroup } from "@angular/forms";
@@ -18,15 +19,12 @@ import { EntityFormService } from "../../entity-form/entity-form.service";
 import { MatDialog } from "@angular/material/dialog";
 import { LoggingService } from "../../../logging/logging.service";
 import { AnalyticsService } from "../../../analytics/analytics.service";
-import {
-  CanDelete,
-  CanSave,
-  RowDetailsComponent,
-} from "../row-details/row-details.component";
+import { RowDetailsComponent } from "../row-details/row-details.component";
 import {
   EntityRemoveService,
   RemoveResult,
 } from "../../../entity/entity-remove.service";
+import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { tableSort } from "./table-sort";
 
 export interface TableRow<T> {
@@ -54,7 +52,7 @@ export interface TableRow<T> {
   styleUrls: ["./entity-subrecord.component.scss"],
 })
 export class EntitySubrecordComponent<T extends Entity>
-  implements OnChanges, CanSave<TableRow<T>>, CanDelete<TableRow<T>> {
+  implements OnChanges, OnInit {
   /** configuration what kind of columns to be generated for the table */
   @Input() set columns(columns: (FormFieldConfig | string)[]) {
     this._columns = columns.map((col) => {
@@ -76,6 +74,10 @@ export class EntitySubrecordComponent<T extends Entity>
         record: rec,
       };
     });
+    if (!this.newRecordFactory && this._records.length > 0) {
+      this.newRecordFactory = () =>
+        new (this._records[0].getConstructor() as EntityConstructor<T>)();
+    }
   }
   private _records: Array<T> = [];
   _columns: FormFieldConfig[] = [];
@@ -101,7 +103,7 @@ export class EntitySubrecordComponent<T extends Entity>
   private mediaSubscription: Subscription;
   private screenWidth = "";
 
-  public idForSavingPagination = "startWert";
+  idForSavingPagination = "startWert";
 
   @ViewChild(MatSort) sort: MatSort;
 
@@ -109,7 +111,7 @@ export class EntitySubrecordComponent<T extends Entity>
    * A function which should be executed when a row is clicked or a new entity created.
    * @param entity The newly created or clicked entity.
    */
-  @Input() showEntity?: (T) => void;
+  @Input() showEntity?: (entity: T) => void = this.showRowDetails;
 
   constructor(
     private alertService: AlertService,
@@ -118,7 +120,8 @@ export class EntitySubrecordComponent<T extends Entity>
     private dialog: MatDialog,
     private analyticsService: AnalyticsService,
     private loggingService: LoggingService,
-    private entityRemoveService: EntityRemoveService
+    private entityRemoveService: EntityRemoveService,
+    private entityMapper: EntityMapperService
   ) {
     this.mediaSubscription = this.media
       .asObservable()
@@ -133,6 +136,40 @@ export class EntitySubrecordComponent<T extends Entity>
 
   /** function returns the background color for each row*/
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
+
+  ngOnInit() {
+    if (this.entityConstructorIsAvailable()) {
+      this.entityMapper
+        .receiveUpdates(this.getEntityConstructor())
+        .pipe(untilDestroyed(this))
+        .subscribe(({ entity, type }) => {
+          if (type === "new") {
+            this.addToTable(entity);
+          } else if (type === "remove") {
+            this.removeFromDataTable(entity);
+          } else if (
+            type === "update" &&
+            !this._records.find((rec) => rec.getId() === entity.getId())
+          ) {
+            this.addToTable(entity);
+          }
+        });
+    }
+  }
+
+  private entityConstructorIsAvailable(): boolean {
+    return this._records.length > 0 || !!this.newRecordFactory;
+  }
+
+  getEntityConstructor(): EntityConstructor<T> {
+    if (this.entityConstructorIsAvailable()) {
+      const record =
+        this._records.length > 0 ? this._records[0] : this.newRecordFactory();
+      return record.getConstructor() as EntityConstructor<T>;
+    } else {
+      throw new Error("No constructor is available");
+    }
+  }
 
   /**
    * Update the component if any of the @Input properties were changed from outside.
@@ -155,13 +192,11 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 
   private initFormGroups() {
-    if (this._records.length > 0 || this.newRecordFactory) {
-      const entity =
-        this._records.length > 0 ? this._records[0] : this.newRecordFactory();
+    if (this.entityConstructorIsAvailable()) {
       try {
         this.entityFormService.extendFormFieldConfig(
           this._columns,
-          entity,
+          this.getEntityConstructor(),
           true
         );
         this.idForSavingPagination = this._columns
@@ -223,20 +258,13 @@ export class EntitySubrecordComponent<T extends Entity>
   /**
    * Save an edited record to the database (if validation succeeds).
    * @param row The entity to be saved.
-   * @param isNew whether or not the record is new
    */
-  async save(row: TableRow<T>, isNew: boolean = false): Promise<void> {
+  async save(row: TableRow<T>): Promise<void> {
     try {
       row.record = await this.entityFormService.saveChanges(
         row.formGroup,
         row.record
       );
-      if (isNew) {
-        this._records.unshift(row.record);
-        this.recordsDataSource.data = [{ record: row.record }].concat(
-          this.recordsDataSource.data
-        );
-      }
       row.formGroup.disable();
     } catch (err) {
       this.alertService.addDanger(err.message);
@@ -264,7 +292,7 @@ export class EntitySubrecordComponent<T extends Entity>
       .subscribe((result) => {
         switch (result) {
           case RemoveResult.REMOVED:
-            this.removeFromDataTable(row);
+            this.removeFromDataTable(row.record);
             break;
           case RemoveResult.UNDONE:
             this._records.unshift(row.record);
@@ -273,29 +301,25 @@ export class EntitySubrecordComponent<T extends Entity>
       });
   }
 
-  private removeFromDataTable(row: TableRow<T>) {
-    const index = this._records.findIndex(
-      (a) => a.getId() === row.record.getId()
+  private removeFromDataTable(deleted: T) {
+    // use setter so datasource is also updated
+    this.records = this._records.filter(
+      (rec) => rec.getId() !== deleted.getId()
     );
-    if (index > -1) {
-      this._records.splice(index, 1);
-      this.initFormGroups();
-    }
+  }
+
+  private addToTable(record: T) {
+    // use setter so datasource is also updated
+    this.records = [record].concat(this._records);
   }
 
   /**
    * Create a new entity.
    * The entity is only written to the database when the user saves this record which is newly added in edit mode.
    */
-  async create() {
+  create() {
     const newRecord = this.newRecordFactory();
-
-    if (this.showEntity) {
-      this.showEntity(newRecord);
-    } else {
-      this.showRowDetails({ record: newRecord }, true);
-    }
-
+    this.showEntity(newRecord);
     this.analyticsService.eventTrack("subrecord_add_new", {
       category: newRecord.getType(),
     });
@@ -307,18 +331,14 @@ export class EntitySubrecordComponent<T extends Entity>
    */
   rowClick(row: TableRow<T>) {
     if (!row.formGroup || row.formGroup.disabled) {
-      if (this.showEntity) {
-        this.showEntity(row.record);
-      } else {
-        this.showRowDetails(row, false);
-        this.analyticsService.eventTrack("subrecord_show_popup", {
-          category: row.record.getType(),
-        });
-      }
+      this.showEntity(row.record);
+      this.analyticsService.eventTrack("subrecord_show_popup", {
+        category: row.record.getType(),
+      });
     }
   }
 
-  private showRowDetails(row: TableRow<T>, isNew: boolean) {
+  private showRowDetails(entity: T) {
     const columnsToDisplay = this._columns
       .filter((col) => col.edit)
       .map((col) => {
@@ -326,21 +346,13 @@ export class EntitySubrecordComponent<T extends Entity>
         return col;
       })
       .map((col) => Object.assign({}, col));
-    if (isNew) {
-      row.formGroup = this.entityFormService.createFormGroup(
-        this._columns,
-        row.record
-      );
-    }
     this.dialog.open(RowDetailsComponent, {
       width: "80%",
       maxHeight: "90vh",
       data: {
-        row: row,
+        entity: entity,
         columns: columnsToDisplay,
         viewOnlyColumns: this._columns.filter((col) => !col.edit),
-        operations: this,
-        isNew: isNew,
       },
     });
   }
@@ -348,7 +360,7 @@ export class EntitySubrecordComponent<T extends Entity>
   /**
    * resets columnsToDisplay depending on current screensize
    */
-  setupTable() {
+  private setupTable() {
     if (this._columns !== undefined && this.screenWidth !== "") {
       this.columnsToDisplay = this._columns
         .filter((col) => this.isVisible(col))

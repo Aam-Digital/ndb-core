@@ -9,7 +9,7 @@ import { EntityUtilsModule } from "../../entity-utils.module";
 import { EditSingleEntityComponent } from "./edit-single-entity.component";
 import { FormControl, FormGroup } from "@angular/forms";
 import { StorybookBaseModule } from "../../../../../utils/storybook-base.module";
-import { MockSessionModule } from "../../../../session/mock-session.module";
+import { MockedTestingModule } from "../../../../../utils/mocked-testing.module";
 import { LoginState } from "../../../../session/session-states/login-state.enum";
 
 const child1 = new Child();
@@ -43,7 +43,7 @@ export default {
         EntityUtilsModule,
         StorybookBaseModule,
         ChildrenModule,
-        MockSessionModule.withState(LoginState.LOGGED_IN, [
+        MockedTestingModule.withState(LoginState.LOGGED_IN, [
           child1,
           child2,
           child3,

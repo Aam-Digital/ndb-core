@@ -78,8 +78,7 @@ import { TranslatableMatPaginator } from "./core/translation/TranslatableMatPagi
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
-import { MatTableModule } from '@angular/material/table';
-import { MatSortModule } from '@angular/material/sort';
+import { DemoPermissionGeneratorService } from "./core/permissions/demo-permission-generator.service";
 
 /**
  * Main entry point of the application.
@@ -126,8 +125,6 @@ import { MatSortModule } from '@angular/material/sort';
     ConfigurableEnumModule,
     ReportingModule,
     EntityUtilsModule,
-    MatTableModule,
-    MatSortModule,
     DemoDataModule.forRoot([
       ...DemoChildGenerator.provider({ count: 120 }),
       ...DemoSchoolGenerator.provider({ count: 8 }),
@@ -151,6 +148,7 @@ import { MatSortModule } from '@angular/material/sort';
         minCountAttributes: 2,
         maxCountAttributes: 5,
       }),
+      ...DemoPermissionGeneratorService.provider(),
     ]),
     AttendanceModule,
     DashboardShortcutWidgetModule,

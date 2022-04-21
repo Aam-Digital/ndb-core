@@ -8,6 +8,7 @@ import { FormsModule } from "@angular/forms";
 import { ConfirmationDialogModule } from "../confirmation-dialog/confirmation-dialog.module";
 import { Angulartics2Module } from "angulartics2";
 import { PermissionsModule } from "../permissions/permissions.module";
+import { AbilityModule } from "@casl/angular";
 
 /**
  * A helper utility module to consistently and easily display forms
@@ -25,6 +26,7 @@ import { PermissionsModule } from "../permissions/permissions.module";
     ConfirmationDialogModule,
     Angulartics2Module,
     PermissionsModule,
+    AbilityModule,
   ],
   declarations: [FormDialogWrapperComponent],
   providers: [FormDialogService],

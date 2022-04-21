@@ -1,10 +1,11 @@
 import { Injectable } from "@angular/core";
 import { FormBuilder, FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "./entity-form/FormConfig";
-import { Entity } from "../../entity/model/entity";
+import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DynamicValidatorsService } from "./dynamic-form-validators/dynamic-validators.service";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
 
 @Injectable()
 /**
@@ -16,17 +17,18 @@ export class EntityFormService {
     private fb: FormBuilder,
     private entityMapper: EntityMapperService,
     private entitySchemaService: EntitySchemaService,
-    private dynamicValidator: DynamicValidatorsService
+    private dynamicValidator: DynamicValidatorsService,
+    private ability: EntityAbility
   ) {}
 
   public extendFormFieldConfig(
     formFields: FormFieldConfig[],
-    entity: Entity,
+    entityType: EntityConstructor,
     forTable = false
   ) {
     formFields.forEach((formField) => {
       try {
-        this.addFormFields(formField, entity, forTable);
+        this.addFormFields(formField, entityType, forTable);
       } catch (err) {
         throw new Error(
           `Could not create form config for ${formField.id}\: ${err}`
@@ -35,8 +37,12 @@ export class EntityFormService {
     });
   }
 
-  private addFormFields(formField: FormFieldConfig, entity: Entity, forTable) {
-    const propertySchema = entity.getSchema().get(formField.id);
+  private addFormFields(
+    formField: FormFieldConfig,
+    entityType: EntityConstructor,
+    forTable: boolean
+  ) {
+    const propertySchema = entityType.schema.get(formField.id);
     formField.edit =
       formField.edit ||
       this.entitySchemaService.getComponent(propertySchema, "edit");
@@ -86,15 +92,23 @@ export class EntityFormService {
    * @param entity The entity on which the changes should be applied.
    * @returns a copy of the input entity with the changes from the form group
    */
-  public saveChanges<T extends Entity>(form: FormGroup, entity: T): Promise<T> {
+  public async saveChanges<T extends Entity>(
+    form: FormGroup,
+    entity: T
+  ): Promise<T> {
     this.checkFormValidity(form);
-    const entityCopy = entity.copy() as T;
-    this.assignFormValuesToEntity(form, entityCopy);
-    entityCopy.assertValid();
+    const updatedEntity = entity.copy() as T;
+    Object.assign(updatedEntity, form.getRawValue());
+    updatedEntity.assertValid();
+    if (!this.canSave(entity, updatedEntity)) {
+      throw new Error(
+        $localize`Current user is not permitted to save these changes`
+      );
+    }
 
     return this.entityMapper
-      .save(entityCopy)
-      .then(() => Object.assign(entity, entityCopy))
+      .save(updatedEntity)
+      .then(() => Object.assign(entity, updatedEntity))
       .catch((err) => {
         throw new Error($localize`Could not save ${entity.getType()}\: ${err}`);
       });
@@ -120,9 +134,12 @@ export class EntityFormService {
     return invalid.join(", ");
   }
 
-  private assignFormValuesToEntity(form: FormGroup, entity: Entity) {
-    Object.keys(form.controls).forEach((key) => {
-      entity[key] = form.get(key).value;
-    });
+  private canSave(oldEntity: Entity, newEntity: Entity): boolean {
+    // no _rev means a new entity is created
+    if (oldEntity._rev) {
+      return this.ability.can("update", oldEntity);
+    } else {
+      return this.ability.can("create", newEntity);
+    }
   }
 }

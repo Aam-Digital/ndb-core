@@ -40,7 +40,7 @@ describe("EntityMapperService", () => {
 
   beforeEach(
     waitForAsync(() => {
-      testDatabase = PouchDatabase.createWithInMemoryDB();
+      testDatabase = PouchDatabase.create();
       entityMapper = new EntityMapperService(
         testDatabase,
         new EntitySchemaService(),
@@ -64,7 +64,7 @@ describe("EntityMapperService", () => {
       Entity.createPrefixedId(actualEntity.getType(), actualEntity.getId())
     ).toBe(expectedEntity._id);
 
-    expect(actualEntity instanceof Entity).toBe(true);
+    expect(actualEntity).toBeInstanceOf(Entity);
   }
 
   it("loads existing entity", async () => {
@@ -77,7 +77,7 @@ describe("EntityMapperService", () => {
 
   it("load multiple entities", async () => {
     const loadedEntities = await entityMapper.loadType<Entity>(Entity);
-    expect(loadedEntities.length).toBe(2);
+    expect(loadedEntities).toHaveSize(2);
 
     const entity1 = loadedEntities[0];
     const entity2 = loadedEntities[1];
@@ -98,7 +98,7 @@ describe("EntityMapperService", () => {
     }
 
     const result = await entityMapper.loadType<TestEntity>(TestEntity);
-    expect(result.length).toBe(0);
+    expect(result).toBeEmpty();
   });
 
   it("saves new entity and loads it", async () => {
@@ -130,7 +130,7 @@ describe("EntityMapperService", () => {
       Entity,
       existingEntity.entityId
     );
-    expect(loadedEntity.getId()).toBe(existingEntity.entityId);
+    expect(loadedEntity).toHaveId(existingEntity.entityId);
 
     await entityMapper.save<Entity>(loadedEntity);
   });
@@ -169,7 +169,7 @@ describe("EntityMapperService", () => {
     );
     expect(loadedByEntityId).toBeDefined();
 
-    expect(loadedByEntityId._id.startsWith(Entity.ENTITY_TYPE)).toBeTruthy();
+    expect(loadedByEntityId._id.startsWith(Entity.ENTITY_TYPE)).toBeTrue();
     const loadedByFullId = await entityMapper.load<Entity>(
       Entity,
       loadedByEntityId._id

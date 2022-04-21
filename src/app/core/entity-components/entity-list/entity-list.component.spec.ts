@@ -1,24 +1,17 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { EntityListComponent } from "./entity-list.component";
-import { CommonModule, DatePipe } from "@angular/common";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { RouterTestingModule } from "@angular/router/testing";
 import { SimpleChange } from "@angular/core";
 import { BooleanFilterConfig, EntityListConfig } from "./EntityListConfig";
 import { Entity } from "../../entity/model/entity";
-import { ChildrenListComponent } from "../../../child-dev-project/children/children-list/children-list.component";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ConfigService } from "../../config/config.service";
 import { LoggingService } from "../../logging/logging.service";
 import { EntityListModule } from "./entity-list.module";
-import { Angulartics2Module } from "angulartics2";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DatabaseField } from "../../entity/database-field.decorator";
-import { ReactiveFormsModule } from "@angular/forms";
 import { AttendanceService } from "../../../child-dev-project/attendance/attendance.service";
-import { ExportModule } from "../../export/export.module";
 import { ExportService } from "../../export/export-service/export.service";
-import { MockSessionModule } from "../../session/mock-session.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("EntityListComponent", () => {
@@ -92,22 +85,12 @@ describe("EntityListComponent", () => {
       );
 
       TestBed.configureTestingModule({
-        declarations: [EntityListComponent],
         imports: [
-          CommonModule,
-          NoopAnimationsModule,
           EntityListModule,
-          ExportModule,
-          Angulartics2Module.forRoot(),
-          ReactiveFormsModule,
-          RouterTestingModule.withRoutes([
-            { path: "child", component: ChildrenListComponent },
-          ]),
-          MockSessionModule.withState(),
+          MockedTestingModule.withState(),
           FontAwesomeTestingModule,
         ],
         providers: [
-          DatePipe,
           { provide: ConfigService, useValue: mockConfigService },
           { provide: LoggingService, useValue: mockLoggingService },
           { provide: ExportService, useValue: {} },
@@ -169,8 +152,8 @@ describe("EntityListComponent", () => {
       expect(component.filterSelections[0].selectedOption).toEqual(
         clickedOption
       );
-      expect(component.allEntities.length).toEqual(2);
-      expect(component.filteredEntities.length).toEqual(1);
+      expect(component.allEntities).toHaveSize(2);
+      expect(component.filteredEntities).toHaveSize(1);
       expect(component.filteredEntities[0]).toEqual(child1);
       done();
     });
@@ -213,6 +196,6 @@ describe("EntityListComponent", () => {
 
     const res = component.getNewRecordFactory()();
 
-    expect(res.getType()).toEqual(Child.ENTITY_TYPE);
+    expect(res).toHaveType(Child.ENTITY_TYPE);
   });
 });

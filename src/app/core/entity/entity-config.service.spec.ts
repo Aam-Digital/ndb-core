@@ -13,43 +13,12 @@ import { EntitySchemaService } from "./schema/entity-schema.service";
 import { EntityMapperService } from "./entity-mapper.service";
 import { mockEntityMapper } from "./mock-entity-mapper-service";
 
-declare global {
-  namespace jasmine {
-    interface Matchers<T> {
-      toContainKey(key: any);
-    }
-  }
-}
-
 describe("EntityConfigService", () => {
   let service: EntityConfigService;
   let mockConfigService: jasmine.SpyObj<ConfigService>;
   const testConfig: EntityConfig = {
     attributes: [{ name: "testAttribute", schema: { dataType: "string" } }],
   };
-
-  beforeAll(() => {
-    jasmine.addMatchers({
-      toContainKey: () => {
-        return {
-          compare: <T>(actual: Map<T, any>, expected: T) => {
-            if (actual.has(expected)) {
-              return {
-                pass: true,
-              };
-            } else {
-              return {
-                pass: false,
-                message: `Expected Map ${[...actual].join(
-                  ","
-                )} to contain key '${expected}'`,
-              };
-            }
-          },
-        };
-      },
-    });
-  });
 
   beforeEach(() => {
     mockConfigService = jasmine.createSpyObj(["getConfig", "getAllConfigs"]);
@@ -73,10 +42,10 @@ describe("EntityConfigService", () => {
   });
 
   it("should add attributes to a entity class schema", () => {
-    expect(Test.schema.has("name")).toBeTrue();
+    expect(Test.schema).toHaveKey("name");
     service.addConfigAttributes<Test>(Test);
-    expect(Test.schema).toContainKey("testAttribute");
-    expect(Test.schema).toContainKey("name");
+    expect(Test.schema).toHaveKey("testAttribute");
+    expect(Test.schema).toHaveKey("name");
   });
 
   it("should assign the correct schema", () => {
@@ -85,7 +54,7 @@ describe("EntityConfigService", () => {
   });
 
   it("should load a given EntityType", () => {
-    const config: EntityConfig = { permissions: {}, attributes: [] };
+    const config: EntityConfig = { attributes: [] };
     mockConfigService.getConfig.and.returnValue(config);
     const result = service.getEntityConfig(Test);
     expect(mockConfigService.getConfig).toHaveBeenCalledWith("entity:Test");
@@ -96,7 +65,7 @@ describe("EntityConfigService", () => {
     const configWithInvalidEntities: (EntityConfig & { _id: string })[] = [
       {
         _id: "entity:IDoNotExist",
-        permissions: {},
+        attributes: [],
       },
     ];
     mockConfigService.getAllConfigs.and.returnValue(configWithInvalidEntities);
@@ -133,8 +102,8 @@ describe("EntityConfigService", () => {
     ];
     mockConfigService.getAllConfigs.and.returnValue(mockEntityConfigs);
     service.setupEntitiesFromConfig();
-    expect(Test.schema).toContainKey(ATTRIBUTE_1_NAME);
-    expect(Test2.schema).toContainKey(ATTRIBUTE_2_NAME);
+    expect(Test.schema).toHaveKey(ATTRIBUTE_1_NAME);
+    expect(Test2.schema).toHaveKey(ATTRIBUTE_2_NAME);
   });
 });
 

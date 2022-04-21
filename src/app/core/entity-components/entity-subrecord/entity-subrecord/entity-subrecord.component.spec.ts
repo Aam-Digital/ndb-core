@@ -12,9 +12,6 @@ import {
 } from "./entity-subrecord.component";
 import { EntitySubrecordModule } from "../entity-subrecord.module";
 import { Entity } from "../../../entity/model/entity";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { MatNativeDateModule } from "@angular/material/core";
-import { DatePipe, PercentPipe } from "@angular/common";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { ConfigurableEnumValue } from "../../../configurable-enum/configurable-enum.interface";
 import { Child } from "../../../../child-dev-project/children/model/child";
@@ -24,30 +21,29 @@ import { FormBuilder, FormGroup } from "@angular/forms";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 import { genders } from "../../../../child-dev-project/children/model/genders";
 import { LoggingService } from "../../../logging/logging.service";
-import { MockSessionModule } from "../../../session/mock-session.module";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import moment from "moment";
 import { MediaObserver } from "@angular/flex-layout";
+import { Subject } from "rxjs";
+import { UpdatedEntity } from "../../../entity/model/entity-update";
+import { MatDialog } from "@angular/material/dialog";
+import { RowDetailsComponent } from "../row-details/row-details.component";
+import { EntityAbility } from "../../../permissions/ability/entity-ability";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
   let fixture: ComponentFixture<EntitySubrecordComponent<Entity>>;
-  let entityMapper: EntityMapperService;
 
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
         imports: [
           EntitySubrecordModule,
-          MatNativeDateModule,
-          NoopAnimationsModule,
-          MockSessionModule.withState(),
+          MockedTestingModule.withState(),
           FontAwesomeTestingModule,
         ],
-        providers: [DatePipe, PercentPipe],
       }).compileComponents();
-
-      entityMapper = TestBed.inject(EntityMapperService);
     })
   );
 
@@ -184,22 +180,27 @@ describe("EntitySubrecordComponent", () => {
   });
 
   it("should create a formGroup when editing a row", () => {
-    spyOn(TestBed.inject(MediaObserver), "isActive").and.returnValue(false);
-    component.columns = [{ id: "name" }, { id: "projectNumber" }];
+    component.columns = ["name", "projectNumber"];
     const child = new Child();
     child.name = "Child Name";
     child.projectNumber = "01";
     const tableRow: TableRow<Child> = { record: child };
+    const media = TestBed.inject(MediaObserver);
+    spyOn(media, "isActive").and.returnValue(false);
 
     component.edit(tableRow);
 
     const formGroup = tableRow.formGroup;
-    expect(formGroup.get("name").value).toBe("Child Name");
-    expect(formGroup.get("projectNumber").value).toBe("01");
-    expect(formGroup.enabled).toBeTrue();
+    expect(formGroup.get("name")).toHaveValue("Child Name");
+    expect(formGroup.get("projectNumber")).toHaveValue("01");
+    expect(formGroup).toBeEnabled();
   });
 
   it("should correctly save changes to an entity", fakeAsync(() => {
+    TestBed.inject(EntityAbility).update([
+      { subject: "Child", action: "create" },
+    ]);
+    const entityMapper = TestBed.inject(EntityMapperService);
     spyOn(entityMapper, "save").and.resolveTo();
     const fb = TestBed.inject(FormBuilder);
     const child = new Child();
@@ -216,7 +217,7 @@ describe("EntitySubrecordComponent", () => {
     expect(entityMapper.save).toHaveBeenCalledWith(tableRow.record);
     expect(tableRow.record.name).toBe("New Name");
     expect(tableRow.record.gender).toBe(genders[2]);
-    expect(tableRow.formGroup.disabled).toBeTrue();
+    expect(tableRow.formGroup).not.toBeEnabled();
   }));
 
   it("should show a error message when saving fails", fakeAsync(() => {
@@ -253,16 +254,25 @@ describe("EntitySubrecordComponent", () => {
     expect(component.showEntity).toHaveBeenCalledWith(child);
   }));
 
-  it("should create new entities and open it in a row when no show entity function is supplied", fakeAsync(() => {
+  it("should create a new entity and open a dialog on default when clicking create", () => {
     const child = new Child();
     component.newRecordFactory = () => child;
-    const spy = spyOn<any>(component, "showRowDetails");
+    component.ngOnInit();
+    const dialog = TestBed.inject(MatDialog);
+    spyOn(dialog, "open");
 
     component.create();
-    tick();
 
-    expect(spy).toHaveBeenCalledWith({ record: child }, true);
-  }));
+    expect(dialog.open).toHaveBeenCalledWith(RowDetailsComponent, {
+      width: "80%",
+      maxHeight: "90vh",
+      data: {
+        entity: child,
+        columns: [],
+        viewOnlyColumns: [],
+      },
+    });
+  });
 
   it("should notify when an entity is clicked", (done) => {
     const child = new Child();
@@ -274,19 +284,52 @@ describe("EntitySubrecordComponent", () => {
     component.rowClick({ record: child });
   });
 
-  it("should add a new entity to the the table when it's new", async () => {
-    const entityFormService = TestBed.inject(EntityFormService);
-    spyOn(entityFormService, "saveChanges").and.resolveTo();
+  it("should add a new entity that was created after the initial loading to the table", () => {
+    const entityUpdates = new Subject<UpdatedEntity<Entity>>();
+    const entityMapper = TestBed.inject(EntityMapperService);
+    spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
+    component.newRecordFactory = () => new Entity();
     component.records = [];
+    component.ngOnInit();
+
     const entity = new Entity();
-    await component.save({ record: entity }, true);
-    expect(component.recordsDataSource.data).toHaveSize(1);
+    entityUpdates.next({ entity: entity, type: "new" });
+
+    expect(component.recordsDataSource.data).toEqual([{ record: entity }]);
+  });
+
+  it("should remove a entity from the table when it has been deleted", async () => {
+    const entityUpdates = new Subject<UpdatedEntity<Entity>>();
+    const entityMapper = TestBed.inject(EntityMapperService);
+    spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
+    const entity = new Entity();
+    component.records = [entity];
+    component.ngOnInit();
+
+    expect(component.recordsDataSource.data).toEqual([{ record: entity }]);
+
+    entityUpdates.next({ entity: entity, type: "remove" });
+
+    expect(component.recordsDataSource.data).toEqual([]);
   });
 
   it("does not change the size of it's records when not saving a new record", async () => {
     const entity = new Entity();
     component.records = [entity];
-    await component.save({ record: entity }, false);
+    await component.save({ record: entity });
     expect(component.recordsDataSource.data).toHaveSize(1);
+  });
+
+  it("should correctly determine the entity constructor", () => {
+    expect(() => component.getEntityConstructor()).toThrowError();
+
+    const newRecordSpy = jasmine.createSpy().and.returnValue(new Child());
+    component.newRecordFactory = newRecordSpy;
+    expect(component.getEntityConstructor()).toBe(Child);
+    expect(newRecordSpy).toHaveBeenCalled();
+
+    component.newRecordFactory = undefined;
+    component.records = [new Note()];
+    expect(component.getEntityConstructor()).toBe(Note);
   });
 });

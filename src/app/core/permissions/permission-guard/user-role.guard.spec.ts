@@ -1,8 +1,8 @@
 import { TestBed } from "@angular/core/testing";
 
 import { UserRoleGuard } from "./user-role.guard";
-import { SessionService } from "../session/session-service/session.service";
-import { DatabaseUser } from "../session/session-service/local-user";
+import { SessionService } from "../../session/session-service/session.service";
+import { DatabaseUser } from "../../session/session-service/local-user";
 
 describe("UserRoleGuard", () => {
   let guard: UserRoleGuard;

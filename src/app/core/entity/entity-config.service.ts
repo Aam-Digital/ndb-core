@@ -7,7 +7,6 @@ import {
 import { ConfigService } from "../config/config.service";
 import { EntitySchemaField } from "./schema/entity-schema-field";
 import { addPropertySchema } from "./database-field.decorator";
-import { OperationType } from "../permissions/entity-permissions.service";
 import { EntityRegistry } from "./database-entity.decorator";
 
 /**
@@ -81,8 +80,6 @@ export class EntityConfigService {
  * This allows to change entity metadata based on the configuration.
  */
 export interface EntityConfig {
-  permissions?: { [key in OperationType]?: string[] };
-
   /**
    * A list of attributes that will be dynamically added/overwritten to the entity.
    */

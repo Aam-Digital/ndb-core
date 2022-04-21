@@ -146,7 +146,7 @@ export class EntitySchemaService {
     schema?: EntitySchema
   ): any {
     if (!schema) {
-      schema = entity.getConstructor().schema;
+      schema = entity.getSchema();
     }
 
     const data = {};
