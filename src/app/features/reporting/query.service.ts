@@ -10,6 +10,7 @@ import { ChildSchoolRelation } from "../../child-dev-project/children/model/chil
 import { ChildrenService } from "../../child-dev-project/children/children.service";
 import { AttendanceService } from "../../child-dev-project/attendance/attendance.service";
 import { EventAttendance } from "../../child-dev-project/attendance/model/event-attendance";
+import { UpdatedEntity } from "../../core/entity/model/entity-update";
 
 const jsonQuery = require("json-query");
 
@@ -20,14 +21,59 @@ const jsonQuery = require("json-query");
   providedIn: "root",
 })
 export class QueryService {
-  private entities: { [type: string]: { [id: string]: Entity } };
+  private entities: { [type: string]: { [id: string]: Entity } } = {};
   private dataAvailableFrom: Date;
+
+  private entityTypesPrimary: EntityConstructor[] = [
+    Child,
+    School,
+    RecurringActivity,
+    ChildSchoolRelation,
+  ];
+
+  private entityTypesTimebound: [
+    EntityConstructor<any>,
+    (Date) => Promise<Entity[]>
+  ][] = [
+    [Note, (from: Date) => this.childrenService.getNotesInTimespan(from)],
+    [
+      EventNote,
+      (from: Date) => this.attendanceService.getEventsOnDate(from, new Date()),
+    ],
+  ];
 
   constructor(
     private entityMapper: EntityMapperService,
     private childrenService: ChildrenService,
     private attendanceService: AttendanceService
-  ) {}
+  ) {
+    this.initEntityUpdateSubscriptions();
+  }
+
+  private initEntityUpdateSubscriptions() {
+    for (const entityType of [
+      ...this.entityTypesPrimary,
+      ...this.entityTypesTimebound.map((e) => e[0]),
+    ]) {
+      this.entityMapper
+        .receiveUpdates(entityType)
+        .subscribe((u) => this.updateCachedData(u));
+    }
+  }
+
+  private updateCachedData(u: UpdatedEntity<Entity>) {
+    const cachedEntities = this.entities[u.entity.getConstructor().ENTITY_TYPE];
+    if (!cachedEntities) {
+      // type is not cached yet
+      return;
+    }
+
+    if (u.type === "new" || u.type === "update") {
+      cachedEntities[u.entity._id] = u.entity;
+    } else if (u.type === "remove") {
+      delete cachedEntities[u.entity._id];
+    }
+  }
 
   /**
    * Runs the query on the passed data object
@@ -47,9 +93,8 @@ export class QueryService {
     if (from === null) {
       from = new Date(0);
     }
-    if (from < this.dataAvailableFrom || !this.dataAvailableFrom) {
-      await this.loadData(from);
-    }
+
+    await this.loadEntityCacheIfRequired(query, from);
 
     if (!data) {
       data = this.entities;
@@ -75,35 +120,25 @@ export class QueryService {
     }).value;
   }
 
-  private async loadData(from: Date): Promise<void> {
-    const entityClasses: [EntityConstructor<any>, () => Promise<Entity[]>][] = [
-      [Child, () => this.entityMapper.loadType(Child)],
-      [School, () => this.entityMapper.loadType(School)],
-      [RecurringActivity, () => this.entityMapper.loadType(RecurringActivity)],
-      [
-        ChildSchoolRelation,
-        () => this.entityMapper.loadType(ChildSchoolRelation),
-      ],
-      [Note, () => this.childrenService.getNotesInTimespan(from)],
-      [
-        EventNote,
-        () => this.attendanceService.getEventsOnDate(from, new Date()),
-      ],
-    ];
-
-    this.entities = {};
-
-    const dataPromises = [];
-    for (const entityLoader of entityClasses) {
-      const promise = entityLoader[1]().then((loadedEntities) =>
-        this.setEntities(entityLoader[0], loadedEntities)
-      );
-      dataPromises.push(promise);
+  private async loadEntityCacheIfRequired(query: string, from: Date) {
+    if (!this.entities || Object.keys(this.entities).length === 0) {
+      for (const entityType of this.entityTypesPrimary) {
+        const loadedEntities = await this.entityMapper.loadType(entityType);
+        this.setEntities(entityType, loadedEntities);
+      }
     }
 
-    await Promise.all(dataPromises);
+    if (
+      this.entityTypesTimebound.some((t) => query.includes(t[0].ENTITY_TYPE)) &&
+      (from < this.dataAvailableFrom || !this.dataAvailableFrom)
+    ) {
+      for (const entityLoader of this.entityTypesTimebound) {
+        const loadedEntities = await entityLoader[1](from);
+        this.setEntities(entityLoader[0], loadedEntities);
+      }
 
-    this.dataAvailableFrom = from;
+      this.dataAvailableFrom = from;
+    }
   }
 
   private setEntities<T extends Entity>(
