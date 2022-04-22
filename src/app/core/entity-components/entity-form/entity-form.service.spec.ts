@@ -108,7 +108,6 @@ describe("EntityFormService", () => {
       new ChildSchoolRelation()
     );
     const schema = ChildSchoolRelation.schema;
-    console.log("fromGroup", formGroup.getRawValue());
 
     try {
       await service.saveChanges(formGroup, new ChildSchoolRelation());
