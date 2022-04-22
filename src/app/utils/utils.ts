@@ -3,6 +3,8 @@
  * @param date The date to be checked
  */
 import { Router } from "@angular/router";
+import { MessageId, TargetMessage } from "@angular/localize/src/utils";
+import xliff from "xliff";
 
 export function isValidDate(date: any): boolean {
   return (
@@ -88,4 +90,34 @@ export function readFile(file: Blob): Promise<string> {
     );
     fileReader.readAsText(file);
   });
+}
+
+export async function parseTranslationsForLocalize(
+  translations: string
+): Promise<Record<MessageId, TargetMessage>> {
+  const parserResult: any = await xliff.xliff12ToJs(translations);
+  const xliffContent: any = parserResult.resources["ng2.template"];
+
+  return Object.keys(xliffContent).reduce(
+    (result: Record<MessageId, TargetMessage>, current: string) => {
+      if (typeof xliffContent[current].target === "string") {
+        result[current] = xliffContent[current].target;
+      } else if (Array.isArray(xliffContent[current].target)) {
+        result[current] = xliffContent[current].target
+          .map((entry: string | { [key: string]: any }) =>
+            typeof entry === "string"
+              ? entry
+              : "{$" + entry.Standalone["id"] + "}"
+          )
+          .map((entry: string) => entry.replace("{{", "{$").replace("}}", "}"))
+          .join("");
+      } else {
+        console.warn("this is probably an error", xliffContent[current]);
+        result[current] = xliffContent[current].target.Standalone["equiv-text"];
+      }
+
+      return result;
+    },
+    {}
+  );
 }
