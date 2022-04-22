@@ -147,4 +147,8 @@ export class ActivityAttendanceSectionComponent
       forChild: this.forChild,
     });
   }
+
+  getBackgroundColor?: (rec: ActivityAttendance) => string = (
+    rec: ActivityAttendance
+  ) => rec.getColor(this.forChild);
 }

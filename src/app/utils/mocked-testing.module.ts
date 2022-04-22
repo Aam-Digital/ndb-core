@@ -28,7 +28,6 @@ import {
   ViewRegistry,
 } from "../core/view/dynamic-components/dynamic-component.decorator";
 import { RouteRegistry, routesRegistry } from "../app.routing";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { MatNativeDateModule } from "@angular/material/core";
 
 export const TEST_USER = "test";
@@ -52,7 +51,6 @@ export const TEST_PASSWORD = "pass";
     NoopAnimationsModule,
     Angulartics2Module.forRoot(),
     RouterTestingModule,
-    FontAwesomeTestingModule,
     MatNativeDateModule,
   ],
   providers: [
