@@ -76,6 +76,5 @@ describe("RowDetailsComponent", () => {
 
     expect(alertSpy).toHaveBeenCalledWith(message);
     expect(closeSpy).not.toHaveBeenCalled();
-    expect(alertSpy).toHaveBeenCalledWith(message);
   }));
 });
