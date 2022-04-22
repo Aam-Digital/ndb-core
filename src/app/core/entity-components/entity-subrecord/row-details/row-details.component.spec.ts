@@ -68,10 +68,14 @@ describe("RowDetailsComponent", () => {
     spyOn(formService, "saveChanges").and.rejectWith(new Error(message));
     const alertSpy = jasmine.createSpy();
     TestBed.inject(AlertService).addWarning = alertSpy;
+    const closeSpy = jasmine.createSpy();
+    TestBed.inject(MatDialogRef).close = closeSpy;
 
     component.save();
     tick();
 
+    expect(alertSpy).toHaveBeenCalledWith(message);
+    expect(closeSpy).not.toHaveBeenCalled();
     expect(alertSpy).toHaveBeenCalledWith(message);
   }));
 });
