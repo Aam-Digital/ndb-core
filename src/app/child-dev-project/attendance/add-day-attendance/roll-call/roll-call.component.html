@@ -1,17 +1,46 @@
 <!-- Individual Student's Page -->
 <div *ngIf="entries?.length > 0">
+  <div class="attendance-progress-bar">
+    <mat-progress-bar
+      class="filler"
+      mode="determinate"
+      [value]="(currentIndex / entries.length) * 100"
+    ></mat-progress-bar>
+    <div class="progress-label" [style.visibility]="currentIndex < entries.length ? 'visible' : 'hidden'">
+      {{ currentIndex+1 }} / {{ entries.length }}
+    </div>
+  </div>
   <div style="display: flex; flex-direction: row; width: 100%">
     <button mat-icon-button (click)="goToPrevious()" [disabled]="isFirst">
       <fa-icon icon="chevron-left"></fa-icon>
     </button>
-    <div style="flex-grow: 1; place-self: center">
-      <div *ngFor="let entry of entries; let i = index" style="display: flex; place-content: center">
-        <p *ngIf="i === currentIndex">{{i}}</p>
-      </div>
-    </div>
+    <app-child-block [entity]="entries[currentIndex].child" [linkDisabled]="true" style="display: flex; flex-grow: 1; place-content: center"></app-child-block>
     <button mat-icon-button (click)="goToNext()" [disabled]="isFinished">
       <fa-icon icon="chevron-right"></fa-icon>
     </button>
+  </div>
+  <div style="display: flex; position: relative" class="tab-wrapper">
+    <app-roll-call-tab
+      *ngFor="let entry of entries; let i = index"
+      class="tab-body" [class.tab-body-active]="currentIndex === i"
+      [position]="i - currentIndex" >
+      <div
+        class="group-select-option"
+        *ngFor="let option of availableStatus"
+        (click)="markAttendance(option)"
+        [ngClass]="
+        entry.attendance.status.id === option.id
+          ? option.style
+          : ''
+      "
+      >
+        <fa-icon
+          *ngIf="entry.attendance.status.id === option.id"
+          icon="check"
+        ></fa-icon>
+        {{ option.label }}
+      </div>
+    </app-roll-call-tab>
   </div>
 </div>
 

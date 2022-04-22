@@ -61,6 +61,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { ViewModule } from "../../core/view/view.module";
 import { AttendanceSummaryComponent } from "./attendance-summary/attendance-summary.component";
+import { RollCallTabComponent } from "./add-day-attendance/roll-call/roll-call-tab/roll-call-tab.component";
 
 @NgModule({
   declarations: [
@@ -80,6 +81,7 @@ import { AttendanceSummaryComponent } from "./attendance-summary/attendance-summ
     AttendanceWeekDashboardComponent,
     AttendanceManagerComponent,
     AttendanceSummaryComponent,
+    RollCallTabComponent,
   ],
   imports: [
     EntityListModule,

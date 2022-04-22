@@ -1,0 +1,15 @@
+.tab-body {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  display: block;
+  overflow: hidden;
+  flex-basis: 100%;
+}
+
+.tab-body-active {
+  position: relative;
+  flex-grow: 1;
+}
