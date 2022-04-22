@@ -6,7 +6,7 @@
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build --prod",
-    "build-localized": "ng build --configuration=production,localized",
+    "build-localized": "ng build --configuration=production",
     "test": "ng test",
     "test-ci": "ng test --code-coverage --karmaConfig=build/karma-ci.conf.js ",
     "lint": "ng lint ndb-core --type-check",
@@ -18,7 +18,7 @@
     "docs:json": "compodoc -p ./tsconfig.json -e json -d .",
     "storybook": "npm run docs:json && start-storybook -p 6006",
     "build-storybook": "npm run docs:json && build-storybook",
-    "extract-i18n": "ng extract-i18n --output-path ./src/assets/locale/",
+    "extract-i18n": "ng extract-i18n --output-path ./src/assets/locale/ && xliffmerge --profile xliffmerge.json",
     "cypress:open": "e2e open",
     "cypress:run": "e2e run"
   },
