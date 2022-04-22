@@ -20,9 +20,46 @@ import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 
 import { AppModule } from "./app/app.module";
 import { environment } from "./environments/environment";
+import { loadTranslations } from "@angular/localize";
+import { parseTranslationsForLocalize } from "./app/utils/utils";
+import { registerLocaleData } from "@angular/common";
 
 if (environment.production) {
   enableProdMode();
 }
 
-platformBrowserDynamic().bootstrapModule(AppModule);
+const locale = localStorage.getItem("locale") || "en-US";
+
+if (locale !== "en-US") {
+  fetch("/assets/locale/messages." + locale + ".xlf")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("HTTP error " + response.status);
+      }
+      return response.text();
+    })
+    .then((res) => parseTranslationsForLocalize(res))
+    .then(async (json) => {
+      loadTranslations(json);
+      $localize.locale = locale;
+
+      // This is needed for locale-aware components & pipes to work.
+      // Add the required locales to `webpackInclude` to keep the bundle size small
+      const localeModule = await import(
+        /* webpackInclude: /(en-US|fr|de)\.js/ */
+        `@angular/common/locales/${locale}`
+      );
+      registerLocaleData(localeModule.default, locale);
+
+      // Bootstrap app
+      platformBrowserDynamic()
+        .bootstrapModule(AppModule)
+        .catch((err) => console.error(err));
+    })
+    .catch((err) => console.log("error", err));
+} else {
+  // Bootstrap app
+  platformBrowserDynamic()
+    .bootstrapModule(AppModule)
+    .catch((err) => console.error(err));
+}

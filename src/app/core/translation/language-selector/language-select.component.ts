@@ -1,13 +1,9 @@
 import { Component } from "@angular/core";
 import { TranslationService } from "../translation.service";
-import { NavigationEnd, Router } from "@angular/router";
-import { filter } from "rxjs/operators";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Shows a dropdown-menu of available languages
  */
-@UntilDestroy()
 @Component({
   selector: "app-language-select",
   templateUrl: "./language-select.component.html",
@@ -19,30 +15,12 @@ export class LanguageSelectComponent {
    */
   siteRegionCode: string;
 
-  /**
-   * The relative route the user is currently on
-   */
-  currentUrl = "";
-
-  constructor(
-    private translationService: TranslationService,
-    private router: Router
-  ) {
+  constructor(public translationService: TranslationService) {
     this.siteRegionCode = translationService.currentRegionCode();
-    this.router.events
-      .pipe(
-        untilDestroyed(this),
-        filter((event) => event instanceof NavigationEnd)
-      )
-      .subscribe(() => {
-        this.currentUrl = this.router.url;
-      });
   }
 
-  /**
-   * A list of all available languages
-   */
-  get languageList(): { locale: string; regionCode: string }[] {
-    return this.translationService.availableLocales;
+  changeLocale(lang: string) {
+    localStorage.setItem("locale", lang);
+    window.location.reload();
   }
 }

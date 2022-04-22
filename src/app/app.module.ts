@@ -17,7 +17,7 @@
 
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { ErrorHandler, NgModule } from "@angular/core";
+import { ErrorHandler, LOCALE_ID, NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 
@@ -158,6 +158,7 @@ import { DemoPermissionGeneratorService } from "./core/permissions/demo-permissi
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
     { provide: MatPaginatorIntl, useValue: TranslatableMatPaginator() },
     { provide: RouteRegistry, useValue: routesRegistry },
+    { provide: LOCALE_ID, useValue: localStorage.getItem("locale") || "en-US" },
     AnalyticsService,
     Angulartics2Matomo,
   ],
