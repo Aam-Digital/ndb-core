@@ -100,22 +100,20 @@ export async function parseTranslationsForLocalize(
 
   return Object.keys(xliffContent).reduce(
     (result: Record<MessageId, TargetMessage>, current: string) => {
-      if (typeof xliffContent[current].target === "string") {
-        result[current] = xliffContent[current].target;
-      } else if (Array.isArray(xliffContent[current].target)) {
-        result[current] = xliffContent[current].target
-          .map((entry: string | { [key: string]: any }) =>
-            typeof entry === "string"
-              ? entry
-              : "{$" + entry.Standalone["id"] + "}"
+      const translation = xliffContent[current].target;
+      if (typeof translation === "string") {
+        result[current] = translation;
+      } else if (Array.isArray(translation)) {
+        result[current] = translation
+          .map((entry) =>
+            typeof entry === "string" ? entry : `{{${entry.Standalone.id}}}`
           )
           .map((entry: string) => entry.replace("{{", "{$").replace("}}", "}"))
           .join("");
       } else {
         console.warn("this is probably an error", xliffContent[current]);
-        result[current] = xliffContent[current].target.Standalone["equiv-text"];
+        result[current] = translation.Standalone["equiv-text"];
       }
-
       return result;
     },
     {}

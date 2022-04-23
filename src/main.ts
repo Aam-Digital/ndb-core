@@ -31,14 +31,15 @@ if (environment.production) {
 const locale = localStorage.getItem("locale") || "en-US";
 
 if (locale !== "en-US") {
-  fetch("/assets/locale/messages." + locale + ".xlf")
+  // fetch("/assets/locale/messages." + locale + ".xlf")
+  fetch("/assets/locale/messages.json")
     .then((response) => {
       if (!response.ok) {
         throw new Error("HTTP error " + response.status);
       }
-      return response.text();
+      return response.json().then((res) => res.translations);
     })
-    .then((res) => parseTranslationsForLocalize(res))
+    // .then((res) => parseTranslationsForLocalize(res))
     .then(async (json) => {
       loadTranslations(json);
       $localize.locale = locale;

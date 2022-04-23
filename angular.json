@@ -75,7 +75,8 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "ndb-core:build"
+            "browserTarget": "ndb-core:build",
+            "format": "json"
           }
         },
         "test": {
