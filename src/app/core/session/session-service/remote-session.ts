@@ -31,6 +31,7 @@ import { LoggingService } from "../../logging/logging.service";
  */
 @Injectable()
 export class RemoteSession extends SessionService {
+  static readonly LAST_LOGIN_KEY = "LAST_REMOTE_LOGIN";
   // See https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
   readonly UNAUTHORIZED_STATUS_CODE = 401;
   /** remote (!) PouchDB  */
@@ -68,6 +69,10 @@ export class RemoteSession extends SessionService {
         )
         .toPromise();
       this.assignDatabaseUser(response);
+      localStorage.setItem(
+        RemoteSession.LAST_LOGIN_KEY,
+        new Date().toISOString()
+      );
       this.loginState.next(LoginState.LOGGED_IN);
     } catch (error) {
       const httpError = error as HttpErrorResponse;

@@ -79,6 +79,11 @@ export const defaultJsonConfig = {
         "name": $localize`:Menu item:Help`,
         "icon": "question",
         "link": "/help"
+      },
+      {
+        "name": "Support",
+        "icon": "question",
+        "link": "/support"
       }
     ]
   },
@@ -202,6 +207,9 @@ export const defaultJsonConfig = {
   },
   "view:user": {
     "component": "UserAccount"
+  },
+  "view:support": {
+    "component": "Support"
   },
   "view:note": {
     "component": "NotesManager",

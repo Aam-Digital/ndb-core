@@ -1,0 +1,11 @@
+<p>support works!</p>
+<div>
+  <p>Username: {{ currentUser.name }}</p>
+  <p>Device info: {{ userAgent }}</p>
+  <p>Current sync state: {{ currentSyncState }}</p>
+  <p>Last sync: {{ lastSync }}</p>
+  <p>Last remote login: {{ lastRemoteLogin }}</p>
+  <p>Service Worker available: {{ swStatus }}</p>
+  <button mat-button (click)="sendReport()">Send</button>
+  <button mat-button (click)="resetApplication()">Reset Application</button>
+</div>
