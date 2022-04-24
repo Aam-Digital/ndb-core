@@ -17,12 +17,13 @@
 
 import { DatabaseIndexingService } from "./database-indexing.service";
 import { Database } from "../../database/database";
-import { take } from "rxjs/operators";
 import { EntitySchemaService } from "../schema/entity-schema.service";
+import { expectObservable } from "../../../test-utils/observable-utils";
 import { fakeAsync, flush, tick } from "@angular/core/testing";
 import { SessionService } from "../../session/session-service/session.service";
 import { BehaviorSubject } from "rxjs";
 import { LoginState } from "../../session/session-states/login-state.enum";
+import { take } from "rxjs/operators";
 
 describe("DatabaseIndexingService", () => {
   let service: DatabaseIndexingService;
@@ -88,13 +89,11 @@ describe("DatabaseIndexingService", () => {
     );
 
     // initially no registered indices
-    expect(await service.indicesRegistered.pipe(take(1)).toPromise()).toEqual(
-      []
-    );
+    await expectObservable(service.indicesRegistered).first.toBeResolvedTo([]);
 
     // calling `createIndex` triggers a pending index state immediately
     const indexCreationPromise = service.createIndex(testDesignDoc);
-    expect(await service.indicesRegistered.pipe(take(1)).toPromise()).toEqual([
+    await expectObservable(service.indicesRegistered).first.toBeResolvedTo([
       {
         title: "Preparing data (Indexing)",
         details: testIndexName,
@@ -105,7 +104,7 @@ describe("DatabaseIndexingService", () => {
 
     // after the index creation is done, registered indices are updated
     await indexCreationPromise;
-    expect(await service.indicesRegistered.pipe(take(1)).toPromise()).toEqual([
+    await expectObservable(service.indicesRegistered).first.toBeResolvedTo([
       {
         title: "Preparing data (Indexing)",
         details: testIndexName,
@@ -125,13 +124,12 @@ describe("DatabaseIndexingService", () => {
     };
     const testErr = { msg: "error" };
     mockDb.saveDatabaseIndex.and.callFake(
-      () =>
-        new Promise((resolve, reject) => setTimeout(() => reject(testErr), 1))
+      () => new Promise((_, reject) => setTimeout(() => reject(testErr), 1))
     );
 
     // calling `createIndex` triggers a pending index state immediately
     const indexCreationPromise = service.createIndex(testDesignDoc);
-    expect(await service.indicesRegistered.pipe(take(1)).toPromise()).toEqual([
+    await expectObservable(service.indicesRegistered).first.toBeResolvedTo([
       {
         title: "Preparing data (Indexing)",
         details: testIndexName,
@@ -142,7 +140,7 @@ describe("DatabaseIndexingService", () => {
 
     // after the index creation failed, registered indices are updated with error state
     await expectAsync(indexCreationPromise).toBeRejectedWith(testErr);
-    expect(await service.indicesRegistered.pipe(take(1)).toPromise()).toEqual([
+    await expectObservable(service.indicesRegistered).first.toBeResolvedTo([
       {
         title: "Preparing data (Indexing)",
         details: testIndexName,

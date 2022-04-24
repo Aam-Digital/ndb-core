@@ -151,7 +151,7 @@ describe("EntitySelectComponent", () => {
   it("does not add anything if a new entity doesn't match", () => {
     component.allEntities = testUsers;
     component.select({ input: null, value: "ZZ" });
-    expect(component.selectedEntities).toEqual([]);
+    expect(component.selectedEntities).toBeEmpty();
   });
 
   it("autocompletes with the default accessor", (done) => {

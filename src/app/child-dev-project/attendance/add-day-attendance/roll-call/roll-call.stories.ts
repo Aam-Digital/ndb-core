@@ -5,8 +5,9 @@ import { moduleMetadata } from "@storybook/angular";
 import { Note } from "../../../notes/model/note";
 import { AttendanceModule } from "../../attendance.module";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
-import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { LoginState } from "../../../../core/session/session-states/login-state.enum";
+import { mockEntityMapper } from "../../../../core/entity/mock-entity-mapper-service";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { ChildrenService } from "../../../children/children.service";
 
 const demoEvent = Note.create(new Date(), "coaching");
 const demoChildren = [
@@ -14,17 +15,23 @@ const demoChildren = [
   DemoChildGenerator.generateEntity("2"),
   DemoChildGenerator.generateEntity("3"),
 ];
-demoChildren.forEach((c) => demoEvent.addChild(c.getId()));
+demoChildren.forEach((c) => demoEvent.addChild(c));
 
 export default {
   title: "Attendance/Views/RollCall",
   component: RollCallComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        AttendanceModule,
-        StorybookBaseModule,
-        MockedTestingModule.withState(LoginState.LOGGED_IN, demoChildren),
+      imports: [StorybookBaseModule, AttendanceModule],
+      providers: [
+        {
+          provide: EntityMapperService,
+          useValue: mockEntityMapper(demoChildren),
+        },
+        {
+          provide: ChildrenService,
+          useValue: {},
+        },
       ],
     }),
   ],

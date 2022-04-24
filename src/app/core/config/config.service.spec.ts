@@ -55,7 +55,7 @@ describe("ConfigService", () => {
     service.loadConfig();
     tick();
     const result = service.getAllConfigs<any>("test:");
-    expect(result.length).toBe(2);
+    expect(result).toHaveSize(2);
     expect(result).toContain({ name: "first", _id: "test:1" });
     expect(result).toContain({ name: "second", _id: "test:2" });
     expect(result).not.toContain({ name: "wrong", _id: "other:1" });

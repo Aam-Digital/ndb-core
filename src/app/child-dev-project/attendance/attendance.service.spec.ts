@@ -112,7 +112,7 @@ describe("AttendanceService", () => {
 
   it("gets empty array for a date without events", async () => {
     const actualEvents = await service.getEventsOnDate(new Date("2007-01-01"));
-    expect(actualEvents).toEqual([]);
+    expect(actualEvents).toBeEmpty();
   });
 
   it("gets events and loads additional participants from linked schools", async () => {
@@ -137,8 +137,10 @@ describe("AttendanceService", () => {
     await entityMapper.save(testNoteWithSchool);
 
     const actualEvents = await service.getEventsOnDate(new Date("2021-01-01"));
-    expect(actualEvents.length).toBe(1);
-    expect(actualEvents[0].children.sort()).toEqual(["1", "2", "3"].sort());
+    expect(actualEvents).toHaveSize(1);
+    expect(actualEvents[0].children).toEqual(
+      jasmine.arrayWithExactContents(["1", "2", "3"])
+    );
   });
 
   it("gets events for an activity", async () => {
@@ -149,7 +151,7 @@ describe("AttendanceService", () => {
   it("getActivityAttendances creates record for each month when there is at least one event", async () => {
     const actualAttendances = await service.getActivityAttendances(activity1);
 
-    expect(actualAttendances.length).toBe(2);
+    expect(actualAttendances).toHaveSize(2);
 
     expect(
       moment(actualAttendances[0].periodFrom).isSame(
@@ -176,7 +178,7 @@ describe("AttendanceService", () => {
       new Date("2020-01-05")
     );
 
-    expect(actualAttendences.length).toBe(2);
+    expect(actualAttendences).toHaveSize(2);
     expectEntitiesToMatch(
       actualAttendences.find((t) => t.activity._id === activity1._id).events,
       [e1_1, e1_2]
@@ -186,10 +188,10 @@ describe("AttendanceService", () => {
       [e2_1]
     );
 
-    expect(actualAttendences[0].periodFrom).toEqual(new Date("2020-01-01"));
-    expect(actualAttendences[0].periodTo).toEqual(new Date("2020-01-05"));
-    expect(actualAttendences[1].periodFrom).toEqual(new Date("2020-01-01"));
-    expect(actualAttendences[1].periodTo).toEqual(new Date("2020-01-05"));
+    expect(actualAttendences[0].periodFrom).toBeDate("2020-01-01");
+    expect(actualAttendences[0].periodTo).toBeDate("2020-01-05");
+    expect(actualAttendences[1].periodFrom).toBeDate("2020-01-01");
+    expect(actualAttendences[1].periodTo).toBeDate("2020-01-05");
   });
 
   it("getActivitiesForChild gets all existing RecurringActivities where it is a participant", async () => {

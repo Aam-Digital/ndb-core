@@ -19,6 +19,7 @@ import { LoginState } from "../../../../core/session/session-states/login-state.
 import { SimpleChange } from "@angular/core";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { ChildrenService } from "../../../children/children.service";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 const PRESENT = {
   id: "PRESENT",
@@ -68,6 +69,7 @@ describe("RollCallComponent", () => {
             participant2,
             participant3,
           ]),
+          FontAwesomeTestingModule,
         ],
         providers: [
           { provide: ConfigService, useValue: mockConfigService },
@@ -129,7 +131,7 @@ describe("RollCallComponent", () => {
     tick();
 
     component.markAttendance(PRESENT);
-    component.goToNext();
+    tick(1000);
     component.markAttendance(ABSENT);
 
     expect(note.getAttendance(participant1.getId()).status).toEqual(PRESENT);
@@ -209,6 +211,23 @@ describe("RollCallComponent", () => {
     expect(component.currentChild).toBe(participant2);
     expect(component.currentIndex).toBe(1);
   });
+
+  it("should not allow to mark attendance again while transition to next participant is in progress", fakeAsync(() => {
+    component.eventEntity.addChild(participant1);
+    component.eventEntity.addChild(participant2);
+    component.ngOnChanges(dummyChanges);
+    tick();
+
+    expect(component.currentIndex).toBe(0);
+    component.markAttendance(PRESENT);
+    component.markAttendance(PRESENT);
+    tick(1000);
+
+    expect(component.currentIndex).toBe(1);
+    component.markAttendance(ABSENT);
+    tick(1000);
+    expect(component.currentIndex).toBe(2);
+  }));
 
   it("should not sort participants without sortParticipantsBy configured", fakeAsync(() => {
     participant1.name = "Zoey";
