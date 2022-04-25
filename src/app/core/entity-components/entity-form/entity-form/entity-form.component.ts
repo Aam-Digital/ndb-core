@@ -5,11 +5,6 @@ import { FormGroup } from "@angular/forms";
 import { EntityFormService } from "../entity-form.service";
 import { AlertService } from "../../../alerts/alert.service";
 
-@Component({
-  selector: "app-entity-form",
-  templateUrl: "./entity-form.component.html",
-  styleUrls: ["./entity-form.component.scss"],
-})
 /**
  * A general purpose form component for displaying and editing entities.
  * It uses the FormFieldConfig interface for building the form fields but missing information are also fetched from
@@ -19,6 +14,11 @@ import { AlertService } from "../../../alerts/alert.service";
  * This component can be used directly or in a popup.
  * Inside the entity details component use the FormComponent which is registered as dynamic component.
  */
+@Component({
+  selector: "app-entity-form",
+  templateUrl: "./entity-form.component.html",
+  styleUrls: ["./entity-form.component.scss"],
+})
 export class EntityFormComponent implements OnInit {
   /**
    * The entity which should be displayed and edited

@@ -14,7 +14,6 @@ import memory from "pouchdb-adapter-memory";
 import { Database } from "../database/database";
 import { PouchDatabase } from "../database/pouch-database";
 
-@Injectable()
 /**
  * This service handles everything related to the demo-mode
  *  - Register users (demo and demo-admin)
@@ -22,6 +21,7 @@ import { PouchDatabase } from "../database/pouch-database";
  *  - Automatically login user (demo)
  *  - Synchronizes (local) databases of different users in the same browser
  */
+@Injectable()
 export class DemoDataInitializerService {
   private liveSyncHandle: PouchDB.Replication.Sync<any>;
   private pouchDatabase: PouchDatabase;
