@@ -1,10 +1,11 @@
 import { Injectable } from "@angular/core";
-import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { MatDialog } from "@angular/material/dialog";
 import {
   ConfirmationDialogButton,
   ConfirmationDialogComponent,
   YesNoButtons,
 } from "./confirmation-dialog/confirmation-dialog.component";
+import { map } from "rxjs/operators";
 
 /**
  * Inject this service instead of MatDialog if you need a simple, configurable confirmation dialog box
@@ -31,23 +32,25 @@ export class ConfirmationDialogService {
    * @param buttons The buttons to show. Defaults to 'yes' and 'no', but can be
    * arbitrary
    * @param closeButton Whether a single icon-button with an 'x' is shown to the user
-   * @return The reference to the opened MatDialog.
-   *          You can use this to control the dialog or subscribe to its result:
-   *          (`ref.afterClosed().subscribe(confirmed => myAction(confirmed));`
+   * @returns promise that resolves to true if the user confirmed and false otherwise`
    */
   openDialog(
     title: string,
     text: string,
     buttons: ConfirmationDialogButton[] = YesNoButtons,
     closeButton = true
-  ): MatDialogRef<ConfirmationDialogComponent> {
-    return this.dialog.open(ConfirmationDialogComponent, {
-      data: {
-        title: title,
-        text: text,
-        buttons: buttons,
-        closeButton: closeButton,
-      },
-    });
+  ): Promise<boolean> {
+    return this.dialog
+      .open(ConfirmationDialogComponent, {
+        data: {
+          title: title,
+          text: text,
+          buttons: buttons,
+          closeButton: closeButton,
+        },
+      })
+      .afterClosed()
+      .pipe(map((choice) => !!choice))
+      .toPromise();
   }
 }

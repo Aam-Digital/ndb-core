@@ -90,22 +90,19 @@ export class EntityRemoveService {
     const dialogText =
       textOptions?.dialogText ||
       $localize`:Delete confirmation text:Are you sure you want to delete this ${entity.getType()}?`;
-    const dialogRef = this.confirmationDialog.openDialog(
-      dialogTitle,
-      dialogText
-    );
-
-    dialogRef.afterClosed().subscribe(async (confirmed) => {
-      if (confirmed) {
-        const snackBarTitle =
-          textOptions?.deletedEntityInformation ||
-          $localize`:Deleted Entity information:Deleted Entity ${entity.toString()}`;
-        await this.removeEntityAndOpenSnackBar(entity, snackBarTitle, subject);
-      } else {
-        subject.next(RemoveResult.CANCELLED);
-        subject.complete();
-      }
-    });
+    this.confirmationDialog
+      .openDialog(dialogTitle, dialogText)
+      .then((confirmed) => {
+        if (confirmed) {
+          const snackBarTitle =
+            textOptions?.deletedEntityInformation ||
+            $localize`:Deleted Entity information:Deleted Entity ${entity.toString()}`;
+          this.removeEntityAndOpenSnackBar(entity, snackBarTitle, subject);
+        } else {
+          subject.next(RemoveResult.CANCELLED);
+          subject.complete();
+        }
+      });
     return subject.asObservable();
   }
 

@@ -3,7 +3,6 @@ import { DataImportService } from "./data-import.service";
 import { Database } from "../../core/database/database";
 import { ConfirmationDialogService } from "../../core/confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar, MatSnackBarRef } from "@angular/material/snack-bar";
-import { MatDialogRef } from "@angular/material/dialog";
 import { NEVER, of } from "rxjs";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { Papa, ParseResult } from "ngx-papaparse";
@@ -18,11 +17,20 @@ import { ChildrenModule } from "../../child-dev-project/children/children.module
 describe("DataImportService", () => {
   let db: Database;
   let service: DataImportService;
+  let mockConfirmationService: jasmine.SpyObj<ConfirmationDialogService>;
 
   beforeEach(
     waitForAsync(() => {
+      mockConfirmationService = jasmine.createSpyObj(["openDialog"]);
+      mockConfirmationService.openDialog.and.resolveTo(true);
       TestBed.configureTestingModule({
         imports: [DataImportModule, DatabaseTestingModule, ChildrenModule],
+        providers: [
+          {
+            provide: ConfirmationDialogService,
+            useValue: mockConfirmationService,
+          },
+        ],
       });
       service = TestBed.inject(DataImportService);
       db = TestBed.inject(Database);
@@ -67,7 +75,6 @@ describe("DataImportService", () => {
     await db.put(doc1);
     await db.put(doc2);
     mockFileReader();
-    mockDialog(true);
     mockSnackbar(true);
     const importMeta: ImportMetaData = {
       entityType: "Child",
@@ -88,7 +95,6 @@ describe("DataImportService", () => {
   });
 
   it("should use the passed component map to create the entity", async () => {
-    mockDialog();
     const birthday1 = moment().subtract("10", "years");
     const birthday2 = moment().subtract("12", "years");
     const csvData = {
@@ -137,7 +143,6 @@ describe("DataImportService", () => {
   });
 
   it("should delete existing records and prepend the transactionID to ID's of the newly uploaded entities", async () => {
-    mockDialog();
     const csvData = {
       meta: { fields: ["Name"] },
       data: [{ Name: "test1" }, { Name: "test2" }],
@@ -167,7 +172,6 @@ describe("DataImportService", () => {
   });
 
   it("should use the provided date format to parse dates", async () => {
-    mockDialog();
     const csvData = {
       meta: { fields: ["ID", "Birthday"] },
       data: [
@@ -191,7 +195,6 @@ describe("DataImportService", () => {
   });
 
   it("should import csv file and generate searchIndices", async () => {
-    mockDialog();
     spyOn(db, "put");
     const csvData = {
       meta: { fields: ["ID", "Birthday"] },
@@ -223,19 +226,6 @@ describe("DataImportService", () => {
     // mock FileReader constructor
     spyOn(window, "FileReader").and.returnValue(fileReader);
     return fileReader;
-  }
-
-  function mockDialog(
-    confirm: boolean = true
-  ): jasmine.SpyObj<MatDialogRef<any>> {
-    const mockDialogRef = jasmine.createSpyObj<MatDialogRef<any>>(
-      "mockDialogRef",
-      ["afterClosed"]
-    );
-    mockDialogRef.afterClosed.and.returnValue(of(confirm));
-    const confirmationDialog = TestBed.inject(ConfirmationDialogService);
-    spyOn(confirmationDialog, "openDialog").and.returnValue(mockDialogRef);
-    return mockDialogRef;
   }
 
   function mockSnackbar(clicked: boolean): jasmine.SpyObj<MatSnackBarRef<any>> {

@@ -62,14 +62,9 @@ export class FormDialogService {
             $localize`:Save changes header:Save Changes?`,
             $localize`:Save changes message:Do you want to save the changes you made to the record?`
           )
-          .afterClosed()
-          .subscribe((confirmed) => {
-            if (confirmed) {
-              dialogWrapper.save();
-            } else {
-              dialogWrapper.cancel();
-            }
-          });
+          .then((confirmed) =>
+            confirmed ? dialogWrapper.save() : dialogWrapper.cancel()
+          );
       }
     });
 

@@ -11,8 +11,6 @@ import { BackupService } from "../services/backup.service";
 import { AppConfig } from "../../app-config/app-config";
 import { ConfigService } from "../../config/config.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
-import { of } from "rxjs";
-import { MatDialogRef } from "@angular/material/dialog";
 import { SessionType } from "../../session/session-type";
 import { AdminModule } from "../admin.module";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
@@ -21,17 +19,19 @@ describe("AdminComponent", () => {
   let component: AdminComponent;
   let fixture: ComponentFixture<AdminComponent>;
 
-  const mockConfigService: jasmine.SpyObj<ConfigService> = jasmine.createSpyObj(
-    ConfigService,
-    ["exportConfig", "saveConfig", "loadConfig"]
-  );
-  const mockBackupService: jasmine.SpyObj<BackupService> = jasmine.createSpyObj(
-    BackupService,
-    ["getJsonExport", "getCsvExport", "clearDatabase", "importJson"]
-  );
+  const mockConfigService = jasmine.createSpyObj<ConfigService>([
+    "exportConfig",
+    "saveConfig",
+    "loadConfig",
+  ]);
+  const mockBackupService = jasmine.createSpyObj<BackupService>([
+    "getJsonExport",
+    "getCsvExport",
+    "clearDatabase",
+    "importJson",
+  ]);
 
-  const confirmationDialogMock: jasmine.SpyObj<ConfirmationDialogService> = jasmine.createSpyObj(
-    ConfirmationDialogService,
+  const confirmationDialogMock = jasmine.createSpyObj<ConfirmationDialogService>(
     ["openDialog"]
   );
 
@@ -51,15 +51,6 @@ describe("AdminComponent", () => {
     // mock FileReader constructor
     spyOn(window, "FileReader").and.returnValue(mockFileReader);
     return mockFileReader;
-  }
-
-  function createDialogMock(): jasmine.SpyObj<MatDialogRef<any>> {
-    const mockDialogRef: jasmine.SpyObj<
-      MatDialogRef<any>
-    > = jasmine.createSpyObj("mockDialogRef", ["afterClosed"]);
-    mockDialogRef.afterClosed.and.returnValue(of(true));
-    confirmationDialogMock.openDialog.and.returnValue(mockDialogRef);
-    return mockDialogRef;
   }
 
   beforeEach(
@@ -99,7 +90,7 @@ describe("AdminComponent", () => {
 
   it("should call backup service for json export", fakeAsync(() => {
     spyOn(document, "createElement").and.callFake(() => tmplink);
-    mockBackupService.getJsonExport.and.returnValue(Promise.resolve(""));
+    mockBackupService.getJsonExport.and.resolveTo("");
     component.saveBackup();
     expect(mockBackupService.getJsonExport).toHaveBeenCalled();
     tick();
@@ -108,7 +99,7 @@ describe("AdminComponent", () => {
 
   it("should call backup service for csv export", fakeAsync(() => {
     spyOn(document, "createElement").and.returnValue(tmplink);
-    mockBackupService.getCsvExport.and.returnValue(Promise.resolve(""));
+    mockBackupService.getCsvExport.and.resolveTo("");
     component.saveCsvExport();
     expect(mockBackupService.getCsvExport).toHaveBeenCalled();
     tick();
@@ -125,7 +116,7 @@ describe("AdminComponent", () => {
 
   it("should save and apply new configuration", fakeAsync(() => {
     const mockFileReader = createFileReaderMock("{}");
-    mockConfigService.saveConfig.and.returnValue(Promise.resolve(null));
+    mockConfigService.saveConfig.and.resolveTo(null);
     component.uploadConfigFile({ target: { files: [] } } as any);
     tick();
     expect(mockFileReader.readAsText).toHaveBeenCalled();
@@ -134,8 +125,8 @@ describe("AdminComponent", () => {
 
   it("should open dialog and call backup service when loading backup", fakeAsync(() => {
     const mockFileReader = createFileReaderMock("[]");
-    mockBackupService.getJsonExport.and.returnValue(Promise.resolve("[]"));
-    createDialogMock();
+    mockBackupService.getJsonExport.and.resolveTo("[]");
+    confirmationDialogMock.openDialog.and.resolveTo(true);
 
     component.loadBackup({ target: { files: [] } } as any);
     expect(mockBackupService.getJsonExport).toHaveBeenCalled();
@@ -148,8 +139,8 @@ describe("AdminComponent", () => {
   }));
 
   it("should open dialog when clearing database", fakeAsync(() => {
-    mockBackupService.getJsonExport.and.returnValue(Promise.resolve(""));
-    createDialogMock();
+    mockBackupService.getJsonExport.and.resolveTo("");
+    confirmationDialogMock.openDialog.and.resolveTo(true);
 
     component.clearDatabase();
     expect(mockBackupService.getJsonExport).toHaveBeenCalled();
