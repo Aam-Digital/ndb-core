@@ -1,16 +1,49 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { SupportComponent } from './support.component';
+import { SupportComponent } from "./support.component";
+import { SupportModule } from "../support.module";
+import { SessionService } from "../../session/session-service/session.service";
+import { BehaviorSubject, of } from "rxjs";
+import { SyncState } from "../../session/session-states/sync-state.enum";
+import { SwUpdate } from "@angular/service-worker";
+import { Database } from "../../database/database";
+import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
+import { TEST_USER } from "../../../utils/mocked-testing.module";
+import { RemoteSession } from "../../session/session-service/remote-session";
+import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 
-describe('SupportComponent', () => {
+describe("SupportComponent", () => {
   let component: SupportComponent;
   let fixture: ComponentFixture<SupportComponent>;
+  const testUser = { name: TEST_USER, roles: [] };
+  let mockSessionService: jasmine.SpyObj<SessionService>;
+  let mockSW = { isEnabled: false };
+  let mockDB: jasmine.SpyObj<Database>;
+  let mockWindow = {
+    navigator: {
+      userAgent: "mock user agent",
+      serviceWorker: { getRegistrations: () => [] },
+    },
+  };
+  let mockLocation: jasmine.SpyObj<Location>;
 
   beforeEach(async () => {
+    mockSessionService = jasmine.createSpyObj(["getCurrentUser"], {
+      syncState: new BehaviorSubject(SyncState.UNSYNCED),
+    });
+    mockSessionService.getCurrentUser.and.returnValue(testUser);
+    mockDB = jasmine.createSpyObj(["destroy"]);
+    mockLocation = jasmine.createSpyObj(["reload"]);
     await TestBed.configureTestingModule({
-      declarations: [ SupportComponent ]
-    })
-    .compileComponents();
+      imports: [SupportModule],
+      providers: [
+        { provide: SessionService, useValue: mockSessionService },
+        { provide: SwUpdate, useValue: mockSW },
+        { provide: Database, useValue: mockDB },
+        { provide: WINDOW_TOKEN, useValue: mockWindow },
+        { provide: LOCATION_TOKEN, useValue: mockLocation },
+      ],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +52,48 @@ describe('SupportComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should initialize application information", () => {
+    expect(component.currentUser).toBe(testUser);
+    expect(component.currentSyncState).toBe("unsynced");
+    expect(component.lastSync).toBe("never");
+    expect(component.lastRemoteLogin).toBe("never");
+    expect(component.swStatus).toBe("not enabled");
+    expect(component.userAgent).toBe("mock user agent");
+  });
+
+  it("should correctly read sync and remote login status from local storage", () => {
+    const lastSync = new Date("2022-01-01").toISOString();
+    localStorage.setItem(SupportComponent.LAST_SYNC_KEY, lastSync);
+    const lastRemoteLogin = new Date("2022-01-02").toISOString();
+    localStorage.setItem(RemoteSession.LAST_LOGIN_KEY, lastRemoteLogin);
+
+    component.ngOnInit();
+
+    expect(component.lastSync).toBe(lastSync);
+    expect(component.lastRemoteLogin).toBe(lastRemoteLogin);
+    localStorage.clear();
+  });
+
+  it("should reset the application after confirmation", async () => {
+    const confirmationDialog = TestBed.inject(ConfirmationDialogService);
+    spyOn(confirmationDialog, "openDialog").and.returnValue({
+      afterClosed: () => of(true),
+    } as any);
+    localStorage.setItem("someItem", "someValue");
+    const unregisterSpy = jasmine.createSpy();
+    mockWindow.navigator.serviceWorker.getRegistrations = () => [
+      { unregister: unregisterSpy },
+    ];
+
+    await component.resetApplication();
+
+    expect(mockDB.destroy).toHaveBeenCalled();
+    expect(unregisterSpy).toHaveBeenCalled();
+    expect(localStorage.getItem("someItem")).toBeNull();
+    expect(mockLocation.reload).toHaveBeenCalled();
   });
 });

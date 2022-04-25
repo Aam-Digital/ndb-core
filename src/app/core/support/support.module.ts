@@ -5,10 +5,11 @@ import { MatButtonModule } from "@angular/material/button";
 import { SessionService } from "../session/session-service/session.service";
 import { filter } from "rxjs/operators";
 import { SyncState } from "../session/session-states/sync-state.enum";
+import { ConfirmationDialogModule } from "../confirmation-dialog/confirmation-dialog.module";
 
 @NgModule({
   declarations: [SupportComponent],
-  imports: [CommonModule, MatButtonModule],
+  imports: [CommonModule, MatButtonModule, ConfirmationDialogModule],
   exports: [SupportComponent],
 })
 export class SupportModule {
