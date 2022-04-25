@@ -24,7 +24,6 @@ import { Injectable } from "@angular/core";
 import { fromEvent, Observable } from "rxjs";
 import { filter, map } from "rxjs/operators";
 
-@Injectable()
 /**
  * Wrapper for a PouchDB instance to decouple the code from
  * that external library.
@@ -32,6 +31,7 @@ import { filter, map } from "rxjs/operators";
  * Additional convenience functions on top of the PouchDB API
  * should be implemented in the abstract {@link Database}.
  */
+@Injectable()
 export class PouchDatabase extends Database {
   /**
    * Small helper function which creates a database with in-memory PouchDB initialized
