@@ -6,10 +6,16 @@ import { SessionService } from "../session/session-service/session.service";
 import { filter } from "rxjs/operators";
 import { SyncState } from "../session/session-states/sync-state.enum";
 import { ConfirmationDialogModule } from "../confirmation-dialog/confirmation-dialog.module";
+import { FlexModule } from "@angular/flex-layout";
 
 @NgModule({
   declarations: [SupportComponent],
-  imports: [CommonModule, MatButtonModule, ConfirmationDialogModule],
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    ConfirmationDialogModule,
+    FlexModule,
+  ],
   exports: [SupportComponent],
 })
 export class SupportModule {

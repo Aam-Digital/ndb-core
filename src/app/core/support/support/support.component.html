@@ -1,11 +1,21 @@
-<h1>Support Panel</h1>
-<div>
-  <p i18n="status">Username: {{ currentUser.name }}</p>
-  <p i18n="status">Device info: {{ userAgent }}</p>
-  <p i18n="status">Current sync state: {{ currentSyncState }}</p>
-  <p i18n="status">Last sync: {{ lastSync }}</p>
-  <p i18n="status">Last remote login: {{ lastRemoteLogin }}</p>
-  <p i18n="status">Service Worker: {{ swStatus }}</p>
-  <button mat-raised-button (click)="sendReport()" i18n="button label">Send</button>
-  <button mat-raised-button (click)="resetApplication()" i18n="button label">Reset Application</button>
+<h1>Technical User Support Details</h1>
+
+<div fxLayout="column" fxLayoutGap="32px">
+  <div fxFlex>
+    <em>The following details of your device and app can help the user support troubleshoot when you are having technical issues.</em>
+  </div>
+
+  <div fxFlex class="tech-details">
+    <p i18n="status">Username: {{ currentUser.name }}</p>
+    <p i18n="status">Device info: {{ userAgent }}</p>
+    <p i18n="status">Current sync state: {{ currentSyncState }}</p>
+    <p i18n="status">Last sync: {{ lastSync }}</p>
+    <p i18n="status">Last remote login: {{ lastRemoteLogin }}</p>
+    <p i18n="status">Service Worker: {{ swStatus }}</p>
+    <button mat-raised-button (click)="sendReport()" i18n="button label" class="button">Send Details</button>
+  </div>
+
+  <div fxFlex>
+    <button mat-raised-button color="warn" (click)="resetApplication()" i18n="button label" class="button">Reset Application</button>
+  </div>
 </div>
