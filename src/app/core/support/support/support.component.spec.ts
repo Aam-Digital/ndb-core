@@ -80,7 +80,7 @@ describe("SupportComponent", () => {
 
   it("should reset the application after confirmation", async () => {
     const confirmationDialog = TestBed.inject(ConfirmationDialogService);
-    spyOn(confirmationDialog, "openDialog").and.returnValue({
+    spyOn(confirmationDialog, "getConfirmation").and.returnValue({
       afterClosed: () => of(true),
     } as any);
     localStorage.setItem("someItem", "someValue");

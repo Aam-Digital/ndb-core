@@ -46,33 +46,31 @@ export class SupportComponent implements OnInit {
   private initCurrentSyncState() {
     switch (this.sessionService.syncState.value) {
       case SyncState.COMPLETED:
-        this.currentSyncState = $localize`:status|something is synced:synced`;
+        this.currentSyncState = "synced";
         return;
       case SyncState.STARTED:
-        this.currentSyncState = $localize`:status|something is progress:in progress`;
+        this.currentSyncState = "in progress";
         return;
       default:
-        this.currentSyncState = $localize`:status|something is unsynced:unsynced`;
+        this.currentSyncState = "unsynced";
     }
   }
 
   private initLastSync() {
     this.lastSync =
-      localStorage.getItem(SupportComponent.LAST_SYNC_KEY) ||
-      $localize`:timestamp|e.g. last sync - never:never`;
+      localStorage.getItem(SupportComponent.LAST_SYNC_KEY) || "never";
   }
 
   private initLastRemoteLogin() {
     this.lastRemoteLogin =
-      localStorage.getItem(RemoteSession.LAST_LOGIN_KEY) ||
-      $localize`:timestamp|e.g. last sync - never:never`;
+      localStorage.getItem(RemoteSession.LAST_LOGIN_KEY) || "never";
   }
 
   private initSwStatus() {
     if (this.sw.isEnabled) {
-      this.swStatus = $localize`:status|something is enabled:enabled`;
+      this.swStatus = "enabled";
     } else {
-      this.swStatus = $localize`:status|something is not enabled:not enabled`;
+      this.swStatus = "not enabled";
     }
   }
 
@@ -101,13 +99,10 @@ export class SupportComponent implements OnInit {
   }
 
   async resetApplication() {
-    const choice = await this.confirmationDialog
-      .openDialog(
-        $localize`Reset Application`,
-        $localize`Are you sure you want to reset the application? This will delete all application data from your device and you will have to synchronize again.`
-      )
-      .afterClosed()
-      .toPromise();
+    const choice = await this.confirmationDialog.getConfirmation(
+      "Reset Application",
+      "Are you sure you want to reset the application? This will delete all application data from your device and you will have to synchronize again."
+    );
     if (!choice) {
       return;
     }
