@@ -8,11 +8,11 @@ import { DynamicValidatorsService } from "./dynamic-form-validators/dynamic-vali
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntitySchema } from "../../entity/schema/entity-schema";
 
-@Injectable()
 /**
  * This service provides helper functions for creating tables or forms for an entity as well as saving
  * new changes correctly to the entity.
  */
+@Injectable()
 export class EntityFormService {
   constructor(
     private fb: FormBuilder,
