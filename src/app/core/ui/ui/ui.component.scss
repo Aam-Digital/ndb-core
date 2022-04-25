@@ -97,3 +97,14 @@ app-search {
 .user-nav-button-first {
   border-left: 0;
 }
+
+.info-icon {
+  padding: 2px 5px;
+  border-right: solid 1px rgba(0, 0, 0, 0.12);
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.info-icon:hover {
+  background: rgba(0, 0, 0, 0.12);
+}

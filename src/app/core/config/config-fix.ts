@@ -80,11 +80,6 @@ export const defaultJsonConfig = {
         "icon": "question",
         "link": "/help"
       },
-      {
-        "name": "Support",
-        "icon": "question",
-        "link": "/support"
-      }
     ]
   },
 

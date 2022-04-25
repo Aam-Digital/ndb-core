@@ -85,8 +85,14 @@
         <div fxLayout="row">
           <app-pwa-install fxFlex></app-pwa-install>
         </div>
+        <div>
+          <button mat-stroked-button class="user-nav-button" style="width: 100%; border-bottom: 0" routerLink="/support">
+            <fa-icon icon="info-circle" class="nav-icon"></fa-icon>
+            Support
+          </button>
+        </div>
         <div fxLayout="row">
-          
+
           <button
             (click)="closeSidenavOnMobile()"
             mat-button
@@ -105,7 +111,10 @@
           </button>
         </div>
 
-        <app-version></app-version>
+        <div fxLayout="row">
+          <fa-icon icon="info-circle" class="info-icon" routerLink="/support"></fa-icon>
+          <app-version style="width: 100%"></app-version>
+        </div>
       </div>
 
     </div>
