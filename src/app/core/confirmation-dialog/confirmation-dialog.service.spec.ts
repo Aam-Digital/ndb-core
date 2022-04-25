@@ -1,20 +1,18 @@
-import { TestBed, inject } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 
 import { ConfirmationDialogService } from "./confirmation-dialog.service";
-import { MatDialogModule } from "@angular/material/dialog";
+import { ConfirmationDialogModule } from "./confirmation-dialog.module";
 
 describe("ConfirmationDialogService", () => {
+  let service: ConfirmationDialogService;
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [ConfirmationDialogService],
-      imports: [MatDialogModule],
+      imports: [ConfirmationDialogModule],
     });
+    service = TestBed.inject(ConfirmationDialogService);
   });
 
-  it("should be created", inject(
-    [ConfirmationDialogService],
-    (service: ConfirmationDialogService) => {
-      expect(service).toBeTruthy();
-    }
-  ));
+  it("should be created", () => {
+    expect(service).toBeTruthy();
+  });
 });
