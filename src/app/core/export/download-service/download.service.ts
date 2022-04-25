@@ -4,11 +4,11 @@ import { ExportDataFormat } from "../export-data-directive/export-data.directive
 import { ExportService } from "../export-service/export.service";
 import { LoggingService } from "../../logging/logging.service";
 
-@Injectable()
 /**
  * This service allows to start a download process from the browser.
  * Depending on the browser and the setting this might open a popup or directly download the file.
  */
+@Injectable()
 export class DownloadService {
   constructor(
     private exportService: ExportService,
