@@ -17,9 +17,9 @@ describe("SupportComponent", () => {
   let fixture: ComponentFixture<SupportComponent>;
   const testUser = { name: TEST_USER, roles: [] };
   let mockSessionService: jasmine.SpyObj<SessionService>;
-  let mockSW = { isEnabled: false };
+  const mockSW = { isEnabled: false };
   let mockDB: jasmine.SpyObj<Database>;
-  let mockWindow = {
+  const mockWindow = {
     navigator: {
       userAgent: "mock user agent",
       serviceWorker: { getRegistrations: () => [] },
