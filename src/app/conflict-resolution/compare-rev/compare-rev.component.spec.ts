@@ -43,9 +43,9 @@ describe("CompareRevComponent", () => {
       );
 
       const confDialogMock = jasmine.createSpyObj<ConfirmationDialogService>([
-        "openDialog",
+        "getConfirmation",
       ]);
-      confDialogMock.openDialog.and.resolveTo(true);
+      confDialogMock.getConfirmation.and.resolveTo(true);
 
       TestBed.configureTestingModule({
         imports: [

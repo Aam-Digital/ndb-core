@@ -23,8 +23,8 @@ describe("EntityRemoveService", () => {
     mockEntityMapper = jasmine.createSpyObj(["remove", "save"]);
     snackBarSpy = jasmine.createSpyObj(["open"]);
     mockSnackBarRef = jasmine.createSpyObj(["onAction", "afterDismissed"]);
-    mockConfirmationDialog = jasmine.createSpyObj(["openDialog"]);
-    mockConfirmationDialog.openDialog.and.resolveTo(true);
+    mockConfirmationDialog = jasmine.createSpyObj(["getConfirmation"]);
+    mockConfirmationDialog.getConfirmation.and.resolveTo(true);
     snackBarSpy.open.and.returnValue(mockSnackBarRef);
     mockEntityMapper.remove.and.resolveTo();
     TestBed.configureTestingModule({
@@ -45,7 +45,7 @@ describe("EntityRemoveService", () => {
   });
 
   it("emits once and closes when the user has cancelled", (done) => {
-    mockConfirmationDialog.openDialog.and.resolveTo(false);
+    mockConfirmationDialog.getConfirmation.and.resolveTo(false);
     service
       .remove(new Entity())
       .pipe(toArray())

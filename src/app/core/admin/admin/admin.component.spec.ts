@@ -32,7 +32,7 @@ describe("AdminComponent", () => {
   ]);
 
   const confirmationDialogMock = jasmine.createSpyObj<ConfirmationDialogService>(
-    ["openDialog"]
+    ["getConfirmation"]
   );
 
   const tmplink: jasmine.SpyObj<HTMLAnchorElement> = jasmine.createSpyObj(
@@ -126,13 +126,13 @@ describe("AdminComponent", () => {
   it("should open dialog and call backup service when loading backup", fakeAsync(() => {
     const mockFileReader = createFileReaderMock("[]");
     mockBackupService.getJsonExport.and.resolveTo("[]");
-    confirmationDialogMock.openDialog.and.resolveTo(true);
+    confirmationDialogMock.getConfirmation.and.resolveTo(true);
 
     component.loadBackup({ target: { files: [] } } as any);
     expect(mockBackupService.getJsonExport).toHaveBeenCalled();
     tick();
     expect(mockFileReader.readAsText).toHaveBeenCalled();
-    expect(confirmationDialogMock.openDialog).toHaveBeenCalled();
+    expect(confirmationDialogMock.getConfirmation).toHaveBeenCalled();
     flush();
     expect(mockBackupService.clearDatabase).toHaveBeenCalled();
     expect(mockBackupService.importJson).toHaveBeenCalled();
@@ -140,12 +140,12 @@ describe("AdminComponent", () => {
 
   it("should open dialog when clearing database", fakeAsync(() => {
     mockBackupService.getJsonExport.and.resolveTo("");
-    confirmationDialogMock.openDialog.and.resolveTo(true);
+    confirmationDialogMock.getConfirmation.and.resolveTo(true);
 
     component.clearDatabase();
     expect(mockBackupService.getJsonExport).toHaveBeenCalled();
     tick();
-    expect(confirmationDialogMock.openDialog).toHaveBeenCalled();
+    expect(confirmationDialogMock.getConfirmation).toHaveBeenCalled();
     flush();
     expect(mockBackupService.clearDatabase).toHaveBeenCalled();
   }));

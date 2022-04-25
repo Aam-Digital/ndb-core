@@ -17,7 +17,7 @@ import { EntityAbility } from "../permissions/ability/entity-ability";
  * Import the {@link FormDialogModule} in your root module to provide this service.
  *
  * @example
- formDialog.openDialog(NoteDetailsComponent, noteEntity);
+ formDialog.getConfirmation(NoteDetailsComponent, noteEntity);
  */
 @Injectable()
 export class FormDialogService {
@@ -58,7 +58,7 @@ export class FormDialogService {
     dialogRef.beforeClosed().subscribe((activelyClosed) => {
       if (!activelyClosed && dialogWrapper.isFormDirty) {
         this.confirmationDialog
-          .openDialog(
+          .getConfirmation(
             $localize`:Save changes header:Save Changes?`,
             $localize`:Save changes message:Do you want to save the changes you made to the record?`
           )

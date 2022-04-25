@@ -103,7 +103,7 @@ export class AdminComponent implements OnInit {
     const restorePoint = await this.backupService.getJsonExport();
     const newData = await readFile(this.getFileFromInputEvent(inputEvent));
 
-    const confirmed = await this.confirmationDialog.openDialog(
+    const confirmed = await this.confirmationDialog.getConfirmation(
       `Overwrite complete database?`,
       `Are you sure you want to restore this backup? This will
       delete all ${JSON.parse(restorePoint).length} existing records,
@@ -140,7 +140,7 @@ export class AdminComponent implements OnInit {
   async clearDatabase() {
     const restorePoint = await this.backupService.getJsonExport();
 
-    const confirmed = await this.confirmationDialog.openDialog(
+    const confirmed = await this.confirmationDialog.getConfirmation(
       `Empty complete database?`,
       `Are you sure you want to clear the database? This will delete all ${
         restorePoint.split("\n").length

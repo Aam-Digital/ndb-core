@@ -91,7 +91,7 @@ export class CompareRevComponent {
    * @param docToDelete Document to be deleted
    */
   public async resolveByDelete(docToDelete: any) {
-    const confirmed = await this.confirmationDialog.openDialog(
+    const confirmed = await this.confirmationDialog.getConfirmation(
       $localize`Delete Conflicting Version?`,
       $localize`Are you sure you want to keep the current version and delete this conflicting version? ${this.stringify(
         docToDelete
@@ -148,7 +148,7 @@ export class CompareRevComponent {
 
     const newChanges = diff(originalDoc, this.doc);
 
-    const confirmed = await this.confirmationDialog.openDialog(
+    const confirmed = await this.confirmationDialog.getConfirmation(
       $localize`Save Changes for Conflict Resolution?`,
       $localize`Are you sure you want to save the following changes and delete the conflicting version? ${this.stringify(
         newChanges

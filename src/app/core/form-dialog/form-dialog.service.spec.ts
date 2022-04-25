@@ -29,7 +29,7 @@ describe("FormDialogService", () => {
       providers: [
         {
           provide: ConfirmationDialogService,
-          useValue: jasmine.createSpyObj(["openDialog"]),
+          useValue: jasmine.createSpyObj(["getConfirmation"]),
         },
         {
           provide: EntityAbility,

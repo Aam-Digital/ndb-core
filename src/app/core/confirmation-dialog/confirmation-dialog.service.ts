@@ -14,12 +14,13 @@ import { map } from "rxjs/operators";
  * Import the {@link ConfirmationDialogModule} in your root module to provide this service.
  *
  * @example
- const dialogRef = this.confirmationDialog.openDialog('Delete?', 'Are you sure you want to delete this record?');
- dialogRef.afterClosed().subscribe(confirmed => {
+ this.confirmationDialog
+  .getConfirmation('Delete?', 'Are you sure you want to delete this record?')
+  .then((confirmed) => {
     if (confirmed) {
        // delete
     }
- });
+  });
  */
 @Injectable()
 export class ConfirmationDialogService {
@@ -34,7 +35,7 @@ export class ConfirmationDialogService {
    * @param closeButton Whether a single icon-button with an 'x' is shown to the user
    * @returns promise that resolves to true if the user confirmed and false otherwise`
    */
-  openDialog(
+  getConfirmation(
     title: string,
     text: string,
     buttons: ConfirmationDialogButton[] = YesNoButtons,

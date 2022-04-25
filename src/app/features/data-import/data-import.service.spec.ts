@@ -21,8 +21,8 @@ describe("DataImportService", () => {
 
   beforeEach(
     waitForAsync(() => {
-      mockConfirmationService = jasmine.createSpyObj(["openDialog"]);
-      mockConfirmationService.openDialog.and.resolveTo(true);
+      mockConfirmationService = jasmine.createSpyObj(["getConfirmation"]);
+      mockConfirmationService.getConfirmation.and.resolveTo(true);
       TestBed.configureTestingModule({
         imports: [DataImportModule, DatabaseTestingModule, ChildrenModule],
         providers: [

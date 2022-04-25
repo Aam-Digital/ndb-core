@@ -107,7 +107,7 @@ export class DataImportService {
     if (importMeta.transactionId) {
       refText = $localize`${refText} All existing records imported with the transaction id '${importMeta.transactionId}' will be deleted!`;
     }
-    return this.confirmationDialog.openDialog(refTitle, refText);
+    return this.confirmationDialog.getConfirmation(refTitle, refText);
   }
 
   private async deleteExistingRecords(importMeta: ImportMetaData) {

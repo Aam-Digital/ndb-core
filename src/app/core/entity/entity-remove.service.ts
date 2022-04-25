@@ -91,7 +91,7 @@ export class EntityRemoveService {
       textOptions?.dialogText ||
       $localize`:Delete confirmation text:Are you sure you want to delete this ${entity.getType()}?`;
     this.confirmationDialog
-      .openDialog(dialogTitle, dialogText)
+      .getConfirmation(dialogTitle, dialogText)
       .then((confirmed) => {
         if (confirmed) {
           const snackBarTitle =
