@@ -14,10 +14,10 @@ import { monthEntitySchemaDatatype } from "../../core/entity/schema-datatypes/da
 import moment from "moment";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 
-@Injectable()
 /**
  * This service handels the parsing of CSV files and importing of data
  */
+@Injectable()
 export class DataImportService {
   private readonly dateDataTypes = [
     dateEntitySchemaDatatype,

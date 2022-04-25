@@ -5,15 +5,15 @@ import { Note } from "../model/note";
 import { AttendanceLogicalStatus } from "../../attendance/model/attendance-status";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 
+/**
+ * Displays the amount of children with a given attendance status at a given note.
+ */
 @DynamicComponent("NoteAttendanceCountBlock")
 @Component({
   selector: "app-note-attendance-count-block",
   templateUrl: "./note-attendance-count-block.component.html",
   styleUrls: ["./note-attendance-count-block.component.scss"],
 })
-/**
- * Displays the amount of children with a given attendance status at a given note.
- */
 export class NoteAttendanceCountBlockComponent
   implements OnInitDynamicComponent, OnInit {
   /**
