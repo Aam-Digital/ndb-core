@@ -77,7 +77,7 @@ export class SupportComponent implements OnInit {
     }
     this.window.navigator.serviceWorker.ready
       .then(() =>
-        this.http.get("ngsw/state", { responseType: "text" }).toPromise()
+        this.http.get("/ngsw/state", { responseType: "text" }).toPromise()
       )
       .then((res) => (this.swLog = res));
   }
@@ -93,7 +93,7 @@ export class SupportComponent implements OnInit {
         lastRemoteLogin: this.lastRemoteLogin,
         swStatus: this.swStatus,
         userAgent: this.userAgent,
-        swLog: this.swLog
+        swLog: this.swLog,
       },
     });
     Sentry.showReportDialog({
