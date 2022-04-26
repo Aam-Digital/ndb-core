@@ -93,6 +93,7 @@ export class SupportComponent implements OnInit {
         lastRemoteLogin: this.lastRemoteLogin,
         swStatus: this.swStatus,
         userAgent: this.userAgent,
+        swLog: this.swLog
       },
     });
     Sentry.showReportDialog({
