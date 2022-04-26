@@ -7,6 +7,7 @@ import { filter } from "rxjs/operators";
 import { SyncState } from "../session/session-states/sync-state.enum";
 import { ConfirmationDialogModule } from "../confirmation-dialog/confirmation-dialog.module";
 import { FlexModule } from "@angular/flex-layout";
+import { MatExpansionModule } from "@angular/material/expansion";
 
 @NgModule({
   declarations: [SupportComponent],
@@ -15,6 +16,7 @@ import { FlexModule } from "@angular/flex-layout";
     MatButtonModule,
     ConfirmationDialogModule,
     FlexModule,
+    MatExpansionModule,
   ],
   exports: [SupportComponent],
 })

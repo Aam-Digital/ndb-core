@@ -11,15 +11,20 @@
     <p>Last sync: {{ lastSync }}</p>
     <p>Last remote login: {{ lastRemoteLogin }}</p>
     <p>Service Worker: {{ swStatus }}</p>
+    <p>
+      <mat-expansion-panel class="mat-elevation-z0 sw-logs">
+        <mat-expansion-panel-header>
+          <mat-panel-title class="tech-details">
+            Service Worker Logs
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div>{{swLog}}</div>
+      </mat-expansion-panel>
+    </p>
     <button mat-raised-button (click)="sendReport()" class="button">Send Details</button>
   </div>
 
   <div fxFlex>
     <button mat-raised-button color="warn" (click)="resetApplication()" class="button">Reset Application</button>
-  </div>
-
-  <div class="tech-details sw-logs">
-    <h3>Service Worker Log</h3>
-    <p style="white-space: pre">{{ swLog }}</p>
   </div>
 </div>
