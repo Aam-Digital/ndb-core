@@ -35,6 +35,7 @@ describe("SupportComponent", () => {
   let mockLocation: jasmine.SpyObj<Location>;
 
   beforeEach(async () => {
+    localStorage.clear();
     mockSessionService = jasmine.createSpyObj(["getCurrentUser"], {
       syncState: new BehaviorSubject(SyncState.UNSYNCED),
     });
