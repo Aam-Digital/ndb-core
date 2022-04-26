@@ -6,17 +6,16 @@
   </div>
 
   <div fxFlex class="tech-details">
-    <p i18n="status">Username: {{ currentUser.name }}</p>
-    <p i18n="status">Device info: {{ userAgent }}</p>
-    <p i18n="status">Current sync state: {{ currentSyncState }}</p>
-    <p i18n="status">Last sync: {{ lastSync }}</p>
-    <p i18n="status">Last remote login: {{ lastRemoteLogin }}</p>
-    <p i18n="status">Service Worker: {{ swStatus }}</p>
-    <button mat-raised-button (click)="sendReport()" i18n="button label" class="button">Send Details</button>
+    <p>Username: {{ currentUser.name }}</p>
+    <p>Current sync state: {{ currentSyncState }}</p>
+    <p>Last sync: {{ lastSync }}</p>
+    <p>Last remote login: {{ lastRemoteLogin }}</p>
+    <p>Service Worker: {{ swStatus }}</p>
+    <button mat-raised-button (click)="sendReport()" class="button">Send Details</button>
   </div>
 
   <div fxFlex>
-    <button mat-raised-button color="warn" (click)="resetApplication()" i18n="button label" class="button">Reset Application</button>
+    <button mat-raised-button color="warn" (click)="resetApplication()" class="button">Reset Application</button>
   </div>
 
   <div class="tech-details sw-logs">
