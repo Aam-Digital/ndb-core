@@ -29,7 +29,9 @@
             "assets": [
               "src/assets",
               "src/favicon.ico",
-              "src/manifest.json"
+              "src/manifest.json",
+              "src/ngsw-worker.js",
+              "src/ngsw.json"
             ],
             "styles": [
               "src/ndb-theme.scss",
