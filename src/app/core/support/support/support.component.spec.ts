@@ -1,4 +1,9 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from "@angular/core/testing";
 
 import { SupportComponent } from "./support.component";
 import { SupportModule } from "../support.module";
@@ -11,6 +16,8 @@ import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { TEST_USER } from "../../../utils/mocked-testing.module";
 import { RemoteSession } from "../../session/session-service/remote-session";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { HttpClient } from "@angular/common/http";
 
 describe("SupportComponent", () => {
   let component: SupportComponent;
@@ -22,7 +29,7 @@ describe("SupportComponent", () => {
   const mockWindow = {
     navigator: {
       userAgent: "mock user agent",
-      serviceWorker: { getRegistrations: () => [] },
+      serviceWorker: { getRegistrations: () => [], ready: Promise.resolve() },
     },
   };
   let mockLocation: jasmine.SpyObj<Location>;
@@ -35,7 +42,7 @@ describe("SupportComponent", () => {
     mockDB = jasmine.createSpyObj(["destroy"]);
     mockLocation = jasmine.createSpyObj(["reload"]);
     await TestBed.configureTestingModule({
-      imports: [SupportModule],
+      imports: [SupportModule, HttpClientTestingModule],
       providers: [
         { provide: SessionService, useValue: mockSessionService },
         { provide: SwUpdate, useValue: mockSW },
@@ -96,4 +103,14 @@ describe("SupportComponent", () => {
     expect(localStorage.getItem("someItem")).toBeNull();
     expect(mockLocation.reload).toHaveBeenCalled();
   });
+
+  it("should display the service worker logs after they are available", fakeAsync(() => {
+    const exampleLog = "example service worker log";
+    spyOn(TestBed.inject(HttpClient), "get").and.returnValue(of(exampleLog));
+
+    component.ngOnInit();
+    tick();
+
+    expect(component.swLog).toBe(exampleLog);
+  }));
 });
