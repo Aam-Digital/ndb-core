@@ -11,21 +11,25 @@
   explanation="Temporary explanation"
 >
   <app-widget-content>
-    <div class="mat-elevation-z8">
-      <table mat-table [dataSource]="dataSource" matSort>
+    
+    <div *ngIf="childrenDataSource.data.length > 0 && !isLoading" class="table-wrapper">
+      <table mat-table [dataSource]="childrenDataSource"matSort>
+        <tr hidden="true">
+          <th scope="col" mat-sort-header>Child </th>
+          <th scope="col" mat-sort-header>DateOfBirth</th>
+          <th scope="col" mat-sort-header>AfterBirthdayAge</th>
+        </tr>
         <ng-container matColumnDef="entityId">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Child Name</th>
-          <td mat-cell *matCellDef="let children">{{ children.entityId}} </td>
+          <td mat-cell *matCellDef="let Child">{{ Child.entityId}} 
+          </td>
         </ng-container>
 
-        <ng-container matColumnDef="Birthdays">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Birthday Date</th>
-          <td mat-cell *matCellDef="let children">{{children.Birthday}} </td>
+        <ng-container matColumnDef="dateOfBirth">
+          <td mat-cell *matCellDef="let Child">{{Child.dateOfBirth}} </td>
         </ng-container>
 
         <ng-container matColumnDef="age">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>After Birthday Age</th>
-          <td mat-cell *matCellDef="let children">{{children.age}}</td>
+          <td mat-cell *matCellDef="let Child">{{Child.age}}</td>
         </ng-container>
 
     
@@ -35,15 +39,28 @@
   - display the child using the `ChildBlockComponent`
   - display the birthday
   - display the age the child will have after its birthday
+   
 -->
-      <app-child-block
-       *ngFor="let child of children"
-       [entity]="child"
-      ></app-child-block>
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+           <app-child-block
+             *ngFor="let child of children"
+             [entity]="child"
+           ></app-child-block>
+<tr
+mat-row
+*matRowDef="let row; columns: ['entityId', 'dateOfBirth','age'];"
+></tr>
       </table>
+      
     </div>
     
+    <mat-paginator
+      #paginator
+      [style.display]="paginator.getNumberOfPages() === 0 ? 'none' : ''"
+      [pageSizeOptions]="[5]"
+      [hidePageSize]="true"
+    >
+    </mat-paginator>
+    
   </app-widget-content>
-
+  
 </app-dashboard-widget>
