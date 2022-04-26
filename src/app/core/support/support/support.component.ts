@@ -33,7 +33,16 @@ export class SupportComponent implements OnInit {
     private confirmationDialog: ConfirmationDialogService,
     @Inject(WINDOW_TOKEN) private window: Window,
     @Inject(LOCATION_TOKEN) private location: Location
-  ) {}
+  ) {
+    fetch("ngsw/state")
+      .then((res) => res.text())
+      .then((debugInfo) => {
+        const swVersion = /Driver version: (.+)/.exec(debugInfo)[1];
+        const latestAppVersionHash = /Latest manifest hash: (.+)/.exec(
+          debugInfo
+        )[1];
+      });
+  }
 
   ngOnInit(): void {
     this.currentUser = this.sessionService.getCurrentUser();
