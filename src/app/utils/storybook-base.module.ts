@@ -14,6 +14,11 @@ import {
   entityRegistry,
   EntityRegistry,
 } from "../core/entity/database-entity.decorator";
+import {
+  viewRegistry,
+  ViewRegistry,
+} from "../core/view/dynamic-components/dynamic-component.decorator";
+import { RouteRegistry, routesRegistry } from "../app.routing";
 
 /**
  * Utility module to be imported in Storybook stories to ensure central setup like fontawesome icons are available.
@@ -28,7 +33,20 @@ import {
     Angulartics2Module.forRoot(),
     RouterTestingModule,
   ],
-  providers: [{ provide: EntityRegistry, useValue: entityRegistry }],
+  providers: [
+    {
+      provide: EntityRegistry,
+      useValue: entityRegistry.withDuplicatesAllowed(),
+    },
+    {
+      provide: ViewRegistry,
+      useValue: viewRegistry.withDuplicatesAllowed(),
+    },
+    {
+      provide: RouteRegistry,
+      useValue: routesRegistry.withDuplicatesAllowed(),
+    },
+  ],
 })
 export class StorybookBaseModule {
   constructor(icons: FaIconLibrary) {
