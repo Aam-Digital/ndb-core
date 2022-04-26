@@ -10,6 +10,7 @@ import { Severity } from "@sentry/browser";
 import { RemoteSession } from "../../session/session-service/remote-session";
 import { RouteTarget } from "../../../app.routing";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
+import { HttpClient } from "@angular/common/http";
 
 @RouteTarget("Support")
 @Component({
@@ -24,6 +25,7 @@ export class SupportComponent implements OnInit {
   lastSync: string;
   lastRemoteLogin: string;
   swStatus: string;
+  swLog = "not available";
   userAgent = this.window.navigator.userAgent;
 
   constructor(
@@ -31,18 +33,10 @@ export class SupportComponent implements OnInit {
     private sw: SwUpdate,
     private database: Database,
     private confirmationDialog: ConfirmationDialogService,
+    private http: HttpClient,
     @Inject(WINDOW_TOKEN) private window: Window,
     @Inject(LOCATION_TOKEN) private location: Location
-  ) {
-    fetch("ngsw/state")
-      .then((res) => res.text())
-      .then((debugInfo) => {
-        const swVersion = /Driver version: (.+)/.exec(debugInfo)[1];
-        const latestAppVersionHash = /Latest manifest hash: (.+)/.exec(
-          debugInfo
-        )[1];
-      });
-  }
+  ) {}
 
   ngOnInit(): void {
     this.currentUser = this.sessionService.getCurrentUser();
@@ -81,6 +75,11 @@ export class SupportComponent implements OnInit {
     } else {
       this.swStatus = "not enabled";
     }
+    this.window.navigator.serviceWorker.ready
+      .then(() =>
+        this.http.get("ngsw/state", { responseType: "text" }).toPromise()
+      )
+      .then((res) => (this.swLog = res));
   }
 
   sendReport() {
