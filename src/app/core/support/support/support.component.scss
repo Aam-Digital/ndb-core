@@ -15,10 +15,14 @@
   color: #707070;
 }
 
-.sw-logs {
+.mat-expansion-panel {
   background-color: transparent;
   border: 1px #707070 solid;
+}
+
+.sw-logs {
   overflow: auto;
+  white-space: pre;
 }
 
 .button {

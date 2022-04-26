@@ -7,18 +7,19 @@
 
   <div fxFlex class="tech-details">
     <p>Username: {{ currentUser.name }}</p>
+    <p>Device Info: {{ userAgent }}</p>
     <p>Current sync state: {{ currentSyncState }}</p>
     <p>Last sync: {{ lastSync }}</p>
     <p>Last remote login: {{ lastRemoteLogin }}</p>
     <p>Service Worker: {{ swStatus }}</p>
     <p>
-      <mat-expansion-panel class="mat-elevation-z0 sw-logs">
+      <mat-expansion-panel class="mat-elevation-z0">
         <mat-expansion-panel-header>
           <mat-panel-title class="tech-details">
             Service Worker Logs
           </mat-panel-title>
         </mat-expansion-panel-header>
-        <div>{{swLog}}</div>
+        <div class="sw-logs tech-details">{{ swLog }}</div>
       </mat-expansion-panel>
     </p>
     <button mat-raised-button (click)="sendReport()" class="button">Send Details</button>
