@@ -1,70 +1,62 @@
-import { Injectable, Optional } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Config } from "./config";
-import { LoggingService } from "../logging/logging.service";
-import { BehaviorSubject } from "rxjs";
-import { defaultJsonConfig } from "./config-fix";
+import { Observable, Subject } from "rxjs";
 import {
   CONFIGURABLE_ENUM_CONFIG_PREFIX,
   ConfigurableEnumConfig,
   ConfigurableEnumValue,
 } from "../configurable-enum/configurable-enum.interface";
+import { filter, map } from "rxjs/operators";
+import { mockEntityMapper } from "../entity/mock-entity-mapper-service";
 
 /**
  * Access dynamic app configuration retrieved from the database
  * that defines how the interface and data models should look.
  */
-@Injectable({
-  providedIn: "root",
-})
+@Injectable()
 export class ConfigService {
   /**
    * Subscribe to receive the current config and get notified whenever the config is updated.
    */
-  public configUpdates: BehaviorSubject<Config>;
+  private _configUpdates = new Subject<Config>();
+  private currentConfig: Config;
 
-  private get configData(): any {
-    return this.configUpdates.value.data;
+  get configUpdates(): Observable<Config> {
+    return this._configUpdates.asObservable();
   }
 
-  constructor(
-    private entityMapper: EntityMapperService,
-    @Optional() private loggingService?: LoggingService
-  ) {
-    const defaultConfig = JSON.parse(JSON.stringify(defaultJsonConfig));
-    this.configUpdates = new BehaviorSubject(
-      new Config(Config.CONFIG_KEY, defaultConfig)
-    );
+  constructor(private entityMapper: EntityMapperService) {
+    this.configUpdates.subscribe((config) => (this.currentConfig = config));
+    this.loadConfig();
   }
 
-  public async loadConfig(): Promise<Config> {
-    this.configUpdates.next(await this.getConfigOrDefault());
-    return this.configUpdates.value;
+  private async loadConfig(): Promise<void> {
+    // TODO this has to be called whenever the database is initialized
+    try {
+      const config = await this.entityMapper.load(Config, Config.CONFIG_KEY);
+      this._configUpdates.next(config);
+    } catch (e) {}
+
+    this.entityMapper
+      .receiveUpdates(Config)
+      .pipe(
+        map(({ entity }) => entity),
+        filter((entity) => entity.getId() === Config.CONFIG_KEY)
+      )
+      .subscribe((config) => this._configUpdates.next(config));
   }
 
-  private getConfigOrDefault(): Promise<Config> {
-    return this.entityMapper.load(Config, Config.CONFIG_KEY).catch(() => {
-      this.loggingService.info(
-        "No configuration found in the database, using default one"
-      );
-      const defaultConfig = JSON.parse(JSON.stringify(defaultJsonConfig));
-      return new Config(Config.CONFIG_KEY, defaultConfig);
-    });
+  public saveConfig(config: any): Promise<void> {
+    return this.entityMapper.save(config, true);
   }
 
-  public async saveConfig(config: any): Promise<Config> {
-    this.configUpdates.next(new Config(Config.CONFIG_KEY, config));
-    await this.entityMapper.save<Config>(this.configUpdates.value, true);
-    return this.configUpdates.value;
-  }
-
-  public async exportConfig(): Promise<string> {
-    const config = await this.getConfigOrDefault();
-    return JSON.stringify(config.data);
+  public exportConfig(): string {
+    return JSON.stringify(this.currentConfig);
   }
 
   public getConfig<T>(id: string): T {
-    return this.configData[id];
+    return this.currentConfig.data[id];
   }
 
   /**
@@ -82,10 +74,10 @@ export class ConfigService {
 
   public getAllConfigs<T>(prefix: string): T[] {
     const matchingConfigs = [];
-    for (const id of Object.keys(this.configData)) {
+    for (const id of Object.keys(this.currentConfig.data)) {
       if (id.startsWith(prefix)) {
-        this.configData[id]._id = id;
-        matchingConfigs.push(this.configData[id]);
+        this.currentConfig.data[id]._id = id;
+        matchingConfigs.push(this.currentConfig.data[id]);
       }
     }
     return matchingConfigs;
@@ -93,9 +85,7 @@ export class ConfigService {
 }
 
 export function createTestingConfigService(configsObject: any): ConfigService {
-  const configService = new ConfigService(null);
-  configService.configUpdates.next(
-    new Config(Config.CONFIG_KEY, configsObject)
+  return new ConfigService(
+    mockEntityMapper([new Config(Config.CONFIG_KEY, configsObject)])
   );
-  return configService;
 }

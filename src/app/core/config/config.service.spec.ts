@@ -86,7 +86,7 @@ describe("ConfigService", () => {
     config.data = { first: "foo", second: "bar" };
     const expected = JSON.stringify(config.data);
     entityMapper.load.and.returnValue(Promise.resolve(config));
-    const result = await service.exportConfig();
+    const result = service.exportConfig();
     expect(result).toEqual(expected);
   });
 

@@ -66,21 +66,11 @@ export class AppComponent {
 
     // first register to events
 
-    // Reload config once the database is synced after someone logged in
-    this.sessionService.syncState
-      .pipe(filter((state) => state === SyncState.COMPLETED))
-      .subscribe(() => this.configService.loadConfig());
-
     // Re-trigger services that depend on the config when something changes
-    let lastConfig: string;
-    this.configService.configUpdates.subscribe((config) => {
+    this.configService.configUpdates.subscribe(() => {
       this.routerService.initRouting();
       this.entityConfigService.setupEntitiesFromConfig();
-      const configString = JSON.stringify(config);
-      if (this.sessionService.isLoggedIn() && configString !== lastConfig) {
-        this.router.navigate([], { relativeTo: this.activatedRoute });
-        lastConfig = configString;
-      }
+      this.router.navigate([], { relativeTo: this.activatedRoute });
     });
 
     // update the user context for remote error logging and tracking and load config initially
@@ -89,7 +79,6 @@ export class AppComponent {
         const username = this.sessionService.getCurrentUser().name;
         LoggingService.setLoggingContextUser(username);
         this.analyticsService.setUser(username);
-        this.configService.loadConfig();
       } else {
         LoggingService.setLoggingContextUser(undefined);
         this.analyticsService.setUser(undefined);

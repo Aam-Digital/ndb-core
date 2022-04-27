@@ -21,8 +21,8 @@ import PouchDB from "pouchdb-browser";
 import memory from "pouchdb-adapter-memory";
 import { PerformanceAnalysisLogging } from "../../utils/performance-analysis-logging";
 import { Injectable } from "@angular/core";
-import { fromEvent, Observable } from "rxjs";
-import { filter, map } from "rxjs/operators";
+import { Observable, Subject } from "rxjs";
+import { filter } from "rxjs/operators";
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -57,7 +57,13 @@ export class PouchDatabase extends Database {
    * This change can come from the current user or remotely from the (live) synchronization
    * @private
    */
-  private changesFeed: Observable<any>;
+  private changesFeed: Subject<any>;
+  private changesListener: PouchDB.Core.Changes<any>;
+
+  private databaseInitialized = new Subject<void>();
+  waitForInitialization(): Promise<void> {
+    return this.databaseInitialized.toPromise();
+  }
 
   /**
    * Create a PouchDB database manager.
@@ -73,9 +79,30 @@ export class PouchDatabase extends Database {
    * @param dbName the name for the database
    */
   initInMemoryDB(dbName = "in-memory-database"): PouchDatabase {
+    const updateChangesListener =
+      this.changesListener && dbName !== this.pouchDB?.name;
     PouchDB.plugin(memory);
     this.pouchDB = new PouchDB(dbName, { adapter: "memory" });
+
+    if (updateChangesListener) {
+      this.changesListener.removeAllListeners();
+      this.changesListener.cancel();
+      this.listenToChanges();
+    }
+
+    this.databaseInitialized.complete();
     return this;
+  }
+
+  private listenToChanges() {
+    this.changesListener = this.pouchDB.changes({
+      live: true,
+      since: "now",
+      include_docs: true,
+    });
+    this.changesListener.addListener("change", (change) =>
+      this.changesFeed.next(change.doc)
+    );
   }
 
   /**
@@ -111,15 +138,17 @@ export class PouchDatabase extends Database {
     options: GetOptions = {},
     returnUndefined?: boolean
   ): Promise<any> {
-    return this.pouchDB.get(id, options).catch((err) => {
-      if (err.status === 404) {
-        this.loggingService.debug("Doc not found in database: " + id);
-        if (returnUndefined) {
-          return undefined;
+    return this.waitForInitialization().then(() =>
+      this.pouchDB.get(id, options).catch((err) => {
+        if (err.status === 404) {
+          this.loggingService.debug("Doc not found in database: " + id);
+          if (returnUndefined) {
+            return undefined;
+          }
         }
-      }
-      throw new DatabaseException(err);
-    });
+        throw new DatabaseException(err);
+      })
+    );
   }
 
   /**
@@ -231,15 +260,8 @@ export class PouchDatabase extends Database {
    */
   changes(prefix: string): Observable<any> {
     if (!this.changesFeed) {
-      // Only maintain one changes feed for the whole app live-cycle
-      this.changesFeed = fromEvent(
-        this.pouchDB.changes({
-          live: true,
-          since: "now",
-          include_docs: true,
-        }),
-        "change"
-      ).pipe(map((change) => change[0].doc));
+      this.changesFeed = new Subject<any>();
+      this.waitForInitialization().then(() => this.listenToChanges());
     }
     return this.changesFeed.pipe(filter((doc) => doc._id.startsWith(prefix)));
   }
