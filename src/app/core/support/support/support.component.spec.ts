@@ -19,6 +19,7 @@ import { ConfirmationDialogService } from "../../confirmation-dialog/confirmatio
 import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { HttpClient } from "@angular/common/http";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { SyncedSessionService } from "../../session/session-service/synced-session.service";
 
 describe("SupportComponent", () => {
   let component: SupportComponent;
@@ -76,7 +77,7 @@ describe("SupportComponent", () => {
 
   it("should correctly read sync and remote login status from local storage", () => {
     const lastSync = new Date("2022-01-01").toISOString();
-    localStorage.setItem(SupportComponent.LAST_SYNC_KEY, lastSync);
+    localStorage.setItem(SyncedSessionService.LAST_SYNC_KEY, lastSync);
     const lastRemoteLogin = new Date("2022-01-02").toISOString();
     localStorage.setItem(RemoteSession.LAST_LOGIN_KEY, lastRemoteLogin);
 
