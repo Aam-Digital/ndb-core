@@ -154,6 +154,7 @@ import { SupportModule } from "./core/support/support.module";
     AttendanceModule,
     DashboardShortcutWidgetModule,
     HistoricalDataModule,
+    SupportModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
@@ -161,7 +162,6 @@ import { SupportModule } from "./core/support/support.module";
     { provide: RouteRegistry, useValue: routesRegistry },
     AnalyticsService,
     Angulartics2Matomo,
-    SupportModule,
   ],
   bootstrap: [AppComponent],
 })
