@@ -36,7 +36,6 @@ ARG CHROME_BIN=/usr/bin/chromium-browser
 # Install chromium for karma, lint code and run tests
 RUN if [ "$RUN_TESTS" = true ] || [ "$UPLOAD_COVERAGE" = true ] ; then \
     apk --no-cache add chromium &&\
-    npm run lint &&\
     npm run test-ci ; fi
 
 # The following arguments need to be provided for the code climate test reporter to work correctly
