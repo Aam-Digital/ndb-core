@@ -60,6 +60,13 @@ export class SyncedSessionService extends SessionService {
     this._localSession = new LocalSession(pouchDatabase);
     this._remoteSession = new RemoteSession(this.httpClient, loggingService);
 
+    this.checkForValidSession();
+  }
+
+  /**
+   * Do login automatically if there is still a valid CouchDB cookie from last login with username and password
+   */
+  checkForValidSession() {
     this.httpClient
       .get(`${AppConfig.settings.database.remote_url}_session`, {
         withCredentials: true,

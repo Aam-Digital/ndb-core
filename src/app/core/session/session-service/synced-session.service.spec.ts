@@ -267,6 +267,41 @@ describe("SyncedSessionService", () => {
     tick();
   }));
 
+  it("should login, given that CouchDB cookie is still valid", fakeAsync(() => {
+    const responseObject = {
+      ok: true,
+      userCtx: {
+        name: "demo",
+        roles: ["user_app"],
+      },
+      info: {
+        authentication_handlers: ["cookie", "default"],
+        authenticated: "default",
+      },
+    };
+    mockHttpClient.get.and.returnValue(of(responseObject));
+    sessionService.checkForValidSession();
+    tick();
+    expect(sessionService.loginState.value).toEqual(LoginState.LOGGED_IN);
+  }));
+
+  it("should not login, given that there is no valid CouchDB cookie", fakeAsync(() => {
+    const responseObject = {
+      ok: true,
+      userCtx: {
+        name: null,
+        roles: [],
+      },
+      info: {
+        authentication_handlers: ["cookie", "default"],
+      },
+    };
+    mockHttpClient.get.and.returnValue(of(responseObject));
+    sessionService.checkForValidSession();
+    tick();
+    expect(sessionService.loginState.value).toEqual(LoginState.LOGGED_OUT);
+  }));
+
   testSessionServiceImplementation(() => Promise.resolve(sessionService));
 
   function passRemoteLogin(response: DatabaseUser = { name: "", roles: [] }) {
