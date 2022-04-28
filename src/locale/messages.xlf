@@ -830,7 +830,7 @@
         <source>Table showing disaggregation of the beneficiaries</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/dashboard-widgets/children-count-dashboard/children-count-dashboard.component.html</context>
-          <context context-type="linenumber">9</context>
+          <context context-type="linenumber">10</context>
         </context-group>
         <note priority="1" from="description">Label for children count dashboard</note>
       </trans-unit>
@@ -1431,13 +1431,6 @@
           <context context-type="linenumber">14,22</context>
         </context-group>
         <note priority="1" from="description">Explanation for missing currently active entry - part 2 of 2:</note>
-      </trans-unit>
-      <trans-unit id="94516fa213706c67ce5a5b5765681d7fb032033a" datatype="html">
-        <source>Loading...</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/notes-dashboard/notes-dashboard.component.html</context>
-          <context context-type="linenumber">9</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="ef53f00083d0537e89f52ce3fc949182c6bca8e4" datatype="html">
         <source><x id="START_TABLE_CELL" ctype="x-td" equiv-text="&lt;td *matCellDef=&quot;let childNoteInfo&quot;&gt;"/><x id="START_TAG_SPAN_1" ctype="x-span_1" equiv-text="&lt;span  class=&quot;dashboard-table-additional-info-cell&quot;&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span
@@ -3207,6 +3200,13 @@
         </context-group>
         <note priority="1" from="description">Title of dashboard widget that shows a list of certain actions a user can click on</note>
       </trans-unit>
+      <trans-unit id="94516fa213706c67ce5a5b5765681d7fb032033a" datatype="html">
+        <source>Loading...</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/dashboard/dashboard-widget/dashboard-widget.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="f10d5109ec72341c3a043905f31ccbfdd4c59923" datatype="html">
         <source>Generating sample data for this demo ...</source>
         <context-group purpose="location">
@@ -3649,6 +3649,54 @@
         </context-group>
         <note priority="1" from="description">Missing permission</note>
       </trans-unit>
+      <trans-unit id="5e589ae47ed0c90beb209018a8f60ed492d8ad8d" datatype="html">
+        <source>Install App</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/pwa-install/pwa-install.component.html</context>
+          <context context-type="linenumber">12</context>
+        </context-group>
+        <note priority="1" from="description">PWA Install Button Label</note>
+      </trans-unit>
+      <trans-unit id="240687bf23ceecb815aa0788691b36fc61468b53" datatype="html">
+        <source> To install the app </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/pwa-install/pwa-install.component.html</context>
+          <context context-type="linenumber">17,18</context>
+        </context-group>
+        <note priority="1" from="description">PWA iOS Install Instructions - Line 1</note>
+      </trans-unit>
+      <trans-unit id="8beef6deafdec7914c3971782faad2ac1e66604d" datatype="html">
+        <source> tap on </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/pwa-install/pwa-install.component.html</context>
+          <context context-type="linenumber">29,30</context>
+        </context-group>
+        <note priority="1" from="description">PWA iOS Install Instructions - Line 2-1</note>
+      </trans-unit>
+      <trans-unit id="5e1fef8419bb00629ae0fe59c98feced66824e11" datatype="html">
+        <source> at the bottom </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/pwa-install/pwa-install.component.html</context>
+          <context context-type="linenumber">34,35</context>
+        </context-group>
+        <note priority="1" from="description">PWA iOS Install Instructions - Line 2-2</note>
+      </trans-unit>
+      <trans-unit id="6ac57c355739ba746bcfb893197082f53ac6ee75" datatype="html">
+        <source> and then tap on </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/pwa-install/pwa-install.component.html</context>
+          <context context-type="linenumber">39,40</context>
+        </context-group>
+        <note priority="1" from="description">PWA iOS Install Instructions - Line 3-1</note>
+      </trans-unit>
+      <trans-unit id="26c649bd93b5051b07a9aed12f707cfa401553d7" datatype="html">
+        <source> (Add to Homescreen). </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/pwa-install/pwa-install.component.html</context>
+          <context context-type="linenumber">43,44</context>
+        </context-group>
+        <note priority="1" from="description">PWA iOS Install Instructions - Line 3-2</note>
+      </trans-unit>
       <trans-unit id="266e3d5d7292b095716537dd0b57ef6784768c14" datatype="html">
         <source> Please Sign In </source>
         <context-group purpose="location">
@@ -3708,7 +3756,7 @@
         <source>Your password was changed recently. Please retry with your new password!</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/session/session-service/synced-session.service.ts</context>
-          <context context-type="linenumber">136,135</context>
+          <context context-type="linenumber">146,145</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1883557110661036774" datatype="html">
@@ -4614,54 +4662,6 @@
           <context context-type="linenumber">80,81</context>
         </context-group>
         <note priority="1" from="description">Button to download data</note>
-      </trans-unit>
-      <trans-unit id="5e589ae47ed0c90beb209018a8f60ed492d8ad8d" datatype="html">
-        <source>Install App</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/pwa-install/pwa-install.component.html</context>
-          <context context-type="linenumber">12</context>
-        </context-group>
-        <note priority="1" from="description">PWA Install Button Label</note>
-      </trans-unit>
-      <trans-unit id="240687bf23ceecb815aa0788691b36fc61468b53" datatype="html">
-        <source> To install the app </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/pwa-install/pwa-install.component.html</context>
-          <context context-type="linenumber">17,18</context>
-        </context-group>
-        <note priority="1" from="description">PWA iOS Install Instructions - Line 1</note>
-      </trans-unit>
-      <trans-unit id="8beef6deafdec7914c3971782faad2ac1e66604d" datatype="html">
-        <source> tap on </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/pwa-install/pwa-install.component.html</context>
-          <context context-type="linenumber">29,30</context>
-        </context-group>
-        <note priority="1" from="description">PWA iOS Install Instructions - Line 2-1</note>
-      </trans-unit>
-      <trans-unit id="5e1fef8419bb00629ae0fe59c98feced66824e11" datatype="html">
-        <source> at the bottom </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/pwa-install/pwa-install.component.html</context>
-          <context context-type="linenumber">34,35</context>
-        </context-group>
-        <note priority="1" from="description">PWA iOS Install Instructions - Line 2-2</note>
-      </trans-unit>
-      <trans-unit id="6ac57c355739ba746bcfb893197082f53ac6ee75" datatype="html">
-        <source> and then tap on </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/pwa-install/pwa-install.component.html</context>
-          <context context-type="linenumber">39,40</context>
-        </context-group>
-        <note priority="1" from="description">PWA iOS Install Instructions - Line 3-1</note>
-      </trans-unit>
-      <trans-unit id="26c649bd93b5051b07a9aed12f707cfa401553d7" datatype="html">
-        <source> (Add to Homescreen). </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/pwa-install/pwa-install.component.html</context>
-          <context context-type="linenumber">43,44</context>
-        </context-group>
-        <note priority="1" from="description">PWA iOS Install Instructions - Line 3-2</note>
       </trans-unit>
     </body>
   </file>

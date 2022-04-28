@@ -705,8 +705,8 @@
         <source>Loading...</source>
         <target state="translated">wird geladen ...</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/notes-dashboard/notes-dashboard.component.html</context>
-          <context context-type="linenumber">9</context>
+          <context context-type="sourcefile">src/app/core/dashboard/dashboard-widget/dashboard-widget.component.html</context>
+          <context context-type="linenumber">16</context>
         </context-group>
       </trans-unit>
       <trans-unit id="ef53f00083d0537e89f52ce3fc949182c6bca8e4" datatype="html">
@@ -1203,7 +1203,7 @@
       </trans-unit>
       <trans-unit id="02b6f9239c84f76fe5b1c6087dba40dad21e194b" datatype="html">
         <source> Download details </source>
-        <target state="translate"> Details herunterladen </target>
+        <target state="translated"> Details herunterladen </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
           <context context-type="linenumber">51</context>
@@ -3804,7 +3804,7 @@
         <note priority="1" from="description">Label for children count dashboard</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/dashboard-widgets/children-count-dashboard/children-count-dashboard.component.html</context>
-          <context context-type="linenumber">9</context>
+          <context context-type="linenumber">10</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4369844267709449786" datatype="html">
@@ -4672,7 +4672,7 @@
         <target state="translated">Ihr Passwort hat sich vor kurzem geändert. Bitte mit dem neuen Passwort versuchen!</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/session/session-service/synced-session.service.ts</context>
-          <context context-type="linenumber">136</context>
+          <context context-type="linenumber">146</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1883557110661036774" datatype="html">
@@ -5156,7 +5156,7 @@
         <target state="translated">App installieren</target>
         <note priority="1" from="description">PWA Install Button Label</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/pwa-install/pwa-install.component.html</context>
+          <context context-type="sourcefile">src/app/core/pwa-install/pwa-install.component.html</context>
           <context context-type="linenumber">12</context>
         </context-group>
       </trans-unit>
@@ -5165,7 +5165,7 @@
         <target state="translated">Um die App zu installieren, klicken Sie </target>
         <note priority="1" from="description">PWA iOS Install Instructions - Line 1</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/pwa-install/pwa-install.component.html</context>
+          <context context-type="sourcefile">src/app/core/pwa-install/pwa-install.component.html</context>
           <context context-type="linenumber">17</context>
         </context-group>
       </trans-unit>
@@ -5174,7 +5174,7 @@
         <target state="translated">unten auf </target>
         <note priority="1" from="description">PWA iOS Install Instructions - Line 2-1</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/pwa-install/pwa-install.component.html</context>
+          <context context-type="sourcefile">src/app/core/pwa-install/pwa-install.component.html</context>
           <context context-type="linenumber">29</context>
         </context-group>
       </trans-unit>
@@ -5183,7 +5183,7 @@
         <target state="translated"/>
         <note priority="1" from="description">PWA iOS Install Instructions - Line 2-2</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/pwa-install/pwa-install.component.html</context>
+          <context context-type="sourcefile">src/app/core/pwa-install/pwa-install.component.html</context>
           <context context-type="linenumber">34</context>
         </context-group>
       </trans-unit>
@@ -5192,7 +5192,7 @@
         <target state="translated">und dann auf </target>
         <note priority="1" from="description">PWA iOS Install Instructions - Line 3-1</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/pwa-install/pwa-install.component.html</context>
+          <context context-type="sourcefile">src/app/core/pwa-install/pwa-install.component.html</context>
           <context context-type="linenumber">39</context>
         </context-group>
       </trans-unit>
@@ -5201,7 +5201,7 @@
         <target state="translated"> (Zum Home-Bildschirm).</target>
         <note priority="1" from="description">PWA iOS Install Instructions - Line 3-2</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/pwa-install/pwa-install.component.html</context>
+          <context context-type="sourcefile">src/app/core/pwa-install/pwa-install.component.html</context>
           <context context-type="linenumber">43</context>
         </context-group>
       </trans-unit>
