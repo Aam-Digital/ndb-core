@@ -4,7 +4,7 @@
 # >> docker build -f build/Dockerfile -t aam/digital:latest .
 # >> docker run -p=80:80 aam/digital:latest
 # >> docker kill aam-digital
-FROM node:15.11.0-alpine3.13 as builder
+FROM node:16.14.2-alpine3.15 as builder
 WORKDIR /app
 
 COPY package*.json ./
