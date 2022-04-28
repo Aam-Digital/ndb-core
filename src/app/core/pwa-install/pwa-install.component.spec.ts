@@ -6,7 +6,7 @@ import { PwaInstallService, PWAInstallType } from "./pwa-install.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Subject } from "rxjs";
 import { take } from "rxjs/operators";
-import { MockedTestingModule } from "../utils/mocked-testing.module";
+import { MockedTestingModule } from "../../utils/mocked-testing.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("PwaInstallComponent", () => {
