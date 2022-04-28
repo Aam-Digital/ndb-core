@@ -196,6 +196,9 @@ export const defaultJsonConfig = {
           "config": {
             "dashboardConfigId": "1"
           }
+        },
+        {
+          "component": "ChildrenBmiDashboard"
         }
       ]
     }

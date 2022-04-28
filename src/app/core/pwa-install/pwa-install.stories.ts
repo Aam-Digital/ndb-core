@@ -10,23 +10,17 @@ export default {
   component: PwaInstallComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        PwaInstallModule,
-        StorybookBaseModule,
-        MatSnackBarModule
-      ],
+      imports: [PwaInstallModule, StorybookBaseModule, MatSnackBarModule],
     }),
   ],
 } as Meta;
 
-const Template: Story<PwaInstallComponent> = (
-  args: PwaInstallComponent
-) => ({
+const Template: Story<PwaInstallComponent> = (args: PwaInstallComponent) => ({
   component: PwaInstallComponent,
   props: args,
 });
 
 export const Primary = Template.bind({});
 Primary.args = {
-    installText2 : 'Install instructions',
+  installText2: "Install instructions",
 };
