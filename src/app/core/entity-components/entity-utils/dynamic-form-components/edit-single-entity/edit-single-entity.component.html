@@ -1,21 +1,32 @@
 <mat-form-field *ngIf="!selectedEntity || editingSelectedEntity" [formGroup]="formControl.parent">
   <mat-label>{{ label }}</mat-label>
+  <!--
+    This input is need for detecting errors in the form.
+    The actual input used for editing is below.
+   -->
+  <input
+    matInput
+    [formControl]="formControl"
+    hidden
+  />
   <input
     #inputElement
     matInput
     [placeholder]="placeholder"
-    [formControl]="entityNameFormControl"
+    [disabled]="formControl.disabled"
     [matAutocomplete]="autoSuggestions"
-    (keyup.enter)="select(entityNameFormControl.value)"
-    (focusout)="select(entityNameFormControl.value)"
-  />
+    [value]="selectedEntity?.toString()"
+    (keyup)="updateAutocomplete(inputElement.value)"
+    (focusin)="updateAutocomplete(inputElement.value)"
+    (focusout)="select(inputElement.value)"
+  >
   <mat-autocomplete
     #autoSuggestions="matAutocomplete"
     (optionSelected)="select($event.option.value)"
   >
     <!-- Optional header -->
     <ng-content select="mat-option"></ng-content>
-    <mat-option *ngFor="let entity of filteredEntities | async" [value]="entity.toString()">
+    <mat-option *ngFor="let entity of autocompleteEntities | async" [value]="entity">
       <app-display-entity
         [entityToDisplay]="entity"
         [linkDisabled]="true"

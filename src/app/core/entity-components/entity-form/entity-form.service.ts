@@ -6,6 +6,7 @@ import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DynamicValidatorsService } from "./dynamic-form-validators/dynamic-validators.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { EntitySchema } from "../../entity/schema/entity-schema";
 
 @Injectable()
 /**
@@ -96,7 +97,7 @@ export class EntityFormService {
     form: FormGroup,
     entity: T
   ): Promise<T> {
-    this.checkFormValidity(form);
+    this.checkFormValidity(form, entity.getSchema());
     const updatedEntity = entity.copy() as T;
     Object.assign(updatedEntity, form.getRawValue());
     updatedEntity.assertValid();
@@ -114,24 +115,20 @@ export class EntityFormService {
       });
   }
 
-  private checkFormValidity(form: FormGroup) {
+  private checkFormValidity(form: FormGroup, schema: EntitySchema) {
     // errors regarding invalid fields wont be displayed unless marked as touched
     form.markAllAsTouched();
     if (form.invalid) {
-      const invalidFields = this.getInvalidFields(form);
+      const invalidFields = this.getInvalidFields(form, schema);
       throw new Error($localize`Fields: "${invalidFields}" are invalid`);
     }
   }
 
-  private getInvalidFields(form: FormGroup): string {
-    const invalid: string[] = [];
-    const controls = form.controls;
-    for (const field in controls) {
-      if (controls[field].invalid) {
-        invalid.push(field);
-      }
-    }
-    return invalid.join(", ");
+  private getInvalidFields(form: FormGroup, schema: EntitySchema): string {
+    return Object.keys(form.controls)
+      .filter((key) => form.controls[key].invalid)
+      .map((field) => schema.get(field).label)
+      .join(", ");
   }
 
   private canSave(oldEntity: Entity, newEntity: Entity): boolean {

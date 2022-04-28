@@ -28,6 +28,7 @@ import { EventNote } from "../../attendance/model/event-note";
 import { UpdatedEntity } from "../../../core/entity/model/entity-update";
 import { ExportService } from "../../../core/export/export-service/export.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("NotesManagerComponent", () => {
   let component: NotesManagerComponent;
@@ -100,7 +101,11 @@ describe("NotesManagerComponent", () => {
     mockEventNoteObservable = new Subject<UpdatedEntity<EventNote>>();
 
     TestBed.configureTestingModule({
-      imports: [NotesModule, MockedTestingModule.withState()],
+      imports: [
+        NotesModule,
+        MockedTestingModule.withState(),
+        FontAwesomeTestingModule,
+      ],
       providers: [
         { provide: FormDialogService, useValue: dialogMock },
         { provide: ActivatedRoute, useValue: routeMock },
@@ -134,9 +139,9 @@ describe("NotesManagerComponent", () => {
     component.ngOnInit();
     tick();
     expect(component.config.filters.length).toEqual(3);
-    expect(component.config.filters[0].hasOwnProperty("options")).toBeTrue();
-    expect(component.config.filters[1].hasOwnProperty("options")).toBeTrue();
-    expect(component.config.filters[2].hasOwnProperty("options")).toBeFalse();
+    expect(component.config.filters[0]).toHaveOwnProperty("options");
+    expect(component.config.filters[1]).toHaveOwnProperty("options");
+    expect(component.config.filters[2]).not.toHaveOwnProperty("options");
   }));
 
   it("should open the dialog when clicking details", () => {

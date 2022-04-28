@@ -12,7 +12,7 @@ describe("FilterSelection", () => {
     const keys = ["x", "y"];
     fs.options = FilterSelection.generateOptions(keys, "category");
 
-    expect(fs.options.length).toBe(keys.length + 1);
+    expect(fs.options).toHaveSize(keys.length + 1);
 
     const testData = [
       { id: 1, category: "x" },
@@ -23,7 +23,7 @@ describe("FilterSelection", () => {
       fs.getFilterFunction(selectedCategory)
     );
 
-    expect(filteredData.length).toBe(1);
+    expect(filteredData).toHaveSize(1);
     expect(filteredData[0].category).toBe(selectedCategory);
   });
 });

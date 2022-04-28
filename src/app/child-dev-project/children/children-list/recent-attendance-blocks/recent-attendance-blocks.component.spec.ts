@@ -81,6 +81,6 @@ describe("RecentAttendanceBlocksComponent", () => {
     });
     flush();
 
-    expect(component.attendanceList.length).toBe(2);
+    expect(component.attendanceList).toHaveSize(2);
   }));
 });

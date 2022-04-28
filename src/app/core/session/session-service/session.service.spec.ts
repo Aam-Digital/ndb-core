@@ -86,7 +86,7 @@ export function testSessionServiceImplementation(
     expectNotToBeLoggedIn(LoginState.LOGGED_OUT);
   });
 
-  fit("it correctly handles the necessary steps after a successful login", async () => {
+  it("it correctly handles the necessary steps after a successful login", async () => {
     const dummyUser: DatabaseUser = {
       name: "Hanspeter",
       roles: ["user_app"],
@@ -112,7 +112,7 @@ export function testSessionServiceImplementation(
 
     expect(sessionService.isLoggedIn())
       .withContext("unexpected isLoggedIn")
-      .toEqual(false);
-    expect(sessionService.getCurrentUser()).not.toBeDefined();
+      .toBeFalse();
+    expect(sessionService.getCurrentUser()).toBeUndefined();
   }
 }

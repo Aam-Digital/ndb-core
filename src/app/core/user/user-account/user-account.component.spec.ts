@@ -83,18 +83,18 @@ describe("UserAccountComponent", () => {
   });
 
   it("should enable password form", () => {
-    expect(component.passwordForm.enabled).toBeTrue();
+    expect(component.passwordForm).toBeEnabled();
   });
 
   it("should set error when password is incorrect", () => {
     component.passwordForm.get("currentPassword").setValue("wrongPW");
     mockSessionService.checkPassword.and.returnValue(false);
 
-    expect(component.passwordForm.get("currentPassword").valid).toBeTrue();
+    expect(component.passwordForm.get("currentPassword")).toBeValidForm();
 
     component.changePassword();
 
-    expect(component.passwordForm.get("currentPassword").valid).toBeFalse();
+    expect(component.passwordForm.get("currentPassword")).not.toBeValidForm();
   });
 
   it("should set error when password change fails", fakeAsync(() => {

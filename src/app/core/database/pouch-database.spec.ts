@@ -35,9 +35,13 @@ describe("PouchDatabase tests", () => {
     const testData = { _id: id, name: name, count: count };
     await database.put(testData);
     const resultData = await database.get(id);
-    expect(resultData._id).toEqual(id);
-    expect(resultData.name).toEqual(name);
-    expect(resultData.count).toEqual(count);
+    expect(resultData).toEqual(
+      jasmine.objectContaining({
+        _id: id,
+        name: name,
+        count: count,
+      })
+    );
   });
 
   it("put two objects with different _id", async () => {
@@ -124,7 +128,7 @@ describe("PouchDatabase tests", () => {
     const result = await database.getAll();
     expect(result.map((el) => el._id)).toContain(testData1._id);
     expect(result.map((el) => el._id)).toContain(testData2._id);
-    expect(result.length).toBe(2);
+    expect(result).toHaveSize(2);
   });
 
   it("getAll returns prefixed objects", async () => {
@@ -134,7 +138,7 @@ describe("PouchDatabase tests", () => {
     await database.put(testData1);
     await database.put(testData2);
     const result = await database.getAll(prefix);
-    expect(result.length).toBe(1);
+    expect(result).toHaveSize(1);
     expect(result.map((el) => el._id)).toContain(testData1._id);
     expect(result.map((el) => el._id)).not.toContain(testData2._id);
   });
