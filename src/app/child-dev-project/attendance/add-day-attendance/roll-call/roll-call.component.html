@@ -10,17 +10,24 @@
       {{ currentIndex+1 }} / {{ entries.length }}
     </div>
   </div>
-  <div style="display: flex; flex-direction: row; width: 100%">
+  <div class="navbar-wrapper">
     <button mat-icon-button (click)="goToPrevious()" [disabled]="isFirst">
       <fa-icon icon="chevron-left"></fa-icon>
     </button>
-    <app-child-block [entity]="entries[currentIndex].child" [linkDisabled]="true" style="display: flex; flex-grow: 1; place-content: center"></app-child-block>
+    <app-child-block
+      class="child-block"
+      *ngIf="!isFinished"
+      [entity]="entries[currentIndex].child"
+      [linkDisabled]="true"
+      [tooltipDisabled]="true">
+    </app-child-block>
     <button mat-icon-button (click)="goToNext()" [disabled]="isFinished">
       <fa-icon icon="chevron-right"></fa-icon>
     </button>
   </div>
-  <div style="display: flex; position: relative" class="tab-wrapper">
+  <div *ngIf="!isFinished" class="tab-wrapper">
     <app-roll-call-tab
+      (swipe)="swipe($event)"
       *ngFor="let entry of entries; let i = index"
       class="tab-body" [class.tab-body-active]="currentIndex === i"
       [position]="i - currentIndex" >

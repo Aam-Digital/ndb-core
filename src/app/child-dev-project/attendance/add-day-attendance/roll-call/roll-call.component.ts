@@ -213,4 +213,8 @@ export class RollCallComponent implements OnChanges {
   finish() {
     this.exit.emit();
   }
+
+  swipe(event) {
+    console.log(event);
+  }
 }

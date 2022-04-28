@@ -76,6 +76,8 @@
   display: flex;
   overflow: hidden;
   flex-basis: 100%;
+  margin-left: 6px;
+  margin-right: 6px;
 }
 
 .tab-body-active {
@@ -90,5 +92,18 @@
 }
 
 .tab-wrapper {
+  display: flex;
+  position: relative;
+}
+
+.navbar-wrapper {
+  display: flex;
+  flex-direction: row;
   width: 100%;
+}
+
+.child-block {
+  display: flex;
+  flex-grow: 1;
+  place-content: center;
 }
