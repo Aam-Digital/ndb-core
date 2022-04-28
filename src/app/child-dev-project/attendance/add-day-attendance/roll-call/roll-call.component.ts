@@ -173,9 +173,6 @@ export class RollCallComponent implements OnChanges {
   }
 
   markAttendance(status: AttendanceStatusType) {
-    /*if (this.transitionInProgress) {
-      return;
-    } */
     this.currentStatus = status;
     this.isDirty = true;
 
