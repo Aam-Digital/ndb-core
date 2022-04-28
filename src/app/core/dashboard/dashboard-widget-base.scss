@@ -65,3 +65,10 @@
 .mat-table tr:first-child {
   border-top: none;
 }
+
+.headline {
+  height: 100%;
+  display: flex;
+  place-content: center;
+  place-items: center;
+}

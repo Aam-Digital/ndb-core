@@ -18,7 +18,7 @@
 import { DatabaseIndexingService } from "./database-indexing.service";
 import { Database } from "../../database/database";
 import { EntitySchemaService } from "../schema/entity-schema.service";
-import { expectObservable } from "../../../test-utils/observable-utils";
+import { expectObservable } from "../../../utils/test-utils/observable-utils";
 import { fakeAsync, flush, tick } from "@angular/core/testing";
 import { SessionService } from "../../session/session-service/session.service";
 import { BehaviorSubject } from "rxjs";

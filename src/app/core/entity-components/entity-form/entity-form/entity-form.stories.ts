@@ -1,6 +1,5 @@
 import { moduleMetadata } from "@storybook/angular";
 import { Meta, Story } from "@storybook/angular/types-6-0";
-import { AlertService } from "../../../alerts/alert.service";
 import { ChildPhotoService } from "../../../../child-dev-project/children/child-photo-service/child-photo.service";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { ChildrenModule } from "../../../../child-dev-project/children/children.module";
@@ -30,10 +29,6 @@ export default {
         MockedTestingModule.withState(LoginState.LOGGED_IN, [s1, s2, s3]),
       ],
       providers: [
-        {
-          provide: AlertService,
-          useValue: { addDanger: () => null, addInfo: () => null },
-        },
         { provide: ChildPhotoService, useValue: { canSetImage: () => true } },
       ],
     }),
@@ -98,6 +93,9 @@ Child.schema.set("school", {
   additional: School.ENTITY_TYPE,
   viewComponent: "DisplayEntity",
   editComponent: "EditSingleEntity",
+  validators: {
+    required: true,
+  },
 });
 Child.schema.set("configurable-enum-array", {
   dataType: "array",

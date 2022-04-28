@@ -4,10 +4,21 @@
     #inputElement
     matInput
     [placeholder]="placeholder"
-    [formControl]="entityNameFormControl"
+    [disabled]="formControl.disabled"
     [matAutocomplete]="autoSuggestions"
-    (keyup.enter)="select(entityNameFormControl.value)"
-    (focusout)="select(entityNameFormControl.value)"
+    [value]="selectedEntity?.toString()"
+    (keyup)="updateAutocomplete(inputElement.value)"
+    (focusin)="updateAutocomplete(inputElement.value)"
+    (focusout)="select(inputElement.value)"
+  >
+  <!--
+  This input is need for detecting errors in the form.
+  The actual input used for editing is below.
+ -->
+  <input
+    matInput
+    [formControl]="formControl"
+    hidden
   />
   <mat-autocomplete
     #autoSuggestions="matAutocomplete"
@@ -15,13 +26,14 @@
   >
     <!-- Optional header -->
     <ng-content select="mat-option"></ng-content>
-    <mat-option *ngFor="let entity of filteredEntities | async" [value]="entity.toString()">
+    <mat-option *ngFor="let entity of autocompleteEntities | async" [value]="entity">
       <app-display-entity
         [entityToDisplay]="entity"
         [linkDisabled]="true"
       ></app-display-entity>
     </mat-option>
   </mat-autocomplete>
+
   <mat-error *ngIf="formControl.errors?.required" i18n="Error message for any input">
     This field is required
   </mat-error>
