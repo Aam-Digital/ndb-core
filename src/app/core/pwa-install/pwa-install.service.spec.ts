@@ -2,7 +2,7 @@ import { TestBed } from "@angular/core/testing";
 import { PwaInstallModule } from "./pwa-install.module";
 
 import { PwaInstallService, PWAInstallType } from "./pwa-install.service";
-import { WINDOW_TOKEN } from "../utils/di-tokens";
+import { WINDOW_TOKEN } from "../../utils/di-tokens";
 
 describe("PwaInstallService", () => {
   let service: PwaInstallService;

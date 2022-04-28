@@ -1,0 +1,30 @@
+.dot {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.dot-red {
+  background-color: red;
+}
+.dot-green {
+  background-color: green;
+}
+
+.tech-details {
+  color: #707070;
+}
+
+.mat-expansion-panel {
+  background-color: transparent;
+  border: 1px #707070 solid;
+}
+
+.sw-logs {
+  overflow: auto;
+  white-space: pre;
+}
+
+.button {
+  width: 100%;
+}
