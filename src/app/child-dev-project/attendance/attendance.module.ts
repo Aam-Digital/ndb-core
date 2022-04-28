@@ -62,6 +62,7 @@ import { MatPaginatorModule } from "@angular/material/paginator";
 import { ViewModule } from "../../core/view/view.module";
 import { AttendanceSummaryComponent } from "./attendance-summary/attendance-summary.component";
 import { RollCallTabComponent } from "./add-day-attendance/roll-call/roll-call-tab/roll-call-tab.component";
+import { HammerModule } from "@angular/platform-browser";
 
 @NgModule({
   declarations: [
@@ -113,6 +114,7 @@ import { RollCallTabComponent } from "./add-day-attendance/roll-call/roll-call-t
     DashboardModule,
     MatPaginatorModule,
     ViewModule,
+    HammerModule,
   ],
   exports: [
     ActivityCardComponent,

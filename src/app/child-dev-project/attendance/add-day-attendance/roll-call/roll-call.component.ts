@@ -191,11 +191,15 @@ export class RollCallComponent implements OnChanges {
   }
 
   goToPrevious() {
-    this.goToParticipantWithIndex(this.currentIndex - 1);
+    if (this.currentIndex - 1 >= 0) {
+      this.goToParticipantWithIndex(this.currentIndex - 1);
+    }
   }
 
   goToNext() {
-    this.goToParticipantWithIndex(this.currentIndex + 1);
+    if (this.currentIndex + 1 <= this.entries.length) {
+      this.goToParticipantWithIndex(this.currentIndex + 1);
+    }
   }
 
   get isFirst(): boolean {
@@ -214,7 +218,11 @@ export class RollCallComponent implements OnChanges {
     this.exit.emit();
   }
 
-  swipe(event) {
-    console.log(event);
+  swipeRight() {
+    this.goToPrevious();
+  }
+
+  swipeLeft() {
+    this.goToNext();
   }
 }

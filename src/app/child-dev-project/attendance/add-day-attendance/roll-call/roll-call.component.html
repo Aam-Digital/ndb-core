@@ -27,7 +27,8 @@
   </div>
   <div *ngIf="!isFinished" class="tab-wrapper">
     <app-roll-call-tab
-      (swipe)="swipe($event)"
+      (swiperight)="swipeRight()"
+      (swipeleft)="swipeLeft()"
       *ngFor="let entry of entries; let i = index"
       class="tab-body" [class.tab-body-active]="currentIndex === i"
       [position]="i - currentIndex" >
