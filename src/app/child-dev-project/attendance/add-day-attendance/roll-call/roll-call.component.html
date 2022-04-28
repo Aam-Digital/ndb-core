@@ -53,7 +53,7 @@
 </div>
 
 <!-- Completion Page -->
-<div *ngIf="isFinished" class="roll-call-complete" [@completeRollCall] (click)="finish()">
+<div *ngIf="isFinished" class="roll-call-complete" @completeRollCall (click)="finish()">
   <fa-icon icon="check-circle" class="roll-call-complete-icon"></fa-icon>
   <div
     i18n="

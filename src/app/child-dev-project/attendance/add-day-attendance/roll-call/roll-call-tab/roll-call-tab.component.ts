@@ -50,6 +50,7 @@ type PositionState = "left" | "center" | "right";
         })
       ),
 
+      transition("void => *", []),
       transition(
         "* => left, * => right, left => center, right => center",
         animate("{{animationDuration}} cubic-bezier(0.35, 0, 0.25, 1)")
