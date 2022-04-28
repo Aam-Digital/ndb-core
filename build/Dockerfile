@@ -8,8 +8,6 @@ FROM node:15.11.0-alpine3.13 as builder
 WORKDIR /app
 
 COPY package*.json ./
-COPY patch-webpack.js .
-COPY patch-casl.js .
 RUN npm ci --no-progress
 
 RUN $(npm bin)/ng version
