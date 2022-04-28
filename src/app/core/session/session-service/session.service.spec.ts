@@ -91,7 +91,7 @@ export function testSessionServiceImplementation(
       name: "Hanspeter",
       roles: ["user_app"],
     };
-    await sessionService.handleSucessfulLogin(dummyUser);
+    await sessionService.handleSuccessfulLogin(dummyUser);
     expect(sessionService.loginState.value).toEqual(LoginState.LOGGED_IN);
     expect(sessionService.getCurrentUser()).toEqual(dummyUser);
   });

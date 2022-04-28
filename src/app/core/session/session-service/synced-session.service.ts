@@ -66,15 +66,15 @@ export class SyncedSessionService extends SessionService {
       })
       .subscribe((res: any) => {
         if (res.userCtx.name) {
-          this.handleSucessfulLogin(res.userCtx);
+          this.handleSuccessfulLogin(res.userCtx);
         }
       });
   }
 
-  async handleSucessfulLogin(userObject: DatabaseUser) {
+  async handleSuccessfulLogin(userObject: DatabaseUser) {
     this.startSyncAfterLocalAndRemoteLogin();
-    await this._remoteSession.handleSucessfulLogin(userObject);
-    await this._localSession.handleSucessfulLogin(userObject);
+    await this._remoteSession.handleSuccessfulLogin(userObject);
+    await this._localSession.handleSuccessfulLogin(userObject);
     this.loginState.next(LoginState.LOGGED_IN);
   }
 
