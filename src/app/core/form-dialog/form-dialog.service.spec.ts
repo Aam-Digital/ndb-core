@@ -16,13 +16,7 @@ import { EntityAbility } from "../permissions/ability/entity-ability";
 describe("FormDialogService", () => {
   let service: FormDialogService;
 
-  let mockConfirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
-
   beforeEach(() => {
-    mockConfirmationDialog = jasmine.createSpyObj("mockConfirmationDialog", [
-      "openDialog",
-    ]);
-
     TestBed.configureTestingModule({
       imports: [
         FormDialogModule,
@@ -35,7 +29,7 @@ describe("FormDialogService", () => {
       providers: [
         {
           provide: ConfirmationDialogService,
-          useValue: mockConfirmationDialog,
+          useValue: jasmine.createSpyObj(["getConfirmation"]),
         },
         {
           provide: EntityAbility,

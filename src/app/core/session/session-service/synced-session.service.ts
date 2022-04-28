@@ -31,6 +31,7 @@ import { waitForChangeTo } from "../session-states/session-utils";
 import { PouchDatabase } from "../../database/pouch-database";
 import { zip } from "rxjs";
 import { AppConfig } from "app/core/app-config/app-config";
+import { filter } from "rxjs/operators";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -41,6 +42,7 @@ import { AppConfig } from "app/core/app-config/app-config";
  */
 @Injectable()
 export class SyncedSessionService extends SessionService {
+  static readonly LAST_SYNC_KEY = "LAST_SYNC";
   private readonly LOGIN_RETRY_TIMEOUT = 60000;
   private readonly POUCHDB_SYNC_BATCH_SIZE = 500;
 
@@ -83,6 +85,14 @@ export class SyncedSessionService extends SessionService {
     await this._remoteSession.handleSuccessfulLogin(userObject);
     await this._localSession.handleSuccessfulLogin(userObject);
     this.loginState.next(LoginState.LOGGED_IN);
+    this.syncState
+      .pipe(filter((state) => state === SyncState.COMPLETED))
+      .subscribe(() =>
+        localStorage.setItem(
+          SyncedSessionService.LAST_SYNC_KEY,
+          new Date().toISOString()
+        )
+      );
   }
 
   /**

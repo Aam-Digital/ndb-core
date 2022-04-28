@@ -36,7 +36,9 @@ export class EditSingleEntityComponent extends EditComponent<string> {
 
   async onInitFromDynamicConfig(config: EditPropertyConfig) {
     super.onInitFromDynamicConfig(config);
-    this.placeholder = $localize`:Placeholder for input to set an entity|context Select User:Select ${this.label}`;
+    this.placeholder = $localize`:Placeholder for input to set an entity|context Select User:Select ${
+      config.formFieldConfig.label || config.propertySchema?.label
+    }`;
     const entityType: string =
       config.formFieldConfig.additional || config.propertySchema.additional;
     this.entities = await this.entityMapperService.loadType(entityType);

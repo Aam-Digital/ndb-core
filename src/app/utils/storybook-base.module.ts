@@ -14,6 +14,8 @@ import {
   entityRegistry,
   EntityRegistry,
 } from "../core/entity/database-entity.decorator";
+import { viewRegistry } from "../core/view/dynamic-components/dynamic-component.decorator";
+import { routesRegistry } from "../app.routing";
 
 /**
  * Utility module to be imported in Storybook stories to ensure central setup like fontawesome icons are available.
@@ -33,5 +35,8 @@ import {
 export class StorybookBaseModule {
   constructor(icons: FaIconLibrary) {
     icons.addIconPacks(fas, far);
+    entityRegistry.allowDuplicates();
+    viewRegistry.allowDuplicates();
+    routesRegistry.allowDuplicates();
   }
 }
