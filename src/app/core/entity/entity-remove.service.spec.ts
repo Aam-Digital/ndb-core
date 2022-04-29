@@ -9,9 +9,7 @@ import {
 } from "@angular/material/snack-bar";
 import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
 import { Entity } from "./model/entity";
-import { NEVER, Observable, Subject } from "rxjs";
-import { MatDialogRef } from "@angular/material/dialog";
-import { ConfirmationDialogComponent } from "../confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+import { NEVER, Observable } from "rxjs";
 import { toArray } from "rxjs/operators";
 
 describe("EntityRemoveService", () => {
@@ -20,18 +18,13 @@ describe("EntityRemoveService", () => {
   let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
   let mockSnackBarRef: jasmine.SpyObj<MatSnackBarRef<TextOnlySnackBar>>;
   let mockConfirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
-  let mockDialogRef: jasmine.SpyObj<MatDialogRef<ConfirmationDialogComponent>>;
-  let afterClosed: Subject<boolean>;
 
   beforeEach(() => {
     mockEntityMapper = jasmine.createSpyObj(["remove", "save"]);
     snackBarSpy = jasmine.createSpyObj(["open"]);
     mockSnackBarRef = jasmine.createSpyObj(["onAction", "afterDismissed"]);
-    mockConfirmationDialog = jasmine.createSpyObj(["openDialog"]);
-    mockDialogRef = jasmine.createSpyObj(["afterClosed"]);
-    afterClosed = new Subject<boolean>();
-    mockDialogRef.afterClosed.and.returnValue(afterClosed);
-    mockConfirmationDialog.openDialog.and.returnValue(mockDialogRef);
+    mockConfirmationDialog = jasmine.createSpyObj(["getConfirmation"]);
+    mockConfirmationDialog.getConfirmation.and.resolveTo(true);
     snackBarSpy.open.and.returnValue(mockSnackBarRef);
     mockEntityMapper.remove.and.resolveTo();
     TestBed.configureTestingModule({
@@ -47,15 +40,12 @@ describe("EntityRemoveService", () => {
     service = TestBed.inject(EntityRemoveService);
   });
 
-  afterEach(() => {
-    afterClosed.complete();
-  });
-
   it("should be created", () => {
     expect(service).toBeTruthy();
   });
 
   it("emits once and closes when the user has cancelled", (done) => {
+    mockConfirmationDialog.getConfirmation.and.resolveTo(false);
     service
       .remove(new Entity())
       .pipe(toArray())
@@ -72,7 +62,6 @@ describe("EntityRemoveService", () => {
           done();
         }
       );
-    afterClosed.next(false);
   });
 
   it("deletes the entity and finishes if the action is never undone", (done) => {
@@ -99,7 +88,6 @@ describe("EntityRemoveService", () => {
           done();
         }
       );
-    afterClosed.next(true);
   });
 
   it("emits twice when an entity was deleted and the user pressed undo", (done) => {
@@ -127,6 +115,5 @@ describe("EntityRemoveService", () => {
           done();
         }
       );
-    afterClosed.next(true);
   });
 });

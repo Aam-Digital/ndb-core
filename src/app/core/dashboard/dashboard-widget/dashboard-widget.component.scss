@@ -83,3 +83,11 @@ $border-radius-card: 4px;
 .mat-button-wrapper {
   display: flex;
 }
+
+.headline {
+  height: 100%;
+  display: flex;
+  place-content: center;
+  place-items: center;
+  width: 100%;
+}

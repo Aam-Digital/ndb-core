@@ -5,11 +5,6 @@ import { RecurringActivity } from "./model/recurring-activity";
 import { ActivityAttendance } from "./model/activity-attendance";
 import { groupBy } from "../../utils/utils";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
-import { ConfigService } from "../../core/config/config.service";
-import {
-  INTERACTION_TYPE_CONFIG_ID,
-  InteractionType,
-} from "../notes/model/interaction-type.interface";
 import { EventNote } from "./model/event-note";
 import { ChildrenService } from "../children/children.service";
 
@@ -20,32 +15,23 @@ export class AttendanceService {
   constructor(
     private entityMapper: EntityMapperService,
     private dbIndexing: DatabaseIndexingService,
-    private configService: ConfigService,
     private childrenService: ChildrenService
   ) {
     this.createIndices();
   }
 
   private createIndices() {
-    const meetingInteractionTypes = this.configService
-      .getConfigurableEnumValues<InteractionType>(INTERACTION_TYPE_CONFIG_ID)
-      .filter((t) => t.isMeeting)
-      .map((t) => t.id);
-    this.createEventsIndex(meetingInteractionTypes);
+    this.createEventsIndex();
     this.createRecurringActivitiesIndex();
   }
 
-  private createEventsIndex(meetingInteractionTypes: string[]): Promise<void> {
+  private createEventsIndex(): Promise<void> {
     const designDoc = {
       _id: "_design/events_index",
       views: {
         by_date: {
           map: `(doc) => {
-            if (doc._id.startsWith("${EventNote.ENTITY_TYPE}") &&
-                ${JSON.stringify(
-                  meetingInteractionTypes
-                )}.includes(doc.category)
-            ) {
+            if (doc._id.startsWith("${EventNote.ENTITY_TYPE}")) {
               var d = new Date(doc.date || null);
               var dString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0")
               emit(dString);

@@ -4,32 +4,28 @@ import {
   TestBed,
   tick,
 } from "@angular/core/testing";
-import { of } from "rxjs";
 import { ChildrenModule } from "../../children.module";
-import { ChildrenService } from "../../children.service";
-import { Child } from "../../model/child";
 import { ChildrenBmiDashboardComponent } from "./children-bmi-dashboard.component";
 import { HealthCheck } from "../../health-checkup/model/health-check";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 
 describe("ChildrenBmiDashboardComponent", () => {
   let component: ChildrenBmiDashboardComponent;
   let fixture: ComponentFixture<ChildrenBmiDashboardComponent>;
-  const mockChildrenService: jasmine.SpyObj<ChildrenService> = jasmine.createSpyObj(
-    "mockChildrenService",
-    ["getHealthChecksOfChild", "getChildren"]
-  );
+  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
 
   beforeEach(() => {
-    mockChildrenService.getChildren.and.returnValue(of([]));
+    mockEntityMapper = jasmine.createSpyObj("mockEntityMapper", ["loadType"]);
+    mockEntityMapper.loadType.and.resolveTo([]);
     TestBed.configureTestingModule({
       imports: [
         ChildrenModule,
         MockedTestingModule.withState(),
         FontAwesomeTestingModule,
       ],
-      providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
+      providers: [{ provide: EntityMapperService, useValue: mockEntityMapper }],
     }).compileComponents();
   });
 
@@ -43,8 +39,7 @@ describe("ChildrenBmiDashboardComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should load the BMI data for the childs, but only display the unhealthy one", fakeAsync(() => {
-    const testChild = new Child("testID");
+  it("should load the BMI data for the children, but only display the unhealthy one", fakeAsync(() => {
     const healthCheck1 = HealthCheck.create({
       _id: "hc1",
       child: "testID",
@@ -59,7 +54,6 @@ describe("ChildrenBmiDashboardComponent", () => {
       height: 150,
       weight: 15,
     });
-    const testChild2 = new Child("testID2");
     const healthCheck3 = HealthCheck.create({
       _id: "hc3",
       child: "testID2",
@@ -67,29 +61,17 @@ describe("ChildrenBmiDashboardComponent", () => {
       height: 115,
       weight: 30,
     });
-    mockChildrenService.getChildren.and.returnValue(
-      of([testChild, testChild2])
-    );
-    mockChildrenService.getHealthChecksOfChild.and.callFake(
-      (childId: string) => {
-        if (childId === "testID") {
-          return of([healthCheck1, healthCheck2]);
-        }
-        if (childId === "testID2") {
-          return of([healthCheck3]);
-        }
-      }
-    );
-    component.ngOnInit();
-    expect(mockChildrenService.getChildren).toHaveBeenCalled();
-    expect(mockChildrenService.getHealthChecksOfChild).toHaveBeenCalledWith(
-      testChild.getId()
-    );
-    expect(mockChildrenService.getHealthChecksOfChild).toHaveBeenCalledWith(
-      testChild2.getId()
-    );
+    mockEntityMapper.loadType.and.resolveTo([
+      healthCheck1,
+      healthCheck2,
+      healthCheck3,
+    ]);
+
+    component.onInitFromDynamicConfig();
+
+    expect(mockEntityMapper.loadType).toHaveBeenCalledWith(HealthCheck);
     tick();
-    expect(component.bmiRows).toEqual([
+    expect(component.bmiDataSource.data).toEqual([
       { childId: "testID", bmi: healthCheck2.bmi },
     ]);
   }));

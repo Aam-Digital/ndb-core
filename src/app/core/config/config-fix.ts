@@ -79,7 +79,7 @@ export const defaultJsonConfig = {
         "name": $localize`:Menu item:Help`,
         "icon": "question",
         "link": "/help"
-      }
+      },
     ]
   },
 
@@ -196,12 +196,18 @@ export const defaultJsonConfig = {
           "config": {
             "dashboardConfigId": "1"
           }
+        },
+        {
+          "component": "ChildrenBmiDashboard"
         }
       ]
     }
   },
   "view:user": {
     "component": "UserAccount"
+  },
+  "view:support": {
+    "component": "Support"
   },
   "view:note": {
     "component": "NotesManager",
