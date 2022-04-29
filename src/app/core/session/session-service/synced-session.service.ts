@@ -61,7 +61,14 @@ export class SyncedSessionService extends SessionService {
     super();
     this._localSession = new LocalSession(pouchDatabase);
     this._remoteSession = new RemoteSession(this.httpClient, loggingService);
-
+    this.syncState
+      .pipe(filter((state) => state === SyncState.COMPLETED))
+      .subscribe(() =>
+        localStorage.setItem(
+          SyncedSessionService.LAST_SYNC_KEY,
+          new Date().toISOString()
+        )
+      );
     this.checkForValidSession();
   }
 
@@ -85,14 +92,6 @@ export class SyncedSessionService extends SessionService {
     await this._remoteSession.handleSuccessfulLogin(userObject);
     await this._localSession.handleSuccessfulLogin(userObject);
     this.loginState.next(LoginState.LOGGED_IN);
-    this.syncState
-      .pipe(filter((state) => state === SyncState.COMPLETED))
-      .subscribe(() =>
-        localStorage.setItem(
-          SyncedSessionService.LAST_SYNC_KEY,
-          new Date().toISOString()
-        )
-      );
   }
 
   /**
