@@ -13,11 +13,12 @@
   <app-widget-content>
     
     <div *ngIf="childrendataSource.data.length > 0 && !isLoading" class="table-wrapper">
-      <table mat-table [dataSource]="childrendataSource" matSort>
+      <table mat-table [dataSource]="childrendataSource" matSort >
         <tr hidden="true">
-          <th scope="col" mat-sort-header>Child </th>
-          <th scope="col" mat-sort-header>DateOfBirth</th>
-          <th scope="col" mat-sort-header>AfterBirthdayAge</th>
+          <th scope="col" mat-sort-header >Child </th>
+          <th scope="col"  mat-sort-header>DateOfBirth</th>
+          <th scope="col" mat-sort-header >AfterBirthdayAge</th>
+          
         </tr>
         <ng-container matColumnDef="entityId">
           <td mat-cell *matCellDef="let child">{{ child.entityId}} 
@@ -25,7 +26,7 @@
         </ng-container>
 
         <ng-container matColumnDef="dateOfBirth">
-          <td mat-cell *matCellDef="let child">{{child.dateOfBirth}} </td>
+          <td mat-cell *matCellDef="let child">{{child.dateOfBirth | date:'dd-MM-YYYY' }} </td>
         </ng-container>
 
         <ng-container matColumnDef="age">
@@ -45,7 +46,6 @@
              *ngFor="let child of children"
              [entity]="child"
            ></app-child-block>
-           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table> 
       
@@ -54,7 +54,7 @@
     <mat-paginator [length]="100"
     [pageSize]="5"
     [pageSizeOptions]="[5, 10, 25, 100]"
-    aria-label="Select page" showFirstLastButtons>
+    aria-label="Select page" showFirstButtons>
 </mat-paginator>
     
   </app-widget-content>
