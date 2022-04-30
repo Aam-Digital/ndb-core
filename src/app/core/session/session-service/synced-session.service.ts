@@ -30,6 +30,7 @@ import { DatabaseUser } from "./local-user";
 import { waitForChangeTo } from "../session-states/session-utils";
 import { PouchDatabase } from "../../database/pouch-database";
 import { zip } from "rxjs";
+import { AppConfig } from "app/core/app-config/app-config";
 import { filter } from "rxjs/operators";
 
 /**
@@ -68,6 +69,29 @@ export class SyncedSessionService extends SessionService {
           new Date().toISOString()
         )
       );
+    this.checkForValidSession();
+  }
+
+  /**
+   * Do login automatically if there is still a valid CouchDB cookie from last login with username and password
+   */
+  checkForValidSession() {
+    this.httpClient
+      .get(`${AppConfig.settings.database.remote_url}_session`, {
+        withCredentials: true,
+      })
+      .subscribe((res: any) => {
+        if (res.userCtx.name) {
+          this.handleSuccessfulLogin(res.userCtx);
+        }
+      });
+  }
+
+  async handleSuccessfulLogin(userObject: DatabaseUser) {
+    this.startSyncAfterLocalAndRemoteLogin();
+    await this._remoteSession.handleSuccessfulLogin(userObject);
+    await this._localSession.handleSuccessfulLogin(userObject);
+    this.loginState.next(LoginState.LOGGED_IN);
   }
 
   /**
