@@ -1,0 +1,6 @@
+@use "../../../../core/dashboard/dashboard-widget-base";
+
+.dashboard-table-additional-info-cell {
+  display: flex;
+  justify-content: flex-end;
+}
