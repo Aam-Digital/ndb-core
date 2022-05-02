@@ -13,11 +13,11 @@
   <app-widget-content>
     
     <div *ngIf="childrendataSource.data.length > 0 && !isLoading" class="table-wrapper">
-      <table mat-table [dataSource]="childrendataSource" matSort >
+      <table mat-table [dataSource]="childrendataSource"  >
         <tr hidden="true">
-          <th scope="col" mat-sort-header >Child </th>
-          <th scope="col"  mat-sort-header>DateOfBirth</th>
-          <th scope="col" mat-sort-header >AfterBirthdayAge</th>
+          <th scope="col" >Child </th>
+          <th scope="col"  >DateOfBirth</th>
+          <th scope="col" >AfterBirthdayAge</th>
           
         </tr>
         <ng-container matColumnDef="entityId">
@@ -30,7 +30,7 @@
         </ng-container>
 
         <ng-container matColumnDef="age">
-          <td mat-cell *matCellDef="let child">{{child.age}}</td>
+          <td mat-cell *matCellDef="let child">{{child.age +1}}</td>
         </ng-container>
 
     

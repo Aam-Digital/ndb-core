@@ -7,6 +7,8 @@ import { MatTableDataSource } from "@angular/material/table";
 import { MatSort } from "@angular/material/sort";
 import { MatPaginator } from "@angular/material/paginator";
 import { ViewChild } from "@angular/core";
+import _ from "lodash";
+import { date } from "faker";
 
 
 @DynamicComponent("BirthdayDashboard")
@@ -18,7 +20,7 @@ import { ViewChild } from "@angular/core";
 export class BirthdayDashboardComponent implements OnInitDynamicComponent,AfterViewInit {
 
   children: Child[] = [];
-  displayedColumns: string[] = ['entityId', 'dateOfBirth', 'age'];
+  displayedColumns: string[]= ['entityId', 'dateOfBirth', 'age'];
   childrendataSource = new  MatTableDataSource<Child>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -26,26 +28,21 @@ export class BirthdayDashboardComponent implements OnInitDynamicComponent,AfterV
   dateOfBirth: string | number | Date;
   age: number;
 
+
   constructor(private entityMapper: EntityMapperService) {}
+  
   ngOnInit(){
    // TODO sort the children based on the date of birth
     this.entityMapper.loadType(Child).then((res) => {
       this.children = res;
-      console.log(this.children);
+      this.children.sort((a,b) => +new Date(a.dateOfBirth)- +new Date(b.dateOfBirth));
+      //console.log(_.sortBy(this.children,'dateOfBirth'));
       this.childrendataSource.data= this.children;
     
       //  Now the children are set
     });
   }
-  public CalculateAge(): void
-  {
-    if (this.dateOfBirth) {
-      const bdate = new Date(this.dateOfBirth);
-      const timeDiff = Math.abs(Date.now() - bdate.getTime() );
-      
-      this.age = Math.floor((timeDiff / (1000 * 3600 * 24)) / 365);
-    }
- }
+ 
   
   ngAfterViewInit() {
     this.childrendataSource= new MatTableDataSource(this.children);
