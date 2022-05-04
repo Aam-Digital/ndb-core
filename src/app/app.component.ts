@@ -74,6 +74,7 @@ export class AppComponent {
     // Re-trigger services that depend on the config when something changes
     let lastConfig: string;
     this.configService.configUpdates.subscribe((config) => {
+      console.log("updated config", config);
       this.routerService.initRouting();
       this.entityConfigService.setupEntitiesFromConfig();
       const configString = JSON.stringify(config);

@@ -1,10 +1,8 @@
 <div>
   <span class="indicator {{ value.style }}">&nbsp;</span>
-
   <mat-form-field class="compact-form-field">
     <mat-select [(ngModel)]="value" (ngModelChange)="valueChange.emit(value)" [disabled]="disabled">
-      <mat-option *ngFor="let s of statusValues" [value]="s">
-        <span class="indicator {{ s.style }}">&nbsp;</span>
+      <mat-option *appConfigurableEnum="let s of statusID" [value]="s">
         {{ s.label }}
       </mat-option>
     </mat-select>

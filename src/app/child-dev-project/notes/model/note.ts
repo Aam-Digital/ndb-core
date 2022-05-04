@@ -188,6 +188,7 @@ export class Note extends Entity {
     if (!(attendance instanceof EventAttendance)) {
       attendance = Object.assign(new EventAttendance(), attendance);
     }
+    // console.log("attendance", child, attendance.status.label)
     return attendance;
   }
 
