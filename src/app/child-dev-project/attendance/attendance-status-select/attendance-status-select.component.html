@@ -8,6 +8,7 @@
       [compareWith]="compareFn"
     >
       <mat-option *appConfigurableEnum="let s of statusID" [value]="s">
+        <span class="indicator {{ s.style }}">&nbsp;</span>
         {{ s.label }}
       </mat-option>
     </mat-select>
