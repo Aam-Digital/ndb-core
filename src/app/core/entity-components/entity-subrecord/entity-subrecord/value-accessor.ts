@@ -8,17 +8,17 @@
 export function getReadableValue<OBJECT, PROPERTY extends keyof OBJECT>(
   data: OBJECT,
   key: PROPERTY
-): OBJECT[PROPERTY] | string {
-  if (isConfigurableEnum(data, key)) {
-    return (data[key] as any).label;
+): any {
+  const value = data[key];
+  if (isConfigurableEnum(value)) {
+    return (value as any).label;
+  } else if (Array.isArray(value)) {
+    return (value as Array<any>).map((v) => getReadableValue({ v }, "v"));
   } else {
-    return data[key];
+    return value;
   }
 }
 
-function isConfigurableEnum<OBJECT, PROPERTY extends keyof OBJECT>(
-  data: OBJECT,
-  key: PROPERTY
-): boolean {
-  return typeof data[key] === "object" && data[key] && "label" in data[key];
+function isConfigurableEnum(value: any): boolean {
+  return typeof value === "object" && value && "label" in value;
 }
