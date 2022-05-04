@@ -20,7 +20,7 @@ import { date } from "faker";
 export class BirthdayDashboardComponent implements OnInitDynamicComponent,AfterViewInit {
 
   children: Child[] = [];
-  displayedColumns: string[]= ['entityId', 'dateOfBirth', 'age'];
+  displayedColumns: string[]= ['name', 'dateOfBirth', 'age'];
   childrendataSource = new  MatTableDataSource<Child>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -35,8 +35,7 @@ export class BirthdayDashboardComponent implements OnInitDynamicComponent,AfterV
    // TODO sort the children based on the date of birth
     this.entityMapper.loadType(Child).then((res) => {
       this.children = res;
-      this.children.sort((a,b) => +new Date(a.dateOfBirth)- +new Date(b.dateOfBirth));
-      //console.log(_.sortBy(this.children,'dateOfBirth'));
+      this.children.sort((a,b) => a.dateOfBirth.getTime()- b.dateOfBirth.getTime());
       this.childrendataSource.data= this.children;
     
       //  Now the children are set
@@ -47,9 +46,7 @@ export class BirthdayDashboardComponent implements OnInitDynamicComponent,AfterV
   ngAfterViewInit() {
     this.childrendataSource= new MatTableDataSource(this.children);
     this.childrendataSource.paginator = this.paginator;
-    this.childrendataSource.sort = this.sort;
-
-    
+   
   }
  
   onInitFromDynamicConfig(config: any) {
