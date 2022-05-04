@@ -4,6 +4,7 @@ import {
   AttendanceStatusType,
   NullAttendanceStatusType,
 } from "../model/attendance-status";
+import { compareEnums } from "../../../utils/utils";
 
 @Component({
   selector: "app-attendance-status-select",
@@ -15,4 +16,5 @@ export class AttendanceStatusSelectComponent {
   @Input() disabled: boolean = false;
   @Output() valueChange = new EventEmitter<AttendanceStatusType>();
   statusID = ATTENDANCE_STATUS_CONFIG_ID;
+  compareFn = compareEnums;
 }

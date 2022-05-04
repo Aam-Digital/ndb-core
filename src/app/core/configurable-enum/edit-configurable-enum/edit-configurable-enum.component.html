@@ -2,7 +2,7 @@
   <mat-label>
     {{ label }}
   </mat-label>
-  <mat-select [formControlName]="formControlName" [multiple]="multi">
+  <mat-select [formControlName]="formControlName" [multiple]="multi" [compareWith]="compareFun">
     <mat-option *appConfigurableEnum="let o of enumId" [value]="o">
       {{ o.label }}
     </mat-option>
