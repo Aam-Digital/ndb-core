@@ -14,10 +14,10 @@ import { monthEntitySchemaDatatype } from "../../core/entity/schema-datatypes/da
 import moment from "moment";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 
-@Injectable()
 /**
  * This service handels the parsing of CSV files and importing of data
  */
+@Injectable()
 export class DataImportService {
   private readonly dateDataTypes = [
     dateEntitySchemaDatatype,
@@ -107,11 +107,7 @@ export class DataImportService {
     if (importMeta.transactionId) {
       refText = $localize`${refText} All existing records imported with the transaction id '${importMeta.transactionId}' will be deleted!`;
     }
-    const dialogRef = this.confirmationDialog.openDialog(refTitle, refText);
-
-    return new Promise<boolean>((resolve) => {
-      dialogRef.afterClosed().subscribe((confirmed) => resolve(confirmed));
-    });
+    return this.confirmationDialog.getConfirmation(refTitle, refText);
   }
 
   private async deleteExistingRecords(importMeta: ImportMetaData) {

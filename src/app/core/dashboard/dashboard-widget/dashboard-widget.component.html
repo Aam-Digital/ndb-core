@@ -3,15 +3,17 @@
   <div class="widget-header app-{{theme}}">
     <div *ngIf="headline" class="widget-headline">{{headline}}</div>
     <div *ngIf="!headline" class="widget-title">
-      <span *ngIf="!_loading">{{_title}}</span>
-      <mat-spinner *ngIf="_loading" diameter="40"></mat-spinner>
+      <span *ngIf="!titleReady">{{_title}}</span>
+      <mat-spinner *ngIf="titleReady" diameter="40"></mat-spinner>
     </div>
     <div *ngIf="!headline" class="widget-subheadline" [matTooltip]="explanation">{{subtitle}}</div>
     <app-fa-dynamic-icon class="widget-icon" [icon]="icon"></app-fa-dynamic-icon>
   </div>
 
+
   <!-- Content -->
   <div class="widget-content">
-    <ng-content select="app-widget-content"></ng-content>
+    <h2 *ngIf="loading" class="headline" i18n>Loading...</h2>
+    <ng-content *ngIf="!loading" select="app-widget-content"></ng-content>
   </div>
 </div>
