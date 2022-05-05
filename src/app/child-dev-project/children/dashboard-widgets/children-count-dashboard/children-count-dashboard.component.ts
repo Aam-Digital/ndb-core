@@ -25,7 +25,7 @@ export class ChildrenCountDashboardComponent
   @Input() groupBy: string = "center";
 
   totalChildren: number;
-  childrenGroupCounts: { label: string; value: number }[] = [];
+  childrenGroupCounts: { label: string; value: number; id: string }[] = [];
   loading = true;
 
   constructor(
@@ -48,9 +48,9 @@ export class ChildrenCountDashboardComponent
       });
   }
 
-  goToChildrenList(filterString: string) {
+  goToChildrenList(filterId: string) {
     const params = {};
-    params[this.groupBy] = filterString.toLocaleLowerCase();
+    params[this.groupBy] = filterId;
 
     const path = "/" + Child.ENTITY_TYPE.toLowerCase();
     this.router.navigate([path], { queryParams: params });
@@ -74,10 +74,14 @@ export class ChildrenCountDashboardComponent
     });
 
     this.childrenGroupCounts = Array.from(countMap.entries()) // direct use of Map creates change detection problems
-      .map((entry) => ({
-        label: extractHumanReadableLabel(entry[0]),
-        value: entry[1],
-      }));
+      .map((entry) => {
+        const label = extractHumanReadableLabel(entry[0]);
+        return {
+          label: label,
+          value: entry[1],
+          id: entry[0]?.id || label,
+        };
+      });
     this.loading = false;
   }
 }
