@@ -82,8 +82,8 @@ describe("EducationalMaterialComponent", () => {
 
   it("loads all education data associated with a child and updates the summary", async () => {
     const educationalData = [
-      { materialType: PENCIL, materialAmount: 1 },
-      { materialType: RULER, materialAmount: 2 },
+      { materialType: PENCIL, materialAmount: 1, child: child.getId() },
+      { materialType: RULER, materialAmount: 2, child: child.getId() },
     ].map(EducationalMaterial.create);
     spyOn(TestBed.inject(EntityMapperService), "loadType").and.resolveTo(
       educationalData
