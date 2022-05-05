@@ -433,7 +433,7 @@
         <note priority="1" from="description">Back to overview button after finishing a roll call</note>
       </trans-unit>
       <trans-unit id="828a009e2c01bece732333b25efb6b62ed46f6ec" datatype="html">
-        <source> attended <x id="INTERPOLATION" equiv-text="{{ attendanceDescription }}"/> events </source>
+        <source> attended <x id="INTERPOLATION" equiv-text="{{ attendanceDescription }"/> events </source>
         <target state="translated"> présent à <x id="INTERPOLATION" equiv-text="{{ attendanceDescription }"/> évènement(s) </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-block/attendance-block.component.html</context>
@@ -444,7 +444,7 @@
         <note priority="1" from="meaning">Attended Tooltip</note>
       </trans-unit>
       <trans-unit id="ed036f51e8ff8249699a772878a12268f8764150" datatype="html">
-        <source> (excluding <x id="INTERPOLATION" equiv-text="{{ logicalCount[LStatus.IGNORE] }}"/> events excused or unknown) </source>
+        <source> (excluding <x id="INTERPOLATION" equiv-text="{{ logicalCount[LStatus.IGNORE] }"/> events excused or unknown) </source>
         <target state="translated"> (à l'exception de <x id="INTERPOLATION" equiv-text="{{ logicalCount[LStatus.IGNORE] }"/> évènement(s) excusé ou sans information) </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-block/attendance-block.component.html</context>
@@ -465,7 +465,7 @@
         <note priority="1" from="meaning">Remarks</note>
       </trans-unit>
       <trans-unit id="06771f30e83b5987e80630effdd08b8ca509b8c6" datatype="html">
-        <source> All excused (out of <x id="INTERPOLATION" equiv-text="{{ selectedEvent.children.length }}"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other
+        <source> All excused (out of <x id="INTERPOLATION" equiv-text="{{ selectedEvent.children.length }"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other
       {participants} }"/>) </source>
         <target state="translated"> Excusé pour tous les évènements (out of <x id="INTERPOLATION" equiv-text="{{ selectedEvent.children.length }"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other
       {participants} }"/>) </target>
@@ -490,7 +490,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="0dc97840c4fe5e03dfb822aed93db7b7bcc45b9b" datatype="html">
-        <source> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.average | percent: &quot;1.0-0&quot; }}"/> attended (of <x id="INTERPOLATION_1" equiv-text="{{ selectedEvent.children.length }}"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other
+        <source> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.average | percent: &quot;1.0-0&quot; }"/> attended (of <x id="INTERPOLATION_1" equiv-text="{{ selectedEvent.children.length"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other
       {participants} }"/>) </source>
         <target state="translated"> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.average | percent: &quot;1.0-0&quot; }"/> présents (sur <x id="INTERPOLATION_1" equiv-text="{{ selectedEvent.children.length"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other
       {participants} }"/>) </target>
@@ -500,7 +500,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="fcce2647ba7b1763c285341617aaf63f9edab746" datatype="html">
-        <source> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.excludedUnknown }}"/> <x id="ICU" equiv-text="{ selectedEventStats.excludedUnknown, plural, one {participant} other
+        <source> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.excludedUnknown }"/> <x id="ICU" equiv-text="{ selectedEventStats.excludedUnknown, plural, one {participant} other
       {participants} }"/> without recorded status </source>
         <target state="translated"> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.excludedUnknown }"/> <x id="ICU" equiv-text="{ selectedEventStats.excludedUnknown, plural, one {participant} other
       {participants} }"/> sans statut enregistré </target>
@@ -556,8 +556,7 @@
           (focusedChild
             ? entity?.getAttendancePercentage(focusedChild)
             : entity?.getAttendancePercentageAverage()
-          ) | percent: &quot;1.0-0&quot;
-        }}"/> </source>
+          ) | percent: &quot;1.0-0&quot;"/> </source>
         <target state="translated"> Taux de présence: <x id="INTERPOLATION" equiv-text="{{
           (focusedChild
             ? entity?.getAttendancePercentage(focusedChild)
@@ -870,7 +869,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="e0dc43b431d171971d708cb150a3fbce5d2530f1" datatype="html">
-        <source> class <x id="INTERPOLATION" equiv-text="{{ entity?.schoolClass }}"/> </source>
+        <source> class <x id="INTERPOLATION" equiv-text="{{ entity?.schoolClass }"/> </source>
         <target state="translated"> classe <x id="INTERPOLATION" equiv-text="{{ entity?.schoolClass }"/> </target>
         <note priority="1" from="description">e.g. 'class 8'</note>
         <note priority="1" from="meaning">The class a child is attending</note>
@@ -1357,7 +1356,7 @@
         <note priority="1" from="description">Label gender</note>
       </trans-unit>
       <trans-unit id="e64cd56b20854bd619f18d78c372a8ac9f788a8b" datatype="html">
-        <source> Total: <x id="INTERPOLATION" equiv-text="{{ summary }}"/>
+        <source> Total: <x id="INTERPOLATION" equiv-text="{{ summary }"/>
 </source>
         <target state="translated"> Total: <x id="INTERPOLATION" equiv-text="{{ summary }"/>
 </target>
@@ -1583,10 +1582,6 @@
         <source>Loading...</source>
         <target state="translated">Chargement...</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/children/dashboard-widgets/children-bmi-dashboard/children-bmi-dashboard.component.html</context>
-          <context context-type="linenumber">10</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/dashboard/dashboard-widget/dashboard-widget.component.html</context>
           <context context-type="linenumber">16</context>
         </context-group>
@@ -1610,7 +1605,7 @@
         <note priority="1" from="description">Column description for BMI result column</note>
       </trans-unit>
       <trans-unit id="6eddfcf31085fb8c4dd0c1e0a1454620a33c2d71" datatype="html">
-        <source> BMI: <x id="INTERPOLATION" equiv-text="{{ row.bmi.toFixed(2) }}"/> </source>
+        <source> BMI: <x id="INTERPOLATION" equiv-text="{{ row.bmi.toFixed(2) }"/> </source>
         <target state="new"> BMI: <x id="INTERPOLATION" equiv-text="{{ row.bmi.toFixed(2) }}"/> </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/dashboard-widgets/children-bmi-dashboard/children-bmi-dashboard.component.html</context>
@@ -1631,7 +1626,7 @@
       <trans-unit id="ef53f00083d0537e89f52ce3fc949182c6bca8e4" datatype="html">
         <source><x id="START_TABLE_CELL" ctype="x-td" equiv-text="&lt;td *matCellDef=&quot;let childNoteInfo&quot;>"/><x id="START_TAG_SPAN_1" ctype="x-span_1" equiv-text="&lt;span  class=&quot;dashboard-table-additional-info-cell&quot;>"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span
                 *ngIf=&quot;childNoteInfo.moreThanDaysSince&quot;
-              >"/> >  <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/> <x id="INTERPOLATION" equiv-text="{{ childNoteInfo.daysSinceLastNote | number: &quot;1.0-0&quot; }}"/> days <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/><x id="CLOSE_TABLE_CELL" ctype="x-td" equiv-text="&lt;/td>"/></source>
+              >"/> >  <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/> <x id="INTERPOLATION" equiv-text="{{ childNoteInfo.daysSinceLastNote | number: &quot;1.0-0&quot; }"/> days <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/><x id="CLOSE_TABLE_CELL" ctype="x-td" equiv-text="&lt;/td>"/></source>
         <target state="translated"><x id="START_TABLE_CELL" ctype="x-td" equiv-text="&lt;td *matCellDef=&quot;let childNoteInfo&quot;>"/><x id="START_TAG_SPAN_1" ctype="x-span_1" equiv-text="&lt;span  class=&quot;dashboard-table-additional-info-cell&quot;>"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span
                 *ngIf=&quot;childNoteInfo.moreThanDaysSince&quot;
               >"/> >  <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/> <x id="INTERPOLATION" equiv-text="{{ childNoteInfo.daysSinceLastNote | number: &quot;1.0-0&quot; }}"/> days <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/><x id="CLOSE_TABLE_CELL" ctype="x-td" equiv-text="&lt;/td>"/></target>
@@ -3834,7 +3829,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-single-entity/edit-single-entity.component.html</context>
-          <context context-type="linenumber">38</context>
+          <context context-type="linenumber">43</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8998179362936748717" datatype="html">
@@ -3882,7 +3877,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="ae2c7190bf68b2ba76dae8802db6b3f5b1e2a8ce" datatype="html">
-        <source> Adding new <x id="INTERPOLATION" equiv-text="{{ config?.entity }}"/> </source>
+        <source> Adding new <x id="INTERPOLATION" equiv-text="{{ config?.entity }"/> </source>
         <target state="translated"> Ajout d'un(e) <x id="INTERPOLATION" equiv-text="{{ config?.entity }"/> </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-details/entity-details.component.html</context>
@@ -3984,6 +3979,14 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</context>
           <context context-type="linenumber">124</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="9109500675543184751" datatype="html">
+        <source>Please enter a valid date</source>
+        <target state="new">Please enter a valid date</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</context>
+          <context context-type="linenumber">126</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6538802206219799979" datatype="html">
@@ -4182,7 +4185,7 @@
         <note priority="1" from="description">A placeholder for the input element when select options are not loaded yet</note>
       </trans-unit>
       <trans-unit id="bff91547325db41ddc532740323020315227b440" datatype="html">
-        <source> <x id="INTERPOLATION" equiv-text="{{ entity[property]?.length }}"/> in total
+        <source> <x id="INTERPOLATION" equiv-text="{{ entity[property]?.length }"/> in total
 </source>
         <target state="translated"> <x id="INTERPOLATION" equiv-text="{{ entity[property]?.length }"/> au total
 </target>
@@ -4405,7 +4408,7 @@
         <target state="translated">Votre mot de passe a été modifié récemment. Veuillez réessayer avec votre nouveau mot de passe !</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/session/session-service/synced-session.service.ts</context>
-          <context context-type="linenumber">146</context>
+          <context context-type="linenumber">170</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1883557110661036774" datatype="html">
@@ -4554,7 +4557,7 @@
         <note priority="1" from="description">Search label</note>
       </trans-unit>
       <trans-unit id="5a18ff86dec7316b0abcaa53685e042d9e417755" datatype="html">
-        <source> Insert at least <x id="INTERPOLATION" equiv-text="{{ MIN_CHARACTERS_FOR_SEARCH }}"/> characters </source>
+        <source> Insert at least <x id="INTERPOLATION" equiv-text="{{ MIN_CHARACTERS_FOR_SEARCH }"/> characters </source>
         <target state="translated"> Insérer au moins <x id="INTERPOLATION" equiv-text="{{ MIN_CHARACTERS_FOR_SEARCH }"/> caractères </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/search/search.component.html</context>
@@ -4728,7 +4731,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="65276aa6cba4b1cf77121125a2525a46fb0a5b1c" datatype="html">
-        <source> Failed to change password: <x id="INTERPOLATION" equiv-text="{{ passwordChangeResult.error }}"/><x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br />"/> Please try again. If the problem persists contact Aam Digital support. </source>
+        <source> Failed to change password: <x id="INTERPOLATION" equiv-text="{{ passwordChangeResult.error }"/><x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br />"/> Please try again. If the problem persists contact Aam Digital support. </source>
         <target state="translated"> Échec lors de la modification du mot de passe: <x id="INTERPOLATION" equiv-text="{{ passwordChangeResult.error }"/><x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br />"/> Please try again. If the problem persists contact Aam Digital support. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
