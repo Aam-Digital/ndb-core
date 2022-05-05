@@ -4,10 +4,10 @@
   [title]="amountOfConcernedChildren"
   [subtitle]="subtitle"
   [explanation]="tooltip"
+  [loading]="isLoading"
 >
   <app-widget-content>
-    <h2 *ngIf="isLoading" class="headline" i18n>Loading...</h2>
-    <div *ngIf="childrenWithNoteInfoDataSource.data.length > 0 && !isLoading" class="table-wrapper">
+    <div *ngIf="childrenWithNoteInfoDataSource.data.length > 0" class="table-wrapper">
       <table
         mat-table
         [dataSource]="childrenWithNoteInfoDataSource"

@@ -58,11 +58,6 @@ describe("AttendanceService", () => {
     await entityMapper.save(activity1);
     await entityMapper.save(activity2);
 
-    const someUnrelatedNote = EventNote.create(
-      new Date("2020-01-01"),
-      "report not event"
-    );
-    await entityMapper.save(someUnrelatedNote);
     await entityMapper.save(e1_1);
     await entityMapper.save(e1_2);
     await entityMapper.save(e1_3);
@@ -96,7 +91,7 @@ describe("AttendanceService", () => {
 
     const nonMeetingNote = Note.create(
       new Date("2020-01-02"),
-      "manual event note 2"
+      "manual event note 3"
     );
     nonMeetingNote.addChild("1");
     nonMeetingNote.category = defaultInteractionTypes.find((t) => !t.isMeeting);
