@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { RollCallTabComponent } from "./roll-call-tab.component";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
 describe("RollCallTabComponent", () => {
   let component: RollCallTabComponent;
@@ -9,6 +10,7 @@ describe("RollCallTabComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [RollCallTabComponent],
+      imports: [NoopAnimationsModule],
     }).compileComponents();
   });
 
