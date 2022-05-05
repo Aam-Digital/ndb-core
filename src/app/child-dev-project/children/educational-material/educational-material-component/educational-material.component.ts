@@ -6,12 +6,16 @@ import { PanelConfig } from "../../../../core/entity-components/entity-details/E
 import { FormFieldConfig } from "../../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { applyUpdate } from "../../../../core/entity/model/entity-update";
+import { filter } from "rxjs/operators";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Displays educational materials of a child, such as a pencil, rulers, e.t.c
  * as well as a summary
  */
 @DynamicComponent("EducationalMaterial")
+@UntilDestroy()
 @Component({
   selector: "app-educational-material",
   templateUrl: "./educational-material.component.html",
@@ -29,7 +33,21 @@ export class EducationalMaterialComponent
     { id: "description", visibleFrom: "md" },
   ];
 
-  constructor(private entityMapper: EntityMapperService) {}
+  constructor(private entityMapper: EntityMapperService) {
+    this.entityMapper
+      .receiveUpdates(EducationalMaterial)
+      .pipe(
+        untilDestroyed(this),
+        filter(
+          ({ entity, type }) =>
+            type === "remove" || entity.child === this.child.getId()
+        )
+      )
+      .subscribe((update) => {
+        this.records = applyUpdate(this.records, update);
+        this.updateSummary();
+      });
+  }
 
   async ngOnChanges(changes: SimpleChanges): Promise<void> {
     if (changes.hasOwnProperty("child")) {

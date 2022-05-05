@@ -7,10 +7,13 @@ import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { EducationalMaterial } from "../model/educational-material";
 import { ConfigurableEnumValue } from "../../../../core/configurable-enum/configurable-enum.interface";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { Subject } from "rxjs";
+import { UpdatedEntity } from "../../../../core/entity/model/entity-update";
 
 describe("EducationalMaterialComponent", () => {
   let component: EducationalMaterialComponent;
   let fixture: ComponentFixture<EducationalMaterialComponent>;
+  const updates = new Subject<UpdatedEntity<EducationalMaterial>>();
   const child = new Child("22");
   const PENCIL: ConfigurableEnumValue = {
     id: "pencil",
@@ -26,6 +29,8 @@ describe("EducationalMaterialComponent", () => {
       TestBed.configureTestingModule({
         imports: [ChildrenModule, MockedTestingModule.withState()],
       }).compileComponents();
+      const entityMapper = TestBed.inject(EntityMapperService);
+      spyOn(entityMapper, "receiveUpdates").and.returnValue(updates);
     })
   );
 
@@ -89,8 +94,33 @@ describe("EducationalMaterialComponent", () => {
   });
 
   it("associates a new record with the current child", () => {
-    component.child = child;
     const newRecord = component.newRecordFactory();
     expect(newRecord.child).toBe(child.getId());
+  });
+
+  it("should update the summary when entity updates are received", async () => {
+    const update1 = EducationalMaterial.create({
+      child: child.getId(),
+      materialType: PENCIL,
+      materialAmount: 1,
+    });
+    updates.next({ entity: update1, type: "new" });
+
+    expect(component.records).toEqual([update1]);
+    expect(component.summary).toBe(`${PENCIL.label}: 1`);
+
+    const update2 = update1.copy() as EducationalMaterial;
+    update2.materialAmount = 2;
+    updates.next({ entity: update2, type: "update" });
+
+    expect(component.records).toEqual([update2]);
+    expect(component.summary).toBe(`${PENCIL.label}: 2`);
+
+    const unrelatedUpdate = update1.copy() as EducationalMaterial;
+    unrelatedUpdate.child = "differentChild";
+    updates.next({ entity: unrelatedUpdate, type: "new" });
+    // No change
+    expect(component.records).toEqual([update2]);
+    expect(component.summary).toBe(`${PENCIL.label}: 2`);
   });
 });
