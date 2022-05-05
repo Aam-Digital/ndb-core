@@ -30,23 +30,29 @@
       (swiperight)="swipeRight()"
       (swipeleft)="swipeLeft()"
       *ngFor="let entry of entries; let i = index"
-      class="tab-body" [class.tab-body-active]="currentIndex === i"
+      class="tab-body"
+      [class.tab-body-active]="currentIndex === i"
+      [class.tab-body-inactive]="currentIndex !== i"
       [position]="i - currentIndex" >
-      <div
-        class="group-select-option"
-        *ngFor="let option of availableStatus"
-        (click)="markAttendance(option)"
-        [ngClass]="
-        entry.attendance.status.id === option.id
-          ? option.style
-          : ''
-      "
-      >
-        <fa-icon
-          *ngIf="entry.attendance.status.id === option.id"
-          icon="check"
-        ></fa-icon>
-        {{ option.label }}
+      <div>
+        <div
+          class="group-select-option"
+          *ngFor="let option of availableStatus"
+          (click)="markAttendance(option)"
+          [ngClass]="
+          entry.attendance.status.id === option.id
+            ? option.style
+            : ''
+          "
+        >
+          <div style="display: flex; flex-direction: row; padding: 16px; gap: 16px">
+            <fa-icon
+              *ngIf="entry.attendance.status.id === option.id"
+              icon="check"
+            ></fa-icon>
+            <p style="margin: 0">{{ option.label }}</p>
+          </div>
+        </div>
       </div>
     </app-roll-call-tab>
   </div>

@@ -1,6 +1,5 @@
 .group-select-option {
   width: 100%;
-  padding: 16px;
   cursor: pointer;
   box-sizing: border-box;
   border: 1px solid;
@@ -76,8 +75,6 @@
   display: flex;
   overflow: hidden;
   flex-basis: 100%;
-  margin-left: 6px;
-  margin-right: 6px;
 }
 
 .tab-body-active {
@@ -85,6 +82,12 @@
   flex-grow: 1;
   place-content: center;
   z-index: 1;
+}
+
+.tab-body-inactive {
+  padding-left: 50px;
+  padding-right: 50px;
+  transition: all 100ms ease-in-out;
 }
 
 .content {

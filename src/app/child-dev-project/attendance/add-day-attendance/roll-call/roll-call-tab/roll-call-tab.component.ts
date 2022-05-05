@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import {
   animate,
   state,
@@ -22,8 +22,6 @@ type PositionState = "left" | "center" | "right";
 @Component({
   selector: "app-roll-call-tab",
   templateUrl: "./roll-call-tab.component.html",
-  styleUrls: ["./roll-call-tab.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger("translateTab", [
       // Transitions to `none` instead of 0, because some browsers might blur the content.
