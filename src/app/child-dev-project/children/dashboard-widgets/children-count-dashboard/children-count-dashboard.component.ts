@@ -1,14 +1,11 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { ChildrenService } from "../../children.service";
 import { Router } from "@angular/router";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { take } from "rxjs/operators";
 import { ConfigurableEnumValue } from "../../../../core/configurable-enum/configurable-enum.interface";
 import { Child } from "../../model/child";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 
-@UntilDestroy()
 @DynamicComponent("ChildrenCountDashboard")
 @Component({
   selector: "app-children-count-dashboard",
@@ -29,8 +26,8 @@ export class ChildrenCountDashboardComponent
   loading = true;
 
   constructor(
-    private childrenService: ChildrenService,
-    public router: Router
+    private entityMapper: EntityMapperService,
+    private router: Router
   ) {}
 
   onInitFromDynamicConfig(config: any) {
@@ -39,13 +36,9 @@ export class ChildrenCountDashboardComponent
     }
   }
 
-  ngOnInit() {
-    this.childrenService
-      .getChildren()
-      .pipe(untilDestroyed(this), take(1)) // only take the initial result, no need for updated details
-      .subscribe((results) => {
-        this.updateCounts(results);
-      });
+  async ngOnInit() {
+    const children = await this.entityMapper.loadType(Child);
+    this.updateCounts(children);
   }
 
   goToChildrenList(filterId: string) {
