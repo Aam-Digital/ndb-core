@@ -176,7 +176,7 @@ export class RollCallComponent implements OnChanges {
     this.currentStatus = status;
     this.isDirty = true;
 
-    setTimeout(() => this.goToNext(), 100);
+    this.goToNext();
   }
 
   goToParticipantWithIndex(newIndex: number) {
