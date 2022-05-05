@@ -1,17 +1,16 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { EducationalMaterialComponent } from "./educational-material.component";
-import { ChildrenService } from "../../children.service";
 import { Child } from "../../model/child";
 import { ChildrenModule } from "../../children.module";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { EducationalMaterial } from "../model/educational-material";
 import { ConfigurableEnumValue } from "../../../../core/configurable-enum/configurable-enum.interface";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 
 describe("EducationalMaterialComponent", () => {
   let component: EducationalMaterialComponent;
   let fixture: ComponentFixture<EducationalMaterialComponent>;
-  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
   const child = new Child("22");
   const PENCIL: ConfigurableEnumValue = {
     id: "pencil",
@@ -24,14 +23,8 @@ describe("EducationalMaterialComponent", () => {
 
   beforeEach(
     waitForAsync(() => {
-      mockChildrenService = jasmine.createSpyObj([
-        "getEducationalMaterialsOfChild",
-      ]);
       TestBed.configureTestingModule({
         imports: [ChildrenModule, MockedTestingModule.withState()],
-        providers: [
-          { provide: ChildrenService, useValue: mockChildrenService },
-        ],
       }).compileComponents();
     })
   );
@@ -87,7 +80,7 @@ describe("EducationalMaterialComponent", () => {
       { materialType: PENCIL, materialAmount: 1 },
       { materialType: RULER, materialAmount: 2 },
     ].map(EducationalMaterial.create);
-    mockChildrenService.getEducationalMaterialsOfChild.and.resolveTo(
+    spyOn(TestBed.inject(EntityMapperService), "loadType").and.resolveTo(
       educationalData
     );
     await component.loadData("22");
