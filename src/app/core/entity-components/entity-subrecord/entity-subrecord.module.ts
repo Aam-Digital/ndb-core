@@ -26,6 +26,7 @@ import { PermissionsModule } from "../../permissions/permissions.module";
 import { MatRippleModule } from "@angular/material/core";
 import { MatChipsModule } from "@angular/material/chips";
 import { MatMenuModule } from "@angular/material/menu";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 @NgModule({
   declarations: [
@@ -58,6 +59,7 @@ import { MatMenuModule } from "@angular/material/menu";
     MatRippleModule,
     MatChipsModule,
     MatMenuModule,
+    MatProgressSpinnerModule,
   ],
   exports: [EntitySubrecordComponent],
 })

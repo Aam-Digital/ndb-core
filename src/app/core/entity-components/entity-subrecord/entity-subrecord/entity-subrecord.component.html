@@ -1,4 +1,9 @@
 <div class="mat-elevation-z1 container">
+  <mat-spinner
+    *ngIf="loading"
+    [diameter]="20"
+    class="process-spinner"
+  ></mat-spinner>
   <table
     mat-table
     [dataSource]="recordsDataSource"
