@@ -28,7 +28,6 @@ export class BirthdayDashboardComponent implements OnInitDynamicComponent,AfterV
     });
   }
       ngAfterViewInit() {
-      this.childrendataSource= new MatTableDataSource(this.children);
       this.childrendataSource.paginator = this.paginator;
     }
  
