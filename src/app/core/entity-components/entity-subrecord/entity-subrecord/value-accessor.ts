@@ -13,7 +13,7 @@ export function getReadableValue<OBJECT, PROPERTY extends keyof OBJECT>(
   if (isConfigurableEnum(value)) {
     return value.label;
   } else if (Array.isArray(value)) {
-    return (value as Array<any>).map((v) => getReadableValue({ v }, "v"));
+    return value.map((v) => getReadableValue({ v }, "v"));
   } else {
     return value;
   }
