@@ -1,10 +1,9 @@
-import { Component,OnInit,AfterViewInit, } from "@angular/core";
+import { Component,AfterViewInit, } from "@angular/core";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { Child } from "../../model/child";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { MatTableDataSource } from "@angular/material/table";
-import { MatSort } from "@angular/material/sort";
 import { MatPaginator } from "@angular/material/paginator";
 import { ViewChild } from "@angular/core";
 
