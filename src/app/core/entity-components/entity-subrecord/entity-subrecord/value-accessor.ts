@@ -19,6 +19,6 @@ export function getReadableValue<OBJECT, PROPERTY extends keyof OBJECT>(
   }
 }
 
-function isConfigurableEnum(value: any): boolean {
+function isConfigurableEnum(value: any): value is ConfigurableEnumValue {
   return typeof value === "object" && value && "label" in value;
 }
