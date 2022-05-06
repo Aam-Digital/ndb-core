@@ -97,13 +97,15 @@ export class NotesDashboardComponent
   ) {
     const queryRange = Math.round((dayRangeBoundary * 3) / 10) * 10; // query longer range to be able to display exact date of last note for recent
 
+    // recent notes are sorted ascending, without recent notes descending
+    const order = this.mode === "with-recent-notes" ? -1 : 1;
     const promise = this.childrenService
       .getDaysSinceLastNoteOfEachChild(queryRange)
       .then((children) => {
         return Array.from(children)
           .filter(filter)
           .map((stat) => statsToChildWithRecentNoteInfo(stat, queryRange))
-          .sort((a, b) => b.daysSinceLastNote - a.daysSinceLastNote);
+          .sort((a, b) => order * (b.daysSinceLastNote - a.daysSinceLastNote));
       });
     promise.then((children) => {
       this.concernedChildren = children;
