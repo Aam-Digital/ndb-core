@@ -158,12 +158,12 @@ describe("RollCallComponent", () => {
 
   it("should not open the dialog when the roll call is finished", () => {
     const confirmationDialogService = TestBed.inject(ConfirmationDialogService);
-    spyOn(confirmationDialogService, "openDialog");
+    spyOn(confirmationDialogService, "getConfirmation");
     spyOnProperty(component, "isFinished").and.returnValue(true);
 
     component.finish();
 
-    expect(confirmationDialogService.openDialog).not.toHaveBeenCalled();
+    expect(confirmationDialogService.getConfirmation).not.toHaveBeenCalled();
   });
 
   it("isn't dirty initially", () => {

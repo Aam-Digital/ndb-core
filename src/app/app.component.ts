@@ -33,14 +33,14 @@ import { LoggingService } from "./core/logging/logging.service";
 import { EntityRegistry } from "./core/entity/database-entity.decorator";
 import { filter } from "rxjs/operators";
 
-@Component({
-  selector: "app-root",
-  template: "<app-ui></app-ui>",
-})
 /**
  * Component as the main entry point for the app.
  * Actual logic and UI structure is defined in other modules.
  */
+@Component({
+  selector: "app-root",
+  template: "<app-ui></app-ui>",
+})
 export class AppComponent {
   constructor(
     private viewContainerRef: ViewContainerRef, // need this small hack in order to catch application root view container ref

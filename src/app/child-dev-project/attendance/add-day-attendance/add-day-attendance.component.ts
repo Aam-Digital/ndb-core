@@ -74,7 +74,7 @@ export class AddDayAttendanceComponent {
 
   exit() {
     if (this.rollCallComponent?.isDirty) {
-      this.confirmationDialog.openDialog(
+      this.confirmationDialog.getConfirmation(
         $localize`:Exit from the current screen:Exit`,
         $localize`Do you want to save your progress before going back?`,
         this.buttons,

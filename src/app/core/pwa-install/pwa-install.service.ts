@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@angular/core";
-import { WINDOW_TOKEN } from "../utils/di-tokens";
+import { WINDOW_TOKEN } from "../../utils/di-tokens";
 
 export enum PWAInstallType {
   ShowiOSInstallInstructions,

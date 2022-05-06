@@ -52,9 +52,7 @@ export class LocalSession extends SessionService {
     const user: LocalUser = JSON.parse(window.localStorage.getItem(username));
     if (user) {
       if (passwordEqualsEncrypted(password, user.encryptedPassword)) {
-        this.currentDBUser = user;
-        await this.initializeDatabaseForCurrentUser();
-        this.loginState.next(LoginState.LOGGED_IN);
+        await this.handleSuccessfulLogin(user);
       } else {
         this.loginState.next(LoginState.LOGIN_FAILED);
       }
@@ -62,6 +60,12 @@ export class LocalSession extends SessionService {
       this.loginState.next(LoginState.UNAVAILABLE);
     }
     return this.loginState.value;
+  }
+
+  public async handleSuccessfulLogin(userObject: DatabaseUser) {
+    this.currentDBUser = userObject;
+    await this.initializeDatabaseForCurrentUser();
+    this.loginState.next(LoginState.LOGGED_IN);
   }
 
   private async initializeDatabaseForCurrentUser() {

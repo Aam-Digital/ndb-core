@@ -26,6 +26,7 @@ export class ChildrenCountDashboardComponent
 
   totalChildren: number;
   childrenGroupCounts: { label: string; value: number }[] = [];
+  loading = true;
 
   constructor(
     private childrenService: ChildrenService,
@@ -77,6 +78,7 @@ export class ChildrenCountDashboardComponent
         label: extractHumanReadableLabel(entry[0]),
         value: entry[1],
       }));
+    this.loading = false;
   }
 }
 

@@ -15,6 +15,8 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { Observable } from "rxjs";
+
 /**
  * An implementation of this abstract class provides functions for direct database access.
  * This interface is an extension of the [PouchDB API](https://pouchdb.com/api.html).
@@ -103,6 +105,8 @@ export abstract class Database {
    * Closes all open connections to the database base and destroys it (clearing all data)
    */
   abstract destroy(): Promise<any>;
+
+  abstract changes(prefix: string): Observable<any>;
 }
 
 /**
