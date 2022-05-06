@@ -122,6 +122,8 @@ export class DynamicValidatorsService {
         return $localize`This field is required`;
       case "validEmail":
         return $localize`Please enter a valid email`;
+      case "matDatepickerParse":
+        return $localize`Please enter a valid date`;
       default:
         throw new Error("No description defined for validator " + validator);
     }
