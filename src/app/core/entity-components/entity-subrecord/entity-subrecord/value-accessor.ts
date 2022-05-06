@@ -11,7 +11,7 @@ export function getReadableValue<OBJECT, PROPERTY extends keyof OBJECT>(
 ): any {
   const value = data[key];
   if (isConfigurableEnum(value)) {
-    return (value as any).label;
+    return value.label;
   } else if (Array.isArray(value)) {
     return (value as Array<any>).map((v) => getReadableValue({ v }, "v"));
   } else {
