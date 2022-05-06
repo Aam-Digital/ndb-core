@@ -5,6 +5,8 @@
  * @param data The object (table row); passed in by the data source
  * @param key The active sorting header key; passed in by the data source
  */
+import { ConfigurableEnumValue } from "../../../configurable-enum/configurable-enum.interface";
+
 export function getReadableValue<OBJECT, PROPERTY extends keyof OBJECT>(
   data: OBJECT,
   key: PROPERTY
