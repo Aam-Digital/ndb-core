@@ -3,11 +3,11 @@
   (mouseenter)="showTooltip()"
   (mouseleave)="hideTooltip()"
   (click)="showDetailsPage()"
-  [ngClass]="{ inactive: !entity.isActive, clickable: !linkDisabled }"
+  [ngClass]="{ inactive: !entity.isActive }"
   class="truncate-text"
 >
   <img [src]="entity.photo?.photo?.value" class="child-pic" i18n-alt="Alternative text for small picture" alt="Picture of a child"/>
-  <span class="underline-on-hover mat-body-1">{{ entity?.name }}</span>
+  <span class="mat-body-1">{{ entity?.name }}</span>
   <span style="font-size: x-small" *ngIf="entity?.projectNumber"
     > ({{ entity?.projectNumber }})</span
   >
