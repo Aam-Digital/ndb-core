@@ -59,4 +59,15 @@ describe("getReadableValue", () => {
       value2: "hello",
     });
   });
+
+  it("should return a array of labels if a object has an array of configurable enums", () => {
+    const object = {
+      arr: [
+        { label: "Label1", value: "val1" },
+        { label: "Label2", value: "val2" },
+      ],
+    };
+    const readableValue = getReadableValue(object, "arr");
+    expect(readableValue).toEqual(["Label1", "Label2"]);
+  });
 });
