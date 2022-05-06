@@ -5,20 +5,22 @@
  * @param data The object (table row); passed in by the data source
  * @param key The active sorting header key; passed in by the data source
  */
+import { ConfigurableEnumValue } from "../../../configurable-enum/configurable-enum.interface";
+
 export function getReadableValue<OBJECT, PROPERTY extends keyof OBJECT>(
   data: OBJECT,
   key: PROPERTY
-): OBJECT[PROPERTY] | string {
-  if (isConfigurableEnum(data, key)) {
-    return (data[key] as any).label;
+): any {
+  const value = data[key];
+  if (isConfigurableEnum(value)) {
+    return value.label;
+  } else if (Array.isArray(value)) {
+    return value.map((v) => getReadableValue({ v }, "v"));
   } else {
-    return data[key];
+    return value;
   }
 }
 
-function isConfigurableEnum<OBJECT, PROPERTY extends keyof OBJECT>(
-  data: OBJECT,
-  key: PROPERTY
-): boolean {
-  return typeof data[key] === "object" && data[key] && "label" in data[key];
+function isConfigurableEnum(value: any): value is ConfigurableEnumValue {
+  return typeof value === "object" && value && "label" in value;
 }
