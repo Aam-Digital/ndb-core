@@ -11,6 +11,7 @@ import { RemoteSession } from "../../session/session-service/remote-session";
 import { RouteTarget } from "../../../app.routing";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { HttpClient } from "@angular/common/http";
+import { SyncedSessionService } from "../../session/session-service/synced-session.service";
 
 @RouteTarget("Support")
 @Component({
@@ -19,7 +20,6 @@ import { HttpClient } from "@angular/common/http";
   styleUrls: ["./support.component.scss"],
 })
 export class SupportComponent implements OnInit {
-  static readonly LAST_SYNC_KEY = "LAST_SYNC";
   currentUser: DatabaseUser;
   currentSyncState: string;
   lastSync: string;
@@ -61,7 +61,7 @@ export class SupportComponent implements OnInit {
 
   private initLastSync() {
     this.lastSync =
-      localStorage.getItem(SupportComponent.LAST_SYNC_KEY) || "never";
+      localStorage.getItem(SyncedSessionService.LAST_SYNC_KEY) || "never";
   }
 
   private initLastRemoteLogin() {

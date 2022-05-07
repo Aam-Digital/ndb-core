@@ -1,17 +1,21 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { EducationalMaterial } from "../model/educational-material";
-import { ChildrenService } from "../../children.service";
 import { Child } from "../../model/child";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { PanelConfig } from "../../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { FormFieldConfig } from "../../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { applyUpdate } from "../../../../core/entity/model/entity-update";
+import { filter } from "rxjs/operators";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Displays educational materials of a child, such as a pencil, rulers, e.t.c
  * as well as a summary
  */
 @DynamicComponent("EducationalMaterial")
+@UntilDestroy()
 @Component({
   selector: "app-educational-material",
   templateUrl: "./educational-material.component.html",
@@ -29,7 +33,21 @@ export class EducationalMaterialComponent
     { id: "description", visibleFrom: "md" },
   ];
 
-  constructor(private childrenService: ChildrenService) {}
+  constructor(private entityMapper: EntityMapperService) {
+    this.entityMapper
+      .receiveUpdates(EducationalMaterial)
+      .pipe(
+        untilDestroyed(this),
+        filter(
+          ({ entity, type }) =>
+            type === "remove" || entity.child === this.child.getId()
+        )
+      )
+      .subscribe((update) => {
+        this.records = applyUpdate(this.records, update);
+        this.updateSummary();
+      });
+  }
 
   async ngOnChanges(changes: SimpleChanges): Promise<void> {
     if (changes.hasOwnProperty("child")) {
@@ -51,9 +69,8 @@ export class EducationalMaterialComponent
    * @param id The id of the child to load the data for
    */
   async loadData(id: string) {
-    this.records = await this.childrenService.getEducationalMaterialsOfChild(
-      id
-    );
+    const allMaterials = await this.entityMapper.loadType(EducationalMaterial);
+    this.records = allMaterials.filter((mat) => mat.child === id);
     this.updateSummary();
   }
 

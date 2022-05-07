@@ -154,6 +154,7 @@ import { DemoConfigGeneratorService } from "./core/config/demo-config-generator.
     AttendanceModule,
     DashboardShortcutWidgetModule,
     HistoricalDataModule,
+    SupportModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
@@ -161,7 +162,6 @@ import { DemoConfigGeneratorService } from "./core/config/demo-config-generator.
     { provide: RouteRegistry, useValue: routesRegistry },
     AnalyticsService,
     Angulartics2Matomo,
-    SupportModule,
   ],
   bootstrap: [AppComponent],
 })

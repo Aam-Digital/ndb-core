@@ -1,4 +1,4 @@
-import { Entity } from "../core/entity/model/entity";
+import { Entity } from "../../core/entity/model/entity";
 import { makeCustomMatcher } from "./custom-matcher-utils";
 
 const entityMatchers: jasmine.CustomMatcherFactories = {

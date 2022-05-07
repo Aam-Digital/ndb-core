@@ -6,10 +6,10 @@
   i18n-subtitle="Dashboard attendance component subtitle"
   explanation="Cases absent multiple times in the given week"
   i18n-explanation="Dashboard attendance component explanation tooltip"
+  [loading]="!loadingDone"
 >
   <app-widget-content>
-    <h2 *ngIf="!loadingDone" class="headline">Loading...</h2>
-    <div *ngIf="tableDataSource.data.length > 0 && loadingDone" class="table-wrapper">
+    <div *ngIf="tableDataSource.data.length > 0" class="table-wrapper">
       <table
         mat-table
         [dataSource]="tableDataSource"
