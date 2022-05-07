@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Config } from "./config";
-import { Observable, Subject } from "rxjs";
+import { NEVER, Observable, ReplaySubject, Subject } from "rxjs";
 import {
   CONFIGURABLE_ENUM_CONFIG_PREFIX,
   ConfigurableEnumConfig,
@@ -9,6 +9,7 @@ import {
 } from "../configurable-enum/configurable-enum.interface";
 import { filter, map } from "rxjs/operators";
 import { mockEntityMapper } from "../entity/mock-entity-mapper-service";
+import { SessionService } from "../session/session-service/session.service";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -19,32 +20,40 @@ export class ConfigService {
   /**
    * Subscribe to receive the current config and get notified whenever the config is updated.
    */
-  private _configUpdates = new Subject<Config>();
+  private _configUpdates = new ReplaySubject<Config>(1);
   private currentConfig: Config;
 
   get configUpdates(): Observable<Config> {
     return this._configUpdates.asObservable();
   }
 
-  constructor(private entityMapper: EntityMapperService) {
-    this.configUpdates.subscribe((config) => (this.currentConfig = config));
-    this.loadConfig();
-  }
-
-  private async loadConfig(): Promise<void> {
-    // TODO this has to be called whenever the database is initialized
-    try {
-      const config = await this.entityMapper.load(Config, Config.CONFIG_KEY);
-      this._configUpdates.next(config);
-    } catch (e) {}
-
+  constructor(
+    private entityMapper: EntityMapperService,
+    private sessionService: SessionService
+  ) {
+    this.sessionService.loginState.subscribe(() => this.loadConfig());
     this.entityMapper
       .receiveUpdates(Config)
       .pipe(
         map(({ entity }) => entity),
         filter((entity) => entity.getId() === Config.CONFIG_KEY)
       )
-      .subscribe((config) => this._configUpdates.next(config));
+      .subscribe((config) => this.updateConfigIfChanged(config));
+  }
+
+  private async loadConfig(): Promise<void> {
+    this.entityMapper
+      .load(Config, Config.CONFIG_KEY)
+      .then((config) => this.updateConfigIfChanged(config))
+      .catch(() => {});
+  }
+
+  private updateConfigIfChanged(config: Config) {
+    if (config._rev !== this.currentConfig?._rev) {
+      this.currentConfig = config;
+      this._configUpdates.next(config);
+      console.log("udpated config");
+    }
   }
 
   public saveConfig(config: any): Promise<void> {
@@ -86,6 +95,7 @@ export class ConfigService {
 
 export function createTestingConfigService(configsObject: any): ConfigService {
   return new ConfigService(
-    mockEntityMapper([new Config(Config.CONFIG_KEY, configsObject)])
+    mockEntityMapper([new Config(Config.CONFIG_KEY, configsObject)]),
+    { loginState: NEVER } as any
   );
 }
