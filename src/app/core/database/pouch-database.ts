@@ -326,7 +326,7 @@ export class PouchDatabase extends Database {
       return;
     }
 
-    await this.put(designDoc);
+    await this.put(designDoc, true);
     await this.prebuildViewsOfDesignDoc(designDoc);
   }
 
