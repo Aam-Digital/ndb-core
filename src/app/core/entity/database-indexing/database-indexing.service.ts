@@ -49,6 +49,7 @@ export class DatabaseIndexingService {
     private entitySchemaService: EntitySchemaService,
     private sessionService: SessionService
   ) {
+    // TODO this does not really work in synced mode
     sessionService.loginState
       .pipe(filter((state) => state === LoginState.LOGGED_IN))
       .subscribe(() =>

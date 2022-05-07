@@ -79,10 +79,28 @@ export class PouchDatabase extends Database {
    * @param dbName the name for the database
    */
   initInMemoryDB(dbName = "in-memory-database"): PouchDatabase {
+    PouchDB.plugin(memory);
+    return this.initDB(dbName, { adapter: "memory " });
+  }
+
+  /**
+   * Initialize the PouchDB with the IndexedDB/in-browser adapter (default).
+   * See {link https://github.com/pouchdb/pouchdb/tree/master/packages/node_modules/pouchdb-browser}
+   * @param dbName the name for the database under which the IndexedDB entries will be created
+   * @param options PouchDB options which are directly passed to the constructor
+   */
+  initIndexedDB(
+    dbName = "indexed-database",
+    options?: PouchDB.Configuration.DatabaseConfiguration
+  ): PouchDatabase {
+    return this.initDB(dbName, options);
+  }
+
+  private initDB(dbName: string, options = {}): PouchDatabase {
     const updateChangesListener =
       this.changesListener && dbName !== this.pouchDB?.name;
-    PouchDB.plugin(memory);
-    this.pouchDB = new PouchDB(dbName, { adapter: "memory" });
+
+    this.pouchDB = new PouchDB(dbName, options);
 
     if (updateChangesListener) {
       this.changesListener.removeAllListeners();
@@ -103,20 +121,6 @@ export class PouchDatabase extends Database {
     this.changesListener.addListener("change", (change) =>
       this.changesFeed.next(change.doc)
     );
-  }
-
-  /**
-   * Initialize the PouchDB with the IndexedDB/in-browser adapter (default).
-   * See {link https://github.com/pouchdb/pouchdb/tree/master/packages/node_modules/pouchdb-browser}
-   * @param dbName the name for the database under which the IndexedDB entries will be created
-   * @param options PouchDB options which are directly passed to the constructor
-   */
-  initIndexedDB(
-    dbName = "indexed-database",
-    options?: PouchDB.Configuration.DatabaseConfiguration
-  ): PouchDatabase {
-    this.pouchDB = new PouchDB(dbName, options);
-    return this;
   }
 
   /**
