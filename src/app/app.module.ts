@@ -23,7 +23,6 @@ import { HttpClientModule } from "@angular/common/http";
 
 import { AppComponent } from "./app.component";
 import { UiModule } from "./core/ui/ui.module";
-import { AppConfigModule } from "./core/app-config/app-config.module";
 import { RouteRegistry, routesRegistry, routing } from "./app.routing";
 import { AlertsModule } from "./core/alerts/alerts.module";
 import { SessionModule } from "./core/session/session.module";
@@ -107,7 +106,6 @@ import { DemoConfigGeneratorService } from "./core/config/demo-config-generator.
     FormDialogModule,
     AlertsModule,
     EntityModule,
-    AppConfigModule,
     SessionModule,
     ConfigModule,
     UiModule,
