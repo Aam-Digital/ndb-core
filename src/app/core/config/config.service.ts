@@ -52,7 +52,6 @@ export class ConfigService {
     if (config._rev !== this.currentConfig?._rev) {
       this.currentConfig = config;
       this._configUpdates.next(config);
-      console.log("udpated config");
     }
   }
 
