@@ -1,15 +1,14 @@
 import { Injectable } from "@angular/core";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Config } from "./config";
-import { NEVER, Observable, ReplaySubject, Subject } from "rxjs";
+import { Observable, ReplaySubject } from "rxjs";
 import {
   CONFIGURABLE_ENUM_CONFIG_PREFIX,
   ConfigurableEnumConfig,
   ConfigurableEnumValue,
 } from "../configurable-enum/configurable-enum.interface";
-import { filter, map } from "rxjs/operators";
+import { filter } from "rxjs/operators";
 import { mockEntityMapper } from "../entity/mock-entity-mapper-service";
-import { SessionService } from "../session/session-service/session.service";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -27,18 +26,12 @@ export class ConfigService {
     return this._configUpdates.asObservable();
   }
 
-  constructor(
-    private entityMapper: EntityMapperService,
-    private sessionService: SessionService
-  ) {
-    this.sessionService.loginState.subscribe(() => this.loadConfig());
+  constructor(private entityMapper: EntityMapperService) {
+    this.loadConfig();
     this.entityMapper
       .receiveUpdates(Config)
-      .pipe(
-        map(({ entity }) => entity),
-        filter((entity) => entity.getId() === Config.CONFIG_KEY)
-      )
-      .subscribe((config) => this.updateConfigIfChanged(config));
+      .pipe(filter(({ entity }) => entity.getId() === Config.CONFIG_KEY))
+      .subscribe(({ entity }) => this.updateConfigIfChanged(entity));
   }
 
   private async loadConfig(): Promise<void> {
@@ -94,7 +87,6 @@ export class ConfigService {
 
 export function createTestingConfigService(configsObject: any): ConfigService {
   return new ConfigService(
-    mockEntityMapper([new Config(Config.CONFIG_KEY, configsObject)]),
-    { loginState: NEVER } as any
+    mockEntityMapper([new Config(Config.CONFIG_KEY, configsObject)])
   );
 }

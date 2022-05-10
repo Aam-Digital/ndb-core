@@ -298,11 +298,11 @@ export class SyncedSessionService extends SessionService {
    * Logout and stop any existing sync.
    * also see {@link SessionService}
    */
-  public logout() {
+  public async logout() {
     this.cancelLoginOfflineRetry();
     this.cancelLiveSync();
-    this.loginState.next(LoginState.LOGGED_OUT);
     this._localSession.logout();
     this._remoteSession.logout();
+    location.reload();
   }
 }

@@ -62,6 +62,7 @@ export class DemoDataInitializerService {
   }
 
   private syncDatabaseOnUserChange() {
+    // TODO what to do with this if we reload on logout?
     this.sessionService.loginState.subscribe((state) => {
       if (
         state === LoginState.LOGGED_IN &&
