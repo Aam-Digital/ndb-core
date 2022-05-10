@@ -19,6 +19,8 @@ import { Child } from "../../../children/model/child";
 import { LoggingService } from "../../../../core/logging/logging.service";
 import { FormGroup } from "@angular/forms";
 import { sortByAttribute } from "../../../../utils/utils";
+import { NoteDetailsComponent } from "../../../notes/note-details/note-details.component";
+import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
 
 /**
  * Displays the participants of the given event one by one to mark attendance status.
@@ -92,6 +94,7 @@ export class RollCallComponent implements OnChanges {
   constructor(
     private configService: ConfigService,
     private entityMapper: EntityMapperService,
+    private formDialog: FormDialogService,
     private loggingService: LoggingService
   ) {}
 
@@ -217,5 +220,9 @@ export class RollCallComponent implements OnChanges {
 
   finish() {
     this.exit.emit();
+  }
+
+  showDetails() {
+    this.formDialog.openDialog(NoteDetailsComponent, this.eventEntity.copy());
   }
 }
