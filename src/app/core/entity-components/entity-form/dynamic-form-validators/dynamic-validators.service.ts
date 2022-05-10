@@ -125,7 +125,12 @@ export class DynamicValidatorsService {
       case "matDatepickerParse":
         return $localize`Please enter a valid date`;
       default:
-        throw new Error("No description defined for validator " + validator);
+        this.loggingService.error(
+          `No description defined for validator "${validator}": ${JSON.stringify(
+            validationValue
+          )}`
+        );
+        throw $localize`Invalid input`;
     }
   }
 }
