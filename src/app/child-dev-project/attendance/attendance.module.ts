@@ -61,6 +61,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { ViewModule } from "../../core/view/view.module";
 import { AttendanceSummaryComponent } from "./attendance-summary/attendance-summary.component";
+import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
 
 @NgModule({
   declarations: [
@@ -111,6 +112,7 @@ import { AttendanceSummaryComponent } from "./attendance-summary/attendance-summ
     DashboardModule,
     MatPaginatorModule,
     ViewModule,
+    ConfigurableEnumModule,
   ],
   exports: [
     ActivityCardComponent,
