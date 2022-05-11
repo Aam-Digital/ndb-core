@@ -41,6 +41,7 @@ locales.forEach((locale) => {
 });
 
 combined.index = "/index.html";
+// add root index.html to correctly cache direct app entry (e.g. without en-US)
 combined["assetGroups"][0]["urls"].push("/index.html");
 
 fs.writeFileSync(`${distFolder}/ngsw.json`, JSON.stringify(combined));
@@ -50,12 +51,13 @@ fs.unlinkSync(`${distFolder}/${firstLocale}/ngsw.json`);
 const swFile = fs
   .readFileSync(`${distFolder}/${firstLocale}/ngsw-worker.js`)
   .toString();
-//TODO this might be an issue in the root request
-// const patchedSw = swFile.replace(
-//   "return this.handleFetch(this.adapter.newRequest(this.indexUrl), context);",
-//   "return this.handleFetch(this.adapter.newRequest('/' + this.adapter.normalizeUrl(req.url).split('/')[1] + '/index.html'), context);"
-// );
-fs.writeFileSync(`${distFolder}/ngsw-worker.js`, swFile);
+const patchedSw = swFile.replace(
+  "return this.handleFetch(this.adapter.newRequest(this.indexUrl), context);",
+  `const locale = this.adapter.normalizeUrl(req.url).split("/")[1];
+                    const url = locale ? "/" + locale + "/index.html": "/index.html";
+                    return this.handleFetch(this.adapter.newRequest(url), context);`
+);
+fs.writeFileSync(`${distFolder}/ngsw-worker.js`, patchedSw);
 fs.unlinkSync(`${distFolder}/${firstLocale}/ngsw-worker.js`);
 fs.renameSync(
   `${distFolder}/${firstLocale}/safety-worker.js`,
