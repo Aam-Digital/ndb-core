@@ -41,6 +41,7 @@ locales.forEach((locale) => {
 });
 
 combined.index = "/index.html";
+combined["assetGroups"][0]["urls"].push("/index.html");
 
 fs.writeFileSync(`${distFolder}/ngsw.json`, JSON.stringify(combined));
 fs.unlinkSync(`${distFolder}/${firstLocale}/ngsw.json`);
