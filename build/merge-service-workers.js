@@ -50,10 +50,11 @@ fs.unlinkSync(`${distFolder}/${firstLocale}/ngsw.json`);
 const swFile = fs
   .readFileSync(`${distFolder}/${firstLocale}/ngsw-worker.js`)
   .toString();
-const patchedSw = swFile.replace(
-  "return this.handleFetch(this.adapter.newRequest(this.indexUrl), context);",
-  "return this.handleFetch(this.adapter.newRequest('/' + this.adapter.normalizeUrl(req.url).split('/')[1] + '/index.html'), context);"
-);
+//TODO this might be an issue in the root request
+// const patchedSw = swFile.replace(
+//   "return this.handleFetch(this.adapter.newRequest(this.indexUrl), context);",
+//   "return this.handleFetch(this.adapter.newRequest('/' + this.adapter.normalizeUrl(req.url).split('/')[1] + '/index.html'), context);"
+// );
 fs.writeFileSync(`${distFolder}/ngsw-worker.js`, patchedSw);
 fs.unlinkSync(`${distFolder}/${firstLocale}/ngsw-worker.js`);
 fs.renameSync(
