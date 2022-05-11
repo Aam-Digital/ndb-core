@@ -59,7 +59,7 @@ export const allRoutes: Routes = [
         (m) => m["ComingSoonModule"]
       ),
   },
-  { path: "**", redirectTo: "/" },
+  // { path: "**", redirectTo: "/" },
 ];
 
 /**
@@ -67,5 +67,5 @@ export const allRoutes: Routes = [
  */
 export const routing: ModuleWithProviders<RouterModule> = RouterModule.forRoot(
   allRoutes,
-  { relativeLinkResolution: "legacy" }
+  { relativeLinkResolution: "legacy", initialNavigation: "disabled" }
 );

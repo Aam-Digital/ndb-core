@@ -68,6 +68,8 @@ export class AppComponent {
 
     // Re-trigger services that depend on the config when something changes
     this.configService.configUpdates.subscribe(() => {
+      // this.router.initialNavigation();
+      console.log("update found", this.router.url);
       this.routerService.initRouting();
       this.entityConfigService.setupEntitiesFromConfig();
       this.router.navigate([], { relativeTo: this.activatedRoute });
