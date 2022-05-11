@@ -7,9 +7,10 @@ import { MatDialogRef } from "@angular/material/dialog";
 import { Subject } from "rxjs";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { Child } from "../../../child-dev-project/children/model/child";
 
 describe("FormDialogWrapperComponent", () => {
-  let component: FormDialogWrapperComponent;
+  let component: FormDialogWrapperComponent<Child>;
   let fixture: ComponentFixture<FormDialogWrapperComponent>;
 
   let saveEntitySpy: jasmine.Spy;
@@ -31,7 +32,7 @@ describe("FormDialogWrapperComponent", () => {
 
   beforeEach(() => {
     fixture = TestBed.createComponent(FormDialogWrapperComponent);
-    component = fixture.componentInstance;
+    component = fixture.componentInstance as FormDialogWrapperComponent<Child>;
     component.contentForm = {
       form: { dirty: false, statusChanges: new Subject() },
     };
@@ -43,19 +44,19 @@ describe("FormDialogWrapperComponent", () => {
   });
 
   it("should reset entity on cancel", async () => {
-    const testEntity: any = { value: 1 };
+    const testEntity = Child.create("old name");
     component.entity = testEntity;
 
-    testEntity.value = 2;
-    // @ts-ignore
-    expect(component.entity.value).toBe(2);
+    testEntity.name = "new name";
+    expect(component.entity.name).toBe("new name");
 
     await component.cancel();
-    expect(testEntity.value).toBe(1);
+    expect(testEntity.name).toBe("old name");
   });
 
   it("should save without beforeSave hook", async () => {
-    const testEntity: any = { value: 1 };
+    const testEntity = new Child();
+
     component.entity = testEntity;
 
     await component.save();
@@ -64,7 +65,7 @@ describe("FormDialogWrapperComponent", () => {
   });
 
   it("should allow aborting save", async () => {
-    const testEntity: any = { value: 1 };
+    const testEntity = new Child();
     component.entity = testEntity;
     component.beforeSave = () => undefined; // abort save by returning undefined from the beforeSave transformation hook
     spyOn(component, "beforeSave").and.callThrough();
@@ -76,9 +77,9 @@ describe("FormDialogWrapperComponent", () => {
   });
 
   it("should save entity as transformed by beforeSave", async () => {
-    const testEntity: any = { value: 1 };
+    const testEntity = Child.create("old name");
     component.entity = testEntity;
-    const transformedEntity: any = { value: 99 };
+    const transformedEntity = Child.create("transformed name");
     component.beforeSave = () => Promise.resolve(transformedEntity);
     spyOn(component, "beforeSave").and.callThrough();
 
