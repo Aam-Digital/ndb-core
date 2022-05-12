@@ -1,4 +1,4 @@
-import { Component,AfterViewInit, } from "@angular/core";
+import { Component, AfterViewInit, OnInit } from "@angular/core";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { Child } from "../../model/child";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
@@ -13,27 +13,25 @@ import { ViewChild } from "@angular/core";
   templateUrl: "./birthday-dashboard.component.html",
   styleUrls: ["./birthday-dashboard.component.scss"],
 })
-export class BirthdayDashboardComponent implements OnInitDynamicComponent,AfterViewInit {
-
+export class BirthdayDashboardComponent
+  implements OnInitDynamicComponent, OnInit, AfterViewInit {
   children: Child[] = [];
-  childrendataSource = new  MatTableDataSource<Child>();
+  childrendataSource = new MatTableDataSource<Child>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   isLoading: boolean = false;
-    constructor(private entityMapper: EntityMapperService) {}
-      ngOnInit(){
-      this.entityMapper.loadType(Child).then((res) => {
-      this.children = res;
-      this.children.sort((a,b) => a.dateOfBirth.getTime()- b.dateOfBirth.getTime());
-      this.childrendataSource.data= this.children;
-    });
-  }
-      ngAfterViewInit() {
-      this.childrendataSource.paginator = this.paginator;
-    }
- 
-  onInitFromDynamicConfig(config: any) {
-    
-  }
- 
-}
 
+  constructor(private entityMapper: EntityMapperService) {}
+
+  async ngOnInit() {
+    this.children = (await this.entityMapper.loadType(Child))
+      .filter((child: Child) => child.isActive)
+      .sort((a, b) => a.dateOfBirth.getTime() - b.dateOfBirth.getTime());
+    this.childrendataSource.data = this.children;
+  }
+
+  ngAfterViewInit() {
+    this.childrendataSource.paginator = this.paginator;
+  }
+
+  onInitFromDynamicConfig(config: any) {}
+}

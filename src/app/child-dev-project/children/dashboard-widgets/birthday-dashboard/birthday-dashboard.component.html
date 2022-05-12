@@ -6,12 +6,12 @@
   explanation="Temporary explanation"
 >
   <app-widget-content>
-    
+
     <div *ngIf="childrendataSource.data.length > 0 && !isLoading" class="table-wrapper">
-      <table 
-      mat-table 
+      <table
+      mat-table
       [dataSource]="childrendataSource">
-        
+
         <tr hidden="true">
           <th scope="col">Child Name</th>
           <th scope="col">DateOfBirth</th>
@@ -27,27 +27,29 @@
         </ng-container>
 
         <ng-container matColumnDef="dateOfBirth">
-          <td mat-cell *matCellDef="let child">{{child.dateOfBirth|date}} </td>
+          <td mat-cell *matCellDef="let child">{{ child.dateOfBirth | date:"E dd.MM." }} </td>
         </ng-container>
 
         <ng-container matColumnDef="age">
-          <td mat-cell *matCellDef="let child">AGE: {{child.age +1}}</td>
+          <td mat-cell *matCellDef="let child">{{child.age +1}} yrs</td>
+          <!--<td mat-cell *matCellDef="let child">will be {{child.age +1}} yrs</td>
+          <td mat-cell *matCellDef="let child">age: {{child.age +1}}</td>-->
         </ng-container>
 
-          
-      <tr mat-row 
+
+      <tr mat-row
       *matRowDef="let row; columns: ['child','dateOfBirth','age'];">
          </tr>
-      </table> 
+      </table>
     </div>
-    
+
     <mat-paginator
       [style.display]="paginator.getNumberOfPages() === 0 ? 'none' : ''"
       #paginator
       [pageSizeOptions]="[5]"
       [hidePageSize]="true">
     </mat-paginator>
-    
+
   </app-widget-content>
-  
+
 </app-dashboard-widget>
