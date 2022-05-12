@@ -12,6 +12,7 @@ import { RouteTarget } from "../../../app.routing";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { HttpClient } from "@angular/common/http";
 import { SyncedSessionService } from "../../session/session-service/synced-session.service";
+import { environment } from "../../../../environments/environment";
 
 @RouteTarget("Support")
 @Component({
@@ -28,6 +29,7 @@ export class SupportComponent implements OnInit {
   swStatus: string;
   swLog = "not available";
   userAgent = this.window.navigator.userAgent;
+  appVersion: string;
 
   constructor(
     private sessionService: SessionService,
@@ -41,6 +43,7 @@ export class SupportComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUser = this.sessionService.getCurrentUser();
+    this.appVersion = environment.appVersion;
     this.initCurrentSyncState();
     this.initLastSync();
     this.initLastRemoteLogin();
