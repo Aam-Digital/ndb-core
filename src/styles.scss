@@ -270,3 +270,7 @@ $standard-icon-size: 1.5em;
 .remove-margin-bottom {
   margin-bottom: 0 !important;
 }
+
+.margin-bottom-small {
+  margin-bottom: $standard-margin-small;
+}

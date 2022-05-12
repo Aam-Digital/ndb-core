@@ -48,7 +48,7 @@
 .child-block {
   flex-grow: 1;
   display: flex;
-  justify-content: center;
+  place-content: center;
 }
 
 .finished-screen-button {
@@ -80,12 +80,6 @@
   display: flex;
   flex-direction: row;
   width: 100%;
-}
-
-.child-block {
-  display: flex;
-  flex-grow: 1;
-  place-content: center;
 }
 
 // Per default, the content of a mat-button is center-aligned.
