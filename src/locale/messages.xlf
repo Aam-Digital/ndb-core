@@ -205,21 +205,29 @@
         </context-group>
         <note priority="1" from="description">Alert when selected date is invalid</note>
       </trans-unit>
-      <trans-unit id="67beb29a599fc9ce9ea95f0407cc99ec5742573c" datatype="html">
+      <trans-unit id="21b16e7ad80f33b5297b549244c29b67f186841b" datatype="html">
         <source> Attendance completed. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
-          <context context-type="linenumber">64,71</context>
+          <context context-type="linenumber">66,72</context>
         </context-group>
         <note priority="1" from="description">shows when the user has registered the attendance of
-      all children</note>
+        all children</note>
         <note priority="1" from="meaning">Attendance completed</note>
+      </trans-unit>
+      <trans-unit id="9503df0de4cb2ea22c7eb006f44ccebdfaefb262" datatype="html">
+        <source> Review Details </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
+          <context context-type="linenumber">75,81</context>
+        </context-group>
+        <note priority="1" from="description">Open details of recorded event for review</note>
       </trans-unit>
       <trans-unit id="75786b4315b04c8048cfba5db681fd42c5111804" datatype="html">
         <source> Back to Overview </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
-          <context context-type="linenumber">73,76</context>
+          <context context-type="linenumber">85,88</context>
         </context-group>
         <note priority="1" from="description">Back to overview button after finishing a roll call</note>
       </trans-unit>
@@ -3766,7 +3774,7 @@
         <source>Support request</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/support/support/support.component.ts</context>
-          <context context-type="linenumber">104,99</context>
+          <context context-type="linenumber">121,116</context>
         </context-group>
         <note priority="1" from="description">Title user feedback dialog</note>
       </trans-unit>
@@ -3774,7 +3782,7 @@
         <source>Please describe the problem you are facing.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/support/support/support.component.ts</context>
-          <context context-type="linenumber">105,99</context>
+          <context context-type="linenumber">122,116</context>
         </context-group>
         <note priority="1" from="description">Subtitle user feedback dialog</note>
       </trans-unit>

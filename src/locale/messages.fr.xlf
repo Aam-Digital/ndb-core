@@ -412,25 +412,34 @@
         </context-group>
         <note priority="1" from="description">Alert when selected date is invalid</note>
       </trans-unit>
-      <trans-unit id="67beb29a599fc9ce9ea95f0407cc99ec5742573c" datatype="html">
+      <trans-unit id="21b16e7ad80f33b5297b549244c29b67f186841b" datatype="html">
         <source> Attendance completed. </source>
         <target state="translated"> Appel effectué. </target>
-        <note priority="1" from="description">shows when the user has registered the attendance of
-      all children</note>
-        <note priority="1" from="meaning">Attendance completed</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
-          <context context-type="linenumber">64</context>
+          <context context-type="linenumber">66,72</context>
         </context-group>
+        <note priority="1" from="description">shows when the user has registered the attendance of
+        all children</note>
+        <note priority="1" from="meaning">Attendance completed</note>
+      </trans-unit>
+      <trans-unit id="9503df0de4cb2ea22c7eb006f44ccebdfaefb262" datatype="html">
+        <source> Review Details </source>
+        <target state="new"> Review Details </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
+          <context context-type="linenumber">75,81</context>
+        </context-group>
+        <note priority="1" from="description">Open details of recorded event for review</note>
       </trans-unit>
       <trans-unit id="75786b4315b04c8048cfba5db681fd42c5111804" datatype="html">
         <source> Back to Overview </source>
         <target state="new"> Back to Overview </target>
+        <note priority="1" from="description">Back to overview button after finishing a roll call</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
-          <context context-type="linenumber">73,76</context>
+          <context context-type="linenumber">85</context>
         </context-group>
-        <note priority="1" from="description">Back to overview button after finishing a roll call</note>
       </trans-unit>
       <trans-unit id="828a009e2c01bece732333b25efb6b62ed46f6ec" datatype="html">
         <source> attended <x id="INTERPOLATION" equiv-text="{{ attendanceDescription }"/> events </source>
@@ -4368,20 +4377,20 @@
       <trans-unit id="1883557110661036774" datatype="html">
         <source>Support request</source>
         <target state="new">Support request</target>
+        <note priority="1" from="description">Title user feedback dialog</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/support/support/support.component.ts</context>
-          <context context-type="linenumber">104,99</context>
+          <context context-type="linenumber">121</context>
         </context-group>
-        <note priority="1" from="description">Title user feedback dialog</note>
       </trans-unit>
       <trans-unit id="7476504920536064818" datatype="html">
         <source>Please describe the problem you are facing.</source>
         <target state="new">Please describe the problem you are facing.</target>
+        <note priority="1" from="description">Subtitle user feedback dialog</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/support/support/support.component.ts</context>
-          <context context-type="linenumber">105,99</context>
+          <context context-type="linenumber">122</context>
         </context-group>
-        <note priority="1" from="description">Subtitle user feedback dialog</note>
       </trans-unit>
       <trans-unit id="75e83679bf9fc19906d0e3b2e5422466c282e539" datatype="html">
         <source> The following processes are still running in the background. Until these are finished some pages may be slow or incomplete. </source>
