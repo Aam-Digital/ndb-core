@@ -20,6 +20,7 @@ import { ModuleWithProviders } from "@angular/core";
 import { UserRoleGuard } from "./core/permissions/permission-guard/user-role.guard";
 import { ComponentType } from "@angular/cdk/overlay";
 import { Registry } from "./core/registry/dynamic-registry";
+import { NotFoundComponent } from "./core/not-found/not-found/not-found.component";
 
 export class RouteRegistry extends Registry<ComponentType<any>> {}
 export const routesRegistry = new RouteRegistry();
@@ -59,7 +60,7 @@ export const allRoutes: Routes = [
         (m) => m["ComingSoonModule"]
       ),
   },
-  // { path: "**", redirectTo: "/" },
+  { path: "**", pathMatch: "full", component: NotFoundComponent },
 ];
 
 /**
@@ -67,5 +68,5 @@ export const allRoutes: Routes = [
  */
 export const routing: ModuleWithProviders<RouterModule> = RouterModule.forRoot(
   allRoutes,
-  { relativeLinkResolution: "legacy", initialNavigation: "disabled" }
+  { relativeLinkResolution: "legacy" }
 );

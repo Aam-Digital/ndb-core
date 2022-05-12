@@ -80,6 +80,7 @@ import { far } from "@fortawesome/free-regular-svg-icons";
 import { DemoPermissionGeneratorService } from "./core/permissions/demo-permission-generator.service";
 import { SupportModule } from "./core/support/support.module";
 import { DemoConfigGeneratorService } from "./core/config/demo-config-generator.service";
+import { NotFoundModule } from "./core/not-found/not-found.module";
 
 /**
  * Main entry point of the application.
@@ -155,6 +156,7 @@ import { DemoConfigGeneratorService } from "./core/config/demo-config-generator.
     DashboardShortcutWidgetModule,
     HistoricalDataModule,
     SupportModule,
+    NotFoundModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
