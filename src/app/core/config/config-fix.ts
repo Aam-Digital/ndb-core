@@ -756,16 +756,7 @@ export const defaultJsonConfig = {
             {
               "query": `${Child.ENTITY_TYPE}:toArray[*isActive=true]`,
               "label": $localize`:Label of report query:All children`,
-              "aggregations": [
-                {
-                  "label": $localize`:Label of report query:Male children`,
-                  "query": `:filterByObjectAttribute(gender, id, M)`
-                },
-                {
-                  "label": $localize`:Label of report query:Female children`,
-                  "query": `:filterByObjectAttribute(gender, id, F)`
-                },
-              ]
+              "groupBy": ["gender"],
             },
             {
               "query": `${School.ENTITY_TYPE}:toArray`,
@@ -782,16 +773,7 @@ export const defaultJsonConfig = {
                 {
                   "query": `[*privateSchool!=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`,
                   "label": $localize`:Label for report query:Children attending a governmental school`,
-                  "aggregations": [
-                    {
-                      "label": $localize`:Label for report query:Male children attending a governmental school`,
-                      "query": `:filterByObjectAttribute(gender, id, M)`
-                    },
-                    {
-                      "label": $localize`:Label for report query:Female children attending a governmental school`,
-                      "query": `:filterByObjectAttribute(gender, id, F)`
-                    },
-                  ]
+                  "groupBy": ["gender"],
                 },
                 {
                   "label": $localize`:Label for report query:Private schools`,
@@ -800,16 +782,7 @@ export const defaultJsonConfig = {
                 {
                   "query": `[*privateSchool=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`,
                   "label": $localize`:Label for report query:Children attending a private school`,
-                  "aggregations": [
-                    {
-                      "label": $localize`:Label for report query:Male children attending a private school`,
-                      "query": `:filterByObjectAttribute(gender, id, M)`
-                    },
-                    {
-                      "label": $localize`:Label for report query:Female children attending a private school`,
-                      "query": `:filterByObjectAttribute(gender, id, F)`
-                    },
-                  ]
+                  "groupBy": ["gender"],
                 },
               ]
             }
