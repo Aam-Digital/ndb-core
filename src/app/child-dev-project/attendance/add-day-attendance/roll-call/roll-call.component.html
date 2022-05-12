@@ -11,7 +11,7 @@
     </div>
   </div>
   <div class="navbar-wrapper">
-    <button mat-icon-button (click)="goToPrevious()" [disabled]="isFirst">
+    <button mat-icon-button class="button-aligned-left" (click)="goToPrevious()" [disabled]="isFirst">
       <fa-icon icon="chevron-left"></fa-icon>
     </button>
     <app-child-block
@@ -21,7 +21,7 @@
       [linkDisabled]="true"
       [tooltipDisabled]="true">
     </app-child-block>
-    <button mat-icon-button (click)="goToNext()" [disabled]="isFinished">
+    <button class="button-aligned-right" mat-icon-button (click)="goToNext()" [disabled]="isFinished">
       <fa-icon icon="chevron-right"></fa-icon>
     </button>
   </div>
@@ -32,7 +32,6 @@
       *ngFor="let entry of entries; let i = index"
       class="tab-body"
       [class.tab-body-active]="currentIndex === i"
-      [class.tab-body-inactive]="currentIndex !== i"
       [position]="i - currentIndex" >
       <div>
         <div

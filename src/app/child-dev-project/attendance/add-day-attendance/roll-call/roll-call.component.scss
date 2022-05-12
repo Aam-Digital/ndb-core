@@ -4,14 +4,9 @@
   box-sizing: border-box;
   border: 1px solid;
   border-top: 0;
-}
-
-.group-select-option:first-child {
-  border-top: 1px solid;
-}
-
-.options-wrapper {
-  margin-top: 16px;
+  &:first-child {
+    border-top: 1px solid;
+  }
 }
 
 .nav-button {
@@ -32,6 +27,7 @@
   background-color: #c8e6c9;
   border-radius: 4px;
 }
+
 .roll-call-complete-icon {
   font-size: 40px;
 }
@@ -47,13 +43,6 @@
 .attendance-progress-bar {
   display: flex;
   flex-direction: column;
-}
-
-.navigation-bar {
-  margin-top: 12px;
-  display: flex;
-  place-items: center;
-  width: 100%;
 }
 
 .child-block {
@@ -73,8 +62,6 @@
   bottom: 0;
   top: 0;
   display: flex;
-  overflow: hidden;
-  flex-basis: 100%;
 }
 
 .tab-body-active {
@@ -82,16 +69,6 @@
   flex-grow: 1;
   place-content: center;
   z-index: 1;
-}
-
-.tab-body-inactive {
-  padding-left: 50px;
-  padding-right: 50px;
-  transition: all 100ms ease-in-out;
-}
-
-.content {
-  border: 1px solid;
 }
 
 .tab-wrapper {
@@ -109,4 +86,23 @@
   display: flex;
   flex-grow: 1;
   place-content: center;
+}
+
+// Per default, the content of a mat-button is center-aligned.
+// In this case, the button contains an icon and we want it left (resp. right)-aligned
+// with the content
+// `text-align: left` would work as well, but not with the ripples
+
+.button-aligned-left {
+  // Position the button relative to it's parent
+  position: relative;
+  // This is the amount the button has to be shifted to be left-aligned
+  left: -15px;
+}
+
+.button-aligned-right {
+  // Position the button relative to it's parent
+  position: relative;
+  // This is the amount the button has to be shifted to be right-aligned
+  right: -15px;
 }

@@ -34,7 +34,7 @@ type PositionState = "left" | "center" | "right";
       state(
         "left",
         style({
-          transform: "translate(-100%)",
+          transform: "translate(-110%)",
           minHeight: "1px",
           visibility: "hidden",
         })
@@ -42,7 +42,7 @@ type PositionState = "left" | "center" | "right";
       state(
         "right",
         style({
-          transform: "translate(100%)",
+          transform: "translate(110%)",
           minHeight: "1px",
           visibility: "hidden",
         })
