@@ -3,6 +3,7 @@ import { Database } from "../../database/database";
 import { User } from "../../user/user";
 import { Papa } from "ngx-papaparse";
 import { ExportService } from "../../export/export-service/export.service";
+import { Config } from "../../config/config";
 
 /**
  * Create and load backups of the database.
@@ -46,10 +47,14 @@ export class BackupService {
   async clearDatabase(): Promise<void> {
     const allDocs = await this.db.getAll();
     for (const row of allDocs) {
-      if (!row._id.startsWith(User.ENTITY_TYPE + ":")) {
-        // skip User entities in order to not break login!
-        await this.db.remove(row);
+      if (
+        row._id.startsWith(User.ENTITY_TYPE + ":") ||
+        row._id.startsWith(Config.ENTITY_TYPE + ":")
+      ) {
+        // skip User entities and config in order to not break login!
+        continue;
       }
+      await this.db.remove(row);
     }
   }
 

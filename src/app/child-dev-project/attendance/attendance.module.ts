@@ -63,6 +63,7 @@ import { ViewModule } from "../../core/view/view.module";
 import { AttendanceSummaryComponent } from "./attendance-summary/attendance-summary.component";
 import { RollCallTabComponent } from "./add-day-attendance/roll-call/roll-call-tab/roll-call-tab.component";
 import { HammerModule } from "@angular/platform-browser";
+import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
 
 @NgModule({
   declarations: [
@@ -114,6 +115,7 @@ import { HammerModule } from "@angular/platform-browser";
     DashboardModule,
     MatPaginatorModule,
     ViewModule,
+    ConfigurableEnumModule,
     HammerModule,
   ],
   exports: [

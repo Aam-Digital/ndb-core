@@ -3,6 +3,7 @@
  * @param date The date to be checked
  */
 import { Router } from "@angular/router";
+import { ConfigurableEnumValue } from "../core/configurable-enum/configurable-enum.interface";
 
 export function isValidDate(date: any): boolean {
   return (
@@ -88,4 +89,11 @@ export function readFile(file: Blob): Promise<string> {
     );
     fileReader.readAsText(file);
   });
+}
+
+export function compareEnums(
+  a: ConfigurableEnumValue,
+  b: ConfigurableEnumValue
+): boolean {
+  return a?.id === b?.id;
 }

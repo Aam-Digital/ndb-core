@@ -51,7 +51,7 @@
   justify-content: center;
 }
 
-.completed-button {
+.finished-screen-button {
   margin-top: 1em;
 }
 
@@ -105,4 +105,8 @@
   position: relative;
   // This is the amount the button has to be shifted to be right-aligned
   right: -15px;
+}
+
+.full-width {
+  width: 100%;
 }

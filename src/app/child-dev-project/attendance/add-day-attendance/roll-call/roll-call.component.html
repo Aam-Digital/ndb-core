@@ -1,13 +1,13 @@
 <!-- Individual Student's Page -->
-<div *ngIf="entries?.length > 0">
+<div *ngIf="children?.length > 0">
   <div class="attendance-progress-bar">
     <mat-progress-bar
       class="filler"
       mode="determinate"
-      [value]="(currentIndex / entries.length) * 100"
+      [value]="(currentIndex / children.length) * 100"
     ></mat-progress-bar>
-    <div class="progress-label" [style.visibility]="currentIndex < entries.length ? 'visible' : 'hidden'">
-      {{ currentIndex+1 }} / {{ entries.length }}
+    <div class="progress-label" [style.visibility]="currentIndex < children.length ? 'visible' : 'hidden'">
+      {{ currentIndex+1 }} / {{ children.length }}
     </div>
   </div>
   <div class="navbar-wrapper">
@@ -17,7 +17,7 @@
     <app-child-block
       class="child-block"
       *ngIf="!isFinished"
-      [entity]="entries[currentIndex].child"
+      [entity]="currentChild"
       [linkDisabled]="true"
       [tooltipDisabled]="true">
     </app-child-block>
@@ -25,11 +25,11 @@
       <fa-icon icon="chevron-right"></fa-icon>
     </button>
   </div>
-  <div *ngIf="!isFinished" class="tab-wrapper">
+  <div *ngIf="!isFinished && currentAttendance" class="tab-wrapper">
     <app-roll-call-tab
       (swiperight)="swipeRight()"
       (swipeleft)="swipeLeft()"
-      *ngFor="let entry of entries; let i = index"
+      *ngFor="let child of children; let i = index"
       class="tab-body"
       [class.tab-body-active]="currentIndex === i"
       [position]="i - currentIndex" >
@@ -39,14 +39,14 @@
           *ngFor="let option of availableStatus"
           (click)="markAttendance(option)"
           [ngClass]="
-          entry.attendance.status.id === option.id
+          eventEntity.getAttendance(child).status.id === option.id
             ? option.style
             : ''
           "
         >
           <div style="display: flex; flex-direction: row; padding: 16px; gap: 16px">
             <fa-icon
-              *ngIf="entry.attendance.status.id === option.id"
+              *ngIf="eventEntity.getAttendance(child).status.id === option.id"
               icon="check"
             ></fa-icon>
             <p style="margin: 0">{{ option.label }}</p>
@@ -58,20 +58,32 @@
 </div>
 
 <!-- Completion Page -->
-<div *ngIf="isFinished" class="roll-call-complete" @completeRollCall (click)="finish()">
-  <fa-icon icon="check-circle" class="roll-call-complete-icon"></fa-icon>
-  <div
-    i18n="
-      Attendance completed|shows when the user has registered the attendance of
-      all children
-    "
-  >
-    Attendance completed.
+<div *ngIf="isFinished">
+  <div class="roll-call-complete" @completeRollCall>
+    <fa-icon icon="check-circle" class="roll-call-complete-icon"></fa-icon>
+    <div
+      i18n="
+        Attendance completed|shows when the user has registered the attendance of
+        all children
+      "
+      (click)="finish()"
+    >
+      Attendance completed.
+    </div>
+
+    <button
+      (click)="showDetails()"
+      class="finished-screen-button"
+      mat-stroked-button
+      i18n="Open details of recorded event for review"
+    >
+      Review Details
+    </button>
   </div>
 
   <button
     (click)="finish()"
-    class="completed-button"
+    class="finished-screen-button full-width"
     mat-stroked-button
     i18n="Back to overview button after finishing a roll call"
   >
