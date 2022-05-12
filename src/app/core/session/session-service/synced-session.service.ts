@@ -302,7 +302,7 @@ export class SyncedSessionService extends SessionService {
     this.cancelLoginOfflineRetry();
     this.cancelLiveSync();
     this._localSession.logout();
-    this._remoteSession.logout();
+    await this._remoteSession.logout();
     location.reload();
   }
 }
