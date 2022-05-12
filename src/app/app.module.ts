@@ -81,6 +81,7 @@ import { DemoPermissionGeneratorService } from "./core/permissions/demo-permissi
 import { SupportModule } from "./core/support/support.module";
 import { DemoConfigGeneratorService } from "./core/config/demo-config-generator.service";
 import { NotFoundModule } from "./core/not-found/not-found.module";
+import { DatabaseModule } from "./core/database/database.module";
 
 /**
  * Main entry point of the application.
@@ -157,6 +158,7 @@ import { NotFoundModule } from "./core/not-found/not-found.module";
     HistoricalDataModule,
     SupportModule,
     NotFoundModule,
+    DatabaseModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },

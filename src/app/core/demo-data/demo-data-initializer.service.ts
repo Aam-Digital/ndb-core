@@ -28,7 +28,7 @@ export class DemoDataInitializerService {
 
   constructor(
     private demoDataService: DemoDataService,
-    private sessionService: SessionService,
+    private localSession: LocalSession,
     private dialog: MatDialog,
     private loggingService: LoggingService,
     private database: Database
@@ -54,7 +54,7 @@ export class DemoDataInitializerService {
 
     dialogRef.close();
 
-    await this.sessionService.login(
+    await this.localSession.login(
       DemoUserGeneratorService.DEFAULT_USERNAME,
       DemoUserGeneratorService.DEFAULT_PASSWORD
     );
@@ -63,10 +63,10 @@ export class DemoDataInitializerService {
 
   private syncDatabaseOnUserChange() {
     // TODO what to do with this if we reload on logout?
-    this.sessionService.loginState.subscribe((state) => {
+    this.localSession.loginState.subscribe((state) => {
       if (
         state === LoginState.LOGGED_IN &&
-        this.sessionService.getCurrentUser().name !==
+        this.localSession.getCurrentUser().name !==
           DemoUserGeneratorService.DEFAULT_USERNAME
       ) {
         // There is a slight race-condition with session type local
@@ -80,7 +80,7 @@ export class DemoDataInitializerService {
   }
 
   private registerDemoUsers() {
-    const localSession = this.sessionService as LocalSession;
+    const localSession = this.localSession;
     localSession.saveUser(
       {
         name: DemoUserGeneratorService.DEFAULT_USERNAME,
