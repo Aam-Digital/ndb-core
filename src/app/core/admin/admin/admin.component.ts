@@ -103,32 +103,30 @@ export class AdminComponent implements OnInit {
     const restorePoint = await this.backupService.getJsonExport();
     const newData = await readFile(this.getFileFromInputEvent(inputEvent));
 
-    const dialogRef = this.confirmationDialog.openDialog(
+    const confirmed = await this.confirmationDialog.getConfirmation(
       `Overwrite complete database?`,
       `Are you sure you want to restore this backup? This will
       delete all ${JSON.parse(restorePoint).length} existing records,
       restoring ${JSON.parse(newData).length} records from the loaded file.`
     );
 
-    dialogRef.afterClosed().subscribe(async (confirmed) => {
-      if (!confirmed) {
-        return;
-      }
+    if (!confirmed) {
+      return;
+    }
 
-      await this.backupService.clearDatabase();
-      await this.backupService.importJson(newData, true);
+    await this.backupService.clearDatabase();
+    await this.backupService.importJson(newData, true);
 
-      const snackBarRef = this.snackBar.open(`Backup restored`, "Undo", {
-        duration: 8000,
-      });
-      snackBarRef
-        .onAction()
-        .pipe(untilDestroyed(this))
-        .subscribe(async () => {
-          await this.backupService.clearDatabase();
-          await this.backupService.importJson(restorePoint, true);
-        });
+    const snackBarRef = this.snackBar.open(`Backup restored`, "Undo", {
+      duration: 8000,
     });
+    snackBarRef
+      .onAction()
+      .pipe(untilDestroyed(this))
+      .subscribe(async () => {
+        await this.backupService.clearDatabase();
+        await this.backupService.importJson(restorePoint, true);
+      });
   }
 
   private getFileFromInputEvent(inputEvent: Event): Blob {
@@ -142,29 +140,27 @@ export class AdminComponent implements OnInit {
   async clearDatabase() {
     const restorePoint = await this.backupService.getJsonExport();
 
-    const dialogRef = this.confirmationDialog.openDialog(
+    const confirmed = await this.confirmationDialog.getConfirmation(
       `Empty complete database?`,
       `Are you sure you want to clear the database? This will delete all ${
         restorePoint.split("\n").length
       } existing records in the database!`
     );
 
-    dialogRef.afterClosed().subscribe(async (confirmed) => {
-      if (!confirmed) {
-        return;
-      }
+    if (!confirmed) {
+      return;
+    }
 
-      await this.backupService.clearDatabase();
+    await this.backupService.clearDatabase();
 
-      const snackBarRef = this.snackBar.open(`Import completed`, "Undo", {
-        duration: 8000,
-      });
-      snackBarRef
-        .onAction()
-        .pipe(untilDestroyed(this))
-        .subscribe(async () => {
-          await this.backupService.importJson(restorePoint, true);
-        });
+    const snackBarRef = this.snackBar.open(`Import completed`, "Undo", {
+      duration: 8000,
     });
+    snackBarRef
+      .onAction()
+      .pipe(untilDestroyed(this))
+      .subscribe(async () => {
+        await this.backupService.importJson(restorePoint, true);
+      });
   }
 }

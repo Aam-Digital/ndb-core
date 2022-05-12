@@ -81,12 +81,12 @@
       ></app-navigation>
 
 
-      <div fxFlex>
-        <div fxLayout="row">
+      <div fxFlex >
+        <div fxLayout="row" class="menu-footer-row">
           <app-pwa-install fxFlex></app-pwa-install>
         </div>
-        <div fxLayout="row">
-          
+
+        <div fxLayout="row" class="menu-footer-row">
           <button
             (click)="closeSidenavOnMobile()"
             mat-button
@@ -105,7 +105,12 @@
           </button>
         </div>
 
-        <app-version></app-version>
+        <div fxLayout="row" class="menu-footer-row">
+          <button mat-icon-button class="info-button" routerLink="/support" (click)="closeSidenavOnMobile()">
+            <fa-icon icon="info-circle" class="info-icon"></fa-icon>
+          </button>
+          <app-version style="width: 100%"></app-version>
+        </div>
       </div>
 
     </div>

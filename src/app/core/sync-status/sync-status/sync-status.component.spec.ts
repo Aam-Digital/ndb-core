@@ -30,7 +30,7 @@ import {
   EntityRegistry,
   entityRegistry,
 } from "../../entity/database-entity.decorator";
-import { expectObservable } from "../../../test-utils/observable-utils";
+import { expectObservable } from "../../../utils/test-utils/observable-utils";
 
 describe("SyncStatusComponent", () => {
   let component: SyncStatusComponent;

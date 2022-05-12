@@ -14,13 +14,15 @@ import { ConfigurableEnumDatatype } from "../../../configurable-enum/configurabl
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { ChildrenModule } from "../../../../child-dev-project/children/children.module";
 import { ChildrenService } from "../../../../child-dev-project/children/children.service";
-import { of, Subject } from "rxjs";
+import { NEVER, of, Subject } from "rxjs";
 import { AttendanceLogicalStatus } from "../../../../child-dev-project/attendance/model/attendance-status";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { AbilityService } from "../../../permissions/ability/ability.service";
 import { faker } from "../../../demo-data/faker";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
+import { Ability } from "@casl/ability";
+import { EntityAbility } from "../../../permissions/ability/entity-ability";
 
 const configService = new ConfigService(mockEntityMapper());
 const schemaService = new EntitySchemaService();
@@ -59,6 +61,7 @@ export default {
                 faker.random.arrayElement(childGenerator.entities)
               ),
             loadType: () => Promise.resolve(childGenerator.entities),
+            receiveUpdates: () => NEVER,
           },
         },
         { provide: EntitySchemaService, useValue: schemaService },
@@ -73,7 +76,12 @@ export default {
         },
         {
           provide: AbilityService,
-          useValue: { abilityUpdateNotifier: new Subject() },
+          useValue: { abilityUpdated: new Subject() },
+        },
+
+        {
+          provide: EntityAbility,
+          useValue: new Ability([{ subject: "all", action: "manage" }]),
         },
       ],
     }),

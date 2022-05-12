@@ -1,6 +1,6 @@
 import { of } from "rxjs";
 import { waitForChangeTo } from "./session-utils";
-import { expectObservable } from "../../../test-utils/observable-utils";
+import { expectObservable } from "../../../utils/test-utils/observable-utils";
 
 describe("session-utils", () => {
   it("(waitForChangeTo) Should only emit elements in a stream when the given condition is false", () => {
