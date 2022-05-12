@@ -26,6 +26,7 @@ import { MatMenuModule } from "@angular/material/menu";
 import { MatTabsModule } from "@angular/material/tabs";
 import { FilterOverlayComponent } from "./filter-overlay/filter-overlay.component";
 import { MatDialogModule } from "@angular/material/dialog";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import { MatDialogModule } from "@angular/material/dialog";
     ExtendedModule,
     MatButtonToggleModule,
     MatTableModule,
+    MatProgressSpinnerModule,
     ViewModule,
     MatSortModule,
     MatPaginatorModule,

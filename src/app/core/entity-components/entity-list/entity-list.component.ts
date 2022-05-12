@@ -45,6 +45,7 @@ export class EntityListComponent<T extends Entity>
   filteredEntities: T[] = [];
   @Input() listConfig: EntityListConfig;
   @Input() entityConstructor: EntityConstructor<T>;
+  @Input() isLoading: boolean;
   @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();
 

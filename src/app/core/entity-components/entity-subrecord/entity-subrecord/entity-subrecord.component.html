@@ -1,9 +1,11 @@
-<div class="mat-elevation-z1 container">
+<div style="display: flex; justify-content: center">
   <mat-spinner
-    *ngIf="loading"
-    [diameter]="20"
+    *ngIf="isLoading"
+    [diameter]="60"
     class="process-spinner"
   ></mat-spinner>
+</div>
+<div *ngIf="!isLoading" class="mat-elevation-z1 container">
   <table
     mat-table
     [dataSource]="recordsDataSource"

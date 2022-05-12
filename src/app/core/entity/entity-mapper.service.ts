@@ -76,7 +76,9 @@ export class EntityMapperService {
   ): Promise<T[]> {
     const resultArray: Array<T> = [];
     const ctor = this.resolveConstructor(entityType);
-
+    console.log("Waiting started.");
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    console.log("Waiting stopped.");
     const allRecordsOfType = await this._db.getAll(
       new ctor("").getType() + ":"
     );

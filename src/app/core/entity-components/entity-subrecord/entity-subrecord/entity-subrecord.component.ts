@@ -53,6 +53,8 @@ export interface TableRow<T> {
 })
 export class EntitySubrecordComponent<T extends Entity>
   implements OnChanges, OnInit {
+  @Input() isLoading: boolean;
+
   /** configuration what kind of columns to be generated for the table */
   @Input() set columns(columns: (FormFieldConfig | string)[]) {
     this._columns = columns.map((col) => {
@@ -66,7 +68,6 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 
   /** data to be displayed */
-  loading: Boolean = true;
   @Input()
   set records(value: Array<T>) {
     this._records = value;
@@ -79,7 +80,6 @@ export class EntitySubrecordComponent<T extends Entity>
       this.newRecordFactory = () =>
         new (this._records[0].getConstructor() as EntityConstructor<T>)();
     }
-    this.loading = false;
   }
   private _records: Array<T> = [];
   _columns: FormFieldConfig[] = [];

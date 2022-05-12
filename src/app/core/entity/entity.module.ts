@@ -21,6 +21,7 @@ import { EntityMapperService } from "./entity-mapper.service";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 import { EntityConfigService } from "./entity-config.service";
 import { entityRegistry, EntityRegistry } from "./database-entity.decorator";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 /**
  * Generic system to manage saving and loading documents with the database

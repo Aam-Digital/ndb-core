@@ -14,6 +14,7 @@ import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 import { RouteTarget } from "../../../app.routing";
+import { textChangeRangeIsUnchanged } from "typescript";
 
 @UntilDestroy()
 @RouteTarget("ChildrenList")
@@ -23,6 +24,7 @@ import { RouteTarget } from "../../../app.routing";
     <app-entity-list
       [allEntities]="childrenList"
       [listConfig]="listConfig"
+      [isLoading]="isLoading"
       [entityConstructor]="childConstructor"
       (elementClick)="routeTo($event.getId())"
       (addNewClick)="routeTo('new')"
@@ -35,6 +37,7 @@ export class ChildrenListComponent implements OnInit {
   childConstructor = Child;
   @ViewChild(EntityListComponent)
   entityListComponent: EntityListComponent<Child>;
+  isLoading: boolean = true;
 
   constructor(
     private childrenService: ChildrenService,
@@ -54,6 +57,7 @@ export class ChildrenListComponent implements OnInit {
       .subscribe((children) => {
         this.childrenList = children;
         this.addPrebuiltFilters();
+        this.isLoading = false;
       });
   }
 
