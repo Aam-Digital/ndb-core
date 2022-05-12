@@ -19,6 +19,7 @@ import { LoginState } from "../session-states/login-state.enum";
 import { SessionService } from "./session.service";
 import { SyncState } from "../session-states/sync-state.enum";
 import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
+import { DatabaseUser } from "./local-user";
 
 /**
  * Default tests for testing basic functionality of any SessionService implementation.
@@ -83,6 +84,16 @@ export function testSessionServiceImplementation(
 
     await sessionService.logout();
     expectNotToBeLoggedIn(LoginState.LOGGED_OUT);
+  });
+
+  it("it correctly handles the necessary steps after a successful login", async () => {
+    const dummyUser: DatabaseUser = {
+      name: "Hanspeter",
+      roles: ["user_app"],
+    };
+    await sessionService.handleSuccessfulLogin(dummyUser);
+    expect(sessionService.loginState.value).toEqual(LoginState.LOGGED_IN);
+    expect(sessionService.getCurrentUser()).toEqual(dummyUser);
   });
 
   /**

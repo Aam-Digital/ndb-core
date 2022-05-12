@@ -3,7 +3,6 @@ import { from, Observable, Subject } from "rxjs";
 import { Child } from "./model/child";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { Note } from "../notes/model/note";
-import { EducationalMaterial } from "./educational-material/model/educational-material";
 import { Aser } from "./aser/model/aser";
 import { ChildSchoolRelation } from "./model/childSchoolRelation";
 import { HealthCheck } from "./health-checkup/model/health-check";
@@ -238,13 +237,6 @@ export class ChildrenService {
     };
 
     return this.dbIndexing.createIndex(designDoc);
-  }
-
-  async getEducationalMaterialsOfChild(
-    childId: string
-  ): Promise<EducationalMaterial[]> {
-    const allMaterials = await this.entityMapper.loadType(EducationalMaterial);
-    return allMaterials.filter((mat) => mat.child === childId);
   }
 
   /**

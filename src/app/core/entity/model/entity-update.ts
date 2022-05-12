@@ -33,7 +33,7 @@ export interface UpdatedEntity<T extends Entity> {
 export function applyUpdate<T extends Entity>(
   entities: T[],
   next: UpdatedEntity<T>
-) {
+): T[] {
   if (!next || !next.entity) {
     return entities;
   }

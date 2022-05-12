@@ -62,12 +62,13 @@ export class RemoteSession extends SessionService {
   public async login(username: string, password: string): Promise<LoginState> {
     try {
       const response = await this.httpClient
-        .post(
+        .post<DatabaseUser>(
           `${AppConfig.settings.database.remote_url}_session`,
           { name: username, password: password },
           { withCredentials: true }
         )
         .toPromise();
+      await this.handleSuccessfulLogin(response);
       this.assignDatabaseUser(response);
       localStorage.setItem(
         RemoteSession.LAST_LOGIN_KEY,
@@ -90,6 +91,11 @@ export class RemoteSession extends SessionService {
       name: couchDBResponse.name,
       roles: couchDBResponse.roles,
     };
+  }
+
+  public async handleSuccessfulLogin(userObject: DatabaseUser) {
+    this.currentDBUser = userObject;
+    this.loginState.next(LoginState.LOGGED_IN);
   }
 
   /**
