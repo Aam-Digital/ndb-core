@@ -42,7 +42,7 @@ export class FormDialogWrapperComponent<E extends Entity = Entity>
   implements AfterViewInit {
   /** entity to be edited */
   @Input() set entity(value: E) {
-    this.originalEntity = Object.assign({}, value);
+    this.originalEntity = value.copy() as E;
     this._entity = value;
   }
   get entity(): E {
@@ -112,7 +112,7 @@ export class FormDialogWrapperComponent<E extends Entity = Entity>
       this.entity = transformedEntity;
     }
 
-    await this.entityMapper.save<Entity>(this.entity);
+    await this.entityMapper.save(this.entity);
     this.onClose.emit(this.entity);
   }
 
