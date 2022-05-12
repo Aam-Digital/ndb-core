@@ -115,7 +115,7 @@ describe("RollCallComponent", () => {
     component.ngOnChanges(dummyChanges);
     tick();
 
-    expect(component.entries.map((e) => e.child)).toEqual([participant1]);
+    expect(component.children).toEqual([participant1]);
     expect(component.eventEntity.children).not.toContain(nonExistingChildId);
     expect(mockLoggingService.warn).toHaveBeenCalled();
     flush();
@@ -284,9 +284,7 @@ describe("RollCallComponent", () => {
     });
     tick();
 
-    expect(component.entries.map((e) => e.child)).toEqual(
-      expectedParticipantsOrder
-    );
+    expect(component.children).toEqual(expectedParticipantsOrder);
     expect(component.eventEntity.children).toEqual(
       expectedParticipantsOrder.map((p) => p.getId())
     );
