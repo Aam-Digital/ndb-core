@@ -36,6 +36,7 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
 export class EntityDetailsComponent {
   entity: Entity;
   creatingNew = false;
+  isLoading: boolean = true;
 
   panels: Panel[] = [];
   iconName: string;
@@ -70,10 +71,13 @@ export class EntityDetailsComponent {
       this.creatingNew = true;
       this.setPanelsConfig();
     } else {
+      console.log("loadEntity started.");
       this.creatingNew = false;
       this.entityMapperService.load<Entity>(constr, id).then((entity) => {
         this.entity = entity;
         this.setPanelsConfig();
+        this.isLoading = false;
+        console.log("loadEntity stopped.");
       });
     }
   }
