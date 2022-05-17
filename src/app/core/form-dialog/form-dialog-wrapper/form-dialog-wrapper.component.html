@@ -20,7 +20,7 @@
   </button>
   <button
     mat-stroked-button
-    (click)="cancel()"
+    (click)="onClose.emit()"
     angulartics2On="click"
     [angularticsCategory]="entity?.getType()"
     angularticsAction="form_dialog_cancel"

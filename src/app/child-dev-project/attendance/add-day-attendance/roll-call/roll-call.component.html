@@ -1,13 +1,13 @@
 <!-- Individual Student's Page -->
-<div *ngIf="entries?.length > 0">
+<div *ngIf="children?.length > 0">
   <div class="attendance-progress-bar">
     <mat-progress-bar
       class="filler"
       mode="determinate"
-      [value]="(currentIndex / entries.length) * 100"
+      [value]="(currentIndex / children.length) * 100"
     ></mat-progress-bar>
-    <div class="progress-label" [style.visibility]="currentIndex < entries.length ? 'visible' : 'hidden'">
-      {{ currentIndex+1 }} / {{ entries.length }}
+    <div class="progress-label" [style.visibility]="currentIndex < children.length ? 'visible' : 'hidden'">
+      {{ currentIndex+1 }} / {{ children.length }}
     </div>
 
     <div class="navigation-bar">
@@ -28,7 +28,7 @@
   </div>
 
   <div
-    *ngIf="!isFinished"
+    *ngIf="!isFinished && currentAttendance"
     fxLayout="column"
     fxLayoutAlign="space-between stretch"
     class="options-wrapper"
@@ -38,13 +38,13 @@
       *ngFor="let option of availableStatus"
       (click)="markAttendance(option)"
       [ngClass]="
-        currentStatus.id === option.id
+        currentAttendance.status.id === option.id
           ? option.style
           : ''
       "
     >
       <fa-icon
-        *ngIf="currentStatus.id === option.id"
+        *ngIf="currentAttendance.status.id === option.id"
         icon="check"
       ></fa-icon>
       {{ option.label }}
@@ -53,20 +53,32 @@
 </div>
 
 <!-- Completion Page -->
-<div *ngIf="isFinished" class="roll-call-complete" [@completeRollCall] (click)="finish()">
-  <fa-icon icon="check-circle" class="roll-call-complete-icon"></fa-icon>
-  <div
-    i18n="
-      Attendance completed|shows when the user has registered the attendance of
-      all children
-    "
-  >
-    Attendance completed.
+<div *ngIf="isFinished">
+  <div class="roll-call-complete" [@completeRollCall]>
+    <fa-icon icon="check-circle" class="roll-call-complete-icon"></fa-icon>
+    <div
+      i18n="
+        Attendance completed|shows when the user has registered the attendance of
+        all children
+      "
+      (click)="finish()"
+    >
+      Attendance completed.
+    </div>
+
+    <button
+      (click)="showDetails()"
+      class="finished-screen-button"
+      mat-stroked-button
+      i18n="Open details of recorded event for review"
+    >
+      Review Details
+    </button>
   </div>
 
   <button
     (click)="finish()"
-    class="completed-button"
+    class="finished-screen-button full-width"
     mat-stroked-button
     i18n="Back to overview button after finishing a roll call"
   >

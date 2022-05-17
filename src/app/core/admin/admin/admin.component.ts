@@ -5,12 +5,12 @@ import { Alert } from "../../alerts/alert";
 import { BackupService } from "../services/backup.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import PouchDB from "pouchdb-browser";
 import { ChildPhotoUpdateService } from "../services/child-photo-update.service";
 import { ConfigService } from "../../config/config.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { readFile } from "../../../utils/utils";
 import { RouteTarget } from "../../../app.routing";
+import { Database } from "../../database/database";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -29,12 +29,10 @@ export class AdminComponent implements OnInit {
   /** all alerts */
   alerts: Alert[];
 
-  /** direct database instance */
-  private db;
-
   constructor(
     private alertService: AlertService,
     private backupService: BackupService,
+    private db: Database,
     private confirmationDialog: ConfirmationDialogService,
     private snackBar: MatSnackBar,
     private childPhotoUpdateService: ChildPhotoUpdateService,
@@ -43,7 +41,6 @@ export class AdminComponent implements OnInit {
 
   ngOnInit() {
     this.alerts = this.alertService.alerts;
-    this.db = new PouchDB(AppConfig.settings.database.name);
   }
 
   /**
@@ -142,9 +139,7 @@ export class AdminComponent implements OnInit {
 
     const confirmed = await this.confirmationDialog.getConfirmation(
       `Empty complete database?`,
-      `Are you sure you want to clear the database? This will delete all ${
-        restorePoint.split("\n").length
-      } existing records in the database!`
+      `Are you sure you want to clear the database? This will delete all existing records in the database!`
     );
 
     if (!confirmed) {
