@@ -25,7 +25,6 @@ import {
   waitForAsync,
 } from "@angular/core/testing";
 import { AppComponent } from "./app.component";
-import { ApplicationInitStatus } from "@angular/core";
 import { AppModule } from "./app.module";
 import { AppConfig } from "./core/app-config/app-config";
 import { IAppConfig } from "./core/app-config/app-config.model";
@@ -33,15 +32,14 @@ import { Angulartics2Matomo } from "angulartics2/matomo";
 import { Config } from "./core/config/config";
 import { USAGE_ANALYTICS_CONFIG_ID } from "./core/analytics/usage-analytics-config";
 import { environment } from "../environments/environment";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { EntityRegistry } from "./core/entity/database-entity.decorator";
 import { Subject } from "rxjs";
-import { SessionService } from "./core/session/session-service/session.service";
 import { Database } from "./core/database/database";
 import { UpdatedEntity } from "./core/entity/model/entity-update";
 import { EntityMapperService } from "./core/entity/entity-mapper.service";
 import { mockEntityMapper } from "./core/entity/mock-entity-mapper-service";
-import { LocalSession } from "./core/session/session-service/local-session";
+import { DemoDataService } from "./core/demo-data/demo-data.service";
+import { SessionType } from "./core/session/session-type";
 
 describe("AppComponent", () => {
   let component: AppComponent;
@@ -50,7 +48,8 @@ describe("AppComponent", () => {
 
   const mockAppSettings: IAppConfig = {
     database: { name: "", remote_url: "" },
-    session_type: undefined,
+    session_type: SessionType.local,
+    demo_mode: false,
     site_name: "",
   };
 
@@ -62,14 +61,10 @@ describe("AppComponent", () => {
       spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
 
       TestBed.configureTestingModule({
-        imports: [AppModule, HttpClientTestingModule],
-        providers: [
-          { provide: SessionService, useClass: LocalSession },
-          { provide: EntityMapperService, useValue: entityMapper },
-        ],
+        imports: [AppModule],
+        providers: [{ provide: EntityMapperService, useValue: entityMapper }],
       }).compileComponents();
 
-      TestBed.inject(ApplicationInitStatus); // This ensures that the AppConfig is loaded before test execution
       spyOn(TestBed.inject(EntityRegistry), "add"); // Prevent error with duplicate registration
     })
   );
@@ -114,6 +109,18 @@ describe("AppComponent", () => {
     ]);
 
     discardPeriodicTasks();
+  }));
+
+  it("published the demo data", fakeAsync(() => {
+    const demoDataService = TestBed.inject(DemoDataService);
+    spyOn(demoDataService, "publishDemoData").and.callThrough();
+    AppConfig.settings.demo_mode = true;
+
+    createComponent();
     flush();
+    discardPeriodicTasks();
+
+    expect(demoDataService.publishDemoData).toHaveBeenCalled();
+    AppConfig.settings.demo_mode = false;
   }));
 });
