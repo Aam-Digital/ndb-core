@@ -34,19 +34,11 @@ import {
 @NgModule({
   providers: [
     LoggingService,
-    {
-      provide: Database,
-      useFactory: (loggingService: LoggingService) =>
-        new PouchDatabase(loggingService).initInMemoryDB(),
-      deps: [LoggingService],
-    },
+    PouchDatabase,
+    { provide: Database, useExisting: PouchDatabase },
     EntityMapperService,
     EntitySchemaService,
-    {
-      provide: SessionService,
-      useFactory: (database: PouchDatabase) => new LocalSession(database),
-      deps: [Database],
-    },
+    { provide: SessionService, useClass: LocalSession },
     DatabaseIndexingService,
     { provide: EntityRegistry, useValue: entityRegistry },
     { provide: ViewRegistry, useValue: viewRegistry },
@@ -54,4 +46,8 @@ import {
     { provide: ConfigService, useValue: createTestingConfigService() },
   ],
 })
-export class DatabaseTestingModule {}
+export class DatabaseTestingModule {
+  constructor(pouchDatabase: PouchDatabase) {
+    pouchDatabase.initInMemoryDB();
+  }
+}

@@ -228,30 +228,13 @@ export class PouchDatabase extends Database {
   }
 
   /**
-   * Sync the local database with a remote database.
-   * See {@Link https://pouchdb.com/guides/replication.html}
-   * @param remoteDatabase the PouchDB instance of the remote database
-   */
-  sync(remoteDatabase) {
-    return this.getPouchDBOnceReady()
-      .then((pouchDB) =>
-        pouchDB.sync(remoteDatabase, {
-          batch_size: 500,
-        })
-      )
-      .catch((err) => {
-        throw new DatabaseException(err);
-      });
-  }
-
-  /**
    * Listen to changes to documents which have an _id with the given prefix
    * @param prefix for which document changes are emitted
    * @returns observable which emits the filtered changes
    */
   changes(prefix: string): Observable<any> {
     if (!this.changesFeed) {
-      this.changesFeed = new Subject<any>();
+      this.changesFeed = new Subject();
       this.getPouchDBOnceReady().then((pouchDB) =>
         pouchDB
           .changes({

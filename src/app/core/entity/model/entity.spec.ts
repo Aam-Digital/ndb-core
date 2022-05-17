@@ -19,11 +19,7 @@ import { Entity, EntityConstructor } from "./entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
 import { ConfigurableEnumDatatype } from "../../configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
-import { ConfigService } from "../../config/config.service";
-import { mockEntityMapper } from "../mock-entity-mapper-service";
-import { defaultJsonConfig } from "../../config/config-fix";
-import { Config } from "../../config/config";
-import { fakeAsync, tick } from "@angular/core/testing";
+import { createTestingConfigService } from "../../config/config.service";
 
 describe("Entity", () => {
   let entitySchemaService: EntitySchemaService;
@@ -107,11 +103,9 @@ export function testEntitySubclass(
     expect(Entity.extractTypeFromId(entity._id)).toBe(entityType);
   });
 
-  it("should only load and store properties defined in the schema", fakeAsync(() => {
+  it("should only load and store properties defined in the schema", () => {
     const schemaService = new EntitySchemaService();
-    const config = new Config(Config.CONFIG_KEY, defaultJsonConfig);
-    const configService = new ConfigService(mockEntityMapper([config]));
-    tick();
+    const configService = createTestingConfigService();
     schemaService.registerSchemaDatatype(
       new ConfigurableEnumDatatype(configService)
     );
@@ -126,5 +120,5 @@ export function testEntitySubclass(
       delete rawData.searchIndices;
     }
     expect(rawData).toEqual(expectedDatabaseFormat);
-  }));
+  });
 }

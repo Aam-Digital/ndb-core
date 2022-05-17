@@ -4,6 +4,7 @@ import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Config } from "./config";
 import { Subject } from "rxjs";
 import { UpdatedEntity } from "../entity/model/entity-update";
+import { take } from "rxjs/operators";
 
 describe("ConfigService", () => {
   let service: ConfigService;
@@ -41,14 +42,13 @@ describe("ConfigService", () => {
     entityMapper.load.and.rejectWith("No config found");
     const testConfig = new Config();
     testConfig.data = { testKey: "testValue" };
-    const configLoaded = service.configUpdates.toPromise();
+    const configLoaded = service.configUpdates.pipe(take(1)).toPromise();
     service.loadConfig();
     tick();
     expect(() => service.getConfig("testKey")).toThrowError();
     updateSubject.next({ type: "new", entity: testConfig });
     expect(service.getConfig("testKey")).toBe("testValue");
-    expectAsync(configLoaded).toBeResolvedTo(testConfig);
-    tick();
+    return expectAsync(configLoaded).toBeResolvedTo(testConfig);
   }));
 
   it("should correctly return prefixed fields", fakeAsync(() => {

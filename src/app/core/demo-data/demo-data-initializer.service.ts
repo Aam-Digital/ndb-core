@@ -80,15 +80,14 @@ export class DemoDataInitializerService {
   }
 
   private registerDemoUsers() {
-    const localSession = this.localSession;
-    localSession.saveUser(
+    this.localSession.saveUser(
       {
         name: DemoUserGeneratorService.DEFAULT_USERNAME,
         roles: ["user_app"],
       },
       DemoUserGeneratorService.DEFAULT_PASSWORD
     );
-    localSession.saveUser(
+    this.localSession.saveUser(
       {
         name: DemoUserGeneratorService.ADMIN_USERNAME,
         roles: ["user_app", "admin_app"],
