@@ -16,6 +16,10 @@ import {
   ViewRegistry,
 } from "../core/view/dynamic-components/dynamic-component.decorator";
 import { RouteRegistry, routesRegistry } from "../app.routing";
+import {
+  ConfigService,
+  createTestingConfigService,
+} from "../core/config/config.service";
 
 /**
  * Utility module that creates a simple environment where a correctly configured database and session is set up.
@@ -47,6 +51,7 @@ import { RouteRegistry, routesRegistry } from "../app.routing";
     { provide: EntityRegistry, useValue: entityRegistry },
     { provide: ViewRegistry, useValue: viewRegistry },
     { provide: RouteRegistry, useValue: routesRegistry },
+    { provide: ConfigService, useValue: createTestingConfigService() },
   ],
 })
 export class DatabaseTestingModule {}

@@ -2,18 +2,23 @@ import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { ConfigService } from "./config.service";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Config } from "./config";
-import { defaultJsonConfig } from "./config-fix";
+import { Subject } from "rxjs";
+import { UpdatedEntity } from "../entity/model/entity-update";
 
 describe("ConfigService", () => {
   let service: ConfigService;
-  const entityMapper: jasmine.SpyObj<EntityMapperService> = jasmine.createSpyObj(
-    "entityMapper",
-    ["load", "save"]
-  );
+  let entityMapper: jasmine.SpyObj<EntityMapperService>;
+  const updateSubject = new Subject<UpdatedEntity<Config>>();
 
   beforeEach(() => {
+    entityMapper = jasmine.createSpyObj(["load", "save", "receiveUpdates"]);
+    entityMapper.receiveUpdates.and.returnValue(updateSubject);
+    entityMapper.load.and.rejectWith();
     TestBed.configureTestingModule({
-      providers: [{ provide: EntityMapperService, useValue: entityMapper }],
+      providers: [
+        { provide: EntityMapperService, useValue: entityMapper },
+        ConfigService,
+      ],
     });
     service = TestBed.inject(ConfigService);
   });
@@ -23,25 +28,27 @@ describe("ConfigService", () => {
   });
 
   it("should load the config from the entity mapper", fakeAsync(() => {
-    const testConfig: Config = new Config();
+    const testConfig = new Config();
     testConfig.data = { testKey: "testValue" };
-    entityMapper.load.and.returnValue(Promise.resolve(testConfig));
+    entityMapper.load.and.resolveTo(testConfig);
     service.loadConfig();
     expect(entityMapper.load).toHaveBeenCalled();
     tick();
     expect(service.getConfig("testKey")).toEqual("testValue");
   }));
 
-  it("should use the default config when none is loaded", fakeAsync(() => {
-    const defaultConfig = Object.keys(defaultJsonConfig).map((key) => {
-      defaultJsonConfig[key]._id = key;
-      return defaultJsonConfig[key];
-    });
+  it("should emit the config once it is loaded", fakeAsync(() => {
     entityMapper.load.and.rejectWith("No config found");
+    const testConfig = new Config();
+    testConfig.data = { testKey: "testValue" };
+    const configLoaded = service.configUpdates.toPromise();
     service.loadConfig();
     tick();
-    const configAfter = service.getAllConfigs("");
-    expect(configAfter).toEqual(defaultConfig);
+    expect(() => service.getConfig("testKey")).toThrowError();
+    updateSubject.next({ type: "new", entity: testConfig });
+    expect(service.getConfig("testKey")).toBe("testValue");
+    expectAsync(configLoaded).toBeResolvedTo(testConfig);
+    tick();
   }));
 
   it("should correctly return prefixed fields", fakeAsync(() => {
@@ -75,27 +82,17 @@ describe("ConfigService", () => {
     const newConfig = { test: "data" };
     service.saveConfig(newConfig);
     expect(entityMapper.save).toHaveBeenCalled();
-    expect(entityMapper.save.calls.mostRecent().args[0]).toBeInstanceOf(Config);
-    expect(
-      (entityMapper.save.calls.mostRecent().args[0] as Config).data
-    ).toEqual({ test: "data" });
+    const lastCall = entityMapper.save.calls.mostRecent().args[0] as Config;
+    expect(lastCall).toBeInstanceOf(Config);
+    expect(lastCall.data).toEqual({ test: "data" });
   });
 
-  it("should create export config string", async () => {
+  it("should create export config string", () => {
     const config = new Config();
     config.data = { first: "foo", second: "bar" };
     const expected = JSON.stringify(config.data);
-    entityMapper.load.and.returnValue(Promise.resolve(config));
+    updateSubject.next({ entity: config, type: "update" });
     const result = service.exportConfig();
     expect(result).toEqual(expected);
   });
-
-  it("should emit new value", fakeAsync(() => {
-    spyOn(service.configUpdates, "next");
-    entityMapper.load.and.returnValue(Promise.resolve(new Config()));
-    expect(service.configUpdates.next).not.toHaveBeenCalled();
-    service.loadConfig();
-    tick();
-    expect(service.configUpdates.next).toHaveBeenCalled();
-  }));
 });

@@ -1,7 +1,10 @@
 import { TestBed } from "@angular/core/testing";
 
 import { FilterGeneratorService } from "./filter-generator.service";
-import { ConfigService } from "../../config/config.service";
+import {
+  ConfigService,
+  createTestingConfigService,
+} from "../../config/config.service";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { LoggingService } from "../../logging/logging.service";
 import { BooleanFilterConfig, PrebuiltFilterConfig } from "./EntityListConfig";
@@ -17,19 +20,22 @@ import {
   EntityRegistry,
   entityRegistry,
 } from "../../entity/database-entity.decorator";
+import {
+  mockEntityMapper,
+  MockEntityMapperService,
+} from "../../entity/mock-entity-mapper-service";
 
 describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let entityMapper: MockEntityMapperService;
 
   beforeEach(async () => {
-    mockEntityMapper = jasmine.createSpyObj(["loadType", "load"]);
-    mockEntityMapper.load.and.rejectWith();
+    entityMapper = mockEntityMapper();
     TestBed.configureTestingModule({
       providers: [
-        ConfigService,
+        { provide: ConfigService, useValue: createTestingConfigService() },
         EntitySchemaService,
-        { provide: EntityMapperService, useValue: mockEntityMapper },
+        { provide: EntityMapperService, useValue: entityMapper },
         LoggingService,
         EntityConfigService,
         {
@@ -103,7 +109,7 @@ describe("FilterGeneratorService", () => {
     school1.name = "First School";
     const school2 = new School();
     school2.name = "Second School";
-    mockEntityMapper.loadType.and.resolveTo([school1, school2]);
+    entityMapper.addAll([school1, school2]);
     const csr1 = new ChildSchoolRelation();
     csr1.schoolId = school1.getId();
     const csr2 = new ChildSchoolRelation();

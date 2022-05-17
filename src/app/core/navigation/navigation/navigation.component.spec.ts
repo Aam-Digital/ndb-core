@@ -43,9 +43,10 @@ describe("NavigationComponent", () => {
   beforeEach(
     waitForAsync(() => {
       mockConfigUpdated = new BehaviorSubject<Config>(null);
-      mockConfigService = jasmine.createSpyObj(["getConfig"]);
+      mockConfigService = jasmine.createSpyObj(["getConfig"], {
+        configUpdates: mockConfigUpdated,
+      });
       mockConfigService.getConfig.and.returnValue({ items: [] });
-      mockConfigService.configUpdates = mockConfigUpdated;
       mockUserRoleGuard = jasmine.createSpyObj(["canActivate"]);
       mockUserRoleGuard.canActivate.and.returnValue(true);
 

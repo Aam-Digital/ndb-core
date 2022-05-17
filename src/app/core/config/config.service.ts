@@ -9,6 +9,7 @@ import {
 } from "../configurable-enum/configurable-enum.interface";
 import { filter } from "rxjs/operators";
 import { mockEntityMapper } from "../entity/mock-entity-mapper-service";
+import { defaultJsonConfig } from "./config-fix";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -34,7 +35,7 @@ export class ConfigService {
       .subscribe(({ entity }) => this.updateConfigIfChanged(entity));
   }
 
-  private async loadConfig(): Promise<void> {
+  async loadConfig(): Promise<void> {
     this.entityMapper
       .load(Config, Config.CONFIG_KEY)
       .then((config) => this.updateConfigIfChanged(config))
@@ -42,18 +43,18 @@ export class ConfigService {
   }
 
   private updateConfigIfChanged(config: Config) {
-    if (config._rev !== this.currentConfig?._rev) {
+    if (!this.currentConfig || config._rev !== this.currentConfig?._rev) {
       this.currentConfig = config;
       this._configUpdates.next(config);
     }
   }
 
   public saveConfig(config: any): Promise<void> {
-    return this.entityMapper.save(config, true);
+    return this.entityMapper.save(new Config(Config.CONFIG_KEY, config), true);
   }
 
   public exportConfig(): string {
-    return JSON.stringify(this.currentConfig);
+    return JSON.stringify(this.currentConfig.data);
   }
 
   public getConfig<T>(id: string): T {
@@ -85,8 +86,10 @@ export class ConfigService {
   }
 }
 
-export function createTestingConfigService(configsObject: any): ConfigService {
-  return new ConfigService(
-    mockEntityMapper([new Config(Config.CONFIG_KEY, configsObject)])
-  );
+export function createTestingConfigService(
+  configsObject: any = defaultJsonConfig
+): ConfigService {
+  const configService = new ConfigService(mockEntityMapper());
+  configService["currentConfig"] = new Config(Config.CONFIG_KEY, configsObject);
+  return configService;
 }

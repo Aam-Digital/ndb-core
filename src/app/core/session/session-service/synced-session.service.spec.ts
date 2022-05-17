@@ -31,6 +31,7 @@ import { testSessionServiceImplementation } from "./session.service.spec";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { PouchDatabase } from "../../database/pouch-database";
 import { SessionModule } from "../session.module";
+import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 
 describe("SyncedSessionService", () => {
   let sessionService: SyncedSessionService;
@@ -46,16 +47,19 @@ describe("SyncedSessionService", () => {
   let syncSpy: jasmine.Spy<() => Promise<void>>;
   let liveSyncSpy: jasmine.Spy<() => void>;
   let mockHttpClient: jasmine.SpyObj<HttpClient>;
+  let mockLocation: jasmine.SpyObj<Location>;
 
   beforeEach(() => {
     mockHttpClient = jasmine.createSpyObj(["post", "delete", "get"]);
     mockHttpClient.delete.and.returnValue(of());
     mockHttpClient.get.and.returnValue(of());
+    mockLocation = jasmine.createSpyObj(["reload"]);
     TestBed.configureTestingModule({
       imports: [SessionModule, NoopAnimationsModule, FontAwesomeTestingModule],
       providers: [
         PouchDatabase,
         { provide: HttpClient, useValue: mockHttpClient },
+        { provide: LOCATION_TOKEN, useValue: mockLocation },
       ],
     });
     AppConfig.settings = {

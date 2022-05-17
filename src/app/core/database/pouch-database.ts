@@ -270,7 +270,9 @@ export class PouchDatabase extends Database {
    */
   async destroy(): Promise<any> {
     await Promise.all(this.indexPromises);
-    return this.getPouchDBOnceReady().then((pouchDB) => pouchDB.destroy());
+    if (this.pouchDB) {
+      return this.pouchDB.destroy();
+    }
   }
 
   /**

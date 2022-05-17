@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from "@angular/core";
+import { Inject, Injectable } from "@angular/core";
 import { AlertService } from "../../alerts/alert.service";
 
 import { SessionService } from "./session.service";
@@ -31,6 +31,7 @@ import { waitForChangeTo } from "../session-states/session-utils";
 import { zip } from "rxjs";
 import { AppConfig } from "app/core/app-config/app-config";
 import { filter } from "rxjs/operators";
+import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -54,7 +55,8 @@ export class SyncedSessionService extends SessionService {
     private loggingService: LoggingService,
     private httpClient: HttpClient,
     private localSession: LocalSession,
-    private remoteSession: RemoteSession
+    private remoteSession: RemoteSession,
+    @Inject(LOCATION_TOKEN) private location: Location
   ) {
     super();
     this.syncState
@@ -299,6 +301,8 @@ export class SyncedSessionService extends SessionService {
     this.cancelLiveSync();
     this.localSession.logout();
     await this.remoteSession.logout();
-    location.reload();
+    this.location.reload();
+    this.loginState.next(LoginState.LOGGED_OUT);
+    this.syncState.next(SyncState.UNSYNCED);
   }
 }

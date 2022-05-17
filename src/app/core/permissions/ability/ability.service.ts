@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { SessionService } from "../../session/session-service/session.service";
-import { filter, map } from "rxjs/operators";
+import { filter } from "rxjs/operators";
 import { Observable, Subject } from "rxjs";
 import { DatabaseRule, DatabaseRules } from "../permission-types";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
@@ -46,12 +46,9 @@ export class AbilityService {
     // TODO this setup is very similar to `ConfigService`
     this.initRules();
     this.entityMapper
-      .receiveUpdates(Config)
-      .pipe(
-        filter(({ entity }) => entity.getId() === Config.PERMISSION_KEY),
-        map(({ entity }) => entity as Config<DatabaseRules>)
-      )
-      .subscribe((config) => this.updateAbilityWithUserRules(config.data));
+      .receiveUpdates<Config<DatabaseRules>>(Config)
+      .pipe(filter(({ entity }) => entity.getId() === Config.PERMISSION_KEY))
+      .subscribe(({ entity }) => this.updateAbilityWithUserRules(entity.data));
   }
 
   private initRules(): Promise<void> {
@@ -63,7 +60,7 @@ export class AbilityService {
       .catch(() => undefined);
   }
 
-  private async updateAbilityWithUserRules(rules: DatabaseRules) {
+  private updateAbilityWithUserRules(rules: DatabaseRules): Promise<any> {
     const userRules = this.getRulesForUser(rules);
     if (userRules.length === 0 || userRules.length === rules.default?.length) {
       // No rules or only default rules defined
@@ -73,7 +70,7 @@ export class AbilityService {
       );
     }
     this.updateAbilityWithRules(userRules);
-    await this.permissionEnforcer.enforcePermissionsOnLocalData(userRules);
+    return this.permissionEnforcer.enforcePermissionsOnLocalData(userRules);
   }
 
   private getRulesForUser(rules: DatabaseRules): DatabaseRule[] {

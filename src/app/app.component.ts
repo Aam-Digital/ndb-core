@@ -21,7 +21,6 @@ import { ConfigService } from "./core/config/config.service";
 import { RouterService } from "./core/view/dynamic-routing/router.service";
 import { EntityConfigService } from "./core/entity/entity-config.service";
 import { SessionService } from "./core/session/session-service/session.service";
-import { SyncState } from "./core/session/session-states/sync-state.enum";
 import { ActivatedRoute, Router } from "@angular/router";
 import { environment } from "../environments/environment";
 import { Child } from "./child-dev-project/children/model/child";
@@ -31,7 +30,6 @@ import { AppConfig } from "./core/app-config/app-config";
 import { LoginState } from "./core/session/session-states/login-state.enum";
 import { LoggingService } from "./core/logging/logging.service";
 import { EntityRegistry } from "./core/entity/database-entity.decorator";
-import { filter } from "rxjs/operators";
 
 /**
  * Component as the main entry point for the app.
@@ -68,8 +66,6 @@ export class AppComponent {
 
     // Re-trigger services that depend on the config when something changes
     this.configService.configUpdates.subscribe(() => {
-      // this.router.initialNavigation();
-      console.log("update found", this.router.url);
       this.routerService.initRouting();
       this.entityConfigService.setupEntitiesFromConfig();
       this.router.navigate([], { relativeTo: this.activatedRoute });
