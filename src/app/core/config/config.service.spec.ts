@@ -32,6 +32,7 @@ describe("ConfigService", () => {
     const testConfig = new Config();
     testConfig.data = { testKey: "testValue" };
     entityMapper.load.and.resolveTo(testConfig);
+
     service.loadConfig();
     expect(entityMapper.load).toHaveBeenCalled();
     tick();
@@ -40,13 +41,16 @@ describe("ConfigService", () => {
 
   it("should emit the config once it is loaded", fakeAsync(() => {
     entityMapper.load.and.rejectWith("No config found");
-    const testConfig = new Config();
-    testConfig.data = { testKey: "testValue" };
     const configLoaded = service.configUpdates.pipe(take(1)).toPromise();
+
     service.loadConfig();
     tick();
     expect(() => service.getConfig("testKey")).toThrowError();
+
+    const testConfig = new Config();
+    testConfig.data = { testKey: "testValue" };
     updateSubject.next({ type: "new", entity: testConfig });
+
     expect(service.getConfig("testKey")).toBe("testValue");
     return expectAsync(configLoaded).toBeResolvedTo(testConfig);
   }));
