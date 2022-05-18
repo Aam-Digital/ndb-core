@@ -63,7 +63,8 @@ describe("PreviousSchoolsComponent", () => {
     tick();
     expect(mockChildrenService.queryRelationsOf).toHaveBeenCalledWith(
       "child",
-      testChild.getId()
+      testChild.getId(),
+      false
     );
   }));
 

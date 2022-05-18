@@ -120,10 +120,7 @@ describe("AttendanceService", () => {
     childSchool2.childId = "3";
     childSchool2.schoolId = linkedSchoolId;
     childSchool2.start = new Date();
-    spyOn(TestBed.inject(ChildrenService), "queryRelationsOf").and.resolveTo([
-      childSchool1,
-      childSchool2,
-    ]);
+    await entityMapper.saveAll([childSchool1, childSchool2]);
 
     const testNoteWithSchool = Note.create(new Date("2021-01-01"));
     testNoteWithSchool.children = ["1", "2"];
@@ -209,10 +206,7 @@ describe("AttendanceService", () => {
     const testActivity = RecurringActivity.create("new activity");
     testActivity.linkedGroups.push("testSchool");
 
-    spyOn(TestBed.inject(ChildrenService), "queryRelationsOf").and.resolveTo([
-      childSchoolRelation,
-    ]);
-    await entityMapper.save(testActivity);
+    await entityMapper.saveAll([testActivity, childSchoolRelation]);
 
     const activities = await service.getActivitiesForChild("testChild");
     expectEntitiesToMatch(activities, [testActivity]);
@@ -240,14 +234,14 @@ describe("AttendanceService", () => {
     const inactiveActivity = RecurringActivity.create("inactive activity");
     inactiveActivity.linkedGroups.push(inactiveRelation.schoolId);
 
-    spyOn(TestBed.inject(ChildrenService), "queryRelationsOf").and.resolveTo([
+    await entityMapper.saveAll([
       activeRelation1,
       inactiveRelation,
       activeRelation2,
+      activeActivity1,
+      activeActivity2,
+      inactiveActivity,
     ]);
-    await entityMapper.save(activeActivity1);
-    await entityMapper.save(activeActivity2);
-    await entityMapper.save(inactiveActivity);
 
     const activities = await service.getActivitiesForChild("testChild");
     expectEntitiesToMatch(activities, [activeActivity1, activeActivity2]);
@@ -262,10 +256,7 @@ describe("AttendanceService", () => {
     activity.linkedGroups.push(relation.schoolId);
     activity.participants.push(relation.childId);
 
-    spyOn(TestBed.inject(ChildrenService), "queryRelationsOf").and.resolveTo([
-      relation,
-    ]);
-    await entityMapper.save(activity);
+    await entityMapper.saveAll([activity, relation]);
 
     const activities = await service.getActivitiesForChild(relation.childId);
 
@@ -306,12 +297,11 @@ describe("AttendanceService", () => {
     const duplicateChild = new Child();
     const duplicateChildRelation = new ChildSchoolRelation();
     duplicateChildRelation.childId = duplicateChild.getId();
+    duplicateChildRelation.schoolId = linkedSchool.getId();
     const anotherRelation = new ChildSchoolRelation();
     anotherRelation.childId = "another child id";
-    spyOn(TestBed.inject(ChildrenService), "queryRelationsOf").and.resolveTo([
-      duplicateChildRelation,
-      anotherRelation,
-    ]);
+    anotherRelation.schoolId = linkedSchool.getId();
+    await entityMapper.saveAll([duplicateChildRelation, anotherRelation]);
 
     const directlyAddedChild = new Child();
     activity.participants.push(

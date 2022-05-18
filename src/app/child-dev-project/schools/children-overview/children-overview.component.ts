@@ -55,8 +55,7 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
     this.entity = config.entity;
     this.records = await this.childrenService.queryRelationsOf(
       "school",
-      this.entity.getId(),
-      true
+      this.entity.getId()
     );
   }
 

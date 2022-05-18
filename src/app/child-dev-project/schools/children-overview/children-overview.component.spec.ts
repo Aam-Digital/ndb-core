@@ -55,8 +55,7 @@ describe("ChildrenOverviewComponent", () => {
 
     expect(mockChildrenService.queryRelationsOf).toHaveBeenCalledWith(
       "school",
-      school.getId(),
-      true
+      school.getId()
     );
     expect(component.records).toEqual([relation1, relation2]);
   }));

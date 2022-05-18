@@ -10,6 +10,7 @@ import { Note } from "../notes/model/note";
 import { genders } from "./model/genders";
 import { DatabaseTestingModule } from "../../utils/database-testing.module";
 import { sortByAttribute } from "../../utils/utils";
+import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
 
 describe("ChildrenService", () => {
   let service: ChildrenService;
@@ -106,14 +107,37 @@ describe("ChildrenService", () => {
     expect(recentNotesMap.get(c0)).toBePositiveInfinity();
   });
 
-  it("should load a single child with school info", async () => {
-    const child1 = await service.getChild("1").toPromise();
-    expect(child1.schoolClass).toBe("2");
-    expect(child1.schoolId).toBe("1");
-
+  it("should load a single child and add school info", async () => {
+    // no active relation
     const child2 = await service.getChild("2").toPromise();
     expect(child2.schoolClass).toBeUndefined();
     expect(child2.schoolId).toBeUndefined();
+
+    // one active relation
+    let child1 = await service.getChild("1").toPromise();
+    expect(child1.schoolClass).toBe("2");
+    expect(child1.schoolId).toBe("1");
+
+    // multiple active relations
+    const newRelation = new ChildSchoolRelation();
+    newRelation.childId = child1.getId();
+    newRelation.start = new Date();
+    newRelation.schoolId = "2";
+    newRelation.schoolClass = "3";
+    await entityMapper.save(newRelation);
+    child1 = await service.getChild(child1.getId()).toPromise();
+    expect(child1.schoolClass).toBe("3");
+    expect(child1.schoolId).toBe("2");
+
+    // multiple active, no start date on one
+    const noStartDate = new ChildSchoolRelation();
+    noStartDate.childId = child1.getId();
+    noStartDate.schoolId = "2";
+    noStartDate.schoolClass = "4";
+    await entityMapper.save(noStartDate);
+    child1 = await service.getChild(child1.getId()).toPromise();
+    expect(child1.schoolClass).toBe("4");
+    expect(child1.schoolId).toBe("2");
   });
 
   it("should load all children with school info", async () => {
@@ -130,7 +154,7 @@ describe("ChildrenService", () => {
   });
 
   it("should get the relations for a child in sorted order", async () => {
-    const relations = await service.queryRelationsOf("child", "3");
+    const relations = await service.queryRelationsOf("child", "3", false);
 
     expect(relations).toHaveSize(2);
     expect(relations[0].start.getTime()).toBeGreaterThanOrEqual(
@@ -139,7 +163,7 @@ describe("ChildrenService", () => {
   });
 
   it("should get all relations for a school", async () => {
-    const relations = await service.queryRelationsOf("school", "1");
+    const relations = await service.queryRelationsOf("school", "1", false);
 
     expect(relations).toHaveSize(2);
     const relation1 = relations.find((relation) => relation.getId() === "1");
@@ -153,18 +177,17 @@ describe("ChildrenService", () => {
     todayRelation.schoolId = "3";
     todayRelation.start = new Date();
     await entityMapper.save(todayRelation);
-    const relations = await service.queryRelationsOf("school", "3", true);
-    expect(relations).toHaveSize(1);
-    expect(relations[0]).toHaveId(todayRelation.getId());
+    const relations = await service.queryRelationsOf("school", "3");
+    expectEntitiesToMatch(relations, [todayRelation]);
   });
 
-  it("should only return active relations if specified", async () => {
+  it("should on default only return active relations", async () => {
     const allRelations = await entityMapper.loadType(ChildSchoolRelation);
     const activeRelations = allRelations
       .filter((rel) => rel.isActive && rel.childId === "3")
       .sort(sortByAttribute("start", "desc"));
 
-    const result = await service.queryRelationsOf("child", "3", true);
+    const result = await service.queryRelationsOf("child", "3");
     expect(result).toEqual(activeRelations);
   });
 });

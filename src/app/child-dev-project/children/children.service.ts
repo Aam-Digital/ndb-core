@@ -93,7 +93,7 @@ export class ChildrenService {
   queryLatestRelation(
     childId: string
   ): Promise<ChildSchoolRelation | undefined> {
-    return this.queryRelationsOf("child", childId, true).then((relations) =>
+    return this.queryRelationsOf("child", childId).then((relations) =>
       relations.length > 0 ? relations[0] : undefined
     );
   }
@@ -101,7 +101,7 @@ export class ChildrenService {
   async queryRelationsOf(
     queryType: "child" | "school",
     id: string,
-    onlyActive = false
+    onlyActive = true
   ): Promise<ChildSchoolRelation[]> {
     let relations = await this.dbIndexing.queryIndexDocs(
       ChildSchoolRelation,
@@ -112,7 +112,7 @@ export class ChildrenService {
         descending: true,
       }
     );
-    if (onlyActive) {
+    if (onlyActive === true) {
       relations = relations.filter((rel) => rel.isActive);
     }
     return relations;
