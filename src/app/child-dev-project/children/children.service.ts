@@ -11,7 +11,6 @@ import { ChildPhotoService } from "./child-photo-service/child-photo.service";
 import moment, { Moment } from "moment";
 import { LoggingService } from "../../core/logging/logging.service";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
-import { QueryOptions } from "../../core/database/database";
 
 @Injectable()
 export class ChildrenService {
