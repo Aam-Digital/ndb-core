@@ -259,7 +259,6 @@ export class SyncedSessionService extends SessionService {
    * @param timeout ms to wait before starting the liveSync
    */
   public liveSyncDeferred(timeout = 1000) {
-    this.cancelLiveSync(); // cancel any liveSync that may have been alive before
     this._liveSyncScheduledHandle = setTimeout(() => this.liveSync(), timeout);
   }
 
@@ -282,6 +281,7 @@ export class SyncedSessionService extends SessionService {
     if (this._liveSyncHandle) {
       this._liveSyncHandle.cancel();
     }
+    this.syncState.next(SyncState.UNSYNCED);
   }
 
   /**
@@ -303,6 +303,5 @@ export class SyncedSessionService extends SessionService {
     await this.remoteSession.logout();
     this.location.reload();
     this.loginState.next(LoginState.LOGGED_OUT);
-    this.syncState.next(SyncState.UNSYNCED);
   }
 }
