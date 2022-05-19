@@ -21,6 +21,7 @@
       [linkDisabled]="true"
       [tooltipDisabled]="true">
     </app-child-block>
+    <div class="placeholder" *ngIf="isFinished"></div>
     <button class="button-aligned-right" mat-icon-button (click)="goToNext()" [disabled]="isFinished">
       <fa-icon icon="chevron-right"></fa-icon>
     </button>
