@@ -72,13 +72,11 @@ export class EntityDetailsComponent {
       this.creatingNew = true;
       this.setFullPanelsConfig();
     } else {
-      console.log("loadEntity started.");
       this.creatingNew = false;
       this.entityMapperService.load<Entity>(constr, id).then((entity) => {
         this.entity = entity;
         this.setFullPanelsConfig();
         this.isLoading = false;
-        console.log("loadEntity stopped.");
       });
     }
   }
