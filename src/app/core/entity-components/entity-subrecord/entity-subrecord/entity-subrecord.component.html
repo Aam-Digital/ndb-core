@@ -1,7 +1,4 @@
-<div class="process-spinner">
-  <mat-spinner *ngIf="isLoading" [diameter]="60"></mat-spinner>
-</div>
-<div *ngIf="!isLoading" class="mat-elevation-z1 container">
+<div class="mat-elevation-z1 container">
   <table
     mat-table
     [dataSource]="recordsDataSource"
@@ -151,7 +148,11 @@
       class="table-row"
     ></tr>
   </table>
+  <div *ngIf="isLoading" class="process-spinner">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
   <app-list-paginator
+    *ngIf="!isLoading || recordsDataSource.data.length"
     [dataSource]="recordsDataSource"
     [idForSavingPagination]="idForSavingPagination"
   ></app-list-paginator>

@@ -44,6 +44,7 @@ export class NotesManagerComponent implements OnInit {
   config: EntityListConfig;
   noteConstructor = Note;
   notes: Note[] = [];
+  isLoading: boolean = true;
 
   private statusFS: FilterSelectionOption<Note>[] = [
     {
@@ -101,9 +102,12 @@ export class NotesManagerComponent implements OnInit {
 
   private async loadEntities(): Promise<Note[]> {
     let notes = await this.entityMapperService.loadType(Note);
+    this.isLoading = false;
     if (this.includeEventNotes) {
+      this.isLoading = true;
       const eventNotes = await this.entityMapperService.loadType(EventNote);
       notes = notes.concat(eventNotes);
+      this.isLoading = false;
     }
     return notes;
   }
@@ -127,6 +131,7 @@ export class NotesManagerComponent implements OnInit {
   }
 
   async updateIncludeEvents() {
+    this.isLoading = true;
     this.notes = await this.loadEntities();
   }
 

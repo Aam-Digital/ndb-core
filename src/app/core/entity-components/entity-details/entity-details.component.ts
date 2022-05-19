@@ -53,6 +53,7 @@ export class EntityDetailsComponent {
   ) {
     this.route.data.subscribe((data: RouteData<EntityDetailsConfig>) => {
       this.config = data.config;
+      this.setInitialPanelsConfig();
       this.iconName = data.config.icon;
       this.route.paramMap.subscribe((params) =>
         this.loadEntity(params.get("id"))
@@ -69,20 +70,29 @@ export class EntityDetailsComponent {
       }
       this.entity = new constr();
       this.creatingNew = true;
-      this.setPanelsConfig();
+      this.setFullPanelsConfig();
     } else {
       console.log("loadEntity started.");
       this.creatingNew = false;
       this.entityMapperService.load<Entity>(constr, id).then((entity) => {
         this.entity = entity;
-        this.setPanelsConfig();
+        this.setFullPanelsConfig();
         this.isLoading = false;
         console.log("loadEntity stopped.");
       });
     }
   }
 
-  private setPanelsConfig() {
+  private setInitialPanelsConfig() {
+    this.panels = this.config.panels.map((p) => {
+      return {
+        title: p.title,
+        components: [],
+      };
+    });
+  }
+
+  private setFullPanelsConfig() {
     this.panels = this.config.panels.map((p) => {
       return {
         title: p.title,

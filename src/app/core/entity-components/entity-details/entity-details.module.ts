@@ -21,6 +21,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatMenuModule } from "@angular/material/menu";
 import { EntityUtilsModule } from "../entity-utils/entity-utils.module";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
 
 @NgModule({
   declarations: [EntityDetailsComponent, FormComponent],
@@ -45,6 +46,7 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
     FontAwesomeModule,
     EntityUtilsModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule,
   ],
 })
 export class EntityDetailsModule {

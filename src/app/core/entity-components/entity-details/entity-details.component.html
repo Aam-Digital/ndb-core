@@ -15,10 +15,7 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<div *ngIf="isLoading" class="process-spinner">
-  <mat-spinner [diameter]="60"></mat-spinner>
-</div>
-<div *ngIf="!isLoading">
+<div>
   <div class="header-row">
     <app-view-title *ngIf="!creatingNew">
       {{ entity?.toString() }}
@@ -81,6 +78,10 @@
             {{ panelConfig.title }}
           </label>
         </ng-template>
+
+        <div *ngIf="isLoading" class="process-spinner">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </div>
 
         <div
           *ngFor="let componentConfig of panelConfig.components; let j = index"
