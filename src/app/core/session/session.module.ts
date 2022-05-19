@@ -69,10 +69,14 @@ import { SessionType } from "./session-type";
     RemoteSession,
     {
       provide: SessionService,
-      useExisting:
-        AppConfig?.settings?.session_type === SessionType.synced
-          ? SyncedSessionService
-          : LocalSession,
+      useFactory: (injector: Injector) => {
+        if (AppConfig?.settings?.session_type === SessionType.synced) {
+          return injector.get(SyncedSessionService);
+        } else {
+          return injector.get(LocalSession);
+        }
+      },
+      deps: [Injector],
     },
   ],
 })
