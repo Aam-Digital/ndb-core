@@ -25,8 +25,8 @@ describe("RollCallSetupComponent", () => {
   let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
 
   beforeEach(() => {
-    mockChildrenService = jasmine.createSpyObj(["queryRelationsOf"]);
-    mockChildrenService.queryRelationsOf.and.resolveTo([]);
+    mockChildrenService = jasmine.createSpyObj(["queryActiveRelationsOf"]);
+    mockChildrenService.queryActiveRelationsOf.and.resolveTo([]);
     mockAttendanceService = jasmine.createSpyObj([
       "getEventsOnDate",
       "createEventForActivity",
