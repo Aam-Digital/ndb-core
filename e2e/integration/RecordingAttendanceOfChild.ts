@@ -34,7 +34,7 @@ describe("Scenario: Recording attendance of a child - E2E test", () => {
       console.log(el.text());
       cy.get("#mat-input-2").focus().type(el.text());
     });
-    cy.get(".mat-option-text", { timeout: 500 }).click();
+    cy.get(".mat-option-text", { timeout: 1000 }).click();
     cy.get("#mat-tab-label-0-2").click();
     cy.get(".attendance-P").should(
       "have.css",
