@@ -87,9 +87,10 @@ export class SyncedSessionService extends SessionService {
 
   async handleSuccessfulLogin(userObject: DatabaseUser) {
     this.startSyncAfterLocalAndRemoteLogin();
-    await this.remoteSession.handleSuccessfulLogin(userObject);
     await this.localSession.handleSuccessfulLogin(userObject);
+    // The app is ready to be used once the local session is logged in
     this.loginState.next(LoginState.LOGGED_IN);
+    await this.remoteSession.handleSuccessfulLogin(userObject);
   }
 
   /**
