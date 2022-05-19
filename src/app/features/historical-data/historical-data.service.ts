@@ -31,7 +31,7 @@ export class HistoricalDataService {
       HistoricalEntityData,
       "historicalData_index/by_entity",
       {
-        startkey: [entityId + "\u0000"],
+        startkey: [entityId, "\uffff"],
         endkey: [entityId],
         descending: true,
       }
