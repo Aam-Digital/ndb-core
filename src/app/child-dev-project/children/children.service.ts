@@ -93,17 +93,25 @@ export class ChildrenService {
   queryLatestRelation(
     childId: string
   ): Promise<ChildSchoolRelation | undefined> {
-    return this.queryRelationsOf("child", childId).then((relations) =>
+    return this.queryActiveRelationsOf("child", childId).then((relations) =>
       relations.length > 0 ? relations[0] : undefined
     );
   }
 
-  async queryRelationsOf(
+  queryActiveRelationsOf(
     queryType: "child" | "school",
-    id: string,
-    onlyActive = true
+    id: string
   ): Promise<ChildSchoolRelation[]> {
-    let relations = await this.dbIndexing.queryIndexDocs(
+    return this.queryRelationsOf(queryType, id).then((relations) =>
+      relations.filter((rel) => rel.isActive)
+    );
+  }
+
+  queryRelationsOf(
+    queryType: "child" | "school",
+    id: string
+  ): Promise<ChildSchoolRelation[]> {
+    return this.dbIndexing.queryIndexDocs(
       ChildSchoolRelation,
       "childSchoolRelations_index/by_" + queryType,
       {
@@ -112,10 +120,6 @@ export class ChildrenService {
         descending: true,
       }
     );
-    if (onlyActive === true) {
-      relations = relations.filter((rel) => rel.isActive);
-    }
-    return relations;
   }
 
   getNotesOfChild(childId: string): Observable<Note[]> {

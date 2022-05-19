@@ -217,7 +217,7 @@ export class AttendanceService {
       childId
     );
 
-    const visitedSchools = await this.childrenService.queryRelationsOf(
+    const visitedSchools = await this.childrenService.queryActiveRelationsOf(
       "child",
       childId
     );
@@ -267,7 +267,7 @@ export class AttendanceService {
   ): Promise<string[]> {
     const childIdPromises = linkedGroups.map((groupId) =>
       this.childrenService
-        .queryRelationsOf("school", groupId)
+        .queryActiveRelationsOf("school", groupId)
         .then((relations) =>
           relations.map((r) => r.childId).filter((id) => !!id)
         )

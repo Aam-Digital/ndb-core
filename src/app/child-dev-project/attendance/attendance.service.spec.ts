@@ -272,7 +272,7 @@ describe("AttendanceService", () => {
     childAttendingSchool.childId = "child attending school";
     const mockQueryRelationsOf = spyOn(
       TestBed.inject(ChildrenService),
-      "queryRelationsOf"
+      "queryActiveRelationsOf"
     ).and.resolveTo([childAttendingSchool]);
 
     const directlyAddedChild = new Child();

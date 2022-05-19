@@ -154,7 +154,7 @@ describe("ChildrenService", () => {
   });
 
   it("should get the relations for a child in sorted order", async () => {
-    const relations = await service.queryRelationsOf("child", "3", false);
+    const relations = await service.queryRelationsOf("child", "3");
 
     expect(relations).toHaveSize(2);
     expect(relations[0].start.getTime()).toBeGreaterThanOrEqual(
@@ -163,7 +163,7 @@ describe("ChildrenService", () => {
   });
 
   it("should get all relations for a school", async () => {
-    const relations = await service.queryRelationsOf("school", "1", false);
+    const relations = await service.queryRelationsOf("school", "1");
 
     expect(relations).toHaveSize(2);
     const relation1 = relations.find((relation) => relation.getId() === "1");
@@ -177,7 +177,7 @@ describe("ChildrenService", () => {
     todayRelation.schoolId = "3";
     todayRelation.start = new Date();
     await entityMapper.save(todayRelation);
-    const relations = await service.queryRelationsOf("school", "3");
+    const relations = await service.queryActiveRelationsOf("school", "3");
     expectEntitiesToMatch(relations, [todayRelation]);
   });
 
@@ -187,7 +187,7 @@ describe("ChildrenService", () => {
       .filter((rel) => rel.isActive && rel.childId === "3")
       .sort(sortByAttribute("start", "desc"));
 
-    const result = await service.queryRelationsOf("child", "3");
+    const result = await service.queryActiveRelationsOf("child", "3");
     expect(result).toEqual(activeRelations);
   });
 });

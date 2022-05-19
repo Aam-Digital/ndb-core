@@ -21,7 +21,7 @@ describe("ChildrenOverviewComponent", () => {
 
   beforeEach(
     waitForAsync(() => {
-      mockChildrenService = jasmine.createSpyObj(["queryRelationsOf"]);
+      mockChildrenService = jasmine.createSpyObj(["queryActiveRelationsOf"]);
 
       TestBed.configureTestingModule({
         imports: [SchoolsModule, MockedTestingModule.withState()],
@@ -48,12 +48,15 @@ describe("ChildrenOverviewComponent", () => {
     const relation1 = new ChildSchoolRelation("r1");
     const relation2 = new ChildSchoolRelation("r2");
     const config = { entity: school };
-    mockChildrenService.queryRelationsOf.and.resolveTo([relation1, relation2]);
+    mockChildrenService.queryActiveRelationsOf.and.resolveTo([
+      relation1,
+      relation2,
+    ]);
 
     component.onInitFromDynamicConfig(config);
     tick();
 
-    expect(mockChildrenService.queryRelationsOf).toHaveBeenCalledWith(
+    expect(mockChildrenService.queryActiveRelationsOf).toHaveBeenCalledWith(
       "school",
       school.getId()
     );

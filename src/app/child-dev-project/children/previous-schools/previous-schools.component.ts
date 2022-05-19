@@ -55,11 +55,7 @@ export class PreviousSchoolsComponent
       return;
     }
 
-    this.records = await this.childrenService.queryRelationsOf(
-      "child",
-      id,
-      false
-    );
+    this.records = await this.childrenService.queryRelationsOf("child", id);
     this.hasCurrentlyActiveEntry = this.records.some(
       (record) => record.isActive
     );
