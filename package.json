@@ -44,7 +44,7 @@
     "@fortawesome/free-regular-svg-icons": "^5.15.2",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@ngneat/until-destroy": "^8.1.4",
-    "@sentry/browser": "^6.19.6",
+    "@sentry/browser": "^6.19.7",
     "angulartics2": "^10.1.0",
     "crypto-js": "^4.1.1",
     "deep-object-diff": "^1.1.7",
@@ -60,7 +60,7 @@
     "pouchdb-browser": "^7.3.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.6.7",
-    "tslib": "^2.3.1",
+    "tslib": "^2.4.0",
     "uuid": "^8.3.2",
     "webdav": "^4.8.0",
     "zone.js": "~0.11.5"

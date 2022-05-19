@@ -53,7 +53,7 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
       this.columns = config.config.columns.concat(isActiveIndicator);
     }
     this.entity = config.entity;
-    this.records = await this.childrenService.queryRelationsOf(
+    this.records = await this.childrenService.queryActiveRelationsOf(
       "school",
       this.entity.getId()
     );

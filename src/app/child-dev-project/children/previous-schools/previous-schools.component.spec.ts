@@ -27,8 +27,8 @@ describe("PreviousSchoolsComponent", () => {
 
   beforeEach(
     waitForAsync(() => {
-      mockChildrenService = jasmine.createSpyObj(["getSchoolRelationsFor"]);
-      mockChildrenService.getSchoolRelationsFor.and.resolveTo([
+      mockChildrenService = jasmine.createSpyObj(["queryRelationsOf"]);
+      mockChildrenService.queryRelationsOf.and.resolveTo([
         new ChildSchoolRelation(),
       ]);
 
@@ -61,7 +61,8 @@ describe("PreviousSchoolsComponent", () => {
       child: new SimpleChange(undefined, testChild, false),
     });
     tick();
-    expect(mockChildrenService.getSchoolRelationsFor).toHaveBeenCalledWith(
+    expect(mockChildrenService.queryRelationsOf).toHaveBeenCalledWith(
+      "child",
       testChild.getId()
     );
   }));
