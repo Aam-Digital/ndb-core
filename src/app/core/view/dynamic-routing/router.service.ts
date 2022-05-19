@@ -53,23 +53,12 @@ export class RouterService {
 
     for (const view of viewConfigs) {
       if (view.lazyLoaded) {
-        // lazy-loaded views' routing is still hardcoded in the app.routing
-        continue;
+        const path = view._id.substring(PREFIX_VIEW_CONFIG.length);
+        const route = additionalRoutes.find((r) => r.path === path);
+        routes.push(this.generateRouteFromConfig(view, route));
+      } else {
+        routes.push(this.generateRouteFromConfig(view));
       }
-      const route = this.generateRouteFromConfig(view);
-
-      if (
-        !overwriteExistingRoutes &&
-        additionalRoutes.find((r) => r.path === route.path)
-      ) {
-        this.loggingService.warn(
-          "ignoring route from view config because the path is already defined: " +
-            view._id
-        );
-        continue;
-      }
-
-      routes.push(route);
     }
 
     // add routes from other sources (e.g. pre-existing  hard-coded routes)
@@ -81,14 +70,13 @@ export class RouterService {
     this.router.resetConfig(routes);
   }
 
-  private generateRouteFromConfig(view: ViewConfig): Route {
-    const path = view._id.substring(PREFIX_VIEW_CONFIG.length); // remove prefix to get actual path
-
-    const route: Route = {
-      path: path,
+  private generateRouteFromConfig(
+    view: ViewConfig,
+    route: Route = {
+      path: view._id.substring(PREFIX_VIEW_CONFIG.length),
       component: this.registry.get(view.component),
-    };
-
+    }
+  ): Route {
     const routeData: RouteData = {};
 
     if (view.permittedUserRoles) {

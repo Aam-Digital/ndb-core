@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
-import { Router } from "@angular/router";
+import { Route, Router } from "@angular/router";
 import { RouterTestingModule } from "@angular/router/testing";
 import { ChildrenListComponent } from "../../../child-dev-project/children/children-list/children-list.component";
 import { AdminComponent } from "../../admin/admin/admin.component";
@@ -87,18 +87,29 @@ describe("RouterService", () => {
     expect(router.resetConfig).toHaveBeenCalledWith(expectedRoutes);
   });
 
-  it("should ignore a view config route of hard-coded route already exists", () => {
-    const existingRoutes = [{ path: "other", component: TestComponent }];
-    const testViewConfigs = [
-      { _id: "view:child", component: "ChildrenList" },
-      { _id: "view:other", component: "EntityDetails" },
-    ];
-    const expectedRoutes = [
-      { path: "child", component: ChildrenListComponent, data: {} },
+  it("should extend a view config route of lazy loaded routes (hard coded)", () => {
+    const existingRoutes: Route[] = [
       { path: "other", component: TestComponent },
+      { path: "child", component: ChildrenListComponent },
+    ];
+    const testViewConfigs: ViewConfig[] = [
+      {
+        _id: "view:other",
+        permittedUserRoles: ["admin_app"],
+        lazyLoaded: true,
+      },
+    ];
+    const expectedRoutes: Route[] = [
+      {
+        path: "other",
+        component: TestComponent,
+        canActivate: [UserRoleGuard],
+        data: { permittedUserRoles: ["admin_app"] },
+      },
+      { path: "child", component: ChildrenListComponent },
     ];
 
-    const router = TestBed.inject<Router>(Router);
+    const router = TestBed.inject(Router);
     spyOn(router, "resetConfig");
 
     service.reloadRouting(testViewConfigs, existingRoutes);

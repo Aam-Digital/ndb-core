@@ -17,7 +17,6 @@
 
 import { RouterModule, Routes } from "@angular/router";
 import { ModuleWithProviders } from "@angular/core";
-import { UserRoleGuard } from "./core/permissions/permission-guard/user-role.guard";
 import { ComponentType } from "@angular/cdk/overlay";
 import { Registry } from "./core/registry/dynamic-registry";
 import { NotFoundComponent } from "./core/not-found/not-found/not-found.component";
@@ -47,7 +46,6 @@ export const allRoutes: Routes = [
   // routes are added dynamically by the RouterService
   {
     path: "admin/conflicts",
-    canActivate: [UserRoleGuard],
     loadChildren: () =>
       import("./conflict-resolution/conflict-resolution.module").then(
         (m) => m["ConflictResolutionModule"]
