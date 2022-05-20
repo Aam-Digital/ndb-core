@@ -69,7 +69,9 @@ export class RouterService {
 
     // change wildcard route to show not-found component instead of empty page
     const wildcardRoute = noDuplicates.find((route) => route.path === "**");
-    wildcardRoute.component = NotFoundComponent;
+    if (wildcardRoute) {
+      wildcardRoute.component = NotFoundComponent;
+    }
 
     routes.push(...noDuplicates);
 

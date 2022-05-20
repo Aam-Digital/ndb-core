@@ -12,6 +12,8 @@ import { EntityDetailsComponent } from "../../entity-components/entity-details/e
 import { ViewConfig } from "./view-config.interface";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { RouteRegistry, routesRegistry } from "../../../app.routing";
+import { EmptyComponent } from "./empty/empty.component";
+import { NotFoundComponent } from "./not-found/not-found.component";
 
 class TestComponent extends Component {}
 
@@ -160,5 +162,13 @@ describe("RouterService", () => {
     service.reloadRouting(testViewConfigs);
 
     expect(router.resetConfig).toHaveBeenCalledWith(expectedRoutes);
+  });
+
+  it("should set NotFoundComponent for wildcard route", () => {
+    const wildcardRoute: Route = { path: "**", component: EmptyComponent };
+
+    service.reloadRouting([], [wildcardRoute]);
+
+    expect(wildcardRoute).toEqual({ path: "**", component: NotFoundComponent });
   });
 });
