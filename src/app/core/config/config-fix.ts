@@ -440,7 +440,7 @@ export const defaultJsonConfig = {
         }
       ],
       "columnGroups": {
-        "default": $localize`:Translated name of default column group:School Info`,
+        "default": $localize`:Translated name of default column group:Basic Info`,
         "mobile": $localize`:Translated name of mobile column group:Mobile`,
         "groups": [
           {
