@@ -62,8 +62,22 @@ import { MatPaginatorModule } from "@angular/material/paginator";
 import { ViewModule } from "../../core/view/view.module";
 import { AttendanceSummaryComponent } from "./attendance-summary/attendance-summary.component";
 import { RollCallTabComponent } from "./add-day-attendance/roll-call/roll-call-tab/roll-call-tab.component";
-import { HammerModule } from "@angular/platform-browser";
+import {
+  HAMMER_GESTURE_CONFIG,
+  HammerGestureConfig,
+  HammerModule,
+} from "@angular/platform-browser";
 import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
+import * as Hammer from "hammerjs";
+
+// Only allow horizontal swiping
+export class HorizontalHammerConfig extends HammerGestureConfig {
+  overrides = {
+    swipe: { direction: Hammer.DIRECTION_HORIZONTAL },
+    pinch: { enable: false },
+    rotate: { enable: false },
+  };
+}
 
 @NgModule({
   declarations: [
@@ -129,6 +143,12 @@ import { ConfigurableEnumModule } from "../../core/configurable-enum/configurabl
     AttendanceCalendarComponent,
     AttendanceDetailsComponent,
     AttendanceWeekDashboardComponent,
+  ],
+  providers: [
+    {
+      provide: HAMMER_GESTURE_CONFIG,
+      useClass: HorizontalHammerConfig,
+    },
   ],
 })
 export class AttendanceModule {
