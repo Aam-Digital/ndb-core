@@ -10,6 +10,9 @@ import {
   viewRegistry,
   ViewRegistry,
 } from "./dynamic-components/dynamic-component.decorator";
+import { EmptyComponent } from "./dynamic-routing/empty/empty.component";
+import { NotFoundComponent } from "./dynamic-routing/not-found/not-found.component";
+import { RouterModule } from "@angular/router";
 
 /**
  * Generic components and services to allow assembling the app dynamically from config objects.
@@ -19,13 +22,22 @@ import {
     DynamicComponentDirective,
     FaDynamicIconComponent,
     ViewTitleComponent,
+    EmptyComponent,
+    NotFoundComponent,
   ],
-  imports: [CommonModule, FontAwesomeModule, MatTooltipModule, MatButtonModule],
+  imports: [
+    CommonModule,
+    FontAwesomeModule,
+    MatTooltipModule,
+    MatButtonModule,
+    RouterModule,
+  ],
   providers: [{ provide: ViewRegistry, useValue: viewRegistry }],
   exports: [
     DynamicComponentDirective,
     FaDynamicIconComponent,
     ViewTitleComponent,
+    EmptyComponent,
   ],
 })
 export class ViewModule {}

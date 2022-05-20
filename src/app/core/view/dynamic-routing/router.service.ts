@@ -9,6 +9,7 @@ import {
 } from "./view-config.interface";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { RouteRegistry } from "../../../app.routing";
+import { NotFoundComponent } from "./not-found/not-found.component";
 
 /**
  * The RouterService dynamically sets up Angular routing from config loaded through the {@link ConfigService}.
@@ -65,6 +66,11 @@ export class RouterService {
     const noDuplicates = additionalRoutes.filter(
       (r) => !routes.find((o) => o.path === r.path)
     );
+
+    // change wildcard route to show not-found component instead of empty page
+    const wildcardRoute = noDuplicates.find((route) => route.path === "**");
+    wildcardRoute.component = NotFoundComponent;
+
     routes.push(...noDuplicates);
 
     this.router.resetConfig(routes);

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { NotFoundComponent } from "./not-found.component";
-import { NotFoundModule } from "../not-found.module";
+import { NotFoundModule } from "../../../not-found/not-found.module";
 import { RouterTestingModule } from "@angular/router/testing";
 
 describe("NotFoundComponent", () => {
