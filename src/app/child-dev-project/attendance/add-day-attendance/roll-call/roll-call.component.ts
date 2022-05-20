@@ -206,12 +206,4 @@ export class RollCallComponent implements OnChanges {
   showDetails() {
     this.formDialog.openDialog(NoteDetailsComponent, this.eventEntity);
   }
-
-  swipeRight() {
-    this.goToPrevious();
-  }
-
-  swipeLeft() {
-    this.goToNext();
-  }
 }

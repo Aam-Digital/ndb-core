@@ -28,8 +28,8 @@
   </div>
   <div *ngIf="!isFinished && currentAttendance" class="tab-wrapper">
     <app-roll-call-tab
-      (swiperight)="swipeRight()"
-      (swipeleft)="swipeLeft()"
+      (swiperight)="goToPrevious()"
+      (swipeleft)="goToNext()"
       *ngFor="let child of children; let i = index"
       class="tab-body"
       [class.tab-body-active]="currentIndex === i"
