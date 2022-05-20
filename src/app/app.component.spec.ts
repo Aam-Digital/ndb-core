@@ -40,6 +40,7 @@ import { EntityMapperService } from "./core/entity/entity-mapper.service";
 import { mockEntityMapper } from "./core/entity/mock-entity-mapper-service";
 import { DemoDataService } from "./core/demo-data/demo-data.service";
 import { SessionType } from "./core/session/session-type";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
 
 describe("AppComponent", () => {
   let component: AppComponent;
@@ -61,7 +62,7 @@ describe("AppComponent", () => {
       spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
 
       TestBed.configureTestingModule({
-        imports: [AppModule],
+        imports: [AppModule, HttpClientTestingModule],
         providers: [{ provide: EntityMapperService, useValue: entityMapper }],
       }).compileComponents();
 
