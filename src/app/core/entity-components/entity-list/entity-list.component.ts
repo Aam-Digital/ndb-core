@@ -107,10 +107,13 @@ export class EntityListComponent<T extends Entity>
         )
       )
       .subscribe((isBigScreen) => {
-        if (isBigScreen) {
-          this.displayColumnGroupByName(this.defaultColumnGroup);
-        } else {
+        if (!isBigScreen) {
           this.displayColumnGroupByName(this.mobileColumnGroup);
+        } else if (
+          this.selectedColumnGroupIndex ===
+          this.getSelectedColumnIndexByName(this.mobileColumnGroup)
+        ) {
+          this.displayColumnGroupByName(this.defaultColumnGroup);
         }
       });
     this.activatedRoute.queryParams.subscribe((params) => {
@@ -244,12 +247,16 @@ export class EntityListComponent<T extends Entity>
   }
 
   private displayColumnGroupByName(columnGroupName: string) {
-    const selectedColumnIndex = this.columnGroups.findIndex(
-      (c) => c.name === columnGroupName
+    const selectedColumnIndex = this.getSelectedColumnIndexByName(
+      columnGroupName
     );
     if (selectedColumnIndex !== -1) {
       this.selectedColumnGroupIndex = selectedColumnIndex;
     }
+  }
+
+  private getSelectedColumnIndexByName(columnGroupName: string) {
+    return this.columnGroups.findIndex((c) => c.name === columnGroupName);
   }
 
   getNewRecordFactory(): () => T {
