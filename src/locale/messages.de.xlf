@@ -3258,19 +3258,6 @@
           <context context-type="linenumber">29</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="394bc3d433575a9568c49d094894a1a13bff3552" datatype="html">
-        <source>Picture of a child</source>
-        <target state="translated">Das Bild eines Kindes</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/children/child-block/child-block.component.html</context>
-          <context context-type="linenumber">9</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/children/child-block/child-block.component.html</context>
-          <context context-type="linenumber">25</context>
-        </context-group>
-        <note priority="1" from="description">Alternative text for small picture</note>
-      </trans-unit>
       <trans-unit id="2283054349785348898" datatype="html">
         <source>PN</source>
         <target state="translated">PN</target>

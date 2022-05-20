@@ -742,18 +742,6 @@
         </context-group>
         <note priority="1" from="description">Label math level</note>
       </trans-unit>
-      <trans-unit id="394bc3d433575a9568c49d094894a1a13bff3552" datatype="html">
-        <source>Picture of a child</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/children/child-block/child-block.component.html</context>
-          <context context-type="linenumber">9</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/children/child-block/child-block.component.html</context>
-          <context context-type="linenumber">25</context>
-        </context-group>
-        <note priority="1" from="description">Alternative text for small picture</note>
-      </trans-unit>
       <trans-unit id="e0dc43b431d171971d708cb150a3fbce5d2530f1" datatype="html">
         <source> class <x id="INTERPOLATION" equiv-text="{{ entity?.schoolClass }"/> </source>
         <context-group purpose="location">
