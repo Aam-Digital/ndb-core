@@ -14,6 +14,7 @@ import { EmptyComponent } from "./dynamic-routing/empty/empty.component";
 import { NotFoundComponent } from "./dynamic-routing/not-found/not-found.component";
 import { RouterModule } from "@angular/router";
 import { FlexModule } from "@angular/flex-layout";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
 
 /**
  * Generic components and services to allow assembling the app dynamically from config objects.
@@ -33,6 +34,7 @@ import { FlexModule } from "@angular/flex-layout";
     MatButtonModule,
     RouterModule,
     FlexModule,
+    MatProgressBarModule,
   ],
   providers: [{ provide: ViewRegistry, useValue: viewRegistry }],
   exports: [

@@ -1,6 +1,6 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 
 @Component({
-  template: "",
+  templateUrl: "empty.component.html",
 })
 export class EmptyComponent {}

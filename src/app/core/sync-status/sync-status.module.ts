@@ -23,7 +23,6 @@ import { AlertsModule } from "../alerts/alerts.module";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
-import { InitialSyncDialogComponent } from "./sync-status/initial-sync-dialog.component";
 import { MatBadgeModule } from "@angular/material/badge";
 import { MatMenuModule } from "@angular/material/menu";
 import { BackgroundProcessingIndicatorComponent } from "./background-processing-indicator/background-processing-indicator.component";
@@ -48,7 +47,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     FontAwesomeModule,
   ],
   declarations: [
-    InitialSyncDialogComponent,
     SyncStatusComponent,
     BackgroundProcessingIndicatorComponent,
   ],
