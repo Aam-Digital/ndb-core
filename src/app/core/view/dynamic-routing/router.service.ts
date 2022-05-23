@@ -35,7 +35,7 @@ export class RouterService {
     const viewConfigs = this.configService.getAllConfigs<ViewConfig>(
       PREFIX_VIEW_CONFIG
     );
-    this.reloadRouting(viewConfigs, this.router.config, true);
+    this.reloadRouting(viewConfigs, this.router.config);
   }
 
   /**
@@ -43,12 +43,10 @@ export class RouterService {
    *
    * @param viewConfigs The configs loaded from the ConfigService
    * @param additionalRoutes Optional array of routes to keep in addition to the ones loaded from config
-   * @param overwriteExistingRoutes Optionally set to true if config was updated and previously existing routes shall be updated
    */
   reloadRouting(
     viewConfigs: ViewConfig[],
     additionalRoutes: Route[] = [],
-    overwriteExistingRoutes = false
   ) {
     const routes: Route[] = [];
 

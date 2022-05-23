@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
 import { DemoDataService } from "./demo-data.service";
-import { SessionService } from "../session/session-service/session.service";
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
 import { LocalSession } from "../session/session-service/local-session";
 import { MatDialog } from "@angular/material/dialog";
@@ -62,7 +61,6 @@ export class DemoDataInitializerService {
   }
 
   private syncDatabaseOnUserChange() {
-    // TODO what to do with this if we reload on logout?
     this.localSession.loginState.subscribe((state) => {
       if (
         state === LoginState.LOGGED_IN &&
