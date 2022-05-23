@@ -16,5 +16,14 @@
     "pathRewrite": {
       "^/nextcloud": ""
     }
+  },
+  "/auth": {
+    "target": "http://localhost:8080/realms/myrealm/protocol/openid-connect/token",
+    "secure": true,
+    "logLevel": "debug",
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/auth": ""
+    }
   }
 }
