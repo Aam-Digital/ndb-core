@@ -19,7 +19,7 @@ export class UserRoleGuard implements CanActivate {
     } else {
       if (route instanceof ActivatedRouteSnapshot) {
         // Route should only change if this is a "real" navigation check (not the check in the NavigationComponent)
-        this.router.navigate(["/"]);
+        this.router.navigate(["/404"]);
       }
       return false;
     }
