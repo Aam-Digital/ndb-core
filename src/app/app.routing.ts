@@ -20,6 +20,7 @@ import { ModuleWithProviders } from "@angular/core";
 import { ComponentType } from "@angular/cdk/overlay";
 import { Registry } from "./core/registry/dynamic-registry";
 import { EmptyComponent } from "./core/view/dynamic-routing/empty/empty.component";
+import { NotFoundComponent } from "./core/view/dynamic-routing/not-found/not-found.component";
 
 export class RouteRegistry extends Registry<ComponentType<any>> {}
 export const routesRegistry = new RouteRegistry();
@@ -58,6 +59,7 @@ export const allRoutes: Routes = [
         (m) => m["ComingSoonModule"]
       ),
   },
+  { path: "404", component: NotFoundComponent },
   { path: "**", pathMatch: "full", component: EmptyComponent },
 ];
 

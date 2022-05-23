@@ -72,7 +72,6 @@ export class RouterService {
     if (wildcardRoute) {
       wildcardRoute.component = NotFoundComponent;
     }
-    routes.push({ path: "404", component: NotFoundComponent });
 
     routes.push(...noDuplicates);
 

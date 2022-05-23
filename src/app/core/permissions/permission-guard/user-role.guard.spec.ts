@@ -56,7 +56,7 @@ describe("UserRoleGuard", () => {
     expect(router.navigate).not.toHaveBeenCalled();
   });
 
-  it("should navigate away for real navigation requests without permissions", () => {
+  it("should navigate to 404 for real navigation requests without permissions", () => {
     mockSessionService.getCurrentUser.and.returnValue(normalUser);
     const router = TestBed.inject(Router);
     spyOn(router, "navigate");
@@ -68,7 +68,7 @@ describe("UserRoleGuard", () => {
 
     guard.canActivate(route);
 
-    expect(router.navigate).toHaveBeenCalledWith(["/"]);
+    expect(router.navigate).toHaveBeenCalledWith(["/404"]);
   });
 
   it("should return true if no config is set", () => {
