@@ -16,12 +16,17 @@
  */
 import { AppConfig } from "../../app-config/app-config";
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+} from "@angular/common/http";
 import { DatabaseUser } from "./local-user";
 import { SessionService } from "./session.service";
 import { LoginState } from "../session-states/login-state.enum";
 import { PouchDatabase } from "../../database/pouch-database";
 import { LoggingService } from "../../logging/logging.service";
+import PouchDB from "pouchdb-browser";
 
 /**
  * Responsibilities:
@@ -46,12 +51,7 @@ export class RemoteSession extends SessionService {
     private loggingService: LoggingService
   ) {
     super();
-    this.database = new PouchDatabase(this.loggingService).initIndexedDB(
-      AppConfig.settings.database.remote_url + AppConfig.settings.database.name,
-      {
-        skip_setup: true,
-      }
-    );
+    this.database = new PouchDatabase(this.loggingService);
   }
 
   /**
@@ -61,15 +61,42 @@ export class RemoteSession extends SessionService {
    */
   public async login(username: string, password: string): Promise<LoginState> {
     try {
+      const body = new URLSearchParams();
+      body.set("username", username);
+      body.set("password", password);
+      body.set("grant_type", "password");
+      body.set("client_id", "myclient");
+      const options = {
+        headers: new HttpHeaders().set(
+          "Content-Type",
+          "application/x-www-form-urlencoded"
+        ),
+      };
       const response = await this.httpClient
-        .post<DatabaseUser>(
-          `${AppConfig.settings.database.remote_url}_session`,
-          { name: username, password: password },
-          { withCredentials: true }
-        )
+        .post<any>(`/auth`, body.toString(), options)
         .toPromise();
-      await this.handleSuccessfulLogin(response);
-      this.assignDatabaseUser(response);
+      this.database.initIndexedDB(
+        AppConfig.settings.database.remote_url +
+          AppConfig.settings.database.name,
+        {
+          skip_setup: true,
+          fetch: (url, opts) => {
+            // @ts-ignore
+            opts.headers.set(
+              "Authorization",
+              "Bearer " + response.access_token
+            );
+            return PouchDB.fetch(url, opts);
+          },
+        }
+      );
+      const user = await this.httpClient
+        .get<any>(`${AppConfig.settings.database.remote_url}_session`, {
+          withCredentials: true,
+          headers: { Authorization: "Bearer " + response.access_token },
+        })
+        .toPromise();
+      await this.handleSuccessfulLogin(user.userCtx);
       localStorage.setItem(
         RemoteSession.LAST_LOGIN_KEY,
         new Date().toISOString()
@@ -84,13 +111,6 @@ export class RemoteSession extends SessionService {
       }
     }
     return this.loginState.value;
-  }
-
-  private assignDatabaseUser(couchDBResponse: any) {
-    this.currentDBUser = {
-      name: couchDBResponse.name,
-      roles: couchDBResponse.roles,
-    };
   }
 
   public async handleSuccessfulLogin(userObject: DatabaseUser) {
