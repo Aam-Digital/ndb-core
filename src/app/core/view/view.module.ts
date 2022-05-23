@@ -13,6 +13,7 @@ import {
 import { EmptyComponent } from "./dynamic-routing/empty/empty.component";
 import { NotFoundComponent } from "./dynamic-routing/not-found/not-found.component";
 import { RouterModule } from "@angular/router";
+import { FlexModule } from "@angular/flex-layout";
 
 /**
  * Generic components and services to allow assembling the app dynamically from config objects.
@@ -31,6 +32,7 @@ import { RouterModule } from "@angular/router";
     MatTooltipModule,
     MatButtonModule,
     RouterModule,
+    FlexModule,
   ],
   providers: [{ provide: ViewRegistry, useValue: viewRegistry }],
   exports: [
