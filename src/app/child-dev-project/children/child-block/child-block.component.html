@@ -6,7 +6,7 @@
   [ngClass]="{ inactive: !entity.isActive }"
   class="truncate-text"
 >
-  <img [src]="entity.photo?.photo?.value" class="child-pic" i18n-alt="Alternative text for small picture" alt="Picture of a child"/>
+  <img [src]="entity.photo?.photo?.value" class="child-pic" alt=""/>
   <span class="mat-body-1">{{ entity?.name }}</span>
   <span style="font-size: x-small" *ngIf="entity?.projectNumber"
     > ({{ entity?.projectNumber }})</span
@@ -22,7 +22,7 @@
     fxLayoutGap="8px"
   >
     <div fxFlex>
-      <img [src]="entity?.photo?.photo?.value" class="child-pic-large" i18n-alt="Alternative text for big picture" alt="Picture of a child"/>
+      <img [src]="entity?.photo?.photo?.value" class="child-pic-large" alt=""/>
     </div>
     <div fxFlex="grow">
       <h3>{{ entity?.name }}</h3>
