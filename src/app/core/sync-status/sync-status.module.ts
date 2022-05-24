@@ -44,12 +44,10 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     MatProgressSpinnerModule,
     FlexModule,
     MatTooltipModule,
+
     FontAwesomeModule,
   ],
-  declarations: [
-    SyncStatusComponent,
-    BackgroundProcessingIndicatorComponent,
-  ],
+  declarations: [SyncStatusComponent, BackgroundProcessingIndicatorComponent],
   exports: [SyncStatusComponent],
   providers: [],
 })

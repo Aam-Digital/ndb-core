@@ -44,10 +44,7 @@ export class RouterService {
    * @param viewConfigs The configs loaded from the ConfigService
    * @param additionalRoutes Optional array of routes to keep in addition to the ones loaded from config
    */
-  reloadRouting(
-    viewConfigs: ViewConfig[],
-    additionalRoutes: Route[] = [],
-  ) {
+  reloadRouting(viewConfigs: ViewConfig[], additionalRoutes: Route[] = []) {
     const routes: Route[] = [];
 
     for (const view of viewConfigs) {
