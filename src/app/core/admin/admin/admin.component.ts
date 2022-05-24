@@ -73,8 +73,8 @@ export class AdminComponent implements OnInit {
     this.startDownload(csv, "text/csv", "export.csv");
   }
 
-  async downloadConfigClick() {
-    const configString = await this.configService.exportConfig();
+  downloadConfigClick() {
+    const configString = this.configService.exportConfig();
     this.startDownload(configString, "text/json", "config.json");
   }
 

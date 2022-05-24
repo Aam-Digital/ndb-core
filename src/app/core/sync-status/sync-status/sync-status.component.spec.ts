@@ -83,20 +83,6 @@ describe("SyncStatusComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should open dialog without error", async () => {
-    mockSessionService.syncState.next(SyncState.STARTED);
-
-    fixture.detectChanges();
-    await fixture.whenStable();
-    // @ts-ignore
-    expect(component.dialogRef).toBeDefined();
-
-    mockSessionService.syncState.next(SyncState.COMPLETED);
-
-    fixture.detectChanges();
-    await fixture.whenStable();
-  });
-
   it("should update backgroundProcesses details on sync", async () => {
     mockSessionService.syncState.next(SyncState.STARTED);
     fixture.detectChanges();

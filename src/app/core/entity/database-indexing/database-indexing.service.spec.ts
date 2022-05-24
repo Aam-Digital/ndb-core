@@ -19,31 +19,16 @@ import { DatabaseIndexingService } from "./database-indexing.service";
 import { Database } from "../../database/database";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { expectObservable } from "../../../utils/test-utils/observable-utils";
-import { fakeAsync, flush, tick } from "@angular/core/testing";
-import { SessionService } from "../../session/session-service/session.service";
-import { BehaviorSubject } from "rxjs";
-import { LoginState } from "../../session/session-states/login-state.enum";
+import { fakeAsync, tick } from "@angular/core/testing";
 import { take } from "rxjs/operators";
 
 describe("DatabaseIndexingService", () => {
   let service: DatabaseIndexingService;
   let mockDb: jasmine.SpyObj<Database>;
-  let mockSession: jasmine.SpyObj<SessionService>;
-  let loginState: BehaviorSubject<LoginState>;
 
   beforeEach(() => {
     mockDb = jasmine.createSpyObj("mockDb", ["saveDatabaseIndex", "query"]);
-    loginState = new BehaviorSubject(LoginState.LOGGED_OUT);
-    mockSession = jasmine.createSpyObj([], { loginState });
-    service = new DatabaseIndexingService(
-      mockDb,
-      new EntitySchemaService(),
-      mockSession
-    );
-  });
-
-  afterEach(() => {
-    loginState.complete();
+    service = new DatabaseIndexingService(mockDb, new EntitySchemaService());
   });
 
   it("should pass through any query to the database", async () => {
@@ -98,7 +83,6 @@ describe("DatabaseIndexingService", () => {
         title: "Preparing data (Indexing)",
         details: testIndexName,
         pending: true,
-        designDoc: testDesignDoc,
       },
     ]);
 
@@ -109,7 +93,6 @@ describe("DatabaseIndexingService", () => {
         title: "Preparing data (Indexing)",
         details: testIndexName,
         pending: false,
-        designDoc: testDesignDoc,
       },
     ]);
 
@@ -134,7 +117,6 @@ describe("DatabaseIndexingService", () => {
         title: "Preparing data (Indexing)",
         details: testIndexName,
         pending: true,
-        designDoc: testDesignDoc,
       },
     ]);
 
@@ -146,31 +128,9 @@ describe("DatabaseIndexingService", () => {
         details: testIndexName,
         pending: false,
         error: testErr,
-        designDoc: testDesignDoc,
       },
     ]);
   });
-
-  it("should re-create indices whenever a new user logs in", fakeAsync(() => {
-    const testDesignDoc = {
-      _id: "_design/test-index",
-      views: {},
-    };
-
-    service.createIndex(testDesignDoc);
-    tick();
-
-    expect(mockDb.saveDatabaseIndex.calls.allArgs()).toEqual([[testDesignDoc]]);
-
-    loginState.next(LoginState.LOGGED_IN);
-
-    tick();
-    expect(mockDb.saveDatabaseIndex.calls.allArgs()).toEqual([
-      [testDesignDoc],
-      [testDesignDoc],
-    ]);
-    flush();
-  }));
 
   it("should only register indices once", async () => {
     const testDesignDoc = {

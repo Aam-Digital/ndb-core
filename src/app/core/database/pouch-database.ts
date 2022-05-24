@@ -21,8 +21,8 @@ import PouchDB from "pouchdb-browser";
 import memory from "pouchdb-adapter-memory";
 import { PerformanceAnalysisLogging } from "../../utils/performance-analysis-logging";
 import { Injectable } from "@angular/core";
-import { fromEvent, Observable } from "rxjs";
-import { filter, map } from "rxjs/operators";
+import { Observable, Subject } from "rxjs";
+import { filter } from "rxjs/operators";
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -57,7 +57,9 @@ export class PouchDatabase extends Database {
    * This change can come from the current user or remotely from the (live) synchronization
    * @private
    */
-  private changesFeed: Observable<any>;
+  private changesFeed: Subject<any>;
+
+  private databaseInitialized = new Subject<void>();
 
   /**
    * Create a PouchDB database manager.
@@ -75,6 +77,7 @@ export class PouchDatabase extends Database {
   initInMemoryDB(dbName = "in-memory-database"): PouchDatabase {
     PouchDB.plugin(memory);
     this.pouchDB = new PouchDB(dbName, { adapter: "memory" });
+    this.databaseInitialized.complete();
     return this;
   }
 
@@ -89,7 +92,13 @@ export class PouchDatabase extends Database {
     options?: PouchDB.Configuration.DatabaseConfiguration
   ): PouchDatabase {
     this.pouchDB = new PouchDB(dbName, options);
+    this.databaseInitialized.complete();
     return this;
+  }
+
+  async getPouchDBOnceReady(): Promise<PouchDB.Database> {
+    await this.databaseInitialized.toPromise();
+    return this.pouchDB;
   }
 
   /**
@@ -111,15 +120,17 @@ export class PouchDatabase extends Database {
     options: GetOptions = {},
     returnUndefined?: boolean
   ): Promise<any> {
-    return this.pouchDB.get(id, options).catch((err) => {
-      if (err.status === 404) {
-        this.loggingService.debug("Doc not found in database: " + id);
-        if (returnUndefined) {
-          return undefined;
+    return this.getPouchDBOnceReady()
+      .then((pouchDB) => pouchDB.get(id, options))
+      .catch((err) => {
+        if (err.status === 404) {
+          this.loggingService.debug("Doc not found in database: " + id);
+          if (returnUndefined) {
+            return undefined;
+          }
         }
-      }
-      throw new DatabaseException(err);
-    });
+        throw new DatabaseException(err);
+      });
   }
 
   /**
@@ -133,8 +144,8 @@ export class PouchDatabase extends Database {
    * @param options PouchDB options object as in the normal PouchDB library
    */
   allDocs(options?: GetAllOptions) {
-    return this.pouchDB
-      .allDocs(options)
+    return this.getPouchDBOnceReady()
+      .then((pouchDB) => pouchDB.allDocs(options))
       .then((result) => result.rows.map((row) => row.doc))
       .catch((err) => {
         throw new DatabaseException(err);
@@ -153,13 +164,15 @@ export class PouchDatabase extends Database {
       object._rev = undefined;
     }
 
-    return this.pouchDB.put(object).catch((err) => {
-      if (err.status === 409) {
-        return this.resolveConflict(object, forceOverwrite, err);
-      } else {
-        throw new DatabaseException(err);
-      }
-    });
+    return this.getPouchDBOnceReady()
+      .then((pouchDB) => pouchDB.put(object))
+      .catch((err) => {
+        if (err.status === 409) {
+          return this.resolveConflict(object, forceOverwrite, err);
+        } else {
+          throw new DatabaseException(err);
+        }
+      });
   }
 
   /**
@@ -173,7 +186,8 @@ export class PouchDatabase extends Database {
       objects.forEach((obj) => (obj._rev = undefined));
     }
 
-    const results = await this.pouchDB.bulkDocs(objects);
+    const pouchDB = await this.getPouchDBOnceReady();
+    const results = await pouchDB.bulkDocs(objects);
 
     for (let i = 0; i < results.length; i++) {
       // Check if document update conflicts happened in the request
@@ -196,9 +210,11 @@ export class PouchDatabase extends Database {
    * @param object The document to be deleted (usually this object must at least contain the _id and _rev)
    */
   remove(object: any) {
-    return this.pouchDB.remove(object).catch((err) => {
-      throw new DatabaseException(err);
-    });
+    return this.getPouchDBOnceReady()
+      .then((pouchDB) => pouchDB.remove(object))
+      .catch((err) => {
+        throw new DatabaseException(err);
+      });
   }
 
   /**
@@ -206,22 +222,9 @@ export class PouchDatabase extends Database {
    * Returns true if there are no documents in the database
    */
   isEmpty(): Promise<boolean> {
-    return this.pouchDB.info().then((res) => res.doc_count === 0);
-  }
-
-  /**
-   * Sync the local database with a remote database.
-   * See {@Link https://pouchdb.com/guides/replication.html}
-   * @param remoteDatabase the PouchDB instance of the remote database
-   */
-  sync(remoteDatabase) {
-    return this.pouchDB
-      .sync(remoteDatabase, {
-        batch_size: 500,
-      })
-      .catch((err) => {
-        throw new DatabaseException(err);
-      });
+    return this.getPouchDBOnceReady()
+      .then((pouchDB) => pouchDB.info())
+      .then((res) => res.doc_count === 0);
   }
 
   /**
@@ -231,15 +234,16 @@ export class PouchDatabase extends Database {
    */
   changes(prefix: string): Observable<any> {
     if (!this.changesFeed) {
-      // Only maintain one changes feed for the whole app live-cycle
-      this.changesFeed = fromEvent(
-        this.pouchDB.changes({
-          live: true,
-          since: "now",
-          include_docs: true,
-        }),
-        "change"
-      ).pipe(map((change) => change[0].doc));
+      this.changesFeed = new Subject();
+      this.getPouchDBOnceReady().then((pouchDB) =>
+        pouchDB
+          .changes({
+            live: true,
+            since: "now",
+            include_docs: true,
+          })
+          .addListener("change", (change) => this.changesFeed.next(change.doc))
+      );
     }
     return this.changesFeed.pipe(filter((doc) => doc._id.startsWith(prefix)));
   }
@@ -249,7 +253,9 @@ export class PouchDatabase extends Database {
    */
   async destroy(): Promise<any> {
     await Promise.all(this.indexPromises);
-    return this.pouchDB.destroy();
+    if (this.pouchDB) {
+      return this.pouchDB.destroy();
+    }
   }
 
   /**
@@ -266,9 +272,11 @@ export class PouchDatabase extends Database {
     fun: string | ((doc: any, emit: any) => void),
     options: QueryOptions
   ): Promise<any> {
-    return this.pouchDB.query(fun, options).catch((err) => {
-      throw new DatabaseException(err);
-    });
+    return this.getPouchDBOnceReady()
+      .then((pouchDB) => pouchDB.query(fun, options))
+      .catch((err) => {
+        throw new DatabaseException(err);
+      });
   }
 
   /**
@@ -300,7 +308,7 @@ export class PouchDatabase extends Database {
       return;
     }
 
-    await this.put(designDoc);
+    await this.put(designDoc, true);
     await this.prebuildViewsOfDesignDoc(designDoc);
   }
 

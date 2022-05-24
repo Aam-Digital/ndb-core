@@ -21,7 +21,6 @@ import { ConfigService } from "./core/config/config.service";
 import { RouterService } from "./core/view/dynamic-routing/router.service";
 import { EntityConfigService } from "./core/entity/entity-config.service";
 import { SessionService } from "./core/session/session-service/session.service";
-import { SyncState } from "./core/session/session-states/sync-state.enum";
 import { ActivatedRoute, Router } from "@angular/router";
 import { environment } from "../environments/environment";
 import { Child } from "./child-dev-project/children/model/child";
@@ -31,7 +30,6 @@ import { AppConfig } from "./core/app-config/app-config";
 import { LoginState } from "./core/session/session-states/login-state.enum";
 import { LoggingService } from "./core/logging/logging.service";
 import { EntityRegistry } from "./core/entity/database-entity.decorator";
-import { filter } from "rxjs/operators";
 
 /**
  * Component as the main entry point for the app.
@@ -66,21 +64,11 @@ export class AppComponent {
 
     // first register to events
 
-    // Reload config once the database is synced after someone logged in
-    this.sessionService.syncState
-      .pipe(filter((state) => state === SyncState.COMPLETED))
-      .subscribe(() => this.configService.loadConfig());
-
     // Re-trigger services that depend on the config when something changes
-    let lastConfig: string;
-    this.configService.configUpdates.subscribe((config) => {
+    this.configService.configUpdates.subscribe(() => {
       this.routerService.initRouting();
       this.entityConfigService.setupEntitiesFromConfig();
-      const configString = JSON.stringify(config);
-      if (this.sessionService.isLoggedIn() && configString !== lastConfig) {
-        this.router.navigate([], { relativeTo: this.activatedRoute });
-        lastConfig = configString;
-      }
+      this.router.navigate([], { relativeTo: this.activatedRoute });
     });
 
     // update the user context for remote error logging and tracking and load config initially
@@ -89,7 +77,6 @@ export class AppComponent {
         const username = this.sessionService.getCurrentUser().name;
         LoggingService.setLoggingContextUser(username);
         this.analyticsService.setUser(username);
-        this.configService.loadConfig();
       } else {
         LoggingService.setLoggingContextUser(undefined);
         this.analyticsService.setUser(undefined);
