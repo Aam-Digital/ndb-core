@@ -10,7 +10,7 @@ import {
   viewRegistry,
   ViewRegistry,
 } from "./dynamic-components/dynamic-component.decorator";
-import { EmptyComponent } from "./dynamic-routing/empty/empty.component";
+import { ApplicationLoadingComponent } from "./dynamic-routing/empty/application-loading.component";
 import { NotFoundComponent } from "./dynamic-routing/not-found/not-found.component";
 import { RouterModule } from "@angular/router";
 import { FlexModule } from "@angular/flex-layout";
@@ -24,7 +24,7 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
     DynamicComponentDirective,
     FaDynamicIconComponent,
     ViewTitleComponent,
-    EmptyComponent,
+    ApplicationLoadingComponent,
     NotFoundComponent,
   ],
   imports: [
@@ -41,7 +41,7 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
     DynamicComponentDirective,
     FaDynamicIconComponent,
     ViewTitleComponent,
-    EmptyComponent,
+    ApplicationLoadingComponent,
   ],
 })
 export class ViewModule {}

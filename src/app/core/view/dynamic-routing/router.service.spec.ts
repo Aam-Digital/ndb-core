@@ -12,7 +12,7 @@ import { EntityDetailsComponent } from "../../entity-components/entity-details/e
 import { ViewConfig } from "./view-config.interface";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { RouteRegistry, routesRegistry } from "../../../app.routing";
-import { EmptyComponent } from "./empty/empty.component";
+import { ApplicationLoadingComponent } from "./empty/application-loading.component";
 import { NotFoundComponent } from "./not-found/not-found.component";
 
 class TestComponent extends Component {}
@@ -165,7 +165,10 @@ describe("RouterService", () => {
   });
 
   it("should set NotFoundComponent for wildcard route", () => {
-    const wildcardRoute: Route = { path: "**", component: EmptyComponent };
+    const wildcardRoute: Route = {
+      path: "**",
+      component: ApplicationLoadingComponent,
+    };
 
     service.reloadRouting([], [wildcardRoute]);
 

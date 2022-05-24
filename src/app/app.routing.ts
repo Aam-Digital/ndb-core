@@ -19,7 +19,7 @@ import { RouterModule, Routes } from "@angular/router";
 import { ModuleWithProviders } from "@angular/core";
 import { ComponentType } from "@angular/cdk/overlay";
 import { Registry } from "./core/registry/dynamic-registry";
-import { EmptyComponent } from "./core/view/dynamic-routing/empty/empty.component";
+import { ApplicationLoadingComponent } from "./core/view/dynamic-routing/empty/application-loading.component";
 import { NotFoundComponent } from "./core/view/dynamic-routing/not-found/not-found.component";
 
 export class RouteRegistry extends Registry<ComponentType<any>> {}
@@ -60,7 +60,7 @@ export const allRoutes: Routes = [
       ),
   },
   { path: "404", component: NotFoundComponent },
-  { path: "**", pathMatch: "full", component: EmptyComponent },
+  { path: "**", pathMatch: "full", component: ApplicationLoadingComponent },
 ];
 
 /**
