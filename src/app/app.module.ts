@@ -23,7 +23,6 @@ import { HttpClientModule } from "@angular/common/http";
 
 import { AppComponent } from "./app.component";
 import { UiModule } from "./core/ui/ui.module";
-import { AppConfigModule } from "./core/app-config/app-config.module";
 import { RouteRegistry, routesRegistry, routing } from "./app.routing";
 import { AlertsModule } from "./core/alerts/alerts.module";
 import { SessionModule } from "./core/session/session.module";
@@ -80,6 +79,8 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
 import { DemoPermissionGeneratorService } from "./core/permissions/demo-permission-generator.service";
 import { SupportModule } from "./core/support/support.module";
+import { DemoConfigGeneratorService } from "./core/config/demo-config-generator.service";
+import { DatabaseModule } from "./core/database/database.module";
 
 /**
  * Main entry point of the application.
@@ -106,7 +107,6 @@ import { SupportModule } from "./core/support/support.module";
     FormDialogModule,
     AlertsModule,
     EntityModule,
-    AppConfigModule,
     SessionModule,
     ConfigModule,
     UiModule,
@@ -150,11 +150,13 @@ import { SupportModule } from "./core/support/support.module";
         maxCountAttributes: 5,
       }),
       ...DemoPermissionGeneratorService.provider(),
+      ...DemoConfigGeneratorService.provider(),
     ]),
     AttendanceModule,
     DashboardShortcutWidgetModule,
     HistoricalDataModule,
     SupportModule,
+    DatabaseModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },

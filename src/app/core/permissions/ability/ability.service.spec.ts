@@ -6,9 +6,6 @@ import { SessionService } from "../../session/session-service/session.service";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { SyncState } from "../../session/session-states/sync-state.enum";
-import { LoginState } from "../../session/session-states/login-state.enum";
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
 import { DatabaseUser } from "../../session/session-service/local-user";
 import { User } from "../../user/user";
@@ -18,14 +15,16 @@ import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enu
 import { DatabaseRule, DatabaseRules } from "../permission-types";
 import { Config } from "../../config/config";
 import { LoggingService } from "../../logging/logging.service";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { UpdatedEntity } from "../../entity/model/entity-update";
+import { PermissionsModule } from "../permissions.module";
 
 describe("AbilityService", () => {
   let service: AbilityService;
   let mockSessionService: jasmine.SpyObj<SessionService>;
   let ability: EntityAbility;
-  let mockSyncState: Subject<SyncState>;
-  let mockLoginState: Subject<LoginState>;
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let entityUpdates: Subject<UpdatedEntity<Config<DatabaseRules>>>;
   let mockPermissionEnforcer: jasmine.SpyObj<PermissionEnforcerService>;
   let mockLoggingService: jasmine.SpyObj<LoggingService>;
   const user: DatabaseUser = { name: "testUser", roles: ["user_app"] };
@@ -38,16 +37,11 @@ describe("AbilityService", () => {
   };
 
   beforeEach(() => {
-    mockEntityMapper = jasmine.createSpyObj(["load"]);
-    mockEntityMapper.load.and.resolveTo(
-      new Config(Config.PERMISSION_KEY, rules)
-    );
-    mockSyncState = new Subject<SyncState>();
-    mockLoginState = new Subject<LoginState>();
-    mockSessionService = jasmine.createSpyObj(["getCurrentUser"], {
-      syncState: mockSyncState,
-      loginState: mockLoginState,
-    });
+    mockEntityMapper = jasmine.createSpyObj(["load", "receiveUpdates"]);
+    mockEntityMapper.load.and.rejectWith();
+    entityUpdates = new Subject();
+    mockEntityMapper.receiveUpdates.and.returnValue(entityUpdates);
+    mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
     mockSessionService.getCurrentUser.and.returnValue(user);
     mockPermissionEnforcer = jasmine.createSpyObj([
       "enforcePermissionsOnLocalData",
@@ -55,9 +49,12 @@ describe("AbilityService", () => {
     mockLoggingService = jasmine.createSpyObj(["warn"]);
 
     TestBed.configureTestingModule({
-      imports: [ConfigurableEnumModule],
+      imports: [
+        PermissionsModule,
+        ConfigurableEnumModule,
+        MockedTestingModule.withState(),
+      ],
       providers: [
-        EntityAbility,
         { provide: SessionService, useValue: mockSessionService },
         { provide: EntityMapperService, useValue: mockEntityMapper },
         {
@@ -65,8 +62,6 @@ describe("AbilityService", () => {
           useValue: mockPermissionEnforcer,
         },
         { provide: LoggingService, useValue: mockLoggingService },
-        EntitySchemaService,
-        AbilityService,
       ],
     });
     service = TestBed.inject(AbilityService);
@@ -74,8 +69,7 @@ describe("AbilityService", () => {
   });
 
   afterEach(() => {
-    mockLoginState.complete();
-    mockSyncState.complete();
+    entityUpdates.complete();
   });
 
   it("should be created", () => {
@@ -83,60 +77,59 @@ describe("AbilityService", () => {
   });
 
   it("should fetch the rules object from the database", () => {
-    mockLoginState.next(LoginState.LOGGED_IN);
-
     expect(mockEntityMapper.load).toHaveBeenCalledWith(
       Config,
       Config.PERMISSION_KEY
     );
   });
 
-  it("should retry fetching the rules after the sync has completed", fakeAsync(() => {
-    mockEntityMapper.load.and.returnValues(
-      Promise.reject("first error"),
-      Promise.resolve(new Config(Config.PERMISSION_KEY, rules))
-    );
+  it("should update the rules when a change is published", () => {
+    mockEntityMapper.load.and.rejectWith("no initial config");
 
-    mockLoginState.next(LoginState.LOGGED_IN);
-
-    expect(mockEntityMapper.load).toHaveBeenCalledTimes(1);
+    expect(mockEntityMapper.load).toHaveBeenCalled();
     // Default rule
     expect(ability.rules).toEqual([{ action: "manage", subject: "all" }]);
 
-    mockSyncState.next(SyncState.COMPLETED);
+    entityUpdates.next({
+      entity: new Config(Config.PERMISSION_KEY, rules),
+      type: "update",
+    });
 
-    expect(mockEntityMapper.load).toHaveBeenCalledTimes(2);
-    tick();
     expect(ability.rules).toEqual(rules[user.roles[0]]);
-  }));
+  });
 
-  it("should update the ability with the received rules for the logged in user", fakeAsync(() => {
+  it("should update the ability with the received rules for the logged in user", () => {
     spyOn(ability, "update");
-
-    mockLoginState.next(LoginState.LOGGED_IN);
-    tick();
+    entityUpdates.next({
+      entity: new Config(Config.PERMISSION_KEY, rules),
+      type: "update",
+    });
 
     expect(ability.update).toHaveBeenCalledWith(rules.user_app);
-  }));
+  });
 
-  it("should update the ability with rules for all roles the logged in user has", fakeAsync(() => {
+  it("should update the ability with rules for all roles the logged in user has", () => {
     spyOn(ability, "update");
     mockSessionService.getCurrentUser.and.returnValue({
       name: "testAdmin",
       roles: ["user_app", "admin_app"],
     });
 
-    mockLoginState.next(LoginState.LOGGED_IN);
-    tick();
+    entityUpdates.next({
+      entity: new Config(Config.PERMISSION_KEY, rules),
+      type: "update",
+    });
 
     expect(ability.update).toHaveBeenCalledWith(
       rules.user_app.concat(rules.admin_app)
     );
-  }));
+  });
 
-  it("should create an ability that correctly uses the defined rules", fakeAsync(() => {
-    mockLoginState.next(LoginState.LOGGED_IN);
-    tick();
+  it("should create an ability that correctly uses the defined rules", () => {
+    entityUpdates.next({
+      entity: new Config(Config.PERMISSION_KEY, rules),
+      type: "update",
+    });
 
     expect(ability.can("read", Child)).toBeTrue();
     expect(ability.can("create", Child)).toBeFalse();
@@ -151,35 +144,29 @@ describe("AbilityService", () => {
       name: "testAdmin",
       roles: ["user_app", "admin_app"],
     });
-    mockLoginState.next(LoginState.LOGGED_IN);
-    tick();
+
+    const updatedConfig = new Config(Config.PERMISSION_KEY, rules);
+    updatedConfig._rev = "update";
+    entityUpdates.next({ entity: updatedConfig, type: "update" });
 
     expect(ability.can("manage", Child)).toBeTrue();
     expect(ability.can("manage", new Child())).toBeTrue();
     expect(ability.can("manage", Note)).toBeTrue();
     expect(ability.can("manage", new Note())).toBeTrue();
-  }));
+  });
 
   it("should throw an error when checking permissions on a object that is not a Entity", () => {
-    mockLoginState.next(LoginState.LOGGED_IN);
+    entityUpdates.next({
+      entity: new Config(Config.PERMISSION_KEY, rules),
+      type: "update",
+    });
 
     class TestClass {}
     expect(() => ability.can("read", new TestClass() as any)).toThrowError();
   });
 
   it("should give all permissions if no rules object can be fetched", () => {
-    mockEntityMapper.load.and.rejectWith();
-
-    mockLoginState.next(LoginState.LOGGED_IN);
-
     // Request failed, sync not started - offline without cached rules object
-    expect(ability.can("read", Child)).toBeTrue();
-    expect(ability.can("update", Child)).toBeTrue();
-    expect(ability.can("manage", new Note())).toBeTrue();
-
-    mockSyncState.next(SyncState.STARTED);
-
-    // Request failed, sync started - no rules object exists
     expect(ability.can("read", Child)).toBeTrue();
     expect(ability.can("update", Child)).toBeTrue();
     expect(ability.can("manage", new Note())).toBeTrue();
@@ -192,99 +179,100 @@ describe("AbilityService", () => {
       done();
     });
 
-    mockLoginState.next(LoginState.LOGGED_IN);
+    entityUpdates.next({
+      entity: new Config(Config.PERMISSION_KEY, rules),
+      type: "update",
+    });
   });
 
-  it("should call the ability enforcer after updating the rules", fakeAsync(() => {
-    mockLoginState.next(LoginState.LOGGED_IN);
-    tick();
+  it("should call the ability enforcer after updating the rules", () => {
+    entityUpdates.next({
+      entity: new Config(Config.PERMISSION_KEY, rules),
+      type: "update",
+    });
 
     expect(
       mockPermissionEnforcer.enforcePermissionsOnLocalData
     ).toHaveBeenCalled();
-  }));
+  });
 
-  it("should allow to access user properties in the rules", fakeAsync(() => {
-    mockEntityMapper.load.and.resolveTo(
-      new Config(Config.PERMISSION_KEY, {
-        user_app: [
-          {
-            subject: "User",
-            action: "manage",
-            conditions: { name: "${user.name}" },
-          },
-        ],
-      })
-    );
-    mockLoginState.next(LoginState.LOGGED_IN);
-    tick();
+  it("should allow to access user properties in the rules", () => {
+    const config = new Config<DatabaseRules>(Config.PERMISSION_KEY, {
+      user_app: [
+        {
+          subject: "User",
+          action: "manage",
+          conditions: { name: "${user.name}" },
+        },
+      ],
+    });
+    entityUpdates.next({ entity: config, type: "update" });
 
     const userEntity = new User();
     userEntity.name = user.name;
     expect(ability.can("manage", userEntity)).toBeTrue();
     userEntity.name = "another user";
     expect(ability.cannot("manage", userEntity)).toBeTrue();
-  }));
+  });
 
   it("should allow to check conditions with complex data types", fakeAsync(() => {
     const classInteraction = defaultInteractionTypes.find(
       (type) => type.id === "SCHOOL_CLASS"
     );
-    mockEntityMapper.load.and.resolveTo(
-      new Config(Config.PERMISSION_KEY, {
-        user_app: [
-          {
-            subject: "Note",
-            action: "read",
-            conditions: { category: classInteraction.id },
-          },
-        ],
-      })
-    );
-    mockLoginState.next(LoginState.LOGGED_IN);
-    tick();
+    const config = new Config<DatabaseRules>(Config.PERMISSION_KEY, {
+      user_app: [
+        {
+          subject: "Note",
+          action: "read",
+          conditions: { category: classInteraction.id },
+        },
+      ],
+    });
+    entityUpdates.next({ entity: config, type: "update" });
 
     const note = new Note();
     expect(ability.can("read", note)).toBeFalse();
     note.category = classInteraction;
+    tick();
     expect(ability.can("read", note)).toBeTrue();
   }));
 
-  it("should log a warning if no rules are found for a user", fakeAsync(() => {
+  it("should log a warning if no rules are found for a user", () => {
     mockSessionService.getCurrentUser.and.returnValue({
       name: "new-user",
       roles: ["invalid_role"],
     });
-    mockLoginState.next(LoginState.LOGGED_IN);
-    tick();
+    entityUpdates.next({
+      entity: new Config(Config.PERMISSION_KEY, rules),
+      type: "update",
+    });
 
     expect(mockLoggingService.warn).toHaveBeenCalled();
-  }));
+  });
 
-  it("should prepend default rules to all users", fakeAsync(() => {
+  it("should prepend default rules to all users", () => {
     const defaultRules: DatabaseRule[] = [
       { subject: "Config", action: "read" },
       { subject: "ProgressDashboardConfig", action: "manage" },
     ];
-    mockEntityMapper.load.and.resolveTo(
-      new Config(
-        Config.PERMISSION_KEY,
-        Object.assign({ default: defaultRules } as DatabaseRules, rules)
-      )
+    const config = new Config<DatabaseRules>(
+      Config.PERMISSION_KEY,
+      Object.assign({ default: defaultRules } as DatabaseRules, rules)
     );
 
-    mockLoginState.next(LoginState.LOGGED_IN);
-    tick();
+    entityUpdates.next({ entity: config, type: "update" });
+
     expect(ability.rules).toEqual(defaultRules.concat(...rules.user_app));
 
     mockSessionService.getCurrentUser.and.returnValue({
       name: "admin",
       roles: ["user_app", "admin_app"],
     });
-    mockLoginState.next(LoginState.LOGGED_IN);
-    tick();
+
+    config._rev = "update";
+    entityUpdates.next({ entity: config, type: "update" });
     expect(ability.rules).toEqual(
       defaultRules.concat(...rules.user_app, ...rules.admin_app)
     );
-  }));
+  });
 });

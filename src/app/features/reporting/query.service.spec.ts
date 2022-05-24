@@ -48,13 +48,8 @@ describe("QueryService", () => {
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
-      imports: [ConfigurableEnumModule, DatabaseTestingModule, ChildrenModule],
-      providers: [
-        ChildrenService,
-        AttendanceService,
-        ConfigService,
-        EntityConfigService,
-      ],
+      imports: [DatabaseTestingModule, ConfigurableEnumModule, ChildrenModule],
+      providers: [ChildrenService, AttendanceService, EntityConfigService],
     });
     service = TestBed.inject(QueryService);
     const configService = TestBed.inject(ConfigService);
