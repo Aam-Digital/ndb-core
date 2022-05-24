@@ -114,7 +114,10 @@ export class MockEntityMapperService extends EntityMapperService {
     forceUpdate: boolean = false
   ): Promise<any> {
     this.add(entity);
-    return Promise.resolve();
+  }
+
+  async saveAll(entities: Entity[]): Promise<any> {
+    this.addAll(entities);
   }
 
   remove<T extends Entity>(entity: T): Promise<any> {

@@ -1,7 +1,7 @@
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 
 import { PermissionEnforcerService } from "./permission-enforcer.service";
-import { DatabaseRule } from "../permission-types";
+import { DatabaseRule, DatabaseRules } from "../permission-types";
 import { SessionService } from "../../session/session-service/session.service";
 import { TEST_USER } from "../../../utils/mocked-testing.module";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
@@ -14,14 +14,14 @@ import { mockEntityMapper } from "../../entity/mock-entity-mapper-service";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { AnalyticsService } from "../../analytics/analytics.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { BehaviorSubject, Subject } from "rxjs";
-import { LoginState } from "../../session/session-states/login-state.enum";
+import { Subject } from "rxjs";
 import { EntityAbility } from "../ability/entity-ability";
 import { Config } from "../../config/config";
 import {
   entityRegistry,
   EntityRegistry,
 } from "../../entity/database-entity.decorator";
+import { UpdatedEntity } from "../../entity/model/entity-update";
 
 describe("PermissionEnforcerService", () => {
   let service: PermissionEnforcerService;
@@ -33,15 +33,11 @@ describe("PermissionEnforcerService", () => {
   let mockDatabase: jasmine.SpyObj<Database>;
   let mockLocation: jasmine.SpyObj<Location>;
   let mockAnalytics: jasmine.SpyObj<AnalyticsService>;
-  const mockLoginState = new BehaviorSubject(LoginState.LOGGED_IN);
-  let loadSpy: jasmine.Spy<EntityMapperService["load"]>;
   let entityMapper: EntityMapperService;
+  const entityUpdates = new Subject<UpdatedEntity<Config<DatabaseRules>>>();
 
   beforeEach(fakeAsync(() => {
-    mockSession = jasmine.createSpyObj(["getCurrentUser"], {
-      loginState: mockLoginState,
-      syncState: new Subject(),
-    });
+    mockSession = jasmine.createSpyObj(["getCurrentUser"]);
     mockSession.getCurrentUser.and.returnValue({
       name: TEST_USER,
       roles: ["user_app"],
@@ -64,10 +60,10 @@ describe("PermissionEnforcerService", () => {
         AbilityService,
       ],
     });
+    entityMapper = TestBed.inject(EntityMapperService);
+    spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
     service = TestBed.inject(PermissionEnforcerService);
     TestBed.inject(AbilityService);
-    entityMapper = TestBed.inject(EntityMapperService);
-    loadSpy = spyOn(entityMapper, "load");
   }));
 
   afterEach(async () => {
@@ -213,7 +209,7 @@ describe("PermissionEnforcerService", () => {
 
   async function updateRulesAndTriggerEnforcer(rules: DatabaseRule[]) {
     const role = mockSession.getCurrentUser().roles[0];
-    loadSpy.and.resolveTo(new Config(Config.PERMISSION_KEY, { [role]: rules }));
-    mockLoginState.next(LoginState.LOGGED_IN);
+    const config = new Config(Config.PERMISSION_KEY, { [role]: rules });
+    entityUpdates.next({ entity: config, type: "update" });
   }
 });

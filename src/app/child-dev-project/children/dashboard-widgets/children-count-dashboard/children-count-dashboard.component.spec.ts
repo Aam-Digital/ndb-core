@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ChildrenCountDashboardComponent } from "./children-count-dashboard.component";
-import { RouterTestingModule } from "@angular/router/testing";
 import { Center, Child } from "../../model/child";
 import { ConfigurableEnumValue } from "../../../../core/configurable-enum/configurable-enum.interface";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -11,6 +10,7 @@ import {
   MockEntityMapperService,
 } from "../../../../core/entity/mock-entity-mapper-service";
 import { ChildrenModule } from "../../children.module";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 
 describe("ChildrenCountDashboardComponent", () => {
   let component: ChildrenCountDashboardComponent;
@@ -29,7 +29,7 @@ describe("ChildrenCountDashboardComponent", () => {
       TestBed.configureTestingModule({
         imports: [
           ChildrenModule,
-          RouterTestingModule,
+          MockedTestingModule.withState(),
           FontAwesomeTestingModule,
         ],
         providers: [{ provide: EntityMapperService, useValue: entityMapper }],

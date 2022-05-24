@@ -16,6 +16,10 @@ import {
   ViewRegistry,
 } from "../core/view/dynamic-components/dynamic-component.decorator";
 import { RouteRegistry, routesRegistry } from "../app.routing";
+import {
+  ConfigService,
+  createTestingConfigService,
+} from "../core/config/config.service";
 
 /**
  * Utility module that creates a simple environment where a correctly configured database and session is set up.
@@ -30,23 +34,20 @@ import { RouteRegistry, routesRegistry } from "../app.routing";
 @NgModule({
   providers: [
     LoggingService,
-    {
-      provide: Database,
-      useFactory: (loggingService: LoggingService) =>
-        new PouchDatabase(loggingService).initInMemoryDB(),
-      deps: [LoggingService],
-    },
+    PouchDatabase,
+    { provide: Database, useExisting: PouchDatabase },
     EntityMapperService,
     EntitySchemaService,
-    {
-      provide: SessionService,
-      useFactory: (database: PouchDatabase) => new LocalSession(database),
-      deps: [Database],
-    },
+    { provide: SessionService, useClass: LocalSession },
     DatabaseIndexingService,
     { provide: EntityRegistry, useValue: entityRegistry },
     { provide: ViewRegistry, useValue: viewRegistry },
     { provide: RouteRegistry, useValue: routesRegistry },
+    { provide: ConfigService, useValue: createTestingConfigService() },
   ],
 })
-export class DatabaseTestingModule {}
+export class DatabaseTestingModule {
+  constructor(pouchDatabase: PouchDatabase) {
+    pouchDatabase.initInMemoryDB();
+  }
+}

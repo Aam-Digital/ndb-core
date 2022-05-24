@@ -17,6 +17,7 @@ import { BehaviorSubject, Subject } from "rxjs";
 import { take } from "rxjs/operators";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { SyncState } from "../../../core/session/session-states/sync-state.enum";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("ProgressDashboardComponent", () => {
   let component: ProgressDashboardComponent;
@@ -38,7 +39,11 @@ describe("ProgressDashboardComponent", () => {
       mockSession = jasmine.createSpyObj([], { syncState: mockSync });
 
       TestBed.configureTestingModule({
-        imports: [ProgressDashboardWidgetModule, FontAwesomeTestingModule],
+        imports: [
+          ProgressDashboardWidgetModule,
+          MockedTestingModule.withState(),
+          FontAwesomeTestingModule,
+        ],
         providers: [
           { provide: EntityMapperService, useValue: mockEntityMapper },
           { provide: MatDialog, useValue: mockDialog },

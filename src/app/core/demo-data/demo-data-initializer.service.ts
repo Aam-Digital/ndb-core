@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
 import { DemoDataService } from "./demo-data.service";
-import { SessionService } from "../session/session-service/session.service";
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
 import { LocalSession } from "../session/session-service/local-session";
 import { MatDialog } from "@angular/material/dialog";
@@ -28,7 +27,7 @@ export class DemoDataInitializerService {
 
   constructor(
     private demoDataService: DemoDataService,
-    private sessionService: SessionService,
+    private localSession: LocalSession,
     private dialog: MatDialog,
     private loggingService: LoggingService,
     private database: Database
@@ -54,7 +53,7 @@ export class DemoDataInitializerService {
 
     dialogRef.close();
 
-    await this.sessionService.login(
+    await this.localSession.login(
       DemoUserGeneratorService.DEFAULT_USERNAME,
       DemoUserGeneratorService.DEFAULT_PASSWORD
     );
@@ -62,10 +61,10 @@ export class DemoDataInitializerService {
   }
 
   private syncDatabaseOnUserChange() {
-    this.sessionService.loginState.subscribe((state) => {
+    this.localSession.loginState.subscribe((state) => {
       if (
         state === LoginState.LOGGED_IN &&
-        this.sessionService.getCurrentUser().name !==
+        this.localSession.getCurrentUser().name !==
           DemoUserGeneratorService.DEFAULT_USERNAME
       ) {
         // There is a slight race-condition with session type local
@@ -79,15 +78,14 @@ export class DemoDataInitializerService {
   }
 
   private registerDemoUsers() {
-    const localSession = this.sessionService as LocalSession;
-    localSession.saveUser(
+    this.localSession.saveUser(
       {
         name: DemoUserGeneratorService.DEFAULT_USERNAME,
         roles: ["user_app"],
       },
       DemoUserGeneratorService.DEFAULT_PASSWORD
     );
-    localSession.saveUser(
+    this.localSession.saveUser(
       {
         name: DemoUserGeneratorService.ADMIN_USERNAME,
         roles: ["user_app", "admin_app"],
