@@ -20,9 +20,6 @@ import { Observable } from "rxjs";
 /**
  * An implementation of this abstract class provides functions for direct database access.
  * This interface is an extension of the [PouchDB API](https://pouchdb.com/api.html).
- *
- * A `Database` instance is injected into the app through the {@link databaseServiceProvider}
- * with the help of the {@link SessionService}.
  */
 export abstract class Database {
   /**

@@ -10,6 +10,11 @@ import {
   viewRegistry,
   ViewRegistry,
 } from "./dynamic-components/dynamic-component.decorator";
+import { ApplicationLoadingComponent } from "./dynamic-routing/empty/application-loading.component";
+import { NotFoundComponent } from "./dynamic-routing/not-found/not-found.component";
+import { RouterModule } from "@angular/router";
+import { FlexModule } from "@angular/flex-layout";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
 
 /**
  * Generic components and services to allow assembling the app dynamically from config objects.
@@ -19,13 +24,24 @@ import {
     DynamicComponentDirective,
     FaDynamicIconComponent,
     ViewTitleComponent,
+    ApplicationLoadingComponent,
+    NotFoundComponent,
   ],
-  imports: [CommonModule, FontAwesomeModule, MatTooltipModule, MatButtonModule],
+  imports: [
+    CommonModule,
+    FontAwesomeModule,
+    MatTooltipModule,
+    MatButtonModule,
+    RouterModule,
+    FlexModule,
+    MatProgressBarModule,
+  ],
   providers: [{ provide: ViewRegistry, useValue: viewRegistry }],
   exports: [
     DynamicComponentDirective,
     FaDynamicIconComponent,
     ViewTitleComponent,
+    ApplicationLoadingComponent,
   ],
 })
 export class ViewModule {}

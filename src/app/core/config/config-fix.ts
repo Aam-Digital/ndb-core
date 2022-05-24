@@ -306,7 +306,6 @@ export const defaultJsonConfig = {
     "permittedUserRoles": ["admin_app"]
   },
   "view:admin/conflicts": {
-    "component": "ConflictResolution",
     "permittedUserRoles": ["admin_app"],
     "lazyLoaded":  true
   },
