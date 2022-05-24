@@ -1,37 +1,33 @@
-describe("Scenario: Recording attendance of a child - E2E test", () => {
-  before(() => {
-    // GIVEN A specific child is attending a specific class
+describe("Scenario: Recording attendance of a child - E2E test", function () {
+  before("GIVEN A specific child is attending a specific class", function () {
     cy.visit("attendance");
   });
 
-  // WHEN I record attendance for this class
-  it("Record attendance for the class", function () {
+  it("WHEN I record attendance for this class", () => {
     cy.get(".mat-card", { timeout: 10000 }).should("be.visible").eq(0).click();
     cy.contains("button", "Record").click();
   });
 
-  // AND I set the attendance of the specific child to 'present'
-  it("set the attendance of the specific child to 'present'", function () {
+  it("AND I set the attendance of the specific child to 'present'", function () {
     cy.contains("button", "Show more").click({ scrollBehavior: "center" });
     cy.contains("mat-card", "School Class")
       .eq(0)
       .click({ scrollBehavior: "center" });
-    cy.get(".options-wrapper > :nth-child(1)").click();
+    cy.get(".mat-body-1").invoke("text").as("childName");
+    cy.get(".group-select-option").contains("Present").click();
     cy.get('[fxflex=""] > .ng-star-inserted > .mat-focus-indicator').click();
     cy.contains("button", "Save").click();
   });
 
-  // THEN in the details page of this child under 'attendance' for the specific class I should see a green background for the current day
-  it("In the details page of this child under 'attendance' for the specific class should be a green background for the current day", function () {
-    cy.get(".mat-card", { timeout: 10000 })
-      .should("be.visible")
-      .eq(0)
-      .click({ force: true });
-    // Click on ChildBlock inside roll-call to navigate to child
-    cy.get(".navigation-bar > :nth-child(1)").click();
-    cy.get(".child-block").click();
+  it("THEN in the details page of this child under 'attendance' for the specific class I should see a green background for the current day", function () {
+    cy.get("#mat-input-2")
+      .focus()
+      .type(this.childName)
+      .wait(500)
+      .type("{downArrow}")
+      .type("{enter}");
     cy.get("#mat-tab-label-0-2").click();
-    cy.get(".attendance-P").should(
+    cy.get(".mat-calendar-body-active").should(
       "have.css",
       "background-color",
       "rgb(200, 230, 201)"

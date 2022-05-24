@@ -9,52 +9,58 @@
     <div class="progress-label" [style.visibility]="currentIndex < children.length ? 'visible' : 'hidden'">
       {{ currentIndex+1 }} / {{ children.length }}
     </div>
-
-    <div class="navigation-bar">
-      <button mat-icon-button (click)="goToPrevious()" [disabled]="isFirst">
-        <fa-icon icon="chevron-left"></fa-icon>
-      </button>
-      <div *ngIf="isFinished" style="flex-grow: 1"></div>
-      <app-child-block
-        *ngIf="!isFinished"
-        [entity]="currentChild"
-        class="child-block">
-      </app-child-block>
-      <button mat-icon-button (click)="goToNext()" [disabled]="isFinished">
-        <fa-icon icon="chevron-right"></fa-icon>
-      </button>
-    </div>
-
   </div>
-
-  <div
-    *ngIf="!isFinished && currentAttendance"
-    fxLayout="column"
-    fxLayoutAlign="space-between stretch"
-    class="options-wrapper"
-  >
-    <div
-      class="group-select-option"
-      *ngFor="let option of availableStatus"
-      (click)="markAttendance(option)"
-      [ngClass]="
-        currentAttendance.status.id === option.id
-          ? option.style
-          : ''
-      "
-    >
-      <fa-icon
-        *ngIf="currentAttendance.status.id === option.id"
-        icon="check"
-      ></fa-icon>
-      {{ option.label }}
-    </div>
+  <div class="navbar-wrapper margin-bottom-small">
+    <button mat-icon-button class="button-aligned-left" (click)="goToPrevious()" [disabled]="isFirst">
+      <fa-icon icon="chevron-left"></fa-icon>
+    </button>
+    <app-child-block
+      class="child-block"
+      *ngIf="!isFinished"
+      [entity]="currentChild"
+      [linkDisabled]="true"
+      [tooltipDisabled]="true">
+    </app-child-block>
+    <div class="placeholder" *ngIf="isFinished"></div>
+    <button class="button-aligned-right" mat-icon-button (click)="goToNext()" [disabled]="isFinished">
+      <fa-icon icon="chevron-right"></fa-icon>
+    </button>
+  </div>
+  <div *ngIf="!isFinished && currentAttendance" class="tab-wrapper">
+    <app-roll-call-tab
+      (swiperight)="goToPrevious()"
+      (swipeleft)="goToNext()"
+      *ngFor="let child of children; let i = index"
+      class="tab-body"
+      [class.tab-body-active]="currentIndex === i"
+      [position]="i - currentIndex" >
+      <div>
+        <div
+          class="group-select-option"
+          *ngFor="let option of availableStatus"
+          (click)="markAttendance(option)"
+          [ngClass]="
+          eventEntity.getAttendance(child).status.id === option.id
+            ? option.style
+            : ''
+          "
+        >
+          <div style="display: flex; flex-direction: row; padding: 16px; gap: 16px">
+            <fa-icon
+              *ngIf="eventEntity.getAttendance(child).status.id === option.id"
+              icon="check"
+            ></fa-icon>
+            <p style="margin: 0">{{ option.label }}</p>
+          </div>
+        </div>
+      </div>
+    </app-roll-call-tab>
   </div>
 </div>
 
 <!-- Completion Page -->
 <div *ngIf="isFinished">
-  <div class="roll-call-complete" [@completeRollCall]>
+  <div class="roll-call-complete" @completeRollCall>
     <fa-icon icon="check-circle" class="roll-call-complete-icon"></fa-icon>
     <div
       i18n="
