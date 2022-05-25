@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from "@angular/core";
+import { Injectable, NgModule } from "@angular/core";
 import { ActivityListComponent } from "./activity-list/activity-list.component";
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
 import { ChildrenModule } from "../children/children.module";
@@ -70,6 +70,7 @@ import {
 import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
 import * as Hammer from "hammerjs";
 
+@Injectable()
 // Only allow horizontal swiping
 export class HorizontalHammerConfig extends HammerGestureConfig {
   overrides = {
