@@ -75,14 +75,14 @@ export class AbilityService {
 
   private getRulesForUser(rules: DatabaseRules): DatabaseRule[] {
     const rawUserRules: DatabaseRule[] = [];
-    if (rules.default) {
-      rawUserRules.push(...rules.default);
-    }
     const currentUser = this.sessionService.getCurrentUser();
     currentUser.roles.forEach((role) => {
       const rulesForRole = rules[role] || [];
       rawUserRules.push(...rulesForRole);
     });
+    if (rules.default) {
+      rawUserRules.push(...rules.default);
+    }
     return this.interpolateUser(rawUserRules, currentUser);
   }
 
@@ -107,7 +107,7 @@ export class AbilityService {
   }
 
   private updateAbilityWithRules(rules: DatabaseRule[]) {
-    this.ability.update(rules as any);
+    this.ability.update(rules);
     this._abilityUpdated.next();
   }
 }
