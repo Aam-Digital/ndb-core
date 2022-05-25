@@ -1,6 +1,5 @@
 import { NgModule } from "@angular/core";
 import { CommonModule, DatePipe } from "@angular/common";
-import { SchoolsListComponent } from "./schools-list/schools-list.component";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatButtonModule } from "@angular/material/button";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
@@ -71,18 +70,10 @@ import { ViewModule } from "../../core/view/view.module";
     FontAwesomeModule,
     ViewModule,
   ],
-  declarations: [
-    SchoolBlockComponent,
-    SchoolsListComponent,
-    ChildrenOverviewComponent,
-  ],
+  declarations: [SchoolBlockComponent, ChildrenOverviewComponent],
   exports: [SchoolBlockComponent],
   providers: [DatePipe],
 })
 export class SchoolsModule {
-  static dynamicComponents = [
-    SchoolsListComponent,
-    ChildrenOverviewComponent,
-    SchoolBlockComponent,
-  ];
+  static dynamicComponents = [ChildrenOverviewComponent, SchoolBlockComponent];
 }

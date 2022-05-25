@@ -1,4 +1,12 @@
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  discardPeriodicTasks,
+  fakeAsync,
+  flush,
+  TestBed,
+  tick,
+  waitForAsync,
+} from "@angular/core/testing";
 import { EntityListComponent } from "./entity-list.component";
 import { SimpleChange } from "@angular/core";
 import { BooleanFilterConfig, EntityListConfig } from "./EntityListConfig";
@@ -13,6 +21,10 @@ import { AttendanceService } from "../../../child-dev-project/attendance/attenda
 import { ExportService } from "../../export/export-service/export.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Subject } from "rxjs";
+import { RouteData } from "../../view/dynamic-routing/view-config.interface";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -66,6 +78,8 @@ describe("EntityListComponent", () => {
   let mockLoggingService: jasmine.SpyObj<LoggingService>;
   let mockEntitySchemaService: jasmine.SpyObj<EntitySchemaService>;
   let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
+  let mockActivatedRoute: Partial<ActivatedRoute>;
+  let routeData: Subject<RouteData<EntityListConfig>>;
 
   beforeEach(
     waitForAsync(() => {
@@ -83,6 +97,13 @@ describe("EntityListComponent", () => {
       mockAttendanceService.getAllActivityAttendancesForPeriod.and.resolveTo(
         []
       );
+      routeData = new Subject<RouteData<EntityListConfig>>();
+      mockActivatedRoute = {
+        component: undefined,
+        queryParams: new Subject(),
+        data: routeData,
+        snapshot: { queryParams: {} } as any,
+      };
 
       TestBed.configureTestingModule({
         imports: [
@@ -96,32 +117,27 @@ describe("EntityListComponent", () => {
           { provide: ExportService, useValue: {} },
           { provide: EntitySchemaService, useValue: mockEntitySchemaService },
           { provide: AttendanceService, useValue: mockAttendanceService },
+          { provide: ActivatedRoute, useValue: mockActivatedRoute },
         ],
       }).compileComponents();
     })
   );
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(EntityListComponent);
-    component = fixture.componentInstance;
-    component.listConfig = testConfig;
-    component.entityConstructor = Child;
-    component.ngOnChanges({
-      allEntities: new SimpleChange(null, component.allEntities, false),
-      listConfig: new SimpleChange(null, component.listConfig, false),
-    });
-    fixture.detectChanges();
-  });
-
   it("should create", () => {
+    createComponent();
+    initComponentInputs();
     expect(component).toBeTruthy();
   });
 
   it("should creates columns from config", () => {
+    createComponent();
+    initComponentInputs();
     expect(component.columns).toEqual(testConfig.columns);
   });
 
   it("should create column groups from config and set correct one", () => {
+    createComponent();
+    initComponentInputs();
     expect(component.columnGroups).toEqual(testConfig.columnGroups.groups);
     const defaultGroup = testConfig.columnGroups.groups.findIndex(
       (g) => g.name === testConfig.columnGroups.default
@@ -133,33 +149,39 @@ describe("EntityListComponent", () => {
   });
 
   it("should set the clicked column group", () => {
+    createComponent();
+    initComponentInputs();
     const clickedColumnGroup = testConfig.columnGroups.groups[0];
     component.columnGroupClick(clickedColumnGroup.name);
     expect(component.selectedColumnGroupIndex).toEqual(0);
     expect(component.columnsToDisplay).toEqual(clickedColumnGroup.columns);
   });
 
-  it("should apply the clicked filter", (done) => {
+  it("should apply the clicked filter", fakeAsync(() => {
+    createComponent();
+    initComponentInputs();
     const clickedOption = "false";
     const child1 = new Child("dropoutId");
     child1.status = "Dropout";
     const child2 = new Child("activeId");
     component.allEntities = [child1, child2];
+
     component.ngOnChanges({ allEntities: null });
-    setTimeout(() => {
-      const activeFs = component.filterSelections[0];
-      component.filterOptionSelected(activeFs, clickedOption);
-      expect(component.filterSelections[0].selectedOption).toEqual(
-        clickedOption
-      );
-      expect(component.allEntities).toHaveSize(2);
-      expect(component.filteredEntities).toHaveSize(1);
-      expect(component.filteredEntities[0]).toEqual(child1);
-      done();
-    });
-  });
+    tick();
+
+    const activeFs = component.filterSelections[0];
+    component.filterOptionSelected(activeFs, clickedOption);
+    expect(component.filterSelections[0].selectedOption).toEqual(clickedOption);
+    expect(component.allEntities).toHaveSize(2);
+    expect(component.filteredEntities).toHaveSize(1);
+    expect(component.filteredEntities[0]).toEqual(child1);
+    flush();
+    discardPeriodicTasks();
+  }));
 
   it("should add and initialize columns which are only mentioned in the columnGroups", () => {
+    createComponent();
+    initComponentInputs();
     class Test extends Entity {
       @DatabaseField({ label: "Test Property" }) testProperty: string;
     }
@@ -192,10 +214,54 @@ describe("EntityListComponent", () => {
   });
 
   it("should create records of the correct entity", () => {
+    createComponent();
+    initComponentInputs();
     component.entityConstructor = Child;
 
     const res = component.getNewRecordFactory()();
 
     expect(res).toHaveType(Child.ENTITY_TYPE);
   });
+
+  it("should automatically initialize values if directly referenced from config", fakeAsync(() => {
+    mockActivatedRoute.component = EntityListComponent;
+    const config = {
+      entity: "Child",
+      title: "Some title",
+      columns: ["name", "gender"],
+    };
+    const entityMapper = TestBed.inject(EntityMapperService);
+    const children = [new Child(), new Child()];
+    spyOn(entityMapper, "loadType").and.resolveTo(children);
+
+    createComponent();
+    routeData.next({ config });
+    tick();
+
+    expect(component.entityConstructor).toBe(Child);
+    expect(component.listConfig).toEqual(config);
+    expect(component.allEntities).toEqual(children);
+
+    const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
+    component.addNewClick.emit();
+    expect(navigateSpy.calls.mostRecent().args[0]).toEqual(["new"]);
+    component.elementClick.emit(new Child("clickedId"));
+    expect(navigateSpy.calls.mostRecent().args[0]).toEqual(["clickedId"]);
+  }));
+
+  function createComponent() {
+    fixture = TestBed.createComponent(EntityListComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  }
+
+  function initComponentInputs() {
+    component.listConfig = testConfig;
+    component.entityConstructor = Child;
+    component.ngOnChanges({
+      allEntities: new SimpleChange(null, component.allEntities, false),
+      listConfig: new SimpleChange(null, component.listConfig, false),
+    });
+    fixture.detectChanges();
+  }
 });

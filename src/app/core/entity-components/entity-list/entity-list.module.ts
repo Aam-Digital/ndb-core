@@ -62,4 +62,6 @@ import { MatDialogModule } from "@angular/material/dialog";
   ],
   exports: [EntityListComponent, ListFilterComponent],
 })
-export class EntityListModule {}
+export class EntityListModule {
+  dynamicComponents = [EntityListComponent];
+}

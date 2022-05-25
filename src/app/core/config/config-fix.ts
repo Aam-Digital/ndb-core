@@ -322,9 +322,10 @@ export const defaultJsonConfig = {
     "component": "AddDayAttendance"
   },
   "view:school": {
-    "component": "SchoolsList",
+    "component": "EntityList",
     "config": {
       "title": $localize`:Title of schools overview:Schools List`,
+      "entity": "School",
       "columns": [
         "name",
         "privateSchool",
@@ -681,9 +682,10 @@ export const defaultJsonConfig = {
   },
 
   "view:attendance/recurring-activity": {
-    "component": "ActivityList",
+    "component": "EntityList",
     "config": {
       "title": $localize`:Title of recurring activities overview:Recurring Activities`,
+      "entity": "RecurringActivity",
       "columns": [
         "title",
         "type",

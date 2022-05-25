@@ -23,7 +23,7 @@
           [angularticsAction]="
               listName.toLowerCase().replace(' ', '_') + '_add_new'
             "
-          [angularticsCategory]="entityConstructor.ENTITY_TYPE"
+          [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
           angularticsAction="list_add_entity"
           *appDisabledEntityOperation="{
               entity: entityConstructor,
@@ -58,7 +58,7 @@
         [displayAsToggle]="filter.display !== 'dropdown'"
         (selectedOptionChange)="filterOptionSelected(filter, $event)"
         angulartics2On="click"
-        [angularticsCategory]="entityConstructor.ENTITY_TYPE"
+        [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
         angularticsAction="list_filter"
         [angularticsLabel]="filter.filterSettings.label"
       >
@@ -73,7 +73,7 @@
             [label]="item.name"
             (click)="columnGroupClick(item.name)"
             angulartics2On="click"
-            [angularticsCategory]="entityConstructor.ENTITY_TYPE"
+            [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
             angularticsAction="list_column_view"
             [angularticsLabel]="item.name"
           ></mat-tab>
@@ -181,7 +181,7 @@
     mat-menu-item
     [appExportData]="allEntities"
     format="csv"
-    [exportConfig]="listConfig.exportConfig"
+    [exportConfig]="listConfig?.exportConfig"
     [filename]="listName.replace(' ', '')"
   >
     <fa-icon
@@ -189,7 +189,7 @@
       aria-label="download csv"
       icon="download"
       angulartics2On="click"
-      [angularticsCategory]="entityConstructor.ENTITY_TYPE"
+      [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
       angularticsAction="list_csv_export"
     ></fa-icon>
     <span i18n="Download list contents as CSV"> Download CSV </span>
