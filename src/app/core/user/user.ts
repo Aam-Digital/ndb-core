@@ -30,7 +30,16 @@ import * as CryptoJS from "crypto-js";
 @DatabaseEntity("User")
 export class User extends Entity {
   /** username used for login and identification */
-  @DatabaseField() name: string;
+  @DatabaseField({
+    label: $localize`:Label of username:Username`,
+    validators: { required: true },
+  })
+  name: string;
+
+  @DatabaseField({ label: $localize`:Label of user email:Email` })
+  email: string;
+  @DatabaseField({ label: $localize`:Label of user phone:Contact` })
+  phone: string;
 
   /**
    * settings for the mat-paginator for tables.

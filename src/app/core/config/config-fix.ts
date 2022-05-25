@@ -302,7 +302,44 @@ export const defaultJsonConfig = {
     "permittedUserRoles": ["admin_app"]
   },
   "view:users": {
-    "component": "UserList",
+    "component": "EntityList",
+    "config": {
+      "title": $localize`:Title for user overview:Users`,
+      "entity": "User",
+      "columns": ["name", "email", "phone"]
+    },
+    "permittedUserRoles": ["admin_app"]
+  },
+  "view:users/:id": {
+    "component": "EntityDetails",
+    "config": {
+      "entity": "User",
+      "panels": [
+        {
+          "title": $localize`:Panel title:User Information`,
+          "components": [
+            {
+              "title": "",
+              "component": "Form",
+              "config": {
+                "cols": [
+                  [
+                    "name",
+                  ],
+                  [
+                    "email"
+                  ],
+                  [
+                    "phone"
+                  ]
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "icon": "user"
+    },
     "permittedUserRoles": ["admin_app"]
   },
   "view:admin/conflicts": {
@@ -680,7 +717,6 @@ export const defaultJsonConfig = {
       ]
     }
   },
-
   "view:attendance/recurring-activity": {
     "component": "EntityList",
     "config": {

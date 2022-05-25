@@ -45,6 +45,8 @@ export class DemoUserGeneratorService extends DemoDataGenerator<User> {
     for (const name of userNames) {
       const user = new User(name);
       user.name = name;
+      user.email = name + "@aam-digital.com";
+      user.phone = faker.phone.phoneNumber();
       users.push(user);
     }
 
