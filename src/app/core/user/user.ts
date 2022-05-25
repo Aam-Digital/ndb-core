@@ -36,11 +36,6 @@ export class User extends Entity {
   })
   name: string;
 
-  @DatabaseField({ label: $localize`:Label of user email:Email` })
-  email: string;
-  @DatabaseField({ label: $localize`:Label of user phone:Contact` })
-  phone: string;
-
   /**
    * settings for the mat-paginator for tables.
    * map of ids (uniquely identifying a table) to pageSize or pageIndex.

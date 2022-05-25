@@ -91,6 +91,7 @@ export class DemoDataService {
     // save the generated data
     for (const generator of this.dataGenerators) {
       await this.entityMapper.saveAll(generator.entities);
+      await new Promise((resolve) => setTimeout(resolve));
     }
   }
 }

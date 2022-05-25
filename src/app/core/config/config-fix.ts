@@ -1039,5 +1039,24 @@ export const defaultJsonConfig = {
         }
       },
     ]
+  },
+  "entity:User": {
+    attributes: [
+
+      {
+        name: "email",
+        schema: {
+          dataType: "string",
+          label: $localize`:Label of user email:Email`
+        }
+      },
+      {
+        name: "phone",
+        schema: {
+          dataType: "string",
+          label: $localize`:Label of user phone:Contact`
+        }
+      },
+    ]
   }
 }
