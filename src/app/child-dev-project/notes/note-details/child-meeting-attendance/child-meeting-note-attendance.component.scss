@@ -2,6 +2,14 @@
   display: none;
 }
 
-.dense-form-field {
-  margin-top: -1em;
+fa-icon {
+  padding-right: 10px;
+  cursor: pointer;
+}
+
+.attendance-box {
+  border: 1px solid lightgrey;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 5px
 }
