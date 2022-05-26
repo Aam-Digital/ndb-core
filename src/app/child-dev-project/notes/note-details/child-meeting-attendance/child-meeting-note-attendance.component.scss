@@ -2,14 +2,21 @@
   display: none;
 }
 
-fa-icon {
-  padding-right: 10px;
-  cursor: pointer;
-}
-
 .attendance-box {
   border: 1px solid lightgrey;
   border-radius: 5px;
   padding: 10px;
-  margin-bottom: 5px
+  margin-bottom: 7px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 12px;
+  flex-grow: 1;
 }

@@ -274,3 +274,11 @@ $standard-icon-size: 1.5em;
 .margin-bottom-small {
   margin-bottom: $standard-margin-small;
 }
+
+/**
+ * Flex
+ */
+
+.flex-grow {
+  flex-grow: 1;
+}

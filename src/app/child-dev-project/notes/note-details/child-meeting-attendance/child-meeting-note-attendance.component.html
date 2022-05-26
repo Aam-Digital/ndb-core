@@ -1,26 +1,29 @@
-<div fxLayout="row wrap" fxLayoutAlign="start baseline" class="attendance-box">
+<div class="attendance-box">
 
-  <fa-icon *ngIf="!disabled" icon="times" (click)="remove.emit()"></fa-icon>
+  <div class="content-wrapper">
+    <app-child-block [entityId]="childId"></app-child-block>
 
-  <app-child-block [entityId]="childId" fxFlex> </app-child-block>
-
-  <app-attendance-status-select
-    [(value)]="attendance.status"
-    (valueChange)="change.emit(attendance)"
-    [disabled]="disabled"
-    fxFlex="250px"
-  >
-  </app-attendance-status-select>
-
-  <mat-form-field fxFlex>
-    <input
-      matInput
-      i18n-placeholder
-      placeholder="Remarks"
-      name="remarks"
-      type="text"
-      [(ngModel)]="attendance.remarks"
+    <app-attendance-status-select
+      [(value)]="attendance.status"
+      (valueChange)="change.emit(attendance)"
       [disabled]="disabled"
-    />
-  </mat-form-field>
+    >
+    </app-attendance-status-select>
+
+    <mat-form-field class="flex-grow">
+      <input
+        matInput
+        i18n-placeholder
+        placeholder="Remarks"
+        name="remarks"
+        type="text"
+        [(ngModel)]="attendance.remarks"
+        [disabled]="disabled"
+      />
+    </mat-form-field>
+  </div>
+
+  <button mat-icon-button>
+    <fa-icon *ngIf="!disabled" icon="trash" (click)="remove.emit()"></fa-icon>
+  </button>
 </div>
