@@ -122,7 +122,7 @@ describe("ChildrenListComponent", () => {
   });
 
   it("should load children on init", fakeAsync(() => {
-    expect(component.isLoading).toBeTrue();
+    component.isLoading = true;
     const child1 = new Child("c1");
     const child2 = new Child("c2");
     mockChildrenService.getChildren.and.returnValue(of([child1, child2]));

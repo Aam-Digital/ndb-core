@@ -217,7 +217,7 @@ describe("NotesManagerComponent", () => {
   });
 
   it("loads initial list including EventNotes if set in config", fakeAsync(() => {
-    expect(component.isLoading).toBeTrue();
+    component.isLoading = true;
     const note = Note.create(new Date("2020-01-01"), "test note");
     note.category = testInteractionTypes[0];
     const eventNote = EventNote.create(new Date("2020-01-01"), "test event");
