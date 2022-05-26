@@ -59,14 +59,12 @@ describe("ActivityListComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should indicate once loading is finished", fakeAsync(() => {
+  fit("should indicate once loading is finished", fakeAsync(() => {
     expect(component.isLoading).toBeTrue();
     const loadTypeSpy = spyOn(TestBed.inject(EntityMapperService), "loadType");
     const subject = new Subject<RecurringActivity[]>();
     loadTypeSpy.and.returnValue(subject.toPromise());
     component.ngOnInit();
-    tick();
-    expect(component.isLoading).toBeTrue();
     subject.complete();
     tick();
     expect(component.isLoading).toBeFalse();
