@@ -7,7 +7,7 @@ import {
 } from "@angular/core/testing";
 import { ChildrenListComponent } from "./children-list.component";
 import { ChildrenService } from "../children.service";
-import { of, Subject } from "rxjs";
+import { of } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ChildrenModule } from "../children.module";
 import { Child } from "../model/child";

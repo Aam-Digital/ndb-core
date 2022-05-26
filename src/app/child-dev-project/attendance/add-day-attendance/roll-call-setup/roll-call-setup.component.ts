@@ -1,6 +1,7 @@
 import {
   Component,
   EventEmitter,
+  Input,
   OnInit,
   Output,
   ViewChild,
@@ -39,6 +40,9 @@ export class RollCallSetupComponent implements OnInit {
 
   @ViewChild("dateField") dateField: NgModel;
 
+  @Input() isLoading;
+  @Output() isLoadingChange = new EventEmitter<boolean>();
+
   /**
    * filters are displayed in the UI only if at least this many events are listed.
    *
@@ -65,6 +69,8 @@ export class RollCallSetupComponent implements OnInit {
     );
     await this.loadActivities();
     await this.updateEventsList();
+    this.isLoading = false;
+    this.isLoadingChange.emit(false);
   }
 
   private async loadActivities() {

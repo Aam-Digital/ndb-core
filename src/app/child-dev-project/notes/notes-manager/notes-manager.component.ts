@@ -102,13 +102,11 @@ export class NotesManagerComponent implements OnInit {
 
   private async loadEntities(): Promise<Note[]> {
     let notes = await this.entityMapperService.loadType(Note);
-    this.isLoading = false;
     if (this.includeEventNotes) {
-      this.isLoading = true;
       const eventNotes = await this.entityMapperService.loadType(EventNote);
       notes = notes.concat(eventNotes);
-      this.isLoading = false;
     }
+    this.isLoading = false;
     return notes;
   }
 
