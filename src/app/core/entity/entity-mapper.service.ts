@@ -55,9 +55,6 @@ export class EntityMapperService {
   ): Promise<T> {
     const ctor = this.resolveConstructor(entityType);
     const resultEntity = new ctor("");
-    console.log("Waiting for load started.");
-    await new Promise((resolve) => setTimeout(resolve, 5000));
-    console.log("Waiting for load stopped.");
     const result = await this._db.get(
       Entity.createPrefixedId(resultEntity.getType(), id)
     );
@@ -79,9 +76,6 @@ export class EntityMapperService {
   ): Promise<T[]> {
     const resultArray: Array<T> = [];
     const ctor = this.resolveConstructor(entityType);
-    console.log("Waiting for loadType started.");
-    await new Promise((resolve) => setTimeout(resolve, 5000));
-    console.log("Waiting for loadType stopped.");
     const allRecordsOfType = await this._db.getAll(
       new ctor("").getType() + ":"
     );
