@@ -1042,7 +1042,6 @@ export const defaultJsonConfig = {
   },
   "entity:User": {
     attributes: [
-
       {
         name: "email",
         schema: {

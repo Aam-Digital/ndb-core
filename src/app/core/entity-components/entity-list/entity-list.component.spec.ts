@@ -258,10 +258,7 @@ describe("EntityListComponent", () => {
   function initComponentInputs() {
     component.listConfig = testConfig;
     component.entityConstructor = Child;
-    component.ngOnChanges({
-      allEntities: new SimpleChange(null, component.allEntities, false),
-      listConfig: new SimpleChange(null, component.listConfig, false),
-    });
+    component.ngOnChanges({ allEntities: undefined, listConfig: undefined });
     fixture.detectChanges();
   }
 });
