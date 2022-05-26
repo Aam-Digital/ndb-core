@@ -1,35 +1,21 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { SearchComponent } from "./search.component";
-import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
-import { MatToolbarModule } from "@angular/material/toolbar";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { CommonModule } from "@angular/common";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { ChildrenModule } from "../../../child-dev-project/children/children.module";
-import { SchoolsModule } from "../../../child-dev-project/schools/schools.module";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { School } from "../../../child-dev-project/schools/model/school";
-import { RouterTestingModule } from "@angular/router/testing";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
-import { EntityUtilsModule } from "../../entity-components/entity-utils/entity-utils.module";
 import { Subscription } from "rxjs";
 import { Entity } from "../../entity/model/entity";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
-import {
-  EntityRegistry,
-  entityRegistry,
-} from "../../entity/database-entity.decorator";
+import { UiModule } from "../ui.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { SwUpdate } from "@angular/service-worker";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("SearchComponent", () => {
   let component: SearchComponent;
   let fixture: ComponentFixture<SearchComponent>;
 
   let mockIndexService: jasmine.SpyObj<DatabaseIndexingService>;
-  const entitySchemaService = new EntitySchemaService();
   let subscription: Subscription;
 
   beforeEach(
@@ -41,35 +27,20 @@ describe("SearchComponent", () => {
 
       TestBed.configureTestingModule({
         imports: [
-          MatFormFieldModule,
-          MatInputModule,
-          MatAutocompleteModule,
-          CommonModule,
-          FormsModule,
-          NoopAnimationsModule,
-          ChildrenModule,
-          SchoolsModule,
-          MatToolbarModule,
-          RouterTestingModule,
-          ReactiveFormsModule,
-          EntityUtilsModule,
+          UiModule,
+          MockedTestingModule.withState(),
+          FontAwesomeTestingModule,
         ],
         providers: [
-          { provide: EntitySchemaService, useValue: entitySchemaService },
           { provide: DatabaseIndexingService, useValue: mockIndexService },
-          { provide: EntityMapperService, useValue: {} },
-          {
-            provide: EntityRegistry,
-            useValue: entityRegistry,
-          },
+          { provide: SwUpdate, useValue: {} },
         ],
-        declarations: [SearchComponent],
       }).compileComponents();
     })
   );
 
   beforeEach(() => {
-    mockIndexService.createIndex.and.returnValue(Promise.resolve());
+    mockIndexService.createIndex.and.resolveTo();
     fixture = TestBed.createComponent(SearchComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

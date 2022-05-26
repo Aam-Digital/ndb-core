@@ -173,19 +173,6 @@
           <context context-type="linenumber">29</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="394bc3d433575a9568c49d094894a1a13bff3552" datatype="html">
-        <source>Picture of a child</source>
-        <target state="new">Picture of a child</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/children/child-block/child-block.component.html</context>
-          <context context-type="linenumber">9</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/children/child-block/child-block.component.html</context>
-          <context context-type="linenumber">25</context>
-        </context-group>
-        <note priority="1" from="description">Alternative text for small picture</note>
-      </trans-unit>
       <trans-unit id="a91744f158d6ec717adbfd9aba29793d4ae68c50" datatype="html">
         <source>Activate to also show entries for the activity that do not have any events with actual participation of this person</source>
         <target state="translated">Activer pour afficher également les données de l'activité qui n'ont pas d'événements comportant la participation effective de cette personne.</target>
@@ -1325,7 +1312,7 @@
         <note priority="1" from="description">Error assertValid failed</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/model/childSchoolRelation.ts</context>
-          <context context-type="linenumber">89</context>
+          <context context-type="linenumber">88</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3663273932389961089" datatype="html">
@@ -1334,7 +1321,7 @@
         <note priority="1" from="description">Error assertValid failed</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/model/childSchoolRelation.ts</context>
-          <context context-type="linenumber">93</context>
+          <context context-type="linenumber">92</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5743999575330197666" datatype="html">
@@ -3241,11 +3228,7 @@
       <trans-unit id="3007651244935433751" datatype="html">
         <source>School Info</source>
         <target state="translated">Informations scolaires</target>
-        <note priority="1" from="description">Translated name of default column group</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">444</context>
-        </context-group>
+        <note priority="1" from="description">Column group name</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
           <context context-type="linenumber">461</context>
@@ -3254,7 +3237,11 @@
       <trans-unit id="7691138136265271231" datatype="html">
         <source>Basic Info</source>
         <target state="translated">Informations de base</target>
-        <note priority="1" from="description">Column group name</note>
+        <note priority="1" from="description">Translated name of default column group</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
+          <context context-type="linenumber">444</context>
+        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
           <context context-type="linenumber">448</context>

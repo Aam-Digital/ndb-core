@@ -11,7 +11,6 @@ import { ChildPhotoService } from "./child-photo-service/child-photo.service";
 import moment, { Moment } from "moment";
 import { LoggingService } from "../../core/logging/logging.service";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
-import { QueryOptions } from "../../core/database/database";
 
 @Injectable()
 export class ChildrenService {
@@ -40,11 +39,11 @@ export class ChildrenService {
       results.next(loadedChildren);
 
       for (const loadedChild of loadedChildren) {
-        const childCurrentSchoolInfo = await this.getCurrentSchoolInfoForChild(
+        const childCurrentSchoolInfo = await this.queryLatestRelation(
           loadedChild.getId()
         );
-        loadedChild.schoolClass = childCurrentSchoolInfo.schoolClass;
-        loadedChild.schoolId = childCurrentSchoolInfo.schoolId;
+        loadedChild.schoolClass = childCurrentSchoolInfo?.schoolClass;
+        loadedChild.schoolId = childCurrentSchoolInfo?.schoolId;
       }
       results.next(loadedChildren);
       results.complete();
@@ -61,13 +60,11 @@ export class ChildrenService {
     const promise = this.entityMapper
       .load<Child>(Child, id)
       .then((loadedChild) => {
-        return this.getCurrentSchoolInfoForChild(id).then(
-          (currentSchoolInfo) => {
-            loadedChild.schoolClass = currentSchoolInfo.schoolClass;
-            loadedChild.schoolId = currentSchoolInfo.schoolId;
-            return loadedChild;
-          }
-        );
+        return this.queryLatestRelation(id).then((currentSchoolInfo) => {
+          loadedChild.schoolClass = currentSchoolInfo?.schoolClass;
+          loadedChild.schoolId = currentSchoolInfo?.schoolId;
+          return loadedChild;
+        });
       });
     return from(promise);
   }
@@ -79,30 +76,13 @@ export class ChildrenService {
         by_child: {
           map: `(doc) => {
             if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
-            emit(doc.childId);
-            }`,
+            emit([doc.childId, new Date(doc.start || '3000-01-01').getTime()]);
+          }`,
         },
         by_school: {
           map: `(doc) => {
-            if ( (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) ||
-                (doc.start && isAfterToday(new Date(doc.start))) ||
-                (doc.end && !isAfterToday(new Date(doc.end))) ) {
-              return;
-            }
-            emit(doc.schoolId);
-            function isAfterToday(date) {
-              const tomorrow = new Date();
-              tomorrow.setHours(0, 0, 0, 0);
-              tomorrow.setDate(tomorrow.getDate() + 1);
-              return date >= tomorrow;
-            }
-            }`,
-        },
-        by_date: {
-          map: `(doc) => {
             if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
-            let timestamp = (new Date(doc.start || '3000-01-01')).getTime().toString().padStart(14, "0");
-            emit(doc.childId + '_' + timestamp);
+            emit([doc.schoolId]);
             }`,
         },
       },
@@ -110,38 +90,35 @@ export class ChildrenService {
     return this.dbIndexing.createIndex(designDoc);
   }
 
-  queryLatestRelation(childId: string): Promise<ChildSchoolRelation> {
-    return this.querySortedRelations(childId, 1).then(
-      (children) => children[0]
+  queryLatestRelation(
+    childId: string
+  ): Promise<ChildSchoolRelation | undefined> {
+    return this.queryActiveRelationsOf("child", childId).then((relations) =>
+      relations.length > 0 ? relations[0] : undefined
     );
   }
 
-  async querySortedRelations(
-    childId: string,
-    limit?: number
+  queryActiveRelationsOf(
+    queryType: "child" | "school",
+    id: string
   ): Promise<ChildSchoolRelation[]> {
-    const options: QueryOptions = {
-      startkey: childId + "_\uffff", //  higher value needs to be startkey
-      endkey: childId + "_", //  \uffff is not a character -> only relations staring with childId will be selected
-      descending: true,
-      include_docs: true,
-      limit: limit,
-    };
-    return this.dbIndexing.queryIndexDocs(
-      ChildSchoolRelation,
-      "childSchoolRelations_index/by_date",
-      options
+    return this.queryRelationsOf(queryType, id).then((relations) =>
+      relations.filter((rel) => rel.isActive)
     );
   }
 
-  async queryRelationsOf(
+  queryRelationsOf(
     queryType: "child" | "school",
     id: string
   ): Promise<ChildSchoolRelation[]> {
     return this.dbIndexing.queryIndexDocs(
       ChildSchoolRelation,
       "childSchoolRelations_index/by_" + queryType,
-      id
+      {
+        startkey: [id, "\uffff"],
+        endkey: [id],
+        descending: true,
+      }
     );
   }
 
@@ -260,31 +237,5 @@ export class ChildrenService {
         return loadedEntities.filter((o) => o.child === childId);
       })
     );
-  }
-
-  async getCurrentSchoolInfoForChild(
-    childId: string
-  ): Promise<{ schoolId: string; schoolClass: string }> {
-    const relations = (await this.querySortedRelations(childId)) || [];
-    for (const rel of relations) {
-      if (
-        moment(rel.start).isSameOrBefore(moment(), "days") &&
-        moment(rel.end).isSameOrAfter(moment(), "days")
-      ) {
-        return {
-          schoolId: rel.schoolId,
-          schoolClass: rel.schoolClass,
-        };
-      }
-    }
-
-    return {
-      schoolId: null,
-      schoolClass: null,
-    };
-  }
-
-  getSchoolRelationsFor(childId: string): Promise<ChildSchoolRelation[]> {
-    return this.querySortedRelations(childId);
   }
 }

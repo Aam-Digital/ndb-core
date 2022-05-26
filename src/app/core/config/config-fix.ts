@@ -306,7 +306,6 @@ export const defaultJsonConfig = {
     "permittedUserRoles": ["admin_app"]
   },
   "view:admin/conflicts": {
-    "component": "ConflictResolution",
     "permittedUserRoles": ["admin_app"],
     "lazyLoaded":  true
   },
@@ -441,7 +440,7 @@ export const defaultJsonConfig = {
         }
       ],
       "columnGroups": {
-        "default": $localize`:Translated name of default column group:School Info`,
+        "default": $localize`:Translated name of default column group:Basic Info`,
         "mobile": $localize`:Translated name of mobile column group:Mobile`,
         "groups": [
           {

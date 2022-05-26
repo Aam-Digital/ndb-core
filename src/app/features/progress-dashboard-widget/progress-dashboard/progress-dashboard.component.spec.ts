@@ -15,6 +15,7 @@ import { ProgressDashboardConfig } from "./progress-dashboard-config";
 import { MatDialog } from "@angular/material/dialog";
 import { Subject } from "rxjs";
 import { take } from "rxjs/operators";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("ProgressDashboardComponent", () => {
   let component: ProgressDashboardComponent;
@@ -32,7 +33,11 @@ describe("ProgressDashboardComponent", () => {
       mockEntityMapper.save.and.resolveTo();
 
       TestBed.configureTestingModule({
-        imports: [ProgressDashboardWidgetModule, FontAwesomeTestingModule],
+        imports: [
+          ProgressDashboardWidgetModule,
+          MockedTestingModule.withState(),
+          FontAwesomeTestingModule,
+        ],
         providers: [
           { provide: EntityMapperService, useValue: mockEntityMapper },
           { provide: MatDialog, useValue: mockDialog },

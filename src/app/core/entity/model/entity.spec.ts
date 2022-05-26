@@ -19,9 +19,7 @@ import { Entity, EntityConstructor } from "./entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
 import { ConfigurableEnumDatatype } from "../../configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
-import { ConfigService } from "../../config/config.service";
-import { LoggingService } from "../../logging/logging.service";
-import { mockEntityMapper } from "../mock-entity-mapper-service";
+import { createTestingConfigService } from "../../config/config.service";
 
 describe("Entity", () => {
   let entitySchemaService: EntitySchemaService;
@@ -107,11 +105,7 @@ export function testEntitySubclass(
 
   it("should only load and store properties defined in the schema", () => {
     const schemaService = new EntitySchemaService();
-    const configService = new ConfigService(
-      mockEntityMapper(),
-      new LoggingService()
-    );
-    configService.loadConfig();
+    const configService = createTestingConfigService();
     schemaService.registerSchemaDatatype(
       new ConfigurableEnumDatatype(configService)
     );

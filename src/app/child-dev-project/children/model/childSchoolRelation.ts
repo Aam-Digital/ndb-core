@@ -70,8 +70,7 @@ export class ChildSchoolRelation extends Entity {
    */
   isActiveAt(date: Date): boolean {
     return (
-      this.start &&
-      moment(this.start).isSameOrBefore(date, "day") &&
+      (!this.start || moment(this.start).isSameOrBefore(date, "day")) &&
       (!this.end || moment(this.end).isSameOrAfter(date, "day"))
     );
   }

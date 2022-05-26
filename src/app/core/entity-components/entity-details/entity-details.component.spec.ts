@@ -65,11 +65,11 @@ describe("EntityDetailsComponent", () => {
   beforeEach(
     waitForAsync(() => {
       mockChildrenService = jasmine.createSpyObj([
-        "getSchoolRelationsFor",
+        "queryRelationsOf",
         "getAserResultsOfChild",
       ]);
       mockEntityRemoveService = jasmine.createSpyObj(["remove"]);
-      mockChildrenService.getSchoolRelationsFor.and.resolveTo([]);
+      mockChildrenService.queryRelationsOf.and.resolveTo([]);
       mockChildrenService.getAserResultsOfChild.and.returnValue(of([]));
       mockAbility = jasmine.createSpyObj(["cannot", "update"]);
       mockAbility.cannot.and.returnValue(false);
