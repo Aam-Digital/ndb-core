@@ -67,7 +67,7 @@
 
     <div>
       <div *ngIf="columnGroups.length > 1" >
-        <mat-tab-group [(selectedIndex)]="selectedColumnGroupIndex">
+        <mat-tab-group [(selectedIndex)]="selectedColumnGroupIndex" appTabStateMemo>
           <mat-tab
             *ngFor="let item of columnGroups"
             [label]="item.name"

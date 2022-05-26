@@ -26,6 +26,7 @@ import { MatMenuModule } from "@angular/material/menu";
 import { MatTabsModule } from "@angular/material/tabs";
 import { FilterOverlayComponent } from "./filter-overlay/filter-overlay.component";
 import { MatDialogModule } from "@angular/material/dialog";
+import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 
 @NgModule({
   declarations: [
@@ -59,6 +60,7 @@ import { MatDialogModule } from "@angular/material/dialog";
     EntityFormModule,
     FontAwesomeModule,
     MatDialogModule,
+    TabStateModule,
   ],
   exports: [EntityListComponent, ListFilterComponent],
 })
