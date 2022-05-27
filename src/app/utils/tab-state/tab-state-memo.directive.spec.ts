@@ -11,14 +11,12 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { CommonModule } from "@angular/common";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Component } from "@angular/core";
-import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatTabGroupHarness } from "@angular/material/tabs/testing";
 import { TabStateModule } from "./tab-state.module";
 
 describe("TabStateService", () => {
   let fixture: ComponentFixture<TestAppComponent>;
-  let loader: HarnessLoader;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -33,7 +31,6 @@ describe("TabStateService", () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(TestAppComponent);
-    loader = TestbedHarnessEnvironment.loader(fixture);
 
     fixture.detectChanges();
   });
