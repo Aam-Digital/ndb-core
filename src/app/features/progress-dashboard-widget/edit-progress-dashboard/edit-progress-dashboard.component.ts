@@ -23,6 +23,7 @@ export interface EditProgressDashboardComponentData {
   styleUrls: ["./edit-progress-dashboard.component.scss"],
 })
 export class EditProgressDashboardComponent {
+  title: FormControl;
   forms: FormArray;
   currentErrorStateMatcher = new FormCurrentErrorStateMatcher();
 
@@ -30,6 +31,7 @@ export class EditProgressDashboardComponent {
     @Inject(MAT_DIALOG_DATA) public data: EditProgressDashboardComponentData,
     private fb: FormBuilder
   ) {
+    this.title = new FormControl("");
     this.forms = fb.array(data.parts.map((part) => this.formGroup(part)));
   }
 

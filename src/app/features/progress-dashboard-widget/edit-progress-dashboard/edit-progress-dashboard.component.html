@@ -1,5 +1,13 @@
 <div mat-dialog-title style="display: flex">
-  <h1 i18n="Edit the progress of one or multiple tasks">Edit Progress</h1>
+  <h1>
+    <input
+      formControlName="title"
+      matInput
+      type="text"
+      i18n-placeholder="Title Progress|Edit the progress of one or multiple tasks"
+      placeholder="Title"
+    />
+  </h1>
 </div>
 
 <mat-dialog-content class="dialog-content">
