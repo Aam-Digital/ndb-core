@@ -16,7 +16,7 @@ import { NoteDetailsComponent } from "../../note-details/note-details.component"
 })
 export class ImportantNotesComponent
   implements OnInit, OnInitDynamicComponent, AfterViewInit {
-  private relevantWarningLevels;
+  private relevantWarningLevels: string[] = [];
   public relevantNotes: Promise<Note[]>;
   public relevantNotesCount: Promise<number>;
 
