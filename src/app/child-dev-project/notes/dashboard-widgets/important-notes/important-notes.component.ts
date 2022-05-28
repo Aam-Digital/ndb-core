@@ -7,8 +7,13 @@ import { MatTableDataSource } from "@angular/material/table";
 import { MatPaginator } from "@angular/material/paginator";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
 import { NoteDetailsComponent } from "../../note-details/note-details.component";
+import { applyUpdate } from "../../../../core/entity/model/entity-update";
+import { concat, Observable } from "rxjs";
+import { first, map } from "rxjs/operators";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 @DynamicComponent("ImportantNotesComponent")
+@UntilDestroy()
 @Component({
   selector: "app-important-notes",
   templateUrl: "./important-notes.component.html",
@@ -17,8 +22,11 @@ import { NoteDetailsComponent } from "../../note-details/note-details.component"
 export class ImportantNotesComponent
   implements OnInit, OnInitDynamicComponent, AfterViewInit {
   private relevantWarningLevels: string[] = [];
-  public relevantNotes: Promise<Note[]>;
-  public relevantNotesCount: Promise<number>;
+  public relevantNotes: Note[] = [];
+  public relevantNotesLength?: number;
+
+  private notes: Observable<Note[]>;
+  public loading: boolean = true;
 
   public notesDataSource = new MatTableDataSource<Note>();
 
@@ -30,11 +38,22 @@ export class ImportantNotesComponent
   ) {}
 
   ngOnInit(): void {
-    this.relevantNotes = this.entityMapperService
-      .loadType(Note)
-      .then((notes) => notes.filter((note) => this.noteIsRelevant(note)))
-      .then((notes) => (this.notesDataSource.data = notes));
-    this.relevantNotesCount = this.relevantNotes.then((notes) => notes.length);
+    // This feed always contains the latest notes plus
+    // the initial notes
+    this.notes = concat(
+      this.entityMapperService.loadType(Note),
+      this.entityMapperService
+        .receiveUpdates(Note)
+        .pipe(map((next) => applyUpdate(this.relevantNotes, next)))
+    );
+    // set loading to `false` when the first chunk of notes (the initial notes) have arrived
+    this.notes.pipe(first()).subscribe(() => (this.loading = false));
+    this.notes.pipe(untilDestroyed(this)).subscribe((next) => {
+      this.relevantNotes = next.filter((note) => this.noteIsRelevant(note));
+      // this cannot simply be computed since it has to be undefined initially to display the spinner when loading
+      this.relevantNotesLength = this.relevantNotes.length;
+      this.notesDataSource.data = this.relevantNotes;
+    });
   }
 
   onInitFromDynamicConfig(config: any) {

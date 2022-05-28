@@ -1,12 +1,12 @@
 <app-dashboard-widget
   icon="exclamation-triangle"
-  [title]="relevantNotesCount"
+  [title]="relevantNotesLength"
   subtitle="Notes needing follow-up"
   theme="note"
-  [loading]="(relevantNotes | async) === null"
+  [loading]="loading"
 >
   <app-widget-content>
-    <div *ngIf="(relevantNotesCount | async) > 0" class="table-wrapper">
+    <div *ngIf="relevantNotes.length > 0" class="table-wrapper">
       <table
         mat-table
         [dataSource]="notesDataSource"
@@ -40,7 +40,7 @@
       </table>
     </div>
     <div
-      *ngIf="(relevantNotesCount | async) === 0"
+      *ngIf="relevantNotes.length === 0"
       class="headline"
     >
       <span i18n="There are no participants that have a recent report to be shown here">

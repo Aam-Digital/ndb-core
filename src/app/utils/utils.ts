@@ -97,3 +97,12 @@ export function compareEnums(
 ): boolean {
   return a?.id === b?.id;
 }
+
+/**
+ * returns `true` when `thing` is (probably) a `PromiseLike`, i.e. can
+ * be awaited and has a `.then()` function, `false` otherwise
+ * @param thing The thing under test
+ */
+export function isPromise(thing: any): thing is PromiseLike<any> {
+  return thing && typeof thing["then"] === "function";
+}
