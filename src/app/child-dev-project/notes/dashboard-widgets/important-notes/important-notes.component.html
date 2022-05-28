@@ -1,0 +1,58 @@
+<app-dashboard-widget
+  icon="exclamation-triangle"
+  [title]="relevantNotesCount"
+  subtitle="Notes needing follow-up"
+  theme="note"
+  [loading]="(relevantNotes | async) === null"
+>
+  <app-widget-content>
+    <div *ngIf="(relevantNotesCount | async) > 0" class="table-wrapper">
+      <table
+        mat-table
+        [dataSource]="notesDataSource"
+        aria-label="Notes needing follow-up"
+      >
+        <!-- Table header only for assistive technologies like screen readers -->
+        <tr hidden="true">
+          <th scope="col">Date</th>
+          <th scope="col">Title</th>
+        </tr>
+        <ng-container matColumnDef="date">
+          <td *matCellDef="let note">
+            {{note.date | date}}
+          </td>
+        </ng-container>
+
+        <ng-container
+          matColumnDef="title"
+        >
+          <td *matCellDef="let note" class="subject-cell">
+            {{note.subject}}
+          </td>
+        </ng-container>
+
+        <tr
+          mat-row
+          *matRowDef="let row; columns: ['date', 'title'];"
+          class="dashboard-table-row"
+          (click)="goToNote(row)"
+        ></tr>
+      </table>
+    </div>
+    <div
+      *ngIf="(relevantNotesCount | async) === 0"
+      class="headline"
+    >
+      <span i18n="There are no participants that have a recent report to be shown here">
+        no notes that need immediate attention
+      </span>
+    </div>
+    <mat-paginator
+      #paginator
+      [style.display]="paginator.getNumberOfPages() === 0 ? 'none' : ''"
+      [pageSizeOptions]="[5]"
+      [hidePageSize]="true"
+    >
+    </mat-paginator>
+  </app-widget-content>
+</app-dashboard-widget>

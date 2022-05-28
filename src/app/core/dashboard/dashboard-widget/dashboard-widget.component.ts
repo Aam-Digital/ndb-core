@@ -1,4 +1,5 @@
 import { Component, Input } from "@angular/core";
+import { IconName } from "@fortawesome/fontawesome-svg-core";
 
 export type DashboardTheme =
   | "general"
@@ -15,7 +16,7 @@ export type DashboardTheme =
 })
 export class DashboardWidgetComponent {
   @Input() subtitle: string;
-  @Input() icon: string;
+  @Input() icon: IconName;
   @Input() theme: DashboardTheme;
 
   _title: Promise<any>;

@@ -162,6 +162,12 @@ export const defaultJsonConfig = {
           "component": "ChildrenCountDashboard"
         },
         {
+          "component": "ImportantNotesComponent",
+          "config": {
+            "warningLevels": ["WARNING", "URGENT"],
+          }
+        },
+        {
           "component": "NotesDashboard",
           "config": {
             "sinceDays": 28,
