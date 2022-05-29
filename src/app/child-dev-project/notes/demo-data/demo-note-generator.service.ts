@@ -13,6 +13,7 @@ import moment from "moment";
 import { AttendanceLogicalStatus } from "../../attendance/model/attendance-status";
 import { DemoUserGeneratorService } from "../../../core/user/demo-user-generator.service";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
+import { getEarlierDateOrToday } from "../../../utils/utils";
 
 export class DemoNoteConfig {
   minNotesPerChild: number;
@@ -71,7 +72,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
             child,
             faker.date.between(
               moment().subtract(6, "days").toDate(),
-              faker.getEarlierDateOrToday(child.dropoutDate)
+              getEarlierDateOrToday(child.dropoutDate)
             )
           )
         );
@@ -107,7 +108,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     if (!date) {
       date = faker.date.between(
         child.admissionDate,
-        faker.getEarlierDateOrToday(child.dropoutDate)
+        getEarlierDateOrToday(child.dropoutDate)
       );
     }
     note.date = date;
