@@ -19,8 +19,8 @@
 .information-body {
   display: flex;
   flex-direction: column;
-  gap: $standard-margin-small;
-  padding: $standard-margin-small;
+  gap: $standard-gutter-small;
+  padding: $standard-gutter-small;
 }
 
 .additional-actions-menu {

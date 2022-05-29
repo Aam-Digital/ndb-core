@@ -1,4 +1,4 @@
-<form [formGroup]="form" (ngSubmit)="updateCloudServiceSettings()">
+<form [formGroup]="form" (ngSubmit)="updateCloudServiceSettings()" class="width-1-3">
   <p>
     <em i18n
       >Please enter your username and password for your Nextcloud account. This
@@ -6,17 +6,18 @@
     >
   </p>
   <p>
-    <mat-form-field>
+    <mat-form-field class="full-width">
       <input
         matInput
         required
         formControlName="cloudUser"
         i18n-placeholder="Cloud username placeholder"
         placeholder="Cloud Image Service User"
+        class="full-width"
       />
     </mat-form-field>
     <br />
-    <mat-form-field>
+    <mat-form-field class="full-width">
       <input
         matInput
         type="password"
@@ -24,6 +25,7 @@
         formControlName="cloudPassword"
         i18n-placeholder="Cloud password placeholder"
         placeholder="Cloud Image Service Password"
+        class="full-width"
       />
       <mat-error
         *ngIf="form.controls.cloudPassword.errors?.connectionFailed"
@@ -42,8 +44,9 @@
     >
   </p>
   <p>
-    <mat-form-field>
+    <mat-form-field class="full-width">
       <input
+        class="full-width"
         matInput
         type="password"
         required
@@ -61,7 +64,7 @@
       </mat-error>
     </mat-form-field>
   </p>
-  <p class="p-submit">
+  <p class="flex-row align-center">
     <button
       mat-raised-button
       type="submit"

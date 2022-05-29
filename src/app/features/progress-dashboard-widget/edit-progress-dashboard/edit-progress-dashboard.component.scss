@@ -4,7 +4,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr) 64px;
   grid-template-rows: repeat(2, 1fr);
-  grid-gap: $standard-margin-small;
+  grid-gap: $standard-gutter-small;
   grid-template-areas:
     "header header trash"
     "current target trash";

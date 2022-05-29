@@ -13,7 +13,6 @@ import { SessionService } from "../../session/session-service/session.service";
 @Component({
   selector: "app-cloud-file-service-user-settings",
   templateUrl: "./cloud-file-service-user-settings.component.html",
-  styleUrls: ["./cloud-file-service-user-settings.component.scss"],
 })
 export class CloudFileServiceUserSettingsComponent implements OnInit {
   /** The user for who this form edits data */

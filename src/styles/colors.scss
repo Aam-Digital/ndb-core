@@ -14,13 +14,18 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
-@import "~@angular/material/theming";
-@import "../../../../styles/colors";
-@import "../../../../styles/sizes";
 
-.info-field {
-  @include mat-elevation(1);
-  font-style: italic;
-  margin: $standard-gutter-small;
-  padding: $standard-gutter-small
+$color-warning-ok       : #90ee90;
+$color-warning-warning  : #ffa500;
+$color-warning-urgent   : #fd7272;
+
+$color-success          : #c8e6c9;
+$color-error            : #ff8a65;
+
+.background-error {
+  background-color: $color-error;
+}
+
+.background-success {
+  background-color: $color-success;
 }
