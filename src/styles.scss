@@ -358,6 +358,10 @@ $standard-icon-size: 1.5em;
   align-items: center;
 }
 
+.flex-grow-1-3 {
+  flex-grow: 0.3;
+}
+
 /**   Overflow   **/
 
 .overflow-auto-y {
@@ -370,4 +374,22 @@ $standard-icon-size: 1.5em;
 
 .pointer {
   cursor: pointer;
+}
+
+.hide-mobile {
+  @media (max-width: 599px) {
+    display: none;
+  }
+}
+
+.white {
+  color: white;
+}
+
+.padding-right-small {
+  padding-right: $standard-margin-small;
+}
+
+.remove-padding-bottom {
+  padding-bottom: 0;
 }
