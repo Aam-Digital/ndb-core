@@ -282,3 +282,92 @@ $standard-icon-size: 1.5em;
 .full-height {
   height: 100%
 }
+
+/** Flex helpers
+ *
+ *  These classes are designed to avoid boilerplate classes such as
+ *  .some-element {
+ *    display: flex
+ *    flex-direction: row
+ *  }
+ *
+ * Usage is intended for simple cases only. Use custom classes for more complex
+ * flex-layouts
+ */
+
+/**
+ * Aligns children in a row
+ *
+ * example:
+ * |--|------|-|
+ */
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+/**
+ * Aligns children in a column
+ *
+ * example:
+ * |--|
+ * |------|
+ * |-|
+ */
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+/**
+ * Makes a child grow bigger, relative to other items
+ * before:
+ * |---x---|--y--|---x---|
+ * after flex-grow is applied to the y-element:
+ * |---x---|------y------|---x---|
+ */
+.flex-grow {
+  flex-grow: 1;
+}
+
+/**
+ * justifies (places the item on their main axis) items so that the space
+ * between the items is maxed. This is useful, for example, when two items
+ * need to be placed at opposite ends (for example left and right or top and bottom)
+ *
+ + The main axis is dependent on the flex direction
+ * - flex-direction = row    : main axis is x-axis
+ * - flex-direction = column : main axis is y-axis
+ *
+ * example assuming flex-direction = row
+ *
+ * Without justify-space-between:
+ * | ----- | ----- |                |
+ *
+ * With justify-space-between:
+ * | ----- |                | ----- |
+ */
+.justify-space-between {
+  justify-content: space-between;
+}
+
+/**
+ * aligns the items (i.e. places the items on the non main axis)
+ */
+.align-center {
+  align-items: center;
+}
+
+/**   Overflow   **/
+
+.overflow-auto-y {
+  overflow-y: auto;
+}
+
+.overflow-y-hidden {
+  overflow-y: hidden;
+}
+
+.pointer {
+  cursor: pointer;
+}

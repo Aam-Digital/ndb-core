@@ -17,41 +17,67 @@
 
 @import "../../../../styles";
 
+/*
+ * outermost elements; make them as tall as possible.
+ * Consumes all of the available screen
+ */
 html,
 body {
   height: 100%;
 }
 
-.app-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+/**  Toolbar  **/
+
+/**
+ * Directive for the only toolbar row.
+ * Both of these directives are required to make the shadow show
+ */
+.ui-toolbar {
+  position: relative;
   z-index: 2;
 }
 
+.search-field {
+  /**
+   * Use a fixed width here because
+   * the form field does not work with
+   * relative / computed sizes
+   */
+  width: 450px;
+}
+
+.header-icon {
+  color: white;
+  font-size: 15pt;
+}
+
+/**  App content  **/
+
+/**
+ * The app content is fixed below the toolbar.
+ */
 .app-content {
   position: fixed;
   top: 64px;
   left: 0;
   right: 0;
   bottom: 0;
-}
 
-.sidenav-menu {
-  margin-top: 64px;
-}
-
-/* App Header is smaller on XS */
-@media (max-width: 599px) {
-  .app-content {
+  /**
+   * When the app is small (smaller than 599px),
+   * the toolbar shrinks because there is no search field.
+   * Therefore, the content must adapt
+   */
+  @media (max-width: 599px) {
     top: 56px;
   }
-  .sidenav-menu {
-    margin-top: 56px;
-  }
 }
 
+/**  Main content  **/
+
+/**
+ * The main content. Apply standard paddings to all edges
+ */
 .sidenav-content {
   margin:
     $margin-main-view-top
@@ -60,24 +86,18 @@ body {
     $margin-main-view-left;
 }
 
-.header-icon {
-  color: white;
-  font-size: 15pt;
-}
-
-.header-spacer {
-  flex: 1 1 auto;
-}
-
+/**
+ * reset the styles from the anchor element
+ */
 .header-title {
   color: white;
   text-decoration: none;
 }
 
-app-search {
-  max-height: 100%;
-}
-
+/**
+ * Remove the right border so that the background color
+ * merges into the main element
+ */
 .mat-drawer-side {
   border-right: 0;
 }
@@ -88,14 +108,16 @@ app-search {
   margin: auto;
 }
 
-.user-nav-button {
-  border: solid 1px rgba(0, 0, 0, 0.12);
-  border-right: 0;
+.footer-cell {
+  border-top: solid 1px rgba(0, 0, 0, 0.12);
   border-radius: 0;
-  overflow: hidden;
-}
-.user-nav-button-first {
-  border-left: 0;
+  display: flex;
+  place-content: center;
+  place-items: center;
+  &:not(:last-child) {
+    border-right: solid 1px rgba(0, 0, 0, 0.12);
+  }
+  box-sizing: border-box;
 }
 
 .info-icon {
@@ -109,9 +131,4 @@ app-search {
   border-right: solid 1px rgba(0, 0, 0, 0.12);
   border-radius: 0;
   overflow: hidden;
-}
-
-.menu-footer-row {
-  height: 40px;
-  align-items: center;
 }

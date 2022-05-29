@@ -16,40 +16,36 @@
   -->
 
 <!-- HEADER TOOLBAR -->
-<mat-toolbar color="primary" class="app-header mat-elevation-z2 mat-typography">
-  <mat-toolbar-row fxLayout="row">
-    <span fxFlex *ngIf="isLoggedIn() && sideNavMode == 'over'">
-      <button mat-icon-button (click)="sideNav.toggle()">
-        <fa-icon class="header-icon" icon="bars"></fa-icon>
-      </button>
-    </span>
+<mat-toolbar color="primary">
+  <mat-toolbar-row class="justify-space-between mat-elevation-z2 ui-toolbar">
+    <!-- Left items -->
+    <div class="flex-row align-center">
+      <span *ngIf="isLoggedIn() && sideNavMode === 'over'">
+        <button mat-icon-button (click)="sideNav.toggle()">
+          <fa-icon class="header-icon" icon="bars"></fa-icon>
+        </button>
+      </span>
 
-    <span fxFlex [fxHide.lt-md]="isLoggedIn()">
       <a
+        *ngIf="isLoggedIn() && sideNavMode !== 'over'"
         [routerLink]="['']"
         class="header-title"
         angulartics2On="click"
         angularticsCategory="Navigation"
         angularticsAction="navbar_site_title_link"
       >
-        {{ title }}
+      {{ title }}
       </a>
-    </span>
-
-    <span fxFlex="grow">&nbsp;</span>
-    <span fxFlex="grow">&nbsp;</span>
+    </div>
 
     <!--top right icons and search-->
+    <div class="flex-row align-center">
+      <app-search class="search-field" *ngIf="isLoggedIn()"></app-search>
 
-    <app-search
-      *ngIf="isLoggedIn()"
-      [fxFlex]="sideNavMode == 'side' ? 'grow' : 'none'"
-    ></app-search>
+      <app-sync-status></app-sync-status>
 
-    <app-sync-status></app-sync-status>
-
-    <app-language-select *ngIf="showLanguageSelect"></app-language-select>
-
+      <app-language-select *ngIf="showLanguageSelect"></app-language-select>
+    </div>
   </mat-toolbar-row>
 </mat-toolbar>
 
@@ -57,7 +53,7 @@
 
 <!-- MAIN NAVIGATION + CONTENT -->
 <mat-sidenav-container
-  class="app-content mat-typography primary-background"
+  class="app-content primary-background"
   (backdropClick)="closeSidenavOnMobile()"
 >
   <mat-sidenav
@@ -67,52 +63,46 @@
     [mode]="sideNavMode"
     [opened]="sideNavMode == 'side'"
     disableClose
-    fixedInViewport="true"
-    class="sidenav-menu"
   >
-    <div fxLayout="column" fxFlexFill>
+    <div class="flex-column justify-space-between full-height overflow-y-hidden">
 
-      <img *ngIf="logo_path" alt="site logo of user organisation" class="site-logo" [src]="logo_path" fxFlex/>
+      <img *ngIf="logo_path" alt="site logo of user organisation" class="site-logo" [src]="logo_path"/>
 
       <app-navigation
+        class="overflow-auto-y"
         (click)="closeSidenavOnMobile()"
-        fxFlex="grow"
-        style="overflow-y: auto"
       ></app-navigation>
 
+      <div class="flex-column">
+        <app-pwa-install></app-pwa-install>
 
-      <div fxFlex >
-        <div fxLayout="row" class="menu-footer-row">
-          <app-pwa-install fxFlex></app-pwa-install>
-        </div>
-
-        <div fxLayout="row" class="menu-footer-row">
+        <div class="flex-row">
           <button
             (click)="closeSidenavOnMobile()"
             mat-button
             routerLink="user"
             i18n="Navigate to user profile page"
-            class="user-nav-button user-nav-button-first"
-            fxFlex="50"
+            class="footer-cell"
           >
-            <fa-icon icon="user" class="nav-icon"></fa-icon>
+            <fa-icon icon="user"></fa-icon>
             Profile
           </button>
 
-          <button mat-button (click)="logout()" i18n="Sign out of the app" class="user-nav-button" fxFlex="50">
-            <fa-icon icon="sign-out-alt" class="nav-icon"></fa-icon>
+          <button mat-button (click)="logout()" i18n="Sign out of the app" class="footer-cell">
+            <fa-icon icon="sign-out-alt"></fa-icon>
             Sign out
           </button>
         </div>
 
-        <div fxLayout="row" class="menu-footer-row">
-          <button mat-icon-button class="info-button" routerLink="/support" (click)="closeSidenavOnMobile()">
+        <div class="flex-row">
+          <button mat-icon-button class="footer-cell" routerLink="/support" (click)="closeSidenavOnMobile()">
             <fa-icon icon="info-circle" class="info-icon"></fa-icon>
           </button>
-          <app-version class="full-width"></app-version>
+          <button mat-button class="footer-cell full-width">
+            <app-version></app-version>
+          </button>
         </div>
       </div>
-
     </div>
   </mat-sidenav>
 
