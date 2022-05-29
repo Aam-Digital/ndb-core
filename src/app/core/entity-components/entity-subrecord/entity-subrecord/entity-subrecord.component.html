@@ -3,7 +3,7 @@
     mat-table
     [dataSource]="recordsDataSource"
     matSort
-    class="subrecord-table"
+    class="full-width"
   >
     <ng-container *ngFor="let col of filteredColumns" [matColumnDef]="col.id">
       <th

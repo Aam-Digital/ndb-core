@@ -10,10 +10,6 @@ $widget-height: 370px;
   font-style: italic;
 }
 
-.action-button {
-  width: 100%;
-}
-
 .cards-wrapper {
   @include adaptive-grid($min-width-content);
 }
