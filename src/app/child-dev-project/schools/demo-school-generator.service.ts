@@ -1,4 +1,4 @@
-import { faker } from "../../core/demo-data/faker";
+import faker from "faker/locale/en_IND";
 import { School } from "./model/school";
 import { Injectable } from "@angular/core";
 import { DemoDataGenerator } from "../../core/demo-data/demo-data-generator";

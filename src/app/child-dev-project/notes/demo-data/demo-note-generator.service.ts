@@ -3,7 +3,7 @@ import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
 import { Child } from "../../children/model/child";
 import { Note } from "../model/note";
-import { faker } from "../../../core/demo-data/faker";
+import faker from "faker/locale/en_IND";
 import { warningLevels } from "../../warning-levels";
 import { noteIndividualStories } from "./notes_individual-stories";
 import { noteGroupStories } from "./notes_group-stories";

@@ -18,7 +18,7 @@ import { NEVER, of, Subject } from "rxjs";
 import { AttendanceLogicalStatus } from "../../../../child-dev-project/attendance/model/attendance-status";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { AbilityService } from "../../../permissions/ability/ability.service";
-import { faker } from "../../../demo-data/faker";
+import faker from "faker/locale/en_IND";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 import { Ability } from "@casl/ability";
@@ -34,9 +34,7 @@ const userGenerator = new DemoUserGeneratorService();
 const data = new DemoNoteGeneratorService(
   { minNotesPerChild: 5, maxNotesPerChild: 10, groupNotes: 2 },
   childGenerator,
-  userGenerator,
-  schemaService,
-  configService
+  userGenerator
 ).generateEntities();
 
 export default {

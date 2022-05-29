@@ -1,4 +1,9 @@
-import { calculateAge, isValidDate, sortByAttribute } from "./utils";
+import {
+  calculateAge,
+  getEarlierDateOrToday,
+  isValidDate,
+  sortByAttribute,
+} from "./utils";
 import moment from "moment";
 
 describe("Utils", () => {
@@ -61,5 +66,27 @@ describe("Utils", () => {
     );
 
     expect(sortedDesc).toEqual([third, second, first]);
+  });
+
+  describe("getEarlierDateOrToday", () => {
+    it("should getEarlierDateOrToday", () => {
+      const TODAY = new Date();
+
+      const earlierDate = new Date(2019, 0, 1);
+      expect(getEarlierDateOrToday(earlierDate)).toEqual(earlierDate);
+
+      const laterDate = new Date();
+      laterDate.setMonth(laterDate.getMonth() + 1);
+      let actualDate = getEarlierDateOrToday(laterDate);
+      expect(actualDate.getFullYear()).toEqual(TODAY.getFullYear());
+      expect(actualDate.getMonth()).toEqual(TODAY.getMonth());
+      expect(actualDate.getDate()).toEqual(TODAY.getDate());
+
+      const noDate = undefined;
+      actualDate = getEarlierDateOrToday(noDate);
+      expect(actualDate.getFullYear()).toEqual(TODAY.getFullYear());
+      expect(actualDate.getMonth()).toEqual(TODAY.getMonth());
+      expect(actualDate.getDate()).toEqual(TODAY.getDate());
+    });
   });
 });

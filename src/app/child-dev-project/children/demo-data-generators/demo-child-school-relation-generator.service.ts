@@ -4,7 +4,7 @@ import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
 import { Child } from "../model/child";
 import { ChildSchoolRelation } from "../model/childSchoolRelation";
-import { faker } from "../../../core/demo-data/faker";
+import faker from "faker/locale/en_IND";
 import { School } from "../../schools/model/school";
 
 /**

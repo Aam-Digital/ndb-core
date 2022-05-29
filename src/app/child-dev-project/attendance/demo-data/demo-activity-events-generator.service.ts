@@ -1,6 +1,6 @@
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
-import { faker } from "../../../core/demo-data/faker";
+import faker from "faker/locale/en_IND";
 import { RecurringActivity } from "../model/recurring-activity";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";

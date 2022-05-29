@@ -4,7 +4,7 @@ import { languages } from "./fixtures/languages";
 import { dropoutTypes } from "./fixtures/dropout-types";
 import { Injectable } from "@angular/core";
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
-import { faker } from "../../../core/demo-data/faker";
+import faker from "faker/locale/en_IND";
 import { centersWithProbability } from "./fixtures/centers";
 import { addDefaultChildPhoto } from "../../../../../.storybook/utils/addDefaultChildPhoto";
 import { genders } from "../model/genders";
@@ -29,13 +29,27 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
     ];
   }
 
+  /**
+   * Generate a date that works as a date of birth in the given age range.
+   * @param minAge The minimum age (today) of a person with the generated random birth date.
+   * @param maxAge The maximum age (today) of a person with the generated random birth date.
+   */
+  static dateOfBirth(minAge: number, maxAge: number): Date {
+    const currentYear = new Date().getFullYear();
+    const latest = new Date();
+    latest.setFullYear(currentYear - minAge);
+    const earliest = new Date();
+    earliest.setFullYear(currentYear - maxAge);
+    return faker.date.between(earliest, latest);
+  }
+
   static generateEntity(id: string) {
     const child = new Child(id);
     child.name = faker.name.firstName() + " " + faker.name.lastName();
     child.projectNumber = id;
     child["religion"] = faker.random.arrayElement(religions);
     child.gender = faker.random.arrayElement(genders.slice(1));
-    child.dateOfBirth = faker.dateOfBirth(5, 20);
+    child.dateOfBirth = this.dateOfBirth(5, 20);
     child["motherTongue"] = faker.random.arrayElement(languages);
     child.center = faker.random.arrayElement(centersWithProbability);
     child.phone =
