@@ -1,11 +1,11 @@
 <h1>Technical User Support Details</h1>
 
-<div fxLayout="column" fxLayoutGap="32px">
-  <div fxFlex>
+<div class="flex-column gap-large">
+  <div>
     <em>The following details of your device and app can help the user support troubleshoot when you are having technical issues.</em>
   </div>
 
-  <div fxFlex class="tech-details">
+  <div>
     <p>Username: {{ currentUser.name }}</p>
     <p>App version: {{ appVersion }}</p>
     <p>Device info: {{ userAgent }}</p>
@@ -27,7 +27,7 @@
     <button mat-raised-button (click)="sendReport()" class="full-width">Send Details</button>
   </div>
 
-  <div fxFlex>
+  <div>
     <button mat-raised-button color="warn" (click)="resetApplication()" class="full-width">Reset Application</button>
   </div>
 </div>

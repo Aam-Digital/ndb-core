@@ -1,6 +1,7 @@
 <button
   mat-icon-button
   class="white"
+  [hidden]="allTasksFinished | async"
   [matMenuTriggerFor]="taskListDropdown"
   (menuClosed)="wasClosed = true"
 >
