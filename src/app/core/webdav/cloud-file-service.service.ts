@@ -3,7 +3,7 @@ import { AppConfig } from "../app-config/app-config";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { SessionService } from "../session/session-service/session.service";
 import { WebdavWrapperService } from "./webdav-wrapper.service";
-import { WebDAVClient } from "webdav";
+import { WebDAVClient } from "webdav/web";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { User } from "../user/user";
 

@@ -5,7 +5,7 @@ import { User } from "../user/user";
 import { AppConfig } from "../app-config/app-config";
 import { SessionType } from "../session/session-type";
 import { WebdavWrapperService } from "./webdav-wrapper.service";
-import { WebDAVClient } from "webdav";
+import { WebDAVClient } from "webdav/web";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import {
   mockEntityMapper,
