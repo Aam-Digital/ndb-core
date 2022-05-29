@@ -358,6 +358,20 @@ $standard-icon-size: 1.5em;
   align-items: center;
 }
 
+/**
+ * justifies the items (i.e. places the items on the main axis)
+ */
+.justify-center {
+  justify-items: center;
+}
+
+/**
+ * justifies and aligns the items of an outer element to the center position
+ */
+.place-center {
+  place-items: center;
+}
+
 .flex-grow-1-3 {
   flex-grow: 0.3;
 }
