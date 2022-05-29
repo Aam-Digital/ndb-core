@@ -1,33 +1,16 @@
+@import "../../../../styles/sizes";
+
 .details-header {
   font-size: small;
   text-align: justify;
 }
 
-.details-container {
-  padding: 0 16px;
-}
-
-.details-line {
-  line-height: 48px;
-}
-
-.process-spinner {
-  display: inline-block;
-  vertical-align: middle;
-}
 .process-checkmark {
-  font-size: 20px;
   color: green;
 }
 
-.process-title {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.sync-icon {
-  color: white;
+.details-line {
+  line-height: 32px;
 }
 
 [hidden] {
