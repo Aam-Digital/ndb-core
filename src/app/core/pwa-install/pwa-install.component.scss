@@ -1,8 +1,8 @@
+@import '../../../ndb-theme';
+
 .pwa-install-button {
-    border: solid 1px rgba(0, 0, 0, 0.12);
-    border-right: 0;
-    border-radius: 0;
-    overflow: hidden;
-    border-left: 0;
-    background-color: #ff9800;
-  }
+  border-top: solid 1px rgba(0, 0, 0, 0.12);
+  border-radius: 0;
+  overflow: hidden;
+  background-color: mat-color($ndb-app-primary);
+}

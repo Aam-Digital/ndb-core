@@ -15,27 +15,11 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import "../../../../styles";
+@import "../../../../styles/sizes";
 
-$nav-link-gap: 8px;
-
-.divider {
-  background-color: #e5e5e5;
-  height: 1px;
-  margin: 9px 0;
-  overflow: hidden;
-}
-
-.nav-history {
-  text-align: center;
-}
-
+/**
+ * ensures that all icons have the same width
+ */
 .nav-icon {
-  margin-right: $nav-link-gap;
   min-width: $max-icon-width;
-}
-
-.nav-link {
-  display: flex;
-  flex-direction: row;
 }

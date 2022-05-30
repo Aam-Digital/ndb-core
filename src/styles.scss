@@ -20,15 +20,6 @@
 @import "./styles/colors";
 @import "./styles/sizes";
 
-$margin-main-view-right: 28px;
-$margin-main-view-left: 28px;
-$margin-main-view-top: 10px;
-$margin-main-view-bottom: 16px;
-
-$standard-grid-gap: 25px;
-
-$max-icon-width: 22px;
-
 body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
   margin: 0;
@@ -387,4 +378,21 @@ $standard-icon-size: 1.5em;
   @media (max-width: 599px) {
     display: none;
   }
+}
+
+.badge-label {
+  display: inline-block;
+  padding: 0 $standard-gutter-small;
+  line-height: 1.5;
+  vertical-align: middle;
+  white-space: nowrap;
+  border-radius: 2px;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: white;
+}
+
+.app-list {
+  // this is a constant because this padding only removes the default
+  padding-left: 16px;
 }

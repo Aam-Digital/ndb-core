@@ -19,7 +19,44 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MarkdownPageComponent } from "./markdown-page/markdown-page.component";
 import { HttpClient, HttpClientModule } from "@angular/common/http";
-import { MarkdownModule } from "ngx-markdown";
+import { MarkdownModule, MarkedOptions, MarkedRenderer } from "ngx-markdown";
+
+function markedOptionsFactory(): MarkedOptions {
+  const renderer = new MarkedRenderer();
+
+  renderer.heading = (text, level) => {
+    if (level === 3) {
+      console.log(text);
+      switch (text.toLowerCase()) {
+        case "bug fixes":
+          return `<span class="badge-label background-changelog-bugfix">${text}</span>`;
+        case "features":
+          return `<span class="badge-label background-changelog-feature">${text}</span>`;
+        default:
+          return `<span class="badge-label background-changelog-unknown">${text}</span>`;
+      }
+    } else {
+      return `<h${level}>${text}</h${level}>`;
+    }
+  };
+
+  renderer.list = (body, ordered) => {
+    if (ordered) {
+      return `<ol class="app-list mat-body-1">${body}</ol>`;
+    } else {
+      return `<ul class="app-list mat-body-1">${body}</ul>`;
+    }
+  };
+
+  return {
+    renderer: renderer,
+    gfm: true,
+    breaks: false,
+    pedantic: false,
+    smartLists: true,
+    smartypants: false,
+  };
+}
 
 /**
  * Display any information contained in a markdown file.
@@ -29,7 +66,13 @@ import { MarkdownModule } from "ngx-markdown";
   imports: [
     CommonModule,
     HttpClientModule,
-    MarkdownModule.forRoot({ loader: HttpClient }),
+    MarkdownModule.forRoot({
+      loader: HttpClient,
+      markedOptions: {
+        provide: MarkedOptions,
+        useFactory: markedOptionsFactory,
+      },
+    }),
   ],
 })
 export class MarkdownPageModule {

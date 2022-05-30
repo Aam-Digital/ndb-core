@@ -24,6 +24,18 @@ $color-error            : #ff8a65;
 
 $color-tech-details     : #707070;
 
+.background-changelog-bugfix {
+  background-color: $color-warning-warning;
+}
+
+.background-changelog-feature {
+  background-color: green;
+}
+
+.background-changelog-unknown {
+  background-color: $color-tech-details;
+}
+
 .background-error {
   background-color: $color-error;
 }

@@ -15,10 +15,12 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import "../../../../styles/sizes";
+
 .login-panel {
   max-width: 400px;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin-top: $standard-gutter-large;
+  margin-bottom: $standard-gutter-large;
 }
 
 .login-field {

@@ -1,22 +1,44 @@
-$standard-gutter-small: 8px;
-$standard-gutter-regular: 16px;
-$standard-gutter-large: 28px;
+$standard-gutter-small    : 8px;
+$standard-gutter-regular  : 16px;
+$standard-gutter-large    : 28px;
+
+$max-icon-width           : 22px;
+
+$margin-main-view-right   : $standard-gutter-large;
+$margin-main-view-left    : $standard-gutter-large;
+$margin-main-view-top     : 10px;
+$margin-main-view-bottom  : $standard-gutter-regular;
+
+$standard-grid-gap        : 25px;
+
+/**   Paddings   **/
+
+// Small
+.padding-right-small  { padding-right  : $standard-gutter-small }
+.padding-left-small   { padding-left   : $standard-gutter-small }
+.padding-top-small    { padding-top    : $standard-gutter-small }
+.padding-bottom-small { padding-bottom : $standard-gutter-small }
+.padding-small        { padding        : $standard-gutter-small }
+
+// Regular
+.padding-right-regular  { padding-right  : $standard-gutter-regular }
+.padding-left-regular   { padding-left   : $standard-gutter-regular }
+.padding-top-regular    { padding-top    : $standard-gutter-regular }
+.padding-bottom-regular { padding-bottom : $standard-gutter-regular }
+.padding-regular        { padding        : $standard-gutter-regular }
+
+// Large
+.padding-right-large  { padding-right  : $standard-gutter-large }
+.padding-left-large   { padding-left   : $standard-gutter-large }
+.padding-top-large    { padding-top    : $standard-gutter-large }
+.padding-bottom-large { padding-bottom : $standard-gutter-large }
+.padding-large        { padding        : $standard-gutter-large }
+
+.remove-padding-bottom { padding-bottom: 0 }
 
 .margin-sides-small {
   margin-right: $standard-gutter-small;
   margin-left: $standard-gutter-small;
-}
-
-.padding-right-small {
-  padding-right: $standard-gutter-small;
-}
-
-.remove-padding-bottom {
-  padding-bottom: 0;
-}
-
-.padding-small {
-  padding: $standard-gutter-small;
 }
 
 .margin-small {
