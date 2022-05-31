@@ -36,25 +36,32 @@ $standard-grid-gap        : 25px;
 
 .remove-padding-bottom { padding-bottom: 0 }
 
+/**   Margins   **/
+.margin-right-small  { margin-right  : $standard-gutter-small }
+.margin-left-small   { margin-left   : $standard-gutter-small }
+.margin-top-small    { margin-top    : $standard-gutter-small }
+.margin-bottom-small { margin-bottom : $standard-gutter-small }
+.margin-small        { margin        : $standard-gutter-small }
+
+// Regular
+.margin-right-regular  { margin-right  : $standard-gutter-regular }
+.margin-left-regular   { margin-left   : $standard-gutter-regular }
+.margin-top-regular    { margin-top    : $standard-gutter-regular }
+.margin-bottom-regular { margin-bottom : $standard-gutter-regular }
+.margin-regular        { margin        : $standard-gutter-regular }
+
+// Large
+.margin-right-large  { margin-right  : $standard-gutter-large }
+.margin-left-large   { margin-left   : $standard-gutter-large }
+.margin-top-large    { margin-top    : $standard-gutter-large }
+.margin-bottom-large { margin-bottom : $standard-gutter-large }
+.margin-large        { margin        : $standard-gutter-large }
+
+.remove-margin-bottom { margin-bottom: 0 }
+
 .margin-sides-small {
   margin-right: $standard-gutter-small;
   margin-left: $standard-gutter-small;
-}
-
-.margin-small {
-  margin: $standard-gutter-small;
-}
-
-.margin-top-small {
-  margin-top: $standard-gutter-small;
-}
-
-.margin-top-regular {
-  margin-top: $standard-gutter-regular;
-}
-
-.margin-top-large {
-  margin-top: $standard-gutter-large;
 }
 
 .width-1-2 {

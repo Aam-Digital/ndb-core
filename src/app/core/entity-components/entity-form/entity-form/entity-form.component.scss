@@ -1,16 +1,7 @@
 @import "../../../../utils/grid-layout";
 
-$padding-block: 50px;
-
-$padding-buttons-bottom: 0.25em;
-
 $min-block-width: 330px;
 $max-screen-width: $min-block-width + $margin-main-view-right + $margin-main-view-left;
-
-.form-field {
-  display: inline-block;
-  margin-left: 20px;
-}
 
 // Hacky way to set the width of each form field
 // to 100% in every form component
@@ -23,12 +14,8 @@ $max-screen-width: $min-block-width + $margin-main-view-right + $margin-main-vie
   align-items: start;
 }
 
-.column-group {
-  margin-right: 0.5em;
-}
-
-.buttons-wrapper {
-  padding-bottom: $padding-buttons-bottom;
+.align-self-end {
+  align-self: end;
 }
 
 .mat-chip {

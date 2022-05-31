@@ -9,7 +9,6 @@ import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-co
 @Component({
   selector: "app-display-entity-array",
   templateUrl: "./display-entity-array.component.html",
-  styleUrls: ["./display-entity-array.component.scss"],
 })
 export class DisplayEntityArrayComponent extends ViewDirective {
   readonly aggregationThreshold = 5;

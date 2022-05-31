@@ -1,4 +1,4 @@
-<div class="header-row">
+<div class="flex-row align-center mat-title">
   <button
     *ngIf="(parentUrl || !navigateToParentBehaviour) && !disableBackButton"
     mat-icon-button
@@ -9,7 +9,7 @@
     <fa-icon icon="arrow-left"></fa-icon>
   </button>
 
-  <h1 class="header-title truncate-text">
+  <h1 class="remove-margin-bottom truncate-text">
     <ng-content></ng-content>
   </h1>
 </div>

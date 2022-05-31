@@ -1,18 +1,17 @@
 <!-- Desktop version -->
-<div fxLayout="column" *ngIf="desktop">
+<div *ngIf="desktop">
+
+    <!-- Header bar; contains the title on the left and controls on the right -->
 
     <div
-      fxLayout="row"
-      fxLayoutAlign="space-between end"
+      class="flex-row justify-space-between"
       [ngStyle]="offsetFilterStyle"
     >
       <app-view-title>
         {{ listName }}
       </app-view-title>
 
-      <div fxFlex></div>
-
-      <div fxLayoutGap="25px" fxLayoutAlign="end end" fxFlex>
+      <div class="flex-row gap-regular">
         <button
           mat-stroked-button
           color="accent"
@@ -31,24 +30,21 @@
             }"
         >
           <fa-icon
-            class="button-icon"
             aria-label="add element"
             icon="plus-circle"
           ></fa-icon>
           <span i18n="Add a new entity to a list of multiple entities"> Add New </span>
         </button>
 
-        <button mat-icon-button class="additional-button" color="primary" [matMenuTriggerFor]="additional">
+        <button mat-icon-button color="primary" [matMenuTriggerFor]="additional">
           <fa-icon class="standard-icon" icon="ellipsis-v"></fa-icon>
         </button>
       </div>
     </div>
 
-    <div
-      class="toggle-selection-section"
-      fxLayout="row wrap"
-      fxLayoutGap="10px"
-    >
+    <!-- Filters -->
+
+    <div class="flex-row gap-regular flex-wrap">
       <div *ngTemplateOutlet="filterDialog"></div>
 
       <app-list-filter
@@ -90,11 +86,11 @@
 
   <h2>{{listName}}</h2>
 
-  <div fxLayout="row" fxLayoutGap="15px" style="margin-bottom: 15px">
+  <div class="flex-row">
     <div *ngTemplateOutlet="filterDialog"></div>
 
     <button mat-icon-button color="primary" [matMenuTriggerFor]="additional">
-      <fa-icon class="standard-icon" icon="ellipsis-v"></fa-icon>
+      <fa-icon icon="ellipsis-v" class="standard-icon"></fa-icon>
     </button>
 
   </div>
@@ -106,9 +102,10 @@
 <!-- Templates and menus for both mobile and desktop -->
 
 <ng-template #filterDialog>
-  <mat-form-field class="filter-field">
+  <mat-form-field class="full-width filter-field">
     <mat-label i18n="Filter placeholder|Allows the user to filter through entities">Filter</mat-label>
     <input
+      class="full-width"
       matInput
       i18n-placeholder="Examples of things to filter"
       placeholder="e.g. name, age"
@@ -139,7 +136,7 @@
 
 <mat-menu #additional>
 
-  <div fxHide.gt-xs>
+  <div class="hide-desktop">
 
     <button
       mat-menu-item

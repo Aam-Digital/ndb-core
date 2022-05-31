@@ -1,16 +1,11 @@
+@import "../../../../styles/sizes";
+
 .illustration {
   width: 70%;
 }
 
-.feedback-button[disabled] {
-  background: #c8e6c9;
-  color: black;
-}
-
-.requested-icon {
-  vertical-align: baseline !important;
-}
-
 .feedback-section {
-  padding: 1rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $standard-gutter-regular;
 }

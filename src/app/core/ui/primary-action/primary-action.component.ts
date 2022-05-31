@@ -1,8 +1,9 @@
 import { Component } from "@angular/core";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { SessionService } from "../../session/session-service/session.service";
-import { NoteDetailsComponent } from "../../../child-dev-project/notes/note-details/note-details.component";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
+import { AlertService } from "../../alerts/alert.service";
+import { AlertDisplay } from "../../alerts/alert-display";
 
 /**
  * The "Primary Action" is always displayed hovering over the rest of the app as a quick action for the user.
@@ -20,14 +21,16 @@ export class PrimaryActionComponent {
 
   constructor(
     private sessionService: SessionService,
-    private formDialog: FormDialogService
+    private formDialog: FormDialogService,
+    private alertService: AlertService
   ) {}
 
   /**
    * The primary action to be triggered when the user clicks the hovering button.
    */
   primaryAction() {
-    this.formDialog.openDialog(NoteDetailsComponent, this.createNewNote());
+    this.alertService.addDanger("Danger Alert", AlertDisplay.PERSISTENT);
+    // this.formDialog.openDialog(NoteDetailsComponent, this.createNewNote());
   }
 
   private createNewNote() {

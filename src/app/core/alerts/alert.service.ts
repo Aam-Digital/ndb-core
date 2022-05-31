@@ -16,7 +16,7 @@
  */
 
 import { Injectable } from "@angular/core";
-import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 
 import { Alert } from "./alert";
 import { AlertComponent } from "./alerts/alert.component";
@@ -48,10 +48,9 @@ export class AlertService {
   }
 
   private displayAlert(alert: Alert) {
-    const snackConfig = {
+    const snackConfig: MatSnackBarConfig = {
       data: alert,
       duration: 10000,
-      panelClass: "alerts-snackbar",
     };
 
     switch (alert.display) {
@@ -65,10 +64,15 @@ export class AlertService {
         break;
     }
 
-    alert.notificationRef = this.snackBar.openFromComponent(
-      AlertComponent,
-      snackConfig
-    );
+    switch (alert.type) {
+      case Alert.INFO:
+        break;
+      case Alert.WARNING:
+      case Alert.DANGER:
+        snackConfig.panelClass = "background-error";
+    }
+
+    this.snackBar.open(alert.message, "dismiss", snackConfig);
   }
 
   /**

@@ -1,18 +1,15 @@
-<fa-icon
-  mat-dialog-close
-  class="cancel-icon"
-  icon="times"
-  mat-ripple
->
-</fa-icon>
+<button mat-icon-button mat-dialog-close class="overlay-close-button">
+  <fa-icon icon="times"></fa-icon>
+</button>
 <div mat-dialog-content>
   <div class="main-content">
     <div
       *ngFor="let row of data.columns"
-      class="row-element"
+      class="flex-row align-baseline gap-small full-width"
     >
-      <div
-        [appDynamicComponent]="{
+      <div class="flex-grow">
+        <div
+          [appDynamicComponent]="{
             component: row.edit,
             config: {
               formFieldConfig: row,
@@ -20,7 +17,8 @@
               formControl: form.get(row.id)
             }
           }"
-      ></div>
+        ></div>
+      </div>
       <fa-icon
         (click)="tooltipElement.show()"
         #tooltipElement="matTooltip"
@@ -32,7 +30,7 @@
     </div>
   </div>
 
-  <div *ngFor="let col of viewOnlyColumns" class="viewonly-section">
+  <div *ngFor="let col of viewOnlyColumns">
     <mat-chip-list>
       <mat-chip
         [matTooltip]="col.tooltip"

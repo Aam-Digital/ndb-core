@@ -1,9 +1,8 @@
-<div fxLayout="column">
-  <div fxFlexAlign="end" class="buttons-wrapper">
+<div class="flex-column">
+  <div class="padding-bottom-small align-self-end">
     <button
       *ngIf="form?.enabled"
       mat-raised-button
-      class="action-button"
       (click)="save()"
       i18n="Save button for forms"
     >
@@ -13,7 +12,6 @@
     <button
       *ngIf="form?.enabled"
       mat-raised-button
-      class="action-button"
       (click)="cancel()"
       i18n="Cancel button for forms"
     >
@@ -23,7 +21,6 @@
     <ng-container *ngIf="form?.disabled">
       <button
         mat-raised-button
-        class="action-button"
         (click)="switchEdit()"
         *appDisabledEntityOperation="{
           entity: entity,
@@ -37,7 +34,7 @@
   </div>
 
   <form class="columns-wrapper">
-    <div *ngFor="let col of _columns; let i=index" class="column-group">
+    <div *ngFor="let col of _columns; let i=index" class="margin-right-small">
       <h2 *ngIf="columnHeaders && columnHeaders[i]">{{columnHeaders[i]}}</h2>
       <div
         *ngFor="let row of col"

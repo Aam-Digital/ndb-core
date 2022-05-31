@@ -8,7 +8,6 @@ import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-co
 @Component({
   selector: "app-readonly-function",
   templateUrl: "./readonly-function.component.html",
-  styleUrls: ["./readonly-function.component.scss"],
 })
 export class ReadonlyFunctionComponent extends ViewDirective {
   @Input() displayFunction: (entity: Entity) => any;

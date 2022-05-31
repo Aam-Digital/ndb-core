@@ -343,10 +343,25 @@ $standard-icon-size: 1.5em;
 }
 
 /**
+ * aligns the items (i.e. places the items on the non main axis)
+ */
+.align-baseline {
+  align-items: baseline;
+}
+
+/**
  * justifies the items (i.e. places the items on the main axis)
  */
 .justify-center {
   justify-items: center;
+}
+
+/**
+ * Allows items to wrap to the next row when there are too many to fit
+ * onto one row
+ */
+.flex-wrap {
+  flex-wrap: wrap;
 }
 
 /**
@@ -380,6 +395,12 @@ $standard-icon-size: 1.5em;
   }
 }
 
+.hide-desktop {
+  @media (min-width: 599px) {
+    display: none;
+  }
+}
+
 .badge-label {
   display: inline-block;
   padding: 0 $standard-gutter-small;
@@ -395,4 +416,14 @@ $standard-icon-size: 1.5em;
 .app-list {
   // this is a constant because this padding only removes the default
   padding-left: 16px;
+}
+
+/**
+ * Positions the 'x' button that is shown for an overlay to
+ * the top-right of the overlay
+ */
+.overlay-close-button {
+  position: absolute;
+  top: 0;
+  right: 0;
 }

@@ -6,7 +6,6 @@ import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-co
 @Component({
   selector: "app-display-percentage",
   templateUrl: "./display-percentage.component.html",
-  styleUrls: ["./display-percentage.component.scss"],
 })
 export class DisplayPercentageComponent extends ViewDirective {
   /**

@@ -15,7 +15,7 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<div class="header-row">
+<div class="flex-row justify-space-between">
   <app-view-title *ngIf="!creatingNew">
     {{ entity?.toString() }}
   </app-view-title>
@@ -24,7 +24,6 @@
     Adding new {{ config?.entity }}
   </app-view-title>
 
-  <div class="header-spacer"></div>
   <button
     mat-icon-button
     class="additional-button"

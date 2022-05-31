@@ -20,7 +20,6 @@ import { Database } from "../../database/database";
 @Component({
   selector: "app-admin",
   templateUrl: "./admin.component.html",
-  styleUrls: ["./admin.component.scss"],
 })
 export class AdminComponent implements OnInit {
   /** app-wide configuration */
