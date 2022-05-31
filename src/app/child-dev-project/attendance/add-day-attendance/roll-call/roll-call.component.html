@@ -11,8 +11,11 @@
     </div>
   </div>
   <div class="navbar-wrapper margin-bottom-small">
+    <button mat-icon-button class="button-aligned-left" (click)="goToFirst()" [disabled]="isFirst">
+      <fa-icon icon="angle-double-left"></fa-icon>
+    </button>
     <button mat-icon-button class="button-aligned-left" (click)="goToPrevious()" [disabled]="isFirst">
-      <fa-icon icon="chevron-left"></fa-icon>
+      <fa-icon icon="angle-left"></fa-icon>
     </button>
     <app-child-block
       class="child-block"
@@ -23,7 +26,10 @@
     </app-child-block>
     <div class="placeholder" *ngIf="isFinished"></div>
     <button class="button-aligned-right" mat-icon-button (click)="goToNext()" [disabled]="isFinished">
-      <fa-icon icon="chevron-right"></fa-icon>
+      <fa-icon icon="angle-right"></fa-icon>
+    </button>
+    <button class="button-aligned-right" mat-icon-button (click)="goToLast()" [disabled]="isFinished">
+      <fa-icon icon="angle-double-right"></fa-icon>
     </button>
   </div>
   <div *ngIf="!isFinished && currentAttendance" class="tab-wrapper">

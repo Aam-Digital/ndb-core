@@ -187,6 +187,16 @@ export class RollCallComponent implements OnChanges {
     }
   }
 
+  goToFirst() {
+    this.goToParticipantWithIndex(0);
+  }
+
+  goToLast() {
+    // No need for `this.children.length - 1`
+    // because there is one more page than there are children
+    this.goToParticipantWithIndex(this.children.length);
+  }
+
   get isFirst(): boolean {
     return this.currentIndex === 0;
   }
