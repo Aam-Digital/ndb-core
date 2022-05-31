@@ -12,6 +12,7 @@ import { RouteTarget } from "../../../app.routing";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { HttpClient } from "@angular/common/http";
 import { SyncedSessionService } from "../../session/session-service/synced-session.service";
+import { environment } from "../../../../environments/environment";
 
 @RouteTarget("Support")
 @Component({
@@ -24,9 +25,11 @@ export class SupportComponent implements OnInit {
   currentSyncState: string;
   lastSync: string;
   lastRemoteLogin: string;
+  storageInfo: string;
   swStatus: string;
   swLog = "not available";
   userAgent = this.window.navigator.userAgent;
+  appVersion: string;
 
   constructor(
     private sessionService: SessionService,
@@ -40,9 +43,11 @@ export class SupportComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUser = this.sessionService.getCurrentUser();
+    this.appVersion = environment.appVersion;
     this.initCurrentSyncState();
     this.initLastSync();
     this.initLastRemoteLogin();
+    this.initStorageInfo();
     this.initSwStatus();
   }
 
@@ -67,6 +72,17 @@ export class SupportComponent implements OnInit {
   private initLastRemoteLogin() {
     this.lastRemoteLogin =
       localStorage.getItem(RemoteSession.LAST_LOGIN_KEY) || "never";
+  }
+
+  private initStorageInfo() {
+    const storage = this.window.navigator?.storage;
+    if (storage && "estimate" in storage) {
+      storage.estimate().then((estimate) => {
+        const used = estimate.usage / 1048576;
+        const available = estimate.quota / 1048576;
+        this.storageInfo = `${used.toFixed(2)}MBs / ${available.toFixed(2)}MBs`;
+      });
+    }
   }
 
   private initSwStatus() {
@@ -94,6 +110,7 @@ export class SupportComponent implements OnInit {
         swStatus: this.swStatus,
         userAgent: this.userAgent,
         swLog: this.swLog,
+        storageInfo: this.storageInfo,
       },
     });
     Sentry.showReportDialog({

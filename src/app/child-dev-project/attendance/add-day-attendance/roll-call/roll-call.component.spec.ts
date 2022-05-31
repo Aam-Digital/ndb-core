@@ -115,7 +115,7 @@ describe("RollCallComponent", () => {
     component.ngOnChanges(dummyChanges);
     tick();
 
-    expect(component.entries.map((e) => e.child)).toEqual([participant1]);
+    expect(component.children).toEqual([participant1]);
     expect(component.eventEntity.children).not.toContain(nonExistingChildId);
     expect(mockLoggingService.warn).toHaveBeenCalled();
     flush();
@@ -212,23 +212,6 @@ describe("RollCallComponent", () => {
     expect(component.currentIndex).toBe(1);
   });
 
-  it("should not allow to mark attendance again while transition to next participant is in progress", fakeAsync(() => {
-    component.eventEntity.addChild(participant1);
-    component.eventEntity.addChild(participant2);
-    component.ngOnChanges(dummyChanges);
-    tick();
-
-    expect(component.currentIndex).toBe(0);
-    component.markAttendance(PRESENT);
-    component.markAttendance(PRESENT);
-    tick(1000);
-
-    expect(component.currentIndex).toBe(1);
-    component.markAttendance(ABSENT);
-    tick(1000);
-    expect(component.currentIndex).toBe(2);
-  }));
-
   it("should not sort participants without sortParticipantsBy configured", fakeAsync(() => {
     participant1.name = "Zoey";
     participant2.name = "Adam";
@@ -284,9 +267,7 @@ describe("RollCallComponent", () => {
     });
     tick();
 
-    expect(component.entries.map((e) => e.child)).toEqual(
-      expectedParticipantsOrder
-    );
+    expect(component.children).toEqual(expectedParticipantsOrder);
     expect(component.eventEntity.children).toEqual(
       expectedParticipantsOrder.map((p) => p.getId())
     );

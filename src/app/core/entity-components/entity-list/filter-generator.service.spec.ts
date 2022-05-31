@@ -1,9 +1,7 @@
 import { TestBed } from "@angular/core/testing";
 
 import { FilterGeneratorService } from "./filter-generator.service";
-import { ConfigService } from "../../config/config.service";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { LoggingService } from "../../logging/logging.service";
 import { BooleanFilterConfig, PrebuiltFilterConfig } from "./EntityListConfig";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { Note } from "../../../child-dev-project/notes/model/note";
@@ -12,36 +10,17 @@ import { ChildSchoolRelation } from "../../../child-dev-project/children/model/c
 import { Child } from "../../../child-dev-project/children/model/child";
 import moment from "moment";
 import { EntityConfigService } from "app/core/entity/entity-config.service";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import {
-  EntityRegistry,
-  entityRegistry,
-} from "../../entity/database-entity.decorator";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
 
   beforeEach(async () => {
-    mockEntityMapper = jasmine.createSpyObj(["loadType", "load"]);
-    mockEntityMapper.load.and.rejectWith();
     TestBed.configureTestingModule({
-      providers: [
-        ConfigService,
-        EntitySchemaService,
-        { provide: EntityMapperService, useValue: mockEntityMapper },
-        LoggingService,
-        EntityConfigService,
-        {
-          provide: EntityRegistry,
-          useValue: entityRegistry,
-        },
-      ],
+      imports: [MockedTestingModule.withState()],
     });
     service = TestBed.inject(FilterGeneratorService);
-    const configService = TestBed.inject(ConfigService);
     const entityConfigService = TestBed.inject(EntityConfigService);
-    await configService.loadConfig();
     entityConfigService.addConfigAttributes(School);
     entityConfigService.addConfigAttributes(Child);
   });
@@ -75,11 +54,6 @@ describe("FilterGeneratorService", () => {
   });
 
   it("should create a configurable enum filter", async () => {
-    const getConfigSpy = spyOn(
-      TestBed.inject(ConfigService),
-      "getConfigurableEnumValues"
-    );
-    getConfigSpy.and.returnValue(defaultInteractionTypes);
     const interactionTypes = defaultInteractionTypes.map((it) => {
       return { key: it.id, label: it.label };
     });
@@ -103,7 +77,7 @@ describe("FilterGeneratorService", () => {
     school1.name = "First School";
     const school2 = new School();
     school2.name = "Second School";
-    mockEntityMapper.loadType.and.resolveTo([school1, school2]);
+    await TestBed.inject(EntityMapperService).saveAll([school1, school2]);
     const csr1 = new ChildSchoolRelation();
     csr1.schoolId = school1.getId();
     const csr2 = new ChildSchoolRelation();

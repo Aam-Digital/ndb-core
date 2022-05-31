@@ -6,6 +6,7 @@ import {
 import { ConfigurableEnumValue } from "../configurable-enum.interface";
 import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
 import { arrayEntitySchemaDatatype } from "../../entity/schema-datatypes/datatype-array";
+import { compareEnums } from "../../../utils/utils";
 
 @DynamicComponent("EditConfigurableEnum")
 @Component({
@@ -16,6 +17,7 @@ import { arrayEntitySchemaDatatype } from "../../entity/schema-datatypes/datatyp
 export class EditConfigurableEnumComponent extends EditComponent<ConfigurableEnumValue> {
   enumId: string;
   multi = false;
+  compareFun = compareEnums;
 
   onInitFromDynamicConfig(config: EditPropertyConfig) {
     super.onInitFromDynamicConfig(config);

@@ -20,9 +20,19 @@ import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 
 import { AppModule } from "./app/app.module";
 import { environment } from "./environments/environment";
+import { AppConfig } from "./app/core/app-config/app-config";
+
+// Import hammer.js to enable gestures
+// on mobile devices
+import "hammerjs";
 
 if (environment.production) {
   enableProdMode();
 }
 
-platformBrowserDynamic().bootstrapModule(AppModule);
+/**
+ * Loading AppConfig before bootstrap process (see {@link https://stackoverflow.com/a/66957293/10713841})
+ */
+AppConfig.load().then(() =>
+  platformBrowserDynamic().bootstrapModule(AppModule)
+);

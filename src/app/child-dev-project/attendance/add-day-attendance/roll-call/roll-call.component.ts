@@ -19,6 +19,8 @@ import { Child } from "../../../children/model/child";
 import { LoggingService } from "../../../../core/logging/logging.service";
 import { FormGroup } from "@angular/forms";
 import { sortByAttribute } from "../../../../utils/utils";
+import { NoteDetailsComponent } from "../../../notes/note-details/note-details.component";
+import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
 
 /**
  * Displays the participants of the given event one by one to mark attendance status.
@@ -58,40 +60,26 @@ export class RollCallComponent implements OnChanges {
   @Output() exit = new EventEmitter();
 
   /**
-   * private model; should only be set within this component
-   * @private
+   * The index, child and attendance that is currently being processed
    */
-  private _currentIndex: number;
+  currentIndex = 0;
+  currentChild: Child;
+  currentAttendance: EventAttendance;
   /**
    * whether any changes have been made to the model
    */
   isDirty: boolean = false;
-  /**
-   * The index of the child that is currently being processed
-   */
-  get currentIndex(): number {
-    return this._currentIndex;
-  }
-  get currentStatus(): AttendanceStatusType {
-    return this.entries[this.currentIndex].attendance.status;
-  }
-  set currentStatus(newStatus: AttendanceStatusType) {
-    this.entries[this.currentIndex].attendance.status = newStatus;
-  }
-  get currentChild(): Child {
-    return this.entries[this.currentIndex].child;
-  }
 
   /** options available for selecting an attendance status */
   availableStatus: AttendanceStatusType[];
 
-  entries: { child: Child; attendance: EventAttendance }[] = [];
+  children: Child[] = [];
   form: FormGroup;
-  private transitionInProgress;
 
   constructor(
     private configService: ConfigService,
     private entityMapper: EntityMapperService,
+    private formDialog: FormDialogService,
     private loggingService: LoggingService
   ) {}
 
@@ -115,19 +103,19 @@ export class RollCallComponent implements OnChanges {
    */
   private setInitialIndex() {
     let index = 0;
-    for (const entry of this.entries) {
-      if (!this.eventEntity.getAttendance(entry.child.getId())?.status?.id) {
+    for (const entry of this.children) {
+      if (!this.eventEntity.getAttendance(entry.getId())?.status?.id) {
         break;
       }
       index += 1;
     }
 
     // do not jump to end - if all participants are recorded, start with first instead
-    if (index >= this.entries.length) {
+    if (index >= this.children.length) {
       index = 0;
     }
 
-    this._currentIndex = index;
+    this.goToParticipantWithIndex(index);
   }
 
   private loadAttendanceStatusTypes() {
@@ -137,8 +125,7 @@ export class RollCallComponent implements OnChanges {
   }
 
   private async loadParticipants() {
-    this.entries = [];
-    this._currentIndex = 0;
+    this.children = [];
     for (const childId of this.eventEntity.children) {
       let child;
       try {
@@ -153,10 +140,7 @@ export class RollCallComponent implements OnChanges {
         this.eventEntity.removeChild(childId);
         continue;
       }
-      this.entries.push({
-        child: child,
-        attendance: this.eventEntity.getAttendance(childId),
-      });
+      this.children.push(child);
     }
     this.sortParticipants();
   }
@@ -166,41 +150,41 @@ export class RollCallComponent implements OnChanges {
       return;
     }
 
-    this.entries.sort((a, b) =>
-      sortByAttribute<any>(this.sortParticipantsBy, "asc")(a.child, b.child)
-    );
+    this.children.sort(sortByAttribute<any>(this.sortParticipantsBy, "asc"));
     // also sort the participants in the Note entity itself for display in details view later
-    this.eventEntity.children = this.entries.map((e) => e.child.getId());
+    this.eventEntity.children = this.children.map((e) => e.getId());
   }
 
   markAttendance(status: AttendanceStatusType) {
-    if (this.transitionInProgress) {
-      return;
-    }
-    this.currentStatus = status;
+    this.currentAttendance.status = status;
     this.isDirty = true;
 
-    // automatically move to next participant after a short delay giving the user visual feedback on the selected status
-    this.transitionInProgress = setTimeout(() => {
-      this.goToNext();
-      this.transitionInProgress = undefined;
-    }, 500);
+    this.goToNext();
   }
 
   goToParticipantWithIndex(newIndex: number) {
-    this._currentIndex = newIndex;
+    this.currentIndex = newIndex;
 
     if (this.isFinished) {
       this.complete.emit(this.eventEntity);
+    } else {
+      this.currentChild = this.children[this.currentIndex];
+      this.currentAttendance = this.eventEntity.getAttendance(
+        this.currentChild.getId()
+      );
     }
   }
 
   goToPrevious() {
-    this.goToParticipantWithIndex(this.currentIndex - 1);
+    if (this.currentIndex - 1 >= 0) {
+      this.goToParticipantWithIndex(this.currentIndex - 1);
+    }
   }
 
   goToNext() {
-    this.goToParticipantWithIndex(this.currentIndex + 1);
+    if (this.currentIndex + 1 <= this.children.length) {
+      this.goToParticipantWithIndex(this.currentIndex + 1);
+    }
   }
 
   get isFirst(): boolean {
@@ -208,14 +192,18 @@ export class RollCallComponent implements OnChanges {
   }
 
   get isLast(): boolean {
-    return this.currentIndex === this.entries.length - 1;
+    return this.currentIndex === this.children.length - 1;
   }
 
   get isFinished(): boolean {
-    return this.currentIndex >= this.entries.length;
+    return this.currentIndex >= this.children.length;
   }
 
   finish() {
     this.exit.emit();
+  }
+
+  showDetails() {
+    this.formDialog.openDialog(NoteDetailsComponent, this.eventEntity);
   }
 }
