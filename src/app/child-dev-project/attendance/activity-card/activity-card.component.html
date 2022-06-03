@@ -24,7 +24,7 @@
   </mat-card-title>
   <mat-card-content>
     {{ event.children.length }}
-    <span i18n="Participants|Amount of participants of an event">
+    <span>
       {event.children.length, plural, one {participant} other {participants}}
     </span>
     <span *ngIf="!recurring"> ({{ event.date | date: "shortDate" }}) </span>
