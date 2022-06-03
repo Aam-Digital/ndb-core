@@ -162,7 +162,7 @@
 
     <!-- Participants and groups -->
     <app-entity-select
-      style="margin-top: 12px"
+      class="form-section"
       entityType="Child"
       [(selection)]="entity.children"
       (selectionChange)="entityForm.form.markAsDirty()"
@@ -185,7 +185,7 @@
       </mat-option>
     </app-entity-select>
 
-    <div *ngIf="entity.category?.isMeeting">
+    <div *ngIf="entity.category?.isMeeting" style="margin-top: -1.25em">
       <app-child-meeting-note-attendance
         *ngFor="let childId of entity.children"
         [childId]="childId"
@@ -198,6 +198,7 @@
     </div>
 
     <app-entity-select
+      class="form-section"
       entityType="School"
       [(selection)]="entity.schools"
       (selectionChange)="entityForm.form.markAsDirty()"
