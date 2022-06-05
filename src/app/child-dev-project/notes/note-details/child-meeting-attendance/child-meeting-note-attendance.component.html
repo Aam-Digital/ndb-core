@@ -25,6 +25,7 @@
       type="text"
       [(ngModel)]="attendance.remarks"
       [disabled]="disabled"
+      (input)="change.emit(attendance)"
     />
   </mat-form-field>
 </div>

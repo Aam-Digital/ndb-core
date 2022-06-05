@@ -14,3 +14,13 @@
 .flex-fill-section {
   min-height: 0;
 }
+
+.subject-line {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  // correctly left-aligns the items with the other content
+  position: relative;
+  left: -13px;
+}

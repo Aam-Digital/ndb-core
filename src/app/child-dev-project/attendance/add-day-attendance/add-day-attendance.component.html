@@ -13,11 +13,11 @@
     <h2 *ngIf="currentStage === 0">
       {{ stages[currentStage] }}
     </h2>
-    <div fxLayout="row" *ngIf="currentStage !== 0">
-      <button mat-icon-button style="margin-top: -4px" (click)="exit()">
+    <div class="subject-line" *ngIf="currentStage !== 0">
+      <button mat-icon-button (click)="exit()">
         <fa-icon icon="arrow-left"></fa-icon>
       </button>
-      <h2>{{event.subject}}</h2>
+      <h2 class="remove-margin-bottom">{{event.subject}}</h2>
     </div>
   </div>
 

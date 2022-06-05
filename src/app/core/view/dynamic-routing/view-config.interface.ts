@@ -9,8 +9,11 @@ export interface ViewConfig {
   /**
    * string id/name of the component to be displaying this view.
    * The component id has to be registered in the component map.
+   *
+   * (optional) if the `ladyLoaded` is true, this is not required (and will be ignored)
+   *    This allows hard-coded lazy-loaded components to be dynamically extended with config or permissions.
    */
-  component: string;
+  component?: string;
 
   /**
    * Allows to restrict the route to the given list of user roles.

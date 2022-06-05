@@ -15,9 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from "@angular/core";
 import { IAppConfig } from "./app-config.model";
-import { HttpClient } from "@angular/common/http";
 
 /**
  * Central app configuration.
@@ -35,28 +33,24 @@ import { HttpClient } from "@angular/common/http";
  * // just directly use AppConfig and let your IDE add an "import" statement to the file
  * // no need for dependency injection here
  */
-@Injectable()
 export class AppConfig {
   /** settings for the app */
   static settings: IAppConfig;
 
   /** file location of the config file to be created by the administrator */
-  private readonly CONFIG_FILE = "assets/config.json";
+  private static readonly CONFIG_FILE = "assets/config.json";
 
   /** fallback file location of the config that is part of the project already if the "real" config file isn't found */
-  private readonly DEFAULT_CONFIG_FILE = "assets/config.default.json";
-
-  constructor(private http: HttpClient) {}
+  private static readonly DEFAULT_CONFIG_FILE = "assets/config.default.json";
 
   /**
    * Load the config file into the `AppConfig.settings` so they can be used synchronously anywhere in the code after that.
    *
    * If the config file does not exist, uses the default config as a fallback.
    */
-  load(): Promise<void> {
-    return this.loadAppConfigJson(this.CONFIG_FILE).then(
-      (result) => result,
-      () => this.loadAppConfigJson(this.DEFAULT_CONFIG_FILE)
+  static load(): Promise<IAppConfig> {
+    return this.loadAppConfigJson(this.CONFIG_FILE).catch(() =>
+      this.loadAppConfigJson(this.DEFAULT_CONFIG_FILE)
     );
   }
 
@@ -68,22 +62,18 @@ export class AppConfig {
    *
    * @param jsonFileLocation The file path of the json file to be loaded as config
    */
-  private loadAppConfigJson(jsonFileLocation: string): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      this.http
-        .get<IAppConfig>(jsonFileLocation)
-        .toPromise()
-        .then((result) => {
-          AppConfig.settings = result;
-          resolve();
-        })
-        .catch((response: any) => {
-          reject(
-            `Could not load file '${jsonFileLocation}': ${JSON.stringify(
-              response
-            )}`
-          );
-        });
-    });
+  private static loadAppConfigJson(
+    jsonFileLocation: string
+  ): Promise<IAppConfig> {
+    return fetch(jsonFileLocation)
+      .then((result) => result.json())
+      .then((result: IAppConfig) => (AppConfig.settings = result))
+      .catch((response: any) => {
+        throw new Error(
+          `Could not load file '${jsonFileLocation}': ${JSON.stringify(
+            response
+          )}`
+        );
+      });
   }
 }
