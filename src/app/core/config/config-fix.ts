@@ -382,6 +382,15 @@ export const defaultJsonConfig = {
               "component": "ChildrenOverview",
             }
           ]
+        },
+        {
+          "title": $localize`:Panel title:Activities`,
+          "components": [
+            {
+              "title": "",
+              "component": "ActivitiesOverview",
+            }
+          ]
         }
       ],
       "icon": "university"

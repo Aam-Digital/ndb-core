@@ -28,6 +28,7 @@ import { EntityListModule } from "../../core/entity-components/entity-list/entit
 import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ViewModule } from "../../core/view/view.module";
+import { ActivitiesOverviewComponent } from './activities-overview/activities-overview.component';
 
 @NgModule({
   imports: [
@@ -75,6 +76,7 @@ import { ViewModule } from "../../core/view/view.module";
     SchoolBlockComponent,
     SchoolsListComponent,
     ChildrenOverviewComponent,
+    ActivitiesOverviewComponent,
   ],
   exports: [SchoolBlockComponent],
   providers: [DatePipe],
