@@ -14,6 +14,7 @@ import {
 import { ErrorStateMatcher } from "@angular/material/core";
 
 export interface EditProgressDashboardComponentData {
+  title: ProgressDashboardPart;
   parts: ProgressDashboardPart[];
 }
 
@@ -23,16 +24,21 @@ export interface EditProgressDashboardComponentData {
   styleUrls: ["./edit-progress-dashboard.component.scss"],
 })
 export class EditProgressDashboardComponent {
-  title: FormControl;
-  forms: FormArray;
+  data: FormGroup
+  'title: FormControl;
+  'forms: FormArray;
   currentErrorStateMatcher = new FormCurrentErrorStateMatcher();
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: EditProgressDashboardComponentData,
     private fb: FormBuilder
   ) {
-    this.title = new FormControl("");
-    this.forms = fb.array(data.parts.map((part) => this.formGroup(part)));
+    this.data = this.fb.group({
+      title: "",
+      forms: fb.array(data.parts.map((part) => this.formGroup(part)))
+    })
+    'this.title = fb.group({})
+    'this.forms = fb.array(data.parts.map((part) => this.formGroup(part)));
   }
 
   formGroup(part: ProgressDashboardPart): FormGroup {
