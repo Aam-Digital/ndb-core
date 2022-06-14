@@ -37,6 +37,8 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
  * The pagination settings are stored for each user.
  * The columns can be any kind of component.
  * The column components will be provided with the Entity object, the id for this column, as well as its static config.
+ *
+ * The component can be either used inside a template, or directly in a route through the config object.
  */
 @RouteTarget("EntityList")
 @Component({
@@ -106,6 +108,7 @@ export class EntityListComponent<T extends Entity>
     private entities: EntityRegistry
   ) {
     if (this.activatedRoute.component === EntityListComponent) {
+      // the component is used for a route and not inside a template
       this.activatedRoute.data.subscribe(
         (config: RouteData<EntityListConfig>) =>
           this.buildComponentFromConfig(config)
