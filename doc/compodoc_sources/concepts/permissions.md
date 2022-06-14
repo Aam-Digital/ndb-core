@@ -128,12 +128,12 @@ As permissions cannot directly be created and edited from within the app at the 
 Look for or create the document with `"_id": "Config:Permissions"` and define the permissions as described above.
 2. After saving the new permissions document, update the replication backend about the updated permissions:
 Visit `https://<your-system-domain>/db/api/` to use the OpenAPI interface for this.
-3. There in `Servers` select `/db deployed`
-4. Use your CouchDB admin credentials in the `POST /_session` endpoint to get a valid access token.
-5. Make a request to the `POST /rules/reload` endpoint. If successful, the response will show the newly fetched rules.
+3. There in `Servers` select `/db deployed`.
+4. Click on `Authorize` enter valid user credentials and click `Login`.
+5. Make a request to the `POST /rules/{db}/reload` endpoint, where `{db}` is the active database, e.g. `app`. If successful, the response will show the newly fetched rules.
 6. In case some users might have **gained** access to documents to which they did not have access before,
-also trigger the `POST /clear_local` endpoint.
-The `/clear_local` endpoint will ensure that each client re-checks whether new objects are available for synchronization. 
+also trigger the `POST /{db}/clear_local` endpoint, where `{db}` again is the active database.
+The `/{db}/clear_local` endpoint will ensure that each client re-checks whether new objects are available for synchronization. 
 This should also be used in case an existing user has gotten a new, more powerful role.
 In case a user lost permissions for objects that were already synced, this users local DB will automatically be destroyed and the user has to synchronize all data again.
 
