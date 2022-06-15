@@ -90,7 +90,7 @@ export class PermissionEnforcerService {
   }
 
   private getRelevantSubjects(rule: DatabaseRule): string[] {
-    if (rule.subject === "any") {
+    if (rule.subject === "all") {
       return [...this.entities.keys()];
     } else if (Array.isArray(rule.subject)) {
       return rule.subject;
