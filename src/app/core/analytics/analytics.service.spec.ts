@@ -61,8 +61,9 @@ describe("AnalyticsService", () => {
     expect(mockMatomo.startTracking).not.toHaveBeenCalled();
   });
 
-  it("should start tracking after calling init", () => {
+  it("should start tracking after calling init and config is loaded", () => {
     service.init();
+    configUpdates.next(new Config());
 
     expect(mockMatomo.startTracking).toHaveBeenCalled();
   });

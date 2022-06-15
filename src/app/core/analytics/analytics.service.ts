@@ -74,10 +74,13 @@ export class AnalyticsService {
    * @private
    */
   private setConfigValues() {
-    const { url, site_id, no_cookies } =
-      this.configService.getConfig<UsageAnalyticsConfig>(
-        USAGE_ANALYTICS_CONFIG_ID
-      ) || {};
+    const {
+      url,
+      site_id,
+      no_cookies,
+    } = this.configService.getConfig<UsageAnalyticsConfig>(
+      USAGE_ANALYTICS_CONFIG_ID
+    ) || { url: "https://matomo.aam-digital.org" };
     const u = url.endsWith("/") ? url : url + "/";
 
     if (!this.isInitialized) {
