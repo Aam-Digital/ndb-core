@@ -8,8 +8,7 @@ import {
   UsageAnalyticsConfig,
 } from "./usage-analytics-config";
 import { Angulartics2 } from "angulartics2";
-
-const md5 = require("md5");
+import md5 from "md5";
 
 /**
  * Track usage analytics data and report it to a backend server like Matomo.
@@ -20,7 +19,7 @@ const md5 = require("md5");
   providedIn: "root",
 })
 export class AnalyticsService {
-  private static getUserHash(username: string) {
+  private static getUserHash(username: string): string {
     return md5(AppConfig.settings?.site_name + username);
   }
 
