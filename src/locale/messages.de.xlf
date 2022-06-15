@@ -75,17 +75,7 @@
       </trans-unit>
       <trans-unit id="dd9e271c1b77197013f8e72933162b08df7e058d" datatype="html">
         <source>{VAR_PLURAL, plural, one {participant} other {participants}}</source>
-        <target state="translated">{VAR_PLURAL, plural, 1= {Teilnehmer:in} other {Teilnehmer:innen}}</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-card/activity-card.component.html</context>
-          <context context-type="linenumber">28</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7e0f04afa6ef0fb574cada5f817e88c7d6a081f8" datatype="html">
-        <source> <x id="ICU" equiv-text="{event.children.length, plural, one {participant} other {participants}}"/> </source>
-        <target state="translated"> <x id="ICU" equiv-text="{event.children.length, plural, one {Teilnehmer:in} other {Teilnehmer:innen}}"/> </target>
-        <note priority="1" from="description">Amount of participants of an event</note>
-        <note priority="1" from="meaning">Participants</note>
+        <target state="translated">{VAR_PLURAL, plural, one {Teilnehmer:in} other {Teilnehmer:innen}}</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-card/activity-card.component.html</context>
           <context context-type="linenumber">28</context>
@@ -255,13 +245,12 @@
           <context context-type="linenumber">35</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="06771f30e83b5987e80630effdd08b8ca509b8c6" datatype="html">
-        <source> All excused (out of <x id="INTERPOLATION" equiv-text="{{ selectedEvent.children.length }"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other
-      {participants} }"/>) </source>
-        <target state="translated"> Alle entschuldigt (von <x id="INTERPOLATION" equiv-text="{{selectedEvent.children.length}}"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {Teilnehmer:in} other {Teilnehmer:innen} }"/>) </target>
+      <trans-unit id="0038846c0220ff6fd7989d00827b3d20f7ad304f" datatype="html">
+        <source> All excused (out of <x id="INTERPOLATION" equiv-text="{{ selectedEvent.children.length"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other {participants} }"/> ) </source>
+        <target state="translated"> Alle entschuldigt (von <x id="INTERPOLATION" equiv-text="{{ selectedEvent.children.length"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other {participants} }"/> ) </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
-          <context context-type="linenumber">50,54</context>
+          <context context-type="linenumber">50,55</context>
         </context-group>
         <note priority="1" from="description">How many participants attended at an event (in
         percent)</note>
@@ -269,42 +258,40 @@
       </trans-unit>
       <trans-unit id="07ac11d423e4809d0c4b11c7cdbf72ada5d94909" datatype="html">
         <source>{VAR_PLURAL, plural, one {participant} other {participants}}</source>
-        <target state="translated">{VAR_PLURAL, plural, 1= {Teilnehmender:in} other {Teilnehmer:innen}}</target>
+        <target state="translated">{VAR_PLURAL, plural, one {Teilnehmer:in} other {Teilnehmer:innen}}</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
-          <context context-type="linenumber">52</context>
+          <context context-type="linenumber">53</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
-          <context context-type="linenumber">58</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="0dc97840c4fe5e03dfb822aed93db7b7bcc45b9b" datatype="html">
-        <source> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.average | percent: &quot;1.0-0&quot; }"/> attended (of <x id="INTERPOLATION_1" equiv-text="{{ selectedEvent.children.length"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other
-      {participants} }"/>) </source>
-        <target state="translated"> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.average | percent: &quot;1.0-0&quot; }}"/> haben teilgenommen (von <x id="INTERPOLATION_1" equiv-text="{{ selectedEvent.children.length }}"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, 1= {Teilnehmende/r} other {Teilnehmern} }"/>) </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
-          <context context-type="linenumber">55</context>
+          <context context-type="linenumber">60</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="fcce2647ba7b1763c285341617aaf63f9edab746" datatype="html">
-        <source> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.excludedUnknown }"/> <x id="ICU" equiv-text="{ selectedEventStats.excludedUnknown, plural, one {participant} other
-      {participants} }"/> without recorded status </source>
-        <target state="translated"> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.unknownStatus }}"/> <x id="ICU" equiv-text="{ selectedEventStats.unknownStatus, plural, 1={Teilnehmer:in} other {Teilnehmer:innen} }"/> ohne aufgenommenen Status </target>
+      <trans-unit id="9c7f757afc2ef59ca9cf0ef5e060f35d46efadeb" datatype="html">
+        <source> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.average | percent: &quot;1.0-0&quot; }"/> attended (of <x id="INTERPOLATION_1" equiv-text="{{ selectedEvent.children.length"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other {participants} }"/>) </source>
+        <target state="translated"> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.average | percent: &quot;1.0-0&quot; }"/> haben teilgenommen (von <x id="INTERPOLATION_1" equiv-text="{{ selectedEvent.children.length"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other {participants} }"/>) </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
-          <context context-type="linenumber">65,69</context>
+          <context context-type="linenumber">56,61</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="cf2a6870796ce293380ba0f6a415684ddbabf3ec" datatype="html">
+        <source> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.excludedUnknown }"/> <x id="ICU" equiv-text="{ selectedEventStats.excludedUnknown, plural, one {participant} other {participants} }"/> without recorded status </source>
+        <target state="translated"> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.excludedUnknown }"/> <x id="ICU" equiv-text="{ selectedEventStats.excludedUnknown, plural, one {participant} other {participants} }"/> ohne aufgenommenen Status </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
+          <context context-type="linenumber">66,70</context>
         </context-group>
         <note priority="1" from="description">How many children are without a status</note>
         <note priority="1" from="meaning">Unknown status</note>
       </trans-unit>
       <trans-unit id="8cd09777be56fa0cf0e03baa6cc1667e7c882412" datatype="html">
         <source>{VAR_PLURAL, plural, one {participant} other {participants}}</source>
-        <target state="translated">{VAR_PLURAL, plural, 1= {Teilnehmer} other {Teilnehmer}}</target>
+        <target state="translated">{VAR_PLURAL, plural, one {Teilnehmer} other {Teilnehmer}}</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
-          <context context-type="linenumber">67</context>
+          <context context-type="linenumber">68</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8159a7b7db1727e88d86574bac80ef0cfbe4a0ea" datatype="html">
@@ -315,7 +302,7 @@
         <note priority="1" from="meaning">Show Details Button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
-          <context context-type="linenumber">79</context>
+          <context context-type="linenumber">80</context>
         </context-group>
       </trans-unit>
       <trans-unit id="70ec92659a4c9b68ad0d9d94a5ce12a26dae719d" datatype="html">
@@ -325,7 +312,7 @@
         <note priority="1" from="meaning">No Events</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
-          <context context-type="linenumber">89</context>
+          <context context-type="linenumber">90</context>
         </context-group>
       </trans-unit>
       <trans-unit id="d89edb1989da710f57248a304e191694410b0425" datatype="html">
@@ -336,7 +323,7 @@
         <note priority="1" from="meaning">Add New Event Button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
-          <context context-type="linenumber">100</context>
+          <context context-type="linenumber">101</context>
         </context-group>
       </trans-unit>
       <trans-unit id="049382b7bd465fb9e2602a03c8d3eee30d378de6" datatype="html">
