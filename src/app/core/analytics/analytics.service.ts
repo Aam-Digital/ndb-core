@@ -95,11 +95,9 @@ export class AnalyticsService {
       this.isInitialized = true;
     }
 
+    window["_paq"].push(["setTrackerUrl", u + "matomo.php"]);
     if (no_cookies) {
       window["_paq"].push(["disableCookies"]);
-    }
-    if (url) {
-      window["_paq"].push(["setTrackerUrl", u + "matomo.php"]);
     }
     if (site_id) {
       window["_paq"].push(["setSiteId", site_id]);
