@@ -10,7 +10,7 @@
       Record Attendance
     </app-view-title>
 
-    <h2 *ngIf="currentStage === 0 && !isLoading">
+    <h2 *ngIf="currentStage === 0">
       {{ stages[currentStage] }}
     </h2>
     <div class="subject-line" *ngIf="currentStage !== 0">
@@ -21,13 +21,8 @@
     </div>
   </div>
 
-  <div *ngIf="isLoading" class="process-spinner">
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-  </div>
-
   <div fxFlex="grow" class="flex-fill-section">
     <app-roll-call-setup
-      [(isLoading)]="isLoading"
       *ngIf="currentStage === 0"
       (eventSelected)="finishBasicInformationStage($event)"
     >

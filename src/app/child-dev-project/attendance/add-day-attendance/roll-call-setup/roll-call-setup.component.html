@@ -1,4 +1,4 @@
-<div *ngIf="!isLoading" class="overall-container">
+<div class="overall-container">
   <div class="top-control primary-background">
     <mat-form-field>
       <mat-label
@@ -45,7 +45,11 @@
     </div>
   </div>
 
-  <div class="flex-scroll-container">
+  <div *ngIf="isLoading" class="process-spinner">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+
+  <div class="flex-scroll-container" *ngIf="!isLoading">
     <div class="cards-list">
       <app-activity-card
         class="activity-card"

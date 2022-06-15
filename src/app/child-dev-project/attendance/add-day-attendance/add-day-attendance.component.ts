@@ -57,8 +57,6 @@ export class AddDayAttendanceComponent {
     $localize`:One of the stages while recording child-attendances:Record Attendance`,
   ];
 
-  isLoading: boolean = true;
-
   constructor(
     private entityMapper: EntityMapperService,
     private route: ActivatedRoute,

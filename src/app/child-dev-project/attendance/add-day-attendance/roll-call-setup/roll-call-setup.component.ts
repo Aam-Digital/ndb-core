@@ -1,7 +1,6 @@
 import {
   Component,
   EventEmitter,
-  Input,
   OnInit,
   Output,
   ViewChild,
@@ -36,12 +35,11 @@ export class RollCallSetupComponent implements OnInit {
   visibleActivities: RecurringActivity[] = [];
   filterSettings: FilterComponentSettings<Note>[] = [];
 
-  showingAll: boolean = false;
+  showingAll = false;
 
   @ViewChild("dateField") dateField: NgModel;
 
-  @Input() isLoading;
-  @Output() isLoadingChange = new EventEmitter<boolean>();
+  isLoading = true;
 
   /**
    * filters are displayed in the UI only if at least this many events are listed.
@@ -64,13 +62,13 @@ export class RollCallSetupComponent implements OnInit {
   }
 
   private async initAvailableEvents() {
+    this.isLoading = true;
     this.existingEvents = await this.attendanceService.getEventsOnDate(
       this.date
     );
     await this.loadActivities();
     await this.updateEventsList();
     this.isLoading = false;
-    this.isLoadingChange.emit(false);
   }
 
   private async loadActivities() {
