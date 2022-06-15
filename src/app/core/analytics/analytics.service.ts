@@ -75,15 +75,14 @@ export class AnalyticsService {
    */
   private setConfigValues() {
     const { url, site_id, no_cookies } =
-    this.configService.getConfig<UsageAnalyticsConfig>(
-      USAGE_ANALYTICS_CONFIG_ID
-    ) || {};
+      this.configService.getConfig<UsageAnalyticsConfig>(
+        USAGE_ANALYTICS_CONFIG_ID
+      ) || {};
     const u = url.endsWith("/") ? url : url + "/";
 
     if (!this.isInitialized) {
-      const d = document;
-      const g = d.createElement("script");
-      const s = d.getElementsByTagName("script")[0];
+      const g = document.createElement("script");
+      const s = document.getElementsByTagName("script")[0];
       g.type = "text/javascript";
       g.async = true;
       g.defer = true;
