@@ -9,7 +9,6 @@ import {
 import { Entity } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { getUrlWithoutParams } from "../../../utils/utils";
-import { UntilDestroy } from "@ngneat/until-destroy";
 import { RouteData } from "../../view/dynamic-routing/view-config.interface";
 import { AnalyticsService } from "../../analytics/analytics.service";
 import {
@@ -26,7 +25,6 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
  * Any component that is registered (has the `DynamicComponent` decorator) can be used as a subcomponent.
  * The subcomponents will be provided with the Entity object and the creating new status, as well as its static config.
  */
-@UntilDestroy()
 @RouteTarget("EntityDetails")
 @Component({
   selector: "app-entity-details",
@@ -118,12 +116,12 @@ export class EntityDetailsComponent {
   /**
    * Usage analytics tracking when a section is opened.
    * (directive `angulartics2On="click"` doesn't work as it fires too often and blocks events within the panel)
-   * @param panelTitle
+   * @param index
    */
-  trackPanelOpen(panelTitle: string) {
-    this.analyticsService.eventTrack("details_section_expanded", {
+  trackPanelOpen(index: number) {
+    this.analyticsService.eventTrack("details_tab_changed", {
       category: this.config?.entity,
-      label: panelTitle,
+      label: this.config.panels[index].title,
     });
   }
 }

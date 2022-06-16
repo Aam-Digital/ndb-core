@@ -58,8 +58,11 @@
   </button>
 </mat-menu>
 
-<mat-tab-group appTabStateMemo>
-  <mat-tab *ngFor="let panelConfig of panels; let i = index" [disabled]="creatingNew">
+<mat-tab-group (selectedIndexChange)="trackPanelOpen($event)" appTabStateMemo>
+  <mat-tab
+    *ngFor="let panelConfig of panels; let i = index"
+    [disabled]="creatingNew"
+  >
     <ng-template mat-tab-label>
       <label [matTooltipDisabled]="!creatingNew"
              matTooltip="Save the new record to create it before accessing other details"
