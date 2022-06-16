@@ -62,7 +62,7 @@
   </mat-menu>
 
   <div>
-    <mat-tab-group>
+    <mat-tab-group (selectedIndexChange)="trackTabChanged($event)" appTabStateMemo>
       <mat-tab
         *ngFor="let panelConfig of panels; let i = index"
         [disabled]="creatingNew"

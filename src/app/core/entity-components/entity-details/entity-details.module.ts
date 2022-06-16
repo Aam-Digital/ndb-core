@@ -20,6 +20,7 @@ import { Angulartics2Module } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatMenuModule } from "@angular/material/menu";
 import { EntityUtilsModule } from "../entity-utils/entity-utils.module";
+import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 
 @NgModule({
@@ -45,6 +46,7 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
     FontAwesomeModule,
     EntityUtilsModule,
     MatProgressBarModule,
+    TabStateModule,
   ],
 })
 export class EntityDetailsModule {
