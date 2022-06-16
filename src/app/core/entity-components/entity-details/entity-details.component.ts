@@ -125,12 +125,7 @@ export class EntityDetailsComponent {
     });
   }
 
-  /**
-   * Usage analytics tracking when a section is opened.
-   * (directive `angulartics2On="click"` doesn't work as it fires too often and blocks events within the panel)
-   * @param index
-   */
-  trackPanelOpen(index: number) {
+  trackTabChanged(index: number) {
     this.analyticsService.eventTrack("details_tab_changed", {
       category: this.config?.entity,
       label: this.config.panels[index].title,

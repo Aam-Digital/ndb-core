@@ -81,9 +81,7 @@ describe("ChildrenListComponent", () => {
     queryParams: of({}),
     snapshot: {
       queryParamMap: {
-        get(): string {
-          return "";
-        },
+        get: () => "",
       },
       queryParams: {},
     },

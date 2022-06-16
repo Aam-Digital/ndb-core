@@ -59,9 +59,7 @@ describe("EntityDetailsComponent", () => {
     data: of({ config: routeConfig }),
     snapshot: {
       queryParamMap: {
-        get(): string {
-          return "";
-        },
+        get: () => "",
       },
     },
   };
