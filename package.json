@@ -72,7 +72,7 @@
     "@angular/compiler-cli": "^11.2.4",
     "@babel/core": "^7.13.8",
     "@compodoc/compodoc": "1.1.11",
-    "@cypress/schematic": "^1.5.1",
+    "@cypress/schematic": "~1.5.1",
     "@schematics/angular": "^11.2.14",
     "@storybook/addon-actions": "^6.4.19",
     "@storybook/addon-essentials": "^6.4.19",
