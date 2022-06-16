@@ -23,6 +23,7 @@ import { RouteTarget } from "../../../app.routing";
     <app-entity-list
       [allEntities]="childrenList"
       [listConfig]="listConfig"
+      [isLoading]="isLoading"
       [entityConstructor]="childConstructor"
       (elementClick)="routeTo($event.getId())"
       (addNewClick)="routeTo('new')"
@@ -35,6 +36,7 @@ export class ChildrenListComponent implements OnInit {
   childConstructor = Child;
   @ViewChild(EntityListComponent)
   entityListComponent: EntityListComponent<Child>;
+  isLoading: boolean = true;
 
   constructor(
     private childrenService: ChildrenService,
@@ -54,6 +56,7 @@ export class ChildrenListComponent implements OnInit {
       .subscribe((children) => {
         this.childrenList = children;
         this.addPrebuiltFilters();
+        this.isLoading = false;
       });
   }
 
