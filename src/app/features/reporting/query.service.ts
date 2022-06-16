@@ -10,8 +10,7 @@ import { ChildSchoolRelation } from "../../child-dev-project/children/model/chil
 import { ChildrenService } from "../../child-dev-project/children/children.service";
 import { AttendanceService } from "../../child-dev-project/attendance/attendance.service";
 import { EventAttendance } from "../../child-dev-project/attendance/model/event-attendance";
-
-const jsonQuery = require("json-query");
+import jsonQuery from "json-query";
 
 /**
  * A query service which uses the json-query library (https://github.com/auditassistant/json-query).
