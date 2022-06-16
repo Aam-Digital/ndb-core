@@ -21,22 +21,22 @@ export class DashboardWidgetComponent {
   @Input() theme: DashboardTheme;
 
   _title: string | number;
-  titleReady: boolean;
+  titleReady = true;
 
   /** optional tooltip to explain detailed meaning of this widget / statistic */
   @Input() explanation: string;
   @Input() set title(
     title: PromiseLike<string | number> | string | number | undefined
   ) {
+    this.titleReady = false;
     if (isPromise(title)) {
-      this.titleReady = true;
       title.then((value) => {
         this._title = value;
-        this.titleReady = false;
+        this.titleReady = true;
       });
     } else {
       this._title = title;
-      this.titleReady = title === undefined;
+      this.titleReady = title !== undefined && title !== null;
     }
   }
   @Input() headline: string;

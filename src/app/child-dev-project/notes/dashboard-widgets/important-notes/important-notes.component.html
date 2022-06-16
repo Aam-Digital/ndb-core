@@ -1,12 +1,12 @@
 <app-dashboard-widget
   icon="exclamation-triangle"
-  [title]="relevantNotesLength"
+  [title]="relevantNotes?.length"
   subtitle="Notes needing follow-up"
   theme="note"
   [loading]="loading"
 >
   <app-widget-content>
-    <div *ngIf="relevantNotes.length > 0" class="table-wrapper">
+    <div *ngIf="relevantNotes?.length > 0" class="table-wrapper">
       <table
         mat-table
         [dataSource]="notesDataSource"
@@ -19,7 +19,7 @@
         </tr>
         <ng-container matColumnDef="date">
           <td *matCellDef="let note">
-            {{note.date | date}}
+            {{ note.date | date }}
           </td>
         </ng-container>
 
@@ -27,7 +27,7 @@
           matColumnDef="title"
         >
           <td *matCellDef="let note" class="subject-cell">
-            {{note.subject}}
+            {{ note.subject }}
           </td>
         </ng-container>
 
@@ -35,15 +35,15 @@
           mat-row
           *matRowDef="let row; columns: ['date', 'title'];"
           class="dashboard-table-row"
-          (click)="goToNote(row)"
+          (click)="openNote(row)"
         ></tr>
       </table>
     </div>
     <div
-      *ngIf="relevantNotes.length === 0"
+      *ngIf="relevantNotes?.length === 0"
       class="headline"
     >
-      <span i18n="There are no participants that have a recent report to be shown here">
+      <span i18n="Description when there are no notes that need a follow-up">
         no notes that need immediate attention
       </span>
     </div>

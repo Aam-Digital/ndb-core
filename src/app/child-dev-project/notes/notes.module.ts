@@ -116,5 +116,6 @@ export class NotesModule {
     NoteAttendanceCountBlockComponent,
     NotesDashboardComponent,
     NotesOfChildComponent,
+    ImportantNotesComponent,
   ];
 }

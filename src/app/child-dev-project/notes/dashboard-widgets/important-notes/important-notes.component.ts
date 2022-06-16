@@ -22,8 +22,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 export class ImportantNotesComponent
   implements OnInit, OnInitDynamicComponent, AfterViewInit {
   private relevantWarningLevels: string[] = [];
-  public relevantNotes: Note[] = [];
-  public relevantNotesLength?: number;
+  public relevantNotes: Note[];
 
   private notes: Observable<Note[]>;
   public loading: boolean = true;
@@ -38,8 +37,7 @@ export class ImportantNotesComponent
   ) {}
 
   ngOnInit(): void {
-    // This feed always contains the latest notes plus
-    // the initial notes
+    // This feed always contains the latest notes plus the initial notes
     this.notes = concat(
       this.entityMapperService.loadType(Note),
       this.entityMapperService
@@ -50,8 +48,6 @@ export class ImportantNotesComponent
     this.notes.pipe(first()).subscribe(() => (this.loading = false));
     this.notes.pipe(untilDestroyed(this)).subscribe((next) => {
       this.relevantNotes = next.filter((note) => this.noteIsRelevant(note));
-      // this cannot simply be computed since it has to be undefined initially to display the spinner when loading
-      this.relevantNotesLength = this.relevantNotes.length;
       this.notesDataSource.data = this.relevantNotes;
     });
   }
@@ -68,7 +64,7 @@ export class ImportantNotesComponent
     return this.relevantWarningLevels.includes(note.warningLevel.id);
   }
 
-  goToNote(note: Note) {
+  openNote(note: Note) {
     this.formDialog.openDialog(NoteDetailsComponent, note);
   }
 }
