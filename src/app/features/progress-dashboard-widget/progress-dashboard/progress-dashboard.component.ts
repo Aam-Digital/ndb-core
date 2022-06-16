@@ -66,8 +66,7 @@ export class ProgressDashboardComponent
       .afterClosed()
       .subscribe(async (next) => {
         if (next) {
-          console.warn(this.data)
-          this.data.parts = next;
+          Object.assign(this.data, next);
           await this.save();
         }
       });

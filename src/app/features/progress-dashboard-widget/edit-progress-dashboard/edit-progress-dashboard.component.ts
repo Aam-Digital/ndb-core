@@ -1,6 +1,9 @@
 import { Component, Inject } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { ProgressDashboardPart } from "../progress-dashboard/progress-dashboard-config";
+import {
+  ProgressDashboardPart,
+  ProgressDashboardConfig,
+} from "../progress-dashboard/progress-dashboard-config";
 import {
   FormArray,
   FormBuilder,
@@ -13,32 +16,27 @@ import {
 } from "@angular/forms";
 import { ErrorStateMatcher } from "@angular/material/core";
 
-export interface EditProgressDashboardComponentData {
-  title: ProgressDashboardPart;
-  parts: ProgressDashboardPart[];
-}
-
 @Component({
   selector: "app-edit-progress-dashboard",
   templateUrl: "./edit-progress-dashboard.component.html",
   styleUrls: ["./edit-progress-dashboard.component.scss"],
 })
 export class EditProgressDashboardComponent {
-  data: FormGroup
-  'title: FormControl;
-  'forms: FormArray;
+  outputData: FormGroup;
+  title: FormControl;
+  parts: FormArray;
   currentErrorStateMatcher = new FormCurrentErrorStateMatcher();
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: EditProgressDashboardComponentData,
+    @Inject(MAT_DIALOG_DATA) public data: ProgressDashboardConfig,
     private fb: FormBuilder
   ) {
-    this.data = this.fb.group({
-      title: "",
-      forms: fb.array(data.parts.map((part) => this.formGroup(part)))
-    })
-    'this.title = fb.group({})
-    'this.forms = fb.array(data.parts.map((part) => this.formGroup(part)));
+    this.title = new FormControl(data.title);
+    this.parts = fb.array(data.parts.map((part) => this.formGroup(part)));
+    this.outputData = new FormGroup({
+      title: this.title,
+      parts: this.parts,
+    });
   }
 
   formGroup(part: ProgressDashboardPart): FormGroup {
@@ -78,17 +76,17 @@ export class EditProgressDashboardComponent {
       currentValue: 1,
       targetValue: 10,
     };
-    this.forms.push(this.formGroup(newPart));
+    this.parts.push(this.formGroup(newPart));
   }
 
   get tooltipOnSave(): string {
-    return this.forms.valid
+    return this.parts.valid
       ? ""
       : $localize`:Shown when there are errors that prevent saving:Fix the errors to save the form`;
   }
 
   removePart(index: number) {
-    this.forms.removeAt(index);
+    this.parts.removeAt(index);
   }
 }
 
