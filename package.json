@@ -49,7 +49,7 @@
     "crypto-es": "^1.2.7",
     "deep-object-diff": "^1.1.7",
     "faker": "^5.5.3",
-    "flag-icon-css": "^3.5.0",
+    "flag-icons": "^6.5.1",
     "hammerjs": "^2.0.8",
     "json-query": "^2.2.2",
     "lodash-es": "^4.17.21",
