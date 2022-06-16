@@ -7,7 +7,7 @@ import {
 } from "@angular/core/testing";
 import { SchoolsListComponent } from "./schools-list.component";
 import { ActivatedRoute, Router } from "@angular/router";
-import { of } from "rxjs";
+import { of, Subject } from "rxjs";
 import { SchoolsModule } from "../schools.module";
 import { School } from "../model/school";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
@@ -86,4 +86,17 @@ describe("SchoolsListComponent", () => {
     component.routeTo("schoolId");
     expect(router.navigate).toHaveBeenCalledWith(["/school", "schoolId"]);
   });
+
+  it("should indicate once loading is finished", fakeAsync(() => {
+    expect(component.isLoading).toBeTrue();
+    const loadTypeSpy = spyOn(TestBed.inject(EntityMapperService), "loadType");
+    const subject = new Subject<School[]>();
+    loadTypeSpy.and.returnValue(subject.toPromise());
+    component.ngOnInit();
+    tick();
+    expect(component.isLoading).toBeTrue();
+    subject.complete();
+    tick();
+    expect(component.isLoading).toBeFalse();
+  }));
 });

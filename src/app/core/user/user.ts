@@ -18,8 +18,7 @@
 import { Entity } from "../entity/model/entity";
 import { DatabaseEntity } from "../entity/database-entity.decorator";
 import { DatabaseField } from "../entity/database-field.decorator";
-
-import * as CryptoJS from "crypto-js";
+import CryptoES from "crypto-es";
 
 /**
  * Entity representing a User object including password.
@@ -65,10 +64,10 @@ export class User extends Entity {
       return;
     }
 
-    this.cloudPasswordDec = CryptoJS.AES.decrypt(
+    this.cloudPasswordDec = CryptoES.AES.decrypt(
       this.cloudPasswordEnc.toString(),
       givenPassword
-    ).toString(CryptoJS.enc.Utf8);
+    ).toString(CryptoES.enc.Utf8);
     return this.cloudPasswordDec;
   }
 
@@ -79,7 +78,7 @@ export class User extends Entity {
    */
   public setCloudPassword(blobPassword: string, givenPassword: string) {
     this.cloudPasswordDec = blobPassword;
-    this.cloudPasswordEnc = CryptoJS.AES.encrypt(
+    this.cloudPasswordEnc = CryptoES.AES.encrypt(
       blobPassword,
       givenPassword
     ).toString();

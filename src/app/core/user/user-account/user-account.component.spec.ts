@@ -32,6 +32,8 @@ import { UserModule } from "../user.module";
 import { SessionType } from "../../session/session-type";
 import { IAppConfig } from "../../app-config/app-config.model";
 import { LoggingService } from "../../logging/logging.service";
+import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
+import { RouterTestingModule } from "@angular/router/testing";
 
 describe("UserAccountComponent", () => {
   let component: UserAccountComponent;
@@ -62,7 +64,12 @@ describe("UserAccountComponent", () => {
 
       TestBed.configureTestingModule({
         declarations: [UserAccountComponent],
-        imports: [UserModule, NoopAnimationsModule],
+        imports: [
+          UserModule,
+          NoopAnimationsModule,
+          TabStateModule,
+          RouterTestingModule,
+        ],
         providers: [
           { provide: SessionService, useValue: mockSessionService },
           { provide: UserAccountService, useValue: mockUserAccountService },
