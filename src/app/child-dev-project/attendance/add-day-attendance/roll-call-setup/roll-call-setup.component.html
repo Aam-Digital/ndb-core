@@ -6,9 +6,8 @@
           Event-Record label|Record an event for a particular date that is to be
           inputted
         "
-      >Date
-      </mat-label
-      >
+        >Date
+      </mat-label>
       <input
         matInput
         #dateField="ngModel"
@@ -20,13 +19,18 @@
       <mat-datepicker-toggle
         matSuffix
         [for]="datePicker"
-        angulartics2On="click" angularticsCategory="Record Attendance" angularticsAction="select_date"
+        angulartics2On="click"
+        angularticsCategory="Record Attendance"
+        angularticsAction="select_date"
       ></mat-datepicker-toggle>
       <mat-datepicker #datePicker></mat-datepicker>
     </mat-form-field>
 
-    <div *ngIf="existingEvents.length >= FILTER_VISIBLE_THRESHOLD"
-         fxLayout="row wrap" fxLayoutGap="8px">
+    <div
+      *ngIf="existingEvents.length >= FILTER_VISIBLE_THRESHOLD"
+      fxLayout="row wrap"
+      fxLayoutGap="8px"
+    >
       <app-list-filter
         *ngFor="let filter of filterSettings"
         [filterConfig]="filter.filterSettings"
@@ -41,7 +45,11 @@
     </div>
   </div>
 
-  <div class="flex-scroll-container">
+  <div *ngIf="isLoading" class="process-spinner">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+
+  <div class="flex-scroll-container" *ngIf="!isLoading">
     <div class="cards-list">
       <app-activity-card
         class="activity-card"
@@ -61,14 +69,10 @@
         angularticsCategory="Record Attendance"
         angularticsAction="show_more"
       >
-        <span
-          *ngIf="showingAll"
-          i18n="Show less entries of a list">
+        <span *ngIf="showingAll" i18n="Show less entries of a list">
           Show less
         </span>
-        <span
-          *ngIf="!showingAll"
-          i18n="Show more entries of a list">
+        <span *ngIf="!showingAll" i18n="Show more entries of a list">
           Show more
         </span>
       </button>

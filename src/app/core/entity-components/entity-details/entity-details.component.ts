@@ -36,6 +36,7 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
 export class EntityDetailsComponent {
   entity: Entity;
   creatingNew = false;
+  isLoading: boolean = true;
 
   panels: Panel[] = [];
   iconName: string;
@@ -52,6 +53,7 @@ export class EntityDetailsComponent {
   ) {
     this.route.data.subscribe((data: RouteData<EntityDetailsConfig>) => {
       this.config = data.config;
+      this.setInitialPanelsConfig();
       this.iconName = data.config.icon;
       this.route.paramMap.subscribe((params) =>
         this.loadEntity(params.get("id"))
@@ -68,17 +70,27 @@ export class EntityDetailsComponent {
       }
       this.entity = new constr();
       this.creatingNew = true;
-      this.setPanelsConfig();
+      this.setFullPanelsConfig();
     } else {
       this.creatingNew = false;
       this.entityMapperService.load<Entity>(constr, id).then((entity) => {
         this.entity = entity;
-        this.setPanelsConfig();
+        this.setFullPanelsConfig();
+        this.isLoading = false;
       });
     }
   }
 
-  private setPanelsConfig() {
+  private setInitialPanelsConfig() {
+    this.panels = this.config.panels.map((p) => {
+      return {
+        title: p.title,
+        components: [],
+      };
+    });
+  }
+
+  private setFullPanelsConfig() {
     this.panels = this.config.panels.map((p) => {
       return {
         title: p.title,

@@ -53,6 +53,8 @@ export interface TableRow<T> {
 })
 export class EntitySubrecordComponent<T extends Entity>
   implements OnChanges, OnInit {
+  @Input() isLoading: boolean;
+
   /** configuration what kind of columns to be generated for the table */
   @Input() set columns(columns: (FormFieldConfig | string)[]) {
     this._columns = columns.map((col) => {

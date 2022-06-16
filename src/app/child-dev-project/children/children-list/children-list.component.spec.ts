@@ -122,6 +122,7 @@ describe("ChildrenListComponent", () => {
   });
 
   it("should load children on init", fakeAsync(() => {
+    component.isLoading = true;
     const child1 = new Child("c1");
     const child2 = new Child("c2");
     mockChildrenService.getChildren.and.returnValue(of([child1, child2]));
@@ -129,6 +130,7 @@ describe("ChildrenListComponent", () => {
     tick();
     expect(mockChildrenService.getChildren).toHaveBeenCalled();
     expect(component.childrenList).toEqual([child1, child2]);
+    expect(component.isLoading).toBeFalse();
   }));
 
   it("should route to the given id", () => {
