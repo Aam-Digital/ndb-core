@@ -13,8 +13,10 @@ import { ProgressDashboardWidgetModule } from "../progress-dashboard-widget.modu
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { ProgressDashboardConfig } from "./progress-dashboard-config";
 import { MatDialog } from "@angular/material/dialog";
-import { Subject } from "rxjs";
+import { BehaviorSubject, Subject } from "rxjs";
 import { take } from "rxjs/operators";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { SyncState } from "../../../core/session/session-states/sync-state.enum";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("ProgressDashboardComponent", () => {
@@ -22,6 +24,8 @@ describe("ProgressDashboardComponent", () => {
   let fixture: ComponentFixture<ProgressDashboardComponent>;
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
   const mockDialog = jasmine.createSpyObj<MatDialog>("matDialog", ["open"]);
+  let mockSession: jasmine.SpyObj<SessionService>;
+  let mockSync: BehaviorSubject<SyncState>;
 
   beforeEach(
     waitForAsync(() => {
@@ -31,6 +35,8 @@ describe("ProgressDashboardComponent", () => {
       ]);
       mockEntityMapper.load.and.resolveTo({ title: "test", parts: [] } as any);
       mockEntityMapper.save.and.resolveTo();
+      mockSync = new BehaviorSubject(SyncState.UNSYNCED);
+      mockSession = jasmine.createSpyObj([], { syncState: mockSync });
 
       TestBed.configureTestingModule({
         imports: [
@@ -41,6 +47,7 @@ describe("ProgressDashboardComponent", () => {
         providers: [
           { provide: EntityMapperService, useValue: mockEntityMapper },
           { provide: MatDialog, useValue: mockDialog },
+          { provide: SessionService, useValue: mockSession },
           {
             provide: AlertService,
             useValue: jasmine.createSpyObj([
@@ -76,8 +83,22 @@ describe("ProgressDashboardComponent", () => {
     );
   }));
 
-  it("should create a new progress dashboard config if no configuration could be found", fakeAsync(() => {
-    mockEntityMapper.load.and.rejectWith({ status: 404 });
+  it("should retry loading the config after sync has finished", fakeAsync(() => {
+    mockEntityMapper.load.and.rejectWith();
+    component.onInitFromDynamicConfig({ dashboardConfigId: "someId" });
+    component.ngOnInit();
+    tick();
+
+    const config = new ProgressDashboardConfig("someId");
+    mockEntityMapper.load.and.resolveTo(config);
+    mockSync.next(SyncState.COMPLETED);
+
+    expect(component.data).toEqual(config);
+  }));
+
+  it("should create a new progress dashboard config if no configuration could be found after initial sync", fakeAsync(() => {
+    mockEntityMapper.load.and.rejectWith();
+    mockSync.next(SyncState.COMPLETED);
     const configID = "config-id";
 
     component.onInitFromDynamicConfig({ dashboardConfigId: configID });

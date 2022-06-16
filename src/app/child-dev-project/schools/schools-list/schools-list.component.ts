@@ -16,6 +16,7 @@ import { RouteTarget } from "../../../app.routing";
     <app-entity-list
       [allEntities]="schoolList"
       [listConfig]="listConfig"
+      [isLoading]="isLoading"
       [entityConstructor]="schoolConstructor"
       (elementClick)="routeTo($event.getId())"
       (addNewClick)="routeTo('new')"
@@ -28,6 +29,7 @@ export class SchoolsListComponent implements OnInit {
   schoolList: School[] = [];
   listConfig: EntityListConfig;
   schoolConstructor = School;
+  isLoading: boolean = true;
 
   constructor(
     private entityMapper: EntityMapperService,
@@ -39,9 +41,10 @@ export class SchoolsListComponent implements OnInit {
     this.route.data.subscribe(
       (data: RouteData<EntityListConfig>) => (this.listConfig = data.config)
     );
-    this.entityMapper
-      .loadType<School>(School)
-      .then((data) => (this.schoolList = data));
+    this.entityMapper.loadType<School>(School).then((data) => {
+      this.schoolList = data;
+      this.isLoading = false;
+    });
   }
 
   routeTo(route: string) {
