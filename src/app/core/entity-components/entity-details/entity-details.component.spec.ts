@@ -126,6 +126,7 @@ describe("EntityDetailsComponent", () => {
   }));
 
   it("should load the correct child on startup", fakeAsync(() => {
+    expect(component.isLoading).toBeTrue();
     const testChild = new Child("Test-Child");
     const entityMapper = TestBed.inject(EntityMapperService);
     entityMapper.save(testChild);
@@ -137,6 +138,7 @@ describe("EntityDetailsComponent", () => {
 
     expect(entityMapper.load).toHaveBeenCalledWith(Child, testChild.getId());
     expect(component.entity).toBe(testChild);
+    expect(component.isLoading).toBeFalse();
   }));
 
   it("should navigate back when deleting an entity", fakeAsync(() => {

@@ -23,6 +23,8 @@ export class AnalyticsService {
     return md5(AppConfig.settings?.site_name + username);
   }
 
+  private isInitialized = false;
+
   constructor(
     private angulartics2: Angulartics2,
     private angulartics2Matomo: Angulartics2Matomo,
@@ -33,6 +35,23 @@ export class AnalyticsService {
     this.angulartics2Matomo.setUsername(
       AnalyticsService.getUserHash(username ?? "")
     );
+  }
+
+  /**
+   * Set up usage analytics tracking - if the AppConfig specifies the required settings.
+   */
+  init(): void {
+    window["_paq"] = window["_paq"] || [];
+    window["_paq"].push([
+      "setDocumentTitle",
+      document.domain + "/" + document.title,
+    ]);
+    window["_paq"].push(["trackPageView"]);
+    window["_paq"].push(["enableLinkTracking"]);
+    this.setVersion();
+    this.setOrganization(AppConfig.settings.site_name);
+    this.setUser(undefined);
+    this.configService.configUpdates.subscribe(() => this.setConfigValues());
   }
 
   private setVersion(): void {
@@ -47,37 +66,6 @@ export class AnalyticsService {
     });
   }
 
-  private setConfigValues() {
-    const { url, site_id, no_cookies } =
-      this.configService.getConfig<UsageAnalyticsConfig>(
-        USAGE_ANALYTICS_CONFIG_ID
-      ) || {};
-    if (no_cookies) {
-      window["_paq"].push(["disableCookies"]);
-    }
-    if (url) {
-      const u = url.endsWith("/") ? url : url + "/";
-      window["_paq"].push(["setTrackerUrl", u + "matomo.php"]);
-    }
-    if (site_id) {
-      window["_paq"].push(["setSiteId", site_id]);
-    }
-  }
-
-  /**
-   * Set up usage analytics tracking - if the AppConfig specifies the required settings.
-   */
-  init(): void {
-    this.setUpMatomo();
-
-    this.setVersion();
-    this.setOrganization(AppConfig.settings.site_name);
-    this.setUser(undefined);
-    this.configService.configUpdates.subscribe(() => this.setConfigValues());
-
-    this.angulartics2Matomo.startTracking();
-  }
-
   /**
    * dynamically sets up everything for Matomo.
    *
@@ -85,23 +73,35 @@ export class AnalyticsService {
    * https://github.com/Arnaud73/ngx-matomo/blob/master/projects/ngx-matomo/src/lib/matomo-injector.service.ts
    * @private
    */
-  private setUpMatomo() {
-    window["_paq"] = window["_paq"] || [];
-    window["_paq"].push([
-      "setDocumentTitle",
-      document.domain + "/" + document.title,
-    ]);
-    window["_paq"].push(["trackPageView"]);
-    window["_paq"].push(["enableLinkTracking"]);
-    const d = document;
-    const g = d.createElement("script");
-    const s = d.getElementsByTagName("script")[0];
-    g.type = "text/javascript";
-    g.async = true;
-    g.defer = true;
-    // TODO this should be configurable
-    g.src = "https://matomo.aam-digital.org/matomo.js";
-    s.parentNode.insertBefore(g, s);
+  private setConfigValues() {
+    const {
+      url,
+      site_id,
+      no_cookies,
+    } = this.configService.getConfig<UsageAnalyticsConfig>(
+      USAGE_ANALYTICS_CONFIG_ID
+    ) || { url: "https://matomo.aam-digital.org" };
+    const u = url.endsWith("/") ? url : url + "/";
+
+    if (!this.isInitialized) {
+      const g = document.createElement("script");
+      const s = document.getElementsByTagName("script")[0];
+      g.type = "text/javascript";
+      g.async = true;
+      g.defer = true;
+      g.src = u + "matomo.js";
+      s.parentNode.insertBefore(g, s);
+      this.angulartics2Matomo.startTracking();
+      this.isInitialized = true;
+    }
+
+    window["_paq"].push(["setTrackerUrl", u + "matomo.php"]);
+    if (no_cookies) {
+      window["_paq"].push(["disableCookies"]);
+    }
+    if (site_id) {
+      window["_paq"].push(["setSiteId", site_id]);
+    }
   }
 
   /**
