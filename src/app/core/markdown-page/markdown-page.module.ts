@@ -26,7 +26,6 @@ function markedOptionsFactory(): MarkedOptions {
 
   renderer.heading = (text, level) => {
     if (level === 3) {
-      console.log(text);
       switch (text.toLowerCase()) {
         case "bug fixes":
           return `<span class="badge-label background-changelog-bugfix">${text}</span>`;

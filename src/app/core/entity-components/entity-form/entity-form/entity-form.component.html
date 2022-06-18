@@ -1,11 +1,16 @@
 <div class="flex-column">
-  <div class="padding-bottom-small align-self-end">
+  <!-- The wrapper for edit, save and cancel button.
+
+  The classes 'flex-row' and 'gap-small' enable a small gap between the Save button and the Cancel button.
+  Simply applying a margin right to the 'Save' button collides with the styles that the 'mat-raised-button'
+  brings with it.
+  -->
+  <div class="padding-bottom-small align-self-end flex-row gap-small">
     <button
       *ngIf="form?.enabled"
       mat-raised-button
       (click)="save()"
       i18n="Save button for forms"
-      class="margin-right-small"
     >
       Save
     </button>
@@ -34,10 +39,10 @@
     </ng-container>
   </div>
 
-  <form class="columns-wrapper">
-    <div *ngFor="let col of _columns; let i=index">
+  <form class="entity-form-columns">
+    <div *ngFor="let col of _columns; let i=index" class="entity-form-cell">
       <h2 *ngIf="columnHeaders && columnHeaders[i]">{{columnHeaders[i]}}</h2>
-      <div
+      <ng-container
         *ngFor="let row of col"
         [appDynamicComponent]="{
           component: row.edit,
@@ -56,8 +61,7 @@
           icon="question-circle"
           [matTooltip]="row.tooltip"
         ></fa-icon>
-      </div>
-
+      </ng-container>
     </div>
   </form>
 </div>

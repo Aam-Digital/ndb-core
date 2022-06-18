@@ -1,0 +1,49 @@
+@use "../variables/colors";
+@use "../variables/ndb-light-theme" as theme;
+@use "~@angular/material/theming" as *;
+
+/** Color-utility classes **/
+
+.background-muted {
+  background-color: mat-color($mat-grey);
+}
+
+.background-accent {
+  background-color: mat-color(theme.$accent);
+}
+
+.color-accent {
+  color: mat-color(theme.$accent);
+}
+
+.background-changelog-bugfix {
+  background-color: colors.$warning-warning;
+}
+
+.background-changelog-feature {
+  background-color: green;
+}
+
+.background-changelog-unknown {
+  background-color: mat-color($mat-grey);
+}
+
+.background-error {
+  background-color: #f44336;
+}
+
+.background-success {
+  background-color: colors.$success;
+}
+
+.color-error {
+  color: colors.$error;
+}
+
+.color-success {
+  color: colors.$success;
+}
+
+.white {
+  color: white;
+}

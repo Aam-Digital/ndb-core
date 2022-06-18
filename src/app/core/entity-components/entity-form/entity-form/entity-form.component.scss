@@ -1,15 +1,23 @@
 @use "src/styles/mixins/grid-layout";
 
-.columns-wrapper {
-  @include grid-layout.adaptive(330px);
-  // The items will usually span a whole grid-cell when they contain a
-  // mat-form-field. When this is not the case (for example when displaying a photo)
-  // we want to have the items center-aligned
-  align-items: center;
+.entity-form-columns {
+  @include grid-layout.adaptive($min-block-width: 330px);
+}
+
+.entity-form-cell {
+  display: flex;
+  flex-direction: column;
 
   // set the width of each form field to 100% in every form component that is a descendent
   // of the columns-wrapper class
   mat-form-field {
     width: 100%;
+  }
+
+  // We align the photo (and only tht photo) to the center of the cell if there is one.
+  // This looks better on desktop and mobile compared to an alignment to the start of the cell
+  // which is the default for all other elements
+  > app-edit-photo {
+    align-self: center;
   }
 }

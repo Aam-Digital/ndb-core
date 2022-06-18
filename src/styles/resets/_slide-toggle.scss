@@ -1,0 +1,37 @@
+@use "~@angular/material/theming" as *;
+@use "../variables/ndb-light-theme" as theme;
+
+/* configuration for the mat-slide-toggle feature, used e.g. in the entity-list.component for the "Show All"
+option within the pagination of the tables */
+.mat-slide-toggle-thumb {
+  filter: grayscale(100%);
+  width: 18px !important;
+  height: 18px !important;
+  transform: translate(0%, 0%);
+  background-image: url(~/src/assets/icons/icon-512x512.png) !important;
+  background-origin: content-box;
+  background-size: contain;
+  background-position: center center;
+}
+
+.mat-checked .mat-slide-toggle-thumb {
+  filter: grayscale(0);
+}
+
+.mat-slide-toggle-bar {
+  background-color: #cccccc;
+  border-radius: 15px !important;
+  height: 16px !important;
+}
+
+.mat-slide-toggle-thumb-container {
+  top: -2px !important;
+}
+
+.mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-bar {
+  background-color: mat-color(theme.$primary);
+}
+
+.mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
+  background-color: #fff;
+}
