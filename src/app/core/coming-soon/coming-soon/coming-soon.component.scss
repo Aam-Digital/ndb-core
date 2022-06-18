@@ -1,4 +1,4 @@
-@import "../../../../styles/sizes";
+@use "src/styles/variables/sizes";
 
 .illustration {
   width: 70%;
@@ -7,5 +7,5 @@
 .feedback-section {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: $standard-gutter-regular;
+  gap: sizes.$regular;
 }

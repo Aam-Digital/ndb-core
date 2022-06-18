@@ -1,25 +1,15 @@
-@import "../../../../utils/grid-layout";
-
-$min-block-width: 330px;
-$max-screen-width: $min-block-width + $margin-main-view-right + $margin-main-view-left;
-
-// Hacky way to set the width of each form field
-// to 100% in every form component
-:host ::ng-deep .mat-form-field {
-  width: 100%;
-}
+@use "src/styles/mixins/grid-layout";
 
 .columns-wrapper {
-  @include adaptive-grid($min-block-width, $max-screen-width);
-  align-items: start;
-}
+  @include grid-layout.adaptive(330px);
+  // The items will usually span a whole grid-cell when they contain a
+  // mat-form-field. When this is not the case (for example when displaying a photo)
+  // we want to have the items center-aligned
+  align-items: center;
 
-.align-self-end {
-  align-self: end;
-}
-
-.mat-chip {
-  margin-left: 20px !important;
-  margin-bottom: 20px !important;
-  font-family: sans-serif;
+  // set the width of each form field to 100% in every form component that is a descendent
+  // of the columns-wrapper class
+  mat-form-field {
+    width: 100%;
+  }
 }

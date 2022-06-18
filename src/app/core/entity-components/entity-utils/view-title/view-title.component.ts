@@ -6,6 +6,7 @@ import { Location } from "@angular/common";
 @Component({
   selector: "app-view-title",
   templateUrl: "./view-title.component.html",
+  styleUrls: ["./view-title-component.scss"]
 })
 export class ViewTitleComponent {
   /** The page title to be displayed */

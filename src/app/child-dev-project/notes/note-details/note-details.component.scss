@@ -1,5 +1,5 @@
-@import "../../../../styles";
-@import "../../../utils/grid-layout";
+@use "src/styles/variables/sizes";
+@use "src/styles/mixins/grid-layout";
 
 .input-medium {
   width: 100%;
@@ -13,14 +13,14 @@
 }
 
 .content-header {
-  @include adaptive-grid(450px);
+  @include grid-layout.adaptive(450px);
 }
 
 .information-body {
   display: flex;
   flex-direction: column;
-  gap: $standard-gutter-small;
-  padding: $standard-gutter-small;
+  gap: sizes.$small;
+  padding: sizes.$small;
 }
 
 .additional-actions-menu {

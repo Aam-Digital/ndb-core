@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { FormFieldConfig } from "./FormConfig";
 import { FormGroup } from "@angular/forms";
@@ -18,6 +18,9 @@ import { AlertService } from "../../../alerts/alert.service";
   selector: "app-entity-form",
   templateUrl: "./entity-form.component.html",
   styleUrls: ["./entity-form.component.scss"],
+  // Use no encapsulation because we want to change the value of children (the mat-form-fields that are
+  // dynamically created)
+  encapsulation: ViewEncapsulation.None,
 })
 export class EntityFormComponent implements OnInit {
   /**

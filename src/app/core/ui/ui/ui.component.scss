@@ -15,7 +15,9 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import "../../../../styles";
+@use "~@angular/material/theming" as *;
+@use "src/styles/variables/sizes";
+@use "src/styles/variables/ndb-light-theme" as theme;
 
 /*
  * outermost elements; make them as tall as possible.
@@ -62,6 +64,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
+  background-color: mat-color(theme.$primary, 50);
 
   /**
    * When the app is small (smaller than 599px),
@@ -80,10 +83,10 @@ body {
  */
 .sidenav-content {
   margin:
-    $margin-main-view-top
-    $margin-main-view-right
-    $margin-main-view-bottom
-    $margin-main-view-left;
+    sizes.$margin-main-view-top
+    sizes.$margin-main-view-right
+    sizes.$margin-main-view-bottom
+    sizes.$margin-main-view-left;
 }
 
 /**
@@ -131,4 +134,10 @@ body {
   border-right: solid 1px rgba(0, 0, 0, 0.12);
   border-radius: 0;
   overflow: hidden;
+}
+
+.login {
+  display: grid;
+  grid-template-columns: 400px;
+  justify-content: center;
 }

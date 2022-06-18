@@ -1,87 +1,84 @@
-<div class="overall-container">
-  <div class="top-control primary-background">
-    <mat-form-field>
-      <mat-label
-        i18n="
-          Event-Record label|Record an event for a particular date that is to be
-          inputted
-        "
-      >Date
-      </mat-label
-      >
-      <input
-        matInput
-        #dateField="ngModel"
-        [(ngModel)]="date"
-        required
-        [matDatepicker]="datePicker"
-        (dateChange)="setNewDate($event.value)"
-      />
-      <mat-datepicker-toggle
-        matSuffix
-        [for]="datePicker"
-        angulartics2On="click" angularticsCategory="Record Attendance" angularticsAction="select_date"
-      ></mat-datepicker-toggle>
-      <mat-datepicker #datePicker></mat-datepicker>
-    </mat-form-field>
+<div class="top-control">
+  <mat-form-field>
+    <mat-label
+      i18n="
+        Event-Record label|Record an event for a particular date that is to be
+        inputted
+      "
+    >Date
+    </mat-label
+    >
+    <input
+      matInput
+      #dateField="ngModel"
+      [(ngModel)]="date"
+      required
+      [matDatepicker]="datePicker"
+      (dateChange)="setNewDate($event.value)"
+    />
+    <mat-datepicker-toggle
+      matSuffix
+      [for]="datePicker"
+      angulartics2On="click" angularticsCategory="Record Attendance" angularticsAction="select_date"
+    ></mat-datepicker-toggle>
+    <mat-datepicker #datePicker></mat-datepicker>
+  </mat-form-field>
 
-    <div *ngIf="existingEvents.length >= FILTER_VISIBLE_THRESHOLD"
-         fxLayout="row wrap" fxLayoutGap="8px">
-      <app-list-filter
-        *ngFor="let filter of filterSettings"
-        [filterConfig]="filter.filterSettings"
-        [(selectedOption)]="filter.selectedOption"
-        (selectedOptionChange)="applyFilter(filter, $event)"
-        angulartics2On="click"
-        angularticsCategory="Record Attendance"
-        angularticsAction="filter"
-        [angularticsLabel]="filter.filterSettings.label"
-      >
-      </app-list-filter>
-    </div>
+  <div *ngIf="existingEvents.length >= FILTER_VISIBLE_THRESHOLD" class="flex-row flex-wrap gap-small">
+    <app-list-filter
+      *ngFor="let filter of filterSettings"
+      [filterConfig]="filter.filterSettings"
+      [(selectedOption)]="filter.selectedOption"
+      (selectedOptionChange)="applyFilter(filter, $event)"
+      angulartics2On="click"
+      angularticsCategory="Record Attendance"
+      angularticsAction="filter"
+      [angularticsLabel]="filter.filterSettings.label"
+    >
+    </app-list-filter>
   </div>
+</div>
 
-  <div class="flex-scroll-container">
-    <div class="cards-list">
-      <app-activity-card
-        class="activity-card"
-        *ngFor="let event of filteredExistingEvents"
-        [event]="event"
-        [recurring]="event.isNewFromActivity"
-        (click)="selectEvent(event)"
-      >
-      </app-activity-card>
-    </div>
 
-    <div class="actions">
-      <button
-        mat-stroked-button
-        (click)="showingAll ? showLess() : showMore()"
-        angulartics2On="click"
-        angularticsCategory="Record Attendance"
-        angularticsAction="show_more"
-      >
-        <span
-          *ngIf="showingAll"
-          i18n="Show less entries of a list">
-          Show less
-        </span>
-        <span
-          *ngIf="!showingAll"
-          i18n="Show more entries of a list">
-          Show more
-        </span>
-      </button>
-      <button
-        i18n="Not listed|Allows to create a new event"
-        mat-button
-        (click)="createOneTimeEvent()"
-        angulartics2On="click"
-        angularticsCategory="Record Attendance"
-        angularticsAction="create_onetime_event"
-      >
-        My event is not listed ...
-      </button>
-    </div>
-  </div>
+<div class="cards-list">
+  <app-activity-card
+    class="pointer"
+    *ngFor="let event of filteredExistingEvents"
+    [event]="event"
+    [recurring]="event.isNewFromActivity"
+    (click)="selectEvent(event)"
+  >
+  </app-activity-card>
+</div>
+
+<div class="padding-top-regular">
+  <button
+    mat-stroked-button
+    (click)="showingAll ? showLess() : showMore()"
+    angulartics2On="click"
+    angularticsCategory="Record Attendance"
+    angularticsAction="show_more"
+    class="padding-right-small"
+  >
+    <span
+      *ngIf="showingAll"
+      i18n="Show less entries of a list">
+      Show less
+    </span>
+    <span
+      *ngIf="!showingAll"
+      i18n="Show more entries of a list">
+      Show more
+    </span>
+  </button>
+  <button
+    i18n="Not listed|Allows to create a new event"
+    mat-button
+    (click)="createOneTimeEvent()"
+    angulartics2On="click"
+    angularticsCategory="Record Attendance"
+    angularticsAction="create_onetime_event"
+  >
+    My event is not listed ...
+  </button>
 </div>

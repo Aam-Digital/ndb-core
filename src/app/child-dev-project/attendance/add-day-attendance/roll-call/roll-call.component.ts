@@ -89,6 +89,7 @@ export class RollCallComponent implements OnChanges {
       await this.loadParticipants();
       this.setInitialIndex();
     }
+    console.log(this);
     if (changes.sortParticipantsBy) {
       this.sortParticipants();
     }
@@ -104,6 +105,7 @@ export class RollCallComponent implements OnChanges {
   private setInitialIndex() {
     let index = 0;
     for (const entry of this.children) {
+      // This field is empty when there is nothing set
       if (!this.eventEntity.getAttendance(entry.getId())?.status?.id) {
         break;
       }

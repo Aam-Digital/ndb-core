@@ -1,10 +1,10 @@
-@import "../../../../styles";
+@use "src/styles/variables/sizes";
 
 .entry-wrapper {
   display: grid;
   grid-template-columns: repeat(2, 1fr) 64px;
   grid-template-rows: repeat(2, 1fr);
-  grid-gap: $standard-gutter-small;
+  grid-gap: sizes.$small;
   grid-template-areas:
     "header header trash"
     "current target trash";
@@ -12,10 +12,11 @@
 }
 
 .entry-wrapper:not(:last-child) {
-  margin-bottom: $standard-grid-gap;
+  margin-bottom: sizes.$large;
 }
+
 .entry-wrapper:last-child {
- margin-bottom: 12px;
+ margin-bottom: sizes.$regular;
 }
 
 .header-field {

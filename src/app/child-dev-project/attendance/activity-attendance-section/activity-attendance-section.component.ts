@@ -14,7 +14,6 @@ import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-
 @Component({
   selector: "app-activity-attendance-section",
   templateUrl: "./activity-attendance-section.component.html",
-  styleUrls: ["./activity-attendance-section.component.scss"],
 })
 export class ActivityAttendanceSectionComponent
   implements OnChanges, OnInitDynamicComponent {

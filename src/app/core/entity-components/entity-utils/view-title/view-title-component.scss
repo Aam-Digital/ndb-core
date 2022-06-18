@@ -1,0 +1,7 @@
+// Moves the whole title component 12 pixels to the left so that
+// the "go back" button is aligned with the left border. This class
+// is applied conditionally when the "back" button is shown
+.title-fixup {
+  position: relative;
+  left: -12px;
+}

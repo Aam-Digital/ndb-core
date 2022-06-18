@@ -53,7 +53,7 @@
 
 <!-- MAIN NAVIGATION + CONTENT -->
 <mat-sidenav-container
-  class="app-content primary-background"
+  class="app-content"
   (backdropClick)="closeSidenavOnMobile()"
 >
   <mat-sidenav
@@ -109,7 +109,7 @@
   <mat-sidenav-content>
     <div class="sidenav-content">
       <router-outlet *ngIf="isLoggedIn()"></router-outlet>
-      <app-login *ngIf="!isLoggedIn()"></app-login>
+      <app-login class="login" *ngIf="!isLoggedIn()"></app-login>
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

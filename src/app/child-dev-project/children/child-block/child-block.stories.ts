@@ -34,3 +34,12 @@ export const Primary = Template.bind({});
 Primary.args = {
   entity: demoChild,
 };
+
+const demoInactiveChild = Child.create("John Doe");
+demoInactiveChild.projectNumber = "42";
+demoInactiveChild.status = "Dropout";
+
+export const Inactive = Template.bind({});
+Inactive.args = {
+  entity: demoInactiveChild,
+};

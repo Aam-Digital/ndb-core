@@ -32,8 +32,8 @@
               "src/manifest.json"
             ],
             "styles": [
-              "src/ndb-theme.scss",
-              "src/styles.scss",
+              "src/styles/styles.scss",
+              "src/styles/themes/ndb-theme.scss",
               "node_modules/flag-icon-css/css/flag-icon.min.css"
             ],
             "scripts": [
@@ -101,8 +101,8 @@
               "node_modules/marked/lib/marked.js"
             ],
             "styles": [
-              "src/ndb-theme.scss",
-              "src/styles.scss"
+              "src/styles/styles.scss",
+              "src/styles/themes/ndb-theme.scss"
             ],
             "assets": [
               "src/assets",
@@ -150,8 +150,8 @@
               "src/manifest.json"
             ],
             "styles": [
-              "src/ndb-theme.scss",
-              "src/styles.scss",
+              "src/styles/styles.scss",
+              "src/styles/themes/ndb-theme.scss",
               "node_modules/flag-icon-css/css/flag-icon.min.css"
             ],
             "scripts": [
@@ -219,7 +219,8 @@
             ],
             "styles": [
               "src/ndb-theme.scss",
-              "src/styles.scss"
+              "src/styles/themes/ndb-theme.scss",
+              "src/styles/styles.scss"
             ],
             "assets": [
               "src/assets",

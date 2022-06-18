@@ -1,10 +1,4 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  ViewChild,
-} from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges, ViewChild, ViewEncapsulation, } from "@angular/core";
 import { Note } from "../../notes/model/note";
 import { MatCalendarCellCssClasses } from "@angular/material/datepicker/calendar-body";
 import moment, { Moment } from "moment";
@@ -13,10 +7,7 @@ import { MatCalendar } from "@angular/material/datepicker";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { NoteDetailsComponent } from "../../notes/note-details/note-details.component";
-import {
-  AverageAttendanceStats,
-  calculateAverageAttendance,
-} from "../model/calculate-average-event-attendance";
+import { AverageAttendanceStats, calculateAverageAttendance, } from "../model/calculate-average-event-attendance";
 import { EventNote } from "../model/event-note";
 import { RecurringActivity } from "../model/recurring-activity";
 import { applyUpdate } from "../../../core/entity/model/entity-update";
@@ -28,6 +19,7 @@ import { AnalyticsService } from "../../../core/analytics/analytics.service";
   selector: "app-attendance-calendar",
   templateUrl: "./attendance-calendar.component.html",
   styleUrls: ["./attendance-calendar.component.scss"],
+  encapsulation: ViewEncapsulation.None
 })
 @UntilDestroy()
 export class AttendanceCalendarComponent implements OnChanges {

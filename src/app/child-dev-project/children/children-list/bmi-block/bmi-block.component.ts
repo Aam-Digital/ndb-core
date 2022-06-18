@@ -11,7 +11,7 @@ import { DynamicComponent } from "../../../../core/view/dynamic-components/dynam
 @Component({
   selector: "app-bmi-block",
   template: `<span
-    class="mat-elevation-z1 attendance-block w-{{
+    class="mat-elevation-z1 bmi-block w-{{
       currentHealthCheck?.getWarningLevel()
     }}"
   >

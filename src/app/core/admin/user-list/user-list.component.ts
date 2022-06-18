@@ -11,7 +11,6 @@ import { RouteTarget } from "../../../app.routing";
 @Component({
   selector: "app-user-list",
   templateUrl: "./user-list.component.html",
-  styleUrls: ["./user-list.component.scss"],
 })
 export class UserListComponent implements OnInit {
   /** displayed columns for the list table in the template */

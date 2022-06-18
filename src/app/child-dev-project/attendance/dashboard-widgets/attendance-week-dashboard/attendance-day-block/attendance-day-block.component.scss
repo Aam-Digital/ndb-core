@@ -1,5 +1,7 @@
+@use "~@angular/material/theming" as *;
+
 .day-cell {
-  background-color: #f5f5f5;
+  background-color: mat-color($mat-light-theme-background, background);
   position: relative;
   text-align: center;
   vertical-align: middle;
@@ -12,16 +14,14 @@
   margin-top: 0.5em;
 }
 
+$dark-grey: map-get($mat-grey, 800);
+
 .has-remark {
   background: linear-gradient(
     45deg,
     transparent 0%,
     transparent 80%,
-    #5f5f5f 80%,
-    #5f5f5f 100%
+    $dark-grey 80%,
+    $dark-grey 100%
   );
-}
-
-.attendance- {
-  background-color: #f2f2f2;
 }

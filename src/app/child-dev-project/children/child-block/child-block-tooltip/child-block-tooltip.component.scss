@@ -1,0 +1,10 @@
+@use "@angular/material/theming" as *;
+
+.child-pic {
+  width: 80px;
+  height: 80px;
+  border-radius: 100vmax;
+  object-fit: cover;
+  border: 3px solid mat-color($mat-grey, 500);
+  @include mat-elevation(2);
+}

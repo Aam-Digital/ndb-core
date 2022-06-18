@@ -1,23 +1,23 @@
-@import "../../../../styles";
-
-.recurring-container {
-  background-color: #fdfdb7;
-}
+@use "~@angular/material/theming" as *;
+@use "src/styles/variables/ndb-light-theme" as theme;
+@use "src/styles/variables/colors";
 
 .border-ok {
-  border-color: $color-warning-ok;
+  border-color: colors.$success;
 }
 
 .border-warning {
-  border-color: $color-warning-warning;
+  border-color: colors.$warn;
 }
 
 .border-urgent {
-  border-color: $color-warning-urgent;
+  border-color: colors.$error;
 }
 
 .main-card {
   max-width: 500px;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 mat-card-title {

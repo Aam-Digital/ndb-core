@@ -1,8 +1,9 @@
-@import '../../../ndb-theme';
+@use 'src/styles/variables/ndb-light-theme' as theme;
+@use "~@angular/material/theming" as *;
 
 .pwa-install-button {
   border-top: solid 1px rgba(0, 0, 0, 0.12);
   border-radius: 0;
   overflow: hidden;
-  background-color: mat-color($ndb-app-primary);
+  background-color: mat-color(theme.$primary);
 }

@@ -1,3 +1,10 @@
-.warnings-section {
-  padding-bottom: 1em;
+@use "src/styles/variables/sizes";
+@use "~@angular/material/theming" as *;
+
+.hint-badge {
+  background-color: mat-color($mat-light-theme-background, status-bar);
+  padding: sizes.$small;
+  margin-bottom: sizes.$regular;
+  border-radius: 100vmax;
+  width: max-content;
 }

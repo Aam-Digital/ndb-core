@@ -55,12 +55,6 @@ OneTimeEvent.args = {
   event: simpleEvent,
 };
 
-export const Highlighted = Template.bind({});
-Highlighted.args = {
-  event: simpleEvent,
-  highlighted: true,
-};
-
 export const OneTimeEventComplex = Template.bind({});
 OneTimeEventComplex.args = {
   event: longEvent,

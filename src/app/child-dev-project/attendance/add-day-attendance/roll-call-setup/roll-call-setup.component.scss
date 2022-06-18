@@ -1,18 +1,7 @@
-@import "../../../../../styles";
-@import "../../../../utils/grid-layout";
-
-// Total height of the bottom control with padding
-$bottom-control-height: 86px;
-$bottom-control-padding: 16px;
-
-.overall-container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  // remove the bottom margin so that scrolling to the bottom
-  // doesn't overflow
-  margin-bottom: -$margin-main-view-bottom;
-}
+@use "src/styles/mixins/grid-layout";
+@use "src/styles/variables/sizes";
+@use "~@angular/material/theming" as *;
+@use "src/styles/variables/ndb-light-theme" as theme;
 
 .top-control {
   position: sticky;
@@ -24,34 +13,15 @@ $bottom-control-padding: 16px;
   // and re-apply them as padding.
   // This way, the margin stays consistent and scrolling works
   // as intended (there is no overflow left or right)
-  margin-left: -$margin-main-view-left;
-  padding-left: $margin-main-view-left;
-  margin-right: -$margin-main-view-right;
-  padding-right: $margin-main-view-right;
-  margin-top: -$margin-main-view-top;
-  padding-top: $margin-main-view-top;
-}
-
-.selected-card {
-  overflow: auto;
-  flex-grow: 1;
+  margin-left: - sizes.$margin-main-view-left;
+  padding-left: sizes.$margin-main-view-left;
+  margin-right: - sizes.$margin-main-view-right;
+  padding-right: sizes.$margin-main-view-right;
+  margin-top: - sizes.$margin-main-view-top;
+  padding-top: sizes.$margin-main-view-top;
+  background-color: mat-color(theme.$primary, 50);
 }
 
 .cards-list {
-  @include adaptive-grid(270px);
-}
-
-.flex-scroll-container {
-  flex-grow: 1;
-  padding-bottom: $bottom-control-padding;
-}
-
-.actions {
-  margin-top: $standard-gutter-small;
-  display: flex;
-  gap: $standard-gutter-small;
-}
-
-.activity-card {
-  cursor: pointer;
+  @include grid-layout.adaptive(270px);
 }

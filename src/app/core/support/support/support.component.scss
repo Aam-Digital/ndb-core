@@ -1,4 +1,6 @@
-@import "../../../../styles/colors";
+@use "src/styles/variables/colors";
+
+$tech-details           : #707070;
 
 .dot {
   height: 20px;
@@ -14,12 +16,12 @@
 }
 
 .tech-details {
-  color: $color-tech-details;
+  color: $tech-details;
 }
 
 .mat-expansion-panel {
   background-color: transparent;
-  border: 1px $color-tech-details solid;
+  border: 1px $tech-details solid;
 }
 
 .sw-logs {

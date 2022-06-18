@@ -1,26 +1,13 @@
+@use "src/styles/variables/sizes";
+
 .attendance-block {
   display: inline-block;
   text-align: center;
   border-radius: 4px;
-  margin: 3px;
   width: 42px;
-  padding-top: 5px;
-  padding-bottom: 5px;
+  padding: sizes.$small;
 }
 
 .attendance-tooltip {
-  position: relative;
-  top: -5px;
-  left: 5px;
-
-  padding: 8px;
-  background-color: white;
-}
-.attendance-tooltip-header {
-  text-align: center;
-  font-weight: bold;
-}
-.attendance-tooltip-content {
-  text-align: left;
-  font-size: 0.95em;
+  padding: sizes.$small;
 }

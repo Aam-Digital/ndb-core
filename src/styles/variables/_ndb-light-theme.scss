@@ -1,0 +1,19 @@
+/*
+ The main light theme for the application
+ */
+
+@use '~@angular/material/theming' as *;
+
+// Define the applications theme.
+$primary  : mat-palette($mat-orange);
+$accent   : mat-palette($mat-blue, A200, A100, A400);
+$warn     : mat-palette($mat-red);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$theme: mat-light-theme((
+  color: (
+    primary: $primary,
+    accent: $accent,
+    warn: $warn
+  )
+));

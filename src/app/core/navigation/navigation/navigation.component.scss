@@ -15,11 +15,11 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import "../../../../styles/sizes";
+@use "src/styles/variables/sizes";
 
 /**
  * ensures that all icons have the same width
  */
 .nav-icon {
-  min-width: $max-icon-width;
+  min-width: sizes.$max-icon-width;
 }

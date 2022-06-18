@@ -1,31 +1,23 @@
-.child-tooltip {
-  position: relative;
-  top: -5px;
-  left: 5px;
-
-  padding: 8px;
-  background-color: white;
-  z-index: 99;
-
-  width: 400px;
-}
+@use "src/styles/variables/sizes";
+@use "~@angular/material/theming" as *;
 
 .child-pic {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  object-fit: cover;
-  margin-right: 4px;
   vertical-align: middle;
+  object-fit: cover;
+  margin-right: sizes.$small;
 }
 
-.child-pic-large {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
+.additional-number {
+  font-size: x-small;
+}
+
+.additional-number-active {
+  color: mat-color($mat-light-theme-foreground, secondary-text);
 }
 
 .inactive {
-  color: grey;
+  color: mat-color($mat-light-theme-foreground, disabled);
 }

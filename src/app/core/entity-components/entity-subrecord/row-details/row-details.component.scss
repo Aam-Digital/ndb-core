@@ -1,11 +1,11 @@
-@import "../../../../utils/grid-layout";
-@import "../../../../../styles/sizes";
+@use "src/styles/variables/sizes";
+@use "src/styles/mixins/grid-layout";
 
 $min-block-width: 250px;
 
 .main-content {
-  @include adaptive-grid($min-block-width);
-  margin-top: $standard-gutter-large;
+  @include grid-layout.adaptive($min-block-width);
+  margin-top: sizes.$large;
 }
 
 // Hacky way to set the width of every form field

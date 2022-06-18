@@ -5,6 +5,7 @@
       mat-raised-button
       (click)="save()"
       i18n="Save button for forms"
+      class="margin-right-small"
     >
       Save
     </button>
@@ -34,7 +35,7 @@
   </div>
 
   <form class="columns-wrapper">
-    <div *ngFor="let col of _columns; let i=index" class="margin-right-small">
+    <div *ngFor="let col of _columns; let i=index">
       <h2 *ngIf="columnHeaders && columnHeaders[i]">{{columnHeaders[i]}}</h2>
       <div
         *ngFor="let row of col"

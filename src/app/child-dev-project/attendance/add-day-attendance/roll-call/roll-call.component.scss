@@ -1,3 +1,6 @@
+@use "src/styles/variables/sizes";
+@use "src/styles/variables/colors";
+
 .group-select-option {
   width: 100%;
   cursor: pointer;
@@ -9,50 +12,28 @@
   }
 }
 
-.nav-button {
-  margin: 10px;
-  flex: none;
-}
-
 .roll-call-complete {
   display: flex;
+  flex-direction: column;
   place-content: center;
   place-items: center;
   height: 200px;
-  flex-direction: column;
-  gap: 8px;
+  gap: sizes.$small;
   cursor: pointer;
-  margin-top: 16px;
+  margin-top: sizes.$regular;
 
-  background-color: #c8e6c9;
+  background-color: colors.$success;
   border-radius: 4px;
 }
 
-.roll-call-complete-icon {
-  font-size: 40px;
-}
-
-.filler {
-  margin-bottom: 10px;
-}
-
 .progress-label {
-  align-self: flex-end;
-}
-
-.attendance-progress-bar {
-  display: flex;
-  flex-direction: column;
+  align-self: end;
 }
 
 .child-block {
   flex-grow: 1;
   display: flex;
   place-content: center;
-}
-
-.finished-screen-button {
-  margin-top: 1em;
 }
 
 .tab-body {
@@ -77,12 +58,6 @@
   position: relative;
 }
 
-.navbar-wrapper {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-}
-
 // Per default, the content of a mat-button is center-aligned.
 // In this case, the button contains an icon and we want it left (resp. right)-aligned
 // with the content
@@ -100,8 +75,4 @@
   position: relative;
   // This is the amount the button has to be shifted to be right-aligned
   right: -15px;
-}
-
-.placeholder {
-  flex-grow: 1;
 }

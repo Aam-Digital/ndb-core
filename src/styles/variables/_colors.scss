@@ -14,21 +14,17 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
-@import "../../styles";
+@use "../themes/ndb-theme" as theme;
+@use "~@angular/material/theming" as *;
 
-/**
- * Can be used to create an adaptive grid-layout where the items will take
- * up all horizontal space given. The items won't shrink smaller
- * than `$min-block-width` but instead create a new row. All items
- * have the same width.
- * Below `$max-screen-width`, the grid will only contain a single
- * column and all items will be aligned into a single column.
- */
-@mixin adaptive-grid($min-block-width, $max-screen-width: $min-block-width) {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax($min-block-width, 1fr));
-  @media all and (max-width: $max-screen-width) {
-    grid-template-columns: 1fr;
-  }
-  grid-gap: $standard-grid-gap;
-}
+$err-palette            : mat-palette($mat-red);
+$warn-palette           : mat-palette($mat-orange);
+$success-palette        : mat-palette($mat-green);
+
+$warning-ok             : #90ee90;
+$warning-warning        : #ffa500;
+$warning-urgent         : #fd7272;
+
+$success                : mat-color($success-palette);
+$warn                   : mat-color($warn-palette);
+$error                  : mat-color($err-palette);

@@ -1,35 +1,25 @@
+@use "src/styles/variables/colors";
+
 mat-calendar {
   min-width: 200px;
   max-width: 300px;
 }
 
-/*
-background: linear-gradient(to right, green 0%, green 80%, red 80%, red 100%);
- */
-
-.selected-title {
-  margin-block-start: 0;
-}
-
-.no-events-notice {
-  font-style: italic;
-}
-
 .unknown-status-notice {
   font-style: italic;
-  color: red;
+  color: colors.$error;
 }
 
-::ng-deep .attendance-calendar-date-general {
+.attendance-calendar-date-general {
   border: 2px solid transparent;
 }
 
-::ng-deep .attendance-calendar-date-selected {
+.attendance-calendar-date-selected {
   font-weight: 900;
   font-size: 115%;
 }
 
-::ng-deep .attendance-calendar-date-has-remarks {
+.attendance-calendar-date-has-remarks {
   background: linear-gradient(
     45deg,
     transparent 0%,
@@ -39,7 +29,7 @@ background: linear-gradient(to right, green 0%, green 80%, red 80%, red 100%);
   );
 }
 
-::ng-deep .attendance-calendar-date-has-participants-with-unknown-status {
+.attendance-calendar-date-has-participants-with-unknown-status {
   background: linear-gradient(
     45deg,
     transparent 0%,
@@ -49,7 +39,7 @@ background: linear-gradient(to right, green 0%, green 80%, red 80%, red 100%);
   );
 }
 
-.form {
+.attendance-calendar-details-form {
   padding: 10px;
   max-width: 300px;
   position: relative;
@@ -62,8 +52,4 @@ background: linear-gradient(to right, green 0%, green 80%, red 80%, red 100%);
   position: absolute;
   top: 0;
   right: 0;
-}
-
-button {
-  margin: 5px;
 }

@@ -1,7 +1,6 @@
-@import "../../../../styles";
-@import "../../../utils/grid-layout";
-
-$margin-side: 16px;
+@use "src/styles/variables/sizes";
+@use "src/styles/mixins/grid-layout";
+@use "~@angular/material/theming" as *;
 
 $min-width-content: 250px;
 $widget-height: 370px;
@@ -11,14 +10,12 @@ $widget-height: 370px;
 }
 
 .cards-wrapper {
-  @include adaptive-grid($min-width-content);
+  @include grid-layout.adaptive($min-width-content);
 }
 
 .mat-card {
   display: flex;
   flex-direction: column;
-  min-width: $min-width-content;
-  flex: 1;
 }
 
 .mat-card-header {
@@ -27,17 +24,16 @@ $widget-height: 370px;
 
 .mat-card-content {
   flex-grow: 1;
-  overflow: auto;
-  margin-left: $margin-side;
-  margin-right: $margin-side;
+  margin-left: sizes.$regular;
+  margin-right: sizes.$regular;
 }
 
 .mat-card-footer {
-  margin-left: $margin-side;
-  margin-right: $margin-side;
+  margin-left: sizes.$regular;
+  margin-right: sizes.$regular;
   margin-bottom: auto;
 }
 
 .inactive-card {
-  background-color: #ffffff40;
+  background-color: map-get($mat-grey, A100);
 }

@@ -6,8 +6,8 @@
 >
 </mat-calendar>
 
-<div *ngIf="selectedDate" class="form">
-  <h3 class="selected-title">
+<div *ngIf="selectedDate" class="attendance-calendar-details-form">
+  <h3 class="remove-margin-top">
     {{ selectedDate.toDate() | date }}
   </h3>
 
@@ -68,6 +68,7 @@
       {participants} } without recorded status
     </div>
     <button
+      class="margin-top-regular"
       i18n="
         Show Details Button|Allows the user to see details of an event that took
         place at a particular day
@@ -80,15 +81,16 @@
     </button>
   </div>
 
-  <div *ngIf="!selectedEvent" class="no-events-notice">
-    <p
+  <ng-container *ngIf="!selectedEvent">
+    <i
       i18n="
         No Events|Informs the user that there are no events at a particular date
       "
     >
       no events on this date
-    </p>
+    </i>
     <button
+      class="margin-top-regular"
       mat-stroked-button
       (click)="createNewEvent()"
       i18n="
@@ -99,5 +101,5 @@
     >
       Add new event
     </button>
-  </div>
+  </ng-container>
 </div>

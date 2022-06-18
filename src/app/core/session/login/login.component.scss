@@ -15,19 +15,9 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import "../../../../styles/sizes";
-
-.login-panel {
-  max-width: 400px;
-  margin-top: $standard-gutter-large;
-  margin-bottom: $standard-gutter-large;
-}
-
-.login-field {
-  width: 90%;
-}
+@use "src/styles/variables/colors";
 
 .login-error {
-  color: red;
+  color: colors.$error;
   font-weight: bold;
 }

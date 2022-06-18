@@ -1,3 +1,5 @@
+@use "@angular/material/theming" as *;
+
 .error-code {
-  color: darkgray;
+  color: mat-color($mat-light-theme-foreground, secondary-text);
 }

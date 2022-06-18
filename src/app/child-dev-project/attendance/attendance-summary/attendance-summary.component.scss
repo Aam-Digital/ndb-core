@@ -1,3 +1,5 @@
+@use "@angular/material/theming" as *;
+
 .wrapper {
   padding: 1em;
 }
@@ -7,7 +9,7 @@
 }
 
 .summary-period {
-  color: #606060;
+  color: mat-color($mat-light-theme-foreground, hint-text);
   margin: 0;
 }
 
@@ -16,7 +18,7 @@
 }
 
 .summary-row {
-  background-color: #b0b0b040;
+  background-color: mat-color($mat-light-theme-background, background);
 }
 
 .summary-cell-label {
