@@ -12,10 +12,7 @@
       </app-view-title>
 
       <div class="flex-row gap-regular">
-        <button
-          mat-stroked-button
-          color="accent"
-          class="standard-add-button"
+        <app-add-new-button
           (click)="addNewClick.emit()"
           angulartics2On="click"
           angularticsCategory="UserAction"
@@ -28,14 +25,7 @@
               entity: entityConstructor,
               operation: 'create'
             }"
-        >
-          <fa-icon
-            aria-label="add element"
-            icon="plus-circle"
-          ></fa-icon>
-          <span i18n="Add a new entity to a list of multiple entities"> Add New </span>
-        </button>
-
+        > Add new </app-add-new-button>
         <button mat-icon-button color="primary" [matMenuTriggerFor]="additional">
           <fa-icon class="standard-icon" icon="ellipsis-v"></fa-icon>
         </button>

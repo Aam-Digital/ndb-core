@@ -20,7 +20,24 @@
   box-sizing: border-box;
 }
 
-mat-card-title {
-  font-size: 16px;
+.card-title {
   font-weight: bold;
+}
+
+.content {
+  color: mat-color($mat-light-theme-foreground, secondary-text);
+  font-size: 1.1em;
+}
+
+.sep {
+  font-weight: 900;
+  color: mat-color($mat-light-theme-foreground, hint-text);
+
+  &::before {
+    content: " "
+  }
+
+  &::after {
+    content: " "
+  }
 }

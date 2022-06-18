@@ -23,5 +23,5 @@
 }
 
 .cards-list {
-  @include grid-layout.adaptive(270px);
+  @include grid-layout.adaptive(350px);
 }

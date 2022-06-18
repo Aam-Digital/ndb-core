@@ -3,33 +3,18 @@
   [borderClass]="'border-' + warningLevel"
   class="main-card"
 >
-  <mat-card-title>
-    <fa-icon
-      *ngIf="!recurring"
-      icon="calendar-alt"
-      i18n-matTooltip="
-        One-time event|Informs the user that this is a one-time event
-      "
-      matTooltip="one-time event"
-    >
-    </fa-icon>
-    <fa-icon
-      *ngIf="recurring"
-      icon="calendar-alt"
-      i18n-matTooltip="
-        Recurring-event|Informs the user that this is a recurring event
-      "
-      matTooltip="recurring activity - record for one day"
-    >
-    </fa-icon>
-    {{ event?.subject }}
-  </mat-card-title>
-  <mat-card-content>
-    {{ event.children.length }}
-    <span i18n="Participants|Amount of participants of an event">
-      {event.children.length, plural, one {participant} other {participants}}
-    </span>
-    <span *ngIf="!recurring"> ({{ event.date | date: "shortDate" }}) </span>
-    ; {{ event.category?.label }}
-  </mat-card-content>
+  <h1 class="card-title">{{event?.subject}}</h1>
+  <p class="content">
+    <fa-icon icon="child"></fa-icon> {{event.children.length}} {
+      event.children.length, plural, one {participant} other {participants}
+    }
+    <ng-container *ngIf="!recurring">
+      <span class="sep">/</span><fa-icon icon="calendar"></fa-icon> {{
+      event.date | date: "shortDate"
+      }}
+    </ng-container>
+    <span class="sep">/</span>{{
+      event.category?.label
+    }}
+  </p>
 </mat-card>
