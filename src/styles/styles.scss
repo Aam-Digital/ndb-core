@@ -23,7 +23,7 @@
 // Include all global styles
 @use "globals";
 @use "resets";
-@use "src/app/utils/border-highlight/border-highlight.directive";
+@use "../app/core/common-components/border-highlight/border-highlight.directive";
 
 body {
   margin: 0;

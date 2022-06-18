@@ -1,5 +1,5 @@
 @use "sass:color";
-@use "~@angular/material/theming" as *;
+@use "../../../../../node_modules/@angular/material/theming" as *;
 
 .tooltip-wrapper {
   background-color: mat-color($mat-light-theme-background, card);

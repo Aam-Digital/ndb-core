@@ -69,8 +69,9 @@ import {
 } from "@angular/platform-browser";
 import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
 import * as Hammer from "hammerjs";
-import { CustomizableTooltipModule } from "../../utils/customizable-tooltip/customizable-tooltip.module";
-import { BorderHighlightModule } from "../../utils/border-highlight/border-highlight.module";
+import {
+  CommonComponentsModule
+} from "../../core/common-components/common-components.module";
 
 @Injectable()
 // Only allow horizontal swiping
@@ -134,8 +135,7 @@ export class HorizontalHammerConfig extends HammerGestureConfig {
         ViewModule,
         ConfigurableEnumModule,
         HammerModule,
-        CustomizableTooltipModule,
-        BorderHighlightModule,
+        CommonComponentsModule
     ],
   exports: [
     ActivityCardComponent,

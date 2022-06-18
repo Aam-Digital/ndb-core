@@ -66,8 +66,10 @@ import { EntityUtilsModule } from "../../core/entity-components/entity-utils/ent
 import { DashboardModule } from "../../core/dashboard/dashboard.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ExportModule } from "../../core/export/export.module";
-import { CustomizableTooltipModule } from "../../utils/customizable-tooltip/customizable-tooltip.module";
 import { ChildBlockTooltipComponent } from './child-block/child-block-tooltip/child-block-tooltip.component';
+import {
+  CommonComponentsModule
+} from "../../core/common-components/common-components.module";
 
 @NgModule({
     imports: [
@@ -111,7 +113,7 @@ import { ChildBlockTooltipComponent } from './child-block/child-block-tooltip/ch
         DashboardModule,
         FontAwesomeModule,
         ExportModule,
-        CustomizableTooltipModule,
+        CommonComponentsModule
     ],
   declarations: [
     ChildBlockComponent,

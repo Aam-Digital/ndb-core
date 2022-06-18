@@ -26,7 +26,7 @@ import { PermissionsModule } from "../../permissions/permissions.module";
 import { MatRippleModule } from "@angular/material/core";
 import { MatChipsModule } from "@angular/material/chips";
 import { MatMenuModule } from "@angular/material/menu";
-import { DialogCloseModule } from "../../../utils/dialog-close/dialog-close.module";
+import { CommonComponentsModule } from "../../common-components/common-components.module";
 
 @NgModule({
   declarations: [
@@ -59,7 +59,7 @@ import { DialogCloseModule } from "../../../utils/dialog-close/dialog-close.modu
         MatRippleModule,
         MatChipsModule,
         MatMenuModule,
-        DialogCloseModule,
+        CommonComponentsModule
     ],
   exports: [EntitySubrecordComponent],
 })

@@ -47,7 +47,9 @@ import { NotesDashboardComponent } from "./dashboard-widgets/notes-dashboard/not
 import { NotesOfChildComponent } from "./notes-of-child/notes-of-child.component";
 import { DashboardModule } from "../../core/dashboard/dashboard.module";
 import { ExportModule } from "../../core/export/export.module";
-import { BorderHighlightModule } from "../../utils/border-highlight/border-highlight.module";
+import {
+  CommonComponentsModule
+} from "../../core/common-components/common-components.module";
 
 @NgModule({
   declarations: [
@@ -106,7 +108,7 @@ import { BorderHighlightModule } from "../../utils/border-highlight/border-highl
         MatMenuModule,
         DashboardModule,
         ExportModule,
-        BorderHighlightModule,
+        CommonComponentsModule
     ],
   exports: [NoteDetailsComponent],
 })

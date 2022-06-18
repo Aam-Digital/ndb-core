@@ -7,7 +7,7 @@ import { ConfirmationDialogService } from "./confirmation-dialog.service";
 import { MatIconModule } from "@angular/material/icon";
 import { MatRippleModule } from "@angular/material/core";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { DialogCloseModule } from "../../utils/dialog-close/dialog-close.module";
+import { CommonComponentsModule } from "../common-components/common-components.module";
 
 /**
  * A helper utility module helping to display configurable confirmation dialog boxes
@@ -23,7 +23,7 @@ import { DialogCloseModule } from "../../utils/dialog-close/dialog-close.module"
         MatIconModule,
         MatRippleModule,
         FontAwesomeModule,
-        DialogCloseModule,
+        CommonComponentsModule
     ],
   declarations: [ConfirmationDialogComponent],
   providers: [ConfirmationDialogService],

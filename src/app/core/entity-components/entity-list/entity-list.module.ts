@@ -26,7 +26,7 @@ import { MatMenuModule } from "@angular/material/menu";
 import { MatTabsModule } from "@angular/material/tabs";
 import { FilterOverlayComponent } from "./filter-overlay/filter-overlay.component";
 import { MatDialogModule } from "@angular/material/dialog";
-import { BorderHighlightModule } from "../../../utils/border-highlight/border-highlight.module";
+import { CommonComponentsModule } from "../../common-components/common-components.module";
 
 @NgModule({
   declarations: [
@@ -60,7 +60,7 @@ import { BorderHighlightModule } from "../../../utils/border-highlight/border-hi
         EntityFormModule,
         FontAwesomeModule,
         MatDialogModule,
-        BorderHighlightModule,
+        CommonComponentsModule,
     ],
   exports: [EntityListComponent, ListFilterComponent],
 })
