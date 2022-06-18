@@ -15,8 +15,6 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* You can add global styles to this file, and also import other style files */
-
 @use "variables/sizes";
 @use "variables/colors";
 @use "variables/ndb-light-theme" as theme;
@@ -25,6 +23,7 @@
 // Include all global styles
 @use "globals";
 @use "resets";
+@use "src/app/utils/border-highlight/border-highlight.directive";
 
 body {
   margin: 0;
@@ -53,27 +52,6 @@ body {
   margin-right: sizes.$small;
 }
 
-.mat-raised-button {
-  margin-right: sizes.$small;
-}
-
-/**
- * adds a standard-margin wide border to the left side
- * that can be used to highlight things.
- * This itself does not actually change the appearance,
- * but specifying a border-color will do so.
- */
-.border-left-highlight {
-  border-left: sizes.$small solid;
-  border-color: transparent;
-}
-
-/**
- * Positions the 'x' button that is shown for an overlay to
- * the top-right of the overlay
- */
-.overlay-close-button {
-  position: absolute;
-  top: 0;
-  right: 0;
+.mat-dialog-container {
+  position: relative;
 }

@@ -1,6 +1,4 @@
-<button mat-icon-button mat-dialog-close class="overlay-close-button">
-  <fa-icon icon="times"></fa-icon>
-</button>
+<app-dialog-close></app-dialog-close>
 <div mat-dialog-content>
   <div class="main-content">
     <div
@@ -34,9 +32,7 @@
     <mat-chip-list>
       <mat-chip
         [matTooltip]="col.tooltip"
-        [ngStyle]="{
-          'background-color': tempEntity.getColor()
-        }"
+        [style.background-color]="tempEntity.getColor()"
       >
         <p *ngIf="col.label">{{ col.label }}:&nbsp;</p>
         <ng-template

@@ -26,6 +26,7 @@ import { PermissionsModule } from "../../permissions/permissions.module";
 import { MatRippleModule } from "@angular/material/core";
 import { MatChipsModule } from "@angular/material/chips";
 import { MatMenuModule } from "@angular/material/menu";
+import { DialogCloseModule } from "../../../utils/dialog-close/dialog-close.module";
 
 @NgModule({
   declarations: [
@@ -33,32 +34,33 @@ import { MatMenuModule } from "@angular/material/menu";
     ListPaginatorComponent,
     RowDetailsComponent,
   ],
-  imports: [
-    CommonModule,
-    AlertsModule,
-    MatSnackBarModule,
-    EntityModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatSortModule,
-    ViewModule,
-    ReactiveFormsModule,
-    ConfirmationDialogModule,
-    MatTooltipModule,
-    MatButtonModule,
-    MatSlideToggleModule,
-    MatToolbarModule,
-    EntityFormModule,
-    FontAwesomeModule,
-    FlexLayoutModule,
-    Angulartics2Module,
-    MatFormFieldModule,
-    MatDialogModule,
-    PermissionsModule,
-    MatRippleModule,
-    MatChipsModule,
-    MatMenuModule,
-  ],
+    imports: [
+        CommonModule,
+        AlertsModule,
+        MatSnackBarModule,
+        EntityModule,
+        MatTableModule,
+        MatPaginatorModule,
+        MatSortModule,
+        ViewModule,
+        ReactiveFormsModule,
+        ConfirmationDialogModule,
+        MatTooltipModule,
+        MatButtonModule,
+        MatSlideToggleModule,
+        MatToolbarModule,
+        EntityFormModule,
+        FontAwesomeModule,
+        FlexLayoutModule,
+        Angulartics2Module,
+        MatFormFieldModule,
+        MatDialogModule,
+        PermissionsModule,
+        MatRippleModule,
+        MatChipsModule,
+        MatMenuModule,
+        DialogCloseModule,
+    ],
   exports: [EntitySubrecordComponent],
 })
 export class EntitySubrecordModule {}

@@ -70,6 +70,7 @@ import {
 import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
 import * as Hammer from "hammerjs";
 import { CustomizableTooltipModule } from "../../utils/customizable-tooltip/customizable-tooltip.module";
+import { BorderHighlightModule } from "../../utils/border-highlight/border-highlight.module";
 
 @Injectable()
 // Only allow horizontal swiping
@@ -134,6 +135,7 @@ export class HorizontalHammerConfig extends HammerGestureConfig {
         ConfigurableEnumModule,
         HammerModule,
         CustomizableTooltipModule,
+        BorderHighlightModule,
     ],
   exports: [
     ActivityCardComponent,

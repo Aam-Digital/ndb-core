@@ -27,7 +27,6 @@ export interface DetailsComponentData<E extends Entity> {
  * Displays a single row of a table as a dialog component
  */
 @Component({
-  selector: "app-row-details",
   templateUrl: "./row-details.component.html",
   styleUrls: ["./row-details.component.scss"],
 })

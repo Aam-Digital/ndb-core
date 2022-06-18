@@ -1,5 +1,7 @@
 <mat-card
-  class="main-card border-left-highlight border-{{warningLevel}}"
+  appBorderHighlight
+  [borderClass]="'border-' + warningLevel"
+  class="main-card"
 >
   <mat-card-title>
     <fa-icon

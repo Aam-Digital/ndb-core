@@ -103,8 +103,7 @@
               let interaction of INTERACTION_TYPE_CONFIG
             "
             [value]="interaction"
-            class="border-left-highlight"
-            [style.border-color]="interaction.color"
+            [appBorderHighlight]="interaction.color"
           >
             {{ interaction.label }}
           </mat-option>
