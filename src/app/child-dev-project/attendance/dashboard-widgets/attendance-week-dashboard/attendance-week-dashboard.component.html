@@ -47,6 +47,7 @@
     <div
       *ngIf="tableDataSource.data.length === 0 && loadingDone"
       i18n="Placeholder if no absences are visible in dashboar"
+      class="headline"
     >no absences recorded</div>
     <mat-paginator
       [style.display]="paginator.getNumberOfPages() === 0 ? 'none' : ''"

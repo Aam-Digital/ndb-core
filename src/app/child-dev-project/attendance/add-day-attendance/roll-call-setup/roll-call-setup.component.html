@@ -6,8 +6,7 @@
         inputted
       "
     >Date
-    </mat-label
-    >
+    </mat-label>
     <input
       matInput
       #dateField="ngModel"
@@ -19,12 +18,16 @@
     <mat-datepicker-toggle
       matSuffix
       [for]="datePicker"
-      angulartics2On="click" angularticsCategory="Record Attendance" angularticsAction="select_date"
+      angulartics2On="click"
+      angularticsCategory="Record Attendance"
+      angularticsAction="select_date"
     ></mat-datepicker-toggle>
     <mat-datepicker #datePicker></mat-datepicker>
   </mat-form-field>
 
-  <div *ngIf="existingEvents.length >= FILTER_VISIBLE_THRESHOLD" class="flex-row flex-wrap gap-small">
+  <div
+    *ngIf="existingEvents.length >= FILTER_VISIBLE_THRESHOLD"
+    class="flex-row flex-wrap gap-small">
     <app-list-filter
       *ngFor="let filter of filterSettings"
       [filterConfig]="filter.filterSettings"
@@ -40,7 +43,11 @@
 </div>
 
 
-<div class="cards-list">
+<div *ngIf="isLoading" class="process-spinner">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</div>
+
+<div class="cards-list" *ngIf="!isLoading">
   <app-activity-card
     class="pointer"
     *ngFor="let event of filteredExistingEvents"

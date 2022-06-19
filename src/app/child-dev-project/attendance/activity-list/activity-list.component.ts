@@ -13,6 +13,7 @@ import { RouteTarget } from "../../../app.routing";
     <app-entity-list
       [allEntities]="entities"
       [listConfig]="listConfig"
+      [isLoading]="isLoading"
       [entityConstructor]="activityConstructor"
       (elementClick)="routeTo($event.getId())"
       (addNewClick)="routeTo('new')"
@@ -23,6 +24,7 @@ export class ActivityListComponent implements OnInit {
   entities: RecurringActivity[] = [];
   listConfig: EntityListConfig;
   activityConstructor = RecurringActivity;
+  isLoading: boolean = true;
 
   constructor(
     private entityMapper: EntityMapperService,
@@ -34,9 +36,11 @@ export class ActivityListComponent implements OnInit {
     this.route.data.subscribe(
       (data: RouteData<EntityListConfig>) => (this.listConfig = data.config)
     );
+
     this.entities = await this.entityMapper.loadType<RecurringActivity>(
       RecurringActivity
     );
+    this.isLoading = false;
   }
 
   routeTo(route: string) {

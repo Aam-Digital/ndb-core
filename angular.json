@@ -34,7 +34,7 @@
             "styles": [
               "src/styles/styles.scss",
               "src/styles/themes/ndb-theme.scss",
-              "node_modules/flag-icon-css/css/flag-icon.min.css"
+              "node_modules/flag-icons/css/flag-icons.min.css"
             ],
             "scripts": [
               "node_modules/marked/lib/marked.js"
@@ -152,7 +152,7 @@
             "styles": [
               "src/styles/styles.scss",
               "src/styles/themes/ndb-theme.scss",
-              "node_modules/flag-icon-css/css/flag-icon.min.css"
+              "node_modules/flag-icons/css/flag-icons.min.css"
             ],
             "scripts": [
               "node_modules/marked/lib/marked.js"

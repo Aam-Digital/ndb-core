@@ -25,3 +25,8 @@
 .cards-list {
   @include grid-layout.adaptive(350px);
 }
+
+.process-spinner {
+  display: flex;
+  justify-content: center;
+}

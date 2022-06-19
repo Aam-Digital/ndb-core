@@ -26,6 +26,7 @@ import { PermissionsModule } from "../../permissions/permissions.module";
 import { MatRippleModule } from "@angular/material/core";
 import { MatChipsModule } from "@angular/material/chips";
 import { MatMenuModule } from "@angular/material/menu";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { CommonComponentsModule } from "../../common-components/common-components.module";
 
 @NgModule({
@@ -34,33 +35,34 @@ import { CommonComponentsModule } from "../../common-components/common-component
     ListPaginatorComponent,
     RowDetailsComponent,
   ],
-    imports: [
-        CommonModule,
-        AlertsModule,
-        MatSnackBarModule,
-        EntityModule,
-        MatTableModule,
-        MatPaginatorModule,
-        MatSortModule,
-        ViewModule,
-        ReactiveFormsModule,
-        ConfirmationDialogModule,
-        MatTooltipModule,
-        MatButtonModule,
-        MatSlideToggleModule,
-        MatToolbarModule,
-        EntityFormModule,
-        FontAwesomeModule,
-        FlexLayoutModule,
-        Angulartics2Module,
-        MatFormFieldModule,
-        MatDialogModule,
-        PermissionsModule,
-        MatRippleModule,
-        MatChipsModule,
-        MatMenuModule,
-        CommonComponentsModule
-    ],
+  imports: [
+    CommonModule,
+    AlertsModule,
+    MatSnackBarModule,
+    EntityModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    ViewModule,
+    ReactiveFormsModule,
+    ConfirmationDialogModule,
+    MatTooltipModule,
+    MatButtonModule,
+    MatSlideToggleModule,
+    MatToolbarModule,
+    EntityFormModule,
+    FontAwesomeModule,
+    FlexLayoutModule,
+    Angulartics2Module,
+    MatFormFieldModule,
+    MatDialogModule,
+    PermissionsModule,
+    MatRippleModule,
+    MatChipsModule,
+    MatMenuModule,
+    MatProgressBarModule,
+    CommonComponentsModule
+  ],
   exports: [EntitySubrecordComponent],
 })
 export class EntitySubrecordModule {}

@@ -9,7 +9,6 @@ import {
 import { Entity } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { getUrlWithoutParams } from "../../../utils/utils";
-import { UntilDestroy } from "@ngneat/until-destroy";
 import { RouteData } from "../../view/dynamic-routing/view-config.interface";
 import { AnalyticsService } from "../../analytics/analytics.service";
 import {
@@ -26,7 +25,6 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
  * Any component that is registered (has the `DynamicComponent` decorator) can be used as a subcomponent.
  * The subcomponents will be provided with the Entity object and the creating new status, as well as its static config.
  */
-@UntilDestroy()
 @RouteTarget("EntityDetails")
 @Component({
   selector: "app-entity-details",
@@ -35,6 +33,7 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
 export class EntityDetailsComponent {
   entity: Entity;
   creatingNew = false;
+  isLoading: boolean = true;
 
   panels: Panel[] = [];
   iconName: string;
@@ -51,6 +50,7 @@ export class EntityDetailsComponent {
   ) {
     this.route.data.subscribe((data: RouteData<EntityDetailsConfig>) => {
       this.config = data.config;
+      this.setInitialPanelsConfig();
       this.iconName = data.config.icon;
       this.route.paramMap.subscribe((params) =>
         this.loadEntity(params.get("id"))
@@ -67,17 +67,27 @@ export class EntityDetailsComponent {
       }
       this.entity = new constr();
       this.creatingNew = true;
-      this.setPanelsConfig();
+      this.setFullPanelsConfig();
     } else {
       this.creatingNew = false;
       this.entityMapperService.load<Entity>(constr, id).then((entity) => {
         this.entity = entity;
-        this.setPanelsConfig();
+        this.setFullPanelsConfig();
+        this.isLoading = false;
       });
     }
   }
 
-  private setPanelsConfig() {
+  private setInitialPanelsConfig() {
+    this.panels = this.config.panels.map((p) => {
+      return {
+        title: p.title,
+        components: [],
+      };
+    });
+  }
+
+  private setFullPanelsConfig() {
     this.panels = this.config.panels.map((p) => {
       return {
         title: p.title,
@@ -114,15 +124,10 @@ export class EntityDetailsComponent {
     });
   }
 
-  /**
-   * Usage analytics tracking when a section is opened.
-   * (directive `angulartics2On="click"` doesn't work as it fires too often and blocks events within the panel)
-   * @param panelTitle
-   */
-  trackPanelOpen(panelTitle: string) {
-    this.analyticsService.eventTrack("details_section_expanded", {
+  trackTabChanged(index: number) {
+    this.analyticsService.eventTrack("details_tab_changed", {
       category: this.config?.entity,
-      label: panelTitle,
+      label: this.config.panels[index].title,
     });
   }
 }

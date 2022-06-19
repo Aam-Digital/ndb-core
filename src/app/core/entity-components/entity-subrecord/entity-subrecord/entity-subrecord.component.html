@@ -144,7 +144,11 @@
       class="table-row"
     ></tr>
   </table>
+  <div *ngIf="isLoading" class="process-spinner">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
   <app-list-paginator
+    *ngIf="!isLoading || recordsDataSource.data.length"
     [dataSource]="recordsDataSource"
     [idForSavingPagination]="idForSavingPagination"
   ></app-list-paginator>
