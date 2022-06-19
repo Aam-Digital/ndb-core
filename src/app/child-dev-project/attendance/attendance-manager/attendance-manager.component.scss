@@ -2,38 +2,36 @@
 @use "src/styles/mixins/grid-layout";
 @use "~@angular/material/theming" as *;
 
-$min-width-content: 250px;
-$widget-height: 370px;
-
-.general-description {
-  font-style: italic;
-}
-
 .cards-wrapper {
-  @include grid-layout.adaptive($min-width-content);
+  @include grid-layout.adaptive($min-block-width: 250px);
+  margin-top: sizes.$large;
 }
 
 .mat-card {
-  display: flex;
-  flex-direction: column;
-}
+  display: grid;
 
-.mat-card-header {
-  flex-shrink: 0;
-}
+  grid-template-rows:
+    auto  // Heading: takes its intrinsic space (but no more)
+    1fr   // Content: takes all available space ('grows')
+    auto; // Button: takes its intrinsic space (but no more)
 
-.mat-card-content {
-  flex-grow: 1;
-  margin-left: sizes.$regular;
-  margin-right: sizes.$regular;
-}
+  // choose a very opaque background when the card is disabled
+  &[disabled] {
+    background-color: mat-color($mat-grey, $hue: 400, $opacity: 0.1);
+  }
 
-.mat-card-footer {
-  margin-left: sizes.$regular;
-  margin-right: sizes.$regular;
-  margin-bottom: auto;
-}
+  // Content: adapt typography
+  > p {
+    color: mat-color($mat-grey, 800);
+    font-size: 110%;
+    line-height: 1.5em;
+  }
 
-.inactive-card {
-  background-color: map-get($mat-grey, A100);
+  // Add some margin to the top to make it distinct from the content
+  > button {
+    // we can't simply use `margin-top: ...` because it is overridden
+    // by the native mat-button
+    margin: sizes.$regular 0 0 0;
+    width: 100%;
+  }
 }

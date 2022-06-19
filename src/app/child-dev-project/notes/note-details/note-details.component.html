@@ -21,7 +21,7 @@
 >
   <h1>{{ entity.date | date }}: {{ entity.subject }}</h1>
 
-  <form #entityForm="ngForm" class="form-wrapper">
+  <form #entityForm="ngForm" class="flex-column gap-regular">
     <div class="additional-actions-menu">
       <button
         mat-icon-button
@@ -125,7 +125,7 @@
     </div>
 
     <!-- Primary information of Note -->
-    <div class="mat-elevation-z2 information-body">
+    <div class="mat-elevation-z2 flex-column gap-small padding-small">
       <mat-form-field class="input-medium">
         <input
           matInput

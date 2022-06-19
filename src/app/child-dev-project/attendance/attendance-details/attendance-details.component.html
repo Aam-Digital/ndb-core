@@ -22,22 +22,20 @@
   </h1>
 
   <form #entityForm="ngForm">
-    <div class="w-{{ entity.getWarningLevel() }}">
-      <div
-        class="summary"
-        i18n="
-          Attendance|Attendance of a child (in percent) or the average of the
-          event (in percent)
-        "
-      >
-        Attendance:
-        {{
-          (focusedChild
-            ? entity?.getAttendancePercentage(focusedChild)
-            : entity?.getAttendancePercentageAverage()
-          ) | percent: "1.0-0"
-        }}
-      </div>
+    <div
+      class="summary w-{{ entity.getWarningLevel() }}"
+      i18n="
+        Attendance|Attendance of a child (in percent) or the average of the
+        event (in percent)
+      "
+    >
+      Attendance:
+      {{
+        (focusedChild
+          ? entity?.getAttendancePercentage(focusedChild)
+          : entity?.getAttendancePercentageAverage()
+        ) | percent: "1.0-0"
+      }}
     </div>
 
     <div class="flex-row flex-wrap gap-regular" *ngIf="focusedChild">
@@ -110,22 +108,18 @@
       </mat-form-field>
     </div>
 
-    <div>
-      <app-entity-subrecord
-        [records]="entity.events"
-        [columns]="eventsColumns"
-        [showEntity]="showEventDetails.bind(this)"
-        [editable]="false"
-      >
-      </app-entity-subrecord>
-    </div>
+    <app-entity-subrecord
+      [records]="entity.events"
+      [columns]="eventsColumns"
+      [showEntity]="showEventDetails.bind(this)"
+      [editable]="false"
+    >
+    </app-entity-subrecord>
 
-    <div>
-      <app-attendance-calendar
-        [records]="entity.events"
-        [highlightForChild]="focusedChild"
-        [activity]="entity.activity"
-      ></app-attendance-calendar>
-    </div>
+    <app-attendance-calendar
+      [records]="entity.events"
+      [highlightForChild]="focusedChild"
+      [activity]="entity.activity"
+    ></app-attendance-calendar>
   </form>
 </app-form-dialog-wrapper>

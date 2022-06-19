@@ -1,49 +1,16 @@
 @use "~@angular/material/theming" as *;
 @use "src/styles/variables/colors";
+@use "src/styles/functions/gradient-helpers";
 
 .day-cell {
-  background-color: mat-color($mat-light-theme-background, background);
-  position: relative;
-  text-align: center;
-  vertical-align: middle;
-  display: table-cell;
-  min-width: 16px;
-}
-
-.status {
-  //font-weight: bold;
-  margin-top: 0.5em;
+  padding: 0.28em;
+  line-height: 1em;
+  width: 1ch;
 }
 
 $dark-grey: map-get($mat-grey, 800);
 
 .has-remark {
-  background: linear-gradient(
-    45deg,
-    transparent 0%,
-    transparent 80%,
-    $dark-grey 80%,
-    $dark-grey 100%
-  );
-}
-
-
-.attendance-P {
-  background-color: colors.$success !important;
-}
-.attendance-H {
-  background-color: #CFD8DC !important;
-}
-.attendance-L {
-  background-color: #FFECB3 !important;
-}
-.attendance-E {
-  background-color: #D7CCC8 !important;
-}
-.attendance-A {
-  background-color: colors.$error !important;
-}
-.attendance-U {
-  background-color: #DDDDDD !important;
+  background-image: gradient-helpers.top-right-triangle($dark-grey);
 }
 

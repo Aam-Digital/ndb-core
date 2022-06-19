@@ -1,31 +1,27 @@
 @use "@angular/material/theming" as *;
-
-.wrapper {
-  padding: 1em;
-}
+@use "src/styles/variables/sizes";
 
 .summary-title {
   margin-bottom: 0.25em;
+  font-weight: bold;
+  font-size: 150%;
 }
 
 .summary-period {
   color: mat-color($mat-light-theme-foreground, hint-text);
-  margin: 0;
+  font-size: 110%;
 }
 
 .summary-table {
-  border-spacing: 0 8px;
+  border-spacing: 0 sizes.$small;
 }
 
 .summary-row {
   background-color: mat-color($mat-light-theme-background, background);
 }
 
-.summary-cell-label {
-  padding: 0.5em;
-}
 .summary-cell {
-   font-size: 1.5em;
+   font-size: 150%;
    text-align: right;
-   padding: 0.5em;
- }
+   padding: sizes.$small;
+}

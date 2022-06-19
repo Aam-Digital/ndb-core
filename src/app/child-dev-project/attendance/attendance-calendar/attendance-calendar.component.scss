@@ -1,4 +1,5 @@
 @use "src/styles/variables/colors";
+@use "src/styles/functions/gradient-helpers";
 
 mat-calendar {
   min-width: 200px;
@@ -12,31 +13,19 @@ mat-calendar {
 
 .attendance-calendar-date-general {
   border: 2px solid transparent;
-}
 
-.attendance-calendar-date-selected {
-  font-weight: 900;
-  font-size: 115%;
-}
+  &.attendance-calendar-date-selected {
+    font-weight: 900;
+    font-size: 1.15em;
+  }
 
-.attendance-calendar-date-has-remarks {
-  background: linear-gradient(
-    45deg,
-    transparent 0%,
-    transparent 85%,
-    #5f5f5f 85%,
-    #5f5f5f 100%
-  );
-}
+  &.attendance-calendar-date-has-remarks {
+    background: gradient-helpers.top-right-triangle(#5f5f5f);
+  }
 
-.attendance-calendar-date-has-participants-with-unknown-status {
-  background: linear-gradient(
-    45deg,
-    transparent 0%,
-    transparent 85%,
-    red 85%,
-    red 100%
-  );
+  &.attendance-calendar-date-has-participants-with-unknown-status {
+    background: gradient-helpers.top-right-triangle(red);
+  }
 }
 
 .attendance-calendar-details-form {
@@ -46,10 +35,4 @@ mat-calendar {
 
   border: 5px solid black;
   box-sizing: border-box;
-}
-
-.form-close {
-  position: absolute;
-  top: 0;
-  right: 0;
 }

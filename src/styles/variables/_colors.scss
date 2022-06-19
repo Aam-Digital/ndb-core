@@ -21,10 +21,42 @@ $err-palette            : mat-palette($mat-red);
 $warn-palette           : mat-palette($mat-orange);
 $success-palette        : mat-palette($mat-green);
 
-$warning-ok             : #90ee90;
-$warning-warning        : #ffa500;
-$warning-urgent         : #fd7272;
-
 $success                : mat-color($success-palette);
 $warn                   : mat-color($warn-palette);
 $error                  : mat-color($err-palette);
+
+/*
+ * Quantized warning-levels. Each level represents a color from green (all is OK)
+ * to red (nothing is OK).
+ *
+ * classes will be generated with the prefix 'w-', i.e.
+ * 'w-100', 'w-90', ..., 'w-0'
+ */
+$w-levels: (
+  100: #90ee90,
+  90 : #a5e46e,
+  80 : #bcd84e,
+  70 : #d2c92e,
+  60 : #e9b90f,
+  50 : #ffa500,
+  40 : #ff982a,
+  30 : #ff8b40,
+  20 : #ff8153,
+  10 : #ff7863,
+  0  : #fd7272,
+);
+
+@function w-level($level) {
+  @return map-get($w-levels, $level);
+}
+
+// Levels that are used when describing attendance values
+
+$attendance-levels: (
+  P: #c8e6c9,  // Present
+  H: #CFD8DC,  // ?
+  L: #FFECB3,  // Late
+  E: #D7CCC8,  // Excused
+  A: #FF8A65,  // Absent
+  U: #DDDDDD   // Unknown
+);

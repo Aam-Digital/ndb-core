@@ -17,7 +17,6 @@ import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-
 @Component({
   selector: "app-school-block",
   templateUrl: "./school-block.component.html",
-  styleUrls: ["./school-block.component.scss"],
 })
 export class SchoolBlockComponent implements OnInitDynamicComponent, OnChanges {
   icon: string;

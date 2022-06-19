@@ -4,16 +4,16 @@ $max-icon-width           : 22px;
 $standard-icon            : 1.5em;
 
 $standard-sizes: (
-  small: 8px,
-  regular: 16px,
-  large: 28px
+  small   : 0.5em,
+  regular : 1em,
+  large   : 2em
 );
 
 $small    : map-get($standard-sizes, small);
 $regular  : map-get($standard-sizes, regular);
 $large    : map-get($standard-sizes, large);
 
-$margin-main-view-right   : $large;
-$margin-main-view-left    : $large;
-$margin-main-view-top     : $regular;
-$margin-main-view-bottom  : $regular;
+$margin-main-view-right   : 28px;
+$margin-main-view-left    : 28px;
+$margin-main-view-top     : 16px;
+$margin-main-view-bottom  : 16px;

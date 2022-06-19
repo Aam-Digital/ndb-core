@@ -30,15 +30,13 @@
           matColumnDef="daysSinceLastNote"
           i18n="Amount of days back|Format like 'Days passed > 5 days'"
         >
-          <td *matCellDef="let childNoteInfo">
-            <span  class="dashboard-table-additional-info-cell">
-              <span
-                *ngIf="childNoteInfo.moreThanDaysSince"
-              >
-                &gt;&nbsp;
-              </span>
-              {{ childNoteInfo.daysSinceLastNote | number: "1.0-0" }} days
-            </span>
+          <td *matCellDef="let childNoteInfo" class="text-align-end">
+            <ng-container
+              *ngIf="childNoteInfo.moreThanDaysSince"
+            >
+              &gt;&nbsp;
+            </ng-container>
+            {{ childNoteInfo.daysSinceLastNote | number: "1.0-0" }} days
           </td>
         </ng-container>
 
@@ -53,12 +51,12 @@
       *ngIf="childrenWithNoteInfoDataSource.data.length === 0 && !isLoading"
       class="headline"
     >
-      <span *ngIf="mode==='without-recent-notes'" i18n="There are no participants that don't have a recent report to be shown here">
+      <ng-container *ngIf="mode==='without-recent-notes'" i18n="There are no participants that don't have a recent report to be shown here">
         no records without recent report
-      </span>
-      <span *ngIf="mode==='with-recent-notes'" i18n="There are no participants that have a recent report to be shown here">
+      </ng-container>
+      <ng-container *ngIf="mode==='with-recent-notes'" i18n="There are no participants that have a recent report to be shown here">
         no records with recent report
-      </span>
+      </ng-container>
     </div>
     <mat-paginator
       #paginator

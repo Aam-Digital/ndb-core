@@ -9,7 +9,6 @@
   <div mat-menu-item>
     <mat-slide-toggle
       *ngIf="showEventNotesToggle"
-      class="event-toggle"
       ngDefaultControl
       [(ngModel)]="includeEventNotes"
       (change)="updateIncludeEvents()"

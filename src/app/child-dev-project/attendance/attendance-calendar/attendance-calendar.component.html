@@ -11,9 +11,7 @@
     {{ selectedDate.toDate() | date }}
   </h3>
 
-  <button mat-icon-button class="form-close" (click)="selectDay()">
-    <fa-icon icon="times"></fa-icon>
-  </button>
+  <app-dialog-close (click)="selectDay()"></app-dialog-close>
 
   <div *ngIf="selectedEvent && highlightForChild">
     <div>

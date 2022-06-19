@@ -17,14 +17,14 @@
       >
         <!-- Table header only for assistive technologies like screen readers -->
         <tr hidden="true">
-          <th scope="col">Participant</th>
-          <th scope="col">Attendance</th>
+          <th scope="col" i18n="The participant of a group, e.g. a school">Participant</th>
+          <th scope="col" i18n="The attendance of a participant, e.g. a student">Attendance</th>
         </tr>
         <ng-container matColumnDef="child">
           <td
             *matCellDef="let rowGroup"
             (click)="goToChild(rowGroup[0].childId)"
-            style="cursor: pointer"
+            class="pointer"
           >
             <app-child-block [entityId]="rowGroup[0].childId"></app-child-block>
           </td>
@@ -32,11 +32,10 @@
 
         <ng-container matColumnDef="attendance">
           <td *matCellDef="let rowGroup">
-            <div *ngFor="let activityRecord of rowGroup; let first=first" class="activities-record">
-              <div *ngFor="let day of activityRecord.attendanceDays">
-                <app-attendance-day-block [attendance]="day">
-                </app-attendance-day-block>
-              </div>
+            <div *ngFor="let activityRecord of rowGroup" class="activities-record">
+              <ng-container *ngFor="let day of activityRecord.attendanceDays">
+                <app-attendance-day-block [attendance]="day"></app-attendance-day-block>
+              </ng-container>
             </div>
           </td>
         </ng-container>

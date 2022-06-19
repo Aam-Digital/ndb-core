@@ -6,25 +6,12 @@
   max-width: 500px;
 }
 
-.form-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
 .content-header {
   @include grid-layout.adaptive(450px);
 }
 
-.information-body {
-  display: flex;
-  flex-direction: column;
-  gap: sizes.$small;
-  padding: sizes.$small;
-}
-
 .additional-actions-menu {
   position: absolute;
-  right: 8px;
-  top: 16px;
+  right: sizes.$small;
+  top: sizes.$regular;
 }

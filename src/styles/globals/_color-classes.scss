@@ -17,7 +17,7 @@
 }
 
 .background-changelog-bugfix {
-  background-color: colors.$warning-warning;
+  background-color: colors.w-level(50);
 }
 
 .background-changelog-feature {
@@ -46,4 +46,33 @@
 
 .white {
   color: white;
+}
+
+@each $level, $color in colors.$w-levels {
+  .w-#{$level} {
+    background-color: $color;
+  }
+}
+
+@each $level, $color in colors.$attendance-levels {
+  .attendance-#{$level} {
+    background-color: $color !important;
+  }
+}
+
+// Selected warning levels with color-adjustments
+
+// alias for w-100
+.w-OK {
+  background-color: adjust-color(colors.w-level(100), $alpha: -0.75);
+}
+
+// alias for w-50
+.w-WARNING {
+  background-color: adjust-color(colors.w-level(50), $alpha: -0.5);
+}
+
+// alias for w-0
+.w-URGENT {
+  background-color: adjust-color(colors.w-level(0), $alpha: -0.5);
 }
