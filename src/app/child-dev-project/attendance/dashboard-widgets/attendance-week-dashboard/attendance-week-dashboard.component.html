@@ -13,6 +13,7 @@
       <table
         mat-table
         [dataSource]="tableDataSource"
+        i18n-aria-label
         aria-label="cases absent multiple times"
       >
         <!-- Table header only for assistive technologies like screen readers -->
@@ -40,12 +41,11 @@
           </td>
         </ng-container>
 
-        <tr mat-row *matRowDef="let row; columns: ['child', 'attendance'];" class="dashboard-table-row"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['child', 'attendance'];"></tr>
       </table>
     </div>
     <div
       *ngIf="tableDataSource.data.length === 0 && loadingDone"
-      class="headline"
       i18n="Placeholder if no absences are visible in dashboar"
     >no absences recorded</div>
     <mat-paginator

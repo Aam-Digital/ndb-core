@@ -33,26 +33,28 @@ import { EditProgressDashboardComponent } from "./edit-progress-dashboard/edit-p
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatTableModule } from "@angular/material/table";
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    FlexLayoutModule,
-    MatCardModule,
-    MatButtonModule,
-    MatProgressBarModule,
-    MatInputModule,
-    MatFormFieldModule,
-    ChildrenModule,
-    DashboardModule,
-    ViewModule,
-    FontAwesomeModule,
-    MatDialogModule,
-    MatDividerModule,
-    ReactiveFormsModule,
-    MatTooltipModule,
-  ],
+    imports: [
+        CommonModule,
+        FormsModule,
+        FlexLayoutModule,
+        MatCardModule,
+        MatButtonModule,
+        MatProgressBarModule,
+        MatInputModule,
+        MatFormFieldModule,
+        ChildrenModule,
+        DashboardModule,
+        ViewModule,
+        FontAwesomeModule,
+        MatDialogModule,
+        MatDividerModule,
+        ReactiveFormsModule,
+        MatTooltipModule,
+        MatTableModule,
+    ],
   declarations: [ProgressDashboardComponent, EditProgressDashboardComponent],
   exports: [ProgressDashboardComponent],
 })
