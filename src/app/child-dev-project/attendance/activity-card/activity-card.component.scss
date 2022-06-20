@@ -1,5 +1,4 @@
 @use "~@angular/material/theming" as *;
-@use "src/styles/variables/ndb-light-theme" as theme;
 @use "src/styles/variables/colors";
 
 .border-ok {
@@ -24,19 +23,16 @@
   font-weight: bold;
 }
 
-.content {
-  color: mat-color($mat-light-theme-foreground, secondary-text);
-  font-size: 1.1em;
-}
-
 .sep {
   font-weight: 900;
   color: mat-color($mat-light-theme-foreground, hint-text);
 
+  // Add a whitespace before the separator
   &::before {
     content: " "
   }
 
+  // Add a whitespace before the separator
   &::after {
     content: " "
   }
