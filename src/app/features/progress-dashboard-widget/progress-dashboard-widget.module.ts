@@ -34,6 +34,7 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatTableModule } from "@angular/material/table";
+import { CommonComponentsModule } from "../../core/common-components/common-components.module";
 
 @NgModule({
     imports: [
@@ -54,6 +55,7 @@ import { MatTableModule } from "@angular/material/table";
         ReactiveFormsModule,
         MatTooltipModule,
         MatTableModule,
+        CommonComponentsModule,
     ],
   declarations: [ProgressDashboardComponent, EditProgressDashboardComponent],
   exports: [ProgressDashboardComponent],

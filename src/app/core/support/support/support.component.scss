@@ -1,18 +1,57 @@
-@use "src/styles/variables/colors";
+@use "~@angular/material/theming" as *;
+@use "src/styles/variables/sizes";
 
-$tech-details           : #707070;
+$tech-details             : mat-color($mat-grey, 600);
+$table-odd-color          : mat-color($mat-grey, 50);
+$table-even-color         : mat-color($mat-grey, 100);
+$table-border-color       : mat-color($mat-grey, 300);
 
-.dot {
-  height: 20px;
-  width: 20px;
-  border-radius: 50%;
-  display: inline-block;
+$table-border             : 1px solid $table-border-color;
+
+$table-padding-horizontal : 12px;
+$table-padding-vertical   : 16px;
+
+$table-padding            : $table-padding-vertical $table-padding-horizontal;
+
+.container {
+  max-width: 60rem;
+  margin: 0 auto;
 }
-.dot-red {
-  background-color: red;
-}
-.dot-green {
-  background-color: green;
+
+.support-table {
+
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin-bottom: sizes.$large;
+
+  &--body {
+    tr:nth-of-type(odd) {
+      background-color: $table-odd-color;
+      border-top: $table-border;
+      border-bottom: $table-border;
+    }
+
+    tr:nth-of-type(even) {
+      background-color: $table-even-color;
+    }
+
+    tr td:first-child {
+      width: 25%;
+    }
+
+    tr td:nth-child(2) {
+      width: 75%;
+    }
+  }
+
+  th {
+    padding: $table-padding;
+    text-align: left;
+  }
+
+  td {
+    padding: $table-padding;
+  }
 }
 
 .tech-details {
@@ -22,9 +61,15 @@ $tech-details           : #707070;
 .mat-expansion-panel {
   background-color: transparent;
   border: 1px $tech-details solid;
+  margin-bottom: sizes.$large;
 }
 
 .sw-logs {
   overflow: auto;
   white-space: pre;
+}
+
+.first-button {
+  margin-inline-end: sizes.$small;
+  margin-block-end: sizes.$small;
 }

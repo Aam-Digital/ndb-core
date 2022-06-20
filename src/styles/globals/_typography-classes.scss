@@ -1,0 +1,5 @@
+@use "../typography/custom-typography";
+
+.text-secondary {
+  @include custom-typography.text-secondary();
+}

@@ -1,6 +1,7 @@
 @use "src/styles/variables/sizes";
 @use "src/styles/mixins/grid-layout";
 @use "~@angular/material/theming" as *;
+@use "src/styles/typography/custom-typography";
 
 .cards-wrapper {
   @include grid-layout.adaptive($min-block-width: 250px);
@@ -22,9 +23,7 @@
 
   // Content: adapt typography
   > p {
-    color: mat-color($mat-grey, 800);
-    font-size: 110%;
-    line-height: 1.5em;
+    @include custom-typography.text-secondary();
   }
 
   // Add some margin to the top to make it distinct from the content
