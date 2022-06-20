@@ -22,6 +22,7 @@ import { LoggingService } from "../../../core/logging/logging.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ExportService } from "../../../core/export/export-service/export.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;
@@ -78,7 +79,12 @@ describe("ChildrenListComponent", () => {
   const routeMock = {
     data: of({ config: routeData }),
     queryParams: of({}),
-    snapshot: { queryParams: {} },
+    snapshot: {
+      queryParamMap: {
+        get: () => "",
+      },
+      queryParams: {},
+    },
   };
   const mockChildrenService: jasmine.SpyObj<ChildrenService> = jasmine.createSpyObj(
     ["getChildren"]
@@ -92,6 +98,7 @@ describe("ChildrenListComponent", () => {
           ChildrenModule,
           MockedTestingModule.withState(),
           FontAwesomeTestingModule,
+          TabStateModule,
         ],
         providers: [
           {
@@ -122,6 +129,7 @@ describe("ChildrenListComponent", () => {
   });
 
   it("should load children on init", fakeAsync(() => {
+    component.isLoading = true;
     const child1 = new Child("c1");
     const child2 = new Child("c2");
     mockChildrenService.getChildren.and.returnValue(of([child1, child2]));
@@ -129,6 +137,7 @@ describe("ChildrenListComponent", () => {
     tick();
     expect(mockChildrenService.getChildren).toHaveBeenCalled();
     expect(component.childrenList).toEqual([child1, child2]);
+    expect(component.isLoading).toBeFalse();
   }));
 
   it("should route to the given id", () => {
