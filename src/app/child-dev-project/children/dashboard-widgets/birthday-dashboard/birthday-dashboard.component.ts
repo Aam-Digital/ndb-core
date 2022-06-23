@@ -6,9 +6,7 @@ import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components
 import { MatTableDataSource } from "@angular/material/table";
 import { MatPaginator } from "@angular/material/paginator";
 import { ViewChild } from "@angular/core";
-import { months } from "moment";
-import { C } from "@angular/cdk/keycodes";
-import { date } from "faker";
+
 
 @DynamicComponent("BirthdayDashboard")
 @Component({
@@ -26,52 +24,64 @@ export class BirthdayDashboardComponent
   constructor(private entityMapper: EntityMapperService) {}
 
   async ngOnInit() {
-    this.children = (await this.entityMapper.loadType(Child))
+      this.children = (await this.entityMapper.loadType(Child))
       .filter((child: Child) => child.isActive)
-      //*.sort((a, b) => a.dateOfBirth.getTime() - b.dateOfBirth.getTime());
-    this.childrendataSource.data = this.children;
-    var dateOfBirth: any[], today: Date, bday: Date, diff: number, days: number;
-  dateOfBirth = [months,days]; // 6th of February
-        today = new Date();
-        bday = new Date(today.getFullYear(),dateOfBirth[1]-1,dateOfBirth[0]);
-    if( today.getTime() > bday.getTime()) {
-        bday.setFullYear(bday.getFullYear()+1);
-          }
-       diff = bday.getTime()-today.getTime();// calculating difference between days
-        days = Math.floor(diff/(1000*60*60*24));
-   // const children=[]  ;
-     
-//function distanceToBirthday(dateOfBirth)
-//{
-   // let currDate = new Date();
-   // currDate.setHours(0, 0, 0, 0);
-    //let currYear = currDate.getFullYear();
+     //.sort((a, b) => a.dateOfBirth.getTime() - b.dateOfBirth.getTime());
+      this.childrendataSource.data = this.children;
 
-   // let offset = new Date();
-   // offset.setHours(0, 0, 0, 0);
-   // offset.setFullYear(currYear + 1);
+      function daysUntilBirthday(dateOfBirth: Date): number {
+         let today = new Date();
+         today.setHours(0,0,0,0);
+         let birthday = new Date(today.getFullYear(), dateOfBirth.getMonth(),
+             dateOfBirth.getDate());
+            
 
-    //dateOfBirth = new Date(dateOfBirth + " 00:00");
-    //dateOfBirth.setFullYear(currYear);
+      // If the birthday has already occured this year. Then their next birthday is next year.
+         if (today.getTime() > birthday.getTime()) {
+            birthday.setFullYear(birthday.getFullYear() + 1);
+               }
 
-    //let diff = dateOfBirth - currDate;
-   // return (diff < 0) ? diff + offset.getTime() : diff;
-//}
+         let diff = birthday.getTime() - today.getTime();
+         let daysTillNextBirthday = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-//function getUpcomingBirthdays(bdays)
-//{
-   // return bdays.slice(0).sort(
-       // (a: any[], b: any[]) => distanceToBirthday(a[1]) - distanceToBirthday(b[1])
-   // );
-//}
+         return daysTillNextBirthday;
+            }
+           
 
-//console.log(getUpcomingBirthdays(children));
-  }
+    
+      this.children.sort((a:Child,b:Child) => daysUntilBirthday(a.dateOfBirth) - 
+           daysUntilBirthday(b.dateOfBirth));
+           console.log(daysUntilBirthday);
   
 
-  ngAfterViewInit() {
-    this.childrendataSource.paginator = this.paginator;
-  }
+    // TASK A: sort this.children so that the child whose birthday comes next is listed first
 
-  onInitFromDynamicConfig(config: any) {}
-}
+    // TASK B: filter this.children so that only those children are included whose birthday is less than 30 days from today
+
+  
+             }
+
+        ngAfterViewInit() {
+        this.childrendataSource.paginator = this.paginator;
+          }
+
+        onInitFromDynamicConfig(config: any) {}
+      }
+
+/**
+* Takes a date as input and returns the number of days till the next birthday (i.e. this or next year).
+*/
+//function daysUntilBirthday(dateOfBirth: Date) : Number {
+  //let today = new Date();
+  //let birthday = new Date(today.getFullYear(), dateOfBirth.getMonth() - 1, dateOfBirth.getDate());
+
+  // If the birthday has already occured this year. Then their next birthday is next year.
+  //if (today.getTime() > birthday.getTime()) {
+    //birthday.setFullYear(birthday.getFullYear() + 1);
+ // }
+
+  //let diff = birthday.getTime() - today.getTime();
+  //let daysTillNextBirthday = Math.floor(diff/(1000*60*60*24));
+
+  //return daysTillNextBirthday;
+//}
