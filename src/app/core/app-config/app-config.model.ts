@@ -43,13 +43,6 @@ export interface IAppConfig {
   database: {
     /** name of the database - both remote and local */
     name: string;
-
-    /**
-     * URL to the database server to be synced with
-     *
-     * Beware of CORS issues if this is on a different domain than the app is served from.
-     */
-    remote_url: string;
   };
 
   /**
