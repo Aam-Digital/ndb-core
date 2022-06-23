@@ -49,7 +49,7 @@ describe("ActivitiesOverviewComponent", () => {
 
   it("should create a new recurring activity having the current school as a linkedGroup", () => {
     component.entity = new School("school1");
-    let newRecurringActivity = component.generateNewRecordFactory();
+    const newRecurringActivity = component.generateNewRecordFactory();
     expect(newRecurringActivity().linkedGroups).toEqual(["school1"]);
   });
 });
