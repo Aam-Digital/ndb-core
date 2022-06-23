@@ -75,7 +75,7 @@ export class SyncedSessionService extends SessionService {
    */
   checkForValidSession() {
     this.httpClient
-      .get(`${AppConfig.settings.database.remote_url}_session`, {
+      .get(`${AppConfig.DB_PROXY_PREFIX}/_session`, {
         withCredentials: true,
       })
       .subscribe((res: any) => {
