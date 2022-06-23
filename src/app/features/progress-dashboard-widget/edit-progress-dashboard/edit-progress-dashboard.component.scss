@@ -18,6 +18,11 @@
  margin-bottom: 12px;
 }
 
+.title-field {
+  width: 100%;
+  min-width: 0;
+}
+
 .header-field {
   grid-area: header;
   min-width: 0;
