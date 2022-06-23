@@ -16,6 +16,11 @@ import {
 } from "@angular/forms";
 import { ErrorStateMatcher } from "@angular/material/core";
 
+export interface EditProgressDashboardComponentData {
+  title: string;
+  parts: ProgressDashboardPart[];
+}
+
 @Component({
   selector: "app-edit-progress-dashboard",
   templateUrl: "./edit-progress-dashboard.component.html",

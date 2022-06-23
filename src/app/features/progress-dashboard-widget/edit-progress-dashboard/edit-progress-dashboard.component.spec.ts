@@ -12,6 +12,7 @@ describe("EditProgressDashboardComponent", () => {
   let fixture: ComponentFixture<EditProgressDashboardComponent>;
 
   const mockDialogData: EditProgressDashboardComponentData = {
+    title: "qwe",
     parts: [
       {
         label: "foo",
@@ -46,7 +47,7 @@ describe("EditProgressDashboardComponent", () => {
   });
 
   function getGroup(index: number): FormGroup {
-    return component.forms.at(index) as FormGroup;
+    return component.parts.at(index) as FormGroup;
   }
 
   beforeEach(() => {
@@ -60,19 +61,19 @@ describe("EditProgressDashboardComponent", () => {
   });
 
   it("should contain the initial state from the data", () => {
-    expect(component.forms).toHaveValue(mockDialogData.parts);
-    expect(component.forms).toBeValidForm();
+    expect(component.parts).toHaveValue(mockDialogData.parts);
+    expect(component.parts).toBeValidForm();
   });
 
   it("should append a new part", () => {
     component.addPart();
-    expect(component.forms).toHaveSize(4);
+    expect(component.parts).toHaveSize(4);
   });
 
   it("should delete a part", () => {
     component.removePart(1);
-    expect(component.forms).toHaveSize(2);
-    expect(component.forms).toHaveValue([
+    expect(component.parts).toHaveSize(2);
+    expect(component.parts).toHaveValue([
       mockDialogData.parts[0],
       mockDialogData.parts[2],
     ]);
