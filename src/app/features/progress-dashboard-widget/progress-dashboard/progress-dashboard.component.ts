@@ -6,6 +6,9 @@ import { LoggingService } from "../../../core/logging/logging.service";
 import { MatDialog } from "@angular/material/dialog";
 import { EditProgressDashboardComponent } from "../edit-progress-dashboard/edit-progress-dashboard.component";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { waitForChangeTo } from "../../../core/session/session-states/session-utils";
+import { SyncState } from "../../../core/session/session-states/sync-state.enum";
 
 @Component({
   selector: "app-progress-dashboard",
@@ -21,35 +24,35 @@ export class ProgressDashboardComponent
   constructor(
     private entityMapper: EntityMapperService,
     private loggingService: LoggingService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private sessionService: SessionService
   ) {}
 
   onInitFromDynamicConfig(config: any) {
     this.dashboardConfigId = config.dashboardConfigId;
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.data = new ProgressDashboardConfig(this.dashboardConfigId);
-    this.entityMapper
+    this.loadConfigFromDatabase().catch(() =>
+      this.sessionService.syncState
+        .pipe(waitForChangeTo(SyncState.COMPLETED))
+        .toPromise()
+        .then(() => this.loadConfigFromDatabase())
+        .catch(() => this.createDefaultConfig())
+    );
+  }
+
+  private loadConfigFromDatabase() {
+    return this.entityMapper
       .load(ProgressDashboardConfig, this.dashboardConfigId)
-      .then((config) => {
-        this.data = config;
-      })
-      .catch((e) => {
-        if (e.status === 404) {
-          this.loggingService.debug(
-            `ProgressDashboardConfig (${this.dashboardConfigId}) not found. Creating ...`
-          );
-          this.createDefaultConfig();
-        } else {
-          this.loggingService.warn(
-            `Error loading ProgressDashboardConfig (${this.dashboardConfigId}): ${e.message}`
-          );
-        }
-      });
+      .then((config) => (this.data = config));
   }
 
   private createDefaultConfig() {
+    this.loggingService.debug(
+      `ProgressDashboardConfig (${this.dashboardConfigId}) not found. Creating ...`
+    );
     this.data.title = $localize`:The progress, e.g. of a certain activity:Progress of X`;
     this.save();
   }

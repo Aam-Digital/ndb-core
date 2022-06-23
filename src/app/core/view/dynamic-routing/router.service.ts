@@ -9,6 +9,7 @@ import {
 } from "./view-config.interface";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { RouteRegistry } from "../../../app.routing";
+import { NotFoundComponent } from "./not-found/not-found.component";
 
 /**
  * The RouterService dynamically sets up Angular routing from config loaded through the {@link ConfigService}.
@@ -34,7 +35,7 @@ export class RouterService {
     const viewConfigs = this.configService.getAllConfigs<ViewConfig>(
       PREFIX_VIEW_CONFIG
     );
-    this.reloadRouting(viewConfigs, this.router.config, true);
+    this.reloadRouting(viewConfigs, this.router.config);
   }
 
   /**
@@ -42,53 +43,43 @@ export class RouterService {
    *
    * @param viewConfigs The configs loaded from the ConfigService
    * @param additionalRoutes Optional array of routes to keep in addition to the ones loaded from config
-   * @param overwriteExistingRoutes Optionally set to true if config was updated and previously existing routes shall be updated
    */
-  reloadRouting(
-    viewConfigs: ViewConfig[],
-    additionalRoutes: Route[] = [],
-    overwriteExistingRoutes = false
-  ) {
+  reloadRouting(viewConfigs: ViewConfig[], additionalRoutes: Route[] = []) {
     const routes: Route[] = [];
 
     for (const view of viewConfigs) {
       if (view.lazyLoaded) {
-        // lazy-loaded views' routing is still hardcoded in the app.routing
-        continue;
+        const path = view._id.substring(PREFIX_VIEW_CONFIG.length);
+        const route = additionalRoutes.find((r) => r.path === path);
+        routes.push(this.generateRouteFromConfig(view, route));
+      } else {
+        routes.push(this.generateRouteFromConfig(view));
       }
-      const route = this.generateRouteFromConfig(view);
-
-      if (
-        !overwriteExistingRoutes &&
-        additionalRoutes.find((r) => r.path === route.path)
-      ) {
-        this.loggingService.warn(
-          "ignoring route from view config because the path is already defined: " +
-            view._id
-        );
-        continue;
-      }
-
-      routes.push(route);
     }
 
     // add routes from other sources (e.g. pre-existing  hard-coded routes)
     const noDuplicates = additionalRoutes.filter(
       (r) => !routes.find((o) => o.path === r.path)
     );
+
+    // change wildcard route to show not-found component instead of empty page
+    const wildcardRoute = noDuplicates.find((route) => route.path === "**");
+    if (wildcardRoute) {
+      wildcardRoute.component = NotFoundComponent;
+    }
+
     routes.push(...noDuplicates);
 
     this.router.resetConfig(routes);
   }
 
-  private generateRouteFromConfig(view: ViewConfig): Route {
-    const path = view._id.substring(PREFIX_VIEW_CONFIG.length); // remove prefix to get actual path
-
-    const route: Route = {
-      path: path,
+  private generateRouteFromConfig(
+    view: ViewConfig,
+    route: Route = {
+      path: view._id.substring(PREFIX_VIEW_CONFIG.length),
       component: this.registry.get(view.component),
-    };
-
+    }
+  ): Route {
     const routeData: RouteData = {};
 
     if (view.permittedUserRoles) {

@@ -29,6 +29,10 @@ import {
 } from "../core/view/dynamic-components/dynamic-component.decorator";
 import { RouteRegistry, routesRegistry } from "../app.routing";
 import { MatNativeDateModule } from "@angular/material/core";
+import {
+  ConfigService,
+  createTestingConfigService,
+} from "../core/config/config.service";
 
 export const TEST_USER = "test";
 export const TEST_PASSWORD = "pass";
@@ -101,6 +105,7 @@ export class MockedTestingModule {
           useValue: session,
         },
         { provide: EntityMapperService, useValue: mockedEntityMapper },
+        { provide: ConfigService, useValue: createTestingConfigService() },
         { provide: Database, useValue: session.getDatabase() },
       ],
     };

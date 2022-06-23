@@ -1,94 +1,93 @@
 <!-- Desktop version -->
 <div fxLayout="column" *ngIf="desktop">
+  <div
+    fxLayout="row"
+    fxLayoutAlign="space-between end"
+    [ngStyle]="offsetFilterStyle"
+  >
+    <app-view-title>
+      {{ listName }}
+    </app-view-title>
 
-    <div
-      fxLayout="row"
-      fxLayoutAlign="space-between end"
-      [ngStyle]="offsetFilterStyle"
-    >
-      <app-view-title>
-        {{ listName }}
-      </app-view-title>
+    <div fxFlex></div>
 
-      <div fxFlex></div>
-
-      <div fxLayoutGap="25px" fxLayoutAlign="end end" fxFlex>
-        <button
-          mat-stroked-button
-          color="accent"
-          class="standard-add-button"
-          (click)="addNewClick.emit()"
-          angulartics2On="click"
-          angularticsCategory="UserAction"
-          [angularticsAction]="
-              listName.toLowerCase().replace(' ', '_') + '_add_new'
-            "
-          [angularticsCategory]="entityConstructor.ENTITY_TYPE"
-          angularticsAction="list_add_entity"
-          *appDisabledEntityOperation="{
-              entity: entityConstructor,
-              operation: 'create'
-            }"
-        >
-          <fa-icon
-            class="button-icon"
-            aria-label="add element"
-            icon="plus-circle"
-          ></fa-icon>
-          <span i18n="Add a new entity to a list of multiple entities"> Add New </span>
-        </button>
-
-        <button mat-icon-button class="additional-button" color="primary" [matMenuTriggerFor]="additional">
-          <fa-icon class="standard-icon" icon="ellipsis-v"></fa-icon>
-        </button>
-      </div>
-    </div>
-
-    <div
-      class="toggle-selection-section"
-      fxLayout="row wrap"
-      fxLayoutGap="10px"
-    >
-      <div *ngTemplateOutlet="filterDialog"></div>
-
-      <app-list-filter
-        *ngFor="let filter of filterSelections"
-        [filterConfig]="filter.filterSettings"
-        [(selectedOption)]="filter.selectedOption"
-        [displayAsToggle]="filter.display !== 'dropdown'"
-        (selectedOptionChange)="filterOptionSelected(filter, $event)"
+    <div fxLayoutGap="25px" fxLayoutAlign="end end" fxFlex>
+      <button
+        mat-stroked-button
+        color="accent"
+        class="standard-add-button"
+        (click)="addNewClick.emit()"
         angulartics2On="click"
+        angularticsCategory="UserAction"
+        [angularticsAction]="
+          listName.toLowerCase().replace(' ', '_') + '_add_new'
+        "
         [angularticsCategory]="entityConstructor.ENTITY_TYPE"
-        angularticsAction="list_filter"
-        [angularticsLabel]="filter.filterSettings.label"
+        angularticsAction="list_add_entity"
+        *appDisabledEntityOperation="{
+          entity: entityConstructor,
+          operation: 'create'
+        }"
       >
-      </app-list-filter>
+        <fa-icon
+          class="button-icon"
+          aria-label="add element"
+          icon="plus-circle"
+        ></fa-icon>
+        <span i18n="Add a new entity to a list of multiple entities">
+          Add New
+        </span>
+      </button>
+
+      <button
+        mat-icon-button
+        class="additional-button"
+        color="primary"
+        [matMenuTriggerFor]="additional"
+      >
+        <fa-icon class="standard-icon" icon="ellipsis-v"></fa-icon>
+      </button>
     </div>
+  </div>
 
-    <div>
-      <div *ngIf="columnGroups.length > 1" >
-        <mat-tab-group [(selectedIndex)]="selectedColumnGroupIndex">
-          <mat-tab
-            *ngFor="let item of columnGroups"
-            [label]="item.name"
-            (click)="columnGroupClick(item.name)"
-            angulartics2On="click"
-            [angularticsCategory]="entityConstructor.ENTITY_TYPE"
-            angularticsAction="list_column_view"
-            [angularticsLabel]="item.name"
-          ></mat-tab>
-        </mat-tab-group>
-      </div>
+  <div class="toggle-selection-section" fxLayout="row wrap" fxLayoutGap="10px">
+    <div *ngTemplateOutlet="filterDialog"></div>
 
-      <div *ngTemplateOutlet="subrecord"></div>
+    <app-list-filter
+      *ngFor="let filter of filterSelections"
+      [filterConfig]="filter.filterSettings"
+      [(selectedOption)]="filter.selectedOption"
+      [displayAsToggle]="filter.display !== 'dropdown'"
+      (selectedOptionChange)="filterOptionSelected(filter, $event)"
+      angulartics2On="click"
+      [angularticsCategory]="entityConstructor.ENTITY_TYPE"
+      angularticsAction="list_filter"
+      [angularticsLabel]="filter.filterSettings.label"
+    >
+    </app-list-filter>
+  </div>
+
+  <div>
+    <div *ngIf="columnGroups.length > 1">
+      <mat-tab-group [(selectedIndex)]="selectedColumnGroupIndex" appTabStateMemo>
+        <mat-tab
+          *ngFor="let item of columnGroups"
+          [label]="item.name"
+          (click)="columnGroupClick(item.name)"
+          angulartics2On="click"
+          [angularticsCategory]="entityConstructor.ENTITY_TYPE"
+          angularticsAction="list_column_view"
+          [angularticsLabel]="item.name"
+        ></mat-tab>
+      </mat-tab-group>
     </div>
-
+    <div *ngTemplateOutlet="subrecord"></div>
+  </div>
 </div>
 
 <!-- Mobile Version -->
 <div *ngIf="!desktop">
-
-  <h2>{{listName}}</h2>
+  <h2>{{ listName }}</h2>
 
   <div fxLayout="row" fxLayoutGap="15px" style="margin-bottom: 15px">
     <div *ngTemplateOutlet="filterDialog"></div>
@@ -96,18 +95,19 @@
     <button mat-icon-button color="primary" [matMenuTriggerFor]="additional">
       <fa-icon class="standard-icon" icon="ellipsis-v"></fa-icon>
     </button>
-
   </div>
 
   <div *ngTemplateOutlet="subrecord"></div>
-
 </div>
 
 <!-- Templates and menus for both mobile and desktop -->
 
 <ng-template #filterDialog>
   <mat-form-field class="filter-field">
-    <mat-label i18n="Filter placeholder|Allows the user to filter through entities">Filter</mat-label>
+    <mat-label
+      i18n="Filter placeholder|Allows the user to filter through entities"
+      >Filter</mat-label
+    >
     <input
       matInput
       i18n-placeholder="Examples of things to filter"
@@ -134,38 +134,36 @@
     [editable]="false"
     [showEntity]="elementClick.emit.bind(elementClick)"
     [columnsToDisplay]="columnsToDisplay"
+    [isLoading]="isLoading"
   ></app-entity-subrecord>
 </ng-template>
 
 <mat-menu #additional>
-
   <div fxHide.gt-xs>
-
     <button
       mat-menu-item
       (click)="addNewClick.emit()"
       angulartics2On="click"
       angularticsCategory="UserAction"
       [angularticsAction]="
-                listName.toLowerCase().replace(' ', '_') + '_add_new'
-              "
+        listName.toLowerCase().replace(' ', '_') + '_add_new'
+      "
       *appDisabledEntityOperation="{
-                entity: entityConstructor,
-                operation: 'create'
-              }"
+        entity: entityConstructor,
+        operation: 'create'
+      }"
     >
       <fa-icon
         class="standard-icon accent-icon"
         aria-label="add element"
         icon="plus-circle"
       ></fa-icon>
-      <span i18n="Add a new entity to a list of multiple entities"> Add New </span>
+      <span i18n="Add a new entity to a list of multiple entities">
+        Add New
+      </span>
     </button>
 
-    <button
-      mat-menu-item
-      (click)="openFilterOverlay()"
-    >
+    <button mat-menu-item (click)="openFilterOverlay()">
       <fa-icon
         aria-label="filter"
         class="standard-icon accent-icon"
@@ -174,7 +172,6 @@
       </fa-icon>
       <span>Filter options</span>
     </button>
-
   </div>
 
   <button

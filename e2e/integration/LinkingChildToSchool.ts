@@ -1,14 +1,12 @@
-describe("Scenario: Linking a child to a school - E2E test", () => {
-  before(() => {
-    // GIVEN I am on the details page of a child
+describe("Scenario: Linking a child to a school - E2E test", function () {
+  before("GIVEN I am on the details page of a child", function () {
     cy.visit("");
     cy.create("Children", "E2E Child");
     cy.create("Schools", "E2E School");
     cy.get("[ng-reflect-angulartics-label=Children]").click();
   });
 
-  // WHEN I add an entry in the 'Previous Schools' section with a specific school
-  it("Add an entry in the Previous School section", function () {
+  it("WHEN I add an entry in the 'Previous Schools' section with a specific school", function () {
     // type to the input "Filter" the name of child
     cy.get('[data-placeholder="e.g. name, age"]').type("E2E Child");
 
@@ -36,8 +34,7 @@ describe("Scenario: Linking a child to a school - E2E test", () => {
     cy.wait(100);
   });
 
-  // THEN I can see that child in the 'Children Overview' of the details page of this school
-  it("Check for child in Children Overview of specific school", function () {
+  it("THEN I can see that child in the 'Children Overview' of the details page of this school", function () {
     // Click on the school that was added to the child profile
     cy.contains("span", "E2E School").click();
     // Open the students overview

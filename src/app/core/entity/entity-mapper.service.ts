@@ -76,7 +76,6 @@ export class EntityMapperService {
   ): Promise<T[]> {
     const resultArray: Array<T> = [];
     const ctor = this.resolveConstructor(entityType);
-
     const allRecordsOfType = await this._db.getAll(
       new ctor("").getType() + ":"
     );

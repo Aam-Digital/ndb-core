@@ -14,26 +14,18 @@ import { School } from "../../../../../child-dev-project/schools/model/school";
 import { EntityUtilsModule } from "../../entity-utils.module";
 import { Child } from "../../../../../child-dev-project/children/model/child";
 import { TypedFormControl } from "../edit-component";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { MockedTestingModule } from "../../../../../utils/mocked-testing.module";
 
 describe("EditSingleEntityComponent", () => {
   let component: EditSingleEntityComponent;
   let fixture: ComponentFixture<EditSingleEntityComponent>;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let loadTypeSpy: jasmine.Spy;
 
   beforeEach(async () => {
-    mockEntityMapper = jasmine.createSpyObj(["loadType"]);
-    mockEntityMapper.loadType.and.resolveTo([]);
-
     await TestBed.configureTestingModule({
-      imports: [
-        EntityUtilsModule,
-        FontAwesomeTestingModule,
-        MockedTestingModule,
-      ],
-      providers: [{ provide: EntityMapperService, useValue: mockEntityMapper }],
+      imports: [EntityUtilsModule, MockedTestingModule.withState()],
     }).compileComponents();
+    loadTypeSpy = spyOn(TestBed.inject(EntityMapperService), "loadType");
   });
 
   beforeEach(() => {
@@ -54,12 +46,12 @@ describe("EditSingleEntityComponent", () => {
   it("should show all entities of the given type", fakeAsync(() => {
     const school1 = School.create({ name: "First School" });
     const school2 = School.create({ name: "Second School " });
-    mockEntityMapper.loadType.and.resolveTo([school1, school2]);
+    loadTypeSpy.and.resolveTo([school1, school2]);
 
     initComponent();
     tick();
 
-    expect(mockEntityMapper.loadType).toHaveBeenCalled();
+    expect(loadTypeSpy).toHaveBeenCalled();
     expect(component.entities).toEqual([school1, school2]);
     component.updateAutocomplete("");
     expect(component.autocompleteEntities.value).toEqual([school1, school2]);
@@ -87,7 +79,7 @@ describe("EditSingleEntityComponent", () => {
     const child1 = Child.create("First Child");
     const child2 = Child.create("Second Child");
     component.formControl.setValue(child1.getId());
-    mockEntityMapper.loadType.and.resolveTo([child1, child2]);
+    loadTypeSpy.and.resolveTo([child1, child2]);
 
     initComponent();
     tick();

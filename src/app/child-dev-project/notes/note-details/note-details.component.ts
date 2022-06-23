@@ -9,6 +9,7 @@ import { School } from "../../schools/model/school";
 import { ExportColumnConfig } from "../../../core/export/export-service/export-column-config";
 import { ConfigService } from "../../../core/config/config.service";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
+import { compareEnums } from "../../../utils/utils";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -27,6 +28,7 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
   readonly User: EntityConstructor<User> = User;
 
   readonly INTERACTION_TYPE_CONFIG = INTERACTION_TYPE_CONFIG_ID;
+  readonly compareFn = compareEnums;
   includeInactiveChildren: boolean = false;
 
   /** export format for notes to be used for downloading the individual details */

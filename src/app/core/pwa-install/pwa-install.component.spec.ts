@@ -53,9 +53,7 @@ describe("PwaInstallComponent", () => {
     pwaInstallResult.next();
 
     const component = createComponent();
-    console.log("created");
     tick();
-    console.log("checking");
     expect(component.showPWAInstallButton).toBeTrue();
 
     mockPWAInstallService.installPWA.and.resolveTo({ outcome: "accepted" });

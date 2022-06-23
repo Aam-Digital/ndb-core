@@ -2,7 +2,6 @@ import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 
 import { DemoDataInitializerService } from "./demo-data-initializer.service";
 import { DemoDataService } from "./demo-data.service";
-import { SessionService } from "../session/session-service/session.service";
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
 import { LocalSession } from "../session/session-service/local-session";
 import { DatabaseUser } from "../session/session-service/local-user";
@@ -41,8 +40,6 @@ describe("DemoDataInitializerService", () => {
       ["login", "saveUser", "getCurrentUser"],
       { loginState: loginState }
     );
-    // @ts-ignore this makes the spy pass the instanceof check
-    mockSessionService.__proto__ = LocalSession.prototype;
 
     TestBed.configureTestingModule({
       providers: [
@@ -50,7 +47,7 @@ describe("DemoDataInitializerService", () => {
         { provide: MatDialog, useValue: mockDialog },
         { provide: Database, useClass: PouchDatabase },
         { provide: DemoDataService, useValue: mockDemoDataService },
-        { provide: SessionService, useValue: mockSessionService },
+        { provide: LocalSession, useValue: mockSessionService },
       ],
     });
     service = TestBed.inject(DemoDataInitializerService);
