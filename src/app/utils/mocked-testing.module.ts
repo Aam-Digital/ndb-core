@@ -90,10 +90,7 @@ export class MockedTestingModule {
     AppConfig.settings = {
       site_name: "Aam Digital - DEV",
       session_type: SessionType.mock,
-      database: {
-        name: "test-db-name",
-        remote_url: "https://demo.aam-digital.com/db/",
-      },
+      database: { name: "test-db-name" },
     };
     const mockedEntityMapper = mockEntityMapper([new User(TEST_USER), ...data]);
     const session = createLocalSession(loginState === LoginState.LOGGED_IN);

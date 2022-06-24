@@ -58,10 +58,7 @@ describe("AdminComponent", () => {
       AppConfig.settings = {
         site_name: "",
         session_type: SessionType.mock,
-        database: {
-          name: "unit-tests",
-          remote_url: "",
-        },
+        database: { name: "unit-tests" },
       };
 
       TestBed.configureTestingModule({

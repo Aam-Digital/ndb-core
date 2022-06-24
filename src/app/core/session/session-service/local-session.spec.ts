@@ -33,10 +33,7 @@ describe("LocalSessionService", () => {
     AppConfig.settings = {
       site_name: "Aam Digital - DEV",
       session_type: SessionType.mock,
-      database: {
-        name: "test-db-name",
-        remote_url: "https://demo.aam-digital.com/db/",
-      },
+      database: { name: "test-db-name" },
     };
     database = jasmine.createSpyObj([
       "initInMemoryDB",

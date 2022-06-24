@@ -14,10 +14,7 @@ xdescribe("Performance Tests", () => {
     AppConfig.settings = {
       site_name: "Aam Digital - DEV",
       session_type: SessionType.mock, // change to SessionType.local to run performance tests with the InBrowser database
-      database: {
-        name: "test-db-name",
-        remote_url: "https://demo.aam-digital.com/db/",
-      },
+      database: { name: "test-db-name" },
     };
 
     await TestBed.configureTestingModule({
