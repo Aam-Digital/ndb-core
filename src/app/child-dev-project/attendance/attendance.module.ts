@@ -68,6 +68,7 @@ import {
 } from "@angular/platform-browser";
 import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
 import * as Hammer from "hammerjs";
+import { TabStateModule } from "../../utils/tab-state/tab-state.module";
 
 @Injectable()
 // Only allow horizontal swiping
@@ -130,6 +131,7 @@ export class HorizontalHammerConfig extends HammerGestureConfig {
     ViewModule,
     ConfigurableEnumModule,
     HammerModule,
+    TabStateModule,
   ],
   exports: [
     ActivityCardComponent,

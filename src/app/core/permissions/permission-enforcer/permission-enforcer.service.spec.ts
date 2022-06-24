@@ -14,7 +14,7 @@ import { mockEntityMapper } from "../../entity/mock-entity-mapper-service";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { AnalyticsService } from "../../analytics/analytics.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { Subject } from "rxjs";
+import { of, Subject } from "rxjs";
 import { EntityAbility } from "../ability/entity-ability";
 import { Config } from "../../config/config";
 import {
@@ -22,6 +22,7 @@ import {
   EntityRegistry,
 } from "../../entity/database-entity.decorator";
 import { UpdatedEntity } from "../../entity/model/entity-update";
+import { ConfigService } from "../../config/config.service";
 
 describe("PermissionEnforcerService", () => {
   let service: PermissionEnforcerService;
@@ -58,6 +59,10 @@ describe("PermissionEnforcerService", () => {
         { provide: AnalyticsService, useValue: mockAnalytics },
         { provide: EntityRegistry, useValue: entityRegistry },
         AbilityService,
+        {
+          provide: ConfigService,
+          useValue: { configUpdates: of(new Config()) },
+        },
       ],
     });
     entityMapper = TestBed.inject(EntityMapperService);
@@ -66,7 +71,7 @@ describe("PermissionEnforcerService", () => {
     TestBed.inject(AbilityService);
   }));
 
-  afterEach(async () => {
+  afterEach(() => {
     window.localStorage.removeItem(
       TEST_USER + "-" + PermissionEnforcerService.LOCALSTORAGE_KEY
     );
@@ -207,7 +212,21 @@ describe("PermissionEnforcerService", () => {
     );
   }));
 
-  async function updateRulesAndTriggerEnforcer(rules: DatabaseRule[]) {
+  it("should not fail if a non-entity rule exists", fakeAsync(() => {
+    const rules: DatabaseRule[] = [
+      { subject: "Child", action: "manage" },
+      { subject: "org.couchdb.user", action: "read", inverted: true },
+    ];
+    updateRulesAndTriggerEnforcer(rules);
+    tick();
+
+    const storedRules = localStorage.getItem(
+      `${TEST_USER}-${PermissionEnforcerService.LOCALSTORAGE_KEY}`
+    );
+    expect(JSON.parse(storedRules)).toEqual(rules);
+  }));
+
+  function updateRulesAndTriggerEnforcer(rules: DatabaseRule[]) {
     const role = mockSession.getCurrentUser().roles[0];
     const config = new Config(Config.PERMISSION_KEY, { [role]: rules });
     entityUpdates.next({ entity: config, type: "update" });

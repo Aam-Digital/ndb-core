@@ -7,10 +7,10 @@ import { DatabaseRule, DatabaseRules } from "../permission-types";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
 import { DatabaseUser } from "../../session/session-service/local-user";
-import * as _ from "lodash";
 import { EntityAbility } from "./entity-ability";
 import { Config } from "../../config/config";
 import { LoggingService } from "../../logging/logging.service";
+import { get } from "lodash-es";
 
 export function detectEntityType(subject: Entity): EntityConstructor<any> {
   if (subject instanceof Entity) {
@@ -96,7 +96,7 @@ export class AbilityService {
       }
 
       const name = rawValue.slice(2, -1);
-      const value = _.get({ user }, name);
+      const value = get({ user }, name);
 
       if (typeof value === "undefined") {
         throw new ReferenceError(`Variable ${name} is not defined`);
