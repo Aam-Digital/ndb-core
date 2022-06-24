@@ -55,7 +55,8 @@ export class RemoteSession extends SessionService {
         fetch: (url, opts) => {
           if (typeof url === "string") {
             return PouchDB.fetch(
-              AppConfig.DB_PROXY_PREFIX + url.split(AppConfig.DB_PROXY_PREFIX)[1],
+              AppConfig.DB_PROXY_PREFIX +
+                url.split(AppConfig.DB_PROXY_PREFIX)[1],
               opts
             );
           }
