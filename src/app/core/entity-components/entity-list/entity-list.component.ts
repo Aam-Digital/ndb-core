@@ -110,6 +110,7 @@ export class EntityListComponent<T extends Entity>
   ) {
     if (this.activatedRoute.component === EntityListComponent) {
       // the component is used for a route and not inside a template
+      this.isLoading = true;
       this.activatedRoute.data.subscribe(
         (config: RouteData<EntityListConfig>) =>
           this.buildComponentFromConfig(config)
@@ -147,6 +148,7 @@ export class EntityListComponent<T extends Entity>
     this.allEntities = await this.entityMapperService.loadType(
       this.entityConstructor
     );
+    this.isLoading = false;
     this.elementClick.subscribe((entity) =>
       this.router.navigate([entity.getId()], {
         relativeTo: this.activatedRoute,
