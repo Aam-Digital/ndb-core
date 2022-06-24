@@ -27,6 +27,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatListModule } from "@angular/material/list";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { TabStateModule } from "../../utils/tab-state/tab-state.module";
 
 /**
  * Provides a User functionality including user account forms.
@@ -44,6 +45,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     MatAutocompleteModule,
     FormsModule,
     FontAwesomeModule,
+    TabStateModule,
   ],
   declarations: [UserAccountComponent],
 })

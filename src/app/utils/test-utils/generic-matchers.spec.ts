@@ -29,10 +29,10 @@ const genericMatchers: jasmine.CustomMatcherFactories = {
         )} not to to contain own property ${value}`
     );
   },
-  toBeDate: (util, matchers) => {
+  toBeDate: (util) => {
     return makeCustomMatcher(
       (expected: string | number | Date, actual: string | number | Date) =>
-        util.equals(new Date(expected), new Date(actual), matchers),
+        util.equals(new Date(expected), new Date(actual)),
       (expected, actual) =>
         `Expected date ${util.pp(expected)} to equal ${actual}`,
       (expected, actual) =>

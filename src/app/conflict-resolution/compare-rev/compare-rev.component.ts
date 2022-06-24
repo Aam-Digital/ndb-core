@@ -1,10 +1,10 @@
 import { Component, Input } from "@angular/core";
 import { diff } from "deep-object-diff";
-import _ from "lodash";
 import { ConfirmationDialogService } from "../../core/confirmation-dialog/confirmation-dialog.service";
 import { Database } from "../../core/database/database";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AutoResolutionService } from "../auto-resolution/auto-resolution.service";
+import { merge } from "lodash-es";
 
 /**
  * Visualize one specific conflicting document revision and offer resolution options.
@@ -142,9 +142,9 @@ export class CompareRevComponent {
    * @param diffStringToApply The (user-edited) diff to be applied to the current doc
    */
   public async resolveByManualEdit(diffStringToApply: string) {
-    const originalDoc = _.merge({}, this.doc);
+    const originalDoc = merge({}, this.doc);
     const diffToApply = JSON.parse(diffStringToApply);
-    _.merge(this.doc, diffToApply);
+    merge(this.doc, diffToApply);
 
     const newChanges = diff(originalDoc, this.doc);
 
