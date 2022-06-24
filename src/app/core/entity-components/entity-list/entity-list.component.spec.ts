@@ -8,7 +8,6 @@ import {
   waitForAsync,
 } from "@angular/core/testing";
 import { EntityListComponent } from "./entity-list.component";
-import { SimpleChange } from "@angular/core";
 import { BooleanFilterConfig, EntityListConfig } from "./EntityListConfig";
 import { Entity } from "../../entity/model/entity";
 import { Child } from "../../../child-dev-project/children/model/child";
@@ -102,7 +101,7 @@ describe("EntityListComponent", () => {
         component: undefined,
         queryParams: new Subject(),
         data: routeData,
-        snapshot: { queryParams: {} } as any,
+        snapshot: { queryParams: {}, queryParamMap: new Map() } as any,
       };
 
       TestBed.configureTestingModule({
