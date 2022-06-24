@@ -34,6 +34,7 @@ import { IAppConfig } from "./app-config.model";
  * // no need for dependency injection here
  */
 export class AppConfig {
+  /** Path for the reverse proxy that forwards to the database - configured in `proxy.conf.json` and `default.conf` */
   static DB_PROXY_PREFIX = "/db";
   /** settings for the app */
   static settings: IAppConfig;
