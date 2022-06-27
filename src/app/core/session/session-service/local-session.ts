@@ -72,7 +72,7 @@ export class LocalSession extends SessionService {
     const userDBName = `${this.currentDBUser.name}-${AppConfig.settings.database.name}`;
     const tmpDB = new PouchDatabase(undefined);
     this.initDatabase(userDBName, tmpDB);
-    if (!(await this.database.isEmpty())) {
+    if (!(await tmpDB.isEmpty())) {
       // Current user has own database, we are done here
       this.initDatabase(userDBName);
       return;
@@ -83,13 +83,13 @@ export class LocalSession extends SessionService {
       LocalSession.DEPRECATED_DB_KEY
     );
     const dbAvailable = !dbFallback || dbFallback === this.currentDBUser.name;
-    if (dbAvailable && !(await this.database.isEmpty())) {
+    if (dbAvailable && !(await tmpDB.isEmpty())) {
       // Old database is available and can be used by the current user
       window.localStorage.setItem(
         LocalSession.DEPRECATED_DB_KEY,
         this.currentDBUser.name
       );
-      this.initDatabase(AppConfig.settings.database.name)
+      this.initDatabase(AppConfig.settings.database.name);
       return;
     }
 
