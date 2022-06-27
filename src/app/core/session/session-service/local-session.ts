@@ -70,13 +70,15 @@ export class LocalSession extends SessionService {
 
   private async initializeDatabaseForCurrentUser() {
     const userDBName = `${this.currentDBUser.name}-${AppConfig.settings.database.name}`;
-    this.initDatabase(userDBName);
+    const tmpDB = new PouchDatabase(undefined);
+    this.initDatabase(userDBName, tmpDB);
     if (!(await this.database.isEmpty())) {
       // Current user has own database, we are done here
+      this.initDatabase(userDBName);
       return;
     }
 
-    this.initDatabase(AppConfig.settings.database.name);
+    this.initDatabase(AppConfig.settings.database.name, tmpDB);
     const dbFallback = window.localStorage.getItem(
       LocalSession.DEPRECATED_DB_KEY
     );
@@ -87,6 +89,7 @@ export class LocalSession extends SessionService {
         LocalSession.DEPRECATED_DB_KEY,
         this.currentDBUser.name
       );
+      this.initDatabase(AppConfig.settings.database.name)
       return;
     }
 
@@ -94,11 +97,11 @@ export class LocalSession extends SessionService {
     this.initDatabase(userDBName);
   }
 
-  private initDatabase(dbName: string) {
+  private initDatabase(dbName: string, db = this.database) {
     if (AppConfig.settings.session_type === SessionType.mock) {
-      this.database.initInMemoryDB(dbName);
+      db.initInMemoryDB(dbName);
     } else {
-      this.database.initIndexedDB(dbName);
+      db.initIndexedDB(dbName);
     }
   }
 
