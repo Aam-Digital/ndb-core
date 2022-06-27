@@ -70,6 +70,7 @@ export class LocalSession extends SessionService {
 
   private async initializeDatabaseForCurrentUser() {
     const userDBName = `${this.currentDBUser.name}-${AppConfig.settings.database.name}`;
+    // Work on a temporary database before initializing the real one
     const tmpDB = new PouchDatabase(undefined);
     this.initDatabase(userDBName, tmpDB);
     if (!(await tmpDB.isEmpty())) {
