@@ -26,7 +26,7 @@
         Title when adding a new entity|An entity is a child, note, school, etc.
       "
     >
-      Adding new {{ config?.entity }}
+      Adding new {{ (config?.title || config?.entity) || 'record' }}
     </app-view-title>
 
     <div class="header-spacer"></div>

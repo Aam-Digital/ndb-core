@@ -383,6 +383,7 @@ export const defaultJsonConfig = {
     "component": "EntityDetails",
     "config": {
       "entity": "School",
+      "title": "School or Group",
       "panels": [
         {
           "title": $localize`:Panel title:Basic Information`,
