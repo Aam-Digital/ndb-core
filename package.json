@@ -39,7 +39,7 @@
     "@angular/service-worker": "^12.2.16",
     "@casl/ability": "^5.4.3",
     "@casl/angular": "^6.0.0",
-    "@fortawesome/angular-fontawesome": "^0.8.2",
+    "@fortawesome/angular-fontawesome": "^0.10.2",
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-regular-svg-icons": "^5.15.2",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
