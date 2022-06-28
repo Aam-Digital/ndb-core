@@ -35,9 +35,6 @@
               "src/styles.scss",
               "node_modules/flag-icons/css/flag-icons.min.css"
             ],
-            "scripts": [
-              "node_modules/marked/lib/marked.js"
-            ],
             "vendorChunk": true,
             "extractLicenses": false,
             "buildOptimizer": false,
@@ -105,9 +102,6 @@
             "karmaConfig": "./karma.conf.js",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
-            "scripts": [
-              "node_modules/marked/lib/marked.js"
-            ],
             "styles": [
               "src/ndb-theme.scss",
               "src/styles.scss"
@@ -150,9 +144,6 @@
               "src/ndb-theme.scss",
               "src/styles.scss",
               "node_modules/flag-icons/css/flag-icons.min.css"
-            ],
-            "scripts": [
-              "node_modules/marked/lib/marked.js"
             ],
             "vendorChunk": true,
             "extractLicenses": false,
@@ -220,9 +211,6 @@
             "karmaConfig": "./karma.conf.js",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
-            "scripts": [
-              "node_modules/marked/lib/marked.js"
-            ],
             "styles": [
               "src/ndb-theme.scss",
               "src/styles.scss"

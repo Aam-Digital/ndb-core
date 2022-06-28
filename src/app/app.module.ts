@@ -54,9 +54,7 @@ import { DemoUserGeneratorService } from "./core/user/demo-user-generator.servic
 import { ConfirmationDialogModule } from "./core/confirmation-dialog/confirmation-dialog.module";
 import { FormDialogModule } from "./core/form-dialog/form-dialog.module";
 import { LoggingService } from "./core/logging/logging.service";
-import { Angulartics2Module } from "angulartics2";
 import { AnalyticsService } from "./core/analytics/analytics.service";
-import { Angulartics2Matomo } from "angulartics2/matomo";
 import { ViewModule } from "./core/view/view.module";
 import { DashboardModule } from "./core/dashboard/dashboard.module";
 import { EntityDetailsModule } from "./core/entity-components/entity-details/entity-details.module";
@@ -81,6 +79,7 @@ import { DemoPermissionGeneratorService } from "./core/permissions/demo-permissi
 import { SupportModule } from "./core/support/support.module";
 import { DemoConfigGeneratorService } from "./core/config/demo-config-generator.service";
 import { DatabaseModule } from "./core/database/database.module";
+import { Angulartics2Matomo, Angulartics2Module } from "angulartics2";
 
 /**
  * Main entry point of the application.

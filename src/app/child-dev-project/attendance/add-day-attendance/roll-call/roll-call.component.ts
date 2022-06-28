@@ -17,7 +17,6 @@ import { ConfigService } from "../../../../core/config/config.service";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { Child } from "../../../children/model/child";
 import { LoggingService } from "../../../../core/logging/logging.service";
-import { FormGroup } from "@angular/forms";
 import { sortByAttribute } from "../../../../utils/utils";
 import { NoteDetailsComponent } from "../../../notes/note-details/note-details.component";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
@@ -74,7 +73,6 @@ export class RollCallComponent implements OnChanges {
   availableStatus: AttendanceStatusType[];
 
   children: Child[] = [];
-  form: FormGroup;
 
   constructor(
     private configService: ConfigService,

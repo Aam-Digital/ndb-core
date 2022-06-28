@@ -33,25 +33,25 @@ export class DemoSchoolGenerator extends DemoDataGenerator<School> {
 
     for (let i = 1; i <= this.config.count; i++) {
       const school = new School(String(i));
-      school["language"] = faker.random.arrayElement([
+      school["language"] = faker.helpers.arrayElement([
         $localize`:Language of a school:Hindi`,
         $localize`:Language of a school:English`,
         $localize`:Language of a school:Bengali`,
       ]);
-      const schoolNameWithType = $localize`:School demo name order for connecting the school name and (High) School|e.g. Example School:${faker.name.firstName()} ${faker.random.arrayElement(
+      const schoolNameWithType = $localize`:School demo name order for connecting the school name and (High) School|e.g. Example School:${faker.name.firstName()} ${faker.helpers.arrayElement(
         [this.normalSchool, this.highSchool]
       )}`;
       const schoolNameWithLanguage = $localize`${faker.name.firstName()} ${
         school["language"]
       } Language`;
-      school.name = faker.random.arrayElement([
+      school.name = faker.helpers.arrayElement([
         schoolNameWithType,
         schoolNameWithLanguage,
       ]);
       school["address"] = faker.address.streetAddress();
       school["phone"] = faker.phone.phoneNumberFormat();
       school["privateSchool"] = faker.datatype.boolean();
-      school["timing"] = faker.random.arrayElement([
+      school["timing"] = faker.helpers.arrayElement([
         $localize`:School demo timing:6 a.m. - 11 a.m.`,
         $localize`:School demo timing:11 a.m. - 4 p.m.`,
         $localize`:School demo timing:6:30-11:00 and 11:30-16:00`,

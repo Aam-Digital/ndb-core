@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { LogLevel } from "./log-level";
 import * as Sentry from "@sentry/browser";
 import { environment } from "../../../environments/environment";
+import { SeverityLevel } from "@sentry/browser";
 
 /* tslint:disable:no-console */
 
@@ -128,18 +129,18 @@ export class LoggingService {
     }
   }
 
-  private translateLogLevel(logLevel: LogLevel): Sentry.Severity {
+  private translateLogLevel(logLevel: LogLevel): SeverityLevel {
     switch (+logLevel) {
       case LogLevel.DEBUG:
-        return Sentry.Severity.Debug;
+        return "debug";
       case LogLevel.INFO:
-        return Sentry.Severity.Info;
+        return "info";
       case LogLevel.WARN:
-        return Sentry.Severity.Warning;
+        return "warning";
       case LogLevel.ERROR:
-        return Sentry.Severity.Error;
+        return "error";
       default:
-        return Sentry.Severity.Info;
+        return "info";
     }
   }
 }

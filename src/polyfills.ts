@@ -55,5 +55,5 @@ import "@angular/localize/init";
 
 // WARNING: workaround to allow PouchDB with Angular v6: https://github.com/pouchdb/pouchdb/issues/7263
 (window as any).global = window;
-(window as any).process = {};
-(window as any).process.nextTick = setTimeout;
+// (window as any).process = {};
+// (window as any).process.nextTick = setTimeout;
