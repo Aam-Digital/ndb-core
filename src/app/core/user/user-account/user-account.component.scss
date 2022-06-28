@@ -14,8 +14,8 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
-@use '~@angular/material' as mat;
-@import "~@angular/material/theming";
+@use '@angular/material' as mat;
+@import "@angular/material/theming";
 
 .form-container {
   padding: 8px;
