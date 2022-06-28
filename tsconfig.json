@@ -18,7 +18,8 @@
       "es2018",
       "dom"
     ],
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "skipLibCheck": true
   },
   "angularCompilerOptions": {
     "strictTemplates": true
