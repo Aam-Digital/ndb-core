@@ -4,7 +4,6 @@ import { BehaviorSubject } from "rxjs";
 import { BackupService } from "../../../../admin/services/backup.service";
 import { ChildrenModule } from "../../../../../child-dev-project/children/children.module";
 import { Child } from "../../../../../child-dev-project/children/model/child";
-import { CloudFileService } from "../../../../webdav/cloud-file-service.service";
 import { EntityUtilsModule } from "../../entity-utils.module";
 import { EditSingleEntityComponent } from "./edit-single-entity.component";
 import { FormControl, FormGroup } from "@angular/forms";
@@ -49,10 +48,7 @@ export default {
           child3,
         ]),
       ],
-      providers: [
-        { provide: BackupService, useValue: {} },
-        { provide: CloudFileService, useValue: {} },
-      ],
+      providers: [{ provide: BackupService, useValue: {} }],
     }),
   ],
 } as Meta;

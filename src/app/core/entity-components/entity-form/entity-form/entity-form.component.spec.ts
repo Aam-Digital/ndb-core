@@ -26,11 +26,7 @@ describe("EntityFormComponent", () => {
 
   beforeEach(
     waitForAsync(() => {
-      mockChildPhotoService = jasmine.createSpyObj([
-        "canSetImage",
-        "setImage",
-        "getImage",
-      ]);
+      mockChildPhotoService = jasmine.createSpyObj(["getImage"]);
       mockConfigService = jasmine.createSpyObj(["getConfig"]);
 
       TestBed.configureTestingModule({
@@ -51,7 +47,6 @@ describe("EntityFormComponent", () => {
 
   beforeEach(() => {
     testChild.name = "Test Name";
-    mockChildPhotoService.canSetImage.and.returnValue(false);
     fixture = TestBed.createComponent(EntityFormComponent);
     component = fixture.componentInstance;
     component.entity = testChild;
