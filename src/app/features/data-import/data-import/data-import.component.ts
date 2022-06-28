@@ -110,11 +110,12 @@ export class DataImportComponent {
   }
 
   processChange(value: string) {
-    const usedProperties = Object.values(this.columnMappingForm.getRawValue());
+    const usedProperties = Object.values(this.columnMappingForm.getRawValue() as { [key: string]: string });
     this.filteredProperties.next(
       this.properties.filter(
         (property) =>
-          property.includes(value) && !usedProperties.includes(property)
+          property.toLowerCase().includes(value.toLowerCase()) &&
+          !usedProperties.includes(property)
       )
     );
   }
