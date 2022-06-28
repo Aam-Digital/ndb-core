@@ -9,7 +9,7 @@ import { AppConfig } from "../app-config/app-config";
 import { LoginState } from "../session/session-states/login-state.enum";
 import PouchDB from "pouchdb-browser";
 import { SessionType } from "../session/session-type";
-import memory from "pouchdb-adapter-memory";
+// import memory from "pouchdb-adapter-memory";
 import { Database } from "../database/database";
 import { PouchDatabase } from "../database/pouch-database";
 
@@ -98,8 +98,9 @@ export class DemoDataInitializerService {
     const dbName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${AppConfig.settings.database.name}`;
     let demoUserDB: PouchDB.Database;
     if (AppConfig.settings.session_type === SessionType.mock) {
-      PouchDB.plugin(memory);
-      demoUserDB = new PouchDB(dbName, { adapter: "memory" });
+      // PouchDB.plugin(memory);
+      // demoUserDB = new PouchDB(dbName, { adapter: "memory" });
+      demoUserDB = new PouchDB(dbName);
     } else {
       demoUserDB = new PouchDB(dbName);
     }
