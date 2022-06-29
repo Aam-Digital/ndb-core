@@ -124,7 +124,7 @@ describe("EntityDetailsComponent", () => {
   }));
 
   it("should load the correct child on startup", fakeAsync(() => {
-    expect(component.isLoading).toBeTrue();
+    component.isLoading = true;
     const testChild = new Child("Test-Child");
     const entityMapper = TestBed.inject(EntityMapperService);
     entityMapper.save(testChild);
@@ -132,6 +132,7 @@ describe("EntityDetailsComponent", () => {
     spyOn(entityMapper, "load").and.callThrough();
 
     routeObserver.next({ get: () => testChild.getId() });
+    expect(component.isLoading).toBeTrue();
     tick();
 
     expect(entityMapper.load).toHaveBeenCalledWith(Child, testChild.getId());
