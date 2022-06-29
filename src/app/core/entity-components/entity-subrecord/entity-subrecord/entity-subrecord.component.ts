@@ -66,6 +66,8 @@ export class EntitySubrecordComponent<T extends Entity>
     });
     this.filteredColumns = this._columns.filter((col) => !col.hideFromTable);
   }
+  _columns: FormFieldConfig[] = [];
+  filteredColumns: FormFieldConfig[] = [];
 
   /** data to be displayed */
   @Input()
@@ -82,8 +84,6 @@ export class EntitySubrecordComponent<T extends Entity>
     }
   }
   private _records: Array<T> = [];
-  _columns: FormFieldConfig[] = [];
-  filteredColumns: FormFieldConfig[] = [];
 
   /**
    * factory method to create a new instance of the displayed Entity type
@@ -94,7 +94,7 @@ export class EntitySubrecordComponent<T extends Entity>
   /**
    * Whether the rows of the table are inline editable and new entries can be created through the "+" button.
    */
-  @Input() editable: boolean = true;
+  @Input() editable = true;
 
   /** columns displayed in the template's table */
   @Input() columnsToDisplay = [];
@@ -107,7 +107,15 @@ export class EntitySubrecordComponent<T extends Entity>
 
   idForSavingPagination = "startWert";
 
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort) set sort(matSort: MatSort) {
+    // Initialize sort once available
+    this.recordsDataSource.sort = matSort;
+    setTimeout(() => this.initDefaultSort());
+  }
+
+  get sort(): MatSort {
+    return this.recordsDataSource.sort;
+  }
 
   /**
    * A function which should be executed when a row is clicked or a new entity created.
@@ -211,7 +219,6 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 
   private initDefaultSort() {
-    this.recordsDataSource.sort = this.sort;
     this.recordsDataSource.sortData = (data, sort) =>
       tableSort(data, {
         active: sort.active as keyof T | "",
