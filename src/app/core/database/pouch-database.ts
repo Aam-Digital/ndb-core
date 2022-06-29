@@ -18,7 +18,7 @@
 import { Database, GetAllOptions, GetOptions, QueryOptions } from "./database";
 import { LoggingService } from "../logging/logging.service";
 import PouchDB from "pouchdb-browser";
-// import memory from "pouchdb-adapter-memory";
+import memory from "pouchdb-adapter-memory";
 import { PerformanceAnalysisLogging } from "../../utils/performance-analysis-logging";
 import { Injectable } from "@angular/core";
 import { Observable, Subject } from "rxjs";
@@ -75,9 +75,9 @@ export class PouchDatabase extends Database {
    * @param dbName the name for the database
    */
   initInMemoryDB(dbName = "in-memory-database"): PouchDatabase {
-    // PouchDB.plugin(memory);
-    // this.pouchDB = new PouchDB(dbName, { adapter: "memory" });
-    this.pouchDB = new PouchDB(dbName);
+    PouchDB.plugin(memory);
+    this.pouchDB = new PouchDB(dbName, { adapter: "memory" });
+    // this.pouchDB = new PouchDB(dbName);
     this.databaseInitialized.complete();
     return this;
   }

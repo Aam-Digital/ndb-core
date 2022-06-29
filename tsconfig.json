@@ -19,6 +19,15 @@
       "dom"
     ],
     "resolveJsonModule": true,
+    "paths": {
+      "stream": [
+        "../node_modules/stream-browserify"
+      ],
+      "path": [
+        "../node_modules/path-browserify"
+      ]
+    },
+    "esModuleInterop": true,
     "skipLibCheck": true
   },
   "angularCompilerOptions": {

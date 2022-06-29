@@ -49,7 +49,7 @@ export class DemoSchoolGenerator extends DemoDataGenerator<School> {
         schoolNameWithLanguage,
       ]);
       school["address"] = faker.address.streetAddress();
-      school["phone"] = faker.phone.phoneNumberFormat();
+      school["phone"] = faker.phone.number();
       school["privateSchool"] = faker.datatype.boolean();
       school["timing"] = faker.helpers.arrayElement([
         $localize`:School demo timing:6 a.m. - 11 a.m.`,

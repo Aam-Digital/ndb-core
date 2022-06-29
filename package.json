@@ -57,6 +57,7 @@
     "moment": "^2.29.3",
     "ngx-markdown": "^13.1.0",
     "ngx-papaparse": "^5.1.0",
+    "pouchdb-adapter-memory": "^7.3.0",
     "pouchdb-browser": "^7.3.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.5.5",
