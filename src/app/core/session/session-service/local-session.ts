@@ -70,23 +70,27 @@ export class LocalSession extends SessionService {
 
   private async initializeDatabaseForCurrentUser() {
     const userDBName = `${this.currentDBUser.name}-${AppConfig.settings.database.name}`;
-    this.initDatabase(userDBName);
-    if (!(await this.database.isEmpty())) {
+    // Work on a temporary database before initializing the real one
+    const tmpDB = new PouchDatabase(undefined);
+    this.initDatabase(userDBName, tmpDB);
+    if (!(await tmpDB.isEmpty())) {
       // Current user has own database, we are done here
+      this.initDatabase(userDBName);
       return;
     }
 
-    this.initDatabase(AppConfig.settings.database.name);
+    this.initDatabase(AppConfig.settings.database.name, tmpDB);
     const dbFallback = window.localStorage.getItem(
       LocalSession.DEPRECATED_DB_KEY
     );
     const dbAvailable = !dbFallback || dbFallback === this.currentDBUser.name;
-    if (dbAvailable && !(await this.database.isEmpty())) {
+    if (dbAvailable && !(await tmpDB.isEmpty())) {
       // Old database is available and can be used by the current user
       window.localStorage.setItem(
         LocalSession.DEPRECATED_DB_KEY,
         this.currentDBUser.name
       );
+      this.initDatabase(AppConfig.settings.database.name);
       return;
     }
 
@@ -94,11 +98,11 @@ export class LocalSession extends SessionService {
     this.initDatabase(userDBName);
   }
 
-  private initDatabase(dbName: string) {
+  private initDatabase(dbName: string, db = this.database) {
     if (AppConfig.settings.session_type === SessionType.mock) {
-      this.database.initInMemoryDB(dbName);
+      db.initInMemoryDB(dbName);
     } else {
-      this.database.initIndexedDB(dbName);
+      db.initIndexedDB(dbName);
     }
   }
 
