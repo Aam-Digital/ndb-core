@@ -114,7 +114,7 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 
   get sort(): MatSort {
-    return this.recordsDataSource.sort
+    return this.recordsDataSource.sort;
   }
 
   /**
