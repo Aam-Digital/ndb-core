@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { DisplayUnitComponent } from "./display-unit.component";
-import { HealthCheck } from "../../../../../child-dev-project/children/health-checkup/model/health-check";
 
 describe("DisplayUnitComponent", () => {
   let component: DisplayUnitComponent;
@@ -16,8 +15,7 @@ describe("DisplayUnitComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DisplayUnitComponent);
     component = fixture.componentInstance;
-    component.entity = new HealthCheck();
-    component.property = "height";
+    component.value = "120";
     component.unit = "cm";
     fixture.detectChanges();
   });
