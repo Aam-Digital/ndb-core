@@ -34,9 +34,7 @@ const userGenerator = new DemoUserGeneratorService();
 const data = new DemoNoteGeneratorService(
   { minNotesPerChild: 5, maxNotesPerChild: 10, groupNotes: 2 },
   childGenerator,
-  userGenerator,
-  schemaService,
-  configService
+  userGenerator
 ).generateEntities();
 
 export default {
