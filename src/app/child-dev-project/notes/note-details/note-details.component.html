@@ -187,7 +187,13 @@
 
     <div *ngIf="entity.category?.isMeeting" style="margin-top: -1.25em" class="attendance-blocks">
       <div *ngFor="let childId of entity.children" class="attendance-item">
-        <app-child-block [entityId]="childId" class="attendance-item--header"></app-child-block>
+        <div class="attendance-item--header">
+          <app-child-block [entityId]="childId"></app-child-block>
+
+          <button mat-icon-button>
+            <fa-icon *ngIf="!formDialogWrapper.readonly" icon="trash" (click)="entity.removeChild(childId); entityForm.form.markAsDirty()"></fa-icon>
+          </button>
+        </div>
 
         <div class="attendance-item--content">
           <app-attendance-status-select
@@ -209,10 +215,6 @@
               (input)="entityForm.form.markAsDirty()"
             />
           </mat-form-field>
-
-          <button mat-icon-button>
-            <fa-icon *ngIf="!formDialogWrapper.readonly" icon="trash" (click)="entity.removeChild(childId); entityForm.form.markAsDirty()"></fa-icon>
-          </button>
         </div>
       </div>
     </div>
