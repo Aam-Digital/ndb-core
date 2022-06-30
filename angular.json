@@ -24,7 +24,9 @@
             "tsConfig": "src/tsconfig.app.json",
             "polyfills": "src/polyfills.ts",
             "i18nMissingTranslation": "warning",
-            "localize": ["en-US"],
+            "localize": [
+              "en-US"
+            ],
             "assets": [
               "src/assets",
               "src/favicon.ico",
@@ -77,8 +79,7 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-          },
+          "options": {},
           "configurations": {
             "production": {
               "browserTarget": "ndb-core:build:production"
@@ -125,6 +126,15 @@
           "builder": "@storybook/angular:build-storybook",
           "options": {
             "browserTarget": "ndb-core:build"
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
           }
         }
       }
@@ -200,8 +210,7 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-          },
+          "options": {},
           "configurations": {
             "production": {
               "browserTarget": "ndb-core-e2e:build:production"
@@ -274,6 +283,7 @@
     }
   },
   "cli": {
-    "analytics": "0bd2cce5-bfb0-4375-af96-a8222d782810"
+    "analytics": "0bd2cce5-bfb0-4375-af96-a8222d782810",
+    "defaultCollection": "@angular-eslint/schematics"
   }
 }
