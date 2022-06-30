@@ -5,6 +5,8 @@ import {
   mockEntityMapper,
   MockEntityMapperService,
 } from "app/core/entity/mock-entity-mapper-service";
+import { UpdatedEntity } from "app/core/entity/model/entity-update";
+import { Subject } from "rxjs";
 import { School } from "../model/school";
 
 import { ActivitiesOverviewComponent } from "./activities-overview.component";
@@ -51,5 +53,22 @@ describe("ActivitiesOverviewComponent", () => {
     component.entity = new School("school1");
     const newRecurringActivity = component.generateNewRecordFactory();
     expect(newRecurringActivity().linkedGroups).toEqual(["school1"]);
+  });
+
+  it("should remove the recurring activity from the table view if the current school is removed as a group of this recurring activity", async () => {
+    const school1 = new School("school1");
+    const activity1 = new RecurringActivity();
+    activity1.linkedGroups = ["school1"];
+    const activity2 = new RecurringActivity();
+    activity1.linkedGroups = ["school1", "school2", "school3"];
+    entityMapper.addAll([activity1, activity2]);
+    const subject = new Subject<UpdatedEntity<RecurringActivity>>();
+    spyOn(entityMapper, "receiveUpdates").and.returnValue(subject);
+    await component.onInitFromDynamicConfig({ entity: school1 });
+
+    activity2.linkedGroups = ["school2", "school3"];
+    subject.next({ entity: activity2, type: "update" });
+
+    expect(component.records).toEqual([activity1]);
   });
 });

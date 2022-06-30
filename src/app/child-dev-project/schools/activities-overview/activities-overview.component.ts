@@ -37,6 +37,15 @@ export class ActivitiesOverviewComponent implements OnInitDynamicComponent {
     this.records = (
       await this.entityMapper.loadType<RecurringActivity>(RecurringActivity)
     ).filter((activity) => activity.linkedGroups.includes(this.entity.getId()));
+    this.entityMapper
+      .receiveUpdates(RecurringActivity)
+      .subscribe((updateEntity) => {
+        if (updateEntity.type === "update") {
+          this.records = this.records.filter((activity) =>
+            activity.linkedGroups.includes(this.entity.getId())
+          );
+        }
+      });
   }
 
   generateNewRecordFactory(): () => RecurringActivity {
