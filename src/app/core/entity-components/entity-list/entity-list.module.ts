@@ -64,4 +64,6 @@ import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
   ],
   exports: [EntityListComponent, ListFilterComponent],
 })
-export class EntityListModule {}
+export class EntityListModule {
+  dynamicComponents = [EntityListComponent];
+}
