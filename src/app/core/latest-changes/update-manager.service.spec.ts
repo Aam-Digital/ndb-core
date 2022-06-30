@@ -21,7 +21,7 @@ describe("UpdateManagerService", () => {
     location = jasmine.createSpyObj(["reload"]);
     updateSubject = new Subject();
     swUpdate = jasmine.createSpyObj(["checkForUpdate"], {
-      available: updateSubject,
+      versionUpdates: updateSubject,
       isEnabled: true,
     });
     swUpdate.checkForUpdate.and.resolveTo();
