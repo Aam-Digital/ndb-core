@@ -360,8 +360,9 @@ export class PouchDatabase extends Database {
 /**
  * This overwrites PouchDB's error class which only logs limited information
  */
-class DatabaseException {
+class DatabaseException extends Error {
   constructor(error: PouchDB.Core.Error) {
+    super();
     Object.assign(this, error);
   }
 }
