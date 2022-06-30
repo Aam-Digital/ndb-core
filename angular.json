@@ -263,9 +263,6 @@
           "configurations": {
             "production": {
               "devServerTarget": "ndb-core-e2e:serve:production"
-            },
-            "ci": {
-              "record": true
             }
           }
         }
