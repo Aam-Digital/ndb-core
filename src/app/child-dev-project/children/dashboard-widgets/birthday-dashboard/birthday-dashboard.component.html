@@ -21,17 +21,17 @@
         <ng-container matColumnDef="child">
           <td mat-cell *matCellDef="let child">
           <app-child-block
-             [entity]="child"
+             [entity]="child.child"
            ></app-child-block>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="dateOfBirth">
-          <td mat-cell *matCellDef="let child">{{ child.dateOfBirth | date:"E dd.MM." }} </td>
+          <td mat-cell *matCellDef="let child">{{ child.birthday | date:"E dd.MM" }} </td>
         </ng-container>
 
         <ng-container matColumnDef="age">
-          <td mat-cell *matCellDef="let child">{{child.age +1}} yrs</td>
+          <td mat-cell *matCellDef="let child">{{child.child?.age +1}} yrs</td>
           <!--<td mat-cell *matCellDef="let child">will be {{child.age +1}} yrs</td>
           <td mat-cell *matCellDef="let child">age: {{child.age +1}}</td>-->
         </ng-container>
