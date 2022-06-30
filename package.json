@@ -10,7 +10,6 @@
     "test": "ng test",
     "test-ci": "ng test --code-coverage --karmaConfig=build/karma-ci.conf.js ",
     "lint": "ng lint ndb-core",
-    "e2e-ci": "ng e2e",
     "e2e": "ng e2e",
     "e2e-open": "ng run ndb-core-e2e:cypress-open",
     "compodoc": "npx compodoc -c doc/compodoc_sources/.compodocrc.json",
