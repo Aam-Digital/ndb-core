@@ -23,6 +23,12 @@
       "stream": [
         "../node_modules/stream-browserify"
       ],
+      "util": [
+        "../node_modules/util"
+      ],
+      "assert": [
+        "../node_modules/assert"
+      ],
     },
     "esModuleInterop": true,
     "skipLibCheck": true
