@@ -24,26 +24,24 @@ describe("EntityFormComponent", () => {
 
   const testChild = new Child("Test Name");
 
-  beforeEach(
-    waitForAsync(() => {
-      mockChildPhotoService = jasmine.createSpyObj(["getImage"]);
-      mockConfigService = jasmine.createSpyObj(["getConfig"]);
+  beforeEach(waitForAsync(() => {
+    mockChildPhotoService = jasmine.createSpyObj(["getImage"]);
+    mockConfigService = jasmine.createSpyObj(["getConfig"]);
 
-      TestBed.configureTestingModule({
-        imports: [
-          EntityFormModule,
-          MockedTestingModule.withState(),
-          MatSnackBarModule,
-          AlertsModule,
-          ReactiveFormsModule,
-        ],
-        providers: [
-          { provide: ChildPhotoService, useValue: mockChildPhotoService },
-          { provide: ConfigService, useValue: mockConfigService },
-        ],
-      }).compileComponents();
-    })
-  );
+    TestBed.configureTestingModule({
+      imports: [
+        EntityFormModule,
+        MockedTestingModule.withState(),
+        MatSnackBarModule,
+        AlertsModule,
+        ReactiveFormsModule,
+      ],
+      providers: [
+        { provide: ChildPhotoService, useValue: mockChildPhotoService },
+        { provide: ConfigService, useValue: mockConfigService },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     testChild.name = "Test Name";
@@ -59,13 +57,13 @@ describe("EntityFormComponent", () => {
 
   it("should emit notification when a child is saved", (done) => {
     spyOnProperty(component.form, "valid").and.returnValue(true);
-    const subscription = component.onSave.subscribe((child) => {
+    const subscription = component.save.subscribe((child) => {
       expect(child).toEqual(testChild);
       subscription.unsubscribe();
       done();
     });
 
-    component.save();
+    component.saveForm();
   });
 
   it("should show an warning alert when form service rejects saving", async () => {
@@ -76,7 +74,7 @@ describe("EntityFormComponent", () => {
       new Error("error message")
     );
 
-    await component.save();
+    await component.saveForm();
 
     expect(alertService.addWarning).toHaveBeenCalledWith("error message");
   });
