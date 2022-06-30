@@ -63,6 +63,15 @@ describe("EditProgressDashboardComponent", () => {
   it("should contain the initial state from the data", () => {
     expect(component.parts).toHaveValue(mockDialogData.parts);
     expect(component.parts).toBeValidForm();
+
+    expect(component.title).toHaveValue(mockDialogData.title);
+    expect(component.title).toBeValidForm();
+  });
+
+  it("should mark form as valid when title is empty", () => {
+    component.title.setValue("");
+    expect(component.title).toHaveValue("");
+    expect(component.title).toBeValidForm();
   });
 
   it("should append a new part", () => {

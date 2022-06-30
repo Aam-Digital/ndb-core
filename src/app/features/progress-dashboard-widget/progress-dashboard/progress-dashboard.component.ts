@@ -69,7 +69,6 @@ export class ProgressDashboardComponent
       .afterClosed()
       .subscribe(async (next) => {
         if (next) {
-          console.log(next)
           Object.assign(this.data, next);
           await this.save();
         }
