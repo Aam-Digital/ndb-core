@@ -10,6 +10,7 @@ import {
   RemoveResult,
 } from "../../../entity/entity-remove.service";
 import { AlertService } from "../../../alerts/alert.service";
+import { RecurringActivity } from "app/child-dev-project/attendance/model/recurring-activity";
 
 /**
  * Data interface that must be given when opening the dialog
@@ -49,10 +50,29 @@ export class RowDetailsComponent<E extends Entity> {
     if (this.ability.cannot("update", data.entity)) {
       this.form.disable();
     }
-    this.tempEntity = this.data.entity;
+    this.tempEntity = data.entity.copy();
+
+    for (const c of data.columns) {
+      // if (c.edit === "EditEntityArray") {
+      if (c.id === "assignedTo") {
+        this.form.get(c.id).valueChanges.subscribe((value) => {
+          // title changed
+          // --> check if activity exist
+          console.log("form valueChanges", value);
+
+          // [2]
+          // title as entity-select changed selected entity
+          this.tempEntity = new RecurringActivity();
+          this.tempEntity["title"] = "new title";
+          // this.tempEntity["type"] = "Home visit";
+          this.formService.updateValues(this.form, this.tempEntity, c.id);
+          // this.form.setValue(this.tempEntity);
+        });
+      }
+    }
+
     this.form.valueChanges.subscribe((value) => {
-      const dynamicConstructor: any = data.entity.getConstructor();
-      this.tempEntity = Object.assign(new dynamicConstructor(), value);
+      Object.assign(this.tempEntity, value);
     });
     this.viewOnlyColumns = data.viewOnlyColumns;
   }
