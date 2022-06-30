@@ -100,7 +100,6 @@ export class DemoDataInitializerService {
     if (AppConfig.settings.session_type === SessionType.mock) {
       PouchDB.plugin(memory);
       demoUserDB = new PouchDB(dbName, { adapter: "memory" });
-      // demoUserDB = new PouchDB(dbName);
     } else {
       demoUserDB = new PouchDB(dbName);
     }

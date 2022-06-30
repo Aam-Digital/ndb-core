@@ -77,7 +77,6 @@ export class PouchDatabase extends Database {
   initInMemoryDB(dbName = "in-memory-database"): PouchDatabase {
     PouchDB.plugin(memory);
     this.pouchDB = new PouchDB(dbName, { adapter: "memory" });
-    // this.pouchDB = new PouchDB(dbName);
     this.databaseInitialized.complete();
     return this;
   }
