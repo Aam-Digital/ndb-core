@@ -192,8 +192,7 @@ export class RollCallComponent implements OnChanges {
   }
 
   goToLast() {
-    // No need for `this.children.length - 1`
-    // because there is one more page than there are children
+    // jump directly to completed state, i.e. beyond last participant index
     this.goToParticipantWithIndex(this.children.length);
   }
 
