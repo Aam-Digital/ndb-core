@@ -69,6 +69,7 @@ export class DataImportComponent {
         this.columnMappingForm.addControl(field, new FormControl())
       );
       this.entitySelectionChanged();
+      this.stepper.next();
     } catch (e) {
       this.fileNameForm.setErrors({ fileInvalid: e.message });
     }
