@@ -4,9 +4,25 @@ import { FormFieldConfig } from "../entity-form/entity-form/FormConfig";
 import { ExportColumnConfig } from "../../export/export-service/export-column-config";
 
 export interface EntityListConfig {
+  /**
+   * Title that is shown on top of the component
+   */
   title: string;
-  addNew?: string;
+
+  /**
+   * Select which entities should be displayed in the table
+   * (optional) This is only used and necessary if EntityListComponent is used directly in config
+   */
+  entity?: string;
+
+  /**
+   * Placeholder string in the filter input
+   */
   filterPlaceholder?: string;
+
+  /**
+   * The columns to be displayed in the table
+   */
   columns: (FormFieldConfig | string)[];
 
   /**

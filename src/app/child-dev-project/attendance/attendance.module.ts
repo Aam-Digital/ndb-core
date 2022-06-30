@@ -16,7 +16,6 @@
  */
 
 import { Injectable, NgModule } from "@angular/core";
-import { ActivityListComponent } from "./activity-list/activity-list.component";
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
 import { ChildrenModule } from "../children/children.module";
 import { MatButtonModule } from "@angular/material/button";
@@ -69,6 +68,7 @@ import {
 } from "@angular/platform-browser";
 import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
 import * as Hammer from "hammerjs";
+import { TabStateModule } from "../../utils/tab-state/tab-state.module";
 
 @Injectable()
 // Only allow horizontal swiping
@@ -82,7 +82,6 @@ export class HorizontalHammerConfig extends HammerGestureConfig {
 
 @NgModule({
   declarations: [
-    ActivityListComponent,
     ActivityCardComponent,
     RollCallSetupComponent,
     AttendanceDayBlockComponent,
@@ -132,6 +131,7 @@ export class HorizontalHammerConfig extends HammerGestureConfig {
     ViewModule,
     ConfigurableEnumModule,
     HammerModule,
+    TabStateModule,
   ],
   exports: [
     ActivityCardComponent,
@@ -154,7 +154,6 @@ export class HorizontalHammerConfig extends HammerGestureConfig {
 })
 export class AttendanceModule {
   static dynamicComponents = [
-    ActivityListComponent,
     AddDayAttendanceComponent,
     AttendanceManagerComponent,
     ActivityAttendanceSectionComponent,

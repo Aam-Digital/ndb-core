@@ -68,7 +68,10 @@ export class AppComponent {
     this.configService.configUpdates.subscribe(() => {
       this.routerService.initRouting();
       this.entityConfigService.setupEntitiesFromConfig();
-      this.router.navigate([], { relativeTo: this.activatedRoute });
+      this.router.navigate([], {
+        relativeTo: this.activatedRoute,
+        queryParamsHandling: "preserve",
+      });
     });
 
     // update the user context for remote error logging and tracking and load config initially

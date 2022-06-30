@@ -127,6 +127,7 @@ import { DatabaseModule } from "./core/database/database.module";
     ReportingModule,
     EntityUtilsModule,
     DemoDataModule.forRoot([
+      ...DemoConfigGeneratorService.provider(),
       ...DemoChildGenerator.provider({ count: 120 }),
       ...DemoSchoolGenerator.provider({ count: 8 }),
       ...DemoChildSchoolRelationGenerator.provider(),
@@ -150,7 +151,6 @@ import { DatabaseModule } from "./core/database/database.module";
         maxCountAttributes: 5,
       }),
       ...DemoPermissionGeneratorService.provider(),
-      ...DemoConfigGeneratorService.provider(),
     ]),
     AttendanceModule,
     DashboardShortcutWidgetModule,
