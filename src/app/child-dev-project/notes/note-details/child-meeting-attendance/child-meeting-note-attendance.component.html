@@ -1,30 +1,25 @@
-<div class="attendance-box">
+<app-child-block [entityId]="childId"></app-child-block>
 
-  <div class="content-wrapper">
-    <app-child-block [entityId]="childId"></app-child-block>
+<app-attendance-status-select
+  [(value)]="attendance.status"
+  (valueChange)="change.emit(attendance)"
+  [disabled]="disabled"
+>
+</app-attendance-status-select>
 
-    <app-attendance-status-select
-      [(value)]="attendance.status"
-      (valueChange)="change.emit(attendance)"
-      [disabled]="disabled"
-    >
-    </app-attendance-status-select>
+<mat-form-field class="flex-grow">
+  <input
+    matInput
+    i18n-placeholder
+    placeholder="Remarks"
+    name="remarks"
+    type="text"
+    [(ngModel)]="attendance.remarks"
+    [disabled]="disabled"
+    (input)="change.emit(attendance)"
+  />
+</mat-form-field>
 
-    <mat-form-field class="flex-grow">
-      <input
-        matInput
-        i18n-placeholder
-        placeholder="Remarks"
-        name="remarks"
-        type="text"
-        [(ngModel)]="attendance.remarks"
-        [disabled]="disabled"
-        (input)="change.emit(attendance)"
-      />
-    </mat-form-field>
-  </div>
-
-  <button mat-icon-button>
-    <fa-icon *ngIf="!disabled" icon="trash" (click)="remove.emit()"></fa-icon>
-  </button>
-</div>
+<button mat-icon-button>
+  <fa-icon *ngIf="!disabled" icon="trash" (click)="remove.emit()"></fa-icon>
+</button>

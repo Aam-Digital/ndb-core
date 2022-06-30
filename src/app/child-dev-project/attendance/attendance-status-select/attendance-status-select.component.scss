@@ -21,3 +21,8 @@
     vertical-align: middle;
   }
 }
+
+mat-form-field {
+  // don't allow this to overflow
+  max-width: 100%;
+}

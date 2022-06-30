@@ -185,16 +185,36 @@
       </mat-option>
     </app-entity-select>
 
-    <div *ngIf="entity.category?.isMeeting" style="margin-top: -1.25em">
-      <app-child-meeting-note-attendance
-        *ngFor="let childId of entity.children"
-        [childId]="childId"
-        [attendance]="entity.getAttendance(childId)"
-        (change)="entityForm.form.markAsDirty()"
-        (remove)="entity.removeChild(childId); entityForm.form.markAsDirty()"
-        [disabled]="formDialogWrapper.readonly"
-      >
-      </app-child-meeting-note-attendance>
+    <div *ngIf="entity.category?.isMeeting" style="margin-top: -1.25em" class="attendance-blocks">
+      <div *ngFor="let childId of entity.children" class="attendance-item">
+        <app-child-block [entityId]="childId" class="attendance-item--header"></app-child-block>
+
+        <div class="attendance-item--content">
+          <app-attendance-status-select
+            [(value)]="entity.getAttendance(childId).status"
+            (valueChange)="entityForm.form.markAsDirty()"
+            [disabled]="formDialogWrapper.readonly"
+          >
+          </app-attendance-status-select>
+
+          <mat-form-field>
+            <input
+              matInput
+              i18n-placeholder
+              placeholder="Remarks"
+              name="remarks"
+              type="text"
+              [(ngModel)]="entity.getAttendance(childId).remarks"
+              [disabled]="formDialogWrapper.readonly"
+              (input)="entityForm.form.markAsDirty()"
+            />
+          </mat-form-field>
+
+          <button mat-icon-button>
+            <fa-icon *ngIf="!formDialogWrapper.readonly" icon="trash" (click)="entity.removeChild(childId); entityForm.form.markAsDirty()"></fa-icon>
+          </button>
+        </div>
+      </div>
     </div>
 
     <app-entity-select

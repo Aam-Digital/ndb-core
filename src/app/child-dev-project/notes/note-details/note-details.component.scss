@@ -16,6 +16,43 @@
   @include adaptive-grid(450px);
 }
 
+.attendance-blocks {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.attendance-item {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  border: 1px solid lightgray;
+  border-radius: 4px;
+  gap: 1em;
+
+  padding: 1em;
+  box-sizing: border-box;
+
+  &--header {
+    align-self: center;
+  }
+
+  &--content {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 1em;
+    align-items: baseline;
+    justify-content: center;
+
+    > mat-form-field {
+      flex-grow: 1;
+    }
+  }
+}
+
 .information-body {
   display: flex;
   flex-direction: column;
