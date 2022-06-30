@@ -29,7 +29,11 @@ import CryptoES from "crypto-es";
 @DatabaseEntity("User")
 export class User extends Entity {
   /** username used for login and identification */
-  @DatabaseField() name: string;
+  @DatabaseField({
+    label: $localize`:Label of username:Username`,
+    validators: { required: true },
+  })
+  name: string;
 
   /**
    * settings for the mat-paginator for tables.
