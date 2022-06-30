@@ -6,6 +6,8 @@ import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components
 import { MatTableDataSource } from "@angular/material/table";
 import { MatPaginator } from "@angular/material/paginator";
 import { ViewChild } from "@angular/core";
+import { ConditionalExpr } from "@angular/compiler";
+import { Console } from "console";
 
 
 @DynamicComponent("BirthdayDashboard")
@@ -17,7 +19,7 @@ import { ViewChild } from "@angular/core";
 export class BirthdayDashboardComponent
   implements OnInitDynamicComponent, OnInit, AfterViewInit {
   children: Child[] = [];
-  childrendataSource = new MatTableDataSource<Child>();
+  childrendataSource = new MatTableDataSource<{child:Child,birthday:Date}>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   isLoading: boolean = false;
 
@@ -25,33 +27,41 @@ export class BirthdayDashboardComponent
 
   async ngOnInit() {
       this.children = (await this.entityMapper.loadType(Child))
-      .filter((child: Child) => child.isActive)
-     //.sort((a, b) => a.dateOfBirth.getTime() - b.dateOfBirth.getTime());
-      this.childrendataSource.data = this.children;
+      .filter((child: Child) => child.isActive);
+     
+     this.childrendataSource.data= this.children.map((child)=>({child:child,birthday:getNextBirthday(child.dateOfBirth)}))
+       .sort((a,b) =>daysUntilBirthday(a.birthday) - daysUntilBirthday(b.birthday))
+       .filter((a)=>daysUntilBirthday(a.birthday)<32)
 
-      function daysUntilBirthday(dateOfBirth: Date): number {
+     
+   
+       /** Takes a date as input and returns the number of days till the next birthday (i.e. this or next year).
+*/
+      function daysUntilBirthday(birthday: Date): number {
          let today = new Date();
          today.setHours(0,0,0,0);
-         let birthday = new Date(today.getFullYear(), dateOfBirth.getMonth(),
-             dateOfBirth.getDate());
-            
-
-      // If the birthday has already occured this year. Then their next birthday is next year.
-         if (today.getTime() > birthday.getTime()) {
-            birthday.setFullYear(birthday.getFullYear() + 1);
-               }
-
+       
          let diff = birthday.getTime() - today.getTime();
          let daysTillNextBirthday = Math.floor(diff / (1000 * 60 * 60 * 24));
 
          return daysTillNextBirthday;
             }
-           
+            function getNextBirthday(dateOfBirth:Date) :Date{
+              let today = new Date();
+              today.setHours(0,0,0,0);
+              let birthday = new Date(today.getFullYear(),dateOfBirth.getMonth(),
+                  dateOfBirth.getDate());
+                       
+     
+             // If the birthday has already occured this year. Then their next birthday is next year.
+              if (today.getTime() > birthday.getTime()) { 
+                 birthday.setFullYear(birthday.getFullYear() + 1);
+                    }
+                    return birthday;
 
-    
-      this.children.sort((a:Child,b:Child) => daysUntilBirthday(a.dateOfBirth) - 
-           daysUntilBirthday(b.dateOfBirth));
-           console.log(daysUntilBirthday);
+
+            }
+           
   
 
     // TASK A: sort this.children so that the child whose birthday comes next is listed first
