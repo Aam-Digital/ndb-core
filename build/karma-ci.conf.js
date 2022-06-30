@@ -41,7 +41,7 @@ module.exports = function (config) {
     },
     coverageReporter: {
       dir: require("path").join(__dirname, "../coverage"),
-      reporters: [{ type: "lcovonly" }],
+      reporters: [{ type: "lcovonly", subdir: "." }],
     },
     angularCli: {
       environment: "dev",
