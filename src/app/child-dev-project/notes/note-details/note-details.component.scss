@@ -23,13 +23,16 @@
   gap: 0.5em;
 }
 
+
+$border: 1px solid lightgray;
+
 .attendance-item {
   display: flex;
   flex-direction: column;
   width: 100%;
 
-  border: 1px solid lightgray;
-  border-radius: 4px;
+  border: $border;
+
   gap: 1em;
 
   padding: 1em;
@@ -56,6 +59,47 @@
       flex-grow: 1;
     }
   }
+}
+
+.table {
+
+  border-spacing: 0 4px;
+
+  > tr > td {
+
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+
+    &:first-child {
+      border-radius: 4px 0 0 4px;
+      border-left: $border;
+      border-top: $border;
+      border-bottom: $border;
+    }
+
+    &:last-child {
+      border-radius: 0 4px 4px 0;
+      border-right: $border;
+      border-top: $border;
+      border-bottom: $border;
+    }
+
+    &:not(:first-child):not(:last-child) {
+      border-top: $border;
+      border-bottom: $border;
+    }
+  }
+}
+
+.adjust-top {
+  position: relative;
+  top: 4px;
+  padding-right: 1em;
+  width: 100%;
+}
+
+.full-width {
+  width: 100%;
 }
 
 .information-body {

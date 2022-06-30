@@ -185,7 +185,42 @@
       </mat-option>
     </app-entity-select>
 
-    <div *ngIf="entity.category?.isMeeting" style="margin-top: -1.25em" class="attendance-blocks">
+    <div *ngIf="entity.category?.isMeeting && !desktop">
+      <table class="table">
+        <tr *ngFor="let childId of entity.children">
+          <td>
+            <button mat-icon-button>
+              <fa-icon *ngIf="!formDialogWrapper.readonly" icon="trash" (click)="entity.removeChild(childId); entityForm.form.markAsDirty()"></fa-icon>
+            </button>
+          </td>
+          <td><app-child-block [entityId]="childId"></app-child-block></td>
+          <td>
+            <app-attendance-status-select
+              [(value)]="entity.getAttendance(childId).status"
+              (valueChange)="entityForm.form.markAsDirty()"
+              [disabled]="formDialogWrapper.readonly"
+            >
+            </app-attendance-status-select>
+          </td>
+          <td class="full-width">
+            <mat-form-field class="adjust-top">
+              <input
+                matInput
+                i18n-placeholder
+                placeholder="Remarks"
+                name="remarks"
+                type="text"
+                [(ngModel)]="entity.getAttendance(childId).remarks"
+                [disabled]="formDialogWrapper.readonly"
+                (input)="entityForm.form.markAsDirty()"
+              />
+            </mat-form-field>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div *ngIf="entity.category?.isMeeting && desktop" class="attendance-blocks">
       <div *ngFor="let childId of entity.children" class="attendance-item">
         <div class="attendance-item--header">
           <app-child-block [entityId]="childId"></app-child-block>
@@ -231,5 +266,6 @@
       placeholder="Add group ..."
     >
     </app-entity-select>
+
   </form>
 </app-form-dialog-wrapper>

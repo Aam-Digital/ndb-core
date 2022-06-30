@@ -10,6 +10,7 @@ import { ExportColumnConfig } from "../../../core/export/export-service/export-c
 import { ConfigService } from "../../../core/config/config.service";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { compareEnums } from "../../../utils/utils";
+import { BreakpointObserver } from "@angular/cdk/layout";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -34,11 +35,14 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
   /** export format for notes to be used for downloading the individual details */
   exportConfig: ExportColumnConfig[];
 
-  constructor(private configService: ConfigService) {
+  constructor(private configService: ConfigService, private breakpointObserver: BreakpointObserver) {
     this.exportConfig = this.configService.getConfig<{
       config: EntityListConfig;
     }>("view:note").config.exportConfig;
+    this.breakpointObserver.observe("(max-width: 1000px)").subscribe((next) => this.desktop = next.matches);
   }
+
+  desktop: boolean;
 
   toggleIncludeInactiveChildren() {
     this.includeInactiveChildren = !this.includeInactiveChildren;
