@@ -50,19 +50,18 @@ describe("DisplayEntityComponent", () => {
   it("should use the block component when available", fakeAsync(() => {
     const school = new School();
     mockEntityMapper.load.and.resolveTo(school);
-    const relation = new ChildSchoolRelation();
-    relation.schoolId = school.getId();
 
     component.onInitFromDynamicConfig({
-      entity: relation,
+      entity: new ChildSchoolRelation(),
       id: "schoolId",
+      value: school.getId(),
     });
     tick();
 
     expect(component.entityBlockComponent).toEqual(School.getBlockComponent());
     expect(mockEntityMapper.load).toHaveBeenCalledWith(
       school.getType(),
-      relation.schoolId
+      school.getId()
     );
     expect(component.entityToDisplay).toEqual(school);
   }));
