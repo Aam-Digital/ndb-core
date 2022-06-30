@@ -7,7 +7,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { DataImportService } from "../data-import.service";
-import { ImportMetaData } from "../import-meta-data.type";
+import { ImportColumnMap, ImportMetaData } from "../import-meta-data.type";
 import { AlertService } from "app/core/alerts/alert.service";
 import { MatStepper } from "@angular/material/stepper";
 import { ParseResult } from "ngx-papaparse";
@@ -57,6 +57,7 @@ export class DataImportComponent {
     private downloadService: DownloadService,
     public entities: EntityRegistry
   ) {}
+
   // TODO add supported types for file select
   async setCsvFile(inputEvent: Event): Promise<void> {
     const file = this.getSelectedFile(inputEvent);
@@ -67,6 +68,7 @@ export class DataImportComponent {
       this.csvFile.meta.fields.forEach((field) =>
         this.columnMappingForm.addControl(field, new FormControl())
       );
+      this.entitySelectionChanged();
       this.stepper.next();
     } catch (e) {
       this.fileNameForm.setErrors({ fileInvalid: e.message });
@@ -89,7 +91,6 @@ export class DataImportComponent {
         const type = record["_id"].split(":")[0] as string;
         this.entityForm.patchValue({ entity: type });
         this.entityForm.disable();
-        this.entitySelectionChanged();
       }
       this.transactionIDForm.patchValue({ transactionId: "" });
       this.transactionIDForm.disable();
@@ -101,7 +102,27 @@ export class DataImportComponent {
     const entityName = this.entityForm.get("entity").value;
     const propertyKeys = this.entities.get(entityName).schema.keys();
     this.properties = [...propertyKeys];
+
+    this.inferColumnPropertyMapping();
+
     this.stepper.next();
+  }
+
+  /**
+   * Try to guess mappings of import file columns to entity properties.
+   * (e.g. based on column headers)
+   * @private
+   */
+  private inferColumnPropertyMapping() {
+    const columnMap: ImportColumnMap = {};
+
+    for (const p of this.properties) {
+      if (this.csvFile.meta.fields.includes(p)) {
+        columnMap[p] = p;
+      }
+    }
+
+    this.loadColumnMapping(columnMap);
   }
 
   setRandomTransactionID() {
@@ -150,9 +171,14 @@ export class DataImportComponent {
     this.patchIfPossible(this.dateFormatForm, {
       dateFormat: importMeta.dateFormat,
     });
+
+    this.loadColumnMapping(importMeta.columnMap);
+  }
+
+  private loadColumnMapping(columnMap: ImportColumnMap) {
     const combinedMap = Object.assign(
       this.columnMappingForm.getRawValue(),
-      importMeta.columnMap
+      columnMap
     );
     this.patchIfPossible(this.columnMappingForm, combinedMap);
   }
