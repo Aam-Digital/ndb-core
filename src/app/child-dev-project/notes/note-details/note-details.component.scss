@@ -27,18 +27,19 @@
 $border: 1px solid lightgray;
 
 .attendance-item {
+  /* Align the items in one column */
   display: flex;
   flex-direction: column;
   width: 100%;
+  gap: 1em;
 
   border: $border;
-
-  gap: 1em;
 
   padding: 1em;
   box-sizing: border-box;
 
   &--header {
+    /* Header: Display the child name on the right, the delete item on the left */
     align-self: center;
     display: flex;
     flex-direction: row;
@@ -47,6 +48,7 @@ $border: 1px solid lightgray;
     width: 100%;
   }
 
+  /* Content: Display all items as a column; allow the items to wrap to the next line */
   &--content {
     display: flex;
     flex-wrap: wrap;
@@ -55,6 +57,7 @@ $border: 1px solid lightgray;
     align-items: baseline;
     justify-content: center;
 
+    /* This field should be the biggest, allow it to grow */
     > mat-form-field {
       flex-grow: 1;
     }

@@ -185,6 +185,12 @@
       </mat-option>
     </app-entity-select>
 
+    <!-- Additional elements when the note is a meeting -->
+    <!-- If feasible, this whole setup should be replaced with a more simple setup that
+      automatically adapts to the screen size without having to rely on two different layout techniques for
+      small and big screens.
+     -->
+    <!-- Desktop view: display the information as table -->
     <div *ngIf="entity.category?.isMeeting && !desktop">
       <table class="table">
         <tr *ngFor="let childId of entity.children">
@@ -220,6 +226,7 @@
       </table>
     </div>
 
+    <!-- Mobile view / smaller screen: display the information using a flex-layout -->
     <div *ngIf="entity.category?.isMeeting && desktop" class="attendance-blocks">
       <div *ngFor="let childId of entity.children" class="attendance-item">
         <div class="attendance-item--header">
