@@ -23,20 +23,8 @@ describe("User", () => {
     _id: "User:some-id",
 
     name: "tester",
-    cloudPasswordEnc: "encryptedPassword",
-    cloudBaseFolder: "/aam-digital/",
     paginatorSettingsPageSize: {},
 
     searchIndices: ["tester"],
-  });
-
-  it("sets cloud passwords", () => {
-    const user = new User("test1");
-    expect(user.cloudPasswordDec).not.toBeDefined();
-
-    user.setCloudPassword("cloudpwd", "userpwd");
-
-    expect(user.cloudPasswordDec).toEqual("cloudpwd");
-    expect(user.decryptCloudPassword("userpwd")).toEqual("cloudpwd");
   });
 });
