@@ -18,7 +18,6 @@
 import { Entity } from "../entity/model/entity";
 import { DatabaseEntity } from "../entity/database-entity.decorator";
 import { DatabaseField } from "../entity/database-field.decorator";
-import CryptoES from "crypto-es";
 
 /**
  * Entity representing a User object including password.
