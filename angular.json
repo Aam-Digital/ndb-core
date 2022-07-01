@@ -269,6 +269,7 @@
       }
     }
   },
+  "defaultProject": "ndb-core",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",

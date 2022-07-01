@@ -1,8 +1,9 @@
 import { ChangeDetectorRef, Component, ViewChild } from "@angular/core";
 import {
   FormBuilder,
-  UntypedFormControl,
-  UntypedFormGroup,
+  FormControl,
+  FormGroup,
+  FormRecord,
   Validators,
 } from "@angular/forms";
 import { DataImportService } from "../data-import.service";
@@ -42,7 +43,7 @@ export class DataImportComponent {
     dateFormat: [""],
   });
 
-  columnMappingForm = new UntypedFormGroup({});
+  columnMappingForm = new FormRecord<FormControl<string>>({});
   private properties: string[] = [];
   filteredProperties = new BehaviorSubject<string[]>([]);
 
@@ -62,9 +63,9 @@ export class DataImportComponent {
     try {
       this.csvFile = await this.loadCSVFile(file);
       this.fileNameForm.setValue({ fileName: file.name });
-      this.columnMappingForm = new UntypedFormGroup({});
+      this.columnMappingForm = new FormRecord<FormControl<string>>({});
       this.csvFile.meta.fields.forEach((field) =>
-        this.columnMappingForm.addControl(field, new UntypedFormControl())
+        this.columnMappingForm.addControl(field, new FormControl())
       );
       this.stepper.next();
     } catch (e) {
@@ -155,10 +156,7 @@ export class DataImportComponent {
     this.patchIfPossible(this.columnMappingForm, combinedMap);
   }
 
-  private patchIfPossible(
-    form: UntypedFormGroup,
-    patch: { [key in string]: any }
-  ) {
+  private patchIfPossible(form: FormGroup, patch: { [key in string]: any }) {
     if (form.enabled) {
       form.patchValue(patch);
     }

@@ -6,7 +6,7 @@ import {
   ViewChild,
 } from "@angular/core";
 import { Note } from "../../notes/model/note";
-import { MatCalendarCellCssClasses } from "@angular/material/datepicker/calendar-body";
+import { MatCalendarCellCssClasses } from "@angular/material/datepicker";
 import moment, { Moment } from "moment";
 import { EventAttendance } from "../model/event-attendance";
 import { MatCalendar } from "@angular/material/datepicker";

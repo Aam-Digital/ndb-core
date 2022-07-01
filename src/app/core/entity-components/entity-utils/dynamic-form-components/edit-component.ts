@@ -1,5 +1,5 @@
 import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init-dynamic-component.interface";
-import { AbstractControl } from "@angular/forms";
+import { AbstractControl, FormControl, FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 
@@ -46,7 +46,9 @@ export abstract class EditComponent<T> implements OnInitDynamicComponent {
   /**
    * The typed form control.
    */
-  formControl: AbstractControl<T>;
+  formControl: FormControl<T>;
+
+  parent: FormGroup;
 
   onInitFromDynamicConfig(config: EditPropertyConfig<T>) {
     if (!config.formFieldConfig.forTable) {
@@ -54,6 +56,7 @@ export abstract class EditComponent<T> implements OnInitDynamicComponent {
       this.tooltip = config.formFieldConfig.tooltip;
     }
     this.formControlName = config.formFieldConfig.id;
-    this.formControl = config.formControl;
+    this.formControl = config.formControl as FormControl<T>;
+    this.parent = this.formControl.parent as FormGroup;
   }
 }
