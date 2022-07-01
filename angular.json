@@ -269,7 +269,6 @@
       }
     }
   },
-  "defaultProject": "ndb-core",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",
@@ -281,6 +280,8 @@
   },
   "cli": {
     "analytics": "0bd2cce5-bfb0-4375-af96-a8222d782810",
-    "defaultCollection": "@angular-eslint/schematics"
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   }
 }

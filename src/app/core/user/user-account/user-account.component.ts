@@ -18,7 +18,7 @@
 import { Component, OnInit } from "@angular/core";
 import { SessionService } from "../../session/session-service/session.service";
 import { UserAccountService } from "./user-account.service";
-import { FormBuilder, ValidationErrors, Validators } from "@angular/forms";
+import { UntypedFormBuilder, ValidationErrors, Validators } from "@angular/forms";
 import { AppConfig } from "../../app-config/app-config";
 import { LoggingService } from "../../logging/logging.service";
 import { SessionType } from "../../session/session-type";
@@ -65,7 +65,7 @@ export class UserAccountComponent implements OnInit {
   constructor(
     private sessionService: SessionService,
     private userAccountService: UserAccountService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private loggingService: LoggingService
   ) {}
 

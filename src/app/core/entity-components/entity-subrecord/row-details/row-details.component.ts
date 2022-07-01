@@ -3,7 +3,7 @@ import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Entity } from "../../../entity/model/entity";
 import { EntityFormService } from "../../entity-form/entity-form.service";
-import { FormGroup } from "@angular/forms";
+import { UntypedFormGroup } from "@angular/forms";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import {
   EntityRemoveService,
@@ -32,7 +32,7 @@ export interface DetailsComponentData<E extends Entity> {
   styleUrls: ["./row-details.component.scss"],
 })
 export class RowDetailsComponent<E extends Entity> {
-  form: FormGroup;
+  form: UntypedFormGroup;
 
   viewOnlyColumns: FormFieldConfig[];
   tempEntity: Entity;

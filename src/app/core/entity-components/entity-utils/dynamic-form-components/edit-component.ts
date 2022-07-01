@@ -1,5 +1,5 @@
 import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init-dynamic-component.interface";
-import { AbstractControl, FormControl, FormGroup } from "@angular/forms";
+import { AbstractControl, UntypedFormControl, UntypedFormGroup } from "@angular/forms";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 
@@ -27,7 +27,7 @@ export interface EditPropertyConfig {
  * A simple extension of the Form control which allows to access the form type-safe.
  * <T> refers to the type of the value which is managed in this control.
  */
-export class TypedFormControl<T> extends FormControl {
+export class TypedFormControl<T> extends UntypedFormControl {
   value: T;
   setValue(
     value: T,
@@ -41,8 +41,8 @@ export class TypedFormControl<T> extends FormControl {
     super.setValue(value, options);
   }
 
-  get parent(): FormGroup {
-    return super.parent as FormGroup;
+  get parent(): UntypedFormGroup {
+    return super.parent as UntypedFormGroup;
   }
 }
 

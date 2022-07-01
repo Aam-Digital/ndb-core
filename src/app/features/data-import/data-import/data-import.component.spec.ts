@@ -6,7 +6,7 @@ import {
 } from "@angular/core/testing";
 import { DataImportComponent } from "./data-import.component";
 import { DataImportService } from "../data-import.service";
-import { FormControl } from "@angular/forms";
+import { UntypedFormControl } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { DownloadService } from "../../../core/export/download-service/download.service";
 import { DataImportModule } from "../data-import.module";
@@ -100,7 +100,7 @@ describe("DataImportComponent", () => {
     component.processChange("na");
     expect(component.filteredProperties.value).toEqual(["name"]);
 
-    component.columnMappingForm.addControl("Name", new FormControl("name"));
+    component.columnMappingForm.addControl("Name", new UntypedFormControl("name"));
     component.processChange("na");
     expect(component.filteredProperties.value).toEqual([]);
   }));
@@ -113,11 +113,11 @@ describe("DataImportComponent", () => {
     component.dateFormatForm.patchValue({ dateFormat: importMeta.dateFormat });
     component.columnMappingForm.registerControl(
       "Name",
-      new FormControl("name")
+      new UntypedFormControl("name")
     );
     component.columnMappingForm.registerControl(
       "PN",
-      new FormControl("projectNumber")
+      new UntypedFormControl("projectNumber")
     );
     const csvFile = { meta: { fields: [] } } as ParseResult;
     mockDataImportService.validateCsvFile.and.resolveTo(csvFile);
@@ -133,8 +133,8 @@ describe("DataImportComponent", () => {
 
   it("should initialize forms when loading a config", async () => {
     mockFileReader(importMeta);
-    component.columnMappingForm.addControl("Name", new FormControl());
-    component.columnMappingForm.addControl("PN", new FormControl());
+    component.columnMappingForm.addControl("Name", new UntypedFormControl());
+    component.columnMappingForm.addControl("PN", new UntypedFormControl());
 
     await component.loadConfig({ target: { files: [undefined] } } as any);
 
@@ -161,12 +161,12 @@ describe("DataImportComponent", () => {
       },
       entityType: "Child",
     });
-    component.columnMappingForm.addControl("existingColumn", new FormControl());
+    component.columnMappingForm.addControl("existingColumn", new UntypedFormControl());
     component.columnMappingForm.addControl(
       "existingEmptyColumn",
-      new FormControl()
+      new UntypedFormControl()
     );
-    component.columnMappingForm.addControl("newColumn", new FormControl());
+    component.columnMappingForm.addControl("newColumn", new UntypedFormControl());
 
     await component.loadConfig({ target: { files: [undefined] } } as any);
 

@@ -2,10 +2,10 @@ import { Component, Inject } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { ProgressDashboardPart } from "../progress-dashboard/progress-dashboard-config";
 import {
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
+  UntypedFormArray,
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup,
   FormGroupDirective,
   NgForm,
   ValidationErrors,
@@ -23,17 +23,17 @@ export interface EditProgressDashboardComponentData {
   styleUrls: ["./edit-progress-dashboard.component.scss"],
 })
 export class EditProgressDashboardComponent {
-  forms: FormArray;
+  forms: UntypedFormArray;
   currentErrorStateMatcher = new FormCurrentErrorStateMatcher();
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: EditProgressDashboardComponentData,
-    private fb: FormBuilder
+    private fb: UntypedFormBuilder
   ) {
     this.forms = fb.array(data.parts.map((part) => this.formGroup(part)));
   }
 
-  formGroup(part: ProgressDashboardPart): FormGroup {
+  formGroup(part: ProgressDashboardPart): UntypedFormGroup {
     return this.fb.group(
       {
         label: this.fb.control(part.label),
@@ -52,7 +52,7 @@ export class EditProgressDashboardComponent {
     );
   }
 
-  currentLessThanTarget(control: FormGroup): ValidationErrors | null {
+  currentLessThanTarget(control: UntypedFormGroup): ValidationErrors | null {
     const current = control.get("currentValue");
     const target = control.get("targetValue");
     if (current.value > target.value) {
@@ -86,7 +86,7 @@ export class EditProgressDashboardComponent {
 
 class FormCurrentErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(
-    control: FormControl | null,
+    control: UntypedFormControl | null,
     form: FormGroupDirective | NgForm | null
   ): boolean {
     return !control?.parent?.valid;

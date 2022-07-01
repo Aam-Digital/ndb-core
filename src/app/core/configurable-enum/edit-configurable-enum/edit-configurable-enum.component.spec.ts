@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EditConfigurableEnumComponent } from "./edit-configurable-enum.component";
 import { EntityDetailsModule } from "../../entity-components/entity-details/entity-details.module";
-import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { UntypedFormControl, UntypedFormGroup, ReactiveFormsModule } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ConfigService } from "../../config/config.service";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -37,8 +37,8 @@ describe("EditConfigurableEnumComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EditConfigurableEnumComponent);
     component = fixture.componentInstance;
-    const formControl = new FormControl();
-    const formGroup = new FormGroup({});
+    const formControl = new UntypedFormControl();
+    const formGroup = new UntypedFormGroup({});
     component.formControlName = "testControl";
     component.formControl = formControl as TypedFormControl<ConfigurableEnumValue>;
     formGroup.registerControl(component.formControlName, formControl);

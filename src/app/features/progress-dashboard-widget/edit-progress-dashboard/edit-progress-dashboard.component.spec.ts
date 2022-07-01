@@ -5,7 +5,7 @@ import {
   EditProgressDashboardComponentData,
 } from "./edit-progress-dashboard.component";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { UntypedFormBuilder, UntypedFormGroup, ReactiveFormsModule } from "@angular/forms";
 
 describe("EditProgressDashboardComponent", () => {
   let component: EditProgressDashboardComponent;
@@ -40,13 +40,13 @@ describe("EditProgressDashboardComponent", () => {
           provide: MAT_DIALOG_DATA,
           useValue: mockDialogData,
         },
-        FormBuilder,
+        UntypedFormBuilder,
       ],
     }).compileComponents();
   });
 
-  function getGroup(index: number): FormGroup {
-    return component.forms.at(index) as FormGroup;
+  function getGroup(index: number): UntypedFormGroup {
+    return component.forms.at(index) as UntypedFormGroup;
   }
 
   beforeEach(() => {

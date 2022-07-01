@@ -2,9 +2,9 @@ import { TestBed } from "@angular/core/testing";
 
 import { EntityFormService } from "./entity-form.service";
 import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup,
   Validators,
 } from "@angular/forms";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
@@ -25,7 +25,7 @@ describe("EntityFormService", () => {
     TestBed.configureTestingModule({
       imports: [EntityFormModule],
       providers: [
-        FormBuilder,
+        UntypedFormBuilder,
         EntitySchemaService,
         { provide: EntityMapperService, useValue: mockEntityMapper },
         EntityAbility,
@@ -43,7 +43,7 @@ describe("EntityFormService", () => {
     const copyEntity = entity.copy();
     spyOn(entity, "copy").and.returnValue(copyEntity);
     spyOn(copyEntity, "assertValid").and.throwError(new Error());
-    const formGroup = new FormGroup({ _id: new FormControl("newId") });
+    const formGroup = new UntypedFormGroup({ _id: new UntypedFormControl("newId") });
 
     await expectAsync(service.saveChanges(formGroup, entity)).toBeRejected();
     expect(entity.getId()).not.toBe("newId");
@@ -51,7 +51,7 @@ describe("EntityFormService", () => {
 
   it("should update entity if saving is successful", async () => {
     const entity = new Entity("initialId");
-    const formGroup = new FormGroup({ _id: new FormControl("newId") });
+    const formGroup = new UntypedFormGroup({ _id: new UntypedFormControl("newId") });
     TestBed.inject(EntityAbility).update([
       { subject: "Entity", action: "create" },
     ]);
@@ -73,7 +73,7 @@ describe("EntityFormService", () => {
     ]);
     const school = new School();
 
-    const formGroup = new FormGroup({ name: new FormControl("normal school") });
+    const formGroup = new UntypedFormGroup({ name: new UntypedFormControl("normal school") });
     await service.saveChanges(formGroup, school);
     expect(school.name).toBe("normal school");
 

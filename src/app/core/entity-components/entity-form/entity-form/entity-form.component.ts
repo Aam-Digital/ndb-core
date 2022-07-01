@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { FormFieldConfig } from "./FormConfig";
-import { FormGroup } from "@angular/forms";
+import { UntypedFormGroup } from "@angular/forms";
 import { EntityFormService } from "../entity-form.service";
 import { AlertService } from "../../../alerts/alert.service";
 
@@ -59,7 +59,7 @@ export class EntityFormComponent implements OnInit {
    */
   @Output() cancel = new EventEmitter<void>();
 
-  form: FormGroup;
+  form: UntypedFormGroup;
 
   constructor(
     private entityFormService: EntityFormService,

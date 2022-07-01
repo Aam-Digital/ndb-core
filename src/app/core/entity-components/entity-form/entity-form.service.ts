@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { FormBuilder, FormGroup } from "@angular/forms";
+import { UntypedFormBuilder, UntypedFormGroup } from "@angular/forms";
 import { FormFieldConfig } from "./entity-form/FormConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
@@ -15,7 +15,7 @@ import { EntitySchema } from "../../entity/schema/entity-schema";
 @Injectable()
 export class EntityFormService {
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private entityMapper: EntityMapperService,
     private entitySchemaService: EntitySchemaService,
     private dynamicValidator: DynamicValidatorsService,
@@ -68,7 +68,7 @@ export class EntityFormService {
   public createFormGroup(
     formFields: FormFieldConfig[],
     entity: Entity
-  ): FormGroup {
+  ): UntypedFormGroup {
     const formConfig = {};
     const entitySchema = entity.getSchema();
     formFields
@@ -94,7 +94,7 @@ export class EntityFormService {
    * @returns a copy of the input entity with the changes from the form group
    */
   public async saveChanges<T extends Entity>(
-    form: FormGroup,
+    form: UntypedFormGroup,
     entity: T
   ): Promise<T> {
     this.checkFormValidity(form, entity.getSchema());
@@ -115,7 +115,7 @@ export class EntityFormService {
       });
   }
 
-  private checkFormValidity(form: FormGroup, schema: EntitySchema) {
+  private checkFormValidity(form: UntypedFormGroup, schema: EntitySchema) {
     // errors regarding invalid fields wont be displayed unless marked as touched
     form.markAllAsTouched();
     if (form.invalid) {
@@ -124,7 +124,7 @@ export class EntityFormService {
     }
   }
 
-  private getInvalidFields(form: FormGroup, schema: EntitySchema): string {
+  private getInvalidFields(form: UntypedFormGroup, schema: EntitySchema): string {
     return Object.keys(form.controls)
       .filter((key) => form.controls[key].invalid)
       .map((field) => schema.get(field).label)
