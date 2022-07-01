@@ -66,12 +66,8 @@ describe("DataImportComponent", () => {
       meta: { fields: ["_id", "name"] },
       data: [{ _id: "Child:1", name: "Test Child" }],
     } as ParseResult;
-    mockDataImportService.validateCsvFile.and.resolveTo(parsed);
-    const file = { name: "test.csv" } as File;
-    await component.setCsvFile({ target: { files: [file] } } as any);
+    await component.loadData(parsed);
 
-    expect(mockDataImportService.validateCsvFile).toHaveBeenCalledWith(file);
-    expect(component.fileNameForm.get("fileName")).toHaveValue(file.name);
     const columns = Object.keys(component.columnMappingForm.getRawValue());
     expect(columns).toEqual(["_id", "name"]);
     expect(component.entityForm.get("entity")).toHaveValue("Child");
@@ -91,39 +87,12 @@ describe("DataImportComponent", () => {
     expect(component.filteredProperties.value).toEqual([]);
   }));
 
-  it("should call import service with imported file and meta information", async () => {
-    component.transactionIDForm.patchValue({
-      transactionId: importMeta.transactionId,
-    });
-    component.entityForm.patchValue({ entity: importMeta.entityType });
-    component.dateFormatForm.patchValue({ dateFormat: importMeta.dateFormat });
-    component.columnMappingForm.registerControl(
-      "Name",
-      new FormControl("name")
-    );
-    component.columnMappingForm.registerControl(
-      "PN",
-      new FormControl("projectNumber")
-    );
-    const csvFile = { meta: { fields: [] } } as ParseResult;
-    mockDataImportService.validateCsvFile.and.resolveTo(csvFile);
-    await component.setCsvFile({ target: { files: [undefined] } } as any);
-
-    await component.importSelectedFile();
-
-    expect(mockDataImportService.handleCsvImport).toHaveBeenCalledWith(
-      csvFile,
-      importMeta
-    );
-  });
-
   it("should initialize forms when loading a config", async () => {
     mockCsvFileLoaded();
-    mockFileReader(importMeta);
     component.columnMappingForm.addControl("Name", new FormControl());
     component.columnMappingForm.addControl("PN", new FormControl());
 
-    await component.loadConfig({ target: { files: [undefined] } } as any);
+    await component.loadConfig({ data: importMeta } as ParseResult);
 
     expect(component.entityForm.get("entity")).toHaveValue(
       importMeta.entityType
@@ -140,15 +109,15 @@ describe("DataImportComponent", () => {
   });
 
   it("should have correct columns in the column map if a config for different/less columns has been imported", async () => {
-    mockCsvFileLoaded();
-    mockFileReader({
+    const configFileContents = {
       columnMap: {
         existingColumn: "existing column value",
         missingColumn: "missing column value",
         existingEmptyColumn: null,
       },
       entityType: "Child",
-    });
+    };
+    mockCsvFileLoaded();
     component.columnMappingForm.addControl("existingColumn", new FormControl());
     component.columnMappingForm.addControl(
       "existingEmptyColumn",
@@ -156,7 +125,7 @@ describe("DataImportComponent", () => {
     );
     component.columnMappingForm.addControl("newColumn", new FormControl());
 
-    await component.loadConfig({ target: { files: [undefined] } } as any);
+    await component.loadConfig({ data: configFileContents } as ParseResult);
 
     expect(component.columnMappingForm.getRawValue()).toEqual({
       existingColumn: "existing column value",
@@ -167,15 +136,15 @@ describe("DataImportComponent", () => {
 
   it("should correctly initialize the entity type and available properties from the imported config", async () => {
     mockCsvFileLoaded();
+
     @DatabaseEntity("Testing")
     class Testing extends Entity {
       @DatabaseField() databaseString: string;
       @DatabaseField() databaseDate: Date;
       nonDatabaseString: string;
     }
-    mockFileReader({ entityType: "Testing" });
 
-    await component.loadConfig({ target: { files: [undefined] } } as any);
+    await component.loadConfig({ data: { entityType: "Testing" } } as ParseResult);
 
     expect(component.entityForm.get("entity")).toHaveValue("Testing");
 
@@ -193,14 +162,12 @@ describe("DataImportComponent", () => {
       @DatabaseField() testProperty: string;
       @DatabaseField() testOther: string;
     }
-    mockFileReader({ entityType: "TestInferredMapping" });
     const parsed = {
       meta: { fields: ["_id", "unknownColumn", "testProperty"] },
       data: [{ _id: "TestInferredMapping:1", unknownColumn: "foo", testProperty: "x" }],
     } as ParseResult;
-    mockDataImportService.validateCsvFile.and.resolveTo(parsed);
-    const file = { name: "test.csv" } as File;
-    await component.setCsvFile({ target: { files: [file] } } as any);
+
+    await component.loadData(parsed)
 
     const actualColumnMap = component.columnMappingForm.getRawValue();
     expect(actualColumnMap.testProperty).toBe("testProperty");
@@ -212,16 +179,11 @@ describe("DataImportComponent", () => {
    * put component into state like a csv file has been loaded to test later phases of import
    */
   function mockCsvFileLoaded(mockCsvFields = []) {
-    // @ts-ignore
-    component.csvFile = { meta: { fields: mockCsvFields } } as ParseResult;
-  }
-
-  function mockFileReader(data: Partial<ImportMetaData>) {
-    const fileReader: any = {
-      result: JSON.stringify(data),
-      addEventListener: (_str: string, fun: () => any) => fun(),
-      readAsText: () => {},
+    component.importData = {
+      data: undefined, errors: [], meta: {
+        fields: mockCsvFields, delimiter: ',', linebreak: '\n', aborted: false,
+        truncated: false,
+      },
     };
-    spyOn(window, "FileReader").and.returnValue(fileReader);
   }
 });
