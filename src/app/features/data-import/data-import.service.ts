@@ -1,10 +1,8 @@
 import { Injectable } from "@angular/core";
 import { Database } from "../../core/database/database";
-import { Papa, ParseResult } from "ngx-papaparse";
 import { BackupService } from "../../core/admin/services/backup.service";
 import { ConfirmationDialogService } from "../../core/confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { readFile } from "../../utils/utils";
 import { ImportMetaData } from "./import-meta-data.type";
 import { v4 as uuid } from "uuid";
 import { Entity } from "../../core/entity/model/entity";
@@ -13,6 +11,7 @@ import { dateOnlyEntitySchemaDatatype } from "../../core/entity/schema-datatypes
 import { monthEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-month";
 import moment from "moment";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
+import { ParseResult } from "ngx-papaparse";
 
 /**
  * This service handels the parsing of CSV files and importing of data
@@ -26,41 +25,11 @@ export class DataImportService {
   ].map((dataType) => dataType.name);
   constructor(
     private db: Database,
-    private papa: Papa,
     private backupService: BackupService,
     private confirmationDialog: ConfirmationDialogService,
     private snackBar: MatSnackBar,
     private entities: EntityRegistry
   ) {}
-
-  /**
-   * Validates and reads a CSV
-   * @param file a File Blob
-   */
-  async validateCsvFile(file: File): Promise<ParseResult> {
-    if (!file.name.toLowerCase().endsWith(".csv")) {
-      throw new Error("Only .csv files are supported");
-    }
-    const csvData = await readFile(file);
-    const parsedCsvFile = this.parseCsvFile(csvData);
-
-    if (parsedCsvFile === undefined || parsedCsvFile.data === undefined) {
-      throw new Error("File could not be parsed");
-    }
-    if (parsedCsvFile.data.length === 0) {
-      throw new Error("File has no content");
-    }
-
-    return parsedCsvFile;
-  }
-
-  private parseCsvFile(csvString: string): ParseResult {
-    return this.papa.parse(csvString, {
-      header: true,
-      dynamicTyping: true,
-      skipEmptyLines: true,
-    });
-  }
 
   /**
    * Add the data from the loaded file to the database, inserting and updating records.
