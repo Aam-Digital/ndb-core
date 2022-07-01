@@ -18,7 +18,7 @@
 import { Component, OnInit } from "@angular/core";
 import { SessionService } from "../../session/session-service/session.service";
 import { UserAccountService } from "./user-account.service";
-import { UntypedFormBuilder, ValidationErrors, Validators } from "@angular/forms";
+import { FormBuilder, ValidationErrors, Validators } from "@angular/forms";
 import { AppConfig } from "../../app-config/app-config";
 import { LoggingService } from "../../logging/logging.service";
 import { SessionType } from "../../session/session-type";
@@ -65,7 +65,7 @@ export class UserAccountComponent implements OnInit {
   constructor(
     private sessionService: SessionService,
     private userAccountService: UserAccountService,
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
     private loggingService: LoggingService
   ) {}
 
@@ -118,8 +118,8 @@ export class UserAccountComponent implements OnInit {
 
   private passwordMatchValidator(): ValidationErrors | null {
     const newPassword: string = this?.passwordForm?.get("newPassword")?.value;
-    const confirmPassword: string = this?.passwordForm?.get("confirmPassword")
-      ?.value;
+    const confirmPassword: string =
+      this?.passwordForm?.get("confirmPassword")?.value;
     if (newPassword !== confirmPassword) {
       this.passwordForm
         .get("confirmPassword")

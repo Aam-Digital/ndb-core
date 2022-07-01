@@ -5,7 +5,9 @@ import {
   EditProgressDashboardComponentData,
 } from "./edit-progress-dashboard.component";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { UntypedFormBuilder, UntypedFormGroup, ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule, FormBuilder } from "@angular/forms";
+import { TypedForm } from "../../../core/entity-components/entity-form/entity-form.service";
+import { ProgressDashboardPart } from "../progress-dashboard/progress-dashboard-config";
 
 describe("EditProgressDashboardComponent", () => {
   let component: EditProgressDashboardComponent;
@@ -40,13 +42,13 @@ describe("EditProgressDashboardComponent", () => {
           provide: MAT_DIALOG_DATA,
           useValue: mockDialogData,
         },
-        UntypedFormBuilder,
+        FormBuilder,
       ],
     }).compileComponents();
   });
 
-  function getGroup(index: number): UntypedFormGroup {
-    return component.forms.at(index) as UntypedFormGroup;
+  function getGroup(index: number): TypedForm<ProgressDashboardPart> {
+    return component.forms.at(index);
   }
 
   beforeEach(() => {
@@ -80,9 +82,9 @@ describe("EditProgressDashboardComponent", () => {
 
   it("should mark the form as invalid when current or target is not present", () => {
     const firstForm = getGroup(0);
-    firstForm.get("currentValue").setValue("");
+    firstForm.get("currentValue").setValue(undefined);
     expect(firstForm.get("currentValue")).toContainFormError("required");
-    firstForm.get("targetValue").setValue("");
+    firstForm.get("targetValue").setValue(undefined);
     expect(firstForm.get("targetValue")).toContainFormError("required");
 
     expect(firstForm).not.toBeValidForm();

@@ -1,8 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { FormFieldConfig } from "./FormConfig";
-import { UntypedFormGroup } from "@angular/forms";
-import { EntityFormService } from "../entity-form.service";
+import { EntityForm, EntityFormService } from "../entity-form.service";
 import { AlertService } from "../../../alerts/alert.service";
 
 /**
@@ -19,11 +18,11 @@ import { AlertService } from "../../../alerts/alert.service";
   templateUrl: "./entity-form.component.html",
   styleUrls: ["./entity-form.component.scss"],
 })
-export class EntityFormComponent implements OnInit {
+export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
   /**
    * The entity which should be displayed and edited
    */
-  @Input() entity: Entity;
+  @Input() entity: T;
 
   /**
    * Whether the form should be opened in editing mode or not
@@ -52,14 +51,14 @@ export class EntityFormComponent implements OnInit {
   /**
    * This will be emitted whenever changes have been successfully saved to the entity.
    */
-  @Output() save = new EventEmitter<Entity>();
+  @Output() save = new EventEmitter<T>();
 
   /**
    * This will be emitted whenever the cancel button is pressed.
    */
   @Output() cancel = new EventEmitter<void>();
 
-  form: UntypedFormGroup;
+  form: EntityForm<T>;
 
   constructor(
     private entityFormService: EntityFormService,

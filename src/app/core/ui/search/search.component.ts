@@ -4,7 +4,7 @@ import { from, Observable } from "rxjs";
 import { concatMap, debounceTime, skipUntil, tap } from "rxjs/operators";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 import { Router } from "@angular/router";
-import { UntypedFormControl } from "@angular/forms";
+import { FormControl } from "@angular/forms";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 
@@ -32,7 +32,7 @@ export class SearchComponent {
 
   state = this.NOTHING_ENTERED;
 
-  formControl = new UntypedFormControl();
+  formControl = new FormControl("");
 
   results: Observable<Entity[]>;
 

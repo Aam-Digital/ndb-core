@@ -2,16 +2,15 @@ import { Component, Inject } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { ProgressDashboardPart } from "../progress-dashboard/progress-dashboard-config";
 import {
-  UntypedFormArray,
-  UntypedFormBuilder,
   UntypedFormControl,
-  UntypedFormGroup,
   FormGroupDirective,
   NgForm,
   ValidationErrors,
   Validators,
+  FormBuilder,
 } from "@angular/forms";
 import { ErrorStateMatcher } from "@angular/material/core";
+import { TypedForm } from "../../../core/entity-components/entity-form/entity-form.service";
 
 export interface EditProgressDashboardComponentData {
   parts: ProgressDashboardPart[];
@@ -23,17 +22,15 @@ export interface EditProgressDashboardComponentData {
   styleUrls: ["./edit-progress-dashboard.component.scss"],
 })
 export class EditProgressDashboardComponent {
-  forms: UntypedFormArray;
+  forms = this.fb.array(this.data.parts.map((part) => this.formGroup(part)));
   currentErrorStateMatcher = new FormCurrentErrorStateMatcher();
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: EditProgressDashboardComponentData,
-    private fb: UntypedFormBuilder
-  ) {
-    this.forms = fb.array(data.parts.map((part) => this.formGroup(part)));
-  }
+    private fb: FormBuilder
+  ) {}
 
-  formGroup(part: ProgressDashboardPart): UntypedFormGroup {
+  formGroup(part: ProgressDashboardPart) {
     return this.fb.group(
       {
         label: this.fb.control(part.label),
@@ -52,7 +49,9 @@ export class EditProgressDashboardComponent {
     );
   }
 
-  currentLessThanTarget(control: UntypedFormGroup): ValidationErrors | null {
+  currentLessThanTarget(
+    control: TypedForm<ProgressDashboardPart>
+  ): ValidationErrors | null {
     const current = control.get("currentValue");
     const target = control.get("targetValue");
     if (current.value > target.value) {

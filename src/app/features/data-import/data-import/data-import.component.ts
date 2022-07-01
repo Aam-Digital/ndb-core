@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, ViewChild } from "@angular/core";
 import {
-  UntypedFormBuilder,
+  FormBuilder,
   UntypedFormControl,
   UntypedFormGroup,
   Validators,
@@ -50,7 +50,7 @@ export class DataImportComponent {
 
   constructor(
     private dataImportService: DataImportService,
-    private formBuilder: UntypedFormBuilder,
+    private formBuilder: FormBuilder,
     private alertService: AlertService,
     private changeDetectorRef: ChangeDetectorRef,
     private downloadService: DownloadService,
@@ -90,7 +90,7 @@ export class DataImportComponent {
         this.entityForm.disable();
         this.entitySelectionChanged();
       }
-      this.transactionIDForm.patchValue({ transactionID: "" });
+      this.transactionIDForm.patchValue({ transactionId: "" });
       this.transactionIDForm.disable();
     }
     return csvFile;
@@ -155,7 +155,10 @@ export class DataImportComponent {
     this.patchIfPossible(this.columnMappingForm, combinedMap);
   }
 
-  private patchIfPossible(form: UntypedFormGroup, patch: { [key in string]: any }) {
+  private patchIfPossible(
+    form: UntypedFormGroup,
+    patch: { [key in string]: any }
+  ) {
     if (form.enabled) {
       form.patchValue(patch);
     }
