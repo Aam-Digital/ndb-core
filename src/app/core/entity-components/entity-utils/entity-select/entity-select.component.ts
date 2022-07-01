@@ -179,7 +179,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * whatever the accessor defines)
    * @param event the event to call this with
    */
-  select(event: MatChipInputEvent) {
+  select(event: Pick<MatChipInputEvent, "value">) {
     const value = event.value;
 
     if (value) {

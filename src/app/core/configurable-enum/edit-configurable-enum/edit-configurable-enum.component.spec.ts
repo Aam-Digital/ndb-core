@@ -35,10 +35,13 @@ describe("EditConfigurableEnumComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EditConfigurableEnumComponent);
     component = fixture.componentInstance;
-    const formGroup = new FormGroup({});
+    component.parent = new FormGroup({});
     component.formControlName = "testControl";
-    component.formControl = new FormControl({id: "", label: ""});
-    formGroup.registerControl(component.formControlName, component.formControl);
+    component.formControl = new FormControl({ id: "", label: "" });
+    component.parent.registerControl(
+      component.formControlName,
+      component.formControl
+    );
     component.enumId = "";
     fixture.detectChanges();
   });
