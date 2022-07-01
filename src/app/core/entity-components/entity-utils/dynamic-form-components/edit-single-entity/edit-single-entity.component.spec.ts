@@ -13,7 +13,6 @@ import { ChildSchoolRelation } from "../../../../../child-dev-project/children/m
 import { School } from "../../../../../child-dev-project/schools/model/school";
 import { EntityUtilsModule } from "../../entity-utils.module";
 import { Child } from "../../../../../child-dev-project/children/model/child";
-import { TypedFormControl } from "../edit-component";
 import { MockedTestingModule } from "../../../../../utils/mocked-testing.module";
 
 describe("EditSingleEntityComponent", () => {
@@ -34,7 +33,7 @@ describe("EditSingleEntityComponent", () => {
     const entityFormService = TestBed.inject(EntityFormService);
     component.formControl = entityFormService
       .createFormGroup([{ id: "schoolId" }], new ChildSchoolRelation())
-      .get("schoolId") as TypedFormControl<string>;
+      .get("schoolId");
     component.formControlName = "schoolId";
     fixture.detectChanges();
   });
