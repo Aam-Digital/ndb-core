@@ -48,6 +48,9 @@ export abstract class EditComponent<T> implements OnInitDynamicComponent {
    */
   formControl: FormControl<T>;
 
+  /**
+   * The parent form of the `formControl` this is always needed to correctly setup the `mat-form-field`
+   */
   parent: FormGroup;
 
   onInitFromDynamicConfig(config: EditPropertyConfig<T>) {
@@ -56,6 +59,7 @@ export abstract class EditComponent<T> implements OnInitDynamicComponent {
       this.tooltip = config.formFieldConfig.tooltip;
     }
     this.formControlName = config.formFieldConfig.id;
+    // This type casts are needed as the normal types throw errors in the templates
     this.formControl = config.formControl as FormControl<T>;
     this.parent = this.formControl.parent as FormGroup;
   }

@@ -11,7 +11,7 @@ import {
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { Entity } from "../../../entity/model/entity";
 import { BehaviorSubject, Observable } from "rxjs";
-import { UntypedFormControl } from "@angular/forms";
+import { FormControl } from "@angular/forms";
 import { filter, map } from "rxjs/operators";
 import { MatChipInputEvent } from "@angular/material/chips";
 import { MatAutocompleteTrigger } from "@angular/material/autocomplete";
@@ -126,7 +126,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
 
   allEntities: E[] = [];
   filteredEntities: Observable<E[]>;
-  formControl = new UntypedFormControl();
+  formControl = new FormControl("");
 
   @ViewChild("inputField") inputField: ElementRef<HTMLInputElement>;
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;

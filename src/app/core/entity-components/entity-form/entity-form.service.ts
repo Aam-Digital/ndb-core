@@ -8,6 +8,9 @@ import { DynamicValidatorsService } from "./dynamic-form-validators/dynamic-vali
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntitySchema } from "../../entity/schema/entity-schema";
 
+/**
+ * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
+ */
 export type TypedForm<T> = FormGroup<{ [K in keyof T]: ɵElement<T[K], null> }>;
 export type EntityForm<T extends Entity> = TypedForm<Partial<T>>;
 

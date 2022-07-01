@@ -6,7 +6,7 @@ import {
 } from "@angular/core/testing";
 import { DataImportComponent } from "./data-import.component";
 import { DataImportService } from "../data-import.service";
-import { UntypedFormControl } from "@angular/forms";
+import { FormControl } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { DownloadService } from "../../../core/export/download-service/download.service";
 import { DataImportModule } from "../data-import.module";
@@ -35,36 +35,34 @@ describe("DataImportComponent", () => {
     },
   };
 
-  beforeEach(
-    waitForAsync(() => {
-      mockDataImportService = jasmine.createSpyObj("DataImportService", [
-        "handleCsvImport",
-        "validateCsvFile",
-      ]);
-      TestBed.configureTestingModule({
-        declarations: [DataImportComponent],
-        imports: [
-          DataImportModule,
-          NoopAnimationsModule,
-          FontAwesomeTestingModule,
-        ],
-        providers: [
-          {
-            provide: DataImportService,
-            useValue: mockDataImportService,
-          },
-          {
-            provide: EntityRegistry,
-            useValue: entityRegistry,
-          },
-          {
-            provide: DownloadService,
-            useValue: jasmine.createSpyObj(["triggerDownload"]),
-          },
-        ],
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    mockDataImportService = jasmine.createSpyObj("DataImportService", [
+      "handleCsvImport",
+      "validateCsvFile",
+    ]);
+    TestBed.configureTestingModule({
+      declarations: [DataImportComponent],
+      imports: [
+        DataImportModule,
+        NoopAnimationsModule,
+        FontAwesomeTestingModule,
+      ],
+      providers: [
+        {
+          provide: DataImportService,
+          useValue: mockDataImportService,
+        },
+        {
+          provide: EntityRegistry,
+          useValue: entityRegistry,
+        },
+        {
+          provide: DownloadService,
+          useValue: jasmine.createSpyObj(["triggerDownload"]),
+        },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(DataImportComponent);
@@ -100,7 +98,7 @@ describe("DataImportComponent", () => {
     component.processChange("na");
     expect(component.filteredProperties.value).toEqual(["name"]);
 
-    component.columnMappingForm.addControl("Name", new UntypedFormControl("name"));
+    component.columnMappingForm.addControl("Name", new FormControl("name"));
     component.processChange("na");
     expect(component.filteredProperties.value).toEqual([]);
   }));
@@ -113,11 +111,11 @@ describe("DataImportComponent", () => {
     component.dateFormatForm.patchValue({ dateFormat: importMeta.dateFormat });
     component.columnMappingForm.registerControl(
       "Name",
-      new UntypedFormControl("name")
+      new FormControl("name")
     );
     component.columnMappingForm.registerControl(
       "PN",
-      new UntypedFormControl("projectNumber")
+      new FormControl("projectNumber")
     );
     const csvFile = { meta: { fields: [] } } as ParseResult;
     mockDataImportService.validateCsvFile.and.resolveTo(csvFile);
@@ -133,8 +131,8 @@ describe("DataImportComponent", () => {
 
   it("should initialize forms when loading a config", async () => {
     mockFileReader(importMeta);
-    component.columnMappingForm.addControl("Name", new UntypedFormControl());
-    component.columnMappingForm.addControl("PN", new UntypedFormControl());
+    component.columnMappingForm.addControl("Name", new FormControl());
+    component.columnMappingForm.addControl("PN", new FormControl());
 
     await component.loadConfig({ target: { files: [undefined] } } as any);
 
@@ -161,12 +159,12 @@ describe("DataImportComponent", () => {
       },
       entityType: "Child",
     });
-    component.columnMappingForm.addControl("existingColumn", new UntypedFormControl());
+    component.columnMappingForm.addControl("existingColumn", new FormControl());
     component.columnMappingForm.addControl(
       "existingEmptyColumn",
-      new UntypedFormControl()
+      new FormControl()
     );
-    component.columnMappingForm.addControl("newColumn", new UntypedFormControl());
+    component.columnMappingForm.addControl("newColumn", new FormControl());
 
     await component.loadConfig({ target: { files: [undefined] } } as any);
 
