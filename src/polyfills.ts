@@ -43,7 +43,10 @@ import "core-js/es/reflect";
 /***************************************************************************************************
  * Zone JS is required by Angular itself.
  */
+console.log("Exectued polyfill");
+(window as any).__Zone_disable_toString = true; // Zone will not patch Function.prototype.toString
 import "zone.js/dist/zone"; // Included with Angular CLI.
+(window as any).__Zone_disable_toString = true; // Zone will not patch Function.prototype.toString
 
 /***************************************************************************************************
  * APPLICATION IMPORTS

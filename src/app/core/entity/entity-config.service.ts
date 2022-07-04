@@ -26,6 +26,22 @@ export class EntityConfigService {
   ) {}
 
   /**
+   * Assigns additional schema-fields to all entities that are
+   * defined inside the config. Entities that are not registered
+   * using the {@link DatabaseEntity}-Decorator won't work and will
+   * trigger an error message
+   */
+  setupEntitiesFromConfig() {
+    for (const config of this.configService.getAllConfigs<
+      EntityConfig & { _id: string }
+    >(ENTITY_CONFIG_PREFIX)) {
+      const id = config._id.substring(ENTITY_CONFIG_PREFIX.length);
+      const ctor = this.entities.get(id);
+      this.addConfigAttributes(ctor, config);
+    }
+  }
+
+  /**
    * Appends the given (dynamic) attributes to the schema of the provided Entity.
    * If no arguments are provided, they will be loaded from the config
    * @param entityType The type to add the attributes to
@@ -45,6 +61,9 @@ export class EntityConfigService {
         )
       );
     }
+    // if (entityConfig?.toString) {
+    entityType.lalelu = entityConfig.toString || ["entityId"];
+    // }
   }
 
   /**
@@ -56,22 +75,6 @@ export class EntityConfigService {
     const configName =
       EntityConfigService.PREFIX_ENTITY_CONFIG + entityType.ENTITY_TYPE;
     return this.configService.getConfig<EntityConfig>(configName);
-  }
-
-  /**
-   * Assigns additional schema-fields to all entities that are
-   * defined inside the config. Entities that are not registered
-   * using the {@link DatabaseEntity}-Decorator won't work and will
-   * trigger an error message
-   */
-  setupEntitiesFromConfig() {
-    for (const config of this.configService.getAllConfigs<
-      EntityConfig & { _id: string }
-    >(ENTITY_CONFIG_PREFIX)) {
-      const id = config._id.substring(ENTITY_CONFIG_PREFIX.length);
-      const ctor = this.entities.get(id);
-      this.addConfigAttributes(ctor, config);
-    }
   }
 }
 
@@ -94,4 +97,6 @@ export interface EntityConfig {
      */
     schema: EntitySchemaField;
   }[];
+
+  toString: string[];
 }

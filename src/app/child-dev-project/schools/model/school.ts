@@ -21,8 +21,4 @@ export class School extends Entity {
     },
   })
   name: string = "";
-
-  public toString() {
-    return this.name;
-  }
 }

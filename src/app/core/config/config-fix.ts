@@ -901,6 +901,7 @@ export const defaultJsonConfig = {
   },
 
   "entity:Child": {
+    toString: ["name", "age"],
     "attributes": [
       {
         "name": "address",

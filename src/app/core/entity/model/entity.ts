@@ -60,6 +60,8 @@ export class Entity {
    */
   static schema: EntitySchema;
 
+  static lalelu = ["entityId"];
+
   /**
    * Extract the ENTITY_TYPE from an id.
    * @param id An entity's id including prefix.
@@ -197,7 +199,10 @@ export class Entity {
    * @returns {string} the instance's string representation.
    */
   public toString(): string {
-    return this.getId();
+    console.log("lalelu", this.getConstructor().lalelu);
+    return this.getConstructor()
+      .lalelu.map((prop) => this[prop])
+      .join(" ");
   }
 
   /**

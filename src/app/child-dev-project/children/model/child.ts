@@ -141,8 +141,4 @@ export class Child extends Entity {
     return indices;
   }
   set searchIndices(value) {}
-
-  public toString() {
-    return this.name;
-  }
 }

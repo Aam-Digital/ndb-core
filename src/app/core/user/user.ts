@@ -87,8 +87,4 @@ export class User extends Entity {
       givenPassword
     ).toString();
   }
-
-  toString(): string {
-    return this.name;
-  }
 }
