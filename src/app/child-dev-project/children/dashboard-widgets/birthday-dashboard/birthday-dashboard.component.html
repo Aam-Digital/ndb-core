@@ -2,12 +2,15 @@
   icon="birthday-cake"
   theme="child"
   title="Birthdays"
+  i18n-title="Title of the birthday widget"
   subtitle="Upcoming Birthdays"
+  i18n-subtitle="Subtitle of the birthday widget"
   explanation="Children whose birthday is soon"
-  [loading]="loading"
+  i18n-explanation="Tooltip for the birthday widget"
+  [loading]="isLoading"
 >
   <app-widget-content>
-    <div *ngIf="childrenDataSource.data.length > 0 && !isLoading" class="table-wrapper">
+    <div *ngIf="childrenDataSource.data.length > 0" class="table-wrapper">
       <table mat-table [dataSource]="childrenDataSource">
         <tr hidden="true">
           <th scope="col">Child Name</th>
@@ -31,9 +34,9 @@
     </div>
     <mat-paginator
       [style.display]="paginator.getNumberOfPages() === 0 ? 'none' : ''"
-      #paginator
       [pageSizeOptions]="[5]"
-      [hidePageSize]="true">
+      hidePageSize
+      #paginator>
     </mat-paginator>
   </app-widget-content>
 </app-dashboard-widget>
