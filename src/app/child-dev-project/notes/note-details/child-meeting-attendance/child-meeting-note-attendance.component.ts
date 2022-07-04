@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { EventAttendance } from "../../../attendance/model/event-attendance";
+import { Note } from "../../model/note";
+import { FormGroup } from "@angular/forms";
 
 /**
  * Display a single participant's attendance status in a compact row.
@@ -10,9 +12,9 @@ import { EventAttendance } from "../../../attendance/model/event-attendance";
   styleUrls: ["./child-meeting-note-attendance.component.scss"],
 })
 export class ChildMeetingNoteAttendanceComponent {
-  @Input() childId: string;
+  @Input() mobile = false;
+  @Input() entity: Note;
   @Input() disabled: boolean = false;
-  @Input() attendance: EventAttendance;
-  @Output() change = new EventEmitter();
-  @Output() remove = new EventEmitter();
+  @Output() change = new EventEmitter<string>();
+  @Output() remove = new EventEmitter<string>();
 }
