@@ -26,7 +26,7 @@ export default {
         { provide: MatDialogRef, useValue: {} },
         {
           provide: ChildrenService,
-          useValue: { getChild: () => of(new Child()) },
+          useValue: { getChild: () => of(Child.create("John Doe")) },
         },
       ],
     }),

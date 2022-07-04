@@ -266,3 +266,19 @@ $standard-icon-size: 1.5em;
   border-left: $standard-margin-small solid;
   border-color: transparent;
 }
+
+.remove-margin-bottom {
+  margin-bottom: 0 !important;
+}
+
+.margin-bottom-small {
+  margin-bottom: $standard-margin-small;
+}
+
+/**
+ * Flex
+ */
+
+.flex-grow {
+  flex-grow: 1;
+}

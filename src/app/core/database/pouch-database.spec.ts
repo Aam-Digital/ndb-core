@@ -149,7 +149,7 @@ describe("PouchDatabase tests", () => {
     const spyOnQuery = spyOn(database, "query").and.resolveTo();
 
     await database.saveDatabaseIndex(testIndex);
-    expect(database.put).toHaveBeenCalledWith(testIndex);
+    expect(database.put).toHaveBeenCalledWith(testIndex, true);
 
     // expect all indices to be queried
     expect(spyOnQuery).toHaveBeenCalledTimes(2);
@@ -170,11 +170,14 @@ describe("PouchDatabase tests", () => {
     const spyOnQuery = spyOn(database, "query").and.resolveTo();
 
     await database.saveDatabaseIndex(testIndex);
-    expect(database.put).toHaveBeenCalledWith({
-      _id: testIndex._id,
-      _rev: existingIndex._rev,
-      views: testIndex.views,
-    });
+    expect(database.put).toHaveBeenCalledWith(
+      {
+        _id: testIndex._id,
+        _rev: existingIndex._rev,
+        views: testIndex.views,
+      },
+      true
+    );
 
     // expect all indices to be queried
     expect(spyOnQuery).toHaveBeenCalledTimes(2);

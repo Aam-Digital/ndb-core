@@ -15,8 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from "@angular/core";
-import { ActivityListComponent } from "./activity-list/activity-list.component";
+import { Injectable, NgModule } from "@angular/core";
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
 import { ChildrenModule } from "../children/children.module";
 import { MatButtonModule } from "@angular/material/button";
@@ -61,11 +60,28 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { ViewModule } from "../../core/view/view.module";
 import { AttendanceSummaryComponent } from "./attendance-summary/attendance-summary.component";
+import { RollCallTabComponent } from "./add-day-attendance/roll-call/roll-call-tab/roll-call-tab.component";
+import {
+  HAMMER_GESTURE_CONFIG,
+  HammerGestureConfig,
+  HammerModule,
+} from "@angular/platform-browser";
 import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
+import * as Hammer from "hammerjs";
+import { TabStateModule } from "../../utils/tab-state/tab-state.module";
+
+@Injectable()
+// Only allow horizontal swiping
+export class HorizontalHammerConfig extends HammerGestureConfig {
+  overrides = {
+    swipe: { direction: Hammer.DIRECTION_HORIZONTAL },
+    pinch: { enable: false },
+    rotate: { enable: false },
+  };
+}
 
 @NgModule({
   declarations: [
-    ActivityListComponent,
     ActivityCardComponent,
     RollCallSetupComponent,
     AttendanceDayBlockComponent,
@@ -81,6 +97,7 @@ import { ConfigurableEnumModule } from "../../core/configurable-enum/configurabl
     AttendanceWeekDashboardComponent,
     AttendanceManagerComponent,
     AttendanceSummaryComponent,
+    RollCallTabComponent,
   ],
   imports: [
     EntityListModule,
@@ -113,6 +130,8 @@ import { ConfigurableEnumModule } from "../../core/configurable-enum/configurabl
     MatPaginatorModule,
     ViewModule,
     ConfigurableEnumModule,
+    HammerModule,
+    TabStateModule,
   ],
   exports: [
     ActivityCardComponent,
@@ -126,10 +145,15 @@ import { ConfigurableEnumModule } from "../../core/configurable-enum/configurabl
     AttendanceDetailsComponent,
     AttendanceWeekDashboardComponent,
   ],
+  providers: [
+    {
+      provide: HAMMER_GESTURE_CONFIG,
+      useClass: HorizontalHammerConfig,
+    },
+  ],
 })
 export class AttendanceModule {
   static dynamicComponents = [
-    ActivityListComponent,
     AddDayAttendanceComponent,
     AttendanceManagerComponent,
     ActivityAttendanceSectionComponent,

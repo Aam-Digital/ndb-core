@@ -8,6 +8,8 @@ import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { AnalyticsService } from "../../analytics/analytics.service";
 import { EntityAbility } from "../ability/entity-ability";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { ConfigService } from "../../config/config.service";
+import { take } from "rxjs/operators";
 
 /**
  * This service checks whether the relevant rules for the current user changed.
@@ -29,7 +31,8 @@ export class PermissionEnforcerService {
     private database: Database,
     private analyticsService: AnalyticsService,
     private entities: EntityRegistry,
-    @Inject(LOCATION_TOKEN) private location: Location
+    @Inject(LOCATION_TOKEN) private location: Location,
+    private configService: ConfigService
   ) {}
 
   async enforcePermissionsOnLocalData(userRules: DatabaseRule[]) {
@@ -90,18 +93,23 @@ export class PermissionEnforcerService {
   }
 
   private getRelevantSubjects(rule: DatabaseRule): string[] {
-    if (rule.subject === "any") {
-      return [...this.entities.keys()];
+    let subjects: string[];
+    if (rule.subject === "all") {
+      subjects = [...this.entities.keys()];
     } else if (Array.isArray(rule.subject)) {
-      return rule.subject;
+      subjects = rule.subject;
     } else {
-      return [rule.subject];
+      subjects = [rule.subject];
     }
+    // Only return valid entities
+    return subjects.filter((sub) => this.entities.has(sub));
   }
 
   private async dbHasEntitiesWithoutPermissions(
     subjects: EntityConstructor[]
   ): Promise<boolean> {
+    // wait for config service to be ready before using the entity mapper
+    await this.configService.configUpdates.pipe(take(1)).toPromise();
     for (const subject of subjects) {
       const entities = await this.entityMapper.loadType(subject);
       if (entities.some((entity) => this.ability.cannot("read", entity))) {
