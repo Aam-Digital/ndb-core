@@ -1,11 +1,10 @@
-import { Component, AfterViewInit, OnInit } from "@angular/core";
+import { Component, AfterViewInit, OnInit, ViewChild } from "@angular/core";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { Child } from "../../model/child";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatPaginator } from "@angular/material/paginator";
-import { ViewChild } from "@angular/core";
 
 @DynamicComponent("BirthdayDashboard")
 @Component({
@@ -48,7 +47,7 @@ export class BirthdayDashboardComponent
     this.childrenDataSource.paginator = this.paginator;
   }
 
-  onInitFromDynamicConfig(config: any) {}
+  onInitFromDynamicConfig() {}
 
   private getNextBirthday(dateOfBirth: Date): Date {
     const birthday = new Date(
