@@ -185,80 +185,15 @@
       </mat-option>
     </app-entity-select>
 
-    <!-- Additional elements when the note is a meeting -->
-    <!-- If feasible, this whole setup should be replaced with a more simple setup that
-      automatically adapts to the screen size without having to rely on two different layout techniques for
-      small and big screens.
-     -->
-    <!-- Desktop view: display the information as table -->
-    <div *ngIf="entity.category?.isMeeting && !desktop">
-      <table class="table">
-        <tr *ngFor="let childId of entity.children">
-          <td>
-            <button mat-icon-button>
-              <fa-icon *ngIf="!formDialogWrapper.readonly" icon="trash" (click)="entity.removeChild(childId); entityForm.form.markAsDirty()"></fa-icon>
-            </button>
-          </td>
-          <td><app-child-block [entityId]="childId"></app-child-block></td>
-          <td>
-            <app-attendance-status-select
-              [(value)]="entity.getAttendance(childId).status"
-              (valueChange)="entityForm.form.markAsDirty()"
-              [disabled]="formDialogWrapper.readonly"
-            >
-            </app-attendance-status-select>
-          </td>
-          <td class="full-width">
-            <mat-form-field class="adjust-top">
-              <input
-                matInput
-                i18n-placeholder
-                placeholder="Remarks"
-                name="remarks"
-                type="text"
-                [(ngModel)]="entity.getAttendance(childId).remarks"
-                [disabled]="formDialogWrapper.readonly"
-                (input)="entityForm.form.markAsDirty()"
-              />
-            </mat-form-field>
-          </td>
-        </tr>
-      </table>
-    </div>
 
-    <!-- Mobile view / smaller screen: display the information using a flex-layout -->
-    <div *ngIf="entity.category?.isMeeting && desktop" class="attendance-blocks">
-      <div *ngFor="let childId of entity.children" class="attendance-item">
-        <div class="attendance-item--header">
-          <app-child-block [entityId]="childId"></app-child-block>
-
-          <button mat-icon-button>
-            <fa-icon *ngIf="!formDialogWrapper.readonly" icon="trash" (click)="entity.removeChild(childId); entityForm.form.markAsDirty()"></fa-icon>
-          </button>
-        </div>
-
-        <div class="attendance-item--content">
-          <app-attendance-status-select
-            [(value)]="entity.getAttendance(childId).status"
-            (valueChange)="entityForm.form.markAsDirty()"
-            [disabled]="formDialogWrapper.readonly"
-          >
-          </app-attendance-status-select>
-
-          <mat-form-field>
-            <input
-              matInput
-              i18n-placeholder
-              placeholder="Remarks"
-              name="remarks"
-              type="text"
-              [(ngModel)]="entity.getAttendance(childId).remarks"
-              [disabled]="formDialogWrapper.readonly"
-              (input)="entityForm.form.markAsDirty()"
-            />
-          </mat-form-field>
-        </div>
-      </div>
+    <div *ngIf="entity.category?.isMeeting">
+      <app-child-meeting-note-attendance
+        [mobile]="mobile"
+        [entity]="entity"
+        [disabled]="formDialogWrapper.readonly"
+        (change)="entityForm.form.markAsDirty()"
+        (remove)="entity.removeChild($event); entityForm.form.markAsDirty()"
+      ></app-child-meeting-note-attendance>
     </div>
 
     <app-entity-select

@@ -11,6 +11,7 @@ import { ConfigService } from "../../../core/config/config.service";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { compareEnums } from "../../../utils/utils";
 import { BreakpointObserver } from "@angular/cdk/layout";
+import { FormDialogWrapperComponent } from "../../../core/form-dialog/form-dialog-wrapper/form-dialog-wrapper.component";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -22,7 +23,8 @@ import { BreakpointObserver } from "@angular/cdk/layout";
 })
 export class NoteDetailsComponent implements ShowsEntity<Note> {
   @Input() entity: Note;
-  @ViewChild("dialogForm", { static: true }) formDialogWrapper;
+  @ViewChild("dialogForm", { static: true })
+  formDialogWrapper: FormDialogWrapperComponent<Note>;
 
   readonly Child: EntityConstructor<Child> = Child;
   readonly School: EntityConstructor<School> = School;
@@ -35,14 +37,20 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
   /** export format for notes to be used for downloading the individual details */
   exportConfig: ExportColumnConfig[];
 
-  constructor(private configService: ConfigService, private breakpointObserver: BreakpointObserver) {
+  /** Is it mobile view or not */
+  mobile = false;
+
+  constructor(
+    private configService: ConfigService,
+    private breakpointObserver: BreakpointObserver
+  ) {
     this.exportConfig = this.configService.getConfig<{
       config: EntityListConfig;
     }>("view:note").config.exportConfig;
-    this.breakpointObserver.observe("(max-width: 1000px)").subscribe((next) => this.desktop = next.matches);
+    this.breakpointObserver
+      .observe("(max-width: 1000px)")
+      .subscribe((next) => (this.mobile = next.matches));
   }
-
-  desktop: boolean;
 
   toggleIncludeInactiveChildren() {
     this.includeInactiveChildren = !this.includeInactiveChildren;
