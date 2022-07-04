@@ -187,6 +187,15 @@ export class RollCallComponent implements OnChanges {
     }
   }
 
+  goToFirst() {
+    this.goToParticipantWithIndex(0);
+  }
+
+  goToLast() {
+    // jump directly to completed state, i.e. beyond last participant index
+    this.goToParticipantWithIndex(this.children.length);
+  }
+
   get isFirst(): boolean {
     return this.currentIndex === 0;
   }
