@@ -4,7 +4,7 @@
   title="Birthdays"
   subtitle="Upcoming Birthdays"
   explanation="Children whose birthday is soon"
-  [loading]="false"
+  [loading]="loading"
 >
   <app-widget-content>
     <div *ngIf="childrenDataSource.data.length > 0 && !isLoading" class="table-wrapper">
