@@ -15,41 +15,56 @@ import { ViewChild } from "@angular/core";
 })
 export class BirthdayDashboardComponent
   implements OnInitDynamicComponent, OnInit, AfterViewInit {
-  children: Child[] = [];
-  childrendataSource = new MatTableDataSource<{child:Child,birthday:Date}>();
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  isLoading: boolean = false;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  private readonly today: Date;
+  childrenDataSource = new MatTableDataSource<{
+    child: Child;
+    birthday: Date;
+  }>();
+  isLoading = true;
 
-  constructor(private entityMapper: EntityMapperService) {}
+  constructor(private entityMapper: EntityMapperService) {
+    this.today = new Date();
+    this.today.setHours(0, 0, 0, 0);
+  }
 
   async ngOnInit() {
-  this.children = (await this.entityMapper.loadType(Child))
-      .filter((child: Child) => child.isActive);
-     
-  this.childrendataSource.data= this.children.map((child)=>( {child:child,birthday:getNextBirthday(child.dateOfBirth)} ))
-      .sort((a,b) =>daysUntilBirthday(a.birthday) - daysUntilBirthday(b.birthday))
-      .filter((a)=>daysUntilBirthday(a.birthday)<32);
+    const children = await this.entityMapper.loadType(Child);
 
- function daysUntilBirthday(birthday: Date): number {
-  let today = new Date();
-      today.setHours(0,0,0,0);
-  let diff = birthday.getTime() - today.getTime();
-  let daysTillNextBirthday = Math.floor(diff / (1000 * 60 * 60 * 24));
-      return daysTillNextBirthday;
-}
- function getNextBirthday(dateOfBirth:Date) :Date {
-  let today = new Date();
-      today.setHours(0,0,0,0);
-  let birthday = new Date(today.getFullYear(),dateOfBirth.getMonth(), dateOfBirth.getDate());
+    // Only active children with a birthday in less than 31 days are shown
+    this.childrenDataSource.data = children
+      .filter((child: Child) => child.isActive)
+      .map((child) => ({
+        child: child,
+        birthday: this.getNextBirthday(child.dateOfBirth),
+      }))
+      .filter((a) => this.daysUntil(a.birthday) < 32)
+      .sort((a, b) => this.daysUntil(a.birthday) - this.daysUntil(b.birthday));
 
-  if (today.getTime() > birthday.getTime()) { 
+    this.isLoading = false;
+  }
+
+  ngAfterViewInit() {
+    this.childrenDataSource.paginator = this.paginator;
+  }
+
+  onInitFromDynamicConfig(config: any) {}
+
+  private getNextBirthday(dateOfBirth: Date): Date {
+    const birthday = new Date(
+      this.today.getFullYear(),
+      dateOfBirth.getMonth(),
+      dateOfBirth.getDate()
+    );
+
+    if (this.today.getTime() > birthday.getTime()) {
       birthday.setFullYear(birthday.getFullYear() + 1);
-}
+    }
     return birthday;
-}
-}
- ngAfterViewInit() {
- this.childrendataSource.paginator = this.paginator;
-}
- onInitFromDynamicConfig(config: any) {}
+  }
+
+  private daysUntil(date: Date): number {
+    const diff = date.getTime() - this.today.getTime();
+    return Math.floor(diff / (1000 * 60 * 60 * 24));
+  }
 }
