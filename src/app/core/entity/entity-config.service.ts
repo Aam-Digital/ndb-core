@@ -61,9 +61,9 @@ export class EntityConfigService {
         )
       );
     }
-    // if (entityConfig?.toString) {
-    entityType.lalelu = entityConfig.toString || ["entityId"];
-    // }
+    if (entityConfig?.toStringAttributes) {
+      entityType.toStringAttributes = entityConfig.toStringAttributes;
+    }
   }
 
   /**
@@ -98,5 +98,11 @@ export interface EntityConfig {
     schema: EntitySchemaField;
   }[];
 
-  toString: string[];
+  /**
+   * A list of attributes which should be shown when calling the `.toString()` method of this entity.
+   * E.g. showing the first and last name of a child.
+   *
+   * (optional) the default is the ID of the entity (`.entityId`)
+   */
+  toStringAttributes?: string[];
 }

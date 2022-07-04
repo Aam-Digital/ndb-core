@@ -901,7 +901,7 @@ export const defaultJsonConfig = {
   },
 
   "entity:Child": {
-    toString: ["name", "age"],
+    toStringAttributes: ["name", "projectNumber", "motherTongue"],
     "attributes": [
       {
         "name": "address",
@@ -941,6 +941,7 @@ export const defaultJsonConfig = {
     ]
   },
   "entity:School": {
+    toStringAttributes: ["name"],
     "attributes": [
       {
         "name": "name",
@@ -993,6 +994,9 @@ export const defaultJsonConfig = {
       }
     ]
   },
+  "entity:RecurringActivity": {
+    toStringAttributes: ["title"],
+  },
   "entity:HistoricalEntityData": {
     "attributes": [
       {
@@ -1043,6 +1047,7 @@ export const defaultJsonConfig = {
     ]
   },
   "entity:User": {
+    toStringAttributes: ["name"],
     attributes: [
       {
         name: "email",

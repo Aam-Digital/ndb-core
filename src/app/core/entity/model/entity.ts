@@ -60,7 +60,12 @@ export class Entity {
    */
   static schema: EntitySchema;
 
-  static lalelu = ["entityId"];
+  /**
+   * Defining which attribute values of an entity should be shown in the `.toString()` method.
+   *
+   * The default is the ID of the entity (`entityId`).
+   */
+  static toStringAttributes = ["entityId"];
 
   /**
    * Extract the ENTITY_TYPE from an id.
@@ -193,15 +198,13 @@ export class Entity {
 
   /**
    * Returns a string representation or summary of the instance.
-   *
-   * <b>Important: Overwrite this method in subtypes!</b>
+   * This can be configured with the static `toStringAttributes` for each subclass.
    *
    * @returns {string} the instance's string representation.
    */
   public toString(): string {
-    console.log("lalelu", this.getConstructor().lalelu);
     return this.getConstructor()
-      .lalelu.map((prop) => this[prop])
+      .toStringAttributes.map((attr) => this[attr])
       .join(" ");
   }
 
