@@ -198,8 +198,11 @@ export const defaultJsonConfig = {
           }
         },
         {
+          "component": "BirthdayDashboard"
+        },
+        {
           "component": "ChildrenBmiDashboard"
-        }
+        },
       ]
     }
   },
