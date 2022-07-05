@@ -43,6 +43,8 @@ export class RecurringActivity extends Entity {
     return (note?.relatesTo ?? "").startsWith(RecurringActivity.ENTITY_TYPE);
   }
 
+  static toStringAttributes = ["title"];
+
   /** primary name to identify the activity */
   @DatabaseField({
     label: $localize`:Label for the title of a recurring activity:Title`,

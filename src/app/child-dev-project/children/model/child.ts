@@ -38,6 +38,8 @@ export class Child extends Entity {
     return "ChildBlock";
   }
 
+  static toStringAttributes = ["name"];
+
   @DatabaseField({
     label: $localize`:Label for the name of a child:Name`,
     validators: {

@@ -25,8 +25,6 @@ import { AppConfig } from "./app/core/app-config/app-config";
 // Import hammer.js to enable gestures
 // on mobile devices
 import "hammerjs";
-console.log("main");
-(window as any).__Zone_disable_toString = true; // Zone will not patch Function.prototype.toString
 
 if (environment.production) {
   enableProdMode();

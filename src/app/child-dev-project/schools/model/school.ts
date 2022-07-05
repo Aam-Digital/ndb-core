@@ -14,6 +14,8 @@ export class School extends Entity {
     return school;
   }
 
+  static toStringAttributes = ["name"];
+
   @DatabaseField({
     label: $localize`:Label for the name of a school:Name`,
     validators: {

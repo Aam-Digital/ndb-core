@@ -28,6 +28,8 @@ import CryptoES from "crypto-es";
  */
 @DatabaseEntity("User")
 export class User extends Entity {
+  static toStringAttributes = ["name"];
+
   /** username used for login and identification */
   @DatabaseField({
     label: $localize`:Label of username:Username`,
