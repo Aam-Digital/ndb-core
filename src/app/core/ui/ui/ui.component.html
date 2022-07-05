@@ -18,7 +18,7 @@
 <!-- HEADER TOOLBAR -->
 <mat-toolbar color="primary" class="app-header mat-elevation-z2 mat-typography">
   <mat-toolbar-row fxLayout="row">
-    <span fxFlex *ngIf="isLoggedIn() && sideNavMode == 'over'">
+    <span fxFlex *ngIf="isLoggedIn() && sideNavMode === 'over'">
       <button mat-icon-button (click)="sideNav.toggle()">
         <fa-icon class="header-icon" icon="bars"></fa-icon>
       </button>
@@ -43,7 +43,7 @@
 
     <app-search
       *ngIf="isLoggedIn()"
-      [fxFlex]="sideNavMode == 'side' ? 'grow' : 'none'"
+      [fxFlex]="sideNavMode === 'side' ? 'grow' : 'none'"
     ></app-search>
 
     <app-sync-status></app-sync-status>
@@ -65,7 +65,7 @@
     *ngIf="isLoggedIn()"
     [autoFocus]="false"
     [mode]="sideNavMode"
-    [opened]="sideNavMode == 'side'"
+    [opened]="sideNavMode === 'side'"
     disableClose
     fixedInViewport="true"
     class="sidenav-menu"

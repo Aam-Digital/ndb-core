@@ -17,7 +17,6 @@
 
 import { Component, OnInit } from "@angular/core";
 import { SessionService } from "../../session/session-service/session.service";
-import { WebdavModule } from "../../webdav/webdav.module";
 import { UserAccountService } from "./user-account.service";
 import { FormBuilder, ValidationErrors, Validators } from "@angular/forms";
 import { AppConfig } from "../../app-config/app-config";
@@ -37,9 +36,6 @@ import { RouteTarget } from "../../../app.routing";
 export class UserAccountComponent implements OnInit {
   /** user to be edited */
   username: string;
-
-  /** whether webdav integration is configured and the cloud settings section should be displayed */
-  webdavEnabled = WebdavModule.isEnabled;
 
   /** whether password change is disallowed because of demo mode */
   disabledForDemoMode: boolean;
@@ -122,8 +118,8 @@ export class UserAccountComponent implements OnInit {
 
   private passwordMatchValidator(): ValidationErrors | null {
     const newPassword: string = this?.passwordForm?.get("newPassword")?.value;
-    const confirmPassword: string = this?.passwordForm?.get("confirmPassword")
-      ?.value;
+    const confirmPassword: string =
+      this?.passwordForm?.get("confirmPassword")?.value;
     if (newPassword !== confirmPassword) {
       this.passwordForm
         .get("confirmPassword")

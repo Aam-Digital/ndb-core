@@ -1,11 +1,10 @@
 import { TestBed } from "@angular/core/testing";
 
 import { AnalyticsService } from "./analytics.service";
-import { Angulartics2Module } from "angulartics2";
+import { Angulartics2Matomo, Angulartics2Module } from "angulartics2";
 import { RouterTestingModule } from "@angular/router/testing";
 import { ConfigService } from "../config/config.service";
 import { UsageAnalyticsConfig } from "./usage-analytics-config";
-import { Angulartics2Matomo } from "angulartics2/matomo";
 import { AppConfig } from "../app-config/app-config";
 import { IAppConfig } from "../app-config/app-config.model";
 import { Subject } from "rxjs";

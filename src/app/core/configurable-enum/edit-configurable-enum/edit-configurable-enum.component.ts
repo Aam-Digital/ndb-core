@@ -19,7 +19,7 @@ export class EditConfigurableEnumComponent extends EditComponent<ConfigurableEnu
   multi = false;
   compareFun = compareEnums;
 
-  onInitFromDynamicConfig(config: EditPropertyConfig) {
+  onInitFromDynamicConfig(config: EditPropertyConfig<ConfigurableEnumValue>) {
     super.onInitFromDynamicConfig(config);
     if (config.propertySchema.dataType === arrayEntitySchemaDatatype.name) {
       this.multi = true;

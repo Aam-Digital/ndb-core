@@ -33,11 +33,11 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
     const child = new Child(id);
     child.name = faker.name.firstName() + " " + faker.name.lastName();
     child.projectNumber = id;
-    child["religion"] = faker.random.arrayElement(religions);
-    child.gender = faker.random.arrayElement(genders.slice(1));
+    child["religion"] = faker.helpers.arrayElement(religions);
+    child.gender = faker.helpers.arrayElement(genders.slice(1));
     child.dateOfBirth = faker.dateOfBirth(5, 20);
-    child["motherTongue"] = faker.random.arrayElement(languages);
-    child.center = faker.random.arrayElement(centersWithProbability);
+    child["motherTongue"] = faker.helpers.arrayElement(languages);
+    child.center = faker.helpers.arrayElement(centersWithProbability);
     child.phone =
       "+" +
       faker.datatype.number({ min: 10, max: 99 }) +
@@ -59,7 +59,7 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
   private static makeChildDropout(child: Child) {
     child.dropoutDate = faker.date.between(child.admissionDate, new Date());
     child.dropoutRemarks = faker.lorem.sentence();
-    child.dropoutType = faker.random.arrayElement(dropoutTypes);
+    child.dropoutType = faker.helpers.arrayElement(dropoutTypes);
     child.status = $localize`:Child status:Dropout`;
   }
 
