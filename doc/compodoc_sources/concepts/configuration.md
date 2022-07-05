@@ -328,7 +328,7 @@ Example:
 
 ### Entity
 The entity object within the config file can be used to extend and configure existing entities.
-The name of the entity to which this config refers comes ofter the colon in this case `"child"`.
+The name of the entity to which this config refers comes after the colon in this case `"child"`.
 
 #### Attributes
 The attribute field allows to add attributes to an entity:
@@ -347,6 +347,26 @@ Example:
 
 ```
 
+#### String representation
+It is possible to overwrite, how an entity is converted to a string using the optional `toStringAttributes` key.
+This expects an array of strings referring to properties of that child which should be printed out.
+The order of these strings is also the order in which the property values are printed.
+
+E.g. while some projects use a `name` property on a child, others might use `firstname` and `lastname`.
+In this case they probably want to show both the first and the last name in the app.
+To achieve this, the configuration of the `Child` entity can be extended like this:
+
+```json
+"entity:Child": {
+    "toStringAttributes": ["firstname", "lastname"],
+    "attributes": [
+        {"name": "firstname", "schema": { "dataType": "string", "label": "First name" } },
+        {"name": "lastname", "schema": { "dataType": "string", "label": "Last name" } },
+        ...
+    ]
+}
+
+```
 #### Permissions
 Permissions for interaction on entities can be given or denied using the config.
 This will disable buttons in the app to create, delete or edit entities if the user is not permitted.
