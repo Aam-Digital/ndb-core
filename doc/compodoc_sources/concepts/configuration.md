@@ -367,28 +367,6 @@ To achieve this, the configuration of the `Child` entity can be extended like th
 }
 
 ```
-#### Permissions
-Permissions for interaction on entities can be given or denied using the config.
-This will disable buttons in the app to create, delete or edit entities if the user is not permitted.
-
-The following example will only allow `admin` users to create, edit and delete `School` objects:
-```json
-"entity:School": {
-  "permissions": {
-    "create": ["admin"],
-    "update": ["admin"],
-    "delete": ["admin"]
-  }
-}
-```
-Buttons can be marked as part of an interaction using the `appDisableEntityInteraction` directive:
-```html
-<button
-  (click)="switchEdit()"
-  *appDisableEntityOperation="{entity: entity?.getConstructor(), operation: operationType.UPDATE}"
->Edit</button>
-```
-This will disable the button if the current user is not allowed to perform the update operation on the given entity.
 
 ### Option Lists
 Option lists or `ConfigurableEnumValue`s can provide a pre-set list of options for a field
