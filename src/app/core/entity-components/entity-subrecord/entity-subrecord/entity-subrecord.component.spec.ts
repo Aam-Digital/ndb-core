@@ -17,7 +17,7 @@ import { ConfigurableEnumValue } from "../../../configurable-enum/configurable-e
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { Note } from "../../../../child-dev-project/notes/model/note";
 import { AlertService } from "../../../alerts/alert.service";
-import { FormBuilder, FormGroup } from "@angular/forms";
+import { UntypedFormBuilder, UntypedFormGroup } from "@angular/forms";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 import { genders } from "../../../../child-dev-project/children/model/genders";
 import { LoggingService } from "../../../logging/logging.service";
@@ -202,7 +202,7 @@ describe("EntitySubrecordComponent", () => {
     ]);
     const entityMapper = TestBed.inject(EntityMapperService);
     spyOn(entityMapper, "save").and.resolveTo();
-    const fb = TestBed.inject(FormBuilder);
+    const fb = TestBed.inject(UntypedFormBuilder);
     const child = new Child();
     child.name = "Old Name";
     const formGroup = fb.group({
@@ -235,7 +235,7 @@ describe("EntitySubrecordComponent", () => {
   }));
 
   it("should clear the form group when resetting", () => {
-    const row = { record: new Child(), formGroup: new FormGroup({}) };
+    const row = { record: new Child(), formGroup: new UntypedFormGroup({}) };
 
     component.resetChanges(row);
 

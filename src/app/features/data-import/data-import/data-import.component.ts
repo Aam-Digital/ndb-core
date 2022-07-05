@@ -3,6 +3,7 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
+  FormRecord,
   Validators,
 } from "@angular/forms";
 import { DataImportService } from "../data-import.service";
@@ -42,7 +43,7 @@ export class DataImportComponent {
     dateFormat: [""],
   });
 
-  columnMappingForm = new FormGroup({});
+  columnMappingForm = new FormRecord<FormControl<string>>({});
   private properties: string[] = [];
   filteredProperties = new BehaviorSubject<string[]>([]);
 
@@ -62,7 +63,7 @@ export class DataImportComponent {
     try {
       this.csvFile = await this.loadCSVFile(file);
       this.fileNameForm.setValue({ fileName: file.name });
-      this.columnMappingForm = new FormGroup({});
+      this.columnMappingForm = new FormRecord<FormControl<string>>({});
       this.csvFile.meta.fields.forEach((field) =>
         this.columnMappingForm.addControl(field, new FormControl())
       );
@@ -90,7 +91,7 @@ export class DataImportComponent {
         this.entityForm.disable();
         this.entitySelectionChanged();
       }
-      this.transactionIDForm.patchValue({ transactionID: "" });
+      this.transactionIDForm.patchValue({ transactionId: "" });
       this.transactionIDForm.disable();
     }
     return csvFile;

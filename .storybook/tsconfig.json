@@ -4,7 +4,8 @@
     "types": [
       "node",
       "jasmine"
-    ]
+    ],
+    "allowSyntheticDefaultImports": true
   },
   "exclude": [
     "../src/test.ts",

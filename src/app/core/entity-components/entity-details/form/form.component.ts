@@ -20,8 +20,8 @@ import { DynamicComponent } from "../../../view/dynamic-components/dynamic-compo
     [columns]="columns"
     [columnHeaders]="headers"
     [editing]="creatingNew"
-    (onSave)="saveClicked($event)"
-    (onCancel)="cancelClicked()"
+    (save)="saveClicked($event)"
+    (cancel)="cancelClicked()"
   ></app-entity-form>`,
 })
 export class FormComponent implements OnInitDynamicComponent {

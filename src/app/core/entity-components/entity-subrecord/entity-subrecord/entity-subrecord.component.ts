@@ -13,9 +13,11 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { AlertService } from "../../../alerts/alert.service";
 import { Subscription } from "rxjs";
-import { FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
-import { EntityFormService } from "../../entity-form/entity-form.service";
+import {
+  EntityForm,
+  EntityFormService,
+} from "../../entity-form/entity-form.service";
 import { MatDialog } from "@angular/material/dialog";
 import { LoggingService } from "../../../logging/logging.service";
 import { AnalyticsService } from "../../../analytics/analytics.service";
@@ -27,9 +29,9 @@ import {
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { tableSort } from "./table-sort";
 
-export interface TableRow<T> {
+export interface TableRow<T extends Entity> {
   record: T;
-  formGroup?: FormGroup;
+  formGroup?: EntityForm<T>;
 }
 
 /**
@@ -52,7 +54,8 @@ export interface TableRow<T> {
   styleUrls: ["./entity-subrecord.component.scss"],
 })
 export class EntitySubrecordComponent<T extends Entity>
-  implements OnChanges, OnInit {
+  implements OnChanges, OnInit
+{
   @Input() isLoading: boolean;
 
   /** configuration what kind of columns to be generated for the table */
