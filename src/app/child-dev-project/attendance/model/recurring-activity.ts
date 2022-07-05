@@ -29,6 +29,8 @@ import { School } from "../../schools/model/school";
 
 @DatabaseEntity("RecurringActivity")
 export class RecurringActivity extends Entity {
+  static toStringAttributes = ["title"];
+
   static create(title: string = ""): RecurringActivity {
     const instance = new RecurringActivity();
     instance.title = title;
@@ -42,8 +44,6 @@ export class RecurringActivity extends Entity {
   static isActivityEventNote(note: Note) {
     return (note?.relatesTo ?? "").startsWith(RecurringActivity.ENTITY_TYPE);
   }
-
-  static toStringAttributes = ["title"];
 
   /** primary name to identify the activity */
   @DatabaseField({

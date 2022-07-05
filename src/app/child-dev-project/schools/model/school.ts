@@ -4,6 +4,8 @@ import { DatabaseField } from "../../../core/entity/database-field.decorator";
 
 @DatabaseEntity("School")
 export class School extends Entity {
+  static toStringAttributes = ["name"];
+
   static getBlockComponent(): string {
     return "SchoolBlock";
   }
@@ -13,8 +15,6 @@ export class School extends Entity {
     Object.assign(school, params);
     return school;
   }
-
-  static toStringAttributes = ["name"];
 
   @DatabaseField({
     label: $localize`:Label for the name of a school:Name`,

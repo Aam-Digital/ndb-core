@@ -28,6 +28,8 @@ import { ChildPhotoService } from "../child-photo-service/child-photo.service";
 export type Center = ConfigurableEnumValue;
 @DatabaseEntity("Child")
 export class Child extends Entity {
+  static toStringAttributes = ["name"];
+
   static create(name: string): Child {
     const instance = new Child();
     instance.name = name;
@@ -37,8 +39,6 @@ export class Child extends Entity {
   static getBlockComponent(): string {
     return "ChildBlock";
   }
-
-  static toStringAttributes = ["name"];
 
   @DatabaseField({
     label: $localize`:Label for the name of a child:Name`,

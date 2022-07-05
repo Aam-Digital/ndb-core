@@ -64,6 +64,7 @@ export class Entity {
    * Defining which attribute values of an entity should be shown in the `.toString()` method.
    *
    * The default is the ID of the entity (`entityId`).
+   * This can be overwritten in subclasses or through the config.
    */
   static toStringAttributes = ["entityId"];
 
