@@ -23,7 +23,7 @@
       <img [src]="entity?.photo?.photo?.value" class="child-pic-large" alt=""/>
     </div>
     <div fxFlex="grow">
-      <h3>{{ entity?.name }}</h3>
+      <h3>{{ entity?.toString() }}</h3>
       <p>
         <fa-icon icon="phone"></fa-icon>
         {{ entity?.phone }}</p>

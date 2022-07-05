@@ -99,7 +99,7 @@ export class ChildrenListComponent implements OnInit {
     schools.forEach((school) =>
       options.push({
         key: school.getId(),
-        label: school.name,
+        label: school.toString(),
         filterFun: (c) => c.schoolId === school.getId(),
       })
     );
