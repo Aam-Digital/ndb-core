@@ -8,7 +8,6 @@ import { NotesManagerComponent } from "./notes-manager/notes-manager.component";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatTableModule } from "@angular/material/table";
-import { FlexLayoutModule } from "@angular/flex-layout";
 import { RouterModule } from "@angular/router";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -63,7 +62,6 @@ import { ImportantNotesComponent } from "./dashboard-widgets/important-notes/imp
     CommonModule,
     FormsModule,
     ConfirmationDialogModule,
-    FlexLayoutModule,
     RouterModule,
     MatFormFieldModule,
     MatInputModule,

@@ -29,6 +29,8 @@ import { School } from "../../schools/model/school";
 
 @DatabaseEntity("RecurringActivity")
 export class RecurringActivity extends Entity {
+  static toStringAttributes = ["title"];
+
   static create(title: string = ""): RecurringActivity {
     const instance = new RecurringActivity();
     instance.title = title;
@@ -93,9 +95,5 @@ export class RecurringActivity extends Entity {
 
   isAssignedTo(username: string): boolean {
     return !!this.assignedTo.find((name) => username === name);
-  }
-
-  toString(): string {
-    return this.title;
   }
 }

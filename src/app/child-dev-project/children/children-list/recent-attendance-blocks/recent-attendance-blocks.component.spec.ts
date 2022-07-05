@@ -75,6 +75,7 @@ describe("RecentAttendanceBlocksComponent", () => {
     component.onInitFromDynamicConfig({
       entity: testChild,
       id: "",
+      value: undefined,
       config: {
         filterByActivityType: defaultInteractionTypes[1].id,
       },

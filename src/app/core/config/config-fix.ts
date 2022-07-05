@@ -204,8 +204,11 @@ export const defaultJsonConfig = {
           }
         },
         {
+          "component": "BirthdayDashboard"
+        },
+        {
           "component": "ChildrenBmiDashboard"
-        }
+        },
       ]
     }
   },
@@ -308,7 +311,44 @@ export const defaultJsonConfig = {
     "permittedUserRoles": ["admin_app"]
   },
   "view:users": {
-    "component": "UserList",
+    "component": "EntityList",
+    "config": {
+      "title": $localize`:Title for user overview:Users`,
+      "entity": "User",
+      "columns": ["name", "email", "phone"]
+    },
+    "permittedUserRoles": ["admin_app"]
+  },
+  "view:users/:id": {
+    "component": "EntityDetails",
+    "config": {
+      "entity": "User",
+      "panels": [
+        {
+          "title": $localize`:Panel title:User Information`,
+          "components": [
+            {
+              "title": "",
+              "component": "Form",
+              "config": {
+                "cols": [
+                  [
+                    "name",
+                  ],
+                  [
+                    "email"
+                  ],
+                  [
+                    "phone"
+                  ]
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "icon": "user"
+    },
     "permittedUserRoles": ["admin_app"]
   },
   "view:admin/conflicts": {
@@ -328,9 +368,10 @@ export const defaultJsonConfig = {
     "component": "AddDayAttendance"
   },
   "view:school": {
-    "component": "SchoolsList",
+    "component": "EntityList",
     "config": {
       "title": $localize`:Title of schools overview:Schools List`,
+      "entity": "School",
       "columns": [
         "name",
         "privateSchool",
@@ -351,6 +392,7 @@ export const defaultJsonConfig = {
     "component": "EntityDetails",
     "config": {
       "entity": "School",
+      "title": $localize`:Title when adding new entity|e.g. Add new School or Group:School or Group`,
       "panels": [
         {
           "title": $localize`:Panel title:Basic Information`,
@@ -685,11 +727,11 @@ export const defaultJsonConfig = {
       ]
     }
   },
-
   "view:attendance/recurring-activity": {
-    "component": "ActivityList",
+    "component": "EntityList",
     "config": {
       "title": $localize`:Title of recurring activities overview:Recurring Activities`,
+      "entity": "RecurringActivity",
       "columns": [
         "title",
         "type",
@@ -1004,6 +1046,24 @@ export const defaultJsonConfig = {
           "innerDataType": "rating-answer",
           label: $localize`:Label for a child attribute:Asking Questions`,
           description: $localize`:Description for a child attribute:The child is asking questions during the class.`
+        }
+      },
+    ]
+  },
+  "entity:User": {
+    attributes: [
+      {
+        name: "email",
+        schema: {
+          dataType: "string",
+          label: $localize`:Label of user email:Email`
+        }
+      },
+      {
+        name: "phone",
+        schema: {
+          dataType: "string",
+          label: $localize`:Label of user phone:Contact`
         }
       },
     ]

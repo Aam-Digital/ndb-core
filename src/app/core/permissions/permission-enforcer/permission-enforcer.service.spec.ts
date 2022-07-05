@@ -212,7 +212,21 @@ describe("PermissionEnforcerService", () => {
     );
   }));
 
-  async function updateRulesAndTriggerEnforcer(rules: DatabaseRule[]) {
+  it("should not fail if a non-entity rule exists", fakeAsync(() => {
+    const rules: DatabaseRule[] = [
+      { subject: "Child", action: "manage" },
+      { subject: "org.couchdb.user", action: "read", inverted: true },
+    ];
+    updateRulesAndTriggerEnforcer(rules);
+    tick();
+
+    const storedRules = localStorage.getItem(
+      `${TEST_USER}-${PermissionEnforcerService.LOCALSTORAGE_KEY}`
+    );
+    expect(JSON.parse(storedRules)).toEqual(rules);
+  }));
+
+  function updateRulesAndTriggerEnforcer(rules: DatabaseRule[]) {
     const role = mockSession.getCurrentUser().roles[0];
     const config = new Config(Config.PERMISSION_KEY, { [role]: rules });
     entityUpdates.next({ entity: config, type: "update" });

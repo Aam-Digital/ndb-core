@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { Angulartics2Matomo } from "angulartics2/matomo";
 import { environment } from "../../../environments/environment";
 import { AppConfig } from "../app-config/app-config";
 import { ConfigService } from "../config/config.service";
@@ -7,7 +6,7 @@ import {
   USAGE_ANALYTICS_CONFIG_ID,
   UsageAnalyticsConfig,
 } from "./usage-analytics-config";
-import { Angulartics2 } from "angulartics2";
+import { Angulartics2, Angulartics2Matomo } from "angulartics2";
 import md5 from "md5";
 
 /**

@@ -1,0 +1,42 @@
+<app-dashboard-widget
+  icon="birthday-cake"
+  theme="child"
+  title="Birthdays"
+  i18n-title="Title of the birthday widget"
+  subtitle="Upcoming Birthdays"
+  i18n-subtitle="Subtitle of the birthday widget"
+  explanation="Children whose birthday is soon"
+  i18n-explanation="Tooltip for the birthday widget"
+  [loading]="isLoading"
+>
+  <app-widget-content>
+    <div *ngIf="childrenDataSource.data.length > 0" class="table-wrapper">
+      <table mat-table [dataSource]="childrenDataSource">
+        <tr hidden="true">
+          <th scope="col">Child Name</th>
+          <th scope="col">DateOfBirth</th>
+          <th scope="col">AfterBirthdayAge</th>
+        </tr>
+        <ng-container matColumnDef="child">
+          <td mat-cell *matCellDef="let child">
+            <app-child-block [entity]="child.child"></app-child-block>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="dateOfBirth">
+          <td mat-cell *matCellDef="let child">{{ child.birthday | date:"E dd.MM" }} </td>
+        </ng-container>
+        <ng-container matColumnDef="age">
+          <td mat-cell *matCellDef="let child" i18n>{{child.child?.age + 1}} yrs</td>
+        </ng-container>
+        <tr mat-row *matRowDef="let row; columns: ['child','dateOfBirth','age'];">
+        </tr>
+      </table>
+    </div>
+    <mat-paginator
+      [style.display]="paginator.getNumberOfPages() === 0 ? 'none' : ''"
+      [pageSizeOptions]="[5]"
+      hidePageSize
+      #paginator>
+    </mat-paginator>
+  </app-widget-content>
+</app-dashboard-widget>

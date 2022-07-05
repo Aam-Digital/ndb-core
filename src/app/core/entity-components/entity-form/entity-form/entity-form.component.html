@@ -4,7 +4,7 @@
       *ngIf="form?.enabled"
       mat-raised-button
       class="action-button"
-      (click)="save()"
+      (click)="saveForm()"
       i18n="Save button for forms"
     >
       Save
@@ -14,7 +14,7 @@
       *ngIf="form?.enabled"
       mat-raised-button
       class="action-button"
-      (click)="cancel()"
+      (click)="cancelClicked()"
       i18n="Cancel button for forms"
     >
       Cancel
