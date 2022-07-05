@@ -27,6 +27,8 @@ import { DatabaseField } from "../entity/database-field.decorator";
  */
 @DatabaseEntity("User")
 export class User extends Entity {
+  static toStringAttributes = ["name"];
+
   /** username used for login and identification */
   @DatabaseField({
     label: $localize`:Label of username:Username`,
@@ -44,8 +46,4 @@ export class User extends Entity {
    */
   @DatabaseField() paginatorSettingsPageSize: { [id: string]: number } = {};
   public paginatorSettingsPageIndex: { [id: string]: number } = {};
-
-  toString(): string {
-    return this.name;
-  }
 }
