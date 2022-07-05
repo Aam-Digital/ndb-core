@@ -25,21 +25,21 @@ $table-padding            : $table-padding-vertical $table-padding-horizontal;
   margin-bottom: sizes.$large;
 
   &--body {
-    tr:nth-of-type(odd) {
+    > tr:nth-of-type(odd) {
       background-color: $table-odd-color;
       border-top: $table-border;
       border-bottom: $table-border;
     }
 
-    tr:nth-of-type(even) {
+    > tr:nth-of-type(even) {
       background-color: $table-even-color;
     }
 
-    tr td:first-child {
+    > tr td:first-child {
       width: 25%;
     }
 
-    tr td:nth-child(2) {
+    > tr td:nth-child(2) {
       width: 75%;
     }
   }
