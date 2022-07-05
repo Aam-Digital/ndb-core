@@ -13,8 +13,8 @@ import { ChildSchoolRelation } from "../../../../../child-dev-project/children/m
 import { School } from "../../../../../child-dev-project/schools/model/school";
 import { EntityUtilsModule } from "../../entity-utils.module";
 import { Child } from "../../../../../child-dev-project/children/model/child";
-import { TypedFormControl } from "../edit-component";
 import { MockedTestingModule } from "../../../../../utils/mocked-testing.module";
+import { FormControl } from "@angular/forms";
 
 describe("EditSingleEntityComponent", () => {
   let component: EditSingleEntityComponent;
@@ -32,9 +32,13 @@ describe("EditSingleEntityComponent", () => {
     fixture = TestBed.createComponent(EditSingleEntityComponent);
     component = fixture.componentInstance;
     const entityFormService = TestBed.inject(EntityFormService);
-    component.formControl = entityFormService
-      .createFormGroup([{ id: "schoolId" }], new ChildSchoolRelation())
-      .get("schoolId") as TypedFormControl<string>;
+    component.parent = entityFormService.createFormGroup(
+      [{ id: "schoolId" }],
+      new ChildSchoolRelation()
+    );
+    component.formControl = component.parent.get(
+      "schoolId"
+    ) as FormControl<string>;
     component.formControlName = "schoolId";
     fixture.detectChanges();
   });

@@ -50,7 +50,7 @@ describe("PwaInstallComponent", () => {
   });
 
   it("should call installPWA when no install instructions are defined and remove button once confirmed", fakeAsync(() => {
-    pwaInstallResult.next();
+    pwaInstallResult.next(undefined);
 
     const component = createComponent();
     tick();

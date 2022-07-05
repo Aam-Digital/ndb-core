@@ -41,19 +41,14 @@ export class FormDialogService {
     });
 
     dialogRef.componentInstance.entity = entity;
-    if (
-      typeof (dialogRef.componentInstance as OnInitDynamicComponent)
-        .onInitFromDynamicConfig === "function"
-    ) {
-      (dialogRef.componentInstance as OnInitDynamicComponent).onInitFromDynamicConfig(
-        componentConfig
-      );
+    if (this.isDynamicComponent(dialogRef.componentInstance)) {
+      dialogRef.componentInstance.onInitFromDynamicConfig(componentConfig);
     }
 
     const dialogWrapper = dialogRef.componentInstance.formDialogWrapper;
     dialogWrapper.readonly = this.ability.cannot("update", entity);
 
-    dialogWrapper.onClose.subscribe((res) => dialogRef.close(res));
+    dialogWrapper.close.subscribe((res) => dialogRef.close(res));
 
     dialogRef.beforeClosed().subscribe((activelyClosed) => {
       if (!activelyClosed && dialogWrapper.isFormDirty) {
@@ -69,5 +64,9 @@ export class FormDialogService {
     });
 
     return dialogRef;
+  }
+
+  private isDynamicComponent(component): component is OnInitDynamicComponent {
+    return typeof component.onInitFromDynamicConfig === "function";
   }
 }

@@ -57,7 +57,6 @@ import { ViewModule } from "../../core/view/view.module";
 import { ChildBlockComponent } from "./child-block/child-block.component";
 import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
-import { WebdavModule } from "../../core/webdav/webdav.module";
 import { BmiBlockComponent } from "./children-list/bmi-block/bmi-block.component";
 import { ChildrenBmiDashboardComponent } from "./dashboard-widgets/children-bmi-dashboard/children-bmi-dashboard.component";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
@@ -98,7 +97,6 @@ import { BirthdayDashboardComponent } from "./dashboard-widgets/birthday-dashboa
     ReactiveFormsModule,
     MatDialogModule,
     MatListModule,
-    WebdavModule,
     MatProgressSpinnerModule,
     ConfirmationDialogModule,
     FormDialogModule,

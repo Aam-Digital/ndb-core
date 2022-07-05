@@ -1,4 +1,4 @@
-import originalFaker from "faker/locale/en_IND";
+import { faker as originalFaker } from "@faker-js/faker/locale/en_IND";
 /**
  * Extension of faker.js implementing additional data generation methods.
  */

@@ -1,7 +1,7 @@
 import { UpdateManagerService } from "./update-manager.service";
 import { discardPeriodicTasks, fakeAsync, tick } from "@angular/core/testing";
 import { ApplicationRef } from "@angular/core";
-import { SwUpdate, UpdateActivatedEvent } from "@angular/service-worker";
+import { SwUpdate, VersionEvent } from "@angular/service-worker";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { Subject } from "rxjs";
@@ -10,7 +10,7 @@ describe("UpdateManagerService", () => {
   let service: UpdateManagerService;
   let location: jasmine.SpyObj<Location>;
   let swUpdate: jasmine.SpyObj<SwUpdate>;
-  let updateSubject: Subject<UpdateActivatedEvent>;
+  let updateSubject: Subject<Partial<VersionEvent>>;
   let snackBar: jasmine.SpyObj<MatSnackBar>;
   let snackBarAction: Subject<void>;
   let appRef: jasmine.SpyObj<ApplicationRef>;
@@ -19,9 +19,9 @@ describe("UpdateManagerService", () => {
 
   beforeEach(() => {
     location = jasmine.createSpyObj(["reload"]);
-    updateSubject = new Subject<UpdateActivatedEvent>();
+    updateSubject = new Subject();
     swUpdate = jasmine.createSpyObj(["checkForUpdate"], {
-      available: updateSubject,
+      versionUpdates: updateSubject,
       isEnabled: true,
     });
     swUpdate.checkForUpdate.and.resolveTo();
@@ -44,7 +44,7 @@ describe("UpdateManagerService", () => {
   it("should show a snackBar that allows to reload the page when an update is available", fakeAsync(() => {
     service.notifyUserWhenUpdateAvailable();
     // notify about new update
-    updateSubject.next();
+    updateSubject.next({ type: "VERSION_READY" });
     tick();
 
     expect(snackBar.open).toHaveBeenCalled();
@@ -78,7 +78,7 @@ describe("UpdateManagerService", () => {
       version
     );
     service.notifyUserWhenUpdateAvailable();
-    updateSubject.next();
+    updateSubject.next({ type: "VERSION_READY" });
 
     expect(
       window.localStorage.getItem(LatestChangesDialogService.VERSION_KEY)
