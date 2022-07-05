@@ -353,11 +353,7 @@ export class EntitySubrecordComponent<T extends Entity>
   private showRowDetails(entity: T) {
     const columnsToDisplay = this._columns
       .filter((col) => col.edit)
-      .map((col) => {
-        col.forTable = false;
-        return col;
-      })
-      .map((col) => Object.assign({}, col));
+      .map((col) => Object.assign({}, col, { forTable: false }));
     this.dialog.open(RowDetailsComponent, {
       width: "80%",
       maxHeight: "90vh",

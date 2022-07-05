@@ -21,6 +21,8 @@ describe("DisplayDateComponent", () => {
     component.onInitFromDynamicConfig({
       entity: new ChildSchoolRelation(),
       id: "date",
+      value: new Date(),
+      config: "dd-MM-yyyy",
     });
     fixture.detectChanges();
   });

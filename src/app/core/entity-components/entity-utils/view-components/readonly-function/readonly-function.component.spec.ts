@@ -24,6 +24,7 @@ describe("ReadonlyFunctionComponent", () => {
     component.onInitFromDynamicConfig({
       entity: Child.create("nameBefore"),
       id: "",
+      value: undefined,
       config: (entity) => entity.name,
     });
     fixture.detectChanges();
