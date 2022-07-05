@@ -126,7 +126,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
 
   allEntities: E[] = [];
   filteredEntities: Observable<E[]>;
-  formControl = new FormControl();
+  formControl = new FormControl("");
 
   @ViewChild("inputField") inputField: ElementRef<HTMLInputElement>;
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
@@ -179,7 +179,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * whatever the accessor defines)
    * @param event the event to call this with
    */
-  select(event: MatChipInputEvent) {
+  select(event: Pick<MatChipInputEvent, "value">) {
     const value = event.value;
 
     if (value) {

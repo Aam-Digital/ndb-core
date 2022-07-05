@@ -1,6 +1,6 @@
 <div
-  *ngIf="entity[property]"
-  [ngStyle]="resultColorStyleBuilder(entity[property])"
+  *ngIf="value"
+  [ngStyle]="resultColorStyleBuilder(value)"
 >
-  {{ entity[property] + "%" }}
+  {{ value + "%" }}
 </div>

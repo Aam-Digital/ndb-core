@@ -2,14 +2,12 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EditConfigurableEnumComponent } from "./edit-configurable-enum.component";
 import { EntityDetailsModule } from "../../entity-components/entity-details/entity-details.module";
-import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule, FormControl, FormGroup } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ConfigService } from "../../config/config.service";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { ConfigurableEnumModule } from "../configurable-enum.module";
-import { TypedFormControl } from "../../entity-components/entity-utils/dynamic-form-components/edit-component";
-import { ConfigurableEnumValue } from "../configurable-enum.interface";
 
 describe("EditConfigurableEnumComponent", () => {
   let component: EditConfigurableEnumComponent;
@@ -37,11 +35,13 @@ describe("EditConfigurableEnumComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EditConfigurableEnumComponent);
     component = fixture.componentInstance;
-    const formControl = new FormControl();
-    const formGroup = new FormGroup({});
+    component.parent = new FormGroup({});
     component.formControlName = "testControl";
-    component.formControl = formControl as TypedFormControl<ConfigurableEnumValue>;
-    formGroup.registerControl(component.formControlName, formControl);
+    component.formControl = new FormControl({ id: "", label: "" });
+    component.parent.registerControl(
+      component.formControlName,
+      component.formControl
+    );
     component.enumId = "";
     fixture.detectChanges();
   });

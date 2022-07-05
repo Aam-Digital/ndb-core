@@ -144,13 +144,13 @@ describe("EntitySelectComponent", () => {
 
   it("adds a new entity if it matches a known entity", () => {
     component.allEntities = testUsers;
-    component.select({ input: null, value: testUsers[0]["name"] });
+    component.select({ value: testUsers[0]["name"] });
     expect(component.selectedEntities).toEqual([testUsers[0]]);
   });
 
   it("does not add anything if a new entity doesn't match", () => {
     component.allEntities = testUsers;
-    component.select({ input: null, value: "ZZ" });
+    component.select({ value: "ZZ" });
     expect(component.selectedEntities).toBeEmpty();
   });
 

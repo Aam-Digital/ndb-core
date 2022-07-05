@@ -11,7 +11,7 @@ import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-co
 export class EditEntityArrayComponent extends EditComponent<string[]> {
   placeholder: string;
   entityName: string;
-  onInitFromDynamicConfig(config: EditPropertyConfig) {
+  onInitFromDynamicConfig(config: EditPropertyConfig<string[]>) {
     super.onInitFromDynamicConfig(config);
     this.entityName =
       config.formFieldConfig.additional || config.propertySchema.additional;

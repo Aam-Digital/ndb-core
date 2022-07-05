@@ -67,6 +67,7 @@ describe("BmiBlockComponent", () => {
     component.onInitFromDynamicConfig({
       entity: testChild,
       id: "",
+      value: undefined,
     });
     expect(mockChildrenService.getHealthChecksOfChild).toHaveBeenCalledWith(
       testChild.getId()

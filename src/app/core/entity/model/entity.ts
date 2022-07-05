@@ -61,6 +61,14 @@ export class Entity {
   static schema: EntitySchema;
 
   /**
+   * Defining which attribute values of an entity should be shown in the `.toString()` method.
+   *
+   * The default is the ID of the entity (`entityId`).
+   * This can be overwritten in subclasses or through the config.
+   */
+  static toStringAttributes = ["entityId"];
+
+  /**
    * Extract the ENTITY_TYPE from an id.
    * @param id An entity's id including prefix.
    */
@@ -191,13 +199,14 @@ export class Entity {
 
   /**
    * Returns a string representation or summary of the instance.
-   *
-   * <b>Important: Overwrite this method in subtypes!</b>
+   * This can be configured with the static `toStringAttributes` for each subclass.
    *
    * @returns {string} the instance's string representation.
    */
   public toString(): string {
-    return this.getId();
+    return this.getConstructor()
+      .toStringAttributes.map((attr) => this[attr])
+      .join(" ");
   }
 
   /**

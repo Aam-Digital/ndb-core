@@ -31,7 +31,11 @@ describe("DisplayEntityArrayComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DisplayEntityArrayComponent);
     component = fixture.componentInstance;
-    component.onInitFromDynamicConfig({ entity: new Note(), id: "children" });
+    component.onInitFromDynamicConfig({
+      entity: new Note(),
+      id: "children",
+      value: [],
+    });
     fixture.detectChanges();
   });
 
