@@ -53,12 +53,12 @@ describe("FormDialogService", () => {
     expect(dialogRef.componentInstance.entity).toEqual(testEntity);
   });
 
-  it("should close dialog on form onClose", () => {
+  it("should close dialog on form close", () => {
     const testEntity: any = { name: "test" };
     const dialogRef = service.openDialog(TestComponent, testEntity);
 
     spyOn(dialogRef, "close");
-    dialogRef.componentInstance.formDialogWrapper.onClose.emit();
+    dialogRef.componentInstance.formDialogWrapper.close.emit();
 
     expect(dialogRef.close).toHaveBeenCalled();
   });
@@ -68,14 +68,15 @@ describe("FormDialogService", () => {
       selector: "app-test-component",
       template: "<div></div>",
     })
-    class TestComponentDynamic
-      implements ShowsEntity<Entity>, OnInitDynamicComponent {
+    class TestDynamicComponent
+      implements ShowsEntity<Entity>, OnInitDynamicComponent
+    {
       @Input() entity: Entity;
       public hasCalledInitFromDynamicConfig = false;
 
       // @ts-ignore
       formDialogWrapper: FormDialogWrapperComponent = {
-        onClose: new EventEmitter<Entity>(),
+        close: new EventEmitter<Entity>(),
         isFormDirty: false,
       };
 
@@ -85,7 +86,7 @@ describe("FormDialogService", () => {
     }
 
     const testEntity: any = { name: "test" };
-    const dialogRef = service.openDialog(TestComponentDynamic, testEntity);
+    const dialogRef = service.openDialog(TestDynamicComponent, testEntity);
 
     expect(dialogRef).toBeDefined();
     expect(
@@ -103,7 +104,7 @@ class TestComponent implements ShowsEntity<Entity> {
 
   // @ts-ignore
   formDialogWrapper: FormDialogWrapperComponent = {
-    onClose: new EventEmitter<Entity>(),
+    close: new EventEmitter<Entity>(),
     isFormDirty: false,
   };
 }

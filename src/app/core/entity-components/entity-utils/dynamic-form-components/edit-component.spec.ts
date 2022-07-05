@@ -1,5 +1,5 @@
 import { EditComponent } from "./edit-component";
-import { FormControl, FormGroup } from "@angular/forms";
+import { UntypedFormControl, UntypedFormGroup } from "@angular/forms";
 
 /**
  * A simple helper class that sets up a EditComponent with the required FormGroup
@@ -9,11 +9,11 @@ import { FormControl, FormGroup } from "@angular/forms";
 export function setupEditComponent<T>(
   component: EditComponent<T>,
   propertyName = "testProperty"
-): FormGroup {
-  const formControl = new FormControl();
+): UntypedFormGroup {
+  const formControl = new UntypedFormControl();
   const fromGroupConfig = {};
   fromGroupConfig[propertyName] = formControl;
-  const formGroup = new FormGroup(fromGroupConfig);
+  const formGroup = new UntypedFormGroup(fromGroupConfig);
   component.onInitFromDynamicConfig({
     formControl: formControl,
     propertySchema: {},

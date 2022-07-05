@@ -2097,7 +2097,7 @@
         <note priority="1" from="description">School demo name that is connected with a school name</note>
       </trans-unit>
       <trans-unit id="3036695099328175425" datatype="html">
-        <source><x id="PH" equiv-text="faker.name.firstName()"/> <x id="PH_1" equiv-text="faker.random.arrayElement(
+        <source><x id="PH" equiv-text="faker.name.firstName()"/> <x id="PH_1" equiv-text="faker.helpers.arrayElement(
         [this.normalSchool, this.highSchool]
       )"/></source>
         <context-group purpose="location">
