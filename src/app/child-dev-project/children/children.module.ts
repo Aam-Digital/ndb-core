@@ -65,6 +65,7 @@ import { EntityUtilsModule } from "../../core/entity-components/entity-utils/ent
 import { DashboardModule } from "../../core/dashboard/dashboard.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ExportModule } from "../../core/export/export.module";
+import { BirthdayDashboardComponent } from "./dashboard-widgets/birthday-dashboard/birthday-dashboard.component";
 
 @NgModule({
   imports: [
@@ -118,9 +119,10 @@ import { ExportModule } from "../../core/export/export.module";
     PreviousSchoolsComponent,
     BmiBlockComponent,
     ChildrenBmiDashboardComponent,
+    BirthdayDashboardComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
-  exports: [ChildBlockComponent],
+  exports: [ChildBlockComponent, BirthdayDashboardComponent],
 })
 export class ChildrenModule {
   static dynamicComponents = [
@@ -133,6 +135,7 @@ export class ChildrenModule {
     EducationalMaterialComponent,
     HealthCheckupComponent,
     PreviousSchoolsComponent,
+    BirthdayDashboardComponent,
   ];
   constructor(entitySchemaService: EntitySchemaService) {
     entitySchemaService.registerSchemaDatatype(new PhotoDatatype());
