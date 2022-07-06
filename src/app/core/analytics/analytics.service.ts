@@ -100,7 +100,8 @@ export class AnalyticsService {
     if (site_id) {
       window["_paq"].push(["setSiteId", site_id]);
     }
-    const { site_name } = this.configService.getConfig<UiConfig>("appConfig");
+    const { site_name } =
+      this.configService.getConfig<UiConfig>("appConfig") || {};
     if (site_name) {
       this.setOrganization(site_name);
     }

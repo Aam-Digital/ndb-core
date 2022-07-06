@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component,ViewChild } from "@angular/core";
+import { Component, ViewChild } from "@angular/core";
 import { SessionService } from "../../session/session-service/session.service";
 import { Title } from "@angular/platform-browser";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
@@ -68,7 +68,8 @@ export class UiComponent {
     this.configService.configUpdates
       .pipe(untilDestroyed(this))
       .subscribe(() => {
-        const uiConfig = this.configService.getConfig<UiConfig>("appConfig");
+        const uiConfig =
+          this.configService.getConfig<UiConfig>("appConfig") || {};
         this.title = uiConfig.site_name || this.title;
         this.titleService.setTitle(this.title);
         this.logo_path = uiConfig?.logo_path;
