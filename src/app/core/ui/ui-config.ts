@@ -14,4 +14,9 @@ export interface UiConfig {
    * This should only be used if configurations for multiple languages are available.
    */
   displayLanguageSelect: boolean;
+
+  /**
+   * The title which is shown at the top of the application.
+   */
+  site_name: string;
 }

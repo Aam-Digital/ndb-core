@@ -63,10 +63,7 @@ describe("SyncedSessionService", () => {
       ],
     });
     AppConfig.settings = {
-      site_name: "Aam Digital - DEV",
       session_type: SessionType.mock,
-      database: { name: "integration_tests" },
-      webdav: { remote_url: "" },
     };
     sessionService = TestBed.inject(SyncedSessionService);
 

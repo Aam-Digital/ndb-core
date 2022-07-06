@@ -48,10 +48,8 @@ describe("AppComponent", () => {
   let entityUpdates: Subject<UpdatedEntity<Config>>;
 
   const mockAppSettings: IAppConfig = {
-    database: { name: "" },
     session_type: SessionType.local,
     demo_mode: false,
-    site_name: "",
   };
 
   beforeEach(

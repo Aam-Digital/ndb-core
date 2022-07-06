@@ -25,7 +25,7 @@ import { SessionType } from "../session/session-type";
  */
 export interface IAppConfig {
   /** Title of the app overall */
-  site_name: string;
+  site_name?: string;
 
   /**
    * which type of database session to use.
@@ -40,7 +40,7 @@ export interface IAppConfig {
   demo_mode?: boolean;
 
   /** database configuration */
-  database: {
+  database?: {
     /** name of the database - both remote and local */
     name: string;
   };

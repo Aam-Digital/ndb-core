@@ -33,9 +33,7 @@ describe("LocalSessionService", () => {
 
   beforeEach(() => {
     AppConfig.settings = {
-      site_name: "Aam Digital - DEV",
       session_type: SessionType.mock,
-      database: { name: "test-db-name" },
     };
     userDBName = `${TEST_USER}-${AppConfig.DB_NAME}`;
     deprecatedDBName = AppConfig.DB_NAME;

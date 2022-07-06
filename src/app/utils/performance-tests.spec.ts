@@ -12,9 +12,7 @@ xdescribe("Performance Tests", () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 150000;
 
     AppConfig.settings = {
-      site_name: "Aam Digital - DEV",
       session_type: SessionType.mock, // change to SessionType.local to run performance tests with the InBrowser database
-      database: { name: "test-db-name" },
     };
 
     await TestBed.configureTestingModule({

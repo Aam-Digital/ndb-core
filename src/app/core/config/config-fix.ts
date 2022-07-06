@@ -17,7 +17,8 @@ import { ratingAnswers } from "../../features/historical-data/model/rating-answe
 export const defaultJsonConfig = {
   "appConfig": {
     "displayLanguageSelect": true,
-    "logo_path": null
+    "logo_path": null,
+    "site_name": "Aam Digital - DEMO"
   },
   "appConfig:usage-analytics": {
     "url": "https://matomo.aam-digital.org",

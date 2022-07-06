@@ -56,9 +56,7 @@ describe("AdminComponent", () => {
   beforeEach(
     waitForAsync(() => {
       AppConfig.settings = {
-        site_name: "",
         session_type: SessionType.mock,
-        database: { name: "unit-tests" },
       };
 
       TestBed.configureTestingModule({
