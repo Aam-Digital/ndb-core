@@ -48,7 +48,7 @@ export class RemoteSession extends SessionService {
   ) {
     super();
     this.database = new PouchDatabase(this.loggingService).initIndexedDB(
-      `${AppConfig.DB_PROXY_PREFIX}/${AppConfig.settings.database.name}`,
+      `${AppConfig.DB_PROXY_PREFIX}/${AppConfig.DB_NAME}`,
       {
         adapter: "http",
         skip_setup: true,

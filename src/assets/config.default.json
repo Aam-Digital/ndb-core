@@ -3,9 +3,6 @@
 
   "session_type": "mock",
   "demo_mode": true,
-  "database": {
-    "name": "app"
-  },
 
   "debug": false
 }

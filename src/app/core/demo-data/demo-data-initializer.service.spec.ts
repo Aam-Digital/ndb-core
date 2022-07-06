@@ -29,8 +29,8 @@ describe("DemoDataInitializerService", () => {
       database: { name: "test-db" },
       session_type: SessionType.mock,
     } as IAppConfig;
-    demoUserDBName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${AppConfig.settings.database.name}`;
-    adminDBName = `${DemoUserGeneratorService.ADMIN_USERNAME}-${AppConfig.settings.database.name}`;
+    demoUserDBName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${AppConfig.DB_NAME}`;
+    adminDBName = `${DemoUserGeneratorService.ADMIN_USERNAME}-${AppConfig.DB_NAME}`;
     mockDemoDataService = jasmine.createSpyObj(["publishDemoData"]);
     mockDemoDataService.publishDemoData.and.resolveTo();
     mockDialog = jasmine.createSpyObj(["open"]);

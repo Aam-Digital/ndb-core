@@ -95,7 +95,7 @@ export class DemoDataInitializerService {
   }
 
   private async syncWithDemoUserDB() {
-    const dbName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${AppConfig.settings.database.name}`;
+    const dbName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${AppConfig.DB_NAME}`;
     let demoUserDB: PouchDB.Database;
     if (AppConfig.settings.session_type === SessionType.mock) {
       PouchDB.plugin(memory);
@@ -119,7 +119,7 @@ export class DemoDataInitializerService {
   }
 
   private initializeDefaultDatabase() {
-    const dbName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${AppConfig.settings.database.name}`;
+    const dbName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${AppConfig.DB_NAME}`;
     if (AppConfig.settings.session_type === SessionType.mock) {
       this.pouchDatabase.initInMemoryDB(dbName);
     } else {

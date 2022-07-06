@@ -35,7 +35,9 @@ import { IAppConfig } from "./app-config.model";
  */
 export class AppConfig {
   /** Path for the reverse proxy that forwards to the database - configured in `proxy.conf.json` and `default.conf` */
-  static DB_PROXY_PREFIX = "/db";
+  static readonly DB_PROXY_PREFIX = "/db";
+  /** Name of the database that is used */
+  static readonly DB_NAME = "app";
   /** settings for the app */
   static settings: IAppConfig;
 

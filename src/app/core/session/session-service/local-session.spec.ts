@@ -37,8 +37,8 @@ describe("LocalSessionService", () => {
       session_type: SessionType.mock,
       database: { name: "test-db-name" },
     };
-    userDBName = `${TEST_USER}-${AppConfig.settings.database.name}`;
-    deprecatedDBName = AppConfig.settings.database.name;
+    userDBName = `${TEST_USER}-${AppConfig.DB_NAME}`;
+    deprecatedDBName = AppConfig.DB_NAME;
     database = jasmine.createSpyObj([
       "initInMemoryDB",
       "initIndexedDB",
@@ -120,7 +120,7 @@ describe("LocalSessionService", () => {
     await localSession.login(TEST_USER, TEST_PASSWORD);
 
     expect(database.initInMemoryDB).toHaveBeenCalledWith(
-      TEST_USER + "-" + AppConfig.settings.database.name
+      TEST_USER + "-" + AppConfig.DB_NAME
     );
     expect(localSession.getDatabase()).toBe(database);
   });
