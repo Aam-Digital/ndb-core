@@ -4,7 +4,8 @@ import { EntityFormService } from "./entity-form.service";
 import {
   FormBuilder,
   FormControl,
-  FormGroup,
+  UntypedFormControl,
+  UntypedFormGroup,
   Validators,
 } from "@angular/forms";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
@@ -43,7 +44,9 @@ describe("EntityFormService", () => {
     const copyEntity = entity.copy();
     spyOn(entity, "copy").and.returnValue(copyEntity);
     spyOn(copyEntity, "assertValid").and.throwError(new Error());
-    const formGroup = new FormGroup({ _id: new FormControl("newId") });
+    const formGroup = new UntypedFormGroup({
+      _id: new FormControl("newId"),
+    });
 
     await expectAsync(service.saveChanges(formGroup, entity)).toBeRejected();
     expect(entity.getId()).not.toBe("newId");
@@ -51,7 +54,9 @@ describe("EntityFormService", () => {
 
   it("should update entity if saving is successful", async () => {
     const entity = new Entity("initialId");
-    const formGroup = new FormGroup({ _id: new FormControl("newId") });
+    const formGroup = new UntypedFormGroup({
+      _id: new UntypedFormControl("newId"),
+    });
     TestBed.inject(EntityAbility).update([
       { subject: "Entity", action: "create" },
     ]);
@@ -73,7 +78,9 @@ describe("EntityFormService", () => {
     ]);
     const school = new School();
 
-    const formGroup = new FormGroup({ name: new FormControl("normal school") });
+    const formGroup = new UntypedFormGroup({
+      name: new UntypedFormControl("normal school"),
+    });
     await service.saveChanges(formGroup, school);
     expect(school.name).toBe("normal school");
 
@@ -94,9 +101,9 @@ describe("EntityFormService", () => {
     expect(formGroup.invalid).toBeTrue();
     formGroup.patchValue({ schoolId: "someSchool" });
     expect(formGroup.valid).toBeTrue();
-    formGroup.patchValue({ result: "101" });
+    formGroup.patchValue({ result: 101 });
     expect(formGroup.invalid).toBeTrue();
-    formGroup.patchValue({ result: "100" });
+    formGroup.patchValue({ result: 100 });
     expect(formGroup.valid).toBeTrue();
   });
 

@@ -1,8 +1,14 @@
 import { tableSort } from "./table-sort";
 import moment from "moment";
 import { ConfigurableEnumConfig } from "../../../configurable-enum/configurable-enum.interface";
+import { Entity } from "../../../entity/model/entity";
 
 describe("TableSort", () => {
+  class E extends Entity {
+    constructor(public key: any) {
+      super();
+    }
+  }
   it("should sort strings with partial numbers correctly", () => {
     testSort(["PN1", "PN2", "PN12"]);
   });
@@ -38,14 +44,14 @@ describe("TableSort", () => {
 
   it("should return input array if not sort direction is defined", () => {
     const values = ["3", 1, 2, undefined, "ten"].map((val) => ({
-      record: { key: val },
+      record: new E(val),
     }));
     const result = tableSort([...values], { direction: "", active: "key" });
     expect(result).toEqual(values);
   });
 
   it("should return input array if no active property is defined", () => {
-    const values = [2, 1, 3].map((val) => ({ record: { key: val } }));
+    const values = [2, 1, 3].map((val) => ({ record: new E(val) }));
     const result = tableSort([...values], { direction: "asc", active: "" });
     expect(result).toEqual(values);
   });
@@ -54,7 +60,7 @@ describe("TableSort", () => {
     sortedArray: any[],
     direction: "asc" | "desc" | "" = "asc"
   ) {
-    const objectArray = sortedArray.map((val) => ({ record: { key: val } }));
+    const objectArray = sortedArray.map((val) => ({ record: new E(val) }));
     for (let i = 0; i < sortedArray.length; i++) {
       const shuffled = shuffle(objectArray);
       const result = tableSort(shuffled, { direction, active: "key" });

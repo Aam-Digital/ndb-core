@@ -29,7 +29,7 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<RecurringAct
     assignedUser?: User
   ): RecurringActivity {
     const activity = RecurringActivity.create();
-    const type = faker.random.arrayElement(this.ACTIVITY_TYPES);
+    const type = faker.helpers.arrayElement(this.ACTIVITY_TYPES);
 
     activity.title =
       type.label +
@@ -80,7 +80,7 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<RecurringAct
       data.push(
         DemoActivityGeneratorService.generateActivityForChildren(
           participatingChildren,
-          faker.random.arrayElement(this.demoUser.entities)
+          faker.helpers.arrayElement(this.demoUser.entities)
         )
       );
       i += groupSize;

@@ -39,7 +39,8 @@ import {
   styleUrls: ["./form-dialog-wrapper.component.scss"],
 })
 export class FormDialogWrapperComponent<E extends Entity = Entity>
-  implements AfterViewInit {
+  implements AfterViewInit
+{
   /** entity to be edited */
   @Input() set entity(value: E) {
     this.originalEntity = value.copy() as E;
@@ -70,7 +71,7 @@ export class FormDialogWrapperComponent<E extends Entity = Entity>
    *
    * This emits the saved entity or undefined if the form was canceled.
    */
-  @Output() onClose = new EventEmitter<E>();
+  @Output() close = new EventEmitter<E>();
 
   /** ngForm component of the child component that is set through the ng-content */
   @ContentChild("entityForm", { static: true }) contentForm;
@@ -113,21 +114,21 @@ export class FormDialogWrapperComponent<E extends Entity = Entity>
     }
 
     await this.entityMapper.save(this.entity);
-    this.onClose.emit(this.entity);
+    this.close.emit(this.entity);
   }
 
   /**
-   * Reset any changes made to the entity in the current form (and trigger an `onClose` event).
+   * Reset any changes made to the entity in the current form (and trigger an `close` event).
    */
   public async cancel() {
     Object.assign(this._entity, this.originalEntity);
-    this.onClose.emit(undefined);
+    this.close.emit(undefined);
   }
 
   public delete() {
     this.entityRemoveService.remove(this.entity).subscribe((result) => {
       if (result === RemoveResult.REMOVED) {
-        this.onClose.emit();
+        this.close.emit();
       }
     });
   }

@@ -1,5 +1,6 @@
 import { getReadableValue } from "./value-accessor";
 import { TableRow } from "./entity-subrecord.component";
+import { Entity } from "../../../entity/model/entity";
 
 /**
  * Custom sort implementation for a MatTableDataSource<TableRow<T>>
@@ -8,7 +9,7 @@ import { TableRow } from "./entity-subrecord.component";
  * @param active the property of T for which it should be sorted
  * @returns the sorted table rows
  */
-export function tableSort<OBJECT, PROPERTY extends keyof OBJECT>(
+export function tableSort<OBJECT extends Entity, PROPERTY extends keyof OBJECT>(
   data: TableRow<OBJECT>[],
   {
     direction,

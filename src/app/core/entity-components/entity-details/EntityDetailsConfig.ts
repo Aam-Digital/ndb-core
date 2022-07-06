@@ -16,6 +16,11 @@ export interface EntityDetailsConfig {
   entity: string;
 
   /**
+   * The label/title that is displayed in the user interface (if different than "entity")
+   */
+  title?: string;
+
+  /**
    * The configuration for the panels on this details page.
    */
   panels: Panel[];

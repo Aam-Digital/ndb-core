@@ -29,7 +29,6 @@ describe("ChildrenListComponent", () => {
   let fixture: ComponentFixture<ChildrenListComponent>;
   const routeData: EntityListConfig = {
     title: "Children List",
-    addNew: "Add child",
     filterPlaceholder: "e.g. participant name",
     columns: [
       { view: "DisplayText", label: "PN", id: "projectNumber" },

@@ -28,6 +28,8 @@ import { ChildPhotoService } from "../child-photo-service/child-photo.service";
 export type Center = ConfigurableEnumValue;
 @DatabaseEntity("Child")
 export class Child extends Entity {
+  static toStringAttributes = ["name"];
+
   static create(name: string): Child {
     const instance = new Child();
     instance.name = name;
@@ -131,9 +133,7 @@ export class Child extends Entity {
   @DatabaseField() get searchIndices(): string[] {
     let indices = [];
 
-    if (this.name !== undefined) {
-      indices = indices.concat(this.name.split(" "));
-    }
+    indices = indices.concat(this.toString().split(" "));
     if (this.projectNumber !== undefined) {
       indices.push(this.projectNumber);
     }
@@ -141,8 +141,4 @@ export class Child extends Entity {
     return indices;
   }
   set searchIndices(value) {}
-
-  public toString() {
-    return this.name;
-  }
 }

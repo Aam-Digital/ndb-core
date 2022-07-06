@@ -11,7 +11,9 @@ import { EntityMapperService } from "../../../../entity/entity-mapper.service";
   templateUrl: "./display-entity.component.html",
   styleUrls: ["./display-entity.component.scss"],
 })
-export class DisplayEntityComponent extends ViewDirective implements OnInit {
+export class DisplayEntityComponent
+  extends ViewDirective<string>
+  implements OnInit {
   @Input() entityToDisplay: Entity;
   @Input() linkDisabled = false;
   entityBlockComponent: string;
@@ -29,11 +31,11 @@ export class DisplayEntityComponent extends ViewDirective implements OnInit {
 
   async onInitFromDynamicConfig(config: ViewPropertyConfig) {
     super.onInitFromDynamicConfig(config);
-    if (this.entity[this.property]) {
+    if (this.value) {
       const type =
         config.config || this.entity.getSchema().get(this.property).additional;
       this.entityToDisplay = await this.entityMapperService
-        .load(type, this.entity[this.property])
+        .load(type, this.value)
         .catch(() => undefined);
       this.ngOnInit();
     }

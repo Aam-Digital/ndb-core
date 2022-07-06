@@ -28,7 +28,6 @@ import { AppComponent } from "./app.component";
 import { AppModule } from "./app.module";
 import { AppConfig } from "./core/app-config/app-config";
 import { IAppConfig } from "./core/app-config/app-config.model";
-import { Angulartics2Matomo } from "angulartics2/matomo";
 import { Config } from "./core/config/config";
 import { USAGE_ANALYTICS_CONFIG_ID } from "./core/analytics/usage-analytics-config";
 import { environment } from "../environments/environment";
@@ -41,6 +40,7 @@ import { mockEntityMapper } from "./core/entity/mock-entity-mapper-service";
 import { DemoDataService } from "./core/demo-data/demo-data.service";
 import { SessionType } from "./core/session/session-type";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { Angulartics2Matomo } from "angulartics2";
 
 describe("AppComponent", () => {
   let component: AppComponent;

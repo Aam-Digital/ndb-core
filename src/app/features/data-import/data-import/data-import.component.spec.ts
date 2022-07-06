@@ -35,36 +35,34 @@ describe("DataImportComponent", () => {
     },
   };
 
-  beforeEach(
-    waitForAsync(() => {
-      mockDataImportService = jasmine.createSpyObj("DataImportService", [
-        "handleCsvImport",
-        "validateCsvFile",
-      ]);
-      TestBed.configureTestingModule({
-        declarations: [DataImportComponent],
-        imports: [
-          DataImportModule,
-          NoopAnimationsModule,
-          FontAwesomeTestingModule,
-        ],
-        providers: [
-          {
-            provide: DataImportService,
-            useValue: mockDataImportService,
-          },
-          {
-            provide: EntityRegistry,
-            useValue: entityRegistry,
-          },
-          {
-            provide: DownloadService,
-            useValue: jasmine.createSpyObj(["triggerDownload"]),
-          },
-        ],
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    mockDataImportService = jasmine.createSpyObj("DataImportService", [
+      "handleCsvImport",
+      "validateCsvFile",
+    ]);
+    TestBed.configureTestingModule({
+      declarations: [DataImportComponent],
+      imports: [
+        DataImportModule,
+        NoopAnimationsModule,
+        FontAwesomeTestingModule,
+      ],
+      providers: [
+        {
+          provide: DataImportService,
+          useValue: mockDataImportService,
+        },
+        {
+          provide: EntityRegistry,
+          useValue: entityRegistry,
+        },
+        {
+          provide: DownloadService,
+          useValue: jasmine.createSpyObj(["triggerDownload"]),
+        },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(DataImportComponent);

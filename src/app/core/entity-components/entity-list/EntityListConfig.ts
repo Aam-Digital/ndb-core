@@ -4,9 +4,25 @@ import { FormFieldConfig } from "../entity-form/entity-form/FormConfig";
 import { ExportColumnConfig } from "../../export/export-service/export-column-config";
 
 export interface EntityListConfig {
+  /**
+   * Title that is shown on top of the component
+   */
   title: string;
-  addNew?: string;
+
+  /**
+   * Select which entities should be displayed in the table
+   * (optional) This is only used and necessary if EntityListComponent is used directly in config
+   */
+  entity?: string;
+
+  /**
+   * Placeholder string in the filter input
+   */
   filterPlaceholder?: string;
+
+  /**
+   * The columns to be displayed in the table
+   */
   columns: (FormFieldConfig | string)[];
 
   /**
@@ -71,8 +87,24 @@ export interface ConfigurableEnumFilterConfig<T> extends FilterConfig {
 }
 
 export interface ViewPropertyConfig {
+  /**
+   * The entity which is being displayed, this should only be used if `value` does not contain enough information
+   */
   entity: Entity;
+  /**
+   * The name of the property of the entity which should be displayed
+   */
   id: string;
+  /**
+   * This represents `entity[id]` and makes the component re-build whenever this value changes.
+   */
+  value: any;
+  /**
+   * Further configuration that will be passed to the final component
+   */
   config?: any;
+  /**
+   * A tooltip that describes this property in more detail
+   */
   tooltip?: string;
 }
