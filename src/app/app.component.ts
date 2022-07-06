@@ -90,7 +90,7 @@ export class AppComponent {
       this.analyticsService.init();
     }
 
-    if (AppConfig.settings.demo_mode) {
+    if (AppConfig.DEMO_MODE) {
       await this.demoDataInitializer.run();
     }
   }

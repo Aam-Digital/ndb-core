@@ -87,9 +87,7 @@ export class MockedTestingModule {
     loginState = LoginState.LOGGED_IN,
     data: Entity[] = []
   ): ModuleWithProviders<MockedTestingModule> {
-    AppConfig.settings = {
-      session_type: SessionType.mock,
-    };
+    AppConfig.SESSION_TYPE = SessionType.mock;
     const mockedEntityMapper = mockEntityMapper([new User(TEST_USER), ...data]);
     const session = createLocalSession(loginState === LoginState.LOGGED_IN);
     return {

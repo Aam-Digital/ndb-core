@@ -70,7 +70,7 @@ import { SessionType } from "./session-type";
     {
       provide: SessionService,
       useFactory: (injector: Injector) => {
-        if (AppConfig?.settings?.session_type === SessionType.synced) {
+        if (AppConfig.SESSION_TYPE === SessionType.synced) {
           return injector.get(SyncedSessionService);
         } else {
           return injector.get(LocalSession);

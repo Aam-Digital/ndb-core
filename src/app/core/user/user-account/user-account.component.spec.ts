@@ -30,7 +30,6 @@ import { AppConfig } from "../../app-config/app-config";
 import { UserAccountService } from "./user-account.service";
 import { UserModule } from "../user.module";
 import { SessionType } from "../../session/session-type";
-import { IAppConfig } from "../../app-config/app-config.model";
 import { LoggingService } from "../../logging/logging.service";
 import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { RouterTestingModule } from "@angular/router/testing";
@@ -45,9 +44,7 @@ describe("UserAccountComponent", () => {
 
   beforeEach(
     waitForAsync(() => {
-      AppConfig.settings = {
-        session_type: SessionType.synced, // password change only available in synced mode
-      } as IAppConfig;
+      AppConfig.SESSION_TYPE = SessionType.synced; // password change only available in synced mode
       mockSessionService = jasmine.createSpyObj("sessionService", [
         "getCurrentUser",
         "login",

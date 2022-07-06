@@ -62,9 +62,7 @@ describe("SyncedSessionService", () => {
         { provide: LOCATION_TOKEN, useValue: mockLocation },
       ],
     });
-    AppConfig.settings = {
-      session_type: SessionType.mock,
-    };
+    AppConfig.SESSION_TYPE = SessionType.mock;
     sessionService = TestBed.inject(SyncedSessionService);
 
     localSession = TestBed.inject(LocalSession);

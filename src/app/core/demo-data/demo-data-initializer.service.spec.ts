@@ -11,7 +11,6 @@ import { AppConfig } from "../app-config/app-config";
 import { PouchDatabase } from "../database/pouch-database";
 import { Subject } from "rxjs";
 import { LoginState } from "../session/session-states/login-state.enum";
-import { IAppConfig } from "../app-config/app-config.model";
 import { Database } from "../database/database";
 import { SessionType } from "../session/session-type";
 
@@ -25,10 +24,7 @@ describe("DemoDataInitializerService", () => {
   let adminDBName: string;
 
   beforeEach(() => {
-    AppConfig.settings = {
-      database: { name: "test-db" },
-      session_type: SessionType.mock,
-    } as IAppConfig;
+    AppConfig.SESSION_TYPE = SessionType.mock;
     demoUserDBName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${AppConfig.DB_NAME}`;
     adminDBName = `${DemoUserGeneratorService.ADMIN_USERNAME}-${AppConfig.DB_NAME}`;
     mockDemoDataService = jasmine.createSpyObj(["publishDemoData"]);

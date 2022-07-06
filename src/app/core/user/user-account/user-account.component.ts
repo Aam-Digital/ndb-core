@@ -79,7 +79,7 @@ export class UserAccountComponent implements OnInit {
     this.disabledForOfflineMode = false;
     this.passwordForm.enable();
 
-    if (AppConfig.settings.session_type !== SessionType.synced) {
+    if (AppConfig.SESSION_TYPE !== SessionType.synced) {
       this.disabledForDemoMode = true;
       this.passwordForm.disable();
     } else if (!navigator.onLine) {
@@ -117,9 +117,9 @@ export class UserAccountComponent implements OnInit {
   }
 
   private passwordMatchValidator(): ValidationErrors | null {
-    const newPassword: string = this?.passwordForm?.get("newPassword")?.value;
-    const confirmPassword: string =
-      this?.passwordForm?.get("confirmPassword")?.value;
+    const newPassword: string = this.passwordForm.get("newPassword")?.value;
+    const confirmPassword: string = this.passwordForm.get("confirmPassword")
+      ?.value;
     if (newPassword !== confirmPassword) {
       this.passwordForm
         .get("confirmPassword")

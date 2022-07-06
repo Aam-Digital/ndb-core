@@ -55,9 +55,7 @@ describe("AdminComponent", () => {
 
   beforeEach(
     waitForAsync(() => {
-      AppConfig.settings = {
-        session_type: SessionType.mock,
-      };
+      AppConfig.SESSION_TYPE = SessionType.mock;
 
       TestBed.configureTestingModule({
         imports: [AdminModule, MockedTestingModule.withState()],

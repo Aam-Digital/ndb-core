@@ -27,7 +27,6 @@ import {
 import { AppComponent } from "./app.component";
 import { AppModule } from "./app.module";
 import { AppConfig } from "./core/app-config/app-config";
-import { IAppConfig } from "./core/app-config/app-config.model";
 import { Config } from "./core/config/config";
 import { USAGE_ANALYTICS_CONFIG_ID } from "./core/analytics/usage-analytics-config";
 import { environment } from "../environments/environment";
@@ -47,14 +46,9 @@ describe("AppComponent", () => {
   let fixture: ComponentFixture<AppComponent>;
   let entityUpdates: Subject<UpdatedEntity<Config>>;
 
-  const mockAppSettings: IAppConfig = {
-    session_type: SessionType.local,
-    demo_mode: false,
-  };
-
   beforeEach(
     waitForAsync(() => {
-      AppConfig.settings = mockAppSettings;
+      AppConfig.SESSION_TYPE = SessionType.mock;
       const entityMapper = mockEntityMapper();
       entityUpdates = new Subject();
       spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
@@ -113,13 +107,13 @@ describe("AppComponent", () => {
   it("published the demo data", fakeAsync(() => {
     const demoDataService = TestBed.inject(DemoDataService);
     spyOn(demoDataService, "publishDemoData").and.callThrough();
-    AppConfig.settings.demo_mode = true;
+    AppConfig.DEMO_MODE = true;
 
     createComponent();
     flush();
     discardPeriodicTasks();
 
     expect(demoDataService.publishDemoData).toHaveBeenCalled();
-    AppConfig.settings.demo_mode = false;
+    AppConfig.DEMO_MODE = false;
   }));
 });

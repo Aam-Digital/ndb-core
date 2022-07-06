@@ -16,6 +16,8 @@
  */
 
 import { IAppConfig } from "./app-config.model";
+import { SessionType } from "../session/session-type";
+import { environment } from "../../../environments/environment";
 
 /**
  * Central app configuration.
@@ -38,6 +40,9 @@ export class AppConfig {
   static readonly DB_PROXY_PREFIX = "/db";
   /** Name of the database that is used */
   static readonly DB_NAME = "app";
+
+  static DEMO_MODE = false;
+  static SESSION_TYPE = SessionType.synced;
   /** settings for the app */
   static settings: IAppConfig;
 
@@ -53,6 +58,24 @@ export class AppConfig {
    * If the config file does not exist, uses the default config as a fallback.
    */
   static load(): Promise<IAppConfig> {
+    const params = new URLSearchParams(location.search);
+    const demoMode = params.get("demo");
+    const sessionType = params.get("session");
+    if (demoMode === "true" || environment.demo_mode) {
+      AppConfig.DEMO_MODE = true;
+    }
+    if (
+      sessionType === "mock" ||
+      environment.session_type === SessionType.mock
+    ) {
+      AppConfig.SESSION_TYPE = SessionType.mock;
+    } else if (
+      sessionType === "local" ||
+      environment.session_type === SessionType.local
+    ) {
+      AppConfig.SESSION_TYPE = SessionType.local;
+    }
+    console.log("params", demoMode, sessionType);
     return this.loadAppConfigJson(this.CONFIG_FILE).catch(() =>
       this.loadAppConfigJson(this.DEFAULT_CONFIG_FILE)
     );

@@ -20,6 +20,8 @@ import {
   ConfigService,
   createTestingConfigService,
 } from "../core/config/config.service";
+import { AppConfig } from "../core/app-config/app-config";
+import { SessionType } from "../core/session/session-type";
 
 /**
  * Utility module that creates a simple environment where a correctly configured database and session is set up.
@@ -48,6 +50,7 @@ import {
 })
 export class DatabaseTestingModule {
   constructor(pouchDatabase: PouchDatabase) {
+    AppConfig.SESSION_TYPE = SessionType.mock;
     pouchDatabase.initInMemoryDB();
   }
 }

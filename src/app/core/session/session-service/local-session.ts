@@ -99,7 +99,7 @@ export class LocalSession extends SessionService {
   }
 
   private initDatabase(dbName: string, db = this.database) {
-    if (AppConfig.settings.session_type === SessionType.mock) {
+    if (AppConfig.SESSION_TYPE === SessionType.mock) {
       db.initInMemoryDB(dbName);
     } else {
       db.initIndexedDB(dbName);

@@ -11,9 +11,7 @@ xdescribe("Performance Tests", () => {
   beforeEach(async () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 150000;
 
-    AppConfig.settings = {
-      session_type: SessionType.mock, // change to SessionType.local to run performance tests with the InBrowser database
-    };
+    AppConfig.SESSION_TYPE = SessionType.mock; // change to SessionType.local to run performance tests with the InBrowser database
 
     await TestBed.configureTestingModule({
       imports: [AppModule, DatabaseTestingModule],

@@ -16,9 +16,7 @@ describe("RemoteSessionService", () => {
   let dbUser: DatabaseUser;
 
   beforeEach(() => {
-    AppConfig.settings = {
-      session_type: SessionType.mock,
-    };
+    AppConfig.SESSION_TYPE = SessionType.mock;
     mockHttpClient = jasmine.createSpyObj(["post", "delete"]);
     mockHttpClient.delete.and.returnValue(of());
 
