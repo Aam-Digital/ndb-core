@@ -4,8 +4,7 @@
   "session_type": "mock",
   "demo_mode": true,
   "database": {
-    "name": "app",
-    "remote_url": "http://localhost:4200/db/"
+    "name": "app"
   },
 
   "debug": false
