@@ -10,7 +10,7 @@ import {
 import { filter } from "rxjs/operators";
 import { mockEntityMapper } from "../entity/mock-entity-mapper-service";
 import { defaultJsonConfig } from "./config-fix";
-import { OrderedEnums } from "../configurable-enum/configurable-enum-ordering";
+import { EnumOrdering } from "../configurable-enum/configurable-enum-ordering";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -76,7 +76,7 @@ export class ConfigService {
     }
     const enumValues = this.getConfig<any>(id);
     if (ordered) {
-      return OrderedEnums.imposeTotalOrdering(enumValues);
+      return EnumOrdering.imposeTotalOrdering(enumValues);
     } else {
       return enumValues;
     }

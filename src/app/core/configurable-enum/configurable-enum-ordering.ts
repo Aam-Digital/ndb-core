@@ -25,7 +25,7 @@ export type OrderedConfigurableEnumValue<
   T extends ConfigurableEnumValue = ConfigurableEnumValue
 > = T & HasOrdinal;
 
-export namespace OrderedEnums {
+export namespace EnumOrdering {
   export type Config<T extends ConfigurableEnumValue> = ConfigurableEnumConfig<
     T & HasOrdinal
   >;
