@@ -1,4 +1,4 @@
-@use "~@angular/material/theming" as *;
+@use "@angular/material" as mat;
 @use "../variables/ndb-light-theme" as theme;
 
 /* configuration for the mat-slide-toggle feature, used e.g. in the entity-list.component for the "Show All"
@@ -29,7 +29,7 @@ option within the pagination of the tables */
 }
 
 .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-bar {
-  background-color: mat-color(theme.$primary);
+  background-color: mat.get-color-from-palette(theme.$primary);
 }
 
 .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {

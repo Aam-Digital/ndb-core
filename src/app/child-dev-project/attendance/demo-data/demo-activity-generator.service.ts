@@ -2,11 +2,11 @@ import { DemoChildGenerator } from "../../children/demo-data-generators/demo-chi
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
 import { Child } from "../../children/model/child";
-import faker from "faker/locale/en_IND";
 import { RecurringActivity } from "../model/recurring-activity";
 import { DemoUserGeneratorService } from "../../../core/user/demo-user-generator.service";
 import { User } from "../../../core/user/user";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
+import { faker } from "../../../core/demo-data/faker";
 
 /**
  * Generate RecurringActivity entities

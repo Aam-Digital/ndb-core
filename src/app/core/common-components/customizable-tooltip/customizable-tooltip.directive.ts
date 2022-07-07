@@ -28,7 +28,7 @@ export class CustomizableTooltipDirective implements OnInit, OnDestroy {
 
   private overlayRef!: OverlayRef;
 
-  private tooltipTimeout?: NodeJS.Timeout;
+  private tooltipTimeout?: any;
 
   constructor(
     private overlay: Overlay,

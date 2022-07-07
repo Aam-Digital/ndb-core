@@ -2,10 +2,10 @@ import { DemoDataGenerator } from "../../core/demo-data/demo-data-generator";
 import { HistoricalEntityData } from "./model/historical-entity-data";
 import { Injectable } from "@angular/core";
 import { DemoChildGenerator } from "../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
-import faker from "faker/locale/en_IND";
 import { ENTITY_CONFIG_PREFIX } from "../../core/entity/model/entity";
 import { DemoConfigGeneratorService } from "../../core/config/demo-config-generator.service";
 import { ratingAnswers } from "./model/rating-answers";
+import { faker } from "../../core/demo-data/faker";
 
 export class DemoHistoricalDataConfig {
   minCountAttributes: number;

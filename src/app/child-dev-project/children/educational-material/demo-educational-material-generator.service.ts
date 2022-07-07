@@ -2,10 +2,10 @@ import { DemoChildGenerator } from "../demo-data-generators/demo-child-generator
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
 import { Child } from "../model/child";
-import faker from "faker/locale/en_IND";
 import { EducationalMaterial } from "./model/educational-material";
 import { materials } from "./model/materials";
 import { getEarlierDateOrToday } from "../../../utils/utils";
+import { faker } from "../../../core/demo-data/faker";
 
 export class DemoEducationMaterialConfig {
   minCount: number;

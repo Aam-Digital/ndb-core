@@ -1,7 +1,7 @@
 import { DemoDataGenerator } from "../demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
 import { User } from "./user";
-import faker from "faker/locale/en_IND";
+import { faker } from "../demo-data/faker";
 
 /**
  * Generate demo users for the application with its DemoDataModule.

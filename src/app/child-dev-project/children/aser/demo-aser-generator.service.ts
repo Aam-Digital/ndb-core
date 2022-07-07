@@ -2,12 +2,12 @@ import { DemoChildGenerator } from "../demo-data-generators/demo-child-generator
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
 import { Child } from "../model/child";
-import faker from "faker/locale/en_IND";
 import { Aser } from "./model/aser";
 import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 import { mathLevels, readingLevels } from "./model/skill-levels";
 import { WarningLevel } from "../../../core/entity/model/warning-level";
 import { getEarlierDateOrToday } from "../../../utils/utils";
+import { faker } from "../../../core/demo-data/faker";
 
 /**
  * Generate ASER results every 12 months for each Child until passing.

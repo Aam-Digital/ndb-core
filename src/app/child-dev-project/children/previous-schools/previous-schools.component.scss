@@ -1,8 +1,8 @@
 @use "src/styles/variables/sizes";
-@use "~@angular/material/theming" as *;
+@use "@angular/material" as mat;
 
 .hint-badge {
-  background-color: mat-color($mat-light-theme-background, status-bar);
+  background-color: mat.get-color-from-palette(mat.$light-theme-background-palette, status-bar);
   padding: sizes.$small;
   margin-bottom: sizes.$regular;
   border-radius: 100vmax;

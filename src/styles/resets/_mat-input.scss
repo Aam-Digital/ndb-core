@@ -1,10 +1,10 @@
-@use "~@angular/material/theming" as *;
+@use "@angular/material" as mat;
 
 /* display disabled form values in black for better readability as we disable forms by default */
 .mat-input-element:disabled {
-  color: mat-color($mat-light-theme-foreground, text) !important;
+  color: mat.get-color-from-palette(mat.$light-theme-foreground-palette, text) !important;
 }
 
 .mat-select-disabled .mat-select-value {
-  color: mat-color($mat-light-theme-foreground, text) !important;
+  color: mat.get-color-from-palette(mat.$light-theme-foreground-palette, text) !important;
 }

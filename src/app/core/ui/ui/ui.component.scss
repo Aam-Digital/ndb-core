@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@use "~@angular/material/theming" as *;
+@use "@angular/material" as mat;
 @use "src/styles/variables/sizes";
 @use "src/styles/variables/ndb-light-theme" as theme;
 
@@ -64,7 +64,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: mat-color(theme.$primary, 50);
+  background-color: mat.get-color-from-palette(theme.$primary, 50);
 
   /**
    * When the app is small (smaller than 599px),

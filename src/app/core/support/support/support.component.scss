@@ -1,10 +1,10 @@
-@use "~@angular/material/theming" as *;
+@use "@angular/material" as mat;
 @use "src/styles/variables/sizes";
 
-$tech-details             : mat-color($mat-grey, 600);
-$table-odd-color          : mat-color($mat-grey, 50);
-$table-even-color         : mat-color($mat-grey, 100);
-$table-border-color       : mat-color($mat-grey, 300);
+$tech-details             : mat.get-color-from-palette(mat.$grey-palette, 600);
+$table-odd-color          : mat.get-color-from-palette(mat.$grey-palette, 50);
+$table-even-color         : mat.get-color-from-palette(mat.$grey-palette, 100);
+$table-border-color       : mat.get-color-from-palette(mat.$grey-palette, 300);
 
 $table-border             : 1px solid $table-border-color;
 

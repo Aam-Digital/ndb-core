@@ -1,4 +1,4 @@
-@use "~@angular/material/theming" as *;
+@use "@angular/material" as mat;
 @use "src/styles/variables/colors";
 @use "src/styles/functions/gradient-helpers";
 
@@ -8,7 +8,7 @@
   width: 1ch;
 }
 
-$dark-grey: map-get($mat-grey, 800);
+$dark-grey: mat.get-color-from-palette(mat.$gray-palette, 800);
 
 .has-remark {
   background-image: gradient-helpers.top-right-triangle($dark-grey);

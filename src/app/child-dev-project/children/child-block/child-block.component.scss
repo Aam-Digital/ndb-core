@@ -1,5 +1,5 @@
 @use "src/styles/variables/sizes";
-@use "~@angular/material/theming" as *;
+@use "@angular/material" as mat;
 
 .child-pic {
   width: 28px;
@@ -15,11 +15,11 @@
 }
 
 .additional-number-active {
-  color: mat-color($mat-light-theme-foreground, secondary-text);
+  color: mat.get-color-from-palette(mat.$light-theme-foreground-palette, secondary-text);
 }
 
 .inactive {
-  color: mat-color($mat-light-theme-foreground, disabled);
+  color: mat.get-color-from-palette(mat.$light-theme-foreground-palette, disabled);
 }
 
 .container {

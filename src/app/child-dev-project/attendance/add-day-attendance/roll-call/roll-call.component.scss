@@ -35,8 +35,8 @@
 .attendance-progress-bar {
   display: flex;
   flex-direction: column;
-  margin-top: $standard-margin-small;
-  margin-bottom: $standard-margin-small;
+  margin-top: sizes.$small;
+  margin-bottom: sizes.$small;
 }
 
 .progress-nav {
@@ -50,7 +50,7 @@
 }
 
 .child-block-container {
-  margin: $standard-margin-small;
+  margin: sizes.$small;
 }
 
 .tab-body {

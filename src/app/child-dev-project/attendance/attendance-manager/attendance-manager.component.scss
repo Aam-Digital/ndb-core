@@ -1,6 +1,6 @@
 @use "src/styles/variables/sizes";
 @use "src/styles/mixins/grid-layout";
-@use "~@angular/material/theming" as *;
+@use "@angular/material" as mat;
 @use "src/styles/typography/custom-typography";
 
 .cards-wrapper {
@@ -18,7 +18,7 @@
 
   // choose a very opaque background when the card is disabled
   &[disabled] {
-    background-color: mat-color($mat-grey, $hue: 400, $opacity: 0.1);
+    background-color: mat.get-color-from-palette(mat.$grey-palette, $hue: 400, $opacity: 0.1);
   }
 
   // Content: adapt typography

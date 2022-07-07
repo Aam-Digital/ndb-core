@@ -15,15 +15,15 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 @use "../themes/ndb-theme" as theme;
-@use "~@angular/material/theming" as *;
+@use "@angular/material" as mat;
 
-$err-palette            : mat-palette($mat-red);
-$warn-palette           : mat-palette($mat-orange);
-$success-palette        : mat-palette($mat-green);
+$err-palette            : mat.define-palette(mat.$red-palette);
+$warn-palette           : mat.define-palette(mat.$orange-palette);
+$success-palette        : mat.define-palette(mat.$green-palette);
 
-$success                : mat-color($success-palette);
-$warn                   : mat-color($warn-palette);
-$error                  : mat-color($err-palette);
+$success                : mat.get-color-from-palette($success-palette);
+$warn                   : mat.get-color-from-palette($warn-palette);
+$error                  : mat.get-color-from-palette($err-palette);
 
 /*
  * Quantized warning-levels. Each level represents a color from green (all is OK)
@@ -61,4 +61,4 @@ $attendance-levels: (
   U: #DDDDDD   // Unknown
 );
 
-$text-secondary: mat-color($mat-grey, 800);
+$text-secondary: mat.get-color-from-palette(mat.$grey-palette, 800);
