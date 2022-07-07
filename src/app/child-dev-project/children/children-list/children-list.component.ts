@@ -95,7 +95,7 @@ export class ChildrenListComponent implements OnInit {
     const options: FilterSelectionOption<Child>[] = [
       { key: "", label: $localize`All`, filterFun: () => true },
     ];
-    schools.sort((s1, s2) => s1.name.localeCompare(s2.name));
+    schools.sort((s1, s2) => s1.toString().localeCompare(s2.toString()));
     schools.forEach((school) =>
       options.push({
         key: school.getId(),
