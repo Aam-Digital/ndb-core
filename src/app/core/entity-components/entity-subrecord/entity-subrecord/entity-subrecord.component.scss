@@ -1,5 +1,12 @@
+@use "src/styles/variables/sizes";
+@use "src/styles/variables/ndb-light-theme" as theme;
+@use "@angular/material" as mat;
+
 .table-action-button {
-  min-width: auto !important;
+  margin: 0 sizes.$small;
+  padding: sizes.$small;
+  color: mat.get-color-from-palette(theme.$accent);
+  font-size: 115%;
 }
 
 .mat-column-actions {

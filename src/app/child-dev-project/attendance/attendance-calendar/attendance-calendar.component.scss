@@ -1,5 +1,6 @@
 @use "src/styles/variables/colors";
 @use "src/styles/functions/gradient-helpers";
+@use "src/styles/variables/sizes";
 
 mat-calendar {
   min-width: 200px;
@@ -12,11 +13,11 @@ mat-calendar {
 }
 
 .attendance-calendar-date-general {
-  border: 2px solid transparent;
+  border: 2px solid transparent !important;
 
   &.attendance-calendar-date-selected {
     font-weight: 900;
-    font-size: 1.15em;
+    font-size: 115%;
   }
 
   &.attendance-calendar-date-has-remarks {
@@ -35,4 +36,5 @@ mat-calendar {
 
   border: 5px solid black;
   box-sizing: border-box;
+  margin-bottom: sizes.$regular;
 }

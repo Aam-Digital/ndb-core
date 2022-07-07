@@ -35,6 +35,7 @@ $sides: right, left, top, bottom;
 /** Normalize utilities: removes margins or paddings from elements **/
 
 .remove-padding-bottom { padding-bottom: 0 !important; }
+.remove-padding-left   { padding-left: 0 !important; }
 .remove-margin-bottom  { margin-bottom: 0 !important; }
 .remove-margin-top     { margin-top: 0 !important; }
 .remove-margin-left    { margin-left: 0 !important; }

@@ -9,7 +9,10 @@ import { EventAttendance } from "../model/event-attendance";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { NoteDetailsComponent } from "../../notes/note-details/note-details.component";
-import { AverageAttendanceStats, calculateAverageAttendance, } from "../model/calculate-average-event-attendance";
+import {
+  AverageAttendanceStats,
+  calculateAverageAttendance,
+} from "../model/calculate-average-event-attendance";
 import { EventNote } from "../model/event-note";
 import { RecurringActivity } from "../model/recurring-activity";
 import { applyUpdate } from "../../../core/entity/model/entity-update";
