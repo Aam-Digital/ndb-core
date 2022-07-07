@@ -14,11 +14,11 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
-@use "~@angular/material/theming" as *;
+@use '@angular/material' as mat;
 @use "src/styles/variables/sizes";
 
 .info-field {
-  @include mat-elevation(1);
+  @include mat.elevation(1);
   font-style: italic;
   margin: sizes.$small;
   padding: sizes.$small;

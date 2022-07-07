@@ -1,4 +1,4 @@
-<mat-vertical-stepper linear #stepper>
+<mat-stepper orientation="vertical" linear #stepper>
   <mat-step i18n-label="Data import wizard label" label="Select file" [stepControl]="fileNameForm">
     <form [formGroup]="fileNameForm">
       <input #csvImport type="file" style="display: none" (change)="setCsvFile($event)"/>
@@ -141,4 +141,4 @@
   <ng-template matStepperIcon="edit">
     <fa-icon class="stepper-icon" icon="check"></fa-icon>
   </ng-template>
-</mat-vertical-stepper>
+</mat-stepper>

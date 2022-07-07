@@ -6,7 +6,6 @@ import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SwUpdate } from "@angular/service-worker";
 import { Database } from "../../database/database";
 import * as Sentry from "@sentry/browser";
-import { Severity } from "@sentry/browser";
 import { RemoteSession } from "../../session/session-service/remote-session";
 import { RouteTarget } from "../../../app.routing";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
@@ -102,7 +101,7 @@ export class SupportComponent implements OnInit {
     // This is sent even without submitting the crash report.
     Sentry.captureMessage("report information", {
       user: { name: this.currentUser.name },
-      level: Severity.Debug,
+      level: "debug",
       extra: {
         currentSyncState: this.currentSyncState,
         lastSync: this.lastSync,

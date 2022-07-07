@@ -7,7 +7,7 @@ import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-co
   selector: "app-display-percentage",
   templateUrl: "./display-percentage.component.html",
 })
-export class DisplayPercentageComponent extends ViewDirective {
+export class DisplayPercentageComponent extends ViewDirective<number> {
   /**
    * returns a css-compatible color value from green to red using the given
    * input value

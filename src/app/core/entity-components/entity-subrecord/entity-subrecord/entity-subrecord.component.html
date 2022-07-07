@@ -1,9 +1,13 @@
 <div class="mat-elevation-z1 container">
+  <div *ngIf="isLoading" class="process-spinner">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
   <table
     mat-table
     [dataSource]="recordsDataSource"
     matSort
     class="full-width"
+    *ngIf="!isLoading"
   >
     <ng-container *ngFor="let col of filteredColumns" [matColumnDef]="col.id">
       <th
@@ -27,6 +31,7 @@
           [appDynamicComponent]="{
             component: col.view,
             config: {
+              value: row.record[col.id],
               id: col.id,
               entity: row.record,
               config: col.additional
@@ -144,9 +149,6 @@
       class="table-row"
     ></tr>
   </table>
-  <div *ngIf="isLoading" class="process-spinner">
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-  </div>
   <app-list-paginator
     *ngIf="!isLoading || recordsDataSource.data.length"
     [dataSource]="recordsDataSource"

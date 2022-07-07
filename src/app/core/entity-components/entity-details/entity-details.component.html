@@ -23,7 +23,7 @@
     *ngIf="creatingNew"
     i18n="Title when adding a new entity|An entity is a child, note, school, etc."
   >
-    Adding new {{ config?.entity }}
+    Adding new {{ config?.title || config?.entity }}
   </app-view-title>
 
   <button

@@ -148,13 +148,4 @@
       </form>
     </div>
   </mat-tab>
-
-  <mat-tab label="Image Service" *ngIf="webdavEnabled">
-    <div class="margin-top-large">
-      <app-cloud-file-service-user-settings
-        class="margin-top-large"
-        [username]="username"
-      ></app-cloud-file-service-user-settings>
-    </div>
-  </mat-tab>
 </mat-tab-group>

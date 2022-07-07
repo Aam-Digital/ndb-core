@@ -52,7 +52,7 @@ export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<E
       }
 
       const specialMaterial = this.generateEducationalMaterialEntity(child);
-      specialMaterial.materialType = faker.random.arrayElement(
+      specialMaterial.materialType = faker.helpers.arrayElement(
         materials.filter((material) => material.hasOwnProperty("color"))
       );
       specialMaterial.materialAmount = 1;
@@ -70,8 +70,8 @@ export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<E
       child.admissionDate,
       getEarlierDateOrToday(child.dropoutDate)
     );
-    entity.materialAmount = faker.random.arrayElement([1, 1, 1, 2, 3]);
-    entity.materialType = faker.random.arrayElement(materials);
+    entity.materialAmount = faker.helpers.arrayElement([1, 1, 1, 2, 3]);
+    entity.materialType = faker.helpers.arrayElement(materials);
 
     return entity;
   }

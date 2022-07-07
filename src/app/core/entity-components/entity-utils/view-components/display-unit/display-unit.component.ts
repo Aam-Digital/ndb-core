@@ -8,7 +8,7 @@ import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-co
   selector: "app-display-unit",
   templateUrl: "./display-unit.component.html",
 })
-export class DisplayUnitComponent extends ViewDirective {
+export class DisplayUnitComponent extends ViewDirective<string> {
   unit: string;
   onInitFromDynamicConfig(config: ViewPropertyConfig) {
     super.onInitFromDynamicConfig(config);

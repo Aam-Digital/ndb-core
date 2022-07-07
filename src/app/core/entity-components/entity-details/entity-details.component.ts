@@ -33,7 +33,7 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
 export class EntityDetailsComponent {
   entity: Entity;
   creatingNew = false;
-  isLoading: boolean = true;
+  isLoading = true;
 
   panels: Panel[] = [];
   iconName: string;
@@ -73,7 +73,6 @@ export class EntityDetailsComponent {
       this.entityMapperService.load<Entity>(constr, id).then((entity) => {
         this.entity = entity;
         this.setFullPanelsConfig();
-        this.isLoading = false;
       });
     }
   }
@@ -100,6 +99,7 @@ export class EntityDetailsComponent {
         }),
       };
     });
+    this.isLoading = false;
   }
 
   private getPanelConfig(c: PanelComponent): PanelConfig {

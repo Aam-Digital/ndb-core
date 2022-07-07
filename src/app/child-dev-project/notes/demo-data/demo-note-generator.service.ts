@@ -99,11 +99,13 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
   private generateNoteForChild(child: Child, date?: Date): Note {
     const note = new Note();
 
-    const selectedStory = faker.random.arrayElement(noteIndividualStories);
+    const selectedStory = faker.helpers.arrayElement(noteIndividualStories);
     Object.assign(note, selectedStory);
 
     note.addChild(child.getId());
-    note.authors = [faker.random.arrayElement(this.demoUsers.entities).getId()];
+    note.authors = [
+      faker.helpers.arrayElement(this.demoUsers.entities).getId(),
+    ];
 
     if (!date) {
       date = faker.date.between(
@@ -132,7 +134,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
   private generateGroupNote(children: Child[]) {
     const note = new Note();
 
-    const selectedStory = faker.random.arrayElement(noteGroupStories);
+    const selectedStory = faker.helpers.arrayElement(noteGroupStories);
     Object.assign(note, selectedStory);
 
     note.children = children.map((c) => c.getId());
@@ -143,7 +145,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
         attendance.status = defaultAttendanceStatusTypes.find(
           (t) => t.countAs === AttendanceLogicalStatus.ABSENT
         );
-        attendance.remarks = faker.random.arrayElement(absenceRemarks);
+        attendance.remarks = faker.helpers.arrayElement(absenceRemarks);
       } else {
         attendance.status = defaultAttendanceStatusTypes.find(
           (t) => t.countAs === AttendanceLogicalStatus.PRESENT
@@ -151,7 +153,9 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
       }
     });
 
-    note.authors = [faker.random.arrayElement(this.demoUsers.entities).getId()];
+    note.authors = [
+      faker.helpers.arrayElement(this.demoUsers.entities).getId(),
+    ];
 
     note.date = faker.date.past(1);
 

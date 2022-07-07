@@ -9,7 +9,7 @@ import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-co
   selector: "app-readonly-function",
   templateUrl: "./readonly-function.component.html",
 })
-export class ReadonlyFunctionComponent extends ViewDirective {
+export class ReadonlyFunctionComponent extends ViewDirective<any> {
   @Input() displayFunction: (entity: Entity) => any;
   onInitFromDynamicConfig(config: ViewPropertyConfig) {
     super.onInitFromDynamicConfig(config);

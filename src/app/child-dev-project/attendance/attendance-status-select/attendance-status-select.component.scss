@@ -3,8 +3,8 @@
 // The indicator is a round, colored shape with a small margin on the right
 // it is used as prefix in the form field and for the individual options
 .indicator {
-  width: 1em;
-  height: 1em;
+  width: sizes.$medium;
+  height: sizes.$medium;
   border-radius: 50%;
 
   margin-right: sizes.$small;

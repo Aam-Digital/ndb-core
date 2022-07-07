@@ -66,4 +66,6 @@ import { CommonComponentsModule } from "../../common-components/common-component
   ],
   exports: [EntityListComponent, ListFilterComponent],
 })
-export class EntityListModule {}
+export class EntityListModule {
+  dynamicComponents = [EntityListComponent];
+}
