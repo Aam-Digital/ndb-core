@@ -39,13 +39,9 @@ export class AppConfig {
   static readonly DB_PROXY_PREFIX = "/db";
   /** Name of the database that is used */
   static readonly DB_NAME = "app";
-  /**
-   * Whether the app is running in demo mode.
-   */
+  /** Whether the app is running in demo mode */
   static DEMO_MODE = false;
-  /**
-   * The session type that is used.
-   */
+  /** The session type that is used */
   static SESSION_TYPE = SessionType.synced;
 
   /**
