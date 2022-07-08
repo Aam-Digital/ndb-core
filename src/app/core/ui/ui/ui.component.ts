@@ -31,7 +31,6 @@ import { UiConfig } from "../ui-config";
  */
 @UntilDestroy()
 @Component({
-  moduleId: module.id,
   selector: "app-ui",
   templateUrl: "./ui.component.html",
   styleUrls: ["./ui.component.scss"],

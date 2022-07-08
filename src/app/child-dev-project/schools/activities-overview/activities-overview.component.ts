@@ -15,7 +15,7 @@ import { OnInitDynamicComponent } from "app/core/view/dynamic-components/on-init
 })
 export class ActivitiesOverviewComponent implements OnInitDynamicComponent {
   columns: FormFieldConfig[] = [
-    { id: "title" },
+    { id: "title", edit: "EditSingleEntity", additional: "RecurringActivity" },
     { id: "type" },
     { id: "assignedTo" },
     { id: "linkedGroups" },
@@ -37,7 +37,28 @@ export class ActivitiesOverviewComponent implements OnInitDynamicComponent {
     this.records = (
       await this.entityMapper.loadType<RecurringActivity>(RecurringActivity)
     ).filter((activity) => activity.linkedGroups.includes(this.entity.getId()));
+    this.entityMapper
+      .receiveUpdates(RecurringActivity)
+      .subscribe((updateEntity) => {
+        if (updateEntity.type === "update") {
+          this.records = this.records.filter((activity) =>
+            activity.linkedGroups.includes(this.entity.getId())
+          );
+        }
+      });
   }
+
+  /**
+   *
+   *  Requirements for the autocomplete title field:
+   *  - if an activity from the auto suggested list of activities is selected, load this activity
+   *  - if the entered string is not part of any activity, create a new activity
+   *  - if the entered string equals exactly a title of an activity and if this title is unique, load this activity ??
+   *  - if the entered string is part of exacty one activity, load this activity ??
+   *  - add a suggestion for creating a new activity to the autocomplete list ??
+   *
+   *
+   */
 
   generateNewRecordFactory(): () => RecurringActivity {
     return () => {

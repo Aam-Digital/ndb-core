@@ -16,9 +16,12 @@ describe("DisplayUnitComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DisplayUnitComponent);
     component = fixture.componentInstance;
-    component.entity = new HealthCheck();
-    component.property = "height";
-    component.unit = "cm";
+    component.onInitFromDynamicConfig({
+      entity: new HealthCheck(),
+      id: "height",
+      value: "120",
+      config: "cm",
+    });
     fixture.detectChanges();
   });
 

@@ -1,5 +1,5 @@
 import { Component, Input } from "@angular/core";
-import { FormControl } from "@angular/forms";
+import { UntypedFormControl } from "@angular/forms";
 import { DynamicValidatorsService } from "../../entity-form/dynamic-form-validators/dynamic-validators.service";
 
 @Component({
@@ -7,7 +7,7 @@ import { DynamicValidatorsService } from "../../entity-form/dynamic-form-validat
   templateUrl: "./error-hint.component.html",
 })
 export class ErrorHintComponent {
-  @Input() form: FormControl;
+  @Input() form: UntypedFormControl;
 
   constructor(public validatorService: DynamicValidatorsService) {}
 }

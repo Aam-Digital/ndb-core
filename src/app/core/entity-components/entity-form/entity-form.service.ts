@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { FormBuilder, FormGroup } from "@angular/forms";
+import { FormBuilder, FormGroup, ɵElement } from "@angular/forms";
 import { FormFieldConfig } from "./entity-form/FormConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
@@ -7,6 +7,12 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DynamicValidatorsService } from "./dynamic-form-validators/dynamic-validators.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntitySchema } from "../../entity/schema/entity-schema";
+
+/**
+ * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
+ */
+export type TypedForm<T> = FormGroup<{ [K in keyof T]: ɵElement<T[K], null> }>;
+export type EntityForm<T extends Entity> = TypedForm<Partial<T>>;
 
 /**
  * This service provides helper functions for creating tables or forms for an entity as well as saving
@@ -65,10 +71,10 @@ export class EntityFormService {
     }
   }
 
-  public createFormGroup(
+  public createFormGroup<T extends Entity>(
     formFields: FormFieldConfig[],
-    entity: Entity
-  ): FormGroup {
+    entity: T
+  ): EntityForm<T> {
     const formConfig = {};
     const entitySchema = entity.getSchema();
     formFields
@@ -82,7 +88,7 @@ export class EntityFormService {
           formConfig[formField.id].push(validators);
         }
       });
-    return this.fb.group(formConfig);
+    return this.fb.group<Partial<T>>(formConfig);
   }
 
   public updateValues(formGroup: FormGroup, entity: Entity, staticKey: string) {
@@ -103,7 +109,7 @@ export class EntityFormService {
    * @returns a copy of the input entity with the changes from the form group
    */
   public async saveChanges<T extends Entity>(
-    form: FormGroup,
+    form: EntityForm<T>,
     entity: T
   ): Promise<T> {
     this.checkFormValidity(form, entity.getSchema());
@@ -124,7 +130,10 @@ export class EntityFormService {
       });
   }
 
-  private checkFormValidity(form: FormGroup, schema: EntitySchema) {
+  private checkFormValidity<T extends Entity>(
+    form: EntityForm<T>,
+    schema: EntitySchema
+  ) {
     // errors regarding invalid fields wont be displayed unless marked as touched
     form.markAllAsTouched();
     if (form.invalid) {
@@ -133,7 +142,10 @@ export class EntityFormService {
     }
   }
 
-  private getInvalidFields(form: FormGroup, schema: EntitySchema): string {
+  private getInvalidFields<T extends Entity>(
+    form: EntityForm<T>,
+    schema: EntitySchema
+  ): string {
     return Object.keys(form.controls)
       .filter((key) => form.controls[key].invalid)
       .map((field) => schema.get(field).label)

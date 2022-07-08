@@ -1,3 +1,4 @@
+@use '@angular/material' as mat;
 @import "../../../../ndb-theme";
 @import "../../../../styles";
 
@@ -19,12 +20,12 @@
 }
 
 .filter-field {
-  color: mat-color($ndb-app-accent);
+  color: mat.get-color-from-palette($ndb-app-accent);
   width: calc(2*(180px + 2*0.75em) + 10px); // span the width of two other filter elements
 }
 
 .accent-icon {
-  color: mat-color($ndb-app-accent);
+  color: mat.get-color-from-palette($ndb-app-accent);
   min-width: $max-icon-width;
   margin-right: 8px;
 }

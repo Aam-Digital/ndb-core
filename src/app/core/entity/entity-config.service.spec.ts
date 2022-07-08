@@ -105,6 +105,17 @@ describe("EntityConfigService", () => {
     expect(Test.schema).toHaveKey(ATTRIBUTE_1_NAME);
     expect(Test2.schema).toHaveKey(ATTRIBUTE_2_NAME);
   });
+
+  it("should allow to configure the `.toString` method", () => {
+    mockConfigService.getAllConfigs.and.returnValue([
+      { _id: "entity:Test", toStringAttributes: ["name", "entityId"] },
+    ]);
+    service.setupEntitiesFromConfig();
+
+    const test = new Test("id");
+    test.name = "testName";
+    expect(test.toString()).toBe("testName id");
+  });
 });
 
 @DatabaseEntity("Test")
