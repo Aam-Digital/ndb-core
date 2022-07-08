@@ -15,7 +15,6 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { IAppConfig } from "./app-config.model";
 import { SessionType } from "../session/session-type";
 import { environment } from "../../../environments/environment";
 
@@ -40,24 +39,19 @@ export class AppConfig {
   static readonly DB_PROXY_PREFIX = "/db";
   /** Name of the database that is used */
   static readonly DB_NAME = "app";
-
+  /**
+   * Whether the app is running in demo mode.
+   */
   static DEMO_MODE = false;
+  /**
+   * The session type that is used.
+   */
   static SESSION_TYPE = SessionType.synced;
-  /** settings for the app */
-  static settings: IAppConfig;
-
-  /** file location of the config file to be created by the administrator */
-  private static readonly CONFIG_FILE = "assets/config.json";
-
-  /** fallback file location of the config that is part of the project already if the "real" config file isn't found */
-  private static readonly DEFAULT_CONFIG_FILE = "assets/config.default.json";
 
   /**
-   * Load the config file into the `AppConfig.settings` so they can be used synchronously anywhere in the code after that.
-   *
-   * If the config file does not exist, uses the default config as a fallback.
+   * Initializes static settings through the environment or the URL params.
    */
-  static load(): Promise<IAppConfig> {
+  static initSettings() {
     const params = new URLSearchParams(location.search);
     const demoMode = params.get("demo");
     const sessionType = params.get("session");
@@ -75,32 +69,5 @@ export class AppConfig {
     ) {
       AppConfig.SESSION_TYPE = SessionType.local;
     }
-    console.log("params", demoMode, sessionType);
-    return this.loadAppConfigJson(this.CONFIG_FILE).catch(() =>
-      this.loadAppConfigJson(this.DEFAULT_CONFIG_FILE)
-    );
-  }
-
-  /**
-   * Load the given file and set it as AppConfig.settings.
-   *
-   * This requires a HTTP request because the "assets" folder including the config.json is on our server
-   * while this javascript code is executed in the users browser.
-   *
-   * @param jsonFileLocation The file path of the json file to be loaded as config
-   */
-  private static loadAppConfigJson(
-    jsonFileLocation: string
-  ): Promise<IAppConfig> {
-    return fetch(jsonFileLocation)
-      .then((result) => result.json())
-      .then((result: IAppConfig) => (AppConfig.settings = result))
-      .catch((response: any) => {
-        throw new Error(
-          `Could not load file '${jsonFileLocation}': ${JSON.stringify(
-            response
-          )}`
-        );
-      });
   }
 }

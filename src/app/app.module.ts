@@ -80,6 +80,7 @@ import { SupportModule } from "./core/support/support.module";
 import { DemoConfigGeneratorService } from "./core/config/demo-config-generator.service";
 import { DatabaseModule } from "./core/database/database.module";
 import { Angulartics2Matomo, Angulartics2Module } from "angulartics2";
+import { AppConfig } from "./core/app-config/app-config";
 
 /**
  * Main entry point of the application.
@@ -168,6 +169,7 @@ import { Angulartics2Matomo, Angulartics2Module } from "angulartics2";
 })
 export class AppModule {
   constructor(icons: FaIconLibrary) {
+    AppConfig.initSettings();
     icons.addIconPacks(fas, far);
   }
 }
