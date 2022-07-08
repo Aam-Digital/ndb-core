@@ -4,6 +4,7 @@ import { Entity } from "../../../../entity/model/entity";
 import { BehaviorSubject } from "rxjs";
 import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
+import { FormControl } from "@angular/forms";
 
 @DynamicComponent("EditSingleEntity")
 @Component({
@@ -44,7 +45,7 @@ export class EditSingleEntityComponent extends EditComponent<string> {
     this.entities = await this.entityMapperService.loadType(entityType);
     this.entities.sort((e1, e2) => e1.toString().localeCompare(e2.toString()));
     const selectedEntity = this.entities.find(
-      (entity) => entity.getId() === this.formControl.value
+      (entity) => entity.toString() === this.formControl.value
     );
     if (selectedEntity) {
       this.selectedEntity = selectedEntity;
@@ -65,10 +66,20 @@ export class EditSingleEntityComponent extends EditComponent<string> {
     if (entity) {
       this.selectedEntity = entity;
       this.editingSelectedEntity = false;
-      this.formControl.setValue(entity.getId());
+      // this.formControl.setValue(entity.getId());
+      const schema = entity.getSchema();
+      const formKeys = Object.keys(entity).filter(
+        (key) => schema.has(key) && !this.parent.controls.hasOwnProperty(key)
+      );
+      Object.keys(this.parent.controls).forEach((key) => {
+        this.parent.controls[key].setValue(entity[key]);
+      });
+      formKeys.forEach((key) =>
+        this.parent.addControl(key, new FormControl(entity[key]))
+      );
     } else {
       this.selectedEntity = undefined;
-      this.formControl.setValue(undefined);
+      this.formControl.setValue(selected as string);
     }
   }
 
