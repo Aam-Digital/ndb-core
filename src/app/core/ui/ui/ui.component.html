@@ -59,6 +59,7 @@
 <mat-sidenav-container
   class="app-content mat-typography primary-background"
   (backdropClick)="closeSidenavOnMobile()"
+  autosize
 >
   <mat-sidenav
     #sideNav
@@ -81,7 +82,7 @@
       ></app-navigation>
 
 
-      <div fxFlex >
+      <div fxFlex>
         <div fxLayout="row" class="menu-footer-row">
           <app-pwa-install fxFlex></app-pwa-install>
         </div>
