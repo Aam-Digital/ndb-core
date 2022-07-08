@@ -42,39 +42,36 @@ describe("UserAccountComponent", () => {
   let mockUserAccountService: jasmine.SpyObj<UserAccountService>;
   let mockLoggingService: jasmine.SpyObj<LoggingService>;
 
-  beforeEach(
-    waitForAsync(() => {
-      AppConfig.SESSION_TYPE = SessionType.synced; // password change only available in synced mode
-      mockSessionService = jasmine.createSpyObj("sessionService", [
-        "getCurrentUser",
-        "login",
-        "checkPassword",
-      ]);
-      mockSessionService.getCurrentUser.and.returnValue({
-        name: "TestUser",
-        roles: [],
-      });
-      mockUserAccountService = jasmine.createSpyObj("mockUserAccount", [
-        "changePassword",
-      ]);
-      mockLoggingService = jasmine.createSpyObj(["error"]);
+  beforeEach(waitForAsync(() => {
+    AppConfig.SESSION_TYPE = SessionType.synced; // password change only available in synced mode
+    mockSessionService = jasmine.createSpyObj("sessionService", [
+      "getCurrentUser",
+      "login",
+      "checkPassword",
+    ]);
+    mockSessionService.getCurrentUser.and.returnValue({
+      name: "TestUser",
+      roles: [],
+    });
+    mockUserAccountService = jasmine.createSpyObj("mockUserAccount", [
+      "changePassword",
+    ]);
+    mockLoggingService = jasmine.createSpyObj(["error"]);
 
-      TestBed.configureTestingModule({
-        declarations: [UserAccountComponent],
-        imports: [
-          UserModule,
-          NoopAnimationsModule,
-          TabStateModule,
-          RouterTestingModule,
-        ],
-        providers: [
-          { provide: SessionService, useValue: mockSessionService },
-          { provide: UserAccountService, useValue: mockUserAccountService },
-          { provide: LoggingService, useValue: mockLoggingService },
-        ],
-      });
-    })
-  );
+    TestBed.configureTestingModule({
+      imports: [
+        UserModule,
+        NoopAnimationsModule,
+        TabStateModule,
+        RouterTestingModule,
+      ],
+      providers: [
+        { provide: SessionService, useValue: mockSessionService },
+        { provide: UserAccountService, useValue: mockUserAccountService },
+        { provide: LoggingService, useValue: mockLoggingService },
+      ],
+    });
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(UserAccountComponent);
