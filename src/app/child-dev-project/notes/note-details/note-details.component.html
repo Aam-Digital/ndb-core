@@ -162,7 +162,7 @@
 
     <!-- Participants and groups -->
     <app-entity-select
-      style="margin-top: 12px"
+      class="form-section"
       entityType="Child"
       [(selection)]="entity.children"
       (selectionChange)="entityForm.form.markAsDirty()"
@@ -185,19 +185,19 @@
       </mat-option>
     </app-entity-select>
 
+
     <div *ngIf="entity.category?.isMeeting">
       <app-child-meeting-note-attendance
-        *ngFor="let childId of entity.children"
-        [childId]="childId"
-        [attendance]="entity.getAttendance(childId)"
-        (change)="entityForm.form.markAsDirty()"
-        (remove)="entity.removeChild(childId); entityForm.form.markAsDirty()"
+        [mobile]="mobile"
+        [entity]="entity"
         [disabled]="formDialogWrapper.readonly"
-      >
-      </app-child-meeting-note-attendance>
+        (change)="entityForm.form.markAsDirty()"
+        (remove)="entity.removeChild($event); entityForm.form.markAsDirty()"
+      ></app-child-meeting-note-attendance>
     </div>
 
     <app-entity-select
+      class="form-section"
       entityType="School"
       [(selection)]="entity.schools"
       (selectionChange)="entityForm.form.markAsDirty()"
@@ -208,5 +208,6 @@
       placeholder="Add group ..."
     >
     </app-entity-select>
+
   </form>
 </app-form-dialog-wrapper>

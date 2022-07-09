@@ -53,8 +53,11 @@ describe("DemoDataInitializerService", () => {
     service = TestBed.inject(DemoDataInitializerService);
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     loginState.complete();
+    const tmpDB = new PouchDatabase(undefined);
+    await tmpDB.initInMemoryDB(demoUserDBName).destroy();
+    await tmpDB.initInMemoryDB(adminDBName).destroy();
   });
 
   it("should be created", () => {
@@ -155,10 +158,6 @@ describe("DemoDataInitializerService", () => {
     expectAsync(defaultUserDB.get(adminDoc1._id)).toBeResolved();
     expectAsync(defaultUserDB.get(adminDoc2._id)).toBeResolved();
     expectAsync(defaultUserDB.get(userDoc._id)).toBeResolved();
-    tick();
-
-    defaultUserDB.destroy();
-    database.destroy();
     tick();
   }));
 

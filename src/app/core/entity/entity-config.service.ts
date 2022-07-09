@@ -26,6 +26,22 @@ export class EntityConfigService {
   ) {}
 
   /**
+   * Assigns additional schema-fields to all entities that are
+   * defined inside the config. Entities that are not registered
+   * using the {@link DatabaseEntity}-Decorator won't work and will
+   * trigger an error message
+   */
+  setupEntitiesFromConfig() {
+    for (const config of this.configService.getAllConfigs<
+      EntityConfig & { _id: string }
+    >(ENTITY_CONFIG_PREFIX)) {
+      const id = config._id.substring(ENTITY_CONFIG_PREFIX.length);
+      const ctor = this.entities.get(id);
+      this.addConfigAttributes(ctor, config);
+    }
+  }
+
+  /**
    * Appends the given (dynamic) attributes to the schema of the provided Entity.
    * If no arguments are provided, they will be loaded from the config
    * @param entityType The type to add the attributes to
@@ -45,6 +61,9 @@ export class EntityConfigService {
         )
       );
     }
+    if (entityConfig?.toStringAttributes) {
+      entityType.toStringAttributes = entityConfig.toStringAttributes;
+    }
   }
 
   /**
@@ -56,22 +75,6 @@ export class EntityConfigService {
     const configName =
       EntityConfigService.PREFIX_ENTITY_CONFIG + entityType.ENTITY_TYPE;
     return this.configService.getConfig<EntityConfig>(configName);
-  }
-
-  /**
-   * Assigns additional schema-fields to all entities that are
-   * defined inside the config. Entities that are not registered
-   * using the {@link DatabaseEntity}-Decorator won't work and will
-   * trigger an error message
-   */
-  setupEntitiesFromConfig() {
-    for (const config of this.configService.getAllConfigs<
-      EntityConfig & { _id: string }
-    >(ENTITY_CONFIG_PREFIX)) {
-      const id = config._id.substring(ENTITY_CONFIG_PREFIX.length);
-      const ctor = this.entities.get(id);
-      this.addConfigAttributes(ctor, config);
-    }
   }
 }
 
@@ -94,4 +97,12 @@ export interface EntityConfig {
      */
     schema: EntitySchemaField;
   }[];
+
+  /**
+   * A list of attributes which should be shown when calling the `.toString()` method of this entity.
+   * E.g. showing the first and last name of a child.
+   *
+   * (optional) the default is the ID of the entity (`.entityId`)
+   */
+  toStringAttributes?: string[];
 }

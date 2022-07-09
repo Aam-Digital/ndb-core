@@ -198,8 +198,11 @@ export const defaultJsonConfig = {
           }
         },
         {
+          "component": "BirthdayDashboard"
+        },
+        {
           "component": "ChildrenBmiDashboard"
-        }
+        },
       ]
     }
   },
@@ -419,6 +422,15 @@ export const defaultJsonConfig = {
             {
               "title": "",
               "component": "ChildrenOverview",
+            }
+          ]
+        },
+        {
+          "title": $localize`:Panel title:Activities`,
+          "components": [
+            {
+              "title": "",
+              "component": "ActivitiesOverview",
             }
           ]
         }
