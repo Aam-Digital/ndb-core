@@ -5,7 +5,7 @@
 <mat-menu #menu>
   <a
     *ngFor="let lang of languageList"
-    [href]="'/' + lang.locale + currentUrl"
+    [href]="'/' + lang.locale + currentUrl + '/index.html'"
     mat-menu-item
   >
     <span

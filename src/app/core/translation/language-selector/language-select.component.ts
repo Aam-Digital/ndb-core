@@ -20,7 +20,7 @@ export class LanguageSelectComponent {
   siteRegionCode: string;
 
   /**
-   * The relative route the user is currently on
+   * The relative route the user is currently on without query params
    */
   currentUrl = "";
 
@@ -34,9 +34,7 @@ export class LanguageSelectComponent {
         untilDestroyed(this),
         filter((event) => event instanceof NavigationEnd)
       )
-      .subscribe(() => {
-        this.currentUrl = this.router.url;
-      });
+      .subscribe(() => (this.currentUrl = this.router.url.split("?")[0]));
   }
 
   /**
