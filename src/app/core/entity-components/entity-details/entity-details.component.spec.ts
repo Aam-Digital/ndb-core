@@ -20,6 +20,7 @@ import {
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 
 describe("EntityDetailsComponent", () => {
   let component: EntityDetailsComponent;
@@ -56,6 +57,11 @@ describe("EntityDetailsComponent", () => {
       observer.next({ get: () => "new" });
     }),
     data: of({ config: routeConfig }),
+    snapshot: {
+      queryParamMap: {
+        get: () => "",
+      },
+    },
   };
 
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
@@ -65,11 +71,11 @@ describe("EntityDetailsComponent", () => {
   beforeEach(
     waitForAsync(() => {
       mockChildrenService = jasmine.createSpyObj([
-        "getSchoolRelationsFor",
+        "queryRelationsOf",
         "getAserResultsOfChild",
       ]);
       mockEntityRemoveService = jasmine.createSpyObj(["remove"]);
-      mockChildrenService.getSchoolRelationsFor.and.resolveTo([]);
+      mockChildrenService.queryRelationsOf.and.resolveTo([]);
       mockChildrenService.getAserResultsOfChild.and.returnValue(of([]));
       mockAbility = jasmine.createSpyObj(["cannot", "update"]);
       mockAbility.cannot.and.returnValue(false);
@@ -78,6 +84,7 @@ describe("EntityDetailsComponent", () => {
           ChildrenModule,
           MockedTestingModule.withState(),
           FontAwesomeTestingModule,
+          TabStateModule,
         ],
         providers: [
           { provide: ActivatedRoute, useValue: mockedRoute },
@@ -117,6 +124,7 @@ describe("EntityDetailsComponent", () => {
   }));
 
   it("should load the correct child on startup", fakeAsync(() => {
+    component.isLoading = true;
     const testChild = new Child("Test-Child");
     const entityMapper = TestBed.inject(EntityMapperService);
     entityMapper.save(testChild);
@@ -124,10 +132,12 @@ describe("EntityDetailsComponent", () => {
     spyOn(entityMapper, "load").and.callThrough();
 
     routeObserver.next({ get: () => testChild.getId() });
+    expect(component.isLoading).toBeTrue();
     tick();
 
     expect(entityMapper.load).toHaveBeenCalledWith(Child, testChild.getId());
     expect(component.entity).toBe(testChild);
+    expect(component.isLoading).toBeFalse();
   }));
 
   it("should navigate back when deleting an entity", fakeAsync(() => {

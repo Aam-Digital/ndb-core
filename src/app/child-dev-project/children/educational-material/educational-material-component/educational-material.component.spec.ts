@@ -1,17 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { EducationalMaterialComponent } from "./educational-material.component";
-import { ChildrenService } from "../../children.service";
 import { Child } from "../../model/child";
 import { ChildrenModule } from "../../children.module";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { EducationalMaterial } from "../model/educational-material";
 import { ConfigurableEnumValue } from "../../../../core/configurable-enum/configurable-enum.interface";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { Subject } from "rxjs";
+import { UpdatedEntity } from "../../../../core/entity/model/entity-update";
 
 describe("EducationalMaterialComponent", () => {
   let component: EducationalMaterialComponent;
   let fixture: ComponentFixture<EducationalMaterialComponent>;
-  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
+  const updates = new Subject<UpdatedEntity<EducationalMaterial>>();
   const child = new Child("22");
   const PENCIL: ConfigurableEnumValue = {
     id: "pencil",
@@ -24,15 +26,11 @@ describe("EducationalMaterialComponent", () => {
 
   beforeEach(
     waitForAsync(() => {
-      mockChildrenService = jasmine.createSpyObj([
-        "getEducationalMaterialsOfChild",
-      ]);
       TestBed.configureTestingModule({
         imports: [ChildrenModule, MockedTestingModule.withState()],
-        providers: [
-          { provide: ChildrenService, useValue: mockChildrenService },
-        ],
       }).compileComponents();
+      const entityMapper = TestBed.inject(EntityMapperService);
+      spyOn(entityMapper, "receiveUpdates").and.returnValue(updates);
     })
   );
 
@@ -84,10 +82,10 @@ describe("EducationalMaterialComponent", () => {
 
   it("loads all education data associated with a child and updates the summary", async () => {
     const educationalData = [
-      { materialType: PENCIL, materialAmount: 1 },
-      { materialType: RULER, materialAmount: 2 },
+      { materialType: PENCIL, materialAmount: 1, child: child.getId() },
+      { materialType: RULER, materialAmount: 2, child: child.getId() },
     ].map(EducationalMaterial.create);
-    mockChildrenService.getEducationalMaterialsOfChild.and.resolveTo(
+    spyOn(TestBed.inject(EntityMapperService), "loadType").and.resolveTo(
       educationalData
     );
     await component.loadData("22");
@@ -96,8 +94,33 @@ describe("EducationalMaterialComponent", () => {
   });
 
   it("associates a new record with the current child", () => {
-    component.child = child;
     const newRecord = component.newRecordFactory();
     expect(newRecord.child).toBe(child.getId());
+  });
+
+  it("should update the summary when entity updates are received", async () => {
+    const update1 = EducationalMaterial.create({
+      child: child.getId(),
+      materialType: PENCIL,
+      materialAmount: 1,
+    });
+    updates.next({ entity: update1, type: "new" });
+
+    expect(component.records).toEqual([update1]);
+    expect(component.summary).toBe(`${PENCIL.label}: 1`);
+
+    const update2 = update1.copy() as EducationalMaterial;
+    update2.materialAmount = 2;
+    updates.next({ entity: update2, type: "update" });
+
+    expect(component.records).toEqual([update2]);
+    expect(component.summary).toBe(`${PENCIL.label}: 2`);
+
+    const unrelatedUpdate = update1.copy() as EducationalMaterial;
+    unrelatedUpdate.child = "differentChild";
+    updates.next({ entity: unrelatedUpdate, type: "new" });
+    // No change
+    expect(component.records).toEqual([update2]);
+    expect(component.summary).toBe(`${PENCIL.label}: 2`);
   });
 });

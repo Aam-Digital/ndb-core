@@ -2,9 +2,10 @@
  * Checks if the given value is an instance of Date and holds a valid date value.
  * @param date The date to be checked
  */
+import { MessageId, TargetMessage } from "@angular/localize";
 import { Router } from "@angular/router";
-import { MessageId, TargetMessage } from "@angular/localize/src/utils";
 import xliff from "xliff";
+import { ConfigurableEnumValue } from "../core/configurable-enum/configurable-enum.interface";
 
 export function isValidDate(date: any): boolean {
   return (
@@ -118,4 +119,11 @@ export async function parseTranslationsForLocalize(
     },
     {}
   );
+}
+
+export function compareEnums(
+  a: ConfigurableEnumValue,
+  b: ConfigurableEnumValue
+): boolean {
+  return a?.id === b?.id;
 }

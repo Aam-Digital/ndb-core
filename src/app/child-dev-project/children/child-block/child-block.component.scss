@@ -30,6 +30,24 @@
   color: grey;
 }
 
-.clickable {
-  cursor: pointer;
+.container {
+  display: flex;
+  align-items: center;
+  font-size: 1em;
 }
+
+.font-size-rel {
+  font-size: 1em;
+  margin-right: 3px;
+  font-weight: 500;
+  color: #262626;
+}
+
+.subnote {
+  font-size: 0.7em;
+  position: relative;
+  top: 0.2em;
+  color: #5e5e5e;
+}
+
+

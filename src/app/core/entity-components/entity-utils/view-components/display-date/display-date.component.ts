@@ -9,9 +9,9 @@ import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-co
 @DynamicComponent("DisplayDate")
 @Component({
   selector: "app-display-date",
-  template: `{{ entity[property] | date: format }}`,
+  template: `{{ value | date: format }}`,
 })
-export class DisplayDateComponent extends ViewDirective {
+export class DisplayDateComponent extends ViewDirective<Date> {
   format = "yyyy-MM-dd";
 
   onInitFromDynamicConfig(config: ViewPropertyConfig) {

@@ -21,8 +21,9 @@
         class="chip"
       >
         <app-display-entity
+          class="display-entity"
           [entityToDisplay]="entity"
-          [linkDisabled]="true"
+          [linkDisabled]="formControl.enabled"
         ></app-display-entity>
         <fa-icon
           *ngIf="removable && formControl.enabled"

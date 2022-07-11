@@ -30,7 +30,7 @@ import {
   EntityRegistry,
   entityRegistry,
 } from "../../entity/database-entity.decorator";
-import { expectObservable } from "../../../test-utils/observable-utils";
+import { expectObservable } from "../../../utils/test-utils/observable-utils";
 
 describe("SyncStatusComponent", () => {
   let component: SyncStatusComponent;
@@ -81,20 +81,6 @@ describe("SyncStatusComponent", () => {
 
   it("should be created", () => {
     expect(component).toBeTruthy();
-  });
-
-  it("should open dialog without error", async () => {
-    mockSessionService.syncState.next(SyncState.STARTED);
-
-    fixture.detectChanges();
-    await fixture.whenStable();
-    // @ts-ignore
-    expect(component.dialogRef).toBeDefined();
-
-    mockSessionService.syncState.next(SyncState.COMPLETED);
-
-    fixture.detectChanges();
-    await fixture.whenStable();
   });
 
   it("should update backgroundProcesses details on sync", async () => {

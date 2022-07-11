@@ -4,12 +4,10 @@
 # >> docker build -f build/Dockerfile -t aam/digital:latest .
 # >> docker run -p=80:80 aam/digital:latest
 # >> docker kill aam-digital
-FROM node:15.11.0-alpine3.13 as builder
+FROM node:16.14.2-alpine3.15 as builder
 WORKDIR /app
 
 COPY package*.json ./
-COPY patch-webpack.js .
-COPY patch-casl.js .
 RUN npm ci --no-progress
 
 RUN $(npm bin)/ng version
@@ -61,7 +59,7 @@ RUN if [ "$SENTRY_AUTH_TOKEN" != "" ] ; then \
 
 ### PROD image
 
-FROM nginx:1.21-alpine
+FROM nginx:1.22.0-alpine
 COPY ./build/default.conf /etc/nginx/templates/default.conf
 COPY --from=builder /app/dist/ /usr/share/nginx/html
 # The port on which the app will run in the Docker container

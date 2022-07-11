@@ -1,15 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { FormFieldConfig } from "./FormConfig";
-import { FormGroup } from "@angular/forms";
-import { EntityFormService } from "../entity-form.service";
+import { EntityForm, EntityFormService } from "../entity-form.service";
 import { AlertService } from "../../../alerts/alert.service";
 
-@Component({
-  selector: "app-entity-form",
-  templateUrl: "./entity-form.component.html",
-  styleUrls: ["./entity-form.component.scss"],
-})
 /**
  * A general purpose form component for displaying and editing entities.
  * It uses the FormFieldConfig interface for building the form fields but missing information are also fetched from
@@ -19,11 +13,16 @@ import { AlertService } from "../../../alerts/alert.service";
  * This component can be used directly or in a popup.
  * Inside the entity details component use the FormComponent which is registered as dynamic component.
  */
-export class EntityFormComponent implements OnInit {
+@Component({
+  selector: "app-entity-form",
+  templateUrl: "./entity-form.component.html",
+  styleUrls: ["./entity-form.component.scss"],
+})
+export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
   /**
    * The entity which should be displayed and edited
    */
-  @Input() entity: Entity;
+  @Input() entity: T;
 
   /**
    * Whether the form should be opened in editing mode or not
@@ -52,14 +51,14 @@ export class EntityFormComponent implements OnInit {
   /**
    * This will be emitted whenever changes have been successfully saved to the entity.
    */
-  @Output() onSave = new EventEmitter<Entity>();
+  @Output() save = new EventEmitter<T>();
 
   /**
    * This will be emitted whenever the cancel button is pressed.
    */
-  @Output() onCancel = new EventEmitter<void>();
+  @Output() cancel = new EventEmitter<void>();
 
-  form: FormGroup;
+  form: EntityForm<T>;
 
   constructor(
     private entityFormService: EntityFormService,
@@ -81,18 +80,18 @@ export class EntityFormComponent implements OnInit {
     }
   }
 
-  async save(): Promise<void> {
+  async saveForm(): Promise<void> {
     try {
       await this.entityFormService.saveChanges(this.form, this.entity);
-      this.onSave.emit(this.entity);
+      this.save.emit(this.entity);
       this.switchEdit();
     } catch (err) {
       this.alertService.addWarning(err.message);
     }
   }
 
-  cancel() {
-    this.onCancel.emit();
+  cancelClicked() {
+    this.cancel.emit();
     this.buildFormConfig();
   }
 

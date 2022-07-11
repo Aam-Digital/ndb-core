@@ -15,7 +15,7 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<mat-tab-group>
+<mat-tab-group appTabStateMemo>
   <mat-tab i18n-label="User-Account label" label="User Account">
     <ng-template matTabContent>
       <div class="user-profile-tab">
@@ -141,16 +141,6 @@
             Change Password
           </button>
         </form>
-      </div>
-    </ng-template>
-  </mat-tab>
-
-  <mat-tab label="Image Service" *ngIf="webdavEnabled">
-    <ng-template matTabContent>
-      <div class="user-profile-tab">
-        <app-cloud-file-service-user-settings
-          [username]="username"
-        ></app-cloud-file-service-user-settings>
       </div>
     </ng-template>
   </mat-tab>

@@ -5,12 +5,12 @@ import { Alert } from "../../alerts/alert";
 import { BackupService } from "../services/backup.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import PouchDB from "pouchdb-browser";
 import { ChildPhotoUpdateService } from "../services/child-photo-update.service";
 import { ConfigService } from "../../config/config.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { readFile } from "../../../utils/utils";
 import { RouteTarget } from "../../../app.routing";
+import { Database } from "../../database/database";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -29,12 +29,10 @@ export class AdminComponent implements OnInit {
   /** all alerts */
   alerts: Alert[];
 
-  /** direct database instance */
-  private db;
-
   constructor(
     private alertService: AlertService,
     private backupService: BackupService,
+    private db: Database,
     private confirmationDialog: ConfirmationDialogService,
     private snackBar: MatSnackBar,
     private childPhotoUpdateService: ChildPhotoUpdateService,
@@ -43,7 +41,6 @@ export class AdminComponent implements OnInit {
 
   ngOnInit() {
     this.alerts = this.alertService.alerts;
-    this.db = new PouchDB(AppConfig.settings.database.name);
   }
 
   /**
@@ -76,8 +73,8 @@ export class AdminComponent implements OnInit {
     this.startDownload(csv, "text/csv", "export.csv");
   }
 
-  async downloadConfigClick() {
-    const configString = await this.configService.exportConfig();
+  downloadConfigClick() {
+    const configString = this.configService.exportConfig();
     this.startDownload(configString, "text/json", "config.json");
   }
 
@@ -103,32 +100,30 @@ export class AdminComponent implements OnInit {
     const restorePoint = await this.backupService.getJsonExport();
     const newData = await readFile(this.getFileFromInputEvent(inputEvent));
 
-    const dialogRef = this.confirmationDialog.openDialog(
+    const confirmed = await this.confirmationDialog.getConfirmation(
       `Overwrite complete database?`,
       `Are you sure you want to restore this backup? This will
       delete all ${JSON.parse(restorePoint).length} existing records,
       restoring ${JSON.parse(newData).length} records from the loaded file.`
     );
 
-    dialogRef.afterClosed().subscribe(async (confirmed) => {
-      if (!confirmed) {
-        return;
-      }
+    if (!confirmed) {
+      return;
+    }
 
-      await this.backupService.clearDatabase();
-      await this.backupService.importJson(newData, true);
+    await this.backupService.clearDatabase();
+    await this.backupService.importJson(newData, true);
 
-      const snackBarRef = this.snackBar.open(`Backup restored`, "Undo", {
-        duration: 8000,
-      });
-      snackBarRef
-        .onAction()
-        .pipe(untilDestroyed(this))
-        .subscribe(async () => {
-          await this.backupService.clearDatabase();
-          await this.backupService.importJson(restorePoint, true);
-        });
+    const snackBarRef = this.snackBar.open(`Backup restored`, "Undo", {
+      duration: 8000,
     });
+    snackBarRef
+      .onAction()
+      .pipe(untilDestroyed(this))
+      .subscribe(async () => {
+        await this.backupService.clearDatabase();
+        await this.backupService.importJson(restorePoint, true);
+      });
   }
 
   private getFileFromInputEvent(inputEvent: Event): Blob {
@@ -142,29 +137,25 @@ export class AdminComponent implements OnInit {
   async clearDatabase() {
     const restorePoint = await this.backupService.getJsonExport();
 
-    const dialogRef = this.confirmationDialog.openDialog(
+    const confirmed = await this.confirmationDialog.getConfirmation(
       `Empty complete database?`,
-      `Are you sure you want to clear the database? This will delete all ${
-        restorePoint.split("\n").length
-      } existing records in the database!`
+      `Are you sure you want to clear the database? This will delete all existing records in the database!`
     );
 
-    dialogRef.afterClosed().subscribe(async (confirmed) => {
-      if (!confirmed) {
-        return;
-      }
+    if (!confirmed) {
+      return;
+    }
 
-      await this.backupService.clearDatabase();
+    await this.backupService.clearDatabase();
 
-      const snackBarRef = this.snackBar.open(`Import completed`, "Undo", {
-        duration: 8000,
-      });
-      snackBarRef
-        .onAction()
-        .pipe(untilDestroyed(this))
-        .subscribe(async () => {
-          await this.backupService.importJson(restorePoint, true);
-        });
+    const snackBarRef = this.snackBar.open(`Import completed`, "Undo", {
+      duration: 8000,
     });
+    snackBarRef
+      .onAction()
+      .pipe(untilDestroyed(this))
+      .subscribe(async () => {
+        await this.backupService.importJson(restorePoint, true);
+      });
   }
 }

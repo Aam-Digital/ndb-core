@@ -21,8 +21,14 @@ import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 import { AppModule } from "./app/app.module";
 import { environment } from "./environments/environment";
 import { loadTranslations } from "@angular/localize";
-import { parseTranslationsForLocalize } from "./app/utils/utils";
 import { registerLocaleData } from "@angular/common";
+import { AppConfig } from "./app/core/app-config/app-config";
+import localeDe from "@angular/common/locales/de";
+
+// Import hammer.js to enable gestures
+// on mobile devices
+import "hammerjs";
+import { parseTranslationsForLocalize } from "./app/utils/utils";
 
 if (environment.production) {
   enableProdMode();
@@ -31,36 +37,47 @@ if (environment.production) {
 const locale = localStorage.getItem("locale") || "en-US";
 
 if (locale !== "en-US") {
-  // fetch("/assets/locale/messages." + locale + ".xlf")
-  fetch("/assets/locale/messages.json")
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("HTTP error " + response.status);
-      }
-      return response.json().then((res) => res.translations);
-    })
-    // .then((res) => parseTranslationsForLocalize(res))
+  fetch("/assets/locale/messages." + locale + ".xlf")
+    .then((response) => response.text())
+    // fetch("/assets/locale/messages.json")
+    //   .then((response) => {
+    //     if (!response.ok) {
+    //       throw new Error("HTTP error " + response.status);
+    //     }
+    //     return response.json().then((res) => res.translations);
+    //   })
+    .then((res) => parseTranslationsForLocalize(res))
     .then(async (json) => {
       loadTranslations(json);
       $localize.locale = locale;
 
       // This is needed for locale-aware components & pipes to work.
       // Add the required locales to `webpackInclude` to keep the bundle size small
-      const localeModule = await import(
-        /* webpackInclude: /(en-US|fr|de)\.js/ */
-        `@angular/common/locales/${locale}`
-      );
-      registerLocaleData(localeModule.default, locale);
+      // const localeModule = await import(
+      //   /* webpackInclude: /(en-US|fr|de)\.js/ */
+      //   `@angular/common/locales/${locale}`
+      // );
+      registerLocaleData(localeDe, locale);
 
-      // Bootstrap app
-      platformBrowserDynamic()
-        .bootstrapModule(AppModule)
-        .catch((err) => console.error(err));
+      /**
+       * Loading AppConfig before bootstrap process (see {@link https://stackoverflow.com/a/66957293/10713841})
+       */
+      AppConfig.load().then(() => {
+        // Bootstrap app
+        platformBrowserDynamic()
+          .bootstrapModule(AppModule)
+          .catch((err) => console.error(err));
+      });
     })
     .catch((err) => console.log("error", err));
 } else {
-  // Bootstrap app
-  platformBrowserDynamic()
-    .bootstrapModule(AppModule)
-    .catch((err) => console.error(err));
+  /**
+   * Loading AppConfig before bootstrap process (see {@link https://stackoverflow.com/a/66957293/10713841})
+   */
+  AppConfig.load().then(() => {
+    // Bootstrap app
+    platformBrowserDynamic()
+      .bootstrapModule(AppModule)
+      .catch((err) => console.error(err));
+  });
 }

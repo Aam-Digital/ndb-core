@@ -1,5 +1,4 @@
-import * as originalFaker from "faker";
-
+import { faker as originalFaker } from "@faker-js/faker/locale/en_IND";
 /**
  * Extension of faker.js implementing additional data generation methods.
  */
@@ -12,15 +11,14 @@ class CustomFaker {
     // @ts-ignore
     private baseFaker: Faker.FakerStatic
   ) {
-    baseFaker.locale = "en_IND";
     // make baseFaker methods available from instances of this class
     Object.assign(this, baseFaker);
   }
 
   /**
    * Generate a date that works as a date of birth in the given age range.
-   * @param minAge The minimum age (today) of a person with the generated random birth date.
-   * @param maxAge The maximum age (today) of a person with the generated random birth date.
+   * @param minAge The minimum age (today) of a person with the generated random birthdate.
+   * @param maxAge The maximum age (today) of a person with the generated random birthdate.
    */
   public dateOfBirth(minAge: number, maxAge: number): Date {
     const currentYear = new Date().getFullYear();

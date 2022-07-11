@@ -10,7 +10,7 @@ import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-co
   styleUrls: ["./edit-number.component.scss"],
 })
 export class EditNumberComponent extends EditComponent<number> {
-  onInitFromDynamicConfig(config: EditPropertyConfig) {
+  onInitFromDynamicConfig(config: EditPropertyConfig<number>) {
     super.onInitFromDynamicConfig(config);
     const newValidators = [CustomNumberValidators.isNumber];
     if (this.formControl.validator) {

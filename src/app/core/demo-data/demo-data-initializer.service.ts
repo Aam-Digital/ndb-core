@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
 import { DemoDataService } from "./demo-data.service";
-import { SessionService } from "../session/session-service/session.service";
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
 import { LocalSession } from "../session/session-service/local-session";
 import { MatDialog } from "@angular/material/dialog";
@@ -14,7 +13,6 @@ import memory from "pouchdb-adapter-memory";
 import { Database } from "../database/database";
 import { PouchDatabase } from "../database/pouch-database";
 
-@Injectable()
 /**
  * This service handles everything related to the demo-mode
  *  - Register users (demo and demo-admin)
@@ -22,13 +20,14 @@ import { PouchDatabase } from "../database/pouch-database";
  *  - Automatically login user (demo)
  *  - Synchronizes (local) databases of different users in the same browser
  */
+@Injectable()
 export class DemoDataInitializerService {
   private liveSyncHandle: PouchDB.Replication.Sync<any>;
   private pouchDatabase: PouchDatabase;
 
   constructor(
     private demoDataService: DemoDataService,
-    private sessionService: SessionService,
+    private localSession: LocalSession,
     private dialog: MatDialog,
     private loggingService: LoggingService,
     private database: Database
@@ -54,7 +53,7 @@ export class DemoDataInitializerService {
 
     dialogRef.close();
 
-    await this.sessionService.login(
+    await this.localSession.login(
       DemoUserGeneratorService.DEFAULT_USERNAME,
       DemoUserGeneratorService.DEFAULT_PASSWORD
     );
@@ -62,10 +61,10 @@ export class DemoDataInitializerService {
   }
 
   private syncDatabaseOnUserChange() {
-    this.sessionService.loginState.subscribe((state) => {
+    this.localSession.loginState.subscribe((state) => {
       if (
         state === LoginState.LOGGED_IN &&
-        this.sessionService.getCurrentUser().name !==
+        this.localSession.getCurrentUser().name !==
           DemoUserGeneratorService.DEFAULT_USERNAME
       ) {
         // There is a slight race-condition with session type local
@@ -79,15 +78,14 @@ export class DemoDataInitializerService {
   }
 
   private registerDemoUsers() {
-    const localSession = this.sessionService as LocalSession;
-    localSession.saveUser(
+    this.localSession.saveUser(
       {
         name: DemoUserGeneratorService.DEFAULT_USERNAME,
         roles: ["user_app"],
       },
       DemoUserGeneratorService.DEFAULT_PASSWORD
     );
-    localSession.saveUser(
+    this.localSession.saveUser(
       {
         name: DemoUserGeneratorService.ADMIN_USERNAME,
         roles: ["user_app", "admin_app"],

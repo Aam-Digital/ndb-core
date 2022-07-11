@@ -14,7 +14,6 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ConfirmationDialogService } from "../../core/confirmation-dialog/confirmation-dialog.service";
 import { Database } from "../../core/database/database";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
-import { BehaviorSubject } from "rxjs";
 import { AutoResolutionService } from "../auto-resolution/auto-resolution.service";
 
 describe("CompareRevComponent", () => {
@@ -43,11 +42,10 @@ describe("CompareRevComponent", () => {
         false
       );
 
-      const confDialogMock = {
-        // by default immediately simulate a confirmed dialog result
-        openDialog: () => ({ afterClosed: () => new BehaviorSubject(true) }),
-      };
-      spyOn(confDialogMock, "openDialog").and.callThrough();
+      const confDialogMock = jasmine.createSpyObj<ConfirmationDialogService>([
+        "getConfirmation",
+      ]);
+      confDialogMock.getConfirmation.and.resolveTo(true);
 
       TestBed.configureTestingModule({
         imports: [

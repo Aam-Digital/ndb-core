@@ -8,6 +8,10 @@ import { Router } from "@angular/router";
 import { Location } from "@angular/common";
 import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
 
+/**
+ * A simple wrapper function of the EntityFormComponent which can be used as a dynamic component
+ * e.g. as a panel for the EntityDetailsComponent.
+ */
 @DynamicComponent("Form")
 @Component({
   selector: "app-form",
@@ -16,14 +20,10 @@ import { DynamicComponent } from "../../../view/dynamic-components/dynamic-compo
     [columns]="columns"
     [columnHeaders]="headers"
     [editing]="creatingNew"
-    (onSave)="saveClicked($event)"
-    (onCancel)="cancelClicked()"
+    (save)="saveClicked($event)"
+    (cancel)="cancelClicked()"
   ></app-entity-form>`,
 })
-/**
- * A simple wrapper function of the EntityFormComponent which can be used as a dynamic component
- * e.g. as a panel for the EntityDetailsComponent.
- */
 export class FormComponent implements OnInitDynamicComponent {
   entity: Entity;
   columns: FormFieldConfig[][] = [];

@@ -17,7 +17,7 @@
 
 import { ApplicationRef, Inject, Injectable } from "@angular/core";
 import { SwUpdate } from "@angular/service-worker";
-import { first } from "rxjs/operators";
+import { filter, first } from "rxjs/operators";
 import { concat, interval } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { LoggingService } from "../logging/logging.service";
@@ -65,7 +65,9 @@ export class UpdateManagerService {
     if (!this.updates.isEnabled) {
       return;
     }
-    this.updates.available.subscribe(() => this.showUpdateNotification());
+    this.updates.versionUpdates
+      .pipe(filter((e) => e.type === "VERSION_READY"))
+      .subscribe(() => this.showUpdateNotification());
   }
 
   /**

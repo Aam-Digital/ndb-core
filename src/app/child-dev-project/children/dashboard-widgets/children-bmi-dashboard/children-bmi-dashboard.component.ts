@@ -1,13 +1,12 @@
-import { Component, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
-import { HealthCheck } from "../../health-checkup/model/health-check";
-import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { take } from "rxjs/operators";
-import { ChildrenService } from "../../children.service";
-import { Child } from "../../model/child";
-import { WarningLevel } from "../../../../core/entity/model/warning-level";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { AfterViewInit, Component, ViewChild } from "@angular/core";
+import { MatTableDataSource } from "@angular/material/table";
+import { MatPaginator } from "@angular/material/paginator";
+import { OnInitDynamicComponent } from "app/core/view/dynamic-components/on-init-dynamic-component.interface";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
+import { WarningLevel } from "../../../../core/entity/model/warning-level";
+import { HealthCheck } from "../../health-checkup/model/health-check";
+import { groupBy } from "../../../../utils/utils";
 
 interface BmiRow {
   childId: string;
@@ -15,61 +14,42 @@ interface BmiRow {
 }
 
 @DynamicComponent("ChildrenBmiDashboard")
-@UntilDestroy()
 @Component({
   selector: "app-children-bmi-dashboard",
   templateUrl: "./children-bmi-dashboard.component.html",
+  styleUrls: ["./children-bmi-dashboard.component.scss"],
 })
 export class ChildrenBmiDashboardComponent
-  implements OnInit, OnInitDynamicComponent {
-  public currentHealthCheck: HealthCheck;
-  bmiRows: BmiRow[] = [];
+  implements OnInitDynamicComponent, AfterViewInit {
+  bmiDataSource = new MatTableDataSource<BmiRow>();
+  isLoading = false;
+  @ViewChild("paginator") paginator: MatPaginator;
 
-  constructor(
-    private childrenService: ChildrenService,
-    public router: Router
-  ) {}
+  constructor(private entityMapper: EntityMapperService) {}
 
-  ngOnInit(): void {
-    this.childrenService
-      .getChildren()
-      .pipe(untilDestroyed(this), take(1))
-      .subscribe((results) => {
-        this.filterBMI(results);
-      });
+  onInitFromDynamicConfig() {
+    return this.loadBMIData();
   }
 
-  onInitFromDynamicConfig(config: any) {}
+  ngAfterViewInit() {
+    this.bmiDataSource.paginator = this.paginator;
+  }
 
-  recordTrackByFunction = (index, item) => item.childId;
-
-  filterBMI(children: Child[]) {
-    children.forEach((child) => {
-      this.childrenService
-        .getHealthChecksOfChild(child.getId())
-        .pipe(untilDestroyed(this))
-        .subscribe((results) => {
-          /** get latest HealthCheck */
-          if (results.length > 0) {
-            this.currentHealthCheck = results.reduce((prev, cur) =>
-              cur.date > prev.date ? cur : prev
-            );
-            /**Check health status */
-            if (
-              this.currentHealthCheck.getWarningLevel() === WarningLevel.URGENT
-            ) {
-              this.bmiRows.push({
-                childId: child.getId(),
-                bmi: this.currentHealthCheck.bmi,
-              });
-            }
-          }
-        });
+  async loadBMIData() {
+    this.isLoading = true;
+    // Maybe replace this by a smart index function
+    const healthChecks = await this.entityMapper.loadType(HealthCheck);
+    const healthCheckMap = groupBy(healthChecks, "child");
+    const BMIs: BmiRow[] = [];
+    healthCheckMap.forEach((checks, childId) => {
+      const latest = checks.reduce((prev, cur) =>
+        cur.date > prev.date ? cur : prev
+      );
+      if (latest && latest.getWarningLevel() === WarningLevel.URGENT) {
+        BMIs.push({ childId: childId, bmi: latest?.bmi });
+      }
     });
-  }
-
-  goToChild(childId: string) {
-    const path = "/" + Child.ENTITY_TYPE.toLowerCase();
-    this.router.navigate([path, childId]);
+    this.bmiDataSource.data = BMIs;
+    this.isLoading = false;
   }
 }

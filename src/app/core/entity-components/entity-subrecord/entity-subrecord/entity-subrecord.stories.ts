@@ -14,13 +14,15 @@ import { ConfigurableEnumDatatype } from "../../../configurable-enum/configurabl
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { ChildrenModule } from "../../../../child-dev-project/children/children.module";
 import { ChildrenService } from "../../../../child-dev-project/children/children.service";
-import { of, Subject } from "rxjs";
+import { NEVER, of, Subject } from "rxjs";
 import { AttendanceLogicalStatus } from "../../../../child-dev-project/attendance/model/attendance-status";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { AbilityService } from "../../../permissions/ability/ability.service";
 import { faker } from "../../../demo-data/faker";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
+import { Ability } from "@casl/ability";
+import { EntityAbility } from "../../../permissions/ability/entity-ability";
 
 const configService = new ConfigService(mockEntityMapper());
 const schemaService = new EntitySchemaService();
@@ -32,9 +34,7 @@ const userGenerator = new DemoUserGeneratorService();
 const data = new DemoNoteGeneratorService(
   { minNotesPerChild: 5, maxNotesPerChild: 10, groupNotes: 2 },
   childGenerator,
-  userGenerator,
-  schemaService,
-  configService
+  userGenerator
 ).generateEntities();
 
 export default {
@@ -56,9 +56,10 @@ export default {
             remove: () => Promise.resolve(),
             load: () =>
               Promise.resolve(
-                faker.random.arrayElement(childGenerator.entities)
+                faker.helpers.arrayElement(childGenerator.entities)
               ),
             loadType: () => Promise.resolve(childGenerator.entities),
+            receiveUpdates: () => NEVER,
           },
         },
         { provide: EntitySchemaService, useValue: schemaService },
@@ -68,12 +69,17 @@ export default {
           provide: ChildrenService,
           useValue: {
             getChild: () =>
-              of(faker.random.arrayElement(childGenerator.entities)),
+              of(faker.helpers.arrayElement(childGenerator.entities)),
           },
         },
         {
           provide: AbilityService,
-          useValue: { abilityUpdateNotifier: new Subject() },
+          useValue: { abilityUpdated: new Subject() },
+        },
+
+        {
+          provide: EntityAbility,
+          useValue: new Ability([{ subject: "all", action: "manage" }]),
         },
       ],
     }),

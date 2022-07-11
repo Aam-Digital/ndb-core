@@ -43,6 +43,7 @@ describe("NoteAttendanceBlockCountComponent", () => {
       entity: note,
       id: "",
       config: { status: "PRESENT" },
+      value: undefined,
     });
 
     expect(component.participantsWithStatus).toBe(2);

@@ -1,14 +1,19 @@
-<mat-form-field *ngIf="!selectedEntity || editingSelectedEntity" [formGroup]="formControl.parent">
-  <mat-label>{{ label }}</mat-label>
+<mat-form-field
+  *ngIf="!selectedEntity || editingSelectedEntity"
+  [formGroup]="parent"
+  floatLabel="always"
+>
   <!--
-    This input is need for detecting errors in the form.
-    The actual input used for editing is below.
-   -->
+  This input is need for detecting errors in the form.
+  The actual input used for editing is below.
+  We also set floatLabel to always because the label is attached to the wrong input (which cannot be changed otherwise we loose the error highlighting).
+ -->
   <input
     matInput
     [formControl]="formControl"
     hidden
   />
+  <mat-label>{{ label }}</mat-label>
   <input
     #inputElement
     matInput
@@ -33,6 +38,7 @@
       ></app-display-entity>
     </mat-option>
   </mat-autocomplete>
+
   <mat-error *ngIf="formControl.errors?.required" i18n="Error message for any input">
     This field is required
   </mat-error>

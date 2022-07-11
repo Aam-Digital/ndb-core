@@ -1,72 +1,101 @@
 <!-- Individual Student's Page -->
-<div *ngIf="entries?.length > 0">
+<div *ngIf="children?.length > 0">
   <div class="attendance-progress-bar">
     <mat-progress-bar
       class="filler"
       mode="determinate"
-      [value]="(currentIndex / entries.length) * 100"
+      [value]="(currentIndex / children.length) * 100"
     ></mat-progress-bar>
-    <div class="progress-label" [style.visibility]="currentIndex < entries.length ? 'visible' : 'hidden'">
-      {{ currentIndex+1 }} / {{ entries.length }}
-    </div>
 
-    <div class="navigation-bar">
-      <button mat-icon-button (click)="goToPrevious()" [disabled]="isFirst">
-        <fa-icon icon="chevron-left"></fa-icon>
+    <div fxLayout="row" class="progress-nav">
+      <button mat-icon-button (click)="goToFirst()" [disabled]="isFirst" class="button-skip" fxFlex="40px">
+        <fa-icon icon="angle-double-left"></fa-icon>
       </button>
-      <div *ngIf="isFinished" style="flex-grow: 1"></div>
-      <app-child-block
-        *ngIf="!isFinished"
-        [entity]="currentChild"
-        class="child-block">
-      </app-child-block>
-      <button mat-icon-button (click)="goToNext()" [disabled]="isFinished">
-        <fa-icon icon="chevron-right"></fa-icon>
+      <button mat-icon-button (click)="goToPrevious()" [disabled]="isFirst" class="button-skip" fxFlex="40px">
+        <fa-icon icon="angle-left"></fa-icon>
+      </button>
+      <div class="progress-label" [style.visibility]="currentIndex < children.length ? 'visible' : 'hidden'" fxFlex="grow">
+        {{ currentIndex+1 }} / {{ children.length }}
+      </div>
+      <button mat-icon-button (click)="goToNext()" [disabled]="isFinished" class="button-skip" fxFlex="40px">
+        <fa-icon icon="angle-right"></fa-icon>
+      </button>
+      <button mat-icon-button (click)="goToLast()" [disabled]="isFinished" class="button-skip" fxFlex="40px">
+        <fa-icon icon="angle-double-right"></fa-icon>
       </button>
     </div>
-
   </div>
 
-  <div
-    *ngIf="!isFinished"
-    fxLayout="column"
-    fxLayoutAlign="space-between stretch"
-    class="options-wrapper"
-  >
-    <div
-      class="group-select-option"
-      *ngFor="let option of availableStatus"
-      (click)="markAttendance(option)"
-      [ngClass]="
-        currentStatus.id === option.id
-          ? option.style
-          : ''
-      "
-    >
-      <fa-icon
-        *ngIf="currentStatus.id === option.id"
-        icon="check"
-      ></fa-icon>
-      {{ option.label }}
-    </div>
+  <div class="child-block-container">
+    <app-child-block
+      class="child-block"
+      *ngIf="!isFinished"
+      [entity]="currentChild"
+      [linkDisabled]="true"
+      [tooltipDisabled]="true">
+    </app-child-block>
+    <div class="placeholder" *ngIf="isFinished"></div>
+  </div>
+
+  <div *ngIf="!isFinished && currentAttendance" class="tab-wrapper">
+    <app-roll-call-tab
+      (swiperight)="goToPrevious()"
+      (swipeleft)="goToNext()"
+      *ngFor="let child of children; let i = index"
+      class="tab-body"
+      [class.tab-body-active]="currentIndex === i"
+      [position]="i - currentIndex" >
+      <div>
+        <div
+          class="group-select-option"
+          *ngFor="let option of availableStatus"
+          (click)="markAttendance(option)"
+          [ngClass]="
+          eventEntity.getAttendance(child).status.id === option.id
+            ? option.style
+            : ''
+          "
+        >
+          <div style="display: flex; flex-direction: row; padding: 16px; gap: 16px">
+            <fa-icon
+              *ngIf="eventEntity.getAttendance(child).status.id === option.id"
+              icon="check"
+            ></fa-icon>
+            <p style="margin: 0">{{ option.label }}</p>
+          </div>
+        </div>
+      </div>
+    </app-roll-call-tab>
   </div>
 </div>
 
 <!-- Completion Page -->
-<div *ngIf="isFinished" class="roll-call-complete" [@completeRollCall] (click)="finish()">
-  <fa-icon icon="check-circle" class="roll-call-complete-icon"></fa-icon>
-  <div
-    i18n="
-      Attendance completed|shows when the user has registered the attendance of
-      all children
-    "
-  >
-    Attendance completed.
+<div *ngIf="isFinished">
+  <div class="roll-call-complete" @completeRollCall>
+    <fa-icon icon="check-circle" class="roll-call-complete-icon"></fa-icon>
+    <div
+      i18n="
+        Attendance completed|shows when the user has registered the attendance of
+        all children
+      "
+      (click)="finish()"
+    >
+      Attendance completed.
+    </div>
+
+    <button
+      (click)="showDetails()"
+      class="finished-screen-button"
+      mat-stroked-button
+      i18n="Open details of recorded event for review"
+    >
+      Review Details
+    </button>
   </div>
 
   <button
     (click)="finish()"
-    class="completed-button"
+    class="finished-screen-button full-width"
     mat-stroked-button
     i18n="Back to overview button after finishing a roll call"
   >

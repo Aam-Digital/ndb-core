@@ -17,7 +17,7 @@ import { EntityAbility } from "../permissions/ability/entity-ability";
  * Import the {@link FormDialogModule} in your root module to provide this service.
  *
  * @example
- formDialog.openDialog(NoteDetailsComponent, noteEntity);
+ formDialog.getConfirmation(NoteDetailsComponent, noteEntity);
  */
 @Injectable()
 export class FormDialogService {
@@ -41,38 +41,32 @@ export class FormDialogService {
     });
 
     dialogRef.componentInstance.entity = entity;
-    if (
-      typeof (dialogRef.componentInstance as OnInitDynamicComponent)
-        .onInitFromDynamicConfig === "function"
-    ) {
-      (dialogRef.componentInstance as OnInitDynamicComponent).onInitFromDynamicConfig(
-        componentConfig
-      );
+    if (this.isDynamicComponent(dialogRef.componentInstance)) {
+      dialogRef.componentInstance.onInitFromDynamicConfig(componentConfig);
     }
 
     const dialogWrapper = dialogRef.componentInstance.formDialogWrapper;
     dialogWrapper.readonly = this.ability.cannot("update", entity);
 
-    dialogWrapper.onClose.subscribe((res) => dialogRef.close(res));
+    dialogWrapper.close.subscribe((res) => dialogRef.close(res));
 
     dialogRef.beforeClosed().subscribe((activelyClosed) => {
       if (!activelyClosed && dialogWrapper.isFormDirty) {
         this.confirmationDialog
-          .openDialog(
+          .getConfirmation(
             $localize`:Save changes header:Save Changes?`,
             $localize`:Save changes message:Do you want to save the changes you made to the record?`
           )
-          .afterClosed()
-          .subscribe((confirmed) => {
-            if (confirmed) {
-              dialogWrapper.save();
-            } else {
-              dialogWrapper.cancel();
-            }
-          });
+          .then((confirmed) =>
+            confirmed ? dialogWrapper.save() : dialogWrapper.cancel()
+          );
       }
     });
 
     return dialogRef;
+  }
+
+  private isDynamicComponent(component): component is OnInitDynamicComponent {
+    return typeof component.onInitFromDynamicConfig === "function";
   }
 }
