@@ -41,12 +41,7 @@ export const monthEntitySchemaDatatype: EntitySchemaDatatype = {
   },
 
   transformToObjectFormat: (value: string) => {
-    const values = value
-      .toString()
-      .replace(/-(\d)-/g, "-0$1-")
-      .replace(/-(\d)$/g, "-0$1")
-      .split("-")
-      .map((v) => Number(v));
+    const values = value.split("-").map((v) => Number(v));
     const date = new Date(values[0], values[1] - 1);
     if (Number.isNaN(date.getTime())) {
       throw new Error("failed to convert data to Date object: " + value);
