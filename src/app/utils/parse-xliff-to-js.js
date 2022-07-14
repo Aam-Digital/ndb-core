@@ -9,7 +9,6 @@ const xliff = require("xliff");
  * @returns {Promise<{}>} with the JSON object
  */
 module.exports = async (translations) => {
-  console.log("executed", translations);
   const parserResult = await xliff.xliff12ToJs(translations, {
     captureSpacesBetweenElements: true,
   });
