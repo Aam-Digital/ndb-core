@@ -18,8 +18,15 @@
 import { loadTranslations } from "@angular/localize";
 import { registerLocaleData } from "@angular/common";
 import { parseTranslationsForLocalize } from "./app/utils/utils";
+import { LOCATION_LOCAL_STORAGE_KEY } from "./app/core/translation/location-key";
+import { environment } from "./environments/environment";
+import { enableProdMode } from "@angular/core";
 
-const locale = localStorage.getItem("locale") || "en-US";
+if (environment.production) {
+  enableProdMode();
+}
+
+const locale = localStorage.getItem(LOCATION_LOCAL_STORAGE_KEY) || "en-US";
 if (locale !== "en-US") {
   initLanguage(locale).then(() => bootstrap());
 } else {

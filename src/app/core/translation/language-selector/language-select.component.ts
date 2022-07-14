@@ -1,5 +1,7 @@
-import { Component } from "@angular/core";
+import { Component, Inject } from "@angular/core";
 import { TranslationService } from "../translation.service";
+import { LOCATION_TOKEN } from "../../../utils/di-tokens";
+import { LOCATION_LOCAL_STORAGE_KEY } from "../location-key";
 
 /**
  * Shows a dropdown-menu of available languages
@@ -15,12 +17,15 @@ export class LanguageSelectComponent {
    */
   siteRegionCode: string;
 
-  constructor(public translationService: TranslationService) {
+  constructor(
+    public translationService: TranslationService,
+    @Inject(LOCATION_TOKEN) private location: Location
+  ) {
     this.siteRegionCode = translationService.currentRegionCode();
   }
 
   changeLocale(lang: string) {
-    localStorage.setItem("locale", lang);
-    window.location.reload();
+    localStorage.setItem(LOCATION_LOCAL_STORAGE_KEY, lang);
+    this.location.reload();
   }
 }
