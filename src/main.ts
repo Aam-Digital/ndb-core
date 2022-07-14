@@ -26,9 +26,9 @@ if (environment.production) {
   enableProdMode();
 }
 
-const locale = localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY) || "en-US";
-if (locale !== "en-US") {
-  initLanguage(locale).then(() => bootstrap());
+const appLang = localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY) || "en-US";
+if (appLang !== "en-US") {
+  initLanguage(appLang).then(() => bootstrap());
 } else {
   bootstrap();
 }
