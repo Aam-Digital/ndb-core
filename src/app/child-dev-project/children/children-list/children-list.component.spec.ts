@@ -65,7 +65,7 @@ describe("ChildrenListComponent", () => {
       } as BooleanFilterConfig,
       {
         id: "center",
-      }
+      },
     ],
   };
   const routeMock = {
@@ -78,31 +78,28 @@ describe("ChildrenListComponent", () => {
       queryParams: {},
     },
   };
-  const mockChildrenService: jasmine.SpyObj<ChildrenService> = jasmine.createSpyObj(
-    ["getChildren"]
-  );
+  const mockChildrenService: jasmine.SpyObj<ChildrenService> =
+    jasmine.createSpyObj(["getChildren"]);
 
-  beforeEach(
-    waitForAsync(() => {
-      mockChildrenService.getChildren.and.returnValue(of([]));
-      TestBed.configureTestingModule({
-        imports: [
-          ChildrenModule,
-          MockedTestingModule.withState(),
-          FontAwesomeTestingModule,
-          TabStateModule,
-        ],
-        providers: [
-          {
-            provide: ChildrenService,
-            useValue: mockChildrenService,
-          },
-          { provide: ActivatedRoute, useValue: routeMock },
-          { provide: ExportService, useValue: {} },
-        ],
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    mockChildrenService.getChildren.and.returnValue(of([]));
+    TestBed.configureTestingModule({
+      imports: [
+        ChildrenModule,
+        MockedTestingModule.withState(),
+        FontAwesomeTestingModule,
+        TabStateModule,
+      ],
+      providers: [
+        {
+          provide: ChildrenService,
+          useValue: mockChildrenService,
+        },
+        { provide: ActivatedRoute, useValue: routeMock },
+        { provide: ExportService, useValue: {} },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ChildrenListComponent);
