@@ -15,25 +15,15 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { enableProdMode } from "@angular/core";
-import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
-
-import { AppModule } from "./app/app.module";
-import { environment } from "./environments/environment";
 import { loadTranslations } from "@angular/localize";
 import { registerLocaleData } from "@angular/common";
-import { AppConfig } from "./app/core/app-config/app-config";
 import { parseTranslationsForLocalize } from "./app/utils/utils";
-
-if (environment.production) {
-  enableProdMode();
-}
 
 const locale = localStorage.getItem("locale") || "en-US";
 if (locale !== "en-US") {
-  initLanguage(locale).then(() => buildApp());
+  initLanguage(locale).then(() => bootstrap());
 } else {
-  buildApp();
+  bootstrap();
 }
 
 async function initLanguage(locale: string): Promise<void> {
@@ -51,14 +41,6 @@ async function initLanguage(locale: string): Promise<void> {
   registerLocaleData(localeModule.default);
 }
 
-function buildApp(): Promise<void> {
-  /**
-   * Loading AppConfig before bootstrap process (see {@link https://stackoverflow.com/a/66957293/10713841})
-   */
-  return AppConfig.load().then(() => {
-    // Bootstrap app
-    platformBrowserDynamic()
-      .bootstrapModule(AppModule)
-      .catch((err) => console.error(err));
-  });
+function bootstrap(): Promise<void> {
+  return import("./bootstrap").then((m) => m.bootstrap());
 }
