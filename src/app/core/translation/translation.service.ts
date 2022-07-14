@@ -22,19 +22,12 @@ export class TranslationService {
   constructor(@Inject(LOCALE_ID) private baseLocale: string) {}
 
   /**
-   * Returns the locale currently used by the user
-   */
-  currentLocale(): string {
-    return this.baseLocale;
-  }
-
-  /**
    * returns the region code of the locale currently used
    * Extracts the region code (i.e. 'de', 'us', 'in') in lowercase letters
    * from a locale (i.e. 'en-US', 'hi-IN')
    */
   currentRegionCode(): string {
-    const components = this.currentLocale().split("-");
+    const components = this.baseLocale.split("-");
     if (components.length >= 2) {
       return components[1].toLowerCase();
     } else {

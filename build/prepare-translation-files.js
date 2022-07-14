@@ -6,15 +6,14 @@ const localeFolder = "dist/assets/locale";
 // get all locales
 const xliffFiles = fs
   .readdirSync(localeFolder)
-  .filter((fileName) => fileName !== "messages.xlf");
+  .map((fileName) => fileName.match(/messages\.([a-zA-Z\-]+)\.xlf/))
+  .filter((fn) => fn != null);
 
-xliffFiles.forEach(async (fileName) => {
+xliffFiles.forEach(async ([fileName, locale]) => {
   // read xliff content and transform to JSON
   const xliffContent = fs.readFileSync(`${localeFolder}/${fileName}`, "utf8");
   const jsonContent = await parseXliffToJson(xliffContent);
 
-  // get name of locale e.g. "de" and create json file
-  const locale = fileName.match(/\.(.+)\./)[1];
   fs.writeFileSync(
     `${localeFolder}/messages.${locale}.json`,
     JSON.stringify(jsonContent)

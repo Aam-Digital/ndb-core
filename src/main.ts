@@ -17,20 +17,34 @@
 
 import { loadTranslations } from "@angular/localize";
 import { registerLocaleData } from "@angular/common";
-import { LANGUAGE_LOCAL_STORAGE_KEY } from "./app/core/translation/language-key";
+import {
+  DEFAULT_LANGUAGE,
+  LANGUAGE_LOCAL_STORAGE_KEY,
+} from "./app/core/translation/language-statics";
 import { environment } from "./environments/environment";
 import { enableProdMode } from "@angular/core";
 import * as parseXliffToJson from "./app/utils/parse-xliff-to-js";
+import { AppConfig } from "./app/core/app-config/app-config";
+import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 
 if (environment.production) {
   enableProdMode();
 }
 
-const appLang = localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY) || "en-US";
-if (appLang !== "en-US") {
-  initLanguage(appLang).then(() => bootstrap());
-} else {
+const appLang =
+  localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY) ?? DEFAULT_LANGUAGE;
+if (appLang === DEFAULT_LANGUAGE) {
   bootstrap();
+} else {
+  initLanguage(appLang).then(() => bootstrap());
+}
+
+function bootstrap(): Promise<any> {
+  // Dynamically load the main module after the language has been initialized
+  return AppConfig.load()
+    .then(() => import("./app/app.module"))
+    .then((m) => platformBrowserDynamic().bootstrapModule(m.AppModule))
+    .catch((err) => console.error(err));
 }
 
 async function initLanguage(locale: string): Promise<void> {
@@ -52,8 +66,4 @@ async function initLanguage(locale: string): Promise<void> {
     `../node_modules/@angular/common/locales/${locale}`
   );
   registerLocaleData(localeModule.default);
-}
-
-function bootstrap(): Promise<void> {
-  return import("./bootstrap").then((m) => m.bootstrap());
 }

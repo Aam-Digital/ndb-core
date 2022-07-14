@@ -19,10 +19,6 @@ describe("TranslationServiceService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should return the default locale if nothing is specified", () => {
-    expect(service.currentLocale()).toBe("en-US");
-  });
-
   it("should return the current region code", () => {
     expect(service.currentRegionCode()).toBe("us");
   });

@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { LanguageSelectComponent } from "./language-select.component";
 import { TranslationModule } from "../translation.module";
 import { RouterTestingModule } from "@angular/router/testing";
-import { LANGUAGE_LOCAL_STORAGE_KEY } from "../language-key";
+import { LANGUAGE_LOCAL_STORAGE_KEY } from "../language-statics";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 
 describe("LanguageSelectComponent", () => {

@@ -80,6 +80,10 @@ import { SupportModule } from "./core/support/support.module";
 import { DemoConfigGeneratorService } from "./core/config/demo-config-generator.service";
 import { DatabaseModule } from "./core/database/database.module";
 import { Angulartics2Matomo, Angulartics2Module } from "angulartics2";
+import {
+  DEFAULT_LANGUAGE,
+  LANGUAGE_LOCAL_STORAGE_KEY,
+} from "./core/translation/language-statics";
 
 /**
  * Main entry point of the application.
@@ -161,7 +165,11 @@ import { Angulartics2Matomo, Angulartics2Module } from "angulartics2";
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
     { provide: MatPaginatorIntl, useValue: TranslatableMatPaginator() },
     { provide: RouteRegistry, useValue: routesRegistry },
-    { provide: LOCALE_ID, useValue: localStorage.getItem("locale") || "en-US" },
+    {
+      provide: LOCALE_ID,
+      useValue:
+        localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY) ?? DEFAULT_LANGUAGE,
+    },
     AnalyticsService,
     Angulartics2Matomo,
   ],

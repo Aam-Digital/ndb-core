@@ -1,7 +1,7 @@
 import { Component, Inject } from "@angular/core";
 import { TranslationService } from "../translation.service";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
-import { LANGUAGE_LOCAL_STORAGE_KEY } from "../language-key";
+import { LANGUAGE_LOCAL_STORAGE_KEY } from "../language-statics";
 
 /**
  * Shows a dropdown-menu of available languages
