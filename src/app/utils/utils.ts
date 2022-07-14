@@ -96,7 +96,9 @@ export function readFile(file: Blob): Promise<string> {
 export async function parseTranslationsForLocalize(
   translations: string
 ): Promise<Record<MessageId, TargetMessage>> {
-  const parserResult: any = await xliff.xliff12ToJs(translations);
+  const parserResult: any = await xliff.xliff12ToJs(translations, {
+    captureSpacesBetweenElements: true,
+  });
   const xliffContent: any = parserResult.resources["ng2.template"];
 
   return Object.keys(xliffContent).reduce(
