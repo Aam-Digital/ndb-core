@@ -14,11 +14,8 @@ import { Child } from "../model/child";
 import {
   BooleanFilterConfig,
   EntityListConfig,
-  PrebuiltFilterConfig,
 } from "../../../core/entity-components/entity-list/EntityListConfig";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { School } from "../../schools/model/school";
-import { LoggingService } from "../../../core/logging/logging.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ExportService } from "../../../core/export/export-service/export.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -68,11 +65,7 @@ describe("ChildrenListComponent", () => {
       } as BooleanFilterConfig,
       {
         id: "center",
-      },
-      {
-        type: "prebuilt",
-        id: "school",
-      },
+      }
     ],
   };
   const routeMock = {
@@ -105,10 +98,6 @@ describe("ChildrenListComponent", () => {
             useValue: mockChildrenService,
           },
           { provide: ActivatedRoute, useValue: routeMock },
-          {
-            provide: LoggingService,
-            useValue: jasmine.createSpyObj(["warn"]),
-          },
           { provide: ExportService, useValue: {} },
         ],
       }).compileComponents();
@@ -145,37 +134,4 @@ describe("ChildrenListComponent", () => {
     component.routeTo("childId");
     expect(router.navigate).toHaveBeenCalledWith(["/child", "childId"]);
   });
-
-  it("should create a filter with all schools sorted by names", fakeAsync(() => {
-    const firstSchool = new School("a test");
-    firstSchool.name = "A Test";
-    const secondSchool = new School("test");
-    secondSchool.name = "Test";
-    const entityMapper = TestBed.inject(EntityMapperService);
-    entityMapper.save(firstSchool);
-    entityMapper.save(secondSchool);
-    tick();
-
-    component.ngOnInit();
-    tick();
-
-    const schoolFilter = component.listConfig.filters.find(
-      (f) => f.id === "school"
-    ) as PrebuiltFilterConfig<Child>;
-    expect(schoolFilter.options).toHaveSize(3);
-    expect(schoolFilter.options).toEqual([
-      jasmine.objectContaining({
-        key: "",
-        label: "All",
-      }),
-      jasmine.objectContaining({
-        key: "a test",
-        label: "A Test",
-      }),
-      jasmine.objectContaining({
-        key: "test",
-        label: "Test",
-      }),
-    ]);
-  }));
 });
