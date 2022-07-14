@@ -69,7 +69,6 @@ export class DataImportComponent {
         this.columnMappingForm.addControl(field, new FormControl())
       );
       this.entitySelectionChanged();
-      this.stepper.next();
     } catch (e) {
       this.fileNameForm.setErrors({ fileInvalid: e.message });
     }
@@ -131,7 +130,7 @@ export class DataImportComponent {
   }
 
   processChange(value: string) {
-    const usedProperties = Object.values(this.columnMappingForm.getRawValue() as { [key: string]: string });
+    const usedProperties = Object.values(this.columnMappingForm.getRawValue());
     this.filteredProperties.next(
       this.properties.filter(
         (property) =>
