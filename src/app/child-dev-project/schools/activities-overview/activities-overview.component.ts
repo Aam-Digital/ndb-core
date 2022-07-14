@@ -15,7 +15,11 @@ import { OnInitDynamicComponent } from "app/core/view/dynamic-components/on-init
 })
 export class ActivitiesOverviewComponent implements OnInitDynamicComponent {
   columns: FormFieldConfig[] = [
-    { id: "title", edit: "EditSingleEntity", additional: "RecurringActivity" },
+    {
+      id: "title",
+      edit: "EditTextWithAutocomplete",
+      additional: "RecurringActivity",
+    },
     { id: "type" },
     { id: "assignedTo" },
     { id: "linkedGroups" },
