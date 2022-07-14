@@ -251,6 +251,7 @@ export const defaultJsonConfig = {
       "filters": [
         {
           "id": "status",
+          "label": $localize`:Filter label:Status`,
           "type": "prebuilt"
         },
         {
