@@ -17,10 +17,10 @@
 
 import { loadTranslations } from "@angular/localize";
 import { registerLocaleData } from "@angular/common";
-import { parseTranslationsForLocalize } from "./app/utils/utils";
 import { LOCATION_LOCAL_STORAGE_KEY } from "./app/core/translation/location-key";
 import { environment } from "./environments/environment";
 import { enableProdMode } from "@angular/core";
+import * as parseXliffToJson from "./app/utils/parse-xliff-to-js";
 
 if (environment.production) {
   enableProdMode();
@@ -34,9 +34,15 @@ if (locale !== "en-US") {
 }
 
 async function initLanguage(locale: string): Promise<void> {
-  const response = await fetch("/assets/locale/messages." + locale + ".xlf");
-  const res = await response.text();
-  const json = await parseTranslationsForLocalize(res);
+  const json = await fetch("/assets/locale/messages." + locale + ".json")
+    .then((r) => r.json())
+    .catch(() =>
+      // parse translation at runtime if JSON file is not available
+      fetch("/assets/locale/messages." + locale + ".xlf")
+        .then((r) => r.text())
+        .then((t) => parseXliffToJson(t))
+    );
+
   loadTranslations(json);
   $localize.locale = locale;
   // This is needed for locale-aware components & pipes to work.

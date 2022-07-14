@@ -2,9 +2,7 @@
  * Checks if the given value is an instance of Date and holds a valid date value.
  * @param date The date to be checked
  */
-import { MessageId, TargetMessage } from "@angular/localize";
 import { Router } from "@angular/router";
-import xliff from "xliff";
 import { ConfigurableEnumValue } from "../core/configurable-enum/configurable-enum.interface";
 
 export function isValidDate(date: any): boolean {
@@ -91,36 +89,6 @@ export function readFile(file: Blob): Promise<string> {
     );
     fileReader.readAsText(file);
   });
-}
-
-export async function parseTranslationsForLocalize(
-  translations: string
-): Promise<Record<MessageId, TargetMessage>> {
-  const parserResult: any = await xliff.xliff12ToJs(translations, {
-    captureSpacesBetweenElements: true,
-  });
-  const xliffContent: any = parserResult.resources["ng2.template"];
-
-  return Object.keys(xliffContent).reduce(
-    (result: Record<MessageId, TargetMessage>, current: string) => {
-      const translation = xliffContent[current].target;
-      if (typeof translation === "string") {
-        result[current] = translation;
-      } else if (Array.isArray(translation)) {
-        result[current] = translation
-          .map((entry) =>
-            typeof entry === "string" ? entry : `{{${entry.Standalone.id}}}`
-          )
-          .map((entry: string) => entry.replace("{{", "{$").replace("}}", "}"))
-          .join("");
-      } else {
-        console.warn("this is probably an error", xliffContent[current]);
-        result[current] = translation.Standalone["equiv-text"];
-      }
-      return result;
-    },
-    {}
-  );
 }
 
 export function compareEnums(

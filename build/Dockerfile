@@ -19,6 +19,9 @@ RUN sed -i "s/appVersion: \".*\"/appVersion: \"$APP_VERSION\"/g" src/environment
 
 RUN npm run build
 
+# Transform the xliff files to json so this does not have to be done on the client side
+RUN node build/prepare-translation-files.js
+
 # When set to true, tests are run and coverage will be uploaded to CodeClimate
 ARG UPLOAD_COVERAGE=false
 RUN if [ "$UPLOAD_COVERAGE" = true ] ; then \
