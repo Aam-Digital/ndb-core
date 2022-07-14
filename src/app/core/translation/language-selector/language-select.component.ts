@@ -1,7 +1,7 @@
 import { Component, Inject } from "@angular/core";
 import { TranslationService } from "../translation.service";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
-import { LOCATION_LOCAL_STORAGE_KEY } from "../location-key";
+import { LANGUAGE_LOCAL_STORAGE_KEY } from "../language-key";
 
 /**
  * Shows a dropdown-menu of available languages
@@ -25,7 +25,7 @@ export class LanguageSelectComponent {
   }
 
   changeLocale(lang: string) {
-    localStorage.setItem(LOCATION_LOCAL_STORAGE_KEY, lang);
+    localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, lang);
     this.location.reload();
   }
 }

@@ -17,7 +17,7 @@
 
 import { loadTranslations } from "@angular/localize";
 import { registerLocaleData } from "@angular/common";
-import { LOCATION_LOCAL_STORAGE_KEY } from "./app/core/translation/location-key";
+import { LANGUAGE_LOCAL_STORAGE_KEY } from "./app/core/translation/language-key";
 import { environment } from "./environments/environment";
 import { enableProdMode } from "@angular/core";
 import * as parseXliffToJson from "./app/utils/parse-xliff-to-js";
@@ -26,7 +26,7 @@ if (environment.production) {
   enableProdMode();
 }
 
-const locale = localStorage.getItem(LOCATION_LOCAL_STORAGE_KEY) || "en-US";
+const locale = localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY) || "en-US";
 if (locale !== "en-US") {
   initLanguage(locale).then(() => bootstrap());
 } else {
