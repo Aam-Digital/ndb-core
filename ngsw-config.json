@@ -20,7 +20,6 @@
     "resources": {
       "files": [
         "/*.svg",
-        "/assets/changelog.json",
         "/assets/child.png",
         "/assets/config.default.json",
         "/assets/How_To.md",
@@ -47,15 +46,6 @@
         "maxAge": "10d",
         "strategy": "performance"
       }
-    },
-    {
-      "name": "webdavPhotos",
-      "urls": ["**/nextcloud/*/photos/**"],
-      "cacheConfig": {
-        "maxSize": 500,
-        "maxAge": "10d",
-        "strategy": "performance"
-      }
     }
   ],
   "navigationUrls": [
@@ -63,7 +53,7 @@
     "!/**/*.*",
     "!/**/*__*",
     "!/**/*__*/**",
-    "!/db/_utils",
-    "!/db/_utils/**"
+    "!/db/",
+    "!/db/**"
   ]
 }
