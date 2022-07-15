@@ -47,7 +47,8 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
   styleUrls: ["./entity-list.component.scss"],
 })
 export class EntityListComponent<T extends Entity>
-  implements OnChanges, AfterViewInit {
+  implements OnChanges, AfterViewInit
+{
   @Input() allEntities: T[] = [];
   filteredEntities: T[] = [];
   @Input() listConfig: EntityListConfig;
@@ -116,25 +117,6 @@ export class EntityListComponent<T extends Entity>
           this.buildComponentFromConfig(config)
       );
     }
-
-    this.media
-      .asObservable()
-      .pipe(
-        map(
-          (changes) =>
-            changes[0].mqAlias !== "xs" && changes[0].mqAlias !== "md"
-        )
-      )
-      .subscribe((isBigScreen) => {
-        if (!isBigScreen) {
-          this.displayColumnGroupByName(this.mobileColumnGroup);
-        } else if (
-          this.selectedColumnGroupIndex ===
-          this.getSelectedColumnIndexByName(this.mobileColumnGroup)
-        ) {
-          this.displayColumnGroupByName(this.defaultColumnGroup);
-        }
-      });
     this.activatedRoute.queryParams.subscribe((params) => {
       this.loadUrlParams(params);
     });
@@ -175,6 +157,7 @@ export class EntityListComponent<T extends Entity>
       this.initColumnGroups(this.listConfig.columnGroups);
       this.filtersConfig = this.listConfig.filters || [];
       this.displayColumnGroupByName(this.defaultColumnGroup);
+      this.adjustTableToScreenSize();
     }
     if (changes.hasOwnProperty("allEntities")) {
       await this.initFilterSelections();
@@ -216,6 +199,22 @@ export class EntityListComponent<T extends Entity>
       this.defaultColumnGroup = "default";
       this.mobileColumnGroup = "default";
     }
+  }
+
+  private adjustTableToScreenSize() {
+    this.media
+      .asObservable()
+      .pipe(map((c) => c[0].mqAlias !== "xs" && c[0].mqAlias !== "md"))
+      .subscribe((isBigScreen) => {
+        if (!isBigScreen) {
+          this.displayColumnGroupByName(this.mobileColumnGroup);
+        } else if (
+          this.selectedColumnGroupIndex ===
+          this.getSelectedColumnIndexByName(this.mobileColumnGroup)
+        ) {
+          this.displayColumnGroupByName(this.defaultColumnGroup);
+        }
+      });
   }
 
   private loadUrlParams(parameters?: Params) {
@@ -289,9 +288,9 @@ export class EntityListComponent<T extends Entity>
   }
 
   private displayColumnGroupByName(columnGroupName: string) {
-    const selectedColumnIndex = this.getSelectedColumnIndexByName(
-      columnGroupName
-    );
+    console.log("displaying column group", columnGroupName);
+    const selectedColumnIndex =
+      this.getSelectedColumnIndexByName(columnGroupName);
     if (selectedColumnIndex !== -1) {
       this.selectedColumnGroupIndex = selectedColumnIndex;
     }
