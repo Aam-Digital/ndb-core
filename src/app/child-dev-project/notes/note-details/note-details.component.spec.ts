@@ -11,7 +11,6 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { By } from "@angular/platform-browser";
 import { ChildMeetingNoteAttendanceComponent } from "./child-meeting-attendance/child-meeting-note-attendance.component";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { LoginState } from "../../../core/session/session-states/login-state.enum";
 
 function generateTestNote(forChildren: Child[]) {
