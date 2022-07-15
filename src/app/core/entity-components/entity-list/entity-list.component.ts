@@ -30,6 +30,7 @@ import { RouteTarget } from "../../../app.routing";
 import { RouteData } from "../../view/dynamic-routing/view-config.interface";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { Subscription } from "rxjs";
 
 /**
  * This component allows to create a full blown table with pagination, filtering, searching and grouping.
@@ -85,6 +86,8 @@ export class EntityListComponent<T extends Entity>
   }
 
   selectedColumnGroupIndex_: number = 0;
+
+  private mediaSubscription: Subscription;
 
   /**
    * defines the bottom margin of the topmost row in the
@@ -202,7 +205,10 @@ export class EntityListComponent<T extends Entity>
   }
 
   private adjustTableToScreenSize() {
-    this.media
+    if (this.mediaSubscription) {
+      this.mediaSubscription.unsubscribe();
+    }
+    this.mediaSubscription = this.media
       .asObservable()
       .pipe(map((c) => c[0].mqAlias !== "xs" && c[0].mqAlias !== "md"))
       .subscribe((isBigScreen) => {
