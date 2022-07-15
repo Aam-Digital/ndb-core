@@ -191,6 +191,7 @@ describe("DataImportService", () => {
     const test1 = await entityMapper.load(Child, "test1");
     expect(test1.dateOfBirth).toBeDate("2010-12-17");
     const test2 = await entityMapper.load(Child, "test2");
+    // TODO timezone problem
     expect(test2.dateOfBirth).toBeDate("2011-06-07");
   });
 

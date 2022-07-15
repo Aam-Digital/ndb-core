@@ -15,6 +15,7 @@ import {
   EntityRegistry,
   entityRegistry,
 } from "../../../../entity/database-entity.decorator";
+import { RouterTestingModule } from "@angular/router/testing";
 
 describe("DisplayEntityComponent", () => {
   let component: DisplayEntityComponent;
@@ -26,6 +27,7 @@ describe("DisplayEntityComponent", () => {
     mockEntityMapper.load.and.resolveTo(new Child());
     await TestBed.configureTestingModule({
       declarations: [DisplayEntityComponent],
+      imports: [RouterTestingModule],
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper },
         {

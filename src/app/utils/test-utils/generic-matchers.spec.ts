@@ -31,8 +31,10 @@ const genericMatchers: jasmine.CustomMatcherFactories = {
   },
   toBeDate: (util) => {
     return makeCustomMatcher(
-      (expected: string | number | Date, actual: string | number | Date) =>
-        util.equals(new Date(expected), new Date(actual)),
+      (expected: string | number | Date, actual: string | number | Date) => {
+        console.log("called", new Date(expected), new Date(actual));
+        return util.equals(new Date(expected), new Date(actual));
+      },
       (expected, actual) =>
         `Expected date ${util.pp(expected)} to equal ${actual}`,
       (expected, actual) =>
