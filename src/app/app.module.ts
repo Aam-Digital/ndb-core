@@ -71,7 +71,7 @@ import { DashboardShortcutWidgetModule } from "./core/dashboard-shortcut-widget/
 import { HistoricalDataModule } from "./features/historical-data/historical-data.module";
 import { EntityUtilsModule } from "./core/entity-components/entity-utils/entity-utils.module";
 import { DemoHistoricalDataGenerator } from "./features/historical-data/demo-historical-data-generator";
-import { TranslatableMatPaginator } from "./core/translation/TranslatableMatPaginator";
+import { TranslatableMatPaginator } from "./core/language/TranslatableMatPaginator";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
@@ -83,7 +83,7 @@ import { Angulartics2Matomo, Angulartics2Module } from "angulartics2";
 import {
   DEFAULT_LANGUAGE,
   LANGUAGE_LOCAL_STORAGE_KEY,
-} from "./core/translation/language-statics";
+} from "./core/language/language-statics";
 
 /**
  * Main entry point of the application.

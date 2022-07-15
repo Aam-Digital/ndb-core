@@ -20,7 +20,7 @@ import { registerLocaleData } from "@angular/common";
 import {
   DEFAULT_LANGUAGE,
   LANGUAGE_LOCAL_STORAGE_KEY,
-} from "./app/core/translation/language-statics";
+} from "./app/core/language/language-statics";
 import { environment } from "./environments/environment";
 import { enableProdMode } from "@angular/core";
 import * as parseXliffToJson from "./app/utils/parse-xliff-to-js";

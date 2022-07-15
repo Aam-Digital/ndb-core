@@ -1,5 +1,5 @@
 import { Component, Inject } from "@angular/core";
-import { TranslationService } from "../translation.service";
+import { LanguageService } from "../language.service";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { LANGUAGE_LOCAL_STORAGE_KEY } from "../language-statics";
 
@@ -18,7 +18,7 @@ export class LanguageSelectComponent {
   siteRegionCode: string;
 
   constructor(
-    public translationService: TranslationService,
+    public translationService: LanguageService,
     @Inject(LOCATION_TOKEN) private location: Location
   ) {
     this.siteRegionCode = translationService.currentRegionCode();

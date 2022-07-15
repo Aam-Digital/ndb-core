@@ -17,6 +17,7 @@ import { ratingAnswers } from "../../features/historical-data/model/rating-answe
 export const defaultJsonConfig = {
   "appConfig": {
     "displayLanguageSelect": true,
+    "default_language": "en-US",
     "logo_path": null
   },
   "appConfig:usage-analytics": {
