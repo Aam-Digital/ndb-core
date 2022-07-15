@@ -25,11 +25,9 @@ import { dateOnlyEntitySchemaDatatype } from "../schema-datatypes/datatype-date-
 describe("EntitySchemaService", () => {
   let entitySchemaService: EntitySchemaService;
 
-  beforeEach(
-    waitForAsync(() => {
-      entitySchemaService = new EntitySchemaService();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    entitySchemaService = new EntitySchemaService();
+  }));
 
   it("schema:string converts to strings", function () {
     class TestEntity extends Entity {
@@ -112,8 +110,7 @@ describe("EntitySchemaService", () => {
     };
     entitySchemaService.loadDataIntoEntity(entity, data);
 
-    const expectedDate = new Date("2018-02");
-    expect(entity.month).toEqual(expectedDate);
+    expect(entity.month).toBeDate("2018-02-01");
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
     expect(rawData.month).toEqual("2018-02");
@@ -132,11 +129,10 @@ describe("EntitySchemaService", () => {
     };
     entitySchemaService.loadDataIntoEntity(entity, data);
 
-    const expectedDate = new Date("2018-01-15");
-    expect(entity.day).toEqual(expectedDate);
+    expect(entity.day).toBeDate("2018-01-15");
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-    expect(rawData.day).toBe("2018-01-15");
+    expect(rawData.day).toBeDate("2018-01-15");
   });
 
   it("schema:array converts contained dates to month for saving", function () {
@@ -165,7 +161,7 @@ describe("EntitySchemaService", () => {
     };
     entitySchemaService.loadDataIntoEntity(entity, data);
 
-    expect(entity.dateArr).toEqual([new Date("2020-01"), new Date("2020-12")]);
+    expect(entity.dateArr).toEqual([new Date(2020, 0), new Date(2020, 11)]);
   });
 
   it("schema:schema-embed converts contained object with contained schema annotation", function () {
@@ -186,7 +182,7 @@ describe("EntitySchemaService", () => {
     };
 
     entitySchemaService.loadDataIntoEntity(entity, data);
-    expect(entity.details.month).toEqual(new Date("2020-01"));
+    expect(entity.details.month).toBeDate(new Date(2020, 0));
 
     entity.details.otherStuff = "foo";
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
