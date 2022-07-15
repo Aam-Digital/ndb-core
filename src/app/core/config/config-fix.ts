@@ -206,12 +206,6 @@ export const defaultJsonConfig = {
       ]
     }
   },
-  "view:user": {
-    "component": "UserAccount"
-  },
-  "view:support": {
-    "component": "Support"
-  },
   "view:note": {
     "component": "NotesManager",
     "config": {
