@@ -66,6 +66,6 @@ export class DisplayEntityComponent
       return;
     }
     const path = "/" + this.entityToDisplay.getType().toLowerCase();
-    this.router?.navigate([path, this.entityToDisplay.getId()]);
+    this.router.navigate([path, this.entityToDisplay.getId()]);
   }
 }
