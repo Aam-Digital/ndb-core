@@ -206,12 +206,6 @@ export const defaultJsonConfig = {
       ]
     }
   },
-  "view:user": {
-    "component": "UserAccount"
-  },
-  "view:support": {
-    "component": "Support"
-  },
   "view:note": {
     "component": "NotesManager",
     "config": {
@@ -251,6 +245,7 @@ export const defaultJsonConfig = {
       "filters": [
         {
           "id": "status",
+          "label": $localize`:Filter label:Status`,
           "type": "prebuilt"
         },
         {

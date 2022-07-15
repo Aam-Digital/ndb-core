@@ -21,16 +21,18 @@ describe("RouterService", () => {
   let service: RouterService;
 
   let mockConfigService: jasmine.SpyObj<ConfigService>;
+  let mockLoggingService: jasmine.SpyObj<LoggingService>;
 
   beforeEach(() => {
     mockConfigService = jasmine.createSpyObj(["getAllConfigs"]);
     mockConfigService.getAllConfigs.and.returnValue([]);
+    mockLoggingService = jasmine.createSpyObj(["warn"]);
 
     TestBed.configureTestingModule({
       imports: [RouterTestingModule],
       providers: [
         { provide: ConfigService, useValue: mockConfigService },
-        { provide: LoggingService, useValue: jasmine.createSpyObj(["warn"]) },
+        { provide: LoggingService, useValue: mockLoggingService },
         { provide: RouteRegistry, useValue: routesRegistry },
       ],
     });
@@ -173,5 +175,15 @@ describe("RouterService", () => {
     service.reloadRouting([], [wildcardRoute]);
 
     expect(wildcardRoute).toEqual({ path: "**", component: NotFoundComponent });
+  });
+
+  it("should log a warning if a view config has a component which is not registered", () => {
+    const testViewConfigs: ViewConfig[] = [
+      { _id: "view:child", component: "Support" },
+    ];
+
+    service.reloadRouting(testViewConfigs);
+
+    expect(mockLoggingService.warn).toHaveBeenCalled();
   });
 });

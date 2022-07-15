@@ -85,7 +85,7 @@ export class DataImportService {
     await this.importCsvContentToDB(csvFile, importMeta);
 
     const snackBarRef = this.snackBar.open(
-      $localize`Import completed?`,
+      $localize`Import completed`,
       $localize`Undo`,
       {
         duration: 8000,
