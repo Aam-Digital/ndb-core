@@ -17,6 +17,4 @@ import { MatExpansionModule } from "@angular/material/expansion";
   ],
   exports: [SupportComponent],
 })
-export class SupportModule {
-  static dynamicComponents = [SupportComponent];
-}
+export class SupportModule {}

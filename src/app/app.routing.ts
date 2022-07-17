@@ -17,9 +17,12 @@
 
 import { RouterModule, Routes } from "@angular/router";
 import { ModuleWithProviders } from "@angular/core";
-import { UserRoleGuard } from "./core/permissions/permission-guard/user-role.guard";
 import { ComponentType } from "@angular/cdk/overlay";
 import { Registry } from "./core/registry/dynamic-registry";
+import { ApplicationLoadingComponent } from "./core/view/dynamic-routing/empty/application-loading.component";
+import { NotFoundComponent } from "./core/view/dynamic-routing/not-found/not-found.component";
+import { UserAccountComponent } from "./core/user/user-account/user-account.component";
+import { SupportComponent } from "./core/support/support/support.component";
 
 export class RouteRegistry extends Registry<ComponentType<any>> {}
 export const routesRegistry = new RouteRegistry();
@@ -46,7 +49,6 @@ export const allRoutes: Routes = [
   // routes are added dynamically by the RouterService
   {
     path: "admin/conflicts",
-    canActivate: [UserRoleGuard],
     loadChildren: () =>
       import("./conflict-resolution/conflict-resolution.module").then(
         (m) => m["ConflictResolutionModule"]
@@ -59,7 +61,10 @@ export const allRoutes: Routes = [
         (m) => m["ComingSoonModule"]
       ),
   },
-  { path: "**", redirectTo: "/" },
+  { path: "user", component: UserAccountComponent },
+  { path: "support", component: SupportComponent },
+  { path: "404", component: NotFoundComponent },
+  { path: "**", pathMatch: "full", component: ApplicationLoadingComponent },
 ];
 
 /**

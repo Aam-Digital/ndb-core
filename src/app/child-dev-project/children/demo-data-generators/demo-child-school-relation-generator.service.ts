@@ -102,11 +102,11 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
    */
   private selectNextSchool(currentSchool: School) {
     if (!currentSchool) {
-      return faker.random.arrayElement(this.demoSchools.entities);
+      return faker.helpers.arrayElement(this.demoSchools.entities);
     }
 
     if (faker.datatype.number(100) > 75) {
-      return faker.random.arrayElement(this.demoSchools.entities);
+      return faker.helpers.arrayElement(this.demoSchools.entities);
     } else {
       return currentSchool;
     }

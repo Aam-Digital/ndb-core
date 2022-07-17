@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ErrorHintComponent } from "./error-hint.component";
-import { FormControl, Validators } from "@angular/forms";
+import { UntypedFormControl, Validators } from "@angular/forms";
 import { By } from "@angular/platform-browser";
 
 describe("ErrorHintComponent", () => {
@@ -17,7 +17,7 @@ describe("ErrorHintComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ErrorHintComponent);
     component = fixture.componentInstance;
-    component.form = new FormControl();
+    component.form = new UntypedFormControl();
     fixture.detectChanges();
   });
 
@@ -31,7 +31,7 @@ describe("ErrorHintComponent", () => {
   });
 
   it("should contain an entry when there is one error", async () => {
-    component.form = new FormControl("", Validators.required);
+    component.form = new UntypedFormControl("", Validators.required);
     fixture.detectChanges();
     await fixture.whenStable();
     const ellElements = fixture.debugElement.queryAll(By.css("div"));

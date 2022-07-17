@@ -34,9 +34,7 @@ const userGenerator = new DemoUserGeneratorService();
 const data = new DemoNoteGeneratorService(
   { minNotesPerChild: 5, maxNotesPerChild: 10, groupNotes: 2 },
   childGenerator,
-  userGenerator,
-  schemaService,
-  configService
+  userGenerator
 ).generateEntities();
 
 export default {
@@ -58,7 +56,7 @@ export default {
             remove: () => Promise.resolve(),
             load: () =>
               Promise.resolve(
-                faker.random.arrayElement(childGenerator.entities)
+                faker.helpers.arrayElement(childGenerator.entities)
               ),
             loadType: () => Promise.resolve(childGenerator.entities),
             receiveUpdates: () => NEVER,
@@ -71,7 +69,7 @@ export default {
           provide: ChildrenService,
           useValue: {
             getChild: () =>
-              of(faker.random.arrayElement(childGenerator.entities)),
+              of(faker.helpers.arrayElement(childGenerator.entities)),
           },
         },
         {

@@ -14,21 +14,18 @@ import { Child } from "../model/child";
 import {
   BooleanFilterConfig,
   EntityListConfig,
-  PrebuiltFilterConfig,
 } from "../../../core/entity-components/entity-list/EntityListConfig";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { School } from "../../schools/model/school";
-import { LoggingService } from "../../../core/logging/logging.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ExportService } from "../../../core/export/export-service/export.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;
   let fixture: ComponentFixture<ChildrenListComponent>;
   const routeData: EntityListConfig = {
     title: "Children List",
-    addNew: "Add child",
     filterPlaceholder: "e.g. participant name",
     columns: [
       { view: "DisplayText", label: "PN", id: "projectNumber" },
@@ -69,45 +66,40 @@ describe("ChildrenListComponent", () => {
       {
         id: "center",
       },
-      {
-        type: "prebuilt",
-        id: "school",
-      },
     ],
   };
   const routeMock = {
     data: of({ config: routeData }),
     queryParams: of({}),
-    snapshot: { queryParams: {} },
+    snapshot: {
+      queryParamMap: {
+        get: () => "",
+      },
+      queryParams: {},
+    },
   };
-  const mockChildrenService: jasmine.SpyObj<ChildrenService> = jasmine.createSpyObj(
-    ["getChildren"]
-  );
+  const mockChildrenService: jasmine.SpyObj<ChildrenService> =
+    jasmine.createSpyObj(["getChildren"]);
 
-  beforeEach(
-    waitForAsync(() => {
-      mockChildrenService.getChildren.and.returnValue(of([]));
-      TestBed.configureTestingModule({
-        imports: [
-          ChildrenModule,
-          MockedTestingModule.withState(),
-          FontAwesomeTestingModule,
-        ],
-        providers: [
-          {
-            provide: ChildrenService,
-            useValue: mockChildrenService,
-          },
-          { provide: ActivatedRoute, useValue: routeMock },
-          {
-            provide: LoggingService,
-            useValue: jasmine.createSpyObj(["warn"]),
-          },
-          { provide: ExportService, useValue: {} },
-        ],
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    mockChildrenService.getChildren.and.returnValue(of([]));
+    TestBed.configureTestingModule({
+      imports: [
+        ChildrenModule,
+        MockedTestingModule.withState(),
+        FontAwesomeTestingModule,
+        TabStateModule,
+      ],
+      providers: [
+        {
+          provide: ChildrenService,
+          useValue: mockChildrenService,
+        },
+        { provide: ActivatedRoute, useValue: routeMock },
+        { provide: ExportService, useValue: {} },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ChildrenListComponent);
@@ -122,6 +114,7 @@ describe("ChildrenListComponent", () => {
   });
 
   it("should load children on init", fakeAsync(() => {
+    component.isLoading = true;
     const child1 = new Child("c1");
     const child2 = new Child("c2");
     mockChildrenService.getChildren.and.returnValue(of([child1, child2]));
@@ -129,6 +122,7 @@ describe("ChildrenListComponent", () => {
     tick();
     expect(mockChildrenService.getChildren).toHaveBeenCalled();
     expect(component.childrenList).toEqual([child1, child2]);
+    expect(component.isLoading).toBeFalse();
   }));
 
   it("should route to the given id", () => {
@@ -137,37 +131,4 @@ describe("ChildrenListComponent", () => {
     component.routeTo("childId");
     expect(router.navigate).toHaveBeenCalledWith(["/child", "childId"]);
   });
-
-  it("should create a filter with all schools sorted by names", fakeAsync(() => {
-    const firstSchool = new School("a test");
-    firstSchool.name = "A Test";
-    const secondSchool = new School("test");
-    secondSchool.name = "Test";
-    const entityMapper = TestBed.inject(EntityMapperService);
-    entityMapper.save(firstSchool);
-    entityMapper.save(secondSchool);
-    tick();
-
-    component.ngOnInit();
-    tick();
-
-    const schoolFilter = component.listConfig.filters.find(
-      (f) => f.id === "school"
-    ) as PrebuiltFilterConfig<Child>;
-    expect(schoolFilter.options).toHaveSize(3);
-    expect(schoolFilter.options).toEqual([
-      jasmine.objectContaining({
-        key: "",
-        label: "All",
-      }),
-      jasmine.objectContaining({
-        key: "a test",
-        label: "A Test",
-      }),
-      jasmine.objectContaining({
-        key: "test",
-        label: "Test",
-      }),
-    ]);
-  }));
 });

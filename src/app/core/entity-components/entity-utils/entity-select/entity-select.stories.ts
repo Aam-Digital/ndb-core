@@ -3,7 +3,6 @@ import { moduleMetadata } from "@storybook/angular";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { Database } from "../../../database/database";
 import { BackupService } from "../../../admin/services/backup.service";
-import { CloudFileService } from "../../../webdav/cloud-file-service.service";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { ChildrenService } from "../../../../child-dev-project/children/children.service";
 import { BehaviorSubject } from "rxjs";
@@ -43,7 +42,6 @@ export default {
       declarations: [],
       providers: [
         { provide: BackupService, useValue: {} },
-        { provide: CloudFileService, useValue: {} },
         {
           provide: EntityMapperService,
           useValue: {

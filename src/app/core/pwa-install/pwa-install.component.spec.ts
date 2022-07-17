@@ -50,12 +50,10 @@ describe("PwaInstallComponent", () => {
   });
 
   it("should call installPWA when no install instructions are defined and remove button once confirmed", fakeAsync(() => {
-    pwaInstallResult.next();
+    pwaInstallResult.next(undefined);
 
     const component = createComponent();
-    console.log("created");
     tick();
-    console.log("checking");
     expect(component.showPWAInstallButton).toBeTrue();
 
     mockPWAInstallService.installPWA.and.resolveTo({ outcome: "accepted" });

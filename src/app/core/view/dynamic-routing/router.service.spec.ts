@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
-import { Router } from "@angular/router";
+import { Route, Router } from "@angular/router";
 import { RouterTestingModule } from "@angular/router/testing";
 import { ChildrenListComponent } from "../../../child-dev-project/children/children-list/children-list.component";
 import { AdminComponent } from "../../admin/admin/admin.component";
@@ -12,6 +12,8 @@ import { EntityDetailsComponent } from "../../entity-components/entity-details/e
 import { ViewConfig } from "./view-config.interface";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { RouteRegistry, routesRegistry } from "../../../app.routing";
+import { ApplicationLoadingComponent } from "./empty/application-loading.component";
+import { NotFoundComponent } from "./not-found/not-found.component";
 
 class TestComponent extends Component {}
 
@@ -19,16 +21,18 @@ describe("RouterService", () => {
   let service: RouterService;
 
   let mockConfigService: jasmine.SpyObj<ConfigService>;
+  let mockLoggingService: jasmine.SpyObj<LoggingService>;
 
   beforeEach(() => {
     mockConfigService = jasmine.createSpyObj(["getAllConfigs"]);
     mockConfigService.getAllConfigs.and.returnValue([]);
+    mockLoggingService = jasmine.createSpyObj(["warn"]);
 
     TestBed.configureTestingModule({
       imports: [RouterTestingModule],
       providers: [
         { provide: ConfigService, useValue: mockConfigService },
-        { provide: LoggingService, useValue: jasmine.createSpyObj(["warn"]) },
+        { provide: LoggingService, useValue: mockLoggingService },
         { provide: RouteRegistry, useValue: routesRegistry },
       ],
     });
@@ -87,18 +91,29 @@ describe("RouterService", () => {
     expect(router.resetConfig).toHaveBeenCalledWith(expectedRoutes);
   });
 
-  it("should ignore a view config route of hard-coded route already exists", () => {
-    const existingRoutes = [{ path: "other", component: TestComponent }];
-    const testViewConfigs = [
-      { _id: "view:child", component: "ChildrenList" },
-      { _id: "view:other", component: "EntityDetails" },
-    ];
-    const expectedRoutes = [
-      { path: "child", component: ChildrenListComponent, data: {} },
+  it("should extend a view config route of lazy loaded routes (hard coded)", () => {
+    const existingRoutes: Route[] = [
       { path: "other", component: TestComponent },
+      { path: "child", component: ChildrenListComponent },
+    ];
+    const testViewConfigs: ViewConfig[] = [
+      {
+        _id: "view:other",
+        permittedUserRoles: ["admin_app"],
+        lazyLoaded: true,
+      },
+    ];
+    const expectedRoutes: Route[] = [
+      {
+        path: "other",
+        component: TestComponent,
+        canActivate: [UserRoleGuard],
+        data: { permittedUserRoles: ["admin_app"] },
+      },
+      { path: "child", component: ChildrenListComponent },
     ];
 
-    const router = TestBed.inject<Router>(Router);
+    const router = TestBed.inject(Router);
     spyOn(router, "resetConfig");
 
     service.reloadRouting(testViewConfigs, existingRoutes);
@@ -149,5 +164,26 @@ describe("RouterService", () => {
     service.reloadRouting(testViewConfigs);
 
     expect(router.resetConfig).toHaveBeenCalledWith(expectedRoutes);
+  });
+
+  it("should set NotFoundComponent for wildcard route", () => {
+    const wildcardRoute: Route = {
+      path: "**",
+      component: ApplicationLoadingComponent,
+    };
+
+    service.reloadRouting([], [wildcardRoute]);
+
+    expect(wildcardRoute).toEqual({ path: "**", component: NotFoundComponent });
+  });
+
+  it("should log a warning if a view config has a component which is not registered", () => {
+    const testViewConfigs: ViewConfig[] = [
+      { _id: "view:child", component: "Support" },
+    ];
+
+    service.reloadRouting(testViewConfigs);
+
+    expect(mockLoggingService.warn).toHaveBeenCalled();
   });
 });

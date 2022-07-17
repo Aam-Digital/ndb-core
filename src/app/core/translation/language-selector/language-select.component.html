@@ -1,5 +1,5 @@
 <button mat-icon-button [matMenuTriggerFor]="menu">
-  <mat-icon [class]="'flag-icon flag-icon-' + siteRegionCode"></mat-icon>
+  <mat-icon [class]="'fi fi-' + siteRegionCode"></mat-icon>
 </button>
 
 <mat-menu #menu>
@@ -9,7 +9,7 @@
     mat-menu-item
   >
     <span
-      [class]="'flag-clip flag-icon flag-icon-' + lang.regionCode"
+      [class]="'flag-clip fi fi-' + lang.regionCode"
     ></span>
     <span>{{ lang.regionCode }}</span>
   </a>

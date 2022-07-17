@@ -4,13 +4,11 @@
   (mouseleave)="hideTooltip()"
   (click)="showDetailsPage()"
   [ngClass]="{ inactive: !entity.isActive }"
-  class="truncate-text"
+  class="truncate-text container"
 >
   <img [src]="entity.photo?.photo?.value" class="child-pic" alt=""/>
-  <span class="mat-body-1">{{ entity?.name }}</span>
-  <span style="font-size: x-small" *ngIf="entity?.projectNumber"
-    > ({{ entity?.projectNumber }})</span
-  >
+  <span class="font-size-rel">{{ entity?.toString() }}</span>
+  <span class="subnote" *ngIf="entity?.projectNumber"> ({{ entity?.projectNumber }})</span>
 </span>
 
 <div style="position: absolute" *ngIf="tooltipVisible">
@@ -25,15 +23,18 @@
       <img [src]="entity?.photo?.photo?.value" class="child-pic-large" alt=""/>
     </div>
     <div fxFlex="grow">
-      <h3>{{ entity?.name }}</h3>
-      <p><fa-icon icon="phone"></fa-icon> {{ entity?.phone }}</p>
+      <h3>{{ entity?.toString() }}</h3>
+      <p>
+        <fa-icon icon="phone"></fa-icon>
+        {{ entity?.phone }}</p>
       <ng-container *ngIf="entity?.schoolId || entity?.schoolClass">
         <p>
           <app-school-block
             [entityId]="entity?.schoolId"
             [linkDisabled]="true"
           ></app-school-block
-          >,
+          >
+          ,
           <ng-container i18n="The class a child is attending|e.g. 'class 8'" *ngIf="entity.schoolClass">
             class {{ entity?.schoolClass }}
           </ng-container>

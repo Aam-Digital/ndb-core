@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, fakeAsync, TestBed } from "@angular/core/testing";
 import { DataImportComponent } from "./data-import.component";
 import { DataImportService } from "../data-import.service";
 import { FormControl } from "@angular/forms";
@@ -35,45 +30,35 @@ describe("DataImportComponent", () => {
     },
   };
 
-  beforeEach(
-    waitForAsync(() => {
-      mockDataImportService = jasmine.createSpyObj("DataImportService", [
-        "handleCsvImport",
-        "validateCsvFile",
-      ]);
-      TestBed.configureTestingModule({
-        declarations: [DataImportComponent],
-        imports: [
-          DataImportModule,
-          NoopAnimationsModule,
-          FontAwesomeTestingModule,
-        ],
-        providers: [
-          {
-            provide: DataImportService,
-            useValue: mockDataImportService,
-          },
-          {
-            provide: EntityRegistry,
-            useValue: entityRegistry,
-          },
-          {
-            provide: DownloadService,
-            useValue: jasmine.createSpyObj(["triggerDownload"]),
-          },
-        ],
-      }).compileComponents();
-    })
-  );
-
   beforeEach(() => {
+    mockDataImportService = jasmine.createSpyObj("DataImportService", [
+      "handleCsvImport",
+      "validateCsvFile",
+    ]);
+    TestBed.configureTestingModule({
+      imports: [
+        DataImportModule,
+        NoopAnimationsModule,
+        FontAwesomeTestingModule,
+      ],
+      providers: [
+        {
+          provide: DataImportService,
+          useValue: mockDataImportService,
+        },
+        {
+          provide: EntityRegistry,
+          useValue: entityRegistry,
+        },
+        {
+          provide: DownloadService,
+          useValue: jasmine.createSpyObj(["triggerDownload"]),
+        },
+      ],
+    }).compileComponents();
     fixture = TestBed.createComponent(DataImportComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  });
-
-  it("should create", () => {
-    expect(component).toBeTruthy();
   });
 
   it("should update EntityType and transactionId form if import includes _id field", async () => {
@@ -93,7 +78,8 @@ describe("DataImportComponent", () => {
     expect(component.transactionIDForm).not.toBeEnabled();
   });
 
-  it("should only show properties that havent been used yet", fakeAsync(() => {
+  it("should only show properties that have not been used yet", fakeAsync(() => {
+    mockCsvFileLoaded();
     component.entityForm.patchValue({ entity: "Child" });
     component.entitySelectionChanged();
 
@@ -132,6 +118,7 @@ describe("DataImportComponent", () => {
   });
 
   it("should initialize forms when loading a config", async () => {
+    mockCsvFileLoaded();
     mockFileReader(importMeta);
     component.columnMappingForm.addControl("Name", new FormControl());
     component.columnMappingForm.addControl("PN", new FormControl());
@@ -153,6 +140,7 @@ describe("DataImportComponent", () => {
   });
 
   it("should have correct columns in the column map if a config for different/less columns has been imported", async () => {
+    mockCsvFileLoaded();
     mockFileReader({
       columnMap: {
         existingColumn: "existing column value",
@@ -178,6 +166,7 @@ describe("DataImportComponent", () => {
   });
 
   it("should correctly initialize the entity type and available properties from the imported config", async () => {
+    mockCsvFileLoaded();
     @DatabaseEntity("Testing")
     class Testing extends Entity {
       @DatabaseField() databaseString: string;
@@ -197,6 +186,35 @@ describe("DataImportComponent", () => {
       "nonDatabaseString"
     );
   });
+
+  it("automatically selects column mappings if column and property name is identical", async () => {
+    @DatabaseEntity("TestInferredMapping")
+    class Testing extends Entity {
+      @DatabaseField() testProperty: string;
+      @DatabaseField() testOther: string;
+    }
+    mockFileReader({ entityType: "TestInferredMapping" });
+    const parsed = {
+      meta: { fields: ["_id", "unknownColumn", "testProperty"] },
+      data: [{ _id: "TestInferredMapping:1", unknownColumn: "foo", testProperty: "x" }],
+    } as ParseResult;
+    mockDataImportService.validateCsvFile.and.resolveTo(parsed);
+    const file = { name: "test.csv" } as File;
+    await component.setCsvFile({ target: { files: [file] } } as any);
+
+    const actualColumnMap = component.columnMappingForm.getRawValue();
+    expect(actualColumnMap.testProperty).toBe("testProperty");
+    expect(actualColumnMap.unknownColumn).toBe(null);
+    expect(actualColumnMap["testOther"]).toBe(undefined);
+  });
+
+  /**
+   * put component into state like a csv file has been loaded to test later phases of import
+   */
+  function mockCsvFileLoaded(mockCsvFields = []) {
+    // @ts-ignore
+    component.csvFile = { meta: { fields: mockCsvFields } } as ParseResult;
+  }
 
   function mockFileReader(data: Partial<ImportMetaData>) {
     const fileReader: any = {

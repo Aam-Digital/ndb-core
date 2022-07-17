@@ -11,7 +11,7 @@ import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-co
   templateUrl: "./display-entity-array.component.html",
   styleUrls: ["./display-entity-array.component.scss"],
 })
-export class DisplayEntityArrayComponent extends ViewDirective {
+export class DisplayEntityArrayComponent extends ViewDirective<string[]> {
   readonly aggregationThreshold = 5;
   entities: Entity[];
   constructor(private entityMapper: EntityMapperService) {
@@ -20,7 +20,7 @@ export class DisplayEntityArrayComponent extends ViewDirective {
 
   async onInitFromDynamicConfig(config: ViewPropertyConfig) {
     super.onInitFromDynamicConfig(config);
-    const entityIds: string[] = this.entity[this.property] || [];
+    const entityIds: string[] = this.value || [];
     if (entityIds.length < this.aggregationThreshold) {
       const entityType = this.entity.getSchema().get(this.property).additional;
       const entityPromises = entityIds.map((entityId) =>

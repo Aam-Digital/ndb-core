@@ -23,7 +23,6 @@ import { HttpClientModule } from "@angular/common/http";
 
 import { AppComponent } from "./app.component";
 import { UiModule } from "./core/ui/ui.module";
-import { AppConfigModule } from "./core/app-config/app-config.module";
 import { RouteRegistry, routesRegistry, routing } from "./app.routing";
 import { AlertsModule } from "./core/alerts/alerts.module";
 import { SessionModule } from "./core/session/session.module";
@@ -55,9 +54,7 @@ import { DemoUserGeneratorService } from "./core/user/demo-user-generator.servic
 import { ConfirmationDialogModule } from "./core/confirmation-dialog/confirmation-dialog.module";
 import { FormDialogModule } from "./core/form-dialog/form-dialog.module";
 import { LoggingService } from "./core/logging/logging.service";
-import { Angulartics2Module } from "angulartics2";
 import { AnalyticsService } from "./core/analytics/analytics.service";
-import { Angulartics2Matomo } from "angulartics2/matomo";
 import { ViewModule } from "./core/view/view.module";
 import { DashboardModule } from "./core/dashboard/dashboard.module";
 import { EntityDetailsModule } from "./core/entity-components/entity-details/entity-details.module";
@@ -80,6 +77,9 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
 import { DemoPermissionGeneratorService } from "./core/permissions/demo-permission-generator.service";
 import { SupportModule } from "./core/support/support.module";
+import { DemoConfigGeneratorService } from "./core/config/demo-config-generator.service";
+import { DatabaseModule } from "./core/database/database.module";
+import { Angulartics2Matomo, Angulartics2Module } from "angulartics2";
 
 /**
  * Main entry point of the application.
@@ -106,7 +106,6 @@ import { SupportModule } from "./core/support/support.module";
     FormDialogModule,
     AlertsModule,
     EntityModule,
-    AppConfigModule,
     SessionModule,
     ConfigModule,
     UiModule,
@@ -127,6 +126,7 @@ import { SupportModule } from "./core/support/support.module";
     ReportingModule,
     EntityUtilsModule,
     DemoDataModule.forRoot([
+      ...DemoConfigGeneratorService.provider(),
       ...DemoChildGenerator.provider({ count: 120 }),
       ...DemoSchoolGenerator.provider({ count: 8 }),
       ...DemoChildSchoolRelationGenerator.provider(),
@@ -155,6 +155,7 @@ import { SupportModule } from "./core/support/support.module";
     DashboardShortcutWidgetModule,
     HistoricalDataModule,
     SupportModule,
+    DatabaseModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
