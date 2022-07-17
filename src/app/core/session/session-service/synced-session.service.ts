@@ -74,9 +74,11 @@ export class SyncedSessionService extends SessionService {
    * Do login automatically if there is still a valid CouchDB cookie from last login with username and password
    */
   checkForValidSession() {
+    const token = window.localStorage.getItem("token");
     this.httpClient
-      .get(`${AppConfig.settings.database.remote_url}_session`, {
+      .get<any>(`${AppConfig.settings.database.remote_url}_session`, {
         withCredentials: true,
+        headers: { Authorization: "Bearer " + token },
       })
       .subscribe((res: any) => {
         if (res.userCtx.name) {
@@ -225,10 +227,12 @@ export class SyncedSessionService extends SessionService {
     this.syncState.next(SyncState.STARTED);
     const localPouchDB = this.localSession.getDatabase().getPouchDB();
     const remotePouchDB = this.remoteSession.getDatabase().getPouchDB();
-    this._liveSyncHandle = (localPouchDB.sync(remotePouchDB, {
-      live: true,
-      retry: true,
-    }) as any)
+    this._liveSyncHandle = (
+      localPouchDB.sync(remotePouchDB, {
+        live: true,
+        retry: true,
+      }) as any
+    )
       .on("paused", (info) => {
         // replication was paused: either because sync is finished or because of a failed sync (mostly due to lost connection). info is empty.
         if (this.remoteSession.loginState.value === LoginState.LOGGED_IN) {
