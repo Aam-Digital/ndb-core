@@ -120,12 +120,7 @@ export class EntityListComponent<T extends Entity>
 
     this.media
       .asObservable()
-      .pipe(
-        map(
-          (changes) =>
-            changes[0].mqAlias !== "xs" && changes[0].mqAlias !== "md"
-        )
-      )
+      .pipe(map((c) => c[0].mqAlias !== "xs" && c[0].mqAlias !== "md"))
       .subscribe((isBigScreen) => {
         if (!isBigScreen) {
           this.displayColumnGroupByName(this.mobileColumnGroup);
