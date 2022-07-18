@@ -67,7 +67,8 @@ export class RemoteSession extends SessionService {
    */
   public async login(username: string, password: string): Promise<LoginState> {
     try {
-      let user = await this.verifyCredentials(username, password);
+      const token = await this.authenticate(username, password);
+      const user = await this.processToken(token);
       await this.handleSuccessfulLogin(user);
       localStorage.setItem(
         RemoteSession.LAST_LOGIN_KEY,
@@ -85,37 +86,22 @@ export class RemoteSession extends SessionService {
     return this.loginState.value;
   }
 
-  private async verifyCredentials(
-    username: string,
-    password: string
-  ): Promise<DatabaseUser> {
-    const { body, options } = this.buildAuthRequest(username, password);
-    const response = await firstValueFrom(
-      this.httpClient.post<JwtToken>(`/auth`, body.toString(), options)
-    );
-    this.accessToken = response.access_token;
-    this.refreshTokenBeforeExpiry(response.expires_in, response.refresh_token);
-    localStorage.setItem(
-      RemoteSession.REFRESH_TOKEN_KEY,
-      response.refresh_token
-    );
-    const parsedToken = parseJwt(this.accessToken);
-    return {
-      name: parsedToken.sub,
-      roles: parsedToken["_couchdb.roles"],
-    };
+  private authenticate(username: string, password: string): Promise<JwtToken> {
+    const body = new URLSearchParams();
+    body.set("username", username);
+    body.set("password", password);
+    body.set("grant_type", "password");
+    return this.getToken(body);
   }
 
-  private buildAuthRequest(username: string, password: string) {
+  private refreshToken(token: string): Promise<JwtToken> {
     const body = new URLSearchParams();
-    if (username) {
-      body.set("username", username);
-      body.set("password", password);
-      body.set("grant_type", "password");
-    } else {
-      body.set("refresh_token", password);
-      body.set("grant_type", "refresh_token");
-    }
+    body.set("refresh_token", token);
+    body.set("grant_type", "refresh_token");
+    return this.getToken(body);
+  }
+
+  private getToken(body: URLSearchParams): Promise<JwtToken> {
     body.set("client_id", "myclient");
     const options = {
       headers: new HttpHeaders().set(
@@ -123,7 +109,20 @@ export class RemoteSession extends SessionService {
         "application/x-www-form-urlencoded"
       ),
     };
-    return { body, options };
+    return firstValueFrom(
+      this.httpClient.post<JwtToken>(`/auth`, body.toString(), options)
+    );
+  }
+
+  private async processToken(token: JwtToken): Promise<DatabaseUser> {
+    this.accessToken = token.access_token;
+    this.refreshTokenBeforeExpiry(token.expires_in, token.refresh_token);
+    localStorage.setItem(RemoteSession.REFRESH_TOKEN_KEY, token.refresh_token);
+    const parsedToken = parseJwt(this.accessToken);
+    return {
+      name: parsedToken.sub,
+      roles: parsedToken["_couchdb.roles"],
+    };
   }
 
   private refreshTokenBeforeExpiry(
@@ -132,10 +131,10 @@ export class RemoteSession extends SessionService {
   ) {
     // Refresh token one minute before it expires or after ten seconds
     const refreshTimeout = Math.max(10, secondsTillExpiration - 60);
-    this.refreshTokenTimeout = setTimeout(
-      () => this.verifyCredentials("", refreshToken),
-      refreshTimeout * 1000
-    );
+    this.refreshTokenTimeout = setTimeout(async () => {
+      const token = await this.refreshToken(refreshToken);
+      await this.processToken(token);
+    }, refreshTimeout * 1000);
   }
 
   public async handleSuccessfulLogin(userObject: DatabaseUser) {
