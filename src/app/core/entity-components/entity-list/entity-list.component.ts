@@ -294,7 +294,6 @@ export class EntityListComponent<T extends Entity>
   }
 
   private displayColumnGroupByName(columnGroupName: string) {
-    console.log("displaying column group", columnGroupName);
     const selectedColumnIndex =
       this.getSelectedColumnIndexByName(columnGroupName);
     if (selectedColumnIndex !== -1) {
