@@ -28,6 +28,7 @@ import { PouchDatabase } from "../../database/pouch-database";
 import { LoggingService } from "../../logging/logging.service";
 import PouchDB from "pouchdb-browser";
 import { firstValueFrom } from "rxjs";
+import { parseJwt } from "../../../utils/utils";
 
 /**
  * Responsibilities:
@@ -38,11 +39,14 @@ import { firstValueFrom } from "rxjs";
 @Injectable()
 export class RemoteSession extends SessionService {
   static readonly LAST_LOGIN_KEY = "LAST_REMOTE_LOGIN";
+  static readonly REFRESH_TOKEN_KEY = "REFRESH_TOKEN";
   // See https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
   readonly UNAUTHORIZED_STATUS_CODE = 401;
   /** remote (!) PouchDB  */
   private readonly database: PouchDatabase;
   private currentDBUser: DatabaseUser;
+
+  public accessToken: string;
 
   /**
    * Create a RemoteSession and set up connection to the remote CouchDB server configured in AppConfig.
@@ -62,22 +66,17 @@ export class RemoteSession extends SessionService {
    */
   public async login(username: string, password: string): Promise<LoginState> {
     try {
-      let token = window.localStorage.getItem("token");
-      if (!token) {
-        const response = await this.getUserToken(username, password);
-        token = response.access_token;
-      }
-      window.localStorage.setItem("token", token);
-      const user = await firstValueFrom(
-        this.httpClient.get<any>(
-          `${AppConfig.settings.database.remote_url}_session`,
-          {
-            withCredentials: true,
-            headers: { Authorization: "Bearer " + token },
-          }
-        )
+      let response = await this.getUserToken(username, password);
+      localStorage.setItem(
+        RemoteSession.REFRESH_TOKEN_KEY,
+        response.refresh_token
       );
-      await this.handleSuccessfulLogin(user.userCtx);
+      this.accessToken = response.access_token;
+      const parsedToken = parseJwt(response.access_token);
+      await this.handleSuccessfulLogin({
+        name: parsedToken.sub,
+        roles: parsedToken["_couchdb.roles"],
+      });
       localStorage.setItem(
         RemoteSession.LAST_LOGIN_KEY,
         new Date().toISOString()
@@ -94,7 +93,7 @@ export class RemoteSession extends SessionService {
     return this.loginState.value;
   }
 
-  private getUserToken(username: string, password: string) {
+  private getUserToken(username: string, password: string): Promise<JwtToken> {
     const body = new URLSearchParams();
     body.set("username", username);
     body.set("password", password);
@@ -107,18 +106,17 @@ export class RemoteSession extends SessionService {
       ),
     };
     return firstValueFrom(
-      this.httpClient.post<any>(`/auth`, body.toString(), options)
+      this.httpClient.post<JwtToken>(`/auth`, body.toString(), options)
     );
   }
 
   public async handleSuccessfulLogin(userObject: DatabaseUser) {
-    let token = window.localStorage.getItem("token");
     this.database.initIndexedDB(
       AppConfig.settings.database.remote_url + AppConfig.settings.database.name,
       {
         skip_setup: true,
         fetch: (url, opts: any) => {
-          opts.headers.set("Authorization", "Bearer " + token);
+          opts.headers.set("Authorization", "Bearer " + this.accessToken);
           return PouchDB.fetch(url, opts);
         },
       }
@@ -131,6 +129,7 @@ export class RemoteSession extends SessionService {
    * Logout at the remote database.
    */
   public async logout(): Promise<void> {
+    window.localStorage.removeItem(RemoteSession.REFRESH_TOKEN_KEY);
     await this.httpClient
       .delete(`${AppConfig.settings.database.remote_url}_session`, {
         withCredentials: true,
@@ -153,4 +152,9 @@ export class RemoteSession extends SessionService {
   getDatabase(): PouchDatabase {
     return this.database;
   }
+}
+
+export interface JwtToken {
+  access_token: string;
+  refresh_token: string;
 }
