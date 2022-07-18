@@ -32,6 +32,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { PouchDatabase } from "../../database/pouch-database";
 import { SessionModule } from "../session.module";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
+import { remoteSessionHttpFake } from "./remote-session.spec";
 
 describe("SyncedSessionService", () => {
   let sessionService: SyncedSessionService;
@@ -79,17 +80,7 @@ describe("SyncedSessionService", () => {
     // Setting up local and remote session to accept TEST_USER and TEST_PASSWORD as valid credentials
     dbUser = { name: TEST_USER, roles: ["user_app"] };
     localSession.saveUser({ name: TEST_USER, roles: [] }, TEST_PASSWORD);
-    mockHttpClient.post.and.callFake((url, body) => {
-      if (body.name === TEST_USER && body.password === TEST_PASSWORD) {
-        return of(dbUser as any);
-      } else {
-        return throwError(
-          new HttpErrorResponse({
-            status: remoteSession.UNAUTHORIZED_STATUS_CODE,
-          })
-        );
-      }
-    });
+    mockHttpClient.post.and.callFake(remoteSessionHttpFake);
 
     localLoginSpy = spyOn(localSession, "login").and.callThrough();
     remoteLoginSpy = spyOn(remoteSession, "login").and.callThrough();
@@ -196,6 +187,9 @@ describe("SyncedSessionService", () => {
     expect(syncSpy).toHaveBeenCalled();
     expect(liveSyncSpy).toHaveBeenCalled();
     expectAsync(login).toBeResolvedTo(LoginState.LOGGED_IN);
+
+    // clear timeouts and intervals
+    sessionService.logout();
     flush();
   }));
 
@@ -295,14 +289,17 @@ describe("SyncedSessionService", () => {
   testSessionServiceImplementation(() => Promise.resolve(sessionService));
 
   function passRemoteLogin(response: DatabaseUser = { name: "", roles: [] }) {
-    mockHttpClient.post.and.returnValue(of(response));
+    remoteLoginSpy.and.callFake(() => {
+      remoteSession.handleSuccessfulLogin(response);
+      return Promise.resolve(LoginState.LOGGED_IN);
+    });
   }
 
   function failRemoteLogin(offline = false) {
     let rejectError;
     if (!offline) {
       rejectError = new HttpErrorResponse({
-        status: remoteSession.UNAUTHORIZED_STATUS_CODE,
+        status: RemoteSession.UNAUTHORIZED_STATUS_CODE,
       });
     }
     mockHttpClient.post.and.returnValue(throwError(rejectError));

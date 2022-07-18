@@ -41,12 +41,13 @@ export class RemoteSession extends SessionService {
   static readonly LAST_LOGIN_KEY = "LAST_REMOTE_LOGIN";
   static readonly REFRESH_TOKEN_KEY = "REFRESH_TOKEN";
   // See https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
-  readonly UNAUTHORIZED_STATUS_CODE = 401;
+  static readonly UNAUTHORIZED_STATUS_CODE = 401;
   /** remote (!) PouchDB  */
   private readonly database: PouchDatabase;
   private currentDBUser: DatabaseUser;
 
   public accessToken: string;
+  private refreshTokenTimeout;
 
   /**
    * Create a RemoteSession and set up connection to the remote CouchDB server configured in AppConfig.
@@ -66,17 +67,8 @@ export class RemoteSession extends SessionService {
    */
   public async login(username: string, password: string): Promise<LoginState> {
     try {
-      let response = await this.getUserToken(username, password);
-      localStorage.setItem(
-        RemoteSession.REFRESH_TOKEN_KEY,
-        response.refresh_token
-      );
-      this.accessToken = response.access_token;
-      const parsedToken = parseJwt(response.access_token);
-      await this.handleSuccessfulLogin({
-        name: parsedToken.sub,
-        roles: parsedToken["_couchdb.roles"],
-      });
+      let user = await this.verifyCredentials(username, password);
+      await this.handleSuccessfulLogin(user);
       localStorage.setItem(
         RemoteSession.LAST_LOGIN_KEY,
         new Date().toISOString()
@@ -84,7 +76,7 @@ export class RemoteSession extends SessionService {
       this.loginState.next(LoginState.LOGGED_IN);
     } catch (error) {
       const httpError = error as HttpErrorResponse;
-      if (httpError?.status === this.UNAUTHORIZED_STATUS_CODE) {
+      if (httpError?.status === RemoteSession.UNAUTHORIZED_STATUS_CODE) {
         this.loginState.next(LoginState.LOGIN_FAILED);
       } else {
         this.loginState.next(LoginState.UNAVAILABLE);
@@ -93,11 +85,37 @@ export class RemoteSession extends SessionService {
     return this.loginState.value;
   }
 
-  private getUserToken(username: string, password: string): Promise<JwtToken> {
+  private async verifyCredentials(
+    username: string,
+    password: string
+  ): Promise<DatabaseUser> {
+    const { body, options } = this.buildAuthRequest(username, password);
+    const response = await firstValueFrom(
+      this.httpClient.post<JwtToken>(`/auth`, body.toString(), options)
+    );
+    this.accessToken = response.access_token;
+    this.refreshTokenBeforeExpiry(response.expires_in, response.refresh_token);
+    localStorage.setItem(
+      RemoteSession.REFRESH_TOKEN_KEY,
+      response.refresh_token
+    );
+    const parsedToken = parseJwt(this.accessToken);
+    return {
+      name: parsedToken.sub,
+      roles: parsedToken["_couchdb.roles"],
+    };
+  }
+
+  private buildAuthRequest(username: string, password: string) {
     const body = new URLSearchParams();
-    body.set("username", username);
-    body.set("password", password);
-    body.set("grant_type", "password");
+    if (username) {
+      body.set("username", username);
+      body.set("password", password);
+      body.set("grant_type", "password");
+    } else {
+      body.set("refresh_token", password);
+      body.set("grant_type", "refresh_token");
+    }
     body.set("client_id", "myclient");
     const options = {
       headers: new HttpHeaders().set(
@@ -105,8 +123,18 @@ export class RemoteSession extends SessionService {
         "application/x-www-form-urlencoded"
       ),
     };
-    return firstValueFrom(
-      this.httpClient.post<JwtToken>(`/auth`, body.toString(), options)
+    return { body, options };
+  }
+
+  private refreshTokenBeforeExpiry(
+    secondsTillExpiration: number,
+    refreshToken: string
+  ) {
+    // Refresh token one minute before it expires or after ten seconds
+    const refreshTimeout = Math.max(10, secondsTillExpiration - 60);
+    this.refreshTokenTimeout = setTimeout(
+      () => this.verifyCredentials("", refreshToken),
+      refreshTimeout * 1000
     );
   }
 
@@ -128,14 +156,9 @@ export class RemoteSession extends SessionService {
   /**
    * Logout at the remote database.
    */
-  public async logout(): Promise<void> {
+  public logout(): void {
+    clearTimeout(this.refreshTokenTimeout);
     window.localStorage.removeItem(RemoteSession.REFRESH_TOKEN_KEY);
-    await this.httpClient
-      .delete(`${AppConfig.settings.database.remote_url}_session`, {
-        withCredentials: true,
-      })
-      .toPromise()
-      .catch(() => undefined);
     this.currentDBUser = undefined;
     this.loginState.next(LoginState.LOGGED_OUT);
   }
@@ -157,4 +180,5 @@ export class RemoteSession extends SessionService {
 export interface JwtToken {
   access_token: string;
   refresh_token: string;
+  expires_in: number;
 }

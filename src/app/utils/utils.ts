@@ -98,7 +98,7 @@ export function compareEnums(
   return a?.id === b?.id;
 }
 
-export function parseJwt(token) {
+export function parseJwt(token): { sub: string } {
   const base64Url = token.split(".")[1];
   const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
   const jsonPayload = decodeURIComponent(
