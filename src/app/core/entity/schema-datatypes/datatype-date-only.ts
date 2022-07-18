@@ -45,10 +45,15 @@ export const dateOnlyEntitySchemaDatatype: EntitySchemaDatatype = {
   },
 
   transformToObjectFormat: (value: string) => {
+    let date: Date;
     // new Date("2022-01-01") is interpreted as UTC time whereas new Date(2022, 0, 1) is local time
     // -> we want local time to represent the same day wherever used.
     const values = value.split("-").map((v) => Number(v));
-    const date = new Date(values[0], values[1] - 1, values[2]);
+    date = new Date(values[0], values[1] - 1, values[2]);
+    if (isNaN(date.getTime())) {
+      // fallback to legacy date parsing if format is unsupported
+      date = new Date(value);
+    }
     if (Number.isNaN(date.getTime())) {
       throw new Error("failed to convert data to Date object: " + value);
     }
