@@ -29,7 +29,6 @@ import { HttpClient } from "@angular/common/http";
 import { DatabaseUser } from "./local-user";
 import { waitForChangeTo } from "../session-states/session-utils";
 import { zip } from "rxjs";
-import { AppConfig } from "app/core/app-config/app-config";
 import { filter } from "rxjs/operators";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 
@@ -74,17 +73,11 @@ export class SyncedSessionService extends SessionService {
    * Do login automatically if there is still a valid CouchDB cookie from last login with username and password
    */
   checkForValidSession() {
-    const token = window.localStorage.getItem("token");
-    this.httpClient
-      .get<any>(`${AppConfig.settings.database.remote_url}_session`, {
-        withCredentials: true,
-        headers: { Authorization: "Bearer " + token },
-      })
-      .subscribe((res: any) => {
-        if (res.userCtx.name) {
-          this.handleSuccessfulLogin(res.userCtx);
-        }
-      });
+    this.remoteSession
+      .refreshToken()
+      .then((token) => this.remoteSession.processToken(token))
+      .then((user) => this.handleSuccessfulLogin(user))
+      .catch((err) => {});
   }
 
   async handleSuccessfulLogin(userObject: DatabaseUser) {

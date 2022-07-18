@@ -94,8 +94,9 @@ export class RemoteSession extends SessionService {
     return this.getToken(body);
   }
 
-  private refreshToken(token: string): Promise<JwtToken> {
+  public refreshToken(): Promise<JwtToken> {
     const body = new URLSearchParams();
+    const token = localStorage.getItem(RemoteSession.REFRESH_TOKEN_KEY);
     body.set("refresh_token", token);
     body.set("grant_type", "refresh_token");
     return this.getToken(body);
@@ -114,10 +115,10 @@ export class RemoteSession extends SessionService {
     );
   }
 
-  private async processToken(token: JwtToken): Promise<DatabaseUser> {
+  public async processToken(token: JwtToken): Promise<DatabaseUser> {
     this.accessToken = token.access_token;
-    this.refreshTokenBeforeExpiry(token.expires_in, token.refresh_token);
     localStorage.setItem(RemoteSession.REFRESH_TOKEN_KEY, token.refresh_token);
+    this.refreshTokenBeforeExpiry(token.expires_in);
     const parsedToken = parseJwt(this.accessToken);
     return {
       name: parsedToken.sub,
@@ -125,14 +126,11 @@ export class RemoteSession extends SessionService {
     };
   }
 
-  private refreshTokenBeforeExpiry(
-    secondsTillExpiration: number,
-    refreshToken: string
-  ) {
+  private refreshTokenBeforeExpiry(secondsTillExpiration: number) {
     // Refresh token one minute before it expires or after ten seconds
     const refreshTimeout = Math.max(10, secondsTillExpiration - 60);
     this.refreshTokenTimeout = setTimeout(async () => {
-      const token = await this.refreshToken(refreshToken);
+      const token = await this.refreshToken();
       await this.processToken(token);
     }, refreshTimeout * 1000);
   }

@@ -32,7 +32,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { PouchDatabase } from "../../database/pouch-database";
 import { SessionModule } from "../session.module";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
-import { remoteSessionHttpFake } from "./remote-session.spec";
+import { jwtTokenResponse, remoteSessionHttpFake } from "./remote-session.spec";
 
 describe("SyncedSessionService", () => {
   let sessionService: SyncedSessionService;
@@ -51,9 +51,10 @@ describe("SyncedSessionService", () => {
   let mockLocation: jasmine.SpyObj<Location>;
 
   beforeEach(() => {
-    mockHttpClient = jasmine.createSpyObj(["post", "delete", "get"]);
-    mockHttpClient.delete.and.returnValue(of());
-    mockHttpClient.get.and.returnValue(of());
+    mockHttpClient = jasmine.createSpyObj(["post"]);
+    mockHttpClient.post.and.returnValue(
+      throwError(() => new HttpErrorResponse({}))
+    );
     mockLocation = jasmine.createSpyObj(["reload"]);
     TestBed.configureTestingModule({
       imports: [SessionModule, NoopAnimationsModule, FontAwesomeTestingModule],
@@ -251,36 +252,20 @@ describe("SyncedSessionService", () => {
     tick();
   }));
 
-  it("should login, given that CouchDB cookie is still valid", fakeAsync(() => {
-    const responseObject = {
-      ok: true,
-      userCtx: {
-        name: "demo",
-        roles: ["user_app"],
-      },
-      info: {
-        authentication_handlers: ["cookie", "default"],
-        authenticated: "default",
-      },
-    };
-    mockHttpClient.get.and.returnValue(of(responseObject));
+  it("should login, if there is a valid refresh token", fakeAsync(() => {
+    localStorage.setItem(RemoteSession.REFRESH_TOKEN_KEY, "some-refresh-token");
+    mockHttpClient.post.and.returnValue(of(jwtTokenResponse));
     sessionService.checkForValidSession();
     tick();
     expect(sessionService.loginState.value).toEqual(LoginState.LOGGED_IN);
+    localStorage.removeItem(RemoteSession.REFRESH_TOKEN_KEY);
+    sessionService.logout();
   }));
 
   it("should not login, given that there is no valid CouchDB cookie", fakeAsync(() => {
-    const responseObject = {
-      ok: true,
-      userCtx: {
-        name: null,
-        roles: [],
-      },
-      info: {
-        authentication_handlers: ["cookie", "default"],
-      },
-    };
-    mockHttpClient.get.and.returnValue(of(responseObject));
+    mockHttpClient.post.and.returnValue(
+      throwError(() => new HttpErrorResponse({}))
+    );
     sessionService.checkForValidSession();
     tick();
     expect(sessionService.loginState.value).toEqual(LoginState.LOGGED_OUT);
