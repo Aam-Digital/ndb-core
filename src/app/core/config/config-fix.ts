@@ -17,6 +17,7 @@ import { ratingAnswers } from "../../features/historical-data/model/rating-answe
 export const defaultJsonConfig = {
   "appConfig": {
     "displayLanguageSelect": true,
+    "default_language": "en-US",
     "logo_path": null
   },
   "appConfig:usage-analytics": {
@@ -856,7 +857,7 @@ export const defaultJsonConfig = {
               "subQueries": [
                 {
                   "label": $localize`:Name of column of a report:Type`,
-                  "query": ":setString(School Class)"
+                  "query": ":setString(" + $localize`School Class` + ")"
                 },
                 {
                   "label": $localize`:Name of a column of a report:Name`,
@@ -881,7 +882,7 @@ export const defaultJsonConfig = {
               "subQueries": [
                 {
                   "label": $localize`:Name of column of a report:Type`,
-                  "query": ":setString(Coaching Class)"
+                  "query": ":setString(" + $localize`Coaching Class` + ")"
                 },
                 {
                   "label": $localize`:Name of a column of a report:Name`,

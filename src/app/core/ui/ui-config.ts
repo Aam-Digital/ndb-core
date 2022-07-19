@@ -14,4 +14,9 @@ export interface UiConfig {
    * This should only be used if configurations for multiple languages are available.
    */
   displayLanguageSelect: boolean;
+
+  /**
+   * The default language of the application which is used after login if the user doesn't select something else.
+   */
+  default_language: string;
 }
