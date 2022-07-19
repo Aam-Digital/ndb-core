@@ -61,7 +61,7 @@ export const allRoutes: Routes = [
         (m) => m["ComingSoonModule"]
       ),
   },
-  { path: "user", component: UserAccountComponent },
+  { path: "user-account", component: UserAccountComponent },
   { path: "support", component: SupportComponent },
   { path: "404", component: NotFoundComponent },
   { path: "**", pathMatch: "full", component: ApplicationLoadingComponent },

@@ -63,7 +63,7 @@ export const defaultJsonConfig = {
       {
         "name": $localize`:Menu item:Users`,
         "icon": "users",
-        "link": "/users"
+        "link": "/user"
       },
       {
         "name": $localize`:Menu item:Reports`,
@@ -299,7 +299,7 @@ export const defaultJsonConfig = {
     "component": "Import",
     "permittedUserRoles": ["admin_app"]
   },
-  "view:users": {
+  "view:user": {
     "component": "EntityList",
     "config": {
       "title": $localize`:Title for user overview:Users`,
@@ -308,7 +308,7 @@ export const defaultJsonConfig = {
     },
     "permittedUserRoles": ["admin_app"]
   },
-  "view:users/:id": {
+  "view:user/:id": {
     "component": "EntityDetails",
     "config": {
       "entity": "User",
