@@ -39,9 +39,8 @@ export class AppConfig {
   static readonly DB_PROXY_PREFIX = "/db";
   /** Name of the database that is used */
   static readonly DB_NAME = "app";
-
+  /** Demo and session can be persisted in local storage */
   static readonly DEMO_LOCAL_STORAGE_KEY = "demo_mode";
-
   static readonly SESSION_LOCAL_STORAGE_KEY = "session_type";
   /** Whether the app is running in demo mode */
   static DEMO_MODE = false;
@@ -55,6 +54,8 @@ export class AppConfig {
    * 1. URL params
    * 2. Local storage
    * 3. Environment
+   *
+   * If params are found in the URL query params, then they are persisted in the local storage.
    */
   static initSettings() {
     const params = new URLSearchParams(location.search);
