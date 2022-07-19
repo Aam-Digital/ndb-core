@@ -21,6 +21,8 @@ import { ComponentType } from "@angular/cdk/overlay";
 import { Registry } from "./core/registry/dynamic-registry";
 import { ApplicationLoadingComponent } from "./core/view/dynamic-routing/empty/application-loading.component";
 import { NotFoundComponent } from "./core/view/dynamic-routing/not-found/not-found.component";
+import { UserAccountComponent } from "./core/user/user-account/user-account.component";
+import { SupportComponent } from "./core/support/support/support.component";
 
 export class RouteRegistry extends Registry<ComponentType<any>> {}
 export const routesRegistry = new RouteRegistry();
@@ -59,6 +61,8 @@ export const allRoutes: Routes = [
         (m) => m["ComingSoonModule"]
       ),
   },
+  { path: "user-account", component: UserAccountComponent },
+  { path: "support", component: SupportComponent },
   { path: "404", component: NotFoundComponent },
   { path: "**", pathMatch: "full", component: ApplicationLoadingComponent },
 ];

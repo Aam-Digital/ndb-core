@@ -22,12 +22,10 @@ import { FormBuilder, ValidationErrors, Validators } from "@angular/forms";
 import { AppConfig } from "../../app-config/app-config";
 import { LoggingService } from "../../logging/logging.service";
 import { SessionType } from "../../session/session-type";
-import { RouteTarget } from "../../../app.routing";
 
 /**
  * User account form to allow the user to view and edit information.
  */
-@RouteTarget("UserAccount")
 @Component({
   selector: "app-user-account",
   templateUrl: "./user-account.component.html",

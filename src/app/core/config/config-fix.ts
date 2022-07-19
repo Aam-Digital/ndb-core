@@ -18,7 +18,8 @@ export const defaultJsonConfig = {
   "appConfig": {
     "displayLanguageSelect": true,
     "logo_path": null,
-    "site_name": "Aam Digital - DEMO"
+    "site_name": "Aam Digital - DEMO",
+    "default_language": "en-US"
   },
   "appConfig:usage-analytics": {
     "url": "https://matomo.aam-digital.org",
@@ -64,7 +65,7 @@ export const defaultJsonConfig = {
       {
         "name": $localize`:Menu item:Users`,
         "icon": "users",
-        "link": "/users"
+        "link": "/user"
       },
       {
         "name": $localize`:Menu item:Reports`,
@@ -207,12 +208,6 @@ export const defaultJsonConfig = {
       ]
     }
   },
-  "view:user": {
-    "component": "UserAccount"
-  },
-  "view:support": {
-    "component": "Support"
-  },
   "view:note": {
     "component": "NotesManager",
     "config": {
@@ -252,6 +247,7 @@ export const defaultJsonConfig = {
       "filters": [
         {
           "id": "status",
+          "label": $localize`:Filter label:Status`,
           "type": "prebuilt"
         },
         {
@@ -305,7 +301,7 @@ export const defaultJsonConfig = {
     "component": "Import",
     "permittedUserRoles": ["admin_app"]
   },
-  "view:users": {
+  "view:user": {
     "component": "EntityList",
     "config": {
       "title": $localize`:Title for user overview:Users`,
@@ -314,7 +310,7 @@ export const defaultJsonConfig = {
     },
     "permittedUserRoles": ["admin_app"]
   },
-  "view:users/:id": {
+  "view:user/:id": {
     "component": "EntityDetails",
     "config": {
       "entity": "User",
@@ -862,7 +858,7 @@ export const defaultJsonConfig = {
               "subQueries": [
                 {
                   "label": $localize`:Name of column of a report:Type`,
-                  "query": ":setString(School Class)"
+                  "query": ":setString(" + $localize`School Class` + ")"
                 },
                 {
                   "label": $localize`:Name of a column of a report:Name`,
@@ -887,7 +883,7 @@ export const defaultJsonConfig = {
               "subQueries": [
                 {
                   "label": $localize`:Name of column of a report:Type`,
-                  "query": ":setString(Coaching Class)"
+                  "query": ":setString(" + $localize`Coaching Class` + ")"
                 },
                 {
                   "label": $localize`:Name of a column of a report:Name`,

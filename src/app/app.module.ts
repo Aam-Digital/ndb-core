@@ -17,7 +17,7 @@
 
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { ErrorHandler, NgModule } from "@angular/core";
+import { ErrorHandler, LOCALE_ID, NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 
@@ -71,7 +71,7 @@ import { DashboardShortcutWidgetModule } from "./core/dashboard-shortcut-widget/
 import { HistoricalDataModule } from "./features/historical-data/historical-data.module";
 import { EntityUtilsModule } from "./core/entity-components/entity-utils/entity-utils.module";
 import { DemoHistoricalDataGenerator } from "./features/historical-data/demo-historical-data-generator";
-import { TranslatableMatPaginator } from "./core/translation/TranslatableMatPaginator";
+import { TranslatableMatPaginator } from "./core/language/TranslatableMatPaginator";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
@@ -80,6 +80,10 @@ import { SupportModule } from "./core/support/support.module";
 import { DemoConfigGeneratorService } from "./core/config/demo-config-generator.service";
 import { DatabaseModule } from "./core/database/database.module";
 import { Angulartics2Matomo, Angulartics2Module } from "angulartics2";
+import {
+  DEFAULT_LANGUAGE,
+  LANGUAGE_LOCAL_STORAGE_KEY,
+} from "./core/language/language-statics";
 import { AppConfig } from "./core/app-config/app-config";
 
 /**
@@ -162,6 +166,11 @@ import { AppConfig } from "./core/app-config/app-config";
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
     { provide: MatPaginatorIntl, useValue: TranslatableMatPaginator() },
     { provide: RouteRegistry, useValue: routesRegistry },
+    {
+      provide: LOCALE_ID,
+      useValue:
+        localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY) ?? DEFAULT_LANGUAGE,
+    },
     AnalyticsService,
     Angulartics2Matomo,
   ],

@@ -16,6 +16,11 @@ export interface UiConfig {
   displayLanguageSelect?: boolean;
 
   /**
+   * The default language of the application which is used after login if the user doesn't select something else.
+   */
+  default_language?: string;
+
+  /**
    * The title which is shown at the top of the application.
    */
   site_name?: string;
