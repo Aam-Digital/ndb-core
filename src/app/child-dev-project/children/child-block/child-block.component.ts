@@ -6,7 +6,6 @@ import {
   SimpleChange,
   SimpleChanges,
 } from "@angular/core";
-import { Router } from "@angular/router";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { ChildrenService } from "../children.service";
@@ -32,10 +31,7 @@ export class ChildBlockComponent implements OnInitDynamicComponent, OnChanges {
   tooltipVisible = false;
   tooltipTimeout;
 
-  constructor(
-    @Optional() private router: Router,
-    @Optional() private childrenService: ChildrenService
-  ) {}
+  constructor(@Optional() private childrenService: ChildrenService) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.hasOwnProperty("entityId")) {
@@ -75,13 +71,5 @@ export class ChildBlockComponent implements OnInitDynamicComponent, OnChanges {
       clearTimeout(this.tooltipTimeout);
     }
     this.tooltipTimeout = setTimeout(() => (this.tooltipVisible = false), 150);
-  }
-
-  showDetailsPage() {
-    if (this.linkDisabled) {
-      return;
-    }
-    const path = "/" + Child.ENTITY_TYPE.toLowerCase();
-    this.router?.navigate([path, this.entity.getId()]);
   }
 }
