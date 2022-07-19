@@ -19,7 +19,7 @@
         </tr>
         <ng-container matColumnDef="child">
           <td mat-cell *matCellDef="let child">
-            <app-child-block [entity]="child.child"></app-child-block>
+            <app-display-entity [entityToDisplay]="child.child"></app-display-entity>
           </td>
         </ng-container>
         <ng-container matColumnDef="dateOfBirth">

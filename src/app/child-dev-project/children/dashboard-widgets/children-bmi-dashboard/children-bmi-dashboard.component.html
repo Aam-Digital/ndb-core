@@ -22,15 +22,16 @@
         </tr>
         <ng-container matColumnDef="child">
           <td *matCellDef="let row">
-            <app-child-block
+            <app-display-entity
               [entityId]="row.childId"
-            ></app-child-block>
+              entityType="Child"
+            ></app-display-entity>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="bmi">
           <td *matCellDef="let row">
-            <span  class="dashboard-table-additional-info-cell" i18n="Displaying the BMI result of a child|BMI: 21.02">
+            <span class="dashboard-table-additional-info-cell" i18n="Displaying the BMI result of a child|BMI: 21.02">
               BMI: {{ row.bmi.toFixed(2) }}
             </span>
           </td>
