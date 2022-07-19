@@ -39,31 +39,50 @@ export class AppConfig {
   static readonly DB_PROXY_PREFIX = "/db";
   /** Name of the database that is used */
   static readonly DB_NAME = "app";
+
+  static readonly DEMO_LOCAL_STORAGE_KEY = "demo_mode";
+
+  static readonly SESSION_LOCAL_STORAGE_KEY = "session_type";
   /** Whether the app is running in demo mode */
   static DEMO_MODE = false;
   /** The session type that is used */
   static SESSION_TYPE = SessionType.synced;
 
   /**
-   * Initializes static settings through the environment or the URL params.
+   * Initializes static settings through the URL params, the local storage or the environment.
+   *
+   * The settings are checked and used in the following order:
+   * 1. URL params
+   * 2. Local storage
+   * 3. Environment
    */
   static initSettings() {
     const params = new URLSearchParams(location.search);
-    const demoMode = params.get("demo");
-    const sessionType = params.get("session");
-    if (demoMode === "true" || environment.demo_mode) {
-      AppConfig.DEMO_MODE = true;
+    this.DEMO_MODE = this.isDemoMode(params);
+    this.SESSION_TYPE = this.getSession(params);
+  }
+
+  private static isDemoMode(params: URLSearchParams): boolean {
+    const demoParam = params.get("demo");
+    const demoStorage = localStorage.getItem(this.DEMO_LOCAL_STORAGE_KEY);
+    if (demoParam) {
+      localStorage.setItem(this.DEMO_LOCAL_STORAGE_KEY, demoParam);
+      return demoParam === "true";
+    } else if (demoStorage) {
+      return demoStorage === "true";
     }
-    if (
-      sessionType === "mock" ||
-      environment.session_type === SessionType.mock
-    ) {
-      AppConfig.SESSION_TYPE = SessionType.mock;
-    } else if (
-      sessionType === "local" ||
-      environment.session_type === SessionType.local
-    ) {
-      AppConfig.SESSION_TYPE = SessionType.local;
+    return environment.demo_mode;
+  }
+
+  private static getSession(params: URLSearchParams): SessionType {
+    const sessionParam = params.get("session");
+    const sessionStorage = localStorage.getItem(this.SESSION_LOCAL_STORAGE_KEY);
+    if (sessionParam) {
+      localStorage.setItem(this.SESSION_LOCAL_STORAGE_KEY, sessionParam);
+      return sessionParam as SessionType;
+    } else if (sessionStorage) {
+      return sessionStorage as SessionType;
     }
+    return environment.session_type;
   }
 }
