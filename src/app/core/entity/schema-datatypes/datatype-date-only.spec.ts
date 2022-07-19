@@ -21,4 +21,18 @@ describe("Schema data type:Date", () => {
     expect(objFormat.getMonth()).toBe(0);
     expect(objFormat.getDate()).toBe(1);
   });
+
+  it("should fallback to legacy date parsing if format is unsupported", () => {
+    let date: Date = dateOnlyEntitySchemaDatatype.transformToObjectFormat(
+      "2013-01-12T00:00:00.000Z"
+    );
+    expect(date.getFullYear()).toBe(2013);
+    expect(date.getMonth()).toBe(0);
+    expect(date.getDate()).toBe(12);
+
+    date = dateOnlyEntitySchemaDatatype.transformToObjectFormat("4/1/2021");
+    expect(date.getFullYear()).toBe(2021);
+    expect(date.getMonth()).toBe(3);
+    expect(date.getDate()).toBe(1);
+  });
 });
