@@ -1,11 +1,9 @@
 import {
   Component,
-  HostListener,
   Input,
   OnChanges,
   SimpleChanges,
 } from "@angular/core";
-import { Router } from "@angular/router";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { School } from "../model/school";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
@@ -26,13 +24,11 @@ export class SchoolBlockComponent implements OnInitDynamicComponent, OnChanges {
   @Input() linkDisabled: boolean;
 
   constructor(
-    private router: Router,
     private entityMapper: EntityMapperService,
     private configService: ConfigService
   ) {
-    this.icon = this.configService.getConfig<ViewConfig>(
-      "view:school/:id"
-    )?.config?.icon;
+    this.icon =
+      this.configService.getConfig<ViewConfig>("view:school/:id")?.config?.icon;
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -55,17 +51,5 @@ export class SchoolBlockComponent implements OnInitDynamicComponent, OnChanges {
       return;
     }
     this.entity = await this.entityMapper.load(School, this.entityId);
-  }
-
-  @HostListener("click") onClick() {
-    this.showDetailsPage();
-  }
-
-  showDetailsPage() {
-    if (this.linkDisabled) {
-      return;
-    }
-    const path = "/" + School.ENTITY_TYPE.toLowerCase();
-    this.router?.navigate([path, this.entity.getId()]);
   }
 }
