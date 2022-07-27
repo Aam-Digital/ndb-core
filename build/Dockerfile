@@ -66,12 +66,10 @@ COPY ./build/default.conf /etc/nginx/templates/default.conf
 COPY --from=builder /app/dist/ /usr/share/nginx/html
 # The port on which the app will run in the Docker container
 ENV PORT=80
-# The url to the webdav server
-ENV WEBDAV_URL="http://localhost"
 # The url to the CouchDB database
 ENV COUCHDB_URL="http://localhost"
 # Whether the app should be started in demo mode. Everything else then "true" is considered as "false".
 ENV DEMO="true"
 # variables are inserted into the nginx config
-CMD envsubst '$$PORT $$WEBDAV_URL $$COUCHDB_URL $$DEMO' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
+CMD envsubst '$$PORT $$COUCHDB_URL $$DEMO' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
     nginx -g 'daemon off;'
