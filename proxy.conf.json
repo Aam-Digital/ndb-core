@@ -1,6 +1,6 @@
 {
   "/db": {
-    "target": "http://localhost:5984",
+    "target": "https://keycloak-test.aam-digital.com/db",
     "secure": true,
     "logLevel": "debug",
     "changeOrigin": true,
@@ -18,12 +18,17 @@
     }
   },
   "/auth": {
-    "target": "http://localhost:8080/realms/myrealm/protocol/openid-connect/token",
-    "secure": true,
+    "target": "http://localhost:8080",
+    "secure": false,
     "logLevel": "debug",
-    "changeOrigin": true,
+    "changeOrigin": false,
+    "withCredentials": true,
+    "xfwd": true,
     "pathRewrite": {
       "^/auth": ""
-    }
+    },
+    "cookiePathRewrite": "/",
+    "hostRewrite": "/auth",
+    "followRedirects": true
   }
 }

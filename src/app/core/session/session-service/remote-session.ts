@@ -103,7 +103,7 @@ export class RemoteSession extends SessionService {
   }
 
   private getToken(body: URLSearchParams): Promise<JwtToken> {
-    body.set("client_id", "myclient");
+    body.set("client_id", "app");
     const options = {
       headers: new HttpHeaders().set(
         "Content-Type",
@@ -111,7 +111,11 @@ export class RemoteSession extends SessionService {
       ),
     };
     return firstValueFrom(
-      this.httpClient.post<JwtToken>(`/auth`, body.toString(), options)
+      this.httpClient.post<JwtToken>(
+        `/auth/realms/local/protocol/openid-connect/token`,
+        body.toString(),
+        options
+      )
     );
   }
 
@@ -120,8 +124,9 @@ export class RemoteSession extends SessionService {
     localStorage.setItem(RemoteSession.REFRESH_TOKEN_KEY, token.refresh_token);
     this.refreshTokenBeforeExpiry(token.expires_in);
     const parsedToken = parseJwt(this.accessToken);
+    document.cookie = `KEYCLOAK_SESSION=keycloak-test/${parsedToken.sub}/${parsedToken.sid}`;
     return {
-      name: parsedToken.sub,
+      name: parsedToken.username,
       roles: parsedToken["_couchdb.roles"],
     };
   }
@@ -178,4 +183,5 @@ export interface JwtToken {
   access_token: string;
   refresh_token: string;
   expires_in: number;
+  session_state: string;
 }

@@ -18,6 +18,7 @@
 <mat-tab-group appTabStateMemo>
   <mat-tab i18n-label="User-Account label" label="User Account">
     <ng-template matTabContent>
+      <button mat-button (click)="resetPassword()">Change Passwort</button>
       <div class="user-profile-tab">
         <p>
           <mat-form-field>
@@ -73,12 +74,12 @@
               Please provide your correct current password for confirmation.
             </mat-error>
           </mat-form-field>
-          <br />
+          <br/>
 
           <mat-form-field class="user-form-field" style="height: 80px">
             <label i18n>
               New password
-              <input matInput type="password" formControlName="newPassword" />
+              <input matInput type="password" formControlName="newPassword"/>
             </label>
             <mat-error *ngIf="passwordForm.get('newPassword').invalid">
               <div
@@ -96,7 +97,7 @@
               </div>
             </mat-error>
           </mat-form-field>
-          <br />
+          <br/>
 
           <mat-form-field class="user-form-field">
             <label i18n>
@@ -117,14 +118,14 @@
               Confirmation does not match your new password.
             </mat-error>
           </mat-form-field>
-          <br />
+          <br/>
 
           <div *ngIf="passwordChangeResult">
             <div *ngIf="passwordChangeResult.success" class="info success" i18n>
               Password changed successfully.
             </div>
             <div *ngIf="!passwordChangeResult.success" class="info error" i18n>
-              Failed to change password: {{ passwordChangeResult.error }}<br />
+              Failed to change password: {{ passwordChangeResult.error }}<br/>
               Please try again. If the problem persists contact Aam Digital
               support.
             </div>

@@ -22,6 +22,8 @@ import { FormBuilder, ValidationErrors, Validators } from "@angular/forms";
 import { AppConfig } from "../../app-config/app-config";
 import { LoggingService } from "../../logging/logging.service";
 import { SessionType } from "../../session/session-type";
+import Keycloak from "keycloak-js";
+import { RemoteSession } from "../../session/session-service/remote-session";
 
 /**
  * User account form to allow the user to view and edit information.
@@ -64,12 +66,41 @@ export class UserAccountComponent implements OnInit {
     private sessionService: SessionService,
     private userAccountService: UserAccountService,
     private fb: FormBuilder,
-    private loggingService: LoggingService
+    private loggingService: LoggingService,
+    private remoteSession: RemoteSession
   ) {}
 
   ngOnInit() {
     this.checkIfPasswordChangeAllowed();
     this.username = this.sessionService.getCurrentUser()?.name;
+  }
+
+  resetPassword() {
+    const keycloak = new Keycloak({
+      url: "http://localhost:4200/auth",
+      realm: "local",
+      clientId: "app",
+    });
+    keycloak.onReady = (res) => console.log("ready", res);
+    keycloak.onAuthSuccess = () => console.log("onAuthSuccess");
+    keycloak
+      .init({
+        token: this.remoteSession.accessToken,
+        refreshToken: localStorage.getItem(RemoteSession.REFRESH_TOKEN_KEY),
+        checkLoginIframe: true,
+        enableLogging: true,
+      })
+      .then((res) => {
+        console.log("logging in", res);
+        keycloak
+          .login({
+            action: "UPDATE_PASSWORD",
+            redirectUri: location.href,
+          })
+          .then((res) => console.log("res", res))
+          .catch((err) => console.log("err", err));
+      })
+      .catch((err) => console.log("err", err));
   }
 
   checkIfPasswordChangeAllowed() {
