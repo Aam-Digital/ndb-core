@@ -19,19 +19,14 @@ import { SessionType } from "../session/session-type";
 import { environment } from "../../../environments/environment";
 
 /**
- * Central app settings.
- *
- * Some settings are fixed, others can be changed at runtime.
+ * Central static app settings.
+ * More dynamic settings can be found in the environment.ts file.
  */
 export class AppSettings {
   /** Path for the reverse proxy that forwards to the database - configured in `proxy.conf.json` and `default.conf` */
   static readonly DB_PROXY_PREFIX = "/db";
   /** Name of the database that is used */
   static readonly DB_NAME = "app";
-  /** Whether the app is running in demo mode */
-  static DEMO_MODE = false;
-  /** The session type that is used */
-  static SESSION_TYPE = SessionType.synced;
 
   /** Demo mode and session type can be persisted in local storage */
   private static readonly DEMO_MODE_KEY = "demo_mode";
@@ -40,11 +35,15 @@ export class AppSettings {
   /**
    * Initializes settings that can be changed at runtime.
    */
-  static initSettings() {
+  static initRuntimeSettings() {
     const demoMode = this.getSetting(this.DEMO_MODE_KEY);
-    this.DEMO_MODE = demoMode === "true";
+    if (demoMode) {
+      environment.demo_mode = demoMode === "true";
+    }
     const sessionType = this.getSetting(this.SESSION_TYPE_KEY);
-    this.SESSION_TYPE = sessionType as SessionType;
+    if (sessionType) {
+      environment.session_type = sessionType as SessionType;
+    }
   }
 
   /**
@@ -68,8 +67,6 @@ export class AppSettings {
       return paramValue;
     } else if (localStorageValue) {
       return localStorageValue;
-    } else {
-      return environment[key];
     }
   }
 }

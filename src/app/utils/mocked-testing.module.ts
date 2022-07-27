@@ -10,7 +10,6 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Angulartics2Module } from "angulartics2";
 import { RouterTestingModule } from "@angular/router/testing";
 import { Database } from "../core/database/database";
-import { AppSettings } from "../core/app-config/app-settings";
 import { SessionType } from "../core/session/session-type";
 import { PouchDatabase } from "../core/database/pouch-database";
 import { LOCATION_TOKEN } from "./di-tokens";
@@ -33,6 +32,7 @@ import {
   ConfigService,
   createTestingConfigService,
 } from "../core/config/config.service";
+import { environment } from "../../environments/environment";
 
 export const TEST_USER = "test";
 export const TEST_PASSWORD = "pass";
@@ -87,7 +87,7 @@ export class MockedTestingModule {
     loginState = LoginState.LOGGED_IN,
     data: Entity[] = []
   ): ModuleWithProviders<MockedTestingModule> {
-    AppSettings.SESSION_TYPE = SessionType.mock;
+    environment.session_type = SessionType.mock;
     const mockedEntityMapper = mockEntityMapper([new User(TEST_USER), ...data]);
     const session = createLocalSession(loginState === LoginState.LOGGED_IN);
     return {

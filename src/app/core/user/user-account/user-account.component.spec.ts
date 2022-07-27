@@ -26,13 +26,13 @@ import {
 import { UserAccountComponent } from "./user-account.component";
 import { SessionService } from "../../session/session-service/session.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { AppSettings } from "../../app-config/app-settings";
 import { UserAccountService } from "./user-account.service";
 import { UserModule } from "../user.module";
 import { SessionType } from "../../session/session-type";
 import { LoggingService } from "../../logging/logging.service";
 import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { RouterTestingModule } from "@angular/router/testing";
+import { environment } from "../../../../environments/environment";
 
 describe("UserAccountComponent", () => {
   let component: UserAccountComponent;
@@ -43,7 +43,7 @@ describe("UserAccountComponent", () => {
   let mockLoggingService: jasmine.SpyObj<LoggingService>;
 
   beforeEach(waitForAsync(() => {
-    AppSettings.SESSION_TYPE = SessionType.synced; // password change only available in synced mode
+    environment.session_type = SessionType.synced; // password change only available in synced mode
     mockSessionService = jasmine.createSpyObj("sessionService", [
       "getCurrentUser",
       "login",

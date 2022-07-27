@@ -26,6 +26,7 @@ import { SessionService } from "./session.service";
 import { PouchDatabase } from "../../database/pouch-database";
 import { AppSettings } from "../../app-config/app-settings";
 import { SessionType } from "../session-type";
+import { environment } from "../../../../environments/environment";
 
 /**
  * Responsibilities:
@@ -99,7 +100,7 @@ export class LocalSession extends SessionService {
   }
 
   private initDatabase(dbName: string, db = this.database) {
-    if (AppSettings.SESSION_TYPE === SessionType.mock) {
+    if (environment.session_type === SessionType.mock) {
       db.initInMemoryDB(dbName);
     } else {
       db.initIndexedDB(dbName);

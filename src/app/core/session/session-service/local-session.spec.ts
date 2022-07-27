@@ -23,6 +23,7 @@ import { LoginState } from "../session-states/login-state.enum";
 import { testSessionServiceImplementation } from "./session.service.spec";
 import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
 import { PouchDatabase } from "../../database/pouch-database";
+import { environment } from "../../../../environments/environment";
 
 describe("LocalSessionService", () => {
   let userDBName;
@@ -32,7 +33,7 @@ describe("LocalSessionService", () => {
   let database: jasmine.SpyObj<PouchDatabase>;
 
   beforeEach(() => {
-    AppSettings.SESSION_TYPE = SessionType.mock;
+    environment.session_type = SessionType.mock;
     userDBName = `${TEST_USER}-${AppSettings.DB_NAME}`;
     deprecatedDBName = AppSettings.DB_NAME;
     database = jasmine.createSpyObj([
@@ -128,7 +129,7 @@ describe("LocalSessionService", () => {
     ) {
       database.initInMemoryDB.calls.reset();
       database.initIndexedDB.calls.reset();
-      AppSettings.SESSION_TYPE = sessionType;
+      environment.session_type = sessionType;
       await localSession.login(TEST_USER, TEST_PASSWORD);
       if (expectedDB === "inMemory") {
         expect(database.initInMemoryDB).toHaveBeenCalled();

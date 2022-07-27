@@ -8,12 +8,12 @@ import {
 } from "@angular/core/testing";
 import { AdminComponent } from "./admin.component";
 import { BackupService } from "../services/backup.service";
-import { AppSettings } from "../../app-config/app-settings";
 import { ConfigService } from "../../config/config.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { SessionType } from "../../session/session-type";
 import { AdminModule } from "../admin.module";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { environment } from "../../../../environments/environment";
 
 describe("AdminComponent", () => {
   let component: AdminComponent;
@@ -31,9 +31,8 @@ describe("AdminComponent", () => {
     "importJson",
   ]);
 
-  const confirmationDialogMock = jasmine.createSpyObj<ConfirmationDialogService>(
-    ["getConfirmation"]
-  );
+  const confirmationDialogMock =
+    jasmine.createSpyObj<ConfirmationDialogService>(["getConfirmation"]);
 
   const tmplink: jasmine.SpyObj<HTMLAnchorElement> = jasmine.createSpyObj(
     "mockLink",
@@ -53,23 +52,21 @@ describe("AdminComponent", () => {
     return mockFileReader;
   }
 
-  beforeEach(
-    waitForAsync(() => {
-      AppSettings.SESSION_TYPE = SessionType.mock;
+  beforeEach(waitForAsync(() => {
+    environment.session_type = SessionType.mock;
 
-      TestBed.configureTestingModule({
-        imports: [AdminModule, MockedTestingModule.withState()],
-        providers: [
-          { provide: BackupService, useValue: mockBackupService },
-          { provide: ConfigService, useValue: mockConfigService },
-          {
-            provide: ConfirmationDialogService,
-            useValue: confirmationDialogMock,
-          },
-        ],
-      }).compileComponents();
-    })
-  );
+    TestBed.configureTestingModule({
+      imports: [AdminModule, MockedTestingModule.withState()],
+      providers: [
+        { provide: BackupService, useValue: mockBackupService },
+        { provide: ConfigService, useValue: mockConfigService },
+        {
+          provide: ConfirmationDialogService,
+          useValue: confirmationDialogMock,
+        },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AdminComponent);

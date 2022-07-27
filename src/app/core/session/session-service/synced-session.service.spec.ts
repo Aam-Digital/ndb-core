@@ -17,7 +17,6 @@
 
 import { SyncedSessionService } from "./synced-session.service";
 import { LoginState } from "../session-states/login-state.enum";
-import { AppSettings } from "../../app-config/app-settings";
 import { LocalSession } from "./local-session";
 import { RemoteSession } from "./remote-session";
 import { SessionType } from "../session-type";
@@ -32,6 +31,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { PouchDatabase } from "../../database/pouch-database";
 import { SessionModule } from "../session.module";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
+import { environment } from "../../../../environments/environment";
 
 describe("SyncedSessionService", () => {
   let sessionService: SyncedSessionService;
@@ -62,7 +62,7 @@ describe("SyncedSessionService", () => {
         { provide: LOCATION_TOKEN, useValue: mockLocation },
       ],
     });
-    AppSettings.SESSION_TYPE = SessionType.mock;
+    environment.session_type = SessionType.mock;
     sessionService = TestBed.inject(SyncedSessionService);
 
     localSession = TestBed.inject(LocalSession);

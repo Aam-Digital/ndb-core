@@ -178,7 +178,7 @@ import { AppSettings } from "./core/app-config/app-settings";
 })
 export class AppModule {
   constructor(icons: FaIconLibrary) {
-    AppSettings.initSettings();
+    AppSettings.initRuntimeSettings();
     icons.addIconPacks(fas, far);
   }
 }

@@ -3,15 +3,15 @@ import { AppModule } from "../app.module";
 import moment from "moment";
 import { Database } from "../core/database/database";
 import { DemoDataService } from "../core/demo-data/demo-data.service";
-import { AppSettings } from "../core/app-config/app-settings";
 import { SessionType } from "../core/session/session-type";
 import { DatabaseTestingModule } from "./database-testing.module";
+import { environment } from "../../environments/environment";
 
 xdescribe("Performance Tests", () => {
   beforeEach(async () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 150000;
 
-    AppSettings.SESSION_TYPE = SessionType.mock; // change to SessionType.local to run performance tests with the InBrowser database
+    environment.session_type = SessionType.mock; // change to SessionType.local to run performance tests with the InBrowser database
 
     await TestBed.configureTestingModule({
       imports: [AppModule, DatabaseTestingModule],
@@ -22,11 +22,9 @@ xdescribe("Performance Tests", () => {
     console.log("finished publishing demo data", setup.getDuration());
   });
 
-  afterEach(
-    waitForAsync(() => {
-      return TestBed.inject(Database).destroy();
-    })
-  );
+  afterEach(waitForAsync(() => {
+    return TestBed.inject(Database).destroy();
+  }));
 
   it("basic test example", async () => {
     await comparePerformance(

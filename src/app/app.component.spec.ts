@@ -25,7 +25,6 @@ import {
 } from "@angular/core/testing";
 import { AppComponent } from "./app.component";
 import { AppModule } from "./app.module";
-import { AppSettings } from "./core/app-config/app-settings";
 import { Config } from "./core/config/config";
 import { USAGE_ANALYTICS_CONFIG_ID } from "./core/analytics/usage-analytics-config";
 import { environment } from "../environments/environment";
@@ -46,7 +45,7 @@ describe("AppComponent", () => {
   let entityUpdates: Subject<UpdatedEntity<Config>>;
 
   beforeEach(waitForAsync(() => {
-    AppSettings.SESSION_TYPE = SessionType.mock;
+    environment.session_type = SessionType.mock;
     const entityMapper = mockEntityMapper();
     entityUpdates = new Subject();
     spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
@@ -104,13 +103,13 @@ describe("AppComponent", () => {
   it("published the demo data", fakeAsync(() => {
     const demoDataService = TestBed.inject(DemoDataService);
     spyOn(demoDataService, "publishDemoData").and.callThrough();
-    AppSettings.DEMO_MODE = true;
+    environment.demo_mode = true;
 
     createComponent();
     flush();
     discardPeriodicTasks();
 
     expect(demoDataService.publishDemoData).toHaveBeenCalled();
-    AppSettings.DEMO_MODE = false;
+    environment.demo_mode = false;
   }));
 });

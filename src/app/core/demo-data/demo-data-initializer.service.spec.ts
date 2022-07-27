@@ -13,6 +13,7 @@ import { Subject } from "rxjs";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { Database } from "../database/database";
 import { SessionType } from "../session/session-type";
+import { environment } from "../../../environments/environment";
 
 describe("DemoDataInitializerService", () => {
   let service: DemoDataInitializerService;
@@ -24,7 +25,7 @@ describe("DemoDataInitializerService", () => {
   let adminDBName: string;
 
   beforeEach(() => {
-    AppSettings.SESSION_TYPE = SessionType.mock;
+    environment.session_type = SessionType.mock;
     demoUserDBName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${AppSettings.DB_NAME}`;
     adminDBName = `${DemoUserGeneratorService.ADMIN_USERNAME}-${AppSettings.DB_NAME}`;
     mockDemoDataService = jasmine.createSpyObj(["publishDemoData"]);
