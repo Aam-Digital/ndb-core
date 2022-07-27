@@ -21,69 +21,55 @@ import { environment } from "../../../environments/environment";
 /**
  * Central app configuration.
  *
- * The settings are defined in a json file and can therefore be changed for different deployments
- * without code changes.
- *
- * Simply use the static `AppConfig.settings` for easy access to the app's configuration.
- * You do _not_ have to inject the AppConfig service into your code in order to access the app settings.
- * AppConfig is an Angular service only because this is required for initially loading the remote settings into
- * the static AppConfig.settings object.
- *
- * @example
- * this.title = AppConfig.settings.site_name;
- * // just directly use AppConfig and let your IDE add an "import" statement to the file
- * // no need for dependency injection here
+ * Some settings are fixed, others can be changed at runtime.
  */
 export class AppConfig {
   /** Path for the reverse proxy that forwards to the database - configured in `proxy.conf.json` and `default.conf` */
   static readonly DB_PROXY_PREFIX = "/db";
   /** Name of the database that is used */
   static readonly DB_NAME = "app";
-  /** Demo and session can be persisted in local storage */
-  static readonly DEMO_LOCAL_STORAGE_KEY = "demo_mode";
-  static readonly SESSION_LOCAL_STORAGE_KEY = "session_type";
   /** Whether the app is running in demo mode */
   static DEMO_MODE = false;
   /** The session type that is used */
   static SESSION_TYPE = SessionType.synced;
 
+  /** Demo mode and session type can be persisted in local storage */
+  private static readonly DEMO_MODE_KEY = "demo_mode";
+  private static readonly SESSION_TYPE_KEY = "session_type";
+
   /**
-   * Initializes static settings through the URL params, the local storage or the environment.
+   * Initializes settings that can be changed at runtime.
+   */
+  static initSettings() {
+    const demoMode = this.getSetting(this.DEMO_MODE_KEY);
+    this.DEMO_MODE = demoMode === "true";
+    const sessionType = this.getSetting(this.SESSION_TYPE_KEY);
+    this.SESSION_TYPE = sessionType as SessionType;
+  }
+
+  /**
+   * A setting can be applied through the url params, the local storage and the environment.
+   * If params are found in the URL query params, then they are persisted in the local storage.
    *
    * The settings are checked and used in the following order:
    * 1. URL params
    * 2. Local storage
    * 3. Environment
    *
-   * If params are found in the URL query params, then they are persisted in the local storage.
+   * @param key The key of the setting
+   * @returns first value of the setting
+   * @private
    */
-  static initSettings() {
-    const params = new URLSearchParams(location.search);
-    this.DEMO_MODE = this.isDemoMode(params);
-    this.SESSION_TYPE = this.getSession(params);
-  }
-
-  private static isDemoMode(params: URLSearchParams): boolean {
-    const demoParam = params.get("demo");
-    const demoStorage = localStorage.getItem(this.DEMO_LOCAL_STORAGE_KEY);
-    if (demoParam) {
-      localStorage.setItem(this.DEMO_LOCAL_STORAGE_KEY, demoParam);
-      return demoParam === "true";
-    } else if (demoStorage) {
-      return demoStorage === "true";
+  private static getSetting(key: string): string {
+    const paramValue = new URLSearchParams(location.search).get(key);
+    const localStorageValue = localStorage.getItem(this.SESSION_TYPE_KEY);
+    if (paramValue) {
+      localStorage.setItem(key, paramValue);
+      return paramValue;
+    } else if (localStorageValue) {
+      return localStorageValue;
+    } else {
+      return environment[key];
     }
-    return environment.demo_mode;
-  }
-
-  private static getSession(params: URLSearchParams): SessionType {
-    const sessionParam = params.get("session");
-    const sessionStorage = localStorage.getItem(this.SESSION_LOCAL_STORAGE_KEY);
-    if (sessionParam) {
-      localStorage.setItem(this.SESSION_LOCAL_STORAGE_KEY, sessionParam);
-      return sessionParam as SessionType;
-    } else if (sessionStorage) {
-      return sessionStorage as SessionType;
-    }
-    return environment.session_type;
   }
 }
