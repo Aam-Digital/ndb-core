@@ -19,7 +19,7 @@ import { Component, OnInit } from "@angular/core";
 import { SessionService } from "../../session/session-service/session.service";
 import { UserAccountService } from "./user-account.service";
 import { FormBuilder, ValidationErrors, Validators } from "@angular/forms";
-import { AppConfig } from "../../app-config/app-config";
+import { AppSettings } from "../../app-config/app-settings";
 import { LoggingService } from "../../logging/logging.service";
 import { SessionType } from "../../session/session-type";
 
@@ -77,7 +77,7 @@ export class UserAccountComponent implements OnInit {
     this.disabledForOfflineMode = false;
     this.passwordForm.enable();
 
-    if (AppConfig.SESSION_TYPE !== SessionType.synced) {
+    if (AppSettings.SESSION_TYPE !== SessionType.synced) {
       this.disabledForDemoMode = true;
       this.passwordForm.disable();
     } else if (!navigator.onLine) {

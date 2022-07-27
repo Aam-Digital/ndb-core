@@ -29,7 +29,7 @@ import { HttpClient } from "@angular/common/http";
 import { DatabaseUser } from "./local-user";
 import { waitForChangeTo } from "../session-states/session-utils";
 import { zip } from "rxjs";
-import { AppConfig } from "app/core/app-config/app-config";
+import { AppSettings } from "app/core/app-config/app-settings";
 import { filter } from "rxjs/operators";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 
@@ -75,7 +75,7 @@ export class SyncedSessionService extends SessionService {
    */
   checkForValidSession() {
     this.httpClient
-      .get(`${AppConfig.DB_PROXY_PREFIX}/_session`, {
+      .get(`${AppSettings.DB_PROXY_PREFIX}/_session`, {
         withCredentials: true,
       })
       .subscribe((res: any) => {

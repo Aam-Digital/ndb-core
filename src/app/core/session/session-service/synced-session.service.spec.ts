@@ -17,7 +17,7 @@
 
 import { SyncedSessionService } from "./synced-session.service";
 import { LoginState } from "../session-states/login-state.enum";
-import { AppConfig } from "../../app-config/app-config";
+import { AppSettings } from "../../app-config/app-settings";
 import { LocalSession } from "./local-session";
 import { RemoteSession } from "./remote-session";
 import { SessionType } from "../session-type";
@@ -62,7 +62,7 @@ describe("SyncedSessionService", () => {
         { provide: LOCATION_TOKEN, useValue: mockLocation },
       ],
     });
-    AppConfig.SESSION_TYPE = SessionType.mock;
+    AppSettings.SESSION_TYPE = SessionType.mock;
     sessionService = TestBed.inject(SyncedSessionService);
 
     localSession = TestBed.inject(LocalSession);

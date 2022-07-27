@@ -8,7 +8,7 @@ import {
 } from "@angular/core/testing";
 import { AdminComponent } from "./admin.component";
 import { BackupService } from "../services/backup.service";
-import { AppConfig } from "../../app-config/app-config";
+import { AppSettings } from "../../app-config/app-settings";
 import { ConfigService } from "../../config/config.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { SessionType } from "../../session/session-type";
@@ -55,7 +55,7 @@ describe("AdminComponent", () => {
 
   beforeEach(
     waitForAsync(() => {
-      AppConfig.SESSION_TYPE = SessionType.mock;
+      AppSettings.SESSION_TYPE = SessionType.mock;
 
       TestBed.configureTestingModule({
         imports: [AdminModule, MockedTestingModule.withState()],

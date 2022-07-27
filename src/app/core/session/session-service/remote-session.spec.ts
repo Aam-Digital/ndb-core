@@ -2,7 +2,7 @@ import { TestBed } from "@angular/core/testing";
 import { RemoteSession } from "./remote-session";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { of, throwError } from "rxjs";
-import { AppConfig } from "../../app-config/app-config";
+import { AppSettings } from "../../app-config/app-settings";
 import { SessionType } from "../session-type";
 import { LoggingService } from "../../logging/logging.service";
 import { testSessionServiceImplementation } from "./session.service.spec";
@@ -16,7 +16,7 @@ describe("RemoteSessionService", () => {
   let dbUser: DatabaseUser;
 
   beforeEach(() => {
-    AppConfig.SESSION_TYPE = SessionType.mock;
+    AppSettings.SESSION_TYPE = SessionType.mock;
     mockHttpClient = jasmine.createSpyObj(["post", "delete"]);
     mockHttpClient.delete.and.returnValue(of());
 

@@ -7,7 +7,7 @@ import { LocalSession } from "../session/session-service/local-session";
 import { DatabaseUser } from "../session/session-service/local-user";
 import { MatDialog } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
-import { AppConfig } from "../app-config/app-config";
+import { AppSettings } from "../app-config/app-settings";
 import { PouchDatabase } from "../database/pouch-database";
 import { Subject } from "rxjs";
 import { LoginState } from "../session/session-states/login-state.enum";
@@ -24,9 +24,9 @@ describe("DemoDataInitializerService", () => {
   let adminDBName: string;
 
   beforeEach(() => {
-    AppConfig.SESSION_TYPE = SessionType.mock;
-    demoUserDBName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${AppConfig.DB_NAME}`;
-    adminDBName = `${DemoUserGeneratorService.ADMIN_USERNAME}-${AppConfig.DB_NAME}`;
+    AppSettings.SESSION_TYPE = SessionType.mock;
+    demoUserDBName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${AppSettings.DB_NAME}`;
+    adminDBName = `${DemoUserGeneratorService.ADMIN_USERNAME}-${AppSettings.DB_NAME}`;
     mockDemoDataService = jasmine.createSpyObj(["publishDemoData"]);
     mockDemoDataService.publishDemoData.and.resolveTo();
     mockDialog = jasmine.createSpyObj(["open"]);

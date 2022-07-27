@@ -19,11 +19,11 @@ import { SessionType } from "../session/session-type";
 import { environment } from "../../../environments/environment";
 
 /**
- * Central app configuration.
+ * Central app settings.
  *
  * Some settings are fixed, others can be changed at runtime.
  */
-export class AppConfig {
+export class AppSettings {
   /** Path for the reverse proxy that forwards to the database - configured in `proxy.conf.json` and `default.conf` */
   static readonly DB_PROXY_PREFIX = "/db";
   /** Name of the database that is used */

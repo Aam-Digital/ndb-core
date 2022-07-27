@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { AppConfig } from "../../app-config/app-config";
+import { AppSettings } from "../../app-config/app-settings";
 import { LocalSession } from "./local-session";
 import { SessionType } from "../session-type";
 import { DatabaseUser, LocalUser, passwordEqualsEncrypted } from "./local-user";
@@ -32,9 +32,9 @@ describe("LocalSessionService", () => {
   let database: jasmine.SpyObj<PouchDatabase>;
 
   beforeEach(() => {
-    AppConfig.SESSION_TYPE = SessionType.mock;
-    userDBName = `${TEST_USER}-${AppConfig.DB_NAME}`;
-    deprecatedDBName = AppConfig.DB_NAME;
+    AppSettings.SESSION_TYPE = SessionType.mock;
+    userDBName = `${TEST_USER}-${AppSettings.DB_NAME}`;
+    deprecatedDBName = AppSettings.DB_NAME;
     database = jasmine.createSpyObj([
       "initInMemoryDB",
       "initIndexedDB",
@@ -116,19 +116,19 @@ describe("LocalSessionService", () => {
     await localSession.login(TEST_USER, TEST_PASSWORD);
 
     expect(database.initInMemoryDB).toHaveBeenCalledWith(
-      TEST_USER + "-" + AppConfig.DB_NAME
+      TEST_USER + "-" + AppSettings.DB_NAME
     );
     expect(localSession.getDatabase()).toBe(database);
   });
 
-  it("should create the database according to the session type in the AppConfig", async () => {
+  it("should create the database according to the session type in the AppSettings", async () => {
     async function testDatabaseCreation(
       sessionType: SessionType,
       expectedDB: "inMemory" | "indexed"
     ) {
       database.initInMemoryDB.calls.reset();
       database.initIndexedDB.calls.reset();
-      AppConfig.SESSION_TYPE = sessionType;
+      AppSettings.SESSION_TYPE = sessionType;
       await localSession.login(TEST_USER, TEST_PASSWORD);
       if (expectedDB === "inMemory") {
         expect(database.initInMemoryDB).toHaveBeenCalled();

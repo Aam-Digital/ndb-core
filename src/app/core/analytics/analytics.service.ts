@@ -37,7 +37,7 @@ export class AnalyticsService {
   }
 
   /**
-   * Set up usage analytics tracking - if the AppConfig specifies the required settings.
+   * Set up usage analytics tracking.
    */
   init(): void {
     window["_paq"] = window["_paq"] || [];
@@ -72,13 +72,10 @@ export class AnalyticsService {
    * @private
    */
   private setConfigValues() {
-    const {
-      url,
-      site_id,
-      no_cookies,
-    } = this.configService.getConfig<UsageAnalyticsConfig>(
-      USAGE_ANALYTICS_CONFIG_ID
-    ) || { url: "https://matomo.aam-digital.org" };
+    const { url, site_id, no_cookies } =
+      this.configService.getConfig<UsageAnalyticsConfig>(
+        USAGE_ANALYTICS_CONFIG_ID
+      ) || { url: "https://matomo.aam-digital.org" };
     const u = url.endsWith("/") ? url : url + "/";
 
     if (!this.isInitialized) {

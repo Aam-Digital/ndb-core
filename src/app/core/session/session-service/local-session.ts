@@ -24,7 +24,7 @@ import {
 } from "./local-user";
 import { SessionService } from "./session.service";
 import { PouchDatabase } from "../../database/pouch-database";
-import { AppConfig } from "../../app-config/app-config";
+import { AppSettings } from "../../app-config/app-settings";
 import { SessionType } from "../session-type";
 
 /**
@@ -69,7 +69,7 @@ export class LocalSession extends SessionService {
   }
 
   private async initializeDatabaseForCurrentUser() {
-    const userDBName = `${this.currentDBUser.name}-${AppConfig.DB_NAME}`;
+    const userDBName = `${this.currentDBUser.name}-${AppSettings.DB_NAME}`;
     // Work on a temporary database before initializing the real one
     const tmpDB = new PouchDatabase(undefined);
     this.initDatabase(userDBName, tmpDB);
@@ -79,7 +79,7 @@ export class LocalSession extends SessionService {
       return;
     }
 
-    this.initDatabase(AppConfig.DB_NAME, tmpDB);
+    this.initDatabase(AppSettings.DB_NAME, tmpDB);
     const dbFallback = window.localStorage.getItem(
       LocalSession.DEPRECATED_DB_KEY
     );
@@ -90,7 +90,7 @@ export class LocalSession extends SessionService {
         LocalSession.DEPRECATED_DB_KEY,
         this.currentDBUser.name
       );
-      this.initDatabase(AppConfig.DB_NAME);
+      this.initDatabase(AppSettings.DB_NAME);
       return;
     }
 
@@ -99,7 +99,7 @@ export class LocalSession extends SessionService {
   }
 
   private initDatabase(dbName: string, db = this.database) {
-    if (AppConfig.SESSION_TYPE === SessionType.mock) {
+    if (AppSettings.SESSION_TYPE === SessionType.mock) {
       db.initInMemoryDB(dbName);
     } else {
       db.initIndexedDB(dbName);

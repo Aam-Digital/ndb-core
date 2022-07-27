@@ -20,7 +20,7 @@ import {
   ConfigService,
   createTestingConfigService,
 } from "../core/config/config.service";
-import { AppConfig } from "../core/app-config/app-config";
+import { AppSettings } from "../core/app-config/app-settings";
 import { SessionType } from "../core/session/session-type";
 
 /**
@@ -50,7 +50,7 @@ import { SessionType } from "../core/session/session-type";
 })
 export class DatabaseTestingModule {
   constructor(pouchDatabase: PouchDatabase) {
-    AppConfig.SESSION_TYPE = SessionType.mock;
+    AppSettings.SESSION_TYPE = SessionType.mock;
     pouchDatabase.initInMemoryDB();
   }
 }
