@@ -16,10 +16,10 @@ import { ratingAnswers } from "../../features/historical-data/model/rating-answe
 // prettier-ignore
 export const defaultJsonConfig = {
   "appConfig": {
+    "default_language": "en-US",
     "displayLanguageSelect": true,
     "logo_path": null,
-    "site_name": "Aam Digital - DEMO",
-    "default_language": "en-US"
+    "site_name": "Aam Digital - DEMO (automatically generated data)",
   },
   "appConfig:usage-analytics": {
     "url": "https://matomo.aam-digital.org",
