@@ -39,7 +39,7 @@ import { NotesModule } from "../../child-dev-project/notes/notes.module";
 import { Angulartics2Module } from "angulartics2";
 import { PermissionsModule } from "../permissions/permissions.module";
 import { EntityUtilsModule } from "../entity-components/entity-utils/entity-utils.module";
-import { TranslationModule } from "../translation/translation.module";
+import { LanguageModule } from "../language/language.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { PwaInstallModule } from "app/core/pwa-install/pwa-install.module";
 
@@ -69,7 +69,7 @@ import { PwaInstallModule } from "app/core/pwa-install/pwa-install.module";
     PermissionsModule,
     EntityUtilsModule,
     ReactiveFormsModule,
-    TranslationModule,
+    LanguageModule,
     FontAwesomeModule,
     PwaInstallModule,
   ],

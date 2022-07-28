@@ -26,7 +26,6 @@ import { environment } from "../environments/environment";
 import { Child } from "./child-dev-project/children/model/child";
 import { School } from "./child-dev-project/schools/model/school";
 import { DemoDataInitializerService } from "./core/demo-data/demo-data-initializer.service";
-import { AppConfig } from "./core/app-config/app-config";
 import { LoginState } from "./core/session/session-states/login-state.enum";
 import { LoggingService } from "./core/logging/logging.service";
 import { EntityRegistry } from "./core/entity/database-entity.decorator";
@@ -90,7 +89,7 @@ export class AppComponent {
       this.analyticsService.init();
     }
 
-    if (AppConfig.settings.demo_mode) {
+    if (environment.demo_mode) {
       await this.demoDataInitializer.run();
     }
   }

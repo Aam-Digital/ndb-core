@@ -47,7 +47,8 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
   styleUrls: ["./entity-list.component.scss"],
 })
 export class EntityListComponent<T extends Entity>
-  implements OnChanges, AfterViewInit {
+  implements OnChanges, AfterViewInit
+{
   @Input() allEntities: T[] = [];
   filteredEntities: T[] = [];
   @Input() listConfig: EntityListConfig;
@@ -119,12 +120,7 @@ export class EntityListComponent<T extends Entity>
 
     this.media
       .asObservable()
-      .pipe(
-        map(
-          (changes) =>
-            changes[0].mqAlias !== "xs" && changes[0].mqAlias !== "md"
-        )
-      )
+      .pipe(map((c) => c[0].mqAlias !== "xs" && c[0].mqAlias !== "md"))
       .subscribe((isBigScreen) => {
         if (!isBigScreen) {
           this.displayColumnGroupByName(this.mobileColumnGroup);
@@ -175,6 +171,9 @@ export class EntityListComponent<T extends Entity>
       this.initColumnGroups(this.listConfig.columnGroups);
       this.filtersConfig = this.listConfig.filters || [];
       this.displayColumnGroupByName(this.defaultColumnGroup);
+      if (this.media.isActive("xs") || this.media.isActive("md")) {
+        this.displayColumnGroupByName(this.mobileColumnGroup);
+      }
     }
     if (changes.hasOwnProperty("allEntities")) {
       await this.initFilterSelections();
@@ -289,9 +288,8 @@ export class EntityListComponent<T extends Entity>
   }
 
   private displayColumnGroupByName(columnGroupName: string) {
-    const selectedColumnIndex = this.getSelectedColumnIndexByName(
-      columnGroupName
-    );
+    const selectedColumnIndex =
+      this.getSelectedColumnIndexByName(columnGroupName);
     if (selectedColumnIndex !== -1) {
       this.selectedColumnGroupIndex = selectedColumnIndex;
     }

@@ -1,4 +1,7 @@
-<span [ngClass]="{ clickable: !linkDisabled }">
+<div
+  [ngClass]="{ clickable: !linkDisabled }"
+  (click)="showDetailsPage()"
+>
   <ng-container
     *ngIf="entityBlockComponent && entityToDisplay"
     [appDynamicComponent]="{
@@ -14,4 +17,4 @@
   <ng-container *ngIf="!entityBlockComponent">
     {{ entityToDisplay?.toString() }}
   </ng-container>
-</span>
+</div>

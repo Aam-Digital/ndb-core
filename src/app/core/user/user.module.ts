@@ -47,6 +47,4 @@ import { TabStateModule } from "../../utils/tab-state/tab-state.module";
   ],
   declarations: [UserAccountComponent],
 })
-export class UserModule {
-  static dynamicComponents = [UserAccountComponent];
-}
+export class UserModule {}

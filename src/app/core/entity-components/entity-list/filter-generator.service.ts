@@ -156,6 +156,7 @@ export class FilterGeneratorService {
     entityType: string
   ): Promise<FilterSelectionOption<T>[]> {
     const filterEntities = await this.entityMapperService.loadType(entityType);
+    filterEntities.sort((a, b) => a.toString().localeCompare(b.toString()));
 
     const options = [
       {
