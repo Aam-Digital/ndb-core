@@ -84,6 +84,7 @@ import {
   DEFAULT_LANGUAGE,
   LANGUAGE_LOCAL_STORAGE_KEY,
 } from "./core/language/language-statics";
+import { AppSettings } from "./core/app-config/app-settings";
 
 /**
  * Main entry point of the application.
@@ -177,6 +178,7 @@ import {
 })
 export class AppModule {
   constructor(icons: FaIconLibrary) {
+    AppSettings.initRuntimeSettings();
     icons.addIconPacks(fas, far);
   }
 }

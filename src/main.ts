@@ -24,7 +24,6 @@ import {
 import { environment } from "./environments/environment";
 import { enableProdMode } from "@angular/core";
 import * as parseXliffToJson from "./app/utils/parse-xliff-to-js";
-import { AppConfig } from "./app/core/app-config/app-config";
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 
 if (environment.production) {
@@ -41,8 +40,7 @@ if (appLang === DEFAULT_LANGUAGE) {
 
 function bootstrap(): Promise<any> {
   // Dynamically load the main module after the language has been initialized
-  return AppConfig.load()
-    .then(() => import("./app/app.module"))
+  return import("./app/app.module")
     .then((m) => platformBrowserDynamic().bootstrapModule(m.AppModule))
     .catch((err) => console.error(err));
 }
