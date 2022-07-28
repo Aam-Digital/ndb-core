@@ -92,7 +92,6 @@ export class EntityFormService {
   }
 
   public updateValues(formGroup: FormGroup, entity: Entity, staticKey: string) {
-    console.log("hi", entity);
     // formGroup.setValue(entity);
     Object.keys(formGroup.controls).forEach((key) => {
       if (key != staticKey) {

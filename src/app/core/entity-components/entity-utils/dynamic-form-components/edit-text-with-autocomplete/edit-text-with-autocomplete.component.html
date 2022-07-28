@@ -12,13 +12,13 @@
   <input
     #inputElement
     matInput
+    [matAutocompleteDisabled]="matAutocompleteDisabled"
     [placeholder]="placeholder"
     [disabled]="formControl.disabled"
     [matAutocomplete]="autoSuggestions"
     [value]="selectedEntity?.toString() || inputText"
     (keyup)="updateAutocomplete(inputElement.value)"
     (focusin)="updateAutocomplete(inputElement.value)"
-    (focusout)="select(inputElement.value)"
   />
   <mat-autocomplete
     #autoSuggestions="matAutocomplete"

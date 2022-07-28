@@ -14,12 +14,13 @@ import { OnInitDynamicComponent } from "app/core/view/dynamic-components/on-init
   styleUrls: ["./activities-overview.component.scss"],
 })
 export class ActivitiesOverviewComponent implements OnInitDynamicComponent {
+  titleColumn = {
+    id: "title",
+    edit: "EditTextWithAutocomplete",
+    additional: {},
+  };
   columns: FormFieldConfig[] = [
-    {
-      id: "title",
-      edit: "EditTextWithAutocomplete",
-      additional: "RecurringActivity",
-    },
+    this.titleColumn,
     { id: "type" },
     { id: "assignedTo" },
     { id: "linkedGroups" },
@@ -41,6 +42,11 @@ export class ActivitiesOverviewComponent implements OnInitDynamicComponent {
     this.records = (
       await this.entityMapper.loadType<RecurringActivity>(RecurringActivity)
     ).filter((activity) => activity.linkedGroups.includes(this.entity.getId()));
+    this.titleColumn.additional = {
+      entityType: "RecurringActivity",
+      relevantProperty: "linkedGroups",
+      relevantValue: this.entity.getId(),
+    };
     this.entityMapper
       .receiveUpdates(RecurringActivity)
       .subscribe((updateEntity) => {

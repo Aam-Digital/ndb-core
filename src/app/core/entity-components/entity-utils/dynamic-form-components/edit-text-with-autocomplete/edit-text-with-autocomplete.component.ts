@@ -20,6 +20,14 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
   editingSelectedEntity = false;
   inputText = "";
   inUniqueExistingEntity = false;
+  isFirstFocusIn = true;
+  initialValues;
+  matAutocompleteDisabled: boolean = false;
+  additional: {
+    entityType: string;
+    relevantProperty: string;
+    relevantValue: string;
+  };
 
   @ViewChild("inputElement") input: ElementRef;
 
@@ -28,27 +36,35 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
   }
 
   updateAutocomplete(inputText: string) {
-    let filteredEntities = this.entities;
-    if (inputText) {
-      filteredEntities = this.entities.filter((entity) =>
-        entity.toString().toLowerCase().includes(inputText.toLowerCase())
-      );
+    if (this.isFirstFocusIn) {
+      this.isFirstFocusIn = false;
+      return;
     }
-    this.autocompleteEntities.next(filteredEntities);
-    if (filteredEntities.length === 1) {
-      this.select(filteredEntities[0]);
+    if (!this.matAutocompleteDisabled) {
+      let filteredEntities = this.entities;
+      if (inputText) {
+        filteredEntities = this.entities.filter((entity) =>
+          entity.toString().toLowerCase().includes(inputText.toLowerCase())
+        );
+        // if (filteredEntities.length === 1) {
+        //   this.select(filteredEntities[0]);
+        // } else {
+        // this.select(inputText);
+        // }
+      }
+      this.autocompleteEntities.next(filteredEntities);
     }
-    // console.log("updateAutocomplete ruft select auf");
-    // this.select(inputText);
   }
 
   async onInitFromDynamicConfig(config: EditPropertyConfig<string>) {
     super.onInitFromDynamicConfig(config);
-    this.placeholder = $localize`:Placeholder for input to set an entity|context Select User:Select ${
+    this.additional = config.formFieldConfig.additional;
+    this.placeholder = $localize`:Placeholder for input to set an entity|context Select User:Type new or select existing after typing ${
       config.formFieldConfig.label || config.propertySchema?.label
     }`;
     const entityType: string =
-      config.formFieldConfig.additional || config.propertySchema.additional;
+      config.formFieldConfig.additional.entityType ||
+      config.propertySchema.additional.entityType;
     this.entities = await this.entityMapperService.loadType(entityType);
     this.entities.sort((e1, e2) => e1.toString().localeCompare(e2.toString()));
     const selectedEntity = this.entities.find(
@@ -57,19 +73,22 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
     if (selectedEntity) {
       this.selectedEntity = selectedEntity;
       this.editingSelectedEntity = false;
+      this.matAutocompleteDisabled = true;
+      this.placeholder = "";
     }
+    this.initialValues = this.parent.getRawValue();
   }
 
-  select(selected: string | Entity) {
+  select(selected: Entity) {
     let entity: Entity;
     console.log("select aufgerufen mit ", selected);
-    if (typeof selected === "string") {
-      entity = this.entities.find(
-        (e) => e.toString().toLowerCase() === selected.toLowerCase()
-      );
-    } else {
-      entity = selected;
-    }
+    // if (typeof selected === "string") {
+    //   entity = this.entities.find(
+    //     (e) => e.toString().toLowerCase() === selected.toLowerCase()
+    //   );
+    // } else {
+    entity = selected;
+    // }
     console.log("entity ist ", entity);
 
     if (entity) {
@@ -80,6 +99,9 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
       const formKeys = Object.keys(entity).filter(
         (key) => schema.has(key) && !this.parent.controls.hasOwnProperty(key)
       );
+      entity[this.additional.relevantProperty].push(
+        this.additional.relevantValue
+      );
       Object.keys(this.parent.controls).forEach((key) => {
         this.parent.controls[key].setValue(entity[key]);
       });
@@ -87,8 +109,17 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
         this.parent.addControl(key, new FormControl(entity[key]))
       );
     } else {
+      // this.inputText = selected as string;
       this.selectedEntity = undefined;
-      this.inputText = selected as string;
+      Object.keys(this.parent.controls)
+        .filter((key) => key != this.formControlName)
+        .forEach((key) => {
+          if (this.initialValues.hasOwnProperty(key)) {
+            this.parent.controls[key].setValue(this.initialValues[key]);
+          } else {
+            this.parent.removeControl(key);
+          }
+        });
       // this.formControl.setValue(selected as string);
     }
     console.log("this.selectedEntity", this.selectedEntity);
