@@ -61,7 +61,7 @@ export class AppSettings {
    */
   private static getSetting(key: string): string {
     const paramValue = new URLSearchParams(location.search).get(key);
-    const localStorageValue = localStorage.getItem(this.SESSION_TYPE_KEY);
+    const localStorageValue = localStorage.getItem(key);
     if (paramValue) {
       localStorage.setItem(key, paramValue);
       return paramValue;
