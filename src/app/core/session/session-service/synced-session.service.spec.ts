@@ -17,7 +17,6 @@
 
 import { SyncedSessionService } from "./synced-session.service";
 import { LoginState } from "../session-states/login-state.enum";
-import { AppConfig } from "../../app-config/app-config";
 import { LocalSession } from "./local-session";
 import { RemoteSession } from "./remote-session";
 import { SessionType } from "../session-type";
@@ -32,6 +31,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { PouchDatabase } from "../../database/pouch-database";
 import { SessionModule } from "../session.module";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
+import { environment } from "../../../../environments/environment";
 import { jwtTokenResponse, remoteSessionHttpFake } from "./remote-session.spec";
 
 describe("SyncedSessionService", () => {
@@ -64,15 +64,7 @@ describe("SyncedSessionService", () => {
         { provide: LOCATION_TOKEN, useValue: mockLocation },
       ],
     });
-    AppConfig.settings = {
-      site_name: "Aam Digital - DEV",
-      session_type: SessionType.mock,
-      database: {
-        name: "integration_tests",
-        remote_url: "https://demo.aam-digital.com/db/",
-      },
-      webdav: { remote_url: "" },
-    };
+    environment.session_type = SessionType.mock;
     sessionService = TestBed.inject(SyncedSessionService);
 
     localSession = TestBed.inject(LocalSession);

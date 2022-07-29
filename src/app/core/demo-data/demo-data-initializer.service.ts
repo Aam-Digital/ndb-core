@@ -5,13 +5,14 @@ import { LocalSession } from "../session/session-service/local-session";
 import { MatDialog } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
 import { LoggingService } from "../logging/logging.service";
-import { AppConfig } from "../app-config/app-config";
+import { AppSettings } from "../app-config/app-settings";
 import { LoginState } from "../session/session-states/login-state.enum";
 import PouchDB from "pouchdb-browser";
 import { SessionType } from "../session/session-type";
 import memory from "pouchdb-adapter-memory";
 import { Database } from "../database/database";
 import { PouchDatabase } from "../database/pouch-database";
+import { environment } from "../../../environments/environment";
 
 /**
  * This service handles everything related to the demo-mode
@@ -42,8 +43,7 @@ export class DemoDataInitializerService {
       this.pouchDatabase = this.database;
     } else {
       this.loggingService.warn(
-        "Cannot create demo data with session: " +
-          AppConfig.settings.session_type
+        "Cannot create demo data with session: " + environment.session_type
       );
     }
     this.registerDemoUsers();
@@ -95,9 +95,9 @@ export class DemoDataInitializerService {
   }
 
   private async syncWithDemoUserDB() {
-    const dbName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${AppConfig.settings.database.name}`;
+    const dbName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${AppSettings.DB_NAME}`;
     let demoUserDB: PouchDB.Database;
-    if (AppConfig.settings.session_type === SessionType.mock) {
+    if (environment.session_type === SessionType.mock) {
       PouchDB.plugin(memory);
       demoUserDB = new PouchDB(dbName, { adapter: "memory" });
     } else {
@@ -119,8 +119,8 @@ export class DemoDataInitializerService {
   }
 
   private initializeDefaultDatabase() {
-    const dbName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${AppConfig.settings.database.name}`;
-    if (AppConfig.settings.session_type === SessionType.mock) {
+    const dbName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${AppSettings.DB_NAME}`;
+    if (environment.session_type === SessionType.mock) {
       this.pouchDatabase.initInMemoryDB(dbName);
     } else {
       this.pouchDatabase.initIndexedDB(dbName);

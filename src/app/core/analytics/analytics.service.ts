@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
 import { environment } from "../../../environments/environment";
-import { AppConfig } from "../app-config/app-config";
 import { ConfigService } from "../config/config.service";
 import {
   USAGE_ANALYTICS_CONFIG_ID,
@@ -8,6 +7,7 @@ import {
 } from "./usage-analytics-config";
 import { Angulartics2, Angulartics2Matomo } from "angulartics2";
 import md5 from "md5";
+import { UiConfig } from "../ui/ui-config";
 
 /**
  * Track usage analytics data and report it to a backend server like Matomo.
@@ -18,10 +18,6 @@ import md5 from "md5";
   providedIn: "root",
 })
 export class AnalyticsService {
-  private static getUserHash(username: string): string {
-    return md5(AppConfig.settings?.site_name + username);
-  }
-
   private isInitialized = false;
 
   constructor(
@@ -30,14 +26,18 @@ export class AnalyticsService {
     private configService: ConfigService
   ) {}
 
+  /**
+   * Sets a unique user hash which is always for the same user but does not expose the username.
+   * This improves the logging behavior.
+   * @param username actual username
+   */
   public setUser(username: string): void {
-    this.angulartics2Matomo.setUsername(
-      AnalyticsService.getUserHash(username ?? "")
-    );
+    const baseUrl = location.host;
+    this.angulartics2Matomo.setUsername(md5(`${baseUrl}${username ?? ""}`));
   }
 
   /**
-   * Set up usage analytics tracking - if the AppConfig specifies the required settings.
+   * Set up usage analytics tracking.
    */
   init(): void {
     window["_paq"] = window["_paq"] || [];
@@ -48,7 +48,6 @@ export class AnalyticsService {
     window["_paq"].push(["trackPageView"]);
     window["_paq"].push(["enableLinkTracking"]);
     this.setVersion();
-    this.setOrganization(AppConfig.settings.site_name);
     this.setUser(undefined);
     this.configService.configUpdates.subscribe(() => this.setConfigValues());
   }
@@ -73,13 +72,10 @@ export class AnalyticsService {
    * @private
    */
   private setConfigValues() {
-    const {
-      url,
-      site_id,
-      no_cookies,
-    } = this.configService.getConfig<UsageAnalyticsConfig>(
-      USAGE_ANALYTICS_CONFIG_ID
-    ) || { url: "https://matomo.aam-digital.org" };
+    const { url, site_id, no_cookies } =
+      this.configService.getConfig<UsageAnalyticsConfig>(
+        USAGE_ANALYTICS_CONFIG_ID
+      ) || { url: "https://matomo.aam-digital.org" };
     const u = url.endsWith("/") ? url : url + "/";
 
     if (!this.isInitialized) {
@@ -100,6 +96,11 @@ export class AnalyticsService {
     }
     if (site_id) {
       window["_paq"].push(["setSiteId", site_id]);
+    }
+    const { site_name } =
+      this.configService.getConfig<UiConfig>("appConfig") || {};
+    if (site_name) {
+      this.setOrganization(site_name);
     }
   }
 

@@ -14,7 +14,6 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { AppConfig } from "../../app-config/app-config";
 import { Injectable } from "@angular/core";
 import {
   HttpClient,
@@ -29,6 +28,7 @@ import { LoggingService } from "../../logging/logging.service";
 import PouchDB from "pouchdb-browser";
 import { firstValueFrom } from "rxjs";
 import { parseJwt } from "../../../utils/utils";
+import { AppSettings } from "app/core/app-config/app-settings";
 
 /**
  * Responsibilities:
@@ -142,12 +142,19 @@ export class RemoteSession extends SessionService {
 
   public async handleSuccessfulLogin(userObject: DatabaseUser) {
     this.database.initIndexedDB(
-      AppConfig.settings.database.remote_url + AppConfig.settings.database.name,
+      `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}`,
       {
+        adapter: "http",
         skip_setup: true,
         fetch: (url, opts: any) => {
-          opts.headers.set("Authorization", "Bearer " + this.accessToken);
-          return PouchDB.fetch(url, opts);
+          if (typeof url === "string") {
+            opts.headers.set("Authorization", "Bearer " + this.accessToken);
+            return PouchDB.fetch(
+              AppSettings.DB_PROXY_PREFIX +
+              url.split(AppSettings.DB_PROXY_PREFIX)[1],
+              opts
+            );
+          }
         },
       }
     );

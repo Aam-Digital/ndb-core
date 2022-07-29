@@ -2,13 +2,13 @@ import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { JwtToken, RemoteSession } from "./remote-session";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { of, throwError } from "rxjs";
-import { AppConfig } from "../../app-config/app-config";
 import { SessionType } from "../session-type";
 import { LoggingService } from "../../logging/logging.service";
 import { testSessionServiceImplementation } from "./session.service.spec";
 import { DatabaseUser } from "./local-user";
 import { LoginState } from "../session-states/login-state.enum";
 import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
+import { environment } from "../../../../environments/environment";
 
 export function remoteSessionHttpFake(url, body) {
   const params = new URLSearchParams(body);
@@ -47,6 +47,7 @@ export const jwtTokenResponse: JwtToken = {
     "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJzV2FQaEdOYy1GSWpTdHBYVk96Y29oMjdSbVBpYVRwZjRlWUItUHpwU1VVIn0.eyJleHAiOjE2NTgxMzk0NTUsImlhdCI6MTY1ODEzOTM5NSwianRpIjoiY2YwZTYzNTMtNTJiMy00NzgyLTg1YjAtOWNkMzQ4MTM4YmI4IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9teXJlYWxtIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6InRlc3QiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJteWNsaWVudCIsInNlc3Npb25fc3RhdGUiOiI2ZWE5YzRkYi0wOGZmLTQ4MjQtOTUzMS1lNTIzODg1Y2E2NTIiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHBzOi8vd3d3LmtleWNsb2FrLm9yZyJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1teXJlYWxtIiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7Im15Y2xpZW50Ijp7InJvbGVzIjpbInVzZXJfYXBwIl19LCJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6ImVtYWlsIHByb2ZpbGUiLCJzaWQiOiI2ZWE5YzRkYi0wOGZmLTQ4MjQtOTUzMS1lNTIzODg1Y2E2NTIiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsIl9jb3VjaGRiLnJvbGVzIjpbInVzZXJfYXBwIl0sInByZWZlcnJlZF91c2VybmFtZSI6InRlc3QifQ.eynm8Zoox4Ovad0K4fYkia4mIyJUJpSfxEM0ZivQAD4LzhzDXuixsEJLQ3RFHI421k2q4wOMaorQAhjVbhmuu9CVQbPjTvNWfeO5DfTdo103KzWmQirWgBHP47H7dwF_2ksyag5HWFMTMCoD9BrNNPJPGjgkabXEFz4-dXg0GaslWd5MIO21cYqkZc_8YhFFLj9oP5gaY-9f3WTQg5YWTg7wk2YKM8IFlKrO67DMLTuO361lSdltnPNIBGzzAEC_oCM3GNFB1d8OkUnA5No89DhxCqQGHeQTKiYiJKoCdnZNQr7pIY0Ml-uNtAEHKAMV9Q6_sxqNcIFjROirdv3kkA",
   refresh_token: "test-refresh-token",
   expires_in: 120,
+  session_state: "test-session-state",
 };
 
 describe("RemoteSessionService", () => {
@@ -55,14 +56,7 @@ describe("RemoteSessionService", () => {
   let dbUser: DatabaseUser;
 
   beforeEach(() => {
-    AppConfig.settings = {
-      site_name: "test",
-      session_type: SessionType.mock,
-      database: {
-        name: "database",
-        remote_url: "database_url",
-      },
-    };
+    environment.session_type = SessionType.mock;
     mockHttpClient = jasmine.createSpyObj(["post"]);
     mockHttpClient.post.and.callFake(remoteSessionHttpFake);
 
