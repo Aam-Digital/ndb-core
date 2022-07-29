@@ -33,6 +33,7 @@ import { LoggingService } from "../../logging/logging.service";
 import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { RouterTestingModule } from "@angular/router/testing";
 import { environment } from "../../../../environments/environment";
+import { RemoteSession } from "../../session/session-service/remote-session";
 
 describe("UserAccountComponent", () => {
   let component: UserAccountComponent;
@@ -67,6 +68,7 @@ describe("UserAccountComponent", () => {
       ],
       providers: [
         { provide: SessionService, useValue: mockSessionService },
+        { provide: RemoteSession, useValue: { accessToken: "some token" } },
         { provide: UserAccountService, useValue: mockUserAccountService },
         { provide: LoggingService, useValue: mockLoggingService },
       ],
