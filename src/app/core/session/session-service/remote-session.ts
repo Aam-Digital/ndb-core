@@ -112,7 +112,7 @@ export class RemoteSession extends SessionService {
     };
     return firstValueFrom(
       this.httpClient.post<JwtToken>(
-        `/auth/realms/local/protocol/openid-connect/token`,
+        `/auth/realms/keycloak-test/protocol/openid-connect/token`,
         body.toString(),
         options
       )

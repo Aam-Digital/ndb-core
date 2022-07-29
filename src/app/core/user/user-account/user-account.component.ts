@@ -77,12 +77,10 @@ export class UserAccountComponent implements OnInit {
 
   resetPassword() {
     const keycloak = new Keycloak({
-      url: "http://localhost:4200/auth",
-      realm: "local",
+      url: "/auth",
+      realm: "keycloak-test",
       clientId: "app",
     });
-    keycloak.onReady = (res) => console.log("ready", res);
-    keycloak.onAuthSuccess = () => console.log("onAuthSuccess");
     keycloak
       .init({
         token: this.remoteSession.accessToken,

@@ -1,6 +1,6 @@
 {
   "/db": {
-    "target": "https://keycloak-test.aam-digital.com/db",
+    "target": "https://dev.aam-digital.com/db",
     "secure": true,
     "logLevel": "debug",
     "changeOrigin": true,
@@ -19,16 +19,9 @@
   },
   "/auth": {
     "target": "http://localhost:8080",
-    "secure": false,
+    "secure": true,
     "logLevel": "debug",
-    "changeOrigin": false,
-    "withCredentials": true,
-    "xfwd": true,
-    "pathRewrite": {
-      "^/auth": ""
-    },
-    "cookiePathRewrite": "/",
-    "hostRewrite": "/auth",
-    "followRedirects": true
+    "followRedirects": true,
+    "xfwd": true
   }
 }

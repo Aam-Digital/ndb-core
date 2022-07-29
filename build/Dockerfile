@@ -71,6 +71,8 @@ ENV PORT=80
 ENV WEBDAV_URL="http://localhost"
 # The url to the CouchDB database
 ENV COUCHDB_URL="http://localhost"
+# The url to the Keycloak server
+ENV KEYCLOAK_URL="http://localhost"
 # variables are inserted into the nginx config
-CMD envsubst '$$PORT $$WEBDAV_URL $$COUCHDB_URL' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
+CMD envsubst '$$PORT $$WEBDAV_URL $$COUCHDB_URL $$KEYCLOAK_URL' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
     nginx -g 'daemon off;'
