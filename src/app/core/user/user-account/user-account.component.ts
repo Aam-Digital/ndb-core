@@ -17,13 +17,10 @@
 
 import { Component, OnInit } from "@angular/core";
 import { SessionService } from "../../session/session-service/session.service";
-import { UserAccountService } from "./user-account.service";
-import { FormBuilder, ValidationErrors, Validators } from "@angular/forms";
 import { LoggingService } from "../../logging/logging.service";
 import { SessionType } from "../../session/session-type";
 import { environment } from "../../../../environments/environment";
 import Keycloak from "keycloak-js";
-import { RemoteSession } from "../../session/session-service/remote-session";
 
 /**
  * User account form to allow the user to view and edit information.
@@ -41,33 +38,9 @@ export class UserAccountComponent implements OnInit {
   disabledForDemoMode: boolean;
   disabledForOfflineMode: boolean;
 
-  passwordChangeResult: { success: boolean; error?: any };
-
-  passwordForm = this.fb.group(
-    {
-      currentPassword: ["", Validators.required],
-      newPassword: [
-        "",
-        [
-          Validators.required,
-          Validators.minLength(8),
-          Validators.pattern(/[A-Z]/),
-          Validators.pattern(/[a-z]/),
-          Validators.pattern(/[0-9]/),
-          Validators.pattern(/[^A-Za-z0-9]/),
-        ],
-      ],
-      confirmPassword: ["", [Validators.required]],
-    },
-    { validators: () => this.passwordMatchValidator() }
-  );
-
   constructor(
     private sessionService: SessionService,
-    private userAccountService: UserAccountService,
-    private fb: FormBuilder,
-    private loggingService: LoggingService,
-    private remoteSession: RemoteSession
+    private loggingService: LoggingService
   ) {}
 
   ngOnInit() {
@@ -82,76 +55,32 @@ export class UserAccountComponent implements OnInit {
       clientId: "app",
     });
     keycloak
-      .init({
-        token: this.remoteSession.accessToken,
-        refreshToken: localStorage.getItem(RemoteSession.REFRESH_TOKEN_KEY),
-        checkLoginIframe: true,
-        enableLogging: true,
-      })
-      .then((res) => {
-        console.log("logging in", res);
-        keycloak
-          .login({
-            action: "UPDATE_PASSWORD",
-            redirectUri: location.href,
-          })
-          .then((res) => console.log("res", res))
-          .catch((err) => console.log("err", err));
-      })
-      .catch((err) => console.log("err", err));
+      .init({})
+      .then(() =>
+        keycloak.login({
+          action: "UPDATE_PASSWORD",
+          redirectUri: location.href,
+        })
+      )
+      .catch((err) => this.loggingService.error(err));
   }
 
   checkIfPasswordChangeAllowed() {
     this.disabledForDemoMode = false;
     this.disabledForOfflineMode = false;
-    this.passwordForm.enable();
 
     if (environment.session_type !== SessionType.synced) {
       this.disabledForDemoMode = true;
-      this.passwordForm.disable();
     } else if (!navigator.onLine) {
       this.disabledForOfflineMode = true;
-      this.passwordForm.disable();
     }
   }
 
-  changePassword() {
-    this.passwordChangeResult = undefined;
-
-    const currentPassword = this.passwordForm.get("currentPassword").value;
-
-    if (!this.sessionService.checkPassword(this.username, currentPassword)) {
-      this.passwordForm
-        .get("currentPassword")
-        .setErrors({ incorrectPassword: true });
-      return;
-    }
-
-    const newPassword = this.passwordForm.get("newPassword").value;
-    this.userAccountService
-      .changePassword(this.username, currentPassword, newPassword)
-      .then(() => this.sessionService.login(this.username, newPassword))
-      .then(() => (this.passwordChangeResult = { success: true }))
-      .catch((err: Error) => {
-        this.passwordChangeResult = { success: false, error: err.message };
-        this.loggingService.error({
-          error: "password change failed",
-          details: err.message,
-        });
-        // rethrow to properly report to sentry.io; this exception is not expected, only caught to display in UI
-        throw err;
-      });
-  }
-
-  private passwordMatchValidator(): ValidationErrors | null {
-    const newPassword = this.passwordForm?.get("newPassword").value;
-    const confirmPassword = this.passwordForm?.get("confirmPassword").value;
-    if (newPassword !== confirmPassword) {
-      this.passwordForm
-        .get("confirmPassword")
-        .setErrors({ passwordConfirmationMismatch: true });
-      return { passwordConfirmationMismatch: true };
-    }
-    return null;
+  getPasswordResetDisabledTooltip(): string {
+    return this.disabledForDemoMode
+      ? $localize`:Password reset disabled tooltip:Password change is not allowed in demo mode.`
+      : this.disabledForOfflineMode
+      ? $localize`:Password reset disabled tooltip:Password change is not possible while being offline.`
+      : "";
   }
 }

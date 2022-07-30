@@ -12,7 +12,7 @@
     "target": "http://localhost:8080",
     "secure": true,
     "logLevel": "debug",
-    "followRedirects": true,
+    "changeOrigin": true,
     "xfwd": true
   }
 }

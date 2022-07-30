@@ -124,7 +124,6 @@ export class RemoteSession extends SessionService {
     localStorage.setItem(RemoteSession.REFRESH_TOKEN_KEY, token.refresh_token);
     this.refreshTokenBeforeExpiry(token.expires_in);
     const parsedToken = parseJwt(this.accessToken);
-    document.cookie = `KEYCLOAK_SESSION=keycloak-test/${parsedToken.sub}/${parsedToken.sid}`;
     return {
       name: parsedToken.username,
       roles: parsedToken["_couchdb.roles"],
@@ -151,7 +150,7 @@ export class RemoteSession extends SessionService {
             opts.headers.set("Authorization", "Bearer " + this.accessToken);
             return PouchDB.fetch(
               AppSettings.DB_PROXY_PREFIX +
-              url.split(AppSettings.DB_PROXY_PREFIX)[1],
+                url.split(AppSettings.DB_PROXY_PREFIX)[1],
               opts
             );
           }
