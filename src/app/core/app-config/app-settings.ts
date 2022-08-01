@@ -37,7 +37,7 @@ export class AppSettings {
    */
   static initRuntimeSettings() {
     const demoMode = this.getSetting(this.DEMO_MODE_KEY);
-    if (demoMode) {
+    if (demoMode || location.host.includes("demo")) {
       environment.demo_mode = demoMode === "true";
     }
     const sessionType = this.getSetting(this.SESSION_TYPE_KEY);
