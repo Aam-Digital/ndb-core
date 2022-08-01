@@ -9,6 +9,7 @@ import { DatabaseUser } from "./local-user";
 import { LoginState } from "../session-states/login-state.enum";
 import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
 import { environment } from "../../../../environments/environment";
+import Keycloak from "keycloak-js";
 
 export function remoteSessionHttpFake(url, body) {
   const params = new URLSearchParams(body);
@@ -66,6 +67,7 @@ describe("RemoteSessionService", () => {
         RemoteSession,
         LoggingService,
         { provide: HttpClient, useValue: mockHttpClient },
+        { provide: Keycloak, useValue: {} },
       ],
     });
 
