@@ -15,12 +15,10 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Optional } from "@angular/core";
 import { SessionService } from "../../session/session-service/session.service";
 import { LoggingService } from "../../logging/logging.service";
-import { SessionType } from "../../session/session-type";
-import { environment } from "../../../../environments/environment";
-import Keycloak from "keycloak-js";
+import { RemoteSession } from "../../session/session-service/remote-session";
 
 /**
  * User account form to allow the user to view and edit information.
@@ -40,7 +38,8 @@ export class UserAccountComponent implements OnInit {
 
   constructor(
     private sessionService: SessionService,
-    private loggingService: LoggingService
+    private loggingService: LoggingService,
+    @Optional() private remoteSession: RemoteSession
   ) {}
 
   ngOnInit() {
@@ -49,27 +48,14 @@ export class UserAccountComponent implements OnInit {
   }
 
   resetPassword() {
-    const keycloak = new Keycloak({
-      url: "/auth",
-      realm: "keycloak-test",
-      clientId: "app",
-    });
-    keycloak
-      .init({})
-      .then(() =>
-        keycloak.login({
-          action: "UPDATE_PASSWORD",
-          redirectUri: location.href,
-        })
-      )
-      .catch((err) => this.loggingService.error(err));
+    this.remoteSession.resetPassword();
   }
 
   checkIfPasswordChangeAllowed() {
     this.disabledForDemoMode = false;
     this.disabledForOfflineMode = false;
 
-    if (environment.session_type !== SessionType.synced) {
+    if (!this.remoteSession) {
       this.disabledForDemoMode = true;
     } else if (!navigator.onLine) {
       this.disabledForOfflineMode = true;

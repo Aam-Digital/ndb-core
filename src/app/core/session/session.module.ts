@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injector, NgModule } from "@angular/core";
+import { APP_INITIALIZER, Injector, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { LoginComponent } from "./login/login.component";
 import { FormsModule } from "@angular/forms";
@@ -36,6 +36,7 @@ import { RemoteSession } from "./session-service/remote-session";
 import { SessionService } from "./session-service/session.service";
 import { SessionType } from "./session-type";
 import { environment } from "../../../environments/environment";
+import Keycloak from "keycloak-js";
 
 /**
  * The core session logic handling user login as well as connection and synchronization with the remote database.
@@ -77,6 +78,13 @@ import { environment } from "../../../environments/environment";
         }
       },
       deps: [Injector],
+    },
+    { provide: Keycloak, useValue: new Keycloak("assets/keycloak.json") },
+    {
+      provide: APP_INITIALIZER,
+      deps: [Keycloak],
+      useFactory: (keycloak: Keycloak) => () => keycloak.init({}),
+      multi: true,
     },
   ],
 })

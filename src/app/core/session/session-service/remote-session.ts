@@ -29,6 +29,7 @@ import PouchDB from "pouchdb-browser";
 import { firstValueFrom } from "rxjs";
 import { parseJwt } from "../../../utils/utils";
 import { AppSettings } from "app/core/app-config/app-settings";
+import Keycloak from "keycloak-js";
 
 /**
  * Responsibilities:
@@ -54,7 +55,8 @@ export class RemoteSession extends SessionService {
    */
   constructor(
     private httpClient: HttpClient,
-    private loggingService: LoggingService
+    private loggingService: LoggingService,
+    private keycloak: Keycloak
   ) {
     super();
     this.database = new PouchDatabase(this.loggingService);
@@ -112,7 +114,7 @@ export class RemoteSession extends SessionService {
     };
     return firstValueFrom(
       this.httpClient.post<JwtToken>(
-        `/auth/realms/keycloak-test/protocol/openid-connect/token`,
+        `${this.keycloak.authServerUrl}realms/keycloak-test/protocol/openid-connect/token`,
         body.toString(),
         options
       )
@@ -182,6 +184,13 @@ export class RemoteSession extends SessionService {
 
   getDatabase(): PouchDatabase {
     return this.database;
+  }
+
+  resetPassword() {
+    this.keycloak.login({
+      action: "UPDATE_PASSWORD",
+      redirectUri: location.href,
+    });
   }
 }
 
