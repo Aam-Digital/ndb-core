@@ -37,8 +37,12 @@ export class AppSettings {
    */
   static initRuntimeSettings() {
     const demoMode = this.getSetting(this.DEMO_MODE_KEY);
-    if (demoMode || location.host.includes("demo")) {
+    if (demoMode) {
       environment.demo_mode = demoMode === "true";
+    } else if (location.host.includes("demo")) {
+      // Fallback when SW prevents redirect of NGINX
+      localStorage.setItem(this.DEMO_MODE_KEY, "true");
+      environment.demo_mode = true;
     }
     const sessionType = this.getSetting(this.SESSION_TYPE_KEY);
     if (sessionType) {
