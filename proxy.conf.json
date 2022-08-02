@@ -1,6 +1,6 @@
 {
   "/db": {
-    "target": "https://keycloak-test.aam-digital.com/db",
+    "target": "https://dev.aam-digital.com/db",
     "secure": true,
     "logLevel": "debug",
     "changeOrigin": true,
