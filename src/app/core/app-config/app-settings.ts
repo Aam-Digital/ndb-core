@@ -37,17 +37,25 @@ export class AppSettings {
    */
   static initRuntimeSettings() {
     const demoMode = this.getSetting(this.DEMO_MODE_KEY);
-    console.log("hostname", location.host, location.hostname);
     if (demoMode) {
       environment.demo_mode = demoMode === "true";
-    } else if (location.hostname.includes("demo")) {
-      // Fallback when SW prevents redirect of NGINX
-      localStorage.setItem(this.DEMO_MODE_KEY, "true");
-      environment.demo_mode = true;
     }
+
     const sessionType = this.getSetting(this.SESSION_TYPE_KEY);
     if (sessionType) {
       environment.session_type = sessionType as SessionType;
+    }
+
+    if (
+      location.hostname.includes("demo") &&
+      environment.session_type !== SessionType.mock &&
+      !environment.demo_mode
+    ) {
+      // Fallback when SW prevents redirect of NGINX
+      environment.session_type = SessionType.synced;
+      environment.demo_mode = true;
+      localStorage.setItem(this.DEMO_MODE_KEY, "true");
+      localStorage.setItem(this.SESSION_TYPE_KEY, "mock");
     }
   }
 
