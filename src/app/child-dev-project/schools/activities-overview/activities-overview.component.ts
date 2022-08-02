@@ -24,28 +24,29 @@ export class ActivitiesOverviewComponent implements OnInitDynamicComponent {
   entity: Entity;
   records: RecurringActivity[] = [];
   listConfig: EntityListConfig;
-  activityConstructor = RecurringActivity;
 
   constructor(private entityMapper: EntityMapperService) {}
 
-  async onInitFromDynamicConfig(config: any) {
+  onInitFromDynamicConfig(config: any) {
     if (config?.config?.columns) {
       this.columns = config.config.columns;
     }
 
     this.entity = config.entity;
-    this.records = (
-      await this.entityMapper.loadType<RecurringActivity>(RecurringActivity)
-    ).filter((activity) => activity.linkedGroups.includes(this.entity.getId()));
+    this.initializeRelatedActivities();
     this.entityMapper
       .receiveUpdates(RecurringActivity)
       .subscribe((updateEntity) => {
         if (updateEntity.type === "update") {
-          this.records = this.records.filter((activity) =>
-            activity.linkedGroups.includes(this.entity.getId())
-          );
+          this.initializeRelatedActivities();
         }
       });
+  }
+
+  private async initializeRelatedActivities() {
+    this.records = (
+      await this.entityMapper.loadType<RecurringActivity>(RecurringActivity)
+    ).filter((activity) => activity.linkedGroups.includes(this.entity.getId()));
   }
 
   generateNewRecordFactory(): () => RecurringActivity {
