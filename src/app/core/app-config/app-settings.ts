@@ -52,7 +52,7 @@ export class AppSettings {
       !environment.demo_mode
     ) {
       // Fallback when SW prevents redirect of NGINX
-      environment.session_type = SessionType.synced;
+      environment.session_type = SessionType.mock;
       environment.demo_mode = true;
       localStorage.setItem(this.DEMO_MODE_KEY, "true");
       localStorage.setItem(this.SESSION_TYPE_KEY, "mock");
