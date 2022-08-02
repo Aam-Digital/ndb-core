@@ -47,7 +47,7 @@ export class AppSettings {
     }
 
     if (
-      location.hostname.includes("demo") &&
+      location.hostname.includes("demo.") &&
       environment.session_type !== SessionType.mock &&
       !environment.demo_mode
     ) {
