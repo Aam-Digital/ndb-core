@@ -60,16 +60,13 @@
   <button
     mat-raised-button
     (click)="save()"
-    *appDisabledEntityOperation="{
-      operation: 'update',
-      entity: data.entity
-    }"
     i18n="Save button for forms"
   >
     Save
   </button>
 
   <button
+    *ngIf="editMode === 'update'"
     mat-icon-button
     [matMenuTriggerFor]="additional"
   >
