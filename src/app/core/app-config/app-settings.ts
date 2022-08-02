@@ -45,7 +45,7 @@ export class AppSettings {
     if (sessionType) {
       environment.session_type = sessionType as SessionType;
     }
-
+    console.log("environment", environment.demo_mode, environment.session_type);
     if (
       location.hostname.includes("demo") &&
       environment.session_type !== SessionType.mock &&
@@ -56,6 +56,7 @@ export class AppSettings {
       environment.demo_mode = true;
       localStorage.setItem(this.DEMO_MODE_KEY, "true");
       localStorage.setItem(this.SESSION_TYPE_KEY, "mock");
+      console.log("fallback handling", environment.demo_mode, environment.session_type)
     }
   }
 
