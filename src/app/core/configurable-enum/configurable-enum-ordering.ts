@@ -76,13 +76,7 @@ export namespace EnumOrdering {
         }' cannot be ordered`
       );
     }
-    if (first._ordinal > second._ordinal) {
-      return 1;
-    } else if (first._ordinal < second._ordinal) {
-      return -1;
-    } else {
-      return 0;
-    }
+    return first._ordinal - second._ordinal;
   }
 
   /**
