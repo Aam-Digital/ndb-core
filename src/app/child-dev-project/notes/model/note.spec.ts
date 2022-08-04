@@ -24,6 +24,7 @@ import {
 } from "../../../core/entity/model/warning-level";
 import { testEntitySubclass } from "../../../core/entity/model/entity.spec";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
+import { EnumOrdering } from "../../../core/configurable-enum/configurable-enum-ordering";
 
 const testStatusTypes: ConfigurableEnumConfig<AttendanceStatusType> = [
   {
@@ -61,37 +62,34 @@ describe("Note", () => {
   const ENTITY_TYPE = "Note";
   let entitySchemaService: EntitySchemaService;
 
-  const testInteractionTypes: InteractionType[] = [
-    {
-      id: "",
-      label: "",
-    },
-    {
-      id: "HOME_VISIT",
-      label: "Home Visit",
-    },
-    {
-      id: "GUARDIAN_TALK",
-      label: "Talk with Guardians",
-    },
-  ];
+  const testInteractionTypes: InteractionType[] =
+    EnumOrdering.imposeTotalOrdering([
+      {
+        id: "",
+        label: "",
+      },
+      {
+        id: "HOME_VISIT",
+        label: "Home Visit",
+      },
+      {
+        id: "GUARDIAN_TALK",
+        label: "Talk with Guardians",
+      },
+    ]);
 
-  beforeEach(
-    waitForAsync(() => {
-      const testConfigs = {};
-      testConfigs[
-        CONFIGURABLE_ENUM_CONFIG_PREFIX + INTERACTION_TYPE_CONFIG_ID
-      ] = testInteractionTypes;
-      testConfigs[
-        CONFIGURABLE_ENUM_CONFIG_PREFIX + ATTENDANCE_STATUS_CONFIG_ID
-      ] = testStatusTypes;
+  beforeEach(waitForAsync(() => {
+    const testConfigs = {};
+    testConfigs[CONFIGURABLE_ENUM_CONFIG_PREFIX + INTERACTION_TYPE_CONFIG_ID] =
+      testInteractionTypes;
+    testConfigs[CONFIGURABLE_ENUM_CONFIG_PREFIX + ATTENDANCE_STATUS_CONFIG_ID] =
+      testStatusTypes;
 
-      entitySchemaService = new EntitySchemaService();
-      entitySchemaService.registerSchemaDatatype(
-        new ConfigurableEnumDatatype(createTestingConfigService(testConfigs))
-      );
-    })
-  );
+    entitySchemaService = new EntitySchemaService();
+    entitySchemaService.registerSchemaDatatype(
+      new ConfigurableEnumDatatype(createTestingConfigService(testConfigs))
+    );
+  }));
 
   testEntitySubclass("Note", Note, {
     _id: "Note:some-id",
@@ -139,7 +137,7 @@ describe("Note", () => {
   it("should return colors", function () {
     const note = new Note("1");
 
-    note.category = { id: "", label: "test", color: "#FFFFFF" };
+    note.category = { id: "", label: "test", color: "#FFFFFF", _ordinal: -1 };
     expect(note.getColor()).toBe("#FFFFFF");
 
     note.warningLevel = warningLevels.find((level) => level.id === "URGENT");

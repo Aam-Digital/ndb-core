@@ -2,6 +2,7 @@ import {
   ConfigurableEnumConfig,
   ConfigurableEnumValue,
 } from "./configurable-enum.interface";
+import { isObject } from "lodash-es";
 
 /**
  * Support for types of configurable enums that impose a total ordering of their elements.
@@ -17,8 +18,12 @@ import {
  * of 'greater' or 'less' than is dependent on the concrete enum.
  */
 
-interface HasOrdinal {
+export interface HasOrdinal {
   _ordinal: number;
+}
+
+export function hasOrdinalValue(value: any): value is HasOrdinal {
+  return isObject(value) && "_ordinal" in value;
 }
 
 export type OrderedConfigurableEnumValue<
