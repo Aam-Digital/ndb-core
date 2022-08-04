@@ -6,6 +6,7 @@
  * @param key The active sorting header key; passed in by the data source
  */
 import { ConfigurableEnumValue } from "../../../configurable-enum/configurable-enum.interface";
+import { OrderedConfigurableEnumValue } from "../../../configurable-enum/configurable-enum-ordering";
 
 export function getReadableValue<OBJECT, PROPERTY extends keyof OBJECT>(
   data: OBJECT,
@@ -13,7 +14,11 @@ export function getReadableValue<OBJECT, PROPERTY extends keyof OBJECT>(
 ): any {
   const value = data[key];
   if (isConfigurableEnum(value)) {
-    return value.label;
+    if (hasOrdering(value)) {
+      return value._ordinal;
+    } else {
+      return value.label;
+    }
   } else if (Array.isArray(value)) {
     return value.map((v) => getReadableValue({ v }, "v"));
   } else {
@@ -23,4 +28,10 @@ export function getReadableValue<OBJECT, PROPERTY extends keyof OBJECT>(
 
 function isConfigurableEnum(value: any): value is ConfigurableEnumValue {
   return typeof value === "object" && value && "label" in value;
+}
+
+function hasOrdering(
+  value: ConfigurableEnumValue
+): value is OrderedConfigurableEnumValue {
+  return "_ordinal" in value;
 }

@@ -10,7 +10,6 @@ import {
 import { filter } from "rxjs/operators";
 import { mockEntityMapper } from "../entity/mock-entity-mapper-service";
 import { defaultJsonConfig } from "./config-fix";
-import { EnumOrdering } from "../configurable-enum/configurable-enum-ordering";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -65,21 +64,14 @@ export class ConfigService {
   /**
    * Get the array of pre-defined values for the given configurable enum id.
    * @param id
-   * @param ordered whether the enums should be returned ordered, i.e. they should be comparable
    */
   public getConfigurableEnumValues<T extends ConfigurableEnumValue>(
-    id: string,
-    ordered: boolean = false
+    id: string
   ): ConfigurableEnumConfig<T> {
     if (!id.startsWith(CONFIGURABLE_ENUM_CONFIG_PREFIX)) {
       id = CONFIGURABLE_ENUM_CONFIG_PREFIX + id;
     }
-    const enumValues = this.getConfig<any>(id);
-    if (ordered) {
-      return EnumOrdering.imposeTotalOrdering(enumValues);
-    } else {
-      return enumValues;
-    }
+    return this.getConfig<any>(id);
   }
 
   public getAllConfigs<T>(prefix: string): T[] {
