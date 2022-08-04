@@ -26,14 +26,13 @@ import {
 import { UserAccountComponent } from "./user-account.component";
 import { SessionService } from "../../session/session-service/session.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { AppConfig } from "../../app-config/app-config";
 import { UserAccountService } from "./user-account.service";
 import { UserModule } from "../user.module";
 import { SessionType } from "../../session/session-type";
-import { IAppConfig } from "../../app-config/app-config.model";
 import { LoggingService } from "../../logging/logging.service";
 import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { RouterTestingModule } from "@angular/router/testing";
+import { environment } from "../../../../environments/environment";
 
 describe("UserAccountComponent", () => {
   let component: UserAccountComponent;
@@ -43,41 +42,36 @@ describe("UserAccountComponent", () => {
   let mockUserAccountService: jasmine.SpyObj<UserAccountService>;
   let mockLoggingService: jasmine.SpyObj<LoggingService>;
 
-  beforeEach(
-    waitForAsync(() => {
-      AppConfig.settings = {
-        session_type: SessionType.synced, // password change only available in synced mode
-      } as IAppConfig;
-      mockSessionService = jasmine.createSpyObj("sessionService", [
-        "getCurrentUser",
-        "login",
-        "checkPassword",
-      ]);
-      mockSessionService.getCurrentUser.and.returnValue({
-        name: "TestUser",
-        roles: [],
-      });
-      mockUserAccountService = jasmine.createSpyObj("mockUserAccount", [
-        "changePassword",
-      ]);
-      mockLoggingService = jasmine.createSpyObj(["error"]);
+  beforeEach(waitForAsync(() => {
+    environment.session_type = SessionType.synced; // password change only available in synced mode
+    mockSessionService = jasmine.createSpyObj("sessionService", [
+      "getCurrentUser",
+      "login",
+      "checkPassword",
+    ]);
+    mockSessionService.getCurrentUser.and.returnValue({
+      name: "TestUser",
+      roles: [],
+    });
+    mockUserAccountService = jasmine.createSpyObj("mockUserAccount", [
+      "changePassword",
+    ]);
+    mockLoggingService = jasmine.createSpyObj(["error"]);
 
-      TestBed.configureTestingModule({
-        declarations: [UserAccountComponent],
-        imports: [
-          UserModule,
-          NoopAnimationsModule,
-          TabStateModule,
-          RouterTestingModule,
-        ],
-        providers: [
-          { provide: SessionService, useValue: mockSessionService },
-          { provide: UserAccountService, useValue: mockUserAccountService },
-          { provide: LoggingService, useValue: mockLoggingService },
-        ],
-      });
-    })
-  );
+    TestBed.configureTestingModule({
+      imports: [
+        UserModule,
+        NoopAnimationsModule,
+        TabStateModule,
+        RouterTestingModule,
+      ],
+      providers: [
+        { provide: SessionService, useValue: mockSessionService },
+        { provide: UserAccountService, useValue: mockUserAccountService },
+        { provide: LoggingService, useValue: mockLoggingService },
+      ],
+    });
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(UserAccountComponent);

@@ -6,6 +6,7 @@ import {
   YesNoButtons,
 } from "./confirmation-dialog/confirmation-dialog.component";
 import { map } from "rxjs/operators";
+import { firstValueFrom } from "rxjs";
 
 /**
  * Inject this service instead of MatDialog if you need a simple, configurable confirmation dialog box
@@ -41,17 +42,18 @@ export class ConfirmationDialogService {
     buttons: ConfirmationDialogButton[] = YesNoButtons,
     closeButton = true
   ): Promise<boolean> {
-    return this.dialog
-      .open(ConfirmationDialogComponent, {
-        data: {
-          title: title,
-          text: text,
-          buttons: buttons,
-          closeButton: closeButton,
-        },
-      })
-      .afterClosed()
-      .pipe(map((choice) => !!choice))
-      .toPromise();
+    return firstValueFrom(
+      this.dialog
+        .open(ConfirmationDialogComponent, {
+          data: {
+            title: title,
+            text: text,
+            buttons: buttons,
+            closeButton: closeButton,
+          },
+        })
+        .afterClosed()
+        .pipe(map((choice) => !!choice))
+    );
   }
 }

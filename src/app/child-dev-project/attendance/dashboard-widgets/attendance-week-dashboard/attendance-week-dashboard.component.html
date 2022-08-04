@@ -26,7 +26,7 @@
             (click)="goToChild(rowGroup[0].childId)"
             style="cursor: pointer"
           >
-            <app-child-block [entityId]="rowGroup[0].childId"></app-child-block>
+            <app-display-entity [entityId]="rowGroup[0].childId" entityType="Child"></app-display-entity>
           </td>
         </ng-container>
 
@@ -48,7 +48,9 @@
       *ngIf="tableDataSource.data.length === 0 && loadingDone"
       class="headline"
       i18n="Placeholder if no absences are visible in dashboar"
-    >no absences recorded</div>
+    >
+      no absences recorded
+    </div>
     <mat-paginator
       [style.display]="paginator.getNumberOfPages() === 0 ? 'none' : ''"
       #paginator

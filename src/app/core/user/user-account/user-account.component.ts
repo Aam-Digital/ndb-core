@@ -19,15 +19,13 @@ import { Component, OnInit } from "@angular/core";
 import { SessionService } from "../../session/session-service/session.service";
 import { UserAccountService } from "./user-account.service";
 import { FormBuilder, ValidationErrors, Validators } from "@angular/forms";
-import { AppConfig } from "../../app-config/app-config";
 import { LoggingService } from "../../logging/logging.service";
 import { SessionType } from "../../session/session-type";
-import { RouteTarget } from "../../../app.routing";
+import { environment } from "../../../../environments/environment";
 
 /**
  * User account form to allow the user to view and edit information.
  */
-@RouteTarget("UserAccount")
 @Component({
   selector: "app-user-account",
   templateUrl: "./user-account.component.html",
@@ -79,7 +77,7 @@ export class UserAccountComponent implements OnInit {
     this.disabledForOfflineMode = false;
     this.passwordForm.enable();
 
-    if (AppConfig.settings.session_type !== SessionType.synced) {
+    if (environment.session_type !== SessionType.synced) {
       this.disabledForDemoMode = true;
       this.passwordForm.disable();
     } else if (!navigator.onLine) {
@@ -117,9 +115,8 @@ export class UserAccountComponent implements OnInit {
   }
 
   private passwordMatchValidator(): ValidationErrors | null {
-    const newPassword: string = this?.passwordForm?.get("newPassword")?.value;
-    const confirmPassword: string =
-      this?.passwordForm?.get("confirmPassword")?.value;
+    const newPassword = this.passwordForm?.get("newPassword").value;
+    const confirmPassword = this.passwordForm?.get("confirmPassword").value;
     if (newPassword !== confirmPassword) {
       this.passwordForm
         .get("confirmPassword")

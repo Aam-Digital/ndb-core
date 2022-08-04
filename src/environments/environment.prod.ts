@@ -15,6 +15,8 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { SessionType } from "../app/core/session/session-type";
+
 /**
  * Central environment that allows to configure differences between a "dev" and a "prod" build.
  *
@@ -29,4 +31,6 @@ export const environment = {
   repositoryId: "Aam-Digital/ndb-core",
   remoteLoggingDsn:
     "https://bd6aba79ca514d35bb06a4b4e0c2a21e@sentry.io/1242399",
+  demo_mode: false,
+  session_type: SessionType.synced,
 };

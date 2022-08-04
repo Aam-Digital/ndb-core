@@ -31,12 +31,17 @@ const genericMatchers: jasmine.CustomMatcherFactories = {
   },
   toBeDate: (util) => {
     return makeCustomMatcher(
-      (expected: string | number | Date, actual: string | number | Date) =>
-        util.equals(new Date(expected), new Date(actual)),
-      (expected, actual) =>
-        `Expected date ${util.pp(expected)} to equal ${actual}`,
-      (expected, actual) =>
-        `Expected date ${util.pp(expected)} to be different than date ${actual}`
+      (actual: string | number | Date, expected: string | number | Date) => {
+        if (typeof expected === "string" && actual instanceof Date) {
+          const [year, month, day] = expected.split("-");
+          expected = new Date(Number(year), Number(month) - 1, Number(day));
+        }
+        return util.equals(new Date(actual), new Date(expected));
+      },
+      (actual, expected) =>
+        `Expected date ${util.pp(actual)} to equal ${expected}`,
+      (actual, expected) =>
+        `Expected date ${util.pp(actual)} to be different than date ${expected}`
     );
   },
 };
