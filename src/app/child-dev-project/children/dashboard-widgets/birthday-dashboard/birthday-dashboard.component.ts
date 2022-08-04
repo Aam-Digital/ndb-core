@@ -13,7 +13,8 @@ import { MatPaginator } from "@angular/material/paginator";
   styleUrls: ["./birthday-dashboard.component.scss"],
 })
 export class BirthdayDashboardComponent
-  implements OnInitDynamicComponent, OnInit, AfterViewInit {
+  implements OnInitDynamicComponent, OnInit, AfterViewInit
+{
   @ViewChild(MatPaginator) paginator: MatPaginator;
   private readonly today: Date;
   childrenDataSource = new MatTableDataSource<{
@@ -32,7 +33,7 @@ export class BirthdayDashboardComponent
 
     // Only active children with a birthday in less than 31 days are shown
     this.childrenDataSource.data = children
-      .filter((child: Child) => child.isActive)
+      .filter((child: Child) => child.isActive && child.dateOfBirth)
       .map((child) => ({
         child: child,
         birthday: this.getNextBirthday(child.dateOfBirth),

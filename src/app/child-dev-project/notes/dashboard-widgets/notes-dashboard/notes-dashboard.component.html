@@ -20,9 +20,10 @@
         </tr>
         <ng-container matColumnDef="child">
           <td *matCellDef="let childNoteInfo">
-            <app-child-block
+            <app-display-entity
               [entityId]="childNoteInfo.childId"
-            ></app-child-block>
+              entityType="Child"
+            ></app-display-entity>
           </td>
         </ng-container>
 
@@ -50,10 +51,12 @@
       *ngIf="childrenWithNoteInfoDataSource.data.length === 0 && !isLoading"
       class="headline"
     >
-      <ng-container *ngIf="mode==='without-recent-notes'" i18n="There are no participants that don't have a recent report to be shown here">
+      <ng-container *ngIf="mode==='without-recent-notes'"
+                    i18n="There are no participants that don't have a recent report to be shown here">
         no records without recent report
       </ng-container>
-      <ng-container *ngIf="mode==='with-recent-notes'" i18n="There are no participants that have a recent report to be shown here">
+      <ng-container *ngIf="mode==='with-recent-notes'"
+                    i18n="There are no participants that have a recent report to be shown here">
         no records with recent report
       </ng-container>
     </div>

@@ -1,5 +1,4 @@
 import { Component, OnInit } from "@angular/core";
-import { AppConfig } from "../../app-config/app-config";
 import { AlertService } from "../../alerts/alert.service";
 import { Alert } from "../../alerts/alert";
 import { BackupService } from "../services/backup.service";
@@ -22,9 +21,6 @@ import { Database } from "../../database/database";
   templateUrl: "./admin.component.html",
 })
 export class AdminComponent implements OnInit {
-  /** app-wide configuration */
-  appConfig = AppConfig.settings;
-
   /** all alerts */
   alerts: Alert[];
 

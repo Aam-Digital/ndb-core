@@ -18,6 +18,7 @@
       </div>
     </form>
   </mat-step>
+
   <mat-step i18n-label="Data import wizard label" label="Load config" [optional]="true">
     <div>
       <mat-form-field>
@@ -35,6 +36,7 @@
       </div>
     </div>
   </mat-step>
+
   <mat-step i18n-label="Data import wizard label" label="Select type" [stepControl]="entityForm" [optional]="entityForm.disabled">
     <form [formGroup]="entityForm">
       <mat-form-field>
@@ -51,6 +53,7 @@
       </div>
     </form>
   </mat-step>
+
   <mat-step i18n-label="Data import wizard label" label="Transaction ID" [stepControl]="transactionIDForm" [optional]="transactionIDForm.disabled">
     <form [formGroup]="transactionIDForm">
       <p *ngIf="transactionIDForm.disabled" i18n="Hint in import wizard when transaction ID is not necessary">IDs are specified in CSV file</p>
@@ -71,6 +74,7 @@
       </div>
     </form>
   </mat-step>
+
   <mat-step i18n-label="Data import wizard label" label="Date format" [optional]="true" [stepControl]="dateFormatForm">
     <form [formGroup]="dateFormatForm">
       <mat-form-field>
@@ -88,6 +92,7 @@
       </div>
     </form>
   </mat-step>
+
   <mat-step i18n-label="Data import wizard label" label="Assign columns">
     <form [formGroup]="columnMappingForm">
       <div *ngFor="let control of columnMappingForm.controls | keyvalue">
@@ -120,6 +125,7 @@
       <button mat-button matStepperNext i18n="Button to proceed in import wizard">Next</button>
     </div>
   </mat-step>
+
   <mat-step i18n-label="Data import wizard label" label="Start import">
     <p i18n="Data import Final overview">Entity Type:    <em>{{ entityForm.get('entity').value }}</em></p>
     <p i18n="Data import Final overview">CSV File:       <em>{{ fileNameForm.get('fileName').value }}</em></p>
@@ -138,6 +144,7 @@
       <button mat-button (click)="stepper.reset()" i18n="Button to reset import wizard">Reset</button>
     </div>
   </mat-step>
+
   <ng-template matStepperIcon="edit">
     <fa-icon class="stepper-icon" icon="check"></fa-icon>
   </ng-template>

@@ -8,11 +8,7 @@
       "sourceRoot": "src",
       "projectType": "application",
       "i18n": {
-        "sourceLocale": "en-US",
-        "locales": {
-          "de": "src/locale/messages.de.xlf",
-          "fr": "src/locale/messages.fr.xlf"
-        }
+        "sourceLocale": "en-US"
       },
       "architect": {
         "build": {
@@ -24,9 +20,6 @@
             "tsConfig": "src/tsconfig.app.json",
             "polyfills": "src/polyfills.ts",
             "i18nMissingTranslation": "warning",
-            "localize": [
-              "en-US"
-            ],
             "assets": [
               "src/assets",
               "src/favicon.ico",
@@ -65,13 +58,6 @@
                 }
               ],
               "serviceWorker": true
-            },
-            "localized": {
-              "localize": [
-                "de",
-                "en-US",
-                "fr"
-              ]
             },
             "development": {}
           },

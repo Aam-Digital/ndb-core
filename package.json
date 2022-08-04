@@ -6,7 +6,6 @@
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build --configuration production",
-    "build-localized": "ng build --configuration=production,localized",
     "test": "ng test",
     "test-ci": "ng test --code-coverage --karma-config=build/karma-ci.conf.js ",
     "lint": "ng lint ndb-core",
@@ -17,7 +16,7 @@
     "docs:json": "compodoc -p ./tsconfig.json -e json -d .",
     "storybook": "ng run ndb-core:storybook",
     "build-storybook": "ng run ndb-core:build-storybook",
-    "extract-i18n": "ng extract-i18n --output-path ./src/locale/ && xliffmerge --profile xliffmerge.json"
+    "extract-i18n": "ng extract-i18n --output-path ./src/assets/locale/ && xliffmerge --profile xliffmerge.json"
   },
   "private": true,
   "dependencies": {
@@ -52,7 +51,7 @@
     "json-query": "^2.2.2",
     "lodash-es": "^4.17.21",
     "md5": "^2.3.0",
-    "moment": "^2.29.3",
+    "moment": "^2.29.4",
     "ngx-markdown": "^14.0.1",
     "ngx-papaparse": "^5.1.0",
     "pouchdb-adapter-memory": "^7.3.0",
@@ -117,7 +116,8 @@
     "ts-node": "^10.8.1",
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.3.0",
-    "typescript": "~4.7.4"
+    "typescript": "~4.7.4",
+    "xliff": "^6.1.0"
   },
   "overrides": {
     "@casl/angular": {

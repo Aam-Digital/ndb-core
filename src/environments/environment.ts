@@ -15,6 +15,8 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { SessionType } from "../app/core/session/session-type";
+
 /**
  * Central environment that allows to configure differences between a "dev" and a "prod" build.
  *
@@ -28,4 +30,6 @@ export const environment = {
   appVersion: "0.0.0", // replaced automatically during docker build
   repositoryId: "Aam-Digital/ndb-core",
   remoteLoggingDsn: undefined, // only set for production mode in environment.prod.ts
+  demo_mode: true,
+  session_type: SessionType.mock,
 };

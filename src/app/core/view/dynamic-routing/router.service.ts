@@ -32,9 +32,8 @@ export class RouterService {
    * Initialize routes from the config while respecting existing routes.
    */
   initRouting() {
-    const viewConfigs = this.configService.getAllConfigs<ViewConfig>(
-      PREFIX_VIEW_CONFIG
-    );
+    const viewConfigs =
+      this.configService.getAllConfigs<ViewConfig>(PREFIX_VIEW_CONFIG);
     this.reloadRouting(viewConfigs, this.router.config);
   }
 
@@ -48,12 +47,12 @@ export class RouterService {
     const routes: Route[] = [];
 
     for (const view of viewConfigs) {
-      if (view.lazyLoaded) {
-        const path = view._id.substring(PREFIX_VIEW_CONFIG.length);
-        const route = additionalRoutes.find((r) => r.path === path);
-        routes.push(this.generateRouteFromConfig(view, route));
-      } else {
-        routes.push(this.generateRouteFromConfig(view));
+      try {
+        routes.push(this.createRoute(view, additionalRoutes));
+      } catch (e) {
+        this.loggingService.warn(
+          `Failed to create route for view ${view._id}: ${e.message}`
+        );
       }
     }
 
@@ -71,6 +70,16 @@ export class RouterService {
     routes.push(...noDuplicates);
 
     this.router.resetConfig(routes);
+  }
+
+  private createRoute(view: ViewConfig, additionalRoutes: Route[]) {
+    if (view.lazyLoaded) {
+      const path = view._id.substring(PREFIX_VIEW_CONFIG.length);
+      const route = additionalRoutes.find((r) => r.path === path);
+      return this.generateRouteFromConfig(view, route);
+    } else {
+      return this.generateRouteFromConfig(view);
+    }
   }
 
   private generateRouteFromConfig(

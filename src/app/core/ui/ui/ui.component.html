@@ -55,6 +55,7 @@
 <mat-sidenav-container
   class="app-content"
   (backdropClick)="closeSidenavOnMobile()"
+  autosize
 >
   <mat-sidenav
     #sideNav
@@ -80,7 +81,7 @@
           <button
             (click)="closeSidenavOnMobile()"
             mat-button
-            routerLink="user"
+            routerLink="user-account"
             i18n="Navigate to user profile page"
             class="footer-cell"
           >
