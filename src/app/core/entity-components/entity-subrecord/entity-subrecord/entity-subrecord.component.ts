@@ -373,7 +373,7 @@ export class EntitySubrecordComponent<T extends Entity>
       this.columnsToDisplay = this._columns
         .filter((col) => this.isVisible(col))
         .map((col) => col.id);
-      this.columnsToDisplay.unshift("actions");
+      if (this.editable) this.columnsToDisplay.unshift("actions");
     }
   }
 
