@@ -48,7 +48,7 @@ export class AppSettings {
 
     // TODO: remove in future version after all demo users are likely to have new service workers
     if (
-      location.hostname.startsWith("demo.") &&
+      location.hostname.match(/^demo\./) &&
       environment.session_type !== SessionType.mock &&
       !environment.demo_mode
     ) {
