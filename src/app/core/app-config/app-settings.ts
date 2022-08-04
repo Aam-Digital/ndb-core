@@ -46,8 +46,9 @@ export class AppSettings {
       environment.session_type = sessionType as SessionType;
     }
 
+    // TODO: remove in future version after all demo users are likely to have new service workers
     if (
-      location.hostname.includes("demo.") &&
+      location.hostname.startsWith("demo.") &&
       environment.session_type !== SessionType.mock &&
       !environment.demo_mode
     ) {
