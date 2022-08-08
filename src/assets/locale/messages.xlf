@@ -2359,6 +2359,14 @@
         </context-group>
         <note priority="1" from="description">Sent after the user has sent a feature-request</note>
       </trans-unit>
+      <trans-unit id="1237640232293738415" datatype="html">
+        <source>Aam Digital - DEMO (automatically generated data)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+        <note priority="1" from="description">Page title</note>
+      </trans-unit>
       <trans-unit id="6570363013146073520" datatype="html">
         <source>Dashboard</source>
         <context-group purpose="location">
