@@ -114,7 +114,7 @@ export class RemoteSession extends SessionService {
     };
     return firstValueFrom(
       this.httpClient.post<JwtToken>(
-        `${this.keycloak.authServerUrl}realms/keycloak-test/protocol/openid-connect/token`,
+        `${this.keycloak.authServerUrl}realms/${this.keycloak.realm}/protocol/openid-connect/token`,
         body.toString(),
         options
       )

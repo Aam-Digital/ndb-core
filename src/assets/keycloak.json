@@ -1,5 +1,5 @@
 {
-  "realm": "keycloak-test",
+  "realm": "ndb-dev",
   "auth-server-url": "https://keycloak.aam-digital.com/",
   "ssl-required": "external",
   "resource": "app",
