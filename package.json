@@ -46,7 +46,7 @@
     "assert": "^2.0.0",
     "crypto-es": "^1.2.7",
     "deep-object-diff": "^1.1.7",
-    "flag-icons": "^6.6.2",
+    "flag-icons": "^6.6.4",
     "hammerjs": "^2.0.8",
     "json-query": "^2.2.2",
     "lodash-es": "^4.17.21",
