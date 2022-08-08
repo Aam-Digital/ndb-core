@@ -12,6 +12,7 @@ import {
   RemoveResult,
 } from "../../../entity/entity-remove.service";
 import { AlertService } from "../../../alerts/alert.service";
+import { EntityAction } from "../../../permissions/permission-types";
 
 /**
  * Data interface that must be given when opening the dialog
@@ -38,6 +39,7 @@ export class RowDetailsComponent<E extends Entity> {
 
   viewOnlyColumns: FormFieldConfig[];
   tempEntity: Entity;
+  editMode: EntityAction = "update";
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsComponentData<E>,
@@ -48,7 +50,13 @@ export class RowDetailsComponent<E extends Entity> {
     private alertService: AlertService
   ) {
     this.form = this.formService.createFormGroup(data.columns, data.entity);
-    if (this.ability.cannot("update", data.entity)) {
+    if (!this.data.entity._rev) {
+      this.editMode = "create";
+    }
+    if (
+      this.editMode === "update" &&
+      this.ability.cannot("update", data.entity)
+    ) {
       this.form.disable();
     }
     this.tempEntity = this.data.entity;
