@@ -73,8 +73,9 @@ export class SyncedSessionService extends SessionService {
    * Do login automatically if there is still a valid CouchDB cookie from last login with username and password
    */
   checkForValidSession() {
-    this.remoteSession
-      .refreshToken()
+    this.remoteSession.keycloak
+      .init({})
+      .then(() => this.remoteSession.refreshToken())
       .then((token) => this.remoteSession.processToken(token))
       .then((user) => this.handleSuccessfulLogin(user))
       .catch(() => undefined);

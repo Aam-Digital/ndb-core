@@ -56,7 +56,7 @@ export class RemoteSession extends SessionService {
   constructor(
     private httpClient: HttpClient,
     private loggingService: LoggingService,
-    private keycloak: Keycloak
+    public keycloak: Keycloak
   ) {
     super();
     this.database = new PouchDatabase(this.loggingService);

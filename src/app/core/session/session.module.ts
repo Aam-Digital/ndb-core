@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { APP_INITIALIZER, Injector, NgModule } from "@angular/core";
+import { Injector, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { LoginComponent } from "./login/login.component";
 import { FormsModule } from "@angular/forms";
@@ -80,13 +80,6 @@ import Keycloak from "keycloak-js";
       deps: [Injector],
     },
     { provide: Keycloak, useValue: new Keycloak("assets/keycloak.json") },
-    {
-      provide: APP_INITIALIZER,
-      deps: [Keycloak],
-      useFactory: (keycloak: Keycloak) => () =>
-        keycloak.init({}).catch(() => undefined),
-      multi: true,
-    },
   ],
 })
 export class SessionModule {}
