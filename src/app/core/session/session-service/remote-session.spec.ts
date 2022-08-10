@@ -11,7 +11,7 @@ import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
 import { environment } from "../../../../environments/environment";
 import Keycloak from "keycloak-js";
 
-export function remoteSessionHttpFake(url, body) {
+export function remoteSessionHttpFake(_url, body) {
   const params = new URLSearchParams(body);
   const isValidPassword =
     params.get("username") === TEST_USER &&
@@ -67,7 +67,7 @@ describe("RemoteSessionService", () => {
         RemoteSession,
         LoggingService,
         { provide: HttpClient, useValue: mockHttpClient },
-        { provide: Keycloak, useValue: { login: () => {} } },
+        { provide: Keycloak, useValue: { login: () => undefined } },
       ],
     });
 

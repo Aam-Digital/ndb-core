@@ -77,7 +77,7 @@ export class SyncedSessionService extends SessionService {
       .refreshToken()
       .then((token) => this.remoteSession.processToken(token))
       .then((user) => this.handleSuccessfulLogin(user))
-      .catch((err) => {});
+      .catch(() => undefined);
   }
 
   async handleSuccessfulLogin(userObject: DatabaseUser) {

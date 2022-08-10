@@ -57,10 +57,12 @@ export class UserAccountComponent implements OnInit {
   }
 
   getPasswordResetDisabledTooltip(): string {
-    return this.disabledForDemoMode
-      ? $localize`:Password reset disabled tooltip:Password change is not allowed in demo mode.`
-      : this.disabledForOfflineMode
-      ? $localize`:Password reset disabled tooltip:Password change is not possible while being offline.`
-      : "";
+    if (this.disabledForDemoMode) {
+      return $localize`:Password reset disabled tooltip:Password change is not allowed in demo mode.`;
+    } else if (this.disabledForOfflineMode) {
+      return $localize`:Password reset disabled tooltip:Password change is not possible while being offline.`;
+    } else {
+      return "";
+    }
   }
 }
