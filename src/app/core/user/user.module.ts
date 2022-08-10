@@ -24,6 +24,7 @@ import { CommonModule } from "@angular/common";
 import { MatTabsModule } from "@angular/material/tabs";
 import { TabStateModule } from "../../utils/tab-state/tab-state.module";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { Angulartics2Module } from "angulartics2";
 
 /**
  * Provides a User functionality including user account forms.
@@ -37,6 +38,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatTabsModule,
     TabStateModule,
     MatTooltipModule,
+    Angulartics2Module,
   ],
   declarations: [UserAccountComponent],
 })

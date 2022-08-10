@@ -39,7 +39,10 @@
         >
           <button
             mat-stroked-button
-            (click)="resetPassword()"
+            angulartics2On="click"
+            angularticsCategory="User"
+            angularticsAction="password_update"
+            (click)="remoteSession?.resetPassword()"
             [disabled]="disabledForDemoMode || disabledForOfflineMode"
             i18n="Button which opens password reset page"
           >

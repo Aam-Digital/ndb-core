@@ -220,12 +220,11 @@ export class SyncedSessionService extends SessionService {
     this.syncState.next(SyncState.STARTED);
     const localPouchDB = this.localSession.getDatabase().getPouchDB();
     const remotePouchDB = this.remoteSession.getDatabase().getPouchDB();
-    this._liveSyncHandle = (
-      localPouchDB.sync(remotePouchDB, {
-        live: true,
-        retry: true,
-      }) as any
-    )
+    this._liveSyncHandle = localPouchDB.sync(remotePouchDB, {
+      live: true,
+      retry: true,
+    });
+    this._liveSyncHandle
       .on("paused", (info) => {
         // replication was paused: either because sync is finished or because of a failed sync (mostly due to lost connection). info is empty.
         if (this.remoteSession.loginState.value === LoginState.LOGGED_IN) {
@@ -247,7 +246,6 @@ export class SyncedSessionService extends SessionService {
         // replication was canceled!
         this._liveSyncHandle = null;
       });
-    return this._liveSyncHandle;
   }
 
   /**

@@ -17,7 +17,6 @@
 
 import { Component, OnInit, Optional } from "@angular/core";
 import { SessionService } from "../../session/session-service/session.service";
-import { LoggingService } from "../../logging/logging.service";
 import { RemoteSession } from "../../session/session-service/remote-session";
 
 /**
@@ -38,17 +37,12 @@ export class UserAccountComponent implements OnInit {
 
   constructor(
     private sessionService: SessionService,
-    private loggingService: LoggingService,
-    @Optional() private remoteSession: RemoteSession
+    @Optional() public remoteSession: RemoteSession
   ) {}
 
   ngOnInit() {
     this.checkIfPasswordChangeAllowed();
     this.username = this.sessionService.getCurrentUser()?.name;
-  }
-
-  resetPassword() {
-    this.remoteSession.resetPassword();
   }
 
   checkIfPasswordChangeAllowed() {

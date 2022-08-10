@@ -67,7 +67,7 @@ describe("RemoteSessionService", () => {
         RemoteSession,
         LoggingService,
         { provide: HttpClient, useValue: mockHttpClient },
-        { provide: Keycloak, useValue: {} },
+        { provide: Keycloak, useValue: { login: () => {} } },
       ],
     });
 
@@ -129,6 +129,17 @@ describe("RemoteSessionService", () => {
     // clear timeouts
     service.logout();
   }));
+
+  it("should call keycloak for a password reset", () => {
+    const keycloak = TestBed.inject(Keycloak);
+    spyOn(keycloak, "login");
+
+    service.resetPassword();
+
+    expect(keycloak.login).toHaveBeenCalledWith(
+      jasmine.objectContaining({ action: "UPDATE_PASSWORD" })
+    );
+  });
 
   testSessionServiceImplementation(() => Promise.resolve(service));
 });

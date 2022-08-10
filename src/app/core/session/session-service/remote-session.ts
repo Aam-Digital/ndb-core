@@ -186,6 +186,10 @@ export class RemoteSession extends SessionService {
     return this.database;
   }
 
+  /**
+   * Open password reset page in browser.
+   * Only works with internet connection.
+   */
   resetPassword() {
     this.keycloak.login({
       action: "UPDATE_PASSWORD",

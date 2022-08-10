@@ -98,6 +98,11 @@ export function compareEnums(
   return a?.id === b?.id;
 }
 
+/**
+ * Parses and returns the payload of a JWT into a JSON object.
+ * For me info see {@link https://jwt.io}.
+ * @param token a valid JWT
+ */
 export function parseJwt(token): {
   sub: string;
   username: string;
