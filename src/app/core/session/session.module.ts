@@ -83,7 +83,8 @@ import Keycloak from "keycloak-js";
     {
       provide: APP_INITIALIZER,
       deps: [Keycloak],
-      useFactory: (keycloak: Keycloak) => () => keycloak.init({}),
+      useFactory: (keycloak: Keycloak) => () =>
+        keycloak.init({}).catch(() => undefined),
       multi: true,
     },
   ],
