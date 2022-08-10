@@ -35,7 +35,7 @@ const appLang =
 if (appLang === DEFAULT_LANGUAGE) {
   bootstrap();
 } else {
-  initLanguage(appLang).then(() => bootstrap());
+  initLanguage(appLang).finally(() => bootstrap());
 }
 
 function bootstrap(): Promise<any> {
