@@ -24,6 +24,7 @@ import { UserModule } from "../user.module";
 import { LoggingService } from "../../logging/logging.service";
 import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { RouterTestingModule } from "@angular/router/testing";
+import { Angulartics2Module } from "angulartics2";
 
 describe("UserAccountComponent", () => {
   let component: UserAccountComponent;
@@ -44,10 +45,11 @@ describe("UserAccountComponent", () => {
 
     TestBed.configureTestingModule({
       imports: [
+        RouterTestingModule,
         UserModule,
+        Angulartics2Module.forRoot(),
         NoopAnimationsModule,
         TabStateModule,
-        RouterTestingModule,
       ],
       providers: [
         { provide: SessionService, useValue: mockSessionService },
