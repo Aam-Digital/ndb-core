@@ -1,9 +1,10 @@
 @use "src/styles/variables/sizes";
+@use "sass:math";
 
 .attendance-block {
   display: inline-block;
   text-align: center;
   border-radius: 4px;
   width: 4ch;
-  padding: sizes.$small / 2 sizes.$small;
+  padding: math.div(sizes.$small, 2);
 }
