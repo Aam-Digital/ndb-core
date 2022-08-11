@@ -3,10 +3,17 @@
 @use "@angular/material" as mat;
 
 .table-action-button {
-  margin: 0 sizes.$small;
-  padding: sizes.$small;
-  color: mat.get-color-from-palette(theme.$accent);
   font-size: 115%;
+  color: mat.get-color-from-palette(theme.$accent);
+  border: 1px solid lightgrey;
+  border-radius: 4px;
+  margin: sizes.$small;
+  cursor: pointer;
+  background-color: initial;
+
+  &:hover {
+    background-color: mat.get-color-from-palette(mat.$grey-palette, 50);
+  }
 }
 
 .mat-column-actions {

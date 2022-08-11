@@ -57,11 +57,12 @@
       <th mat-header-cell *matHeaderCellDef class="remove-padding-left">
         <ng-container>
           <button
+            mat-ripple
             *appDisabledEntityOperation="{
               entity: getEntityConstructor(),
               operation: 'create'
             }"
-            class="mat-stroked-button table-action-button"
+            class="table-action-button"
             (click)="create()"
           >
             <fa-icon
