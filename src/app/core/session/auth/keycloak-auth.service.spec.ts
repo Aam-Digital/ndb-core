@@ -64,8 +64,8 @@ describe("KeycloakAuthService", () => {
     });
     dbUser = { name: TEST_USER, roles: ["user_app"] };
     service = TestBed.inject(KeycloakAuthService);
-    // Wait for keycloak to be initialized
-    return service["keycloakReady"];
+    // Mock initialization of keycloak
+    service["keycloakReady"] = Promise.resolve() as any;
   });
 
   afterEach(() =>
