@@ -1,4 +1,9 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from "@angular/core/testing";
 import { RecurringActivity } from "app/child-dev-project/attendance/model/recurring-activity";
 import { EntityMapperService } from "app/core/entity/entity-mapper.service";
 import {
@@ -10,6 +15,8 @@ import { Subject } from "rxjs";
 import { School } from "../model/school";
 
 import { ActivitiesOverviewComponent } from "./activities-overview.component";
+import { SchoolsModule } from "../schools.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("ActivitiesOverviewComponent", () => {
   let component: ActivitiesOverviewComponent;
@@ -20,7 +27,7 @@ describe("ActivitiesOverviewComponent", () => {
   beforeEach(async () => {
     entityMapper = mockEntityMapper();
     await TestBed.configureTestingModule({
-      declarations: [ActivitiesOverviewComponent],
+      imports: [SchoolsModule, MockedTestingModule.withState()],
       providers: [{ provide: EntityMapperService, useValue: entityMapper }],
     }).compileComponents();
   });
@@ -28,6 +35,7 @@ describe("ActivitiesOverviewComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ActivitiesOverviewComponent);
     component = fixture.componentInstance;
+    component.entity = new School();
     fixture.detectChanges();
   });
 
@@ -55,20 +63,24 @@ describe("ActivitiesOverviewComponent", () => {
     expect(newRecurringActivity().linkedGroups).toEqual(["school1"]);
   });
 
-  it("should remove the recurring activity from the table view if the current school is removed as a group of this recurring activity", async () => {
+  it("should remove the recurring activity from the table view if the current school is removed as a group of this recurring activity", fakeAsync(() => {
     const school1 = new School("school1");
     const activity1 = new RecurringActivity();
     activity1.linkedGroups = ["school1"];
     const activity2 = new RecurringActivity();
-    activity1.linkedGroups = ["school1", "school2", "school3"];
+    activity2.linkedGroups = ["school1", "school2", "school3"];
     entityMapper.addAll([activity1, activity2]);
     const subject = new Subject<UpdatedEntity<RecurringActivity>>();
     spyOn(entityMapper, "receiveUpdates").and.returnValue(subject);
-    await component.onInitFromDynamicConfig({ entity: school1 });
+    component.onInitFromDynamicConfig({ entity: school1 });
+    tick();
+
+    expect(component.records).toEqual([activity1, activity2]);
 
     activity2.linkedGroups = ["school2", "school3"];
     subject.next({ entity: activity2, type: "update" });
+    tick();
 
     expect(component.records).toEqual([activity1]);
-  });
+  }));
 });

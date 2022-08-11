@@ -4,9 +4,10 @@
   floatLabel="always"
 >
   <!--
-  This input is need for detecting errors in the form.
-  The actual input used for editing is below.
-  We also set floatLabel to always because the label is attached to the wrong input (which cannot be changed otherwise we loose the error highlighting).
+  This input contains the actual value, i.e. the id of the entity.
+  It is filled in automatically in code after the user has chosen a correct value.
+
+  We also set floatLabel to always because the label is attached to the wrong input
  -->
   <input
     matInput
@@ -14,6 +15,10 @@
     hidden
   />
   <mat-label>{{ label }}</mat-label>
+  <!--
+  This input contains the display value (i.e. the value that the user chooses and sees when he clicks 'update')
+  Which is the name of the entity in many cases.
+  -->
   <input
     #inputElement
     matInput
