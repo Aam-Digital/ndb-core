@@ -42,7 +42,7 @@
             angulartics2On="click"
             angularticsCategory="User"
             angularticsAction="password_update"
-            (click)="remoteSession?.resetPassword()"
+            (click)="authService.changePassword()"
             [disabled]="disabledForDemoMode || disabledForOfflineMode"
             i18n="Button which opens password reset page"
           >

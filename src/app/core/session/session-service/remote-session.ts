@@ -15,21 +15,15 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { Injectable } from "@angular/core";
-import {
-  HttpClient,
-  HttpErrorResponse,
-  HttpHeaders,
-} from "@angular/common/http";
+import { HttpErrorResponse } from "@angular/common/http";
 import { DatabaseUser } from "./local-user";
 import { SessionService } from "./session.service";
 import { LoginState } from "../session-states/login-state.enum";
 import { PouchDatabase } from "../../database/pouch-database";
 import { LoggingService } from "../../logging/logging.service";
 import PouchDB from "pouchdb-browser";
-import { firstValueFrom } from "rxjs";
-import { parseJwt } from "../../../utils/utils";
 import { AppSettings } from "app/core/app-config/app-settings";
-import Keycloak from "keycloak-js";
+import { AuthService } from "../auth/auth.service";
 
 /**
  * Responsibilities:
@@ -47,16 +41,12 @@ export class RemoteSession extends SessionService {
   private readonly database: PouchDatabase;
   private currentDBUser: DatabaseUser;
 
-  public accessToken: string;
-  private refreshTokenTimeout;
-
   /**
-   * Create a RemoteSession and set up connection to the remote CouchDB server configured in AppConfig.
+   * Create a RemoteSession and set up connection to the remote CouchDB server with valid authentication.
    */
   constructor(
-    private httpClient: HttpClient,
     private loggingService: LoggingService,
-    public keycloak: Keycloak
+    private authService: AuthService
   ) {
     super();
     this.database = new PouchDatabase(this.loggingService);
@@ -69,8 +59,7 @@ export class RemoteSession extends SessionService {
    */
   public async login(username: string, password: string): Promise<LoginState> {
     try {
-      const token = await this.authenticate(username, password);
-      const user = await this.processToken(token);
+      const user = await this.authService.authenticate(username, password);
       await this.handleSuccessfulLogin(user);
       localStorage.setItem(
         RemoteSession.LAST_LOGIN_KEY,
@@ -88,59 +77,6 @@ export class RemoteSession extends SessionService {
     return this.loginState.value;
   }
 
-  private authenticate(username: string, password: string): Promise<JwtToken> {
-    const body = new URLSearchParams();
-    body.set("username", username);
-    body.set("password", password);
-    body.set("grant_type", "password");
-    return this.getToken(body);
-  }
-
-  public refreshToken(): Promise<JwtToken> {
-    const body = new URLSearchParams();
-    const token = localStorage.getItem(RemoteSession.REFRESH_TOKEN_KEY);
-    body.set("refresh_token", token);
-    body.set("grant_type", "refresh_token");
-    return this.getToken(body);
-  }
-
-  private getToken(body: URLSearchParams): Promise<JwtToken> {
-    body.set("client_id", "app");
-    const options = {
-      headers: new HttpHeaders().set(
-        "Content-Type",
-        "application/x-www-form-urlencoded"
-      ),
-    };
-    return firstValueFrom(
-      this.httpClient.post<JwtToken>(
-        `${this.keycloak.authServerUrl}realms/${this.keycloak.realm}/protocol/openid-connect/token`,
-        body.toString(),
-        options
-      )
-    );
-  }
-
-  public async processToken(token: JwtToken): Promise<DatabaseUser> {
-    this.accessToken = token.access_token;
-    localStorage.setItem(RemoteSession.REFRESH_TOKEN_KEY, token.refresh_token);
-    this.refreshTokenBeforeExpiry(token.expires_in);
-    const parsedToken = parseJwt(this.accessToken);
-    return {
-      name: parsedToken.username,
-      roles: parsedToken["_couchdb.roles"],
-    };
-  }
-
-  private refreshTokenBeforeExpiry(secondsTillExpiration: number) {
-    // Refresh token one minute before it expires or after ten seconds
-    const refreshTimeout = Math.max(10, secondsTillExpiration - 60);
-    this.refreshTokenTimeout = setTimeout(async () => {
-      const token = await this.refreshToken();
-      await this.processToken(token);
-    }, refreshTimeout * 1000);
-  }
-
   public async handleSuccessfulLogin(userObject: DatabaseUser) {
     this.database.initIndexedDB(
       `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}`,
@@ -149,7 +85,7 @@ export class RemoteSession extends SessionService {
         skip_setup: true,
         fetch: (url, opts: any) => {
           if (typeof url === "string") {
-            opts.headers.set("Authorization", "Bearer " + this.accessToken);
+            this.authService.addAuthHeader(opts.headers);
             return PouchDB.fetch(
               AppSettings.DB_PROXY_PREFIX +
                 url.split(AppSettings.DB_PROXY_PREFIX)[1],
@@ -167,8 +103,7 @@ export class RemoteSession extends SessionService {
    * Logout at the remote database.
    */
   public logout(): void {
-    clearTimeout(this.refreshTokenTimeout);
-    window.localStorage.removeItem(RemoteSession.REFRESH_TOKEN_KEY);
+    this.authService.logout();
     this.currentDBUser = undefined;
     this.loginState.next(LoginState.LOGGED_OUT);
   }
@@ -185,22 +120,4 @@ export class RemoteSession extends SessionService {
   getDatabase(): PouchDatabase {
     return this.database;
   }
-
-  /**
-   * Open password reset page in browser.
-   * Only works with internet connection.
-   */
-  resetPassword() {
-    this.keycloak.login({
-      action: "UPDATE_PASSWORD",
-      redirectUri: location.href,
-    });
-  }
-}
-
-export interface JwtToken {
-  access_token: string;
-  refresh_token: string;
-  expires_in: number;
-  session_state: string;
 }

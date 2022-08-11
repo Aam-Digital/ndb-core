@@ -31,6 +31,7 @@ import { waitForChangeTo } from "../session-states/session-utils";
 import { zip } from "rxjs";
 import { filter } from "rxjs/operators";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
+import { AuthService } from "../auth/auth.service";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -55,6 +56,7 @@ export class SyncedSessionService extends SessionService {
     private httpClient: HttpClient,
     private localSession: LocalSession,
     private remoteSession: RemoteSession,
+    private authService: AuthService,
     @Inject(LOCATION_TOKEN) private location: Location
   ) {
     super();
@@ -70,13 +72,11 @@ export class SyncedSessionService extends SessionService {
   }
 
   /**
-   * Do login automatically if there is still a valid CouchDB cookie from last login with username and password
+   * Do log in automatically if there is still a valid CouchDB cookie from last login with username and password
    */
   checkForValidSession() {
-    this.remoteSession.keycloak
-      .init({})
-      .then(() => this.remoteSession.refreshToken())
-      .then((token) => this.remoteSession.processToken(token))
+    this.authService
+      .autoLogin()
       .then((user) => this.handleSuccessfulLogin(user))
       .catch(() => undefined);
   }

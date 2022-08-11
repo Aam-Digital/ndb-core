@@ -15,9 +15,11 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit, Optional } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { SessionService } from "../../session/session-service/session.service";
-import { RemoteSession } from "../../session/session-service/remote-session";
+import { environment } from "../../../../environments/environment";
+import { SessionType } from "../../session/session-type";
+import { AuthService } from "../../session/auth/auth.service";
 
 /**
  * User account form to allow the user to view and edit information.
@@ -37,7 +39,7 @@ export class UserAccountComponent implements OnInit {
 
   constructor(
     private sessionService: SessionService,
-    @Optional() public remoteSession: RemoteSession
+    public authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -49,7 +51,7 @@ export class UserAccountComponent implements OnInit {
     this.disabledForDemoMode = false;
     this.disabledForOfflineMode = false;
 
-    if (!this.remoteSession) {
+    if (environment.session_type !== SessionType.synced) {
       this.disabledForDemoMode = true;
     } else if (!navigator.onLine) {
       this.disabledForOfflineMode = true;

@@ -36,7 +36,8 @@ import { RemoteSession } from "./session-service/remote-session";
 import { SessionService } from "./session-service/session.service";
 import { SessionType } from "./session-type";
 import { environment } from "../../../environments/environment";
-import Keycloak from "keycloak-js";
+import { AuthService } from "./auth/auth.service";
+import { KeycloakAuthService } from "./auth/keycloak-auth.service";
 
 /**
  * The core session logic handling user login as well as connection and synchronization with the remote database.
@@ -79,7 +80,7 @@ import Keycloak from "keycloak-js";
       },
       deps: [Injector],
     },
-    { provide: Keycloak, useValue: new Keycloak("assets/keycloak.json") },
+    { provide: AuthService, useClass: KeycloakAuthService },
   ],
 })
 export class SessionModule {}

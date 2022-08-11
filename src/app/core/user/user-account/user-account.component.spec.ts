@@ -25,6 +25,7 @@ import { LoggingService } from "../../logging/logging.service";
 import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { RouterTestingModule } from "@angular/router/testing";
 import { Angulartics2Module } from "angulartics2";
+import { AuthService } from "../../session/auth/auth.service";
 
 describe("UserAccountComponent", () => {
   let component: UserAccountComponent;
@@ -53,6 +54,7 @@ describe("UserAccountComponent", () => {
       ],
       providers: [
         { provide: SessionService, useValue: mockSessionService },
+        { provide: AuthService, useValue: { changePassword: () => undefined } },
         { provide: LoggingService, useValue: mockLoggingService },
       ],
     });
