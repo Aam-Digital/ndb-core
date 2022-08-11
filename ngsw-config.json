@@ -30,15 +30,6 @@
   }],
   "dataGroups": [
     {
-      "name": "config",
-      "urls": ["**/assets/config.json"],
-      "cacheConfig": {
-        "maxSize": 1,
-        "maxAge": "30d",
-        "strategy": "freshness"
-      }
-    },
-    {
       "name": "childPhotos",
       "urls": ["**/child-photos/**"],
       "cacheConfig": {
