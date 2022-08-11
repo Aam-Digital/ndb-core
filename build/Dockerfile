@@ -16,10 +16,10 @@ COPY . .
 ARG APP_VERSION="UNKNOWN"
 RUN sed -i "s/appVersion: \".*\"/appVersion: \"$APP_VERSION\"/g" src/environments/environment*.ts
 
-RUN npm run build
-
 # Transform the xliff files to json so this does not have to be done on the client side
 RUN node build/prepare-translation-files.js
+
+RUN npm run build
 
 # When set to true, tests are run and coverage will be uploaded to CodeClimate
 ARG UPLOAD_COVERAGE=false
@@ -57,7 +57,7 @@ ARG SENTRY_PROJECT
 RUN if [ "$SENTRY_AUTH_TOKEN" != "" ] ; then \
     npm install -g @sentry/cli &&\
     sentry-cli --auth-token=$SENTRY_AUTH_TOKEN releases --org=$SENTRY_ORG --project=$SENTRY_PROJECT files ndb-core@$APP_VERSION upload-sourcemaps dist  && \
-    rm dist/*/*.map ; fi
+    rm dist/*.map ; fi
 
 ### PROD image
 

@@ -40,9 +40,23 @@ export class AppSettings {
     if (demoMode) {
       environment.demo_mode = demoMode === "true";
     }
+
     const sessionType = this.getSetting(this.SESSION_TYPE_KEY);
     if (sessionType) {
       environment.session_type = sessionType as SessionType;
+    }
+
+    // TODO: remove in future version after all demo users are likely to have new service workers
+    if (
+      location.hostname.match(/^demo\./) &&
+      environment.session_type !== SessionType.mock &&
+      !environment.demo_mode
+    ) {
+      // Fallback when SW prevents redirect of NGINX
+      environment.session_type = SessionType.mock;
+      environment.demo_mode = true;
+      localStorage.setItem(this.DEMO_MODE_KEY, "true");
+      localStorage.setItem(this.SESSION_TYPE_KEY, "mock");
     }
   }
 
@@ -61,7 +75,7 @@ export class AppSettings {
    */
   private static getSetting(key: string): string {
     const paramValue = new URLSearchParams(location.search).get(key);
-    const localStorageValue = localStorage.getItem(this.SESSION_TYPE_KEY);
+    const localStorageValue = localStorage.getItem(key);
     if (paramValue) {
       localStorage.setItem(key, paramValue);
       return paramValue;

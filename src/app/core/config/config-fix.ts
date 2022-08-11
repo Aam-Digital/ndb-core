@@ -19,7 +19,7 @@ export const defaultJsonConfig = {
     "default_language": "en-US",
     "displayLanguageSelect": true,
     "logo_path": null,
-    "site_name": "Aam Digital - DEMO (automatically generated data)",
+    "site_name": $localize`:Page title:Aam Digital - DEMO (automatically generated data)`,
   },
   "appConfig:usage-analytics": {
     "url": "https://matomo.aam-digital.org",

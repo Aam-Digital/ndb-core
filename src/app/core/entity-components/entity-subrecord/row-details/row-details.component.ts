@@ -14,6 +14,7 @@ import {
 import { AlertService } from "../../../alerts/alert.service";
 import { RecurringActivity } from "app/child-dev-project/attendance/model/recurring-activity";
 import { EntityMapperService } from "app/core/entity/entity-mapper.service";
+import { EntityAction } from "../../../permissions/permission-types";
 
 /**
  * Data interface that must be given when opening the dialog
@@ -40,6 +41,7 @@ export class RowDetailsComponent<E extends Entity> {
 
   viewOnlyColumns: FormFieldConfig[];
   tempEntity: Entity;
+  editMode: EntityAction = "update";
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsComponentData<E>,
@@ -51,49 +53,19 @@ export class RowDetailsComponent<E extends Entity> {
     private entityMapperService: EntityMapperService
   ) {
     this.form = this.formService.createFormGroup(data.columns, data.entity);
-    if (this.ability.cannot("update", data.entity)) {
+    if (!this.data.entity._rev) {
+      this.editMode = "create";
+    }
+    if (
+      this.editMode === "update" &&
+      this.ability.cannot("update", data.entity)
+    ) {
       this.form.disable();
     }
-    this.tempEntity = data.entity.copy();
-
-    // for (const c of data.columns) {
-    //   // if (c.edit === "EditEntityArray") {
-    //   if (c.id === "title") {
-    //     this.form.get(c.id).valueChanges.subscribe(async (value) => {
-    //       // title changed
-    //       // --> check if activity exist
-    //       console.log("form title valueChanges", value);
-    //       if (value) {
-    //         this.tempEntity = await this.entityMapperService.load(
-    //           c.additional,
-    //           value
-    //         );
-    //         console.log("tempEntity", this.tempEntity);
-    //         // this.tempEntity["type"] = "Home visit";
-    //         this.formService.updateValues(this.form, this.tempEntity, "title");
-    //         console.log("bye");
-    //       }
-    //     });
-    //   }
-    // if (c.id === "assignedTo") {
-    //   this.form.get(c.id).valueChanges.subscribe((value) => {
-    //     // title changed
-    //     // --> check if activity exist
-    //     console.log("form assignedTo valueChanges", value);
-
-    //     // [2]
-    //     // title as entity-select changed selected entity
-    //     this.tempEntity = new RecurringActivity();
-    //     this.tempEntity["title"] = "new title";
-    //     // this.tempEntity["type"] = "Home visit";
-    //     this.formService.updateValues(this.form, this.tempEntity, c.id);
-    //     // this.form.setValue(this.tempEntity);
-    //   });
-    // }
-    // }
-
+    this.tempEntity = this.data.entity;
     this.form.valueChanges.subscribe((value) => {
-      Object.assign(this.tempEntity, value);
+      const dynamicConstructor: any = data.entity.getConstructor();
+      this.tempEntity = Object.assign(new dynamicConstructor(), value);
     });
     this.viewOnlyColumns = data.viewOnlyColumns;
   }

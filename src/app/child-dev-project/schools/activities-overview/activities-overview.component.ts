@@ -6,6 +6,7 @@ import { EntityMapperService } from "app/core/entity/entity-mapper.service";
 import { Entity } from "app/core/entity/model/entity";
 import { DynamicComponent } from "app/core/view/dynamic-components/dynamic-component.decorator";
 import { OnInitDynamicComponent } from "app/core/view/dynamic-components/on-init-dynamic-component.interface";
+import { delay } from "rxjs";
 
 @DynamicComponent("ActivitiesOverview")
 @Component({
@@ -29,7 +30,6 @@ export class ActivitiesOverviewComponent implements OnInitDynamicComponent {
   entity: Entity;
   records: RecurringActivity[] = [];
   listConfig: EntityListConfig;
-  activityConstructor = RecurringActivity;
 
   constructor(private entityMapper: EntityMapperService) {}
 
@@ -42,13 +42,11 @@ export class ActivitiesOverviewComponent implements OnInitDynamicComponent {
     this.records = (
       await this.entityMapper.loadType<RecurringActivity>(RecurringActivity)
     ).filter((activity) => activity.linkedGroups.includes(this.entity.getId()));
-    this.titleColumn.additional = {
-      entityType: "RecurringActivity",
-      relevantProperty: "linkedGroups",
-      relevantValue: this.entity.getId(),
-    };
+
     this.entityMapper
       .receiveUpdates(RecurringActivity)
+      // using short delay to make sure the EntitySubrecord's `receiveUpdates` code is executed before this
+      .pipe(delay(0))
       .subscribe(async (updateEntity) => {
         if (updateEntity.type === "update") {
           this.records = (
