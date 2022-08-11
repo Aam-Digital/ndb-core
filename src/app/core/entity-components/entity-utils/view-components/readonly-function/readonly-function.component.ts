@@ -7,7 +7,7 @@ import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-co
 @DynamicComponent("ReadonlyFunction")
 @Component({
   selector: "app-readonly-function",
-  templateUrl: "./readonly-function.component.html",
+  template: `{{ entity | entityFunction: displayFunction }}`,
 })
 export class ReadonlyFunctionComponent extends ViewDirective<any> {
   @Input() displayFunction: (entity: Entity) => any;
