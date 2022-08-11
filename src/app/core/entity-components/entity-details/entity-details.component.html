@@ -64,7 +64,7 @@
       [disabled]="creatingNew"
     >
       <ng-template mat-tab-label>
-        <label
+        <span
           [matTooltipDisabled]="!creatingNew"
           matTooltip="Save the new record to create it before accessing other details"
           i18n-matTooltip="
@@ -72,7 +72,7 @@
           "
         >
           {{ panelConfig.title }}
-        </label>
+        </span>
       </ng-template>
 
       <div *ngIf="isLoading" class="process-spinner">
