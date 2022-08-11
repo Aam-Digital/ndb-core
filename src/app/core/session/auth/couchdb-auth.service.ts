@@ -12,7 +12,7 @@ import { RemoteSession } from "../session-service/remote-session";
 
 @Injectable()
 export class CouchdbAuthService extends AuthService {
-  private static readonly COUCHDB_USER_ENDPOINT = "/db/_users/org.couchdb.user";
+  private static readonly COUCHDB_USER_ENDPOINT = `${AppSettings.DB_PROXY_PREFIX}/_users/org.couchdb.user`;
 
   constructor(private http: HttpClient) {
     super();

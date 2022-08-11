@@ -51,7 +51,11 @@ describe("SyncedSessionService", () => {
 
   beforeEach(() => {
     mockLocation = jasmine.createSpyObj(["reload"]);
-    mockAuthService = jasmine.createSpyObj(["authenticate", "autoLogin"]);
+    mockAuthService = jasmine.createSpyObj([
+      "authenticate",
+      "autoLogin",
+      "logout",
+    ]);
     mockAuthService.autoLogin.and.rejectWith();
     mockAuthService.authenticate.and.callFake(async (u, p) => {
       if (u === TEST_USER && p === TEST_PASSWORD) {

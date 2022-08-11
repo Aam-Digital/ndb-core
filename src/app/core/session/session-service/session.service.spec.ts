@@ -82,7 +82,7 @@ export function testSessionServiceImplementation(
     const loginResult = await sessionService.login(TEST_USER, TEST_PASSWORD);
     expect(loginResult).toEqual(LoginState.LOGGED_IN);
 
-    sessionService.logout();
+    await sessionService.logout();
     expectNotToBeLoggedIn(LoginState.LOGGED_OUT);
   });
 
