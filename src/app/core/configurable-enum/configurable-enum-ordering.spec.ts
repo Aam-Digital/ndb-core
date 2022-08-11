@@ -1,5 +1,5 @@
 import { ConfigurableEnumValue } from "./configurable-enum.interface";
-import { EnumOrdering, hasOrdinalValue } from "./configurable-enum-ordering";
+import { Ordering } from "./configurable-enum-ordering";
 import { expect } from "@angular/flex-layout/_private-utils/testing";
 
 describe("Configurable Enum Ordering", () => {
@@ -23,7 +23,7 @@ describe("Configurable Enum Ordering", () => {
   it("should assign each enum value its corresponding position", () => {
     const enumValues = mockEnumValues();
 
-    const orderedEnumValues = EnumOrdering.imposeTotalOrdering(enumValues);
+    const orderedEnumValues = Ordering.imposeTotalOrdering(enumValues);
     expect(orderedEnumValues.map((it) => it._ordinal)).toEqual([0, 1, 2]);
   });
 
@@ -40,7 +40,7 @@ describe("Configurable Enum Ordering", () => {
         otherField: 2,
       },
     ].forEach((obj) => {
-      expect(hasOrdinalValue(obj)).toBeTrue();
+      expect(Ordering.hasOrdinalValue(obj)).toBeTrue();
     });
   });
 
@@ -52,7 +52,7 @@ describe("Configurable Enum Ordering", () => {
         notOrdinal: 0,
       },
     ].forEach((thing) => {
-      expect(hasOrdinalValue(thing)).toBeFalse();
+      expect(Ordering.hasOrdinalValue(thing)).toBeFalse();
     });
   });
 });

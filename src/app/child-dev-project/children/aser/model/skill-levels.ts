@@ -2,15 +2,12 @@ import {
   ConfigurableEnumConfig,
   EMPTY,
 } from "../../../../core/configurable-enum/configurable-enum.interface";
-import {
-  OrderedConfigurableEnumValue,
-  EnumOrdering,
-} from "../../../../core/configurable-enum/configurable-enum-ordering";
+import { Ordering } from "../../../../core/configurable-enum/configurable-enum-ordering";
 
-export type SkillLevel = OrderedConfigurableEnumValue & { passed?: boolean };
+export type SkillLevel = Ordering.EnumValue & { passed?: boolean };
 
 export const readingLevels: ConfigurableEnumConfig<SkillLevel> =
-  EnumOrdering.imposeTotalOrdering([
+  Ordering.imposeTotalOrdering([
     EMPTY,
     {
       id: "Nothing",
@@ -36,7 +33,7 @@ export const readingLevels: ConfigurableEnumConfig<SkillLevel> =
   ]);
 
 export const mathLevels: ConfigurableEnumConfig<SkillLevel> =
-  EnumOrdering.imposeTotalOrdering([
+  Ordering.imposeTotalOrdering([
     EMPTY,
     {
       id: "Nothing",

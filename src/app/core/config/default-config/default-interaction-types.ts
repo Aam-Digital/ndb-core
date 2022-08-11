@@ -1,8 +1,8 @@
 import { InteractionType } from "../../../child-dev-project/notes/model/interaction-type.interface";
-import { EnumOrdering } from "../../configurable-enum/configurable-enum-ordering";
+import { Ordering } from "../../configurable-enum/configurable-enum-ordering";
 
 export const defaultInteractionTypes: InteractionType[] =
-  EnumOrdering.imposeTotalOrdering([
+  Ordering.imposeTotalOrdering([
     {
       id: "",
       label: "",

@@ -1,11 +1,11 @@
 import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
-import { OrderedConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum-ordering";
+import { Ordering } from "../../../core/configurable-enum/configurable-enum-ordering";
 
 /**
  * Additional properties defined in the "interaction-type" {@link ConfigurableEnumValue} values
  * providing special context for {@link Note} categories.
  */
-export interface InteractionType extends OrderedConfigurableEnumValue {
+export interface InteractionType extends Ordering.EnumValue {
   /** color highlighting the individual category */
   color?: string;
 

@@ -1,8 +1,8 @@
 import { ConfigurableEnumValue } from "../core/configurable-enum/configurable-enum.interface";
-import { EnumOrdering } from "../core/configurable-enum/configurable-enum-ordering";
+import { Ordering } from "../core/configurable-enum/configurable-enum-ordering";
 
 export const warningLevels: ConfigurableEnumValue[] =
-  EnumOrdering.imposeTotalOrdering([
+  Ordering.imposeTotalOrdering([
     {
       id: "",
       label: "",

@@ -24,7 +24,7 @@ import {
 } from "../../../core/entity/model/warning-level";
 import { testEntitySubclass } from "../../../core/entity/model/entity.spec";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
-import { EnumOrdering } from "../../../core/configurable-enum/configurable-enum-ordering";
+import { Ordering } from "../../../core/configurable-enum/configurable-enum-ordering";
 
 const testStatusTypes: ConfigurableEnumConfig<AttendanceStatusType> = [
   {
@@ -62,21 +62,20 @@ describe("Note", () => {
   const ENTITY_TYPE = "Note";
   let entitySchemaService: EntitySchemaService;
 
-  const testInteractionTypes: InteractionType[] =
-    EnumOrdering.imposeTotalOrdering([
-      {
-        id: "",
-        label: "",
-      },
-      {
-        id: "HOME_VISIT",
-        label: "Home Visit",
-      },
-      {
-        id: "GUARDIAN_TALK",
-        label: "Talk with Guardians",
-      },
-    ]);
+  const testInteractionTypes: InteractionType[] = Ordering.imposeTotalOrdering([
+    {
+      id: "",
+      label: "",
+    },
+    {
+      id: "HOME_VISIT",
+      label: "Home Visit",
+    },
+    {
+      id: "GUARDIAN_TALK",
+      label: "Talk with Guardians",
+    },
+  ]);
 
   beforeEach(waitForAsync(() => {
     const testConfigs = {};

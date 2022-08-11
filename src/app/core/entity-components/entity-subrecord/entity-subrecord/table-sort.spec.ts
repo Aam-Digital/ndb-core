@@ -5,7 +5,7 @@ import {
   ConfigurableEnumValue,
 } from "../../../configurable-enum/configurable-enum.interface";
 import { Entity } from "../../../entity/model/entity";
-import { EnumOrdering } from "../../../configurable-enum/configurable-enum-ordering";
+import { Ordering } from "../../../configurable-enum/configurable-enum-ordering";
 
 describe("TableSort", () => {
   class E extends Entity {
@@ -43,7 +43,7 @@ describe("TableSort", () => {
   });
 
   it("should sort configurable with an ordinal value based on their ordinal value", () => {
-    const values: EnumOrdering.Config<ConfigurableEnumValue> = [
+    const values: Ordering.Config<ConfigurableEnumValue> = [
       { id: "first", label: "X", _ordinal: 2 },
       { id: "second", label: "Cgt", _ordinal: 1 },
       { id: "third", label: "876", _ordinal: 0 },

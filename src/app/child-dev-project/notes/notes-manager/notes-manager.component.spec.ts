@@ -29,7 +29,7 @@ import { UpdatedEntity } from "../../../core/entity/model/entity-update";
 import { ExportService } from "../../../core/export/export-service/export.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { EnumOrdering } from "../../../core/configurable-enum/configurable-enum-ordering";
+import { Ordering } from "../../../core/configurable-enum/configurable-enum-ordering";
 
 describe("NotesManagerComponent", () => {
   let component: NotesManagerComponent;
@@ -79,17 +79,16 @@ describe("NotesManagerComponent", () => {
     snapshot: { queryParams: {} },
   };
 
-  const testInteractionTypes: InteractionType[] =
-    EnumOrdering.imposeTotalOrdering([
-      {
-        id: "HOME_VISIT",
-        label: "Home Visit",
-      },
-      {
-        id: "GUARDIAN_TALK",
-        label: "Talk with Guardians",
-      },
-    ]);
+  const testInteractionTypes: InteractionType[] = Ordering.imposeTotalOrdering([
+    {
+      id: "HOME_VISIT",
+      label: "Home Visit",
+    },
+    {
+      id: "GUARDIAN_TALK",
+      label: "Talk with Guardians",
+    },
+  ]);
 
   beforeEach(() => {
     const mockConfigService = jasmine.createSpyObj("mockConfigService", [

@@ -1,7 +1,7 @@
 import { getReadableValue } from "./value-accessor";
 import { TableRow } from "./entity-subrecord.component";
 import { Entity } from "../../../entity/model/entity";
-import { hasOrdinalValue } from "../../../configurable-enum/configurable-enum-ordering";
+import { Ordering } from "../../../configurable-enum/configurable-enum-ordering";
 
 /**
  * Custom sort implementation for a MatTableDataSource<TableRow<T>>
@@ -36,7 +36,7 @@ function getComparableValue<OBJECT, PROPERTY extends keyof OBJECT>(
   key: PROPERTY
 ): number | string | Symbol {
   let value = obj[key];
-  if (hasOrdinalValue(value)) {
+  if (Ordering.hasOrdinalValue(value)) {
     return value._ordinal;
   }
   value = getReadableValue(obj, key);
