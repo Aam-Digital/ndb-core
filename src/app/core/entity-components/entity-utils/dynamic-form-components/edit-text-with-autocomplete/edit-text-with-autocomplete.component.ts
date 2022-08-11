@@ -5,6 +5,7 @@ import { BehaviorSubject } from "rxjs";
 import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 import { FormControl } from "@angular/forms";
+import { ConfirmationDialogService } from "app/core/confirmation-dialog/confirmation-dialog.service";
 
 @DynamicComponent("EditTextWithAutocomplete")
 @Component({
@@ -17,9 +18,7 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
   placeholder: string;
   autocompleteEntities = new BehaviorSubject<Entity[]>([]);
   selectedEntity?: Entity;
-  editingSelectedEntity = false;
   inputText = "";
-  inUniqueExistingEntity = false;
   isFirstFocusIn = true;
   initialValues;
   matAutocompleteDisabled: boolean = false;
@@ -28,29 +27,37 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
     relevantProperty: string;
     relevantValue: string;
   };
+  lastValue: string = "";
 
   @ViewChild("inputElement") input: ElementRef;
 
-  constructor(private entityMapperService: EntityMapperService) {
+  constructor(
+    private entityMapperService: EntityMapperService,
+    private confirmationDialog: ConfirmationDialogService
+  ) {
     super();
   }
 
+  keyup(inputText: string) {
+    this.lastValue = inputText;
+    this.updateAutocomplete(inputText);
+  }
+
+  focusin(inputText: string) {
+    if (!this.isFirstFocusIn) this.updateAutocomplete(inputText);
+  }
+
+  focusout() {
+    this.isFirstFocusIn = false;
+  }
+
   updateAutocomplete(inputText: string) {
-    if (this.isFirstFocusIn) {
-      this.isFirstFocusIn = false;
-      return;
-    }
     if (!this.matAutocompleteDisabled) {
       let filteredEntities = this.entities;
       if (inputText) {
         filteredEntities = this.entities.filter((entity) =>
           entity.toString().toLowerCase().includes(inputText.toLowerCase())
         );
-        // if (filteredEntities.length === 1) {
-        //   this.select(filteredEntities[0]);
-        // } else {
-        // this.select(inputText);
-        // }
       }
       this.autocompleteEntities.next(filteredEntities);
     }
@@ -72,63 +79,55 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
     );
     if (selectedEntity) {
       this.selectedEntity = selectedEntity;
-      this.editingSelectedEntity = false;
       this.matAutocompleteDisabled = true;
       this.placeholder = "";
     }
     this.initialValues = this.parent.getRawValue();
   }
 
-  select(selected: Entity) {
-    let entity: Entity;
-    console.log("select aufgerufen mit ", selected);
-    // if (typeof selected === "string") {
-    //   entity = this.entities.find(
-    //     (e) => e.toString().toLowerCase() === selected.toLowerCase()
-    //   );
-    // } else {
-    entity = selected;
-    // }
-    console.log("entity ist ", entity);
-
-    if (entity) {
-      this.selectedEntity = entity;
-      this.editingSelectedEntity = false;
-      // this.formControl.setValue(entity.getId());
-      const schema = entity.getSchema();
-      const formKeys = Object.keys(entity).filter(
+  async select(selected: Entity) {
+    let valuesChanged = false;
+    for (const iV in this.initialValues) {
+      if (
+        iV != this.formControlName &&
+        this.initialValues[iV] != this.parent.controls[iV].value
+      ) {
+        valuesChanged = true;
+        break;
+      }
+    }
+    if (
+      !valuesChanged ||
+      (await this.confirmationDialog.getConfirmation(
+        $localize`:Discard the changes made:Discard changes`,
+        $localize`Do you want to discard the changes made and load '${
+          selected[this.formControlName]
+        }'?`
+      ))
+    ) {
+      this.selectedEntity = selected;
+      const schema = selected.getSchema();
+      if (
+        !selected[this.additional.relevantProperty].includes(
+          this.additional.relevantValue
+        )
+      ) {
+        selected[this.additional.relevantProperty].push(
+          this.additional.relevantValue
+        );
+      }
+      Object.keys(this.parent.controls).forEach((key) => {
+        this.parent.controls[key].setValue(selected[key]);
+      });
+      const formKeys = Object.keys(selected).filter(
         (key) => schema.has(key) && !this.parent.controls.hasOwnProperty(key)
       );
-      entity[this.additional.relevantProperty].push(
-        this.additional.relevantValue
-      );
-      Object.keys(this.parent.controls).forEach((key) => {
-        this.parent.controls[key].setValue(entity[key]);
-      });
       formKeys.forEach((key) =>
-        this.parent.addControl(key, new FormControl(entity[key]))
+        this.parent.addControl(key, new FormControl(selected[key]))
       );
+      this.initialValues = this.parent.getRawValue();
     } else {
-      // this.inputText = selected as string;
-      this.selectedEntity = undefined;
-      Object.keys(this.parent.controls)
-        .filter((key) => key != this.formControlName)
-        .forEach((key) => {
-          if (this.initialValues.hasOwnProperty(key)) {
-            this.parent.controls[key].setValue(this.initialValues[key]);
-          } else {
-            this.parent.removeControl(key);
-          }
-        });
-      // this.formControl.setValue(selected as string);
+      this.formControl.setValue(this.lastValue);
     }
-    console.log("this.selectedEntity", this.selectedEntity);
   }
-
-  // editSelectedEntity() {
-  //   this.editingSelectedEntity = true;
-  //   setTimeout(() => {
-  //     this.input.nativeElement.focus();
-  //   });
-  // }
 }
