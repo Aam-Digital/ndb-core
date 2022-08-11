@@ -102,8 +102,8 @@ export class RemoteSession extends SessionService {
   /**
    * Logout at the remote database.
    */
-  public logout(): void {
-    this.authService.logout();
+  public async logout(): Promise<void> {
+    await this.authService.logout();
     this.currentDBUser = undefined;
     this.loginState.next(LoginState.LOGGED_OUT);
   }

@@ -38,6 +38,7 @@ import { SessionType } from "./session-type";
 import { environment } from "../../../environments/environment";
 import { AuthService } from "./auth/auth.service";
 import { KeycloakAuthService } from "./auth/keycloak-auth.service";
+import { CouchdbAuthService } from "./auth/couchdb-auth.service";
 
 /**
  * The core session logic handling user login as well as connection and synchronization with the remote database.
@@ -80,7 +81,7 @@ import { KeycloakAuthService } from "./auth/keycloak-auth.service";
       },
       deps: [Injector],
     },
-    { provide: AuthService, useClass: KeycloakAuthService },
+    { provide: AuthService, useClass: CouchdbAuthService },
   ],
 })
 export class SessionModule {}
