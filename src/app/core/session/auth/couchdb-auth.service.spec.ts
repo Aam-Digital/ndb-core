@@ -14,7 +14,7 @@ describe("CouchdbAuthService", () => {
   beforeEach(() => {
     mockHttpClient = jasmine.createSpyObj(["get", "post", "put"]);
     mockHttpClient.get.and.returnValue(throwError(() => new Error()));
-    mockHttpClient.post.and.callFake((url, body) => {
+    mockHttpClient.post.and.callFake((_url, body) => {
       if (body.name === TEST_USER && body.password === TEST_PASSWORD) {
         return of(dbUser as any);
       } else {

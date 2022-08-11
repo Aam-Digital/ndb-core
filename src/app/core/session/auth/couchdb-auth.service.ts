@@ -19,6 +19,7 @@ export class CouchdbAuthService extends AuthService {
   }
 
   addAuthHeader() {
+    // auth happens through cookie
     return;
   }
 
