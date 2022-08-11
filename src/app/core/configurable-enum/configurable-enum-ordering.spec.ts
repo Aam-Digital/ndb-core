@@ -1,5 +1,5 @@
 import { ConfigurableEnumValue } from "./configurable-enum.interface";
-import { EnumOrdering } from "./configurable-enum-ordering";
+import { EnumOrdering, hasOrdinalValue } from "./configurable-enum-ordering";
 import { expect } from "@angular/flex-layout/_private-utils/testing";
 
 describe("Configurable Enum Ordering", () => {
@@ -27,22 +27,32 @@ describe("Configurable Enum Ordering", () => {
     expect(orderedEnumValues.map((it) => it._ordinal)).toEqual([0, 1, 2]);
   });
 
-  it("Should be able to compare two ordered enum values", () => {
-    const orderedValues = EnumOrdering.imposeTotalOrdering(mockEnumValues());
-
-    expect(EnumOrdering.lt(orderedValues[0], orderedValues[1])).toBeTrue();
-    expect(EnumOrdering.lt(orderedValues[0], orderedValues[0])).toBeFalse();
-    expect(EnumOrdering.lt(orderedValues[1], orderedValues[0])).toBeFalse();
+  it("correctly identifier an objects with _ordinal values", () => {
+    [
+      {
+        _ordinal: 0,
+      },
+      {
+        _ordinal: "A",
+      },
+      {
+        _ordinal: 1,
+        otherField: 2,
+      },
+    ].forEach((obj) => {
+      expect(hasOrdinalValue(obj)).toBeTrue();
+    });
   });
 
-  it("Should be able to sort an array of ordered enum values", () => {
-    const orderedValues = EnumOrdering.imposeTotalOrdering(mockEnumValues());
-    const unorderedValues = [
-      orderedValues[1],
-      orderedValues[2],
-      orderedValues[0],
-    ];
-
-    expect(EnumOrdering.sort(unorderedValues)).toEqual(orderedValues);
+  it("identifies entities without '_ordinal' value", () => {
+    [
+      0,
+      "ordinal",
+      {
+        notOrdinal: 0,
+      },
+    ].forEach((thing) => {
+      expect(hasOrdinalValue(thing)).toBeFalse();
+    });
   });
 });
