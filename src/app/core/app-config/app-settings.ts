@@ -39,10 +39,20 @@ export class AppSettings {
    * If the config file does not exist, uses the default config as a fallback.
    */
   static async initRuntimeSettings() {
-    const res = await fetch(this.CONFIG_FILE)
-      .catch(() => fetch(this.DEFAULT_CONFIG_FILE))
-      .then((result) => result.json());
+    const res = await this.getFile(this.CONFIG_FILE).catch(() =>
+      this.getFile(this.DEFAULT_CONFIG_FILE)
+    );
     environment.demo_mode = res.demo_mode;
     environment.session_type = res.session_type;
+  }
+
+  static getFile(name: string): Promise<any> {
+    return fetch(name).then((result) => {
+      if (result.ok) {
+        return result.json();
+      } else {
+        throw new Error("File not found");
+      }
+    });
   }
 }
