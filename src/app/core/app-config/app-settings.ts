@@ -15,7 +15,6 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { SessionType } from "../session/session-type";
 import { environment } from "../../../environments/environment";
 
 /**
@@ -28,59 +27,22 @@ export class AppSettings {
   /** Name of the database that is used */
   static readonly DB_NAME = "app";
 
-  /** Demo mode and session type can be persisted in local storage */
-  private static readonly DEMO_MODE_KEY = "demo_mode";
-  private static readonly SESSION_TYPE_KEY = "session_type";
+  /** file location of the config file to be created by the administrator */
+  private static readonly CONFIG_FILE = "assets/config.json";
+
+  /** fallback file location of the config that is part of the project already if the "real" config file isn't found */
+  private static readonly DEFAULT_CONFIG_FILE = "assets/config.default.json";
 
   /**
-   * Initializes settings that can be changed at runtime.
-   */
-  static initRuntimeSettings() {
-    const demoMode = this.getSetting(this.DEMO_MODE_KEY);
-    if (demoMode) {
-      environment.demo_mode = demoMode === "true";
-    }
-
-    const sessionType = this.getSetting(this.SESSION_TYPE_KEY);
-    if (sessionType) {
-      environment.session_type = sessionType as SessionType;
-    }
-
-    // TODO: remove in future version after all demo users are likely to have new service workers
-    if (
-      location.hostname.match(/^demo\./) &&
-      environment.session_type !== SessionType.mock &&
-      !environment.demo_mode
-    ) {
-      // Fallback when SW prevents redirect of NGINX
-      environment.session_type = SessionType.mock;
-      environment.demo_mode = true;
-      localStorage.setItem(this.DEMO_MODE_KEY, "true");
-      localStorage.setItem(this.SESSION_TYPE_KEY, "mock");
-    }
-  }
-
-  /**
-   * A setting can be applied through the url params, the local storage and the environment.
-   * If params are found in the URL query params, then they are persisted in the local storage.
+   * Load the config file into the `AppConfig.settings` so they can be used synchronously anywhere in the code after that.
    *
-   * The settings are checked and used in the following order:
-   * 1. URL params
-   * 2. Local storage
-   * 3. Environment
-   *
-   * @param key The key of the setting
-   * @returns first value of the setting
-   * @private
+   * If the config file does not exist, uses the default config as a fallback.
    */
-  private static getSetting(key: string): string {
-    const paramValue = new URLSearchParams(location.search).get(key);
-    const localStorageValue = localStorage.getItem(key);
-    if (paramValue) {
-      localStorage.setItem(key, paramValue);
-      return paramValue;
-    } else if (localStorageValue) {
-      return localStorageValue;
-    }
+  static async initRuntimeSettings() {
+    const res = await fetch(this.CONFIG_FILE)
+      .catch(() => fetch(this.DEFAULT_CONFIG_FILE))
+      .then((result) => result.json());
+    environment.demo_mode = res.demo_mode;
+    environment.session_type = res.session_type;
   }
 }

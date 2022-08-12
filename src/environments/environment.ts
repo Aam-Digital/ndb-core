@@ -30,6 +30,7 @@ export const environment = {
   appVersion: "0.0.0", // replaced automatically during docker build
   repositoryId: "Aam-Digital/ndb-core",
   remoteLoggingDsn: undefined, // only set for production mode in environment.prod.ts
+  /** The following settings get overridden by the config file, see {@link AppSettings} */
   demo_mode: true,
   session_type: SessionType.mock,
 };
