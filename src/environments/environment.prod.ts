@@ -31,7 +31,7 @@ export const environment = {
   repositoryId: "Aam-Digital/ndb-core",
   remoteLoggingDsn:
     "https://bd6aba79ca514d35bb06a4b4e0c2a21e@sentry.io/1242399",
-  /** The following settings get overridden by the config file, see {@link AppSettings} */
+  /** The following settings can be overridden by the `config.json` if present, see {@link AppSettings} */
   demo_mode: true,
   session_type: SessionType.mock,
 };

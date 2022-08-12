@@ -30,29 +30,14 @@ export class AppSettings {
   /** file location of the config file to be created by the administrator */
   private static readonly CONFIG_FILE = "assets/config.json";
 
-  /** fallback file location of the config that is part of the project already if the "real" config file isn't found */
-  private static readonly DEFAULT_CONFIG_FILE = "assets/config.default.json";
-
   /**
-   * Load the config file into the `AppConfig.settings` so they can be used synchronously anywhere in the code after that.
-   *
-   * If the config file does not exist, uses the default config as a fallback.
-   */
-  static async initRuntimeSettings() {
-    const res = await this.getFile(this.CONFIG_FILE).catch(() =>
-      this.getFile(this.DEFAULT_CONFIG_FILE)
-    );
-    environment.demo_mode = res.demo_mode;
-    environment.session_type = res.session_type;
-  }
-
-  static getFile(name: string): Promise<any> {
-    return fetch(name).then((result) => {
-      if (result.ok) {
-        return result.json();
-      } else {
-        throw new Error("File not found");
-      }
-    });
+   * Overwrite environment settings with the settings from the `config.json` if present.
+   * If no file is found, the environment settings are kept.
+   **/
+  static initRuntimeSettings(): Promise<void> {
+    return fetch(this.CONFIG_FILE)
+      .then((res) => res.json())
+      .then((res) => Object.assign(environment, res))
+      .catch(() => undefined);
   }
 }
