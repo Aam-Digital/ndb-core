@@ -1,7 +1,7 @@
 const fs = require("fs");
 const parseXliffToJson = require("../src/app/utils/parse-xliff-to-js");
 
-const localeFolder = "dist/assets/locale";
+const localeFolder = "src/assets/locale";
 
 // get all locales
 const xliffFiles = fs
