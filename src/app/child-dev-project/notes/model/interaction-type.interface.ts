@@ -1,4 +1,3 @@
-import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 import { Ordering } from "../../../core/configurable-enum/configurable-enum-ordering";
 
 /**
