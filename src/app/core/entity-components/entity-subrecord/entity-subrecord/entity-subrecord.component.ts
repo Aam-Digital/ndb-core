@@ -1,8 +1,10 @@
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
@@ -72,9 +74,9 @@ export class EntitySubrecordComponent<T extends Entity>
   _columns: FormFieldConfig[] = [];
   filteredColumns: FormFieldConfig[] = [];
 
-  /** data to be displayed */
+  /** data to be displayed, can also be used as two-way-binding */
   @Input()
-  set records(value: Array<T>) {
+  set records(value: T[]) {
     this._records = value;
     this.recordsDataSource.data = this._records.map((rec) => {
       return {
@@ -86,7 +88,9 @@ export class EntitySubrecordComponent<T extends Entity>
         new (this._records[0].getConstructor() as EntityConstructor<T>)();
     }
   }
-  private _records: Array<T> = [];
+  private _records: T[] = [];
+
+  @Output() recordsChange = new EventEmitter<T[]>();
 
   /**
    * factory method to create a new instance of the displayed Entity type
@@ -318,11 +322,13 @@ export class EntitySubrecordComponent<T extends Entity>
     this.records = this._records.filter(
       (rec) => rec.getId() !== deleted.getId()
     );
+    this.recordsChange.emit(this._records);
   }
 
   private addToTable(record: T) {
     // use setter so datasource is also updated
     this.records = [record].concat(this._records);
+    this.recordsChange.emit(this._records);
   }
 
   /**

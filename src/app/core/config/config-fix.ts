@@ -16,8 +16,10 @@ import { ratingAnswers } from "../../features/historical-data/model/rating-answe
 // prettier-ignore
 export const defaultJsonConfig = {
   "appConfig": {
+    "default_language": "en-US",
     "displayLanguageSelect": true,
-    "logo_path": null
+    "logo_path": null,
+    "site_name": $localize`:Page title:Aam Digital - DEMO (automatically generated data)`,
   },
   "appConfig:usage-analytics": {
     "url": "https://matomo.aam-digital.org",
@@ -856,7 +858,7 @@ export const defaultJsonConfig = {
               "subQueries": [
                 {
                   "label": $localize`:Name of column of a report:Type`,
-                  "query": ":setString(School Class)"
+                  "query": ":setString(" + $localize`School Class` + ")"
                 },
                 {
                   "label": $localize`:Name of a column of a report:Name`,
@@ -881,7 +883,7 @@ export const defaultJsonConfig = {
               "subQueries": [
                 {
                   "label": $localize`:Name of column of a report:Type`,
-                  "query": ":setString(Coaching Class)"
+                  "query": ":setString(" + $localize`Coaching Class` + ")"
                 },
                 {
                   "label": $localize`:Name of a column of a report:Name`,

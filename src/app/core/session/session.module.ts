@@ -34,8 +34,8 @@ import { SyncedSessionService } from "./session-service/synced-session.service";
 import { LocalSession } from "./session-service/local-session";
 import { RemoteSession } from "./session-service/remote-session";
 import { SessionService } from "./session-service/session.service";
-import { AppConfig } from "../app-config/app-config";
 import { SessionType } from "./session-type";
+import { environment } from "../../../environments/environment";
 
 /**
  * The core session logic handling user login as well as connection and synchronization with the remote database.
@@ -70,7 +70,7 @@ import { SessionType } from "./session-type";
     {
       provide: SessionService,
       useFactory: (injector: Injector) => {
-        if (AppConfig?.settings?.session_type === SessionType.synced) {
+        if (environment.session_type === SessionType.synced) {
           return injector.get(SyncedSessionService);
         } else {
           return injector.get(LocalSession);

@@ -16,6 +16,7 @@ import { EntitySubrecordModule } from "../entity-subrecord.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 import { AlertService } from "../../../alerts/alert.service";
+import { EntityAbility } from "../../../permissions/ability/entity-ability";
 
 describe("RowDetailsComponent", () => {
   let component: RowDetailsComponent<any>;
@@ -37,6 +38,7 @@ describe("RowDetailsComponent", () => {
         { provide: MatDialogRef, useValue: {} },
       ],
     }).compileComponents();
+    spyOn(TestBed.inject(EntityAbility), "cannot").and.returnValue(true);
   });
 
   beforeEach(() => {
@@ -77,4 +79,8 @@ describe("RowDetailsComponent", () => {
     expect(alertSpy).toHaveBeenCalledWith(message);
     expect(closeSpy).not.toHaveBeenCalled();
   }));
+
+  it("should not disable the form when creating a new entity", () => {
+    expect(component.form.disabled).toBeFalsy();
+  });
 });

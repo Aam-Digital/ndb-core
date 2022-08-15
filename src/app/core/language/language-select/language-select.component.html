@@ -4,8 +4,8 @@
 
 <mat-menu #menu>
   <a
-    *ngFor="let lang of languageList"
-    [href]="'/' + lang.locale + currentUrl"
+    *ngFor="let lang of translationService.availableLocales"
+    (click)="changeLocale(lang.locale)"
     mat-menu-item
   >
     <span
