@@ -14,7 +14,12 @@ import {
 } from "@angular/animations";
 
 /**
- * This is the component that the tooltip is shown.
+ * This is the component that the tooltip is shown. It serves the following purposes:
+ *
+ * - Rendering the actual tooltip
+ * - Animating when the tooltip appears
+ * - giving each tooltip the same border and background
+ *
  * Usage is intended for internal use only. To display a custom tooltip,
  * refer to the {@link ./customizable-tooltip.directive.ts Customizable Tooltip Directive}
  */
