@@ -1,16 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { CustomizableTooltipComponent } from './customizable-tooltip.component';
+import { CustomizableTooltipComponent } from "./customizable-tooltip.component";
 
-describe('CustomizableTooltipComponent', () => {
+describe("CustomizableTooltipComponent", () => {
   let component: CustomizableTooltipComponent;
   let fixture: ComponentFixture<CustomizableTooltipComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CustomizableTooltipComponent ]
-    })
-    .compileComponents();
+      declarations: [CustomizableTooltipComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('CustomizableTooltipComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });
