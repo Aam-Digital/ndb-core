@@ -2,8 +2,7 @@
   class="mat-elevation-z1 attendance-block w-{{
     attendanceData.getWarningLevel(forChild)
   }}"
-  (mouseenter)="showTooltip()"
-  (mouseleave)="hideTooltip()"
+  [appCustomizableTooltip]="tooltip"
 >
   <span *ngIf="attendanceData.getAttendancePercentage(forChild)">
     {{ attendanceData.getAttendancePercentage(forChild) | percent: "1.0-0" }}
@@ -11,12 +10,8 @@
   <span *ngIf="!attendanceData.getAttendancePercentage(forChild)"> - </span>
 </span>
 
-<div style="position: absolute" *ngIf="tooltip">
-  <div
-    class="mat-elevation-z3 attendance-tooltip"
-    (mouseenter)="showTooltip()"
-    (mouseleave)="hideTooltip()"
-  >
+<ng-template #tooltip>
+  <div class="mat-elevation-z3 attendance-tooltip">
     <div class="attendance-tooltip-header">
       {{ attendanceData.periodFrom | date: "shortDate" }} -
       {{ attendanceData.periodTo | date: "shortDate" }}
@@ -49,4 +44,4 @@
       </app-attendance-calendar>
     </div>
   </div>
-</div>
+</ng-template>
