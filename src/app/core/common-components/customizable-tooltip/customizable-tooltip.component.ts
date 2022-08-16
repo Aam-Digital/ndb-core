@@ -1,23 +1,44 @@
-import { Component, EventEmitter, Input, Output, TemplateRef } from '@angular/core';
-import { animate, state, style, transition, trigger } from "@angular/animations";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  TemplateRef,
+} from "@angular/core";
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger,
+} from "@angular/animations";
 
+/**
+ * This is the component that the tooltip is shown.
+ * Usage is intended for internal use only. To display a custom tooltip,
+ * refer to the {@link ./customizable-tooltip.directive.ts Customizable Tooltip Directive}
+ */
 @Component({
-  selector: 'app-customizable-tooltip',
-  templateUrl: './customizable-tooltip.component.html',
-  styleUrls: ['./customizable-tooltip.component.scss'],
+  selector: "app-customizable-tooltip",
+  templateUrl: "./customizable-tooltip.component.html",
+  styleUrls: ["./customizable-tooltip.component.scss"],
   animations: [
-    trigger('appear', [
-      state('void', style({
-        transform: 'scale(0)'
-      })),
-      state('*', style({
-        transform: 'scale(1)'
-      })),
-      transition(':enter', [
-        animate('100ms')
-      ]),
-    ])
-  ]
+    trigger("appear", [
+      state(
+        "void",
+        style({
+          transform: "scale(0)",
+        })
+      ),
+      state(
+        "*",
+        style({
+          transform: "scale(1)",
+        })
+      ),
+      transition(":enter", [animate("100ms")]),
+    ]),
+  ],
 })
 export class CustomizableTooltipComponent {
   /**
