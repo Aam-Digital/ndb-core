@@ -5,17 +5,20 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  TemplateRef
-} from '@angular/core';
-import { Overlay, OverlayPositionBuilder, OverlayRef } from "@angular/cdk/overlay";
+  TemplateRef,
+} from "@angular/core";
+import {
+  Overlay,
+  OverlayPositionBuilder,
+  OverlayRef,
+} from "@angular/cdk/overlay";
 import { ComponentPortal } from "@angular/cdk/portal";
 import { CustomizableTooltipComponent } from "./customizable-tooltip.component";
 
 @Directive({
-  selector: '[appCustomizableTooltip]'
+  selector: "[appCustomizableTooltip]",
 })
 export class CustomizableTooltipDirective implements OnInit, OnDestroy {
-
   @Input() tooltipDisabled: boolean = false;
 
   @Input() tooltipShown: boolean = true;
@@ -34,7 +37,7 @@ export class CustomizableTooltipDirective implements OnInit, OnDestroy {
     private overlay: Overlay,
     private overlayPositionBuilder: OverlayPositionBuilder,
     private element: ElementRef
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     if (!this.tooltipShown) {
@@ -42,15 +45,17 @@ export class CustomizableTooltipDirective implements OnInit, OnDestroy {
     }
     const positionStrategy = this.overlayPositionBuilder
       .flexibleConnectedTo(this.element)
-      .withPositions([{
-        originX: 'center',
-        originY: 'bottom',
-        overlayX: 'center',
-        overlayY: 'top',
-        offsetY: 5,
-      }]);
+      .withPositions([
+        {
+          originX: "center",
+          originY: "bottom",
+          overlayX: "center",
+          overlayY: "top",
+          offsetY: 5,
+        },
+      ]);
 
-    this.overlayRef = this.overlay.create({ positionStrategy});
+    this.overlayRef = this.overlay.create({ positionStrategy });
   }
 
   ngOnDestroy() {
@@ -77,7 +82,9 @@ export class CustomizableTooltipDirective implements OnInit, OnDestroy {
     this.tooltipTimeout = setTimeout(() => {
       //attach the component if it has not already attached to the overlay
       if (!this.overlayRef.hasAttached()) {
-        const tooltipRef = this.overlayRef.attach(new ComponentPortal(CustomizableTooltipComponent));
+        const tooltipRef = this.overlayRef.attach(
+          new ComponentPortal(CustomizableTooltipComponent)
+        );
         tooltipRef.instance.contentTemplate = this.contentTemplate;
         tooltipRef.instance.hide.subscribe(() => this.hide());
         tooltipRef.instance.show.subscribe(() => this.show());
@@ -89,7 +96,9 @@ export class CustomizableTooltipDirective implements OnInit, OnDestroy {
     if (this.tooltipTimeout) {
       clearTimeout(this.tooltipTimeout);
     }
-    this.tooltipTimeout = setTimeout(() => (this.overlayRef.detach()), this.delayHide);
+    this.tooltipTimeout = setTimeout(
+      () => this.overlayRef.detach(),
+      this.delayHide
+    );
   }
-
 }
