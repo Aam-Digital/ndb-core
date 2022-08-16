@@ -11,15 +11,14 @@
 </span>
 
 <ng-template #tooltip>
-  <div class="mat-elevation-z3 attendance-tooltip">
-    <div class="attendance-tooltip-header">
+  <div class="attendance-tooltip-container">
+    <b>
       {{ attendanceData.periodFrom | date: "shortDate" }} -
       {{ attendanceData.periodTo | date: "shortDate" }}
       {{ attendanceData.activity.title }}
-    </div>
+    </b>
 
     <div
-      class="attendance-tooltip-content"
       i18n="
         Attended Tooltip|How many attendees were present / how many attendees
         were absent
@@ -28,20 +27,17 @@
       attended {{ attendanceDescription }} events
     </div>
 
-    <div
-      class="attendance-tooltip-content"
+    <i
       *ngIf="logicalCount[LStatus.IGNORE] > 0"
       i18n="Attended Tooltip|How many events were excluded"
     >
       (excluding {{ logicalCount[LStatus.IGNORE] }} events excused or unknown)
-    </div>
-    <div>
-      <app-attendance-calendar
-        [records]="attendanceData.events"
-        [highlightForChild]="forChild"
-        [activity]="attendanceData.activity"
-      >
-      </app-attendance-calendar>
-    </div>
+    </i>
+    <app-attendance-calendar
+      [records]="attendanceData.events"
+      [highlightForChild]="forChild"
+      [activity]="attendanceData.activity"
+    >
+    </app-attendance-calendar>
   </div>
 </ng-template>
