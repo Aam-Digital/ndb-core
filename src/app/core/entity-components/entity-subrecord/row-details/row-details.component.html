@@ -29,24 +29,23 @@
   </div>
 
   <div *ngFor="let col of viewOnlyColumns">
-    <mat-chip-list>
-      <mat-chip
-        [matTooltip]="col.tooltip"
-        [style.background-color]="tempEntity.getColor()"
-      >
-        <p *ngIf="col.label">{{ col.label }}:&nbsp;</p>
-        <ng-template
-          [appDynamicComponent]="{
-          component: col.view,
-          config: {
-            id: col.id,
-            entity: tempEntity,
-            config: col.additional
-          }
-        }"
-        ></ng-template>
-      </mat-chip>
-    </mat-chip-list>
+    <div
+      [matTooltip]="col.tooltip"
+      [style.background-color]="tempEntity.getColor()"
+      class="badge-label"
+    >
+      <span *ngIf="col.label">{{ col.label }}:&nbsp;</span>
+      <ng-template
+        [appDynamicComponent]="{
+        component: col.view,
+        config: {
+          id: col.id,
+          entity: tempEntity,
+          config: col.additional
+        }
+      }"
+      ></ng-template>
+    </div>
     <!-- avoid scroll bar + move delete into [...] menu -->
   </div>
 </div>
