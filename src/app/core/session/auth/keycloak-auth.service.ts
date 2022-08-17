@@ -35,7 +35,7 @@ export class KeycloakAuthService extends AuthService {
   private credentialAuth(
     username: string,
     password: string
-  ): Promise<JwtToken> {
+  ): Promise<OIDCTokenResponse> {
     const body = new URLSearchParams();
     body.set("username", username);
     body.set("password", password);
@@ -43,7 +43,7 @@ export class KeycloakAuthService extends AuthService {
     return this.getToken(body);
   }
 
-  private refreshTokenAuth(): Promise<JwtToken> {
+  private refreshTokenAuth(): Promise<OIDCTokenResponse> {
     const body = new URLSearchParams();
     const token = localStorage.getItem(KeycloakAuthService.REFRESH_TOKEN_KEY);
     body.set("refresh_token", token);
@@ -51,7 +51,7 @@ export class KeycloakAuthService extends AuthService {
     return this.getToken(body);
   }
 
-  private getToken(body: URLSearchParams): Promise<JwtToken> {
+  private getToken(body: URLSearchParams): Promise<OIDCTokenResponse> {
     body.set("client_id", "app");
     const options = {
       headers: new HttpHeaders().set(
@@ -60,7 +60,7 @@ export class KeycloakAuthService extends AuthService {
       ),
     };
     return firstValueFrom(
-      this.httpClient.post<JwtToken>(
+      this.httpClient.post<OIDCTokenResponse>(
         `${this.keycloak.authServerUrl}realms/${this.keycloak.realm}/protocol/openid-connect/token`,
         body.toString(),
         options
@@ -68,7 +68,7 @@ export class KeycloakAuthService extends AuthService {
     );
   }
 
-  private processToken(token: JwtToken): DatabaseUser {
+  private processToken(token: OIDCTokenResponse): DatabaseUser {
     this.accessToken = token.access_token;
     localStorage.setItem(
       KeycloakAuthService.REFRESH_TOKEN_KEY,
@@ -112,7 +112,7 @@ export class KeycloakAuthService extends AuthService {
   }
 }
 
-export interface JwtToken {
+export interface OIDCTokenResponse {
   access_token: string;
   refresh_token: string;
   expires_in: number;
