@@ -11,7 +11,9 @@
           <fa-icon *ngIf="!disabled" icon="trash" (click)="remove.emit(childId)"></fa-icon>
         </button>
       </td>
-      <td><app-child-block [entityId]="childId"></app-child-block></td>
+      <td>
+        <app-display-entity [entityId]="childId" entityType="Child"></app-display-entity>
+      </td>
       <td>
         <app-attendance-status-select
           [(value)]="entity.getAttendance(childId).status"
@@ -42,7 +44,7 @@
   <!-- Mobile view / smaller screen: display the information using a flex-layout -->
   <div *ngFor="let childId of entity.children" class="attendance-item">
     <div class="attendance-item--header">
-      <app-child-block [entityId]="childId"></app-child-block>
+      <app-display-entity [entityId]="childId" entityType="Child"></app-display-entity>
 
       <button mat-icon-button>
         <fa-icon *ngIf="!disabled" icon="trash" (click)="remove.emit(childId)"></fa-icon>

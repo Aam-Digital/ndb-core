@@ -59,6 +59,7 @@
 <mat-sidenav-container
   class="app-content mat-typography primary-background"
   (backdropClick)="closeSidenavOnMobile()"
+  autosize
 >
   <mat-sidenav
     #sideNav
@@ -81,7 +82,7 @@
       ></app-navigation>
 
 
-      <div fxFlex >
+      <div fxFlex>
         <div fxLayout="row" class="menu-footer-row">
           <app-pwa-install fxFlex></app-pwa-install>
         </div>
@@ -90,7 +91,7 @@
           <button
             (click)="closeSidenavOnMobile()"
             mat-button
-            routerLink="user"
+            routerLink="user-account"
             i18n="Navigate to user profile page"
             class="user-nav-button user-nav-button-first"
             fxFlex="50"

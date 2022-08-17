@@ -6,6 +6,7 @@ export interface ImportMetaData {
    * The entity type of the imported data based on the name provided with `@DatabaseEntity()`
    */
   entityType: string;
+
   /**
    * A unique identifier that will be prepended to the ID of each imported entity.
    * This allows to find the imported entities later which can be used to undo an import.
@@ -13,11 +14,12 @@ export interface ImportMetaData {
    * `<entityType>:<transactionId>-<9-characters-of-UUID>
    */
   transactionId?: string;
+
   /**
-   * A map that defines for each column of the input table to which property of the entity it should be mapped.
-   * If a column should not be imported, the value should be `undefined`
+   * A map that defines which column should be imported into which entity property.
    */
-  columnMap: { [key in string]: string };
+  columnMap: ImportColumnMap;
+
   /**
    * The format for parsing the dates from the imported file.
    * Default is `YYYY-MM-DD`
@@ -25,3 +27,11 @@ export interface ImportMetaData {
    */
   dateFormat?: string;
 }
+
+/**
+ * A map that defines for each column of the input table (key) to which property of the entity (value) it should be mapped.
+ * If a column should not be imported, the value should be `undefined`
+ */
+export type ImportColumnMap = {
+  [key in string]: string;
+};

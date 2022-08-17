@@ -1,9 +1,8 @@
 # This docker image can be used to run the application locally.
 # To use it only Docker needs to be installed locally
 # Run the following commands from the root folder to build, run and kill the application
-# >> docker build -f build/Dockerfile -t aam/digital:latest .
-# >> docker run -p=80:80 aam/digital:latest
-# >> docker kill aam-digital
+# >> docker build -f build/Dockerfile -t aam-digital .
+# >> docker run -p=80:80 aam-digital
 FROM node:16.14.2-alpine3.15 as builder
 WORKDIR /app
 
@@ -17,10 +16,10 @@ COPY . .
 ARG APP_VERSION="UNKNOWN"
 RUN sed -i "s/appVersion: \".*\"/appVersion: \"$APP_VERSION\"/g" src/environments/environment*.ts
 
-RUN npm run build-localized
+# Transform the xliff files to json so this does not have to be done on the client side
+RUN node build/prepare-translation-files.js
 
-# Merge the service workers for the different locales
-RUN node build/merge-service-workers.js
+RUN npm run build
 
 # When set to true, tests are run and coverage will be uploaded to CodeClimate
 ARG UPLOAD_COVERAGE=false
@@ -58,7 +57,7 @@ ARG SENTRY_PROJECT
 RUN if [ "$SENTRY_AUTH_TOKEN" != "" ] ; then \
     npm install -g @sentry/cli &&\
     sentry-cli --auth-token=$SENTRY_AUTH_TOKEN releases --org=$SENTRY_ORG --project=$SENTRY_PROJECT files ndb-core@$APP_VERSION upload-sourcemaps dist  && \
-    rm dist/*/*.map ; fi
+    rm dist/*.map ; fi
 
 ### PROD image
 
@@ -67,12 +66,8 @@ COPY ./build/default.conf /etc/nginx/templates/default.conf
 COPY --from=builder /app/dist/ /usr/share/nginx/html
 # The port on which the app will run in the Docker container
 ENV PORT=80
-# The url to the webdav server
-ENV WEBDAV_URL="http://localhost"
 # The url to the CouchDB database
 ENV COUCHDB_URL="http://localhost"
-# The language which should be loaded on default options are "en-US" and "de"
-ENV DEFAULT_LANGUAGE="en-US"
 # variables are inserted into the nginx config
-CMD envsubst '$$PORT $$WEBDAV_URL $$COUCHDB_URL $$DEFAULT_LANGUAGE' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
+CMD envsubst '$$PORT $$COUCHDB_URL' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
     nginx -g 'daemon off;'

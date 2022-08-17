@@ -22,19 +22,15 @@ import { EntitySchemaService } from "../schema/entity-schema.service";
 
 describe("Schema data type: map", () => {
   class TestEntity extends Entity {
-    @DatabaseField({ innerDataType: "month" }) dateMap: Map<
-      string,
-      Date
-    > = new Map();
+    @DatabaseField({ innerDataType: "month" }) dateMap: Map<string, Date> =
+      new Map();
   }
 
   let entitySchemaService: EntitySchemaService;
 
-  beforeEach(
-    waitForAsync(() => {
-      entitySchemaService = new EntitySchemaService();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    entitySchemaService = new EntitySchemaService();
+  }));
 
   it("converts contained dates to month for saving", () => {
     const id = "test1";
@@ -70,12 +66,11 @@ describe("Schema data type: map", () => {
   it("reproduces exact same values after save and load", () => {
     const id = "test1";
     const originalEntity = new TestEntity(id);
-    originalEntity.dateMap.set("a", new Date("2020-01-01"));
-    originalEntity.dateMap.set("b", new Date("2019-02-01"));
+    originalEntity.dateMap.set("a", new Date(2020, 0, 1));
+    originalEntity.dateMap.set("b", new Date(2019, 1, 1));
 
-    const rawData = entitySchemaService.transformEntityToDatabaseFormat(
-      originalEntity
-    );
+    const rawData =
+      entitySchemaService.transformEntityToDatabaseFormat(originalEntity);
 
     const loadedEntity = new TestEntity("");
     entitySchemaService.loadDataIntoEntity(loadedEntity, rawData);
@@ -86,8 +81,7 @@ describe("Schema data type: map", () => {
   it("keeps value unchanged if it is not a map", () => {
     const id = "test1";
     const entity = new TestEntity(id);
-    // @ts-ignore
-    entity.dateMap = "not a map";
+    entity.dateMap = "not a map" as any;
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
@@ -100,9 +94,8 @@ describe("Schema data type: map", () => {
     originalEntity.dateMap.set("a", new Date("2020-01-01"));
     originalEntity.dateMap.set("b", new Date("2020-02-02"));
 
-    const rawData = entitySchemaService.transformEntityToDatabaseFormat(
-      originalEntity
-    );
+    const rawData =
+      entitySchemaService.transformEntityToDatabaseFormat(originalEntity);
 
     const loadedEntity = new TestEntity();
     entitySchemaService.loadDataIntoEntity(loadedEntity, rawData);

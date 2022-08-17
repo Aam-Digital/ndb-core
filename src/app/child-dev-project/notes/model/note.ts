@@ -92,7 +92,7 @@ export class Note extends Entity {
     dataType: "configurable-enum",
     innerDataType: INTERACTION_TYPE_CONFIG_ID,
   })
-  category: InteractionType = { id: "", label: "" };
+  category: InteractionType = { id: "", label: "", _ordinal: 0 };
 
   /**
    * id referencing a different entity (e.g. a recurring activity) this note is related to
