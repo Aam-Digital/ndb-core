@@ -29,12 +29,12 @@ import {
 } from "../../attendance/model/attendance-status";
 import { User } from "../../../core/user/user";
 import { Child } from "../../children/model/child";
-import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 import {
   getWarningLevelColor,
   WarningLevel,
 } from "../../../core/entity/model/warning-level";
 import { School } from "../../schools/model/school";
+import { Ordering } from "../../../core/configurable-enum/configurable-enum-ordering";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
@@ -113,7 +113,7 @@ export class Note extends Entity {
     dataType: "configurable-enum",
     innerDataType: "warning-levels",
   })
-  warningLevel: ConfigurableEnumValue;
+  warningLevel: Ordering.EnumValue;
 
   getWarningLevel(): WarningLevel {
     if (this.warningLevel) {

@@ -6,7 +6,7 @@
   [loading]="loading"
 >
   <app-widget-content>
-    <div *ngIf="relevantNotes?.length > 0" class="table-wrapper">
+    <div *ngIf="relevantNotes?.length > 0">
       <table
         mat-table
         [dataSource]="notesDataSource"
@@ -34,8 +34,9 @@
         <tr
           mat-row
           *matRowDef="let row; columns: ['date', 'title'];"
-          class="dashboard-table-row"
+          class="dashboard-table-row row-view"
           (click)="openNote(row)"
+          [style.background-color]="row.getColor?.()"
         ></tr>
       </table>
     </div>

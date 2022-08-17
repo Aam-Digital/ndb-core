@@ -20,7 +20,8 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
   styleUrls: ["./important-notes.component.scss"],
 })
 export class ImportantNotesComponent
-  implements OnInit, OnInitDynamicComponent, AfterViewInit {
+  implements OnInit, OnInitDynamicComponent, AfterViewInit
+{
   private relevantWarningLevels: string[] = [];
   public relevantNotes: Note[];
 
@@ -48,7 +49,9 @@ export class ImportantNotesComponent
     this.notes.pipe(first()).subscribe(() => (this.loading = false));
     this.notes.pipe(untilDestroyed(this)).subscribe((next) => {
       this.relevantNotes = next.filter((note) => this.noteIsRelevant(note));
-      this.notesDataSource.data = this.relevantNotes;
+      this.notesDataSource.data = this.relevantNotes.sort(
+        (a, b) => b.warningLevel._ordinal - a.warningLevel._ordinal
+      );
     });
   }
 

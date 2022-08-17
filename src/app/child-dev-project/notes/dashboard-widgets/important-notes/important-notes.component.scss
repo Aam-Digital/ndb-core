@@ -1,5 +1,18 @@
 @use "../../../../core/dashboard/dashboard-widget-base";
+@use "src/styles" as *;
 
 .subject-cell {
   text-align: right;
+}
+
+.row-view {
+  cursor: pointer;
+
+  & > td:first-child {
+    padding-left: $standard-margin-small;
+  }
+
+  & > td:last-child {
+    padding-right: $standard-margin-small;
+  }
 }
