@@ -1,11 +1,11 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { CustomizableTooltipDirective } from "./customizable-tooltip/customizable-tooltip.directive";
-import { CustomizableTooltipComponent } from "./customizable-tooltip/customizable-tooltip.component";
+import { TemplateTooltipDirective } from "./template-tooltip/template-tooltip.directive";
+import { TemplateTooltipComponent } from "./template-tooltip/template-tooltip.component";
 
 @NgModule({
-  declarations: [CustomizableTooltipDirective, CustomizableTooltipComponent],
+  declarations: [TemplateTooltipDirective, TemplateTooltipComponent],
   imports: [CommonModule],
-  exports: [CustomizableTooltipDirective],
+  exports: [TemplateTooltipDirective],
 })
 export class CommonComponentsModule {}

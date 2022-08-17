@@ -13,7 +13,7 @@ import {
   OverlayRef,
 } from "@angular/cdk/overlay";
 import { ComponentPortal } from "@angular/cdk/portal";
-import { CustomizableTooltipComponent } from "./customizable-tooltip.component";
+import { TemplateTooltipComponent } from "./template-tooltip.component";
 
 /**
  * A directive that can be used to render a custom tooltip that may contain HTML code.
@@ -24,7 +24,7 @@ import { CustomizableTooltipComponent } from "./customizable-tooltip.component";
  * when hovered over.
  *
  * @example
- * <div [appCustomizableTooltip]="tooltip">Hover here to show the tooltip</div>
+ * <div [appTemplateTooltip]="tooltip">Hover here to show the tooltip</div>
  * <ng-template #tooltip>
  *   Custom tooltip <i>with</i> HTML-Elements
  * </ng-template>
@@ -32,9 +32,9 @@ import { CustomizableTooltipComponent } from "./customizable-tooltip.component";
  * @see contentTemplate
  */
 @Directive({
-  selector: "[appCustomizableTooltip]",
+  selector: "[appTemplateTooltip]",
 })
-export class CustomizableTooltipDirective implements OnInit, OnDestroy {
+export class TemplateTooltipDirective implements OnInit, OnDestroy {
   /**
    * Whether to disable the tooltip so it won't ever be shown
    */
@@ -59,12 +59,12 @@ export class CustomizableTooltipDirective implements OnInit, OnDestroy {
    * used element.
    *
    * @example
-   * <div [appCustomizableTooltip]="tooltip">Hover here to show the tooltip</div>
+   * <div [appTemplateTooltip]="tooltip">Hover here to show the tooltip</div>
    * <ng-template #tooltip>
    *   Custom tooltip <i>with</i> HTML-Elements
    * </ng-template>
    */
-  @Input("appCustomizableTooltip") contentTemplate!: TemplateRef<any>;
+  @Input("appTemplateTooltip") contentTemplate!: TemplateRef<any>;
 
   /**
    * Reference to the overlay (the Tooltip) to the control the visibility of the tooltip
@@ -138,7 +138,7 @@ export class CustomizableTooltipDirective implements OnInit, OnDestroy {
       //attach the component if it has not already attached to the overlay
       if (!this.overlayRef.hasAttached()) {
         const tooltipRef = this.overlayRef.attach(
-          new ComponentPortal(CustomizableTooltipComponent)
+          new ComponentPortal(TemplateTooltipComponent)
         );
         tooltipRef.instance.contentTemplate = this.contentTemplate;
         tooltipRef.instance.hide.subscribe(() => this.hide());

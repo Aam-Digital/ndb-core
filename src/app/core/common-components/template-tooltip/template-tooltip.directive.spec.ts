@@ -1,4 +1,4 @@
-import { CustomizableTooltipDirective } from "./customizable-tooltip.directive";
+import { TemplateTooltipDirective } from "./template-tooltip.directive";
 import {
   ComponentFixture,
   fakeAsync,
@@ -11,7 +11,7 @@ import { CommonModule } from "@angular/common";
 import { OverlayModule } from "@angular/cdk/overlay";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
-describe("CustomizableTooltipDirective", () => {
+describe("TemplateTooltipDirective", () => {
   let fixture: ComponentFixture<any>;
 
   function hoverOn(element: HTMLElement) {
@@ -36,7 +36,7 @@ describe("CustomizableTooltipDirective", () => {
 
   beforeEach(() => {
     fixture = TestBed.configureTestingModule({
-      declarations: [MockComponent, CustomizableTooltipDirective],
+      declarations: [MockComponent, TemplateTooltipDirective],
       imports: [CommonModule, OverlayModule, NoopAnimationsModule],
     }).createComponent(MockComponent);
     fixture.detectChanges();
@@ -95,11 +95,7 @@ describe("CustomizableTooltipDirective", () => {
 
 @Component({
   template: `
-    <div
-      [appCustomizableTooltip]="tooltip"
-      [delayHide]="150"
-      [delayShow]="1000"
-    >
+    <div [appTemplateTooltip]="tooltip" [delayHide]="150" [delayShow]="1000">
       Show Tooltip
     </div>
     <ng-template #tooltip><h2>Custom Tooltip</h2></ng-template>

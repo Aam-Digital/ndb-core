@@ -2,7 +2,7 @@
   class="mat-elevation-z1 attendance-block w-{{
     attendanceData.getWarningLevel(forChild)
   }}"
-  [appCustomizableTooltip]="tooltip"
+  [appTemplateTooltip]="tooltip"
 >
   <span *ngIf="attendanceData.getAttendancePercentage(forChild)">
     {{ attendanceData.getAttendancePercentage(forChild) | percent: "1.0-0" }}

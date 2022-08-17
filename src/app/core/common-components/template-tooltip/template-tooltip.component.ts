@@ -21,12 +21,12 @@ import {
  * - giving each tooltip the same border and background
  *
  * Usage is intended for internal use only. To display a custom tooltip,
- * refer to the {@link ./customizable-tooltip.directive.ts Customizable Tooltip Directive}
+ * refer to the {@link ./template-tooltip.directive.ts Template Tooltip Directive}
  */
 @Component({
-  selector: "app-customizable-tooltip",
-  templateUrl: "./customizable-tooltip.component.html",
-  styleUrls: ["./customizable-tooltip.component.scss"],
+  selector: "app-template-tooltip",
+  templateUrl: "./template-tooltip.component.html",
+  styleUrls: ["./template-tooltip.component.scss"],
   animations: [
     trigger("appear", [
       state(
@@ -45,7 +45,7 @@ import {
     ]),
   ],
 })
-export class CustomizableTooltipComponent {
+export class TemplateTooltipComponent {
   /**
    * This provides finer control on the content to be visible on the tooltip
    * This template will be injected in ToolTipRenderer directive in the consumer template
