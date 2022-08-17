@@ -96,31 +96,38 @@ export const defaultJsonConfig = {
   "enum:document-status": [
     {
       "id": "",
-      "label": ""
+      "label": "",
+      "_ordinal": 0,
     },
     {
       "id": "OK (copy with us)",
-      "label": $localize`:Document status:OK (copy with us)`
+      "label": $localize`:Document status:OK (copy with us)`,
+      "_ordinal": 1,
     },
     {
       "id": "OK (copy needed for us)",
-      "label": $localize`:Document status:OK (copy needed for us)`
+      "label": $localize`:Document status:OK (copy needed for us)`,
+      "_ordinal": 2,
     },
     {
       "id": "needs correction",
-      "label": $localize`:Document status:needs correction`
+      "label": $localize`:Document status:needs correction`,
+      "_ordinal": 3,
     },
     {
       "id": "applied",
-      "label": $localize`:Document status:applied`
+      "label": $localize`:Document status:applied`,
+      "_ordinal": 4,
     },
     {
       "id": "doesn't have",
-      "label": $localize`:Document status:doesn't have`
+      "label": $localize`:Document status:doesn't have`,
+      "_ordinal": 5,
     },
     {
       "id": "not eligible",
-      "label": $localize`:Document status:not eligible`
+      "label": $localize`:Document status:not eligible`,
+      "_ordinal": 6,
     }
   ],
   "enum:center": [
