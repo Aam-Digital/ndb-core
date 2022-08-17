@@ -16,6 +16,7 @@ import { LoginState } from "../../../core/session/session-states/login-state.enu
 function generateTestNote(forChildren: Child[]) {
   const testNote = Note.create(new Date(), "test note");
   testNote.category = {
+    _ordinal: 0,
     id: "CHILDREN_MEETING",
     label: "Children's Meeting",
     color: "#E1F5FE",

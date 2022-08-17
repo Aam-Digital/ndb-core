@@ -1,3 +1,5 @@
+import { ConfigurableEnumValue } from "../../../configurable-enum/configurable-enum.interface";
+
 /**
  * An enhanced sortingDataAccessor function that can be set for a MatTableDataSource
  * in order to support sorting by ConfigurableEnum columns and other Entity specific values.
@@ -5,8 +7,6 @@
  * @param data The object (table row); passed in by the data source
  * @param key The active sorting header key; passed in by the data source
  */
-import { ConfigurableEnumValue } from "../../../configurable-enum/configurable-enum.interface";
-
 export function getReadableValue<OBJECT, PROPERTY extends keyof OBJECT>(
   data: OBJECT,
   key: PROPERTY
