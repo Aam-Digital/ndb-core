@@ -1,4 +1,4 @@
-<div class="hint-badge" *ngIf="!hasCurrentlyActiveEntry">
+<app-pill class="hint-badge" *ngIf="!hasCurrentlyActiveEntry">
   Currently there is no active entry. To add a new entry, click on the
   <fa-icon
     class="pointer color-accent"
@@ -6,7 +6,7 @@
     icon="plus-circle"
     (click)="entitySubrecord.create()"></fa-icon>
   button.
-</div>
+</app-pill>
 
 <app-entity-subrecord
   #entitySubrecord

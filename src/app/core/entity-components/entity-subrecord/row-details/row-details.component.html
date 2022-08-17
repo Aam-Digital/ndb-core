@@ -29,10 +29,10 @@
   </div>
 
   <div *ngFor="let col of viewOnlyColumns">
-    <div
+    <app-pill
       [matTooltip]="col.tooltip"
       [style.background-color]="tempEntity.getColor()"
-      class="badge-label"
+      class="mat-body-strong"
     >
       <span *ngIf="col.label">{{ col.label }}:&nbsp;</span>
       <ng-template
@@ -45,11 +45,11 @@
         }
       }"
       ></ng-template>
-    </div>
+    </app-pill>
     <!-- avoid scroll bar + move delete into [...] menu -->
   </div>
 </div>
-<div mat-dialog-actions fxLayoutGap="10px">
+<div mat-dialog-actions>
   <button
     mat-raised-button
     (click)="save()"

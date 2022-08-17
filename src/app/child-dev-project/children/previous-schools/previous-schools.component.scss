@@ -3,8 +3,5 @@
 
 .hint-badge {
   background-color: mat.get-color-from-palette(mat.$light-theme-background-palette, status-bar);
-  padding: sizes.$small;
   margin-bottom: sizes.$regular;
-  border-radius: 100vmax;
-  width: max-content;
 }
