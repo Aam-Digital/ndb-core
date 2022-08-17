@@ -67,7 +67,7 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
   @Input("appTemplateTooltip") contentTemplate!: TemplateRef<any>;
 
   /**
-   * Reference to the overlay (the Tooltip) to the control the visibility of the tooltip
+   * Reference to the overlay (the Tooltip) to control the visibility of the tooltip
    * @private
    */
   private overlayRef!: OverlayRef;
