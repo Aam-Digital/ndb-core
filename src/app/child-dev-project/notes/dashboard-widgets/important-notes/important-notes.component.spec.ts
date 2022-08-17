@@ -16,6 +16,7 @@ describe("ImportantNotesComponent", () => {
     note.warningLevel = {
       id: wLevel,
       label: "",
+      _ordinal: 0,
     };
     return note;
   }
@@ -54,8 +55,8 @@ describe("ImportantNotesComponent", () => {
   });
 
   it("shows notes that have a high warning level", () => {
-    const expectedNotes = mockNotes.filter(
-      (note) => note.warningLevel.id in ["WARNING", "URGENT"]
+    const expectedNotes = mockNotes.filter((note) =>
+      ["WARNING", "URGENT"].includes(note.warningLevel.id)
     );
     expect(component.relevantNotes).toEqual(expectedNotes);
   });

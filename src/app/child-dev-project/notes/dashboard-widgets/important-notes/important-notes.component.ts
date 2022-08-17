@@ -49,9 +49,10 @@ export class ImportantNotesComponent
     this.notes.pipe(first()).subscribe(() => (this.loading = false));
     this.notes.pipe(untilDestroyed(this)).subscribe((next) => {
       this.relevantNotes = next.filter((note) => this.noteIsRelevant(note));
-      this.notesDataSource.data = this.relevantNotes.sort(
+      this.relevantNotes.sort(
         (a, b) => b.warningLevel._ordinal - a.warningLevel._ordinal
       );
+      this.notesDataSource.data = this.relevantNotes;
     });
   }
 
