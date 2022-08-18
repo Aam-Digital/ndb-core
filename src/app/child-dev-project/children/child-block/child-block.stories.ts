@@ -21,8 +21,7 @@ const demoChild = new Child("1");
 demoChild.name = "John Doe";
 addDefaultChildPhoto(demoChild);
 demoChild.projectNumber = "99";
-// @ts-ignore
-demoChild.phone = "+49 199 1234567"; // @ts-ignore
+demoChild.phone = "+49 199 1234567";
 demoChild.schoolClass = "5";
 
 const Template: Story<ChildBlockComponent> = (args: ChildBlockComponent) => ({
