@@ -25,6 +25,9 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { TabStateModule } from "../../utils/tab-state/tab-state.module";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Angulartics2Module } from "angulartics2";
+import { PasswordFormComponent } from "./password-form/password-form.component";
+import { ReactiveFormsModule } from "@angular/forms";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 /**
  * Provides a User functionality including user account forms.
@@ -39,7 +42,10 @@ import { Angulartics2Module } from "angulartics2";
     TabStateModule,
     MatTooltipModule,
     Angulartics2Module,
+    ReactiveFormsModule,
+    FontAwesomeModule
   ],
-  declarations: [UserAccountComponent],
+  declarations: [UserAccountComponent, PasswordFormComponent],
 })
-export class UserModule {}
+export class UserModule {
+}

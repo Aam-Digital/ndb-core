@@ -20,6 +20,7 @@ import { SessionService } from "../../session/session-service/session.service";
 import { environment } from "../../../../environments/environment";
 import { SessionType } from "../../session/session-type";
 import { AuthService } from "../../session/auth/auth.service";
+import { CouchdbAuthService } from "../../session/auth/couchdb-auth.service";
 
 /**
  * User account form to allow the user to view and edit information.
@@ -36,11 +37,16 @@ export class UserAccountComponent implements OnInit {
   /** whether password change is disallowed because of demo mode */
   disabledForDemoMode: boolean;
   disabledForOfflineMode: boolean;
+  couchdbAuthService: CouchdbAuthService;
 
   constructor(
     private sessionService: SessionService,
     public authService: AuthService
-  ) {}
+  ) {
+    if (this.authService instanceof CouchdbAuthService) {
+      this.couchdbAuthService = this.authService;
+    }
+  }
 
   ngOnInit() {
     this.checkIfPasswordChangeAllowed();

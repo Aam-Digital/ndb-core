@@ -37,7 +37,14 @@
           [matTooltipDisabled]="!disabledForOfflineMode && !disabledForDemoMode"
           style="width: fit-content"
         >
+          <app-password-form
+            *ngIf="couchdbAuthService"
+            [couchdbAuthService]="couchdbAuthService"
+            [username]="username"
+            [disabled]="disabledForDemoMode || disabledForOfflineMode"
+          ></app-password-form>
           <button
+            *ngIf="!couchdbAuthService"
             mat-stroked-button
             angulartics2On="click"
             angularticsCategory="User"
