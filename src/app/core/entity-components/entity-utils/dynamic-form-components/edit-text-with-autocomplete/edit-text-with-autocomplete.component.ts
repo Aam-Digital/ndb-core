@@ -24,8 +24,8 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
   matAutocompleteDisabled: boolean = false;
   additional: {
     entityType: string;
-    relevantProperty: string;
-    relevantValue: string;
+    relevantProperty?: string;
+    relevantValue?: string;
   };
   lastValue: string = "";
 
@@ -108,6 +108,8 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
       this.selectedEntity = selected;
       const schema = selected.getSchema();
       if (
+        this.additional.relevantProperty &&
+        this.additional.relevantValue &&
         !selected[this.additional.relevantProperty].includes(
           this.additional.relevantValue
         )

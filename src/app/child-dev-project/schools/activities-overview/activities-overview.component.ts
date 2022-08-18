@@ -18,7 +18,11 @@ export class ActivitiesOverviewComponent implements OnInitDynamicComponent {
   titleColumn = {
     id: "title",
     edit: "EditTextWithAutocomplete",
-    additional: {},
+    additional: {
+      entityType: "RecurringActivity",
+      relevantProperty: "linkedGroups",
+      relevantValue: "",
+    },
   };
   columns: FormFieldConfig[] = [
     this.titleColumn,
@@ -39,6 +43,7 @@ export class ActivitiesOverviewComponent implements OnInitDynamicComponent {
     }
 
     this.entity = config.entity;
+    this.titleColumn.additional.relevantValue = this.entity.getId();
     this.records = (
       await this.entityMapper.loadType<RecurringActivity>(RecurringActivity)
     ).filter((activity) => activity.linkedGroups.includes(this.entity.getId()));
@@ -59,18 +64,6 @@ export class ActivitiesOverviewComponent implements OnInitDynamicComponent {
         }
       });
   }
-
-  /**
-   *
-   *  Requirements for the autocomplete title field:
-   *  - if an activity from the auto suggested list of activities is selected, load this activity
-   *  - if the entered string is not part of any activity, create a new activity
-   *  - if the entered string equals exactly a title of an activity and if this title is unique, load this activity ??
-   *  - if the entered string is part of exacty one activity, load this activity ??
-   *  - add a suggestion for creating a new activity to the autocomplete list ??
-   *
-   *
-   */
 
   generateNewRecordFactory(): () => RecurringActivity {
     return () => {
