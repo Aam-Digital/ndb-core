@@ -3,7 +3,6 @@ import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
 import { Child } from "../model/child";
 import { Aser } from "./model/aser";
-import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 import { mathLevels, readingLevels } from "./model/skill-levels";
 import { WarningLevel } from "../../../core/entity/model/warning-level";
 import { getEarlierDateOrToday } from "../../../utils/utils";
@@ -79,10 +78,7 @@ export class DemoAserGeneratorService extends DemoDataGenerator<Aser> {
    * @param skillRange The array of skill levels for the desired subject (mathLevels or readingLevels)
    * @param previousSkillLevel The string indicating the level from the previous test for this subject
    */
-  private selectNextSkillLevel(
-    skillRange: ConfigurableEnumValue[],
-    previousSkillLevel: ConfigurableEnumValue
-  ): ConfigurableEnumValue {
+  private selectNextSkillLevel<T>(skillRange: T[], previousSkillLevel: T): T {
     const previousSkillLevelIndex = skillRange.indexOf(previousSkillLevel);
 
     let nextSkillLevelIndex;
