@@ -24,7 +24,7 @@ import {
  * refer to the {@link ./template-tooltip.directive.ts Template Tooltip Directive}
  */
 @Component({
-  selector: "app-template-tooltip",
+  selector: TemplateTooltipComponent.SELECTOR,
   templateUrl: "./template-tooltip.component.html",
   styleUrls: ["./template-tooltip.component.scss"],
   animations: [
@@ -46,6 +46,7 @@ import {
   ],
 })
 export class TemplateTooltipComponent {
+  static readonly SELECTOR = "app-template-tooltip";
   /**
    * This provides finer control on the content to be visible on the tooltip
    * This template will be injected in ToolTipRenderer directive in the consumer template

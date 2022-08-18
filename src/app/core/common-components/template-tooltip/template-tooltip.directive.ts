@@ -55,7 +55,7 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
   /**
    * The template that is shown in the tooltip.
    * You can get the template ref of an HTML-Element by using the `#<template name>` syntax.
-   * An `<ng-template>` Element won't be shown to the user by default. Therefore it is the most commonly
+   * An `<ng-template>` Element won't be shown to the user by default. Therefore, it is the most commonly
    * used element.
    *
    * @example
@@ -113,9 +113,15 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
     this.show();
   }
 
-  @HostListener("mouseleave")
-  onMouseLeave() {
-    this.hide();
+  @HostListener("mouseleave", ["$event.relatedTarget"])
+  onMouseLeave(relatedTarget: HTMLElement) {
+    // This ensures that `hide` is not called when the popup overlaps the element that this directive is on.
+    // If the method was called, the popup would flicker; disappearing (because of this method) and then
+    // re-appearing because of the `mouseenter` method.
+    if (
+      relatedTarget?.tagName !== TemplateTooltipComponent.SELECTOR.toUpperCase()
+    )
+      this.hide();
   }
 
   /**
