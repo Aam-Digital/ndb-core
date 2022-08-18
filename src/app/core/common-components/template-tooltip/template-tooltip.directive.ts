@@ -36,7 +36,7 @@ import { TemplateTooltipComponent } from "./template-tooltip.component";
 })
 export class TemplateTooltipDirective implements OnInit, OnDestroy {
   /**
-   * Whether to disable the tooltip so it won't ever be shown
+   * Whether to disable the tooltip, so it won't ever be shown
    */
   @Input() tooltipDisabled: boolean = false;
 
@@ -73,7 +73,7 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
   private overlayRef!: OverlayRef;
 
   /**
-   * The timeout used to deal both with the show-delay as well as the hide-delay
+   * The timeout used to deal both with the show-delay and the hide-delay
    * @see delayHide
    * @see delayShow
    * @private
