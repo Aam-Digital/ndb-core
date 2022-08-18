@@ -1,4 +1,11 @@
-import { Component, Input, OnChanges, SimpleChanges, ViewChild, ViewEncapsulation, } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  ViewChild,
+  ViewEncapsulation,
+} from "@angular/core";
 import { Note } from "../../notes/model/note";
 import {
   MatCalendar,
@@ -24,7 +31,7 @@ import { AnalyticsService } from "../../../core/analytics/analytics.service";
   selector: "app-attendance-calendar",
   templateUrl: "./attendance-calendar.component.html",
   styleUrls: ["./attendance-calendar.component.scss"],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 @UntilDestroy()
 export class AttendanceCalendarComponent implements OnChanges {

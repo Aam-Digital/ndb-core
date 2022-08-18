@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewEncapsulation,
+} from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { FormFieldConfig } from "./FormConfig";
 import { EntityForm, EntityFormService } from "../entity-form.service";
@@ -48,6 +55,7 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
       })
     );
   }
+
   _columns: FormFieldConfig[][] = [];
   @Input() columnHeaders?: (string | null)[];
 

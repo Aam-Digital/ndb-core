@@ -2,10 +2,9 @@ import { DemoChildGenerator } from "../../demo-data-generators/demo-child-genera
 import { DemoDataGenerator } from "../../../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
 import { Child } from "../../model/child";
+import { faker } from "../../../../core/demo-data/faker";
 import { HealthCheck } from "../model/health-check";
 import { heightRangeForAge, weightRangeForAge } from "./height-weight";
-import { getEarlierDateOrToday } from "../../../../utils/utils";
-import { faker } from "../../../../core/demo-data/faker";
 
 /**
  * Generate HealthCheck records every 6 months for children up to the age of 12.
@@ -66,7 +65,7 @@ export class DemoHealthCheckGeneratorService extends DemoDataGenerator<HealthChe
       }
       previousRecord = record;
     } while (
-      date < getEarlierDateOrToday(child.dropoutDate) &&
+      date < faker.getEarlierDateOrToday(child.dropoutDate) &&
       this.getAgeAtDate(child, date) < 11
     );
 

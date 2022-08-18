@@ -1,7 +1,7 @@
+import { faker } from "../../core/demo-data/faker";
 import { School } from "./model/school";
 import { Injectable } from "@angular/core";
 import { DemoDataGenerator } from "../../core/demo-data/demo-data-generator";
-import { faker } from "../../core/demo-data/faker";
 
 export class DemoSchoolConfig {
   count: number;

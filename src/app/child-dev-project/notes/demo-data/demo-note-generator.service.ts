@@ -3,6 +3,7 @@ import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
 import { Child } from "../../children/model/child";
 import { Note } from "../model/note";
+import { faker } from "../../../core/demo-data/faker";
 import { warningLevels } from "../../warning-levels";
 import { noteIndividualStories } from "./notes_individual-stories";
 import { noteGroupStories } from "./notes_group-stories";
@@ -12,8 +13,6 @@ import moment from "moment";
 import { AttendanceLogicalStatus } from "../../attendance/model/attendance-status";
 import { DemoUserGeneratorService } from "../../../core/user/demo-user-generator.service";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
-import { getEarlierDateOrToday } from "../../../utils/utils";
-import { faker } from "../../../core/demo-data/faker";
 
 export class DemoNoteConfig {
   minNotesPerChild: number;
@@ -72,7 +71,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
             child,
             faker.date.between(
               moment().subtract(6, "days").toDate(),
-              getEarlierDateOrToday(child.dropoutDate)
+              faker.getEarlierDateOrToday(child.dropoutDate)
             )
           )
         );
@@ -110,7 +109,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     if (!date) {
       date = faker.date.between(
         child.admissionDate,
-        getEarlierDateOrToday(child.dropoutDate)
+        faker.getEarlierDateOrToday(child.dropoutDate)
       );
     }
     note.date = date;

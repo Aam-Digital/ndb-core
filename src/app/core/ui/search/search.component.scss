@@ -1,6 +1,6 @@
-@use "@angular/material/theming" as *;
+@use "@angular/material" as mat;
 
 .result-hint {
-  background-color: mat-color($mat-light-theme-background, status-bar);
+  background-color: mat.get-color-from-palette(mat.$light-theme-background-palette, status-bar);
   font-style: italic;
 }

@@ -18,7 +18,10 @@ export default {
   decorators: [
     moduleMetadata({
       imports: [AttendanceModule, MatNativeDateModule],
-      providers: [{ provide: EntityMapperService, useValue: null }, {provide: ConfigService, useValue: {}}],
+      providers: [
+        { provide: EntityMapperService, useValue: null },
+        { provide: ConfigService, useValue: {} },
+      ],
     }),
   ],
 } as Meta;
@@ -83,9 +86,3 @@ PeriodWithoutEvents.args = {
   attendanceData: attendanceRecordEmpty,
   forChild: "1",
 };
-
-export const WithTooltip = Template.bind({});
-WithTooltip.args = {
-  attendanceData: attendanceRecord3,
-  forChild: "1",
-}

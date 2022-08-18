@@ -25,21 +25,6 @@ export function getParentUrl(router: Router): string {
 }
 
 /**
- * Return the given date if it is defined and earlier than today's date
- * otherwise return a Date representing today.
- * @param date The date to be compared
- */
-export function getEarlierDateOrToday(date: Date): Date {
-  const today = new Date();
-
-  if (!date || date > today) {
-    return today;
-  } else {
-    return date;
-  }
-}
-
-/**
  * Group an array by the given property into a map of parts of the array.
  *
  * @param array A simple array to be grouped.

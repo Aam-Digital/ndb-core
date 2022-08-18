@@ -16,15 +16,15 @@ import { CommonComponentsModule } from "../common-components/common-components.m
  * Use the {@link ConfirmationDialogService} for this.
  */
 @NgModule({
-    imports: [
-        CommonModule,
-        MatDialogModule,
-        MatButtonModule,
-        MatIconModule,
-        MatRippleModule,
-        FontAwesomeModule,
-        CommonComponentsModule
-    ],
+  imports: [
+    CommonModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatIconModule,
+    MatRippleModule,
+    FontAwesomeModule,
+    CommonComponentsModule,
+  ],
   declarations: [ConfirmationDialogComponent],
   providers: [ConfirmationDialogService],
 })
