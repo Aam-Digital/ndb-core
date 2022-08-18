@@ -3,11 +3,10 @@ import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { OIDCTokenResponse, KeycloakAuthService } from "./keycloak-auth.service";
 import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
 import { of, throwError } from "rxjs";
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import { RemoteSession } from "../session-service/remote-session";
+import { HttpClient, HttpErrorResponse, HttpStatusCode } from "@angular/common/http";
 import { DatabaseUser } from "../session-service/local-user";
 
-function remoteSessionHttpFake(_url, body) {
+function keycloakAuthHttpFake(_url, body) {
   const params = new URLSearchParams(body);
   const isValidPassword =
     params.get("username") === TEST_USER &&
@@ -19,7 +18,7 @@ function remoteSessionHttpFake(_url, body) {
     return throwError(
       () =>
         new HttpErrorResponse({
-          status: RemoteSession.UNAUTHORIZED_STATUS_CODE,
+          status: HttpStatusCode.Unauthorized,
         })
     );
   }
@@ -55,7 +54,7 @@ describe("KeycloakAuthService", () => {
 
   beforeEach(() => {
     mockHttpClient = jasmine.createSpyObj(["post"]);
-    mockHttpClient.post.and.callFake(remoteSessionHttpFake);
+    mockHttpClient.post.and.callFake(keycloakAuthHttpFake);
     TestBed.configureTestingModule({
       providers: [
         { provide: HttpClient, useValue: mockHttpClient },
@@ -69,7 +68,7 @@ describe("KeycloakAuthService", () => {
   });
 
   afterEach(() =>
-    window.localStorage.removeItem(RemoteSession.REFRESH_TOKEN_KEY)
+    window.localStorage.removeItem(KeycloakAuthService.REFRESH_TOKEN_KEY)
   );
 
   it("should be created", () => {
@@ -82,7 +81,7 @@ describe("KeycloakAuthService", () => {
     expect(user).toEqual(dbUser);
   });
 
-  it("should store access token in remote session and refresh token in local storage", async () => {
+  it("should store access token in memory and refresh token in local storage", async () => {
     await service.authenticate(TEST_USER, TEST_PASSWORD);
 
     expect(service.accessToken).toBe(jwtTokenResponse.access_token);
@@ -122,7 +121,7 @@ describe("KeycloakAuthService", () => {
   });
 
   it("should login, if there is a valid refresh token", async () => {
-    localStorage.setItem(RemoteSession.REFRESH_TOKEN_KEY, "some-refresh-token");
+    localStorage.setItem(KeycloakAuthService.REFRESH_TOKEN_KEY, "some-refresh-token");
     mockHttpClient.post.and.returnValue(of(jwtTokenResponse));
     const user = await service.autoLogin();
     expect(user).toEqual(dbUser);

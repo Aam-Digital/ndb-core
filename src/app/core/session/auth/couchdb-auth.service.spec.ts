@@ -1,10 +1,9 @@
 import { TestBed } from "@angular/core/testing";
 
 import { CouchdbAuthService } from "./couchdb-auth.service";
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse, HttpStatusCode } from "@angular/common/http";
 import { of, throwError } from "rxjs";
 import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
-import { RemoteSession } from "../session-service/remote-session";
 
 describe("CouchdbAuthService", () => {
   let service: CouchdbAuthService;
@@ -21,7 +20,7 @@ describe("CouchdbAuthService", () => {
         return throwError(
           () =>
             new HttpErrorResponse({
-              status: RemoteSession.UNAUTHORIZED_STATUS_CODE,
+              status: HttpStatusCode.Unauthorized,
             })
         );
       }

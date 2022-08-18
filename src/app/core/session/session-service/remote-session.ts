@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { Injectable } from "@angular/core";
-import { HttpErrorResponse } from "@angular/common/http";
+import { HttpErrorResponse, HttpStatusCode } from "@angular/common/http";
 import { DatabaseUser } from "./local-user";
 import { SessionService } from "./session.service";
 import { LoginState } from "../session-states/login-state.enum";
@@ -34,9 +34,6 @@ import { AuthService } from "../auth/auth.service";
 @Injectable()
 export class RemoteSession extends SessionService {
   static readonly LAST_LOGIN_KEY = "LAST_REMOTE_LOGIN";
-  static readonly REFRESH_TOKEN_KEY = "REFRESH_TOKEN";
-  // See https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
-  static readonly UNAUTHORIZED_STATUS_CODE = 401;
   /** remote (!) PouchDB  */
   private readonly database: PouchDatabase;
   private currentDBUser: DatabaseUser;
@@ -68,7 +65,7 @@ export class RemoteSession extends SessionService {
       this.loginState.next(LoginState.LOGGED_IN);
     } catch (error) {
       const httpError = error as HttpErrorResponse;
-      if (httpError?.status === RemoteSession.UNAUTHORIZED_STATUS_CODE) {
+      if (httpError?.status === HttpStatusCode.Unauthorized) {
         this.loginState.next(LoginState.LOGIN_FAILED);
       } else {
         this.loginState.next(LoginState.UNAVAILABLE);
@@ -88,7 +85,7 @@ export class RemoteSession extends SessionService {
             this.authService.addAuthHeader(opts.headers);
             return PouchDB.fetch(
               AppSettings.DB_PROXY_PREFIX +
-                url.split(AppSettings.DB_PROXY_PREFIX)[1],
+              url.split(AppSettings.DB_PROXY_PREFIX)[1],
               opts
             );
           }

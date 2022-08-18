@@ -1,6 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 import { RemoteSession } from "./remote-session";
-import { HttpErrorResponse } from "@angular/common/http";
+import { HttpErrorResponse, HttpStatusCode } from "@angular/common/http";
 import { SessionType } from "../session-type";
 import { LoggingService } from "../../logging/logging.service";
 import { testSessionServiceImplementation } from "./session.service.spec";
@@ -22,7 +22,7 @@ describe("RemoteSessionService", () => {
         return { name: TEST_USER, roles: ["user_app"] };
       } else {
         throw new HttpErrorResponse({
-          status: RemoteSession.UNAUTHORIZED_STATUS_CODE,
+          status: HttpStatusCode.Unauthorized,
         });
       }
     });

@@ -3,12 +3,11 @@ import { AuthService } from "./auth.service";
 import {
   HttpClient,
   HttpErrorResponse,
-  HttpHeaders,
+  HttpHeaders, HttpStatusCode,
 } from "@angular/common/http";
 import { firstValueFrom } from "rxjs";
 import { DatabaseUser } from "../session-service/local-user";
 import { AppSettings } from "../../app-config/app-settings";
-import { RemoteSession } from "../session-service/remote-session";
 
 @Injectable()
 export class CouchdbAuthService extends AuthService {
@@ -44,7 +43,7 @@ export class CouchdbAuthService extends AuthService {
         return res.userCtx;
       } else {
         throw new HttpErrorResponse({
-          status: RemoteSession.UNAUTHORIZED_STATUS_CODE,
+          status: HttpStatusCode.Unauthorized,
         });
       }
     });

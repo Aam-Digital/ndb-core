@@ -21,7 +21,7 @@ import { LocalSession } from "./local-session";
 import { RemoteSession } from "./remote-session";
 import { SessionType } from "../session-type";
 import { fakeAsync, flush, TestBed, tick } from "@angular/core/testing";
-import { HttpErrorResponse } from "@angular/common/http";
+import { HttpErrorResponse, HttpStatusCode } from "@angular/common/http";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { DatabaseUser } from "./local-user";
 import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
@@ -37,12 +37,8 @@ describe("SyncedSessionService", () => {
   let sessionService: SyncedSessionService;
   let localSession: LocalSession;
   let remoteSession: RemoteSession;
-  let localLoginSpy: jasmine.Spy<
-    (username: string, password: string) => Promise<LoginState>
-  >;
-  let remoteLoginSpy: jasmine.Spy<
-    (username: string, password: string) => Promise<LoginState>
-  >;
+  let localLoginSpy: jasmine.Spy<(username: string, password: string) => Promise<LoginState>>;
+  let remoteLoginSpy: jasmine.Spy<(username: string, password: string) => Promise<LoginState>>;
   let dbUser: DatabaseUser;
   let syncSpy: jasmine.Spy<() => Promise<void>>;
   let liveSyncSpy: jasmine.Spy<() => void>;
@@ -62,7 +58,7 @@ describe("SyncedSessionService", () => {
         return dbUser;
       } else {
         throw new HttpErrorResponse({
-          status: RemoteSession.UNAUTHORIZED_STATUS_CODE,
+          status: HttpStatusCode.Unauthorized,
         });
       }
     });
@@ -271,7 +267,7 @@ describe("SyncedSessionService", () => {
     let rejectError;
     if (!offline) {
       rejectError = new HttpErrorResponse({
-        status: RemoteSession.UNAUTHORIZED_STATUS_CODE,
+        status: HttpStatusCode.Unauthorized,
       });
     }
     mockAuthService.authenticate.and.rejectWith(rejectError);

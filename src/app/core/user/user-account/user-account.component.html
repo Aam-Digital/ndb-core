@@ -33,15 +33,15 @@
           </mat-form-field>
         </p>
         <div
-          [matTooltip]="getPasswordResetDisabledTooltip()"
-          [matTooltipDisabled]="!disabledForOfflineMode && !disabledForDemoMode"
+          [matTooltip]="tooltipText"
+          [matTooltipDisabled]="!passwordChangeDisabled"
           style="width: fit-content"
         >
           <app-password-form
             *ngIf="couchdbAuthService"
             [couchdbAuthService]="couchdbAuthService"
             [username]="username"
-            [disabled]="disabledForDemoMode || disabledForOfflineMode"
+            [disabled]="passwordChangeDisabled"
           ></app-password-form>
           <button
             *ngIf="!couchdbAuthService"
@@ -50,7 +50,7 @@
             angularticsCategory="User"
             angularticsAction="password_update"
             (click)="authService.changePassword()"
-            [disabled]="disabledForDemoMode || disabledForOfflineMode"
+            [disabled]="passwordChangeDisabled"
             i18n="Button which opens password reset page"
           >
             Change Password

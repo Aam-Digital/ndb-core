@@ -34,9 +34,8 @@ export class UserAccountComponent implements OnInit {
   /** user to be edited */
   username: string;
 
-  /** whether password change is disallowed because of demo mode */
-  disabledForDemoMode: boolean;
-  disabledForOfflineMode: boolean;
+  passwordChangeDisabled = false;
+  tooltipText;
   couchdbAuthService: CouchdbAuthService;
 
   constructor(
@@ -54,23 +53,14 @@ export class UserAccountComponent implements OnInit {
   }
 
   checkIfPasswordChangeAllowed() {
-    this.disabledForDemoMode = false;
-    this.disabledForOfflineMode = false;
+    this.passwordChangeDisabled = false;
+    this.tooltipText = "";
 
     if (environment.session_type !== SessionType.synced) {
-      this.disabledForDemoMode = true;
+      this.passwordChangeDisabled = true;
+      this.tooltipText = $localize`:Password reset disabled tooltip:Password change is not allowed in demo mode.`;
     } else if (!navigator.onLine) {
-      this.disabledForOfflineMode = true;
-    }
-  }
-
-  getPasswordResetDisabledTooltip(): string {
-    if (this.disabledForDemoMode) {
-      return $localize`:Password reset disabled tooltip:Password change is not allowed in demo mode.`;
-    } else if (this.disabledForOfflineMode) {
-      return $localize`:Password reset disabled tooltip:Password change is not possible while being offline.`;
-    } else {
-      return "";
+      this.tooltipText = $localize`:Password reset disabled tooltip:Password change is not possible while being offline.`;
     }
   }
 }
