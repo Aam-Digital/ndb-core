@@ -2,6 +2,9 @@
 
 $max-icon-width           : 22px;
 $standard-icon            : 1.5em;
+// This is the maximum width a text should have in order not to
+// show too much text at a time in a line which hinders readability
+$max-text-width           : 60rem;
 
 $standard-sizes: (
   small   : 0.5em,

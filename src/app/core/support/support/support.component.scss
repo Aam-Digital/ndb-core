@@ -14,7 +14,7 @@ $table-padding-vertical   : 16px;
 $table-padding            : $table-padding-vertical $table-padding-horizontal;
 
 .container {
-  max-width: 60rem;
+  max-width: sizes.$max-text-width;
   margin: 0 auto;
 }
 

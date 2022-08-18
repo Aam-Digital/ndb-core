@@ -49,3 +49,10 @@ $sides: right, left, top, bottom;
 .width-1-3   { width: 33.3%; }
 .full-width  { width: 100%;  }
 .full-height { height: 100%  }
+
+/* Use this class with a large paragraph of text so that the length
+ * of single lines does not become too large which hinders readability
+ */
+.text-width-max {
+  max-width: sizes.$max-text-width;
+}
