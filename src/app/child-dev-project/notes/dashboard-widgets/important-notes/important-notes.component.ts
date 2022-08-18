@@ -48,6 +48,7 @@ export class ImportantNotesComponent
     // set loading to `false` when the first chunk of notes (the initial notes) have arrived
     this.notes.pipe(first()).subscribe(() => (this.loading = false));
     this.notes.pipe(untilDestroyed(this)).subscribe((next) => {
+      console.log("first call of 'notes'");
       this.relevantNotes = next.filter((note) => this.noteIsRelevant(note));
       this.relevantNotes.sort(
         (a, b) => b.warningLevel._ordinal - a.warningLevel._ordinal

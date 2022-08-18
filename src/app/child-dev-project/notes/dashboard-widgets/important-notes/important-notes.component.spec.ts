@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, fakeAsync, TestBed } from "@angular/core/testing";
 
 import { ImportantNotesComponent } from "./important-notes.component";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
@@ -41,13 +36,14 @@ describe("ImportantNotesComponent", () => {
     }).compileComponents();
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     fixture = TestBed.createComponent(ImportantNotesComponent);
     component = fixture.componentInstance;
     component.onInitFromDynamicConfig({
       warningLevels: ["WARNING", "URGENT"],
     });
     fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it("should create", () => {
@@ -55,11 +51,9 @@ describe("ImportantNotesComponent", () => {
   });
 
   it("shows notes that have a high warning level", fakeAsync(() => {
-    const expectedNotes = mockNotes.filter((note) =>
-      ["WARNING", "URGENT"].includes(note.warningLevel.id)
-    );
-    tick();
-    console.log(component.relevantNotes);
+    const expectedNotes = mockNotes
+      .filter((note) => ["WARNING", "URGENT"].includes(note.warningLevel.id))
+      .reverse();
     expect(component.relevantNotes).toEqual(expectedNotes);
   }));
 });
