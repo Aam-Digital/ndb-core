@@ -1,4 +1,9 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from "@angular/core/testing";
 
 import { ImportantNotesComponent } from "./important-notes.component";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
@@ -6,22 +11,17 @@ import { LoginState } from "../../../../core/session/session-states/login-state.
 import { Note } from "../../model/note";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
 import { MatPaginatorModule } from "@angular/material/paginator";
+import { warningLevels } from "../../../warning-levels";
 
 describe("ImportantNotesComponent", () => {
   let component: ImportantNotesComponent;
   let fixture: ComponentFixture<ImportantNotesComponent>;
 
-  function createNote(wLevel: string) {
+  const mockNotes = warningLevels.map((wLevel) => {
     const note = Note.create(new Date());
-    note.warningLevel = {
-      id: wLevel,
-      label: "",
-      _ordinal: 0,
-    };
+    note.warningLevel = wLevel;
     return note;
-  }
-
-  const mockNotes = ["WARNING", "WARNING", "URGENT", "OK", ""].map(createNote);
+  });
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -54,10 +54,12 @@ describe("ImportantNotesComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("shows notes that have a high warning level", () => {
+  it("shows notes that have a high warning level", fakeAsync(() => {
     const expectedNotes = mockNotes.filter((note) =>
       ["WARNING", "URGENT"].includes(note.warningLevel.id)
     );
+    tick();
+    console.log(component.relevantNotes);
     expect(component.relevantNotes).toEqual(expectedNotes);
-  });
+  }));
 });
