@@ -66,10 +66,8 @@ import { DashboardModule } from "../../core/dashboard/dashboard.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ExportModule } from "../../core/export/export.module";
 import { BirthdayDashboardComponent } from "./dashboard-widgets/birthday-dashboard/birthday-dashboard.component";
-import { ChildBlockTooltipComponent } from './child-block/child-block-tooltip/child-block-tooltip.component';
-import {
-  CommonComponentsModule
-} from "../../core/common-components/common-components.module";
+import { ChildBlockTooltipComponent } from "./child-block/child-block-tooltip/child-block-tooltip.component";
+import { CommonComponentsModule } from "../../core/common-components/common-components.module";
 
 @NgModule({
   imports: [
@@ -112,7 +110,7 @@ import {
     DashboardModule,
     FontAwesomeModule,
     ExportModule,
-    CommonComponentsModule
+    CommonComponentsModule,
   ],
   declarations: [
     ChildBlockComponent,

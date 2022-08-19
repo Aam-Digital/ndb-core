@@ -1,15 +1,13 @@
 <span
   *ngIf="entity"
-  [appCustomizableTooltip]="tooltip"
+  [appTemplateTooltip]="tooltip"
   [tooltipDisabled]="tooltipDisabled"
   [class.inactive]="!entity.isActive"
-  class="truncate-text"
+  class="truncate-text container"
 >
   <img [src]="entity.photo?.photo?.value" class="child-pic" alt=""/>
-  <span class="mat-body-1">{{ entity?.name }}</span>
-  <small class="additional-number" [class.additional-number-active]="entity.isActive" *ngIf="entity?.projectNumber"
-    > ({{ entity?.projectNumber }})</small
-  >
+  <span class="font-size-rel">{{ entity?.toString() }}</span>
+  <span class="subnote" *ngIf="entity?.projectNumber"> ({{ entity?.projectNumber }})</span>
 </span>
 
 <ng-template #tooltip>

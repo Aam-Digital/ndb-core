@@ -1,25 +1,22 @@
-@use "src/styles/variables/sizes";
-@use "@angular/material" as mat;
 
 .child-pic {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  vertical-align: middle;
   object-fit: cover;
-  margin-right: sizes.$small;
+  margin-right: 4px;
+  vertical-align: middle;
 }
 
-.additional-number {
-  font-size: x-small;
-}
-
-.additional-number-active {
-  color: mat.get-color-from-palette(mat.$light-theme-foreground-palette, secondary-text);
+.child-pic-large {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .inactive {
-  color: mat.get-color-from-palette(mat.$light-theme-foreground-palette, disabled);
+  color: grey;
 }
 
 .container {

@@ -53,5 +53,4 @@ export class ChildBlockComponent implements OnInitDynamicComponent, OnChanges {
     this.linkDisabled = config.linkDisabled;
     this.tooltipDisabled = config.tooltipDisabled;
   }
-
 }

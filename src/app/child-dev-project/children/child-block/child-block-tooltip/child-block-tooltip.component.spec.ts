@@ -1,16 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { ChildBlockTooltipComponent } from './child-block-tooltip.component';
+import { ChildBlockTooltipComponent } from "./child-block-tooltip.component";
 
-describe('ChildBlockTooltipComponent', () => {
+describe("ChildBlockTooltipComponent", () => {
   let component: ChildBlockTooltipComponent;
   let fixture: ComponentFixture<ChildBlockTooltipComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ChildBlockTooltipComponent ]
-    })
-    .compileComponents();
+      declarations: [ChildBlockTooltipComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('ChildBlockTooltipComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });
