@@ -35,6 +35,9 @@ import { AlertDisplay } from "./alert-display";
  */
 @Injectable()
 export class AlertService {
+  /** All alerts currently to be displayed */
+  alerts: AlertConfig[] = [];
+
   private static ALERT_CLASS_PREFIX = "alert--";
 
   constructor(public snackBar: MatSnackBar) {}
@@ -43,9 +46,13 @@ export class AlertService {
    * Display the given alert.
    * @param alert The alert instance to be displayed
    */
-  public addAlert(alert: AlertConfig) {
+  addAlert(alert: AlertConfig) {
+    this.alerts.push(alert);
+    this.displayAlert(alert);
+  }
+
+  private displayAlert(alert: AlertConfig) {
     const snackConfig: MatSnackBarConfig = {
-      data: alert,
       duration: 10000,
     };
 
