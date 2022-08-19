@@ -19,22 +19,13 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 import { AlertService } from "./alert.service";
-import { MatButtonModule } from "@angular/material/button";
-import { MatCardModule } from "@angular/material/card";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 /**
  * Show alert message to the user informing about events or errors.
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    MatSnackBarModule,
-    MatCardModule,
-    MatButtonModule,
-    FontAwesomeModule,
-  ],
+  imports: [CommonModule, MatSnackBarModule],
   providers: [AlertService],
 })
 export class AlertsModule {}

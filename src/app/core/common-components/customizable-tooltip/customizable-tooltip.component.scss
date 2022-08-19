@@ -1,9 +1,0 @@
-@use "sass:color";
-@use "../../../../../node_modules/@angular/material/theming" as *;
-
-.tooltip-wrapper {
-  background-color: mat-color($mat-light-theme-background, card);
-  border-radius: 4px;
-  border: 1px solid mat-color($mat-grey, 400);
-  transform-origin: center 0;
-}

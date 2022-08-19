@@ -40,7 +40,7 @@ export class AlertService {
 
   private static ALERT_CLASS_PREFIX = "alert--";
 
-  constructor(public snackBar: MatSnackBar) {}
+  constructor(private snackBar: MatSnackBar) {}
 
   /**
    * Display the given alert.

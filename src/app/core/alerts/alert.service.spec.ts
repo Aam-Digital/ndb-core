@@ -16,52 +16,41 @@
  */
 
 import { AlertService } from "./alert.service";
-import { LogLevel } from "../logging/log-level";
-import { LoggingService } from "../logging/logging.service";
-
-class MockLoggingService extends LoggingService {
-  public log(_message: string, _logLevel: LogLevel) {}
-
-  public debug(_message: string) {}
-
-  public info(_message: string) {}
-
-  public warn(_message: string) {}
-
-  public error(_message: string) {}
-}
+import { TestBed } from "@angular/core/testing";
+import { AlertsModule } from "./alerts.module";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
 describe("AlertService", () => {
-  let alertService: AlertService;
-  let snackBarMock;
-  let loggingService: MockLoggingService;
+  let service: AlertService;
+
   beforeEach(() => {
-    loggingService = new MockLoggingService();
-    snackBarMock = jasmine.createSpyObj(["openFromComponent"]);
-    alertService = new AlertService(snackBarMock);
+    TestBed.configureTestingModule({
+      imports: [AlertsModule, NoopAnimationsModule],
+    });
+    service = TestBed.inject(AlertService);
   });
 
-  it("add info alert", function () {
+  it("adds an info alert", function () {
     const message = "info alert";
-    alertService.addInfo(message);
+    service.addInfo(message);
 
-    expect(alertService.alerts[0].message).toEqual(message);
-    expect(alertService.alerts[0].type).toEqual("info");
+    expect(service.alerts[0].message).toEqual(message);
+    expect(service.alerts[0].type).toEqual("info");
   });
 
-  it("add warning alert", function () {
+  it("adds a warning alert", function () {
     const message = "warning alert";
-    alertService.addWarning(message);
+    service.addWarning(message);
 
-    expect(alertService.alerts[0].message).toEqual(message);
-    expect(alertService.alerts[0].type).toEqual("warning");
+    expect(service.alerts[0].message).toEqual(message);
+    expect(service.alerts[0].type).toEqual("warning");
   });
 
-  it("add danger alert", function () {
+  it("adds a danger alert", function () {
     const message = "danger alert";
-    alertService.addDanger(message);
+    service.addDanger(message);
 
-    expect(alertService.alerts[0].message).toEqual(message);
-    expect(alertService.alerts[0].type).toEqual("danger");
+    expect(service.alerts[0].message).toEqual(message);
+    expect(service.alerts[0].type).toEqual("danger");
   });
 });
