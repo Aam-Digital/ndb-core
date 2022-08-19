@@ -7,22 +7,26 @@
       [value]="(currentIndex / children.length) * 100"
     ></mat-progress-bar>
 
-    <div fxLayout="row" class="progress-nav">
-      <button mat-icon-button (click)="goToFirst()" [disabled]="isFirst" class="button-skip" fxFlex="40px">
-        <fa-icon icon="angle-double-left"></fa-icon>
-      </button>
-      <button mat-icon-button (click)="goToPrevious()" [disabled]="isFirst" class="button-skip" fxFlex="40px">
-        <fa-icon icon="angle-left"></fa-icon>
-      </button>
-      <div class="progress-label" [style.visibility]="currentIndex < children.length ? 'visible' : 'hidden'" fxFlex="grow">
+    <div class="progress-nav">
+      <div>
+        <button mat-icon-button (click)="goToFirst()" [disabled]="isFirst" class="button-skip">
+          <fa-icon icon="angle-double-left"></fa-icon>
+        </button>
+        <button mat-icon-button (click)="goToPrevious()" [disabled]="isFirst" class="button-skip">
+          <fa-icon icon="angle-left"></fa-icon>
+        </button>
+      </div>
+      <div class="progress-label" [style.visibility]="currentIndex < children.length ? 'visible' : 'hidden'">
         {{ currentIndex+1 }} / {{ children.length }}
       </div>
-      <button mat-icon-button (click)="goToNext()" [disabled]="isFinished" class="button-skip" fxFlex="40px">
-        <fa-icon icon="angle-right"></fa-icon>
-      </button>
-      <button mat-icon-button (click)="goToLast()" [disabled]="isFinished" class="button-skip" fxFlex="40px">
-        <fa-icon icon="angle-double-right"></fa-icon>
-      </button>
+      <div>
+        <button mat-icon-button (click)="goToNext()" [disabled]="isFinished" class="button-skip">
+          <fa-icon icon="angle-right"></fa-icon>
+        </button>
+        <button mat-icon-button (click)="goToLast()" [disabled]="isFinished" class="button-skip">
+          <fa-icon icon="angle-double-right"></fa-icon>
+        </button>
+      </div>
     </div>
   </div>
 

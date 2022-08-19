@@ -54,7 +54,7 @@ export class DemoDataInitializerService {
     dialogRef.close();
 
     await this.localSession.login(
-      DemoUserGeneratorService.DEFAULT_USERNAME,
+      DemoUserGeneratorService.ADMIN_USERNAME,
       DemoUserGeneratorService.DEFAULT_PASSWORD
     );
     this.syncDatabaseOnUserChange();

@@ -32,3 +32,7 @@ export interface AlertConfig {
   /** The display style (e.g. whether the alert has to be actively dismissed by the user) */
   display: AlertDisplay;
 }
+
+export interface ExtendedAlertConfig extends AlertConfig {
+  timestamp: Date;
+}

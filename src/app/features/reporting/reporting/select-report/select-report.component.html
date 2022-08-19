@@ -11,7 +11,7 @@
 
 <div *ngIf="reports?.length > 0"
      class="work-panel">
-  <div fxLayout="row wrap" fxLayoutGap="1rem">
+  <div class="flex-row flex-wrap gap-regular">
     <mat-form-field>
       <mat-label i18n>Select Report</mat-label>
       <mat-select [(ngModel)]="selectedReport" [disabled]="loading">

@@ -9,7 +9,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { readFile } from "../../../utils/utils";
 import { RouteTarget } from "../../../app.routing";
 import { Database } from "../../database/database";
-import { AlertConfig } from "../../alerts/alert-config";
+import { ExtendedAlertConfig } from "../../alerts/alert-config";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -19,10 +19,11 @@ import { AlertConfig } from "../../alerts/alert-config";
 @Component({
   selector: "app-admin",
   templateUrl: "./admin.component.html",
+  styleUrls: ["./admin.component.scss"],
 })
 export class AdminComponent implements OnInit {
   /** all alerts */
-  alerts: AlertConfig[];
+  alerts: ExtendedAlertConfig[] = [];
 
   constructor(
     private alertService: AlertService,

@@ -27,7 +27,6 @@
 }
 
 .progress-label {
-  align-self: end;
   display: flex;
   place-content: center;
 }
@@ -41,6 +40,9 @@
 
 .progress-nav {
   margin-top: -4px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .child-block {

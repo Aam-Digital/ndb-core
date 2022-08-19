@@ -5,7 +5,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { Angulartics2Module } from "angulartics2";
 import { MatButtonModule } from "@angular/material/button";
-import { ExtendedModule, FlexModule } from "@angular/flex-layout";
 import { MatInputModule } from "@angular/material/input";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatExpansionModule } from "@angular/material/expansion";
@@ -43,11 +42,9 @@ import { CommonComponentsModule } from "../../common-components/common-component
     ExportModule,
     Angulartics2Module,
     MatButtonModule,
-    FlexModule,
     MatInputModule,
     MatCheckboxModule,
     MatExpansionModule,
-    ExtendedModule,
     MatButtonToggleModule,
     MatTableModule,
     ViewModule,

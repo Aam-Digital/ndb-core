@@ -28,7 +28,6 @@ import { MatListModule } from "@angular/material/list";
 import { MatInputModule } from "@angular/material/input";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { FormsModule } from "@angular/forms";
-import { FlexModule } from "@angular/flex-layout";
 import { AttendanceDayBlockComponent } from "./dashboard-widgets/attendance-week-dashboard/attendance-day-block/attendance-day-block.component";
 import { AttendanceDetailsComponent } from "./attendance-details/attendance-details.component";
 import { AddDayAttendanceComponent } from "./add-day-attendance/add-day-attendance.component";
@@ -69,9 +68,7 @@ import {
 import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
 import * as Hammer from "hammerjs";
 import { TabStateModule } from "../../utils/tab-state/tab-state.module";
-import {
-  CommonComponentsModule
-} from "../../core/common-components/common-components.module";
+import { CommonComponentsModule } from "../../core/common-components/common-components.module";
 
 @Injectable()
 // Only allow horizontal swiping
@@ -113,7 +110,6 @@ export class HorizontalHammerConfig extends HammerGestureConfig {
     MatInputModule,
     MatDatepickerModule,
     FormsModule,
-    FlexModule,
     MatTableModule,
     MatProgressBarModule,
     MatButtonToggleModule,
@@ -135,7 +131,7 @@ export class HorizontalHammerConfig extends HammerGestureConfig {
     ConfigurableEnumModule,
     HammerModule,
     TabStateModule,
-    CommonComponentsModule
+    CommonComponentsModule,
   ],
   exports: [
     ActivityCardComponent,

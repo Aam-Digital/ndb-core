@@ -2,7 +2,6 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ComingSoonComponent } from "./coming-soon/coming-soon.component";
 import { MatButtonModule } from "@angular/material/button";
-import { FlexModule } from "@angular/flex-layout";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { CommonComponentsModule } from "../common-components/common-components.module";
@@ -32,7 +31,6 @@ import { MatDialogModule } from "@angular/material/dialog";
   imports: [
     CommonModule,
     MatButtonModule,
-    FlexModule,
     RouterModule.forChild([
       {
         path: ":feature",

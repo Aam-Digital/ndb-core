@@ -18,7 +18,7 @@
 import { Injectable } from "@angular/core";
 import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 
-import { AlertConfig } from "./alert-config";
+import { AlertConfig, ExtendedAlertConfig } from "./alert-config";
 import { AlertDisplay } from "./alert-display";
 
 /**
@@ -36,7 +36,7 @@ import { AlertDisplay } from "./alert-display";
 @Injectable()
 export class AlertService {
   /** All alerts currently to be displayed */
-  alerts: AlertConfig[] = [];
+  alerts: ExtendedAlertConfig[] = [];
 
   private static ALERT_CLASS_PREFIX = "alert--";
 
@@ -47,7 +47,7 @@ export class AlertService {
    * @param alert The alert instance to be displayed
    */
   addAlert(alert: AlertConfig) {
-    this.alerts.push(alert);
+    this.alerts.push({ ...alert, timestamp: new Date() });
     this.displayAlert(alert);
   }
 

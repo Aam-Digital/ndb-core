@@ -131,7 +131,7 @@
     <p i18n="Data import Final overview">CSV File:       <em>{{ fileNameForm.get('fileName').value }}</em></p>
     <p i18n="Data import Final overview">TransactionID:  <em>{{ transactionIDForm.get('transactionId').value }}</em></p>
 
-    <div fxLayout="row" fxLayoutGap="10px">
+    <div class="flex-row gap-small">
       <button (click)="importSelectedFile()" mat-stroked-button i18n="Button to start import">
         Start Import
       </button>
