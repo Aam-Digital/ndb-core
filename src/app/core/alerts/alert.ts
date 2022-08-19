@@ -15,33 +15,20 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { MatSnackBarRef } from "@angular/material/snack-bar";
-import { AlertComponent } from "./alerts/alert.component";
 import { AlertDisplay } from "./alert-display";
 
-/**
- * An Alert message to be displayed to the user through the {@link AlertService}.
- */
-export class Alert {
-  /** Info messages provide feedback or information to the user without any required action */
-  static INFO = "info";
-  /** Warning messages provide feedback about unexpected or potentially unintended events */
-  static WARNING = "warning";
-  /** Danger messages inform about errors or critical conditions that the user should not overlook */
-  static DANGER = "danger";
+export interface AlertConfig {
+  /** The text of the message */
+  message: string;
 
-  /** reference to the ui displaying the message */
-  public notificationRef: MatSnackBarRef<AlertComponent>;
-
-  /**
-   * Create a container of a new Alert message.
-   * @param message The text of the message
-   * @param type The type of the message
-   * @param display The display style (e.g. whether the alert has to be actively dismissed by the user)
+  /** The type of the message
+   *
+   *  - Info messages provide feedback or information to the user without any required action
+   *  - Warning messages provide feedback about unexpected or potentially unintended events
+   *  - Danger messages inform about errors or critical conditions that the user should not overlook
    */
-  constructor(
-    public message: string,
-    public type: string,
-    public display: AlertDisplay
-  ) {}
+  type: "info" | "warning" | "danger";
+
+  /** The display style (e.g. whether the alert has to be actively dismissed by the user) */
+  display: AlertDisplay;
 }

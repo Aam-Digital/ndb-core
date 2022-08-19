@@ -18,7 +18,7 @@
 import { Injectable } from "@angular/core";
 import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 
-import { Alert } from "./alert";
+import { AlertConfig } from "./alert";
 import { AlertDisplay } from "./alert-display";
 
 /**
@@ -29,11 +29,13 @@ import { AlertDisplay } from "./alert-display";
  *
  * If you want to log technical details and problems, use {@link LoggingService} instead!
  * This service is for user facing messages.
+ *
+ * You can also use the {@link MatSnackBar} when you want to have more control over what you
+ * want to display to the user.
  */
 @Injectable()
 export class AlertService {
-  /** All alerts currently to be displayed */
-  alerts: Alert[] = [];
+  private static ALERT_CLASS_PREFIX = "alert--";
 
   constructor(public snackBar: MatSnackBar) {}
 
@@ -41,12 +43,7 @@ export class AlertService {
    * Display the given alert.
    * @param alert The alert instance to be displayed
    */
-  addAlert(alert: Alert) {
-    this.alerts.push(alert);
-    this.displayAlert(alert);
-  }
-
-  private displayAlert(alert: Alert) {
+  public addAlert(alert: AlertConfig) {
     const snackConfig: MatSnackBarConfig = {
       data: alert,
       duration: 10000,
@@ -63,26 +60,9 @@ export class AlertService {
         break;
     }
 
-    switch (alert.type) {
-      case Alert.INFO:
-        break;
-      case Alert.WARNING:
-      case Alert.DANGER:
-        snackConfig.panelClass = "background-error";
-    }
+    snackConfig.panelClass = AlertService.ALERT_CLASS_PREFIX + alert.type;
 
     this.snackBar.open(alert.message, "dismiss", snackConfig);
-  }
-
-  /**
-   * Remove an existing alert so that it is no longer displayed.
-   * @param alert The alert to be removed
-   */
-  removeAlert(alert: Alert) {
-    const index = this.alerts.indexOf(alert, 0);
-    if (index > -1) {
-      this.alerts.splice(index, 1);
-    }
   }
 
   /**
@@ -94,7 +74,7 @@ export class AlertService {
     message: string,
     display: AlertDisplay = AlertDisplay.TEMPORARY
   ) {
-    this.addAlert(new Alert(message, Alert.INFO, display));
+    this.addAlert({ message, type: "info", display });
   }
 
   /**
@@ -106,7 +86,7 @@ export class AlertService {
     message: string,
     display: AlertDisplay = AlertDisplay.PERSISTENT
   ) {
-    this.addAlert(new Alert(message, Alert.WARNING, display));
+    this.addAlert({ message, type: "warning", display });
   }
 
   /**
@@ -118,6 +98,6 @@ export class AlertService {
     message: string,
     display: AlertDisplay = AlertDisplay.PERSISTENT
   ) {
-    this.addAlert(new Alert(message, Alert.DANGER, display));
+    this.addAlert({ message, type: "danger", display });
   }
 }

@@ -1,6 +1,5 @@
 import { Component, OnInit } from "@angular/core";
 import { AlertService } from "../../alerts/alert.service";
-import { Alert } from "../../alerts/alert";
 import { BackupService } from "../services/backup.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -10,6 +9,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { readFile } from "../../../utils/utils";
 import { RouteTarget } from "../../../app.routing";
 import { Database } from "../../database/database";
+import { AlertConfig } from "../../alerts/alert";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -22,7 +22,7 @@ import { Database } from "../../database/database";
 })
 export class AdminComponent implements OnInit {
   /** all alerts */
-  alerts: Alert[];
+  alerts: AlertConfig[];
 
   constructor(
     private alertService: AlertService,

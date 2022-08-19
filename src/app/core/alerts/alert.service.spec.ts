@@ -16,10 +16,8 @@
  */
 
 import { AlertService } from "./alert.service";
-import { Alert } from "./alert";
 import { LogLevel } from "../logging/log-level";
 import { LoggingService } from "../logging/logging.service";
-import { AlertDisplay } from "./alert-display";
 
 class MockLoggingService extends LoggingService {
   public log(_message: string, _logLevel: LogLevel) {}
@@ -65,17 +63,5 @@ describe("AlertService", () => {
 
     expect(alertService.alerts[0].message).toEqual(message);
     expect(alertService.alerts[0].type).toEqual("danger");
-  });
-
-  it("removes alert", function () {
-    const alert = new Alert(
-      "test message",
-      Alert.DANGER,
-      AlertDisplay.PERSISTENT
-    );
-    alertService.addAlert(alert);
-    alertService.removeAlert(alert);
-
-    expect(alertService.alerts).toBeEmpty();
   });
 });

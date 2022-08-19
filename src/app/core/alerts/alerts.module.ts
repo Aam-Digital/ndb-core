@@ -18,7 +18,6 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
-import { AlertComponent } from "./alerts/alert.component";
 import { AlertService } from "./alert.service";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
@@ -36,8 +35,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     MatButtonModule,
     FontAwesomeModule,
   ],
-  declarations: [AlertComponent],
-  exports: [AlertComponent],
   providers: [AlertService],
 })
 export class AlertsModule {}
