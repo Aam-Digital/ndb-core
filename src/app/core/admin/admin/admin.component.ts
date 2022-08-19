@@ -9,7 +9,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { readFile } from "../../../utils/utils";
 import { RouteTarget } from "../../../app.routing";
 import { Database } from "../../database/database";
-import { AlertConfig } from "../../alerts/alert";
+import { AlertConfig } from "../../alerts/alert-config";
 
 /**
  * Admin GUI giving administrative users different options/actions.

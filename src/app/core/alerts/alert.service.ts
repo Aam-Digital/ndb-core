@@ -18,7 +18,7 @@
 import { Injectable } from "@angular/core";
 import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 
-import { AlertConfig } from "./alert";
+import { AlertConfig } from "./alert-config";
 import { AlertDisplay } from "./alert-display";
 
 /**
