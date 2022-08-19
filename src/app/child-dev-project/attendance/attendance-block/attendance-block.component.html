@@ -7,11 +7,11 @@
 
 <ng-template #tooltip>
   <div class="padding-small">
-    <b>
+    <strong>
       {{ attendanceData.periodFrom | date: "shortDate" }} -
       {{ attendanceData.periodTo | date: "shortDate" }}
       {{ attendanceData.activity.title }}
-    </b>
+    </strong>
 
     <div
       i18n="
@@ -22,12 +22,12 @@
       attended {{ attendanceDescription }} events
     </div>
 
-    <i
+    <em
       *ngIf="logicalCount[LStatus.IGNORE] > 0"
       i18n="Attended Tooltip|How many events were excluded"
     >
       (excluding {{ logicalCount[LStatus.IGNORE] }} events excused or unknown)
-    </i>
+    </em>
     <app-attendance-calendar
       [records]="attendanceData.events"
       [highlightForChild]="forChild"

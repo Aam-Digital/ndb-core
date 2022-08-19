@@ -81,13 +81,13 @@
   </div>
 
   <ng-container *ngIf="!selectedEvent">
-    <i
+    <em
       i18n="
         No Events|Informs the user that there are no events at a particular date
       "
     >
       no events on this date
-    </i>
+    </em>
     <app-add-new-button
       class="margin-top-regular"
       (click)="createNewEvent()"

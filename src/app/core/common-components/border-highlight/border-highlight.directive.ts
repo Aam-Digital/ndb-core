@@ -1,4 +1,4 @@
-import { Directive, HostBinding, Input } from '@angular/core';
+import { Directive, HostBinding, Input } from "@angular/core";
 
 /**
  * A directive that applies a colored border to the left side of an element.
@@ -15,13 +15,12 @@ import { Directive, HostBinding, Input } from '@angular/core';
   selector: "[appBorderHighlight]",
 })
 export class BorderHighlightDirective {
+  readonly CLASS_NAME = "border-left-highlight";
 
-  readonly CLASS_NAME = 'border-left-highlight'
-
-  @HostBinding('class')
+  @HostBinding("class")
   elementClass = this.CLASS_NAME;
 
-  @HostBinding('style.border-color')
+  @HostBinding("style.border-color")
   borderColor: string | boolean = "transparent";
 
   @Input("appBorderHighlight") set color(value: string | undefined) {
@@ -29,13 +28,12 @@ export class BorderHighlightDirective {
       this.borderColor = value;
       this.elementClass = this.CLASS_NAME;
     }
-  };
+  }
 
   @Input() set borderClass(value: string | undefined) {
     if (value) {
-      this.elementClass = this.CLASS_NAME +  ' ' + value;
+      this.elementClass = this.CLASS_NAME + " " + value;
       this.borderColor = false;
     }
   }
-
 }
