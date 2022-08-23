@@ -1,5 +1,9 @@
-import { mockEntityMapper, MockEntityMapperService } from "./mock-entity-mapper-service";
+import {
+  mockEntityMapper,
+  MockEntityMapperService,
+} from "./mock-entity-mapper-service";
 import { Child } from "../../child-dev-project/children/model/child";
+import { expectObservable } from "../../utils/test-utils/observable-utils";
 
 describe("MockEntityMapperServicer", () => {
   let service: MockEntityMapperService;
@@ -9,12 +13,10 @@ describe("MockEntityMapperServicer", () => {
 
   it("should publish a update for a newly added entity", (done) => {
     const child = new Child();
-    service.receiveUpdates(Child.ENTITY_TYPE).subscribe((update) => {
-      expect(update.entity).toEqual(child);
-      expect(update.type).toBe("new");
-      done();
-    });
 
+    expectObservable(service.receiveUpdates(Child))
+      .first.toBeResolvedTo({ type: "new", entity: child })
+      .then(() => done());
     service.add(child);
   });
 
@@ -23,11 +25,9 @@ describe("MockEntityMapperServicer", () => {
     service.add(child);
 
     child.name = "Updated name";
-    service.receiveUpdates(Child.ENTITY_TYPE).subscribe((update) => {
-      expect(update.entity).toEqual(child);
-      expect(update.type).toBe("update");
-      done();
-    });
+    expectObservable(service.receiveUpdates(Child))
+      .first.toBeResolvedTo({ type: "update", entity: child })
+      .then(() => done());
     service.add(child);
   });
 });
