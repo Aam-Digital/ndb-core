@@ -1,5 +1,4 @@
 import {
-  ComponentFactoryResolver,
   ComponentRef,
   Directive,
   Input,
@@ -37,7 +36,6 @@ export class DisableEntityOperationDirective implements OnInit, OnChanges {
   constructor(
     private templateRef: TemplateRef<HTMLButtonElement>,
     private viewContainerRef: ViewContainerRef,
-    private componentFactoryResolver: ComponentFactoryResolver,
     private ability: EntityAbility,
     private abilityService: AbilityService
   ) {
@@ -45,11 +43,8 @@ export class DisableEntityOperationDirective implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    const containerFactory = this.componentFactoryResolver.resolveComponentFactory(
-      DisabledWrapperComponent
-    );
     this.wrapperComponent = this.viewContainerRef.createComponent(
-      containerFactory
+      DisabledWrapperComponent
     );
     this.wrapperComponent.instance.template = this.templateRef;
     this.wrapperComponent.instance.text = this.text;
