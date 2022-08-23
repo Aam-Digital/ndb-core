@@ -1,38 +1,33 @@
 {
   "index": "/index.html",
-  "assetGroups": [
-    {
-      "name": "app",
-      "installMode": "prefetch",
-      "resources": {
-        "files": [
-          "/favicon.ico",
-          "/index.html",
-          "/*.js",
-          "/*.css",
-          "/*.woff2",
-          "/*.tff"
-        ]
-      }
-    },
-    {
-      "name": "assets",
-      "installMode": "lazy",
-      "updateMode": "prefetch",
-      "resources": {
-        "files": [
-          "/*.svg",
-          "/assets/**"
-        ]
-      }
+  "assetGroups": [{
+    "name": "app",
+    "installMode": "prefetch",
+    "resources": {
+      "files": [
+        "/favicon.ico",
+        "/index.html",
+        "/*.js",
+        "/*.css",
+        "/*.woff2",
+        "/*.tff"
+      ]
     }
-  ],
+  }, {
+    "name": "assets",
+    "installMode": "lazy",
+    "updateMode": "prefetch",
+    "resources": {
+      "files": [
+        "/*.svg",
+        "/assets/**"
+      ]
+    }
+  }],
   "dataGroups": [
     {
       "name": "config",
-      "urls": [
-        "**/assets/config.json"
-      ],
+      "urls": ["**/assets/config.json"],
       "cacheConfig": {
         "maxSize": 1,
         "maxAge": "30d",
@@ -41,9 +36,7 @@
     },
     {
       "name": "childPhotos",
-      "urls": [
-        "**/child-photos/**"
-      ],
+      "urls": ["**/child-photos/**"],
       "cacheConfig": {
         "maxSize": 500,
         "maxAge": "10d",
