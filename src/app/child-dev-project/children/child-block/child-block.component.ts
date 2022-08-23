@@ -28,8 +28,6 @@ export class ChildBlockComponent implements OnInitDynamicComponent, OnChanges {
 
   /** prevent additional details to be displayed in a tooltip on mouse over */
   @Input() tooltipDisabled: boolean;
-  tooltipVisible = false;
-  tooltipTimeout;
 
   constructor(@Optional() private childrenService: ChildrenService) {}
 
@@ -54,22 +52,5 @@ export class ChildBlockComponent implements OnInitDynamicComponent, OnChanges {
     }
     this.linkDisabled = config.linkDisabled;
     this.tooltipDisabled = config.tooltipDisabled;
-  }
-
-  showTooltip() {
-    if (this.tooltipDisabled) {
-      return;
-    }
-    if (this.tooltipTimeout) {
-      clearTimeout(this.tooltipTimeout);
-    }
-    this.tooltipTimeout = setTimeout(() => (this.tooltipVisible = true), 1000);
-  }
-
-  hideTooltip() {
-    if (this.tooltipTimeout) {
-      clearTimeout(this.tooltipTimeout);
-    }
-    this.tooltipTimeout = setTimeout(() => (this.tooltipVisible = false), 150);
   }
 }
