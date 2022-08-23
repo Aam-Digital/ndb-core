@@ -4,8 +4,8 @@ import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
 import { Child } from "../model/child";
 import { ChildSchoolRelation } from "../model/childSchoolRelation";
-import { School } from "../../schools/model/school";
 import { faker } from "../../../core/demo-data/faker";
+import { School } from "../../schools/model/school";
 
 /**
  * Generate ChildSchoolRelation entities linking a child to a school for a specific year.
