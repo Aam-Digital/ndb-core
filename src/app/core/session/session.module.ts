@@ -73,7 +73,6 @@ import { CouchdbAuthService } from "./auth/couchdb-auth.service";
     {
       provide: SessionService,
       useFactory: (injector: Injector) => {
-        console.log("requesting session");
         if (environment.session_type === SessionType.synced) {
           return injector.get(SyncedSessionService);
         } else {
@@ -84,18 +83,16 @@ import { CouchdbAuthService } from "./auth/couchdb-auth.service";
     },
     KeycloakAuthService,
     CouchdbAuthService,
-
     {
-      provide: [AuthService],
+      provide: AuthService,
       useFactory: (injector: Injector) => {
-        console.log("requested");
         if (environment.authenticator === "keycloak") {
           return injector.get(KeycloakAuthService);
         } else {
           return injector.get(CouchdbAuthService);
         }
       },
-      deps: [KeycloakAuthService],
+      deps: [Injector],
     },
   ],
 })
