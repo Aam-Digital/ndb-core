@@ -20,6 +20,7 @@ export function mockEntityMapper(
 export class MockEntityMapperService extends EntityMapperService {
   private data: Map<string, Map<string, Entity>> = new Map();
   private observables: Map<string, Subject<UpdatedEntity<any>>> = new Map();
+
   constructor() {
     super(null, null, entityRegistry);
   }
@@ -40,10 +41,11 @@ export class MockEntityMapperService extends EntityMapperService {
     if (!this.data.get(type)) {
       this.data.set(type, new Map());
     }
+    const alreadyExists = this.contains(entity);
     this.data.get(type).set(entity.getId(), entity);
     this.publishUpdates(
       entity.getType(),
-      this.contains(entity)
+      alreadyExists
         ? { type: "update", entity }
         : { type: "new", entity }
     );
@@ -144,7 +146,7 @@ export class MockEntityMapperService extends EntityMapperService {
     entityType: EntityConstructor<T> | string
   ): Observable<UpdatedEntity<T>> {
     let name =
-      typeof entityType === "string" ? entityType : new entityType().getType();
+      typeof entityType === "string" ? entityType : entityType.ENTITY_TYPE;
     if (!this.observables.has(name)) {
       this.observables.set(name, new Subject());
     }
