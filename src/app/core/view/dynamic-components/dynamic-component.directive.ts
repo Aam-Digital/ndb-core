@@ -1,5 +1,4 @@
 import {
-  ComponentFactoryResolver,
   Directive,
   Input,
   OnChanges,
@@ -26,7 +25,6 @@ export class DynamicComponentDirective implements OnChanges {
 
   constructor(
     public viewContainerRef: ViewContainerRef,
-    private componentFactoryResolver: ComponentFactoryResolver,
     private registry: ViewRegistry
   ) {}
 
@@ -40,15 +38,11 @@ export class DynamicComponentDirective implements OnChanges {
     }
 
     const component = this.registry.get(this.appDynamicComponent.component);
-    const componentFactory = this.componentFactoryResolver.resolveComponentFactory<OnInitDynamicComponent>(
-      component
-    );
 
     this.viewContainerRef.clear();
 
-    const componentRef = this.viewContainerRef.createComponent<OnInitDynamicComponent>(
-      componentFactory
-    );
+    const componentRef =
+      this.viewContainerRef.createComponent<OnInitDynamicComponent>(component);
     componentRef.instance.onInitFromDynamicConfig(
       this.appDynamicComponent.config
     );
