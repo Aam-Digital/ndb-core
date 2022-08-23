@@ -34,4 +34,5 @@ export const environment = {
   /** The following settings can be overridden by the `config.json` if present, see {@link AppSettings} */
   demo_mode: true,
   session_type: SessionType.mock,
+  authenticator: "keycloak",
 };
