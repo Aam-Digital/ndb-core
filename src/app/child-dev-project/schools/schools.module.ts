@@ -15,7 +15,6 @@ import { MatSortModule } from "@angular/material/sort";
 import { MatTableModule } from "@angular/material/table";
 import { SchoolBlockComponent } from "./school-block/school-block.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { FlexLayoutModule } from "@angular/flex-layout";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatSelectModule } from "@angular/material/select";
@@ -38,7 +37,6 @@ import { ActivitiesOverviewComponent } from "./activities-overview/activities-ov
     MatSortModule,
     MatExpansionModule,
     MatButtonModule,
-    FlexLayoutModule,
     MatSnackBarModule,
     MatCheckboxModule,
     ReactiveFormsModule,
@@ -49,7 +47,6 @@ import { ActivitiesOverviewComponent } from "./activities-overview/activities-ov
     MatProgressSpinnerModule,
     CommonModule,
     FormsModule,
-    FlexLayoutModule,
     RouterModule,
     MatFormFieldModule,
     MatInputModule,

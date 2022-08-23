@@ -33,7 +33,6 @@ import { SearchComponent } from "./search/search.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { ChildrenModule } from "../../child-dev-project/children/children.module";
 import { SchoolsModule } from "../../child-dev-project/schools/schools.module";
-import { FlexLayoutModule } from "@angular/flex-layout";
 import { PrimaryActionComponent } from "./primary-action/primary-action.component";
 import { NotesModule } from "../../child-dev-project/notes/notes.module";
 import { Angulartics2Module } from "angulartics2";
@@ -61,7 +60,6 @@ import { PwaInstallModule } from "app/core/pwa-install/pwa-install.module";
     MatFormFieldModule,
     MatInputModule,
     MatAutocompleteModule,
-    FlexLayoutModule,
     ChildrenModule,
     SchoolsModule,
     NotesModule,

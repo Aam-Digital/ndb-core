@@ -16,7 +16,6 @@ import { EntityFormModule } from "../entity-form/entity-form.module";
 import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatToolbarModule } from "@angular/material/toolbar";
-import { FlexLayoutModule } from "@angular/flex-layout";
 import { Angulartics2Module } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { RowDetailsComponent } from "./row-details/row-details.component";
@@ -52,7 +51,6 @@ import { CommonComponentsModule } from "../../common-components/common-component
     MatToolbarModule,
     EntityFormModule,
     FontAwesomeModule,
-    FlexLayoutModule,
     Angulartics2Module,
     MatFormFieldModule,
     MatDialogModule,
@@ -61,7 +59,7 @@ import { CommonComponentsModule } from "../../common-components/common-component
     MatChipsModule,
     MatMenuModule,
     MatProgressBarModule,
-    CommonComponentsModule
+    CommonComponentsModule,
   ],
   exports: [EntitySubrecordComponent],
 })

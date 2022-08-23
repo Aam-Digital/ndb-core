@@ -36,7 +36,6 @@ import { MatSortModule } from "@angular/material/sort";
 import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatChipsModule } from "@angular/material/chips";
-import { FlexLayoutModule } from "@angular/flex-layout";
 import { ChildrenService } from "./children.service";
 import { ChildrenCountDashboardComponent } from "./dashboard-widgets/children-count-dashboard/children-count-dashboard.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -73,7 +72,6 @@ import { CommonComponentsModule } from "../../core/common-components/common-comp
   imports: [
     CommonModule,
     FormsModule,
-    FlexLayoutModule,
     RouterModule,
     MatFormFieldModule,
     MatInputModule,
