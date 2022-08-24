@@ -18,11 +18,11 @@
 import { Component, ViewChild } from "@angular/core";
 import { SessionService } from "../../session/session-service/session.service";
 import { Title } from "@angular/platform-browser";
-import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { MatDrawerMode } from "@angular/material/sidenav";
 import { ConfigService } from "../../config/config.service";
 import { UiConfig } from "../ui-config";
+import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 
 /**
  * The main user interface component as root element for the app structure
@@ -52,19 +52,11 @@ export class UiComponent {
     private _sessionService: SessionService,
     private titleService: Title,
     private configService: ConfigService,
-    mediaObserver: MediaObserver
+    private screenSizeObserver: ScreenWidthObserver
   ) {
-    // watch screen width to change sidenav mode
-    mediaObserver
-      .asObservable()
-      .pipe(untilDestroyed(this))
-      .subscribe((change: MediaChange[]) => {
-        if (change[0].mqAlias === "xs" || change[0].mqAlias === "sm") {
-          this.sideNavMode = "over";
-        } else {
-          this.sideNavMode = "side";
-        }
-      });
+    this.screenSizeObserver.platform.subscribe(
+      (isDesktop) => (this.sideNavMode = isDesktop ? "side" : "over")
+    );
     this.configService.configUpdates
       .pipe(untilDestroyed(this))
       .subscribe(() => {

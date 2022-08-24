@@ -10,7 +10,6 @@ import {
 } from "@angular/core";
 import { MatSort, MatSortable } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
-import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { AlertService } from "../../../alerts/alert.service";
@@ -30,6 +29,11 @@ import {
 } from "../../../entity/entity-remove.service";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { tableSort } from "./table-sort";
+import {
+  ScreenWidthObserver,
+  ScreenSize,
+} from "../../../../utils/media/screen-size-observer.service";
+import { distinctUntilChanged } from "rxjs/operators";
 
 export interface TableRow<T extends Entity> {
   record: T;
@@ -110,7 +114,6 @@ export class EntitySubrecordComponent<T extends Entity>
   recordsDataSource = new MatTableDataSource<TableRow<T>>();
 
   private mediaSubscription: Subscription;
-  private screenWidth = "";
 
   idForSavingPagination = "startWert";
 
@@ -132,7 +135,7 @@ export class EntitySubrecordComponent<T extends Entity>
 
   constructor(
     private alertService: AlertService,
-    private media: MediaObserver,
+    private screenSizeObserver: ScreenWidthObserver,
     private entityFormService: EntityFormService,
     private dialog: MatDialog,
     private analyticsService: AnalyticsService,
@@ -140,14 +143,10 @@ export class EntitySubrecordComponent<T extends Entity>
     private entityRemoveService: EntityRemoveService,
     private entityMapper: EntityMapperService
   ) {
-    this.mediaSubscription = this.media
-      .asObservable()
-      .pipe(untilDestroyed(this))
-      .subscribe((change: MediaChange[]) => {
-        if (change[0].mqAlias !== this.screenWidth) {
-          this.screenWidth = change[0].mqAlias;
-          this.setupTable();
-        }
+    this.mediaSubscription = this.screenSizeObserver.shared
+      .pipe(untilDestroyed(this), distinctUntilChanged())
+      .subscribe(() => {
+        this.setupTable();
       });
   }
 
@@ -258,9 +257,7 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 
   edit(row: TableRow<T>) {
-    if (this.media.isActive("lt-sm")) {
-      this.rowClick(row);
-    } else {
+    if (this.screenSizeObserver.isDesktop()) {
       if (!row.formGroup) {
         row.formGroup = this.entityFormService.createFormGroup(
           this._columns,
@@ -268,6 +265,8 @@ export class EntitySubrecordComponent<T extends Entity>
         );
       }
       row.formGroup.enable();
+    } else {
+      this.rowClick(row);
     }
   }
 
@@ -375,7 +374,7 @@ export class EntitySubrecordComponent<T extends Entity>
    * resets columnsToDisplay depending on current screensize
    */
   private setupTable() {
-    if (this._columns !== undefined && this.screenWidth !== "") {
+    if (this._columns !== undefined) {
       this.columnsToDisplay = this._columns
         .filter((col) => this.isVisible(col))
         .map((col) => col.id);
@@ -393,13 +392,9 @@ export class EntitySubrecordComponent<T extends Entity>
     if (col.hideFromTable) {
       return false;
     }
-    const visibilityGroups = ["sm", "md", "lg", "xl"];
-    const visibleFromIndex = visibilityGroups.indexOf(col.visibleFrom);
-    if (visibleFromIndex !== -1) {
-      const regex = visibilityGroups.slice(visibleFromIndex).join("|");
-      return !!this.screenWidth.match(regex);
-    } else {
-      return true;
-    }
+    // when `ScreenSize[col.visibleFrom]` is undefined, this returns `false`
+    return (
+      this.screenSizeObserver.currentScreenSize() < ScreenSize[col.visibleFrom]
+    );
   }
 }

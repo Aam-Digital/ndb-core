@@ -1,5 +1,5 @@
 <!-- Desktop version -->
-<div *ngIf="desktop">
+<div *ngIf="isDesktop">
 
     <!-- Header bar; contains the title on the left and controls on the right -->
 
@@ -70,7 +70,7 @@
 </div>
 
 <!-- Mobile Version -->
-<div *ngIf="!desktop">
+<div *ngIf="!isDesktop">
   <h2>{{ listName }}</h2>
 
   <div class="flex-row">

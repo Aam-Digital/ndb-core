@@ -1,13 +1,16 @@
 import { Component } from "@angular/core";
 import { Child } from "../../model/child";
-import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { ViewPropertyConfig } from "../../../../core/entity-components/entity-list/EntityListConfig";
 import { ActivityAttendance } from "../../../attendance/model/activity-attendance";
 import { AttendanceService } from "../../../attendance/attendance.service";
 import moment from "moment";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { UntilDestroy } from "@ngneat/until-destroy";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
+import {
+  ScreenWidthObserver,
+  ScreenSize,
+} from "../../../../utils/media/screen-size-observer.service";
 
 /**
  * This component lists attendance blocks for a child for recent months filtered by institutions.
@@ -35,32 +38,30 @@ export class RecentAttendanceBlocksComponent implements OnInitDynamicComponent {
 
   constructor(
     private attendanceService: AttendanceService,
-    private media: MediaObserver
+    private media: ScreenWidthObserver
   ) {
-    this.media
-      .asObservable()
-      .pipe(untilDestroyed(this))
-      .subscribe((change: MediaChange[]) => {
-        switch (change[0].mqAlias) {
-          case "xs":
-          case "sm": {
-            this.maxAttendanceBlocks = 1;
-            break;
-          }
-          case "md": {
-            this.maxAttendanceBlocks = 2;
-            break;
-          }
-          case "lg": {
-            this.maxAttendanceBlocks = 3;
-            break;
-          }
-          case "xl": {
-            this.maxAttendanceBlocks = 6;
-            break;
-          }
+    this.media.shared.subscribe((change) => {
+      switch (change) {
+        case ScreenSize.xs:
+        case ScreenSize.sm: {
+          this.maxAttendanceBlocks = 1;
+          break;
         }
-      });
+        case ScreenSize.md: {
+          this.maxAttendanceBlocks = 2;
+          break;
+        }
+        case ScreenSize.lg: {
+          this.maxAttendanceBlocks = 3;
+          break;
+        }
+        case ScreenSize.xl:
+        case ScreenSize.xxl: {
+          this.maxAttendanceBlocks = 6;
+          break;
+        }
+      }
+    });
   }
 
   async onInitFromDynamicConfig(config: ViewPropertyConfig) {
@@ -79,10 +80,11 @@ export class RecentAttendanceBlocksComponent implements OnInitDynamicComponent {
       }
 
       this.attendanceList = [];
-      const activityRecords = await this.attendanceService.getAllActivityAttendancesForPeriod(
-        moment().startOf("month").toDate(),
-        moment().endOf("month").toDate()
-      );
+      const activityRecords =
+        await this.attendanceService.getAllActivityAttendancesForPeriod(
+          moment().startOf("month").toDate(),
+          moment().endOf("month").toDate()
+        );
 
       for (const record of activityRecords) {
         if (activities.find((a) => a.getId() === record.activity?.getId())) {
