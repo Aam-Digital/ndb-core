@@ -4,10 +4,13 @@ import { distinctUntilChanged, map, startWith } from "rxjs/operators";
 import { WINDOW_TOKEN } from "../di-tokens";
 
 /*
- * Constants that are used for
+ * Constants describing the threshold values.
+ * These constants are considered the lower limit, i.e. if
+ * a screen is more than 576px large but less than 768px
+ * the screen is considered SM.
+ *
+ * Any screen smaller than `SM` is considered `XS`
  */
-
-// const XS = "0px";
 const SM = "576px";
 const MD = "768px";
 const LG = "992px";
