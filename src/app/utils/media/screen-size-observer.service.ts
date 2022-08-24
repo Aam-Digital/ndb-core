@@ -83,8 +83,7 @@ export class ScreenWidthObserver {
    */
   private static matching(query: MediaQueryList): Observable<boolean> {
     return fromEvent<MediaQueryListEvent>(query, "change").pipe(
-      map((event) => event.matches),
-      startWith(query.matches)
+      map((event) => event.matches)
     );
   }
 
@@ -97,20 +96,28 @@ export class ScreenWidthObserver {
     this.window.matchMedia(`screen and (min-width: ${size})`)
   );
 
+  private readonly _shared: Observable<ScreenSize>;
+
   /**
    * The observable shared amongst all instances.
    * Subscribers to this observable get notified whenever the current screen size changes
    */
-  public readonly shared: Observable<ScreenSize>;
+  public get shared(): Observable<ScreenSize> {
+    return this._shared.pipe(startWith(this.currentScreenSize()));
+  }
+
+  private readonly _platform: Observable<IsDesktop>;
 
   /**
    * An observable that emits whenever the screen size changes so that the app is considered
    * to be on a mobile device or a desktop device.
    */
-  public readonly platform: Observable<IsDesktop>;
+  public get platform(): Observable<IsDesktop> {
+    return this._platform.pipe(startWith(this.isDesktop()));
+  }
 
   constructor(@Inject(WINDOW_TOKEN) private window: Window) {
-    this.shared = combineLatest(
+    this._shared = combineLatest(
       this.queryLists.map((queryList) =>
         ScreenWidthObserver.matching(queryList)
       )
@@ -122,7 +129,7 @@ export class ScreenWidthObserver {
       })
     );
 
-    this.platform = this.shared.pipe(
+    this._platform = this._shared.pipe(
       map((screenSize) => screenSize > MOBILE_THRESHOLD),
       distinctUntilChanged()
     );
@@ -139,10 +146,10 @@ export class ScreenWidthObserver {
   }
 
   /**
-   * returns whether or not the app is currently considered to be in desktop mode
+   * returns whether the app is currently considered to be in desktop mode
    * looking only at the screen size.
    */
   public isDesktop(): IsDesktop {
-    return this.currentScreenSize() <= MOBILE_THRESHOLD;
+    return this.currentScreenSize() > MOBILE_THRESHOLD;
   }
 }

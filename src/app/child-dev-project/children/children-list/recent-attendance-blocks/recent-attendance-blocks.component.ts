@@ -5,7 +5,7 @@ import { ViewPropertyConfig } from "../../../../core/entity-components/entity-li
 import { ActivityAttendance } from "../../../attendance/model/activity-attendance";
 import { AttendanceService } from "../../../attendance/attendance.service";
 import moment from "moment";
-import { UntilDestroy } from "@ngneat/until-destroy";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 import {
   ScreenWidthObserver,
@@ -38,30 +38,33 @@ export class RecentAttendanceBlocksComponent implements OnInitDynamicComponent {
 
   constructor(
     private attendanceService: AttendanceService,
-    private media: ScreenWidthObserver
+    private screenWidthObserver: ScreenWidthObserver
   ) {
-    this.media.shared.subscribe((change) => {
-      switch (change) {
-        case ScreenSize.xs:
-        case ScreenSize.sm: {
-          this.maxAttendanceBlocks = 1;
-          break;
+    this.screenWidthObserver.shared
+      .pipe(untilDestroyed(this))
+      .subscribe((change) => {
+        console.log("Change: ", change);
+        switch (change) {
+          case ScreenSize.xs:
+          case ScreenSize.sm: {
+            this.maxAttendanceBlocks = 1;
+            break;
+          }
+          case ScreenSize.md: {
+            this.maxAttendanceBlocks = 2;
+            break;
+          }
+          case ScreenSize.lg: {
+            this.maxAttendanceBlocks = 3;
+            break;
+          }
+          case ScreenSize.xl:
+          case ScreenSize.xxl: {
+            this.maxAttendanceBlocks = 6;
+            break;
+          }
         }
-        case ScreenSize.md: {
-          this.maxAttendanceBlocks = 2;
-          break;
-        }
-        case ScreenSize.lg: {
-          this.maxAttendanceBlocks = 3;
-          break;
-        }
-        case ScreenSize.xl:
-        case ScreenSize.xxl: {
-          this.maxAttendanceBlocks = 6;
-          break;
-        }
-      }
-    });
+      });
   }
 
   async onInitFromDynamicConfig(config: ViewPropertyConfig) {

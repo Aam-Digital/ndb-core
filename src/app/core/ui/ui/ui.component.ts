@@ -52,11 +52,13 @@ export class UiComponent {
     private _sessionService: SessionService,
     private titleService: Title,
     private configService: ConfigService,
-    private screenSizeObserver: ScreenWidthObserver
+    private screenWidthObserver: ScreenWidthObserver
   ) {
-    this.screenSizeObserver.platform.subscribe(
-      (isDesktop) => (this.sideNavMode = isDesktop ? "side" : "over")
-    );
+    this.screenWidthObserver.platform
+      .pipe(untilDestroyed(this))
+      .subscribe(
+        (isDesktop) => (this.sideNavMode = isDesktop ? "side" : "over")
+      );
     this.configService.configUpdates
       .pipe(untilDestroyed(this))
       .subscribe(() => {
