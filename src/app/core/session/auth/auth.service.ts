@@ -4,6 +4,7 @@ import { DatabaseUser } from "../session-service/local-user";
 /**
  * Abstract class that handles user authentication and password change.
  * Implement this for different authentication providers.
+ * See {@link AuthProvider} for available options.
  */
 export abstract class AuthService {
   /**
