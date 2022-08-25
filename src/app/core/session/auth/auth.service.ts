@@ -6,8 +6,6 @@ import { DatabaseUser } from "../session-service/local-user";
  * Implement this for different authentication providers.
  */
 export abstract class AuthService {
-  someProp = "this is some value";
-
   /**
    * Authenticate a user with credentials.
    * @param username The username of the user
