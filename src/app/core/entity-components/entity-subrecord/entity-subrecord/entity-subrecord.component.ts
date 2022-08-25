@@ -107,7 +107,7 @@ export class EntitySubrecordComponent<T extends Entity>
   @Input() editable = true;
 
   /** columns displayed in the template's table */
-  @Input() columnsToDisplay = [];
+  @Input() columnsToDisplay: string[] = [];
 
   /** data displayed in the template's table */
   recordsDataSource = new MatTableDataSource<TableRow<T>>();
@@ -139,14 +139,7 @@ export class EntitySubrecordComponent<T extends Entity>
     private loggingService: LoggingService,
     private entityRemoveService: EntityRemoveService,
     private entityMapper: EntityMapperService
-  ) {
-    this.screenWidthObserver
-      .shared()
-      .pipe(untilDestroyed(this), distinctUntilChanged())
-      .subscribe(() => {
-        this.setupTable();
-      });
-  }
+  ) {}
 
   /** function returns the background color for each row*/
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
@@ -169,6 +162,13 @@ export class EntitySubrecordComponent<T extends Entity>
           }
         });
     }
+
+    this.screenWidthObserver
+      .shared()
+      .pipe(untilDestroyed(this), distinctUntilChanged())
+      .subscribe(() => {
+        this.setupTable();
+      });
   }
 
   private entityConstructorIsAvailable(): boolean {
@@ -392,6 +392,6 @@ export class EntitySubrecordComponent<T extends Entity>
     if (numericValue === undefined) {
       return true;
     }
-    return this.screenWidthObserver.currentScreenSize() < numericValue;
+    return this.screenWidthObserver.currentScreenSize() >= numericValue;
   }
 }

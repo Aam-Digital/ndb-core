@@ -86,7 +86,8 @@ export class ScreenWidthObserver {
    */
   private static matching(query: MediaQueryList): Observable<boolean> {
     return fromEvent<MediaQueryListEvent>(query, "change").pipe(
-      map((event) => event.matches)
+      map((event) => event.matches),
+      startWith(query.matches)
     );
   }
 
