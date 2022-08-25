@@ -68,8 +68,6 @@ COPY --from=builder /app/dist/ /usr/share/nginx/html
 ENV PORT=80
 # The url to the CouchDB database
 ENV COUCHDB_URL="http://localhost"
-# Whether the app should be started in demo mode. Everything else then "true" is considered as "false".
-ENV DEMO="true"
 # variables are inserted into the nginx config
-CMD envsubst '$$PORT $$COUCHDB_URL $$DEMO' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
+CMD envsubst '$$PORT $$COUCHDB_URL' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
     nginx -g 'daemon off;'
