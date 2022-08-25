@@ -52,6 +52,7 @@ describe("EntitySubrecordComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EntitySubrecordComponent);
     component = fixture.componentInstance;
+    component.editable = false;
     fixture.detectChanges();
   });
 
