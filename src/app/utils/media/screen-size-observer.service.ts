@@ -103,9 +103,12 @@ export class ScreenWidthObserver {
 
   /**
    * The observable shared amongst all instances.
-   * Subscribers to this observable get notified whenever the current screen size changes
+   * Subscribers to this observable get notified whenever the current screen size changes.
+   *
+   * When getting a new observable (or, in other words, when calling this function), the current
+   * screen size is injected so that when you subscribe the first element that arrives is the current screen size.
    */
-  public get shared(): Observable<ScreenSize> {
+  public shared(): Observable<ScreenSize> {
     return this._shared.pipe(startWith(this.currentScreenSize()));
   }
 
@@ -115,7 +118,7 @@ export class ScreenWidthObserver {
    * An observable that emits whenever the screen size changes so that the app is considered
    * to be on a mobile device or a desktop device.
    */
-  public get platform(): Observable<IsDesktop> {
+  public platform(): Observable<IsDesktop> {
     return this._platform.pipe(startWith(this.isDesktop()));
   }
 

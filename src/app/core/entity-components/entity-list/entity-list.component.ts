@@ -115,7 +115,7 @@ export class EntityListComponent<T extends Entity>
       );
     }
 
-    this.screenSizeObserver.platform.subscribe((isDesktop) => {
+    this.screenSizeObserver.platform().subscribe((isDesktop) => {
       if (!isDesktop) {
         this.displayColumnGroupByName(this.mobileColumnGroup);
       } else if (

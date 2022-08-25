@@ -40,10 +40,10 @@ export class RecentAttendanceBlocksComponent implements OnInitDynamicComponent {
     private attendanceService: AttendanceService,
     private screenWidthObserver: ScreenWidthObserver
   ) {
-    this.screenWidthObserver.shared
+    this.screenWidthObserver
+      .shared()
       .pipe(untilDestroyed(this))
       .subscribe((change) => {
-        console.log("Change: ", change);
         switch (change) {
           case ScreenSize.xs:
           case ScreenSize.sm: {

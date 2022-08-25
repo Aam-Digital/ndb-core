@@ -13,23 +13,19 @@ describe("HealthCheckupComponent", () => {
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
   const child = new Child();
 
-  beforeEach(
-    waitForAsync(() => {
-      mockChildrenService = jasmine.createSpyObj([
-        "getChild",
-        "getHealthChecksOfChild",
-      ]);
-      mockChildrenService.getChild.and.returnValue(of(child));
-      mockChildrenService.getHealthChecksOfChild.and.returnValue(of([]));
+  beforeEach(waitForAsync(() => {
+    mockChildrenService = jasmine.createSpyObj([
+      "getChild",
+      "getHealthChecksOfChild",
+    ]);
+    mockChildrenService.getChild.and.returnValue(of(child));
+    mockChildrenService.getHealthChecksOfChild.and.returnValue(of([]));
 
-      TestBed.configureTestingModule({
-        imports: [ChildrenModule, MockedTestingModule.withState()],
-        providers: [
-          { provide: ChildrenService, useValue: mockChildrenService },
-        ],
-      }).compileComponents();
-    })
-  );
+    TestBed.configureTestingModule({
+      imports: [ChildrenModule, MockedTestingModule.withState()],
+      providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(HealthCheckupComponent);

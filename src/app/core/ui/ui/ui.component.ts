@@ -54,7 +54,8 @@ export class UiComponent {
     private configService: ConfigService,
     private screenWidthObserver: ScreenWidthObserver
   ) {
-    this.screenWidthObserver.platform
+    this.screenWidthObserver
+      .platform()
       .pipe(untilDestroyed(this))
       .subscribe(
         (isDesktop) => (this.sideNavMode = isDesktop ? "side" : "over")

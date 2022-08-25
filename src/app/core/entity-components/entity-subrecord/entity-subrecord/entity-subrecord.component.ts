@@ -13,7 +13,6 @@ import { MatTableDataSource } from "@angular/material/table";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { AlertService } from "../../../alerts/alert.service";
-import { Subscription } from "rxjs";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import {
   EntityForm,
@@ -113,8 +112,6 @@ export class EntitySubrecordComponent<T extends Entity>
   /** data displayed in the template's table */
   recordsDataSource = new MatTableDataSource<TableRow<T>>();
 
-  private mediaSubscription: Subscription;
-
   idForSavingPagination = "startWert";
 
   @ViewChild(MatSort) set sort(matSort: MatSort) {
@@ -135,7 +132,7 @@ export class EntitySubrecordComponent<T extends Entity>
 
   constructor(
     private alertService: AlertService,
-    private screenSizeObserver: ScreenWidthObserver,
+    private screenWidthObserver: ScreenWidthObserver,
     private entityFormService: EntityFormService,
     private dialog: MatDialog,
     private analyticsService: AnalyticsService,
@@ -143,7 +140,8 @@ export class EntitySubrecordComponent<T extends Entity>
     private entityRemoveService: EntityRemoveService,
     private entityMapper: EntityMapperService
   ) {
-    this.mediaSubscription = this.screenSizeObserver.shared
+    this.screenWidthObserver
+      .shared()
       .pipe(untilDestroyed(this), distinctUntilChanged())
       .subscribe(() => {
         this.setupTable();
@@ -202,9 +200,6 @@ export class EntitySubrecordComponent<T extends Entity>
       }
       this.initDefaultSort();
     }
-    if (changes.hasOwnProperty("columnsToDisplay")) {
-      this.mediaSubscription.unsubscribe();
-    }
   }
 
   private initFormGroups() {
@@ -257,7 +252,7 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 
   edit(row: TableRow<T>) {
-    if (this.screenSizeObserver.isDesktop()) {
+    if (this.screenWidthObserver.isDesktop()) {
       if (!row.formGroup) {
         row.formGroup = this.entityFormService.createFormGroup(
           this._columns,
@@ -392,9 +387,11 @@ export class EntitySubrecordComponent<T extends Entity>
     if (col.hideFromTable) {
       return false;
     }
-    // when `ScreenSize[col.visibleFrom]` is undefined, this returns `false`
-    return (
-      this.screenSizeObserver.currentScreenSize() < ScreenSize[col.visibleFrom]
-    );
+    // when `ScreenSize[col.visibleFrom]` is undefined, this returns `true`
+    const numericValue = ScreenSize[col.visibleFrom];
+    if (numericValue === undefined) {
+      return true;
+    }
+    return this.screenWidthObserver.currentScreenSize() < numericValue;
   }
 }
