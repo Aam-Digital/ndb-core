@@ -12,8 +12,6 @@ import {
   RemoveResult,
 } from "../../../entity/entity-remove.service";
 import { AlertService } from "../../../alerts/alert.service";
-import { RecurringActivity } from "app/child-dev-project/attendance/model/recurring-activity";
-import { EntityMapperService } from "app/core/entity/entity-mapper.service";
 import { EntityAction } from "../../../permissions/permission-types";
 
 /**
@@ -49,8 +47,7 @@ export class RowDetailsComponent<E extends Entity> {
     private formService: EntityFormService,
     private ability: EntityAbility,
     private entityRemoveService: EntityRemoveService,
-    private alertService: AlertService,
-    private entityMapperService: EntityMapperService
+    private alertService: AlertService
   ) {
     this.form = this.formService.createFormGroup(data.columns, data.entity);
     if (!this.data.entity._rev) {

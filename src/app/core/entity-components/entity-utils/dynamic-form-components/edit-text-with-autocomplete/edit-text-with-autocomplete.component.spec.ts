@@ -1,7 +1,5 @@
-import { ComponentHarness } from "@angular/cdk/testing";
 import {
   ComponentFixture,
-  discardPeriodicTasks,
   fakeAsync,
   TestBed,
   tick,
@@ -17,7 +15,7 @@ import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 import { EntityUtilsModule } from "../../entity-utils.module";
 import { EditTextWithAutocompleteComponent } from "./edit-text-with-autocomplete.component";
 
-fdescribe("EditTextWithAutocompleteComponent", () => {
+describe("EditTextWithAutocompleteComponent", () => {
   let component: EditTextWithAutocompleteComponent;
   let fixture: ComponentFixture<EditTextWithAutocompleteComponent>;
   let loadTypeSpy: jasmine.Spy;
@@ -116,7 +114,7 @@ fdescribe("EditTextWithAutocompleteComponent", () => {
   }));
 
   // check if values in the form control have been manually changed after loading the entity
-  fit("should only load new entity if user confirms to override changes", fakeAsync(() => {
+  it("should only load new entity if user confirms to override changes", fakeAsync(() => {
     const rA1 = RecurringActivity.create("First Recurring Activity");
     const rA2 = RecurringActivity.create("Second Recurring Activity");
     rA1.type = defaultInteractionTypes[0];

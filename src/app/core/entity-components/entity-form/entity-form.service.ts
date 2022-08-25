@@ -91,16 +91,6 @@ export class EntityFormService {
     return this.fb.group<Partial<T>>(formConfig);
   }
 
-  public updateValues(formGroup: FormGroup, entity: Entity, staticKey: string) {
-    // formGroup.setValue(entity);
-    Object.keys(formGroup.controls).forEach((key) => {
-      if (key != staticKey) {
-        formGroup.controls[key].setValue(entity[key]);
-        console.log(key, entity[key]);
-      }
-    });
-  }
-
   /**
    * This function applies the changes of the formGroup to the entity.
    * If the form is invalid or the entity does not pass validation after applying the changes, an error will be thrown.
