@@ -1,8 +1,9 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { FormBuilder, ValidationErrors, Validators } from "@angular/forms";
-import { SessionService } from "../../session/session-service/session.service";
-import { CouchdbAuthService } from "../../session/auth/couchdb-auth.service";
-import { LoggingService } from "../../logging/logging.service";
+import { SessionService } from "../../../session-service/session.service";
+import { LoggingService } from "../../../../logging/logging.service";
+import { AuthService } from "../../auth.service";
+import { CouchdbAuthService } from "../couchdb-auth.service";
 
 /**
  * A simple password form that enforces secure password.
@@ -10,12 +11,13 @@ import { LoggingService } from "../../logging/logging.service";
 @Component({
   selector: "app-password-form",
   templateUrl: "./password-form.component.html",
-  styleUrls: ["./password-form.component.scss"]
+  styleUrls: ["./password-form.component.scss"],
 })
 export class PasswordFormComponent implements OnInit {
-  @Input() couchdbAuthService: CouchdbAuthService;
   @Input() username: string;
   @Input() disabled = false;
+
+  couchdbAuthService: CouchdbAuthService;
 
   passwordChangeResult: { success: boolean; error?: any };
 
@@ -41,13 +43,25 @@ export class PasswordFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private sessionService: SessionService,
-    private loggingService: LoggingService
-  ) {}
+    private loggingService: LoggingService,
+    authService: AuthService
+  ) {
+    if (authService instanceof CouchdbAuthService) {
+      this.couchdbAuthService = authService;
+    }
+  }
 
   ngOnInit() {
+    console.log("disabled", this.disabled);
+    console.log("form", this.passwordForm.valid, this.passwordForm.disabled);
     if (this.disabled) {
       this.passwordForm.disable();
     }
+    console.log(
+      "form after",
+      this.passwordForm.valid,
+      this.passwordForm.disabled
+    );
   }
 
   changePassword(): Promise<any> {
@@ -63,7 +77,8 @@ export class PasswordFormComponent implements OnInit {
     }
 
     const newPassword = this.passwordForm.get("newPassword").value;
-    return this.couchdbAuthService.changePassword(this.username, currentPassword, newPassword)
+    return this.couchdbAuthService
+      .changePassword(this.username, currentPassword, newPassword)
       .then(() => this.sessionService.login(this.username, newPassword))
       .then(() => (this.passwordChangeResult = { success: true }))
       .catch((err: Error) => {

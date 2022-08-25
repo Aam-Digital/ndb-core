@@ -38,23 +38,12 @@
           style="width: fit-content"
         >
           <app-password-form
-            *ngIf="couchdbAuthService"
-            [couchdbAuthService]="couchdbAuthService"
             [username]="username"
             [disabled]="passwordChangeDisabled"
           ></app-password-form>
-          <button
-            *ngIf="!couchdbAuthService"
-            mat-stroked-button
-            angulartics2On="click"
-            angularticsCategory="User"
-            angularticsAction="password_update"
-            (click)="authService.changePassword()"
-            [disabled]="passwordChangeDisabled"
-            i18n="Button which opens password reset page"
-          >
-            Change Password
-          </button>
+
+          <app-password-button [disabled]="passwordChangeDisabled">
+          </app-password-button>
         </div>
       </div>
     </ng-template>

@@ -1,13 +1,14 @@
 import { Injectable } from "@angular/core";
-import { AuthService } from "./auth.service";
+import { AuthService } from "../auth.service";
 import {
   HttpClient,
   HttpErrorResponse,
-  HttpHeaders, HttpStatusCode,
+  HttpHeaders,
+  HttpStatusCode,
 } from "@angular/common/http";
 import { firstValueFrom } from "rxjs";
-import { DatabaseUser } from "../session-service/local-user";
-import { AppSettings } from "../../app-config/app-settings";
+import { DatabaseUser } from "../../session-service/local-user";
+import { AppSettings } from "../../../app-config/app-settings";
 
 @Injectable()
 export class CouchdbAuthService extends AuthService {

@@ -1,10 +1,20 @@
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 
-import { OIDCTokenResponse, KeycloakAuthService } from "./keycloak-auth.service";
-import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
+import {
+  OIDCTokenResponse,
+  KeycloakAuthService,
+} from "./keycloak-auth.service";
+import {
+  TEST_PASSWORD,
+  TEST_USER,
+} from "../../../../utils/mocked-testing.module";
 import { of, throwError } from "rxjs";
-import { HttpClient, HttpErrorResponse, HttpStatusCode } from "@angular/common/http";
-import { DatabaseUser } from "../session-service/local-user";
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpStatusCode,
+} from "@angular/common/http";
+import { DatabaseUser } from "../../session-service/local-user";
 
 function keycloakAuthHttpFake(_url, body) {
   const params = new URLSearchParams(body);
@@ -98,7 +108,7 @@ describe("KeycloakAuthService", () => {
     mockHttpClient.post.calls.reset();
     const newToken = { ...jwtTokenResponse, access_token: "new.token" };
     // mock token cannot be parsed as JwtToken
-    spyOn(window, "atob").and.returnValue("{\"decoded\": \"token\"}");
+    spyOn(window, "atob").and.returnValue('{"decoded": "token"}');
     mockHttpClient.post.and.returnValue(of(newToken));
     // should refresh token one minute before it expires
     tick(60 * 1000);
@@ -121,7 +131,10 @@ describe("KeycloakAuthService", () => {
   });
 
   it("should login, if there is a valid refresh token", async () => {
-    localStorage.setItem(KeycloakAuthService.REFRESH_TOKEN_KEY, "some-refresh-token");
+    localStorage.setItem(
+      KeycloakAuthService.REFRESH_TOKEN_KEY,
+      "some-refresh-token"
+    );
     mockHttpClient.post.and.returnValue(of(jwtTokenResponse));
     const user = await service.autoLogin();
     expect(user).toEqual(dbUser);

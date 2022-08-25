@@ -1,9 +1,16 @@
 import { TestBed } from "@angular/core/testing";
 
 import { CouchdbAuthService } from "./couchdb-auth.service";
-import { HttpClient, HttpErrorResponse, HttpStatusCode } from "@angular/common/http";
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpStatusCode,
+} from "@angular/common/http";
 import { of, throwError } from "rxjs";
-import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
+import {
+  TEST_PASSWORD,
+  TEST_USER,
+} from "../../../../utils/mocked-testing.module";
 
 describe("CouchdbAuthService", () => {
   let service: CouchdbAuthService;

@@ -1,10 +1,10 @@
-import { AuthService } from "./auth.service";
+import { AuthService } from "../auth.service";
 import { Injectable } from "@angular/core";
 import Keycloak from "keycloak-js";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { firstValueFrom } from "rxjs";
-import { DatabaseUser } from "../session-service/local-user";
-import { parseJwt } from "../../../utils/utils";
+import { DatabaseUser } from "../../session-service/local-user";
+import { parseJwt } from "../../../../utils/utils";
 
 @Injectable()
 export class KeycloakAuthService extends AuthService {
