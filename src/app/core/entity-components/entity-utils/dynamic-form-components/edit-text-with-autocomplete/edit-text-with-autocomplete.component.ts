@@ -86,6 +86,28 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
   }
 
   async select(selected: Entity) {
+    if (
+      !this.valuesChanged() ||
+      (await this.confirmationDialog.getConfirmation(
+        $localize`:Discard the changes made:Discard changes`,
+        $localize`Do you want to discard the changes made and load '${
+          selected[this.formControlName]
+        }'?`
+      ))
+    ) {
+      this.selectedEntity = selected;
+      this.addRelevantValueToRelevantProperty(selected);
+      Object.keys(this.parent.controls).forEach((key) => {
+        this.parent.controls[key].setValue(selected[key]);
+      });
+      this.addMissingControls(selected);
+      this.initialValues = this.parent.getRawValue();
+    } else {
+      this.formControl.setValue(this.lastValue);
+    }
+  }
+
+  private valuesChanged() {
     let valuesChanged = false;
     for (const iV in this.initialValues) {
       if (
@@ -96,40 +118,31 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
         break;
       }
     }
+    return valuesChanged;
+  }
+
+  private addRelevantValueToRelevantProperty(selected) {
     if (
-      !valuesChanged ||
-      (await this.confirmationDialog.getConfirmation(
-        $localize`:Discard the changes made:Discard changes`,
-        $localize`Do you want to discard the changes made and load '${
-          selected[this.formControlName]
-        }'?`
-      ))
+      this.additional.relevantProperty &&
+      this.additional.relevantValue &&
+      !selected[this.additional.relevantProperty].includes(
+        this.additional.relevantValue
+      )
     ) {
-      this.selectedEntity = selected;
-      const schema = selected.getSchema();
-      if (
-        this.additional.relevantProperty &&
-        this.additional.relevantValue &&
-        !selected[this.additional.relevantProperty].includes(
-          this.additional.relevantValue
-        )
-      ) {
-        selected[this.additional.relevantProperty].push(
-          this.additional.relevantValue
-        );
-      }
-      Object.keys(this.parent.controls).forEach((key) => {
-        this.parent.controls[key].setValue(selected[key]);
-      });
-      const formKeys = Object.keys(selected).filter(
-        (key) => schema.has(key) && !this.parent.controls.hasOwnProperty(key)
+      selected[this.additional.relevantProperty].push(
+        this.additional.relevantValue
       );
-      formKeys.forEach((key) =>
-        this.parent.addControl(key, new FormControl(selected[key]))
-      );
-      this.initialValues = this.parent.getRawValue();
-    } else {
-      this.formControl.setValue(this.lastValue);
     }
+  }
+
+  private addMissingControls(selected) {
+    const formKeys = Object.keys(selected).filter(
+      (key) =>
+        selected.getSchema().has(key) &&
+        !this.parent.controls.hasOwnProperty(key)
+    );
+    formKeys.forEach((key) =>
+      this.parent.addControl(key, new FormControl(selected[key]))
+    );
   }
 }
