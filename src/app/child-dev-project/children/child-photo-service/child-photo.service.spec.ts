@@ -19,7 +19,7 @@ describe("ChildPhotoService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should getFile default if no webdav connection", async () => {
+  it("should getFile default", async () => {
     const testChild = new Child("1");
     const actualImage = await service.getImage(testChild);
     expect(actualImage).toBe(DEFAULT_IMG);

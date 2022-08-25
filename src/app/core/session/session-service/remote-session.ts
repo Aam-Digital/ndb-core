@@ -14,7 +14,6 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { AppConfig } from "../../app-config/app-config";
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { DatabaseUser } from "./local-user";
@@ -22,6 +21,8 @@ import { SessionService } from "./session.service";
 import { LoginState } from "../session-states/login-state.enum";
 import { PouchDatabase } from "../../database/pouch-database";
 import { LoggingService } from "../../logging/logging.service";
+import PouchDB from "pouchdb-browser";
+import { AppSettings } from "app/core/app-config/app-settings";
 
 /**
  * Responsibilities:
@@ -47,9 +48,19 @@ export class RemoteSession extends SessionService {
   ) {
     super();
     this.database = new PouchDatabase(this.loggingService).initIndexedDB(
-      AppConfig.settings.database.remote_url + AppConfig.settings.database.name,
+      `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}`,
       {
+        adapter: "http",
         skip_setup: true,
+        fetch: (url, opts) => {
+          if (typeof url === "string") {
+            return PouchDB.fetch(
+              AppSettings.DB_PROXY_PREFIX +
+                url.split(AppSettings.DB_PROXY_PREFIX)[1],
+              opts
+            );
+          }
+        },
       }
     );
   }
@@ -63,7 +74,7 @@ export class RemoteSession extends SessionService {
     try {
       const response = await this.httpClient
         .post<DatabaseUser>(
-          `${AppConfig.settings.database.remote_url}_session`,
+          `${AppSettings.DB_PROXY_PREFIX}/_session`,
           { name: username, password: password },
           { withCredentials: true }
         )
@@ -103,7 +114,7 @@ export class RemoteSession extends SessionService {
    */
   public async logout(): Promise<void> {
     await this.httpClient
-      .delete(`${AppConfig.settings.database.remote_url}_session`, {
+      .delete(`${AppSettings.DB_PROXY_PREFIX}/_session`, {
         withCredentials: true,
       })
       .toPromise()

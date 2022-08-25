@@ -15,9 +15,8 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, ViewChild } from "@angular/core";
 import { SessionService } from "../../session/session-service/session.service";
-import { AppConfig } from "../../app-config/app-config";
 import { Title } from "@angular/platform-browser";
 import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -35,14 +34,14 @@ import { UiConfig } from "../ui-config";
   templateUrl: "./ui.component.html",
   styleUrls: ["./ui.component.scss"],
 })
-export class UiComponent implements OnInit {
+export class UiComponent {
   /** display mode for the menu to make it responsive and usable on smaller screens */
   sideNavMode: MatDrawerMode;
   /** reference to sideNav component in template, required for toggling the menu on user actions */
   @ViewChild("sideNav") sideNav;
 
   /** title displayed in the app header bar */
-  title: string;
+  title = "Aam Digital";
 
   /** path to the image of a logo */
   logo_path: string;
@@ -69,15 +68,13 @@ export class UiComponent implements OnInit {
     this.configService.configUpdates
       .pipe(untilDestroyed(this))
       .subscribe(() => {
-        const uiConfig = this.configService.getConfig<UiConfig>("appConfig");
+        const uiConfig =
+          this.configService.getConfig<UiConfig>("appConfig") || {};
+        this.title = uiConfig.site_name || this.title;
+        this.titleService.setTitle(this.title);
         this.logo_path = uiConfig?.logo_path;
         this.showLanguageSelect = uiConfig?.displayLanguageSelect === true;
       });
-  }
-
-  ngOnInit(): void {
-    this.title = AppConfig?.settings?.site_name;
-    this.titleService.setTitle(this.title);
   }
 
   /**

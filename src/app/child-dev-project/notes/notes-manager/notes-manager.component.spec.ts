@@ -29,6 +29,7 @@ import { UpdatedEntity } from "../../../core/entity/model/entity-update";
 import { ExportService } from "../../../core/export/export-service/export.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { Ordering } from "../../../core/configurable-enum/configurable-enum-ordering";
 
 describe("NotesManagerComponent", () => {
   let component: NotesManagerComponent;
@@ -78,7 +79,7 @@ describe("NotesManagerComponent", () => {
     snapshot: { queryParams: {} },
   };
 
-  const testInteractionTypes: InteractionType[] = [
+  const testInteractionTypes: InteractionType[] = Ordering.imposeTotalOrdering([
     {
       id: "HOME_VISIT",
       label: "Home Visit",
@@ -87,7 +88,7 @@ describe("NotesManagerComponent", () => {
       id: "GUARDIAN_TALK",
       label: "Talk with Guardians",
     },
-  ];
+  ]);
 
   beforeEach(() => {
     const mockConfigService = jasmine.createSpyObj("mockConfigService", [
@@ -169,9 +170,9 @@ describe("NotesManagerComponent", () => {
     flush();
 
     const list = fixture.debugElement.query(By.css("app-entity-list"));
-    const filterSettings = (list.componentInstance as EntityListComponent<Note>).filterSelections.find(
-      (f) => f.filterSettings.name === "category"
-    );
+    const filterSettings = (
+      list.componentInstance as EntityListComponent<Note>
+    ).filterSelections.find((f) => f.filterSettings.name === "category");
 
     expect(filterSettings.filterSettings.options).toHaveSize(
       testInteractionTypes.length + 1

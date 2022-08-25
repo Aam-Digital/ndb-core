@@ -53,6 +53,10 @@ import "@angular/localize/init";
  */
 // import 'intl/locale-data/jsonp/en';
 
+// Import hammer.js to enable gestures
+// on mobile devices
+import "hammerjs";
+
 // WARNING: workaround to allow PouchDB with Angular v6: https://github.com/pouchdb/pouchdb/issues/7263
 (window as any).global = window;
 

@@ -21,42 +21,6 @@ You can directly run the system using Docker.
 More information in our [Aam-Digital/ndb-setup repository](https://github.com/Aam-Digital/ndb-setup/).
 In that case you do not have to clone this repository and install all the dependencies as everything is packaged into the docker image already.
 
-## Configuration
-The custom configuration for your service instance is set in the `assets/config.json` file.
-You can copy the `assets/config.default.json` as a starting point.
-
-### Nextcloud (webdav) Integration
-You can integrate Aam Digital with an existing Nextcloud server to allow users to update photos on their own.
-To avoid CORS issues the webdav URL in your _config.json_ should be a relative URL
-in combination with a reverse-proxy that is forwarding to the actual Nextcloud server address:
-
-_assets/config.json:_
-```
-  "webdav": {
-    "remote_url": "nextcloud/"
-  }
-```
-
-_proxy.conf.json_ (for local development):
-```
-  "/nextcloud": {
-    "target": "https://<your-nextcloud-server>/remote.php/webdav",
-    "secure": true,
-    "changeOrigin": true,
-    "pathRewrite": {
-      "^/nextcloud": ""
-    }
-  }
-```
-
-_docker-compose.yml_ (for production server):
-```
-  environment:
-    WEBDAV_URL: https://<your-nextcloud-server>/remote.php/webdav
-```
-
------
-
 # Development
 
 ## Setup
