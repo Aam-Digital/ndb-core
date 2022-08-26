@@ -11,7 +11,6 @@ import { CouchdbAuthService } from "../couchdb-auth.service";
 @Component({
   selector: "app-password-form",
   templateUrl: "./password-form.component.html",
-  styleUrls: ["./password-form.component.scss"],
 })
 export class PasswordFormComponent implements OnInit {
   @Input() username: string;
@@ -31,7 +30,7 @@ export class PasswordFormComponent implements OnInit {
           Validators.minLength(8),
           Validators.pattern(/[A-Z]/),
           Validators.pattern(/[a-z]/),
-          Validators.pattern(/[0-9]/),
+          Validators.pattern(/\d/),
           Validators.pattern(/[^A-Za-z0-9]/),
         ],
       ],
