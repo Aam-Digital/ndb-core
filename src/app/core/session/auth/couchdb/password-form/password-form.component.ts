@@ -65,11 +65,11 @@ export class PasswordFormComponent implements OnInit {
       this.passwordForm
         .get("currentPassword")
         .setErrors({ incorrectPassword: true });
-      return Promise.reject();
+      return;
     }
 
     if (this.passwordForm.invalid) {
-      return Promise.reject();
+      return;
     }
 
     const newPassword = this.passwordForm.get("newPassword").value;
