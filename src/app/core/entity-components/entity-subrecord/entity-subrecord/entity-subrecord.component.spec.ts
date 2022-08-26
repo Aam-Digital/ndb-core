@@ -84,6 +84,7 @@ describe("EntitySubrecordComponent", () => {
     component.ngOnChanges({ records: undefined, columns: undefined });
     fixture.detectChanges();
 
+    component.recordsDataSource.sort.direction = "";
     component.recordsDataSource.sort.sort({
       id: "enumValue",
       start: "asc",
