@@ -13,8 +13,6 @@ import { AttendanceLogicalStatus } from "../model/attendance-status";
 export class AttendanceBlockComponent implements OnChanges {
   @Input() attendanceData: ActivityAttendance;
   @Input() forChild: string;
-  tooltip = false;
-  tooltipTimeout;
   LStatus = AttendanceLogicalStatus;
   logicalCount: { [key in AttendanceLogicalStatus]?: number };
 
@@ -24,18 +22,6 @@ export class AttendanceBlockComponent implements OnChanges {
       {};
   }
 
-  showTooltip() {
-    if (this.tooltipTimeout) {
-      clearTimeout(this.tooltipTimeout);
-    }
-    this.tooltipTimeout = setTimeout(() => (this.tooltip = true), 1000);
-  }
-  hideTooltip() {
-    if (this.tooltipTimeout) {
-      clearTimeout(this.tooltipTimeout);
-    }
-    this.tooltipTimeout = setTimeout(() => (this.tooltip = false), 150);
-  }
   get attendanceDescription(): string {
     return `${this.logicalCount[this.LStatus.PRESENT]} / ${
       (this.logicalCount[this.LStatus.PRESENT] || 0) +
