@@ -34,9 +34,4 @@ export abstract class AuthService {
    * Clear the local session of the currently logged-in user.
    */
   abstract logout(): Promise<void>;
-
-  /**
-   * Change the password of a user.
-   */
-  abstract changePassword(): Promise<any>;
 }

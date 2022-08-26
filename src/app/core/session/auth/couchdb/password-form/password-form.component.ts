@@ -52,19 +52,15 @@ export class PasswordFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log("disabled", this.disabled);
-    console.log("form", this.passwordForm.valid, this.passwordForm.disabled);
     if (this.disabled) {
       this.passwordForm.disable();
     }
-    console.log(
-      "form after",
-      this.passwordForm.valid,
-      this.passwordForm.disabled
-    );
   }
 
   changePassword(): Promise<any> {
+    if (this.passwordForm.invalid) {
+      return;
+    }
     this.passwordChangeResult = undefined;
 
     const currentPassword = this.passwordForm.get("currentPassword").value;
