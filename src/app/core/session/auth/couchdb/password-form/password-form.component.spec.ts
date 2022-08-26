@@ -29,11 +29,18 @@ describe("PasswordFormComponent", () => {
     fixture = TestBed.createComponent(PasswordFormComponent);
     component = fixture.componentInstance;
     component.couchdbAuthService = mockCouchDBAuth;
+    component.username = "testUser";
     fixture.detectChanges();
   });
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should disable the form when disabled is passed to component", () => {
+    component.disabled = true;
+    component.ngOnInit();
+    expect(component.passwordForm.disabled).toBeTrue();
   });
 
   it("should set error when password is incorrect", () => {
@@ -48,8 +55,9 @@ describe("PasswordFormComponent", () => {
   });
 
   it("should set error when password change fails", fakeAsync(() => {
-    component.username = "testUser";
     component.passwordForm.get("currentPassword").setValue("testPW");
+    component.passwordForm.get("newPassword").setValue("Password1-");
+    component.passwordForm.get("confirmPassword").setValue("Password1-");
     mockSessionService.checkPassword.and.returnValue(true);
     mockCouchDBAuth.changePassword.and.rejectWith(new Error("pw change error"));
 
@@ -62,9 +70,9 @@ describe("PasswordFormComponent", () => {
   }));
 
   it("should set success and re-login when password change worked", fakeAsync(() => {
-    component.username = "testUser";
     component.passwordForm.get("currentPassword").setValue("testPW");
-    component.passwordForm.get("newPassword").setValue("changedPassword");
+    component.passwordForm.get("newPassword").setValue("Password1-");
+    component.passwordForm.get("confirmPassword").setValue("Password1-");
     mockSessionService.checkPassword.and.returnValue(true);
     mockCouchDBAuth.changePassword.and.resolveTo();
     mockSessionService.login.and.resolveTo(null);
@@ -74,7 +82,7 @@ describe("PasswordFormComponent", () => {
     expect(component.passwordChangeResult.success).toBeTrue();
     expect(mockSessionService.login).toHaveBeenCalledWith(
       "testUser",
-      "changedPassword"
+      "Password1-"
     );
   }));
 });

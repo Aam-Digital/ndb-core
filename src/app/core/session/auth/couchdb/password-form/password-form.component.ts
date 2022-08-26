@@ -57,9 +57,6 @@ export class PasswordFormComponent implements OnInit {
   }
 
   changePassword(): Promise<any> {
-    if (this.passwordForm.invalid) {
-      return;
-    }
     this.passwordChangeResult = undefined;
 
     const currentPassword = this.passwordForm.get("currentPassword").value;
@@ -68,7 +65,11 @@ export class PasswordFormComponent implements OnInit {
       this.passwordForm
         .get("currentPassword")
         .setErrors({ incorrectPassword: true });
-      return;
+      return Promise.reject();
+    }
+
+    if (this.passwordForm.invalid) {
+      return Promise.reject();
     }
 
     const newPassword = this.passwordForm.get("newPassword").value;
