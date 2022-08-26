@@ -7,6 +7,6 @@ export function entityFilterPredicate<T extends Entity, P extends keyof T>(
 ): boolean {
   const keys = Object.keys(data) as P[];
   return keys.some((property) =>
-    getReadableValue(data, property)?.toString().toLowerCase().includes(filter)
+    String(getReadableValue(data, property)).toLowerCase().includes(filter)
   );
 }
