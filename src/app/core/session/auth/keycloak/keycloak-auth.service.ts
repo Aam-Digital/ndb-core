@@ -95,8 +95,14 @@ export class KeycloakAuthService extends AuthService {
     );
   }
 
-  addAuthHeader(headers: HttpHeaders) {
-    headers.set("Authorization", "Bearer " + this.accessToken);
+  addAuthHeader(headers: any) {
+    if (headers.set && typeof headers.set === "function") {
+      // PouchDB headers are set as a map
+      headers.set("Authorization", "Bearer " + this.accessToken);
+    } else {
+      // Interceptor headers are set as a simple object
+      headers["Authorization"] = "Bearer " + this.accessToken;
+    }
   }
 
   async logout() {
@@ -118,21 +124,16 @@ export class KeycloakAuthService extends AuthService {
   getUserinfo(): Promise<any> {
     return this.keycloakReady.then(() =>
       firstValueFrom(
-        this.httpClient.get(
-          `${this.realmUrl}/protocol/openid-connect/userinfo`,
-          { headers: { Authorization: "Bearer " + this.accessToken } }
-        )
+        this.httpClient.get(`${this.realmUrl}/protocol/openid-connect/userinfo`)
       )
     );
   }
 
   setEmail(email: string): Observable<any> {
     // TODO where do we set this URL
-    return this.httpClient.put(
-      "http://localhost:3000/account/set-email",
-      { email },
-      { headers: { Authorization: "Bearer " + this.accessToken } }
-    );
+    return this.httpClient.put("http://localhost:3000/account/set-email", {
+      email,
+    });
   }
 
   forgotPassword(email: string): Observable<any> {

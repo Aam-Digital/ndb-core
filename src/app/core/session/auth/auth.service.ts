@@ -28,7 +28,7 @@ export abstract class AuthService {
    * Add headers to requests send by PouchDB if required for authentication.
    * @param headers the object where further headers can be added
    */
-  abstract addAuthHeader(headers: HttpHeaders);
+  abstract addAuthHeader(headers: any);
 
   /**
    * Clear the local session of the currently logged-in user.

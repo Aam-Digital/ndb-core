@@ -26,7 +26,7 @@ import { MatCardModule } from "@angular/material/card";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { RouterModule } from "@angular/router";
-import { HttpClientModule } from "@angular/common/http";
+import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { SyncedSessionService } from "./session-service/synced-session.service";
@@ -44,6 +44,7 @@ import { AccountPageComponent } from "./auth/keycloak/account-page/account-page.
 import { Angulartics2OnModule } from "angulartics2";
 import { PasswordResetComponent } from "./auth/keycloak/password-reset/password-reset.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { AuthInterceptor } from "./auth/keycloak/auth-interceptor.service";
 
 /**
  * The core session logic handling user login as well as connection and synchronization with the remote database.
@@ -105,6 +106,11 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
         }
       },
       deps: [Injector],
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
     },
   ],
 })
