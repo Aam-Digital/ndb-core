@@ -20,6 +20,10 @@ export class KeycloakAuthService extends AuthService {
     super();
   }
 
+  get realmUrl(): string {
+    return `${this.keycloak.authServerUrl}realms/${this.keycloak.realm}`;
+  }
+
   authenticate(username: string, password: string): Promise<DatabaseUser> {
     return this.keycloakReady
       .then(() => this.credentialAuth(username, password))
@@ -61,7 +65,7 @@ export class KeycloakAuthService extends AuthService {
     };
     return firstValueFrom(
       this.httpClient.post<OIDCTokenResponse>(
-        `${this.keycloak.authServerUrl}realms/${this.keycloak.realm}/protocol/openid-connect/token`,
+        `${this.realmUrl}/protocol/openid-connect/token`,
         body.toString(),
         options
       )
@@ -109,6 +113,26 @@ export class KeycloakAuthService extends AuthService {
       action: "UPDATE_PASSWORD",
       redirectUri: location.href,
     });
+  }
+
+  getUserinfo(): Promise<any> {
+    return this.keycloakReady.then(() =>
+      firstValueFrom(
+        this.httpClient.get(
+          `${this.realmUrl}/protocol/openid-connect/userinfo`,
+          { headers: { Authorization: "Bearer " + this.accessToken } }
+        )
+      )
+    );
+  }
+
+  setEmail(email: string): Observable<any> {
+    // TODO where do we set this URL
+    return this.httpClient.put(
+      "http://localhost:3000/account/set-email",
+      { email },
+      { headers: { Authorization: "Bearer " + this.accessToken } }
+    );
   }
 
   forgotPassword(email: string): Observable<any> {

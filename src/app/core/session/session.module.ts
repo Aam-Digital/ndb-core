@@ -43,6 +43,7 @@ import { PasswordFormComponent } from "./auth/couchdb/password-form/password-for
 import { AccountPageComponent } from "./auth/keycloak/account-page/account-page.component";
 import { Angulartics2OnModule } from "angulartics2";
 import { PasswordResetComponent } from "./auth/keycloak/password-reset/password-reset.component";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 /**
  * The core session logic handling user login as well as connection and synchronization with the remote database.
@@ -68,6 +69,7 @@ import { PasswordResetComponent } from "./auth/keycloak/password-reset/password-
     MatProgressBarModule,
     Angulartics2OnModule,
     ReactiveFormsModule,
+    FontAwesomeModule,
   ],
   declarations: [
     LoginComponent,
