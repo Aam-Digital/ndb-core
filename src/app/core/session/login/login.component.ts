@@ -19,6 +19,7 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
 import { SessionService } from "../session-service/session.service";
 import { LoginState } from "../session-states/login-state.enum";
 import { LoggingService } from "../../logging/logging.service";
+import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 
 /**
  * Form to allow users to enter their credentials and log in.
@@ -45,7 +46,8 @@ export class LoginComponent implements AfterViewInit {
 
   constructor(
     private _sessionService: SessionService,
-    private loggingService: LoggingService
+    private loggingService: LoggingService,
+    private keycloak: KeycloakAuthService
   ) {}
 
   ngAfterViewInit(): void {
@@ -98,5 +100,9 @@ export class LoginComponent implements AfterViewInit {
     this.errorMessage = "";
     this.password = "";
     this.loginInProgress = false;
+  }
+
+  forgotPassword() {
+    this.keycloak.forgotPassword("simon@aam-digital.com");
   }
 }

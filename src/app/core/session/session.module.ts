@@ -42,6 +42,7 @@ import { AuthProvider } from "./auth/auth-provider";
 import { PasswordFormComponent } from "./auth/couchdb/password-form/password-form.component";
 import { PasswordButtonComponent } from "./auth/keycloak/password-button/password-button.component";
 import { Angulartics2OnModule } from "angulartics2";
+import { PasswordResetComponent } from './auth/couchdb/password-reset/password-reset.component';
 
 /**
  * The core session logic handling user login as well as connection and synchronization with the remote database.
@@ -72,6 +73,7 @@ import { Angulartics2OnModule } from "angulartics2";
     LoginComponent,
     PasswordFormComponent,
     PasswordButtonComponent,
+    PasswordResetComponent,
   ],
   exports: [LoginComponent, PasswordButtonComponent, PasswordFormComponent],
   providers: [

@@ -2,7 +2,7 @@ import { AuthService } from "../auth.service";
 import { Injectable } from "@angular/core";
 import Keycloak from "keycloak-js";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { firstValueFrom } from "rxjs";
+import { firstValueFrom, Observable } from "rxjs";
 import { DatabaseUser } from "../../session-service/local-user";
 import { parseJwt } from "../../../../utils/utils";
 
@@ -109,6 +109,17 @@ export class KeycloakAuthService extends AuthService {
       action: "UPDATE_PASSWORD",
       redirectUri: location.href,
     });
+  }
+
+  forgotPassword(email: string): Observable<any> {
+    return this.httpClient.post(
+      "http://localhost:3000/account/forgot-password",
+      {
+        email,
+        realm: this.keycloak.realm,
+        client: this.keycloak.clientId,
+      }
+    );
   }
 }
 
