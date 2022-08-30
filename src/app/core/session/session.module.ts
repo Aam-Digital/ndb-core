@@ -40,9 +40,9 @@ import { KeycloakAuthService } from "./auth/keycloak/keycloak-auth.service";
 import { CouchdbAuthService } from "./auth/couchdb/couchdb-auth.service";
 import { AuthProvider } from "./auth/auth-provider";
 import { PasswordFormComponent } from "./auth/couchdb/password-form/password-form.component";
-import { PasswordButtonComponent } from "./auth/keycloak/password-button/password-button.component";
+import { AccountPageComponent } from "./auth/keycloak/account-page/account-page.component";
 import { Angulartics2OnModule } from "angulartics2";
-import { PasswordResetComponent } from './auth/couchdb/password-reset/password-reset.component';
+import { PasswordResetComponent } from "./auth/keycloak/password-reset/password-reset.component";
 
 /**
  * The core session logic handling user login as well as connection and synchronization with the remote database.
@@ -72,10 +72,10 @@ import { PasswordResetComponent } from './auth/couchdb/password-reset/password-r
   declarations: [
     LoginComponent,
     PasswordFormComponent,
-    PasswordButtonComponent,
+    AccountPageComponent,
     PasswordResetComponent,
   ],
-  exports: [LoginComponent, PasswordButtonComponent, PasswordFormComponent],
+  exports: [LoginComponent, AccountPageComponent, PasswordFormComponent],
   providers: [
     SyncedSessionService,
     LocalSession,

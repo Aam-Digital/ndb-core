@@ -3,10 +3,10 @@ import { AuthService } from "../../auth.service";
 import { KeycloakAuthService } from "../keycloak-auth.service";
 
 @Component({
-  selector: "app-password-button",
-  templateUrl: "./password-button.component.html",
+  selector: "app-account-page",
+  templateUrl: "./account-page.component.html",
 })
-export class PasswordButtonComponent {
+export class AccountPageComponent {
   @Input() disabled: boolean;
   keycloakAuthService: KeycloakAuthService;
 

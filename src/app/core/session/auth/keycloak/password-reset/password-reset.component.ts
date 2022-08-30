@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { AuthService } from "../../auth.service";
-import { KeycloakAuthService } from "../../keycloak/keycloak-auth.service";
+import { KeycloakAuthService } from "../keycloak-auth.service";
 import { FormControl, Validators } from "@angular/forms";
 import { MatSnackBar } from "@angular/material/snack-bar";
 

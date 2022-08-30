@@ -1,21 +1,21 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { PasswordButtonComponent } from "./password-button.component";
+import { AccountPageComponent } from "./account-page.component";
 import { AuthService } from "../../auth.service";
 
-describe("PasswordButtonComponent", () => {
-  let component: PasswordButtonComponent;
-  let fixture: ComponentFixture<PasswordButtonComponent>;
+describe("AccountPageComponent", () => {
+  let component: AccountPageComponent;
+  let fixture: ComponentFixture<AccountPageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PasswordButtonComponent],
+      declarations: [AccountPageComponent],
       providers: [
         { provide: AuthService, useValue: { changePassword: () => undefined } },
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(PasswordButtonComponent);
+    fixture = TestBed.createComponent(AccountPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
