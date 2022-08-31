@@ -1,4 +1,3 @@
-import { HttpHeaders } from "@angular/common/http";
 import { DatabaseUser } from "../session-service/local-user";
 
 /**

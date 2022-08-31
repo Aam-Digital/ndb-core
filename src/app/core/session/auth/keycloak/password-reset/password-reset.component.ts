@@ -7,7 +7,6 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 @Component({
   selector: "app-password-reset",
   templateUrl: "./password-reset.component.html",
-  styleUrls: ["./password-reset.component.scss"],
 })
 export class PasswordResetComponent {
   keycloakAuth: KeycloakAuthService;
