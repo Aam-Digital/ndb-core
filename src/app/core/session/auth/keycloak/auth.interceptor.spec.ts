@@ -1,16 +1,37 @@
 import { TestBed } from "@angular/core/testing";
 
 import { AuthInterceptor } from "./auth-interceptor.service";
+import { AuthService } from "../auth.service";
 
 describe("AuthInterceptor", () => {
-  beforeEach(() =>
+  let mockAuthService: jasmine.SpyObj<AuthService>;
+
+  beforeEach(() => {
+    mockAuthService = jasmine.createSpyObj(["addAuthHeader"]);
     TestBed.configureTestingModule({
-      providers: [AuthInterceptor],
-    })
-  );
+      providers: [
+        AuthInterceptor,
+        { provide: AuthService, useValue: mockAuthService },
+      ],
+    });
+  });
 
   it("should be created", () => {
     const interceptor: AuthInterceptor = TestBed.inject(AuthInterceptor);
     expect(interceptor).toBeTruthy();
+  });
+
+  it("should add an auth header to a request", () => {
+    const request = { clone: jasmine.createSpy() };
+    mockAuthService.addAuthHeader.and.callFake(
+      (obj) => (obj["Authorization"] = "my-auth-header")
+    );
+
+    const interceptor: AuthInterceptor = TestBed.inject(AuthInterceptor);
+    interceptor.intercept(request as any, { handle: () => undefined });
+
+    expect(request.clone).toHaveBeenCalledWith({
+      setHeaders: { Authorization: "my-auth-header" },
+    });
   });
 });
