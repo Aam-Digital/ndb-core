@@ -22,7 +22,7 @@ export class AccountPageComponent implements OnInit {
   ngOnInit() {
     this.keycloakAuthService
       .getUserinfo()
-      .then((res) => this.email.setValue(res.email));
+      .subscribe((res) => this.email.setValue(res.email));
   }
 
   setEmail() {

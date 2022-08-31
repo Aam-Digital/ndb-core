@@ -35,4 +35,5 @@ export const environment = {
   demo_mode: true,
   session_type: SessionType.mock,
   authenticator: AuthProvider.CouchDB,
+  account_url: "",
 };

@@ -5,6 +5,7 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { firstValueFrom, Observable } from "rxjs";
 import { DatabaseUser } from "../../session-service/local-user";
 import { parseJwt } from "../../../../utils/utils";
+import { environment } from "../../../../../environments/environment";
 
 @Injectable()
 export class KeycloakAuthService extends AuthService {
@@ -121,24 +122,21 @@ export class KeycloakAuthService extends AuthService {
     });
   }
 
-  getUserinfo(): Promise<any> {
-    return this.keycloakReady.then(() =>
-      firstValueFrom(
-        this.httpClient.get(`${this.realmUrl}/protocol/openid-connect/userinfo`)
-      )
+  getUserinfo(): Observable<any> {
+    return this.httpClient.get(
+      `${this.realmUrl}/protocol/openid-connect/userinfo`
     );
   }
 
   setEmail(email: string): Observable<any> {
-    // TODO where do we set this URL
-    return this.httpClient.put("http://localhost:3000/account/set-email", {
+    return this.httpClient.put(`${environment.account_url}/account/set-email`, {
       email,
     });
   }
 
   forgotPassword(email: string): Observable<any> {
     return this.httpClient.post(
-      "http://localhost:3000/account/forgot-password",
+      `${environment.account_url}/account/forgot-password`,
       {
         email,
         realm: this.keycloak.realm,
