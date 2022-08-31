@@ -79,8 +79,7 @@ describe("AccountPageComponent", () => {
         () => new HttpErrorResponse({ error: { message: errorMessage } })
       )
     );
-    const validEmail = "valid@email.com";
-    component.email.setValue(validEmail);
+    component.email.setValue("valid@email.com");
 
     component.setEmail();
     tick();
