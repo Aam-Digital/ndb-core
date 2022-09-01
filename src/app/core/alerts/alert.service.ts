@@ -38,7 +38,7 @@ export class AlertService {
   /** All alerts currently to be displayed */
   alerts: ExtendedAlertConfig[] = [];
 
-  private static ALERT_CLASS_PREFIX = "alert--";
+  private static ALERT_BASE_CLASS = "ndb-alert";
 
   constructor(private snackBar: MatSnackBar) {}
 
@@ -67,7 +67,10 @@ export class AlertService {
         break;
     }
 
-    snackConfig.panelClass = AlertService.ALERT_CLASS_PREFIX + alert.type;
+    snackConfig.panelClass = [
+      AlertService.ALERT_BASE_CLASS,
+      AlertService.ALERT_BASE_CLASS + "--" + alert.type,
+    ];
 
     this.snackBar.open(alert.message, "dismiss", snackConfig);
   }

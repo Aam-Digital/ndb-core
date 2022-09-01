@@ -1,14 +1,17 @@
 @use "@angular/material" as mat;
 @use "src/styles/variables/ndb-light-theme" as theme;
 
-/* .alert--info {
-  intentionally non existent: `info` has the default styling.
-} */
+.ndb-alert {
 
-.alert--warning {
-  background-color: mat.get-color-from-palette(mat.$orange-palette, 800) !important;
-}
+  white-space: pre-wrap;
 
-.alert--danger {
-  background-color: mat.get-color-from-palette(mat.$red-palette, 800) !important;
+  // There is no `ndb-alert--info` class since `info` has the default styling.
+
+  &--warning {
+    background-color: mat.get-color-from-palette(mat.$orange-palette, 800) !important;
+  }
+
+  &--danger {
+    background-color: mat.get-color-from-palette(mat.$red-palette, 800) !important;
+  }
 }
