@@ -22,7 +22,7 @@ export class KeycloakAuthService extends AuthService {
 
   authenticate(username: string, password: string): Promise<DatabaseUser> {
     return this.keycloakReady
-      .then(() => this.credentialAuth(username, password))
+      .then(() => this.credentialAuth(username.trim(), password))
       .then((token) => this.processToken(token));
   }
 
