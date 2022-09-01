@@ -9,7 +9,7 @@
     <tr *ngFor="let col of _columns" class="summary-row">
       <td class="padding-small">{{ col.label }}:</td>
       <td class="summary-cell">
-        <div
+        <ng-container
           [appDynamicComponent]="{
             component: col.view,
             config: {
@@ -18,7 +18,7 @@
               config: col.additional
             }
           }"
-        ></div>
+        ></ng-container>
       </td>
     </tr>
   </table>
