@@ -83,6 +83,22 @@ describe("LocalSessionService", () => {
     expect(localSession.loginState.value).toBe(LoginState.LOGGED_IN);
   });
 
+  it("should be case-insensitive and ignore spaces in username", async () => {
+    expect(localSession.loginState.value).toBe(LoginState.LOGGED_OUT);
+    const user: DatabaseUser = {
+      name: "UserName",
+      roles: [],
+    };
+    localSession.saveUser(user, TEST_PASSWORD);
+
+    await localSession.login(" Username ", TEST_PASSWORD);
+
+    expect(localSession.loginState.value).toBe(LoginState.LOGGED_IN);
+    expect(localSession.getCurrentUser().name).toBe("UserName");
+
+    localSession.removeUser("username");
+  });
+
   it("should fail login with correct username but wrong password", async () => {
     await localSession.login(TEST_USER, "wrong password");
 
