@@ -1,10 +1,8 @@
 {
-  "realm": "ndb-dev",
+  "realm": "dev",
   "auth-server-url": "https://keycloak.aam-digital.com/",
   "ssl-required": "external",
   "resource": "app",
   "public-client": true,
-  "verify-token-audience": true,
-  "use-resource-role-mappings": true,
   "confidential-port": 0
 }
