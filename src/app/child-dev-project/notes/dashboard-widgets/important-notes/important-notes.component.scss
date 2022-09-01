@@ -8,6 +8,18 @@
 .row-view {
   cursor: pointer;
 
+  &::before {
+    content: '';
+    display: block;
+    width: 8px;
+    height: 8px;
+    border-radius: 100vmax;
+    background-color: red;
+    position: relative;
+    top: 19px;
+    left: 4px;
+  }
+
   & > td:first-child {
     padding-left: $standard-margin-small;
   }
