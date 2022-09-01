@@ -50,7 +50,9 @@ export class LocalSession extends SessionService {
    * @param password Password
    */
   public async login(username: string, password: string): Promise<LoginState> {
-    const user: LocalUser = JSON.parse(window.localStorage.getItem(username));
+    const user: LocalUser = JSON.parse(
+      window.localStorage.getItem(username.trim().toLowerCase())
+    );
     if (user) {
       if (passwordEqualsEncrypted(password, user.encryptedPassword)) {
         await this.handleSuccessfulLogin(user);
@@ -118,7 +120,10 @@ export class LocalSession extends SessionService {
       roles: user.roles,
       encryptedPassword: encryptPassword(password),
     };
-    window.localStorage.setItem(localUser.name, JSON.stringify(localUser));
+    window.localStorage.setItem(
+      localUser.name.trim().toLowerCase(),
+      JSON.stringify(localUser)
+    );
     // Update when already logged in
     if (this.getCurrentUser()?.name === localUser.name) {
       this.currentDBUser = localUser;
