@@ -74,7 +74,7 @@
 </div>
 
 <!-- Completion Page -->
-<div *ngIf="isFinished">
+<div *ngIf="isFinished" class="flex-column gap-regular">
   <div class="roll-call-complete" @completeRollCall>
     <fa-icon icon="check-circle" size="3x"></fa-icon>
     <div
@@ -90,7 +90,8 @@
     <button
       (click)="showDetails()"
       class="finished-screen-button"
-      mat-stroked-button
+      mat-raised-button
+      color="accent"
       i18n="Open details of recorded event for review"
     >
       Review Details
@@ -99,8 +100,8 @@
 
   <button
     (click)="finish()"
-    class="full-width margin-top-regular"
-    mat-stroked-button
+    color="primary"
+    mat-raised-button
     i18n="Back to overview button after finishing a roll call"
   >
     Back to Overview

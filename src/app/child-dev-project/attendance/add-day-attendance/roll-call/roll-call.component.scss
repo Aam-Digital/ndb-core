@@ -1,5 +1,6 @@
 @use "src/styles/variables/sizes";
 @use "src/styles/variables/colors";
+@use "sass:color";
 
 .group-select-option {
   width: 100%;
@@ -19,10 +20,8 @@
   place-items: center;
   height: 200px;
   gap: sizes.$small;
-  cursor: pointer;
-  margin-top: sizes.$regular;
 
-  background-color: colors.$success;
+  background-color: color.adjust(colors.$success, $alpha: -0.5);
   border-radius: 4px;
 }
 
