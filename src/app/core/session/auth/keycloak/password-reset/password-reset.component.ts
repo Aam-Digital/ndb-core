@@ -28,6 +28,7 @@ export class PasswordResetComponent {
       return;
     }
 
+    // TODO add matomo tracking
     this.keycloakAuth.forgotPassword(this.email.value).subscribe({
       next: () => {
         this.snackbar.open(
@@ -37,6 +38,7 @@ export class PasswordResetComponent {
         );
         this.toggleEmailForm();
       },
+      // TODO error not shown
       error: (err) => this.email.setErrors({ notFound: err.error.message }),
     });
   }
