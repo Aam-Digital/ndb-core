@@ -21,3 +21,7 @@
   color: colors.$error;
   font-weight: bold;
 }
+
+:host {
+  display: block;
+}

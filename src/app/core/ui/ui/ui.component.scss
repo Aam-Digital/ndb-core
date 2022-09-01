@@ -137,9 +137,8 @@ body {
 }
 
 .login {
-  display: grid;
-  grid-template-columns: 400px;
-  justify-content: center;
+  margin: 0 auto;
+  max-width: 400px;
 }
 
 .justify-content-end {
