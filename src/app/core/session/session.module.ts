@@ -18,10 +18,9 @@
 import { Injector, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { LoginComponent } from "./login/login.component";
-import { FormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { EntityModule } from "../entity/entity.module";
 import { AlertsModule } from "../alerts/alerts.module";
-import { UserModule } from "../user/user.module";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -36,6 +35,13 @@ import { RemoteSession } from "./session-service/remote-session";
 import { SessionService } from "./session-service/session.service";
 import { SessionType } from "./session-type";
 import { environment } from "../../../environments/environment";
+import { AuthService } from "./auth/auth.service";
+import { KeycloakAuthService } from "./auth/keycloak/keycloak-auth.service";
+import { CouchdbAuthService } from "./auth/couchdb/couchdb-auth.service";
+import { AuthProvider } from "./auth/auth-provider";
+import { PasswordFormComponent } from "./auth/couchdb/password-form/password-form.component";
+import { PasswordButtonComponent } from "./auth/keycloak/password-button/password-button.component";
+import { Angulartics2OnModule } from "angulartics2";
 
 /**
  * The core session logic handling user login as well as connection and synchronization with the remote database.
@@ -56,13 +62,18 @@ import { environment } from "../../../environments/environment";
     MatInputModule,
     MatButtonModule,
     RouterModule,
-    UserModule,
     HttpClientModule,
     MatDialogModule,
     MatProgressBarModule,
+    Angulartics2OnModule,
+    ReactiveFormsModule,
   ],
-  declarations: [LoginComponent],
-  exports: [LoginComponent],
+  declarations: [
+    LoginComponent,
+    PasswordFormComponent,
+    PasswordButtonComponent,
+  ],
+  exports: [LoginComponent, PasswordButtonComponent, PasswordFormComponent],
   providers: [
     SyncedSessionService,
     LocalSession,
@@ -74,6 +85,19 @@ import { environment } from "../../../environments/environment";
           return injector.get(SyncedSessionService);
         } else {
           return injector.get(LocalSession);
+        }
+      },
+      deps: [Injector],
+    },
+    KeycloakAuthService,
+    CouchdbAuthService,
+    {
+      provide: AuthService,
+      useFactory: (injector: Injector) => {
+        if (environment.authenticator === AuthProvider.Keycloak) {
+          return injector.get(KeycloakAuthService);
+        } else {
+          return injector.get(CouchdbAuthService);
         }
       },
       deps: [Injector],
