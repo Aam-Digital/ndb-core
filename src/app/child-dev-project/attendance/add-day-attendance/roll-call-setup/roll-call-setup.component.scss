@@ -23,7 +23,7 @@
 }
 
 .cards-list {
-  @include grid-layout.adaptive(350px);
+  @include grid-layout.adaptive(350px, 414px);
 }
 
 .process-spinner {
