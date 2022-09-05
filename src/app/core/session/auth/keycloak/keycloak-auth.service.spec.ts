@@ -91,6 +91,15 @@ describe("KeycloakAuthService", () => {
     expect(user).toEqual(dbUser);
   });
 
+  it("should trim whitespace from username", async () => {
+    await service.authenticate(" " + TEST_USER + "  ", TEST_PASSWORD);
+    expect(mockHttpClient.post).toHaveBeenCalledWith(
+      jasmine.anything(),
+      jasmine.stringContaining(`username=${TEST_USER}&`),
+      jasmine.anything()
+    );
+  });
+
   it("should store access token in memory and refresh token in local storage", async () => {
     await service.authenticate(TEST_USER, TEST_PASSWORD);
 
