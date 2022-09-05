@@ -4,7 +4,7 @@
 $approx-width-paginator: 450px;
 $slider-padding-all: 16px;
 
-.toolbar {
+:host {
   display: flex;
   flex-direction: row;
   align-items: center;

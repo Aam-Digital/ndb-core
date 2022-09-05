@@ -1,67 +1,66 @@
-<div class="flex-column">
-  <!-- The wrapper for edit, save and cancel button.
+<!-- The wrapper for edit, save and cancel button.
 
-  The classes 'flex-row' and 'gap-small' enable a small gap between the Save button and the Cancel button.
-  Simply applying a margin right to the 'Save' button collides with the styles that the 'mat-raised-button'
-  brings with it.
-  -->
-  <div class="padding-bottom-small align-self-end flex-row gap-small">
+The classes 'flex-row' and 'gap-small' enable a small gap between the Save button and the Cancel button.
+Simply applying a margin right to the 'Save' button collides with the styles that the 'mat-raised-button'
+brings with it.
+-->
+<div class="padding-bottom-small flex-row gap-small align-self-end">
+  <button
+    *ngIf="form?.enabled"
+    mat-raised-button
+    (click)="saveForm()"
+    i18n="Save button for forms"
+  >
+    Save
+  </button>
+
+  <button
+    *ngIf="form?.enabled"
+    mat-raised-button
+    (click)="cancelClicked()"
+    i18n="Cancel button for forms"
+  >
+    Cancel
+  </button>
+
+  <ng-container *ngIf="form?.disabled">
     <button
-      *ngIf="form?.enabled"
       mat-raised-button
-      (click)="saveForm()"
-      i18n="Save button for forms"
+      (click)="switchEdit()"
+      *appDisabledEntityOperation="{
+        entity: entity,
+        operation: 'update'
+      }"
+      i18n="Edit button for forms"
     >
-      Save
+      Edit
     </button>
+  </ng-container>
+</div>
 
-    <button
-      *ngIf="form?.enabled"
-      mat-raised-button
-      (click)="cancelClicked()"
-      i18n="Cancel button for forms"
+<form class="entity-form-columns">
+  <div *ngFor="let col of _columns; let i=index" class="entity-form-cell">
+    <h2 *ngIf="columnHeaders && columnHeaders[i]">{{columnHeaders[i]}}</h2>
+    <ng-container
+      *ngFor="let row of col"
+      [appDynamicComponent]="{
+        component: row.edit,
+        config: {
+          formFieldConfig: row,
+          propertySchema: entity.getSchema().get(row.id),
+          formControl: form.get(row.id)
+        }
+      }"
     >
-      Cancel
-    </button>
-
-    <ng-container *ngIf="form?.disabled">
-      <button
-        mat-raised-button
-        (click)="switchEdit()"
-        *appDisabledEntityOperation="{
-          entity: entity,
-          operation: 'update'
-        }"
-        i18n="Edit button for forms"
-      >
-        Edit
-      </button>
+      <fa-icon
+        (click)="tooltipElement.show()"
+        #tooltipElement="matTooltip"
+        *ngIf="row.tooltip"
+        matSuffix
+        icon="question-circle"
+        [matTooltip]="row.tooltip"
+      ></fa-icon>
     </ng-container>
   </div>
+</form>
 
-  <form class="entity-form-columns">
-    <div *ngFor="let col of _columns; let i=index" class="entity-form-cell">
-      <h2 *ngIf="columnHeaders && columnHeaders[i]">{{columnHeaders[i]}}</h2>
-      <ng-container
-        *ngFor="let row of col"
-        [appDynamicComponent]="{
-          component: row.edit,
-          config: {
-            formFieldConfig: row,
-            propertySchema: entity.getSchema().get(row.id),
-            formControl: form.get(row.id)
-          }
-        }"
-      >
-        <fa-icon
-          (click)="tooltipElement.show()"
-          #tooltipElement="matTooltip"
-          *ngIf="row.tooltip"
-          matSuffix
-          icon="question-circle"
-          [matTooltip]="row.tooltip"
-        ></fa-icon>
-      </ng-container>
-    </div>
-  </form>
-</div>

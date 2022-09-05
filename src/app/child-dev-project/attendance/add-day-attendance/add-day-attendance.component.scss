@@ -4,3 +4,9 @@
   position: relative;
   left: -12px;
 }
+
+:host {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}

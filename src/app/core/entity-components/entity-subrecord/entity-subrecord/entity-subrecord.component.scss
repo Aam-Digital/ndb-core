@@ -30,3 +30,8 @@
   display: flex;
   justify-content: center;
 }
+
+:host {
+  @include mat.elevation(1);
+  display: block;
+}

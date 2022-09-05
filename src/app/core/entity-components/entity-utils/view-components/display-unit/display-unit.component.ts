@@ -6,7 +6,7 @@ import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-co
 @DynamicComponent("DisplayUnit")
 @Component({
   selector: "app-display-unit",
-  templateUrl: "./display-unit.component.html",
+  template: '{{ value ? value + " " + unit : "" }}',
 })
 export class DisplayUnitComponent extends ViewDirective<string> {
   unit: string;

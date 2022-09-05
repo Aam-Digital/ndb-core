@@ -1,4 +1,10 @@
-import { Component, Input } from "@angular/core";
+import {
+  Component,
+  HostBinding,
+  Input,
+  OnChanges,
+  SimpleChanges,
+} from "@angular/core";
 import { getUrlWithoutParams } from "../../../../utils/utils";
 import { Router } from "@angular/router";
 import { Location } from "@angular/common";
@@ -8,7 +14,7 @@ import { Location } from "@angular/common";
   templateUrl: "./view-title.component.html",
   styleUrls: ["./view-title.component.scss"],
 })
-export class ViewTitleComponent {
+export class ViewTitleComponent implements OnChanges {
   /** The page title to be displayed */
   @Input() title: string;
 
@@ -44,4 +50,24 @@ export class ViewTitleComponent {
       this.location.back();
     }
   }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.hasOwnProperty("disableBackButton")) {
+      this.extraStyles = this.buildExtraStyles();
+    }
+  }
+
+  private buildExtraStyles() {
+    /* Moves the whole title component 12 pixels to the left so that
+     * the "go back" button is aligned with the left border. This class
+     * is applied conditionally when the "back" button is shown
+     */
+    return {
+      position: "relative",
+      left: "-12px",
+    };
+  }
+
+  @HostBinding("class") extraClasses = "mat-title";
+  @HostBinding("style") extraStyles = this.buildExtraStyles();
 }

@@ -1,6 +1,8 @@
 import {
   Component,
   EventEmitter,
+  HostBinding,
+  HostListener,
   Input,
   Output,
   TemplateRef,
@@ -25,7 +27,7 @@ import {
  */
 @Component({
   selector: TemplateTooltipComponent.SELECTOR,
-  templateUrl: "./template-tooltip.component.html",
+  template: '<ng-container *ngTemplateOutlet="contentTemplate"></ng-container>',
   styleUrls: ["./template-tooltip.component.scss"],
   animations: [
     trigger("appear", [
@@ -59,4 +61,16 @@ export class TemplateTooltipComponent {
   @Output() hide = new EventEmitter<void>();
 
   @Output() show = new EventEmitter<void>();
+
+  @HostListener("mouseenter")
+  onMouseEnter() {
+    this.show.emit();
+  }
+
+  @HostListener("mouseleave")
+  onMouseLeave() {
+    this.hide.emit();
+  }
+
+  @HostBinding("@appear") animation = true;
 }

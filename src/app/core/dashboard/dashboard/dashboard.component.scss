@@ -25,7 +25,7 @@ $min-widget-width: 330px;
 $max-screen-width: $min-widget-width + sizes.$margin-main-view-right + sizes.$margin-main-view-left;
 $widget-height: 410px;
 
-.widget-wrapper {
+:host {
   @include grid-layout.adaptive($min-widget-width, $max-screen-width);
   // Make all rows be equal in height
   grid-auto-rows: $widget-height;

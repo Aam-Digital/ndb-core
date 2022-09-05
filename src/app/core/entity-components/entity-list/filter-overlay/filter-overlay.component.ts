@@ -18,6 +18,7 @@ export interface FilterOverlayData<T extends Entity> {
 @Component({
   selector: "app-filter-overlay",
   templateUrl: "./filter-overlay.component.html",
+  styles: [":host { display: block }"],
 })
 export class FilterOverlayComponent<T extends Entity> {
   constructor(@Inject(MAT_DIALOG_DATA) public data: FilterOverlayData<T>) {}

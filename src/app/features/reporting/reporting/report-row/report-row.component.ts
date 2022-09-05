@@ -1,5 +1,15 @@
 import { Component, Input } from "@angular/core";
 import { getGroupingInformationString, ReportRow } from "../../report-row";
+import { FlatTreeControl } from "@angular/cdk/tree";
+import {
+  MatTreeFlatDataSource,
+  MatTreeFlattener,
+} from "@angular/material/tree";
+
+interface FlattenedReportRow extends ReportRow {
+  level: number;
+  isExpandable: boolean;
+}
 
 @Component({
   selector: "app-report-row",
@@ -7,7 +17,27 @@ import { getGroupingInformationString, ReportRow } from "../../report-row";
   styleUrls: ["./report-row.component.scss"],
 })
 export class ReportRowComponent {
-  @Input() rows: ReportRow[] = [];
+  @Input() set rows(rows: ReportRow[]) {
+    this.dataSource.data = rows;
+  }
+  displayedColumns: string[] = ["name", "count"];
 
   getGroupedByString = getGroupingInformationString;
+  treeFlattener = new MatTreeFlattener<ReportRow, FlattenedReportRow>(
+    (row, level) => ({
+      level: level,
+      isExpandable: !!row.subRows && row.subRows.length > 0,
+      ...row,
+    }),
+    (row) => row.level,
+    (row) => row.isExpandable,
+    (row) => row.subRows
+  );
+  treeControl = new FlatTreeControl<FlattenedReportRow>(
+    (row) => row.level,
+    (row) => row.isExpandable
+  );
+  dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+
+  hasChild = (_: number, row: ReportRow) => row.subRows.length > 0;
 }

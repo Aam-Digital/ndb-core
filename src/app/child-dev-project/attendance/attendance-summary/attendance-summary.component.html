@@ -1,4 +1,4 @@
-<div *ngIf="attendance" class="wrapper">
+<ng-container *ngIf="attendance">
   <h4 class="summary-title" i18n="Attendance summary title">Overall Attendance</h4>
   <p class="summary-period">
     {{ attendance.periodFrom | date: "shortDate" }} -
@@ -22,4 +22,4 @@
       </td>
     </tr>
   </table>
-</div>
+</ng-container>

@@ -1,9 +1,4 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-} from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { School } from "../model/school";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
@@ -15,6 +10,7 @@ import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-
 @Component({
   selector: "app-school-block",
   templateUrl: "./school-block.component.html",
+  styleUrls: ["./school-block.component.scss"],
 })
 export class SchoolBlockComponent implements OnInitDynamicComponent, OnChanges {
   icon: string;

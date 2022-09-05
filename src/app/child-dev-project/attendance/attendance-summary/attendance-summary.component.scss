@@ -25,3 +25,7 @@
    text-align: right;
    padding: sizes.$small;
 }
+
+:host {
+  display: block;
+}

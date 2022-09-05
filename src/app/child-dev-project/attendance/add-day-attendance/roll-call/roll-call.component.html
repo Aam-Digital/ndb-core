@@ -30,16 +30,13 @@
     </div>
   </div>
 
-  <div class="child-block-container">
-    <app-child-block
-      class="child-block"
-      *ngIf="!isFinished"
-      [entity]="currentChild"
-      [linkDisabled]="true"
-      [tooltipDisabled]="true">
-    </app-child-block>
-    <div class="placeholder" *ngIf="isFinished"></div>
-  </div>
+  <app-child-block
+    class="child-block"
+    *ngIf="!isFinished"
+    [entity]="currentChild"
+    [linkDisabled]="true"
+    [tooltipDisabled]="true">
+  </app-child-block>
 
   <div *ngIf="!isFinished && currentAttendance" class="tab-wrapper">
     <app-roll-call-tab
@@ -74,7 +71,7 @@
 </div>
 
 <!-- Completion Page -->
-<div *ngIf="isFinished" class="flex-column gap-regular">
+<div *ngIf="isFinished" class="flex-column gap-regular margin-top-regular">
   <div class="roll-call-complete" @completeRollCall>
     <fa-icon icon="check-circle" size="3x"></fa-icon>
     <div

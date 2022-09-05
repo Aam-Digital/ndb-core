@@ -9,3 +9,10 @@
   grid-template-columns: repeat(2, 1fr);
   gap: sizes.$regular;
 }
+
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: sizes.$max-text-width;
+}

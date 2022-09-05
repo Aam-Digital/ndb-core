@@ -19,6 +19,7 @@ import { ViewModule } from "../../core/view/view.module";
 import { SelectReportComponent } from "./reporting/select-report/select-report.component";
 import { MatSortModule } from "@angular/material/sort";
 import { ObjectTableComponent } from "./reporting/object-table/object-table.component";
+import { MatTreeModule } from "@angular/material/tree";
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { ObjectTableComponent } from "./reporting/object-table/object-table.comp
     Angulartics2Module,
     ViewModule,
     MatSortModule,
+    MatTreeModule,
   ],
   exports: [SelectReportComponent, ReportingComponent],
 })
