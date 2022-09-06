@@ -34,7 +34,7 @@ if (environment.production) {
 // Initialize remote logging
 LoggingService.initRemoteLogging({
   dsn: environment.remoteLoggingDsn,
-  whitelistUrls: [/https?:\/\/(.*)\.?aam-digital\.com/],
+  // whitelistUrls: [/https?:\/\/(.*)\.?aam-digital\.com/],
 });
 
 const appLang =
