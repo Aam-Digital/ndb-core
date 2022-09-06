@@ -109,7 +109,7 @@ export class Note extends Entity {
   schools: string[] = [];
 
   @DatabaseField({
-    label: "",
+    label: $localize`:Status of a note:Status`,
     dataType: "configurable-enum",
     innerDataType: "warning-levels",
   })
