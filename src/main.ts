@@ -31,11 +31,13 @@ import { LoggingService } from "./app/core/logging/logging.service";
 if (environment.production) {
   enableProdMode();
 }
+
 // Initialize remote logging
 LoggingService.initRemoteLogging({
   dsn: environment.remoteLoggingDsn,
-  // whitelistUrls: [/https?:\/\/(.*)\.?aam-digital\.com/],
+  whitelistUrls: [/https?:\/\/(.*)\.?aam-digital\.com/],
 });
+const logger = new LoggingService();
 
 const appLang =
   localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY) ?? DEFAULT_LANGUAGE;
@@ -48,9 +50,10 @@ if (appLang === DEFAULT_LANGUAGE) {
 function bootstrap(): Promise<any> {
   // Dynamically load the main module after the language has been initialized
   return AppSettings.initRuntimeSettings()
+    .catch((err) => logger.error(err))
     .then(() => import("./app/app.module"))
     .then((m) => platformBrowserDynamic().bootstrapModule(m.AppModule))
-    .catch((err) => new LoggingService().error(err));
+    .catch((err) => logger.error(err));
 }
 
 async function initLanguage(locale: string): Promise<void> {

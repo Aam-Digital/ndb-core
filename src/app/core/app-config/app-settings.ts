@@ -37,10 +37,6 @@ export class AppSettings {
   static initRuntimeSettings(): Promise<void> {
     return fetch(this.CONFIG_FILE)
       .then((res) => res.json())
-      .then((res) => Object.assign(environment, res))
-      .catch(() => undefined)
-      .finally(() => {
-        throw new Error("finally error");
-      });
+      .then((res) => Object.assign(environment, res));
   }
 }
