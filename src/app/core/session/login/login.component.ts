@@ -60,7 +60,7 @@ export class LoginComponent implements AfterViewInit {
     this.errorMessage = "";
 
     this._sessionService
-      .login(this.username, this.password)
+      .login(this.username.trim(), this.password)
       .then((loginState) => {
         switch (loginState) {
           case LoginState.LOGGED_IN:
