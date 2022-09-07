@@ -82,13 +82,13 @@ describe("NotesOfChildComponent", () => {
   });
 
   it("should sort notes by date", fakeAsync(() => {
+    // No date should come first
     const n1 = new Note();
-    n1.date = moment().subtract(1, "day").toDate();
     const n2 = new Note();
-    n2.date = moment().subtract(2, "days").toDate();
+    n2.date = moment().subtract(1, "day").toDate();
     const n3 = new Note();
-    n3.date = moment().subtract(3, "days").toDate();
-    mockChildrenService.getNotesOf.and.resolveTo([n1, n3, n2]);
+    n3.date = moment().subtract(2, "days").toDate();
+    mockChildrenService.getNotesOf.and.resolveTo([n3, n2, n1]);
 
     component.onInitFromDynamicConfig({ entity: new Child() });
     tick();
