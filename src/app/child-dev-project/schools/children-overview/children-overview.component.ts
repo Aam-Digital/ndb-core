@@ -32,16 +32,17 @@ export const isActiveIndicator = {
 })
 export class ChildrenOverviewComponent implements OnInitDynamicComponent {
   columns: FormFieldConfig[] = [
-    { id: "childId" },
-    { id: "schoolClass" },
     { id: "start", visibleFrom: "md" },
     { id: "end", visibleFrom: "md" },
+    { id: "childId" },
+    { id: "schoolClass" },
     { id: "result" },
     isActiveIndicator,
   ];
 
   entity: Entity;
   records: ChildSchoolRelation[] = [];
+  backgroundColorFn = (r: ChildSchoolRelation) => r.getColor();
 
   constructor(
     private childrenService: ChildrenService,
@@ -49,14 +50,19 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
   ) {}
 
   async onInitFromDynamicConfig(config: PanelConfig) {
-    if (config?.config?.columns) {
+    if (config.config?.columns) {
       this.columns = config.config.columns.concat(isActiveIndicator);
     }
     this.entity = config.entity;
-    this.records = await this.childrenService.queryActiveRelationsOf(
+    this.records = await this.childrenService.queryRelationsOf(
       "school",
       this.entity.getId()
     );
+    if (!config.config?.showInactive) {
+      this.records = this.records.filter((r) => r.isActive);
+      // Do not highlight active ones when only active are shown
+      this.backgroundColorFn = undefined;
+    }
   }
 
   routeToChild(child: Child) {

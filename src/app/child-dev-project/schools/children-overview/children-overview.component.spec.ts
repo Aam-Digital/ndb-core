@@ -13,24 +13,26 @@ import { Router } from "@angular/router";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { ChildrenService } from "../../children/children.service";
+import moment from "moment";
 
 describe("ChildrenOverviewComponent", () => {
   let component: ChildrenOverviewComponent;
   let fixture: ComponentFixture<ChildrenOverviewComponent>;
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
+  const school = new School("s1");
+  const active1 = new ChildSchoolRelation("r1");
+  const active2 = new ChildSchoolRelation("r2");
+  const inactive = new ChildSchoolRelation("r2");
+  inactive.end = moment().subtract("1", "week").toDate();
 
-  beforeEach(
-    waitForAsync(() => {
-      mockChildrenService = jasmine.createSpyObj(["queryActiveRelationsOf"]);
+  beforeEach(waitForAsync(() => {
+    mockChildrenService = jasmine.createSpyObj(["queryRelationsOf"]);
 
-      TestBed.configureTestingModule({
-        imports: [SchoolsModule, MockedTestingModule.withState()],
-        providers: [
-          { provide: ChildrenService, useValue: mockChildrenService },
-        ],
-      }).compileComponents();
-    })
-  );
+    TestBed.configureTestingModule({
+      imports: [SchoolsModule, MockedTestingModule.withState()],
+      providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ChildrenOverviewComponent);
@@ -43,25 +45,38 @@ describe("ChildrenOverviewComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should load the relations for a school", fakeAsync(() => {
-    const school = new School("s1");
-    const relation1 = new ChildSchoolRelation("r1");
-    const relation2 = new ChildSchoolRelation("r2");
-    const config = { entity: school };
-    mockChildrenService.queryActiveRelationsOf.and.resolveTo([
-      relation1,
-      relation2,
+  it("should on default only show active relations", async () => {
+    mockChildrenService.queryRelationsOf.and.resolveTo([
+      active1,
+      active2,
+      inactive,
     ]);
 
-    component.onInitFromDynamicConfig(config);
-    tick();
+    await component.onInitFromDynamicConfig({ entity: school });
 
-    expect(mockChildrenService.queryActiveRelationsOf).toHaveBeenCalledWith(
+    expect(mockChildrenService.queryRelationsOf).toHaveBeenCalledWith(
       "school",
       school.getId()
     );
-    expect(component.records).toEqual([relation1, relation2]);
-  }));
+    expect(component.records).toEqual([active1, active2]);
+  });
+
+  it("should show all relations if configured with active ones being highlighted", async () => {
+    mockChildrenService.queryRelationsOf.and.resolveTo([
+      active1,
+      active2,
+      inactive,
+    ]);
+
+    await component.onInitFromDynamicConfig({
+      entity: new School(),
+      config: { showInactive: true },
+    });
+
+    expect(component.records).toEqual([active1, active2, inactive]);
+    expect(component.backgroundColorFn(active1)).not.toEqual("");
+    expect(component.backgroundColorFn(inactive)).toEqual("");
+  });
 
   it("should route to a child when clicked", () => {
     const router = TestBed.inject(Router);
