@@ -1,10 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { ChildrenOverviewComponent } from "./children-overview.component";
 import { SchoolsModule } from "../schools.module";
 import { School } from "../model/school";
