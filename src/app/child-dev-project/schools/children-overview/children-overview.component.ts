@@ -23,6 +23,8 @@ export const isActiveIndicator = {
 
 /**
  * This component creates a table containing all children currently attending this school.
+ *
+ * TODO merge with {@link PreviousSchoolsComponent}
  */
 @DynamicComponent("ChildrenOverview")
 @Component({
