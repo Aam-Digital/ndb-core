@@ -206,13 +206,13 @@ describe("ChildrenService", () => {
     n3.schools.push(s2.getId());
     await entityMapper.saveAll([n1, n2, n3]);
 
-    let res = await service.getNotesOf(c1);
+    let res = await service.getNotesOf(c1.getId(), "children");
     expect(res).toEqual([n1, n2]);
 
-    res = await service.getNotesOf(s1);
+    res = await service.getNotesOf(s1.getId(), "schools");
     expect(res).toEqual([n1]);
 
-    res = await service.getNotesOf(s2);
+    res = await service.getNotesOf(s2.getId(), "schools");
     expect(res).toEqual([n3]);
   });
 });

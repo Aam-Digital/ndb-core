@@ -123,20 +123,11 @@ export class ChildrenService {
     );
   }
 
-  getNotesOf(entity: Entity): Promise<Note[]> {
-    const entityType = entity.getType();
-    const relevantProperty = [...Note.schema.keys()].find(
-      (prop) => Note.schema.get(prop).additional === entityType
-    );
-    if (!relevantProperty) {
-      return Promise.reject(
-        `No related Note property for "${entityType}" found`
-      );
-    }
+  getNotesOf(entityId: string, noteProperty: string): Promise<Note[]> {
     return this.dbIndexing.queryIndexDocs(
       Note,
-      `notes_index/by_${relevantProperty}`,
-      entity.getId()
+      `notes_index/by_${noteProperty}`,
+      entityId
     );
   }
 
