@@ -11,6 +11,7 @@ import { ChildPhotoService } from "./child-photo-service/child-photo.service";
 import moment, { Moment } from "moment";
 import { LoggingService } from "../../core/logging/logging.service";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
+import { Entity } from "../../core/entity/model/entity";
 
 @Injectable()
 export class ChildrenService {
@@ -122,11 +123,20 @@ export class ChildrenService {
     );
   }
 
-  getNotesOfChild(childId: string): Promise<Note[]> {
+  getNotesOf(entity: Entity): Promise<Note[]> {
+    const entityType = entity.getType();
+    const relevantProperty = [...Note.schema.keys()].find(
+      (prop) => Note.schema.get(prop).additional === entityType
+    );
+    if (!relevantProperty) {
+      return Promise.reject(
+        `No related Note property for "${entityType}" found`
+      );
+    }
     return this.dbIndexing.queryIndexDocs(
       Note,
-      "notes_index/by_child",
-      childId
+      `notes_index/by_${relevantProperty}`,
+      entity.getId()
     );
   }
 
@@ -189,16 +199,6 @@ export class ChildrenService {
     const designDoc = {
       _id: "_design/notes_index",
       views: {
-        by_child: {
-          map:
-            "(doc) => { " +
-            'if (!doc._id.startsWith("' +
-            Note.ENTITY_TYPE +
-            '")) return;' +
-            "if (!Array.isArray(doc.children)) return;" +
-            "doc.children.forEach(childId => emit(childId)); " +
-            "}",
-        },
         note_child_by_date: {
           map: `(doc) => {
             if (!doc._id.startsWith("${Note.ENTITY_TYPE}")) return;
@@ -210,8 +210,23 @@ export class ChildrenService {
         },
       },
     };
+    // creating a by_... view for each of the following properties
+    ["children", "schools", "authors"].forEach(
+      (prop) =>
+        (designDoc.views[`by_${prop}`] = this.createNotesByFunction(prop))
+    );
 
     return this.dbIndexing.createIndex(designDoc);
+  }
+
+  private createNotesByFunction(property: string) {
+    return {
+      map: `(doc) => {
+        if (!doc._id.startsWith("${Note.ENTITY_TYPE}")) return;
+        if (!Array.isArray(doc.${property})) return;
+        doc.${property}.forEach(val => emit(val));
+      }`,
+    };
   }
 
   /**

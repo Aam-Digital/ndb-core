@@ -56,18 +56,16 @@ export class NotesOfChildComponent
   }
 
   private initNotesOfChild() {
-    this.childrenService
-      .getNotesOfChild(this.child.getId())
-      .then((notes: Note[]) => {
-        notes.sort((a, b) => {
-          if (!a.date && b.date) {
-            // note without date should be first
-            return -1;
-          }
-          return moment(b.date).valueOf() - moment(a.date).valueOf();
-        });
-        this.records = notes;
+    this.childrenService.getNotesOf(this.child).then((notes: Note[]) => {
+      notes.sort((a, b) => {
+        if (!a.date && b.date) {
+          // note without date should be first
+          return -1;
+        }
+        return moment(b.date).valueOf() - moment(a.date).valueOf();
       });
+      this.records = notes;
+    });
   }
 
   generateNewRecordFactory() {
