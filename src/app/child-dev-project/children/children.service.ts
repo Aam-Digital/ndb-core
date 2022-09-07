@@ -122,14 +122,12 @@ export class ChildrenService {
     );
   }
 
-  getNotesOfChild(childId: string): Observable<Note[]> {
-    const promise = this.dbIndexing.queryIndexDocs(
+  getNotesOfChild(childId: string): Promise<Note[]> {
+    return this.dbIndexing.queryIndexDocs(
       Note,
       "notes_index/by_child",
       childId
     );
-
-    return from(promise);
   }
 
   /**

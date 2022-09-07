@@ -4,7 +4,6 @@ import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { ChildrenService } from "../../children/children.service";
 import moment from "moment";
 import { SessionService } from "../../../core/session/session-service/session.service";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../children/model/child";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
@@ -15,7 +14,6 @@ import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-
 /**
  * The component that is responsible for listing the Notes that are related to a certain child
  */
-@UntilDestroy()
 @DynamicComponent("NotesOfChild")
 @Component({
   selector: "app-notes-of-child",
@@ -23,7 +21,8 @@ import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-
   styleUrls: ["./notes-of-child.component.scss"],
 })
 export class NotesOfChildComponent
-  implements OnChanges, OnInitDynamicComponent {
+  implements OnChanges, OnInitDynamicComponent
+{
   @Input() child: Child;
   records: Array<Note> = [];
 
@@ -59,8 +58,7 @@ export class NotesOfChildComponent
   private initNotesOfChild() {
     this.childrenService
       .getNotesOfChild(this.child.getId())
-      .pipe(untilDestroyed(this))
-      .subscribe((notes: Note[]) => {
+      .then((notes: Note[]) => {
         notes.sort((a, b) => {
           if (!a.date && b.date) {
             // note without date should be first
