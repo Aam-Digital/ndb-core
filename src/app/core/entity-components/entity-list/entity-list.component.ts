@@ -29,6 +29,8 @@ import { RouteData } from "../../view/dynamic-routing/view-config.interface";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { skip } from "rxjs";
 
 /**
  * This component allows to create a full blown table with pagination, filtering, searching and grouping.
@@ -45,6 +47,7 @@ import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.s
   templateUrl: "./entity-list.component.html",
   styleUrls: ["./entity-list.component.scss"],
 })
+@UntilDestroy()
 export class EntityListComponent<T extends Entity>
   implements OnChanges, AfterViewInit
 {
@@ -97,7 +100,7 @@ export class EntityListComponent<T extends Entity>
   }
 
   constructor(
-    private screenSizeObserver: ScreenWidthObserver,
+    private screenWidthObserver: ScreenWidthObserver,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private analyticsService: AnalyticsService,
@@ -115,18 +118,21 @@ export class EntityListComponent<T extends Entity>
       );
     }
 
-    this.screenSizeObserver.platform().subscribe((isDesktop) => {
-      if (!isDesktop) {
-        this.displayColumnGroupByName(this.mobileColumnGroup);
-      } else if (
-        this.selectedColumnGroupIndex ===
-        this.getSelectedColumnIndexByName(this.mobileColumnGroup)
-      ) {
-        this.displayColumnGroupByName(this.defaultColumnGroup);
-      }
+    this.screenWidthObserver
+      .platform()
+      .pipe(untilDestroyed(this), skip(1))
+      .subscribe((isDesktop) => {
+        if (!isDesktop) {
+          this.displayColumnGroupByName(this.mobileColumnGroup);
+        } else if (
+          this.selectedColumnGroupIndex ===
+          this.getSelectedColumnIndexByName(this.mobileColumnGroup)
+        ) {
+          this.displayColumnGroupByName(this.defaultColumnGroup);
+        }
 
-      this.isDesktop = isDesktop;
-    });
+        this.isDesktop = isDesktop;
+      });
     this.activatedRoute.queryParams.subscribe((params) => {
       this.loadUrlParams(params);
     });
@@ -167,7 +173,7 @@ export class EntityListComponent<T extends Entity>
       this.initColumnGroups(this.listConfig.columnGroups);
       this.filtersConfig = this.listConfig.filters || [];
       this.displayColumnGroupByName(this.defaultColumnGroup);
-      if (!this.screenSizeObserver.isDesktop()) {
+      if (!this.screenWidthObserver.isDesktop()) {
         this.displayColumnGroupByName(this.mobileColumnGroup);
       }
     }
