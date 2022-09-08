@@ -15,6 +15,9 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@use "@angular/material" as mat;
+@use "../../../../ndb-theme.scss" as *;
+
 .login-panel {
   max-width: 400px;
   margin-top: 20px;
@@ -28,4 +31,8 @@
 .login-error {
   color: red;
   font-weight: bold;
+}
+
+.password-icon {
+  color: mat.get-color-from-palette($ndb-app-primary);
 }
