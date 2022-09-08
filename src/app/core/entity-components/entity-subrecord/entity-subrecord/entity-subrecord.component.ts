@@ -33,6 +33,7 @@ import {
   ScreenSize,
 } from "../../../../utils/media/screen-size-observer.service";
 import { distinctUntilChanged } from "rxjs/operators";
+import { Subscription } from "rxjs";
 
 export interface TableRow<T extends Entity> {
   record: T;
@@ -112,6 +113,8 @@ export class EntitySubrecordComponent<T extends Entity>
   /** data displayed in the template's table */
   recordsDataSource = new MatTableDataSource<TableRow<T>>();
 
+  private mediaSubscription: Subscription;
+
   idForSavingPagination = "startWert";
 
   @ViewChild(MatSort) set sort(matSort: MatSort) {
@@ -139,7 +142,12 @@ export class EntitySubrecordComponent<T extends Entity>
     private loggingService: LoggingService,
     private entityRemoveService: EntityRemoveService,
     private entityMapper: EntityMapperService
-  ) {}
+  ) {
+    this.mediaSubscription = this.screenWidthObserver
+      .shared()
+      .pipe(untilDestroyed(this), distinctUntilChanged())
+      .subscribe(() => this.setupTable());
+  }
 
   /** function returns the background color for each row*/
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
@@ -162,13 +170,6 @@ export class EntitySubrecordComponent<T extends Entity>
           }
         });
     }
-
-    this.screenWidthObserver
-      .shared()
-      .pipe(untilDestroyed(this), distinctUntilChanged())
-      .subscribe(() => {
-        this.setupTable();
-      });
   }
 
   private entityConstructorIsAvailable(): boolean {
@@ -199,6 +200,9 @@ export class EntitySubrecordComponent<T extends Entity>
         this.setupTable();
       }
       this.initDefaultSort();
+    }
+    if (changes.hasOwnProperty("columnsToDisplay")) {
+      this.mediaSubscription.unsubscribe();
     }
   }
 
@@ -392,6 +396,6 @@ export class EntitySubrecordComponent<T extends Entity>
     if (numericValue === undefined) {
       return true;
     }
-    return this.screenWidthObserver.currentScreenSize() >= numericValue;
+    return this.screenWidthObserver.currentScreenSize() <= numericValue;
   }
 }
