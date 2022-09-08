@@ -37,6 +37,7 @@
           *matRowDef="let row; columns: ['date', 'title'];"
           class="dashboard-table-row row-view"
           (click)="openNote(row)"
+          [style.background-color]="row.getColor?.()"
         ></tr>
       </table>
     </div>
