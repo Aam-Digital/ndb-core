@@ -6,6 +6,7 @@ export enum PWAInstallType {
   RunningAsPWA,
   NotAvailable,
 }
+
 enum Browser {
   Opera,
   MicrosoftInternetExplorer,
@@ -15,6 +16,7 @@ enum Browser {
   Firefox,
   Other,
 }
+
 enum OS {
   iOS,
   MacOS,
@@ -37,7 +39,9 @@ export class PwaInstallService {
 
   registerPWAInstallListener() {
     this.canInstallDirectly = new Promise((resolve) => {
+      console.log("adding event listener");
       this.window.addEventListener("beforeinstallprompt", (e) => {
+        console.log("triggered", e);
         e.preventDefault();
         this.deferredInstallPrompt = e;
         resolve();
