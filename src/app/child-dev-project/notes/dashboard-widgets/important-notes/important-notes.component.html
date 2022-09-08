@@ -37,7 +37,7 @@
           *matRowDef="let row; columns: ['date', 'title'];"
           class="dashboard-table-row row-view"
           (click)="openNote(row)"
-          [style.border-left-color]="row.getColor?.()"
+          [ngStyle]="{'--important-notes-bg-color': row.getColor?.()}"
         ></tr>
       </table>
     </div>

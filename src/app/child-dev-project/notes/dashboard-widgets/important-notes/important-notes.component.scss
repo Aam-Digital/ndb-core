@@ -7,9 +7,16 @@
 
 .row-view {
   cursor: pointer;
+  position: relative;
 
-  border-left-width: 8px;
-  border-left-style: solid;
+  &::before {
+    content: '';
+    display: block;
+    width: 8px;
+    height: 100%;
+    position: absolute;
+    background-color: var(--important-notes-bg-color);
+  }
 
   & > td:first-child {
     padding-left: $standard-margin-small;
