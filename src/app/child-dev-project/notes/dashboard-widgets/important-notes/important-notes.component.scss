@@ -8,6 +8,9 @@
 .row-view {
   cursor: pointer;
 
+  border-left-width: 8px;
+  border-left-style: solid;
+
   & > td:first-child {
     padding-left: $standard-margin-small;
   }
