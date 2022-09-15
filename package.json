@@ -29,6 +29,7 @@
     "@angular/forms": "^14.2.0",
     "@angular/localize": "^14.2.0",
     "@angular/material": "^14.2.0",
+    "@angular/material-moment-adapter": "^14.2.2",
     "@angular/platform-browser": "^14.2.0",
     "@angular/platform-browser-dynamic": "^14.2.0",
     "@angular/router": "^14.2.0",

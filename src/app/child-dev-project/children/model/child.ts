@@ -24,6 +24,7 @@ import { Photo } from "../child-photo-service/photo";
 import { BehaviorSubject } from "rxjs";
 import { SafeUrl } from "@angular/platform-browser";
 import { ChildPhotoService } from "../child-photo-service/child-photo.service";
+import moment from "moment";
 
 export type Center = ConfigurableEnumValue;
 @DatabaseEntity("Child")
@@ -118,7 +119,7 @@ export class Child extends Entity {
   phone: string;
 
   get age(): number {
-    return this.dateOfBirth ? calculateAge(this.dateOfBirth) : null;
+    return this.dateOfBirth ? calculateAge(moment(this.dateOfBirth)) : null;
   }
 
   get isActive(): boolean {

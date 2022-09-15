@@ -19,10 +19,10 @@ describe("Utils", () => {
 
   it("should calculate age correctly", () => {
     let dob = moment().subtract(9, "years");
-    let age = calculateAge(dob.toDate());
+    let age = calculateAge(dob);
     expect(age).toBe(9);
     dob = dob.add("1", "day");
-    age = calculateAge(dob.toDate());
+    age = calculateAge(dob);
     expect(age).toBe(8);
   });
 

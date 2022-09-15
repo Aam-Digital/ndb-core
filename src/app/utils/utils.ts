@@ -4,6 +4,7 @@
  */
 import { Router } from "@angular/router";
 import { ConfigurableEnumValue } from "../core/configurable-enum/configurable-enum.interface";
+import moment, { Moment } from "moment";
 
 export function isValidDate(date: any): boolean {
   return (
@@ -44,14 +45,8 @@ export function groupBy<T>(
   );
 }
 
-export function calculateAge(dateOfBirth: Date): number {
-  const now = new Date();
-  let age = now.getFullYear() - dateOfBirth.getFullYear();
-  const m = now.getMonth() - dateOfBirth.getMonth();
-  if (m < 0 || (m === 0 && now.getDate() < dateOfBirth.getDate())) {
-    age--;
-  }
-  return age;
+export function calculateAge(dateOfBirth: Moment): number {
+  return moment().diff(dateOfBirth, "years");
 }
 
 export function sortByAttribute<OBJECT>(
