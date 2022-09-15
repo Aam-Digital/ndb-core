@@ -9,11 +9,7 @@
 
   We also set floatLabel to always because the label is attached to the wrong input
  -->
-  <input
-    matInput
-    [formControl]="formControl"
-    hidden
-  />
+  <input matInput [formControl]="formControl" hidden />
   <mat-label>{{ label }}</mat-label>
   <!--
   This input contains the display value (i.e. the value that the user chooses and sees when he clicks 'update')
@@ -26,17 +22,22 @@
     [disabled]="formControl.disabled"
     [matAutocomplete]="autoSuggestions"
     [value]="selectedEntity?.toString()"
+    (keyup.enter)="enterPressed()"
     (keyup)="updateAutocomplete(inputElement.value)"
     (focusin)="updateAutocomplete(inputElement.value)"
     (focusout)="select(inputElement.value)"
-  >
+  />
   <mat-autocomplete
     #autoSuggestions="matAutocomplete"
     (optionSelected)="select($event.option.value)"
   >
     <!-- Optional header -->
     <ng-content select="mat-option"></ng-content>
-    <mat-option *ngFor="let entity of autocompleteEntities | async" [value]="entity">
+    <mat-option
+      [class.highlight]="this.autocompleteEntities.getValue().length === 1"
+      *ngFor="let entity of autocompleteEntities | async"
+      [value]="entity"
+    >
       <app-display-entity
         [entityToDisplay]="entity"
         [linkDisabled]="true"
@@ -44,7 +45,10 @@
     </mat-option>
   </mat-autocomplete>
 
-  <mat-error *ngIf="formControl.errors?.required" i18n="Error message for any input">
+  <mat-error
+    *ngIf="formControl.errors?.required"
+    i18n="Error message for any input"
+  >
     This field is required
   </mat-error>
 </mat-form-field>
@@ -54,7 +58,11 @@
     class="block-wrapper"
     [entityToDisplay]="selectedEntity"
   ></app-display-entity>
-  <button *ngIf="formControl.enabled" mat-icon-button (click)="editSelectedEntity()">
+  <button
+    *ngIf="formControl.enabled"
+    mat-icon-button
+    (click)="editSelectedEntity()"
+  >
     <fa-icon icon="pen"></fa-icon>
   </button>
 </div>

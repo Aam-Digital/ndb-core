@@ -32,6 +32,18 @@ export class EditSingleEntityComponent extends EditComponent<string> {
       );
     }
     this.autocompleteEntities.next(filteredEntities);
+    if (filteredEntities.length === 1) {
+      console.log("Unique!");
+    } else {
+      console.log("Not unique.");
+    }
+  }
+
+  enterPressed() {
+    console.log("Enter pressed");
+    if (this.autocompleteEntities.getValue().length === 1) {
+      this.select(this.autocompleteEntities.getValue()[0]);
+    }
   }
 
   async onInitFromDynamicConfig(config: EditPropertyConfig<string>) {
