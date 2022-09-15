@@ -7,6 +7,9 @@
         i18n-placeholder="Title Progress|Edit the progress of one or multiple tasks"
         placeholder="Title"
       />
+      <mat-error *ngIf="title.hasError('required')" i18n>
+        This field is required
+      </mat-error>
   </mat-form-field>
 </div>
 
@@ -20,6 +23,9 @@
         i18n-placeholder="Process Label|The label of a process or task"
         placeholder="Task"
       />
+      <mat-error *ngIf="control.hasError('required','label')" i18n>
+        This field is required
+      </mat-error>
     </mat-form-field>
 
     <button
@@ -101,9 +107,9 @@
     <button
       mat-stroked-button
       [mat-dialog-close]="outputData.value"
-      [disabled]="!parts.valid"
+      [disabled]="!parts.valid || !title.valid"
     >
-      <span [matTooltip]="tooltipOnSave" i18n>Save</span>
+      <span matTooltip="Fix the errors to save the form" [matTooltipDisabled]="outputData.valid" i18n-matTooltip="Shown when there are errors that prevent saving" i18n>Save</span>
     </button>
   <button mat-stroked-button mat-dialog-close i18n>Cancel</button>
 </mat-dialog-actions>

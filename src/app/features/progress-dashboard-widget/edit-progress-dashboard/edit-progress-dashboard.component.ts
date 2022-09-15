@@ -36,7 +36,7 @@ export class EditProgressDashboardComponent {
     @Inject(MAT_DIALOG_DATA) public data: ProgressDashboardConfig,
     private fb: FormBuilder
   ) {
-    this.title = new FormControl(data.title);
+    this.title = new FormControl(data.title, [Validators.required]);
     this.parts = fb.array(data.parts.map((part) => this.formGroup(part)));
     this.outputData = new FormGroup({
       title: this.title,
@@ -47,7 +47,7 @@ export class EditProgressDashboardComponent {
   formGroup(part: ProgressDashboardPart): FormGroup {
     return this.fb.group(
       {
-        label: this.fb.control(part.label),
+        label: this.fb.control(part.label, [Validators.required]),
         currentValue: this.fb.control(part.currentValue, [
           Validators.required,
           Validators.min(0),
@@ -82,12 +82,6 @@ export class EditProgressDashboardComponent {
       targetValue: 10,
     };
     this.parts.push(this.formGroup(newPart));
-  }
-
-  get tooltipOnSave(): string {
-    return this.parts.valid
-      ? ""
-      : $localize`:Shown when there are errors that prevent saving:Fix the errors to save the form`;
   }
 
   removePart(index: number) {

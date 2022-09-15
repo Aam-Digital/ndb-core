@@ -68,10 +68,12 @@ describe("EditProgressDashboardComponent", () => {
     expect(component.title).toBeValidForm();
   });
 
-  it("should mark form as valid when title is empty", () => {
+  it("should mark form as invalid when title is empty", () => {
     component.title.setValue("");
     expect(component.title).toHaveValue("");
-    expect(component.title).toBeValidForm();
+    expect(component.title).toContainFormError("required");
+
+    expect(component.title).not.toBeValidForm();
   });
 
   it("should append a new part", () => {
