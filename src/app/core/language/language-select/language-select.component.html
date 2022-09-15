@@ -1,0 +1,16 @@
+<button mat-icon-button [matMenuTriggerFor]="menu">
+  <mat-icon [class]="'fi fi-' + siteRegionCode"></mat-icon>
+</button>
+
+<mat-menu #menu>
+  <a
+    *ngFor="let lang of translationService.availableLocales"
+    (click)="changeLocale(lang.locale)"
+    mat-menu-item
+  >
+    <span
+      [class]="'flag-clip fi fi-' + lang.regionCode"
+    ></span>
+    <span>{{ lang.regionCode }}</span>
+  </a>
+</mat-menu>

@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { AppConfig } from "../../app-config/app-config";
+import { AppSettings } from "../../app-config/app-settings";
 import { LocalSession } from "./local-session";
 import { SessionType } from "../session-type";
 import { DatabaseUser, LocalUser, passwordEqualsEncrypted } from "./local-user";
@@ -23,6 +23,7 @@ import { LoginState } from "../session-states/login-state.enum";
 import { testSessionServiceImplementation } from "./session.service.spec";
 import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
 import { PouchDatabase } from "../../database/pouch-database";
+import { environment } from "../../../../environments/environment";
 
 describe("LocalSessionService", () => {
   let userDBName;
@@ -32,16 +33,9 @@ describe("LocalSessionService", () => {
   let database: jasmine.SpyObj<PouchDatabase>;
 
   beforeEach(() => {
-    AppConfig.settings = {
-      site_name: "Aam Digital - DEV",
-      session_type: SessionType.mock,
-      database: {
-        name: "test-db-name",
-        remote_url: "https://demo.aam-digital.com/db/",
-      },
-    };
-    userDBName = `${TEST_USER}-${AppConfig.settings.database.name}`;
-    deprecatedDBName = AppConfig.settings.database.name;
+    environment.session_type = SessionType.mock;
+    userDBName = `${TEST_USER}-${AppSettings.DB_NAME}`;
+    deprecatedDBName = AppSettings.DB_NAME;
     database = jasmine.createSpyObj([
       "initInMemoryDB",
       "initIndexedDB",
@@ -89,6 +83,22 @@ describe("LocalSessionService", () => {
     expect(localSession.loginState.value).toBe(LoginState.LOGGED_IN);
   });
 
+  it("should be case-insensitive and ignore spaces in username", async () => {
+    expect(localSession.loginState.value).toBe(LoginState.LOGGED_OUT);
+    const user: DatabaseUser = {
+      name: "UserName",
+      roles: [],
+    };
+    localSession.saveUser(user, TEST_PASSWORD);
+
+    await localSession.login(" Username ", TEST_PASSWORD);
+
+    expect(localSession.loginState.value).toBe(LoginState.LOGGED_IN);
+    expect(localSession.getCurrentUser().name).toBe("UserName");
+
+    localSession.removeUser("username");
+  });
+
   it("should fail login with correct username but wrong password", async () => {
     await localSession.login(TEST_USER, "wrong password");
 
@@ -123,19 +133,19 @@ describe("LocalSessionService", () => {
     await localSession.login(TEST_USER, TEST_PASSWORD);
 
     expect(database.initInMemoryDB).toHaveBeenCalledWith(
-      TEST_USER + "-" + AppConfig.settings.database.name
+      TEST_USER + "-" + AppSettings.DB_NAME
     );
     expect(localSession.getDatabase()).toBe(database);
   });
 
-  it("should create the database according to the session type in the AppConfig", async () => {
+  it("should create the database according to the session type in the AppSettings", async () => {
     async function testDatabaseCreation(
       sessionType: SessionType,
       expectedDB: "inMemory" | "indexed"
     ) {
       database.initInMemoryDB.calls.reset();
       database.initIndexedDB.calls.reset();
-      AppConfig.settings.session_type = sessionType;
+      environment.session_type = sessionType;
       await localSession.login(TEST_USER, TEST_PASSWORD);
       if (expectedDB === "inMemory") {
         expect(database.initInMemoryDB).toHaveBeenCalled();

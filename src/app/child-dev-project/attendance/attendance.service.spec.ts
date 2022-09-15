@@ -166,8 +166,8 @@ describe("AttendanceService", () => {
 
   it("getAllActivityAttendancesForPeriod creates records for every activity with events in the given period", async () => {
     const actualAttendences = await service.getAllActivityAttendancesForPeriod(
-      new Date("2020-01-01"),
-      new Date("2020-01-05")
+      new Date(2020, 0, 1),
+      new Date(2020, 0, 5)
     );
 
     expect(actualAttendences).toHaveSize(2);

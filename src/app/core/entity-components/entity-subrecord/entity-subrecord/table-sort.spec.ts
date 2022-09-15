@@ -1,7 +1,11 @@
 import { tableSort } from "./table-sort";
 import moment from "moment";
-import { ConfigurableEnumConfig } from "../../../configurable-enum/configurable-enum.interface";
+import {
+  ConfigurableEnumConfig,
+  ConfigurableEnumValue,
+} from "../../../configurable-enum/configurable-enum.interface";
 import { Entity } from "../../../entity/model/entity";
+import { Ordering } from "../../../configurable-enum/configurable-enum-ordering";
 
 describe("TableSort", () => {
   class E extends Entity {
@@ -34,6 +38,15 @@ describe("TableSort", () => {
       { id: "first", label: "aAa" },
       { id: "second", label: "Bbb" },
       { id: "third", label: "CDE" },
+    ];
+    testSort(values);
+  });
+
+  it("should sort configurable with an ordinal value based on their ordinal value", () => {
+    const values: Ordering.Config<ConfigurableEnumValue> = [
+      { id: "first", label: "X", _ordinal: 2 },
+      { id: "second", label: "Cgt", _ordinal: 1 },
+      { id: "third", label: "876", _ordinal: 0 },
     ];
     testSort(values);
   });

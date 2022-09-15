@@ -22,11 +22,12 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { CommonModule } from "@angular/common";
 import { MatTabsModule } from "@angular/material/tabs";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { MatListModule } from "@angular/material/list";
-import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { TabStateModule } from "../../utils/tab-state/tab-state.module";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { Angulartics2Module } from "angulartics2";
+import { ReactiveFormsModule } from "@angular/forms";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { SessionModule } from "../session/session.module";
 
 /**
  * Provides a User functionality including user account forms.
@@ -38,15 +39,13 @@ import { TabStateModule } from "../../utils/tab-state/tab-state.module";
     MatInputModule,
     MatButtonModule,
     MatTabsModule,
-    ReactiveFormsModule,
-    MatListModule,
-    MatAutocompleteModule,
-    FormsModule,
-    FontAwesomeModule,
     TabStateModule,
+    MatTooltipModule,
+    Angulartics2Module,
+    ReactiveFormsModule,
+    FontAwesomeModule,
+    SessionModule,
   ],
   declarations: [UserAccountComponent],
 })
-export class UserModule {
-  static dynamicComponents = [UserAccountComponent];
-}
+export class UserModule {}

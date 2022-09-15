@@ -6,7 +6,6 @@ import {
   SimpleChange,
   SimpleChanges,
 } from "@angular/core";
-import { Router } from "@angular/router";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { ChildrenService } from "../children.service";
@@ -29,13 +28,8 @@ export class ChildBlockComponent implements OnInitDynamicComponent, OnChanges {
 
   /** prevent additional details to be displayed in a tooltip on mouse over */
   @Input() tooltipDisabled: boolean;
-  tooltipVisible = false;
-  tooltipTimeout;
 
-  constructor(
-    @Optional() private router: Router,
-    @Optional() private childrenService: ChildrenService
-  ) {}
+  constructor(@Optional() private childrenService: ChildrenService) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.hasOwnProperty("entityId")) {
@@ -58,30 +52,5 @@ export class ChildBlockComponent implements OnInitDynamicComponent, OnChanges {
     }
     this.linkDisabled = config.linkDisabled;
     this.tooltipDisabled = config.tooltipDisabled;
-  }
-
-  showTooltip() {
-    if (this.tooltipDisabled) {
-      return;
-    }
-    if (this.tooltipTimeout) {
-      clearTimeout(this.tooltipTimeout);
-    }
-    this.tooltipTimeout = setTimeout(() => (this.tooltipVisible = true), 1000);
-  }
-
-  hideTooltip() {
-    if (this.tooltipTimeout) {
-      clearTimeout(this.tooltipTimeout);
-    }
-    this.tooltipTimeout = setTimeout(() => (this.tooltipVisible = false), 150);
-  }
-
-  showDetailsPage() {
-    if (this.linkDisabled) {
-      return;
-    }
-    const path = "/" + Child.ENTITY_TYPE.toLowerCase();
-    this.router?.navigate([path, this.entity.getId()]);
   }
 }

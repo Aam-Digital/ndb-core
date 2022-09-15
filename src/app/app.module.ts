@@ -17,7 +17,7 @@
 
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { ErrorHandler, NgModule } from "@angular/core";
+import { ErrorHandler, LOCALE_ID, NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 
@@ -53,7 +53,6 @@ import { DemoProgressDashboardWidgetGeneratorService } from "./features/progress
 import { DemoUserGeneratorService } from "./core/user/demo-user-generator.service";
 import { ConfirmationDialogModule } from "./core/confirmation-dialog/confirmation-dialog.module";
 import { FormDialogModule } from "./core/form-dialog/form-dialog.module";
-import { LoggingService } from "./core/logging/logging.service";
 import { AnalyticsService } from "./core/analytics/analytics.service";
 import { ViewModule } from "./core/view/view.module";
 import { DashboardModule } from "./core/dashboard/dashboard.module";
@@ -71,7 +70,7 @@ import { DashboardShortcutWidgetModule } from "./core/dashboard-shortcut-widget/
 import { HistoricalDataModule } from "./features/historical-data/historical-data.module";
 import { EntityUtilsModule } from "./core/entity-components/entity-utils/entity-utils.module";
 import { DemoHistoricalDataGenerator } from "./features/historical-data/demo-historical-data-generator";
-import { TranslatableMatPaginator } from "./core/translation/TranslatableMatPaginator";
+import { TranslatableMatPaginator } from "./core/language/TranslatableMatPaginator";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
@@ -80,6 +79,10 @@ import { SupportModule } from "./core/support/support.module";
 import { DemoConfigGeneratorService } from "./core/config/demo-config-generator.service";
 import { DatabaseModule } from "./core/database/database.module";
 import { Angulartics2Matomo, Angulartics2Module } from "angulartics2";
+import {
+  DEFAULT_LANGUAGE,
+  LANGUAGE_LOCAL_STORAGE_KEY,
+} from "./core/language/language-statics";
 
 /**
  * Main entry point of the application.
@@ -161,6 +164,11 @@ import { Angulartics2Matomo, Angulartics2Module } from "angulartics2";
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
     { provide: MatPaginatorIntl, useValue: TranslatableMatPaginator() },
     { provide: RouteRegistry, useValue: routesRegistry },
+    {
+      provide: LOCALE_ID,
+      useValue:
+        localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY) ?? DEFAULT_LANGUAGE,
+    },
     AnalyticsService,
     Angulartics2Matomo,
   ],
@@ -171,9 +179,3 @@ export class AppModule {
     icons.addIconPacks(fas, far);
   }
 }
-
-// Initialize remote logging
-LoggingService.initRemoteLogging({
-  dsn: environment.remoteLoggingDsn,
-  whitelistUrls: [/https?:\/\/(.*)\.?aam-digital\.com/],
-});

@@ -20,7 +20,6 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { UiComponent } from "./ui.component";
 import { SwUpdate } from "@angular/service-worker";
 import { of, Subject } from "rxjs";
-import { ApplicationInitStatus } from "@angular/core";
 import { UiModule } from "../ui.module";
 import { ConfigService } from "../../config/config.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
@@ -32,38 +31,35 @@ describe("UiComponent", () => {
   let component: UiComponent;
   let fixture: ComponentFixture<UiComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      const mockSwUpdate = { available: of(), checkForUpdate: () => {} };
-      const mockIndexingService = jasmine.createSpyObj<DatabaseIndexingService>(
-        ["createIndex"],
+  beforeEach(waitForAsync(() => {
+    const mockSwUpdate = { available: of(), checkForUpdate: () => {} };
+    const mockIndexingService = jasmine.createSpyObj<DatabaseIndexingService>(
+      ["createIndex"],
+      {
+        indicesRegistered: new Subject(),
+      }
+    );
+    mockIndexingService.createIndex.and.resolveTo();
+
+    TestBed.configureTestingModule({
+      imports: [
+        UiModule,
+        MockedTestingModule.withState(),
+        FontAwesomeTestingModule,
+        TabStateModule,
+      ],
+      providers: [
+        { provide: SwUpdate, useValue: mockSwUpdate },
         {
-          indicesRegistered: new Subject(),
-        }
-      );
-      mockIndexingService.createIndex.and.resolveTo();
+          provide: DatabaseIndexingService,
+          useValue: mockIndexingService,
+        },
+      ],
+    }).compileComponents();
 
-      TestBed.configureTestingModule({
-        imports: [
-          UiModule,
-          MockedTestingModule.withState(),
-          FontAwesomeTestingModule,
-          TabStateModule,
-        ],
-        providers: [
-          { provide: SwUpdate, useValue: mockSwUpdate },
-          {
-            provide: DatabaseIndexingService,
-            useValue: mockIndexingService,
-          },
-        ],
-      }).compileComponents();
-      TestBed.inject(ApplicationInitStatus); // This ensures that the AppConfig is loaded before test execution
-
-      const configService = TestBed.inject(ConfigService);
-      configService.saveConfig({ navigationMenu: { items: [] } });
-    })
-  );
+    const configService = TestBed.inject(ConfigService);
+    configService.saveConfig({ navigationMenu: { items: [] } });
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(UiComponent);

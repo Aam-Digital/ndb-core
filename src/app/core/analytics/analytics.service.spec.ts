@@ -5,8 +5,6 @@ import { Angulartics2Matomo, Angulartics2Module } from "angulartics2";
 import { RouterTestingModule } from "@angular/router/testing";
 import { ConfigService } from "../config/config.service";
 import { UsageAnalyticsConfig } from "./usage-analytics-config";
-import { AppConfig } from "../app-config/app-config";
-import { IAppConfig } from "../app-config/app-config.model";
 import { Subject } from "rxjs";
 import { Config } from "../config/config";
 
@@ -18,7 +16,6 @@ describe("AnalyticsService", () => {
   let mockMatomo: jasmine.SpyObj<Angulartics2Matomo>;
 
   beforeEach(() => {
-    AppConfig.settings = { site_name: "unit-testing" } as IAppConfig;
     mockConfigService = jasmine.createSpyObj(
       "mockConfigService",
       ["getConfig"],

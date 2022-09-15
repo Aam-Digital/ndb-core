@@ -1,4 +1,6 @@
-export const ratingAnswers = [
+import { Ordering } from '../../../core/configurable-enum/configurable-enum-ordering';
+
+export const ratingAnswers = Ordering.imposeTotalOrdering([
   {
     id: "notTrueAtAll",
     label: $localize`:Rating answer:not at all`,
@@ -24,4 +26,4 @@ export const ratingAnswers = [
     label: $localize`:Rating answer:N/A`,
     color: '#b0b0b0',
   },
-];
+]);

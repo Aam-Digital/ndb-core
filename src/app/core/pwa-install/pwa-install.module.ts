@@ -4,7 +4,6 @@ import { PwaInstallComponent } from "./pwa-install.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { FlexLayoutModule } from "@angular/flex-layout";
-import { TranslationModule } from "app/core/translation/translation.module";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { PwaInstallService } from "./pwa-install.service";
@@ -18,7 +17,6 @@ import { Angulartics2Module } from "angulartics2";
     FontAwesomeModule,
     MatButtonModule,
     FlexLayoutModule,
-    TranslationModule,
     MatSidenavModule,
     MatToolbarModule,
     MatSnackBarModule,
