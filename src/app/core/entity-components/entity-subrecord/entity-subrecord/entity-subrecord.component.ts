@@ -33,7 +33,7 @@ import {
   ScreenSize,
 } from "../../../../utils/media/screen-size-observer.service";
 import { distinctUntilChanged } from "rxjs/operators";
-import { skip, Subscription } from "rxjs";
+import { Subscription } from "rxjs";
 
 export interface TableRow<T extends Entity> {
   record: T;
@@ -146,7 +146,7 @@ export class EntitySubrecordComponent<T extends Entity>
   ) {
     this.mediaSubscription = this.screenWidthObserver
       .shared()
-      .pipe(untilDestroyed(this), distinctUntilChanged(), skip(1))
+      .pipe(untilDestroyed(this), distinctUntilChanged())
       .subscribe((change: ScreenSize) => {
         if (change !== this.screenWidth) {
           this.screenWidth = change;
@@ -402,6 +402,6 @@ export class EntitySubrecordComponent<T extends Entity>
     if (numericValue === undefined) {
       return true;
     }
-    return this.screenWidthObserver.currentScreenSize() <= numericValue;
+    return this.screenWidthObserver.currentScreenSize() >= numericValue;
   }
 }
