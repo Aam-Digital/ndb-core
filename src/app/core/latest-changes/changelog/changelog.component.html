@@ -45,7 +45,7 @@
   </div>
 </mat-dialog-content>
 
-<mat-dialog-actions>
+<mat-dialog-actions class="flex-row gap-regular flex-wrap">
   <button mat-raised-button (click)="loadPreviousRelease()" i18n>
     Show previous changes
   </button>
@@ -54,6 +54,7 @@
     color="accent"
     [mat-dialog-close]="true"
     i18n="Generic close button"
+    class="remove-margin-left"
   >
     Close
   </button>
