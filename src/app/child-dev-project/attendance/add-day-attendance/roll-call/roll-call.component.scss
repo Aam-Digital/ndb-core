@@ -42,13 +42,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-}
-
-.child-block {
-  flex-grow: 1;
-  display: flex;
-  place-content: flex-start;
-  margin: sizes.$small;
+  align-items: center;
 }
 
 .tab-body {
@@ -71,13 +65,5 @@
 .tab-wrapper {
   display: flex;
   position: relative;
-}
-
-// Per default, the content of a mat-button is center-aligned.
-// In this case, the button contains an icon and we want it left (resp. right)-aligned
-// with the content
-// `text-align: left` would work as well, but not with the ripples
-
-.button-skip {
-  margin-top: -10px;
+  overflow-x: hidden;
 }

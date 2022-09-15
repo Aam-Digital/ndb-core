@@ -1,37 +1,34 @@
 <!-- Individual Student's Page -->
-<div *ngIf="children?.length > 0">
-  <div class="flex-column">
-    <mat-progress-bar
-      class="margin-bottom-small"
-      mode="determinate"
-      [value]="(currentIndex / children.length) * 100"
-    ></mat-progress-bar>
+<div *ngIf="children?.length > 0" class="flex-column gap-regular">
+  <mat-progress-bar
+    mode="determinate"
+    [value]="(currentIndex / children.length) * 100"
+  ></mat-progress-bar>
 
-    <div class="progress-nav">
-      <div>
-        <button mat-icon-button (click)="goToFirst()" [disabled]="isFirst" class="button-skip">
-          <fa-icon icon="angle-double-left"></fa-icon>
-        </button>
-        <button mat-icon-button (click)="goToPrevious()" [disabled]="isFirst" class="button-skip">
-          <fa-icon icon="angle-left"></fa-icon>
-        </button>
-      </div>
-      <div class="progress-label" [style.visibility]="currentIndex < children.length ? 'visible' : 'hidden'">
-        {{ currentIndex+1 }} / {{ children.length }}
-      </div>
-      <div>
-        <button mat-icon-button (click)="goToNext()" [disabled]="isFinished" class="button-skip">
-          <fa-icon icon="angle-right"></fa-icon>
-        </button>
-        <button mat-icon-button (click)="goToLast()" [disabled]="isFinished" class="button-skip">
-          <fa-icon icon="angle-double-right"></fa-icon>
-        </button>
-      </div>
+  <div class="progress-nav">
+    <div style="margin-left: -10px">
+      <button mat-icon-button (click)="goToFirst()" [disabled]="isFirst" class="button-skip">
+        <fa-icon icon="angle-double-left"></fa-icon>
+      </button>
+      <button mat-icon-button (click)="goToPrevious()" [disabled]="isFirst" class="button-skip">
+        <fa-icon icon="angle-left"></fa-icon>
+      </button>
+    </div>
+    <div class="progress-label" [style.visibility]="currentIndex < children.length ? 'visible' : 'hidden'">
+      {{ currentIndex+1 }} / {{ children.length }}
+    </div>
+    <div style="margin-right: -10px">
+      <button mat-icon-button (click)="goToNext()" [disabled]="isFinished" class="button-skip">
+        <fa-icon icon="angle-right"></fa-icon>
+      </button>
+      <button mat-icon-button (click)="goToLast()" [disabled]="isFinished" class="button-skip">
+        <fa-icon icon="angle-double-right"></fa-icon>
+      </button>
     </div>
   </div>
 
   <app-child-block
-    class="child-block"
+    class="margin-small"
     *ngIf="!isFinished"
     [entity]="currentChild"
     [linkDisabled]="true"
