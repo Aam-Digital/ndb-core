@@ -33,7 +33,7 @@ import {
   ScreenSize,
 } from "../../../../utils/media/screen-size-observer.service";
 import { distinctUntilChanged } from "rxjs/operators";
-import { Subscription } from "rxjs";
+import { skip, Subscription } from "rxjs";
 
 export interface TableRow<T extends Entity> {
   record: T;
@@ -114,6 +114,7 @@ export class EntitySubrecordComponent<T extends Entity>
   recordsDataSource = new MatTableDataSource<TableRow<T>>();
 
   private mediaSubscription: Subscription;
+  private screenWidth: ScreenSize | undefined = undefined;
 
   idForSavingPagination = "startWert";
 
@@ -145,8 +146,13 @@ export class EntitySubrecordComponent<T extends Entity>
   ) {
     this.mediaSubscription = this.screenWidthObserver
       .shared()
-      .pipe(untilDestroyed(this), distinctUntilChanged())
-      .subscribe(() => this.setupTable());
+      .pipe(untilDestroyed(this), distinctUntilChanged(), skip(1))
+      .subscribe((change: ScreenSize) => {
+        if (change !== this.screenWidth) {
+          this.screenWidth = change;
+          this.setupTable();
+        }
+      });
   }
 
   /** function returns the background color for each row*/
@@ -373,11 +379,11 @@ export class EntitySubrecordComponent<T extends Entity>
    * resets columnsToDisplay depending on current screensize
    */
   private setupTable() {
-    if (this._columns !== undefined) {
+    if (this._columns !== undefined && this.screenWidth !== undefined) {
       this.columnsToDisplay = this._columns
         .filter((col) => this.isVisible(col))
         .map((col) => col.id);
-      if (this.editable) this.columnsToDisplay.unshift("actions");
+      this.columnsToDisplay.unshift("actions");
     }
   }
 

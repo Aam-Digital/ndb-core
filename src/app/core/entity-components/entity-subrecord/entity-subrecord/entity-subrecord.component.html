@@ -52,7 +52,7 @@
     </td>
   </ng-container>
 
-  <ng-container *ngIf="editable" matColumnDef="actions">
+  <ng-container matColumnDef="actions">
     <th mat-header-cell *matHeaderCellDef class="remove-padding-left">
       <ng-container>
         <button
@@ -139,11 +139,7 @@
   <tr
     mat-row
     *matRowDef="let row; columns: columnsToDisplay"
-    [ngStyle]="
-      getBackgroundColor && {
-        'background-color': getBackgroundColor(row.record)
-      }
-    "
+    [style.background-color]="getBackgroundColor?.(row.record)"
     class="table-row"
   ></tr>
 </table>
