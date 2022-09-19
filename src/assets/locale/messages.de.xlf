@@ -3207,7 +3207,7 @@
       <trans-unit id="d1098c08e9a97818984d027f08aaf20f0ec574be" datatype="html">
         <source> no birthdays in the next <x id="INTERPOLATION" equiv-text="{{ birthdayThreshold - 1 }}"/> days </source>
         <target state="translated">Keine Geburtstage in den nächsten
-          <x id="INTERPOLATION" equiv-text="{{ birthdayThreshold - 1 }}"/>
+           <x id="INTERPOLATION" equiv-text="{{ birthdayThreshold - 1 }}"/>
           Tagen
         </target>
         <note priority="1" from="description">Fallback text if not birtdays are in the specified period</note>
