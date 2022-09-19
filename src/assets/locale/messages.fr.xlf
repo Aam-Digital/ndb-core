@@ -1226,6 +1226,10 @@
           <context context-type="linenumber">81</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
+          <context context-type="linenumber">112</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
           <context context-type="linenumber">257</context>
         </context-group>
@@ -2211,110 +2215,6 @@
           <context context-type="linenumber">51</context>
         </context-group>
         <note priority="1" from="description">Download note details as CSV</note>
-      </trans-unit>
-      <trans-unit id="5dbffebd80ca5f8de5017d833b16690daf0c6a1a" datatype="html">
-        <source>Date</source>
-        <target state="translated">Date</target>
-        <note priority="1" from="description">Placeholder for a date-input</note>
-        <note priority="1" from="meaning">Date input</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">62</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="f3ab141a02057a7853b9cde7dea17eef6811e27a" datatype="html">
-        <source> Status</source>
-        <target state="translated"> Statut </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">76</context>
-        </context-group>
-        <note priority="1" from="description">Status of a note</note>
-      </trans-unit>
-      <trans-unit id="483724599dbaabe37f5f82b0bee1c1faf0b27cd0" datatype="html">
-        <source>Type of Interaction</source>
-        <target state="translated">Type d'interaction</target>
-        <note priority="1" from="description">Type of Interaction when adding event</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">95</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="ec3f853537ad707f8ce894ebd598335a40d787e0" datatype="html">
-        <source>Add Author...</source>
-        <target state="translated">Ajouter un auteur...</target>
-        <note priority="1" from="description">placeholder when adding multiple authors</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">120</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="415f73cbdba5d09762df6c89878273c3aa6da51e" datatype="html">
-        <source>Authors</source>
-        <target state="translated">Auteurs</target>
-        <note priority="1" from="description">Authors of a note</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">122</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="c5252bb2561936719f899267ec66be730597597b" datatype="html">
-        <source>Topic / Summary</source>
-        <target state="translated">Sujet / Résumé</target>
-        <note priority="1" from="description">Placeholder informing that this is the Topic/Summary
-            of the note</note>
-        <note priority="1" from="meaning">Placeholder</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">137</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7350eb960cd51aedbc7bb7f8bf89814947d2aa65" datatype="html">
-        <source>Notes</source>
-        <target state="translated">Observations</target>
-        <note priority="1" from="description">Placeholder informing that this is textarea the actual
-            note can be entered into</note>
-        <note priority="1" from="meaning">Placeholder</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">153</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="303cf04ca5c12a60d676b6a00ceaf852799c1af4" datatype="html">
-        <source>Participants</source>
-        <target state="translated">Participants</target>
-        <note priority="1" from="description">Participants of a note</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">172</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="781e08965bad0a6de4dc79d832da4ec55bcd3d85" datatype="html">
-        <source>Add participant ...</source>
-        <target state="translated">Ajouter un participant ...</target>
-        <note priority="1" from="description">Add participants of a note</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">174</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="c22ba03540aa3217da059f45e7eab138b51a96e2" datatype="html">
-        <source>Groups</source>
-        <target state="translated">Groupes</target>
-        <note priority="1" from="description">Groups that belong to a note</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">206</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="d3233bd79e5ab0f7f5e9600bb5b8ef470bdb4bc6" datatype="html">
-        <source>Add group ...</source>
-        <target state="translated">Ajouter un groupe ...</target>
-        <note priority="1" from="description">Add a group to a note</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">208</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="17808fe2d7d0ecfca1373602e7da72d11dcc4c0d" datatype="html">
         <source> Include events </source>
@@ -4168,10 +4068,14 @@
         </context-group>
       </trans-unit>
       <trans-unit id="8454211630052123531" datatype="html">
-        <source>Add <x id="PH" equiv-text="this.label"/></source>
+        <source>Add <x id="PH" equiv-text="label"/></source>
         <target state="translated">Ajouter <x id="PH" equiv-text="this.label"/></target>
         <note priority="1" from="description">context Add User(s)</note>
         <note priority="1" from="meaning">Placeholder for input to add entities</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.ts</context>
+          <context context-type="linenumber">77</context>
+        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-entity-array/edit-entity-array.component.ts</context>
           <context context-type="linenumber">18</context>
