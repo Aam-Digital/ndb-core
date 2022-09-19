@@ -83,6 +83,8 @@ import {
   DEFAULT_LANGUAGE,
   LANGUAGE_LOCAL_STORAGE_KEY,
 } from "./core/language/language-statics";
+import { DateAdapter } from "@angular/material/core";
+import { DateAdapterWithFormatting } from "./core/language/date-adapter-with-formatting";
 
 /**
  * Main entry point of the application.
@@ -171,6 +173,7 @@ import {
     },
     AnalyticsService,
     Angulartics2Matomo,
+    { provide: DateAdapter, useClass: DateAdapterWithFormatting },
   ],
   bootstrap: [AppComponent],
 })
