@@ -29,6 +29,17 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
   readonly Child: EntityConstructor<Child> = Child;
   readonly School: EntityConstructor<School> = School;
   readonly User: EntityConstructor<User> = User;
+  readonly dateLabel = Note.schema.get("date").label;
+  readonly statusLabel = Note.schema.get("warningLevel").label;
+  readonly categoryLabel = Note.schema.get("category").label;
+  readonly authorsLabel = Note.schema.get("authors").label;
+  readonly authorsPlaceholder = this.getPlaceholder(this.authorsLabel);
+  readonly subjectLabel = Note.schema.get("subject").label;
+  readonly textLabel = Note.schema.get("text").label;
+  readonly childrenLabel = Note.schema.get("children").label;
+  readonly childrenPlaceholder = this.getPlaceholder(this.childrenLabel);
+  readonly schoolsLabel = Note.schema.get("schools").label;
+  readonly schoolsPlaceholder = this.getPlaceholder(this.schoolsLabel);
 
   readonly INTERACTION_TYPE_CONFIG = INTERACTION_TYPE_CONFIG_ID;
   readonly compareFn = compareEnums;
@@ -61,4 +72,8 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
   }
 
   filterInactiveChildren: (Child) => boolean = (c: Child) => c.isActive;
+
+  private getPlaceholder(label: string): string {
+    return $localize`:Placeholder for input to add entities|context Add User(s):Add ${label}`;
+  }
 }
