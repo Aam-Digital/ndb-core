@@ -947,6 +947,15 @@
         </context-group>
         <note priority="1" from="description">Tooltip for the birthday widget</note>
       </trans-unit>
+      <trans-unit id="d1098c08e9a97818984d027f08aaf20f0ec574be" datatype="html">
+        <source> no birthdays in the next <x id="INTERPOLATION" equiv-text="{{ birthdayThreshold - 1 }}"/> days </source>
+        <target state="new"> no birthdays in the next <x id="INTERPOLATION" equiv-text="{{ birthdayThreshold - 1 }}"/> days </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/dashboard-widgets/birthday-dashboard/birthday-dashboard.component.html</context>
+          <context context-type="linenumber">18,20</context>
+        </context-group>
+        <note priority="1" from="description">Fallback text if not birtdays are in the specified period</note>
+      </trans-unit>
       <trans-unit id="d5e76e1adac9d692354a5b88232fda10bdac8105" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="yrs&lt;/td>
         &lt;/ng-container>
@@ -956,7 +965,7 @@
         &lt;tr mat"/> yrs</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/dashboard-widgets/birthday-dashboard/birthday-dashboard.component.html</context>
-          <context context-type="linenumber">29,30</context>
+          <context context-type="linenumber">37</context>
         </context-group>
       </trans-unit>
       <trans-unit id="08bad5a0bee40ad4d99b7f4b31f6753022ce769a" datatype="html">
@@ -2258,6 +2267,26 @@
           <context context-type="sourcefile">src/app/child-dev-project/notes/notes-manager/notes-manager.component.ts</context>
           <context context-type="linenumber">73</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="543a18431c986263de1745b1fa957fd2ac67dc6c" datatype="html">
+        <source>Show entries where the end date is in the past</source>
+        <target state="new">Show entries where the end date is in the past</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/schools/children-overview/children-overview.component.html</context>
+          <context context-type="linenumber">13,20</context>
+        </context-group>
+        <note priority="1" from="description">Tooltip that will appear when hovered over the show-ended button</note>
+        <note priority="1" from="meaning">Show ended tooltip</note>
+      </trans-unit>
+      <trans-unit id="b2a4edf44613d53549470870dae3c3ce1817b263" datatype="html">
+        <source> Include ended ones </source>
+        <target state="new"> Include ended ones </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/schools/children-overview/children-overview.component.html</context>
+          <context context-type="linenumber">16,20</context>
+        </context-group>
+        <note priority="1" from="description">also show entries that are inactive</note>
+        <note priority="1" from="meaning">slider</note>
       </trans-unit>
       <trans-unit id="9f16eb852e79a33c7dac9d9c98535fb61718f905" datatype="html">
         <source>Currently there is no active entry. To add a new entry, click on the</source>
@@ -4065,7 +4094,7 @@
         <note priority="1" from="meaning">Placeholder for input to add entities</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.ts</context>
-          <context context-type="linenumber">83</context>
+          <context context-type="linenumber">77</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-entity-array/edit-entity-array.component.ts</context>
