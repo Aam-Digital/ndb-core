@@ -1,5 +1,17 @@
-import { NativeDateAdapter } from "@angular/material/core";
+import {
+  MAT_NATIVE_DATE_FORMATS,
+  MatDateFormats,
+  NativeDateAdapter,
+} from "@angular/material/core";
 import moment from "moment";
+
+/**
+ * Extend MAT_NATIVE_DATE_FORMATS to also support parsing.
+ */
+export const DATE_FORMATS: MatDateFormats = {
+  parse: { dateInput: "l" },
+  display: MAT_NATIVE_DATE_FORMATS.display,
+};
 
 export class DateAdapterWithFormatting extends NativeDateAdapter {
   /**
