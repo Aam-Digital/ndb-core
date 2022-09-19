@@ -5,7 +5,8 @@ import { DynamicComponent } from "../../view/dynamic-components/dynamic-componen
 import { ConfigurableEnumValue } from "../configurable-enum.interface";
 
 /**
- * This component displays a text attribute.
+ * This component displays a {@link ConfigurableEnumValue} as text.
+ * If the value has a `color` property, it is used as the background color.
  */
 @DynamicComponent("DisplayConfigurableEnum")
 @Component({
@@ -13,10 +14,16 @@ import { ConfigurableEnumValue } from "../configurable-enum.interface";
   template: `{{ value?.label }}`,
 })
 export class DisplayConfigurableEnumComponent extends ViewDirective<ConfigurableEnumValue> {
-  @HostBinding ('style.background-color') style;
-  @HostBinding ('style.padding') padding = '5px';
-  @HostBinding ('style.border-radius') radius = '4px';
+  @HostBinding("style.background-color") private style;
+  @HostBinding("style.padding") private padding;
+  @HostBinding("style.border-radius") private radius;
+
   onInitFromDynamicConfig(config: ViewPropertyConfig) {
-    super.onInitFromDynamicConfig(config)
-    this.style = this.value.color;
-} }
+    super.onInitFromDynamicConfig(config);
+    if (this.value.color) {
+      this.style = this.value.color;
+      this.padding = "5px";
+      this.radius = "4px";
+    }
+  }
+}
