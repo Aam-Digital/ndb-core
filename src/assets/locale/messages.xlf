@@ -2033,6 +2033,24 @@
         </context-group>
         <note priority="1" from="description">Filter-option for notes</note>
       </trans-unit>
+      <trans-unit id="543a18431c986263de1745b1fa957fd2ac67dc6c" datatype="html">
+        <source>Show entries where the end date is in the past</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/schools/children-overview/children-overview.component.html</context>
+          <context context-type="linenumber">13,20</context>
+        </context-group>
+        <note priority="1" from="description">Tooltip that will appear when hovered over the show-ended button</note>
+        <note priority="1" from="meaning">Show ended tooltip</note>
+      </trans-unit>
+      <trans-unit id="b2a4edf44613d53549470870dae3c3ce1817b263" datatype="html">
+        <source> Include ended ones </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/schools/children-overview/children-overview.component.html</context>
+          <context context-type="linenumber">16,20</context>
+        </context-group>
+        <note priority="1" from="description">also show entries that are inactive</note>
+        <note priority="1" from="meaning">slider</note>
+      </trans-unit>
       <trans-unit id="7788705242231433853" datatype="html">
         <source>Currently</source>
         <context-group purpose="location">
