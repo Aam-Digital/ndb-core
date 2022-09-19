@@ -4258,8 +4258,9 @@
       <trans-unit id="3663273932389961089" datatype="html">
         <source>The "<x id="PH" equiv-text="startLabel"/>" date is after the "<x id="PH_1" equiv-text="endLabel"/>" date
         </source>
-        <target state="translated">Das "<x id="PH" equiv-text="startLabel"/>"-Datum ist nach dem "<x id="PH_1"
-                                                                                                     equiv-text="endLabel"/>
+        <target state="translated">Das "<x id="PH" equiv-text="startLabel"/>"-Datum ist nach dem "
+          <x id="PH_1"
+             equiv-text="endLabel"/>
           "-Datum
         </target>
         <note priority="1" from="description">Error assertValid failed</note>
