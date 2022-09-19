@@ -1,7 +1,20 @@
 <app-entity-subrecord
-  [records]="records"
+  [records]="displayedRecords"
   [columns]="columns"
   [newRecordFactory]="generateNewRecordFactory()"
   [getBackgroundColor]="backgroundColorFn"
 ></app-entity-subrecord>
+
+<div style="margin-top: 16px">
+  <mat-slide-toggle
+    [(ngModel)]="showInactive"
+    (change)="this.prepareDisplayedData()"
+    i18n="slider|also show entries that lay in the past"
+    i18n-matTooltip="Show ended tooltip|Tooltip that will appear when hovered over the show-ended button"
+    matTooltip="Show entries where the end date lays in the past"
+  >
+    Include ended ones
+  </mat-slide-toggle>
+</div>
+
 

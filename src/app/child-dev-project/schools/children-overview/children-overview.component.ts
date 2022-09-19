@@ -43,7 +43,10 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
   ];
 
   entity: Entity;
-  records: ChildSchoolRelation[] = [];
+
+  private allRecords: ChildSchoolRelation[] = [];
+  displayedRecords: ChildSchoolRelation[] = [];
+  showInactive = false;
   backgroundColorFn = (r: ChildSchoolRelation) => r.getColor();
 
   constructor(
@@ -56,12 +59,20 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
       this.columns = config.config.columns.concat(isActiveIndicator);
     }
     this.entity = config.entity;
-    this.records = await this.childrenService.queryRelationsOf(
+    this.allRecords = await this.childrenService.queryRelationsOf(
       "school",
       this.entity.getId()
     );
-    if (!config.config?.showInactive) {
-      this.records = this.records.filter((r) => r.isActive);
+    this.showInactive = !!config.config?.showInactive;
+    this.prepareDisplayedData();
+  }
+
+  prepareDisplayedData() {
+    if (this.showInactive) {
+      this.displayedRecords = this.allRecords;
+      this.backgroundColorFn = (r: ChildSchoolRelation) => r.getColor();
+    } else {
+      this.displayedRecords = this.allRecords.filter((r) => r.isActive);
       // Do not highlight active ones when only active are shown
       this.backgroundColorFn = undefined;
     }

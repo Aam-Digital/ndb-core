@@ -52,10 +52,10 @@ describe("ChildrenOverviewComponent", () => {
       "school",
       school.getId()
     );
-    expect(component.records).toEqual([active1, active2]);
+    expect(component.displayedRecords).toEqual([active1, active2]);
   });
 
-  it("should show all relations if configured with active ones being highlighted", async () => {
+  it("should show all relations if configured; with active ones being highlighted", async () => {
     mockChildrenService.queryRelationsOf.and.resolveTo([
       active1,
       active2,
@@ -67,7 +67,7 @@ describe("ChildrenOverviewComponent", () => {
       config: { showInactive: true },
     });
 
-    expect(component.records).toEqual([active1, active2, inactive]);
+    expect(component.displayedRecords).toEqual([active1, active2, inactive]);
     expect(component.backgroundColorFn(active1)).not.toEqual("");
     expect(component.backgroundColorFn(inactive)).toEqual("");
   });
