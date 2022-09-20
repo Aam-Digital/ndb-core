@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { DisplayConfigurableEnumComponent } from "./display-configurable-enum.component";
 import { ConfigurableEnumValue } from "../configurable-enum.interface";
 import { Note } from "../../../child-dev-project/notes/model/note";
+import { Ordering } from "../configurable-enum-ordering";
 
 describe("DisplayConfigurableEnumComponent", () => {
   let component: DisplayConfigurableEnumComponent;
@@ -32,10 +33,11 @@ describe("DisplayConfigurableEnumComponent", () => {
     const elem = fixture.debugElement.nativeElement;
     expect(elem.style["background-color"]).toBe("");
 
-    const value: ConfigurableEnumValue = {
+    const value: Ordering.EnumValue = {
       label: "withColor",
       id: "WITH_COLOR",
       color: "black",
+      _ordinal: 1,
     };
     const entity = new Note();
     entity.warningLevel = value;
