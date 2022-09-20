@@ -171,6 +171,12 @@ export const defaultJsonConfig = {
           "component": "ChildrenCountDashboard"
         },
         {
+          "component": "ImportantNotesComponent",
+          "config": {
+            "warningLevels": ["WARNING", "URGENT"],
+          }
+        },
+        {
           "component": "NotesDashboard",
           "config": {
             "sinceDays": 28,
@@ -351,7 +357,7 @@ export const defaultJsonConfig = {
   },
   "view:admin/conflicts": {
     "permittedUserRoles": ["admin_app"],
-    "lazyLoaded":  true
+    "lazyLoaded": true
   },
   "view:help": {
     "component": "MarkdownPage",
@@ -706,11 +712,11 @@ export const defaultJsonConfig = {
               component: "HistoricalDataComponent",
               config: [
                 "date",
-                {id: "isMotivatedDuringClass", visibleFrom: "lg" },
-                {id: "isParticipatingInClass", visibleFrom: "lg" },
-                {id: "isInteractingWithOthers", visibleFrom: "lg" },
-                {id: "doesHomework", visibleFrom: "lg" },
-                {id: "asksQuestions", visibleFrom: "lg" },
+                { id: "isMotivatedDuringClass", visibleFrom: "lg" },
+                { id: "isParticipatingInClass", visibleFrom: "lg" },
+                { id: "isInteractingWithOthers", visibleFrom: "lg" },
+                { id: "doesHomework", visibleFrom: "lg" },
+                { id: "asksQuestions", visibleFrom: "lg" },
               ]
             }
           ]
@@ -1075,4 +1081,4 @@ export const defaultJsonConfig = {
       },
     ]
   }
-}
+};
