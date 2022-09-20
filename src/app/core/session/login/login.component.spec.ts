@@ -39,7 +39,7 @@ describe("LoginComponent", () => {
   beforeEach(waitForAsync(() => {
     mockSessionService = jasmine.createSpyObj(["login"]);
     TestBed.configureTestingModule({
-      imports: [SessionModule, MockedTestingModule],
+      imports: [SessionModule, MockedTestingModule, FontAwesomeTestingModule],
       providers: [{ provide: SessionService, useValue: mockSessionService }],
     }).compileComponents();
   }));
