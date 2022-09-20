@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from "@angular/core";
+import { Component } from "@angular/core";
 import { EditComponent, EditPropertyConfig } from "../edit-component";
 import { Entity } from "../../../../entity/model/entity";
 import { BehaviorSubject } from "rxjs";
@@ -15,21 +15,16 @@ import { ConfirmationDialogService } from "app/core/confirmation-dialog/confirma
 })
 export class EditTextWithAutocompleteComponent extends EditComponent<string> {
   entities: Entity[] = [];
-  placeholder: string;
   autocompleteEntities = new BehaviorSubject<Entity[]>([]);
   selectedEntity?: Entity;
-  inputText = "";
-  isFirstFocusIn = true;
   initialValues;
-  matAutocompleteDisabled: boolean = false;
+  autocompleteDisabled = true;
   additional: {
     entityType: string;
     relevantProperty?: string;
     relevantValue?: string;
   };
-  lastValue: string = "";
-
-  @ViewChild("inputElement") input: ElementRef;
+  lastValue = "";
 
   constructor(
     private entityMapperService: EntityMapperService,
@@ -38,25 +33,23 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
     super();
   }
 
-  keyup(inputText: string) {
-    this.lastValue = inputText;
-    this.updateAutocomplete(inputText);
+  keyup() {
+    this.lastValue = this.formControl.value;
+    this.updateAutocomplete();
   }
 
-  focusin(inputText: string) {
-    if (!this.isFirstFocusIn) this.updateAutocomplete(inputText);
-  }
-
-  focusout() {
-    this.isFirstFocusIn = false;
-  }
-
-  updateAutocomplete(inputText: string) {
-    if (!this.matAutocompleteDisabled) {
+  updateAutocomplete() {
+    let val = this.formControl.value;
+    if (
+      !this.autocompleteDisabled &&
+      val !== this.initialValues[this.formControlName]
+    ) {
       let filteredEntities = this.entities;
-      if (inputText) {
-        filteredEntities = this.entities.filter((entity) =>
-          entity.toString().toLowerCase().includes(inputText.toLowerCase())
+      if (val) {
+        filteredEntities = this.entities.filter(
+          (entity) =>
+            entity !== this.selectedEntity &&
+            entity.toString().toLowerCase().includes(val.toLowerCase())
         );
       }
       this.autocompleteEntities.next(filteredEntities);
@@ -65,63 +58,54 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
 
   async onInitFromDynamicConfig(config: EditPropertyConfig<string>) {
     super.onInitFromDynamicConfig(config);
-    this.additional = config.formFieldConfig.additional;
-    this.placeholder = $localize`:Placeholder for input to set an entity|context Select User:Type new or select existing after typing ${
-      config.formFieldConfig.label || config.propertySchema?.label
-    }`;
-    const entityType: string =
-      config.formFieldConfig.additional.entityType ||
-      config.propertySchema.additional.entityType;
-    this.entities = await this.entityMapperService.loadType(entityType);
-    this.entities.sort((e1, e2) => e1.toString().localeCompare(e2.toString()));
-    const selectedEntity = this.entities.find(
-      (entity) => entity.toString() === this.formControl.value
-    );
-    if (selectedEntity) {
-      this.selectedEntity = selectedEntity;
-      this.matAutocompleteDisabled = true;
-      this.placeholder = "";
+    if (!this.formControl.value) {
+      // adding new entry - enable autocomplete
+      this.additional = config.formFieldConfig.additional;
+      const entityType =
+        this.additional.entityType || this.additional.entityType;
+      this.entities = await this.entityMapperService.loadType(entityType);
+      this.entities.sort((e1, e2) =>
+        e1.toString().localeCompare(e2.toString())
+      );
+      this.selectedEntity = this.entities.find(
+        (entity) => entity[this.formControlName] === this.formControl.value
+      );
+      this.autocompleteDisabled = false;
+      this.initialValues = this.parent.getRawValue();
     }
-    this.initialValues = this.parent.getRawValue();
   }
 
-  async select(selected: Entity) {
-    if (
-      !this.valuesChanged() ||
-      (await this.confirmationDialog.getConfirmation(
-        $localize`:Discard the changes made:Discard changes`,
-        $localize`Do you want to discard the changes made and load '${
-          selected[this.formControlName]
-        }'?`
-      ))
-    ) {
-      this.selectedEntity = selected;
-      this.addRelevantValueToRelevantProperty(selected);
-      Object.keys(this.parent.controls).forEach((key) => {
-        this.parent.controls[key].setValue(selected[key]);
-      });
-      this.addMissingControls(selected);
+  async selectEntity() {
+    const val = this.formControl.value;
+    if (!this.valuesChanged() || (await this.userConfirmsOverwrite(val))) {
+      this.selectedEntity = this.entities.find(
+        (e) => e[this.formControlName] === val
+      );
+      this.addRelevantValueToRelevantProperty(this.selectedEntity);
+      this.setAllFormValues(this.selectedEntity);
       this.initialValues = this.parent.getRawValue();
+      this.autocompleteEntities.next([]);
     } else {
       this.formControl.setValue(this.lastValue);
     }
   }
 
-  private valuesChanged() {
-    let valuesChanged = false;
-    for (const iV in this.initialValues) {
-      if (
-        iV != this.formControlName &&
-        this.initialValues[iV] != this.parent.controls[iV].value
-      ) {
-        valuesChanged = true;
-        break;
-      }
-    }
-    return valuesChanged;
+  private async userConfirmsOverwrite(selected: string) {
+    return await this.confirmationDialog.getConfirmation(
+      $localize`:Discard the changes made:Discard changes`,
+      $localize`Do you want to discard the changes made and load '${selected}'?`
+    );
   }
 
-  private addRelevantValueToRelevantProperty(selected) {
+  private valuesChanged() {
+    return Object.keys(this.initialValues).some(
+      (prop) =>
+        prop != this.formControlName &&
+        this.initialValues[prop] != this.parent.controls[prop].value
+    );
+  }
+
+  private addRelevantValueToRelevantProperty(selected: Entity) {
     if (
       this.additional.relevantProperty &&
       this.additional.relevantValue &&
@@ -135,14 +119,16 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
     }
   }
 
-  private addMissingControls(selected) {
-    const formKeys = Object.keys(selected).filter(
-      (key) =>
-        selected.getSchema().has(key) &&
-        !this.parent.controls.hasOwnProperty(key)
-    );
-    formKeys.forEach((key) =>
-      this.parent.addControl(key, new FormControl(selected[key]))
-    );
+  private setAllFormValues(selected: Entity) {
+    Object.keys(selected)
+      .filter((key) => selected.getSchema().has(key))
+      .forEach((key) => {
+        if (this.parent.controls.hasOwnProperty(key)) {
+          this.parent.controls[key].setValue(this.selectedEntity[key]);
+        } else {
+          // adding missing controls so saving does not lose any data
+          this.parent.addControl(key, new FormControl(selected[key]));
+        }
+      });
   }
 }

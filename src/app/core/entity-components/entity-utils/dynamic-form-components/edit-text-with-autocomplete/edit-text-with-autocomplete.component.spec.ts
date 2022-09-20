@@ -14,6 +14,7 @@ import { MockedTestingModule } from "app/utils/mocked-testing.module";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 import { EntityUtilsModule } from "../../entity-utils.module";
 import { EditTextWithAutocompleteComponent } from "./edit-text-with-autocomplete.component";
+import { By } from "@angular/platform-browser";
 
 describe("EditTextWithAutocompleteComponent", () => {
   let component: EditTextWithAutocompleteComponent;
@@ -60,7 +61,8 @@ describe("EditTextWithAutocompleteComponent", () => {
 
     expect(loadTypeSpy).toHaveBeenCalled();
     expect(component.entities).toEqual([rA1, rA2]);
-    component.updateAutocomplete("");
+    component.formControl.setValue("Activity");
+    component.updateAutocomplete();
     expect(component.autocompleteEntities.value).toEqual([rA1, rA2]);
   }));
 
@@ -73,7 +75,8 @@ describe("EditTextWithAutocompleteComponent", () => {
 
     initComponent();
     tick();
-    component.select(rA1);
+    component.formControl.setValue(rA1.title);
+    component.selectEntity();
     tick();
     expect(component.formControl.value).toEqual(rA1.title);
     expect(component.parent.get("type").value).toEqual(rA1.type);
@@ -90,7 +93,8 @@ describe("EditTextWithAutocompleteComponent", () => {
 
     initComponent("linkedGroups", "group3");
     tick();
-    component.select(rA1);
+    component.formControl.setValue(rA1.title);
+    component.selectEntity();
     tick();
 
     expect(component.parent.get("linkedGroups").value).toContain("group3");
@@ -103,14 +107,13 @@ describe("EditTextWithAutocompleteComponent", () => {
     loadTypeSpy.and.resolveTo([rA1, rA2]);
 
     initComponent();
-    tick();
-    expect(component.selectedEntity).toBe(rA1);
 
     tick();
     fixture.detectChanges();
-    expect(component.input.nativeElement.value).toEqual(
-      "First Recurring Activity"
-    );
+    const input: HTMLInputElement = fixture.debugElement.query(
+      By.css("input")
+    ).nativeElement;
+    expect(input.value).toEqual("First Recurring Activity");
   }));
 
   // check if values in the form control have been manually changed after loading the entity
@@ -120,9 +123,9 @@ describe("EditTextWithAutocompleteComponent", () => {
     rA1.type = defaultInteractionTypes[0];
     rA1.assignedTo = ["user1", "user2"];
     rA1.linkedGroups = ["group1", "group2"];
-    loadTypeSpy.and.resolveTo([rA1]);
+    loadTypeSpy.and.resolveTo([rA1, rA2]);
 
-    let confirmationDialogueSpy: jasmine.Spy = spyOn(
+    const confirmationDialogueSpy: jasmine.Spy = spyOn(
       TestBed.inject(ConfirmationDialogService),
       "getConfirmation"
     );
@@ -132,14 +135,15 @@ describe("EditTextWithAutocompleteComponent", () => {
     tick();
     component.formControl.setValue("test1");
     component.parent.get("assignedTo").setValue(["user3"]);
-    component.select(rA2);
+    component.formControl.setValue(rA2.title);
+    component.selectEntity();
     tick();
 
     expect(component.selectedEntity).toEqual(rA2);
   }));
 
   function initComponent(relevantProperty?, relevantValue?): Promise<any> {
-    let res: FormFieldConfig = {
+    const res: FormFieldConfig = {
       id: "title",
       additional: {
         entityType: "RecurringActivity",

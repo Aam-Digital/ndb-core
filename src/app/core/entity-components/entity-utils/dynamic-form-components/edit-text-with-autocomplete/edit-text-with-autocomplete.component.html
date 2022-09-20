@@ -1,27 +1,22 @@
-<mat-form-field [formGroup]="parent" floatLabel="always">
+<mat-form-field [formGroup]="parent">
   <mat-label>{{ label }}</mat-label>
   <input
-    #inputElement
     matInput
     [formControl]="formControl"
-    [matAutocompleteDisabled]="matAutocompleteDisabled"
-    [placeholder]="placeholder"
-    [disabled]="formControl.disabled"
     [matAutocomplete]="autoSuggestions"
-    [value]="selectedEntity?.toString() || inputText"
-    (keyup)="keyup(inputElement.value)"
-    (focusin)="focusin(inputElement.value)"
-    (focusout)="focusout()"
+    [matAutocompleteDisabled]="autocompleteDisabled"
+    (keyup)="keyup()"
+    (focusin)="updateAutocomplete()"
   />
   <mat-autocomplete
     #autoSuggestions="matAutocomplete"
-    (optionSelected)="select($event.option.value)"
+    (optionSelected)="selectEntity()"
   >
     <!-- Optional header -->
     <ng-content select="mat-option"></ng-content>
     <mat-option
       *ngFor="let entity of autocompleteEntities | async"
-      [value]="entity"
+      [value]="entity[formControlName]"
     >
       <app-display-entity
         [entityToDisplay]="entity"
