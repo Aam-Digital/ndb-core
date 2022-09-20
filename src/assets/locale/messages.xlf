@@ -226,7 +226,7 @@
         <source> attended <x id="INTERPOLATION" equiv-text="{{ attendanceDescription }}"/> events </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-block/attendance-block.component.html</context>
-          <context context-type="linenumber">32,34</context>
+          <context context-type="linenumber">26,28</context>
         </context-group>
         <note priority="1" from="description">How many attendees were present / how many attendees
         were absent</note>
@@ -236,7 +236,7 @@
         <source> (excluding <x id="INTERPOLATION" equiv-text="{{ logicalCount[LStatus.IGNORE] }}"/> events excused or unknown) </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-block/attendance-block.component.html</context>
-          <context context-type="linenumber">40,42</context>
+          <context context-type="linenumber">33,35</context>
         </context-group>
         <note priority="1" from="description">How many events were excluded</note>
         <note priority="1" from="meaning">Attended Tooltip</note>
@@ -751,11 +751,11 @@
         </context-group>
         <note priority="1" from="description">Label math level</note>
       </trans-unit>
-      <trans-unit id="e0dc43b431d171971d708cb150a3fbce5d2530f1" datatype="html">
+      <trans-unit id="0ad520dd3cf9fdf79711733cf1452a894483a602" datatype="html">
         <source> class <x id="INTERPOLATION" equiv-text="{{ entity?.schoolClass }}"/> </source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/children/child-block/child-block.component.html</context>
-          <context context-type="linenumber">37,39</context>
+          <context context-type="sourcefile">src/app/child-dev-project/children/child-block/child-block-tooltip/child-block-tooltip.component.html</context>
+          <context context-type="linenumber">12,14</context>
         </context-group>
         <note priority="1" from="description">e.g. &apos;class 8&apos;</note>
         <note priority="1" from="meaning">The class a child is attending</note>
@@ -784,13 +784,21 @@
         </context-group>
         <note priority="1" from="description">Tooltip for the birthday widget</note>
       </trans-unit>
+      <trans-unit id="d1098c08e9a97818984d027f08aaf20f0ec574be" datatype="html">
+        <source> no birthdays in the next <x id="INTERPOLATION" equiv-text="{{ birthdayThreshold - 1 }}"/> days </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/dashboard-widgets/birthday-dashboard/birthday-dashboard.component.html</context>
+          <context context-type="linenumber">18,20</context>
+        </context-group>
+        <note priority="1" from="description">Fallback text if not birtdays are in the specified period</note>
+      </trans-unit>
       <trans-unit id="d5e76e1adac9d692354a5b88232fda10bdac8105" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="yrs&lt;/td&gt;
         &lt;/ng-container&gt;
         &lt;tr mat-r"/> yrs</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/dashboard-widgets/birthday-dashboard/birthday-dashboard.component.html</context>
-          <context context-type="linenumber">29,30</context>
+          <context context-type="linenumber">37,38</context>
         </context-group>
       </trans-unit>
       <trans-unit id="08bad5a0bee40ad4d99b7f4b31f6753022ce769a" datatype="html">
@@ -1273,6 +1281,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/model/child.ts</context>
           <context context-type="linenumber">81</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
+          <context context-type="linenumber">112</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
@@ -1948,98 +1960,18 @@
         </context-group>
         <note priority="1" from="description">Download note details as CSV</note>
       </trans-unit>
-      <trans-unit id="5dbffebd80ca5f8de5017d833b16690daf0c6a1a" datatype="html">
-        <source>Date</source>
+      <trans-unit id="8454211630052123531" datatype="html">
+        <source>Add <x id="PH" equiv-text="label"/></source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">62</context>
+          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.ts</context>
+          <context context-type="linenumber">77</context>
         </context-group>
-        <note priority="1" from="description">Placeholder for a date-input</note>
-        <note priority="1" from="meaning">Date input</note>
-      </trans-unit>
-      <trans-unit id="f3ab141a02057a7853b9cde7dea17eef6811e27a" datatype="html">
-        <source> Status</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">76</context>
+          <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-entity-array/edit-entity-array.component.ts</context>
+          <context context-type="linenumber">18</context>
         </context-group>
-        <note priority="1" from="description">Status of a note</note>
-      </trans-unit>
-      <trans-unit id="483724599dbaabe37f5f82b0bee1c1faf0b27cd0" datatype="html">
-        <source>Type of Interaction</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">95</context>
-        </context-group>
-        <note priority="1" from="description">Type of Interaction when adding event</note>
-      </trans-unit>
-      <trans-unit id="ec3f853537ad707f8ce894ebd598335a40d787e0" datatype="html">
-        <source>Add Author...</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">120</context>
-        </context-group>
-        <note priority="1" from="description">placeholder when adding multiple authors</note>
-      </trans-unit>
-      <trans-unit id="415f73cbdba5d09762df6c89878273c3aa6da51e" datatype="html">
-        <source>Authors</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">122</context>
-        </context-group>
-        <note priority="1" from="description">Authors of a note</note>
-      </trans-unit>
-      <trans-unit id="c5252bb2561936719f899267ec66be730597597b" datatype="html">
-        <source>Topic / Summary</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">137</context>
-        </context-group>
-        <note priority="1" from="description">Placeholder informing that this is the Topic/Summary
-            of the note</note>
-        <note priority="1" from="meaning">Placeholder</note>
-      </trans-unit>
-      <trans-unit id="7350eb960cd51aedbc7bb7f8bf89814947d2aa65" datatype="html">
-        <source>Notes</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">153</context>
-        </context-group>
-        <note priority="1" from="description">Placeholder informing that this is textarea the actual
-            note can be entered into</note>
-        <note priority="1" from="meaning">Placeholder</note>
-      </trans-unit>
-      <trans-unit id="303cf04ca5c12a60d676b6a00ceaf852799c1af4" datatype="html">
-        <source>Participants</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">172</context>
-        </context-group>
-        <note priority="1" from="description">Participants of a note</note>
-      </trans-unit>
-      <trans-unit id="781e08965bad0a6de4dc79d832da4ec55bcd3d85" datatype="html">
-        <source>Add participant ...</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">174</context>
-        </context-group>
-        <note priority="1" from="description">Add participants of a note</note>
-      </trans-unit>
-      <trans-unit id="c22ba03540aa3217da059f45e7eab138b51a96e2" datatype="html">
-        <source>Groups</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">206</context>
-        </context-group>
-        <note priority="1" from="description">Groups that belong to a note</note>
-      </trans-unit>
-      <trans-unit id="d3233bd79e5ab0f7f5e9600bb5b8ef470bdb4bc6" datatype="html">
-        <source>Add group ...</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">208</context>
-        </context-group>
-        <note priority="1" from="description">Add a group to a note</note>
+        <note priority="1" from="description">context Add User(s)</note>
+        <note priority="1" from="meaning">Placeholder for input to add entities</note>
       </trans-unit>
       <trans-unit id="17808fe2d7d0ecfca1373602e7da72d11dcc4c0d" datatype="html">
         <source> Include events </source>
@@ -2117,6 +2049,24 @@
           <context context-type="linenumber">73,71</context>
         </context-group>
         <note priority="1" from="description">Filter-option for notes</note>
+      </trans-unit>
+      <trans-unit id="543a18431c986263de1745b1fa957fd2ac67dc6c" datatype="html">
+        <source>Show entries where the end date is in the past</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/schools/children-overview/children-overview.component.html</context>
+          <context context-type="linenumber">13,20</context>
+        </context-group>
+        <note priority="1" from="description">Tooltip that will appear when hovered over the show-ended button</note>
+        <note priority="1" from="meaning">Show ended tooltip</note>
+      </trans-unit>
+      <trans-unit id="b2a4edf44613d53549470870dae3c3ce1817b263" datatype="html">
+        <source> Include ended ones </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/schools/children-overview/children-overview.component.html</context>
+          <context context-type="linenumber">16,20</context>
+        </context-group>
+        <note priority="1" from="description">also show entries that are inactive</note>
+        <note priority="1" from="meaning">slider</note>
       </trans-unit>
       <trans-unit id="7788705242231433853" datatype="html">
         <source>Currently</source>
@@ -3501,15 +3451,6 @@
         </context-group>
         <note priority="1" from="description">Placeholder for the input that displays the age</note>
       </trans-unit>
-      <trans-unit id="8454211630052123531" datatype="html">
-        <source>Add <x id="PH" equiv-text="this.label"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-components/entity-utils/dynamic-form-components/edit-entity-array/edit-entity-array.component.ts</context>
-          <context context-type="linenumber">18</context>
-        </context-group>
-        <note priority="1" from="description">context Add User(s)</note>
-        <note priority="1" from="meaning">Placeholder for input to add entities</note>
-      </trans-unit>
       <trans-unit id="dd40d6656244918969b6d8aad2fdc8072eb8c66b" datatype="html">
         <source>No photo set</source>
         <context-group purpose="location">
@@ -3765,7 +3706,7 @@
         <source>Your account does not have the required permission for this action.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/permissions/permission-directive/disable-entity-operation.directive.ts</context>
-          <context context-type="linenumber">35</context>
+          <context context-type="linenumber">34</context>
         </context-group>
         <note priority="1" from="description">Missing permission</note>
       </trans-unit>
@@ -3816,6 +3757,108 @@
           <context context-type="linenumber">41,43</context>
         </context-group>
         <note priority="1" from="description">PWA iOS Install Instructions - Line 3-2</note>
+      </trans-unit>
+      <trans-unit id="102e5b933f5a6bb3c25c976433b244b0b8e89805" datatype="html">
+        <source> Current Password <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input
+        matInput
+        type=&quot;password&quot;
+        formControlName=&quot;currentPassword&quot;
+      /&gt;"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
+          <context context-type="linenumber">3,9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="9e02830ba42ed9d4c0ecd3c7cdaa9fb9650a86a5" datatype="html">
+        <source> Please provide your correct current password for confirmation. </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
+          <context context-type="linenumber">17,19</context>
+        </context-group>
+        <note priority="1" from="description">An incorrect password was entered trying
+                to change the password</note>
+        <note priority="1" from="meaning">Password Confirmation</note>
+      </trans-unit>
+      <trans-unit id="a7a2b3a47711149bc818c5367f5d19b5d21e56af" datatype="html">
+        <source> New password <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input matInput type=&quot;password&quot; formControlName=&quot;newPassword&quot;/&gt;"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
+          <context context-type="linenumber">24,26</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="f2415ff4be1ffe9eccdab21194ab1050eb4db871" datatype="html">
+        <source> Please enter a new password. </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
+          <context context-type="linenumber">32,34</context>
+        </context-group>
+        <note priority="1" from="description">Password validation</note>
+      </trans-unit>
+      <trans-unit id="fc9128b642973e290d74879c3dc6eef397b3b900" datatype="html">
+        <source> Must be at least 8 characters long. </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
+          <context context-type="linenumber">38,40</context>
+        </context-group>
+        <note priority="1" from="description">Password validation</note>
+      </trans-unit>
+      <trans-unit id="cfff0b6cf6018ac55ce005b42c541e50651e2359" datatype="html">
+        <source> Must contain lower case letters, upper case letters, symbols and numbers to be secure. </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
+          <context context-type="linenumber">44,47</context>
+        </context-group>
+        <note priority="1" from="description">Illegal password pattern</note>
+      </trans-unit>
+      <trans-unit id="c28a32c12ebe513afc070cfca0060f1c0e4886dd" datatype="html">
+        <source> Confirm new password <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input
+        matInput
+        type=&quot;password&quot;
+        formControlName=&quot;confirmPassword&quot;
+      /&gt;"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
+          <context context-type="linenumber">53,59</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3316806639934b0749e109177aa165a7240be5b8" datatype="html">
+        <source> Passwords don&apos;t match. </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
+          <context context-type="linenumber">67,69</context>
+        </context-group>
+        <note priority="1" from="description">Illegal new password</note>
+      </trans-unit>
+      <trans-unit id="e66fc2d91526ffac5a6c38ac89be467dec871e9c" datatype="html">
+        <source> Password changed successfully. </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
+          <context context-type="linenumber">74,76</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="55eb5d338efb319c9fc87c6b69ea99f54cde8e9f" datatype="html">
+        <source> Failed to change password: <x id="INTERPOLATION" equiv-text="{{ passwordChangeResult.error }}"/><x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br/&gt;"/> Please try again. If the problem persists contact Aam Digital support. </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
+          <context context-type="linenumber">77,81</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3e9d991fb327d0ee54cc6c7690b2a2016edc23f9" datatype="html">
+        <source> Change Password </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
+          <context context-type="linenumber">91,93</context>
+        </context-group>
+        <note priority="1" from="description">Change password button</note>
+      </trans-unit>
+      <trans-unit id="132c4b72d99a70ee1f064216fdb9fefc883b7b57" datatype="html">
+        <source> Change Password
+</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/session/auth/keycloak/password-button/password-button.component.html</context>
+          <context context-type="linenumber">10,12</context>
+        </context-group>
+        <note priority="1" from="description">Button which opens password reset page</note>
       </trans-unit>
       <trans-unit id="266e3d5d7292b095716537dd0b57ef6784768c14" datatype="html">
         <source> Please Sign In </source>
@@ -3884,7 +3927,7 @@
         <source>Your password was changed recently. Please retry with your new password!</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/session/session-service/synced-session.service.ts</context>
-          <context context-type="linenumber">169,168</context>
+          <context context-type="linenumber">165,164</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1883557110661036774" datatype="html">
@@ -3996,112 +4039,21 @@
         </context-group>
         <note priority="1" from="description">User-Account label</note>
       </trans-unit>
-      <trans-unit id="a1796846efed21a9df7d8bb32305638e97fddaea" datatype="html">
-        <source> Password change is not allowed in demo mode. </source>
+      <trans-unit id="2219067079229278684" datatype="html">
+        <source>Password change is not allowed in demo mode.</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
-          <context context-type="linenumber">39,41</context>
+          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.ts</context>
+          <context context-type="linenumber">55</context>
         </context-group>
+        <note priority="1" from="description">Password reset disabled tooltip</note>
       </trans-unit>
-      <trans-unit id="13b9be8d991e0841b1dcd8b920e3f36612793af1" datatype="html">
-        <source> Password change is not possible while being offline. </source>
+      <trans-unit id="4363136589112981005" datatype="html">
+        <source>Password change is not possible while being offline.</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
-          <context context-type="linenumber">45,47</context>
+          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.ts</context>
+          <context context-type="linenumber">57</context>
         </context-group>
-      </trans-unit>
-      <trans-unit id="27876292ef1e527317ef059764bc7be610a354e6" datatype="html">
-        <source> retry </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
-          <context context-type="linenumber">52,54</context>
-        </context-group>
-        <note priority="1" from="description">retry switching from offline to online</note>
-      </trans-unit>
-      <trans-unit id="c3ffe42418fa55673c64995e678abed8fcab1d8d" datatype="html">
-        <source> Current Password <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input
-                matInput
-                type=&quot;password&quot;
-                formControlName=&quot;currentPassword&quot;
-              /&gt;"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
-          <context context-type="linenumber">58,64</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="536bb81885f3340a80d4a644443466435be9cb8a" datatype="html">
-        <source> Please provide your correct current password for confirmation. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
-          <context context-type="linenumber">72,74</context>
-        </context-group>
-        <note priority="1" from="description">An incorrect password was entered trying
-                to change the password</note>
-        <note priority="1" from="meaning">Password Confirmation</note>
-      </trans-unit>
-      <trans-unit id="8f40af8e9d563eb5d107eaecc26be60697612933" datatype="html">
-        <source> New password <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input matInput type=&quot;password&quot; formControlName=&quot;newPassword&quot; /&gt;"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
-          <context context-type="linenumber">79,81</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1f6c1fca48ef36952ca833f85033d4896b90695c" datatype="html">
-        <source> Must be at least 8 characters long. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
-          <context context-type="linenumber">87,89</context>
-        </context-group>
-        <note priority="1" from="description">Password validation</note>
-      </trans-unit>
-      <trans-unit id="448d736d8cef624c90a73c196b64b2c26ba48359" datatype="html">
-        <source> Must contain lower case letters, upper case letters, symbols and numbers to be secure. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
-          <context context-type="linenumber">93,96</context>
-        </context-group>
-        <note priority="1" from="description">Illegal password pattern</note>
-      </trans-unit>
-      <trans-unit id="3916768993624cd468083fafd982b4646fed3356" datatype="html">
-        <source> Confirm new password <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input
-                matInput
-                type=&quot;password&quot;
-                formControlName=&quot;confirmPassword&quot;
-              /&gt;"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
-          <context context-type="linenumber">102,108</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="6662b08b1bd1cfe1b31b8bf01831819f492cfd35" datatype="html">
-        <source> Confirmation does not match your new password. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
-          <context context-type="linenumber">116,118</context>
-        </context-group>
-        <note priority="1" from="description">Illegal new password</note>
-      </trans-unit>
-      <trans-unit id="b7034d4cd8ed27cd1533755de5e41e94912b4b27" datatype="html">
-        <source> Password changed successfully. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
-          <context context-type="linenumber">123,125</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="65276aa6cba4b1cf77121125a2525a46fb0a5b1c" datatype="html">
-        <source> Failed to change password: <x id="INTERPOLATION" equiv-text="{{ passwordChangeResult.error }}"/><x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> Please try again. If the problem persists contact Aam Digital support. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
-          <context context-type="linenumber">126,130</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="947fb7a14ab3d88dbe2ab508622f33bfcae44ad5" datatype="html">
-        <source> Change Password </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
-          <context context-type="linenumber">140,142</context>
-        </context-group>
-        <note priority="1" from="description">Change password button</note>
+        <note priority="1" from="description">Password reset disabled tooltip</note>
       </trans-unit>
       <trans-unit id="5248717555542428023" datatype="html">
         <source>Username</source>
@@ -4389,19 +4341,11 @@
         </context-group>
         <note priority="1" from="description">Button to reset import wizard</note>
       </trans-unit>
-      <trans-unit id="6811901802533648897" datatype="html">
-        <source>N/A</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/historical-data/model/rating-answers.ts</context>
-          <context context-type="linenumber">6</context>
-        </context-group>
-        <note priority="1" from="description">Rating answer</note>
-      </trans-unit>
       <trans-unit id="3193639537347911590" datatype="html">
         <source>not at all</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/historical-data/model/rating-answers.ts</context>
-          <context context-type="linenumber">10</context>
+          <context context-type="linenumber">6</context>
         </context-group>
         <note priority="1" from="description">Rating answer</note>
       </trans-unit>
@@ -4409,7 +4353,7 @@
         <source>rarely</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/historical-data/model/rating-answers.ts</context>
-          <context context-type="linenumber">14</context>
+          <context context-type="linenumber">11</context>
         </context-group>
         <note priority="1" from="description">Rating answer</note>
       </trans-unit>
@@ -4417,7 +4361,7 @@
         <source>usually</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/historical-data/model/rating-answers.ts</context>
-          <context context-type="linenumber">18</context>
+          <context context-type="linenumber">16</context>
         </context-group>
         <note priority="1" from="description">Rating answer</note>
       </trans-unit>
@@ -4425,7 +4369,15 @@
         <source>absolutely</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/historical-data/model/rating-answers.ts</context>
-          <context context-type="linenumber">22</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+        <note priority="1" from="description">Rating answer</note>
+      </trans-unit>
+      <trans-unit id="6811901802533648897" datatype="html">
+        <source>N/A</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/historical-data/model/rating-answers.ts</context>
+          <context context-type="linenumber">26</context>
         </context-group>
         <note priority="1" from="description">Rating answer</note>
       </trans-unit>

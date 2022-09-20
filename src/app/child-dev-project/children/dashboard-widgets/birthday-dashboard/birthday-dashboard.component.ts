@@ -17,6 +17,7 @@ export class BirthdayDashboardComponent
 {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   private readonly today: Date;
+  readonly birthdayThreshold = 32;
   childrenDataSource = new MatTableDataSource<{
     child: Child;
     birthday: Date;
@@ -38,7 +39,7 @@ export class BirthdayDashboardComponent
         child: child,
         birthday: this.getNextBirthday(child.dateOfBirth),
       }))
-      .filter((a) => this.daysUntil(a.birthday) < 32)
+      .filter((a) => this.daysUntil(a.birthday) < this.birthdayThreshold)
       .sort((a, b) => this.daysUntil(a.birthday) - this.daysUntil(b.birthday));
 
     this.isLoading = false;

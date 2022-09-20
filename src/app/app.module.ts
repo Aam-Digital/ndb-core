@@ -53,7 +53,6 @@ import { DemoProgressDashboardWidgetGeneratorService } from "./features/progress
 import { DemoUserGeneratorService } from "./core/user/demo-user-generator.service";
 import { ConfirmationDialogModule } from "./core/confirmation-dialog/confirmation-dialog.module";
 import { FormDialogModule } from "./core/form-dialog/form-dialog.module";
-import { LoggingService } from "./core/logging/logging.service";
 import { AnalyticsService } from "./core/analytics/analytics.service";
 import { ViewModule } from "./core/view/view.module";
 import { DashboardModule } from "./core/dashboard/dashboard.module";
@@ -180,9 +179,3 @@ export class AppModule {
     icons.addIconPacks(fas, far);
   }
 }
-
-// Initialize remote logging
-LoggingService.initRemoteLogging({
-  dsn: environment.remoteLoggingDsn,
-  whitelistUrls: [/https?:\/\/(.*)\.?aam-digital\.com/],
-});
