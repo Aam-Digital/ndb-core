@@ -83,16 +83,11 @@ import {
   DEFAULT_LANGUAGE,
   LANGUAGE_LOCAL_STORAGE_KEY,
 } from "./core/language/language-statics";
-import {
-  DateAdapter,
-  MAT_DATE_FORMATS,
-  MAT_NATIVE_DATE_FORMATS,
-} from "@angular/material/core";
+import { DateAdapter, MAT_DATE_FORMATS } from "@angular/material/core";
 import {
   DATE_FORMATS,
   DateAdapterWithFormatting,
 } from "./core/language/date-adapter-with-formatting";
-import { MAT_MOMENT_DATE_FORMATS } from "@angular/material-moment-adapter";
 
 /**
  * Main entry point of the application.
@@ -183,10 +178,8 @@ import { MAT_MOMENT_DATE_FORMATS } from "@angular/material-moment-adapter";
     Angulartics2Matomo,
     { provide: DateAdapter, useClass: DateAdapterWithFormatting },
     {
-      provide: DATE_FORMATS,
-      useValue: Object.assign(MAT_NATIVE_DATE_FORMATS, {
-        parse: { dateInput: "l" },
-      }),
+      provide: MAT_DATE_FORMATS,
+      useValue: DATE_FORMATS,
     },
   ],
   bootstrap: [AppComponent],
