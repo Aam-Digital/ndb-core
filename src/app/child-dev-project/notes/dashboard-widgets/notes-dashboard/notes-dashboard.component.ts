@@ -25,7 +25,8 @@ import { DynamicComponent } from "../../../../core/view/dynamic-components/dynam
   styleUrls: ["./notes-dashboard.component.scss"],
 })
 export class NotesDashboardComponent
-  implements OnInitDynamicComponent, OnInit, AfterViewInit {
+  implements OnInitDynamicComponent, OnInit, AfterViewInit
+{
   /**
    * number of days since last note that children should be considered having a "recent" note.
    */
@@ -34,17 +35,16 @@ export class NotesDashboardComponent
   /** Whether an additional offset should be automatically added to include notes from the beginning of the week */
   @Input() fromBeginningOfWeek = true;
 
-  /** children displayed in the template
-   * Child entities with additional "daysSinceLastNote" field
-   */
-  concernedChildren: ChildWithRecentNoteInfo[] = [];
-  amountOfConcernedChildren: Promise<number>;
   mode: "with-recent-notes" | "without-recent-notes";
 
-  childrenWithNoteInfoDataSource = new MatTableDataSource<ChildWithRecentNoteInfo>();
+  /**
+   * Children displayed in the template
+   * Child entities with additional "daysSinceLastNote" field
+   */
+  dataSource = new MatTableDataSource<ChildWithRecentNoteInfo>();
   @ViewChild("paginator") paginator: MatPaginator;
 
-  isLoading: boolean = true;
+  isLoading = true;
 
   constructor(private childrenService: ChildrenService) {}
 
@@ -88,10 +88,10 @@ export class NotesDashboardComponent
   }
 
   ngAfterViewInit() {
-    this.childrenWithNoteInfoDataSource.paginator = this.paginator;
+    this.dataSource.paginator = this.paginator;
   }
 
-  private loadConcernedChildren(
+  private async loadConcernedChildren(
     filter: (stat: [string, number]) => boolean,
     dayRangeBoundary: number
   ) {
@@ -99,22 +99,15 @@ export class NotesDashboardComponent
 
     // recent notes are sorted ascending, without recent notes descending
     const order = this.mode === "with-recent-notes" ? -1 : 1;
-    const promise = this.childrenService
-      .getDaysSinceLastNoteOfEachChild(queryRange)
-      .then((children) => {
-        return Array.from(children)
-          .filter(filter)
-          .map((stat) => statsToChildWithRecentNoteInfo(stat, queryRange))
-          .sort((a, b) => order * (b.daysSinceLastNote - a.daysSinceLastNote));
-      });
-    promise.then((children) => {
-      this.concernedChildren = children;
-      this.childrenWithNoteInfoDataSource.data = children;
-      this.isLoading = false;
-    });
-    this.amountOfConcernedChildren = promise.then(
-      (children) => children.length
+    const children = await this.childrenService.getDaysSinceLastNoteOfEachChild(
+      queryRange
     );
+    this.dataSource.data = Array.from(children)
+      .filter(filter)
+      .map((stat) => statsToChildWithRecentNoteInfo(stat, queryRange))
+      .sort((a, b) => order * (b.daysSinceLastNote - a.daysSinceLastNote));
+
+    this.isLoading = false;
   }
 
   get tooltip(): string {

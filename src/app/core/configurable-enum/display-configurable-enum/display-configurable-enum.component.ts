@@ -20,7 +20,7 @@ export class DisplayConfigurableEnumComponent extends ViewDirective<Configurable
 
   onInitFromDynamicConfig(config: ViewPropertyConfig) {
     super.onInitFromDynamicConfig(config);
-    if (this.value.color) {
+    if (this.value?.color) {
       this.style = this.value.color;
       this.padding = "5px";
       this.radius = "4px";
