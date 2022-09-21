@@ -18,29 +18,7 @@ in the US (`en-US`), Great-Britain (`en-GB`) or Australia (`en-AU`).
 A list of available country codes can be found [here](https://www.iso.org/obp/ui/#search/code/).
 Once you have the language and country code, the resulting code is _language code_-_country code_.
 
-### 2) Add the language to the list of known languages
-
-The file [angular.json](angular.json) contains all available languages. In this file, look for the
-`i18n` section. Add the language code from the last step (possible including the region code)
-as a key to the `locales` section. Specify the path `src/locale/messages.<your locale>.xlf` as
-the value. Don't create that file yet - this will be done automatically in the next steps.
-For example, if you wanted to add the French language, this is what the `i18n` section should look like:
-
-```json
-{
-  ...
-  "i18n": {
-    "sourceLocale": "en-US",
-    "locales": {
-      // other locales
-      "fr": "src/locale/messages.fr.xlf"
-    }
-  },
-  ...
-}
-```
-
-### 3) Let xliffmerge know about the new language
+### 2) Let xliffmerge know about the new language
 
 `xliffmerge` is a tool that helps in the translation process. Especially, it is needed to
 update the language files while retaining old translations.
@@ -56,7 +34,7 @@ Again, for french, this could look like this:
 ]
 ```
 
-### 4) Create a localization-file
+### 3) Create a localization-file
 
 In order to allow the actual translation process to take place, you need to create a
 standardized file that translators can work with. The standard that we use is `xlf`.
@@ -64,12 +42,12 @@ standardized file that translators can work with. The standard that we use is `x
 To generate a file, simply use the script `extract-i18n` located inside the [package.json](package.json)
 file. This will automatically generate the needed file if none exists
 
-### 5) Add language icon
+### 4) Add language icon
 
 Go to the `LanguageService` and add the language to the list of `availableLocales`.
 This allows the app to show the langauge icon in the language select component.
 
-### 6) Include language in bundle
+### 5) Include language in bundle
 
 To reduce the bundle size, only supported languages are shipped with the production build.
 To support a language by Angular (dates, units etc.) add the language to the _webpack include_ in the `main.ts`
@@ -82,7 +60,7 @@ const localeModule = await import(
   );
 ```
 
-### 7) Test your build
+### 6) Test your build
 
 Run the app.
 You can change the language in the top right corner.
