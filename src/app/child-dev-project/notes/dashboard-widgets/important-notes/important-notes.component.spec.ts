@@ -54,6 +54,6 @@ describe("ImportantNotesComponent", () => {
     const expectedNotes = mockNotes
       .filter((note) => ["WARNING", "URGENT"].includes(note.warningLevel.id))
       .reverse();
-    expect(component.relevantNotes).toEqual(expectedNotes);
+    expect(component.notesDataSource.data).toEqual(expectedNotes);
   }));
 });
