@@ -27,11 +27,13 @@ Go to [xliffmerge.json](xliffmerge.json) and add your language code to the `lang
 Again, for french, this could look like this:
 
 ```json
-...
-"languages": [
-// other languages
-"fr"
-]
+{
+  ...
+  "languages": [
+    // other languages
+    "fr"
+  ]
+}
 ```
 
 ### 3) Create a localization-file
