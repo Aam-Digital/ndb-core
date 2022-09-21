@@ -1,7 +1,7 @@
 import { Entity, EntityConstructor } from "./model/entity";
 import { EntityMapperService } from "./entity-mapper.service";
 import { UpdatedEntity } from "./model/entity-update";
-import { NEVER, Observable } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import { entityRegistry } from "./database-entity.decorator";
 import { HttpErrorResponse } from "@angular/common/http";
 
@@ -19,8 +19,17 @@ export function mockEntityMapper(
  */
 export class MockEntityMapperService extends EntityMapperService {
   private data: Map<string, Map<string, Entity>> = new Map();
+  private observables: Map<string, Subject<UpdatedEntity<any>>> = new Map();
+
   constructor() {
     super(null, null, entityRegistry);
+  }
+
+  private publishUpdates(type: string, update: UpdatedEntity<any>) {
+    const subj = this.observables.get(type);
+    if (subj !== undefined) {
+      subj.next(update);
+    }
   }
 
   /**
@@ -32,11 +41,18 @@ export class MockEntityMapperService extends EntityMapperService {
     if (!this.data.get(type)) {
       this.data.set(type, new Map());
     }
+    const alreadyExists = this.contains(entity);
     this.data.get(type).set(entity.getId(), entity);
+    this.publishUpdates(
+      entity.getType(),
+      alreadyExists
+        ? { type: "update", entity }
+        : { type: "new", entity }
+    );
   }
 
   /**
-   * returns whether or not the given entity is known
+   * returns whether the given entity is known
    * @param entity
    */
   public contains(entity: Entity): boolean {
@@ -84,6 +100,7 @@ export class MockEntityMapperService extends EntityMapperService {
     const entities = this.data.get(entity.getType());
     if (entities) {
       entities.delete(entity.getId());
+      this.publishUpdates(entity.getType(), { type: "remove", entity });
     }
   }
 
@@ -128,6 +145,11 @@ export class MockEntityMapperService extends EntityMapperService {
   receiveUpdates<T extends Entity>(
     entityType: EntityConstructor<T> | string
   ): Observable<UpdatedEntity<T>> {
-    return NEVER;
+    let name =
+      typeof entityType === "string" ? entityType : entityType.ENTITY_TYPE;
+    if (!this.observables.has(name)) {
+      this.observables.set(name, new Subject());
+    }
+    return this.observables.get(name);
   }
 }
