@@ -51,7 +51,6 @@ describe("AttendanceWeekDashboardComponent", () => {
     const mondayLastWeek = moment().startOf("week").subtract(6, "days");
     const e1 = EventNote.create(mondayLastWeek.toDate());
     const e2 = EventNote.create(moment(e1.date).add(1, "day").toDate());
-    console.log("other dates", e1.date, e2.date);
     const presentStatus = defaultAttendanceStatusTypes.find(
       (s) => s.countAs === AttendanceLogicalStatus.PRESENT
     );
