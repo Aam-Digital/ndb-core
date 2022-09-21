@@ -859,7 +859,7 @@
       </trans-unit>
       <trans-unit id="7ad92a1738c7bec394078181565cdcb4549abf73" datatype="html">
         <source>Upcoming Birthdays</source>
-        <target state="new">Upcoming Birthdays</target>
+        <target state="translated">Compleanni</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/dashboard-widgets/birthday-dashboard/birthday-dashboard.component.html</context>
           <context context-type="linenumber">6,9</context>
@@ -1667,9 +1667,9 @@
         <source><x id="START_TABLE_CELL" ctype="x-td" equiv-text="&lt;td *matCellDef=&quot;let childNoteInfo&quot;>"/><x id="START_TAG_SPAN_1" ctype="x-span_1" equiv-text="&lt;span class=&quot;dashboard-table-additional-info-cell&quot;>"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span
                 *ngIf=&quot;childNoteInfo.moreThanDaysSince&quot;
               >"/> >  <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/> <x id="INTERPOLATION" equiv-text="{{ childNoteInfo.daysSinceLastNote | number: &quot;1.0-0&quot; }}"/> days <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/><x id="CLOSE_TABLE_CELL" ctype="x-td" equiv-text="&lt;/td>"/></source>
-        <target state="new"><x id="START_TABLE_CELL" ctype="x-td" equiv-text="&lt;td *matCellDef=&quot;let childNoteInfo&quot;>"/><x id="START_TAG_SPAN_1" ctype="x-span_1" equiv-text="&lt;span class=&quot;dashboard-table-additional-info-cell&quot;>"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span
+        <target state="translated"><x id="START_TABLE_CELL" ctype="x-td" equiv-text="&lt;td *matCellDef=&quot;let childNoteInfo&quot;>"/><x id="START_TAG_SPAN_1" ctype="x-span_1" equiv-text="&lt;span class=&quot;dashboard-table-additional-info-cell&quot;>"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span
                 *ngIf=&quot;childNoteInfo.moreThanDaysSince&quot;
-              >"/> >  <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/> <x id="INTERPOLATION" equiv-text="{{ childNoteInfo.daysSinceLastNote | number: &quot;1.0-0&quot; }}"/> days <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/><x id="CLOSE_TABLE_CELL" ctype="x-td" equiv-text="&lt;/td>"/></target>
+              >"/> >  <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/> <x id="INTERPOLATION" equiv-text="{{ childNoteInfo.daysSinceLastNote | number: &quot;1.0-0&quot; }}"/> giorni <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/><x id="CLOSE_TABLE_CELL" ctype="x-td" equiv-text="&lt;/td>"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/notes-dashboard/notes-dashboard.component.html</context>
           <context context-type="linenumber">34,43</context>
@@ -2268,7 +2268,7 @@
       </trans-unit>
       <trans-unit id="1616102757855967475" datatype="html">
         <source>All</source>
-        <target state="new">All</target>
+        <target state="translated">Tutti</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/notes-manager/notes-manager.component.ts</context>
           <context context-type="linenumber">62</context>
@@ -3611,7 +3611,7 @@
       </trans-unit>
       <trans-unit id="7d0989d8ca6bcf4968f86bbbee83d4f2d4dc2ac9" datatype="html">
         <source>Quick actions</source>
-        <target state="new">Quick actions</target>
+        <target state="translated">Azioni rapide</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/dashboard-shortcut-widget/dashboard-shortcut-widget/dashboard-shortcut-widget.component.html</context>
           <context context-type="linenumber">4</context>
