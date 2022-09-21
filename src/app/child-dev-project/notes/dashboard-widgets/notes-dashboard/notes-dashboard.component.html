@@ -1,16 +1,16 @@
 <app-dashboard-widget
   icon="file-alt"
   theme="note"
-  [title]="amountOfConcernedChildren"
+  [title]="dataSource.data.length"
   [subtitle]="subtitle"
   [explanation]="tooltip"
   [loading]="isLoading"
 >
   <app-widget-content>
-    <div *ngIf="childrenWithNoteInfoDataSource.data.length > 0" class="table-wrapper">
+    <div *ngIf="dataSource.data.length > 0" class="table-wrapper">
       <table
         mat-table
-        [dataSource]="childrenWithNoteInfoDataSource"
+        [dataSource]="dataSource"
         [attr.aria-label]="subtitle"
       >
         <!-- Table header only for assistive technologies like screen readers -->
@@ -51,7 +51,7 @@
       </table>
     </div>
     <div
-      *ngIf="childrenWithNoteInfoDataSource.data.length === 0 && !isLoading"
+      *ngIf="dataSource.data.length === 0 && !isLoading"
       class="headline"
     >
       <span *ngIf="mode==='without-recent-notes'"
