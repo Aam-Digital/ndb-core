@@ -740,19 +740,11 @@
         <note priority="1" from="description">e.g. &apos;class 8&apos;</note>
         <note priority="1" from="meaning">The class a child is attending</note>
       </trans-unit>
-      <trans-unit id="b6c247515e74a7cb77afd4d800417d7b851b2911" datatype="html">
-        <source>Birthdays</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/children/dashboard-widgets/birthday-dashboard/birthday-dashboard.component.html</context>
-          <context context-type="linenumber">4,7</context>
-        </context-group>
-        <note priority="1" from="description">Title of the birthday widget</note>
-      </trans-unit>
       <trans-unit id="7ad92a1738c7bec394078181565cdcb4549abf73" datatype="html">
         <source>Upcoming Birthdays</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/dashboard-widgets/birthday-dashboard/birthday-dashboard.component.html</context>
-          <context context-type="linenumber">6,9</context>
+          <context context-type="linenumber">5,8</context>
         </context-group>
         <note priority="1" from="description">Subtitle of the birthday widget</note>
       </trans-unit>
@@ -760,7 +752,7 @@
         <source>Children whose birthday is soon</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/dashboard-widgets/birthday-dashboard/birthday-dashboard.component.html</context>
-          <context context-type="linenumber">8,13</context>
+          <context context-type="linenumber">7,12</context>
         </context-group>
         <note priority="1" from="description">Tooltip for the birthday widget</note>
       </trans-unit>
@@ -768,7 +760,7 @@
         <source> no birthdays in the next <x id="INTERPOLATION" equiv-text="{{ birthdayThreshold - 1 }}"/> days </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/dashboard-widgets/birthday-dashboard/birthday-dashboard.component.html</context>
-          <context context-type="linenumber">18,20</context>
+          <context context-type="linenumber">17,19</context>
         </context-group>
         <note priority="1" from="description">Fallback text if not birtdays are in the specified period</note>
       </trans-unit>
@@ -778,26 +770,18 @@
         &lt;tr mat-r"/> yrs</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/dashboard-widgets/birthday-dashboard/birthday-dashboard.component.html</context>
-          <context context-type="linenumber">37,38</context>
+          <context context-type="linenumber">36,37</context>
         </context-group>
-      </trans-unit>
-      <trans-unit id="08bad5a0bee40ad4d99b7f4b31f6753022ce769a" datatype="html">
-        <source>BMI</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/children/dashboard-widgets/children-bmi-dashboard/children-bmi-dashboard.component.html</context>
-          <context context-type="linenumber">6,8</context>
-        </context-group>
-        <note priority="1" from="description">Title of the BMI dashboard component</note>
       </trans-unit>
       <trans-unit id="8e908b258f84bb8bc5687bf5300fc5a8c9cec963" datatype="html">
         <source>Students with unhealthy BMI</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/dashboard-widgets/children-bmi-dashboard/children-bmi-dashboard.component.html</context>
-          <context context-type="linenumber">7,11</context>
+          <context context-type="linenumber">6,10</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/dashboard-widgets/children-bmi-dashboard/children-bmi-dashboard.component.html</context>
-          <context context-type="linenumber">16,19</context>
+          <context context-type="linenumber">15,18</context>
         </context-group>
         <note priority="1" from="description">Subtitle of the BMI dashboard component</note>
       </trans-unit>
@@ -805,7 +789,7 @@
         <source>Child</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/dashboard-widgets/children-bmi-dashboard/children-bmi-dashboard.component.html</context>
-          <context context-type="linenumber">20,22</context>
+          <context context-type="linenumber">19,21</context>
         </context-group>
         <note priority="1" from="description">Column description for children column</note>
       </trans-unit>
@@ -813,7 +797,7 @@
         <source>Last BMI result</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/dashboard-widgets/children-bmi-dashboard/children-bmi-dashboard.component.html</context>
-          <context context-type="linenumber">21,25</context>
+          <context context-type="linenumber">20,24</context>
         </context-group>
         <note priority="1" from="description">Column description for BMI result column</note>
       </trans-unit>
@@ -821,7 +805,7 @@
         <source> BMI: <x id="INTERPOLATION" equiv-text="{{ row.bmi.toFixed(2) }}"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/dashboard-widgets/children-bmi-dashboard/children-bmi-dashboard.component.html</context>
-          <context context-type="linenumber">35,36</context>
+          <context context-type="linenumber">34,35</context>
         </context-group>
         <note priority="1" from="description">BMI: 21.02</note>
         <note priority="1" from="meaning">Displaying the BMI result of a child</note>
@@ -830,7 +814,7 @@
         <source> no BMI data recorded </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/dashboard-widgets/children-bmi-dashboard/children-bmi-dashboard.component.html</context>
-          <context context-type="linenumber">52,57</context>
+          <context context-type="linenumber">51,56</context>
         </context-group>
         <note priority="1" from="description">There is no BMI data available that can be displayed</note>
       </trans-unit>
@@ -1414,12 +1398,13 @@
         <note priority="1" from="description">Description when there are no notes that need a follow-up</note>
       </trans-unit>
       <trans-unit id="ef53f00083d0537e89f52ce3fc949182c6bca8e4" datatype="html">
-        <source><x id="START_TABLE_CELL" ctype="x-td" equiv-text="&lt;td *matCellDef=&quot;let childNoteInfo&quot;&gt;"/><x id="START_TAG_SPAN_1" ctype="x-span_1" equiv-text="&lt;span class=&quot;dashboard-table-additional-info-cell&quot;&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span
+        <source><x id="START_TABLE_CELL" ctype="x-td" equiv-text="&lt;span class=&quot;dashboard-table-additional-info-cell&quot;&gt;
+              &lt;span"/><x id="START_TAG_SPAN_1" ctype="x-span_1" equiv-text="&lt;span class=&quot;dashboard-table-additional-info-cell&quot;&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span
                 *ngIf=&quot;childNoteInfo.moreThanDaysSince&quot;
               &gt;"/> &gt;  <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/> <x id="INTERPOLATION" equiv-text="{{ childNoteInfo.daysSinceLastNote | number: &quot;1.0-0&quot; }}"/> days <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/><x id="CLOSE_TABLE_CELL" ctype="x-td" equiv-text="&lt;/td&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/notes-dashboard/notes-dashboard.component.html</context>
-          <context context-type="linenumber">34,43</context>
+          <context context-type="linenumber">34,44</context>
         </context-group>
         <note priority="1" from="description">Format like &apos;Days passed &gt; 5 days&apos;</note>
         <note priority="1" from="meaning">Amount of days back</note>
@@ -1428,7 +1413,7 @@
         <source> no records without recent report </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/notes-dashboard/notes-dashboard.component.html</context>
-          <context context-type="linenumber">58,60</context>
+          <context context-type="linenumber">59,62</context>
         </context-group>
         <note priority="1" from="description">There are no participants that don&apos;t have a recent report to be shown here</note>
       </trans-unit>
@@ -1436,7 +1421,7 @@
         <source> no records with recent report </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/notes-dashboard/notes-dashboard.component.html</context>
-          <context context-type="linenumber">62,64</context>
+          <context context-type="linenumber">63,69</context>
         </context-group>
         <note priority="1" from="description">There are no participants that have a recent report to be shown here</note>
       </trans-unit>
@@ -1462,7 +1447,7 @@
         <source>includes cases with a note<x id="sinceBeginningOfWeek" equiv-text="this.sinceBeginningOfTheWeek"/><x id="withinTheLastDays" equiv-text="this.withinTheLastNDays"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/notes-dashboard/notes-dashboard.component.ts</context>
-          <context context-type="linenumber">123</context>
+          <context context-type="linenumber">116</context>
         </context-group>
         <note priority="1" from="description">Spaces in front of the variables are added automatically</note>
         <note priority="1" from="meaning">Tooltip</note>
@@ -1471,7 +1456,7 @@
         <source>includes cases without a note<x id="sinceBeginningOfWeek" equiv-text="this.sinceBeginningOfTheWeek"/><x id="withinTheLastDays" equiv-text="this.withinTheLastNDays"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/notes-dashboard/notes-dashboard.component.ts</context>
-          <context context-type="linenumber">125</context>
+          <context context-type="linenumber">118</context>
         </context-group>
         <note priority="1" from="description">Spaces in front of the variables are added automatically</note>
         <note priority="1" from="meaning">Tooltip</note>
@@ -1480,7 +1465,7 @@
         <source>since the beginning of the week</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/notes-dashboard/notes-dashboard.component.ts</context>
-          <context context-type="linenumber">133</context>
+          <context context-type="linenumber">126,124</context>
         </context-group>
         <note priority="1" from="description">&apos;includes cases without a note since the beginning of the week&apos;</note>
         <note priority="1" from="meaning">Tooltip-part</note>
@@ -1489,7 +1474,7 @@
         <source>without a note within the last <x id="PH" equiv-text="this.sinceDays"/> days</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/notes-dashboard/notes-dashboard.component.ts</context>
-          <context context-type="linenumber">142</context>
+          <context context-type="linenumber">135,133</context>
         </context-group>
         <note priority="1" from="description">&apos;includes cases without a note within the last x days&apos;</note>
         <note priority="1" from="meaning">Tooltip-part</note>
@@ -3722,7 +3707,7 @@
         <source>Progress of X</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.ts</context>
-          <context context-type="linenumber">56</context>
+          <context context-type="linenumber">58</context>
         </context-group>
         <note priority="1" from="description">The progress, e.g. of a certain activity</note>
       </trans-unit>

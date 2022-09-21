@@ -34,7 +34,8 @@ interface AttendanceWeekRow {
   styleUrls: ["./attendance-week-dashboard.component.scss"],
 })
 export class AttendanceWeekDashboardComponent
-  implements OnInitDynamicComponent, OnInit, AfterViewInit {
+  implements OnInitDynamicComponent, OnInit, AfterViewInit
+{
   /**
    * The offset from the default time period, which is the last complete week.
    *
@@ -43,7 +44,7 @@ export class AttendanceWeekDashboardComponent
    * If you set the offset to 7 and today is Thursday, the widget displays attendance from the Monday 3 days ago
    * (i.e. the current running week).
    */
-  @Input() daysOffset: number;
+  @Input() daysOffset = 0;
 
   /**
    * description displayed to users for the time period this widget is analysing
@@ -52,7 +53,7 @@ export class AttendanceWeekDashboardComponent
   @Input() periodLabel: string;
 
   /**
-   * Only participants who were absent more then this threshold are counted and shown in the dashboard.
+   * Only participants who were absent more than this threshold are counted and shown in the dashboard.
    *
    * The default is 1.
    * That means if someone was absent two or more days within a specific activity in the given week
@@ -60,12 +61,8 @@ export class AttendanceWeekDashboardComponent
    */
   @Input() absentWarningThreshold: number = 1;
 
-  dashboardRowGroups: Promise<AttendanceWeekRow[][]>;
-
   @ViewChild("paginator") paginator: MatPaginator;
   tableDataSource = new MatTableDataSource<AttendanceWeekRow[]>();
-
-  rowGroupCount: Promise<number>;
 
   loadingDone = false;
 
@@ -84,10 +81,8 @@ export class AttendanceWeekDashboardComponent
   }
 
   async ngOnInit() {
-    await this.loadAttendanceOfAbsentees(this.daysOffset);
+    await this.loadAttendanceOfAbsentees();
   }
-
-  recordTrackByFunction = (index, item) => item.childId;
 
   async loadAttendanceOfAbsentees(daysOffset = 0) {
     const today = new Date();
@@ -102,34 +97,31 @@ export class AttendanceWeekDashboardComponent
       previousMonday.getDate() + 5
     );
 
-    this.dashboardRowGroups = this.attendanceService
-      .getAllActivityAttendancesForPeriod(previousMonday, previousSaturday)
-      .then((activityAttendances) => {
-        const lowAttendanceCases = new Set<string>();
-        const records: AttendanceWeekRow[] = [];
-        for (const att of activityAttendances) {
-          const rows = this.generateRowsFromActivityAttendance(
-            att,
-            moment(previousMonday),
-            moment(previousSaturday)
-          );
-          records.push(...rows);
+    const activityAttendances =
+      await this.attendanceService.getAllActivityAttendancesForPeriod(
+        previousMonday,
+        previousSaturday
+      );
+    const lowAttendanceCases = new Set<string>();
+    const records: AttendanceWeekRow[] = [];
+    for (const att of activityAttendances) {
+      const rows = this.generateRowsFromActivityAttendance(
+        att,
+        moment(previousMonday),
+        moment(previousSaturday)
+      );
+      records.push(...rows);
 
-          rows
-            .filter((r) => this.filterLowAttendance(r))
-            .forEach((r) => lowAttendanceCases.add(r.childId));
-        }
+      rows
+        .filter((r) => this.filterLowAttendance(r))
+        .forEach((r) => lowAttendanceCases.add(r.childId));
+    }
 
-        const groupedRecords = groupBy(records, "childId");
-        return Array.from(lowAttendanceCases.values()).map((childId) =>
-          groupedRecords.get(childId)
-        );
-      });
-    this.rowGroupCount = this.dashboardRowGroups.then((value) => value.length);
-    this.dashboardRowGroups.then((groups) => {
-      this.tableDataSource.data = groups;
-      this.loadingDone = true;
-    });
+    const groupedRecords = groupBy(records, "childId");
+    this.tableDataSource.data = Array.from(lowAttendanceCases.values()).map(
+      (childId) => groupedRecords.get(childId)
+    );
+    this.loadingDone = true;
   }
 
   private generateRowsFromActivityAttendance(
