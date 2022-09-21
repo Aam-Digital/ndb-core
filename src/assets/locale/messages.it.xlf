@@ -868,9 +868,9 @@
         <source><x id="INTERPOLATION" equiv-text="yrs&lt;/td>
         &lt;/ng-container>
         &lt;tr mat-r"/> yrs</source>
-        <target state="new"><x id="INTERPOLATION" equiv-text="yrs&lt;/td>
+        <target state="translated"><x id="INTERPOLATION" equiv-text="yrs&lt;/td>
         &lt;/ng-container>
-        &lt;tr mat-r"/> yrs</target>
+        &lt;tr mat-r"/> anni</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/dashboard-widgets/birthday-dashboard/birthday-dashboard.component.html</context>
           <context context-type="linenumber">37,38</context>
@@ -3574,7 +3574,7 @@
       </trans-unit>
       <trans-unit id="5a18ff86dec7316b0abcaa53685e042d9e417755" datatype="html">
         <source> Insert at least <x id="INTERPOLATION" equiv-text="{{ MIN_CHARACTERS_FOR_SEARCH }}"/> characters </source>
-        <target state="new"> Insert at least <x id="INTERPOLATION" equiv-text="{{ MIN_CHARACTERS_FOR_SEARCH }}"/> characters </target>
+        <target state="translated"> Inserire almeno <x id="INTERPOLATION" equiv-text="{{ MIN_CHARACTERS_FOR_SEARCH }}"/> caratteri </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/search/search.component.html</context>
           <context context-type="linenumber">26,28</context>
@@ -3682,7 +3682,7 @@
       </trans-unit>
       <trans-unit id="03354b2489337882c5a4fd033fec9b9f4b8d109f" datatype="html">
         <source>Page Not Found</source>
-        <target state="new">Page Not Found</target>
+        <target state="translated">Pagina non trovata</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/view/dynamic-routing/not-found/not-found.component.html</context>
           <context context-type="linenumber">2</context>
@@ -3690,7 +3690,7 @@
       </trans-unit>
       <trans-unit id="8cab7de00e3746d35b288dce6ec3f20f02845781" datatype="html">
         <source>Either the page has been removed or you don't have the required permissions to view this page.</source>
-        <target state="new">Either the page has been removed or you don't have the required permissions to view this page.</target>
+        <target state="translated">La pagina è stata rimossa o non disponi delle autorizzazioni necessarie per visualizzare questa pagina.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/view/dynamic-routing/not-found/not-found.component.html</context>
           <context context-type="linenumber">4</context>
@@ -3698,7 +3698,7 @@
       </trans-unit>
       <trans-unit id="cbeb3bd06f5d6189ef1726be8c5d6f5d69710e89" datatype="html">
         <source>Go to Dashboard</source>
-        <target state="new">Go to Dashboard</target>
+        <target state="translated">Vai a Dashboard</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/view/dynamic-routing/not-found/not-found.component.html</context>
           <context context-type="linenumber">5</context>
