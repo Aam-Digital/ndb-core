@@ -1,0 +1,28 @@
+@use "../../../../core/dashboard/dashboard-widget-base";
+@use "src/styles" as *;
+
+.subject-cell {
+  text-align: right;
+}
+
+.row-view {
+  cursor: pointer;
+  position: relative;
+
+  &::before {
+    content: '';
+    display: block;
+    width: 8px;
+    height: 100%;
+    position: absolute;
+    background-color: var(--important-notes-bg-color);
+  }
+
+  & > td:first-child {
+    padding-left: $standard-margin-small + 4;
+  }
+
+  & > td:last-child {
+    padding-right: $standard-margin-small;
+  }
+}
