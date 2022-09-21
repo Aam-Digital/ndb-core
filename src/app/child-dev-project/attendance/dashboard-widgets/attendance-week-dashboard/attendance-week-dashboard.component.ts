@@ -44,7 +44,7 @@ export class AttendanceWeekDashboardComponent
    * If you set the offset to 7 and today is Thursday, the widget displays attendance from the Monday 3 days ago
    * (i.e. the current running week).
    */
-  @Input() daysOffset: number;
+  @Input() daysOffset = 0;
 
   /**
    * description displayed to users for the time period this widget is analysing
@@ -53,7 +53,7 @@ export class AttendanceWeekDashboardComponent
   @Input() periodLabel: string;
 
   /**
-   * Only participants who were absent more then this threshold are counted and shown in the dashboard.
+   * Only participants who were absent more than this threshold are counted and shown in the dashboard.
    *
    * The default is 1.
    * That means if someone was absent two or more days within a specific activity in the given week
@@ -81,7 +81,7 @@ export class AttendanceWeekDashboardComponent
   }
 
   async ngOnInit() {
-    await this.loadAttendanceOfAbsentees(this.daysOffset);
+    await this.loadAttendanceOfAbsentees();
   }
 
   async loadAttendanceOfAbsentees(daysOffset = 0) {
