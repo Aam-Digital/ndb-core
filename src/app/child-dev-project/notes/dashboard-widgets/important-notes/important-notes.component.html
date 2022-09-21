@@ -1,13 +1,13 @@
 <app-dashboard-widget
   icon="exclamation-triangle"
-  [title]="relevantNotes?.length"
+  [title]="notesDataSource.data.length"
   subtitle="Notes needing follow-up"
   i18n-subtitle="subtitle|dashboard showing notes that require action"
   theme="note"
   [loading]="loading"
 >
   <app-widget-content>
-    <div *ngIf="relevantNotes?.length > 0">
+    <div *ngIf="notesDataSource.data.length > 0">
       <table
         mat-table
         [dataSource]="notesDataSource"
@@ -42,7 +42,7 @@
       </table>
     </div>
     <div
-      *ngIf="relevantNotes?.length === 0"
+      *ngIf="notesDataSource.data.length === 0"
       class="headline"
     >
       <span i18n="Description when there are no notes that need a follow-up">
