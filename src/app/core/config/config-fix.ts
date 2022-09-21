@@ -16,228 +16,136 @@ import { ratingAnswers } from "../../features/historical-data/model/rating-answe
 // prettier-ignore
 export const defaultJsonConfig = {
   "appConfig": {
-    "displayLanguageSelect": false,
-    "logo_path": "assets/child-photos/logo-hostage-italia.jpg",
-    "site_name": "Sistema dati Hostage Italia edita da Aam Digital"
+    "default_language": "en-US",
+    "displayLanguageSelect": true,
+    "logo_path": null,
+    "site_name": $localize`:Page title:Aam Digital - DEMO (automatically generated data)`,
   },
   "appConfig:usage-analytics": {
     "url": "https://matomo.aam-digital.org",
-    "site_id": "4"
+    "site_id": "8",
   },
   "navigationMenu": {
     "items": [
       {
-        "name": "Dashboard",
+        "name": $localize`:Menu item:Dashboard`,
         "icon": "home",
         "link": "/"
       },
       {
-        "name": "Casi",
+        "name": $localize`:Menu item:Children`,
         "icon": "child",
         "link": "/child"
       },
       {
-        "name": "Case Worker / Volontari professionisti",
-        "icon": "user-tie",
+        "name": $localize`:Menu item:Schools`,
+        "icon": "university",
         "link": "/school"
       },
       {
-        "name": "Note & Attivita'",
+        "name": $localize`:Menu item:Attendance`,
+        "icon": "calendar-check",
+        "link": "/attendance"
+      },
+      {
+        "name": $localize`:Menu item:Notes`,
         "icon": "file-alt",
         "link": "/note"
       },
       {
-        "name": "Admin",
+        "name": $localize`:Menu item:Admin`,
         "icon": "wrench",
         "link": "/admin"
       },
       {
-        "name": "Users",
-        "icon": "user",
+        "name": $localize`:Menu item:Import`,
+        "icon": "file-import",
+        "link": "/import"
+      },
+      {
+        "name": $localize`:Menu item:Users`,
+        "icon": "users",
         "link": "/user"
       },
       {
-        "name": "Reports",
+        "name": $localize`:Menu item:Reports`,
         "icon": "line-chart",
         "link": "/report"
       },
       {
-        "name": "Database Conflicts",
+        "name": $localize`:Menu item:Database Conflicts`,
         "icon": "wrench",
         "link": "/admin/conflicts"
       },
       {
-        "name": "Assistenza",
+        "name": $localize`:Menu item:Help`,
         "icon": "question",
         "link": "/help"
-      }
+      },
     ]
   },
-  "enum:interaction-type": [
-    {
-      "id": "",
-      "label": ""
-    },
-    {
-      "id": "IN_PERSON",
-      "label": "In persona"
-    },
-    {
-      "id": "EMAIL",
-      "label": "Email"
-    },
-    {
-      "id": "PHONE",
-      "label": "Phone"
-    },
-    {
-      "id": "INCIDENT",
-      "label": "Incontro straordinario"
-    },
-    {
-      "id": "WORKSHOP",
-      "label": "Workshop / Seminar",
-      "isMeeting": true
-    },
-    {
-      "id": "TRAINING",
-      "label": "Training",
-      "isMeeting": true
-    }
-  ],
-  "enum:attendance-status": [
-    {
-      "id": "PRESENT",
-      "shortName": "P",
-      "label": "Present",
-      "style": "attendance-P",
-      "countAs": "PRESENT"
-    },
-    {
-      "id": "ABSENT",
-      "shortName": "A",
-      "label": "Absent",
-      "style": "attendance-A",
-      "countAs": "ABSENT"
-    },
-    {
-      "id": "EXCUSED",
-      "shortName": "E",
-      "label": "Excused",
-      "style": "attendance-E",
-      "countAs": "IGNORE"
-    }
-  ],
-  "enum:materials": [
-    {
-      "id": "OTHER",
-      "label": "Altro"
-    },
-    {
-      "id": "ENTERTAINMENT",
-      "label": "Intrattenimenti"
-    },
-    {
-      "id": "TRAVEL",
-      "label": "Viaggi"
-    },
-    {
-      "id": "MATERIALS",
-      "label": "Materiale"
-    },
-    {
-      "id": "ACCOMMODATION",
-      "label": "Pernottamenti"
-    }
-  ],
-  "enum:warning-levels": [
-    {
-      "id": "",
-      "label": ""
-    },
-    {
-      "id": "INFO",
-      "label": "Solo informazione"
-    },
-    {
-      "id": "OK",
-      "label": "Risolto"
-    },
-    {
-      "id": "WARNING",
-      "label": "Da seguire"
-    },
-    {
-      "id": "URGENT",
-      "label": "Da seguire: urgente"
-    }
-  ],
+
+
+  "enum:interaction-type": defaultInteractionTypes,
+  "enum:attendance-status": defaultAttendanceStatusTypes,
+  "enum:reading-levels": readingLevels,
+  "enum:math-levels": mathLevels,
+  "enum:genders": genders,
+  "enum:materials": materials,
+  "enum:warning-levels": warningLevels,
   "enum:document-status": [
     {
       "id": "",
-      "label": ""
+      "label": "",
+      "_ordinal": 0,
     },
     {
       "id": "OK (copy with us)",
-      "label": "OK (copy with us)"
+      "label": $localize`:Document status:OK (copy with us)`,
+      "_ordinal": 1,
     },
     {
       "id": "OK (copy needed for us)",
-      "label": "OK (copy needed for us)"
+      "label": $localize`:Document status:OK (copy needed for us)`,
+      "_ordinal": 2,
     },
     {
       "id": "needs correction",
-      "label": "needs correction"
+      "label": $localize`:Document status:needs correction`,
+      "_ordinal": 3,
     },
     {
       "id": "applied",
-      "label": "applied"
+      "label": $localize`:Document status:applied`,
+      "_ordinal": 4,
     },
     {
       "id": "doesn't have",
-      "label": "doesn't have"
+      "label": $localize`:Document status:doesn't have`,
+      "_ordinal": 5,
     },
     {
       "id": "not eligible",
-      "label": "not eligible"
+      "label": $localize`:Document status:not eligible`,
+      "_ordinal": 6,
     }
   ],
   "enum:center": [
     {
       "id": "alipore",
-      "label": "Alipore"
+      "label": $localize`:center:Alipore`
     },
     {
       "id": "tollygunge",
-      "label": "Tollygunge"
+      "label": $localize`:center:Tollygunge`
     },
     {
       "id": "barabazar",
-      "label": "Barabazar"
+      "label": $localize`:center:Barabazar`
     }
   ],
-  "enum:rating-answer": [
-    {
-      "id": "notTrueAtAll",
-      "label": "not true at all"
-    },
-    {
-      "id": "rarelyTrue",
-      "label": "rarely true"
-    },
-    {
-      "id": "usuallyTrue",
-      "label": "usually true"
-    },
-    {
-      "id": "absolutelyTrue",
-      "label": "absolutely True"
-    },
-    {
-      "id": "noAnswerPossible",
-      "label": "no answer possible"
-    }
-  ],
+  "enum:rating-answer": ratingAnswers,
+
   "view:": {
     "component": "Dashboard",
     "config": {
@@ -247,15 +155,26 @@ export const defaultJsonConfig = {
           "config": {
             "shortcuts": [
               {
-                "label": "Inserire incontro",
+                "label": $localize`:Dashboard shortcut widget|record attendance shortcut:Record Attendance`,
                 "icon": "calendar-check",
-                "link": "/attendance/add-day"
+                "link": "/attendance/add-day",
+              },
+              {
+                "label": $localize`:Dashboard shortcut widget|record attendance shortcut:Add Child`,
+                "icon": "plus",
+                "link": "/child/new",
               }
             ]
           }
         },
         {
           "component": "ChildrenCountDashboard"
+        },
+        {
+          "component": "ImportantNotesComponent",
+          "config": {
+            "warningLevels": ["WARNING", "URGENT"],
+          }
         },
         {
           "component": "NotesDashboard",
@@ -274,6 +193,20 @@ export const defaultJsonConfig = {
           }
         },
         {
+          "component": "AttendanceWeekDashboard",
+          "config": {
+            "daysOffset": 0,
+            "periodLabel": $localize`:Attendance week dashboard widget label:last week`
+          }
+        },
+        {
+          "component": "AttendanceWeekDashboard",
+          "config": {
+            "daysOffset": 7,
+            "periodLabel": $localize`:Attendance week dashboard widget label:this week`
+          }
+        },
+        {
           "component": "ProgressDashboard",
           "config": {
             "dashboardConfigId": "1"
@@ -281,16 +214,19 @@ export const defaultJsonConfig = {
         },
         {
           "component": "BirthdayDashboard"
-        }
+        },
+        {
+          "component": "ChildrenBmiDashboard"
+        },
       ]
-    },
-    "_id": "view:"
+    }
   },
   "view:note": {
     "component": "NotesManager",
     "config": {
-      "title": "Note & Attivita'",
+      "title": $localize`:Title for notes overview:Notes & Reports`,
       "includeEventNotes": false,
+      "showEventNotesToggle": true,
       "columns": [
         {
           "id": "children",
@@ -298,11 +234,11 @@ export const defaultJsonConfig = {
         }
       ],
       "columnGroups": {
-        "default": "Appunti registrati",
-        "mobile": "Mobile",
+        "default": $localize`:Translated name of default column group:Standard`,
+        "mobile": $localize`:Translated name of mobile column group:Mobile`,
         "groups": [
           {
-            "name": "Appunti registrati",
+            "name": $localize`:Column group name:Standard`,
             "columns": [
               "date",
               "subject",
@@ -312,7 +248,7 @@ export const defaultJsonConfig = {
             ]
           },
           {
-            "name": "Eventi / Attivita'",
+            "name": $localize`:Column group name:Mobile`,
             "columns": [
               "date",
               "subject",
@@ -324,8 +260,8 @@ export const defaultJsonConfig = {
       "filters": [
         {
           "id": "status",
-          "type": "prebuilt",
-          "label": "Status"
+          "label": $localize`:Filter label:Status`,
+          "type": "prebuilt"
         },
         {
           "id": "date",
@@ -337,80 +273,55 @@ export const defaultJsonConfig = {
         }
       ],
       "exportConfig": [
+        { "label": "event_id", "query": "_id" },
+        { "label": "date", "query": "date" },
+        { "label": "event title", "query": "subject" },
+        { "label": "event type", "query": "category" },
+        { "label": "event description", "query": "text" },
         {
-          "label": "event_id",
-          "query": "_id"
-        },
-        {
-          "label": "Data",
-          "query": "date"
-        },
-        {
-          "label": "event title",
-          "query": "subject"
-        },
-        {
-          "label": "event type",
-          "query": "category"
-        },
-        {
-          "label": "event description",
-          "query": "text"
-        },
-        {
-          "query": ":getAttendanceArray",
+          "query": ":getAttendanceArray(true)",
           "subQueries": [
             {
               "query": ".participant:toEntities(Child)",
               "subQueries": [
-                {
-                  "label": "participant_id",
-                  "query": "_id"
-                },
-                {
-                  "label": "participant",
-                  "query": "name"
-                },
-                {
-                  "label": "gender",
-                  "query": "gender"
-                },
-                {
-                  "label": "religion",
-                  "query": "religion"
-                }
+                { "label": "participant_id", "query": "_id" },
+                { "label": "participant", "query": "name" },
+                { "label": "gender", "query": "gender" },
+                { "label": "religion", "query": "religion" },
               ]
             },
             {
               "label": "status",
-              "query": ".status._status.id"
+              "query": ".status._status.id",
+            },
+            {
+              "query": ".school:toEntities(School)",
+              "subQueries": [
+                { "label": "school_name", "query": "name" },
+                { "label": "school_id", "query": "entityId" }
+              ]
             }
-          ]
-        }
+          ],
+        },
       ]
-    },
-    "_id": "view:note"
+    }
   },
   "view:admin": {
     "component": "Admin",
-    "permittedUserRoles": [
-      "admin_app"
-    ],
-    "_id": "view:admin"
+    "permittedUserRoles": ["admin_app"]
+  },
+  "view:import": {
+    "component": "Import",
+    "permittedUserRoles": ["admin_app"]
   },
   "view:user": {
     "component": "EntityList",
     "config": {
-      "title": "Users",
+      "title": $localize`:Title for user overview:Users`,
       "entity": "User",
-      "columns": [
-        "name"
-      ]
+      "columns": ["name", "email", "phone"]
     },
-    "permittedUserRoles": [
-      "admin_app"
-    ],
-    "_id": "view:users"
+    "permittedUserRoles": ["admin_app"]
   },
   "view:user/:id": {
     "component": "EntityDetails",
@@ -418,7 +329,7 @@ export const defaultJsonConfig = {
       "entity": "User",
       "panels": [
         {
-          "title": "User Information",
+          "title": $localize`:Panel title:User Information`,
           "components": [
             {
               "title": "",
@@ -426,7 +337,13 @@ export const defaultJsonConfig = {
               "config": {
                 "cols": [
                   [
-                    "name"
+                    "name",
+                  ],
+                  [
+                    "email"
+                  ],
+                  [
+                    "phone"
                   ]
                 ]
               }
@@ -436,66 +353,53 @@ export const defaultJsonConfig = {
       ],
       "icon": "user"
     },
-    "permittedUserRoles": [
-      "admin_app"
-    ]
+    "permittedUserRoles": ["admin_app"]
   },
   "view:admin/conflicts": {
-    "component": "ConflictResolution",
-    "permittedUserRoles": [
-      "admin_app"
-    ],
-    "lazyLoaded": true,
-    "_id": "view:admin/conflicts"
+    "permittedUserRoles": ["admin_app"],
+    "lazyLoaded": true
   },
   "view:help": {
     "component": "MarkdownPage",
     "config": {
-      "markdownFile": "assets/help/help.it.md"
-    },
-    "_id": "view:help"
+      "markdownFile": $localize`:Filename of markdown help page (make sure the filename you enter as a translation actually exists on the server!):assets/help/help.en.md`,
+    }
   },
   "view:attendance": {
-    "component": "AttendanceManager",
-    "_id": "view:attendance"
+    "component": "AttendanceManager"
   },
   "view:attendance/add-day": {
-    "component": "AddDayAttendance",
-    "_id": "view:attendance/add-day"
+    "component": "AddDayAttendance"
   },
   "view:school": {
     "component": "EntityList",
     "config": {
+      "title": $localize`:Title of schools overview:Schools List`,
       "entity": "School",
-      "title": "Case Worker / Professionista volontario",
       "columns": [
         "name",
-        "location",
-        "HIExperience",
-        "HITraining",
-        "signedNDA"
+        "privateSchool",
+        "language"
       ],
       "filters": [
         {
-          "id": "profession",
-          "display": "dropdown"
-        },
-        {
-          "id": "location",
-          "display": "dropdown"
+          "id": "privateSchool",
+          "label": $localize`Schools`,
+          "true": $localize`:Label for private schools filter - true case:Private`,
+          "false": $localize`:Label for private schools filter - false case:Government`,
+          "all": $localize`:Label for disabling the filter:All`
         }
       ]
-    },
-    "_id": "view:school"
+    }
   },
   "view:school/:id": {
     "component": "EntityDetails",
     "config": {
       "entity": "School",
-      "title": "Case Worker / Professionista volontario",
+      "title": $localize`:Title when adding new entity|e.g. Add new School or Group:School or Group`,
       "panels": [
         {
-          "title": "Scheda professionista volontario",
+          "title": $localize`:Panel title:Basic Information`,
           "components": [
             {
               "title": "",
@@ -504,27 +408,18 @@ export const defaultJsonConfig = {
                 "cols": [
                   [
                     "name",
-                    "location",
-                    "phone",
-                    "email",
-                    "languages"
+                    "privateSchool"
                   ],
                   [
-                    "profession",
-                    "employer",
+                    "address",
+                    "phone"
+                  ],
+                  [
+                    "language",
+                    "timing",
+                  ],
+                  [
                     "remarks"
-                  ],
-                  [
-                    "availabilityLimitations",
-                    "HITraining",
-                    "HIExperience",
-                    "signedNDA"
-                  ],
-                  [
-                    "scopeItalia",
-                    "scopeRegione",
-                    "scopeProvincia",
-                    "scopeCitta"
                   ]
                 ]
               }
@@ -532,85 +427,139 @@ export const defaultJsonConfig = {
           ]
         },
         {
-          "title": "Casi",
+          "title": $localize`:Panel title:Students`,
           "components": [
             {
               "title": "",
               "component": "ChildrenOverview",
-              "config": {
-                "columns": [
-                  "childId",
-                  "start",
-                  "end",
-                  "caseIntro"
-                ]
-              }
+            }
+          ]
+        },
+        {
+          "title": $localize`:Panel title:Activities`,
+          "components": [
+            {
+              "title": "",
+              "component": "ActivitiesOverview",
             }
           ]
         }
       ],
-      "icon": "user-tie"
-    },
-    "_id": "view:school/:id"
+      "icon": "university"
+    }
   },
   "view:child": {
     "component": "ChildrenList",
     "config": {
-      "title": "Lista dei casi",
+      "title": $localize`:Title children overview:Children List`,
       "columns": [
         {
           "view": "ChildBlock",
-          "label": "Nome",
+          "label": $localize`:Column title for ChildBlockComponents:Name`,
           "id": "name"
         },
         {
           "view": "DisplayText",
-          "label": "Eta'",
+          "label": $localize`:Column label for age of child:Age`,
           "id": "age"
         },
         {
+          "view": "DisplayText",
+          "label": $localize`:Column label for class which child attends:Class`,
+          "id": "schoolClass"
+        },
+        {
           "view": "DisplayEntity",
-          "label": "Case Worker",
+          "label": $localize`:Column label for school which child attends:School`,
           "id": "schoolId",
-          "additional": "School",
+          "additional": `${School.ENTITY_TYPE}`,
+          "noSorting": true
+        },
+        {
+          "view": "RecentAttendanceBlocks",
+          "label": $localize`:Column label for school attendance of child:Attendance (School)`,
+          "id": "schoolAttendance",
+          "additional": {
+            "filterByActivityType": "SCHOOL_CLASS"
+          },
+          "noSorting": true
+        },
+        {
+          "view": "RecentAttendanceBlocks",
+          "label": $localize`:Column label for coaching attendance of child:Attendance (Coaching)`,
+          "id": "coachingAttendance",
+          "additional": {
+            "filterByActivityType": "COACHING_CLASS"
+          },
+          "noSorting": true
+        },
+        {
+          "view": "BmiBlock",
+          "label": $localize`:Column label for BMI of child:BMI`,
+          "id": "health_BMI",
           "noSorting": true
         }
       ],
       "columnGroups": {
-        "default": "Case Info",
-        "mobile": "Mobile",
+        "default": $localize`:Translated name of default column group:Basic Info`,
+        "mobile": $localize`:Translated name of mobile column group:Mobile`,
         "groups": [
           {
-            "name": "Case Info",
+            "name": $localize`:Column group name:Basic Info`,
             "columns": [
               "projectNumber",
               "name",
               "age",
               "gender",
-              "recordType",
+              "schoolClass",
+              "schoolId",
+              "center",
+              "status"
+            ]
+          },
+          {
+            "name": $localize`:Column group name:School Info`,
+            "columns": [
+              "projectNumber",
+              "name",
+              "age",
+              "schoolClass",
+              "schoolId",
+              "schoolAttendance",
+              "coachingAttendance",
+              "motherTongue"
+            ]
+          },
+          {
+            "name": $localize`:Column group name:Status`,
+            "columns": [
+              "projectNumber",
+              "name",
+              "center",
               "status",
-              "schoolId"
+              "admissionDate"
             ]
           },
           {
-            "name": "Contatti",
+            "name": $localize`:Column group name:Health`,
             "columns": [
               "projectNumber",
               "name",
-              "caseworkerAllocated",
-              "caseworkerName",
-              "phone",
-              "email",
-              "preferredContactMeans",
-              "preferredContactTime"
+              "center",
+              "health_BMI",
+              "health_bloodGroup",
+              "health_lastDentalCheckup",
+              "gender",
+              "age",
+              "dateOfBirth"
             ]
           },
           {
-            "name": "Mobile",
+            "name": $localize`:Column group name:Mobile`,
             "columns": [
               "projectNumber",
               "name",
-              "caseworkerName"
+              "age"
             ]
           }
         ]
@@ -618,89 +567,108 @@ export const defaultJsonConfig = {
       "filters": [
         {
           "id": "isActive",
-          "label": "Casi",
           "type": "boolean",
           "default": "true",
-          "true": "Casi Attivi",
-          "false": "Casi Inattivi",
-          "all": "All"
+          "label": $localize`Children`,
+          "true": $localize`:Active children filter label - true case:Active`,
+          "false": $localize`:Active children filter label - false case:Inactive`,
+          "all": $localize`:Active children unselect option:All`
         },
         {
-          "id": "recordType",
+          "id": "center",
           "display": "dropdown"
         },
         {
           "id": "schoolId",
           "type": "School",
-          "label": "Case Worker",
+          "label": $localize`:Label of schools filter:School`,
           "display": "dropdown"
         }
       ]
-    },
-    "_id": "view:child"
+    }
   },
   "view:child/:id": {
     "component": "EntityDetails",
     "config": {
       "icon": "child",
       "entity": "Child",
-      "title": "Caso",
       "panels": [
         {
-          "title": "Cartella",
+          "title": $localize`:Panel title:Basic Information`,
           "components": [
             {
               "title": "",
               "component": "Form",
               "config": {
                 "cols": [
-                  [
-                    "photo"
-                  ],
+                  ["photo"],
                   [
                     "name",
+                    "projectNumber",
+                    "admissionDate",
+                  ],
+                  [
                     "dateOfBirth",
                     "gender",
-                    "projectNumber",
-                    "admissionDate"
+                    "motherTongue"
                   ],
                   [
-                    "recordType",
+                    "center",
                     "status",
-                    "caseworkerAllocated",
-                    "caseworkerName"
+                    "address",
+                    "phone"
                   ],
-                  [
-                    "location",
-                    "phone",
-                    "email",
-                    "preferredContactMeans",
-                    "preferredContactTime"
-                  ]
+                ],
+                "headers": [
+                  null,
+                  $localize`:Header for form section:Personal Information`,
+                  $localize`:Header for form section:Additional`,
+                  $localize`:Header for form section:Scholar activities`,
                 ]
               }
             }
           ]
         },
         {
-          "title": "Gestione",
+          "title": $localize`:Panel title:Education`,
           "components": [
             {
+              "title": $localize`:Title inside a panel:School History`,
               "component": "PreviousSchools",
               "config": {
-                "single": false,
+                "single": true,
                 "columns": [
+                  {
+                    id: "start",
+                    visibleFrom: "sm",
+                  },
+                  {
+                    id: "end",
+                    visibleFrom: "sm",
+                  },
                   "schoolId",
-                  "start",
-                  "end",
-                  "caseIntro"
-                ]
+                  "schoolClass",
+                  "result",
+                ],
               }
+            },
+            {
+              "title": $localize`:Title inside a panel:ASER Results`,
+              "component": "Aser"
             }
           ]
         },
         {
-          "title": "Appunti & Note",
+          "title": $localize`:Panel title:Attendance`,
+          "components": [
+            {
+              "title": "",
+              "component": "GroupedChildAttendance"
+            }
+          ]
+        },
+        {
+          "title": $localize`:Panel title:Notes & Reports`,
           "components": [
             {
               "title": "",
@@ -709,75 +677,85 @@ export const defaultJsonConfig = {
           ]
         },
         {
-          "title": "Spese & Materiali",
-          "components": [
-            {
-              "title": "",
-              "component": "EducationalMaterial",
-              "config": {
-                "columns": [
-                  "date",
-                  "materialType",
-                  "materialAmount",
-                  "description",
-                  "receipt"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "title": "Chiusura caso",
+          "title": $localize`:Panel title:Health`,
           "components": [
             {
               "title": "",
               "component": "Form",
               "config": {
                 "cols": [
-                  [
-                    "dropoutDate"
-                  ],
-                  [
-                    "dropoutType"
-                  ],
-                  [
-                    "dropoutRemarks"
-                  ]
+                  ["health_bloodGroup"],
+                  ["health_lastDentalCheckup"]
+                ]
+              }
+            },
+            {
+              "title": $localize`:Title inside a panel:Height & Weight Tracking`,
+              "component": "HealthCheckup"
+            }
+          ]
+        },
+        {
+          "title": $localize`:Panel title:Educational Materials`,
+          "components": [
+            {
+              "title": "",
+              "component": "EducationalMaterial"
+            }
+          ]
+        },
+        {
+          title: $localize`:Panel title:Observations`,
+          components: [
+            {
+              title: "",
+              component: "HistoricalDataComponent",
+              config: [
+                "date",
+                { id: "isMotivatedDuringClass", visibleFrom: "lg" },
+                { id: "isParticipatingInClass", visibleFrom: "lg" },
+                { id: "isInteractingWithOthers", visibleFrom: "lg" },
+                { id: "doesHomework", visibleFrom: "lg" },
+                { id: "asksQuestions", visibleFrom: "lg" },
+              ]
+            }
+          ]
+        },
+        {
+          "title": $localize`:Panel title:Dropout`,
+          "components": [
+            {
+              "title": "",
+              "component": "Form",
+              "config": {
+                "cols": [
+                  ["dropoutDate"],
+                  ["dropoutType"],
+                  ["dropoutRemarks"]
                 ]
               }
             }
           ]
         }
       ]
-    },
-    "_id": "view:child/:id"
+    }
   },
   "view:attendance/recurring-activity": {
     "component": "EntityList",
     "config": {
+      "title": $localize`:Title of recurring activities overview:Recurring Activities`,
       "entity": "RecurringActivity",
-      "title": "Recurring Activities",
       "columns": [
         "title",
         "type",
         "assignedTo"
       ],
       "exportConfig": [
-        {
-          "label": "Title",
-          "query": "title"
-        },
-        {
-          "label": "Type",
-          "query": "type"
-        },
-        {
-          "label": "Assigned users",
-          "query": "assignedTo"
-        }
+        { label: "Title", query: "title" },
+        { label: "Type", query: "type" },
+        { label: "Assigned users", query: "assignedTo" }
       ]
-    },
-    "_id": "view:attendance/recurring-activity"
+    }
   },
   "view:attendance/recurring-activity/:id": {
     "component": "EntityDetails",
@@ -785,44 +763,36 @@ export const defaultJsonConfig = {
       "entity": "RecurringActivity",
       "panels": [
         {
-          "title": "Activity",
+          "title": $localize`:Panel title:Basic Information`,
           "components": [
             {
               "component": "Form",
               "config": {
                 "cols": [
-                  [
-                    "title"
-                  ],
-                  [
-                    "type"
-                  ],
-                  [
-                    "assignedTo"
-                  ]
+                  ["title"],
+                  ["type"],
+                  ["assignedTo"]
                 ]
               }
             }
           ]
         },
         {
-          "title": "Participants",
+          "title": $localize`:Panel title:Participants`,
           "components": [
             {
               "component": "Form",
               "config": {
-                "cols": [
-                  [
-                    "linkedGroups",
-                    "participants"
-                  ]
-                ]
+                "cols": [[
+                  "linkedGroups",
+                  "participants"
+                ]]
               }
             }
           ]
         },
         {
-          "title": "Events & Attendance",
+          "title": $localize`:Panel title:Events & Attendance`,
           "components": [
             {
               "component": "ActivityAttendanceSection"
@@ -831,514 +801,284 @@ export const defaultJsonConfig = {
         }
       ],
       "icon": "calendar-alt"
-    },
-    "_id": "view:attendance/recurring-activity/:id"
+    }
   },
   "view:report": {
     "component": "Reporting",
     "config": {
       "reports": [
         {
-          "title": "ReportReport: Eventi & attivita'",
+          "title": $localize`:Name of a report:Basic Report`,
           "aggregationDefinitions": [
             {
-              "query": "Child:toArray[*isActive=true]",
-              "label": "All children",
+              "query": `${Child.ENTITY_TYPE}:toArray[*isActive=true]`,
+              "label": $localize`:Label of report query:All children`,
+              "groupBy": ["gender"],
+            },
+            {
+              "query": `${School.ENTITY_TYPE}:toArray`,
+              "label": $localize`:Label for report query:All schools`,
               "aggregations": [
                 {
-                  "label": "Male children",
-                  "query": ":filterByObjectAttribute(gender, id, M)"
+                  "label": $localize`:Label for report query:Children attending a school`,
+                  "query": `:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:unique`
                 },
                 {
-                  "label": "Female children",
-                  "query": ":filterByObjectAttribute(gender, id, F)"
+                  "label": $localize`:Label for report query:Governmental schools`,
+                  "query": `[*privateSchool!=true]`
+                },
+                {
+                  "query": `[*privateSchool!=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`,
+                  "label": $localize`:Label for report query:Children attending a governmental school`,
+                  "groupBy": ["gender"],
+                },
+                {
+                  "label": $localize`:Label for report query:Private schools`,
+                  "query": `[*privateSchool=true]`
+                },
+                {
+                  "query": `[*privateSchool=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`,
+                  "label": $localize`:Label for report query:Children attending a private school`,
+                  "groupBy": ["gender"],
+                },
+              ]
+            }
+          ],
+        },
+        {
+          "title": $localize`:Name of a report:Event Report`,
+          "aggregationDefinitions": [
+            {
+              "query": `${EventNote.ENTITY_TYPE}:toArray[*date >= ? & date <= ?]`,
+              "groupBy": ["category"],
+              "label": $localize`:Label for a report query:Events`,
+              "aggregations": [
+                {
+                  "query": `:getParticipantsWithAttendance(PRESENT):unique:addPrefix(${Child.ENTITY_TYPE}):toEntities`,
+                  "groupBy": ["gender"],
+                  "label": $localize`:Label for a report query:Participants`
+                }
+              ]
+            }
+          ],
+        },
+        {
+          "title": $localize`:Name of a report:Attendance Report`,
+          "mode": "exporting",
+          "aggregationDefinitions": [
+            {
+              "query": `${EventNote.ENTITY_TYPE}:toArray:filterByObjectAttribute(category, id, SCHOOL_CLASS)[* date >= ? & date <= ?]:getAttendanceArray:getAttendanceReport`,
+              "subQueries": [
+                {
+                  "label": $localize`:Name of column of a report:Type`,
+                  "query": ":setString(" + $localize`School Class` + ")"
+                },
+                {
+                  "label": $localize`:Name of a column of a report:Name`,
+                  "query": `.participant:toEntities(Child).name`
+                },
+                {
+                  "label": $localize`:Name of a column of a report:Total`,
+                  "query": `total`
+                },
+                {
+                  "label": $localize`:Name of a column of a report:Present`,
+                  "query": `present`
+                },
+                {
+                  "label": $localize`:Name of a column of a report:Rate`,
+                  "query": `percentage`
                 }
               ]
             },
             {
-              "query": "School:toArray",
-              "label": "All schools",
-              "aggregations": [
+              "query": `${EventNote.ENTITY_TYPE}:toArray:filterByObjectAttribute(category, id, COACHING_CLASS)[* date >= ? & date <= ?]:getAttendanceArray:getAttendanceReport`,
+              "subQueries": [
                 {
-                  "label": "Children attending a school",
-                  "query": ":getRelated(ChildSchoolRelation, schoolId)[*isActive=true].childId:unique"
+                  "label": $localize`:Name of column of a report:Type`,
+                  "query": ":setString(" + $localize`Coaching Class` + ")"
                 },
                 {
-                  "label": "Governmental schools",
-                  "query": "[*privateSchool!=true]"
+                  "label": $localize`:Name of a column of a report:Name`,
+                  "query": `.participant:toEntities(Child).name`
                 },
                 {
-                  "query": "[*privateSchool!=true]:getRelated(ChildSchoolRelation, schoolId)[*isActive=true].childId:addPrefix(Child):unique:toEntities",
-                  "label": "Children attending a governmental school",
-                  "aggregations": [
-                    {
-                      "label": "Male children attending a governmental school",
-                      "query": ":filterByObjectAttribute(gender, id, M)"
-                    },
-                    {
-                      "label": "Female children attending a governmental school",
-                      "query": ":filterByObjectAttribute(gender, id, F)"
-                    }
-                  ]
+                  "label": $localize`:Name of a column of a report:Total`,
+                  "query": `total`
                 },
                 {
-                  "label": "Private schools",
-                  "query": "[*privateSchool=true]"
+                  "label": $localize`:Name of a column of a report:Present`,
+                  "query": `present`
                 },
                 {
-                  "query": "[*privateSchool=true]:getRelated(ChildSchoolRelation, schoolId)[*isActive=true].childId:addPrefix(Child):unique:toEntities",
-                  "label": "Children attending a private school",
-                  "aggregations": [
-                    {
-                      "label": "Male children attending a private school",
-                      "query": ":filterByObjectAttribute(gender, id, M)"
-                    },
-                    {
-                      "label": "Female children attending a private school",
-                      "query": ":filterByObjectAttribute(gender, id, F)"
-                    }
-                  ]
+                  "label": $localize`:Name of a column of a report:Rate`,
+                  "query": `percentage`
                 }
               ]
-            }
-          ]
+            },
+          ],
         },
-        {
-          "title": "Report: Eventi & attivita'",
-          "aggregationDefinitions": [
-            {
-              "query": "EventNote:toArray[*date >= ? & date <= ?]",
-              "groupBy": [
-                "category"
-              ],
-              "label": "Events",
-              "aggregations": [
-                {
-                  "query": ":getParticipantsWithAttendance(PRESENT):unique:addPrefix(Child):toEntities",
-                  "groupBy": [
-                    "gender"
-                  ],
-                  "label": "Participants"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Report annuale Hostage Italia",
-          "aggregationDefinitions": [
-            {
-              "query": "EventNote:toArray:addEntities(Note)[*date >= ? & date <= ?]",
-              "groupBy": [
-                "category"
-              ],
-              "label": "Events",
-              "aggregations": [
-                {
-                  "query": ":getParticipantsWithAttendance(PRESENT):unique:addPrefix(Child):toEntities",
-                  "groupBy": [
-                    "gender",
-                    "religion"
-                  ],
-                  "label": "Participants"
-                }
-              ]
-            }
-          ]
-        }
       ]
-    },
-    "_id": "view:report"
+    }
   },
-  "entity:ChildSchoolRelation": {
-    "attributes": [
-      {
-        "name": "childId",
-        "schema": {
-          "label": "Caso",
-          "viewComponent": "DisplayEntity",
-          "editComponent": "EditSingleEntity",
-          "additional": "Child",
-          "validators": {
-            "required": true
-          }
-        }
-      },
-      {
-        "name": "schoolId",
-        "schema": {
-          "label": "Volontario professionista",
-          "viewComponent": "DisplayEntity",
-          "editComponent": "EditSingleEntity",
-          "additional": "School",
-          "validators": {
-            "required": true
-          }
-        }
-      },
-      {
-        "name": "caseIntro",
-        "schema": {
-          "dataType": "string",
-          "editComponent": "EditLongText",
-          "label": "Nota introduttiva del caso"
-        }
-      }
-    ]
-  },
+
   "entity:Child": {
     "attributes": [
       {
-        "name": "projectNumber",
+        "name": "address",
         "schema": {
-          "dataType": "string",
-          "label": "Codice"
+          dataType: "string",
+          label: $localize`:Label for the address of a child:Address`
         }
       },
       {
-        "name": "admissionDate",
+        "name": "health_bloodGroup",
         "schema": {
-          "dataType": "date-only",
-          "label": "Data di apertura"
+          dataType: "string",
+          label: $localize`:Label for a child attribute:Blood Group`
         }
       },
       {
-        "name": "gender",
+        "name": "religion",
         "schema": {
-          "dataType": "configurable-enum",
-          "innerDataType": "genders",
-          "label": "Sesso"
+          dataType: "string",
+          label: $localize`:Label for the religion of a child:Religion`
         }
       },
       {
-        "name": "recordType",
+        "name": "motherTongue",
         "schema": {
-          "dataType": "configurable-enum",
-          "innerDataType": "record-type",
-          "label": "Tipologia beneficiario"
+          dataType: "string",
+          label: $localize`:Label for the mother tongue of a child:Mother Tongue`
         }
       },
       {
-        "name": "location",
+        "name": "health_lastDentalCheckup",
         "schema": {
-          "dataType": "string",
-          "label": "Citta'"
+          dataType: "Date",
+          label: $localize`:Label for a child attribute:Last Dental Check-Up`
         }
       },
-      {
-        "name": "phone",
-        "schema": {
-          "dataType": "string",
-          "label": "Tel."
-        }
-      },
-      {
-        "name": "email",
-        "schema": {
-          "dataType": "string",
-          "label": "Email"
-        }
-      },
-      {
-        "name": "caseworkerAllocated",
-        "schema": {
-          "dataType": "boolean",
-          "label": "Assengato case worker?"
-        }
-      },
-      {
-        "name": "caseworkerName",
-        "schema": {
-          "dataType": "string",
-          "viewComponent": "DisplayEntity",
-          "editComponent": "EditSingleEntity",
-          "additional": "School",
-          "label": "Case Worker"
-        }
-      },
-      {
-        "name": "preferredContactMeans",
-        "schema": {
-          "dataType": "configurable-enum",
-          "innerDataType": "contact-means",
-          "label": "Modalita' di contatto"
-        }
-      },
-      {
-        "name": "preferredContactTime",
-        "schema": {
-          "dataType": "configurable-enum",
-          "innerDataType": "contact-time",
-          "label": "Orario preferito"
-        }
-      },
-      {
-        "name": "dropoutDate",
-        "schema": {
-          "dataType": "date",
-          "label": "Data di chiusura"
-        }
-      },
-      {
-        "name": "dropoutType",
-        "schema": {
-          "dataType": "string",
-          "label": "Motivo della chiusura"
-        }
-      },
-      {
-        "name": "dropoutRemarks",
-        "schema": {
-          "dataType": "string",
-          "label": "Osservazioni"
-        }
-      }
-    ],
-    "_id": "entity:Child"
+    ]
   },
-  "enum:genders": [
-    {
-      "id": "",
-      "label": ""
-    },
-    {
-      "id": "M",
-      "label": "male"
-    },
-    {
-      "id": "F",
-      "label": "female"
-    },
-    {
-      "id": "X",
-      "label": "Non-binary/third gender"
-    }
-  ],
-  "enum:record-type": [
-    {
-      "id": "",
-      "label": ""
-    },
-    {
-      "id": "HOSTAGE",
-      "label": "Ostaggio"
-    },
-    {
-      "id": "FAMILY",
-      "label": "Familiare"
-    },
-    {
-      "id": "FRIEND",
-      "label": "Amico o Collega"
-    }
-  ],
-  "enum:contact-means": [
-    {
-      "id": "",
-      "label": ""
-    },
-    {
-      "id": "EMAIL",
-      "label": "email"
-    },
-    {
-      "id": "PHONE",
-      "label": "phone"
-    }
-  ],
-  "enum:contact-time": [
-    {
-      "id": "",
-      "label": ""
-    },
-    {
-      "id": "MORNING",
-      "label": "morning"
-    },
-    {
-      "id": "AFTERNOON",
-      "label": "afternoon"
-    },
-    {
-      "id": "EVENING",
-      "label": "evening"
-    }
-  ],
   "entity:School": {
     "attributes": [
       {
         "name": "name",
         "schema": {
-          "dataType": "string",
-          "label": "Nome",
-          "validators": {
-            "required": true
-          }
+          dataType: "string",
+          label: $localize`:Label for the name of a school:Name`
         }
       },
       {
-        "name": "location",
+        "name": "privateSchool",
         "schema": {
-          "dataType": "string",
-          "label": "Citta'"
+          dataType: "boolean",
+          label: $localize`:Label for if a school is a private school:Private School`
+        }
+      },
+      {
+        "name": "language",
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for the language of a school:Language`
+        }
+      },
+      {
+        "name": "address",
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for the address of a school:Address`
         }
       },
       {
         "name": "phone",
         "schema": {
-          "dataType": "string",
-          "label": "Phone"
+          dataType: "string",
+          label: $localize`:Label for the phone number of a school:Phone Number`
         }
       },
       {
-        "name": "email",
+        "name": "timing",
         "schema": {
-          "dataType": "string",
-          "label": "Email"
-        }
-      },
-      {
-        "name": "languages",
-        "schema": {
-          "dataType": "string",
-          "label": "Lingue parlate"
-        }
-      },
-      {
-        "name": "profession",
-        "schema": {
-          "dataType": "string",
-          "label": "Professione"
-        }
-      },
-      {
-        "name": "employer",
-        "schema": {
-          "dataType": "string",
-          "label": "Datore di lavoro"
+          dataType: "string",
+          label: $localize`:Label for the timing of a school:School Timing`
         }
       },
       {
         "name": "remarks",
         "schema": {
-          "dataType": "string",
-          "label": "Osservazioni"
-        }
-      },
-      {
-        "name": "availabilityLimitations",
-        "schema": {
-          "dataType": "string",
-          "label": "Disponibilita'"
-        }
-      },
-      {
-        "name": "HITraining",
-        "schema": {
-          "dataType": "date-only",
-          "label": "Data formazione Hostage Italia",
-          "description": "Date completed; If empty, no training has been done"
-        }
-      },
-      {
-        "name": "HIExperience",
-        "schema": {
-          "dataType": "configurable-enum",
-          "innerDataType": "HI-experience",
-          "label": "Esperienza con Hostage Italia"
-        }
-      },
-      {
-        "name": "scopeItalia",
-        "schema": {
-          "dataType": "boolean",
-          "label": "Italia"
-        }
-      },
-      {
-        "name": "scopeRegione",
-        "schema": {
-          "dataType": "boolean",
-          "label": "Regione"
-        }
-      },
-      {
-        "name": "scopeProvincia",
-        "schema": {
-          "dataType": "boolean",
-          "label": "Provincia"
-        }
-      },
-      {
-        "name": "scopeCitta",
-        "schema": {
-          "dataType": "boolean",
-          "label": "Citta'"
-        }
-      },
-      {
-        "name": "signedNDA",
-        "schema": {
-          "dataType": "boolean",
-          "label": "AND Firmato"
+          dataType: "string",
+          label: $localize`:Label for the remarks for a school:Remarks`
         }
       }
-    ],
-    "_id": "entity:School"
+    ]
   },
-  "enum:HI-experience": [
-    {
-      "id": "",
-      "label": ""
-    },
-    {
-      "id": "EX_HOSTAGE",
-      "label": "Ex-ostaggio"
-    },
-    {
-      "id": "FAMILY",
-      "label": "Familiare"
-    },
-    {
-      "id": "PROFESSIONAL",
-      "label": "Professionista"
-    },
-    {
-      "id": "NONE",
-      "label": "Nessuno"
-    }
-  ],
-  "entity:EducationalMaterial": {
+  "entity:HistoricalEntityData": {
     "attributes": [
       {
-        "name": "materialType",
+        "name": "isMotivatedDuringClass",
         "schema": {
           "dataType": "configurable-enum",
-          "innerDataType": "materials",
-          "label": "Tipo di spesa"
+          "innerDataType": "rating-answer",
+          label: $localize`:Label for a child attribute:Motivated`,
+          description: $localize`:Description for a child attribute:The child is motivated during the class.`
         }
       },
       {
-        "name": "materialAmount",
+        "name": "isParticipatingInClass",
         "schema": {
-          "dataType": "number",
-          "label": "Somma"
+          "dataType": "configurable-enum",
+          "innerDataType": "rating-answer",
+          label: $localize`:Label for a child attribute:Participating`,
+          description: $localize`:Description for a child attribute:The child is actively participating in the class.`
         }
       },
       {
-        "name": "description",
+        "name": "isInteractingWithOthers",
         "schema": {
-          "dataType": "string",
-          "label": "Descrizione"
+          "dataType": "configurable-enum",
+          "innerDataType": "rating-answer",
+          label: $localize`:Label for a child attribute:Interacting`,
+          description: $localize`:Description for a child attribute:The child interacts with other students during the class.`
         }
       },
       {
-        "name": "receipt",
+        "name": "doesHomework",
         "schema": {
-          "dataType": "string",
-          "label": "Ricevuta registrata"
+          "dataType": "configurable-enum",
+          "innerDataType": "rating-answer",
+          label: $localize`:Label for a child attribute:Homework`,
+          description: $localize`:Description for a child attribute:The child does its homework.`
         }
-      }
+      },
+      {
+        "name": "asksQuestions",
+        "schema": {
+          "dataType": "configurable-enum",
+          "innerDataType": "rating-answer",
+          label: $localize`:Label for a child attribute:Asking Questions`,
+          description: $localize`:Description for a child attribute:The child is asking questions during the class.`
+        }
+      },
+    ]
+  },
+  "entity:User": {
+    attributes: [
+      {
+        name: "email",
+        schema: {
+          dataType: "string",
+          label: $localize`:Label of user email:Email`
+        }
+      },
+      {
+        name: "phone",
+        schema: {
+          dataType: "string",
+          label: $localize`:Label of user phone:Contact`
+        }
+      },
     ]
   }
 };
