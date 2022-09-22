@@ -10,6 +10,7 @@
     [matChipInputFor]="chipList"
     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
     (matChipInputTokenEnd)="select($event)"
+    (keyup.enter)="enterPressed()"
   />
 
   <mat-chip-list #chipList [disabled]="formControl.disabled || loading.value">
@@ -43,7 +44,11 @@
   >
     <!-- Optional header -->
     <ng-content select="mat-option"></ng-content>
-    <mat-option *ngFor="let res of filteredEntities | async" [value]="res">
+    <mat-option
+      [class.highlight]="filteredEntities.length === 1"
+      *ngFor="let res of filteredEntities"
+      [value]="res"
+    >
       <app-display-entity
         [entityToDisplay]="res"
         [linkDisabled]="true"

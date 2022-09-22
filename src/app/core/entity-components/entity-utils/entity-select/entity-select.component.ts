@@ -126,18 +126,22 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   inputPlaceholder = this.loadingPlaceholder;
 
   allEntities: E[] = [];
-  filteredEntities: Observable<E[]>;
+  filteredEntities: E[] = [];
   formControl = new FormControl("");
 
   @ViewChild("inputField") inputField: ElementRef<HTMLInputElement>;
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
   constructor(private entityMapperService: EntityMapperService) {
-    this.filteredEntities = this.formControl.valueChanges.pipe(
-      untilDestroyed(this),
-      filter((value) => value === null || typeof value === "string"), // sometimes produces entities
-      map((searchText?: string) => this.filter(searchText))
-    );
+    this.formControl.valueChanges
+      .pipe(
+        untilDestroyed(this),
+        filter((value) => value === null || typeof value === "string"), // sometimes produces entities
+        map((searchText?: string) => this.filter(searchText))
+      )
+      .subscribe((value) => {
+        this.filteredEntities = value;
+      });
     this.loading.pipe(untilDestroyed(this)).subscribe((isLoading) => {
       this.inputPlaceholder = isLoading
         ? this.loadingPlaceholder
@@ -227,6 +231,12 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
       this.emitChange();
       // Update the form control to re-run the filter function
       this.formControl.updateValueAndValidity();
+    }
+  }
+
+  enterPressed() {
+    if (this.filteredEntities.length === 1) {
+      this.selectEntity(this.filteredEntities[0]);
     }
   }
 
