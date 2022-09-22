@@ -1,8 +1,7 @@
-import { ConfigurableEnumValue } from "../core/configurable-enum/configurable-enum.interface";
 import { Ordering } from "../core/configurable-enum/configurable-enum-ordering";
 
-export const warningLevels: ConfigurableEnumValue[] =
-  Ordering.imposeTotalOrdering([
+export const warningLevels: Ordering.EnumValue[] = Ordering.imposeTotalOrdering(
+  [
     {
       id: "",
       label: "",
@@ -19,4 +18,5 @@ export const warningLevels: ConfigurableEnumValue[] =
       id: "URGENT",
       label: $localize`:Label warning level:Urgent Follow-Up`,
     },
-  ]);
+  ]
+);
