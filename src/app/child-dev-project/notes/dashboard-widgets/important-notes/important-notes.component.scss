@@ -1,5 +1,5 @@
 @use "../../../../core/dashboard/dashboard-widget-base";
-@use "src/styles" as *;
+@use "../../../../../styles/variables/sizes";
 
 .subject-cell {
   text-align: right;
@@ -13,7 +13,7 @@
     top: 0;
     content: '';
     display: block;
-    width: $standard-margin-small;
+    width: sizes.$small;
     height: 100%;
     position: absolute;
     background-color: var(--important-notes-bg-color);
@@ -25,10 +25,10 @@
   position: relative;
 
   & > td:first-child {
-    padding-left: 2 * $standard-margin-small;
+    padding-left: 2 * sizes.$small;
   }
 
   & > td:last-child {
-    padding-right: $standard-margin-small;
+    padding-right: sizes.$small;
   }
 }
