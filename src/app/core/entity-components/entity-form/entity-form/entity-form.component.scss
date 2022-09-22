@@ -22,7 +22,7 @@ $max-screen-width: $min-block-width + $margin-main-view-right + $margin-main-vie
   @include adaptive-grid($min-block-width, $max-screen-width);
   align-items: start;
   position: relative;
-  height: calc(100vh - 240px);
+  max-height: calc(100vh - 240px);
   overflow: auto;
 }
 
