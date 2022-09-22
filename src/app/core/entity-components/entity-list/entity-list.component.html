@@ -1,41 +1,42 @@
 <!-- Desktop version -->
 <div *ngIf="isDesktop">
 
-    <!-- Header bar; contains the title on the left and controls on the right -->
+  <!-- Header bar; contains the title on the left and controls on the right -->
 
-    <div
-      class="flex-row justify-space-between"
-      [ngStyle]="offsetFilterStyle"
-    >
-      <app-view-title>
-        {{ listName }}
-      </app-view-title>
+  <div
+    class="flex-row justify-space-between"
+    [ngStyle]="offsetFilterStyle"
+  >
+    <app-view-title>
+      {{ listName }}
+    </app-view-title>
 
-      <div class="flex-row gap-regular">
-        <app-add-new-button
-          (click)="addNewClick.emit()"
-          angulartics2On="click"
-          angularticsCategory="UserAction"
-          [angularticsAction]="
-              listName.toLowerCase().replace(' ', '_') + '_add_new'
-            "
-          [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
-          angularticsAction="list_add_entity"
-          *appDisabledEntityOperation="{
-              entity: entityConstructor,
-              operation: 'create'
-            }"
-        > Add new </app-add-new-button>
-        <button mat-icon-button color="primary" [matMenuTriggerFor]="additional">
-          <fa-icon class="standard-icon" icon="ellipsis-v"></fa-icon>
-        </button>
-      </div>
+    <div class="flex-row gap-regular">
+      <app-add-new-button
+        (click)="addNewClick.emit()"
+        angulartics2On="click"
+        angularticsCategory="UserAction"
+        [angularticsAction]="
+            listName.toLowerCase().replace(' ', '_') + '_add_new'
+          "
+        [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
+        angularticsAction="list_add_entity"
+        *appDisabledEntityOperation="{
+            entity: entityConstructor,
+            operation: 'create'
+          }"
+        i18n
+      > Add New </app-add-new-button>
+      <button mat-icon-button color="primary" [matMenuTriggerFor]="additional">
+        <fa-icon class="standard-icon" icon="ellipsis-v"></fa-icon>
+      </button>
     </div>
+  </div>
 
-    <!-- Filters -->
+  <!-- Filters -->
 
-    <div class="flex-row gap-regular flex-wrap">
-      <div *ngTemplateOutlet="filterDialog"></div>
+  <div class="flex-row gap-regular flex-wrap">
+    <div *ngTemplateOutlet="filterDialog"></div>
 
     <app-list-filter
       *ngFor="let filter of filterSelections"
