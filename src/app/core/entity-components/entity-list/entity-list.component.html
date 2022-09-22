@@ -66,7 +66,7 @@
         ></mat-tab>
       </mat-tab-group>
     </div>
-    <div *ngTemplateOutlet="subrecord"></div>
+    <ng-container *ngTemplateOutlet="subrecord"></ng-container>
   </div>
 </div>
 
@@ -82,7 +82,7 @@
     </button>
   </div>
 
-  <div *ngTemplateOutlet="subrecord"></div>
+  <ng-container *ngTemplateOutlet="subrecord"></ng-container>
 </div>
 
 <!-- Templates and menus for both mobile and desktop -->
