@@ -85,9 +85,8 @@ export class EntityMapperService {
       this.entitySchemaService.loadDataIntoEntity(entity, record);
     } catch (e) {
       // add _id information to error message
-      throw new Error(
-        `Could not transform entity "${record._id}": ${e.message}`
-      );
+      e.message = `Could not transform entity "${record._id}": ${e.message}`;
+      throw e;
     }
     return entity;
   }
