@@ -141,6 +141,20 @@ describe("EditSingleEntityComponent", () => {
     expect(inputSpy).toHaveBeenCalled();
   }));
 
+  it("Should select an entity after hitting enter only of the typed string is unique for the entity", () => {
+    const child1 = Child.create("First Child");
+    const child2 = Child.create("Second Child");
+    component.entities = [child1, child2];
+
+    component.updateAutocomplete("Child");
+    component.enterPressed();
+    expect(component.selectedEntity).toBe(undefined);
+
+    component.updateAutocomplete("Second");
+    component.enterPressed();
+    expect(component.selectedEntity).toBe(child2);
+  });
+
   function initComponent(): Promise<any> {
     return component.onInitFromDynamicConfig({
       formFieldConfig: { id: "childId" },

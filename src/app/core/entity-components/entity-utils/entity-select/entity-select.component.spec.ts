@@ -23,7 +23,7 @@ import {
   entityRegistry,
 } from "../../../entity/database-entity.decorator";
 
-fdescribe("EntitySelectComponent", () => {
+describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any>;
   let fixture: ComponentFixture<EntitySelectComponent<any>>;
   let subscription: Subscription = null;
@@ -199,4 +199,19 @@ fdescribe("EntitySelectComponent", () => {
     component.unselectEntity(selectedUser);
     expect(component.filteredEntities).toContain(selectedUser);
   });
+
+  it("should select a user after hitting enter only if the typed string is unique for this users", fakeAsync(() => {
+    component.entityType = User.ENTITY_TYPE;
+
+    component.formControl.setValue("Ab");
+    component.enterPressed();
+    tick();
+    expect(component.filteredEntities.length).not.toBe(1);
+
+    component.formControl.setValue("Abd");
+    component.enterPressed();
+    tick();
+    expect(component.filteredEntities.length).toBe(3);
+    expect(component.filteredEntities).not.toContain(testUsers[2]);
+  }));
 });
