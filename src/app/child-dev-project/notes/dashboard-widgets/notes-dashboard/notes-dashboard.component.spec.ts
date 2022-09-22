@@ -17,23 +17,19 @@ describe("NotesDashboardComponent", () => {
 
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
 
-  beforeEach(
-    waitForAsync(() => {
-      mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
-        "getDaysSinceLastNoteOfEachChild",
-      ]);
-      mockChildrenService.getDaysSinceLastNoteOfEachChild.and.resolveTo(
-        new Map()
-      );
+  beforeEach(waitForAsync(() => {
+    mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
+      "getDaysSinceLastNoteOfEachChild",
+    ]);
+    mockChildrenService.getDaysSinceLastNoteOfEachChild.and.resolveTo(
+      new Map()
+    );
 
-      TestBed.configureTestingModule({
-        imports: [ChildrenModule, MockedTestingModule.withState()],
-        providers: [
-          { provide: ChildrenService, useValue: mockChildrenService },
-        ],
-      }).compileComponents();
-    })
-  );
+    TestBed.configureTestingModule({
+      imports: [ChildrenModule, MockedTestingModule.withState()],
+      providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
+    }).compileComponents();
+  }));
 
   describe("with recent notes", () => {
     beforeEach(() => {
@@ -63,7 +59,7 @@ describe("NotesDashboardComponent", () => {
       component.ngOnInit();
       tick();
 
-      expect(component.concernedChildren).toHaveSize(3);
+      expect(component.dataSource.data).toHaveSize(3);
     }));
   });
 
@@ -96,9 +92,9 @@ describe("NotesDashboardComponent", () => {
 
       tick();
 
-      expect(component.concernedChildren).toHaveSize(3);
+      expect(component.dataSource.data).toHaveSize(3);
 
-      expect(component.concernedChildren[0]).toEqual({
+      expect(component.dataSource.data[0]).toEqual({
         childId: "5",
         daysSinceLastNote: 50,
         moreThanDaysSince: false,
@@ -114,11 +110,11 @@ describe("NotesDashboardComponent", () => {
       component.ngOnInit();
       tick();
 
-      expect(component.concernedChildren).toHaveSize(1);
+      expect(component.dataSource.data).toHaveSize(1);
 
-      expect(component.concernedChildren[0].childId).toBe(childId1);
-      expect(component.concernedChildren[0].moreThanDaysSince).toBeTrue();
-      expect(component.concernedChildren[0].daysSinceLastNote).toBeFinite();
+      expect(component.dataSource.data[0].childId).toBe(childId1);
+      expect(component.dataSource.data[0].moreThanDaysSince).toBeTrue();
+      expect(component.dataSource.data[0].daysSinceLastNote).toBeFinite();
     }));
   });
 });
