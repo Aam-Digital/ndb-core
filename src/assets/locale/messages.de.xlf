@@ -212,7 +212,8 @@
       <trans-unit id="0038846c0220ff6fd7989d00827b3d20f7ad304f" datatype="html">
         <source> All excused (out of <x id="INTERPOLATION" equiv-text="{{ selectedEvent.children.length }}"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other {participants} }"/> ) </source>
         <target state="translated">Alle entschuldigt (von <x id="INTERPOLATION" equiv-text="{{ selectedEvent.children.length"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other {participants} }"/> ) </target>
-        <note priority="1" from="description">How many participants attended at an event (in percent)</note>
+        <note priority="1" from="description">How many participants attended at an event (in
+        percent)</note>
         <note priority="1" from="meaning">Event participants</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
