@@ -5,21 +5,27 @@
   text-align: right;
 }
 
-.row-view {
-  cursor: pointer;
+.date-cell {
   position: relative;
 
   &::before {
+    left: 0;
+    top: 0;
     content: '';
     display: block;
-    width: 8px;
+    width: $standard-margin-small;
     height: 100%;
     position: absolute;
     background-color: var(--important-notes-bg-color);
   }
+}
+
+.row-view {
+  cursor: pointer;
+  position: relative;
 
   & > td:first-child {
-    padding-left: $standard-margin-small + 4;
+    padding-left: 2 * $standard-margin-small;
   }
 
   & > td:last-child {
