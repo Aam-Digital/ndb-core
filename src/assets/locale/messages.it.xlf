@@ -857,7 +857,7 @@
       </trans-unit>
       <trans-unit id="d1098c08e9a97818984d027f08aaf20f0ec574be" datatype="html">
         <source> no birthdays in the next <x id="INTERPOLATION" equiv-text="{{ birthdayThreshold - 1 }}"/> days </source>
-        <target state="new"> no birthdays in the next <x id="INTERPOLATION" equiv-text="{{ birthdayThreshold - 1 }}"/> days </target>
+        <target state="translated"> nessun compleanno nei prossimi <x id="INTERPOLATION" equiv-text="{{ birthdayThreshold - 1 }}"/> giorni </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/dashboard-widgets/birthday-dashboard/birthday-dashboard.component.html</context>
           <context context-type="linenumber">18,20</context>
@@ -3655,7 +3655,7 @@
       </trans-unit>
       <trans-unit id="5248717555542428023" datatype="html">
         <source>Username</source>
-        <target state="new">Username</target>
+        <target state="translated">Nome utente</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user.ts</context>
           <context context-type="linenumber">34</context>
