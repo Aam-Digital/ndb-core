@@ -20,9 +20,10 @@ interface BmiRow {
   styleUrls: ["./children-bmi-dashboard.component.scss"],
 })
 export class ChildrenBmiDashboardComponent
-  implements OnInitDynamicComponent, AfterViewInit {
+  implements OnInitDynamicComponent, AfterViewInit
+{
   bmiDataSource = new MatTableDataSource<BmiRow>();
-  isLoading = false;
+  isLoading = true;
   @ViewChild("paginator") paginator: MatPaginator;
 
   constructor(private entityMapper: EntityMapperService) {}
@@ -36,7 +37,6 @@ export class ChildrenBmiDashboardComponent
   }
 
   async loadBMIData() {
-    this.isLoading = true;
     // Maybe replace this by a smart index function
     const healthChecks = await this.entityMapper.loadType(HealthCheck);
     const healthCheckMap = groupBy(healthChecks, "child");

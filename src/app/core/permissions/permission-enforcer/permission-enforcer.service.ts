@@ -93,13 +93,16 @@ export class PermissionEnforcerService {
   }
 
   private getRelevantSubjects(rule: DatabaseRule): string[] {
+    let subjects: string[];
     if (rule.subject === "all") {
-      return [...this.entities.keys()];
+      subjects = [...this.entities.keys()];
     } else if (Array.isArray(rule.subject)) {
-      return rule.subject;
+      subjects = rule.subject;
     } else {
-      return [rule.subject];
+      subjects = [rule.subject];
     }
+    // Only return valid entities
+    return subjects.filter((sub) => this.entities.has(sub));
   }
 
   private async dbHasEntitiesWithoutPermissions(

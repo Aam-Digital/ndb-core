@@ -8,7 +8,6 @@ import { NotesManagerComponent } from "./notes-manager/notes-manager.component";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatTableModule } from "@angular/material/table";
-import { FlexLayoutModule } from "@angular/flex-layout";
 import { RouterModule } from "@angular/router";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -47,6 +46,7 @@ import { NotesDashboardComponent } from "./dashboard-widgets/notes-dashboard/not
 import { NotesOfChildComponent } from "./notes-of-child/notes-of-child.component";
 import { DashboardModule } from "../../core/dashboard/dashboard.module";
 import { ExportModule } from "../../core/export/export.module";
+import { ImportantNotesComponent } from "./dashboard-widgets/important-notes/important-notes.component";
 
 @NgModule({
   declarations: [
@@ -56,12 +56,12 @@ import { ExportModule } from "../../core/export/export.module";
     NoteAttendanceCountBlockComponent,
     NotesDashboardComponent,
     NotesOfChildComponent,
+    ImportantNotesComponent,
   ],
   imports: [
     CommonModule,
     FormsModule,
     ConfirmationDialogModule,
-    FlexLayoutModule,
     RouterModule,
     MatFormFieldModule,
     MatInputModule,
@@ -114,5 +114,6 @@ export class NotesModule {
     NoteAttendanceCountBlockComponent,
     NotesDashboardComponent,
     NotesOfChildComponent,
+    ImportantNotesComponent,
   ];
 }

@@ -1,8 +1,10 @@
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
@@ -13,9 +15,11 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { AlertService } from "../../../alerts/alert.service";
 import { Subscription } from "rxjs";
-import { FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
-import { EntityFormService } from "../../entity-form/entity-form.service";
+import {
+  EntityForm,
+  EntityFormService,
+} from "../../entity-form/entity-form.service";
 import { MatDialog } from "@angular/material/dialog";
 import { LoggingService } from "../../../logging/logging.service";
 import { AnalyticsService } from "../../../analytics/analytics.service";
@@ -27,9 +31,9 @@ import {
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { tableSort } from "./table-sort";
 
-export interface TableRow<T> {
+export interface TableRow<T extends Entity> {
   record: T;
-  formGroup?: FormGroup;
+  formGroup?: EntityForm<T>;
 }
 
 /**
@@ -52,7 +56,8 @@ export interface TableRow<T> {
   styleUrls: ["./entity-subrecord.component.scss"],
 })
 export class EntitySubrecordComponent<T extends Entity>
-  implements OnChanges, OnInit {
+  implements OnChanges, OnInit
+{
   @Input() isLoading: boolean;
 
   /** configuration what kind of columns to be generated for the table */
@@ -66,10 +71,12 @@ export class EntitySubrecordComponent<T extends Entity>
     });
     this.filteredColumns = this._columns.filter((col) => !col.hideFromTable);
   }
+  _columns: FormFieldConfig[] = [];
+  filteredColumns: FormFieldConfig[] = [];
 
-  /** data to be displayed */
+  /** data to be displayed, can also be used as two-way-binding */
   @Input()
-  set records(value: Array<T>) {
+  set records(value: T[]) {
     this._records = value;
     this.recordsDataSource.data = this._records.map((rec) => {
       return {
@@ -81,9 +88,9 @@ export class EntitySubrecordComponent<T extends Entity>
         new (this._records[0].getConstructor() as EntityConstructor<T>)();
     }
   }
-  private _records: Array<T> = [];
-  _columns: FormFieldConfig[] = [];
-  filteredColumns: FormFieldConfig[] = [];
+  private _records: T[] = [];
+
+  @Output() recordsChange = new EventEmitter<T[]>();
 
   /**
    * factory method to create a new instance of the displayed Entity type
@@ -94,7 +101,7 @@ export class EntitySubrecordComponent<T extends Entity>
   /**
    * Whether the rows of the table are inline editable and new entries can be created through the "+" button.
    */
-  @Input() editable: boolean = true;
+  @Input() editable = true;
 
   /** columns displayed in the template's table */
   @Input() columnsToDisplay = [];
@@ -107,7 +114,15 @@ export class EntitySubrecordComponent<T extends Entity>
 
   idForSavingPagination = "startWert";
 
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort) set sort(matSort: MatSort) {
+    // Initialize sort once available
+    this.recordsDataSource.sort = matSort;
+    setTimeout(() => this.initDefaultSort());
+  }
+
+  get sort(): MatSort {
+    return this.recordsDataSource.sort;
+  }
 
   /**
    * A function which should be executed when a row is clicked or a new entity created.
@@ -211,7 +226,6 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 
   private initDefaultSort() {
-    this.recordsDataSource.sort = this.sort;
     this.recordsDataSource.sortData = (data, sort) =>
       tableSort(data, {
         active: sort.active as keyof T | "",
@@ -308,11 +322,13 @@ export class EntitySubrecordComponent<T extends Entity>
     this.records = this._records.filter(
       (rec) => rec.getId() !== deleted.getId()
     );
+    this.recordsChange.emit(this._records);
   }
 
   private addToTable(record: T) {
     // use setter so datasource is also updated
     this.records = [record].concat(this._records);
+    this.recordsChange.emit(this._records);
   }
 
   /**
@@ -343,11 +359,7 @@ export class EntitySubrecordComponent<T extends Entity>
   private showRowDetails(entity: T) {
     const columnsToDisplay = this._columns
       .filter((col) => col.edit)
-      .map((col) => {
-        col.forTable = false;
-        return col;
-      })
-      .map((col) => Object.assign({}, col));
+      .map((col) => Object.assign({}, col, { forTable: false }));
     this.dialog.open(RowDetailsComponent, {
       width: "80%",
       maxHeight: "90vh",

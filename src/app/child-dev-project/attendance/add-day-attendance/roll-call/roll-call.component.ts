@@ -17,7 +17,6 @@ import { ConfigService } from "../../../../core/config/config.service";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { Child } from "../../../children/model/child";
 import { LoggingService } from "../../../../core/logging/logging.service";
-import { FormGroup } from "@angular/forms";
 import { sortByAttribute } from "../../../../utils/utils";
 import { NoteDetailsComponent } from "../../../notes/note-details/note-details.component";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
@@ -74,7 +73,6 @@ export class RollCallComponent implements OnChanges {
   availableStatus: AttendanceStatusType[];
 
   children: Child[] = [];
-  form: FormGroup;
 
   constructor(
     private configService: ConfigService,
@@ -185,6 +183,15 @@ export class RollCallComponent implements OnChanges {
     if (this.currentIndex + 1 <= this.children.length) {
       this.goToParticipantWithIndex(this.currentIndex + 1);
     }
+  }
+
+  goToFirst() {
+    this.goToParticipantWithIndex(0);
+  }
+
+  goToLast() {
+    // jump directly to completed state, i.e. beyond last participant index
+    this.goToParticipantWithIndex(this.children.length);
   }
 
   get isFirst(): boolean {

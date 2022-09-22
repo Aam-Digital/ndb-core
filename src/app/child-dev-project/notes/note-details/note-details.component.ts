@@ -10,6 +10,8 @@ import { ExportColumnConfig } from "../../../core/export/export-service/export-c
 import { ConfigService } from "../../../core/config/config.service";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { compareEnums } from "../../../utils/utils";
+import { BreakpointObserver } from "@angular/cdk/layout";
+import { FormDialogWrapperComponent } from "../../../core/form-dialog/form-dialog-wrapper/form-dialog-wrapper.component";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -21,11 +23,23 @@ import { compareEnums } from "../../../utils/utils";
 })
 export class NoteDetailsComponent implements ShowsEntity<Note> {
   @Input() entity: Note;
-  @ViewChild("dialogForm", { static: true }) formDialogWrapper;
+  @ViewChild("dialogForm", { static: true })
+  formDialogWrapper: FormDialogWrapperComponent<Note>;
 
   readonly Child: EntityConstructor<Child> = Child;
   readonly School: EntityConstructor<School> = School;
   readonly User: EntityConstructor<User> = User;
+  readonly dateLabel = Note.schema.get("date").label;
+  readonly statusLabel = Note.schema.get("warningLevel").label;
+  readonly categoryLabel = Note.schema.get("category").label;
+  readonly authorsLabel = Note.schema.get("authors").label;
+  readonly authorsPlaceholder = this.getPlaceholder(this.authorsLabel);
+  readonly subjectLabel = Note.schema.get("subject").label;
+  readonly textLabel = Note.schema.get("text").label;
+  readonly childrenLabel = Note.schema.get("children").label;
+  readonly childrenPlaceholder = this.getPlaceholder(this.childrenLabel);
+  readonly schoolsLabel = Note.schema.get("schools").label;
+  readonly schoolsPlaceholder = this.getPlaceholder(this.schoolsLabel);
 
   readonly INTERACTION_TYPE_CONFIG = INTERACTION_TYPE_CONFIG_ID;
   readonly compareFn = compareEnums;
@@ -34,10 +48,19 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
   /** export format for notes to be used for downloading the individual details */
   exportConfig: ExportColumnConfig[];
 
-  constructor(private configService: ConfigService) {
+  /** Is it mobile view or not */
+  mobile = false;
+
+  constructor(
+    private configService: ConfigService,
+    private breakpointObserver: BreakpointObserver
+  ) {
     this.exportConfig = this.configService.getConfig<{
       config: EntityListConfig;
     }>("view:note").config.exportConfig;
+    this.breakpointObserver
+      .observe("(max-width: 1000px)")
+      .subscribe((next) => (this.mobile = next.matches));
   }
 
   toggleIncludeInactiveChildren() {
@@ -49,4 +72,8 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
   }
 
   filterInactiveChildren: (Child) => boolean = (c: Child) => c.isActive;
+
+  private getPlaceholder(label: string): string {
+    return $localize`:Placeholder for input to add entities|context Add User(s):Add ${label}`;
+  }
 }

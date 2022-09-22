@@ -1,6 +1,5 @@
 import { NgModule } from "@angular/core";
 import { CommonModule, DatePipe } from "@angular/common";
-import { SchoolsListComponent } from "./schools-list/schools-list.component";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatButtonModule } from "@angular/material/button";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
@@ -28,6 +27,8 @@ import { EntityListModule } from "../../core/entity-components/entity-list/entit
 import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ViewModule } from "../../core/view/view.module";
+import { ActivitiesOverviewComponent } from "./activities-overview/activities-overview.component";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 
 @NgModule({
   imports: [
@@ -70,19 +71,20 @@ import { ViewModule } from "../../core/view/view.module";
     EntitySubrecordModule,
     FontAwesomeModule,
     ViewModule,
+    MatSlideToggleModule,
   ],
   declarations: [
     SchoolBlockComponent,
-    SchoolsListComponent,
     ChildrenOverviewComponent,
+    ActivitiesOverviewComponent,
   ],
   exports: [SchoolBlockComponent],
   providers: [DatePipe],
 })
 export class SchoolsModule {
   static dynamicComponents = [
-    SchoolsListComponent,
     ChildrenOverviewComponent,
     SchoolBlockComponent,
+    ActivitiesOverviewComponent,
   ];
 }

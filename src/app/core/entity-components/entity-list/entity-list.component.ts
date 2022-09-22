@@ -26,6 +26,10 @@ import { map } from "rxjs/operators";
 import { MatDialog } from "@angular/material/dialog";
 import { FilterOverlayComponent } from "./filter-overlay/filter-overlay.component";
 import { AnalyticsService } from "../../analytics/analytics.service";
+import { RouteTarget } from "../../../app.routing";
+import { RouteData } from "../../view/dynamic-routing/view-config.interface";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
 
 /**
  * This component allows to create a full blown table with pagination, filtering, searching and grouping.
@@ -33,14 +37,18 @@ import { AnalyticsService } from "../../analytics/analytics.service";
  * The pagination settings are stored for each user.
  * The columns can be any kind of component.
  * The column components will be provided with the Entity object, the id for this column, as well as its static config.
+ *
+ * The component can be either used inside a template, or directly in a route through the config object.
  */
+@RouteTarget("EntityList")
 @Component({
   selector: "app-entity-list",
   templateUrl: "./entity-list.component.html",
   styleUrls: ["./entity-list.component.scss"],
 })
 export class EntityListComponent<T extends Entity>
-  implements OnChanges, AfterViewInit {
+  implements OnChanges, AfterViewInit
+{
   @Input() allEntities: T[] = [];
   filteredEntities: T[] = [];
   @Input() listConfig: EntityListConfig;
@@ -97,16 +105,22 @@ export class EntityListComponent<T extends Entity>
     private activatedRoute: ActivatedRoute,
     private analyticsService: AnalyticsService,
     private filterGeneratorService: FilterGeneratorService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private entityMapperService: EntityMapperService,
+    private entities: EntityRegistry
   ) {
+    if (this.activatedRoute.component === EntityListComponent) {
+      // the component is used for a route and not inside a template
+      this.isLoading = true;
+      this.activatedRoute.data.subscribe(
+        (config: RouteData<EntityListConfig>) =>
+          this.buildComponentFromConfig(config)
+      );
+    }
+
     this.media
       .asObservable()
-      .pipe(
-        map(
-          (changes) =>
-            changes[0].mqAlias !== "xs" && changes[0].mqAlias !== "md"
-        )
-      )
+      .pipe(map((c) => c[0].mqAlias !== "xs" && c[0].mqAlias !== "md"))
       .subscribe((isBigScreen) => {
         if (!isBigScreen) {
           this.displayColumnGroupByName(this.mobileColumnGroup);
@@ -122,6 +136,29 @@ export class EntityListComponent<T extends Entity>
     });
   }
 
+  private async buildComponentFromConfig(data: RouteData<EntityListConfig>) {
+    this.listConfig = data.config;
+    this.entityConstructor = this.entities.get(
+      this.listConfig.entity
+    ) as EntityConstructor<T>;
+    this.allEntities = await this.entityMapperService.loadType(
+      this.entityConstructor
+    );
+    this.isLoading = false;
+    this.elementClick.subscribe((entity) =>
+      this.router.navigate([entity.getId()], {
+        relativeTo: this.activatedRoute,
+      })
+    );
+    this.addNewClick.subscribe(() =>
+      this.router.navigate(["new"], { relativeTo: this.activatedRoute })
+    );
+    await this.ngOnChanges({
+      listConfig: undefined,
+      allEntities: undefined,
+    });
+  }
+
   ngAfterViewInit() {
     this.entityTable.recordsDataSource.filterPredicate = (data, filter) =>
       entityFilterPredicate(data.record, filter);
@@ -134,6 +171,9 @@ export class EntityListComponent<T extends Entity>
       this.initColumnGroups(this.listConfig.columnGroups);
       this.filtersConfig = this.listConfig.filters || [];
       this.displayColumnGroupByName(this.defaultColumnGroup);
+      if (this.media.isActive("xs") || this.media.isActive("md")) {
+        this.displayColumnGroupByName(this.mobileColumnGroup);
+      }
     }
     if (changes.hasOwnProperty("allEntities")) {
       await this.initFilterSelections();
@@ -248,9 +288,8 @@ export class EntityListComponent<T extends Entity>
   }
 
   private displayColumnGroupByName(columnGroupName: string) {
-    const selectedColumnIndex = this.getSelectedColumnIndexByName(
-      columnGroupName
-    );
+    const selectedColumnIndex =
+      this.getSelectedColumnIndexByName(columnGroupName);
     if (selectedColumnIndex !== -1) {
       this.selectedColumnGroupIndex = selectedColumnIndex;
     }

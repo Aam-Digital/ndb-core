@@ -2,8 +2,7 @@
   class="mat-elevation-z1 attendance-block w-{{
     attendanceData.getWarningLevel(forChild)
   }}"
-  (mouseenter)="showTooltip()"
-  (mouseleave)="hideTooltip()"
+  [appTemplateTooltip]="tooltip"
 >
   <span *ngIf="attendanceData.getAttendancePercentage(forChild)">
     {{ attendanceData.getAttendancePercentage(forChild) | percent: "1.0-0" }}
@@ -11,20 +10,15 @@
   <span *ngIf="!attendanceData.getAttendancePercentage(forChild)"> - </span>
 </span>
 
-<div style="position: absolute" *ngIf="tooltip">
-  <div
-    class="mat-elevation-z3 attendance-tooltip"
-    (mouseenter)="showTooltip()"
-    (mouseleave)="hideTooltip()"
-  >
-    <div class="attendance-tooltip-header">
+<ng-template #tooltip>
+  <div class="attendance-tooltip-container">
+    <strong>
       {{ attendanceData.periodFrom | date: "shortDate" }} -
       {{ attendanceData.periodTo | date: "shortDate" }}
       {{ attendanceData.activity.title }}
-    </div>
+    </strong>
 
     <div
-      class="attendance-tooltip-content"
       i18n="
         Attended Tooltip|How many attendees were present / how many attendees
         were absent
@@ -33,20 +27,17 @@
       attended {{ attendanceDescription }} events
     </div>
 
-    <div
-      class="attendance-tooltip-content"
+    <em
       *ngIf="logicalCount[LStatus.IGNORE] > 0"
       i18n="Attended Tooltip|How many events were excluded"
     >
       (excluding {{ logicalCount[LStatus.IGNORE] }} events excused or unknown)
-    </div>
-    <div>
-      <app-attendance-calendar
-        [records]="attendanceData.events"
-        [highlightForChild]="forChild"
-        [activity]="attendanceData.activity"
-      >
-      </app-attendance-calendar>
-    </div>
+    </em>
+    <app-attendance-calendar
+      [records]="attendanceData.events"
+      [highlightForChild]="forChild"
+      [activity]="attendanceData.activity"
+    >
+    </app-attendance-calendar>
   </div>
-</div>
+</ng-template>

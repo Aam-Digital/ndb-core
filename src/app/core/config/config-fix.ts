@@ -16,8 +16,10 @@ import { ratingAnswers } from "../../features/historical-data/model/rating-answe
 // prettier-ignore
 export const defaultJsonConfig = {
   "appConfig": {
+    "default_language": "en-US",
     "displayLanguageSelect": true,
-    "logo_path": null
+    "logo_path": null,
+    "site_name": $localize`:Page title:Aam Digital - DEMO (automatically generated data)`,
   },
   "appConfig:usage-analytics": {
     "url": "https://matomo.aam-digital.org",
@@ -63,7 +65,7 @@ export const defaultJsonConfig = {
       {
         "name": $localize`:Menu item:Users`,
         "icon": "users",
-        "link": "/users"
+        "link": "/user"
       },
       {
         "name": $localize`:Menu item:Reports`,
@@ -94,31 +96,38 @@ export const defaultJsonConfig = {
   "enum:document-status": [
     {
       "id": "",
-      "label": ""
+      "label": "",
+      "_ordinal": 0,
     },
     {
       "id": "OK (copy with us)",
-      "label": $localize`:Document status:OK (copy with us)`
+      "label": $localize`:Document status:OK (copy with us)`,
+      "_ordinal": 1,
     },
     {
       "id": "OK (copy needed for us)",
-      "label": $localize`:Document status:OK (copy needed for us)`
+      "label": $localize`:Document status:OK (copy needed for us)`,
+      "_ordinal": 2,
     },
     {
       "id": "needs correction",
-      "label": $localize`:Document status:needs correction`
+      "label": $localize`:Document status:needs correction`,
+      "_ordinal": 3,
     },
     {
       "id": "applied",
-      "label": $localize`:Document status:applied`
+      "label": $localize`:Document status:applied`,
+      "_ordinal": 4,
     },
     {
       "id": "doesn't have",
-      "label": $localize`:Document status:doesn't have`
+      "label": $localize`:Document status:doesn't have`,
+      "_ordinal": 5,
     },
     {
       "id": "not eligible",
-      "label": $localize`:Document status:not eligible`
+      "label": $localize`:Document status:not eligible`,
+      "_ordinal": 6,
     }
   ],
   "enum:center": [
@@ -162,6 +171,12 @@ export const defaultJsonConfig = {
           "component": "ChildrenCountDashboard"
         },
         {
+          "component": "ImportantNotesComponent",
+          "config": {
+            "warningLevels": ["WARNING", "URGENT"],
+          }
+        },
+        {
           "component": "NotesDashboard",
           "config": {
             "sinceDays": 28,
@@ -198,16 +213,13 @@ export const defaultJsonConfig = {
           }
         },
         {
+          "component": "BirthdayDashboard"
+        },
+        {
           "component": "ChildrenBmiDashboard"
-        }
+        },
       ]
     }
-  },
-  "view:user": {
-    "component": "UserAccount"
-  },
-  "view:support": {
-    "component": "Support"
   },
   "view:note": {
     "component": "NotesManager",
@@ -248,6 +260,7 @@ export const defaultJsonConfig = {
       "filters": [
         {
           "id": "status",
+          "label": $localize`:Filter label:Status`,
           "type": "prebuilt"
         },
         {
@@ -301,13 +314,50 @@ export const defaultJsonConfig = {
     "component": "Import",
     "permittedUserRoles": ["admin_app"]
   },
-  "view:users": {
-    "component": "UserList",
+  "view:user": {
+    "component": "EntityList",
+    "config": {
+      "title": $localize`:Title for user overview:Users`,
+      "entity": "User",
+      "columns": ["name", "email", "phone"]
+    },
+    "permittedUserRoles": ["admin_app"]
+  },
+  "view:user/:id": {
+    "component": "EntityDetails",
+    "config": {
+      "entity": "User",
+      "panels": [
+        {
+          "title": $localize`:Panel title:User Information`,
+          "components": [
+            {
+              "title": "",
+              "component": "Form",
+              "config": {
+                "cols": [
+                  [
+                    "name",
+                  ],
+                  [
+                    "email"
+                  ],
+                  [
+                    "phone"
+                  ]
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "icon": "user"
+    },
     "permittedUserRoles": ["admin_app"]
   },
   "view:admin/conflicts": {
     "permittedUserRoles": ["admin_app"],
-    "lazyLoaded":  true
+    "lazyLoaded": true
   },
   "view:help": {
     "component": "MarkdownPage",
@@ -322,9 +372,10 @@ export const defaultJsonConfig = {
     "component": "AddDayAttendance"
   },
   "view:school": {
-    "component": "SchoolsList",
+    "component": "EntityList",
     "config": {
       "title": $localize`:Title of schools overview:Schools List`,
+      "entity": "School",
       "columns": [
         "name",
         "privateSchool",
@@ -345,6 +396,7 @@ export const defaultJsonConfig = {
     "component": "EntityDetails",
     "config": {
       "entity": "School",
+      "title": $localize`:Title when adding new entity|e.g. Add new School or Group:School or Group`,
       "panels": [
         {
           "title": $localize`:Panel title:Basic Information`,
@@ -380,6 +432,15 @@ export const defaultJsonConfig = {
             {
               "title": "",
               "component": "ChildrenOverview",
+            }
+          ]
+        },
+        {
+          "title": $localize`:Panel title:Activities`,
+          "components": [
+            {
+              "title": "",
+              "component": "ActivitiesOverview",
             }
           ]
         }
@@ -651,11 +712,11 @@ export const defaultJsonConfig = {
               component: "HistoricalDataComponent",
               config: [
                 "date",
-                {id: "isMotivatedDuringClass", visibleFrom: "lg" },
-                {id: "isParticipatingInClass", visibleFrom: "lg" },
-                {id: "isInteractingWithOthers", visibleFrom: "lg" },
-                {id: "doesHomework", visibleFrom: "lg" },
-                {id: "asksQuestions", visibleFrom: "lg" },
+                { id: "isMotivatedDuringClass", visibleFrom: "lg" },
+                { id: "isParticipatingInClass", visibleFrom: "lg" },
+                { id: "isInteractingWithOthers", visibleFrom: "lg" },
+                { id: "doesHomework", visibleFrom: "lg" },
+                { id: "asksQuestions", visibleFrom: "lg" },
               ]
             }
           ]
@@ -679,11 +740,11 @@ export const defaultJsonConfig = {
       ]
     }
   },
-
   "view:attendance/recurring-activity": {
-    "component": "ActivityList",
+    "component": "EntityList",
     "config": {
       "title": $localize`:Title of recurring activities overview:Recurring Activities`,
+      "entity": "RecurringActivity",
       "columns": [
         "title",
         "type",
@@ -810,7 +871,7 @@ export const defaultJsonConfig = {
               "subQueries": [
                 {
                   "label": $localize`:Name of column of a report:Type`,
-                  "query": ":setString(School Class)"
+                  "query": ":setString(" + $localize`School Class` + ")"
                 },
                 {
                   "label": $localize`:Name of a column of a report:Name`,
@@ -835,7 +896,7 @@ export const defaultJsonConfig = {
               "subQueries": [
                 {
                   "label": $localize`:Name of column of a report:Type`,
-                  "query": ":setString(Coaching Class)"
+                  "query": ":setString(" + $localize`Coaching Class` + ")"
                 },
                 {
                   "label": $localize`:Name of a column of a report:Name`,
@@ -1001,5 +1062,23 @@ export const defaultJsonConfig = {
         }
       },
     ]
+  },
+  "entity:User": {
+    attributes: [
+      {
+        name: "email",
+        schema: {
+          dataType: "string",
+          label: $localize`:Label of user email:Email`
+        }
+      },
+      {
+        name: "phone",
+        schema: {
+          dataType: "string",
+          label: $localize`:Label of user phone:Contact`
+        }
+      },
+    ]
   }
-}
+};

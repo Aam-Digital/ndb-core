@@ -1,8 +1,7 @@
 <app-dashboard-widget
   icon="weight"
   theme="note"
-  i18n-title="Title of the BMI dashboard component"
-  title="BMI"
+  [title]="bmiDataSource.data.length"
   i18n-subtitle="Subtitle of the BMI dashboard component"
   subtitle="Students with unhealthy BMI"
   [loading]="isLoading"
@@ -22,15 +21,16 @@
         </tr>
         <ng-container matColumnDef="child">
           <td *matCellDef="let row">
-            <app-child-block
+            <app-display-entity
               [entityId]="row.childId"
-            ></app-child-block>
+              entityType="Child"
+            ></app-display-entity>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="bmi">
           <td *matCellDef="let row">
-            <span  class="dashboard-table-additional-info-cell" i18n="Displaying the BMI result of a child|BMI: 21.02">
+            <span class="dashboard-table-additional-info-cell" i18n="Displaying the BMI result of a child|BMI: 21.02">
               BMI: {{ row.bmi.toFixed(2) }}
             </span>
           </td>

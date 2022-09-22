@@ -57,7 +57,6 @@ import { ViewModule } from "../../core/view/view.module";
 import { ChildBlockComponent } from "./child-block/child-block.component";
 import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
-import { WebdavModule } from "../../core/webdav/webdav.module";
 import { BmiBlockComponent } from "./children-list/bmi-block/bmi-block.component";
 import { ChildrenBmiDashboardComponent } from "./dashboard-widgets/children-bmi-dashboard/children-bmi-dashboard.component";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
@@ -66,6 +65,9 @@ import { EntityUtilsModule } from "../../core/entity-components/entity-utils/ent
 import { DashboardModule } from "../../core/dashboard/dashboard.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ExportModule } from "../../core/export/export.module";
+import { BirthdayDashboardComponent } from "./dashboard-widgets/birthday-dashboard/birthday-dashboard.component";
+import { ChildBlockTooltipComponent } from "./child-block/child-block-tooltip/child-block-tooltip.component";
+import { CommonComponentsModule } from "../../core/common-components/common-components.module";
 
 @NgModule({
   imports: [
@@ -97,7 +99,6 @@ import { ExportModule } from "../../core/export/export.module";
     ReactiveFormsModule,
     MatDialogModule,
     MatListModule,
-    WebdavModule,
     MatProgressSpinnerModule,
     ConfirmationDialogModule,
     FormDialogModule,
@@ -109,6 +110,7 @@ import { ExportModule } from "../../core/export/export.module";
     DashboardModule,
     FontAwesomeModule,
     ExportModule,
+    CommonComponentsModule,
   ],
   declarations: [
     ChildBlockComponent,
@@ -120,9 +122,11 @@ import { ExportModule } from "../../core/export/export.module";
     PreviousSchoolsComponent,
     BmiBlockComponent,
     ChildrenBmiDashboardComponent,
+    BirthdayDashboardComponent,
+    ChildBlockTooltipComponent,
   ],
   providers: [ChildrenService, DatePipe, PercentPipe],
-  exports: [ChildBlockComponent],
+  exports: [ChildBlockComponent, BirthdayDashboardComponent],
 })
 export class ChildrenModule {
   static dynamicComponents = [
@@ -135,6 +139,7 @@ export class ChildrenModule {
     EducationalMaterialComponent,
     HealthCheckupComponent,
     PreviousSchoolsComponent,
+    BirthdayDashboardComponent,
   ];
   constructor(entitySchemaService: EntitySchemaService) {
     entitySchemaService.registerSchemaDatatype(new PhotoDatatype());

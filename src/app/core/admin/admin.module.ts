@@ -14,7 +14,6 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { UserListComponent } from "./user-list/user-list.component";
 import { BackupService } from "./services/backup.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FlexModule } from "@angular/flex-layout";
@@ -45,9 +44,9 @@ import { DataImportModule } from "../../features/data-import/data-import.module"
     FontAwesomeModule,
     DataImportModule,
   ],
-  declarations: [AdminComponent, UserListComponent],
+  declarations: [AdminComponent],
   providers: [ChildPhotoUpdateService, BackupService],
 })
 export class AdminModule {
-  static dynamicComponents = [AdminComponent, UserListComponent];
+  static dynamicComponents = [AdminComponent];
 }

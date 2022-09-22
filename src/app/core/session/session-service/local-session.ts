@@ -24,8 +24,9 @@ import {
 } from "./local-user";
 import { SessionService } from "./session.service";
 import { PouchDatabase } from "../../database/pouch-database";
-import { AppConfig } from "../../app-config/app-config";
+import { AppSettings } from "../../app-config/app-settings";
 import { SessionType } from "../session-type";
+import { environment } from "../../../../environments/environment";
 
 /**
  * Responsibilities:
@@ -49,7 +50,9 @@ export class LocalSession extends SessionService {
    * @param password Password
    */
   public async login(username: string, password: string): Promise<LoginState> {
-    const user: LocalUser = JSON.parse(window.localStorage.getItem(username));
+    const user: LocalUser = JSON.parse(
+      window.localStorage.getItem(username.trim().toLowerCase())
+    );
     if (user) {
       if (passwordEqualsEncrypted(password, user.encryptedPassword)) {
         await this.handleSuccessfulLogin(user);
@@ -69,24 +72,28 @@ export class LocalSession extends SessionService {
   }
 
   private async initializeDatabaseForCurrentUser() {
-    const userDBName = `${this.currentDBUser.name}-${AppConfig.settings.database.name}`;
-    this.initDatabase(userDBName);
-    if (!(await this.database.isEmpty())) {
+    const userDBName = `${this.currentDBUser.name}-${AppSettings.DB_NAME}`;
+    // Work on a temporary database before initializing the real one
+    const tmpDB = new PouchDatabase(undefined);
+    this.initDatabase(userDBName, tmpDB);
+    if (!(await tmpDB.isEmpty())) {
       // Current user has own database, we are done here
+      this.initDatabase(userDBName);
       return;
     }
 
-    this.initDatabase(AppConfig.settings.database.name);
+    this.initDatabase(AppSettings.DB_NAME, tmpDB);
     const dbFallback = window.localStorage.getItem(
       LocalSession.DEPRECATED_DB_KEY
     );
     const dbAvailable = !dbFallback || dbFallback === this.currentDBUser.name;
-    if (dbAvailable && !(await this.database.isEmpty())) {
+    if (dbAvailable && !(await tmpDB.isEmpty())) {
       // Old database is available and can be used by the current user
       window.localStorage.setItem(
         LocalSession.DEPRECATED_DB_KEY,
         this.currentDBUser.name
       );
+      this.initDatabase(AppSettings.DB_NAME);
       return;
     }
 
@@ -94,11 +101,11 @@ export class LocalSession extends SessionService {
     this.initDatabase(userDBName);
   }
 
-  private initDatabase(dbName: string) {
-    if (AppConfig.settings.session_type === SessionType.mock) {
-      this.database.initInMemoryDB(dbName);
+  private initDatabase(dbName: string, db = this.database) {
+    if (environment.session_type === SessionType.mock) {
+      db.initInMemoryDB(dbName);
     } else {
-      this.database.initIndexedDB(dbName);
+      db.initIndexedDB(dbName);
     }
   }
 
@@ -113,7 +120,10 @@ export class LocalSession extends SessionService {
       roles: user.roles,
       encryptedPassword: encryptPassword(password),
     };
-    window.localStorage.setItem(localUser.name, JSON.stringify(localUser));
+    window.localStorage.setItem(
+      localUser.name.trim().toLowerCase(),
+      JSON.stringify(localUser)
+    );
     // Update when already logged in
     if (this.getCurrentUser()?.name === localUser.name) {
       this.currentDBUser = localUser;

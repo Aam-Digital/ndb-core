@@ -21,11 +21,13 @@
         class="chip"
       >
         <app-display-entity
+          class="display-entity"
           [entityToDisplay]="entity"
           [linkDisabled]="formControl.enabled"
         ></app-display-entity>
         <fa-icon
           *ngIf="removable && formControl.enabled"
+          i18n-matTooltip="tooltip for remove icon-button"
           matTooltip="remove"
           class="remove-item"
           icon="minus-square"

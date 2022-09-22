@@ -1,31 +1,76 @@
-<div fxLayout="col" fxLayoutGap="4px" fxLayoutAlign="start baseline">
-  <div class="actions" fxFlex="40px" *ngIf="!disabled">
-    <button mat-icon-button (click)="remove.emit()">
-      <fa-icon icon="times"></fa-icon>
-    </button>
+<!-- If feasible, this whole setup should be replaced with a more simple setup that
+  automatically adapts to the screen size without having to rely on two different layout techniques for
+  small and big screens.
+ -->
+<div *ngIf="!mobile">
+  <!-- Desktop view: display the information as table -->
+  <table class="table">
+    <tr *ngFor="let childId of entity.children">
+      <td>
+        <button mat-icon-button>
+          <fa-icon *ngIf="!disabled" icon="trash" (click)="remove.emit(childId)"></fa-icon>
+        </button>
+      </td>
+      <td>
+        <app-display-entity [entityId]="childId" entityType="Child"></app-display-entity>
+      </td>
+      <td>
+        <app-attendance-status-select
+          [(value)]="entity.getAttendance(childId).status"
+          (valueChange)="change.emit(childId)"
+          [disabled]="disabled"
+        >
+        </app-attendance-status-select>
+      </td>
+      <td class="full-width">
+        <mat-form-field class="adjust-top">
+          <input
+            matInput
+            i18n-placeholder
+            placeholder="Remarks"
+            name="remarks"
+            type="text"
+            [(ngModel)]="entity.getAttendance(childId).remarks"
+            [disabled]="disabled"
+            (input)="change.emit(childId)"
+          />
+        </mat-form-field>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div *ngIf="mobile" class="attendance-blocks">
+  <!-- Mobile view / smaller screen: display the information using a flex-layout -->
+  <div *ngFor="let childId of entity.children" class="attendance-item">
+    <div class="attendance-item--header">
+      <app-display-entity [entityId]="childId" entityType="Child"></app-display-entity>
+
+      <button mat-icon-button>
+        <fa-icon *ngIf="!disabled" icon="trash" (click)="remove.emit(childId)"></fa-icon>
+      </button>
+    </div>
+
+    <div class="attendance-item--content">
+      <app-attendance-status-select
+        [(value)]="entity.getAttendance(childId).status"
+        (valueChange)="change.emit(childId)"
+        [disabled]="disabled"
+      >
+      </app-attendance-status-select>
+
+      <mat-form-field>
+        <input
+          matInput
+          i18n-placeholder
+          placeholder="Remarks"
+          name="remarks"
+          type="text"
+          [(ngModel)]="entity.getAttendance(childId).remarks"
+          (input)="change.emit(childId)"
+          [disabled]="disabled"
+        />
+      </mat-form-field>
+    </div>
   </div>
-
-  <div fxFlex="250px">
-    <app-attendance-status-select
-      [(value)]="attendance.status"
-      (valueChange)="change.emit(attendance)"
-      [disabled]="disabled"
-    >
-    </app-attendance-status-select>
-  </div>
-
-  <app-child-block [entityId]="childId" fxFlex> </app-child-block>
-
-  <mat-form-field class="dense-form-field" fxFlex>
-    <input
-      matInput
-      i18n-placeholder
-      placeholder="Remarks"
-      name="remarks"
-      type="text"
-      [(ngModel)]="attendance.remarks"
-      [disabled]="disabled"
-      (input)="change.emit(attendance)"
-    />
-  </mat-form-field>
 </div>

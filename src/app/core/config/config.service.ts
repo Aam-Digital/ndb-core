@@ -71,7 +71,7 @@ export class ConfigService {
     if (!id.startsWith(CONFIGURABLE_ENUM_CONFIG_PREFIX)) {
       id = CONFIGURABLE_ENUM_CONFIG_PREFIX + id;
     }
-    return this.getConfig(id);
+    return this.getConfig<any>(id);
   }
 
   public getAllConfigs<T>(prefix: string): T[] {

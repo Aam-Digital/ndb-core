@@ -7,13 +7,13 @@ import { LocalSession } from "../session/session-service/local-session";
 import { DatabaseUser } from "../session/session-service/local-user";
 import { MatDialog } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
-import { AppConfig } from "../app-config/app-config";
+import { AppSettings } from "../app-config/app-settings";
 import { PouchDatabase } from "../database/pouch-database";
 import { Subject } from "rxjs";
 import { LoginState } from "../session/session-states/login-state.enum";
-import { IAppConfig } from "../app-config/app-config.model";
 import { Database } from "../database/database";
 import { SessionType } from "../session/session-type";
+import { environment } from "../../../environments/environment";
 
 describe("DemoDataInitializerService", () => {
   let service: DemoDataInitializerService;
@@ -25,12 +25,9 @@ describe("DemoDataInitializerService", () => {
   let adminDBName: string;
 
   beforeEach(() => {
-    AppConfig.settings = {
-      database: { name: "test-db" },
-      session_type: SessionType.mock,
-    } as IAppConfig;
-    demoUserDBName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${AppConfig.settings.database.name}`;
-    adminDBName = `${DemoUserGeneratorService.ADMIN_USERNAME}-${AppConfig.settings.database.name}`;
+    environment.session_type = SessionType.mock;
+    demoUserDBName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${AppSettings.DB_NAME}`;
+    adminDBName = `${DemoUserGeneratorService.ADMIN_USERNAME}-${AppSettings.DB_NAME}`;
     mockDemoDataService = jasmine.createSpyObj(["publishDemoData"]);
     mockDemoDataService.publishDemoData.and.resolveTo();
     mockDialog = jasmine.createSpyObj(["open"]);
@@ -53,8 +50,11 @@ describe("DemoDataInitializerService", () => {
     service = TestBed.inject(DemoDataInitializerService);
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     loginState.complete();
+    const tmpDB = new PouchDatabase(undefined);
+    await tmpDB.initInMemoryDB(demoUserDBName).destroy();
+    await tmpDB.initInMemoryDB(adminDBName).destroy();
   });
 
   it("should be created", () => {
@@ -155,10 +155,6 @@ describe("DemoDataInitializerService", () => {
     expectAsync(defaultUserDB.get(adminDoc1._id)).toBeResolved();
     expectAsync(defaultUserDB.get(adminDoc2._id)).toBeResolved();
     expectAsync(defaultUserDB.get(userDoc._id)).toBeResolved();
-    tick();
-
-    defaultUserDB.destroy();
-    database.destroy();
     tick();
   }));
 

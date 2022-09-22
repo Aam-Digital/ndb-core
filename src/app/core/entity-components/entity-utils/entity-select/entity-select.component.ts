@@ -64,6 +64,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
         );
       });
   }
+
   /** Underlying data-array */
   selectedEntities: E[] = [];
   /**
@@ -126,7 +127,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
 
   allEntities: E[] = [];
   filteredEntities: Observable<E[]>;
-  formControl = new FormControl();
+  formControl = new FormControl("");
 
   @ViewChild("inputField") inputField: ElementRef<HTMLInputElement>;
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
@@ -157,7 +158,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * <br> Per default, this filters for the name. If the entity
    * has no name, this filters for the entity's id.
    */
-  @Input() accessor: (e: Entity) => string = (e) => e["name"] || e.getId();
+  @Input() accessor: (e: Entity) => string = (e) => e.toString();
 
   @Input() additionalFilter: (e: E) => boolean = (_) => true;
 
@@ -179,7 +180,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * whatever the accessor defines)
    * @param event the event to call this with
    */
-  select(event: MatChipInputEvent) {
+  select(event: Pick<MatChipInputEvent, "value">) {
     const value = event.value;
 
     if (value) {

@@ -17,7 +17,7 @@ import { ConfigurableEnumValue } from "../../../configurable-enum/configurable-e
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { Note } from "../../../../child-dev-project/notes/model/note";
 import { AlertService } from "../../../alerts/alert.service";
-import { FormBuilder, FormGroup } from "@angular/forms";
+import { UntypedFormBuilder, UntypedFormGroup } from "@angular/forms";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 import { genders } from "../../../../child-dev-project/children/model/genders";
 import { LoggingService } from "../../../logging/logging.service";
@@ -35,17 +35,15 @@ describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
   let fixture: ComponentFixture<EntitySubrecordComponent<Entity>>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        imports: [
-          EntitySubrecordModule,
-          MockedTestingModule.withState(),
-          FontAwesomeTestingModule,
-        ],
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [
+        EntitySubrecordModule,
+        MockedTestingModule.withState(),
+        FontAwesomeTestingModule,
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EntitySubrecordComponent);
@@ -133,10 +131,10 @@ describe("EntitySubrecordComponent", () => {
 
   it("should sort non-standard objects", () => {
     const notes = [new Note("0"), new Note("1"), new Note("2"), new Note("3")];
-    notes[0].category = { id: "0", label: "AA" };
-    notes[3].category = { id: "1", label: "AB" };
-    notes[2].category = { id: "2", label: "Z" };
-    notes[1].category = { id: "3", label: "C" };
+    notes[0].category = { id: "0", label: "AA", _ordinal: 3 };
+    notes[1].category = { id: "3", label: "C", _ordinal: 1 };
+    notes[2].category = { id: "2", label: "Z", _ordinal: 0 };
+    notes[3].category = { id: "1", label: "AB", _ordinal: 2 };
     component.records = notes;
     component.ngOnChanges({ records: undefined });
 
@@ -202,7 +200,7 @@ describe("EntitySubrecordComponent", () => {
     ]);
     const entityMapper = TestBed.inject(EntityMapperService);
     spyOn(entityMapper, "save").and.resolveTo();
-    const fb = TestBed.inject(FormBuilder);
+    const fb = TestBed.inject(UntypedFormBuilder);
     const child = new Child();
     child.name = "Old Name";
     const formGroup = fb.group({
@@ -235,7 +233,7 @@ describe("EntitySubrecordComponent", () => {
   }));
 
   it("should clear the form group when resetting", () => {
-    const row = { record: new Child(), formGroup: new FormGroup({}) };
+    const row = { record: new Child(), formGroup: new UntypedFormGroup({}) };
 
     component.resetChanges(row);
 

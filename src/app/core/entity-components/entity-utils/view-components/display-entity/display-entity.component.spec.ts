@@ -15,15 +15,18 @@ import {
   EntityRegistry,
   entityRegistry,
 } from "../../../../entity/database-entity.decorator";
+import { Router } from "@angular/router";
 
 describe("DisplayEntityComponent", () => {
   let component: DisplayEntityComponent;
   let fixture: ComponentFixture<DisplayEntityComponent>;
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockRouter: jasmine.SpyObj<Router>;
 
   beforeEach(async () => {
     mockEntityMapper = jasmine.createSpyObj(["load"]);
     mockEntityMapper.load.and.resolveTo(new Child());
+    mockRouter = jasmine.createSpyObj(["navigate"]);
     await TestBed.configureTestingModule({
       declarations: [DisplayEntityComponent],
       providers: [
@@ -32,6 +35,7 @@ describe("DisplayEntityComponent", () => {
           provide: EntityRegistry,
           useValue: entityRegistry,
         },
+        { provide: Router, useValue: mockRouter },
         EntitySchemaService,
       ],
     }).compileComponents();
@@ -50,20 +54,27 @@ describe("DisplayEntityComponent", () => {
   it("should use the block component when available", fakeAsync(() => {
     const school = new School();
     mockEntityMapper.load.and.resolveTo(school);
-    const relation = new ChildSchoolRelation();
-    relation.schoolId = school.getId();
 
     component.onInitFromDynamicConfig({
-      entity: relation,
+      entity: new ChildSchoolRelation(),
       id: "schoolId",
+      value: school.getId(),
     });
     tick();
 
     expect(component.entityBlockComponent).toEqual(School.getBlockComponent());
     expect(mockEntityMapper.load).toHaveBeenCalledWith(
       school.getType(),
-      relation.schoolId
+      school.getId()
     );
     expect(component.entityToDisplay).toEqual(school);
+  }));
+
+  it("should navigate to the details page of the entity", fakeAsync(() => {
+    component.entityToDisplay = new Child("1");
+
+    component.showDetailsPage();
+
+    expect(mockRouter.navigate).toHaveBeenCalledWith(["/child", "1"]);
   }));
 });

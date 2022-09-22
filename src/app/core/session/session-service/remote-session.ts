@@ -14,14 +14,16 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { AppConfig } from "../../app-config/app-config";
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
+import { HttpErrorResponse, HttpStatusCode } from "@angular/common/http";
 import { DatabaseUser } from "./local-user";
 import { SessionService } from "./session.service";
 import { LoginState } from "../session-states/login-state.enum";
 import { PouchDatabase } from "../../database/pouch-database";
 import { LoggingService } from "../../logging/logging.service";
+import PouchDB from "pouchdb-browser";
+import { AppSettings } from "app/core/app-config/app-settings";
+import { AuthService } from "../auth/auth.service";
 
 /**
  * Responsibilities:
@@ -32,26 +34,19 @@ import { LoggingService } from "../../logging/logging.service";
 @Injectable()
 export class RemoteSession extends SessionService {
   static readonly LAST_LOGIN_KEY = "LAST_REMOTE_LOGIN";
-  // See https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
-  readonly UNAUTHORIZED_STATUS_CODE = 401;
   /** remote (!) PouchDB  */
   private readonly database: PouchDatabase;
   private currentDBUser: DatabaseUser;
 
   /**
-   * Create a RemoteSession and set up connection to the remote CouchDB server configured in AppConfig.
+   * Create a RemoteSession and set up connection to the remote CouchDB server with valid authentication.
    */
   constructor(
-    private httpClient: HttpClient,
-    private loggingService: LoggingService
+    private loggingService: LoggingService,
+    private authService: AuthService
   ) {
     super();
-    this.database = new PouchDatabase(this.loggingService).initIndexedDB(
-      AppConfig.settings.database.remote_url + AppConfig.settings.database.name,
-      {
-        skip_setup: true,
-      }
-    );
+    this.database = new PouchDatabase(this.loggingService);
   }
 
   /**
@@ -61,15 +56,8 @@ export class RemoteSession extends SessionService {
    */
   public async login(username: string, password: string): Promise<LoginState> {
     try {
-      const response = await this.httpClient
-        .post<DatabaseUser>(
-          `${AppConfig.settings.database.remote_url}_session`,
-          { name: username, password: password },
-          { withCredentials: true }
-        )
-        .toPromise();
-      await this.handleSuccessfulLogin(response);
-      this.assignDatabaseUser(response);
+      const user = await this.authService.authenticate(username, password);
+      await this.handleSuccessfulLogin(user);
       localStorage.setItem(
         RemoteSession.LAST_LOGIN_KEY,
         new Date().toISOString()
@@ -77,7 +65,7 @@ export class RemoteSession extends SessionService {
       this.loginState.next(LoginState.LOGGED_IN);
     } catch (error) {
       const httpError = error as HttpErrorResponse;
-      if (httpError?.status === this.UNAUTHORIZED_STATUS_CODE) {
+      if (httpError?.status === HttpStatusCode.Unauthorized) {
         this.loginState.next(LoginState.LOGIN_FAILED);
       } else {
         this.loginState.next(LoginState.UNAVAILABLE);
@@ -86,14 +74,24 @@ export class RemoteSession extends SessionService {
     return this.loginState.value;
   }
 
-  private assignDatabaseUser(couchDBResponse: any) {
-    this.currentDBUser = {
-      name: couchDBResponse.name,
-      roles: couchDBResponse.roles,
-    };
-  }
-
   public async handleSuccessfulLogin(userObject: DatabaseUser) {
+    this.database.initIndexedDB(
+      `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}`,
+      {
+        adapter: "http",
+        skip_setup: true,
+        fetch: (url, opts: any) => {
+          if (typeof url === "string") {
+            this.authService.addAuthHeader(opts.headers);
+            return PouchDB.fetch(
+              AppSettings.DB_PROXY_PREFIX +
+              url.split(AppSettings.DB_PROXY_PREFIX)[1],
+              opts
+            );
+          }
+        },
+      }
+    );
     this.currentDBUser = userObject;
     this.loginState.next(LoginState.LOGGED_IN);
   }
@@ -102,12 +100,7 @@ export class RemoteSession extends SessionService {
    * Logout at the remote database.
    */
   public async logout(): Promise<void> {
-    await this.httpClient
-      .delete(`${AppConfig.settings.database.remote_url}_session`, {
-        withCredentials: true,
-      })
-      .toPromise()
-      .catch(() => undefined);
+    await this.authService.logout();
     this.currentDBUser = undefined;
     this.loginState.next(LoginState.LOGGED_OUT);
   }

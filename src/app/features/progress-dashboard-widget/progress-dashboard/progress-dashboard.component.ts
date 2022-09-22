@@ -9,6 +9,7 @@ import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { waitForChangeTo } from "../../../core/session/session-states/session-utils";
 import { SyncState } from "../../../core/session/session-states/sync-state.enum";
+import { firstValueFrom } from "rxjs";
 
 @Component({
   selector: "app-progress-dashboard",
@@ -17,7 +18,8 @@ import { SyncState } from "../../../core/session/session-states/sync-state.enum"
 })
 @DynamicComponent("ProgressDashboard")
 export class ProgressDashboardComponent
-  implements OnInitDynamicComponent, OnInit {
+  implements OnInitDynamicComponent, OnInit
+{
   @Input() dashboardConfigId = "";
   data: ProgressDashboardConfig;
 
@@ -35,9 +37,9 @@ export class ProgressDashboardComponent
   async ngOnInit() {
     this.data = new ProgressDashboardConfig(this.dashboardConfigId);
     this.loadConfigFromDatabase().catch(() =>
-      this.sessionService.syncState
-        .pipe(waitForChangeTo(SyncState.COMPLETED))
-        .toPromise()
+      firstValueFrom(
+        this.sessionService.syncState.pipe(waitForChangeTo(SyncState.COMPLETED))
+      )
         .then(() => this.loadConfigFromDatabase())
         .catch(() => this.createDefaultConfig())
     );

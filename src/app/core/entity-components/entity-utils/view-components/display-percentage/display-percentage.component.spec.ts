@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { DisplayPercentageComponent } from "./display-percentage.component";
-import { ChildSchoolRelation } from "../../../../../child-dev-project/children/model/childSchoolRelation";
 
 describe("DisplayPercentageComponent", () => {
   let component: DisplayPercentageComponent;
@@ -16,8 +15,7 @@ describe("DisplayPercentageComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DisplayPercentageComponent);
     component = fixture.componentInstance;
-    component.entity = new ChildSchoolRelation();
-    component.property = "result";
+    component.value = 10;
     fixture.detectChanges();
   });
 

@@ -6,15 +6,12 @@ import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SwUpdate } from "@angular/service-worker";
 import { Database } from "../../database/database";
 import * as Sentry from "@sentry/browser";
-import { Severity } from "@sentry/browser";
 import { RemoteSession } from "../../session/session-service/remote-session";
-import { RouteTarget } from "../../../app.routing";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { HttpClient } from "@angular/common/http";
 import { SyncedSessionService } from "../../session/session-service/synced-session.service";
 import { environment } from "../../../../environments/environment";
 
-@RouteTarget("Support")
 @Component({
   selector: "app-support",
   templateUrl: "./support.component.html",
@@ -102,7 +99,7 @@ export class SupportComponent implements OnInit {
     // This is sent even without submitting the crash report.
     Sentry.captureMessage("report information", {
       user: { name: this.currentUser.name },
-      level: Severity.Debug,
+      level: "debug",
       extra: {
         currentSyncState: this.currentSyncState,
         lastSync: this.lastSync,
@@ -134,7 +131,8 @@ export class SupportComponent implements OnInit {
     }
 
     await this.database.destroy();
-    const registrations = await this.window.navigator.serviceWorker.getRegistrations();
+    const registrations =
+      await this.window.navigator.serviceWorker.getRegistrations();
     const unregisterPromises = registrations.map((reg) => reg.unregister());
     await Promise.all(unregisterPromises);
     localStorage.clear();

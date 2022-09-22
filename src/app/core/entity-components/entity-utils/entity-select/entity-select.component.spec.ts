@@ -16,7 +16,7 @@ import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 import { User } from "../../../user/user";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { FlexLayoutModule } from "@angular/flex-layout";
-import { Subscription } from "rxjs";
+import { firstValueFrom, Subscription } from "rxjs";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import {
   EntityRegistry,
@@ -144,13 +144,13 @@ describe("EntitySelectComponent", () => {
 
   it("adds a new entity if it matches a known entity", () => {
     component.allEntities = testUsers;
-    component.select({ input: null, value: testUsers[0]["name"] });
+    component.select({ value: testUsers[0]["name"] });
     expect(component.selectedEntities).toEqual([testUsers[0]]);
   });
 
   it("does not add anything if a new entity doesn't match", () => {
     component.allEntities = testUsers;
-    component.select({ input: null, value: "ZZ" });
+    component.select({ value: "ZZ" });
     expect(component.selectedEntities).toBeEmpty();
   });
 
@@ -174,6 +174,28 @@ describe("EntitySelectComponent", () => {
     component.formControl.setValue("Ab");
     expectedLength = 1;
     component.formControl.setValue("Abc");
+  });
+
+  it("should use the configurable toStringAttributes for comparing values", async () => {
+    class Person extends Entity {
+      static toStringAttributes = ["firstname", "lastname"];
+
+      firstname: string;
+      lastname: string;
+    }
+
+    const p1 = Object.assign(new Person(), { firstname: "Aa", lastname: "bb" });
+    const p2 = Object.assign(new Person(), { firstname: "Aa", lastname: "cc" });
+    component.allEntities = [p1, p2];
+    component.loading.next(false);
+
+    let res = firstValueFrom(component.filteredEntities);
+    component.formControl.setValue("Aa");
+    await expectAsync(res).toBeResolvedTo([p1, p2]);
+
+    res = firstValueFrom(component.filteredEntities);
+    component.formControl.setValue("Aa b");
+    await expectAsync(res).toBeResolvedTo([p1]);
   });
 
   it("should add an unselected entity to the filtered entities array", (done) => {
