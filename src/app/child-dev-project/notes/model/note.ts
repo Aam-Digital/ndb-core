@@ -103,7 +103,7 @@ export class Note extends Entity {
    * related school ids (e.g. to infer participants for event roll calls)
    */
   @DatabaseField({
-    label: "Groups",
+    label: $localize`:label for the linked schools:Groups`,
     additional: School.ENTITY_TYPE,
   })
   schools: string[] = [];
