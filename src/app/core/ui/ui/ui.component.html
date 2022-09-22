@@ -16,7 +16,7 @@
   -->
 
 <!-- HEADER TOOLBAR -->
-<mat-toolbar color="primary" class="justify-space-between mat-elevation-z2 ui-toolbar">
+<mat-toolbar color="primary" class="ui-toolbar">
   <!-- Left items -->
   <div class="flex-row align-center">
     <span *ngIf="isLoggedIn() && sideNavMode === 'over'">
@@ -47,13 +47,9 @@
   </div>
 </mat-toolbar>
 
-<app-primary-action *ngIf="isLoggedIn()"></app-primary-action>
-
 <!-- MAIN NAVIGATION + CONTENT -->
 <mat-sidenav-container
-  class="app-content"
   (backdropClick)="closeSidenavOnMobile()"
-  autosize
 >
   <mat-sidenav
     #sideNav
@@ -105,10 +101,10 @@
     </div>
   </mat-sidenav>
 
-  <mat-sidenav-content>
-    <div class="sidenav-content">
-      <router-outlet *ngIf="isLoggedIn()"></router-outlet>
-      <app-login class="login" *ngIf="!isLoggedIn()"></app-login>
-    </div>
+  <mat-sidenav-content class="sidenav-content">
+    <router-outlet *ngIf="isLoggedIn()"></router-outlet>
+    <app-login class="login" *ngIf="!isLoggedIn()"></app-login>
   </mat-sidenav-content>
 </mat-sidenav-container>
+
+<app-primary-action *ngIf="isLoggedIn()"></app-primary-action>

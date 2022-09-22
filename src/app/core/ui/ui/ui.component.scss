@@ -38,6 +38,8 @@ body {
 .ui-toolbar {
   position: relative;
   z-index: 2;
+  justify-content: space-between;
+  @include mat.elevation(2);
 }
 
 .search-field {
@@ -56,16 +58,12 @@ body {
 
 /**  App content  **/
 
-/**
- * The app content is fixed below the toolbar.
- */
-.app-content {
-  position: fixed;
-  top: 64px;
-  left: 0;
-  right: 0;
-  bottom: 0;
+:host {
   background-color: mat.get-color-from-palette(theme.$primary, 50);
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+  height: 100vh;
 }
 
 /**  Main content  **/
@@ -74,12 +72,18 @@ body {
  * The main content. Apply standard paddings to all edges
  */
 .sidenav-content {
-  margin:
+  padding:
     sizes.$margin-main-view-top
     sizes.$margin-main-view-right
     sizes.$margin-main-view-bottom
     sizes.$margin-main-view-left;
   display: block;
+  overflow: auto;
+  box-sizing: border-box;
+}
+
+mat-sidenav-container {
+  background: none;
 }
 
 /**
