@@ -23,6 +23,8 @@ export const isActiveIndicator = {
 
 /**
  * This component creates a table containing all children currently attending this school.
+ *
+ * TODO merge with {@link PreviousSchoolsComponent}
  */
 @DynamicComponent("ChildrenOverview")
 @Component({
@@ -31,16 +33,20 @@ export const isActiveIndicator = {
 })
 export class ChildrenOverviewComponent implements OnInitDynamicComponent {
   columns: FormFieldConfig[] = [
-    { id: "childId" },
-    { id: "schoolClass" },
     { id: "start", visibleFrom: "md" },
     { id: "end", visibleFrom: "md" },
+    { id: "childId" },
+    { id: "schoolClass" },
     { id: "result" },
     isActiveIndicator,
   ];
 
   entity: Entity;
-  records: ChildSchoolRelation[] = [];
+
+  private allRecords: ChildSchoolRelation[] = [];
+  displayedRecords: ChildSchoolRelation[] = [];
+  showInactive = false;
+  backgroundColorFn = (r: ChildSchoolRelation) => r.getColor();
 
   constructor(
     private childrenService: ChildrenService,
@@ -48,14 +54,27 @@ export class ChildrenOverviewComponent implements OnInitDynamicComponent {
   ) {}
 
   async onInitFromDynamicConfig(config: PanelConfig) {
-    if (config?.config?.columns) {
+    if (config.config?.columns) {
       this.columns = config.config.columns.concat(isActiveIndicator);
     }
     this.entity = config.entity;
-    this.records = await this.childrenService.queryActiveRelationsOf(
+    this.allRecords = await this.childrenService.queryRelationsOf(
       "school",
       this.entity.getId()
     );
+    this.showInactive = !!config.config?.showInactive;
+    this.prepareDisplayedData();
+  }
+
+  prepareDisplayedData() {
+    if (this.showInactive) {
+      this.displayedRecords = this.allRecords;
+      this.backgroundColorFn = (r: ChildSchoolRelation) => r.getColor();
+    } else {
+      this.displayedRecords = this.allRecords.filter((r) => r.isActive);
+      // Do not highlight active ones when only active are shown
+      this.backgroundColorFn = undefined;
+    }
   }
 
   routeToChild(child: Child) {

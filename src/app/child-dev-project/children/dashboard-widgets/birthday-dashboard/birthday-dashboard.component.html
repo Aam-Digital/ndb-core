@@ -1,8 +1,7 @@
 <app-dashboard-widget
   icon="birthday-cake"
   theme="child"
-  title="Birthdays"
-  i18n-title="Title of the birthday widget"
+  [title]="childrenDataSource.data.length"
   subtitle="Upcoming Birthdays"
   i18n-subtitle="Subtitle of the birthday widget"
   explanation="Children whose birthday is soon"
@@ -10,6 +9,14 @@
   [loading]="isLoading"
 >
   <app-widget-content>
+    <div
+      *ngIf="childrenDataSource.data.length === 0 && !isLoading"
+      class="headline"
+    >
+      <span i18n="Fallback text if not birtdays are in the specified period">
+        no birthdays in the next {{ birthdayThreshold - 1 }} days
+      </span>
+    </div>
     <div *ngIf="childrenDataSource.data.length > 0" class="table-wrapper">
       <table mat-table [dataSource]="childrenDataSource">
         <tr hidden="true">

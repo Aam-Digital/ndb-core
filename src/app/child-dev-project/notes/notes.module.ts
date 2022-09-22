@@ -49,6 +49,7 @@ import { ExportModule } from "../../core/export/export.module";
 import {
   CommonComponentsModule
 } from "../../core/common-components/common-components.module";
+import { ImportantNotesComponent } from "./dashboard-widgets/important-notes/important-notes.component";
 
 @NgModule({
   declarations: [
@@ -58,6 +59,7 @@ import {
     NoteAttendanceCountBlockComponent,
     NotesDashboardComponent,
     NotesOfChildComponent,
+    ImportantNotesComponent,
   ],
   imports: [
     CommonModule,
@@ -116,5 +118,6 @@ export class NotesModule {
     NoteAttendanceCountBlockComponent,
     NotesDashboardComponent,
     NotesOfChildComponent,
+    ImportantNotesComponent,
   ];
 }

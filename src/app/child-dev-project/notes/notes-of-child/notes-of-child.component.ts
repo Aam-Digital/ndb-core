@@ -4,26 +4,28 @@ import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { ChildrenService } from "../../children/children.service";
 import moment from "moment";
 import { SessionService } from "../../../core/session/session-service/session.service";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { Child } from "../../children/model/child";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
+import { Entity } from "../../../core/entity/model/entity";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain child
+ *
+ * TODO rename this to a more general name as this can also handle notes of schools and notes of authors
  */
-@UntilDestroy()
 @DynamicComponent("NotesOfChild")
 @Component({
   selector: "app-notes-of-child",
   templateUrl: "./notes-of-child.component.html",
 })
 export class NotesOfChildComponent
-  implements OnChanges, OnInitDynamicComponent {
-  @Input() child: Child;
+  implements OnChanges, OnInitDynamicComponent
+{
+  @Input() entity: Entity;
+  private noteProperty = "children";
   records: Array<Note> = [];
 
   columns: FormFieldConfig[] = [
@@ -33,6 +35,12 @@ export class NotesOfChildComponent
     { id: "authors", visibleFrom: "md" },
     { id: "warningLevel", visibleFrom: "md" },
   ];
+
+  /**
+   * returns the color for a note; passed to the entity subrecord component
+   * @param note note to get color for
+   */
+  getColor = (note: Note) => note?.getColor();
 
   constructor(
     private childrenService: ChildrenService,
@@ -51,15 +59,29 @@ export class NotesOfChildComponent
       this.columns = config.config.columns;
     }
 
-    this.child = config.entity as Child;
+    this.entity = config.entity;
+    const entityType = this.entity.getType();
+    this.noteProperty = [...Note.schema.keys()].find(
+      (prop) => Note.schema.get(prop).additional === entityType
+    );
+    if (!this.noteProperty) {
+      throw new Error(
+        `Could not load notes for related entity: "${entityType}"`
+      );
+    }
+
+    if (this.noteProperty === "children") {
+      // When displaying notes for a child, use attendance color highlighting
+      this.getColor = (note: Note) => note?.getColorForId(this.entity.getId());
+    }
+
     this.initNotesOfChild();
   }
 
   private initNotesOfChild() {
     this.childrenService
-      .getNotesOfChild(this.child.getId())
-      .pipe(untilDestroyed(this))
-      .subscribe((notes: Note[]) => {
+      .getNotesOf(this.entity.getId(), this.noteProperty)
+      .then((notes: Note[]) => {
         notes.sort((a, b) => {
           if (!a.date && b.date) {
             // note without date should be first
@@ -72,25 +94,24 @@ export class NotesOfChildComponent
   }
 
   generateNewRecordFactory() {
-    // define values locally because "this" is a different scope after passing a function as input to another component
     const user = this.sessionService.getCurrentUser().name;
-    const childId = this.child.getId();
+    const entityId = this.entity.getId();
 
     return () => {
       const newNote = new Note(Date.now().toString());
       newNote.date = new Date();
-      newNote.addChild(childId);
-      newNote.authors = [user];
+      if (this.noteProperty === "children") {
+        newNote.addChild(entityId);
+      } else {
+        newNote[this.noteProperty].push(entityId);
+      }
+      if (!newNote.authors.includes(user)) {
+        newNote.authors.push(user);
+      }
 
       return newNote;
     };
   }
-
-  /**
-   * returns the color for a note; passed to the entity subrecord component
-   * @param note note to get color for
-   */
-  getColor = (note: Note) => note?.getColorForId(this.child.getId());
 
   showNoteDetails(note: Note) {
     this.formDialog.openDialog(NoteDetailsComponent, note);

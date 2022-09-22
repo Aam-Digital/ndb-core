@@ -4,3 +4,7 @@
 .clickable:hover {
   text-decoration: underline;
 }
+
+:host {
+  display: inline-block;
+}

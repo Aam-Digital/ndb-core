@@ -7,9 +7,9 @@
   (addNewClick)="addNoteClick()"
   #entityList
 >
-  <div mat-menu-item>
+  <div mat-menu-item *ngIf="showEventNotesToggle">
     <mat-slide-toggle
-      *ngIf="showEventNotesToggle"
+      class="event-toggle"
       ngDefaultControl
       [(ngModel)]="includeEventNotes"
       (change)="updateIncludeEvents()"

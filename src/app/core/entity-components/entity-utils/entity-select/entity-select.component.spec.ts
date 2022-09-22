@@ -15,7 +15,8 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 import { User } from "../../../user/user";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { Subscription } from "rxjs";
+import { FlexLayoutModule } from "@angular/flex-layout";
+import { firstValueFrom, Subscription } from "rxjs";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import {
   EntityRegistry,
@@ -172,6 +173,28 @@ describe("EntitySelectComponent", () => {
     component.formControl.setValue("Ab");
     expectedLength = 1;
     component.formControl.setValue("Abc");
+  });
+
+  it("should use the configurable toStringAttributes for comparing values", async () => {
+    class Person extends Entity {
+      static toStringAttributes = ["firstname", "lastname"];
+
+      firstname: string;
+      lastname: string;
+    }
+
+    const p1 = Object.assign(new Person(), { firstname: "Aa", lastname: "bb" });
+    const p2 = Object.assign(new Person(), { firstname: "Aa", lastname: "cc" });
+    component.allEntities = [p1, p2];
+    component.loading.next(false);
+
+    let res = firstValueFrom(component.filteredEntities);
+    component.formControl.setValue("Aa");
+    await expectAsync(res).toBeResolvedTo([p1, p2]);
+
+    res = firstValueFrom(component.filteredEntities);
+    component.formControl.setValue("Aa b");
+    await expectAsync(res).toBeResolvedTo([p1]);
   });
 
   it("should add an unselected entity to the filtered entities array", (done) => {
