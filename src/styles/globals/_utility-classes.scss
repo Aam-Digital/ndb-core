@@ -1,3 +1,5 @@
+@use "src/styles/variables/breakpoints";
+
 .overflow-auto-y {
   overflow-y: auto;
 }
@@ -26,7 +28,7 @@
  * Hide the element that this is applied on when on a mobile device
  */
 .hide-mobile {
-  @media (max-width: 599px) {
+  @media screen and (max-width: breakpoints.$md) {
     display: none;
   }
 }
@@ -35,7 +37,7 @@
  * Hide the element that this is applied on when on a desktop device
  */
 .hide-desktop {
-  @media (min-width: 599px) {
+  @media screen and (min-width: breakpoints.$md) {
     display: none;
   }
 }

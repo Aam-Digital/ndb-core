@@ -1,10 +1,12 @@
+@use "../../../../styles/variables/breakpoints";
+
 /**
  * Aligns the baseline of the filter-field with the baseline
  * of the other controls.
  * This only has to be done on the desktop
  */
 .filter-field {
-  @media screen and (min-width: 599px) {
+  @media screen and (min-width: breakpoints.$md) {
     position: relative;
     top: 12px;
     // restricts the width so that the field does not feel too big

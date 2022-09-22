@@ -30,7 +30,6 @@ import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { skip } from "rxjs";
 
 /**
  * This component allows to create a full blown table with pagination, filtering, searching and grouping.
@@ -120,7 +119,7 @@ export class EntityListComponent<T extends Entity>
 
     this.screenWidthObserver
       .platform()
-      .pipe(untilDestroyed(this), skip(1))
+      .pipe(untilDestroyed(this))
       .subscribe((isDesktop) => {
         if (!isDesktop) {
           this.displayColumnGroupByName(this.mobileColumnGroup);

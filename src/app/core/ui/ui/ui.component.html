@@ -16,37 +16,35 @@
   -->
 
 <!-- HEADER TOOLBAR -->
-<mat-toolbar color="primary">
-  <mat-toolbar-row class="justify-space-between mat-elevation-z2 ui-toolbar">
-    <!-- Left items -->
-    <div class="flex-row align-center">
-      <span *ngIf="isLoggedIn() && sideNavMode === 'over'">
-        <button mat-icon-button (click)="sideNav.toggle()">
-          <fa-icon class="header-icon" icon="bars"></fa-icon>
-        </button>
-      </span>
+<mat-toolbar color="primary" class="justify-space-between mat-elevation-z2 ui-toolbar">
+  <!-- Left items -->
+  <div class="flex-row align-center">
+    <span *ngIf="isLoggedIn() && sideNavMode === 'over'">
+      <button mat-icon-button (click)="sideNav.toggle()">
+        <fa-icon class="header-icon" icon="bars"></fa-icon>
+      </button>
+    </span>
 
-      <a
-        *ngIf="isLoggedIn() && sideNavMode !== 'over'"
-        [routerLink]="['']"
-        class="header-title"
-        angulartics2On="click"
-        angularticsCategory="Navigation"
-        angularticsAction="navbar_site_title_link"
-      >
-      {{ title }}
-      </a>
-    </div>
+    <a
+      *ngIf="isLoggedIn() && sideNavMode !== 'over'"
+      [routerLink]="['']"
+      class="header-title"
+      angulartics2On="click"
+      angularticsCategory="Navigation"
+      angularticsAction="navbar_site_title_link"
+    >
+    {{ title }}
+    </a>
+  </div>
 
-    <!--top right icons and search-->
-    <div class="flex-row align-center flex-grow-1-3 justify-content-end gap-small">
-      <app-search class="hide-mobile full-width" *ngIf="isLoggedIn()"></app-search>
+  <!--top right icons and search-->
+  <div class="flex-row align-center flex-grow-1-3 justify-content-end gap-small">
+    <app-search class="hide-mobile full-width" *ngIf="isLoggedIn()"></app-search>
 
-      <app-sync-status></app-sync-status>
+    <app-sync-status></app-sync-status>
 
-      <app-language-select *ngIf="showLanguageSelect"></app-language-select>
-    </div>
-  </mat-toolbar-row>
+    <app-language-select *ngIf="showLanguageSelect"></app-language-select>
+  </div>
 </mat-toolbar>
 
 <app-primary-action *ngIf="isLoggedIn()"></app-primary-action>

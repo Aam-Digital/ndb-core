@@ -17,6 +17,7 @@
 
 @use "@angular/material" as mat;
 @use "src/styles/variables/sizes";
+@use "src/styles/variables/breakpoints";
 @use "src/styles/variables/ndb-light-theme" as theme;
 
 /*
@@ -65,15 +66,6 @@ body {
   right: 0;
   bottom: 0;
   background-color: mat.get-color-from-palette(theme.$primary, 50);
-
-  /**
-   * When the app is small (smaller than 599px),
-   * the toolbar shrinks because there is no search field.
-   * Therefore, the content must adapt
-   */
-  @media (max-width: 599px) {
-    top: 56px;
-  }
 }
 
 /**  Main content  **/
