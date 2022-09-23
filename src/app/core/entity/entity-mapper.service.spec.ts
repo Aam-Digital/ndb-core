@@ -21,6 +21,7 @@ import { EntitySchemaService } from "./schema/entity-schema.service";
 import { waitForAsync } from "@angular/core/testing";
 import { PouchDatabase } from "../database/pouch-database";
 import { DatabaseEntity, entityRegistry } from "./database-entity.decorator";
+import { Child } from "../../child-dev-project/children/model/child";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
@@ -38,21 +39,19 @@ describe("EntityMapperService", () => {
     label: "entity 2 from database",
   };
 
-  beforeEach(
-    waitForAsync(() => {
-      testDatabase = PouchDatabase.create();
-      entityMapper = new EntityMapperService(
-        testDatabase,
-        new EntitySchemaService(),
-        entityRegistry
-      );
+  beforeEach(waitForAsync(() => {
+    testDatabase = PouchDatabase.create();
+    entityMapper = new EntityMapperService(
+      testDatabase,
+      new EntitySchemaService(),
+      entityRegistry
+    );
 
-      return Promise.all([
-        testDatabase.put(existingEntity),
-        testDatabase.put(existingEntity2),
-      ]);
-    })
-  );
+    return Promise.all([
+      testDatabase.put(existingEntity),
+      testDatabase.put(existingEntity2),
+    ]);
+  }));
 
   afterEach(async () => {
     await testDatabase.destroy();
@@ -259,6 +258,17 @@ describe("EntityMapperService", () => {
         id: "EntityA:42",
       }),
     ]);
+  });
+
+  it("should include _id field in transformation errors", (done) => {
+    const doc = { _id: "Child:test", dateOfBirth: "invalidDate" };
+    testDatabase
+      .put(doc)
+      .then(() => entityMapper.load(Child, "Child:test"))
+      .catch((err) => {
+        expect(err.message).toContain("Child:test");
+        done();
+      });
   });
 
   function receiveUpdatesAndTestTypeAndId(type?: string, entityId?: string) {
