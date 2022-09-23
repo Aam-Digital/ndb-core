@@ -27,24 +27,22 @@ export interface EditProgressDashboardComponentData {
   styleUrls: ["./edit-progress-dashboard.component.scss"],
 })
 export class EditProgressDashboardComponent {
-  outputData: FormGroup;
-  title: FormControl;
-  parts: FormArray;
+  title = new FormControl(this.data.title, [Validators.required]);
+  parts = this.fb.array(
+    this.data.parts.map((part) => this.createPartForm(part))
+  );
+  outputData = new FormGroup({
+    title: this.title,
+    parts: this.parts,
+  });
   currentErrorStateMatcher = new FormCurrentErrorStateMatcher();
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: ProgressDashboardConfig,
     private fb: FormBuilder
-  ) {
-    this.title = new FormControl(data.title, [Validators.required]);
-    this.parts = fb.array(data.parts.map((part) => this.formGroup(part)));
-    this.outputData = new FormGroup({
-      title: this.title,
-      parts: this.parts,
-    });
-  }
+  ) {}
 
-  formGroup(part: ProgressDashboardPart): FormGroup {
+  createPartForm(part: ProgressDashboardPart) {
     return this.fb.group(
       {
         label: this.fb.control(part.label, [Validators.required]),
@@ -81,7 +79,7 @@ export class EditProgressDashboardComponent {
       currentValue: 1,
       targetValue: 10,
     };
-    this.parts.push(this.formGroup(newPart));
+    this.parts.push(this.createPartForm(newPart));
   }
 
   removePart(index: number) {
