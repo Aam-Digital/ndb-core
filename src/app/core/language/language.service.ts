@@ -21,6 +21,7 @@ export class LanguageService {
     { locale: "de", regionCode: "de" },
     { locale: "en-US", regionCode: "us" },
     { locale: "fr", regionCode: "fr" },
+    { locale: "it", regionCode: "it" },
   ];
 
   constructor(

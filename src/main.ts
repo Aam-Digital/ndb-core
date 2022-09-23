@@ -71,7 +71,7 @@ async function initLanguage(locale: string): Promise<void> {
   // This is needed for locale-aware components & pipes to work.
   // Add the required locales to `webpackInclude` to keep the bundle size small
   const localeModule = await import(
-    /* webpackInclude: /(fr|de)\.mjs/ */
+    /* webpackInclude: /(fr|de|it)\.mjs/ */
     `../node_modules/@angular/common/locales/${locale}`
   );
   registerLocaleData(localeModule.default);

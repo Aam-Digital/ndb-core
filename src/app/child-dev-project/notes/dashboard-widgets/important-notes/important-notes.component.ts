@@ -23,7 +23,6 @@ export class ImportantNotesComponent
   implements OnInit, OnInitDynamicComponent, AfterViewInit
 {
   private relevantWarningLevels: string[] = [];
-  public relevantNotes: Note[];
 
   private notes: Observable<Note[]>;
   public loading: boolean = true;
@@ -43,16 +42,14 @@ export class ImportantNotesComponent
       this.entityMapperService.loadType(Note),
       this.entityMapperService
         .receiveUpdates(Note)
-        .pipe(map((next) => applyUpdate(this.relevantNotes, next)))
+        .pipe(map((next) => applyUpdate(this.notesDataSource.data, next)))
     );
     // set loading to `false` when the first chunk of notes (the initial notes) have arrived
     this.notes.pipe(first()).subscribe(() => (this.loading = false));
     this.notes.pipe(untilDestroyed(this)).subscribe((next) => {
-      this.relevantNotes = next.filter((note) => this.noteIsRelevant(note));
-      this.relevantNotes.sort(
-        (a, b) => b.warningLevel._ordinal - a.warningLevel._ordinal
-      );
-      this.notesDataSource.data = this.relevantNotes;
+      this.notesDataSource.data = next
+        .filter((note) => this.noteIsRelevant(note))
+        .sort((a, b) => b.warningLevel._ordinal - a.warningLevel._ordinal);
     });
   }
 
