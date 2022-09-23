@@ -3,9 +3,9 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import {
   ProgressDashboardPart,
   ProgressDashboardConfig,
+  ObjectForm,
 } from "../progress-dashboard/progress-dashboard-config";
 import {
-  FormArray,
   FormBuilder,
   FormControl,
   FormGroup,
@@ -38,7 +38,7 @@ export class EditProgressDashboardComponent {
   currentErrorStateMatcher = new FormCurrentErrorStateMatcher();
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: ProgressDashboardConfig,
+    @Inject(MAT_DIALOG_DATA) private data: ProgressDashboardConfig,
     private fb: FormBuilder
   ) {}
 
@@ -61,7 +61,9 @@ export class EditProgressDashboardComponent {
     );
   }
 
-  currentLessThanTarget(control: FormGroup): ValidationErrors | null {
+  currentLessThanTarget(
+    control: ObjectForm<ProgressDashboardPart>
+  ): ValidationErrors | null {
     const current = control.get("currentValue");
     const target = control.get("targetValue");
     if (current.value > target.value) {

@@ -18,6 +18,7 @@
 import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
+import { FormControl, FormGroup } from "@angular/forms";
 
 @DatabaseEntity("ProgressDashboardConfig")
 export class ProgressDashboardConfig extends Entity {
@@ -36,6 +37,10 @@ export class ProgressDashboardConfig extends Entity {
     return currentTotal / targetTotal;
   }
 }
+
+export type ObjectForm<T> = FormGroup<{
+  [Key in keyof T]: FormControl<T[Key]>;
+}>;
 
 export interface ProgressDashboardPart {
   label: string;
