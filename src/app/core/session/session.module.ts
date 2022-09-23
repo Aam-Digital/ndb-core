@@ -42,6 +42,8 @@ import { AuthProvider } from "./auth/auth-provider";
 import { PasswordFormComponent } from "./auth/couchdb/password-form/password-form.component";
 import { PasswordButtonComponent } from "./auth/keycloak/password-button/password-button.component";
 import { Angulartics2OnModule } from "angulartics2";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 /**
  * The core session logic handling user login as well as connection and synchronization with the remote database.
@@ -67,6 +69,8 @@ import { Angulartics2OnModule } from "angulartics2";
     MatProgressBarModule,
     Angulartics2OnModule,
     ReactiveFormsModule,
+    FontAwesomeModule,
+    MatTooltipModule,
   ],
   declarations: [
     LoginComponent,
