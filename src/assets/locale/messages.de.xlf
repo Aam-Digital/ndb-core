@@ -3091,7 +3091,7 @@
       </trans-unit>
       <trans-unit id="5197025786058849273" datatype="html">
         <source>Read Letters</source>
-        <target state="translated">Kann Buchstaben lsen</target>
+        <target state="translated">Kann Buchstaben lesen</target>
         <note priority="1" from="description">Label reading level</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/aser/model/skill-levels.ts</context>
