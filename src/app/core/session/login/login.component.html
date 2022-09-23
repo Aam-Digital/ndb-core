@@ -16,7 +16,7 @@
   -->
 
 <mat-card class="login-panel centered mat-elevation-z2">
-  <mat-card-title i18n="Sign in title"> Please Sign In </mat-card-title>
+  <mat-card-title i18n="Sign in title"> Please Sign In</mat-card-title>
 
   <mat-card-content>
     <form>
@@ -54,7 +54,6 @@
           />
           <fa-icon
             [icon]="passwordVisible ? 'eye-slash' : 'eye'"
-            class="password-icon"
             matSuffix
             [matTooltip]="passwordVisible ? hidePasswordHint : showPasswordHint"
             (click)="togglePasswordVisible()"
