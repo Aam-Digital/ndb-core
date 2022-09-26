@@ -3,7 +3,6 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import {
   ProgressDashboardPart,
   ProgressDashboardConfig,
-  ObjectForm,
 } from "../progress-dashboard/progress-dashboard-config";
 import {
   FormBuilder,
@@ -15,6 +14,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { ErrorStateMatcher } from "@angular/material/core";
+import { AngularForm } from "@oasisdigital/angular-typed-forms-helpers";
 
 export interface EditProgressDashboardComponentData {
   title: string;
@@ -62,7 +62,7 @@ export class EditProgressDashboardComponent {
   }
 
   currentLessThanTarget(
-    control: ObjectForm<ProgressDashboardPart>
+    control: AngularForm<ProgressDashboardPart>
   ): ValidationErrors | null {
     const current = control.get("currentValue");
     const target = control.get("targetValue");
