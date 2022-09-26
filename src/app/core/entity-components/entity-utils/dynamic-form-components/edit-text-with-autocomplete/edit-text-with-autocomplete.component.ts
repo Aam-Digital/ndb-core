@@ -32,7 +32,6 @@ import { ConfirmationDialogService } from "app/core/confirmation-dialog/confirma
 @Component({
   selector: "app-edit-text-with-autocomplete",
   templateUrl: "./edit-text-with-autocomplete.component.html",
-  styleUrls: ["./edit-text-with-autocomplete.component.scss"],
 })
 export class EditTextWithAutocompleteComponent extends EditComponent<string> {
   /**
