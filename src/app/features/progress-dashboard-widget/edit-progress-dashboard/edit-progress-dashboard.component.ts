@@ -8,8 +8,6 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
-  FormGroupDirective,
-  NgForm,
   ValidationErrors,
   Validators,
 } from "@angular/forms";
@@ -27,6 +25,13 @@ export interface EditProgressDashboardComponentData {
   styleUrls: ["./edit-progress-dashboard.component.scss"],
 })
 export class EditProgressDashboardComponent {
+  /**
+   * This marks the control as invalid when the whole form has an error
+   */
+  readonly currentErrorStateMatcher: ErrorStateMatcher = {
+    isErrorState: (control: FormControl | null) => !control?.parent?.valid,
+  };
+
   title = new FormControl(this.data.title, [Validators.required]);
   parts = this.fb.array(
     this.data.parts.map((part) => this.createPartForm(part))
@@ -35,7 +40,6 @@ export class EditProgressDashboardComponent {
     title: this.title,
     parts: this.parts,
   });
-  currentErrorStateMatcher = new FormCurrentErrorStateMatcher();
 
   constructor(
     @Inject(MAT_DIALOG_DATA) private data: ProgressDashboardConfig,
@@ -86,14 +90,5 @@ export class EditProgressDashboardComponent {
 
   removePart(index: number) {
     this.parts.removeAt(index);
-  }
-}
-
-class FormCurrentErrorStateMatcher implements ErrorStateMatcher {
-  isErrorState(
-    control: FormControl | null,
-    form: FormGroupDirective | NgForm | null
-  ): boolean {
-    return !control?.parent?.valid;
   }
 }

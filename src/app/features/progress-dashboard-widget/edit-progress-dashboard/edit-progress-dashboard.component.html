@@ -1,20 +1,21 @@
 <div mat-dialog-title style="display: flex">
-  <mat-form-field class = "title-field">
-      <input
-        [formControl]="title"
-        matInput
-        type="text"
-        i18n-placeholder="Title Progress|Edit the progress of one or multiple tasks"
-        placeholder="Title"
-      />
-      <mat-error *ngIf="title.hasError('required')" i18n>
-        This field is required
-      </mat-error>
+  <mat-form-field class="title-field">
+    <input
+      [formControl]="title"
+      matInput
+      type="text"
+      i18n-placeholder="Title Progress|Edit the progress of one or multiple tasks"
+      placeholder="Title"
+    />
+    <mat-error *ngIf="title.hasError('required')" i18n>
+      This field is required
+    </mat-error>
   </mat-form-field>
 </div>
 
 <mat-dialog-content class="dialog-content">
-  <div *ngFor="let control of parts.controls; let index=index" class="entry-wrapper mat-elevation-z1" [formGroup]="$any(control)">
+  <div *ngFor="let control of parts.controls; let index=index" class="entry-wrapper mat-elevation-z1"
+       [formGroup]="$any(control)">
     <mat-form-field class="header-field">
       <input
         formControlName="label"
@@ -104,12 +105,13 @@
   </div>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button
-      mat-stroked-button
-      [mat-dialog-close]="outputData.value"
-      [disabled]="!parts.valid || !title.valid"
-    >
-      <span matTooltip="Fix the errors to save the form" [matTooltipDisabled]="outputData.valid" i18n-matTooltip="Shown when there are errors that prevent saving" i18n>Save</span>
-    </button>
+  <button
+    mat-stroked-button
+    [mat-dialog-close]="outputData.value"
+    [disabled]="outputData.invalid"
+  >
+    <span matTooltip="Fix the errors to save the form" [matTooltipDisabled]="outputData.valid"
+          i18n-matTooltip="Shown when there are errors that prevent saving" i18n>Save</span>
+  </button>
   <button mat-stroked-button mat-dialog-close i18n>Cancel</button>
 </mat-dialog-actions>
