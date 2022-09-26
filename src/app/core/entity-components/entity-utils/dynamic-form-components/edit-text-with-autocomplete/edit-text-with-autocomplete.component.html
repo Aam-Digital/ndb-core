@@ -8,15 +8,11 @@
     (keyup)="keyup()"
     (focusin)="updateAutocomplete()"
   />
-  <mat-autocomplete
-    #autoSuggestions="matAutocomplete"
-    (optionSelected)="selectEntity()"
-  >
-    <!-- Optional header -->
-    <ng-content select="mat-option"></ng-content>
+  <mat-autocomplete #autoSuggestions="matAutocomplete">
     <mat-option
       *ngFor="let entity of autocompleteEntities | async"
       [value]="entity[formControlName]"
+      (onSelectionChange)="$event.source.selected ? selectEntity(entity) : null"
     >
       <app-display-entity
         [entityToDisplay]="entity"

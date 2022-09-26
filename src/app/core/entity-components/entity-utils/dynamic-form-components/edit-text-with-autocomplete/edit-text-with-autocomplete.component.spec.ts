@@ -75,8 +75,7 @@ describe("EditTextWithAutocompleteComponent", () => {
 
     initComponent();
     tick();
-    component.formControl.setValue(rA1.title);
-    component.selectEntity();
+    component.selectEntity(rA1);
     tick();
     expect(component.formControl.value).toEqual(rA1.title);
     expect(component.parent.get("type").value).toEqual(rA1.type);
@@ -93,8 +92,7 @@ describe("EditTextWithAutocompleteComponent", () => {
 
     initComponent("linkedGroups", "group3");
     tick();
-    component.formControl.setValue(rA1.title);
-    component.selectEntity();
+    component.selectEntity(rA1);
     tick();
 
     expect(component.parent.get("linkedGroups").value).toContain("group3");
@@ -135,8 +133,7 @@ describe("EditTextWithAutocompleteComponent", () => {
     tick();
     component.formControl.setValue("test1");
     component.parent.get("assignedTo").setValue(["user3"]);
-    component.formControl.setValue(rA2.title);
-    component.selectEntity();
+    component.selectEntity(rA2);
     tick();
 
     expect(component.selectedEntity).toEqual(rA2);

@@ -7,6 +7,27 @@ import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 import { FormControl } from "@angular/forms";
 import { ConfirmationDialogService } from "app/core/confirmation-dialog/confirmation-dialog.service";
 
+/**
+ * This component creates a normal text input with autocomplete.
+ * Compared to the {@link EditSingleEntityComponent} this does not just assign the ID to the form control
+ * but instead completely overwrites the form with the values taken from the selected entity.
+ * This is especially useful when instead of creating a new entity, an existing one can also be selected (and extended).
+ *
+ * When a value is already present the autocomplete is disabled, and it works like a normal text input.
+ *
+ * E.g.
+ * ```json
+ * {
+ *     "id": "title",
+ *     "edit": "EditTextWithAutocomplete",
+ *     "additional": {
+ *       "entityType": "RecurringActivity",
+ *       "relevantProperty": "linkedGroups",
+ *       "relevantValue": "some-id",
+ *     },
+ *   }
+ * ```
+ */
 @DynamicComponent("EditTextWithAutocomplete")
 @Component({
   selector: "app-edit-text-with-autocomplete",
@@ -14,16 +35,31 @@ import { ConfirmationDialogService } from "app/core/confirmation-dialog/confirma
   styleUrls: ["./edit-text-with-autocomplete.component.scss"],
 })
 export class EditTextWithAutocompleteComponent extends EditComponent<string> {
+  /**
+   * Config passed using component
+   */
+  additional: {
+    /**
+     * The entity type for which autofill should be created.
+     * This should be the same type as for which the form was created.
+     */
+    entityType: string;
+    /**
+     * (optional) a property which should be filled with certain value, if an entity is selected.
+     */
+    relevantProperty?: string;
+    /**
+     * (optional) required if `relevantProperty` is set.
+     * The value to be filled in `selectedEntity[relevantProperty]`.
+     */
+    relevantValue?: string;
+  };
+
   entities: Entity[] = [];
-  autocompleteEntities = new BehaviorSubject<Entity[]>([]);
+  autocompleteEntities = new BehaviorSubject(this.entities);
   selectedEntity?: Entity;
   initialValues;
   autocompleteDisabled = true;
-  additional: {
-    entityType: string;
-    relevantProperty?: string;
-    relevantValue?: string;
-  };
   lastValue = "";
 
   constructor(
@@ -67,20 +103,14 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
       this.entities.sort((e1, e2) =>
         e1.toString().localeCompare(e2.toString())
       );
-      this.selectedEntity = this.entities.find(
-        (entity) => entity[this.formControlName] === this.formControl.value
-      );
       this.autocompleteDisabled = false;
       this.initialValues = this.parent.getRawValue();
     }
   }
 
-  async selectEntity() {
-    const val = this.formControl.value;
-    if (!this.valuesChanged() || (await this.userConfirmsOverwrite(val))) {
-      this.selectedEntity = this.entities.find(
-        (e) => e[this.formControlName] === val
-      );
+  async selectEntity(selected: Entity) {
+    if (!this.valuesChanged() || (await this.userConfirmsOverwrite(selected))) {
+      this.selectedEntity = selected;
       this.addRelevantValueToRelevantProperty(this.selectedEntity);
       this.setAllFormValues(this.selectedEntity);
       this.initialValues = this.parent.getRawValue();
@@ -90,8 +120,8 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
     }
   }
 
-  private async userConfirmsOverwrite(selected: string) {
-    return await this.confirmationDialog.getConfirmation(
+  private userConfirmsOverwrite(selected: Entity) {
+    return this.confirmationDialog.getConfirmation(
       $localize`:Discard the changes made:Discard changes`,
       $localize`Do you want to discard the changes made and load '${selected}'?`
     );
