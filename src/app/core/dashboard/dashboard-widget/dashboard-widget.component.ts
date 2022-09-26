@@ -1,4 +1,5 @@
 import { Component, Input } from "@angular/core";
+import { IconName } from "@fortawesome/fontawesome-svg-core";
 
 export type DashboardTheme =
   | "general"
@@ -15,25 +16,13 @@ export type DashboardTheme =
 })
 export class DashboardWidgetComponent {
   @Input() subtitle: string;
-  @Input() icon: string;
+  @Input() icon: IconName;
   @Input() theme: DashboardTheme;
 
-  _title: Promise<any>;
-  titleReady: boolean;
+  @Input() title: string | number;
 
   /** optional tooltip to explain detailed meaning of this widget / statistic */
   @Input() explanation: string;
-  @Input() set title(title: PromiseLike<any> | any) {
-    if (title && typeof title["then"] === "function") {
-      this.titleReady = true;
-      title.then((value) => {
-        this._title = value;
-        this.titleReady = false;
-      });
-    } else {
-      this._title = title;
-    }
-  }
   @Input() headline: string;
 
   /** Show a loading indicator until data is ready to be shown */

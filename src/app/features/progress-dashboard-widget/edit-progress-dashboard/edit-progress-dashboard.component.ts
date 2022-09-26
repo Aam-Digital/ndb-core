@@ -1,18 +1,21 @@
 import { Component, Inject } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { ProgressDashboardPart } from "../progress-dashboard/progress-dashboard-config";
 import {
-  UntypedFormControl,
-  FormGroupDirective,
-  NgForm,
+  ProgressDashboardPart,
+  ProgressDashboardConfig,
+} from "../progress-dashboard/progress-dashboard-config";
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
   ValidationErrors,
   Validators,
-  FormBuilder,
 } from "@angular/forms";
 import { ErrorStateMatcher } from "@angular/material/core";
-import { TypedForm } from "../../../core/entity-components/entity-form/entity-form.service";
+import { AngularForm } from "@oasisdigital/angular-typed-forms-helpers";
 
 export interface EditProgressDashboardComponentData {
+  title: string;
   parts: ProgressDashboardPart[];
 }
 
@@ -22,18 +25,31 @@ export interface EditProgressDashboardComponentData {
   styleUrls: ["./edit-progress-dashboard.component.scss"],
 })
 export class EditProgressDashboardComponent {
-  forms = this.fb.array(this.data.parts.map((part) => this.formGroup(part)));
-  currentErrorStateMatcher = new FormCurrentErrorStateMatcher();
+  /**
+   * This marks the control as invalid when the whole form has an error
+   */
+  readonly currentErrorStateMatcher: ErrorStateMatcher = {
+    isErrorState: (control: FormControl | null) => !control?.parent?.valid,
+  };
+
+  title = new FormControl(this.data.title, [Validators.required]);
+  parts = this.fb.array(
+    this.data.parts.map((part) => this.createPartForm(part))
+  );
+  outputData = new FormGroup({
+    title: this.title,
+    parts: this.parts,
+  });
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: EditProgressDashboardComponentData,
+    @Inject(MAT_DIALOG_DATA) private data: ProgressDashboardConfig,
     private fb: FormBuilder
   ) {}
 
-  formGroup(part: ProgressDashboardPart) {
+  createPartForm(part: ProgressDashboardPart) {
     return this.fb.group(
       {
-        label: this.fb.control(part.label),
+        label: this.fb.control(part.label, [Validators.required]),
         currentValue: this.fb.control(part.currentValue, [
           Validators.required,
           Validators.min(0),
@@ -50,7 +66,7 @@ export class EditProgressDashboardComponent {
   }
 
   currentLessThanTarget(
-    control: TypedForm<ProgressDashboardPart>
+    control: AngularForm<ProgressDashboardPart>
   ): ValidationErrors | null {
     const current = control.get("currentValue");
     const target = control.get("targetValue");
@@ -69,25 +85,10 @@ export class EditProgressDashboardComponent {
       currentValue: 1,
       targetValue: 10,
     };
-    this.forms.push(this.formGroup(newPart));
-  }
-
-  get tooltipOnSave(): string {
-    return this.forms.valid
-      ? ""
-      : $localize`:Shown when there are errors that prevent saving:Fix the errors to save the form`;
+    this.parts.push(this.createPartForm(newPart));
   }
 
   removePart(index: number) {
-    this.forms.removeAt(index);
-  }
-}
-
-class FormCurrentErrorStateMatcher implements ErrorStateMatcher {
-  isErrorState(
-    control: UntypedFormControl | null,
-    form: FormGroupDirective | NgForm | null
-  ): boolean {
-    return !control?.parent?.valid;
+    this.parts.removeAt(index);
   }
 }

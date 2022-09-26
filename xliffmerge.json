@@ -9,7 +9,8 @@
     "defaultLanguage": "en-US",
     "languages": [
       "de",
-      "fr"
+      "fr",
+      "it"
     ],
     "removeUnusedIds": true,
     "supportNgxTranslate": false,
