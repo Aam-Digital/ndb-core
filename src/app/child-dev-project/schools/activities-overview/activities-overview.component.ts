@@ -37,14 +37,14 @@ export class ActivitiesOverviewComponent implements OnInitDynamicComponent {
 
   constructor(private entityMapper: EntityMapperService) {}
 
-  onInitFromDynamicConfig(config: any) {
+  async onInitFromDynamicConfig(config: any) {
     if (config?.config?.columns) {
       this.columns = config.config.columns;
     }
 
     this.entity = config.entity;
     this.titleColumn.additional.relevantValue = this.entity.getId();
-    this.initLinkedActivities();
+    await this.initLinkedActivities();
 
     this.entityMapper
       .receiveUpdates(RecurringActivity)
@@ -59,7 +59,7 @@ export class ActivitiesOverviewComponent implements OnInitDynamicComponent {
 
   private async initLinkedActivities() {
     this.records = await this.entityMapper
-      .loadType<RecurringActivity>(RecurringActivity)
+      .loadType(RecurringActivity)
       .then((activities) =>
         activities.filter((activity) =>
           activity.linkedGroups.includes(this.entity.getId())
