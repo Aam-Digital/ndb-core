@@ -97,8 +97,7 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
     if (!this.formControl.value) {
       // adding new entry - enable autocomplete
       this.additional = config.formFieldConfig.additional;
-      const entityType =
-        this.additional.entityType || this.additional.entityType;
+      const entityType = this.additional.entityType;
       this.entities = await this.entityMapperService.loadType(entityType);
       this.entities.sort((e1, e2) =>
         e1.toString().localeCompare(e2.toString())

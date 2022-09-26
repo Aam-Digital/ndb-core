@@ -9,7 +9,6 @@ import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 @Component({
   selector: "app-edit-single-entity",
   templateUrl: "./edit-single-entity.component.html",
-  styleUrls: ["./edit-single-entity.component.scss"],
 })
 export class EditSingleEntityComponent extends EditComponent<string> {
   entities: Entity[] = [];

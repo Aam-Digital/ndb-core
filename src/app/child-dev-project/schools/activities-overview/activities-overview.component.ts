@@ -37,32 +37,34 @@ export class ActivitiesOverviewComponent implements OnInitDynamicComponent {
 
   constructor(private entityMapper: EntityMapperService) {}
 
-  async onInitFromDynamicConfig(config: any) {
+  onInitFromDynamicConfig(config: any) {
     if (config?.config?.columns) {
       this.columns = config.config.columns;
     }
 
     this.entity = config.entity;
     this.titleColumn.additional.relevantValue = this.entity.getId();
-    this.records = (
-      await this.entityMapper.loadType<RecurringActivity>(RecurringActivity)
-    ).filter((activity) => activity.linkedGroups.includes(this.entity.getId()));
+    this.initLinkedActivities();
 
     this.entityMapper
       .receiveUpdates(RecurringActivity)
       // using short delay to make sure the EntitySubrecord's `receiveUpdates` code is executed before this
       .pipe(delay(0))
-      .subscribe(async (updateEntity) => {
+      .subscribe((updateEntity) => {
         if (updateEntity.type === "update") {
-          this.records = (
-            await this.entityMapper.loadType<RecurringActivity>(
-              RecurringActivity
-            )
-          ).filter((activity) =>
-            activity.linkedGroups.includes(this.entity.getId())
-          );
+          this.initLinkedActivities();
         }
       });
+  }
+
+  private async initLinkedActivities() {
+    this.records = await this.entityMapper
+      .loadType<RecurringActivity>(RecurringActivity)
+      .then((activities) =>
+        activities.filter((activity) =>
+          activity.linkedGroups.includes(this.entity.getId())
+        )
+      );
   }
 
   generateNewRecordFactory(): () => RecurringActivity {
