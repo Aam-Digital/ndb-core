@@ -53,7 +53,6 @@ import { DemoProgressDashboardWidgetGeneratorService } from "./features/progress
 import { DemoUserGeneratorService } from "./core/user/demo-user-generator.service";
 import { ConfirmationDialogModule } from "./core/confirmation-dialog/confirmation-dialog.module";
 import { FormDialogModule } from "./core/form-dialog/form-dialog.module";
-import { LoggingService } from "./core/logging/logging.service";
 import { AnalyticsService } from "./core/analytics/analytics.service";
 import { ViewModule } from "./core/view/view.module";
 import { DashboardModule } from "./core/dashboard/dashboard.module";
@@ -84,6 +83,11 @@ import {
   DEFAULT_LANGUAGE,
   LANGUAGE_LOCAL_STORAGE_KEY,
 } from "./core/language/language-statics";
+import { DateAdapter, MAT_DATE_FORMATS } from "@angular/material/core";
+import {
+  DATE_FORMATS,
+  DateAdapterWithFormatting,
+} from "./core/language/date-adapter-with-formatting";
 
 /**
  * Main entry point of the application.
@@ -172,6 +176,11 @@ import {
     },
     AnalyticsService,
     Angulartics2Matomo,
+    { provide: DateAdapter, useClass: DateAdapterWithFormatting },
+    {
+      provide: MAT_DATE_FORMATS,
+      useValue: DATE_FORMATS,
+    },
   ],
   bootstrap: [AppComponent],
 })
@@ -180,9 +189,3 @@ export class AppModule {
     icons.addIconPacks(fas, far);
   }
 }
-
-// Initialize remote logging
-LoggingService.initRemoteLogging({
-  dsn: environment.remoteLoggingDsn,
-  whitelistUrls: [/https?:\/\/(.*)\.?aam-digital\.com/],
-});

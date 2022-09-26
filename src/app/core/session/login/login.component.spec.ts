@@ -29,21 +29,20 @@ import { SessionService } from "../session-service/session.service";
 import { LoginState } from "../session-states/login-state.enum";
 import { SessionModule } from "../session.module";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("LoginComponent", () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
   let mockSessionService: jasmine.SpyObj<SessionService>;
 
-  beforeEach(
-    waitForAsync(() => {
-      mockSessionService = jasmine.createSpyObj(["login"]);
-      TestBed.configureTestingModule({
-        imports: [SessionModule, MockedTestingModule],
-        providers: [{ provide: SessionService, useValue: mockSessionService }],
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    mockSessionService = jasmine.createSpyObj(["login"]);
+    TestBed.configureTestingModule({
+      imports: [SessionModule, MockedTestingModule, FontAwesomeTestingModule],
+      providers: [{ provide: SessionService, useValue: mockSessionService }],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(LoginComponent);

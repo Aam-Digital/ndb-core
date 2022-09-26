@@ -21,6 +21,9 @@ $max-screen-width: $min-block-width + $margin-main-view-right + $margin-main-vie
 .columns-wrapper {
   @include adaptive-grid($min-block-width, $max-screen-width);
   align-items: start;
+  position: relative;
+  max-height: calc(100vh - 240px);
+  overflow: auto;
 }
 
 .column-group {

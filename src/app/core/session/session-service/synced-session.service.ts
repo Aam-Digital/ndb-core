@@ -29,9 +29,9 @@ import { HttpClient } from "@angular/common/http";
 import { DatabaseUser } from "./local-user";
 import { waitForChangeTo } from "../session-states/session-utils";
 import { zip } from "rxjs";
-import { AppSettings } from "app/core/app-config/app-settings";
 import { filter } from "rxjs/operators";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
+import { AuthService } from "../auth/auth.service";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -56,6 +56,7 @@ export class SyncedSessionService extends SessionService {
     private httpClient: HttpClient,
     private localSession: LocalSession,
     private remoteSession: RemoteSession,
+    private authService: AuthService,
     @Inject(LOCATION_TOKEN) private location: Location
   ) {
     super();
@@ -71,18 +72,13 @@ export class SyncedSessionService extends SessionService {
   }
 
   /**
-   * Do login automatically if there is still a valid CouchDB cookie from last login with username and password
+   * Do log in automatically if there is still a valid CouchDB cookie from last login with username and password
    */
   checkForValidSession() {
-    this.httpClient
-      .get(`${AppSettings.DB_PROXY_PREFIX}/_session`, {
-        withCredentials: true,
-      })
-      .subscribe((res: any) => {
-        if (res.userCtx.name) {
-          this.handleSuccessfulLogin(res.userCtx);
-        }
-      });
+    this.authService
+      .autoLogin()
+      .then((user) => this.handleSuccessfulLogin(user))
+      .catch(() => undefined);
   }
 
   async handleSuccessfulLogin(userObject: DatabaseUser) {
@@ -225,10 +221,11 @@ export class SyncedSessionService extends SessionService {
     this.syncState.next(SyncState.STARTED);
     const localPouchDB = this.localSession.getDatabase().getPouchDB();
     const remotePouchDB = this.remoteSession.getDatabase().getPouchDB();
-    this._liveSyncHandle = (localPouchDB.sync(remotePouchDB, {
+    this._liveSyncHandle = localPouchDB.sync(remotePouchDB, {
       live: true,
       retry: true,
-    }) as any)
+    });
+    this._liveSyncHandle
       .on("paused", (info) => {
         // replication was paused: either because sync is finished or because of a failed sync (mostly due to lost connection). info is empty.
         if (this.remoteSession.loginState.value === LoginState.LOGGED_IN) {
@@ -250,7 +247,6 @@ export class SyncedSessionService extends SessionService {
         // replication was canceled!
         this._liveSyncHandle = null;
       });
-    return this._liveSyncHandle;
   }
 
   /**

@@ -28,6 +28,7 @@ import { EntitySubrecordModule } from "../../core/entity-components/entity-subre
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ViewModule } from "../../core/view/view.module";
 import { ActivitiesOverviewComponent } from "./activities-overview/activities-overview.component";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 
 @NgModule({
   imports: [
@@ -70,6 +71,7 @@ import { ActivitiesOverviewComponent } from "./activities-overview/activities-ov
     EntitySubrecordModule,
     FontAwesomeModule,
     ViewModule,
+    MatSlideToggleModule,
   ],
   declarations: [
     SchoolBlockComponent,

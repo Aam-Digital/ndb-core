@@ -54,12 +54,9 @@ export class EntityMapperService {
     id: string
   ): Promise<T> {
     const ctor = this.resolveConstructor(entityType);
-    const resultEntity = new ctor("");
-    const result = await this._db.get(
-      Entity.createPrefixedId(resultEntity.getType(), id)
-    );
-    this.entitySchemaService.loadDataIntoEntity(resultEntity, result);
-    return resultEntity;
+    const entityId = Entity.createPrefixedId(ctor.ENTITY_TYPE, id);
+    const result = await this._db.get(entityId);
+    return this.transformToEntityFormat(result, ctor);
   }
 
   /**
@@ -74,19 +71,24 @@ export class EntityMapperService {
   public async loadType<T extends Entity>(
     entityType: EntityConstructor<T> | string
   ): Promise<T[]> {
-    const resultArray: Array<T> = [];
     const ctor = this.resolveConstructor(entityType);
-    const allRecordsOfType = await this._db.getAll(
-      new ctor("").getType() + ":"
-    );
+    const records = await this._db.getAll(ctor.ENTITY_TYPE + ":");
+    return records.map((rec) => this.transformToEntityFormat(rec, ctor));
+  }
 
-    for (const record of allRecordsOfType) {
-      const entity = new ctor("");
+  private transformToEntityFormat<T extends Entity>(
+    record: any,
+    ctor: EntityConstructor<T>
+  ): T {
+    const entity = new ctor("");
+    try {
       this.entitySchemaService.loadDataIntoEntity(entity, record);
-      resultArray.push(entity);
+    } catch (e) {
+      // add _id information to error message
+      e.message = `Could not transform entity "${record._id}": ${e.message}`;
+      throw e;
     }
-
-    return resultArray;
+    return entity;
   }
 
   /**
@@ -134,9 +136,8 @@ export class EntityMapperService {
     entity: T,
     forceUpdate: boolean = false
   ): Promise<any> {
-    const rawData = this.entitySchemaService.transformEntityToDatabaseFormat(
-      entity
-    );
+    const rawData =
+      this.entitySchemaService.transformEntityToDatabaseFormat(entity);
     const result = await this._db.put(rawData, forceUpdate);
     if (result?.ok) {
       entity._rev = result.rev;

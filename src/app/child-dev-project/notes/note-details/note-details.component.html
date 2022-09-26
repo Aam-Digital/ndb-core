@@ -58,8 +58,7 @@
       <mat-form-field>
         <input
           matInput
-          i18n-placeholder="Date input|Placeholder for a date-input"
-          placeholder="Date"
+          [placeholder]="dateLabel"
           name="date"
           [disabled]="formDialogWrapper.readonly"
           [(ngModel)]="entity.date"
@@ -73,7 +72,7 @@
       </mat-form-field>
 
       <mat-form-field>
-        <mat-label i18n="Status of a note"> Status</mat-label>
+        <mat-label> {{ statusLabel }}</mat-label>
         <mat-select
           name="followup"
           [(ngModel)]="entity.warningLevel"
@@ -91,8 +90,7 @@
 
       <mat-form-field>
         <mat-select
-          i18n-placeholder="Type of Interaction when adding event"
-          placeholder="Type of Interaction"
+          [placeholder]="categoryLabel"
           name="type"
           [(ngModel)]="entity.category"
           [disabled]="formDialogWrapper.readonly"
@@ -116,10 +114,8 @@
         (selectionChange)="entityForm.form.markAsDirty()"
         [(selection)]="entity.authors"
         [disabled]="formDialogWrapper.readonly"
-        i18n-placeholder="placeholder when adding multiple authors"
-        placeholder="Add Author..."
-        i18n-label="Authors of a note"
-        label="Authors"
+        [placeholder]="authorsPlaceholder"
+        [label]="authorsLabel"
       >
       </app-entity-select>
 
@@ -130,11 +126,7 @@
       <mat-form-field class="input-medium">
         <input
           matInput
-          i18n-placeholder="
-            Placeholder|Placeholder informing that this is the Topic/Summary
-            of the note
-          "
-          placeholder="Topic / Summary"
+          [placeholder]="subjectLabel"
           name="subject"
           type="text"
           cdkFocusInitial
@@ -146,11 +138,7 @@
       <mat-form-field>
         <textarea
           matInput
-          i18n-placeholder="
-            Placeholder|Placeholder informing that this is textarea the actual
-            note can be entered into
-          "
-          placeholder="Notes"
+          [placeholder]="textLabel"
           name="notes"
           [(ngModel)]="entity.text"
           [disabled]="formDialogWrapper.readonly"
@@ -169,18 +157,17 @@
       [additionalFilter]="filterInactiveChildren"
       [showEntities]="!entity.category?.isMeeting"
       [disabled]="formDialogWrapper.readonly"
-      label="Participants"
-      i18n-label="Participants of a note"
-      placeholder="Add participant ..."
-      i18n-placeholder="Add participants of a note"
+      [label]="childrenLabel"
+      [placeholder]="childrenPlaceholder"
     >
       <mat-option>
         <mat-checkbox
           labelPosition="before"
           (change)="toggleIncludeInactiveChildren()"
           [checked]="includeInactiveChildren"
+          i18n="Label for checkbox|e.g. include inactive children"
         >
-          Include Inactive Children
+          Include Inactive {{ childrenLabel }}
         </mat-checkbox>
       </mat-option>
     </app-entity-select>
@@ -202,10 +189,8 @@
       [(selection)]="entity.schools"
       (selectionChange)="entityForm.form.markAsDirty()"
       [disabled]="formDialogWrapper.readonly"
-      i18n-label="Groups that belong to a note"
-      label="Groups"
-      i18n-placeholder="Add a group to a note"
-      placeholder="Add group ..."
+      [label]="schoolsLabel"
+      [placeholder]="schoolsPlaceholder"
     >
     </app-entity-select>
 
