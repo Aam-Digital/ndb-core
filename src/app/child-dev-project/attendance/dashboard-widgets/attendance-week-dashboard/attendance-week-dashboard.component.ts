@@ -6,7 +6,6 @@ import {
   ViewChild,
 } from "@angular/core";
 import { Router } from "@angular/router";
-import { UntilDestroy } from "@ngneat/until-destroy";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { Child } from "../../../children/model/child";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
@@ -26,7 +25,6 @@ interface AttendanceWeekRow {
   attendanceDays: (EventAttendance | undefined)[];
 }
 
-@UntilDestroy()
 @DynamicComponent("AttendanceWeekDashboard")
 @Component({
   selector: "app-attendance-week-dashboard",
@@ -84,12 +82,12 @@ export class AttendanceWeekDashboardComponent
     await this.loadAttendanceOfAbsentees();
   }
 
-  async loadAttendanceOfAbsentees(daysOffset = 0) {
+  async loadAttendanceOfAbsentees() {
     const today = new Date();
     const previousMonday = new Date(
       today.getFullYear(),
       today.getMonth(),
-      today.getDate() - today.getDay() - 6 + daysOffset
+      today.getDate() - today.getDay() - 6 + this.daysOffset
     );
     const previousSaturday = new Date(
       previousMonday.getFullYear(),
