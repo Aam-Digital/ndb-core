@@ -24,6 +24,7 @@ export class DataImportService {
     dateOnlyEntitySchemaDatatype,
     monthEntitySchemaDatatype,
   ].map((dataType) => dataType.name);
+
   constructor(
     private db: Database,
     private papa: Papa,
@@ -161,7 +162,10 @@ export class DataImportService {
   ): any {
     if (property === "_id") {
       return Entity.createPrefixedId(importMeta.entityType, value);
-    } else if (importMeta.dateFormat && this.dateDataTypes.includes(dataType)) {
+    } else if (
+      importMeta.dateFormat &&
+      this.dateDataTypes.includes(dataType.toLowerCase())
+    ) {
       return this.transform2Date(value, importMeta.dateFormat);
     } else {
       return value;

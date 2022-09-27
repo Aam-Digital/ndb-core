@@ -68,7 +68,6 @@ export class DataImportComponent {
       this.csvFile.meta.fields.forEach((field) =>
         this.columnMappingForm.addControl(field, new FormControl())
       );
-      this.entitySelectionChanged();
     } catch (e) {
       this.fileNameForm.setErrors({ fileInvalid: e.message });
     }
@@ -90,6 +89,7 @@ export class DataImportComponent {
         const type = record["_id"].split(":")[0] as string;
         this.entityForm.patchValue({ entity: type });
         this.entityForm.disable();
+        this.entitySelectionChanged();
       }
       this.transactionIDForm.patchValue({ transactionId: "" });
       this.transactionIDForm.disable();
