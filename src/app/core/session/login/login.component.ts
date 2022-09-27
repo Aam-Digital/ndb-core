@@ -38,6 +38,11 @@ export class LoginComponent implements AfterViewInit {
   /** password as entered in form */
   password: string;
 
+  /** whether to show or hide the password */
+  passwordVisible: boolean = false;
+  readonly showPasswordHint = $localize`:Tooltip text for showing the password:Show password`;
+  readonly hidePasswordHint = $localize`:Tooltip text for hiding the password:Hide password`;
+
   /** errorMessage displayed in form */
   errorMessage: string;
 
@@ -60,7 +65,7 @@ export class LoginComponent implements AfterViewInit {
     this.errorMessage = "";
 
     this._sessionService
-      .login(this.username, this.password)
+      .login(this.username?.trim(), this.password)
       .then((loginState) => {
         switch (loginState) {
           case LoginState.LOGGED_IN:
@@ -98,5 +103,9 @@ export class LoginComponent implements AfterViewInit {
     this.errorMessage = "";
     this.password = "";
     this.loginInProgress = false;
+  }
+
+  togglePasswordVisible() {
+    this.passwordVisible = !this.passwordVisible;
   }
 }

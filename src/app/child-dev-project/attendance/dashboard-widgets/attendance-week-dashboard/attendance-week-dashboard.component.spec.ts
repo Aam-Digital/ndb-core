@@ -92,4 +92,29 @@ describe("AttendanceWeekDashboardComponent", () => {
       ],
     ]);
   });
+
+  it("should correctly use the offset", () => {
+    // default case: last week monday till saturday
+    const mondayLastWeek = moment().startOf("week").subtract(6, "days");
+    const saturdayLastWeek = mondayLastWeek.clone().add("5", "days");
+    mockAttendanceService.getAllActivityAttendancesForPeriod.calls.reset();
+
+    component.loadAttendanceOfAbsentees();
+
+    expect(
+      mockAttendanceService.getAllActivityAttendancesForPeriod
+    ).toHaveBeenCalledWith(mondayLastWeek.toDate(), saturdayLastWeek.toDate());
+
+    // with offset: this week monday till saturday
+    const mondayThisWeek = moment().startOf("week").add(1, "day");
+    const saturdayThisWeek = mondayThisWeek.clone().add(5, "days");
+    mockAttendanceService.getAllActivityAttendancesForPeriod.calls.reset();
+
+    component.onInitFromDynamicConfig({ daysOffset: 7 });
+    component.loadAttendanceOfAbsentees();
+
+    expect(
+      mockAttendanceService.getAllActivityAttendancesForPeriod
+    ).toHaveBeenCalledWith(mondayThisWeek.toDate(), saturdayThisWeek.toDate());
+  });
 });
