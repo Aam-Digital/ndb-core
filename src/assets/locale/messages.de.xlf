@@ -722,7 +722,7 @@
               >"/> >  <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/> <x id="INTERPOLATION" equiv-text="{{ childNoteInfo.daysSinceLastNote | number: &quot;1.0-0&quot; }}"/> days <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/><x id="CLOSE_TABLE_CELL" ctype="x-td" equiv-text="&lt;/td>"/></source>
         <target state="translated"><x id="START_TABLE_CELL" ctype="x-td" equiv-text="&lt;td *matCellDef=&quot;let childNoteInfo&quot;>"/><x id="START_TAG_SPAN_1" ctype="x-span_1" equiv-text="&lt;span  class=&quot;dashboard-table-additional-info-cell&quot;>"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span
                 *ngIf=&quot;childNoteInfo.moreThanDaysSince&quot;
-              >"/> > <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/><x id="INTERPOLATION" equiv-text="{{ childNoteInfo.daysSinceLastNote | number: &quot;1.0-0&quot; }}"/>Tage<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/><x id="CLOSE_TABLE_CELL" ctype="x-td" equiv-text="&lt;/td>"/></target>
+              >"/> > <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/><x id="INTERPOLATION" equiv-text="{{ childNoteInfo.daysSinceLastNote | number: &quot;1.0-0&quot; }}"/> Tage <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span>"/><x id="CLOSE_TABLE_CELL" ctype="x-td" equiv-text="&lt;/td>"/></target>
         <note priority="1" from="description">Format like 'Days passed > 5 days'</note>
         <note priority="1" from="meaning">Amount of days back</note>
         <context-group purpose="location">
