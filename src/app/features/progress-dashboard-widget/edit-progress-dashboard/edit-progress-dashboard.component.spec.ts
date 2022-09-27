@@ -5,15 +5,14 @@ import {
   EditProgressDashboardComponentData,
 } from "./edit-progress-dashboard.component";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { ReactiveFormsModule, FormBuilder } from "@angular/forms";
-import { TypedForm } from "../../../core/entity-components/entity-form/entity-form.service";
-import { ProgressDashboardPart } from "../progress-dashboard/progress-dashboard-config";
+import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 
 describe("EditProgressDashboardComponent", () => {
   let component: EditProgressDashboardComponent;
   let fixture: ComponentFixture<EditProgressDashboardComponent>;
 
   const mockDialogData: EditProgressDashboardComponentData = {
+    title: "qwe",
     parts: [
       {
         label: "foo",
@@ -47,8 +46,8 @@ describe("EditProgressDashboardComponent", () => {
     }).compileComponents();
   });
 
-  function getGroup(index: number): TypedForm<ProgressDashboardPart> {
-    return component.forms.at(index);
+  function getGroup(index: number): FormGroup {
+    return component.parts.at(index) as FormGroup;
   }
 
   beforeEach(() => {
@@ -62,19 +61,30 @@ describe("EditProgressDashboardComponent", () => {
   });
 
   it("should contain the initial state from the data", () => {
-    expect(component.forms).toHaveValue(mockDialogData.parts);
-    expect(component.forms).toBeValidForm();
+    expect(component.parts).toHaveValue(mockDialogData.parts);
+    expect(component.parts).toBeValidForm();
+
+    expect(component.title).toHaveValue(mockDialogData.title);
+    expect(component.title).toBeValidForm();
+  });
+
+  it("should mark form as invalid when title is empty", () => {
+    component.title.setValue("");
+    expect(component.title).toHaveValue("");
+    expect(component.title).toContainFormError("required");
+
+    expect(component.title).not.toBeValidForm();
   });
 
   it("should append a new part", () => {
     component.addPart();
-    expect(component.forms).toHaveSize(4);
+    expect(component.parts).toHaveSize(4);
   });
 
   it("should delete a part", () => {
     component.removePart(1);
-    expect(component.forms).toHaveSize(2);
-    expect(component.forms).toHaveValue([
+    expect(component.parts).toHaveSize(2);
+    expect(component.parts).toHaveValue([
       mockDialogData.parts[0],
       mockDialogData.parts[2],
     ]);
@@ -82,9 +92,9 @@ describe("EditProgressDashboardComponent", () => {
 
   it("should mark the form as invalid when current or target is not present", () => {
     const firstForm = getGroup(0);
-    firstForm.get("currentValue").setValue(undefined);
+    firstForm.get("currentValue").setValue("");
     expect(firstForm.get("currentValue")).toContainFormError("required");
-    firstForm.get("targetValue").setValue(undefined);
+    firstForm.get("targetValue").setValue("");
     expect(firstForm.get("targetValue")).toContainFormError("required");
 
     expect(firstForm).not.toBeValidForm();

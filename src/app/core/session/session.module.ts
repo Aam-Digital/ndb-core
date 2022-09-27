@@ -45,6 +45,7 @@ import { Angulartics2OnModule } from "angulartics2";
 import { PasswordResetComponent } from "./auth/keycloak/password-reset/password-reset.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { AuthInterceptor } from "./auth/keycloak/auth-interceptor.service";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 /**
  * The core session logic handling user login as well as connection and synchronization with the remote database.
@@ -71,6 +72,7 @@ import { AuthInterceptor } from "./auth/keycloak/auth-interceptor.service";
     Angulartics2OnModule,
     ReactiveFormsModule,
     FontAwesomeModule,
+    MatTooltipModule,
   ],
   declarations: [
     LoginComponent,

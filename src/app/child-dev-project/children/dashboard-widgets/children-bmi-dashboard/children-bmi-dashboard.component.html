@@ -1,8 +1,7 @@
 <app-dashboard-widget
   icon="weight"
   theme="note"
-  i18n-title="Title of the BMI dashboard component"
-  title="BMI"
+  [title]="bmiDataSource.data.length"
   i18n-subtitle="Subtitle of the BMI dashboard component"
   subtitle="Students with unhealthy BMI"
   [loading]="isLoading"
