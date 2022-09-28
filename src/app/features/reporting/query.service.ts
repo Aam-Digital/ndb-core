@@ -332,9 +332,11 @@ export class QueryService {
           total: 0,
           present: 0,
           percentage: "",
+          detailedStatus: {},
         };
       }
       const report = participantMap[attendance.participant];
+      report.detailedStatus[attendance.status.status.id] = report.detailedStatus[attendance.status.status.id] ? report.detailedStatus[attendance.status.status.id] + 1 : 1;
       if (attendance.status.status.countAs === "PRESENT") {
         report.present++;
       }
@@ -380,4 +382,7 @@ export interface AttendanceReport {
   total: number;
   present: number;
   percentage: string;
+
+  /** counts by all custom configured status **/
+  detailedStatus?: { [key: string]: number };
 }
