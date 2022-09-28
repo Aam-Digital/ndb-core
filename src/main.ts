@@ -27,10 +27,19 @@ import * as parseXliffToJson from "./app/utils/parse-xliff-to-js";
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 import { AppSettings } from "./app/core/app-config/app-settings";
 import { LoggingService } from "./app/core/logging/logging.service";
+import { PwaInstallService } from "./app/core/pwa-install/pwa-install.service";
 
 if (environment.production) {
   enableProdMode();
 }
+
+PwaInstallService.canInstallDirectly = new Promise((resolve) => {
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    PwaInstallService.deferredInstallPrompt = e;
+    resolve();
+  });
+});
 
 // Initialize remote logging
 LoggingService.initRemoteLogging({
