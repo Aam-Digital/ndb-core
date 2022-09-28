@@ -27,7 +27,7 @@
     "@angular/core": "^14.2.0",
     "@angular/flex-layout": "^14.0.0-beta.40",
     "@angular/forms": "^14.2.0",
-    "@angular/localize": "^14.2.0",
+    "@angular/localize": "^14.2.1",
     "@angular/material": "^14.2.0",
     "@angular/platform-browser": "^14.2.0",
     "@angular/platform-browser-dynamic": "^14.2.0",
