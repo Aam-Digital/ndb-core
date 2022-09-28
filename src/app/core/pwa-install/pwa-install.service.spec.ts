@@ -65,6 +65,9 @@ describe("PwaInstallService", () => {
     const installPromise = service.installPWA();
     expect(installSpy).toHaveBeenCalled();
     await expectAsync(installPromise).toBeResolvedTo({ outcome: "accepted" });
+
+    // reset static property
+    PwaInstallService["deferredInstallPrompt"] = undefined;
   });
 
   it("should throw an error when trying to install without install prompt", () => {
