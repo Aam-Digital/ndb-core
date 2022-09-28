@@ -33,13 +33,8 @@ if (environment.production) {
   enableProdMode();
 }
 
-PwaInstallService.canInstallDirectly = new Promise((resolve) => {
-  window.addEventListener("beforeinstallprompt", (e) => {
-    e.preventDefault();
-    PwaInstallService.deferredInstallPrompt = e;
-    resolve();
-  });
-});
+// Listening to event as soon as possible
+PwaInstallService.registerPWAInstallListener();
 
 // Initialize remote logging
 LoggingService.initRemoteLogging({

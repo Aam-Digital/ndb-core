@@ -33,18 +33,18 @@ export class PwaInstallService {
    */
   static canInstallDirectly: Promise<void>;
 
-  static deferredInstallPrompt: any;
+  private static deferredInstallPrompt: any;
 
   constructor(@Inject(WINDOW_TOKEN) private window: Window) {}
 
-  registerPWAInstallListener() {
-    // PwaInstallService.canInstallDirectly = new Promise((resolve) => {
-    //   this.window.addEventListener("beforeinstallprompt", (e) => {
-    //     e.preventDefault();
-    //     PwaInstallService.deferredInstallPrompt = e;
-    //     resolve();
-    //   });
-    // });
+  static registerPWAInstallListener() {
+    this.canInstallDirectly = new Promise((resolve) => {
+      window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        this.deferredInstallPrompt = e;
+        resolve();
+      });
+    });
   }
 
   installPWA(): Promise<any> {
