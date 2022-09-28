@@ -23,7 +23,7 @@ export class PwaInstallComponent {
     if (this.pwaInstallType === PWAInstallType.ShowiOSInstallInstructions) {
       this.showPWAInstallButton = true;
     }
-    PwaInstallService.canInstallDirectly.then(() => {
+    PwaInstallService.canInstallDirectly?.then(() => {
       this.showPWAInstallButton = true;
     });
   }

@@ -13,7 +13,6 @@ describe("PwaInstallService", () => {
       navigator: {
         userAgent: "mockAgent",
       },
-      addEventListener: () => {},
       innerWidth: 2000,
       matchMedia: () => ({}),
     };
@@ -48,7 +47,7 @@ describe("PwaInstallService", () => {
 
   it("should execute install event when calling install", async () => {
     const installSpy = jasmine.createSpy();
-    spyOn(mockWindow, "addEventListener").and.callFake((_, callback) =>
+    spyOn(window, "addEventListener").and.callFake((_, callback) =>
       callback({
         prompt: installSpy,
         preventDefault: () => {},
@@ -56,12 +55,12 @@ describe("PwaInstallService", () => {
       })
     );
 
-    service.registerPWAInstallListener();
-    expect(mockWindow.addEventListener).toHaveBeenCalledWith(
+    PwaInstallService.registerPWAInstallListener();
+    expect(window.addEventListener).toHaveBeenCalledWith(
       "beforeinstallprompt",
       jasmine.anything()
     );
-    await expectAsync(service.canInstallDirectly).toBeResolved();
+    await expectAsync(PwaInstallService.canInstallDirectly).toBeResolved();
 
     const installPromise = service.installPWA();
     expect(installSpy).toHaveBeenCalled();
