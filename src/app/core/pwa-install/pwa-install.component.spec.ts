@@ -4,7 +4,7 @@ import { PwaInstallComponent } from "./pwa-install.component";
 import { PwaInstallModule } from "./pwa-install.module";
 import { PwaInstallService, PWAInstallType } from "./pwa-install.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { Subject } from "rxjs";
+import { firstValueFrom, Subject } from "rxjs";
 import { take } from "rxjs/operators";
 import { MockedTestingModule } from "../../utils/mocked-testing.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -12,13 +12,16 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 describe("PwaInstallComponent", () => {
   let mockPWAInstallService: jasmine.SpyObj<PwaInstallService>;
   let mockSnackbar: jasmine.SpyObj<MatSnackBar>;
-  const pwaInstallResult = new Subject();
+  const pwaInstallResult = new Subject<any>();
 
   beforeEach(async () => {
-    mockPWAInstallService = jasmine.createSpyObj(
-      ["getPWAInstallType", "installPWA", "registerPWAInstallListener"],
-      { canInstallDirectly: pwaInstallResult.pipe(take(1)).toPromise() }
+    PwaInstallService.canInstallDirectly = firstValueFrom(
+      pwaInstallResult.pipe(take(1))
     );
+    mockPWAInstallService = jasmine.createSpyObj([
+      "getPWAInstallType",
+      "installPWA",
+    ]);
     mockSnackbar = jasmine.createSpyObj(["openFromTemplate"]);
     await TestBed.configureTestingModule({
       imports: [
