@@ -349,6 +349,14 @@ export const defaultJsonConfig = {
               }
             }
           ]
+        },
+        {
+          "title": "Security",
+          "components": [
+            {
+              "component": "UserSecurity"
+            }
+          ]
         }
       ],
       "icon": "user"

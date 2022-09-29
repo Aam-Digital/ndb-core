@@ -144,6 +144,14 @@ export class KeycloakAuthService extends AuthService {
       }
     );
   }
+
+  createUser(username: string, email: string, roles: string[] = []) {
+    return this.httpClient.post(`${environment.account_url}/account`, {
+      username,
+      email,
+      roles,
+    });
+  }
 }
 
 export interface OIDCTokenResponse {

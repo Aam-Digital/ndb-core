@@ -1,1 +1,12 @@
-<p>user-security works!</p>
+<form [formGroup]="form">
+  <mat-form-field>
+    <mat-label>Username</mat-label>
+    <input matInput type="text" formControlName="username">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Email</mat-label>
+    <input matInput type="text" formControlName="email">
+  </mat-form-field>
+  <br>
+  <button mat-stroked-button type="submit" (click)="createUser()">Send invitation</button>
+</form>
