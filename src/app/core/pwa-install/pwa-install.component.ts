@@ -1,6 +1,7 @@
 import { Component, TemplateRef, ViewChild } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { PwaInstallService, PWAInstallType } from "./pwa-install.service";
+
 @Component({
   selector: "app-pwa-install",
   templateUrl: "./pwa-install.component.html",
@@ -22,7 +23,7 @@ export class PwaInstallComponent {
     if (this.pwaInstallType === PWAInstallType.ShowiOSInstallInstructions) {
       this.showPWAInstallButton = true;
     }
-    pwaInstallService.canInstallDirectly.then(() => {
+    PwaInstallService.canInstallDirectly?.then(() => {
       this.showPWAInstallButton = true;
     });
   }

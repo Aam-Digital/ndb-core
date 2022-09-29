@@ -1,0 +1,30 @@
+<mat-form-field [formGroup]="parent">
+  <mat-label>{{ label }}</mat-label>
+  <input
+    matInput
+    [formControl]="formControl"
+    [matAutocomplete]="autoSuggestions"
+    [matAutocompleteDisabled]="autocompleteDisabled"
+    (keyup)="keyup()"
+    (focusin)="updateAutocomplete()"
+  />
+  <mat-autocomplete #autoSuggestions="matAutocomplete">
+    <mat-option
+      *ngFor="let entity of autocompleteEntities | async"
+      [value]="entity[formControlName]"
+      (onSelectionChange)="$event.source.selected ? selectEntity(entity) : null"
+    >
+      <app-display-entity
+        [entityToDisplay]="entity"
+        [linkDisabled]="true"
+      ></app-display-entity>
+    </mat-option>
+  </mat-autocomplete>
+
+  <mat-error
+    *ngIf="formControl.errors?.required"
+    i18n="Error message for any input"
+  >
+    This field is required
+  </mat-error>
+</mat-form-field>

@@ -6,6 +6,7 @@ export enum PWAInstallType {
   RunningAsPWA,
   NotAvailable,
 }
+
 enum Browser {
   Opera,
   MicrosoftInternetExplorer,
@@ -15,6 +16,7 @@ enum Browser {
   Firefox,
   Other,
 }
+
 enum OS {
   iOS,
   MacOS,
@@ -29,15 +31,15 @@ export class PwaInstallService {
   /**
    * Resolves once/if it is possible to directly install the app
    */
-  canInstallDirectly: Promise<void>;
+  static canInstallDirectly: Promise<void>;
 
-  private deferredInstallPrompt: any;
+  private static deferredInstallPrompt: any;
 
   constructor(@Inject(WINDOW_TOKEN) private window: Window) {}
 
-  registerPWAInstallListener() {
+  static registerPWAInstallListener() {
     this.canInstallDirectly = new Promise((resolve) => {
-      this.window.addEventListener("beforeinstallprompt", (e) => {
+      window.addEventListener("beforeinstallprompt", (e) => {
         e.preventDefault();
         this.deferredInstallPrompt = e;
         resolve();
@@ -46,13 +48,13 @@ export class PwaInstallService {
   }
 
   installPWA(): Promise<any> {
-    if (!this.deferredInstallPrompt) {
+    if (!PwaInstallService.deferredInstallPrompt) {
       throw new Error(
         "InstallPWA called, but PWA install prompt has not fired."
       );
     }
-    this.deferredInstallPrompt.prompt();
-    return this.deferredInstallPrompt.userChoice;
+    PwaInstallService.deferredInstallPrompt.prompt();
+    return PwaInstallService.deferredInstallPrompt.userChoice;
   }
 
   getPWAInstallType(): PWAInstallType {
