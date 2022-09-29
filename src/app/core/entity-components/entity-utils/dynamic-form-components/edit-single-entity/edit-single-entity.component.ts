@@ -34,12 +34,6 @@ export class EditSingleEntityComponent extends EditComponent<string> {
     this.autocompleteEntities.next(filteredEntities);
   }
 
-  enterPressed() {
-    if (this.autocompleteEntities.getValue().length === 1) {
-      this.select(this.autocompleteEntities.getValue()[0]);
-    }
-  }
-
   async onInitFromDynamicConfig(config: EditPropertyConfig<string>) {
     super.onInitFromDynamicConfig(config);
     this.placeholder = $localize`:Placeholder for input to set an entity|context Select User:Select ${

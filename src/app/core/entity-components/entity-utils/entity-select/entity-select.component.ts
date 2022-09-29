@@ -234,12 +234,6 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     }
   }
 
-  enterPressed() {
-    if (this.filteredEntities.length === 1) {
-      this.selectEntity(this.filteredEntities[0]);
-    }
-  }
-
   private emitChange() {
     this.selectionChange.emit(this.selectedEntities.map((e) => e.getId()));
   }
