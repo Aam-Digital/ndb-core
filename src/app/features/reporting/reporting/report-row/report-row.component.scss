@@ -1,0 +1,5 @@
+@use "@angular/material" as mat;
+
+table tr:nth-child(even) {
+  background-color: mat.get-color-from-palette(mat.$light-theme-background-palette, background);
+}
