@@ -10,6 +10,9 @@
   <mat-form-field style="width: 100%">
     <mat-label>Roles</mat-label>
     <mat-select formControlName="roles" multiple>
+      <mat-select-trigger>
+        <span *ngFor="let role of form.get('roles').value">{{ role.name }} </span>
+      </mat-select-trigger>
       <mat-option
         *ngFor="let role of availableRoles"
         [value]="role"
@@ -19,4 +22,5 @@
   </mat-form-field>
   <br>
   <button mat-stroked-button type="submit" (click)="createUser()">Send invitation</button>
+  <mat-error *ngIf="form.getError('failed')">{{ form.getError('failed') }}</mat-error>
 </form>

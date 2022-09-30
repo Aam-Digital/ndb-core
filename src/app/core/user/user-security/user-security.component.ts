@@ -47,19 +47,25 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
   }
 
   createUser() {
-    // TODO add error handling
+    this.form.setErrors({});
+    if (this.form.invalid) {
+      this.form.markAsTouched();
+      return;
+    }
     this.keycloak
       .createUser(
         this.form.get("username").value,
         this.form.get("email").value,
         this.form.get("roles").value
       )
-      .subscribe(() =>
-        this.snackbar.open(
-          `An email has been sent to ${this.form.get("email").value}`,
-          undefined,
-          { duration: 5000 }
-        )
-      );
+      .subscribe({
+        next: () =>
+          this.snackbar.open(
+            `An email has been sent to ${this.form.get("email").value}`,
+            undefined,
+            { duration: 5000 }
+          ),
+        error: ({ error }) => this.form.setErrors({ failed: error.message }),
+      });
   }
 }
