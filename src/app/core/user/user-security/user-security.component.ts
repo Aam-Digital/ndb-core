@@ -72,7 +72,9 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
         this.form.get("email").value,
         this.form.get("roles").value
       ),
-      `An email has been sent to ${this.form.get("email").value}`
+      $localize`:Snackbar message:An email has been sent to ${
+        this.form.get("email").value
+      }`
     );
   }
 
@@ -84,7 +86,7 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
     );
     this.process(
       this.keycloak.updateUser(this.userId, this.form.getRawValue()),
-      "Successfully updated user"
+      $localize`:Snackbar message:Successfully updated user`
     );
   }
 

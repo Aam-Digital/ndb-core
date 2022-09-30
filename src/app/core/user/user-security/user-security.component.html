@@ -1,14 +1,14 @@
 <form [formGroup]="form">
   <mat-form-field>
-    <mat-label>Username</mat-label>
+    <mat-label i18n="label of username input">Username</mat-label>
     <input matInput type="text" formControlName="username">
   </mat-form-field>
   <mat-form-field>
-    <mat-label>Email</mat-label>
+    <mat-label i18n="label of email input">Email</mat-label>
     <input matInput type="text" formControlName="email">
   </mat-form-field>
   <mat-form-field style="width: 100%">
-    <mat-label>Roles</mat-label>
+    <mat-label i18n="label of roles input">Roles</mat-label>
     <mat-select formControlName="roles" multiple>
       <mat-select-trigger>
         <span *ngFor="let role of form.get('roles').value">{{ role.name }} </span>
@@ -21,7 +21,23 @@
     </mat-select>
   </mat-form-field>
   <br>
-  <button *ngIf="!userId" mat-stroked-button type="submit" (click)="createUser()">Send invitation</button>
-  <button *ngIf="userId" mat-stroked-button type="submit" (click)="updateUser()">Update user</button>
+  <button
+    *ngIf="!userId"
+    mat-stroked-button
+    type="submit"
+    (click)="createUser()"
+    [disabled]="form.disabled"
+    i18n="button to invite a new user"
+  >Send invitation
+  </button>
+  <button
+    *ngIf="userId"
+    mat-stroked-button
+    type="submit"
+    (click)="updateUser()"
+    [disabled]="form.disabled"
+    i18n="button to update data of an existing user"
+  >Update user
+  </button>
   <mat-error *ngIf="form.getError('failed')">{{ form.getError('failed') }}</mat-error>
 </form>

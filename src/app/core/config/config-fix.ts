@@ -351,7 +351,7 @@ export const defaultJsonConfig = {
           ]
         },
         {
-          "title": "Security",
+          "title": $localize`:Panel title:Security`,
           "components": [
             {
               "component": "UserSecurity"
