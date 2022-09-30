@@ -25,6 +25,7 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
   });
   keycloak: KeycloakAuthService;
   availableRoles: Role[] = [];
+  userId: string;
 
   constructor(
     private fb: FormBuilder,
@@ -44,6 +45,24 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
   onInitFromDynamicConfig(config: any) {
     const user = config.entity as User;
     this.form.get("username").setValue(user.name);
+    if (this.keycloak) {
+      this.keycloak.getUser(user.name).subscribe({
+        next: (res) => this.assignUser(res),
+        error: () => undefined,
+      });
+    }
+  }
+
+  private assignUser(res: { id: string; email: string; roles: Role[] }) {
+    this.form.get("email").setValue(res.email);
+    this.form
+      .get("roles")
+      .setValue(
+        res.roles.map((role) =>
+          this.availableRoles.find((r) => r.id === role.id)
+        )
+      );
+    this.userId = res.id;
   }
 
   createUser() {
@@ -68,4 +87,6 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
         error: ({ error }) => this.form.setErrors({ failed: error.message }),
       });
   }
+
+  updateUser() {}
 }

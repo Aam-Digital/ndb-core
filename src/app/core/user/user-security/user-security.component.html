@@ -21,6 +21,7 @@
     </mat-select>
   </mat-form-field>
   <br>
-  <button mat-stroked-button type="submit" (click)="createUser()">Send invitation</button>
+  <button *ngIf="!userId" mat-stroked-button type="submit" (click)="createUser()">Send invitation</button>
+  <button *ngIf="userId" mat-stroked-button type="submit" (click)="updateUser()">Update user</button>
   <mat-error *ngIf="form.getError('failed')">{{ form.getError('failed') }}</mat-error>
 </form>
