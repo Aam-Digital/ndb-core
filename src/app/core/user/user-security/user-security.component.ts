@@ -9,6 +9,7 @@ import {
 import { AuthService } from "../../session/auth/auth.service";
 import { User } from "../user";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { Observable } from "rxjs";
 
 @DynamicComponent("UserSecurity")
 @Component({
@@ -18,8 +19,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 })
 export class UserSecurityComponent implements OnInitDynamicComponent {
   form = this.fb.group({
-    username: [{ value: "", disabled: true }, Validators.required],
-    // TODO these values should be pre-filled if already set
+    username: [{ value: "", disabled: true }],
     email: ["", [Validators.required, Validators.email]],
     roles: new FormControl<Role[]>([]),
   });
@@ -66,27 +66,37 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
   }
 
   createUser() {
-    this.form.setErrors({});
+    this.process(
+      this.keycloak.createUser(
+        this.form.get("username").value,
+        this.form.get("email").value,
+        this.form.get("roles").value
+      ),
+      `An email has been sent to ${this.form.get("email").value}`
+    );
+  }
+
+  updateUser() {
+    const update = this.form.getRawValue();
+    // only send values that have changed
+    Object.keys(this.form.controls).forEach((control) =>
+      this.form.get(control).pristine ? delete update[control] : undefined
+    );
+    this.process(
+      this.keycloak.updateUser(this.userId, this.form.getRawValue()),
+      "Successfully updated user"
+    );
+  }
+
+  private process(obs: Observable<any>, message: string) {
     if (this.form.invalid) {
       this.form.markAsTouched();
       return;
     }
-    this.keycloak
-      .createUser(
-        this.form.get("username").value,
-        this.form.get("email").value,
-        this.form.get("roles").value
-      )
-      .subscribe({
-        next: () =>
-          this.snackbar.open(
-            `An email has been sent to ${this.form.get("email").value}`,
-            undefined,
-            { duration: 5000 }
-          ),
-        error: ({ error }) => this.form.setErrors({ failed: error.message }),
-      });
+    this.form.setErrors({});
+    obs.subscribe({
+      next: () => this.snackbar.open(message, undefined, { duration: 5000 }),
+      error: ({ error }) => this.form.setErrors({ failed: error.message }),
+    });
   }
-
-  updateUser() {}
 }

@@ -153,6 +153,13 @@ export class KeycloakAuthService extends AuthService {
     });
   }
 
+  updateUser(userId: string, user: any) {
+    return this.httpClient.put(
+      `${environment.account_url}/account/${userId}`,
+      user
+    );
+  }
+
   getUser(username: string) {
     return this.httpClient.get<{ id: string; email: string; roles: Role[] }>(
       `${environment.account_url}/account/${username}`
