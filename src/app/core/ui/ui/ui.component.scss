@@ -26,7 +26,7 @@
  */
 html,
 body {
-  height: 100%;
+  // height: 100%;
 }
 
 /**  Toolbar  **/
@@ -67,20 +67,6 @@ body {
 }
 
 /**  Main content  **/
-
-/**
- * The main content. Apply standard paddings to all edges
- */
-.sidenav-content {
-  padding:
-    sizes.$margin-main-view-top
-    sizes.$margin-main-view-right
-    sizes.$margin-main-view-bottom
-    sizes.$margin-main-view-left;
-  display: block;
-  overflow: auto;
-  box-sizing: border-box;
-}
 
 mat-sidenav-container {
   background: none;

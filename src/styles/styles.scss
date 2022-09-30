@@ -25,6 +25,7 @@
 
 // Include all global styles
 @use "globals";
+@use "../app/core/ui/ui/ui.component.global-styles";
 
 // Include reset-files that alter the display of predefined components
 // such as material components or native html components

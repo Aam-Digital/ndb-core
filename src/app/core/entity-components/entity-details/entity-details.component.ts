@@ -29,6 +29,7 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
 @Component({
   selector: "app-entity-details",
   templateUrl: "./entity-details.component.html",
+  styleUrls: ["./entity-details.component.scss"],
 })
 export class EntityDetailsComponent {
   entity: Entity;
