@@ -19,6 +19,14 @@
  margin-bottom: sizes.$regular;
 }
 
+.title-field {
+  input{
+    font-size: 32px;
+  }
+  width: 100%;
+  min-width: 0;
+}
+
 .header-field {
   grid-area: header;
   min-width: 0;

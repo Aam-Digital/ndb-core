@@ -34,6 +34,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { EntitySubrecordModule } from "../entity-subrecord/entity-subrecord.module";
 import { ErrorHintComponent } from "./error-hint/error-hint.component";
+import { EditTextWithAutocompleteComponent } from "./dynamic-form-components/edit-text-with-autocomplete/edit-text-with-autocomplete.component";
 
 @NgModule({
   declarations: [
@@ -57,6 +58,7 @@ import { ErrorHintComponent } from "./error-hint/error-hint.component";
     EditNumberComponent,
     EntityFunctionPipe,
     ErrorHintComponent,
+    EditTextWithAutocompleteComponent,
   ],
   imports: [
     CommonModule,
@@ -92,6 +94,7 @@ export class EntityUtilsModule {
     EditPhotoComponent,
     EditSingleEntityComponent,
     EditTextComponent,
+    EditTextWithAutocompleteComponent,
     EditDateComponent,
     DisplayCheckmarkComponent,
     DisplayDateComponent,

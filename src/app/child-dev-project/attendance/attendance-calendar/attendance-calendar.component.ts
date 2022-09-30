@@ -60,7 +60,7 @@ export class AttendanceCalendarComponent implements OnChanges {
       .pipe(untilDestroyed(this))
       .subscribe((newNotes) => {
         this.records = applyUpdate(this.records, newNotes);
-        this.selectDay(this.selectedDate.toDate());
+        this.selectDay(this.selectedDate?.toDate());
       });
   }
 

@@ -46,12 +46,19 @@
             matInput
             i18n-placeholder="password placeholder"
             placeholder="Password"
-            type="password"
+            [type]="passwordVisible ? 'text' : 'password'"
             [(ngModel)]="password"
             required
             name="password"
             autocomplete="current-password"
           />
+          <fa-icon
+            [icon]="passwordVisible ? 'eye-slash' : 'eye'"
+            matSuffix
+            [matTooltip]="passwordVisible ? hidePasswordHint : showPasswordHint"
+            (click)="togglePasswordVisible()"
+          >
+          </fa-icon>
         </mat-form-field>
       </p>
 
