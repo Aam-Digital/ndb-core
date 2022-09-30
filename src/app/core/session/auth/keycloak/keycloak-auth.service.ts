@@ -145,12 +145,18 @@ export class KeycloakAuthService extends AuthService {
     );
   }
 
-  createUser(username: string, email: string, roles: string[] = []) {
+  createUser(username: string, email: string, roles: Role[] = []) {
     return this.httpClient.post(`${environment.account_url}/account`, {
       username,
       email,
       roles,
     });
+  }
+
+  getRoles() {
+    return this.httpClient.get<Role[]>(
+      `${environment.account_url}/account/roles`
+    );
   }
 }
 
@@ -159,4 +165,10 @@ export interface OIDCTokenResponse {
   refresh_token: string;
   expires_in: number;
   session_state: string;
+}
+
+export interface Role {
+  id: string;
+  name: string;
+  description: string;
 }

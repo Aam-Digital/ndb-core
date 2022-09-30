@@ -2,9 +2,13 @@ import { Component } from "@angular/core";
 import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
 import { OnInitDynamicComponent } from "../../view/dynamic-components/on-init-dynamic-component.interface";
 import { FormBuilder, FormControl, Validators } from "@angular/forms";
-import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
+import {
+  KeycloakAuthService,
+  Role,
+} from "../../session/auth/keycloak/keycloak-auth.service";
 import { AuthService } from "../../session/auth/auth.service";
 import { User } from "../user";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @DynamicComponent("UserSecurity")
 @Component({
@@ -15,14 +19,23 @@ import { User } from "../user";
 export class UserSecurityComponent implements OnInitDynamicComponent {
   form = this.fb.group({
     username: [{ value: "", disabled: true }, Validators.required],
+    // TODO these values should be pre-filled if already set
     email: ["", [Validators.required, Validators.email]],
-    roles: new FormControl<string[]>(["user_app"]),
+    roles: new FormControl<Role[]>([]),
   });
   keycloak: KeycloakAuthService;
+  availableRoles: Role[] = [];
 
-  constructor(private fb: FormBuilder, authService: AuthService) {
+  constructor(
+    private fb: FormBuilder,
+    authService: AuthService,
+    private snackbar: MatSnackBar
+  ) {
     if (authService instanceof KeycloakAuthService) {
       this.keycloak = authService;
+      this.keycloak
+        .getRoles()
+        .subscribe((roles) => (this.availableRoles = roles));
     } else {
       this.form.disable();
     }
@@ -34,12 +47,19 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
   }
 
   createUser() {
+    // TODO add error handling
     this.keycloak
       .createUser(
         this.form.get("username").value,
         this.form.get("email").value,
         this.form.get("roles").value
       )
-      .subscribe((res) => console.log("res", res));
+      .subscribe(() =>
+        this.snackbar.open(
+          `An email has been sent to ${this.form.get("email").value}`,
+          undefined,
+          { duration: 5000 }
+        )
+      );
   }
 }

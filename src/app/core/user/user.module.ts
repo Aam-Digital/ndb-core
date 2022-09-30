@@ -28,7 +28,8 @@ import { Angulartics2Module } from "angulartics2";
 import { ReactiveFormsModule } from "@angular/forms";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { SessionModule } from "../session/session.module";
-import { UserSecurityComponent } from './user-security/user-security.component';
+import { UserSecurityComponent } from "./user-security/user-security.component";
+import { MatSelectModule } from "@angular/material/select";
 
 /**
  * Provides a User functionality including user account forms.
@@ -46,6 +47,7 @@ import { UserSecurityComponent } from './user-security/user-security.component';
     ReactiveFormsModule,
     FontAwesomeModule,
     SessionModule,
+    MatSelectModule,
   ],
   declarations: [UserAccountComponent, UserSecurityComponent],
 })

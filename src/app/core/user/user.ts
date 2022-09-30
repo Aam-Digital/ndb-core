@@ -46,4 +46,8 @@ export class User extends Entity {
    */
   @DatabaseField() paginatorSettingsPageSize: { [id: string]: number } = {};
   public paginatorSettingsPageIndex: { [id: string]: number } = {};
+
+  toString() {
+    return this.name;
+  }
 }

@@ -7,6 +7,16 @@
     <mat-label>Email</mat-label>
     <input matInput type="text" formControlName="email">
   </mat-form-field>
+  <mat-form-field style="width: 100%">
+    <mat-label>Roles</mat-label>
+    <mat-select formControlName="roles" multiple>
+      <mat-option
+        *ngFor="let role of availableRoles"
+        [value]="role"
+        [matTooltip]="role.description"
+      >{{ role.name }} <i style="font-size: small">({{ role.description }})</i></mat-option>
+    </mat-select>
+  </mat-form-field>
   <br>
   <button mat-stroked-button type="submit" (click)="createUser()">Send invitation</button>
 </form>
