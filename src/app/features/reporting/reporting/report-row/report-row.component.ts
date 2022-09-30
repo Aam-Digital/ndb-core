@@ -38,6 +38,4 @@ export class ReportRowComponent {
     (row) => row.isExpandable
   );
   dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
-
-  hasChild = (_: number, row: ReportRow) => row.subRows.length > 0;
 }
