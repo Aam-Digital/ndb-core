@@ -15,8 +15,17 @@ import { delay } from "rxjs";
   styleUrls: ["./activities-overview.component.scss"],
 })
 export class ActivitiesOverviewComponent implements OnInitDynamicComponent {
+  titleColumn = {
+    id: "title",
+    edit: "EditTextWithAutocomplete",
+    additional: {
+      entityType: "RecurringActivity",
+      relevantProperty: "linkedGroups",
+      relevantValue: "",
+    },
+  };
   columns: FormFieldConfig[] = [
-    { id: "title" },
+    this.titleColumn,
     { id: "type" },
     { id: "assignedTo" },
     { id: "linkedGroups" },
@@ -34,9 +43,8 @@ export class ActivitiesOverviewComponent implements OnInitDynamicComponent {
     }
 
     this.entity = config.entity;
-    this.records = (
-      await this.entityMapper.loadType<RecurringActivity>(RecurringActivity)
-    ).filter((activity) => activity.linkedGroups.includes(this.entity.getId()));
+    this.titleColumn.additional.relevantValue = this.entity.getId();
+    await this.initLinkedActivities();
 
     this.entityMapper
       .receiveUpdates(RecurringActivity)
@@ -44,11 +52,19 @@ export class ActivitiesOverviewComponent implements OnInitDynamicComponent {
       .pipe(delay(0))
       .subscribe((updateEntity) => {
         if (updateEntity.type === "update") {
-          this.records = this.records.filter((activity) =>
-            activity.linkedGroups.includes(this.entity.getId())
-          );
+          this.initLinkedActivities();
         }
       });
+  }
+
+  private async initLinkedActivities() {
+    this.records = await this.entityMapper
+      .loadType(RecurringActivity)
+      .then((activities) =>
+        activities.filter((activity) =>
+          activity.linkedGroups.includes(this.entity.getId())
+        )
+      );
   }
 
   generateNewRecordFactory(): () => RecurringActivity {
