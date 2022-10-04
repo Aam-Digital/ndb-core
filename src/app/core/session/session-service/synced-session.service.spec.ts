@@ -37,8 +37,12 @@ describe("SyncedSessionService", () => {
   let sessionService: SyncedSessionService;
   let localSession: LocalSession;
   let remoteSession: RemoteSession;
-  let localLoginSpy: jasmine.Spy<(username: string, password: string) => Promise<LoginState>>;
-  let remoteLoginSpy: jasmine.Spy<(username: string, password: string) => Promise<LoginState>>;
+  let localLoginSpy: jasmine.Spy<
+    (username: string, password: string) => Promise<LoginState>
+  >;
+  let remoteLoginSpy: jasmine.Spy<
+    (username: string, password: string) => Promise<LoginState>
+  >;
   let dbUser: DatabaseUser;
   let syncSpy: jasmine.Spy<() => Promise<void>>;
   let liveSyncSpy: jasmine.Spy<() => void>;
@@ -256,6 +260,24 @@ describe("SyncedSessionService", () => {
     tick();
     expect(sessionService.loginState.value).toEqual(LoginState.LOGGED_IN);
   }));
+
+  it("should support email instead of username for login", async () => {
+    const newUser: DatabaseUser = { name: "test-user", roles: ["test-role"] };
+    passRemoteLogin(newUser);
+
+    const res = await sessionService.login("my@email.com", "test-pass");
+
+    expect(res).toBe(LoginState.LOGGED_IN);
+    expect(JSON.parse(localStorage.getItem("test-user"))).toEqual(
+      jasmine.objectContaining(newUser)
+    );
+    expect(JSON.parse(localStorage.getItem("my@email.com"))).toEqual(
+      jasmine.objectContaining(newUser)
+    );
+
+    localStorage.removeItem("test-user");
+    localStorage.removeItem("my@email.com");
+  });
 
   testSessionServiceImplementation(() => Promise.resolve(sessionService));
 

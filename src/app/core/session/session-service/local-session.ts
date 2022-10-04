@@ -113,15 +113,16 @@ export class LocalSession extends SessionService {
    * Saves a user to the local storage
    * @param user a object holding the username and the roles of the user
    * @param password of the user
+   * @param loginName (optional) if login also works with a username other than `user.name`. E.g. the email of the user
    */
-  public saveUser(user: DatabaseUser, password: string) {
+  public saveUser(user: DatabaseUser, password: string, loginName = user.name) {
     const localUser: LocalUser = {
       name: user.name,
       roles: user.roles,
       encryptedPassword: encryptPassword(password),
     };
     window.localStorage.setItem(
-      localUser.name.trim().toLowerCase(),
+      loginName.trim().toLowerCase(),
       JSON.stringify(localUser)
     );
     // Update when already logged in
