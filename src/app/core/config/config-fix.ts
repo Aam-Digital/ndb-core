@@ -896,6 +896,10 @@ export const defaultJsonConfig = {
                 {
                   "label": $localize`:Name of a column of a report:Rate`,
                   "query": `percentage`
+                },
+                {
+                  "label": $localize`:Name of a column of a report:Late`,
+                  "query": `detailedStatus.LATE`
                 }
               ]
             },
