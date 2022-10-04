@@ -15,7 +15,6 @@ import { Observable } from "rxjs";
 @Component({
   selector: "app-user-security",
   templateUrl: "./user-security.component.html",
-  styleUrls: ["./user-security.component.scss"],
 })
 export class UserSecurityComponent implements OnInitDynamicComponent {
   form = this.fb.group({

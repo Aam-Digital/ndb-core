@@ -17,7 +17,7 @@
         *ngFor="let role of availableRoles"
         [value]="role"
         [matTooltip]="role.description"
-      >{{ role.name }} <i style="font-size: small">({{ role.description }})</i></mat-option>
+      >{{ role.name }} <em style="font-size: small">({{ role.description }})</em></mat-option>
     </mat-select>
   </mat-form-field>
   <br>
