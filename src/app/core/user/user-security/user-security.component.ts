@@ -64,7 +64,7 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
     this.userId = res.id;
   }
 
-  createUser() {
+  activateAccount() {
     this.process(
       this.keycloak.createUser(
         this.form.get("username").value,
@@ -77,7 +77,7 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
     );
   }
 
-  updateUser() {
+  updateAccount() {
     const update = this.form.getRawValue();
     // only send values that have changed
     Object.keys(this.form.controls).forEach((control) =>

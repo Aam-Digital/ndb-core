@@ -25,7 +25,7 @@
     *ngIf="!userId"
     mat-stroked-button
     type="submit"
-    (click)="createUser()"
+    (click)="activateAccount()"
     [disabled]="form.disabled"
     i18n="button to invite a new user"
   >Send invitation
@@ -34,7 +34,7 @@
     *ngIf="userId"
     mat-stroked-button
     type="submit"
-    (click)="updateUser()"
+    (click)="updateAccount()"
     [disabled]="form.disabled"
     i18n="button to update data of an existing user"
   >Update user
