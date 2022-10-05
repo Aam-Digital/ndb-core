@@ -172,7 +172,7 @@ export class SyncedSessionService extends SessionService {
     }, this.LOGIN_RETRY_TIMEOUT);
   }
 
-  private updateLocalUser(password: string, loginName?: string) {
+  private updateLocalUser(password: string, loginName: string) {
     // Update local user object
     const remoteUser = this.remoteSession.getCurrentUser();
     if (remoteUser) {

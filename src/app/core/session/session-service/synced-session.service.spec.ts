@@ -195,22 +195,6 @@ describe("SyncedSessionService", () => {
     flush();
   }));
 
-  it("Remote succeeds, local fails", fakeAsync(() => {
-    passRemoteLogin();
-
-    const result = sessionService.login(TEST_USER, "anotherPassword");
-    tick();
-
-    expect(localLoginSpy).toHaveBeenCalledWith(TEST_USER, "anotherPassword");
-    expect(localLoginSpy).toHaveBeenCalledTimes(2);
-    expect(remoteLoginSpy).toHaveBeenCalledWith(TEST_USER, "anotherPassword");
-    expect(remoteLoginSpy).toHaveBeenCalledTimes(1);
-    expect(syncSpy).not.toHaveBeenCalled();
-    expect(liveSyncSpy).not.toHaveBeenCalled();
-    expectAsync(result).toBeResolvedTo(LoginState.LOGIN_FAILED);
-    tick();
-  }));
-
   it("remote and local unavailable", fakeAsync(() => {
     failRemoteLogin(true);
 

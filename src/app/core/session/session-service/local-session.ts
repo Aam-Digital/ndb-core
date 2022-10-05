@@ -138,6 +138,7 @@ export class LocalSession extends SessionService {
    */
   public removeUser(username: string) {
     window.localStorage.removeItem(username);
+    window.localStorage.removeItem(username.trim().toLowerCase());
   }
 
   public checkPassword(username: string, password: string): boolean {
