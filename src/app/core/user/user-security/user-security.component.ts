@@ -10,6 +10,7 @@ import { AuthService } from "../../session/auth/auth.service";
 import { User } from "../user";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Observable } from "rxjs";
+import { PanelConfig } from "../../entity-components/entity-details/EntityDetailsConfig";
 
 @DynamicComponent("UserSecurity")
 @Component({
@@ -41,7 +42,7 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
     }
   }
 
-  onInitFromDynamicConfig(config: any) {
+  onInitFromDynamicConfig(config: PanelConfig) {
     const user = config.entity as User;
     this.form.get("username").setValue(user.name);
     if (this.keycloak) {
@@ -84,7 +85,7 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
       this.form.get(control).pristine ? delete update[control] : undefined
     );
     this.process(
-      this.keycloak.updateUser(this.userId, this.form.getRawValue()),
+      this.keycloak.updateUser(this.userId, update),
       $localize`:Snackbar message:Successfully updated user`
     );
   }
