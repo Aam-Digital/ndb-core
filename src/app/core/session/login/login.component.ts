@@ -61,7 +61,6 @@ export class LoginComponent implements AfterViewInit {
    * Do a login with the SessionService.
    */
   login() {
-    // TODO login with email works by keycloak but not app fails
     this.loginInProgress = true;
     this.errorMessage = "";
 
