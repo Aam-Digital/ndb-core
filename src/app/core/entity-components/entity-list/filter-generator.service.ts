@@ -7,6 +7,7 @@ import {
   BooleanFilterConfig,
   FilterConfig,
   PrebuiltFilterConfig,
+  DateRangeFilterConfig,
 } from "./EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { ConfigService } from "../../config/config.service";
@@ -15,6 +16,7 @@ import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { FilterComponentSettings } from "./filter-component.settings";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
+import moment from "moment";
 
 @Injectable({
   providedIn: "root",
@@ -86,6 +88,8 @@ export class FilterGeneratorService {
   ): Promise<FilterSelectionOption<T>[]> {
     if (config.type === "prebuilt") {
       return (config as PrebuiltFilterConfig<T>).options;
+    } else if (schema.dataType === "date") {
+      return this.createDateRangeFilterOptions(config as DateRangeFilterConfig);
     } else if (schema.dataType === "boolean" || config.type === "boolean") {
       return this.createBooleanFilterOptions(config as BooleanFilterConfig);
     } else if (schema.dataType === "configurable-enum") {
@@ -105,6 +109,97 @@ export class FilterGeneratorService {
       const options = [...new Set(data.map((c) => c[config.id]))];
       return FilterSelection.generateOptions(options, config.id);
     }
+  }
+
+  private createDateRangeFilterOptions<T extends Entity>(
+    filterConfig: DateRangeFilterConfig
+  ): FilterSelectionOption<T>[] {
+    let firstDayOfCurrentWeek;
+    if (filterConfig.startingDayOfWeek) {
+      let daysToSubstract;
+      switch (filterConfig.startingDayOfWeek.toLocaleLowerCase()) {
+        case "sunday": {
+          daysToSubstract = 1;
+          break;
+        }
+        case "monday": {
+          daysToSubstract = 0;
+          break;
+        }
+        case "tuesday": {
+          daysToSubstract = 6;
+          break;
+        }
+        case "wednesday": {
+          daysToSubstract = 5;
+          break;
+        }
+        case "thursday": {
+          daysToSubstract = 4;
+          break;
+        }
+        case "friday": {
+          daysToSubstract = 3;
+          break;
+        }
+        case "saturday": {
+          daysToSubstract = 2;
+          break;
+        }
+      }
+      console.log("daysToSubstract", daysToSubstract);
+      let startOfIsoWeek = moment().startOf("isoWeek");
+      let possibleStartOfWeek = moment()
+        .startOf("isoWeek")
+        .subtract(daysToSubstract, "days");
+      console.log("isoStartOfWeek", startOfIsoWeek.format());
+      console.log("possibleStartOfWeek", possibleStartOfWeek.format());
+
+      console.log("Diff:", moment().diff(possibleStartOfWeek, "days"));
+
+      if (moment().diff(possibleStartOfWeek, "days") < 7) {
+        firstDayOfCurrentWeek = possibleStartOfWeek;
+      } else {
+        firstDayOfCurrentWeek = startOfIsoWeek;
+      }
+      console.log("firstDayOfCurrentWeek", firstDayOfCurrentWeek.format());
+    } else {
+      firstDayOfCurrentWeek = moment().startOf("week");
+    }
+    // console.log(
+    //   "XXXStartOfWeek",
+    //   moment("2022-10-02", "YYYY-MM-DD").startOf("week").format()
+    // );
+    // console.log(
+    //   "XXXStartOfIsoWeek",
+    //   moment("2022-10-02", "YYYY-MM-DD").startOf("isoWeek").format()
+    // );
+    const dateFS = [
+      {
+        key: "current-week",
+        label: $localize`:Filter-option for notes:This Week`,
+        filterFun: (c: Entity) =>
+          moment(c[filterConfig.id]).isSameOrAfter(
+            firstDayOfCurrentWeek,
+            "day"
+          ), //  > this.getPreviousSunday(0),
+      },
+      {
+        key: "last-week",
+        label: $localize`:Filter-option for notes:Since Last Week`,
+        filterFun: (c: Entity) =>
+          c[filterConfig.id] > this.getPreviousSunday(1),
+      },
+      { key: "", label: $localize`All`, filterFun: () => true },
+    ];
+    return dateFS; // XXX
+  }
+
+  private getPreviousSunday(weeksBack: number) {
+    const today = new Date();
+    const day = today.getDay();
+    const diff = today.getDate() - day - 7 * weeksBack; // adjust when day is sunday
+    return new Date(today.setDate(diff));
   }
 
   private createBooleanFilterOptions<T extends Entity>(

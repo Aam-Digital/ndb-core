@@ -78,6 +78,24 @@ export interface BooleanFilterConfig extends FilterConfig {
   all: string;
 }
 
+export interface DateRangeFilterConfig extends FilterConfig {
+  startingDayOfWeek?:
+    | "Sunday"
+    | "sunday"
+    | "Monday"
+    | "monday"
+    | "Tuesday"
+    | "tuesday"
+    | "Wednesday"
+    | "wednesday"
+    | "Thursday"
+    | "thursday"
+    | "Friday"
+    | "friday"
+    | "Saturday"
+    | "saturday";
+}
+
 export interface PrebuiltFilterConfig<T> extends FilterConfig {
   options: FilterSelectionOption<T>[];
 }
