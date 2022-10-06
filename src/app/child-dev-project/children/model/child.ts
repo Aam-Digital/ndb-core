@@ -26,6 +26,7 @@ import { SafeUrl } from "@angular/platform-browser";
 import { ChildPhotoService } from "../child-photo-service/child-photo.service";
 
 export type Center = ConfigurableEnumValue;
+
 @DatabaseEntity("Child")
 export class Child extends Entity {
   static toStringAttributes = ["name"];
@@ -134,11 +135,11 @@ export class Child extends Entity {
     let indices = [];
 
     indices = indices.concat(this.toString().split(" "));
-    if (this.projectNumber !== undefined) {
+    if (this.projectNumber !== undefined && this.projectNumber !== null) {
       indices.push(this.projectNumber);
     }
-
     return indices;
   }
+
   set searchIndices(value) {}
 }
