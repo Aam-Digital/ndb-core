@@ -4,6 +4,7 @@ import {
   NativeDateAdapter,
 } from "@angular/material/core";
 import moment from "moment";
+import { Injectable } from "@angular/core";
 
 /**
  * Extend MAT_NATIVE_DATE_FORMATS to also support parsing.
@@ -13,6 +14,7 @@ export const DATE_FORMATS: MatDateFormats = {
   display: MAT_NATIVE_DATE_FORMATS.display,
 };
 
+@Injectable()
 export class DateAdapterWithFormatting extends NativeDateAdapter {
   /**
    * Using Moment.js to parse the date input {@link https://momentjs.com/guides/#/parsing/}
