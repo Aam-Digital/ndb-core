@@ -109,7 +109,7 @@ export class SyncedSessionService extends SessionService {
     const remoteLogin = this.remoteSession
       .login(username, password)
       .then((state) => {
-        this.updateLocalUser(password);
+        this.updateLocalUser(password, username);
         return state;
       });
 
@@ -172,11 +172,15 @@ export class SyncedSessionService extends SessionService {
     }, this.LOGIN_RETRY_TIMEOUT);
   }
 
-  private updateLocalUser(password: string) {
+  private updateLocalUser(password: string, loginName: string) {
     // Update local user object
     const remoteUser = this.remoteSession.getCurrentUser();
     if (remoteUser) {
       this.localSession.saveUser(remoteUser, password);
+      if (loginName !== remoteUser.name) {
+        // add if login also worked with other username
+        this.localSession.saveUser(remoteUser, password, loginName);
+      }
     }
   }
 

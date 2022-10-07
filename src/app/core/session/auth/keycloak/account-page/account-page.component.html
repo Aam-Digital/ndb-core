@@ -26,6 +26,7 @@
       >
         Please provide a valid email
       </mat-error>
+      <mat-error *ngIf="email.errors?.other">{{ email.errors.other }}</mat-error>
     </mat-form-field>
     <p>
       <button
@@ -35,6 +36,7 @@
         angularticsAction="email_update"
         (click)="setEmail()"
         i18n="Button which updates the user's email"
+        style="margin-top: 5px"
       >
         Update email
       </button>
