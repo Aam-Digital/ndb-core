@@ -96,6 +96,7 @@ export class EntitySchemaService {
    * @param schema A schema defining the transformation
    */
   public transformDatabaseToEntityFormat(data: any, schema: EntitySchema) {
+    const transformed = {};
     for (const key of schema.keys()) {
       const schemaField: EntitySchemaField = schema.get(key);
 
@@ -112,7 +113,7 @@ export class EntitySchemaService {
         schemaField.dataType
       ).transformToObjectFormat(data[key], schemaField, this, data);
       if (newValue !== undefined) {
-        data[key] = newValue;
+        transformed[key] = newValue;
       }
 
       if (schemaField.generateIndex) {
@@ -120,7 +121,7 @@ export class EntitySchemaService {
       }
     }
 
-    return data;
+    return transformed;
   }
 
   /**
@@ -129,11 +130,11 @@ export class EntitySchemaService {
    * @param data The database object that will be transformed and assigned to the entity
    */
   public loadDataIntoEntity(entity: Entity, data: any) {
-    data = this.transformDatabaseToEntityFormat(
+    const transformed = this.transformDatabaseToEntityFormat(
       data,
       (<typeof Entity>entity.constructor).schema
     );
-    Object.assign(entity, data);
+    Object.assign(entity, transformed);
   }
 
   /**
