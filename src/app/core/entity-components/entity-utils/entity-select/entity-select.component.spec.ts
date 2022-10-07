@@ -23,7 +23,7 @@ import {
   entityRegistry,
 } from "../../../entity/database-entity.decorator";
 
-describe("EntitySelectComponent", () => {
+fdescribe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any>;
   let fixture: ComponentFixture<EntitySelectComponent<any>>;
   let subscription: Subscription = null;
@@ -155,16 +155,21 @@ describe("EntitySelectComponent", () => {
   it("autocompletes with the default accessor", () => {
     component.allEntities = testUsers;
     component.loading.next(false);
-    let expectedLength = 4;
 
     component.formControl.setValue(null);
-    expectedLength = 3;
+    expect(component.filteredEntities.length).toEqual(4);
+
     component.formControl.setValue("A");
-    expectedLength = 3;
-    component.formControl.setValue("Ab");
-    expectedLength = 1;
+    expect(component.filteredEntities.length).toEqual(3);
+
+    component.formControl.setValue("c");
+    expect(component.filteredEntities.length).toEqual(2);
+
     component.formControl.setValue("Abc");
-    expect(component.filteredEntities.length).toEqual(expectedLength);
+    expect(component.filteredEntities.length).toEqual(1);
+
+    component.formControl.setValue("z");
+    expect(component.filteredEntities.length).toEqual(0);
   });
 
   it("should use the configurable toStringAttributes for comparing values", fakeAsync(() => {
