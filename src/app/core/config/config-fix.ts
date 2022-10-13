@@ -265,7 +265,8 @@ export const defaultJsonConfig = {
         },
         {
           "id": "date",
-          "startingDayOfWeek": "tuesday"
+          "startingDayOfWeek": "Monday",
+          "weeksBack": [1, 2, 4]
         },
         {
           "id": "category",

@@ -114,84 +114,72 @@ export class FilterGeneratorService {
   private createDateRangeFilterOptions<T extends Entity>(
     filterConfig: DateRangeFilterConfig
   ): FilterSelectionOption<T>[] {
-    let firstDayOfCurrentWeek;
     if (filterConfig.startingDayOfWeek) {
-      let daysToSubstract;
-      switch (filterConfig.startingDayOfWeek.toLocaleLowerCase()) {
+      let configStartingDayOfWeek;
+      switch (filterConfig.startingDayOfWeek.toLowerCase()) {
         case "sunday": {
-          daysToSubstract = 1;
+          configStartingDayOfWeek = 0;
           break;
         }
         case "monday": {
-          daysToSubstract = 0;
+          configStartingDayOfWeek = 1;
           break;
         }
         case "tuesday": {
-          daysToSubstract = 6;
+          configStartingDayOfWeek = 2;
           break;
         }
         case "wednesday": {
-          daysToSubstract = 5;
+          configStartingDayOfWeek = 3;
           break;
         }
         case "thursday": {
-          daysToSubstract = 4;
+          configStartingDayOfWeek = 4;
           break;
         }
         case "friday": {
-          daysToSubstract = 3;
+          configStartingDayOfWeek = 5;
           break;
         }
         case "saturday": {
-          daysToSubstract = 2;
+          configStartingDayOfWeek = 6;
           break;
         }
       }
-      console.log("daysToSubstract", daysToSubstract);
-      let startOfIsoWeek = moment().startOf("isoWeek");
-      let possibleStartOfWeek = moment()
-        .startOf("isoWeek")
-        .subtract(daysToSubstract, "days");
-      console.log("isoStartOfWeek", startOfIsoWeek.format());
-      console.log("possibleStartOfWeek", possibleStartOfWeek.format());
-
-      console.log("Diff:", moment().diff(possibleStartOfWeek, "days"));
-
-      if (moment().diff(possibleStartOfWeek, "days") < 7) {
-        firstDayOfCurrentWeek = possibleStartOfWeek;
-      } else {
-        firstDayOfCurrentWeek = startOfIsoWeek;
-      }
-      console.log("firstDayOfCurrentWeek", firstDayOfCurrentWeek.format());
-    } else {
-      firstDayOfCurrentWeek = moment().startOf("week");
+      moment.updateLocale(moment.locale(), {
+        week: {
+          dow: configStartingDayOfWeek,
+        },
+      });
     }
-    // console.log(
-    //   "XXXStartOfWeek",
-    //   moment("2022-10-02", "YYYY-MM-DD").startOf("week").format()
-    // );
-    // console.log(
-    //   "XXXStartOfIsoWeek",
-    //   moment("2022-10-02", "YYYY-MM-DD").startOf("isoWeek").format()
-    // );
-    const dateFS = [
-      {
-        key: "current-week",
-        label: $localize`:Filter-option for notes:This Week`,
-        filterFun: (c: Entity) =>
-          moment(c[filterConfig.id]).isSameOrAfter(
-            firstDayOfCurrentWeek,
-            "day"
-          ), //  > this.getPreviousSunday(0),
-      },
-      {
-        key: "last-week",
-        label: $localize`:Filter-option for notes:Since Last Week`,
-        filterFun: (c: Entity) =>
-          c[filterConfig.id] > this.getPreviousSunday(1),
-      },
-      { key: "", label: $localize`All`, filterFun: () => true },
-    ];
+    const dateFS = [];
+    for (const weeksBack of filterConfig.weeksBack) {
+      if (weeksBack === 1 || weeksBack === 0) {
+        dateFS.push({
+          key: "current-week",
+          label: $localize`:Filter option:This Week`,
+          filterFun: (c: Entity) =>
+            moment(c[filterConfig.id]).isSameOrAfter(
+              moment().startOf("week"),
+              "day"
+            ), //  > this.getPreviousSunday(0),
+        });
+      } else {
+        dateFS.push({
+          key: "last-" + weeksBack + "-weeks",
+          label: $localize`:Filter option:Last ${weeksBack} Weeks`,
+          filterFun: (c: Entity) =>
+            moment(c[filterConfig.id]).isSameOrAfter(
+              moment()
+                .subtract(weeksBack - 1, "weeks")
+                .startOf("week"),
+              "day"
+            ), //> this.getPreviousSunday(1),
+        });
+      }
+    }
+    dateFS.push({ key: "", label: $localize`All`, filterFun: () => true });
+    console.log("dateFS:", dateFS);
     return dateFS; // XXX
   }
 

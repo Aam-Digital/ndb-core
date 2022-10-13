@@ -79,8 +79,8 @@ export interface BooleanFilterConfig extends FilterConfig {
 }
 
 export interface DateRangeFilterConfig extends FilterConfig {
-  startingDayOfWeek?:
-    | "Sunday"
+  startingDayOfWeek?: // manually setting with what day a calendar week should start
+  | "Sunday"
     | "sunday"
     | "Monday"
     | "monday"
@@ -94,6 +94,7 @@ export interface DateRangeFilterConfig extends FilterConfig {
     | "friday"
     | "Saturday"
     | "saturday";
+  weeksBack: number[]; // starting with 1 for "this week"
 }
 
 export interface PrebuiltFilterConfig<T> extends FilterConfig {
