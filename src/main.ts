@@ -39,7 +39,7 @@ PwaInstallService.registerPWAInstallListener();
 // Initialize remote logging
 LoggingService.initRemoteLogging({
   dsn: environment.remoteLoggingDsn,
-  whitelistUrls: [/https?:\/\/(.*)\.?aam-digital\.com/],
+  allowUrls: [/https?:\/\/(.*)\.?aam-digital\.com/],
 });
 const logger = new LoggingService();
 
