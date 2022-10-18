@@ -4,6 +4,7 @@ import { OnInitDynamicComponent } from "../../view/dynamic-components/on-init-dy
 import { FormBuilder, FormControl, Validators } from "@angular/forms";
 import {
   KeycloakAuthService,
+  AuthUser,
   Role,
 } from "../../session/auth/keycloak/keycloak-auth.service";
 import { AuthService } from "../../session/auth/auth.service";
@@ -26,6 +27,7 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
   keycloak: KeycloakAuthService;
   availableRoles: Role[] = [];
   userId: string;
+  userEnabled: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -53,29 +55,46 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
     }
   }
 
-  private assignUser(res: { id: string; email: string; roles: Role[] }) {
-    this.form.get("email").setValue(res.email);
+  private assignUser(user: AuthUser) {
+    this.form.get("email").setValue(user.email);
     this.form
       .get("roles")
       .setValue(
-        res.roles.map((role) =>
+        user.roles.map((role) =>
           this.availableRoles.find((r) => r.id === role.id)
         )
       );
-    this.userId = res.id;
+    this.userId = user.id;
+    this.toggleForm(user.enabled);
   }
 
-  activateAccount() {
+  createAccount() {
     this.process(
-      this.keycloak.createUser(
-        this.form.get("username").value,
-        this.form.get("email").value,
-        this.form.get("roles").value
-      ),
+      this.keycloak.createUser({
+        username: this.form.get("username").value,
+        email: this.form.get("email").value,
+        roles: this.form.get("roles").value,
+      }),
       $localize`:Snackbar message:An email has been sent to ${
         this.form.get("email").value
       }`
     );
+  }
+
+  toggleAccount(enabled: boolean) {
+    this.keycloak.updateUser(this.userId, { enabled }).subscribe({
+      next: () => this.toggleForm(enabled),
+      error: ({ error }) => this.form.setErrors({ failed: error.message }),
+    });
+  }
+
+  private toggleForm(enabled: boolean) {
+    this.userEnabled = enabled;
+    if (enabled) {
+      this.form.enable();
+    } else {
+      this.form.disable();
+    }
   }
 
   updateAccount() {

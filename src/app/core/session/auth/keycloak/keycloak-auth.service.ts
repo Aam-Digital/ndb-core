@@ -1,7 +1,12 @@
 import { AuthService } from "../auth.service";
 import { Injectable } from "@angular/core";
 import Keycloak from "keycloak-js";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+  HttpStatusCode,
+} from "@angular/common/http";
 import { firstValueFrom, Observable } from "rxjs";
 import { DatabaseUser } from "../../session-service/local-user";
 import { parseJwt } from "../../../../utils/utils";
@@ -28,7 +33,15 @@ export class KeycloakAuthService extends AuthService {
   authenticate(username: string, password: string): Promise<DatabaseUser> {
     return this.keycloakReady
       .then(() => this.credentialAuth(username.trim(), password))
-      .then((token) => this.processToken(token));
+      .then((token) => this.processToken(token))
+      .catch((err) => {
+        if (err.error.error_description === "Account disabled") {
+          // Disabled account is also treated as unauthorized
+          throw new HttpErrorResponse({ status: HttpStatusCode.Unauthorized });
+        } else {
+          throw err;
+        }
+      });
   }
 
   autoLogin(): Promise<DatabaseUser> {
@@ -145,28 +158,24 @@ export class KeycloakAuthService extends AuthService {
     );
   }
 
-  createUser(username: string, email: string, roles: Role[] = []) {
-    return this.httpClient.post(`${environment.account_url}/account`, {
-      username,
-      email,
-      roles,
-    });
+  createUser(user: Partial<AuthUser>): Observable<any> {
+    return this.httpClient.post(`${environment.account_url}/account`, user);
   }
 
-  updateUser(userId: string, user: any) {
+  updateUser(userId: string, user: Partial<AuthUser>): Observable<any> {
     return this.httpClient.put(
       `${environment.account_url}/account/${userId}`,
       user
     );
   }
 
-  getUser(username: string) {
-    return this.httpClient.get<{ id: string; email: string; roles: Role[] }>(
+  getUser(username: string): Observable<AuthUser> {
+    return this.httpClient.get<AuthUser>(
       `${environment.account_url}/account/${username}`
     );
   }
 
-  getRoles() {
+  getRoles(): Observable<Role[]> {
     return this.httpClient.get<Role[]>(
       `${environment.account_url}/account/roles`
     );
@@ -184,4 +193,12 @@ export interface Role {
   id: string;
   name: string;
   description: string;
+}
+
+export interface AuthUser {
+  id: string;
+  username: string;
+  email: string;
+  roles: Role[];
+  enabled: boolean;
 }

@@ -101,7 +101,7 @@ describe("UserSecurityComponent", () => {
       roles: [assignedRole],
       email: "new@email.com",
     });
-    component.activateAccount();
+    component.createAccount();
     tick();
 
     expect(mockHttp.post).toHaveBeenCalledWith(
@@ -123,7 +123,7 @@ describe("UserSecurityComponent", () => {
     );
 
     component.form.patchValue({ username: "test-name", email: "my@email.com" });
-    component.activateAccount();
+    component.createAccount();
     tick();
 
     expect(component.form.errors).toEqual({ failed: "user unauthorized" });
