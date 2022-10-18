@@ -69,7 +69,7 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
   }
 
   createAccount() {
-    this.process(
+    this.executeObservableIfFormValid(
       this.keycloak.createUser(this.form.getRawValue()),
       $localize`:Snackbar message:An email has been sent to ${
         this.form.get("email").value
@@ -99,13 +99,21 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
     Object.keys(this.form.controls).forEach((control) =>
       this.form.get(control).pristine ? delete update[control] : undefined
     );
-    this.process(
+    this.executeObservableIfFormValid(
       this.keycloak.updateUser(this.userId, update),
       $localize`:Snackbar message:Successfully updated user`
     );
   }
 
-  private process(obs: Observable<any>, message: string) {
+  /**
+   * A simple helper function that only subscribes to an observable if the form is valid.
+   * As Angular HttpRequests return cold observables {@link https://stackoverflow.com/a/42817567/10713841}
+   * the request is only sent once the observable is subscribed to.
+   * @param obs the cold observable
+   * @param message the message to show on success
+   * @private
+   */
+  private executeObservableIfFormValid(obs: Observable<any>, message: string) {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
