@@ -154,7 +154,8 @@ describe("SyncedSessionService", () => {
         name: newUser.name,
         roles: newUser.roles,
       },
-      "p"
+      "p",
+      newUser.name
     );
     expect(sessionService.getCurrentUser().name).toBe("newUser");
     expect(sessionService.getCurrentUser().roles).toEqual(["user_app"]);
