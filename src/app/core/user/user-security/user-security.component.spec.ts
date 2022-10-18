@@ -48,7 +48,8 @@ describe("UserSecurityComponent", () => {
     await TestBed.configureTestingModule({
       imports: [UserModule, MockedTestingModule],
       providers: [
-        { provide: AuthService, useValue: new KeycloakAuthService(mockHttp) },
+        { provide: AuthService, useClass: KeycloakAuthService },
+        { provide: HttpClient, useValue: mockHttp },
       ],
     }).compileComponents();
 
@@ -68,9 +69,11 @@ describe("UserSecurityComponent", () => {
     tick();
 
     expect(component.userId).toBe("userId");
-    expect(component.form.get("username").value).toBe(user.name);
-    expect(component.form.get("email").value).toBe("my@email.de");
-    expect(component.form.get("roles").value).toEqual([assignedRole]);
+    expect(component.form).toHaveValue({
+      username: user.name,
+      email: "my@email.de",
+      roles: [assignedRole],
+    });
   }));
 
   it("should only send modified values to keycloak when updating", fakeAsync(() => {

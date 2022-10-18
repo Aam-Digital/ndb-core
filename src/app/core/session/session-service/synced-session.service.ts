@@ -176,11 +176,7 @@ export class SyncedSessionService extends SessionService {
     // Update local user object
     const remoteUser = this.remoteSession.getCurrentUser();
     if (remoteUser) {
-      this.localSession.saveUser(remoteUser, password);
-      if (loginName !== remoteUser.name) {
-        // add if login also worked with other username
-        this.localSession.saveUser(remoteUser, password, loginName);
-      }
+      this.localSession.saveUser(remoteUser, password, loginName);
     }
   }
 

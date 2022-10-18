@@ -70,11 +70,7 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
 
   createAccount() {
     this.process(
-      this.keycloak.createUser({
-        username: this.form.get("username").value,
-        email: this.form.get("email").value,
-        roles: this.form.get("roles").value,
-      }),
+      this.keycloak.createUser(this.form.getRawValue()),
       $localize`:Snackbar message:An email has been sent to ${
         this.form.get("email").value
       }`
@@ -111,7 +107,7 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
 
   private process(obs: Observable<any>, message: string) {
     if (this.form.invalid) {
-      this.form.markAsTouched();
+      this.form.markAllAsTouched();
       return;
     }
     this.form.setErrors({});

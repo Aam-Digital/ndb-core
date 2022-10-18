@@ -121,10 +121,12 @@ export class LocalSession extends SessionService {
       roles: user.roles,
       encryptedPassword: encryptPassword(password),
     };
-    window.localStorage.setItem(
-      loginName.trim().toLowerCase(),
-      JSON.stringify(localUser)
-    );
+    const loginNameLower = loginName.trim().toLowerCase();
+    window.localStorage.setItem(loginNameLower, JSON.stringify(localUser));
+    const userNameLower = user.name.trim().toLowerCase();
+    if (userNameLower !== loginNameLower) {
+      window.localStorage.setItem(userNameLower, JSON.stringify(localUser));
+    }
     // Update when already logged in
     if (this.getCurrentUser()?.name === localUser.name) {
       this.currentDBUser = localUser;
