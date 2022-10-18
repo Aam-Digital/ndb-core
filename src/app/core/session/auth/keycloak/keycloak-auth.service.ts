@@ -166,6 +166,9 @@ export class KeycloakAuthService extends AuthService {
     );
   }
 
+  /**
+   * Get a list of all roles generally available in the user management system.
+   */
   getRoles() {
     return this.httpClient.get<Role[]>(
       `${environment.account_url}/account/roles`
