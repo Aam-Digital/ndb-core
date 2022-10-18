@@ -4,7 +4,7 @@ import { OnInitDynamicComponent } from "../../view/dynamic-components/on-init-dy
 import { FormBuilder, FormControl, Validators } from "@angular/forms";
 import {
   KeycloakAuthService,
-  AuthUser,
+  KeycloakUser,
   Role,
 } from "../../session/auth/keycloak/keycloak-auth.service";
 import { AuthService } from "../../session/auth/auth.service";
@@ -55,7 +55,7 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
     }
   }
 
-  private assignUser(user: AuthUser) {
+  private assignUser(user: KeycloakUser) {
     this.form.get("email").setValue(user.email);
     this.form
       .get("roles")

@@ -14,7 +14,7 @@ import {
   HttpErrorResponse,
   HttpStatusCode,
 } from "@angular/common/http";
-import { DatabaseUser } from "../../session-service/local-user";
+import { AuthUser } from "../../session-service/auth-user";
 
 function keycloakAuthHttpFake(_url, body) {
   const params = new URLSearchParams(body);
@@ -60,7 +60,7 @@ const jwtTokenResponse: OIDCTokenResponse = {
 describe("KeycloakAuthService", () => {
   let service: KeycloakAuthService;
   let mockHttpClient: jasmine.SpyObj<HttpClient>;
-  let dbUser: DatabaseUser;
+  let dbUser: AuthUser;
 
   beforeEach(() => {
     mockHttpClient = jasmine.createSpyObj(["post"]);

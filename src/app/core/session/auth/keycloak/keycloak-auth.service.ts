@@ -8,9 +8,9 @@ import {
   HttpStatusCode,
 } from "@angular/common/http";
 import { firstValueFrom, Observable } from "rxjs";
-import { DatabaseUser } from "../../session-service/local-user";
 import { parseJwt } from "../../../../utils/utils";
 import { environment } from "../../../../../environments/environment";
+import { AuthUser } from "../../session-service/auth-user";
 
 @Injectable()
 export class KeycloakAuthService extends AuthService {
@@ -30,7 +30,7 @@ export class KeycloakAuthService extends AuthService {
     return `${this.keycloak.authServerUrl}realms/${this.keycloak.realm}`;
   }
 
-  authenticate(username: string, password: string): Promise<DatabaseUser> {
+  authenticate(username: string, password: string): Promise<AuthUser> {
     return this.keycloakReady
       .then(() => this.credentialAuth(username.trim(), password))
       .then((token) => this.processToken(token))
@@ -44,7 +44,7 @@ export class KeycloakAuthService extends AuthService {
       });
   }
 
-  autoLogin(): Promise<DatabaseUser> {
+  autoLogin(): Promise<AuthUser> {
     return this.keycloakReady
       .then(() => this.refreshTokenAuth())
       .then((token) => this.processToken(token));
@@ -86,7 +86,7 @@ export class KeycloakAuthService extends AuthService {
     );
   }
 
-  private processToken(token: OIDCTokenResponse): DatabaseUser {
+  private processToken(token: OIDCTokenResponse): AuthUser {
     this.accessToken = token.access_token;
     localStorage.setItem(
       KeycloakAuthService.REFRESH_TOKEN_KEY,
@@ -158,19 +158,19 @@ export class KeycloakAuthService extends AuthService {
     );
   }
 
-  createUser(user: Partial<AuthUser>): Observable<any> {
+  createUser(user: Partial<KeycloakUser>): Observable<any> {
     return this.httpClient.post(`${environment.account_url}/account`, user);
   }
 
-  updateUser(userId: string, user: Partial<AuthUser>): Observable<any> {
+  updateUser(userId: string, user: Partial<KeycloakUser>): Observable<any> {
     return this.httpClient.put(
       `${environment.account_url}/account/${userId}`,
       user
     );
   }
 
-  getUser(username: string): Observable<AuthUser> {
-    return this.httpClient.get<AuthUser>(
+  getUser(username: string): Observable<KeycloakUser> {
+    return this.httpClient.get<KeycloakUser>(
       `${environment.account_url}/account/${username}`
     );
   }
@@ -195,7 +195,7 @@ export interface Role {
   description: string;
 }
 
-export interface AuthUser {
+export interface KeycloakUser {
   id: string;
   username: string;
   email: string;

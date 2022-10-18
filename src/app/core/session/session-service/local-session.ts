@@ -17,7 +17,6 @@
 import { Injectable } from "@angular/core";
 import { LoginState } from "../session-states/login-state.enum";
 import {
-  DatabaseUser,
   encryptPassword,
   LocalUser,
   passwordEqualsEncrypted,
@@ -27,6 +26,7 @@ import { PouchDatabase } from "../../database/pouch-database";
 import { AppSettings } from "../../app-config/app-settings";
 import { SessionType } from "../session-type";
 import { environment } from "../../../../environments/environment";
+import { AuthUser } from "./auth-user";
 
 /**
  * Responsibilities:
@@ -37,7 +37,7 @@ import { environment } from "../../../../environments/environment";
 @Injectable()
 export class LocalSession extends SessionService {
   static readonly DEPRECATED_DB_KEY = "RESERVED_FOR";
-  private currentDBUser: DatabaseUser;
+  private currentDBUser: AuthUser;
 
   constructor(private database: PouchDatabase) {
     super();
@@ -65,7 +65,7 @@ export class LocalSession extends SessionService {
     return this.loginState.value;
   }
 
-  public async handleSuccessfulLogin(userObject: DatabaseUser) {
+  public async handleSuccessfulLogin(userObject: AuthUser) {
     this.currentDBUser = userObject;
     await this.initializeDatabaseForCurrentUser();
     this.loginState.next(LoginState.LOGGED_IN);
@@ -115,7 +115,7 @@ export class LocalSession extends SessionService {
    * @param password of the user
    * @param loginName (optional) if login also works with a username other than `user.name`. E.g. the email of the user
    */
-  public saveUser(user: DatabaseUser, password: string, loginName = user.name) {
+  public saveUser(user: AuthUser, password: string, loginName = user.name) {
     const localUser: LocalUser = {
       name: user.name,
       roles: user.roles,
@@ -148,7 +148,7 @@ export class LocalSession extends SessionService {
     return user && passwordEqualsEncrypted(password, user.encryptedPassword);
   }
 
-  public getCurrentUser(): DatabaseUser {
+  public getCurrentUser(): AuthUser {
     return this.currentDBUser;
   }
 

@@ -23,7 +23,6 @@ import { SessionType } from "../session-type";
 import { fakeAsync, flush, TestBed, tick } from "@angular/core/testing";
 import { HttpErrorResponse, HttpStatusCode } from "@angular/common/http";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { DatabaseUser } from "./local-user";
 import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
 import { testSessionServiceImplementation } from "./session.service.spec";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -32,6 +31,7 @@ import { SessionModule } from "../session.module";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { environment } from "../../../../environments/environment";
 import { AuthService } from "../auth/auth.service";
+import { AuthUser } from "./auth-user";
 
 describe("SyncedSessionService", () => {
   let sessionService: SyncedSessionService;
@@ -43,7 +43,7 @@ describe("SyncedSessionService", () => {
   let remoteLoginSpy: jasmine.Spy<
     (username: string, password: string) => Promise<LoginState>
   >;
-  let dbUser: DatabaseUser;
+  let dbUser: AuthUser;
   let syncSpy: jasmine.Spy<() => Promise<void>>;
   let liveSyncSpy: jasmine.Spy<() => void>;
   let mockAuthService: jasmine.SpyObj<AuthService>;
@@ -216,7 +216,7 @@ describe("SyncedSessionService", () => {
   }));
 
   it("should update the local user object once connected", fakeAsync(() => {
-    const updatedUser: DatabaseUser = {
+    const updatedUser: AuthUser = {
       name: TEST_USER,
       roles: dbUser.roles.concat("admin"),
     };
@@ -246,7 +246,7 @@ describe("SyncedSessionService", () => {
   }));
 
   it("should support email instead of username for login", async () => {
-    const newUser: DatabaseUser = { name: "test-user", roles: ["test-role"] };
+    const newUser: AuthUser = { name: "test-user", roles: ["test-role"] };
     passRemoteLogin(newUser);
 
     const res = await sessionService.login("my@email.com", "test-pass");
@@ -265,7 +265,7 @@ describe("SyncedSessionService", () => {
 
   testSessionServiceImplementation(() => Promise.resolve(sessionService));
 
-  function passRemoteLogin(response: DatabaseUser = { name: "", roles: [] }) {
+  function passRemoteLogin(response: AuthUser = { name: "", roles: [] }) {
     mockAuthService.authenticate.and.resolveTo(response);
   }
 
