@@ -185,6 +185,9 @@ export class KeycloakAuthService extends AuthService {
   }
 }
 
+/**
+ * Extract of openId-connect response.
+ */
 export interface OIDCTokenResponse {
   access_token: string;
   refresh_token: string;
@@ -192,12 +195,20 @@ export interface OIDCTokenResponse {
   session_state: string;
 }
 
+/**
+ * Extract of Keycloak role object.
+ * See {@link https://www.keycloak.org/docs-api/19.0.3/rest-api/index.html#_rolerepresentation}
+ */
 export interface Role {
   id: string;
   name: string;
   description: string;
 }
 
+/**
+ * Extract of Keycloak user object.
+ * See {@link https://www.keycloak.org/docs-api/19.0.3/rest-api/index.html#_userrepresentation}
+ */
 export interface KeycloakUser {
   id: string;
   username: string;
