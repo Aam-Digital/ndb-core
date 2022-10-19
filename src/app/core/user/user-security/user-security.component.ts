@@ -71,7 +71,7 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
   createAccount() {
     this.executeObservableIfFormValid(
       this.keycloak.createUser(this.form.getRawValue()),
-      $localize`:Snackbar message:An email has been sent to ${
+      $localize`:Snackbar message:Account created. An email has been sent to ${
         this.form.get("email").value
       }`
     );
