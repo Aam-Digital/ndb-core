@@ -13,6 +13,7 @@ import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { AuthService } from "../../session/auth/auth.service";
 import {
   KeycloakAuthService,
+  KeycloakUser,
   Role,
 } from "../../session/auth/keycloak/keycloak-auth.service";
 import { of, throwError } from "rxjs";
@@ -33,10 +34,12 @@ describe("UserSecurityComponent", () => {
     description: "this role is not assigned to the user",
   };
   const user = { name: "test-user" } as User;
-  const keycloakUser = {
+  const keycloakUser: KeycloakUser = {
     id: "userId",
     email: "my@email.de",
     roles: [assignedRole],
+    enabled: true,
+    username: "test-user",
   };
 
   beforeEach(async () => {
@@ -130,5 +133,19 @@ describe("UserSecurityComponent", () => {
     tick();
 
     expect(component.form.errors).toEqual({ failed: "user unauthorized" });
+  }));
+
+  it("should disable the form if a user has been deactivated", fakeAsync(() => {
+    mockHttp.get.and.returnValue(of(keycloakUser));
+    component.onInitFromDynamicConfig({ entity: user });
+    tick();
+    expect(component.form.enabled).toBeTrue();
+    expect(component.userEnabled).toBeTrue();
+
+    component.toggleAccount(false);
+    tick();
+
+    expect(component.form.disabled).toBeTrue();
+    expect(component.userEnabled).toBeFalse();
   }));
 });

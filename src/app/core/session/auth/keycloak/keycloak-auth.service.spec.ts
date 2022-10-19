@@ -129,6 +129,25 @@ describe("KeycloakAuthService", () => {
     service.logout();
   }));
 
+  it("should throw a unauthorized exception if account is disabled", (done) => {
+    mockHttpClient.post.and.returnValue(
+      throwError(
+        () =>
+          new HttpErrorResponse({
+            status: 400,
+            error: {
+              error: "invalid_grant",
+              error_description: "Account disabled",
+            },
+          })
+      )
+    );
+    service.authenticate(TEST_USER, TEST_PASSWORD).catch((err) => {
+      expect(err.status).toBe(HttpStatusCode.Unauthorized);
+      done();
+    });
+  });
+
   it("should call keycloak for a password reset", () => {
     const loginSpy = spyOn(service["keycloak"], "login");
 

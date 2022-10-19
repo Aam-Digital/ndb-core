@@ -27,7 +27,7 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
   keycloak: KeycloakAuthService;
   availableRoles: Role[] = [];
   userId: string;
-  userEnabled: boolean = false;
+  userEnabled = false;
 
   constructor(
     private fb: FormBuilder,

@@ -11,6 +11,7 @@ import { firstValueFrom, Observable } from "rxjs";
 import { parseJwt } from "../../../../utils/utils";
 import { environment } from "../../../../../environments/environment";
 import { AuthUser } from "../../session-service/auth-user";
+import { catchError } from "rxjs/operators";
 
 @Injectable()
 export class KeycloakAuthService extends AuthService {
@@ -33,15 +34,7 @@ export class KeycloakAuthService extends AuthService {
   authenticate(username: string, password: string): Promise<AuthUser> {
     return this.keycloakReady
       .then(() => this.credentialAuth(username.trim(), password))
-      .then((token) => this.processToken(token))
-      .catch((err) => {
-        if (err.error.error_description === "Account disabled") {
-          // Disabled account is also treated as unauthorized
-          throw new HttpErrorResponse({ status: HttpStatusCode.Unauthorized });
-        } else {
-          throw err;
-        }
-      });
+      .then((token) => this.processToken(token));
   }
 
   autoLogin(): Promise<AuthUser> {
@@ -78,11 +71,24 @@ export class KeycloakAuthService extends AuthService {
       ),
     };
     return firstValueFrom(
-      this.httpClient.post<OIDCTokenResponse>(
-        `${this.realmUrl}/protocol/openid-connect/token`,
-        body.toString(),
-        options
-      )
+      this.httpClient
+        .post<OIDCTokenResponse>(
+          `${this.realmUrl}/protocol/openid-connect/token`,
+          body.toString(),
+          options
+        )
+        .pipe(
+          catchError((err) => {
+            if (err.error.error_description === "Account disabled") {
+              // Disabled account is also treated as unauthorized
+              throw new HttpErrorResponse({
+                status: HttpStatusCode.Unauthorized,
+              });
+            } else {
+              throw err;
+            }
+          })
+        )
     );
   }
 
