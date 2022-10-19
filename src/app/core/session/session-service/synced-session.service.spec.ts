@@ -263,6 +263,13 @@ describe("SyncedSessionService", () => {
     localStorage.removeItem("my@email.com");
   });
 
+  it("should correctly check the password", () => {
+    localSession.saveUser({ name: "TestUser", roles: [] }, TEST_PASSWORD);
+
+    expect(sessionService.checkPassword("TestUser", TEST_PASSWORD)).toBeTrue();
+    expect(sessionService.checkPassword("TestUser", "wrongPW")).toBeFalse();
+  });
+
   testSessionServiceImplementation(() => Promise.resolve(sessionService));
 
   function passRemoteLogin(response: DatabaseUser = { name: "", roles: [] }) {
