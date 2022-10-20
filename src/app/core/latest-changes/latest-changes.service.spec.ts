@@ -118,18 +118,17 @@ describe("LatestChangesService", () => {
 
   it("should add Alert on failing to get changelog", (done) => {
     spyOn(http, "get").and.returnValue(
-      throwError({ status: 404, message: "not found" })
+      throwError(() => ({ status: 404, message: "not found" }))
     );
     const alertSpy = spyOn(alertService, "addAlert");
-    service.getChangelogsBetweenVersions("1.0").subscribe(
-      () => {},
-      () => {
+    service.getChangelogsBetweenVersions("1.0").subscribe({
+      error: () => {
         expect(alertSpy)
           .withContext('"not found" error not defined')
           .toHaveBeenCalledTimes(1);
         done();
-      }
-    );
+      },
+    });
   });
 
   it("should not include prereleases", (done) => {
@@ -171,8 +170,7 @@ describe("LatestChangesService", () => {
     const testRelease = {
       name: "test with notes",
       tag_name: "3.0",
-      body:
-        "* fix ([e03dcca](https://github.com/Aam-Digital/ndb-core/commit/e03dcca7d89e584b8f08cc7fe30621c1ad428dba))",
+      body: "* fix ([e03dcca](https://github.com/Aam-Digital/ndb-core/commit/e03dcca7d89e584b8f08cc7fe30621c1ad428dba))",
     };
 
     spyOn(http, "get").and.returnValue(of([testRelease]));
