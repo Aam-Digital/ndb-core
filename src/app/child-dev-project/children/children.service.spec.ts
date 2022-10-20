@@ -11,6 +11,7 @@ import { genders } from "./model/genders";
 import { DatabaseTestingModule } from "../../utils/database-testing.module";
 import { sortByAttribute } from "../../utils/utils";
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
+import { lastValueFrom } from "rxjs";
 
 describe("ChildrenService", () => {
   let service: ChildrenService;
@@ -41,10 +42,10 @@ describe("ChildrenService", () => {
   });
 
   it("should list newly saved children", async () => {
-    const childrenBefore = await service.getChildren().toPromise();
+    const childrenBefore = await lastValueFrom(service.getChildren());
     const child = new Child("10");
     await entityMapper.save<Child>(child);
-    const childrenAfter = await service.getChildren().toPromise();
+    const childrenAfter = await lastValueFrom(service.getChildren());
 
     let find = childrenBefore.find((c) => c.getId() === child.getId());
     expect(find).toBeUndefined();
@@ -59,14 +60,14 @@ describe("ChildrenService", () => {
     const child = new Child("10");
     let error;
     try {
-      await service.getChild(child.getId()).toPromise();
+      await service.getChild(child.getId());
     } catch (err) {
       error = err;
     }
     expect(error).toBeDefined();
 
     await entityMapper.save<Child>(child);
-    const childAfter = await service.getChild(child.getId()).toPromise();
+    const childAfter = await service.getChild(child.getId());
     expect(childAfter).toBeDefined();
     expect(childAfter).toHaveId(child.getId());
   });
@@ -109,12 +110,12 @@ describe("ChildrenService", () => {
 
   it("should load a single child and add school info", async () => {
     // no active relation
-    const child2 = await service.getChild("2").toPromise();
+    const child2 = await service.getChild("2");
     expect(child2.schoolClass).toBeUndefined();
     expect(child2.schoolId).toBeUndefined();
 
     // one active relation
-    let child1 = await service.getChild("1").toPromise();
+    let child1 = await service.getChild("1");
     expect(child1.schoolClass).toBe("2");
     expect(child1.schoolId).toBe("1");
 
@@ -125,7 +126,7 @@ describe("ChildrenService", () => {
     newRelation.schoolId = "2";
     newRelation.schoolClass = "3";
     await entityMapper.save(newRelation);
-    child1 = await service.getChild(child1.getId()).toPromise();
+    child1 = await service.getChild(child1.getId());
     expect(child1.schoolClass).toBe("3");
     expect(child1.schoolId).toBe("2");
 
@@ -135,13 +136,13 @@ describe("ChildrenService", () => {
     noStartDate.schoolId = "2";
     noStartDate.schoolClass = "4";
     await entityMapper.save(noStartDate);
-    child1 = await service.getChild(child1.getId()).toPromise();
+    child1 = await service.getChild(child1.getId());
     expect(child1.schoolClass).toBe("4");
     expect(child1.schoolId).toBe("2");
   });
 
   it("should load all children with school info", async () => {
-    const children = await service.getChildren().toPromise();
+    const children = await lastValueFrom(service.getChildren());
     const child1 = children.find((child) => child.getId() === "1");
     expect(child1.schoolClass).toBe("2");
     expect(child1.schoolId).toBe("1");

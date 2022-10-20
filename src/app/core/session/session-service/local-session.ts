@@ -50,9 +50,7 @@ export class LocalSession extends SessionService {
    * @param password Password
    */
   public async login(username: string, password: string): Promise<LoginState> {
-    const user: LocalUser = JSON.parse(
-      window.localStorage.getItem(username.trim().toLowerCase())
-    );
+    const user = this.getStoredUser(username);
     if (user) {
       if (passwordEqualsEncrypted(password, user.encryptedPassword)) {
         await this.handleSuccessfulLogin(user);
@@ -63,6 +61,11 @@ export class LocalSession extends SessionService {
       this.loginState.next(LoginState.UNAVAILABLE);
     }
     return this.loginState.value;
+  }
+
+  private getStoredUser(username: string): LocalUser {
+    const stored = window.localStorage.getItem(username.trim().toLowerCase());
+    return JSON.parse(stored);
   }
 
   public async handleSuccessfulLogin(userObject: AuthUser) {
@@ -117,8 +120,7 @@ export class LocalSession extends SessionService {
    */
   public saveUser(user: AuthUser, password: string, loginName = user.name) {
     const localUser: LocalUser = {
-      name: user.name,
-      roles: user.roles,
+      ...user,
       encryptedPassword: encryptPassword(password),
     };
     const loginNameLower = loginName.trim().toLowerCase();
@@ -144,7 +146,7 @@ export class LocalSession extends SessionService {
   }
 
   public checkPassword(username: string, password: string): boolean {
-    const user: LocalUser = JSON.parse(window.localStorage.getItem(username));
+    const user = this.getStoredUser(username);
     return user && passwordEqualsEncrypted(password, user.encryptedPassword);
   }
 

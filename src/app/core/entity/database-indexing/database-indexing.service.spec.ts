@@ -20,7 +20,7 @@ import { Database } from "../../database/database";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { expectObservable } from "../../../utils/test-utils/observable-utils";
 import { fakeAsync, tick } from "@angular/core/testing";
-import { take } from "rxjs/operators";
+import { firstValueFrom } from "rxjs";
 
 describe("DatabaseIndexingService", () => {
   let service: DatabaseIndexingService;
@@ -139,17 +139,13 @@ describe("DatabaseIndexingService", () => {
     };
 
     await service.createIndex(testDesignDoc);
-    let registeredIndices = await service.indicesRegistered
-      .pipe(take(1))
-      .toPromise();
+    let registeredIndices = await firstValueFrom(service.indicesRegistered);
     expect(registeredIndices).toEqual([
       jasmine.objectContaining({ details: "test-index" }),
     ]);
 
     await service.createIndex(testDesignDoc);
-    registeredIndices = await service.indicesRegistered
-      .pipe(take(1))
-      .toPromise();
+    registeredIndices = await firstValueFrom(service.indicesRegistered);
     expect(registeredIndices).toEqual([
       jasmine.objectContaining({ details: "test-index" }),
     ]);

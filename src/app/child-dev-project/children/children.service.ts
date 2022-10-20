@@ -11,7 +11,6 @@ import { ChildPhotoService } from "./child-photo-service/child-photo.service";
 import moment, { Moment } from "moment";
 import { LoggingService } from "../../core/logging/logging.service";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
-import { Entity } from "../../core/entity/model/entity";
 
 @Injectable()
 export class ChildrenService {
@@ -57,17 +56,14 @@ export class ChildrenService {
    * returns an observable which retrieves a single child and loads its photo
    * @param id id of child
    */
-  getChild(id: string): Observable<Child> {
-    const promise = this.entityMapper
-      .load<Child>(Child, id)
-      .then((loadedChild) => {
-        return this.queryLatestRelation(id).then((currentSchoolInfo) => {
-          loadedChild.schoolClass = currentSchoolInfo?.schoolClass;
-          loadedChild.schoolId = currentSchoolInfo?.schoolId;
-          return loadedChild;
-        });
+  getChild(id: string): Promise<Child> {
+    return this.entityMapper.load<Child>(Child, id).then((loadedChild) => {
+      return this.queryLatestRelation(id).then((currentSchoolInfo) => {
+        loadedChild.schoolClass = currentSchoolInfo?.schoolClass;
+        loadedChild.schoolId = currentSchoolInfo?.schoolId;
+        return loadedChild;
       });
-    return from(promise);
+    });
   }
 
   private createChildSchoolRelationIndex(): Promise<any> {

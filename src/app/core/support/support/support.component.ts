@@ -11,6 +11,7 @@ import { HttpClient } from "@angular/common/http";
 import { SyncedSessionService } from "../../session/session-service/synced-session.service";
 import { environment } from "../../../../environments/environment";
 import { AuthUser } from "../../session/session-service/auth-user";
+import { firstValueFrom } from "rxjs";
 
 @Component({
   selector: "app-support",
@@ -90,7 +91,7 @@ export class SupportComponent implements OnInit {
     }
     this.window.navigator.serviceWorker.ready
       .then(() =>
-        this.http.get("/ngsw/state", { responseType: "text" }).toPromise()
+        firstValueFrom(this.http.get("/ngsw/state", { responseType: "text" }))
       )
       .then((res) => (this.swLog = res));
   }
