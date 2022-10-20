@@ -192,7 +192,9 @@ export class QueryService {
     relationKey: string
   ): Entity[] {
     const targetEntities = this.toArray(this.entities[entityType]);
-    const srcIds = srcEntities.map((entity) => entity.getId());
+    const srcIds = srcEntities
+      .filter(entity => typeof entity.getId === "function") // skip empty placeholder objects
+      .map((entity) => entity.getId());
     if (
       targetEntities.length > 0 &&
       Array.isArray(targetEntities[0][relationKey])

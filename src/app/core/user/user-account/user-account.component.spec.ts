@@ -19,13 +19,10 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { UserAccountComponent } from "./user-account.component";
 import { SessionService } from "../../session/session-service/session.service";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { UserModule } from "../user.module";
 import { LoggingService } from "../../logging/logging.service";
-import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
-import { RouterTestingModule } from "@angular/router/testing";
-import { Angulartics2Module } from "angulartics2";
 import { AuthService } from "../../session/auth/auth.service";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("UserAccountComponent", () => {
   let component: UserAccountComponent;
@@ -45,13 +42,7 @@ describe("UserAccountComponent", () => {
     mockLoggingService = jasmine.createSpyObj(["error"]);
 
     TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule,
-        UserModule,
-        Angulartics2Module.forRoot(),
-        NoopAnimationsModule,
-        TabStateModule,
-      ],
+      imports: [UserModule, MockedTestingModule.withState()],
       providers: [
         { provide: SessionService, useValue: mockSessionService },
         { provide: AuthService, useValue: { changePassword: () => undefined } },

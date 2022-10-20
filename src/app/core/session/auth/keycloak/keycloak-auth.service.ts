@@ -2,9 +2,10 @@ import { AuthService } from "../auth.service";
 import { Injectable } from "@angular/core";
 import Keycloak from "keycloak-js";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { firstValueFrom } from "rxjs";
+import { firstValueFrom, Observable } from "rxjs";
 import { DatabaseUser } from "../../session-service/local-user";
 import { parseJwt } from "../../../../utils/utils";
+import { environment } from "../../../../../environments/environment";
 
 @Injectable()
 export class KeycloakAuthService extends AuthService {
@@ -18,6 +19,10 @@ export class KeycloakAuthService extends AuthService {
 
   constructor(private httpClient: HttpClient) {
     super();
+  }
+
+  get realmUrl(): string {
+    return `${this.keycloak.authServerUrl}realms/${this.keycloak.realm}`;
   }
 
   authenticate(username: string, password: string): Promise<DatabaseUser> {
@@ -61,7 +66,7 @@ export class KeycloakAuthService extends AuthService {
     };
     return firstValueFrom(
       this.httpClient.post<OIDCTokenResponse>(
-        `${this.keycloak.authServerUrl}realms/${this.keycloak.realm}/protocol/openid-connect/token`,
+        `${this.realmUrl}/protocol/openid-connect/token`,
         body.toString(),
         options
       )
@@ -91,8 +96,14 @@ export class KeycloakAuthService extends AuthService {
     );
   }
 
-  addAuthHeader(headers: HttpHeaders) {
-    headers.set("Authorization", "Bearer " + this.accessToken);
+  addAuthHeader(headers: any) {
+    if (headers.set && typeof headers.set === "function") {
+      // PouchDB headers are set as a map
+      headers.set("Authorization", "Bearer " + this.accessToken);
+    } else {
+      // Interceptor headers are set as a simple object
+      headers["Authorization"] = "Bearer " + this.accessToken;
+    }
   }
 
   async logout() {
@@ -109,6 +120,29 @@ export class KeycloakAuthService extends AuthService {
       action: "UPDATE_PASSWORD",
       redirectUri: location.href,
     });
+  }
+
+  getUserinfo(): Observable<any> {
+    return this.httpClient.get(
+      `${this.realmUrl}/protocol/openid-connect/userinfo`
+    );
+  }
+
+  setEmail(email: string): Observable<any> {
+    return this.httpClient.put(`${environment.account_url}/account/set-email`, {
+      email,
+    });
+  }
+
+  forgotPassword(email: string): Observable<any> {
+    return this.httpClient.post(
+      `${environment.account_url}/account/forgot-password`,
+      {
+        email,
+        realm: this.keycloak.realm,
+        client: this.keycloak.clientId,
+      }
+    );
   }
 }
 

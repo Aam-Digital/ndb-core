@@ -50,9 +50,7 @@ export class LocalSession extends SessionService {
    * @param password Password
    */
   public async login(username: string, password: string): Promise<LoginState> {
-    const user: LocalUser = JSON.parse(
-      window.localStorage.getItem(username.trim().toLowerCase())
-    );
+    const user = this.getStoredUser(username);
     if (user) {
       if (passwordEqualsEncrypted(password, user.encryptedPassword)) {
         await this.handleSuccessfulLogin(user);
@@ -63,6 +61,11 @@ export class LocalSession extends SessionService {
       this.loginState.next(LoginState.UNAVAILABLE);
     }
     return this.loginState.value;
+  }
+
+  private getStoredUser(username: string): LocalUser {
+    const stored = window.localStorage.getItem(username.trim().toLowerCase());
+    return JSON.parse(stored);
   }
 
   public async handleSuccessfulLogin(userObject: DatabaseUser) {
@@ -113,15 +116,16 @@ export class LocalSession extends SessionService {
    * Saves a user to the local storage
    * @param user a object holding the username and the roles of the user
    * @param password of the user
+   * @param loginName (optional) if login also works with a username other than `user.name`. E.g. the email of the user
    */
-  public saveUser(user: DatabaseUser, password: string) {
+  public saveUser(user: DatabaseUser, password: string, loginName = user.name) {
     const localUser: LocalUser = {
       name: user.name,
       roles: user.roles,
       encryptedPassword: encryptPassword(password),
     };
     window.localStorage.setItem(
-      localUser.name.trim().toLowerCase(),
+      loginName.trim().toLowerCase(),
       JSON.stringify(localUser)
     );
     // Update when already logged in
@@ -137,10 +141,11 @@ export class LocalSession extends SessionService {
    */
   public removeUser(username: string) {
     window.localStorage.removeItem(username);
+    window.localStorage.removeItem(username.trim().toLowerCase());
   }
 
   public checkPassword(username: string, password: string): boolean {
-    const user: LocalUser = JSON.parse(window.localStorage.getItem(username));
+    const user = this.getStoredUser(username);
     return user && passwordEqualsEncrypted(password, user.encryptedPassword);
   }
 

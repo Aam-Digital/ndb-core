@@ -15,7 +15,7 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 import { User } from "../../../user/user";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { firstValueFrom, Subscription } from "rxjs";
+import { Subscription } from "rxjs";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import {
   EntityRegistry,
@@ -85,14 +85,12 @@ describe("EntitySelectComponent", () => {
     expect(component.loading.value).toBe(false);
   }));
 
-  it("should suggest all entities after an initial load", (done) => {
-    subscription = component.filteredEntities.subscribe((next) => {
-      expect(next.length).toBe(testUsers.length);
-      done();
-    });
+  it("should suggest all entities after an initial load", fakeAsync(() => {
     component.entityType = User.ENTITY_TYPE;
+    tick();
     fixture.detectChanges();
-  });
+    expect(component.filteredEntities.length).toBe(testUsers.length);
+  }));
 
   it("contains the initial selection as entities", fakeAsync(() => {
     component.entityType = User.ENTITY_TYPE;
@@ -152,29 +150,27 @@ describe("EntitySelectComponent", () => {
     expect(component.selectedEntities).toBeEmpty();
   });
 
-  it("autocompletes with the default accessor", (done) => {
+  it("autocompletes with the default accessor", () => {
     component.allEntities = testUsers;
     component.loading.next(false);
-    let iterations = 0;
-    let expectedLength = 4;
-    subscription = component.filteredEntities.subscribe((next) => {
-      iterations++;
-      expect(next.length).toEqual(expectedLength);
-      if (iterations === 4) {
-        done();
-      }
-    });
-    expectedLength = 4;
+
     component.formControl.setValue(null);
-    expectedLength = 3;
+    expect(component.filteredEntities.length).toEqual(4);
+
     component.formControl.setValue("A");
-    expectedLength = 3;
-    component.formControl.setValue("Ab");
-    expectedLength = 1;
+    expect(component.filteredEntities.length).toEqual(3);
+
+    component.formControl.setValue("c");
+    expect(component.filteredEntities.length).toEqual(2);
+
     component.formControl.setValue("Abc");
+    expect(component.filteredEntities.length).toEqual(1);
+
+    component.formControl.setValue("z");
+    expect(component.filteredEntities.length).toEqual(0);
   });
 
-  it("should use the configurable toStringAttributes for comparing values", async () => {
+  it("should use the configurable toStringAttributes for comparing values", fakeAsync(() => {
     class Person extends Entity {
       static toStringAttributes = ["firstname", "lastname"];
 
@@ -187,34 +183,23 @@ describe("EntitySelectComponent", () => {
     component.allEntities = [p1, p2];
     component.loading.next(false);
 
-    let res = firstValueFrom(component.filteredEntities);
     component.formControl.setValue("Aa");
-    await expectAsync(res).toBeResolvedTo([p1, p2]);
+    tick();
+    expect(component.filteredEntities).toEqual([p1, p2]);
 
-    res = firstValueFrom(component.filteredEntities);
     component.formControl.setValue("Aa b");
-    await expectAsync(res).toBeResolvedTo([p1]);
-  });
+    tick();
+    expect(component.filteredEntities).toEqual([p1]);
+  }));
 
-  it("should add an unselected entity to the filtered entities array", (done) => {
-    // TODO this is still throwing object unsubscribe error
+  it("should add an unselected entity to the filtered entities array", () => {
     component.allEntities = testUsers;
     const selectedUser = testUsers[1];
-    let iteration = 0;
-
-    subscription = component.filteredEntities.subscribe(
-      (autocompleteEntities) => {
-        iteration++;
-        if (iteration === 1) {
-          expect(autocompleteEntities).not.toContain(selectedUser);
-        } else if (iteration === 2) {
-          expect(autocompleteEntities).toContain(selectedUser);
-          done();
-        }
-      }
-    );
 
     component.selectEntity(selectedUser);
+    expect(component.filteredEntities).not.toContain(selectedUser);
+
     component.unselectEntity(selectedUser);
+    expect(component.filteredEntities).toContain(selectedUser);
   });
 });
