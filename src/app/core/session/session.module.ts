@@ -26,7 +26,7 @@ import { MatCardModule } from "@angular/material/card";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { RouterModule } from "@angular/router";
-import { HttpClientModule } from "@angular/common/http";
+import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { SyncedSessionService } from "./session-service/synced-session.service";
@@ -40,9 +40,11 @@ import { KeycloakAuthService } from "./auth/keycloak/keycloak-auth.service";
 import { CouchdbAuthService } from "./auth/couchdb/couchdb-auth.service";
 import { AuthProvider } from "./auth/auth-provider";
 import { PasswordFormComponent } from "./auth/couchdb/password-form/password-form.component";
-import { PasswordButtonComponent } from "./auth/keycloak/password-button/password-button.component";
+import { AccountPageComponent } from "./auth/keycloak/account-page/account-page.component";
 import { Angulartics2OnModule } from "angulartics2";
+import { PasswordResetComponent } from "./auth/keycloak/password-reset/password-reset.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { AuthInterceptor } from "./auth/keycloak/auth-interceptor.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
 /**
@@ -75,9 +77,10 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   declarations: [
     LoginComponent,
     PasswordFormComponent,
-    PasswordButtonComponent,
+    AccountPageComponent,
+    PasswordResetComponent,
   ],
-  exports: [LoginComponent, PasswordButtonComponent, PasswordFormComponent],
+  exports: [LoginComponent, AccountPageComponent, PasswordFormComponent],
   providers: [
     SyncedSessionService,
     LocalSession,
@@ -105,6 +108,11 @@ import { MatTooltipModule } from "@angular/material/tooltip";
         }
       },
       deps: [Injector],
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
     },
   ],
 })
