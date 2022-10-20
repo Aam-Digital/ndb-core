@@ -1,7 +1,7 @@
 import { NoteDetailsComponent } from "./note-details.component";
 import { Note } from "../model/note";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { of } from "rxjs";
+import { EMPTY } from "rxjs";
 import { ChildrenService } from "../../children/children.service";
 import { NotesModule } from "../notes.module";
 import { Child } from "../../children/model/child";
@@ -44,9 +44,9 @@ describe("NoteDetailsComponent", () => {
     const mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
       "getChild",
     ]);
-    mockChildrenService.getChild.and.returnValue(of(new Child("")));
+    mockChildrenService.getChild.and.resolveTo(new Child(""));
 
-    const dialogRefMock = { beforeClosed: () => of(), close: () => {} };
+    const dialogRefMock = { beforeClosed: () => EMPTY, close: () => {} };
 
     TestBed.configureTestingModule({
       imports: [
