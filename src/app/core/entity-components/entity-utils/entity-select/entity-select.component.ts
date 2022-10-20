@@ -10,7 +10,7 @@ import {
 } from "@angular/core";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { Entity } from "../../../entity/model/entity";
-import { BehaviorSubject, Observable } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 import { FormControl } from "@angular/forms";
 import { filter, map } from "rxjs/operators";
 import { MatChipInputEvent } from "@angular/material/chips";
