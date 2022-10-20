@@ -65,8 +65,12 @@ body {
   grid-template-rows: auto 1fr;
   height: 100vh;
 
-  /* mobile viewport bug fix */
-  min-height: -webkit-fill-available;
+  /* mobile viewport bug fix. */
+  // The viewport height on iOs is not necessarily the visible screen size.
+  // There might be a bar on the top of the screen. The following line
+  // fixes this, but since this is no official css feature, this line should
+  // be replaced as soon as a nicer solution exists.
+  height: -webkit-fill-available;
 }
 
 /**  Main content  **/
