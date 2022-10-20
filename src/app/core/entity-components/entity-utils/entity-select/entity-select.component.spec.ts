@@ -23,7 +23,7 @@ import {
   entityRegistry,
 } from "../../../entity/database-entity.decorator";
 
-fdescribe("EntitySelectComponent", () => {
+describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any>;
   let fixture: ComponentFixture<EntitySelectComponent<any>>;
   let subscription: Subscription = null;
