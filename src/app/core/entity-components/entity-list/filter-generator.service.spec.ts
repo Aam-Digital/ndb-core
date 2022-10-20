@@ -187,4 +187,51 @@ describe("FilterGeneratorService", () => {
     );
     expect(notes.filter(beforeFilter.filterFun)).toEqual([yesterdayNote]);
   });
+
+  it("should use the configuration values for the date filter", async () => {
+    const dateFilter = {
+      id: "date",
+      label: "Date",
+      startingDayOfWeek: "Monday",
+      daysBack: [0, 1, 2, 5],
+      weeksBack: [0, 1, 3, 4, 6],
+    };
+
+    const filter = (await service.generate([dateFilter], Note, []))[0];
+
+    expect(filter.filterSettings.label).toEqual(dateFilter.label);
+    expect(filter.filterSettings.name).toEqual(dateFilter.id);
+
+    const todayNote = new Note();
+    todayNote.date = new Date();
+    const yesterdayNote = new Note();
+    const fourWeeksBackNote = new Note();
+    const notes = [todayNote, yesterdayNote, fourWeeksBackNote];
+    yesterdayNote.date = moment().subtract(1, "day").toDate();
+    fourWeeksBackNote.date = moment().subtract(4, "week").toDate();
+
+    const allFilter = filter.filterSettings.options.find((f) => f.key === "");
+    expect(notes.filter(allFilter.filterFun)).toEqual(notes);
+
+    const todayFilter = filter.filterSettings.options.find(
+      (f) => f.key === "current-day"
+    );
+    expect(notes.filter(todayFilter.filterFun)).toEqual([todayNote]);
+
+    const yesterdayFilter = filter.filterSettings.options.find(
+      (f) => f.key === "last-2-days"
+    );
+    expect(notes.filter(yesterdayFilter.filterFun)).toEqual([
+      todayNote,
+      yesterdayNote,
+    ]);
+
+    const lastThreeWeeksFilter = filter.filterSettings.options.find(
+      (f) => f.key === "last-3-weeks"
+    );
+    expect(notes.filter(lastThreeWeeksFilter.filterFun)).toEqual([
+      todayNote,
+      yesterdayNote,
+    ]);
+  });
 });
