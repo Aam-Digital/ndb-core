@@ -32,7 +32,6 @@ import {
   ScreenWidthObserver,
   ScreenSize,
 } from "../../../../utils/media/screen-size-observer.service";
-import { distinctUntilChanged } from "rxjs/operators";
 import { Subscription } from "rxjs";
 
 export interface TableRow<T extends Entity> {
@@ -66,6 +65,7 @@ export class EntitySubrecordComponent<T extends Entity>
 
   /** configuration what kind of columns to be generated for the table */
   @Input() set columns(columns: (FormFieldConfig | string)[]) {
+    console.log("Set columns", columns);
     this._columns = columns.map((col) => {
       if (typeof col === "string") {
         return { id: col };
@@ -74,6 +74,8 @@ export class EntitySubrecordComponent<T extends Entity>
       }
     });
     this.filteredColumns = this._columns.filter((col) => !col.hideFromTable);
+    console.log("Set filtered columns", this.filteredColumns);
+    console.log("Columns to display", this.columnsToDisplay);
   }
   _columns: FormFieldConfig[] = [];
   filteredColumns: FormFieldConfig[] = [];
@@ -113,7 +115,7 @@ export class EntitySubrecordComponent<T extends Entity>
   /** data displayed in the template's table */
   recordsDataSource = new MatTableDataSource<TableRow<T>>();
 
-  private mediaSubscription: Subscription;
+  private mediaSubscription: Subscription = Subscription.EMPTY;
   private screenWidth: ScreenSize | undefined = undefined;
 
   idForSavingPagination = "startWert";
@@ -146,12 +148,10 @@ export class EntitySubrecordComponent<T extends Entity>
   ) {
     this.mediaSubscription = this.screenWidthObserver
       .shared()
-      .pipe(untilDestroyed(this), distinctUntilChanged())
+      .pipe(untilDestroyed(this))
       .subscribe((change: ScreenSize) => {
-        if (change !== this.screenWidth) {
-          this.screenWidth = change;
-          this.setupTable();
-        }
+        this.screenWidth = change;
+        this.setupTable();
       });
   }
 
@@ -199,6 +199,9 @@ export class EntitySubrecordComponent<T extends Entity>
   ngOnChanges(changes: SimpleChanges) {
     if (changes.hasOwnProperty("columns")) {
       this.initFormGroups();
+      if (this.columnsToDisplay.length < 2) {
+        this.setupTable();
+      }
     }
     if (changes.hasOwnProperty("records") && this._records.length > 0) {
       this.initFormGroups();
