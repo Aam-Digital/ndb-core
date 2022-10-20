@@ -65,8 +65,8 @@ body {
   grid-template-rows: auto 1fr;
   height: 100vh;
 
-  /* mobile viewport bug fix */
-  min-height: -webkit-fill-available;
+  /* mobile viewport bug fix. */
+  height: -webkit-fill-available;
 }
 
 /**  Main content  **/
