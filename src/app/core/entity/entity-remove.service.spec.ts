@@ -49,19 +49,16 @@ describe("EntityRemoveService", () => {
     service
       .remove(new Entity())
       .pipe(toArray())
-      .subscribe(
-        (next) => {
+      .subscribe({
+        next: (next) => {
           expect(next).toEqual([RemoveResult.CANCELLED]);
         },
-        () => {
-          // intentionally empty
-        },
-        () => {
+        complete: () => {
           expect(snackBarSpy.open).not.toHaveBeenCalled();
           expect(mockEntityMapper.remove).not.toHaveBeenCalled();
           done();
-        }
-      );
+        },
+      });
   });
 
   it("deletes the entity and finishes if the action is never undone", (done) => {
@@ -75,19 +72,16 @@ describe("EntityRemoveService", () => {
     service
       .remove(new Entity())
       .pipe(toArray())
-      .subscribe(
-        (next) => {
+      .subscribe({
+        next: (next) => {
           expect(next).toEqual([RemoveResult.REMOVED]);
         },
-        () => {
-          // intentionally empty
-        },
-        () => {
+        complete: () => {
           expect(snackBarSpy.open).toHaveBeenCalled();
           expect(mockEntityMapper.remove).toHaveBeenCalled();
           done();
-        }
-      );
+        },
+      });
   });
 
   it("emits twice when an entity was deleted and the user pressed undo", (done) => {
@@ -102,18 +96,15 @@ describe("EntityRemoveService", () => {
     service
       .remove(entity)
       .pipe(toArray())
-      .subscribe(
-        (next) => {
+      .subscribe({
+        next: (next) => {
           expect(next).toEqual([RemoveResult.REMOVED, RemoveResult.UNDONE]);
         },
-        () => {
-          // intentionally empty
-        },
-        () => {
+        complete: () => {
           expect(mockEntityMapper.remove).toHaveBeenCalled();
           expect(mockEntityMapper.save).toHaveBeenCalledWith(entity, true);
           done();
-        }
-      );
+        },
+      });
   });
 });
