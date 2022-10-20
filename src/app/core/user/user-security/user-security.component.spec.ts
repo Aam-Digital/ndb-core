@@ -71,7 +71,7 @@ describe("UserSecurityComponent", () => {
     component.onInitFromDynamicConfig({ entity: user });
     tick();
 
-    expect(component.userId).toBe("userId");
+    expect(component.user).toBe(keycloakUser);
     expect(component.form).toHaveValue({
       username: user.name,
       email: "my@email.de",
@@ -102,7 +102,7 @@ describe("UserSecurityComponent", () => {
     component.onInitFromDynamicConfig({ entity: user });
     tick();
 
-    expect(component.userId).toBeUndefined();
+    expect(component.user).toBeUndefined();
     component.form.patchValue({
       roles: [assignedRole],
       email: "new@email.com",
@@ -116,6 +116,7 @@ describe("UserSecurityComponent", () => {
         username: user.name,
         email: "new@email.com",
         roles: [assignedRole],
+        enabled: true,
       }
     );
     flush();
@@ -139,13 +140,15 @@ describe("UserSecurityComponent", () => {
     mockHttp.get.and.returnValue(of(keycloakUser));
     component.onInitFromDynamicConfig({ entity: user });
     tick();
+    component.editForm();
     expect(component.form.enabled).toBeTrue();
-    expect(component.userEnabled).toBeTrue();
+    expect(component.user.enabled).toBeTrue();
 
     component.toggleAccount(false);
     tick();
 
     expect(component.form.disabled).toBeTrue();
-    expect(component.userEnabled).toBeFalse();
+    expect(component.user.enabled).toBeFalse();
+    flush();
   }));
 });
