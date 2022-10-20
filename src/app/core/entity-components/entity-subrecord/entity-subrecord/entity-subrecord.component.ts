@@ -65,7 +65,6 @@ export class EntitySubrecordComponent<T extends Entity>
 
   /** configuration what kind of columns to be generated for the table */
   @Input() set columns(columns: (FormFieldConfig | string)[]) {
-    console.log("Set columns", columns);
     this._columns = columns.map((col) => {
       if (typeof col === "string") {
         return { id: col };
@@ -74,8 +73,6 @@ export class EntitySubrecordComponent<T extends Entity>
       }
     });
     this.filteredColumns = this._columns.filter((col) => !col.hideFromTable);
-    console.log("Set filtered columns", this.filteredColumns);
-    console.log("Columns to display", this.columnsToDisplay);
   }
   _columns: FormFieldConfig[] = [];
   filteredColumns: FormFieldConfig[] = [];
