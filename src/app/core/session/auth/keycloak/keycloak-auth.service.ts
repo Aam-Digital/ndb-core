@@ -64,26 +64,22 @@ export class KeycloakAuthService extends AuthService {
 
   private getToken(body: URLSearchParams): Promise<OIDCTokenResponse> {
     body.set("client_id", "app");
-    const options = {
-      headers: new HttpHeaders().set(
-        "Content-Type",
-        "application/x-www-form-urlencoded"
-      ),
-    };
+    const headers = new HttpHeaders().set(
+      "Content-Type",
+      "application/x-www-form-urlencoded"
+    );
     return firstValueFrom(
       this.httpClient
         .post<OIDCTokenResponse>(
           `${this.realmUrl}/protocol/openid-connect/token`,
           body.toString(),
-          options
+          { headers }
         )
         .pipe(
           catchError((err) => {
             if (err.error.error_description === "Account disabled") {
-              // Disabled account is also treated as unauthorized
-              throw new HttpErrorResponse({
-                status: HttpStatusCode.Unauthorized,
-              });
+              const status = HttpStatusCode.Unauthorized;
+              throw new HttpErrorResponse({ status });
             } else {
               throw err;
             }
