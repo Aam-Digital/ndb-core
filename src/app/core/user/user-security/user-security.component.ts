@@ -11,6 +11,7 @@ import { AuthService } from "../../session/auth/auth.service";
 import { User } from "../user";
 import { PanelConfig } from "../../entity-components/entity-details/EntityDetailsConfig";
 import { AlertService } from "../../alerts/alert.service";
+import { SessionService } from "../../session/session-service/session.service";
 
 @DynamicComponent("UserSecurity")
 @Component({
@@ -28,12 +29,21 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
   availableRoles: Role[] = [];
   user: KeycloakUser;
   editing = true;
+  userIsPermitted = false;
 
   constructor(
     private fb: FormBuilder,
     authService: AuthService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private sessionService: SessionService
   ) {
+    if (
+      this.sessionService
+        .getCurrentUser()
+        .roles.includes(KeycloakAuthService.ACCOUNT_MANAGER_ROLE)
+    ) {
+      this.userIsPermitted = true;
+    }
     if (authService instanceof KeycloakAuthService) {
       this.keycloak = authService;
       this.keycloak

@@ -1,4 +1,7 @@
-<div fxLayout="column">
+<em *ngIf="!userIsPermitted" i18n="Placeholder text when permissions are missing">
+  You account does not have the required permissions to see this page.
+</em>
+<div *ngIf="userIsPermitted" fxLayout="column">
   <div *ngIf="!user" fxFlexAlign="start" class="buttons-wrapper">
     <p i18n="notice about user without account" class="field-hint field-warning">
       There is no user account set up for this user yet.

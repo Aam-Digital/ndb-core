@@ -15,6 +15,10 @@ import { catchError } from "rxjs/operators";
 
 @Injectable()
 export class KeycloakAuthService extends AuthService {
+  /**
+   * Users with this role can create and update other accounts.
+   */
+  static readonly ACCOUNT_MANAGER_ROLE = "account_manager";
   static readonly REFRESH_TOKEN_KEY = "REFRESH_TOKEN";
 
   public accessToken: string;
