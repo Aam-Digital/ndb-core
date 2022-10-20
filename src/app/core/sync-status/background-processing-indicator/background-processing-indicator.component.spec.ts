@@ -9,27 +9,26 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EMPTY, of } from "rxjs";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { expectObservable } from "../../../utils/test-utils/observable-utils";
 
 describe("BackgroundProcessingIndicatorComponent", () => {
   let component: BackgroundProcessingIndicatorComponent;
   let fixture: ComponentFixture<BackgroundProcessingIndicatorComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        imports: [
-          MatMenuModule,
-          MatTooltipModule,
-          MatBadgeModule,
-          MatProgressSpinnerModule,
-          NoopAnimationsModule,
-          FontAwesomeModule,
-          FontAwesomeTestingModule,
-        ],
-        declarations: [BackgroundProcessingIndicatorComponent],
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [
+        MatMenuModule,
+        MatTooltipModule,
+        MatBadgeModule,
+        MatProgressSpinnerModule,
+        NoopAnimationsModule,
+        FontAwesomeModule,
+        FontAwesomeTestingModule,
+      ],
+      declarations: [BackgroundProcessingIndicatorComponent],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(BackgroundProcessingIndicatorComponent);
@@ -55,11 +54,10 @@ describe("BackgroundProcessingIndicatorComponent", () => {
     component.summarize = true;
     component.ngOnInit();
 
-    const taskCounter = await component.taskCounterObservable.toPromise();
-    expect(taskCounter).toBe(2);
-
-    const filteredProcesses = await component.filteredProcesses.toPromise();
-    expect(filteredProcesses).toEqual([
+    await expectObservable(
+      component.taskCounterObservable
+    ).first.toBeResolvedTo(2);
+    await expectObservable(component.filteredProcesses).first.toBeResolvedTo([
       p1,
       { title: p2a.title, pending: true },
       p3,
@@ -72,9 +70,9 @@ describe("BackgroundProcessingIndicatorComponent", () => {
     spyOn(component.taskListDropdownTrigger, "closeMenu");
     component.ngOnInit();
 
-    const tasks = await component.taskCounterObservable.toPromise();
-
-    expect(tasks).toBe(0);
+    await expectObservable(
+      component.taskCounterObservable
+    ).first.toBeResolvedTo(0);
     expect(component.taskListDropdownTrigger.closeMenu).toHaveBeenCalled();
   });
 

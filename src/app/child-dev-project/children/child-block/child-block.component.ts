@@ -6,13 +6,11 @@ import {
   SimpleChange,
   SimpleChanges,
 } from "@angular/core";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { ChildrenService } from "../children.service";
 import { Child } from "../model/child";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 
-@UntilDestroy()
 @DynamicComponent("ChildBlock")
 @Component({
   selector: "app-child-block",
@@ -31,14 +29,9 @@ export class ChildBlockComponent implements OnInitDynamicComponent, OnChanges {
 
   constructor(@Optional() private childrenService: ChildrenService) {}
 
-  ngOnChanges(changes: SimpleChanges) {
+  async ngOnChanges(changes: SimpleChanges) {
     if (changes.hasOwnProperty("entityId")) {
-      this.childrenService
-        .getChild(this.entityId)
-        .pipe(untilDestroyed(this))
-        .subscribe((child) => {
-          this.entity = child;
-        });
+      this.entity = await this.childrenService.getChild(this.entityId);
     }
   }
 

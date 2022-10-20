@@ -21,7 +21,7 @@ export function getUrlWithoutParams(router: Router): string {
 
 export function getParentUrl(router: Router): string {
   const url = getUrlWithoutParams(router);
-  return url.substr(0, url.lastIndexOf("/"));
+  return url.substring(0, url.lastIndexOf("/"));
 }
 
 /**

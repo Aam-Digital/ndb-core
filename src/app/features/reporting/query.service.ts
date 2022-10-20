@@ -192,7 +192,9 @@ export class QueryService {
     relationKey: string
   ): Entity[] {
     const targetEntities = this.toArray(this.entities[entityType]);
-    const srcIds = srcEntities.map((entity) => entity.getId());
+    const srcIds = srcEntities
+      .filter(entity => typeof entity.getId === "function") // skip empty placeholder objects
+      .map((entity) => entity.getId());
     if (
       targetEntities.length > 0 &&
       Array.isArray(targetEntities[0][relationKey])
@@ -332,9 +334,11 @@ export class QueryService {
           total: 0,
           present: 0,
           percentage: "",
+          detailedStatus: {},
         };
       }
       const report = participantMap[attendance.participant];
+      report.detailedStatus[attendance.status.status.id] = report.detailedStatus[attendance.status.status.id] ? report.detailedStatus[attendance.status.status.id] + 1 : 1;
       if (attendance.status.status.countAs === "PRESENT") {
         report.present++;
       }
@@ -380,4 +384,7 @@ export interface AttendanceReport {
   total: number;
   present: number;
   percentage: string;
+
+  /** counts by all custom configured status **/
+  detailedStatus?: { [key: string]: number };
 }

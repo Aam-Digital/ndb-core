@@ -10,7 +10,7 @@ import {
 } from "@angular/core";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { Entity } from "../../../entity/model/entity";
-import { BehaviorSubject, Observable } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 import { FormControl } from "@angular/forms";
 import { filter, map } from "rxjs/operators";
 import { MatChipInputEvent } from "@angular/material/chips";
@@ -126,18 +126,22 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   inputPlaceholder = this.loadingPlaceholder;
 
   allEntities: E[] = [];
-  filteredEntities: Observable<E[]>;
+  filteredEntities: E[] = [];
   formControl = new FormControl("");
 
   @ViewChild("inputField") inputField: ElementRef<HTMLInputElement>;
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
   constructor(private entityMapperService: EntityMapperService) {
-    this.filteredEntities = this.formControl.valueChanges.pipe(
-      untilDestroyed(this),
-      filter((value) => value === null || typeof value === "string"), // sometimes produces entities
-      map((searchText?: string) => this.filter(searchText))
-    );
+    this.formControl.valueChanges
+      .pipe(
+        untilDestroyed(this),
+        filter((value) => value === null || typeof value === "string"), // sometimes produces entities
+        map((searchText?: string) => this.filter(searchText))
+      )
+      .subscribe((value) => {
+        this.filteredEntities = value;
+      });
     this.loading.pipe(untilDestroyed(this)).subscribe((isLoading) => {
       this.inputPlaceholder = isLoading
         ? this.loadingPlaceholder
