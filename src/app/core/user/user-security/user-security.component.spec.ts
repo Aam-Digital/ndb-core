@@ -18,6 +18,7 @@ import {
 } from "../../session/auth/keycloak/keycloak-auth.service";
 import { of, throwError } from "rxjs";
 import { User } from "../user";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("UserSecurityComponent", () => {
   let component: UserSecurityComponent;
@@ -34,22 +35,23 @@ describe("UserSecurityComponent", () => {
     description: "this role is not assigned to the user",
   };
   const user = { name: "test-user" } as User;
-  const keycloakUser: KeycloakUser = {
-    id: "userId",
-    email: "my@email.de",
-    roles: [assignedRole],
-    enabled: true,
-    username: "test-user",
-  };
+  let keycloakUser: KeycloakUser;
 
   beforeEach(async () => {
+    keycloakUser = {
+      id: "userId",
+      email: "my@email.de",
+      roles: [assignedRole],
+      enabled: true,
+      username: "test-user",
+    };
     mockHttp = jasmine.createSpyObj(["get", "put", "post"]);
     mockHttp.get.and.returnValue(of([assignedRole, notAssignedRole]));
     mockHttp.put.and.returnValue(of({}));
     mockHttp.post.and.returnValue(of({}));
 
     await TestBed.configureTestingModule({
-      imports: [UserModule, MockedTestingModule],
+      imports: [UserModule, MockedTestingModule, FontAwesomeTestingModule],
       providers: [
         { provide: AuthService, useClass: KeycloakAuthService },
         { provide: HttpClient, useValue: mockHttp },

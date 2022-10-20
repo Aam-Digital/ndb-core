@@ -9,8 +9,8 @@ import {
 } from "../../session/auth/keycloak/keycloak-auth.service";
 import { AuthService } from "../../session/auth/auth.service";
 import { User } from "../user";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { PanelConfig } from "../../entity-components/entity-details/EntityDetailsConfig";
+import { AlertService } from "../../alerts/alert.service";
 
 @DynamicComponent("UserSecurity")
 @Component({
@@ -32,7 +32,7 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
   constructor(
     private fb: FormBuilder,
     authService: AuthService,
-    private snackbar: MatSnackBar
+    private alertService: AlertService
   ) {
     if (authService instanceof KeycloakAuthService) {
       this.keycloak = authService;
@@ -102,7 +102,7 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
     if (user) {
       this.keycloak.createUser(user).subscribe({
         next: () => {
-          this.showSnackbar(
+          this.alertService.addInfo(
             $localize`:Snackbar message:Account created. An email has been sent to ${
               this.form.get("email").value
             }`
@@ -132,7 +132,7 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
   private updateKeycloakUser(update: Partial<KeycloakUser>, message: string) {
     this.keycloak.updateUser(this.user.id, update).subscribe({
       next: () => {
-        this.showSnackbar(message);
+        this.alertService.addInfo(message);
         Object.assign(this.user, update);
         this.disableForm();
       },
@@ -147,9 +147,5 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
     }
     this.form.setErrors({});
     return this.form.getRawValue();
-  }
-
-  private showSnackbar(message: string) {
-    this.snackbar.open(message, undefined, { duration: 5000 });
   }
 }
