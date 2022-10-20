@@ -10,12 +10,12 @@ import {
 import { AuthService } from "../../session/auth/auth.service";
 import { User } from "../user";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { Observable } from "rxjs";
 import { PanelConfig } from "../../entity-components/entity-details/EntityDetailsConfig";
 
 @DynamicComponent("UserSecurity")
 @Component({
   selector: "app-user-security",
+  styleUrls: ["./user-security.component.scss"],
   templateUrl: "./user-security.component.html",
 })
 export class UserSecurityComponent implements OnInitDynamicComponent {
@@ -26,8 +26,8 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
   });
   keycloak: KeycloakAuthService;
   availableRoles: Role[] = [];
-  userId: string;
-  userEnabled = false;
+  user: KeycloakUser;
+  editing = true;
 
   constructor(
     private fb: FormBuilder,
@@ -56,72 +56,100 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
   }
 
   private assignUser(user: KeycloakUser) {
-    this.form.get("email").setValue(user.email);
+    this.user = user;
+    this.initializeForm();
+    if (this.user) {
+      this.disableForm();
+    }
+  }
+
+  private initializeForm() {
+    this.form.get("email").setValue(this.user.email);
     this.form
       .get("roles")
       .setValue(
-        user.roles.map((role) =>
+        this.user.roles.map((role) =>
           this.availableRoles.find((r) => r.id === role.id)
         )
       );
-    this.userId = user.id;
-    this.toggleForm(user.enabled);
-  }
-
-  createAccount() {
-    this.executeObservableIfFormValid(
-      this.keycloak.createUser(this.form.getRawValue()),
-      $localize`:Snackbar message:Account created. An email has been sent to ${
-        this.form.get("email").value
-      }`
-    );
+    this.form.markAsPristine();
   }
 
   toggleAccount(enabled: boolean) {
-    this.keycloak.updateUser(this.userId, { enabled }).subscribe({
-      next: () => this.toggleForm(enabled),
-      error: ({ error }) => this.form.setErrors({ failed: error.message }),
-    });
+    let message = $localize`:Snackbar message:Account has been disabled, user will not be able to login anymore.`;
+    if (enabled) {
+      message = $localize`:Snackbar message:Account has been activated, user can login again.`;
+    }
+    this.updateKeycloakUser({ enabled }, message);
   }
 
-  private toggleForm(enabled: boolean) {
-    this.userEnabled = enabled;
-    if (enabled) {
+  editForm() {
+    this.editing = true;
+    if (this.user.enabled) {
       this.form.enable();
-    } else {
-      this.form.disable();
+    }
+  }
+
+  disableForm() {
+    this.editing = false;
+    this.initializeForm();
+    this.form.disable();
+  }
+
+  createAccount() {
+    const user = this.getFormValues();
+    user.enabled = true;
+    if (user) {
+      this.keycloak.createUser(user).subscribe({
+        next: () => {
+          this.showSnackbar(
+            $localize`:Snackbar message:Account created. An email has been sent to ${
+              this.form.get("email").value
+            }`
+          );
+          this.user = user as KeycloakUser;
+          this.disableForm();
+        },
+        error: ({ error }) => this.form.setErrors({ failed: error.message }),
+      });
     }
   }
 
   updateAccount() {
-    const update = this.form.getRawValue();
+    const update = this.getFormValues();
     // only send values that have changed
     Object.keys(this.form.controls).forEach((control) =>
       this.form.get(control).pristine ? delete update[control] : undefined
     );
-    this.executeObservableIfFormValid(
-      this.keycloak.updateUser(this.userId, update),
-      $localize`:Snackbar message:Successfully updated user`
-    );
+    if (update) {
+      this.updateKeycloakUser(
+        update,
+        $localize`:Snackbar message:Successfully updated user`
+      );
+    }
   }
 
-  /**
-   * A simple helper function that only subscribes to an observable if the form is valid.
-   * As Angular HttpRequests return cold observables {@link https://stackoverflow.com/a/42817567/10713841}
-   * the request is only sent once the observable is subscribed to.
-   * @param obs the cold observable
-   * @param message the message to show on success
-   * @private
-   */
-  private executeObservableIfFormValid(obs: Observable<any>, message: string) {
+  private updateKeycloakUser(update: Partial<KeycloakUser>, message: string) {
+    this.keycloak.updateUser(this.user.id, update).subscribe({
+      next: () => {
+        this.showSnackbar(message);
+        Object.assign(this.user, update);
+        this.disableForm();
+      },
+      error: ({ error }) => this.form.setErrors({ failed: error.message }),
+    });
+  }
+
+  getFormValues(): Partial<KeycloakUser> {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
     this.form.setErrors({});
-    obs.subscribe({
-      next: () => this.snackbar.open(message, undefined, { duration: 5000 }),
-      error: ({ error }) => this.form.setErrors({ failed: error.message }),
-    });
+    return this.form.getRawValue();
+  }
+
+  private showSnackbar(message: string) {
+    this.snackbar.open(message, undefined, { duration: 5000 });
   }
 }

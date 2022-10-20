@@ -1,4 +1,63 @@
-<form [formGroup]="form">
+<div fxLayout="column">
+  <div fxFlexAlign="end" class="buttons-wrapper">
+    <button
+      *ngIf="editing && !user"
+      mat-raised-button
+      type="submit"
+      (click)="createAccount()"
+      [disabled]="form.disabled"
+      i18n="button to invite a new user"
+    >
+      Send invitation
+    </button>
+    <button
+      *ngIf="editing && user && user.enabled"
+      mat-raised-button
+      color="warn"
+      (click)="toggleAccount(false)"
+      matTooltip="User will not be able to login again, no information will be lost"
+      i18n="button to update disable a user"
+    >
+      Deactivate user
+    </button>
+    <button
+      *ngIf="editing && user && !user.enabled"
+      mat-raised-button
+      (click)="toggleAccount(true)"
+      matTooltip="User can login again with the previously used credentials"
+      i18n="button to enable a user"
+    >
+      Activate user
+    </button>
+    <button
+      *ngIf="editing && user && user.enabled"
+      mat-raised-button
+      class="action-button"
+      (click)="updateAccount()"
+      i18n="Save button for forms"
+    >
+      Save
+    </button>
+    <button
+      *ngIf="editing && user"
+      mat-raised-button
+      class="action-button"
+      (click)="disableForm()"
+      i18n="Cancel button for forms"
+    >
+      Cancel
+    </button>
+    <button
+      *ngIf="!editing"
+      mat-raised-button
+      class="action-button"
+      (click)="editForm()"
+      i18n="Edit button for forms"
+    >
+      Edit
+    </button>
+  </div>
+  <form [formGroup]="form">
   <mat-form-field>
     <mat-label i18n="label of username input">Username</mat-label>
     <input matInput type="text" formControlName="username">
@@ -21,40 +80,5 @@
     </mat-select>
   </mat-form-field>
   <br>
-  <button
-    *ngIf="!userId"
-    mat-stroked-button
-    type="submit"
-    (click)="createAccount()"
-    [disabled]="form.disabled"
-    i18n="button to invite a new user"
-  >Send invitation
-  </button>
-  <button
-    *ngIf="userId"
-    mat-stroked-button
-    type="submit"
-    (click)="updateAccount()"
-    [disabled]="form.disabled"
-    i18n="button to update data of an existing user"
-    style="margin-right: 5px"
-  >Update user
-  </button>
-  <button
-    *ngIf="userEnabled"
-    mat-stroked-button
-    (click)="toggleAccount(false)"
-    matTooltip="User will not be able to login again, no information will be lost"
-    i18n="button to update data of an existing user"
-  >Deactivate user
-  </button>
-  <button
-    *ngIf="userId && !userEnabled"
-    mat-stroked-button
-    (click)="toggleAccount(true)"
-    matTooltip="User can login again with the previously used credentials"
-    i18n="button to update data of an existing user"
-  >Activate user
-  </button>
   <mat-error *ngIf="form.getError('failed')">{{ form.getError('failed') }}</mat-error>
 </form>
