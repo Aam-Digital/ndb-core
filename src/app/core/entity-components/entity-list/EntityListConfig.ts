@@ -94,7 +94,10 @@ export interface DateRangeFilterConfig extends FilterConfig {
     | "friday"
     | "Saturday"
     | "saturday";
-  weeksBack: number[]; // starting with 1 for "this week"
+  daysBack: number[];
+  weeksBack: number[];
+  monthsBack: number[];
+  yearsBack: number[];
 }
 
 export interface PrebuiltFilterConfig<T> extends FilterConfig {

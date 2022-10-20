@@ -16,7 +16,7 @@ import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { FilterComponentSettings } from "./filter-component.settings";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
-import moment from "moment";
+import moment, { unitOfTime } from "moment";
 
 @Injectable({
   providedIn: "root",
@@ -153,41 +153,45 @@ export class FilterGeneratorService {
       });
     }
     const dateFS = [];
-    for (const weeksBack of filterConfig.weeksBack) {
-      if (weeksBack === 1 || weeksBack === 0) {
-        dateFS.push({
-          key: "current-week",
-          label: $localize`:Filter option:This Week`,
-          filterFun: (c: Entity) =>
-            moment(c[filterConfig.id]).isSameOrAfter(
-              moment().startOf("week"),
-              "day"
-            ), //  > this.getPreviousSunday(0),
-        });
-      } else {
-        dateFS.push({
-          key: "last-" + weeksBack + "-weeks",
-          label: $localize`:Filter option:Last ${weeksBack} Weeks`,
-          filterFun: (c: Entity) =>
-            moment(c[filterConfig.id]).isSameOrAfter(
-              moment()
-                .subtract(weeksBack - 1, "weeks")
-                .startOf("week"),
-              "day"
-            ), //> this.getPreviousSunday(1),
-        });
+    for (const timeUnit of ["day", "week", "month", "year"]) {
+      if (filterConfig[timeUnit + "sBack"]) {
+        for (const tUBack of filterConfig[timeUnit + "sBack"].sort(
+          (a, b) => a - b
+        )) {
+          if (tUBack === 0 || tUBack === 1) {
+            if (!dateFS.some((e) => e.key === "current-" + timeUnit)) {
+              let label;
+              if (timeUnit === "day")
+                label = $localize`:Filter option for today:Today`;
+              else label = $localize`:Filter option:This ${timeUnit}`;
+              dateFS.push({
+                key: "current-" + timeUnit,
+                label: label,
+                filterFun: (c: Entity) =>
+                  moment(c[filterConfig.id]).isSameOrAfter(
+                    moment().startOf(timeUnit as unitOfTime.StartOf),
+                    "day"
+                  ),
+              });
+            }
+          } else {
+            dateFS.push({
+              key: "last-" + tUBack + "-" + timeUnit + "s",
+              label: $localize`:Filter option:Last ${tUBack} ${timeUnit + "s"}`,
+              filterFun: (c: Entity) =>
+                moment(c[filterConfig.id]).isSameOrAfter(
+                  moment()
+                    .subtract(tUBack - 1, timeUnit as unitOfTime.Base)
+                    .startOf(timeUnit as unitOfTime.Base),
+                  "day"
+                ),
+            });
+          }
+        }
       }
     }
     dateFS.push({ key: "", label: $localize`All`, filterFun: () => true });
-    console.log("dateFS:", dateFS);
-    return dateFS; // XXX
-  }
-
-  private getPreviousSunday(weeksBack: number) {
-    const today = new Date();
-    const day = today.getDay();
-    const diff = today.getDate() - day - 7 * weeksBack; // adjust when day is sunday
-    return new Date(today.setDate(diff));
+    return dateFS;
   }
 
   private createBooleanFilterOptions<T extends Entity>(
