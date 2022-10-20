@@ -1,5 +1,9 @@
 <div fxLayout="column">
-  <div fxFlexAlign="end" class="buttons-wrapper">
+  <div *ngIf="!user" fxFlexAlign="start" class="buttons-wrapper">
+    <p i18n="notice about user without account" class="field-hint field-warning">
+      There is no user account set up for this user yet.
+      To create user credentials to allow logging into the app, please fill the details below.
+    </p>
     <button
       *ngIf="editing && !user"
       mat-raised-button
@@ -8,10 +12,13 @@
       [disabled]="form.disabled"
       i18n="button to invite a new user"
     >
-      Send invitation
+      Create account & send invitation
     </button>
+  </div>
+
+  <div *ngIf="user" fxFlexAlign="end" class="buttons-wrapper">
     <button
-      *ngIf="editing && user && user.enabled"
+      *ngIf="editing && user.enabled"
       mat-raised-button
       color="warn"
       (click)="toggleAccount(false)"
@@ -21,7 +28,7 @@
       Deactivate user
     </button>
     <button
-      *ngIf="editing && user && !user.enabled"
+      *ngIf="editing && !user.enabled"
       mat-raised-button
       (click)="toggleAccount(true)"
       matTooltip="User can login again with the previously used credentials"
@@ -30,7 +37,7 @@
       Activate user
     </button>
     <button
-      *ngIf="editing && user && user.enabled"
+      *ngIf="editing && user.enabled"
       mat-raised-button
       class="action-button"
       (click)="updateAccount()"
@@ -39,7 +46,7 @@
       Save
     </button>
     <button
-      *ngIf="editing && user"
+      *ngIf="editing"
       mat-raised-button
       class="action-button"
       (click)="disableForm()"
@@ -57,28 +64,42 @@
       Edit
     </button>
   </div>
+
   <form [formGroup]="form">
-  <mat-form-field>
-    <mat-label i18n="label of username input">Username</mat-label>
-    <input matInput type="text" formControlName="username">
-  </mat-form-field>
-  <mat-form-field>
-    <mat-label i18n="label of email input">Email</mat-label>
-    <input matInput type="text" formControlName="email">
-  </mat-form-field>
-  <mat-form-field style="width: 100%">
-    <mat-label i18n="label of roles input">Roles</mat-label>
-    <mat-select formControlName="roles" multiple>
-      <mat-select-trigger>
-        <span *ngFor="let role of form.get('roles').value">{{ role.name }} </span>
-      </mat-select-trigger>
-      <mat-option
-        *ngFor="let role of availableRoles"
-        [value]="role"
-        [matTooltip]="role.description"
-      >{{ role.name }} <em style="font-size: small">({{ role.description }})</em></mat-option>
-    </mat-select>
-  </mat-form-field>
-  <br>
-  <mat-error *ngIf="form.getError('failed')">{{ form.getError('failed') }}</mat-error>
-</form>
+    <div>
+      <mat-form-field>
+        <mat-label i18n="label of username input">Username</mat-label>
+        <input matInput type="text" formControlName="username">
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-form-field>
+        <mat-label i18n="label of email input">Email</mat-label>
+        <input matInput type="text" formControlName="email">
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-form-field style="width: 100%">
+        <mat-label i18n="label of roles input">Roles</mat-label>
+        <mat-select formControlName="roles" multiple>
+          <mat-select-trigger>
+            <span *ngFor="let role of form.get('roles').value">{{ role.name }} </span>
+          </mat-select-trigger>
+          <mat-option
+            *ngFor="let role of availableRoles"
+            [value]="role"
+            [matTooltip]="role.description"
+          >{{ role.name }} <em style="font-size: small">({{ role.description }})</em></mat-option>
+        </mat-select>
+      </mat-form-field>
+      <p i18n="hint about assigning user roles" class="field-hint">
+        You should select at least one user role.
+        Otherwise this user will not even be able to access the basic app layout like the menu.
+      </p>
+    </div>
+
+    <mat-error *ngIf="form.getError('failed')">{{ form.getError('failed') }}</mat-error>
+  </form>
+</div>
