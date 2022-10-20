@@ -64,6 +64,9 @@ body {
   grid-template-columns: 1fr;
   grid-template-rows: auto 1fr;
   height: 100vh;
+
+  /* mobile viewport bug fix */
+  min-height: -webkit-fill-available;
 }
 
 /**  Main content  **/
