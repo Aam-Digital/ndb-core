@@ -15,7 +15,7 @@ import { FormControl } from "@angular/forms";
 })
 export class InputFileComponent implements OnInit {
   /** returns parsed data on completing load after user selects a file */
-  @Output() fileLoad = new EventEmitter<any>();
+  @Output() fileLoad = new EventEmitter<ParsedData>();
 
   @Input() fileType: "csv" | "json";
 

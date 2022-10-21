@@ -1,0 +1,8 @@
+<!-- todo: flex to display below each other with proper margins -->
+
+<app-input-file (fileLoad)="loadData($event)" fileType="csv"></app-input-file>
+<br>
+<textarea [value]="generatedConfig" rows="10" class="config-textarea"></textarea>
+<br>
+<button mat-stroked-button (click)="saveConfig()">Save & Apply Config</button>
+<button mat-stroked-button [cdkCopyToClipboard]="generatedConfig">Copy Config to Clipboard</button>

@@ -34,7 +34,7 @@ import { MatExpansionModule } from "@angular/material/expansion";
     FlexModule,
     MatExpansionModule,
   ],
-  exports: [DataImportComponent],
+    exports: [DataImportComponent, InputFileComponent],
   providers: [DataImportService],
 })
 export class DataImportModule {
