@@ -1,18 +1,10 @@
-/**
- * User object as received from the remote server database.
- * See {@link https://docs.couchdb.org/en/stable/intro/security.html?highlight=_users#users-documents}
- */
 import CryptoES from "crypto-es";
-
-export interface DatabaseUser {
-  name: string;
-  roles: string[];
-}
+import { AuthUser } from "./auth-user";
 
 /**
  * User object as prepared and used by the local session.
  */
-export interface LocalUser extends DatabaseUser {
+export interface LocalUser extends AuthUser {
   encryptedPassword: EncryptedPassword;
 }
 

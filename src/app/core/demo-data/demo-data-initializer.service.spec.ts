@@ -4,7 +4,6 @@ import { DemoDataInitializerService } from "./demo-data-initializer.service";
 import { DemoDataService } from "./demo-data.service";
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
 import { LocalSession } from "../session/session-service/local-session";
-import { DatabaseUser } from "../session/session-service/local-user";
 import { MatDialog } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
 import { AppSettings } from "../app-config/app-settings";
@@ -14,6 +13,7 @@ import { LoginState } from "../session/session-states/login-state.enum";
 import { Database } from "../database/database";
 import { SessionType } from "../session/session-type";
 import { environment } from "../../../environments/environment";
+import { AuthUser } from "../session/session-service/auth-user";
 
 describe("DemoDataInitializerService", () => {
   let service: DemoDataInitializerService;
@@ -64,11 +64,11 @@ describe("DemoDataInitializerService", () => {
   it("should save the default users", () => {
     service.run();
 
-    const normalUser: DatabaseUser = {
+    const normalUser: AuthUser = {
       name: DemoUserGeneratorService.DEFAULT_USERNAME,
       roles: ["user_app"],
     };
-    const adminUser: DatabaseUser = {
+    const adminUser: AuthUser = {
       name: DemoUserGeneratorService.ADMIN_USERNAME,
       roles: ["user_app", "admin_app"],
     };

@@ -21,7 +21,7 @@ import PouchDB from "pouchdb-browser";
 import memory from "pouchdb-adapter-memory";
 import { PerformanceAnalysisLogging } from "../../utils/performance-analysis-logging";
 import { Injectable } from "@angular/core";
-import { Observable, Subject } from "rxjs";
+import { firstValueFrom, Observable, Subject } from "rxjs";
 import { filter } from "rxjs/operators";
 
 /**
@@ -97,7 +97,9 @@ export class PouchDatabase extends Database {
   }
 
   async getPouchDBOnceReady(): Promise<PouchDB.Database> {
-    await this.databaseInitialized.toPromise();
+    await firstValueFrom(this.databaseInitialized, {
+      defaultValue: this.pouchDB,
+    });
     return this.pouchDB;
   }
 

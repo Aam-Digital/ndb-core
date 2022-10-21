@@ -125,7 +125,7 @@ export class DataImportComponent {
   }
 
   setRandomTransactionID() {
-    const transactionID = uuid().substr(0, 8);
+    const transactionID = uuid().substring(0, 8);
     this.transactionIDForm.setValue({ transactionId: transactionID });
   }
 

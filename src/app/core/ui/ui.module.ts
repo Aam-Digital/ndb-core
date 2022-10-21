@@ -42,6 +42,7 @@ import { EntityUtilsModule } from "../entity-components/entity-utils/entity-util
 import { LanguageModule } from "../language/language.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { PwaInstallModule } from "app/core/pwa-install/pwa-install.module";
+import { UserSecurityComponent } from "../user/user-security/user-security.component";
 
 /**
  * The core user interface structure that ties different components together into the overall app layout.
@@ -76,4 +77,6 @@ import { PwaInstallModule } from "app/core/pwa-install/pwa-install.module";
   declarations: [SearchComponent, UiComponent, PrimaryActionComponent],
   exports: [UiComponent],
 })
-export class UiModule {}
+export class UiModule {
+  static dynamicComponents = [UserSecurityComponent];
+}
