@@ -319,7 +319,7 @@ export const defaultJsonConfig = {
     "config": {
       "title": $localize`:Title for user overview:Users`,
       "entity": "User",
-      "columns": ["name", "email", "phone"]
+      "columns": ["name", "phone"]
     },
     "permittedUserRoles": ["admin_app"]
   },
@@ -340,13 +340,18 @@ export const defaultJsonConfig = {
                     "name",
                   ],
                   [
-                    "email"
-                  ],
-                  [
                     "phone"
                   ]
                 ]
               }
+            }
+          ]
+        },
+        {
+          "title": $localize`:Panel title:Security`,
+          "components": [
+            {
+              "component": "UserSecurity"
             }
           ]
         }
@@ -1069,13 +1074,6 @@ export const defaultJsonConfig = {
   },
   "entity:User": {
     attributes: [
-      {
-        name: "email",
-        schema: {
-          dataType: "string",
-          label: $localize`:Label of user email:Email`
-        }
-      },
       {
         name: "phone",
         schema: {
