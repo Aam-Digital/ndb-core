@@ -12,6 +12,8 @@ import { User } from "../user";
 import { PanelConfig } from "../../entity-components/entity-details/EntityDetailsConfig";
 import { AlertService } from "../../alerts/alert.service";
 import { SessionService } from "../../session/session-service/session.service";
+import { HttpClient } from "@angular/common/http";
+import { AppSettings } from "../../app-config/app-settings";
 
 @DynamicComponent("UserSecurity")
 @Component({
@@ -32,13 +34,14 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
   userIsPermitted = false;
 
   constructor(
-    private fb: FormBuilder,
     authService: AuthService,
+    sessionService: SessionService,
+    private fb: FormBuilder,
     private alertService: AlertService,
-    private sessionService: SessionService
+    private http: HttpClient
   ) {
     if (
-      this.sessionService
+      sessionService
         .getCurrentUser()
         .roles.includes(KeycloakAuthService.ACCOUNT_MANAGER_ROLE)
     ) {
@@ -145,6 +148,10 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
         this.alertService.addInfo(message);
         Object.assign(this.user, update);
         this.disableForm();
+        if (update.roles?.length > 0) {
+          // roles changed, user might have more permissions now
+          this.triggerSyncReset();
+        }
       },
       error: ({ error }) => this.form.setErrors({ failed: error.message }),
     });
@@ -157,5 +164,18 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
     }
     this.form.setErrors({});
     return this.form.getRawValue();
+  }
+
+  private triggerSyncReset() {
+    this.http
+      .post(
+        `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}/clear_local`,
+        undefined
+      )
+      .subscribe({
+        next: () => undefined,
+        // request fails if no permission backend is used - this is fine
+        error: () => undefined,
+      });
   }
 }

@@ -19,11 +19,14 @@ import {
 import { of, throwError } from "rxjs";
 import { User } from "../user";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { AppSettings } from "../../app-config/app-settings";
+import { SessionService } from "../../session/session-service/session.service";
 
 describe("UserSecurityComponent", () => {
   let component: UserSecurityComponent;
   let fixture: ComponentFixture<UserSecurityComponent>;
   let mockHttp: jasmine.SpyObj<HttpClient>;
+  let mockSession: jasmine.SpyObj<SessionService>;
   const assignedRole: Role = {
     id: "assigned-role",
     name: "Assigned Role",
@@ -49,12 +52,18 @@ describe("UserSecurityComponent", () => {
     mockHttp.get.and.returnValue(of([assignedRole, notAssignedRole]));
     mockHttp.put.and.returnValue(of({}));
     mockHttp.post.and.returnValue(of({}));
+    mockSession = jasmine.createSpyObj(["getCurrentUser"]);
+    mockSession.getCurrentUser.and.returnValue({
+      name: user.name,
+      roles: [KeycloakAuthService.ACCOUNT_MANAGER_ROLE],
+    });
 
     await TestBed.configureTestingModule({
       imports: [UserModule, MockedTestingModule, FontAwesomeTestingModule],
       providers: [
         { provide: AuthService, useClass: KeycloakAuthService },
         { provide: HttpClient, useValue: mockHttp },
+        { provide: SessionService, useValue: mockSession },
       ],
     }).compileComponents();
 
@@ -68,10 +77,7 @@ describe("UserSecurityComponent", () => {
   });
 
   it("should load existing account data", fakeAsync(() => {
-    mockHttp.get.and.returnValue(of(keycloakUser));
-
-    component.onInitFromDynamicConfig({ entity: user });
-    tick();
+    initComponent();
 
     expect(component.user).toBe(keycloakUser);
     expect(component.form).toHaveValue({
@@ -82,9 +88,7 @@ describe("UserSecurityComponent", () => {
   }));
 
   it("should only send modified values to keycloak when updating", fakeAsync(() => {
-    mockHttp.get.and.returnValue(of(keycloakUser));
-    component.onInitFromDynamicConfig({ entity: user });
-    tick();
+    initComponent();
 
     const emailForm = component.form.get("email");
     emailForm.setValue("other@email.com");
@@ -100,9 +104,7 @@ describe("UserSecurityComponent", () => {
   }));
 
   it("should create a user with all form values", fakeAsync(() => {
-    mockHttp.get.and.returnValue(throwError(() => new HttpErrorResponse({})));
-    component.onInitFromDynamicConfig({ entity: user });
-    tick();
+    initComponent(throwError(() => new HttpErrorResponse({})));
 
     expect(component.user).toBeUndefined();
     component.form.patchValue({
@@ -139,9 +141,7 @@ describe("UserSecurityComponent", () => {
   }));
 
   it("should disable the form if a user has been deactivated", fakeAsync(() => {
-    mockHttp.get.and.returnValue(of(keycloakUser));
-    component.onInitFromDynamicConfig({ entity: user });
-    tick();
+    initComponent();
     component.editForm();
     expect(component.form.enabled).toBeTrue();
     expect(component.user.enabled).toBeTrue();
@@ -153,4 +153,37 @@ describe("UserSecurityComponent", () => {
     expect(component.user.enabled).toBeFalse();
     flush();
   }));
+
+  it("should reset the sync state if roles changed for a user", fakeAsync(() => {
+    initComponent();
+
+    component.form.get("roles").setValue([assignedRole, notAssignedRole]);
+    component.form.get("roles").markAsDirty();
+    component.updateAccount();
+    tick();
+
+    expect(mockHttp.post).toHaveBeenCalledWith(
+      `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}/clear_local`,
+      undefined
+    );
+    flush();
+  }));
+
+  it("should not reset sync state if roles did not change", fakeAsync(() => {
+    initComponent();
+
+    component.form.get("email").setValue("another@mail.com");
+    component.form.get("email").markAsDirty();
+    component.updateAccount();
+    tick();
+
+    expect(mockHttp.post).not.toHaveBeenCalled();
+    flush();
+  }));
+
+  function initComponent(keycloakResult = of(keycloakUser)) {
+    mockHttp.get.and.returnValue(keycloakResult);
+    component.onInitFromDynamicConfig({ entity: user });
+    tick();
+  }
 });
