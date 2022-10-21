@@ -1,13 +1,13 @@
 name: CleanUp
 on:
   pull_request_target:
-    types: [closed]
+    types: [ closed ]
 
 jobs:
   remove-heroku-app:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Remove app
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
