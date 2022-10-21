@@ -12,11 +12,13 @@ import { of, throwError } from "rxjs";
 import { SessionModule } from "../../../session.module";
 import { MockedTestingModule } from "../../../../../utils/mocked-testing.module";
 import { HttpErrorResponse } from "@angular/common/http";
+import { AlertService } from "../../../../alerts/alert.service";
 
 describe("AccountPageComponent", () => {
   let component: AccountPageComponent;
   let fixture: ComponentFixture<AccountPageComponent>;
   let mockAuthService: jasmine.SpyObj<KeycloakAuthService>;
+  let mockAlerts: jasmine.SpyObj<AlertService>;
 
   beforeEach(async () => {
     mockAuthService = jasmine.createSpyObj([
@@ -25,9 +27,13 @@ describe("AccountPageComponent", () => {
       "setEmail",
     ]);
     mockAuthService.getUserinfo.and.returnValue(throwError(() => new Error()));
+    mockAlerts = jasmine.createSpyObj(["addInfo"]);
     await TestBed.configureTestingModule({
       imports: [SessionModule, MockedTestingModule.withState()],
-      providers: [{ provide: AuthService, useValue: {} }],
+      providers: [
+        { provide: AuthService, useValue: {} },
+        { provide: AlertService, useValue: mockAlerts },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AccountPageComponent);
@@ -69,7 +75,7 @@ describe("AccountPageComponent", () => {
 
     expect(mockAuthService.setEmail).toHaveBeenCalledWith(validEmail);
     tick();
-    expect(component.showSuccessMessage).toBeTrue();
+    expect(mockAlerts.addInfo).toHaveBeenCalled();
   }));
 
   it("should show error message if email couldn't be set", fakeAsync(() => {
@@ -84,7 +90,6 @@ describe("AccountPageComponent", () => {
     component.setEmail();
     tick();
 
-    expect(component.showSuccessMessage).toBeFalse();
     expect(component.email.errors).toEqual({ other: errorMessage });
   }));
 });

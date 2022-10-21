@@ -129,7 +129,7 @@ describe("KeycloakAuthService", () => {
     service.logout();
   }));
 
-  it("should throw a unauthorized exception if account is disabled", (done) => {
+  it("should throw a unauthorized exception if invalid_grant is returned", (done) => {
     mockHttpClient.post.and.returnValue(
       throwError(
         () =>
