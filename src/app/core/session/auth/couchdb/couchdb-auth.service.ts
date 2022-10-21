@@ -7,8 +7,8 @@ import {
   HttpStatusCode,
 } from "@angular/common/http";
 import { firstValueFrom } from "rxjs";
-import { DatabaseUser } from "../../session-service/local-user";
 import { AppSettings } from "../../../app-config/app-settings";
+import { AuthUser } from "../../session-service/auth-user";
 
 @Injectable()
 export class CouchdbAuthService extends AuthService {
@@ -23,9 +23,9 @@ export class CouchdbAuthService extends AuthService {
     return;
   }
 
-  authenticate(username: string, password: string): Promise<DatabaseUser> {
+  authenticate(username: string, password: string): Promise<AuthUser> {
     return firstValueFrom(
-      this.http.post<DatabaseUser>(
+      this.http.post<AuthUser>(
         `${AppSettings.DB_PROXY_PREFIX}/_session`,
         { name: username, password: password },
         { withCredentials: true }
@@ -35,7 +35,7 @@ export class CouchdbAuthService extends AuthService {
 
   autoLogin(): Promise<any> {
     return firstValueFrom(
-      this.http.get<{ userCtx: DatabaseUser }>(
+      this.http.get<{ userCtx: AuthUser }>(
         `${AppSettings.DB_PROXY_PREFIX}/_session`,
         { withCredentials: true }
       )
