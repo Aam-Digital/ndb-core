@@ -27,10 +27,14 @@ import * as parseXliffToJson from "./app/utils/parse-xliff-to-js";
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 import { AppSettings } from "./app/core/app-config/app-settings";
 import { LoggingService } from "./app/core/logging/logging.service";
+import { PwaInstallService } from "./app/core/pwa-install/pwa-install.service";
 
 if (environment.production) {
   enableProdMode();
 }
+
+// Listening to event as soon as possible
+PwaInstallService.registerPWAInstallListener();
 
 // Initialize remote logging
 LoggingService.initRemoteLogging({

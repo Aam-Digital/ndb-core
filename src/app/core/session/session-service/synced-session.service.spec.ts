@@ -23,7 +23,6 @@ import { SessionType } from "../session-type";
 import { fakeAsync, flush, TestBed, tick } from "@angular/core/testing";
 import { HttpErrorResponse, HttpStatusCode } from "@angular/common/http";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { DatabaseUser } from "./local-user";
 import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
 import { testSessionServiceImplementation } from "./session.service.spec";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -32,14 +31,19 @@ import { SessionModule } from "../session.module";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { environment } from "../../../../environments/environment";
 import { AuthService } from "../auth/auth.service";
+import { AuthUser } from "./auth-user";
 
 describe("SyncedSessionService", () => {
   let sessionService: SyncedSessionService;
   let localSession: LocalSession;
   let remoteSession: RemoteSession;
-  let localLoginSpy: jasmine.Spy<(username: string, password: string) => Promise<LoginState>>;
-  let remoteLoginSpy: jasmine.Spy<(username: string, password: string) => Promise<LoginState>>;
-  let dbUser: DatabaseUser;
+  let localLoginSpy: jasmine.Spy<
+    (username: string, password: string) => Promise<LoginState>
+  >;
+  let remoteLoginSpy: jasmine.Spy<
+    (username: string, password: string) => Promise<LoginState>
+  >;
+  let dbUser: AuthUser;
   let syncSpy: jasmine.Spy<() => Promise<void>>;
   let liveSyncSpy: jasmine.Spy<() => void>;
   let mockAuthService: jasmine.SpyObj<AuthService>;
@@ -150,7 +154,8 @@ describe("SyncedSessionService", () => {
         name: newUser.name,
         roles: newUser.roles,
       },
-      "p"
+      "p",
+      newUser.name
     );
     expect(sessionService.getCurrentUser().name).toBe("newUser");
     expect(sessionService.getCurrentUser().roles).toEqual(["user_app"]);
@@ -191,22 +196,6 @@ describe("SyncedSessionService", () => {
     flush();
   }));
 
-  it("Remote succeeds, local fails", fakeAsync(() => {
-    passRemoteLogin();
-
-    const result = sessionService.login(TEST_USER, "anotherPassword");
-    tick();
-
-    expect(localLoginSpy).toHaveBeenCalledWith(TEST_USER, "anotherPassword");
-    expect(localLoginSpy).toHaveBeenCalledTimes(2);
-    expect(remoteLoginSpy).toHaveBeenCalledWith(TEST_USER, "anotherPassword");
-    expect(remoteLoginSpy).toHaveBeenCalledTimes(1);
-    expect(syncSpy).not.toHaveBeenCalled();
-    expect(liveSyncSpy).not.toHaveBeenCalled();
-    expectAsync(result).toBeResolvedTo(LoginState.LOGIN_FAILED);
-    tick();
-  }));
-
   it("remote and local unavailable", fakeAsync(() => {
     failRemoteLogin(true);
 
@@ -228,7 +217,7 @@ describe("SyncedSessionService", () => {
   }));
 
   it("should update the local user object once connected", fakeAsync(() => {
-    const updatedUser: DatabaseUser = {
+    const updatedUser: AuthUser = {
       name: TEST_USER,
       roles: dbUser.roles.concat("admin"),
     };
@@ -257,9 +246,34 @@ describe("SyncedSessionService", () => {
     expect(sessionService.loginState.value).toEqual(LoginState.LOGGED_IN);
   }));
 
+  it("should support email instead of username for login", async () => {
+    const newUser: AuthUser = { name: "test-user", roles: ["test-role"] };
+    passRemoteLogin(newUser);
+
+    const res = await sessionService.login("my@email.com", "test-pass");
+
+    expect(res).toBe(LoginState.LOGGED_IN);
+    expect(JSON.parse(localStorage.getItem("test-user"))).toEqual(
+      jasmine.objectContaining(newUser)
+    );
+    expect(JSON.parse(localStorage.getItem("my@email.com"))).toEqual(
+      jasmine.objectContaining(newUser)
+    );
+
+    localStorage.removeItem("test-user");
+    localStorage.removeItem("my@email.com");
+  });
+
+  it("should correctly check the password", () => {
+    localSession.saveUser({ name: "TestUser", roles: [] }, TEST_PASSWORD);
+
+    expect(sessionService.checkPassword("TestUser", TEST_PASSWORD)).toBeTrue();
+    expect(sessionService.checkPassword("TestUser", "wrongPW")).toBeFalse();
+  });
+
   testSessionServiceImplementation(() => Promise.resolve(sessionService));
 
-  function passRemoteLogin(response: DatabaseUser = { name: "", roles: [] }) {
+  function passRemoteLogin(response: AuthUser = { name: "", roles: [] }) {
     mockAuthService.authenticate.and.resolveTo(response);
   }
 

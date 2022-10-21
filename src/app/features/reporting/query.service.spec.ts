@@ -435,6 +435,7 @@ describe("QueryService", () => {
   });
 
   it("should create a attendance report with percentages", async () => {
+    const lateAttendanceStatus = defaultAttendanceStatusTypes.find((status) => status.id === "LATE");
     const presentTwice = await createChild();
     const presentOnce = await createChild();
     const alwaysAbsent = await createChild();
@@ -448,7 +449,7 @@ describe("QueryService", () => {
     ]);
     await createNote(new Date(), [
       { child: alwaysAbsent, status: absentAttendanceStatus },
-      { child: presentTwice, status: presentAttendanceStatus },
+      { child: presentTwice, status: lateAttendanceStatus },
     ]);
 
     const reportQuery = `${EventNote.ENTITY_TYPE}:toArray:getAttendanceArray:getAttendanceReport`;
@@ -460,18 +461,21 @@ describe("QueryService", () => {
       present: 2,
       total: 2,
       percentage: "1.00",
+      detailedStatus: { "PRESENT": 1, "LATE": 1 }
     });
     expect(report).toContain({
       participant: presentOnce.getId(),
       present: 1,
       total: 2,
       percentage: "0.50",
+      detailedStatus: { "PRESENT": 1, "ABSENT": 1 }
     });
     expect(report).toContain({
       participant: alwaysAbsent.getId(),
       present: 0,
       total: 2,
       percentage: "0.00",
+      detailedStatus: { "ABSENT": 2 }
     });
   });
 

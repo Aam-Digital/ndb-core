@@ -3,6 +3,7 @@ import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { HttpClient } from "@angular/common/http";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ChildPhotoService } from "../../../child-dev-project/children/child-photo-service/child-photo.service";
+import { firstValueFrom } from "rxjs";
 
 /**
  * Utility service to automatically detect and update filenames for Child entities' photos.
@@ -56,7 +57,7 @@ export class ChildPhotoUpdateService {
 
   private async checkIfFileExists(filename): Promise<boolean> {
     try {
-      await this.httpClient.get(filename).toPromise();
+      await firstValueFrom(this.httpClient.get(filename));
       return true;
     } catch (e) {
       return e.status === 200;

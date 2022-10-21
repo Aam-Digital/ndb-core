@@ -128,7 +128,7 @@ export class DataImportService {
       if (!entity["_id"]) {
         entity["_id"] = `${importMeta.entityType}:${
           importMeta.transactionId
-        }-${uuid().substr(9)}`;
+        }-${uuid().substring(9)}`;
       }
       await this.db.put(entity, true);
     }

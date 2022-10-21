@@ -33,6 +33,7 @@ describe("EntitySchemaService", () => {
     class TestEntity extends Entity {
       @DatabaseField() aString: string;
     }
+
     const id = "test1";
     const entity = new TestEntity(id);
 
@@ -53,6 +54,7 @@ describe("EntitySchemaService", () => {
       @DatabaseField() aNumber: number;
       @DatabaseField() aFloat: number;
     }
+
     const id = "test1";
     const entity = new TestEntity(id);
 
@@ -76,6 +78,7 @@ describe("EntitySchemaService", () => {
       @DatabaseField() defaultDate: Date = new Date();
       @DatabaseField() otherDate: Date;
     }
+
     const id = "test1";
     const entity = new TestEntity(id);
 
@@ -94,13 +97,15 @@ describe("EntitySchemaService", () => {
     expect(entity.otherDate.getDate()).toEqual(1);
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-    expect(rawData.otherDate).toEqual(data.otherDate);
+    // Date is not transformed before saving
+    expect(rawData.otherDate).toEqual(new Date(data.otherDate));
   });
 
   it("schema:month converts between string and Date objects", function () {
     class TestEntity extends Entity {
       @DatabaseField({ dataType: "month" }) month: Date;
     }
+
     const id = "test1";
     const entity = new TestEntity(id);
 
@@ -120,6 +125,7 @@ describe("EntitySchemaService", () => {
     class TestEntity extends Entity {
       @DatabaseField({ dataType: "date-only" }) day: Date;
     }
+
     const id = "test1";
     const entity = new TestEntity(id);
 
@@ -139,6 +145,7 @@ describe("EntitySchemaService", () => {
     class TestEntity extends Entity {
       @DatabaseField({ innerDataType: "month" }) dateArr: Date[];
     }
+
     const id = "test1";
     const entity = new TestEntity(id);
     entity.dateArr = [new Date("2020-01-01"), new Date("2020-12-06")];
@@ -152,6 +159,7 @@ describe("EntitySchemaService", () => {
     class TestEntity extends Entity {
       @DatabaseField({ innerDataType: "month" }) dateArr: Date[];
     }
+
     const id = "test1";
     const entity = new TestEntity(id);
 
@@ -169,10 +177,12 @@ describe("EntitySchemaService", () => {
       @DatabaseField({ dataType: "month" }) month: Date;
       otherStuff: string;
     }
+
     class TestEntity extends Entity {
       @DatabaseField({ dataType: "schema-embed", additional: Detail })
       details: Detail;
     }
+
     const id = "test1";
     const entity = new TestEntity(id);
 
@@ -221,6 +231,7 @@ describe("EntitySchemaService", () => {
       transformToObjectFormat: () => null,
     };
     entitySchemaService.registerSchemaDatatype(testDatatype);
+
     class Test extends Entity {
       @DatabaseField({ dataType: "test-datatype" }) stringProperty: string;
     }
@@ -238,6 +249,7 @@ describe("EntitySchemaService", () => {
       @DatabaseField({ innerDataType: dateOnlyEntitySchemaDatatype.name })
       dates: Date[];
     }
+
     const propertySchema = TestEntity.schema.get("dates");
 
     const displayComponent = entitySchemaService.getComponent(
