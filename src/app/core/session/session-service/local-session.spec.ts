@@ -18,18 +18,19 @@
 import { AppSettings } from "../../app-config/app-settings";
 import { LocalSession } from "./local-session";
 import { SessionType } from "../session-type";
-import { DatabaseUser, LocalUser, passwordEqualsEncrypted } from "./local-user";
+import { LocalUser, passwordEqualsEncrypted } from "./local-user";
 import { LoginState } from "../session-states/login-state.enum";
 import { testSessionServiceImplementation } from "./session.service.spec";
 import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
 import { PouchDatabase } from "../../database/pouch-database";
 import { environment } from "../../../../environments/environment";
+import { AuthUser } from "./auth-user";
 
 describe("LocalSessionService", () => {
   let userDBName;
   let deprecatedDBName;
   let localSession: LocalSession;
-  let testUser: DatabaseUser;
+  let testUser: AuthUser;
   let database: jasmine.SpyObj<PouchDatabase>;
 
   beforeEach(() => {
@@ -85,7 +86,7 @@ describe("LocalSessionService", () => {
 
   it("should be case-insensitive and ignore spaces in username", async () => {
     expect(localSession.loginState.value).toBe(LoginState.LOGGED_OUT);
-    const user: DatabaseUser = {
+    const user: AuthUser = {
       name: "UserName",
       roles: [],
     };

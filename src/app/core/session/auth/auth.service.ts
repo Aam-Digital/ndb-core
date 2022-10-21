@@ -1,4 +1,4 @@
-import { DatabaseUser } from "../session-service/local-user";
+import { AuthUser } from "../session-service/auth-user";
 
 /**
  * Abstract class that handles user authentication and password change.
@@ -12,16 +12,13 @@ export abstract class AuthService {
    * @param password The password of the user
    * @returns Promise that resolves with the user if the login was successful, rejects otherwise.
    */
-  abstract authenticate(
-    username: string,
-    password: string
-  ): Promise<DatabaseUser>;
+  abstract authenticate(username: string, password: string): Promise<AuthUser>;
 
   /**
    * Authenticate a user without credentials based on a still valid session.
    * @returns Promise that resolves with the user if the session is still valid, rejects otherwise.
    */
-  abstract autoLogin(): Promise<DatabaseUser>;
+  abstract autoLogin(): Promise<AuthUser>;
 
   /**
    * Add headers to requests send by PouchDB if required for authentication.

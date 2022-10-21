@@ -19,14 +19,14 @@ import { LoginState } from "../session-states/login-state.enum";
 import { SessionService } from "./session.service";
 import { SyncState } from "../session-states/sync-state.enum";
 import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
-import { DatabaseUser } from "./local-user";
+import { AuthUser } from "./auth-user";
 
 /**
  * Default tests for testing basic functionality of any SessionService implementation.
  * The session has to be setup, so TEST_USER and TEST_PASSWORD are (the only) valid credentials
  *
  * @example
-describe("TestSessionService", async () => {
+ describe("TestSessionService", async () => {
   testSessionServiceImplementation(async () => {
     return new TestSessionService();
   });
@@ -87,7 +87,7 @@ export function testSessionServiceImplementation(
   });
 
   it("it correctly handles the necessary steps after a successful login", async () => {
-    const dummyUser: DatabaseUser = {
+    const dummyUser: AuthUser = {
       name: "Hanspeter",
       roles: ["user_app"],
     };
