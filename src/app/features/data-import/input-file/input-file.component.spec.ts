@@ -27,7 +27,7 @@ describe("InputFileComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should only allow files that have a .csv extension", async () => {
+  it("should only allow files that have a .csv extension when set to fileType csv", async () => {
     mockFileReader();
 
     await component.loadFile(mockFileEvent({ name: "wrong_extension.xlsx" }));
