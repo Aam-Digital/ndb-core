@@ -88,6 +88,7 @@ import {
   DATE_FORMATS,
   DateAdapterWithFormatting,
 } from "./core/language/date-adapter-with-formatting";
+import { FileModule } from "./core/file/file.module";
 
 /**
  * Main entry point of the application.
@@ -133,6 +134,7 @@ import {
     ConfigurableEnumModule,
     ReportingModule,
     EntityUtilsModule,
+    FileModule,
     DemoDataModule.forRoot([
       ...DemoConfigGeneratorService.provider(),
       ...DemoChildGenerator.provider({ count: 120 }),
