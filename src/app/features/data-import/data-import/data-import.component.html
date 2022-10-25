@@ -66,7 +66,7 @@
             placeholder="Select property"
             aria-label="Select property"
             matInput
-            (input)="processChange($event.target['value'].toLowerCase())"
+            (input)="processChange($event.target['value'])"
             (focusin)="processChange('')"
             [matAutocomplete]="auto"
             [formControlName]="control.key"
@@ -74,7 +74,7 @@
           <mat-autocomplete #auto="matAutocomplete">
             <mat-option
               *ngFor="let property of filteredProperties | async"
-              [value]="property?.toLowerCase()"
+              [value]="property"
             >
               {{ property }}
             </mat-option>
