@@ -16,7 +16,7 @@ import { BehaviorSubject } from "rxjs";
 import { DownloadService } from "../../../core/export/download-service/download.service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { RouteTarget } from "../../../app.routing";
-import { ParsedData } from "../input-file/input-file.component";
+import { Entity } from "app/core/entity/model/entity";
 
 @RouteTarget("Import")
 @Component({
@@ -56,7 +56,7 @@ export class DataImportComponent {
     public entities: EntityRegistry
   ) {}
 
-  async loadData(parsedData: ParsedData): Promise<void> {
+  async loadData(parsedData: ParseResult): Promise<void> {
     this.importData = parsedData;
 
     this.entityForm.enable();
@@ -159,7 +159,7 @@ export class DataImportComponent {
     };
   }
 
-  async loadConfig(parsedData: ParsedData) {
+  async loadConfig(parsedData: ParseResult) {
     const importMeta = parsedData.data as ImportMetaData;
     this.patchIfPossible(this.entityForm, { entity: importMeta.entityType });
     this.entitySelectionChanged();

@@ -19,7 +19,7 @@ export class InputFileComponent {
 
   @Input() fileType: "csv" | "json";
 
-  parsedData: ParsedData;
+  parsedData: ParseResult;
   formControl = new FormControl();
 
   constructor(private papa: Papa) {}
@@ -83,5 +83,3 @@ export class InputFileComponent {
     return target.files[0];
   }
 }
-
-export type ParsedData = ParseResult;
