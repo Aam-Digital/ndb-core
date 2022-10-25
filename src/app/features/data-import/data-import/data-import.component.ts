@@ -81,7 +81,7 @@ export class DataImportComponent {
       this.importData.data[0]["_id"]
     ) {
       const record = this.importData.data[0] as { _id: string };
-      if (record._id.includes(":")) {
+      if (record._id.toString().includes(":")) {
         const type = Entity.extractTypeFromId(record["_id"]);
         this.entityForm.patchValue({ entity: type });
         this.entityForm.disable();
