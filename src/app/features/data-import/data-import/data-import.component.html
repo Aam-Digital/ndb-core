@@ -1,17 +1,59 @@
-<app-input-file (fileLoad)="loadData($event)" fileType="csv"></app-input-file>
+<div fxLayout="row">
+  <div fxFlex>
+    <app-input-file (fileLoad)="loadData($event)" fileType="csv"></app-input-file>
 
-<form [formGroup]="entityForm">
-  <mat-form-field>
-    <mat-label>Entity Type</mat-label>
-    <mat-select formControlName="entity" required (selectionChange)="entitySelectionChanged()">
-      <mat-option *ngFor="let entity of entities | keyvalue" [value]="entity.key">
-        {{entity.key}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-</form>
+    <form [formGroup]="entityForm">
+      <mat-form-field>
+        <mat-label>Entity Type</mat-label>
+        <mat-select formControlName="entity" required (selectionChange)="entitySelectionChanged()">
+          <mat-option *ngFor="let entity of entities | keyvalue" [value]="entity.key">
+            {{entity.key}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </form>
+  </div>
 
-<mat-expansion-panel [expanded]="true">
+  <div fxFlex>
+    <mat-expansion-panel [expanded]="false">
+      <mat-expansion-panel-header>Additional Import Configuration (optional)</mat-expansion-panel-header>
+
+        <label i18n="Data import wizard label">Load config from file: </label>
+        <app-input-file (fileLoad)="loadConfig($event)" fileType="json"></app-input-file>
+
+        <form [formGroup]="transactionIDForm">
+          <p *ngIf="transactionIDForm.disabled" i18n="Hint in import wizard when transaction ID is not necessary">IDs are specified in CSV file</p>
+          <mat-form-field>
+            <mat-label i18n="Unique ID for this import">Transaction ID:</mat-label>
+            <input
+              matInput
+              formControlName="transactionId"
+              i18n-placeholder="Placeholder for input for transactionId as part of the import process"
+              placeholder="Enter TransactionID"
+            />
+          </mat-form-field>
+          <button *ngIf="transactionIDForm.enabled" mat-button (click)="setRandomTransactionID()" i18n="Button to generate a random ID">Generate ID</button>
+        </form>
+
+        <form [formGroup]="dateFormatForm">
+          <mat-form-field>
+            <mat-label i18n="Label for date-format input  ">Date format</mat-label>
+            <input
+              matInput
+              formControlName="dateFormat"
+              i18n-placeholder="Placeholdr for input where date format as part of the import process"
+              placeholder="Enter a date format"
+            />
+          </mat-form-field>
+        </form>
+
+    </mat-expansion-panel>
+  </div>
+</div>
+
+<br>
+
+<mat-expansion-panel  [expanded]="readyForImport" [disabled]="!readyForImport">
   <mat-expansion-panel-header>Field Mapping</mat-expansion-panel-header>
   <div>
     <form [formGroup]="columnMappingForm">
@@ -43,63 +85,6 @@
   </div>
 </mat-expansion-panel>
 
-<mat-expansion-panel [expanded]="false">
-  <mat-expansion-panel-header>Additional Import Configuration (optional)</mat-expansion-panel-header>
-
-  <mat-vertical-stepper linear #stepper>
-    <mat-step i18n-label="Data import wizard label" label="Load config" [optional]="true">
-      <div>
-        <app-input-file (fileLoad)="loadConfig($event)" fileType="json"></app-input-file>
-        <div>
-          <button mat-button matStepperNext i18n="Button to proceed in import wizard">Next</button>
-        </div>
-      </div>
-    </mat-step>
-
-    <mat-step i18n-label="Data import wizard label" label="Transaction ID" [stepControl]="transactionIDForm" [optional]="transactionIDForm.disabled">
-      <form [formGroup]="transactionIDForm">
-        <p *ngIf="transactionIDForm.disabled" i18n="Hint in import wizard when transaction ID is not necessary">IDs are specified in CSV file</p>
-        <mat-form-field>
-          <mat-label i18n="Unique ID for this import">Transaction ID:</mat-label>
-          <input
-            matInput
-            formControlName="transactionId"
-            i18n-placeholder="Placeholder for input for transactionId as part of the import process"
-            placeholder="Enter TransactionID"
-            required
-          />
-        </mat-form-field>
-        <button *ngIf="transactionIDForm.enabled" mat-button (click)="setRandomTransactionID()" i18n="Button to generate a random ID">Generate ID</button>
-        <div>
-          <button mat-button matStepperPrevious i18n="Button to go back in import wizard">Back</button>
-          <button mat-button matStepperNext i18n="Button to proceed in import wizard">Next</button>
-        </div>
-      </form>
-    </mat-step>
-
-    <mat-step i18n-label="Data import wizard label" label="Date format" [optional]="true" [stepControl]="dateFormatForm">
-      <form [formGroup]="dateFormatForm">
-        <mat-form-field>
-          <mat-label i18n="Label for date-format input  ">Date format</mat-label>
-          <input
-            matInput
-            formControlName="dateFormat"
-            i18n-placeholder="Placeholdr for input where date format as part of the import process"
-            placeholder="Enter a date format"
-          />
-        </mat-form-field>
-        <div>
-          <button mat-button matStepperPrevious i18n="Button to go back in import wizard">Back</button>
-          <button mat-button (click)="readyForImport = true" i18n="Button to proceed in import wizard">Next</button>
-        </div>
-      </form>
-    </mat-step>
-
-    <ng-template matStepperIcon="edit">
-      <fa-icon class="stepper-icon" icon="check"></fa-icon>
-    </ng-template>
-  </mat-vertical-stepper>
-</mat-expansion-panel>
 
 <mat-expansion-panel [expanded]="readyForImport">
   <mat-expansion-panel-header>View Summary & Start Import</mat-expansion-panel-header>

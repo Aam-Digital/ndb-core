@@ -9,7 +9,6 @@ import {
 import { DataImportService } from "../data-import.service";
 import { ImportColumnMap, ImportMetaData } from "../import-meta-data.type";
 import { AlertService } from "app/core/alerts/alert.service";
-import { MatStepper } from "@angular/material/stepper";
 import { ParseResult } from "ngx-papaparse";
 import { v4 as uuid } from "uuid";
 import { BehaviorSubject } from "rxjs";
@@ -45,8 +44,6 @@ export class DataImportComponent {
   private properties: string[] = [];
   filteredProperties = new BehaviorSubject<string[]>([]);
 
-  @ViewChild(MatStepper) private stepper: MatStepper;
-
   constructor(
     private dataImportService: DataImportService,
     private formBuilder: FormBuilder,
@@ -67,8 +64,6 @@ export class DataImportComponent {
     this.updateColumnMappingFromData();
 
     this.entitySelectionChanged();
-
-    this.readyForImport = true;
   }
 
   /**
@@ -100,12 +95,16 @@ export class DataImportComponent {
 
   entitySelectionChanged(): void {
     const entityName = this.entityForm.get("entity").value;
+    if (!entityName) {
+      return;
+    }
+
     const propertyKeys = this.entities.get(entityName).schema.keys();
     this.properties = [...propertyKeys];
 
     this.inferColumnPropertyMapping();
 
-    this.stepper.next();
+    this.readyForImport = !!entityName && !!this.importData;
   }
 
   /**
@@ -117,7 +116,7 @@ export class DataImportComponent {
     const columnMap: ImportColumnMap = {};
 
     for (const p of this.properties) {
-      if (this.importData.meta.fields.includes(p)) {
+      if (this.importData?.meta.fields.includes(p)) {
         columnMap[p] = p;
       }
     }
