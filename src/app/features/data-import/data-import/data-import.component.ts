@@ -16,6 +16,7 @@ import { DownloadService } from "../../../core/export/download-service/download.
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { RouteTarget } from "../../../app.routing";
 import { Entity } from "app/core/entity/model/entity";
+import { ParsedData } from "../input-file/input-file.component";
 
 @RouteTarget("Import")
 @Component({
@@ -24,7 +25,7 @@ import { Entity } from "app/core/entity/model/entity";
   styleUrls: ["./data-import.component.scss"],
 })
 export class DataImportComponent {
-  importData: ParseResult;
+  importData: ParsedData;
   readyForImport: boolean;
 
   entityForm = this.formBuilder.group({ entity: ["", Validators.required] });
@@ -53,7 +54,7 @@ export class DataImportComponent {
     public entities: EntityRegistry
   ) {}
 
-  async loadData(parsedData: ParseResult): Promise<void> {
+  async loadData(parsedData: ParsedData): Promise<void> {
     this.importData = parsedData;
 
     this.entityForm.enable();
@@ -72,8 +73,8 @@ export class DataImportComponent {
    */
   private updateConfigFromDataIds() {
     if (
-      this.importData.meta.fields.includes("_id") &&
-      this.importData.data[0]["_id"]
+      this.importData?.fields.includes("_id") &&
+      this.importData?.data[0]["_id"]
     ) {
       const record = this.importData.data[0] as { _id: string };
       if (record._id.toString().includes(":")) {
@@ -88,7 +89,7 @@ export class DataImportComponent {
 
   private updateColumnMappingFromData() {
     this.columnMappingForm = new FormGroup({});
-    this.importData.meta.fields.forEach((field) =>
+    this.importData.fields.forEach((field) =>
       this.columnMappingForm.addControl(field, new FormControl())
     );
   }
@@ -116,7 +117,7 @@ export class DataImportComponent {
     const columnMap: ImportColumnMap = {};
 
     for (const p of this.properties) {
-      if (this.importData?.meta.fields.includes(p)) {
+      if (this.importData?.fields.includes(p)) {
         columnMap[p] = p;
       }
     }
@@ -143,7 +144,7 @@ export class DataImportComponent {
   importSelectedFile(): Promise<void> {
     if (this.importData) {
       return this.dataImportService.handleCsvImport(
-        this.importData,
+        this.importData.data,
         this.createImportMetaData()
       );
     }
@@ -158,8 +159,8 @@ export class DataImportComponent {
     };
   }
 
-  async loadConfig(parsedData: ParseResult) {
-    const importMeta = parsedData.data as ImportMetaData;
+  async loadConfig(loadedConfig: ParsedData<ImportMetaData>) {
+    const importMeta = loadedConfig.data;
     this.patchIfPossible(this.entityForm, { entity: importMeta.entityType });
     this.entitySelectionChanged();
     this.patchIfPossible(this.transactionIDForm, {

@@ -11,7 +11,6 @@ import { dateOnlyEntitySchemaDatatype } from "../../core/entity/schema-datatypes
 import { monthEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-month";
 import moment from "moment";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
-import { ParseResult } from "ngx-papaparse";
 
 /**
  * This service handels the parsing of CSV files and importing of data
@@ -34,15 +33,15 @@ export class DataImportService {
   /**
    * Add the data from the loaded file to the database, inserting and updating records.
    * If a transactionId is provided in the ImportMetaData, all records starting with this ID will be deleted from the database before importing
-   * @param csvFile The file object of the csv data to be loaded
+   * @param data The objects parsed from a file to be loaded
    * @param importMeta Additional information required for importing the file
    */
   async handleCsvImport(
-    csvFile: ParseResult,
+    data: Object[],
     importMeta: ImportMetaData
   ): Promise<void> {
     const restorePoint = await this.backupService.getJsonExport();
-    const confirmed = await this.getUserConfirmation(csvFile, importMeta);
+    const confirmed = await this.getUserConfirmation(data, importMeta);
     if (!confirmed) {
       return;
     }
@@ -51,7 +50,7 @@ export class DataImportService {
       await this.deleteExistingRecords(importMeta);
     }
 
-    await this.importCsvContentToDB(csvFile, importMeta);
+    await this.importCsvContentToDB(data, importMeta);
 
     const snackBarRef = this.snackBar.open(
       $localize`Import completed`,
@@ -67,12 +66,12 @@ export class DataImportService {
   }
 
   private getUserConfirmation(
-    csvFile: ParseResult,
+    data: Object[],
     importMeta: ImportMetaData
   ): Promise<boolean> {
     const refTitle = $localize`Import new data?`;
     let refText = $localize`Are you sure you want to import this file?
-      This will add or update ${csvFile.data.length} records from the loaded file.`;
+      This will add or update ${data.length} records from the loaded file.`;
     if (importMeta.transactionId) {
       refText = $localize`${refText} All existing records imported with the transaction id '${importMeta.transactionId}' will be deleted!`;
     }
@@ -87,10 +86,10 @@ export class DataImportService {
   }
 
   private async importCsvContentToDB(
-    csv: ParseResult,
+    data: Object[],
     importMeta: ImportMetaData
   ): Promise<void> {
-    for (const row of csv.data) {
+    for (const row of data) {
       const entity = this.createEntityWithRowData(row, importMeta);
       this.createSearchIndices(importMeta, entity);
       if (!entity["_id"]) {

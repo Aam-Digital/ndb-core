@@ -3,8 +3,8 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { InputFileComponent } from "./input-file.component";
 import { Papa } from "ngx-papaparse";
 
-function mockFileEvent(mockFile: {name: string}): Event {
-  return { target: { files: [mockFile] }} as unknown as Event;
+function mockFileEvent(mockFile: { name: string }): Event {
+  return { target: { files: [mockFile] } } as unknown as Event;
 }
 
 describe("InputFileComponent", () => {
@@ -18,7 +18,7 @@ describe("InputFileComponent", () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(InputFileComponent);
+    fixture = TestBed.createComponent(InputFileComponent<Object[]>);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -53,7 +53,6 @@ describe("InputFileComponent", () => {
     expect(component.formControl.invalid);
   });
 });
-
 
 function mockFileReader(
   result = '_id,name,projectNumber\nChild:1,"John Doe",123'
