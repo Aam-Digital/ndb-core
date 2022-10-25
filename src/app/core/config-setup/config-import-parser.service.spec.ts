@@ -5,6 +5,8 @@ import { EntityConfig } from "../entity/entity-config.service";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { ConfigService } from "../config/config.service";
 import { ConfigFieldRaw } from "./config-field.raw";
+import { EntityListConfig } from "../entity-components/entity-list/EntityListConfig";
+import { EntityDetailsConfig } from "../entity-components/entity-details/EntityDetailsConfig";
 
 fdescribe("ConfigImportParserService", () => {
   let service: ConfigImportParserService;
@@ -73,6 +75,21 @@ fdescribe("ConfigImportParserService", () => {
 
     const resultConfig = result["entity:" + entityName] as EntityConfig;
     expect(resultConfig?.attributes).toEqual(expectedOutputs);
+
+    return result;
+  }
+
+  function expectToGenerateViewConfig(
+    inputs: ConfigFieldRaw[],
+    expectedOutputs: EntityListConfig | EntityDetailsConfig,
+    detailsView: boolean
+  ) {
+    const entityName = "test";
+    const result = service.parseImportDefinition(inputs, entityName);
+
+    const viewName = detailsView ? entityName + "/:id" : entityName;
+    const resultConfig = result["view:" + viewName];
+    expect(resultConfig).toEqual(expectedOutputs);
 
     return result;
   }
@@ -235,8 +252,93 @@ fdescribe("ConfigImportParserService", () => {
       { id: "Berlin", label: "Berlin" },
       { id: "Hongkong", label: "Hongkong" },
       { id: "New York", label: "New York" },
-      // TODO: should we rename the enum ids for distinction from labels? (--> NEW_YORK)
     ]);
     expect(Object.keys(parsedConfig)).not.toContain("enum:city");
+  });
+
+  it("should generate list view with fields from config added to their columnGroups", () => {
+    expectToGenerateViewConfig(
+      [
+        {
+          id: "name",
+          label: "name",
+          dataType: "string",
+          show_in_list: "Basic Info",
+        },
+        {
+          id: "admissionDate",
+          label: "admission date",
+          dataType: "date-only",
+          show_in_list: "Status",
+        },
+        {
+          id: "phone",
+          label: "phone",
+          dataType: "number",
+          show_in_list: "Basic Info, Status",
+        },
+      ],
+      {
+        title: "",
+        entity: "test",
+        columns: [],
+        columnGroups: {
+          groups: [
+            { name: "Basic Info", columns: ["name", "phone"] },
+            { name: "Status", columns: ["admissionDate", "phone"] },
+          ],
+        },
+      },
+      false
+    );
+  });
+
+  it("should generate details view with fields from config", () => {
+    expectToGenerateViewConfig(
+      [
+        {
+          id: "name",
+          label: "name",
+          dataType: "string",
+          show_in_details: "Overview",
+        },
+        {
+          id: "admissionDate",
+          label: "admission date",
+          dataType: "date-only",
+          show_in_details: "Overview",
+        },
+        {
+          id: "phone",
+          label: "phone",
+          dataType: "number",
+          show_in_details: "Contact Details",
+        },
+      ],
+      {
+        icon: "",
+        entity: "test",
+        title: "",
+        panels: [
+          {
+            title: "Overview",
+            components: [
+              {
+                title: "",
+                component: "Form",
+                config: { cols: [["name", "admissionDate"]] },
+              },
+            ],
+          },
+          {
+            title: "Contact Details",
+            components: [
+              { title: "", component: "Form", config: { cols: [["phone"]] } },
+            ],
+          },
+        ],
+      } as EntityDetailsConfig,
+      true
+    );
   });
 });

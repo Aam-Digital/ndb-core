@@ -1,7 +1,16 @@
 import { Injectable } from "@angular/core";
 import { EntityConfig } from "../entity/entity-config.service";
-import { EntityListConfig } from "../entity-components/entity-list/EntityListConfig";
-import { EntityDetailsConfig } from "../entity-components/entity-details/EntityDetailsConfig";
+import {
+  ColumnGroupsConfig,
+  EntityListConfig,
+  GroupConfig,
+} from "../entity-components/entity-list/EntityListConfig";
+import {
+  EntityDetailsConfig,
+  Panel,
+  PanelComponent,
+  PanelConfig,
+} from "../entity-components/entity-details/EntityDetailsConfig";
 import {
   CONFIGURABLE_ENUM_CONFIG_PREFIX,
   ConfigurableEnumConfig,
@@ -17,6 +26,9 @@ export class ConfigImportParserService {
   enumsAvailable: Map<string, ConfigurableEnumConfig> = new Map();
   existingEnumHashmap: Map<string, string> = new Map();
 
+  generatedViews: Map<string, EntityListConfig | EntityDetailsConfig> =
+    new Map();
+
   constructor(private configService: ConfigService) {
     const enums = this.configService.getAllConfigs(
       CONFIGURABLE_ENUM_CONFIG_PREFIX
@@ -31,7 +43,7 @@ export class ConfigImportParserService {
     const entity: EntityConfig = {
       attributes: configRaw
         .filter((field) => !!field.dataType)
-        .map((field) => this.parseFieldDefinition(field)),
+        .map((field) => this.parseFieldDefinition(field, entityName)),
     };
 
     const generatedConfig: GeneratedConfig = {
@@ -43,14 +55,16 @@ export class ConfigImportParserService {
       generatedConfig["enum:" + key] = enumConfig;
     }
 
-    //TODO generatedConfig["view:" + entityName] = {} as EntityListConfig;
+    for (const [key, viewConfig] of this.generatedViews) {
+      generatedConfig["view:" + key] = viewConfig;
+    }
     //TODO generatedConfig["view:" + entityName + "/:id"] = {} as EntityDetailsConfig;
 
     return generatedConfig;
   }
 
-  private parseFieldDefinition(fieldDef: ConfigFieldRaw) {
-    const key =
+  private parseFieldDefinition(fieldDef: ConfigFieldRaw, entityType: string) {
+    const fieldId =
       fieldDef.id ??
       ConfigImportParserService.generateIdFromLabel(fieldDef.label);
 
@@ -67,12 +81,15 @@ export class ConfigImportParserService {
       schema.dataType = "configurable-enum";
       schema.innerDataType = this.generateOrMatchEnum(
         fieldDef.additional_type_details,
-        key
+        fieldId
       );
     }
 
+    this.generateOrUpdateListViewConfig(fieldDef, entityType, fieldId);
+    this.generateOrUpdateDetailsViewConfig(fieldDef, entityType, fieldId);
+
     deleteEmptyProperties(schema);
-    return { name: key, schema: schema };
+    return { name: fieldId, schema: schema };
   }
 
   /**
@@ -121,6 +138,116 @@ export class ConfigImportParserService {
     this.enumsAvailable.set(key, enumConfig);
     this.existingEnumHashmap.set(hash, key);
     return key;
+  }
+
+  private generateOrUpdateListViewConfig(
+    fieldDef: ConfigFieldRaw,
+    entityType: string,
+    fieldId: string
+  ) {
+    if (
+      !fieldDef.show_in_list ||
+      fieldDef.show_in_list.toString().length === 0
+    ) {
+      return;
+    }
+
+    const listView: EntityListConfig =
+      (this.generatedViews.get(entityType) as EntityListConfig) ??
+      this.generateEmptyListView(entityType);
+
+    for (const fieldColGroup of fieldDef.show_in_list.split(",")) {
+      const columnGroup = this.generateOrFindColumnGroup(
+        listView,
+        fieldColGroup.trim()
+      );
+      columnGroup.columns.push(fieldId);
+    }
+  }
+
+  private generateEmptyListView(entityType: string): EntityListConfig {
+    const newListView = {
+      columns: [],
+      entity: entityType,
+      title: "",
+      columnGroups: { groups: [] },
+    };
+    this.generatedViews.set(entityType, newListView);
+    return newListView;
+  }
+
+  private generateOrFindColumnGroup(
+    listView: EntityListConfig,
+    columnGroupName: string
+  ) {
+    const existingColumnGroup = listView.columnGroups.groups.find(
+      (c) => c.name === columnGroupName
+    );
+    if (existingColumnGroup) {
+      return existingColumnGroup;
+    }
+
+    const newColumnGroup: GroupConfig = { name: columnGroupName, columns: [] };
+    listView.columnGroups.groups.push(newColumnGroup);
+    return newColumnGroup;
+  }
+
+  private generateOrUpdateDetailsViewConfig(
+    fieldDef: ConfigFieldRaw,
+    entityType: string,
+    fieldId: string
+  ) {
+    if (
+      !fieldDef.show_in_details ||
+      fieldDef.show_in_details.toString().length === 0
+    ) {
+      return;
+    }
+
+    const detailsView: EntityDetailsConfig =
+      (this.generatedViews.get(entityType + "/:id") as EntityDetailsConfig) ??
+      this.generateEmptyDetailsView(entityType + "/:id", entityType);
+
+    if (fieldDef.show_in_details) {
+      const panel: PanelComponent = this.generateOrFindDetailsPanel(
+        detailsView,
+        fieldDef.show_in_details.trim()
+      );
+      panel.config.cols[0].push(fieldId);
+    }
+  }
+
+  private generateEmptyDetailsView(
+    viewId: string,
+    entityType: string
+  ): EntityDetailsConfig {
+    const newDetailsView = {
+      entity: entityType,
+      icon: "",
+      panels: [],
+      title: "",
+    };
+    this.generatedViews.set(viewId, newDetailsView);
+    return newDetailsView;
+  }
+
+  private generateOrFindDetailsPanel(
+    detailsView: EntityDetailsConfig,
+    panelName: string
+  ): PanelComponent {
+    const existingPanel = detailsView.panels.find(
+      (c) => c.title === panelName && c.components[0].component === "Form"
+    );
+    if (existingPanel) {
+      return existingPanel.components[0];
+    }
+
+    const newPanel: Panel = {
+      title: panelName,
+      components: [{ title: "", component: "Form", config: { cols: [[]] } }],
+    };
+    detailsView.panels.push(newPanel);
+    return newPanel.components[0];
   }
 }
 
