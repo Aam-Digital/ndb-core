@@ -44,7 +44,7 @@
 </mat-expansion-panel>
 
 <mat-expansion-panel [expanded]="false">
-  <mat-expansion-panel-header>Additional Import Configuration</mat-expansion-panel-header>
+  <mat-expansion-panel-header>Additional Import Configuration (optional)</mat-expansion-panel-header>
 
   <mat-vertical-stepper linear #stepper>
     <mat-step i18n-label="Data import wizard label" label="Load config" [optional]="true">
@@ -90,7 +90,7 @@
         </mat-form-field>
         <div>
           <button mat-button matStepperPrevious i18n="Button to go back in import wizard">Back</button>
-          <button mat-button matStepperNext i18n="Button to proceed in import wizard">Next</button>
+          <button mat-button (click)="readyForImport = true" i18n="Button to proceed in import wizard">Next</button>
         </div>
       </form>
     </mat-step>
