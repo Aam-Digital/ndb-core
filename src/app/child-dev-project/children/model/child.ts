@@ -118,6 +118,18 @@ export class Child extends Entity {
   })
   phone: string;
 
+  @DatabaseField({ label: "File 1", dataType: "file" }) file1: string;
+  @DatabaseField({ label: "File 2", dataType: "file" }) file2: string;
+  @DatabaseField({ label: "File 3", dataType: "file" }) file3: string;
+  @DatabaseField({ label: "File 4", dataType: "file" }) file4: string;
+  @DatabaseField({ label: "File 5", dataType: "file" }) file5: string;
+  @DatabaseField({ label: "File 6", dataType: "file" }) file6: string;
+  @DatabaseField({ label: "File 7", dataType: "file" }) file7: string;
+  @DatabaseField({ label: "File 8", dataType: "file" }) file8: string;
+  @DatabaseField({ label: "File 9", dataType: "file" }) file9: string;
+  @DatabaseField({ label: "File 10", dataType: "file" }) file10: string;
+  @DatabaseField({ label: "File 11", dataType: "file" }) file11: string;
+
   get age(): number {
     return this.dateOfBirth ? calculateAge(this.dateOfBirth) : null;
   }
