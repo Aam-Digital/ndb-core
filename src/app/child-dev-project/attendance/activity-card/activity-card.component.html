@@ -3,7 +3,7 @@
   [borderClass]="'border-' + warningLevel"
   class="main-card"
 >
-  <h1 class="card-title">{{event?.subject}}</h1>
+  <h3 class="card-title">{{event?.subject}}</h3>
   <p class="text-secondary">
     <fa-icon icon="child"></fa-icon> {{event.children.length}} {
       event.children.length, plural, one {participant} other {participants}
