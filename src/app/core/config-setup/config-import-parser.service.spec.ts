@@ -7,52 +7,10 @@ import { ConfigService } from "../config/config.service";
 import { ConfigFieldRaw } from "./config-field.raw";
 import { EntityListConfig } from "../entity-components/entity-list/EntityListConfig";
 import { EntityDetailsConfig } from "../entity-components/entity-details/EntityDetailsConfig";
+import { ViewConfig } from "../view/dynamic-routing/view-config.interface";
 
-fdescribe("ConfigImportParserService", () => {
+describe("ConfigImportParserService", () => {
   let service: ConfigImportParserService;
-
-  const dummyImportData = [
-    {
-      id: "firstname",
-      label: "firstname",
-      dataType: "string",
-      additional_type_details: null,
-      description: null,
-      show_in_list: "Basic Information, Demographics",
-      show_in_details: "Overview",
-      remarks: null,
-    },
-    {
-      id: "dateOfBirth",
-      label: "date of birth",
-      dataType: "date-only",
-      additional_type_details: null,
-      description: null,
-      show_in_list: "Basic Information, Demographics",
-      show_in_details: "Overview",
-      remarks: null,
-    },
-    {
-      id: "numberOfSiblings",
-      label: "number of siblings",
-      dataType: "number",
-      additional_type_details: null,
-      description: "How many sibling live in the same household?",
-      show_in_list: "Demographics",
-      show_in_details: "Family Background",
-      remarks: null,
-    },
-    {
-      id: "mothertongue",
-      label: "mothertongue",
-      dataType: "enum",
-      additional_type_details: "Hindi, English, Marathi",
-      description: null,
-      show_in_list: "Demographics",
-      show_in_details: "Overview",
-      remarks: null,
-    },
-  ];
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -88,8 +46,17 @@ fdescribe("ConfigImportParserService", () => {
     const result = service.parseImportDefinition(inputs, entityName);
 
     const viewName = detailsView ? entityName + "/:id" : entityName;
-    const resultConfig = result["view:" + viewName];
-    expect(resultConfig).toEqual(expectedOutputs);
+    const resultConfig = result["view:" + viewName] as ViewConfig<
+      EntityListConfig | EntityDetailsConfig
+    >;
+
+    if (detailsView) {
+      expect(resultConfig?.component).toBe("EntityDetails");
+    } else {
+      expect(resultConfig?.component).toBe("EntityList");
+    }
+
+    expect(resultConfig.config).toEqual(expectedOutputs);
 
     return result;
   }
@@ -316,7 +283,7 @@ fdescribe("ConfigImportParserService", () => {
         },
       ],
       {
-        icon: "",
+        icon: "child",
         entity: "test",
         title: "",
         panels: [

@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { EntityConfig } from "../entity/entity-config.service";
 import {
-  ColumnGroupsConfig,
   EntityListConfig,
   GroupConfig,
 } from "../entity-components/entity-list/EntityListConfig";
@@ -9,7 +8,6 @@ import {
   EntityDetailsConfig,
   Panel,
   PanelComponent,
-  PanelConfig,
 } from "../entity-components/entity-details/EntityDetailsConfig";
 import {
   CONFIGURABLE_ENUM_CONFIG_PREFIX,
@@ -18,6 +16,8 @@ import {
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { ConfigService } from "../config/config.service";
 import { ConfigFieldRaw } from "./config-field.raw";
+import { ViewConfig } from "../view/dynamic-routing/view-config.interface";
+import { defaultJsonConfig } from "../config/config-fix";
 
 @Injectable({
   providedIn: "root",
@@ -26,14 +26,16 @@ export class ConfigImportParserService {
   enumsAvailable: Map<string, ConfigurableEnumConfig> = new Map();
   existingEnumHashmap: Map<string, string> = new Map();
 
-  generatedViews: Map<string, EntityListConfig | EntityDetailsConfig> =
-    new Map();
+  generatedViews: Map<
+    string,
+    ViewConfig<EntityListConfig> | ViewConfig<EntityDetailsConfig>
+  > = new Map();
 
   constructor(private configService: ConfigService) {
     const enums = this.configService.getAllConfigs(
       CONFIGURABLE_ENUM_CONFIG_PREFIX
     );
-    // TODO: how to get the id?
+    // TODO: how to get the id for already existing enums in database?
   }
 
   parseImportDefinition(
@@ -52,13 +54,18 @@ export class ConfigImportParserService {
 
     // add enum configs
     for (const [key, enumConfig] of this.enumsAvailable) {
-      generatedConfig["enum:" + key] = enumConfig;
+      generatedConfig["enum:" + key.toLowerCase()] = enumConfig;
     }
 
+    // add generated list and details view configs
     for (const [key, viewConfig] of this.generatedViews) {
-      generatedConfig["view:" + key] = viewConfig;
+      generatedConfig["view:" + key.toLowerCase()] = viewConfig;
     }
-    //TODO generatedConfig["view:" + entityName + "/:id"] = {} as EntityDetailsConfig;
+
+    // add some default configs
+    for (const [key, config] of this.generateDefaultConfigs(entityName)) {
+      generatedConfig[key] = config;
+    }
 
     return generatedConfig;
   }
@@ -153,7 +160,7 @@ export class ConfigImportParserService {
     }
 
     const listView: EntityListConfig =
-      (this.generatedViews.get(entityType) as EntityListConfig) ??
+      (this.generatedViews.get(entityType)?.config as EntityListConfig) ??
       this.generateEmptyListView(entityType);
 
     for (const fieldColGroup of fieldDef.show_in_list.split(",")) {
@@ -172,7 +179,11 @@ export class ConfigImportParserService {
       title: "",
       columnGroups: { groups: [] },
     };
-    this.generatedViews.set(entityType, newListView);
+    this.generatedViews.set(entityType, {
+      _id: entityType,
+      component: "EntityList",
+      config: newListView,
+    });
     return newListView;
   }
 
@@ -205,7 +216,8 @@ export class ConfigImportParserService {
     }
 
     const detailsView: EntityDetailsConfig =
-      (this.generatedViews.get(entityType + "/:id") as EntityDetailsConfig) ??
+      (this.generatedViews.get(entityType + "/:id")
+        ?.config as EntityDetailsConfig) ??
       this.generateEmptyDetailsView(entityType + "/:id", entityType);
 
     if (fieldDef.show_in_details) {
@@ -223,11 +235,15 @@ export class ConfigImportParserService {
   ): EntityDetailsConfig {
     const newDetailsView = {
       entity: entityType,
-      icon: "",
+      icon: "child",
       panels: [],
       title: "",
     };
-    this.generatedViews.set(viewId, newDetailsView);
+    this.generatedViews.set(viewId, {
+      _id: viewId,
+      component: "EntityDetails",
+      config: newDetailsView,
+    });
     return newDetailsView;
   }
 
@@ -249,14 +265,24 @@ export class ConfigImportParserService {
     detailsView.panels.push(newPanel);
     return newPanel.components[0];
   }
+
+  private generateDefaultConfigs(entityName: string) {
+    const configs = new Map<string, any>();
+
+    configs.set("appConfig", defaultJsonConfig.appConfig);
+    configs.set(
+      "appConfig:usage-analytics",
+      defaultJsonConfig["appConfig:usage-analytics"]
+    );
+    configs.set("navigationMenu", defaultJsonConfig.navigationMenu);
+    configs.set("view:", defaultJsonConfig["view:"]);
+
+    return configs;
+  }
 }
 
 export type GeneratedConfig = {
-  [key: string]:
-    | EntityConfig
-    | EntityListConfig
-    | EntityDetailsConfig
-    | ConfigurableEnumConfig;
+  [key: string]: EntityConfig | ViewConfig | ConfigurableEnumConfig;
 };
 
 /**
