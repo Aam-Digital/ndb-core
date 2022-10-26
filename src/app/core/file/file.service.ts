@@ -10,7 +10,12 @@ export class FileService {
 
   constructor(private http: HttpClient) {}
 
-  uploadFile(file: File, entityId: string, property: string): Observable<any> {
+  uploadFile(
+    file: File,
+    entityId: string,
+    property: string,
+    blob = new Blob([file])
+  ): Observable<any> {
     const attachmentId = `${this.attachmentsUrl}/${entityId}`;
     return this.http.get<{ _id: string; _rev: string }>(attachmentId).pipe(
       catchError((err) =>
@@ -21,7 +26,7 @@ export class FileService {
       concatMap((res) =>
         this.http.put<{ ok: true }>(
           `${attachmentId}/${property}?rev=${res._rev}`,
-          new Blob([file]),
+          blob,
           {
             headers: { "Content-Type": file.type },
           }
