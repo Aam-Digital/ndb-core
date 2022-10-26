@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { readFile } from "../../../utils/utils";
 import { Papa, ParseResult } from "ngx-papaparse";
 import { FormControl } from "@angular/forms";
@@ -13,7 +13,7 @@ import { FormControl } from "@angular/forms";
   templateUrl: "./input-file.component.html",
   styleUrls: ["./input-file.component.scss"],
 })
-export class InputFileComponent implements OnInit {
+export class InputFileComponent {
   /** returns parsed data on completing load after user selects a file */
   @Output() fileLoad = new EventEmitter<ParsedData>();
 
@@ -23,8 +23,6 @@ export class InputFileComponent implements OnInit {
   formControl = new FormControl();
 
   constructor(private papa: Papa) {}
-
-  ngOnInit(): void {}
 
   async loadFile($event: Event): Promise<void> {
     this.formControl.reset();
