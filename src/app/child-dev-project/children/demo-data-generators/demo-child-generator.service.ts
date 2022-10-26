@@ -48,9 +48,6 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
 
     child.admissionDate = faker.date.past(child.age - 4);
 
-    for (const i of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]) {
-    }
-
     if (faker.datatype.number(100) > 90) {
       DemoChildGenerator.makeChildDropout(child);
     }
