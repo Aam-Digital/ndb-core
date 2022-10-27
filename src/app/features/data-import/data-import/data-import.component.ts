@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ViewChild } from "@angular/core";
+import { ChangeDetectorRef, Component } from "@angular/core";
 import {
   FormBuilder,
   FormControl,
@@ -9,7 +9,6 @@ import {
 import { DataImportService } from "../data-import.service";
 import { ImportColumnMap, ImportMetaData } from "../import-meta-data.type";
 import { AlertService } from "app/core/alerts/alert.service";
-import { ParseResult } from "ngx-papaparse";
 import { v4 as uuid } from "uuid";
 import { BehaviorSubject } from "rxjs";
 import { DownloadService } from "../../../core/export/download-service/download.service";

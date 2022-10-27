@@ -11,7 +11,6 @@ import { FormControl } from "@angular/forms";
 @Component({
   selector: "app-input-file",
   templateUrl: "./input-file.component.html",
-  styleUrls: ["./input-file.component.scss"],
 })
 export class InputFileComponent<T = any> {
   /** returns parsed data as an object on completing load after user selects a file */
@@ -86,7 +85,7 @@ export class InputFileComponent<T = any> {
 /**
  * Results and (optional) meta data about data parsed from a file.
  */
-export interface ParsedData<T = Object[]> {
+export interface ParsedData<T = any[]> {
   /** object or array of objects parsed from a file */
   data: T;
 

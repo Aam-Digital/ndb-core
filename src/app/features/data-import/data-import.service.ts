@@ -22,6 +22,7 @@ export class DataImportService {
     dateOnlyEntitySchemaDatatype,
     monthEntitySchemaDatatype,
   ].map((dataType) => dataType.name);
+
   constructor(
     private db: Database,
     private backupService: BackupService,
@@ -37,7 +38,7 @@ export class DataImportService {
    * @param importMeta Additional information required for importing the file
    */
   async handleCsvImport(
-    data: Object[],
+    data: any[],
     importMeta: ImportMetaData
   ): Promise<void> {
     const restorePoint = await this.backupService.getJsonExport();
@@ -66,7 +67,7 @@ export class DataImportService {
   }
 
   private getUserConfirmation(
-    data: Object[],
+    data: any[],
     importMeta: ImportMetaData
   ): Promise<boolean> {
     const refTitle = $localize`Import new data?`;
@@ -86,7 +87,7 @@ export class DataImportService {
   }
 
   private async importCsvContentToDB(
-    data: Object[],
+    data: any[],
     importMeta: ImportMetaData
   ): Promise<void> {
     for (const row of data) {

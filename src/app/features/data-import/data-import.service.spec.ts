@@ -5,7 +5,7 @@ import { ConfirmationDialogService } from "../../core/confirmation-dialog/confir
 import { MatSnackBar, MatSnackBarRef } from "@angular/material/snack-bar";
 import { NEVER, of } from "rxjs";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
-import { Papa, ParseResult } from "ngx-papaparse";
+import { ParseResult } from "ngx-papaparse";
 import { ImportMetaData } from "./import-meta-data.type";
 import { expectEntitiesToBeInDatabase } from "../../utils/expect-entity-data.spec";
 import { Child } from "../../child-dev-project/children/model/child";
