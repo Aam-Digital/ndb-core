@@ -20,7 +20,7 @@
       ></app-display-entity>
     </mat-option>
   </mat-autocomplete>
-  <mat-hint>
+  <mat-hint *ngIf="!autocompleteDisabled">
     <span *ngIf="!selectedEntity">Create new record.</span>
     <span *ngIf="selectedEntity">Edit loaded existing record.</span>
   </mat-hint>
