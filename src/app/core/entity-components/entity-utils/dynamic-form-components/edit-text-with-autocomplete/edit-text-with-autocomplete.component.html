@@ -33,6 +33,7 @@
 </mat-form-field>
 
 <fa-icon
+  *ngIf="!autocompleteDisabled"
   (click)="tooltipElement.show()"
   #tooltipElement="matTooltip"
   icon="cogs"
