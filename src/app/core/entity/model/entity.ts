@@ -139,12 +139,13 @@ export class Entity {
     let indices = [];
 
     // default indices generated from "name" property
-    if (this.hasOwnProperty("name")) {
+    if (typeof this["name"] === "string") {
       indices = this["name"].split(" ");
     }
 
     return indices;
   }
+
   set searchIndices(value) {
     // do nothing, always generated on the fly
     // searchIndices is only saved to database so it can be used internally for database indexing
