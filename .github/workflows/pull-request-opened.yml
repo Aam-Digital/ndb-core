@@ -1,7 +1,7 @@
 name: SetUp
 on:
   pull_request:
-    types: [opened, reopened]
+    types: [ opened, reopened ]
 
 jobs:
   create-heroku-app:
@@ -9,7 +9,7 @@ jobs:
     env:
       APP_NAME: "app-name"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Create app name
         run: echo "APP_NAME=test-deployment-pr-${{ github.event.number }}" >> $GITHUB_ENV
       - name: Create app

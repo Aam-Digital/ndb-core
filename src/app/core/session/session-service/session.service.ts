@@ -18,8 +18,8 @@
 import { LoginState } from "../session-states/login-state.enum";
 import { Database } from "../../database/database";
 import { SyncState } from "../session-states/sync-state.enum";
-import { DatabaseUser } from "./local-user";
 import { BehaviorSubject } from "rxjs";
+import { AuthUser } from "./auth-user";
 
 /**
  * A session manages user authentication and database connection for the app.
@@ -52,7 +52,7 @@ export abstract class SessionService {
    * i.e. set the current user and change the login state
    * @param userObject the user that is successfully loged in
    */
-  abstract handleSuccessfulLogin(userObject: DatabaseUser): Promise<void>;
+  abstract handleSuccessfulLogin(userObject: AuthUser): Promise<void>;
 
   /**
    * Logout the current user.
@@ -62,7 +62,7 @@ export abstract class SessionService {
   /**
    * Get the current user according to the CouchDB format
    */
-  abstract getCurrentUser(): DatabaseUser;
+  abstract getCurrentUser(): AuthUser;
 
   /**
    * Check a password if its valid

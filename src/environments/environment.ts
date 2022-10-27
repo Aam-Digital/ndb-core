@@ -35,5 +35,5 @@ export const environment = {
   demo_mode: true,
   session_type: SessionType.mock,
   authenticator: AuthProvider.CouchDB,
-  account_url: "https://dev-accounts.aam-digital.com",
+  account_url: "https://accounts.aam-digital.net",
 };
