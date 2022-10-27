@@ -31,6 +31,7 @@ import { ConfirmationDialogService } from "app/core/confirmation-dialog/confirma
 @DynamicComponent("EditTextWithAutocomplete")
 @Component({
   selector: "app-edit-text-with-autocomplete",
+  styleUrls: ["./edit-text-with-autocomplete.component.scss"],
   templateUrl: "./edit-text-with-autocomplete.component.html",
 })
 export class EditTextWithAutocompleteComponent extends EditComponent<string> {

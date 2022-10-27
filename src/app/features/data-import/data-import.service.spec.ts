@@ -5,7 +5,7 @@ import { ConfirmationDialogService } from "../../core/confirmation-dialog/confir
 import { MatSnackBar, MatSnackBarRef } from "@angular/material/snack-bar";
 import { NEVER, of } from "rxjs";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
-import { Papa, ParseResult } from "ngx-papaparse";
+import { ParseResult } from "ngx-papaparse";
 import { ImportMetaData } from "./import-meta-data.type";
 import { expectEntitiesToBeInDatabase } from "../../utils/expect-entity-data.spec";
 import { Child } from "../../child-dev-project/children/model/child";
@@ -23,41 +23,39 @@ describe("DataImportService", () => {
   const date1 = moment().subtract("10", "years");
   const date2 = moment().subtract("12", "years");
 
-  beforeEach(
-    waitForAsync(() => {
-      mockParseResult =  {
-        meta: { fields: ["ID", "Name", "Birthday", "Age"] },
-        data: [
-          {
-            ID: 1,
-            Name: "First",
-            Birthday: date1.format("YYYY-MM-DD"),
-            notExistingProperty: "some value",
-          },
-          {
-            ID: 2,
-            Name: "Second",
-            Birthday: date2.format("YYYY-MM-DD"),
-            notExistingProperty: "another value",
-          },
-        ],
-      } as ParseResult;
+  beforeEach(waitForAsync(() => {
+    mockParseResult = {
+      meta: { fields: ["ID", "Name", "Birthday", "Age"] },
+      data: [
+        {
+          ID: 1,
+          Name: "First",
+          Birthday: date1.format("YYYY-MM-DD"),
+          notExistingProperty: "some value",
+        },
+        {
+          ID: 2,
+          Name: "Second",
+          Birthday: date2.format("YYYY-MM-DD"),
+          notExistingProperty: "another value",
+        },
+      ],
+    } as ParseResult;
 
-      mockConfirmationService = jasmine.createSpyObj(["getConfirmation"]);
-      mockConfirmationService.getConfirmation.and.resolveTo(true);
-      TestBed.configureTestingModule({
-        imports: [DataImportModule, DatabaseTestingModule, ChildrenModule],
-        providers: [
-          {
-            provide: ConfirmationDialogService,
-            useValue: mockConfirmationService,
-          },
-        ],
-      });
-      service = TestBed.inject(DataImportService);
-      db = TestBed.inject(Database);
-    })
-  );
+    mockConfirmationService = jasmine.createSpyObj(["getConfirmation"]);
+    mockConfirmationService.getConfirmation.and.resolveTo(true);
+    TestBed.configureTestingModule({
+      imports: [DataImportModule, DatabaseTestingModule, ChildrenModule],
+      providers: [
+        {
+          provide: ConfirmationDialogService,
+          useValue: mockConfirmationService,
+        },
+      ],
+    });
+    service = TestBed.inject(DataImportService);
+    db = TestBed.inject(Database);
+  }));
 
   afterEach(() => db.destroy());
 
@@ -76,8 +74,8 @@ describe("DataImportService", () => {
       data: [
         {
           _id: "Child:1",
-          name: "First"
-        }
+          name: "First",
+        },
       ],
     } as ParseResult;
     const importMeta: ImportMetaData = {
@@ -88,7 +86,7 @@ describe("DataImportService", () => {
       },
     };
 
-    await service.handleCsvImport(parsedData, importMeta);
+    await service.handleCsvImport(parsedData.data, importMeta);
 
     await expectAsync(db.get(doc1._id)).toBeResolved();
     await expectAsync(db.get(doc2._id)).toBeResolved();
@@ -108,7 +106,7 @@ describe("DataImportService", () => {
       columnMap: columnMap,
     };
 
-    await service.handleCsvImport(csvData, importMeta);
+    await service.handleCsvImport(csvData.data, importMeta);
 
     const entityMapper = TestBed.inject(EntityMapperService);
     const firstChild = await entityMapper.load(Child, "1");
@@ -139,7 +137,7 @@ describe("DataImportService", () => {
     await db.put({ _id: `Child:${transactionID}-123` });
     await db.put({ _id: `Child:${transactionID}-124` });
 
-    await service.handleCsvImport(csvData, importMeta);
+    await service.handleCsvImport(csvData.data, importMeta);
 
     await expectEntitiesToBeInDatabase(
       [Child.create("test1"), Child.create("test2")],
@@ -168,7 +166,7 @@ describe("DataImportService", () => {
       dateFormat: "D/M/YYYY",
     };
 
-    await service.handleCsvImport(csvData, importMeta);
+    await service.handleCsvImport(csvData.data, importMeta);
 
     const entityMapper = TestBed.inject(EntityMapperService);
     const test1 = await entityMapper.load(Child, "test1");
@@ -188,7 +186,7 @@ describe("DataImportService", () => {
       columnMap: { name: "name", projectNumber: "projectNumber" },
     };
 
-    await service.handleCsvImport(csvData, importMeta);
+    await service.handleCsvImport(csvData.data, importMeta);
 
     expect(db.put).toHaveBeenCalledWith(
       jasmine.objectContaining({
@@ -197,7 +195,6 @@ describe("DataImportService", () => {
       jasmine.anything()
     );
   });
-
 
   function mockSnackbar(clicked: boolean): jasmine.SpyObj<MatSnackBarRef<any>> {
     const mockSnackBarRef = jasmine.createSpyObj<MatSnackBarRef<any>>(

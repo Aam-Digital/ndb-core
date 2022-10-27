@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { readFile } from "../../../utils/utils";
-import { Papa, ParseResult } from "ngx-papaparse";
+import { Papa } from "ngx-papaparse";
 import { FormControl } from "@angular/forms";
 
 /**
@@ -11,15 +11,14 @@ import { FormControl } from "@angular/forms";
 @Component({
   selector: "app-input-file",
   templateUrl: "./input-file.component.html",
-  styleUrls: ["./input-file.component.scss"],
 })
-export class InputFileComponent {
-  /** returns parsed data on completing load after user selects a file */
-  @Output() fileLoad = new EventEmitter<ParsedData>();
+export class InputFileComponent<T = any> {
+  /** returns parsed data as an object on completing load after user selects a file */
+  @Output() fileLoad = new EventEmitter<ParsedData<T>>();
 
   @Input() fileType: "csv" | "json";
 
-  parsedData: ParsedData;
+  parsedData: ParsedData<T>;
   formControl = new FormControl();
 
   constructor(private papa: Papa) {}
@@ -27,61 +26,69 @@ export class InputFileComponent {
   async loadFile($event: Event): Promise<void> {
     this.formControl.reset();
 
-    const file = this.getFileFromInputEvent($event);
-    this.formControl.setValue(file.name);
+    try {
+      const file = this.getFileFromInputEvent($event, this.fileType);
+      this.formControl.setValue(file.name);
 
-    const fileErrors = this.detectFileValidationErrors(file);
-    if (fileErrors) {
-      this.formControl.setErrors(fileErrors);
+      const fileContent = await readFile(file);
+      this.parsedData = this.parseContent(fileContent);
+
+      this.fileLoad.emit(this.parsedData);
+    } catch (errors) {
+      this.formControl.setErrors(errors);
       this.formControl.markAsTouched();
-      return;
+    }
+  }
+
+  private getFileFromInputEvent(
+    inputEvent: Event,
+    allowedFileType?: string
+  ): File {
+    const target = inputEvent.target as HTMLInputElement;
+    const file = target.files[0];
+
+    if (
+      allowedFileType &&
+      !file.name.toLowerCase().endsWith("." + allowedFileType)
+    ) {
+      throw { fileInvalid: `Only ${this.fileType} files are supported` };
     }
 
-    const fileContent = await readFile(file);
-    this.parsedData = this.parseContent(fileContent);
-
-    const parseErrors = this.detectParsingErrors(this.parsedData);
-    if (parseErrors) {
-      this.formControl.setErrors(parseErrors);
-      this.formControl.markAsTouched();
-      return;
-    }
-
-    this.fileLoad.emit(this.parsedData);
+    return file;
   }
 
   private parseContent(fileContent: string) {
+    let result;
+
     if (this.fileType === "csv") {
-      return this.papa.parse(fileContent, {
+      const papaParsed = this.papa.parse(fileContent, {
         header: true,
         dynamicTyping: true,
         skipEmptyLines: true,
       });
+      result = { data: papaParsed.data, fields: papaParsed.meta.fields };
+    } else if (this.fileType === "json") {
+      result = { data: JSON.parse(fileContent) };
     }
-    if (this.fileType === "json") {
-      return JSON.parse(fileContent);
-    }
-  }
 
-  private detectFileValidationErrors(file: File): Object | void {
-    if (!file.name.toLowerCase().endsWith("." + this.fileType)) {
-      return { fileInvalid: `Only ${this.fileType} files are supported` };
+    if (result === undefined) {
+      throw { parsingError: "File could not be parsed" };
     }
-  }
+    if (result.data.length === 0) {
+      throw { parsingError: "File has no content" };
+    }
 
-  private detectParsingErrors(parsedData: ParseResult): Object | void {
-    if (parsedData === undefined || parsedData.data === undefined) {
-      return { parsingError: "File could not be parsed" };
-    }
-    if (parsedData.data.length === 0) {
-      return { parsingError: "File has no content" };
-    }
-  }
-
-  private getFileFromInputEvent(inputEvent: Event): File {
-    const target = inputEvent.target as HTMLInputElement;
-    return target.files[0];
+    return result;
   }
 }
 
-export type ParsedData = ParseResult;
+/**
+ * Results and (optional) meta data about data parsed from a file.
+ */
+export interface ParsedData<T = any[]> {
+  /** object or array of objects parsed from a file */
+  data: T;
+
+  /** meta information listing the fields contained in data objects */
+  fields?: string[];
+}

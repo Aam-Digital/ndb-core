@@ -15,6 +15,7 @@ import {
   EntityRegistry,
 } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
+import { ParsedData } from "../input-file/input-file.component";
 
 describe("DataImportComponent", () => {
   let component: DataImportComponent;
@@ -63,9 +64,9 @@ describe("DataImportComponent", () => {
 
   it("should update EntityType and transactionId form if import includes _id field", async () => {
     const parsed = {
-      meta: { fields: ["_id", "name"] },
+      fields: ["_id", "name"],
       data: [{ _id: "Child:1", name: "Test Child" }],
-    } as ParseResult;
+    } as ParsedData;
     await component.loadData(parsed);
 
     const columns = Object.keys(component.columnMappingForm.getRawValue());
@@ -144,7 +145,9 @@ describe("DataImportComponent", () => {
       nonDatabaseString: string;
     }
 
-    await component.loadConfig({ data: { entityType: "Testing" } } as ParseResult);
+    await component.loadConfig({
+      data: { entityType: "Testing" },
+    } as ParseResult);
 
     expect(component.entityForm.get("entity")).toHaveValue("Testing");
 
@@ -163,11 +166,17 @@ describe("DataImportComponent", () => {
       @DatabaseField() testOther: string;
     }
     const parsed = {
-      meta: { fields: ["_id", "unknownColumn", "testProperty"] },
-      data: [{ _id: "TestInferredMapping:1", unknownColumn: "foo", testProperty: "x" }],
-    } as ParseResult;
+      fields: ["_id", "unknownColumn", "testProperty"],
+      data: [
+        {
+          _id: "TestInferredMapping:1",
+          unknownColumn: "foo",
+          testProperty: "x",
+        },
+      ],
+    } as ParsedData;
 
-    await component.loadData(parsed)
+    await component.loadData(parsed);
 
     const actualColumnMap = component.columnMappingForm.getRawValue();
     expect(actualColumnMap.testProperty).toBe("testProperty");
@@ -180,10 +189,8 @@ describe("DataImportComponent", () => {
    */
   function mockCsvFileLoaded(mockCsvFields = []) {
     component.importData = {
-      data: undefined, errors: [], meta: {
-        fields: mockCsvFields, delimiter: ',', linebreak: '\n', aborted: false,
-        truncated: false,
-      },
+      data: undefined,
+      fields: mockCsvFields,
     };
   }
 });

@@ -11,6 +11,7 @@
     [formControl]="formControl"
     i18n-placeholder="placeholder for file-input"
     placeholder="No file selected"
+    (click)="fileInput.click()"
   />
   <button mat-icon-button matSuffix (click)="fileInput.click()">
     <fa-icon icon="upload"></fa-icon>

@@ -81,7 +81,8 @@ export class KeycloakAuthService extends AuthService {
         )
         .pipe(
           catchError((err) => {
-            if (err.error.error_description === "Account disabled") {
+            // treat all invalid grants as unauthorized
+            if (err.error.error === "invalid_grant") {
               const status = HttpStatusCode.Unauthorized;
               throw new HttpErrorResponse({ status });
             } else {
@@ -116,12 +117,14 @@ export class KeycloakAuthService extends AuthService {
   }
 
   addAuthHeader(headers: any) {
-    if (headers.set && typeof headers.set === "function") {
-      // PouchDB headers are set as a map
-      headers.set("Authorization", "Bearer " + this.accessToken);
-    } else {
-      // Interceptor headers are set as a simple object
-      headers["Authorization"] = "Bearer " + this.accessToken;
+    if (this.accessToken) {
+      if (headers.set && typeof headers.set === "function") {
+        // PouchDB headers are set as a map
+        headers.set("Authorization", "Bearer " + this.accessToken);
+      } else {
+        // Interceptor headers are set as a simple object
+        headers["Authorization"] = "Bearer " + this.accessToken;
+      }
     }
   }
 

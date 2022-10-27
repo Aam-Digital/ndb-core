@@ -15,6 +15,7 @@ import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 import { EntityUtilsModule } from "../../entity-utils.module";
 import { EditTextWithAutocompleteComponent } from "./edit-text-with-autocomplete.component";
 import { By } from "@angular/platform-browser";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("EditTextWithAutocompleteComponent", () => {
   let component: EditTextWithAutocompleteComponent;
@@ -24,7 +25,7 @@ describe("EditTextWithAutocompleteComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [EditTextWithAutocompleteComponent],
-      imports: [EntityUtilsModule, MockedTestingModule.withState()],
+      imports: [EntityUtilsModule, MockedTestingModule.withState(), FontAwesomeTestingModule],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EditTextWithAutocompleteComponent);

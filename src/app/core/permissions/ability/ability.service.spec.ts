@@ -212,8 +212,9 @@ describe("AbilityService", () => {
     const userEntity = new User();
     userEntity.name = user.name;
     expect(ability.can("manage", userEntity)).toBeTrue();
-    userEntity.name = "another user";
-    expect(ability.cannot("manage", userEntity)).toBeTrue();
+    const anotherUser = new User();
+    anotherUser.name = "another user";
+    expect(ability.cannot("manage", anotherUser)).toBeTrue();
   });
 
   it("should allow to check conditions with complex data types", fakeAsync(() => {
