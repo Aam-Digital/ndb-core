@@ -65,12 +65,18 @@ body {
   grid-template-rows: auto 1fr;
   height: 100vh;
 
-  /* mobile viewport bug fix. */
-  // The viewport height on iOs is not necessarily the visible screen size.
-  // There might be a bar on the top of the screen. The following line
-  // fixes this, but since this is no official css feature, this line should
-  // be replaced as soon as a nicer solution exists.
-  height: -webkit-fill-available;
+  // This only targets iOs devices. Note that (just like the line below), this is
+  // a hacky solution. While it is practically guaranteed that only iOs will have this
+  // property, it is not guaranteed that iOs will keep this property for ever.
+  @supports (-webkit-touch-callout: none) {
+    /* mobile viewport bug fix. */
+    // The viewport height on iOs is not necessarily the visible screen size.
+    // There might be a bar on the top of the screen. The following line
+    // fixes this, but since this is no official css feature, this line should
+    // be replaced as soon as a nicer solution exists.
+
+    height: -webkit-fill-available;
+  }
 }
 
 /**  Main content  **/
