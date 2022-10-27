@@ -115,37 +115,16 @@ export class FilterGeneratorService {
     filterConfig: DateRangeFilterConfig
   ): FilterSelectionOption<T>[] {
     if (filterConfig.startingDayOfWeek) {
-      let configStartingDayOfWeek;
-      switch (filterConfig.startingDayOfWeek.toLowerCase()) {
-        case "sunday": {
-          configStartingDayOfWeek = 0;
-          break;
-        }
-        case "monday": {
-          configStartingDayOfWeek = 1;
-          break;
-        }
-        case "tuesday": {
-          configStartingDayOfWeek = 2;
-          break;
-        }
-        case "wednesday": {
-          configStartingDayOfWeek = 3;
-          break;
-        }
-        case "thursday": {
-          configStartingDayOfWeek = 4;
-          break;
-        }
-        case "friday": {
-          configStartingDayOfWeek = 5;
-          break;
-        }
-        case "saturday": {
-          configStartingDayOfWeek = 6;
-          break;
-        }
-      }
+      let configStartingDayOfWeek = {
+        sunday: 0,
+        monday: 1,
+        tuesday: 2,
+        wednesday: 3,
+        thursday: 4,
+        friday: 5,
+        saturday: 6,
+      }[filterConfig.startingDayOfWeek.toLowerCase()];
+      console.log("configStartingDayOfWeek: ", configStartingDayOfWeek);
       moment.updateLocale(moment.locale(), {
         week: {
           dow: configStartingDayOfWeek,
