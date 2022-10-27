@@ -1,16 +1,18 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { DialogCloseComponent } from './dialog-close.component';
+import { DialogCloseComponent } from "./dialog-close.component";
+import { DialogModule } from "@angular/cdk/dialog";
+import { MatButtonModule } from "@angular/material/button";
 
-describe('DialogCloseComponent', () => {
+describe("DialogCloseComponent", () => {
   let component: DialogCloseComponent;
   let fixture: ComponentFixture<DialogCloseComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DialogCloseComponent ]
-    })
-    .compileComponents();
+      declarations: [DialogCloseComponent],
+      imports: [DialogModule, MatButtonModule],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +21,7 @@ describe('DialogCloseComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });
