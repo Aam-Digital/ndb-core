@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ViewChild } from "@angular/core";
+import { ChangeDetectorRef, Component } from "@angular/core";
 import {
   FormBuilder,
   FormControl,
@@ -9,14 +9,13 @@ import {
 import { DataImportService } from "../data-import.service";
 import { ImportColumnMap, ImportMetaData } from "../import-meta-data.type";
 import { AlertService } from "app/core/alerts/alert.service";
-import { MatStepper } from "@angular/material/stepper";
-import { ParseResult } from "ngx-papaparse";
 import { v4 as uuid } from "uuid";
 import { BehaviorSubject } from "rxjs";
 import { DownloadService } from "../../../core/export/download-service/download.service";
-import { readFile } from "../../../utils/utils";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { RouteTarget } from "../../../app.routing";
+import { Entity } from "app/core/entity/model/entity";
+import { ParsedData } from "../input-file/input-file.component";
 
 @RouteTarget("Import")
 @Component({
@@ -25,10 +24,8 @@ import { RouteTarget } from "../../../app.routing";
   styleUrls: ["./data-import.component.scss"],
 })
 export class DataImportComponent {
-  fileNameForm = this.formBuilder.group({
-    fileName: ["", Validators.required],
-  });
-  private csvFile: ParseResult;
+  importData: ParsedData;
+  readyForImport: boolean;
 
   entityForm = this.formBuilder.group({ entity: ["", Validators.required] });
 
@@ -47,8 +44,6 @@ export class DataImportComponent {
   private properties: string[] = [];
   filteredProperties = new BehaviorSubject<string[]>([]);
 
-  @ViewChild(MatStepper) private stepper: MatStepper;
-
   constructor(
     private dataImportService: DataImportService,
     private formBuilder: FormBuilder,
@@ -58,53 +53,58 @@ export class DataImportComponent {
     public entities: EntityRegistry
   ) {}
 
-  // TODO add supported types for file select
-  async setCsvFile(inputEvent: Event): Promise<void> {
-    const file = this.getSelectedFile(inputEvent);
-    try {
-      this.csvFile = await this.loadCSVFile(file);
-      this.fileNameForm.setValue({ fileName: file.name });
-      this.columnMappingForm = new FormRecord<FormControl<string>>({});
-      this.csvFile.meta.fields.forEach((field) =>
-        this.columnMappingForm.addControl(field, new FormControl())
-      );
-      this.entitySelectionChanged();
-    } catch (e) {
-      this.fileNameForm.setErrors({ fileInvalid: e.message });
-    }
-    this.changeDetectorRef.detectChanges();
-  }
+  async loadData(parsedData: ParsedData): Promise<void> {
+    this.importData = parsedData;
 
-  private getSelectedFile(inputEvent: Event) {
-    const target = inputEvent.target as HTMLInputElement;
-    return target.files[0];
-  }
-
-  private async loadCSVFile(file: File) {
     this.entityForm.enable();
     this.transactionIDForm.enable();
-    const csvFile = await this.dataImportService.validateCsvFile(file);
-    if (csvFile.meta.fields.includes("_id") && csvFile.data[0]["_id"]) {
-      const record = csvFile.data[0] as { _id: string };
-      if (record._id.includes(":")) {
-        const type = record["_id"].split(":")[0] as string;
+
+    this.updateConfigFromDataIds();
+
+    this.updateColumnMappingFromData();
+
+    this.entitySelectionChanged();
+  }
+
+  /**
+   * Check if new data contains _id and infer config options.
+   * @private
+   */
+  private updateConfigFromDataIds() {
+    if (
+      this.importData?.fields.includes("_id") &&
+      this.importData?.data[0]["_id"]
+    ) {
+      const record = this.importData.data[0] as { _id: string };
+      if (record._id.toString().includes(":")) {
+        const type = Entity.extractTypeFromId(record["_id"]);
         this.entityForm.patchValue({ entity: type });
         this.entityForm.disable();
       }
       this.transactionIDForm.patchValue({ transactionId: "" });
       this.transactionIDForm.disable();
     }
-    return csvFile;
+  }
+
+  private updateColumnMappingFromData() {
+    this.columnMappingForm = new FormGroup({});
+    this.importData.fields.forEach((field) =>
+      this.columnMappingForm.addControl(field, new FormControl())
+    );
   }
 
   entitySelectionChanged(): void {
     const entityName = this.entityForm.get("entity").value;
+    if (!entityName) {
+      return;
+    }
+
     const propertyKeys = this.entities.get(entityName).schema.keys();
     this.properties = [...propertyKeys];
 
     this.inferColumnPropertyMapping();
 
-    this.stepper.next();
+    this.readyForImport = !!entityName && !!this.importData;
   }
 
   /**
@@ -116,7 +116,7 @@ export class DataImportComponent {
     const columnMap: ImportColumnMap = {};
 
     for (const p of this.properties) {
-      if (this.csvFile.meta.fields.includes(p)) {
+      if (this.importData?.fields.includes(p)) {
         columnMap[p] = p;
       }
     }
@@ -141,9 +141,9 @@ export class DataImportComponent {
   }
 
   importSelectedFile(): Promise<void> {
-    if (this.csvFile) {
+    if (this.importData) {
       return this.dataImportService.handleCsvImport(
-        this.csvFile,
+        this.importData.data,
         this.createImportMetaData()
       );
     }
@@ -158,10 +158,8 @@ export class DataImportComponent {
     };
   }
 
-  async loadConfig(inputEvent: Event) {
-    const file = this.getSelectedFile(inputEvent);
-    const fileContent = await readFile(file);
-    const importMeta = JSON.parse(fileContent) as ImportMetaData;
+  async loadConfig(loadedConfig: ParsedData<ImportMetaData>) {
+    const importMeta = loadedConfig.data;
     this.patchIfPossible(this.entityForm, { entity: importMeta.entityType });
     this.entitySelectionChanged();
     this.patchIfPossible(this.transactionIDForm, {

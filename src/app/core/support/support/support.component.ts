@@ -1,6 +1,5 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import { SessionService } from "../../session/session-service/session.service";
-import { DatabaseUser } from "../../session/session-service/local-user";
 import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SwUpdate } from "@angular/service-worker";
@@ -11,6 +10,7 @@ import { ConfirmationDialogService } from "../../confirmation-dialog/confirmatio
 import { HttpClient } from "@angular/common/http";
 import { SyncedSessionService } from "../../session/session-service/synced-session.service";
 import { environment } from "../../../../environments/environment";
+import { AuthUser } from "../../session/session-service/auth-user";
 import { firstValueFrom } from "rxjs";
 
 @Component({
@@ -19,7 +19,7 @@ import { firstValueFrom } from "rxjs";
   styleUrls: ["./support.component.scss"],
 })
 export class SupportComponent implements OnInit {
-  currentUser: DatabaseUser;
+  currentUser: AuthUser;
   currentSyncState: string;
   lastSync: string;
   lastRemoteLogin: string;

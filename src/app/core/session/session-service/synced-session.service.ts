@@ -26,12 +26,12 @@ import { Database } from "../../database/database";
 import { SyncState } from "../session-states/sync-state.enum";
 import { LoggingService } from "../../logging/logging.service";
 import { HttpClient } from "@angular/common/http";
-import { DatabaseUser } from "./local-user";
 import { waitForChangeTo } from "../session-states/session-utils";
 import { zip } from "rxjs";
 import { filter } from "rxjs/operators";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { AuthService } from "../auth/auth.service";
+import { AuthUser } from "./auth-user";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -81,7 +81,7 @@ export class SyncedSessionService extends SessionService {
       .catch(() => undefined);
   }
 
-  async handleSuccessfulLogin(userObject: DatabaseUser) {
+  async handleSuccessfulLogin(userObject: AuthUser) {
     this.startSyncAfterLocalAndRemoteLogin();
     await this.localSession.handleSuccessfulLogin(userObject);
     // The app is ready to be used once the local session is logged in
@@ -176,11 +176,7 @@ export class SyncedSessionService extends SessionService {
     // Update local user object
     const remoteUser = this.remoteSession.getCurrentUser();
     if (remoteUser) {
-      this.localSession.saveUser(remoteUser, password);
-      if (loginName !== remoteUser.name) {
-        // add if login also worked with other username
-        this.localSession.saveUser(remoteUser, password, loginName);
-      }
+      this.localSession.saveUser(remoteUser, password, loginName);
     }
   }
 
@@ -191,7 +187,7 @@ export class SyncedSessionService extends SessionService {
       .finally(() => this.liveSyncDeferred());
   }
 
-  public getCurrentUser(): DatabaseUser {
+  public getCurrentUser(): AuthUser {
     return this.localSession.getCurrentUser();
   }
 
