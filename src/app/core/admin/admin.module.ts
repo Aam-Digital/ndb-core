@@ -19,6 +19,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { FlexModule } from "@angular/flex-layout";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DataImportModule } from "../../features/data-import/data-import.module";
+import { RouterLink } from "@angular/router";
 
 /**
  * GUI for administrative users to manage and maintain background and technical aspects of the app.
@@ -43,6 +44,7 @@ import { DataImportModule } from "../../features/data-import/data-import.module"
     FlexModule,
     FontAwesomeModule,
     DataImportModule,
+    RouterLink,
   ],
   declarations: [AdminComponent],
   providers: [ChildPhotoUpdateService, BackupService],
