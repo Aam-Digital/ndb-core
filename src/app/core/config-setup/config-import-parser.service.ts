@@ -48,9 +48,9 @@ export class ConfigImportParserService {
         .map((field) => this.parseFieldDefinition(field, entityName)),
     };
 
-    const generatedConfig: GeneratedConfig = {
-      ["entity:" + entityName]: entity,
-    };
+    const generatedConfig: GeneratedConfig = {};
+
+    generatedConfig["entity:" + entityName] = entity;
 
     // add enum configs
     for (const [key, enumConfig] of this.enumsAvailable) {
@@ -276,6 +276,28 @@ export class ConfigImportParserService {
     );
     configs.set("navigationMenu", defaultJsonConfig.navigationMenu);
     configs.set("view:", defaultJsonConfig["view:"]);
+    configs.set(
+      "enum:interaction-type",
+      defaultJsonConfig["enum:interaction-type"]
+    );
+    configs.set(
+      "enum:warning-levels",
+      defaultJsonConfig["enum:warning-levels"]
+    );
+    configs.set("view:note", defaultJsonConfig["view:note"]);
+    configs.set("view:admin", defaultJsonConfig["view:admin"]);
+    configs.set(
+      "view:admin/conflicts",
+      defaultJsonConfig["view:admin/conflicts"]
+    );
+    configs.set(
+      "view:admin/config-import",
+      defaultJsonConfig["view:admin/config-import"]
+    );
+    configs.set("view:import", defaultJsonConfig["view:import"]);
+    configs.set("view:user", defaultJsonConfig["view:user"]);
+    configs.set("view:user/:id", defaultJsonConfig["view:user/:id"]);
+    configs.set("view:help", defaultJsonConfig["view:help"]);
 
     return configs;
   }
