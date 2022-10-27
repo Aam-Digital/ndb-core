@@ -20,11 +20,20 @@ import { testEntitySubclass } from "../entity/model/entity.spec";
 
 describe("User", () => {
   testEntitySubclass("User", User, {
-    _id: "User:some-id",
+    _id: "User:tester",
 
     name: "tester",
     paginatorSettingsPageSize: {},
 
     searchIndices: ["tester"],
+  });
+
+  it("should not allow to change the name after initialization and set it as the ID", () => {
+    const user = new User();
+    user.name = "test-name";
+
+    expect(user.name).toBe("test-name");
+    expect(user.getId()).toBe("test-name");
+    expect(() => (user.name = "another-name")).toThrowError();
   });
 });
