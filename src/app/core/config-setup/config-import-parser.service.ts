@@ -54,7 +54,7 @@ export class ConfigImportParserService {
 
     // add enum configs
     for (const [key, enumConfig] of this.enumsAvailable) {
-      generatedConfig["enum:" + key.toLowerCase()] = enumConfig;
+      generatedConfig["enum:" + key] = enumConfig;
     }
 
     // add generated list and details view configs
