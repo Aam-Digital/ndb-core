@@ -2,6 +2,7 @@ import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init
 import { AbstractControl, FormControl, FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
+import { Entity } from "../../../entity/model/entity";
 
 /**
  * The interface for the configuration which is created by the form- or the entity-subrecord-component.
@@ -21,6 +22,8 @@ export interface EditPropertyConfig<T> {
    * The form control for this field which is part of a form group of the table/form component.
    */
   formControl: AbstractControl<T>;
+
+  entity: Entity;
 }
 
 /**
@@ -53,6 +56,8 @@ export abstract class EditComponent<T> implements OnInitDynamicComponent {
    */
   parent: FormGroup;
 
+  entity: Entity;
+
   onInitFromDynamicConfig(config: EditPropertyConfig<T>) {
     if (!config.formFieldConfig.forTable) {
       this.label = config.formFieldConfig.label || config.propertySchema?.label;
@@ -62,5 +67,6 @@ export abstract class EditComponent<T> implements OnInitDynamicComponent {
     // This type casts are needed as the normal types throw errors in the templates
     this.formControl = config.formControl as FormControl<T>;
     this.parent = this.formControl.parent as FormGroup;
+    this.entity = config.entity;
   }
 }

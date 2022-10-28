@@ -18,7 +18,7 @@ export class FileService {
   ): Observable<any> {
     const attachmentId = `${this.attachmentsUrl}/${entityId}`;
     return this.http.get<{ _id: string; _rev: string }>(attachmentId).pipe(
-      catchError((err) =>
+      catchError(() =>
         this.http
           .put<{ rev: string }>(attachmentId, {})
           .pipe(map((res) => ({ _rev: res.rev })))

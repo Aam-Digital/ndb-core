@@ -1,2 +1,12 @@
-<input type="file" class="file-upload" (change)="onFileSelected($event)">
-<button type="button" (click)="fileClicked()">Show file</button>
+<input type="file" style="display: none" (change)="onFileSelected($event)" #fileUpload>
+
+<div class="file-upload">
+
+  <button *ngIf="entity[formControlName]" mat-button type="button"
+          (click)="fileClicked()">{{ entity[formControlName] }}</button>
+  <span *ngIf="!entity[formControlName]">{{ "No file uploaded yet. " }}</span>
+
+  <button mat-mini-fab type="button" color="primary" (click)="fileUpload.click()">
+    <fa-icon icon="paperclip"></fa-icon>
+  </button>
+</div>

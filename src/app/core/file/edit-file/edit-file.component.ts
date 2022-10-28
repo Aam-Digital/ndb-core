@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { EditComponent } from "../../entity-components/entity-utils/dynamic-form-components/edit-component";
 import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
 import { FileService } from "../file.service";
-import { ActivatedRoute } from "@angular/router";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
 
 @DynamicComponent("edit-file")
 @Component({
@@ -11,11 +11,11 @@ import { ActivatedRoute } from "@angular/router";
   styleUrls: ["./edit-file.component.scss"],
 })
 export class EditFileComponent extends EditComponent<string> {
-  id: string;
-
-  constructor(private fileService: FileService, private route: ActivatedRoute) {
+  constructor(
+    private fileService: FileService,
+    private entityMapper: EntityMapperService
+  ) {
     super();
-    this.id = this.route.snapshot.params.id;
   }
 
   onFileSelected(event) {
@@ -26,14 +26,19 @@ export class EditFileComponent extends EditComponent<string> {
     const file: File = event.target.files[0];
     this.formControl.setValue(file.name);
     this.fileService
-      .uploadFile(file, `Child:${this.id}`, this.formControlName)
+      .uploadFile(file, this.entity._id, this.formControlName)
       .subscribe({
-        next: (res) => console.log("res", res),
+        next: () => {
+          this.entity[this.formControlName] = file.name;
+          this.entityMapper
+            .save(this.entity)
+            .then(() => console.log("entity", this.entity));
+        },
         error: (err) => console.log("err", err),
       });
   }
 
   fileClicked() {
-    this.fileService.showFile(`Child:${this.id}`, this.formControlName);
+    this.fileService.showFile(this.entity._id, this.formControlName);
   }
 }
