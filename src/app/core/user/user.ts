@@ -35,7 +35,7 @@ export class User extends Entity {
     validators: { required: true },
   })
   set name(value: string) {
-    if (this._name) {
+    if (this._name && value !== this._name) {
       // Throwing error if trying to change existing username
       const label = User.schema.get("name").label;
       throw new Error(
