@@ -3,6 +3,7 @@ import { EditComponent } from "../../entity-components/entity-utils/dynamic-form
 import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
 import { FileService } from "../file.service";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { HttpEventType } from "@angular/common/http";
 
 @DynamicComponent("edit-file")
 @Component({
@@ -11,6 +12,8 @@ import { EntityMapperService } from "../../entity/entity-mapper.service";
   styleUrls: ["./edit-file.component.scss"],
 })
 export class EditFileComponent extends EditComponent<string> {
+  uploadProgress: number;
+
   constructor(
     private fileService: FileService,
     private entityMapper: EntityMapperService
@@ -28,13 +31,20 @@ export class EditFileComponent extends EditComponent<string> {
     this.fileService
       .uploadFile(file, this.entity._id, this.formControlName)
       .subscribe({
-        next: () => {
+        next: (event) => {
+          if (event.type == HttpEventType.UploadProgress) {
+            this.uploadProgress = Math.round(
+              100 * (event.loaded / event.total)
+            );
+          }
+        },
+        error: (err) => console.log("err", err),
+        complete: () => {
           this.entity[this.formControlName] = file.name;
           this.entityMapper
             .save(this.entity)
             .then(() => console.log("entity", this.entity));
         },
-        error: (err) => console.log("err", err),
       });
   }
 

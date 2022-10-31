@@ -7,6 +7,12 @@
   <span *ngIf="!entity[formControlName]">{{ "No file uploaded yet. " }}</span>
 
   <button mat-mini-fab type="button" color="primary" (click)="fileUpload.click()">
-    <fa-icon icon="paperclip"></fa-icon>
+    <fa-icon icon="paperclip" style="color: white"></fa-icon>
   </button>
+  
+  <mat-progress-spinner *ngIf="uploadProgress && uploadProgress !== 100" diameter="40"
+                        class="progress-bar" mode="determinate"
+                        [value]="uploadProgress">
+  </mat-progress-spinner>
+  <fa-icon *ngIf="uploadProgress === 100" icon="circle-check" size="2xl" class="icon"></fa-icon>
 </div>
