@@ -9,10 +9,10 @@
   <button mat-mini-fab type="button" color="primary" (click)="fileUpload.click()">
     <fa-icon icon="paperclip" style="color: white"></fa-icon>
   </button>
-  
-  <mat-progress-spinner *ngIf="uploadProgress && uploadProgress !== 100" diameter="40"
-                        class="progress-bar" mode="determinate"
+
+  <mat-progress-spinner *ngIf="uploadProgress && !done" diameter="40"
+                        class="progress-bar" [mode]="mode"
                         [value]="uploadProgress">
   </mat-progress-spinner>
-  <fa-icon *ngIf="uploadProgress === 100" icon="circle-check" size="2xl" class="icon"></fa-icon>
+  <fa-icon *ngIf="done" icon="circle-check" size="2xl" class="icon"></fa-icon>
 </div>

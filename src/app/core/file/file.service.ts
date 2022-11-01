@@ -6,7 +6,7 @@ import {
   HttpResponse,
 } from "@angular/common/http";
 import { AppSettings } from "../app-config/app-settings";
-import { catchError, concatMap, filter, map, tap } from "rxjs/operators";
+import { catchError, concatMap, filter, map } from "rxjs/operators";
 import { Observable } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
 import { DownloadProgressComponent } from "./download-progress/download-progress.component";
@@ -14,8 +14,6 @@ import { DownloadProgressComponent } from "./download-progress/download-progress
 @Injectable()
 export class FileService {
   private attachmentsUrl = `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}-attachments`;
-
-  private downloadProgress: Observable<number>;
 
   constructor(private http: HttpClient, private dialog: MatDialog) {}
 
@@ -55,12 +53,12 @@ export class FileService {
         observe: "events",
       }
     );
-    this.downloadProgress = obs.pipe(
+    const progress = obs.pipe(
       filter((e) => e.type === HttpEventType.DownloadProgress),
       map((e: HttpProgressEvent) => Math.round(100 * (e.loaded / e.total)))
     );
     const ref = this.dialog.open(DownloadProgressComponent, {
-      data: { progress: this.downloadProgress },
+      data: { progress },
     });
     obs
       .pipe(filter((e) => e.type === HttpEventType.Response))
