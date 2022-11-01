@@ -8,6 +8,9 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { DownloadProgressComponent } from "./download-progress/download-progress.component";
+import { MatInputModule } from "@angular/material/input";
+import { ReactiveFormsModule } from "@angular/forms";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @NgModule({
   declarations: [
@@ -21,6 +24,9 @@ import { DownloadProgressComponent } from "./download-progress/download-progress
     FontAwesomeModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    MatTooltipModule,
   ],
   providers: [FileService],
 })

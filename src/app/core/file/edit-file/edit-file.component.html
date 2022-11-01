@@ -2,11 +2,16 @@
 
 <div class="file-upload">
 
-  <button *ngIf="entity[formControlName]" mat-button type="button"
-          (click)="fileClicked()">{{ entity[formControlName] }}</button>
-  <span *ngIf="!entity[formControlName]">{{ "No file uploaded yet. " }}</span>
+  <button
+    mat-button
+    type="button"
+    [disabled]="!formControl.value"
+    (click)="fileClicked()"
+  >
+    {{ label }}: <em>{{ formControl.value }}</em>
+  </button>
 
-  <button mat-mini-fab type="button" color="primary" (click)="fileUpload.click()">
+  <button mat-mini-fab type="button" color="primary" class="upload-button" (click)="fileUpload.click()">
     <fa-icon icon="paperclip" style="color: white"></fa-icon>
   </button>
 

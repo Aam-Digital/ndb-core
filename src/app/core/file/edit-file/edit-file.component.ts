@@ -79,6 +79,8 @@ export class EditFileComponent extends EditComponent<string> {
   }
 
   fileClicked() {
-    this.fileService.showFile(this.entity._id, this.formControlName);
+    if (this.formControl.value) {
+      this.fileService.showFile(this.entity._id, this.formControlName);
+    }
   }
 }
