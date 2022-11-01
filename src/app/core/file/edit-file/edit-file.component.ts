@@ -7,6 +7,7 @@ import { HttpEventType } from "@angular/common/http";
 import { ProgressSpinnerMode } from "@angular/material/progress-spinner";
 import { AlertService } from "../../alerts/alert.service";
 import { LoggingService } from "../../logging/logging.service";
+import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 
 @DynamicComponent("edit-file")
 @Component({
@@ -23,18 +24,29 @@ export class EditFileComponent extends EditComponent<string> {
     private fileService: FileService,
     private entityMapper: EntityMapperService,
     private alertService: AlertService,
-    private logger: LoggingService
+    private logger: LoggingService,
+    private confirmationServer: ConfirmationDialogService
   ) {
     super();
   }
 
-  onFileSelected(event) {
+  async onFileSelected(event) {
+    const file: File = event.target.files[0];
     this.uploadProgress = 0;
     this.mode = "determinate";
     this.done = false;
 
+    if (this.formControl.value) {
+      const shouldReplace = await this.confirmationServer.getConfirmation(
+        $localize`Replacing file`,
+        $localize`Are you sure you want to replace "${this.formControl.value}" with "${file.name}"?`
+      );
+      if (!shouldReplace) {
+        return;
+      }
+    }
+
     // The maximum file size which can be processed by CouchDB before a timeout is around 200mb
-    const file: File = event.target.files[0];
     this.fileService
       .uploadFile(file, this.entity._id, this.formControlName)
       .subscribe({
