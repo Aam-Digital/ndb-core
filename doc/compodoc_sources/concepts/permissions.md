@@ -4,7 +4,7 @@
 
 User roles are used to restrict what components a user can see and what data a user can access and edit.
 These roles are stored in the backend and are available in the frontend after a successful login.
-At the moment there are two places where the roles can be defined.
+At the moment there are two places, depending on your system setup, where the roles can be defined.
 
 ### CouchDB
 
