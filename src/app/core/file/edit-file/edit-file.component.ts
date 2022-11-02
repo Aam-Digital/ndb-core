@@ -25,7 +25,7 @@ export class EditFileComponent extends EditComponent<string> {
     private entityMapper: EntityMapperService,
     private alertService: AlertService,
     private logger: LoggingService,
-    private confirmationServer: ConfirmationDialogService
+    private confirmationDialog: ConfirmationDialogService
   ) {
     super();
   }
