@@ -34,7 +34,23 @@ export class User extends Entity {
     label: $localize`:Label of username:Username`,
     validators: { required: true },
   })
-  name: string;
+  set name(value: string) {
+    if (this._name && value !== this._name) {
+      // Throwing error if trying to change existing username
+      const label = User.schema.get("name").label;
+      throw new Error(
+        $localize`:Error message when trying to change the username|e.g. username cannot be changed after initialization:${label} cannot be changed after initialization`
+      );
+    }
+    this.entityId = value;
+    this._name = value;
+  }
+
+  get name(): string {
+    return this._name;
+  }
+
+  private _name: string;
 
   /**
    * settings for the mat-paginator for tables.

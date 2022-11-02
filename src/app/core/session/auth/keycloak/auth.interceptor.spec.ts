@@ -1,7 +1,8 @@
 import { TestBed } from "@angular/core/testing";
 
-import { AuthInterceptor } from "./auth-interceptor.service";
+import { AUTH_ENABLED, AuthInterceptor } from "./auth-interceptor.service";
 import { AuthService } from "../auth.service";
+import { HttpContext } from "@angular/common/http";
 
 describe("AuthInterceptor", () => {
   let mockAuthService: jasmine.SpyObj<AuthService>;
@@ -22,7 +23,10 @@ describe("AuthInterceptor", () => {
   });
 
   it("should add an auth header to a request", () => {
-    const request = { clone: jasmine.createSpy() };
+    const request = {
+      clone: jasmine.createSpy(),
+      context: new HttpContext().set(AUTH_ENABLED, true),
+    };
     mockAuthService.addAuthHeader.and.callFake(
       (obj) => (obj["Authorization"] = "my-auth-header")
     );
