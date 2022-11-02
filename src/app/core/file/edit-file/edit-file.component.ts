@@ -9,7 +9,7 @@ import { AlertService } from "../../alerts/alert.service";
 import { LoggingService } from "../../logging/logging.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 
-@DynamicComponent("edit-file")
+@DynamicComponent("EditFile")
 @Component({
   selector: "app-edit-file",
   templateUrl: "./edit-file.component.html",
