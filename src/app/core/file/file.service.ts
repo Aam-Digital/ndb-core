@@ -35,7 +35,7 @@ export class FileService {
           `${attachmentId}/${property}?rev=${res._rev}`,
           blob,
           {
-            headers: { "Content-Type": file.type },
+            headers: { "Content-Type": file.type, "ngsw-bypass": "" },
             reportProgress: true,
             observe: "events",
           }
@@ -51,6 +51,7 @@ export class FileService {
         responseType: "blob",
         reportProgress: true,
         observe: "events",
+        headers: { "ngsw-bypass": "" },
       }
     );
     const progress = obs.pipe(
