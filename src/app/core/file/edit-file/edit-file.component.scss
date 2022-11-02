@@ -4,10 +4,17 @@
   margin-left: 5px
 }
 
-.icon {
+.done-icon {
   margin-left: 11px;
   color: orange;
 }
+
+.clickable {
+  color: orange;
+  cursor: pointer;
+  padding: 5px;
+}
+
 
 .upload-button {
   margin-bottom: 4px;

@@ -6,7 +6,7 @@ import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
  */
 export const fileEntitySchemaDatatype: EntitySchemaDatatype = {
   name: "file",
-  editComponent: "edit-file",
+  editComponent: "EditFile",
 
   transformToDatabaseFormat: (value: any) => value,
 

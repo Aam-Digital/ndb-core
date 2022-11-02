@@ -11,6 +11,7 @@ import { DownloadProgressComponent } from "./download-progress/download-progress
 import { MatInputModule } from "@angular/material/input";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatRippleModule } from "@angular/material/core";
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatInputModule,
     ReactiveFormsModule,
     MatTooltipModule,
+    MatRippleModule,
   ],
   providers: [FileService],
 })

@@ -23,16 +23,11 @@ export class FileService {
     property: string,
     blob = new Blob([file])
   ): Observable<any> {
-    const attachmentId = `${this.attachmentsUrl}/${entityId}`;
-    return this.http.get<{ _id: string; _rev: string }>(attachmentId).pipe(
-      catchError(() =>
-        this.http
-          .put<{ rev: string }>(attachmentId, {})
-          .pipe(map((res) => ({ _rev: res.rev })))
-      ),
-      concatMap((res) =>
+    const attachmentPath = `${this.attachmentsUrl}/${entityId}`;
+    return this.getAttachmentsDocument(attachmentPath).pipe(
+      concatMap(({ _rev }) =>
         this.http.put<{ ok: true }>(
-          `${attachmentId}/${property}?rev=${res._rev}`,
+          `${attachmentPath}/${property}?rev=${_rev}`,
           blob,
           {
             headers: { "Content-Type": file.type, "ngsw-bypass": "" },
@@ -40,6 +35,27 @@ export class FileService {
             observe: "events",
           }
         )
+      )
+    );
+  }
+
+  private getAttachmentsDocument(attachmentPath: string) {
+    return this.http
+      .get<{ _id: string; _rev: string }>(attachmentPath)
+      .pipe(
+        catchError(() =>
+          this.http
+            .put<{ rev: string }>(attachmentPath, {})
+            .pipe(map((res) => ({ _rev: res.rev })))
+        )
+      );
+  }
+
+  removeFile(entityId: string, property: string) {
+    const attachmentPath = `${this.attachmentsUrl}/${entityId}`;
+    return this.getAttachmentsDocument(attachmentPath).pipe(
+      concatMap(({ _rev }) =>
+        this.http.delete(`${attachmentPath}/${property}?rev=${_rev}`)
       )
     );
   }

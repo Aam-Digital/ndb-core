@@ -16,7 +16,7 @@ import { ConfirmationDialogService } from "../../confirmation-dialog/confirmatio
   styleUrls: ["./edit-file.component.scss"],
 })
 export class EditFileComponent extends EditComponent<string> {
-  uploadProgress: number;
+  uploadProgress = 0;
   mode: ProgressSpinnerMode = "determinate";
   done = false;
 
@@ -37,7 +37,7 @@ export class EditFileComponent extends EditComponent<string> {
     this.done = false;
 
     if (this.formControl.value) {
-      const shouldReplace = await this.confirmationServer.getConfirmation(
+      const shouldReplace = await this.confirmationDialog.getConfirmation(
         $localize`Replacing file`,
         $localize`Are you sure you want to replace "${this.formControl.value}" with "${file.name}"?`
       );
@@ -52,7 +52,11 @@ export class EditFileComponent extends EditComponent<string> {
       .subscribe({
         next: (event) => this.processEvent(event),
         error: (err) => this.handleError(err),
-        complete: () => this.updateEntity(file.name),
+        complete: async () => {
+          await this.updateEntity(file.name);
+          this.done = true;
+          this.uploadProgress = 0;
+        },
       });
   }
 
@@ -66,7 +70,6 @@ export class EditFileComponent extends EditComponent<string> {
     this.formControl.setValue(filename);
     this.entity[this.formControlName] = filename;
     await this.entityMapper.save(this.entity);
-    this.done = true;
   }
 
   private processEvent(event) {
@@ -82,5 +85,17 @@ export class EditFileComponent extends EditComponent<string> {
     if (this.formControl.value) {
       this.fileService.showFile(this.entity._id, this.formControlName);
     }
+  }
+
+  delete() {
+    this.done = false;
+    this.fileService
+      .removeFile(this.entity._id, this.formControlName)
+      .subscribe({
+        next: async () => {
+          await this.updateEntity(undefined);
+          this.alertService.addInfo($localize`:Message for user:File deleted`);
+        },
+      });
   }
 }
