@@ -228,12 +228,30 @@ export class ConfigImportParserService {
         ?.config as EntityDetailsConfig) ??
       this.generateEmptyDetailsView(entityType + "/:id", entityType);
 
-    if (fieldDef.show_in_details) {
+    for (const detailsTab of fieldDef.show_in_details.split(",")) {
+      const [tabName, fieldGroupName] = detailsTab.split(":");
       const panel: PanelComponent = this.generateOrFindDetailsPanel(
         detailsView,
-        fieldDef.show_in_details.trim()
+        tabName.trim()
       );
-      panel.config.cols[0].push(fieldId);
+
+      let fieldGroupIndex = 0;
+      if (fieldGroupName) {
+        if (!panel.config.headers) {
+          panel.config.headers = [null]; // initialize headers with a default for fields without header
+        }
+
+        fieldGroupIndex = panel.config.headers.findIndex(
+          (header) => header === fieldGroupName
+        );
+        if (fieldGroupIndex === -1) {
+          panel.config.headers.push(fieldGroupName);
+          fieldGroupIndex = panel.config.headers.length - 1;
+        }
+      }
+
+      extendArray(panel.config.cols, fieldGroupIndex + 1);
+      panel.config.cols[fieldGroupIndex].push(fieldId);
     }
   }
 
@@ -324,4 +342,13 @@ function deleteEmptyProperties(data: Object) {
       delete data[k];
     }
   }
+}
+
+/**
+ * Pad an array with additional empty arrays up to the given new size.
+ * @param array
+ * @param newSize
+ */
+function extendArray(array: any, newSize: number) {
+  while (newSize > array.length) array.push([]);
 }

@@ -308,4 +308,140 @@ describe("ConfigImportParserService", () => {
       true
     );
   });
+
+  it("should allow a field in multiple details view tabs", () => {
+    expectToGenerateViewConfig(
+      [
+        {
+          id: "name",
+          label: "name",
+          dataType: "string",
+          show_in_details: "Overview,Other Tab",
+        },
+      ],
+      {
+        icon: "child",
+        entity: "test",
+        title: "",
+        panels: [
+          {
+            title: "Overview",
+            components: [
+              {
+                title: "",
+                component: "Form",
+                config: { cols: [["name"]] },
+              },
+            ],
+          },
+          {
+            title: "Other Tab",
+            components: [
+              {
+                title: "",
+                component: "Form",
+                config: { cols: [["name"]] },
+              },
+            ],
+          },
+        ],
+      } as EntityDetailsConfig,
+      true
+    );
+  });
+
+  xit("should group fields within a details view tab when giving group index", () => {
+    // this use case is not implemented currently
+    // because it is difficult to get consistent behaviour in case of mixing field group headers and indices
+    // instead we can simply delete the generated headers manually and have a clean result
+
+    expectToGenerateViewConfig(
+      [
+        {
+          id: "name",
+          label: "name",
+          dataType: "string",
+          show_in_details: "Overview",
+        },
+        {
+          id: "phone",
+          label: "phone",
+          dataType: "string",
+          show_in_details: "Overview:2",
+        },
+        {
+          id: "email",
+          label: "email",
+          dataType: "string",
+          show_in_details: "Overview:2",
+        },
+      ],
+      {
+        icon: "child",
+        entity: "test",
+        title: "",
+        panels: [
+          {
+            title: "Overview",
+            components: [
+              {
+                title: "",
+                component: "Form",
+                config: {
+                  cols: [["name"], [], ["phone", "email"]],
+                },
+              },
+            ],
+          },
+        ],
+      } as EntityDetailsConfig,
+      true
+    );
+  });
+
+  it("should group fields within a details view tab when giving group header", () => {
+    expectToGenerateViewConfig(
+      [
+        {
+          id: "name",
+          label: "name",
+          dataType: "string",
+          show_in_details: "Overview",
+        },
+        {
+          id: "phone",
+          label: "phone",
+          dataType: "string",
+          show_in_details: "Overview:Contact Details",
+        },
+        {
+          id: "email",
+          label: "email",
+          dataType: "string",
+          show_in_details: "Overview:Contact Details",
+        },
+      ],
+      {
+        icon: "child",
+        entity: "test",
+        title: "",
+        panels: [
+          {
+            title: "Overview",
+            components: [
+              {
+                title: "",
+                component: "Form",
+                config: {
+                  cols: [["name"], ["phone", "email"]],
+                  headers: [null, "Contact Details"],
+                },
+              },
+            ],
+          },
+        ],
+      } as EntityDetailsConfig,
+      true
+    );
+  });
 });
