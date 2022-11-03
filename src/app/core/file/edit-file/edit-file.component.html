@@ -11,15 +11,17 @@
     {{ label }}: <em>{{ formControl.value }}</em>
   </button>
 
-  <fa-icon *ngIf="formControl.value" icon="xmark" size="2xl" class="clickable" matRipple [matRippleCentered]="true"
+  <fa-icon *ngIf="formControl.value && formControl.enabled" icon="xmark" size="2xl" class="clickable" matRipple
+           [matRippleCentered]="true"
            (click)="delete()"></fa-icon>
 
-  <fa-icon icon="paperclip" size="2xl" class="clickable" matRipple [matRippleCentered]="true"
+  <fa-icon *ngIf="formControl.enabled" icon="paperclip" size="2xl" class="clickable" matRipple
+           [matRippleCentered]="true"
            (click)="fileUpload.click()"></fa-icon>
 
   <mat-progress-spinner *ngIf="uploadProgress && !done" diameter="40"
                         class="progress-bar" [mode]="mode"
                         [value]="uploadProgress">
   </mat-progress-spinner>
-  <fa-icon *ngIf="done" icon="circle-check" size="2xl" class="done-icon"></fa-icon>
+  <fa-icon *ngIf="done && formControl.enabled" icon="circle-check" size="2xl" class="done-icon"></fa-icon>
 </div>
