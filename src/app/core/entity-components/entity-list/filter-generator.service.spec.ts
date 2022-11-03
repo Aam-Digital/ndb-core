@@ -2,7 +2,11 @@ import { TestBed } from "@angular/core/testing";
 
 import { FilterGeneratorService } from "./filter-generator.service";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { BooleanFilterConfig, PrebuiltFilterConfig } from "./EntityListConfig";
+import {
+  BooleanFilterConfig,
+  DateRangeFilterConfig,
+  PrebuiltFilterConfig,
+} from "./EntityListConfig";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
@@ -189,12 +193,24 @@ describe("FilterGeneratorService", () => {
   });
 
   it("should use the configuration values for the date filter", async () => {
-    const dateFilter = {
+    const dateFilter: DateRangeFilterConfig = {
       id: "date",
       label: "Date",
       startingDayOfWeek: "Monday",
-      daysBack: [0, 1, 2, 5],
-      weeksBack: [0, 1, 3, 4, 6],
+      options: [
+        {
+          offsets: [{ amount: 0, unit: "days" }],
+          label: "Today",
+        },
+        {
+          offsets: [{ amount: 2, unit: "days" }],
+          label: "Since last two days",
+        },
+        {
+          offsets: [{ amount: 3, unit: "weeks" }],
+          label: "Since last three weeks",
+        },
+      ],
     };
 
     const filter = (await service.generate([dateFilter], Note, []))[0];
@@ -214,12 +230,12 @@ describe("FilterGeneratorService", () => {
     expect(notes.filter(allFilter.filterFun)).toEqual(notes);
 
     const todayFilter = filter.filterSettings.options.find(
-      (f) => f.key === "current-day"
+      (f) => f.label === "Today"
     );
     expect(notes.filter(todayFilter.filterFun)).toEqual([todayNote]);
 
     const yesterdayFilter = filter.filterSettings.options.find(
-      (f) => f.key === "last-2-days"
+      (f) => f.label === "Since last two days"
     );
     expect(notes.filter(yesterdayFilter.filterFun)).toEqual([
       todayNote,
@@ -227,7 +243,7 @@ describe("FilterGeneratorService", () => {
     ]);
 
     const lastThreeWeeksFilter = filter.filterSettings.options.find(
-      (f) => f.key === "last-3-weeks"
+      (f) => f.label === "Since last three weeks"
     );
     expect(notes.filter(lastThreeWeeksFilter.filterFun)).toEqual([
       todayNote,

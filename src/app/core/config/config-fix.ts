@@ -266,10 +266,20 @@ export const defaultJsonConfig = {
         {
           "id": "date",
           "startingDayOfWeek": "Monday",
-          "daysBack":  [0, 1, 3, 5],
-          "weeksBack": [0,1,2, 4, 6],
-          "monthsBack": [1,3,4, 12],
-          "yearsBack": [1,3,5, 2]
+          "options": [
+             { 
+              "offsets": [ { "amount": 0, "unit": "weeks"}],
+              "label": "This week"
+             },
+            { 
+              "offsets": [ { "amount": 1, "unit": "weeks"}],
+              "label": "Since last week"
+             },
+             { 
+              "offsets": [ { "amount": 0, "unit": "months"}],
+              "label": "This month"
+             },
+            ],
         },
         {
           "id": "category",

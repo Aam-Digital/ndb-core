@@ -8,6 +8,7 @@ import {
   FilterConfig,
   PrebuiltFilterConfig,
   DateRangeFilterConfig,
+  weekDayMap,
 } from "./EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { ConfigService } from "../../config/config.service";
@@ -115,16 +116,8 @@ export class FilterGeneratorService {
     filterConfig: DateRangeFilterConfig
   ): FilterSelectionOption<T>[] {
     if (filterConfig.startingDayOfWeek) {
-      let configStartingDayOfWeek = {
-        sunday: 0,
-        monday: 1,
-        tuesday: 2,
-        wednesday: 3,
-        thursday: 4,
-        friday: 5,
-        saturday: 6,
-      }[filterConfig.startingDayOfWeek.toLowerCase()];
-      console.log("configStartingDayOfWeek: ", configStartingDayOfWeek);
+      const configStartingDayOfWeek =
+        weekDayMap[filterConfig.startingDayOfWeek.toLowerCase()];
       moment.updateLocale(moment.locale(), {
         week: {
           dow: configStartingDayOfWeek,
@@ -132,42 +125,18 @@ export class FilterGeneratorService {
       });
     }
     const dateFS = [];
-    for (const timeUnit of ["day", "week", "month", "year"]) {
-      if (filterConfig[timeUnit + "sBack"]) {
-        for (const tUBack of filterConfig[timeUnit + "sBack"].sort(
-          (a, b) => a - b
-        )) {
-          if (tUBack === 0 || tUBack === 1) {
-            if (!dateFS.some((e) => e.key === "current-" + timeUnit)) {
-              let label;
-              if (timeUnit === "day")
-                label = $localize`:Filter option for today:Today`;
-              else label = $localize`:Filter option:This ${timeUnit}`;
-              dateFS.push({
-                key: "current-" + timeUnit,
-                label: label,
-                filterFun: (c: Entity) =>
-                  moment(c[filterConfig.id]).isSameOrAfter(
-                    moment().startOf(timeUnit as unitOfTime.StartOf),
-                    "day"
-                  ),
-              });
-            }
-          } else {
-            dateFS.push({
-              key: "last-" + tUBack + "-" + timeUnit + "s",
-              label: $localize`:Filter option:Last ${tUBack} ${timeUnit + "s"}`,
-              filterFun: (c: Entity) =>
-                moment(c[filterConfig.id]).isSameOrAfter(
-                  moment()
-                    .subtract(tUBack - 1, timeUnit as unitOfTime.Base)
-                    .startOf(timeUnit as unitOfTime.Base),
-                  "day"
-                ),
-            });
-          }
-        }
-      }
+    for (const option of filterConfig.options) {
+      let relevantDate = moment().startOf(option.offsets[0].unit);
+      option.offsets.forEach((offset) =>
+        relevantDate.subtract(offset.amount, offset.unit)
+      );
+      dateFS.push({
+        key: "option_" + (dateFS.length + 1),
+        label: option.label,
+        filterFun: (c: Entity) => {
+          return moment(c[filterConfig.id]).isSameOrAfter(relevantDate, "day");
+        },
+      });
     }
     dateFS.push({ key: "", label: $localize`All`, filterFun: () => true });
     return dateFS;

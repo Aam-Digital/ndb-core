@@ -2,6 +2,7 @@ import { Entity } from "../../entity/model/entity";
 import { FilterSelectionOption } from "../../filter/filter-selection/filter-selection";
 import { FormFieldConfig } from "../entity-form/entity-form/FormConfig";
 import { ExportColumnConfig } from "../../export/export-service/export-column-config";
+import moment, { unitOfTime } from "moment";
 
 export interface EntityListConfig {
   /**
@@ -78,6 +79,15 @@ export interface BooleanFilterConfig extends FilterConfig {
   all: string;
 }
 
+export const weekDayMap = {
+  sunday: 0,
+  monday: 1,
+  tuesday: 2,
+  wednesday: 3,
+  thursday: 4,
+  friday: 5,
+  saturday: 6,
+};
 export interface DateRangeFilterConfig extends FilterConfig {
   startingDayOfWeek?: // manually setting with what day a calendar week should start
   | "Sunday"
@@ -94,10 +104,10 @@ export interface DateRangeFilterConfig extends FilterConfig {
     | "friday"
     | "Saturday"
     | "saturday";
-  daysBack: number[];
-  weeksBack: number[];
-  monthsBack: number[];
-  yearsBack: number[];
+  options: {
+    offsets: { amount: number; unit: unitOfTime.Base }[];
+    label: string;
+  }[];
 }
 
 export interface PrebuiltFilterConfig<T> extends FilterConfig {
