@@ -31,7 +31,13 @@ export class ConfigImportParserService {
     ViewConfig<EntityListConfig> | ViewConfig<EntityDetailsConfig>
   > = new Map();
 
-  constructor(private configService: ConfigService) {
+  constructor(private configService: ConfigService) {}
+
+  private reset() {
+    this.enumsAvailable.clear();
+    this.existingEnumHashmap.clear();
+    this.generatedViews.clear();
+
     const enums = this.configService.getAllConfigs(
       CONFIGURABLE_ENUM_CONFIG_PREFIX
     );
@@ -42,6 +48,8 @@ export class ConfigImportParserService {
     configRaw: ConfigFieldRaw[],
     entityName: string
   ): GeneratedConfig {
+    this.reset();
+
     const entity: EntityConfig = {
       attributes: configRaw
         .filter((field) => !!field.dataType)
