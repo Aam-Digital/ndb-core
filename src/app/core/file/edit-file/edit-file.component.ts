@@ -61,7 +61,7 @@ export class EditFileComponent extends EditComponent<string> {
   }
 
   private handleError(err) {
-    this.logger.error("Failed uploading file: " + err);
+    this.logger.error("Failed uploading file: " + JSON.stringify(err));
     this.alertService.addDanger("Could not upload file, please try again.");
     this.done = true;
   }

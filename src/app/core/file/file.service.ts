@@ -44,16 +44,19 @@ export class FileService {
     );
   }
 
-  private getAttachmentsDocument(attachmentPath: string) {
-    return this.http
-      .get<{ _id: string; _rev: string }>(attachmentPath)
-      .pipe(
-        catchError(() =>
-          this.http
+  private getAttachmentsDocument(
+    attachmentPath: string
+  ): Observable<{ _rev: string }> {
+    return this.http.get<{ _id: string; _rev: string }>(attachmentPath).pipe(
+      catchError((err) => {
+        if (err.status === 404) {
+          return this.http
             .put<{ rev: string }>(attachmentPath, {})
-            .pipe(map((res) => ({ _rev: res.rev })))
-        )
-      );
+            .pipe(map((res) => ({ _rev: res.rev })));
+        }
+        throw err;
+      })
+    );
   }
 
   removeFile(entityId: string, property: string) {
