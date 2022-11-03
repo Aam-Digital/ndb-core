@@ -1,10 +1,17 @@
-import { fakeAsync, TestBed } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 
 import { FileService } from "./file.service";
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpEvent,
+  HttpEventType,
+  HttpResponse,
+} from "@angular/common/http";
 import { AlertService } from "../alerts/alert.service";
 import { MatDialog } from "@angular/material/dialog";
-import { of, throwError } from "rxjs";
+import { of, Subject, throwError } from "rxjs";
+import { ShowFileComponent } from "./show-file/show-file.component";
 
 describe("FileService", () => {
   let service: FileService;
@@ -14,6 +21,8 @@ describe("FileService", () => {
 
   beforeEach(() => {
     mockHttp = jasmine.createSpyObj(["get", "put", "delete"]);
+    mockAlerts = jasmine.createSpyObj(["addProgress", "removeAlert"]);
+    mockDialog = jasmine.createSpyObj(["open"]);
     TestBed.configureTestingModule({
       providers: [
         FileService,
@@ -102,5 +111,33 @@ describe("FileService", () => {
     });
   });
 
-  it("should show progress while downloading a file");
+  it("should show progress while downloading a file", () => {
+    const events = new Subject<HttpEvent<Blob>>();
+    spyOn(URL, "createObjectURL");
+    spyOn(window, "open");
+    mockHttp.get.and.returnValue(events);
+
+    service.showFile("testId", "testProp");
+
+    expect(mockAlerts.addProgress).toHaveBeenCalled();
+
+    events.next({ type: HttpEventType.DownloadProgress, loaded: 1, total: 10 });
+    expect(mockAlerts.removeAlert).not.toHaveBeenCalled();
+
+    events.next({ type: HttpEventType.Response } as HttpResponse<any>);
+    expect(mockAlerts.removeAlert).toHaveBeenCalled();
+  });
+
+  it("should show a dialog if the popup couldn't be opened", () => {
+    mockHttp.get.and.returnValue(of({ type: HttpEventType.Response }));
+    spyOn(URL, "createObjectURL").and.returnValue("dataUrl");
+    // no return value means popup couldn't be opened
+    spyOn(window, "open");
+
+    service.showFile("testId", "testProp");
+
+    expect(mockDialog.open).toHaveBeenCalledWith(ShowFileComponent, {
+      data: "dataUrl",
+    });
+  });
 });
