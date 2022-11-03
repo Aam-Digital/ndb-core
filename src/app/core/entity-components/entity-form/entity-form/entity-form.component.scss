@@ -39,3 +39,12 @@ $max-screen-width: $min-block-width + $margin-main-view-right + $margin-main-vie
   margin-bottom: 20px !important;
   font-family: sans-serif;
 }
+
+.field-with-tooltip-suffix {
+  width: calc(100% - 24px);
+  display: inline-block;
+}
+
+.tooltip-suffix {
+  margin: 4px;
+}

@@ -36,4 +36,11 @@ describe("User", () => {
     expect(user.getId()).toBe("test-name");
     expect(() => (user.name = "another-name")).toThrowError();
   });
+
+  it("should not fail when name is actually the same", () => {
+    const user = new User();
+    user.name = "test-name";
+
+    expect(() => (user.name = "test-name")).not.toThrowError();
+  });
 });
