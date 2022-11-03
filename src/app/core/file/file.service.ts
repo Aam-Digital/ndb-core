@@ -9,12 +9,18 @@ import { AppSettings } from "../app-config/app-settings";
 import { catchError, concatMap, filter, map } from "rxjs/operators";
 import { Observable } from "rxjs";
 import { AlertService } from "../alerts/alert.service";
+import { MatDialog } from "@angular/material/dialog";
+import { ShowFileComponent } from "./show-file/show-file.component";
 
 @Injectable()
 export class FileService {
   private attachmentsUrl = `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}-attachments`;
 
-  constructor(private http: HttpClient, private alerts: AlertService) {}
+  constructor(
+    private http: HttpClient,
+    private alerts: AlertService,
+    private dialog: MatDialog
+  ) {}
 
   uploadFile(
     file: File,
@@ -81,7 +87,7 @@ export class FileService {
         const win = window.open(fileURL, "_blank");
         if (!win || win.closed || typeof win.closed == "undefined") {
           // When it takes more than a few (2-5) seconds to open the file, the browser might block the popup
-          this.alerts.addInfo($localize`${fileURL}`);
+          this.dialog.open(ShowFileComponent, { data: fileURL });
         }
         this.alerts.removeAlert(alert);
       });

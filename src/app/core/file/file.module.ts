@@ -11,9 +11,10 @@ import { MatInputModule } from "@angular/material/input";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatRippleModule } from "@angular/material/core";
+import { ShowFileComponent } from "./show-file/show-file.component";
 
 @NgModule({
-  declarations: [EditFileComponent, ViewFileComponent],
+  declarations: [EditFileComponent, ViewFileComponent, ShowFileComponent],
   imports: [
     CommonModule,
     MatButtonModule,
