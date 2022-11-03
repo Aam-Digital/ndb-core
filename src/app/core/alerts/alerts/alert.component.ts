@@ -28,14 +28,9 @@ import { MAT_SNACK_BAR_DATA } from "@angular/material/snack-bar";
   styleUrls: ["./alert.component.scss"],
 })
 export class AlertComponent {
-  /** the displayed alert */
-  alert: Alert;
-
   /**
    * This component is created through MatSnackBar which provides the required data during creation.
-   * @param data The alert instance to be displayed
+   * @param alert The alert instance to be displayed
    */
-  constructor(@Inject(MAT_SNACK_BAR_DATA) private data: any) {
-    this.alert = data;
-  }
+  constructor(@Inject(MAT_SNACK_BAR_DATA) public alert: Alert) {}
 }

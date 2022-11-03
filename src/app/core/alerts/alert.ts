@@ -18,6 +18,7 @@
 import { MatSnackBarRef } from "@angular/material/snack-bar";
 import { AlertComponent } from "./alerts/alert.component";
 import { AlertDisplay } from "./alert-display";
+import { Observable } from "rxjs";
 
 /**
  * An Alert message to be displayed to the user through the {@link AlertService}.
@@ -38,10 +39,12 @@ export class Alert {
    * @param message The text of the message
    * @param type The type of the message
    * @param display The display style (e.g. whether the alert has to be actively dismissed by the user)
+   * @param progress If provided, a progress bar is shown below the message. Should emit numbers between 0 and 100.
    */
   constructor(
     public message: string,
     public type: string,
-    public display: AlertDisplay
+    public display: AlertDisplay,
+    public progress?: Observable<number>
   ) {}
 }

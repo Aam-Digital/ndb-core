@@ -27,4 +27,5 @@
     ></fa-icon>
   </button>
   <p>{{ alert.message }}</p>
+  <mat-progress-bar *ngIf="alert.progress" mode="determinate" [value]="alert.progress | async"></mat-progress-bar>
 </div>

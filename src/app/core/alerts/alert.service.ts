@@ -21,6 +21,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { Alert } from "./alert";
 import { AlertComponent } from "./alerts/alert.component";
 import { AlertDisplay } from "./alert-display";
+import { Observable } from "rxjs";
 
 /**
  * Display alerts to the user as a hovering message at the bottom of the view.
@@ -79,6 +80,7 @@ export class AlertService {
     const index = this.alerts.indexOf(alert, 0);
     if (index > -1) {
       this.alerts.splice(index, 1);
+      alert.notificationRef.dismiss();
     }
   }
 
@@ -116,5 +118,22 @@ export class AlertService {
     display: AlertDisplay = AlertDisplay.PERSISTENT
   ) {
     this.addAlert(new Alert(message, Alert.DANGER, display));
+  }
+
+  /**
+   * Shows a message together with a progress bar.
+   * @param message The text to be displayed
+   * @param progress An observable that emits numbers between 0 and 100
+   * @returns Alert which can be used to close it after finishing
+   */
+  public addProgress(message: string, progress: Observable<number>): Alert {
+    const alert = new Alert(
+      message,
+      Alert.INFO,
+      AlertDisplay.PERSISTENT,
+      progress
+    );
+    this.addAlert(alert);
+    return alert;
   }
 }

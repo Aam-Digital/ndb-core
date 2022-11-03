@@ -24,6 +24,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
 
 /**
  * Show alert message to the user informing about events or errors.
@@ -35,6 +36,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     MatCardModule,
     MatButtonModule,
     FontAwesomeModule,
+    MatProgressBarModule,
   ],
   declarations: [AlertComponent],
   exports: [AlertComponent],

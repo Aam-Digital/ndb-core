@@ -8,14 +8,13 @@ import {
 import { AppSettings } from "../app-config/app-settings";
 import { catchError, concatMap, filter, map } from "rxjs/operators";
 import { Observable } from "rxjs";
-import { MatDialog } from "@angular/material/dialog";
-import { DownloadProgressComponent } from "./download-progress/download-progress.component";
+import { AlertService } from "../alerts/alert.service";
 
 @Injectable()
 export class FileService {
   private attachmentsUrl = `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}-attachments`;
 
-  constructor(private http: HttpClient, private dialog: MatDialog) {}
+  constructor(private http: HttpClient, private alerts: AlertService) {}
 
   uploadFile(
     file: File,
@@ -74,18 +73,17 @@ export class FileService {
       filter((e) => e.type === HttpEventType.DownloadProgress),
       map((e: HttpProgressEvent) => Math.round(100 * (e.loaded / e.total)))
     );
-    const ref = this.dialog.open(DownloadProgressComponent, {
-      data: { progress },
-    });
+    const alert = this.alerts.addProgress($localize`Loading...`, progress);
     obs
       .pipe(filter((e) => e.type === HttpEventType.Response))
       .subscribe((e: HttpResponse<Blob>) => {
-        const fileURL: any = URL.createObjectURL(e.body);
-        const a = document.createElement("a");
-        a.href = fileURL;
-        a.target = "_blank";
-        a.click();
-        ref.close();
+        const fileURL = URL.createObjectURL(e.body);
+        const win = window.open(fileURL, "_blank");
+        if (!win || win.closed || typeof win.closed == "undefined") {
+          // When it takes more than a few (2-5) seconds to open the file, the browser might block the popup
+          this.alerts.addInfo($localize`${fileURL}`);
+        }
+        this.alerts.removeAlert(alert);
       });
   }
 }
