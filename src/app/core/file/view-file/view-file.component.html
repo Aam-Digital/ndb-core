@@ -1,1 +1,5 @@
-<p>view-file works!</p>
+<button
+  mat-button
+  *ngIf="value"
+  (click)="showFile($event)"
+>{{ value }}</button>
