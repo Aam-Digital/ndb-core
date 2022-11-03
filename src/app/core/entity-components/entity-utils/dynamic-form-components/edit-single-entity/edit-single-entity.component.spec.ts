@@ -146,6 +146,7 @@ describe("EditSingleEntityComponent", () => {
       formFieldConfig: { id: "childId" },
       formControl: component.formControl,
       propertySchema: ChildSchoolRelation.schema.get("childId"),
+      entity: new ChildSchoolRelation(),
     });
   }
 });
