@@ -1,27 +1,18 @@
 <input type="file" style="display: none" (change)="onFileSelected($event)" #fileUpload>
 
-<div class="file-upload">
-
-  <button
-    mat-button
-    type="button"
-    [disabled]="!formControl.value"
+<mat-form-field (click)="formClicked()">
+  <mat-label>{{ label }}</mat-label>
+  <input
+    matInput readonly
+    [formControl]="formControl"
+    i18n-placeholder="placeholder for file-input"
+    placeholder="No file selected"
     (click)="fileClicked()"
-  >
-    {{ label }}: <em>{{ formControl.value }}</em>
+  />
+  <button *ngIf="formControl.value && formControl.enabled" type="button" mat-icon-button matSuffix (click)="delete()">
+    <fa-icon icon="xmark"></fa-icon>
   </button>
-
-  <fa-icon *ngIf="formControl.value && formControl.enabled" icon="xmark" size="2xl" class="clickable" matRipple
-           [matRippleCentered]="true"
-           (click)="delete()"></fa-icon>
-
-  <fa-icon *ngIf="formControl.enabled" icon="paperclip" size="2xl" class="clickable" matRipple
-           [matRippleCentered]="true"
-           (click)="fileUpload.click()"></fa-icon>
-
-  <mat-progress-spinner *ngIf="uploadProgress && !done" diameter="40"
-                        class="progress-bar" [mode]="mode"
-                        [value]="uploadProgress">
-  </mat-progress-spinner>
-  <fa-icon *ngIf="done && formControl.enabled" icon="circle-check" size="2xl" class="done-icon"></fa-icon>
-</div>
+  <button *ngIf="formControl.enabled" type="button" mat-icon-button matSuffix (click)="fileUpload.click()">
+    <fa-icon icon="upload"></fa-icon>
+  </button>
+</mat-form-field>
