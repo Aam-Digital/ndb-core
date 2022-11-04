@@ -971,7 +971,8 @@ export const defaultJsonConfig = {
         "name": "motherTongue",
         "schema": {
           dataType: "string",
-          label: $localize`:Label for the mother tongue of a child:Mother Tongue`
+          label: $localize`:Label for the mother tongue of a child:Mother Tongue`,
+          description: $localize`:Tooltip description for the mother tongue of a child:The primary language spoken at home`,
         }
       },
       {

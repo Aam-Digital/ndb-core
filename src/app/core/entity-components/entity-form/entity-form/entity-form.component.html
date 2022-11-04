@@ -39,18 +39,18 @@
   <form class="columns-wrapper">
     <div *ngFor="let col of _columns; let i=index" class="column-group">
       <h2 *ngIf="columnHeaders && columnHeaders[i]">{{columnHeaders[i]}}</h2>
-      <div
-        *ngFor="let row of col"
-        [appDynamicComponent]="{
-          component: row.edit,
-          config: {
-            formFieldConfig: row,
-            propertySchema: entity.getSchema().get(row.id),
-            formControl: form.get(row.id),
-            entity: entity
-          }
-        }"
-      >
+      <div *ngFor="let row of col">
+        <div [class.field-with-tooltip-suffix]="row.tooltip">
+          <ng-container [appDynamicComponent]="{
+            component: row.edit,
+            config: {
+              formFieldConfig: row,
+              propertySchema: entity.getSchema().get(row.id),
+              formControl: form.get(row.id),
+              entity: entity
+            }
+          }"></ng-container>
+        </div>
         <fa-icon
           (click)="tooltipElement.show()"
           #tooltipElement="matTooltip"
@@ -58,6 +58,7 @@
           matSuffix
           icon="question-circle"
           [matTooltip]="row.tooltip"
+          class="tooltip-suffix"
         ></fa-icon>
       </div>
 
