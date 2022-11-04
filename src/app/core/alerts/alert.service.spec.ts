@@ -20,6 +20,7 @@ import { Alert } from "./alert";
 import { LogLevel } from "../logging/log-level";
 import { LoggingService } from "../logging/logging.service";
 import { AlertDisplay } from "./alert-display";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 class MockLoggingService extends LoggingService {
   public log(_message: string, _logLevel: LogLevel) {}
@@ -35,11 +36,15 @@ class MockLoggingService extends LoggingService {
 
 describe("AlertService", () => {
   let alertService: AlertService;
-  let snackBarMock;
+  let snackBarMock: jasmine.SpyObj<MatSnackBar>;
   let loggingService: MockLoggingService;
+  const dismissSpy = jasmine.createSpy();
   beforeEach(() => {
     loggingService = new MockLoggingService();
     snackBarMock = jasmine.createSpyObj(["openFromComponent"]);
+    snackBarMock.openFromComponent.and.returnValue({
+      dismiss: dismissSpy,
+    } as any);
     alertService = new AlertService(snackBarMock);
   });
 
@@ -77,5 +82,6 @@ describe("AlertService", () => {
     alertService.removeAlert(alert);
 
     expect(alertService.alerts).toBeEmpty();
+    expect(dismissSpy).toHaveBeenCalled();
   });
 });

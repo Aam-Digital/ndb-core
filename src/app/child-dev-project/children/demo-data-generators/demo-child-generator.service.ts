@@ -65,10 +65,7 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
     child.status = $localize`:Child status:Dropout`;
   }
 
-  constructor(
-    public config: DemoChildConfig,
-    private fileService: FileService
-  ) {
+  constructor(public config: DemoChildConfig) {
     super();
   }
 
@@ -82,6 +79,7 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
   }
 
   async addFiles(children: Child[]) {
+    const fileService = undefined;
     const fileNames = await fetch("assets/data/files.txt")
       .then((res) => res.text())
       .then((res) => res.split("\n"));
@@ -94,7 +92,7 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
           .then((res) => res.blob())
           .then((file) =>
             firstValueFrom(
-              this.fileService.uploadFile(
+              fileService.uploadFile(
                 { type } as File,
                 child._id,
                 `file${j.toString()}`,
