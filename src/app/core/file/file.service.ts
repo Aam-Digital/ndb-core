@@ -1,16 +1,26 @@
 import { Injectable } from "@angular/core";
 import {
   HttpClient,
+  HttpEvent,
   HttpEventType,
   HttpProgressEvent,
   HttpResponse,
 } from "@angular/common/http";
 import { AppSettings } from "../app-config/app-settings";
-import { catchError, concatMap, filter, map } from "rxjs/operators";
+import {
+  catchError,
+  concatMap,
+  filter,
+  finalize,
+  map,
+  tap,
+} from "rxjs/operators";
 import { Observable } from "rxjs";
 import { AlertService } from "../alerts/alert.service";
 import { MatDialog } from "@angular/material/dialog";
 import { ShowFileComponent } from "./show-file/show-file.component";
+import { Entity } from "../entity/model/entity";
+import { EntityMapperService } from "../entity/entity-mapper.service";
 
 @Injectable()
 export class FileService {
@@ -19,29 +29,32 @@ export class FileService {
   constructor(
     private http: HttpClient,
     private alerts: AlertService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private entityMapper: EntityMapperService
   ) {}
 
   uploadFile(
     file: File,
-    entityId: string,
+    entity: Entity,
     property: string,
     blob = new Blob([file])
   ): Observable<any> {
-    const attachmentPath = `${this.attachmentsUrl}/${entityId}`;
-    return this.getAttachmentsDocument(attachmentPath).pipe(
+    const attachmentPath = `${this.attachmentsUrl}/${entity._id}`;
+    const obs = this.getAttachmentsDocument(attachmentPath).pipe(
       concatMap(({ _rev }) =>
-        this.http.put<{ ok: true }>(
-          `${attachmentPath}/${property}?rev=${_rev}`,
-          blob,
-          {
-            headers: { "Content-Type": file.type, "ngsw-bypass": "" },
-            reportProgress: true,
-            observe: "events",
-          }
-        )
-      )
+        this.http.put(`${attachmentPath}/${property}?rev=${_rev}`, blob, {
+          headers: { "Content-Type": file.type, "ngsw-bypass": "" },
+          reportProgress: true,
+          observe: "events",
+        })
+      ),
+      finalize(async () => {
+        entity[property] = file.name;
+        await this.entityMapper.save(entity);
+      })
     );
+    this.reportProgress($localize`Uploading "${file.name}"`, obs);
+    return obs;
   }
 
   private getAttachmentsDocument(
@@ -59,8 +72,8 @@ export class FileService {
     );
   }
 
-  removeFile(entityId: string, property: string) {
-    const attachmentPath = `${this.attachmentsUrl}/${entityId}`;
+  removeFile(entity: Entity, property: string) {
+    const attachmentPath = `${this.attachmentsUrl}/${entity._id}`;
     return this.getAttachmentsDocument(attachmentPath).pipe(
       concatMap(({ _rev }) =>
         this.http.delete(`${attachmentPath}/${property}?rev=${_rev}`)
@@ -68,9 +81,9 @@ export class FileService {
     );
   }
 
-  showFile(entityId: string, property: string) {
+  showFile(entity: Entity, property: string) {
     const obs = this.http.get(
-      `${this.attachmentsUrl}/${entityId}/${property}`,
+      `${this.attachmentsUrl}/${entity._id}/${property}`,
       {
         responseType: "blob",
         reportProgress: true,
@@ -78,11 +91,7 @@ export class FileService {
         headers: { "ngsw-bypass": "" },
       }
     );
-    const progress = obs.pipe(
-      filter((e) => e.type === HttpEventType.DownloadProgress),
-      map((e: HttpProgressEvent) => Math.round(100 * (e.loaded / e.total)))
-    );
-    const alert = this.alerts.addProgress($localize`Loading...`, progress);
+    this.reportProgress($localize`Loading "${entity[property]}"`, obs);
     obs
       .pipe(filter((e) => e.type === HttpEventType.Response))
       .subscribe((e: HttpResponse<Blob>) => {
@@ -92,7 +101,19 @@ export class FileService {
           // When it takes more than a few (2-5) seconds to open the file, the browser might block the popup
           this.dialog.open(ShowFileComponent, { data: fileURL });
         }
-        this.alerts.removeAlert(alert);
       });
+  }
+
+  private reportProgress(message: string, obs: Observable<HttpEvent<any>>) {
+    const progress = obs.pipe(
+      filter(
+        (e) =>
+          e.type === HttpEventType.DownloadProgress ||
+          e.type === HttpEventType.UploadProgress
+      ),
+      map((e: HttpProgressEvent) => Math.round(100 * (e.loaded / e.total)))
+    );
+    const alert = this.alerts.addProgress(message, progress);
+    progress.subscribe({ complete: () => this.alerts.removeAlert(alert) });
   }
 }

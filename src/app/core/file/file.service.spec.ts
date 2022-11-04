@@ -12,6 +12,7 @@ import { AlertService } from "../alerts/alert.service";
 import { MatDialog } from "@angular/material/dialog";
 import { of, Subject, throwError } from "rxjs";
 import { ShowFileComponent } from "./show-file/show-file.component";
+import { Entity } from "../entity/model/entity";
 
 describe("FileService", () => {
   let service: FileService;
@@ -46,7 +47,7 @@ describe("FileService", () => {
     mockHttp.put.and.returnValue(of({ ok: true }));
     const file = { type: "image/png" } as File;
 
-    service.uploadFile(file, "testId", "testProp").subscribe(() => {
+    service.uploadFile(file, new Entity("testId"), "testProp").subscribe(() => {
       expect(mockHttp.get).toHaveBeenCalledWith(
         jasmine.stringContaining("/testId")
       );
@@ -66,7 +67,7 @@ describe("FileService", () => {
     mockHttp.put.and.returnValue(of({ rev: "newRev" }));
     const file = { type: "image/png" } as File;
 
-    service.uploadFile(file, "testId", "testProp").subscribe(() => {
+    service.uploadFile(file, new Entity("testId"), "testProp").subscribe(() => {
       expect(mockHttp.put).toHaveBeenCalledWith(
         jasmine.stringContaining("/testId"),
         {}
@@ -87,7 +88,7 @@ describe("FileService", () => {
 
     const file = { type: "image/png" } as File;
 
-    service.uploadFile(file, "testId", "testProp").subscribe({
+    service.uploadFile(file, new Entity("testId"), "testProp").subscribe({
       error: (err) => {
         expect(err).toBeInstanceOf(HttpErrorResponse);
         expect(err.status).toBe(401);
@@ -100,7 +101,7 @@ describe("FileService", () => {
     mockHttp.get.and.returnValue(of({ _rev: "test_rev" }));
     mockHttp.delete.and.returnValue(of({ ok: true }));
 
-    service.removeFile("testId", "testProp").subscribe(() => {
+    service.removeFile(new Entity("testId"), "testProp").subscribe(() => {
       expect(mockHttp.get).toHaveBeenCalledWith(
         jasmine.stringContaining("/testId")
       );
@@ -117,7 +118,7 @@ describe("FileService", () => {
     spyOn(window, "open");
     mockHttp.get.and.returnValue(events);
 
-    service.showFile("testId", "testProp");
+    service.showFile(new Entity("testId"), "testProp");
 
     expect(mockAlerts.addProgress).toHaveBeenCalled();
 
@@ -134,7 +135,7 @@ describe("FileService", () => {
     // no return value means popup couldn't be opened
     spyOn(window, "open");
 
-    service.showFile("testId", "testProp");
+    service.showFile(new Entity("testId"), "testProp");
 
     expect(mockDialog.open).toHaveBeenCalledWith(ShowFileComponent, {
       data: "dataUrl",
