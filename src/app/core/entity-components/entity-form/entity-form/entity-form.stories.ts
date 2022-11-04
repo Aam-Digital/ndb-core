@@ -49,6 +49,7 @@ const cols = [
     {
       id: "projectNumber",
       edit: "EditNumber",
+      tooltip: "some extra explanation",
     },
     {
       edit: "EditLongText",
