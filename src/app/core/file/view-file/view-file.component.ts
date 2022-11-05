@@ -15,7 +15,7 @@ export class ViewFileComponent extends ViewDirective<string> {
   }
 
   showFile(event: Event) {
-    // Prevent bubbling
+    // Prevent event bubbling
     event.stopPropagation();
     this.fileService.showFile(this.entity, this.property);
   }
