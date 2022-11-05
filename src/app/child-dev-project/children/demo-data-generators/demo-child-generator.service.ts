@@ -8,7 +8,6 @@ import { faker } from "../../../core/demo-data/faker";
 import { centersWithProbability } from "./fixtures/centers";
 import { addDefaultChildPhoto } from "../../../../../.storybook/utils/addDefaultChildPhoto";
 import { genders } from "../model/genders";
-import { firstValueFrom } from "rxjs";
 
 export class DemoChildConfig {
   count: number;
@@ -73,50 +72,6 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
     for (let i = 1; i <= this.config.count; i++) {
       data.push(DemoChildGenerator.generateEntity(String(i)));
     }
-    // this.addFiles(data);
     return data;
-  }
-
-  async addFiles(children: Child[]) {
-    const fileService = undefined;
-    const fileNames = await fetch("assets/data/files.txt")
-      .then((res) => res.text())
-      .then((res) => res.split("\n"));
-    let fileNum = 0;
-    for (let child of children) {
-      for (let j = 1; j < 12; j++) {
-        const fileName = fileNames[fileNum];
-        const type = this.getContentType(fileName);
-        await fetch(`assets/data/${fileName}`)
-          .then((res) => res.blob())
-          .then((file) =>
-            firstValueFrom(
-              fileService.uploadFile(
-                { type } as File,
-                child._id,
-                `file${j.toString()}`,
-                file
-              )
-            )
-          );
-        console.log("uploaded file", fileNum, fileName);
-        fileNum = (fileNum + 1) % 1064;
-      }
-    }
-    console.log("done");
-  }
-
-  getContentType(fileName: string): string {
-    const contentTypeMap = new Map<string, string>([
-      ["jpg", "image/jpeg"],
-      ["jpeg", "image/jpeg"],
-      ["png", "image/png"],
-      ["heic", "image/heic"],
-      ["mp4", "video/mp4"],
-      ["mov", "video/H264"],
-    ]);
-    return (
-      contentTypeMap.get(fileName.split(".")[1].toLowerCase()) || "image/jpeg"
-    );
   }
 }
