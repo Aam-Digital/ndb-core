@@ -1,23 +1,23 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ViewFileComponent } from "./view-file.component";
-import { CouchdbFileService } from "../couchdb-file.service";
 import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatButtonHarness } from "@angular/material/button/testing";
 import { Entity } from "../../entity/model/entity";
+import { FileService } from "../file.service";
 
 describe("ViewFileComponent", () => {
   let component: ViewFileComponent;
   let fixture: ComponentFixture<ViewFileComponent>;
-  let mockFileService: jasmine.SpyObj<CouchdbFileService>;
+  let mockFileService: jasmine.SpyObj<FileService>;
   let loader: HarnessLoader;
 
   beforeEach(async () => {
     mockFileService = jasmine.createSpyObj(["showFile"]);
     await TestBed.configureTestingModule({
       declarations: [ViewFileComponent],
-      providers: [{ provide: CouchdbFileService, useValue: mockFileService }],
+      providers: [{ provide: FileService, useValue: mockFileService }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ViewFileComponent);

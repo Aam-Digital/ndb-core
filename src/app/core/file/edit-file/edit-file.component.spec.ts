@@ -11,15 +11,15 @@ import { AlertService } from "../../alerts/alert.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { FormControl } from "@angular/forms";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { CouchdbFileService } from "../couchdb-file.service";
 import { of, throwError } from "rxjs";
 import { Entity } from "app/core/entity/model/entity";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { FileService } from "../file.service";
 
 describe("EditFileComponent", () => {
   let component: EditFileComponent;
   let fixture: ComponentFixture<EditFileComponent>;
-  let mockFileService: jasmine.SpyObj<CouchdbFileService>;
+  let mockFileService: jasmine.SpyObj<FileService>;
   let mockConfirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
   let mockAlertService: jasmine.SpyObj<AlertService>;
   const file = { name: "test.file" } as File;
@@ -37,7 +37,7 @@ describe("EditFileComponent", () => {
       imports: [FileModule, FontAwesomeTestingModule, NoopAnimationsModule],
       providers: [
         { provide: AlertService, useValue: mockAlertService },
-        { provide: CouchdbFileService, useValue: mockFileService },
+        { provide: FileService, useValue: mockFileService },
         {
           provide: ConfirmationDialogService,
           useValue: mockConfirmationDialog,
