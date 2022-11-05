@@ -19,33 +19,11 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MarkdownPageComponent } from "./markdown-page/markdown-page.component";
 import { HttpClient, HttpClientModule } from "@angular/common/http";
-import { MarkdownModule, MarkedOptions, MarkedRenderer } from "ngx-markdown";
+import { MarkdownModule, MarkedOptions } from "ngx-markdown";
+import { MarkedRendererCustom } from "./MarkedRendererCustom";
 
 function markedOptionsFactory(): MarkedOptions {
-  const renderer = new MarkedRenderer();
-
-  renderer.heading = (text, level) => {
-    if (level === 3) {
-      switch (text.toLowerCase()) {
-        case "bug fixes":
-          return `<span class="badge-label background-changelog-bugfix">${text}</span>`;
-        case "features":
-          return `<span class="badge-label background-changelog-feature">${text}</span>`;
-        default:
-          return `<span class="badge-label background-changelog-unknown">${text}</span>`;
-      }
-    } else {
-      return `<h${level}>${text}</h${level}>`;
-    }
-  };
-
-  renderer.list = (body, ordered) => {
-    if (ordered) {
-      return `<ol class="app-list mat-body-1">${body}</ol>`;
-    } else {
-      return `<ul class="app-list mat-body-1">${body}</ul>`;
-    }
-  };
+  const renderer = new MarkedRendererCustom();
 
   return {
     renderer: renderer,
