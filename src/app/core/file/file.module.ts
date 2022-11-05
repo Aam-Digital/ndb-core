@@ -31,6 +31,8 @@ import { MockFileService } from "./mock-file.service";
     MatRippleModule,
   ],
   providers: [
+    CouchdbFileService,
+    MockFileService,
     {
       provide: FileService,
       useFactory: (injector: Injector) => {

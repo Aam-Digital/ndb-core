@@ -614,6 +614,7 @@ export const defaultJsonConfig = {
                   ],
                   [
                     "dateOfBirth",
+                    "birth_certificate",
                     "gender",
                     "motherTongue"
                   ],
@@ -622,19 +623,6 @@ export const defaultJsonConfig = {
                     "status",
                     "address",
                     "phone"
-                  ],
-                  [
-                    "file1",
-                    "file2",
-                    "file3",
-                    "file4",
-                    "file5",
-                    "file6",
-                    "file7",
-                    "file8",
-                    "file9",
-                    "file10",
-                    "file11"
                   ]
                 ],
                 "headers": [
@@ -982,6 +970,15 @@ export const defaultJsonConfig = {
           label: $localize`:Label for a child attribute:Last Dental Check-Up`
         }
       },
+      {
+        "name": "birth_certificate",
+        "schema": {
+          dataType: "string",
+          label: $localize`:Label for a child attribute:Birth certificate`,
+          editComponent: "EditFile",
+          viewComponent: "ViewFile"
+        }
+      }
     ]
   },
   "entity:School": {

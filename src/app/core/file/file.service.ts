@@ -2,7 +2,7 @@ import { Entity } from "../entity/model/entity";
 import { Observable } from "rxjs";
 
 export abstract class FileService {
-  abstract removeFile(entity: Entity, property: string): Observable<Object>;
+  abstract removeFile(entity: Entity, property: string): Observable<any>;
 
   abstract showFile(entity: Entity, property: string): void;
 
