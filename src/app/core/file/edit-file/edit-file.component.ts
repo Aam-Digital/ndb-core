@@ -69,11 +69,11 @@ export class EditFileComponent extends EditComponent<string> {
     if (!shouldDelete) {
       return;
     }
-    this.fileService.removeFile(this.entity, this.formControlName).subscribe({
-      next: () => {
+    this.fileService
+      .removeFile(this.entity, this.formControlName)
+      .subscribe(() => {
         this.formControl.setValue(undefined);
         this.alertService.addInfo($localize`:Message for user:File deleted`);
-      },
-    });
+      });
   }
 }
