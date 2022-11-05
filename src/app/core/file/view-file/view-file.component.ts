@@ -3,6 +3,10 @@ import { ViewDirective } from "../../entity-components/entity-utils/view-compone
 import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
 import { FileService } from "../file.service";
 
+/**
+ * This component should be used as `viewComponent` when a property stores files.
+ * If a file is stored, this component allows to view it.
+ */
 @DynamicComponent("ViewFile")
 @Component({
   selector: "app-view-file",

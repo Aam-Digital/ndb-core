@@ -23,6 +23,9 @@ export interface EditPropertyConfig<T> {
    */
   formControl: AbstractControl<T>;
 
+  /**
+   * The entity which is edited.
+   */
   entity: Entity;
 }
 
@@ -56,6 +59,9 @@ export abstract class EditComponent<T> implements OnInitDynamicComponent {
    */
   parent: FormGroup;
 
+  /**
+   * The entity which is being edited.
+   */
   entity: Entity;
 
   onInitFromDynamicConfig(config: EditPropertyConfig<T>) {

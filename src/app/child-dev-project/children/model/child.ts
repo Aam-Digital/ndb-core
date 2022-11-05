@@ -118,19 +118,6 @@ export class Child extends Entity {
   })
   phone: string;
 
-  @DatabaseField({
-    label: "File 1",
-    viewComponent: "ViewFile",
-    editComponent: "EditFile",
-  })
-  file1: string;
-  @DatabaseField({
-    label: "File 2",
-    viewComponent: "ViewFile",
-    editComponent: "EditFile",
-  })
-  file2: string;
-
   get age(): number {
     return this.dateOfBirth ? calculateAge(this.dateOfBirth) : null;
   }

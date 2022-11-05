@@ -1,6 +1,9 @@
 import { Component, Inject } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 
+/**
+ * This simple component can be used to open a file in a new window, if the user's browser is blocking popups.
+ */
 @Component({
   selector: "app-show-file",
   templateUrl: "./show-file.component.html",

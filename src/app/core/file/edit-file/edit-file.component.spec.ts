@@ -82,7 +82,7 @@ describe("EditFileComponent", () => {
     expect(mockFileService.uploadFile).not.toHaveBeenCalled();
   }));
 
-  it("should upload errors as an alert", () => {
+  it("should show upload errors as an alert", () => {
     mockFileService.uploadFile.and.returnValue(throwError(() => new Error()));
 
     component.onFileSelected(fileEvent);

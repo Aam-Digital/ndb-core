@@ -6,6 +6,10 @@ import { LoggingService } from "../../logging/logging.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { FileService } from "../file.service";
 
+/**
+ * This component should be used as a `editComponent` when a property should store files.
+ * It allows to show, upload and remove files.
+ */
 @DynamicComponent("EditFile")
 @Component({
   selector: "app-edit-file",
