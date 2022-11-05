@@ -16,6 +16,7 @@ import { environment } from "../../../environments/environment";
 import { SessionType } from "../session/session-type";
 import { FileService } from "./file.service";
 import { MockFileService } from "./mock-file.service";
+import { serviceProvider } from "../../utils/utils";
 
 @NgModule({
   declarations: [EditFileComponent, ViewFileComponent, ShowFileComponent],
@@ -33,17 +34,11 @@ import { MockFileService } from "./mock-file.service";
   providers: [
     CouchdbFileService,
     MockFileService,
-    {
-      provide: FileService,
-      useFactory: (injector: Injector) => {
-        if (environment.session_type === SessionType.synced) {
-          return injector.get(CouchdbFileService);
-        } else {
-          return injector.get(MockFileService);
-        }
-      },
-      deps: [Injector],
-    },
+    serviceProvider(FileService, (injector: Injector) => {
+      return environment.session_type === SessionType.synced
+        ? injector.get(CouchdbFileService)
+        : injector.get(MockFileService);
+    }),
   ],
 })
 export class FileModule {

@@ -46,6 +46,7 @@ import { PasswordResetComponent } from "./auth/keycloak/password-reset/password-
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { AuthInterceptor } from "./auth/keycloak/auth-interceptor.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { serviceProvider } from "../../utils/utils";
 
 /**
  * The core session logic handling user login as well as connection and synchronization with the remote database.
@@ -85,30 +86,18 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     SyncedSessionService,
     LocalSession,
     RemoteSession,
-    {
-      provide: SessionService,
-      useFactory: (injector: Injector) => {
-        if (environment.session_type === SessionType.synced) {
-          return injector.get(SyncedSessionService);
-        } else {
-          return injector.get(LocalSession);
-        }
-      },
-      deps: [Injector],
-    },
+    serviceProvider(SessionService, (injector: Injector) => {
+      return environment.session_type === SessionType.synced
+        ? injector.get(SyncedSessionService)
+        : injector.get(LocalSession);
+    }),
     KeycloakAuthService,
     CouchdbAuthService,
-    {
-      provide: AuthService,
-      useFactory: (injector: Injector) => {
-        if (environment.authenticator === AuthProvider.Keycloak) {
-          return injector.get(KeycloakAuthService);
-        } else {
-          return injector.get(CouchdbAuthService);
-        }
-      },
-      deps: [Injector],
-    },
+    serviceProvider(AuthService, (injector: Injector) => {
+      return environment.authenticator === AuthProvider.Keycloak
+        ? injector.get(KeycloakAuthService)
+        : injector.get(CouchdbAuthService);
+    }),
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
