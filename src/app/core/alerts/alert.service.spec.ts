@@ -21,6 +21,7 @@ import { LogLevel } from "../logging/log-level";
 import { LoggingService } from "../logging/logging.service";
 import { AlertDisplay } from "./alert-display";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { of } from "rxjs";
 
 class MockLoggingService extends LoggingService {
   public log(_message: string, _logLevel: LogLevel) {}
@@ -83,5 +84,14 @@ describe("AlertService", () => {
 
     expect(alertService.alerts).toBeEmpty();
     expect(dismissSpy).toHaveBeenCalled();
+  });
+
+  it("should create an alert with the progress observable", () => {
+    const progress = of(1, 2, 3);
+
+    const alert = alertService.addProgress("progress", progress);
+
+    expect(alert.progress).toBe(progress);
+    expect(alertService.alerts[0]).toBe(alert);
   });
 });
