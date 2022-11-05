@@ -46,7 +46,6 @@ export class EditFileComponent extends EditComponent<string> {
 
   private handleError(err) {
     this.logger.error("Failed uploading file: " + JSON.stringify(err));
-    // TODO maybe use mat-error in form
     this.alertService.addDanger("Could not upload file, please try again.");
   }
 

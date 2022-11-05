@@ -7,20 +7,14 @@ import {
   HttpResponse,
 } from "@angular/common/http";
 import { AppSettings } from "../app-config/app-settings";
-import {
-  catchError,
-  concatMap,
-  filter,
-  finalize,
-  map,
-  tap,
-} from "rxjs/operators";
+import { catchError, concatMap, filter, finalize, map } from "rxjs/operators";
 import { Observable } from "rxjs";
 import { AlertService } from "../alerts/alert.service";
 import { MatDialog } from "@angular/material/dialog";
 import { ShowFileComponent } from "./show-file/show-file.component";
 import { Entity } from "../entity/model/entity";
 import { EntityMapperService } from "../entity/entity-mapper.service";
+import { Alert } from "../alerts/alert";
 
 @Injectable()
 export class FileService {
@@ -48,13 +42,13 @@ export class FileService {
           observe: "events",
         })
       ),
-      finalize(async () => {
+      finalize(() => {
         entity[property] = file.name;
-        await this.entityMapper.save(entity);
+        this.entityMapper.save(entity);
       })
     );
-    this.reportProgress($localize`Uploading "${file.name}"`, obs);
-    return obs;
+    const alert = this.reportProgress($localize`Uploading "${file.name}"`, obs);
+    return obs.pipe(finalize(() => this.alerts.removeAlert(alert)));
   }
 
   private getAttachmentsDocument(
@@ -91,9 +85,15 @@ export class FileService {
         headers: { "ngsw-bypass": "" },
       }
     );
-    this.reportProgress($localize`Loading "${entity[property]}"`, obs);
+    const alert = this.reportProgress(
+      $localize`Loading "${entity[property]}"`,
+      obs
+    );
     obs
-      .pipe(filter((e) => e.type === HttpEventType.Response))
+      .pipe(
+        filter((e) => e.type === HttpEventType.Response),
+        finalize(() => this.alerts.removeAlert(alert))
+      )
       .subscribe((e: HttpResponse<Blob>) => {
         const fileURL = URL.createObjectURL(e.body);
         const win = window.open(fileURL, "_blank");
@@ -104,7 +104,10 @@ export class FileService {
       });
   }
 
-  private reportProgress(message: string, obs: Observable<HttpEvent<any>>) {
+  private reportProgress(
+    message: string,
+    obs: Observable<HttpEvent<any>>
+  ): Alert {
     const progress = obs.pipe(
       filter(
         (e) =>
@@ -113,7 +116,6 @@ export class FileService {
       ),
       map((e: HttpProgressEvent) => Math.round(100 * (e.loaded / e.total)))
     );
-    const alert = this.alerts.addProgress(message, progress);
-    progress.subscribe({ complete: () => this.alerts.removeAlert(alert) });
+    return this.alerts.addProgress(message, progress);
   }
 }

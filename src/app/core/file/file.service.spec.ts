@@ -1,4 +1,4 @@
-import { TestBed } from "@angular/core/testing";
+import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 
 import { FileService } from "./file.service";
 import {
@@ -6,24 +6,26 @@ import {
   HttpErrorResponse,
   HttpEvent,
   HttpEventType,
-  HttpResponse,
 } from "@angular/common/http";
 import { AlertService } from "../alerts/alert.service";
 import { MatDialog } from "@angular/material/dialog";
 import { of, Subject, throwError } from "rxjs";
 import { ShowFileComponent } from "./show-file/show-file.component";
 import { Entity } from "../entity/model/entity";
+import { EntityMapperService } from "../entity/entity-mapper.service";
 
 describe("FileService", () => {
   let service: FileService;
   let mockHttp: jasmine.SpyObj<HttpClient>;
   let mockAlerts: jasmine.SpyObj<AlertService>;
   let mockDialog: jasmine.SpyObj<MatDialog>;
+  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
 
   beforeEach(() => {
     mockHttp = jasmine.createSpyObj(["get", "put", "delete"]);
     mockAlerts = jasmine.createSpyObj(["addProgress", "removeAlert"]);
     mockDialog = jasmine.createSpyObj(["open"]);
+    mockEntityMapper = jasmine.createSpyObj(["save"]);
     TestBed.configureTestingModule({
       providers: [
         FileService,
@@ -33,6 +35,7 @@ describe("FileService", () => {
           useValue: mockAlerts,
         },
         { provide: MatDialog, useValue: mockDialog },
+        { provide: EntityMapperService, useValue: mockEntityMapper },
       ],
     });
     service = TestBed.inject(FileService);
@@ -42,23 +45,26 @@ describe("FileService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should add a attachment to a existing document", (done) => {
+  it("should add a attachment to a existing document and update the entity", fakeAsync(() => {
     mockHttp.get.and.returnValue(of({ _rev: "test_rev" }));
     mockHttp.put.and.returnValue(of({ ok: true }));
-    const file = { type: "image/png" } as File;
+    const file = { type: "image/png", name: "file.name" } as File;
+    const entity = new Entity("testId");
 
-    service.uploadFile(file, new Entity("testId"), "testProp").subscribe(() => {
-      expect(mockHttp.get).toHaveBeenCalledWith(
-        jasmine.stringContaining("/testId")
-      );
-      expect(mockHttp.put).toHaveBeenCalledWith(
-        jasmine.stringContaining("/testId/testProp?rev=test_rev"),
-        jasmine.anything(),
-        jasmine.anything()
-      );
-      done();
-    });
-  });
+    service.uploadFile(file, entity, "testProp").subscribe();
+    tick();
+
+    expect(mockHttp.get).toHaveBeenCalledWith(
+      jasmine.stringContaining("/Entity:testId")
+    );
+    expect(mockHttp.put).toHaveBeenCalledWith(
+      jasmine.stringContaining("/Entity:testId/testProp?rev=test_rev"),
+      jasmine.anything(),
+      jasmine.anything()
+    );
+    expect(entity["testProp"]).toBe("file.name");
+    expect(mockEntityMapper.save).toHaveBeenCalledWith(entity);
+  }));
 
   it("should create attachment document if it does not exist yet", (done) => {
     mockHttp.get.and.returnValue(
@@ -69,11 +75,11 @@ describe("FileService", () => {
 
     service.uploadFile(file, new Entity("testId"), "testProp").subscribe(() => {
       expect(mockHttp.put).toHaveBeenCalledWith(
-        jasmine.stringContaining("/testId"),
+        jasmine.stringContaining("/Entity:testId"),
         {}
       );
       expect(mockHttp.put).toHaveBeenCalledWith(
-        jasmine.stringContaining("/testId/testProp?rev=newRev"),
+        jasmine.stringContaining("/Entity:testId/testProp?rev=newRev"),
         jasmine.anything(),
         jasmine.anything()
       );
@@ -103,10 +109,10 @@ describe("FileService", () => {
 
     service.removeFile(new Entity("testId"), "testProp").subscribe(() => {
       expect(mockHttp.get).toHaveBeenCalledWith(
-        jasmine.stringContaining("/testId")
+        jasmine.stringContaining("/Entity:testId")
       );
       expect(mockHttp.delete).toHaveBeenCalledWith(
-        jasmine.stringContaining("/testId/testProp?rev=test_rev")
+        jasmine.stringContaining("/Entity:testId/testProp?rev=test_rev")
       );
       done();
     });
@@ -125,7 +131,7 @@ describe("FileService", () => {
     events.next({ type: HttpEventType.DownloadProgress, loaded: 1, total: 10 });
     expect(mockAlerts.removeAlert).not.toHaveBeenCalled();
 
-    events.next({ type: HttpEventType.Response } as HttpResponse<any>);
+    events.complete();
     expect(mockAlerts.removeAlert).toHaveBeenCalled();
   });
 
