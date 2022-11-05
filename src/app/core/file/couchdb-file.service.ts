@@ -74,7 +74,11 @@ export class CouchdbFileService extends FileService {
     return this.getAttachmentsDocument(attachmentPath).pipe(
       concatMap(({ _rev }) =>
         this.http.delete(`${attachmentPath}/${property}?rev=${_rev}`)
-      )
+      ),
+      finalize(async () => {
+        entity[property] = undefined;
+        await this.entityMapper.save(entity);
+      })
     );
   }
 

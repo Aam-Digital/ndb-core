@@ -103,20 +103,25 @@ describe("CouchdbFileService", () => {
     });
   });
 
-  it("should remove a file using the latest rev", (done) => {
+  it("should remove a file using the latest rev and update the entity", fakeAsync(() => {
     mockHttp.get.and.returnValue(of({ _rev: "test_rev" }));
     mockHttp.delete.and.returnValue(of({ ok: true }));
+    const entity = new Entity("testId");
+    const prop = "testProp";
+    entity[prop] = "test.file";
 
-    service.removeFile(new Entity("testId"), "testProp").subscribe(() => {
-      expect(mockHttp.get).toHaveBeenCalledWith(
-        jasmine.stringContaining("/Entity:testId")
-      );
-      expect(mockHttp.delete).toHaveBeenCalledWith(
-        jasmine.stringContaining("/Entity:testId/testProp?rev=test_rev")
-      );
-      done();
-    });
-  });
+    service.removeFile(entity, "testProp").subscribe();
+    tick();
+
+    expect(mockHttp.get).toHaveBeenCalledWith(
+      jasmine.stringContaining("/Entity:testId")
+    );
+    expect(mockHttp.delete).toHaveBeenCalledWith(
+      jasmine.stringContaining("/Entity:testId/testProp?rev=test_rev")
+    );
+    expect(entity[prop]).toBe(undefined);
+    expect(mockEntityMapper.save).toHaveBeenCalledWith(entity);
+  }));
 
   it("should show progress while downloading a file", () => {
     const events = new Subject<HttpEvent<Blob>>();
