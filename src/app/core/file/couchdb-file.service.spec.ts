@@ -1,6 +1,6 @@
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 
-import { FileService } from "./file.service";
+import { CouchdbFileService } from "./couchdb-file.service";
 import {
   HttpClient,
   HttpErrorResponse,
@@ -14,8 +14,8 @@ import { ShowFileComponent } from "./show-file/show-file.component";
 import { Entity } from "../entity/model/entity";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 
-describe("FileService", () => {
-  let service: FileService;
+describe("CouchdbFileService", () => {
+  let service: CouchdbFileService;
   let mockHttp: jasmine.SpyObj<HttpClient>;
   let mockAlerts: jasmine.SpyObj<AlertService>;
   let mockDialog: jasmine.SpyObj<MatDialog>;
@@ -28,7 +28,7 @@ describe("FileService", () => {
     mockEntityMapper = jasmine.createSpyObj(["save"]);
     TestBed.configureTestingModule({
       providers: [
-        FileService,
+        CouchdbFileService,
         { provide: HttpClient, useValue: mockHttp },
         {
           provide: AlertService,
@@ -38,7 +38,7 @@ describe("FileService", () => {
         { provide: EntityMapperService, useValue: mockEntityMapper },
       ],
     });
-    service = TestBed.inject(FileService);
+    service = TestBed.inject(CouchdbFileService);
   });
 
   it("should be created", () => {

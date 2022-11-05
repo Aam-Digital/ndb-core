@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { EditComponent } from "../../entity-components/entity-utils/dynamic-form-components/edit-component";
 import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
-import { FileService } from "../file.service";
+import { CouchdbFileService } from "../couchdb-file.service";
 import { AlertService } from "../../alerts/alert.service";
 import { LoggingService } from "../../logging/logging.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
@@ -14,7 +14,7 @@ import { ConfirmationDialogService } from "../../confirmation-dialog/confirmatio
 })
 export class EditFileComponent extends EditComponent<string> {
   constructor(
-    private fileService: FileService,
+    private fileService: CouchdbFileService,
     private alertService: AlertService,
     private logger: LoggingService,
     private confirmationDialog: ConfirmationDialogService

@@ -8,7 +8,6 @@ import { faker } from "../../../core/demo-data/faker";
 import { centersWithProbability } from "./fixtures/centers";
 import { addDefaultChildPhoto } from "../../../../../.storybook/utils/addDefaultChildPhoto";
 import { genders } from "../model/genders";
-import { FileService } from "../../../core/file/file.service";
 import { firstValueFrom } from "rxjs";
 
 export class DemoChildConfig {

@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { ViewDirective } from "../../entity-components/entity-utils/view-components/view.directive";
-import { FileService } from "../file.service";
+import { CouchdbFileService } from "../couchdb-file.service";
 import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
 
 @DynamicComponent("ViewFile")
@@ -10,7 +10,7 @@ import { DynamicComponent } from "../../view/dynamic-components/dynamic-componen
   styleUrls: ["./view-file.component.scss"],
 })
 export class ViewFileComponent extends ViewDirective<string> {
-  constructor(public fileService: FileService) {
+  constructor(public fileService: CouchdbFileService) {
     super();
   }
 
