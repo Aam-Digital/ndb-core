@@ -132,6 +132,8 @@ describe("CouchdbFileService", () => {
     service.showFile(new Entity("testId"), "testProp");
 
     expect(mockAlerts.addProgress).toHaveBeenCalled();
+    // Code is only executed if observable is subscribed
+    mockAlerts.addProgress.calls.mostRecent().args[1].subscribe();
 
     events.next({ type: HttpEventType.DownloadProgress, loaded: 1, total: 10 });
     expect(mockAlerts.removeAlert).not.toHaveBeenCalled();
