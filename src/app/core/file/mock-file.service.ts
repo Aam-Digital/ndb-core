@@ -4,6 +4,11 @@ import { Observable, of } from "rxjs";
 import { FileService } from "./file.service";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 
+/**
+ * A mock implementation of the file service which only stores the file temporarily in the browser.
+ * This can be used in the demo mode.
+ * NO FILES ARE UPLOADED OR DOWNLOADED
+ */
 @Injectable()
 export class MockFileService extends FileService {
   private fileMap = new Map<string, string>();

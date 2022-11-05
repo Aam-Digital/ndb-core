@@ -17,6 +17,11 @@ import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Alert } from "../alerts/alert";
 import { FileService } from "./file.service";
 
+/**
+ * Stores the files in the CouchDB.
+ * See {@link https://docs.couchdb.org/en/3.2.2-docs/intro/api.html?highlight=attachments#attachments}
+ * Running upload and download processes are shown with progress bars.
+ */
 @Injectable()
 export class CouchdbFileService extends FileService {
   private attachmentsUrl = `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}-attachments`;
@@ -30,12 +35,8 @@ export class CouchdbFileService extends FileService {
     super();
   }
 
-  uploadFile(
-    file: File,
-    entity: Entity,
-    property: string,
-    blob = new Blob([file])
-  ): Observable<any> {
+  uploadFile(file: File, entity: Entity, property: string): Observable<any> {
+    const blob = new Blob([file]);
     const attachmentPath = `${this.attachmentsUrl}/${entity._id}`;
     const obs = this.getAttachmentsDocument(attachmentPath).pipe(
       concatMap(({ _rev }) =>
