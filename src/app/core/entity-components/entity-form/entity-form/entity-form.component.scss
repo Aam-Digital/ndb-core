@@ -28,3 +28,12 @@ app-entity-form {
     align-self: center;
   }
 }
+
+.field-with-tooltip-suffix {
+  width: calc(100% - 24px);
+  display: inline-block;
+}
+
+.tooltip-suffix {
+  margin: 4px;
+}

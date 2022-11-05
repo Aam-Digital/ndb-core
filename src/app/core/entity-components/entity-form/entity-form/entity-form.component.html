@@ -41,25 +41,27 @@ brings with it.
 <form class="entity-form-columns">
   <div *ngFor="let col of _columns; let i=index" class="entity-form-cell">
     <h2 *ngIf="columnHeaders?.[i]">{{columnHeaders[i]}}</h2>
-    <ng-container
-      *ngFor="let row of col"
-      [appDynamicComponent]="{
-        component: row.edit,
-        config: {
-          formFieldConfig: row,
-          propertySchema: entity.getSchema().get(row.id),
-          formControl: form.get(row.id)
-        }
-      }"
-    >
-      <fa-icon
-        (click)="tooltipElement.show()"
-        #tooltipElement="matTooltip"
-        *ngIf="row.tooltip"
-        matSuffix
-        icon="question-circle"
-        [matTooltip]="row.tooltip"
-      ></fa-icon>
+    <ng-container *ngFor="let row of col">
+      <div
+        [class.field-with-tooltip-suffix]="row.tooltip"
+        [appDynamicComponent]="{
+          component: row.edit,
+          config: {
+            formFieldConfig: row,
+            propertySchema: entity.getSchema().get(row.id),
+            formControl: form.get(row.id)
+          }
+        }"
+      >
+        <fa-icon
+          (click)="tooltipElement.show()"
+          #tooltipElement="matTooltip"
+          *ngIf="row.tooltip"
+          matSuffix
+          icon="question-circle"
+          [matTooltip]="row.tooltip"
+        ></fa-icon>
+      </div>
     </ng-container>
   </div>
 </form>
