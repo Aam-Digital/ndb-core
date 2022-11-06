@@ -35,6 +35,7 @@ import {
 } from "../../../core/entity/model/warning-level";
 import { School } from "../../schools/model/school";
 import { Ordering } from "../../../core/configurable-enum/configurable-enum-ordering";
+import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
@@ -98,6 +99,21 @@ export class Note extends Entity {
    * id referencing a different entity (e.g. a recurring activity) this note is related to
    */
   @DatabaseField() relatesTo: string;
+
+  /**
+   * other records (e.g. a recurring activity, group membership, ...) to which this note is related in some way,
+   * so that notes can be displayed linked to these entities.
+   *
+   * This property saves ids including their entity type prefix.
+   */
+  @DatabaseField({
+    label: $localize`:label for the related Entities:Related Records`,
+    viewComponent: "DisplayEntityArray",
+    editComponent: "EditEntityArray",
+    // TODO: transition this to allow linking of multiple/all entity types in the future
+    additional: ChildSchoolRelation.ENTITY_TYPE,
+  })
+  relatedEntities: string[] = [];
 
   /**
    * related school ids (e.g. to infer participants for event roll calls)
@@ -164,6 +180,25 @@ export class Note extends Entity {
     }
 
     this.children = this.children.concat(childId);
+    this.relatedEntities.push(
+      Entity.createPrefixedId(Child.ENTITY_TYPE, childId)
+    );
+  }
+
+  /**
+   * adds a new school to this note
+   * @param school The school or its id to be added to the note
+   */
+  addSchool(school: School | string) {
+    const schoolId = typeof school === "string" ? school : school.getId();
+    if (this.schools.includes(schoolId)) {
+      return;
+    }
+
+    this.schools = this.schools.concat(schoolId);
+    this.relatedEntities.push(
+      Entity.createPrefixedId(School.ENTITY_TYPE, schoolId)
+    );
   }
 
   /**

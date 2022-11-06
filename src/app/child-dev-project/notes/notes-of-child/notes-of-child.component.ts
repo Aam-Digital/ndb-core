@@ -10,6 +10,8 @@ import { FormFieldConfig } from "../../../core/entity-components/entity-form/ent
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { Entity } from "../../../core/entity/model/entity";
+import { Child } from "../../children/model/child";
+import { School } from "../../schools/model/school";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain child
@@ -25,7 +27,6 @@ export class NotesOfChildComponent
   implements OnChanges, OnInitDynamicComponent
 {
   @Input() entity: Entity;
-  private noteProperty = "children";
   records: Array<Note> = [];
 
   columns: FormFieldConfig[] = [
@@ -63,17 +64,8 @@ export class NotesOfChildComponent
     }
 
     this.entity = config.entity;
-    const entityType = this.entity.getType();
-    this.noteProperty = [...Note.schema.keys()].find(
-      (prop) => Note.schema.get(prop).additional === entityType
-    );
-    if (!this.noteProperty) {
-      throw new Error(
-        `Could not load notes for related entity: "${entityType}"`
-      );
-    }
 
-    if (this.noteProperty === "children") {
+    if (this.entity.getType() === Child.ENTITY_TYPE) {
       // When displaying notes for a child, use attendance color highlighting
       this.getColor = (note: Note) => note?.getColorForId(this.entity.getId());
     }
@@ -83,7 +75,7 @@ export class NotesOfChildComponent
 
   private initNotesOfChild() {
     this.childrenService
-      .getNotesOf(this.entity.getId(), this.noteProperty)
+      .getNotesRelatedTo(this.entity.getId(true))
       .then((notes: Note[]) => {
         notes.sort((a, b) => {
           if (!a.date && b.date) {
@@ -98,17 +90,20 @@ export class NotesOfChildComponent
 
   generateNewRecordFactory() {
     const user = this.sessionService.getCurrentUser().name;
-    const entityId = this.entity.getId();
 
     return () => {
       const newNote = new Note(Date.now().toString());
       newNote.date = new Date();
-      if (this.noteProperty === "children") {
-        newNote.addChild(entityId);
+      if (this.entity.getType() === Child.ENTITY_TYPE) {
+        newNote.addChild(this.entity as Child);
+      } else if (this.entity.getType() === School.ENTITY_TYPE) {
+        newNote.addSchool(this.entity as School);
       } else {
-        newNote[this.noteProperty].push(entityId);
+        newNote.relatedEntities.push(this.entity.getId(true));
       }
+
       if (!newNote.authors.includes(user)) {
+        // TODO: should we keep authors completely separate of also add them into the relatedEntities as well?
         newNote.authors.push(user);
       }
 

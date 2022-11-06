@@ -38,6 +38,7 @@ export class AttendanceService {
             }
           }`,
         },
+        // TODO: remove this and use general Note's relatedEntities index?
         by_activity: {
           map: `(doc) => {
             if (doc._id.startsWith("${EventNote.ENTITY_TYPE}") && doc.relatesTo) {

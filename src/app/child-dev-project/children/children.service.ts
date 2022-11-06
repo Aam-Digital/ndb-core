@@ -11,6 +11,7 @@ import { ChildPhotoService } from "./child-photo-service/child-photo.service";
 import moment, { Moment } from "moment";
 import { LoggingService } from "../../core/logging/logging.service";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
+import { EventNote } from "../attendance/model/event-note";
 
 @Injectable()
 export class ChildrenService {
@@ -119,10 +120,15 @@ export class ChildrenService {
     );
   }
 
-  getNotesOf(entityId: string, noteProperty: string): Promise<Note[]> {
-    return this.dbIndexing.queryIndexDocs(
+  /**
+   * Query all notes that have been linked to the given other entity.
+   * @param entityId ID (with prefix!) of the related record
+   */
+  getNotesRelatedTo(entityId: string): Promise<Note[]> {
+    return this.dbIndexing.queryIndexDocsRange(
       Note,
-      `notes_index/by_${noteProperty}`,
+      `notes_related_index/note_by_relatedEntities`,
+      entityId + "", // in future, we can add a date limit here (see AttendanceService.getEventsForActivity)
       entityId
     );
   }
@@ -182,7 +188,7 @@ export class ChildrenService {
     );
   }
 
-  private createNotesIndex(): Promise<any> {
+  private async createNotesIndex(): Promise<any> {
     const designDoc = {
       _id: "_design/notes_index",
       views: {
@@ -197,13 +203,38 @@ export class ChildrenService {
         },
       },
     };
+
+    // TODO: remove these and use general note_by_relatedEntities instead?
     // creating a by_... view for each of the following properties
     ["children", "schools", "authors"].forEach(
       (prop) =>
         (designDoc.views[`by_${prop}`] = this.createNotesByFunction(prop))
     );
 
-    return this.dbIndexing.createIndex(designDoc);
+    await this.dbIndexing.createIndex(designDoc);
+
+    const newDesignDoc = {
+      _id: "_design/notes_related_index",
+      views: {
+        note_by_relatedEntities: {
+          map: `(doc) => {
+            if (!doc._id.startsWith("${Note.ENTITY_TYPE}") && !doc._id.startsWith("${EventNote.ENTITY_TYPE}")) return;
+            if (!Array.isArray(doc.relatedEntities)) return;
+
+            var d = new Date(doc.date || null);
+            var dateString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0")
+
+            doc.relatedEntities.forEach((relatedEntity) => {
+              emit(relatedEntity + "_" + dateString);
+            });
+          }`,
+          // TODO: alternatively, we could build an index that combines all existing indexed properties for backward compatibility
+          //  [...doc.relatedEntities, ...doc.children, ...doc.schools, ...doc.authors] (after adding relevant prefixes)
+          //  also see https://www.dimagi.com/blog/what-every-developer-should-know-about-couchdb/
+        },
+      },
+    };
+    await this.dbIndexing.createIndex(newDesignDoc);
   }
 
   private createNotesByFunction(property: string) {

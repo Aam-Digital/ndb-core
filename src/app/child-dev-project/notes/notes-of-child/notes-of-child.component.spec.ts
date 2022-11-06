@@ -27,8 +27,8 @@ describe("NotesOfChildComponent", () => {
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
 
   beforeEach(() => {
-    mockChildrenService = jasmine.createSpyObj(["getNotesOf"]);
-    mockChildrenService.getNotesOf.and.resolveTo([]);
+    mockChildrenService = jasmine.createSpyObj(["getNotesRelatedTo"]);
+    mockChildrenService.getNotesRelatedTo.and.resolveTo([]);
     TestBed.configureTestingModule({
       imports: [NotesModule, MockedTestingModule.withState()],
       providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
@@ -44,11 +44,6 @@ describe("NotesOfChildComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
-  });
-
-  it("should throw an error when a invalid entity is passed", () => {
-    const config: PanelConfig = { entity: new ChildSchoolRelation() };
-    expect(() => component.onInitFromDynamicConfig(config)).toThrowError();
   });
 
   it("should use the attendance color function when passing a child", () => {
@@ -68,17 +63,21 @@ describe("NotesOfChildComponent", () => {
     let note = component.generateNewRecordFactory()();
     expect(note.children).toEqual([entity.getId()]);
     expect(note.authors).toEqual([TEST_USER]);
+    expect(note.relatedEntities).toEqual([entity._id]);
 
     entity = new School();
     component.onInitFromDynamicConfig({ entity });
     note = component.generateNewRecordFactory()();
     expect(note.schools).toEqual([entity.getId()]);
     expect(note.authors).toEqual([TEST_USER]);
+    expect(note.relatedEntities).toEqual([entity._id]);
 
     entity = new User();
     component.onInitFromDynamicConfig({ entity });
     note = component.generateNewRecordFactory()();
-    expect(note.authors).toEqual([entity.getId(), TEST_USER]);
+    expect(note.relatedEntities).toEqual([entity._id]);
+    // adding a note for a User does not make that User an author of the note!
+    expect(note.authors).toEqual([TEST_USER]);
   });
 
   it("should sort notes by date", fakeAsync(() => {
@@ -88,11 +87,14 @@ describe("NotesOfChildComponent", () => {
     n2.date = moment().subtract(1, "day").toDate();
     const n3 = new Note();
     n3.date = moment().subtract(2, "days").toDate();
-    mockChildrenService.getNotesOf.and.resolveTo([n3, n2, n1]);
+    mockChildrenService.getNotesRelatedTo.and.resolveTo([n3, n2, n1]);
 
     component.onInitFromDynamicConfig({ entity: new Child() });
     tick();
 
+    expect(mockChildrenService.getNotesRelatedTo).toHaveBeenCalledWith(
+      component.entity._id
+    );
     expect(component.records).toEqual([n1, n2, n3]);
   }));
 });
