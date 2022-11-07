@@ -1,7 +1,7 @@
 import { TestBed } from "@angular/core/testing";
 
-import { AUTH_ENABLED, AuthInterceptor } from "./auth-interceptor.service";
-import { AuthService } from "../auth.service";
+import { AUTH_ENABLED, AuthInterceptor } from "./auth.interceptor";
+import { AuthService } from "./auth.service";
 import { HttpContext } from "@angular/common/http";
 
 describe("AuthInterceptor", () => {

@@ -7,7 +7,7 @@ import {
   HttpContextToken,
 } from "@angular/common/http";
 import { Observable } from "rxjs";
-import { AuthService } from "../auth.service";
+import { AuthService } from "./auth.service";
 
 /**
  * This context can be used to prevent the Bearer token to be set by this interceptor.
