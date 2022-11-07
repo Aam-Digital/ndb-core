@@ -9,7 +9,7 @@ import {
   HttpResponse,
   HttpStatusCode,
 } from "@angular/common/http";
-import { of, throwError } from "rxjs";
+import { EMPTY, of, throwError } from "rxjs";
 
 describe("AuthInterceptor", () => {
   let interceptor: AuthInterceptor;
@@ -18,9 +18,6 @@ describe("AuthInterceptor", () => {
     clone: () => mockRequest,
     context: new HttpContext().set(AUTH_ENABLED, true),
   } as HttpRequest<any>;
-  const mockNext = {
-    handle: jasmine.createSpy().and.returnValue(of(undefined)),
-  };
 
   beforeEach(() => {
     mockAuthService = jasmine.createSpyObj(["addAuthHeader", "autoLogin"]);
@@ -41,8 +38,9 @@ describe("AuthInterceptor", () => {
     mockAuthService.addAuthHeader.and.callFake(
       (obj) => (obj["Authorization"] = "my-auth-header")
     );
+    spyOn(mockRequest, "clone");
 
-    interceptor.intercept(mockRequest, mockNext);
+    interceptor.intercept(mockRequest, { handle: () => EMPTY });
 
     expect(mockRequest.clone).toHaveBeenCalledWith({
       setHeaders: { Authorization: "my-auth-header" },
@@ -54,18 +52,18 @@ describe("AuthInterceptor", () => {
       status: HttpStatusCode.Unauthorized,
     });
     const expectedResponse = new HttpResponse({ status: 200 });
-    mockNext.handle.and.returnValues(
+    const handle = jasmine.createSpy().and.returnValues(
       throwError(() => errorResponse),
       of(expectedResponse)
     );
     mockAuthService.autoLogin.and.resolveTo();
 
-    interceptor.intercept(mockRequest, mockNext).subscribe((res) => {
+    interceptor.intercept(mockRequest, { handle }).subscribe((res) => {
       expect(res).toEqual(expectedResponse);
       expect(mockAuthService.autoLogin).toHaveBeenCalled();
       expect(mockAuthService.addAuthHeader).toHaveBeenCalledTimes(2);
-      expect(mockNext.handle).toHaveBeenCalledWith(mockRequest);
-      expect(mockNext.handle).toHaveBeenCalledTimes(2);
+      expect(handle).toHaveBeenCalledWith(mockRequest);
+      expect(handle).toHaveBeenCalledTimes(2);
       done();
     });
   });
@@ -74,13 +72,15 @@ describe("AuthInterceptor", () => {
     const errorResponse = new HttpErrorResponse({
       status: HttpStatusCode.NotFound,
     });
-    mockNext.handle.and.returnValue(throwError(() => errorResponse));
+    const handle = jasmine
+      .createSpy()
+      .and.returnValue(throwError(() => errorResponse));
 
-    interceptor.intercept(mockRequest, mockNext).subscribe({
+    interceptor.intercept(mockRequest, { handle }).subscribe({
       error: (err) => {
         expect(err).toBe(errorResponse);
         expect(mockAuthService.autoLogin).not.toHaveBeenCalled();
-        expect(mockNext.handle).toHaveBeenCalledTimes(1);
+        expect(handle).toHaveBeenCalledTimes(1);
         done();
       },
     });

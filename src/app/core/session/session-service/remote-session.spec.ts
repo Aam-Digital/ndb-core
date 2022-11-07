@@ -11,6 +11,20 @@ import { AuthService } from "../auth/auth.service";
 import { AuthUser } from "./auth-user";
 import PouchDB from "pouchdb-browser";
 
+export function mockAuth(user: AuthUser) {
+  return (u: string, p: string) => {
+    if (u === TEST_USER && p === TEST_PASSWORD) {
+      return Promise.resolve(user);
+    } else {
+      return Promise.reject(
+        new HttpErrorResponse({
+          status: HttpStatusCode.Unauthorized,
+        })
+      );
+    }
+  };
+}
+
 describe("RemoteSessionService", () => {
   let service: RemoteSession;
   let mockAuthService: jasmine.SpyObj<AuthService>;
@@ -25,15 +39,7 @@ describe("RemoteSessionService", () => {
       "autoLogin",
     ]);
     // Remote session allows TEST_USER and TEST_PASSWORD as valid credentials
-    mockAuthService.authenticate.and.callFake(async (u, p) => {
-      if (u === TEST_USER && p === TEST_PASSWORD) {
-        return testUser;
-      } else {
-        throw new HttpErrorResponse({
-          status: HttpStatusCode.Unauthorized,
-        });
-      }
-    });
+    mockAuthService.authenticate.and.callFake(mockAuth(testUser));
 
     TestBed.configureTestingModule({
       providers: [
