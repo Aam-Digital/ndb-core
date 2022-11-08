@@ -33,7 +33,7 @@
       angularticsCategory="Navigation"
       angularticsAction="navbar_site_title_link"
     >
-    {{ title }}
+      {{ title }}
     </a>
   </div>
 
@@ -67,6 +67,8 @@
         class="overflow-auto-y"
         (click)="closeSidenavOnMobile()"
       ></app-navigation>
+
+      <div class="flex-grow"></div>
 
       <div class="flex-column">
         <app-pwa-install></app-pwa-install>
