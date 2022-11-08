@@ -6,6 +6,5 @@ import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-co
 @Component({
   selector: "app-edit-long-text",
   templateUrl: "./edit-long-text.component.html",
-  styleUrls: ["./edit-long-text.component.scss"],
 })
 export class EditLongTextComponent extends EditComponent<string> {}

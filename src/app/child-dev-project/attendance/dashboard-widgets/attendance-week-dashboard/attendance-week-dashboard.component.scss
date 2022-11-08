@@ -1,15 +1,10 @@
 @use "../../../../core/dashboard/dashboard-widget-base";
 
-.day-box {
-  display: table;
-  width: 15px;
-  overflow: hidden;
-  white-space: nowrap;
-  font-size: smaller;
-}
-
+// Lays out the single day components
 .activities-record {
   display: flex;
   flex-direction: row;
-  gap: 2px;
+  gap: 3px;
+  // puts the whole component to the end
+  justify-content: flex-end;
 }

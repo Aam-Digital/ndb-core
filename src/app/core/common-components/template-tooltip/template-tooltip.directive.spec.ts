@@ -6,7 +6,6 @@ import {
   tick,
 } from "@angular/core/testing";
 import { Component } from "@angular/core";
-import { expect } from "@angular/flex-layout/_private-utils/testing";
 import { CommonModule } from "@angular/common";
 import { OverlayModule } from "@angular/cdk/overlay";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";

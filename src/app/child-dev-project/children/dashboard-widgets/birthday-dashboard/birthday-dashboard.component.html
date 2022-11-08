@@ -25,15 +25,15 @@
           <th scope="col">AfterBirthdayAge</th>
         </tr>
         <ng-container matColumnDef="child">
-          <td mat-cell *matCellDef="let child">
+          <td *matCellDef="let child">
             <app-display-entity [entityToDisplay]="child.child"></app-display-entity>
           </td>
         </ng-container>
         <ng-container matColumnDef="dateOfBirth">
-          <td mat-cell *matCellDef="let child">{{ child.birthday | date:"E dd.MM" }} </td>
+          <td *matCellDef="let child">{{ child.birthday | date:"E dd.MM" }} </td>
         </ng-container>
         <ng-container matColumnDef="age">
-          <td mat-cell *matCellDef="let child" i18n>{{child.child?.age + 1}} yrs</td>
+          <td *matCellDef="let child" i18n>{{child.child?.age + 1}} yrs</td>
         </ng-container>
         <tr mat-row *matRowDef="let row; columns: ['child','dateOfBirth','age'];">
         </tr>

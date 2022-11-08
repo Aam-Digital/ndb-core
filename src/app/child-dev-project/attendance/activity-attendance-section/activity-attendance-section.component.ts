@@ -1,9 +1,16 @@
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import {
+  Component,
+  Inject,
+  Input,
+  LOCALE_ID,
+  OnChanges,
+  SimpleChanges,
+} from "@angular/core";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { RecurringActivity } from "../model/recurring-activity";
 import { AttendanceDetailsComponent } from "../attendance-details/attendance-details.component";
 import { AttendanceService } from "../attendance.service";
-import { PercentPipe } from "@angular/common";
+import { formatPercent } from "@angular/common";
 import { ActivityAttendance } from "../model/activity-attendance";
 import moment from "moment";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
@@ -14,10 +21,10 @@ import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-
 @Component({
   selector: "app-activity-attendance-section",
   templateUrl: "./activity-attendance-section.component.html",
-  styleUrls: ["./activity-attendance-section.component.scss"],
 })
 export class ActivityAttendanceSectionComponent
-  implements OnChanges, OnInitDynamicComponent {
+  implements OnChanges, OnInitDynamicComponent
+{
   @Input() activity: RecurringActivity;
   @Input() forChild?: string;
 
@@ -53,10 +60,11 @@ export class ActivityAttendanceSectionComponent
       label: $localize`:Percentage of people that attended an event:Attended`,
       view: "ReadonlyFunction",
       additional: (e: ActivityAttendance) =>
-        this.percentPipe.transform(
+        formatPercent(
           this.forChild
             ? e.getAttendancePercentage(this.forChild)
             : e.getAttendancePercentageAverage(),
+          this.locale,
           "1.0-0"
         ),
     },
@@ -64,7 +72,7 @@ export class ActivityAttendanceSectionComponent
 
   constructor(
     private attendanceService: AttendanceService,
-    private percentPipe: PercentPipe,
+    @Inject(LOCALE_ID) private locale: string,
     private formDialog: FormDialogService
   ) {}
 

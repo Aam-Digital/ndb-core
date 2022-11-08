@@ -5,7 +5,6 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatInputModule } from "@angular/material/input";
 import { MatExpansionModule } from "@angular/material/expansion";
-import { FlexLayoutModule } from "@angular/flex-layout";
 import { MatButtonModule } from "@angular/material/button";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatNativeDateModule } from "@angular/material/core";
@@ -31,7 +30,6 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
     MatInputModule,
     MatExpansionModule,
     ViewModule,
-    FlexLayoutModule,
     MatButtonModule,
     MatSnackBarModule,
     MatNativeDateModule,

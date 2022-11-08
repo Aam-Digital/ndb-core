@@ -2,7 +2,6 @@ import { Story, Meta } from "@storybook/angular/types-6-0";
 import { ChildBlockComponent } from "./child-block.component";
 import { Child } from "../model/child";
 import { moduleMetadata } from "@storybook/angular";
-import { FlexLayoutModule } from "@angular/flex-layout";
 import { CommonModule } from "@angular/common";
 import { addDefaultChildPhoto } from "../../../../../.storybook/utils/addDefaultChildPhoto";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
@@ -12,7 +11,7 @@ export default {
   component: ChildBlockComponent,
   decorators: [
     moduleMetadata({
-      imports: [CommonModule, FlexLayoutModule, StorybookBaseModule],
+      imports: [CommonModule, StorybookBaseModule],
     }),
   ],
 } as Meta;
@@ -32,4 +31,13 @@ const Template: Story<ChildBlockComponent> = (args: ChildBlockComponent) => ({
 export const Primary = Template.bind({});
 Primary.args = {
   entity: demoChild,
+};
+
+const demoInactiveChild = Child.create("John Doe");
+demoInactiveChild.projectNumber = "42";
+demoInactiveChild.status = "Dropout";
+
+export const Inactive = Template.bind({});
+Inactive.args = {
+  entity: demoInactiveChild,
 };

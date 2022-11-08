@@ -4,6 +4,7 @@ import {
   OnChanges,
   SimpleChanges,
   ViewChild,
+  ViewEncapsulation,
 } from "@angular/core";
 import { Note } from "../../notes/model/note";
 import {
@@ -30,6 +31,7 @@ import { AnalyticsService } from "../../../core/analytics/analytics.service";
   selector: "app-attendance-calendar",
   templateUrl: "./attendance-calendar.component.html",
   styleUrls: ["./attendance-calendar.component.scss"],
+  encapsulation: ViewEncapsulation.None,
 })
 @UntilDestroy()
 export class AttendanceCalendarComponent implements OnChanges {

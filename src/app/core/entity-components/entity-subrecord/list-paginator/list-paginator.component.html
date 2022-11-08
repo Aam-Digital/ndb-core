@@ -1,19 +1,18 @@
 <!-- Desktop Version -->
-<div class="toolbar">
-  <mat-slide-toggle
-    class="slider"
-    [checked]="showingAll"
-    (change)="changeAllToggle()"
-    i18n="All toggle for paginator"
-  >
-    Show All
-  </mat-slide-toggle>
-  <mat-paginator
-    #paginator
-    (page)="onPaginateChange($event)"
-    [pageSize]="pageSize"
-    [pageIndex]="currentPageIndex"
-    [pageSizeOptions]="pageSizeOptions"
-    [showFirstLastButtons]="true"
-  ></mat-paginator>
-</div>
+<mat-slide-toggle
+  class="slider"
+  [checked]="showingAll"
+  (change)="changeAllToggle()"
+  i18n="All toggle for paginator"
+>
+  Show All
+</mat-slide-toggle>
+<mat-paginator
+  #paginator
+  (page)="onPaginateChange($event)"
+  [pageSize]="pageSize"
+  [pageIndex]="currentPageIndex"
+  [pageSizeOptions]="pageSizeOptions"
+  [showFirstLastButtons]="true"
+></mat-paginator>
+

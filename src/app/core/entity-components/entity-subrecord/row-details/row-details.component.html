@@ -1,18 +1,13 @@
-<fa-icon
-  mat-dialog-close
-  class="cancel-icon"
-  icon="times"
-  mat-ripple
->
-</fa-icon>
+<app-dialog-close mat-dialog-close></app-dialog-close>
 <div mat-dialog-content>
   <div class="main-content">
     <div
       *ngFor="let row of data.columns"
-      class="row-element"
+      class="flex-row align-baseline gap-small full-width"
     >
-      <div
-        [appDynamicComponent]="{
+      <div class="flex-grow">
+        <div
+          [appDynamicComponent]="{
             component: row.edit,
             config: {
               formFieldConfig: row,
@@ -20,7 +15,8 @@
               formControl: form.get(row.id)
             }
           }"
-      ></div>
+        ></div>
+      </div>
       <fa-icon
         (click)="tooltipElement.show()"
         #tooltipElement="matTooltip"
@@ -32,31 +28,28 @@
     </div>
   </div>
 
-  <div *ngFor="let col of viewOnlyColumns" class="viewonly-section">
-    <mat-chip-list>
-      <mat-chip
-        [matTooltip]="col.tooltip"
-        [ngStyle]="{
-          'background-color': tempEntity.getColor()
-        }"
-      >
-        <p *ngIf="col.label">{{ col.label }}:&nbsp;</p>
-        <ng-template
-          [appDynamicComponent]="{
-          component: col.view,
-          config: {
-            id: col.id,
-            entity: tempEntity,
-            config: col.additional
-          }
-        }"
-        ></ng-template>
-      </mat-chip>
-    </mat-chip-list>
+  <div *ngFor="let col of viewOnlyColumns">
+    <app-pill
+      [matTooltip]="col.tooltip"
+      [style.background-color]="tempEntity.getColor()"
+      class="mat-body-strong"
+    >
+      <span *ngIf="col.label">{{ col.label }}:&nbsp;</span>
+      <ng-template
+        [appDynamicComponent]="{
+        component: col.view,
+        config: {
+          id: col.id,
+          entity: tempEntity,
+          config: col.additional
+        }
+      }"
+      ></ng-template>
+    </app-pill>
     <!-- avoid scroll bar + move delete into [...] menu -->
   </div>
 </div>
-<div mat-dialog-actions fxLayoutGap="10px">
+<div mat-dialog-actions>
   <button
     mat-raised-button
     (click)="save()"
@@ -88,7 +81,7 @@
       angularticsAction="entity_delete"
     >
       <fa-icon
-        class="standard-icon-with-text warn-icon"
+        class="standard-icon-with-text color-accent"
         aria-label="remove element"
         icon="trash"
       ></fa-icon>

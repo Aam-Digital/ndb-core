@@ -1,0 +1,14 @@
+/*
+ * returns a gradient that draws a little triangle on the top-right
+ * corner (if used as background)
+ */
+@function top-right-triangle($color, $threshold: 85%) {
+  @return linear-gradient(
+      45deg,
+      transparent 0%,
+      transparent $threshold,
+      $color $threshold,
+      $color 100%
+  );
+}
+

@@ -45,7 +45,7 @@
   </mat-autocomplete>
 
   <mat-error
-    *ngIf="formControl.errors?.required"
+    *ngIf="formControl.hasError('required')"
     i18n="Error message for any input"
   >
     This field is required

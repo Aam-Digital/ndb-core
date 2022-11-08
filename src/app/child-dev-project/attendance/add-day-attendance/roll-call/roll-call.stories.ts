@@ -7,7 +7,9 @@ import { AttendanceModule } from "../../attendance.module";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { mockEntityMapper } from "../../../../core/entity/mock-entity-mapper-service";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
-import { ChildrenService } from "../../../children/children.service";
+import { ConfigService } from "../../../../core/config/config.service";
+import { ATTENDANCE_STATUS_CONFIG_ID } from "../../model/attendance-status";
+import { defaultAttendanceStatusTypes } from "../../../../core/config/default-config/default-attendance-status-types";
 
 const demoEvent = Note.create(new Date(), "coaching");
 const demoChildren = [
@@ -29,9 +31,15 @@ export default {
           useValue: mockEntityMapper(demoChildren),
         },
         {
-          provide: ChildrenService,
-          useValue: {},
-        },
+          provide: ConfigService,
+          useValue: {
+            getConfigurableEnumValues(id: string) {
+              if (id === ATTENDANCE_STATUS_CONFIG_ID) {
+                return defaultAttendanceStatusTypes;
+              }
+            }
+          },
+        }
       ],
     }),
   ],
@@ -45,6 +53,7 @@ const Template: Story<RollCallComponent> = (args: RollCallComponent) => ({
 export const Primary = Template.bind({});
 Primary.args = {
   eventEntity: demoEvent,
+  children: demoChildren,
 };
 
 export const Finished = Template.bind({});

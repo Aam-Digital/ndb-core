@@ -33,7 +33,6 @@ import { SearchComponent } from "./search/search.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { ChildrenModule } from "../../child-dev-project/children/children.module";
 import { SchoolsModule } from "../../child-dev-project/schools/schools.module";
-import { FlexLayoutModule } from "@angular/flex-layout";
 import { PrimaryActionComponent } from "./primary-action/primary-action.component";
 import { NotesModule } from "../../child-dev-project/notes/notes.module";
 import { Angulartics2Module } from "angulartics2";
@@ -62,7 +61,6 @@ import { UserSecurityComponent } from "../user/user-security/user-security.compo
     MatFormFieldModule,
     MatInputModule,
     MatAutocompleteModule,
-    FlexLayoutModule,
     ChildrenModule,
     SchoolsModule,
     NotesModule,

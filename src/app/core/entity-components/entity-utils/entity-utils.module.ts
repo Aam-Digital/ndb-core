@@ -30,7 +30,6 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatChipsModule } from "@angular/material/chips";
 import { EditNumberComponent } from "./dynamic-form-components/edit-number/edit-number.component";
 import { EntityFunctionPipe } from "./view-components/readonly-function/entity-function.pipe";
-import { FlexLayoutModule } from "@angular/flex-layout";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { EntitySubrecordModule } from "../entity-subrecord/entity-subrecord.module";
@@ -74,7 +73,6 @@ import { EditTextWithAutocompleteComponent } from "./dynamic-form-components/edi
     MatCheckboxModule,
     MatAutocompleteModule,
     MatChipsModule,
-    FlexLayoutModule,
     FontAwesomeModule,
     MatButtonModule,
     EntitySubrecordModule,
