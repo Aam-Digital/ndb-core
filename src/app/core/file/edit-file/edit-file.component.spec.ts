@@ -15,6 +15,7 @@ import { of, throwError } from "rxjs";
 import { Entity } from "app/core/entity/model/entity";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FileService } from "../file.service";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
 describe("EditFileComponent", () => {
   let component: EditFileComponent;
@@ -36,6 +37,7 @@ describe("EditFileComponent", () => {
     await TestBed.configureTestingModule({
       imports: [FileModule, FontAwesomeTestingModule, NoopAnimationsModule],
       providers: [
+        EntitySchemaService,
         { provide: AlertService, useValue: mockAlertService },
         { provide: FileService, useValue: mockFileService },
         {

@@ -1,23 +1,30 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { ProgressComponent } from './progress.component';
+import { ProgressComponent } from "./progress.component";
+import { MAT_SNACK_BAR_DATA } from "@angular/material/snack-bar";
+import { of } from "rxjs";
 
-describe('ProgressComponent', () => {
+describe("ProgressComponent", () => {
   let component: ProgressComponent;
   let fixture: ComponentFixture<ProgressComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ProgressComponent ]
-    })
-    .compileComponents();
+      declarations: [ProgressComponent],
+      providers: [
+        {
+          provide: MAT_SNACK_BAR_DATA,
+          useValue: { message: "Some labe", progress: of(10) },
+        },
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ProgressComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

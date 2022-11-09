@@ -7,33 +7,34 @@ import {
   HttpEvent,
   HttpEventType,
 } from "@angular/common/http";
-import { AlertService } from "../alerts/alert.service";
 import { MatDialog } from "@angular/material/dialog";
 import { of, Subject, throwError } from "rxjs";
 import { ShowFileComponent } from "./show-file/show-file.component";
 import { Entity } from "../entity/model/entity";
 import { EntityMapperService } from "../entity/entity-mapper.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 describe("CouchdbFileService", () => {
   let service: CouchdbFileService;
   let mockHttp: jasmine.SpyObj<HttpClient>;
-  let mockAlerts: jasmine.SpyObj<AlertService>;
   let mockDialog: jasmine.SpyObj<MatDialog>;
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockSnackbar: jasmine.SpyObj<MatSnackBar>;
+  let dismiss: jasmine.Spy;
 
   beforeEach(() => {
     mockHttp = jasmine.createSpyObj(["get", "put", "delete"]);
-    mockAlerts = jasmine.createSpyObj(["addProgress", "removeAlert"]);
     mockDialog = jasmine.createSpyObj(["open"]);
     mockEntityMapper = jasmine.createSpyObj(["save"]);
+    mockSnackbar = jasmine.createSpyObj(["openFromComponent"]);
+    dismiss = jasmine.createSpy();
+    mockSnackbar.openFromComponent.and.returnValue({ dismiss } as any);
+
     TestBed.configureTestingModule({
       providers: [
         CouchdbFileService,
         { provide: HttpClient, useValue: mockHttp },
-        {
-          provide: AlertService,
-          useValue: mockAlerts,
-        },
+        { provide: MatSnackBar, useValue: mockSnackbar },
         { provide: MatDialog, useValue: mockDialog },
         { provide: EntityMapperService, useValue: mockEntityMapper },
       ],
@@ -71,9 +72,10 @@ describe("CouchdbFileService", () => {
       throwError(() => new HttpErrorResponse({ status: 404 }))
     );
     mockHttp.put.and.returnValue(of({ rev: "newRev" }));
-    const file = { type: "image/png" } as File;
+    const file = { type: "image/png", name: "file.name" } as File;
+    const entity = new Entity("testId");
 
-    service.uploadFile(file, new Entity("testId"), "testProp").subscribe(() => {
+    service.uploadFile(file, entity, "testProp").subscribe(() => {
       expect(mockHttp.put).toHaveBeenCalledWith(
         jasmine.stringContaining("/Entity:testId"),
         {}
@@ -83,6 +85,8 @@ describe("CouchdbFileService", () => {
         jasmine.anything(),
         jasmine.anything()
       );
+      expect(entity["testProp"]).toBe("file.name");
+      expect(mockEntityMapper.save).toHaveBeenCalledWith(entity);
       done();
     });
   });
@@ -131,15 +135,17 @@ describe("CouchdbFileService", () => {
 
     service.showFile(new Entity("testId"), "testProp");
 
-    expect(mockAlerts.addProgress).toHaveBeenCalled();
+    expect(mockSnackbar.openFromComponent).toHaveBeenCalled();
     // Code is only executed if observable is subscribed
-    mockAlerts.addProgress.calls.mostRecent().args[1].subscribe();
+    const data: any =
+      mockSnackbar.openFromComponent.calls.mostRecent().args[1].data;
+    data.progress.subscribe();
 
     events.next({ type: HttpEventType.DownloadProgress, loaded: 1, total: 10 });
-    expect(mockAlerts.removeAlert).not.toHaveBeenCalled();
+    expect(dismiss).not.toHaveBeenCalled();
 
     events.complete();
-    expect(mockAlerts.removeAlert).toHaveBeenCalled();
+    expect(dismiss).toHaveBeenCalled();
   });
 
   it("should show a dialog if the popup couldn't be opened", () => {
