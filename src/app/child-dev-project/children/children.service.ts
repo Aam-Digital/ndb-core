@@ -12,6 +12,9 @@ import moment, { Moment } from "moment";
 import { LoggingService } from "../../core/logging/logging.service";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 import { EventNote } from "../attendance/model/event-note";
+import { Entity } from "../../core/entity/model/entity";
+import { School } from "../schools/model/school";
+import { User } from "../../core/user/user";
 
 @Injectable()
 export class ChildrenService {
@@ -124,13 +127,37 @@ export class ChildrenService {
    * Query all notes that have been linked to the given other entity.
    * @param entityId ID (with prefix!) of the related record
    */
-  getNotesRelatedTo(entityId: string): Promise<Note[]> {
-    return this.dbIndexing.queryIndexDocsRange(
+  async getNotesRelatedTo(entityId: string): Promise<Note[]> {
+    const indirectlyLinkedNotes = await this.dbIndexing.queryIndexDocs(
+      Note,
+      `notes_index/by_${this.inferNoteLinkPropertyFromEntityType(entityId)}`,
+      Entity.extractEntityIdFromId(entityId)
+    );
+
+    const explicitlyLinkedNotes = await this.dbIndexing.queryIndexDocsRange(
       Note,
       `notes_related_index/note_by_relatedEntities`,
-      entityId + "", // in future, we can add a date limit here (see AttendanceService.getEventsForActivity)
-      entityId
+      [entityId],
+      [entityId]
     );
+
+    return [...indirectlyLinkedNotes, ...explicitlyLinkedNotes].filter(
+      // remove duplicates
+      (element, index, array) =>
+        array.findIndex((e) => e._id === element._id) === index
+    );
+  }
+
+  private inferNoteLinkPropertyFromEntityType(entityId: string): string {
+    const entityType = Entity.extractTypeFromId(entityId);
+    switch (entityType) {
+      case Child.ENTITY_TYPE:
+        return "children";
+      case School.ENTITY_TYPE:
+        return "schools";
+      case User.ENTITY_TYPE:
+        return "authors";
+    }
   }
 
   /**
@@ -204,7 +231,7 @@ export class ChildrenService {
       },
     };
 
-    // TODO: remove these and use general note_by_relatedEntities instead?
+    // TODO: remove these and use general note_by_relatedEntities instead --> to be decided later #1501
     // creating a by_... view for each of the following properties
     ["children", "schools", "authors"].forEach(
       (prop) =>
@@ -225,12 +252,9 @@ export class ChildrenService {
             var dateString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0")
 
             doc.relatedEntities.forEach((relatedEntity) => {
-              emit(relatedEntity + "_" + dateString);
+              emit([relatedEntity, dateString]);
             });
           }`,
-          // TODO: alternatively, we could build an index that combines all existing indexed properties for backward compatibility
-          //  [...doc.relatedEntities, ...doc.children, ...doc.schools, ...doc.authors] (after adding relevant prefixes)
-          //  also see https://www.dimagi.com/blog/what-every-developer-should-know-about-couchdb/
         },
       },
     };

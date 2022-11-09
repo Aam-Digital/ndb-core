@@ -216,6 +216,22 @@ describe("ChildrenService", () => {
     res = await service.getNotesRelatedTo(s2.getId(true));
     expect(res).toEqual([n3]);
   });
+
+  it("should include related notes through children and schools links (legacy)", async () => {
+    const c1 = new Child("c1");
+    const s1 = new School("s1");
+    const n1 = new Note("n1");
+    n1.children.push(c1.getId());
+    n1.relatedEntities.push(c1.getId(true));
+    n1.schools.push(s1.getId());
+    await entityMapper.saveAll([n1]);
+
+    let res = await service.getNotesRelatedTo(c1.getId(true));
+    expect(res).toEqual([n1]);
+
+    res = await service.getNotesRelatedTo(s1.getId(true));
+    expect(res).toEqual([n1]);
+  });
 });
 
 function generateChildEntities(): Child[] {
