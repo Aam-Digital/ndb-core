@@ -29,6 +29,13 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   readonly loadingPlaceholder = $localize`:A placeholder for the input element when select options are not loaded yet:loading...`;
 
   /**
+   * Handle and emit ids including entity type prefix - default is false.
+   *
+   * TODO: make ids including prefix the default everywhere and remove this option (see #1526)
+   */
+  @Input() withPrefix: boolean = false;
+
+  /**
    * The entity-type (e.g. 'Child', 'School', e.t.c.) to set.
    * @param type The ENTITY_TYPE of a Entity. This affects the entities which will be loaded and the component
    *             that displays the entities.
@@ -235,7 +242,9 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   }
 
   private emitChange() {
-    this.selectionChange.emit(this.selectedEntities.map((e) => e.getId(true)));
+    this.selectionChange.emit(
+      this.selectedEntities.map((e) => e.getId(this.withPrefix))
+    );
   }
 
   private isSelected(entity: E): boolean {
