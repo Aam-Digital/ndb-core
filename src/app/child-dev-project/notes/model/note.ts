@@ -111,7 +111,8 @@ export class Note extends Entity {
     viewComponent: "DisplayEntityArray",
     editComponent: "EditEntityArray",
     // TODO: transition this to allow linking of multiple/all entity types in the future
-    additional: ChildSchoolRelation.ENTITY_TYPE,
+    // by default no additional relatedEntities can be linked apart from children and schools, overwrite this in config to display (e.g. additional: "ChildSchoolRelation")
+    additional: undefined,
   })
   relatedEntities: string[] = [];
 

@@ -60,7 +60,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
       )
       .subscribe((_) => {
         this.selectedEntities = this.allEntities.filter((e) =>
-          sel.find((s) => s === e.getId())
+          sel.find((s) => s === e.getId(true) || s === e.getId())
         );
       });
   }
@@ -224,7 +224,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    */
   unselectEntity(entity: E) {
     const index = this.selectedEntities.findIndex(
-      (e) => e.getId() === entity.getId()
+      (e) => e.getId(true) === entity.getId(true)
     );
     if (index !== -1) {
       this.selectedEntities.splice(index, 1);
@@ -235,10 +235,12 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   }
 
   private emitChange() {
-    this.selectionChange.emit(this.selectedEntities.map((e) => e.getId()));
+    this.selectionChange.emit(this.selectedEntities.map((e) => e.getId(true)));
   }
 
   private isSelected(entity: E): boolean {
-    return this.selectedEntities.some((e) => e.getId() === entity.getId());
+    return this.selectedEntities.some(
+      (e) => e.getId(true) === entity.getId(true)
+    );
   }
 }

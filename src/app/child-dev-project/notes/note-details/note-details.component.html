@@ -193,5 +193,16 @@
     >
     </app-entity-select>
 
+    <app-entity-select *ngIf="relatedEntitiesSchema?.additional"
+      class="form-section"
+      entityType="ChildSchoolRelation"
+      [(selection)]="entity.relatedEntities"
+      (selectionChange)="entityForm.form.markAsDirty()"
+      [disabled]="formDialogWrapper.readonly"
+      [label]="relatedEntitiesSchema.label"
+      [placeholder]="relatedEntitiesSchema.label"
+    >
+    </app-entity-select>
+
   </form>
 </app-form-dialog-wrapper>
