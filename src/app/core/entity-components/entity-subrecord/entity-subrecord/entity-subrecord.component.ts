@@ -182,17 +182,16 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 
   getEntityConstructor(): EntityConstructor<T> {
-    if (this.entityConstructorIsAvailable()) {
-      if (!this.entityConstructor) {
-        const record =
-          this._records.length > 0 ? this._records[0] : this.newRecordFactory();
-        this.entityConstructor =
-          record.getConstructor() as EntityConstructor<T>;
-      }
-      return this.entityConstructor;
-    } else {
+    if (!this.entityConstructorIsAvailable()) {
       throw new Error("No constructor is available");
     }
+
+    if (!this.entityConstructor) {
+      const record =
+        this._records.length > 0 ? this._records[0] : this.newRecordFactory();
+      this.entityConstructor = record.getConstructor() as EntityConstructor<T>;
+    }
+    return this.entityConstructor;
   }
 
   /**
