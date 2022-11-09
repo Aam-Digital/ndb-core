@@ -14,16 +14,16 @@ import { Child } from "../../children/model/child";
 import { School } from "../../schools/model/school";
 
 /**
- * The component that is responsible for listing the Notes that are related to a certain child
- *
- * TODO rename this to a more general name as this can also handle notes of schools and notes of authors
+ * The component that is responsible for listing the Notes that are related to a certain entity.
  */
-@DynamicComponent("NotesOfChild")
+@DynamicComponent("NotesRelatedToEntity")
+@DynamicComponent("NotesOfChild") // for backward compatibility
 @Component({
-  selector: "app-notes-of-child",
-  templateUrl: "./notes-of-child.component.html",
+  selector: "app-notes-related-to-entity",
+  templateUrl: "./notes-related-to-entity.component.html",
+  styleUrls: ["./notes-related-to-entity.component.scss"],
 })
-export class NotesOfChildComponent
+export class NotesRelatedToEntityComponent
   implements OnChanges, OnInitDynamicComponent
 {
   @Input() entity: Entity;
@@ -54,7 +54,7 @@ export class NotesOfChildComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("child")) {
-      this.initNotesOfChild();
+      this.initNotesOfEntity();
     }
   }
 
@@ -70,10 +70,10 @@ export class NotesOfChildComponent
       this.getColor = (note: Note) => note?.getColorForId(this.entity.getId());
     }
 
-    this.initNotesOfChild();
+    this.initNotesOfEntity();
   }
 
-  private initNotesOfChild() {
+  private initNotesOfEntity() {
     this.childrenService
       .getNotesRelatedTo(this.entity.getId(true))
       .then((notes: Note[]) => {

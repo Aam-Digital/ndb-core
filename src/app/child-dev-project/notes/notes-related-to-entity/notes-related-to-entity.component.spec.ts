@@ -1,4 +1,4 @@
-import { NotesOfChildComponent } from "./notes-of-child.component";
+import { NotesRelatedToEntityComponent } from "./notes-related-to-entity.component";
 import {
   ComponentFixture,
   fakeAsync,
@@ -20,9 +20,9 @@ import { School } from "../../schools/model/school";
 import { User } from "../../../core/user/user";
 import moment from "moment";
 
-describe("NotesOfChildComponent", () => {
-  let component: NotesOfChildComponent;
-  let fixture: ComponentFixture<NotesOfChildComponent>;
+describe("NotesRelatedToEntityComponent", () => {
+  let component: NotesRelatedToEntityComponent;
+  let fixture: ComponentFixture<NotesRelatedToEntityComponent>;
 
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
 
@@ -36,7 +36,7 @@ describe("NotesOfChildComponent", () => {
   });
 
   beforeEach(async () => {
-    fixture = TestBed.createComponent(NotesOfChildComponent);
+    fixture = TestBed.createComponent(NotesRelatedToEntityComponent);
     component = fixture.componentInstance;
     component.entity = new Child("1");
     fixture.detectChanges();

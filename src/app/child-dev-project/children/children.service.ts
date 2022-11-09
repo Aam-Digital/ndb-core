@@ -128,11 +128,14 @@ export class ChildrenService {
    * @param entityId ID (with prefix!) of the related record
    */
   async getNotesRelatedTo(entityId: string): Promise<Note[]> {
-    const indirectlyLinkedNotes = await this.dbIndexing.queryIndexDocs(
-      Note,
-      `notes_index/by_${this.inferNoteLinkPropertyFromEntityType(entityId)}`,
-      Entity.extractEntityIdFromId(entityId)
-    );
+    let indirectlyLinkedNotes = [];
+    if (this.inferNoteLinkPropertyFromEntityType(entityId)) {
+      indirectlyLinkedNotes = await this.dbIndexing.queryIndexDocs(
+        Note,
+        `notes_index/by_${this.inferNoteLinkPropertyFromEntityType(entityId)}`,
+        Entity.extractEntityIdFromId(entityId)
+      );
+    }
 
     const explicitlyLinkedNotes = await this.dbIndexing.queryIndexDocsRange(
       Note,
