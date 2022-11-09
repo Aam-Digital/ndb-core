@@ -272,6 +272,8 @@ export class Note extends Entity {
   copy(): Note {
     const note: Note = super.copy() as Note;
     note.children = [...this.children];
+    note.schools = [...this.schools];
+    note.relatedEntities = [...this.relatedEntities];
     note.childrenAttendance = new Map();
     this.childrenAttendance.forEach((value, key) => {
       note.childrenAttendance.set(key, value.copy());
