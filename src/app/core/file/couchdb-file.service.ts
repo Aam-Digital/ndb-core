@@ -126,6 +126,9 @@ export class CouchdbFileService extends FileService {
     const ref = this.snackbar.openFromComponent(ProgressComponent, {
       data: { message, progress },
     });
-    progress.subscribe({ complete: () => ref.dismiss() });
+    progress.subscribe({
+      complete: () => ref.dismiss(),
+      error: () => ref.dismiss(),
+    });
   }
 }
