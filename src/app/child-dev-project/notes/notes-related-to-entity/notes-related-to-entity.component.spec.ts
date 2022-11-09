@@ -38,7 +38,7 @@ describe("NotesRelatedToEntityComponent", () => {
   beforeEach(async () => {
     fixture = TestBed.createComponent(NotesRelatedToEntityComponent);
     component = fixture.componentInstance;
-    component.entity = new Child("1");
+    component.onInitFromDynamicConfig({ entity: new Child("1") });
     fixture.detectChanges();
   });
 

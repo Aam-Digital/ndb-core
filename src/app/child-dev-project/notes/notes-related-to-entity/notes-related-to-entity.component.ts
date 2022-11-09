@@ -48,9 +48,7 @@ export class NotesRelatedToEntityComponent
     private childrenService: ChildrenService,
     private sessionService: SessionService,
     private formDialog: FormDialogService
-  ) {
-    this.newRecordFactory = this.generateNewRecordFactory();
-  }
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("child")) {
@@ -64,6 +62,7 @@ export class NotesRelatedToEntityComponent
     }
 
     this.entity = config.entity;
+    this.newRecordFactory = this.generateNewRecordFactory();
 
     if (this.entity.getType() === Child.ENTITY_TYPE) {
       // When displaying notes for a child, use attendance color highlighting
