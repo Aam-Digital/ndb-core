@@ -41,12 +41,15 @@ export class NotesOfChildComponent
    * @param note note to get color for
    */
   getColor = (note: Note) => note?.getColor();
+  newRecordFactory: () => Note;
 
   constructor(
     private childrenService: ChildrenService,
     private sessionService: SessionService,
     private formDialog: FormDialogService
-  ) {}
+  ) {
+    this.newRecordFactory = this.generateNewRecordFactory();
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("child")) {
