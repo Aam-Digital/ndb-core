@@ -195,6 +195,13 @@ export const defaultJsonConfig = {
         {
           "component": "AttendanceWeekDashboard",
           "config": {
+            "daysOffset": 7,
+            "periodLabel": $localize`:Attendance week dashboard widget label:this week`
+          }
+        },
+        {
+          "component": "AttendanceWeekDashboard",
+          "config": {
             "daysOffset": 0,
             "periodLabel": $localize`:Attendance week dashboard widget label:last week`
           }
@@ -202,8 +209,9 @@ export const defaultJsonConfig = {
         {
           "component": "AttendanceWeekDashboard",
           "config": {
-            "daysOffset": 7,
-            "periodLabel": $localize`:Attendance week dashboard widget label:this week`
+            "daysOffset": 0,
+            "label": $localize`:Attendance week dashboard widget label:Late last week`,
+            "attendanceStatusType": "LATE"
           }
         },
         {
