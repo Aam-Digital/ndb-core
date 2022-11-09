@@ -29,6 +29,7 @@ import { DemoDataInitializerService } from "./core/demo-data/demo-data-initializ
 import { LoginState } from "./core/session/session-states/login-state.enum";
 import { LoggingService } from "./core/logging/logging.service";
 import { EntityRegistry } from "./core/entity/database-entity.decorator";
+import { SwPush } from "@angular/service-worker";
 
 /**
  * Component as the main entry point for the app.
@@ -49,8 +50,19 @@ export class AppComponent {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private demoDataInitializer: DemoDataInitializerService,
-    private entities: EntityRegistry
+    private entities: EntityRegistry,
+    private swPush: SwPush
   ) {
+    console.log("enabled", swPush.isEnabled);
+    swPush.subscription.subscribe((res) => console.log("subscription", res));
+    swPush.messages.subscribe((res) => console.log("message", res));
+
+    swPush
+      .requestSubscription({
+        serverPublicKey:
+          "BI5VAJ5Uv5Q5PrWCNIgI8uqlF7YGI2BWzL0aKVZGxmV8vAgN2FdjWPCM5LXHRBwtla8Xl5gjGJf66boW1vlytOw",
+      })
+      .then((res) => console.log("res", res));
     this.initBasicServices();
   }
 
