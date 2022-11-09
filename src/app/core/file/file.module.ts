@@ -17,9 +17,10 @@ import { SessionType } from "../session/session-type";
 import { FileService } from "./file.service";
 import { MockFileService } from "./mock-file.service";
 import { serviceProvider } from "../../utils/utils";
+import { ProgressComponent } from './progress/progress.component';
 
 @NgModule({
-  declarations: [EditFileComponent, ViewFileComponent, ShowFileComponent],
+  declarations: [EditFileComponent, ViewFileComponent, ShowFileComponent, ProgressComponent],
   imports: [
     CommonModule,
     MatButtonModule,

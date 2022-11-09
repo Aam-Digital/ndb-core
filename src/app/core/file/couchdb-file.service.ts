@@ -7,15 +7,22 @@ import {
   HttpResponse,
 } from "@angular/common/http";
 import { AppSettings } from "../app-config/app-settings";
-import { catchError, concatMap, filter, finalize, map } from "rxjs/operators";
+import {
+  catchError,
+  concatMap,
+  filter,
+  finalize,
+  map,
+  shareReplay,
+} from "rxjs/operators";
 import { Observable } from "rxjs";
-import { AlertService } from "../alerts/alert.service";
 import { MatDialog } from "@angular/material/dialog";
 import { ShowFileComponent } from "./show-file/show-file.component";
 import { Entity } from "../entity/model/entity";
 import { EntityMapperService } from "../entity/entity-mapper.service";
-import { Alert } from "../alerts/alert";
 import { FileService } from "./file.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { ProgressComponent } from "./progress/progress.component";
 
 /**
  * Stores the files in the CouchDB.
@@ -28,9 +35,9 @@ export class CouchdbFileService extends FileService {
 
   constructor(
     private http: HttpClient,
-    private alerts: AlertService,
     private dialog: MatDialog,
-    private entityMapper: EntityMapperService
+    private entityMapper: EntityMapperService,
+    private snackbar: MatSnackBar
   ) {
     super();
   }
@@ -49,10 +56,11 @@ export class CouchdbFileService extends FileService {
       finalize(() => {
         entity[property] = file.name;
         this.entityMapper.save(entity);
-      })
+      }),
+      shareReplay()
     );
-    const alert = this.reportProgress($localize`Uploading "${file.name}"`, obs);
-    return obs.pipe(finalize(() => this.alerts.removeAlert(alert)));
+    this.reportProgress($localize`Uploading "${file.name}"`, obs);
+    return obs;
   }
 
   private getAttachmentsDocument(
@@ -93,15 +101,9 @@ export class CouchdbFileService extends FileService {
         headers: { "ngsw-bypass": "" },
       }
     );
-    const alert = this.reportProgress(
-      $localize`Loading "${entity[property]}"`,
-      obs
-    );
+    this.reportProgress($localize`Loading "${entity[property]}"`, obs);
     obs
-      .pipe(
-        filter((e) => e.type === HttpEventType.Response),
-        finalize(() => this.alerts.removeAlert(alert))
-      )
+      .pipe(filter((e) => e.type === HttpEventType.Response))
       .subscribe((e: HttpResponse<Blob>) => {
         const fileURL = URL.createObjectURL(e.body);
         const win = window.open(fileURL, "_blank");
@@ -112,10 +114,7 @@ export class CouchdbFileService extends FileService {
       });
   }
 
-  private reportProgress(
-    message: string,
-    obs: Observable<HttpEvent<any>>
-  ): Alert {
+  private reportProgress(message: string, obs: Observable<HttpEvent<any>>) {
     const progress = obs.pipe(
       filter(
         (e) =>
@@ -124,6 +123,9 @@ export class CouchdbFileService extends FileService {
       ),
       map((e: HttpProgressEvent) => Math.round(100 * (e.loaded / e.total)))
     );
-    return this.alerts.addProgress(message, progress);
+    const ref = this.snackbar.openFromComponent(ProgressComponent, {
+      data: { message, progress },
+    });
+    progress.subscribe({ complete: () => ref.dismiss() });
   }
 }
