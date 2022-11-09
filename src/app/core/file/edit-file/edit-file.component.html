@@ -1,6 +1,6 @@
 <input type="file" style="display: none" (change)="onFileSelected($event)" #fileUpload>
 
-<mat-form-field (click)="formClicked()">
+<mat-form-field [ngClass]="{ clickable: formControl.value}" (click)="formClicked()">
   <mat-label>{{ label }}</mat-label>
   <input
     matInput readonly
