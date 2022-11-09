@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, ElementRef, ViewChild } from "@angular/core";
 import { EditComponent } from "../../entity-components/entity-utils/dynamic-form-components/edit-component";
 import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
 import { AlertService } from "../../alerts/alert.service";
@@ -17,6 +17,8 @@ import { FileService } from "../file.service";
   styleUrls: ["./edit-file.component.scss"],
 })
 export class EditFileComponent extends EditComponent<string> {
+  @ViewChild("fileUpload") fileInput: ElementRef<HTMLInputElement>;
+
   constructor(
     private fileService: FileService,
     private alertService: AlertService,
@@ -28,6 +30,8 @@ export class EditFileComponent extends EditComponent<string> {
 
   async onFileSelected(event) {
     const file: File = event.target.files[0];
+    // directly reset input so subsequent selections with the same name also trigger the change event
+    this.fileInput.nativeElement.value = "";
 
     if (this.formControl.value) {
       const shouldReplace = await this.confirmationDialog.getConfirmation(
