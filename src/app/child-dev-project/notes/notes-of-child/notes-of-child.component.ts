@@ -47,9 +47,7 @@ export class NotesOfChildComponent
     private childrenService: ChildrenService,
     private sessionService: SessionService,
     private formDialog: FormDialogService
-  ) {
-    this.newRecordFactory = this.generateNewRecordFactory();
-  }
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("child")) {
@@ -64,6 +62,8 @@ export class NotesOfChildComponent
 
     this.entity = config.entity;
     const entityType = this.entity.getType();
+    this.newRecordFactory = this.generateNewRecordFactory();
+
     this.noteProperty = [...Note.schema.keys()].find(
       (prop) => Note.schema.get(prop).additional === entityType
     );
