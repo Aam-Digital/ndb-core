@@ -3,10 +3,10 @@ import { MatTabGroup } from "@angular/material/tabs";
 import { Directive, OnInit } from "@angular/core";
 
 /**
- * Memorizes the current state of a `TabGroup` (I.e. which tab currently is selected)
+ * Memorizes the current state of a `TabGroup` (i.e. which tab currently is selected)
  * in the URL and sets the initial value to a value that was previously set.
  *
- * This enables navigation throughout the app while memoryzing the state a tab was in
+ * This enables navigation throughout the app while memorizing the state a tab was in
  * Usage (only the directive is required, the rest is automatic):
  * ```
  * <mat-tab-group appTabStateMemo>

@@ -6,6 +6,5 @@ import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-co
 @Component({
   selector: "app-edit-date",
   templateUrl: "./edit-date.component.html",
-  styleUrls: ["./edit-date.component.scss"],
 })
 export class EditDateComponent extends EditComponent<Date> {}

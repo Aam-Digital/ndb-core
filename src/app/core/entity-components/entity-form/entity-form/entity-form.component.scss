@@ -1,43 +1,32 @@
-@import "../../../../utils/grid-layout";
+@use "src/styles/mixins/grid-layout";
 
-$padding-block: 50px;
-
-$padding-buttons-bottom: 0.25em;
-
-$min-block-width: 330px;
-$max-screen-width: $min-block-width + $margin-main-view-right + $margin-main-view-left;
-
-.form-field {
-  display: inline-block;
-  margin-left: 20px;
+// Usually, this is the `:host` pseudo-selector but since the
+// view encapsulation is None, this has to be the name
+app-entity-form {
+  display: flex;
+  flex-direction: column;
 }
 
-// Hacky way to set the width of each form field
-// to 100% in every form component
-:host ::ng-deep .mat-form-field {
-  width: 100%;
+.entity-form-columns {
+  @include grid-layout.adaptive($min-block-width: 330px, $max-screen-width: 414px);
 }
 
-.columns-wrapper {
-  @include adaptive-grid($min-block-width, $max-screen-width);
-  align-items: start;
-  position: relative;
-  max-height: calc(100vh - 240px);
-  overflow: auto;
-}
+.entity-form-cell {
+  display: flex;
+  flex-direction: column;
 
-.column-group {
-  margin-right: 0.5em;
-}
+  // set the width of each form field to 100% in every form component that is a descendent
+  // of the columns-wrapper class
+  mat-form-field {
+    width: 100%;
+  }
 
-.buttons-wrapper {
-  padding-bottom: $padding-buttons-bottom;
-}
-
-.mat-chip {
-  margin-left: 20px !important;
-  margin-bottom: 20px !important;
-  font-family: sans-serif;
+  // We align the photo (and only tht photo) to the center of the cell if there is one.
+  // This looks better on desktop and mobile compared to an alignment to the start of the cell
+  // which is the default for all other elements
+  > app-edit-photo {
+    align-self: center;
+  }
 }
 
 .field-with-tooltip-suffix {

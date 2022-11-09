@@ -36,7 +36,6 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 @UntilDestroy()
 @Component({
   templateUrl: "./changelog.component.html",
-  styleUrls: ["./changelog.component.scss"],
 })
 export class ChangelogComponent implements OnInit {
   /** The array of relevant changelog entries to be displayed */
@@ -64,7 +63,7 @@ export class ChangelogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (this.data && isObservable(this.data)) {
+    if (isObservable(this.data)) {
       this.data
         .pipe(untilDestroyed(this))
         .subscribe((changelog) => (this.changelogs = changelog));

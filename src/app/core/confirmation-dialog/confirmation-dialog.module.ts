@@ -7,6 +7,7 @@ import { ConfirmationDialogService } from "./confirmation-dialog.service";
 import { MatIconModule } from "@angular/material/icon";
 import { MatRippleModule } from "@angular/material/core";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { CommonComponentsModule } from "../common-components/common-components.module";
 
 /**
  * A helper utility module helping to display configurable confirmation dialog boxes
@@ -22,6 +23,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     MatIconModule,
     MatRippleModule,
     FontAwesomeModule,
+    CommonComponentsModule,
   ],
   declarations: [ConfirmationDialogComponent],
   providers: [ConfirmationDialogService],

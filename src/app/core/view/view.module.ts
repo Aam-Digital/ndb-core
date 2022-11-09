@@ -13,7 +13,6 @@ import {
 import { ApplicationLoadingComponent } from "./dynamic-routing/empty/application-loading.component";
 import { NotFoundComponent } from "./dynamic-routing/not-found/not-found.component";
 import { RouterModule } from "@angular/router";
-import { FlexModule } from "@angular/flex-layout";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 
 /**
@@ -33,7 +32,6 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
     MatTooltipModule,
     MatButtonModule,
     RouterModule,
-    FlexModule,
     MatProgressBarModule,
   ],
   providers: [{ provide: ViewRegistry, useValue: viewRegistry }],

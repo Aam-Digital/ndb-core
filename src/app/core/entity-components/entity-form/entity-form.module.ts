@@ -3,7 +3,6 @@ import { CommonModule } from "@angular/common";
 import { EntityFormComponent } from "./entity-form/entity-form.component";
 import { EntityFormService } from "./entity-form.service";
 import { MatButtonModule } from "@angular/material/button";
-import { FlexLayoutModule, FlexModule } from "@angular/flex-layout";
 import { ViewModule } from "../../view/view.module";
 import { PermissionsModule } from "../../permissions/permissions.module";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -17,10 +16,8 @@ import { MatChipsModule } from "@angular/material/chips";
   imports: [
     CommonModule,
     MatButtonModule,
-    FlexModule,
     ViewModule,
     PermissionsModule,
-    FlexLayoutModule,
     MatTabsModule,
     MatTooltipModule,
     MatFormFieldModule,

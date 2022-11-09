@@ -117,9 +117,10 @@ export class RollCallComponent implements OnChanges {
   }
 
   private loadAttendanceStatusTypes() {
-    this.availableStatus = this.configService.getConfigurableEnumValues<AttendanceStatusType>(
-      ATTENDANCE_STATUS_CONFIG_ID
-    );
+    this.availableStatus =
+      this.configService.getConfigurableEnumValues<AttendanceStatusType>(
+        ATTENDANCE_STATUS_CONFIG_ID
+      );
   }
 
   private async loadParticipants() {

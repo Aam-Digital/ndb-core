@@ -1,10 +1,4 @@
-<fa-icon
-  *ngIf="data.closeButton"
-  mat-dialog-close
-  class="cancel-icon"
-  icon="times"
-  mat-ripple>
-</fa-icon>
+<app-dialog-close *ngIf="data.closeButton" mat-dialog-close></app-dialog-close>
 <h1 mat-dialog-title>{{ data.title }}</h1>
 <div mat-dialog-content>
   <p>{{ data.text }}</p>

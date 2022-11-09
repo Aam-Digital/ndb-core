@@ -17,36 +17,27 @@
 
 <mat-tab-group appTabStateMemo>
   <mat-tab i18n-label="User-Account label" label="User Account">
-    <ng-template matTabContent>
-      <div class="user-profile-tab">
-        <p>
-          <mat-form-field>
-            <input
-              i18n-placeholder="Username placeholder"
-              placeholder="Username"
-              matInput="text"
-              id="username"
-              type="text"
-              [value]="username"
-              disabled
-            />
-          </mat-form-field>
-        </p>
-        <div
-          [matTooltip]="tooltipText"
-          [matTooltipDisabled]="!passwordChangeDisabled"
-          style="width: fit-content"
-        >
-          <app-password-form
-            [username]="username"
-            [disabled]="passwordChangeDisabled"
-          ></app-password-form>
+    <div class="min-width-1-3 margin-top-large" [matTooltip]="tooltipText">
+      <mat-form-field class="full-width">
+        <input
+          i18n-placeholder="Username placeholder"
+          placeholder="Username"
+          matInput="text"
+          id="username"
+          type="text"
+          [value]="username"
+          disabled
+        />
+      </mat-form-field>
 
-          <app-account-page
-            [disabled]="passwordChangeDisabled"
-          ></app-account-page>
-        </div>
-      </div>
-    </ng-template>
+      <app-password-form
+        [username]="username"
+        [disabled]="passwordChangeDisabled"
+      ></app-password-form>
+
+      <app-account-page
+        [disabled]="passwordChangeDisabled"
+      ></app-account-page>
+    </div>
   </mat-tab>
 </mat-tab-group>

@@ -16,12 +16,10 @@
  */
 
 import { Injectable } from "@angular/core";
-import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 
-import { Alert } from "./alert";
-import { AlertComponent } from "./alerts/alert.component";
+import { AlertConfig, ExtendedAlertConfig } from "./alert-config";
 import { AlertDisplay } from "./alert-display";
-import { Observable } from "rxjs";
 
 /**
  * Display alerts to the user as a hovering message at the bottom of the view.
@@ -31,28 +29,31 @@ import { Observable } from "rxjs";
  *
  * If you want to log technical details and problems, use {@link LoggingService} instead!
  * This service is for user facing messages.
+ *
+ * You can also use the {@link MatSnackBar} when you want to have more control over what you
+ * want to display to the user.
  */
 @Injectable()
 export class AlertService {
   /** All alerts currently to be displayed */
-  alerts: Alert[] = [];
+  alerts: ExtendedAlertConfig[] = [];
 
-  constructor(public snackBar: MatSnackBar) {}
+  private static ALERT_BASE_CLASS = "ndb-alert";
+
+  constructor(private snackBar: MatSnackBar) {}
 
   /**
    * Display the given alert.
    * @param alert The alert instance to be displayed
    */
-  addAlert(alert: Alert) {
-    this.alerts.push(alert);
+  addAlert(alert: AlertConfig) {
+    this.alerts.push({ ...alert, timestamp: new Date() });
     this.displayAlert(alert);
   }
 
-  private displayAlert(alert: Alert) {
-    const snackConfig = {
-      data: alert,
+  private displayAlert(alert: AlertConfig) {
+    const snackConfig: MatSnackBarConfig = {
       duration: 10000,
-      panelClass: "alerts-snackbar",
     };
 
     switch (alert.display) {
@@ -66,22 +67,12 @@ export class AlertService {
         break;
     }
 
-    alert.notificationRef = this.snackBar.openFromComponent(
-      AlertComponent,
-      snackConfig
-    );
-  }
+    snackConfig.panelClass = [
+      AlertService.ALERT_BASE_CLASS,
+      AlertService.ALERT_BASE_CLASS + "--" + alert.type,
+    ];
 
-  /**
-   * Remove an existing alert so that it is no longer displayed.
-   * @param alert The alert to be removed
-   */
-  removeAlert(alert: Alert) {
-    const index = this.alerts.indexOf(alert, 0);
-    if (index > -1) {
-      this.alerts.splice(index, 1);
-      alert.notificationRef.dismiss();
-    }
+    this.snackBar.open(alert.message, "dismiss", snackConfig);
   }
 
   /**
@@ -93,7 +84,7 @@ export class AlertService {
     message: string,
     display: AlertDisplay = AlertDisplay.TEMPORARY
   ) {
-    this.addAlert(new Alert(message, Alert.INFO, display));
+    this.addAlert({ message, type: "info", display });
   }
 
   /**
@@ -105,7 +96,7 @@ export class AlertService {
     message: string,
     display: AlertDisplay = AlertDisplay.PERSISTENT
   ) {
-    this.addAlert(new Alert(message, Alert.WARNING, display));
+    this.addAlert({ message, type: "warning", display });
   }
 
   /**
@@ -117,23 +108,6 @@ export class AlertService {
     message: string,
     display: AlertDisplay = AlertDisplay.PERSISTENT
   ) {
-    this.addAlert(new Alert(message, Alert.DANGER, display));
-  }
-
-  /**
-   * Shows a message together with a progress bar.
-   * @param message The text to be displayed
-   * @param progress An observable that emits numbers between 0 and 100
-   * @returns Alert which can be used to close it after finishing
-   */
-  public addProgress(message: string, progress: Observable<number>): Alert {
-    const alert = new Alert(
-      message,
-      Alert.INFO,
-      AlertDisplay.PERSISTENT,
-      progress
-    );
-    this.addAlert(alert);
-    return alert;
+    this.addAlert({ message, type: "danger", display });
   }
 }

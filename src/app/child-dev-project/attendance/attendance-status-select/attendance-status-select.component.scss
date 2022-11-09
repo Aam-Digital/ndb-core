@@ -1,11 +1,13 @@
+@use "src/styles/variables/sizes";
+
 // The indicator is a round, colored shape with a small margin on the right
 // it is used as prefix in the form field and for the individual options
 .indicator {
-  width: 1em;
-  height: 1em;
+  width: sizes.$regular;
+  height: sizes.$regular;
   border-radius: 50%;
 
-  margin-right: 0.5em;
+  margin-right: sizes.$small;
 
   // when the indicator is used as prefix in a form field
   // it should be center-aligned with the content, but is baseline-aligned
@@ -20,9 +22,4 @@
     display: inline-block;
     vertical-align: middle;
   }
-}
-
-mat-form-field {
-  // don't allow this to overflow
-  max-width: 100%;
 }

@@ -1,32 +1,19 @@
-@import "../../../../styles";
-@import "../../../utils/grid-layout";
+@use "src/styles/variables/sizes";
+@use "src/styles/mixins/grid-layout";
 
 .input-medium {
   width: 100%;
   max-width: 500px;
 }
 
-.form-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
 .content-header {
-  @include adaptive-grid(450px);
-}
-
-.information-body {
-  display: flex;
-  flex-direction: column;
-  gap: $standard-margin-small;
-  padding: $standard-margin-small;
+  @include grid-layout.adaptive(450px);
 }
 
 .additional-actions-menu {
   position: absolute;
-  right: 8px;
-  top: 16px;
+  right: sizes.$small;
+  top: sizes.$regular;
 }
 
 .form-section {

@@ -1,12 +1,6 @@
-.mat-dialog-content > * {
-  padding: 10px;
-}
-
-.input-max {
-  width: 100%;
-}
+@use "src/styles/variables/sizes";
 
 .summary {
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: sizes.$regular;
 }

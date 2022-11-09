@@ -17,7 +17,6 @@
 
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FlexLayoutModule } from "@angular/flex-layout";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -33,12 +32,13 @@ import { EditProgressDashboardComponent } from "./edit-progress-dashboard/edit-p
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatTableModule } from "@angular/material/table";
+import { CommonComponentsModule } from "../../core/common-components/common-components.module";
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
-    FlexLayoutModule,
     MatCardModule,
     MatButtonModule,
     MatProgressBarModule,
@@ -52,6 +52,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatDividerModule,
     ReactiveFormsModule,
     MatTooltipModule,
+    MatTableModule,
+    CommonComponentsModule,
   ],
   declarations: [ProgressDashboardComponent, EditProgressDashboardComponent],
   exports: [ProgressDashboardComponent],

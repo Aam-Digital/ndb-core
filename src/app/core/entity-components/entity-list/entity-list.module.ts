@@ -5,7 +5,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { Angulartics2Module } from "angulartics2";
 import { MatButtonModule } from "@angular/material/button";
-import { ExtendedModule, FlexModule } from "@angular/flex-layout";
 import { MatInputModule } from "@angular/material/input";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatExpansionModule } from "@angular/material/expansion";
@@ -27,6 +26,7 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { FilterOverlayComponent } from "./filter-overlay/filter-overlay.component";
 import { MatDialogModule } from "@angular/material/dialog";
 import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
+import { CommonComponentsModule } from "../../common-components/common-components.module";
 
 @NgModule({
   declarations: [
@@ -42,11 +42,9 @@ import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
     ExportModule,
     Angulartics2Module,
     MatButtonModule,
-    FlexModule,
     MatInputModule,
     MatCheckboxModule,
     MatExpansionModule,
-    ExtendedModule,
     MatButtonToggleModule,
     MatTableModule,
     ViewModule,
@@ -61,6 +59,7 @@ import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
     FontAwesomeModule,
     MatDialogModule,
     TabStateModule,
+    CommonComponentsModule,
   ],
   exports: [EntityListComponent, ListFilterComponent],
 })

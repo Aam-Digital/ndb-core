@@ -12,6 +12,7 @@ import { AttendanceService } from "../../../attendance/attendance.service";
 import { ActivityAttendance } from "../../../attendance/model/activity-attendance";
 import { RecurringActivity } from "../../../attendance/model/recurring-activity";
 import { defaultInteractionTypes } from "../../../../core/config/default-config/default-interaction-types";
+import { WINDOW_TOKEN } from "../../../../utils/di-tokens";
 
 describe("RecentAttendanceBlocksComponent", () => {
   let component: RecentAttendanceBlocksComponent;
@@ -19,21 +20,20 @@ describe("RecentAttendanceBlocksComponent", () => {
 
   let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
 
-  beforeEach(
-    waitForAsync(() => {
-      mockAttendanceService = jasmine.createSpyObj("mockAttendanceService", [
-        "getActivitiesForChild",
-        "getAllActivityAttendancesForPeriod",
-      ]);
+  beforeEach(waitForAsync(() => {
+    mockAttendanceService = jasmine.createSpyObj("mockAttendanceService", [
+      "getActivitiesForChild",
+      "getAllActivityAttendancesForPeriod",
+    ]);
 
-      TestBed.configureTestingModule({
-        declarations: [RecentAttendanceBlocksComponent],
-        providers: [
-          { provide: AttendanceService, useValue: mockAttendanceService },
-        ],
-      }).compileComponents();
-    })
-  );
+    TestBed.configureTestingModule({
+      declarations: [RecentAttendanceBlocksComponent],
+      providers: [
+        { provide: AttendanceService, useValue: mockAttendanceService },
+        { provide: WINDOW_TOKEN, useValue: window },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(RecentAttendanceBlocksComponent);

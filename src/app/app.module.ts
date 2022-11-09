@@ -34,7 +34,6 @@ import { UserModule } from "./core/user/user.module";
 import { ProgressDashboardWidgetModule } from "./features/progress-dashboard-widget/progress-dashboard-widget.module";
 import { ChildrenModule } from "./child-dev-project/children/children.module";
 import { SchoolsModule } from "./child-dev-project/schools/schools.module";
-import { FlexLayoutModule } from "@angular/flex-layout";
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
 import { AdminModule } from "./core/admin/admin.module";
@@ -106,7 +105,6 @@ import { FileModule } from "./core/file/file.module";
     }),
     BrowserModule,
     BrowserAnimationsModule,
-    FlexLayoutModule,
     HttpClientModule,
     routing,
     ViewModule,
