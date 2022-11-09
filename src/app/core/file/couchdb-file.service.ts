@@ -57,6 +57,7 @@ export class CouchdbFileService extends FileService {
         entity[property] = file.name;
         this.entityMapper.save(entity);
       }),
+      // prevent http request to be executed multiple times (whenever .subscribe is called)
       shareReplay()
     );
     this.reportProgress($localize`Uploading "${file.name}"`, obs);
