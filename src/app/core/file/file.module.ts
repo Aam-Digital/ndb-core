@@ -17,10 +17,17 @@ import { SessionType } from "../session/session-type";
 import { FileService } from "./file.service";
 import { MockFileService } from "./mock-file.service";
 import { serviceProvider } from "../../utils/utils";
-import { ProgressComponent } from './progress/progress.component';
+import { ProgressComponent } from "./progress/progress.component";
+import { EntitySchemaService } from "../entity/schema/entity-schema.service";
+import { fileDataType } from "./file-data-type";
 
 @NgModule({
-  declarations: [EditFileComponent, ViewFileComponent, ShowFileComponent, ProgressComponent],
+  declarations: [
+    EditFileComponent,
+    ViewFileComponent,
+    ShowFileComponent,
+    ProgressComponent,
+  ],
   imports: [
     CommonModule,
     MatButtonModule,
@@ -44,4 +51,8 @@ import { ProgressComponent } from './progress/progress.component';
 })
 export class FileModule {
   static dynamicComponents = [EditFileComponent, ViewFileComponent];
+
+  constructor(entitySchemaService: EntitySchemaService) {
+    entitySchemaService.registerSchemaDatatype(fileDataType);
+  }
 }

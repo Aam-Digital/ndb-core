@@ -981,10 +981,8 @@ export const defaultJsonConfig = {
       {
         "name": "birth_certificate",
         "schema": {
-          dataType: "string",
-          label: $localize`:Label for a child attribute:Birth certificate`,
-          editComponent: "EditFile",
-          viewComponent: "ViewFile"
+          dataType: "file",
+          label: $localize`:Label for a child attribute:Birth certificate`
         }
       }
     ]
