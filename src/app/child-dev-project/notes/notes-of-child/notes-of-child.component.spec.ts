@@ -38,7 +38,7 @@ describe("NotesOfChildComponent", () => {
   beforeEach(async () => {
     fixture = TestBed.createComponent(NotesOfChildComponent);
     component = fixture.componentInstance;
-    component.entity = new Child("1");
+    component.onInitFromDynamicConfig({ entity: new Child("1") });
     fixture.detectChanges();
   });
 
