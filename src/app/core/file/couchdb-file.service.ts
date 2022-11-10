@@ -23,6 +23,7 @@ import { EntityMapperService } from "../entity/entity-mapper.service";
 import { FileService } from "./file.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ProgressComponent } from "./progress/progress.component";
+import { EntityRegistry } from "../entity/database-entity.decorator";
 
 /**
  * Stores the files in the CouchDB.
@@ -36,10 +37,11 @@ export class CouchdbFileService extends FileService {
   constructor(
     private http: HttpClient,
     private dialog: MatDialog,
-    private entityMapper: EntityMapperService,
-    private snackbar: MatSnackBar
+    entityMapper: EntityMapperService,
+    private snackbar: MatSnackBar,
+    entities: EntityRegistry
   ) {
-    super();
+    super(entityMapper, entities);
   }
 
   uploadFile(file: File, entity: Entity, property: string): Observable<any> {
@@ -81,7 +83,7 @@ export class CouchdbFileService extends FileService {
 
   removeFile(entity: Entity, property: string) {
     const attachmentPath = `${this.attachmentsUrl}/${entity._id}`;
-    return this.getAttachmentsDocument(attachmentPath).pipe(
+    return this.http.get<{ _rev: string }>(attachmentPath).pipe(
       concatMap(({ _rev }) =>
         this.http.delete(`${attachmentPath}/${property}?rev=${_rev}`)
       ),
@@ -90,6 +92,17 @@ export class CouchdbFileService extends FileService {
         await this.entityMapper.save(entity);
       })
     );
+  }
+
+  removeAllFiles(entity: Entity): Observable<any> {
+    const attachmentPath = `${this.attachmentsUrl}/${entity._id}`;
+    return this.http
+      .get<{ _rev: string }>(attachmentPath)
+      .pipe(
+        concatMap(({ _rev }) =>
+          this.http.delete(`${attachmentPath}/?rev=${_rev}`)
+        )
+      );
   }
 
   showFile(entity: Entity, property: string) {

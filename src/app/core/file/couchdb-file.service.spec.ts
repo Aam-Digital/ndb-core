@@ -13,6 +13,12 @@ import { ShowFileComponent } from "./show-file/show-file.component";
 import { Entity } from "../entity/model/entity";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { UpdatedEntity } from "../entity/model/entity-update";
+import { Database } from "../database/database";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "../entity/database-entity.decorator";
 
 describe("CouchdbFileService", () => {
   let service: CouchdbFileService;
@@ -21,6 +27,7 @@ describe("CouchdbFileService", () => {
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let mockSnackbar: jasmine.SpyObj<MatSnackBar>;
   let dismiss: jasmine.Spy;
+  const receiveUpdates = new Subject<UpdatedEntity<Entity>>();
 
   beforeEach(() => {
     mockHttp = jasmine.createSpyObj(["get", "put", "delete"]);
@@ -37,6 +44,8 @@ describe("CouchdbFileService", () => {
         { provide: MatSnackBar, useValue: mockSnackbar },
         { provide: MatDialog, useValue: mockDialog },
         { provide: EntityMapperService, useValue: mockEntityMapper },
+        { provide: Database, useValue: { receiveUpdates } },
+        { provide: EntityRegistry, useValue: entityRegistry },
       ],
     });
     service = TestBed.inject(CouchdbFileService);
@@ -160,4 +169,20 @@ describe("CouchdbFileService", () => {
       data: "dataUrl",
     });
   });
+
+  it("should delete files document if a entity is deleted", fakeAsync(() => {
+    // Entity needs to have a file property type
+    const entity = new Entity();
+    mockHttp.get.and.returnValue(of({ _rev: "someRev" }));
+
+    receiveUpdates.next({ entity, type: "remove" });
+    tick();
+
+    expect(mockHttp.get).toHaveBeenCalledWith(
+      jasmine.stringContaining(entity._id)
+    );
+    expect(mockHttp.delete).toHaveBeenCalledWith(
+      jasmine.stringContaining(`/${entity._id}?rev=someRev`)
+    );
+  }));
 });
