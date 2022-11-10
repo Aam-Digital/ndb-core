@@ -7,13 +7,23 @@ import { EntityFormModule } from "../../../entity-form/entity-form.module";
 import { FormFieldConfig } from "../../../entity-form/entity-form/FormConfig";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 import { AlertsModule } from "../../../../alerts/alerts.module";
+import { StorybookBaseModule } from "../../../../../utils/storybook-base.module";
+import { DatabaseEntity } from "../../../../entity/database-entity.decorator";
 import { Entity } from "../../../../entity/model/entity";
 import { DatabaseField } from "../../../../entity/database-field.decorator";
-import { DatabaseEntity } from "../../../../entity/database-entity.decorator";
-import { StorybookBaseModule } from "../../../../../utils/storybook-base.module";
+import { mockEntityMapper } from "../../../../entity/mock-entity-mapper-service";
+import { User } from "../../../../user/user";
+import { Child } from "../../../../../child-dev-project/children/model/child";
+
+const testUser = new User("1");
+testUser.name = "test entity";
+const user2 = new User("2");
+user2.name = "other entity";
+const child1 = new Child("1");
+child1.name = "test child";
 
 export default {
-  title: "Core/EntityComponents/Entity Property Fields/Number",
+  title: "Core/EntityComponents/Entity Property Fields/Entity Reference",
   component: EntityFormComponent,
   decorators: [
     moduleMetadata({
@@ -27,7 +37,7 @@ export default {
         EntitySchemaService,
         {
           provide: EntityMapperService,
-          useValue: { save: () => Promise.resolve() },
+          useValue: mockEntityMapper([testUser, user2, child1]),
         },
       ],
     }),
@@ -44,23 +54,56 @@ const Template: Story<EntityFormComponent> = (args: EntityFormComponent) => ({
   props: args,
 });
 
-@DatabaseEntity("TestEntity")
-class TestEntity extends Entity {
-  @DatabaseField() test: number;
-}
 const fieldConfig: FormFieldConfig = {
-  id: "test",
-  view: "DisplayNumber",
-  edit: "EditNumber",
-  label: "test field label",
+  id: "relatedEntity",
+  view: "DisplayEntity",
+  edit: "EditSingleEntity",
+  label: "test related entity label",
   tooltip: "test tooltip",
 };
+const otherField: FormFieldConfig = {
+  id: "x",
+  view: "DisplayNumber",
+  edit: "EditNumber",
+  label: "other label",
+};
+
+@DatabaseEntity("TestEntityReferenceEntity")
+class TestEntity extends Entity {
+  @DatabaseField({
+    dataType: "entity-reference",
+    additional: User.ENTITY_TYPE,
+  })
+  relatedEntity: string;
+
+  @DatabaseField() x = 1;
+
+  @DatabaseField({
+    dataType: "entity-reference",
+    additional: Child.ENTITY_TYPE,
+  })
+  relatedChild: string = "1";
+}
 
 const testEntity = new TestEntity();
-testEntity.test = 5;
+testEntity.relatedEntity = testUser.getId();
 
 export const Primary = Template.bind({});
 Primary.args = {
   columns: [[fieldConfig]],
   entity: testEntity,
+};
+
+export const Edit = Template.bind({});
+Edit.args = {
+  columns: [
+    [
+      otherField,
+      fieldConfig,
+      Object.assign({}, fieldConfig, { id: "relatedChild" }),
+      otherField,
+    ],
+  ],
+  entity: testEntity,
+  editing: true,
 };
