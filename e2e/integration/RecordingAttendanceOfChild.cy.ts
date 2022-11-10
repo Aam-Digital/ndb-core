@@ -13,12 +13,11 @@ describe("Scenario: Recording attendance of a child - E2E test", function () {
     cy.contains("mat-card", "School Class")
       .eq(0)
       .click({ scrollBehavior: "center" });
-    cy.get(".child-block > span > span ")
-      .first()
-      .invoke("text")
-      .as("childName");
+    cy.get(".font-size-rel").first().invoke("text").as("childName");
     cy.get(".group-select-option").contains("Present").click();
-    cy.get('[fxflex=""] > .ng-star-inserted > .mat-focus-indicator').click();
+    cy.get(
+      "app-add-day-attendance.ng-star-inserted > .flex-row > .mat-focus-indicator"
+    ).click();
     cy.contains("button", "Save").click();
   });
 

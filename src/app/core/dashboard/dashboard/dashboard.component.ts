@@ -24,7 +24,10 @@ import { RouteTarget } from "../../../app.routing";
 @RouteTarget("Dashboard")
 @Component({
   selector: "app-dashboard",
-  templateUrl: "./dashboard.component.html",
+  template: `<ng-template
+    *ngFor="let widgetConfig of widgets"
+    [appDynamicComponent]="widgetConfig"
+  ></ng-template>`,
   styleUrls: ["./dashboard.component.scss"],
 })
 export class DashboardComponent implements OnInit {

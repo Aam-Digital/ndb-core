@@ -45,10 +45,10 @@ export class AttendanceWeekDashboardComponent
   @Input() daysOffset = 0;
 
   /**
-   * description displayed to users for the time period this widget is analysing
-   * e.g. "this week" or "previous week"
+   * description displayed to users for what this widget is analysing
+   * e.g. "Absences this week"
    */
-  @Input() periodLabel: string;
+  @Input() label: string;
 
   /**
    * Only participants who were absent more than this threshold are counted and shown in the dashboard.
@@ -58,6 +58,13 @@ export class AttendanceWeekDashboardComponent
    * the person will be counted and displayed as a critical case in this dashboard widget.
    */
   @Input() absentWarningThreshold: number = 1;
+
+  /**
+   * The special attendance status type for which this widget should filter.
+   *
+   * (Optional) If this is not set, all status types that are counted as logically "ABSENT" are considered.
+   */
+  @Input() attendanceStatusType: string;
 
   @ViewChild("paginator") paginator: MatPaginator;
   tableDataSource = new MatTableDataSource<AttendanceWeekRow[]>();
@@ -74,7 +81,13 @@ export class AttendanceWeekDashboardComponent
       this.daysOffset = config.daysOffset;
     }
     if (config?.periodLabel) {
-      this.periodLabel = config.periodLabel;
+      this.label = $localize`:Dashboard attendance component subtitle:Absences ${config.periodLabel}`;
+    }
+    if (config?.label) {
+      this.label = config.label;
+    }
+    if (config?.attendanceStatusType) {
+      this.attendanceStatusType = config.attendanceStatusType;
     }
   }
 
@@ -158,9 +171,16 @@ export class AttendanceWeekDashboardComponent
   }
 
   private filterLowAttendance(row: AttendanceWeekRow): boolean {
-    const countAbsences = row.attendanceDays.filter(
-      (e) => e?.status?.countAs === AttendanceLogicalStatus.ABSENT
-    ).length;
+    let countAbsences = 0;
+    if (!this.attendanceStatusType) {
+      countAbsences = row.attendanceDays.filter(
+        (e) => e?.status?.countAs === AttendanceLogicalStatus.ABSENT
+      ).length;
+    } else {
+      countAbsences = row.attendanceDays.filter(
+        (e) => e?.status?.id === this.attendanceStatusType
+      ).length;
+    }
 
     return countAbsences > this.absentWarningThreshold;
   }

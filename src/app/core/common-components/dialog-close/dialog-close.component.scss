@@ -1,0 +1,9 @@
+/**
+ * Positions the 'x' button that is shown for an overlay to
+ * the top-right of the overlay
+ */
+.overlay-close-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+}

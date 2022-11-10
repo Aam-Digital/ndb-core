@@ -1,16 +1,3 @@
-.school-tooltip {
-  position: relative;
-  top: -5px;
-  left: 5px;
-
-  padding: 8px;
-  background-color: white;
-}
-
-.school-pic {
-  margin-right: 4px;
-}
-
-.icon {
-  margin-right: 8px;
+:host {
+  display: inline;
 }

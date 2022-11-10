@@ -4,6 +4,7 @@ import { SessionService } from "../../../session-service/session.service";
 import { LoggingService } from "../../../../logging/logging.service";
 import { AuthService } from "../../auth.service";
 import { CouchdbAuthService } from "../couchdb-auth.service";
+import { AlertService } from "../../../../alerts/alert.service";
 
 /**
  * A simple password form that enforces secure password.
@@ -17,8 +18,6 @@ export class PasswordFormComponent implements OnInit {
   @Input() disabled = false;
 
   couchdbAuthService: CouchdbAuthService;
-
-  passwordChangeResult: { success: boolean; error?: any };
 
   passwordForm = this.fb.group(
     {
@@ -43,6 +42,7 @@ export class PasswordFormComponent implements OnInit {
     private fb: FormBuilder,
     private sessionService: SessionService,
     private loggingService: LoggingService,
+    private alertService: AlertService,
     authService: AuthService
   ) {
     if (authService instanceof CouchdbAuthService) {
@@ -56,9 +56,7 @@ export class PasswordFormComponent implements OnInit {
     }
   }
 
-  changePassword(): Promise<any> {
-    this.passwordChangeResult = undefined;
-
+  changePassword(): Promise<void> {
     const currentPassword = this.passwordForm.get("currentPassword").value;
 
     if (!this.sessionService.checkPassword(this.username, currentPassword)) {
@@ -76,9 +74,13 @@ export class PasswordFormComponent implements OnInit {
     return this.couchdbAuthService
       .changePassword(this.username, currentPassword, newPassword)
       .then(() => this.sessionService.login(this.username, newPassword))
-      .then(() => (this.passwordChangeResult = { success: true }))
+      .then(() =>
+        this.alertService.addInfo($localize`Password changed successfully.`)
+      )
       .catch((err: Error) => {
-        this.passwordChangeResult = { success: false, error: err.message };
+        this.alertService.addDanger(
+          $localize`Failed to change password: ${err}\nPlease try again. If the problem persists contact Aam Digital support.`
+        );
         this.loggingService.error({
           error: "password change failed",
           details: err.message,

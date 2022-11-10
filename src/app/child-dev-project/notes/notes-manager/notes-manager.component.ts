@@ -1,6 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from "@angular/core";
 import { Note } from "../model/note";
-import { MediaObserver } from "@angular/flex-layout";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { ActivatedRoute } from "@angular/router";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
@@ -79,7 +78,6 @@ export class NotesManagerComponent implements OnInit {
   constructor(
     private formDialog: FormDialogService,
     private sessionService: SessionService,
-    private media: MediaObserver,
     private entityMapperService: EntityMapperService,
     private route: ActivatedRoute,
     private log: LoggingService

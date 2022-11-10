@@ -1,4 +1,4 @@
-<mat-form-field appearance="fill" style="width: 100%">
+<mat-form-field appearance="fill" class="full-width">
   <mat-label>{{ filterConfig.label || filterConfig.name }}</mat-label>
   <mat-select
     [id]="filterConfig.name"
@@ -9,8 +9,7 @@
       *ngFor="let option of filterConfig.options"
       [value]="option.key"
       (click)="selectOption(option.key)"
-      class="border-left-highlight"
-      [style.border-color]="option.color"
+      [appBorderHighlight]="option.color"
     >
       {{ option.label }}
     </mat-option>

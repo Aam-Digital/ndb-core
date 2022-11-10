@@ -1,3 +1,5 @@
+@use "@angular/material" as mat;
+
 $widget-header-height: 64px;
 $widget-content-height: 300px;
 
@@ -17,7 +19,7 @@ $border-radius-card: 4px;
    * |-------|--------------------------------------|
    *
    * The right-upper side is where the headline will be placed.
-   * On the lower right side, the subheadline is placed
+   * On the lower right side, the subhead-line is placed
    * On the two left sides, the icon will be placed in a
    * centered way
    */
@@ -74,20 +76,38 @@ $border-radius-card: 4px;
   background-color: white;
 }
 
-.widget-total {
-  border-radius: $border-radius-card;
-  // necessary for the border-radius to apply
-  overflow: auto;
-}
-
 .mat-button-wrapper {
   display: flex;
 }
 
 .headline {
   height: 100%;
+  width: 100%;
   display: flex;
   place-content: center;
   place-items: center;
-  width: 100%;
+}
+
+// Map containing the colors that belong to a certain theme
+$themes: (
+  general    : #555555,
+  child      : #1565C0,
+  attendance : #00838F,
+  note       : #008f53,
+  class      : #2E7D32,
+  school     : #9E9D24,
+);
+
+@each $ident, $color in $themes {
+  .theme-background-#{$ident} {
+    background-color: $color;
+  }
+}
+
+:host {
+  display: block;
+  border-radius: $border-radius-card;
+  // necessary for the border-radius to apply
+  overflow: auto;
+  @include mat.elevation(3);
 }

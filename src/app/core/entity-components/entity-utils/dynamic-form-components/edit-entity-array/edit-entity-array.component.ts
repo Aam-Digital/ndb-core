@@ -6,7 +6,6 @@ import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-co
 @Component({
   selector: "app-edit-entity-array",
   templateUrl: "./edit-entity-array.component.html",
-  styleUrls: ["./edit-entity-array.component.scss"],
 })
 export class EditEntityArrayComponent extends EditComponent<string[]> {
   placeholder: string;

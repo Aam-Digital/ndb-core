@@ -28,7 +28,6 @@ import { RouteTarget } from "../../../app.routing";
 @Component({
   selector: "app-markdown-page",
   templateUrl: "./markdown-page.component.html",
-  styleUrls: ["./markdown-page.component.scss"],
 })
 export class MarkdownPageComponent implements OnInit {
   /** filepath to be loaded as markdown */

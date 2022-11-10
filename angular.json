@@ -26,8 +26,8 @@
               "src/manifest.json"
             ],
             "styles": [
-              "src/ndb-theme.scss",
-              "src/styles.scss",
+              "src/styles/styles.scss",
+              "src/styles/themes/ndb-theme.scss",
               "node_modules/flag-icons/css/flag-icons.min.css"
             ],
             "vendorChunk": true,
@@ -90,8 +90,8 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
             "styles": [
-              "src/ndb-theme.scss",
-              "src/styles.scss"
+              "src/styles/styles.scss",
+              "src/styles/themes/ndb-theme.scss"
             ],
             "assets": [
               "src/assets",

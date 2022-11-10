@@ -20,7 +20,6 @@ import { Entity } from "../../../core/entity/model/entity";
 @Component({
   selector: "app-notes-of-child",
   templateUrl: "./notes-of-child.component.html",
-  styleUrls: ["./notes-of-child.component.scss"],
 })
 export class NotesOfChildComponent
   implements OnChanges, OnInitDynamicComponent

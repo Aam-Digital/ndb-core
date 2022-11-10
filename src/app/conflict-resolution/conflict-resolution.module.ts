@@ -7,7 +7,6 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { CompareRevComponent } from "./compare-rev/compare-rev.component";
-import { FlexLayoutModule } from "@angular/flex-layout";
 import { MatInputModule } from "@angular/material/input";
 import { FormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -44,7 +43,6 @@ routes: Routes = [
     MatButtonModule,
     MatPaginatorModule,
     MatExpansionModule,
-    FlexLayoutModule,
     MatInputModule,
     FormsModule,
     MatTooltipModule,

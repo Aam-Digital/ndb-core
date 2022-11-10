@@ -1,5 +1,5 @@
-<div fxLayout="row">
-  <div fxFlex>
+<div class="flex-row justify-space-between flex-wrap gap-regular">
+  <div class="flex-column">
     <app-input-file (fileLoad)="loadData($event)" fileType="csv"></app-input-file>
 
     <form [formGroup]="entityForm">
@@ -14,41 +14,39 @@
     </form>
   </div>
 
-  <div fxFlex>
-    <mat-expansion-panel [expanded]="false">
-      <mat-expansion-panel-header>Additional Import Configuration (optional)</mat-expansion-panel-header>
+  <mat-expansion-panel [expanded]="false" class="full-height flex-grow-1-3">
+    <mat-expansion-panel-header>Additional Import Configuration (optional)</mat-expansion-panel-header>
 
-        <label i18n="Data import wizard label">Load config from file: </label>
-        <app-input-file (fileLoad)="loadConfig($event)" fileType="json"></app-input-file>
+      <label i18n="Data import wizard label">Load config from file: </label>
+      <app-input-file (fileLoad)="loadConfig($event)" fileType="json"></app-input-file>
 
-        <form [formGroup]="transactionIDForm">
-          <p *ngIf="transactionIDForm.disabled" i18n="Hint in import wizard when transaction ID is not necessary">IDs are specified in CSV file</p>
-          <mat-form-field>
-            <mat-label i18n="Unique ID for this import">Transaction ID:</mat-label>
-            <input
-              matInput
-              formControlName="transactionId"
-              i18n-placeholder="Placeholder for input for transactionId as part of the import process"
-              placeholder="Enter TransactionID"
-            />
-          </mat-form-field>
-          <button *ngIf="transactionIDForm.enabled" mat-button (click)="setRandomTransactionID()" i18n="Button to generate a random ID">Generate ID</button>
-        </form>
+      <form [formGroup]="transactionIDForm">
+        <p *ngIf="transactionIDForm.disabled" i18n="Hint in import wizard when transaction ID is not necessary">IDs are specified in CSV file</p>
+        <mat-form-field>
+          <mat-label i18n="Unique ID for this import">Transaction ID:</mat-label>
+          <input
+            matInput
+            formControlName="transactionId"
+            i18n-placeholder="Placeholder for input for transactionId as part of the import process"
+            placeholder="Enter TransactionID"
+          />
+        </mat-form-field>
+        <button *ngIf="transactionIDForm.enabled" mat-button (click)="setRandomTransactionID()" i18n="Button to generate a random ID">Generate ID</button>
+      </form>
 
-        <form [formGroup]="dateFormatForm">
-          <mat-form-field>
-            <mat-label i18n="Label for date-format input  ">Date format</mat-label>
-            <input
-              matInput
-              formControlName="dateFormat"
-              i18n-placeholder="Placeholdr for input where date format as part of the import process"
-              placeholder="Enter a date format"
-            />
-          </mat-form-field>
-        </form>
+      <form [formGroup]="dateFormatForm">
+        <mat-form-field>
+          <mat-label i18n="Label for date-format input  ">Date format</mat-label>
+          <input
+            matInput
+            formControlName="dateFormat"
+            i18n-placeholder="Placeholdr for input where date format as part of the import process"
+            placeholder="Enter a date format"
+          />
+        </mat-form-field>
+      </form>
 
-    </mat-expansion-panel>
-  </div>
+  </mat-expansion-panel>
 </div>
 
 <br>
@@ -93,7 +91,7 @@
   <p i18n="Data import Final overview">Data:       <em>{{ importData?.data?.length }}</em></p>
   <p i18n="Data import Final overview">TransactionID:  <em>{{ transactionIDForm.get('transactionId').value }}</em></p>
 
-  <div fxLayout="row" fxLayoutGap="10px">
+  <div class="flex-row gap-small">
     <button (click)="importSelectedFile()" mat-stroked-button i18n="Button to start import">
       Start Import
     </button>

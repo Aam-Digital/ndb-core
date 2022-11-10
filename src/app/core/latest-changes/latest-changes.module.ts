@@ -26,7 +26,6 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { ChangelogComponent } from "./changelog/changelog.component";
 import { UpdateManagerService } from "./update-manager.service";
-import { FlexModule } from "@angular/flex-layout";
 import { MarkdownModule } from "ngx-markdown";
 import { MatCardModule } from "@angular/material/card";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
@@ -53,7 +52,6 @@ import { LOCATION_TOKEN } from "../../utils/di-tokens";
     MatButtonModule,
     MatSnackBarModule,
     HttpClientModule,
-    FlexModule,
     MarkdownModule,
     MatCardModule,
     FontAwesomeModule,

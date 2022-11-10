@@ -1,26 +1,39 @@
-@import "../../../../styles";
-
-.recurring-container {
-  background-color: #fdfdb7;
-}
+@use "@angular/material" as mat;
+@use "src/styles/variables/colors";
 
 .border-ok {
-  border-color: $color-warning-ok;
+  border-color: colors.$success;
 }
 
 .border-warning {
-  border-color: $color-warning-warning;
+  border-color: colors.$warn;
 }
 
 .border-urgent {
-  border-color: $color-warning-urgent;
+  border-color: colors.$error;
 }
 
 .main-card {
   max-width: 500px;
+  height: 100%;
+  box-sizing: border-box;
 }
 
-mat-card-title {
-  font-size: 16px;
+.card-title {
   font-weight: bold;
+}
+
+.sep {
+  font-weight: 900;
+  color: mat.get-color-from-palette(mat.$light-theme-foreground-palette, hint-text);
+
+  // Add a whitespace before the separator
+  &::before {
+    content: " "
+  }
+
+  // Add a whitespace before the separator
+  &::after {
+    content: " "
+  }
 }

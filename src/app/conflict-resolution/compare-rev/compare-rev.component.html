@@ -7,8 +7,8 @@
     </mat-panel-title>
   </mat-expansion-panel-header>
 
-  <div fxLayout="row" fxLayoutGap="10px">
-    <div fxFlex="50">
+  <div class="flex-row gap-small">
+    <div>
       <label
         for="conflictingDiff"
         i18n="Signals that there are conflicting database-entities"
@@ -25,7 +25,7 @@
       </textarea>
       <button
         mat-raised-button
-        class="resolution-btn"
+        class="full-width"
         (click)="resolveByManualEdit(diffs)"
         i18n
       >
@@ -33,7 +33,7 @@
       </button>
     </div>
 
-    <div fxFlex="50">
+    <div>
       <label for="customDiff">Custom Resolution:</label>
       <textarea
         id="customDiff"
@@ -44,7 +44,7 @@
       </textarea>
       <button
         mat-raised-button
-        class="resolution-btn"
+        class="full-width"
         (click)="resolveByManualEdit(diffsCustom)"
         i18n
       >
@@ -52,7 +52,7 @@
       </button>
     </div>
 
-    <div fxFlex="50">
+    <div>
       <label for="currentDiff" i18n="A currently selected entity">
         Current Entity:
       </label>
@@ -66,7 +66,7 @@
       </textarea>
       <button
         mat-raised-button
-        class="resolution-btn"
+        class="full-width"
         (click)="resolveByDelete(revDoc)"
         i18n="
           Choose a current version between several conflicting versions of

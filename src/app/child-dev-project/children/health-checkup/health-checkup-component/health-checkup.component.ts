@@ -13,7 +13,6 @@ import { DynamicComponent } from "../../../../core/view/dynamic-components/dynam
 @Component({
   selector: "app-health-checkup",
   templateUrl: "./health-checkup.component.html",
-  styleUrls: ["./health-checkup.component.scss"],
 })
 export class HealthCheckupComponent
   implements OnChanges, OnInitDynamicComponent {
