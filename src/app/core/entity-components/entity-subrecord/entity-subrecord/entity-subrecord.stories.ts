@@ -23,8 +23,12 @@ import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 import { Ability } from "@casl/ability";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
+import { LoggingService } from "../../../logging/logging.service";
 
-const configService = new ConfigService(mockEntityMapper());
+const configService = new ConfigService(
+  mockEntityMapper(),
+  new LoggingService()
+);
 const schemaService = new EntitySchemaService();
 schemaService.registerSchemaDatatype(
   new ConfigurableEnumDatatype(configService)

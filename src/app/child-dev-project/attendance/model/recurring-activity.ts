@@ -69,8 +69,7 @@ export class RecurringActivity extends Entity {
   /** IDs of children linked to this activity */
   @DatabaseField({
     label: $localize`:Label for the participants of a recurring activity:Participants`,
-    viewComponent: "DisplayEntityArray",
-    editComponent: "EditEntityArray",
+    dataType: "entity-array",
     additional: Child.ENTITY_TYPE,
   })
   participants: string[] = [];
@@ -78,8 +77,7 @@ export class RecurringActivity extends Entity {
   /** IDs of groups (schools, teams) whose (active) members should be included in the activity*/
   @DatabaseField({
     label: $localize`:Label for the linked schools of a recurring activity:Groups`,
-    viewComponent: "DisplayEntityArray",
-    editComponent: "EditEntityArray",
+    dataType: "entity-array",
     additional: School.ENTITY_TYPE,
   })
   linkedGroups: string[] = [];
@@ -87,8 +85,7 @@ export class RecurringActivity extends Entity {
   /** IDs of the users who are responsible for conducting this activity */
   @DatabaseField({
     label: $localize`:Label for the assigned user(s) of a recurring activity:Assigned user(s)`,
-    viewComponent: "DisplayEntityArray",
-    editComponent: "EditEntityArray",
+    dataType: "entity-array",
     additional: User.ENTITY_TYPE,
   })
   assignedTo: string[] = [];
