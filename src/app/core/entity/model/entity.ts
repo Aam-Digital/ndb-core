@@ -80,6 +80,17 @@ export class Entity {
   private static _label: string;
 
   /**
+   * human-readable label for uses of plural of the entity in the UI
+   */
+  static get labelPlural(): string {
+    return this._labelPlural ?? this.label;
+  }
+  static set labelPlural(value: string) {
+    this._labelPlural = value;
+  }
+  private static _labelPlural: string;
+
+  /**
    * icon id used for this entity
    */
   static icon: string;

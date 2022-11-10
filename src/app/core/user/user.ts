@@ -28,6 +28,9 @@ import { DatabaseField } from "../entity/database-field.decorator";
 @DatabaseEntity("User")
 export class User extends Entity {
   static toStringAttributes = ["name"];
+  static icon = "user";
+  static label = $localize`:label for entity:User`;
+  static labelPlural = $localize`:label (plural) for entity:Users`;
 
   /** username used for login and identification */
   @DatabaseField({

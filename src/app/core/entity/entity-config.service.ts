@@ -67,6 +67,9 @@ export class EntityConfigService {
     if (entityConfig?.label) {
       entityType.label = entityConfig.label;
     }
+    if (entityConfig?.labelPlural) {
+      entityType.labelPlural = entityConfig.labelPlural;
+    }
     if (entityConfig?.icon) {
       entityType.icon = entityConfig.icon;
     }
@@ -116,6 +119,11 @@ export interface EntityConfig {
    * human-readable name/label of the entity in the UI
    */
   label?: string;
+
+  /**
+   * human-readable name/label of the entity in the UI when referring to multiple
+   */
+  labelPlural?: string;
 
   /**
    * icon used to visualize the entity type

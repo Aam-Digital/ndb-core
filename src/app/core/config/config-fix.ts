@@ -325,7 +325,6 @@ export const defaultJsonConfig = {
   "view:user": {
     "component": "EntityList",
     "config": {
-      "title": $localize`:Title for user overview:Users`,
       "entity": "User",
       "columns": ["name", "phone"]
     },
@@ -364,7 +363,6 @@ export const defaultJsonConfig = {
           ]
         }
       ],
-      "icon": "user"
     },
     "permittedUserRoles": ["admin_app"]
   },
@@ -387,7 +385,6 @@ export const defaultJsonConfig = {
   "view:school": {
     "component": "EntityList",
     "config": {
-      "title": $localize`:Title of schools overview:Schools List`,
       "entity": "School",
       "columns": [
         "name",
@@ -462,7 +459,6 @@ export const defaultJsonConfig = {
   "view:child": {
     "component": "ChildrenList",
     "config": {
-      "title": $localize`:Title children overview:Children List`,
       "columns": [
         {
           "view": "ChildBlock",
@@ -753,7 +749,6 @@ export const defaultJsonConfig = {
   "view:attendance/recurring-activity": {
     "component": "EntityList",
     "config": {
-      "title": $localize`:Title of recurring activities overview:Recurring Activities`,
       "entity": "RecurringActivity",
       "columns": [
         "title",

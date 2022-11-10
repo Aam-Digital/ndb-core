@@ -80,47 +80,43 @@ describe("EntityListComponent", () => {
   let mockActivatedRoute: Partial<ActivatedRoute>;
   let routeData: Subject<RouteData<EntityListConfig>>;
 
-  beforeEach(
-    waitForAsync(() => {
-      mockConfigService = jasmine.createSpyObj(["getConfig"]);
-      mockLoggingService = jasmine.createSpyObj(["warn"]);
-      mockEntitySchemaService = jasmine.createSpyObj([
-        "getComponent",
-        "registerSchemaDatatype",
-      ]);
-      mockAttendanceService = jasmine.createSpyObj([
-        "getActivitiesForChild",
-        "getAllActivityAttendancesForPeriod",
-      ]);
-      mockAttendanceService.getActivitiesForChild.and.resolveTo([]);
-      mockAttendanceService.getAllActivityAttendancesForPeriod.and.resolveTo(
-        []
-      );
-      routeData = new Subject<RouteData<EntityListConfig>>();
-      mockActivatedRoute = {
-        component: undefined,
-        queryParams: new Subject(),
-        data: routeData,
-        snapshot: { queryParams: {}, queryParamMap: new Map() } as any,
-      };
+  beforeEach(waitForAsync(() => {
+    mockConfigService = jasmine.createSpyObj(["getConfig"]);
+    mockLoggingService = jasmine.createSpyObj(["warn"]);
+    mockEntitySchemaService = jasmine.createSpyObj([
+      "getComponent",
+      "registerSchemaDatatype",
+    ]);
+    mockAttendanceService = jasmine.createSpyObj([
+      "getActivitiesForChild",
+      "getAllActivityAttendancesForPeriod",
+    ]);
+    mockAttendanceService.getActivitiesForChild.and.resolveTo([]);
+    mockAttendanceService.getAllActivityAttendancesForPeriod.and.resolveTo([]);
+    routeData = new Subject<RouteData<EntityListConfig>>();
+    mockActivatedRoute = {
+      component: undefined,
+      queryParams: new Subject(),
+      data: routeData,
+      snapshot: { queryParams: {}, queryParamMap: new Map() } as any,
+    };
 
-      TestBed.configureTestingModule({
-        imports: [
-          EntityListModule,
-          MockedTestingModule.withState(),
-          FontAwesomeTestingModule,
-        ],
-        providers: [
-          { provide: ConfigService, useValue: mockConfigService },
-          { provide: LoggingService, useValue: mockLoggingService },
-          { provide: ExportService, useValue: {} },
-          { provide: EntitySchemaService, useValue: mockEntitySchemaService },
-          { provide: AttendanceService, useValue: mockAttendanceService },
-          { provide: ActivatedRoute, useValue: mockActivatedRoute },
-        ],
-      }).compileComponents();
-    })
-  );
+    TestBed.configureTestingModule({
+      imports: [
+        EntityListModule,
+        MockedTestingModule.withState(),
+        FontAwesomeTestingModule,
+      ],
+      providers: [
+        { provide: ConfigService, useValue: mockConfigService },
+        { provide: LoggingService, useValue: mockLoggingService },
+        { provide: ExportService, useValue: {} },
+        { provide: EntitySchemaService, useValue: mockEntitySchemaService },
+        { provide: AttendanceService, useValue: mockAttendanceService },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
+      ],
+    }).compileComponents();
+  }));
 
   it("should create", () => {
     createComponent();
@@ -240,6 +236,7 @@ describe("EntityListComponent", () => {
     expect(component.entityConstructor).toBe(Child);
     expect(component.listConfig).toEqual(config);
     expect(component.allEntities).toEqual(children);
+    expect(component.listName).toBe("Some title");
 
     const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
     component.addNewClick.emit();

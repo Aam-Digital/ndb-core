@@ -38,6 +38,9 @@ import { Ordering } from "../../../core/configurable-enum/configurable-enum-orde
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
+  static label = $localize`:label for entity:Note`;
+  static labelPlural = $localize`:label (plural) for entity:Notes`;
+
   static create(
     date: Date,
     subject: string = "",

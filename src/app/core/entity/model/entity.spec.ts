@@ -88,6 +88,7 @@ describe("Entity", () => {
     class TestEntity extends Entity {}
 
     expect(TestEntity.label).toBe("TestEntityForLabel");
+    expect(TestEntity.labelPlural).toBe("TestEntityForLabel");
   });
 });
 
