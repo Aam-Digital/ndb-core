@@ -58,7 +58,8 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
   entities: Entity[] = [];
   autocompleteEntities = new BehaviorSubject(this.entities);
   selectedEntity?: Entity;
-  initialValues;
+  currentValues;
+  originalValues;
   autocompleteDisabled = true;
   lastValue = "";
 
@@ -78,7 +79,7 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
     let val = this.formControl.value;
     if (
       !this.autocompleteDisabled &&
-      val !== this.initialValues[this.formControlName]
+      val !== this.currentValues[this.formControlName]
     ) {
       let filteredEntities = this.entities;
       if (val) {
@@ -103,34 +104,41 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
         e1.toString().localeCompare(e2.toString())
       );
       this.autocompleteDisabled = false;
-      this.initialValues = this.parent.getRawValue();
+      this.currentValues = this.parent.getRawValue();
+      this.originalValues = this.currentValues;
     }
   }
 
   async selectEntity(selected: Entity) {
-    if (!this.valuesChanged() || (await this.userConfirmsOverwrite(selected))) {
+    if (await this.userConfirmsOverwriteIfNecessary(selected)) {
       this.selectedEntity = selected;
       this.addRelevantValueToRelevantProperty(this.selectedEntity);
       this.setAllFormValues(this.selectedEntity);
-      this.initialValues = this.parent.getRawValue();
+      this.currentValues = this.parent.getRawValue();
       this.autocompleteEntities.next([]);
     } else {
       this.formControl.setValue(this.lastValue);
     }
   }
 
-  private userConfirmsOverwrite(selected: Entity) {
-    return this.confirmationDialog.getConfirmation(
-      $localize`:Discard the changes made:Discard changes`,
-      $localize`Do you want to discard the changes made and load '${selected}'?`
-    );
+  private userConfirmsOverwriteIfNecessary(entity: Entity) {
+    if (!this.valuesChanged()) return true;
+    else {
+      const question = this.selectedEntity
+        ? $localize`Do you want to discard the changes made to '${entity}'?`
+        : $localize`Do you want to discard the changes and load '${entity}'?`;
+      return this.confirmationDialog.getConfirmation(
+        $localize`:Discard the changes made:Discard changes`,
+        question
+      );
+    }
   }
 
   private valuesChanged() {
-    return Object.keys(this.initialValues).some(
+    return Object.keys(this.currentValues).some(
       (prop) =>
         prop != this.formControlName &&
-        this.initialValues[prop] != this.parent.controls[prop].value
+        this.currentValues[prop] != this.parent.controls[prop].value
     );
   }
 
@@ -159,5 +167,14 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
           this.parent.addControl(key, new FormControl(selected[key]));
         }
       });
+  }
+
+  async resetForm() {
+    if (await this.userConfirmsOverwriteIfNecessary(this.selectedEntity)) {
+      this.formControl.reset();
+      this.formControl.parent.patchValue(this.originalValues);
+      this.selectedEntity = null;
+      this.currentValues = this.originalValues;
+    }
   }
 }
