@@ -409,7 +409,6 @@ export const defaultJsonConfig = {
     "component": "EntityDetails",
     "config": {
       "entity": "School",
-      "title": $localize`:Title when adding new entity|e.g. Add new School or Group:School or Group`,
       "panels": [
         {
           "title": $localize`:Panel title:Basic Information`,
@@ -458,7 +457,6 @@ export const defaultJsonConfig = {
           ]
         }
       ],
-      "icon": "university"
     }
   },
   "view:child": {
@@ -603,7 +601,6 @@ export const defaultJsonConfig = {
   "view:child/:id": {
     "component": "EntityDetails",
     "config": {
-      "icon": "child",
       "entity": "Child",
       "panels": [
         {
@@ -813,7 +810,6 @@ export const defaultJsonConfig = {
           ]
         }
       ],
-      "icon": "calendar-alt"
     }
   },
   "view:report": {
@@ -940,6 +936,8 @@ export const defaultJsonConfig = {
   },
 
   "entity:Child": {
+    "label": "Participant",
+    "icon": "child",
     "attributes": [
       {
         "name": "address",
@@ -980,6 +978,8 @@ export const defaultJsonConfig = {
     ]
   },
   "entity:School": {
+    "label": "School",
+    "icon": "university",
     "attributes": [
       {
         "name": "name",

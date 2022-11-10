@@ -5,6 +5,7 @@ import { DatabaseField } from "../../../core/entity/database-field.decorator";
 @DatabaseEntity("School")
 export class School extends Entity {
   static toStringAttributes = ["name"];
+  static icon = "university";
 
   static getBlockComponent(): string {
     return "SchoolBlock";

@@ -20,6 +20,7 @@ import { EntitySchemaService } from "../schema/entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
 import { ConfigurableEnumDatatype } from "../../configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
 import { createTestingConfigService } from "../../config/config.service";
+import { DatabaseEntity } from "../database-entity.decorator";
 
 describe("Entity", () => {
   let entitySchemaService: EntitySchemaService;
@@ -80,6 +81,13 @@ describe("Entity", () => {
     expect(otherEntity).not.toBe(entity);
     expect(otherEntity).toEqual(entity);
     expect(otherEntity).toBeInstanceOf(TestEntity);
+  });
+
+  it("should use entity type as default label if none is explicitly configured", () => {
+    @DatabaseEntity("TestEntityForLabel")
+    class TestEntity extends Entity {}
+
+    expect(TestEntity.label).toBe("TestEntityForLabel");
   });
 });
 

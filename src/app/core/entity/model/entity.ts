@@ -69,6 +69,22 @@ export class Entity {
   static toStringAttributes = ["entityId"];
 
   /**
+   * human-readable name/label of the entity in the UI
+   */
+  static get label(): string {
+    return this._label ?? this.ENTITY_TYPE;
+  }
+  static set label(value: string) {
+    this._label = value;
+  }
+  private static _label: string;
+
+  /**
+   * icon id used for this entity
+   */
+  static icon: string;
+
+  /**
    * Extract the ENTITY_TYPE from an id.
    * @param id An entity's id including prefix.
    */

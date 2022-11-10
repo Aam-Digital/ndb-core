@@ -30,6 +30,8 @@ export type Center = ConfigurableEnumValue;
 @DatabaseEntity("Child")
 export class Child extends Entity {
   static toStringAttributes = ["name"];
+  static icon = "child";
+  static label = "Participant";
 
   static create(name: string): Child {
     const instance = new Child();

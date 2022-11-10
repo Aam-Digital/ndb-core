@@ -13,18 +13,12 @@ import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-
   styleUrls: ["./school-block.component.scss"],
 })
 export class SchoolBlockComponent implements OnInitDynamicComponent, OnChanges {
-  icon: string;
+  icon: string = School.icon;
   @Input() entity: School = new School("");
   @Input() entityId: string;
   @Input() linkDisabled: boolean;
 
-  constructor(
-    private entityMapper: EntityMapperService,
-    private configService: ConfigService
-  ) {
-    this.icon =
-      this.configService.getConfig<ViewConfig>("view:school/:id")?.config?.icon;
-  }
+  constructor(private entityMapper: EntityMapperService) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.hasOwnProperty("entityId")) {

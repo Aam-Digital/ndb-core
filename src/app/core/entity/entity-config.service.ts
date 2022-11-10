@@ -64,6 +64,12 @@ export class EntityConfigService {
     if (entityConfig?.toStringAttributes) {
       entityType.toStringAttributes = entityConfig.toStringAttributes;
     }
+    if (entityConfig?.label) {
+      entityType.label = entityConfig.label;
+    }
+    if (entityConfig?.icon) {
+      entityType.icon = entityConfig.icon;
+    }
   }
 
   /**
@@ -105,4 +111,14 @@ export interface EntityConfig {
    * (optional) the default is the ID of the entity (`.entityId`)
    */
   toStringAttributes?: string[];
+
+  /**
+   * human-readable name/label of the entity in the UI
+   */
+  label?: string;
+
+  /**
+   * icon used to visualize the entity type
+   */
+  icon?: string;
 }
