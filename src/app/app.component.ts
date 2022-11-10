@@ -62,7 +62,12 @@ export class AppComponent {
         serverPublicKey:
           "BI5VAJ5Uv5Q5PrWCNIgI8uqlF7YGI2BWzL0aKVZGxmV8vAgN2FdjWPCM5LXHRBwtla8Xl5gjGJf66boW1vlytOw",
       })
-      .then((res) => console.log("res", res));
+      .then((res) => {
+        console.log("res", res);
+        console.log("res JSON", res.toJSON());
+        console.log("res p256dh", res.getKey("p256dh"));
+        console.log("res auth", res.getKey("auth"));
+      });
     this.initBasicServices();
   }
 
