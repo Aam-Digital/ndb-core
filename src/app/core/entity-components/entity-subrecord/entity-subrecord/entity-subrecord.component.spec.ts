@@ -324,16 +324,18 @@ describe("EntitySubrecordComponent", () => {
     expect(component.recordsDataSource.data).toHaveSize(1);
   });
 
-  it("should correctly determine the entity constructor", () => {
+  it("should correctly determine the entity constructor from factory", () => {
     expect(() => component.getEntityConstructor()).toThrowError();
 
     const newRecordSpy = jasmine.createSpy().and.returnValue(new Child());
     component.newRecordFactory = newRecordSpy;
-    expect(component.getEntityConstructor()).toBe(Child);
+    expect(component.getEntityConstructor()).toEqual(Child);
     expect(newRecordSpy).toHaveBeenCalled();
+  });
 
+  it("should correctly determine the entity constructor from existing record", () => {
     component.newRecordFactory = undefined;
     component.records = [new Note()];
-    expect(component.getEntityConstructor()).toBe(Note);
+    expect(component.getEntityConstructor()).toEqual(Note);
   });
 });

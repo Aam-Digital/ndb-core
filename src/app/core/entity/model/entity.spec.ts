@@ -20,6 +20,7 @@ import { EntitySchemaService } from "../schema/entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
 import { ConfigurableEnumDatatype } from "../../configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
 import { createTestingConfigService } from "../../config/config.service";
+import { DatabaseEntity } from "../database-entity.decorator";
 
 describe("Entity", () => {
   let entitySchemaService: EntitySchemaService;
@@ -31,6 +32,7 @@ describe("Entity", () => {
   testEntitySubclass("Entity", Entity, { _id: "someId", _rev: "some_rev" });
 
   it("rawData() returns only data matching the schema", function () {
+    @DatabaseEntity("TestWithIgnoredFieldEntity")
     class TestEntity extends Entity {
       @DatabaseField() text: string = "text";
       @DatabaseField() defaultText: string = "default";
@@ -41,6 +43,7 @@ describe("Entity", () => {
 
     const data = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
+    expect(data._id).toBe("TestWithIgnoredFieldEntity:" + id);
     expect(data.text).toBe("text");
     expect(data.defaultText).toBe("default");
     expect(data.otherText).toBeUndefined();
@@ -81,6 +84,14 @@ describe("Entity", () => {
     expect(otherEntity).toEqual(entity);
     expect(otherEntity).toBeInstanceOf(TestEntity);
   });
+
+  it("should use entity type as default label if none is explicitly configured", () => {
+    @DatabaseEntity("TestEntityForLabel")
+    class TestEntity extends Entity {}
+
+    expect(TestEntity.label).toBe("TestEntityForLabel");
+    expect(TestEntity.labelPlural).toBe("TestEntityForLabel");
+  });
 });
 
 export function testEntitySubclass(
@@ -94,12 +105,13 @@ export function testEntitySubclass(
 
     // correct ID
     expect(entity).toHaveId(id);
-    expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
+    expect(Entity.extractEntityIdFromId(entity.getId(true))).toBe(id);
 
     // correct Type
     expect(entity).toBeInstanceOf(entityClass);
     expect(entity).toBeInstanceOf(Entity);
     expect(entity).toHaveType(entityType);
+    // @ts-ignore
     expect(Entity.extractTypeFromId(entity._id)).toBe(entityType);
   });
 

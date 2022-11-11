@@ -41,6 +41,7 @@ export class NotesOfChildComponent
    * @param note note to get color for
    */
   getColor = (note: Note) => note?.getColor();
+  newRecordFactory: () => Note;
 
   constructor(
     private childrenService: ChildrenService,
@@ -61,6 +62,8 @@ export class NotesOfChildComponent
 
     this.entity = config.entity;
     const entityType = this.entity.getType();
+    this.newRecordFactory = this.generateNewRecordFactory();
+
     this.noteProperty = [...Note.schema.keys()].find(
       (prop) => Note.schema.get(prop).additional === entityType
     );
