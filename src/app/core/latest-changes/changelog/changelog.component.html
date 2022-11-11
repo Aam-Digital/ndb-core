@@ -18,7 +18,7 @@
 <h1 mat-dialog-title>Latest Changes</h1>
 
 <mat-dialog-content #changelogContainer>
-  <div *ngFor="let changelog of changelogs">
+  <div *ngFor="let changelog of changelogs" class="changelog-entry-container">
     <h2>{{changelog?.name || noChangelogAvailable}}</h2>
     <div class="padding-bottom-regular">
       <span
