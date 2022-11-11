@@ -66,9 +66,9 @@ describe("EntityFormComponent", () => {
     component.saveForm();
   });
 
-  it("should show an warning alert when form service rejects saving", async () => {
+  it("should show an alert when form service rejects saving", async () => {
     const alertService = TestBed.inject(AlertService);
-    spyOn(alertService, "addWarning");
+    spyOn(alertService, "addDanger");
     const entityFormService = TestBed.inject(EntityFormService);
     spyOn(entityFormService, "saveChanges").and.rejectWith(
       new Error("error message")
@@ -76,7 +76,7 @@ describe("EntityFormComponent", () => {
 
     await component.saveForm();
 
-    expect(alertService.addWarning).toHaveBeenCalledWith("error message");
+    expect(alertService.addDanger).toHaveBeenCalledWith("error message");
   });
 
   it("should add column definitions from property schema", () => {
