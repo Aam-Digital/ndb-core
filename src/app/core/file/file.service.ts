@@ -20,17 +20,14 @@ export abstract class FileService {
 
   private deleteFilesOfDeletedEntities() {
     const entitiesWithFiles = this.getEntitiesWithFileDataType();
-    console.log("entities", entitiesWithFiles);
     entitiesWithFiles.forEach((entity) => {
       this.entityMapper
         .receiveUpdates(entity)
         .pipe(filter(({ type }) => type === "remove"))
         .subscribe(({ entity, type }) => {
-          console.log("removing", entity, type);
           this.removeAllFiles(entity).subscribe({
-            next: (res) => console.log("res", res),
-            complete: () => console.log("removed"),
-            error: (err) => console.log("error", err),
+            next: () => console.log("deleted all files of", entity),
+            error: (err) => console.log("no files found for", entity, err),
           });
         });
     });

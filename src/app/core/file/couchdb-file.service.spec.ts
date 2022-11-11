@@ -8,17 +8,17 @@ import {
   HttpEventType,
 } from "@angular/common/http";
 import { MatDialog } from "@angular/material/dialog";
-import { of, Subject, throwError } from "rxjs";
+import { EMPTY, of, Subject, throwError } from "rxjs";
 import { ShowFileComponent } from "./show-file/show-file.component";
 import { Entity } from "../entity/model/entity";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { UpdatedEntity } from "../entity/model/entity-update";
-import { Database } from "../database/database";
 import {
   entityRegistry,
   EntityRegistry,
 } from "../entity/database-entity.decorator";
+import { fileDataType } from "./file-data-type";
 
 describe("CouchdbFileService", () => {
   let service: CouchdbFileService;
@@ -27,15 +27,17 @@ describe("CouchdbFileService", () => {
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let mockSnackbar: jasmine.SpyObj<MatSnackBar>;
   let dismiss: jasmine.Spy;
-  const receiveUpdates = new Subject<UpdatedEntity<Entity>>();
+  const updates = new Subject<UpdatedEntity<Entity>>();
 
   beforeEach(() => {
     mockHttp = jasmine.createSpyObj(["get", "put", "delete"]);
     mockDialog = jasmine.createSpyObj(["open"]);
-    mockEntityMapper = jasmine.createSpyObj(["save"]);
+    mockEntityMapper = jasmine.createSpyObj(["save", "receiveUpdates"]);
+    mockEntityMapper.receiveUpdates.and.returnValue(updates);
     mockSnackbar = jasmine.createSpyObj(["openFromComponent"]);
     dismiss = jasmine.createSpy();
     mockSnackbar.openFromComponent.and.returnValue({ dismiss } as any);
+    Entity.schema.set("testProp", { dataType: fileDataType.name });
 
     TestBed.configureTestingModule({
       providers: [
@@ -44,7 +46,6 @@ describe("CouchdbFileService", () => {
         { provide: MatSnackBar, useValue: mockSnackbar },
         { provide: MatDialog, useValue: mockDialog },
         { provide: EntityMapperService, useValue: mockEntityMapper },
-        { provide: Database, useValue: { receiveUpdates } },
         { provide: EntityRegistry, useValue: entityRegistry },
       ],
     });
@@ -171,18 +172,19 @@ describe("CouchdbFileService", () => {
   });
 
   it("should delete files document if a entity is deleted", fakeAsync(() => {
-    // Entity needs to have a file property type
     const entity = new Entity();
     mockHttp.get.and.returnValue(of({ _rev: "someRev" }));
+    mockHttp.delete.and.returnValue(EMPTY);
+    console.log("set mocks");
 
-    receiveUpdates.next({ entity, type: "remove" });
+    updates.next({ entity, type: "remove" });
     tick();
 
     expect(mockHttp.get).toHaveBeenCalledWith(
-      jasmine.stringContaining(entity._id)
+      jasmine.stringContaining(entity.getId(true))
     );
     expect(mockHttp.delete).toHaveBeenCalledWith(
-      jasmine.stringContaining(`/${entity._id}?rev=someRev`)
+      jasmine.stringContaining(`/${entity.getId(true)}?rev=someRev`)
     );
   }));
 });

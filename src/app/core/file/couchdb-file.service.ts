@@ -46,7 +46,7 @@ export class CouchdbFileService extends FileService {
 
   uploadFile(file: File, entity: Entity, property: string): Observable<any> {
     const blob = new Blob([file]);
-    const attachmentPath = `${this.attachmentsUrl}/${entity._id}`;
+    const attachmentPath = `${this.attachmentsUrl}/${entity.getId(true)}`;
     const obs = this.getAttachmentsDocument(attachmentPath).pipe(
       concatMap(({ _rev }) =>
         this.http.put(`${attachmentPath}/${property}?rev=${_rev}`, blob, {
@@ -82,7 +82,7 @@ export class CouchdbFileService extends FileService {
   }
 
   removeFile(entity: Entity, property: string) {
-    const attachmentPath = `${this.attachmentsUrl}/${entity._id}`;
+    const attachmentPath = `${this.attachmentsUrl}/${entity.getId(true)}`;
     return this.http.get<{ _rev: string }>(attachmentPath).pipe(
       concatMap(({ _rev }) =>
         this.http.delete(`${attachmentPath}/${property}?rev=${_rev}`)
@@ -95,19 +95,20 @@ export class CouchdbFileService extends FileService {
   }
 
   removeAllFiles(entity: Entity): Observable<any> {
-    const attachmentPath = `${this.attachmentsUrl}/${entity._id}`;
+    console.log("deleting");
+    const attachmentPath = `${this.attachmentsUrl}/${entity.getId(true)}`;
     return this.http
       .get<{ _rev: string }>(attachmentPath)
       .pipe(
         concatMap(({ _rev }) =>
-          this.http.delete(`${attachmentPath}/?rev=${_rev}`)
+          this.http.delete(`${attachmentPath}?rev=${_rev}`)
         )
       );
   }
 
   showFile(entity: Entity, property: string) {
     const obs = this.http.get(
-      `${this.attachmentsUrl}/${entity._id}/${property}`,
+      `${this.attachmentsUrl}/${entity.getId(true)}/${property}`,
       {
         responseType: "blob",
         reportProgress: true,

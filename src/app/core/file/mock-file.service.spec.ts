@@ -4,6 +4,10 @@ import { MockFileService } from "./mock-file.service";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Entity } from "../entity/model/entity";
 import { firstValueFrom } from "rxjs";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "../entity/database-entity.decorator";
 
 describe("MockFileService", () => {
   let service: MockFileService;
@@ -15,6 +19,7 @@ describe("MockFileService", () => {
       providers: [
         MockFileService,
         { provide: EntityMapperService, useValue: mockEntityMapper },
+        { provide: EntityRegistry, useValue: entityRegistry },
       ],
     });
     service = TestBed.inject(MockFileService);
