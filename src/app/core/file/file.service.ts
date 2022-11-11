@@ -36,17 +36,23 @@ export abstract class FileService {
   private getEntitiesWithFileDataType() {
     const entitiesWithFiles: EntityConstructor[] = [];
     for (const entity of this.entities.values()) {
-      for (const prop of entity.schema.values()) {
-        if (
-          prop.dataType === fileDataType.name &&
-          !entitiesWithFiles.includes(entity)
-        ) {
-          entitiesWithFiles.push(entity);
-          break;
-        }
+      if (
+        this.entityHasFileProperty(entity) &&
+        !entitiesWithFiles.includes(entity)
+      ) {
+        entitiesWithFiles.push(entity);
       }
     }
     return entitiesWithFiles;
+  }
+
+  private entityHasFileProperty(entity: EntityConstructor): boolean {
+    for (const prop of entity.schema.values()) {
+      if (prop.dataType === fileDataType.name) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
