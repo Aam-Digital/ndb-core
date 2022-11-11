@@ -84,6 +84,14 @@ describe("Entity", () => {
     expect(otherEntity).toEqual(entity);
     expect(otherEntity).toBeInstanceOf(TestEntity);
   });
+
+  it("should use entity type as default label if none is explicitly configured", () => {
+    @DatabaseEntity("TestEntityForLabel")
+    class TestEntity extends Entity {}
+
+    expect(TestEntity.label).toBe("TestEntityForLabel");
+    expect(TestEntity.labelPlural).toBe("TestEntityForLabel");
+  });
 });
 
 export function testEntitySubclass(
