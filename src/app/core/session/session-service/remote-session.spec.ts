@@ -62,7 +62,7 @@ describe("RemoteSessionService", () => {
     expect(service.loginState.value).toBe(LoginState.UNAVAILABLE);
   });
 
-  it("should retry auto-login if fetch fails and fetch again", async () => {
+  it("should try auto-login if fetch fails and fetch again", async () => {
     const initSpy = spyOn(service["database"], "initIndexedDB");
     spyOn(PouchDB, "fetch").and.returnValues(
       Promise.resolve({
@@ -73,7 +73,7 @@ describe("RemoteSessionService", () => {
     );
     let calls = 0;
     mockAuthService.addAuthHeader.and.callFake((headers) => {
-      headers.Authorization = calls++ === 1 ? "active" : "inactive";
+      headers.Authorization = calls++ === 1 ? "valid" : "invalid";
     });
     mockAuthService.autoLogin.and.resolveTo();
     await service.handleSuccessfulLogin(testUser);
@@ -86,6 +86,7 @@ describe("RemoteSessionService", () => {
 
     expect(PouchDB.fetch).toHaveBeenCalledTimes(2);
     expect(PouchDB.fetch).toHaveBeenCalledWith(url, opts);
+    expect(opts.headers).toEqual({ Authorization: "valid" });
     expect(mockAuthService.autoLogin).toHaveBeenCalled();
     expect(mockAuthService.addAuthHeader).toHaveBeenCalledTimes(2);
   });

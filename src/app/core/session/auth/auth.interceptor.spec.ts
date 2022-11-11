@@ -47,6 +47,18 @@ describe("AuthInterceptor", () => {
     });
   });
 
+  it("should not add an auth header if auth is explicitly disabled", () => {
+    const noAuthRequest = {
+      context: new HttpContext().set(AUTH_ENABLED, false),
+    } as HttpRequest<unknown>;
+    const handle = jasmine.createSpy().and.returnValue(EMPTY);
+
+    interceptor.intercept(noAuthRequest, { handle });
+
+    expect(mockAuthService.addAuthHeader).not.toHaveBeenCalled();
+    expect(handle).toHaveBeenCalledWith(noAuthRequest);
+  });
+
   it("should should retry request with updated auth when receiving unauthorized response", (done) => {
     const errorResponse = new HttpErrorResponse({
       status: HttpStatusCode.Unauthorized,
