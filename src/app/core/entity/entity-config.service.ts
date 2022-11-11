@@ -61,18 +61,11 @@ export class EntityConfigService {
         )
       );
     }
-    if (entityConfig?.toStringAttributes) {
-      entityType.toStringAttributes = entityConfig.toStringAttributes;
-    }
-    if (entityConfig?.label) {
-      entityType.label = entityConfig.label;
-    }
-    if (entityConfig?.labelPlural) {
-      entityType.labelPlural = entityConfig.labelPlural;
-    }
-    if (entityConfig?.icon) {
-      entityType.icon = entityConfig.icon;
-    }
+    entityType.toStringAttributes =
+      entityConfig.toStringAttributes ?? entityType.toStringAttributes;
+    entityType.label = entityConfig.label ?? entityType.label;
+    entityType.labelPlural = entityConfig.labelPlural ?? entityType.labelPlural;
+    entityType.icon = entityConfig.icon ?? entityType.icon;
   }
 
   /**

@@ -2,8 +2,6 @@ import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { School } from "../model/school";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { ConfigService } from "../../../core/config/config.service";
-import { ViewConfig } from "../../../core/view/dynamic-routing/view-config.interface";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 
 @DynamicComponent("SchoolBlock")
