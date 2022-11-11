@@ -368,6 +368,29 @@ To achieve this, the configuration of the `Child` entity can be extended like th
 
 ```
 
+#### Icons and labels
+For different organisations, entities might refer to different real life objects.
+In other words, it is not always suitable to call the entities *Child* or *School* and the icon might also be
+misleading.
+Therefore, the names and icons of entities can be changed through the config.
+This allows to change a text like *Participants with unhealthy BMI* to *Patients with unhealthy BMI*.
+To achieve this a `label` and `labelPlural` can be defined in the entity config.
+Additionally, the `icon` property allows to exchange the icon to another one from
+the [FontAwesome Icon Library](https://fontawesome.com/search?o=r&m=free).
+
+This also has to be adjusted when configuring in a different language.
+
+E.g.
+
+```json
+"entity:Child": {
+  "label": "Patient",
+  "labelPlural": "Patients",
+  "icon": "bed",
+  ...
+}
+```
+
 ### Option Lists
 Option lists or `ConfigurableEnumValue`s can provide a pre-set list of options for a field
 to allow users to easily select an option from a dropdown and ensure that users are not entering random, invalid values.

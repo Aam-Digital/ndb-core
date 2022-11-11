@@ -4,6 +4,7 @@ import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Config } from "./config";
 import { firstValueFrom, Subject } from "rxjs";
 import { UpdatedEntity } from "../entity/model/entity-update";
+import { LoggingService } from "../logging/logging.service";
 
 describe("ConfigService", () => {
   let service: ConfigService;
@@ -18,6 +19,7 @@ describe("ConfigService", () => {
       providers: [
         { provide: EntityMapperService, useValue: entityMapper },
         ConfigService,
+        LoggingService,
       ],
     });
     service = TestBed.inject(ConfigService);

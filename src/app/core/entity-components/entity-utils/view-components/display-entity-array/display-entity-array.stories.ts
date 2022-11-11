@@ -7,7 +7,9 @@ import { DisplayEntityArrayComponent } from "./display-entity-array.component";
 import { BehaviorSubject } from "rxjs";
 import { StorybookBaseModule } from "../../../../../utils/storybook-base.module";
 import { EntityUtilsModule } from "../../entity-utils.module";
-import { MockedTestingModule } from "../../../../../utils/mocked-testing.module";
+import { EntityMapperService } from "../../../../entity/entity-mapper.service";
+import { mockEntityMapper } from "../../../../entity/mock-entity-mapper-service";
+import { ChildrenService } from "../../../../../child-dev-project/children/children.service";
 
 const child1 = new Child();
 child1.name = "Test Name";
@@ -53,9 +55,12 @@ export default {
       imports: [
         EntityUtilsModule,
         StorybookBaseModule,
-        MockedTestingModule.withState(),
         SchoolsModule,
         ChildrenModule,
+      ],
+      providers: [
+        { provide: EntityMapperService, useValue: mockEntityMapper([]) },
+        { provide: ChildrenService, useValue: null },
       ],
     }),
   ],
@@ -70,7 +75,7 @@ const Template: Story<DisplayEntityArrayComponent> = (
 
 export const FewEntities = Template.bind({});
 FewEntities.args = {
-  entities: [child1, child2, child3, child4],
+  entities: [child1, child2, child3],
 };
 
 export const ManyEntities = Template.bind({});

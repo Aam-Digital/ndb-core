@@ -6,7 +6,7 @@ import {
   PanelComponent,
   PanelConfig,
 } from "./EntityDetailsConfig";
-import { Entity } from "../../entity/model/entity";
+import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { RouteData } from "../../view/dynamic-routing/view-config.interface";
@@ -37,8 +37,8 @@ export class EntityDetailsComponent {
   isLoading = true;
 
   panels: Panel[] = [];
-  iconName: string;
   config: EntityDetailsConfig;
+  entityConstructor: EntityConstructor;
 
   constructor(
     private entityMapperService: EntityMapperService,
@@ -51,8 +51,8 @@ export class EntityDetailsComponent {
   ) {
     this.route.data.subscribe((data: RouteData<EntityDetailsConfig>) => {
       this.config = data.config;
+      this.entityConstructor = this.entities.get(this.config.entity);
       this.setInitialPanelsConfig();
-      this.iconName = data.config.icon;
       this.route.paramMap.subscribe((params) =>
         this.loadEntity(params.get("id"))
       );
@@ -60,21 +60,22 @@ export class EntityDetailsComponent {
   }
 
   private loadEntity(id: string) {
-    const constr = this.entities.get(this.config.entity);
     if (id === "new") {
-      if (this.ability.cannot("create", constr)) {
+      if (this.ability.cannot("create", this.entityConstructor)) {
         this.router.navigate([""]);
         return;
       }
-      this.entity = new constr();
+      this.entity = new this.entityConstructor();
       this.creatingNew = true;
       this.setFullPanelsConfig();
     } else {
       this.creatingNew = false;
-      this.entityMapperService.load<Entity>(constr, id).then((entity) => {
-        this.entity = entity;
-        this.setFullPanelsConfig();
-      });
+      this.entityMapperService
+        .load<Entity>(this.entityConstructor, id)
+        .then((entity) => {
+          this.entity = entity;
+          this.setFullPanelsConfig();
+        });
     }
   }
 

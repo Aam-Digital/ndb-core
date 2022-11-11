@@ -74,8 +74,7 @@ const cols = [
     },
     {
       id: "assignedTo",
-      edit: "EditEntityArray",
-      view: "DisplayEntityArray",
+      dataType: "entity-array",
       additional: "School",
       label: "Assigned school(s)",
     },
@@ -89,11 +88,9 @@ Child.schema.set("has_rationCard", {
 });
 Child.schema.set("assignedTo", { dataType: "array", innerDataType: "string" });
 Child.schema.set("school", {
-  dataType: "string",
+  dataType: "entity",
   label: "Assigned School",
   additional: School.ENTITY_TYPE,
-  viewComponent: "DisplayEntity",
-  editComponent: "EditSingleEntity",
   validators: {
     required: true,
   },

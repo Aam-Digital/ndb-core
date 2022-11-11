@@ -55,9 +55,7 @@ export class AppComponent {
   }
 
   private async initBasicServices() {
-    // TODO: remove this with issue #886
-    // This needs to be in the app module (as opposed to the dynamic entity service)
-    // to prevent circular dependencies
+    // TODO: remove this after issue #886 now in next release (keep as fallback for one version)
     this.entities.add("Participant", Child);
     this.entities.add("Team", School);
 
