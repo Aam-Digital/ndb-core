@@ -137,13 +137,13 @@ export class Entity {
    * This is usually combined from the ENTITY_TYPE as a prefix with the entityId field `EntityType:entityId`
    * @example "Entity:123"
    */
-  @DatabaseField() _id: string;
+  @DatabaseField() private _id: string;
 
   /** internal database doc revision, used to detect conflicts by PouchDB/CouchDB */
   @DatabaseField() _rev: string;
 
   /** actual id without prefix */
-  get entityId(): string {
+  private get entityId(): string {
     return Entity.extractEntityIdFromId(this._id);
   }
 
@@ -151,7 +151,7 @@ export class Entity {
    * Set id without prefix.
    * @param newEntityId The new id without prefix.
    */
-  set entityId(newEntityId: string) {
+  private set entityId(newEntityId: string) {
     this._id = Entity.createPrefixedId(this.getType(), newEntityId);
   }
 
@@ -210,7 +210,8 @@ export class Entity {
    *
    * @returns {string} the unique id of this entity
    */
-  public getId(): string {
+  public getId(withPrefix: boolean = false): string {
+    if (withPrefix) return this._id;
     return this.entityId;
   }
 

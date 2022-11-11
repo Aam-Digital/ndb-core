@@ -45,6 +45,8 @@ export class User extends Entity {
         $localize`:Error message when trying to change the username|e.g. username cannot be changed after initialization:${label} cannot be changed after initialization`
       );
     }
+
+    // @ts-ignore allow overwriting of id in this special case, as the name is only given by user editing the form of the new entity
     this.entityId = value;
     this._name = value;
   }

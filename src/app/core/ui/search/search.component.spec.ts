@@ -18,26 +18,24 @@ describe("SearchComponent", () => {
   let mockIndexService: jasmine.SpyObj<DatabaseIndexingService>;
   let subscription: Subscription;
 
-  beforeEach(
-    waitForAsync(() => {
-      mockIndexService = jasmine.createSpyObj("mockIndexService", [
-        "queryIndexRaw",
-        "createIndex",
-      ]);
+  beforeEach(waitForAsync(() => {
+    mockIndexService = jasmine.createSpyObj("mockIndexService", [
+      "queryIndexRaw",
+      "createIndex",
+    ]);
 
-      TestBed.configureTestingModule({
-        imports: [
-          UiModule,
-          MockedTestingModule.withState(),
-          FontAwesomeTestingModule,
-        ],
-        providers: [
-          { provide: DatabaseIndexingService, useValue: mockIndexService },
-          { provide: SwUpdate, useValue: {} },
-        ],
-      }).compileComponents();
-    })
-  );
+    TestBed.configureTestingModule({
+      imports: [
+        UiModule,
+        MockedTestingModule.withState(),
+        FontAwesomeTestingModule,
+      ],
+      providers: [
+        { provide: DatabaseIndexingService, useValue: mockIndexService },
+        { provide: SwUpdate, useValue: {} },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     mockIndexService.createIndex.and.resolveTo();
@@ -109,10 +107,14 @@ describe("SearchComponent", () => {
     school1.name = "Anglo Primary";
     const mockQueryResults = {
       rows: [
-        { id: child1._id, doc: { name: child1.name }, key: "adam" },
-        { id: child1._id, doc: { name: child1.name }, key: "x" },
-        { id: school1._id, doc: { name: school1.name }, key: "anglo" },
-        { id: school1._id, doc: { name: school1.name }, key: "primary" },
+        { id: child1.getId(true), doc: { name: child1.name }, key: "adam" },
+        { id: child1.getId(true), doc: { name: child1.name }, key: "x" },
+        { id: school1.getId(true), doc: { name: school1.name }, key: "anglo" },
+        {
+          id: school1.getId(true),
+          doc: { name: school1.name },
+          key: "primary",
+        },
       ],
     };
     return [child1, school1, mockQueryResults];
