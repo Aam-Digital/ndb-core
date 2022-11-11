@@ -61,9 +61,11 @@ export class EntityConfigService {
         )
       );
     }
-    if (entityConfig?.toStringAttributes) {
-      entityType.toStringAttributes = entityConfig.toStringAttributes;
-    }
+    entityType.toStringAttributes =
+      entityConfig.toStringAttributes ?? entityType.toStringAttributes;
+    entityType.label = entityConfig.label ?? entityType.label;
+    entityType.labelPlural = entityConfig.labelPlural ?? entityType.labelPlural;
+    entityType.icon = entityConfig.icon ?? entityType.icon;
   }
 
   /**
@@ -105,4 +107,19 @@ export interface EntityConfig {
    * (optional) the default is the ID of the entity (`.entityId`)
    */
   toStringAttributes?: string[];
+
+  /**
+   * human-readable name/label of the entity in the UI
+   */
+  label?: string;
+
+  /**
+   * human-readable name/label of the entity in the UI when referring to multiple
+   */
+  labelPlural?: string;
+
+  /**
+   * icon used to visualize the entity type
+   */
+  icon?: string;
 }

@@ -69,6 +69,33 @@ export class Entity {
   static toStringAttributes = ["entityId"];
 
   /**
+   * human-readable name/label of the entity in the UI
+   */
+  static get label(): string {
+    return this._label ?? this.ENTITY_TYPE;
+  }
+  static set label(value: string) {
+    this._label = value;
+  }
+  private static _label: string;
+
+  /**
+   * human-readable label for uses of plural of the entity in the UI
+   */
+  static get labelPlural(): string {
+    return this._labelPlural ?? this.label;
+  }
+  static set labelPlural(value: string) {
+    this._labelPlural = value;
+  }
+  private static _labelPlural: string;
+
+  /**
+   * icon id used for this entity
+   */
+  static icon: string;
+
+  /**
    * Extract the ENTITY_TYPE from an id.
    * @param id An entity's id including prefix.
    */
@@ -110,13 +137,13 @@ export class Entity {
    * This is usually combined from the ENTITY_TYPE as a prefix with the entityId field `EntityType:entityId`
    * @example "Entity:123"
    */
-  @DatabaseField() _id: string;
+  @DatabaseField() private _id: string;
 
   /** internal database doc revision, used to detect conflicts by PouchDB/CouchDB */
   @DatabaseField() _rev: string;
 
   /** actual id without prefix */
-  get entityId(): string {
+  private get entityId(): string {
     return Entity.extractEntityIdFromId(this._id);
   }
 
@@ -124,7 +151,7 @@ export class Entity {
    * Set id without prefix.
    * @param newEntityId The new id without prefix.
    */
-  set entityId(newEntityId: string) {
+  private set entityId(newEntityId: string) {
     this._id = Entity.createPrefixedId(this.getType(), newEntityId);
   }
 
@@ -185,7 +212,7 @@ export class Entity {
    */
   public getId(withPrefix: boolean = false): string {
     if (withPrefix) return this._id;
-    else return this.entityId;
+    return this.entityId;
   }
 
   /**

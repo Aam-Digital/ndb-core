@@ -5,9 +5,12 @@ import {
   HttpEvent,
   HttpInterceptor,
   HttpContextToken,
+  HttpErrorResponse,
+  HttpStatusCode,
 } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { AuthService } from "../auth.service";
+import { concatMap, from, Observable } from "rxjs";
+import { AuthService } from "./auth.service";
+import { catchError } from "rxjs/operators";
 
 /**
  * This context can be used to prevent the Bearer token to be set by this interceptor.
@@ -32,12 +35,27 @@ export class AuthInterceptor implements HttpInterceptor {
     request: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
-    if (request.context.get(AUTH_ENABLED)) {
-      const headers = {} as any;
-      this.authService.addAuthHeader(headers);
-      // The request needs to be cloned as they are immutable
-      request = request.clone({ setHeaders: headers });
+    const authEnabled = request.context.get(AUTH_ENABLED);
+    if (authEnabled) {
+      request = this.getRequestWithAuth(request);
     }
-    return next.handle(request);
+    return next.handle(request).pipe(
+      catchError((err: HttpErrorResponse) => {
+        if (err.status === HttpStatusCode.Unauthorized && authEnabled) {
+          return from(this.authService.autoLogin()).pipe(
+            concatMap(() => next.handle(this.getRequestWithAuth(request)))
+          );
+        } else {
+          throw err;
+        }
+      })
+    );
+  }
+
+  private getRequestWithAuth(request: HttpRequest<any>): HttpRequest<any> {
+    const headers = {} as any;
+    this.authService.addAuthHeader(headers);
+    // The request needs to be cloned as they are immutable
+    return request.clone({ setHeaders: headers });
   }
 }

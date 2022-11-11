@@ -39,6 +39,9 @@ import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
+  static label = $localize`:label for entity:Note`;
+  static labelPlural = $localize`:label (plural) for entity:Notes`;
+
   static create(
     date: Date,
     subject: string = "",
@@ -56,8 +59,7 @@ export class Note extends Entity {
   /** IDs of Child entities linked with this note */
   @DatabaseField({
     label: $localize`:Label for the children of a note:Children`,
-    viewComponent: "DisplayEntityArray",
-    editComponent: "EditEntityArray",
+    dataType: "entity-array",
     additional: Child.ENTITY_TYPE,
   })
   children: string[] = [];
@@ -82,8 +84,7 @@ export class Note extends Entity {
   /** IDs of users that authored this note */
   @DatabaseField({
     label: $localize`:Label for the social worker(s) who created the note:SW`,
-    viewComponent: "DisplayEntityArray",
-    editComponent: "EditEntityArray",
+    dataType: "entity-array",
     additional: User.ENTITY_TYPE,
   })
   authors: string[] = [];
@@ -121,6 +122,7 @@ export class Note extends Entity {
    */
   @DatabaseField({
     label: $localize`:label for the linked schools:Groups`,
+    dataType: "entity-array",
     additional: School.ENTITY_TYPE,
   })
   schools: string[] = [];
