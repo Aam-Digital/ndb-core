@@ -16,7 +16,6 @@ export class EditSingleEntityComponent extends EditComponent<string> {
   placeholder: string;
   autocompleteEntities = new BehaviorSubject<Entity[]>([]);
   selectedEntity?: Entity;
-  editingSelectedEntity = false;
 
   @ViewChild("inputElement") input: ElementRef;
 
@@ -48,7 +47,6 @@ export class EditSingleEntityComponent extends EditComponent<string> {
     );
     if (selectedEntity) {
       this.selectedEntity = selectedEntity;
-      this.editingSelectedEntity = false;
     }
   }
 
@@ -64,18 +62,10 @@ export class EditSingleEntityComponent extends EditComponent<string> {
 
     if (entity) {
       this.selectedEntity = entity;
-      this.editingSelectedEntity = false;
       this.formControl.setValue(entity.getId());
     } else {
       this.selectedEntity = undefined;
       this.formControl.setValue(undefined);
     }
-  }
-
-  editSelectedEntity() {
-    this.editingSelectedEntity = true;
-    setTimeout(() => {
-      this.input.nativeElement.focus();
-    });
   }
 }

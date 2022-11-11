@@ -8,8 +8,10 @@ import { User } from "../../../../user/user";
 import { SchoolsModule } from "../../../../../child-dev-project/schools/schools.module";
 import { ChildrenModule } from "../../../../../child-dev-project/children/children.module";
 import { StorybookBaseModule } from "../../../../../utils/storybook-base.module";
-import { MockedTestingModule } from "../../../../../utils/mocked-testing.module";
 import { EntityUtilsModule } from "../../entity-utils.module";
+import { EntityMapperService } from "../../../../entity/entity-mapper.service";
+import { mockEntityMapper } from "../../../../entity/mock-entity-mapper-service";
+import { ChildrenService } from "../../../../../child-dev-project/children/children.service";
 
 export default {
   title: "Core/EntityComponents/DisplayEntity",
@@ -19,9 +21,12 @@ export default {
       imports: [
         EntityUtilsModule,
         StorybookBaseModule,
-        MockedTestingModule.withState(),
         SchoolsModule,
         ChildrenModule,
+      ],
+      providers: [
+        { provide: EntityMapperService, useValue: mockEntityMapper([]) },
+        { provide: ChildrenService, useValue: null },
       ],
     }),
   ],
@@ -43,17 +48,19 @@ testChild.photo = {
 };
 export const ChildComponent = Template.bind({});
 ChildComponent.args = {
-  entity: testChild,
+  entityToDisplay: testChild,
 };
+
 const testSchool = new School();
 testSchool.name = "Test School";
 export const SchoolComponent = Template.bind({});
 SchoolComponent.args = {
-  entity: testSchool,
+  entityToDisplay: testSchool,
 };
+
 const testUser = new User();
 testUser.name = "Test User";
 export const DefaultComponent = Template.bind({});
 DefaultComponent.args = {
-  entity: testUser,
+  entityToDisplay: testUser,
 };

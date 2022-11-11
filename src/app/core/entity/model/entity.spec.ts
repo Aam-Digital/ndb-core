@@ -32,6 +32,7 @@ describe("Entity", () => {
   testEntitySubclass("Entity", Entity, { _id: "someId", _rev: "some_rev" });
 
   it("rawData() returns only data matching the schema", function () {
+    @DatabaseEntity("TestWithIgnoredFieldEntity")
     class TestEntity extends Entity {
       @DatabaseField() text: string = "text";
       @DatabaseField() defaultText: string = "default";
@@ -42,6 +43,7 @@ describe("Entity", () => {
 
     const data = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
+    expect(data._id).toBe("TestWithIgnoredFieldEntity:" + id);
     expect(data.text).toBe("text");
     expect(data.defaultText).toBe("default");
     expect(data.otherText).toBeUndefined();
@@ -103,12 +105,13 @@ export function testEntitySubclass(
 
     // correct ID
     expect(entity).toHaveId(id);
-    expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
+    expect(Entity.extractEntityIdFromId(entity.getId(true))).toBe(id);
 
     // correct Type
     expect(entity).toBeInstanceOf(entityClass);
     expect(entity).toBeInstanceOf(Entity);
     expect(entity).toHaveType(entityType);
+    // @ts-ignore
     expect(Entity.extractTypeFromId(entity._id)).toBe(entityType);
   });
 
