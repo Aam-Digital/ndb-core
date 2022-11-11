@@ -95,7 +95,6 @@ export class CouchdbFileService extends FileService {
   }
 
   removeAllFiles(entity: Entity): Observable<any> {
-    console.log("deleting");
     const attachmentPath = `${this.attachmentsUrl}/${entity.getId(true)}`;
     return this.http
       .get<{ _rev: string }>(attachmentPath)
