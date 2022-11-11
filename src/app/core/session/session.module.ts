@@ -44,8 +44,8 @@ import { AccountPageComponent } from "./auth/keycloak/account-page/account-page.
 import { Angulartics2OnModule } from "angulartics2";
 import { PasswordResetComponent } from "./auth/keycloak/password-reset/password-reset.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { AuthInterceptor } from "./auth/keycloak/auth-interceptor.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { AuthInterceptor } from "./auth/auth.interceptor";
 import { serviceProvider } from "../../utils/utils";
 
 /**
