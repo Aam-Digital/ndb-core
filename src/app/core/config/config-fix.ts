@@ -931,8 +931,6 @@ export const defaultJsonConfig = {
   },
 
   "entity:Child": {
-    "label": "Participant",
-    "icon": "child",
     "attributes": [
       {
         "name": "address",
@@ -973,8 +971,6 @@ export const defaultJsonConfig = {
     ]
   },
   "entity:School": {
-    "label": "School",
-    "icon": "university",
     "attributes": [
       {
         "name": "name",
