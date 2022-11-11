@@ -27,11 +27,12 @@ describe("CouchdbFileService", () => {
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let mockSnackbar: jasmine.SpyObj<MatSnackBar>;
   let dismiss: jasmine.Spy;
-  const updates = new Subject<UpdatedEntity<Entity>>();
+  let updates: Subject<UpdatedEntity<Entity>>;
 
   beforeEach(() => {
     mockHttp = jasmine.createSpyObj(["get", "put", "delete"]);
     mockDialog = jasmine.createSpyObj(["open"]);
+    updates = new Subject();
     mockEntityMapper = jasmine.createSpyObj(["save", "receiveUpdates"]);
     mockEntityMapper.receiveUpdates.and.returnValue(updates);
     mockSnackbar = jasmine.createSpyObj(["openFromComponent"]);
