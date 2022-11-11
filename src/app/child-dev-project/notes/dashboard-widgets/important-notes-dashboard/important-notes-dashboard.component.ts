@@ -12,14 +12,15 @@ import { concat, Observable } from "rxjs";
 import { first, map } from "rxjs/operators";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
-@DynamicComponent("ImportantNotesComponent")
+@DynamicComponent("ImportantNotesDashboard")
+@DynamicComponent("ImportantNotesComponent") // TODO remove after all existing instances are updated
 @UntilDestroy()
 @Component({
-  selector: "app-important-notes",
-  templateUrl: "./important-notes.component.html",
-  styleUrls: ["./important-notes.component.scss"],
+  selector: "app-important-notes-dashboard",
+  templateUrl: "./important-notes-dashboard.component.html",
+  styleUrls: ["./important-notes-dashboard.component.scss"],
 })
-export class ImportantNotesComponent
+export class ImportantNotesDashboardComponent
   implements OnInit, OnInitDynamicComponent, AfterViewInit
 {
   private relevantWarningLevels: string[] = [];
