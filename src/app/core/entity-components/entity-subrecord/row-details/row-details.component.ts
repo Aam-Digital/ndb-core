@@ -13,6 +13,7 @@ import {
 } from "../../../entity/entity-remove.service";
 import { AlertService } from "../../../alerts/alert.service";
 import { EntityAction } from "../../../permissions/permission-types";
+import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
 
 /**
  * Data interface that must be given when opening the dialog
@@ -71,7 +72,11 @@ export class RowDetailsComponent<E extends Entity> {
     this.formService
       .saveChanges(this.form, this.data.entity)
       .then((res) => this.dialogRef.close(res))
-      .catch((err) => this.alertService.addWarning(err.message));
+      .catch((err) => {
+        if (!(err instanceof InvalidFormFieldError)) {
+          this.alertService.addDanger(err.message);
+        }
+      });
   }
 
   delete() {
