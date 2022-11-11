@@ -3,7 +3,7 @@ import { TestBed } from "@angular/core/testing";
 import { MockFileService } from "./mock-file.service";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Entity } from "../entity/model/entity";
-import { firstValueFrom } from "rxjs";
+import { firstValueFrom, NEVER } from "rxjs";
 import {
   entityRegistry,
   EntityRegistry,
@@ -14,7 +14,8 @@ describe("MockFileService", () => {
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
 
   beforeEach(() => {
-    mockEntityMapper = jasmine.createSpyObj(["save"]);
+    mockEntityMapper = jasmine.createSpyObj(["save", "receiveUpdates"]);
+    mockEntityMapper.receiveUpdates.and.returnValue(NEVER);
     TestBed.configureTestingModule({
       providers: [
         MockFileService,
