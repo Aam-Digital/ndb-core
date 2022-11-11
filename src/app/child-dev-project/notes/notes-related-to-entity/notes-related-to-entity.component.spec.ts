@@ -13,8 +13,6 @@ import {
   MockedTestingModule,
   TEST_USER,
 } from "../../../utils/mocked-testing.module";
-import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
-import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { Entity } from "../../../core/entity/model/entity";
 import { School } from "../../schools/model/school";
 import { User } from "../../../core/user/user";
@@ -63,19 +61,19 @@ describe("NotesRelatedToEntityComponent", () => {
     let note = component.generateNewRecordFactory()();
     expect(note.children).toEqual([entity.getId()]);
     expect(note.authors).toEqual([TEST_USER]);
-    expect(note.relatedEntities).toEqual([entity._id]);
+    expect(note.relatedEntities).toEqual([entity.getId(true)]);
 
     entity = new School();
     component.onInitFromDynamicConfig({ entity });
     note = component.generateNewRecordFactory()();
     expect(note.schools).toEqual([entity.getId()]);
     expect(note.authors).toEqual([TEST_USER]);
-    expect(note.relatedEntities).toEqual([entity._id]);
+    expect(note.relatedEntities).toEqual([entity.getId(true)]);
 
     entity = new User();
     component.onInitFromDynamicConfig({ entity });
     note = component.generateNewRecordFactory()();
-    expect(note.relatedEntities).toEqual([entity._id]);
+    expect(note.relatedEntities).toEqual([entity.getId(true)]);
     // adding a note for a User does not make that User an author of the note!
     expect(note.authors).toEqual([TEST_USER]);
   });
@@ -93,7 +91,7 @@ describe("NotesRelatedToEntityComponent", () => {
     tick();
 
     expect(mockChildrenService.getNotesRelatedTo).toHaveBeenCalledWith(
-      component.entity._id
+      component.entity.getId(true)
     );
     expect(component.records).toEqual([n1, n2, n3]);
   }));
