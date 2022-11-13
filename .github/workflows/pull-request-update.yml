@@ -2,68 +2,17 @@ name: Pipeline
 on: pull_request
 
 jobs:
-  run-tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Get time of commit
-        run: echo "TIME=$(git log -1 --pretty=format:%ct)" >> $GITHUB_ENV
-      - name: Build dev image and save it locally
-        uses: docker/build-push-action@v3
-        with:
-          context: ./
-          file: ./build/Dockerfile
-          builder: ${{ steps.buildx.outputs.name }}
-          target: builder
-          tags: test-image
-          build-args: |
-            UPLOAD_COVERAGE=${{ true }}
-            GIT_COMMIT_SHA=${{ github.event.pull_request.head.sha }}
-            GIT_BRANCH=${{ github.head_ref }}
-            GIT_COMMITTED_AT=${{ env.TIME }}
-            CC_TEST_REPORTER_ID=${{ secrets.CODE_CLIMATE_ID }}
-          cache-from: type=registry,ref=aamdigital/ndb-server:cache
   deploy-prod-image:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Build prod image
-        uses: docker/build-push-action@v3
+      - name: executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@master
         with:
-          context: ./
-          file: ./build/Dockerfile
-          builder: ${{ steps.buildx.outputs.name }}
-          load: true
-          tags: prod-image
-          cache-from: type=registry,ref=aamdigital/ndb-server:cache
-      - name: Heroku deployment
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
-        run: |
-          name=test-deployment-pr-${{ github.event.number }}
-          heroku container:login
-          docker tag prod-image registry.heroku.com/${name}/web
-          docker push registry.heroku.com/${name}/web
-          heroku container:release -a ${name} web
-  run-e2e-tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Cypress run
-        uses: cypress-io/github-action@v4
-        with:
-          command: npm run e2e
-        env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          # We set the commit message to the pull request title
-          COMMIT_INFO_MESSAGE: ${{ github.event.pull_request.title }}
-          # pass GitHub token to allow accurately detecting a build vs a re-run build
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # pass the project ID from the secrets through environment variable
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            whoami
+            ls
+            ls /var/docker
