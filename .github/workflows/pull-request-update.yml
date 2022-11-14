@@ -38,8 +38,6 @@ jobs:
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v2
-      - name: Get time of commit
-        run: echo "TIME=$(git log -1 --pretty=format:%ct)" >> $GITHUB_ENV
       - name: Build and push PR image
         uses: docker/build-push-action@v3
         with:
