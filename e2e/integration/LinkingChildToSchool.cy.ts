@@ -29,7 +29,7 @@ describe("Scenario: Linking a child to a school - E2E test", function () {
       .click();
 
     // save school in child profile
-    cy.contains("button", "Save").click();
+    cy.contains("button", "Save").click({ force: true });
     // wait for the popup-close animation
     cy.wait(100);
   });

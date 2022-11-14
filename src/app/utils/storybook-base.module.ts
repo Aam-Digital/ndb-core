@@ -16,6 +16,18 @@ import {
 } from "../core/entity/database-entity.decorator";
 import { viewRegistry } from "../core/view/dynamic-components/dynamic-component.decorator";
 import { routesRegistry } from "../app.routing";
+import {
+  ConfigService,
+  createTestingConfigService,
+} from "../core/config/config.service";
+import { AbilityService } from "../core/permissions/ability/ability.service";
+import { Subject } from "rxjs";
+import { EntityAbility } from "../core/permissions/ability/entity-ability";
+import { defineAbility } from "@casl/ability";
+
+export const mockAbilityService = {
+  abilityUpdated: new Subject<void>(),
+};
 
 /**
  * Utility module to be imported in Storybook stories to ensure central setup like fontawesome icons are available.
@@ -30,7 +42,17 @@ import { routesRegistry } from "../app.routing";
     Angulartics2Module.forRoot(),
     RouterTestingModule,
   ],
-  providers: [{ provide: EntityRegistry, useValue: entityRegistry }],
+  providers: [
+    { provide: EntityRegistry, useValue: entityRegistry },
+    { provide: ConfigService, useValue: createTestingConfigService() },
+    { provide: AbilityService, useValue: mockAbilityService },
+    {
+      provide: EntityAbility,
+      useValue: defineAbility((can, cannot) => {
+        can("manage", "all");
+      }),
+    },
+  ],
 })
 export class StorybookBaseModule {
   constructor(icons: FaIconLibrary) {

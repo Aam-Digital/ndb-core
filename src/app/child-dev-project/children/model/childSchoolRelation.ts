@@ -12,8 +12,7 @@ import { Child } from "./child";
 export class ChildSchoolRelation extends Entity {
   @DatabaseField({
     label: $localize`:Label for the child of a relation:Child`,
-    viewComponent: "DisplayEntity",
-    editComponent: "EditSingleEntity",
+    dataType: "entity",
     additional: Child.ENTITY_TYPE,
     validators: {
       required: true,
@@ -22,8 +21,7 @@ export class ChildSchoolRelation extends Entity {
   childId: string;
   @DatabaseField({
     label: $localize`:Label for the school of a relation:School`,
-    viewComponent: "DisplayEntity",
-    editComponent: "EditSingleEntity",
+    dataType: "entity",
     additional: School.ENTITY_TYPE,
     validators: {
       required: true,

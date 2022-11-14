@@ -2,8 +2,6 @@ import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { School } from "../model/school";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { ConfigService } from "../../../core/config/config.service";
-import { ViewConfig } from "../../../core/view/dynamic-routing/view-config.interface";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 
 @DynamicComponent("SchoolBlock")
@@ -13,18 +11,12 @@ import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-
   styleUrls: ["./school-block.component.scss"],
 })
 export class SchoolBlockComponent implements OnInitDynamicComponent, OnChanges {
-  icon: string;
+  icon: string = School.icon;
   @Input() entity: School = new School("");
   @Input() entityId: string;
   @Input() linkDisabled: boolean;
 
-  constructor(
-    private entityMapper: EntityMapperService,
-    private configService: ConfigService
-  ) {
-    this.icon =
-      this.configService.getConfig<ViewConfig>("view:school/:id")?.config?.icon;
-  }
+  constructor(private entityMapper: EntityMapperService) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.hasOwnProperty("entityId")) {
