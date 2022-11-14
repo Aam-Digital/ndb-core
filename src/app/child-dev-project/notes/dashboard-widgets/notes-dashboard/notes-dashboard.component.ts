@@ -11,6 +11,7 @@ import { MatTableDataSource } from "@angular/material/table";
 import { MatPaginator } from "@angular/material/paginator";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
+import { Child } from "../../../children/model/child";
 
 /**
  * Dashboard Widget displaying children that do not have a recently added Note.
@@ -83,7 +84,7 @@ export class NotesDashboardComponent
       case "without-recent-notes":
         return $localize`:Subtitle|Subtitle informing the user that these are the children without recent reports:Having no recent reports`;
       case "with-recent-notes":
-        return $localize`:Subtitle|Subtitle informing the user that these are the children with recent reports:Cases with recent report`;
+        return $localize`:Subtitle|Subtitle informing the user that these are the children with recent reports:${Child.labelPlural} with recent report`;
     }
   }
 

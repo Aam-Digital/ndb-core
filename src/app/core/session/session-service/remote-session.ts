@@ -82,11 +82,19 @@ export class RemoteSession extends SessionService {
         skip_setup: true,
         fetch: (url, opts: any) => {
           if (typeof url === "string") {
-            this.authService.addAuthHeader(opts.headers);
-            return PouchDB.fetch(
+            const remoteUrl =
               AppSettings.DB_PROXY_PREFIX +
-                url.split(AppSettings.DB_PROXY_PREFIX)[1],
-              opts
+              url.split(AppSettings.DB_PROXY_PREFIX)[1];
+            return this.sendRequest(remoteUrl, opts).then((initialRes) =>
+              // retry login if request failed with unauthorized
+              initialRes.status === HttpStatusCode.Unauthorized
+                ? this.authService
+                    .autoLogin()
+                    .then(() => this.sendRequest(remoteUrl, opts))
+                    // return initial response if request failed again
+                    .then((newRes) => (newRes.ok ? newRes : initialRes))
+                    .catch(() => initialRes)
+                : initialRes
             );
           }
         },
@@ -94,6 +102,11 @@ export class RemoteSession extends SessionService {
     );
     this.currentDBUser = userObject;
     this.loginState.next(LoginState.LOGGED_IN);
+  }
+
+  private sendRequest(url: string, opts) {
+    this.authService.addAuthHeader(opts.headers);
+    return PouchDB.fetch(url, opts);
   }
 
   /**

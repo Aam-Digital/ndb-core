@@ -5,6 +5,9 @@ import { DatabaseField } from "../../../core/entity/database-field.decorator";
 @DatabaseEntity("School")
 export class School extends Entity {
   static toStringAttributes = ["name"];
+  static icon = "university";
+  static label = $localize`:label for entity:School`;
+  static labelPlural = $localize`:label (plural) for entity:Schools`;
 
   static getBlockComponent(): string {
     return "SchoolBlock";

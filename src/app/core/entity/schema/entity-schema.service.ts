@@ -30,6 +30,8 @@ import { schemaEmbedEntitySchemaDatatype } from "../schema-datatypes/datatype-sc
 import { dateOnlyEntitySchemaDatatype } from "../schema-datatypes/datatype-date-only";
 import { mapEntitySchemaDatatype } from "../schema-datatypes/datatype-map";
 import { booleanEntitySchemaDatatype } from "../schema-datatypes/datatype-boolean";
+import { entityArrayEntitySchemaDatatype } from "../schema-datatypes/datatype-entity-array";
+import { entityEntitySchemaDatatype } from "../schema-datatypes/datatype-entity";
 
 /**
  * Transform between entity instances and database objects
@@ -65,6 +67,8 @@ export class EntitySchemaService {
     this.registerSchemaDatatype(schemaEmbedEntitySchemaDatatype);
     this.registerSchemaDatatype(mapEntitySchemaDatatype);
     this.registerSchemaDatatype(booleanEntitySchemaDatatype);
+    this.registerSchemaDatatype(entityArrayEntitySchemaDatatype);
+    this.registerSchemaDatatype(entityEntitySchemaDatatype);
   }
 
   /**

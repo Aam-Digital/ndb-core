@@ -42,10 +42,10 @@ describe("AttendanceService", () => {
     activity1 = RecurringActivity.create("activity 1");
     activity2 = RecurringActivity.create("activity 2");
 
-    e1_1 = createEvent(new Date("2020-01-01"), activity1._id);
-    e1_2 = createEvent(new Date("2020-01-02"), activity1._id);
-    e1_3 = createEvent(new Date("2020-03-02"), activity1._id);
-    e2_1 = createEvent(new Date("2020-01-01"), activity2._id);
+    e1_1 = createEvent(new Date("2020-01-01"), activity1.getId(true));
+    e1_2 = createEvent(new Date("2020-01-02"), activity1.getId(true));
+    e1_3 = createEvent(new Date("2020-03-02"), activity1.getId(true));
+    e2_1 = createEvent(new Date("2020-01-01"), activity2.getId(true));
 
     TestBed.configureTestingModule({
       imports: [ConfigurableEnumModule, DatabaseTestingModule],
@@ -172,11 +172,15 @@ describe("AttendanceService", () => {
 
     expect(actualAttendences).toHaveSize(2);
     expectEntitiesToMatch(
-      actualAttendences.find((t) => t.activity._id === activity1._id).events,
+      actualAttendences.find(
+        (t) => t.activity.getId(true) === activity1.getId(true)
+      ).events,
       [e1_1, e1_2]
     );
     expectEntitiesToMatch(
-      actualAttendences.find((t) => t.activity._id === activity2._id).events,
+      actualAttendences.find(
+        (t) => t.activity.getId(true) === activity2.getId(true)
+      ).events,
       [e2_1]
     );
 

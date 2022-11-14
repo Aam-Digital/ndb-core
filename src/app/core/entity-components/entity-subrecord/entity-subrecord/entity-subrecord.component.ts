@@ -101,6 +101,8 @@ export class EntitySubrecordComponent<T extends Entity>
    */
   @Input() newRecordFactory: () => T;
 
+  private entityConstructor: EntityConstructor<T>;
+
   /**
    * Whether the rows of the table are inline editable and new entries can be created through the "+" button.
    */
@@ -180,13 +182,16 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 
   getEntityConstructor(): EntityConstructor<T> {
-    if (this.entityConstructorIsAvailable()) {
-      const record =
-        this._records.length > 0 ? this._records[0] : this.newRecordFactory();
-      return record.getConstructor() as EntityConstructor<T>;
-    } else {
+    if (!this.entityConstructorIsAvailable()) {
       throw new Error("No constructor is available");
     }
+
+    if (!this.entityConstructor) {
+      const record =
+        this._records.length > 0 ? this._records[0] : this.newRecordFactory();
+      this.entityConstructor = record.getConstructor() as EntityConstructor<T>;
+    }
+    return this.entityConstructor;
   }
 
   /**
