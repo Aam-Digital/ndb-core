@@ -183,9 +183,6 @@ export class Note extends Entity {
     }
 
     this.children = this.children.concat(childId);
-    this.relatedEntities.push(
-      Entity.createPrefixedId(Child.ENTITY_TYPE, childId)
-    );
   }
 
   /**
@@ -199,9 +196,6 @@ export class Note extends Entity {
     }
 
     this.schools = this.schools.concat(schoolId);
-    this.relatedEntities.push(
-      Entity.createPrefixedId(School.ENTITY_TYPE, schoolId)
-    );
   }
 
   /**
