@@ -11,6 +11,7 @@ import { FileService } from "../file.service";
 @Component({
   selector: "app-view-file",
   templateUrl: "./view-file.component.html",
+  styleUrls: ["../edit-file/edit-file.component.scss"],
 })
 export class ViewFileComponent extends ViewDirective<string> {
   constructor(public fileService: FileService) {

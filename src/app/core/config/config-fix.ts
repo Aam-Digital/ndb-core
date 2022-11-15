@@ -558,7 +558,8 @@ export const defaultJsonConfig = {
               "health_lastDentalCheckup",
               "gender",
               "age",
-              "dateOfBirth"
+              "dateOfBirth",
+              "birth_certificate"
             ]
           },
           {
