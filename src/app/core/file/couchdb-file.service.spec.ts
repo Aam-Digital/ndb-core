@@ -20,6 +20,7 @@ import {
   EntityRegistry,
 } from "../entity/database-entity.decorator";
 import { fileDataType } from "./file-data-type";
+import { AppSettings } from "../app-config/app-settings";
 
 describe("CouchdbFileService", () => {
   let service: CouchdbFileService;
@@ -29,6 +30,7 @@ describe("CouchdbFileService", () => {
   let mockSnackbar: jasmine.SpyObj<MatSnackBar>;
   let dismiss: jasmine.Spy;
   let updates: Subject<UpdatedEntity<Entity>>;
+  const attachmentUrlPrefix = `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}-attachments`;
 
   beforeEach(() => {
     mockHttp = jasmine.createSpyObj(["get", "put", "delete"]);
@@ -67,10 +69,12 @@ describe("CouchdbFileService", () => {
     service.uploadFile(file, entity, "testProp").subscribe();
 
     expect(mockHttp.get).toHaveBeenCalledWith(
-      jasmine.stringContaining("/Entity:testId")
+      jasmine.stringContaining(`${attachmentUrlPrefix}/Entity:testId`)
     );
     expect(mockHttp.put).toHaveBeenCalledWith(
-      jasmine.stringContaining("/Entity:testId/testProp?rev=test_rev"),
+      jasmine.stringContaining(
+        `${attachmentUrlPrefix}/Entity:testId/testProp?rev=test_rev`
+      ),
       jasmine.anything(),
       jasmine.anything()
     );
@@ -88,11 +92,13 @@ describe("CouchdbFileService", () => {
 
     service.uploadFile(file, entity, "testProp").subscribe(() => {
       expect(mockHttp.put).toHaveBeenCalledWith(
-        jasmine.stringContaining("/Entity:testId"),
+        jasmine.stringContaining(`${attachmentUrlPrefix}/Entity:testId`),
         {}
       );
       expect(mockHttp.put).toHaveBeenCalledWith(
-        jasmine.stringContaining("/Entity:testId/testProp?rev=newRev"),
+        jasmine.stringContaining(
+          `${attachmentUrlPrefix}/Entity:testId/testProp?rev=newRev`
+        ),
         jasmine.anything(),
         jasmine.anything()
       );
@@ -128,10 +134,12 @@ describe("CouchdbFileService", () => {
     service.removeFile(entity, "testProp").subscribe();
 
     expect(mockHttp.get).toHaveBeenCalledWith(
-      jasmine.stringContaining("/Entity:testId")
+      jasmine.stringContaining(`${attachmentUrlPrefix}/Entity:testId`)
     );
     expect(mockHttp.delete).toHaveBeenCalledWith(
-      jasmine.stringContaining("/Entity:testId/testProp?rev=test_rev")
+      jasmine.stringContaining(
+        `${attachmentUrlPrefix}/Entity:testId/testProp?rev=test_rev`
+      )
     );
     expect(entity[prop]).toBe(undefined);
     expect(mockEntityMapper.save).toHaveBeenCalledWith(entity);
@@ -175,7 +183,6 @@ describe("CouchdbFileService", () => {
     const entity = new Entity();
     mockHttp.get.and.returnValue(of({ _rev: "someRev" }));
     mockHttp.delete.and.returnValue(EMPTY);
-    console.log("set mocks");
 
     updates.next({ entity, type: "remove" });
     tick();
