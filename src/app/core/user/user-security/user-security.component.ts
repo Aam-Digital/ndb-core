@@ -51,9 +51,20 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
       this.keycloak = authService;
       this.keycloak
         .getRoles()
-        .subscribe((roles) => (this.availableRoles = roles));
+        .subscribe((roles) => this.initializeRoles(roles));
     } else {
       this.form.disable();
+    }
+  }
+
+  private initializeRoles(roles: Role[]) {
+    this.availableRoles = roles;
+    if (!this.user) {
+      // assign "user_app" as default role for new users
+      const userAppRole = roles.find(({ name }) => name === "user_app");
+      if (userAppRole) {
+        this.form.get("roles").setValue([userAppRole]);
+      }
     }
   }
 
