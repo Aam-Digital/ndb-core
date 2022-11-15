@@ -13,24 +13,27 @@ import { ConfigImportParserService } from "../config-import-parser.service";
   styleUrls: ["./config-import.component.scss"],
 })
 export class ConfigImportComponent {
-  generatedConfig: any;
+  loadedConfigFile: any;
+  entityName: string = "Child";
+  generatedConfig: string = "";
 
   constructor(private configImportParser: ConfigImportParserService) {}
 
   loadData(loadedConfigFile: ParsedData) {
     // TODO: handle csv parse errors
     // TODO: validate the data has the expected structure
+    this.loadedConfigFile = loadedConfigFile.data;
+  }
+
+  generateConfig(includingDefaultConfigs: boolean) {
     this.generatedConfig = JSON.stringify(
       this.configImportParser.parseImportDefinition(
-        loadedConfigFile.data,
-        "Child" // TODO
+        this.loadedConfigFile,
+        this.entityName,
+        includingDefaultConfigs
       ),
       null,
       2
     );
-  }
-
-  saveConfig() {
-    throw new Error("not implemented yet");
   }
 }

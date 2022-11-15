@@ -18,11 +18,14 @@ import { ConfigService } from "../config/config.service";
 import { ConfigFieldRaw } from "./config-field.raw";
 import { ViewConfig } from "../view/dynamic-routing/view-config.interface";
 import { defaultJsonConfig } from "../config/config-fix";
+import { School } from "../../child-dev-project/schools/model/school";
 
 @Injectable({
   providedIn: "root",
 })
 export class ConfigImportParserService {
+  static NOT_CONFIGURED_KEY = "NOT_CONFIGURED";
+
   enumsAvailable: Map<string, ConfigurableEnumConfig> = new Map();
   existingEnumHashmap: Map<string, string> = new Map();
 
@@ -46,7 +49,8 @@ export class ConfigImportParserService {
 
   parseImportDefinition(
     configRaw: ConfigFieldRaw[],
-    entityName: string
+    entityName: string,
+    includingDefaultConfigs: boolean
   ): GeneratedConfig {
     this.reset();
 
@@ -70,9 +74,11 @@ export class ConfigImportParserService {
       generatedConfig["view:" + key.toLowerCase()] = viewConfig;
     }
 
-    // add some default configs
-    for (const [key, config] of this.generateDefaultConfigs(entityName)) {
-      generatedConfig[key] = config;
+    if (includingDefaultConfigs) {
+      // add some default configs
+      for (const [key, config] of this.generateDefaultConfigs(entityName)) {
+        generatedConfig[key] = config;
+      }
     }
 
     return generatedConfig;
@@ -88,6 +94,13 @@ export class ConfigImportParserService {
       label: fieldDef.label,
       description: fieldDef.description,
     };
+
+    if (fieldDef.dataType === "single-entity-select") {
+      schema.dataType = "string";
+      schema.additional = fieldDef.additional_type_details;
+      schema.viewComponent = "DisplayEntity";
+      schema.editComponent = "EditSingleEntity";
+    }
 
     if (
       fieldDef.dataType === "enum" ||
@@ -130,7 +143,7 @@ export class ConfigImportParserService {
    */
   private generateOrMatchEnum(enumValues: string, key: string): string {
     if (typeof enumValues !== "string") {
-      return "???";
+      return ConfigImportParserService.NOT_CONFIGURED_KEY;
     }
 
     let values = enumValues
@@ -295,6 +308,13 @@ export class ConfigImportParserService {
   private generateDefaultConfigs(entityName: string) {
     const configs = new Map<string, any>();
 
+    configs.set("enum:" + ConfigImportParserService.NOT_CONFIGURED_KEY, [
+      {
+        id: ConfigImportParserService.NOT_CONFIGURED_KEY,
+        label: "NOT CONFIGURED",
+      },
+    ]);
+
     configs.set("appConfig", defaultJsonConfig.appConfig);
     configs.set(
       "appConfig:usage-analytics",
@@ -311,6 +331,19 @@ export class ConfigImportParserService {
       defaultJsonConfig["enum:warning-levels"]
     );
     configs.set("view:note", defaultJsonConfig["view:note"]);
+    configs.set("view:attendance", defaultJsonConfig["view:attendance"]);
+    configs.set(
+      "view:attendance/add-day",
+      defaultJsonConfig["view:attendance/add-day"]
+    );
+    configs.set(
+      "view:attendance/recurring-activity",
+      defaultJsonConfig["view:attendance/recurring-activity"]
+    );
+    configs.set(
+      "view:attendance/recurring-activity/:id",
+      defaultJsonConfig["view:attendance/recurring-activity/:id"]
+    );
     configs.set("view:admin", defaultJsonConfig["view:admin"]);
     configs.set(
       "view:admin/conflicts",

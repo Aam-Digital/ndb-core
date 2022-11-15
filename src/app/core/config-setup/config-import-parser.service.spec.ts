@@ -29,7 +29,7 @@ describe("ConfigImportParserService", () => {
     expectedOutputs: { name: string; schema: EntitySchemaField }[]
   ) {
     const entityName = "test";
-    const result = service.parseImportDefinition(inputs, entityName);
+    const result = service.parseImportDefinition(inputs, entityName, false);
 
     const resultConfig = result["entity:" + entityName] as EntityConfig;
     expect(resultConfig?.attributes).toEqual(expectedOutputs);
@@ -43,7 +43,7 @@ describe("ConfigImportParserService", () => {
     detailsView: boolean
   ) {
     const entityName = "test";
-    const result = service.parseImportDefinition(inputs, entityName);
+    const result = service.parseImportDefinition(inputs, entityName, false);
 
     const viewName = detailsView ? entityName + "/:id" : entityName;
     const resultConfig = result["view:" + viewName] as ViewConfig<
@@ -209,7 +209,7 @@ describe("ConfigImportParserService", () => {
           schema: {
             dataType: "configurable-enum",
             label: "missing",
-            innerDataType: "???", // reuse the previous enum!
+            innerDataType: ConfigImportParserService.NOT_CONFIGURED_KEY, // reuse the previous enum!
           },
         },
       ]
