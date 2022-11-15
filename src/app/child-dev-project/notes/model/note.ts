@@ -277,6 +277,7 @@ export class Note extends Entity {
     note.children = [...this.children];
     note.schools = [...this.schools];
     note.relatedEntities = [...this.relatedEntities];
+    note.authors = [...this.authors];
     note.childrenAttendance = new Map();
     this.childrenAttendance.forEach((value, key) => {
       note.childrenAttendance.set(key, value.copy());
