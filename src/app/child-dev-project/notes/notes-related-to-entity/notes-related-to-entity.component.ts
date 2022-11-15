@@ -12,6 +12,7 @@ import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-
 import { Entity } from "../../../core/entity/model/entity";
 import { Child } from "../../children/model/child";
 import { School } from "../../schools/model/school";
+import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain entity.
@@ -93,10 +94,16 @@ export class NotesRelatedToEntityComponent
     return () => {
       const newNote = new Note(Date.now().toString());
       newNote.date = new Date();
+
+      //TODO: generalize this code - possibly by only using relatedEntities to link other records here? see #1501
       if (this.entity.getType() === Child.ENTITY_TYPE) {
         newNote.addChild(this.entity as Child);
       } else if (this.entity.getType() === School.ENTITY_TYPE) {
         newNote.addSchool(this.entity as School);
+      } else if (this.entity.getType() === ChildSchoolRelation.ENTITY_TYPE) {
+        newNote.addChild((this.entity as ChildSchoolRelation).childId);
+        newNote.addSchool((this.entity as ChildSchoolRelation).schoolId);
+        newNote.relatedEntities.push(this.entity.getId(true));
       } else {
         newNote.relatedEntities.push(this.entity.getId(true));
       }

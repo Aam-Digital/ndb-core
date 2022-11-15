@@ -78,7 +78,6 @@ describe("NotesRelatedToEntityComponent", () => {
     entity = new ChildSchoolRelation();
     component.onInitFromDynamicConfig({ entity });
     note = component.generateNewRecordFactory()();
-    // adding a note for a User does not make that User an author of the note!
     expect(note.relatedEntities).toEqual([entity.getId(true)]);
   });
 
