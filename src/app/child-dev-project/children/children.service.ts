@@ -11,7 +11,6 @@ import { ChildPhotoService } from "./child-photo-service/child-photo.service";
 import moment, { Moment } from "moment";
 import { LoggingService } from "../../core/logging/logging.service";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
-import { EventNote } from "../attendance/model/event-note";
 import { Entity } from "../../core/entity/model/entity";
 import { School } from "../schools/model/school";
 import { User } from "../../core/user/user";
@@ -248,7 +247,7 @@ export class ChildrenService {
       views: {
         note_by_relatedEntities: {
           map: `(doc) => {
-            if (!doc._id.startsWith("${Note.ENTITY_TYPE}") && !doc._id.startsWith("${EventNote.ENTITY_TYPE}")) return;
+            if (!doc._id.startsWith("${Note.ENTITY_TYPE}")) return;
             if (!Array.isArray(doc.relatedEntities)) return;
 
             var d = new Date(doc.date || null);
