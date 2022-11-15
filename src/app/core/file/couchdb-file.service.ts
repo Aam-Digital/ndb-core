@@ -5,6 +5,7 @@ import {
   HttpEventType,
   HttpProgressEvent,
   HttpResponse,
+  HttpStatusCode,
 } from "@angular/common/http";
 import { AppSettings } from "../app-config/app-settings";
 import {
@@ -71,7 +72,7 @@ export class CouchdbFileService extends FileService {
   ): Observable<{ _rev: string }> {
     return this.http.get<{ _id: string; _rev: string }>(attachmentPath).pipe(
       catchError((err) => {
-        if (err.status === 404) {
+        if (err.status === HttpStatusCode.NotFound) {
           return this.http
             .put<{ rev: string }>(attachmentPath, {})
             .pipe(map((res) => ({ _rev: res.rev })));

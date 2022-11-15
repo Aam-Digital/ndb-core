@@ -62,6 +62,10 @@ export abstract class FileService {
    */
   abstract removeFile(entity: Entity, property: string): Observable<any>;
 
+  /**
+   * Removes all files linked with an entity
+   * @param entity
+   */
   abstract removeAllFiles(entity: Entity): Observable<any>;
 
   /**
