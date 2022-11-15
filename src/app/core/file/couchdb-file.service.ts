@@ -25,6 +25,7 @@ import { FileService } from "./file.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ProgressComponent } from "./progress/progress.component";
 import { EntityRegistry } from "../entity/database-entity.decorator";
+import { LoggingService } from "../logging/logging.service";
 
 /**
  * Stores the files in the CouchDB.
@@ -38,11 +39,12 @@ export class CouchdbFileService extends FileService {
   constructor(
     private http: HttpClient,
     private dialog: MatDialog,
-    entityMapper: EntityMapperService,
     private snackbar: MatSnackBar,
-    entities: EntityRegistry
+    entityMapper: EntityMapperService,
+    entities: EntityRegistry,
+    logger: LoggingService
   ) {
-    super(entityMapper, entities);
+    super(entityMapper, entities, logger);
   }
 
   uploadFile(file: File, entity: Entity, property: string): Observable<any> {

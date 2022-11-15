@@ -4,6 +4,7 @@ import { EntityMapperService } from "../entity/entity-mapper.service";
 import { EntityRegistry } from "../entity/database-entity.decorator";
 import { fileDataType } from "./file-data-type";
 import { filter } from "rxjs/operators";
+import { LoggingService } from "../logging/logging.service";
 
 /**
  * This service allow handles the logic for files/attachments.
@@ -12,7 +13,8 @@ import { filter } from "rxjs/operators";
 export abstract class FileService {
   protected constructor(
     protected entityMapper: EntityMapperService,
-    protected entities: EntityRegistry
+    protected entities: EntityRegistry,
+    protected logger: LoggingService
   ) {
     // TODO maybe registration is to late (only when component is rendered)
     this.deleteFilesOfDeletedEntities();
@@ -26,8 +28,9 @@ export abstract class FileService {
         .pipe(filter(({ type }) => type === "remove"))
         .subscribe(({ entity, type }) => {
           this.removeAllFiles(entity).subscribe({
-            next: () => console.log("deleted all files of", entity),
-            error: (err) => console.log("no files found for", entity, err),
+            next: () => this.logger.debug(`deleted all files of ${entity}`),
+            error: (err) =>
+              this.logger.debug(`no files found for ${entity}: ${err}`),
           });
         });
     });

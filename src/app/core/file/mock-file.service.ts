@@ -4,6 +4,7 @@ import { EMPTY, Observable, of } from "rxjs";
 import { FileService } from "./file.service";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { EntityRegistry } from "../entity/database-entity.decorator";
+import { LoggingService } from "../logging/logging.service";
 
 /**
  * A mock implementation of the file service which only stores the file temporarily in the browser.
@@ -14,8 +15,12 @@ import { EntityRegistry } from "../entity/database-entity.decorator";
 export class MockFileService extends FileService {
   private fileMap = new Map<string, string>();
 
-  constructor(entityMapper: EntityMapperService, entities: EntityRegistry) {
-    super(entityMapper, entities);
+  constructor(
+    entityMapper: EntityMapperService,
+    entities: EntityRegistry,
+    logger: LoggingService
+  ) {
+    super(entityMapper, entities, logger);
   }
 
   removeFile(entity: Entity, property: string): Observable<any> {
