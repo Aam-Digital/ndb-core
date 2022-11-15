@@ -23,13 +23,15 @@ import { genders } from "../../../../child-dev-project/children/model/genders";
 import { LoggingService } from "../../../logging/logging.service";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import moment from "moment";
-import { MediaObserver } from "@angular/flex-layout";
 import { Subject } from "rxjs";
 import { UpdatedEntity } from "../../../entity/model/entity-update";
 import { MatDialog } from "@angular/material/dialog";
 import { RowDetailsComponent } from "../row-details/row-details.component";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { ScreenWidthObserver } from "../../../../utils/media/screen-size-observer.service";
+import { WINDOW_TOKEN } from "../../../../utils/di-tokens";
+import { MediaModule } from "../../../../utils/media/media.module";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -41,13 +43,16 @@ describe("EntitySubrecordComponent", () => {
         EntitySubrecordModule,
         MockedTestingModule.withState(),
         FontAwesomeTestingModule,
+        MediaModule,
       ],
+      providers: [{ provide: WINDOW_TOKEN, useValue: window }],
     }).compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EntitySubrecordComponent);
     component = fixture.componentInstance;
+    component.editable = false;
     fixture.detectChanges();
   });
 
@@ -79,6 +84,7 @@ describe("EntitySubrecordComponent", () => {
     component.ngOnChanges({ records: undefined, columns: undefined });
     fixture.detectChanges();
 
+    component.recordsDataSource.sort.direction = "";
     component.recordsDataSource.sort.sort({
       id: "enumValue",
       start: "asc",
@@ -183,8 +189,8 @@ describe("EntitySubrecordComponent", () => {
     child.name = "Child Name";
     child.projectNumber = "01";
     const tableRow: TableRow<Child> = { record: child };
-    const media = TestBed.inject(MediaObserver);
-    spyOn(media, "isActive").and.returnValue(false);
+    const media = TestBed.inject(ScreenWidthObserver);
+    spyOn(media, "isDesktop").and.returnValue(true);
 
     component.edit(tableRow);
 
@@ -318,16 +324,18 @@ describe("EntitySubrecordComponent", () => {
     expect(component.recordsDataSource.data).toHaveSize(1);
   });
 
-  it("should correctly determine the entity constructor", () => {
+  it("should correctly determine the entity constructor from factory", () => {
     expect(() => component.getEntityConstructor()).toThrowError();
 
     const newRecordSpy = jasmine.createSpy().and.returnValue(new Child());
     component.newRecordFactory = newRecordSpy;
-    expect(component.getEntityConstructor()).toBe(Child);
+    expect(component.getEntityConstructor()).toEqual(Child);
     expect(newRecordSpy).toHaveBeenCalled();
+  });
 
+  it("should correctly determine the entity constructor from existing record", () => {
     component.newRecordFactory = undefined;
     component.records = [new Note()];
-    expect(component.getEntityConstructor()).toBe(Note);
+    expect(component.getEntityConstructor()).toEqual(Note);
   });
 });

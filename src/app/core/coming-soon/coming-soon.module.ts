@@ -2,9 +2,10 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ComingSoonComponent } from "./coming-soon/coming-soon.component";
 import { MatButtonModule } from "@angular/material/button";
-import { FlexModule } from "@angular/flex-layout";
 import { RouterModule } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { CommonComponentsModule } from "../common-components/common-components.module";
+import { MatDialogModule } from "@angular/material/dialog";
 
 /**
  * Provides a generic page to announce features that are not implemented yet including tracking user interest to analytics.
@@ -30,7 +31,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
   imports: [
     CommonModule,
     MatButtonModule,
-    FlexModule,
     RouterModule.forChild([
       {
         path: ":feature",
@@ -38,6 +38,8 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
       },
     ]),
     FontAwesomeModule,
+    CommonComponentsModule,
+    MatDialogModule,
   ],
   exports: [RouterModule, ComingSoonComponent],
 })

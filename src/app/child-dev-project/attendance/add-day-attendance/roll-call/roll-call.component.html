@@ -1,41 +1,39 @@
 <!-- Individual Student's Page -->
-<div *ngIf="children?.length > 0">
-  <div class="attendance-progress-bar">
-    <mat-progress-bar
-      class="filler"
-      mode="determinate"
-      [value]="(currentIndex / children.length) * 100"
-    ></mat-progress-bar>
+<div *ngIf="children?.length > 0" class="flex-column gap-regular">
+  <mat-progress-bar
+    mode="determinate"
+    [value]="(currentIndex / children.length) * 100"
+  ></mat-progress-bar>
 
-    <div fxLayout="row" class="progress-nav">
-      <button mat-icon-button (click)="goToFirst()" [disabled]="isFirst" class="button-skip" fxFlex="40px">
+  <div class="progress-nav">
+    <div style="margin-left: -10px">
+      <button mat-icon-button (click)="goToFirst()" [disabled]="isFirst" class="button-skip">
         <fa-icon icon="angle-double-left"></fa-icon>
       </button>
-      <button mat-icon-button (click)="goToPrevious()" [disabled]="isFirst" class="button-skip" fxFlex="40px">
+      <button mat-icon-button (click)="goToPrevious()" [disabled]="isFirst" class="button-skip">
         <fa-icon icon="angle-left"></fa-icon>
       </button>
-      <div class="progress-label" [style.visibility]="currentIndex < children.length ? 'visible' : 'hidden'" fxFlex="grow">
-        {{ currentIndex+1 }} / {{ children.length }}
-      </div>
-      <button mat-icon-button (click)="goToNext()" [disabled]="isFinished" class="button-skip" fxFlex="40px">
+    </div>
+    <div class="progress-label" [style.visibility]="currentIndex < children.length ? 'visible' : 'hidden'">
+      {{ currentIndex+1 }} / {{ children.length }}
+    </div>
+    <div style="margin-right: -10px">
+      <button mat-icon-button (click)="goToNext()" [disabled]="isFinished" class="button-skip">
         <fa-icon icon="angle-right"></fa-icon>
       </button>
-      <button mat-icon-button (click)="goToLast()" [disabled]="isFinished" class="button-skip" fxFlex="40px">
+      <button mat-icon-button (click)="goToLast()" [disabled]="isFinished" class="button-skip">
         <fa-icon icon="angle-double-right"></fa-icon>
       </button>
     </div>
   </div>
 
-  <div class="child-block-container">
-    <app-child-block
-      class="child-block"
-      *ngIf="!isFinished"
-      [entity]="currentChild"
-      [linkDisabled]="true"
-      [tooltipDisabled]="true">
-    </app-child-block>
-    <div class="placeholder" *ngIf="isFinished"></div>
-  </div>
+  <app-child-block
+    class="margin-small"
+    *ngIf="!isFinished"
+    [entity]="currentChild"
+    [linkDisabled]="true"
+    [tooltipDisabled]="true">
+  </app-child-block>
 
   <div *ngIf="!isFinished && currentAttendance" class="tab-wrapper">
     <app-roll-call-tab
@@ -70,9 +68,9 @@
 </div>
 
 <!-- Completion Page -->
-<div *ngIf="isFinished">
+<div *ngIf="isFinished" class="flex-column gap-regular margin-top-regular">
   <div class="roll-call-complete" @completeRollCall>
-    <fa-icon icon="check-circle" class="roll-call-complete-icon"></fa-icon>
+    <fa-icon icon="check-circle" size="3x"></fa-icon>
     <div
       i18n="
         Attendance completed|shows when the user has registered the attendance of
@@ -86,7 +84,8 @@
     <button
       (click)="showDetails()"
       class="finished-screen-button"
-      mat-stroked-button
+      mat-raised-button
+      color="accent"
       i18n="Open details of recorded event for review"
     >
       Review Details
@@ -95,8 +94,8 @@
 
   <button
     (click)="finish()"
-    class="finished-screen-button full-width"
-    mat-stroked-button
+    color="primary"
+    mat-raised-button
     i18n="Back to overview button after finishing a roll call"
   >
     Back to Overview

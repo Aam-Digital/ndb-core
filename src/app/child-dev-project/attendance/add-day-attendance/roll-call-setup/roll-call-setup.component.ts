@@ -114,7 +114,7 @@ export class RollCallSetupComponent implements OnInit {
   private async createEventForActivity(
     activity: RecurringActivity
   ): Promise<NoteForActivitySetup> {
-    if (this.existingEvents.find((e) => e.relatesTo === activity._id)) {
+    if (this.existingEvents.find((e) => e.relatesTo === activity.getId(true))) {
       return undefined;
     }
 
@@ -132,7 +132,7 @@ export class RollCallSetupComponent implements OnInit {
       let score = 0;
 
       const activityAssignedUsers = this.allActivities.find(
-        (a) => a._id === event.relatesTo
+        (a) => a.getId(true) === event.relatesTo
       )?.assignedTo;
       // use parent activities' assigned users and only fall back to event if necessary
       const assignedUsers = activityAssignedUsers ?? event.authors;

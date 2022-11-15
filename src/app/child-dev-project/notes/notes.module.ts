@@ -46,6 +46,9 @@ import { NotesDashboardComponent } from "./dashboard-widgets/notes-dashboard/not
 import { NotesOfChildComponent } from "./notes-of-child/notes-of-child.component";
 import { DashboardModule } from "../../core/dashboard/dashboard.module";
 import { ExportModule } from "../../core/export/export.module";
+import {
+  CommonComponentsModule
+} from "../../core/common-components/common-components.module";
 import { ImportantNotesComponent } from "./dashboard-widgets/important-notes/important-notes.component";
 
 @NgModule({
@@ -105,6 +108,7 @@ import { ImportantNotesComponent } from "./dashboard-widgets/important-notes/imp
     MatMenuModule,
     DashboardModule,
     ExportModule,
+    CommonComponentsModule
   ],
   exports: [NoteDetailsComponent],
 })

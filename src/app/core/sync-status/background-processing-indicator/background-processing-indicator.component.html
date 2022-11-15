@@ -1,6 +1,6 @@
 <button
   mat-icon-button
-  class="sync-icon"
+  class="white"
   [hidden]="allTasksFinished | async"
   [matMenuTriggerFor]="taskListDropdown"
   (menuClosed)="wasClosed = true"
@@ -10,26 +10,24 @@
     matBadgeColor="accent"
     [matBadgeHidden]="allTasksFinished | async"
   >
-    <fa-icon class="header-icon" icon="sync"></fa-icon>
+    <fa-icon class="white" icon="sync"></fa-icon>
   </span>
 </button>
 
-<mat-menu #taskListDropdown="matMenu" class="details-container">
-  <div class="details-header details-container" i18n>
+<mat-menu #taskListDropdown="matMenu" class="padding-small">
+  <div i18n>
     The following processes are still running in the background. Until these are
     finished some pages may be slow or incomplete.
   </div>
 
   <div
     *ngFor="let process of filteredProcesses | async"
-    class="details-line details-container"
-    fxLayout="row"
+    class="flex-row gap-small align-center mat-body-2 details-line"
   >
-    <div fxFlex="28px">
+    <div>
       <mat-spinner
         *ngIf="process.pending"
         [diameter]="20"
-        class="process-spinner"
       ></mat-spinner>
       <fa-icon
         *ngIf="!process.pending"
@@ -37,20 +35,18 @@
         class="process-checkmark"
       ></fa-icon>
     </div>
-    <div class="process-title" [matTooltip]="process.description" fxFlex>
+    <div class="truncate-text" [matTooltip]="process.description">
       {{ process.title }}
       <span *ngIf="process.details">({{ process.details }})</span>
     </div>
   </div>
 
-  <div class="details-container">
-    <button
-      mat-stroked-button
-      class="details-close"
-      (click)="taskListDropdownTrigger.closeMenu()"
-      i18n="Hide sync details"
-    >
-      Continue in background
-    </button>
-  </div>
+  <button
+    mat-stroked-button
+    class="full-width"
+    (click)="taskListDropdownTrigger.closeMenu()"
+    i18n="Hide sync details"
+  >
+    Continue in background
+  </button>
 </mat-menu>

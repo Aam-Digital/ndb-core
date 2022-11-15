@@ -1,0 +1,11 @@
+@use "../variables/colors";
+
+// Secondary text that is used to explain a certain headline
+// We don't use the predefined secondary text because the contrast is too low
+// which will harm readability
+
+@mixin text-secondary() {
+  color: colors.$text-secondary;
+  font-size: 110%;
+  line-height: 1.5em;
+}

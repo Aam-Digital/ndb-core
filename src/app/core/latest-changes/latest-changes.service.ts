@@ -22,7 +22,7 @@ import { Changelog } from "./changelog";
 import { AlertService } from "../alerts/alert.service";
 import { HttpClient, HttpContext } from "@angular/common/http";
 import { environment } from "../../../environments/environment";
-import { AUTH_ENABLED } from "../session/auth/keycloak/auth-interceptor.service";
+import { AUTH_ENABLED } from "../session/auth/auth.interceptor";
 
 /**
  * Manage the changelog information and display it to the user

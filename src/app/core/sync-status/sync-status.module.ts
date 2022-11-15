@@ -27,7 +27,6 @@ import { MatBadgeModule } from "@angular/material/badge";
 import { MatMenuModule } from "@angular/material/menu";
 import { BackgroundProcessingIndicatorComponent } from "./background-processing-indicator/background-processing-indicator.component";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { FlexModule } from "@angular/flex-layout";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
@@ -42,7 +41,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     MatBadgeModule,
     MatMenuModule,
     MatProgressSpinnerModule,
-    FlexModule,
     MatTooltipModule,
     FontAwesomeModule,
   ],

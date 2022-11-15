@@ -11,9 +11,14 @@ export interface FilterOverlayData<T extends Entity> {
   ) => void;
 }
 
+/**
+ * The component that shows filter options on small screens
+ * via a popover instead of the menu
+ */
 @Component({
   selector: "app-filter-overlay",
   templateUrl: "./filter-overlay.component.html",
+  styles: [":host { display: block }"],
 })
 export class FilterOverlayComponent<T extends Entity> {
   constructor(@Inject(MAT_DIALOG_DATA) public data: FilterOverlayData<T>) {}

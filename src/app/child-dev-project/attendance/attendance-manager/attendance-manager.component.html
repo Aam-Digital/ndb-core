@@ -7,75 +7,48 @@
   Managing Attendance
 </app-view-title>
 
-<p
-  class="general-description"
-  i18n="General description of attendance manager|A general description-header"
->
-</p>
-
 <div class="cards-wrapper">
   <mat-card>
-    <mat-card-header>
-      <mat-card-title i18n="Record attendance title">
-        Record Attendance
-      </mat-card-title>
-    </mat-card-header>
-    <mat-card-content i18n="Record attendance content">
+    <h1 i18n="Record attendance title">Record Attendance</h1>
+    <p i18n="Record attendance content">
       Record attendance for an activity on a certain day.
       Optimized for smartphones.
-    </mat-card-content>
-    <mat-card-footer>
-      <button
-        routerLink="/attendance/add-day"
-        class="action-button"
-        mat-raised-button
-        i18n="Record attendance button"
-      >
-        Record
-      </button>
-    </mat-card-footer>
+    </p>
+    <button
+      routerLink="/attendance/add-day"
+      mat-raised-button
+      i18n="Record attendance button"
+    >
+      Record
+    </button>
   </mat-card>
 
   <mat-card>
-    <mat-card-header>
-      <mat-card-title i18n="Manage Activities title">
-        Recurring Activities
-      </mat-card-title>
-    </mat-card-header>
-    <mat-card-content i18n="Manage Activities content">
+    <h1 i18n="Manage Activities title">Recurring Activities</h1>
+    <p i18n="Manage Activities content">
       Manage "recurring activities" for which you regularly record attendance.
       You can assign participants and users to these activities and analyze their attendance across time.
-    </mat-card-content>
-    <mat-card-footer>
-      <button
-        routerLink="/attendance/recurring-activity"
-        class="action-button"
-        mat-raised-button
-        i18n="Manage activities button"
-      >
-        Manage Activities
-      </button>
-    </mat-card-footer>
+    </p>
+    <button
+      routerLink="/attendance/recurring-activity"
+      mat-raised-button
+      i18n="Manage activities button"
+    >
+      Manage Activities
+    </button>
   </mat-card>
 
-  <mat-card class="inactive-card">
-    <mat-card-header>
-      <mat-card-title i18n="Monthly attendance title">
-        Monthly Attendance
-      </mat-card-title>
-    </mat-card-header>
-    <mat-card-content i18n="Monthly attendance content">
+  <mat-card disabled>
+    <h1 i18n="Monthly attendance title">Monthly Attendance</h1>
+    <p i18n="Monthly attendance content">
       Document attendance totals for a whole month that were collected on paper.
-    </mat-card-content>
-    <mat-card-footer>
-      <button
-        (click)="comingSoonDialog.open('monthly-attendance')"
-        class="action-button"
-        mat-stroked-button
-        i18n="Enter attendance button"
-      >
-        Document Month
-      </button>
-    </mat-card-footer>
+    </p>
+    <button
+      (click)="comingSoonDialog.open('monthly-attendance')"
+      mat-stroked-button
+      i18n="Enter attendance button"
+    >
+      Document Month
+    </button>
   </mat-card>
 </div>

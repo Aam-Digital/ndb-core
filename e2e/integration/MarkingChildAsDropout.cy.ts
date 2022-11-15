@@ -3,7 +3,7 @@ describe("Scenario: Marking a child as dropout - E2E test", function () {
     // go to the url with the Child
     cy.visit("child/1");
     // save the name of this Child to the variable
-    cy.get(".header-row > .header-title").invoke("text").as("childName");
+    cy.get(".mat-title > .remove-margin-bottom").invoke("text").as("childName");
   });
 
   it("WHEN I select a dropout date for this child", () => {

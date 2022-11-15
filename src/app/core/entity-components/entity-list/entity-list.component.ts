@@ -8,7 +8,6 @@ import {
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import { MediaObserver } from "@angular/flex-layout";
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import {
   ColumnGroupsConfig,
@@ -22,7 +21,6 @@ import { EntitySubrecordComponent } from "../entity-subrecord/entity-subrecord/e
 import { FilterGeneratorService } from "./filter-generator.service";
 import { FilterComponentSettings } from "./filter-component.settings";
 import { entityFilterPredicate } from "./filter-predicate";
-import { map } from "rxjs/operators";
 import { MatDialog } from "@angular/material/dialog";
 import { FilterOverlayComponent } from "./filter-overlay/filter-overlay.component";
 import { AnalyticsService } from "../../analytics/analytics.service";
@@ -30,6 +28,8 @@ import { RouteTarget } from "../../../app.routing";
 import { RouteData } from "../../view/dynamic-routing/view-config.interface";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * This component allows to create a full blown table with pagination, filtering, searching and grouping.
@@ -46,6 +46,7 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
   templateUrl: "./entity-list.component.html",
   styleUrls: ["./entity-list.component.scss"],
 })
+@UntilDestroy()
 export class EntityListComponent<T extends Entity>
   implements OnChanges, AfterViewInit
 {
@@ -59,9 +60,7 @@ export class EntityListComponent<T extends Entity>
 
   @ViewChild(EntitySubrecordComponent) entityTable: EntitySubrecordComponent<T>;
 
-  get desktop(): boolean {
-    return this.media.isActive("gt-xs");
-  }
+  isDesktop: boolean;
 
   listName = "";
   columns: (FormFieldConfig | string)[] = [];
@@ -100,7 +99,7 @@ export class EntityListComponent<T extends Entity>
   }
 
   constructor(
-    private media: MediaObserver,
+    private screenWidthObserver: ScreenWidthObserver,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private analyticsService: AnalyticsService,
@@ -118,11 +117,11 @@ export class EntityListComponent<T extends Entity>
       );
     }
 
-    this.media
-      .asObservable()
-      .pipe(map((c) => c[0].mqAlias !== "xs" && c[0].mqAlias !== "md"))
-      .subscribe((isBigScreen) => {
-        if (!isBigScreen) {
+    this.screenWidthObserver
+      .platform()
+      .pipe(untilDestroyed(this))
+      .subscribe((isDesktop) => {
+        if (!isDesktop) {
           this.displayColumnGroupByName(this.mobileColumnGroup);
         } else if (
           this.selectedColumnGroupIndex ===
@@ -130,6 +129,8 @@ export class EntityListComponent<T extends Entity>
         ) {
           this.displayColumnGroupByName(this.defaultColumnGroup);
         }
+
+        this.isDesktop = isDesktop;
       });
     this.activatedRoute.queryParams.subscribe((params) => {
       this.loadUrlParams(params);
@@ -166,12 +167,13 @@ export class EntityListComponent<T extends Entity>
 
   async ngOnChanges(changes: SimpleChanges): Promise<void> {
     if (changes.hasOwnProperty("listConfig")) {
-      this.listName = this.listConfig.title;
+      this.listName =
+        this.listConfig.title || this.entityConstructor?.labelPlural;
       this.addColumnsFromColumnGroups();
       this.initColumnGroups(this.listConfig.columnGroups);
       this.filtersConfig = this.listConfig.filters || [];
       this.displayColumnGroupByName(this.defaultColumnGroup);
-      if (this.media.isActive("xs") || this.media.isActive("md")) {
+      if (!this.screenWidthObserver.isDesktop()) {
         this.displayColumnGroupByName(this.mobileColumnGroup);
       }
     }

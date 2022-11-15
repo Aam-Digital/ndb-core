@@ -23,9 +23,9 @@
     [angularticsLabel]="item.label"
     *ngFor="let item of menuItems"
     [routerLink]="[item.link]"
-    [class.primary-background]="item.link === activeLink"
+    [class.matched-background]="item.link === activeLink"
   >
-    <a class="nav-link">
+    <a class="flex-row gap-small">
       <app-fa-dynamic-icon
         class="nav-icon"
         [icon]="item.icon"

@@ -12,7 +12,6 @@ import { AlertsModule } from "../../core/alerts/alerts.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { ExportModule } from "../../core/export/export.module";
-import { FlexModule } from "@angular/flex-layout";
 import { InputFileComponent } from "./input-file/input-file.component";
 import { MatExpansionModule } from "@angular/material/expansion";
 
@@ -31,7 +30,6 @@ import { MatExpansionModule } from "@angular/material/expansion";
     FontAwesomeModule,
     MatAutocompleteModule,
     ExportModule,
-    FlexModule,
     MatExpansionModule,
   ],
     exports: [DataImportComponent, InputFileComponent],

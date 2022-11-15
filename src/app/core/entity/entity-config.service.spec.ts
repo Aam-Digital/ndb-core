@@ -116,6 +116,22 @@ describe("EntityConfigService", () => {
     test.name = "testName";
     expect(test.toString()).toBe("testName id");
   });
+
+  it("should allow to configure the label and icon for entity", () => {
+    mockConfigService.getAllConfigs.and.returnValue([
+      {
+        _id: "entity:Test",
+        label: "test",
+        labelPlural: "tests",
+        icon: "users",
+      },
+    ]);
+    service.setupEntitiesFromConfig();
+
+    expect(Test.label).toBe("test");
+    expect(Test.labelPlural).toBe("tests");
+    expect(Test.icon).toBe("users");
+  });
 });
 
 @DatabaseEntity("Test")

@@ -5,7 +5,6 @@ import { Entity } from "../../../entity/model/entity";
 @Component({
   selector: "app-list-filter",
   templateUrl: "./list-filter.component.html",
-  styleUrls: ["./list-filter.component.scss"],
 })
 export class ListFilterComponent<E extends Entity> {
   @Input() displayAsToggle: boolean;

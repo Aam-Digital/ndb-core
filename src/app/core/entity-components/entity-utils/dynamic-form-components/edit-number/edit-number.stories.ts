@@ -32,6 +32,11 @@ export default {
       ],
     }),
   ],
+  parameters: {
+    controls: {
+      exclude: ["_columns"],
+    },
+  },
 } as Meta;
 
 const Template: Story<EntityFormComponent> = (args: EntityFormComponent) => ({
@@ -50,6 +55,7 @@ const fieldConfig: FormFieldConfig = {
   label: "test field label",
   tooltip: "test tooltip",
 };
+
 const testEntity = new TestEntity();
 testEntity.test = 5;
 

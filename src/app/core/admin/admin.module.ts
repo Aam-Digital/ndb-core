@@ -16,7 +16,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { BackupService } from "./services/backup.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { FlexModule } from "@angular/flex-layout";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DataImportModule } from "../../features/data-import/data-import.module";
 import { RouterLink } from "@angular/router";
@@ -41,7 +40,6 @@ import { RouterLink } from "@angular/router";
     MatFormFieldModule,
     MatInputModule,
     MatTooltipModule,
-    FlexModule,
     FontAwesomeModule,
     DataImportModule,
     RouterLink,

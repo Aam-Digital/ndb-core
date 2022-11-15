@@ -25,7 +25,6 @@ export class KeycloakAuthService extends AuthService {
 
   private keycloak = new Keycloak("assets/keycloak.json");
   private keycloakReady = this.keycloak.init({});
-  private refreshTokenTimeout;
 
   constructor(private httpClient: HttpClient) {
     super();
@@ -99,21 +98,11 @@ export class KeycloakAuthService extends AuthService {
       KeycloakAuthService.REFRESH_TOKEN_KEY,
       token.refresh_token
     );
-    this.refreshTokenBeforeExpiry(token.expires_in);
     const parsedToken = parseJwt(this.accessToken);
     return {
       name: parsedToken.username,
       roles: parsedToken["_couchdb.roles"],
     };
-  }
-
-  private refreshTokenBeforeExpiry(secondsTillExpiration: number) {
-    // Refresh token one minute before it expires or after ten seconds
-    const refreshTimeout = Math.max(10, secondsTillExpiration - 60);
-    this.refreshTokenTimeout = setTimeout(
-      () => this.refreshTokenAuth().then((token) => this.processToken(token)),
-      refreshTimeout * 1000
-    );
   }
 
   addAuthHeader(headers: any) {
@@ -129,7 +118,6 @@ export class KeycloakAuthService extends AuthService {
   }
 
   async logout() {
-    clearTimeout(this.refreshTokenTimeout);
     window.localStorage.removeItem(KeycloakAuthService.REFRESH_TOKEN_KEY);
   }
 
@@ -200,7 +188,6 @@ export class KeycloakAuthService extends AuthService {
 export interface OIDCTokenResponse {
   access_token: string;
   refresh_token: string;
-  expires_in: number;
   session_state: string;
 }
 

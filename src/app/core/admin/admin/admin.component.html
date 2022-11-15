@@ -1,14 +1,14 @@
 <h1>Administration & Configuration</h1>
 
-<p style="font-style: italic; font-weight: bold">
+<strong><em>
   Warning: This section is intended for system administrators only. Make sure
   you know what you are doing.
-</p>
+</em></strong>
 
 <br/>
 <hr/>
 <h2>Utility Functions</h2>
-<p fxLayoutGap="12px">
+<p>
   <button
     (click)="updatePhotoFilenames()"
     mat-stroked-button
@@ -37,7 +37,7 @@
   <input
     #backupImport
     type="file"
-    style="display: none"
+    hidden
     (change)="loadBackup($event)"
   />
 </p>
@@ -52,7 +52,6 @@
   >
     Download whole database (.csv)
   </button>
-  &nbsp;
 </p>
 <br/>
 <hr/>
@@ -74,7 +73,7 @@
   <input
     #configImport
     type="file"
-    style="display: none"
+    hidden
     (change)="uploadConfigFile($event)"
   />
   &nbsp;
@@ -105,10 +104,18 @@
 
 <br/>
 <hr/>
-<h2>Alert Log</h2>
-<table aria-label="Table showing alerts">
-  <tr *ngFor="let alert of alerts.reverse()">
-    <td>{{ alert.type }}</td>
-    <td>{{ alert.message }}</td>
-  </tr>
+<h2 id="alert-log-heading">Alert Log</h2>
+<table aria-describedby="alert-log-heading" class="admin-table">
+  <thead>
+    <th class="shrink-width">Timestamp</th>
+    <th class="shrink-width">Type</th>
+    <th>Message</th>
+  </thead>
+  <tbody>
+    <tr *ngFor="let alert of alerts.reverse()">
+      <td>{{alert.timestamp | date: "medium"}}</td>
+      <td>{{ alert.type }}</td>
+      <td>{{ alert.message }}</td>
+    </tr>
+  </tbody>
 </table>

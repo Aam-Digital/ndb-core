@@ -13,11 +13,6 @@ export class ActivityCardComponent {
    */
   @Input() event: Note;
 
-  /**
-   * Whether the card is visualized as selected
-   */
-  @Input() highlighted: boolean;
-
   private _displayAsRecurring: boolean | null = null;
   /**
    * Whether the event or activity is displayed in the style of events generated from a generic recurring activity.

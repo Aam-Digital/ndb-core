@@ -1,12 +1,12 @@
-import { Component } from "@angular/core";
+import { Component, HostBinding } from "@angular/core";
 import { ViewDirective } from "../view.directive";
 import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
+import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
 
 @DynamicComponent("DisplayPercentage")
 @Component({
   selector: "app-display-percentage",
-  templateUrl: "./display-percentage.component.html",
-  styleUrls: ["./display-percentage.component.scss"],
+  template: "{{ value ? value + '%' : '-' }}",
 })
 export class DisplayPercentageComponent extends ViewDirective<number> {
   /**
@@ -26,12 +26,16 @@ export class DisplayPercentageComponent extends ViewDirective<number> {
     return "hsl(" + color + ", 100%, 85%)";
   }
 
-  resultColorStyleBuilder(value: number) {
-    return {
-      "background-color": DisplayPercentageComponent.fromPercent(value),
+  onInitFromDynamicConfig(config: ViewPropertyConfig) {
+    super.onInitFromDynamicConfig(config);
+    this.style = {
+      "background-color": DisplayPercentageComponent.fromPercent(this.value),
       "border-radius": "5%",
       padding: "5px",
       width: "min-content",
     };
   }
+
+  @HostBinding("style")
+  public style = {};
 }

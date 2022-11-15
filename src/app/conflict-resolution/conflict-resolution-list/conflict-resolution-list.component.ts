@@ -13,7 +13,6 @@ import { RouteTarget } from "../../app.routing";
 @Component({
   selector: "app-conflict-resolution-list",
   templateUrl: "./conflict-resolution-list.component.html",
-  styleUrls: ["./conflict-resolution-list.component.scss"],
 })
 export class ConflictResolutionListComponent implements AfterViewInit {
   /** visible table columns in the template */

@@ -1,32 +1,6 @@
-.search-field {
-  color: white;
-
-  span {
-    margin-right: 6px;
-  }
-}
-
-.desktop-search-bar {
-  font-size: 16px;
-}
-
-.search-header {
-  position: fixed;
-  background: white;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 3;
-}
-
-.header-icon {
-  color: white;
-  font-size: 15pt;
-}
+@use "@angular/material" as mat;
 
 .result-hint {
-  background-color: lightgrey;
+  background-color: mat.get-color-from-palette(mat.$light-theme-background-palette, status-bar);
   font-style: italic;
-  font-size: 14px;
-  height: 36px;
 }

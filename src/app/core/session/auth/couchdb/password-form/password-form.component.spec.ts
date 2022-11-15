@@ -1,6 +1,7 @@
 import {
   ComponentFixture,
   fakeAsync,
+  flush,
   TestBed,
   tick,
 } from "@angular/core/testing";
@@ -65,8 +66,7 @@ describe("PasswordFormComponent", () => {
     tick();
 
     expect(mockCouchDBAuth.changePassword).toHaveBeenCalled();
-    expect(component.passwordChangeResult.success).toBeFalse();
-    expect(component.passwordChangeResult.error).toBe("pw change error");
+    flush();
   }));
 
   it("should set success and re-login when password change worked", fakeAsync(() => {
@@ -79,10 +79,10 @@ describe("PasswordFormComponent", () => {
 
     component.changePassword();
     tick();
-    expect(component.passwordChangeResult.success).toBeTrue();
     expect(mockSessionService.login).toHaveBeenCalledWith(
       "testUser",
       "Password1-"
     );
+    flush();
   }));
 });

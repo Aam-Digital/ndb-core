@@ -10,11 +10,9 @@ import {
 } from "@angular/core";
 import { MatSort, MatSortable } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
-import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { AlertService } from "../../../alerts/alert.service";
-import { Subscription } from "rxjs";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import {
   EntityForm,
@@ -30,6 +28,11 @@ import {
 } from "../../../entity/entity-remove.service";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { tableSort } from "./table-sort";
+import {
+  ScreenWidthObserver,
+  ScreenSize,
+} from "../../../../utils/media/screen-size-observer.service";
+import { Subscription } from "rxjs";
 
 export interface TableRow<T extends Entity> {
   record: T;
@@ -98,19 +101,21 @@ export class EntitySubrecordComponent<T extends Entity>
    */
   @Input() newRecordFactory: () => T;
 
+  private entityConstructor: EntityConstructor<T>;
+
   /**
    * Whether the rows of the table are inline editable and new entries can be created through the "+" button.
    */
   @Input() editable = true;
 
   /** columns displayed in the template's table */
-  @Input() columnsToDisplay = [];
+  @Input() columnsToDisplay: string[] = [];
 
   /** data displayed in the template's table */
   recordsDataSource = new MatTableDataSource<TableRow<T>>();
 
-  private mediaSubscription: Subscription;
-  private screenWidth = "";
+  private mediaSubscription: Subscription = Subscription.EMPTY;
+  private screenWidth: ScreenSize | undefined = undefined;
 
   idForSavingPagination = "startWert";
 
@@ -132,7 +137,7 @@ export class EntitySubrecordComponent<T extends Entity>
 
   constructor(
     private alertService: AlertService,
-    private media: MediaObserver,
+    private screenWidthObserver: ScreenWidthObserver,
     private entityFormService: EntityFormService,
     private dialog: MatDialog,
     private analyticsService: AnalyticsService,
@@ -140,14 +145,12 @@ export class EntitySubrecordComponent<T extends Entity>
     private entityRemoveService: EntityRemoveService,
     private entityMapper: EntityMapperService
   ) {
-    this.mediaSubscription = this.media
-      .asObservable()
+    this.mediaSubscription = this.screenWidthObserver
+      .shared()
       .pipe(untilDestroyed(this))
-      .subscribe((change: MediaChange[]) => {
-        if (change[0].mqAlias !== this.screenWidth) {
-          this.screenWidth = change[0].mqAlias;
-          this.setupTable();
-        }
+      .subscribe((change: ScreenSize) => {
+        this.screenWidth = change;
+        this.setupTable();
       });
   }
 
@@ -179,13 +182,16 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 
   getEntityConstructor(): EntityConstructor<T> {
-    if (this.entityConstructorIsAvailable()) {
-      const record =
-        this._records.length > 0 ? this._records[0] : this.newRecordFactory();
-      return record.getConstructor() as EntityConstructor<T>;
-    } else {
+    if (!this.entityConstructorIsAvailable()) {
       throw new Error("No constructor is available");
     }
+
+    if (!this.entityConstructor) {
+      const record =
+        this._records.length > 0 ? this._records[0] : this.newRecordFactory();
+      this.entityConstructor = record.getConstructor() as EntityConstructor<T>;
+    }
+    return this.entityConstructor;
   }
 
   /**
@@ -195,6 +201,9 @@ export class EntitySubrecordComponent<T extends Entity>
   ngOnChanges(changes: SimpleChanges) {
     if (changes.hasOwnProperty("columns")) {
       this.initFormGroups();
+      if (this.columnsToDisplay.length < 2) {
+        this.setupTable();
+      }
     }
     if (changes.hasOwnProperty("records") && this._records.length > 0) {
       this.initFormGroups();
@@ -258,9 +267,7 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 
   edit(row: TableRow<T>) {
-    if (this.media.isActive("lt-sm")) {
-      this.rowClick(row);
-    } else {
+    if (this.screenWidthObserver.isDesktop()) {
       if (!row.formGroup) {
         row.formGroup = this.entityFormService.createFormGroup(
           this._columns,
@@ -268,6 +275,8 @@ export class EntitySubrecordComponent<T extends Entity>
         );
       }
       row.formGroup.enable();
+    } else {
+      this.rowClick(row);
     }
   }
 
@@ -375,7 +384,7 @@ export class EntitySubrecordComponent<T extends Entity>
    * resets columnsToDisplay depending on current screensize
    */
   private setupTable() {
-    if (this._columns !== undefined && this.screenWidth !== "") {
+    if (this._columns !== undefined && this.screenWidth !== undefined) {
       this.columnsToDisplay = this._columns
         .filter((col) => this.isVisible(col))
         .map((col) => col.id);
@@ -393,13 +402,11 @@ export class EntitySubrecordComponent<T extends Entity>
     if (col.hideFromTable) {
       return false;
     }
-    const visibilityGroups = ["sm", "md", "lg", "xl"];
-    const visibleFromIndex = visibilityGroups.indexOf(col.visibleFrom);
-    if (visibleFromIndex !== -1) {
-      const regex = visibilityGroups.slice(visibleFromIndex).join("|");
-      return !!this.screenWidth.match(regex);
-    } else {
+    // when `ScreenSize[col.visibleFrom]` is undefined, this returns `true`
+    const numericValue = ScreenSize[col.visibleFrom];
+    if (numericValue === undefined) {
       return true;
     }
+    return this.screenWidthObserver.currentScreenSize() >= numericValue;
   }
 }

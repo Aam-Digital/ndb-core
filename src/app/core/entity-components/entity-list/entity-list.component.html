@@ -1,56 +1,43 @@
 <!-- Desktop version -->
-<div fxLayout="column" *ngIf="desktop">
+<div *ngIf="isDesktop">
+
+  <!-- Header bar; contains the title on the left and controls on the right -->
+
   <div
-    fxLayout="row"
-    fxLayoutAlign="space-between end"
+    class="flex-row justify-space-between"
     [ngStyle]="offsetFilterStyle"
   >
     <app-view-title>
       {{ listName }}
     </app-view-title>
 
-    <div fxFlex></div>
-
-    <div fxLayoutGap="25px" fxLayoutAlign="end end" fxFlex>
-      <button
-        mat-stroked-button
-        color="accent"
-        class="standard-add-button"
+    <div class="flex-row gap-regular">
+      <app-add-new-button
         (click)="addNewClick.emit()"
         angulartics2On="click"
         angularticsCategory="UserAction"
         [angularticsAction]="
-          listName.toLowerCase().replace(' ', '_') + '_add_new'
-        "
+            listName.toLowerCase().replace(' ', '_') + '_add_new'
+          "
         [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
         angularticsAction="list_add_entity"
         *appDisabledEntityOperation="{
-          entity: entityConstructor,
-          operation: 'create'
-        }"
+            entity: entityConstructor,
+            operation: 'create'
+          }"
+        i18n
       >
-        <fa-icon
-          class="button-icon"
-          aria-label="add element"
-          icon="plus-circle"
-        ></fa-icon>
-        <span i18n="Add a new entity to a list of multiple entities">
-          Add New
-        </span>
-      </button>
-
-      <button
-        mat-icon-button
-        class="additional-button"
-        color="primary"
-        [matMenuTriggerFor]="additional"
-      >
+        Add New
+      </app-add-new-button>
+      <button mat-icon-button color="primary" [matMenuTriggerFor]="additional">
         <fa-icon class="standard-icon" icon="ellipsis-v"></fa-icon>
       </button>
     </div>
   </div>
 
-  <div class="toggle-selection-section" fxLayout="row wrap" fxLayoutGap="10px">
+  <!-- Filters -->
+
+  <div class="flex-row gap-regular flex-wrap">
     <div *ngTemplateOutlet="filterDialog"></div>
 
     <app-list-filter
@@ -81,34 +68,36 @@
         ></mat-tab>
       </mat-tab-group>
     </div>
-    <div *ngTemplateOutlet="subrecord"></div>
+    <ng-container *ngTemplateOutlet="subrecord"></ng-container>
   </div>
 </div>
 
 <!-- Mobile Version -->
-<div *ngIf="!desktop">
+<div *ngIf="!isDesktop">
   <h2>{{ listName }}</h2>
 
-  <div fxLayout="row" fxLayoutGap="15px" style="margin-bottom: 15px">
+  <div class="flex-row">
     <div *ngTemplateOutlet="filterDialog"></div>
 
     <button mat-icon-button color="primary" [matMenuTriggerFor]="additional">
-      <fa-icon class="standard-icon" icon="ellipsis-v"></fa-icon>
+      <fa-icon icon="ellipsis-v" class="standard-icon"></fa-icon>
     </button>
   </div>
 
-  <div *ngTemplateOutlet="subrecord"></div>
+  <ng-container *ngTemplateOutlet="subrecord"></ng-container>
 </div>
 
 <!-- Templates and menus for both mobile and desktop -->
 
 <ng-template #filterDialog>
-  <mat-form-field class="filter-field">
+  <mat-form-field class="full-width filter-field">
     <mat-label
       i18n="Filter placeholder|Allows the user to filter through entities"
-      >Filter</mat-label
+    >Filter
+    </mat-label
     >
     <input
+      class="full-width"
       matInput
       i18n-placeholder="Examples of things to filter"
       placeholder="e.g. name, age"
@@ -139,7 +128,9 @@
 </ng-template>
 
 <mat-menu #additional>
-  <div fxHide.gt-xs>
+
+  <div class="hide-desktop">
+
     <button
       mat-menu-item
       (click)="addNewClick.emit()"
@@ -154,7 +145,7 @@
       }"
     >
       <fa-icon
-        class="standard-icon accent-icon"
+        class="standard-icon color-accent"
         aria-label="add element"
         icon="plus-circle"
       ></fa-icon>
@@ -166,11 +157,11 @@
     <button mat-menu-item (click)="openFilterOverlay()">
       <fa-icon
         aria-label="filter"
-        class="standard-icon accent-icon"
+        class="standard-icon color-accent"
         icon="filter"
       >
       </fa-icon>
-      <span>Filter options</span>
+      <span> Filter options </span>
     </button>
   </div>
 
@@ -182,7 +173,7 @@
     [filename]="listName.replace(' ', '')"
   >
     <fa-icon
-      class="standard-icon accent-icon"
+      class="standard-icon color-accent"
       aria-label="download csv"
       icon="download"
       angulartics2On="click"

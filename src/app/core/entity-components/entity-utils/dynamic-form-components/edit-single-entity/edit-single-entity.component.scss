@@ -1,10 +1,5 @@
-@import "../../common-styles";
+@use "../../common-styles" as *;
 
 .block-wrapper {
   @include entity-block-border;
-}
-
-.wrapper-readonly {
-  margin-top: 7px;
-  margin-bottom: 16px;
 }

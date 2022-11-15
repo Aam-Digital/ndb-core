@@ -12,7 +12,7 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { Database } from "../core/database/database";
 import { SessionType } from "../core/session/session-type";
 import { PouchDatabase } from "../core/database/pouch-database";
-import { LOCATION_TOKEN } from "./di-tokens";
+import { LOCATION_TOKEN, WINDOW_TOKEN } from "./di-tokens";
 import { Entity } from "../core/entity/model/entity";
 import { PureAbility } from "@casl/ability";
 import { EntityAbility } from "../core/permissions/ability/entity-ability";
@@ -33,6 +33,7 @@ import {
   createTestingConfigService,
 } from "../core/config/config.service";
 import { environment } from "../../environments/environment";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 export const TEST_USER = "test";
 export const TEST_PASSWORD = "pass";
@@ -56,6 +57,7 @@ export const TEST_PASSWORD = "pass";
     Angulartics2Module.forRoot(),
     RouterTestingModule,
     MatNativeDateModule,
+    FontAwesomeTestingModule,
   ],
   providers: [
     {
@@ -100,6 +102,7 @@ export class MockedTestingModule {
         { provide: EntityMapperService, useValue: mockedEntityMapper },
         { provide: ConfigService, useValue: createTestingConfigService() },
         { provide: Database, useValue: session.getDatabase() },
+        { provide: WINDOW_TOKEN, useValue: window },
       ],
     };
   }

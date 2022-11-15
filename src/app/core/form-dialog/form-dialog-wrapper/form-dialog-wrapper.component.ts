@@ -36,7 +36,6 @@ import {
 @Component({
   selector: "app-form-dialog-wrapper",
   templateUrl: "./form-dialog-wrapper.component.html",
-  styleUrls: ["./form-dialog-wrapper.component.scss"],
 })
 export class FormDialogWrapperComponent<E extends Entity = Entity>
   implements AfterViewInit
