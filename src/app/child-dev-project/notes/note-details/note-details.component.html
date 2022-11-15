@@ -195,7 +195,7 @@
 
     <app-entity-select *ngIf="relatedEntitiesSchema?.additional"
       class="form-section"
-      entityType="ChildSchoolRelation"
+      [entityType]="relatedEntitiesSchema?.additional"
       [withPrefix]="true"
       [(selection)]="entity.relatedEntities"
       (selectionChange)="entityForm.form.markAsDirty()"
