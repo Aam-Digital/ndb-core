@@ -6,6 +6,7 @@ import {
   HttpErrorResponse,
   HttpEvent,
   HttpEventType,
+  HttpStatusCode,
 } from "@angular/common/http";
 import { MatDialog } from "@angular/material/dialog";
 import { EMPTY, of, Subject, throwError } from "rxjs";
@@ -57,14 +58,13 @@ describe("CouchdbFileService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should add a attachment to a existing document and update the entity", fakeAsync(() => {
+  it("should add a attachment to a existing document and update the entity", () => {
     mockHttp.get.and.returnValue(of({ _rev: "test_rev" }));
     mockHttp.put.and.returnValue(of({ ok: true }));
     const file = { type: "image/png", name: "file.name" } as File;
     const entity = new Entity("testId");
 
     service.uploadFile(file, entity, "testProp").subscribe();
-    tick();
 
     expect(mockHttp.get).toHaveBeenCalledWith(
       jasmine.stringContaining("/Entity:testId")
@@ -76,7 +76,7 @@ describe("CouchdbFileService", () => {
     );
     expect(entity["testProp"]).toBe("file.name");
     expect(mockEntityMapper.save).toHaveBeenCalledWith(entity);
-  }));
+  });
 
   it("should create attachment document if it does not exist yet", (done) => {
     mockHttp.get.and.returnValue(
@@ -118,7 +118,7 @@ describe("CouchdbFileService", () => {
     });
   });
 
-  it("should remove a file using the latest rev and update the entity", fakeAsync(() => {
+  it("should remove a file using the latest rev and update the entity", () => {
     mockHttp.get.and.returnValue(of({ _rev: "test_rev" }));
     mockHttp.delete.and.returnValue(of({ ok: true }));
     const entity = new Entity("testId");
@@ -126,7 +126,6 @@ describe("CouchdbFileService", () => {
     entity[prop] = "test.file";
 
     service.removeFile(entity, "testProp").subscribe();
-    tick();
 
     expect(mockHttp.get).toHaveBeenCalledWith(
       jasmine.stringContaining("/Entity:testId")
@@ -136,7 +135,7 @@ describe("CouchdbFileService", () => {
     );
     expect(entity[prop]).toBe(undefined);
     expect(mockEntityMapper.save).toHaveBeenCalledWith(entity);
-  }));
+  });
 
   it("should show progress while downloading a file", () => {
     const events = new Subject<HttpEvent<Blob>>();
@@ -188,4 +187,21 @@ describe("CouchdbFileService", () => {
       jasmine.stringContaining(`/${entity.getId(true)}?rev=someRev`)
     );
   }));
+
+  it("should not fail if to-be-removed file reference could not be found", () => {
+    const entity = new Entity();
+    entity["testProp"] = "some.file";
+    mockHttp.get.and.returnValue(
+      throwError(
+        () => new HttpErrorResponse({ status: HttpStatusCode.NotFound })
+      )
+    );
+
+    service.removeFile(entity, "testProp").subscribe({
+      error: () => fail("Removing file should not fail"),
+    });
+
+    expect(entity["testProp"]).toBeUndefined();
+    expect(mockEntityMapper.save).toHaveBeenCalledWith(entity);
+  });
 });

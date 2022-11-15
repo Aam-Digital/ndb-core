@@ -16,7 +16,7 @@ import {
   map,
   shareReplay,
 } from "rxjs/operators";
-import { Observable } from "rxjs";
+import { Observable, of } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
 import { ShowFileComponent } from "./show-file/show-file.component";
 import { Entity } from "../entity/model/entity";
@@ -88,9 +88,16 @@ export class CouchdbFileService extends FileService {
       concatMap(({ _rev }) =>
         this.http.delete(`${attachmentPath}/${property}?rev=${_rev}`)
       ),
-      finalize(async () => {
+      catchError((err) => {
+        if (err.status === HttpStatusCode.NotFound) {
+          return of({ ok: true });
+        } else {
+          throw err;
+        }
+      }),
+      finalize(() => {
         entity[property] = undefined;
-        await this.entityMapper.save(entity);
+        this.entityMapper.save(entity);
       })
     );
   }
