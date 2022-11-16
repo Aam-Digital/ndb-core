@@ -1,0 +1,52 @@
+
+
+<div class="margin-bottom-small" #matchComparison>
+  <table mat-table [dataSource]="columns" class="match-comparison-table">
+    <ng-container [matColumnDef]="'side-' + i" *ngFor="let side of sideDetails; let i = index">
+      <th mat-header-cell *matHeaderCellDef class="comparison-header" [style.color]="side.entityType.color ?? 'black'">
+        {{ side.entityType.label }}:
+        {{ side.selected?.toString() ?? '-' }}
+        <app-fa-dynamic-icon icon="lock" *ngIf="!side.availableEntities"></app-fa-dynamic-icon>
+      </th>
+      <td mat-cell *matCellDef="let property">
+        <ng-container
+          *ngIf="side.selected?.[property[i]] && side.entityType.schema.get(property[i]); else placeholder"
+          [appDynamicComponent]="{
+          component: schemaService.getComponent(side.entityType.schema.get(property[i])),
+          config: {
+            value: side.selected[property[i]],
+            id: property[i],
+            entity: side.selected
+          }
+        }"
+        ></ng-container>
+
+        <ng-template #placeholder>
+          -
+        </ng-template>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+    <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
+  </table>
+</div>
+
+<div class="margin-bottom-large flex-column gap-small">
+  <div class="flex-grow map-placeholder">Map</div>
+  <button mat-stroked-button color="accent" (click)="createMatch()" style="width: 100%">matchen (Patenschaft erstellen)</button>
+</div>
+
+<div class="flex-row flex-wrap gap-large">
+  <ng-container *ngFor="let side of sideDetails">
+    <div class="flex-grow" *ngIf="side.availableEntities">
+      <h2 [style.color]="side.entityType.color ?? 'black'" class="selection-header">Select {{ side.entityType.label }}</h2>
+      <app-entity-subrecord
+        [records]="side.availableEntities"
+        [columns]="side.columns"
+        [editable]="false"
+        [showEntity]="side.selectMatch"
+      ></app-entity-subrecord>
+    </div>
+  </ng-container>
+</div>

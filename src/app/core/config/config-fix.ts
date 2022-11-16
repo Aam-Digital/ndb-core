@@ -665,6 +665,11 @@ export const defaultJsonConfig = {
             {
               "title": $localize`:Title inside a panel:ASER Results`,
               "component": "Aser"
+            },
+            {
+              title: $localize`:Child details section title:Find suitable school`,
+              component: "MatchingEntities",
+              config: []
             }
           ]
         },
