@@ -2,7 +2,7 @@
  * Object specifying a route and config of its view
  * as stored in the config database
  */
-export interface ViewConfig {
+export interface ViewConfig<T = any> {
   /** config object id which equals the route path */
   _id: string;
 
@@ -23,7 +23,7 @@ export interface ViewConfig {
   permittedUserRoles?: string[];
 
   /** optional object providing any kind of config to be interpreted by the component for this view */
-  config?: any;
+  config?: T;
 
   /**
    * indicate that the route is lazy loaded.

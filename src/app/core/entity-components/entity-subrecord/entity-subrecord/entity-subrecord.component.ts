@@ -33,6 +33,7 @@ import {
   ScreenSize,
 } from "../../../../utils/media/screen-size-observer.service";
 import { Subscription } from "rxjs";
+import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
 
 export interface TableRow<T extends Entity> {
   record: T;
@@ -292,7 +293,9 @@ export class EntitySubrecordComponent<T extends Entity>
       );
       row.formGroup.disable();
     } catch (err) {
-      this.alertService.addDanger(err.message);
+      if (!(err instanceof InvalidFormFieldError)) {
+        this.alertService.addDanger(err.message);
+      }
     }
   }
 

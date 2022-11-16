@@ -102,6 +102,12 @@ export class ConfigService {
       );
     }
 
+    if (configString.includes("ImportantNotesComponent")) {
+      this.logger.warn(
+        "Legacy Config: ImportantNotesComponent found - you should use 'ImportantNotesDashboard' instead"
+      );
+    }
+
     return config;
   }
 }

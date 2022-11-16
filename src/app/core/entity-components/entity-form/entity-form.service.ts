@@ -6,7 +6,7 @@ import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DynamicValidatorsService } from "./dynamic-form-validators/dynamic-validators.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
-import { EntitySchema } from "../../entity/schema/entity-schema";
+import { InvalidFormFieldError } from "./invalid-form-field.error";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
@@ -103,7 +103,7 @@ export class EntityFormService {
     form: EntityForm<T>,
     entity: T
   ): Promise<T> {
-    this.checkFormValidity(form, entity.getSchema());
+    this.checkFormValidity(form);
     const updatedEntity = entity.copy() as T;
     Object.assign(updatedEntity, form.getRawValue());
     updatedEntity.assertValid();
@@ -121,26 +121,12 @@ export class EntityFormService {
       });
   }
 
-  private checkFormValidity<T extends Entity>(
-    form: EntityForm<T>,
-    schema: EntitySchema
-  ) {
+  private checkFormValidity<T extends Entity>(form: EntityForm<T>) {
     // errors regarding invalid fields wont be displayed unless marked as touched
     form.markAllAsTouched();
     if (form.invalid) {
-      const invalidFields = this.getInvalidFields(form, schema);
-      throw new Error($localize`Fields: "${invalidFields}" are invalid`);
+      throw new InvalidFormFieldError();
     }
-  }
-
-  private getInvalidFields<T extends Entity>(
-    form: EntityForm<T>,
-    schema: EntitySchema
-  ): string {
-    return Object.keys(form.controls)
-      .filter((key) => form.controls[key].invalid)
-      .map((field) => schema.get(field).label)
-      .join(", ");
   }
 
   private canSave(oldEntity: Entity, newEntity: Entity): boolean {
