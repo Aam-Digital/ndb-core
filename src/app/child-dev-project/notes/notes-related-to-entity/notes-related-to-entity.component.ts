@@ -22,7 +22,6 @@ import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 @Component({
   selector: "app-notes-related-to-entity",
   templateUrl: "./notes-related-to-entity.component.html",
-  styleUrls: ["./notes-related-to-entity.component.scss"],
 })
 export class NotesRelatedToEntityComponent
   implements OnChanges, OnInitDynamicComponent

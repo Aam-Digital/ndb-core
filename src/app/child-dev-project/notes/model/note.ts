@@ -35,7 +35,6 @@ import {
 } from "../../../core/entity/model/warning-level";
 import { School } from "../../schools/model/school";
 import { Ordering } from "../../../core/configurable-enum/configurable-enum-ordering";
-import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
