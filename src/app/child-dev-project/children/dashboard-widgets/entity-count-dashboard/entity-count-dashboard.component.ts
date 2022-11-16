@@ -58,7 +58,7 @@ export class EntityCountDashboardComponent
 
     const countMap = new Map<any, number>();
     entities.forEach((entity) => {
-      if (!entity.hasOwnProperty("isActive") || entity["isActive"]) {
+      if (entity.isActive) {
         let count = countMap.get(entity[this.groupBy]);
         if (count === undefined) {
           count = 0;
