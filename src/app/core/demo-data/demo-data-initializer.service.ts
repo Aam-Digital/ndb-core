@@ -13,6 +13,7 @@ import memory from "pouchdb-adapter-memory";
 import { Database } from "../database/database";
 import { PouchDatabase } from "../database/pouch-database";
 import { environment } from "../../../environments/environment";
+import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
 
 /**
  * This service handles everything related to the demo-mode
@@ -88,7 +89,11 @@ export class DemoDataInitializerService {
     this.localSession.saveUser(
       {
         name: DemoUserGeneratorService.ADMIN_USERNAME,
-        roles: ["user_app", "admin_app"],
+        roles: [
+          "user_app",
+          "admin_app",
+          KeycloakAuthService.ACCOUNT_MANAGER_ROLE,
+        ],
       },
       DemoUserGeneratorService.DEFAULT_PASSWORD
     );

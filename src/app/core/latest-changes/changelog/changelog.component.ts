@@ -23,7 +23,7 @@ import {
   ViewChild,
 } from "@angular/core";
 import { Changelog } from "../changelog";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { isObservable, Observable } from "rxjs";
 import { LatestChangesService } from "../latest-changes.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -36,6 +36,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 @UntilDestroy()
 @Component({
   templateUrl: "./changelog.component.html",
+  styleUrls: ["./changelog.component.scss"],
 })
 export class ChangelogComponent implements OnInit {
   /** The array of relevant changelog entries to be displayed */
@@ -52,12 +53,10 @@ export class ChangelogComponent implements OnInit {
    * @example
    * dialog.open(ChangelogComponent, { data: { changelogData: latestChangesService.getChangelogs() } });
    *
-   * @param dialogRef Reference to the parent dialog.
    * @param data Changelog data to be display initially
    * @param latestChangesService
    */
   constructor(
-    public dialogRef: MatDialogRef<ChangelogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Observable<Changelog[]>,
     private latestChangesService: LatestChangesService
   ) {}
@@ -82,8 +81,8 @@ export class ChangelogComponent implements OnInit {
       return;
     }
 
-    const lastDisplayedVersion = this.changelogs[this.changelogs.length - 1]
-      .tag_name;
+    const lastDisplayedVersion =
+      this.changelogs[this.changelogs.length - 1].tag_name;
     this.latestChangesService
       .getChangelogsBeforeVersion(lastDisplayedVersion, 1)
       .pipe(untilDestroyed(this))
@@ -95,6 +94,7 @@ export class ChangelogComponent implements OnInit {
   }
 
   private scrollToBottomOfReleases() {
-    this.contentContainer.nativeElement.scrollTop = this.contentContainer.nativeElement.scrollHeight;
+    this.contentContainer.nativeElement.scrollTop =
+      this.contentContainer.nativeElement.scrollHeight;
   }
 }
