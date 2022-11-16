@@ -1,31 +1,34 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { ConfigurableEnumValue } from "../../../../core/configurable-enum/configurable-enum.interface";
 import { Child } from "../../model/child";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { Entity } from "../../../../core/entity/model/entity";
 
 @DynamicComponent("ChildrenCountDashboard")
+@DynamicComponent("EntityCountDashboard")
 @Component({
-  selector: "app-children-count-dashboard",
-  templateUrl: "./children-count-dashboard.component.html",
-  styleUrls: ["./children-count-dashboard.component.scss"],
+  selector: "app-entity-count-dashboard",
+  templateUrl: "./entity-count-dashboard.component.html",
+  styleUrls: ["./entity-count-dashboard.component.scss"],
 })
-export class ChildrenCountDashboardComponent
+export class EntityCountDashboardComponent
   implements OnInitDynamicComponent, OnInit
 {
+  private entity = Child.ENTITY_TYPE;
   /**
    * The property of the Child entities to group counts by.
    *
    * Default is "center".
    */
-  @Input() groupBy: string = "center";
+  private groupBy = "center";
 
-  totalChildren: number;
-  childrenGroupCounts: { label: string; value: number; id: string }[] = [];
+  totalEntities: number;
+  entityGroupCounts: { label: string; value: number; id: string }[] = [];
   loading = true;
-  label: string = Child.labelPlural;
+  label = Child.labelPlural;
 
   constructor(
     private entityMapper: EntityMapperService,
@@ -33,14 +36,13 @@ export class ChildrenCountDashboardComponent
   ) {}
 
   onInitFromDynamicConfig(config: any) {
-    if (config?.groupBy) {
-      this.groupBy = config.groupBy;
-    }
+    this.groupBy = config.groupBy ?? this.groupBy;
+    this.entity = config.entity ?? this.entity;
   }
 
   async ngOnInit() {
-    const children = await this.entityMapper.loadType(Child);
-    this.updateCounts(children);
+    const entities = await this.entityMapper.loadType(this.entity);
+    this.updateCounts(entities);
   }
 
   goToChildrenList(filterId: string) {
@@ -51,24 +53,24 @@ export class ChildrenCountDashboardComponent
     this.router.navigate([path], { queryParams: params });
   }
 
-  private updateCounts(children: Child[]) {
-    this.totalChildren = 0;
+  private updateCounts(entities: Entity[]) {
+    this.totalEntities = 0;
 
     const countMap = new Map<any, number>();
-    children.forEach((child) => {
-      if (child.isActive) {
-        let count = countMap.get(child[this.groupBy]);
+    entities.forEach((entity) => {
+      if (!entity.hasOwnProperty("isActive") || entity["isActive"]) {
+        let count = countMap.get(entity[this.groupBy]);
         if (count === undefined) {
           count = 0;
         }
 
         count++;
-        this.totalChildren++;
-        countMap.set(child[this.groupBy], count);
+        this.totalEntities++;
+        countMap.set(entity[this.groupBy], count);
       }
     });
 
-    this.childrenGroupCounts = Array.from(countMap.entries()) // direct use of Map creates change detection problems
+    this.entityGroupCounts = Array.from(countMap.entries()) // direct use of Map creates change detection problems
       .map((entry) => {
         const label = extractHumanReadableLabel(entry[0]);
         return {

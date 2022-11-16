@@ -1,7 +1,7 @@
 <app-dashboard-widget
   icon="child"
   theme="child"
-  [title]="totalChildren"
+  [title]="totalEntities"
   [subtitle]="label"
   [loading]="loading"
 >
@@ -9,7 +9,7 @@
     <div class="table-wrapper">
       <table
         mat-table
-        [dataSource]="childrenGroupCounts"
+        [dataSource]="entityGroupCounts"
         i18n-aria-label="Label for children count dashboard"
         aria-label="Table showing disaggregation of the beneficiaries"
       >
@@ -20,7 +20,9 @@
           <td *matCellDef="let group" class="text-align-end">{{ group.value }}</td>
         </ng-container>
         <ng-container matColumnDef="link">
-          <td *matCellDef class="text-align-end"><fa-icon icon="external-link-square-alt"></fa-icon></td>
+          <td *matCellDef class="text-align-end">
+            <fa-icon icon="external-link-square-alt"></fa-icon>
+          </td>
         </ng-container>
 
         <tr hidden>

@@ -168,7 +168,7 @@ export const defaultJsonConfig = {
           }
         },
         {
-          "component": "ChildrenCountDashboard"
+          "component": "EntityCountDashboard"
         },
         {
           "component": "ImportantNotesDashboard",
