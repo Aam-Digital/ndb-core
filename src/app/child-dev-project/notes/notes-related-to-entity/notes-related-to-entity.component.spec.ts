@@ -76,9 +76,13 @@ describe("NotesRelatedToEntityComponent", () => {
     expect(note.authors).toEqual([TEST_USER]);
 
     entity = new ChildSchoolRelation();
+    entity["childId"] = "someChild";
+    entity["schoolId"] = "someSchool";
     component.onInitFromDynamicConfig({ entity });
     note = component.generateNewRecordFactory()();
     expect(note.relatedEntities).toEqual([entity.getId(true)]);
+    expect(note.children).toEqual(["someChild"]);
+    expect(note.schools).toEqual(["someSchool"]);
   });
 
   it("should sort notes by date", fakeAsync(() => {
