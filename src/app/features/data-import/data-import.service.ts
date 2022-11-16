@@ -11,7 +11,6 @@ import { dateOnlyEntitySchemaDatatype } from "../../core/entity/schema-datatypes
 import { monthEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-month";
 import moment from "moment";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
-import { ParseResult } from "ngx-papaparse";
 
 /**
  * This service handels the parsing of CSV files and importing of data
