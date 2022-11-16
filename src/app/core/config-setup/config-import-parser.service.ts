@@ -9,22 +9,37 @@ import {
   Panel,
   PanelComponent,
 } from "../entity-components/entity-details/EntityDetailsConfig";
-import {
-  CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnumConfig,
-} from "../configurable-enum/configurable-enum.interface";
+import { ConfigurableEnumConfig } from "../configurable-enum/configurable-enum.interface";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
-import { ConfigService } from "../config/config.service";
 import { ConfigFieldRaw } from "./config-field.raw";
 import { ViewConfig } from "../view/dynamic-routing/view-config.interface";
 import { defaultJsonConfig } from "../config/config-fix";
-import { School } from "../../child-dev-project/schools/model/school";
 
 @Injectable({
   providedIn: "root",
 })
 export class ConfigImportParserService {
   static NOT_CONFIGURED_KEY = "NOT_CONFIGURED";
+  private static DEFAULT_CONFIG_KEYS = [
+    "appConfig",
+    "appConfig:usage-analytics",
+    "navigationMenu",
+    "view:",
+    "enum:interaction-type",
+    "enum:warning-levels",
+    "view:note",
+    "view:attendance",
+    "view:attendance/add-day",
+    "view:attendance/recurring-activity",
+    "view:attendance/recurring-activity/:id",
+    "view:admin",
+    "view:admin/conflicts",
+    "view:admin/config-import",
+    "view:import",
+    "view:user",
+    "view:user/:id",
+    "view:help",
+  ];
 
   enumsAvailable: Map<string, ConfigurableEnumConfig> = new Map();
   existingEnumHashmap: Map<string, string> = new Map();
@@ -34,16 +49,11 @@ export class ConfigImportParserService {
     ViewConfig<EntityListConfig> | ViewConfig<EntityDetailsConfig>
   > = new Map();
 
-  constructor(private configService: ConfigService) {}
-
   private reset() {
     this.enumsAvailable.clear();
     this.existingEnumHashmap.clear();
     this.generatedViews.clear();
 
-    const enums = this.configService.getAllConfigs(
-      CONFIGURABLE_ENUM_CONFIG_PREFIX
-    );
     // TODO: how to get the id for already existing enums in database?
   }
 
@@ -75,10 +85,7 @@ export class ConfigImportParserService {
     }
 
     if (includingDefaultConfigs) {
-      // add some default configs
-      for (const [key, config] of this.generateDefaultConfigs(entityName)) {
-        generatedConfig[key] = config;
-      }
+      this.initializeDefaultValues(generatedConfig);
     }
 
     return generatedConfig;
@@ -305,60 +312,16 @@ export class ConfigImportParserService {
     return newPanel.components[0];
   }
 
-  private generateDefaultConfigs(entityName: string) {
-    const configs = new Map<string, any>();
-
-    configs.set("enum:" + ConfigImportParserService.NOT_CONFIGURED_KEY, [
+  private initializeDefaultValues(generatedConfig: GeneratedConfig) {
+    generatedConfig["enum:" + ConfigImportParserService.NOT_CONFIGURED_KEY] = [
       {
         id: ConfigImportParserService.NOT_CONFIGURED_KEY,
         label: "NOT CONFIGURED",
       },
-    ]);
-
-    configs.set("appConfig", defaultJsonConfig.appConfig);
-    configs.set(
-      "appConfig:usage-analytics",
-      defaultJsonConfig["appConfig:usage-analytics"]
-    );
-    configs.set("navigationMenu", defaultJsonConfig.navigationMenu);
-    configs.set("view:", defaultJsonConfig["view:"]);
-    configs.set(
-      "enum:interaction-type",
-      defaultJsonConfig["enum:interaction-type"]
-    );
-    configs.set(
-      "enum:warning-levels",
-      defaultJsonConfig["enum:warning-levels"]
-    );
-    configs.set("view:note", defaultJsonConfig["view:note"]);
-    configs.set("view:attendance", defaultJsonConfig["view:attendance"]);
-    configs.set(
-      "view:attendance/add-day",
-      defaultJsonConfig["view:attendance/add-day"]
-    );
-    configs.set(
-      "view:attendance/recurring-activity",
-      defaultJsonConfig["view:attendance/recurring-activity"]
-    );
-    configs.set(
-      "view:attendance/recurring-activity/:id",
-      defaultJsonConfig["view:attendance/recurring-activity/:id"]
-    );
-    configs.set("view:admin", defaultJsonConfig["view:admin"]);
-    configs.set(
-      "view:admin/conflicts",
-      defaultJsonConfig["view:admin/conflicts"]
-    );
-    configs.set(
-      "view:admin/config-import",
-      defaultJsonConfig["view:admin/config-import"]
-    );
-    configs.set("view:import", defaultJsonConfig["view:import"]);
-    configs.set("view:user", defaultJsonConfig["view:user"]);
-    configs.set("view:user/:id", defaultJsonConfig["view:user/:id"]);
-    configs.set("view:help", defaultJsonConfig["view:help"]);
-
-    return configs;
+    ];
+    for (const key of ConfigImportParserService.DEFAULT_CONFIG_KEYS) {
+      generatedConfig[key] = defaultJsonConfig[key];
+    }
   }
 }
 
