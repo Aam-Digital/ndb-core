@@ -46,10 +46,8 @@ import { NotesDashboardComponent } from "./dashboard-widgets/notes-dashboard/not
 import { NotesOfChildComponent } from "./notes-of-child/notes-of-child.component";
 import { DashboardModule } from "../../core/dashboard/dashboard.module";
 import { ExportModule } from "../../core/export/export.module";
-import {
-  CommonComponentsModule
-} from "../../core/common-components/common-components.module";
-import { ImportantNotesComponent } from "./dashboard-widgets/important-notes/important-notes.component";
+import { CommonComponentsModule } from "../../core/common-components/common-components.module";
+import { ImportantNotesDashboardComponent } from "./dashboard-widgets/important-notes-dashboard/important-notes-dashboard.component";
 
 @NgModule({
   declarations: [
@@ -59,7 +57,7 @@ import { ImportantNotesComponent } from "./dashboard-widgets/important-notes/imp
     NoteAttendanceCountBlockComponent,
     NotesDashboardComponent,
     NotesOfChildComponent,
-    ImportantNotesComponent,
+    ImportantNotesDashboardComponent,
   ],
   imports: [
     CommonModule,
@@ -108,7 +106,7 @@ import { ImportantNotesComponent } from "./dashboard-widgets/important-notes/imp
     MatMenuModule,
     DashboardModule,
     ExportModule,
-    CommonComponentsModule
+    CommonComponentsModule,
   ],
   exports: [NoteDetailsComponent],
 })
@@ -118,6 +116,6 @@ export class NotesModule {
     NoteAttendanceCountBlockComponent,
     NotesDashboardComponent,
     NotesOfChildComponent,
-    ImportantNotesComponent,
+    ImportantNotesDashboardComponent,
   ];
 }

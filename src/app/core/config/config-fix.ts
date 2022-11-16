@@ -171,7 +171,7 @@ export const defaultJsonConfig = {
           "component": "ChildrenCountDashboard"
         },
         {
-          "component": "ImportantNotesComponent",
+          "component": "ImportantNotesDashboard",
           "config": {
             "warningLevels": ["WARNING", "URGENT"],
           }
@@ -316,6 +316,10 @@ export const defaultJsonConfig = {
   },
   "view:admin": {
     "component": "Admin",
+    "permittedUserRoles": ["admin_app"]
+  },
+  "view:admin/config-import": {
+    "component": "ConfigImport",
     "permittedUserRoles": ["admin_app"]
   },
   "view:import": {

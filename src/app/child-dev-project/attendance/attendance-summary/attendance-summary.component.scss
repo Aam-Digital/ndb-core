@@ -17,7 +17,7 @@
 }
 
 .summary-row {
-  background-color: mat.get-color-from-palette(mat.$light-theme-background-palette, background);
+  background-color: mat.get-color-from-palette(mat.$light-theme-background-palette, background, 50%);
 }
 
 .summary-cell {
