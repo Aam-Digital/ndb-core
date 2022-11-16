@@ -70,7 +70,7 @@ describe("DemoDataInitializerService", () => {
     };
     const adminUser: AuthUser = {
       name: DemoUserGeneratorService.ADMIN_USERNAME,
-      roles: ["user_app", "admin_app"],
+      roles: ["user_app", "admin_app", "account_manager"],
     };
 
     expect(mockSessionService.saveUser).toHaveBeenCalledWith(

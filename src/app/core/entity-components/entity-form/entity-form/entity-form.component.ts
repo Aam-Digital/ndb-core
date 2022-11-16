@@ -10,6 +10,7 @@ import { Entity } from "../../../entity/model/entity";
 import { FormFieldConfig } from "./FormConfig";
 import { EntityForm, EntityFormService } from "../entity-form.service";
 import { AlertService } from "../../../alerts/alert.service";
+import { InvalidFormFieldError } from "../invalid-form-field.error";
 
 /**
  * A general purpose form component for displaying and editing entities.
@@ -97,7 +98,9 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
       this.save.emit(this.entity);
       this.switchEdit();
     } catch (err) {
-      this.alertService.addWarning(err.message);
+      if (!(err instanceof InvalidFormFieldError)) {
+        this.alertService.addDanger(err.message);
+      }
     }
   }
 

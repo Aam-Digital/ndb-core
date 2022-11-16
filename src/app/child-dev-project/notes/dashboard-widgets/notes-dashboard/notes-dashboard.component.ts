@@ -82,7 +82,7 @@ export class NotesDashboardComponent
   get subtitle(): string {
     switch (this.mode) {
       case "without-recent-notes":
-        return $localize`:Subtitle|Subtitle informing the user that these are the children without recent reports:Having no recent reports`;
+        return $localize`:Subtitle|Subtitle informing the user that these are the children without recent reports:${Child.labelPlural} having no recent reports`;
       case "with-recent-notes":
         return $localize`:Subtitle|Subtitle informing the user that these are the children with recent reports:${Child.labelPlural} with recent report`;
     }

@@ -171,7 +171,7 @@ export const defaultJsonConfig = {
           "component": "ChildrenCountDashboard"
         },
         {
-          "component": "ImportantNotesComponent",
+          "component": "ImportantNotesDashboard",
           "config": {
             "warningLevels": ["WARNING", "URGENT"],
           }
