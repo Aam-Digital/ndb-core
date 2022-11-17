@@ -27,12 +27,15 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { FilterOverlayComponent } from "./filter-overlay/filter-overlay.component";
 import { MatDialogModule } from "@angular/material/dialog";
 import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
+import { DateRangeComponent } from "./date-range/date-range.component";
+import { MatCalendar, MatDatepickerModule } from "@angular/material/datepicker";
 
 @NgModule({
   declarations: [
     EntityListComponent,
     ListFilterComponent,
     FilterOverlayComponent,
+    DateRangeComponent,
   ],
   imports: [
     CommonModule,
@@ -61,6 +64,7 @@ import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
     FontAwesomeModule,
     MatDialogModule,
     TabStateModule,
+    MatDatepickerModule,
   ],
   exports: [EntityListComponent, ListFilterComponent],
 })

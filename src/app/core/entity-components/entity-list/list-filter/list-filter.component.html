@@ -1,4 +1,8 @@
-<mat-form-field appearance="fill" style="width: 100%">
+<mat-form-field
+  *ngIf="filterConfig.name != 'date'"
+  appearance="fill"
+  style="width: 100%"
+>
   <mat-label>{{ filterConfig.label || filterConfig.name }}</mat-label>
   <mat-select
     [id]="filterConfig.name"
@@ -13,6 +17,27 @@
       [style.border-color]="option.color"
     >
       {{ option.label }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field
+  *ngIf="filterConfig.name === 'date'"
+  appearance="fill"
+  style="width: 100%"
+>
+  <mat-label>{{ filterConfig.label || filterConfig.name }}</mat-label>
+  <mat-select
+    [id]="filterConfig.name"
+    [value]="selectedOption"
+    [placeholder]="filterConfig.name"
+  >
+    <mat-option
+      [value]="'date-range'"
+      (click)="openDateRangeDialog()"
+      class="border-left-highlight"
+    >
+      Select date
     </mat-option>
   </mat-select>
 </mat-form-field>

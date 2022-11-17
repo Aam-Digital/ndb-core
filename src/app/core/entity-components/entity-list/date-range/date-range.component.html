@@ -1,0 +1,17 @@
+<h1 mat-dialog-title>Select date range</h1>
+
+<mat-dialog-content #changelogContainer>
+  <mat-date-range-picker #picker></mat-date-range-picker>
+  <!-- <mat-calendar></mat-calendar> -->
+</mat-dialog-content>
+
+<mat-dialog-actions class="general-actions">
+  <button
+    mat-raised-button
+    [mat-dialog-close]="true"
+    i18n="Generic close button"
+  >
+    Cancel
+  </button>
+  <button mat-raised-button color="accent" (click)="apply()" i18n>Apply</button>
+</mat-dialog-actions>

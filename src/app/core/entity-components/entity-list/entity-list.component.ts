@@ -285,6 +285,7 @@ export class EntityListComponent<T extends Entity>
       this.entityConstructor,
       this.allEntities
     );
+    console.log("filterSelections: ", this.filterSelections);
   }
 
   private displayColumnGroupByName(columnGroupName: string) {
