@@ -88,7 +88,7 @@ describe("ChildrenService", () => {
     const c1 = allChildren[1].getId();
     // no notes
 
-    const recentNotesMap = await service.getDaysSinceLastNoteOfEachChild();
+    const recentNotesMap = await service.getDaysSinceLastNoteOfEachEntity();
 
     expect(recentNotesMap).toHaveSize(allChildren.length);
     expect(recentNotesMap.get(c0)).toBe(5);
@@ -103,9 +103,33 @@ describe("ChildrenService", () => {
       Note.create(moment().subtract(50, "days").toDate(), "n0-1", [c0])
     );
 
-    const recentNotesMap = await service.getDaysSinceLastNoteOfEachChild(49);
+    const recentNotesMap = await service.getDaysSinceLastNoteOfEachEntity(
+      Child.ENTITY_TYPE,
+      49
+    );
 
     expect(recentNotesMap.get(c0)).toBePositiveInfinity();
+  });
+
+  it("should calculate days since last note for other entity types", async () => {
+    const schools = await entityMapper.loadType(School);
+    const s1 = schools[0];
+    const s2 = schools[1];
+    const n1 = new Note();
+    n1.date = moment().subtract(10, "days").toDate();
+    n1.schools.push(s1.getId());
+    n1.schools.push(s2.getId());
+    const n2 = new Note();
+    n2.date = moment().subtract(2, "days").toDate();
+    n2.schools.push(s1.getId());
+    await entityMapper.saveAll([n1, n2]);
+
+    const recentNotesMap = await service.getDaysSinceLastNoteOfEachEntity(
+      School.ENTITY_TYPE
+    );
+
+    expect(recentNotesMap.get(s1.getId())).toBe(2);
+    expect(recentNotesMap.get(s2.getId())).toBe(10);
   });
 
   it("should load a single child and add school info", async () => {

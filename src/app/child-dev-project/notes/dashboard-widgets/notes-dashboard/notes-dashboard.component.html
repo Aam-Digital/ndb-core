@@ -18,11 +18,11 @@
           <th scope="col">Participant</th>
           <th scope="col">Days since last note</th>
         </tr>
-        <ng-container matColumnDef="child">
-          <td *matCellDef="let childNoteInfo">
+        <ng-container matColumnDef="entity">
+          <td *matCellDef="let entityNoteInfo">
             <app-display-entity
-              [entityId]="childNoteInfo.childId"
-              entityType="Child"
+              [entityId]="entityNoteInfo.entityId"
+              [entityType]="entity"
             ></app-display-entity>
           </td>
         </ng-container>
@@ -31,19 +31,19 @@
           matColumnDef="daysSinceLastNote"
           i18n="Amount of days back|Format like 'Days passed > 5 days'"
         >
-          <td *matCellDef="let childNoteInfo" class="text-align-end">
+          <td *matCellDef="let entityNoteInfo" class="text-align-end">
             <ng-container
-              *ngIf="childNoteInfo.moreThanDaysSince"
+              *ngIf="entityNoteInfo.moreThanDaysSince"
             >
               &gt;&nbsp;
             </ng-container>
-            {{ childNoteInfo.daysSinceLastNote | number: "1.0-0" }} days
+            {{ entityNoteInfo.daysSinceLastNote | number: "1.0-0" }} days
           </td>
         </ng-container>
 
         <tr
           mat-row
-          *matRowDef="let row; columns: ['child', 'daysSinceLastNote'];"
+          *matRowDef="let row; columns: ['entity', 'daysSinceLastNote'];"
         ></tr>
       </table>
     </div>

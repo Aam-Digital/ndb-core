@@ -19,9 +19,9 @@ describe("NotesDashboardComponent", () => {
 
   beforeEach(waitForAsync(() => {
     mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
-      "getDaysSinceLastNoteOfEachChild",
+      "getDaysSinceLastNoteOfEachEntity",
     ]);
-    mockChildrenService.getDaysSinceLastNoteOfEachChild.and.resolveTo(
+    mockChildrenService.getDaysSinceLastNoteOfEachEntity.and.resolveTo(
       new Map()
     );
 
@@ -44,7 +44,7 @@ describe("NotesDashboardComponent", () => {
     });
 
     it("should only count children with recent note", fakeAsync(() => {
-      mockChildrenService.getDaysSinceLastNoteOfEachChild.and.resolveTo(
+      mockChildrenService.getDaysSinceLastNoteOfEachEntity.and.resolveTo(
         new Map([
           ["1", 2],
           ["2", 29],
@@ -76,7 +76,7 @@ describe("NotesDashboardComponent", () => {
     });
 
     it("should add only children without recent note", fakeAsync(() => {
-      mockChildrenService.getDaysSinceLastNoteOfEachChild.and.resolveTo(
+      mockChildrenService.getDaysSinceLastNoteOfEachEntity.and.resolveTo(
         new Map([
           ["1", 2],
           ["2", 29],
@@ -95,7 +95,7 @@ describe("NotesDashboardComponent", () => {
       expect(component.dataSource.data).toHaveSize(3);
 
       expect(component.dataSource.data[0]).toEqual({
-        childId: "5",
+        entityId: "5",
         daysSinceLastNote: 50,
         moreThanDaysSince: false,
       });
@@ -103,7 +103,7 @@ describe("NotesDashboardComponent", () => {
 
     it("should mark children without stats on last note", fakeAsync(() => {
       const childId1 = "1";
-      mockChildrenService.getDaysSinceLastNoteOfEachChild.and.resolveTo(
+      mockChildrenService.getDaysSinceLastNoteOfEachEntity.and.resolveTo(
         new Map([[childId1, Number.POSITIVE_INFINITY]])
       );
 
@@ -112,7 +112,7 @@ describe("NotesDashboardComponent", () => {
 
       expect(component.dataSource.data).toHaveSize(1);
 
-      expect(component.dataSource.data[0].childId).toBe(childId1);
+      expect(component.dataSource.data[0].entityId).toBe(childId1);
       expect(component.dataSource.data[0].moreThanDaysSince).toBeTrue();
       expect(component.dataSource.data[0].daysSinceLastNote).toBeFinite();
     }));
