@@ -10,6 +10,7 @@ import {
 import { filter } from "rxjs/operators";
 import { mockEntityMapper } from "../entity/mock-entity-mapper-service";
 import { defaultJsonConfig } from "./config-fix";
+import { LoggingService } from "../logging/logging.service";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -27,7 +28,10 @@ export class ConfigService {
     return this._configUpdates.asObservable();
   }
 
-  constructor(private entityMapper: EntityMapperService) {
+  constructor(
+    private entityMapper: EntityMapperService,
+    private logger: LoggingService
+  ) {
     this.loadConfig();
     this.entityMapper
       .receiveUpdates(Config)
@@ -38,6 +42,7 @@ export class ConfigService {
   async loadConfig(): Promise<void> {
     this.entityMapper
       .load(Config, Config.CONFIG_KEY)
+      .then((config) => this.detectLegacyConfig(config))
       .then((config) => this.updateConfigIfChanged(config))
       .catch(() => {});
   }
@@ -84,12 +89,36 @@ export class ConfigService {
     }
     return matchingConfigs;
   }
+
+  private detectLegacyConfig(config: Config): Config {
+    // ugly but easy ... could use https://www.npmjs.com/package/jsonpath-plus in future
+    const configString = JSON.stringify(config);
+    if (
+      configString.includes("EditEntityArray") ||
+      configString.includes("EditSingleEntity")
+    ) {
+      this.logger.warn(
+        "Legacy Config: EditEntityArray/EditSingleEntity found - you should use dataType instead"
+      );
+    }
+
+    if (configString.includes("ImportantNotesComponent")) {
+      this.logger.warn(
+        "Legacy Config: ImportantNotesComponent found - you should use 'ImportantNotesDashboard' instead"
+      );
+    }
+
+    return config;
+  }
 }
 
 export function createTestingConfigService(
   configsObject: any = defaultJsonConfig
 ): ConfigService {
-  const configService = new ConfigService(mockEntityMapper());
+  const configService = new ConfigService(
+    mockEntityMapper(),
+    new LoggingService()
+  );
   configService["currentConfig"] = new Config(Config.CONFIG_KEY, configsObject);
   return configService;
 }

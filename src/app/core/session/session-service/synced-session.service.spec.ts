@@ -32,6 +32,7 @@ import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { environment } from "../../../../environments/environment";
 import { AuthService } from "../auth/auth.service";
 import { AuthUser } from "./auth-user";
+import { mockAuth } from "./remote-session.spec";
 
 describe("SyncedSessionService", () => {
   let sessionService: SyncedSessionService;
@@ -57,15 +58,7 @@ describe("SyncedSessionService", () => {
       "logout",
     ]);
     mockAuthService.autoLogin.and.rejectWith();
-    mockAuthService.authenticate.and.callFake(async (u, p) => {
-      if (u === TEST_USER && p === TEST_PASSWORD) {
-        return dbUser;
-      } else {
-        throw new HttpErrorResponse({
-          status: HttpStatusCode.Unauthorized,
-        });
-      }
-    });
+
     TestBed.configureTestingModule({
       imports: [SessionModule, NoopAnimationsModule, FontAwesomeTestingModule],
       providers: [
@@ -83,6 +76,7 @@ describe("SyncedSessionService", () => {
     // Setting up local and remote session to accept TEST_USER and TEST_PASSWORD as valid credentials
     dbUser = { name: TEST_USER, roles: ["user_app"] };
     localSession.saveUser({ name: TEST_USER, roles: [] }, TEST_PASSWORD);
+    mockAuthService.authenticate.and.callFake(mockAuth(dbUser));
 
     localLoginSpy = spyOn(localSession, "login").and.callThrough();
     remoteLoginSpy = spyOn(remoteSession, "login").and.callThrough();

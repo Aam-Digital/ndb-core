@@ -167,7 +167,8 @@ export class EntityListComponent<T extends Entity>
 
   async ngOnChanges(changes: SimpleChanges): Promise<void> {
     if (changes.hasOwnProperty("listConfig")) {
-      this.listName = this.listConfig.title;
+      this.listName =
+        this.listConfig.title || this.entityConstructor?.labelPlural;
       this.addColumnsFromColumnGroups();
       this.initColumnGroups(this.listConfig.columnGroups);
       this.filtersConfig = this.listConfig.filters || [];

@@ -33,6 +33,7 @@ import {
   ScreenSize,
 } from "../../../../utils/media/screen-size-observer.service";
 import { Subscription } from "rxjs";
+import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
 
 export interface TableRow<T extends Entity> {
   record: T;
@@ -100,6 +101,8 @@ export class EntitySubrecordComponent<T extends Entity>
    * used when the user adds a new entity to the list.
    */
   @Input() newRecordFactory: () => T;
+
+  private entityConstructor: EntityConstructor<T>;
 
   /**
    * Whether the rows of the table are inline editable and new entries can be created through the "+" button.
@@ -180,13 +183,16 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 
   getEntityConstructor(): EntityConstructor<T> {
-    if (this.entityConstructorIsAvailable()) {
-      const record =
-        this._records.length > 0 ? this._records[0] : this.newRecordFactory();
-      return record.getConstructor() as EntityConstructor<T>;
-    } else {
+    if (!this.entityConstructorIsAvailable()) {
       throw new Error("No constructor is available");
     }
+
+    if (!this.entityConstructor) {
+      const record =
+        this._records.length > 0 ? this._records[0] : this.newRecordFactory();
+      this.entityConstructor = record.getConstructor() as EntityConstructor<T>;
+    }
+    return this.entityConstructor;
   }
 
   /**
@@ -287,7 +293,9 @@ export class EntitySubrecordComponent<T extends Entity>
       );
       row.formGroup.disable();
     } catch (err) {
-      this.alertService.addDanger(err.message);
+      if (!(err instanceof InvalidFormFieldError)) {
+        this.alertService.addDanger(err.message);
+      }
     }
   }
 

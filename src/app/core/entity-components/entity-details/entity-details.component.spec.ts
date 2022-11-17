@@ -29,7 +29,6 @@ describe("EntityDetailsComponent", () => {
   let routeObserver: Subscriber<any>;
 
   const routeConfig: EntityDetailsConfig = {
-    icon: "child",
     entity: "Child",
     panels: [
       {
@@ -68,33 +67,31 @@ describe("EntityDetailsComponent", () => {
   let mockEntityRemoveService: jasmine.SpyObj<EntityRemoveService>;
   let mockAbility: jasmine.SpyObj<EntityAbility>;
 
-  beforeEach(
-    waitForAsync(() => {
-      mockChildrenService = jasmine.createSpyObj([
-        "queryRelationsOf",
-        "getAserResultsOfChild",
-      ]);
-      mockEntityRemoveService = jasmine.createSpyObj(["remove"]);
-      mockChildrenService.queryRelationsOf.and.resolveTo([]);
-      mockChildrenService.getAserResultsOfChild.and.returnValue(of([]));
-      mockAbility = jasmine.createSpyObj(["cannot", "update"]);
-      mockAbility.cannot.and.returnValue(false);
-      TestBed.configureTestingModule({
-        imports: [
-          ChildrenModule,
-          MockedTestingModule.withState(),
-          FontAwesomeTestingModule,
-          TabStateModule,
-        ],
-        providers: [
-          { provide: ActivatedRoute, useValue: mockedRoute },
-          { provide: ChildrenService, useValue: mockChildrenService },
-          { provide: EntityRemoveService, useValue: mockEntityRemoveService },
-          { provide: EntityAbility, useValue: mockAbility },
-        ],
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    mockChildrenService = jasmine.createSpyObj([
+      "queryRelationsOf",
+      "getAserResultsOfChild",
+    ]);
+    mockEntityRemoveService = jasmine.createSpyObj(["remove"]);
+    mockChildrenService.queryRelationsOf.and.resolveTo([]);
+    mockChildrenService.getAserResultsOfChild.and.returnValue(of([]));
+    mockAbility = jasmine.createSpyObj(["cannot", "update"]);
+    mockAbility.cannot.and.returnValue(false);
+    TestBed.configureTestingModule({
+      imports: [
+        ChildrenModule,
+        MockedTestingModule.withState(),
+        FontAwesomeTestingModule,
+        TabStateModule,
+      ],
+      providers: [
+        { provide: ActivatedRoute, useValue: mockedRoute },
+        { provide: ChildrenService, useValue: mockChildrenService },
+        { provide: EntityRemoveService, useValue: mockEntityRemoveService },
+        { provide: EntityAbility, useValue: mockAbility },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EntityDetailsComponent);

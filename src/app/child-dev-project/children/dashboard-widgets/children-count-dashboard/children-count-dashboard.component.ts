@@ -13,7 +13,8 @@ import { EntityMapperService } from "../../../../core/entity/entity-mapper.servi
   styleUrls: ["./children-count-dashboard.component.scss"],
 })
 export class ChildrenCountDashboardComponent
-  implements OnInitDynamicComponent, OnInit {
+  implements OnInitDynamicComponent, OnInit
+{
   /**
    * The property of the Child entities to group counts by.
    *
@@ -24,6 +25,7 @@ export class ChildrenCountDashboardComponent
   totalChildren: number;
   childrenGroupCounts: { label: string; value: number; id: string }[] = [];
   loading = true;
+  label: string = Child.labelPlural;
 
   constructor(
     private entityMapper: EntityMapperService,
