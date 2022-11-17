@@ -8,6 +8,8 @@ import { faker } from "../../../core/demo-data/faker";
 import { centersWithProbability } from "./fixtures/centers";
 import { addDefaultChildPhoto } from "../../../../../.storybook/utils/addDefaultChildPhoto";
 import { genders } from "../model/genders";
+import { calculateAge } from "../../../utils/utils";
+import { DateOfBirth } from "../model/dateOfBirth";
 
 export class DemoChildConfig {
   count: number;
@@ -35,7 +37,7 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
     child.projectNumber = id;
     child["religion"] = faker.helpers.arrayElement(religions);
     child.gender = faker.helpers.arrayElement(genders.slice(1));
-    child.dateOfBirth = faker.dateOfBirth(5, 20);
+    child.dateOfBirth = new DateOfBirth(faker.dateOfBirth(5, 20));
     child["motherTongue"] = faker.helpers.arrayElement(languages);
     child.center = faker.helpers.arrayElement(centersWithProbability);
     child.phone =
@@ -44,7 +46,7 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
       " " +
       faker.datatype.number({ min: 10000000, max: 99999999 });
 
-    child.admissionDate = faker.date.past(child.age - 4);
+    child.admissionDate = faker.date.past(calculateAge(child.dateOfBirth) - 4);
 
     if (faker.datatype.number(100) > 90) {
       DemoChildGenerator.makeChildDropout(child);

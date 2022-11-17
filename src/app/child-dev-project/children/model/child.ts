@@ -19,11 +19,11 @@ import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
-import { calculateAge } from "../../../utils/utils";
 import { Photo } from "../child-photo-service/photo";
 import { BehaviorSubject } from "rxjs";
 import { SafeUrl } from "@angular/platform-browser";
 import { ChildPhotoService } from "../child-photo-service/child-photo.service";
+import { DateOfBirth } from "./dateOfBirth";
 
 export type Center = ConfigurableEnumValue;
 
@@ -57,12 +57,12 @@ export class Child extends Entity {
   })
   projectNumber: string;
   @DatabaseField({
-    dataType: "date-only",
+    dataType: "date-of-birth",
     label: $localize`:Label for the date of birth of a child:Date of birth`,
     labelShort: $localize`:Short label for the date of birth:DoB`,
     editComponent: "EditAge",
   })
-  dateOfBirth: Date;
+  dateOfBirth: DateOfBirth;
 
   @DatabaseField({
     dataType: "configurable-enum",
@@ -120,10 +120,6 @@ export class Child extends Entity {
     label: $localize`:Label for the phone number of a child:Phone Number`,
   })
   phone: string;
-
-  get age(): number {
-    return this.dateOfBirth ? calculateAge(this.dateOfBirth) : null;
-  }
 
   get isActive(): boolean {
     return (

@@ -470,9 +470,10 @@ export const defaultJsonConfig = {
           "id": "name"
         },
         {
-          "view": "DisplayText",
+          "view": "DisplayAge",
           "label": $localize`:Column label for age of child:Age`,
-          "id": "age"
+          "id": "age",
+          "additional": "dateOfBirth"
         },
         {
           "view": "DisplayText",

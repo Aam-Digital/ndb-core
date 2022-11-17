@@ -36,8 +36,8 @@ export class EntityCountDashboardComponent
   ) {}
 
   onInitFromDynamicConfig(config: any) {
-    this.groupBy = config.groupBy ?? this.groupBy;
-    this.entity = config.entity ?? this.entity;
+    this.groupBy = config?.groupBy ?? this.groupBy;
+    this.entity = config?.entity ?? this.entity;
   }
 
   async ngOnInit() {

@@ -12,6 +12,7 @@ import { Child } from "../../model/child";
 import moment from "moment";
 import { ConfigService } from "../../../../core/config/config.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { DateOfBirth } from "../../model/dateOfBirth";
 
 describe("BirthdayDashboardComponent", () => {
   let component: BirthdayDashboardComponent;
@@ -46,13 +47,13 @@ describe("BirthdayDashboardComponent", () => {
       .add(5, "days")
       .startOf("day");
     const child1 = new Child();
-    child1.dateOfBirth = birthdaySoon.toDate();
+    child1.dateOfBirth = new DateOfBirth(birthdaySoon.toDate());
     const birthdayFarAway = moment()
       .subtract(15, "years")
       .add(5, "weeks")
       .startOf("day");
     const child2 = new Child();
-    child2.dateOfBirth = birthdayFarAway.toDate();
+    child2.dateOfBirth = new DateOfBirth(birthdayFarAway.toDate());
     mockEntityMapper.loadType.and.resolveTo([child1, child2]);
 
     component.ngOnInit();
@@ -70,13 +71,13 @@ describe("BirthdayDashboardComponent", () => {
       .add(5, "days")
       .startOf("day");
     const child1 = new Child();
-    child1.dateOfBirth = firstBirthday.toDate();
+    child1.dateOfBirth = new DateOfBirth(firstBirthday.toDate());
     const secondBirthday = moment()
       .subtract(15, "years")
       .add(2, "weeks")
       .startOf("day");
     const child2 = new Child();
-    child2.dateOfBirth = secondBirthday.toDate();
+    child2.dateOfBirth = new DateOfBirth(secondBirthday.toDate());
     mockEntityMapper.loadType.and.resolveTo([child1, child2]);
 
     component.ngOnInit();
