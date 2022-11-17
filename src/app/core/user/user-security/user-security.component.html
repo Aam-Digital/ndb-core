@@ -1,8 +1,8 @@
 <em *ngIf="!userIsPermitted" i18n="Placeholder text when permissions are missing">
   You account does not have the required permissions to see this page.
 </em>
-<div *ngIf="userIsPermitted" fxLayout="column">
-  <div *ngIf="!user" fxFlexAlign="start" class="buttons-wrapper">
+<div *ngIf="userIsPermitted" class="flex-column">
+  <div *ngIf="!user" class="buttons-wrapper align-self-start">
     <p i18n="notice about user without account" class="field-hint field-warning">
       There is no user account set up for this user yet.
       Enable this user to log into the app by filling the details below.
@@ -19,7 +19,7 @@
     </button>
   </div>
 
-  <div *ngIf="user" fxFlexAlign="end" class="padding-bottom-small flex-row gap-small align-self-end">
+  <div class="padding-bottom-small flex-row gap-small align-self-end flex-wrap">
     <button
       *ngIf="editing && user.enabled"
       mat-raised-button
