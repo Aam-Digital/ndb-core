@@ -12,7 +12,7 @@ import { Child } from "../../model/child";
 import moment from "moment";
 import { ConfigService } from "../../../../core/config/config.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { DateOfBirth } from "../../model/dateOfBirth";
+import { DateWithAge } from "../../model/dateWithAge";
 import { Entity } from "../../../../core/entity/model/entity";
 import { DatabaseField } from "../../../../core/entity/database-field.decorator";
 import {
@@ -53,13 +53,13 @@ describe("BirthdayDashboardComponent", () => {
       .add(5, "days")
       .startOf("day");
     const child1 = new Child();
-    child1.dateOfBirth = new DateOfBirth(birthdaySoon.toDate());
+    child1.dateOfBirth = new DateWithAge(birthdaySoon.toDate());
     const birthdayFarAway = moment()
       .subtract(15, "years")
       .add(5, "weeks")
       .startOf("day");
     const child2 = new Child();
-    child2.dateOfBirth = new DateOfBirth(birthdayFarAway.toDate());
+    child2.dateOfBirth = new DateWithAge(birthdayFarAway.toDate());
     entityMapper.saveAll([child1, child2]);
 
     component.ngOnInit();
@@ -77,13 +77,13 @@ describe("BirthdayDashboardComponent", () => {
       .add(5, "days")
       .startOf("day");
     const child1 = new Child();
-    child1.dateOfBirth = new DateOfBirth(firstBirthday.toDate());
+    child1.dateOfBirth = new DateWithAge(firstBirthday.toDate());
     const secondBirthday = moment()
       .subtract(15, "years")
       .add(2, "weeks")
       .startOf("day");
     const child2 = new Child();
-    child2.dateOfBirth = new DateOfBirth(secondBirthday.toDate());
+    child2.dateOfBirth = new DateWithAge(secondBirthday.toDate());
     entityMapper.saveAll([child1, child2]);
 
     component.ngOnInit();
@@ -100,19 +100,19 @@ describe("BirthdayDashboardComponent", () => {
   it("should support multiple entities types ", fakeAsync(() => {
     @DatabaseEntity("BirthdayEntity")
     class BirthdayEntity extends Entity {
-      @DatabaseField() birthday: DateOfBirth;
+      @DatabaseField() birthday: DateWithAge;
     }
 
     const e1 = new BirthdayEntity();
-    e1.birthday = new DateOfBirth(
+    e1.birthday = new DateWithAge(
       moment().subtract(1, "year").add(1, "day").toDate()
     );
     const e2 = new BirthdayEntity();
-    e2.birthday = new DateOfBirth(
+    e2.birthday = new DateWithAge(
       moment().subtract(3, "years").add(3, "days").toDate()
     );
     const e3 = new Child();
-    e3.dateOfBirth = new DateOfBirth(
+    e3.dateOfBirth = new DateWithAge(
       moment().subtract(2, "years").add(2, "days").toDate()
     );
     entityMapper.saveAll([e1, e2, e3]);

@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { ViewDirective } from "../view.directive";
 import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
-import { DateOfBirth } from "../../../../../child-dev-project/children/model/dateOfBirth";
+import { DateWithAge } from "../../../../../child-dev-project/children/model/dateWithAge";
 import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 
 /**
@@ -23,7 +23,7 @@ import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-co
   template: "{{ date?.age }}",
 })
 export class DisplayAgeComponent extends ViewDirective<any> {
-  date: DateOfBirth;
+  date: DateWithAge;
 
   onInitFromDynamicConfig(config: ViewPropertyConfig) {
     super.onInitFromDynamicConfig(config);

@@ -23,7 +23,7 @@ import { Photo } from "../child-photo-service/photo";
 import { BehaviorSubject } from "rxjs";
 import { SafeUrl } from "@angular/platform-browser";
 import { ChildPhotoService } from "../child-photo-service/child-photo.service";
-import { DateOfBirth } from "./dateOfBirth";
+import { DateWithAge } from "./dateWithAge";
 
 export type Center = ConfigurableEnumValue;
 
@@ -61,7 +61,7 @@ export class Child extends Entity {
     labelShort: $localize`:Short label for the date of birth:DoB`,
     editComponent: "EditAge",
   })
-  dateOfBirth: DateOfBirth;
+  dateOfBirth: DateWithAge;
 
   @DatabaseField({
     dataType: "configurable-enum",

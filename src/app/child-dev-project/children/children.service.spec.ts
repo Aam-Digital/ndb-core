@@ -12,7 +12,7 @@ import { DatabaseTestingModule } from "../../utils/database-testing.module";
 import { sortByAttribute } from "../../utils/utils";
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
 import { lastValueFrom } from "rxjs";
-import { DateOfBirth } from "./model/dateOfBirth";
+import { DateWithAge } from "./model/dateWithAge";
 
 describe("ChildrenService", () => {
   let service: ChildrenService;
@@ -251,7 +251,7 @@ function generateChildEntities(): Child[] {
   a1.projectNumber = "1";
   a1["religion"] = "Hindu";
   a1.gender = genders[1];
-  a1.dateOfBirth = new DateOfBirth("2000-03-13");
+  a1.dateOfBirth = new DateWithAge("2000-03-13");
   a1["motherTongue"] = "Hindi";
   a1.center = { id: "delhi", label: "Delhi" };
   data.push(a1);
@@ -261,7 +261,7 @@ function generateChildEntities(): Child[] {
   a2.projectNumber = "2";
   a2["religion"] = "Hindu";
   a2.gender = genders[2];
-  a2.dateOfBirth = new DateOfBirth("2001-01-01");
+  a2.dateOfBirth = new DateWithAge("2001-01-01");
   a2["motherTongue"] = "Bengali";
   a2.center = { id: "kolkata", label: "Kolkata" };
   data.push(a2);
@@ -271,7 +271,7 @@ function generateChildEntities(): Child[] {
   a3.projectNumber = "3";
   a3["religion"] = "Hindu";
   a3.gender = genders[1];
-  a3.dateOfBirth = new DateOfBirth("2002-07-29");
+  a3.dateOfBirth = new DateWithAge("2002-07-29");
   a3["motherTongue"] = "Hindi";
   a3.center = { id: "kolkata", label: "Kolkata" };
   data.push(a3);

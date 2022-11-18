@@ -9,7 +9,7 @@ import { centersWithProbability } from "./fixtures/centers";
 import { addDefaultChildPhoto } from "../../../../../.storybook/utils/addDefaultChildPhoto";
 import { genders } from "../model/genders";
 import { calculateAge } from "../../../utils/utils";
-import { DateOfBirth } from "../model/dateOfBirth";
+import { DateWithAge } from "../model/dateWithAge";
 
 export class DemoChildConfig {
   count: number;
@@ -37,7 +37,7 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
     child.projectNumber = id;
     child["religion"] = faker.helpers.arrayElement(religions);
     child.gender = faker.helpers.arrayElement(genders.slice(1));
-    child.dateOfBirth = new DateOfBirth(faker.dateOfBirth(5, 20));
+    child.dateOfBirth = new DateWithAge(faker.dateOfBirth(5, 20));
     child["motherTongue"] = faker.helpers.arrayElement(languages);
     child.center = faker.helpers.arrayElement(centersWithProbability);
     child.phone =

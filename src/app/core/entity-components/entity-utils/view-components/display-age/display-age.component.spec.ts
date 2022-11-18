@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { DisplayAgeComponent } from "./display-age.component";
 import { Child } from "../../../../../child-dev-project/children/model/child";
-import { DateOfBirth } from "../../../../../child-dev-project/children/model/dateOfBirth";
+import { DateWithAge } from "../../../../../child-dev-project/children/model/dateWithAge";
 import moment from "moment";
 
 describe("DisplayAgeComponent", () => {
@@ -25,7 +25,7 @@ describe("DisplayAgeComponent", () => {
 
   it("should take the date object of the parent entity", () => {
     const child = new Child();
-    child.dateOfBirth = new DateOfBirth(moment().subtract(5, "years").toDate());
+    child.dateOfBirth = new DateWithAge(moment().subtract(5, "years").toDate());
 
     component.onInitFromDynamicConfig({
       entity: child,

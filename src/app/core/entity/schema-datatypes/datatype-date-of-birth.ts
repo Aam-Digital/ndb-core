@@ -1,20 +1,20 @@
 import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
 import { dateOnlyEntitySchemaDatatype } from "./datatype-date-only";
-import { DateOfBirth } from "../../../child-dev-project/children/model/dateOfBirth";
+import { DateWithAge } from "../../../child-dev-project/children/model/dateWithAge";
 
 /**
- * Similar to the 'date-only' datatype but it uses the `DateOfBirth` class which provides the `age` function.
+ * Similar to the 'date-only' datatype but it uses the `DateWithAge` class which provides the `age` function.
  */
-export const dateOfBirthEntitySchemaDatatype: EntitySchemaDatatype<
-  DateOfBirth,
+export const dateWithAgeEntitySchemaDatatype: EntitySchemaDatatype<
+  DateWithAge,
   string
 > = {
-  name: "date-of-birth",
+  name: "date-with-age",
   editComponent: "EditAge",
   viewComponent: "DisplayDate",
 
   transformToObjectFormat: (value) =>
-    new DateOfBirth(
+    new DateWithAge(
       dateOnlyEntitySchemaDatatype.transformToObjectFormat(value)
     ),
   transformToDatabaseFormat: (value) =>
