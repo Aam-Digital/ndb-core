@@ -5,6 +5,8 @@ import { calculateAge } from "../../../utils/utils";
  * This age is calculated based on the date that this object represents.
  */
 export class DateOfBirth extends Date {
+  static DATA_TYPE = "date-of-birth";
+
   get age() {
     return calculateAge(this);
   }

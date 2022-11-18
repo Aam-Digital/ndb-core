@@ -57,7 +57,6 @@ export class Child extends Entity {
   })
   projectNumber: string;
   @DatabaseField({
-    dataType: "date-of-birth",
     label: $localize`:Label for the date of birth of a child:Date of birth`,
     labelShort: $localize`:Short label for the date of birth:DoB`,
     editComponent: "EditAge",
