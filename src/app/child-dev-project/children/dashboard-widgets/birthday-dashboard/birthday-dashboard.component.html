@@ -4,8 +4,6 @@
   [title]="dataSource.data.length"
   subtitle="Upcoming Birthdays"
   i18n-subtitle="Subtitle of the birthday widget"
-  explanation="Children whose birthday is soon"
-  i18n-explanation="Tooltip for the birthday widget"
   [loading]="isLoading"
 >
   <app-widget-content>
@@ -20,7 +18,7 @@
     <div *ngIf="dataSource.data.length > 0" class="table-wrapper">
       <table mat-table [dataSource]="dataSource">
         <tr hidden="true">
-          <th scope="col">Child Name</th>
+          <th scope="col">Name</th>
           <th scope="col">DateOfBirth</th>
           <th scope="col">AfterBirthdayAge</th>
         </tr>

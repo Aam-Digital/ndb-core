@@ -6,6 +6,7 @@ import { Child } from "../../model/child";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { Entity } from "../../../../core/entity/model/entity";
+import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
 
 @DynamicComponent("ChildrenCountDashboard")
 @DynamicComponent("EntityCountDashboard")
@@ -32,12 +33,16 @@ export class EntityCountDashboardComponent
 
   constructor(
     private entityMapper: EntityMapperService,
-    private router: Router
+    private router: Router,
+    private entities: EntityRegistry
   ) {}
 
   onInitFromDynamicConfig(config: any) {
     this.groupBy = config?.groupBy ?? this.groupBy;
-    this.entity = config?.entity ?? this.entity;
+    if (config?.entity) {
+      this.entity = config?.entity ?? this.entity;
+      this.label = this.entities.get(this.entity).labelPlural;
+    }
   }
 
   async ngOnInit() {

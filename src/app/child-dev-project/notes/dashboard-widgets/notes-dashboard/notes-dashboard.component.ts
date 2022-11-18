@@ -44,6 +44,8 @@ export class NotesDashboardComponent
    */
   dataSource = new MatTableDataSource<EntityWithRecentNoteInfo>();
 
+  subtitle: string;
+
   @ViewChild("paginator") paginator: MatPaginator;
 
   isLoading = true;
@@ -53,7 +55,7 @@ export class NotesDashboardComponent
     private entities: EntityRegistry
   ) {}
 
-  onInitFromDynamicConfig(config: any) {
+  onInitFromDynamicConfig(config: NotesDashboardConfig) {
     this.sinceDays = config.sinceDays ?? this.sinceDays;
     this.fromBeginningOfWeek =
       config.fromBeginningOfWeek ?? this.fromBeginningOfWeek;
@@ -74,21 +76,15 @@ export class NotesDashboardComponent
           (stat) => stat[1] <= dayRangeBoundary,
           dayRangeBoundary
         );
+        this.subtitle = $localize`:Subtitle|Subtitle informing the user that these are the entities with recent reports:${this.entity.labelPlural} with recent report`;
         break;
       case "without-recent-notes":
         this.loadConcernedEntities(
           (stat) => stat[1] >= dayRangeBoundary,
           dayRangeBoundary
         );
-    }
-  }
-
-  get subtitle(): string {
-    switch (this.mode) {
-      case "without-recent-notes":
-        return $localize`:Subtitle|Subtitle informing the user that these are the entities without recent reports:${this.entity.labelPlural} having no recent reports`;
-      case "with-recent-notes":
-        return $localize`:Subtitle|Subtitle informing the user that these are the entities with recent reports:${this.entity.labelPlural} with recent report`;
+        this.subtitle = $localize`:Subtitle|Subtitle informing the user that these are the entities without recent reports:${this.entity.labelPlural} having no recent reports`;
+        break;
     }
   }
 
@@ -177,4 +173,15 @@ function statsToEntityWithRecentNoteInfo(
       moreThanDaysSince: true,
     };
   }
+}
+
+/**
+ * Config for the Notes Dashboard
+ * For more information see the property comments in this class
+ */
+interface NotesDashboardConfig {
+  sinceDays?: number;
+  fromBeginningOfWeek?: boolean;
+  mode?: "with-recent-notes" | "without-recent-notes";
+  entity?: string;
 }

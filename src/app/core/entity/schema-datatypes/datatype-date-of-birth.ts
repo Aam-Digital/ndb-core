@@ -11,7 +11,7 @@ export const dateOfBirthEntitySchemaDatatype: EntitySchemaDatatype<
 > = {
   name: "date-of-birth",
   editComponent: "EditAge",
-  viewComponent: "DisplayAge",
+  viewComponent: "DisplayDate",
 
   transformToObjectFormat: (value) =>
     new DateOfBirth(

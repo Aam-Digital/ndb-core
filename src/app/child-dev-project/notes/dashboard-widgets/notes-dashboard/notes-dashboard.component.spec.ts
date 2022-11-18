@@ -10,6 +10,7 @@ import { ChildrenService } from "../../../children/children.service";
 import { NotesDashboardComponent } from "./notes-dashboard.component";
 import { ChildrenModule } from "../../../children/children.module";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
+import { RecurringActivity } from "../../../attendance/model/recurring-activity";
 
 describe("NotesDashboardComponent", () => {
   let component: NotesDashboardComponent;
@@ -116,5 +117,19 @@ describe("NotesDashboardComponent", () => {
       expect(component.dataSource.data[0].moreThanDaysSince).toBeTrue();
       expect(component.dataSource.data[0].daysSinceLastNote).toBeFinite();
     }));
+
+    it("should load notes related to the configured entity", () => {
+      mockChildrenService.getDaysSinceLastNoteOfEachEntity.and.resolveTo(
+        new Map()
+      );
+      const entity = RecurringActivity.ENTITY_TYPE;
+
+      component.onInitFromDynamicConfig({ entity, mode: "with-recent-notes" });
+      component.ngOnInit();
+
+      expect(
+        mockChildrenService.getDaysSinceLastNoteOfEachEntity
+      ).toHaveBeenCalledWith(entity, jasmine.anything());
+    });
   });
 });

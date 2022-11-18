@@ -140,5 +140,6 @@ describe("EntityCountDashboardComponent", () => {
       { label: type1.label, id: type1.id, value: 2 },
       { label: type2.label, id: type2.id, value: 1 },
     ]);
+    expect(component.label).toBe(RecurringActivity.labelPlural);
   }));
 });
