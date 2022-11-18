@@ -13,19 +13,25 @@ import moment from "moment";
 import { ConfigService } from "../../../../core/config/config.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { DateOfBirth } from "../../model/dateOfBirth";
+import { Entity } from "../../../../core/entity/model/entity";
+import { DatabaseField } from "../../../../core/entity/database-field.decorator";
+import {
+  mockEntityMapper,
+  MockEntityMapperService,
+} from "../../../../core/entity/mock-entity-mapper-service";
+import { DatabaseEntity } from "../../../../core/entity/database-entity.decorator";
 
 describe("BirthdayDashboardComponent", () => {
   let component: BirthdayDashboardComponent;
   let fixture: ComponentFixture<BirthdayDashboardComponent>;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let entityMapper: MockEntityMapperService;
 
   beforeEach(async () => {
-    mockEntityMapper = jasmine.createSpyObj(["loadType", "load"]);
-    mockEntityMapper.loadType.and.resolveTo([]);
+    entityMapper = mockEntityMapper();
     await TestBed.configureTestingModule({
       imports: [ChildrenModule, FontAwesomeTestingModule],
       providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapper },
+        { provide: EntityMapperService, useValue: entityMapper },
         { provide: ConfigService, useValue: {} },
       ],
     }).compileComponents();
@@ -54,14 +60,14 @@ describe("BirthdayDashboardComponent", () => {
       .startOf("day");
     const child2 = new Child();
     child2.dateOfBirth = new DateOfBirth(birthdayFarAway.toDate());
-    mockEntityMapper.loadType.and.resolveTo([child1, child2]);
+    entityMapper.saveAll([child1, child2]);
 
     component.ngOnInit();
     tick();
 
     const expectedNextBirthday = birthdaySoon.add(10, "years");
-    expect(component.childrenDataSource.data).toEqual([
-      { child: child1, birthday: expectedNextBirthday.toDate() },
+    expect(component.dataSource.data).toEqual([
+      { entity: child1, birthday: expectedNextBirthday.toDate(), age: 10 },
     ]);
   }));
 
@@ -78,16 +84,64 @@ describe("BirthdayDashboardComponent", () => {
       .startOf("day");
     const child2 = new Child();
     child2.dateOfBirth = new DateOfBirth(secondBirthday.toDate());
-    mockEntityMapper.loadType.and.resolveTo([child1, child2]);
+    entityMapper.saveAll([child1, child2]);
 
     component.ngOnInit();
     tick();
 
     const expectedFirstBirthday = firstBirthday.add(12, "years");
     const expectedSecondBirthday = secondBirthday.add(15, "years");
-    expect(component.childrenDataSource.data).toEqual([
-      { child: child1, birthday: expectedFirstBirthday.toDate() },
-      { child: child2, birthday: expectedSecondBirthday.toDate() },
+    expect(component.dataSource.data).toEqual([
+      { entity: child1, birthday: expectedFirstBirthday.toDate(), age: 12 },
+      { entity: child2, birthday: expectedSecondBirthday.toDate(), age: 15 },
+    ]);
+  }));
+
+  it("should support multiple entities types ", fakeAsync(() => {
+    @DatabaseEntity("BirthdayEntity")
+    class BirthdayEntity extends Entity {
+      @DatabaseField({ dataType: "date-of-birth" }) birthday: DateOfBirth;
+    }
+
+    const e1 = new BirthdayEntity();
+    e1.birthday = new DateOfBirth(
+      moment().subtract(1, "year").add(1, "day").toDate()
+    );
+    const e2 = new BirthdayEntity();
+    e2.birthday = new DateOfBirth(
+      moment().subtract(3, "years").add(3, "days").toDate()
+    );
+    const e3 = new Child();
+    e3.dateOfBirth = new DateOfBirth(
+      moment().subtract(2, "years").add(2, "days").toDate()
+    );
+    entityMapper.saveAll([e1, e2, e3]);
+
+    component.onInitFromDynamicConfig({
+      entities: {
+        BirthdayEntity: "birthday",
+        Child: "dateOfBirth",
+      },
+    });
+    component.ngOnInit();
+    tick();
+
+    expect(component.dataSource.data).toEqual([
+      {
+        entity: e1,
+        birthday: moment().add(1, "day").startOf("day").toDate(),
+        age: 1,
+      },
+      {
+        entity: e3,
+        birthday: moment().add(2, "day").startOf("day").toDate(),
+        age: 2,
+      },
+      {
+        entity: e2,
+        birthday: moment().add(3, "day").startOf("day").toDate(),
+        age: 3,
+      },
     ]);
   }));
 });
