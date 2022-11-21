@@ -43,7 +43,7 @@ export class BirthdayDashboardComponent
           .map((entity) => ({
             entity: entity,
             birthday: this.getNextBirthday(entity[property]),
-            age: entity[property]?.age + 1,
+            newAge: entity[property]?.age + 1,
           }))
           .filter((a) => this.daysUntil(a.birthday) < this.birthdayThreshold)
       );
@@ -100,5 +100,5 @@ interface BirthdayDashboardConfig {
 interface EntityWithBirthday {
   entity: Entity;
   birthday: Date;
-  age: number;
+  newAge: number;
 }

@@ -67,7 +67,7 @@ describe("BirthdayDashboardComponent", () => {
 
     const expectedNextBirthday = birthdaySoon.add(10, "years");
     expect(component.dataSource.data).toEqual([
-      { entity: child1, birthday: expectedNextBirthday.toDate(), age: 10 },
+      { entity: child1, birthday: expectedNextBirthday.toDate(), newAge: 10 },
     ]);
   }));
 
@@ -92,8 +92,8 @@ describe("BirthdayDashboardComponent", () => {
     const expectedFirstBirthday = firstBirthday.add(12, "years");
     const expectedSecondBirthday = secondBirthday.add(15, "years");
     expect(component.dataSource.data).toEqual([
-      { entity: child1, birthday: expectedFirstBirthday.toDate(), age: 12 },
-      { entity: child2, birthday: expectedSecondBirthday.toDate(), age: 15 },
+      { entity: child1, birthday: expectedFirstBirthday.toDate(), newAge: 12 },
+      { entity: child2, birthday: expectedSecondBirthday.toDate(), newAge: 15 },
     ]);
   }));
 
@@ -130,17 +130,17 @@ describe("BirthdayDashboardComponent", () => {
       {
         entity: e1,
         birthday: moment().add(1, "day").startOf("day").toDate(),
-        age: 1,
+        newAge: 1,
       },
       {
         entity: e3,
         birthday: moment().add(2, "day").startOf("day").toDate(),
-        age: 2,
+        newAge: 2,
       },
       {
         entity: e2,
         birthday: moment().add(3, "day").startOf("day").toDate(),
-        age: 3,
+        newAge: 3,
       },
     ]);
   }));
