@@ -18,7 +18,7 @@ export class BirthdayDashboardComponent
 {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   private readonly today: Date;
-  private entities = { [Child.ENTITY_TYPE]: "dateOfBirth" };
+  private entities: EntityPropertyMap = { [Child.ENTITY_TYPE]: "dateOfBirth" };
   birthdayThreshold = 32;
   dataSource = new MatTableDataSource<EntityWithBirthday>();
   isLoading = true;
@@ -89,12 +89,16 @@ interface BirthdayDashboardConfig {
    * "entities": { "Child": "dateOfBirth" }
    * ```
    */
-  entities?: any;
+  entities?: EntityPropertyMap;
   /**
    * Birthdays that are less than "threshold" days away are shown.
    * Default 32
    */
   threshold?: number;
+}
+
+interface EntityPropertyMap {
+  [key: string]: string;
 }
 
 interface EntityWithBirthday {
