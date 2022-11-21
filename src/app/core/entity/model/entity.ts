@@ -74,9 +74,11 @@ export class Entity {
   static get label(): string {
     return this._label ?? this.ENTITY_TYPE;
   }
+
   static set label(value: string) {
     this._label = value;
   }
+
   private static _label: string;
 
   /**
@@ -85,9 +87,11 @@ export class Entity {
   static get labelPlural(): string {
     return this._labelPlural ?? this.label;
   }
+
   static set labelPlural(value: string) {
     this._labelPlural = value;
   }
+
   private static _labelPlural: string;
 
   /**
@@ -191,8 +195,8 @@ export class Entity {
   /**
    * Get the class (Entity or the actual subclass of the instance) to call static methods on the correct class considering inheritance
    */
-  getConstructor(): EntityConstructor {
-    return <typeof Entity>this.constructor;
+  getConstructor<T extends Entity>(this: T): EntityConstructor<T> {
+    return this.constructor as EntityConstructor<T>;
   }
 
   /**
