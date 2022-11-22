@@ -3,23 +3,35 @@ import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { ConfigService } from "../config/config.service";
 import { DataFilter } from "../entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { Entity } from "../entity/model/entity";
-import { guard } from "@ucast/mongo2js";
+import {
+  createFactory,
+  allParsingInstructions,
+  allInterpreters,
+  Filter,
+  compare,
+} from "@ucast/mongo2js";
+import moment from "moment";
 
 @Injectable({
   providedIn: "root",
 })
 export class FilterService {
+  private filterFactory = createFactory(
+    allParsingInstructions,
+    allInterpreters,
+    { compare: this.extendedCompare }
+  ) as Filter;
+
   constructor(private configService: ConfigService) {}
 
   getFilterPredicate<T extends Entity>(filter: DataFilter<T>) {
-    return guard<T>(filter);
+    return this.filterFactory<T>(filter);
   }
 
   alignEntityWithFilter<T extends Entity>(newNote: T, filter: DataFilter<T>) {
     const schema = newNote.getSchema();
     Object.entries(filter ?? {}).forEach(([key, value]) => {
       // TODO support arrays through recursion
-      // TODO support dates through custom object matching {@link https://github.com/stalniy/ucast/tree/master/packages/js#custom-object-matching)
       if (typeof value !== "object") {
         this.assignValueToEntity(key, value, schema, newNote);
       }
@@ -53,5 +65,20 @@ export class FilterService {
       property.innerDataType
     );
     return enumValues.find(({ id }) => id === value["id"]);
+  }
+
+  private extendedCompare<T>(a: T, b: T): 1 | -1 | 0 {
+    if (a instanceof Date && typeof b === "string") {
+      const diff = moment(a).diff(new Date(b), "days");
+      if (diff < 0) {
+        return -1;
+      } else if (diff > 0) {
+        return 1;
+      } else {
+        return 0;
+      }
+    } else {
+      return compare(a, b);
+    }
   }
 }

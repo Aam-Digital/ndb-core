@@ -51,4 +51,24 @@ describe("FilterService", () => {
     expect(note.subject).toBe("Test");
     expect(note.category).toEqual(guardianTalk);
   });
+
+  it("should support filtering dates with day granularity", () => {
+    const n1 = Note.create(new Date("2022-01-01"));
+    const n2 = Note.create(new Date("2022-01-02"));
+    const n3 = Note.create(new Date("2022-01-03"));
+    const n4 = Note.create(new Date("2022-01-04"));
+    const n5 = Note.create(new Date("2022-01-05"));
+    const notes = [n1, n2, n3, n4, n5];
+
+    let predicate = service.getFilterPredicate({
+      date: "2022-01-02",
+    } as DataFilter<Note>);
+    expect(notes.filter(predicate)).toEqual([n2]);
+
+    predicate = service.getFilterPredicate({
+      date: { $gte: "2022-01-02", $lt: "2022-01-04" },
+    } as DataFilter<Note>);
+    const res = notes.filter(predicate);
+    expect(res).toEqual([n2, n3]);
+  });
 });
