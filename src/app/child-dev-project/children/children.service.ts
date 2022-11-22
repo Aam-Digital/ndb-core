@@ -132,7 +132,7 @@ export class ChildrenService {
    *
    * Warning: Children without any notes will be missing from this map.
    *
-   * @param entityType (Optional) entity for which days sine last note are calculated. Default "Child".
+   * @param entityType (Optional) entity for which days since last note are calculated. Default "Child".
    * @param forLastNDays (Optional) cut-off boundary how many days into the past the analysis will be done.
    * @return A map of childIds as key and days since last note as value;
    *         For performance reasons the days since last note are set to infinity when larger then the forLastNDays parameter

@@ -51,15 +51,16 @@ export class Child extends Entity {
     },
   })
   name: string;
+
   @DatabaseField({
     label: $localize`:Label for the project number of a child:Project Number`,
     labelShort: $localize`:Short label for the project number:PN`,
   })
   projectNumber: string;
+
   @DatabaseField({
     label: $localize`:Label for the date of birth of a child:Date of birth`,
     labelShort: $localize`:Short label for the date of birth:DoB`,
-    editComponent: "EditAge",
   })
   dateOfBirth: DateWithAge;
 
@@ -76,10 +77,12 @@ export class Child extends Entity {
     label: $localize`:Label for the center of a child:Center`,
   })
   center: Center;
+
   @DatabaseField({
     label: $localize`:Label for the admission date of a child:Admission`,
   })
   admissionDate: Date;
+
   @DatabaseField({
     label: $localize`:Label for the status of a child:Status`,
   })
@@ -89,10 +92,12 @@ export class Child extends Entity {
     label: $localize`:Label for the dropout date of a child:Dropout Date`,
   })
   dropoutDate: Date;
+
   @DatabaseField({
     label: $localize`:Label for the type of dropout of a child:Dropout Type`,
   })
   dropoutType: string;
+
   @DatabaseField({
     label: $localize`:Label for the remarks about a dropout of a child:Dropout remarks`,
   })
