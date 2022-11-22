@@ -34,7 +34,7 @@ import {
 } from "../../../../utils/media/screen-size-observer.service";
 import { Subscription } from "rxjs";
 import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
-import { ColumnConfig } from "./entity-subrecord-config";
+import { ColumnConfig, DataFilter } from "./entity-subrecord-config";
 import { guard } from "@ucast/mongo2js";
 
 export interface TableRow<T extends Entity> {
@@ -85,11 +85,7 @@ export class EntitySubrecordComponent<T extends Entity>
   @Input()
   set records(value: T[]) {
     this._records = value;
-    this.recordsDataSource.data = this._records.map((rec) => {
-      return {
-        record: rec,
-      };
-    });
+    this.initDataSource();
     if (!this.newRecordFactory && this._records.length > 0) {
       this.newRecordFactory = () =>
         new (this._records[0].getConstructor() as EntityConstructor<T>)();
@@ -140,11 +136,19 @@ export class EntitySubrecordComponent<T extends Entity>
    */
   @Input() showEntity?: (entity: T) => void = this.showRowDetails;
 
-  @Input() set filter(filter: any) {
-    this.predicate = guard<T>(filter);
+  /**
+   * Adds a filter for the displayed data.
+   * Only data, that passes the filter will be shown in the table.
+   * @param filter a valid MongoDB Query
+   */
+  @Input() set filter(filter: DataFilter<T>) {
+    if (filter) {
+      this.predicate = guard(filter);
+      this.initDataSource();
+    }
   }
 
-  predicate: (entity: T) => boolean;
+  private predicate: (entity: T) => boolean = () => true;
 
   constructor(
     private alertService: AlertService,
@@ -167,6 +171,12 @@ export class EntitySubrecordComponent<T extends Entity>
 
   /** function returns the background color for each row*/
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
+
+  private initDataSource() {
+    this.recordsDataSource.data = this._records
+      .filter(this.predicate)
+      .map((record) => ({ record }));
+  }
 
   ngOnInit() {
     if (this.entityConstructorIsAvailable()) {
