@@ -1,8 +1,8 @@
-import { dateWithAgeEntitySchemaDatatype } from "./datatype-date-of-birth";
+import { dateWithAgeEntitySchemaDatatype } from "./datatype-date-with-age";
 import { DateWithAge } from "../../../child-dev-project/children/model/dateWithAge";
 import moment from "moment";
 
-describe("Schema data type:DateOfBirth", () => {
+describe("Schema data type:date-with-age", () => {
   it("should save Date as date-only", () => {
     const date = new DateWithAge("2022-02-01");
     const dateString =

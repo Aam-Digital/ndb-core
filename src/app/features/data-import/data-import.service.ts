@@ -11,7 +11,7 @@ import { dateOnlyEntitySchemaDatatype } from "../../core/entity/schema-datatypes
 import { monthEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-month";
 import moment from "moment";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
-import { dateWithAgeEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-date-of-birth";
+import { dateWithAgeEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-date-with-age";
 
 /**
  * This service handels the parsing of CSV files and importing of data
