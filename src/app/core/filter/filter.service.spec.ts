@@ -68,7 +68,6 @@ describe("FilterService", () => {
     predicate = service.getFilterPredicate({
       date: { $gte: "2022-01-02", $lt: "2022-01-04" },
     } as DataFilter<Note>);
-    const res = notes.filter(predicate);
-    expect(res).toEqual([n2, n3]);
+    expect(notes.filter(predicate)).toEqual([n2, n3]);
   });
 });
