@@ -38,6 +38,7 @@ export class NotesOfChildComponent
     { id: "authors", visibleFrom: "md" },
     { id: "warningLevel", visibleFrom: "md" },
   ];
+  filter;
 
   /**
    * returns the color for a note; passed to the entity subrecord component
@@ -58,9 +59,12 @@ export class NotesOfChildComponent
     }
   }
 
-  onInitFromDynamicConfig(config: PanelConfig<EntitySubrecordConfig>) {
+  onInitFromDynamicConfig(config: PanelConfig<EntitySubrecordConfig<Note>>) {
     if (config?.config?.columns) {
       this.columns = config.config.columns;
+    }
+    if (config?.config?.filter) {
+      this.filter = config.config.filter;
     }
 
     this.entity = config.entity;
