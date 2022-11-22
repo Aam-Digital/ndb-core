@@ -76,13 +76,13 @@ export class FilterService {
   }
 
   private compareDates(a: Date, b: string) {
-    const diff = moment(a).diff(new Date(b), "days");
-    if (diff < 0) {
-      return -1;
-    } else if (diff > 0) {
-      return 1;
-    } else {
+    const [momentA, momentB] = [moment(a), moment(b)];
+    if (momentA.isSame(momentB, "days")) {
       return 0;
+    } else if (momentA.isBefore(momentB, "days")) {
+      return -1;
+    } else {
+      return 1;
     }
   }
 }
