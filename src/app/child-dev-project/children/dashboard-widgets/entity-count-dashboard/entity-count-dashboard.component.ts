@@ -7,6 +7,7 @@ import { DynamicComponent } from "../../../../core/view/dynamic-components/dynam
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { Entity } from "../../../../core/entity/model/entity";
 import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
+import { IconName } from "@fortawesome/fontawesome-svg-core";
 
 @DynamicComponent("ChildrenCountDashboard")
 @DynamicComponent("EntityCountDashboard")
@@ -30,6 +31,7 @@ export class EntityCountDashboardComponent
   entityGroupCounts: { label: string; value: number; id: string }[] = [];
   loading = true;
   label = Child.labelPlural;
+  entityIcon: IconName = Child.icon;
 
   constructor(
     private entityMapper: EntityMapperService,
@@ -42,6 +44,7 @@ export class EntityCountDashboardComponent
     if (config?.entity) {
       this.entity = config?.entity ?? this.entity;
       this.label = this.entities.get(this.entity).labelPlural;
+      this.entityIcon = this.entities.get(this.entity).icon;
     }
   }
 

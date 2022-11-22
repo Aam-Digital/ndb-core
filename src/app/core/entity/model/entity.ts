@@ -19,6 +19,7 @@ import { v4 as uuid } from "uuid";
 import { EntitySchema } from "../schema/entity-schema";
 import { DatabaseField } from "../database-field.decorator";
 import { getWarningLevelColor, WarningLevel } from "./warning-level";
+import { IconName } from "@fortawesome/fontawesome-svg-core";
 
 /**
  * This represents a static class of type <T>.
@@ -97,7 +98,7 @@ export class Entity {
   /**
    * icon id used for this entity
    */
-  static icon: string;
+  static icon: IconName;
 
   /**
    * Extract the ENTITY_TYPE from an id.

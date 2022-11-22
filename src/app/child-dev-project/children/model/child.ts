@@ -24,13 +24,14 @@ import { BehaviorSubject } from "rxjs";
 import { SafeUrl } from "@angular/platform-browser";
 import { ChildPhotoService } from "../child-photo-service/child-photo.service";
 import { DateWithAge } from "./dateWithAge";
+import { IconName } from "@fortawesome/fontawesome-svg-core";
 
 export type Center = ConfigurableEnumValue;
 
 @DatabaseEntity("Child")
 export class Child extends Entity {
   static toStringAttributes = ["name"];
-  static icon = "child";
+  static icon: IconName = "child";
   static label = $localize`:label for entity:Participant`;
   static labelPlural = $localize`:label (plural) for entity:Participants`;
 
