@@ -13,8 +13,7 @@ import {
   ColumnConfig,
   EntitySubrecordConfig,
 } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { ConfigService } from "../../../core/config/config.service";
-import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
+import { FilterService } from "../../../core/filter/filter.service";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain child
@@ -53,7 +52,7 @@ export class NotesOfChildComponent
     private childrenService: ChildrenService,
     private sessionService: SessionService,
     private formDialog: FormDialogService,
-    private configService: ConfigService
+    private filterService: FilterService
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -121,50 +120,10 @@ export class NotesOfChildComponent
       if (!newNote.authors.includes(user)) {
         newNote.authors.push(user);
       }
-      this.applyValuesFromFilter(newNote);
+      this.filterService.alignEntityWithFilter(newNote, this.filter ?? {});
 
       return newNote;
     };
-  }
-
-  private applyValuesFromFilter(newNote: Note) {
-    const schema = newNote.getSchema();
-    Object.entries(this.filter ?? {}).forEach(([key, value]) => {
-      // TODO support arrays through recursion
-      // TODO support dates through custom object matching {@link https://github.com/stalniy/ucast/tree/master/packages/js#custom-object-matching)
-      if (typeof value !== "object") {
-        this.assignValueToEntity(key, value, schema, newNote);
-      }
-    });
-  }
-
-  private assignValueToEntity(
-    key: string,
-    value,
-    schema: Map<string, EntitySchemaField>,
-    newNote: Note
-  ) {
-    if (key.includes(".")) {
-      // TODO only one level deep nesting is supported (also by ucast https://github.com/stalniy/ucast/issues/32)
-      [key, value] = this.transformNestedKey(key, value);
-    }
-    const property = schema.get(key);
-    if (property.dataType === "configurable-enum") {
-      value = this.parseConfigurableEnumValue(property, value);
-    }
-    newNote[key] = value;
-  }
-
-  private transformNestedKey(key: string, value): any[] {
-    const [first, second] = key.split(".");
-    return [first, { [second]: value }];
-  }
-
-  private parseConfigurableEnumValue(property: EntitySchemaField, value) {
-    const enumValues = this.configService.getConfigurableEnumValues(
-      property.innerDataType
-    );
-    return enumValues.find(({ id }) => id === value["id"]);
   }
 
   showNoteDetails(note: Note) {

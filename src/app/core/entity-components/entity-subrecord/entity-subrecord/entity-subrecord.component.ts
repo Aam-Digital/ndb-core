@@ -35,7 +35,7 @@ import {
 import { Subscription } from "rxjs";
 import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
 import { ColumnConfig, DataFilter } from "./entity-subrecord-config";
-import { guard } from "@ucast/mongo2js";
+import { FilterService } from "../../../filter/filter.service";
 
 export interface TableRow<T extends Entity> {
   record: T;
@@ -143,7 +143,7 @@ export class EntitySubrecordComponent<T extends Entity>
    */
   @Input() set filter(filter: DataFilter<T>) {
     if (filter) {
-      this.predicate = guard(filter);
+      this.predicate = this.filterService.getFilterPredicate(filter);
       this.initDataSource();
     }
   }
@@ -158,7 +158,8 @@ export class EntitySubrecordComponent<T extends Entity>
     private analyticsService: AnalyticsService,
     private loggingService: LoggingService,
     private entityRemoveService: EntityRemoveService,
-    private entityMapper: EntityMapperService
+    private entityMapper: EntityMapperService,
+    private filterService: FilterService
   ) {
     this.mediaSubscription = this.screenWidthObserver
       .shared()
