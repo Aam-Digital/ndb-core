@@ -19,7 +19,7 @@ export class FilterService {
   private filterFactory = createFactory(
     allParsingInstructions,
     allInterpreters,
-    { compare: this.extendedCompare }
+    { compare: this.extendedCompare.bind(this) }
   ) as Filter;
 
   constructor(private configService: ConfigService) {}
