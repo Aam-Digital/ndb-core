@@ -35,6 +35,7 @@ import {
 import { Subscription } from "rxjs";
 import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
 import { ColumnConfig } from "./entity-subrecord-config";
+import { guard } from "@ucast/mongo2js";
 
 export interface TableRow<T extends Entity> {
   record: T;
@@ -138,6 +139,12 @@ export class EntitySubrecordComponent<T extends Entity>
    * @param entity The newly created or clicked entity.
    */
   @Input() showEntity?: (entity: T) => void = this.showRowDetails;
+
+  @Input() set filter(filter: any) {
+    this.predicate = guard<T>(filter);
+  }
+
+  predicate: (entity: T) => boolean;
 
   constructor(
     private alertService: AlertService,
