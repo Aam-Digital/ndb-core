@@ -104,7 +104,7 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
       this.form.pristine ||
       (await this.confirmationDialog.getConfirmation(
         $localize`Load changes?`,
-        $localize`Local changes are in conflict with updated values. Do you want the local changes to be overwritten with the latest values?`
+        $localize`Local changes are in conflict with updated values synced from the server. Do you want the local changes to be overwritten with the latest values?`
       ))
     ) {
       this.buildFormConfig(entity);
