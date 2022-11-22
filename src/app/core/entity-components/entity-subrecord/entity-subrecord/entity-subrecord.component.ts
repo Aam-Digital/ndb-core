@@ -34,6 +34,7 @@ import {
 } from "../../../../utils/media/screen-size-observer.service";
 import { Subscription } from "rxjs";
 import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
+import { ColumnConfig } from "./entity-subrecord-config";
 
 export interface TableRow<T extends Entity> {
   record: T;
@@ -65,7 +66,7 @@ export class EntitySubrecordComponent<T extends Entity>
   @Input() isLoading: boolean;
 
   /** configuration what kind of columns to be generated for the table */
-  @Input() set columns(columns: (FormFieldConfig | string)[]) {
+  @Input() set columns(columns: ColumnConfig[]) {
     this._columns = columns.map((col) => {
       if (typeof col === "string") {
         return { id: col };
@@ -75,6 +76,7 @@ export class EntitySubrecordComponent<T extends Entity>
     });
     this.filteredColumns = this._columns.filter((col) => !col.hideFromTable);
   }
+
   _columns: FormFieldConfig[] = [];
   filteredColumns: FormFieldConfig[] = [];
 
@@ -92,6 +94,7 @@ export class EntitySubrecordComponent<T extends Entity>
         new (this._records[0].getConstructor() as EntityConstructor<T>)();
     }
   }
+
   private _records: T[] = [];
 
   @Output() recordsChange = new EventEmitter<T[]>();

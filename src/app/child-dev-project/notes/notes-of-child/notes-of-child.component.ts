@@ -6,10 +6,13 @@ import moment from "moment";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
-import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { Entity } from "../../../core/entity/model/entity";
+import {
+  ColumnConfig,
+  EntitySubrecordConfig,
+} from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain child
@@ -28,7 +31,7 @@ export class NotesOfChildComponent
   private noteProperty = "children";
   records: Array<Note> = [];
 
-  columns: FormFieldConfig[] = [
+  columns: ColumnConfig[] = [
     { id: "date", visibleFrom: "xs" },
     { id: "subject", visibleFrom: "xs" },
     { id: "text", visibleFrom: "md" },
@@ -55,7 +58,7 @@ export class NotesOfChildComponent
     }
   }
 
-  onInitFromDynamicConfig(config: PanelConfig) {
+  onInitFromDynamicConfig(config: PanelConfig<EntitySubrecordConfig>) {
     if (config?.config?.columns) {
       this.columns = config.config.columns;
     }
