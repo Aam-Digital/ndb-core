@@ -318,6 +318,10 @@ export const defaultJsonConfig = {
     "component": "Admin",
     "permittedUserRoles": ["admin_app"]
   },
+  "view:admin/config-import": {
+    "component": "ConfigImport",
+    "permittedUserRoles": ["admin_app"]
+  },
   "view:import": {
     "component": "Import",
     "permittedUserRoles": ["admin_app"]
