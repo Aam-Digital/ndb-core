@@ -75,6 +75,7 @@ export class EntitySubrecordComponent<T extends Entity>
     });
     this.filteredColumns = this._columns.filter((col) => !col.hideFromTable);
   }
+
   _columns: FormFieldConfig[] = [];
   filteredColumns: FormFieldConfig[] = [];
 
@@ -88,10 +89,10 @@ export class EntitySubrecordComponent<T extends Entity>
       };
     });
     if (!this.newRecordFactory && this._records.length > 0) {
-      this.newRecordFactory = () =>
-        new (this._records[0].getConstructor() as EntityConstructor<T>)();
+      this.newRecordFactory = () => new (this._records[0].getConstructor())();
     }
   }
+
   private _records: T[] = [];
 
   @Output() recordsChange = new EventEmitter<T[]>();
@@ -190,7 +191,7 @@ export class EntitySubrecordComponent<T extends Entity>
     if (!this.entityConstructor) {
       const record =
         this._records.length > 0 ? this._records[0] : this.newRecordFactory();
-      this.entityConstructor = record.getConstructor() as EntityConstructor<T>;
+      this.entityConstructor = record.getConstructor();
     }
     return this.entityConstructor;
   }
