@@ -121,5 +121,5 @@ export interface FilterSelectionOption<T> {
    * function that filters a dataset.
    * This filter logic will be applied to data when this option is selected.
    */
-  filterFun: (c: T) => boolean;
+  filterFun: (c: T) => any;
 }

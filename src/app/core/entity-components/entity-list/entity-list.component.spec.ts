@@ -168,8 +168,10 @@ describe("EntityListComponent", () => {
     component.filterOptionSelected(activeFs, clickedOption);
     expect(component.filterSelections[0].selectedOption).toEqual(clickedOption);
     expect(component.allEntities).toHaveSize(2);
-    expect(component.filteredEntities).toHaveSize(1);
-    expect(component.filteredEntities[0]).toEqual(child1);
+    expect(component.entityTable.recordsDataSource.data).toHaveSize(1);
+    expect(component.entityTable.recordsDataSource.data[0].record).toEqual(
+      child1
+    );
     flush();
     discardPeriodicTasks();
   }));
@@ -177,9 +179,11 @@ describe("EntityListComponent", () => {
   it("should add and initialize columns which are only mentioned in the columnGroups", () => {
     createComponent();
     initComponentInputs();
+
     class Test extends Entity {
       @DatabaseField({ label: "Test Property" }) testProperty: string;
     }
+
     component.entityConstructor = Test;
     mockEntitySchemaService.getComponent.and.returnValue("DisplayText");
     component.listConfig = {

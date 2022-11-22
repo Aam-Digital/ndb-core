@@ -79,6 +79,7 @@ export class FilterGeneratorService {
     }
     return filterSettings;
   }
+
   private async getFilterOptions<T extends Entity>(
     config: FilterConfig,
     schema: EntitySchemaField,
@@ -111,16 +112,16 @@ export class FilterGeneratorService {
     filter: BooleanFilterConfig
   ): FilterSelectionOption<T>[] {
     return [
-      { key: "all", label: filter.all, filterFun: () => true },
+      { key: "all", label: filter.all, filterFun: () => ({}) },
       {
         key: "true",
         label: filter.true,
-        filterFun: (c: Entity) => c[filter.id],
+        filterFun: () => ({ [filter.id]: true }),
       },
       {
         key: "false",
         label: filter.false,
-        filterFun: (c: Entity) => !c[filter.id],
+        filterFun: () => ({ [filter.id]: false }),
       },
     ];
   }
@@ -133,18 +134,19 @@ export class FilterGeneratorService {
       {
         key: "all",
         label: $localize`:Filter label:All`,
-        filterFun: (e: T) => true,
+        filterFun: () => {},
       },
     ];
 
     const enumValues = this.configService.getConfigurableEnumValues(enumId);
+    const key = property + ".id";
 
     for (const enumValue of enumValues) {
       options.push({
         key: enumValue.id,
         label: enumValue.label,
         color: enumValue.color,
-        filterFun: (entity) => entity[property]?.id === enumValue.id,
+        filterFun: () => ({ [key]: enumValue.id }),
       });
     }
 
@@ -162,23 +164,20 @@ export class FilterGeneratorService {
       {
         key: "all",
         label: $localize`:Filter option:All`,
-        filterFun: (e: T) => true,
+        filterFun: () => ({}),
       },
     ];
     options.push(
-      ...filterEntities.map((filterEntity) => {
-        return {
-          key: filterEntity.getId(),
-          label: filterEntity.toString(),
-          filterFun: (entity) => {
-            if (Array.isArray(entity[property])) {
-              return entity[property].includes(filterEntity.getId());
-            } else {
-              return entity[property] === filterEntity.getId();
-            }
-          },
-        };
-      })
+      ...filterEntities.map((filterEntity) => ({
+        key: filterEntity.getId(),
+        label: filterEntity.toString(),
+        filterFun: () => ({
+          $or: [
+            { [property]: filterEntity.getId() },
+            { [property]: { $elemMatch: { $eq: filterEntity.getId() } } },
+          ],
+        }),
+      }))
     );
     return options;
   }

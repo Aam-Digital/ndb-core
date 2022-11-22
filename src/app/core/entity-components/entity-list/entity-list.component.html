@@ -118,12 +118,13 @@
 
 <ng-template #subrecord>
   <app-entity-subrecord
-    [records]="filteredEntities"
+    [records]="allEntities"
     [columns]="columns"
     [editable]="false"
     [showEntity]="elementClick.emit.bind(elementClick)"
     [columnsToDisplay]="columnsToDisplay"
     [isLoading]="isLoading"
+    [filter]="filterObj"
   ></app-entity-subrecord>
 </ng-template>
 

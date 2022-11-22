@@ -30,6 +30,7 @@ import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { DataFilter } from "../entity-subrecord/entity-subrecord/entity-subrecord-config";
 
 /**
  * This component allows to create a full blown table with pagination, filtering, searching and grouping.
@@ -51,7 +52,6 @@ export class EntityListComponent<T extends Entity>
   implements OnChanges, AfterViewInit
 {
   @Input() allEntities: T[] = [];
-  filteredEntities: T[] = [];
   @Input() listConfig: EntityListConfig;
   @Input() entityConstructor: EntityConstructor<T>;
   @Input() isLoading: boolean;
@@ -72,6 +72,7 @@ export class EntityListComponent<T extends Entity>
   columnsToDisplay: string[] = [];
 
   filterSelections: FilterComponentSettings<T>[] = [];
+  filterObj: DataFilter<T>;
   filterString = "";
 
   get selectedColumnGroupIndex(): number {
@@ -260,15 +261,16 @@ export class EntityListComponent<T extends Entity>
   }
 
   private applyFilterSelections() {
-    let filteredData = this.allEntities;
-
-    this.filterSelections.forEach((f) => {
-      filteredData = filteredData.filter(
-        f.filterSettings.getFilterFunction(f.selectedOption)
-      );
-    });
-
-    this.filteredEntities = filteredData;
+    this.filterObj = this.filterSelections.reduce(
+      (obj, filter) =>
+        Object.assign(
+          obj,
+          filter.filterSettings.getFilterFunction(filter.selectedOption)(
+            undefined
+          )
+        ),
+      {}
+    );
   }
 
   private updateUrl(key: string, value: string) {
