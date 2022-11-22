@@ -130,7 +130,8 @@ export class NotesOfChildComponent
   private applyValuesFromFilter(newNote: Note) {
     const schema = newNote.getSchema();
     Object.entries(this.filter ?? {}).forEach(([key, value]) => {
-      // TODO support arrays, dates
+      // TODO support arrays through recursion
+      // TODO support dates through custom object matching {@link https://github.com/stalniy/ucast/tree/master/packages/js#custom-object-matching)
       if (typeof value !== "object") {
         this.assignValueToEntity(key, value, schema, newNote);
       }
