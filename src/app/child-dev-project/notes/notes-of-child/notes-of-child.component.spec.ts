@@ -19,6 +19,8 @@ import { Entity } from "../../../core/entity/model/entity";
 import { School } from "../../schools/model/school";
 import { User } from "../../../core/user/user";
 import moment from "moment";
+import { DataFilter } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 
 describe("NotesOfChildComponent", () => {
   let component: NotesOfChildComponent;
@@ -95,4 +97,22 @@ describe("NotesOfChildComponent", () => {
 
     expect(component.records).toEqual([n1, n2, n3]);
   }));
+
+  it("should respect filter values when creating a new record", () => {
+    const entity = new Child();
+    const guardianTalk = defaultInteractionTypes.find(
+      ({ id }) => id === "GUARDIAN_TALK"
+    );
+    const filter = {
+      subject: "Test",
+      "category.id": guardianTalk.id,
+    } as DataFilter<Note>;
+    component.onInitFromDynamicConfig({ config: { filter }, entity });
+
+    const newEntity = component.newRecordFactory();
+
+    expect(newEntity.subject).toBe("Test");
+    expect(newEntity.category).toEqual(guardianTalk);
+    expect(newEntity.children).toEqual([entity.getId()]);
+  });
 });
