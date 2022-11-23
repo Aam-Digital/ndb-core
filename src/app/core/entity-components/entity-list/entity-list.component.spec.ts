@@ -11,10 +11,7 @@ import { EntityListComponent } from "./entity-list.component";
 import { BooleanFilterConfig, EntityListConfig } from "./EntityListConfig";
 import { Entity } from "../../entity/model/entity";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { ConfigService } from "../../config/config.service";
-import { LoggingService } from "../../logging/logging.service";
 import { EntityListModule } from "./entity-list.module";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { AttendanceService } from "../../../child-dev-project/attendance/attendance.service";
 import { ExportService } from "../../export/export-service/export.service";
@@ -73,20 +70,11 @@ describe("EntityListComponent", () => {
       },
     ],
   };
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
-  let mockLoggingService: jasmine.SpyObj<LoggingService>;
-  let mockEntitySchemaService: jasmine.SpyObj<EntitySchemaService>;
   let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
   let mockActivatedRoute: Partial<ActivatedRoute>;
   let routeData: Subject<RouteData<EntityListConfig>>;
 
   beforeEach(waitForAsync(() => {
-    mockConfigService = jasmine.createSpyObj(["getConfig"]);
-    mockLoggingService = jasmine.createSpyObj(["warn"]);
-    mockEntitySchemaService = jasmine.createSpyObj([
-      "getComponent",
-      "registerSchemaDatatype",
-    ]);
     mockAttendanceService = jasmine.createSpyObj([
       "getActivitiesForChild",
       "getAllActivityAttendancesForPeriod",
@@ -108,10 +96,7 @@ describe("EntityListComponent", () => {
         FontAwesomeTestingModule,
       ],
       providers: [
-        { provide: ConfigService, useValue: mockConfigService },
-        { provide: LoggingService, useValue: mockLoggingService },
         { provide: ExportService, useValue: {} },
-        { provide: EntitySchemaService, useValue: mockEntitySchemaService },
         { provide: AttendanceService, useValue: mockAttendanceService },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
       ],
@@ -166,6 +151,7 @@ describe("EntityListComponent", () => {
 
     const activeFs = component.filterSelections[0];
     component.filterOptionSelected(activeFs, clickedOption);
+    fixture.detectChanges();
     expect(component.filterSelections[0].selectedOption).toEqual(clickedOption);
     expect(component.allEntities).toHaveSize(2);
     expect(component.entityTable.recordsDataSource.data).toHaveSize(1);
@@ -185,7 +171,6 @@ describe("EntityListComponent", () => {
     }
 
     component.entityConstructor = Test;
-    mockEntitySchemaService.getComponent.and.returnValue("DisplayText");
     component.listConfig = {
       title: "",
       columns: [

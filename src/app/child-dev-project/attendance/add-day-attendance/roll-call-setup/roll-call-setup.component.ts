@@ -17,6 +17,8 @@ import { FilterGeneratorService } from "../../../../core/entity-components/entit
 import { AlertService } from "../../../../core/alerts/alert.service";
 import { AlertDisplay } from "../../../../core/alerts/alert-display";
 import { NgModel } from "@angular/forms";
+import { FilterService } from "../../../../core/filter/filter.service";
+import { DataFilter } from "../../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 
 @Component({
   selector: "app-roll-call-setup",
@@ -54,7 +56,8 @@ export class RollCallSetupComponent implements OnInit {
     private sessionService: SessionService,
     private formDialog: FormDialogService,
     private filterGenerator: FilterGeneratorService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private filerService: FilterService
   ) {}
 
   async ngOnInit() {
@@ -184,15 +187,17 @@ export class RollCallSetupComponent implements OnInit {
   }
 
   private filterExistingEvents() {
-    let filteredEvents = this.existingEvents;
-    for (const filter of this.filterSettings) {
-      const filterFun = filter.filterSettings.getFilterFunction(
-        filter.selectedOption
-      );
-      filteredEvents = filteredEvents.filter(filterFun);
-    }
+    const filterObj = this.filterSettings.reduce(
+      (obj, filter) =>
+        Object.assign(
+          obj,
+          filter.filterSettings.getFilter(filter.selectedOption)
+        ),
+      {} as DataFilter<Note>
+    );
 
-    this.filteredExistingEvents = filteredEvents;
+    const predicate = this.filerService.getFilterPredicate(filterObj);
+    this.filteredExistingEvents = this.existingEvents.filter(predicate);
   }
 
   applyFilter(

@@ -15,6 +15,7 @@ import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { FilterComponentSettings } from "./filter-component.settings";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { FilterService } from "../../filter/filter.service";
 
 @Injectable({
   providedIn: "root",
@@ -24,7 +25,8 @@ export class FilterGeneratorService {
     private configService: ConfigService,
     private loggingService: LoggingService,
     private entities: EntityRegistry,
-    private entityMapperService: EntityMapperService
+    private entityMapperService: EntityMapperService,
+    private filterService: FilterService
   ) {}
 
   /**
@@ -62,10 +64,8 @@ export class FilterGeneratorService {
       }
 
       if (onlyShowUsedOptions) {
-        fs.filterSettings.options = fs.filterSettings.options.filter(
-          (option) =>
-            data.filter(fs.filterSettings.getFilterFunction(option.key))
-              .length > 0
+        fs.filterSettings.options = fs.filterSettings.options.filter((option) =>
+          data.some(this.filterService.getFilterPredicate(option.filter))
         );
       }
 
@@ -112,16 +112,16 @@ export class FilterGeneratorService {
     filter: BooleanFilterConfig
   ): FilterSelectionOption<T>[] {
     return [
-      { key: "all", label: filter.all, filterFun: () => ({}) },
+      { key: "all", label: filter.all, filter: {} },
       {
         key: "true",
         label: filter.true,
-        filterFun: () => ({ [filter.id]: true }),
+        filter: { [filter.id]: true },
       },
       {
         key: "false",
         label: filter.false,
-        filterFun: () => ({ [filter.id]: false }),
+        filter: { [filter.id]: false },
       },
     ];
   }
@@ -134,7 +134,7 @@ export class FilterGeneratorService {
       {
         key: "all",
         label: $localize`:Filter label:All`,
-        filterFun: () => {},
+        filter: {},
       },
     ];
 
@@ -146,7 +146,7 @@ export class FilterGeneratorService {
         key: enumValue.id,
         label: enumValue.label,
         color: enumValue.color,
-        filterFun: () => ({ [key]: enumValue.id }),
+        filter: { [key]: enumValue.id },
       });
     }
 
@@ -164,19 +164,19 @@ export class FilterGeneratorService {
       {
         key: "all",
         label: $localize`:Filter option:All`,
-        filterFun: () => ({}),
+        filter: {},
       },
     ];
     options.push(
       ...filterEntities.map((filterEntity) => ({
         key: filterEntity.getId(),
         label: filterEntity.toString(),
-        filterFun: () => ({
+        filter: {
           $or: [
             { [property]: filterEntity.getId() },
             { [property]: { $elemMatch: { $eq: filterEntity.getId() } } },
           ],
-        }),
+        },
       }))
     );
     return options;

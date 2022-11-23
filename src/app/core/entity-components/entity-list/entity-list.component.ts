@@ -265,11 +265,9 @@ export class EntityListComponent<T extends Entity>
       (obj, filter) =>
         Object.assign(
           obj,
-          filter.filterSettings.getFilterFunction(filter.selectedOption)(
-            undefined
-          )
+          filter.filterSettings.getFilter(filter.selectedOption)
         ),
-      {}
+      {} as DataFilter<T>
     );
   }
 
