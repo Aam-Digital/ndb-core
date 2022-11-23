@@ -15,7 +15,6 @@ import { MatPaginatorModule } from "@angular/material/paginator";
 import { FormsModule } from "@angular/forms";
 import { ExportModule } from "../../export/export.module";
 import { ViewModule } from "../../view/view.module";
-import { ListFilterComponent } from "./list-filter/list-filter.component";
 import { PermissionsModule } from "../../permissions/permissions.module";
 import { EntitySubrecordModule } from "../entity-subrecord/entity-subrecord.module";
 import { EntityUtilsModule } from "../entity-utils/entity-utils.module";
@@ -27,13 +26,10 @@ import { FilterOverlayComponent } from "./filter-overlay/filter-overlay.componen
 import { MatDialogModule } from "@angular/material/dialog";
 import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { CommonComponentsModule } from "../../common-components/common-components.module";
+import { FilterModule } from "../../filter/filter.module";
 
 @NgModule({
-  declarations: [
-    EntityListComponent,
-    ListFilterComponent,
-    FilterOverlayComponent,
-  ],
+  declarations: [EntityListComponent, FilterOverlayComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -60,8 +56,9 @@ import { CommonComponentsModule } from "../../common-components/common-component
     MatDialogModule,
     TabStateModule,
     CommonComponentsModule,
+    FilterModule,
   ],
-  exports: [EntityListComponent, ListFilterComponent],
+  exports: [EntityListComponent],
 })
 export class EntityListModule {
   dynamicComponents = [EntityListComponent];

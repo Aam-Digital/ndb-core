@@ -46,10 +46,9 @@ export class TabStateMemoDirective implements OnInit {
   private async updateURLQueryParams(value: number) {
     await this.router.navigate(["."], {
       relativeTo: this.route,
-      queryParams: {
-        [this.tabIndexKey]: value,
-      },
+      queryParams: { [this.tabIndexKey]: value },
       replaceUrl: true,
+      queryParamsHandling: "merge",
     });
   }
 }

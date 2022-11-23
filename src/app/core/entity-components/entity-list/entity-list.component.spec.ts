@@ -197,16 +197,6 @@ describe("EntityListComponent", () => {
     );
   });
 
-  it("should create records of the correct entity", () => {
-    createComponent();
-    initComponentInputs();
-    component.entityConstructor = Child;
-
-    const res = component.getNewRecordFactory()();
-
-    expect(res).toHaveType(Child.ENTITY_TYPE);
-  });
-
   it("should automatically initialize values if directly referenced from config", fakeAsync(() => {
     mockActivatedRoute.component = EntityListComponent;
     const config = {
