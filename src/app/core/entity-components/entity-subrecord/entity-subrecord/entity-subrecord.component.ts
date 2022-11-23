@@ -193,6 +193,7 @@ export class EntitySubrecordComponent<T extends Entity>
             type === "update" &&
             !this._records.find((rec) => rec.getId() === entity.getId())
           ) {
+            // TODO maybe doc does not pass filter anymore -> remove
             this.addToTable(entity);
           }
         });

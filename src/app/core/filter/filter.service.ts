@@ -52,6 +52,7 @@ export class FilterService {
     if (property.dataType === "configurable-enum") {
       value = this.parseConfigurableEnumValue(property, value);
     }
+    // TODO fail for unsupported data types
     newNote[key] = value;
   }
 
