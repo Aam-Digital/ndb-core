@@ -1,8 +1,6 @@
 import {
   ComponentFixture,
-  discardPeriodicTasks,
   fakeAsync,
-  flush,
   TestBed,
   tick,
   waitForAsync,
@@ -21,10 +19,15 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { Subject } from "rxjs";
 import { RouteData } from "../../view/dynamic-routing/view-config.interface";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { HarnessLoader } from "@angular/cdk/testing";
+import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
+import { MatTabGroupHarness } from "@angular/material/tabs/testing";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
   let fixture: ComponentFixture<EntityListComponent<Entity>>;
+  let loader: HarnessLoader;
+
   const testConfig: EntityListConfig = {
     title: "Children List",
     columns: [
@@ -128,39 +131,23 @@ describe("EntityListComponent", () => {
     );
   });
 
-  it("should set the clicked column group", () => {
+  it("should set the clicked column group", async () => {
     createComponent();
     initComponentInputs();
+    expect(component.selectedColumnGroupIndex).toBe(1);
+
+    const tabGroup = await loader.getHarness(MatTabGroupHarness);
+    const groups = await tabGroup.getTabs();
+    const clickedTab = groups[0];
     const clickedColumnGroup = testConfig.columnGroups.groups[0];
-    component.columnGroupClick(clickedColumnGroup.name);
+    const tabLabel = await clickedTab.getLabel();
+    expect(tabLabel).toBe(clickedColumnGroup.name);
+
+    await clickedTab.select();
+
     expect(component.selectedColumnGroupIndex).toEqual(0);
     expect(component.columnsToDisplay).toEqual(clickedColumnGroup.columns);
   });
-
-  it("should apply the clicked filter", fakeAsync(() => {
-    createComponent();
-    initComponentInputs();
-    const clickedOption = "false";
-    const child1 = new Child("dropoutId");
-    child1.status = "Dropout";
-    const child2 = new Child("activeId");
-    component.allEntities = [child1, child2];
-
-    component.ngOnChanges({ allEntities: null });
-    tick();
-
-    const activeFs = component.filterSelections[0];
-    component.filterOptionSelected(activeFs, clickedOption);
-    fixture.detectChanges();
-    expect(component.filterSelections[0].selectedOption).toEqual(clickedOption);
-    expect(component.allEntities).toHaveSize(2);
-    expect(component.entityTable.recordsDataSource.data).toHaveSize(1);
-    expect(component.entityTable.recordsDataSource.data[0].record).toEqual(
-      child1
-    );
-    flush();
-    discardPeriodicTasks();
-  }));
 
   it("should add and initialize columns which are only mentioned in the columnGroups", () => {
     createComponent();
@@ -226,6 +213,7 @@ describe("EntityListComponent", () => {
 
   function createComponent() {
     fixture = TestBed.createComponent(EntityListComponent);
+    loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }

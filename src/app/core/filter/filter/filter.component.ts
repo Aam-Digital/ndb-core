@@ -21,7 +21,7 @@ import { getUrlWithoutParams } from "../../../utils/utils";
   templateUrl: "./filter.component.html",
   styleUrls: ["./filter.component.scss"],
 })
-export class FilterComponent<T extends Entity> implements OnChanges {
+export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   @Input() filterConfig: FilterConfig[];
   @Input() entityType: EntityConstructor<T>;
   @Input() entities: T[];
@@ -50,6 +50,7 @@ export class FilterComponent<T extends Entity> implements OnChanges {
         this.onlyUsed
       );
       this.loadUrlParams();
+      this.applyFilterSelections();
     }
   }
 
@@ -96,7 +97,6 @@ export class FilterComponent<T extends Entity> implements OnChanges {
         f.selectedOption = params[f.filterSettings.name];
       }
     });
-    this.applyFilterSelections();
   }
 
   openFilterOverlay() {

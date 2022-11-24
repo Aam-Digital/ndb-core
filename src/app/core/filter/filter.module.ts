@@ -7,6 +7,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { CommonComponentsModule } from "../common-components/common-components.module";
 import { FilterOverlayComponent } from "./filter-overlay/filter-overlay.component";
+import { MatDialogModule } from "@angular/material/dialog";
 
 @NgModule({
   declarations: [FilterComponent, ListFilterComponent, FilterOverlayComponent],
@@ -17,6 +18,7 @@ import { FilterOverlayComponent } from "./filter-overlay/filter-overlay.componen
     MatFormFieldModule,
     MatSelectModule,
     CommonComponentsModule,
+    MatDialogModule,
   ],
 })
 export class FilterModule {}
