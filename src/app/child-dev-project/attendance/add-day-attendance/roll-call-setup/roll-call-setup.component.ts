@@ -12,8 +12,6 @@ import { RecurringActivity } from "../../model/recurring-activity";
 import { SessionService } from "../../../../core/session/session-service/session.service";
 import { NoteDetailsComponent } from "../../../notes/note-details/note-details.component";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
-import { FilterComponentSettings } from "../../../../core/entity-components/entity-list/filter-component.settings";
-import { FilterGeneratorService } from "../../../../core/entity-components/entity-list/filter-generator.service";
 import { AlertService } from "../../../../core/alerts/alert.service";
 import { AlertDisplay } from "../../../../core/alerts/alert-display";
 import { NgModel } from "@angular/forms";
@@ -36,7 +34,6 @@ export class RollCallSetupComponent implements OnInit {
 
   allActivities: RecurringActivity[] = [];
   visibleActivities: RecurringActivity[] = [];
-  filterSettings: FilterComponentSettings<Note>[] = [];
   filterConfig: FilterConfig[] = [{ id: "category" }, { id: "schools" }];
   entityType = Note;
 
@@ -58,7 +55,6 @@ export class RollCallSetupComponent implements OnInit {
     private attendanceService: AttendanceService,
     private sessionService: SessionService,
     private formDialog: FormDialogService,
-    private filterGenerator: FilterGeneratorService,
     private alertService: AlertService,
     private filerService: FilterService
   ) {}
@@ -73,7 +69,8 @@ export class RollCallSetupComponent implements OnInit {
       this.date
     );
     await this.loadActivities();
-    await this.updateEventsList();
+    this.sortEvents();
+    this.filteredExistingEvents = this.existingEvents;
     this.isLoading = false;
   }
 
@@ -172,11 +169,6 @@ export class RollCallSetupComponent implements OnInit {
           this.existingEvents.push(createdNote);
         }
       });
-  }
-
-  private async updateEventsList() {
-    this.sortEvents();
-    this.filteredExistingEvents = this.existingEvents;
   }
 
   filterExistingEvents(filter: DataFilter<Note>) {
