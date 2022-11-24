@@ -22,14 +22,12 @@ import { EntityFormModule } from "../entity-form/entity-form.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatTabsModule } from "@angular/material/tabs";
-import { FilterOverlayComponent } from "./filter-overlay/filter-overlay.component";
-import { MatDialogModule } from "@angular/material/dialog";
 import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { CommonComponentsModule } from "../../common-components/common-components.module";
 import { FilterModule } from "../../filter/filter.module";
 
 @NgModule({
-  declarations: [EntityListComponent, FilterOverlayComponent],
+  declarations: [EntityListComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -53,7 +51,6 @@ import { FilterModule } from "../../filter/filter.module";
     EntityUtilsModule,
     EntityFormModule,
     FontAwesomeModule,
-    MatDialogModule,
     TabStateModule,
     CommonComponentsModule,
     FilterModule,

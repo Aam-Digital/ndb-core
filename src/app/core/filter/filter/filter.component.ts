@@ -12,7 +12,7 @@ import { FilterComponentSettings } from "../../entity-components/entity-list/fil
 import { DataFilter } from "../../entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { FilterGeneratorService } from "../../entity-components/entity-list/filter-generator.service";
 import { ActivatedRoute, Params, Router } from "@angular/router";
-import { FilterOverlayComponent } from "../../entity-components/entity-list/filter-overlay/filter-overlay.component";
+import { FilterOverlayComponent } from "../filter-overlay/filter-overlay.component";
 import { MatDialog } from "@angular/material/dialog";
 import { getUrlWithoutParams } from "../../../utils/utils";
 
