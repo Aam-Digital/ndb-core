@@ -26,6 +26,7 @@ export class FilterComponent<T extends Entity> implements OnChanges {
   @Input() entityType: EntityConstructor<T>;
   @Input() entities: T[];
   @Input() withUrl = false;
+  @Input() onlyUsed = false;
 
   @Input() filterObj: DataFilter<T>;
   @Output() filterObjChange = new EventEmitter<DataFilter<T>>();
@@ -46,7 +47,7 @@ export class FilterComponent<T extends Entity> implements OnChanges {
         this.filterConfig,
         this.entityType,
         this.entities,
-        true
+        this.onlyUsed
       );
       this.loadUrlParams();
     }
