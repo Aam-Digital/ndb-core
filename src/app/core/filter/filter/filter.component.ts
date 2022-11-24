@@ -16,19 +16,46 @@ import { FilterOverlayComponent } from "../filter-overlay/filter-overlay.compone
 import { MatDialog } from "@angular/material/dialog";
 import { getUrlWithoutParams } from "../../../utils/utils";
 
+/**
+ * This component can be used to display filters, for example above tables.
+ */
 @Component({
   selector: "app-filter",
   templateUrl: "./filter.component.html",
   styleUrls: ["./filter.component.scss"],
 })
 export class FilterComponent<T extends Entity = Entity> implements OnChanges {
+  /**
+   * The filter configuration from the config
+   */
   @Input() filterConfig: FilterConfig[];
+  /**
+   * The type of entities that will be filtered
+   */
   @Input() entityType: EntityConstructor<T>;
+  /**
+   * The list of entities, this is used to detect which options should be available
+   */
   @Input() entities: T[];
+  /**
+   * If true, the filter state will be stored in the url and automatically applied on reload or navigation.
+   * default `false`.
+   */
   @Input() withUrl = false;
+  /**
+   * If true, only filter options are shown, for which some entities pass the filter.
+   * default `false`
+   */
   @Input() onlyUsed = false;
 
+  /**
+   * The filter query which is build by combining all selected filters.
+   * This can be used as two-way-binding or through the `filterObjChange` output.
+   */
   @Input() filterObj: DataFilter<T>;
+  /**
+   * A event emitter that notifies about updates of the filter.
+   */
   @Output() filterObjChange = new EventEmitter<DataFilter<T>>();
 
   filterSelections: FilterComponentSettings<T>[] = [];
@@ -99,6 +126,9 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
     });
   }
 
+  /**
+   * Calling this function will display the filters in a popup
+   */
   openFilterOverlay() {
     this.dialog.open(FilterOverlayComponent, {
       data: {

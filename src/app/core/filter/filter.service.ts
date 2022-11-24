@@ -12,6 +12,9 @@ import {
 } from "@ucast/mongo2js";
 import moment from "moment";
 
+/**
+ * This server handles the filter objects.
+ */
 @Injectable({
   providedIn: "root",
 })
@@ -24,16 +27,31 @@ export class FilterService {
 
   constructor(private configService: ConfigService) {}
 
+  /**
+   * Builds a predicate for a given filter object.
+   * This predicate can be used to filter arrays of objects.
+   * ```javascript
+   * const predicate = this.filterService.getFilterPredicate(filterObj);
+   * const filtered = this.data.filter(predicate)
+   * ```
+   * @param filter a valid filter object, e.g. as provided by the `FilterComponent`
+   */
   getFilterPredicate<T extends Entity>(filter: DataFilter<T>) {
     return this.filterFactory<T>(filter);
   }
 
-  alignEntityWithFilter<T extends Entity>(newNote: T, filter: DataFilter<T>) {
-    const schema = newNote.getSchema();
+  /**
+   * Patches an entity with values required to pass the filter query.
+   * This patch happens in-place.
+   * @param entity the entity to be patched
+   * @param filter the filter which the entity should pass afterwards
+   */
+  alignEntityWithFilter<T extends Entity>(entity: T, filter: DataFilter<T>) {
+    const schema = entity.getSchema();
     Object.entries(filter ?? {}).forEach(([key, value]) => {
       // TODO support arrays through recursion
       if (typeof value !== "object") {
-        this.assignValueToEntity(key, value, schema, newNote);
+        this.assignValueToEntity(key, value, schema, entity);
       }
     });
   }

@@ -46,6 +46,7 @@
       [entities]="allEntities"
       [withUrl]="true"
       [(filterObj)]="filterObj"
+      #filter
     ></app-filter>
   </div>
 
@@ -149,7 +150,7 @@
       </span>
     </button>
 
-    <button mat-menu-item (click)="openFilterOverlay()">
+    <button mat-menu-item (click)="filterComponent.openFilterOverlay()">
       <fa-icon
         aria-label="filter"
         class="standard-icon color-accent"

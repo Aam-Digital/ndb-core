@@ -56,7 +56,7 @@ export class EntityListComponent<T extends Entity>
   @Output() addNewClick = new EventEmitter();
 
   @ViewChild(EntitySubrecordComponent) entityTable: EntitySubrecordComponent<T>;
-  @ViewChild(FilterComponent) private filterComponent: FilterComponent<T>;
+  @ViewChild(FilterComponent) filterComponent: FilterComponent<T>;
 
   isDesktop: boolean;
 
@@ -227,9 +227,5 @@ export class EntityListComponent<T extends Entity>
 
   private getSelectedColumnIndexByName(columnGroupName: string) {
     return this.columnGroups.findIndex((c) => c.name === columnGroupName);
-  }
-
-  openFilterOverlay() {
-    this.filterComponent.openFilterOverlay();
   }
 }
