@@ -66,12 +66,12 @@ export class NotesManagerComponent implements OnInit {
     {
       key: "current-week",
       label: $localize`:Filter-option for notes:This Week`,
-      filter: { date: this.getPreviousSunday(0) },
+      filter: { date: this.getWeeksFilter(0) },
     },
     {
       key: "last-week",
       label: $localize`:Filter-option for notes:Since Last Week`,
-      filter: { date: this.getPreviousSunday(1) },
+      filter: { date: this.getWeeksFilter(1) },
     },
     { key: "", label: $localize`All`, filter: {} },
   ];
@@ -158,7 +158,7 @@ export class NotesManagerComponent implements OnInit {
     }
   }
 
-  private getPreviousSunday(weeksBack: number) {
+  private getWeeksFilter(weeksBack: number) {
     const start = moment().subtract(weeksBack, "weeks").startOf("week");
     const end = moment().endOf("day");
     const startString = start.format("YYYY-MM-DD");
