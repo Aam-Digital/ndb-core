@@ -8,7 +8,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import { ActivatedRoute, Params, Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import {
   ColumnGroupsConfig,
   EntityListConfig,
@@ -18,9 +18,7 @@ import {
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { FormFieldConfig } from "../entity-form/entity-form/FormConfig";
 import { EntitySubrecordComponent } from "../entity-subrecord/entity-subrecord/entity-subrecord.component";
-import { FilterGeneratorService } from "./filter-generator.service";
 import { entityFilterPredicate } from "./filter-predicate";
-import { MatDialog } from "@angular/material/dialog";
 import { AnalyticsService } from "../../analytics/analytics.service";
 import { RouteTarget } from "../../../app.routing";
 import { RouteData } from "../../view/dynamic-routing/view-config.interface";
@@ -103,8 +101,6 @@ export class EntityListComponent<T extends Entity>
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private analyticsService: AnalyticsService,
-    private filterGeneratorService: FilterGeneratorService,
-    private dialog: MatDialog,
     private entityMapperService: EntityMapperService,
     private entities: EntityRegistry
   ) {
@@ -174,7 +170,6 @@ export class EntityListComponent<T extends Entity>
         this.displayColumnGroupByName(this.mobileColumnGroup);
       }
     }
-    this.loadUrlParams();
   }
 
   private addColumnsFromColumnGroups() {
@@ -209,13 +204,6 @@ export class EntityListComponent<T extends Entity>
       ];
       this.defaultColumnGroup = "default";
       this.mobileColumnGroup = "default";
-    }
-  }
-
-  private loadUrlParams() {
-    const params = this.activatedRoute.snapshot.queryParams;
-    if (params["view"]) {
-      this.displayColumnGroupByName(params["view"]);
     }
   }
 
