@@ -83,7 +83,11 @@ import {
   DEFAULT_LANGUAGE,
   LANGUAGE_LOCAL_STORAGE_KEY,
 } from "./core/language/language-statics";
-import { DateAdapter, MAT_DATE_FORMATS } from "@angular/material/core";
+import {
+  DateAdapter,
+  MatNativeDateModule,
+  MAT_DATE_FORMATS,
+} from "@angular/material/core";
 import {
   DATE_FORMATS,
   DateAdapterWithFormatting,
@@ -164,6 +168,7 @@ import {
     HistoricalDataModule,
     SupportModule,
     DatabaseModule,
+    MatNativeDateModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },

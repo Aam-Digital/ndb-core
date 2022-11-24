@@ -1,0 +1,7 @@
+$width: 128px;
+
+:host {
+  position: absolute;
+  width: $width;
+  right: $width;
+}

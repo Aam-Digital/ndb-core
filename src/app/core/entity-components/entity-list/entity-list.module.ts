@@ -29,6 +29,11 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { DateRangeComponent } from "./date-range/date-range.component";
 import { MatCalendar, MatDatepickerModule } from "@angular/material/datepicker";
+import { DaterangeHeaderComponent } from "./date-range/daterange-header/daterange-header.component";
+import { MatIconModule } from "@angular/material/icon";
+import { DaterangePanelComponent } from "./date-range/daterange-panel/daterange-panel.component";
+import { MatCardModule } from "@angular/material/card";
+import { MatNativeDateModule } from "@angular/material/core";
 
 @NgModule({
   declarations: [
@@ -36,6 +41,8 @@ import { MatCalendar, MatDatepickerModule } from "@angular/material/datepicker";
     ListFilterComponent,
     FilterOverlayComponent,
     DateRangeComponent,
+    DaterangeHeaderComponent,
+    DaterangePanelComponent,
   ],
   imports: [
     CommonModule,
@@ -65,6 +72,8 @@ import { MatCalendar, MatDatepickerModule } from "@angular/material/datepicker";
     MatDialogModule,
     TabStateModule,
     MatDatepickerModule,
+    MatIconModule,
+    MatCardModule,
   ],
   exports: [EntityListComponent, ListFilterComponent],
 })

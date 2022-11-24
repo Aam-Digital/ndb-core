@@ -1,0 +1,28 @@
+<div class="example-header">
+  <!-- "previous" buttons -->
+  <button
+    mat-icon-button
+    class="example-double-arrow"
+    (click)="previousClicked('year')"
+  >
+    <fa-icon icon="angles-left"></fa-icon>
+  </button>
+  <button mat-icon-button (click)="previousClicked('month')">
+    <fa-icon icon="angle-left"></fa-icon>
+  </button>
+
+  <!-- center label -->
+  <span class="example-header-label">{{ periodLabel }}</span>
+
+  <!-- "next" buttons -->
+  <button mat-icon-button (click)="nextClicked('month')">
+    <fa-icon icon="angle-right"></fa-icon>
+  </button>
+  <button
+    mat-icon-button
+    class="example-double-arrow"
+    (click)="nextClicked('year')"
+  >
+    <fa-icon icon="angles-right"></fa-icon>
+  </button>
+</div>

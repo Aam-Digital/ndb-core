@@ -1,8 +1,31 @@
 <h1 mat-dialog-title>Select date range</h1>
 
-<mat-dialog-content #changelogContainer>
-  <mat-date-range-picker #picker></mat-date-range-picker>
-  <!-- <mat-calendar></mat-calendar> -->
+<mat-dialog-content style="height: 400px">
+  <app-daterange-panel></app-daterange-panel>
+
+  <div class="example-header">
+    <!-- … -->
+  </div>
+  <mat-form-field appearance="fill">
+    <mat-label>Enter a date range</mat-label>
+
+    <!-- the dual input field: -->
+    <mat-date-range-input [rangePicker]="picker">
+      <!-- start part -->
+      <input matStartDate [(ngModel)]="fromDate" placeholder="Start date" />
+      <!-- end part -->
+      <input matEndDate [(ngModel)]="toDate" placeholder="End date" />
+    </mat-date-range-input>
+
+    <!-- the picker trigger button -->
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+
+    <!-- the actual picker -->
+    <mat-date-range-picker
+      #picker
+      [calendarHeaderComponent]="DaterangeHeaderComponent"
+    ></mat-date-range-picker>
+  </mat-form-field>
 </mat-dialog-content>
 
 <mat-dialog-actions class="general-actions">
