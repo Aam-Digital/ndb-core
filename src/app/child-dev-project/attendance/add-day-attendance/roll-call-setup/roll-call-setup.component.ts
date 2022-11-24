@@ -19,6 +19,7 @@ import { AlertDisplay } from "../../../../core/alerts/alert-display";
 import { NgModel } from "@angular/forms";
 import { FilterService } from "../../../../core/filter/filter.service";
 import { DataFilter } from "../../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { FilterConfig } from "../../../../core/entity-components/entity-list/EntityListConfig";
 
 @Component({
   selector: "app-roll-call-setup",
@@ -36,6 +37,8 @@ export class RollCallSetupComponent implements OnInit {
   allActivities: RecurringActivity[] = [];
   visibleActivities: RecurringActivity[] = [];
   filterSettings: FilterComponentSettings<Note>[] = [];
+  filterConfig: FilterConfig[] = [{ id: "category" }, { id: "schools" }];
+  entityType = Note;
 
   showingAll = false;
 
@@ -172,40 +175,13 @@ export class RollCallSetupComponent implements OnInit {
   }
 
   private async updateEventsList() {
-    await this.updateFilterOptions();
-    this.filterExistingEvents();
     this.sortEvents();
+    this.filteredExistingEvents = this.existingEvents;
   }
 
-  private async updateFilterOptions() {
-    this.filterSettings = await this.filterGenerator.generate(
-      [{ id: "category" }, { id: "schools" }],
-      Note,
-      this.existingEvents,
-      true
-    );
-  }
-
-  private filterExistingEvents() {
-    const filterObj = this.filterSettings.reduce(
-      (obj, filter) =>
-        Object.assign(
-          obj,
-          filter.filterSettings.getFilter(filter.selectedOption)
-        ),
-      {} as DataFilter<Note>
-    );
-
-    const predicate = this.filerService.getFilterPredicate(filterObj);
+  filterExistingEvents(filter: DataFilter<Note>) {
+    const predicate = this.filerService.getFilterPredicate(filter);
     this.filteredExistingEvents = this.existingEvents.filter(predicate);
-  }
-
-  applyFilter(
-    selectedFilter: FilterComponentSettings<Note>,
-    optionKey: string
-  ) {
-    selectedFilter.selectedOption = optionKey;
-    this.filterExistingEvents();
   }
 
   selectEvent(event: NoteForActivitySetup) {
