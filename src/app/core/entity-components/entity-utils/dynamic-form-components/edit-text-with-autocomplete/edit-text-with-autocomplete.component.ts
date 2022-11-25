@@ -62,6 +62,7 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
   originalValues;
   autocompleteDisabled = true;
   lastValue = "";
+  addedFormControls = [];
 
   constructor(
     private entityMapperService: EntityMapperService,
@@ -165,12 +166,17 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
         } else {
           // adding missing controls so saving does not lose any data
           this.parent.addControl(key, new FormControl(selected[key]));
+          this.addedFormControls.push(key);
         }
       });
   }
 
   async resetForm() {
     if (await this.userConfirmsOverwriteIfNecessary(this.selectedEntity)) {
+      this.addedFormControls.forEach((control) =>
+        this.parent.removeControl(control)
+      );
+      this.addedFormControls = [];
       this.formControl.reset();
       this.formControl.parent.patchValue(this.originalValues);
       this.selectedEntity = null;
