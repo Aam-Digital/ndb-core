@@ -20,6 +20,7 @@ const XXL = "1400px";
 /**
  * Different ranges of screen sizes.
  */
+
 /* Implementation note: This is implemented as an enum (as opposed to a string-type)
  * so that
  * ```
@@ -88,7 +89,6 @@ export class ScreenWidthObserver {
     query: MediaQueryList
   ): Observable<MediaQueryListEvent> {
     return fromEvent<MediaQueryListEvent>(query, "change").pipe(
-      map((event) => event),
       startWith({
         matches: query.matches,
         media: query.media,
