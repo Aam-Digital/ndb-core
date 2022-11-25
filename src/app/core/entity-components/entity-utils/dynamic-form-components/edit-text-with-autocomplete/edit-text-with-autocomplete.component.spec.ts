@@ -82,12 +82,10 @@ describe("EditTextWithAutocompleteComponent", () => {
     tick();
     component.selectEntity(rA1);
     tick();
-    expect(component.formControl.value).toEqual(rA1.title);
-    expect(component.parent.get("type").value).toEqual(rA1.type);
-    expect(component.parent.get("assignedTo").value).toEqual(rA1.assignedTo);
-    expect(component.parent.get("linkedGroups").value).toEqual(
-      rA1.linkedGroups
-    );
+    expect(component.formControl).toHaveValue(rA1.title);
+    expect(component.parent.get("type")).toHaveValue(rA1.type);
+    expect(component.parent.get("assignedTo")).toHaveValue(rA1.assignedTo);
+    expect(component.parent.get("linkedGroups")).toHaveValue(rA1.linkedGroups);
   }));
 
   it("should correctly reset the form to its original values", fakeAsync(() => {
@@ -107,10 +105,10 @@ describe("EditTextWithAutocompleteComponent", () => {
     component.resetForm();
     tick();
 
-    expect(component.formControl.value).toEqual("");
-    expect(component.parent.get("type").value).toBeNull();
-    expect(component.parent.get("assignedTo").value).toEqual([]);
-    expect(component.parent.get("linkedGroups").value).toEqual(["testgroup1"]);
+    expect(component.formControl).toHaveValue("");
+    expect(component.parent.get("type")).toHaveValue(null);
+    expect(component.parent.get("assignedTo")).toHaveValue([]);
+    expect(component.parent.get("linkedGroups")).toHaveValue(["testgroup1"]);
   }));
 
   it("should add the given relevantValue to the form control of the relevant property", fakeAsync(() => {
