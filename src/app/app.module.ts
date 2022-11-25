@@ -88,7 +88,7 @@ import {
   DateAdapterWithFormatting,
 } from "./core/language/date-adapter-with-formatting";
 import { ConfigSetupModule } from "./core/config-setup/config-setup.module";
-import { LocationModule } from "./core/location/location.module";
+import { LocationModule } from "./features/location/location.module";
 
 /**
  * Main entry point of the application.

@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
-import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
-import { OnInitDynamicComponent } from "../../view/dynamic-components/on-init-dynamic-component.interface";
+import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
+import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 
 @DynamicComponent("ViewLocation")
 @Component({

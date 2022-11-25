@@ -1,4 +1,4 @@
-import { EntitySchemaDatatype } from "../entity/schema/entity-schema-datatype";
+import { EntitySchemaDatatype } from "../../core/entity/schema/entity-schema-datatype";
 
 export const locationEntitySchemaDataType: EntitySchemaDatatype = {
   name: "location",
