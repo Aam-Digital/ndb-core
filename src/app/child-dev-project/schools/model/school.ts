@@ -8,6 +8,7 @@ export class School extends Entity {
   static icon = "university";
   static label = $localize`:label for entity:School`;
   static labelPlural = $localize`:label (plural) for entity:Schools`;
+  static color = "#9E9D24";
 
   static getBlockComponent(): string {
     return "SchoolBlock";

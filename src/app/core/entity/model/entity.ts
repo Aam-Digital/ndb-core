@@ -96,6 +96,11 @@ export class Entity {
   static icon: string;
 
   /**
+   * color used for to highlight this entity type across the app
+   */
+  static color: string;
+
+  /**
    * Extract the ENTITY_TYPE from an id.
    * @param id An entity's id including prefix.
    */

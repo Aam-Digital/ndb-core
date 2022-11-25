@@ -124,6 +124,7 @@ describe("EntityConfigService", () => {
         label: "test",
         labelPlural: "tests",
         icon: "users",
+        color: "red",
       },
     ]);
     service.setupEntitiesFromConfig();
@@ -131,6 +132,7 @@ describe("EntityConfigService", () => {
     expect(Test.label).toBe("test");
     expect(Test.labelPlural).toBe("tests");
     expect(Test.icon).toBe("users");
+    expect(Test.color).toBe("red");
   });
 });
 
