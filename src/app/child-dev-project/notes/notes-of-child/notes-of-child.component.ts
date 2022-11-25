@@ -11,6 +11,7 @@ import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-
 import { Entity } from "../../../core/entity/model/entity";
 import {
   ColumnConfig,
+  DataFilter,
   EntitySubrecordConfig,
 } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { FilterService } from "../../../core/filter/filter.service";
@@ -39,7 +40,7 @@ export class NotesOfChildComponent
     { id: "authors", visibleFrom: "md" },
     { id: "warningLevel", visibleFrom: "md" },
   ];
-  filter;
+  filter: DataFilter<Note> = {};
 
   /**
    * returns the color for a note; passed to the entity subrecord component
@@ -120,7 +121,7 @@ export class NotesOfChildComponent
       if (!newNote.authors.includes(user)) {
         newNote.authors.push(user);
       }
-      this.filterService.alignEntityWithFilter(newNote, this.filter ?? {});
+      this.filterService.alignEntityWithFilter(newNote, this.filter);
 
       return newNote;
     };

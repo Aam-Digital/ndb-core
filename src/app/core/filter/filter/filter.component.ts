@@ -22,7 +22,6 @@ import { getUrlWithoutParams } from "../../../utils/utils";
 @Component({
   selector: "app-filter",
   templateUrl: "./filter.component.html",
-  styleUrls: ["./filter.component.scss"],
 })
 export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   /**
@@ -34,7 +33,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
    */
   @Input() entityType: EntityConstructor<T>;
   /**
-   * The list of entities, this is used to detect which options should be available
+   * The list of entities. This is used to detect which options should be available
    */
   @Input() entities: T[];
   /**

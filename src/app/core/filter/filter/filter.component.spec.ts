@@ -49,8 +49,8 @@ describe("FilterComponent", () => {
     const options = await selection.getOptions();
     expect(options).toHaveSize(3);
 
-    const firstOption = await options[1].getText();
-    expect(firstOption).toEqual(t1.label);
+    const selectedOption = await options[1].getText();
+    expect(selectedOption).toEqual(t1.label);
 
     await options[1].click();
     const selected = await selection.getValueText();
