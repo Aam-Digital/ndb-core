@@ -93,6 +93,7 @@ describe("EditTextWithAutocompleteComponent", () => {
     rA1.type = defaultInteractionTypes[0];
     rA1.assignedTo = ["user1", "user2"];
     rA1.linkedGroups = ["group1", "group2"];
+    rA1.participants = ["student1", "student2"];
     loadTypeSpy.and.resolveTo([rA1]);
     component.parent.get("linkedGroups").setValue(["testgroup1"]);
 
@@ -109,6 +110,7 @@ describe("EditTextWithAutocompleteComponent", () => {
     expect(component.parent.get("type")).toHaveValue(null);
     expect(component.parent.get("assignedTo")).toHaveValue([]);
     expect(component.parent.get("linkedGroups")).toHaveValue(["testgroup1"]);
+    expect(component.parent.get("participants")).toBeFalsy();
   }));
 
   it("should add the given relevantValue to the form control of the relevant property", fakeAsync(() => {
