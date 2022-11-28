@@ -1,0 +1,12 @@
+<app-list-filter
+  *ngFor="let filter of filterSelections"
+  [filterConfig]="filter.filterSettings"
+  [(selectedOption)]="filter.selectedOption"
+  [displayAsToggle]="filter.display !== 'dropdown'"
+  (selectedOptionChange)="filterOptionSelected(filter, $event)"
+  angulartics2On="click"
+  [angularticsCategory]="entityType?.ENTITY_TYPE"
+  [angularticsAction]="'filter_' + urlPath"
+  [angularticsLabel]="filter.filterSettings.label"
+>
+</app-list-filter>

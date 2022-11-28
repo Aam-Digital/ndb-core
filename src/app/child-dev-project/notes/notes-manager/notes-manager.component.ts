@@ -16,6 +16,7 @@ import { WarningLevel } from "../../../core/entity/model/warning-level";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 import { merge } from "rxjs";
 import { RouteTarget } from "../../../app.routing";
+import moment from "moment";
 
 /**
  * additional config specifically for NotesManagerComponent
@@ -49,30 +50,30 @@ export class NotesManagerComponent implements OnInit {
     {
       key: "urgent",
       label: $localize`:Filter-option for notes:Urgent`,
-      filterFun: (n: Note) => n.getWarningLevel() === WarningLevel.URGENT,
+      filter: { "warningLevel.id": WarningLevel.URGENT },
     },
     {
       key: "follow-up",
       label: $localize`:Filter-option for notes:Needs Follow-Up`,
-      filterFun: (n: Note) =>
-        n.getWarningLevel() === WarningLevel.URGENT ||
-        n.getWarningLevel() === WarningLevel.WARNING,
+      filter: {
+        "warningLevel.id": { $in: [WarningLevel.URGENT, WarningLevel.WARNING] },
+      },
     },
-    { key: "", label: $localize`All`, filterFun: () => true },
+    { key: "", label: $localize`All`, filter: {} },
   ];
 
   private dateFS: FilterSelectionOption<Note>[] = [
     {
       key: "current-week",
       label: $localize`:Filter-option for notes:This Week`,
-      filterFun: (n: Note) => n.date > this.getPreviousSunday(0),
+      filter: { date: this.getWeeksFilter(0) },
     },
     {
       key: "last-week",
       label: $localize`:Filter-option for notes:Since Last Week`,
-      filterFun: (n: Note) => n.date > this.getPreviousSunday(1),
+      filter: { date: this.getWeeksFilter(1) },
     },
-    { key: "", label: $localize`All`, filterFun: () => true },
+    { key: "", label: $localize`All`, filter: {} },
   ];
 
   constructor(
@@ -157,11 +158,12 @@ export class NotesManagerComponent implements OnInit {
     }
   }
 
-  private getPreviousSunday(weeksBack: number) {
-    const today = new Date();
-    const day = today.getDay();
-    const diff = today.getDate() - day - 7 * weeksBack; // adjust when day is sunday
-    return new Date(today.setDate(diff));
+  private getWeeksFilter(weeksBack: number) {
+    const start = moment().subtract(weeksBack, "weeks").startOf("week");
+    const end = moment().endOf("day");
+    const startString = start.format("YYYY-MM-DD");
+    const endString = end.format("YYYY-MM-DD");
+    return { $gte: startString, $lte: endString };
   }
 
   addNoteClick() {

@@ -16,7 +16,6 @@
  */
 
 import { Injectable, NgModule } from "@angular/core";
-import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
 import { ChildrenModule } from "../children/children.module";
 import { MatButtonModule } from "@angular/material/button";
 import { CommonModule } from "@angular/common";
@@ -70,6 +69,7 @@ import * as Hammer from "hammerjs";
 import { TabStateModule } from "../../utils/tab-state/tab-state.module";
 import { CommonComponentsModule } from "../../core/common-components/common-components.module";
 import { MatDialogModule } from "@angular/material/dialog";
+import { FilterModule } from "../../core/filter/filter.module";
 
 @Injectable()
 // Only allow horizontal swiping
@@ -101,7 +101,6 @@ export class HorizontalHammerConfig extends HammerGestureConfig {
     RollCallTabComponent,
   ],
   imports: [
-    EntityListModule,
     ChildrenModule,
     MatButtonModule,
     CommonModule,
@@ -134,6 +133,7 @@ export class HorizontalHammerConfig extends HammerGestureConfig {
     TabStateModule,
     CommonComponentsModule,
     MatDialogModule,
+    FilterModule,
   ],
   exports: [
     ActivityCardComponent,

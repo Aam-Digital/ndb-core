@@ -34,6 +34,8 @@ import {
 } from "../../../../utils/media/screen-size-observer.service";
 import { Subscription } from "rxjs";
 import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
+import { ColumnConfig, DataFilter } from "./entity-subrecord-config";
+import { FilterService } from "../../../filter/filter.service";
 
 export interface TableRow<T extends Entity> {
   record: T;
@@ -65,7 +67,7 @@ export class EntitySubrecordComponent<T extends Entity>
   @Input() isLoading: boolean;
 
   /** configuration what kind of columns to be generated for the table */
-  @Input() set columns(columns: (FormFieldConfig | string)[]) {
+  @Input() set columns(columns: ColumnConfig[]) {
     this._columns = columns.map((col) => {
       if (typeof col === "string") {
         return { id: col };
@@ -75,6 +77,7 @@ export class EntitySubrecordComponent<T extends Entity>
     });
     this.filteredColumns = this._columns.filter((col) => !col.hideFromTable);
   }
+
   _columns: FormFieldConfig[] = [];
   filteredColumns: FormFieldConfig[] = [];
 
@@ -82,16 +85,13 @@ export class EntitySubrecordComponent<T extends Entity>
   @Input()
   set records(value: T[]) {
     this._records = value;
-    this.recordsDataSource.data = this._records.map((rec) => {
-      return {
-        record: rec,
-      };
-    });
+    this.initDataSource();
     if (!this.newRecordFactory && this._records.length > 0) {
       this.newRecordFactory = () =>
         new (this._records[0].getConstructor() as EntityConstructor<T>)();
     }
   }
+
   private _records: T[] = [];
 
   @Output() recordsChange = new EventEmitter<T[]>();
@@ -136,6 +136,20 @@ export class EntitySubrecordComponent<T extends Entity>
    */
   @Input() showEntity?: (entity: T) => void = this.showRowDetails;
 
+  /**
+   * Adds a filter for the displayed data.
+   * Only data, that passes the filter will be shown in the table.
+   * @param filter a valid MongoDB Query
+   */
+  @Input() set filter(filter: DataFilter<T>) {
+    if (filter) {
+      this.predicate = this.filterService.getFilterPredicate(filter);
+      this.initDataSource();
+    }
+  }
+
+  private predicate: (entity: T) => boolean = () => true;
+
   constructor(
     private alertService: AlertService,
     private screenWidthObserver: ScreenWidthObserver,
@@ -144,7 +158,8 @@ export class EntitySubrecordComponent<T extends Entity>
     private analyticsService: AnalyticsService,
     private loggingService: LoggingService,
     private entityRemoveService: EntityRemoveService,
-    private entityMapper: EntityMapperService
+    private entityMapper: EntityMapperService,
+    private filterService: FilterService
   ) {
     this.mediaSubscription = this.screenWidthObserver
       .shared()
@@ -157,6 +172,12 @@ export class EntitySubrecordComponent<T extends Entity>
 
   /** function returns the background color for each row*/
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
+
+  private initDataSource() {
+    this.recordsDataSource.data = this._records
+      .filter(this.predicate)
+      .map((record) => ({ record }));
+  }
 
   ngOnInit() {
     if (this.entityConstructorIsAvailable()) {
@@ -172,6 +193,7 @@ export class EntitySubrecordComponent<T extends Entity>
             type === "update" &&
             !this._records.find((rec) => rec.getId() === entity.getId())
           ) {
+            // TODO maybe doc does not pass filter anymore -> remove
             this.addToTable(entity);
           }
         });

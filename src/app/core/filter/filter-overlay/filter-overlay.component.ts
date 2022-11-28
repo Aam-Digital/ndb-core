@@ -1,7 +1,7 @@
 import { Component, Inject } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { FilterComponentSettings } from "../filter-component.settings";
-import { Entity } from "../../../entity/model/entity";
+import { FilterComponentSettings } from "../../entity-components/entity-list/filter-component.settings";
+import { Entity } from "../../entity/model/entity";
 
 export interface FilterOverlayData<T extends Entity> {
   filterSelections: FilterComponentSettings<T>[];
