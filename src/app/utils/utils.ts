@@ -4,6 +4,7 @@
  */
 import { Router } from "@angular/router";
 import { ConfigurableEnumValue } from "../core/configurable-enum/configurable-enum.interface";
+import { FactoryProvider, Injector } from "@angular/core";
 
 export function isValidDate(date: any): boolean {
   return (
@@ -135,4 +136,22 @@ export function addAlphaToHexColor(color, opacity) {
   // coerce values so ti is between 0 and 1.
   var _opacity = Math.round(Math.min(Math.max(opacity || 1, 0), 1) * 255);
   return color + _opacity.toString(16).toUpperCase();
+}
+
+/**
+ * This is a simple shorthand function to create factories for services.
+ * The use case is, when multiple services extends the same class and one of these services will be provided.
+ * @param service the token for which a service is provided
+ * @param factory factory which returns a subtype of class
+ */
+export function serviceProvider<T>(
+  // Allow abstract or normal classes as first argument
+  service: { prototype: T } | { new (...args: any[]): T },
+  factory: (injector: Injector) => T
+): FactoryProvider {
+  return {
+    provide: service,
+    useFactory: factory,
+    deps: [Injector],
+  };
 }

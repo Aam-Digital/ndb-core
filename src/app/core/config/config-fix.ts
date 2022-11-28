@@ -168,7 +168,7 @@ export const defaultJsonConfig = {
           }
         },
         {
-          "component": "ChildrenCountDashboard"
+          "component": "EntityCountDashboard"
         },
         {
           "component": "ImportantNotesDashboard",
@@ -470,9 +470,10 @@ export const defaultJsonConfig = {
           "id": "name"
         },
         {
-          "view": "DisplayText",
+          "view": "DisplayAge",
           "label": $localize`:Column label for age of child:Age`,
-          "id": "age"
+          "id": "age",
+          "additional": "dateOfBirth"
         },
         {
           "view": "DisplayText",
@@ -562,7 +563,8 @@ export const defaultJsonConfig = {
               "health_lastDentalCheckup",
               "gender",
               "age",
-              "dateOfBirth"
+              "dateOfBirth",
+              "birth_certificate"
             ]
           },
           {
@@ -619,6 +621,7 @@ export const defaultJsonConfig = {
                   ],
                   [
                     "dateOfBirth",
+                    "birth_certificate",
                     "gender",
                     "motherTongue"
                   ],
@@ -627,7 +630,7 @@ export const defaultJsonConfig = {
                     "status",
                     "address",
                     "phone"
-                  ],
+                  ]
                 ],
                 "headers": [
                   null,
@@ -699,7 +702,7 @@ export const defaultJsonConfig = {
           "components": [
             {
               "title": "",
-              "component": "NotesOfChild"
+              "component": "NotesRelatedToEntity"
             }
           ]
         },
@@ -991,6 +994,13 @@ export const defaultJsonConfig = {
           label: $localize`:Label for a child attribute:Last Dental Check-Up`
         }
       },
+      {
+        "name": "birth_certificate",
+        "schema": {
+          dataType: "file",
+          label: $localize`:Label for a child attribute:Birth certificate`
+        }
+      }
     ]
   },
   "entity:School": {

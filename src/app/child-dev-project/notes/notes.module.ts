@@ -43,7 +43,7 @@ import { NoteAttendanceCountBlockComponent } from "./note-attendance-block/note-
 import { MatMenuModule } from "@angular/material/menu";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { NotesDashboardComponent } from "./dashboard-widgets/notes-dashboard/notes-dashboard.component";
-import { NotesOfChildComponent } from "./notes-of-child/notes-of-child.component";
+import { NotesRelatedToEntityComponent } from "./notes-related-to-entity/notes-related-to-entity.component";
 import { DashboardModule } from "../../core/dashboard/dashboard.module";
 import { ExportModule } from "../../core/export/export.module";
 import { CommonComponentsModule } from "../../core/common-components/common-components.module";
@@ -56,7 +56,7 @@ import { ImportantNotesDashboardComponent } from "./dashboard-widgets/important-
     ChildMeetingNoteAttendanceComponent,
     NoteAttendanceCountBlockComponent,
     NotesDashboardComponent,
-    NotesOfChildComponent,
+    NotesRelatedToEntityComponent,
     ImportantNotesDashboardComponent,
   ],
   imports: [
@@ -115,7 +115,7 @@ export class NotesModule {
     NotesManagerComponent,
     NoteAttendanceCountBlockComponent,
     NotesDashboardComponent,
-    NotesOfChildComponent,
+    NotesRelatedToEntityComponent,
     ImportantNotesDashboardComponent,
   ];
 }

@@ -25,7 +25,11 @@ describe("EditTextWithAutocompleteComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [EditTextWithAutocompleteComponent],
-      imports: [EntityUtilsModule, MockedTestingModule.withState(), FontAwesomeTestingModule],
+      imports: [
+        EntityUtilsModule,
+        MockedTestingModule.withState(),
+        FontAwesomeTestingModule,
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EditTextWithAutocompleteComponent);
@@ -157,6 +161,7 @@ describe("EditTextWithAutocompleteComponent", () => {
       formFieldConfig: res,
       formControl: component.formControl,
       propertySchema: RecurringActivity.schema.get("title"),
+      entity: new RecurringActivity(),
     });
   }
 });
