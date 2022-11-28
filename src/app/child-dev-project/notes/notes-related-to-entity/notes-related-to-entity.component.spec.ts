@@ -75,10 +75,14 @@ describe("NotesRelatedToEntityComponent", () => {
     // adding a note for a User does not make that User an author of the note!
     expect(note.authors).toEqual([TEST_USER]);
 
-    entity = new ChildSchoolRelation();
-    component.onInitFromDynamicConfig({ entity });
+    const csrEntity = new ChildSchoolRelation();
+    csrEntity.schoolId = "1";
+    csrEntity.childId = "x";
+    component.onInitFromDynamicConfig({ entity: csrEntity });
     note = component.generateNewRecordFactory()();
-    expect(note.relatedEntities).toEqual([entity.getId(true)]);
+    expect(note.relatedEntities).toEqual([csrEntity.getId(true)]);
+    expect(note.children).toEqual([csrEntity.childId]);
+    expect(note.schools).toEqual([csrEntity.schoolId]);
   });
 
   it("should sort notes by date", fakeAsync(() => {

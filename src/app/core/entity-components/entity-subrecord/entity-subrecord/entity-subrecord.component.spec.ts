@@ -32,6 +32,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { ScreenWidthObserver } from "../../../../utils/media/screen-size-observer.service";
 import { WINDOW_TOKEN } from "../../../../utils/di-tokens";
 import { MediaModule } from "../../../../utils/media/media.module";
+import { DateWithAge } from "../../../../child-dev-project/children/model/dateWithAge";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -341,11 +342,11 @@ describe("EntitySubrecordComponent", () => {
 
   it("should filter data based on filter definition", () => {
     const c1 = Child.create("Matching");
-    c1.dateOfBirth = moment().subtract(1, "years").toDate();
+    c1.dateOfBirth = new DateWithAge(moment().subtract(1, "years").toDate());
     const c2 = Child.create("Not Matching");
-    c2.dateOfBirth = moment().subtract(2, "years").toDate();
+    c2.dateOfBirth = new DateWithAge(moment().subtract(2, "years").toDate());
     const c3 = Child.create("Matching");
-    c3.dateOfBirth = moment().subtract(3, "years").toDate();
+    c3.dateOfBirth = new DateWithAge(moment().subtract(3, "years").toDate());
     // get type-safety for filters
     const childComponent = component as EntitySubrecordComponent<Child>;
     childComponent.records = [c1, c2, c3];
@@ -357,12 +358,15 @@ describe("EntitySubrecordComponent", () => {
       { record: c3 },
     ]);
 
-    childComponent.filter = { name: "Matching", age: { $gte: 2 } };
+    childComponent.filter = {
+      name: "Matching",
+      "dateOfBirth.age": { $gte: 2 },
+    } as any;
 
     expect(childComponent.recordsDataSource.data).toEqual([{ record: c3 }]);
 
     const c4 = Child.create("Matching");
-    c4.dateOfBirth = moment().subtract(4, "years").toDate();
+    c4.dateOfBirth = new DateWithAge(moment().subtract(4, "years").toDate());
     const c5 = Child.create("Not Matching");
 
     childComponent.records = [c1, c2, c3, c4, c5];
