@@ -5,7 +5,6 @@ import { TemplateTooltipComponent } from "./template-tooltip/template-tooltip.co
 import { BorderHighlightDirective } from "./border-highlight/border-highlight.directive";
 import { PillComponent } from "./pill/pill.component";
 import { DialogCloseComponent } from "./dialog-close/dialog-close.component";
-import { AddNewButtonComponent } from "./add-new-button/add-new-button.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 
@@ -16,7 +15,6 @@ import { MatButtonModule } from "@angular/material/button";
     BorderHighlightDirective,
     PillComponent,
     DialogCloseComponent,
-    AddNewButtonComponent,
   ],
   imports: [CommonModule, FontAwesomeModule, MatButtonModule],
   exports: [
@@ -24,7 +22,6 @@ import { MatButtonModule } from "@angular/material/button";
     BorderHighlightDirective,
     PillComponent,
     DialogCloseComponent,
-    AddNewButtonComponent,
   ],
 })
 export class CommonComponentsModule {}
