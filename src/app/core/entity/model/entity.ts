@@ -225,8 +225,8 @@ export class Entity {
   /**
    * Get the class (Entity or the actual subclass of the instance) to call static methods on the correct class considering inheritance
    */
-  getConstructor(): EntityConstructor {
-    return <typeof Entity>this.constructor;
+  getConstructor<T extends Entity>(this: T): EntityConstructor<T> {
+    return this.constructor as EntityConstructor<T>;
   }
 
   /**

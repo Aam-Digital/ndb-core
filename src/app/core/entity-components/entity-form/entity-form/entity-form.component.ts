@@ -11,6 +11,9 @@ import { FormFieldConfig } from "./FormConfig";
 import { EntityForm, EntityFormService } from "../entity-form.service";
 import { AlertService } from "../../../alerts/alert.service";
 import { InvalidFormFieldError } from "../invalid-form-field.error";
+import { EntityMapperService } from "../../../entity/entity-mapper.service";
+import { filter } from "rxjs/operators";
+import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 
 /**
  * A general purpose form component for displaying and editing entities.
@@ -72,15 +75,39 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
 
   form: EntityForm<T>;
 
+  private saveInProgress = false;
+
   constructor(
     private entityFormService: EntityFormService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private entityMapper: EntityMapperService,
+    private confirmationDialog: ConfirmationDialogService
   ) {}
 
   ngOnInit() {
     this.buildFormConfig();
     if (this.editing) {
       this.switchEdit();
+    }
+    this.entityMapper
+      .receiveUpdates(this.entity.getConstructor())
+      .pipe(filter(({ entity }) => entity.getId() === this.entity.getId()))
+      .subscribe(({ entity }) => this.applyChanges(entity));
+  }
+
+  private async applyChanges(entity) {
+    if (this.saveInProgress) {
+      // this is the component that currently saves the values -> no need to apply changes.
+      return;
+    }
+    if (
+      this.form.pristine ||
+      (await this.confirmationDialog.getConfirmation(
+        $localize`Load changes?`,
+        $localize`Local changes are in conflict with updated values synced from the server. Do you want the local changes to be overwritten with the latest values?`
+      ))
+    ) {
+      this.buildFormConfig(entity);
     }
   }
 
@@ -93,6 +120,7 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
   }
 
   async saveForm(): Promise<void> {
+    this.saveInProgress = true;
     try {
       await this.entityFormService.saveChanges(this.form, this.entity);
       this.save.emit(this.entity);
@@ -102,6 +130,7 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
         this.alertService.addDanger(err.message);
       }
     }
+    this.saveInProgress = false;
   }
 
   cancelClicked() {
@@ -109,17 +138,17 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
     this.buildFormConfig();
   }
 
-  private buildFormConfig() {
+  private buildFormConfig(entity = this.entity) {
     const flattenedFormFields = new Array<FormFieldConfig>().concat(
       ...this._columns
     );
     this.entityFormService.extendFormFieldConfig(
       flattenedFormFields,
-      this.entity.getConstructor()
+      entity.getConstructor()
     );
     this.form = this.entityFormService.createFormGroup(
       flattenedFormFields,
-      this.entity
+      entity
     );
     this.form.disable();
   }
