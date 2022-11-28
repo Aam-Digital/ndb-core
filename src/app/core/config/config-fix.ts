@@ -684,7 +684,7 @@ export const defaultJsonConfig = {
           "components": [
             {
               "title": "",
-              "component": "NotesOfChild"
+              "component": "NotesRelatedToEntity"
             }
           ]
         },

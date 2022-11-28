@@ -1,4 +1,4 @@
-import { NotesOfChildComponent } from "./notes-of-child.component";
+import { NotesRelatedToEntityComponent } from "./notes-related-to-entity.component";
 import {
   ComponentFixture,
   fakeAsync,
@@ -13,22 +13,21 @@ import {
   MockedTestingModule,
   TEST_USER,
 } from "../../../utils/mocked-testing.module";
-import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
-import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { Entity } from "../../../core/entity/model/entity";
 import { School } from "../../schools/model/school";
 import { User } from "../../../core/user/user";
 import moment from "moment";
+import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 
-describe("NotesOfChildComponent", () => {
-  let component: NotesOfChildComponent;
-  let fixture: ComponentFixture<NotesOfChildComponent>;
+describe("NotesRelatedToEntityComponent", () => {
+  let component: NotesRelatedToEntityComponent;
+  let fixture: ComponentFixture<NotesRelatedToEntityComponent>;
 
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
 
   beforeEach(() => {
-    mockChildrenService = jasmine.createSpyObj(["getNotesOf"]);
-    mockChildrenService.getNotesOf.and.resolveTo([]);
+    mockChildrenService = jasmine.createSpyObj(["getNotesRelatedTo"]);
+    mockChildrenService.getNotesRelatedTo.and.resolveTo([]);
     TestBed.configureTestingModule({
       imports: [NotesModule, MockedTestingModule.withState()],
       providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
@@ -36,7 +35,7 @@ describe("NotesOfChildComponent", () => {
   });
 
   beforeEach(async () => {
-    fixture = TestBed.createComponent(NotesOfChildComponent);
+    fixture = TestBed.createComponent(NotesRelatedToEntityComponent);
     component = fixture.componentInstance;
     component.onInitFromDynamicConfig({ entity: new Child("1") });
     fixture.detectChanges();
@@ -44,11 +43,6 @@ describe("NotesOfChildComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
-  });
-
-  it("should throw an error when a invalid entity is passed", () => {
-    const config: PanelConfig = { entity: new ChildSchoolRelation() };
-    expect(() => component.onInitFromDynamicConfig(config)).toThrowError();
   });
 
   it("should use the attendance color function when passing a child", () => {
@@ -78,7 +72,13 @@ describe("NotesOfChildComponent", () => {
     entity = new User();
     component.onInitFromDynamicConfig({ entity });
     note = component.generateNewRecordFactory()();
-    expect(note.authors).toEqual([entity.getId(), TEST_USER]);
+    // adding a note for a User does not make that User an author of the note!
+    expect(note.authors).toEqual([TEST_USER]);
+
+    entity = new ChildSchoolRelation();
+    component.onInitFromDynamicConfig({ entity });
+    note = component.generateNewRecordFactory()();
+    expect(note.relatedEntities).toEqual([entity.getId(true)]);
   });
 
   it("should sort notes by date", fakeAsync(() => {
@@ -88,11 +88,14 @@ describe("NotesOfChildComponent", () => {
     n2.date = moment().subtract(1, "day").toDate();
     const n3 = new Note();
     n3.date = moment().subtract(2, "days").toDate();
-    mockChildrenService.getNotesOf.and.resolveTo([n3, n2, n1]);
+    mockChildrenService.getNotesRelatedTo.and.resolveTo([n3, n2, n1]);
 
     component.onInitFromDynamicConfig({ entity: new Child() });
     tick();
 
+    expect(mockChildrenService.getNotesRelatedTo).toHaveBeenCalledWith(
+      component.entity.getId(true)
+    );
     expect(component.records).toEqual([n1, n2, n3]);
   }));
 });
