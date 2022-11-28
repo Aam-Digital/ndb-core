@@ -6,13 +6,18 @@ import moment from "moment";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
-import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { Entity } from "../../../core/entity/model/entity";
 import { Child } from "../../children/model/child";
 import { School } from "../../schools/model/school";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
+import {
+  ColumnConfig,
+  DataFilter,
+  EntitySubrecordConfig,
+} from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { FilterService } from "../../../core/filter/filter.service";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain entity.
@@ -30,13 +35,14 @@ export class NotesRelatedToEntityComponent
   @Input() entity: Entity;
   records: Array<Note> = [];
 
-  columns: FormFieldConfig[] = [
+  columns: ColumnConfig[] = [
     { id: "date", visibleFrom: "xs" },
     { id: "subject", visibleFrom: "xs" },
     { id: "text", visibleFrom: "md" },
     { id: "authors", visibleFrom: "md" },
     { id: "warningLevel", visibleFrom: "md" },
   ];
+  filter: DataFilter<Note> = {};
 
   /**
    * returns the color for a note; passed to the entity subrecord component
@@ -48,7 +54,8 @@ export class NotesRelatedToEntityComponent
   constructor(
     private childrenService: ChildrenService,
     private sessionService: SessionService,
-    private formDialog: FormDialogService
+    private formDialog: FormDialogService,
+    private filterService: FilterService
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -57,9 +64,12 @@ export class NotesRelatedToEntityComponent
     }
   }
 
-  onInitFromDynamicConfig(config: PanelConfig) {
+  onInitFromDynamicConfig(config: PanelConfig<EntitySubrecordConfig<Note>>) {
     if (config?.config?.columns) {
       this.columns = config.config.columns;
+    }
+    if (config?.config?.filter) {
+      this.filter = config.config.filter;
     }
 
     this.entity = config.entity;
@@ -112,6 +122,8 @@ export class NotesRelatedToEntityComponent
         // TODO: should we keep authors completely separate of also add them into the relatedEntities as well?
         newNote.authors.push(user);
       }
+
+      this.filterService.alignEntityWithFilter(newNote, this.filter);
 
       return newNote;
     };

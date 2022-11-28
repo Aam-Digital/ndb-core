@@ -15,6 +15,9 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { DataFilter } from "../../entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { Entity } from "../../entity/model/entity";
+
 /**
  * Generic configuration for a filter with different selectable {@link FilterSelectionOption} options.
  *
@@ -23,7 +26,7 @@
  * As the filter function is provided as part of each {@link FilterSelectionOption}
  * an instance of this FilterSelection class can manage all filter selection logic.
  */
-export class FilterSelection<T> {
+export class FilterSelection<T extends Entity> {
   /**
    * Generate filter options dynamically from the given value to be matched.
    *
@@ -37,7 +40,7 @@ export class FilterSelection<T> {
    *        that is true of a data item's property exactly matches that value.
    * @param attributeName The name of the property of a data item that is compared to the value in the filter function.
    */
-  public static generateOptions<TT>(
+  public static generateOptions<TT extends Entity>(
     valuesToMatchAsOptions: string[],
     attributeName: string
   ): FilterSelectionOption<TT>[] {
@@ -45,7 +48,7 @@ export class FilterSelection<T> {
       {
         key: "",
         label: $localize`:generic filter option showing all entries:All`,
-        filterFun: (e: TT) => true,
+        filter: {} as DataFilter<TT>,
       },
     ];
 
@@ -54,7 +57,7 @@ export class FilterSelection<T> {
         options.push({
           key: k.toLowerCase(),
           label: k.toString(),
-          filterFun: (e: TT) => e[attributeName] === k,
+          filter: { [attributeName]: k } as DataFilter<TT>,
         });
       }
     });
@@ -76,7 +79,7 @@ export class FilterSelection<T> {
   ) {}
 
   /** default filter will keep all items in the result */
-  defaultFilterFunction = (c: T) => true;
+  defaultFilter = {};
 
   /**
    * Get the full filter option by its key.
@@ -87,18 +90,16 @@ export class FilterSelection<T> {
   }
 
   /**
-   * Get the filter function for the given option.
-   * If the given key is undefined or invalid, the returned filter function will keep all items in the result if applied.
-   *
-   * This can be directly used on a data array, e.g. "data.filter(filterSelection.getFilterFunction('a'))"
+   * Get the filter query for the given option.
+   * If the given key is undefined or invalid, the returned filter matches any elements.
    */
-  public getFilterFunction(key: string) {
+  public getFilter(key: string): DataFilter<T> {
     const option = this.getOption(key);
 
     if (!option) {
-      return this.defaultFilterFunction;
+      return this.defaultFilter as DataFilter<T>;
     } else {
-      return option.filterFun;
+      return option.filter;
     }
   }
 }
@@ -107,7 +108,7 @@ export class FilterSelection<T> {
  * Represents one specific option to filter data in a certain way.
  * used by {@link FilterSelection}
  */
-export interface FilterSelectionOption<T> {
+export interface FilterSelectionOption<T extends Entity> {
   /** identifier for this option in the parent FilterSelection instance */
   key: string;
 
@@ -118,8 +119,9 @@ export interface FilterSelectionOption<T> {
   color?: string;
 
   /**
-   * function that filters a dataset.
-   * This filter logic will be applied to data when this option is selected.
+   * The filter query which should be used if this filter is selected
+   *
+   * TODO type safety is not yet given -> any should be removed
    */
-  filterFun: (c: T) => boolean;
+  filter: DataFilter<T> | any;
 }

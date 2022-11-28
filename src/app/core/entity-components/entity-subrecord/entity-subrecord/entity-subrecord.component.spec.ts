@@ -338,4 +338,38 @@ describe("EntitySubrecordComponent", () => {
     component.records = [new Note()];
     expect(component.getEntityConstructor()).toEqual(Note);
   });
+
+  it("should filter data based on filter definition", () => {
+    const c1 = Child.create("Matching");
+    c1.dateOfBirth = moment().subtract(1, "years").toDate();
+    const c2 = Child.create("Not Matching");
+    c2.dateOfBirth = moment().subtract(2, "years").toDate();
+    const c3 = Child.create("Matching");
+    c3.dateOfBirth = moment().subtract(3, "years").toDate();
+    // get type-safety for filters
+    const childComponent = component as EntitySubrecordComponent<Child>;
+    childComponent.records = [c1, c2, c3];
+
+    childComponent.filter = { name: "Matching" };
+
+    expect(childComponent.recordsDataSource.data).toEqual([
+      { record: c1 },
+      { record: c3 },
+    ]);
+
+    childComponent.filter = { name: "Matching", age: { $gte: 2 } };
+
+    expect(childComponent.recordsDataSource.data).toEqual([{ record: c3 }]);
+
+    const c4 = Child.create("Matching");
+    c4.dateOfBirth = moment().subtract(4, "years").toDate();
+    const c5 = Child.create("Not Matching");
+
+    childComponent.records = [c1, c2, c3, c4, c5];
+
+    expect(childComponent.recordsDataSource.data).toEqual([
+      { record: c3 },
+      { record: c4 },
+    ]);
+  });
 });

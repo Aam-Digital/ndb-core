@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { FilterSelection } from "../../../filter/filter-selection/filter-selection";
-import { Entity } from "../../../entity/model/entity";
+import { FilterSelection } from "../filter-selection/filter-selection";
+import { Entity } from "../../entity/model/entity";
 
 @Component({
   selector: "app-list-filter",
