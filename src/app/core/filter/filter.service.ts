@@ -13,7 +13,7 @@ import {
 import moment from "moment";
 
 /**
- * This server handles the filter objects.
+ * Utility service to help handling and aligning filters with entities.
  */
 @Injectable({
   providedIn: "root",
