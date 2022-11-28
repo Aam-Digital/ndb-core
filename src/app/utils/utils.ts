@@ -4,6 +4,7 @@
  */
 import { Router } from "@angular/router";
 import { ConfigurableEnumValue } from "../core/configurable-enum/configurable-enum.interface";
+import { FactoryProvider, Injector } from "@angular/core";
 
 export function isValidDate(date: any): boolean {
   return (
@@ -129,4 +130,22 @@ export function parseJwt(token): {
   );
 
   return JSON.parse(jsonPayload);
+}
+
+/**
+ * This is a simple shorthand function to create factories for services.
+ * The use case is, when multiple services extends the same class and one of these services will be provided.
+ * @param service the token for which a service is provided
+ * @param factory factory which returns a subtype of class
+ */
+export function serviceProvider<T>(
+  // Allow abstract or normal classes as first argument
+  service: { prototype: T } | { new (...args: any[]): T },
+  factory: (injector: Injector) => T
+): FactoryProvider {
+  return {
+    provide: service,
+    useFactory: factory,
+    deps: [Injector],
+  };
 }

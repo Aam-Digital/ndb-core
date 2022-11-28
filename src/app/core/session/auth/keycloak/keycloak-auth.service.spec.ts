@@ -149,7 +149,16 @@ describe("KeycloakAuthService", () => {
 
   it("should not login, given that there is no valid refresh token", () => {
     mockHttpClient.post.and.returnValue(
-      throwError(() => new HttpErrorResponse({}))
+      throwError(
+        () =>
+          new HttpErrorResponse({
+            status: 400,
+            error: {
+              error: "invalid_grant",
+              error_description: "Token is not active",
+            },
+          })
+      )
     );
     return expectAsync(service.autoLogin()).toBeRejected();
   });
