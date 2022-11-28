@@ -13,6 +13,7 @@ import {
 } from "./matching-entities-config";
 import { DataFilter } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { FilterConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
+import { RouteTarget } from "../../../app.routing";
 
 interface MatchingSide {
   entityType: EntityConstructor;
@@ -23,6 +24,7 @@ interface MatchingSide {
   selectMatch: (e: Entity) => void;
 }
 
+@RouteTarget("MatchingEntities")
 @DynamicComponent("MatchingEntities")
 @Component({
   selector: "app-matching-entities",
@@ -92,11 +94,11 @@ export class MatchingEntitiesComponent
     this.rightEntityType = config.config.rightEntityType;
     this.rightFilters = config.config.rightFilters;
 
-    if (config.config.leftEntityType) {
-      this.rightEntitySelected = config.entity;
-    }
-    if (config.config.rightEntityType) {
+    if (!config.config.leftEntityType) {
       this.leftEntitySelected = config.entity;
+    }
+    if (!config.config.rightEntityType) {
+      this.rightEntitySelected = config.entity;
     }
   }
 
@@ -156,11 +158,12 @@ export class MatchingEntitiesComponent
     newMatchEntity[this.onMatch.newEntityMatchPropertyRight] =
       selectedR.getId(false);
 
+    // best guess properties (if they do not exist on the specific entity, the values will be discarded during save
+    newMatchEntity["date"] = new Date();
     newMatchEntity["name"] = `${
       newMatchEntity.getConstructor().label
     } ${selectedL.toString()} - ${selectedR.toString()}`;
 
     await this.entityMapper.save(newMatchEntity);
-    console.log(newMatchEntity);
   }
 }
