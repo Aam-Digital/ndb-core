@@ -7,15 +7,15 @@ import {
 
 import { EditFileComponent } from "./edit-file.component";
 import { FileModule } from "../file.module";
-import { AlertService } from "../../alerts/alert.service";
-import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
+import { AlertService } from "../../../core/alerts/alert.service";
+import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 import { FormControl } from "@angular/forms";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { of, throwError } from "rxjs";
 import { Entity } from "app/core/entity/model/entity";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FileService } from "../file.service";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 
 describe("EditFileComponent", () => {
   let component: EditFileComponent;

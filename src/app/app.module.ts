@@ -87,7 +87,7 @@ import {
   DATE_FORMATS,
   DateAdapterWithFormatting,
 } from "./core/language/date-adapter-with-formatting";
-import { FileModule } from "./core/file/file.module";
+import { FileModule } from "./features/file/file.module";
 import { ConfigSetupModule } from "./core/config-setup/config-setup.module";
 
 /**

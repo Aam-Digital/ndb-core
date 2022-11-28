@@ -7,7 +7,7 @@ import {
   HttpResponse,
   HttpStatusCode,
 } from "@angular/common/http";
-import { AppSettings } from "../app-config/app-settings";
+import { AppSettings } from "../../core/app-config/app-settings";
 import {
   catchError,
   concatMap,
@@ -19,13 +19,13 @@ import {
 import { Observable, of } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
 import { ShowFileComponent } from "./show-file/show-file.component";
-import { Entity } from "../entity/model/entity";
-import { EntityMapperService } from "../entity/entity-mapper.service";
+import { Entity } from "../../core/entity/model/entity";
+import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { FileService } from "./file.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ProgressComponent } from "./progress/progress.component";
-import { EntityRegistry } from "../entity/database-entity.decorator";
-import { LoggingService } from "../logging/logging.service";
+import { EntityRegistry } from "../../core/entity/database-entity.decorator";
+import { LoggingService } from "../../core/logging/logging.service";
 
 /**
  * Stores the files in the CouchDB.

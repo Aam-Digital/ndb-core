@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
-import { Entity } from "../entity/model/entity";
+import { Entity } from "../../core/entity/model/entity";
 import { EMPTY, Observable, of } from "rxjs";
 import { FileService } from "./file.service";
-import { EntityMapperService } from "../entity/entity-mapper.service";
-import { EntityRegistry } from "../entity/database-entity.decorator";
-import { LoggingService } from "../logging/logging.service";
+import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { EntityRegistry } from "../../core/entity/database-entity.decorator";
+import { LoggingService } from "../../core/logging/logging.service";
 
 /**
  * A mock implementation of the file service which only stores the file temporarily in the browser.

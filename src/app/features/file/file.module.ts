@@ -13,12 +13,12 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatRippleModule } from "@angular/material/core";
 import { ShowFileComponent } from "./show-file/show-file.component";
 import { environment } from "../../../environments/environment";
-import { SessionType } from "../session/session-type";
+import { SessionType } from "../../core/session/session-type";
 import { FileService } from "./file.service";
 import { MockFileService } from "./mock-file.service";
 import { serviceProvider } from "../../utils/utils";
 import { ProgressComponent } from "./progress/progress.component";
-import { EntitySchemaService } from "../entity/schema/entity-schema.service";
+import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { fileDataType } from "./file-data-type";
 
 @NgModule({

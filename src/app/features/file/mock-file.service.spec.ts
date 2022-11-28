@@ -1,13 +1,13 @@
 import { TestBed } from "@angular/core/testing";
 
 import { MockFileService } from "./mock-file.service";
-import { EntityMapperService } from "../entity/entity-mapper.service";
-import { Entity } from "../entity/model/entity";
+import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { Entity } from "../../core/entity/model/entity";
 import { firstValueFrom, NEVER } from "rxjs";
 import {
   entityRegistry,
   EntityRegistry,
-} from "../entity/database-entity.decorator";
+} from "../../core/entity/database-entity.decorator";
 
 describe("MockFileService", () => {
   let service: MockFileService;

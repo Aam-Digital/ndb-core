@@ -1,9 +1,9 @@
 import { Component, ElementRef, ViewChild } from "@angular/core";
-import { EditComponent } from "../../entity-components/entity-utils/dynamic-form-components/edit-component";
-import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
-import { AlertService } from "../../alerts/alert.service";
-import { LoggingService } from "../../logging/logging.service";
-import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
+import { EditComponent } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
+import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
+import { AlertService } from "../../../core/alerts/alert.service";
+import { LoggingService } from "../../../core/logging/logging.service";
+import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 import { FileService } from "../file.service";
 
 /**

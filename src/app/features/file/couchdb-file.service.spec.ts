@@ -11,16 +11,16 @@ import {
 import { MatDialog } from "@angular/material/dialog";
 import { EMPTY, of, Subject, throwError } from "rxjs";
 import { ShowFileComponent } from "./show-file/show-file.component";
-import { Entity } from "../entity/model/entity";
-import { EntityMapperService } from "../entity/entity-mapper.service";
+import { Entity } from "../../core/entity/model/entity";
+import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { UpdatedEntity } from "../entity/model/entity-update";
+import { UpdatedEntity } from "../../core/entity/model/entity-update";
 import {
   entityRegistry,
   EntityRegistry,
-} from "../entity/database-entity.decorator";
+} from "../../core/entity/database-entity.decorator";
 import { fileDataType } from "./file-data-type";
-import { AppSettings } from "../app-config/app-settings";
+import { AppSettings } from "../../core/app-config/app-settings";
 
 describe("CouchdbFileService", () => {
   let service: CouchdbFileService;

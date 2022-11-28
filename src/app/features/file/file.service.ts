@@ -1,10 +1,10 @@
-import { Entity, EntityConstructor } from "../entity/model/entity";
+import { Entity, EntityConstructor } from "../../core/entity/model/entity";
 import { Observable } from "rxjs";
-import { EntityMapperService } from "../entity/entity-mapper.service";
-import { EntityRegistry } from "../entity/database-entity.decorator";
+import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { fileDataType } from "./file-data-type";
 import { filter } from "rxjs/operators";
-import { LoggingService } from "../logging/logging.service";
+import { LoggingService } from "../../core/logging/logging.service";
 
 /**
  * This service allow handles the logic for files/attachments.

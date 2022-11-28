@@ -4,7 +4,7 @@ import { ViewFileComponent } from "./view-file.component";
 import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatButtonHarness } from "@angular/material/button/testing";
-import { Entity } from "../../entity/model/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { FileService } from "../file.service";
 
 describe("ViewFileComponent", () => {
