@@ -1,41 +1,39 @@
 <app-dashboard-widget
   icon="birthday-cake"
   theme="child"
-  [title]="childrenDataSource.data.length"
+  [title]="dataSource.data.length"
   subtitle="Upcoming Birthdays"
   i18n-subtitle="Subtitle of the birthday widget"
-  explanation="Children whose birthday is soon"
-  i18n-explanation="Tooltip for the birthday widget"
   [loading]="isLoading"
 >
   <app-widget-content>
     <div
-      *ngIf="childrenDataSource.data.length === 0 && !isLoading"
+      *ngIf="dataSource.data.length === 0 && !isLoading"
       class="headline"
     >
       <span i18n="Fallback text if not birtdays are in the specified period">
         no birthdays in the next {{ birthdayThreshold - 1 }} days
       </span>
     </div>
-    <div *ngIf="childrenDataSource.data.length > 0" class="table-wrapper">
-      <table mat-table [dataSource]="childrenDataSource">
+    <div *ngIf="dataSource.data.length > 0" class="table-wrapper">
+      <table mat-table [dataSource]="dataSource">
         <tr hidden="true">
-          <th scope="col">Child Name</th>
+          <th scope="col">Name</th>
           <th scope="col">DateOfBirth</th>
           <th scope="col">AfterBirthdayAge</th>
         </tr>
-        <ng-container matColumnDef="child">
-          <td *matCellDef="let child">
-            <app-display-entity [entityToDisplay]="child.child"></app-display-entity>
+        <ng-container matColumnDef="entity">
+          <td *matCellDef="let entity">
+            <app-display-entity [entityToDisplay]="entity.entity"></app-display-entity>
           </td>
         </ng-container>
         <ng-container matColumnDef="dateOfBirth">
-          <td *matCellDef="let child">{{ child.birthday | date:"E dd.MM" }} </td>
+          <td *matCellDef="let entity">{{ entity.birthday | date:"E dd.MM" }} </td>
         </ng-container>
-        <ng-container matColumnDef="age">
-          <td *matCellDef="let child" i18n>{{child.child?.age + 1}} yrs</td>
+        <ng-container matColumnDef="newAge">
+          <td *matCellDef="let entity" i18n>{{ entity.newAge }} yrs</td>
         </ng-container>
-        <tr mat-row *matRowDef="let row; columns: ['child','dateOfBirth','age'];">
+        <tr mat-row *matRowDef="let row; columns: ['entity','dateOfBirth','newAge'];">
         </tr>
       </table>
     </div>

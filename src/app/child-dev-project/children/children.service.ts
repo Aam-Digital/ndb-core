@@ -167,11 +167,13 @@ export class ChildrenService {
    *
    * Warning: Children without any notes will be missing from this map.
    *
+   * @param entityType (Optional) entity for which days since last note are calculated. Default "Child".
    * @param forLastNDays (Optional) cut-off boundary how many days into the past the analysis will be done.
    * @return A map of childIds as key and days since last note as value;
    *         For performance reasons the days since last note are set to infinity when larger then the forLastNDays parameter
    */
-  public async getDaysSinceLastNoteOfEachChild(
+  public async getDaysSinceLastNoteOfEachEntity(
+    entityType = Child.ENTITY_TYPE,
     forLastNDays: number = 30
   ): Promise<Map<string, number>> {
     const startDay = moment().subtract(forLastNDays, "days");
@@ -179,19 +181,20 @@ export class ChildrenService {
     const notes = await this.getNotesInTimespan(startDay);
 
     const results = new Map();
-    const children = await this.entityMapper.loadType(Child);
-    children
+    const entities = await this.entityMapper.loadType(entityType);
+    entities
       .filter((c) => c.isActive)
       .forEach((c) => results.set(c.getId(), Number.POSITIVE_INFINITY));
 
+    const noteProperty = Note.getPropertyFor(entityType);
     for (const note of notes) {
       // TODO: filter notes to only include them if the given child is marked "present"
 
-      for (const childId of note.children) {
+      for (const entityId of note[noteProperty]) {
         const daysSinceNote = moment().diff(note.date, "days");
-        const previousValue = results.get(childId);
+        const previousValue = results.get(entityId);
         if (previousValue > daysSinceNote) {
-          results.set(childId, daysSinceNote);
+          results.set(entityId, daysSinceNote);
         }
       }
     }
