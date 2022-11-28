@@ -667,9 +667,21 @@ export const defaultJsonConfig = {
               "component": "Aser"
             },
             {
-              title: $localize`:Child details section title:Find suitable school`,
+              title: $localize`:Child details section title:Find a suitable new school`,
               component: "MatchingEntities",
-              config: []
+              config: {
+                columns: [
+                  ["name", "name"],
+                  ["motherTongue", "language"],
+                  ["address", "address"],
+                ],
+                "rightEntityType": School.ENTITY_TYPE,
+                onMatch: {
+                  newEntityType: ChildSchoolRelation.ENTITY_TYPE,
+                  newEntityMatchPropertyLeft: "childId",
+                  newEntityMatchPropertyRight: "schoolId"
+                }
+              }
             }
           ]
         },
@@ -940,6 +952,8 @@ export const defaultJsonConfig = {
   },
 
   "entity:Child": {
+    "label": "Child",
+    "labelPlural": "Children",
     "attributes": [
       {
         "name": "address",

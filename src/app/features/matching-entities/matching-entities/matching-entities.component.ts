@@ -5,8 +5,12 @@ import { Entity, EntityConstructor } from "../../../core/entity/model/entity";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { addAlphaToHexColor } from "../../../utils/utils";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
+import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
+import {
+  MatchingEntitiesConfig,
+  NewMatchAction,
+} from "./matching-entities-config";
 
 interface MatchingSide {
   entityType: EntityConstructor;
@@ -48,6 +52,13 @@ export class MatchingEntitiesComponent
    */
   @Input() columns: string[][];
 
+  @Input() showMap: boolean = false;
+
+  @Input()
+  matchActionLabel: string = $localize`:Matching button label:create matching`;
+
+  @Input() onMatch: NewMatchAction;
+
   @ViewChild("matchComparison", { static: true })
   matchComparisonElement: ElementRef;
 
@@ -58,6 +69,24 @@ export class MatchingEntitiesComponent
   ) {}
 
   // TODO: fill selection on hover already?
+
+  onInitFromDynamicConfig(config: PanelConfig<MatchingEntitiesConfig>) {
+    this.columns = config.config.columns;
+    this.showMap = config.config.showMap ?? this.showMap;
+    this.matchActionLabel =
+      config.config.matchActionLabel ?? this.matchActionLabel;
+    this.onMatch = config.config.onMatch;
+
+    this.leftEntityType = config.config.leftEntityType;
+    this.rightEntityType = config.config.rightEntityType;
+
+    if (config.config.leftEntityType) {
+      this.rightEntitySelected = config.entity;
+    }
+    if (config.config.rightEntityType) {
+      this.leftEntitySelected = config.entity;
+    }
+  }
 
   async ngOnInit() {
     await this.init("left");
@@ -93,8 +122,6 @@ export class MatchingEntitiesComponent
     this.sideDetails[sideIndex] = newSideDetails;
   }
 
-  onInitFromDynamicConfig(config: any) {}
-
   private highlightSelectedRow(newSelectedEntity, previousSelectedEntity) {
     if (previousSelectedEntity) {
       previousSelectedEntity.getColor =
@@ -104,8 +131,23 @@ export class MatchingEntitiesComponent
       addAlphaToHexColor(newSelectedEntity.getConstructor().color, 0.2);
   }
 
-  createMatch() {
-    alert("new relationship entity created");
-    console.log(this);
+  async createMatch() {
+    const newMatchEntity = new (this.entityRegistry.get(
+      this.onMatch.newEntityType
+    ))();
+    const selectedL = this.sideDetails[0].selected;
+    const selectedR = this.sideDetails[1].selected;
+
+    newMatchEntity[this.onMatch.newEntityMatchPropertyLeft] =
+      selectedL.getId(false);
+    newMatchEntity[this.onMatch.newEntityMatchPropertyRight] =
+      selectedR.getId(false);
+
+    newMatchEntity["name"] = `${
+      newMatchEntity.getConstructor().label
+    } ${selectedL.toString()} - ${selectedR.toString()}`;
+
+    await this.entityMapper.save(newMatchEntity);
+    console.log(newMatchEntity);
   }
 }

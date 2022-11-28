@@ -89,6 +89,7 @@ TwoSidedMatching.args = {
   leftEntityType: Child.ENTITY_TYPE,
   rightEntityType: RecurringActivity.ENTITY_TYPE,
   columns: columnsMapping,
+  showMap: true,
 };
 
 export const LeftMatch = Template.bind({});
@@ -96,6 +97,7 @@ LeftMatch.args = {
   leftEntitySelected: entitiesB[0],
   rightEntityType: RecurringActivity.ENTITY_TYPE,
   columns: columnsMapping,
+  showMap: true,
 };
 
 export const RightMatch = Template.bind({});
@@ -103,4 +105,5 @@ RightMatch.args = {
   leftEntityType: Child.ENTITY_TYPE,
   rightEntitySelected: entitiesA[0],
   columns: columnsMapping,
+  showMap: true,
 };
