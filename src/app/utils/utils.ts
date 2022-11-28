@@ -132,6 +132,12 @@ export function parseJwt(token): {
   return JSON.parse(jsonPayload);
 }
 
+export function addAlphaToHexColor(color, opacity) {
+  // coerce values so ti is between 0 and 1.
+  var _opacity = Math.round(Math.min(Math.max(opacity || 1, 0), 1) * 255);
+  return color + _opacity.toString(16).toUpperCase();
+}
+
 /**
  * This is a simple shorthand function to create factories for services.
  * The use case is, when multiple services extends the same class and one of these services will be provided.

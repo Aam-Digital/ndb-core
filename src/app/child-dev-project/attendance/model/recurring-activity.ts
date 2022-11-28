@@ -32,6 +32,7 @@ export class RecurringActivity extends Entity {
   static toStringAttributes = ["title"];
   static label = $localize`:label for entity:Recurring Activity`;
   static labelPlural = $localize`:label (plural) for entity:Recurring Activities`;
+  static color = "#00838F";
 
   static create(title: string = ""): RecurringActivity {
     const instance = new RecurringActivity();

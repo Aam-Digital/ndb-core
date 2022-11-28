@@ -89,6 +89,7 @@ import {
 } from "./core/language/date-adapter-with-formatting";
 import { FileModule } from "./core/file/file.module";
 import { ConfigSetupModule } from "./core/config-setup/config-setup.module";
+import { MatchingEntitiesModule } from "./features/matching-entities/matching-entities.module";
 
 /**
  * Main entry point of the application.
@@ -166,6 +167,7 @@ import { ConfigSetupModule } from "./core/config-setup/config-setup.module";
     HistoricalDataModule,
     SupportModule,
     DatabaseModule,
+    MatchingEntitiesModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
