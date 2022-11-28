@@ -10,10 +10,15 @@ import { MatNativeDateModule } from "@angular/material/core";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { MatInputModule } from "@angular/material/input";
 import { setupEditComponent } from "../edit-component.spec";
+import { DateWithAge } from "../../../../../child-dev-project/children/model/dateWithAge";
+import { HarnessLoader } from "@angular/cdk/testing";
+import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
+import { MatDatepickerInputHarness } from "@angular/material/datepicker/testing";
 
 describe("EditAgeComponent", () => {
   let component: EditAgeComponent;
   let fixture: ComponentFixture<EditAgeComponent>;
+  let loader: HarnessLoader;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -33,6 +38,7 @@ describe("EditAgeComponent", () => {
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EditAgeComponent);
+    loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
     setupEditComponent(component);
     fixture.detectChanges();
@@ -40,5 +46,14 @@ describe("EditAgeComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should transform Date to DateOfBirth", async () => {
+    const datepicker = await loader.getHarness(MatDatepickerInputHarness);
+
+    await datepicker.setValue("2022-12-20");
+
+    expect(component.formControl.value).toBeInstanceOf(DateWithAge);
+    expect(component.formControl.value).toBeDate(new Date("2022-12-20"));
   });
 });

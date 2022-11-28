@@ -20,6 +20,7 @@ const XXL = "1400px";
 /**
  * Different ranges of screen sizes.
  */
+
 /* Implementation note: This is implemented as an enum (as opposed to a string-type)
  * so that
  * ```
@@ -84,10 +85,14 @@ export class ScreenWidthObserver {
    * @param query The query to check
    * @private
    */
-  private static matching(query: MediaQueryList): Observable<boolean> {
+  private static matching(
+    query: MediaQueryList
+  ): Observable<MediaQueryListEvent> {
     return fromEvent<MediaQueryListEvent>(query, "change").pipe(
-      map((event) => event.matches),
-      startWith(query.matches)
+      startWith({
+        matches: query.matches,
+        media: query.media,
+      } as MediaQueryListEvent)
     );
   }
 
@@ -129,10 +134,10 @@ export class ScreenWidthObserver {
         ScreenWidthObserver.matching(queryList)
       )
     ).pipe(
-      map((value) => {
-        // when this returns -1 then no query is active. This means
-        // that the screen size is less than `SM`, i.e. `XS`
-        return value.lastIndexOf(true) + 1;
+      map(() => {
+        // Listening to the events requires parsing (or understanding) the event and the
+        // attached media-string which requires more logic than simply computing the result in-place.
+        return this.currentScreenSize();
       })
     );
 
@@ -146,6 +151,8 @@ export class ScreenWidthObserver {
    * Return the current screen size as determined by the media queries
    */
   public currentScreenSize(): ScreenSize {
+    // when this returns -1 then no query is active. This means
+    // that the screen size is less than `SM`, i.e. `XS`
     return (
       this.queryLists.map((queryList) => queryList.matches).lastIndexOf(true) +
       1
