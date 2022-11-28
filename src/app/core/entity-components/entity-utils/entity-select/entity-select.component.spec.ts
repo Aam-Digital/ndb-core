@@ -124,6 +124,25 @@ describe("EntitySelectComponent", () => {
     tick();
   }));
 
+  it("emits with prefix the new entity selected", fakeAsync(() => {
+    component.withPrefix = true;
+    spyOn(component.selectionChange, "emit");
+    component.entityType = User.ENTITY_TYPE;
+    tick();
+
+    component.selectEntity(testUsers[0]);
+    expect(component.selectionChange.emit).toHaveBeenCalledWith([
+      testUsers[0].getId(true),
+    ]);
+
+    component.selectEntity(testUsers[1]);
+    expect(component.selectionChange.emit).toHaveBeenCalledWith([
+      testUsers[0].getId(true),
+      testUsers[1].getId(true),
+    ]);
+    tick();
+  }));
+
   it("emits whenever a selected entity is removed", () => {
     spyOn(component.selectionChange, "emit");
     component.selectedEntities = [...testUsers];

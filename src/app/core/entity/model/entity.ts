@@ -19,6 +19,7 @@ import { v4 as uuid } from "uuid";
 import { EntitySchema } from "../schema/entity-schema";
 import { DatabaseField } from "../database-field.decorator";
 import { getWarningLevelColor, WarningLevel } from "./warning-level";
+import { IconName } from "@fortawesome/fontawesome-svg-core";
 
 /**
  * This represents a static class of type <T>.
@@ -97,7 +98,7 @@ export class Entity {
   /**
    * icon id used for this entity
    */
-  static icon: string;
+  static icon: IconName;
 
   /**
    * Extract the ENTITY_TYPE from an id.
@@ -180,6 +181,35 @@ export class Entity {
   set searchIndices(value) {
     // do nothing, always generated on the fly
     // searchIndices is only saved to database so it can be used internally for database indexing
+  }
+
+  /**
+   * Check, if this entity is considered active.
+   * This is either taken from the (not configured) property "active".
+   * If the property doesn't exist, the default is `true`.
+   * Subclasses may overwrite this functionality.
+   *
+   * To have a simple boolean indicating if an entity is active or not, add the following schema:
+   * ```json
+   *  {
+   *    "name": "active",
+   *    "schema": {
+   *      "dataType": "boolean",
+   *      "label": "Active"
+   *    }
+   *  }
+   * ```
+   */
+  get isActive(): boolean {
+    return this["active"] ?? true;
+  }
+
+  /**
+   * If existing entities with `isActive: false` exist, then these values are assigned to the property "active".
+   * @param isActive
+   */
+  set isActive(isActive: boolean) {
+    this["active"] = isActive;
   }
 
   /**

@@ -55,6 +55,23 @@ export class Note extends Entity {
     return instance;
   }
 
+  /**
+   * Returns the name of the Note property where entities of the given entity type are stored
+   * @param entityType
+   */
+  static getPropertyFor(entityType: string) {
+    switch (entityType) {
+      case "Child":
+        return "children";
+      case "School":
+        return "schools";
+      case "User":
+        return "authors";
+      default:
+        return "relatedEntities";
+    }
+  }
+
   /** IDs of Child entities linked with this note */
   @DatabaseField({
     label: $localize`:Label for the children of a note:Children`,
@@ -99,6 +116,22 @@ export class Note extends Entity {
    * id referencing a different entity (e.g. a recurring activity) this note is related to
    */
   @DatabaseField() relatesTo: string;
+
+  /**
+   * other records (e.g. a recurring activity, group membership, ...) to which this note is related in some way,
+   * so that notes can be displayed linked to these entities.
+   *
+   * This property saves ids including their entity type prefix.
+   */
+  @DatabaseField({
+    label: $localize`:label for the related Entities:Related Records`,
+    viewComponent: "DisplayEntityArray",
+    editComponent: "EditEntityArray",
+    // TODO: transition this to allow linking of multiple/all entity types in the future
+    // by default no additional relatedEntities can be linked apart from children and schools, overwrite this in config to display (e.g. additional: "ChildSchoolRelation")
+    additional: undefined,
+  })
+  relatedEntities: string[] = [];
 
   /**
    * related school ids (e.g. to infer participants for event roll calls)
@@ -166,6 +199,19 @@ export class Note extends Entity {
     }
 
     this.children = this.children.concat(childId);
+  }
+
+  /**
+   * adds a new school to this note
+   * @param school The school or its id to be added to the note
+   */
+  addSchool(school: School | string) {
+    const schoolId = typeof school === "string" ? school : school.getId();
+    if (this.schools.includes(schoolId)) {
+      return;
+    }
+
+    this.schools = this.schools.concat(schoolId);
   }
 
   /**
@@ -239,6 +285,9 @@ export class Note extends Entity {
   copy(): Note {
     const note: Note = super.copy() as Note;
     note.children = [...this.children];
+    note.schools = [...this.schools];
+    note.relatedEntities = [...this.relatedEntities];
+    note.authors = [...this.authors];
     note.childrenAttendance = new Map();
     this.childrenAttendance.forEach((value, key) => {
       note.childrenAttendance.set(key, value.copy());
