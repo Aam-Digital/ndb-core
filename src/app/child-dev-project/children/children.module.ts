@@ -37,7 +37,7 @@ import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatChipsModule } from "@angular/material/chips";
 import { ChildrenService } from "./children.service";
-import { ChildrenCountDashboardComponent } from "./dashboard-widgets/children-count-dashboard/children-count-dashboard.component";
+import { EntityCountDashboardComponent } from "./dashboard-widgets/entity-count-dashboard/entity-count-dashboard.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { SchoolsModule } from "../schools/schools.module";
@@ -113,7 +113,7 @@ import { CommonComponentsModule } from "../../core/common-components/common-comp
   declarations: [
     ChildBlockComponent,
     ChildrenListComponent,
-    ChildrenCountDashboardComponent,
+    EntityCountDashboardComponent,
     EducationalMaterialComponent,
     AserComponent,
     HealthCheckupComponent,
@@ -131,7 +131,7 @@ export class ChildrenModule {
     ChildrenListComponent,
     AserComponent,
     ChildBlockComponent,
-    ChildrenCountDashboardComponent,
+    EntityCountDashboardComponent,
     ChildrenBmiDashboardComponent,
     BmiBlockComponent,
     EducationalMaterialComponent,
@@ -139,6 +139,7 @@ export class ChildrenModule {
     PreviousSchoolsComponent,
     BirthdayDashboardComponent,
   ];
+
   constructor(entitySchemaService: EntitySchemaService) {
     entitySchemaService.registerSchemaDatatype(new PhotoDatatype());
   }

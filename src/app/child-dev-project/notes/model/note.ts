@@ -56,6 +56,23 @@ export class Note extends Entity {
     return instance;
   }
 
+  /**
+   * Returns the name of the Note property where entities of the given entity type are stored
+   * @param entityType
+   */
+  static getPropertyFor(entityType: string) {
+    switch (entityType) {
+      case "Child":
+        return "children";
+      case "School":
+        return "schools";
+      case "User":
+        return "authors";
+      default:
+        return "relatedEntities";
+    }
+  }
+
   /** IDs of Child entities linked with this note */
   @DatabaseField({
     label: $localize`:Label for the children of a note:Children`,

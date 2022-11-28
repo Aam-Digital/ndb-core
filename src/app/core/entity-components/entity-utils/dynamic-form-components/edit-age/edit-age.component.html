@@ -5,6 +5,7 @@
       [formControlName]="formControlName"
       [placeholder]="label"
       [matDatepicker]="dateOfBirthDatepicker"
+      (dateChange)="dateChanged($event)"
     />
     <mat-datepicker-toggle
       matSuffix
@@ -27,7 +28,7 @@
       matInput
       i18n-placeholder="Placeholder for the input that displays the age"
       placeholder="Age"
-      [value]="getAge(formControl.value)"
+      [value]="formControl.value?.age?.toString()"
       [disabled]="true"
     />
     <mat-error>
