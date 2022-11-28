@@ -40,12 +40,12 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
    * If true, the filter state will be stored in the url and automatically applied on reload or navigation.
    * default `false`.
    */
-  @Input() withUrl = false;
+  @Input() useUrlQueryParams = false;
   /**
    * If true, only filter options are shown, for which some entities pass the filter.
    * default `false`
    */
-  @Input() onlyUsed = false;
+  @Input() onlyShowRelevantFilterOptions = false;
 
   /**
    * The filter query which is build by combining all selected filters.
@@ -73,7 +73,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
         this.filterConfig,
         this.entityType,
         this.entities,
-        this.onlyUsed
+        this.onlyShowRelevantFilterOptions
       );
       this.loadUrlParams();
       this.applyFilterSelections();
@@ -86,7 +86,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   ) {
     filter.selectedOption = selectedOption;
     this.applyFilterSelections();
-    if (this.withUrl) {
+    if (this.useUrlQueryParams) {
       this.updateUrl(filter.filterSettings.name, selectedOption);
     }
   }
@@ -114,7 +114,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   }
 
   private loadUrlParams(parameters?: Params) {
-    if (!this.withUrl) {
+    if (!this.useUrlQueryParams) {
       return;
     }
     const params = parameters || this.route.snapshot.queryParams;

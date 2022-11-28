@@ -39,7 +39,7 @@ describe("FilterComponent", () => {
     const n2 = new Note();
     n2.category = defaultInteractionTypes[2];
     component.entities = [n1, n2];
-    component.onlyUsed = true;
+    component.onlyShowRelevantFilterOptions = true;
     component.filterConfig = [{ id: "category" }];
 
     await component.ngOnChanges({ filterConfig: true } as any);
