@@ -678,7 +678,8 @@ export const defaultJsonConfig = {
                   ["motherTongue", "language"],
                   ["address", "address"],
                 ],
-                "rightEntityType": School.ENTITY_TYPE,
+                rightEntityType: School.ENTITY_TYPE,
+                rightFilters: [{ "id": "language" }],
                 onMatch: {
                   newEntityType: ChildSchoolRelation.ENTITY_TYPE,
                   newEntityMatchPropertyLeft: "childId",

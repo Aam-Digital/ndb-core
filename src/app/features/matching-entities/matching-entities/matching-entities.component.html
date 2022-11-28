@@ -52,11 +52,22 @@
   <ng-container *ngFor="let side of sideDetails">
     <div class="flex-grow" *ngIf="side.availableEntities">
       <h3 [style.color]="side.entityType.color ?? 'black'" class="selection-header">Select {{ side.entityType.label }}</h3>
+
+      <app-filter
+        class="flex-row gap-regular flex-wrap"
+        [filterConfig]="side.availableFilters"
+        [entityType]="side.entityType"
+        [entities]="side.availableEntities"
+        [withUrl]="true"
+        [(filterObj)]="filterObj"
+      ></app-filter>
+
       <app-entity-subrecord
         [records]="side.availableEntities"
         [columns]="side.columns"
         [editable]="false"
         [showEntity]="side.selectMatch"
+        [filter]="filterObj"
       ></app-entity-subrecord>
     </div>
   </ng-container>

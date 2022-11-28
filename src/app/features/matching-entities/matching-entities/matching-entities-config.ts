@@ -1,3 +1,5 @@
+import { FilterConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
+
 /**
  * Config to be defined to set up a MatchingEntitiesComponent.
  */
@@ -23,10 +25,14 @@ export interface MatchingEntitiesConfig {
    */
   leftEntityType?: string;
 
+  leftFilters: FilterConfig[];
+
   /**
    * entity type on the right side of matching, used to load a list of available entities for manual selection
    */
   rightEntityType?: string;
+
+  rightFilters: FilterConfig[];
 }
 
 export interface NewMatchAction {

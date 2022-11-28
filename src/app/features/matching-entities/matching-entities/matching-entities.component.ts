@@ -11,11 +11,14 @@ import {
   MatchingEntitiesConfig,
   NewMatchAction,
 } from "./matching-entities-config";
+import { DataFilter } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { FilterConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 
 interface MatchingSide {
   entityType: EntityConstructor;
   selected?: Entity;
   availableEntities?: Entity[];
+  availableFilters?: FilterConfig[];
   columns: string[];
   selectMatch: (e: Entity) => void;
 }
@@ -34,6 +37,8 @@ export class MatchingEntitiesComponent
    */
   @Input() leftEntityType: EntityConstructor | string;
 
+  @Input() leftFilters: FilterConfig[];
+
   @Input() leftEntitySelected: Entity;
 
   sideDetails: MatchingSide[] = [];
@@ -43,6 +48,8 @@ export class MatchingEntitiesComponent
    * Entity type of the right side of the matching
    */
   @Input() rightEntityType: EntityConstructor | string;
+
+  @Input() rightFilters: FilterConfig[];
 
   @Input() rightEntitySelected: Entity;
 
@@ -62,6 +69,9 @@ export class MatchingEntitiesComponent
   @ViewChild("matchComparison", { static: true })
   matchComparisonElement: ElementRef;
 
+  /** pass along filters from app-filter to subrecord component */
+  filterObj: DataFilter<any>;
+
   constructor(
     public schemaService: EntitySchemaService,
     private entityMapper: EntityMapperService,
@@ -78,7 +88,9 @@ export class MatchingEntitiesComponent
     this.onMatch = config.config.onMatch;
 
     this.leftEntityType = config.config.leftEntityType;
+    this.leftFilters = config.config.leftFilters;
     this.rightEntityType = config.config.rightEntityType;
+    this.rightFilters = config.config.rightFilters;
 
     if (config.config.leftEntityType) {
       this.rightEntitySelected = config.entity;
@@ -117,6 +129,7 @@ export class MatchingEntitiesComponent
       newSideDetails.availableEntities = await this.entityMapper.loadType(
         newSideDetails.entityType
       );
+      newSideDetails.availableFilters = this[side + "Filters"];
     }
 
     this.sideDetails[sideIndex] = newSideDetails;

@@ -7,6 +7,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { ViewModule } from "../../core/view/view.module";
 import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { FilterModule } from "../../core/filter/filter.module";
 
 /**
  * Facilitate finding suitable entities and connecting them.
@@ -21,6 +22,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     ViewModule,
     MatTableModule,
     MatTooltipModule,
+    FilterModule,
   ],
   exports: [MatchingEntitiesComponent],
 })
