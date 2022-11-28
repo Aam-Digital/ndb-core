@@ -30,7 +30,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { SessionModule } from "../session/session.module";
 import { UserSecurityComponent } from "./user-security/user-security.component";
 import { MatSelectModule } from "@angular/material/select";
-import { FlexModule } from "@angular/flex-layout";
 
 /**
  * Provides a User functionality including user account forms.
@@ -49,7 +48,6 @@ import { FlexModule } from "@angular/flex-layout";
     FontAwesomeModule,
     SessionModule,
     MatSelectModule,
-    FlexModule,
   ],
   declarations: [UserAccountComponent, UserSecurityComponent],
 })

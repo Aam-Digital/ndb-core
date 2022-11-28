@@ -563,7 +563,8 @@ export const defaultJsonConfig = {
               "health_lastDentalCheckup",
               "gender",
               "age",
-              "dateOfBirth"
+              "dateOfBirth",
+              "birth_certificate"
             ]
           },
           {
@@ -620,6 +621,7 @@ export const defaultJsonConfig = {
                   ],
                   [
                     "dateOfBirth",
+                    "birth_certificate",
                     "gender",
                     "motherTongue"
                   ],
@@ -628,7 +630,7 @@ export const defaultJsonConfig = {
                     "status",
                     "address",
                     "phone"
-                  ],
+                  ]
                 ],
                 "headers": [
                   null,
@@ -683,7 +685,7 @@ export const defaultJsonConfig = {
           "components": [
             {
               "title": "",
-              "component": "NotesOfChild"
+              "component": "NotesRelatedToEntity"
             }
           ]
         },
@@ -973,6 +975,13 @@ export const defaultJsonConfig = {
           label: $localize`:Label for a child attribute:Last Dental Check-Up`
         }
       },
+      {
+        "name": "birth_certificate",
+        "schema": {
+          dataType: "file",
+          label: $localize`:Label for a child attribute:Birth certificate`
+        }
+      }
     ]
   },
   "entity:School": {
