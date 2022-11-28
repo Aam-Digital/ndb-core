@@ -52,6 +52,19 @@ describe("FilterService", () => {
     expect(note.category).toEqual(guardianTalk);
   });
 
+  it("should support patching with date values", () => {
+    const filter = { date: "2022-02-03" } as DataFilter<Note>;
+    const predicate = service.getFilterPredicate(filter);
+    const note = new Note();
+
+    expect(predicate(note)).toBeFalse();
+
+    service.alignEntityWithFilter(note, filter);
+
+    expect(note.date).toBeInstanceOf(Date);
+    expect(predicate(note)).toBeTrue();
+  });
+
   it("should support filtering dates with day granularity", () => {
     const n1 = Note.create(new Date("2022-01-01"));
     const n2 = Note.create(new Date("2022-01-02"));
