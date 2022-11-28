@@ -46,9 +46,10 @@ brings with it.
         <ng-container [appDynamicComponent]="{
             component: row.edit,
             config: {
-            formFieldConfig: row,
-            propertySchema: entity.getSchema().get(row.id),
-            formControl: form.get(row.id)
+              formFieldConfig: row,
+              propertySchema: entity.getSchema().get(row.id),
+              formControl: form.get(row.id),
+              entity: entity
             }
           }">
         </ng-container>

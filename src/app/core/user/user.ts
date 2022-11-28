@@ -18,6 +18,7 @@
 import { Entity } from "../entity/model/entity";
 import { DatabaseEntity } from "../entity/database-entity.decorator";
 import { DatabaseField } from "../entity/database-field.decorator";
+import { IconName } from "@fortawesome/fontawesome-svg-core";
 
 /**
  * Entity representing a User object including password.
@@ -28,7 +29,7 @@ import { DatabaseField } from "../entity/database-field.decorator";
 @DatabaseEntity("User")
 export class User extends Entity {
   static toStringAttributes = ["name"];
-  static icon = "user";
+  static icon: IconName = "user";
   static label = $localize`:label for entity:User`;
   static labelPlural = $localize`:label (plural) for entity:Users`;
 

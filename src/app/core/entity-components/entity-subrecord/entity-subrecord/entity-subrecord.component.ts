@@ -87,8 +87,7 @@ export class EntitySubrecordComponent<T extends Entity>
     this._records = value;
     this.initDataSource();
     if (!this.newRecordFactory && this._records.length > 0) {
-      this.newRecordFactory = () =>
-        new (this._records[0].getConstructor() as EntityConstructor<T>)();
+      this.newRecordFactory = () => new (this._records[0].getConstructor())();
     }
   }
 
@@ -212,7 +211,7 @@ export class EntitySubrecordComponent<T extends Entity>
     if (!this.entityConstructor) {
       const record =
         this._records.length > 0 ? this._records[0] : this.newRecordFactory();
-      this.entityConstructor = record.getConstructor() as EntityConstructor<T>;
+      this.entityConstructor = record.getConstructor();
     }
     return this.entityConstructor;
   }
