@@ -18,6 +18,7 @@ import { BackupService } from "./services/backup.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DataImportModule } from "../../features/data-import/data-import.module";
+import { RouterLink } from "@angular/router";
 
 /**
  * GUI for administrative users to manage and maintain background and technical aspects of the app.
@@ -41,6 +42,7 @@ import { DataImportModule } from "../../features/data-import/data-import.module"
     MatTooltipModule,
     FontAwesomeModule,
     DataImportModule,
+    RouterLink,
   ],
   declarations: [AdminComponent],
   providers: [ChildPhotoUpdateService, BackupService],

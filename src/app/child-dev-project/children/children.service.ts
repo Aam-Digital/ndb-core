@@ -11,6 +11,9 @@ import { ChildPhotoService } from "./child-photo-service/child-photo.service";
 import moment, { Moment } from "moment";
 import { LoggingService } from "../../core/logging/logging.service";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
+import { Entity } from "../../core/entity/model/entity";
+import { School } from "../schools/model/school";
+import { User } from "../../core/user/user";
 
 @Injectable()
 export class ChildrenService {
@@ -119,12 +122,44 @@ export class ChildrenService {
     );
   }
 
-  getNotesOf(entityId: string, noteProperty: string): Promise<Note[]> {
-    return this.dbIndexing.queryIndexDocs(
+  /**
+   * Query all notes that have been linked to the given other entity.
+   * @param entityId ID (with prefix!) of the related record
+   */
+  async getNotesRelatedTo(entityId: string): Promise<Note[]> {
+    let legacyLinkedNotes = [];
+    if (this.inferNoteLinkPropertyFromEntityType(entityId)) {
+      legacyLinkedNotes = await this.dbIndexing.queryIndexDocs(
+        Note,
+        `notes_index/by_${this.inferNoteLinkPropertyFromEntityType(entityId)}`,
+        Entity.extractEntityIdFromId(entityId)
+      );
+    }
+
+    const explicitlyLinkedNotes = await this.dbIndexing.queryIndexDocsRange(
       Note,
-      `notes_index/by_${noteProperty}`,
-      entityId
+      `notes_related_index/note_by_relatedEntities`,
+      [entityId],
+      [entityId]
     );
+
+    return [...legacyLinkedNotes, ...explicitlyLinkedNotes].filter(
+      // remove duplicates
+      (element, index, array) =>
+        array.findIndex((e) => e._id === element._id) === index
+    );
+  }
+
+  private inferNoteLinkPropertyFromEntityType(entityId: string): string {
+    const entityType = Entity.extractTypeFromId(entityId);
+    switch (entityType) {
+      case Child.ENTITY_TYPE:
+        return "children";
+      case School.ENTITY_TYPE:
+        return "schools";
+      case User.ENTITY_TYPE:
+        return "authors";
+    }
   }
 
   /**
@@ -182,7 +217,7 @@ export class ChildrenService {
     );
   }
 
-  private createNotesIndex(): Promise<any> {
+  private async createNotesIndex(): Promise<any> {
     const designDoc = {
       _id: "_design/notes_index",
       views: {
@@ -197,13 +232,35 @@ export class ChildrenService {
         },
       },
     };
+
+    // TODO: remove these and use general note_by_relatedEntities instead --> to be decided later #1501
     // creating a by_... view for each of the following properties
     ["children", "schools", "authors"].forEach(
       (prop) =>
         (designDoc.views[`by_${prop}`] = this.createNotesByFunction(prop))
     );
 
-    return this.dbIndexing.createIndex(designDoc);
+    await this.dbIndexing.createIndex(designDoc);
+
+    const newDesignDoc = {
+      _id: "_design/notes_related_index",
+      views: {
+        note_by_relatedEntities: {
+          map: `(doc) => {
+            if (!doc._id.startsWith("${Note.ENTITY_TYPE}")) return;
+            if (!Array.isArray(doc.relatedEntities)) return;
+
+            var d = new Date(doc.date || null);
+            var dateString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0")
+
+            doc.relatedEntities.forEach((relatedEntity) => {
+              emit([relatedEntity, dateString]);
+            });
+          }`,
+        },
+      },
+    };
+    await this.dbIndexing.createIndex(newDesignDoc);
   }
 
   private createNotesByFunction(property: string) {

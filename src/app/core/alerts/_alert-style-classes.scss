@@ -1,5 +1,6 @@
 @use "@angular/material" as mat;
 @use "src/styles/variables/ndb-light-theme" as theme;
+@use "src/styles/variables/colors";
 
 .ndb-alert {
 
@@ -8,10 +9,12 @@
   // There is no `ndb-alert--info` class since `info` has the default styling.
 
   &--warning {
-    background-color: mat.get-color-from-palette(mat.$orange-palette, 800) !important;
+    background-color: colors.$warn !important;
+    color: rgba(0, 0, 0, 0.87) !important;
   }
 
   &--danger {
-    background-color: mat.get-color-from-palette(mat.$red-palette, 800) !important;
+    background-color: colors.$error !important;
+    color: rgba(0, 0, 0, 0.87) !important;
   }
 }

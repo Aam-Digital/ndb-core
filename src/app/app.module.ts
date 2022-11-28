@@ -88,6 +88,7 @@ import {
   DateAdapterWithFormatting,
 } from "./core/language/date-adapter-with-formatting";
 import { FileModule } from "./core/file/file.module";
+import { ConfigSetupModule } from "./core/config-setup/config-setup.module";
 
 /**
  * Main entry point of the application.
@@ -115,6 +116,7 @@ import { FileModule } from "./core/file/file.module";
     EntityModule,
     SessionModule,
     ConfigModule,
+    ConfigSetupModule,
     UiModule,
     SyncStatusModule,
     LatestChangesModule,
