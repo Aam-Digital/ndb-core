@@ -7,7 +7,6 @@ import { Entity } from "../../entity/model/entity";
   templateUrl: "./list-filter.component.html",
 })
 export class ListFilterComponent<E extends Entity> {
-  @Input() displayAsToggle: boolean;
   @Input() filterConfig: FilterSelection<E>;
   @Input() selectedOption: string;
   @Output() selectedOptionChange = new EventEmitter<string>();
