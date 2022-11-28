@@ -130,7 +130,8 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
         this.alertService.addDanger(err.message);
       }
     }
-    this.saveInProgress = false;
+    // Reset state after a short delay
+    setTimeout(() => (this.saveInProgress = false), 500);
   }
 
   cancelClicked() {
