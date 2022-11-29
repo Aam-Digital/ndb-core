@@ -88,8 +88,8 @@
     >
       no events on this date
     </em>
-    <app-add-new-button
-      class="margin-top-regular"
+    <button
+      mat-stroked-button
       (click)="createNewEvent()"
       i18n="
         Add New Event Button|Allows the user to create a new event for the
@@ -98,8 +98,9 @@
       angulartics2On="click"
       angularticsCategory="Attendance"
       angularticsAction="calendar_create_event"
+      style="margin-top: 12px; display: block"
     >
       Add new event
-    </app-add-new-button>
+    </button>
   </ng-container>
 </div>
