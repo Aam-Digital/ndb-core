@@ -12,7 +12,6 @@ import {
   catchError,
   concatMap,
   filter,
-  finalize,
   map,
   shareReplay,
 } from "rxjs/operators";
@@ -58,10 +57,6 @@ export class CouchdbFileService extends FileService {
           observe: "events",
         })
       ),
-      finalize(() => {
-        entity[property] = file.name;
-        this.entityMapper.save(entity);
-      }),
       // prevent http request to be executed multiple times (whenever .subscribe is called)
       shareReplay()
     );
@@ -96,10 +91,6 @@ export class CouchdbFileService extends FileService {
         } else {
           throw err;
         }
-      }),
-      finalize(() => {
-        entity[property] = undefined;
-        this.entityMapper.save(entity);
       })
     );
   }
