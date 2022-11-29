@@ -51,7 +51,6 @@ export class FilterGeneratorService {
           [],
           filter.label || schema.label
         ),
-        display: filter.display,
       };
       try {
         fs.filterSettings.options = await this.getFilterOptions(

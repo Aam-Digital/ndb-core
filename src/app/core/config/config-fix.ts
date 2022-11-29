@@ -276,8 +276,7 @@ export const defaultJsonConfig = {
           "type": "prebuilt"
         },
         {
-          "id": "category",
-          "display": "dropdown"
+          "id": "category"
         }
       ],
       "exportConfig": [
@@ -588,14 +587,12 @@ export const defaultJsonConfig = {
           "all": $localize`:Active children unselect option:All`
         },
         {
-          "id": "center",
-          "display": "dropdown"
+          "id": "center"
         },
         {
           "id": "schoolId",
           "type": "School",
-          "label": $localize`:Label of schools filter:School`,
-          "display": "dropdown"
+          "label": $localize`:Label of schools filter:School`
         }
       ]
     }

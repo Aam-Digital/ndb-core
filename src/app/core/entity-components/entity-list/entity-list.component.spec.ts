@@ -69,7 +69,6 @@ describe("EntityListComponent", () => {
       },
       {
         id: "religion",
-        display: "dropdown",
       },
     ],
   };

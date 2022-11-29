@@ -12,7 +12,11 @@
     </app-view-title>
 
     <div class="flex-row gap-regular">
-      <app-add-new-button
+      <button
+        mat-stroked-button
+        color="accent"
+        class="standard-add-button"
+        style="background-color: white !important;"
         (click)="addNewClick.emit()"
         angulartics2On="click"
         angularticsCategory="UserAction"
@@ -27,8 +31,12 @@
           }"
         i18n
       >
+        <fa-icon
+          aria-label="add element"
+          icon="plus-circle"
+        ></fa-icon>
         Add New
-      </app-add-new-button>
+      </button>
       <button mat-icon-button color="primary" [matMenuTriggerFor]="additional">
         <fa-icon class="standard-icon" icon="ellipsis-v"></fa-icon>
       </button>
@@ -44,7 +52,7 @@
       [filterConfig]="filtersConfig"
       [entityType]="entityConstructor"
       [entities]="allEntities"
-      [withUrl]="true"
+      [useUrlQueryParams]="true"
       [(filterObj)]="filterObj"
     ></app-filter>
   </div>

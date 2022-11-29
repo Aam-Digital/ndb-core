@@ -9,15 +9,15 @@ import { PanelConfig } from "../../../core/entity-components/entity-details/Enti
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { Entity } from "../../../core/entity/model/entity";
-import { Child } from "../../children/model/child";
-import { School } from "../../schools/model/school";
-import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import {
   ColumnConfig,
   DataFilter,
   EntitySubrecordConfig,
 } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { FilterService } from "../../../core/filter/filter.service";
+import { Child } from "../../children/model/child";
+import { School } from "../../schools/model/school";
+import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain entity.
@@ -121,6 +121,7 @@ export class NotesRelatedToEntityComponent
         // TODO: should we keep authors completely separate of also add them into the relatedEntities as well?
         newNote.authors.push(user);
       }
+      this.filterService.alignEntityWithFilter(newNote, this.filter);
 
       this.filterService.alignEntityWithFilter(newNote, this.filter);
 

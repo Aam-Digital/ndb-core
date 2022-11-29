@@ -66,7 +66,6 @@ export interface GroupConfig {
 
 export interface FilterConfig {
   id: string;
-  display?: string;
   type?: string;
   default?: string;
   label?: string;

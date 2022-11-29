@@ -51,6 +51,7 @@ export class FilterService {
     Object.entries(filter ?? {}).forEach(([key, value]) => {
       // TODO support arrays through recursion
       if (typeof value !== "object") {
+        // only simple equality filters are automatically applied to new entities, complex conditions (e.g. $lt / $gt) are ignored)
         this.assignValueToEntity(key, value, schema, entity);
       }
     });
@@ -60,7 +61,7 @@ export class FilterService {
     key: string,
     value,
     schema: Map<string, EntitySchemaField>,
-    newNote: T
+    newEntity: T
   ) {
     if (key.includes(".")) {
       // TODO only one level deep nesting is supported (also by ucast https://github.com/stalniy/ucast/issues/32)
@@ -70,8 +71,10 @@ export class FilterService {
     if (property.dataType === "configurable-enum") {
       value = this.parseConfigurableEnumValue(property, value);
     }
-    // TODO fail for unsupported data types
-    newNote[key] = value;
+    if (property.dataType.includes("date")) {
+      value = new Date(value);
+    }
+    newEntity[key] = value;
   }
 
   private transformNestedKey(key: string, value): any[] {

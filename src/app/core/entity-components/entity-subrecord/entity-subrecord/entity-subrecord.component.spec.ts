@@ -361,7 +361,7 @@ describe("EntitySubrecordComponent", () => {
     childComponent.filter = {
       name: "Matching",
       "dateOfBirth.age": { $gte: 2 },
-    } as any; // TODO: adjust typing to allow dot-notation filters?
+    } as any;
 
     expect(childComponent.recordsDataSource.data).toEqual([{ record: c3 }]);
 
@@ -375,5 +375,22 @@ describe("EntitySubrecordComponent", () => {
       { record: c3 },
       { record: c4 },
     ]);
+  });
+
+  it("should remove an entity if it does not pass the filter anymore", async () => {
+    const entityMapper = TestBed.inject(EntityMapperService);
+    const child = new Child();
+    child.gender = genders[1];
+    await entityMapper.save(child);
+    component.records = [child];
+    component.filter = { "gender.id": genders[1].id } as any;
+    component.ngOnInit();
+
+    expect(component.recordsDataSource.data).toEqual([{ record: child }]);
+
+    child.gender = genders[2];
+    await entityMapper.save(child);
+
+    expect(component.recordsDataSource.data).toEqual([]);
   });
 });

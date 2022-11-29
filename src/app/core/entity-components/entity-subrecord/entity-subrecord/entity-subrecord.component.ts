@@ -186,7 +186,7 @@ export class EntitySubrecordComponent<T extends Entity>
         .subscribe(({ entity, type }) => {
           if (type === "new") {
             this.addToTable(entity);
-          } else if (type === "remove") {
+          } else if (type === "remove" || !this.predicate(entity)) {
             this.removeFromDataTable(entity);
           } else if (
             type === "update" &&
