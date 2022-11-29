@@ -26,36 +26,37 @@ import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
  *
  * `@DatabaseField({dataType: 'date-only'}) myDate: Date = new Date('2020-01-15'); // will be "2020-01-15" (without time) in the database`
  */
-export const dateOnlyEntitySchemaDatatype: EntitySchemaDatatype = {
-  name: "date-only",
-  viewComponent: "DisplayDate",
-  editComponent: "EditDate",
+export const dateOnlyEntitySchemaDatatype: EntitySchemaDatatype<Date, string> =
+  {
+    name: "date-only",
+    viewComponent: "DisplayDate",
+    editComponent: "EditDate",
 
-  transformToDatabaseFormat: (value: Date) => {
-    if (!(value instanceof Date)) {
-      return undefined;
-    }
-    return (
-      value.getFullYear() +
-      "-" +
-      (value.getMonth() + 1).toString().padStart(2, "0") +
-      "-" +
-      value.getDate().toString().padStart(2, "0")
-    );
-  },
+    transformToDatabaseFormat: (value: Date) => {
+      if (!(value instanceof Date)) {
+        return undefined;
+      }
+      return (
+        value.getFullYear() +
+        "-" +
+        (value.getMonth() + 1).toString().padStart(2, "0") +
+        "-" +
+        value.getDate().toString().padStart(2, "0")
+      );
+    },
 
-  transformToObjectFormat: (value: string) => {
-    // new Date("2022-01-01") is interpreted as UTC time whereas new Date(2022, 0, 1) is local time
-    // -> we want local time to represent the same day wherever used.
-    const values = value.split("-").map((v) => Number(v));
-    let date: Date = new Date(values[0], values[1] - 1, values[2]);
-    if (isNaN(date.getTime())) {
-      // fallback to legacy date parsing if format is not "YYYY-mm-dd"
-      date = new Date(value);
-    }
-    if (Number.isNaN(date.getTime())) {
-      throw new Error("failed to convert data to Date object: " + value);
-    }
-    return date;
-  },
-};
+    transformToObjectFormat: (value: string) => {
+      // new Date("2022-01-01") is interpreted as UTC time whereas new Date(2022, 0, 1) is local time
+      // -> we want local time to represent the same day wherever used.
+      const values = value.split("-").map((v) => Number(v));
+      let date: Date = new Date(values[0], values[1] - 1, values[2]);
+      if (isNaN(date.getTime())) {
+        // fallback to legacy date parsing if format is not "YYYY-mm-dd"
+        date = new Date(value);
+      }
+      if (Number.isNaN(date.getTime())) {
+        throw new Error("failed to convert data to Date object: " + value);
+      }
+      return date;
+    },
+  };

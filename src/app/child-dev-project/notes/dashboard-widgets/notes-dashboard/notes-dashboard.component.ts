@@ -1,10 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  Input,
-  OnInit,
-  ViewChild,
-} from "@angular/core";
+import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
 import { ChildrenService } from "../../../children/children.service";
 import moment from "moment";
 import { MatTableDataSource } from "@angular/material/table";
@@ -12,9 +6,11 @@ import { MatPaginator } from "@angular/material/paginator";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 import { Child } from "../../../children/model/child";
+import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
+import { EntityConstructor } from "../../../../core/entity/model/entity";
 
 /**
- * Dashboard Widget displaying children that do not have a recently added Note.
+ * Dashboard Widget displaying entities that do not have a recently added Note.
  *
  * If you do not set "sinceDays" of "fromBeginningOfWeek" inputs
  * by default notes since beginning of the current week are considered.
@@ -29,34 +25,44 @@ export class NotesDashboardComponent
   implements OnInitDynamicComponent, OnInit, AfterViewInit
 {
   /**
-   * number of days since last note that children should be considered having a "recent" note.
+   * Entity for which the recent notes should be counted.
    */
-  @Input() sinceDays: number = 0;
+  entity: EntityConstructor = Child;
+
+  /**
+   * number of days since last note that entities should be considered having a "recent" note.
+   */
+  sinceDays = 0;
 
   /** Whether an additional offset should be automatically added to include notes from the beginning of the week */
-  @Input() fromBeginningOfWeek = true;
+  fromBeginningOfWeek = true;
 
   mode: "with-recent-notes" | "without-recent-notes";
 
   /**
-   * Children displayed in the template
-   * Child entities with additional "daysSinceLastNote" field
+   * Entities displayed in the template with additional "daysSinceLastNote" field
    */
-  dataSource = new MatTableDataSource<ChildWithRecentNoteInfo>();
+  dataSource = new MatTableDataSource<EntityWithRecentNoteInfo>();
+
+  subtitle: string;
+
   @ViewChild("paginator") paginator: MatPaginator;
 
   isLoading = true;
 
-  constructor(private childrenService: ChildrenService) {}
+  constructor(
+    private childrenService: ChildrenService,
+    private entities: EntityRegistry
+  ) {}
 
-  onInitFromDynamicConfig(config: any) {
-    if (config?.sinceDays) {
-      this.sinceDays = config.sinceDays;
+  onInitFromDynamicConfig(config: NotesDashboardConfig) {
+    this.sinceDays = config.sinceDays ?? this.sinceDays;
+    this.fromBeginningOfWeek =
+      config.fromBeginningOfWeek ?? this.fromBeginningOfWeek;
+    this.mode = config.mode;
+    if (config.entity) {
+      this.entity = this.entities.get(config.entity);
     }
-    if (config?.fromBeginningOfWeek) {
-      this.fromBeginningOfWeek = config.fromBeginningOfWeek;
-    }
-    this.mode = config?.mode;
   }
 
   ngOnInit() {
@@ -66,25 +72,19 @@ export class NotesDashboardComponent
     }
     switch (this.mode) {
       case "with-recent-notes":
-        this.loadConcernedChildren(
+        this.loadConcernedEntities(
           (stat) => stat[1] <= dayRangeBoundary,
           dayRangeBoundary
         );
+        this.subtitle = $localize`:Subtitle|Subtitle informing the user that these are the entities with recent reports:${this.entity.labelPlural} with recent report`;
         break;
       case "without-recent-notes":
-        this.loadConcernedChildren(
+        this.loadConcernedEntities(
           (stat) => stat[1] >= dayRangeBoundary,
           dayRangeBoundary
         );
-    }
-  }
-
-  get subtitle(): string {
-    switch (this.mode) {
-      case "without-recent-notes":
-        return $localize`:Subtitle|Subtitle informing the user that these are the children without recent reports:${Child.labelPlural} having no recent reports`;
-      case "with-recent-notes":
-        return $localize`:Subtitle|Subtitle informing the user that these are the children with recent reports:${Child.labelPlural} with recent report`;
+        this.subtitle = $localize`:Subtitle|Subtitle informing the user that these are the entities without recent reports:${this.entity.labelPlural} having no recent reports`;
+        break;
     }
   }
 
@@ -92,7 +92,7 @@ export class NotesDashboardComponent
     this.dataSource.paginator = this.paginator;
   }
 
-  private async loadConcernedChildren(
+  private async loadConcernedEntities(
     filter: (stat: [string, number]) => boolean,
     dayRangeBoundary: number
   ) {
@@ -100,12 +100,14 @@ export class NotesDashboardComponent
 
     // recent notes are sorted ascending, without recent notes descending
     const order = this.mode === "with-recent-notes" ? -1 : 1;
-    const children = await this.childrenService.getDaysSinceLastNoteOfEachChild(
-      queryRange
-    );
-    this.dataSource.data = Array.from(children)
+    const recentNotesMap =
+      await this.childrenService.getDaysSinceLastNoteOfEachEntity(
+        this.entity.ENTITY_TYPE,
+        queryRange
+      );
+    this.dataSource.data = Array.from(recentNotesMap)
       .filter(filter)
-      .map((stat) => statsToChildWithRecentNoteInfo(stat, queryRange))
+      .map((stat) => statsToEntityWithRecentNoteInfo(stat, queryRange))
       .sort((a, b) => order * (b.daysSinceLastNote - a.daysSinceLastNote));
 
     this.isLoading = false;
@@ -140,35 +142,46 @@ export class NotesDashboardComponent
 }
 
 /**
- * details on child stats to be displayed
+ * details on entity stats to be displayed
  */
-interface ChildWithRecentNoteInfo {
-  childId: string;
+interface EntityWithRecentNoteInfo {
+  entityId: string;
   daysSinceLastNote: number;
   /** true when the daysSinceLastNote is not accurate but was cut off for performance optimization */
   moreThanDaysSince: boolean;
 }
 
 /**
- * Map a result entry from getDaysSinceLastNoteOfEachChild to the ChildWithRecentNoteInfo interface
- * @param stat Array of [childId, daysSinceLastNote]
+ * Map a result entry from getDaysSinceLastNoteOfEachEntity to the EntityWithRecentNoteInfo interface
+ * @param stat Array of [entityId, daysSinceLastNote]
  * @param queryRange The query range (the maximum of days that exactly calculated)
  */
-function statsToChildWithRecentNoteInfo(
+function statsToEntityWithRecentNoteInfo(
   stat: [string, number],
   queryRange: number
-): ChildWithRecentNoteInfo {
+): EntityWithRecentNoteInfo {
   if (stat[1] < Number.POSITIVE_INFINITY) {
     return {
-      childId: stat[0],
+      entityId: stat[0],
       daysSinceLastNote: stat[1],
       moreThanDaysSince: false,
     };
   } else {
     return {
-      childId: stat[0],
+      entityId: stat[0],
       daysSinceLastNote: queryRange,
       moreThanDaysSince: true,
     };
   }
+}
+
+/**
+ * Config for the Notes Dashboard
+ * For more information see the property comments in this class
+ */
+interface NotesDashboardConfig {
+  sinceDays?: number;
+  fromBeginningOfWeek?: boolean;
+  mode?: "with-recent-notes" | "without-recent-notes";
+  entity?: string;
 }

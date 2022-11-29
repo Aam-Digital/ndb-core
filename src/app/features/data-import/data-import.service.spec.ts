@@ -113,13 +113,13 @@ describe("DataImportService", () => {
     expect(firstChild.getId(true)).toBe("Child:1");
     expect(firstChild.name).toBe("First");
     expect(date1.isSame(firstChild.dateOfBirth, "day")).toBeTrue();
-    expect(firstChild.age).toBe(10);
+    expect(firstChild.dateOfBirth.age).toBe(10);
     expect(firstChild).not.toHaveOwnProperty("notExistingProperty");
     const secondChild = await entityMapper.load(Child, "2");
     expect(secondChild.getId(true)).toBe("Child:2");
     expect(secondChild.name).toBe("Second");
     expect(date2.isSame(secondChild.dateOfBirth, "day")).toBeTrue();
-    expect(secondChild.age).toBe(12);
+    expect(secondChild.dateOfBirth.age).toBe(12);
     expect(secondChild).not.toHaveOwnProperty("notExistingProperty");
   });
 

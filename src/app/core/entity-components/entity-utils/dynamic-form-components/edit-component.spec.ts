@@ -1,5 +1,6 @@
 import { EditComponent } from "./edit-component";
 import { UntypedFormControl, UntypedFormGroup } from "@angular/forms";
+import { Entity } from "../../../entity/model/entity";
 
 /**
  * A simple helper class that sets up a EditComponent with the required FormGroup
@@ -18,6 +19,7 @@ export function setupEditComponent<T>(
     formControl: formControl,
     propertySchema: {},
     formFieldConfig: { id: propertyName },
+    entity: new Entity(),
   });
   return formGroup;
 }
