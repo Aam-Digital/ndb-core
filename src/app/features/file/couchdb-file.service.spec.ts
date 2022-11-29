@@ -198,4 +198,59 @@ describe("CouchdbFileService", () => {
       firstValueFrom(service.removeFile(new Entity(), "testProp"))
     ).toBeResolved();
   });
+
+  it("should wait for previous request to finish before starting a new one", () => {
+    const putSubject = new Subject();
+    const file1 = { type: "image/png", name: "file1.name" } as File;
+    const file2 = { type: "image/png", name: "file2.name" } as File;
+    const file3 = { type: "image/png", name: "file3.name" } as File;
+    const entity = new Entity("testId");
+    mockHttp.get.and.returnValue(of({ _rev: "1-rev" }));
+    mockHttp.put.and.returnValue(putSubject);
+
+    service
+      .uploadFile(file1, entity, "prop1")
+      .subscribe((res) => console.log("res1", res));
+    service
+      .uploadFile(file2, entity, "prop2")
+      .subscribe((res) => console.log("res2", res));
+    service
+      .uploadFile(file3, entity, "prop3")
+      .subscribe((res) => console.log("res3", res));
+    expect(mockHttp.get).toHaveBeenCalledTimes(1);
+    expect(mockHttp.put).toHaveBeenCalledTimes(1);
+    expect(mockHttp.put).toHaveBeenCalledWith(
+      jasmine.stringContaining(
+        `${attachmentUrlPrefix}/Entity:testId/prop1?rev=1-rev`
+      ),
+      jasmine.anything(),
+      jasmine.anything()
+    );
+
+    mockHttp.get.and.returnValue(of({ _rev: "2-rev" }));
+    putSubject.next({ ok: true });
+
+    expect(mockHttp.get).toHaveBeenCalledTimes(2);
+    expect(mockHttp.put).toHaveBeenCalledTimes(2);
+    expect(mockHttp.put).toHaveBeenCalledWith(
+      jasmine.stringContaining(
+        `${attachmentUrlPrefix}/Entity:testId/prop2?rev=2-rev`
+      ),
+      jasmine.anything(),
+      jasmine.anything()
+    );
+
+    mockHttp.get.and.returnValue(of({ _rev: "3-rev" }));
+    putSubject.next({ ok: true });
+
+    expect(mockHttp.get).toHaveBeenCalledTimes(3);
+    expect(mockHttp.put).toHaveBeenCalledTimes(3);
+    expect(mockHttp.put).toHaveBeenCalledWith(
+      jasmine.stringContaining(
+        `${attachmentUrlPrefix}/Entity:testId/prop3?rev=3-rev`
+      ),
+      jasmine.anything(),
+      jasmine.anything()
+    );
+  });
 });

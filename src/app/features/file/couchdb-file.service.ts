@@ -34,6 +34,7 @@ import { LoggingService } from "../../core/logging/logging.service";
 @Injectable()
 export class CouchdbFileService extends FileService {
   private attachmentsUrl = `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}-attachments`;
+  private requestQueue: Observable<any> = of(undefined);
 
   constructor(
     private http: HttpClient,
@@ -44,9 +45,19 @@ export class CouchdbFileService extends FileService {
     logger: LoggingService
   ) {
     super(entityMapper, entities, logger);
+    this.requestQueue.subscribe();
   }
 
   uploadFile(file: File, entity: Entity, property: string): Observable<any> {
+    let obs = this.requestQueue.pipe(
+      concatMap(() => this.runFileUpload(file, entity, property)),
+      shareReplay()
+    );
+    this.requestQueue = obs.pipe(catchError(() => of(undefined)));
+    return obs;
+  }
+
+  private runFileUpload(file: File, entity: Entity, property: string) {
     const blob = new Blob([file]);
     const attachmentPath = `${this.attachmentsUrl}/${entity.getId(true)}`;
     const obs = this.getAttachmentsDocument(attachmentPath).pipe(
