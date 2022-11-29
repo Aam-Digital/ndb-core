@@ -51,6 +51,7 @@ export class FilterService {
     Object.entries(filter ?? {}).forEach(([key, value]) => {
       // TODO support arrays through recursion
       if (typeof value !== "object") {
+        // only simple equality filters are automatically applied to new entities, complex conditions (e.g. $lt / $gt) are ignored)
         this.assignValueToEntity(key, value, schema, entity);
       }
     });
