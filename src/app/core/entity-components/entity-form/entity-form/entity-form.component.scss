@@ -1,4 +1,5 @@
 @use "src/styles/mixins/grid-layout";
+@use "src/styles/variables/sizes";
 
 // Usually, this is the `:host` pseudo-selector but since the
 // view encapsulation is None, this has to be the name
@@ -36,4 +37,10 @@ app-entity-form {
 
 .tooltip-suffix {
   margin: 4px;
+}
+
+.form-buttons-wrapper {
+  position: sticky;
+  top: sizes.$regular;
+  z-index: 100;
 }
