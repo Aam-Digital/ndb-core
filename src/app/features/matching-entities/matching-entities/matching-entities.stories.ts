@@ -96,6 +96,7 @@ export const LeftMatch = Template.bind({});
 LeftMatch.args = {
   leftEntitySelected: entitiesB[0],
   rightEntityType: RecurringActivity.ENTITY_TYPE,
+  rightFilters: [{ id: "type" }],
   columns: columnsMapping,
   showMap: true,
 };

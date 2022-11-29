@@ -81,6 +81,8 @@ export class MatchingEntitiesComponent
   ) {}
 
   // TODO: fill selection on hover already?
+  // TODO: display matching in rowDetails popup for confirmation during creation?
+  // TODO: lock things after matching was created?
 
   onInitFromDynamicConfig(config: PanelConfig<MatchingEntitiesConfig>) {
     this.columns = config.config.columns;
