@@ -21,13 +21,14 @@ import { MatSelectModule } from "@angular/material/select";
 import { RouterModule } from "@angular/router";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Angulartics2Module } from "angulartics2";
-import { ChildrenOverviewComponent } from "./children-overview/children-overview.component";
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
 import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ViewModule } from "../../core/view/view.module";
 import { ActivitiesOverviewComponent } from "./activities-overview/activities-overview.component";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { ChildSchoolOverviewComponent } from "./child-school-overview/child-school-overview.component";
+import { CommonComponentsModule } from "../../core/common-components/common-components.module";
 
 @NgModule({
   imports: [
@@ -69,18 +70,19 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
     FontAwesomeModule,
     ViewModule,
     MatSlideToggleModule,
+    CommonComponentsModule,
   ],
   declarations: [
     SchoolBlockComponent,
-    ChildrenOverviewComponent,
     ActivitiesOverviewComponent,
+    ChildSchoolOverviewComponent,
   ],
-  exports: [SchoolBlockComponent],
+  exports: [SchoolBlockComponent, ChildSchoolOverviewComponent],
   providers: [DatePipe],
 })
 export class SchoolsModule {
   static dynamicComponents = [
-    ChildrenOverviewComponent,
+    ChildSchoolOverviewComponent,
     SchoolBlockComponent,
     ActivitiesOverviewComponent,
   ];
