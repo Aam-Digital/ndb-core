@@ -25,14 +25,14 @@ export interface MatchingEntitiesConfig {
    */
   leftEntityType?: string;
 
-  leftFilters: FilterConfig[];
+  leftFilters?: FilterConfig[];
 
   /**
    * entity type on the right side of matching, used to load a list of available entities for manual selection
    */
   rightEntityType?: string;
 
-  rightFilters: FilterConfig[];
+  rightFilters?: FilterConfig[];
 }
 
 export interface NewMatchAction {

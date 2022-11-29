@@ -119,7 +119,7 @@ export class MatchingEntitiesComponent
     const newSideDetails: MatchingSide = {
       entityType: entityType ?? this[side + "EntitySelected"]?.getConstructor(),
       selected: this[side + "EntitySelected"],
-      columns: this.columns.map((p) => p[sideIndex]),
+      columns: this.columns?.map((p) => p[sideIndex]),
       selectMatch: (e) => {
         this.highlightSelectedRow(e, newSideDetails.selected);
         newSideDetails.selected = e;
