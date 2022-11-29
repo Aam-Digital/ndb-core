@@ -1,6 +1,8 @@
 import { FilterSelection } from "./filter-selection";
+import { FilterService } from "../filter.service";
 
 describe("FilterSelection", () => {
+  const filterService = new FilterService(undefined);
   it("create an instance", () => {
     const fs = new FilterSelection("", []);
     expect(fs).toBeTruthy();
@@ -17,11 +19,12 @@ describe("FilterSelection", () => {
     const testData = [
       { id: 1, category: "x" },
       { id: 2, category: "y" },
-    ];
+    ] as any;
     const selectedCategory = "x";
-    const filteredData = testData.filter(
-      fs.getFilterFunction(selectedCategory)
+    const predicate = filterService.getFilterPredicate(
+      fs.getFilter(selectedCategory)
     );
+    const filteredData = testData.filter(predicate);
 
     expect(filteredData).toHaveSize(1);
     expect(filteredData[0].category).toBe(selectedCategory);

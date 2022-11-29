@@ -47,19 +47,14 @@
 
   <div class="flex-row gap-regular flex-wrap">
     <div *ngTemplateOutlet="filterDialog"></div>
-
-    <app-list-filter
-      *ngFor="let filter of filterSelections"
-      [filterConfig]="filter.filterSettings"
-      [(selectedOption)]="filter.selectedOption"
-      [displayAsToggle]="filter.display !== 'dropdown'"
-      (selectedOptionChange)="filterOptionSelected(filter, $event)"
-      angulartics2On="click"
-      [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
-      angularticsAction="list_filter"
-      [angularticsLabel]="filter.filterSettings.label"
-    >
-    </app-list-filter>
+    <app-filter
+      class="flex-row gap-regular flex-wrap"
+      [filterConfig]="filtersConfig"
+      [entityType]="entityConstructor"
+      [entities]="allEntities"
+      [useUrlQueryParams]="true"
+      [(filterObj)]="filterObj"
+    ></app-filter>
   </div>
 
   <div>
@@ -68,7 +63,6 @@
         <mat-tab
           *ngFor="let item of columnGroups"
           [label]="item.name"
-          (click)="columnGroupClick(item.name)"
           angulartics2On="click"
           [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
           angularticsAction="list_column_view"
@@ -126,12 +120,13 @@
 
 <ng-template #subrecord>
   <app-entity-subrecord
-    [records]="filteredEntities"
+    [records]="allEntities"
     [columns]="columns"
     [editable]="false"
     [showEntity]="elementClick.emit.bind(elementClick)"
     [columnsToDisplay]="columnsToDisplay"
     [isLoading]="isLoading"
+    [filter]="filterObj"
   ></app-entity-subrecord>
 </ng-template>
 
@@ -162,7 +157,7 @@
       </span>
     </button>
 
-    <button mat-menu-item (click)="openFilterOverlay()">
+    <button mat-menu-item (click)="filterComponent.openFilterOverlay()">
       <fa-icon
         aria-label="filter"
         class="standard-icon color-accent"
