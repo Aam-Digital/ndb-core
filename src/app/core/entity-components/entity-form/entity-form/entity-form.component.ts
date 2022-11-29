@@ -86,8 +86,8 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
 
   ngOnInit() {
     this.buildFormConfig();
-    if (this.editing) {
-      this.switchEdit();
+    if (!this.editing) {
+      this.form.disable();
     }
     this.entityMapper
       .receiveUpdates(this.entity.getConstructor())
@@ -96,7 +96,7 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
   }
 
   private async applyChanges(entity) {
-    if (this.saveInProgress) {
+    if (this.saveInProgress || this.formIsUpToDate(entity)) {
       // this is the component that currently saves the values -> no need to apply changes.
       return;
     }
@@ -107,7 +107,7 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
         $localize`Local changes are in conflict with updated values synced from the server. Do you want the local changes to be overwritten with the latest values?`
       ))
     ) {
-      this.buildFormConfig(entity);
+      this.resetForm(entity);
     }
   }
 
@@ -124,7 +124,7 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
     try {
       await this.entityFormService.saveChanges(this.form, this.entity);
       this.save.emit(this.entity);
-      this.switchEdit();
+      this.form.disable();
     } catch (err) {
       if (!(err instanceof InvalidFormFieldError)) {
         this.alertService.addDanger(err.message);
@@ -135,21 +135,33 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
 
   cancelClicked() {
     this.cancel.emit();
-    this.buildFormConfig();
+    this.resetForm();
+    this.form.disable();
   }
 
-  private buildFormConfig(entity = this.entity) {
+  private buildFormConfig() {
     const flattenedFormFields = new Array<FormFieldConfig>().concat(
       ...this._columns
     );
     this.entityFormService.extendFormFieldConfig(
       flattenedFormFields,
-      entity.getConstructor()
+      this.entity.getConstructor()
     );
     this.form = this.entityFormService.createFormGroup(
       flattenedFormFields,
-      entity
+      this.entity
     );
-    this.form.disable();
+  }
+
+  private resetForm(entity = this.entity) {
+    // Patch form with values from the entity
+    this.form.patchValue(entity as any);
+  }
+
+  private formIsUpToDate(entity: T): boolean {
+    return Object.entries(this.form.getRawValue()).every(
+      ([key, value]) =>
+        entity[key] === value || (entity[key] === undefined && value === null)
+    );
   }
 }
