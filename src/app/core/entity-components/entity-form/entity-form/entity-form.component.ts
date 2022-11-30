@@ -111,18 +111,11 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
     }
   }
 
-  switchEdit() {
-    if (this.form.disabled) {
-      this.form.enable();
-    } else {
-      this.form.disable();
-    }
-  }
-
   async saveForm(): Promise<void> {
     this.saveInProgress = true;
     try {
       await this.entityFormService.saveChanges(this.form, this.entity);
+      this.form.markAsPristine();
       this.save.emit(this.entity);
       this.form.disable();
     } catch (err) {
@@ -130,7 +123,8 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
         this.alertService.addDanger(err.message);
       }
     }
-    this.saveInProgress = false;
+    // Reset state after a short delay
+    setTimeout(() => (this.saveInProgress = false), 1000);
   }
 
   cancelClicked() {
@@ -156,6 +150,7 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
   private resetForm(entity = this.entity) {
     // Patch form with values from the entity
     this.form.patchValue(entity as any);
+    this.form.markAsPristine();
   }
 
   private formIsUpToDate(entity: T): boolean {
