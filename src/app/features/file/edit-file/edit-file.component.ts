@@ -7,7 +7,7 @@ import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-
 import { AlertService } from "../../../core/alerts/alert.service";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { FileService } from "../file.service";
-import { filter } from "rxjs/operators";
+import { distinctUntilChanged, filter } from "rxjs/operators";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 
 /**
@@ -39,7 +39,10 @@ export class EditFileComponent extends EditComponent<string> {
     super.onInitFromDynamicConfig(config);
     this.initialValue = this.formControl.value;
     this.formControl.statusChanges
-      .pipe(filter((change) => change === "DISABLED"))
+      .pipe(
+        distinctUntilChanged(),
+        filter((change) => change === "DISABLED")
+      )
       .subscribe(() => {
         if (
           this.selectedFile &&
@@ -105,7 +108,9 @@ export class EditFileComponent extends EditComponent<string> {
     this.fileService
       .removeFile(this.entity, this.formControlName)
       .subscribe(() => {
-        this.alertService.addInfo($localize`:Message for user:File deleted`);
+        this.alertService.addInfo(
+          $localize`:Message for user:File "${this.initialValue}" deleted`
+        );
         this.initialValue = undefined;
         this.removeClicked = false;
       });
