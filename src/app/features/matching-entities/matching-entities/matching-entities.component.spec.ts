@@ -7,6 +7,7 @@ import { MatchingEntitiesModule } from "../matching-entities.module";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
+import { ActivatedRoute } from "@angular/router";
 
 describe("MatchingEntitiesComponent", () => {
   let component: MatchingEntitiesComponent;
@@ -20,7 +21,10 @@ describe("MatchingEntitiesComponent", () => {
     await TestBed.configureTestingModule({
       declarations: [MatchingEntitiesComponent],
       imports: [MatchingEntitiesModule],
-      providers: [{ provide: EntityMapperService, useValue: mockEntityMapper }],
+      providers: [
+        { provide: EntityMapperService, useValue: mockEntityMapper },
+        { provide: ActivatedRoute, useValue: { data: null } },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MatchingEntitiesComponent);

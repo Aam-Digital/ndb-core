@@ -44,7 +44,7 @@ export class MatchingEntitiesComponent
    */
   @Input() leftEntityType: EntityConstructor | string;
 
-  @Input() leftFilters: FilterConfig[];
+  @Input() leftFilters: FilterConfig[] = [];
 
   @Input() leftEntitySelected: Entity;
 
@@ -56,7 +56,7 @@ export class MatchingEntitiesComponent
    */
   @Input() rightEntityType: EntityConstructor | string;
 
-  @Input() rightFilters: FilterConfig[];
+  @Input() rightFilters: FilterConfig[] = [];
 
   @Input() rightEntitySelected: Entity;
 
@@ -95,9 +95,12 @@ export class MatchingEntitiesComponent
   }
 
   async ngOnInit() {
-    this.route.data.subscribe((data: RouteData<MatchingEntitiesConfig>) =>
-      this.initConfig(data.config)
-    );
+    this.route?.data?.subscribe((data: RouteData<MatchingEntitiesConfig>) => {
+      if (!data?.config?.onMatch) {
+        return;
+      }
+      this.initConfig(data.config);
+    });
 
     await this.init("left");
     await this.init("right");
@@ -105,15 +108,15 @@ export class MatchingEntitiesComponent
   }
 
   private initConfig(config: MatchingEntitiesConfig, entity?: Entity) {
-    this.columns = config.columns;
+    this.columns = config.columns ?? this.columns;
     this.showMap = config.showMap ?? this.showMap;
     this.matchActionLabel = config.matchActionLabel ?? this.matchActionLabel;
-    this.onMatch = config.onMatch;
+    this.onMatch = config.onMatch ?? this.onMatch;
 
-    this.leftEntityType = config.leftEntityType;
-    this.leftFilters = config.leftFilters;
-    this.rightEntityType = config.rightEntityType;
-    this.rightFilters = config.rightFilters;
+    this.leftEntityType = config.leftEntityType ?? this.leftEntityType;
+    this.leftFilters = config.leftFilters ?? this.leftFilters;
+    this.rightEntityType = config.rightEntityType ?? this.rightEntityType;
+    this.rightFilters = config.rightFilters ?? this.rightFilters;
 
     if (!config.leftEntityType) {
       this.leftEntitySelected = entity;
