@@ -31,8 +31,8 @@ import { ConfirmationDialogService } from "app/core/confirmation-dialog/confirma
 @DynamicComponent("EditTextWithAutocomplete")
 @Component({
   selector: "app-edit-text-with-autocomplete",
-  styleUrls: ["./edit-text-with-autocomplete.component.scss"],
   templateUrl: "./edit-text-with-autocomplete.component.html",
+  styleUrls: ["./edit-text-with-autocomplete.component.scss"],
 })
 export class EditTextWithAutocompleteComponent extends EditComponent<string> {
   /**
@@ -122,24 +122,21 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
     }
   }
 
-  private userConfirmsOverwriteIfNecessary(entity: Entity) {
-    if (!this.valuesChanged()) return true;
-    else {
-      const question = this.selectedEntity
-        ? $localize`Do you want to discard the changes made to '${entity}'?`
-        : $localize`Do you want to discard the changes and load '${entity}'?`;
-      return this.confirmationDialog.getConfirmation(
+  private async userConfirmsOverwriteIfNecessary(entity: Entity) {
+    return (
+      !this.valuesChanged() ||
+      this.confirmationDialog.getConfirmation(
         $localize`:Discard the changes made:Discard changes`,
-        question
-      );
-    }
+        $localize`Do you want to discard the changes made to '${entity}'?`
+      )
+    );
   }
 
   private valuesChanged() {
-    return Object.keys(this.currentValues).some(
-      (prop) =>
-        prop != this.formControlName &&
-        this.currentValues[prop] != this.parent.controls[prop].value
+    return Object.entries(this.currentValues).some(
+      ([prop, value]) =>
+        prop !== this.formControlName &&
+        value !== this.parent.controls[prop].value
     );
   }
 
@@ -178,7 +175,7 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
       );
       this.addedFormControls = [];
       this.formControl.reset();
-      this.formControl.parent.patchValue(this.originalValues);
+      this.parent.patchValue(this.originalValues);
       this.selectedEntity = null;
       this.currentValues = this.originalValues;
     }
