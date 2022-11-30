@@ -12,8 +12,13 @@ import {
   NewMatchAction,
 } from "./matching-entities-config";
 import { DataFilter } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { FilterConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
+import {
+  EntityListConfig,
+  FilterConfig,
+} from "../../../core/entity-components/entity-list/EntityListConfig";
 import { RouteTarget } from "../../../app.routing";
+import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
+import { ActivatedRoute } from "@angular/router";
 
 interface MatchingSide {
   entityType: EntityConstructor;
@@ -75,6 +80,7 @@ export class MatchingEntitiesComponent
   filterObj: DataFilter<any>;
 
   constructor(
+    private route: ActivatedRoute,
     public schemaService: EntitySchemaService,
     private entityMapper: EntityMapperService,
     private entityRegistry: EntityRegistry
@@ -85,29 +91,36 @@ export class MatchingEntitiesComponent
   // TODO: lock things after matching was created?
 
   onInitFromDynamicConfig(config: PanelConfig<MatchingEntitiesConfig>) {
-    this.columns = config.config.columns;
-    this.showMap = config.config.showMap ?? this.showMap;
-    this.matchActionLabel =
-      config.config.matchActionLabel ?? this.matchActionLabel;
-    this.onMatch = config.config.onMatch;
-
-    this.leftEntityType = config.config.leftEntityType;
-    this.leftFilters = config.config.leftFilters;
-    this.rightEntityType = config.config.rightEntityType;
-    this.rightFilters = config.config.rightFilters;
-
-    if (!config.config.leftEntityType) {
-      this.leftEntitySelected = config.entity;
-    }
-    if (!config.config.rightEntityType) {
-      this.rightEntitySelected = config.entity;
-    }
+    this.initConfig(config.config, config.entity);
   }
 
   async ngOnInit() {
+    this.route.data.subscribe((data: RouteData<MatchingEntitiesConfig>) =>
+      this.initConfig(data.config)
+    );
+
     await this.init("left");
     await this.init("right");
     this.columnsToDisplay = ["side-0", "side-1"];
+  }
+
+  private initConfig(config: MatchingEntitiesConfig, entity?: Entity) {
+    this.columns = config.columns;
+    this.showMap = config.showMap ?? this.showMap;
+    this.matchActionLabel = config.matchActionLabel ?? this.matchActionLabel;
+    this.onMatch = config.onMatch;
+
+    this.leftEntityType = config.leftEntityType;
+    this.leftFilters = config.leftFilters;
+    this.rightEntityType = config.rightEntityType;
+    this.rightFilters = config.rightFilters;
+
+    if (!config.leftEntityType) {
+      this.leftEntitySelected = entity;
+    }
+    if (!config.rightEntityType) {
+      this.rightEntitySelected = entity;
+    }
   }
 
   private async init(side: "left" | "right") {
