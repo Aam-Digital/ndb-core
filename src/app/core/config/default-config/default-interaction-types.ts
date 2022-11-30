@@ -6,7 +6,7 @@ export const defaultInteractionTypes: InteractionType[] = [
     label: "",
   },
   {
-    id: "HOME_VISIT",
+    id: "VISIT",
     label: $localize`:Interaction type/Category of a Note:Home Visit`,
   },
   {
@@ -16,6 +16,10 @@ export const defaultInteractionTypes: InteractionType[] = [
   {
     id: "INCIDENT",
     label: $localize`:Interaction type/Category of a Note:Incident`,
+  },
+  {
+    id: "NOTE",
+    label: $localize`:Interaction type/Category of a Note:General Note`,
   },
   {
     id: "GUARDIAN_MEETING",
