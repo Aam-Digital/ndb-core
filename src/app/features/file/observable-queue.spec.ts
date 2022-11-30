@@ -126,4 +126,41 @@ describe("ObservableQueue", () => {
     expect(res1).toEqual({ value: "job1 res" });
     expect(res2).toBe("job2");
   });
+
+  it("should only run next job if previous completes", () => {
+    const job1 = new Subject<string>();
+    const job2 = new Subject();
+    let job1res: string;
+    let job1done = false;
+    let job2done = false;
+    queue.add(job1).subscribe({
+      next: (res) => (job1res = res),
+      complete: () => (job1done = true),
+    });
+    queue.add(job2).subscribe({ complete: () => (job2done = true) });
+
+    expect(job1.observed).toBeTrue();
+    expect(job2.observed).toBeFalse();
+    expect(job1done).toBeFalse();
+    expect(job2done).toBeFalse();
+
+    job1.next("some");
+    expect(job1res).toBe("some");
+    job1.next("values");
+    expect(job1res).toBe("values");
+    job1.next("emitted");
+    expect(job1res).toBe("emitted");
+
+    expect(job1.observed).toBeTrue();
+    expect(job2.observed).toBeFalse();
+    expect(job1done).toBeFalse();
+    expect(job2done).toBeFalse();
+
+    job1.complete();
+
+    expect(job1res).toBe("emitted");
+    expect(job2.observed).toBeTrue();
+    expect(job1done).toBeTrue();
+    expect(job2done).toBeFalse();
+  });
 });

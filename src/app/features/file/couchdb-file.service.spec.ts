@@ -9,7 +9,14 @@ import {
   HttpStatusCode,
 } from "@angular/common/http";
 import { MatDialog } from "@angular/material/dialog";
-import { EMPTY, firstValueFrom, of, Subject, throwError } from "rxjs";
+import {
+  BehaviorSubject,
+  EMPTY,
+  firstValueFrom,
+  of,
+  Subject,
+  throwError,
+} from "rxjs";
 import { ShowFileComponent } from "./show-file/show-file.component";
 import { Entity } from "../../core/entity/model/entity";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
@@ -200,30 +207,35 @@ describe("CouchdbFileService", () => {
   });
 
   it("should wait for previous request to finish before starting a new one", () => {
-    const getSubject = new Subject();
-    const putSubject = new Subject();
+    const firstPut = new BehaviorSubject({ ok: true });
+    const secondPut = new BehaviorSubject({ ok: true });
+    const thirdPut = new BehaviorSubject({ ok: true });
     const file1 = { type: "image/png", name: "file1.name" } as File;
     const file2 = { type: "image/png", name: "file2.name" } as File;
     const file3 = { type: "image/png", name: "file3.name" } as File;
     const entity = new Entity("testId");
-    mockHttp.get.and.returnValue(getSubject);
-    mockHttp.put.and.returnValue(putSubject);
+    mockHttp.get.and.returnValues(
+      of({ _rev: "1-rev" }),
+      of({ _rev: "2-rev" }),
+      of({ _rev: "3-rev" })
+    );
+    mockHttp.put.and.returnValues(firstPut, secondPut, thirdPut);
 
     let file1Done = false;
     let file2Done = false;
     let file3Done = false;
     service
       .uploadFile(file1, entity, "prop1")
-      .subscribe(() => (file1Done = true));
+      .subscribe({ complete: () => (file1Done = true) });
     service
       .uploadFile(file2, entity, "prop2")
-      .subscribe(() => (file2Done = true));
+      .subscribe({ complete: () => (file2Done = true) });
     service
       .uploadFile(file3, entity, "prop3")
-      .subscribe(() => (file3Done = true));
+      .subscribe({ complete: () => (file3Done = true) });
 
-    getSubject.next({ _rev: "1-rev" });
-
+    expect(firstPut.observed).toBeTrue();
+    expect(secondPut.observed).toBeFalse();
     expect(mockHttp.put).toHaveBeenCalledTimes(1);
     expect(mockHttp.put).toHaveBeenCalledWith(
       jasmine.stringContaining(
@@ -233,13 +245,13 @@ describe("CouchdbFileService", () => {
       jasmine.anything()
     );
 
-    putSubject.next({ ok: true });
-    getSubject.next({ _rev: "2-rev" });
+    firstPut.complete();
 
     expect(file1Done).toBeTrue();
     expect(file2Done).toBeFalse();
     expect(file3Done).toBeFalse();
-
+    expect(secondPut.observed).toBeTrue();
+    expect(thirdPut.observed).toBeFalse();
     expect(mockHttp.put).toHaveBeenCalledTimes(2);
     expect(mockHttp.put).toHaveBeenCalledWith(
       jasmine.stringContaining(
@@ -249,12 +261,11 @@ describe("CouchdbFileService", () => {
       jasmine.anything()
     );
 
-    putSubject.next({ ok: true });
-    getSubject.next({ _rev: "3-rev" });
+    secondPut.complete();
 
-    expect(file1Done).toBeTrue();
     expect(file2Done).toBeTrue();
     expect(file3Done).toBeFalse();
+    expect(thirdPut.observed).toBeTrue();
     expect(mockHttp.put).toHaveBeenCalledTimes(3);
     expect(mockHttp.put).toHaveBeenCalledWith(
       jasmine.stringContaining(

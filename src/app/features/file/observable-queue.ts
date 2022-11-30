@@ -1,4 +1,4 @@
-import { Observable, of } from "rxjs";
+import { last, Observable, of } from "rxjs";
 import { catchError, concatMap, shareReplay } from "rxjs/operators";
 
 export class ObservableQueue {
@@ -9,7 +9,10 @@ export class ObservableQueue {
       concatMap(() => obs),
       shareReplay()
     );
-    this.jobQueue = newJob.pipe(catchError(() => of(undefined)));
+    this.jobQueue = newJob.pipe(
+      last(),
+      catchError(() => of(undefined))
+    );
     return newJob;
   }
 }
