@@ -87,7 +87,7 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
   ngOnInit() {
     this.buildFormConfig();
     if (this.editing) {
-      this.switchEdit();
+      this.form.enable();
     }
     this.entityMapper
       .receiveUpdates(this.entity.getConstructor())
@@ -111,26 +111,20 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
     }
   }
 
-  switchEdit() {
-    if (this.form.disabled) {
-      this.form.enable();
-    } else {
-      this.form.disable();
-    }
-  }
-
   async saveForm(): Promise<void> {
     this.saveInProgress = true;
     try {
       await this.entityFormService.saveChanges(this.form, this.entity);
+      this.form.markAsPristine();
       this.save.emit(this.entity);
-      this.switchEdit();
+      this.form.disable();
     } catch (err) {
       if (!(err instanceof InvalidFormFieldError)) {
         this.alertService.addDanger(err.message);
       }
     }
-    this.saveInProgress = false;
+    // Reset state after a short delay
+    setTimeout(() => (this.saveInProgress = false), 1000);
   }
 
   cancelClicked() {
