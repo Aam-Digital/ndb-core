@@ -131,7 +131,7 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
       }
     }
     // Reset state after a short delay
-    setTimeout(() => (this.saveInProgress = false), 500);
+    setTimeout(() => (this.saveInProgress = false), 1000);
   }
 
   cancelClicked() {
