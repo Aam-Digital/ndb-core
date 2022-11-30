@@ -1,9 +1,10 @@
 import { FilterSelection } from "../../filter/filter-selection/filter-selection";
+import { Entity } from "../../entity/model/entity";
 
 /**
  * A simple interface which holds all required information to display and use a filter.
  */
-export interface FilterComponentSettings<T> {
+export interface FilterComponentSettings<T extends Entity> {
   /**
    * The filter selection which handles the logic for filtering the data.
    */
