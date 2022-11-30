@@ -200,24 +200,30 @@ describe("CouchdbFileService", () => {
   });
 
   it("should wait for previous request to finish before starting a new one", () => {
+    const getSubject = new Subject();
     const putSubject = new Subject();
     const file1 = { type: "image/png", name: "file1.name" } as File;
     const file2 = { type: "image/png", name: "file2.name" } as File;
     const file3 = { type: "image/png", name: "file3.name" } as File;
     const entity = new Entity("testId");
-    mockHttp.get.and.returnValue(of({ _rev: "1-rev" }));
+    mockHttp.get.and.returnValue(getSubject);
     mockHttp.put.and.returnValue(putSubject);
 
+    let file1Done = false;
+    let file2Done = false;
+    let file3Done = false;
     service
       .uploadFile(file1, entity, "prop1")
-      .subscribe((res) => console.log("res1", res));
+      .subscribe(() => (file1Done = true));
     service
       .uploadFile(file2, entity, "prop2")
-      .subscribe((res) => console.log("res2", res));
+      .subscribe(() => (file2Done = true));
     service
       .uploadFile(file3, entity, "prop3")
-      .subscribe((res) => console.log("res3", res));
-    expect(mockHttp.get).toHaveBeenCalledTimes(1);
+      .subscribe(() => (file3Done = true));
+
+    getSubject.next({ _rev: "1-rev" });
+
     expect(mockHttp.put).toHaveBeenCalledTimes(1);
     expect(mockHttp.put).toHaveBeenCalledWith(
       jasmine.stringContaining(
@@ -227,10 +233,13 @@ describe("CouchdbFileService", () => {
       jasmine.anything()
     );
 
-    mockHttp.get.and.returnValue(of({ _rev: "2-rev" }));
     putSubject.next({ ok: true });
+    getSubject.next({ _rev: "2-rev" });
 
-    expect(mockHttp.get).toHaveBeenCalledTimes(2);
+    expect(file1Done).toBeTrue();
+    expect(file2Done).toBeFalse();
+    expect(file3Done).toBeFalse();
+
     expect(mockHttp.put).toHaveBeenCalledTimes(2);
     expect(mockHttp.put).toHaveBeenCalledWith(
       jasmine.stringContaining(
@@ -240,10 +249,12 @@ describe("CouchdbFileService", () => {
       jasmine.anything()
     );
 
-    mockHttp.get.and.returnValue(of({ _rev: "3-rev" }));
     putSubject.next({ ok: true });
+    getSubject.next({ _rev: "3-rev" });
 
-    expect(mockHttp.get).toHaveBeenCalledTimes(3);
+    expect(file1Done).toBeTrue();
+    expect(file2Done).toBeTrue();
+    expect(file3Done).toBeFalse();
     expect(mockHttp.put).toHaveBeenCalledTimes(3);
     expect(mockHttp.put).toHaveBeenCalledWith(
       jasmine.stringContaining(

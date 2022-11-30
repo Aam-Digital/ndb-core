@@ -49,13 +49,17 @@ export class CouchdbFileService extends FileService {
   }
 
   uploadFile(file: File, entity: Entity, property: string): Observable<any> {
-    return this.requestQueue.add(this.runFileUpload(file, entity, property));
+    const obs = this.requestQueue.add(
+      this.runFileUpload(file, entity, property)
+    );
+    this.reportProgress($localize`Uploading "${file.name}"`, obs);
+    return obs;
   }
 
   private runFileUpload(file: File, entity: Entity, property: string) {
     const blob = new Blob([file]);
     const attachmentPath = `${this.attachmentsUrl}/${entity.getId(true)}`;
-    const obs = this.getAttachmentsDocument(attachmentPath).pipe(
+    return this.getAttachmentsDocument(attachmentPath).pipe(
       concatMap(({ _rev }) =>
         this.http.put(`${attachmentPath}/${property}?rev=${_rev}`, blob, {
           headers: { "Content-Type": file.type, "ngsw-bypass": "" },
@@ -66,8 +70,6 @@ export class CouchdbFileService extends FileService {
       // prevent http request to be executed multiple times (whenever .subscribe is called)
       shareReplay()
     );
-    this.reportProgress($localize`Uploading "${file.name}"`, obs);
-    return obs;
   }
 
   private getAttachmentsDocument(
@@ -106,6 +108,10 @@ export class CouchdbFileService extends FileService {
   }
 
   removeAllFiles(entity: Entity): Observable<any> {
+    return this.requestQueue.add(this.runAllFilesRemoval(entity));
+  }
+
+  private runAllFilesRemoval(entity: Entity) {
     const attachmentPath = `${this.attachmentsUrl}/${entity.getId(true)}`;
     return this.http
       .get<{ _rev: string }>(attachmentPath)
