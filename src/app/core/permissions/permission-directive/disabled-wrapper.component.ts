@@ -7,6 +7,8 @@ import {
   TemplateRef,
   ViewChild,
 } from "@angular/core";
+import { MatButton } from "@angular/material/button";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 /**
  * This component is used to display a tooltip when a element is elementDisabled.
@@ -43,18 +45,19 @@ export class DisabledWrapperComponent implements AfterViewInit {
   @Input() elementDisabled: boolean;
 
   @ViewChild("wrapper") wrapper: ElementRef<HTMLDivElement>;
+
   constructor(private renderer: Renderer2) {}
 
   ngAfterViewInit() {
     if (this.wrapper) {
-      const innerElement = this.wrapper.nativeElement.children[0];
-
+      const buttonElement =
+        this.wrapper.nativeElement.getElementsByTagName("button")[0];
       if (this.elementDisabled) {
-        this.renderer.addClass(innerElement, "mat-button-disabled");
-        this.renderer.setAttribute(innerElement, "disabled", "true");
+        this.renderer.addClass(buttonElement, "mat-button-disabled");
+        this.renderer.setAttribute(buttonElement, "disabled", "true");
       } else {
-        this.renderer.removeAttribute(innerElement, "disabled");
-        this.renderer.removeClass(innerElement, "mat-button-disabled");
+        this.renderer.removeAttribute(buttonElement, "disabled");
+        this.renderer.removeClass(buttonElement, "mat-button-disabled");
       }
     }
   }

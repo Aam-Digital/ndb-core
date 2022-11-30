@@ -12,7 +12,11 @@
     </app-view-title>
 
     <div class="flex-row gap-regular">
-      <app-add-new-button
+      <button
+        mat-stroked-button
+        color="accent"
+        class="standard-add-button"
+        style="background-color: white !important;"
         (click)="addNewClick.emit()"
         angulartics2On="click"
         angularticsCategory="UserAction"
@@ -27,8 +31,12 @@
           }"
         i18n
       >
+        <fa-icon
+          aria-label="add element"
+          icon="plus-circle"
+        ></fa-icon>
         Add New
-      </app-add-new-button>
+      </button>
       <button mat-icon-button color="primary" [matMenuTriggerFor]="additional">
         <fa-icon class="standard-icon" icon="ellipsis-v"></fa-icon>
       </button>
@@ -39,19 +47,14 @@
 
   <div class="flex-row gap-regular flex-wrap">
     <div *ngTemplateOutlet="filterDialog"></div>
-
-    <app-list-filter
-      *ngFor="let filter of filterSelections"
-      [filterConfig]="filter.filterSettings"
-      [(selectedOption)]="filter.selectedOption"
-      [displayAsToggle]="filter.display !== 'dropdown'"
-      (selectedOptionChange)="filterOptionSelected(filter, $event)"
-      angulartics2On="click"
-      [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
-      angularticsAction="list_filter"
-      [angularticsLabel]="filter.filterSettings.label"
-    >
-    </app-list-filter>
+    <app-filter
+      class="flex-row gap-regular flex-wrap"
+      [filterConfig]="filtersConfig"
+      [entityType]="entityConstructor"
+      [entities]="allEntities"
+      [useUrlQueryParams]="true"
+      [(filterObj)]="filterObj"
+    ></app-filter>
   </div>
 
   <div>
@@ -60,7 +63,6 @@
         <mat-tab
           *ngFor="let item of columnGroups"
           [label]="item.name"
-          (click)="columnGroupClick(item.name)"
           angulartics2On="click"
           [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
           angularticsAction="list_column_view"
@@ -118,12 +120,13 @@
 
 <ng-template #subrecord>
   <app-entity-subrecord
-    [records]="filteredEntities"
+    [records]="allEntities"
     [columns]="columns"
     [editable]="false"
     [showEntity]="elementClick.emit.bind(elementClick)"
     [columnsToDisplay]="columnsToDisplay"
     [isLoading]="isLoading"
+    [filter]="filterObj"
   ></app-entity-subrecord>
 </ng-template>
 
@@ -154,7 +157,7 @@
       </span>
     </button>
 
-    <button mat-menu-item (click)="openFilterOverlay()">
+    <button mat-menu-item (click)="filterComponent.openFilterOverlay()">
       <fa-icon
         aria-label="filter"
         class="standard-icon color-accent"
