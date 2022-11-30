@@ -29,6 +29,13 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   readonly loadingPlaceholder = $localize`:A placeholder for the input element when select options are not loaded yet:loading...`;
 
   /**
+   * Handle and emit ids including entity type prefix - default is false.
+   *
+   * TODO: make ids including prefix the default everywhere and remove this option (see #1526)
+   */
+  @Input() withPrefix: boolean = false;
+
+  /**
    * The entity-type (e.g. 'Child', 'School', e.t.c.) to set.
    * @param type The ENTITY_TYPE of a Entity. This affects the entities which will be loaded and the component
    *             that displays the entities.
@@ -60,7 +67,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
       )
       .subscribe((_) => {
         this.selectedEntities = this.allEntities.filter((e) =>
-          sel.find((s) => s === e.getId())
+          sel.find((s) => s === e.getId(true) || s === e.getId())
         );
       });
   }
@@ -224,7 +231,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    */
   unselectEntity(entity: E) {
     const index = this.selectedEntities.findIndex(
-      (e) => e.getId() === entity.getId()
+      (e) => e.getId(true) === entity.getId(true)
     );
     if (index !== -1) {
       this.selectedEntities.splice(index, 1);
@@ -235,10 +242,14 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   }
 
   private emitChange() {
-    this.selectionChange.emit(this.selectedEntities.map((e) => e.getId()));
+    this.selectionChange.emit(
+      this.selectedEntities.map((e) => e.getId(this.withPrefix))
+    );
   }
 
   private isSelected(entity: E): boolean {
-    return this.selectedEntities.some((e) => e.getId() === entity.getId());
+    return this.selectedEntities.some(
+      (e) => e.getId(true) === entity.getId(true)
+    );
   }
 }

@@ -8,7 +8,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import { ActivatedRoute, Params, Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import {
   ColumnGroupsConfig,
   EntityListConfig,
@@ -18,11 +18,7 @@ import {
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { FormFieldConfig } from "../entity-form/entity-form/FormConfig";
 import { EntitySubrecordComponent } from "../entity-subrecord/entity-subrecord/entity-subrecord.component";
-import { FilterGeneratorService } from "./filter-generator.service";
-import { FilterComponentSettings } from "./filter-component.settings";
 import { entityFilterPredicate } from "./filter-predicate";
-import { MatDialog } from "@angular/material/dialog";
-import { FilterOverlayComponent } from "./filter-overlay/filter-overlay.component";
 import { AnalyticsService } from "../../analytics/analytics.service";
 import { RouteTarget } from "../../../app.routing";
 import { RouteData } from "../../view/dynamic-routing/view-config.interface";
@@ -30,6 +26,8 @@ import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { DataFilter } from "../entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { FilterComponent } from "../../filter/filter/filter.component";
 
 /**
  * This component allows to create a full blown table with pagination, filtering, searching and grouping.
@@ -51,7 +49,6 @@ export class EntityListComponent<T extends Entity>
   implements OnChanges, AfterViewInit
 {
   @Input() allEntities: T[] = [];
-  filteredEntities: T[] = [];
   @Input() listConfig: EntityListConfig;
   @Input() entityConstructor: EntityConstructor<T>;
   @Input() isLoading: boolean;
@@ -59,6 +56,7 @@ export class EntityListComponent<T extends Entity>
   @Output() addNewClick = new EventEmitter();
 
   @ViewChild(EntitySubrecordComponent) entityTable: EntitySubrecordComponent<T>;
+  @ViewChild(FilterComponent) filterComponent: FilterComponent<T>;
 
   isDesktop: boolean;
 
@@ -71,7 +69,7 @@ export class EntityListComponent<T extends Entity>
 
   columnsToDisplay: string[] = [];
 
-  filterSelections: FilterComponentSettings<T>[] = [];
+  filterObj: DataFilter<T>;
   filterString = "";
 
   get selectedColumnGroupIndex(): number {
@@ -103,8 +101,6 @@ export class EntityListComponent<T extends Entity>
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private analyticsService: AnalyticsService,
-    private filterGeneratorService: FilterGeneratorService,
-    private dialog: MatDialog,
     private entityMapperService: EntityMapperService,
     private entities: EntityRegistry
   ) {
@@ -132,9 +128,6 @@ export class EntityListComponent<T extends Entity>
 
         this.isDesktop = isDesktop;
       });
-    this.activatedRoute.queryParams.subscribe((params) => {
-      this.loadUrlParams(params);
-    });
   }
 
   private async buildComponentFromConfig(data: RouteData<EntityListConfig>) {
@@ -177,11 +170,6 @@ export class EntityListComponent<T extends Entity>
         this.displayColumnGroupByName(this.mobileColumnGroup);
       }
     }
-    if (changes.hasOwnProperty("allEntities")) {
-      await this.initFilterSelections();
-      this.applyFilterSelections();
-    }
-    this.loadUrlParams();
   }
 
   private addColumnsFromColumnGroups() {
@@ -219,27 +207,6 @@ export class EntityListComponent<T extends Entity>
     }
   }
 
-  private loadUrlParams(parameters?: Params) {
-    const params = parameters || this.activatedRoute.snapshot.queryParams;
-    if (params["view"]) {
-      this.displayColumnGroupByName(params["view"]);
-    }
-    this.filterSelections.forEach((f) => {
-      if (params.hasOwnProperty(f.filterSettings.name)) {
-        f.selectedOption = params[f.filterSettings.name];
-      }
-    });
-    this.applyFilterSelections();
-    if (params["search"]) {
-      this.applyFilter(params["search"]);
-    }
-  }
-
-  columnGroupClick(columnGroupName: string) {
-    this.displayColumnGroupByName(columnGroupName);
-    this.updateUrl("view", columnGroupName);
-  }
-
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
@@ -248,45 +215,6 @@ export class EntityListComponent<T extends Entity>
     this.analyticsService.eventTrack("list_filter_freetext", {
       category: this.entityConstructor?.ENTITY_TYPE,
     });
-  }
-
-  filterOptionSelected(
-    filter: FilterComponentSettings<T>,
-    selectedOption: string
-  ) {
-    filter.selectedOption = selectedOption;
-    this.applyFilterSelections();
-    this.updateUrl(filter.filterSettings.name, selectedOption);
-  }
-
-  private applyFilterSelections() {
-    let filteredData = this.allEntities;
-
-    this.filterSelections.forEach((f) => {
-      filteredData = filteredData.filter(
-        f.filterSettings.getFilterFunction(f.selectedOption)
-      );
-    });
-
-    this.filteredEntities = filteredData;
-  }
-
-  private updateUrl(key: string, value: string) {
-    const params = {};
-    params[key] = value;
-    this.router.navigate([], {
-      relativeTo: this.activatedRoute,
-      queryParams: params,
-      queryParamsHandling: "merge",
-    });
-  }
-
-  private async initFilterSelections(): Promise<void> {
-    this.filterSelections = await this.filterGeneratorService.generate(
-      this.filtersConfig,
-      this.entityConstructor,
-      this.allEntities
-    );
   }
 
   private displayColumnGroupByName(columnGroupName: string) {
@@ -299,23 +227,5 @@ export class EntityListComponent<T extends Entity>
 
   private getSelectedColumnIndexByName(columnGroupName: string) {
     return this.columnGroups.findIndex((c) => c.name === columnGroupName);
-  }
-
-  getNewRecordFactory(): () => T {
-    return () => new this.entityConstructor();
-  }
-
-  openFilterOverlay() {
-    this.dialog.open(FilterOverlayComponent, {
-      data: {
-        filterSelections: this.filterSelections,
-        filterChangeCallback: (
-          filter: FilterComponentSettings<T>,
-          option: string
-        ) => {
-          this.filterOptionSelected(filter, option);
-        },
-      },
-    });
   }
 }

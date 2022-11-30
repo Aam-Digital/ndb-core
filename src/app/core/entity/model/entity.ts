@@ -19,6 +19,7 @@ import { v4 as uuid } from "uuid";
 import { EntitySchema } from "../schema/entity-schema";
 import { DatabaseField } from "../database-field.decorator";
 import { getWarningLevelColor, WarningLevel } from "./warning-level";
+import { IconName } from "@fortawesome/fontawesome-svg-core";
 
 /**
  * This represents a static class of type <T>.
@@ -74,9 +75,11 @@ export class Entity {
   static get label(): string {
     return this._label ?? this.ENTITY_TYPE;
   }
+
   static set label(value: string) {
     this._label = value;
   }
+
   private static _label: string;
 
   /**
@@ -85,15 +88,17 @@ export class Entity {
   static get labelPlural(): string {
     return this._labelPlural ?? this.label;
   }
+
   static set labelPlural(value: string) {
     this._labelPlural = value;
   }
+
   private static _labelPlural: string;
 
   /**
    * icon id used for this entity
    */
-  static icon: string;
+  static icon: IconName;
 
   /**
    * Extract the ENTITY_TYPE from an id.
@@ -179,6 +184,35 @@ export class Entity {
   }
 
   /**
+   * Check, if this entity is considered active.
+   * This is either taken from the (not configured) property "active".
+   * If the property doesn't exist, the default is `true`.
+   * Subclasses may overwrite this functionality.
+   *
+   * To have a simple boolean indicating if an entity is active or not, add the following schema:
+   * ```json
+   *  {
+   *    "name": "active",
+   *    "schema": {
+   *      "dataType": "boolean",
+   *      "label": "Active"
+   *    }
+   *  }
+   * ```
+   */
+  get isActive(): boolean {
+    return this["active"] ?? true;
+  }
+
+  /**
+   * If existing entities with `isActive: false` exist, then these values are assigned to the property "active".
+   * @param isActive
+   */
+  set isActive(isActive: boolean) {
+    this["active"] = isActive;
+  }
+
+  /**
    * Creates an entity object with the given id. This id is final and won't be changeable after this object has been
    * created.
    *
@@ -191,8 +225,8 @@ export class Entity {
   /**
    * Get the class (Entity or the actual subclass of the instance) to call static methods on the correct class considering inheritance
    */
-  getConstructor(): EntityConstructor {
-    return <typeof Entity>this.constructor;
+  getConstructor<T extends Entity>(this: T): EntityConstructor<T> {
+    return this.constructor as EntityConstructor<T>;
   }
 
   /**

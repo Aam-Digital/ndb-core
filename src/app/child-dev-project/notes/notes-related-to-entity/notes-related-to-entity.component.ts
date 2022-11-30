@@ -6,35 +6,42 @@ import moment from "moment";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
-import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { Entity } from "../../../core/entity/model/entity";
+import {
+  ColumnConfig,
+  DataFilter,
+  EntitySubrecordConfig,
+} from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { FilterService } from "../../../core/filter/filter.service";
+import { Child } from "../../children/model/child";
+import { School } from "../../schools/model/school";
+import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 
 /**
- * The component that is responsible for listing the Notes that are related to a certain child
- *
- * TODO rename this to a more general name as this can also handle notes of schools and notes of authors
+ * The component that is responsible for listing the Notes that are related to a certain entity.
  */
-@DynamicComponent("NotesOfChild")
+@DynamicComponent("NotesRelatedToEntity")
+@DynamicComponent("NotesOfChild") // for backward compatibility
 @Component({
-  selector: "app-notes-of-child",
-  templateUrl: "./notes-of-child.component.html",
+  selector: "app-notes-related-to-entity",
+  templateUrl: "./notes-related-to-entity.component.html",
 })
-export class NotesOfChildComponent
+export class NotesRelatedToEntityComponent
   implements OnChanges, OnInitDynamicComponent
 {
   @Input() entity: Entity;
-  private noteProperty = "children";
   records: Array<Note> = [];
 
-  columns: FormFieldConfig[] = [
+  columns: ColumnConfig[] = [
     { id: "date", visibleFrom: "xs" },
     { id: "subject", visibleFrom: "xs" },
     { id: "text", visibleFrom: "md" },
     { id: "authors", visibleFrom: "md" },
     { id: "warningLevel", visibleFrom: "md" },
   ];
+  filter: DataFilter<Note> = {};
 
   /**
    * returns the color for a note; passed to the entity subrecord component
@@ -46,44 +53,38 @@ export class NotesOfChildComponent
   constructor(
     private childrenService: ChildrenService,
     private sessionService: SessionService,
-    private formDialog: FormDialogService
+    private formDialog: FormDialogService,
+    private filterService: FilterService
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("child")) {
-      this.initNotesOfChild();
+      this.initNotesOfEntity();
     }
   }
 
-  onInitFromDynamicConfig(config: PanelConfig) {
+  onInitFromDynamicConfig(config: PanelConfig<EntitySubrecordConfig<Note>>) {
     if (config?.config?.columns) {
       this.columns = config.config.columns;
     }
-
-    this.entity = config.entity;
-    const entityType = this.entity.getType();
-    this.newRecordFactory = this.generateNewRecordFactory();
-
-    this.noteProperty = [...Note.schema.keys()].find(
-      (prop) => Note.schema.get(prop).additional === entityType
-    );
-    if (!this.noteProperty) {
-      throw new Error(
-        `Could not load notes for related entity: "${entityType}"`
-      );
+    if (config?.config?.filter) {
+      this.filter = config.config.filter;
     }
 
-    if (this.noteProperty === "children") {
+    this.entity = config.entity;
+    this.newRecordFactory = this.generateNewRecordFactory();
+
+    if (this.entity.getType() === Child.ENTITY_TYPE) {
       // When displaying notes for a child, use attendance color highlighting
       this.getColor = (note: Note) => note?.getColorForId(this.entity.getId());
     }
 
-    this.initNotesOfChild();
+    this.initNotesOfEntity();
   }
 
-  private initNotesOfChild() {
+  private initNotesOfEntity() {
     this.childrenService
-      .getNotesOf(this.entity.getId(), this.noteProperty)
+      .getNotesRelatedTo(this.entity.getId(true))
       .then((notes: Note[]) => {
         notes.sort((a, b) => {
           if (!a.date && b.date) {
@@ -98,19 +99,29 @@ export class NotesOfChildComponent
 
   generateNewRecordFactory() {
     const user = this.sessionService.getCurrentUser().name;
-    const entityId = this.entity.getId();
 
     return () => {
       const newNote = new Note(Date.now().toString());
       newNote.date = new Date();
-      if (this.noteProperty === "children") {
-        newNote.addChild(entityId);
+
+      //TODO: generalize this code - possibly by only using relatedEntities to link other records here? see #1501
+      if (this.entity.getType() === Child.ENTITY_TYPE) {
+        newNote.addChild(this.entity as Child);
+      } else if (this.entity.getType() === School.ENTITY_TYPE) {
+        newNote.addSchool(this.entity as School);
+      } else if (this.entity.getType() === ChildSchoolRelation.ENTITY_TYPE) {
+        newNote.addChild((this.entity as ChildSchoolRelation).childId);
+        newNote.addSchool((this.entity as ChildSchoolRelation).schoolId);
+        newNote.relatedEntities.push(this.entity.getId(true));
       } else {
-        newNote[this.noteProperty].push(entityId);
+        newNote.relatedEntities.push(this.entity.getId(true));
       }
+
       if (!newNote.authors.includes(user)) {
+        // TODO: should we keep authors completely separate of also add them into the relatedEntities as well?
         newNote.authors.push(user);
       }
+      this.filterService.alignEntityWithFilter(newNote, this.filter);
 
       return newNote;
     };

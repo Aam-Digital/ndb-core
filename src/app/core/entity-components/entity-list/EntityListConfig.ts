@@ -66,7 +66,6 @@ export interface GroupConfig {
 
 export interface FilterConfig {
   id: string;
-  display?: string;
   type?: string;
   default?: string;
   label?: string;
@@ -78,7 +77,7 @@ export interface BooleanFilterConfig extends FilterConfig {
   all: string;
 }
 
-export interface PrebuiltFilterConfig<T> extends FilterConfig {
+export interface PrebuiltFilterConfig<T extends Entity> extends FilterConfig {
   options: FilterSelectionOption<T>[];
 }
 

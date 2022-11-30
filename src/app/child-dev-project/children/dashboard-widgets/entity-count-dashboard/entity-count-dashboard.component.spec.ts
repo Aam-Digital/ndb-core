@@ -1,6 +1,12 @@
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+  waitForAsync,
+} from "@angular/core/testing";
 
-import { ChildrenCountDashboardComponent } from "./children-count-dashboard.component";
+import { EntityCountDashboardComponent } from "./entity-count-dashboard.component";
 import { Center, Child } from "../../model/child";
 import { ConfigurableEnumValue } from "../../../../core/configurable-enum/configurable-enum.interface";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -11,10 +17,12 @@ import {
 } from "../../../../core/entity/mock-entity-mapper-service";
 import { ChildrenModule } from "../../children.module";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
+import { RecurringActivity } from "../../../attendance/model/recurring-activity";
+import { defaultInteractionTypes } from "../../../../core/config/default-config/default-interaction-types";
 
-describe("ChildrenCountDashboardComponent", () => {
-  let component: ChildrenCountDashboardComponent;
-  let fixture: ComponentFixture<ChildrenCountDashboardComponent>;
+describe("EntityCountDashboardComponent", () => {
+  let component: EntityCountDashboardComponent;
+  let fixture: ComponentFixture<EntityCountDashboardComponent>;
   let entityMapper: MockEntityMapperService;
 
   function createChild(center: Center) {
@@ -23,22 +31,20 @@ describe("ChildrenCountDashboardComponent", () => {
     return child;
   }
 
-  beforeEach(
-    waitForAsync(() => {
-      entityMapper = mockEntityMapper();
-      TestBed.configureTestingModule({
-        imports: [
-          ChildrenModule,
-          MockedTestingModule.withState(),
-          FontAwesomeTestingModule,
-        ],
-        providers: [{ provide: EntityMapperService, useValue: entityMapper }],
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    entityMapper = mockEntityMapper();
+    TestBed.configureTestingModule({
+      imports: [
+        ChildrenModule,
+        MockedTestingModule.withState(),
+        FontAwesomeTestingModule,
+      ],
+      providers: [{ provide: EntityMapperService, useValue: entityMapper }],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ChildrenCountDashboardComponent);
+    fixture = TestBed.createComponent(EntityCountDashboardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -54,7 +60,7 @@ describe("ChildrenCountDashboardComponent", () => {
 
     await component.ngOnInit();
 
-    expect(component.totalChildren).toBe(3);
+    expect(component.totalEntities).toBe(3);
   });
 
   it("should calculate children per center correctly", async () => {
@@ -66,16 +72,16 @@ describe("ChildrenCountDashboardComponent", () => {
 
     await component.ngOnInit();
 
-    expect(component.childrenGroupCounts)
+    expect(component.entityGroupCounts)
       .withContext("unexpected number of centersWithProbability")
       .toHaveSize(2);
-    const actualCenterAEntry = component.childrenGroupCounts.filter(
+    const actualCenterAEntry = component.entityGroupCounts.filter(
       (e) => e.label === centerA.label
     )[0];
     expect(actualCenterAEntry.value)
       .withContext("child count of CenterA not correct")
       .toBe(2);
-    const actualCenterBEntry = component.childrenGroupCounts.filter(
+    const actualCenterBEntry = component.entityGroupCounts.filter(
       (e) => e.label === centerB.label
     )[0];
     expect(actualCenterBEntry.value)
@@ -85,7 +91,7 @@ describe("ChildrenCountDashboardComponent", () => {
 
   it("should groupBy enum values and display label", async () => {
     const testGroupBy = "test";
-    component.groupBy = testGroupBy;
+    component.onInitFromDynamicConfig({ groupBy: testGroupBy });
 
     const children = [new Child(), new Child(), new Child(), new Child()];
     const c1: ConfigurableEnumValue = { label: "foo", id: "01" };
@@ -97,16 +103,43 @@ describe("ChildrenCountDashboardComponent", () => {
 
     await component.ngOnInit();
 
-    expect(component.childrenGroupCounts).toHaveSize(3);
-    expect(component.childrenGroupCounts).toContain({
+    expect(component.entityGroupCounts).toHaveSize(3);
+    expect(component.entityGroupCounts).toContain({
       label: c1.label,
       value: 2,
       id: c1.id,
     });
-    expect(component.childrenGroupCounts).toContain({
+    expect(component.entityGroupCounts).toContain({
       label: c2.label,
       value: 1,
       id: c2.id,
     });
   });
+
+  it("should also work with other entities", fakeAsync(() => {
+    spyOn(entityMapper, "loadType").and.callThrough();
+    const type1 = defaultInteractionTypes[1];
+    const type2 = defaultInteractionTypes[2];
+    const ra1 = new RecurringActivity();
+    ra1.type = type1;
+    const ra2 = new RecurringActivity();
+    ra2.type = type1;
+    const ra3 = new RecurringActivity();
+    ra3.type = type2;
+    const entity = RecurringActivity.ENTITY_TYPE;
+    entityMapper.addAll([ra1, ra2, ra3]);
+    const groupBy = "type";
+
+    component.onInitFromDynamicConfig({ entity, groupBy });
+    component.ngOnInit();
+
+    expect(entityMapper.loadType).toHaveBeenCalledWith(entity);
+    tick();
+    expect(component.totalEntities).toBe(3);
+    expect(component.entityGroupCounts).toEqual([
+      { label: type1.label, id: type1.id, value: 2 },
+      { label: type2.label, id: type2.id, value: 1 },
+    ]);
+    expect(component.label).toBe(RecurringActivity.labelPlural);
+  }));
 });

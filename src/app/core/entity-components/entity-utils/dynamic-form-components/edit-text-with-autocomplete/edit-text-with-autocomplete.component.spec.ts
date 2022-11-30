@@ -183,6 +183,7 @@ describe("EditTextWithAutocompleteComponent", () => {
       formFieldConfig: res,
       formControl: component.formControl,
       propertySchema: RecurringActivity.schema.get("title"),
+      entity: new RecurringActivity(),
     });
   }
 });

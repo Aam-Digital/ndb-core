@@ -58,7 +58,7 @@ export interface PanelComponent {
  *
  * This is not config that is defined and stored in the config file for customization.
  */
-export interface PanelConfig {
+export interface PanelConfig<T = any> {
   /**
    * The full entity which is displayed in this details page.
    */
@@ -72,5 +72,5 @@ export interface PanelConfig {
   /**
    * An additional config which has been defined in the PanelComponent.
    */
-  config?: any;
+  config?: T;
 }

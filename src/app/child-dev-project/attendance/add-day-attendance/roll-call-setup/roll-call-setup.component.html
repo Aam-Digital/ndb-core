@@ -25,21 +25,15 @@
     <mat-datepicker #datePicker></mat-datepicker>
   </mat-form-field>
 
-  <div
+  <app-filter
     *ngIf="existingEvents.length >= FILTER_VISIBLE_THRESHOLD"
-    class="flex-row flex-wrap gap-small">
-    <app-list-filter
-      *ngFor="let filter of filterSettings"
-      [filterConfig]="filter.filterSettings"
-      [(selectedOption)]="filter.selectedOption"
-      (selectedOptionChange)="applyFilter(filter, $event)"
-      angulartics2On="click"
-      angularticsCategory="Record Attendance"
-      angularticsAction="filter"
-      [angularticsLabel]="filter.filterSettings.label"
-    >
-    </app-list-filter>
-  </div>
+    class="flex-row flex-wrap gap-small"
+    [filterConfig]="filterConfig"
+    [entityType]="entityType"
+    [entities]="existingEvents"
+    [onlyShowRelevantFilterOptions]="true"
+    (filterObjChange)="filterExistingEvents($event)"
+  ></app-filter>
 </div>
 
 

@@ -22,8 +22,6 @@ import {
 } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { InteractionType } from "../model/interaction-type.interface";
 import { ConfigService } from "../../../core/config/config.service";
-import { By } from "@angular/platform-browser";
-import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
 import { EventNote } from "../../attendance/model/event-note";
 import { UpdatedEntity } from "../../../core/entity/model/entity-update";
 import { ExportService } from "../../../core/export/export-service/export.service";
@@ -160,23 +158,6 @@ describe("NotesManagerComponent", () => {
     dialogMock.openDialog.and.returnValue(returnValue);
     component.addNoteClick();
     expect(dialogMock.openDialog).toHaveBeenCalled();
-  }));
-
-  it("should set up category filter from configurable enum", fakeAsync(() => {
-    component.notes = [
-      Object.assign(new Note(), { category: testInteractionTypes[0] }),
-    ];
-    fixture.detectChanges();
-    flush();
-
-    const list = fixture.debugElement.query(By.css("app-entity-list"));
-    const filterSettings = (
-      list.componentInstance as EntityListComponent<Note>
-    ).filterSelections.find((f) => f.filterSettings.name === "category");
-
-    expect(filterSettings.filterSettings.options).toHaveSize(
-      testInteractionTypes.length + 1
-    );
   }));
 
   it("will contain a new note when saved by an external component", () => {

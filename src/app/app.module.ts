@@ -87,6 +87,7 @@ import {
   DATE_FORMATS,
   DateAdapterWithFormatting,
 } from "./core/language/date-adapter-with-formatting";
+import { FileModule } from "./features/file/file.module";
 import { ConfigSetupModule } from "./core/config-setup/config-setup.module";
 
 /**
@@ -133,6 +134,7 @@ import { ConfigSetupModule } from "./core/config-setup/config-setup.module";
     ConfigurableEnumModule,
     ReportingModule,
     EntityUtilsModule,
+    FileModule,
     DemoDataModule.forRoot([
       ...DemoConfigGeneratorService.provider(),
       ...DemoChildGenerator.provider({ count: 120 }),
