@@ -2,6 +2,7 @@
   <mat-label>{{ label }}</mat-label>
   <input
     matInput
+    [readonly]="!!selectedEntity"
     [formControl]="formControl"
     [matAutocomplete]="autoSuggestions"
     [matAutocompleteDisabled]="autocompleteDisabled"
@@ -33,12 +34,21 @@
 </mat-form-field>
 
 <fa-icon
-  *ngIf="!autocompleteDisabled"
+  *ngIf="!autocompleteDisabled && !selectedEntity"
   (click)="tooltipElement.show()"
   #tooltipElement="matTooltip"
   icon="cogs"
-  [matTooltip]="'You can create a new or load an existing record. Start to type an existing name and then select it from the dropdown to edit the existing record. Type any new text to create a new record.'"
+  i18n-matTooltip="Tooltip help text"
+  matTooltip="You can create a new or load an existing record. Start to type an existing name and then select it from the dropdown to edit the existing record. Type any new text to create a new record."
   class="tooltip-suffix"
 ></fa-icon>
 
-
+<fa-icon
+  *ngIf="!autocompleteDisabled && !!selectedEntity"
+  (click)="resetForm()"
+  icon="circle-xmark"
+  i18n-matTooltip="Tooltip for button to reset form"
+  matTooltip="Unload existing record and reset form."
+  class="tooltip-suffix"
+  style="cursor: pointer"
+></fa-icon>
