@@ -25,6 +25,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { ProgressComponent } from "./progress/progress.component";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { LoggingService } from "../../core/logging/logging.service";
+import { ObservableQueue } from "./observable-queue";
 
 /**
  * Stores the files in the CouchDB.
@@ -34,7 +35,7 @@ import { LoggingService } from "../../core/logging/logging.service";
 @Injectable()
 export class CouchdbFileService extends FileService {
   private attachmentsUrl = `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}-attachments`;
-  private requestQueue: Observable<any> = of(undefined);
+  private requestQueue = new ObservableQueue();
 
   constructor(
     private http: HttpClient,
@@ -45,16 +46,10 @@ export class CouchdbFileService extends FileService {
     logger: LoggingService
   ) {
     super(entityMapper, entities, logger);
-    this.requestQueue.subscribe();
   }
 
   uploadFile(file: File, entity: Entity, property: string): Observable<any> {
-    let obs = this.requestQueue.pipe(
-      concatMap(() => this.runFileUpload(file, entity, property)),
-      shareReplay()
-    );
-    this.requestQueue = obs.pipe(catchError(() => of(undefined)));
-    return obs;
+    return this.requestQueue.add(this.runFileUpload(file, entity, property));
   }
 
   private runFileUpload(file: File, entity: Entity, property: string) {
@@ -91,6 +86,10 @@ export class CouchdbFileService extends FileService {
   }
 
   removeFile(entity: Entity, property: string) {
+    return this.requestQueue.add(this.runFileRemoval(entity, property));
+  }
+
+  private runFileRemoval(entity: Entity, property: string) {
     const attachmentPath = `${this.attachmentsUrl}/${entity.getId(true)}`;
     return this.http.get<{ _rev: string }>(attachmentPath).pipe(
       concatMap(({ _rev }) =>
