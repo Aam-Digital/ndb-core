@@ -25,7 +25,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { ProgressComponent } from "./progress/progress.component";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { LoggingService } from "../../core/logging/logging.service";
-import { ObservableQueue } from "./observable-queue";
+import { ObservableQueue } from "./observable-queue/observable-queue";
 
 /**
  * Stores the files in the CouchDB.
