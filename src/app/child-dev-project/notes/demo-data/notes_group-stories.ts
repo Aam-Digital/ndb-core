@@ -20,7 +20,7 @@ export const noteGroupStories = [
   },
 
   {
-    category: defaultInteractionTypes.find((t) => t.id === "CHILDREN_MEETING"),
+    category: defaultInteractionTypes.find((t) => t.id === "COACHING_CLASS"),
     warningLevel: warningLevels.find((level) => level.id === "OK"),
     subject: $localize`:Note demo subject:Children Meeting`,
     text: $localize`:Note demo text:
@@ -28,7 +28,7 @@ export const noteGroupStories = [
       `,
   },
   {
-    category: defaultInteractionTypes.find((t) => t.id === "CHILDREN_MEETING"),
+    category: defaultInteractionTypes.find((t) => t.id === "COACHING_CLASS"),
     warningLevel: warningLevels.find((level) => level.id === "OK"),
     subject: $localize`:Note demo subject:Children Meeting`,
     text: $localize`:Note demo text:
@@ -36,7 +36,7 @@ export const noteGroupStories = [
       `,
   },
   {
-    category: defaultInteractionTypes.find((t) => t.id === "CHILDREN_MEETING"),
+    category: defaultInteractionTypes.find((t) => t.id === "COACHING_CLASS"),
     warningLevel: warningLevels.find((level) => level.id === "OK"),
     subject: $localize`:Note demo subject:Drug Prevention Workshop`,
     text: $localize`:Note demo text:

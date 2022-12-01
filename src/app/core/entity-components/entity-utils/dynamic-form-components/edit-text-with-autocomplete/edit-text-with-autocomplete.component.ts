@@ -31,8 +31,8 @@ import { ConfirmationDialogService } from "app/core/confirmation-dialog/confirma
 @DynamicComponent("EditTextWithAutocomplete")
 @Component({
   selector: "app-edit-text-with-autocomplete",
-  styleUrls: ["./edit-text-with-autocomplete.component.scss"],
   templateUrl: "./edit-text-with-autocomplete.component.html",
+  styleUrls: ["./edit-text-with-autocomplete.component.scss"],
 })
 export class EditTextWithAutocompleteComponent extends EditComponent<string> {
   /**
@@ -58,9 +58,11 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
   entities: Entity[] = [];
   autocompleteEntities = new BehaviorSubject(this.entities);
   selectedEntity?: Entity;
-  initialValues;
+  currentValues;
+  originalValues;
   autocompleteDisabled = true;
   lastValue = "";
+  addedFormControls = [];
 
   constructor(
     private entityMapperService: EntityMapperService,
@@ -78,7 +80,7 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
     let val = this.formControl.value;
     if (
       !this.autocompleteDisabled &&
-      val !== this.initialValues[this.formControlName]
+      val !== this.currentValues[this.formControlName]
     ) {
       let filteredEntities = this.entities;
       if (val) {
@@ -103,34 +105,38 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
         e1.toString().localeCompare(e2.toString())
       );
       this.autocompleteDisabled = false;
-      this.initialValues = this.parent.getRawValue();
+      this.currentValues = this.parent.getRawValue();
+      this.originalValues = this.currentValues;
     }
   }
 
   async selectEntity(selected: Entity) {
-    if (!this.valuesChanged() || (await this.userConfirmsOverwrite(selected))) {
+    if (await this.userConfirmsOverwriteIfNecessary(selected)) {
       this.selectedEntity = selected;
       this.addRelevantValueToRelevantProperty(this.selectedEntity);
       this.setAllFormValues(this.selectedEntity);
-      this.initialValues = this.parent.getRawValue();
+      this.currentValues = this.parent.getRawValue();
       this.autocompleteEntities.next([]);
     } else {
       this.formControl.setValue(this.lastValue);
     }
   }
 
-  private userConfirmsOverwrite(selected: Entity) {
-    return this.confirmationDialog.getConfirmation(
-      $localize`:Discard the changes made:Discard changes`,
-      $localize`Do you want to discard the changes made and load '${selected}'?`
+  private async userConfirmsOverwriteIfNecessary(entity: Entity) {
+    return (
+      !this.valuesChanged() ||
+      this.confirmationDialog.getConfirmation(
+        $localize`:Discard the changes made:Discard changes`,
+        $localize`Do you want to discard the changes made to '${entity}'?`
+      )
     );
   }
 
   private valuesChanged() {
-    return Object.keys(this.initialValues).some(
-      (prop) =>
-        prop != this.formControlName &&
-        this.initialValues[prop] != this.parent.controls[prop].value
+    return Object.entries(this.currentValues).some(
+      ([prop, value]) =>
+        prop !== this.formControlName &&
+        value !== this.parent.controls[prop].value
     );
   }
 
@@ -157,7 +163,21 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
         } else {
           // adding missing controls so saving does not lose any data
           this.parent.addControl(key, new FormControl(selected[key]));
+          this.addedFormControls.push(key);
         }
       });
+  }
+
+  async resetForm() {
+    if (await this.userConfirmsOverwriteIfNecessary(this.selectedEntity)) {
+      this.addedFormControls.forEach((control) =>
+        this.parent.removeControl(control)
+      );
+      this.addedFormControls = [];
+      this.formControl.reset();
+      this.parent.patchValue(this.originalValues);
+      this.selectedEntity = null;
+      this.currentValues = this.originalValues;
+    }
   }
 }
