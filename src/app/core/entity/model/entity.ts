@@ -101,6 +101,23 @@ export class Entity {
   static icon: IconName;
 
   /**
+   * Base route of the entity (list/details) view for this entity type.
+   */
+  static get route(): string {
+    let route = this._route ?? this.ENTITY_TYPE.toLowerCase();
+    if (!route.startsWith("/")) {
+      route = "/" + route;
+    }
+    return route;
+  }
+
+  static set route(value: string) {
+    this._route = value;
+  }
+
+  private static _route: string;
+
+  /**
    * Extract the ENTITY_TYPE from an id.
    * @param id An entity's id including prefix.
    */

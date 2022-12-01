@@ -92,6 +92,16 @@ describe("Entity", () => {
     expect(TestEntity.label).toBe("TestEntityForLabel");
     expect(TestEntity.labelPlural).toBe("TestEntityForLabel");
   });
+
+  it("should return the route based on entity type name", () => {
+    @DatabaseEntity("TestEntityForRoute")
+    class TestEntity extends Entity {}
+
+    expect(TestEntity.route).toBe("/testentityforroute");
+
+    TestEntity.route = "/custom-route";
+    expect(TestEntity.route).toBe("/custom-route");
+  });
 });
 
 export function testEntitySubclass(

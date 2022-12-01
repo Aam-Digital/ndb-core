@@ -35,6 +35,7 @@ export class ChildSchoolOverviewComponent
 
   @Input() single = true;
   @Input() showInactive = false;
+  @Input() clickMode: "popup" | "navigate" = "popup";
 
   isLoading = false;
   private allRecords: ChildSchoolRelation[] = [];
@@ -56,6 +57,7 @@ export class ChildSchoolOverviewComponent
     this.mode = this.inferMode(this.entity);
 
     this.single = panelConfig.config?.single ?? this.single;
+    this.clickMode = panelConfig.config?.clickMode ?? this.clickMode;
     this.showInactive =
       panelConfig.config?.showInactive ?? this.mode === "child";
     if (panelConfig.config?.columns) {
@@ -75,7 +77,7 @@ export class ChildSchoolOverviewComponent
   }
 
   async loadData() {
-    if (!this.entity.getId() || this.entity.getId() === "" || !this.mode) {
+    if (!this.mode) {
       return;
     }
 
