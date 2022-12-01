@@ -12,10 +12,7 @@ import {
   NewMatchAction,
 } from "./matching-entities-config";
 import { DataFilter } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
-import {
-  EntityListConfig,
-  FilterConfig,
-} from "../../../core/entity-components/entity-list/EntityListConfig";
+import { FilterConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { RouteTarget } from "../../../app.routing";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 import { ActivatedRoute } from "@angular/router";
@@ -24,9 +21,13 @@ interface MatchingSide {
   entityType: EntityConstructor;
   selected?: Entity;
   availableEntities?: Entity[];
+  prefilter?: DataFilter<Entity>;
   availableFilters?: FilterConfig[];
   columns: string[];
   selectMatch: (e: Entity) => void;
+
+  /** pass along filters from app-filter to subrecord component */
+  filterObj?: DataFilter<Entity>;
 }
 
 @RouteTarget("MatchingEntities")
@@ -43,9 +44,9 @@ export class MatchingEntitiesComponent
    * Entity type of the left side of the matching
    */
   @Input() leftEntityType: EntityConstructor | string;
-
+  /** fixed pre-filters applied to remove some entities from the list of available entities */
+  @Input() leftPrefilter?: DataFilter<any>;
   @Input() leftFilters: FilterConfig[] = [];
-
   @Input() leftEntitySelected: Entity;
 
   sideDetails: MatchingSide[] = [];
@@ -55,9 +56,9 @@ export class MatchingEntitiesComponent
    * Entity type of the right side of the matching
    */
   @Input() rightEntityType: EntityConstructor | string;
-
+  /** fixed pre-filters applied to remove some entities from the list of available entities */
+  @Input() rightPrefilter?: DataFilter<any>;
   @Input() rightFilters: FilterConfig[] = [];
-
   @Input() rightEntitySelected: Entity;
 
   /**
@@ -76,9 +77,6 @@ export class MatchingEntitiesComponent
   @ViewChild("matchComparison", { static: true })
   matchComparisonElement: ElementRef;
 
-  /** pass along filters from app-filter to subrecord component */
-  filterObj: DataFilter<any>;
-
   constructor(
     private route: ActivatedRoute,
     public schemaService: EntitySchemaService,
@@ -88,7 +86,8 @@ export class MatchingEntitiesComponent
 
   // TODO: fill selection on hover already?
   // TODO: display matching in rowDetails popup for confirmation during creation?
-  // TODO: force filter available entities in background as configured
+  // TODO: display property labels in comparison table
+  // TODO: refactor to simplify code here?
 
   onInitFromDynamicConfig(config: PanelConfig<MatchingEntitiesConfig>) {
     this.initConfig(config.config, config.entity);
@@ -115,8 +114,10 @@ export class MatchingEntitiesComponent
 
     this.leftEntityType = config.leftEntityType ?? this.leftEntityType;
     this.leftFilters = config.leftFilters ?? this.leftFilters;
+    this.leftPrefilter = config.leftPrefilter ?? this.leftPrefilter;
     this.rightEntityType = config.rightEntityType ?? this.rightEntityType;
     this.rightFilters = config.rightFilters ?? this.rightFilters;
+    this.rightPrefilter = config.rightPrefilter ?? this.rightPrefilter;
 
     if (!config.leftEntityType) {
       this.leftEntitySelected = entity;
@@ -137,7 +138,7 @@ export class MatchingEntitiesComponent
     const newSideDetails: MatchingSide = {
       entityType: entityType ?? this[side + "EntitySelected"]?.getConstructor(),
       selected: this[side + "EntitySelected"],
-      columns: this.columns?.map((p) => p[sideIndex]),
+      columns: this.columns?.map((p) => p[sideIndex]).filter((c) => !!c),
       selectMatch: (e) => {
         this.highlightSelectedRow(e, newSideDetails.selected);
         newSideDetails.selected = e;
@@ -150,6 +151,7 @@ export class MatchingEntitiesComponent
         newSideDetails.entityType
       );
       newSideDetails.availableFilters = this[side + "Filters"];
+      newSideDetails.prefilter = this[side + "Prefilter"];
     }
 
     this.sideDetails[sideIndex] = newSideDetails;
@@ -186,5 +188,9 @@ export class MatchingEntitiesComponent
 
     // lock in current selection to avoid duplicate matches and provide user feedback
     this.sideDetails.forEach((s) => (s.availableEntities = undefined));
+  }
+
+  applySelectedFilters(side: MatchingSide, $event: DataFilter<Entity>) {
+    side.filterObj = Object.assign({}, $event, side.prefilter ?? {});
   }
 }

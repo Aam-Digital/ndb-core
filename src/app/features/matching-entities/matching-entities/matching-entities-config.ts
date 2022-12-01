@@ -1,4 +1,5 @@
 import { FilterConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
+import { DataFilter } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 
 /**
  * Config to be defined to set up a MatchingEntitiesComponent.
@@ -25,14 +26,22 @@ export interface MatchingEntitiesConfig {
    */
   leftEntityType?: string;
 
+  /** UI filter elements displayed for users to filter available entities */
   leftFilters?: FilterConfig[];
+
+  /** fixed pre-filters applied to remove some entities from the list of available entities */
+  leftPrefilter?: DataFilter<any>;
 
   /**
    * entity type on the right side of matching, used to load a list of available entities for manual selection
    */
   rightEntityType?: string;
 
+  /** UI filter elements displayed for users to filter available entities */
   rightFilters?: FilterConfig[];
+
+  /** fixed pre-filters applied to remove some entities from the list of available entities */
+  rightPrefilter?: DataFilter<any>;
 }
 
 export interface NewMatchAction {
