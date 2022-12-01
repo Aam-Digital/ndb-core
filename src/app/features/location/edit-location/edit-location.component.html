@@ -1,12 +1,17 @@
 <mat-form-field [formGroup]="parent">
+  <input [formControl]="formControl" hidden>
   <mat-label>{{ label }}</mat-label>
-  <input type="text"
-         placeholder="Pick one"
-         aria-label="Number"
-         matInput
-         [formControl]="formControl"
-         [matAutocomplete]="auto">
-  <mat-autocomplete #auto="matAutocomplete">
+  <input
+    #inputElement
+    type="text"
+    matInput
+    [value]="formControl.value?.display_name"
+    (keyup)="this.updateAutocomplete()"
+    (focusin)="this.updateAutocomplete()"
+    [matAutocomplete]="auto"
+  >
+  <fa-icon icon="x" (click)="clearInput()"></fa-icon>
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectLocation($event.option.value)">
     <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
       {{option.display_name}}
     </mat-option>

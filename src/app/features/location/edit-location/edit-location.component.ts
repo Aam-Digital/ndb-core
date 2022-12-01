@@ -1,12 +1,16 @@
-import { Component } from "@angular/core";
+import { Component, ElementRef, ViewChild } from "@angular/core";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import {
   EditComponent,
   EditPropertyConfig,
 } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
-import { BehaviorSubject, concatMap, Observable } from "rxjs";
-import { HttpClient, HttpParams } from "@angular/common/http";
-import { debounceTime, map, tap } from "rxjs/operators";
+import { concatMap, Observable, Subject } from "rxjs";
+import { HttpClient } from "@angular/common/http";
+import { debounceTime, tap } from "rxjs/operators";
+
+interface GeoLocation {
+  display_name: string;
+}
 
 @DynamicComponent("EditLocation")
 @Component({
@@ -14,25 +18,40 @@ import { debounceTime, map, tap } from "rxjs/operators";
   templateUrl: "./edit-location.component.html",
   styleUrls: ["./edit-location.component.scss"],
 })
-export class EditLocationComponent extends EditComponent<any> {
+export class EditLocationComponent extends EditComponent<GeoLocation> {
   readonly remoteUrl = "https://nominatim.openstreetmap.org/search";
-  filteredOptions: Observable<any>;
+  filteredOptions: Observable<GeoLocation[]>;
+  inputStream = new Subject<string>();
+
+  @ViewChild("inputElement") input: ElementRef<HTMLInputElement>;
 
   constructor(private http: HttpClient) {
     super();
   }
 
-  onInitFromDynamicConfig(config: EditPropertyConfig<any>) {
+  onInitFromDynamicConfig(config: EditPropertyConfig<GeoLocation>) {
     super.onInitFromDynamicConfig(config);
-    this.filteredOptions = this.formControl.valueChanges.pipe(
+    this.filteredOptions = this.inputStream.pipe(
       debounceTime(1000),
-      concatMap((res) => this.getGeoLookupResult(res)),
-      tap((res) => console.log("result", res))
+      concatMap((res) => this.getGeoLookupResult(res))
     );
   }
 
-  private getGeoLookupResult(searchTerm: string) {
-    return this.http.get(this.remoteUrl, {
+  selectLocation(selected: GeoLocation) {
+    this.formControl.setValue(selected);
+  }
+
+  updateAutocomplete() {
+    this.inputStream.next(this.input.nativeElement.value);
+  }
+
+  clearInput() {
+    this.formControl.setValue(null);
+    this.input.nativeElement.value = "";
+  }
+
+  private getGeoLookupResult(searchTerm) {
+    return this.http.get<GeoLocation[]>(this.remoteUrl, {
       params: {
         q: searchTerm,
         format: "json",

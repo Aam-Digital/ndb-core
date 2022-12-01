@@ -7,7 +7,8 @@ import { locationEntitySchemaDataType } from "./location-data-type";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatInputModule } from "@angular/material/input";
-import { ReactiveFormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @NgModule({
   declarations: [EditLocationComponent, ViewLocationComponent],
@@ -17,6 +18,8 @@ import { ReactiveFormsModule } from "@angular/forms";
     MatAutocompleteModule,
     MatInputModule,
     ReactiveFormsModule,
+    FormsModule,
+    FontAwesomeModule,
   ],
   exports: [EditLocationComponent],
 })
