@@ -1114,5 +1114,26 @@ export const defaultJsonConfig = {
         }
       },
     ]
+  },
+  "view:matching": {
+    component: "MatchingEntities",
+    config: {
+      columns: [
+        ["name", "name"],
+        ["motherTongue", "language"],
+        ["address", "address"],
+        [null, "privateSchool"],
+      ],
+      rightEntityType: School.ENTITY_TYPE,
+      rightPrefilter: { "privateSchool": true },
+      rightFilters: [{ "id": "language" }],
+      leftEntityType: Child.ENTITY_TYPE,
+      onMatch: {
+        newEntityType: ChildSchoolRelation.ENTITY_TYPE,
+        newEntityMatchPropertyLeft: "childId",
+        newEntityMatchPropertyRight: "schoolId",
+        columnsToReview: ["start", "end", "result", "childId", "schoolId" ]
+      }
+    }
   }
 };
