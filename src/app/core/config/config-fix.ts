@@ -939,7 +939,7 @@ export const defaultJsonConfig = {
       {
         "name": "address",
         "schema": {
-          dataType: "string",
+          dataType: "location",
           label: $localize`:Label for the address of a child:Address`
         }
       },
@@ -1007,7 +1007,7 @@ export const defaultJsonConfig = {
       {
         "name": "address",
         "schema": {
-          dataType: "string",
+          dataType: "location",
           label: $localize`:Label for the address of a school:Address`
         }
       },
