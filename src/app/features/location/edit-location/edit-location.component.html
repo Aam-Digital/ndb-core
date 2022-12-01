@@ -12,12 +12,14 @@
     [matAutocomplete]="auto"
   >
   <mat-hint align="end">
-    Map data from <a target="_blank" href="https://openstreetmap.org/copyright">OpenStreetMap</a>
+    Map data from <a target="_blank" href="https://openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a>
   </mat-hint>
   <button *ngIf="formControl.enabled" (click)="clearInput()" matSuffix mat-icon-button type="button">
     <fa-icon icon="x"></fa-icon>
   </button>
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectLocation($event.option.value)">
+    <mat-option *ngIf="loading" disabled>Loading results...</mat-option>
+    <mat-option *ngIf="nothingFound" disabled>Location not found</mat-option>
     <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
       {{option.display_name}}
     </mat-option>

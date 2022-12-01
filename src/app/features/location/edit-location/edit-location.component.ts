@@ -22,6 +22,9 @@ export class EditLocationComponent extends EditComponent<GeoLocation> {
   readonly remoteUrl = "https://nominatim.openstreetmap.org/search";
   filteredOptions: Observable<GeoLocation[]>;
   inputStream = new Subject<string>();
+  lastSearch: string;
+  loading = false;
+  nothingFound = false;
 
   @ViewChild("inputElement") input: ElementRef<HTMLInputElement>;
 
@@ -32,11 +35,20 @@ export class EditLocationComponent extends EditComponent<GeoLocation> {
   onInitFromDynamicConfig(config: EditPropertyConfig<GeoLocation>) {
     super.onInitFromDynamicConfig(config);
     this.filteredOptions = this.inputStream.pipe(
-      filter(
-        (input) => !!input && input !== this.formControl.value?.display_name
-      ),
+      filter((input) => this.isRelevantInput(input)),
+      debounceTime(200),
+      tap(() => (this.loading = true)),
       debounceTime(1000),
       concatMap((res) => this.getGeoLookupResult(res))
+    );
+  }
+
+  private isRelevantInput<T>(input: T | (T & string)) {
+    return (
+      !!input &&
+      input !== "[object Object]" &&
+      input !== this.lastSearch &&
+      input !== this.formControl.value?.display_name
     );
   }
 
@@ -45,6 +57,7 @@ export class EditLocationComponent extends EditComponent<GeoLocation> {
   }
 
   triggerInputUpdate() {
+    this.nothingFound = false;
     this.inputStream.next(this.input.nativeElement.value);
   }
 
@@ -54,12 +67,21 @@ export class EditLocationComponent extends EditComponent<GeoLocation> {
   }
 
   private getGeoLookupResult(searchTerm) {
-    return this.http.get<GeoLocation[]>(this.remoteUrl, {
-      params: {
-        q: searchTerm,
-        format: "json",
-        countrycodes: "de",
-      },
-    });
+    return this.http
+      .get<GeoLocation[]>(this.remoteUrl, {
+        params: {
+          q: searchTerm,
+          format: "json",
+          // TODO make this configurable
+          countrycodes: "de",
+        },
+      })
+      .pipe(
+        tap((res) => {
+          this.lastSearch = searchTerm;
+          this.loading = false;
+          this.nothingFound = res.length === 0;
+        })
+      );
   }
 }
