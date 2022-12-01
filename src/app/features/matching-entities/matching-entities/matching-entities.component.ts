@@ -16,6 +16,7 @@ import { FilterConfig } from "../../../core/entity-components/entity-list/Entity
 import { RouteTarget } from "../../../app.routing";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 import { ActivatedRoute } from "@angular/router";
+import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 
 interface MatchingSide {
   entityType: EntityConstructor;
@@ -79,15 +80,15 @@ export class MatchingEntitiesComponent
 
   constructor(
     private route: ActivatedRoute,
+    private formDialog: FormDialogService,
     public schemaService: EntitySchemaService,
     private entityMapper: EntityMapperService,
     private entityRegistry: EntityRegistry
   ) {}
 
   // TODO: fill selection on hover already?
-  // TODO: display matching in rowDetails popup for confirmation during creation?
-  // TODO: display property labels in comparison table
-  // TODO: refactor to simplify code here?
+  // TODO: display property labels in comparison table?
+  // TODO: refactor to simplify code (later) --> create an app-entity-property-view component that handles the finding of viewComponent from schema
 
   onInitFromDynamicConfig(config: PanelConfig<MatchingEntitiesConfig>) {
     this.initConfig(config.config, config.entity);
@@ -180,11 +181,19 @@ export class MatchingEntitiesComponent
 
     // best guess properties (if they do not exist on the specific entity, the values will be discarded during save
     newMatchEntity["date"] = new Date();
+    newMatchEntity["start"] = new Date();
     newMatchEntity["name"] = `${
       newMatchEntity.getConstructor().label
     } ${selectedL.toString()} - ${selectedR.toString()}`;
 
-    await this.entityMapper.save(newMatchEntity);
+    if (this.onMatch.columnsToReview) {
+      this.formDialog.openSimpleForm(
+        newMatchEntity,
+        this.onMatch.columnsToReview
+      );
+    } else {
+      await this.entityMapper.save(newMatchEntity);
+    }
 
     // lock in current selection to avoid duplicate matches and provide user feedback
     this.sideDetails.forEach((s) => (s.availableEntities = undefined));

@@ -1,5 +1,8 @@
 import { FilterConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
-import { DataFilter } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import {
+  ColumnConfig,
+  DataFilter,
+} from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 
 /**
  * Config to be defined to set up a MatchingEntitiesComponent.
@@ -53,4 +56,10 @@ export interface NewMatchAction {
 
   /** name of the property on newEntityType that should take the id of the right matching entity */
   newEntityMatchPropertyRight: string;
+
+  /**
+   * columns to display in a popup to review, edit and confirm during creation of a match.
+   * If undefined, match is created immediately without a popup form.
+   */
+  columnsToReview?: ColumnConfig[];
 }

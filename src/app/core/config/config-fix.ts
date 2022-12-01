@@ -680,7 +680,8 @@ export const defaultJsonConfig = {
                 onMatch: {
                   newEntityType: ChildSchoolRelation.ENTITY_TYPE,
                   newEntityMatchPropertyLeft: "childId",
-                  newEntityMatchPropertyRight: "schoolId"
+                  newEntityMatchPropertyRight: "schoolId",
+                  columnsToReview: ["start", "schoolClass", "childId", "schoolId" ]
                 }
               }
             }
