@@ -35,6 +35,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { EntitySubrecordModule } from "../entity-subrecord/entity-subrecord.module";
 import { ErrorHintComponent } from "./error-hint/error-hint.component";
 import { EditTextWithAutocompleteComponent } from "./dynamic-form-components/edit-text-with-autocomplete/edit-text-with-autocomplete.component";
+import { DisplayAgeComponent } from "./view-components/display-age/display-age.component";
 
 @NgModule({
   declarations: [
@@ -59,6 +60,7 @@ import { EditTextWithAutocompleteComponent } from "./dynamic-form-components/edi
     EntityFunctionPipe,
     ErrorHintComponent,
     EditTextWithAutocompleteComponent,
+    DisplayAgeComponent,
   ],
   imports: [
     CommonModule,
@@ -103,6 +105,7 @@ export class EntityUtilsModule {
     DisplayPercentageComponent,
     DisplayTextComponent,
     DisplayUnitComponent,
+    DisplayAgeComponent,
     ReadonlyFunctionComponent,
   ];
 }

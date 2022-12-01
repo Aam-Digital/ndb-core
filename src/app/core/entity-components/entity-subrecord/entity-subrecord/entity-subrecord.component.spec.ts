@@ -32,6 +32,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { ScreenWidthObserver } from "../../../../utils/media/screen-size-observer.service";
 import { WINDOW_TOKEN } from "../../../../utils/di-tokens";
 import { MediaModule } from "../../../../utils/media/media.module";
+import { DateWithAge } from "app/child-dev-project/children/model/dateWithAge";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -337,5 +338,59 @@ describe("EntitySubrecordComponent", () => {
     component.newRecordFactory = undefined;
     component.records = [new Note()];
     expect(component.getEntityConstructor()).toEqual(Note);
+  });
+
+  it("should filter data based on filter definition", () => {
+    const c1 = Child.create("Matching");
+    c1.dateOfBirth = new DateWithAge(moment().subtract(1, "years").toDate());
+    const c2 = Child.create("Not Matching");
+    c2.dateOfBirth = new DateWithAge(moment().subtract(2, "years").toDate());
+    const c3 = Child.create("Matching");
+    c3.dateOfBirth = new DateWithAge(moment().subtract(3, "years").toDate());
+    // get type-safety for filters
+    const childComponent = component as EntitySubrecordComponent<Child>;
+    childComponent.records = [c1, c2, c3];
+
+    childComponent.filter = { name: "Matching" };
+
+    expect(childComponent.recordsDataSource.data).toEqual([
+      { record: c1 },
+      { record: c3 },
+    ]);
+
+    childComponent.filter = {
+      name: "Matching",
+      "dateOfBirth.age": { $gte: 2 },
+    } as any;
+
+    expect(childComponent.recordsDataSource.data).toEqual([{ record: c3 }]);
+
+    const c4 = Child.create("Matching");
+    c4.dateOfBirth = new DateWithAge(moment().subtract(4, "years").toDate());
+    const c5 = Child.create("Not Matching");
+
+    childComponent.records = [c1, c2, c3, c4, c5];
+
+    expect(childComponent.recordsDataSource.data).toEqual([
+      { record: c3 },
+      { record: c4 },
+    ]);
+  });
+
+  it("should remove an entity if it does not pass the filter anymore", async () => {
+    const entityMapper = TestBed.inject(EntityMapperService);
+    const child = new Child();
+    child.gender = genders[1];
+    await entityMapper.save(child);
+    component.records = [child];
+    component.filter = { "gender.id": genders[1].id } as any;
+    component.ngOnInit();
+
+    expect(component.recordsDataSource.data).toEqual([{ record: child }]);
+
+    child.gender = genders[2];
+    await entityMapper.save(child);
+
+    expect(component.recordsDataSource.data).toEqual([]);
   });
 });

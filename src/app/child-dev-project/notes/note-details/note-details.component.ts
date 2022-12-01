@@ -12,6 +12,7 @@ import { EntityListConfig } from "../../../core/entity-components/entity-list/En
 import { compareEnums } from "../../../utils/utils";
 import { FormDialogWrapperComponent } from "../../../core/form-dialog/form-dialog-wrapper/form-dialog-wrapper.component";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
+import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -40,6 +41,8 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
   readonly childrenPlaceholder = this.getPlaceholder(this.childrenLabel);
   readonly schoolsLabel = Note.schema.get("schools").label;
   readonly schoolsPlaceholder = this.getPlaceholder(this.schoolsLabel);
+  readonly relatedEntitiesSchema: EntitySchemaField =
+    Note.schema.get("relatedEntities");
 
   readonly INTERACTION_TYPE_CONFIG = INTERACTION_TYPE_CONFIG_ID;
   readonly compareFn = compareEnums;

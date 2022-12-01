@@ -25,7 +25,11 @@ describe("EditTextWithAutocompleteComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [EditTextWithAutocompleteComponent],
-      imports: [EntityUtilsModule, MockedTestingModule.withState(), FontAwesomeTestingModule],
+      imports: [
+        EntityUtilsModule,
+        MockedTestingModule.withState(),
+        FontAwesomeTestingModule,
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EditTextWithAutocompleteComponent);
@@ -78,12 +82,35 @@ describe("EditTextWithAutocompleteComponent", () => {
     tick();
     component.selectEntity(rA1);
     tick();
-    expect(component.formControl.value).toEqual(rA1.title);
-    expect(component.parent.get("type").value).toEqual(rA1.type);
-    expect(component.parent.get("assignedTo").value).toEqual(rA1.assignedTo);
-    expect(component.parent.get("linkedGroups").value).toEqual(
-      rA1.linkedGroups
-    );
+    expect(component.formControl).toHaveValue(rA1.title);
+    expect(component.parent.get("type")).toHaveValue(rA1.type);
+    expect(component.parent.get("assignedTo")).toHaveValue(rA1.assignedTo);
+    expect(component.parent.get("linkedGroups")).toHaveValue(rA1.linkedGroups);
+  }));
+
+  it("should correctly reset the form to its original values", fakeAsync(() => {
+    const rA1 = RecurringActivity.create("First Recurring Activity");
+    rA1.type = defaultInteractionTypes[0];
+    rA1.assignedTo = ["user1", "user2"];
+    rA1.linkedGroups = ["group1", "group2"];
+    rA1.participants = ["student1", "student2"];
+    loadTypeSpy.and.resolveTo([rA1]);
+    component.parent.get("linkedGroups").setValue(["testgroup1"]);
+
+    initComponent();
+    tick();
+
+    component.selectEntity(rA1);
+    tick();
+
+    component.resetForm();
+    tick();
+
+    expect(component.formControl).toHaveValue("");
+    expect(component.parent.get("type")).toHaveValue(null);
+    expect(component.parent.get("assignedTo")).toHaveValue([]);
+    expect(component.parent.get("linkedGroups")).toHaveValue(["testgroup1"]);
+    expect(component.parent.get("participants")).toBeFalsy();
   }));
 
   it("should add the given relevantValue to the form control of the relevant property", fakeAsync(() => {
@@ -95,7 +122,6 @@ describe("EditTextWithAutocompleteComponent", () => {
     tick();
     component.selectEntity(rA1);
     tick();
-
     expect(component.parent.get("linkedGroups").value).toContain("group3");
   }));
 
@@ -157,6 +183,7 @@ describe("EditTextWithAutocompleteComponent", () => {
       formFieldConfig: res,
       formControl: component.formControl,
       propertySchema: RecurringActivity.schema.get("title"),
+      entity: new RecurringActivity(),
     });
   }
 });
