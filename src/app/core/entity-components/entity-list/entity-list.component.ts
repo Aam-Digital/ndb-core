@@ -139,11 +139,6 @@ export class EntityListComponent<T extends Entity>
       this.entityConstructor
     );
     this.isLoading = false;
-    this.elementClick.subscribe((entity) =>
-      this.router.navigate([entity.getId()], {
-        relativeTo: this.activatedRoute,
-      })
-    );
     this.addNewClick.subscribe(() =>
       this.router.navigate(["new"], { relativeTo: this.activatedRoute })
     );

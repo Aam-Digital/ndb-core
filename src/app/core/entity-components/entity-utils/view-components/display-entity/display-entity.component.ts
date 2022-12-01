@@ -65,7 +65,10 @@ export class DisplayEntityComponent
     if (this.linkDisabled) {
       return;
     }
-    const path = "/" + this.entityToDisplay.getType().toLowerCase();
-    this.router.navigate([path, this.entityToDisplay.getId()]);
+
+    this.router.navigate([
+      this.entityToDisplay.getConstructor().route,
+      this.entityToDisplay.getId(),
+    ]);
   }
 }

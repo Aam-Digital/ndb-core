@@ -128,7 +128,7 @@ describe("ChildSchoolOverviewComponent", () => {
     );
   }));
 
-  it("should create a relation child ID", async () => {
+  it("should create a relation with the child ID", async () => {
     const existingRelation = new ChildSchoolRelation();
     existingRelation.start = moment().subtract(1, "year").toDate();
     existingRelation.end = moment().subtract(1, "week").toDate();
