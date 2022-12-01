@@ -6,7 +6,7 @@ import {
 } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
 import { concatMap, Observable, Subject } from "rxjs";
 import { HttpClient } from "@angular/common/http";
-import { debounceTime, tap } from "rxjs/operators";
+import { debounceTime, filter, tap } from "rxjs/operators";
 
 interface GeoLocation {
   display_name: string;
@@ -32,6 +32,9 @@ export class EditLocationComponent extends EditComponent<GeoLocation> {
   onInitFromDynamicConfig(config: EditPropertyConfig<GeoLocation>) {
     super.onInitFromDynamicConfig(config);
     this.filteredOptions = this.inputStream.pipe(
+      filter(
+        (input) => !!input && input !== this.formControl.value?.display_name
+      ),
       debounceTime(1000),
       concatMap((res) => this.getGeoLookupResult(res))
     );
