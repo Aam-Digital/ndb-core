@@ -10,7 +10,9 @@
     (focusin)="this.updateAutocomplete()"
     [matAutocomplete]="auto"
   >
-  <fa-icon icon="x" (click)="clearInput()"></fa-icon>
+  <button (click)="clearInput()" matSuffix mat-icon-button type="button">
+    <fa-icon icon="x"></fa-icon>
+  </button>
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectLocation($event.option.value)">
     <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
       {{option.display_name}}
