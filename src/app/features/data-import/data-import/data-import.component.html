@@ -1,43 +1,7 @@
-<mat-stepper orientation="vertical" linear #stepper>
-  <mat-step i18n-label="Data import wizard label" label="Select file" [stepControl]="fileNameForm">
-    <form [formGroup]="fileNameForm">
-      <input #csvImport type="file" style="display: none" (change)="setCsvFile($event)"/>
-      <mat-form-field>
-        <mat-label i18n="Label for file select input">Selected File:</mat-label>
-        <input
-          matInput
-          formControlName="fileName"
-          (click)="csvImport.click()"
-          i18n-placeholder="Placeholder for file-input where the .csv file can be seleceted as part of the import process"
-          placeholder="No file selected"
-        />
-        <mat-error *ngIf="fileNameForm.errors?.fileInvalid">{{ fileNameForm.errors.fileInvalid }}</mat-error>
-      </mat-form-field>
-      <div>
-        <button mat-button matStepperNext i18n="Button to proceed in import wizard">Next</button>
-      </div>
-    </form>
-  </mat-step>
+<div class="flex-row justify-space-between flex-wrap gap-regular">
+  <div class="flex-column">
+    <app-input-file (fileLoad)="loadData($event)" fileType="csv"></app-input-file>
 
-  <mat-step i18n-label="Data import wizard label" label="Load config" [optional]="true">
-    <div>
-      <mat-form-field>
-        <input #configImport type="file" style="display: none" (change)="loadConfig($event)"/>
-        <input
-          matInput
-          i18n-placeholder="Placeholder for file-input where a config file can be selected as part of the import process"
-          placeholder="No config selected"
-          (click)="configImport.click()"
-        />
-      </mat-form-field>
-      <div>
-        <button mat-button matStepperPrevious i18n="Button to go back in import wizard">Back</button>
-        <button mat-button matStepperNext i18n="Button to proceed in import wizard">Next</button>
-      </div>
-    </div>
-  </mat-step>
-
-  <mat-step i18n-label="Data import wizard label" label="Select type" [stepControl]="entityForm" [optional]="entityForm.disabled">
     <form [formGroup]="entityForm">
       <mat-form-field>
         <mat-label>Entity Type</mat-label>
@@ -47,53 +11,49 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <div>
-        <button mat-button matStepperPrevious i18n="Button to go back in import wizard">Back</button>
-        <button mat-button matStepperNext i18n="Button to proceed in import wizard">Next</button>
-      </div>
     </form>
-  </mat-step>
+  </div>
 
-  <mat-step i18n-label="Data import wizard label" label="Transaction ID" [stepControl]="transactionIDForm" [optional]="transactionIDForm.disabled">
-    <form [formGroup]="transactionIDForm">
-      <p *ngIf="transactionIDForm.disabled" i18n="Hint in import wizard when transaction ID is not necessary">IDs are specified in CSV file</p>
-      <mat-form-field>
-        <mat-label i18n="Unique ID for this import">Transaction ID:</mat-label>
-        <input
-          matInput
-          formControlName="transactionId"
-          i18n-placeholder="Placeholder for input for transactionId as part of the import process"
-          placeholder="Enter TransactionID"
-          required
-        />
-      </mat-form-field>
-      <button *ngIf="transactionIDForm.enabled" mat-button (click)="setRandomTransactionID()" i18n="Button to generate a random ID">Generate ID</button>
-      <div>
-        <button mat-button matStepperPrevious i18n="Button to go back in import wizard">Back</button>
-        <button mat-button matStepperNext i18n="Button to proceed in import wizard">Next</button>
-      </div>
-    </form>
-  </mat-step>
+  <mat-expansion-panel [expanded]="false" class="full-height flex-grow-1-3">
+    <mat-expansion-panel-header>Additional Import Configuration (optional)</mat-expansion-panel-header>
 
-  <mat-step i18n-label="Data import wizard label" label="Date format" [optional]="true" [stepControl]="dateFormatForm">
-    <form [formGroup]="dateFormatForm">
-      <mat-form-field>
-        <mat-label i18n="Label for date-format input  ">Date format</mat-label>
-        <input
-          matInput
-          formControlName="dateFormat"
-          i18n-placeholder="Placeholdr for input where date format as part of the import process"
-          placeholder="Enter a date format"
-        />
-      </mat-form-field>
-      <div>
-        <button mat-button matStepperPrevious i18n="Button to go back in import wizard">Back</button>
-        <button mat-button matStepperNext i18n="Button to proceed in import wizard">Next</button>
-      </div>
-    </form>
-  </mat-step>
+      <label i18n="Data import wizard label">Load config from file: </label>
+      <app-input-file (fileLoad)="loadConfig($event)" fileType="json"></app-input-file>
 
-  <mat-step i18n-label="Data import wizard label" label="Assign columns">
+      <form [formGroup]="transactionIDForm">
+        <p *ngIf="transactionIDForm.disabled" i18n="Hint in import wizard when transaction ID is not necessary">IDs are specified in CSV file</p>
+        <mat-form-field>
+          <mat-label i18n="Unique ID for this import">Transaction ID:</mat-label>
+          <input
+            matInput
+            formControlName="transactionId"
+            i18n-placeholder="Placeholder for input for transactionId as part of the import process"
+            placeholder="Enter TransactionID"
+          />
+        </mat-form-field>
+        <button *ngIf="transactionIDForm.enabled" mat-button (click)="setRandomTransactionID()" i18n="Button to generate a random ID">Generate ID</button>
+      </form>
+
+      <form [formGroup]="dateFormatForm">
+        <mat-form-field>
+          <mat-label i18n="Label for date-format input  ">Date format</mat-label>
+          <input
+            matInput
+            formControlName="dateFormat"
+            i18n-placeholder="Placeholdr for input where date format as part of the import process"
+            placeholder="Enter a date format"
+          />
+        </mat-form-field>
+      </form>
+
+  </mat-expansion-panel>
+</div>
+
+<br>
+
+<mat-expansion-panel  [expanded]="readyForImport" [disabled]="!readyForImport">
+  <mat-expansion-panel-header>Field Mapping</mat-expansion-panel-header>
+  <div>
     <form [formGroup]="columnMappingForm">
       <div *ngFor="let control of columnMappingForm.controls | keyvalue">
         <mat-form-field>
@@ -104,7 +64,7 @@
             placeholder="Select property"
             aria-label="Select property"
             matInput
-            (input)="processChange($event.target['value'].toLowerCase())"
+            (input)="processChange($event.target['value'])"
             (focusin)="processChange('')"
             [matAutocomplete]="auto"
             [formControlName]="control.key"
@@ -120,32 +80,23 @@
         </mat-form-field>
       </div>
     </form>
-    <div>
-      <button mat-button matStepperPrevious i18n="Button to go back in import wizard">Back</button>
-      <button mat-button matStepperNext i18n="Button to proceed in import wizard">Next</button>
-    </div>
-  </mat-step>
+  </div>
+</mat-expansion-panel>
 
-  <mat-step i18n-label="Data import wizard label" label="Start import">
-    <p i18n="Data import Final overview">Entity Type:    <em>{{ entityForm.get('entity').value }}</em></p>
-    <p i18n="Data import Final overview">CSV File:       <em>{{ fileNameForm.get('fileName').value }}</em></p>
-    <p i18n="Data import Final overview">TransactionID:  <em>{{ transactionIDForm.get('transactionId').value }}</em></p>
 
-    <div fxLayout="row" fxLayoutGap="10px">
-      <button (click)="importSelectedFile()" mat-stroked-button i18n="Button to start import">
-        Start Import
-      </button>
-      <button (click)="saveConfig()" mat-stroked-button i18n="Button to save import configuration">
-        Save config
-      </button>
-    </div>
-    <div>
-      <button mat-button matStepperPrevious i18n="Button to go back in import wizard">Back</button>
-      <button mat-button (click)="stepper.reset()" i18n="Button to reset import wizard">Reset</button>
-    </div>
-  </mat-step>
+<mat-expansion-panel [expanded]="readyForImport">
+  <mat-expansion-panel-header>View Summary & Start Import</mat-expansion-panel-header>
 
-  <ng-template matStepperIcon="edit">
-    <fa-icon class="stepper-icon" icon="check"></fa-icon>
-  </ng-template>
-</mat-stepper>
+  <p i18n="Data import Final overview">Entity Type:    <em>{{ entityForm.get('entity').value }}</em></p>
+  <p i18n="Data import Final overview">Data:       <em>{{ importData?.data?.length }}</em></p>
+  <p i18n="Data import Final overview">TransactionID:  <em>{{ transactionIDForm.get('transactionId').value }}</em></p>
+
+  <div class="flex-row gap-small">
+    <button (click)="importSelectedFile()" mat-stroked-button i18n="Button to start import">
+      Start Import
+    </button>
+    <button (click)="saveConfig()" mat-stroked-button i18n="Button to save import configuration">
+      Save config
+    </button>
+  </div>
+</mat-expansion-panel>

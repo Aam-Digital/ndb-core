@@ -233,7 +233,10 @@ export class ActivityAttendance extends Entity {
  * @param activity (Optional) reference to the connected activity entity
  */
 export function generateEventWithAttendance(
-  participating: [string, AttendanceLogicalStatus][],
+  participating: (
+    | [string, AttendanceLogicalStatus]
+    | [string, AttendanceLogicalStatus, string]
+  )[],
   date = new Date(),
   activity?: RecurringActivity
 ): EventNote {
@@ -243,7 +246,10 @@ export function generateEventWithAttendance(
     event.getAttendance(att[0]).status = defaultAttendanceStatusTypes.find(
       (t) => t.countAs === att[1]
     );
+    if (att.length === 3) {
+      event.getAttendance(att[0]).remarks = att[2];
+    }
   }
-  event.relatesTo = activity?._id;
+  event.relatesTo = activity?.getId(true);
   return event;
 }

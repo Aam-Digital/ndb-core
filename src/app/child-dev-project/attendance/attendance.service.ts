@@ -38,6 +38,7 @@ export class AttendanceService {
             }
           }`,
         },
+        // TODO: remove this and use general Note's relatedEntities index?
         by_activity: {
           map: `(doc) => {
             if (doc._id.startsWith("${EventNote.ENTITY_TYPE}") && doc.relatesTo) {
@@ -171,7 +172,10 @@ export class AttendanceService {
       return attMonth;
     }
 
-    const events = await this.getEventsForActivity(activity._id, sinceDate);
+    const events = await this.getEventsForActivity(
+      activity.getId(true),
+      sinceDate
+    );
 
     for (const event of events) {
       const record = getOrCreateAttendancePeriod(event);
@@ -253,7 +257,7 @@ export class AttendanceService {
       ...new Set(activity.participants.concat(...schoolParticipants)), //  remove duplicates
     ];
     instance.schools = activity.linkedGroups;
-    instance.relatesTo = activity._id;
+    instance.relatesTo = activity.getId(true);
     instance.category = activity.type;
     return instance;
   }

@@ -8,13 +8,21 @@ import { MatCardModule } from "@angular/material/card";
 import { RecurringActivity } from "../model/recurring-activity";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { CommonComponentsModule } from "../../../core/common-components/common-components.module";
+import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
 export default {
   title: "Attendance/Components/ActivityCard",
   component: ActivityCardComponent,
   decorators: [
     moduleMetadata({
-      imports: [MatCardModule, MatTooltipModule, BrowserAnimationsModule],
+      imports: [
+        StorybookBaseModule,
+        MatCardModule,
+        MatTooltipModule,
+        BrowserAnimationsModule,
+        CommonComponentsModule,
+      ],
     }),
   ],
 } as Meta;
@@ -47,18 +55,13 @@ longEvent.category = {
 demoChildren.forEach((c) => longEvent.addChild(c.getId()));
 
 const activityEvent = Note.create(new Date(), "Coaching Batch C");
-activityEvent.relatesTo = RecurringActivity.create("Coaching Batch C")._id;
+activityEvent.relatesTo =
+  RecurringActivity.create("Coaching Batch C").getId(true);
 demoChildren.forEach((c) => activityEvent.addChild(c.getId()));
 
 export const OneTimeEvent = Template.bind({});
 OneTimeEvent.args = {
   event: simpleEvent,
-};
-
-export const Highlighted = Template.bind({});
-Highlighted.args = {
-  event: simpleEvent,
-  highlighted: true,
 };
 
 export const OneTimeEventComplex = Template.bind({});

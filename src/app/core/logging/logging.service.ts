@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { LogLevel } from "./log-level";
 import * as Sentry from "@sentry/browser";
 import { environment } from "../../../environments/environment";
-import { SeverityLevel } from "@sentry/browser";
+import { BrowserOptions, SeverityLevel } from "@sentry/browser";
 
 /* eslint-disable no-console */
 
@@ -23,7 +23,7 @@ export class LoggingService {
    * If set up this will be used to send errors to a remote endpoint for analysis.
    * @param options
    */
-  static initRemoteLogging(options: any) {
+  static initRemoteLogging(options: BrowserOptions) {
     if (!options.dsn) {
       // abort if no target url is set
       return;

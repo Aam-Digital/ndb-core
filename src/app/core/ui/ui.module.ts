@@ -33,7 +33,6 @@ import { SearchComponent } from "./search/search.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { ChildrenModule } from "../../child-dev-project/children/children.module";
 import { SchoolsModule } from "../../child-dev-project/schools/schools.module";
-import { FlexLayoutModule } from "@angular/flex-layout";
 import { PrimaryActionComponent } from "./primary-action/primary-action.component";
 import { NotesModule } from "../../child-dev-project/notes/notes.module";
 import { Angulartics2Module } from "angulartics2";
@@ -42,6 +41,7 @@ import { EntityUtilsModule } from "../entity-components/entity-utils/entity-util
 import { LanguageModule } from "../language/language.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { PwaInstallModule } from "app/core/pwa-install/pwa-install.module";
+import { UserSecurityComponent } from "../user/user-security/user-security.component";
 
 /**
  * The core user interface structure that ties different components together into the overall app layout.
@@ -61,7 +61,6 @@ import { PwaInstallModule } from "app/core/pwa-install/pwa-install.module";
     MatFormFieldModule,
     MatInputModule,
     MatAutocompleteModule,
-    FlexLayoutModule,
     ChildrenModule,
     SchoolsModule,
     NotesModule,
@@ -76,4 +75,6 @@ import { PwaInstallModule } from "app/core/pwa-install/pwa-install.module";
   declarations: [SearchComponent, UiComponent, PrimaryActionComponent],
   exports: [UiComponent],
 })
-export class UiModule {}
+export class UiModule {
+  static dynamicComponents = [UserSecurityComponent];
+}

@@ -23,13 +23,16 @@ import { genders } from "../../../../child-dev-project/children/model/genders";
 import { LoggingService } from "../../../logging/logging.service";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import moment from "moment";
-import { MediaObserver } from "@angular/flex-layout";
 import { Subject } from "rxjs";
 import { UpdatedEntity } from "../../../entity/model/entity-update";
 import { MatDialog } from "@angular/material/dialog";
 import { RowDetailsComponent } from "../row-details/row-details.component";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { ScreenWidthObserver } from "../../../../utils/media/screen-size-observer.service";
+import { WINDOW_TOKEN } from "../../../../utils/di-tokens";
+import { MediaModule } from "../../../../utils/media/media.module";
+import { DateWithAge } from "app/child-dev-project/children/model/dateWithAge";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -41,13 +44,16 @@ describe("EntitySubrecordComponent", () => {
         EntitySubrecordModule,
         MockedTestingModule.withState(),
         FontAwesomeTestingModule,
+        MediaModule,
       ],
+      providers: [{ provide: WINDOW_TOKEN, useValue: window }],
     }).compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EntitySubrecordComponent);
     component = fixture.componentInstance;
+    component.editable = false;
     fixture.detectChanges();
   });
 
@@ -79,6 +85,7 @@ describe("EntitySubrecordComponent", () => {
     component.ngOnChanges({ records: undefined, columns: undefined });
     fixture.detectChanges();
 
+    component.recordsDataSource.sort.direction = "";
     component.recordsDataSource.sort.sort({
       id: "enumValue",
       start: "asc",
@@ -183,8 +190,8 @@ describe("EntitySubrecordComponent", () => {
     child.name = "Child Name";
     child.projectNumber = "01";
     const tableRow: TableRow<Child> = { record: child };
-    const media = TestBed.inject(MediaObserver);
-    spyOn(media, "isActive").and.returnValue(false);
+    const media = TestBed.inject(ScreenWidthObserver);
+    spyOn(media, "isDesktop").and.returnValue(true);
 
     component.edit(tableRow);
 
@@ -318,16 +325,72 @@ describe("EntitySubrecordComponent", () => {
     expect(component.recordsDataSource.data).toHaveSize(1);
   });
 
-  it("should correctly determine the entity constructor", () => {
+  it("should correctly determine the entity constructor from factory", () => {
     expect(() => component.getEntityConstructor()).toThrowError();
 
     const newRecordSpy = jasmine.createSpy().and.returnValue(new Child());
     component.newRecordFactory = newRecordSpy;
-    expect(component.getEntityConstructor()).toBe(Child);
+    expect(component.getEntityConstructor()).toEqual(Child);
     expect(newRecordSpy).toHaveBeenCalled();
+  });
 
+  it("should correctly determine the entity constructor from existing record", () => {
     component.newRecordFactory = undefined;
     component.records = [new Note()];
-    expect(component.getEntityConstructor()).toBe(Note);
+    expect(component.getEntityConstructor()).toEqual(Note);
+  });
+
+  it("should filter data based on filter definition", () => {
+    const c1 = Child.create("Matching");
+    c1.dateOfBirth = new DateWithAge(moment().subtract(1, "years").toDate());
+    const c2 = Child.create("Not Matching");
+    c2.dateOfBirth = new DateWithAge(moment().subtract(2, "years").toDate());
+    const c3 = Child.create("Matching");
+    c3.dateOfBirth = new DateWithAge(moment().subtract(3, "years").toDate());
+    // get type-safety for filters
+    const childComponent = component as EntitySubrecordComponent<Child>;
+    childComponent.records = [c1, c2, c3];
+
+    childComponent.filter = { name: "Matching" };
+
+    expect(childComponent.recordsDataSource.data).toEqual([
+      { record: c1 },
+      { record: c3 },
+    ]);
+
+    childComponent.filter = {
+      name: "Matching",
+      "dateOfBirth.age": { $gte: 2 },
+    } as any;
+
+    expect(childComponent.recordsDataSource.data).toEqual([{ record: c3 }]);
+
+    const c4 = Child.create("Matching");
+    c4.dateOfBirth = new DateWithAge(moment().subtract(4, "years").toDate());
+    const c5 = Child.create("Not Matching");
+
+    childComponent.records = [c1, c2, c3, c4, c5];
+
+    expect(childComponent.recordsDataSource.data).toEqual([
+      { record: c3 },
+      { record: c4 },
+    ]);
+  });
+
+  it("should remove an entity if it does not pass the filter anymore", async () => {
+    const entityMapper = TestBed.inject(EntityMapperService);
+    const child = new Child();
+    child.gender = genders[1];
+    await entityMapper.save(child);
+    component.records = [child];
+    component.filter = { "gender.id": genders[1].id } as any;
+    component.ngOnInit();
+
+    expect(component.recordsDataSource.data).toEqual([{ record: child }]);
+
+    child.gender = genders[2];
+    await entityMapper.save(child);
+
+    expect(component.recordsDataSource.data).toEqual([]);
   });
 });

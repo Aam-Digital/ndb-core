@@ -1,11 +1,14 @@
 .primary-action {
+  margin: 10px;
+  font-size: 180%;
+  display: flex;
+  place-items: center;
+  place-content: center;
+}
+
+:host {
   position: absolute;
   bottom: 0;
   right: 0;
   z-index: 999;
-  margin: 10px;
-  font-size: 1.8em;
-  display: flex;
-  place-items: center;
-  place-content: center;
 }

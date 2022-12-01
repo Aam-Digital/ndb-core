@@ -43,6 +43,7 @@ describe("EventNote", () => {
     category: defaultInteractionTypes.find((it) => it.isMeeting).id,
     authors: ["some-coach"],
     relatesTo: "RecurringActivity:some-id",
+    relatedEntities: ["RecurringActivity:some-id"],
     date: new Date(),
     schools: [],
     subject: "some subject",

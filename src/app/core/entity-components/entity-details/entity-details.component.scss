@@ -1,48 +1,8 @@
-/*
- *     This file is part of ndb-core.
- *
- *     ndb-core is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ndb-core is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-@import "../../../../ndb-theme";
-@import "../../../../styles";
-
-.header-row {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  font-weight: bold;
+:host {
+  display: block;
+  height: 100%;
 }
 
-.mat-expansion-panel {
-  padding: 0;
-  margin-top: 0;
-}
-
-.header-spacer {
-  flex-grow: 1;
-}
-
-.delete-button {
-  margin-top: 5px;
-}
-
-.mat-expansion-panel-spacing {
-  margin: 0 0;
-}
-
-.process-spinner {
-  display: flex;
-  justify-content: center;
+.mat-tab-group {
+  height: 100%;
 }

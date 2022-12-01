@@ -1,6 +1,5 @@
 import { ConfigurableEnumValue } from "./configurable-enum.interface";
 import { Ordering } from "./configurable-enum-ordering";
-import { expect } from "@angular/flex-layout/_private-utils/testing";
 
 describe("Configurable Enum Ordering", () => {
   function mockEnumValues(): ConfigurableEnumValue[] {

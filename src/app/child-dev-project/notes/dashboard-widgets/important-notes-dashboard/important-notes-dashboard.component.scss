@@ -1,0 +1,34 @@
+@use "../../../../core/dashboard/dashboard-widget-base";
+@use "../../../../../styles/variables/sizes";
+
+.subject-cell {
+  text-align: right;
+}
+
+.date-cell {
+  position: relative;
+
+  &::before {
+    left: 0;
+    top: 0;
+    content: '';
+    display: block;
+    width: sizes.$small;
+    height: 100%;
+    position: absolute;
+    background-color: var(--important-notes-bg-color);
+  }
+}
+
+.row-view {
+  cursor: pointer;
+  position: relative;
+
+  & > td:first-child {
+    padding-left: 2 * sizes.$small;
+  }
+
+  & > td:last-child {
+    padding-right: sizes.$small;
+  }
+}

@@ -12,11 +12,12 @@ import { RecurringActivity } from "../../model/recurring-activity";
 import { SessionService } from "../../../../core/session/session-service/session.service";
 import { NoteDetailsComponent } from "../../../notes/note-details/note-details.component";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
-import { FilterComponentSettings } from "../../../../core/entity-components/entity-list/filter-component.settings";
-import { FilterGeneratorService } from "../../../../core/entity-components/entity-list/filter-generator.service";
 import { AlertService } from "../../../../core/alerts/alert.service";
 import { AlertDisplay } from "../../../../core/alerts/alert-display";
 import { NgModel } from "@angular/forms";
+import { FilterService } from "../../../../core/filter/filter.service";
+import { DataFilter } from "../../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { FilterConfig } from "../../../../core/entity-components/entity-list/EntityListConfig";
 
 @Component({
   selector: "app-roll-call-setup",
@@ -33,7 +34,8 @@ export class RollCallSetupComponent implements OnInit {
 
   allActivities: RecurringActivity[] = [];
   visibleActivities: RecurringActivity[] = [];
-  filterSettings: FilterComponentSettings<Note>[] = [];
+  filterConfig: FilterConfig[] = [{ id: "category" }, { id: "schools" }];
+  entityType = Note;
 
   showingAll = false;
 
@@ -53,8 +55,8 @@ export class RollCallSetupComponent implements OnInit {
     private attendanceService: AttendanceService,
     private sessionService: SessionService,
     private formDialog: FormDialogService,
-    private filterGenerator: FilterGeneratorService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private filerService: FilterService
   ) {}
 
   async ngOnInit() {
@@ -67,7 +69,8 @@ export class RollCallSetupComponent implements OnInit {
       this.date
     );
     await this.loadActivities();
-    await this.updateEventsList();
+    this.sortEvents();
+    this.filteredExistingEvents = this.existingEvents;
     this.isLoading = false;
   }
 
@@ -114,7 +117,7 @@ export class RollCallSetupComponent implements OnInit {
   private async createEventForActivity(
     activity: RecurringActivity
   ): Promise<NoteForActivitySetup> {
-    if (this.existingEvents.find((e) => e.relatesTo === activity._id)) {
+    if (this.existingEvents.find((e) => e.relatesTo === activity.getId(true))) {
       return undefined;
     }
 
@@ -132,7 +135,7 @@ export class RollCallSetupComponent implements OnInit {
       let score = 0;
 
       const activityAssignedUsers = this.allActivities.find(
-        (a) => a._id === event.relatesTo
+        (a) => a.getId(true) === event.relatesTo
       )?.assignedTo;
       // use parent activities' assigned users and only fall back to event if necessary
       const assignedUsers = activityAssignedUsers ?? event.authors;
@@ -168,39 +171,9 @@ export class RollCallSetupComponent implements OnInit {
       });
   }
 
-  private async updateEventsList() {
-    await this.updateFilterOptions();
-    this.filterExistingEvents();
-    this.sortEvents();
-  }
-
-  private async updateFilterOptions() {
-    this.filterSettings = await this.filterGenerator.generate(
-      [{ id: "category" }, { id: "schools" }],
-      Note,
-      this.existingEvents,
-      true
-    );
-  }
-
-  private filterExistingEvents() {
-    let filteredEvents = this.existingEvents;
-    for (const filter of this.filterSettings) {
-      const filterFun = filter.filterSettings.getFilterFunction(
-        filter.selectedOption
-      );
-      filteredEvents = filteredEvents.filter(filterFun);
-    }
-
-    this.filteredExistingEvents = filteredEvents;
-  }
-
-  applyFilter(
-    selectedFilter: FilterComponentSettings<Note>,
-    optionKey: string
-  ) {
-    selectedFilter.selectedOption = optionKey;
-    this.filterExistingEvents();
+  filterExistingEvents(filter: DataFilter<Note>) {
+    const predicate = this.filerService.getFilterPredicate(filter);
+    this.filteredExistingEvents = this.existingEvents.filter(predicate);
   }
 
   selectEvent(event: NoteForActivitySetup) {

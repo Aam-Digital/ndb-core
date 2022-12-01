@@ -2,9 +2,9 @@ import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { ConfigService } from "./config.service";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Config } from "./config";
-import { Subject } from "rxjs";
+import { firstValueFrom, Subject } from "rxjs";
 import { UpdatedEntity } from "../entity/model/entity-update";
-import { take } from "rxjs/operators";
+import { LoggingService } from "../logging/logging.service";
 
 describe("ConfigService", () => {
   let service: ConfigService;
@@ -19,6 +19,7 @@ describe("ConfigService", () => {
       providers: [
         { provide: EntityMapperService, useValue: entityMapper },
         ConfigService,
+        LoggingService,
       ],
     });
     service = TestBed.inject(ConfigService);
@@ -41,7 +42,7 @@ describe("ConfigService", () => {
 
   it("should emit the config once it is loaded", fakeAsync(() => {
     entityMapper.load.and.rejectWith("No config found");
-    const configLoaded = service.configUpdates.pipe(take(1)).toPromise();
+    const configLoaded = firstValueFrom(service.configUpdates);
 
     service.loadConfig();
     tick();

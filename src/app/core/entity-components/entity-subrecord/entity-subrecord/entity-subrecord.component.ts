@@ -10,11 +10,9 @@ import {
 } from "@angular/core";
 import { MatSort, MatSortable } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
-import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { AlertService } from "../../../alerts/alert.service";
-import { Subscription } from "rxjs";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import {
   EntityForm,
@@ -30,6 +28,14 @@ import {
 } from "../../../entity/entity-remove.service";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { tableSort } from "./table-sort";
+import {
+  ScreenWidthObserver,
+  ScreenSize,
+} from "../../../../utils/media/screen-size-observer.service";
+import { Subscription } from "rxjs";
+import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
+import { ColumnConfig, DataFilter } from "./entity-subrecord-config";
+import { FilterService } from "../../../filter/filter.service";
 
 export interface TableRow<T extends Entity> {
   record: T;
@@ -61,7 +67,7 @@ export class EntitySubrecordComponent<T extends Entity>
   @Input() isLoading: boolean;
 
   /** configuration what kind of columns to be generated for the table */
-  @Input() set columns(columns: (FormFieldConfig | string)[]) {
+  @Input() set columns(columns: ColumnConfig[]) {
     this._columns = columns.map((col) => {
       if (typeof col === "string") {
         return { id: col };
@@ -71,6 +77,7 @@ export class EntitySubrecordComponent<T extends Entity>
     });
     this.filteredColumns = this._columns.filter((col) => !col.hideFromTable);
   }
+
   _columns: FormFieldConfig[] = [];
   filteredColumns: FormFieldConfig[] = [];
 
@@ -78,16 +85,12 @@ export class EntitySubrecordComponent<T extends Entity>
   @Input()
   set records(value: T[]) {
     this._records = value;
-    this.recordsDataSource.data = this._records.map((rec) => {
-      return {
-        record: rec,
-      };
-    });
+    this.initDataSource();
     if (!this.newRecordFactory && this._records.length > 0) {
-      this.newRecordFactory = () =>
-        new (this._records[0].getConstructor() as EntityConstructor<T>)();
+      this.newRecordFactory = () => new (this._records[0].getConstructor())();
     }
   }
+
   private _records: T[] = [];
 
   @Output() recordsChange = new EventEmitter<T[]>();
@@ -98,19 +101,21 @@ export class EntitySubrecordComponent<T extends Entity>
    */
   @Input() newRecordFactory: () => T;
 
+  private entityConstructor: EntityConstructor<T>;
+
   /**
    * Whether the rows of the table are inline editable and new entries can be created through the "+" button.
    */
   @Input() editable = true;
 
   /** columns displayed in the template's table */
-  @Input() columnsToDisplay = [];
+  @Input() columnsToDisplay: string[] = [];
 
   /** data displayed in the template's table */
   recordsDataSource = new MatTableDataSource<TableRow<T>>();
 
-  private mediaSubscription: Subscription;
-  private screenWidth = "";
+  private mediaSubscription: Subscription = Subscription.EMPTY;
+  private screenWidth: ScreenSize | undefined = undefined;
 
   idForSavingPagination = "startWert";
 
@@ -130,29 +135,48 @@ export class EntitySubrecordComponent<T extends Entity>
    */
   @Input() showEntity?: (entity: T) => void = this.showRowDetails;
 
+  /**
+   * Adds a filter for the displayed data.
+   * Only data, that passes the filter will be shown in the table.
+   * @param filter a valid MongoDB Query
+   */
+  @Input() set filter(filter: DataFilter<T>) {
+    if (filter) {
+      this.predicate = this.filterService.getFilterPredicate(filter);
+      this.initDataSource();
+    }
+  }
+
+  private predicate: (entity: T) => boolean = () => true;
+
   constructor(
     private alertService: AlertService,
-    private media: MediaObserver,
+    private screenWidthObserver: ScreenWidthObserver,
     private entityFormService: EntityFormService,
     private dialog: MatDialog,
     private analyticsService: AnalyticsService,
     private loggingService: LoggingService,
     private entityRemoveService: EntityRemoveService,
-    private entityMapper: EntityMapperService
+    private entityMapper: EntityMapperService,
+    private filterService: FilterService
   ) {
-    this.mediaSubscription = this.media
-      .asObservable()
+    this.mediaSubscription = this.screenWidthObserver
+      .shared()
       .pipe(untilDestroyed(this))
-      .subscribe((change: MediaChange[]) => {
-        if (change[0].mqAlias !== this.screenWidth) {
-          this.screenWidth = change[0].mqAlias;
-          this.setupTable();
-        }
+      .subscribe((change: ScreenSize) => {
+        this.screenWidth = change;
+        this.setupTable();
       });
   }
 
   /** function returns the background color for each row*/
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
+
+  private initDataSource() {
+    this.recordsDataSource.data = this._records
+      .filter(this.predicate)
+      .map((record) => ({ record }));
+  }
 
   ngOnInit() {
     if (this.entityConstructorIsAvailable()) {
@@ -162,7 +186,7 @@ export class EntitySubrecordComponent<T extends Entity>
         .subscribe(({ entity, type }) => {
           if (type === "new") {
             this.addToTable(entity);
-          } else if (type === "remove") {
+          } else if (type === "remove" || !this.predicate(entity)) {
             this.removeFromDataTable(entity);
           } else if (
             type === "update" &&
@@ -179,13 +203,16 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 
   getEntityConstructor(): EntityConstructor<T> {
-    if (this.entityConstructorIsAvailable()) {
-      const record =
-        this._records.length > 0 ? this._records[0] : this.newRecordFactory();
-      return record.getConstructor() as EntityConstructor<T>;
-    } else {
+    if (!this.entityConstructorIsAvailable()) {
       throw new Error("No constructor is available");
     }
+
+    if (!this.entityConstructor) {
+      const record =
+        this._records.length > 0 ? this._records[0] : this.newRecordFactory();
+      this.entityConstructor = record.getConstructor();
+    }
+    return this.entityConstructor;
   }
 
   /**
@@ -195,6 +222,9 @@ export class EntitySubrecordComponent<T extends Entity>
   ngOnChanges(changes: SimpleChanges) {
     if (changes.hasOwnProperty("columns")) {
       this.initFormGroups();
+      if (this.columnsToDisplay.length < 2) {
+        this.setupTable();
+      }
     }
     if (changes.hasOwnProperty("records") && this._records.length > 0) {
       this.initFormGroups();
@@ -258,9 +288,7 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 
   edit(row: TableRow<T>) {
-    if (this.media.isActive("lt-sm")) {
-      this.rowClick(row);
-    } else {
+    if (this.screenWidthObserver.isDesktop()) {
       if (!row.formGroup) {
         row.formGroup = this.entityFormService.createFormGroup(
           this._columns,
@@ -268,6 +296,8 @@ export class EntitySubrecordComponent<T extends Entity>
         );
       }
       row.formGroup.enable();
+    } else {
+      this.rowClick(row);
     }
   }
 
@@ -283,7 +313,9 @@ export class EntitySubrecordComponent<T extends Entity>
       );
       row.formGroup.disable();
     } catch (err) {
-      this.alertService.addDanger(err.message);
+      if (!(err instanceof InvalidFormFieldError)) {
+        this.alertService.addDanger(err.message);
+      }
     }
   }
 
@@ -375,7 +407,7 @@ export class EntitySubrecordComponent<T extends Entity>
    * resets columnsToDisplay depending on current screensize
    */
   private setupTable() {
-    if (this._columns !== undefined && this.screenWidth !== "") {
+    if (this._columns !== undefined && this.screenWidth !== undefined) {
       this.columnsToDisplay = this._columns
         .filter((col) => this.isVisible(col))
         .map((col) => col.id);
@@ -393,13 +425,11 @@ export class EntitySubrecordComponent<T extends Entity>
     if (col.hideFromTable) {
       return false;
     }
-    const visibilityGroups = ["sm", "md", "lg", "xl"];
-    const visibleFromIndex = visibilityGroups.indexOf(col.visibleFrom);
-    if (visibleFromIndex !== -1) {
-      const regex = visibilityGroups.slice(visibleFromIndex).join("|");
-      return !!this.screenWidth.match(regex);
-    } else {
+    // when `ScreenSize[col.visibleFrom]` is undefined, this returns `true`
+    const numericValue = ScreenSize[col.visibleFrom];
+    if (numericValue === undefined) {
       return true;
     }
+    return this.screenWidthObserver.currentScreenSize() >= numericValue;
   }
 }

@@ -67,7 +67,6 @@ export interface GroupConfig {
 
 export interface FilterConfig {
   id: string;
-  display?: string;
   type?: string;
   default?: string;
   label?: string;
@@ -110,7 +109,7 @@ export interface DateRangeFilterConfig extends FilterConfig {
   }[];
 }
 
-export interface PrebuiltFilterConfig<T> extends FilterConfig {
+export interface PrebuiltFilterConfig<T extends Entity> extends FilterConfig {
   options: FilterSelectionOption<T>[];
 }
 

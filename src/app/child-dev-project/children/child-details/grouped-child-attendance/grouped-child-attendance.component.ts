@@ -10,7 +10,6 @@ import { DynamicComponent } from "../../../../core/view/dynamic-components/dynam
 @Component({
   selector: "app-grouped-child-attendance",
   templateUrl: "./grouped-child-attendance.component.html",
-  styleUrls: ["./grouped-child-attendance.component.scss"],
 })
 export class GroupedChildAttendanceComponent
   implements OnChanges, OnInitDynamicComponent {

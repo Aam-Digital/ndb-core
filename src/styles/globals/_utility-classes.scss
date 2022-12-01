@@ -1,0 +1,57 @@
+@use "src/styles/variables/breakpoints";
+
+.overflow-auto-y {
+  overflow-y: auto;
+}
+
+.overflow-y-hidden {
+  overflow-y: hidden;
+}
+
+/**
+ *
+ */
+.pointer {
+  cursor: pointer;
+}
+
+/**
+ * Displays a text so that when it would overflow ellipsis (...) are shown instead
+ */
+.truncate-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/**
+ * Hide the element that this is applied on when on a mobile device
+ */
+.hide-mobile {
+  @media screen and (max-width: breakpoints.$md) {
+    display: none;
+  }
+}
+
+/*
+ * Hide the element that this is applied on when on a desktop device
+ */
+.hide-desktop {
+  @media screen and (min-width: breakpoints.$md) {
+    display: none;
+  }
+}
+
+.text-align-end {
+  text-align: end;
+}
+
+.position-relative {
+  position: relative;
+}
+
+// Using this class, the calculated width of the element will include padding and the border
+// as opposed to just the width of the element
+.border-box-sizing {
+  box-sizing: border-box;
+}

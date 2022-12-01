@@ -2,15 +2,15 @@ import { TestBed } from "@angular/core/testing";
 
 import { UserRoleGuard } from "./user-role.guard";
 import { SessionService } from "../../session/session-service/session.service";
-import { DatabaseUser } from "../../session/session-service/local-user";
 import { RouterTestingModule } from "@angular/router/testing";
 import { ActivatedRouteSnapshot, Router } from "@angular/router";
+import { AuthUser } from "../../session/session-service/auth-user";
 
 describe("UserRoleGuard", () => {
   let guard: UserRoleGuard;
   let mockSessionService: jasmine.SpyObj<SessionService>;
-  const normalUser: DatabaseUser = { name: "normalUser", roles: ["user_app"] };
-  const adminUser: DatabaseUser = {
+  const normalUser: AuthUser = { name: "normalUser", roles: ["user_app"] };
+  const adminUser: AuthUser = {
     name: "admin",
     roles: ["admin", "user_app"],
   };

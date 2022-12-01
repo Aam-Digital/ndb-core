@@ -43,10 +43,11 @@ import { NoteAttendanceCountBlockComponent } from "./note-attendance-block/note-
 import { MatMenuModule } from "@angular/material/menu";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { NotesDashboardComponent } from "./dashboard-widgets/notes-dashboard/notes-dashboard.component";
-import { NotesOfChildComponent } from "./notes-of-child/notes-of-child.component";
+import { NotesRelatedToEntityComponent } from "./notes-related-to-entity/notes-related-to-entity.component";
 import { DashboardModule } from "../../core/dashboard/dashboard.module";
 import { ExportModule } from "../../core/export/export.module";
-import { ImportantNotesComponent } from "./dashboard-widgets/important-notes/important-notes.component";
+import { CommonComponentsModule } from "../../core/common-components/common-components.module";
+import { ImportantNotesDashboardComponent } from "./dashboard-widgets/important-notes-dashboard/important-notes-dashboard.component";
 
 @NgModule({
   declarations: [
@@ -55,8 +56,8 @@ import { ImportantNotesComponent } from "./dashboard-widgets/important-notes/imp
     ChildMeetingNoteAttendanceComponent,
     NoteAttendanceCountBlockComponent,
     NotesDashboardComponent,
-    NotesOfChildComponent,
-    ImportantNotesComponent,
+    NotesRelatedToEntityComponent,
+    ImportantNotesDashboardComponent,
   ],
   imports: [
     CommonModule,
@@ -105,6 +106,7 @@ import { ImportantNotesComponent } from "./dashboard-widgets/important-notes/imp
     MatMenuModule,
     DashboardModule,
     ExportModule,
+    CommonComponentsModule,
   ],
   exports: [NoteDetailsComponent],
 })
@@ -113,7 +115,7 @@ export class NotesModule {
     NotesManagerComponent,
     NoteAttendanceCountBlockComponent,
     NotesDashboardComponent,
-    NotesOfChildComponent,
-    ImportantNotesComponent,
+    NotesRelatedToEntityComponent,
+    ImportantNotesDashboardComponent,
   ];
 }

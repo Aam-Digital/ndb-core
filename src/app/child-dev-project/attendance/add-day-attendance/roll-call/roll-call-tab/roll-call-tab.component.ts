@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, HostBinding, Input } from "@angular/core";
 import {
   animate,
   state,
@@ -21,7 +21,8 @@ type PositionState = "left" | "center" | "right";
 
 @Component({
   selector: "app-roll-call-tab",
-  templateUrl: "./roll-call-tab.component.html",
+  template: "<ng-content></ng-content>",
+  styleUrls: ["./roll-call-tab.component.scss"],
   animations: [
     trigger("translateTab", [
       // Transitions to `none` instead of 0, because some browsers might blur the content.
@@ -51,32 +52,24 @@ type PositionState = "left" | "center" | "right";
       transition("void => *", []),
       transition(
         "* => left, * => right, left => center, right => center",
-        animate("{{animationDuration}} cubic-bezier(0.35, 0, 0.25, 1)")
+        animate("800ms cubic-bezier(0.35, 0, 0.25, 1)")
       ),
     ]),
   ],
 })
 export class RollCallTabComponent {
-  /** Current position of the tab-body in the tab-group. Zero means that the tab is visible. */
-  private _positionIndex: number;
-
-  /** Tab body position state. Used by the animation trigger for the current state. */
-  _position: PositionState;
-
   @Input()
   set position(position: number) {
-    this._positionIndex = position;
-    this._computePositionAnimationState();
+    let posState: PositionState;
+    if (position < 0) {
+      posState = "left";
+    } else if (position > 0) {
+      posState = "right";
+    } else {
+      posState = "center";
+    }
+    this.animationState = posState;
   }
 
-  /** Computes the position state that will be used for the tab-body animation trigger. */
-  private _computePositionAnimationState() {
-    if (this._positionIndex < 0) {
-      this._position = "left";
-    } else if (this._positionIndex > 0) {
-      this._position = "right";
-    } else {
-      this._position = "center";
-    }
-  }
+  @HostBinding("@translateTab") animationState = "";
 }

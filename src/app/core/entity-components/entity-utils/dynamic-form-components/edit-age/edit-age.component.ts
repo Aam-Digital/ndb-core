@@ -1,16 +1,16 @@
 import { Component } from "@angular/core";
 import { EditComponent } from "../edit-component";
-import { calculateAge } from "../../../../../utils/utils";
 import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
+import { MatDatepickerInputEvent } from "@angular/material/datepicker";
+import { DateWithAge } from "../../../../../child-dev-project/children/model/dateWithAge";
 
 @DynamicComponent("EditAge")
 @Component({
   selector: "app-edit-age",
   templateUrl: "./edit-age.component.html",
-  styleUrls: ["./edit-age.component.scss"],
 })
-export class EditAgeComponent extends EditComponent<Date> {
-  getAge(selectedDateOfBirth: Date) {
-    return selectedDateOfBirth ? calculateAge(selectedDateOfBirth) : "";
+export class EditAgeComponent extends EditComponent<DateWithAge> {
+  dateChanged(event: MatDatepickerInputEvent<any>) {
+    this.formControl.setValue(new DateWithAge(event.value));
   }
 }

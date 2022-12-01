@@ -9,7 +9,7 @@ import { AnalyticsService } from "../../analytics/analytics.service";
 import { EntityAbility } from "../ability/entity-ability";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ConfigService } from "../../config/config.service";
-import { take } from "rxjs/operators";
+import { firstValueFrom } from "rxjs";
 
 /**
  * This service checks whether the relevant rules for the current user changed.
@@ -109,7 +109,7 @@ export class PermissionEnforcerService {
     subjects: EntityConstructor[]
   ): Promise<boolean> {
     // wait for config service to be ready before using the entity mapper
-    await this.configService.configUpdates.pipe(take(1)).toPromise();
+    await firstValueFrom(this.configService.configUpdates);
     for (const subject of subjects) {
       const entities = await this.entityMapper.loadType(subject);
       if (entities.some((entity) => this.ability.cannot("read", entity))) {

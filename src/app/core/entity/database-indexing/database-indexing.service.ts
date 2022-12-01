@@ -17,7 +17,7 @@
 
 import { Injectable } from "@angular/core";
 import { Database, QueryOptions } from "../../database/database";
-import { BehaviorSubject, Observable } from "rxjs";
+import { BehaviorSubject, firstValueFrom, Observable } from "rxjs";
 import { BackgroundProcessState } from "../../sync-status/background-process-state.interface";
 import { Entity, EntityConstructor } from "../model/entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
@@ -109,18 +109,23 @@ export class DatabaseIndexingService {
    * Load data from the Database through the given, previously created index for a key range.
    * @param entityConstructor
    * @param indexName The name of the previously created index to be queried.
-   * @param startkey
-   * @param endkey
+   * @param startkey start id of range to query
+   * @param endkey end id of range to query (inclusive)
    */
   async queryIndexDocsRange<T extends Entity>(
     entityConstructor: EntityConstructor<T>,
     indexName: string,
-    startkey: string,
-    endkey?: string
+    startkey: string | any[],
+    endkey?: string | any[]
   ): Promise<T[]> {
+    if (Array.isArray(endkey)) {
+      endkey = [...endkey, {}];
+    } else {
+      endkey = endkey + "\ufff0";
+    }
     return this.queryIndexDocs(entityConstructor, indexName, {
       startkey: startkey,
-      endkey: endkey + "\ufff0",
+      endkey: endkey,
     });
   }
 
@@ -176,8 +181,10 @@ export class DatabaseIndexingService {
       return;
     }
 
-    await this._indicesRegistered
-      .pipe(first((processes) => relevantIndexIsReady(processes, indexName)))
-      .toPromise();
+    await firstValueFrom(
+      this._indicesRegistered.pipe(
+        first((processes) => relevantIndexIsReady(processes, indexName))
+      )
+    );
   }
 }

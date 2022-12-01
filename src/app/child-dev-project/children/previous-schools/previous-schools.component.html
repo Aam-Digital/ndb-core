@@ -1,20 +1,12 @@
-<div class="warnings-section">
-  <mat-chip-list *ngIf="!hasCurrentlyActiveEntry">
-    <mat-chip>
-      <span i18n="Explanation for missing currently active entry - part 1 of 2">Currently there is no active entry. To add a new entry, click on the</span>
-      &nbsp;
-      <fa-icon
-        class="table-action-icon"
-        aria-label="add"
-        icon="plus-circle"
-        style="color: #448aff;"
-        (click)="entitySubrecord.create()"
-      > </fa-icon>
-      &nbsp;
-      <span i18n="Explanation for missing currently active entry - part 2 of 2:">button</span>.
-    </mat-chip>
-  </mat-chip-list>
-</div>
+<app-pill class="hint-badge" *ngIf="!hasCurrentlyActiveEntry">
+  Currently there is no active entry. To add a new entry, click on the
+  <fa-icon
+    class="pointer color-accent"
+    aria-label="add"
+    icon="plus-circle"
+    (click)="entitySubrecord.create()"></fa-icon>
+  button.
+</app-pill>
 
 <app-entity-subrecord
   #entitySubrecord

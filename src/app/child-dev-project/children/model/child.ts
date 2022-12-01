@@ -19,16 +19,21 @@ import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
-import { calculateAge } from "../../../utils/utils";
 import { Photo } from "../child-photo-service/photo";
 import { BehaviorSubject } from "rxjs";
 import { SafeUrl } from "@angular/platform-browser";
 import { ChildPhotoService } from "../child-photo-service/child-photo.service";
+import { DateWithAge } from "./dateWithAge";
+import { IconName } from "@fortawesome/fontawesome-svg-core";
 
 export type Center = ConfigurableEnumValue;
+
 @DatabaseEntity("Child")
 export class Child extends Entity {
   static toStringAttributes = ["name"];
+  static icon: IconName = "child";
+  static label = $localize`:label for entity:Participant`;
+  static labelPlural = $localize`:label (plural) for entity:Participants`;
 
   static create(name: string): Child {
     const instance = new Child();
@@ -47,18 +52,18 @@ export class Child extends Entity {
     },
   })
   name: string;
+
   @DatabaseField({
     label: $localize`:Label for the project number of a child:Project Number`,
     labelShort: $localize`:Short label for the project number:PN`,
   })
   projectNumber: string;
+
   @DatabaseField({
-    dataType: "date-only",
     label: $localize`:Label for the date of birth of a child:Date of birth`,
     labelShort: $localize`:Short label for the date of birth:DoB`,
-    editComponent: "EditAge",
   })
-  dateOfBirth: Date;
+  dateOfBirth: DateWithAge;
 
   @DatabaseField({
     dataType: "configurable-enum",
@@ -73,10 +78,12 @@ export class Child extends Entity {
     label: $localize`:Label for the center of a child:Center`,
   })
   center: Center;
+
   @DatabaseField({
     label: $localize`:Label for the admission date of a child:Admission`,
   })
   admissionDate: Date;
+
   @DatabaseField({
     label: $localize`:Label for the status of a child:Status`,
   })
@@ -86,10 +93,12 @@ export class Child extends Entity {
     label: $localize`:Label for the dropout date of a child:Dropout Date`,
   })
   dropoutDate: Date;
+
   @DatabaseField({
     label: $localize`:Label for the type of dropout of a child:Dropout Type`,
   })
   dropoutType: string;
+
   @DatabaseField({
     label: $localize`:Label for the remarks about a dropout of a child:Dropout remarks`,
   })
@@ -117,10 +126,6 @@ export class Child extends Entity {
   })
   phone: string;
 
-  get age(): number {
-    return this.dateOfBirth ? calculateAge(this.dateOfBirth) : null;
-  }
-
   get isActive(): boolean {
     return (
       this.status !== "Dropout" && !this["dropoutDate"] && !this["exit_date"]
@@ -134,11 +139,11 @@ export class Child extends Entity {
     let indices = [];
 
     indices = indices.concat(this.toString().split(" "));
-    if (this.projectNumber !== undefined) {
+    if (this.projectNumber !== undefined && this.projectNumber !== null) {
       indices.push(this.projectNumber);
     }
-
     return indices;
   }
+
   set searchIndices(value) {}
 }

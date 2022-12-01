@@ -7,6 +7,7 @@ import { DynamicComponent } from "../../../../core/view/dynamic-components/dynam
 import { WarningLevel } from "../../../../core/entity/model/warning-level";
 import { HealthCheck } from "../../health-checkup/model/health-check";
 import { groupBy } from "../../../../utils/utils";
+import { Child } from "../../model/child";
 
 interface BmiRow {
   childId: string;
@@ -24,6 +25,7 @@ export class ChildrenBmiDashboardComponent
 {
   bmiDataSource = new MatTableDataSource<BmiRow>();
   isLoading = true;
+  entityLabelPlural: string = Child.labelPlural;
   @ViewChild("paginator") paginator: MatPaginator;
 
   constructor(private entityMapper: EntityMapperService) {}

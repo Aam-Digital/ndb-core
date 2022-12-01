@@ -1,47 +1,36 @@
-@import "../../../../styles";
-@import "../../../utils/grid-layout";
-
-$margin-side: 16px;
-
-$min-width-content: 250px;
-$widget-height: 370px;
-
-.general-description {
-  font-style: italic;
-}
-
-.action-button {
-  width: 100%;
-}
+@use "src/styles/variables/sizes";
+@use "src/styles/mixins/grid-layout";
+@use "@angular/material" as mat;
+@use "src/styles/typography/custom-typography";
 
 .cards-wrapper {
-  @include adaptive-grid($min-width-content);
+  @include grid-layout.adaptive($min-block-width: 250px);
+  margin-top: sizes.$large;
 }
 
 .mat-card {
-  display: flex;
-  flex-direction: column;
-  min-width: $min-width-content;
-  flex: 1;
-}
+  display: grid;
 
-.mat-card-header {
-  flex-shrink: 0;
-}
+  grid-template-rows:
+    auto  // Heading: takes its intrinsic space (but no more)
+    1fr   // Content: takes all available space ('grows')
+    auto; // Button: takes its intrinsic space (but no more)
 
-.mat-card-content {
-  flex-grow: 1;
-  overflow: auto;
-  margin-left: $margin-side;
-  margin-right: $margin-side;
-}
+  // choose a very opaque background when the card is disabled
+  &[disabled] {
+    background-color: mat.get-color-from-palette(mat.$grey-palette, $hue: 400, $opacity: 0.1);
+  }
 
-.mat-card-footer {
-  margin-left: $margin-side;
-  margin-right: $margin-side;
-  margin-bottom: auto;
-}
+  // Content: adapt typography
+  > p {
+    @include custom-typography.text-secondary();
+  }
 
-.inactive-card {
-  background-color: #ffffff40;
+  // Add some margin to the top to make it distinct from the content
+  > button {
+    // we can't simply use `margin-top: ...` because it is overridden
+    // by the native mat-button
+    margin: sizes.$regular 0 0 0;
+    width: 100%;
+  }
 }

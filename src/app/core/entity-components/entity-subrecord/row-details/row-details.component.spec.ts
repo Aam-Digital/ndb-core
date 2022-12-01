@@ -69,7 +69,7 @@ describe("RowDetailsComponent", () => {
     const message = "Error message";
     spyOn(formService, "saveChanges").and.rejectWith(new Error(message));
     const alertSpy = jasmine.createSpy();
-    TestBed.inject(AlertService).addWarning = alertSpy;
+    TestBed.inject(AlertService).addDanger = alertSpy;
     const closeSpy = jasmine.createSpy();
     TestBed.inject(MatDialogRef).close = closeSpy;
 

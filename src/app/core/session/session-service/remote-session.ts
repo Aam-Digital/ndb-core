@@ -16,7 +16,6 @@
  */
 import { Injectable } from "@angular/core";
 import { HttpErrorResponse, HttpStatusCode } from "@angular/common/http";
-import { DatabaseUser } from "./local-user";
 import { SessionService } from "./session.service";
 import { LoginState } from "../session-states/login-state.enum";
 import { PouchDatabase } from "../../database/pouch-database";
@@ -24,6 +23,7 @@ import { LoggingService } from "../../logging/logging.service";
 import PouchDB from "pouchdb-browser";
 import { AppSettings } from "app/core/app-config/app-settings";
 import { AuthService } from "../auth/auth.service";
+import { AuthUser } from "./auth-user";
 
 /**
  * Responsibilities:
@@ -36,7 +36,7 @@ export class RemoteSession extends SessionService {
   static readonly LAST_LOGIN_KEY = "LAST_REMOTE_LOGIN";
   /** remote (!) PouchDB  */
   private readonly database: PouchDatabase;
-  private currentDBUser: DatabaseUser;
+  private currentDBUser: AuthUser;
 
   /**
    * Create a RemoteSession and set up connection to the remote CouchDB server with valid authentication.
@@ -74,7 +74,7 @@ export class RemoteSession extends SessionService {
     return this.loginState.value;
   }
 
-  public async handleSuccessfulLogin(userObject: DatabaseUser) {
+  public async handleSuccessfulLogin(userObject: AuthUser) {
     this.database.initIndexedDB(
       `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}`,
       {
@@ -82,11 +82,19 @@ export class RemoteSession extends SessionService {
         skip_setup: true,
         fetch: (url, opts: any) => {
           if (typeof url === "string") {
-            this.authService.addAuthHeader(opts.headers);
-            return PouchDB.fetch(
+            const remoteUrl =
               AppSettings.DB_PROXY_PREFIX +
-              url.split(AppSettings.DB_PROXY_PREFIX)[1],
-              opts
+              url.split(AppSettings.DB_PROXY_PREFIX)[1];
+            return this.sendRequest(remoteUrl, opts).then((initialRes) =>
+              // retry login if request failed with unauthorized
+              initialRes.status === HttpStatusCode.Unauthorized
+                ? this.authService
+                    .autoLogin()
+                    .then(() => this.sendRequest(remoteUrl, opts))
+                    // return initial response if request failed again
+                    .then((newRes) => (newRes.ok ? newRes : initialRes))
+                    .catch(() => initialRes)
+                : initialRes
             );
           }
         },
@@ -94,6 +102,11 @@ export class RemoteSession extends SessionService {
     );
     this.currentDBUser = userObject;
     this.loginState.next(LoginState.LOGGED_IN);
+  }
+
+  private sendRequest(url: string, opts) {
+    this.authService.addAuthHeader(opts.headers);
+    return PouchDB.fetch(url, opts);
   }
 
   /**
@@ -105,7 +118,7 @@ export class RemoteSession extends SessionService {
     this.loginState.next(LoginState.LOGGED_OUT);
   }
 
-  getCurrentUser(): DatabaseUser {
+  getCurrentUser(): AuthUser {
     return this.currentDBUser;
   }
 

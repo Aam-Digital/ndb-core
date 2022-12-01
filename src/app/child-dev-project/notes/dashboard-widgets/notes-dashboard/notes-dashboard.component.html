@@ -15,14 +15,14 @@
       >
         <!-- Table header only for assistive technologies like screen readers -->
         <tr hidden="true">
-          <th scope="col">Participant</th>
+          <th scope="col">{{ entity.label }}</th>
           <th scope="col">Days since last note</th>
         </tr>
-        <ng-container matColumnDef="child">
-          <td *matCellDef="let childNoteInfo">
+        <ng-container matColumnDef="entity">
+          <td *matCellDef="let entityNoteInfo">
             <app-display-entity
-              [entityId]="childNoteInfo.childId"
-              entityType="Child"
+              [entityId]="entityNoteInfo.entityId"
+              [entityType]="entity"
             ></app-display-entity>
           </td>
         </ng-container>
@@ -31,22 +31,19 @@
           matColumnDef="daysSinceLastNote"
           i18n="Amount of days back|Format like 'Days passed > 5 days'"
         >
-          <td *matCellDef="let childNoteInfo">
-            <span class="dashboard-table-additional-info-cell">
-              <span
-                *ngIf="childNoteInfo.moreThanDaysSince"
-              >
-                &gt;&nbsp;
-              </span>
-              {{ childNoteInfo.daysSinceLastNote | number: "1.0-0" }} days
-            </span>
+          <td *matCellDef="let entityNoteInfo" class="text-align-end">
+            <ng-container
+              *ngIf="entityNoteInfo.moreThanDaysSince"
+            >
+              &gt;&nbsp;
+            </ng-container>
+            {{ entityNoteInfo.daysSinceLastNote | number: "1.0-0" }} days
           </td>
         </ng-container>
 
         <tr
           mat-row
-          *matRowDef="let row; columns: ['child', 'daysSinceLastNote'];"
-          class="dashboard-table-row"
+          *matRowDef="let row; columns: ['entity', 'daysSinceLastNote'];"
         ></tr>
       </table>
     </div>
@@ -54,14 +51,14 @@
       *ngIf="dataSource.data.length === 0 && !isLoading"
       class="headline"
     >
-      <span *ngIf="mode==='without-recent-notes'"
-            i18n="There are no participants that don't have a recent report to be shown here">
+      <ng-container *ngIf="mode==='without-recent-notes'"
+                    i18n="There are no participants that don't have a recent report to be shown here">
         no records without recent report
-      </span>
-      <span *ngIf="mode==='with-recent-notes'"
-            i18n="There are no participants that have a recent report to be shown here">
+      </ng-container>
+      <ng-container *ngIf="mode==='with-recent-notes'"
+                    i18n="There are no participants that have a recent report to be shown here">
         no records with recent report
-      </span>
+      </ng-container>
     </div>
     <mat-paginator
       #paginator

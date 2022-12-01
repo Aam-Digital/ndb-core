@@ -1,26 +1,31 @@
 name: SetUp
+
+permissions:
+  pull-requests: write
+
 on:
   pull_request:
-    types: [opened, reopened]
+    types: [ opened, reopened ]
 
 jobs:
-  create-heroku-app:
+  create-deployment:
     runs-on: ubuntu-latest
-    env:
-      APP_NAME: "app-name"
     steps:
-      - uses: actions/checkout@v2
-      - name: Create app name
-        run: echo "APP_NAME=test-deployment-pr-${{ github.event.number }}" >> $GITHUB_ENV
-      - name: Create app
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
-        run: |
-          heroku apps:create ${{ env.APP_NAME }} --region=eu
+      - uses: actions/checkout@v3
+      - name: Prepare server deployment
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /var/docker
+            cp -r x-pr pr-${{ github.event.number }}
+            sed -i "s/<PR_NUMBER>/${{ github.event.number }}/g" pr-${{ github.event.number }}/docker-compose.yml
       - name: Post comment on PR
         run: |
           curl -X POST \
           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           -H "Accept: application/vnd.github.v3+json" \
           https://api.github.com/repos/Aam-Digital/ndb-core/issues/${{ github.event.number }}/comments \
-          -d '{"body":"Deployed to https://${{ env.APP_NAME }}.herokuapp.com/"}'
+          -d '{"body":"Deployed to https://pr-${{ github.event.number }}.aam-digital.net/"}'

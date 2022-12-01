@@ -1,10 +1,14 @@
 import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
+import { IconName } from "@fortawesome/fontawesome-svg-core";
 
 @DatabaseEntity("School")
 export class School extends Entity {
   static toStringAttributes = ["name"];
+  static icon: IconName = "university";
+  static label = $localize`:label for entity:School`;
+  static labelPlural = $localize`:label (plural) for entity:Schools`;
 
   static getBlockComponent(): string {
     return "SchoolBlock";

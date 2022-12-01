@@ -33,7 +33,6 @@ import { debounceTime } from "rxjs/operators";
 @Component({
   selector: "app-sync-status",
   templateUrl: "./sync-status.component.html",
-  styleUrls: ["./sync-status.component.scss"],
 })
 export class SyncStatusComponent {
   private indexingProcesses: BackgroundProcessState[];

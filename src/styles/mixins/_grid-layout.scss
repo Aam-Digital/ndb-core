@@ -1,0 +1,34 @@
+/*
+ *     This file is part of ndb-core.
+ *
+ *     ndb-core is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     ndb-core is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
+ */
+@use "../variables/sizes";
+
+/**
+ * Can be used to create an adaptive grid-layout where the items will take
+ * up all horizontal space given. The items won't shrink smaller
+ * than `$min-block-width` but instead create a new row. All items
+ * have the same width.
+ * Below `$max-screen-width`, the grid will only contain a single
+ * column and all items will be aligned into a single column.
+ */
+@mixin adaptive($min-block-width, $max-screen-width: $min-block-width) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax($min-block-width, 1fr));
+  @media screen and (max-width: $max-screen-width) {
+    grid-template-columns: 1fr;
+  }
+  grid-gap: sizes.$large;
+}

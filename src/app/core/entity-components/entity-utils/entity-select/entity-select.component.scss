@@ -1,4 +1,4 @@
-@import "../common-styles";
+@use "../common-styles" as *;
 
 .main-list {
   // Mat chip list overflows a little bit without this hack

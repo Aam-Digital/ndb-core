@@ -1,6 +1,5 @@
 import {
   ComponentFixture,
-  discardPeriodicTasks,
   fakeAsync,
   TestBed,
   tick,
@@ -87,14 +86,10 @@ describe("EditSingleEntityComponent", () => {
 
     initComponent();
     tick();
-    expect(component.selectedEntity).toBe(child1);
-
-    component.editSelectedEntity();
-    tick();
     fixture.detectChanges();
-    expect(component.input.nativeElement.value).toEqual("First Child");
 
-    discardPeriodicTasks();
+    expect(component.selectedEntity).toBe(child1);
+    expect(component.input.nativeElement.value).toEqual("First Child");
   }));
 
   it("Should have the correct entity selected when it's name is entered", () => {
@@ -106,7 +101,6 @@ describe("EditSingleEntityComponent", () => {
 
     expect(component.selectedEntity).toBe(child1);
     expect(component.formControl).toHaveValue(child1.getId());
-    expect(component.editingSelectedEntity).toBeFalse();
   });
 
   it("Should unselect if no entity can be matched", () => {
@@ -127,25 +121,12 @@ describe("EditSingleEntityComponent", () => {
     expect(component.formControl.value).toBe(undefined);
   });
 
-  it("Should edit the selected entity", fakeAsync(() => {
-    const input: HTMLInputElement = component.input.nativeElement;
-    const inputSpy = spyOn(input, "focus");
-    component.entities = [School.create({ name: "High School" })];
-    component.select("High School");
-    expect(inputSpy).not.toHaveBeenCalled();
-
-    component.editSelectedEntity();
-
-    expect(component.editingSelectedEntity).toBeTrue();
-    tick();
-    expect(inputSpy).toHaveBeenCalled();
-  }));
-
   function initComponent(): Promise<any> {
     return component.onInitFromDynamicConfig({
       formFieldConfig: { id: "childId" },
       formControl: component.formControl,
       propertySchema: ChildSchoolRelation.schema.get("childId"),
+      entity: new ChildSchoolRelation(),
     });
   }
 });

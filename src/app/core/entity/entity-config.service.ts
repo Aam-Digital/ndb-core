@@ -8,6 +8,7 @@ import { ConfigService } from "../config/config.service";
 import { EntitySchemaField } from "./schema/entity-schema-field";
 import { addPropertySchema } from "./database-field.decorator";
 import { EntityRegistry } from "./database-entity.decorator";
+import { IconName } from "@fortawesome/fontawesome-svg-core";
 
 /**
  * A service that allows to work with configuration-objects
@@ -61,9 +62,11 @@ export class EntityConfigService {
         )
       );
     }
-    if (entityConfig?.toStringAttributes) {
-      entityType.toStringAttributes = entityConfig.toStringAttributes;
-    }
+    entityType.toStringAttributes =
+      entityConfig.toStringAttributes ?? entityType.toStringAttributes;
+    entityType.label = entityConfig.label ?? entityType.label;
+    entityType.labelPlural = entityConfig.labelPlural ?? entityType.labelPlural;
+    entityType.icon = (entityConfig.icon as IconName) ?? entityType.icon;
   }
 
   /**
@@ -105,4 +108,19 @@ export interface EntityConfig {
    * (optional) the default is the ID of the entity (`.entityId`)
    */
   toStringAttributes?: string[];
+
+  /**
+   * human-readable name/label of the entity in the UI
+   */
+  label?: string;
+
+  /**
+   * human-readable name/label of the entity in the UI when referring to multiple
+   */
+  labelPlural?: string;
+
+  /**
+   * icon used to visualize the entity type
+   */
+  icon?: string;
 }

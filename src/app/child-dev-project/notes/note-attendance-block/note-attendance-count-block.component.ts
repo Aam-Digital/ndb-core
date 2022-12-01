@@ -11,8 +11,7 @@ import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-
 @DynamicComponent("NoteAttendanceCountBlock")
 @Component({
   selector: "app-note-attendance-count-block",
-  templateUrl: "./note-attendance-count-block.component.html",
-  styleUrls: ["./note-attendance-count-block.component.scss"],
+  template: `{{ participantsWithStatus }}`,
 })
 export class NoteAttendanceCountBlockComponent
   implements OnInitDynamicComponent, OnInit {

@@ -10,8 +10,9 @@ import { ExportColumnConfig } from "../../../core/export/export-service/export-c
 import { ConfigService } from "../../../core/config/config.service";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { compareEnums } from "../../../utils/utils";
-import { BreakpointObserver } from "@angular/cdk/layout";
 import { FormDialogWrapperComponent } from "../../../core/form-dialog/form-dialog-wrapper/form-dialog-wrapper.component";
+import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
+import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -40,6 +41,8 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
   readonly childrenPlaceholder = this.getPlaceholder(this.childrenLabel);
   readonly schoolsLabel = Note.schema.get("schools").label;
   readonly schoolsPlaceholder = this.getPlaceholder(this.schoolsLabel);
+  readonly relatedEntitiesSchema: EntitySchemaField =
+    Note.schema.get("relatedEntities");
 
   readonly INTERACTION_TYPE_CONFIG = INTERACTION_TYPE_CONFIG_ID;
   readonly compareFn = compareEnums;
@@ -53,14 +56,14 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
 
   constructor(
     private configService: ConfigService,
-    private breakpointObserver: BreakpointObserver
+    private screenWidthObserver: ScreenWidthObserver
   ) {
     this.exportConfig = this.configService.getConfig<{
       config: EntityListConfig;
     }>("view:note").config.exportConfig;
-    this.breakpointObserver
-      .observe("(max-width: 1000px)")
-      .subscribe((next) => (this.mobile = next.matches));
+    this.screenWidthObserver
+      .platform()
+      .subscribe((isDesktop) => (this.mobile = !isDesktop));
   }
 
   toggleIncludeInactiveChildren() {

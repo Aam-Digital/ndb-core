@@ -15,15 +15,20 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import moment from "moment";
 import { EntityConfigService } from "app/core/entity/entity-config.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { FilterService } from "../../filter/filter.service";
+import { FilterSelectionOption } from "../../filter/filter-selection/filter-selection";
+import { Entity } from "../../entity/model/entity";
 
 describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
+  let filterService: FilterService;
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState()],
     });
     service = TestBed.inject(FilterGeneratorService);
+    filterService = TestBed.inject(FilterService);
     const entityConfigService = TestBed.inject(EntityConfigService);
     entityConfigService.addConfigAttributes(School);
     entityConfigService.addConfigAttributes(Child);
@@ -92,28 +97,28 @@ describe("FilterGeneratorService", () => {
     csr4.schoolId = school1.getId();
     const schema = ChildSchoolRelation.schema.get("schoolId");
 
-    const filter = (
+    const filterOptions = (
       await service.generate([{ id: "schoolId" }], ChildSchoolRelation, [])
     )[0];
 
-    expect(filter.filterSettings.label).toEqual(schema.label);
-    expect(filter.filterSettings.name).toEqual("schoolId");
+    expect(filterOptions.filterSettings.label).toEqual(schema.label);
+    expect(filterOptions.filterSettings.name).toEqual("schoolId");
     const allRelations = [csr1, csr2, csr3, csr4];
-    const allFilter = filter.filterSettings.options.find(
+    const allFilter = filterOptions.filterSettings.options.find(
       (opt) => opt.key === "all"
     );
     expect(allFilter.label).toEqual("All");
-    expect(allRelations.filter(allFilter.filterFun)).toEqual(allRelations);
-    const school1Filter = filter.filterSettings.options.find(
+    expect(filter(allRelations, allFilter)).toEqual(allRelations);
+    const school1Filter = filterOptions.filterSettings.options.find(
       (opt) => opt.key === school1.getId()
     );
     expect(school1Filter.label).toEqual(school1.name);
-    expect(allRelations.filter(school1Filter.filterFun)).toEqual([csr1, csr4]);
-    const school2Filter = filter.filterSettings.options.find(
+    expect(filter(allRelations, school1Filter)).toEqual([csr1, csr4]);
+    const school2Filter = filterOptions.filterSettings.options.find(
       (opt) => opt.key === school2.getId()
     );
     expect(school2Filter.label).toEqual(school2.name);
-    expect(allRelations.filter(school2Filter.filterFun)).toEqual([csr2, csr3]);
+    expect(filter(allRelations, school2Filter)).toEqual([csr2, csr3]);
   });
 
   it("should create filters with all possible options on default", async () => {
@@ -148,48 +153,55 @@ describe("FilterGeneratorService", () => {
   });
 
   it("should use values from a prebuilt filter", async () => {
-    const prebuiltFilter: PrebuiltFilterConfig<Note> = {
+    const today = moment().format("YYYY-MM-DD");
+    const prebuiltFilter = {
       id: "date",
       type: "prebuilt",
       label: "Date",
       default: "today",
       options: [
-        { key: "", label: "All", filterFun: () => true },
+        { key: "", label: "All", filter: {} },
         {
           key: "today",
           label: "Today",
-          filterFun: (note) => moment().isSame(note.date, "day"),
+          filter: { date: today },
         },
         {
           key: "before",
           label: "Before today",
-          filterFun: (note) => moment().isAfter(note.date, "day"),
+          filter: { date: { $lt: today } },
         },
       ],
-    };
+    } as PrebuiltFilterConfig<Note>;
 
-    const filter = (await service.generate([prebuiltFilter], Note, []))[0];
+    const filterOptions = (
+      await service.generate([prebuiltFilter], Note, [])
+    )[0];
 
-    expect(filter.filterSettings.label).toEqual(prebuiltFilter.label);
-    expect(filter.filterSettings.name).toEqual(prebuiltFilter.id);
-    expect(filter.filterSettings.options).toEqual(prebuiltFilter.options);
-    expect(filter.selectedOption).toEqual(prebuiltFilter.default);
+    expect(filterOptions.filterSettings.label).toEqual(prebuiltFilter.label);
+    expect(filterOptions.filterSettings.name).toEqual(prebuiltFilter.id);
+    expect(filterOptions.filterSettings.options).toEqual(
+      prebuiltFilter.options
+    );
+    expect(filterOptions.selectedOption).toEqual(prebuiltFilter.default);
 
     const todayNote = new Note();
     todayNote.date = new Date();
     const yesterdayNote = new Note();
     const notes = [todayNote, yesterdayNote];
     yesterdayNote.date = moment().subtract(1, "day").toDate();
-    const allFilter = filter.filterSettings.options.find((f) => f.key === "");
-    expect(notes.filter(allFilter.filterFun)).toEqual(notes);
-    const todayFilter = filter.filterSettings.options.find(
+    const allFilter = filterOptions.filterSettings.options.find(
+      (f) => f.key === ""
+    );
+    expect(filter(notes, allFilter)).toEqual(notes);
+    const todayFilter = filterOptions.filterSettings.options.find(
       (f) => f.key === "today"
     );
-    expect(notes.filter(todayFilter.filterFun)).toEqual([todayNote]);
-    const beforeFilter = filter.filterSettings.options.find(
+    expect(filter(notes, todayFilter)).toEqual([todayNote]);
+    const beforeFilter = filterOptions.filterSettings.options.find(
       (f) => f.key === "before"
     );
-    expect(notes.filter(beforeFilter.filterFun)).toEqual([yesterdayNote]);
+    expect(filter(notes, beforeFilter)).toEqual([yesterdayNote]);
   });
 
   it("should use the configuration values for the date filter", async () => {
@@ -213,10 +225,10 @@ describe("FilterGeneratorService", () => {
       ],
     };
 
-    const filter = (await service.generate([dateFilter], Note, []))[0];
+    const generatedFilter = (await service.generate([dateFilter], Note, []))[0];
 
-    expect(filter.filterSettings.label).toEqual(dateFilter.label);
-    expect(filter.filterSettings.name).toEqual(dateFilter.id);
+    expect(generatedFilter.filterSettings.label).toEqual(dateFilter.label);
+    expect(generatedFilter.filterSettings.name).toEqual(dateFilter.id);
 
     const todayNote = new Note();
     todayNote.date = new Date();
@@ -226,28 +238,34 @@ describe("FilterGeneratorService", () => {
     yesterdayNote.date = moment().subtract(1, "day").toDate();
     fourWeeksBackNote.date = moment().subtract(4, "week").toDate();
 
-    const allFilter = filter.filterSettings.options.find((f) => f.key === "");
-    expect(notes.filter(allFilter.filterFun)).toEqual(notes);
+    const allFilter = generatedFilter.filterSettings.options.find(
+      (f) => f.key === ""
+    );
+    expect(filter(notes, allFilter)).toEqual(notes);
 
-    const todayFilter = filter.filterSettings.options.find(
+    const todayFilter = generatedFilter.filterSettings.options.find(
       (f) => f.label === "Today"
     );
-    expect(notes.filter(todayFilter.filterFun)).toEqual([todayNote]);
+    expect(filter(notes, todayFilter)).toEqual([todayNote]);
 
-    const yesterdayFilter = filter.filterSettings.options.find(
+    const yesterdayFilter = generatedFilter.filterSettings.options.find(
       (f) => f.label === "Since last two days"
     );
-    expect(notes.filter(yesterdayFilter.filterFun)).toEqual([
-      todayNote,
-      yesterdayNote,
-    ]);
+    expect(filter(notes, yesterdayFilter)).toEqual([todayNote, yesterdayNote]);
 
-    const lastThreeWeeksFilter = filter.filterSettings.options.find(
+    const lastThreeWeeksFilter = generatedFilter.filterSettings.options.find(
       (f) => f.label === "Since last three weeks"
     );
-    expect(notes.filter(lastThreeWeeksFilter.filterFun)).toEqual([
+    expect(filter(notes, lastThreeWeeksFilter)).toEqual([
       todayNote,
       yesterdayNote,
     ]);
   });
+
+  function filter<T extends Entity>(
+    data: T[],
+    option: FilterSelectionOption<T>
+  ): T[] {
+    return data.filter(filterService.getFilterPredicate(option.filter));
+  }
 });

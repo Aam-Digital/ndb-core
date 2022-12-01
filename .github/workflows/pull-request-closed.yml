@@ -1,16 +1,21 @@
 name: CleanUp
 on:
   pull_request_target:
-    types: [closed]
+    types: [ closed ]
 
 jobs:
-  remove-heroku-app:
+  remove-deployment:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Remove app
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
-        run: |
-          name=test-deployment-pr-${{ github.event.number }}
-          heroku apps:destroy --app $name --confirm $name
+      - uses: actions/checkout@v3
+      - name: Stop container and remove folder
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /var/docker/pr-${{ github.event.number }}
+            docker compose down
+            cd ..
+            rm -r pr-${{ github.event.number }}

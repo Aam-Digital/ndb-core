@@ -1,0 +1,6 @@
+@use "@angular/material" as mat;
+@use "../variables/ndb-light-theme" as ndb-theme;
+
+// Include non-theme styles for core.
+@include mat.core();
+@include mat.all-component-themes(ndb-theme.$theme)

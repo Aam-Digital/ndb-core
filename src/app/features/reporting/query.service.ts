@@ -111,7 +111,8 @@ export class QueryService {
   ) {
     this.entities[entityClass.ENTITY_TYPE] = {};
     entities.forEach(
-      (entity) => (this.entities[entityClass.ENTITY_TYPE][entity._id] = entity)
+      (entity) =>
+        (this.entities[entityClass.ENTITY_TYPE][entity.getId(true)] = entity)
     );
   }
 
@@ -192,7 +193,9 @@ export class QueryService {
     relationKey: string
   ): Entity[] {
     const targetEntities = this.toArray(this.entities[entityType]);
-    const srcIds = srcEntities.map((entity) => entity.getId());
+    const srcIds = srcEntities
+      .filter((entity) => typeof entity.getId === "function") // skip empty placeholder objects
+      .map((entity) => entity.getId());
     if (
       targetEntities.length > 0 &&
       Array.isArray(targetEntities[0][relationKey])
@@ -336,7 +339,10 @@ export class QueryService {
         };
       }
       const report = participantMap[attendance.participant];
-      report.detailedStatus[attendance.status.status.id] = report.detailedStatus[attendance.status.status.id] ? report.detailedStatus[attendance.status.status.id] + 1 : 1;
+      report.detailedStatus[attendance.status.status.id] = report
+        .detailedStatus[attendance.status.status.id]
+        ? report.detailedStatus[attendance.status.status.id] + 1
+        : 1;
       if (attendance.status.status.countAs === "PRESENT") {
         report.present++;
       }

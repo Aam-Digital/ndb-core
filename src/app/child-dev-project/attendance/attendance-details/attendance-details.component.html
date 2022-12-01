@@ -15,6 +15,7 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
+<app-dialog-close mat-dialog-close></app-dialog-close>
 <app-form-dialog-wrapper #dialogForm [entity]="entity" [readonly]="true">
   <h1>
     {{ entity?.activity?.title }}: {{ entity.periodFrom | date: "shortDate" }} -
@@ -22,122 +23,104 @@
   </h1>
 
   <form #entityForm="ngForm">
-    <div class="w-{{ entity.getWarningLevel() }}">
-      <div
-        class="summary"
-        i18n="
-          Attendance|Attendance of a child (in percent) or the average of the
-          event (in percent)
-        "
-      >
-        Attendance:
-        {{
-          (focusedChild
-            ? entity?.getAttendancePercentage(focusedChild)
-            : entity?.getAttendancePercentageAverage()
-          ) | percent: "1.0-0"
-        }}
-      </div>
+    <div
+      class="summary w-{{ entity.getWarningLevel() }}"
+      i18n="
+        Attendance|Attendance of a child (in percent) or the average of the
+        event (in percent)
+      "
+    >
+      Attendance:
+      {{
+        (focusedChild
+          ? entity?.getAttendancePercentage(focusedChild)
+          : entity?.getAttendancePercentageAverage()
+        ) | percent: "1.0-0"
+      }}
     </div>
 
-    <div fxLayout="row wrap" fxLayoutGap="20px" *ngIf="focusedChild">
-      <div fxFlex>
-        <mat-form-field>
-          <input
-            matInput
-            type="number"
-            i18n-placeholder="days present|How many days a child was present"
-            placeholder="days present"
-            [value]="entity.countEventsPresent(focusedChild)"
-            readonly
-          />
-        </mat-form-field>
-      </div>
+    <div class="flex-row flex-wrap gap-regular" *ngIf="focusedChild">
+      <mat-form-field>
+        <input
+          matInput
+          type="number"
+          i18n-placeholder="days present|How many days a child was present"
+          placeholder="days present"
+          [value]="entity.countEventsPresent(focusedChild)"
+          readonly
+        />
+      </mat-form-field>
 
-      <div fxFlex>
-        <mat-form-field>
-          <input
-            matInput
-            type="number"
-            i18n-placeholder="days absent|How many days a child was absent"
-            placeholder="days absent"
-            [value]="entity.countEventsAbsent(focusedChild)"
-            readonly
-          />
-        </mat-form-field>
-      </div>
+      <mat-form-field>
+        <input
+          matInput
+          type="number"
+          i18n-placeholder="days absent|How many days a child was absent"
+          placeholder="days absent"
+          [value]="entity.countEventsAbsent(focusedChild)"
+          readonly
+        />
+      </mat-form-field>
 
-      <div fxFlex>
-        <mat-form-field>
-          <input
-            matInput
-            type="number"
-            i18n-placeholder="days absent|How many days the presence or absence of a child is unknown"
-            placeholder="unknown status"
-            [value]="entity.countEventsWithUnknownStatus(focusedChild)"
-            readonly
-          />
-        </mat-form-field>
-      </div>
+      <mat-form-field>
+        <input
+          matInput
+          type="number"
+          i18n-placeholder="days absent|How many days the presence or absence of a child is unknown"
+          placeholder="unknown status"
+          [value]="entity.countEventsWithUnknownStatus(focusedChild)"
+          readonly
+        />
+      </mat-form-field>
     </div>
 
-    <div fxLayout="row wrap" fxLayoutGap="20px" *ngIf="!focusedChild">
-      <div fxFlex>
-        <mat-form-field>
-          <input
-            matInput
-            type="number"
-            i18n-placeholder="Total present|How many children were present"
-            placeholder="Total present"
-            [value]="entity.countTotalPresent()"
-            readonly
-          />
-        </mat-form-field>
-      </div>
+    <div class="flex-row flex-wrap gap-regular" *ngIf="!focusedChild">
+      <mat-form-field>
+        <input
+          matInput
+          type="number"
+          i18n-placeholder="Total present|How many children were present"
+          placeholder="Total present"
+          [value]="entity.countTotalPresent()"
+          readonly
+        />
+      </mat-form-field>
 
-      <div fxFlex>
-        <mat-form-field>
-          <input
-            matInput
-            type="number"
-            i18n-placeholder="Total absent|How many children were absent"
-            placeholder="Total absent"
-            [value]="entity.countTotalAbsent()"
-            readonly
-          />
-        </mat-form-field>
-      </div>
+      <mat-form-field>
+        <input
+          matInput
+          type="number"
+          i18n-placeholder="Total absent|How many children were absent"
+          placeholder="Total absent"
+          [value]="entity.countTotalAbsent()"
+          readonly
+        />
+      </mat-form-field>
 
-      <div fxFlex>
-        <mat-form-field>
-          <input
-            matInput
-            type="number"
-            i18n-placeholder="Total unknown|How many children have an unknown presence or absence status"
-            placeholder="Total unknown"
-            [value]="entity.countEventsWithUnknownStatus()"
-            readonly
-          />
-        </mat-form-field>
-      </div>
+      <mat-form-field>
+        <input
+          matInput
+          type="number"
+          i18n-placeholder="Total unknown|How many children have an unknown presence or absence status"
+          placeholder="Total unknown"
+          [value]="entity.countEventsWithUnknownStatus()"
+          readonly
+        />
+      </mat-form-field>
     </div>
 
-    <div>
-      <app-entity-subrecord
-        [records]="entity.events"
-        [columns]="eventsColumns"
-        [showEntity]="showEventDetails.bind(this)"
-        [editable]="false"
-      >
-      </app-entity-subrecord>
-    </div>
+    <app-entity-subrecord
+      [records]="entity.events"
+      [columns]="eventsColumns"
+      [showEntity]="showEventDetails.bind(this)"
+      [editable]="false"
+    >
+    </app-entity-subrecord>
 
-    <div>
-      <app-attendance-calendar
-        [records]="entity.events"
-        [highlightForChild]="focusedChild"
-        [activity]="entity.activity"
-      ></app-attendance-calendar>
-    </div>
+    <app-attendance-calendar
+      [records]="entity.events"
+      [highlightForChild]="focusedChild"
+      [activity]="entity.activity"
+    ></app-attendance-calendar>
   </form>
 </app-form-dialog-wrapper>

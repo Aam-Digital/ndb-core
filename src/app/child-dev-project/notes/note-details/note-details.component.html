@@ -21,7 +21,7 @@
 >
   <h1>{{ entity.date | date }}: {{ entity.subject }}</h1>
 
-  <form #entityForm="ngForm" class="form-wrapper">
+  <form #entityForm="ngForm" class="flex-column gap-regular">
     <div class="additional-actions-menu">
       <button
         mat-icon-button
@@ -41,7 +41,7 @@
           [filename]="'event_' + entity.subject.replace(' ', '-') + '_' + (entity.date | date:'YYYY-MM-dd')"
         >
           <fa-icon
-            class="standard-icon"
+            class="standard-icon color-accent"
             aria-label="download csv"
             icon="download"
             angulartics2On="click"
@@ -101,8 +101,7 @@
               let interaction of INTERACTION_TYPE_CONFIG
             "
             [value]="interaction"
-            class="border-left-highlight"
-            [style.border-color]="interaction.color"
+            [appBorderHighlight]="interaction.color"
           >
             {{ interaction.label }}
           </mat-option>
@@ -122,7 +121,7 @@
     </div>
 
     <!-- Primary information of Note -->
-    <div class="mat-elevation-z2 information-body">
+    <div class="mat-elevation-z2 flex-column gap-small padding-small">
       <mat-form-field class="input-medium">
         <input
           matInput
@@ -191,6 +190,18 @@
       [disabled]="formDialogWrapper.readonly"
       [label]="schoolsLabel"
       [placeholder]="schoolsPlaceholder"
+    >
+    </app-entity-select>
+
+    <app-entity-select *ngIf="relatedEntitiesSchema?.additional"
+      class="form-section"
+      [entityType]="relatedEntitiesSchema?.additional"
+      [withPrefix]="true"
+      [(selection)]="entity.relatedEntities"
+      (selectionChange)="entityForm.form.markAsDirty()"
+      [disabled]="formDialogWrapper.readonly"
+      [label]="relatedEntitiesSchema.label"
+      [placeholder]="relatedEntitiesSchema.label"
     >
     </app-entity-select>
 

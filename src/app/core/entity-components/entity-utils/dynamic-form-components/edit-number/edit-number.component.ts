@@ -7,7 +7,6 @@ import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-co
 @Component({
   selector: "app-edit-number",
   templateUrl: "./edit-number.component.html",
-  styleUrls: ["./edit-number.component.scss"],
 })
 export class EditNumberComponent extends EditComponent<number> {
   onInitFromDynamicConfig(config: EditPropertyConfig<number>) {

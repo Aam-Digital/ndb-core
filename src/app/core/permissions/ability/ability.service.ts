@@ -6,11 +6,11 @@ import { Observable, Subject } from "rxjs";
 import { DatabaseRule, DatabaseRules } from "../permission-types";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
-import { DatabaseUser } from "../../session/session-service/local-user";
 import { EntityAbility } from "./entity-ability";
 import { Config } from "../../config/config";
 import { LoggingService } from "../../logging/logging.service";
 import { get } from "lodash-es";
+import { AuthUser } from "../../session/session-service/auth-user";
 
 export function detectEntityType(subject: Entity): EntityConstructor<any> {
   if (subject instanceof Entity) {
@@ -88,7 +88,7 @@ export class AbilityService {
 
   private interpolateUser(
     rules: DatabaseRule[],
-    user: DatabaseUser
+    user: AuthUser
   ): DatabaseRule[] {
     return JSON.parse(JSON.stringify(rules), (_that, rawValue) => {
       if (rawValue[0] !== "$") {

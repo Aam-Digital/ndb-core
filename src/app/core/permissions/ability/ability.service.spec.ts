@@ -7,7 +7,6 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
-import { DatabaseUser } from "../../session/session-service/local-user";
 import { User } from "../../user/user";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 import { EntityAbility } from "./entity-ability";
@@ -18,6 +17,7 @@ import { LoggingService } from "../../logging/logging.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { UpdatedEntity } from "../../entity/model/entity-update";
 import { PermissionsModule } from "../permissions.module";
+import { AuthUser } from "../../session/session-service/auth-user";
 
 describe("AbilityService", () => {
   let service: AbilityService;
@@ -27,7 +27,7 @@ describe("AbilityService", () => {
   let entityUpdates: Subject<UpdatedEntity<Config<DatabaseRules>>>;
   let mockPermissionEnforcer: jasmine.SpyObj<PermissionEnforcerService>;
   let mockLoggingService: jasmine.SpyObj<LoggingService>;
-  const user: DatabaseUser = { name: "testUser", roles: ["user_app"] };
+  const user: AuthUser = { name: "testUser", roles: ["user_app"] };
   const rules: DatabaseRules = {
     user_app: [
       { subject: "Child", action: "read" },
@@ -162,6 +162,7 @@ describe("AbilityService", () => {
     });
 
     class TestClass {}
+
     expect(() => ability.can("read", new TestClass() as any)).toThrowError();
   });
 
@@ -211,8 +212,9 @@ describe("AbilityService", () => {
     const userEntity = new User();
     userEntity.name = user.name;
     expect(ability.can("manage", userEntity)).toBeTrue();
-    userEntity.name = "another user";
-    expect(ability.cannot("manage", userEntity)).toBeTrue();
+    const anotherUser = new User();
+    anotherUser.name = "another user";
+    expect(ability.cannot("manage", anotherUser)).toBeTrue();
   });
 
   it("should allow to check conditions with complex data types", fakeAsync(() => {

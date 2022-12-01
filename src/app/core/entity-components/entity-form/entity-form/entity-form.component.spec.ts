@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { EntityFormComponent } from "./entity-form.component";
 import { ChildPhotoService } from "../../../../child-dev-project/children/child-photo-service/child-photo.service";
-import { Entity } from "../../../entity/model/entity";
 import { ConfigService } from "../../../config/config.service";
 import { AlertService } from "../../../alerts/alert.service";
 import { DatabaseField } from "../../../entity/database-field.decorator";
@@ -14,19 +13,23 @@ import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { AlertsModule } from "../../../alerts/alerts.module";
 import { ReactiveFormsModule } from "@angular/forms";
+import { EntityMapperService } from "../../../entity/entity-mapper.service";
+import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 
 describe("EntityFormComponent", () => {
-  let component: EntityFormComponent;
-  let fixture: ComponentFixture<EntityFormComponent>;
+  let component: EntityFormComponent<Child>;
+  let fixture: ComponentFixture<EntityFormComponent<Child>>;
 
   let mockChildPhotoService: jasmine.SpyObj<ChildPhotoService>;
   let mockConfigService: jasmine.SpyObj<ConfigService>;
+  let mockConfirmation: jasmine.SpyObj<ConfirmationDialogService>;
 
-  const testChild = new Child("Test Name");
+  const testChild = new Child();
 
   beforeEach(waitForAsync(() => {
     mockChildPhotoService = jasmine.createSpyObj(["getImage"]);
     mockConfigService = jasmine.createSpyObj(["getConfig"]);
+    mockConfirmation = jasmine.createSpyObj(["getConfirmation"]);
 
     TestBed.configureTestingModule({
       imports: [
@@ -39,15 +42,17 @@ describe("EntityFormComponent", () => {
       providers: [
         { provide: ChildPhotoService, useValue: mockChildPhotoService },
         { provide: ConfigService, useValue: mockConfigService },
+        { provide: ConfirmationDialogService, useValue: mockConfirmation },
       ],
     }).compileComponents();
   }));
 
   beforeEach(() => {
     testChild.name = "Test Name";
-    fixture = TestBed.createComponent(EntityFormComponent);
+    fixture = TestBed.createComponent(EntityFormComponent<Child>);
     component = fixture.componentInstance;
     component.entity = testChild;
+    component.columns = [["name"]];
     fixture.detectChanges();
   });
 
@@ -66,9 +71,9 @@ describe("EntityFormComponent", () => {
     component.saveForm();
   });
 
-  it("should show an warning alert when form service rejects saving", async () => {
+  it("should show an alert when form service rejects saving", async () => {
     const alertService = TestBed.inject(AlertService);
-    spyOn(alertService, "addWarning");
+    spyOn(alertService, "addDanger");
     const entityFormService = TestBed.inject(EntityFormService);
     spyOn(entityFormService, "saveChanges").and.rejectWith(
       new Error("error message")
@@ -76,14 +81,15 @@ describe("EntityFormComponent", () => {
 
     await component.saveForm();
 
-    expect(alertService.addWarning).toHaveBeenCalledWith("error message");
+    expect(alertService.addDanger).toHaveBeenCalledWith("error message");
   });
 
   it("should add column definitions from property schema", () => {
-    class Test extends Entity {
+    class Test extends Child {
       @DatabaseField({ description: "Property description" })
       propertyField: string;
     }
+
     spyOn(TestBed.inject(EntitySchemaService), "getComponent").and.returnValue(
       "PredefinedComponent"
     );
@@ -123,5 +129,41 @@ describe("EntityFormComponent", () => {
         },
       ],
     ]);
+  });
+
+  it("should overwrite form if user confirms it", async () => {
+    mockConfirmation.getConfirmation.and.resolveTo(true);
+    component.form.get("name").setValue("Other Name");
+    component.form.markAsDirty();
+    testChild.name = "Changed Name";
+
+    const entityMapper = TestBed.inject(EntityMapperService);
+    await entityMapper.save(testChild);
+
+    expect(component.form.get("name")).toHaveValue("Changed Name");
+    expect(mockConfirmation.getConfirmation).toHaveBeenCalled();
+  });
+
+  it("should not overwrite form if user declines it", async () => {
+    mockConfirmation.getConfirmation.and.resolveTo(false);
+    component.form.get("name").setValue("Other Name");
+    component.form.markAsDirty();
+    testChild.name = "Changed Name";
+
+    const entityMapper = TestBed.inject(EntityMapperService);
+    await entityMapper.save(testChild);
+
+    expect(component.form.get("name")).toHaveValue("Other Name");
+    expect(mockConfirmation.getConfirmation).toHaveBeenCalled();
+  });
+
+  it("should not overwrite form if it currently saves", async () => {
+    component.form.get("name").setValue("Changed Name");
+
+    await component.saveForm();
+
+    expect(mockConfirmation.getConfirmation).not.toHaveBeenCalled();
+    expect(component.entity.name).toBe("Changed Name");
+    expect(component.form.get("name")).toHaveValue("Changed Name");
   });
 });

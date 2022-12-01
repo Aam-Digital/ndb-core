@@ -18,6 +18,7 @@ import { ExportColumnConfig } from "./export-column-config";
 import { defaultAttendanceStatusTypes } from "../../config/default-config/default-attendance-status-types";
 import moment from "moment";
 import { DatabaseTestingModule } from "../../../utils/database-testing.module";
+import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
 
 describe("ExportService", () => {
   let service: ExportService;
@@ -76,19 +77,19 @@ describe("ExportService", () => {
   });
 
   it("should create a csv string correctly", async () => {
+    @DatabaseEntity("TestForCsvEntity")
     class TestClass extends Entity {
       propOne;
       propTwo;
     }
-    const test = new TestClass();
-    test._id = "1";
+    const test = new TestClass("1");
     test._rev = "2";
     test.propOne = "first";
     test.propTwo = "second";
     const expected =
       '"_id","_rev","propOne","propTwo"' +
       ExportService.SEPARATOR_ROW +
-      '"1","2","first","second"';
+      '"TestForCsvEntity:1","2","first","second"';
     const result = await service.createCsv([test]);
     expect(result).toEqual(expected);
   });
@@ -219,6 +220,30 @@ describe("ExportService", () => {
       '"B","John"',
       '"B","Jack"',
     ]);
+  });
+
+  it("should handle cases where related entity is queried on an empty result set", async () => {
+    const emptyActivity = await createActivityInDB("empty activity", [], []);
+
+    const exportConfig: ExportColumnConfig[] = [
+      { label: "activity", query: ".title" },
+      {
+        query: ".linkedGroups:toEntities(School)",
+        subQueries: [
+          { label: "school_name", query: "name" },
+          {
+            label: "related_child",
+            query:
+              ":getRelated(ChildSchoolRelation, schoolId)[*isActive=true].childId",
+          },
+        ],
+      },
+    ];
+    const results = await service.runExportQuery([emptyActivity], exportConfig);
+    const resultRow = results[0];
+    expect(resultRow["activity"]).toBe(emptyActivity.title);
+    expect(resultRow["school_name"]).toEqual([]);
+    expect(resultRow["related_child"]).toEqual([]);
   });
 
   it("should export attendance status for each note participant", async () => {
@@ -479,11 +504,8 @@ describe("ExportService", () => {
     note.children = children.map((child) => child.getId());
 
     for (let i = 0; i < attendanceStatus.length; i++) {
-      note.getAttendance(
-        note.children[i]
-      ).status = defaultAttendanceStatusTypes.find(
-        (s) => s.id === attendanceStatus[i]
-      );
+      note.getAttendance(note.children[i]).status =
+        defaultAttendanceStatusTypes.find((s) => s.id === attendanceStatus[i]);
     }
     await entityMapper.save(note);
     return note;
@@ -506,5 +528,19 @@ describe("ExportService", () => {
     }
 
     return school;
+  }
+
+  async function createActivityInDB(
+    activityTitle: string,
+    participants: Child[] = [],
+    groups: School[] = []
+  ): Promise<RecurringActivity> {
+    const activity = new RecurringActivity();
+    activity.title = activityTitle;
+    activity.participants = participants.map((p) => p.getId());
+    activity.linkedGroups = groups.map((g) => g.getId());
+    await entityMapper.save(activity);
+
+    return activity;
   }
 });

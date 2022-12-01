@@ -8,24 +8,38 @@ import { LoginState } from "../session-states/login-state.enum";
 import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
 import { environment } from "../../../../environments/environment";
 import { AuthService } from "../auth/auth.service";
+import { AuthUser } from "./auth-user";
+import PouchDB from "pouchdb-browser";
+
+export function mockAuth(user: AuthUser) {
+  return (u: string, p: string) => {
+    if (u === TEST_USER && p === TEST_PASSWORD) {
+      return Promise.resolve(user);
+    } else {
+      return Promise.reject(
+        new HttpErrorResponse({
+          status: HttpStatusCode.Unauthorized,
+        })
+      );
+    }
+  };
+}
 
 describe("RemoteSessionService", () => {
   let service: RemoteSession;
   let mockAuthService: jasmine.SpyObj<AuthService>;
+  const testUser: AuthUser = { name: TEST_USER, roles: ["user_app"] };
 
   beforeEach(() => {
     environment.session_type = SessionType.mock;
-    mockAuthService = jasmine.createSpyObj(["authenticate", "logout"]);
+    mockAuthService = jasmine.createSpyObj([
+      "authenticate",
+      "logout",
+      "addAuthHeader",
+      "autoLogin",
+    ]);
     // Remote session allows TEST_USER and TEST_PASSWORD as valid credentials
-    mockAuthService.authenticate.and.callFake(async (u, p) => {
-      if (u === TEST_USER && p === TEST_PASSWORD) {
-        return { name: TEST_USER, roles: ["user_app"] };
-      } else {
-        throw new HttpErrorResponse({
-          status: HttpStatusCode.Unauthorized,
-        });
-      }
-    });
+    mockAuthService.authenticate.and.callFake(mockAuth(testUser));
 
     TestBed.configureTestingModule({
       providers: [
@@ -46,6 +60,35 @@ describe("RemoteSessionService", () => {
     await service.login(TEST_USER, TEST_PASSWORD);
 
     expect(service.loginState.value).toBe(LoginState.UNAVAILABLE);
+  });
+
+  it("should try auto-login if fetch fails and fetch again", async () => {
+    const initSpy = spyOn(service["database"], "initIndexedDB");
+    spyOn(PouchDB, "fetch").and.returnValues(
+      Promise.resolve({
+        status: HttpStatusCode.Unauthorized,
+        ok: false,
+      } as Response),
+      Promise.resolve({ status: HttpStatusCode.Ok, ok: true } as Response)
+    );
+    let calls = 0;
+    mockAuthService.addAuthHeader.and.callFake((headers) => {
+      headers.Authorization = calls++ === 1 ? "valid" : "invalid";
+    });
+    mockAuthService.autoLogin.and.resolveTo();
+    await service.handleSuccessfulLogin(testUser);
+    const dbOptions: PouchDB.Configuration.RemoteDatabaseConfiguration =
+      initSpy.calls.mostRecent().args[1];
+
+    const url = "/db/_changes";
+    const opts = { headers: {} };
+    await expectAsync(dbOptions.fetch(url, opts)).toBeResolved();
+
+    expect(PouchDB.fetch).toHaveBeenCalledTimes(2);
+    expect(PouchDB.fetch).toHaveBeenCalledWith(url, opts);
+    expect(opts.headers).toEqual({ Authorization: "valid" });
+    expect(mockAuthService.autoLogin).toHaveBeenCalled();
+    expect(mockAuthService.addAuthHeader).toHaveBeenCalledTimes(2);
   });
 
   testSessionServiceImplementation(() => Promise.resolve(service));

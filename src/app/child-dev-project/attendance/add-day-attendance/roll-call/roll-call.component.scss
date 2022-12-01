@@ -1,4 +1,6 @@
-@import "../../../../../styles";
+@use "src/styles/variables/sizes";
+@use "src/styles/variables/colors";
+@use "sass:color";
 
 .group-select-option {
   width: 100%;
@@ -11,31 +13,16 @@
   }
 }
 
-.nav-button {
-  margin: 10px;
-  flex: none;
-}
-
 .roll-call-complete {
   display: flex;
+  flex-direction: column;
   place-content: center;
   place-items: center;
   height: 200px;
-  flex-direction: column;
-  gap: 8px;
-  cursor: pointer;
-  margin-top: 16px;
+  gap: sizes.$small;
 
-  background-color: #c8e6c9;
+  background-color: color.adjust(colors.$success, $alpha: -0.5);
   border-radius: 4px;
-}
-
-.roll-call-complete-icon {
-  font-size: 40px;
-}
-
-.filler {
-  margin-bottom: 10px;
 }
 
 .progress-label {
@@ -46,26 +33,16 @@
 .attendance-progress-bar {
   display: flex;
   flex-direction: column;
-  margin-top: $standard-margin-small;
-  margin-bottom: $standard-margin-small;
+  margin-top: sizes.$small;
+  margin-bottom: sizes.$small;
 }
 
 .progress-nav {
   margin-top: -4px;
-}
-
-.child-block {
-  flex-grow: 1;
   display: flex;
-  place-content: flex-start;
-}
-
-.child-block-container {
-  margin: $standard-margin-small;
-}
-
-.finished-screen-button {
-  margin-top: 1em;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .tab-body {
@@ -88,27 +65,5 @@
 .tab-wrapper {
   display: flex;
   position: relative;
-}
-
-.navbar-wrapper {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-}
-
-// Per default, the content of a mat-button is center-aligned.
-// In this case, the button contains an icon and we want it left (resp. right)-aligned
-// with the content
-// `text-align: left` would work as well, but not with the ripples
-
-.button-skip {
-  margin-top: -10px;
-}
-
-.full-width {
-  width: 100%;
-}
-
-.placeholder {
-  flex-grow: 1;
+  overflow-x: hidden;
 }

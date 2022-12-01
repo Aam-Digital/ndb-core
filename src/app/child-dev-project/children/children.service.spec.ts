@@ -11,6 +11,8 @@ import { genders } from "./model/genders";
 import { DatabaseTestingModule } from "../../utils/database-testing.module";
 import { sortByAttribute } from "../../utils/utils";
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
+import { lastValueFrom } from "rxjs";
+import { DateWithAge } from "./model/dateWithAge";
 
 describe("ChildrenService", () => {
   let service: ChildrenService;
@@ -41,10 +43,10 @@ describe("ChildrenService", () => {
   });
 
   it("should list newly saved children", async () => {
-    const childrenBefore = await service.getChildren().toPromise();
+    const childrenBefore = await lastValueFrom(service.getChildren());
     const child = new Child("10");
     await entityMapper.save<Child>(child);
-    const childrenAfter = await service.getChildren().toPromise();
+    const childrenAfter = await lastValueFrom(service.getChildren());
 
     let find = childrenBefore.find((c) => c.getId() === child.getId());
     expect(find).toBeUndefined();
@@ -59,14 +61,14 @@ describe("ChildrenService", () => {
     const child = new Child("10");
     let error;
     try {
-      await service.getChild(child.getId()).toPromise();
+      await service.getChild(child.getId());
     } catch (err) {
       error = err;
     }
     expect(error).toBeDefined();
 
     await entityMapper.save<Child>(child);
-    const childAfter = await service.getChild(child.getId()).toPromise();
+    const childAfter = await service.getChild(child.getId());
     expect(childAfter).toBeDefined();
     expect(childAfter).toHaveId(child.getId());
   });
@@ -87,7 +89,7 @@ describe("ChildrenService", () => {
     const c1 = allChildren[1].getId();
     // no notes
 
-    const recentNotesMap = await service.getDaysSinceLastNoteOfEachChild();
+    const recentNotesMap = await service.getDaysSinceLastNoteOfEachEntity();
 
     expect(recentNotesMap).toHaveSize(allChildren.length);
     expect(recentNotesMap.get(c0)).toBe(5);
@@ -102,19 +104,43 @@ describe("ChildrenService", () => {
       Note.create(moment().subtract(50, "days").toDate(), "n0-1", [c0])
     );
 
-    const recentNotesMap = await service.getDaysSinceLastNoteOfEachChild(49);
+    const recentNotesMap = await service.getDaysSinceLastNoteOfEachEntity(
+      Child.ENTITY_TYPE,
+      49
+    );
 
     expect(recentNotesMap.get(c0)).toBePositiveInfinity();
   });
 
+  it("should calculate days since last note for other entity types", async () => {
+    const schools = await entityMapper.loadType(School);
+    const s1 = schools[0];
+    const s2 = schools[1];
+    const n1 = new Note();
+    n1.date = moment().subtract(10, "days").toDate();
+    n1.schools.push(s1.getId());
+    n1.schools.push(s2.getId());
+    const n2 = new Note();
+    n2.date = moment().subtract(2, "days").toDate();
+    n2.schools.push(s1.getId());
+    await entityMapper.saveAll([n1, n2]);
+
+    const recentNotesMap = await service.getDaysSinceLastNoteOfEachEntity(
+      School.ENTITY_TYPE
+    );
+
+    expect(recentNotesMap.get(s1.getId())).toBe(2);
+    expect(recentNotesMap.get(s2.getId())).toBe(10);
+  });
+
   it("should load a single child and add school info", async () => {
     // no active relation
-    const child2 = await service.getChild("2").toPromise();
+    const child2 = await service.getChild("2");
     expect(child2.schoolClass).toBeUndefined();
     expect(child2.schoolId).toBeUndefined();
 
     // one active relation
-    let child1 = await service.getChild("1").toPromise();
+    let child1 = await service.getChild("1");
     expect(child1.schoolClass).toBe("2");
     expect(child1.schoolId).toBe("1");
 
@@ -125,7 +151,7 @@ describe("ChildrenService", () => {
     newRelation.schoolId = "2";
     newRelation.schoolClass = "3";
     await entityMapper.save(newRelation);
-    child1 = await service.getChild(child1.getId()).toPromise();
+    child1 = await service.getChild(child1.getId());
     expect(child1.schoolClass).toBe("3");
     expect(child1.schoolId).toBe("2");
 
@@ -135,13 +161,13 @@ describe("ChildrenService", () => {
     noStartDate.schoolId = "2";
     noStartDate.schoolClass = "4";
     await entityMapper.save(noStartDate);
-    child1 = await service.getChild(child1.getId()).toPromise();
+    child1 = await service.getChild(child1.getId());
     expect(child1.schoolClass).toBe("4");
     expect(child1.schoolId).toBe("2");
   });
 
   it("should load all children with school info", async () => {
-    const children = await service.getChildren().toPromise();
+    const children = await lastValueFrom(service.getChildren());
     const child1 = children.find((child) => child.getId() === "1");
     expect(child1.schoolClass).toBe("2");
     expect(child1.schoolId).toBe("1");
@@ -199,21 +225,37 @@ describe("ChildrenService", () => {
     const n1 = new Note("n1");
     n1.addChild(c1);
     n1.addChild(c2);
-    n1.schools.push(s1.getId());
+    n1.addSchool(s1);
     const n2 = new Note("n2");
     n2.addChild(c1);
     const n3 = new Note("n3");
-    n3.schools.push(s2.getId());
+    n3.addSchool(s2);
     await entityMapper.saveAll([n1, n2, n3]);
 
-    let res = await service.getNotesOf(c1.getId(), "children");
+    let res = await service.getNotesRelatedTo(c1.getId(true));
     expect(res).toEqual([n1, n2]);
 
-    res = await service.getNotesOf(s1.getId(), "schools");
+    res = await service.getNotesRelatedTo(s1.getId(true));
     expect(res).toEqual([n1]);
 
-    res = await service.getNotesOf(s2.getId(), "schools");
+    res = await service.getNotesRelatedTo(s2.getId(true));
     expect(res).toEqual([n3]);
+  });
+
+  it("should include related notes through children and schools links (legacy)", async () => {
+    const c1 = new Child("c1");
+    const s1 = new School("s1");
+    const n1 = new Note("n1");
+    n1.children.push(c1.getId());
+    n1.relatedEntities.push(c1.getId(true));
+    n1.schools.push(s1.getId());
+    await entityMapper.saveAll([n1]);
+
+    let res = await service.getNotesRelatedTo(c1.getId(true));
+    expect(res).toEqual([n1]);
+
+    res = await service.getNotesRelatedTo(s1.getId(true));
+    expect(res).toEqual([n1]);
   });
 });
 
@@ -225,7 +267,7 @@ function generateChildEntities(): Child[] {
   a1.projectNumber = "1";
   a1["religion"] = "Hindu";
   a1.gender = genders[1];
-  a1.dateOfBirth = new Date("2000-03-13");
+  a1.dateOfBirth = new DateWithAge("2000-03-13");
   a1["motherTongue"] = "Hindi";
   a1.center = { id: "delhi", label: "Delhi" };
   data.push(a1);
@@ -235,7 +277,7 @@ function generateChildEntities(): Child[] {
   a2.projectNumber = "2";
   a2["religion"] = "Hindu";
   a2.gender = genders[2];
-  a2.dateOfBirth = new Date("2001-01-01");
+  a2.dateOfBirth = new DateWithAge("2001-01-01");
   a2["motherTongue"] = "Bengali";
   a2.center = { id: "kolkata", label: "Kolkata" };
   data.push(a2);
@@ -245,7 +287,7 @@ function generateChildEntities(): Child[] {
   a3.projectNumber = "3";
   a3["religion"] = "Hindu";
   a3.gender = genders[1];
-  a3.dateOfBirth = new Date("2002-07-29");
+  a3.dateOfBirth = new DateWithAge("2002-07-29");
   a3["motherTongue"] = "Hindi";
   a3.center = { id: "kolkata", label: "Kolkata" };
   data.push(a3);

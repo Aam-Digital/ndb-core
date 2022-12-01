@@ -168,12 +168,14 @@ describe("EntityMapperService", () => {
     );
     expect(loadedByEntityId).toBeDefined();
 
-    expect(loadedByEntityId._id.startsWith(Entity.ENTITY_TYPE)).toBeTrue();
+    expect(
+      loadedByEntityId.getId(true).startsWith(Entity.ENTITY_TYPE)
+    ).toBeTrue();
     const loadedByFullId = await entityMapper.load<Entity>(
       Entity,
-      loadedByEntityId._id
+      loadedByEntityId.getId(true)
     );
-    expect(loadedByFullId._id).toBe(loadedByEntityId._id);
+    expect(loadedByFullId.getId(true)).toBe(loadedByEntityId.getId(true));
     expect(loadedByFullId._rev).toBe(loadedByEntityId._rev);
   });
 
@@ -279,7 +281,7 @@ describe("EntityMapperService", () => {
             expect(e.type).toBe(type);
           }
           if (entityId) {
-            expect(e.entity.entityId).toBe(entityId);
+            expect(e.entity.getId()).toBe(entityId);
           }
           resolve();
         }

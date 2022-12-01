@@ -3,7 +3,7 @@
 
   <input
     #inputField
-    [fxHide]="!formControl.enabled"
+    [hidden]="!formControl.enabled"
     [placeholder]="inputPlaceholder"
     [formControl]="formControl"
     [matAutocomplete]="autoSuggestions"
@@ -41,10 +41,11 @@
   <mat-autocomplete
     #autoSuggestions="matAutocomplete"
     (optionSelected)="selectEntity($event.option.value)"
+    autoActiveFirstOption
   >
     <!-- Optional header -->
     <ng-content select="mat-option"></ng-content>
-    <mat-option *ngFor="let res of filteredEntities | async" [value]="res">
+    <mat-option *ngFor="let res of filteredEntities" [value]="res">
       <app-display-entity
         [entityToDisplay]="res"
         [linkDisabled]="true"

@@ -17,7 +17,8 @@ import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { FilterComponentSettings } from "./filter-component.settings";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
-import moment, { unitOfTime } from "moment";
+import { FilterService } from "../../filter/filter.service";
+import moment from "moment";
 
 @Injectable({
   providedIn: "root",
@@ -27,7 +28,8 @@ export class FilterGeneratorService {
     private configService: ConfigService,
     private loggingService: LoggingService,
     private entities: EntityRegistry,
-    private entityMapperService: EntityMapperService
+    private entityMapperService: EntityMapperService,
+    private filterService: FilterService
   ) {}
 
   /**
@@ -52,7 +54,6 @@ export class FilterGeneratorService {
           [],
           filter.label || schema.label
         ),
-        display: filter.display,
       };
       try {
         fs.filterSettings.options = await this.getFilterOptions(
@@ -65,10 +66,8 @@ export class FilterGeneratorService {
       }
 
       if (onlyShowUsedOptions) {
-        fs.filterSettings.options = fs.filterSettings.options.filter(
-          (option) =>
-            data.filter(fs.filterSettings.getFilterFunction(option.key))
-              .length > 0
+        fs.filterSettings.options = fs.filterSettings.options.filter((option) =>
+          data.some(this.filterService.getFilterPredicate(option.filter))
         );
       }
 
@@ -82,6 +81,7 @@ export class FilterGeneratorService {
     }
     return filterSettings;
   }
+
   private async getFilterOptions<T extends Entity>(
     config: FilterConfig,
     schema: EntitySchemaField,
@@ -146,16 +146,16 @@ export class FilterGeneratorService {
     filter: BooleanFilterConfig
   ): FilterSelectionOption<T>[] {
     return [
-      { key: "all", label: filter.all, filterFun: () => true },
+      { key: "all", label: filter.all, filter: {} },
       {
         key: "true",
         label: filter.true,
-        filterFun: (c: Entity) => c[filter.id],
+        filter: { [filter.id]: true },
       },
       {
         key: "false",
         label: filter.false,
-        filterFun: (c: Entity) => !c[filter.id],
+        filter: { [filter.id]: false },
       },
     ];
   }
@@ -168,18 +168,19 @@ export class FilterGeneratorService {
       {
         key: "all",
         label: $localize`:Filter label:All`,
-        filterFun: (e: T) => true,
+        filter: {},
       },
     ];
 
     const enumValues = this.configService.getConfigurableEnumValues(enumId);
+    const key = property + ".id";
 
     for (const enumValue of enumValues) {
       options.push({
         key: enumValue.id,
         label: enumValue.label,
         color: enumValue.color,
-        filterFun: (entity) => entity[property]?.id === enumValue.id,
+        filter: { [key]: enumValue.id },
       });
     }
 
@@ -197,23 +198,20 @@ export class FilterGeneratorService {
       {
         key: "all",
         label: $localize`:Filter option:All`,
-        filterFun: (e: T) => true,
+        filter: {},
       },
     ];
     options.push(
-      ...filterEntities.map((filterEntity) => {
-        return {
-          key: filterEntity.getId(),
-          label: filterEntity.toString(),
-          filterFun: (entity) => {
-            if (Array.isArray(entity[property])) {
-              return entity[property].includes(filterEntity.getId());
-            } else {
-              return entity[property] === filterEntity.getId();
-            }
-          },
-        };
-      })
+      ...filterEntities.map((filterEntity) => ({
+        key: filterEntity.getId(),
+        label: filterEntity.toString(),
+        filter: {
+          $or: [
+            { [property]: filterEntity.getId() },
+            { [property]: { $elemMatch: { $eq: filterEntity.getId() } } },
+          ],
+        },
+      }))
     );
     return options;
   }

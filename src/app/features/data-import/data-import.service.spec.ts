@@ -5,7 +5,7 @@ import { ConfirmationDialogService } from "../../core/confirmation-dialog/confir
 import { MatSnackBar, MatSnackBarRef } from "@angular/material/snack-bar";
 import { NEVER, of } from "rxjs";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
-import { Papa, ParseResult } from "ngx-papaparse";
+import { ParseResult } from "ngx-papaparse";
 import { ImportMetaData } from "./import-meta-data.type";
 import { expectEntitiesToBeInDatabase } from "../../utils/expect-entity-data.spec";
 import { Child } from "../../child-dev-project/children/model/child";
@@ -19,23 +19,43 @@ describe("DataImportService", () => {
   let service: DataImportService;
   let mockConfirmationService: jasmine.SpyObj<ConfirmationDialogService>;
 
-  beforeEach(
-    waitForAsync(() => {
-      mockConfirmationService = jasmine.createSpyObj(["getConfirmation"]);
-      mockConfirmationService.getConfirmation.and.resolveTo(true);
-      TestBed.configureTestingModule({
-        imports: [DataImportModule, DatabaseTestingModule, ChildrenModule],
-        providers: [
-          {
-            provide: ConfirmationDialogService,
-            useValue: mockConfirmationService,
-          },
-        ],
-      });
-      service = TestBed.inject(DataImportService);
-      db = TestBed.inject(Database);
-    })
-  );
+  let mockParseResult: ParseResult;
+  const date1 = moment().subtract("10", "years");
+  const date2 = moment().subtract("12", "years");
+
+  beforeEach(waitForAsync(() => {
+    mockParseResult = {
+      meta: { fields: ["ID", "Name", "Birthday", "Age"] },
+      data: [
+        {
+          ID: 1,
+          Name: "First",
+          Birthday: date1.format("YYYY-MM-DD"),
+          notExistingProperty: "some value",
+        },
+        {
+          ID: 2,
+          Name: "Second",
+          Birthday: date2.format("YYYY-MM-DD"),
+          notExistingProperty: "another value",
+        },
+      ],
+    } as ParseResult;
+
+    mockConfirmationService = jasmine.createSpyObj(["getConfirmation"]);
+    mockConfirmationService.getConfirmation.and.resolveTo(true);
+    TestBed.configureTestingModule({
+      imports: [DataImportModule, DatabaseTestingModule, ChildrenModule],
+      providers: [
+        {
+          provide: ConfirmationDialogService,
+          useValue: mockConfirmationService,
+        },
+      ],
+    });
+    service = TestBed.inject(DataImportService);
+    db = TestBed.inject(Database);
+  }));
 
   afterEach(() => db.destroy());
 
@@ -43,51 +63,30 @@ describe("DataImportService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should only allow files that have a .csv extension", async () => {
-    mockFileReader();
-
-    const file = { name: "wrong_extension.xlsx" };
-    await expectAsync(service.validateCsvFile(file as File)).toBeRejected();
-
-    file.name = "good_extension.csv";
-    await expectAsync(service.validateCsvFile(file as File)).toBeResolved();
-  });
-
-  it("should throw error if file cannot be parsed", async () => {
-    mockFileReader();
-    const papa = TestBed.inject(Papa);
-    spyOn(papa, "parse").and.returnValue(undefined);
-    const file = { name: "file.csv" } as File;
-
-    await expectAsync(service.validateCsvFile(file)).toBeRejected();
-  });
-
-  it("should throw error if file is empty", async () => {
-    mockFileReader("");
-    const file = { name: "file.csv" } as File;
-
-    await expectAsync(service.validateCsvFile(file)).toBeRejected();
-  });
-
   it("should restore database if snackbar is clicked", async () => {
     const doc1 = { _id: "Doc:1" };
     const doc2 = { _id: "Doc:2" };
     await db.put(doc1);
     await db.put(doc2);
-    mockFileReader();
     mockSnackbar(true);
+    const parsedData = {
+      meta: { fields: ["ID", "Name", "Birthday", "Age"] },
+      data: [
+        {
+          _id: "Child:1",
+          name: "First",
+        },
+      ],
+    } as ParseResult;
     const importMeta: ImportMetaData = {
       entityType: "Child",
       columnMap: {
         _id: "_id",
-        projectNumber: "projectNumber",
         name: "name",
       },
     };
-    const file = { name: "some.csv" } as File;
-    const parseResult = await service.validateCsvFile(file);
 
-    await service.handleCsvImport(parseResult, importMeta);
+    await service.handleCsvImport(parsedData.data, importMeta);
 
     await expectAsync(db.get(doc1._id)).toBeResolved();
     await expectAsync(db.get(doc2._id)).toBeResolved();
@@ -95,25 +94,7 @@ describe("DataImportService", () => {
   });
 
   it("should use the passed component map to create the entity", async () => {
-    const birthday1 = moment().subtract("10", "years");
-    const birthday2 = moment().subtract("12", "years");
-    const csvData = {
-      meta: { fields: ["ID", "Name", "Birthday", "Age"] },
-      data: [
-        {
-          ID: 1,
-          Name: "First",
-          Birthday: birthday1.format("YYYY-MM-DD"),
-          notExistingProperty: "some value",
-        },
-        {
-          ID: 2,
-          Name: "Second",
-          Birthday: birthday2.format("YYYY-MM-DD"),
-          notExistingProperty: "another value",
-        },
-      ],
-    } as ParseResult;
+    const csvData = mockParseResult;
     const columnMap = {
       ID: "_id",
       Name: "name",
@@ -125,20 +106,20 @@ describe("DataImportService", () => {
       columnMap: columnMap,
     };
 
-    await service.handleCsvImport(csvData, importMeta);
+    await service.handleCsvImport(csvData.data, importMeta);
 
     const entityMapper = TestBed.inject(EntityMapperService);
     const firstChild = await entityMapper.load(Child, "1");
-    expect(firstChild._id).toBe("Child:1");
+    expect(firstChild.getId(true)).toBe("Child:1");
     expect(firstChild.name).toBe("First");
-    expect(birthday1.isSame(firstChild.dateOfBirth, "day")).toBeTrue();
-    expect(firstChild.age).toBe(10);
+    expect(date1.isSame(firstChild.dateOfBirth, "day")).toBeTrue();
+    expect(firstChild.dateOfBirth.age).toBe(10);
     expect(firstChild).not.toHaveOwnProperty("notExistingProperty");
     const secondChild = await entityMapper.load(Child, "2");
-    expect(secondChild._id).toBe("Child:2");
+    expect(secondChild.getId(true)).toBe("Child:2");
     expect(secondChild.name).toBe("Second");
-    expect(birthday2.isSame(secondChild.dateOfBirth, "day")).toBeTrue();
-    expect(secondChild.age).toBe(12);
+    expect(date2.isSame(secondChild.dateOfBirth, "day")).toBeTrue();
+    expect(secondChild.dateOfBirth.age).toBe(12);
     expect(secondChild).not.toHaveOwnProperty("notExistingProperty");
   });
 
@@ -156,7 +137,7 @@ describe("DataImportService", () => {
     await db.put({ _id: `Child:${transactionID}-123` });
     await db.put({ _id: `Child:${transactionID}-124` });
 
-    await service.handleCsvImport(csvData, importMeta);
+    await service.handleCsvImport(csvData.data, importMeta);
 
     await expectEntitiesToBeInDatabase(
       [Child.create("test1"), Child.create("test2")],
@@ -185,7 +166,7 @@ describe("DataImportService", () => {
       dateFormat: "D/M/YYYY",
     };
 
-    await service.handleCsvImport(csvData, importMeta);
+    await service.handleCsvImport(csvData.data, importMeta);
 
     const entityMapper = TestBed.inject(EntityMapperService);
     const test1 = await entityMapper.load(Child, "test1");
@@ -205,7 +186,7 @@ describe("DataImportService", () => {
       columnMap: { name: "name", projectNumber: "projectNumber" },
     };
 
-    await service.handleCsvImport(csvData, importMeta);
+    await service.handleCsvImport(csvData.data, importMeta);
 
     expect(db.put).toHaveBeenCalledWith(
       jasmine.objectContaining({
@@ -214,19 +195,6 @@ describe("DataImportService", () => {
       jasmine.anything()
     );
   });
-
-  function mockFileReader(
-    result = '_id,name,projectNumber\nChild:1,"John Doe",123'
-  ) {
-    const fileReader: any = {
-      result: result,
-      addEventListener: (_str: string, fun: () => any) => fun(),
-      readAsText: () => {},
-    };
-    // mock FileReader constructor
-    spyOn(window, "FileReader").and.returnValue(fileReader);
-    return fileReader;
-  }
 
   function mockSnackbar(clicked: boolean): jasmine.SpyObj<MatSnackBarRef<any>> {
     const mockSnackBarRef = jasmine.createSpyObj<MatSnackBarRef<any>>(

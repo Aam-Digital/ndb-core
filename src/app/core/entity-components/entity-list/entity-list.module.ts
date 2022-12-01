@@ -5,7 +5,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { Angulartics2Module } from "angulartics2";
 import { MatButtonModule } from "@angular/material/button";
-import { ExtendedModule, FlexModule } from "@angular/flex-layout";
 import { MatInputModule } from "@angular/material/input";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatExpansionModule } from "@angular/material/expansion";
@@ -16,7 +15,6 @@ import { MatPaginatorModule } from "@angular/material/paginator";
 import { FormsModule } from "@angular/forms";
 import { ExportModule } from "../../export/export.module";
 import { ViewModule } from "../../view/view.module";
-import { ListFilterComponent } from "./list-filter/list-filter.component";
 import { PermissionsModule } from "../../permissions/permissions.module";
 import { EntitySubrecordModule } from "../entity-subrecord/entity-subrecord.module";
 import { EntityUtilsModule } from "../entity-utils/entity-utils.module";
@@ -24,26 +22,12 @@ import { EntityFormModule } from "../entity-form/entity-form.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatTabsModule } from "@angular/material/tabs";
-import { FilterOverlayComponent } from "./filter-overlay/filter-overlay.component";
-import { MatDialogModule } from "@angular/material/dialog";
 import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
-import { DateRangeComponent } from "./date-range/date-range.component";
-import { MatCalendar, MatDatepickerModule } from "@angular/material/datepicker";
-import { DaterangeHeaderComponent } from "./date-range/daterange-header/daterange-header.component";
-import { MatIconModule } from "@angular/material/icon";
-import { DaterangePanelComponent } from "./date-range/daterange-panel/daterange-panel.component";
-import { MatCardModule } from "@angular/material/card";
-import { MatNativeDateModule } from "@angular/material/core";
+import { CommonComponentsModule } from "../../common-components/common-components.module";
+import { FilterModule } from "../../filter/filter.module";
 
 @NgModule({
-  declarations: [
-    EntityListComponent,
-    ListFilterComponent,
-    FilterOverlayComponent,
-    DateRangeComponent,
-    DaterangeHeaderComponent,
-    DaterangePanelComponent,
-  ],
+  declarations: [EntityListComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -52,11 +36,9 @@ import { MatNativeDateModule } from "@angular/material/core";
     ExportModule,
     Angulartics2Module,
     MatButtonModule,
-    FlexModule,
     MatInputModule,
     MatCheckboxModule,
     MatExpansionModule,
-    ExtendedModule,
     MatButtonToggleModule,
     MatTableModule,
     ViewModule,
@@ -69,13 +51,11 @@ import { MatNativeDateModule } from "@angular/material/core";
     EntityUtilsModule,
     EntityFormModule,
     FontAwesomeModule,
-    MatDialogModule,
     TabStateModule,
-    MatDatepickerModule,
-    MatIconModule,
-    MatCardModule,
+    CommonComponentsModule,
+    FilterModule,
   ],
-  exports: [EntityListComponent, ListFilterComponent],
+  exports: [EntityListComponent],
 })
 export class EntityListModule {
   dynamicComponents = [EntityListComponent];

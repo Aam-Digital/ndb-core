@@ -1,31 +1,28 @@
-.subrecord-table {
-  width: 100%;
-}
-
-.table-link {
-  cursor: pointer;
-  //font-size: 1.5em;
-  height: 30px;
-}
-
-.table-action-icon {
-  font-size: 12pt;
-}
+@use "src/styles/variables/sizes";
+@use "src/styles/variables/ndb-light-theme" as theme;
+@use "@angular/material" as mat;
 
 .table-action-button {
-  min-width: auto !important;
-  //padding-right: 0;
-}
+  font-size: 115%;
+  color: mat.get-color-from-palette(theme.$accent);
+  border: 1px solid lightgrey;
+  border-radius: 4px;
+  margin: sizes.$small;
+  cursor: pointer;
+  background-color: initial;
 
-.table-show-number {
-  /*text-align: right;*/
-}
+  &:hover {
+    background-color: mat.get-color-from-palette(mat.$grey-palette, 50);
+  }
 
-.table-input-number {
-  width: 40px;
-}
-.table-input-month {
-  width: 120px;
+  padding: 4px 8px;
+
+  // CSS Magic that ensures the button is centered in all browsers
+
+  > fa-icon {
+    display: grid;
+    font-size: 1.25em;
+  }
 }
 
 .mat-column-actions {
@@ -41,4 +38,9 @@
 .process-spinner {
   display: flex;
   justify-content: center;
+}
+
+:host {
+  @include mat.elevation(1);
+  display: block;
 }

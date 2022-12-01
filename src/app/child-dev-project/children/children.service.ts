@@ -12,6 +12,8 @@ import moment, { Moment } from "moment";
 import { LoggingService } from "../../core/logging/logging.service";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 import { Entity } from "../../core/entity/model/entity";
+import { School } from "../schools/model/school";
+import { User } from "../../core/user/user";
 
 @Injectable()
 export class ChildrenService {
@@ -57,17 +59,14 @@ export class ChildrenService {
    * returns an observable which retrieves a single child and loads its photo
    * @param id id of child
    */
-  getChild(id: string): Observable<Child> {
-    const promise = this.entityMapper
-      .load<Child>(Child, id)
-      .then((loadedChild) => {
-        return this.queryLatestRelation(id).then((currentSchoolInfo) => {
-          loadedChild.schoolClass = currentSchoolInfo?.schoolClass;
-          loadedChild.schoolId = currentSchoolInfo?.schoolId;
-          return loadedChild;
-        });
+  getChild(id: string): Promise<Child> {
+    return this.entityMapper.load<Child>(Child, id).then((loadedChild) => {
+      return this.queryLatestRelation(id).then((currentSchoolInfo) => {
+        loadedChild.schoolClass = currentSchoolInfo?.schoolClass;
+        loadedChild.schoolId = currentSchoolInfo?.schoolId;
+        return loadedChild;
       });
-    return from(promise);
+    });
   }
 
   private createChildSchoolRelationIndex(): Promise<any> {
@@ -123,12 +122,44 @@ export class ChildrenService {
     );
   }
 
-  getNotesOf(entityId: string, noteProperty: string): Promise<Note[]> {
-    return this.dbIndexing.queryIndexDocs(
+  /**
+   * Query all notes that have been linked to the given other entity.
+   * @param entityId ID (with prefix!) of the related record
+   */
+  async getNotesRelatedTo(entityId: string): Promise<Note[]> {
+    let legacyLinkedNotes = [];
+    if (this.inferNoteLinkPropertyFromEntityType(entityId)) {
+      legacyLinkedNotes = await this.dbIndexing.queryIndexDocs(
+        Note,
+        `notes_index/by_${this.inferNoteLinkPropertyFromEntityType(entityId)}`,
+        Entity.extractEntityIdFromId(entityId)
+      );
+    }
+
+    const explicitlyLinkedNotes = await this.dbIndexing.queryIndexDocsRange(
       Note,
-      `notes_index/by_${noteProperty}`,
-      entityId
+      `notes_related_index/note_by_relatedEntities`,
+      [entityId],
+      [entityId]
     );
+
+    return [...legacyLinkedNotes, ...explicitlyLinkedNotes].filter(
+      // remove duplicates
+      (element, index, array) =>
+        array.findIndex((e) => e._id === element._id) === index
+    );
+  }
+
+  private inferNoteLinkPropertyFromEntityType(entityId: string): string {
+    const entityType = Entity.extractTypeFromId(entityId);
+    switch (entityType) {
+      case Child.ENTITY_TYPE:
+        return "children";
+      case School.ENTITY_TYPE:
+        return "schools";
+      case User.ENTITY_TYPE:
+        return "authors";
+    }
   }
 
   /**
@@ -136,11 +167,13 @@ export class ChildrenService {
    *
    * Warning: Children without any notes will be missing from this map.
    *
+   * @param entityType (Optional) entity for which days since last note are calculated. Default "Child".
    * @param forLastNDays (Optional) cut-off boundary how many days into the past the analysis will be done.
    * @return A map of childIds as key and days since last note as value;
    *         For performance reasons the days since last note are set to infinity when larger then the forLastNDays parameter
    */
-  public async getDaysSinceLastNoteOfEachChild(
+  public async getDaysSinceLastNoteOfEachEntity(
+    entityType = Child.ENTITY_TYPE,
     forLastNDays: number = 30
   ): Promise<Map<string, number>> {
     const startDay = moment().subtract(forLastNDays, "days");
@@ -148,19 +181,20 @@ export class ChildrenService {
     const notes = await this.getNotesInTimespan(startDay);
 
     const results = new Map();
-    const children = await this.entityMapper.loadType(Child);
-    children
+    const entities = await this.entityMapper.loadType(entityType);
+    entities
       .filter((c) => c.isActive)
       .forEach((c) => results.set(c.getId(), Number.POSITIVE_INFINITY));
 
+    const noteProperty = Note.getPropertyFor(entityType);
     for (const note of notes) {
       // TODO: filter notes to only include them if the given child is marked "present"
 
-      for (const childId of note.children) {
+      for (const entityId of note[noteProperty]) {
         const daysSinceNote = moment().diff(note.date, "days");
-        const previousValue = results.get(childId);
+        const previousValue = results.get(entityId);
         if (previousValue > daysSinceNote) {
-          results.set(childId, daysSinceNote);
+          results.set(entityId, daysSinceNote);
         }
       }
     }
@@ -186,7 +220,7 @@ export class ChildrenService {
     );
   }
 
-  private createNotesIndex(): Promise<any> {
+  private async createNotesIndex(): Promise<any> {
     const designDoc = {
       _id: "_design/notes_index",
       views: {
@@ -201,13 +235,35 @@ export class ChildrenService {
         },
       },
     };
+
+    // TODO: remove these and use general note_by_relatedEntities instead --> to be decided later #1501
     // creating a by_... view for each of the following properties
     ["children", "schools", "authors"].forEach(
       (prop) =>
         (designDoc.views[`by_${prop}`] = this.createNotesByFunction(prop))
     );
 
-    return this.dbIndexing.createIndex(designDoc);
+    await this.dbIndexing.createIndex(designDoc);
+
+    const newDesignDoc = {
+      _id: "_design/notes_related_index",
+      views: {
+        note_by_relatedEntities: {
+          map: `(doc) => {
+            if (!doc._id.startsWith("${Note.ENTITY_TYPE}")) return;
+            if (!Array.isArray(doc.relatedEntities)) return;
+
+            var d = new Date(doc.date || null);
+            var dateString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0")
+
+            doc.relatedEntities.forEach((relatedEntity) => {
+              emit([relatedEntity, dateString]);
+            });
+          }`,
+        },
+      },
+    };
+    await this.dbIndexing.createIndex(newDesignDoc);
   }
 
   private createNotesByFunction(property: string) {

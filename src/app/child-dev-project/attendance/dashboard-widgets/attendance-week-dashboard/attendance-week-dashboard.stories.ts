@@ -41,7 +41,7 @@ const events: Note[] = [
   ),
   generateEventWithAttendance(
     [
-      [child1.getId(), AttendanceLogicalStatus.ABSENT],
+      [child1.getId(), AttendanceLogicalStatus.ABSENT, "Remark 123"],
       [child2.getId(), AttendanceLogicalStatus.ABSENT],
     ],
     moment().subtract(2, "day").toDate(),

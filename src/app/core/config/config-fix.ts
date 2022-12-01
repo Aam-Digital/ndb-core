@@ -168,10 +168,10 @@ export const defaultJsonConfig = {
           }
         },
         {
-          "component": "ChildrenCountDashboard"
+          "component": "EntityCountDashboard"
         },
         {
-          "component": "ImportantNotesComponent",
+          "component": "ImportantNotesDashboard",
           "config": {
             "warningLevels": ["WARNING", "URGENT"],
           }
@@ -195,6 +195,13 @@ export const defaultJsonConfig = {
         {
           "component": "AttendanceWeekDashboard",
           "config": {
+            "daysOffset": 7,
+            "periodLabel": $localize`:Attendance week dashboard widget label:this week`
+          }
+        },
+        {
+          "component": "AttendanceWeekDashboard",
+          "config": {
             "daysOffset": 0,
             "periodLabel": $localize`:Attendance week dashboard widget label:last week`
           }
@@ -202,8 +209,9 @@ export const defaultJsonConfig = {
         {
           "component": "AttendanceWeekDashboard",
           "config": {
-            "daysOffset": 7,
-            "periodLabel": $localize`:Attendance week dashboard widget label:this week`
+            "daysOffset": 0,
+            "label": $localize`:Attendance week dashboard widget label:Late last week`,
+            "attendanceStatusType": "LATE"
           }
         },
         {
@@ -282,8 +290,7 @@ export const defaultJsonConfig = {
             ],
         },
         {
-          "id": "category",
-          "display": "dropdown"
+          "id": "category"
         }
       ],
       "exportConfig": [
@@ -324,6 +331,10 @@ export const defaultJsonConfig = {
     "component": "Admin",
     "permittedUserRoles": ["admin_app"]
   },
+  "view:admin/config-import": {
+    "component": "ConfigImport",
+    "permittedUserRoles": ["admin_app"]
+  },
   "view:import": {
     "component": "Import",
     "permittedUserRoles": ["admin_app"]
@@ -331,9 +342,8 @@ export const defaultJsonConfig = {
   "view:user": {
     "component": "EntityList",
     "config": {
-      "title": $localize`:Title for user overview:Users`,
       "entity": "User",
-      "columns": ["name", "email", "phone"]
+      "columns": ["name", "phone"]
     },
     "permittedUserRoles": ["admin_app"]
   },
@@ -354,18 +364,22 @@ export const defaultJsonConfig = {
                     "name",
                   ],
                   [
-                    "email"
-                  ],
-                  [
                     "phone"
                   ]
                 ]
               }
             }
           ]
+        },
+        {
+          "title": $localize`:Panel title:Security`,
+          "components": [
+            {
+              "component": "UserSecurity"
+            }
+          ]
         }
       ],
-      "icon": "user"
     },
     "permittedUserRoles": ["admin_app"]
   },
@@ -388,7 +402,6 @@ export const defaultJsonConfig = {
   "view:school": {
     "component": "EntityList",
     "config": {
-      "title": $localize`:Title of schools overview:Schools List`,
       "entity": "School",
       "columns": [
         "name",
@@ -410,7 +423,6 @@ export const defaultJsonConfig = {
     "component": "EntityDetails",
     "config": {
       "entity": "School",
-      "title": $localize`:Title when adding new entity|e.g. Add new School or Group:School or Group`,
       "panels": [
         {
           "title": $localize`:Panel title:Basic Information`,
@@ -459,13 +471,11 @@ export const defaultJsonConfig = {
           ]
         }
       ],
-      "icon": "university"
     }
   },
   "view:child": {
     "component": "ChildrenList",
     "config": {
-      "title": $localize`:Title children overview:Children List`,
       "columns": [
         {
           "view": "ChildBlock",
@@ -473,9 +483,10 @@ export const defaultJsonConfig = {
           "id": "name"
         },
         {
-          "view": "DisplayText",
+          "view": "DisplayAge",
           "label": $localize`:Column label for age of child:Age`,
-          "id": "age"
+          "id": "age",
+          "additional": "dateOfBirth"
         },
         {
           "view": "DisplayText",
@@ -565,7 +576,8 @@ export const defaultJsonConfig = {
               "health_lastDentalCheckup",
               "gender",
               "age",
-              "dateOfBirth"
+              "dateOfBirth",
+              "birth_certificate"
             ]
           },
           {
@@ -589,14 +601,12 @@ export const defaultJsonConfig = {
           "all": $localize`:Active children unselect option:All`
         },
         {
-          "id": "center",
-          "display": "dropdown"
+          "id": "center"
         },
         {
           "id": "schoolId",
           "type": "School",
-          "label": $localize`:Label of schools filter:School`,
-          "display": "dropdown"
+          "label": $localize`:Label of schools filter:School`
         }
       ]
     }
@@ -604,7 +614,6 @@ export const defaultJsonConfig = {
   "view:child/:id": {
     "component": "EntityDetails",
     "config": {
-      "icon": "child",
       "entity": "Child",
       "panels": [
         {
@@ -623,6 +632,7 @@ export const defaultJsonConfig = {
                   ],
                   [
                     "dateOfBirth",
+                    "birth_certificate",
                     "gender",
                     "motherTongue"
                   ],
@@ -631,7 +641,7 @@ export const defaultJsonConfig = {
                     "status",
                     "address",
                     "phone"
-                  ],
+                  ]
                 ],
                 "headers": [
                   null,
@@ -686,7 +696,7 @@ export const defaultJsonConfig = {
           "components": [
             {
               "title": "",
-              "component": "NotesOfChild"
+              "component": "NotesRelatedToEntity"
             }
           ]
         },
@@ -757,7 +767,6 @@ export const defaultJsonConfig = {
   "view:attendance/recurring-activity": {
     "component": "EntityList",
     "config": {
-      "title": $localize`:Title of recurring activities overview:Recurring Activities`,
       "entity": "RecurringActivity",
       "columns": [
         "title",
@@ -814,7 +823,6 @@ export const defaultJsonConfig = {
           ]
         }
       ],
-      "icon": "calendar-alt"
     }
   },
   "view:report": {
@@ -967,7 +975,8 @@ export const defaultJsonConfig = {
         "name": "motherTongue",
         "schema": {
           dataType: "string",
-          label: $localize`:Label for the mother tongue of a child:Mother Tongue`
+          label: $localize`:Label for the mother tongue of a child:Mother Tongue`,
+          description: $localize`:Tooltip description for the mother tongue of a child:The primary language spoken at home`,
         }
       },
       {
@@ -977,6 +986,13 @@ export const defaultJsonConfig = {
           label: $localize`:Label for a child attribute:Last Dental Check-Up`
         }
       },
+      {
+        "name": "birth_certificate",
+        "schema": {
+          dataType: "file",
+          label: $localize`:Label for a child attribute:Birth certificate`
+        }
+      }
     ]
   },
   "entity:School": {
@@ -1083,13 +1099,6 @@ export const defaultJsonConfig = {
   },
   "entity:User": {
     attributes: [
-      {
-        name: "email",
-        schema: {
-          dataType: "string",
-          label: $localize`:Label of user email:Email`
-        }
-      },
       {
         name: "phone",
         schema: {

@@ -34,7 +34,6 @@ import { UserModule } from "./core/user/user.module";
 import { ProgressDashboardWidgetModule } from "./features/progress-dashboard-widget/progress-dashboard-widget.module";
 import { ChildrenModule } from "./child-dev-project/children/children.module";
 import { SchoolsModule } from "./child-dev-project/schools/schools.module";
-import { FlexLayoutModule } from "@angular/flex-layout";
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
 import { AdminModule } from "./core/admin/admin.module";
@@ -92,6 +91,8 @@ import {
   DATE_FORMATS,
   DateAdapterWithFormatting,
 } from "./core/language/date-adapter-with-formatting";
+import { FileModule } from "./features/file/file.module";
+import { ConfigSetupModule } from "./core/config-setup/config-setup.module";
 
 /**
  * Main entry point of the application.
@@ -109,7 +110,6 @@ import {
     }),
     BrowserModule,
     BrowserAnimationsModule,
-    FlexLayoutModule,
     HttpClientModule,
     routing,
     ViewModule,
@@ -120,6 +120,7 @@ import {
     EntityModule,
     SessionModule,
     ConfigModule,
+    ConfigSetupModule,
     UiModule,
     SyncStatusModule,
     LatestChangesModule,
@@ -137,6 +138,7 @@ import {
     ConfigurableEnumModule,
     ReportingModule,
     EntityUtilsModule,
+    FileModule,
     DemoDataModule.forRoot([
       ...DemoConfigGeneratorService.provider(),
       ...DemoChildGenerator.provider({ count: 120 }),
