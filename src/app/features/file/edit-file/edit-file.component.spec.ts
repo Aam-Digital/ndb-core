@@ -54,11 +54,9 @@ describe("EditFileComponent", () => {
 
     component.onFileSelected(fileEvent);
     expect(component.formControl).toHaveValue(file.name);
+    cancelForm();
 
-    component.formControl.setValue("");
-    component.formControl.disable();
-
-    expect(component.formControl).toHaveValue("");
+    expect(component.formControl).toHaveValue(null);
     expect(mockFileService.uploadFile).not.toHaveBeenCalled();
   });
 
@@ -71,10 +69,9 @@ describe("EditFileComponent", () => {
 
     component.delete();
 
-    component.formControl.setValue("");
-    component.formControl.disable();
+    cancelForm();
 
-    expect(component.formControl).toHaveValue("");
+    expect(component.formControl).toHaveValue(null);
     expect(mockFileService.uploadFile).not.toHaveBeenCalled();
     expect(mockFileService.removeFile).not.toHaveBeenCalled();
   });
@@ -90,10 +87,9 @@ describe("EditFileComponent", () => {
     component.onFileSelected(otherFileEvent);
     expect(component.formControl).toHaveValue("other.file");
 
-    component.formControl.setValue("");
-    component.formControl.disable();
+    cancelForm();
 
-    expect(component.formControl).toHaveValue("");
+    expect(component.formControl).toHaveValue(null);
     expect(mockFileService.uploadFile).not.toHaveBeenCalled();
     expect(mockFileService.removeFile).not.toHaveBeenCalled();
   });
@@ -163,8 +159,7 @@ describe("EditFileComponent", () => {
     component.delete();
     expect(component.formControl).toHaveValue(null);
 
-    component.formControl.setValue(file.name);
-    component.formControl.disable();
+    cancelForm();
 
     expect(component.formControl).toHaveValue(file.name);
     expect(mockFileService.removeFile).not.toHaveBeenCalled();
@@ -178,8 +173,7 @@ describe("EditFileComponent", () => {
     component.onFileSelected(otherFileEvent);
     expect(component.formControl).toHaveValue("other.file");
 
-    component.formControl.setValue(file.name);
-    component.formControl.disable();
+    cancelForm();
 
     expect(component.formControl).toHaveValue(file.name);
     expect(mockFileService.removeFile).not.toHaveBeenCalled();
@@ -264,7 +258,10 @@ describe("EditFileComponent", () => {
     expect(mockFileService.showFile).not.toHaveBeenCalled();
   });
 
-  function setupComponent(initialValue = "") {
+  let initialValue: string;
+
+  function setupComponent(value = null) {
+    initialValue = value;
     component.onInitFromDynamicConfig({
       formControl: new FormControl(initialValue),
       entity: Object.assign(new Entity(), { testProp: initialValue }),
@@ -273,5 +270,10 @@ describe("EditFileComponent", () => {
     });
     component.formControl.disable();
     fixture.detectChanges();
+  }
+
+  function cancelForm() {
+    component.formControl.setValue(initialValue);
+    component.formControl.disable();
   }
 });
