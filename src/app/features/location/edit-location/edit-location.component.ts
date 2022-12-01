@@ -41,7 +41,7 @@ export class EditLocationComponent extends EditComponent<GeoLocation> {
     this.formControl.setValue(selected);
   }
 
-  updateAutocomplete() {
+  triggerInputUpdate() {
     this.inputStream.next(this.input.nativeElement.value);
   }
 

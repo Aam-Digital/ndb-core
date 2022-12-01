@@ -6,8 +6,8 @@
     type="text"
     matInput
     [value]="formControl.value?.display_name"
-    (keyup)="this.updateAutocomplete()"
-    (focusin)="this.updateAutocomplete()"
+    (keyup)="triggerInputUpdate()"
+    (focusin)="triggerInputUpdate()"
     [matAutocomplete]="auto"
   >
   <mat-hint align="end">
