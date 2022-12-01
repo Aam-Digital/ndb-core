@@ -10,6 +10,9 @@
     (focusin)="this.updateAutocomplete()"
     [matAutocomplete]="auto"
   >
+  <mat-hint align="end">
+    Map data from <a target="_blank" href="https://openstreetmap.org/copyright">OpenStreetMap</a>
+  </mat-hint>
   <button (click)="clearInput()" matSuffix mat-icon-button type="button">
     <fa-icon icon="x"></fa-icon>
   </button>
