@@ -88,7 +88,6 @@ export class MatchingEntitiesComponent
 
   // TODO: fill selection on hover already?
   // TODO: display matching in rowDetails popup for confirmation during creation?
-  // TODO: lock things after matching was created?
   // TODO: force filter available entities in background as configured
 
   onInitFromDynamicConfig(config: PanelConfig<MatchingEntitiesConfig>) {
@@ -184,5 +183,8 @@ export class MatchingEntitiesComponent
     } ${selectedL.toString()} - ${selectedR.toString()}`;
 
     await this.entityMapper.save(newMatchEntity);
+
+    // lock in current selection to avoid duplicate matches and provide user feedback
+    this.sideDetails.forEach((s) => (s.availableEntities = undefined));
   }
 }

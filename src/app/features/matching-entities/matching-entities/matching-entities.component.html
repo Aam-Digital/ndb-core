@@ -43,7 +43,7 @@
   <div *ngIf="showMap" class="flex-grow map-placeholder">Map</div>
   <button mat-stroked-button color="accent" style="width: 100%"
           (click)="createMatch()"
-          [disabled]="!sideDetails[0]?.selected || !sideDetails[1]?.selected">
+          [disabled]="!sideDetails[0]?.selected || !sideDetails[1]?.selected || (!sideDetails[0].availableEntities && !sideDetails[1].availableEntities)">
     {{ matchActionLabel }}
   </button>
 </div>
