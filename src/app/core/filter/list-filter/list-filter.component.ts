@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { FilterSelection } from "../filter-selection/filter-selection";
 import { Entity } from "../../entity/model/entity";
 import { MatDialog } from "@angular/material/dialog";
-import { DateRangeComponent } from "app/core/entity-components/entity-list/date-range/date-range.component";
+import { DateRangeComponent } from "app/core/filter/date-range/date-range.component";
 
 @Component({
   selector: "app-list-filter",
@@ -20,10 +20,11 @@ export class ListFilterComponent<E extends Entity> {
     this.selectedOptionChange.emit(selectedOptionKey);
   }
 
-  openDateRangeDialog() {
-    this.dialog.open(DateRangeComponent, {
-      width: "80%",
-      data: {},
-    });
+  dateRangeChange(result) {
+    let option = this.filterConfig.options.find(
+      (option) => option.label === "custom"
+    );
+    option.filter = { [this.filterConfig.name]: result };
+    this.selectOption(option.key);
   }
 }
