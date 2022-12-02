@@ -8,6 +8,7 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { ChildrenService } from "../../children/children.service";
 import moment from "moment";
+import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 
 describe("ChildrenOverviewComponent", () => {
   let component: ChildrenOverviewComponent;
@@ -24,7 +25,10 @@ describe("ChildrenOverviewComponent", () => {
 
     TestBed.configureTestingModule({
       imports: [SchoolsModule, MockedTestingModule.withState()],
-      providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
+      providers: [
+        { provide: ChildrenService, useValue: mockChildrenService },
+        { provide: FormDialogService, useValue: null },
+      ],
     }).compileComponents();
   }));
 

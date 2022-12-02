@@ -6,10 +6,10 @@
         {{ side.entityType.label }}:
         {{ side.selected?.toString() ?? '-' }}
 
-        <app-fa-dynamic-icon icon="lock" *ngIf="!side.availableEntities"
+        <fa-icon icon="lock" *ngIf="!side.availableEntities"
                              matTooltip="These details of the record are displayed to make comparison easier. You cannot select a different record here."
                              i18n-matTooltip="tooltip explaining that this entity in matching is locked"
-        ></app-fa-dynamic-icon>
+        ></fa-icon>
       </th>
 
       <td mat-cell *matCellDef="let property">

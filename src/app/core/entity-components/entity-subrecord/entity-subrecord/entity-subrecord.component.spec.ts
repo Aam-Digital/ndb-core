@@ -33,6 +33,7 @@ import { ScreenWidthObserver } from "../../../../utils/media/screen-size-observe
 import { WINDOW_TOKEN } from "../../../../utils/di-tokens";
 import { MediaModule } from "../../../../utils/media/media.module";
 import { DateWithAge } from "../../../../child-dev-project/children/model/dateWithAge";
+import { FormDialogService } from "../../../form-dialog/form-dialog.service";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -46,7 +47,13 @@ describe("EntitySubrecordComponent", () => {
         FontAwesomeTestingModule,
         MediaModule,
       ],
-      providers: [{ provide: WINDOW_TOKEN, useValue: window }],
+      providers: [
+        { provide: WINDOW_TOKEN, useValue: window },
+        {
+          provide: FormDialogService,
+          useValue: jasmine.createSpyObj(["openSimpleForm"]),
+        },
+      ],
     }).compileComponents();
   }));
 
@@ -263,20 +270,11 @@ describe("EntitySubrecordComponent", () => {
     const child = new Child();
     component.newRecordFactory = () => child;
     component.ngOnInit();
-    const dialog = TestBed.inject(MatDialog);
-    spyOn(dialog, "open");
+    const dialog = TestBed.inject(FormDialogService);
 
     component.create();
 
-    expect(dialog.open).toHaveBeenCalledWith(RowDetailsComponent, {
-      width: "80%",
-      maxHeight: "90vh",
-      data: {
-        entity: child,
-        columns: [],
-        viewOnlyColumns: [],
-      },
-    });
+    expect(dialog.openSimpleForm).toHaveBeenCalledWith(child, []);
   });
 
   it("should notify when an entity is clicked", (done) => {

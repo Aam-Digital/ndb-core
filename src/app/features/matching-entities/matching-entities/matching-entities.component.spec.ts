@@ -8,6 +8,7 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { ActivatedRoute } from "@angular/router";
+import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 
 describe("MatchingEntitiesComponent", () => {
   let component: MatchingEntitiesComponent;
@@ -23,6 +24,7 @@ describe("MatchingEntitiesComponent", () => {
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: ActivatedRoute, useValue: { data: null } },
+        { provide: FormDialogService, useValue: null },
       ],
     }).compileComponents();
 
@@ -136,6 +138,9 @@ describe("MatchingEntitiesComponent", () => {
         name:
           "ChildSchoolRelation " + testEntity.toString() + " - matched child",
       } as Partial<ChildSchoolRelation>)
+    );
+    expect(mockEntityMapper.save).toHaveBeenCalledWith(
+      jasmine.any(ChildSchoolRelation)
     );
   });
 });

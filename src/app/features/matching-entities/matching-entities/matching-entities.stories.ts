@@ -14,6 +14,7 @@ import { ConfigurableEnumDatatype } from "../../../core/configurable-enum/config
 import { ConfigService } from "../../../core/config/config.service";
 import { centersUnique } from "../../../child-dev-project/children/demo-data-generators/fixtures/centers";
 import { genders } from "../../../child-dev-project/children/model/genders";
+import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 
 RecurringActivity.schema.set("center", {
   dataType: "configurable-enum",
@@ -66,6 +67,7 @@ export default {
             return schemaService;
           },
         },
+        FormDialogService,
       ],
     }),
   ],

@@ -8,6 +8,7 @@ import { ViewModule } from "../../core/view/view.module";
 import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FilterModule } from "../../core/filter/filter.module";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 /**
  * Facilitate finding suitable entities and connecting them.
@@ -23,7 +24,9 @@ import { FilterModule } from "../../core/filter/filter.module";
     MatTableModule,
     MatTooltipModule,
     FilterModule,
+    FontAwesomeModule,
   ],
+  exports: [MatchingEntitiesComponent],
 })
 export class MatchingEntitiesModule {
   static dynamicComponents: [MatchingEntitiesComponent];
