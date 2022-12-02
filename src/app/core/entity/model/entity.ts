@@ -101,6 +101,11 @@ export class Entity {
   static icon: IconName;
 
   /**
+   * color used for to highlight this entity type across the app
+   */
+  static color: string;
+
+  /**
    * Base route of the entity (list/details) view for this entity type.
    */
   static get route(): string {

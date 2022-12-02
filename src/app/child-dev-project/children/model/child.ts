@@ -34,6 +34,7 @@ export class Child extends Entity {
   static icon: IconName = "child";
   static label = $localize`:label for entity:Participant`;
   static labelPlural = $localize`:label (plural) for entity:Participants`;
+  static color = "#1565C0";
 
   static create(name: string): Child {
     const instance = new Child();

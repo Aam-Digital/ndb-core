@@ -18,10 +18,8 @@ import {
   EntityForm,
   EntityFormService,
 } from "../../entity-form/entity-form.service";
-import { MatDialog } from "@angular/material/dialog";
 import { LoggingService } from "../../../logging/logging.service";
 import { AnalyticsService } from "../../../analytics/analytics.service";
-import { RowDetailsComponent } from "../row-details/row-details.component";
 import {
   EntityRemoveService,
   RemoveResult,
@@ -34,8 +32,13 @@ import {
 } from "../../../../utils/media/screen-size-observer.service";
 import { Subscription } from "rxjs";
 import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
-import { ColumnConfig, DataFilter } from "./entity-subrecord-config";
+import {
+  ColumnConfig,
+  DataFilter,
+  toFormFieldConfig,
+} from "./entity-subrecord-config";
 import { FilterService } from "../../../filter/filter.service";
+import { FormDialogService } from "../../../form-dialog/form-dialog.service";
 import { Router } from "@angular/router";
 
 export interface TableRow<T extends Entity> {
@@ -71,13 +74,7 @@ export class EntitySubrecordComponent<T extends Entity>
 
   /** configuration what kind of columns to be generated for the table */
   @Input() set columns(columns: ColumnConfig[]) {
-    this._columns = columns.map((col) => {
-      if (typeof col === "string") {
-        return { id: col };
-      } else {
-        return col;
-      }
-    });
+    this._columns = columns.map(toFormFieldConfig);
     this.filteredColumns = this._columns.filter((col) => !col.hideFromTable);
   }
 
@@ -157,7 +154,7 @@ export class EntitySubrecordComponent<T extends Entity>
     private alertService: AlertService,
     private screenWidthObserver: ScreenWidthObserver,
     private entityFormService: EntityFormService,
-    private dialog: MatDialog,
+    private formDialog: FormDialogService,
     private router: Router,
     private analyticsService: AnalyticsService,
     private loggingService: LoggingService,
@@ -397,7 +394,7 @@ export class EntitySubrecordComponent<T extends Entity>
   private showEntity(entity: T) {
     switch (this.clickMode) {
       case "popup":
-        this.showPopupForm(entity);
+        this.formDialog.openSimpleForm(entity, this._columns);
         break;
       case "navigate":
         this.router.navigate([
@@ -406,23 +403,6 @@ export class EntitySubrecordComponent<T extends Entity>
         ]);
         break;
     }
-  }
-
-  private showPopupForm(entity: T) {
-    // TODO: merge this with components like NotesRelatedToEntity's custom handling so that custom popups are done generically here
-
-    const columnsToDisplay = this._columns
-      .filter((col) => col.edit)
-      .map((col) => Object.assign({}, col, { forTable: false }));
-    this.dialog.open(RowDetailsComponent, {
-      width: "80%",
-      maxHeight: "90vh",
-      data: {
-        entity: entity,
-        columns: columnsToDisplay,
-        viewOnlyColumns: this._columns.filter((col) => !col.edit),
-      },
-    });
   }
 
   /**
