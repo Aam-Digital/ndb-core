@@ -2,7 +2,6 @@ import { Component, ElementRef, Input, OnInit, ViewChild } from "@angular/core";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { Entity, EntityConstructor } from "../../../core/entity/model/entity";
-import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { addAlphaToHexColor } from "../../../utils/utils";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
@@ -81,7 +80,6 @@ export class MatchingEntitiesComponent
   constructor(
     private route: ActivatedRoute,
     private formDialog: FormDialogService,
-    public schemaService: EntitySchemaService,
     private entityMapper: EntityMapperService,
     private entityRegistry: EntityRegistry
   ) {}

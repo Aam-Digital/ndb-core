@@ -9,6 +9,8 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
+import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import { ConfigService } from "../../../core/config/config.service";
 
 describe("MatchingEntitiesComponent", () => {
   let component: MatchingEntitiesComponent;
@@ -25,6 +27,8 @@ describe("MatchingEntitiesComponent", () => {
         { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: ActivatedRoute, useValue: { data: null } },
         { provide: FormDialogService, useValue: null },
+        EntitySchemaService,
+        { provide: ConfigService, useValue: null },
       ],
     }).compileComponents();
 

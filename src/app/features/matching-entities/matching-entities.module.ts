@@ -9,6 +9,7 @@ import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FilterModule } from "../../core/filter/filter.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { EntityUtilsModule } from "../../core/entity-components/entity-utils/entity-utils.module";
 
 /**
  * Facilitate finding suitable entities and connecting them.
@@ -25,6 +26,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     MatTooltipModule,
     FilterModule,
     FontAwesomeModule,
+    EntityUtilsModule,
   ],
   exports: [MatchingEntitiesComponent],
 })

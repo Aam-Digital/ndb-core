@@ -13,17 +13,10 @@
       </th>
 
       <td mat-cell *matCellDef="let property">
-        <ng-container
+        <app-entity-property-view
           *ngIf="side.selected?.[property[i]] && side.entityType.schema.get(property[i]); else placeholder"
-          [appDynamicComponent]="{
-          component: schemaService.getComponent(side.entityType.schema.get(property[i])),
-          config: {
-            value: side.selected[property[i]],
-            id: property[i],
-            entity: side.selected
-          }
-        }"
-        ></ng-container>
+          [entity]="side.selected" [property]="property[i]"
+        ></app-entity-property-view>
 
         <ng-template #placeholder>
           -
