@@ -70,7 +70,6 @@ export class MatchingEntitiesComponent
   ) {}
 
   // TODO: fill selection on hover already?
-  // TODO: display property labels in comparison table?
 
   onInitFromDynamicConfig(config: PanelConfig<MatchingEntitiesConfig>) {
     this.initConfig(config.config, config.entity);

@@ -15,7 +15,7 @@
       <td mat-cell *matCellDef="let property">
         <app-entity-property-view
           *ngIf="side.selected?.[property[i]]; else placeholder"
-          [entity]="side.selected" [property]="property[i]"
+          [entity]="side.selected" [property]="property[i]" [showLabel]="true"
         ></app-entity-property-view>
 
         <ng-template #placeholder>

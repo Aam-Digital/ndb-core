@@ -1,3 +1,7 @@
+<div *ngIf="showLabel" class="label">
+  {{ label }}
+</div>
+
 <ng-container
   [appDynamicComponent]="{
           component: component,

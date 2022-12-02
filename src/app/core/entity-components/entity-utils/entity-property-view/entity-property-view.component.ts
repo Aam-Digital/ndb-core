@@ -23,6 +23,9 @@ export class EntityPropertyViewComponent<E extends Entity> implements OnInit {
    */
   @Input() component: string;
 
+  @Input() showLabel: boolean = false;
+  label: string;
+
   constructor(private schemaService: EntitySchemaService) {}
 
   ngOnInit() {
@@ -31,5 +34,7 @@ export class EntityPropertyViewComponent<E extends Entity> implements OnInit {
         this.entity.getSchema().get(this.property)
       );
     }
+    this.label =
+      this.entity.getSchema().get(this.property).label ?? this.property;
   }
 }
