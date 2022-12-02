@@ -87,21 +87,15 @@ export class FormDialogService {
     );
 
     const columnsToDisplay = columns
-      .filter((col) => typeof col === "string" || col.edit)
-      .map((col) =>
-        typeof col === "string"
-          ? col
-          : Object.assign({}, col, { forTable: false })
-      );
+      .filter((col) => col.edit)
+      .map((col) => Object.assign({}, col, { forTable: false }));
 
     this.dialog.open(RowDetailsComponent, {
       ...FormDialogService.dialogSettings,
       data: {
         entity: entity,
         columns: columnsToDisplay,
-        viewOnlyColumns: columns.filter(
-          (col) => typeof col !== "string" && !col.edit
-        ),
+        viewOnlyColumns: columns.filter((col) => !col.edit),
       },
     });
   }
