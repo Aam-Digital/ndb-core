@@ -79,7 +79,15 @@ export class FormDialogService {
     return dialogRef;
   }
 
-  openSimpleForm<E extends Entity>(entity: E, columnsOverall: ColumnConfig[]) {
+  /**
+   * Open a form in a popup that allows to edit the given entity.
+   * @param entity
+   * @param columnsOverall
+   */
+  openSimpleForm<E extends Entity>(
+    entity: E,
+    columnsOverall: ColumnConfig[]
+  ): MatDialogRef<RowDetailsComponent<Entity>> {
     // TODO: merge this with openDialog method above for removing further duplication (see #921)
     const columns: FormFieldConfig[] = this.inferFormFieldColumns(
       columnsOverall,
@@ -90,7 +98,7 @@ export class FormDialogService {
       .filter((col) => col.edit)
       .map((col) => Object.assign({}, col, { forTable: false }));
 
-    this.dialog.open(RowDetailsComponent, {
+    return this.dialog.open(RowDetailsComponent, {
       ...FormDialogService.dialogSettings,
       data: {
         entity: entity,

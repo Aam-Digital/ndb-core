@@ -76,6 +76,7 @@ export class MatchingEntitiesComponent
 
   @ViewChild("matchComparison", { static: true })
   matchComparisonElement: ElementRef;
+  lockedMatching: boolean;
 
   constructor(
     private route: ActivatedRoute,
@@ -185,16 +186,18 @@ export class MatchingEntitiesComponent
     } ${selectedL.toString()} - ${selectedR.toString()}`;
 
     if (this.onMatch.columnsToReview) {
-      this.formDialog.openSimpleForm(
-        newMatchEntity,
-        this.onMatch.columnsToReview
-      );
+      this.formDialog
+        .openSimpleForm(newMatchEntity, this.onMatch.columnsToReview)
+        .afterClosed()
+        .subscribe((result) => {
+          if (result instanceof newMatchEntity.getConstructor()) {
+            this.lockedMatching = true;
+          }
+        });
     } else {
       await this.entityMapper.save(newMatchEntity);
+      this.lockedMatching = true;
     }
-
-    // lock in current selection to avoid duplicate matches and provide user feedback
-    this.sideDetails.forEach((s) => (s.availableEntities = undefined));
   }
 
   applySelectedFilters(side: MatchingSide, filter: DataFilter<Entity>) {

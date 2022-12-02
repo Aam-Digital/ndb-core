@@ -6,7 +6,7 @@
         {{ side.entityType.label }}:
         {{ side.selected?.toString() ?? '-' }}
 
-        <fa-icon icon="lock" *ngIf="!side.availableEntities"
+        <fa-icon icon="lock" *ngIf="!side.availableEntities || lockedMatching"
                              matTooltip="These details of the record are displayed to make comparison easier. You cannot select a different record here."
                              i18n-matTooltip="tooltip explaining that this entity in matching is locked"
         ></fa-icon>
@@ -34,12 +34,12 @@
   <div *ngIf="showMap" class="flex-grow map-placeholder">Map</div>
   <button mat-stroked-button color="accent" style="width: 100%"
           (click)="createMatch()"
-          [disabled]="!sideDetails[0]?.selected || !sideDetails[1]?.selected || (!sideDetails[0].availableEntities && !sideDetails[1].availableEntities)">
+          [disabled]="!sideDetails[0]?.selected || !sideDetails[1]?.selected || lockedMatching">
     {{ matchActionLabel }}
   </button>
 </div>
 
-<div class="flex-row flex-wrap gap-large">
+<div class="flex-row flex-wrap gap-large" *ngIf="!lockedMatching">
   <ng-container *ngFor="let side of sideDetails">
     <div class="flex-grow" *ngIf="side.availableEntities">
       <h3 [style.color]="side.entityType.color ?? 'black'" class="selection-header">Select {{ side.entityType.label }}</h3>
