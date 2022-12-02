@@ -2,6 +2,7 @@ import { AfterViewInit, Component, Input, Output } from "@angular/core";
 import * as L from "leaflet";
 import { Subject } from "rxjs";
 import { debounceTime } from "rxjs/operators";
+import { Coordinates } from "../coordinates";
 
 const iconRetinaUrl = "assets/marker-icon-2x.png";
 const iconUrl = "assets/marker-icon.png";
@@ -24,14 +25,15 @@ L.Marker.prototype.options.icon = iconDefault;
   styleUrls: ["./map.component.scss"],
 })
 export class MapComponent implements AfterViewInit {
-  @Input() set marked(cord: L.LatLng) {
+  @Input() set marked(coordinates: Coordinates) {
+    const latLon = new L.LatLng(coordinates.lat, coordinates.lon);
     if (!this.marker) {
-      this.marker = L.marker(cord);
+      this.marker = L.marker(latLon);
       this.marker.addTo(this.map);
     } else {
-      this.marker.setLatLng(cord);
+      this.marker.setLatLng(latLon);
     }
-    this.map.flyTo(cord);
+    this.map.flyTo(latLon);
   }
 
   private map: L.Map;
@@ -40,7 +42,7 @@ export class MapComponent implements AfterViewInit {
   // TODO filter out double clicks
   @Output() mapClick = this.clickStream.pipe(debounceTime(200));
 
-  ngAfterViewInit(): void {
+  ngAfterViewInit() {
     this.initMap();
   }
 

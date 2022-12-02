@@ -12,6 +12,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { MapComponent } from "./map/map.component";
 import { MapPopupComponent } from "./map-popup/map-popup.component";
+import { MatDialogModule } from "@angular/material/dialog";
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { MapPopupComponent } from "./map-popup/map-popup.component";
     FormsModule,
     FontAwesomeModule,
     MatButtonModule,
+    MatDialogModule,
   ],
   exports: [EditLocationComponent, MapComponent],
 })

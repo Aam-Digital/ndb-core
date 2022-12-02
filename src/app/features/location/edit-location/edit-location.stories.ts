@@ -12,6 +12,7 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
 import { AlertsModule } from "../../../core/alerts/alerts.module";
 import { HttpClientModule } from "@angular/common/http";
+import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 
 export default {
   title: "Features/Location/EditLocation",
@@ -26,6 +27,7 @@ export default {
         HttpClientModule,
       ],
       providers: [
+        ConfirmationDialogService,
         EntitySchemaService,
         { provide: EntityMapperService, useValue: mockEntityMapper() },
       ],

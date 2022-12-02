@@ -17,6 +17,9 @@
   <button *ngIf="formControl.enabled" (click)="clearInput()" matSuffix mat-icon-button type="button">
     <fa-icon icon="x"></fa-icon>
   </button>
+  <button (click)="openMap()" matSuffix mat-icon-button type="button">
+    <fa-icon icon="map"></fa-icon>
+  </button>
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectLocation($event.option.value)">
     <mat-option *ngIf="loading" disabled>Loading results...</mat-option>
     <mat-option *ngIf="nothingFound" disabled>Location not found</mat-option>

@@ -1,1 +1,2 @@
-<app-map></app-map>
+<app-map [marked]="coordinates" (mapClick)="select($event)"></app-map>
+<button mat-button [mat-dialog-close]="coordinates"></button>

@@ -7,8 +7,11 @@ import {
 import { concatMap, Observable, Subject } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { debounceTime, filter, tap } from "rxjs/operators";
+import { MatDialog } from "@angular/material/dialog";
+import { MapPopupComponent } from "../map-popup/map-popup.component";
+import { Coordinates } from "../coordinates";
 
-interface GeoLocation {
+interface GeoLocation extends Coordinates {
   display_name: string;
 }
 
@@ -28,7 +31,7 @@ export class EditLocationComponent extends EditComponent<GeoLocation> {
 
   @ViewChild("inputElement") input: ElementRef<HTMLInputElement>;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private dialog: MatDialog) {
     super();
   }
 
@@ -83,5 +86,17 @@ export class EditLocationComponent extends EditComponent<GeoLocation> {
           this.nothingFound = res.length === 0;
         })
       );
+  }
+
+  openMap() {
+    console.log("selected", this.formControl.value);
+    const ref = this.dialog.open(MapPopupComponent, {
+      width: "90%",
+      height: "90%",
+      data: this.formControl.value,
+    });
+    ref.afterClosed().subscribe((res) => {
+      console.log("res", res);
+    });
   }
 }
