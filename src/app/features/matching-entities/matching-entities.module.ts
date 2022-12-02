@@ -24,7 +24,6 @@ import { FilterModule } from "../../core/filter/filter.module";
     MatTooltipModule,
     FilterModule,
   ],
-  exports: [MatchingEntitiesComponent],
 })
 export class MatchingEntitiesModule {
   static dynamicComponents: [MatchingEntitiesComponent];
