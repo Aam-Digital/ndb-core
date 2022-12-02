@@ -10,9 +10,16 @@ import { MatInputModule } from "@angular/material/input";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
+import { MapComponent } from "./map/map.component";
+import { MapPopupComponent } from "./map-popup/map-popup.component";
 
 @NgModule({
-  declarations: [EditLocationComponent, ViewLocationComponent],
+  declarations: [
+    EditLocationComponent,
+    ViewLocationComponent,
+    MapComponent,
+    MapPopupComponent,
+  ],
   imports: [
     CommonModule,
     MatFormFieldModule,
@@ -23,7 +30,7 @@ import { MatButtonModule } from "@angular/material/button";
     FontAwesomeModule,
     MatButtonModule,
   ],
-  exports: [EditLocationComponent],
+  exports: [EditLocationComponent, MapComponent],
 })
 export class LocationModule {
   dynamicComponents = [EditLocationComponent, ViewLocationComponent];
