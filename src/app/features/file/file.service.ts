@@ -12,9 +12,9 @@ import { LoggingService } from "../../core/logging/logging.service";
  */
 export abstract class FileService {
   protected constructor(
-    protected entityMapper: EntityMapperService,
-    protected entities: EntityRegistry,
-    protected logger: LoggingService
+    private entityMapper: EntityMapperService,
+    private entities: EntityRegistry,
+    private logger: LoggingService
   ) {
     // TODO maybe registration is to late (only when component is rendered)
     this.deleteFilesOfDeletedEntities();
@@ -59,7 +59,7 @@ export abstract class FileService {
   }
 
   /**
-   * Removes a file and updates the entity to reflect this change
+   * Removes the file
    * @param entity
    * @param property of the entity which points to a file
    */
@@ -79,7 +79,7 @@ export abstract class FileService {
   abstract showFile(entity: Entity, property: string): void;
 
   /**
-   * Uploads the file and stores the information on `entity[property]`
+   * Uploads the file
    * @param file to be uploaded
    * @param entity
    * @param property where the information about the file should be stored

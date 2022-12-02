@@ -1,13 +1,13 @@
 import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
-import { PreviousSchoolsComponent } from "./previous-schools.component";
-import { ChildSchoolRelation } from "../model/childSchoolRelation";
-import { School } from "../../schools/model/school";
-import { Child } from "../model/child";
-import { ChildrenModule } from "../children.module";
+import { ChildSchoolOverviewComponent } from "./child-school-overview.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { LoginState } from "../../../core/session/session-states/login-state.enum";
+import { School } from "../model/school";
+import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
+import { SchoolsModule } from "../schools.module";
+import { Child } from "../../children/model/child";
 
 const child = new Child("testChild");
 const school1 = new School("1");
@@ -36,11 +36,11 @@ rel3.result = 23;
 
 export default {
   title: "child-dev-project/Previous Schools",
-  component: PreviousSchoolsComponent,
+  component: ChildSchoolOverviewComponent,
   decorators: [
     moduleMetadata({
       imports: [
-        ChildrenModule,
+        SchoolsModule,
         StorybookBaseModule,
         MockedTestingModule.withState(LoginState.LOGGED_IN, [
           school1,
@@ -54,10 +54,10 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<PreviousSchoolsComponent> = (
-  args: PreviousSchoolsComponent
+const Template: Story<ChildSchoolOverviewComponent> = (
+  args: ChildSchoolOverviewComponent
 ) => ({
-  component: PreviousSchoolsComponent,
+  component: ChildSchoolOverviewComponent,
   props: args,
 });
 

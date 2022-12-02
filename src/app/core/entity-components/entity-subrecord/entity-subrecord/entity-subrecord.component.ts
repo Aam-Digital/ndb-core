@@ -39,6 +39,7 @@ import {
 } from "./entity-subrecord-config";
 import { FilterService } from "../../../filter/filter.service";
 import { FormDialogService } from "../../../form-dialog/form-dialog.service";
+import { Router } from "@angular/router";
 
 export interface TableRow<T extends Entity> {
   record: T;
@@ -68,6 +69,8 @@ export class EntitySubrecordComponent<T extends Entity>
   implements OnChanges, OnInit
 {
   @Input() isLoading: boolean;
+
+  @Input() clickMode: "popup" | "navigate" | "none" = "popup";
 
   /** configuration what kind of columns to be generated for the table */
   @Input() set columns(columns: ColumnConfig[]) {
@@ -127,10 +130,11 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 
   /**
-   * A function which should be executed when a row is clicked or a new entity created.
-   * @param entity The newly created or clicked entity.
+   * Event triggered when the user clicks on a row (i.e. entity).
+   * This does not change the default behavior like opening popup form,
+   * you may want to additionally set `clickMode` to change that.
    */
-  @Input() showEntity?: (entity: T) => void = this.showRowDetails;
+  @Output() rowClick = new EventEmitter<T>();
 
   /**
    * Adds a filter for the displayed data.
@@ -151,6 +155,7 @@ export class EntitySubrecordComponent<T extends Entity>
     private screenWidthObserver: ScreenWidthObserver,
     private entityFormService: EntityFormService,
     private formDialog: FormDialogService,
+    private router: Router,
     private analyticsService: AnalyticsService,
     private loggingService: LoggingService,
     private entityRemoveService: EntityRemoveService,
@@ -189,7 +194,6 @@ export class EntitySubrecordComponent<T extends Entity>
             type === "update" &&
             !this._records.find((rec) => rec.getId() === entity.getId())
           ) {
-            // TODO maybe doc does not pass filter anymore -> remove
             this.addToTable(entity);
           }
         });
@@ -295,7 +299,7 @@ export class EntitySubrecordComponent<T extends Entity>
       }
       row.formGroup.enable();
     } else {
-      this.rowClick(row);
+      this.showEntity(row.record);
     }
   }
 
@@ -377,17 +381,28 @@ export class EntitySubrecordComponent<T extends Entity>
    * Show one record's details in a modal dialog (if configured).
    * @param row The entity whose details should be displayed.
    */
-  rowClick(row: TableRow<T>) {
+  onRowClick(row: TableRow<T>) {
     if (!row.formGroup || row.formGroup.disabled) {
       this.showEntity(row.record);
+      this.rowClick.emit(row.record);
       this.analyticsService.eventTrack("subrecord_show_popup", {
         category: row.record.getType(),
       });
     }
   }
 
-  private showRowDetails(entity: T) {
-    this.formDialog.openSimpleForm(entity, this._columns);
+  private showEntity(entity: T) {
+    switch (this.clickMode) {
+      case "popup":
+        this.formDialog.openSimpleForm(entity, this._columns);
+        break;
+      case "navigate":
+        this.router.navigate([
+          entity.getConstructor().route,
+          entity.getId(false),
+        ]);
+        break;
+    }
   }
 
   /**

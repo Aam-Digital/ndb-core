@@ -443,7 +443,7 @@ export const defaultJsonConfig = {
           "components": [
             {
               "title": "",
-              "component": "ChildrenOverview",
+              "component": "ChildSchoolOverview",
             }
           ]
         },
@@ -644,7 +644,7 @@ export const defaultJsonConfig = {
           "components": [
             {
               "title": $localize`:Title inside a panel:School History`,
-              "component": "PreviousSchools",
+              "component": "ChildSchoolOverview",
               "config": {
                 "single": true,
                 "columns": [

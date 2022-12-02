@@ -56,7 +56,8 @@
         [records]="side.availableEntities"
         [columns]="side.columns"
         [editable]="false"
-        [showEntity]="side.selectMatch"
+        clickMode="none"
+        (rowClick)="side.selectMatch($event)"
         [filter]="side.filterObj"
       ></app-entity-subrecord>
     </div>

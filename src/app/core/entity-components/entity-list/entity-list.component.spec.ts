@@ -208,8 +208,6 @@ describe("EntityListComponent", () => {
     const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
     component.addNewClick.emit();
     expect(navigateSpy.calls.mostRecent().args[0]).toEqual(["new"]);
-    component.elementClick.emit(new Child("clickedId"));
-    expect(navigateSpy.calls.mostRecent().args[0]).toEqual(["clickedId"]);
   }));
 
   function createComponent() {
