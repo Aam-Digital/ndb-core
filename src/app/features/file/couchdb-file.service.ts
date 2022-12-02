@@ -12,7 +12,6 @@ import {
   catchError,
   concatMap,
   filter,
-  finalize,
   map,
   shareReplay,
 } from "rxjs/operators";
@@ -26,6 +25,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { ProgressComponent } from "./progress/progress.component";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { LoggingService } from "../../core/logging/logging.service";
+import { ObservableQueue } from "./observable-queue/observable-queue";
 
 /**
  * Stores the files in the CouchDB.
@@ -35,6 +35,7 @@ import { LoggingService } from "../../core/logging/logging.service";
 @Injectable()
 export class CouchdbFileService extends FileService {
   private attachmentsUrl = `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}-attachments`;
+  private requestQueue = new ObservableQueue();
 
   constructor(
     private http: HttpClient,
@@ -48,9 +49,17 @@ export class CouchdbFileService extends FileService {
   }
 
   uploadFile(file: File, entity: Entity, property: string): Observable<any> {
+    const obs = this.requestQueue.add(
+      this.runFileUpload(file, entity, property)
+    );
+    this.reportProgress($localize`Uploading "${file.name}"`, obs);
+    return obs;
+  }
+
+  private runFileUpload(file: File, entity: Entity, property: string) {
     const blob = new Blob([file]);
     const attachmentPath = `${this.attachmentsUrl}/${entity.getId(true)}`;
-    const obs = this.getAttachmentsDocument(attachmentPath).pipe(
+    return this.getAttachmentsDocument(attachmentPath).pipe(
       concatMap(({ _rev }) =>
         this.http.put(`${attachmentPath}/${property}?rev=${_rev}`, blob, {
           headers: { "Content-Type": file.type, "ngsw-bypass": "" },
@@ -58,15 +67,9 @@ export class CouchdbFileService extends FileService {
           observe: "events",
         })
       ),
-      finalize(() => {
-        entity[property] = file.name;
-        this.entityMapper.save(entity);
-      }),
       // prevent http request to be executed multiple times (whenever .subscribe is called)
       shareReplay()
     );
-    this.reportProgress($localize`Uploading "${file.name}"`, obs);
-    return obs;
   }
 
   private getAttachmentsDocument(
@@ -85,6 +88,10 @@ export class CouchdbFileService extends FileService {
   }
 
   removeFile(entity: Entity, property: string) {
+    return this.requestQueue.add(this.runFileRemoval(entity, property));
+  }
+
+  private runFileRemoval(entity: Entity, property: string) {
     const attachmentPath = `${this.attachmentsUrl}/${entity.getId(true)}`;
     return this.http.get<{ _rev: string }>(attachmentPath).pipe(
       concatMap(({ _rev }) =>
@@ -96,15 +103,15 @@ export class CouchdbFileService extends FileService {
         } else {
           throw err;
         }
-      }),
-      finalize(() => {
-        entity[property] = undefined;
-        this.entityMapper.save(entity);
       })
     );
   }
 
   removeAllFiles(entity: Entity): Observable<any> {
+    return this.requestQueue.add(this.runAllFilesRemoval(entity));
+  }
+
+  private runAllFilesRemoval(entity: Entity) {
     const attachmentPath = `${this.attachmentsUrl}/${entity.getId(true)}`;
     return this.http
       .get<{ _rev: string }>(attachmentPath)

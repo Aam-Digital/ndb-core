@@ -24,9 +24,8 @@ export class MockFileService extends FileService {
   }
 
   removeFile(entity: Entity, property: string): Observable<any> {
-    this.fileMap.delete(entity[property]);
-    entity[property] = undefined;
-    return of(this.entityMapper.save(entity));
+    this.fileMap.delete(entity + property);
+    return of({ ok: true });
   }
 
   removeAllFiles(entity: Entity): Observable<any> {
@@ -34,13 +33,12 @@ export class MockFileService extends FileService {
   }
 
   showFile(entity: Entity, property: string): void {
-    window.open(this.fileMap.get(entity[property]), "_blank");
+    window.open(this.fileMap.get(entity + property), "_blank");
   }
 
   uploadFile(file: File, entity: Entity, property: string): Observable<any> {
     const fileURL = URL.createObjectURL(file);
-    this.fileMap.set(file.name, fileURL);
-    entity[property] = file.name;
-    return of(this.entityMapper.save(entity));
+    this.fileMap.set(entity + property, fileURL);
+    return of({ ok: true });
   }
 }
