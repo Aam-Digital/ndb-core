@@ -11,21 +11,37 @@ import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { ConfigService } from "../../../core/config/config.service";
+import { of } from "rxjs";
 
 describe("MatchingEntitiesComponent", () => {
   let component: MatchingEntitiesComponent;
   let fixture: ComponentFixture<MatchingEntitiesComponent>;
 
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockActivatedRoute;
+
+  let testConfig: MatchingEntitiesConfig = {
+    columns: [],
+    onMatch: {
+      newEntityMatchPropertyLeft: "",
+      newEntityMatchPropertyRight: "",
+      newEntityType: "",
+    },
+    showMap: true,
+    matchActionLabel: "match test",
+    rightSide: { entityType: "Child" },
+    leftSide: { entityType: "School" },
+  };
 
   beforeEach(async () => {
     mockEntityMapper = jasmine.createSpyObj(["loadType", "save"]);
+    mockActivatedRoute = { data: null };
 
     await TestBed.configureTestingModule({
       imports: [MatchingEntitiesModule],
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper },
-        { provide: ActivatedRoute, useValue: { data: null } },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: FormDialogService, useValue: null },
         EntitySchemaService,
         { provide: ConfigService, useValue: null },
@@ -38,25 +54,31 @@ describe("MatchingEntitiesComponent", () => {
   });
 
   it("should create and map dynamic config to inputs", () => {
-    const testConfig: MatchingEntitiesConfig = {
-      columns: [],
-      onMatch: {
-        newEntityMatchPropertyLeft: "",
-        newEntityMatchPropertyRight: "",
-        newEntityType: "",
-      },
-      showMap: true,
-      matchActionLabel: "match test",
-      rightSide: { entityType: "Child" },
-      leftSide: { entityType: "School" },
-    };
-
     component.onInitFromDynamicConfig({
       entity: new Entity(),
       config: testConfig,
     });
 
     expect(component).toBeTruthy();
+    expect(component.columns).toEqual(testConfig.columns);
+    expect(component.onMatch).toEqual(testConfig.onMatch);
+    expect(component.showMap).toEqual(testConfig.showMap);
+    expect(component.matchActionLabel).toEqual(testConfig.matchActionLabel);
+    expect(component.rightSide.entityType).toEqual(
+      testConfig.rightSide.entityType
+    );
+    expect(component.leftSide.entityType).toEqual(
+      testConfig.leftSide.entityType
+    );
+  });
+
+  it("should create and map config from active route as alternative to dynamic config", async () => {
+    mockActivatedRoute.data = of({
+      entity: new Entity(),
+      config: testConfig,
+    });
+    await component.ngOnInit();
+
     expect(component.columns).toEqual(testConfig.columns);
     expect(component.onMatch).toEqual(testConfig.onMatch);
     expect(component.showMap).toEqual(testConfig.showMap);

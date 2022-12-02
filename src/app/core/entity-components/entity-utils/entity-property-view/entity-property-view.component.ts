@@ -13,7 +13,9 @@ import { EntitySchemaService } from "../../../entity/schema/entity-schema.servic
   styleUrls: ["./entity-property-view.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EntityPropertyViewComponent<E extends Entity> implements OnInit {
+export class EntityPropertyViewComponent<E extends Entity = Entity>
+  implements OnInit
+{
   @Input() entity: E;
   @Input() property: string;
 
@@ -21,7 +23,7 @@ export class EntityPropertyViewComponent<E extends Entity> implements OnInit {
    * (optional) component to be used to display this value.
    * If not explicitly provided, the component is inferred from the entity schema.
    */
-  @Input() component: string;
+  @Input() component?: string;
 
   @Input() showLabel: boolean = false;
   label: string;
