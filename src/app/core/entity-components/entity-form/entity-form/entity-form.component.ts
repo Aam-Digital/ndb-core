@@ -76,6 +76,7 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
   form: EntityForm<T>;
 
   private saveInProgress = false;
+  private initialFormValues: any;
 
   constructor(
     private entityFormService: EntityFormService,
@@ -145,11 +146,12 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
       flattenedFormFields,
       this.entity
     );
+    this.initialFormValues = this.form.getRawValue();
   }
 
   private resetForm(entity = this.entity) {
     // Patch form with values from the entity
-    this.form.patchValue(entity as any);
+    this.form.patchValue(Object.assign(this.initialFormValues, entity));
     this.form.markAsPristine();
   }
 
