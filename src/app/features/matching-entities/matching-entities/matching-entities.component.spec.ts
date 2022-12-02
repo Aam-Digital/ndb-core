@@ -19,7 +19,6 @@ describe("MatchingEntitiesComponent", () => {
     mockEntityMapper = jasmine.createSpyObj(["loadType", "save"]);
 
     await TestBed.configureTestingModule({
-      declarations: [MatchingEntitiesComponent],
       imports: [MatchingEntitiesModule],
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper },
