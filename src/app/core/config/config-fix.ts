@@ -954,8 +954,8 @@ export const defaultJsonConfig = {
   },
 
   "entity:Child": {
-    "label": "Child",
-    "labelPlural": "Children",
+    "label": $localize`:Label for child:Child`,
+    "labelPlural": $localize`:Plural label for child:Children`,
     "attributes": [
       {
         "name": "address",
