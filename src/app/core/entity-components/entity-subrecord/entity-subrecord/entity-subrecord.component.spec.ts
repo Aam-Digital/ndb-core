@@ -251,12 +251,12 @@ describe("EntitySubrecordComponent", () => {
     const child = new Child();
     component.newRecordFactory = () => child;
     component.columns = [{ id: "name" }, { id: "projectNumber" }];
-    component.showEntity = jasmine.createSpy("showEntity");
+    TestBed.inject(MatDialog).open = jasmine.createSpy("showEntity");
 
     component.create();
     tick();
 
-    expect(component.showEntity).toHaveBeenCalledWith(child);
+    expect(TestBed.inject(MatDialog).open).toHaveBeenCalled();
   }));
 
   it("should create a new entity and open a dialog on default when clicking create", () => {
@@ -281,12 +281,12 @@ describe("EntitySubrecordComponent", () => {
 
   it("should notify when an entity is clicked", (done) => {
     const child = new Child();
-    component.showEntity = (entity) => {
+    component.rowClick.subscribe((entity) => {
       expect(entity).toEqual(child);
       done();
-    };
+    });
 
-    component.rowClick({ record: child });
+    component.onRowClick({ record: child });
   });
 
   it("should add a new entity that was created after the initial loading to the table", () => {

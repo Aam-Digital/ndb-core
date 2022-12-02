@@ -18,7 +18,7 @@ describe("Scenario: Linking a child to a school - E2E test", function () {
 
     // get the Add School button and click on it
     cy.get(
-      "app-previous-schools.ng-star-inserted > app-entity-subrecord > .mat-table > thead > .mat-header-row > .cdk-column-actions > app-disabled-wrapper.ng-star-inserted > .mat-tooltip-trigger"
+      "app-child-school-overview.ng-star-inserted > app-entity-subrecord > .mat-table > thead > .mat-header-row > .cdk-column-actions > app-disabled-wrapper.ng-star-inserted > .mat-tooltip-trigger"
     )
       .should("be.visible")
       .click();
@@ -41,6 +41,9 @@ describe("Scenario: Linking a child to a school - E2E test", function () {
     cy.contains("div", "Students").should("be.visible").click();
 
     // Check if student is in the school students list
-    cy.contains("app-children-overview > app-entity-subrecord", "E2E Child");
+    cy.contains(
+      "app-child-school-overview > app-entity-subrecord",
+      "E2E Child"
+    );
   });
 });

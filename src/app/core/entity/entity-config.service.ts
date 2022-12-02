@@ -67,6 +67,7 @@ export class EntityConfigService {
     entityType.label = entityConfig.label ?? entityType.label;
     entityType.labelPlural = entityConfig.labelPlural ?? entityType.labelPlural;
     entityType.icon = (entityConfig.icon as IconName) ?? entityType.icon;
+    entityType.route = entityConfig.route ?? entityType.route;
   }
 
   /**
@@ -123,4 +124,9 @@ export interface EntityConfig {
    * icon used to visualize the entity type
    */
   icon?: string;
+
+  /**
+   * base route of views for this entity type
+   */
+  route?: string;
 }

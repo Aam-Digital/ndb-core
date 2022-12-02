@@ -46,7 +46,6 @@ import { AserComponent } from "./aser/aser-component/aser.component";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { HealthCheckupComponent } from "./health-checkup/health-checkup-component/health-checkup.component";
 import { MatDatepickerModule } from "@angular/material/datepicker";
-import { PreviousSchoolsComponent } from "./previous-schools/previous-schools.component";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
 import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirmation-dialog.module";
@@ -117,7 +116,6 @@ import { CommonComponentsModule } from "../../core/common-components/common-comp
     EducationalMaterialComponent,
     AserComponent,
     HealthCheckupComponent,
-    PreviousSchoolsComponent,
     BmiBlockComponent,
     ChildrenBmiDashboardComponent,
     BirthdayDashboardComponent,
@@ -136,7 +134,6 @@ export class ChildrenModule {
     BmiBlockComponent,
     EducationalMaterialComponent,
     HealthCheckupComponent,
-    PreviousSchoolsComponent,
     BirthdayDashboardComponent,
   ];
 
