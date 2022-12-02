@@ -199,7 +199,7 @@ export class MatchingEntitiesComponent
     this.sideDetails.forEach((s) => (s.availableEntities = undefined));
   }
 
-  applySelectedFilters(side: MatchingSide, $event: DataFilter<Entity>) {
-    side.filterObj = Object.assign({}, $event, side.prefilter ?? {});
+  applySelectedFilters(side: MatchingSide, filter: DataFilter<Entity>) {
+    side.filterObj = Object.assign({}, filter, side.prefilter ?? {});
   }
 }
