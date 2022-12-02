@@ -123,8 +123,6 @@ export class NotesRelatedToEntityComponent
       }
       this.filterService.alignEntityWithFilter(newNote, this.filter);
 
-      this.filterService.alignEntityWithFilter(newNote, this.filter);
-
       return newNote;
     };
   }
