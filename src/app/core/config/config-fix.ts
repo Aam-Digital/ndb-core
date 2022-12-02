@@ -675,8 +675,10 @@ export const defaultJsonConfig = {
                   ["motherTongue", "language"],
                   ["address", "address"],
                 ],
-                rightEntityType: School.ENTITY_TYPE,
-                rightFilters: [{ "id": "language" }],
+                rightSide: {
+                  entityType: School.ENTITY_TYPE,
+                  filters: [{ "id": "language" }]
+                },
                 onMatch: {
                   newEntityType: ChildSchoolRelation.ENTITY_TYPE,
                   newEntityMatchPropertyLeft: "childId",
@@ -1124,10 +1126,12 @@ export const defaultJsonConfig = {
         ["address", "address"],
         [null, "privateSchool"],
       ],
-      rightEntityType: School.ENTITY_TYPE,
-      rightPrefilter: { "privateSchool": true },
-      rightFilters: [{ "id": "language" }],
-      leftEntityType: Child.ENTITY_TYPE,
+      rightSide: {
+        entityType: School.ENTITY_TYPE,
+        prefilter: { "privateSchool": true },
+        filters: [{ "id": "language" }],
+      },
+      leftSide: { entityType: Child.ENTITY_TYPE },
       onMatch: {
         newEntityType: ChildSchoolRelation.ENTITY_TYPE,
         newEntityMatchPropertyLeft: "childId",

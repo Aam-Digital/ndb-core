@@ -47,8 +47,8 @@ describe("MatchingEntitiesComponent", () => {
       },
       showMap: true,
       matchActionLabel: "match test",
-      rightEntityType: "Child",
-      leftEntityType: "School",
+      rightSide: { entityType: "Child" },
+      leftSide: { entityType: "School" },
     };
 
     component.onInitFromDynamicConfig({
@@ -61,11 +61,15 @@ describe("MatchingEntitiesComponent", () => {
     expect(component.onMatch).toEqual(testConfig.onMatch);
     expect(component.showMap).toEqual(testConfig.showMap);
     expect(component.matchActionLabel).toEqual(testConfig.matchActionLabel);
-    expect(component.rightEntityType).toEqual(testConfig.rightEntityType);
-    expect(component.leftEntityType).toEqual(testConfig.leftEntityType);
+    expect(component.rightSide.entityType).toEqual(
+      testConfig.rightSide.entityType
+    );
+    expect(component.leftSide.entityType).toEqual(
+      testConfig.leftSide.entityType
+    );
   });
 
-  it("should assign config entity to the selected entity of the side not having a table with select options", () => {
+  it("should assign config entity to the selected entity of the side not having a table with select options", async () => {
     const testConfig: MatchingEntitiesConfig = {
       columns: [],
       onMatch: {
@@ -78,23 +82,34 @@ describe("MatchingEntitiesComponent", () => {
 
     component.onInitFromDynamicConfig({
       entity: testEntity,
-      config: Object.assign({ rightEntityType: "Child" }, testConfig),
+      config: Object.assign(
+        { rightSide: { entityType: "Child" } } as MatchingEntitiesConfig,
+        testConfig
+      ),
     });
+    await component.ngOnInit();
 
-    expect(component.leftEntitySelected).toEqual(testEntity);
+    expect(component.leftSide.selected).toEqual(testEntity);
 
     component.onInitFromDynamicConfig({
       entity: testEntity,
-      config: Object.assign({ leftEntityType: "Child" }, testConfig),
+      config: Object.assign(
+        {
+          leftSide: { entityType: "Child" },
+          rightSide: {},
+        } as MatchingEntitiesConfig,
+        testConfig
+      ),
     });
+    await component.ngOnInit();
 
-    expect(component.rightEntitySelected).toEqual(testEntity);
+    expect(component.rightSide.selected).toEqual(testEntity);
   });
 
   it("should init details for template including available entities table and its columns", async () => {
     const testEntity = new Entity();
-    component.leftEntitySelected = testEntity;
-    component.rightEntityType = "Child";
+    component.leftSide = { selected: testEntity };
+    component.rightSide = { entityType: "Child" };
     component.columns = [
       ["_id", "name"],
       ["_rev", "phone"],
@@ -128,8 +143,8 @@ describe("MatchingEntitiesComponent", () => {
     };
     const testEntity = new Entity();
     const matchedEntity = Child.create("matched child");
-    component.leftEntitySelected = testEntity;
-    component.rightEntitySelected = matchedEntity;
+    component.leftSide = { selected: testEntity };
+    component.rightSide = { selected: matchedEntity };
     component.columns = [["_id", "name"]];
 
     await component.ngOnInit();

@@ -3,6 +3,7 @@ import {
   ColumnConfig,
   DataFilter,
 } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { Entity, EntityConstructor } from "../../../core/entity/model/entity";
 
 /**
  * Config to be defined to set up a MatchingEntitiesComponent.
@@ -24,27 +25,32 @@ export interface MatchingEntitiesConfig {
   /** details of what is created when matching two entities */
   onMatch: NewMatchAction;
 
-  /**
-   * entity type on the left side of matching, used to load a list of available entities for manual selection
-   */
-  leftEntityType?: string;
+  /** details of entities on this side of the matching view */
+  leftSide?: MatchingSideConfig;
 
-  /** UI filter elements displayed for users to filter available entities */
-  leftFilters?: FilterConfig[];
+  /** details of entities on this side of the matching view */
+  rightSide?: MatchingSideConfig;
+}
+
+export interface MatchingSideConfig {
+  /**
+   * entity type of matching, used to load a list of available entities for manual selection
+   */
+  entityType?: EntityConstructor | string;
+
+  /**
+   * selected entity for the matching
+   */
+  selected?: Entity;
 
   /** fixed pre-filters applied to remove some entities from the list of available entities */
-  leftPrefilter?: DataFilter<any>;
-
-  /**
-   * entity type on the right side of matching, used to load a list of available entities for manual selection
-   */
-  rightEntityType?: string;
+  prefilter?: DataFilter<Entity>;
 
   /** UI filter elements displayed for users to filter available entities */
-  rightFilters?: FilterConfig[];
+  availableFilters?: FilterConfig[];
 
-  /** fixed pre-filters applied to remove some entities from the list of available entities */
-  rightPrefilter?: DataFilter<any>;
+  /** columns of the available entities table. Usually inferred from matching columns of the component */
+  columns?: string[];
 }
 
 export interface NewMatchAction {

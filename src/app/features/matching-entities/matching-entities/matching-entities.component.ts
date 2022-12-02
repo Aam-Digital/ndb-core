@@ -8,26 +8,21 @@ import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import {
   MatchingEntitiesConfig,
+  MatchingSideConfig,
   NewMatchAction,
 } from "./matching-entities-config";
 import { DataFilter } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { FilterConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { RouteTarget } from "../../../app.routing";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 
-interface MatchingSide {
-  entityType: EntityConstructor;
-  selected?: Entity;
-  availableEntities?: Entity[];
-  prefilter?: DataFilter<Entity>;
-  availableFilters?: FilterConfig[];
-  columns: string[];
-  selectMatch: (e: Entity) => void;
-
+interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
   filterObj?: DataFilter<Entity>;
+  availableEntities?: Entity[];
+  selectMatch?: (e) => void;
+  entityType: EntityConstructor;
 }
 
 @RouteTarget("MatchingEntities")
@@ -40,26 +35,12 @@ interface MatchingSide {
 export class MatchingEntitiesComponent
   implements OnInit, OnInitDynamicComponent
 {
-  /**
-   * Entity type of the left side of the matching
-   */
-  @Input() leftEntityType: EntityConstructor | string;
-  /** fixed pre-filters applied to remove some entities from the list of available entities */
-  @Input() leftPrefilter?: DataFilter<any>;
-  @Input() leftFilters: FilterConfig[] = [];
-  @Input() leftEntitySelected: Entity;
+  @Input() entity: Entity;
 
-  sideDetails: MatchingSide[] = [];
+  @Input() leftSide: MatchingSide | MatchingSideConfig = {};
+  @Input() rightSide: MatchingSide | MatchingSideConfig = {};
+
   columnsToDisplay = [];
-
-  /**
-   * Entity type of the right side of the matching
-   */
-  @Input() rightEntityType: EntityConstructor | string;
-  /** fixed pre-filters applied to remove some entities from the list of available entities */
-  @Input() rightPrefilter?: DataFilter<any>;
-  @Input() rightFilters: FilterConfig[] = [];
-  @Input() rightEntitySelected: Entity;
 
   /**
    * Column mapping of property pairs of left and right entity that should be compared side by side.
@@ -76,7 +57,10 @@ export class MatchingEntitiesComponent
 
   @ViewChild("matchComparison", { static: true })
   matchComparisonElement: ElementRef;
+
   lockedMatching: boolean;
+
+  sideDetails: MatchingSide[];
 
   constructor(
     private route: ActivatedRoute,
@@ -87,7 +71,6 @@ export class MatchingEntitiesComponent
 
   // TODO: fill selection on hover already?
   // TODO: display property labels in comparison table?
-  // TODO: refactor to simplify code (later) --> create an app-entity-property-view component that handles the finding of viewComponent from schema
 
   onInitFromDynamicConfig(config: PanelConfig<MatchingEntitiesConfig>) {
     this.initConfig(config.config, config.entity);
@@ -101,8 +84,10 @@ export class MatchingEntitiesComponent
       this.initConfig(data.config);
     });
 
-    await this.init("left");
-    await this.init("right");
+    this.sideDetails = [
+      await this.initSideDetails(this.leftSide, 0),
+      await this.initSideDetails(this.rightSide, 1),
+    ];
     this.columnsToDisplay = ["side-0", "side-1"];
   }
 
@@ -112,49 +97,47 @@ export class MatchingEntitiesComponent
     this.matchActionLabel = config.matchActionLabel ?? this.matchActionLabel;
     this.onMatch = config.onMatch ?? this.onMatch;
 
-    this.leftEntityType = config.leftEntityType ?? this.leftEntityType;
-    this.leftFilters = config.leftFilters ?? this.leftFilters;
-    this.leftPrefilter = config.leftPrefilter ?? this.leftPrefilter;
-    this.rightEntityType = config.rightEntityType ?? this.rightEntityType;
-    this.rightFilters = config.rightFilters ?? this.rightFilters;
-    this.rightPrefilter = config.rightPrefilter ?? this.rightPrefilter;
+    this.leftSide = config.leftSide ?? this.leftSide;
+    this.rightSide = config.rightSide ?? this.rightSide;
 
-    if (!config.leftEntityType) {
-      this.leftEntitySelected = entity;
-    }
-    if (!config.rightEntityType) {
-      this.rightEntitySelected = entity;
-    }
+    this.entity = entity;
   }
 
-  private async init(side: "left" | "right") {
-    const sideIndex = side === "right" ? 1 : 0;
+  private async initSideDetails(
+    side: MatchingSideConfig,
+    sideIndex: number
+  ): Promise<MatchingSide> {
+    const newSide = side as MatchingSide; // we are transforming it into this type here
 
-    let entityType = this[side + "EntityType"];
+    if (!newSide.entityType) {
+      newSide.selected = newSide.selected ?? this.entity;
+    }
+
+    let entityType = newSide.entityType;
     if (typeof entityType === "string") {
       entityType = this.entityRegistry.get(entityType);
     }
+    newSide.entityType = entityType ?? newSide.selected?.getConstructor();
 
-    const newSideDetails: MatchingSide = {
-      entityType: entityType ?? this[side + "EntitySelected"]?.getConstructor(),
-      selected: this[side + "EntitySelected"],
-      columns: this.columns?.map((p) => p[sideIndex]).filter((c) => !!c),
-      selectMatch: (e) => {
-        this.highlightSelectedRow(e, newSideDetails.selected);
-        newSideDetails.selected = e;
-        this.matchComparisonElement.nativeElement.scrollIntoView();
-      },
+    newSide.columns =
+      newSide.columns ??
+      this.columns?.map((p) => p[sideIndex]).filter((c) => !!c);
+
+    newSide.selectMatch = (e) => {
+      this.highlightSelectedRow(e, newSide.selected);
+      newSide.selected = e;
+      this.matchComparisonElement.nativeElement.scrollIntoView();
     };
 
-    if (!newSideDetails.selected) {
-      newSideDetails.availableEntities = await this.entityMapper.loadType(
-        newSideDetails.entityType
+    if (!newSide.selected && newSide.entityType) {
+      newSide.availableEntities = await this.entityMapper.loadType(
+        newSide.entityType
       );
-      newSideDetails.availableFilters = this[side + "Filters"];
-      newSideDetails.prefilter = this[side + "Prefilter"];
+      newSide.availableFilters = newSide.availableFilters ?? [];
+      this.applySelectedFilters(newSide, {});
     }
 
-    this.sideDetails[sideIndex] = newSideDetails;
+    return newSide;
   }
 
   private highlightSelectedRow(newSelectedEntity, previousSelectedEntity) {
@@ -170,20 +153,18 @@ export class MatchingEntitiesComponent
     const newMatchEntity = new (this.entityRegistry.get(
       this.onMatch.newEntityType
     ))();
-    const selectedL = this.sideDetails[0].selected;
-    const selectedR = this.sideDetails[1].selected;
 
     newMatchEntity[this.onMatch.newEntityMatchPropertyLeft] =
-      selectedL.getId(false);
+      this.leftSide.selected.getId(false);
     newMatchEntity[this.onMatch.newEntityMatchPropertyRight] =
-      selectedR.getId(false);
+      this.rightSide.selected.getId(false);
 
     // best guess properties (if they do not exist on the specific entity, the values will be discarded during save
     newMatchEntity["date"] = new Date();
     newMatchEntity["start"] = new Date();
     newMatchEntity["name"] = `${
       newMatchEntity.getConstructor().label
-    } ${selectedL.toString()} - ${selectedR.toString()}`;
+    } ${this.leftSide.selected.toString()} - ${this.rightSide.selected.toString()}`;
 
     if (this.onMatch.columnsToReview) {
       this.formDialog

@@ -14,7 +14,7 @@
 
       <td mat-cell *matCellDef="let property">
         <app-entity-property-view
-          *ngIf="side.selected?.[property[i]] && side.entityType.schema.get(property[i]); else placeholder"
+          *ngIf="side.selected?.[property[i]]; else placeholder"
           [entity]="side.selected" [property]="property[i]"
         ></app-entity-property-view>
 
@@ -34,7 +34,7 @@
   <div *ngIf="showMap" class="flex-grow map-placeholder">Map</div>
   <button mat-stroked-button color="accent" style="width: 100%"
           (click)="createMatch()"
-          [disabled]="!sideDetails[0]?.selected || !sideDetails[1]?.selected || lockedMatching">
+          [disabled]="!leftSide?.selected || !rightSide?.selected || lockedMatching">
     {{ matchActionLabel }}
   </button>
 </div>
