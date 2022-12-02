@@ -1,6 +1,6 @@
-import { AfterViewInit, Component, EventEmitter, Output } from "@angular/core";
+import { AfterViewInit, Component, Input, Output } from "@angular/core";
 import * as L from "leaflet";
-import { from, Subject } from "rxjs";
+import { Subject } from "rxjs";
 import { debounceTime } from "rxjs/operators";
 
 const iconRetinaUrl = "assets/marker-icon-2x.png";
@@ -24,23 +24,32 @@ L.Marker.prototype.options.icon = iconDefault;
   styleUrls: ["./map.component.scss"],
 })
 export class MapComponent implements AfterViewInit {
-  map: L.Map;
-  marker: L.Marker = L.marker([52.4790412, 13.4319106]);
+  @Input() set marked(cord: L.LatLng) {
+    if (!this.marker) {
+      this.marker = L.marker(cord);
+      this.marker.addTo(this.map);
+    } else {
+      this.marker.setLatLng(cord);
+    }
+    this.map.flyTo(cord);
+  }
+
+  private map: L.Map;
+  private marker: L.Marker;
   private clickStream = new Subject<L.LatLng>();
   // TODO filter out double clicks
   @Output() mapClick = this.clickStream.pipe(debounceTime(200));
 
-  constructor() {
-    this.mapClick.subscribe((res) => console.log("clicked", res));
+  ngAfterViewInit(): void {
+    this.initMap();
   }
 
-  ngAfterViewInit(): void {
+  private initMap() {
     this.map = L.map("map", {
+      // TODO should be configurable
       center: [52.4790412, 13.4319106],
       zoom: 14,
     });
-    // this.marker.setLatLng(res.latlng);
-    // this.map.flyTo(res.latlng);
     this.map.addEventListener("click", (res) =>
       this.clickStream.next(res.latlng)
     );
@@ -55,7 +64,5 @@ export class MapComponent implements AfterViewInit {
       }
     );
     tiles.addTo(this.map);
-
-    this.marker.addTo(this.map);
   }
 }
