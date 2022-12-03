@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, Input, Output } from "@angular/core";
 import * as L from "leaflet";
-import { Subject } from "rxjs";
-import { debounceTime } from "rxjs/operators";
+import { Observable, Subject } from "rxjs";
+import { debounceTime, map } from "rxjs/operators";
 import { Coordinates } from "../coordinates";
 
 const iconRetinaUrl = "assets/marker-icon-2x.png";
@@ -43,7 +43,10 @@ export class MapComponent implements AfterViewInit {
   private marker: L.Marker;
   private clickStream = new Subject<L.LatLng>();
   // TODO filter out double clicks
-  @Output() mapClick = this.clickStream.pipe(debounceTime(200));
+  @Output() mapClick: Observable<Coordinates> = this.clickStream.pipe(
+    debounceTime(200),
+    map((c) => ({ lat: c.lat, lon: c.lng }))
+  );
 
   ngAfterViewInit() {
     this.initMap();
