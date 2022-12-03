@@ -3,26 +3,9 @@
 @use "@angular/material" as mat;
 
 .table-action-button {
-  font-size: 115%;
-  color: mat.get-color-from-palette(theme.$accent);
   border: 1px solid lightgrey;
   border-radius: 4px;
   margin: sizes.$small;
-  cursor: pointer;
-  background-color: initial;
-
-  &:hover {
-    background-color: mat.get-color-from-palette(mat.$grey-palette, 50);
-  }
-
-  padding: 4px 8px;
-
-  // CSS Magic that ensures the button is centered in all browsers
-
-  > fa-icon {
-    display: grid;
-    font-size: 1.25em;
-  }
 }
 
 .mat-column-actions {
