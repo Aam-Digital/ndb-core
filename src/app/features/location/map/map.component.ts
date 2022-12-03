@@ -26,6 +26,9 @@ L.Marker.prototype.options.icon = iconDefault;
 })
 export class MapComponent implements AfterViewInit {
   @Input() set marked(coordinates: Coordinates) {
+    if (!coordinates) {
+      return;
+    }
     const latLon = new L.LatLng(coordinates.lat, coordinates.lon);
     if (!this.marker) {
       this.marker = L.marker(latLon);
