@@ -32,11 +32,15 @@ export class MapComponent implements AfterViewInit {
     const latLon = new L.LatLng(coordinates.lat, coordinates.lon);
     if (!this.marker) {
       this.marker = L.marker(latLon);
-      this.marker.addTo(this.map);
+      if (this.map) {
+        this.marker.addTo(this.map);
+      }
     } else {
       this.marker.setLatLng(latLon);
     }
-    this.map.flyTo(latLon);
+    if (this.map) {
+      this.map.flyTo(latLon);
+    }
   }
 
   private map: L.Map;
@@ -72,5 +76,10 @@ export class MapComponent implements AfterViewInit {
       }
     );
     tiles.addTo(this.map);
+
+    if (this.marker) {
+      this.marker.addTo(this.map);
+      this.map.flyTo(this.marker.getLatLng());
+    }
   }
 }

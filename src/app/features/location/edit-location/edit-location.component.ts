@@ -4,7 +4,7 @@ import {
   EditComponent,
   EditPropertyConfig,
 } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
-import { concatMap, Observable, Subject } from "rxjs";
+import { concatMap, Subject } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { debounceTime, filter, tap } from "rxjs/operators";
 import { MatDialog } from "@angular/material/dialog";
@@ -23,7 +23,7 @@ interface GeoLocation extends Coordinates {
 })
 export class EditLocationComponent extends EditComponent<GeoLocation> {
   readonly remoteUrl = "https://nominatim.openstreetmap.org/search";
-  filteredOptions: Observable<GeoLocation[]>;
+  filteredOptions = new Subject<GeoLocation[]>();
   inputStream = new Subject<string>();
   lastSearch: string;
   loading = false;
@@ -37,13 +37,15 @@ export class EditLocationComponent extends EditComponent<GeoLocation> {
 
   onInitFromDynamicConfig(config: EditPropertyConfig<GeoLocation>) {
     super.onInitFromDynamicConfig(config);
-    this.filteredOptions = this.inputStream.pipe(
-      filter((input) => this.isRelevantInput(input)),
-      debounceTime(200),
-      tap(() => (this.loading = true)),
-      debounceTime(1000),
-      concatMap((res) => this.getGeoLookupResult(res))
-    );
+    this.inputStream
+      .pipe(
+        filter((input) => this.isRelevantInput(input)),
+        debounceTime(200),
+        tap(() => (this.loading = true)),
+        debounceTime(1000),
+        concatMap((res) => this.getGeoLookupResult(res))
+      )
+      .subscribe((res) => this.filteredOptions.next(res));
   }
 
   private isRelevantInput<T>(input: T | (T & string)) {
@@ -57,6 +59,7 @@ export class EditLocationComponent extends EditComponent<GeoLocation> {
 
   selectLocation(selected: GeoLocation) {
     this.formControl.setValue(selected);
+    this.filteredOptions.next([]);
   }
 
   triggerInputUpdate() {
@@ -89,7 +92,6 @@ export class EditLocationComponent extends EditComponent<GeoLocation> {
   }
 
   openMap() {
-    console.log("selected", this.formControl.value);
     const ref = this.dialog.open(MapPopupComponent, {
       width: "90%",
       height: "90%",
