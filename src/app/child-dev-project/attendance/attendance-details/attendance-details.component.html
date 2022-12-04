@@ -112,7 +112,8 @@
     <app-entity-subrecord
       [records]="entity.events"
       [columns]="eventsColumns"
-      [showEntity]="showEventDetails.bind(this)"
+      clickMode="none"
+      (rowClick)="showEventDetails($event)"
       [editable]="false"
     >
     </app-entity-subrecord>

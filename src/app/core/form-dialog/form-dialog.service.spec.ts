@@ -12,6 +12,7 @@ import { Angulartics2Module } from "angulartics2";
 import { RouterTestingModule } from "@angular/router/testing";
 import { OnInitDynamicComponent } from "../view/dynamic-components/on-init-dynamic-component.interface";
 import { EntityAbility } from "../permissions/ability/entity-ability";
+import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 
 describe("FormDialogService", () => {
   let service: FormDialogService;
@@ -35,6 +36,7 @@ describe("FormDialogService", () => {
           provide: EntityAbility,
           useValue: jasmine.createSpyObj(["cannot"]),
         },
+        EntitySchemaService,
       ],
     });
 

@@ -11,15 +11,15 @@ import {
 
 describe("MockFileService", () => {
   let service: MockFileService;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
 
   beforeEach(() => {
-    mockEntityMapper = jasmine.createSpyObj(["save", "receiveUpdates"]);
-    mockEntityMapper.receiveUpdates.and.returnValue(NEVER);
     TestBed.configureTestingModule({
       providers: [
         MockFileService,
-        { provide: EntityMapperService, useValue: mockEntityMapper },
+        {
+          provide: EntityMapperService,
+          useValue: { receiveUpdates: () => NEVER },
+        },
         { provide: EntityRegistry, useValue: entityRegistry },
       ],
     });
@@ -39,9 +39,7 @@ describe("MockFileService", () => {
 
     await firstValueFrom(service.uploadFile(file, entity, prop));
 
-    expect(entity[prop]).toBe(file.name);
     expect(URL.createObjectURL).toHaveBeenCalledWith(file);
-    expect(mockEntityMapper.save).toHaveBeenCalledWith(entity);
 
     service.showFile(entity, prop);
 
@@ -51,11 +49,9 @@ describe("MockFileService", () => {
   it("should remove a file from a entity", async () => {
     const entity = new Entity();
     const prop = "testProp";
-    entity[prop] = "test.file";
 
-    await firstValueFrom(service.removeFile(entity, prop));
+    const res = await firstValueFrom(service.removeFile(entity, prop));
 
-    expect(entity[prop]).toBe(undefined);
-    expect(mockEntityMapper.save).toHaveBeenCalledWith(entity);
+    expect(res).toEqual({ ok: true });
   });
 });

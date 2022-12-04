@@ -9,7 +9,14 @@ import {
   HttpStatusCode,
 } from "@angular/common/http";
 import { MatDialog } from "@angular/material/dialog";
-import { EMPTY, of, Subject, throwError } from "rxjs";
+import {
+  BehaviorSubject,
+  EMPTY,
+  firstValueFrom,
+  of,
+  Subject,
+  throwError,
+} from "rxjs";
 import { ShowFileComponent } from "./show-file/show-file.component";
 import { Entity } from "../../core/entity/model/entity";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
@@ -26,7 +33,6 @@ describe("CouchdbFileService", () => {
   let service: CouchdbFileService;
   let mockHttp: jasmine.SpyObj<HttpClient>;
   let mockDialog: jasmine.SpyObj<MatDialog>;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let mockSnackbar: jasmine.SpyObj<MatSnackBar>;
   let dismiss: jasmine.Spy;
   let updates: Subject<UpdatedEntity<Entity>>;
@@ -36,8 +42,6 @@ describe("CouchdbFileService", () => {
     mockHttp = jasmine.createSpyObj(["get", "put", "delete"]);
     mockDialog = jasmine.createSpyObj(["open"]);
     updates = new Subject();
-    mockEntityMapper = jasmine.createSpyObj(["save", "receiveUpdates"]);
-    mockEntityMapper.receiveUpdates.and.returnValue(updates);
     mockSnackbar = jasmine.createSpyObj(["openFromComponent"]);
     dismiss = jasmine.createSpy();
     mockSnackbar.openFromComponent.and.returnValue({ dismiss } as any);
@@ -49,7 +53,10 @@ describe("CouchdbFileService", () => {
         { provide: HttpClient, useValue: mockHttp },
         { provide: MatSnackBar, useValue: mockSnackbar },
         { provide: MatDialog, useValue: mockDialog },
-        { provide: EntityMapperService, useValue: mockEntityMapper },
+        {
+          provide: EntityMapperService,
+          useValue: { receiveUpdates: () => updates },
+        },
         { provide: EntityRegistry, useValue: entityRegistry },
       ],
     });
@@ -60,7 +67,7 @@ describe("CouchdbFileService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should add a attachment to a existing document and update the entity", () => {
+  it("should add a attachment to a existing document", () => {
     mockHttp.get.and.returnValue(of({ _rev: "test_rev" }));
     mockHttp.put.and.returnValue(of({ ok: true }));
     const file = { type: "image/png", name: "file.name" } as File;
@@ -78,8 +85,6 @@ describe("CouchdbFileService", () => {
       jasmine.anything(),
       jasmine.anything()
     );
-    expect(entity["testProp"]).toBe("file.name");
-    expect(mockEntityMapper.save).toHaveBeenCalledWith(entity);
   });
 
   it("should create attachment document if it does not exist yet", (done) => {
@@ -102,8 +107,6 @@ describe("CouchdbFileService", () => {
         jasmine.anything(),
         jasmine.anything()
       );
-      expect(entity["testProp"]).toBe("file.name");
-      expect(mockEntityMapper.save).toHaveBeenCalledWith(entity);
       done();
     });
   });
@@ -124,12 +127,10 @@ describe("CouchdbFileService", () => {
     });
   });
 
-  it("should remove a file using the latest rev and update the entity", () => {
+  it("should remove a file using the latest rev", () => {
     mockHttp.get.and.returnValue(of({ _rev: "test_rev" }));
     mockHttp.delete.and.returnValue(of({ ok: true }));
     const entity = new Entity("testId");
-    const prop = "testProp";
-    entity[prop] = "test.file";
 
     service.removeFile(entity, "testProp").subscribe();
 
@@ -141,8 +142,6 @@ describe("CouchdbFileService", () => {
         `${attachmentUrlPrefix}/Entity:testId/testProp?rev=test_rev`
       )
     );
-    expect(entity[prop]).toBe(undefined);
-    expect(mockEntityMapper.save).toHaveBeenCalledWith(entity);
   });
 
   it("should show progress while downloading a file", () => {
@@ -196,19 +195,84 @@ describe("CouchdbFileService", () => {
   }));
 
   it("should not fail if to-be-removed file reference could not be found", () => {
-    const entity = new Entity();
-    entity["testProp"] = "some.file";
     mockHttp.get.and.returnValue(
       throwError(
         () => new HttpErrorResponse({ status: HttpStatusCode.NotFound })
       )
     );
 
-    service.removeFile(entity, "testProp").subscribe({
-      error: () => fail("Removing file should not fail"),
-    });
+    return expectAsync(
+      firstValueFrom(service.removeFile(new Entity(), "testProp"))
+    ).toBeResolved();
+  });
 
-    expect(entity["testProp"]).toBeUndefined();
-    expect(mockEntityMapper.save).toHaveBeenCalledWith(entity);
+  it("should wait for previous request to finish before starting a new one", () => {
+    const firstPut = new BehaviorSubject({ ok: true });
+    const secondPut = new BehaviorSubject({ ok: true });
+    const thirdPut = new BehaviorSubject({ ok: true });
+    const file1 = { type: "image/png", name: "file1.name" } as File;
+    const file2 = { type: "image/png", name: "file2.name" } as File;
+    const file3 = { type: "image/png", name: "file3.name" } as File;
+    const entity = new Entity("testId");
+    mockHttp.get.and.returnValues(
+      of({ _rev: "1-rev" }),
+      of({ _rev: "2-rev" }),
+      of({ _rev: "3-rev" })
+    );
+    mockHttp.put.and.returnValues(firstPut, secondPut, thirdPut);
+
+    let file1Done = false;
+    let file2Done = false;
+    let file3Done = false;
+    service
+      .uploadFile(file1, entity, "prop1")
+      .subscribe({ complete: () => (file1Done = true) });
+    service
+      .uploadFile(file2, entity, "prop2")
+      .subscribe({ complete: () => (file2Done = true) });
+    service
+      .uploadFile(file3, entity, "prop3")
+      .subscribe({ complete: () => (file3Done = true) });
+
+    expect(firstPut.observed).toBeTrue();
+    expect(secondPut.observed).toBeFalse();
+    expect(mockHttp.put).toHaveBeenCalledTimes(1);
+    expect(mockHttp.put).toHaveBeenCalledWith(
+      jasmine.stringContaining(
+        `${attachmentUrlPrefix}/Entity:testId/prop1?rev=1-rev`
+      ),
+      jasmine.anything(),
+      jasmine.anything()
+    );
+
+    firstPut.complete();
+
+    expect(file1Done).toBeTrue();
+    expect(file2Done).toBeFalse();
+    expect(file3Done).toBeFalse();
+    expect(secondPut.observed).toBeTrue();
+    expect(thirdPut.observed).toBeFalse();
+    expect(mockHttp.put).toHaveBeenCalledTimes(2);
+    expect(mockHttp.put).toHaveBeenCalledWith(
+      jasmine.stringContaining(
+        `${attachmentUrlPrefix}/Entity:testId/prop2?rev=2-rev`
+      ),
+      jasmine.anything(),
+      jasmine.anything()
+    );
+
+    secondPut.complete();
+
+    expect(file2Done).toBeTrue();
+    expect(file3Done).toBeFalse();
+    expect(thirdPut.observed).toBeTrue();
+    expect(mockHttp.put).toHaveBeenCalledTimes(3);
+    expect(mockHttp.put).toHaveBeenCalledWith(
+      jasmine.stringContaining(
+        `${attachmentUrlPrefix}/Entity:testId/prop3?rev=3-rev`
+      ),
+      jasmine.anything(),
+      jasmine.anything()
+    );
   });
 });

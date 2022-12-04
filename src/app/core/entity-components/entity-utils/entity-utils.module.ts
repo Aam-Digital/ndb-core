@@ -36,6 +36,7 @@ import { EntitySubrecordModule } from "../entity-subrecord/entity-subrecord.modu
 import { ErrorHintComponent } from "./error-hint/error-hint.component";
 import { EditTextWithAutocompleteComponent } from "./dynamic-form-components/edit-text-with-autocomplete/edit-text-with-autocomplete.component";
 import { DisplayAgeComponent } from "./view-components/display-age/display-age.component";
+import { EntityPropertyViewComponent } from "./entity-property-view/entity-property-view.component";
 
 @NgModule({
   declarations: [
@@ -61,6 +62,7 @@ import { DisplayAgeComponent } from "./view-components/display-age/display-age.c
     ErrorHintComponent,
     EditTextWithAutocompleteComponent,
     DisplayAgeComponent,
+    EntityPropertyViewComponent,
   ],
   imports: [
     CommonModule,
@@ -84,6 +86,7 @@ import { DisplayAgeComponent } from "./view-components/display-age/display-age.c
     DisplayEntityArrayComponent,
     EntitySelectComponent,
     EditSingleEntityComponent,
+    EntityPropertyViewComponent,
   ],
 })
 export class EntityUtilsModule {
