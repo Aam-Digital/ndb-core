@@ -5,15 +5,10 @@ import {
   EditPropertyConfig,
 } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
 import { concatMap, Subject } from "rxjs";
-import { HttpClient } from "@angular/common/http";
 import { debounceTime, filter, tap } from "rxjs/operators";
 import { MatDialog } from "@angular/material/dialog";
 import { MapPopupComponent } from "../map-popup/map-popup.component";
-import { Coordinates } from "../coordinates";
-
-interface GeoLocation extends Coordinates {
-  display_name: string;
-}
+import { GeoResult, GeoService } from "../geo.service";
 
 @DynamicComponent("EditLocation")
 @Component({
@@ -21,9 +16,8 @@ interface GeoLocation extends Coordinates {
   templateUrl: "./edit-location.component.html",
   styleUrls: ["./edit-location.component.scss"],
 })
-export class EditLocationComponent extends EditComponent<GeoLocation> {
-  readonly remoteUrl = "https://nominatim.openstreetmap.org/search";
-  filteredOptions = new Subject<GeoLocation[]>();
+export class EditLocationComponent extends EditComponent<GeoResult> {
+  filteredOptions = new Subject<GeoResult[]>();
   inputStream = new Subject<string>();
   lastSearch: string;
   loading = false;
@@ -31,11 +25,11 @@ export class EditLocationComponent extends EditComponent<GeoLocation> {
 
   @ViewChild("inputElement") input: ElementRef<HTMLInputElement>;
 
-  constructor(private http: HttpClient, private dialog: MatDialog) {
+  constructor(private geo: GeoService, private dialog: MatDialog) {
     super();
   }
 
-  onInitFromDynamicConfig(config: EditPropertyConfig<GeoLocation>) {
+  onInitFromDynamicConfig(config: EditPropertyConfig<GeoResult>) {
     super.onInitFromDynamicConfig(config);
     this.inputStream
       .pipe(
@@ -57,7 +51,7 @@ export class EditLocationComponent extends EditComponent<GeoLocation> {
     );
   }
 
-  selectLocation(selected: GeoLocation) {
+  selectLocation(selected: GeoResult) {
     this.formControl.setValue(selected);
     this.filteredOptions.next([]);
   }
@@ -73,22 +67,13 @@ export class EditLocationComponent extends EditComponent<GeoLocation> {
   }
 
   private getGeoLookupResult(searchTerm) {
-    return this.http
-      .get<GeoLocation[]>(this.remoteUrl, {
-        params: {
-          q: searchTerm,
-          format: "json",
-          // TODO make this configurable
-          countrycodes: "de",
-        },
+    return this.geo.lookup(searchTerm).pipe(
+      tap((res) => {
+        this.lastSearch = searchTerm;
+        this.loading = false;
+        this.nothingFound = res.length === 0;
       })
-      .pipe(
-        tap((res) => {
-          this.lastSearch = searchTerm;
-          this.loading = false;
-          this.nothingFound = res.length === 0;
-        })
-      );
+    );
   }
 
   openMap() {
@@ -97,8 +82,13 @@ export class EditLocationComponent extends EditComponent<GeoLocation> {
       height: "90%",
       data: this.formControl.value,
     });
-    ref.afterClosed().subscribe((res) => {
-      console.log("res", res);
-    });
+    ref
+      .afterClosed()
+      .pipe(
+        filter((res) => !!res),
+        concatMap((res) => this.geo.reverseLookup(res))
+      )
+      // TODO maybe remove name of building (e.g. CRCLR House)
+      .subscribe((res) => this.formControl.setValue(res));
   }
 }
