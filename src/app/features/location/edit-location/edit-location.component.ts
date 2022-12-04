@@ -25,7 +25,7 @@ export class EditLocationComponent extends EditComponent<GeoResult> {
 
   @ViewChild("inputElement") input: ElementRef<HTMLInputElement>;
 
-  constructor(private geo: GeoService, private dialog: MatDialog) {
+  constructor(private location: GeoService, private dialog: MatDialog) {
     super();
   }
 
@@ -67,7 +67,7 @@ export class EditLocationComponent extends EditComponent<GeoResult> {
   }
 
   private getGeoLookupResult(searchTerm) {
-    return this.geo.lookup(searchTerm).pipe(
+    return this.location.lookup(searchTerm).pipe(
       tap((res) => {
         this.lastSearch = searchTerm;
         this.loading = false;
@@ -86,7 +86,7 @@ export class EditLocationComponent extends EditComponent<GeoResult> {
       .afterClosed()
       .pipe(
         filter((res) => !!res),
-        concatMap((res) => this.geo.reverseLookup(res))
+        concatMap((res) => this.location.reverseLookup(res))
       )
       // TODO maybe remove name of building (e.g. CRCLR House)
       .subscribe((res) => this.formControl.setValue(res));
