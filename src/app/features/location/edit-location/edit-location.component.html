@@ -9,6 +9,7 @@
     [value]="formControl.value?.display_name"
     (keyup)="triggerInputUpdate()"
     (focusin)="triggerInputUpdate()"
+    (focusout)="inputElement.value = formControl.value.display_name"
     [matAutocomplete]="auto"
   >
   <mat-hint align="end">

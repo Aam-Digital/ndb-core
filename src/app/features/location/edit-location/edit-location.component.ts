@@ -5,7 +5,7 @@ import {
   EditPropertyConfig,
 } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
 import { concatMap, Subject } from "rxjs";
-import { debounceTime, filter, tap } from "rxjs/operators";
+import { debounceTime, filter, map, tap } from "rxjs/operators";
 import { MatDialog } from "@angular/material/dialog";
 import { MapPopupComponent } from "../map-popup/map-popup.component";
 import { GeoResult, GeoService } from "../geo.service";
@@ -18,12 +18,12 @@ import { GeoResult, GeoService } from "../geo.service";
 })
 export class EditLocationComponent extends EditComponent<GeoResult> {
   filteredOptions = new Subject<GeoResult[]>();
-  inputStream = new Subject<string>();
-  lastSearch: string;
   loading = false;
   nothingFound = false;
 
-  @ViewChild("inputElement") input: ElementRef<HTMLInputElement>;
+  @ViewChild("inputElement") private inputElem: ElementRef<HTMLInputElement>;
+  private inputStream = new Subject<string>();
+  private lastSearch: string;
 
   constructor(private location: GeoService, private dialog: MatDialog) {
     super();
@@ -33,8 +33,9 @@ export class EditLocationComponent extends EditComponent<GeoResult> {
     super.onInitFromDynamicConfig(config);
     this.inputStream
       .pipe(
-        filter((input) => this.isRelevantInput(input)),
         debounceTime(200),
+        map((input) => input.trim()),
+        filter((input) => this.isRelevantInput(input)),
         tap(() => (this.loading = true)),
         debounceTime(1000),
         concatMap((res) => this.getGeoLookupResult(res))
@@ -42,12 +43,12 @@ export class EditLocationComponent extends EditComponent<GeoResult> {
       .subscribe((res) => this.filteredOptions.next(res));
   }
 
-  private isRelevantInput<T>(input: T | (T & string)) {
+  private isRelevantInput(input: string): boolean {
     return (
       !!input &&
-      input !== "[object Object]" &&
-      input !== this.lastSearch &&
-      input !== this.formControl.value?.display_name
+      input.localeCompare("[object Object]") !== 0 &&
+      input.localeCompare(this.lastSearch) !== 0 &&
+      input.localeCompare(this.formControl.value?.display_name) !== 0
     );
   }
 
@@ -58,12 +59,12 @@ export class EditLocationComponent extends EditComponent<GeoResult> {
 
   triggerInputUpdate() {
     this.nothingFound = false;
-    this.inputStream.next(this.input.nativeElement.value);
+    this.inputStream.next(this.inputElem.nativeElement.value);
   }
 
   clearInput() {
     this.formControl.setValue(null);
-    this.input.nativeElement.value = "";
+    this.inputElem.nativeElement.value = "";
   }
 
   private getGeoLookupResult(searchTerm) {
