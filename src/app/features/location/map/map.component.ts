@@ -85,7 +85,9 @@ export class MapComponent implements AfterViewInit {
     if (this.markers && this.map) {
       this.markers.forEach((marker) => marker.removeFrom(this.map));
     }
-    this.markers = coordinates.map((coord) => L.marker([coord.lat, coord.lon]));
+    this.markers = coordinates
+      .filter((coord) => !!coord)
+      .map((coord) => L.marker([coord.lat, coord.lon]));
   }
 
   private setMarker(coordinates: Coordinates) {

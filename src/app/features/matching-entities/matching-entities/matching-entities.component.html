@@ -7,8 +7,8 @@
         {{ side.selected?.toString() ?? '-' }}
 
         <fa-icon icon="lock" *ngIf="!side.availableEntities || lockedMatching"
-                             matTooltip="These details of the record are displayed to make comparison easier. You cannot select a different record here."
-                             i18n-matTooltip="tooltip explaining that this entity in matching is locked"
+                 matTooltip="These details of the record are displayed to make comparison easier. You cannot select a different record here."
+                 i18n-matTooltip="tooltip explaining that this entity in matching is locked"
         ></fa-icon>
       </th>
 
@@ -31,7 +31,9 @@
 </div>
 
 <div class="margin-bottom-large flex-column gap-small">
-  <div *ngIf="showMap" class="flex-grow map-placeholder">Map</div>
+  <app-map *ngIf="showMap" class="flex-grow"
+           [marked]="[leftSide.selected?.address, rightSide.selected?.address]"
+  ></app-map>
   <button mat-stroked-button color="accent" style="width: 100%"
           (click)="createMatch()"
           [disabled]="!leftSide?.selected || !rightSide?.selected || lockedMatching">
@@ -42,7 +44,8 @@
 <div class="flex-row flex-wrap gap-large" *ngIf="!lockedMatching">
   <ng-container *ngFor="let side of sideDetails">
     <div class="flex-grow" *ngIf="side.availableEntities">
-      <h3 [style.color]="side.entityType.color ?? 'black'" class="selection-header">Select {{ side.entityType.label }}</h3>
+      <h3 [style.color]="side.entityType.color ?? 'black'" class="selection-header">
+        Select {{ side.entityType.label }}</h3>
 
       <app-filter
         class="flex-row gap-regular flex-wrap"

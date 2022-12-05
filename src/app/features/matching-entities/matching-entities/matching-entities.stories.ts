@@ -24,24 +24,29 @@ const entitiesA = [
   Object.assign(RecurringActivity.create("A"), {
     type: defaultInteractionTypes[1],
     center: centersUnique[0],
+    address: { lat: 52.4750412, lon: 13.4319106 },
   }),
   Object.assign(RecurringActivity.create("B"), {
     type: defaultInteractionTypes[2],
     center: centersUnique[0],
+    address: { lat: 52.4740412, lon: 13.4319106 },
   }),
   Object.assign(RecurringActivity.create("ABC"), {
     type: defaultInteractionTypes[1],
     center: centersUnique[2],
+    address: { lat: 52.4730412, lon: 13.4319106 },
   }),
 ];
 const entitiesB = [
   Object.assign(Child.create("sample child"), {
     gender: genders[1],
     center: centersUnique[0],
+    address: { lat: 52.4720412, lon: 13.4319106 },
   }),
   Object.assign(Child.create("other child"), {
     gender: genders[2],
     center: centersUnique[0],
+    address: { lat: 52.4710412, lon: 13.4319106 },
   }),
 ];
 
