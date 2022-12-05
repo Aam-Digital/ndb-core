@@ -39,6 +39,7 @@ export class MatchingEntitiesComponent
 
   @Input() leftSide: MatchingSide | MatchingSideConfig = {};
   @Input() rightSide: MatchingSide | MatchingSideConfig = {};
+  mapEntities: { entity: Entity; property: string }[] = [];
 
   columnsToDisplay = [];
 
@@ -131,6 +132,12 @@ export class MatchingEntitiesComponent
     if (!newSide.selected && newSide.entityType) {
       newSide.availableEntities = await this.entityMapper.loadType(
         newSide.entityType
+      );
+      this.mapEntities = this.mapEntities.concat(
+        newSide.availableEntities.map((entity) => ({
+          entity,
+          property: this.showMap[sideIndex],
+        }))
       );
       newSide.availableFilters = newSide.availableFilters ?? [];
       this.applySelectedFilters(newSide, {});

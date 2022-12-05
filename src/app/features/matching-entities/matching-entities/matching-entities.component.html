@@ -32,7 +32,8 @@
 
 <div class="margin-bottom-large flex-column gap-small">
   <app-map *ngIf="showMap" class="flex-grow"
-           [entities]="[
+           [entities]="mapEntities"
+           [highlightedEntities]="[
             { entity: leftSide.selected, property: showMap[0] },
             { entity: rightSide.selected, property: showMap[1]}
           ]"
