@@ -27,7 +27,7 @@ describe("MatchingEntitiesComponent", () => {
       newEntityMatchPropertyRight: "",
       newEntityType: "",
     },
-    showMap: true,
+    showMap: ["address", "address"],
     matchActionLabel: "match test",
     rightSide: { entityType: "Child" },
     leftSide: { entityType: "School" },
