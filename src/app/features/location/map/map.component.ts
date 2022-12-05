@@ -1,8 +1,15 @@
-import { AfterViewInit, Component, Input, Output } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+} from "@angular/core";
 import * as L from "leaflet";
 import { Observable, Subject } from "rxjs";
 import { debounceTime, map } from "rxjs/operators";
 import { Coordinates } from "../coordinates";
+import { Entity } from "../../../core/entity/model/entity";
 
 const iconRetinaUrl = "assets/marker-icon-2x.png";
 const iconUrl = "assets/marker-icon.png";
@@ -24,7 +31,7 @@ L.Marker.prototype.options.icon = iconDefault;
   templateUrl: "./map.component.html",
   styleUrls: ["./map.component.scss"],
 })
-export class MapComponent implements AfterViewInit {
+export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
   // TODO this should be configurable
   private readonly start_location: L.LatLngTuple = [52.4790412, 13.4319106];
 
@@ -42,6 +49,26 @@ export class MapComponent implements AfterViewInit {
     }
   }
 
+  @Input() set entities(entities: { entity: T; property: string }[]) {
+    if (this.markers && this.map) {
+      this.markers.forEach((marker) => marker.removeFrom(this.map));
+    }
+    this.markers = entities
+      .filter(({ entity, property }) => !!entity?.[property])
+      .map(({ entity, property }) => {
+        const marker = L.marker([entity[property].lat, entity[property].lon]);
+        const tooltip = marker.bindTooltip(entity.toString());
+        marker.on("click", () => {
+          this.entityClick.emit(entity);
+          tooltip.openTooltip();
+        });
+        return marker;
+      });
+    if (this.map) {
+      this.showMarkersOnMap();
+    }
+  }
+
   private map: L.Map;
   private marker: L.Marker;
   private markers: L.Marker[];
@@ -51,6 +78,8 @@ export class MapComponent implements AfterViewInit {
     debounceTime(200),
     map((c) => ({ lat: c.lat, lon: c.lng }))
   );
+
+  @Output() entityClick = new EventEmitter<T>();
 
   ngAfterViewInit() {
     this.initMap();

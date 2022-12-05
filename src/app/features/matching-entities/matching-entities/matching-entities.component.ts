@@ -139,7 +139,10 @@ export class MatchingEntitiesComponent
     return newSide;
   }
 
-  private highlightSelectedRow(newSelectedEntity, previousSelectedEntity) {
+  private highlightSelectedRow(
+    newSelectedEntity: Entity,
+    previousSelectedEntity: Entity
+  ) {
     if (previousSelectedEntity) {
       previousSelectedEntity.getColor =
         previousSelectedEntity.getConstructor().prototype.getColor;
