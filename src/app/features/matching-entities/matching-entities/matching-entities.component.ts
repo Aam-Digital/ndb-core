@@ -46,9 +46,9 @@ export class MatchingEntitiesComponent
    * Column mapping of property pairs of left and right entity that should be compared side by side.
    * @param value
    */
-  @Input() columns: string[][];
+  @Input() columns: [string, string][];
 
-  @Input() showMap: boolean = false;
+  @Input() showMap: [string, string];
 
   @Input()
   matchActionLabel: string = $localize`:Matching button label:create matching`;

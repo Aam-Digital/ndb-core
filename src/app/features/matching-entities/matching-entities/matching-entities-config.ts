@@ -14,10 +14,15 @@ export interface MatchingEntitiesConfig {
    *
    * e.g. [["name", "name"], ["motherTongue", "language"]]
    */
-  columns: string[][];
+  columns: [string, string][];
 
-  /** whether a map should be displayed in addition to a comparison table */
-  showMap?: boolean;
+  /**
+   * Mapped properties which should be displayed in a map (of left and right entity).
+   * The properties need to have the format `{ lat: number, lon: number}`.
+   *
+   * e.g. `["address", "location"]
+   */
+  showMap?: [string, string];
 
   /** overwrite the button label to describe the matching action */
   matchActionLabel?: string;

@@ -32,7 +32,7 @@
 
 <div class="margin-bottom-large flex-column gap-small">
   <app-map *ngIf="showMap" class="flex-grow"
-           [marked]="[leftSide.selected?.address, rightSide.selected?.address]"
+           [marked]="[leftSide.selected?.[showMap[0]], rightSide.selected?.[showMap[1]]]"
   ></app-map>
   <button mat-stroked-button color="accent" style="width: 100%"
           (click)="createMatch()"
