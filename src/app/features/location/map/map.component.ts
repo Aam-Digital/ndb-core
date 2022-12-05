@@ -25,17 +25,15 @@ L.Marker.prototype.options.icon = iconDefault;
   styleUrls: ["./map.component.scss"],
 })
 export class MapComponent implements AfterViewInit {
+  // TODO this should be configurable
+  private readonly start_location: L.LatLngTuple = [52.4790412, 13.4319106];
+
   @Input() set marked(coordinates: Coordinates | Coordinates[]) {
     if (!coordinates) {
       return;
     }
     if (Array.isArray(coordinates)) {
-      if (this.markers && this.map) {
-        this.markers.forEach((marker) => marker.removeFrom(this.map));
-      }
-      this.markers = coordinates.map((coord) =>
-        L.marker([coord.lat, coord.lon])
-      );
+      this.setMultipleMarkers(coordinates);
     } else {
       this.setMarker(coordinates);
     }
@@ -60,8 +58,7 @@ export class MapComponent implements AfterViewInit {
 
   private initMap() {
     this.map = L.map("map", {
-      // TODO should be configurable
-      center: [52.4790412, 13.4319106],
+      center: this.marker ? this.marker.getLatLng() : this.start_location,
       zoom: 14,
     });
     this.map.addEventListener("click", (res) =>
@@ -82,6 +79,13 @@ export class MapComponent implements AfterViewInit {
     if (this.marker || this.markers) {
       this.showMarkersOnMap();
     }
+  }
+
+  private setMultipleMarkers(coordinates: Coordinates[]) {
+    if (this.markers && this.map) {
+      this.markers.forEach((marker) => marker.removeFrom(this.map));
+    }
+    this.markers = coordinates.map((coord) => L.marker([coord.lat, coord.lon]));
   }
 
   private setMarker(coordinates: Coordinates) {
