@@ -21,5 +21,15 @@ const Template: Story<MapComponent> = (args: MapComponent) => ({
   props: args,
 });
 
-export const Primary = Template.bind({});
-Primary.args = {};
+export const Single = Template.bind({});
+Single.args = {
+  marked: { lat: 52.4790412, lon: 13.4319106 },
+};
+
+export const Multiple = Template.bind({});
+Multiple.args = {
+  marked: [
+    { lat: 52.4790412, lon: 13.4319106 },
+    { lat: 52.4750412, lon: 13.4319106 },
+  ],
+};

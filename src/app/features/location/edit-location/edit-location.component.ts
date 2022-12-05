@@ -80,7 +80,6 @@ export class EditLocationComponent extends EditComponent<GeoResult> {
   openMap() {
     const ref = this.dialog.open(MapPopupComponent, {
       width: "90%",
-      height: "90%",
       data: this.formControl.value,
     });
     ref

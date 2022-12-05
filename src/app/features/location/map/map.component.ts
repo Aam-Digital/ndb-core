@@ -25,26 +25,28 @@ L.Marker.prototype.options.icon = iconDefault;
   styleUrls: ["./map.component.scss"],
 })
 export class MapComponent implements AfterViewInit {
-  @Input() set marked(coordinates: Coordinates) {
+  @Input() set marked(coordinates: Coordinates | Coordinates[]) {
     if (!coordinates) {
       return;
     }
-    const latLon = new L.LatLng(coordinates.lat, coordinates.lon);
-    if (!this.marker) {
-      this.marker = L.marker(latLon);
-      if (this.map) {
-        this.marker.addTo(this.map);
+    if (Array.isArray(coordinates)) {
+      if (this.markers && this.map) {
+        this.markers.forEach((marker) => marker.removeFrom(this.map));
       }
+      this.markers = coordinates.map((coord) =>
+        L.marker([coord.lat, coord.lon])
+      );
     } else {
-      this.marker.setLatLng(latLon);
+      this.setMarker(coordinates);
     }
     if (this.map) {
-      this.map.flyTo(latLon);
+      this.showMarkersOnMap();
     }
   }
 
   private map: L.Map;
   private marker: L.Marker;
+  private markers: L.Marker[];
   private clickStream = new Subject<L.LatLng>();
   // TODO filter out double clicks
   @Output() mapClick: Observable<Coordinates> = this.clickStream.pipe(
@@ -77,6 +79,26 @@ export class MapComponent implements AfterViewInit {
     );
     tiles.addTo(this.map);
 
+    if (this.marker || this.markers) {
+      this.showMarkersOnMap();
+    }
+  }
+
+  private setMarker(coordinates: Coordinates) {
+    const latLon = new L.LatLng(coordinates.lat, coordinates.lon);
+    if (!this.marker) {
+      this.marker = L.marker(latLon);
+    } else {
+      this.marker.setLatLng(latLon);
+    }
+  }
+
+  private showMarkersOnMap() {
+    if (this.markers) {
+      this.markers.forEach((marker) => marker.addTo(this.map));
+      const group = L.featureGroup(this.markers);
+      this.map.fitBounds(group.getBounds(), { padding: [50, 50] });
+    }
     if (this.marker) {
       this.marker.addTo(this.map);
       this.map.flyTo(this.marker.getLatLng());
