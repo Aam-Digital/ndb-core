@@ -1,12 +1,6 @@
-.map-container {
-  // TODO this should not have to be controlled inside the map component
-  height: 200px
-}
-
 .map-frame {
   border: 1px solid lightgrey;
   border-radius: 2px;
-  height: 100%;
 }
 
 #map {

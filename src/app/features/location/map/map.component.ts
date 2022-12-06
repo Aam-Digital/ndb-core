@@ -21,6 +21,8 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
   // TODO this should be configurable
   private readonly start_location: L.LatLngTuple = [52.4790412, 13.4319106];
 
+  @Input() height = "200px";
+
   @Input() set marked(coordinates: Coordinates | Coordinates[]) {
     if (!coordinates) {
       return;
