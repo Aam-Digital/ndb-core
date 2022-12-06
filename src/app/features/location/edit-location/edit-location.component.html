@@ -22,8 +22,8 @@
     <fa-icon icon="map"></fa-icon>
   </button>
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectLocation($event.option.value)">
-    <mat-option *ngIf="loading" disabled>Loading results...</mat-option>
-    <mat-option *ngIf="nothingFound" disabled>Location not found</mat-option>
+    <mat-option *ngIf="loading" disabled i18n="Loading in progress">Loading results...</mat-option>
+    <mat-option *ngIf="nothingFound" disabled i18n="No results found">Location not found</mat-option>
     <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
       {{option.display_name}}
     </mat-option>

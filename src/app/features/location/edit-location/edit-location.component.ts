@@ -46,6 +46,7 @@ export class EditLocationComponent extends EditComponent<GeoResult> {
   private isRelevantInput(input: string): boolean {
     return (
       !!input &&
+      input.length > 3 &&
       input.localeCompare("[object Object]") !== 0 &&
       input.localeCompare(this.lastSearch) !== 0 &&
       input.localeCompare(this.formControl.value?.display_name) !== 0
@@ -64,7 +65,6 @@ export class EditLocationComponent extends EditComponent<GeoResult> {
 
   clearInput() {
     this.formControl.setValue(null);
-    this.inputElem.nativeElement.value = "";
   }
 
   private getGeoLookupResult(searchTerm) {
