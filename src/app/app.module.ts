@@ -90,6 +90,8 @@ import {
 import { FileModule } from "./features/file/file.module";
 import { ConfigSetupModule } from "./core/config-setup/config-setup.module";
 import { MatchingEntitiesModule } from "./features/matching-entities/matching-entities.module";
+import { TasksModule } from "./features/tasks/tasks.module";
+import { DemoTodoGeneratorService } from "./features/tasks/model/demo-todo-generator.service";
 
 /**
  * Main entry point of the application.
@@ -161,6 +163,7 @@ import { MatchingEntitiesModule } from "./features/matching-entities/matching-en
         maxCountAttributes: 5,
       }),
       ...DemoPermissionGeneratorService.provider(),
+      ...DemoTodoGeneratorService.provider(),
     ]),
     AttendanceModule,
     DashboardShortcutWidgetModule,
@@ -168,6 +171,7 @@ import { MatchingEntitiesModule } from "./features/matching-entities/matching-en
     SupportModule,
     DatabaseModule,
     MatchingEntitiesModule,
+    TasksModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },

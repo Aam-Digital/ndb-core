@@ -53,6 +53,11 @@ export const defaultJsonConfig = {
         "link": "/note"
       },
       {
+        "name": $localize`:Menu item:Tasks`,
+        "icon": "tasks",
+        "link": "/todo"
+      },
+      {
         "name": $localize`:Menu item:Admin`,
         "icon": "wrench",
         "link": "/admin"
@@ -1138,6 +1143,53 @@ export const defaultJsonConfig = {
         newEntityMatchPropertyRight: "schoolId",
         columnsToReview: ["start", "end", "result", "childId", "schoolId" ]
       }
+    }
+  },
+
+  "entity:Todo": {
+    "attributes": [
+      {
+        "name": "startDate",
+        "schema": {
+          dataType: "date-only",
+          label: $localize`:Label:Start date`
+        }
+      }
+      ]
+  },
+  "view:todo": {
+    "component": "EntityList",
+    "config": {
+      "entity": "Todo",
+      "columns": ["deadline", "subject", "assignedTo"]
+    }
+  },
+  "view:todo/:id": {
+    "component": "EntityDetails",
+    "config": {
+      "entity": "Todo",
+      "panels": [
+        {
+          "title": $localize`:Panel title:Overview`,
+          "components": [
+            {
+              "title": "",
+              "component": "Form",
+              "config": {
+                "cols": [
+                  [
+                    "subject",
+                    "description"
+                  ],
+                  [
+                    "assignedTo", "deadline", "startDate"
+                  ]
+                ]
+              }
+            }
+          ]
+        }
+      ],
     }
   }
 };
