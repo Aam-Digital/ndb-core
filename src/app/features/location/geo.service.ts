@@ -2,6 +2,10 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { Coordinates } from "./coordinates";
 import { HttpClient } from "@angular/common/http";
+import { ConfigService } from "../../core/config/config.service";
+import { UiConfig } from "../../core/ui/ui-config";
+import { AnalyticsService } from "../../core/analytics/analytics.service";
+import { environment } from "../../../environments/environment";
 
 export interface GeoResult extends Coordinates {
   display_name: string;
@@ -9,29 +13,41 @@ export interface GeoResult extends Coordinates {
 
 /**
  * A service that uses nominatim to lookup locations {@link https://nominatim.org/}
- * TODO maybe include email in requests {@link https://nominatim.org/release-docs/develop/api/Reverse/#other}
- * TODO log and count requests in matomo
  */
 @Injectable({
   providedIn: "root",
 })
 export class GeoService {
-  readonly remoteUrl = "https://nominatim.openstreetmap.org";
+  private readonly remoteUrl = "/nominatim";
+  private readonly countrycodes: string = "de";
+  private email = environment.email;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private analytics: AnalyticsService,
+    configService: ConfigService
+  ) {
+    const config = configService.getConfig<UiConfig>("appConfig").map;
+    if (config?.countrycodes) {
+      this.countrycodes = config.countrycodes;
+    }
+  }
 
   /**
    * Returns locations that match the search term
    * @param searchTerm e.g. `Rollbergstraße Berlin`
-   * TODO countrycodes should come from the datatype?
-   * @param countrycodes see {@link https://nominatim.org/release-docs/develop/api/Search/#result-limitation}
    */
-  lookup(searchTerm: string, countrycodes = "de"): Observable<GeoResult[]> {
+  lookup(searchTerm: string): Observable<GeoResult[]> {
+    this.analytics.eventTrack("lookup_executed", {
+      category: "Map",
+      value: searchTerm.length,
+    });
     return this.http.get<GeoResult[]>(`${this.remoteUrl}/search`, {
       params: {
         q: searchTerm,
         format: "json",
-        countrycodes,
+        countrycodes: this.countrycodes,
+        email: this.email,
       },
     });
   }
@@ -41,11 +57,15 @@ export class GeoService {
    * @param coordinates of a place (`lat` and `lon`)
    */
   reverseLookup(coordinates: Coordinates): Observable<GeoResult> {
+    this.analytics.eventTrack("reverse_lookup_executed", {
+      category: "Map",
+    });
     return this.http.get<GeoResult>(`${this.remoteUrl}/reverse`, {
       params: {
         lat: coordinates.lat,
         lon: coordinates.lon,
         format: "json",
+        email: this.email,
       },
     });
   }

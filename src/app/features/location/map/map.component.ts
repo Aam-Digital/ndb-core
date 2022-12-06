@@ -11,6 +11,8 @@ import { debounceTime, filter, map } from "rxjs/operators";
 import { Coordinates } from "../coordinates";
 import { Entity } from "../../../core/entity/model/entity";
 import { getHueForEntity } from "../map-utils";
+import { ConfigService } from "../../../core/config/config.service";
+import { UiConfig } from "../../../core/ui/ui-config";
 
 @Component({
   selector: "app-map",
@@ -56,6 +58,13 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
   );
 
   @Output() entityClick = new EventEmitter<T>();
+
+  constructor(configService: ConfigService) {
+    const config = configService.getConfig<UiConfig>("appConfig").map;
+    if (config?.start) {
+      this.start_location = config.start;
+    }
+  }
 
   ngAfterViewInit() {
     // init Map

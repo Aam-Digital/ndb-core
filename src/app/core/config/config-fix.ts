@@ -674,16 +674,18 @@ export const defaultJsonConfig = {
                   ["name", "name"],
                   ["motherTongue", "language"],
                   ["address", "address"],
+                  [undefined, "distance"]
                 ],
                 rightSide: {
                   entityType: School.ENTITY_TYPE,
                   filters: [{ "id": "language" }]
                 },
+                showMap: ["address", "address"],
                 onMatch: {
                   newEntityType: ChildSchoolRelation.ENTITY_TYPE,
                   newEntityMatchPropertyLeft: "childId",
                   newEntityMatchPropertyRight: "schoolId",
-                  columnsToReview: ["start", "schoolClass", "childId", "schoolId" ]
+                  columnsToReview: ["start", "schoolClass", "childId", "schoolId"]
                 }
               }
             }
@@ -1132,11 +1134,12 @@ export const defaultJsonConfig = {
         filters: [{ "id": "language" }],
       },
       leftSide: { entityType: Child.ENTITY_TYPE },
+      showMap: ["address", "address"],
       onMatch: {
         newEntityType: ChildSchoolRelation.ENTITY_TYPE,
         newEntityMatchPropertyLeft: "childId",
         newEntityMatchPropertyRight: "schoolId",
-        columnsToReview: ["start", "end", "result", "childId", "schoolId" ]
+        columnsToReview: ["start", "end", "result", "childId", "schoolId"]
       }
     }
   }

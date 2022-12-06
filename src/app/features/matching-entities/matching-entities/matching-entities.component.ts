@@ -241,6 +241,9 @@ export class MatchingEntitiesComponent
   private getDistanceString(from: Entity, to: Entity, index: number): string {
     const a = from[this.showMap[index]] as Coordinates;
     const b = to[this.showMap[(index + 1) % 2]] as Coordinates;
+    if (!a || !b) {
+      return "-";
+    }
     const res = getKmDistance(a, b).toFixed(2);
     return $localize`:distance with unit|e.g. 5 km:${res} km`;
   }

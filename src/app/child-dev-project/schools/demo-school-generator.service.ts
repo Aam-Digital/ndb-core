@@ -48,7 +48,6 @@ export class DemoSchoolGenerator extends DemoDataGenerator<School> {
         schoolNameWithType,
         schoolNameWithLanguage,
       ]);
-      school["address"] = faker.address.streetAddress();
       school["phone"] = faker.phone.number();
       school["privateSchool"] = faker.datatype.boolean();
       school["timing"] = faker.helpers.arrayElement([

@@ -19,6 +19,7 @@ export class EntityPropertyViewComponent<E extends Entity = Entity>
 {
   @Input() entity: E;
   @Input() property: ColumnConfig;
+  propertyName: string;
 
   /**
    * (optional) component to be used to display this value.
@@ -40,10 +41,12 @@ export class EntityPropertyViewComponent<E extends Entity = Entity>
         this.component = this.schemaService.getComponent(schema);
       }
       this.label = schema.label ?? this.property;
+      this.propertyName = this.property;
     } else {
       this.component = this.property.view;
       this.additional = this.property.additional;
       this.label = this.property.label;
+      this.propertyName = this.property.id;
     }
   }
 }

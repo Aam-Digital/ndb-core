@@ -24,4 +24,19 @@ export interface UiConfig {
    * The title which is shown at the top of the application.
    */
   site_name?: string;
+
+  /**
+   * General configuration for the map integration
+   */
+  map?: {
+    /**
+     * Countries, from which search results will be included
+     * see {@link https://nominatim.org/release-docs/develop/api/Search/#result-limitation}
+     */
+    countrycodes: string;
+    /**
+     * Start location of map if nothing was selected yet
+     */
+    start: [number, number];
+  };
 }
