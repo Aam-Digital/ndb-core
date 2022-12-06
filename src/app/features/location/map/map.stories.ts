@@ -23,7 +23,7 @@ const Template: Story<MapComponent> = (args: MapComponent) => ({
 
 export const Single = Template.bind({});
 Single.args = {
-  marked: { lat: 52.4790412, lon: 13.4319106 },
+  marked: [{ lat: 52.4790412, lon: 13.4319106 }],
 };
 
 export const Multiple = Template.bind({});

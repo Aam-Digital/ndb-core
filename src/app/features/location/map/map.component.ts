@@ -23,18 +23,10 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
 
   @Input() height = "200px";
 
-  @Input() set marked(coordinates: Coordinates | Coordinates[]) {
-    if (!coordinates) {
-      return;
-    }
-    if (Array.isArray(coordinates)) {
-      this.clearMarkers(this.markers);
-      this.markers = this.setMultipleMarkers(coordinates);
-      this.showMarkersOnMap(this.markers);
-    } else {
-      this.setMarker(coordinates);
-      this.showMarkersOnMap(this.marker);
-    }
+  @Input() set marked(coordinates: Coordinates[]) {
+    this.clearMarkers(this.markers);
+    this.markers = this.setMultipleMarkers(coordinates);
+    this.showMarkersOnMap(this.markers);
   }
 
   @Input() set entities(entities: { entity: T; property: string }[]) {
@@ -52,7 +44,6 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
   }
 
   private map: L.Map;
-  private marker: L.Marker;
   private markers: L.Marker[];
   private highlightedMarkers: L.Marker[];
   private clickStream = new Subject<L.LatLng>();
@@ -65,12 +56,12 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
   @Output() entityClick = new EventEmitter<T>();
 
   ngAfterViewInit() {
-    this.initMap();
-  }
-
-  private initMap() {
+    // init Map
     this.map = L.map("map", {
-      center: this.marker ? this.marker.getLatLng() : this.start_location,
+      center:
+        this.markers?.length > 0
+          ? this.markers[0].getLatLng()
+          : this.start_location,
       zoom: 14,
     });
     this.map.addEventListener("click", (res) =>
@@ -88,7 +79,6 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
     );
     tiles.addTo(this.map);
 
-    this.showMarkersOnMap(this.marker);
     this.showMarkersOnMap(this.markers);
     this.showMarkersOnMap(this.highlightedMarkers, true);
   }
@@ -117,33 +107,13 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
       .map((coord) => L.marker([coord.lat, coord.lon]));
   }
 
-  private setMarker(coordinates: Coordinates) {
-    const latLon = new L.LatLng(coordinates.lat, coordinates.lon);
-    if (!this.marker) {
-      this.marker = L.marker(latLon);
-    } else {
-      this.marker.setLatLng(latLon);
-    }
-  }
-
-  private showMarkersOnMap(marker: L.Marker | L.Marker[], highlighted = false) {
-    if (
-      !marker ||
-      !this.map ||
-      (Array.isArray(marker) && marker.length === 0)
-    ) {
+  private showMarkersOnMap(marker: L.Marker[], highlighted = false) {
+    if (!marker || !this.map || marker.length === 0) {
       return;
     }
-    if (Array.isArray(marker)) {
-      marker.forEach((m) => this.addMarker(m, highlighted));
-      const group = L.featureGroup(marker);
-      this.map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom: 14 });
-    } else {
-      if (this.marker) {
-        this.addMarker(this.marker, highlighted);
-        this.map.flyTo(this.marker.getLatLng());
-      }
-    }
+    marker.forEach((m) => this.addMarker(m, highlighted));
+    const group = L.featureGroup(marker);
+    this.map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom: 14 });
   }
 
   private addMarker(m: L.Marker, highlighted: boolean = false) {
