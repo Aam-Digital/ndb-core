@@ -50,8 +50,6 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
       this.setMarker(coordinates);
       this.showMarkersOnMap(this.marker);
     }
-    if (this.map) {
-    }
   }
 
   @Input() set entities(entities: { entity: T; property: string }[]) {
@@ -115,11 +113,8 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
       .filter(({ entity, property }) => !!entity?.[property])
       .map(({ entity, property }) => {
         const marker = L.marker([entity[property].lat, entity[property].lon]);
-        const tooltip = marker.bindTooltip(entity.toString());
-        marker.on("click", () => {
-          this.entityClick.emit(entity);
-          tooltip.openTooltip();
-        });
+        marker.bindTooltip(entity.toString());
+        marker.on("click", () => this.entityClick.emit(entity));
         return marker;
       });
   }
@@ -156,8 +151,7 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
     if (Array.isArray(marker)) {
       marker.forEach((m) => this.addMarker(m, highlighted));
       const group = L.featureGroup(marker);
-      console.log("marker", marker);
-      this.map.fitBounds(group.getBounds(), { padding: [50, 50] });
+      this.map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom: 14 });
     } else {
       if (this.marker) {
         this.addMarker(this.marker, highlighted);
@@ -168,9 +162,7 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
 
   private addMarker(m: L.Marker, highlighted = false) {
     m.addTo(this.map);
-    console.log("adding", m, highlighted);
     if (highlighted) {
-      console.log("icon", m["_icon"]);
       m["_icon"].classList.add("highlighted");
     }
     return m;
@@ -181,7 +173,7 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
    * TODO need to find out how to dynamically create classes or css attributes for marker icons
    * @param entity
    */
-  getColor(entity: T): number {
+  getHueRotation(entity: T): number {
     const color = entity.getConstructor().color;
     let r = parseInt(color.substring(1, 2), 16) / 255; // Grab the hex representation of red (chars 1-2) and convert to decimal (base 10).
     let g = parseInt(color.substring(3, 2), 16) / 255;

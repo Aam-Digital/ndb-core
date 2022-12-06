@@ -2,8 +2,8 @@
   <table mat-table [dataSource]="columns" class="match-comparison-table mat-elevation-z1">
     <ng-container [matColumnDef]="'side-' + i" *ngFor="let side of sideDetails; let i = index">
 
-      <th mat-header-cell *matHeaderCellDef class="comparison-header" [style.color]="side.entityType.color ?? 'black'">
-        {{ side.entityType.label }}:
+      <th mat-header-cell *matHeaderCellDef class="comparison-header" [style.color]="side.entityType?.color ?? 'black'">
+        {{ side.entityType?.label }}:
         {{ side.selected?.toString() ?? '-' }}
 
         <fa-icon icon="lock" *ngIf="!side.availableEntities || lockedMatching"
@@ -34,13 +34,14 @@
   <app-map *ngIf="showMap" class="flex-grow"
            [entities]="mapEntities"
            [highlightedEntities]="[
-            { entity: leftSide.selected, property: showMap[0] },
-            { entity: rightSide.selected, property: showMap[1]}
+            { entity: _leftSide?.selected, property: showMap[0] },
+            { entity: _rightSide?.selected, property: showMap[1]}
           ]"
+           (entityClick)="entityInMapClicked($event)"
   ></app-map>
   <button mat-stroked-button color="accent" style="width: 100%"
           (click)="createMatch()"
-          [disabled]="!leftSide?.selected || !rightSide?.selected || lockedMatching">
+          [disabled]="!_leftSide?.selected || !_rightSide?.selected || lockedMatching">
     {{ matchActionLabel }}
   </button>
 </div>
@@ -49,7 +50,7 @@
   <ng-container *ngFor="let side of sideDetails">
     <div class="flex-grow" *ngIf="side.availableEntities">
       <h3 [style.color]="side.entityType.color ?? 'black'" class="selection-header">
-        Select {{ side.entityType.label }}</h3>
+        Select {{ side.entityType?.label }}</h3>
 
       <app-filter
         class="flex-row gap-regular flex-wrap"
