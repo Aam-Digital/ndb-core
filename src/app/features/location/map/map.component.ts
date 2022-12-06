@@ -6,8 +6,8 @@ import {
   Output,
 } from "@angular/core";
 import * as L from "leaflet";
-import { Observable, Subject } from "rxjs";
-import { debounceTime, map } from "rxjs/operators";
+import { Observable, Subject, timeInterval } from "rxjs";
+import { debounceTime, filter, map } from "rxjs/operators";
 import { Coordinates } from "../coordinates";
 import { Entity } from "../../../core/entity/model/entity";
 import { getHueForEntity } from "../map-utils";
@@ -47,10 +47,12 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
   private markers: L.Marker[];
   private highlightedMarkers: L.Marker[];
   private clickStream = new Subject<L.LatLng>();
-  // TODO filter out double clicks
+
   @Output() mapClick: Observable<Coordinates> = this.clickStream.pipe(
-    debounceTime(200),
-    map((c) => ({ lat: c.lat, lon: c.lng }))
+    timeInterval(),
+    debounceTime(400),
+    filter(({ interval }) => interval > 400),
+    map(({ value }) => ({ lat: value.lat, lon: value.lng }))
   );
 
   @Output() entityClick = new EventEmitter<T>();
@@ -113,7 +115,10 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
     }
     marker.forEach((m) => this.addMarker(m, highlighted));
     const group = L.featureGroup(marker);
-    this.map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom: 14 });
+    this.map.fitBounds(group.getBounds(), {
+      padding: [50, 50],
+      maxZoom: this.map.getZoom(),
+    });
   }
 
   private addMarker(m: L.Marker, highlighted: boolean = false) {
