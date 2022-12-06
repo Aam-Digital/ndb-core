@@ -41,7 +41,12 @@ export interface MatchingSideConfig {
   /**
    * entity type of matching, used to load a list of available entities for manual selection
    */
-  entityType: string;
+  entityType?: EntityConstructor | string;
+
+  /**
+   * selected entity for the matching
+   */
+  selected?: Entity;
 
   /** fixed pre-filters applied to remove some entities from the list of available entities */
   prefilter?: DataFilter<Entity>;

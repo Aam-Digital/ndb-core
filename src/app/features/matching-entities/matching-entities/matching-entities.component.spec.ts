@@ -35,6 +35,7 @@ describe("MatchingEntitiesComponent", () => {
 
   beforeEach(async () => {
     mockEntityMapper = jasmine.createSpyObj(["loadType", "save"]);
+    mockEntityMapper.loadType.and.resolveTo([]);
     mockActivatedRoute = { data: null };
 
     await TestBed.configureTestingModule({

@@ -17,13 +17,12 @@ import { RouteData } from "../../../core/view/dynamic-routing/view-config.interf
 import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 
-interface MatchingSide extends Omit<MatchingSideConfig, "entityType"> {
+interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
   filterObj?: DataFilter<Entity>;
   availableEntities?: Entity[];
-  selectMatch?: (e: Entity) => void;
-  entityType?: EntityConstructor;
-  selected?: Entity;
+  selectMatch?: (e) => void;
+  entityType: EntityConstructor;
 }
 
 @RouteTarget("MatchingEntities")
@@ -38,28 +37,8 @@ export class MatchingEntitiesComponent
 {
   @Input() entity: Entity;
 
-  @Input() set leftSide(config: MatchingSideConfig) {
-    this._leftSide = this.initSideConfig(config);
-  }
-
-  @Input() set rightSide(config: MatchingSideConfig) {
-    this._rightSide = this.initSideConfig(config);
-  }
-
-  private initSideConfig(config: MatchingSideConfig): MatchingSide {
-    const entityType = config.entityType
-      ? this.entityRegistry.get(config.entityType)
-      : undefined;
-    return {
-      entityType,
-      prefilter: config.prefilter,
-      availableFilters: config.availableFilters,
-      columns: config.columns,
-    };
-  }
-
-  _leftSide: MatchingSide = {};
-  _rightSide: MatchingSide = {};
+  @Input() leftSide: MatchingSide | MatchingSideConfig = {};
+  @Input() rightSide: MatchingSide | MatchingSideConfig = {};
   mapEntities: { entity: Entity; property: string }[] = [];
 
   columnsToDisplay = [];
@@ -106,8 +85,8 @@ export class MatchingEntitiesComponent
     });
 
     this.sideDetails = [
-      await this.initSideDetails(this._leftSide, 0),
-      await this.initSideDetails(this._rightSide, 1),
+      await this.initSideDetails(this.leftSide, 0),
+      await this.initSideDetails(this.rightSide, 1),
     ];
     this.columnsToDisplay = ["side-0", "side-1"];
   }
@@ -118,18 +97,14 @@ export class MatchingEntitiesComponent
     this.matchActionLabel = config.matchActionLabel ?? this.matchActionLabel;
     this.onMatch = config.onMatch ?? this.onMatch;
 
-    if (config.leftSide) {
-      this.rightSide = config.leftSide;
-    }
-    if (config.rightSide) {
-      this.rightSide = config.rightSide;
-    }
+    this.leftSide = config.leftSide ?? this.leftSide;
+    this.rightSide = config.rightSide ?? this.rightSide;
 
     this.entity = entity;
   }
 
   private async initSideDetails(
-    side: MatchingSide,
+    side: MatchingSideConfig,
     sideIndex: number
   ): Promise<MatchingSide> {
     const newSide = side as MatchingSide; // we are transforming it into this type here
@@ -137,6 +112,12 @@ export class MatchingEntitiesComponent
     if (!newSide.entityType) {
       newSide.selected = newSide.selected ?? this.entity;
     }
+
+    let entityType = newSide.entityType;
+    if (typeof entityType === "string") {
+      entityType = this.entityRegistry.get(entityType);
+    }
+    newSide.entityType = entityType ?? newSide.selected?.getConstructor();
 
     newSide.columns =
       newSide.columns ??
@@ -152,12 +133,14 @@ export class MatchingEntitiesComponent
       newSide.availableEntities = await this.entityMapper.loadType(
         newSide.entityType
       );
-      this.mapEntities = this.mapEntities.concat(
-        newSide.availableEntities.map((entity) => ({
-          entity,
-          property: this.showMap[sideIndex],
-        }))
-      );
+      if (this.showMap) {
+        this.mapEntities = this.mapEntities.concat(
+          newSide.availableEntities.map((entity) => ({
+            entity,
+            property: this.showMap[sideIndex],
+          }))
+        );
+      }
       newSide.availableFilters = newSide.availableFilters ?? [];
       this.applySelectedFilters(newSide, {});
     }
@@ -183,16 +166,16 @@ export class MatchingEntitiesComponent
     ))();
 
     newMatchEntity[this.onMatch.newEntityMatchPropertyLeft] =
-      this._leftSide.selected.getId(false);
+      this.leftSide.selected.getId(false);
     newMatchEntity[this.onMatch.newEntityMatchPropertyRight] =
-      this._rightSide.selected.getId(false);
+      this.rightSide.selected.getId(false);
 
     // best guess properties (if they do not exist on the specific entity, the values will be discarded during save
     newMatchEntity["date"] = new Date();
     newMatchEntity["start"] = new Date();
     newMatchEntity["name"] = `${
       newMatchEntity.getConstructor().label
-    } ${this._leftSide.selected.toString()} - ${this._rightSide.selected.toString()}`;
+    } ${this.leftSide.selected.toString()} - ${this.rightSide.selected.toString()}`;
 
     if (this.onMatch.columnsToReview) {
       this.formDialog
@@ -214,10 +197,11 @@ export class MatchingEntitiesComponent
   }
 
   entityInMapClicked(entity: Entity) {
-    if (entity.getType() === this._leftSide.entityType?.ENTITY_TYPE) {
-      this._leftSide.selectMatch(entity);
-    } else if (entity.getType() === this._rightSide.entityType?.ENTITY_TYPE) {
-      this._rightSide.selectMatch(entity);
+    const side = this.sideDetails.find(
+      (s) => s.entityType === entity.getConstructor()
+    );
+    if (side) {
+      side.selectMatch(entity);
     }
   }
 }
