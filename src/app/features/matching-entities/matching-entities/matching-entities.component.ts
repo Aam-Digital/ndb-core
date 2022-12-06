@@ -11,11 +11,16 @@ import {
   MatchingSideConfig,
   NewMatchAction,
 } from "./matching-entities-config";
-import { DataFilter } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import {
+  ColumnConfig,
+  DataFilter,
+} from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { RouteTarget } from "../../../app.routing";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
+import { Coordinates } from "../../location/coordinates";
+import { getKmDistance } from "../../location/map-utils";
 
 interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -47,7 +52,14 @@ export class MatchingEntitiesComponent
    * Column mapping of property pairs of left and right entity that should be compared side by side.
    * @param value
    */
-  @Input() columns: [string, string][];
+  @Input() columns: [ColumnConfig, ColumnConfig][];
+
+  private readonly distanceColumn = {
+    id: "distance",
+    label: "Distance",
+    view: "ReadonlyFunction",
+    additional: (e: Entity) => this.calculateDistanceTo(e),
+  };
 
   @Input() showMap: [string, string];
 
@@ -84,6 +96,7 @@ export class MatchingEntitiesComponent
       this.initConfig(data.config);
     });
 
+    this.initDistanceColumn();
     this.sideDetails = [
       await this.initSideDetails(this.leftSide, 0),
       await this.initSideDetails(this.rightSide, 1),
@@ -203,5 +216,32 @@ export class MatchingEntitiesComponent
     if (side) {
       side.selectMatch(entity);
     }
+  }
+
+  private initDistanceColumn() {
+    this.columns.forEach((side) => {
+      if (side.includes(this.distanceColumn.id)) {
+        const index = side.indexOf(this.distanceColumn.id);
+        side[index] = this.distanceColumn;
+      }
+    });
+  }
+
+  private calculateDistanceTo(e: Entity) {
+    // TODO does not update with selection
+    if (this.leftSide.selected && this.leftSide.selected !== e) {
+      return this.getDistanceString(this.leftSide.selected, e, 0);
+    } else if (this.rightSide.selected && this.rightSide.selected !== e) {
+      return this.getDistanceString(this.rightSide.selected, e, 1);
+    } else {
+      return "-";
+    }
+  }
+
+  private getDistanceString(from: Entity, to: Entity, index: number): string {
+    const a = from[this.showMap[index]] as Coordinates;
+    const b = to[this.showMap[(index + 1) % 2]] as Coordinates;
+    const res = getKmDistance(a, b).toFixed(2);
+    return $localize`:distance with unit|e.g. 5 km:${res} km`;
   }
 }

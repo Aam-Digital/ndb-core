@@ -6,6 +6,7 @@ import {
 } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
+import { ColumnConfig } from "../../entity-subrecord/entity-subrecord/entity-subrecord-config";
 
 @Component({
   selector: "app-entity-property-view",
@@ -17,7 +18,7 @@ export class EntityPropertyViewComponent<E extends Entity = Entity>
   implements OnInit
 {
   @Input() entity: E;
-  @Input() property: string;
+  @Input() property: ColumnConfig;
 
   /**
    * (optional) component to be used to display this value.
@@ -26,17 +27,23 @@ export class EntityPropertyViewComponent<E extends Entity = Entity>
   @Input() component?: string;
 
   @Input() showLabel: boolean = false;
+
+  additional: any;
   label: string;
 
   constructor(private schemaService: EntitySchemaService) {}
 
   ngOnInit() {
-    if (!this.component) {
-      this.component = this.schemaService.getComponent(
-        this.entity.getSchema().get(this.property)
-      );
+    if (typeof this.property === "string") {
+      const schema = this.entity.getSchema().get(this.property);
+      if (!this.component) {
+        this.component = this.schemaService.getComponent(schema);
+      }
+      this.label = schema.label ?? this.property;
+    } else {
+      this.component = this.property.view;
+      this.additional = this.property.additional;
+      this.label = this.property.label;
     }
-    this.label =
-      this.entity.getSchema().get(this.property).label ?? this.property;
   }
 }

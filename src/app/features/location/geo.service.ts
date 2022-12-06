@@ -10,6 +10,7 @@ export interface GeoResult extends Coordinates {
 /**
  * A service that uses nominatim to lookup locations {@link https://nominatim.org/}
  * TODO maybe include email in requests {@link https://nominatim.org/release-docs/develop/api/Reverse/#other}
+ * TODO log and count requests in matomo
  */
 @Injectable({
   providedIn: "root",

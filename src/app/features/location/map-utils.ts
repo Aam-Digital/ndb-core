@@ -1,5 +1,6 @@
 import { Entity } from "../../core/entity/model/entity";
 import * as L from "leaflet";
+import { Coordinates } from "./coordinates";
 
 const iconRetinaUrl = "assets/marker-icon-2x.png";
 const iconUrl = "assets/marker-icon.png";
@@ -55,4 +56,27 @@ function getHue(r: number, g: number, b: number) {
     case b:
       return ((r - g) / d + 4) / 6;
   }
+}
+
+/**
+ * Calculate distance between two points
+ * Source {@link https://henry-rossiter.medium.com/calculating-distance-between-geographic-coordinates-with-javascript-5f3097b61898}
+ * @param x
+ * @param y
+ */
+export function getKmDistance(x: Coordinates, y: Coordinates) {
+  const R = 6371e3;
+  const p1 = (x.lat * Math.PI) / 180;
+  const p2 = (y.lat * Math.PI) / 180;
+  const deltaP = p2 - p1;
+  const deltaLon = y.lon - x.lon;
+  const deltaLambda = (deltaLon * Math.PI) / 180;
+  const a =
+    Math.sin(deltaP / 2) * Math.sin(deltaP / 2) +
+    Math.cos(p1) *
+      Math.cos(p2) *
+      Math.sin(deltaLambda / 2) *
+      Math.sin(deltaLambda / 2);
+  const d = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * R;
+  return d / 1000;
 }

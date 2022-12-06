@@ -55,7 +55,7 @@ export interface MatchingSideConfig {
   availableFilters?: FilterConfig[];
 
   /** columns of the available entities table. Usually inferred from matching columns of the component */
-  columns?: string[];
+  columns?: ColumnConfig[];
 }
 
 export interface NewMatchAction {
