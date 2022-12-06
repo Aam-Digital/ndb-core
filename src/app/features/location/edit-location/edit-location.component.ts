@@ -37,7 +37,7 @@ export class EditLocationComponent extends EditComponent<GeoResult> {
         map((input) => input.trim()),
         filter((input) => this.isRelevantInput(input)),
         tap(() => (this.loading = true)),
-        debounceTime(1000),
+        debounceTime(3000),
         concatMap((res) => this.getGeoLookupResult(res))
       )
       .subscribe((res) => this.filteredOptions.next(res));
