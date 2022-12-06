@@ -8,9 +8,24 @@ import { Coordinates } from "../coordinates";
   styleUrls: ["./map-popup.component.scss"],
 })
 export class MapPopupComponent {
-  constructor(@Inject(MAT_DIALOG_DATA) public coordinates: Coordinates) {}
+  coordinates: Coordinates;
+  disabled = false;
+
+  constructor(
+    @Inject(MAT_DIALOG_DATA)
+    data: {
+      coordinates: Coordinates;
+      disabled?: boolean;
+    }
+  ) {
+    this.coordinates = data.coordinates;
+    this.disabled = !!data.disabled;
+  }
 
   select(newCoordinates: Coordinates) {
+    if (this.disabled) {
+      return;
+    }
     this.coordinates = newCoordinates;
   }
 }
