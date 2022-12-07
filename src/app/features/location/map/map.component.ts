@@ -26,7 +26,6 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
 
   @ViewChild("map") private mapElement: ElementRef<HTMLDivElement>;
 
-  // TODO map shows gray on full screen
   @Input() height = "200px";
 
   @Input() set marked(coordinates: Coordinates[]) {
@@ -72,6 +71,7 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
 
   ngAfterViewInit() {
     // init Map
+    console.log("map", this.mapElement);
     this.map = L.map(this.mapElement.nativeElement, {
       center:
         this.markers?.length > 0
@@ -93,6 +93,8 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
       }
     );
     tiles.addTo(this.map);
+    // this is necessary to remove gray spots when directly opening app on a page with the map
+    setTimeout(() => this.map.invalidateSize());
 
     this.showMarkersOnMap(this.markers);
     this.showMarkersOnMap(this.highlightedMarkers, true);
