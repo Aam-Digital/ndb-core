@@ -12,15 +12,6 @@ import { LoggingService } from "../../logging/logging.service";
 import { get } from "lodash-es";
 import { AuthUser } from "../../session/session-service/auth-user";
 
-export function detectEntityType(subject: Entity): EntityConstructor<any> {
-  if (subject instanceof Entity) {
-    return subject.getConstructor();
-  } else {
-    // This happens when trying to check permissions on a object that is not a subtype of Entity
-    throw Error("Checking rule for invalid subject " + subject);
-  }
-}
-
 /**
  * This service sets up the `EntityAbility` injectable with the JSON defined rules for the currently logged in user.
  */

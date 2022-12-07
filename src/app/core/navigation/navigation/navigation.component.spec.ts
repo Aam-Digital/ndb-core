@@ -23,12 +23,7 @@ import { ConfigService } from "../../config/config.service";
 import { BehaviorSubject, Subject } from "rxjs";
 import { Config } from "../../config/config";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
-import {
-  ActivatedRouteSnapshot,
-  Event,
-  NavigationEnd,
-  Router,
-} from "@angular/router";
+import { Event, NavigationEnd, Router } from "@angular/router";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { NavigationModule } from "../navigation.module";
 
