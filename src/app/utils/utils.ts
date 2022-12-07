@@ -5,7 +5,6 @@
 import { Router } from "@angular/router";
 import { ConfigurableEnumValue } from "../core/configurable-enum/configurable-enum.interface";
 import { FactoryProvider, Injector } from "@angular/core";
-import { Entity } from "../core/entity/model/entity";
 
 export function isValidDate(date: any): boolean {
   return (
