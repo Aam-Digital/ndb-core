@@ -100,15 +100,6 @@ export function compareEnums(
 }
 
 /**
- * returns `true` when `thing` is (probably) a `PromiseLike`, i.e. can
- * be awaited and has a `.then()` function, `false` otherwise
- * @param thing The thing under test
- */
-export function isPromise(thing: any): thing is PromiseLike<any> {
-  return thing && typeof thing["then"] === "function";
-}
-
-/**
  * Parses and returns the payload of a JWT into a JSON object.
  * For me info see {@link https://jwt.io}.
  * @param token a valid JWT

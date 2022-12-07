@@ -32,7 +32,6 @@ import { RouteTarget } from "../../../app.routing";
 })
 export class DashboardComponent implements OnInit {
   widgets: DynamicComponentConfig[] = [];
-  isEditing: boolean = false;
 
   constructor(private activatedRoute: ActivatedRoute) {}
 

@@ -70,6 +70,7 @@ import { TabStateModule } from "../../utils/tab-state/tab-state.module";
 import { CommonComponentsModule } from "../../core/common-components/common-components.module";
 import { MatDialogModule } from "@angular/material/dialog";
 import { FilterModule } from "../../core/filter/filter.module";
+import { EntitySelectModule } from "../../core/entity-components/entity-select/entity-select.module";
 
 @Injectable()
 // Only allow horizontal swiping
@@ -134,6 +135,7 @@ export class HorizontalHammerConfig extends HammerGestureConfig {
     CommonComponentsModule,
     MatDialogModule,
     FilterModule,
+    EntitySelectModule,
   ],
   exports: [
     ActivityCardComponent,

@@ -1,10 +1,4 @@
-import {
-  Directive,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  ViewContainerRef,
-} from "@angular/core";
+import { Directive, Input, OnChanges, ViewContainerRef } from "@angular/core";
 import { DynamicComponentConfig } from "./dynamic-component-config.interface";
 import { OnInitDynamicComponent } from "./on-init-dynamic-component.interface";
 import { ViewRegistry } from "./dynamic-component.decorator";
@@ -28,7 +22,7 @@ export class DynamicComponentDirective implements OnChanges {
     private registry: ViewRegistry
   ) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     this.loadDynamicComponent();
   }
 

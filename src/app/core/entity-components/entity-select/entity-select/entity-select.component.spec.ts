@@ -6,54 +6,43 @@ import {
 } from "@angular/core/testing";
 import { EntitySelectComponent } from "./entity-select.component";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatChipsModule } from "@angular/material/chips";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Entity } from "../../../entity/model/entity";
-import { ReactiveFormsModule } from "@angular/forms";
 import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 import { User } from "../../../user/user";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { Subscription } from "rxjs";
-import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
-import {
-  EntityRegistry,
-  entityRegistry,
-} from "../../../entity/database-entity.decorator";
+import { EntitySelectModule } from "../entity-select.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { School } from "../../../../child-dev-project/schools/model/school";
 
 describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any>;
   let fixture: ComponentFixture<EntitySelectComponent<any>>;
-  let subscription: Subscription = null;
 
   const testUsers: Entity[] = ["Abc", "Bcd", "Abd", "Aba"].map((s) => {
     const user = new User();
     user.name = s;
     return user;
   });
-  const otherEntities: Entity[] = [new Child(), new Child()];
+  const testChildren: Entity[] = [new Child(), new Child()];
+  const otherEntities: Entity[] = [new School()];
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [EntitySelectComponent],
       providers: [
         {
           provide: EntityMapperService,
-          useValue: mockEntityMapper(testUsers.concat(otherEntities)),
+          useValue: mockEntityMapper([
+            ...testUsers,
+            ...testChildren,
+            ...otherEntities,
+          ]),
         },
-        {
-          provide: EntityRegistry,
-          useValue: entityRegistry,
-        },
-        EntitySchemaService,
       ],
       imports: [
-        MatAutocompleteModule,
-        MatFormFieldModule,
-        MatChipsModule,
+        EntitySelectModule,
         NoopAnimationsModule,
-        ReactiveFormsModule,
+        FontAwesomeTestingModule,
       ],
     }).compileComponents();
   });
@@ -64,15 +53,11 @@ describe("EntitySelectComponent", () => {
     fixture.detectChanges();
   });
 
-  afterEach(() => {
-    subscription?.unsubscribe();
-  });
-
   it("should create", () => {
     expect(component).toBeTruthy();
   });
 
-  it("eventually loads all entity-types when the entity-type is set", fakeAsync(() => {
+  it("eventually loads all entities of the given type when the entity-type is set", fakeAsync(() => {
     component.entityType = User.ENTITY_TYPE;
     fixture.detectChanges();
     tick();
@@ -104,6 +89,20 @@ describe("EntitySelectComponent", () => {
     expect(component.selectedEntities.map((s) => s.getId())).toEqual(
       expectation
     );
+  }));
+
+  it("accepts initial selection as IDs with and without prefix", fakeAsync(() => {
+    component.entityType = User.ENTITY_TYPE;
+
+    component.selection = [testUsers[1].getId()];
+    fixture.detectChanges();
+    tick();
+    expect(component.selectedEntities).toEqual([testUsers[1]]);
+
+    component.selection = [testUsers[2].getId(true)];
+    fixture.detectChanges();
+    tick();
+    expect(component.selectedEntities).toEqual([testUsers[2]]);
   }));
 
   it("emits whenever a new entity is selected", fakeAsync(() => {
@@ -221,4 +220,24 @@ describe("EntitySelectComponent", () => {
     component.unselectEntity(selectedUser);
     expect(component.filteredEntities).toContain(selectedUser);
   });
+
+  it("suggests all entities of multiple different types if configured", fakeAsync(() => {
+    component.entityType = [User.ENTITY_TYPE, Child.ENTITY_TYPE];
+    tick();
+    fixture.detectChanges();
+    expect(component.allEntities).toEqual([...testUsers, ...testChildren]);
+    expect(component.filteredEntities).toEqual([...testUsers, ...testChildren]);
+  }));
+
+  it("should be able to select entities from different types", fakeAsync(() => {
+    component.entityType = [User.ENTITY_TYPE, Child.ENTITY_TYPE];
+    component.selection = [
+      testUsers[1].getId(true),
+      testChildren[0].getId(true),
+    ];
+    fixture.detectChanges();
+    tick();
+
+    expect(component.selectedEntities).toEqual([testUsers[1], testChildren[0]]);
+  }));
 });

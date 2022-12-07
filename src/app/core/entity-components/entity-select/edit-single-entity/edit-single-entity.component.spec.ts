@@ -6,14 +6,14 @@ import {
 } from "@angular/core/testing";
 
 import { EditSingleEntityComponent } from "./edit-single-entity.component";
-import { EntityMapperService } from "../../../../entity/entity-mapper.service";
-import { EntityFormService } from "../../../entity-form/entity-form.service";
-import { ChildSchoolRelation } from "../../../../../child-dev-project/children/model/childSchoolRelation";
-import { School } from "../../../../../child-dev-project/schools/model/school";
-import { EntityUtilsModule } from "../../entity-utils.module";
-import { Child } from "../../../../../child-dev-project/children/model/child";
-import { MockedTestingModule } from "../../../../../utils/mocked-testing.module";
+import { EntityMapperService } from "../../../entity/entity-mapper.service";
+import { EntityFormService } from "../../entity-form/entity-form.service";
+import { ChildSchoolRelation } from "../../../../child-dev-project/children/model/childSchoolRelation";
+import { School } from "../../../../child-dev-project/schools/model/school";
+import { Child } from "../../../../child-dev-project/children/model/child";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { FormControl } from "@angular/forms";
+import { EntitySelectModule } from "../entity-select.module";
 
 describe("EditSingleEntityComponent", () => {
   let component: EditSingleEntityComponent;
@@ -22,7 +22,8 @@ describe("EditSingleEntityComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EntityUtilsModule, MockedTestingModule.withState()],
+      imports: [EntitySelectModule, MockedTestingModule.withState()],
+      providers: [EntityFormService],
     }).compileComponents();
     loadTypeSpy = spyOn(TestBed.inject(EntityMapperService), "loadType");
   });

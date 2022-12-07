@@ -1,9 +1,9 @@
 import { Component } from "@angular/core";
-import { Entity } from "../../../../entity/model/entity";
-import { EntityMapperService } from "../../../../entity/entity-mapper.service";
-import { ViewDirective } from "../view.directive";
-import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
-import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
+import { Entity } from "../../../entity/model/entity";
+import { EntityMapperService } from "../../../entity/entity-mapper.service";
+import { ViewDirective } from "../../entity-utils/view-components/view.directive";
+import { ViewPropertyConfig } from "../../entity-list/EntityListConfig";
+import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
 
 @DynamicComponent("DisplayEntityArray")
 @Component({

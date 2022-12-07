@@ -11,11 +11,11 @@ import { ConfirmationDialogService } from "app/core/confirmation-dialog/confirma
 import { EntityFormService } from "app/core/entity-components/entity-form/entity-form.service";
 import { FormFieldConfig } from "app/core/entity-components/entity-form/entity-form/FormConfig";
 import { MockedTestingModule } from "app/utils/mocked-testing.module";
-import { EntityMapperService } from "../../../../entity/entity-mapper.service";
-import { EntityUtilsModule } from "../../entity-utils.module";
+import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { EditTextWithAutocompleteComponent } from "./edit-text-with-autocomplete.component";
 import { By } from "@angular/platform-browser";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { EntitySelectModule } from "../entity-select.module";
 
 describe("EditTextWithAutocompleteComponent", () => {
   let component: EditTextWithAutocompleteComponent;
@@ -26,9 +26,16 @@ describe("EditTextWithAutocompleteComponent", () => {
     await TestBed.configureTestingModule({
       declarations: [EditTextWithAutocompleteComponent],
       imports: [
-        EntityUtilsModule,
+        EntitySelectModule,
         MockedTestingModule.withState(),
         FontAwesomeTestingModule,
+      ],
+      providers: [
+        EntityFormService,
+        {
+          provide: ConfirmationDialogService,
+          useValue: new ConfirmationDialogService(null),
+        },
       ],
     }).compileComponents();
 

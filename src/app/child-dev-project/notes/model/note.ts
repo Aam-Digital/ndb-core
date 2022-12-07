@@ -127,7 +127,6 @@ export class Note extends Entity {
     label: $localize`:label for the related Entities:Related Records`,
     viewComponent: "DisplayEntityArray",
     editComponent: "EditEntityArray",
-    // TODO: transition this to allow linking of multiple/all entity types in the future
     // by default no additional relatedEntities can be linked apart from children and schools, overwrite this in config to display (e.g. additional: "ChildSchoolRelation")
     additional: undefined,
   })
