@@ -33,10 +33,10 @@ export interface UiConfig {
      * Countries, from which search results will be included
      * see {@link https://nominatim.org/release-docs/develop/api/Search/#result-limitation}
      */
-    countrycodes: string;
+    countrycodes?: string;
     /**
      * Start location of map if nothing was selected yet
      */
-    start: [number, number];
+    start?: [number, number];
   };
 }

@@ -56,7 +56,7 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
   @Output() mapClick: Observable<Coordinates> = this.clickStream.pipe(
     timeInterval(),
     debounceTime(400),
-    filter(({ interval }) => interval > 400),
+    filter(({ interval }) => interval >= 400),
     map(({ value }) => ({ lat: value.lat, lon: value.lng }))
   );
 
@@ -71,7 +71,6 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
 
   ngAfterViewInit() {
     // init Map
-    console.log("map", this.mapElement);
     this.map = L.map(this.mapElement.nativeElement, {
       center:
         this.markers?.length > 0
@@ -100,6 +99,18 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
     this.showMarkersOnMap(this.highlightedMarkers, true);
   }
 
+  private showMarkersOnMap(marker: L.Marker[], highlighted = false) {
+    if (!marker || !this.map || marker.length === 0) {
+      return;
+    }
+    marker.forEach((m) => this.addMarker(m, highlighted));
+    const group = L.featureGroup(marker);
+    this.map.fitBounds(group.getBounds(), {
+      padding: [50, 50],
+      maxZoom: this.map.getZoom(),
+    });
+  }
+
   private createEntityMarkers(entities: { entity: T; property: string }[]) {
     return entities
       .filter(({ entity, property }) => !!entity?.[property])
@@ -122,18 +133,6 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
     return coordinates
       .filter((coord) => !!coord)
       .map((coord) => L.marker([coord.lat, coord.lon]));
-  }
-
-  private showMarkersOnMap(marker: L.Marker[], highlighted = false) {
-    if (!marker || !this.map || marker.length === 0) {
-      return;
-    }
-    marker.forEach((m) => this.addMarker(m, highlighted));
-    const group = L.featureGroup(marker);
-    this.map.fitBounds(group.getBounds(), {
-      padding: [50, 50],
-      maxZoom: this.map.getZoom(),
-    });
   }
 
   private addMarker(m: L.Marker, highlighted: boolean = false) {
