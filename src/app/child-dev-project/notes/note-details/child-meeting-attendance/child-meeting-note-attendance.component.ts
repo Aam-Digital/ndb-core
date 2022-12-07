@@ -1,7 +1,5 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { EventAttendance } from "../../../attendance/model/event-attendance";
 import { Note } from "../../model/note";
-import { FormGroup } from "@angular/forms";
 
 /**
  * Display a single participant's attendance status in a compact row.

@@ -1,14 +1,14 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { DisplayEntityArrayComponent } from "./display-entity-array.component";
-import { EntityMapperService } from "../../../../entity/entity-mapper.service";
-import { Child } from "../../../../../child-dev-project/children/model/child";
-import { Note } from "../../../../../child-dev-project/notes/model/note";
-import { EntitySchemaService } from "../../../../entity/schema/entity-schema.service";
+import { EntityMapperService } from "../../../entity/entity-mapper.service";
+import { Child } from "../../../../child-dev-project/children/model/child";
+import { Note } from "../../../../child-dev-project/notes/model/note";
+import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import {
   EntityRegistry,
   entityRegistry,
-} from "../../../../entity/database-entity.decorator";
+} from "../../../entity/database-entity.decorator";
 
 describe("DisplayEntityArrayComponent", () => {
   let component: DisplayEntityArrayComponent;

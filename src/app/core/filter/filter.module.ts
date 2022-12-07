@@ -8,6 +8,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { CommonComponentsModule } from "../common-components/common-components.module";
 import { FilterOverlayComponent } from "./filter-overlay/filter-overlay.component";
 import { MatDialogModule } from "@angular/material/dialog";
+import { MatButtonModule } from "@angular/material/button";
 
 @NgModule({
   declarations: [FilterComponent, ListFilterComponent, FilterOverlayComponent],
@@ -19,6 +20,7 @@ import { MatDialogModule } from "@angular/material/dialog";
     MatSelectModule,
     CommonComponentsModule,
     MatDialogModule,
+    MatButtonModule,
   ],
 })
 export class FilterModule {}

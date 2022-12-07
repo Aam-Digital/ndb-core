@@ -8,7 +8,7 @@ import { ChildrenService } from "../../../../child-dev-project/children/children
 import { BehaviorSubject } from "rxjs";
 import { EntitySelectComponent } from "./entity-select.component";
 import { ChildrenModule } from "../../../../child-dev-project/children/children.module";
-import { EntityUtilsModule } from "../entity-utils.module";
+import { EntityUtilsModule } from "../../entity-utils/entity-utils.module";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 
 const child1 = new Child();
