@@ -27,6 +27,9 @@ L.Marker.prototype.options.icon = iconDefault;
 export function getHueForEntity(entity: Entity, offset = 145): string {
   // Grab the hex representation and convert to decimal (base 10).
   const color = entity.getConstructor().color;
+  if (!color) {
+    return "0";
+  }
   const r = parseInt(color.substring(1, 3), 16) / 255;
   const g = parseInt(color.substring(3, 5), 16) / 255;
   const b = parseInt(color.substring(5, 7), 16) / 255;

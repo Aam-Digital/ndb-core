@@ -30,7 +30,7 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
 
   @Input() set marked(coordinates: Coordinates[]) {
     this.clearMarkers(this.markers);
-    this.markers = this.setMultipleMarkers(coordinates);
+    this.markers = this.createMarkers(coordinates);
     this.showMarkersOnMap(this.markers);
   }
 
@@ -63,7 +63,7 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
   @Output() entityClick = new EventEmitter<T>();
 
   constructor(configService: ConfigService) {
-    const config = configService.getConfig<UiConfig>("appConfig").map;
+    const config = configService.getConfig<UiConfig>("appConfig")?.map;
     if (config?.start) {
       this.start_location = config.start;
     }
@@ -129,7 +129,7 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
     }
   }
 
-  private setMultipleMarkers(coordinates: Coordinates[]) {
+  private createMarkers(coordinates: Coordinates[]) {
     return coordinates
       .filter((coord) => !!coord)
       .map((coord) => L.marker([coord.lat, coord.lon]));

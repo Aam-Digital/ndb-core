@@ -10,6 +10,7 @@ import { UiConfig } from "../../../core/ui/ui-config";
 import { ConfigService } from "../../../core/config/config.service";
 import * as L from "leaflet";
 import { Coordinates } from "../coordinates";
+import { Entity } from "../../../core/entity/model/entity";
 
 describe("MapComponent", () => {
   let component: MapComponent;
@@ -54,4 +55,39 @@ describe("MapComponent", () => {
     tick(400);
     expect(clicked).toEqual({ lat: 1, lon: 3 });
   }));
+
+  it("should center map around markers and keep zoom", () => {
+    component.marked = [
+      { lat: 1, lon: 1 },
+      { lat: 1, lon: 3 },
+    ];
+
+    const center = map.getCenter();
+    expect(center.lat).toBeCloseTo(1);
+    expect(center.lng).toBeCloseTo(2);
+  });
+
+  it("should create markers for entities and emit entity when marker is clicked", (done) => {
+    const entity = new Entity();
+    entity["address"] = { lat: 1, lon: 1 };
+    component.entities = [{ entity, property: "address" }];
+
+    // Look for marker where entity has been set
+    let marker: L.Marker;
+    map.eachLayer((layer) => {
+      if (layer["entity"]) {
+        marker = layer as L.Marker;
+      }
+    });
+
+    // marker shows entity information when hovered
+    expect(marker.getTooltip()["_content"]).toBe(entity.toString());
+
+    component.entityClick.subscribe((res) => {
+      expect(res).toBe(entity);
+      done();
+    });
+
+    marker.fireEvent("click");
+  });
 });
