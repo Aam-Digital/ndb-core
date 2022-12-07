@@ -146,16 +146,17 @@ export class MatchingEntitiesComponent
       newSide.availableEntities = await this.entityMapper.loadType(
         newSide.entityType
       );
-      if (this.showMap) {
-        this.mapEntities = this.mapEntities.concat(
-          newSide.availableEntities.map((entity) => ({
-            entity,
-            property: this.showMap[sideIndex],
-          }))
-        );
-      }
       newSide.availableFilters = newSide.availableFilters ?? [];
       this.applySelectedFilters(newSide, {});
+    }
+
+    if (this.showMap && newSide.availableEntities) {
+      this.mapEntities = this.mapEntities.concat(
+        newSide.availableEntities.map((entity) => ({
+          entity,
+          property: this.showMap[sideIndex],
+        }))
+      );
     }
 
     return newSide;
