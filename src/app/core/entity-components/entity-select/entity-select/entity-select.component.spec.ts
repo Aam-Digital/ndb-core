@@ -6,26 +6,17 @@ import {
 } from "@angular/core/testing";
 import { EntitySelectComponent } from "./entity-select.component";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatChipsModule } from "@angular/material/chips";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Entity } from "../../../entity/model/entity";
-import { ReactiveFormsModule } from "@angular/forms";
 import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 import { User } from "../../../user/user";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { Subscription } from "rxjs";
-import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
-import {
-  EntityRegistry,
-  entityRegistry,
-} from "../../../entity/database-entity.decorator";
+import { EntitySelectModule } from "../entity-select.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any>;
   let fixture: ComponentFixture<EntitySelectComponent<any>>;
-  let subscription: Subscription = null;
 
   const testUsers: Entity[] = ["Abc", "Bcd", "Abd", "Aba"].map((s) => {
     const user = new User();
@@ -36,24 +27,16 @@ describe("EntitySelectComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [EntitySelectComponent],
       providers: [
         {
           provide: EntityMapperService,
           useValue: mockEntityMapper(testUsers.concat(otherEntities)),
         },
-        {
-          provide: EntityRegistry,
-          useValue: entityRegistry,
-        },
-        EntitySchemaService,
       ],
       imports: [
-        MatAutocompleteModule,
-        MatFormFieldModule,
-        MatChipsModule,
+        EntitySelectModule,
         NoopAnimationsModule,
-        ReactiveFormsModule,
+        FontAwesomeTestingModule,
       ],
     }).compileComponents();
   });
@@ -62,10 +45,6 @@ describe("EntitySelectComponent", () => {
     fixture = TestBed.createComponent(EntitySelectComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  });
-
-  afterEach(() => {
-    subscription?.unsubscribe();
   });
 
   it("should create", () => {
