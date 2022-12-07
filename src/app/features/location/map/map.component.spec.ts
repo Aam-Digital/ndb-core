@@ -10,7 +10,7 @@ import { UiConfig } from "../../../core/ui/ui-config";
 import { ConfigService } from "../../../core/config/config.service";
 import * as L from "leaflet";
 import { Coordinates } from "../coordinates";
-import { Entity } from "../../../core/entity/model/entity";
+import { Child } from "../../../child-dev-project/children/model/child";
 
 describe("MapComponent", () => {
   let component: MapComponent;
@@ -68,9 +68,9 @@ describe("MapComponent", () => {
   });
 
   it("should create markers for entities and emit entity when marker is clicked", (done) => {
-    const entity = new Entity();
-    entity["address"] = { lat: 1, lon: 1 };
-    component.entities = [{ entity, property: "address" }];
+    const child = new Child();
+    child["address"] = { lat: 1, lon: 1 };
+    component.entities = [{ entity: child, property: "address" }];
 
     // Look for marker where entity has been set
     let marker: L.Marker;
@@ -81,10 +81,10 @@ describe("MapComponent", () => {
     });
 
     // marker shows entity information when hovered
-    expect(marker.getTooltip()["_content"]).toBe(entity.toString());
+    expect(marker.getTooltip()["_content"]).toBe(child.toString());
 
     component.entityClick.subscribe((res) => {
-      expect(res).toBe(entity);
+      expect(res).toBe(child);
       done();
     });
 

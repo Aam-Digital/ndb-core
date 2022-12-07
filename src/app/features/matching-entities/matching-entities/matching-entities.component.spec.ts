@@ -208,4 +208,15 @@ describe("MatchingEntitiesComponent", () => {
     const distance = distanceColumn.additional(compare);
     expect(distance).toEqual("0.01 km");
   });
+
+  it("should select a entity if it has been selected in the map", async () => {
+    component.entity = new Entity();
+    component.rightSide = { entityType: Child };
+    await component.ngOnInit();
+
+    const child = new Child();
+    component.entityInMapClicked(child);
+
+    expect(component.rightSide.selected).toBe(child);
+  });
 });
