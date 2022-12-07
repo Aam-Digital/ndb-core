@@ -1,9 +1,11 @@
 import {
   AfterViewInit,
   Component,
+  ElementRef,
   EventEmitter,
   Input,
   Output,
+  ViewChild,
 } from "@angular/core";
 import * as L from "leaflet";
 import { Observable, Subject, timeInterval } from "rxjs";
@@ -20,9 +22,11 @@ import { UiConfig } from "../../../core/ui/ui-config";
   styleUrls: ["./map.component.scss"],
 })
 export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
-  // TODO this should be configurable
   private readonly start_location: L.LatLngTuple = [52.4790412, 13.4319106];
 
+  @ViewChild("map") private mapElement: ElementRef<HTMLDivElement>;
+
+  // TODO map shows gray on full screen
   @Input() height = "200px";
 
   @Input() set marked(coordinates: Coordinates[]) {
@@ -68,7 +72,7 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
 
   ngAfterViewInit() {
     // init Map
-    this.map = L.map("map", {
+    this.map = L.map(this.mapElement.nativeElement, {
       center:
         this.markers?.length > 0
           ? this.markers[0].getLatLng()
