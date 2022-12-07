@@ -1,9 +1,12 @@
 import { Component, ElementRef, ViewChild } from "@angular/core";
-import { EditComponent, EditPropertyConfig } from "../edit-component";
-import { Entity } from "../../../../entity/model/entity";
+import {
+  EditComponent,
+  EditPropertyConfig,
+} from "../../entity-utils/dynamic-form-components/edit-component";
+import { Entity } from "../../../entity/model/entity";
 import { BehaviorSubject } from "rxjs";
-import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
-import { EntityMapperService } from "../../../../entity/entity-mapper.service";
+import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
+import { EntityMapperService } from "../../../entity/entity-mapper.service";
 
 @DynamicComponent("EditSingleEntity")
 @Component({

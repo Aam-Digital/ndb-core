@@ -1,9 +1,12 @@
 import { Component } from "@angular/core";
-import { EditComponent, EditPropertyConfig } from "../edit-component";
-import { Entity } from "../../../../entity/model/entity";
+import {
+  EditComponent,
+  EditPropertyConfig,
+} from "../../entity-utils/dynamic-form-components/edit-component";
+import { Entity } from "../../../entity/model/entity";
 import { BehaviorSubject } from "rxjs";
-import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
-import { EntityMapperService } from "../../../../entity/entity-mapper.service";
+import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
+import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { FormControl } from "@angular/forms";
 import { ConfirmationDialogService } from "app/core/confirmation-dialog/confirmation-dialog.service";
 
