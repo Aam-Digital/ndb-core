@@ -51,6 +51,7 @@ export class EntityListComponent<T extends Entity>
   @Input() allEntities: T[] = [];
   @Input() listConfig: EntityListConfig;
   @Input() entityConstructor: EntityConstructor<T>;
+  @Input() clickMode: "navigate" | "popup" | "none" = "navigate";
   @Input() isLoading: boolean;
   @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();

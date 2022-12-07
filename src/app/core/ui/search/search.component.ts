@@ -7,6 +7,7 @@ import { Router } from "@angular/router";
 import { FormControl } from "@angular/forms";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 
 /**
  * General search box that provides results out of any kind of entities from the system
@@ -39,6 +40,7 @@ export class SearchComponent {
   constructor(
     private indexingService: DatabaseIndexingService,
     private router: Router,
+    private userRoleGuard: UserRoleGuard,
     private entitySchemaService: EntitySchemaService,
     private entities: EntityRegistry
   ) {
@@ -85,16 +87,12 @@ export class SearchComponent {
   }
 
   async clickOption(optionElement) {
-    // TODO this requires to routes to be called similar to the entities, can we ensure this?
-    const resultEntity: Entity = optionElement.value;
     await this.router.navigate([
-      resultEntity.getType().toLowerCase(),
-      resultEntity.getId(),
+      optionElement.value.getConstructor().route,
+      optionElement.value.getId(),
     ]);
-
     this.formControl.setValue("");
   }
-
   /**
    * Check if the input should start an actual search.
    * Only search for words starting with a char or number -> no searching for space or no input
@@ -132,6 +130,9 @@ export class SearchComponent {
   ): Entity[] {
     return rows
       .map((doc) => this.transformDocToEntity(doc))
+      .filter((entity) =>
+        this.userRoleGuard.checkRoutePermissions(entity.getConstructor().route)
+      )
       .filter((entity) =>
         this.containsSecondarySearchTerms(entity, searchTerms)
       );
