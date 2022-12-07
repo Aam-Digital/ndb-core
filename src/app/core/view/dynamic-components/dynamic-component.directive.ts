@@ -28,7 +28,7 @@ export class DynamicComponentDirective implements OnChanges {
     private registry: ViewRegistry
   ) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     this.loadDynamicComponent();
   }
 

@@ -33,7 +33,6 @@ export class ActivitiesOverviewComponent implements OnInitDynamicComponent {
 
   entity: Entity;
   records: RecurringActivity[] = [];
-  listConfig: EntityListConfig;
 
   constructor(private entityMapper: EntityMapperService) {}
 

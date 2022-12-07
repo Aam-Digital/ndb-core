@@ -7,8 +7,6 @@ import {
   TemplateRef,
   ViewChild,
 } from "@angular/core";
-import { MatButton } from "@angular/material/button";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 /**
  * This component is used to display a tooltip when a element is elementDisabled.

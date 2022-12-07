@@ -12,7 +12,8 @@ import { DynamicComponent } from "../../../../core/view/dynamic-components/dynam
   templateUrl: "./grouped-child-attendance.component.html",
 })
 export class GroupedChildAttendanceComponent
-  implements OnChanges, OnInitDynamicComponent {
+  implements OnChanges, OnInitDynamicComponent
+{
   @Input() child: Child = new Child("");
 
   loading: boolean = true;
@@ -20,7 +21,7 @@ export class GroupedChildAttendanceComponent
 
   constructor(private attendanceService: AttendanceService) {}
 
-  async ngOnChanges(changes: SimpleChanges) {
+  async ngOnChanges() {
     await this.loadActivities();
   }
 

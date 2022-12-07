@@ -16,7 +16,8 @@ import { EventNote } from "../model/event-note";
   styleUrls: ["./attendance-details.component.scss"],
 })
 export class AttendanceDetailsComponent
-  implements ShowsEntity<ActivityAttendance>, OnInitDynamicComponent {
+  implements ShowsEntity<ActivityAttendance>, OnInitDynamicComponent
+{
   @Input() entity: ActivityAttendance = new ActivityAttendance();
   @Input() focusedChild: string;
   @ViewChild("dialogForm", { static: true }) formDialogWrapper;
@@ -40,7 +41,6 @@ export class AttendanceDetailsComponent
       },
     },
   ];
-  UnknownStatus = NullAttendanceStatusType;
 
   constructor(private formDialog: FormDialogService) {}
 
