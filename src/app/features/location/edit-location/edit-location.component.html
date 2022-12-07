@@ -24,10 +24,8 @@
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectLocation($event.option.value)">
     <mat-option *ngIf="loading" disabled i18n="Loading in progress">Loading results...</mat-option>
     <mat-option *ngIf="nothingFound" disabled i18n="No results found">Location not found</mat-option>
-    <ng-container *ngIf="!loading">
-      <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-        {{option.display_name}}
-      </mat-option>
-    </ng-container>
+    <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+      {{option.display_name}}
+    </mat-option>
   </mat-autocomplete>
 </mat-form-field>
