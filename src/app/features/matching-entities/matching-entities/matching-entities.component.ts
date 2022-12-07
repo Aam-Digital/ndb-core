@@ -220,7 +220,7 @@ export class MatchingEntitiesComponent
   }
 
   private initDistanceColumn() {
-    this.columns.forEach((side) => {
+    this.columns?.forEach((side) => {
       if (side.includes(this.distanceColumn.id)) {
         const index = side.indexOf(this.distanceColumn.id);
         side[index] = this.distanceColumn;

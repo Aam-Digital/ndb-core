@@ -12,6 +12,7 @@ import { FormDialogService } from "../../../core/form-dialog/form-dialog.service
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { ConfigService } from "../../../core/config/config.service";
 import { of } from "rxjs";
+import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 
 describe("MatchingEntitiesComponent", () => {
   let component: MatchingEntitiesComponent;
@@ -184,5 +185,27 @@ describe("MatchingEntitiesComponent", () => {
     expect(mockEntityMapper.save).toHaveBeenCalledWith(
       jasmine.any(ChildSchoolRelation)
     );
+  });
+
+  it("should create distance column", async () => {
+    component.columns = [[undefined, "distance"]];
+    component.showMap = ["address", "address"];
+    component.entity = new Child();
+    component.entity["address"] = { lat: 52.0, lon: 13 };
+
+    await component.ngOnInit();
+
+    const distanceColumn = component.columns[0][1] as FormFieldConfig;
+    expect(distanceColumn).toEqual({
+      id: "distance",
+      label: "Distance",
+      view: "ReadonlyFunction",
+      additional: jasmine.anything(),
+    });
+
+    const compare = new Child();
+    compare["address"] = { lat: 52.0001, lon: 13 };
+    const distance = distanceColumn.additional(compare);
+    expect(distance).toEqual("0.01 km");
   });
 });
