@@ -1182,7 +1182,7 @@ export const defaultJsonConfig = {
                     "description"
                   ],
                   [
-                    "assignedTo", "deadline", "startDate"
+                    "assignedTo", "deadline", "startDate", "relatedEntities"
                   ]
                 ]
               }

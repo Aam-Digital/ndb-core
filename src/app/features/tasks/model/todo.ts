@@ -19,6 +19,9 @@ import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { User } from "../../../core/user/user";
+import { Child } from "../../../child-dev-project/children/model/child";
+import { School } from "../../../child-dev-project/schools/model/school";
+import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
 
 @DatabaseEntity("Todo")
 export class Todo extends Entity {
@@ -57,12 +60,13 @@ export class Todo extends Entity {
    * This property saves ids including their entity type prefix.
    */
   @DatabaseField({
+    dataType: "entity-array",
     label: $localize`:label for the related Entities:Related Records`,
-    viewComponent: "DisplayEntityArray",
-    editComponent: "EditEntityArray",
-    // TODO: transition this to allow linking of multiple/all entity types in the future
-    // by default no additional relatedEntities can be linked apart from children and schools, overwrite this in config to display (e.g. additional: "ChildSchoolRelation")
-    additional: undefined,
+    additional: [
+      Child.ENTITY_TYPE,
+      School.ENTITY_TYPE,
+      RecurringActivity.ENTITY_TYPE,
+    ],
   })
   relatedEntities: string[] = [];
 }
