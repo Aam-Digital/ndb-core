@@ -38,16 +38,14 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   /**
    * The entity-type (e.g. 'Child', 'School', e.t.c.) to set.
    * @param type The ENTITY_TYPE of a Entity. This affects the entities which will be loaded and the component
-   *             that displays the entities.
+   *             that displays the entities. Can be an array giving multiple types.
    * @throws Error when `type` is not in the entity-map
    */
-  @Input() set entityType(type: string) {
-    this.loading.next(true);
-    this.entityMapperService.loadType<E>(type).then((entities) => {
-      this.allEntities = entities;
-      this.loading.next(false);
-      this.formControl.setValue(null);
-    });
+  @Input() set entityType(type: string | string[]) {
+    if (typeof type === "string") {
+      type = [type];
+    }
+    this.loadAvailableEntities(type);
   }
 
   /**
@@ -172,6 +170,19 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   @Input() accessor: (e: Entity) => string = (e) => e.toString();
 
   @Input() additionalFilter: (e: E) => boolean = (_) => true;
+
+  private async loadAvailableEntities(types: string[]) {
+    this.loading.next(true);
+    const entities: E[] = [];
+
+    for (const type of types) {
+      entities.push(...(await this.entityMapperService.loadType<E>(type)));
+    }
+
+    this.allEntities = entities;
+    this.loading.next(false);
+    this.formControl.setValue(null);
+  }
 
   /**
    * selects a given entity and emits values
