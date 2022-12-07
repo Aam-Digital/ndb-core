@@ -11,7 +11,7 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { setupEditComponent } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component.spec";
 import { GeoResult, GeoService } from "../geo.service";
 import { of } from "rxjs";
-import { HarnessLoader } from "@angular/cdk/testing";
+import { HarnessLoader, TestElement } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatInputHarness } from "@angular/material/input/testing";
 import { MatButtonHarness } from "@angular/material/button/testing";
@@ -61,18 +61,18 @@ describe("EditLocationComponent", () => {
     expect(mockGeoService.lookup).not.toHaveBeenCalled();
     expect(component.loading).toBeFalse();
 
-    tick(900);
+    tick(2000);
     expect(mockGeoService.lookup).not.toHaveBeenCalled();
     expect(component.loading).toBeTrue();
     await inputElement.clear();
     await inputElement.sendKeys("input 2");
 
-    tick(300);
+    tick(1200);
     expect(mockGeoService.lookup).not.toHaveBeenCalled();
     expect(component.loading).toBeTrue();
     expect(options).toBeUndefined();
 
-    tick(900);
+    tick(2000);
     expect(mockGeoService.lookup).toHaveBeenCalledWith("input 2");
     expect(mockGeoService.lookup).not.toHaveBeenCalledWith("input 1");
     expect(component.loading).toBeFalse();
@@ -85,35 +85,21 @@ describe("EditLocationComponent", () => {
       .then((el) => el.host());
 
     // empty input
-    await inputElement.sendKeys(" ");
-    tick(1200);
-    expect(mockGeoService.lookup).not.toHaveBeenCalled();
+    await expectLookup(" ", false, inputElement);
 
     // object (as created by autocomplete)
-    await inputElement.clear();
-    await inputElement.sendKeys("[object Object]");
-    tick(1200);
-    expect(mockGeoService.lookup).not.toHaveBeenCalled();
+    await expectLookup("[object Object]", false, inputElement);
 
     // same search term as last lookup
-    await inputElement.clear();
-    await inputElement.sendKeys("search term");
-    tick(1200);
-    expect(mockGeoService.lookup).toHaveBeenCalled();
+    await expectLookup("search term", true, inputElement);
     mockGeoService.lookup.calls.reset();
-    await inputElement.clear();
-    await inputElement.sendKeys("search term");
-    tick(1200);
-    expect(mockGeoService.lookup).not.toHaveBeenCalled();
+    await expectLookup("search term", false, inputElement);
 
     // value that is already set on the form
     const display_name = "already entered location";
     component.formControl.setValue({ display_name } as any);
     fixture.detectChanges();
-    await inputElement.clear();
-    await inputElement.sendKeys(display_name);
-    tick(1200);
-    expect(mockGeoService.lookup).not.toHaveBeenCalled();
+    await expectLookup(display_name, false, inputElement);
   }));
 
   it("should reset form and input when clicking x", async () => {
@@ -164,4 +150,19 @@ describe("EditLocationComponent", () => {
     expect(mockGeoService.reverseLookup).toHaveBeenCalledWith(location);
     expect(component.formControl).toHaveValue(fullLocation);
   });
+
+  async function expectLookup(
+    searchTerm: string,
+    lookupCalled: boolean,
+    input: TestElement
+  ) {
+    await input.clear();
+    await input.sendKeys(searchTerm);
+    tick(3200);
+    if (lookupCalled) {
+      expect(mockGeoService.lookup).toHaveBeenCalled();
+    } else {
+      expect(mockGeoService.lookup).not.toHaveBeenCalled();
+    }
+  }
 });
