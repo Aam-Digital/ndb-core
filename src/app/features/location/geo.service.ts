@@ -19,7 +19,7 @@ export interface GeoResult extends Coordinates {
 })
 export class GeoService {
   private readonly remoteUrl = "/nominatim";
-  private readonly countrycodes: string = "de";
+  private countrycodes: string = "de";
   private email = environment.email;
 
   constructor(
@@ -27,10 +27,12 @@ export class GeoService {
     private analytics: AnalyticsService,
     configService: ConfigService
   ) {
-    const config = configService.getConfig<UiConfig>("appConfig").map;
-    if (config?.countrycodes) {
-      this.countrycodes = config.countrycodes;
-    }
+    configService.configUpdates.subscribe(() => {
+      const config = configService.getConfig<UiConfig>("appConfig")?.map;
+      if (config?.countrycodes) {
+        this.countrycodes = config.countrycodes;
+      }
+    });
   }
 
   /**
