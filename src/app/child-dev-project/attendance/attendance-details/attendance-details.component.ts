@@ -4,7 +4,6 @@ import { ActivityAttendance } from "../model/activity-attendance";
 import { NoteDetailsComponent } from "../../notes/note-details/note-details.component";
 import { Note } from "../../notes/model/note";
 import { calculateAverageAttendance } from "../model/calculate-average-event-attendance";
-import { NullAttendanceStatusType } from "../model/attendance-status";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";

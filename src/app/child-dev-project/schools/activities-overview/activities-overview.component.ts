@@ -1,7 +1,6 @@
 import { Component } from "@angular/core";
 import { RecurringActivity } from "app/child-dev-project/attendance/model/recurring-activity";
 import { FormFieldConfig } from "app/core/entity-components/entity-form/entity-form/FormConfig";
-import { EntityListConfig } from "app/core/entity-components/entity-list/EntityListConfig";
 import { EntityMapperService } from "app/core/entity/entity-mapper.service";
 import { Entity } from "app/core/entity/model/entity";
 import { DynamicComponent } from "app/core/view/dynamic-components/dynamic-component.decorator";

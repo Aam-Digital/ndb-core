@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import { Component, Input, OnChanges } from "@angular/core";
 import { Child } from "../../model/child";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { PanelConfig } from "../../../../core/entity-components/entity-details/EntityDetailsConfig";
