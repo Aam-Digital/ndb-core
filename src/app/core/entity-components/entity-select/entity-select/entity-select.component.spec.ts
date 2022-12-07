@@ -221,7 +221,7 @@ describe("EntitySelectComponent", () => {
     expect(component.filteredEntities).toContain(selectedUser);
   });
 
-  fit("suggests all entities of multiple different types if configured", fakeAsync(() => {
+  it("suggests all entities of multiple different types if configured", fakeAsync(() => {
     component.entityType = [User.ENTITY_TYPE, Child.ENTITY_TYPE];
     tick();
     fixture.detectChanges();
@@ -229,7 +229,7 @@ describe("EntitySelectComponent", () => {
     expect(component.filteredEntities).toEqual([...testUsers, ...testChildren]);
   }));
 
-  fit("should be able to select entities from different types", fakeAsync(() => {
+  it("should be able to select entities from different types", fakeAsync(() => {
     component.entityType = [User.ENTITY_TYPE, Child.ENTITY_TYPE];
     component.selection = [
       testUsers[1].getId(true),
