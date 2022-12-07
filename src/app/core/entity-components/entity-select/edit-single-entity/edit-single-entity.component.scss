@@ -1,4 +1,4 @@
-@use "../../common-styles" as *;
+@use "../../entity-utils/common-styles" as *;
 
 .block-wrapper {
   @include entity-block-border;

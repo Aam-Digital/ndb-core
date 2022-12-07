@@ -6,15 +6,15 @@ import {
 } from "@angular/core/testing";
 
 import { DisplayEntityComponent } from "./display-entity.component";
-import { EntityMapperService } from "../../../../entity/entity-mapper.service";
-import { Child } from "../../../../../child-dev-project/children/model/child";
-import { ChildSchoolRelation } from "../../../../../child-dev-project/children/model/childSchoolRelation";
-import { School } from "../../../../../child-dev-project/schools/model/school";
-import { EntitySchemaService } from "../../../../entity/schema/entity-schema.service";
+import { EntityMapperService } from "../../../entity/entity-mapper.service";
+import { Child } from "../../../../child-dev-project/children/model/child";
+import { ChildSchoolRelation } from "../../../../child-dev-project/children/model/childSchoolRelation";
+import { School } from "../../../../child-dev-project/schools/model/school";
+import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import {
   EntityRegistry,
   entityRegistry,
-} from "../../../../entity/database-entity.decorator";
+} from "../../../entity/database-entity.decorator";
 import { Router } from "@angular/router";
 
 describe("DisplayEntityComponent", () => {

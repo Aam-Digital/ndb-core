@@ -1,6 +1,9 @@
 import { Component } from "@angular/core";
-import { EditComponent, EditPropertyConfig } from "../edit-component";
-import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
+import {
+  EditComponent,
+  EditPropertyConfig,
+} from "../../entity-utils/dynamic-form-components/edit-component";
+import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
 
 @DynamicComponent("EditEntityArray")
 @Component({

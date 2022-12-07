@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { SessionService } from "../../session/session-service/session.service";
 import { filter } from "rxjs/operators";
 import { Observable, Subject } from "rxjs";
