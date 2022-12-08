@@ -19,12 +19,4 @@ export class ListFilterComponent<E extends Entity> {
     this.selectedOption = selectedOptionKey;
     this.selectedOptionChange.emit(selectedOptionKey);
   }
-
-  dateRangeChange(result) {
-    let option = this.filterConfig.options.find(
-      (option) => option.label === "custom"
-    );
-    option.filter = { [this.filterConfig.name]: result };
-    this.selectOption(option.key);
-  }
 }

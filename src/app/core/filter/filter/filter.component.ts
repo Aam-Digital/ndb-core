@@ -15,6 +15,7 @@ import { ActivatedRoute, Params, Router } from "@angular/router";
 import { FilterOverlayComponent } from "../filter-overlay/filter-overlay.component";
 import { MatDialog } from "@angular/material/dialog";
 import { getUrlWithoutParams } from "../../../utils/utils";
+import { FilterSelection } from "../filter-selection/filter-selection";
 
 /**
  * This component can be used to display filters, for example above tables.
@@ -100,6 +101,8 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
         ),
       {} as DataFilter<T>
     );
+    console.log(this.filterSelections);
+    console.log(this.filterObj);
     this.filterObjChange.emit(this.filterObj);
   }
 

@@ -104,7 +104,8 @@ export interface DateRangeFilterConfig extends FilterConfig {
     | "Saturday"
     | "saturday";
   options: {
-    offsets: { amount: number; unit: unitOfTime.Base }[];
+    startOffsets: { amount: number; unit: unitOfTime.Base }[];
+    endOffsets: { amount: number; unit: unitOfTime.Base }[];
     label: string;
   }[];
 }

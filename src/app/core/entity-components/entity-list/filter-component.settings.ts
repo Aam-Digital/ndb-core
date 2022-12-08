@@ -1,5 +1,6 @@
 import { FilterSelection } from "../../filter/filter-selection/filter-selection";
 import { Entity } from "../../entity/model/entity";
+import { FilterConfig } from "./EntityListConfig";
 
 /**
  * A simple interface which holds all required information to display and use a filter.
@@ -26,4 +27,6 @@ export interface FilterComponentSettings<T extends Entity> {
    * The label for this filter.
    */
   label?: string;
+
+  filterConfig: FilterConfig;
 }

@@ -276,18 +276,18 @@ export const defaultJsonConfig = {
           "startingDayOfWeek": "Monday",
           "options": [
              { 
-              "offsets": [ { "amount": 0, "unit": "weeks"}],
+              "startOffsets": [ { "amount": 0, "unit": "weeks"}],
               "label": "This week"
              },
             { 
-              "offsets": [ { "amount": 1, "unit": "weeks"}],
+              "startOffsets": [ { "amount": 1, "unit": "weeks"}],
               "label": "Since last week"
              },
              { 
-              "offsets": [ { "amount": 0, "unit": "months"}],
+              "startOffsets": [ { "amount": 0, "unit": "months"}],
               "label": "This month"
              },
-             { "offsets": [ { "amount": 0, "unit": "months"}],label: "custom"},
+             { "startOffsets": [ { "amount": 0, "unit": "months"}],label: "custom"},
             ],
         },
         {

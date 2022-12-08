@@ -54,7 +54,9 @@ export class FilterGeneratorService {
           [],
           filter.label || schema.label
         ),
+        filterConfig: filter,
       };
+
       try {
         fs.filterSettings.options = await this.getFilterOptions(
           filter,
@@ -126,8 +128,8 @@ export class FilterGeneratorService {
     }
     const dateFS = [];
     for (const option of filterConfig.options) {
-      let relevantDate = moment().startOf(option.offsets[0].unit);
-      option.offsets.forEach((offset) =>
+      let relevantDate = moment().startOf(option.startOffsets[0].unit);
+      option.startOffsets.forEach((offset) =>
         relevantDate.subtract(offset.amount, offset.unit)
       );
       dateFS.push({

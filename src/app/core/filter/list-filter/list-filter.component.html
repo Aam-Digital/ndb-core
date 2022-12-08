@@ -19,23 +19,3 @@
     </mat-option>
   </mat-select>
 </mat-form-field>
-
-<app-date-range
-  *ngIf="filterConfig.name === 'date'"
-  (dateRangeChange)="dateRangeChange($event)"
->
-  <!-- <mat-label>{{ filterConfig.label || filterConfig.name }}</mat-label>
-  <mat-select
-    [id]="filterConfig.name"
-    [value]="selectedOption"
-    [placeholder]="filterConfig.name"
-  >
-    <mat-option
-      [value]="'date-range'"
-      (click)="openDateRangeDialog()"
-      class="border-left-highlight"
-    >
-      Select date
-    </mat-option>
-  </mat-select> -->
-</app-date-range>
