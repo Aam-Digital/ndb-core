@@ -21,9 +21,12 @@ import {
   createTestingConfigService,
 } from "../core/config/config.service";
 import { AbilityService } from "../core/permissions/ability/ability.service";
-import { Subject } from "rxjs";
+import { BehaviorSubject, Subject } from "rxjs";
 import { EntityAbility } from "../core/permissions/ability/entity-ability";
 import { defineAbility } from "@casl/ability";
+import { SessionService } from "../core/session/session-service/session.service";
+import { SyncState } from "../core/session/session-states/sync-state.enum";
+import { WINDOW_TOKEN } from "./di-tokens";
 
 export const mockAbilityService = {
   abilityUpdated: new Subject<void>(),
@@ -51,6 +54,14 @@ export const mockAbilityService = {
       useValue: defineAbility((can, cannot) => {
         can("manage", "all");
       }),
+    },
+    { provide: WINDOW_TOKEN, useValue: window },
+    {
+      provide: SessionService,
+      useValue: {
+        getCurrentUser: () => ({ name: "demo-user" }),
+        syncState: new BehaviorSubject(SyncState.COMPLETED),
+      },
     },
   ],
 })

@@ -93,6 +93,7 @@ import {
 } from "./core/language/date-adapter-with-formatting";
 import { FileModule } from "./features/file/file.module";
 import { ConfigSetupModule } from "./core/config-setup/config-setup.module";
+import { MatchingEntitiesModule } from "./features/matching-entities/matching-entities.module";
 
 /**
  * Main entry point of the application.
@@ -171,6 +172,7 @@ import { ConfigSetupModule } from "./core/config-setup/config-setup.module";
     SupportModule,
     DatabaseModule,
     MatNativeDateModule,
+    MatchingEntitiesModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },

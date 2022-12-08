@@ -17,6 +17,7 @@ import { School } from "../model/school";
 import { ActivitiesOverviewComponent } from "./activities-overview.component";
 import { SchoolsModule } from "../schools.module";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 
 describe("ActivitiesOverviewComponent", () => {
   let component: ActivitiesOverviewComponent;
@@ -28,7 +29,10 @@ describe("ActivitiesOverviewComponent", () => {
     entityMapper = mockEntityMapper();
     await TestBed.configureTestingModule({
       imports: [SchoolsModule, MockedTestingModule.withState()],
-      providers: [{ provide: EntityMapperService, useValue: entityMapper }],
+      providers: [
+        { provide: EntityMapperService, useValue: entityMapper },
+        { provide: FormDialogService, useValue: null },
+      ],
     }).compileComponents();
   });
 

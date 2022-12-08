@@ -100,15 +100,6 @@ export function compareEnums(
 }
 
 /**
- * returns `true` when `thing` is (probably) a `PromiseLike`, i.e. can
- * be awaited and has a `.then()` function, `false` otherwise
- * @param thing The thing under test
- */
-export function isPromise(thing: any): thing is PromiseLike<any> {
-  return thing && typeof thing["then"] === "function";
-}
-
-/**
  * Parses and returns the payload of a JWT into a JSON object.
  * For me info see {@link https://jwt.io}.
  * @param token a valid JWT
@@ -130,6 +121,12 @@ export function parseJwt(token): {
   );
 
   return JSON.parse(jsonPayload);
+}
+
+export function addAlphaToHexColor(color, opacity) {
+  // coerce values so it is between 0 and 1.
+  const opacity1 = Math.round(Math.min(Math.max(opacity || 1, 0), 1) * 255);
+  return color + opacity1.toString(16).toUpperCase();
 }
 
 /**

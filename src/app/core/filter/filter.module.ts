@@ -13,12 +13,9 @@ import { DaterangeHeaderComponent } from "./date-range/daterange-header/daterang
 import { DaterangePanelComponent } from "./date-range/daterange-panel/daterange-panel.component";
 import { MatCardModule } from "@angular/material/card";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import {
-  MatDatepickerModule,
-  MatDateRangePicker,
-} from "@angular/material/datepicker";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { MatButton, MatButtonModule } from "@angular/material/button";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { FormsModule } from "@angular/forms";
+import { MatButtonModule } from "@angular/material/button";
 
 @NgModule({
   declarations: [

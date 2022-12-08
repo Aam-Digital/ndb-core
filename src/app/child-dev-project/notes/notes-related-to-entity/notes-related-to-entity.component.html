@@ -3,7 +3,8 @@
   [columns]="columns"
   [filter]="filter"
   [newRecordFactory]="newRecordFactory"
-  [showEntity]="showNoteDetails.bind(this)"
+  clickMode="none"
+  (rowClick)="showNoteDetails($event)"
   [getBackgroundColor]="getColor"
 >
 </app-entity-subrecord>

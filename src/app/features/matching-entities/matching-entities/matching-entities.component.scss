@@ -1,0 +1,36 @@
+@use "src/styles/mixins/grid-layout";
+@use "src/styles/variables/ndb-light-theme" as theme;
+@use "@angular/material" as mat;
+@use "src/styles/variables/sizes";
+
+.overall-layout {
+  @include grid-layout.adaptive(380px, 100%);
+}
+
+.map-placeholder {
+  background-color: lightgrey;
+  height: 100px;
+  padding: 2em;
+}
+
+.match-comparison-table {
+  table-layout: fixed;
+  width: 100%;
+  border-spacing: sizes.$large 0;
+  margin: auto;
+}
+
+.comparison-header {
+  font-weight: bold;
+  font-size: medium;
+}
+.selection-header {
+  font-weight: 500;
+  font-size: medium;
+  font-family: Roboto, sans-serif;
+}
+
+.entity-fixed {
+  background-color: mat.get-color-from-palette(theme.$accent, 0.1);
+  padding: 0 sizes.$regular 0 sizes.$regular;
+}

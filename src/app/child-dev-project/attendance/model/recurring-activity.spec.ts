@@ -28,5 +28,7 @@ describe("RecurringActivity", () => {
     assignedTo: ["demo"],
     participants: ["1", "2"],
     linkedGroups: ["3"],
+
+    searchIndices: ["test", "activity"],
   });
 });

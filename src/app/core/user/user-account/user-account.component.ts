@@ -19,7 +19,6 @@ import { Component, OnInit } from "@angular/core";
 import { SessionService } from "../../session/session-service/session.service";
 import { environment } from "../../../../environments/environment";
 import { SessionType } from "../../session/session-type";
-import { AuthService } from "../../session/auth/auth.service";
 
 /**
  * User account form to allow the user to view and edit information.
@@ -36,10 +35,7 @@ export class UserAccountComponent implements OnInit {
   passwordChangeDisabled = false;
   tooltipText;
 
-  constructor(
-    private sessionService: SessionService,
-    public authService: AuthService
-  ) {}
+  constructor(private sessionService: SessionService) {}
 
   ngOnInit() {
     this.checkIfPasswordChangeAllowed();

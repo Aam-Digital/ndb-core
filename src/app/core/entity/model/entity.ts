@@ -101,6 +101,28 @@ export class Entity {
   static icon: IconName;
 
   /**
+   * color used for to highlight this entity type across the app
+   */
+  static color: string;
+
+  /**
+   * Base route of the entity (list/details) view for this entity type.
+   */
+  static get route(): string {
+    let route = this._route ?? this.ENTITY_TYPE.toLowerCase();
+    if (!route.startsWith("/")) {
+      route = "/" + route;
+    }
+    return route;
+  }
+
+  static set route(value: string) {
+    this._route = value;
+  }
+
+  private static _route: string;
+
+  /**
    * Extract the ENTITY_TYPE from an id.
    * @param id An entity's id including prefix.
    */
@@ -163,19 +185,21 @@ export class Entity {
   /**
    * Returns an array of strings by which the entity can be searched.
    *
-   * By default the parts of the "name" property (split at spaces) is used if it is present.
+   * By default the parts of the string representation (toString) split at spaces is used if it is present.
    *
    * <b>Overwrite this method in subtypes if you want an entity type to be searchable by other properties.</b>
    */
   @DatabaseField() get searchIndices(): string[] {
-    let indices = [];
-
-    // default indices generated from "name" property
-    if (typeof this["name"] === "string") {
-      indices = this["name"].split(" ");
+    if (
+      this.getConstructor().toStringAttributes === Entity.toStringAttributes &&
+      this.toString() === this.entityId
+    ) {
+      // no indices for the default if an entity does not have a human-readable name
+      return [];
     }
 
-    return indices;
+    // default indices generated from toString
+    return this.toString().split(" ");
   }
 
   set searchIndices(value) {

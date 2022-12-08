@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import { Component, Input, OnChanges } from "@angular/core";
 import { Child } from "../../model/child";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { PanelConfig } from "../../../../core/entity-components/entity-details/EntityDetailsConfig";
@@ -12,7 +12,8 @@ import { DynamicComponent } from "../../../../core/view/dynamic-components/dynam
   templateUrl: "./grouped-child-attendance.component.html",
 })
 export class GroupedChildAttendanceComponent
-  implements OnChanges, OnInitDynamicComponent {
+  implements OnChanges, OnInitDynamicComponent
+{
   @Input() child: Child = new Child("");
 
   loading: boolean = true;
@@ -20,7 +21,7 @@ export class GroupedChildAttendanceComponent
 
   constructor(private attendanceService: AttendanceService) {}
 
-  async ngOnChanges(changes: SimpleChanges) {
+  async ngOnChanges() {
     await this.loadActivities();
   }
 

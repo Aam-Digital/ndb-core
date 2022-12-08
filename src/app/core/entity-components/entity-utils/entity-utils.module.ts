@@ -6,10 +6,6 @@ import { EditAgeComponent } from "./dynamic-form-components/edit-age/edit-age.co
 import { EditBooleanComponent } from "./dynamic-form-components/edit-boolean/edit-boolean.component";
 import { EditLongTextComponent } from "./dynamic-form-components/edit-long-text/edit-long-text.component";
 import { EditPhotoComponent } from "./dynamic-form-components/edit-photo/edit-photo.component";
-import { EditEntityArrayComponent } from "./dynamic-form-components/edit-entity-array/edit-entity-array.component";
-import { EditSingleEntityComponent } from "./dynamic-form-components/edit-single-entity/edit-single-entity.component";
-import { DisplayEntityComponent } from "./view-components/display-entity/display-entity.component";
-import { DisplayEntityArrayComponent } from "./view-components/display-entity-array/display-entity-array.component";
 import { DisplayTextComponent } from "./view-components/display-text/display-text.component";
 import { DisplayDateComponent } from "./view-components/display-date/display-date.component";
 import { DisplayCheckmarkComponent } from "./view-components/display-checkmark/display-checkmark.component";
@@ -25,17 +21,13 @@ import { MatInputModule } from "@angular/material/input";
 import { ViewModule } from "../../view/view.module";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatCheckboxModule } from "@angular/material/checkbox";
-import { EntitySelectComponent } from "./entity-select/entity-select.component";
-import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { MatChipsModule } from "@angular/material/chips";
 import { EditNumberComponent } from "./dynamic-form-components/edit-number/edit-number.component";
 import { EntityFunctionPipe } from "./view-components/readonly-function/entity-function.pipe";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
-import { EntitySubrecordModule } from "../entity-subrecord/entity-subrecord.module";
 import { ErrorHintComponent } from "./error-hint/error-hint.component";
-import { EditTextWithAutocompleteComponent } from "./dynamic-form-components/edit-text-with-autocomplete/edit-text-with-autocomplete.component";
 import { DisplayAgeComponent } from "./view-components/display-age/display-age.component";
+import { EntityPropertyViewComponent } from "./entity-property-view/entity-property-view.component";
 
 @NgModule({
   declarations: [
@@ -45,22 +37,17 @@ import { DisplayAgeComponent } from "./view-components/display-age/display-age.c
     EditBooleanComponent,
     EditLongTextComponent,
     EditPhotoComponent,
-    EditEntityArrayComponent,
-    EditSingleEntityComponent,
-    DisplayEntityComponent,
-    DisplayEntityArrayComponent,
     DisplayTextComponent,
     DisplayDateComponent,
     DisplayCheckmarkComponent,
     ReadonlyFunctionComponent,
     DisplayPercentageComponent,
     DisplayUnitComponent,
-    EntitySelectComponent,
     EditNumberComponent,
     EntityFunctionPipe,
     ErrorHintComponent,
-    EditTextWithAutocompleteComponent,
     DisplayAgeComponent,
+    EntityPropertyViewComponent,
   ],
   imports: [
     CommonModule,
@@ -73,35 +60,22 @@ import { DisplayAgeComponent } from "./view-components/display-age/display-age.c
     ViewModule,
     MatDatepickerModule,
     MatCheckboxModule,
-    MatAutocompleteModule,
-    MatChipsModule,
     FontAwesomeModule,
     MatButtonModule,
-    EntitySubrecordModule,
   ],
-  exports: [
-    DisplayEntityComponent,
-    DisplayEntityArrayComponent,
-    EntitySelectComponent,
-    EditSingleEntityComponent,
-  ],
+  exports: [EntityPropertyViewComponent],
 })
 export class EntityUtilsModule {
   static dynamicComponents = [
     EditAgeComponent,
     EditBooleanComponent,
-    EditEntityArrayComponent,
     EditLongTextComponent,
     EditNumberComponent,
     EditPhotoComponent,
-    EditSingleEntityComponent,
     EditTextComponent,
-    EditTextWithAutocompleteComponent,
     EditDateComponent,
     DisplayCheckmarkComponent,
     DisplayDateComponent,
-    DisplayEntityComponent,
-    DisplayEntityArrayComponent,
     DisplayPercentageComponent,
     DisplayTextComponent,
     DisplayUnitComponent,

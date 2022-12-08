@@ -458,7 +458,7 @@ export const defaultJsonConfig = {
           "components": [
             {
               "title": "",
-              "component": "ChildrenOverview",
+              "component": "ChildSchoolOverview",
             }
           ]
         },
@@ -659,7 +659,7 @@ export const defaultJsonConfig = {
           "components": [
             {
               "title": $localize`:Title inside a panel:School History`,
-              "component": "PreviousSchools",
+              "component": "ChildSchoolOverview",
               "config": {
                 "single": true,
                 "columns": [
@@ -680,6 +680,27 @@ export const defaultJsonConfig = {
             {
               "title": $localize`:Title inside a panel:ASER Results`,
               "component": "Aser"
+            },
+            {
+              title: $localize`:Child details section title:Find a suitable new school`,
+              component: "MatchingEntities",
+              config: {
+                columns: [
+                  ["name", "name"],
+                  ["motherTongue", "language"],
+                  ["address", "address"],
+                ],
+                rightSide: {
+                  entityType: School.ENTITY_TYPE,
+                  filters: [{ "id": "language" }]
+                },
+                onMatch: {
+                  newEntityType: ChildSchoolRelation.ENTITY_TYPE,
+                  newEntityMatchPropertyLeft: "childId",
+                  newEntityMatchPropertyRight: "schoolId",
+                  columnsToReview: ["start", "schoolClass", "childId", "schoolId" ]
+                }
+              }
             }
           ]
         },
@@ -950,6 +971,8 @@ export const defaultJsonConfig = {
   },
 
   "entity:Child": {
+    "label": $localize`:Label for child:Child`,
+    "labelPlural": $localize`:Plural label for child:Children`,
     "attributes": [
       {
         "name": "address",
@@ -1108,5 +1131,28 @@ export const defaultJsonConfig = {
         }
       },
     ]
+  },
+  "view:matching": {
+    component: "MatchingEntities",
+    config: {
+      columns: [
+        ["name", "name"],
+        ["motherTongue", "language"],
+        ["address", "address"],
+        [null, "privateSchool"],
+      ],
+      rightSide: {
+        entityType: School.ENTITY_TYPE,
+        prefilter: { "privateSchool": true },
+        filters: [{ "id": "language" }],
+      },
+      leftSide: { entityType: Child.ENTITY_TYPE },
+      onMatch: {
+        newEntityType: ChildSchoolRelation.ENTITY_TYPE,
+        newEntityMatchPropertyLeft: "childId",
+        newEntityMatchPropertyRight: "schoolId",
+        columnsToReview: ["start", "end", "result", "childId", "schoolId" ]
+      }
+    }
   }
 };

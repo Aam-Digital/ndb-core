@@ -25,6 +25,8 @@ $success                : mat.get-color-from-palette($success-palette);
 $warn                   : mat.get-color-from-palette($warn-palette);
 $error                  : mat.get-color-from-palette($err-palette);
 
+$muted                  : rgba(0, 0, 0, 0.54);
+
 /*
  * Quantized warning-levels. Each level represents a color from green (all is OK)
  * to red (nothing is OK).
