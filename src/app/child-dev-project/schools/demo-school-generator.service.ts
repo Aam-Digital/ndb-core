@@ -2,6 +2,7 @@ import { faker } from "../../core/demo-data/faker";
 import { School } from "./model/school";
 import { Injectable } from "@angular/core";
 import { DemoDataGenerator } from "../../core/demo-data/demo-data-generator";
+import { GeoResult } from "../../features/location/geo.service";
 
 export class DemoSchoolConfig {
   count: number;
@@ -55,6 +56,8 @@ export class DemoSchoolGenerator extends DemoDataGenerator<School> {
         $localize`:School demo timing:11 a.m. - 4 p.m.`,
         $localize`:School demo timing:6:30-11:00 and 11:30-16:00`,
       ]);
+
+      school["address"] = faker.geoAddress();
 
       data.push(school);
     }
