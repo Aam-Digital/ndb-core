@@ -30,6 +30,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
 
   /**
    * Handle and emit ids including entity type prefix - default is false.
+   * If multiple `entityType`s are given, this automatically switches prefixes to be activated.
    *
    * TODO: make ids including prefix the default everywhere and remove this option (see #1526)
    */
@@ -42,7 +43,9 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * @throws Error when `type` is not in the entity-map
    */
   @Input() set entityType(type: string | string[]) {
-    if (typeof type === "string") {
+    if (Array.isArray(type)) {
+      this.withPrefix = true;
+    } else {
       type = [type];
     }
     this.loadAvailableEntities(type);

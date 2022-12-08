@@ -15,16 +15,11 @@ export class EditEntityArrayComponent extends EditComponent<string[]> {
 
   entityName: string;
 
-  multipleEntityTypes = false;
-
   onInitFromDynamicConfig(config: EditPropertyConfig<string[]>) {
     super.onInitFromDynamicConfig(config);
 
     this.entityName =
       config.formFieldConfig.additional || config.propertySchema.additional;
-    if (Array.isArray(this.entityName)) {
-      this.multipleEntityTypes = true;
-    }
 
     this.placeholder = $localize`:Placeholder for input to add entities|context Add User(s):Add ${this.label}`;
   }
