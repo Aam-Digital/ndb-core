@@ -236,7 +236,7 @@ export class MatchingEntitiesComponent
 
   private updateDistanceColumn(index: number, entity: Entity) {
     const otherIndex = (index + 1) % 2;
-    this.columns.forEach((column) => {
+    this.columns?.forEach((column) => {
       const cell = column[otherIndex];
       if (typeof cell !== "string" && cell?.id === "distance") {
         cell.additional.compareCoordinates.next(entity[this.showMap[index]]);

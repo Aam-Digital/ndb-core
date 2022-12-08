@@ -11,8 +11,9 @@ import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { ConfigService } from "../../../core/config/config.service";
-import { of } from "rxjs";
+import { BehaviorSubject, of, ReplaySubject } from "rxjs";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
+import { Coordinates } from "../../location/coordinates";
 
 describe("MatchingEntitiesComponent", () => {
   let component: MatchingEntitiesComponent;
@@ -187,11 +188,11 @@ describe("MatchingEntitiesComponent", () => {
     );
   });
 
-  it("should create distance column", async () => {
+  it("should create distance column and publish updates", async () => {
     component.columns = [[undefined, "distance"]];
     component.showMap = ["address", "address"];
     component.entity = new Child();
-    component.entity["address"] = { lat: 52.0, lon: 13 };
+    component.leftSide = { entityType: Child };
 
     await component.ngOnInit();
 
@@ -199,14 +200,22 @@ describe("MatchingEntitiesComponent", () => {
     expect(distanceColumn).toEqual({
       id: "distance",
       label: "Distance",
-      view: "ReadonlyFunction",
-      additional: jasmine.anything(),
+      view: "DisplayDistance",
+      additional: {
+        coordinatesProperty: "address",
+        compareCoordinates: jasmine.any(ReplaySubject),
+      },
     });
 
+    let newCoordinates: Coordinates;
+    distanceColumn.additional.compareCoordinates.subscribe(
+      (res) => (newCoordinates = res)
+    );
+
     const compare = new Child();
-    compare["address"] = { lat: 52.0001, lon: 13 };
-    const distance = distanceColumn.additional(compare);
-    expect(distance).toEqual("0.01 km");
+    compare["address"] = { lat: 52, lon: 13 };
+    component.sideDetails[0].selectMatch(compare);
+    expect(newCoordinates).toEqual(compare["address"]);
   });
 
   it("should select a entity if it has been selected in the map", async () => {
