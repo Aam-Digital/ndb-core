@@ -11,7 +11,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 /**
  * Config for displaying the distance between two entities
  */
-interface ViewDistanceConfig {
+export interface ViewDistanceConfig {
   /**
    * The name of the `GeoResult`/`Coordinates` property of the first entity
    */

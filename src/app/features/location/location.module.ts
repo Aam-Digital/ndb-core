@@ -39,7 +39,11 @@ import { EntityUtilsModule } from "../../core/entity-components/entity-utils/ent
   exports: [EditLocationComponent, MapComponent],
 })
 export class LocationModule {
-  dynamicComponents = [EditLocationComponent, ViewLocationComponent];
+  dynamicComponents = [
+    EditLocationComponent,
+    ViewLocationComponent,
+    ViewDistanceComponent,
+  ];
 
   constructor(schemaService: EntitySchemaService) {
     schemaService.registerSchemaDatatype(locationEntitySchemaDataType);
