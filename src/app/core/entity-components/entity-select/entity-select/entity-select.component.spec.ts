@@ -240,4 +240,12 @@ describe("EntitySelectComponent", () => {
 
     expect(component.selectedEntities).toEqual([testUsers[1], testChildren[0]]);
   }));
+
+  it("activates withPrefix automatically when multiple different types are configured", fakeAsync(() => {
+    component.withPrefix = false;
+    component.entityType = [User.ENTITY_TYPE, Child.ENTITY_TYPE];
+    tick();
+    fixture.detectChanges();
+    expect(component.withPrefix).toBeTrue();
+  }));
 });
