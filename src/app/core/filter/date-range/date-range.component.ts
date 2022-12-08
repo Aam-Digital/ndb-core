@@ -26,12 +26,7 @@ export class DateRangeComponent {
   toDate: Date;
   @Output() dateRangeChange = new EventEmitter<any>();
 
-  constructor(
-    @Optional() private dialogRef: MatDialogRef<DateRangeComponent>
-  ) {}
-
   apply() {
-    // this.dialogRef.close(this.buildFilter());
     this.dateRangeChange.emit(this.buildFilter());
   }
 

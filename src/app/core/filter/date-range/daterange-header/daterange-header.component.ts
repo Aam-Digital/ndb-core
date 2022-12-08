@@ -22,7 +22,7 @@ export class DaterangeHeaderComponent<D> implements OnDestroy {
   private readonly destroy$ = new Subject<void>();
 
   constructor(
-    private calendar: MatCalendar<D>, // calendar instance of picker
+    public calendar: MatCalendar<D>, // calendar instance of picker
     private dateAdapter: DateAdapter<D>, // native or moment date adapter
     @Inject(MAT_DATE_FORMATS)
     private dateFormats: MatDateFormats, // for formatting
@@ -52,6 +52,11 @@ export class DaterangeHeaderComponent<D> implements OnDestroy {
   // called when user clicks on one of the right buttons
   nextClicked(mode: "month" | "year"): void {
     this.changeDate(mode, 1);
+  }
+
+  currentPeriodClicked() {
+    this.calendar.currentView =
+      this.calendar.currentView === "multi-year" ? "month" : "multi-year";
   }
 
   private changeDate(mode: "month" | "year", amount: -1 | 1): void {

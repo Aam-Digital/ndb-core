@@ -67,6 +67,6 @@ export class DaterangePanelComponent<D> {
     const [start, end] = this.calculateDateRange(rangeName);
     this.picker.select(start);
     this.picker.select(end);
-    // this.picker.close();
+    this.picker.close();
   }
 }
