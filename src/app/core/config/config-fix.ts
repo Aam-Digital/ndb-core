@@ -1161,7 +1161,12 @@ export const defaultJsonConfig = {
     "component": "EntityList",
     "config": {
       "entity": "Todo",
-      "columns": ["deadline", "subject", "assignedTo"]
+      "columns": ["deadline", "subject", "assignedTo", "relatedEntities"],
+      "filters": [
+        { "id": "assignedTo" },
+        { "id": "deadline" },
+        { "id": "startDate" }
+      ]
     }
   },
   "view:todo/:id": {

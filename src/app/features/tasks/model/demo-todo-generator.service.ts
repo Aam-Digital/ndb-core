@@ -67,7 +67,7 @@ export class DemoTodoGeneratorService extends DemoDataGenerator<Todo> {
       moment().add(25, "days").toDate()
     );
 
-    todo.relatedEntities = [entity.getId()];
+    todo.relatedEntities = [entity.getId(true)];
 
     todo.assignedTo = [
       faker.helpers.arrayElement(this.demoUsers.entities).getId(),
