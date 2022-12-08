@@ -1,3 +1,5 @@
+@use "src/styles/variables/sizes";
+
 .clickable {
   cursor: pointer;
 }
@@ -7,4 +9,8 @@
 
 :host {
   display: inline-block;
+}
+
+.block-height {
+  line-height: sizes.$icon-block;
 }
