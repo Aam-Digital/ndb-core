@@ -8,9 +8,27 @@ import { MatSelectModule } from "@angular/material/select";
 import { CommonComponentsModule } from "../common-components/common-components.module";
 import { FilterOverlayComponent } from "./filter-overlay/filter-overlay.component";
 import { MatDialogModule } from "@angular/material/dialog";
+import { DateRangeComponent } from "./date-range/date-range.component";
+import { DaterangeHeaderComponent } from "./date-range/daterange-header/daterange-header.component";
+import { DaterangePanelComponent } from "./date-range/daterange-panel/daterange-panel.component";
+import { MatCardModule } from "@angular/material/card";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import {
+  MatDatepickerModule,
+  MatDateRangePicker,
+} from "@angular/material/datepicker";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { MatButton, MatButtonModule } from "@angular/material/button";
 
 @NgModule({
-  declarations: [FilterComponent, ListFilterComponent, FilterOverlayComponent],
+  declarations: [
+    FilterComponent,
+    ListFilterComponent,
+    FilterOverlayComponent,
+    DateRangeComponent,
+    DaterangeHeaderComponent,
+    DaterangePanelComponent,
+  ],
   exports: [FilterComponent],
   imports: [
     CommonModule,
@@ -19,6 +37,11 @@ import { MatDialogModule } from "@angular/material/dialog";
     MatSelectModule,
     CommonComponentsModule,
     MatDialogModule,
+    MatCardModule,
+    FontAwesomeModule,
+    MatDatepickerModule,
+    FormsModule,
+    MatButtonModule,
   ],
 })
 export class FilterModule {}

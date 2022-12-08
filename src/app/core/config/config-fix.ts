@@ -287,6 +287,7 @@ export const defaultJsonConfig = {
               "offsets": [ { "amount": 0, "unit": "months"}],
               "label": "This month"
              },
+             { "offsets": [ { "amount": 0, "unit": "months"}],label: "custom"},
             ],
         },
         {
