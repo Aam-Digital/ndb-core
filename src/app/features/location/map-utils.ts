@@ -1,6 +1,7 @@
 import { Entity } from "../../core/entity/model/entity";
 import * as L from "leaflet";
 import { Coordinates } from "./coordinates";
+import { getHue } from "../../utils/style-utils";
 
 const iconRetinaUrl = "assets/marker-icon-2x.png";
 const iconUrl = "assets/marker-icon.png";
@@ -37,28 +38,6 @@ export function getHueForEntity(entity: Entity, offset = 145): string {
   const offsetHue = (hue * 360 + offset) % 360;
 
   return offsetHue.toFixed(0);
-}
-
-/**
- * Source {@link https://gist.github.com/mjackson/5311256}
- */
-function getHue(r: number, g: number, b: number) {
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-
-  if (max == min) {
-    return 0; // achromatic
-  }
-
-  const d = max - min;
-  switch (max) {
-    case r:
-      return ((g - b) / d + (g < b ? 6 : 0)) / 6;
-    case g:
-      return ((b - r) / d + 2) / 6;
-    case b:
-      return ((r - g) / d + 4) / 6;
-  }
 }
 
 /**

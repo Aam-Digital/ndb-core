@@ -2,7 +2,6 @@ import { Component, ElementRef, Input, OnInit, ViewChild } from "@angular/core";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { Entity, EntityConstructor } from "../../../core/entity/model/entity";
-import { addAlphaToHexColor } from "../../../utils/utils";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
@@ -21,6 +20,7 @@ import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { Coordinates } from "../../location/coordinates";
 import { getKmDistance } from "../../location/map-utils";
+import { addAlphaToHexColor } from "../../../utils/style-utils";
 
 interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
