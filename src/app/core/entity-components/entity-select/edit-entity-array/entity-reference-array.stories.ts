@@ -1,6 +1,5 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
-import { EntityUtilsModule } from "../../entity-utils/entity-utils.module";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
 import { EntityFormModule } from "../../entity-form/entity-form.module";
@@ -13,6 +12,8 @@ import { Entity } from "../../../entity/model/entity";
 import { DatabaseField } from "../../../entity/database-field.decorator";
 import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 import { User } from "../../../user/user";
+import { EntitySelectModule } from "../entity-select.module";
+import { ConfirmationDialogModule } from "../../../confirmation-dialog/confirmation-dialog.module";
 
 const testUser = new User("1");
 testUser.name = "test entity";
@@ -26,7 +27,8 @@ export default {
     moduleMetadata({
       imports: [
         EntityFormModule,
-        EntityUtilsModule,
+        EntitySelectModule,
+        ConfirmationDialogModule,
         AlertsModule,
         StorybookBaseModule,
       ],

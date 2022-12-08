@@ -35,7 +35,14 @@ import { ViewModule } from "../../view/view.module";
     MatInputModule,
     ViewModule,
   ],
-  exports: [EntitySelectComponent, DisplayEntityComponent],
+  exports: [
+    EntitySelectComponent,
+    EditEntityArrayComponent,
+    EditSingleEntityComponent,
+    DisplayEntityComponent,
+    DisplayEntityArrayComponent,
+    EditTextWithAutocompleteComponent,
+  ],
 })
 export class EntitySelectModule {
   static dynamicComponents = [

@@ -8,8 +8,9 @@ import { ChildrenService } from "../../../../child-dev-project/children/children
 import { BehaviorSubject } from "rxjs";
 import { EntitySelectComponent } from "./entity-select.component";
 import { ChildrenModule } from "../../../../child-dev-project/children/children.module";
-import { EntityUtilsModule } from "../../entity-utils/entity-utils.module";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
+import { EntitySelectModule } from "../entity-select.module";
+import { School } from "../../../../child-dev-project/schools/model/school";
 
 const child1 = new Child();
 child1.name = "First Child";
@@ -38,14 +39,20 @@ export default {
   component: EntitySelectComponent,
   decorators: [
     moduleMetadata({
-      imports: [EntityUtilsModule, StorybookBaseModule, ChildrenModule],
+      imports: [EntitySelectModule, StorybookBaseModule, ChildrenModule],
       declarations: [],
       providers: [
         { provide: BackupService, useValue: {} },
         {
           provide: EntityMapperService,
           useValue: {
-            loadType: () => Promise.resolve([child1, child2, child3]),
+            loadType: () =>
+              Promise.resolve([
+                child1,
+                child2,
+                child3,
+                School.create({ name: "School ABC" }),
+              ]),
           },
         },
         { provide: Database, useValue: {} },
@@ -53,6 +60,20 @@ export default {
       ],
     }),
   ],
+  parameters: {
+    controls: {
+      exclude: [
+        "allEntities",
+        "filteredEntities",
+        "selectedEntities",
+        "formControl",
+        "loading",
+        "separatorKeysCodes",
+        "additionalFilter",
+        "accessor",
+      ],
+    },
+  },
 } as Meta;
 
 const Template: Story<EntitySelectComponent<Child>> = (
@@ -67,6 +88,13 @@ primary.args = {
   entityType: Child.ENTITY_TYPE,
   label: "Attending Children",
   placeholder: "Select Children",
+};
+
+export const multipleTypes = Template.bind({});
+multipleTypes.args = {
+  entityType: [Child.ENTITY_TYPE, School.ENTITY_TYPE],
+  label: "Related Records",
+  placeholder: "Select records",
 };
 
 export const disabled = Template.bind({});

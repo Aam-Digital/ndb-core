@@ -12,11 +12,15 @@ import { DynamicComponent } from "../../../view/dynamic-components/dynamic-compo
 })
 export class EditEntityArrayComponent extends EditComponent<string[]> {
   placeholder: string;
+
   entityName: string;
+
   onInitFromDynamicConfig(config: EditPropertyConfig<string[]>) {
     super.onInitFromDynamicConfig(config);
+
     this.entityName =
       config.formFieldConfig.additional || config.propertySchema.additional;
+
     this.placeholder = $localize`:Placeholder for input to add entities|context Add User(s):Add ${this.label}`;
   }
 }
