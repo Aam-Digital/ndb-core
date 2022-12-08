@@ -1,17 +1,17 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { DisplayEntityComponent } from "./display-entity.component";
-import { Child } from "../../../../../child-dev-project/children/model/child";
+import { Child } from "../../../../child-dev-project/children/model/child";
 import { BehaviorSubject } from "rxjs";
-import { School } from "../../../../../child-dev-project/schools/model/school";
-import { User } from "../../../../user/user";
-import { SchoolsModule } from "../../../../../child-dev-project/schools/schools.module";
-import { ChildrenModule } from "../../../../../child-dev-project/children/children.module";
-import { StorybookBaseModule } from "../../../../../utils/storybook-base.module";
-import { EntityUtilsModule } from "../../entity-utils.module";
-import { EntityMapperService } from "../../../../entity/entity-mapper.service";
-import { mockEntityMapper } from "../../../../entity/mock-entity-mapper-service";
-import { ChildrenService } from "../../../../../child-dev-project/children/children.service";
+import { School } from "../../../../child-dev-project/schools/model/school";
+import { User } from "../../../user/user";
+import { SchoolsModule } from "../../../../child-dev-project/schools/schools.module";
+import { ChildrenModule } from "../../../../child-dev-project/children/children.module";
+import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
+import { EntityUtilsModule } from "../../entity-utils/entity-utils.module";
+import { EntityMapperService } from "../../../entity/entity-mapper.service";
+import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
+import { ChildrenService } from "../../../../child-dev-project/children/children.service";
 
 export default {
   title: "Core/EntityComponents/DisplayEntity",
