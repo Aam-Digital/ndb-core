@@ -15,7 +15,7 @@ export class EditEntityArrayComponent extends EditComponent<string[]> {
 
   entityName: string;
 
-  multipleEntityTypes: any;
+  multipleEntityTypes = false;
 
   onInitFromDynamicConfig(config: EditPropertyConfig<string[]>) {
     super.onInitFromDynamicConfig(config);
