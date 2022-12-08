@@ -1126,7 +1126,7 @@ export const defaultJsonConfig = {
         ["name", "name"],
         ["motherTongue", "language"],
         ["address", "address"],
-        [null, "privateSchool"],
+        ["distance", "privateSchool"],
       ],
       rightSide: {
         entityType: School.ENTITY_TYPE,

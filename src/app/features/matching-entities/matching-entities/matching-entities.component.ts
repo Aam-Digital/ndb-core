@@ -18,9 +18,8 @@ import { RouteTarget } from "../../../app.routing";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
-import { Coordinates } from "../../location/coordinates";
-import { getKmDistance } from "../../location/map-utils";
 import { addAlphaToHexColor } from "../../../utils/style-utils";
+import { ReplaySubject } from "rxjs";
 
 interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -53,13 +52,6 @@ export class MatchingEntitiesComponent
    * @param value
    */
   @Input() columns: [ColumnConfig, ColumnConfig][];
-
-  private readonly distanceColumn = {
-    id: "distance",
-    label: "Distance",
-    view: "ReadonlyFunction",
-    additional: (e: Entity) => this.calculateDistanceTo(e),
-  };
 
   @Input() showMap: [string, string];
 
@@ -124,6 +116,7 @@ export class MatchingEntitiesComponent
 
     if (!newSide.entityType) {
       newSide.selected = newSide.selected ?? this.entity;
+      this.updateDistanceColumn(sideIndex, newSide.selected);
     }
 
     let entityType = newSide.entityType;
@@ -140,6 +133,7 @@ export class MatchingEntitiesComponent
       this.highlightSelectedRow(e, newSide.selected);
       newSide.selected = e;
       this.matchComparisonElement.nativeElement.scrollIntoView();
+      this.updateDistanceColumn(sideIndex, e);
     };
 
     if (!newSide.selected && newSide.entityType) {
@@ -220,32 +214,33 @@ export class MatchingEntitiesComponent
   }
 
   private initDistanceColumn() {
-    this.columns?.forEach((side) => {
-      if (side.includes(this.distanceColumn.id)) {
-        const index = side.indexOf(this.distanceColumn.id);
-        side[index] = this.distanceColumn;
+    this.columns?.forEach((column) => {
+      const index = column.findIndex((name) => name === "distance");
+      if (index !== -1) {
+        column[index] = this.getDistanceColumnConfig(index);
       }
     });
   }
 
-  private calculateDistanceTo(e: Entity) {
-    // TODO does not update with selection
-    if (this.leftSide.selected && this.leftSide.selected !== e) {
-      return this.getDistanceString(this.leftSide.selected, e, 0);
-    } else if (this.rightSide.selected && this.rightSide.selected !== e) {
-      return this.getDistanceString(this.rightSide.selected, e, 1);
-    } else {
-      return "-";
-    }
+  private getDistanceColumnConfig(index: number) {
+    return {
+      id: "distance",
+      label: "Distance",
+      view: "DisplayDistance",
+      additional: {
+        coordinatesProperty: this.showMap[index],
+        compareCoordinates: new ReplaySubject(),
+      },
+    };
   }
 
-  private getDistanceString(from: Entity, to: Entity, index: number): string {
-    const a = from[this.showMap[index]] as Coordinates;
-    const b = to[this.showMap[(index + 1) % 2]] as Coordinates;
-    if (!a || !b) {
-      return "-";
-    }
-    const res = getKmDistance(a, b).toFixed(2);
-    return $localize`:distance with unit|e.g. 5 km:${res} km`;
+  private updateDistanceColumn(index: number, entity: Entity) {
+    const otherIndex = (index + 1) % 2;
+    this.columns.forEach((column) => {
+      const cell = column[otherIndex];
+      if (typeof cell !== "string" && cell?.id === "distance") {
+        cell.additional.compareCoordinates.next(entity[this.showMap[index]]);
+      }
+    });
   }
 }

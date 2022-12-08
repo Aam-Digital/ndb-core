@@ -13,6 +13,8 @@ import { MatButtonModule } from "@angular/material/button";
 import { MapComponent } from "./map/map.component";
 import { MapPopupComponent } from "./map-popup/map-popup.component";
 import { MatDialogModule } from "@angular/material/dialog";
+import { ViewDistanceComponent } from "./view-distance/view-distance.component";
+import { EntityUtilsModule } from "../../core/entity-components/entity-utils/entity-utils.module";
 
 @NgModule({
   declarations: [
@@ -20,6 +22,7 @@ import { MatDialogModule } from "@angular/material/dialog";
     ViewLocationComponent,
     MapComponent,
     MapPopupComponent,
+    ViewDistanceComponent,
   ],
   imports: [
     CommonModule,
@@ -31,6 +34,7 @@ import { MatDialogModule } from "@angular/material/dialog";
     FontAwesomeModule,
     MatButtonModule,
     MatDialogModule,
+    EntityUtilsModule,
   ],
   exports: [EditLocationComponent, MapComponent],
 })
