@@ -4,11 +4,12 @@ import {
   EditComponent,
   EditPropertyConfig,
 } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
-import { concatMap, Subject } from "rxjs";
-import { debounceTime, filter, map, tap } from "rxjs/operators";
+import { concatMap, of, Subject } from "rxjs";
+import { catchError, debounceTime, filter, map, tap } from "rxjs/operators";
 import { MatDialog } from "@angular/material/dialog";
 import { MapPopupComponent } from "../map-popup/map-popup.component";
 import { GeoResult, GeoService } from "../geo.service";
+import { Coordinates } from "../coordinates";
 
 @DynamicComponent("EditLocation")
 @Component({
@@ -88,9 +89,21 @@ export class EditLocationComponent extends EditComponent<GeoResult> {
       .afterClosed()
       .pipe(
         filter((res) => !!res),
-        concatMap((res) => this.location.reverseLookup(res))
+        concatMap((res) => this.lookupCoordinates(res))
       )
       // TODO maybe remove name of building (e.g. CRCLR House)
       .subscribe((res) => this.formControl.setValue(res));
+  }
+
+  private lookupCoordinates(coords: Coordinates) {
+    return this.location
+      .reverseLookup(coords)
+      .pipe(
+        map((res) =>
+          res["error"]
+            ? { display_name: `${coords.lat} - ${coords.lon}`, ...coords }
+            : res
+        )
+      );
   }
 }
