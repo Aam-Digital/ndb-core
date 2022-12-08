@@ -14,7 +14,7 @@ import { Coordinates } from "../coordinates";
 import { Entity } from "../../../core/entity/model/entity";
 import { getHueForEntity } from "../map-utils";
 import { ConfigService } from "../../../core/config/config.service";
-import { UiConfig } from "../../../core/ui/ui-config";
+import { MAP_CONFIG_KEY, MapConfig } from "../map-config";
 
 @Component({
   selector: "app-map",
@@ -63,7 +63,7 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
   @Output() entityClick = new EventEmitter<T>();
 
   constructor(configService: ConfigService) {
-    const config = configService.getConfig<UiConfig>("appConfig")?.map;
+    const config = configService.getConfig<MapConfig>(MAP_CONFIG_KEY);
     if (config?.start) {
       this.start_location = config.start;
     }

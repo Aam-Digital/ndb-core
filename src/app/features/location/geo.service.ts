@@ -3,9 +3,9 @@ import { Observable } from "rxjs";
 import { Coordinates } from "./coordinates";
 import { HttpClient } from "@angular/common/http";
 import { ConfigService } from "../../core/config/config.service";
-import { UiConfig } from "../../core/ui/ui-config";
 import { AnalyticsService } from "../../core/analytics/analytics.service";
 import { environment } from "../../../environments/environment";
+import { MAP_CONFIG_KEY, MapConfig } from "./map-config";
 
 export interface GeoResult extends Coordinates {
   display_name: string;
@@ -28,7 +28,7 @@ export class GeoService {
     configService: ConfigService
   ) {
     configService.configUpdates.subscribe(() => {
-      const config = configService.getConfig<UiConfig>("appConfig")?.map;
+      const config = configService.getConfig<MapConfig>(MAP_CONFIG_KEY);
       if (config?.countrycodes) {
         this.countrycodes = config.countrycodes;
       }

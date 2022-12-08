@@ -6,16 +6,16 @@ import {
 } from "@angular/core/testing";
 
 import { MapComponent } from "./map.component";
-import { UiConfig } from "../../../core/ui/ui-config";
 import { ConfigService } from "../../../core/config/config.service";
 import * as L from "leaflet";
 import { Coordinates } from "../coordinates";
 import { Child } from "../../../child-dev-project/children/model/child";
+import { MapConfig } from "../map-config";
 
 describe("MapComponent", () => {
   let component: MapComponent;
   let fixture: ComponentFixture<MapComponent>;
-  const config: UiConfig = { map: { start: [52, 13] } };
+  const config: MapConfig = { start: [52, 13] };
   let map: L.Map;
 
   beforeEach(async () => {
@@ -37,7 +37,7 @@ describe("MapComponent", () => {
   });
 
   it("should create map centered at start position from config", () => {
-    expect(map.getCenter()).toEqual(new L.LatLng(...config.map.start));
+    expect(map.getCenter()).toEqual(new L.LatLng(...config.start));
   });
 
   it("should not emit double clicks on the map", fakeAsync(() => {

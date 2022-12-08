@@ -36,7 +36,7 @@ describe("GeoService", () => {
 
   it("should use countrycode from config and email from app config", () => {
     const countrycodes = "de,en";
-    mockConfigService.getConfig.and.returnValue({ map: { countrycodes } });
+    mockConfigService.getConfig.and.returnValue({ countrycodes });
     configUpdates.next(undefined);
 
     service.lookup("someSearch").subscribe();
