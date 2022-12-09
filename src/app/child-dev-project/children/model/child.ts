@@ -132,7 +132,7 @@ export class Child extends Entity {
       this.status !== "Dropout" &&
       !this["dropoutDate"] &&
       !this["exit_date"] &&
-      this.super.isActive;
+      super.isActive
     );
   }
 
