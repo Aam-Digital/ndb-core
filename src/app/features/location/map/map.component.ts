@@ -8,61 +8,88 @@ import {
   ViewChild,
 } from "@angular/core";
 import * as L from "leaflet";
-import { Observable, Subject, timeInterval } from "rxjs";
+import { Observable, ReplaySubject, timeInterval } from "rxjs";
 import { debounceTime, filter, map } from "rxjs/operators";
 import { Coordinates } from "../coordinates";
 import { Entity } from "../../../core/entity/model/entity";
 import { getHueForEntity } from "../map-utils";
 import { ConfigService } from "../../../core/config/config.service";
 import { MAP_CONFIG_KEY, MapConfig } from "../map-config";
+import {
+  MapPopupComponent,
+  MapPopupConfig,
+} from "../map-popup/map-popup.component";
+import { MatDialog } from "@angular/material/dialog";
+
+export interface LocationEntity {
+  entity: Entity;
+  property: string;
+}
 
 @Component({
   selector: "app-map",
   templateUrl: "./map.component.html",
   styleUrls: ["./map.component.scss"],
 })
-export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
+export class MapComponent implements AfterViewInit {
   private readonly start_location: L.LatLngTuple = [52.4790412, 13.4319106];
 
   @ViewChild("map") private mapElement: ElementRef<HTMLDivElement>;
 
   @Input() height = "200px";
+  @Input() expandable = false;
 
   @Input() set marked(coordinates: Coordinates[]) {
+    if (!coordinates) {
+      return;
+    }
     this.clearMarkers(this.markers);
     this.markers = this.createMarkers(coordinates);
     this.showMarkersOnMap(this.markers);
+    this._marked.next(coordinates);
   }
 
-  @Input() set entities(entities: { entity: T; property: string }[]) {
+  private _marked = new ReplaySubject<Coordinates[]>();
+
+  @Input() set entities(entities: LocationEntity[]) {
+    if (!entities) {
+      return;
+    }
     this.clearMarkers(this.markers);
     this.markers = this.createEntityMarkers(entities);
     this.showMarkersOnMap(this.markers);
+    this._entities.next(entities);
   }
 
-  @Input() set highlightedEntities(
-    entities: { entity: T; property: string }[]
-  ) {
+  private _entities = new ReplaySubject<LocationEntity[]>();
+
+  @Input() set highlightedEntities(entities: LocationEntity[]) {
+    if (!entities) {
+      return;
+    }
     this.clearMarkers(this.highlightedMarkers);
     this.highlightedMarkers = this.createEntityMarkers(entities);
     this.showMarkersOnMap(this.highlightedMarkers, true);
+    this._highlightedEntities.next(entities);
   }
+
+  private _highlightedEntities = new ReplaySubject<LocationEntity[]>();
 
   private map: L.Map;
   private markers: L.Marker[];
   private highlightedMarkers: L.Marker[];
-  private clickStream = new Subject<L.LatLng>();
+  private clickStream = new EventEmitter<Coordinates>();
 
   @Output() mapClick: Observable<Coordinates> = this.clickStream.pipe(
     timeInterval(),
     debounceTime(400),
     filter(({ interval }) => interval >= 400),
-    map(({ value }) => ({ lat: value.lat, lon: value.lng }))
+    map(({ value }) => value)
   );
 
-  @Output() entityClick = new EventEmitter<T>();
+  @Output() entityClick = new EventEmitter<Entity>();
 
-  constructor(configService: ConfigService) {
+  constructor(configService: ConfigService, private dialog: MatDialog) {
     const config = configService.getConfig<MapConfig>(MAP_CONFIG_KEY);
     if (config?.start) {
       this.start_location = config.start;
@@ -79,7 +106,7 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
       zoom: 14,
     });
     this.map.addEventListener("click", (res) =>
-      this.clickStream.next(res.latlng)
+      this.clickStream.emit({ lat: res.latlng.lat, lon: res.latlng.lng })
     );
 
     const tiles = L.tileLayer(
@@ -111,7 +138,7 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
     });
   }
 
-  private createEntityMarkers(entities: { entity: T; property: string }[]) {
+  private createEntityMarkers(entities: LocationEntity[]) {
     return entities
       .filter(({ entity, property }) => !!entity?.[property])
       .map(({ entity, property }) => {
@@ -137,12 +164,25 @@ export class MapComponent<T extends Entity = Entity> implements AfterViewInit {
 
   private addMarker(m: L.Marker, highlighted: boolean = false) {
     m.addTo(this.map);
-    const entity = m["entity"] as T;
+    const entity = m["entity"] as Entity;
     if (highlighted || entity) {
       const degree = highlighted ? "145" : getHueForEntity(entity);
       const icon = m["_icon"] as HTMLElement;
       icon.style.filter = `hue-rotate(${degree}deg)`;
     }
     return m;
+  }
+
+  showPopup() {
+    this.dialog.open(MapPopupComponent, {
+      width: "90%",
+      data: {
+        marked: this._marked,
+        entities: this._entities,
+        highlightedEntities: this._highlightedEntities,
+        entityClick: this.entityClick,
+        mapClick: this.clickStream,
+      } as MapPopupConfig,
+    });
   }
 }

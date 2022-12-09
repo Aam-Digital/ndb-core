@@ -4,10 +4,13 @@ import {
   EditComponent,
   EditPropertyConfig,
 } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
-import { concatMap, of, Subject } from "rxjs";
+import { BehaviorSubject, concatMap, of, Subject } from "rxjs";
 import { catchError, debounceTime, filter, map, tap } from "rxjs/operators";
 import { MatDialog } from "@angular/material/dialog";
-import { MapPopupComponent } from "../map-popup/map-popup.component";
+import {
+  MapPopupComponent,
+  MapPopupConfig,
+} from "../map-popup/map-popup.component";
 import { GeoResult, GeoService } from "../geo.service";
 import { Coordinates } from "../coordinates";
 
@@ -78,32 +81,35 @@ export class EditLocationComponent extends EditComponent<GeoResult> {
   }
 
   openMap() {
+    const marked = new BehaviorSubject<Coordinates[]>([this.formControl.value]);
+    const mapClick = new Subject<Coordinates>();
+    mapClick.subscribe((res) => marked.next([res]));
     const ref = this.dialog.open(MapPopupComponent, {
       width: "90%",
       data: {
-        coordinates: this.formControl.value,
+        marked,
+        mapClick,
         disabled: this.formControl.disabled,
-      },
+      } as MapPopupConfig,
     });
     ref
       .afterClosed()
-      .pipe(
-        filter((res) => !!res),
-        concatMap((res) => this.lookupCoordinates(res))
-      )
+      .pipe(concatMap(() => this.lookupCoordinates(marked.value[0])))
       // TODO maybe remove name of building (e.g. CRCLR House)
       .subscribe((res) => this.formControl.setValue(res));
   }
 
   private lookupCoordinates(coords: Coordinates) {
-    return this.location
-      .reverseLookup(coords)
-      .pipe(
-        map((res) =>
-          res["error"]
-            ? { display_name: `${coords.lat} - ${coords.lon}`, ...coords }
-            : res
-        )
-      );
+    if (!coords) {
+      return undefined;
+    }
+    const fallback = {
+      display_name: `${coords.lat} - ${coords.lon}`,
+      ...coords,
+    };
+    return this.location.reverseLookup(coords).pipe(
+      map((res) => (res["error"] ? fallback : res)),
+      catchError(() => of(fallback))
+    );
   }
 }

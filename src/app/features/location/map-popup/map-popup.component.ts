@@ -1,6 +1,18 @@
 import { Component, Inject } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { Coordinates } from "../coordinates";
+import { Entity } from "../../../core/entity/model/entity";
+import { Observable, Subject } from "rxjs";
+import { LocationEntity } from "../map/map.component";
+
+export interface MapPopupConfig {
+  marked?: Observable<Coordinates[]>;
+  entities?: Observable<LocationEntity[]>;
+  highlightedEntities?: Observable<LocationEntity[]>;
+  mapClick?: Subject<Coordinates>;
+  entityClick?: Subject<Entity>;
+  disabled?: boolean;
+}
 
 @Component({
   selector: "app-map-popup",
@@ -8,24 +20,15 @@ import { Coordinates } from "../coordinates";
   styleUrls: ["./map-popup.component.scss"],
 })
 export class MapPopupComponent {
-  coordinates: Coordinates;
-  disabled = false;
-
   constructor(
     @Inject(MAT_DIALOG_DATA)
-    data: {
-      coordinates: Coordinates;
-      disabled?: boolean;
-    }
-  ) {
-    this.coordinates = data.coordinates;
-    this.disabled = !!data.disabled;
-  }
+    public data: MapPopupConfig
+  ) {}
 
-  select(newCoordinates: Coordinates) {
-    if (this.disabled) {
+  mapClicked(newCoordinates: Coordinates) {
+    if (this.data.disabled) {
       return;
     }
-    this.coordinates = newCoordinates;
+    this.data.mapClick?.next(newCoordinates);
   }
 }

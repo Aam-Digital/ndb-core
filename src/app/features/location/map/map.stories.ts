@@ -32,4 +32,5 @@ Multiple.args = {
     { lat: 52.4790412, lon: 13.4319106 },
     { lat: 52.4750412, lon: 13.4319106 },
   ],
+  expandable: true,
 };

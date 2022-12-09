@@ -1,5 +1,11 @@
-<app-map [marked]="[coordinates]" height="80vh" (mapClick)="select($event)"></app-map>
-<div *ngIf="!disabled">
-  <button mat-raised-button color="accent" [mat-dialog-close]="coordinates" style="margin-right: 5px">Apply</button>
-  <button mat-raised-button mat-dialog-close>Cancel</button>
+<app-map
+  height="80vh"
+  [marked]="data.marked | async"
+  [entities]="data.entities | async"
+  [highlightedEntities]="data.highlightedEntities | async"
+  (mapClick)="mapClicked($event)"
+  (entityClick)="data.entityClick?.next($event)"
+></app-map>
+<div *ngIf="!data.disabled">
+  <button mat-raised-button mat-dialog-close>Close</button>
 </div>

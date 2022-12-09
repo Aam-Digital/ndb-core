@@ -1,3 +1,7 @@
 <div class="map-frame" [style.height]="height">
-  <div id="map" #map></div>
+  <div id="map" #map>
+    <button *ngIf="expandable" mat-mini-fab (click)="showPopup()">
+      <fa-icon icon="expand" style="color: black;"></fa-icon>
+    </button>
+  </div>
 </div>
