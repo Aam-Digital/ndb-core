@@ -219,13 +219,21 @@ export class Entity {
    *    "name": "active",
    *    "schema": {
    *      "dataType": "boolean",
-   *      "label": "Active"
+   *      "label": "Active",
+   *      "defaultValue": true
    *    }
    *  }
    * ```
+   * alternatively you can store the inverted, as name "inactive"
    */
   get isActive(): boolean {
-    return this["active"] ?? true;
+    if (this["active"] !== undefined) {
+      return this["active"];
+    }
+    if (this["inactive"] !== undefined) {
+      return !this["inactive"];
+    }
+    return true;
   }
 
   /**
@@ -234,6 +242,7 @@ export class Entity {
    */
   set isActive(isActive: boolean) {
     this["active"] = isActive;
+    this["inactive"] = !isActive;
   }
 
   /**
