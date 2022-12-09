@@ -225,7 +225,7 @@ export class MatchingEntitiesComponent
   private getDistanceColumnConfig(index: number) {
     return {
       id: "distance",
-      label: "Distance",
+      label: $localize`:Matching View column name:Distance`,
       view: "DisplayDistance",
       additional: {
         coordinatesProperty: this.showMap[index],
