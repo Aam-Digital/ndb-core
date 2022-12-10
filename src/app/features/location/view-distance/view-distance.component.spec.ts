@@ -10,7 +10,6 @@ import { ViewPropertyConfig } from "../../../core/entity-components/entity-list/
 import { Child } from "../../../child-dev-project/children/model/child";
 import { Subject } from "rxjs";
 import { Coordinates } from "../coordinates";
-import { ChangeDetectorRef } from "@angular/core";
 
 describe("ViewDistanceComponent", () => {
   let component: ViewDistanceComponent;
