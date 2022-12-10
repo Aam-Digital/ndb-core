@@ -21,10 +21,6 @@ import { NavigationMenuConfig } from "../navigation-menu-config.interface";
 import { ConfigService } from "../../config/config.service";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import {
-  PREFIX_VIEW_CONFIG,
-  ViewConfig,
-} from "../../view/dynamic-routing/view-config.interface";
 import { SessionService } from "../../session/session-service/session.service";
 import { NavigationEnd, Router } from "@angular/router";
 import { filter, startWith } from "rxjs/operators";
@@ -108,30 +104,15 @@ export class NavigationComponent {
    */
   private initMenuItemsFromConfig() {
     this.menuItems = [];
-    const config: NavigationMenuConfig = this.configService.getConfig<NavigationMenuConfig>(
-      this.CONFIG_ID
-    );
+    const config: NavigationMenuConfig =
+      this.configService.getConfig<NavigationMenuConfig>(this.CONFIG_ID);
     for (const configItem of config.items) {
-      if (this.checkMenuItemPermissions(configItem.link)) {
+      if (this.userRoleGuard.checkRoutePermissions(configItem.link)) {
         this.menuItems.push(
           new MenuItem(configItem.name, configItem.icon, configItem.link)
         );
       }
     }
-  }
-
-  /**
-   * Check whether the user has the required rights
-   */
-  private checkMenuItemPermissions(link: string): boolean {
-    const configPath = link.replace(/^\//, "");
-    const userRoles = this.configService.getConfig<ViewConfig>(
-      PREFIX_VIEW_CONFIG + configPath
-    )?.permittedUserRoles;
-    return this.userRoleGuard.canActivate({
-      routeConfig: { path: configPath },
-      data: { permittedUserRoles: userRoles },
-    } as any);
   }
 
   logout() {

@@ -1,0 +1,22 @@
+@use "../../entity-utils/common-styles" as *;
+
+.main-list {
+  // Mat chip list overflows a little bit without this hack
+  width: 98%;
+  padding-left: 1px;
+}
+
+.chip {
+  @include entity-block-border;
+  margin: 0.2em;
+}
+
+.remove-item {
+  margin-left: 0.5em;
+  cursor: pointer;
+}
+
+.display-entity {
+  vertical-align: middle;
+  display: inline-block;
+}

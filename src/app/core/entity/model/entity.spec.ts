@@ -49,9 +49,10 @@ describe("Entity", () => {
     expect(data.otherText).toBeUndefined();
   });
 
-  it("rawData() includes searchIndices containing name parts", function () {
+  it("rawData() includes searchIndices containing toString parts", function () {
     const id = "test1";
     const entity = new Entity(id);
+    entity.toString = () => entity["name"];
     entity["name"] = "John Doe";
 
     const data = entitySchemaService.transformEntityToDatabaseFormat(entity);
@@ -59,6 +60,16 @@ describe("Entity", () => {
     expect(data.searchIndices).toBeDefined();
     expect(data.searchIndices).toContain("John");
     expect(data.searchIndices).toContain("Doe");
+  });
+
+  it("should not generate searchIndices for entities without a custom toString method", function () {
+    const id = "test1";
+    const entity = new Entity(id);
+    entity["name"] = "John Doe";
+
+    const data = entitySchemaService.transformEntityToDatabaseFormat(entity);
+
+    expect(data.searchIndices).toEqual([]);
   });
 
   it("can perform a shallow copy of itself", () => {
@@ -91,6 +102,32 @@ describe("Entity", () => {
 
     expect(TestEntity.label).toBe("TestEntityForLabel");
     expect(TestEntity.labelPlural).toBe("TestEntityForLabel");
+  });
+
+  it("should return the route based on entity type name", () => {
+    @DatabaseEntity("TestEntityForRoute")
+    class TestEntity extends Entity {}
+
+    expect(TestEntity.route).toBe("/testentityforroute");
+
+    TestEntity.route = "/custom-route";
+    expect(TestEntity.route).toBe("/custom-route");
+  });
+
+  it("should determine isActive based on active or inactive property", () => {
+    const testEntity1 = new Entity();
+    expect(testEntity1.isActive).withContext("default value").toBeTrue();
+
+    testEntity1["active"] = false;
+    expect(testEntity1.isActive).withContext("setting 'active'").toBeFalse();
+
+    const testEntity2 = new Entity();
+    testEntity2["inactive"] = true;
+    expect(testEntity2.isActive).withContext("setting 'inactive'").toBeFalse();
+
+    const testEntity3 = new Entity();
+    testEntity3.isActive = false;
+    expect(testEntity3.isActive).withContext("setting 'isActive'").toBeFalse();
   });
 });
 

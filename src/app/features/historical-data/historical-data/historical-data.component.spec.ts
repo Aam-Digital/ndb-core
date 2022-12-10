@@ -12,6 +12,7 @@ import { HistoricalEntityData } from "../model/historical-entity-data";
 import moment from "moment";
 import { HistoricalDataService } from "../historical-data.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 
 describe("HistoricalDataComponent", () => {
   let component: HistoricalDataComponent;
@@ -26,6 +27,7 @@ describe("HistoricalDataComponent", () => {
       imports: [HistoricalDataModule, MockedTestingModule.withState()],
       providers: [
         { provide: HistoricalDataService, useValue: mockHistoricalDataService },
+        { provide: FormDialogService, useValue: null },
       ],
     }).compileComponents();
   });

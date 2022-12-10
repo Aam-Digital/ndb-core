@@ -51,6 +51,7 @@ export class EntityListComponent<T extends Entity>
   @Input() allEntities: T[] = [];
   @Input() listConfig: EntityListConfig;
   @Input() entityConstructor: EntityConstructor<T>;
+  @Input() clickMode: "navigate" | "popup" | "none" = "navigate";
   @Input() isLoading: boolean;
   @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();
@@ -139,11 +140,6 @@ export class EntityListComponent<T extends Entity>
       this.entityConstructor
     );
     this.isLoading = false;
-    this.elementClick.subscribe((entity) =>
-      this.router.navigate([entity.getId()], {
-        relativeTo: this.activatedRoute,
-      })
-    );
     this.addNewClick.subscribe(() =>
       this.router.navigate(["new"], { relativeTo: this.activatedRoute })
     );

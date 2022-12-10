@@ -186,8 +186,7 @@ export class AttendanceWeekDashboardComponent
   }
 
   goToChild(childId: string) {
-    const path = "/" + Child.ENTITY_TYPE.toLowerCase();
-    this.router.navigate([path, childId]);
+    this.router.navigate([Child.route, childId]);
   }
 
   ngAfterViewInit() {

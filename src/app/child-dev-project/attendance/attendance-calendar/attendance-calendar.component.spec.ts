@@ -16,43 +16,41 @@ import { EventNote } from "../model/event-note";
 import { AttendanceService } from "../attendance.service";
 import { AnalyticsService } from "../../../core/analytics/analytics.service";
 import { EntityAbility } from "../../../core/permissions/ability/entity-ability";
+import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 
 describe("AttendanceCalendarComponent", () => {
   let component: AttendanceCalendarComponent;
   let fixture: ComponentFixture<AttendanceCalendarComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      const mockAttendanceService = jasmine.createSpyObj([
-        "createEventForActivity",
-      ]);
-      mockAttendanceService.createEventForActivity.and.resolveTo(
-        new EventNote()
-      );
-      TestBed.configureTestingModule({
-        imports: [FormDialogModule, MatDatepickerModule, MatNativeDateModule],
-        declarations: [AttendanceCalendarComponent],
-        providers: [
-          {
-            provide: EntityMapperService,
-            useValue: mockEntityMapper(),
-          },
-          {
-            provide: AnalyticsService,
-            useValue: jasmine.createSpyObj(["eventTrack"]),
-          },
-          {
-            provide: AttendanceService,
-            useValue: mockAttendanceService,
-          },
-          {
-            provide: EntityAbility,
-            useValue: jasmine.createSpyObj(["cannot"]),
-          },
-        ],
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    const mockAttendanceService = jasmine.createSpyObj([
+      "createEventForActivity",
+    ]);
+    mockAttendanceService.createEventForActivity.and.resolveTo(new EventNote());
+    TestBed.configureTestingModule({
+      imports: [FormDialogModule, MatDatepickerModule, MatNativeDateModule],
+      declarations: [AttendanceCalendarComponent],
+      providers: [
+        {
+          provide: EntityMapperService,
+          useValue: mockEntityMapper(),
+        },
+        {
+          provide: AnalyticsService,
+          useValue: jasmine.createSpyObj(["eventTrack"]),
+        },
+        {
+          provide: AttendanceService,
+          useValue: mockAttendanceService,
+        },
+        {
+          provide: EntityAbility,
+          useValue: jasmine.createSpyObj(["cannot"]),
+        },
+        { provide: FormDialogService, useValue: null },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AttendanceCalendarComponent);

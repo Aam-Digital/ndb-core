@@ -166,4 +166,31 @@ describe("EntityFormComponent", () => {
     expect(component.entity.name).toBe("Changed Name");
     expect(component.form.get("name")).toHaveValue("Changed Name");
   });
+
+  it("should align form with entity if canceled and notify about click", () => {
+    const child = new Child();
+    child.name = "test child";
+    component.entity = child;
+    component.form.enable();
+    component.form.get("name").setValue("other name");
+    let cancelEmitted = false;
+    component.cancel.subscribe(() => (cancelEmitted = true));
+
+    component.cancelClicked();
+
+    expect(component.form.disabled).toBeTrue();
+    expect(component.form.get("name")).toHaveValue("test child");
+    expect(cancelEmitted).toBeTrue();
+  });
+
+  it("should also reset form values which where not set before", () => {
+    component.entity = new Child();
+    component.ngOnInit();
+    component.form.enable();
+
+    component.form.get("name").setValue("my name");
+    component.cancelClicked();
+
+    expect(component.form.get("name")).toHaveValue(null);
+  });
 });

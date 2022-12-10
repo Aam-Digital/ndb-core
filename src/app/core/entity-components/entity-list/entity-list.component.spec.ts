@@ -22,6 +22,7 @@ import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatTabGroupHarness } from "@angular/material/tabs/testing";
+import { FormDialogService } from "../../form-dialog/form-dialog.service";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -101,6 +102,7 @@ describe("EntityListComponent", () => {
         { provide: ExportService, useValue: {} },
         { provide: AttendanceService, useValue: mockAttendanceService },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
+        { provide: FormDialogService, useValue: null },
       ],
     }).compileComponents();
   }));
@@ -206,8 +208,6 @@ describe("EntityListComponent", () => {
     const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
     component.addNewClick.emit();
     expect(navigateSpy.calls.mostRecent().args[0]).toEqual(["new"]);
-    component.elementClick.emit(new Child("clickedId"));
-    expect(navigateSpy.calls.mostRecent().args[0]).toEqual(["clickedId"]);
   }));
 
   function createComponent() {

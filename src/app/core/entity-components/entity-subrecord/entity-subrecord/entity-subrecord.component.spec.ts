@@ -25,14 +25,13 @@ import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import moment from "moment";
 import { Subject } from "rxjs";
 import { UpdatedEntity } from "../../../entity/model/entity-update";
-import { MatDialog } from "@angular/material/dialog";
-import { RowDetailsComponent } from "../row-details/row-details.component";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { ScreenWidthObserver } from "../../../../utils/media/screen-size-observer.service";
 import { WINDOW_TOKEN } from "../../../../utils/di-tokens";
 import { MediaModule } from "../../../../utils/media/media.module";
-import { DateWithAge } from "app/child-dev-project/children/model/dateWithAge";
+import { DateWithAge } from "../../../../child-dev-project/children/model/dateWithAge";
+import { FormDialogService } from "../../../form-dialog/form-dialog.service";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -46,7 +45,13 @@ describe("EntitySubrecordComponent", () => {
         FontAwesomeTestingModule,
         MediaModule,
       ],
-      providers: [{ provide: WINDOW_TOKEN, useValue: window }],
+      providers: [
+        { provide: WINDOW_TOKEN, useValue: window },
+        {
+          provide: FormDialogService,
+          useValue: jasmine.createSpyObj(["openSimpleForm"]),
+        },
+      ],
     }).compileComponents();
   }));
 
@@ -251,42 +256,32 @@ describe("EntitySubrecordComponent", () => {
     const child = new Child();
     component.newRecordFactory = () => child;
     component.columns = [{ id: "name" }, { id: "projectNumber" }];
-    component.showEntity = jasmine.createSpy("showEntity");
 
     component.create();
     tick();
 
-    expect(component.showEntity).toHaveBeenCalledWith(child);
+    expect(TestBed.inject(FormDialogService).openSimpleForm).toHaveBeenCalled();
   }));
 
   it("should create a new entity and open a dialog on default when clicking create", () => {
     const child = new Child();
     component.newRecordFactory = () => child;
     component.ngOnInit();
-    const dialog = TestBed.inject(MatDialog);
-    spyOn(dialog, "open");
+    const dialog = TestBed.inject(FormDialogService);
 
     component.create();
 
-    expect(dialog.open).toHaveBeenCalledWith(RowDetailsComponent, {
-      width: "80%",
-      maxHeight: "90vh",
-      data: {
-        entity: child,
-        columns: [],
-        viewOnlyColumns: [],
-      },
-    });
+    expect(dialog.openSimpleForm).toHaveBeenCalledWith(child, []);
   });
 
   it("should notify when an entity is clicked", (done) => {
     const child = new Child();
-    component.showEntity = (entity) => {
+    component.rowClick.subscribe((entity) => {
       expect(entity).toEqual(child);
       done();
-    };
+    });
 
-    component.rowClick({ record: child });
+    component.onRowClick({ record: child });
   });
 
   it("should add a new entity that was created after the initial loading to the table", () => {

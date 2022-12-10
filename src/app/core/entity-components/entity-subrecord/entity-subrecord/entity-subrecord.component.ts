@@ -18,10 +18,8 @@ import {
   EntityForm,
   EntityFormService,
 } from "../../entity-form/entity-form.service";
-import { MatDialog } from "@angular/material/dialog";
 import { LoggingService } from "../../../logging/logging.service";
 import { AnalyticsService } from "../../../analytics/analytics.service";
-import { RowDetailsComponent } from "../row-details/row-details.component";
 import {
   EntityRemoveService,
   RemoveResult,
@@ -34,8 +32,14 @@ import {
 } from "../../../../utils/media/screen-size-observer.service";
 import { Subscription } from "rxjs";
 import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
-import { ColumnConfig, DataFilter } from "./entity-subrecord-config";
+import {
+  ColumnConfig,
+  DataFilter,
+  toFormFieldConfig,
+} from "./entity-subrecord-config";
 import { FilterService } from "../../../filter/filter.service";
+import { FormDialogService } from "../../../form-dialog/form-dialog.service";
+import { Router } from "@angular/router";
 
 export interface TableRow<T extends Entity> {
   record: T;
@@ -66,15 +70,11 @@ export class EntitySubrecordComponent<T extends Entity>
 {
   @Input() isLoading: boolean;
 
+  @Input() clickMode: "popup" | "navigate" | "none" = "popup";
+
   /** configuration what kind of columns to be generated for the table */
   @Input() set columns(columns: ColumnConfig[]) {
-    this._columns = columns.map((col) => {
-      if (typeof col === "string") {
-        return { id: col };
-      } else {
-        return col;
-      }
-    });
+    this._columns = columns.map(toFormFieldConfig);
     this.filteredColumns = this._columns.filter((col) => !col.hideFromTable);
   }
 
@@ -130,10 +130,11 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 
   /**
-   * A function which should be executed when a row is clicked or a new entity created.
-   * @param entity The newly created or clicked entity.
+   * Event triggered when the user clicks on a row (i.e. entity).
+   * This does not change the default behavior like opening popup form,
+   * you may want to additionally set `clickMode` to change that.
    */
-  @Input() showEntity?: (entity: T) => void = this.showRowDetails;
+  @Output() rowClick = new EventEmitter<T>();
 
   /**
    * Adds a filter for the displayed data.
@@ -153,7 +154,8 @@ export class EntitySubrecordComponent<T extends Entity>
     private alertService: AlertService,
     private screenWidthObserver: ScreenWidthObserver,
     private entityFormService: EntityFormService,
-    private dialog: MatDialog,
+    private formDialog: FormDialogService,
+    private router: Router,
     private analyticsService: AnalyticsService,
     private loggingService: LoggingService,
     private entityRemoveService: EntityRemoveService,
@@ -297,7 +299,7 @@ export class EntitySubrecordComponent<T extends Entity>
       }
       row.formGroup.enable();
     } else {
-      this.rowClick(row);
+      this.showEntity(row.record);
     }
   }
 
@@ -379,28 +381,28 @@ export class EntitySubrecordComponent<T extends Entity>
    * Show one record's details in a modal dialog (if configured).
    * @param row The entity whose details should be displayed.
    */
-  rowClick(row: TableRow<T>) {
+  onRowClick(row: TableRow<T>) {
     if (!row.formGroup || row.formGroup.disabled) {
       this.showEntity(row.record);
+      this.rowClick.emit(row.record);
       this.analyticsService.eventTrack("subrecord_show_popup", {
         category: row.record.getType(),
       });
     }
   }
 
-  private showRowDetails(entity: T) {
-    const columnsToDisplay = this._columns
-      .filter((col) => col.edit)
-      .map((col) => Object.assign({}, col, { forTable: false }));
-    this.dialog.open(RowDetailsComponent, {
-      width: "80%",
-      maxHeight: "90vh",
-      data: {
-        entity: entity,
-        columns: columnsToDisplay,
-        viewOnlyColumns: this._columns.filter((col) => !col.edit),
-      },
-    });
+  private showEntity(entity: T) {
+    switch (this.clickMode) {
+      case "popup":
+        this.formDialog.openSimpleForm(entity, this._columns);
+        break;
+      case "navigate":
+        this.router.navigate([
+          entity.getConstructor().route,
+          entity.getId(false),
+        ]);
+        break;
+    }
   }
 
   /**
