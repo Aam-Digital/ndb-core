@@ -674,16 +674,18 @@ export const defaultJsonConfig = {
                   ["name", "name"],
                   ["motherTongue", "language"],
                   ["address", "address"],
+                  [undefined, "distance"]
                 ],
                 rightSide: {
                   entityType: School.ENTITY_TYPE,
                   filters: [{ "id": "language" }]
                 },
+                showMap: ["address", "address"],
                 onMatch: {
                   newEntityType: ChildSchoolRelation.ENTITY_TYPE,
                   newEntityMatchPropertyLeft: "childId",
                   newEntityMatchPropertyRight: "schoolId",
-                  columnsToReview: ["start", "schoolClass", "childId", "schoolId" ]
+                  columnsToReview: ["start", "schoolClass", "childId", "schoolId"]
                 }
               }
             }
@@ -962,7 +964,7 @@ export const defaultJsonConfig = {
       {
         "name": "address",
         "schema": {
-          dataType: "string",
+          dataType: "location",
           label: $localize`:Label for the address of a child:Address`
         }
       },
@@ -1030,7 +1032,7 @@ export const defaultJsonConfig = {
       {
         "name": "address",
         "schema": {
-          dataType: "string",
+          dataType: "location",
           label: $localize`:Label for the address of a school:Address`
         }
       },
@@ -1124,7 +1126,7 @@ export const defaultJsonConfig = {
         ["name", "name"],
         ["motherTongue", "language"],
         ["address", "address"],
-        [null, "privateSchool"],
+        ["distance", "privateSchool"],
       ],
       rightSide: {
         entityType: School.ENTITY_TYPE,
@@ -1132,11 +1134,12 @@ export const defaultJsonConfig = {
         filters: [{ "id": "language" }],
       },
       leftSide: { entityType: Child.ENTITY_TYPE },
+      showMap: ["address", "address"],
       onMatch: {
         newEntityType: ChildSchoolRelation.ENTITY_TYPE,
         newEntityMatchPropertyLeft: "childId",
         newEntityMatchPropertyRight: "schoolId",
-        columnsToReview: ["start", "end", "result", "childId", "schoolId" ]
+        columnsToReview: ["start", "end", "result", "childId", "schoolId"]
       }
     }
   }

@@ -85,7 +85,7 @@ export interface ConfigurableEnumFilterConfig<T> extends FilterConfig {
   enumId: string;
 }
 
-export interface ViewPropertyConfig {
+export interface ViewPropertyConfig<T = any> {
   /**
    * The entity which is being displayed, this should only be used if `value` does not contain enough information
    */
@@ -101,7 +101,7 @@ export interface ViewPropertyConfig {
   /**
    * Further configuration that will be passed to the final component
    */
-  config?: any;
+  config?: T;
   /**
    * A tooltip that describes this property in more detail
    */

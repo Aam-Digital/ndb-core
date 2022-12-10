@@ -68,6 +68,8 @@ COPY --from=builder /app/dist/ /usr/share/nginx/html
 ENV PORT=80
 # The url to the CouchDB database
 ENV COUCHDB_URL="http://localhost"
+# The url to a nominatim instance, see https://nominatim.org/
+ENV NOMINATIM_URL="https://nominatim.openstreetmap.org"
 # variables are inserted into the nginx config
-CMD envsubst '$$PORT $$COUCHDB_URL' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
+CMD envsubst '$$PORT $$COUCHDB_URL $$NOMINATIM_URL' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
     nginx -g 'daemon off;'

@@ -2,7 +2,6 @@ import { Component, ElementRef, Input, OnInit, ViewChild } from "@angular/core";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { Entity, EntityConstructor } from "../../../core/entity/model/entity";
-import { addAlphaToHexColor } from "../../../utils/utils";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
@@ -11,11 +10,16 @@ import {
   MatchingSideConfig,
   NewMatchAction,
 } from "./matching-entities-config";
-import { DataFilter } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import {
+  ColumnConfig,
+  DataFilter,
+} from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { RouteTarget } from "../../../app.routing";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
+import { addAlphaToHexColor } from "../../../utils/style-utils";
+import { ReplaySubject } from "rxjs";
 
 interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -39,6 +43,7 @@ export class MatchingEntitiesComponent
 
   @Input() leftSide: MatchingSide | MatchingSideConfig = {};
   @Input() rightSide: MatchingSide | MatchingSideConfig = {};
+  mapEntities: { entity: Entity; property: string }[] = [];
 
   columnsToDisplay = [];
 
@@ -46,9 +51,9 @@ export class MatchingEntitiesComponent
    * Column mapping of property pairs of left and right entity that should be compared side by side.
    * @param value
    */
-  @Input() columns: string[][];
+  @Input() columns: [ColumnConfig, ColumnConfig][];
 
-  @Input() showMap: boolean = false;
+  @Input() showMap: [string, string];
 
   @Input()
   matchActionLabel: string = $localize`:Matching button label:create matching`;
@@ -83,6 +88,7 @@ export class MatchingEntitiesComponent
       this.initConfig(data.config);
     });
 
+    this.initDistanceColumn();
     this.sideDetails = [
       await this.initSideDetails(this.leftSide, 0),
       await this.initSideDetails(this.rightSide, 1),
@@ -110,6 +116,7 @@ export class MatchingEntitiesComponent
 
     if (!newSide.entityType) {
       newSide.selected = newSide.selected ?? this.entity;
+      this.updateDistanceColumn(sideIndex, newSide.selected);
     }
 
     let entityType = newSide.entityType;
@@ -126,6 +133,7 @@ export class MatchingEntitiesComponent
       this.highlightSelectedRow(e, newSide.selected);
       newSide.selected = e;
       this.matchComparisonElement.nativeElement.scrollIntoView();
+      this.updateDistanceColumn(sideIndex, e);
     };
 
     if (!newSide.selected && newSide.entityType) {
@@ -136,10 +144,22 @@ export class MatchingEntitiesComponent
       this.applySelectedFilters(newSide, {});
     }
 
+    if (this.showMap && newSide.availableEntities) {
+      this.mapEntities = this.mapEntities.concat(
+        newSide.availableEntities.map((entity) => ({
+          entity,
+          property: this.showMap[sideIndex],
+        }))
+      );
+    }
+
     return newSide;
   }
 
-  private highlightSelectedRow(newSelectedEntity, previousSelectedEntity) {
+  private highlightSelectedRow(
+    newSelectedEntity: Entity,
+    previousSelectedEntity: Entity
+  ) {
     if (previousSelectedEntity) {
       previousSelectedEntity.getColor =
         previousSelectedEntity.getConstructor().prototype.getColor;
@@ -182,5 +202,45 @@ export class MatchingEntitiesComponent
 
   applySelectedFilters(side: MatchingSide, filter: DataFilter<Entity>) {
     side.filterObj = Object.assign({}, filter, side.prefilter ?? {});
+  }
+
+  entityInMapClicked(entity: Entity) {
+    const side = this.sideDetails.find(
+      (s) => s.entityType === entity.getConstructor()
+    );
+    if (side) {
+      side.selectMatch(entity);
+    }
+  }
+
+  private initDistanceColumn() {
+    this.columns?.forEach((column) => {
+      const index = column.findIndex((name) => name === "distance");
+      if (index !== -1) {
+        column[index] = this.getDistanceColumnConfig(index);
+      }
+    });
+  }
+
+  private getDistanceColumnConfig(index: number) {
+    return {
+      id: "distance",
+      label: $localize`:Matching View column name:Distance`,
+      view: "DisplayDistance",
+      additional: {
+        coordinatesProperty: this.showMap[index],
+        compareCoordinates: new ReplaySubject(),
+      },
+    };
+  }
+
+  private updateDistanceColumn(index: number, entity: Entity) {
+    const otherIndex = (index + 1) % 2;
+    this.columns?.forEach((column) => {
+      const cell = column[otherIndex];
+      if (typeof cell !== "string" && cell?.id === "distance") {
+        cell.additional.compareCoordinates.next(entity[this.showMap[index]]);
+      }
+    });
   }
 }

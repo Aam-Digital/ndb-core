@@ -57,4 +57,19 @@ describe("EntityPropertyViewComponent", () => {
 
     expect(component.label).toBe(Child.schema.get(testProperty).label);
   });
+
+  it("should support object as property config", () => {
+    component.property = {
+      id: "testId",
+      label: "Test Label",
+      view: "DisplayText",
+      additional: "Some additional information",
+    };
+    component.ngOnInit();
+
+    expect(component.label).toBe(component.property.label);
+    expect(component.propertyName).toBe(component.property.id);
+    expect(component.component).toBe(component.property.view);
+    expect(component.additional).toBe(component.property.additional);
+  });
 });

@@ -11,19 +11,21 @@ describe("Scenario: Marking a child as dropout - E2E test", function () {
     cy.contains("Dropout").click();
     cy.get("#mat-tab-label-0-7").click();
     // click on button with the content "Edit" in Dropout menu.
-    cy.contains("span", "Edit").should("be.visible").click();
+    cy.get(".form-buttons-wrapper:visible").contains("button", "Edit").click();
     // select today as the dropout date (which is initially marked as active)
-    cy.get(".mat-datepicker-toggle-default-icon").click();
-    cy.get(".mat-calendar-body-active").click();
+    cy.get(".mat-datepicker-toggle-default-icon:visible").click();
+    cy.get(".mat-calendar-body-active:visible").click();
     // click on button with the content "Save"
-    cy.contains("span", "Save").should("be.visible").click();
+    cy.get(".form-buttons-wrapper:visible").contains("button", "Save").click();
   });
 
   it("THEN I should not see this child in the list of all children at first", function () {
     // click on "Children" menu in navigation
     cy.get('[ng-reflect-angulartics-label="Children"]').click();
     // type to the input "Filter" the name of child
-    cy.get('[data-placeholder="e.g. name, age"]').type(this.childName);
+    cy.get('[data-placeholder="e.g. name, age"]').type(this.childName, {
+      force: true,
+    });
     // find at this table the name of child and it should not exist
     cy.get("table").contains(this.childName.trim()).should("not.exist");
   });

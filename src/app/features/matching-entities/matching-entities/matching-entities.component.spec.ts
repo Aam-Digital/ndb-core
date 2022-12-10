@@ -11,7 +11,9 @@ import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { ConfigService } from "../../../core/config/config.service";
-import { of } from "rxjs";
+import { of, ReplaySubject } from "rxjs";
+import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
+import { Coordinates } from "../../location/coordinates";
 
 describe("MatchingEntitiesComponent", () => {
   let component: MatchingEntitiesComponent;
@@ -27,7 +29,7 @@ describe("MatchingEntitiesComponent", () => {
       newEntityMatchPropertyRight: "",
       newEntityType: "",
     },
-    showMap: true,
+    showMap: ["address", "address"],
     matchActionLabel: "match test",
     rightSide: { entityType: "Child" },
     leftSide: { entityType: "School" },
@@ -35,6 +37,7 @@ describe("MatchingEntitiesComponent", () => {
 
   beforeEach(async () => {
     mockEntityMapper = jasmine.createSpyObj(["loadType", "save"]);
+    mockEntityMapper.loadType.and.resolveTo([]);
     mockActivatedRoute = { data: null };
 
     await TestBed.configureTestingModule({
@@ -183,5 +186,46 @@ describe("MatchingEntitiesComponent", () => {
     expect(mockEntityMapper.save).toHaveBeenCalledWith(
       jasmine.any(ChildSchoolRelation)
     );
+  });
+
+  it("should create distance column and publish updates", async () => {
+    component.columns = [[undefined, "distance"]];
+    component.showMap = ["address", "address"];
+    component.entity = new Child();
+    component.leftSide = { entityType: Child };
+
+    await component.ngOnInit();
+
+    const distanceColumn = component.columns[0][1] as FormFieldConfig;
+    expect(distanceColumn).toEqual({
+      id: "distance",
+      label: "Distance",
+      view: "DisplayDistance",
+      additional: {
+        coordinatesProperty: "address",
+        compareCoordinates: jasmine.any(ReplaySubject),
+      },
+    });
+
+    let newCoordinates: Coordinates;
+    distanceColumn.additional.compareCoordinates.subscribe(
+      (res) => (newCoordinates = res)
+    );
+
+    const compare = new Child();
+    compare["address"] = { lat: 52, lon: 13 };
+    component.sideDetails[0].selectMatch(compare);
+    expect(newCoordinates).toEqual(compare["address"]);
+  });
+
+  it("should select a entity if it has been selected in the map", async () => {
+    component.entity = new Entity();
+    component.rightSide = { entityType: Child };
+    await component.ngOnInit();
+
+    const child = new Child();
+    component.entityInMapClicked(child);
+
+    expect(component.rightSide.selected).toBe(child);
   });
 });
