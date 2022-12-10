@@ -10,13 +10,14 @@ import { LocationModule } from "../location.module";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { setupEditComponent } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component.spec";
 import { GeoResult, GeoService } from "../geo.service";
-import { of } from "rxjs";
+import { of, Subject } from "rxjs";
 import { HarnessLoader, TestElement } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatInputHarness } from "@angular/material/input/testing";
 import { MatButtonHarness } from "@angular/material/button/testing";
 import { MatDialog } from "@angular/material/dialog";
 import { Coordinates } from "../coordinates";
+import { MapPopupConfig } from "../map-popup/map-popup.component";
 
 describe("EditLocationComponent", () => {
   let component: EditLocationComponent;
@@ -139,13 +140,23 @@ describe("EditLocationComponent", () => {
     expect(component.formControl).toHaveValue(selected);
   });
 
-  it("should open map and reverse lookup returned result", () => {
+  it("should open map and reverse lookup last result", () => {
     const location: Coordinates = { lat: 1, lon: 2 };
-    mockDialog.open.and.returnValue({ afterClosed: () => of(location) } as any);
+    const closeSubject = new Subject();
+    mockDialog.open.and.returnValue({ afterClosed: () => closeSubject } as any);
     const fullLocation = { display_name: "lookup result", ...location };
     mockGeoService.reverseLookup.and.returnValue(of(fullLocation));
 
     component.openMap();
+
+    const dialogData: MapPopupConfig =
+      mockDialog.open.calls.mostRecent().args[1].data;
+    dialogData.mapClick.next(location);
+
+    expect(mockGeoService.reverseLookup).not.toHaveBeenCalledWith(location);
+    expect(component.formControl).not.toHaveValue(fullLocation);
+
+    closeSubject.next(undefined);
 
     expect(mockGeoService.reverseLookup).toHaveBeenCalledWith(location);
     expect(component.formControl).toHaveValue(fullLocation);

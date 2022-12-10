@@ -11,18 +11,23 @@ import * as L from "leaflet";
 import { Coordinates } from "../coordinates";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { MapConfig } from "../map-config";
+import { MatDialog } from "@angular/material/dialog";
+import { MapPopupConfig } from "../map-popup/map-popup.component";
 
 describe("MapComponent", () => {
   let component: MapComponent;
   let fixture: ComponentFixture<MapComponent>;
+  let mockDialog: jasmine.SpyObj<MatDialog>;
   const config: MapConfig = { start: [52, 13] };
   let map: L.Map;
 
   beforeEach(async () => {
+    mockDialog = jasmine.createSpyObj(["open"]);
     await TestBed.configureTestingModule({
       declarations: [MapComponent],
       providers: [
         { provide: ConfigService, useValue: { getConfig: () => config } },
+        { provide: MatDialog, useValue: mockDialog },
       ],
     }).compileComponents();
 
@@ -89,5 +94,19 @@ describe("MapComponent", () => {
     });
 
     marker.fireEvent("click");
+  });
+
+  it("should open a popup with the same marker data", () => {
+    const marked = { lat: 1, lon: 1 };
+    component.marked = [marked];
+
+    component.showPopup();
+    const dialogData: MapPopupConfig =
+      mockDialog.open.calls.mostRecent().args[1].data;
+
+    let emitted: Coordinates[];
+    dialogData.marked.subscribe((res) => (emitted = res));
+
+    expect(emitted).toEqual([marked]);
   });
 });
