@@ -11,6 +11,7 @@ import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-co
 })
 export class ReadonlyFunctionComponent extends ViewDirective<any> {
   @Input() displayFunction: (entity: Entity) => any;
+
   onInitFromDynamicConfig(config: ViewPropertyConfig) {
     super.onInitFromDynamicConfig(config);
     this.displayFunction = config.config;

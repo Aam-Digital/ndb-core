@@ -48,6 +48,8 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
 
     child.admissionDate = faker.date.past(calculateAge(child.dateOfBirth) - 4);
 
+    child["address"] = faker.geoAddress();
+
     if (faker.datatype.number(100) > 90) {
       DemoChildGenerator.makeChildDropout(child);
     }

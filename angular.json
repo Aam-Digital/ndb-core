@@ -23,12 +23,18 @@
             "assets": [
               "src/assets",
               "src/favicon.ico",
-              "src/manifest.json"
+              "src/manifest.json",
+              {
+                "glob": "**/*",
+                "input": "node_modules/leaflet/dist/images/",
+                "output": "./assets"
+              }
             ],
             "styles": [
               "src/styles/styles.scss",
               "src/styles/themes/ndb-theme.scss",
-              "node_modules/flag-icons/css/flag-icons.min.css"
+              "node_modules/flag-icons/css/flag-icons.min.css",
+              "node_modules/leaflet/dist/leaflet.css"
             ],
             "vendorChunk": true,
             "extractLicenses": false,

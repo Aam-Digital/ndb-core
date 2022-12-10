@@ -10,6 +10,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { FilterModule } from "../../core/filter/filter.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EntityUtilsModule } from "../../core/entity-components/entity-utils/entity-utils.module";
+import { LocationModule } from "../location/location.module";
 
 /**
  * Facilitate finding suitable entities and connecting them.
@@ -27,6 +28,7 @@ import { EntityUtilsModule } from "../../core/entity-components/entity-utils/ent
     FilterModule,
     FontAwesomeModule,
     EntityUtilsModule,
+    LocationModule,
   ],
   exports: [MatchingEntitiesComponent],
 })

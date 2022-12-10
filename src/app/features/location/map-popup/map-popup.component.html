@@ -1,0 +1,11 @@
+<app-map
+  height="80vh"
+  [marked]="data.marked | async"
+  [entities]="data.entities | async"
+  [highlightedEntities]="data.highlightedEntities | async"
+  (mapClick)="mapClicked($event)"
+  (entityClick)="data.entityClick?.next($event)"
+></app-map>
+<div *ngIf="!data.disabled">
+  <button mat-raised-button mat-dialog-close>Close</button>
+</div>

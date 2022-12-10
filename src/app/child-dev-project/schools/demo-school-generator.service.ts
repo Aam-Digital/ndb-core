@@ -48,7 +48,6 @@ export class DemoSchoolGenerator extends DemoDataGenerator<School> {
         schoolNameWithType,
         schoolNameWithLanguage,
       ]);
-      school["address"] = faker.address.streetAddress();
       school["phone"] = faker.phone.number();
       school["privateSchool"] = faker.datatype.boolean();
       school["timing"] = faker.helpers.arrayElement([
@@ -56,6 +55,8 @@ export class DemoSchoolGenerator extends DemoDataGenerator<School> {
         $localize`:School demo timing:11 a.m. - 4 p.m.`,
         $localize`:School demo timing:6:30-11:00 and 11:30-16:00`,
       ]);
+
+      school["address"] = faker.geoAddress();
 
       data.push(school);
     }

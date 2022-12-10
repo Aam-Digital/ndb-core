@@ -1,0 +1,16 @@
+.map-frame {
+  border: 1px solid lightgrey;
+  border-radius: 2px;
+}
+
+#map {
+  height: 100%;
+}
+
+button {
+  position: absolute;
+  bottom: 3px;
+  left: 3px;
+  z-index: 1000;
+  background-color: white !important;
+}
