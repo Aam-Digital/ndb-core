@@ -25,7 +25,8 @@ jobs:
             GIT_BRANCH=${{ github.head_ref }}
             GIT_COMMITTED_AT=${{ env.TIME }}
             CC_TEST_REPORTER_ID=${{ secrets.CODE_CLIMATE_ID }}
-          cache-from: type=registry,ref=aamdigital/ndb-server:cache
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
   deploy-prod-image:
     runs-on: ubuntu-latest
     steps:
@@ -46,7 +47,8 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           push: true
           tags: aamdigital/ndb-server:pr-${{ github.event.number }}
-          cache-from: type=registry,ref=aamdigital/ndb-server:cache
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
       - name: Deploy updated image
         uses: appleboy/ssh-action@master
         with:

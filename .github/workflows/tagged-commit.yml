@@ -27,8 +27,8 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           push: true
           tags: aamdigital/ndb-server:${{ env.TAG }}
-          cache-from: type=registry,ref=aamdigital/ndb-server:cache
-          cache-to: type=registry,ref=aamdigital/ndb-server:cache,mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           build-args: |
             APP_VERSION=${{ env.TAG }}
             SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_TOKEN }}

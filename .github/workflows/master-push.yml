@@ -48,8 +48,8 @@ jobs:
             GIT_BRANCH=master
             GIT_COMMITTED_AT=${{ env.TIME }}
             CC_TEST_REPORTER_ID=${{ secrets.CODE_CLIMATE_ID }}
-          cache-from: type=registry,ref=aamdigital/ndb-server:cache
-          cache-to: type=registry,ref=aamdigital/ndb-server:cache,mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
   check-dependencies:
     runs-on: ubuntu-latest
     steps:
