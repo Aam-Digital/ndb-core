@@ -706,11 +706,15 @@ export const defaultJsonConfig = {
           ]
         },
         {
-          "title": $localize`:Panel title:Notes & Reports`,
+          "title": $localize`:Panel title:Notes & Tasks`,
           "components": [
             {
               "title": "",
               "component": "NotesRelatedToEntity"
+            },
+            {
+              "title": "Tasks",
+              "component": "TasksRelatedToEntity"
             }
           ]
         },

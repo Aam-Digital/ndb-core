@@ -17,7 +17,7 @@ export class DemoTodoGeneratorService extends DemoDataGenerator<Todo> {
   static provider(
     config: DemoTodoConfig = {
       minPerChild: 1,
-      maxPerChild: 3,
+      maxPerChild: 2,
     }
   ) {
     return [
@@ -85,5 +85,13 @@ const stories: Partial<Todo>[] = [
   {
     subject: $localize`:demo todo record:follow up`,
     description: $localize`:demo todo record:Call to follow up on the recent developments.`,
+  },
+  {
+    subject: $localize`:demo todo record:call family`,
+    description: $localize`:demo todo record:Check about the latest incident.`,
+  },
+  {
+    subject: $localize`:demo todo record:plan career counselling`,
+    description: $localize`:demo todo record:Personalized plan for the next discussion has to be prepared.`,
   },
 ];
