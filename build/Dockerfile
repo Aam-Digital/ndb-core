@@ -16,10 +16,13 @@ COPY . .
 ARG APP_VERSION="UNKNOWN"
 RUN sed -i "s/appVersion: \".*\"/appVersion: \"$APP_VERSION\"/g" src/environments/environment*.ts
 
-# Transform the xliff files to json so this does not have to be done on the client side
-RUN node build/prepare-translation-files.js
 
-RUN npm run build
+# When set to false, no production build for the app is done
+ARG BUILD=true
+RUN if [ "$BUILD" = true ] ; then \
+    node build/prepare-translation-files.js &&\
+    npm run build ; fi
+
 
 # When set to true, tests are run and coverage will be uploaded to CodeClimate
 ARG UPLOAD_COVERAGE=false
@@ -68,6 +71,8 @@ COPY --from=builder /app/dist/ /usr/share/nginx/html
 ENV PORT=80
 # The url to the CouchDB database
 ENV COUCHDB_URL="http://localhost"
+# The url to a nominatim instance, see https://nominatim.org/
+ENV NOMINATIM_URL="https://nominatim.openstreetmap.org"
 # variables are inserted into the nginx config
-CMD envsubst '$$PORT $$COUCHDB_URL' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
+CMD envsubst '$$PORT $$COUCHDB_URL $$NOMINATIM_URL' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
     nginx -g 'daemon off;'

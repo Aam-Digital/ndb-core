@@ -1,4 +1,5 @@
 import { faker as originalFaker } from "@faker-js/faker/locale/en_IND";
+import { GeoResult } from "../../features/location/geo.service";
 /**
  * Extension of faker.js implementing additional data generation methods.
  */
@@ -42,6 +43,17 @@ class CustomFaker {
     } else {
       return date;
     }
+  }
+
+  geoAddress(): GeoResult {
+    const coordinates = faker.address.nearbyGPSCoordinate([
+      52.4790412, 13.4319106,
+    ]);
+    return {
+      lat: Number.parseFloat(coordinates[0]),
+      lon: Number.parseFloat(coordinates[1]),
+      display_name: faker.address.streetAddress(true),
+    } as GeoResult;
   }
 }
 

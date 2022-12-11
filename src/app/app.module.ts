@@ -89,6 +89,7 @@ import {
 } from "./core/language/date-adapter-with-formatting";
 import { FileModule } from "./features/file/file.module";
 import { ConfigSetupModule } from "./core/config-setup/config-setup.module";
+import { LocationModule } from "./features/location/location.module";
 import { MatchingEntitiesModule } from "./features/matching-entities/matching-entities.module";
 import { TasksModule } from "./features/tasks/tasks.module";
 import { DemoTodoGeneratorService } from "./features/tasks/model/demo-todo-generator.service";
@@ -170,6 +171,7 @@ import { DemoTodoGeneratorService } from "./features/tasks/model/demo-todo-gener
     HistoricalDataModule,
     SupportModule,
     DatabaseModule,
+    LocationModule,
     MatchingEntitiesModule,
     TasksModule,
   ],
