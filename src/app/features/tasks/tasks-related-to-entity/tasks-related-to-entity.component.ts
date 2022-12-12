@@ -22,7 +22,8 @@ export class TasksRelatedToEntityComponent implements OnInitDynamicComponent {
     { id: "subject" },
     { id: "assignedTo" },
     { id: "description", visibleFrom: "xl" },
-    { id: "relatedEntities", hideFromTable: true }
+    { id: "repetitionInterval", visibleFrom: "xl" },
+    { id: "relatedEntities", hideFromTable: true },
   ];
 
   private entity: Entity;
@@ -40,7 +41,7 @@ export class TasksRelatedToEntityComponent implements OnInitDynamicComponent {
     this.entity = config.entity;
     this.columns = config.config?.columns ?? this.columns;
 
-    this.entries = await this.loadDataFor(this.entity.getId(true))
+    this.entries = await this.loadDataFor(this.entity.getId(true));
   }
 
   private createIndex() {
@@ -69,15 +70,11 @@ export class TasksRelatedToEntityComponent implements OnInitDynamicComponent {
   }
 
   private loadDataFor(entityId: string): Promise<Todo[]> {
-    return this.dbIndexingService.queryIndexDocs(
-      Todo,
-      "todo_index/by_entity",
-      {
-        startkey: [entityId, "\uffff"],
-        endkey: [entityId],
-        descending: true,
-      }
-    );
+    return this.dbIndexingService.queryIndexDocs(Todo, "todo_index/by_entity", {
+      startkey: [entityId, "\uffff"],
+      endkey: [entityId],
+      descending: true,
+    });
   }
 
   public getNewEntryFunction(): () => Todo {

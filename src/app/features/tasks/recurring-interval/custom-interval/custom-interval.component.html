@@ -1,0 +1,16 @@
+
+<mat-dialog-content>
+  <span i18n>repeat every</span>
+  <input matInput type="number" [(ngModel)]="selectedValue" class="field-number" [min]="1">
+  &nbsp;
+  <mat-select [(ngModel)]="selectedUnit" class="field-select">
+    <mat-option *ngFor="let o of availableUnits" [value]="o.unit">
+      {{ o.label }}
+    </mat-option>
+  </mat-select>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-stroked-button i18n="custom time interval dialog action" [mat-dialog-close]="{ value: selectedValue, unit: selectedUnit }">Set</button>
+  <button mat-stroked-button i18n="custom time interval dialog action" [mat-dialog-close]="undefined">Cancel</button>
+</mat-dialog-actions>
