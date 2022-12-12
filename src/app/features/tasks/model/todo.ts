@@ -29,7 +29,7 @@ export class Todo extends Entity {
   static labelPlural = $localize`:label (plural) for entity:Tasks`;
   static toStringAttributes = ["subject"];
 
-  static create(properties: Object): Todo {
+  static create(properties: Partial<Todo>): Todo {
     const instance = new Todo();
     Object.assign(instance, properties);
     return instance;
