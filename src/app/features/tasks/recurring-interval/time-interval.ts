@@ -16,8 +16,7 @@ export class TimeInterval {
 export function generateLabelFromInterval(interval: TimeInterval) {
   return (
     " " +
-    $localize`:custom interval select option:every ${interval.value} ` +
-    timeunitLabelMap.get(interval.unit)
+    $localize`:custom interval select option| e.g. every 2 weeks:every ${interval.value} ${timeunitLabelMap.get(interval.unit)}`
   );
 }
 
