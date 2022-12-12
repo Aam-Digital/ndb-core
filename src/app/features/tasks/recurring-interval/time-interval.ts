@@ -14,9 +14,24 @@ export class TimeInterval {
 }
 
 export function generateLabelFromInterval(interval: TimeInterval) {
-  // TODO: how to translate units? (probably same problem in date filters ...)
   return (
     " " +
-    $localize`:custom interval select option:every ${interval.value} ${interval.unit}`
+    $localize`:custom interval select option:every ${interval.value} ` +
+    timeunitLabelMap.get(interval.unit)
   );
 }
+
+const timeunitLabelMap: Map<unitOfTime.Base, string> = new Map([
+  ["years", $localize`years`],
+  ["year", $localize`years`],
+  ["y", $localize`years`],
+  ["months", $localize`months`],
+  ["month", $localize`months`],
+  ["m", $localize`months`],
+  ["weeks", $localize`weeks`],
+  ["week", $localize`weeks`],
+  ["w", $localize`weeks`],
+  ["days", $localize`days`],
+  ["day", $localize`days`],
+  ["d", $localize`days`],
+]);
