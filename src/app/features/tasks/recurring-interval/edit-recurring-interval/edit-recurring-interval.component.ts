@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { EditComponent } from "../../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
-import { TimeInterval } from "../time-interval";
+import { generateLabelFromInterval, TimeInterval } from "../time-interval";
 import { MatDialog } from "@angular/material/dialog";
 import { CustomIntervalComponent } from "../custom-interval/custom-interval.component";
 import { MatOptionSelectionChange } from "@angular/material/core";
@@ -79,19 +79,11 @@ export class EditRecurringIntervalComponent
     )?.interval;
     if (!selectedOptionValue) {
       this.predefinedIntervals.push({
-        label: this.generateLabelFromInterval(interval),
+        label: generateLabelFromInterval(interval),
         interval: interval,
       });
     }
 
     this.formControl.setValue(interval);
-  }
-
-  private generateLabelFromInterval(interval: TimeInterval) {
-    // TODO: how to translate units? (probably same problem in date filters ...)
-    return (
-      " " +
-      $localize`:custom interval select option:every ${interval.value} ${interval.unit}`
-    );
   }
 }

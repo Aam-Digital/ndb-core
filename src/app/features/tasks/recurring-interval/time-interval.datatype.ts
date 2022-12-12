@@ -9,7 +9,7 @@ export const timeIntervalDatatype: EntitySchemaDatatype<
   TimeInterval
 > = {
   name: "time-interval",
-  viewComponent: "ViewRecurringInterval",
+  viewComponent: "DisplayRecurringInterval",
   editComponent: "EditRecurringInterval",
   transformToDatabaseFormat: (value) => value,
   transformToObjectFormat: (value) => value,

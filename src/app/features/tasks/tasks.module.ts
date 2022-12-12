@@ -15,12 +15,14 @@ import { CustomIntervalComponent } from "./recurring-interval/custom-interval/cu
 import { MatDialogModule } from "@angular/material/dialog";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { timeIntervalDatatype } from "./recurring-interval/time-interval.datatype";
+import { DisplayRecurringIntervalComponent } from "./recurring-interval/display-recurring-interval/display-recurring-interval.component";
 
 @NgModule({
   declarations: [
     TasksRelatedToEntityComponent,
     EditRecurringIntervalComponent,
     CustomIntervalComponent,
+    DisplayRecurringIntervalComponent,
   ],
   imports: [
     CommonModule,
@@ -36,12 +38,17 @@ import { timeIntervalDatatype } from "./recurring-interval/time-interval.datatyp
     FormsModule,
     MatDialogModule,
   ],
-  exports: [TasksRelatedToEntityComponent, EditRecurringIntervalComponent],
+  exports: [
+    TasksRelatedToEntityComponent,
+    EditRecurringIntervalComponent,
+    DisplayRecurringIntervalComponent,
+  ],
 })
 export class TasksModule {
   static dynamicComponents: [
     TasksRelatedToEntityComponent,
-    EditRecurringIntervalComponent
+    EditRecurringIntervalComponent,
+    DisplayRecurringIntervalComponent
   ];
 
   constructor(entitySchemaService: EntitySchemaService) {

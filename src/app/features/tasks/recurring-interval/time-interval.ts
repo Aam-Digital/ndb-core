@@ -12,3 +12,11 @@ export class TimeInterval {
   /** unit (e.g. days, weeks) to be offset */
   unit: unitOfTime.Base;
 }
+
+export function generateLabelFromInterval(interval: TimeInterval) {
+  // TODO: how to translate units? (probably same problem in date filters ...)
+  return (
+    " " +
+    $localize`:custom interval select option:every ${interval.value} ${interval.unit}`
+  );
+}
