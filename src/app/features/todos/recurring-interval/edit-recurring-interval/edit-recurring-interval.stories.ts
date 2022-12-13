@@ -1,9 +1,9 @@
 import { moduleMetadata } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { Meta, Story } from "@storybook/angular/types-6-0";
-import { EditRecurringIntervalComponent } from "./edit-recurring-interval.component";
-import { TasksModule } from "../../tasks.module";
-import { EntityFormComponent } from "../../../../core/entity-components/entity-form/entity-form/entity-form.component";
+import {EditRecurringIntervalComponent} from "./edit-recurring-interval.component";
+import {TodosModule} from "../../todos.module";
+import {EntityFormComponent} from "../../../../core/entity-components/entity-form/entity-form/entity-form.component";
 import { EntityFormModule } from "../../../../core/entity-components/entity-form/entity-form.module";
 import { EntityUtilsModule } from "../../../../core/entity-components/entity-utils/entity-utils.module";
 import { EntitySchemaService } from "../../../../core/entity/schema/entity-schema.service";
@@ -15,12 +15,12 @@ import { FormFieldConfig } from "../../../../core/entity-components/entity-form/
 import { mockEntityMapper } from "../../../../core/entity/mock-entity-mapper-service";
 
 export default {
-  title: "Features/Tasks/Recurring Interval",
+  title: "Features/Todos/Recurring Interval",
   component: EditRecurringIntervalComponent,
   decorators: [
     moduleMetadata({
       imports: [
-        TasksModule,
+        TodosModule,
         EntityFormModule,
         EntityUtilsModule,
         StorybookBaseModule,

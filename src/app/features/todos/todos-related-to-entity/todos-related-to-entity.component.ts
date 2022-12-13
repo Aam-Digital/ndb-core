@@ -8,22 +8,22 @@ import { DatabaseIndexingService } from "../../../core/entity/database-indexing/
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { SessionService } from "../../../core/session/session-service/session.service";
 
-@DynamicComponent("TasksRelatedToEntity")
+@DynamicComponent("TodosRelatedToEntity")
 @Component({
-  selector: "app-tasks-related-to-entity",
-  templateUrl: "./tasks-related-to-entity.component.html",
-  styleUrls: ["./tasks-related-to-entity.component.scss"],
+  selector: "app-todos-related-to-entity",
+  templateUrl: "./todos-related-to-entity.component.html",
+  styleUrls: ["./todos-related-to-entity.component.scss"],
 })
-export class TasksRelatedToEntityComponent implements OnInitDynamicComponent {
+export class TodosRelatedToEntityComponent implements OnInitDynamicComponent {
   entries: Todo[] = [];
 
   columns: FormFieldConfig[] = [
-    { id: "deadline" },
-    { id: "subject" },
-    { id: "assignedTo" },
-    { id: "description", visibleFrom: "xl" },
-    { id: "repetitionInterval", visibleFrom: "xl" },
-    { id: "relatedEntities", hideFromTable: true },
+    {id: "deadline"},
+    {id: "subject"},
+    {id: "assignedTo"},
+    {id: "description", visibleFrom: "xl"},
+    {id: "repetitionInterval", visibleFrom: "xl"},
+    {id: "relatedEntities", hideFromTable: true},
   ];
 
   private entity: Entity;

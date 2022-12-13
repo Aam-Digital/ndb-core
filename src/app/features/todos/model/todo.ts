@@ -22,7 +22,8 @@ import { User } from "../../../core/user/user";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
-import { TimeInterval } from "../recurring-interval/time-interval";
+import {TimeInterval} from "../recurring-interval/time-interval";
+import {TodoCompletion} from "../todo-completion/todo-completion";
 
 @DatabaseEntity("Todo")
 export class Todo extends Entity {
@@ -89,8 +90,11 @@ export class Todo extends Entity {
   @DatabaseField({
     label: $localize`:label for Todo entity property:completed`,
     editComponent: "EditTaskCompletion",
+    // TODO: DisplayTaskCompletion
   })
-  completed: boolean;
+  completed?: TodoCompletion;
 
-  // TODO: isActive === false for completed tasks
+  get isActive(): boolean {
+    return !this.completed;
+  }
 }

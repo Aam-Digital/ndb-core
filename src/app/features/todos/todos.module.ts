@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { TasksRelatedToEntityComponent } from "./tasks-related-to-entity/tasks-related-to-entity.component";
-import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
+import {CommonModule} from "@angular/common";
+import {TodosRelatedToEntityComponent} from "./todos-related-to-entity/todos-related-to-entity.component";
+import {EntitySubrecordModule} from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { EditRecurringIntervalComponent } from "./recurring-interval/edit-recurring-interval/edit-recurring-interval.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -15,16 +15,18 @@ import { CustomIntervalComponent } from "./recurring-interval/custom-interval/cu
 import { MatDialogModule } from "@angular/material/dialog";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { timeIntervalDatatype } from "./recurring-interval/time-interval.datatype";
-import { DisplayRecurringIntervalComponent } from "./recurring-interval/display-recurring-interval/display-recurring-interval.component";
-import { EditTaskCompletionComponent } from "./edit-task-completion/edit-task-completion.component";
+import {
+  DisplayRecurringIntervalComponent
+} from "./recurring-interval/display-recurring-interval/display-recurring-interval.component";
+import {TodoCompletionComponent} from "./todo-completion/todo-completion.component";
 
 @NgModule({
   declarations: [
-    TasksRelatedToEntityComponent,
+    TodosRelatedToEntityComponent,
     EditRecurringIntervalComponent,
     CustomIntervalComponent,
     DisplayRecurringIntervalComponent,
-    EditTaskCompletionComponent,
+    TodoCompletionComponent,
   ],
   imports: [
     CommonModule,
@@ -41,18 +43,18 @@ import { EditTaskCompletionComponent } from "./edit-task-completion/edit-task-co
     MatDialogModule,
   ],
   exports: [
-    TasksRelatedToEntityComponent,
+    TodosRelatedToEntityComponent,
     EditRecurringIntervalComponent,
     DisplayRecurringIntervalComponent,
-    EditTaskCompletionComponent,
+    TodoCompletionComponent,
   ],
 })
-export class TasksModule {
+export class TodosModule {
   static dynamicComponents: [
-    TasksRelatedToEntityComponent,
+    TodosRelatedToEntityComponent,
     EditRecurringIntervalComponent,
     DisplayRecurringIntervalComponent,
-    EditTaskCompletionComponent
+    TodoCompletionComponent
   ];
 
   constructor(entitySchemaService: EntitySchemaService) {

@@ -714,7 +714,7 @@ export const defaultJsonConfig = {
             },
             {
               "title": "Tasks",
-              "component": "TasksRelatedToEntity"
+              "component": "TodosRelatedToEntity"
             }
           ]
         },
@@ -1191,14 +1191,15 @@ export const defaultJsonConfig = {
                 "cols": [
                   [
                     "subject",
-                    "description"
+                    "description",
+                    "relatedEntities"
                   ],
                   [
+                    "completed",
                     "assignedTo",
                     "deadline",
                     "startDate",
-                    "repetitionInterval",
-                    "relatedEntities"
+                    "repetitionInterval"
                   ]
                 ]
               }

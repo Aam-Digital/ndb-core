@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { EditRecurringIntervalComponent } from "./edit-recurring-interval.component";
-import { TasksModule } from "../../tasks.module";
-import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import {EditRecurringIntervalComponent} from "./edit-recurring-interval.component";
+import {TodosModule} from "../../todos.module";
+import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import { ConfigService } from "../../../../core/config/config.service";
 import { setupEditComponent } from "../../../../core/entity-components/entity-utils/dynamic-form-components/edit-component.spec";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -20,10 +20,10 @@ describe("EditRecurringIntervalComponent", () => {
     mockDialog = jasmine.createSpyObj(["open"]);
 
     await TestBed.configureTestingModule({
-      imports: [TasksModule, FontAwesomeTestingModule, NoopAnimationsModule],
+      imports: [TodosModule, FontAwesomeTestingModule, NoopAnimationsModule],
       providers: [
-        { provide: MatDialog, useValue: mockDialog },
-        { provide: ConfigService, useValue: null },
+        {provide: MatDialog, useValue: mockDialog},
+        {provide: ConfigService, useValue: null},
       ],
     }).compileComponents();
 

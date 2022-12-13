@@ -82,17 +82,17 @@ import {
   DEFAULT_LANGUAGE,
   LANGUAGE_LOCAL_STORAGE_KEY,
 } from "./core/language/language-statics";
-import { DateAdapter, MAT_DATE_FORMATS } from "@angular/material/core";
+import {DateAdapter, MAT_DATE_FORMATS} from "@angular/material/core";
 import {
   DATE_FORMATS,
   DateAdapterWithFormatting,
 } from "./core/language/date-adapter-with-formatting";
-import { FileModule } from "./features/file/file.module";
-import { ConfigSetupModule } from "./core/config-setup/config-setup.module";
-import { LocationModule } from "./features/location/location.module";
-import { MatchingEntitiesModule } from "./features/matching-entities/matching-entities.module";
-import { TasksModule } from "./features/tasks/tasks.module";
-import { DemoTodoGeneratorService } from "./features/tasks/model/demo-todo-generator.service";
+import {FileModule} from "./features/file/file.module";
+import {ConfigSetupModule} from "./core/config-setup/config-setup.module";
+import {LocationModule} from "./features/location/location.module";
+import {MatchingEntitiesModule} from "./features/matching-entities/matching-entities.module";
+import {TodosModule} from "./features/todos/todos.module";
+import {DemoTodoGeneratorService} from "./features/todos/model/demo-todo-generator.service";
 
 /**
  * Main entry point of the application.
@@ -173,7 +173,7 @@ import { DemoTodoGeneratorService } from "./features/tasks/model/demo-todo-gener
     DatabaseModule,
     LocationModule,
     MatchingEntitiesModule,
-    TasksModule,
+    TodosModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
