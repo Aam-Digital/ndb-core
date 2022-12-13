@@ -1,14 +1,16 @@
-import {Component} from "@angular/core";
-import {OnInitDynamicComponent} from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import {FormFieldConfig} from "../../../core/entity-components/entity-form/entity-form/FormConfig";
-import {Entity} from "../../../core/entity/model/entity";
-import {PanelConfig} from "../../../core/entity-components/entity-details/EntityDetailsConfig";
-import {Todo} from "../model/todo";
-import {DatabaseIndexingService} from "../../../core/entity/database-indexing/database-indexing.service";
-import {DynamicComponent} from "../../../core/view/dynamic-components/dynamic-component.decorator";
-import {SessionService} from "../../../core/session/session-service/session.service";
-import {FormDialogService} from "../../../core/form-dialog/form-dialog.service";
-import {TodoDetailsComponent} from "../todo-details/todo-details.component";
+import { Component } from "@angular/core";
+import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
+import { Entity } from "../../../core/entity/model/entity";
+import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
+import { Todo } from "../model/todo";
+import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
+import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
+import { TodoDetailsComponent } from "../todo-details/todo-details.component";
+import { DataFilter } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { MatSlideToggleChange } from "@angular/material/slide-toggle";
 
 @DynamicComponent("TodosRelatedToEntity")
 @Component({
@@ -20,18 +22,24 @@ export class TodosRelatedToEntityComponent implements OnInitDynamicComponent {
   entries: Todo[] = [];
 
   columns: FormFieldConfig[] = [
-    {id: "deadline"},
-    {id: "subject"},
-    {id: "assignedTo"},
-    {id: "description", visibleFrom: "xl"},
-    {id: "repetitionInterval", visibleFrom: "xl"},
-    {id: "relatedEntities", hideFromTable: true},
+    { id: "deadline" },
+    { id: "subject" },
+    { id: "assignedTo" },
+    { id: "description", visibleFrom: "xl" },
+    { id: "repetitionInterval", visibleFrom: "xl" },
+    { id: "relatedEntities", hideFromTable: true },
+    { id: "completed" },
   ];
 
   private entity: Entity;
 
   /** the property name of the Todo that contains the ids referencing related entities */
   private referenceProperty: string = "relatedEntities";
+
+  showInactive: boolean;
+
+  // TODO: filter by current user as default in UX? --> custom filter component or some kind of variable interpolation?
+  filter: DataFilter<Todo> = { isActive: true };
 
   constructor(
     private formDialog: FormDialogService,
@@ -40,8 +48,6 @@ export class TodosRelatedToEntityComponent implements OnInitDynamicComponent {
   ) {
     this.createIndex();
   }
-
-  // TODO: filter by current user as default in UX? --> custom filter component or some kind of variable interpolation?
 
   async onInitFromDynamicConfig(config: PanelConfig) {
     this.entity = config.entity;
@@ -92,6 +98,25 @@ export class TodosRelatedToEntityComponent implements OnInitDynamicComponent {
   }
 
   showDetails(entity: Todo) {
-    this.formDialog.openDialog(TodoDetailsComponent, entity);
+    this.formDialog.openSimpleForm(
+      entity,
+      // TODO: find a more elegant way to exclude the "completed" column!
+      this.columns.filter((c) => c.id !== "completed"),
+      TodoDetailsComponent
+    );
+  }
+
+  toggleInactive($event: MatSlideToggleChange) {
+    // TODO: color-coding for inactive records
+    // TODO: move the toggle into subrecord component? this is almost copy & paste from ChildSchoolOverview
+    if ($event.checked) {
+      this.filter = {};
+      this.columns = this.columns.some((c) => c.id === "completed")
+        ? this.columns
+        : [...this.columns, { id: "completed" }];
+    } else {
+      this.filter = { isActive: true };
+      this.columns = this.columns.filter((c) => c.id !== "completed");
+    }
   }
 }

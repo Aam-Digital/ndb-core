@@ -1,8 +1,8 @@
-import {ComponentFixture, TestBed} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import {TodoCompletionComponent} from "./todo-completion.component";
-import {TodosModule} from "../todos.module";
-import {SessionService} from "../../../core/session/session-service/session.service";
+import { TodoCompletionComponent } from "./todo-completion.component";
+import { TodosModule } from "../../todos.module";
+import { SessionService } from "../../../../core/session/session-service/session.service";
 
 describe("TodoCompletionComponent", () => {
   let component: TodoCompletionComponent;
@@ -11,7 +11,7 @@ describe("TodoCompletionComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [TodosModule],
-      providers: [{provide: SessionService, useValue: null}],
+      providers: [{ provide: SessionService, useValue: null }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TodoCompletionComponent);

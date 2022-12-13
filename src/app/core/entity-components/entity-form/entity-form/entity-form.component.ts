@@ -33,6 +33,9 @@ import { ConfirmationDialogService } from "../../../confirmation-dialog/confirma
   encapsulation: ViewEncapsulation.None,
 })
 export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
+  // TODO: move the buttons into FormComponent and make this a plain generated <form> for easier reuse
+  @Input() noButtons = false;
+
   /**
    * The entity which should be displayed and edited
    */

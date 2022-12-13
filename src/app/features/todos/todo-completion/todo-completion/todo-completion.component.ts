@@ -1,7 +1,7 @@
-import {Component, Input} from "@angular/core";
-import {Todo} from "../model/todo";
-import {SessionService} from "../../../core/session/session-service/session.service";
-import {EntityMapperService} from "../../../core/entity/entity-mapper.service";
+import { Component, Input } from "@angular/core";
+import { Todo } from "../../model/todo";
+import { SessionService } from "../../../../core/session/session-service/session.service";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import moment from "moment";
 
 @Component({
@@ -15,8 +15,7 @@ export class TodoCompletionComponent {
   constructor(
     private sessionService: SessionService,
     private entityMapper: EntityMapperService
-  ) {
-  }
+  ) {}
 
   async completeClick() {
     const nextTodo = await this.createNextRepetition();
@@ -31,7 +30,6 @@ export class TodoCompletionComponent {
 
     // TODO: user block instead of id to display in template
     // TODO: allow to "un-complete" a task again (+ ask user whether to delete next repetition task)
-    // TODO: move into taskcomponent instead of form field level
   }
 
   private async createNextRepetition(): Promise<Todo | null> {
@@ -39,7 +37,8 @@ export class TodoCompletionComponent {
       return null;
     }
 
-    const nextTodo = this.entity.copy();
+    const nextTodo = this.entity.copy(true);
+    // TODO: is this copy deep enough or will some array properties still reference the same?
     nextTodo.deadline = moment(nextTodo.deadline)
       .add(nextTodo.repetitionInterval.amount, nextTodo.repetitionInterval.unit)
       .toDate();

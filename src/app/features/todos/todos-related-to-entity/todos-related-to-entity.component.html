@@ -3,5 +3,15 @@
   [columns]="columns"
   [newRecordFactory]="getNewEntryFunction()"
   clickMode="none"
+  [filter]="filter"
   (rowClick)="showDetails($event)"
 ></app-entity-subrecord>
+
+<div class="margin-top-regular">
+  <mat-slide-toggle
+    (change)="toggleInactive($event)"
+    i18n="slider|also show entries that are inactive"
+  >
+    Include inactive past records
+  </mat-slide-toggle>
+</div>

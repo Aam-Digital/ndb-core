@@ -1,0 +1,10 @@
+@use "../../../../../styles/variables/colors";
+
+.completed-wrapper {
+  color: colors.$success;
+}
+
+.completed-details {
+  color: colors.$text-secondary;
+  font-size: 0.8em;
+}

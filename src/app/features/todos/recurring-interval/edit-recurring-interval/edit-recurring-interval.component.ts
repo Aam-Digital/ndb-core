@@ -24,11 +24,11 @@ export class EditRecurringIntervalComponent
   predefinedIntervals: { label: string; interval: TimeInterval }[] = [
     {
       label: $localize`:default interval select option:weekly`,
-      interval: {amount: 1, unit: "week"},
+      interval: { amount: 1, unit: "week" },
     },
     {
       label: $localize`:default interval select option:monthly`,
-      interval: {amount: 1, unit: "month"},
+      interval: { amount: 1, unit: "month" },
     },
   ];
 

@@ -326,9 +326,15 @@ export class Entity {
    * The resulting entity will be of the same type as this
    * (taking into account subclassing)
    */
-  public copy(): this {
+  public copy(generateNewId: boolean = false): this {
     const other = new (this.getConstructor())(this._id);
     Object.assign(other, this);
+
+    if (generateNewId) {
+      delete other._rev;
+      other.entityId = uuid();
+    }
+
     return other;
   }
 

@@ -228,7 +228,9 @@ export class EntitySubrecordComponent<T extends Entity>
   ngOnChanges(changes: SimpleChanges) {
     if (changes.hasOwnProperty("columns")) {
       this.initFormGroups();
-      this.setupTable();
+      if (this.columnsToDisplay.length < 2) {
+        this.setupTable();
+      }
     }
     if (changes.hasOwnProperty("records") && this._records.length > 0) {
       this.initFormGroups();

@@ -1,5 +1,56 @@
 <app-dialog-close mat-dialog-close></app-dialog-close>
 
-<mat-dialog-content> xxx</mat-dialog-content>
+<mat-dialog-content>
+  <h1>{{ entity.subject }}</h1>
 
-<mat-dialog-actions> actions</mat-dialog-actions>
+  <div class="margin-bottom-large">
+    <app-todo-completion [entity]="entity"></app-todo-completion>
+  </div>
+
+  <app-entity-form
+    [entity]="entity"
+    [editing]="true"
+    [columns]="formColumns"
+    [noButtons]="true"
+  ></app-entity-form>
+</mat-dialog-content>
+
+<mat-dialog-actions class="gap-regular">
+  <button mat-raised-button (click)="save()" i18n="Save button for forms">
+    Save
+  </button>
+
+  <button mat-raised-button (click)="cancel()" i18n="Cancel button for forms">
+    Cancel
+  </button>
+
+  <!--
+  <button
+    *ngIf="editMode === 'update'"
+    mat-icon-button
+    [matMenuTriggerFor]="additional"
+  >
+    <fa-icon icon="ellipsis-v" class="standard-icon"></fa-icon>
+  </button>
+  <mat-menu #additional>
+    <button
+      mat-menu-item
+      (click)="delete()"
+      *appDisabledEntityOperation="{
+        operation: 'delete',
+        entity: data.entity
+      }"
+      angulartics2On="click"
+      [angularticsCategory]="data.entity.getType()"
+      angularticsAction="entity_delete"
+    >
+      <fa-icon
+        class="standard-icon-with-text color-accent"
+        aria-label="remove element"
+        icon="trash"
+      ></fa-icon>
+      <span i18n="Generic delete button"> Delete </span>
+    </button>
+  </mat-menu>
+  -->
+</mat-dialog-actions>

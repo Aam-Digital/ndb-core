@@ -22,8 +22,8 @@ import { User } from "../../../core/user/user";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
-import {TimeInterval} from "../recurring-interval/time-interval";
-import {TodoCompletion} from "../todo-completion/todo-completion";
+import { TimeInterval } from "../recurring-interval/time-interval";
+import { TodoCompletion } from "../todo-completion/todo-completion";
 
 @DatabaseEntity("Todo")
 export class Todo extends Entity {
@@ -77,20 +77,20 @@ export class Todo extends Entity {
     additional: [
       {
         label: $localize`:repetition interval option:every week`,
-        interval: { value: 1, unit: "week" },
+        interval: { amount: 1, unit: "week" },
       },
       {
         label: $localize`:repetition interval option:every month`,
-        interval: { value: 1, unit: "month" },
+        interval: { amount: 1, unit: "month" },
       },
-    ],
+    ] as { label: string; interval: TimeInterval }[],
   })
   repetitionInterval: TimeInterval;
 
   @DatabaseField({
     label: $localize`:label for Todo entity property:completed`,
-    editComponent: "EditTaskCompletion",
     // TODO: DisplayTaskCompletion
+    viewComponent: "DisplayCheckmark",
   })
   completed?: TodoCompletion;
 

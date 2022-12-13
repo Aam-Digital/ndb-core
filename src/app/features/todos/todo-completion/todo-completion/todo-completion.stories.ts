@@ -1,9 +1,9 @@
-import {moduleMetadata} from "@storybook/angular";
-import {Meta, Story} from "@storybook/angular/types-6-0";
-import {TodosModule} from "../todos.module";
-import {StorybookBaseModule} from "../../../utils/storybook-base.module";
-import {TodoCompletionComponent} from "./todo-completion.component";
-import {Todo} from "../model/todo";
+import { moduleMetadata } from "@storybook/angular";
+import { Meta, Story } from "@storybook/angular/types-6-0";
+import { TodosModule } from "../../todos.module";
+import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
+import { TodoCompletionComponent } from "./todo-completion.component";
+import { Todo } from "../../model/todo";
 
 export default {
   title: "Features/Todos/TodoCompletion",
@@ -32,7 +32,7 @@ Incomplete.args = {
 
 const testEntity2 = new Todo();
 testEntity2.subject = "test";
-testEntity2.completed = {completedBy: "tester", completedAt: new Date()};
+testEntity2.completed = { completedBy: "tester", completedAt: new Date() };
 
 export const Complete = Template.bind({});
 Complete.args = {
