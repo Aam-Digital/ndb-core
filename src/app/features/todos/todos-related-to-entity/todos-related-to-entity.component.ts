@@ -1,12 +1,14 @@
-import { Component } from "@angular/core";
-import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
-import { Entity } from "../../../core/entity/model/entity";
-import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
-import { Todo } from "../model/todo";
-import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
-import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
-import { SessionService } from "../../../core/session/session-service/session.service";
+import {Component} from "@angular/core";
+import {OnInitDynamicComponent} from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import {FormFieldConfig} from "../../../core/entity-components/entity-form/entity-form/FormConfig";
+import {Entity} from "../../../core/entity/model/entity";
+import {PanelConfig} from "../../../core/entity-components/entity-details/EntityDetailsConfig";
+import {Todo} from "../model/todo";
+import {DatabaseIndexingService} from "../../../core/entity/database-indexing/database-indexing.service";
+import {DynamicComponent} from "../../../core/view/dynamic-components/dynamic-component.decorator";
+import {SessionService} from "../../../core/session/session-service/session.service";
+import {FormDialogService} from "../../../core/form-dialog/form-dialog.service";
+import {TodoDetailsComponent} from "../todo-details/todo-details.component";
 
 @DynamicComponent("TodosRelatedToEntity")
 @Component({
@@ -32,6 +34,7 @@ export class TodosRelatedToEntityComponent implements OnInitDynamicComponent {
   private referenceProperty: string = "relatedEntities";
 
   constructor(
+    private formDialog: FormDialogService,
     private dbIndexingService: DatabaseIndexingService,
     private sessionService: SessionService
   ) {
@@ -86,5 +89,9 @@ export class TodosRelatedToEntityComponent implements OnInitDynamicComponent {
       newEntry.assignedTo = [this.sessionService.getCurrentUser().name];
       return newEntry;
     };
+  }
+
+  showDetails(entity: Todo) {
+    this.formDialog.openDialog(TodoDetailsComponent, entity);
   }
 }

@@ -38,7 +38,7 @@ describe("EditRecurringIntervalComponent", () => {
   });
 
   it("should create the custom selected option on init if necessary", () => {
-    const customInterval: TimeInterval = { value: 99, unit: "days" };
+    const customInterval: TimeInterval = {amount: 99, unit: "days"};
     component.formControl.setValue(customInterval);
     component.ngOnInit();
 
@@ -48,7 +48,7 @@ describe("EditRecurringIntervalComponent", () => {
   });
 
   it("should open dialog for custom interval and select the result", () => {
-    const customIntervalResult: TimeInterval = { value: 88, unit: "days" };
+    const customIntervalResult: TimeInterval = {amount: 88, unit: "days"};
     mockDialog.open.and.returnValue({
       afterClosed: () => of(customIntervalResult),
     } as MatDialogRef<typeof component>);
@@ -66,7 +66,7 @@ describe("EditRecurringIntervalComponent", () => {
   });
 
   it("should revert to the previously selected option if custom interval dialog is cancelled", () => {
-    const previousInterval: TimeInterval = { value: 77, unit: "days" };
+    const previousInterval: TimeInterval = {amount: 77, unit: "days"};
     component.formControl.setValue(previousInterval);
     component.ngOnInit();
 

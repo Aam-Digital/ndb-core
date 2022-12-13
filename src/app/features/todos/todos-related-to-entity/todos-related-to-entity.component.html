@@ -2,4 +2,6 @@
   [records]="entries"
   [columns]="columns"
   [newRecordFactory]="getNewEntryFunction()"
+  clickMode="none"
+  (rowClick)="showDetails($event)"
 ></app-entity-subrecord>

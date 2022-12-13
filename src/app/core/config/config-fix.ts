@@ -1195,7 +1195,6 @@ export const defaultJsonConfig = {
                     "relatedEntities"
                   ],
                   [
-                    "completed",
                     "assignedTo",
                     "deadline",
                     "startDate",

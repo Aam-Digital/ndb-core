@@ -7,7 +7,7 @@ export class TimeInterval {
   static DATA_TYPE = "time-interval";
 
   /** amount of the unit to be offset */
-  value: number;
+  amount: number;
 
   /** unit (e.g. days, weeks) to be offset */
   unit: unitOfTime.Base;
@@ -17,7 +17,7 @@ export function generateLabelFromInterval(interval: TimeInterval) {
   return (
     " " +
     $localize`:custom interval select option| e.g. every 2 weeks:every ${
-      interval.value
+      interval.amount
     } ${timeunitLabelMap.get(interval.unit)}`
   );
 }
