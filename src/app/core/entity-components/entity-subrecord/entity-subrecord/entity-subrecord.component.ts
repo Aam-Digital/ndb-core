@@ -188,13 +188,17 @@ export class EntitySubrecordComponent<T extends Entity>
         .subscribe(({ entity, type }) => {
           if (type === "new") {
             this.addToTable(entity);
-          } else if (type === "remove" || !this.predicate(entity)) {
+          } else if (type === "remove") {
             this.removeFromDataTable(entity);
           } else if (
             type === "update" &&
             !this._records.find((rec) => rec.getId() === entity.getId())
           ) {
             this.addToTable(entity);
+          }
+
+          if (!this.predicate(entity)) {
+            this.initDataSource();
           }
         });
     }
@@ -224,9 +228,7 @@ export class EntitySubrecordComponent<T extends Entity>
   ngOnChanges(changes: SimpleChanges) {
     if (changes.hasOwnProperty("columns")) {
       this.initFormGroups();
-      if (this.columnsToDisplay.length < 2) {
-        this.setupTable();
-      }
+      this.setupTable();
     }
     if (changes.hasOwnProperty("records") && this._records.length > 0) {
       this.initFormGroups();
