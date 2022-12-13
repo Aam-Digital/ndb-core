@@ -371,6 +371,7 @@ export class EntitySubrecordComponent<T extends Entity>
    */
   create() {
     const newRecord = this.newRecordFactory();
+    this.rowClick.emit(newRecord);
     this.showEntity(newRecord);
     this.analyticsService.eventTrack("subrecord_add_new", {
       category: newRecord.getType(),
