@@ -56,7 +56,7 @@ export class DemoTodoGeneratorService extends DemoDataGenerator<Todo> {
   }
 
   private generateTodoForEntity(entity: Entity): Todo {
-    const todo = new Todo();
+    const todo = new Todo(faker.random.alphaNumeric(20));
 
     const selectedStory = faker.helpers.arrayElement(stories);
     todo.subject = selectedStory.subject;
