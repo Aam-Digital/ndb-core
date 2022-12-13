@@ -50,8 +50,9 @@
 <div class="flex-row flex-wrap gap-large" *ngIf="!lockedMatching">
   <ng-container *ngFor="let side of sideDetails">
     <div class="flex-grow" *ngIf="side.availableEntities">
-      <h3 [style.color]="side.entityType.color ?? 'black'" class="selection-header">
-        Select {{ side.entityType.label }}</h3>
+      <h3 [style.color]="side.entityType.color ?? 'black'" class="selection-header" i18n="header of section with entities available for selection">
+        Select {{ side.entityType.label }}
+      </h3>
 
       <app-filter
         class="flex-row gap-regular flex-wrap"
