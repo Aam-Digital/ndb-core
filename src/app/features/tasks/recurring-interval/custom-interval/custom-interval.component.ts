@@ -11,4 +11,11 @@ export class CustomIntervalComponent {
 
   selectedValue: number = 1;
   selectedUnit: string = "weeks";
+
+  validateValue() {
+    // if we switch to ReactiveForms here then maybe change this to Validators
+    if (this.selectedValue < 1) {
+      this.selectedValue = 1;
+    }
+  }
 }

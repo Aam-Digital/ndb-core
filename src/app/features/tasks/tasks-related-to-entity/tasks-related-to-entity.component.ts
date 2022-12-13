@@ -5,7 +5,6 @@ import { Entity } from "../../../core/entity/model/entity";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { Todo } from "../model/todo";
 import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
-import { HistoricalEntityData } from "../../historical-data/model/historical-entity-data";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { SessionService } from "../../../core/session/session-service/session.service";
 
@@ -66,7 +65,6 @@ export class TasksRelatedToEntityComponent implements OnInitDynamicComponent {
               emit([relatedEntity, dateString]);
             });
           }`,
-          // TODO: defaulting to current date if no deadline is set is not good! Because this happens only once at index creation
         },
       },
     };

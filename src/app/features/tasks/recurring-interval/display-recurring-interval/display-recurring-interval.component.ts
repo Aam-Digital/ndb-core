@@ -8,7 +8,6 @@ import { generateLabelFromInterval, TimeInterval } from "../time-interval";
 @Component({
   selector: "app-display-recurring-interval",
   template: "{{ label }}",
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DisplayRecurringIntervalComponent extends ViewDirective<TimeInterval> {
   label: string;
