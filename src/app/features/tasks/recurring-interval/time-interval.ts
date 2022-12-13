@@ -16,21 +16,30 @@ export class TimeInterval {
 export function generateLabelFromInterval(interval: TimeInterval) {
   return (
     " " +
-    $localize`:custom interval select option| e.g. every 2 weeks:every ${interval.value} ${timeunitLabelMap.get(interval.unit)}`
+    $localize`:custom interval select option| e.g. every 2 weeks:every ${
+      interval.value
+    } ${timeunitLabelMap.get(interval.unit)}`
   );
 }
 
+export const timeUnitsPrimary: { unit: unitOfTime.Base; label: string }[] = [
+  { unit: "days", label: $localize`:time unit:days` },
+  { unit: "weeks", label: $localize`:time unit:weeks` },
+  { unit: "months", label: $localize`:time unit:months` },
+  { unit: "years", label: $localize`:time unit:years` },
+];
+
 const timeunitLabelMap: Map<unitOfTime.Base, string> = new Map([
-  ["years", $localize`years`],
-  ["year", $localize`years`],
-  ["y", $localize`years`],
-  ["months", $localize`months`],
-  ["month", $localize`months`],
-  ["m", $localize`months`],
-  ["weeks", $localize`weeks`],
-  ["week", $localize`weeks`],
-  ["w", $localize`weeks`],
-  ["days", $localize`days`],
-  ["day", $localize`days`],
-  ["d", $localize`days`],
+  ...timeUnitsPrimary.map(
+    (e) => [e.unit, e.label] as [unitOfTime.Base, string]
+  ),
+  // alternative spellings
+  ["year", $localize`:time unit:years`],
+  ["y", $localize`:time unit:years`],
+  ["month", $localize`:time unit:months`],
+  ["m", $localize`:time unit:months`],
+  ["week", $localize`:time unit:weeks`],
+  ["w", $localize`:time unit:weeks`],
+  ["day", $localize`:time unit:days`],
+  ["d", $localize`:time unit:days`],
 ]);

@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import {timeUnitsPrimary} from "../time-interval";
 
 @Component({
   selector: "app-custom-interval",
@@ -6,12 +7,7 @@ import { Component } from "@angular/core";
   styleUrls: ["./custom-interval.component.scss"],
 })
 export class CustomIntervalComponent {
-  availableUnits: { label: string; unit: string }[] = [
-    { unit: "days", label: $localize`:interval unit:days` },
-    { unit: "weeks", label: $localize`:interval unit:weeks` },
-    { unit: "months", label: $localize`:interval unit:months` },
-    { unit: "years", label: $localize`:interval unit:years` },
-  ];
+  availableUnits: { label: string; unit: string }[] = timeUnitsPrimary;
 
   selectedValue: number = 1;
   selectedUnit: string = "weeks";
