@@ -370,7 +370,6 @@ export class EntitySubrecordComponent<T extends Entity>
    * The entity is only written to the database when the user saves this record which is newly added in edit mode.
    */
   create() {
-    console.log("X")
     const newRecord = this.newRecordFactory();
     this.showEntity(newRecord);
     this.analyticsService.eventTrack("subrecord_add_new", {
