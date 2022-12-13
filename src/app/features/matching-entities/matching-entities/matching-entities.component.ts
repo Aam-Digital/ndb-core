@@ -215,10 +215,11 @@ export class MatchingEntitiesComponent
 
   private initDistanceColumn() {
     this.columns?.forEach((column) => {
-      const index = column.findIndex((name) => name === "distance");
-      if (index !== -1) {
-        column[index] = this.getDistanceColumnConfig(index);
-      }
+      column.forEach((row, i) => {
+        if (row === "distance") {
+          column[i] = this.getDistanceColumnConfig(i);
+        }
+      });
     });
   }
 

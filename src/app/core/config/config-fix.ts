@@ -683,7 +683,7 @@ export const defaultJsonConfig = {
                 ],
                 rightSide: {
                   entityType: School.ENTITY_TYPE,
-                  filters: [{ "id": "language" }]
+                  availableFilters: [{ "id": "language" }]
                 },
                 showMap: ["address", "address"],
                 onMatch: {
@@ -1140,7 +1140,7 @@ export const defaultJsonConfig = {
       rightSide: {
         entityType: School.ENTITY_TYPE,
         prefilter: { "privateSchool": true },
-        filters: [{ "id": "language" }],
+        availableFilters: [{ "id": "language" }],
       },
       leftSide: { entityType: Child.ENTITY_TYPE },
       showMap: ["address", "address"],
