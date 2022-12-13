@@ -5327,6 +5327,15 @@ Please try again. If the problem persists contact Aam Digital support.</target>
           <context context-type="linenumber">10</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="44ebeadf262a13261ddbd142a069d1fec88cbb65" datatype="html">
+        <source> Select <x id="INTERPOLATION" equiv-text="{{ side.entityType.label }}"/> </source>
+        <target state="new"> Select <x id="INTERPOLATION" equiv-text="{{ side.entityType.label }}"/> </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/matching-entities/matching-entities/matching-entities.component.html</context>
+          <context context-type="linenumber">54,57</context>
+        </context-group>
+        <note from="description" priority="1">header of section with entities available for selection</note>
+      </trans-unit>
       <trans-unit id="4566094167890982095" datatype="html">
         <source>create matching</source>
         <target state="new">create matching</target>
