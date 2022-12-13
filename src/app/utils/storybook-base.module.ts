@@ -28,6 +28,12 @@ import { SessionService } from "../core/session/session-service/session.service"
 import { SyncState } from "../core/session/session-states/sync-state.enum";
 import { WINDOW_TOKEN } from "./di-tokens";
 
+export const appStorybookDefaulParameters = {
+  controls: {
+    exclude: ["_columns"],
+  },
+};
+
 export const mockAbilityService = {
   abilityUpdated: new Subject<void>(),
 };

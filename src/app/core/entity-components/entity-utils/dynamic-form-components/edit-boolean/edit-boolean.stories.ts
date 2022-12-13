@@ -10,7 +10,10 @@ import { AlertsModule } from "../../../../alerts/alerts.module";
 import { Entity } from "../../../../entity/model/entity";
 import { DatabaseField } from "../../../../entity/database-field.decorator";
 import { DatabaseEntity } from "../../../../entity/database-entity.decorator";
-import { StorybookBaseModule } from "../../../../../utils/storybook-base.module";
+import {
+  appStorybookDefaulParameters,
+  StorybookBaseModule,
+} from "../../../../../utils/storybook-base.module";
 
 export default {
   title: "Core/EntityComponents/Entity Property Fields/Checkbox",
@@ -32,11 +35,7 @@ export default {
       ],
     }),
   ],
-  parameters: {
-    controls: {
-      exclude: ["_columns"],
-    },
-  },
+  parameters: appStorybookDefaulParameters,
 } as Meta;
 
 const Template: Story<EntityFormComponent> = (args: EntityFormComponent) => ({

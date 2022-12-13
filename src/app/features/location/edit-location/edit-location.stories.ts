@@ -1,5 +1,8 @@
 import { moduleMetadata } from "@storybook/angular";
-import { StorybookBaseModule } from "../../../utils/storybook-base.module";
+import {
+  appStorybookDefaulParameters,
+  StorybookBaseModule,
+} from "../../../utils/storybook-base.module";
 import { Meta, Story } from "@storybook/angular/types-6-0";
 import { LocationModule } from "../location.module";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
@@ -33,11 +36,7 @@ export default {
       ],
     }),
   ],
-  parameters: {
-    controls: {
-      exclude: ["_columns"],
-    },
-  },
+  parameters: appStorybookDefaulParameters,
 } as Meta;
 
 @DatabaseEntity("LocationTest")

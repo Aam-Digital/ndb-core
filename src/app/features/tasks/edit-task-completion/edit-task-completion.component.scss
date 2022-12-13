@@ -1,0 +1,15 @@
+@use "src/styles/variables/colors";
+
+.app-form-field-wrapper {
+  // imitate mat-form-field-wrapper padding
+  padding-bottom: 1.25em;
+}
+
+.completed-wrapper {
+  color: colors.$success;
+}
+
+.completed-details {
+  color: colors.$text-secondary;
+  font-size: 0.8em;
+}

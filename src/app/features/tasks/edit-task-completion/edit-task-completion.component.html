@@ -1,0 +1,15 @@
+<div class="app-form-field-wrapper">
+
+  <button *ngIf="!formControl.value" mat-raised-button color="accent" (click)="completeClick()">
+    <fa-icon icon="check" class="margin-right-small"></fa-icon>
+    <span i18n>Complete Task</span>
+  </button>
+
+  <div *ngIf="formControl.value" class="completed-wrapper">
+    <fa-icon icon="check" class="margin-right-small"></fa-icon>
+    <span i18n>completed</span>
+    <span class="completed-details" i18n>
+      by {{name}} on {{ date | date }}
+    </span>
+  </div>
+</div>

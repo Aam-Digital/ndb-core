@@ -85,4 +85,12 @@ export class Todo extends Entity {
     ],
   })
   repetitionInterval: TimeInterval;
+
+  @DatabaseField({
+    label: $localize`:label for Todo entity property:completed`,
+    editComponent: "EditTaskCompletion",
+  })
+  completed: boolean;
+
+  // TODO: isActive === false for completed tasks
 }
