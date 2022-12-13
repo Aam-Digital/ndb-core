@@ -7,6 +7,7 @@ import { Todo } from "../model/todo";
 import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
 import { HistoricalEntityData } from "../../historical-data/model/historical-entity-data";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
+import { SessionService } from "../../../core/session/session-service/session.service";
 
 @DynamicComponent("TasksRelatedToEntity")
 @Component({
@@ -31,7 +32,10 @@ export class TasksRelatedToEntityComponent implements OnInitDynamicComponent {
   /** the property name of the Todo that contains the ids referencing related entities */
   private referenceProperty: string = "relatedEntities";
 
-  constructor(private dbIndexingService: DatabaseIndexingService) {
+  constructor(
+    private dbIndexingService: DatabaseIndexingService,
+    private sessionService: SessionService
+  ) {
     this.createIndex();
   }
 
@@ -81,7 +85,7 @@ export class TasksRelatedToEntityComponent implements OnInitDynamicComponent {
     return () => {
       const newEntry = new Todo();
       newEntry.relatedEntities = [this.entity.getId(true)];
-      newEntry.assignedTo = []; // TODO: current user
+      newEntry.assignedTo = [this.sessionService.getCurrentUser().name];
       return newEntry;
     };
   }
