@@ -10,8 +10,6 @@ import { SessionService } from "../../../core/session/session-service/session.se
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { TodoDetailsComponent } from "../todo-details/todo-details.component";
 import { DataFilter } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { MatSlideToggleChange } from "@angular/material/slide-toggle";
-import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 
 @DynamicComponent("TodosRelatedToEntity")
 @Component({
