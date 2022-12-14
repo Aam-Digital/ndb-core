@@ -5,11 +5,13 @@
   clickMode="none"
   [filter]="filter"
   (rowClick)="showDetails($event)"
+  [getBackgroundColor]="backgroundColorFn"
 ></app-entity-subrecord>
 
 <div class="margin-top-regular">
   <mat-slide-toggle
-    (change)="toggleInactive($event)"
+    [(ngModel)]="includeInactive"
+    (change)="toggleInactive()"
     i18n="slider|also show entries that are inactive"
   >
     Include inactive past records

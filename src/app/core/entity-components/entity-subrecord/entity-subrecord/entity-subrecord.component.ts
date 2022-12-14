@@ -198,7 +198,8 @@ export class EntitySubrecordComponent<T extends Entity>
           }
 
           if (!this.predicate(entity)) {
-            this.initDataSource();
+            // hide after a short delay to give a signal in the UI why records disappear by showing the changed values first
+            setTimeout(() => this.initDataSource(), 5000);
           }
         });
     }

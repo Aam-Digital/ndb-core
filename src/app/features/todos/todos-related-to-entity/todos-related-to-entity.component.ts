@@ -11,6 +11,7 @@ import { FormDialogService } from "../../../core/form-dialog/form-dialog.service
 import { TodoDetailsComponent } from "../todo-details/todo-details.component";
 import { DataFilter } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { MatSlideToggleChange } from "@angular/material/slide-toggle";
+import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 
 @DynamicComponent("TodosRelatedToEntity")
 @Component({
@@ -28,7 +29,7 @@ export class TodosRelatedToEntityComponent implements OnInitDynamicComponent {
     { id: "description", visibleFrom: "xl" },
     { id: "repetitionInterval", visibleFrom: "xl" },
     { id: "relatedEntities", hideFromTable: true },
-    { id: "completed" },
+    { id: "completed", hideFromForm: true },
   ];
 
   private entity: Entity;
@@ -40,6 +41,14 @@ export class TodosRelatedToEntityComponent implements OnInitDynamicComponent {
 
   // TODO: filter by current user as default in UX? --> custom filter component or some kind of variable interpolation?
   filter: DataFilter<Todo> = { isActive: true };
+  includeInactive: boolean;
+  backgroundColorFn = (r: Todo) => {
+    if (!r.isActive) {
+      return "#e0e0e0";
+    } else {
+      return r.getColor();
+    }
+  };
 
   constructor(
     private formDialog: FormDialogService,
@@ -54,6 +63,7 @@ export class TodosRelatedToEntityComponent implements OnInitDynamicComponent {
     this.columns = config.config?.columns ?? this.columns;
 
     this.entries = await this.loadDataFor(this.entity.getId(true));
+    this.toggleInactive();
   }
 
   private createIndex() {
@@ -98,25 +108,15 @@ export class TodosRelatedToEntityComponent implements OnInitDynamicComponent {
   }
 
   showDetails(entity: Todo) {
-    this.formDialog.openSimpleForm(
-      entity,
-      // TODO: find a more elegant way to exclude the "completed" column!
-      this.columns.filter((c) => c.id !== "completed"),
-      TodoDetailsComponent
-    );
+    this.formDialog.openSimpleForm(entity, this.columns, TodoDetailsComponent);
   }
 
-  toggleInactive($event: MatSlideToggleChange) {
-    // TODO: color-coding for inactive records
-    // TODO: move the toggle into subrecord component? this is almost copy & paste from ChildSchoolOverview
-    if ($event.checked) {
+  toggleInactive() {
+    // TODO: move the toggle into its own component to be used like a filter? this is almost copy & paste from ChildSchoolOverview
+    if (this.includeInactive) {
       this.filter = {};
-      this.columns = this.columns.some((c) => c.id === "completed")
-        ? this.columns
-        : [...this.columns, { id: "completed" }];
     } else {
       this.filter = { isActive: true };
-      this.columns = this.columns.filter((c) => c.id !== "completed");
     }
   }
 }
