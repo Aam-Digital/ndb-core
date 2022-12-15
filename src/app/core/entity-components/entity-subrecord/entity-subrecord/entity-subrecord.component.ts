@@ -188,13 +188,18 @@ export class EntitySubrecordComponent<T extends Entity>
         .subscribe(({ entity, type }) => {
           if (type === "new") {
             this.addToTable(entity);
-          } else if (type === "remove" || !this.predicate(entity)) {
+          } else if (type === "remove") {
             this.removeFromDataTable(entity);
           } else if (
             type === "update" &&
             !this._records.find((rec) => rec.getId() === entity.getId())
           ) {
             this.addToTable(entity);
+          }
+
+          if (!this.predicate(entity)) {
+            // hide after a short delay to give a signal in the UI why records disappear by showing the changed values first
+            setTimeout(() => this.initDataSource(), 5000);
           }
         });
     }
