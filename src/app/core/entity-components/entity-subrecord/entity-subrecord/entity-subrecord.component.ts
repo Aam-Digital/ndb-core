@@ -198,7 +198,8 @@ export class EntitySubrecordComponent<T extends Entity>
           }
 
           if (!this.predicate(entity)) {
-            this.initDataSource();
+            // hide after a short delay to give a signal in the UI why records disappear by showing the changed values first
+            setTimeout(() => this.initDataSource(), 5000);
           }
         });
     }
@@ -228,7 +229,9 @@ export class EntitySubrecordComponent<T extends Entity>
   ngOnChanges(changes: SimpleChanges) {
     if (changes.hasOwnProperty("columns")) {
       this.initFormGroups();
-      this.setupTable();
+      if (this.columnsToDisplay.length < 2) {
+        this.setupTable();
+      }
     }
     if (changes.hasOwnProperty("records") && this._records.length > 0) {
       this.initFormGroups();
