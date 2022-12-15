@@ -372,11 +372,12 @@ describe("EntitySubrecordComponent", () => {
     ]);
   });
 
-  it("should remove an entity if it does not pass the filter anymore", async () => {
+  it("should remove an entity if it does not pass the filter anymore", fakeAsync(() => {
     const entityMapper = TestBed.inject(EntityMapperService);
     const child = new Child();
     child.gender = genders[1];
-    await entityMapper.save(child);
+    entityMapper.save(child);
+    tick();
     component.records = [child];
     component.filter = { "gender.id": genders[1].id } as any;
     component.ngOnInit();
@@ -384,8 +385,9 @@ describe("EntitySubrecordComponent", () => {
     expect(component.recordsDataSource.data).toEqual([{ record: child }]);
 
     child.gender = genders[2];
-    await entityMapper.save(child);
+    entityMapper.save(child);
+    tick(5000);
 
     expect(component.recordsDataSource.data).toEqual([]);
-  });
+  }));
 });
