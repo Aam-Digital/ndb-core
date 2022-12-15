@@ -258,8 +258,8 @@ export class Entity {
   /**
    * Get the class (Entity or the actual subclass of the instance) to call static methods on the correct class considering inheritance
    */
-  getConstructor<T extends Entity>(this: T): EntityConstructor<T> {
-    return this.constructor as EntityConstructor<T>;
+  getConstructor(): EntityConstructor<this> {
+    return this.constructor as EntityConstructor<this>;
   }
 
   /**
@@ -326,7 +326,7 @@ export class Entity {
    * The resulting entity will be of the same type as this
    * (taking into account subclassing)
    */
-  public copy(): Entity {
+  public copy(): this {
     const other = new (this.getConstructor())(this._id);
     Object.assign(other, this);
     return other;
