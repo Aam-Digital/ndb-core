@@ -50,8 +50,8 @@ export class EditRecurringIntervalComponent
     this.formControl.setValue(undefined);
   }
 
-  openCustomIntervalSelection($event: MatOptionSelectionChange<TimeInterval>) {
-    if (!$event.isUserInput) {
+  openCustomIntervalSelection(event: MatOptionSelectionChange<TimeInterval>) {
+    if (!event.isUserInput) {
       return;
     }
 
