@@ -28,7 +28,7 @@ import { SessionService } from "../core/session/session-service/session.service"
 import { SyncState } from "../core/session/session-states/sync-state.enum";
 import { WINDOW_TOKEN } from "./di-tokens";
 
-export const appStorybookDefaulParameters = {
+export const entityFormStorybookDefaulParameters = {
   controls: {
     exclude: ["_columns"],
   },

@@ -1,6 +1,6 @@
 import { moduleMetadata } from "@storybook/angular";
 import {
-  appStorybookDefaulParameters,
+  entityFormStorybookDefaulParameters,
   StorybookBaseModule,
 } from "../../../utils/storybook-base.module";
 import { Meta, Story } from "@storybook/angular/types-6-0";
@@ -36,7 +36,7 @@ export default {
       ],
     }),
   ],
-  parameters: appStorybookDefaulParameters,
+  parameters: entityFormStorybookDefaulParameters,
 } as Meta;
 
 @DatabaseEntity("LocationTest")
