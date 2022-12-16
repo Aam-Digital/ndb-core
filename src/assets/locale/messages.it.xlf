@@ -196,7 +196,7 @@
         <note priority="1" from="description">Alert when selected date is invalid</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.ts</context>
-          <context context-type="linenumber">184</context>
+          <context context-type="linenumber">186</context>
         </context-group>
       </trans-unit>
       <trans-unit id="21b16e7ad80f33b5297b549244c29b67f186841b" datatype="html">
@@ -3923,7 +3923,7 @@
         <note priority="1" from="description">Record deleted info</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component.ts</context>
-          <context context-type="linenumber">339</context>
+          <context context-type="linenumber">344</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4295329798815830785" datatype="html">
@@ -3932,7 +3932,7 @@
         <note priority="1" from="description">Delete confirmation message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component.ts</context>
-          <context context-type="linenumber">340</context>
+          <context context-type="linenumber">345</context>
         </context-group>
       </trans-unit>
       <trans-unit id="0a2d5d4e38a8a223d4902c220895a6c366584d9e" datatype="html">
@@ -5348,11 +5348,11 @@ Please try again. If the problem persists contact Aam Digital support.</target>
       <trans-unit id="1779552786277618671" datatype="html">
         <source>Distance</source>
         <target state="new">Distance</target>
+        <note priority="1" from="description">Matching View column name</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/matching-entities/matching-entities/matching-entities.component.ts</context>
-          <context context-type="linenumber">228,226</context>
+          <context context-type="linenumber">229</context>
         </context-group>
-        <note priority="1" from="description">Matching View column name</note>
       </trans-unit>
       <trans-unit id="6680431077518392028" datatype="html">
         <source>Clubs visited</source>
