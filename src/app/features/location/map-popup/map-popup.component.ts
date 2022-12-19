@@ -12,6 +12,7 @@ export interface MapPopupConfig {
   mapClick?: Subject<Coordinates>;
   entityClick?: Subject<Entity>;
   disabled?: boolean;
+  helpText?: string;
 }
 
 @Component({
