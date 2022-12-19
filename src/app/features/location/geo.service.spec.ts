@@ -46,6 +46,7 @@ describe("GeoService", () => {
         format: "json",
         countrycodes,
         email: "some@mail.com",
+        addressdetails: 1,
       },
     });
   });
