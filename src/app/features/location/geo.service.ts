@@ -19,8 +19,12 @@ export interface GeoResult extends Coordinates {
 })
 export class GeoService {
   private readonly remoteUrl = "/nominatim";
-  private countrycodes: string = "de";
-  private email = environment.email;
+  private countrycodes = "de";
+  private defaultOptions = {
+    format: "json",
+    addressdetails: 1,
+    email: environment.email,
+  };
 
   constructor(
     private http: HttpClient,
@@ -46,10 +50,9 @@ export class GeoService {
     });
     return this.http.get<GeoResult[]>(`${this.remoteUrl}/search`, {
       params: {
+        ...this.defaultOptions,
         q: searchTerm,
-        format: "json",
         countrycodes: this.countrycodes,
-        email: this.email,
       },
     });
   }
@@ -64,10 +67,9 @@ export class GeoService {
     });
     return this.http.get<GeoResult>(`${this.remoteUrl}/reverse`, {
       params: {
+        ...this.defaultOptions,
         lat: coordinates.lat,
         lon: coordinates.lon,
-        format: "json",
-        email: this.email,
       },
     });
   }
