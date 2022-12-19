@@ -19,7 +19,7 @@
     </button>
   </div>
 
-  <div class="padding-bottom-small flex-row gap-small align-self-end flex-wrap">
+  <div class="padding-bottom-small flex-row gap-small align-self-end flex-wrap" *ngIf="user">
     <button
       *ngIf="editing && user?.enabled"
       mat-raised-button
@@ -40,7 +40,7 @@
       Activate user
     </button>
     <button
-      *ngIf="editing && user?.enabled"
+      *ngIf="editing && !user?.enabled"
       mat-raised-button
       class="action-button"
       (click)="updateAccount()"
