@@ -14,7 +14,7 @@ export interface MatchingEntitiesConfig {
    *
    * e.g. [["name", "name"], ["motherTongue", "language"]]
    */
-  columns: [string, string][];
+  columns?: [string, string][];
 
   /**
    * Mapped properties which should be displayed in a map (of left and right entity).
@@ -28,7 +28,7 @@ export interface MatchingEntitiesConfig {
   matchActionLabel?: string;
 
   /** details of what is created when matching two entities */
-  onMatch: NewMatchAction;
+  onMatch?: NewMatchAction;
 
   /** details of entities on this side of the matching view */
   leftSide?: MatchingSideConfig;
@@ -42,11 +42,6 @@ export interface MatchingSideConfig {
    * entity type of matching, used to load a list of available entities for manual selection
    */
   entityType?: EntityConstructor | string;
-
-  /**
-   * selected entity for the matching
-   */
-  selected?: Entity;
 
   /** fixed pre-filters applied to remove some entities from the list of available entities */
   prefilter?: DataFilter<Entity>;
