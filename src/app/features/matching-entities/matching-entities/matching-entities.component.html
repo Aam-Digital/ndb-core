@@ -35,14 +35,14 @@
            [expandable]="true"
            [entities]="mapEntities"
            [highlightedEntities]="[
-              { entity: leftSide.selected, property: showMap[0] },
-              { entity: rightSide.selected, property: showMap[1]}
+              { entity: sideDetails?.[0].selected, property: showMap[0] },
+              { entity: sideDetails?.[1].selected, property: showMap[1]}
             ]"
            (entityClick)="entityInMapClicked($event)"
   ></app-map>
   <button mat-stroked-button color="accent" style="width: 100%"
           (click)="createMatch()"
-          [disabled]="!leftSide?.selected || !rightSide?.selected || lockedMatching">
+          [disabled]="!sideDetails?.[0].selected || !sideDetails?.[1].selected || lockedMatching">
     {{ matchActionLabel }}
   </button>
 </div>

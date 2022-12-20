@@ -20,7 +20,7 @@ import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { addAlphaToHexColor } from "../../../utils/style-utils";
 import { ReplaySubject } from "rxjs";
-import {ConfigService} from "../../../core/config/config.service";
+import { ConfigService } from "../../../core/config/config.service";
 
 interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -28,6 +28,7 @@ interface MatchingSide extends MatchingSideConfig {
   availableEntities?: Entity[];
   selectMatch?: (e) => void;
   entityType: EntityConstructor;
+  selected?: Entity;
 }
 
 @RouteTarget("MatchingEntities")
@@ -44,8 +45,8 @@ export class MatchingEntitiesComponent
 
   @Input() entity: Entity;
 
-  @Input() leftSide: MatchingSide | MatchingSideConfig = {};
-  @Input() rightSide: MatchingSide | MatchingSideConfig = {};
+  @Input() leftSide: MatchingSideConfig = {};
+  @Input() rightSide: MatchingSideConfig = {};
   mapEntities: { entity: Entity; property: string }[] = [];
 
   columnsToDisplay = [];
@@ -100,8 +101,14 @@ export class MatchingEntitiesComponent
     this.columnsToDisplay = ["side-0", "side-1"];
   }
 
+  /**
+   * Apply config object to the component inputs (including global default config)
+   * @private
+   */
   private initConfig(config: MatchingEntitiesConfig, entity?: Entity) {
-    const defaultConfig = this.configService.getConfig<MatchingEntitiesConfig>(MatchingEntitiesComponent.DEFAULT_CONFIG_KEY);
+    const defaultConfig = this.configService.getConfig<MatchingEntitiesConfig>(
+      MatchingEntitiesComponent.DEFAULT_CONFIG_KEY
+    );
     config = Object.assign({}, defaultConfig, config);
 
     this.columns = config.columns ?? this.columns;
@@ -115,6 +122,12 @@ export class MatchingEntitiesComponent
     this.entity = entity;
   }
 
+  /**
+   * Generate setup for a side of the matching view template based on the component input properties.
+   * @param side
+   * @param sideIndex
+   * @private
+   */
   private async initSideDetails(
     side: MatchingSideConfig,
     sideIndex: number

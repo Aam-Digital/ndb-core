@@ -81,10 +81,8 @@ describe("MatchingEntitiesComponent", () => {
     testConfig.columns = [["defaultA", "defaultB"]];
     mockConfigService.getConfig.and.returnValue(testConfig);
     const currentConfig: MatchingEntitiesConfig = {
-      columns: [
-        ["newA", "newB"],
-      ],
-    }
+      columns: [["newA", "newB"]],
+    };
 
     component.onInitFromDynamicConfig({
       entity: new Entity(),
@@ -139,7 +137,7 @@ describe("MatchingEntitiesComponent", () => {
 
   it("should init details for template including available entities table and its columns", async () => {
     const testEntity = new Entity();
-    component.leftSide = { selected: testEntity };
+    component.entity = testEntity;
     component.rightSide = { entityType: "Child" };
     component.columns = [
       ["_id", "name"],
@@ -174,11 +172,11 @@ describe("MatchingEntitiesComponent", () => {
     };
     const testEntity = new Entity();
     const matchedEntity = Child.create("matched child");
-    component.leftSide = { selected: testEntity };
-    component.rightSide = { selected: matchedEntity };
     component.columns = [["_id", "name"]];
 
     await component.ngOnInit();
+    component.sideDetails[0].selectMatch(testEntity);
+    component.sideDetails[1].selectMatch(matchedEntity);
     await component.createMatch();
 
     expect(mockEntityMapper.save).toHaveBeenCalledWith(
@@ -236,7 +234,6 @@ describe("MatchingEntitiesComponent", () => {
   });
 
   it("should not change the provided config object directly", async () => {
-
     component.onInitFromDynamicConfig({
       entity: new Entity(),
       config: testConfig,
@@ -258,7 +255,10 @@ describe("MatchingEntitiesComponent", () => {
   });
 });
 
-function expectConfigToMatch(component: MatchingEntitiesComponent, configToLoad: MatchingEntitiesConfig) {
+function expectConfigToMatch(
+  component: MatchingEntitiesComponent,
+  configToLoad: MatchingEntitiesConfig
+) {
   expect(component.columns).toEqual(configToLoad.columns);
   expect(component.onMatch).toEqual(configToLoad.onMatch);
   expect(component.showMap).toEqual(configToLoad.showMap);
