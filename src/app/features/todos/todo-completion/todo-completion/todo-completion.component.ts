@@ -3,6 +3,7 @@ import { Todo } from "../../model/todo";
 import { SessionService } from "../../../../core/session/session-service/session.service";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import moment from "moment";
+import { AlertService } from "../../../../core/alerts/alert.service";
 
 @Component({
   selector: "app-todo-completion",
@@ -14,6 +15,7 @@ export class TodoCompletionComponent {
 
   constructor(
     private sessionService: SessionService,
+    private alertService: AlertService,
     private entityMapper: EntityMapperService
   ) {}
 
@@ -44,6 +46,9 @@ export class TodoCompletionComponent {
       .toDate();
 
     await this.entityMapper.save(nextTodo);
+    this.alertService.addInfo(
+      $localize`:snackbar message informing about next recurring task:A new recurring ${Todo.label} has been created based on the repetition interval.`
+    );
 
     return nextTodo;
   }
