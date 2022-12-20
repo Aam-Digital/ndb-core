@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   EventEmitter,
   Inject,
@@ -17,12 +18,13 @@ import { EntityFormComponent } from "../../../core/entity-components/entity-form
   templateUrl: "./todo-details.component.html",
   styleUrls: ["./todo-details.component.scss"],
 })
-export class TodoDetailsComponent implements OnInit {
+export class TodoDetailsComponent implements AfterViewInit {
   @Input() entity: Todo;
 
   @Output() close = new EventEmitter<Todo>();
 
   @ViewChild(EntityFormComponent) entityForm;
+  formPristine: boolean = true;
 
   formColumns: any;
 
@@ -34,15 +36,18 @@ export class TodoDetailsComponent implements OnInit {
     this.formColumns = [data.columns];
   }
 
-  ngOnInit(): void {}
+  ngAfterViewInit(): void {
+    this.entityForm.form.valueChanges.subscribe((c) => {
+      this.formPristine = this.entityForm.form.pristine;
+    });
+  }
 
   cancel() {
-    // TODO: reset form?
     this.dialogRef.close();
   }
 
   async save() {
-    // TODO: disable save/cancel buttons if form is (not) dirty?
+    // TODO ask to save changes before completing a task (which saves it)
     await this.entityForm.saveForm();
     this.dialogRef.close();
   }

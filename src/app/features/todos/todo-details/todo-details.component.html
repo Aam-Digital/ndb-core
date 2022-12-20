@@ -4,7 +4,11 @@
   <h1>{{ entity.subject }}</h1>
 
   <div class="margin-bottom-large">
-    <app-todo-completion [entity]="entity"></app-todo-completion>
+    <app-todo-completion
+      [entity]="entity"
+      *ngIf="entity.isNew"
+      mat-dialog-close
+    ></app-todo-completion>
   </div>
 
   <app-entity-form
@@ -16,12 +20,20 @@
 </mat-dialog-content>
 
 <mat-dialog-actions class="gap-regular">
-  <button mat-raised-button (click)="save()" i18n="Save button for forms">
+  <button
+    mat-raised-button
+    (click)="save()"
+    [disabled]="formPristine"
+    i18n="Save button for forms"
+  >
     Save
   </button>
 
-  <button mat-raised-button (click)="cancel()" i18n="Cancel button for forms">
-    Cancel
+  <button mat-raised-button mat-dialog-close>
+    <span *ngIf="!formPristine" i18n="Cancel button for forms">Cancel</span>
+    <span *ngIf="formPristine" i18n="Close button for unchanged forms"
+      >Close</span
+    >
   </button>
 
   <!--
