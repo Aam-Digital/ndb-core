@@ -20,6 +20,7 @@ import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { addAlphaToHexColor } from "../../../utils/style-utils";
 import { ReplaySubject } from "rxjs";
+import {ConfigService} from "../../../core/config/config.service";
 
 interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -39,6 +40,8 @@ interface MatchingSide extends MatchingSideConfig {
 export class MatchingEntitiesComponent
   implements OnInit, OnInitDynamicComponent
 {
+  static DEFAULT_CONFIG_KEY = "appConfig:matching-entities";
+
   @Input() entity: Entity;
 
   @Input() leftSide: MatchingSide | MatchingSideConfig = {};
@@ -71,6 +74,7 @@ export class MatchingEntitiesComponent
     private route: ActivatedRoute,
     private formDialog: FormDialogService,
     private entityMapper: EntityMapperService,
+    private configService: ConfigService,
     private entityRegistry: EntityRegistry
   ) {}
 
@@ -97,6 +101,9 @@ export class MatchingEntitiesComponent
   }
 
   private initConfig(config: MatchingEntitiesConfig, entity?: Entity) {
+    const defaultConfig = this.configService.getConfig<MatchingEntitiesConfig>(MatchingEntitiesComponent.DEFAULT_CONFIG_KEY);
+    config = Object.assign({}, defaultConfig, config);
+
     this.columns = config.columns ?? this.columns;
     this.showMap = config.showMap ?? this.showMap;
     this.matchActionLabel = config.matchActionLabel ?? this.matchActionLabel;
