@@ -20,6 +20,7 @@ import { EntitySchema } from "../schema/entity-schema";
 import { DatabaseField } from "../database-field.decorator";
 import { getWarningLevelColor, WarningLevel } from "./warning-level";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
+import { cloneDeep } from "lodash-es";
 
 /**
  * This represents a static class of type <T>.
@@ -333,7 +334,7 @@ export class Entity {
    */
   public copy(generateNewId: boolean = false): this {
     const other = new (this.getConstructor())(this._id);
-    Object.assign(other, this);
+    Object.assign(other, cloneDeep(this));
 
     if (generateNewId) {
       delete other._rev;

@@ -40,7 +40,6 @@ export class TodoCompletionComponent {
     }
 
     const nextTodo = this.entity.copy(true);
-    // TODO: is this copy deep enough or will some array properties still reference the same?
     nextTodo.deadline = moment(nextTodo.deadline)
       .add(nextTodo.repetitionInterval.amount, nextTodo.repetitionInterval.unit)
       .toDate();

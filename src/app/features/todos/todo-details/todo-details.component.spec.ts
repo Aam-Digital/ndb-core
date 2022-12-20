@@ -9,6 +9,7 @@ import { ConfigService } from "../../../core/config/config.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { SessionService } from "../../../core/session/session-service/session.service";
 
 describe("TodoDetailsComponent", () => {
   let component: TodoDetailsComponent;
@@ -25,6 +26,7 @@ describe("TodoDetailsComponent", () => {
         },
         { provide: MatDialogRef, useValue: null },
         { provide: ConfigService, useValue: null },
+        { provide: SessionService, useValue: null },
         { provide: EntityMapperService, useValue: mockEntityMapper() },
       ],
     }).compileComponents();
