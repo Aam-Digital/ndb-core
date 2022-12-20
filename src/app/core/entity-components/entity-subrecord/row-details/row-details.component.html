@@ -60,7 +60,7 @@
   </button>
 
   <button
-    *ngIf="editMode === 'update'"
+    *ngIf="data.entity.isNew"
     mat-icon-button
     [matMenuTriggerFor]="additional"
   >

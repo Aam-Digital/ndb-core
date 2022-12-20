@@ -169,6 +169,11 @@ export class Entity {
   /** internal database doc revision, used to detect conflicts by PouchDB/CouchDB */
   @DatabaseField() _rev: string;
 
+  /** whether this entity object is newly created and not yet saved to database */
+  get isNew(): boolean {
+    return !this._rev;
+  }
+
   /** actual id without prefix */
   private get entityId(): string {
     return Entity.extractEntityIdFromId(this._id);
