@@ -130,11 +130,10 @@ export class EntityFormService {
   }
 
   private canSave(oldEntity: Entity, newEntity: Entity): boolean {
-    // no _rev means a new entity is created
-    if (oldEntity._rev) {
-      return this.ability.can("update", oldEntity);
-    } else {
+    if (oldEntity.isNew) {
       return this.ability.can("create", newEntity);
+    } else {
+      return this.ability.can("update", oldEntity);
     }
   }
 }

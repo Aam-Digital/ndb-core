@@ -129,6 +129,14 @@ describe("Entity", () => {
     testEntity3.isActive = false;
     expect(testEntity3.isActive).withContext("setting 'isActive'").toBeFalse();
   });
+
+  it("should be 'isNew' if newly created before save", () => {
+    const entity = new Entity();
+    expect(entity.isNew).toBeTrue();
+
+    entity._rev = "123";
+    expect(entity.isNew).toBeFalse();
+  });
 });
 
 export function testEntitySubclass(
