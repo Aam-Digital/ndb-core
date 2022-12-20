@@ -55,7 +55,6 @@ export class UpdateManagerService {
     } else {
       this.latestChangesDialogService.showLatestChangesIfUpdated();
     }
-    this.detectUnrecoverableState();
   }
 
   /**
@@ -119,7 +118,14 @@ export class UpdateManagerService {
       });
   }
 
-  private detectUnrecoverableState() {
+  /**
+   * Notifies user if app ends up in an unrecoverable state due to SW updates
+   */
+  public detectUnrecoverableState() {
+    if (!this.updates.isEnabled) {
+      return;
+    }
+
     this.updates.unrecoverable.subscribe(({ reason }) => {
       this.logger.warn(`SW in unrecoverable state: ${reason}`);
       this.snackBar
