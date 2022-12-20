@@ -112,7 +112,7 @@ export class MatchingEntitiesComponent
     side: MatchingSideConfig,
     sideIndex: number
   ): Promise<MatchingSide> {
-    const newSide = side as MatchingSide; // we are transforming it into this type here
+    const newSide = Object.assign({}, side) as MatchingSide; // we are transforming it into this type here
 
     if (!newSide.entityType) {
       newSide.selected = newSide.selected ?? this.entity;
@@ -172,18 +172,20 @@ export class MatchingEntitiesComponent
     const newMatchEntity = new (this.entityRegistry.get(
       this.onMatch.newEntityType
     ))();
+    const leftMatch = this.sideDetails[0].selected;
+    const rightMatch = this.sideDetails[1].selected;
 
     newMatchEntity[this.onMatch.newEntityMatchPropertyLeft] =
-      this.leftSide.selected.getId(false);
+      leftMatch.getId(false);
     newMatchEntity[this.onMatch.newEntityMatchPropertyRight] =
-      this.rightSide.selected.getId(false);
+      rightMatch.getId(false);
 
     // best guess properties (if they do not exist on the specific entity, the values will be discarded during save
     newMatchEntity["date"] = new Date();
     newMatchEntity["start"] = new Date();
     newMatchEntity["name"] = `${
       newMatchEntity.getConstructor().label
-    } ${this.leftSide.selected.toString()} - ${this.rightSide.selected.toString()}`;
+    } ${leftMatch.toString()} - ${rightMatch.toString()}`;
 
     if (this.onMatch.columnsToReview) {
       this.formDialog

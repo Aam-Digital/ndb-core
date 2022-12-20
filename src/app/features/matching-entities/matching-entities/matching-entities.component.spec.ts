@@ -114,7 +114,7 @@ describe("MatchingEntitiesComponent", () => {
     });
     await component.ngOnInit();
 
-    expect(component.leftSide.selected).toEqual(testEntity);
+    expect(component.sideDetails[0].selected).toEqual(testEntity);
 
     component.onInitFromDynamicConfig({
       entity: testEntity,
@@ -128,7 +128,7 @@ describe("MatchingEntitiesComponent", () => {
     });
     await component.ngOnInit();
 
-    expect(component.rightSide.selected).toEqual(testEntity);
+    expect(component.sideDetails[1].selected).toEqual(testEntity);
   });
 
   it("should init details for template including available entities table and its columns", async () => {
@@ -226,6 +226,28 @@ describe("MatchingEntitiesComponent", () => {
     const child = new Child();
     component.entityInMapClicked(child);
 
-    expect(component.rightSide.selected).toBe(child);
+    expect(component.sideDetails[1].selected).toBe(child);
+  });
+
+  it("should not change the provided config object directly", async () => {
+
+    component.onInitFromDynamicConfig({
+      entity: new Entity(),
+      config: testConfig,
+    });
+    await component.ngOnInit();
+    const selectedChild = new Child();
+    component.sideDetails[1].selectMatch(selectedChild);
+    expect(component.sideDetails[1].selected).toEqual(selectedChild);
+
+    const newFixture = TestBed.createComponent(MatchingEntitiesComponent);
+    const newComponent = newFixture.componentInstance;
+    newComponent.onInitFromDynamicConfig({
+      entity: new Entity(),
+      config: testConfig,
+    });
+    await newComponent.ngOnInit();
+
+    expect(newComponent.sideDetails[1].selected).not.toEqual(selectedChild);
   });
 });
