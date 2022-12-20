@@ -162,6 +162,19 @@ describe("EditLocationComponent", () => {
     expect(component.formControl).toHaveValue(fullLocation);
   });
 
+  it("should not send a request if nothing changed", () => {
+    const coordinates = { lat: 1, lon: 2, display_name: "" };
+    component.formControl.setValue(coordinates);
+    mockDialog.open.and.returnValue({
+      afterClosed: () => of({ lat: 1, lon: 1 }),
+    } as any);
+
+    component.openMap();
+
+    expect(mockGeoService.reverseLookup).not.toHaveBeenCalled();
+    expect(component.formControl).toHaveValue(coordinates);
+  });
+
   async function expectLookup(
     searchTerm: string,
     lookupCalled: boolean,

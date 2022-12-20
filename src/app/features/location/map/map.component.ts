@@ -166,9 +166,10 @@ export class MapComponent implements AfterViewInit {
     m.addTo(this.map);
     const entity = m["entity"] as Entity;
     if (highlighted || entity) {
-      const degree = highlighted ? "145" : getHueForEntity(entity);
+      const degree = entity ? getHueForEntity(entity) : "145";
       const icon = m["_icon"] as HTMLElement;
       icon.style.filter = `hue-rotate(${degree}deg)`;
+      icon.style.opacity = highlighted ? "1" : "0.5";
     }
     return m;
   }
