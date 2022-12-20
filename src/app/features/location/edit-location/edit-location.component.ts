@@ -90,7 +90,7 @@ export class EditLocationComponent extends EditComponent<GeoResult> {
         marked,
         mapClick,
         disabled: this.formControl.disabled,
-        helpText: $localize`:help text in map popup:Clicking on the map selects a different location`,
+        helpText: $localize`:help text in map popup:Click on the map to select a different location`,
       } as MapPopupConfig,
     });
     if (this.formControl.enabled) {
