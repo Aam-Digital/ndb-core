@@ -87,7 +87,7 @@ export class MatchingEntitiesComponent
 
   async ngOnInit() {
     this.route?.data?.subscribe((data: RouteData<MatchingEntitiesConfig>) => {
-      if (!data?.config?.onMatch) {
+      if (!data?.config) {
         return;
       }
       this.initConfig(data.config);
