@@ -33,7 +33,6 @@ import { LOCATION_TOKEN } from "../../utils/di-tokens";
  */
 @Injectable()
 export class UpdateManagerService {
-  private notificationRef;
   private readonly UPDATE_PREFIX = "update-";
 
   constructor(
@@ -103,17 +102,39 @@ export class UpdateManagerService {
       this.UPDATE_PREFIX + currentVersion
     );
 
-    this.notificationRef = this.snackBar.open(
-      $localize`A new version of the app is available!`,
-      $localize`:Action that a user can update the app with:Update`
-    );
-    this.notificationRef.onAction().subscribe(() => {
-      window.localStorage.setItem(
-        LatestChangesDialogService.VERSION_KEY,
-        currentVersion
-      );
+    this.snackBar
+      .open(
+        $localize`A new version of the app is available!`,
+        $localize`:Action that a user can update the app with:Update`
+      )
+      .onAction()
+      .subscribe(() => {
+        window.localStorage.setItem(
+          LatestChangesDialogService.VERSION_KEY,
+          currentVersion
+        );
 
-      this.location.reload();
+        this.location.reload();
+      });
+  }
+
+  /**
+   * Notifies user if app ends up in an unrecoverable state due to SW updates
+   */
+  public detectUnrecoverableState() {
+    if (!this.updates.isEnabled) {
+      return;
+    }
+
+    this.updates.unrecoverable.subscribe(({ reason }) => {
+      this.logger.warn(`SW in unrecoverable state: ${reason}`);
+      this.snackBar
+        .open(
+          $localize`The app is in a unrecoverable state, please reload.`,
+          $localize`:Action that a user can reload the app with:Reload`
+        )
+        .onAction()
+        .subscribe(() => this.location.reload());
     });
   }
 }
