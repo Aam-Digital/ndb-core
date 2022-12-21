@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   Component,
   EventEmitter,
   Inject,
@@ -17,13 +16,12 @@ import { EntityFormComponent } from "../../../core/entity-components/entity-form
   templateUrl: "./todo-details.component.html",
   styleUrls: ["./todo-details.component.scss"],
 })
-export class TodoDetailsComponent implements AfterViewInit {
+export class TodoDetailsComponent {
   @Input() entity: Todo;
 
   @Output() close = new EventEmitter<Todo>();
 
   @ViewChild(EntityFormComponent) entityForm;
-  formPristine: boolean = true;
 
   formColumns: any;
 
@@ -33,12 +31,6 @@ export class TodoDetailsComponent implements AfterViewInit {
   ) {
     this.entity = data.entity;
     this.formColumns = [data.columns];
-  }
-
-  ngAfterViewInit(): void {
-    this.entityForm.form.valueChanges.subscribe((c) => {
-      this.formPristine = this.entityForm.form.pristine;
-    });
   }
 
   cancel() {

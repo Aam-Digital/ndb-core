@@ -43,7 +43,7 @@ export class EditRecurringIntervalComponent
     this.predefinedIntervals = this.additional ?? this.predefinedIntervals;
 
     // re-create active custom interval if necessary
-    this.setCustomInterval(this.formControl.value);
+    this.addCustomInterval(this.formControl.value);
   }
 
   resetSelection() {
@@ -64,12 +64,14 @@ export class EditRecurringIntervalComponent
           // keep unchanged, i.e. revert to previous selection
           this.formControl.setValue(previousSelectedInterval);
         } else {
-          this.setCustomInterval(result);
+          this.addCustomInterval(result);
+          this.formControl.setValue(result);
+          this.formControl.markAsDirty();
         }
       });
   }
 
-  private setCustomInterval(interval: TimeInterval) {
+  private addCustomInterval(interval: TimeInterval) {
     if (!interval) {
       return;
     }
@@ -83,7 +85,5 @@ export class EditRecurringIntervalComponent
         interval: interval,
       });
     }
-
-    this.formControl.setValue(interval);
   }
 }

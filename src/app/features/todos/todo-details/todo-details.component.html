@@ -23,17 +23,13 @@
   <button
     mat-raised-button
     (click)="save()"
-    [disabled]="formPristine"
     i18n="Save button for forms"
   >
     Save
   </button>
 
   <button mat-raised-button mat-dialog-close>
-    <span *ngIf="!formPristine" i18n="Cancel button for forms">Cancel</span>
-    <span *ngIf="formPristine" i18n="Close button for unchanged forms"
-      >Close</span
-    >
+    <span i18n="Cancel button for forms">Cancel</span>
   </button>
 
   <!--
