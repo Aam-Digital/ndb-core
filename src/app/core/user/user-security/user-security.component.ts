@@ -18,8 +18,8 @@ import { AppSettings } from "../../app-config/app-settings";
 @DynamicComponent("UserSecurity")
 @Component({
   selector: "app-user-security",
-  styleUrls: ["./user-security.component.scss"],
   templateUrl: "./user-security.component.html",
+  styleUrls: ["./user-security.component.scss"],
 })
 export class UserSecurityComponent implements OnInitDynamicComponent {
   form = this.fb.group({

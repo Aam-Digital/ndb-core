@@ -50,5 +50,8 @@ import { MatSelectModule } from "@angular/material/select";
     MatSelectModule,
   ],
   declarations: [UserAccountComponent, UserSecurityComponent],
+  exports: [UserSecurityComponent],
 })
-export class UserModule {}
+export class UserModule {
+  dynamicComponents = [UserSecurityComponent];
+}

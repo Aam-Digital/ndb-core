@@ -7,5 +7,6 @@
   (entityClick)="data.entityClick?.next($event)"
 ></app-map>
 <div *ngIf="!data.disabled">
+  <p *ngIf="data.helpText" class="help-text">{{ data.helpText }}</p>
   <button mat-raised-button mat-dialog-close>Close</button>
 </div>

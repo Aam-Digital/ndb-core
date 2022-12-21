@@ -57,9 +57,7 @@ export const mockAbilityService = {
     { provide: AbilityService, useValue: mockAbilityService },
     {
       provide: EntityAbility,
-      useValue: defineAbility((can, cannot) => {
-        can("manage", "all");
-      }),
+      useValue: defineAbility((can) => can("manage", "all")),
     },
     { provide: WINDOW_TOKEN, useValue: window },
     {

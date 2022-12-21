@@ -69,5 +69,6 @@ export class LatestChangesModule {
   constructor(private updateManagerService: UpdateManagerService) {
     this.updateManagerService.notifyUserWhenUpdateAvailable();
     this.updateManagerService.regularlyCheckForUpdates();
+    this.updateManagerService.detectUnrecoverableState();
   }
 }
