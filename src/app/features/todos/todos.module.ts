@@ -54,12 +54,14 @@ import { DisplayTodoCompletionComponent } from "./todo-completion/display-todo-c
     TodosRelatedToEntityComponent,
     EditRecurringIntervalComponent,
     DisplayRecurringIntervalComponent,
+    DisplayTodoCompletionComponent,
   ],
 })
 export class TodosModule {
   static dynamicComponents: [
     TodosRelatedToEntityComponent,
     EditRecurringIntervalComponent,
+    DisplayTodoCompletionComponent,
     DisplayRecurringIntervalComponent
   ];
 

@@ -8,11 +8,6 @@
   <span i18n>Complete Task</span>
 </button>
 
-<div *ngIf="entity.completed" class="completed-wrapper">
-  <fa-icon icon="check" class="margin-right-small"></fa-icon>
-  <span i18n>completed</span>
-  <span class="completed-details" i18n>
-    by {{ entity.completed.completedBy }} on
-    {{ entity.completed.completedAt | date }}
-  </span>
+<div *ngIf="entity.completed">
+  <app-display-todo-completion [value]="entity.completed"></app-display-todo-completion>
 </div>
