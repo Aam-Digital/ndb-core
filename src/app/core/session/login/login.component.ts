@@ -19,6 +19,8 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
 import { SessionService } from "../session-service/session.service";
 import { LoginState } from "../session-states/login-state.enum";
 import { LoggingService } from "../../logging/logging.service";
+import { ActivatedRoute, Router } from "@angular/router";
+import { filter } from "rxjs/operators";
 
 /**
  * Form to allow users to enter their credentials and log in.
@@ -50,11 +52,22 @@ export class LoginComponent implements AfterViewInit {
 
   constructor(
     private _sessionService: SessionService,
-    private loggingService: LoggingService
-  ) {}
+    private loggingService: LoggingService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {
+    this._sessionService.loginState
+      .pipe(filter((state) => state === LoginState.LOGGED_IN))
+      .subscribe(() => this.routeAfterLogin());
+  }
 
   ngAfterViewInit(): void {
     setTimeout(() => this.usernameInput?.nativeElement.focus());
+  }
+
+  private routeAfterLogin() {
+    const redirectUri = this.route.snapshot.queryParams["redirect_uri"] || "";
+    this.router.navigate([redirectUri]);
   }
 
   /**

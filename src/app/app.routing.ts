@@ -23,8 +23,11 @@ import { ApplicationLoadingComponent } from "./core/view/dynamic-routing/empty/a
 import { NotFoundComponent } from "./core/view/dynamic-routing/not-found/not-found.component";
 import { UserAccountComponent } from "./core/user/user-account/user-account.component";
 import { SupportComponent } from "./core/support/support/support.component";
+import { LoginComponent } from "./core/session/login/login.component";
+import { AuthGuard } from "./core/session/auth.guard";
 
 export class RouteRegistry extends Registry<ComponentType<any>> {}
+
 export const routesRegistry = new RouteRegistry();
 
 /**
@@ -62,7 +65,8 @@ export const allRoutes: Routes = [
       ),
   },
   { path: "user-account", component: UserAccountComponent },
-  { path: "support", component: SupportComponent },
+  { path: "support", component: SupportComponent, canActivate: [AuthGuard] },
+  { path: "login", component: LoginComponent },
   { path: "404", component: NotFoundComponent },
   { path: "**", pathMatch: "full", component: ApplicationLoadingComponent },
 ];

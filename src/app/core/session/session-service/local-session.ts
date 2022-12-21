@@ -64,7 +64,7 @@ export class LocalSession extends SessionService {
   }
 
   private getStoredUser(username: string): LocalUser {
-    const stored = window.localStorage.getItem(username.trim().toLowerCase());
+    const stored = window.localStorage.getItem(username?.trim().toLowerCase());
     return JSON.parse(stored);
   }
 

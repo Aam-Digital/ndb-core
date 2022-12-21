@@ -104,8 +104,7 @@
   </mat-sidenav>
 
   <mat-sidenav-content class="sidenav-content">
-    <router-outlet *ngIf="isLoggedIn()"></router-outlet>
-    <app-login class="login" *ngIf="!isLoggedIn()"></app-login>
+    <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>
 
