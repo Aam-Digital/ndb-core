@@ -16,12 +16,6 @@ describe("TodoCompletionComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [TodosModule, FontAwesomeTestingModule],
-      providers: [
-        { provide: SessionService, useValue: null },
-        { provide: EntityMapperService, useValue: null },
-        { provide: AlertService, useValue: null },
-        { provide: ConfigService, useValue: null },
-      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TodoCompletionComponent);

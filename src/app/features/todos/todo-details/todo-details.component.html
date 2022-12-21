@@ -6,8 +6,8 @@
   <div class="margin-bottom-large">
     <app-todo-completion
       [entity]="entity"
-      *ngIf="entity.isNew"
-      mat-dialog-close
+      (complete)="completeTodo()"
+      *ngIf="!entity.isNew"
     ></app-todo-completion>
   </div>
 

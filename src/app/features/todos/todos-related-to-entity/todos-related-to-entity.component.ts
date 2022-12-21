@@ -23,6 +23,7 @@ export class TodosRelatedToEntityComponent implements OnInitDynamicComponent {
   columns: FormFieldConfig[] = [
     { id: "deadline" },
     { id: "subject" },
+    { id: "startDate" },
     { id: "assignedTo" },
     { id: "description", visibleFrom: "xl" },
     { id: "repetitionInterval", visibleFrom: "xl" },

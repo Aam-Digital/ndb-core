@@ -23,7 +23,7 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
 import { TimeInterval } from "../recurring-interval/time-interval";
-import { TodoCompletion } from "../todo-completion/todo-completion";
+import { TodoCompletion } from "./todo-completion";
 
 @DatabaseEntity("Todo")
 export class Todo extends Entity {
