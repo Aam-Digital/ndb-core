@@ -73,8 +73,9 @@ export const allRoutes: Routes = [
     canActivate: [AuthGuard],
   },
   { path: "support", component: SupportComponent },
+  // this can't be configured in config as the config is only loaded on login
   {
-    path: "public-form",
+    path: "public-form/:id",
     component: PublicFormComponent,
   },
   { path: "login", component: LoginComponent },
