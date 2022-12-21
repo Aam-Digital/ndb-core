@@ -25,6 +25,7 @@ import { UserAccountComponent } from "./core/user/user-account/user-account.comp
 import { SupportComponent } from "./core/support/support/support.component";
 import { LoginComponent } from "./core/session/login/login.component";
 import { AuthGuard } from "./core/session/auth.guard";
+import { PublicFormComponent } from "./features/public-form/public-form/public-form.component";
 
 export class RouteRegistry extends Registry<ComponentType<any>> {}
 
@@ -72,6 +73,10 @@ export const allRoutes: Routes = [
     canActivate: [AuthGuard],
   },
   { path: "support", component: SupportComponent },
+  {
+    path: "public-form",
+    component: PublicFormComponent,
+  },
   { path: "login", component: LoginComponent },
   { path: "404", component: NotFoundComponent },
   {

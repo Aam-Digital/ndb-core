@@ -91,6 +91,7 @@ import { FileModule } from "./features/file/file.module";
 import { ConfigSetupModule } from "./core/config-setup/config-setup.module";
 import { LocationModule } from "./features/location/location.module";
 import { MatchingEntitiesModule } from "./features/matching-entities/matching-entities.module";
+import { PublicFormModule } from "./features/public-form/public-form.module";
 
 /**
  * Main entry point of the application.
@@ -170,6 +171,7 @@ import { MatchingEntitiesModule } from "./features/matching-entities/matching-en
     DatabaseModule,
     LocationModule,
     MatchingEntitiesModule,
+    PublicFormModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
