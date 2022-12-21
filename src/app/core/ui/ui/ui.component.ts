@@ -23,6 +23,7 @@ import { MatDrawerMode } from "@angular/material/sidenav";
 import { ConfigService } from "../../config/config.service";
 import { UiConfig } from "../ui-config";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
+import { Router } from "@angular/router";
 
 /**
  * The main user interface component as root element for the app structure
@@ -52,7 +53,8 @@ export class UiComponent {
     private _sessionService: SessionService,
     private titleService: Title,
     private configService: ConfigService,
-    private screenWidthObserver: ScreenWidthObserver
+    private screenWidthObserver: ScreenWidthObserver,
+    private router: Router
   ) {
     this.screenWidthObserver
       .platform()
@@ -84,6 +86,9 @@ export class UiComponent {
    */
   logout() {
     this._sessionService.logout();
+    this.router.navigate(["/login"], {
+      queryParams: { redirect_uri: this.router.routerState.snapshot.url },
+    });
   }
 
   closeSidenavOnMobile() {

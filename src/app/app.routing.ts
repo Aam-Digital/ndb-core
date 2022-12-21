@@ -56,6 +56,7 @@ export const allRoutes: Routes = [
       import("./conflict-resolution/conflict-resolution.module").then(
         (m) => m["ConflictResolutionModule"]
       ),
+    canActivate: [AuthGuard],
   },
   {
     path: "coming-soon",
@@ -63,12 +64,22 @@ export const allRoutes: Routes = [
       import("./core/coming-soon/coming-soon.module").then(
         (m) => m["ComingSoonModule"]
       ),
+    canActivate: [AuthGuard],
   },
-  { path: "user-account", component: UserAccountComponent },
-  { path: "support", component: SupportComponent, canActivate: [AuthGuard] },
+  {
+    path: "user-account",
+    component: UserAccountComponent,
+    canActivate: [AuthGuard],
+  },
+  { path: "support", component: SupportComponent },
   { path: "login", component: LoginComponent },
   { path: "404", component: NotFoundComponent },
-  { path: "**", pathMatch: "full", component: ApplicationLoadingComponent },
+  {
+    path: "**",
+    pathMatch: "full",
+    component: ApplicationLoadingComponent,
+    canActivate: [AuthGuard],
+  },
 ];
 
 /**

@@ -67,7 +67,7 @@ export class LoginComponent implements AfterViewInit {
 
   private routeAfterLogin() {
     const redirectUri = this.route.snapshot.queryParams["redirect_uri"] || "";
-    this.router.navigate([redirectUri]);
+    this.router.navigateByUrl(decodeURIComponent(redirectUri));
   }
 
   /**
