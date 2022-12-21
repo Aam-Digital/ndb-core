@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { EntityAction, EntitySubject } from "../permission-types";
-import { Ability, subject } from "@casl/ability";
+import { PureAbility, subject } from "@casl/ability";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Entity } from "../../entity/model/entity";
 
@@ -19,7 +19,7 @@ import { Entity } from "../../entity/model/entity";
  * Entities are transformed to the database format and permissions are evaluated based on the configuration found in the database.
  */
 @Injectable()
-export class EntityAbility extends Ability<[EntityAction, string | any]> {
+export class EntityAbility extends PureAbility<[EntityAction, string | any]> {
   constructor(private entitySchemaService: EntitySchemaService) {
     super([]);
   }

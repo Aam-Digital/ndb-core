@@ -24,4 +24,8 @@ import { EntityAbility } from "./ability/entity-ability";
     },
   ],
 })
-export class PermissionsModule {}
+export class PermissionsModule {
+  constructor(abilityService: AbilityService) {
+    abilityService.initializeRules();
+  }
+}
