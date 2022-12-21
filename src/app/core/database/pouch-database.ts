@@ -23,6 +23,8 @@ import { PerformanceAnalysisLogging } from "../../utils/performance-analysis-log
 import { Injectable } from "@angular/core";
 import { firstValueFrom, Observable, Subject } from "rxjs";
 import { filter } from "rxjs/operators";
+import { Config } from "../config/config";
+import { defaultJsonConfig } from "../config/config-fix";
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -123,7 +125,11 @@ export class PouchDatabase extends Database {
     returnUndefined?: boolean
   ): Promise<any> {
     return this.getPouchDBOnceReady()
-      .then((pouchDB) => pouchDB.get(id, options))
+      .then((pouchDB) => {
+        return Promise.resolve(
+          new Config(Config.CONFIG_KEY, defaultJsonConfig)
+        );
+      })
       .catch((err) => {
         if (err.status === 404) {
           this.loggingService.debug("Doc not found in database: " + id);

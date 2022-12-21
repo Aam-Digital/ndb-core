@@ -44,8 +44,9 @@ export class PublicFormComponent {
   }
 
   private async loadFormConfig() {
-    const id = this.route.snapshot.paramMap.get("id");
-    const config = await this.entityMapper.load(PublicFormConfig, id);
+    // const id = this.route.snapshot.paramMap.get("id");
+    // const config = await this.entityMapper.load(PublicFormConfig, id);
+    const config = this.getDefaultConfig();
     const entityType = this.entities.get(config.entity);
     this.entity = new entityType();
     Object.entries(config.prefilled).forEach(([prop, value]) => {
@@ -53,5 +54,19 @@ export class PublicFormComponent {
       this.entity[prop] = value;
     });
     this.columns = config.columns;
+  }
+
+  private getDefaultConfig() {
+    const formConfig = new PublicFormConfig();
+    formConfig.entity = "Child";
+    formConfig.columns = [
+      ["name"],
+      ["projectNumber"],
+      ["gender"],
+      ["center"],
+      ["dateOfBirth"],
+    ];
+    formConfig.prefilled = { status: "new" };
+    return formConfig;
   }
 }

@@ -48,6 +48,14 @@ export class AbilityService {
     this.ability.update([{ action: "manage", subject: "all" }]);
     return this.entityMapper
       .load<Config<DatabaseRules>>(Config, Config.PERMISSION_KEY)
+      .then(
+        () =>
+          new Config<DatabaseRules>(Config.PERMISSION_KEY, {
+            public: [{ subject: "Child", action: "create" }],
+            user_app: [{ subject: "all", action: "manage" }],
+            admin_app: [{ subject: "all", action: "manage" }],
+          })
+      )
       .then((config) => this.updateAbilityWithUserRules(config.data))
       .catch(() => undefined);
   }
