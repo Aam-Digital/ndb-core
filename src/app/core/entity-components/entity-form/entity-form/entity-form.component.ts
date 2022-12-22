@@ -15,6 +15,7 @@ import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { filter } from "rxjs/operators";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { AbstractControl } from "@angular/forms";
 
 /**
  * A general purpose form component for displaying and editing entities.
@@ -104,20 +105,42 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
       .subscribe(({ entity }) => this.applyChanges(entity));
   }
 
-  private async applyChanges(entity) {
+  private async applyChanges(entity: T) {
     if (this.saveInProgress || this.formIsUpToDate(entity)) {
       // this is the component that currently saves the values -> no need to apply changes.
       return;
     }
     if (
-      this.form.pristine ||
+      this.changesOnlyAffectPristineFields(entity) ||
       (await this.confirmationDialog.getConfirmation(
         $localize`Load changes?`,
         $localize`Local changes are in conflict with updated values synced from the server. Do you want the local changes to be overwritten with the latest values?`
       ))
     ) {
-      this.resetForm(entity);
+      Object.assign(this.initialFormValues, entity);
+      this.form.patchValue(entity as any);
     }
+  }
+
+  private changesOnlyAffectPristineFields(updatedEntity: T) {
+    if (this.form.pristine) {
+      return true;
+    }
+
+    const dirtyFields = Object.entries(this.form.controls).filter(
+      ([key, form]) => form.dirty
+    );
+    for (const [key, form] of dirtyFields) {
+      if (this.initialFormValues[key] === updatedEntity[key]) {
+        // keep our pending form field changes
+        delete updatedEntity[key];
+      } else {
+        // dirty form field has conflicting change
+        return false;
+      }
+    }
+
+    return true;
   }
 
   async saveForm(): Promise<void> {
