@@ -37,20 +37,72 @@ export class DaterangePanelComponent<D> {
     switch (rangeName) {
       case "today":
         return [today, today];
+
       case "last 7 days": {
         const start = this.dateAdapter.addCalendarDays(today, -6);
         return [start, today];
       }
+
+      case "this week": {
+        const start = this.dateAdapter.addCalendarDays(
+          today,
+          this.dateAdapter.getFirstDayOfWeek() -
+            this.dateAdapter.getDayOfWeek(today)
+        );
+        return [start, today];
+      }
+
+      case "this month": {
+        const start = this.dateAdapter.createDate(
+          year,
+          this.dateAdapter.getMonth(today),
+          1
+        );
+        return [start, today];
+      }
+
       case "this year": {
         const start = this.dateAdapter.createDate(year, 0, 1);
         const end = this.dateAdapter.createDate(year, 11, 31);
         return [start, end];
       }
-      // ...
-      // all other cases
-      // ...
-      // default:
-      //   return rangeName; // exhaustiveness check
+
+      case "last week": {
+        const end = this.dateAdapter.addCalendarDays(
+          today,
+          this.dateAdapter.getFirstDayOfWeek() -
+            this.dateAdapter.getDayOfWeek(today) -
+            1
+        );
+        const start = this.dateAdapter.addCalendarDays(end, -6);
+        return [start, end];
+      }
+
+      case "last month": {
+        const start = this.dateAdapter.addCalendarMonths(
+          this.dateAdapter.createDate(
+            year,
+            this.dateAdapter.getMonth(today),
+            1
+          ),
+          -1
+        );
+        const end = this.dateAdapter.addCalendarDays(
+          this.dateAdapter.createDate(
+            year,
+            this.dateAdapter.getMonth(today),
+            1
+          ),
+          -1
+        );
+        return [start, end];
+      }
+
+      case "last year": {
+        const start = this.dateAdapter.createDate(year - 1, 0, 1);
+        const end = this.dateAdapter.createDate(year - 1, 11, 31);
+        return [start, end];
+      }
     }
   }
 
