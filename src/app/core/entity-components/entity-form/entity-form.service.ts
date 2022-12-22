@@ -73,8 +73,10 @@ export class EntityFormService {
 
   public createFormGroup<T extends Entity>(
     formFields: FormFieldConfig[],
-    entity: T
+    entity: T,
+    forTable = false
   ): EntityForm<T> {
+    this.extendFormFieldConfig(formFields, entity.getConstructor(), forTable);
     const formConfig = {};
     const entitySchema = entity.getSchema();
     formFields

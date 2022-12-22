@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init-dynamic-component.interface";
 import { PanelConfig } from "../EntityDetailsConfig";
 import { Entity } from "../../../entity/model/entity";
@@ -7,7 +7,6 @@ import { getParentUrl } from "../../../../utils/utils";
 import { Router } from "@angular/router";
 import { Location } from "@angular/common";
 import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
-import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
 import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
 import {
   EntityForm,
@@ -17,6 +16,7 @@ import { AlertService } from "../../../alerts/alert.service";
 import { filter } from "rxjs/operators";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
+import { toFormFieldConfig } from "../../entity-subrecord/entity-subrecord/entity-subrecord-config";
 
 /**
  * A simple wrapper function of the EntityFormComponent which can be used as a dynamic component
@@ -28,7 +28,7 @@ import { ConfirmationDialogService } from "../../../confirmation-dialog/confirma
   templateUrl: "./form.component.html",
   styleUrls: ["./form.component.scss"],
 })
-export class FormComponent implements OnInitDynamicComponent {
+export class FormComponent implements OnInitDynamicComponent, OnInit {
   entity: Entity;
   columns: FormFieldConfig[][] = [];
   headers?: string[] = [];
@@ -48,16 +48,18 @@ export class FormComponent implements OnInitDynamicComponent {
 
   onInitFromDynamicConfig(config: PanelConfig) {
     this.entity = config.entity;
-    this.columns = config.config?.cols;
+    this.columns = config.config?.cols.map((row) => row.map(toFormFieldConfig));
     this.headers = config.config?.headers;
     if (config.creatingNew) {
       this.creatingNew = true;
     }
   }
 
-  async initForm(form: EntityForm<Entity>) {
-    await new Promise((resolve) => setTimeout(resolve));
-    this.form = form;
+  ngOnInit() {
+    this.form = this.entityFormService.createFormGroup(
+      [].concat(...this.columns),
+      this.entity
+    );
     this.initialFormValues = this.form.getRawValue();
     if (!this.creatingNew) {
       this.form.disable();
@@ -69,7 +71,7 @@ export class FormComponent implements OnInitDynamicComponent {
   }
 
   private async applyChanges(entity) {
-    if (this.saveInProgress || this.formIsUpToDate(entity)) {
+    if (this.formIsUpToDate(entity)) {
       // this is the component that currently saves the values -> no need to apply changes.
       return;
     }
@@ -87,7 +89,9 @@ export class FormComponent implements OnInitDynamicComponent {
   private formIsUpToDate(entity: Entity): boolean {
     return Object.entries(this.form.getRawValue()).every(
       ([key, value]) =>
-        entity[key] === value || (entity[key] === undefined && value === null)
+        this.form.get(key).pristine ||
+        entity[key] === value ||
+        (entity[key] === undefined && value === null)
     );
   }
 
