@@ -71,7 +71,7 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
   }
 
   private async applyChanges(entity) {
-    if (this.formIsUpToDate(entity)) {
+    if (this.saveInProgress || this.formIsUpToDate(entity)) {
       // this is the component that currently saves the values -> no need to apply changes.
       return;
     }
@@ -89,9 +89,7 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
   private formIsUpToDate(entity: Entity): boolean {
     return Object.entries(this.form.getRawValue()).every(
       ([key, value]) =>
-        this.form.get(key).pristine ||
-        entity[key] === value ||
-        (entity[key] === undefined && value === null)
+        entity[key] === value || (entity[key] === undefined && value === null)
     );
   }
 
