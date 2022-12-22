@@ -188,13 +188,18 @@ export class EntitySubrecordComponent<T extends Entity>
         .subscribe(({ entity, type }) => {
           if (type === "new") {
             this.addToTable(entity);
-          } else if (type === "remove" || !this.predicate(entity)) {
+          } else if (type === "remove") {
             this.removeFromDataTable(entity);
           } else if (
             type === "update" &&
             !this._records.find((rec) => rec.getId() === entity.getId())
           ) {
             this.addToTable(entity);
+          }
+
+          if (!this.predicate(entity)) {
+            // hide after a short delay to give a signal in the UI why records disappear by showing the changed values first
+            setTimeout(() => this.initDataSource(), 5000);
           }
         });
     }
@@ -384,7 +389,6 @@ export class EntitySubrecordComponent<T extends Entity>
   onRowClick(row: TableRow<T>) {
     if (!row.formGroup || row.formGroup.disabled) {
       this.showEntity(row.record);
-      this.rowClick.emit(row.record);
       this.analyticsService.eventTrack("subrecord_show_popup", {
         category: row.record.getType(),
       });
@@ -403,6 +407,7 @@ export class EntitySubrecordComponent<T extends Entity>
         ]);
         break;
     }
+    this.rowClick.emit(entity);
   }
 
   /**

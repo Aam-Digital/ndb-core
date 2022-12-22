@@ -14,16 +14,21 @@ export interface MatchingEntitiesConfig {
    *
    * e.g. [["name", "name"], ["motherTongue", "language"]]
    */
-  columns: string[][];
+  columns?: [string, string][];
 
-  /** whether a map should be displayed in addition to a comparison table */
-  showMap?: boolean;
+  /**
+   * Mapped properties which should be displayed in a map (of left and right entity).
+   * The properties need to have the format `{ lat: number, lon: number}`.
+   *
+   * e.g. `["address", "location"]
+   */
+  showMap?: [string, string];
 
   /** overwrite the button label to describe the matching action */
   matchActionLabel?: string;
 
   /** details of what is created when matching two entities */
-  onMatch: NewMatchAction;
+  onMatch?: NewMatchAction;
 
   /** details of entities on this side of the matching view */
   leftSide?: MatchingSideConfig;
@@ -38,11 +43,6 @@ export interface MatchingSideConfig {
    */
   entityType?: EntityConstructor | string;
 
-  /**
-   * selected entity for the matching
-   */
-  selected?: Entity;
-
   /** fixed pre-filters applied to remove some entities from the list of available entities */
   prefilter?: DataFilter<Entity>;
 
@@ -50,7 +50,7 @@ export interface MatchingSideConfig {
   availableFilters?: FilterConfig[];
 
   /** columns of the available entities table. Usually inferred from matching columns of the component */
-  columns?: string[];
+  columns?: ColumnConfig[];
 }
 
 export interface NewMatchAction {

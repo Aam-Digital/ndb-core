@@ -14,6 +14,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatInputModule } from "@angular/material/input";
 import { EditTextWithAutocompleteComponent } from "./edit-text-with-autocomplete/edit-text-with-autocomplete.component";
 import { ViewModule } from "../../view/view.module";
+import { MatButtonModule } from "@angular/material/button";
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { ViewModule } from "../../view/view.module";
     MatTooltipModule,
     MatInputModule,
     ViewModule,
+    MatButtonModule,
   ],
   exports: [
     EntitySelectComponent,

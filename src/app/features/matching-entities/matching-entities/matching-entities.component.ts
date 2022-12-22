@@ -2,7 +2,6 @@ import { Component, ElementRef, Input, OnInit, ViewChild } from "@angular/core";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { Entity, EntityConstructor } from "../../../core/entity/model/entity";
-import { addAlphaToHexColor } from "../../../utils/utils";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
@@ -11,11 +10,17 @@ import {
   MatchingSideConfig,
   NewMatchAction,
 } from "./matching-entities-config";
-import { DataFilter } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import {
+  ColumnConfig,
+  DataFilter,
+} from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { RouteTarget } from "../../../app.routing";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
+import { addAlphaToHexColor } from "../../../utils/style-utils";
+import { ReplaySubject } from "rxjs";
+import { ConfigService } from "../../../core/config/config.service";
 
 interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -23,6 +28,7 @@ interface MatchingSide extends MatchingSideConfig {
   availableEntities?: Entity[];
   selectMatch?: (e) => void;
   entityType: EntityConstructor;
+  selected?: Entity;
 }
 
 @RouteTarget("MatchingEntities")
@@ -35,10 +41,13 @@ interface MatchingSide extends MatchingSideConfig {
 export class MatchingEntitiesComponent
   implements OnInit, OnInitDynamicComponent
 {
+  static DEFAULT_CONFIG_KEY = "appConfig:matching-entities";
+
   @Input() entity: Entity;
 
-  @Input() leftSide: MatchingSide | MatchingSideConfig = {};
-  @Input() rightSide: MatchingSide | MatchingSideConfig = {};
+  @Input() leftSide: MatchingSideConfig = {};
+  @Input() rightSide: MatchingSideConfig = {};
+  mapEntities: { entity: Entity; property: string }[] = [];
 
   columnsToDisplay = [];
 
@@ -46,9 +55,9 @@ export class MatchingEntitiesComponent
    * Column mapping of property pairs of left and right entity that should be compared side by side.
    * @param value
    */
-  @Input() columns: string[][];
+  @Input() columns: [ColumnConfig, ColumnConfig][];
 
-  @Input() showMap: boolean = false;
+  @Input() showMap: [string, string];
 
   @Input()
   matchActionLabel: string = $localize`:Matching button label:create matching`;
@@ -66,6 +75,7 @@ export class MatchingEntitiesComponent
     private route: ActivatedRoute,
     private formDialog: FormDialogService,
     private entityMapper: EntityMapperService,
+    private configService: ConfigService,
     private entityRegistry: EntityRegistry
   ) {}
 
@@ -77,12 +87,13 @@ export class MatchingEntitiesComponent
 
   async ngOnInit() {
     this.route?.data?.subscribe((data: RouteData<MatchingEntitiesConfig>) => {
-      if (!data?.config?.onMatch) {
+      if (!data?.config) {
         return;
       }
       this.initConfig(data.config);
     });
 
+    this.initDistanceColumn();
     this.sideDetails = [
       await this.initSideDetails(this.leftSide, 0),
       await this.initSideDetails(this.rightSide, 1),
@@ -90,7 +101,16 @@ export class MatchingEntitiesComponent
     this.columnsToDisplay = ["side-0", "side-1"];
   }
 
+  /**
+   * Apply config object to the component inputs (including global default config)
+   * @private
+   */
   private initConfig(config: MatchingEntitiesConfig, entity?: Entity) {
+    const defaultConfig = this.configService.getConfig<MatchingEntitiesConfig>(
+      MatchingEntitiesComponent.DEFAULT_CONFIG_KEY
+    );
+    config = Object.assign({}, defaultConfig, config);
+
     this.columns = config.columns ?? this.columns;
     this.showMap = config.showMap ?? this.showMap;
     this.matchActionLabel = config.matchActionLabel ?? this.matchActionLabel;
@@ -102,14 +122,21 @@ export class MatchingEntitiesComponent
     this.entity = entity;
   }
 
+  /**
+   * Generate setup for a side of the matching view template based on the component input properties.
+   * @param side
+   * @param sideIndex
+   * @private
+   */
   private async initSideDetails(
     side: MatchingSideConfig,
     sideIndex: number
   ): Promise<MatchingSide> {
-    const newSide = side as MatchingSide; // we are transforming it into this type here
+    const newSide = Object.assign({}, side) as MatchingSide; // we are transforming it into this type here
 
     if (!newSide.entityType) {
       newSide.selected = newSide.selected ?? this.entity;
+      this.updateDistanceColumn(sideIndex, newSide.selected);
     }
 
     let entityType = newSide.entityType;
@@ -126,6 +153,7 @@ export class MatchingEntitiesComponent
       this.highlightSelectedRow(e, newSide.selected);
       newSide.selected = e;
       this.matchComparisonElement.nativeElement.scrollIntoView();
+      this.updateDistanceColumn(sideIndex, e);
     };
 
     if (!newSide.selected && newSide.entityType) {
@@ -136,10 +164,22 @@ export class MatchingEntitiesComponent
       this.applySelectedFilters(newSide, {});
     }
 
+    if (this.showMap && newSide.availableEntities) {
+      this.mapEntities = this.mapEntities.concat(
+        newSide.availableEntities.map((entity) => ({
+          entity,
+          property: this.showMap[sideIndex],
+        }))
+      );
+    }
+
     return newSide;
   }
 
-  private highlightSelectedRow(newSelectedEntity, previousSelectedEntity) {
+  private highlightSelectedRow(
+    newSelectedEntity: Entity,
+    previousSelectedEntity: Entity
+  ) {
     if (previousSelectedEntity) {
       previousSelectedEntity.getColor =
         previousSelectedEntity.getConstructor().prototype.getColor;
@@ -152,18 +192,20 @@ export class MatchingEntitiesComponent
     const newMatchEntity = new (this.entityRegistry.get(
       this.onMatch.newEntityType
     ))();
+    const leftMatch = this.sideDetails[0].selected;
+    const rightMatch = this.sideDetails[1].selected;
 
     newMatchEntity[this.onMatch.newEntityMatchPropertyLeft] =
-      this.leftSide.selected.getId(false);
+      leftMatch.getId(false);
     newMatchEntity[this.onMatch.newEntityMatchPropertyRight] =
-      this.rightSide.selected.getId(false);
+      rightMatch.getId(false);
 
     // best guess properties (if they do not exist on the specific entity, the values will be discarded during save
     newMatchEntity["date"] = new Date();
     newMatchEntity["start"] = new Date();
     newMatchEntity["name"] = `${
       newMatchEntity.getConstructor().label
-    } ${this.leftSide.selected.toString()} - ${this.rightSide.selected.toString()}`;
+    } ${leftMatch.toString()} - ${rightMatch.toString()}`;
 
     if (this.onMatch.columnsToReview) {
       this.formDialog
@@ -182,5 +224,46 @@ export class MatchingEntitiesComponent
 
   applySelectedFilters(side: MatchingSide, filter: DataFilter<Entity>) {
     side.filterObj = Object.assign({}, filter, side.prefilter ?? {});
+  }
+
+  entityInMapClicked(entity: Entity) {
+    const side = this.sideDetails.find(
+      (s) => s.entityType === entity.getConstructor()
+    );
+    if (side) {
+      side.selectMatch(entity);
+    }
+  }
+
+  private initDistanceColumn() {
+    this.columns?.forEach((column) => {
+      column.forEach((row, i) => {
+        if (row === "distance") {
+          column[i] = this.getDistanceColumnConfig(i);
+        }
+      });
+    });
+  }
+
+  private getDistanceColumnConfig(index: number) {
+    return {
+      id: "distance",
+      label: $localize`:Matching View column name:Distance`,
+      view: "DisplayDistance",
+      additional: {
+        coordinatesProperty: this.showMap[index],
+        compareCoordinates: new ReplaySubject(),
+      },
+    };
+  }
+
+  private updateDistanceColumn(index: number, entity: Entity) {
+    const otherIndex = (index + 1) % 2;
+    this.columns?.forEach((column) => {
+      const cell = column[otherIndex];
+      if (typeof cell !== "string" && cell?.id === "distance") {
+        cell.additional.compareCoordinates.next(entity[this.showMap[index]]);
+      }
+    });
   }
 }

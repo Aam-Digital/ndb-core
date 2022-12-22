@@ -63,7 +63,7 @@ import { EntityPropertyViewComponent } from "./entity-property-view/entity-prope
     FontAwesomeModule,
     MatButtonModule,
   ],
-  exports: [EntityPropertyViewComponent],
+  exports: [EntityPropertyViewComponent, ReadonlyFunctionComponent],
 })
 export class EntityUtilsModule {
   static dynamicComponents = [

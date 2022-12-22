@@ -40,4 +40,24 @@ describe("Child", () => {
 
     searchIndices: ["Max", "projectNumber01"],
   });
+
+  it("should determine isActive based on inferred state", () => {
+    const testEntity1 = new Child();
+    expect(testEntity1.isActive).withContext("default").toBeTrue();
+
+    testEntity1["exit_date"] = new Date();
+    expect(testEntity1.isActive).withContext("exit_date").toBeFalse();
+
+    const testEntity2a = new Child();
+    testEntity2a["inactive"] = true;
+    expect(testEntity2a.isActive).withContext("inactive").toBeFalse();
+
+    const testEntity2b = new Child();
+    testEntity2b["active"] = false;
+    expect(testEntity2b.isActive).withContext("active").toBeFalse();
+
+    const testEntity3 = new Child();
+    testEntity3["status"] = "Dropout";
+    expect(testEntity3.isActive).withContext("Dropout").toBeFalse();
+  });
 });

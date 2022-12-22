@@ -682,24 +682,13 @@ export const defaultJsonConfig = {
               "component": "Aser"
             },
             {
-              title: $localize`:Child details section title:Find a suitable new school`,
-              component: "MatchingEntities",
-              config: {
-                columns: [
-                  ["name", "name"],
-                  ["motherTongue", "language"],
-                  ["address", "address"],
-                ],
-                rightSide: {
-                  entityType: School.ENTITY_TYPE,
-                  filters: [{ "id": "language" }]
+              "title": $localize`:Child details section title:Find a suitable new school`,
+              "component": "MatchingEntities",
+              "config": {
+                "rightSide": {
+                  "entityType": School.ENTITY_TYPE,
+                  "availableFilters": [{ "id": "language" }]
                 },
-                onMatch: {
-                  newEntityType: ChildSchoolRelation.ENTITY_TYPE,
-                  newEntityMatchPropertyLeft: "childId",
-                  newEntityMatchPropertyRight: "schoolId",
-                  columnsToReview: ["start", "schoolClass", "childId", "schoolId" ]
-                }
               }
             }
           ]
@@ -977,7 +966,7 @@ export const defaultJsonConfig = {
       {
         "name": "address",
         "schema": {
-          dataType: "string",
+          dataType: "location",
           label: $localize`:Label for the address of a child:Address`
         }
       },
@@ -1045,7 +1034,7 @@ export const defaultJsonConfig = {
       {
         "name": "address",
         "schema": {
-          dataType: "string",
+          dataType: "location",
           label: $localize`:Label for the address of a school:Address`
         }
       },
@@ -1135,24 +1124,27 @@ export const defaultJsonConfig = {
   "view:matching": {
     component: "MatchingEntities",
     config: {
-      columns: [
-        ["name", "name"],
-        ["motherTongue", "language"],
-        ["address", "address"],
-        [null, "privateSchool"],
-      ],
       rightSide: {
         entityType: School.ENTITY_TYPE,
         prefilter: { "privateSchool": true },
-        filters: [{ "id": "language" }],
+        availableFilters: [{ "id": "language" }],
       },
       leftSide: { entityType: Child.ENTITY_TYPE },
-      onMatch: {
-        newEntityType: ChildSchoolRelation.ENTITY_TYPE,
-        newEntityMatchPropertyLeft: "childId",
-        newEntityMatchPropertyRight: "schoolId",
-        columnsToReview: ["start", "end", "result", "childId", "schoolId" ]
-      }
+    }
+  },
+  "appConfig:matching-entities": {
+    "columns": [
+      ["name", "name"],
+      ["motherTongue", "language"],
+      ["address", "address"],
+      ["distance", "privateSchool"],
+    ],
+    "showMap": ["address", "address"],
+    "onMatch": {
+      "newEntityType": ChildSchoolRelation.ENTITY_TYPE,
+      "newEntityMatchPropertyLeft": "childId",
+      "newEntityMatchPropertyRight": "schoolId",
+      "columnsToReview": ["start", "end", "result", "childId", "schoolId"]
     }
   }
 };

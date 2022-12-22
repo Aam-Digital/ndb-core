@@ -24,24 +24,29 @@ const entitiesA = [
   Object.assign(RecurringActivity.create("A"), {
     type: defaultInteractionTypes[1],
     center: centersUnique[0],
+    address: { lat: 52.4750412, lon: 13.4319106 },
   }),
   Object.assign(RecurringActivity.create("B"), {
     type: defaultInteractionTypes[2],
     center: centersUnique[0],
+    address: { lat: 52.4740412, lon: 13.4319106 },
   }),
   Object.assign(RecurringActivity.create("ABC"), {
     type: defaultInteractionTypes[1],
     center: centersUnique[2],
+    address: { lat: 52.4730412, lon: 13.4319106 },
   }),
 ];
 const entitiesB = [
   Object.assign(Child.create("sample child"), {
     gender: genders[1],
     center: centersUnique[0],
+    address: { lat: 52.4720412, lon: 13.4319106 },
   }),
   Object.assign(Child.create("other child"), {
     gender: genders[2],
     center: centersUnique[0],
+    address: { lat: 52.4710412, lon: 13.4319106 },
   }),
 ];
 
@@ -84,6 +89,7 @@ const columnsMapping = [
   ["name", "title"],
   ["gender", "type"],
   ["center", "center"],
+  [undefined, "distance"],
 ];
 
 export const TwoSidedMatching = Template.bind({});
@@ -91,24 +97,24 @@ TwoSidedMatching.args = {
   leftSide: { entityType: Child.ENTITY_TYPE },
   rightSide: { entityType: RecurringActivity.ENTITY_TYPE },
   columns: columnsMapping,
-  showMap: true,
+  showMap: ["address", "address"],
 };
 
 export const LeftMatch = Template.bind({});
 LeftMatch.args = {
-  leftSide: { selected: entitiesB[0] },
+  entity: entitiesB[0],
   rightSide: {
     entityType: RecurringActivity.ENTITY_TYPE,
     filters: [{ id: "type" }],
   },
   columns: columnsMapping,
-  showMap: true,
+  showMap: ["address", "address"],
 };
 
 export const RightMatch = Template.bind({});
 RightMatch.args = {
   leftSide: { entityType: Child.ENTITY_TYPE },
-  rightSide: { selected: entitiesA[0] },
+  entity: entitiesA[0],
   columns: columnsMapping,
-  showMap: true,
+  showMap: ["address", "address"],
 };

@@ -169,6 +169,11 @@ export class Entity {
   /** internal database doc revision, used to detect conflicts by PouchDB/CouchDB */
   @DatabaseField() _rev: string;
 
+  /** whether this entity object is newly created and not yet saved to database */
+  get isNew(): boolean {
+    return !this._rev;
+  }
+
   /** actual id without prefix */
   private get entityId(): string {
     return Entity.extractEntityIdFromId(this._id);
@@ -219,13 +224,21 @@ export class Entity {
    *    "name": "active",
    *    "schema": {
    *      "dataType": "boolean",
-   *      "label": "Active"
+   *      "label": "Active",
+   *      "defaultValue": true
    *    }
    *  }
    * ```
+   * alternatively you can store the inverted, as name "inactive"
    */
   get isActive(): boolean {
-    return this["active"] ?? true;
+    if (this["active"] !== undefined) {
+      return this["active"];
+    }
+    if (this["inactive"] !== undefined) {
+      return !this["inactive"];
+    }
+    return true;
   }
 
   /**
@@ -234,6 +247,7 @@ export class Entity {
    */
   set isActive(isActive: boolean) {
     this["active"] = isActive;
+    this["inactive"] = !isActive;
   }
 
   /**
@@ -249,8 +263,8 @@ export class Entity {
   /**
    * Get the class (Entity or the actual subclass of the instance) to call static methods on the correct class considering inheritance
    */
-  getConstructor<T extends Entity>(this: T): EntityConstructor<T> {
-    return this.constructor as EntityConstructor<T>;
+  getConstructor(): EntityConstructor<this> {
+    return this.constructor as EntityConstructor<this>;
   }
 
   /**
@@ -317,7 +331,7 @@ export class Entity {
    * The resulting entity will be of the same type as this
    * (taking into account subclassing)
    */
-  public copy(): Entity {
+  public copy(): this {
     const other = new (this.getConstructor())(this._id);
     Object.assign(other, this);
     return other;

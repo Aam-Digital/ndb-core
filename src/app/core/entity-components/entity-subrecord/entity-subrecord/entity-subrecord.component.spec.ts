@@ -166,7 +166,7 @@ describe("EntitySubrecordComponent", () => {
 
     const sortedNames = component.recordsDataSource
       ._orderData(component.recordsDataSource.data)
-      .map((row: TableRow<Child>) => row.record.name);
+      .map((row) => row.record["name"]);
 
     expect(sortedNames).toEqual(["A", "b", "C"]);
   });
@@ -194,7 +194,7 @@ describe("EntitySubrecordComponent", () => {
     const child = new Child();
     child.name = "Child Name";
     child.projectNumber = "01";
-    const tableRow: TableRow<Child> = { record: child };
+    const tableRow: TableRow<Entity> = { record: child };
     const media = TestBed.inject(ScreenWidthObserver);
     spyOn(media, "isDesktop").and.returnValue(true);
 
@@ -343,7 +343,7 @@ describe("EntitySubrecordComponent", () => {
     const c3 = Child.create("Matching");
     c3.dateOfBirth = new DateWithAge(moment().subtract(3, "years").toDate());
     // get type-safety for filters
-    const childComponent = component as EntitySubrecordComponent<Child>;
+    const childComponent = component as any as EntitySubrecordComponent<Child>;
     childComponent.records = [c1, c2, c3];
 
     childComponent.filter = { name: "Matching" };
@@ -372,11 +372,12 @@ describe("EntitySubrecordComponent", () => {
     ]);
   });
 
-  it("should remove an entity if it does not pass the filter anymore", async () => {
+  it("should remove an entity if it does not pass the filter anymore", fakeAsync(() => {
     const entityMapper = TestBed.inject(EntityMapperService);
     const child = new Child();
     child.gender = genders[1];
-    await entityMapper.save(child);
+    entityMapper.save(child);
+    tick();
     component.records = [child];
     component.filter = { "gender.id": genders[1].id } as any;
     component.ngOnInit();
@@ -384,8 +385,9 @@ describe("EntitySubrecordComponent", () => {
     expect(component.recordsDataSource.data).toEqual([{ record: child }]);
 
     child.gender = genders[2];
-    await entityMapper.save(child);
+    entityMapper.save(child);
+    tick(5000);
 
     expect(component.recordsDataSource.data).toEqual([]);
-  });
+  }));
 });
