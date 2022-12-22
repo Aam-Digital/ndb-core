@@ -45,13 +45,21 @@ export class AbilityService {
 
   private loadRules(): Promise<void> {
     // Initially allow everything until permission document could be fetched
+    // TODO somehow this rules is used if no other is found even after update
     this.ability.update([{ action: "manage", subject: "all" }]);
     return this.entityMapper
       .load<Config<DatabaseRules>>(Config, Config.PERMISSION_KEY)
       .then(
         () =>
           new Config<DatabaseRules>(Config.PERMISSION_KEY, {
-            public: [{ subject: "Child", action: "create" }],
+            // TODO check that permissions are properly enforced in frontend
+            public: [
+              {
+                subject: "Child",
+                action: "create",
+                conditions: { status: "new" },
+              },
+            ],
             user_app: [{ subject: "all", action: "manage" }],
             admin_app: [{ subject: "all", action: "manage" }],
           })
