@@ -13,6 +13,7 @@ import { EntityFormComponent } from "../../../core/entity-components/entity-form
 import { TodoService } from "../todo.service";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 import { YesNoCancelButtons } from "../../../core/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 
 @Component({
   selector: "app-todo-details",
@@ -26,7 +27,7 @@ export class TodoDetailsComponent {
 
   @ViewChild(EntityFormComponent) entityForm;
 
-  formColumns: any;
+  formColumns: FormFieldConfig[][];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) data: DetailsComponentData<Todo>,
@@ -69,5 +70,13 @@ export class TodoDetailsComponent {
     }
     await this.todoService.completeTodo(this.entity);
     this.dialogRef.close();
+  }
+
+  async uncompleteTodo() {
+    await this.todoService.uncompleteTodo(this.entity);
+  }
+
+  delete() {
+    //TODO: handle delete (or delegate it to a reusable form-actions component)
   }
 }

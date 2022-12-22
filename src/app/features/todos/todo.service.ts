@@ -1,15 +1,14 @@
-import { Injectable } from '@angular/core';
-import {SessionService} from "../../core/session/session-service/session.service";
-import {AlertService} from "../../core/alerts/alert.service";
-import {EntityMapperService} from "../../core/entity/entity-mapper.service";
-import {Todo} from "./model/todo";
+import { Injectable } from "@angular/core";
+import { SessionService } from "../../core/session/session-service/session.service";
+import { AlertService } from "../../core/alerts/alert.service";
+import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { Todo } from "./model/todo";
 import moment from "moment/moment";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class TodoService {
-
   constructor(
     private sessionService: SessionService,
     private alertService: AlertService,
@@ -28,7 +27,6 @@ export class TodoService {
     await this.entityMapper.save(todo);
 
     // TODO: user block instead of id to display in template
-    // TODO: allow to "un-complete" a task again (+ ask user whether to delete next repetition task)
   }
 
   private async createNextRepetition(originalTodo: Todo): Promise<Todo | null> {
@@ -47,5 +45,11 @@ export class TodoService {
     );
 
     return nextTodo;
+  }
+
+  async uncompleteTodo(todo: Todo) {
+    todo.completed = undefined;
+    await this.entityMapper.save(todo);
+    // we do not delete recurring todos created when completing this for now
   }
 }

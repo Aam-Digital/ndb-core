@@ -22,6 +22,9 @@ import { CommonComponentsModule } from "../../core/common-components/common-comp
 import { EntityFormModule } from "../../core/entity-components/entity-form/entity-form.module";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { DisplayTodoCompletionComponent } from "./todo-completion/display-todo-completion/display-todo-completion.component";
+import { MatMenuModule } from "@angular/material/menu";
+import { Angulartics2Module } from "angulartics2";
+import { PermissionsModule } from "../../core/permissions/permissions.module";
 
 @NgModule({
   declarations: [
@@ -49,11 +52,15 @@ import { DisplayTodoCompletionComponent } from "./todo-completion/display-todo-c
     CommonComponentsModule,
     EntityFormModule,
     MatSlideToggleModule,
+    MatMenuModule,
+    Angulartics2Module,
+    PermissionsModule,
   ],
   exports: [
     TodosRelatedToEntityComponent,
     EditRecurringIntervalComponent,
     DisplayRecurringIntervalComponent,
+    TodoCompletionComponent,
     DisplayTodoCompletionComponent,
   ],
 })
