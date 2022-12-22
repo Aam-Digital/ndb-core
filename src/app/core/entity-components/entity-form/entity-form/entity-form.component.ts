@@ -39,11 +39,6 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
   @Input() entity: T;
 
   /**
-   * Whether the form should be opened in editing mode or not
-   */
-  @Input() editing = false;
-
-  /**
    * The form field definitions. Either as a string or as a FormFieldConfig object.
    * Missing information will be fetched from the entity schema definition.
    * @param columns The columns which should be displayed
@@ -61,80 +56,17 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
   }
 
   _columns: FormFieldConfig[][] = [];
+
   @Input() columnHeaders?: (string | null)[];
 
-  /**
-   * This will be emitted whenever changes have been successfully saved to the entity.
-   */
-  @Output() save = new EventEmitter<T>();
-
-  /**
-   * This will be emitted whenever the cancel button is pressed.
-   */
-  @Output() cancel = new EventEmitter<void>();
+  @Output() formReady = new EventEmitter<EntityForm<T>>();
 
   form: EntityForm<T>;
 
-  private saveInProgress = false;
-  private initialFormValues: any;
-
-  constructor(
-    private entityFormService: EntityFormService,
-    private alertService: AlertService,
-    private entityMapper: EntityMapperService,
-    private confirmationDialog: ConfirmationDialogService
-  ) {}
+  constructor(private entityFormService: EntityFormService) {}
 
   ngOnInit() {
-    this.buildFormConfig();
-    if (!this.editing) {
-      this.form.disable();
-    }
-    this.entityMapper
-      .receiveUpdates(this.entity.getConstructor())
-      .pipe(filter(({ entity }) => entity.getId() === this.entity.getId()))
-      .subscribe(({ entity }) => this.applyChanges(entity));
-  }
-
-  private async applyChanges(entity) {
-    if (this.saveInProgress || this.formIsUpToDate(entity)) {
-      // this is the component that currently saves the values -> no need to apply changes.
-      return;
-    }
-    if (
-      this.form.pristine ||
-      (await this.confirmationDialog.getConfirmation(
-        $localize`Load changes?`,
-        $localize`Local changes are in conflict with updated values synced from the server. Do you want the local changes to be overwritten with the latest values?`
-      ))
-    ) {
-      this.resetForm(entity);
-    }
-  }
-
-  async saveForm(): Promise<void> {
-    this.saveInProgress = true;
-    try {
-      await this.entityFormService.saveChanges(this.form, this.entity);
-      this.form.markAsPristine();
-      this.save.emit(this.entity);
-      this.form.disable();
-    } catch (err) {
-      if (!(err instanceof InvalidFormFieldError)) {
-        this.alertService.addDanger(err.message);
-      }
-    }
-    // Reset state after a short delay
-    setTimeout(() => (this.saveInProgress = false), 1000);
-  }
-
-  cancelClicked() {
-    this.cancel.emit();
-    this.resetForm();
-    this.form.disable();
-  }
-
-  private buildFormConfig() {
+    // TODO move to FormComponent
     const flattenedFormFields = new Array<FormFieldConfig>().concat(
       ...this._columns
     );
@@ -146,19 +78,6 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
       flattenedFormFields,
       this.entity
     );
-    this.initialFormValues = this.form.getRawValue();
-  }
-
-  private resetForm(entity = this.entity) {
-    // Patch form with values from the entity
-    this.form.patchValue(Object.assign(this.initialFormValues, entity));
-    this.form.markAsPristine();
-  }
-
-  private formIsUpToDate(entity: T): boolean {
-    return Object.entries(this.form.getRawValue()).every(
-      ([key, value]) =>
-        entity[key] === value || (entity[key] === undefined && value === null)
-    );
+    this.formReady.emit(this.form);
   }
 }
