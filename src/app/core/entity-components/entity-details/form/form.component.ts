@@ -13,9 +13,6 @@ import {
   EntityFormService,
 } from "../../entity-form/entity-form.service";
 import { AlertService } from "../../../alerts/alert.service";
-import { filter } from "rxjs/operators";
-import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { toFormFieldConfig } from "../../entity-subrecord/entity-subrecord/entity-subrecord-config";
 
 /**
@@ -33,16 +30,13 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
   columns: FormFieldConfig[][] = [];
   headers?: string[] = [];
   creatingNew = false;
-  saveInProgress = false;
   form: EntityForm<Entity>;
 
   constructor(
     private router: Router,
     private location: Location,
     private entityFormService: EntityFormService,
-    private alertService: AlertService,
-    private entityMapper: EntityMapperService,
-    private confirmationDialog: ConfirmationDialogService
+    private alertService: AlertService
   ) {}
 
   onInitFromDynamicConfig(config: PanelConfig) {
@@ -65,8 +59,6 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
   }
 
   async saveClicked() {
-    this.saveInProgress = true;
-    console.log("save is true");
     try {
       await this.entityFormService.saveChanges(this.form, this.entity);
       this.form.markAsPristine();
@@ -79,11 +71,6 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
         this.alertService.addDanger(err.message);
       }
     }
-    // Reset state after a short delay
-    setTimeout(() => {
-      this.saveInProgress = false;
-      console.log("save is false");
-    }, 1000);
   }
 
   cancelClicked() {

@@ -33,8 +33,6 @@ export class EntityFormComponent implements OnInit {
 
   @Input() columnHeaders?: (string | null)[];
 
-  @Input() saveInProgress = false;
-
   @Input() form: EntityForm<Entity>;
 
   constructor(
@@ -50,8 +48,7 @@ export class EntityFormComponent implements OnInit {
   }
 
   private async applyChanges(entity) {
-    console.log("save in progres", this.saveInProgress, this.columns);
-    if (this.saveInProgress || this.formIsUpToDate(entity)) {
+    if (this.formIsUpToDate(entity)) {
       // this is the component that currently saves the values -> no need to apply changes.
       return;
     }
@@ -69,9 +66,10 @@ export class EntityFormComponent implements OnInit {
 
   private formIsUpToDate(entity: Entity): boolean {
     return Object.entries(this.form.getRawValue()).every(([key, value]) => {
-      console.log("comparing", entity[key], value, entity[key] === value);
       return (
-        entity[key] === value || (entity[key] === undefined && value === null)
+        (entity[key] === undefined && value === null) ||
+        entity[key] === value ||
+        JSON.stringify(entity[key]) === JSON.stringify(value)
       );
     });
   }
