@@ -23,17 +23,17 @@ import { ConfirmationDialogService } from "../../../confirmation-dialog/confirma
   // dynamically created)
   encapsulation: ViewEncapsulation.None,
 })
-export class EntityFormComponent implements OnInit {
+export class EntityFormComponent<E extends Entity = Entity> implements OnInit {
   /**
    * The entity which should be displayed and edited
    */
-  @Input() entity: Entity;
+  @Input() entity: E;
 
   @Input() columns: FormFieldConfig[][];
 
   @Input() columnHeaders?: (string | null)[];
 
-  @Input() form: EntityForm<Entity>;
+  @Input() form: EntityForm<E>;
 
   constructor(
     private entityMapper: EntityMapperService,
