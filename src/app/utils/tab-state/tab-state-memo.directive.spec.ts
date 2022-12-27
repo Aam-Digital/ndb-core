@@ -6,13 +6,13 @@ import {
 } from "@angular/core/testing";
 
 import { ActivatedRoute } from "@angular/router";
-import { MatLegacyTabsModule as MatTabsModule } from "@angular/material/legacy-tabs";
+import { MatTabsModule } from "@angular/material/tabs";
 import { RouterTestingModule } from "@angular/router/testing";
 import { CommonModule } from "@angular/common";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Component } from "@angular/core";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
-import { MatLegacyTabGroupHarness as MatTabGroupHarness } from "@angular/material/legacy-tabs/testing";
+import { MatTabGroupHarness } from "@angular/material/tabs/testing";
 import { TabStateModule } from "./tab-state.module";
 
 describe("TabStateService", () => {
