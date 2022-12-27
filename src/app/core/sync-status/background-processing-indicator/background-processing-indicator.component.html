@@ -14,39 +14,42 @@
   </span>
 </button>
 
-<mat-menu #taskListDropdown="matMenu" class="padding-small">
-  <div i18n>
-    The following processes are still running in the background. Until these are
-    finished some pages may be slow or incomplete.
-  </div>
+<mat-menu #taskListDropdown="matMenu">
+  <div style="padding: 5px">
 
-  <div
-    *ngFor="let process of filteredProcesses | async"
-    class="flex-row gap-small align-center mat-subtitle-2 details-line"
-  >
-    <div>
-      <mat-spinner
-        *ngIf="process.pending"
-        [diameter]="20"
-      ></mat-spinner>
-      <fa-icon
-        *ngIf="!process.pending"
-        icon="check"
-        class="process-checkmark"
-      ></fa-icon>
+    <div i18n>
+      The following processes are still running in the background. Until these are
+      finished some pages may be slow or incomplete.
     </div>
-    <div class="truncate-text" [matTooltip]="process.description">
-      {{ process.title }}
-      <span *ngIf="process.details">({{ process.details }})</span>
-    </div>
-  </div>
 
-  <button
-    mat-stroked-button
-    class="full-width"
-    (click)="taskListDropdownTrigger.closeMenu()"
-    i18n="Hide sync details"
-  >
-    Continue in background
-  </button>
+    <div
+      *ngFor="let process of filteredProcesses | async"
+      class="flex-row gap-small align-center mat-subtitle-2 details-line"
+    >
+      <div>
+        <mat-spinner
+          *ngIf="process.pending"
+          [diameter]="20"
+        ></mat-spinner>
+        <fa-icon
+          *ngIf="!process.pending"
+          icon="check"
+          class="process-checkmark"
+        ></fa-icon>
+      </div>
+      <div class="truncate-text" [matTooltip]="process.description">
+        {{ process.title }}
+        <span *ngIf="process.details">({{ process.details }})</span>
+      </div>
+    </div>
+
+    <button
+      mat-stroked-button
+      class="full-width"
+      (click)="taskListDropdownTrigger.closeMenu()"
+      i18n="Hide sync details"
+    >
+      Continue in background
+    </button>
+  </div>
 </mat-menu>
