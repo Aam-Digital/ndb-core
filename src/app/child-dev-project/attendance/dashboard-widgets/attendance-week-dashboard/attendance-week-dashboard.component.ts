@@ -15,8 +15,8 @@ import { ActivityAttendance } from "../../model/activity-attendance";
 import { RecurringActivity } from "../../model/recurring-activity";
 import moment, { Moment } from "moment";
 import { groupBy } from "../../../../utils/utils";
-import { MatLegacyTableDataSource as MatTableDataSource } from "@angular/material/legacy-table";
-import { MatLegacyPaginator as MatPaginator } from "@angular/material/legacy-paginator";
+import { MatTableDataSource } from "@angular/material/table";
+import { MatPaginator } from "@angular/material/paginator";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 
 interface AttendanceWeekRow {

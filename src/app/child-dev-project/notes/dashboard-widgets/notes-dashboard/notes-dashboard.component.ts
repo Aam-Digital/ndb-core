@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
 import { ChildrenService } from "../../../children/children.service";
 import moment from "moment";
-import { MatLegacyTableDataSource as MatTableDataSource } from "@angular/material/legacy-table";
-import { MatLegacyPaginator as MatPaginator } from "@angular/material/legacy-paginator";
+import { MatTableDataSource } from "@angular/material/table";
+import { MatPaginator } from "@angular/material/paginator";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 import { Child } from "../../../children/model/child";

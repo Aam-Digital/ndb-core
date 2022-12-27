@@ -8,7 +8,7 @@ import {
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { RecurringActivity } from "../model/recurring-activity";
 import { AttendanceModule } from "../attendance.module";
-import { MatLegacyDialogRef as MatDialogRef } from "@angular/material/legacy-dialog";
+import { MatDialogRef } from "@angular/material/dialog";
 import { EventNote } from "../model/event-note";
 import { AttendanceService } from "../attendance.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";

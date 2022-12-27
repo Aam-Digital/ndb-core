@@ -5,7 +5,7 @@ import { EMPTY } from "rxjs";
 import { ChildrenService } from "../../children/children.service";
 import { NotesModule } from "../notes.module";
 import { Child } from "../../children/model/child";
-import { MatLegacyDialogRef as MatDialogRef } from "@angular/material/legacy-dialog";
+import { MatDialogRef } from "@angular/material/dialog";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { By } from "@angular/platform-browser";
