@@ -72,6 +72,10 @@ export class ConfigImportParserService {
 
     const generatedConfig: GeneratedConfig = {};
 
+    if (includingDefaultConfigs) {
+      this.initializeDefaultValues(generatedConfig);
+    }
+
     generatedConfig["entity:" + entityName] = entity;
 
     // add enum configs
@@ -82,10 +86,6 @@ export class ConfigImportParserService {
     // add generated list and details view configs
     for (const [key, viewConfig] of this.generatedViews) {
       generatedConfig["view:" + key.toLowerCase()] = viewConfig;
-    }
-
-    if (includingDefaultConfigs) {
-      this.initializeDefaultValues(generatedConfig);
     }
 
     return generatedConfig;
@@ -102,11 +102,16 @@ export class ConfigImportParserService {
       description: fieldDef.description,
     };
 
-    if (fieldDef.dataType === "single-entity-select") {
-      schema.dataType = "string";
+    if (
+      fieldDef.dataType === "single-entity-select" ||
+      fieldDef.dataType === "entity"
+    ) {
+      schema.dataType = "entity";
       schema.additional = fieldDef.additional_type_details;
-      schema.viewComponent = "DisplayEntity";
-      schema.editComponent = "EditSingleEntity";
+    }
+    if (fieldDef.dataType === "entity-array") {
+      schema.dataType = "entity-array";
+      schema.additional = fieldDef.additional_type_details;
     }
 
     if (
@@ -115,6 +120,14 @@ export class ConfigImportParserService {
     ) {
       schema.dataType = "configurable-enum";
       schema.innerDataType = this.generateOrMatchEnum(
+        fieldDef.additional_type_details,
+        fieldId
+      );
+    }
+    if (fieldDef.dataType === "enum-multi") {
+      schema.dataType = "array";
+      schema.innerDataType = "configurable-enum";
+      schema.additional = this.generateOrMatchEnum(
         fieldDef.additional_type_details,
         fieldId
       );
