@@ -8,8 +8,8 @@ import {
 
 import { ListPaginatorComponent } from "./list-paginator.component";
 import { EntityListModule } from "../../entity-list/entity-list.module";
-import { MatTableDataSource } from "@angular/material/table";
-import { PageEvent } from "@angular/material/paginator";
+import { MatLegacyTableDataSource as MatTableDataSource } from "@angular/material/legacy-table";
+import { LegacyPageEvent as PageEvent } from "@angular/material/legacy-paginator";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { User } from "../../../user/user";

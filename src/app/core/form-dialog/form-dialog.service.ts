@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from "@angular/material/legacy-dialog";
 import { ComponentType } from "@angular/cdk/overlay";
 import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
 import { ShowsEntity } from "./shows-entity.interface";

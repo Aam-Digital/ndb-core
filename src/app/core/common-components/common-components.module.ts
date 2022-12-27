@@ -6,7 +6,7 @@ import { BorderHighlightDirective } from "./border-highlight/border-highlight.di
 import { PillComponent } from "./pill/pill.component";
 import { DialogCloseComponent } from "./dialog-close/dialog-close.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatButtonModule } from "@angular/material/button";
+import { MatLegacyButtonModule as MatButtonModule } from "@angular/material/legacy-button";
 
 @NgModule({
   declarations: [

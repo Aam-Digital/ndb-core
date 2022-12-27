@@ -1,6 +1,6 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { MatButtonModule } from "@angular/material/button";
+import { MatLegacyButtonModule as MatButtonModule } from "@angular/material/legacy-button";
 import { ExportDataDirective } from "./export-data-directive/export-data.directive";
 import { DownloadService } from "./download-service/download.service";
 

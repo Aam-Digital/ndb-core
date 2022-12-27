@@ -1,5 +1,5 @@
 import { ActivatedRoute, Router } from "@angular/router";
-import { MatTabGroup } from "@angular/material/tabs";
+import { MatLegacyTabGroup as MatTabGroup } from "@angular/material/legacy-tabs";
 import { Directive, OnInit } from "@angular/core";
 
 /**

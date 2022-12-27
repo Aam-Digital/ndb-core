@@ -2,7 +2,7 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { DisableEntityOperationDirective } from "./permission-directive/disable-entity-operation.directive";
 import { DisabledWrapperComponent } from "./permission-directive/disabled-wrapper.component";
-import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatLegacyTooltipModule as MatTooltipModule } from "@angular/material/legacy-tooltip";
 import { UserRoleGuard } from "./permission-guard/user-role.guard";
 import { AbilityService } from "./ability/ability.service";
 import { PureAbility } from "@casl/ability";

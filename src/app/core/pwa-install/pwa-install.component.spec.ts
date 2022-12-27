@@ -3,7 +3,7 @@ import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { PwaInstallComponent } from "./pwa-install.component";
 import { PwaInstallModule } from "./pwa-install.module";
 import { PwaInstallService, PWAInstallType } from "./pwa-install.service";
-import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatLegacySnackBar as MatSnackBar } from "@angular/material/legacy-snack-bar";
 import { firstValueFrom, Subject } from "rxjs";
 import { take } from "rxjs/operators";
 import { MockedTestingModule } from "../../utils/mocked-testing.module";

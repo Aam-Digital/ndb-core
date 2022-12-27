@@ -1,5 +1,5 @@
 import { Component, Inject } from "@angular/core";
-import { MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from "@angular/material/legacy-dialog";
 
 /**
  * This simple component can be used to open a file in a new window, if the user's browser is blocking popups.

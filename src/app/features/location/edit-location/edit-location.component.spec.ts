@@ -13,9 +13,9 @@ import { GeoResult, GeoService } from "../geo.service";
 import { of, Subject } from "rxjs";
 import { HarnessLoader, TestElement } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
-import { MatInputHarness } from "@angular/material/input/testing";
-import { MatButtonHarness } from "@angular/material/button/testing";
-import { MatDialog } from "@angular/material/dialog";
+import { MatLegacyInputHarness as MatInputHarness } from "@angular/material/legacy-input/testing";
+import { MatLegacyButtonHarness as MatButtonHarness } from "@angular/material/legacy-button/testing";
+import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
 import { Coordinates } from "../coordinates";
 import { MapPopupConfig } from "../map-popup/map-popup.component";
 

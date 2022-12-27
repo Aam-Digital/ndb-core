@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceManagerComponent } from "./attendance-manager.component";
-import { MatButtonModule } from "@angular/material/button";
-import { MatCardModule } from "@angular/material/card";
+import { MatLegacyButtonModule as MatButtonModule } from "@angular/material/legacy-button";
+import { MatLegacyCardModule as MatCardModule } from "@angular/material/legacy-card";
 import { RouterTestingModule } from "@angular/router/testing";
 import { ComingSoonDialogService } from "../../../core/coming-soon/coming-soon-dialog.service";
 

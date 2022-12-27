@@ -3,9 +3,9 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { EditDateComponent } from "./edit-date.component";
 import { ReactiveFormsModule } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatLegacyFormFieldModule as MatFormFieldModule } from "@angular/material/legacy-form-field";
 import { MatDatepickerModule } from "@angular/material/datepicker";
-import { MatInputModule } from "@angular/material/input";
+import { MatLegacyInputModule as MatInputModule } from "@angular/material/legacy-input";
 import { MatNativeDateModule } from "@angular/material/core";
 import { setupEditComponent } from "../edit-component.spec";
 

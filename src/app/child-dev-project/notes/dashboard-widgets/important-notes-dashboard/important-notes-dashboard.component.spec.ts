@@ -5,7 +5,7 @@ import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { LoginState } from "../../../../core/session/session-states/login-state.enum";
 import { Note } from "../../model/note";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
-import { MatPaginatorModule } from "@angular/material/paginator";
+import { MatLegacyPaginatorModule as MatPaginatorModule } from "@angular/material/legacy-paginator";
 import { warningLevels } from "../../../warning-levels";
 
 describe("ImportantNotesDashboardComponent", () => {

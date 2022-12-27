@@ -7,13 +7,13 @@ import {
 } from "@angular/core/testing";
 
 import { CompareRevComponent } from "./compare-rev.component";
-import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatLegacyTooltipModule as MatTooltipModule } from "@angular/material/legacy-tooltip";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { FormsModule } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ConfirmationDialogService } from "../../core/confirmation-dialog/confirmation-dialog.service";
 import { Database } from "../../core/database/database";
-import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { MatLegacySnackBarModule as MatSnackBarModule } from "@angular/material/legacy-snack-bar";
 import { AutoResolutionService } from "../auto-resolution/auto-resolution.service";
 
 describe("CompareRevComponent", () => {

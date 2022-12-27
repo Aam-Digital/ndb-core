@@ -2,11 +2,11 @@ import { TestBed } from "@angular/core/testing";
 import { EntityRemoveService, RemoveResult } from "./entity-remove.service";
 import { EntityMapperService } from "./entity-mapper.service";
 import {
-  MatSnackBar,
-  MatSnackBarDismiss,
-  MatSnackBarRef,
-  TextOnlySnackBar,
-} from "@angular/material/snack-bar";
+  MatLegacySnackBar as MatSnackBar,
+  MatLegacySnackBarDismiss as MatSnackBarDismiss,
+  MatLegacySnackBarRef as MatSnackBarRef,
+  LegacyTextOnlySnackBar as TextOnlySnackBar,
+} from "@angular/material/legacy-snack-bar";
 import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
 import { Entity } from "./model/entity";
 import { NEVER, Observable } from "rxjs";

@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MapPopupComponent } from "./map-popup.component";
 import { LocationModule } from "../location.module";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
-import { MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from "@angular/material/legacy-dialog";
 import { ConfigService } from "../../../core/config/config.service";
 import { Subject } from "rxjs";
 import { Coordinates } from "../coordinates";

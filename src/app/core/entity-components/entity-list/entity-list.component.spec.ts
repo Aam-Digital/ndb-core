@@ -21,7 +21,7 @@ import { RouteData } from "../../view/dynamic-routing/view-config.interface";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
-import { MatTabGroupHarness } from "@angular/material/tabs/testing";
+import { MatLegacyTabGroupHarness as MatTabGroupHarness } from "@angular/material/legacy-tabs/testing";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 
 describe("EntityListComponent", () => {

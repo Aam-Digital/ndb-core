@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ConfirmationDialogComponent } from "./confirmation-dialog.component";
-import { MatButtonModule } from "@angular/material/button";
+import { MatLegacyButtonModule as MatButtonModule } from "@angular/material/legacy-button";
 import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef,
-} from "@angular/material/dialog";
+  MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA,
+  MatLegacyDialogModule as MatDialogModule,
+  MatLegacyDialogRef as MatDialogRef,
+} from "@angular/material/legacy-dialog";
 
 describe("ConfirmationDialogComponent", () => {
   let component: ConfirmationDialogComponent;

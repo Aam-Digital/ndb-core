@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, Optional, ViewChild } from "@angular/core";
-import { MatPaginator } from "@angular/material/paginator";
+import { MatLegacyPaginator as MatPaginator } from "@angular/material/legacy-paginator";
 import { QueryDataSource } from "../../core/database/query-data-source";
 import { Entity } from "../../core/entity/model/entity";
 import { Database } from "../../core/database/database";

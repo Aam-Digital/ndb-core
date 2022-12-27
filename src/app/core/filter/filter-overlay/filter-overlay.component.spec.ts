@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { FilterOverlayComponent } from "./filter-overlay.component";
-import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogModule as MatDialogModule } from "@angular/material/legacy-dialog";
 
 describe("FilterOverlayComponent", () => {
   let component: FilterOverlayComponent<any>;

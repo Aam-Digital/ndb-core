@@ -5,8 +5,8 @@ import { EntityDetailsModule } from "../../entity-components/entity-details/enti
 import { ReactiveFormsModule, FormControl, FormGroup } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ConfigService } from "../../config/config.service";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatSelectModule } from "@angular/material/select";
+import { MatLegacyFormFieldModule as MatFormFieldModule } from "@angular/material/legacy-form-field";
+import { MatLegacySelectModule as MatSelectModule } from "@angular/material/legacy-select";
 import { ConfigurableEnumModule } from "../configurable-enum.module";
 
 describe("EditConfigurableEnumComponent", () => {

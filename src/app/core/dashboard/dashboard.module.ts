@@ -21,13 +21,13 @@ import { DashboardComponent } from "./dashboard/dashboard.component";
 import { ViewModule } from "../view/view.module";
 import { DashboardWidgetComponent } from "./dashboard-widget/dashboard-widget.component";
 import { WidgetContentComponent } from "./dashboard-widget/widget-content/widget-content.component";
-import { MatTableModule } from "@angular/material/table";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatLegacyTableModule as MatTableModule } from "@angular/material/legacy-table";
+import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from "@angular/material/legacy-progress-spinner";
+import { MatLegacyTooltipModule as MatTooltipModule } from "@angular/material/legacy-tooltip";
 import { MatSortModule } from "@angular/material/sort";
-import { MatPaginatorModule } from "@angular/material/paginator";
+import { MatLegacyPaginatorModule as MatPaginatorModule } from "@angular/material/legacy-paginator";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatButtonModule } from "@angular/material/button";
+import { MatLegacyButtonModule as MatButtonModule } from "@angular/material/legacy-button";
 
 @NgModule({
   imports: [

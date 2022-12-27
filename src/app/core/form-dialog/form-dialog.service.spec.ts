@@ -1,5 +1,5 @@
 import { TestBed } from "@angular/core/testing";
-import { MatDialogModule } from "@angular/material/dialog";
+import { MatLegacyDialogModule as MatDialogModule } from "@angular/material/legacy-dialog";
 import { FormDialogService } from "./form-dialog.service";
 import { Component, EventEmitter, Input } from "@angular/core";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";

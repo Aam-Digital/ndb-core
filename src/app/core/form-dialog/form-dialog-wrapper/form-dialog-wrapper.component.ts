@@ -8,7 +8,7 @@ import {
 } from "@angular/core";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { Entity } from "../../entity/model/entity";
-import { MatDialogRef } from "@angular/material/dialog";
+import { MatLegacyDialogRef as MatDialogRef } from "@angular/material/legacy-dialog";
 import { Router } from "@angular/router";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import {

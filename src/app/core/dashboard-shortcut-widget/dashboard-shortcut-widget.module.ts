@@ -1,15 +1,15 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { DashboardShortcutWidgetComponent } from "./dashboard-shortcut-widget/dashboard-shortcut-widget.component";
-import { MatCardModule } from "@angular/material/card";
+import { MatLegacyCardModule as MatCardModule } from "@angular/material/legacy-card";
 import { MatIconModule } from "@angular/material/icon";
 import { RouterModule } from "@angular/router";
 import { Angulartics2Module } from "angulartics2";
 import { DashboardModule } from "../dashboard/dashboard.module";
 import { ViewModule } from "../view/view.module";
 import { MatDividerModule } from "@angular/material/divider";
-import { MatButtonModule } from "@angular/material/button";
-import { MatTableModule } from "@angular/material/table";
+import { MatLegacyButtonModule as MatButtonModule } from "@angular/material/legacy-button";
+import { MatLegacyTableModule as MatTableModule } from "@angular/material/legacy-table";
 
 @NgModule({
   declarations: [DashboardShortcutWidgetComponent],

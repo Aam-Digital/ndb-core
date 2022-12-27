@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ViewChild } from "@angular/core";
-import { MatTableDataSource } from "@angular/material/table";
-import { MatPaginator } from "@angular/material/paginator";
+import { MatLegacyTableDataSource as MatTableDataSource } from "@angular/material/legacy-table";
+import { MatLegacyPaginator as MatPaginator } from "@angular/material/legacy-paginator";
 import { OnInitDynamicComponent } from "app/core/view/dynamic-components/on-init-dynamic-component.interface";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";

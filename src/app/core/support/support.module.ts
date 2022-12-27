@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { SupportComponent } from "./support/support.component";
-import { MatButtonModule } from "@angular/material/button";
+import { MatLegacyButtonModule as MatButtonModule } from "@angular/material/legacy-button";
 import { ConfirmationDialogModule } from "../confirmation-dialog/confirmation-dialog.module";
 import { MatExpansionModule } from "@angular/material/expansion";
 

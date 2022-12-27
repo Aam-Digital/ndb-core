@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ObjectTableComponent } from "./object-table.component";
-import { MatTableModule } from "@angular/material/table";
+import { MatLegacyTableModule as MatTableModule } from "@angular/material/legacy-table";
 
 describe("ObjectTableComponent", () => {
   let component: ObjectTableComponent;

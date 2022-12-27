@@ -19,7 +19,7 @@ import {
   MapPopupComponent,
   MapPopupConfig,
 } from "../map-popup/map-popup.component";
-import { MatDialog } from "@angular/material/dialog";
+import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
 
 export interface LocationEntity {
   entity: Entity;

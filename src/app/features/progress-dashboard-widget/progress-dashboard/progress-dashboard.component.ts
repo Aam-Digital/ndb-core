@@ -3,7 +3,7 @@ import { ProgressDashboardConfig } from "./progress-dashboard-config";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { LoggingService } from "../../../core/logging/logging.service";
-import { MatDialog } from "@angular/material/dialog";
+import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
 import { EditProgressDashboardComponent } from "../edit-progress-dashboard/edit-progress-dashboard.component";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { SessionService } from "../../../core/session/session-service/session.service";

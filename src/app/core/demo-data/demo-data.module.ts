@@ -23,8 +23,8 @@ import {
   NgModule,
   ValueProvider,
 } from "@angular/core";
-import { MatProgressBarModule } from "@angular/material/progress-bar";
-import { MatDialogModule } from "@angular/material/dialog";
+import { MatLegacyProgressBarModule as MatProgressBarModule } from "@angular/material/legacy-progress-bar";
+import { MatLegacyDialogModule as MatDialogModule } from "@angular/material/legacy-dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
 import { DemoDataInitializerService } from "./demo-data-initializer.service";
 

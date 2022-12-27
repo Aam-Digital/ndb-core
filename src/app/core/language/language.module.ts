@@ -1,11 +1,11 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { LanguageSelectComponent } from "./language-select/language-select.component";
-import { MatSelectModule } from "@angular/material/select";
+import { MatLegacySelectModule as MatSelectModule } from "@angular/material/legacy-select";
 import { LanguageService } from "./language.service";
-import { MatMenuModule } from "@angular/material/menu";
+import { MatLegacyMenuModule as MatMenuModule } from "@angular/material/legacy-menu";
 import { MatIconModule } from "@angular/material/icon";
-import { MatButtonModule } from "@angular/material/button";
+import { MatLegacyButtonModule as MatButtonModule } from "@angular/material/legacy-button";
 
 /**
  * Module that aids in the management and choice of translations/languages

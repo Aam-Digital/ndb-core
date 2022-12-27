@@ -19,7 +19,7 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 import { AlertService } from "./alert.service";
-import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { MatLegacySnackBarModule as MatSnackBarModule } from "@angular/material/legacy-snack-bar";
 
 /**
  * Show alert message to the user informing about events or errors.

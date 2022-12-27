@@ -5,7 +5,7 @@ import { Note } from "../../../child-dev-project/notes/model/note";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { HarnessLoader } from "@angular/cdk/testing";
-import { MatSelectHarness } from "@angular/material/select/testing";
+import { MatLegacySelectHarness as MatSelectHarness } from "@angular/material/legacy-select/testing";
 import { FilterModule } from "../filter.module";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { Child } from "../../../child-dev-project/children/model/child";
