@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { DialogCloseComponent } from "./dialog-close.component";
 import { DialogModule } from "@angular/cdk/dialog";
-import { MatLegacyButtonModule as MatButtonModule } from "@angular/material/legacy-button";
+import { MatButtonModule } from "@angular/material/button";
 
 describe("DialogCloseComponent", () => {
   let component: DialogCloseComponent;

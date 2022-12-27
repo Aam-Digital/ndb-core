@@ -9,7 +9,7 @@ import {
 import { AlertService } from "../../alerts/alert.service";
 import { ActivatedRoute } from "@angular/router";
 import { AnalyticsService } from "../../analytics/analytics.service";
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from "@angular/material/legacy-dialog";
+import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 
 /**
  * Placeholder page to announce that a feature is not available yet.

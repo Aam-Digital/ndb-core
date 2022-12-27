@@ -18,7 +18,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AppVersionComponent } from "./app-version.component";
-import { MatLegacyDialogModule as MatDialogModule } from "@angular/material/legacy-dialog";
+import { MatDialogModule } from "@angular/material/dialog";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ChangelogComponent } from "../changelog/changelog.component";
 import { LatestChangesDialogService } from "../latest-changes-dialog.service";

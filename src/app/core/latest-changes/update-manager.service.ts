@@ -19,7 +19,7 @@ import { ApplicationRef, Inject, Injectable } from "@angular/core";
 import { SwUpdate } from "@angular/service-worker";
 import { filter, first } from "rxjs/operators";
 import { concat, interval } from "rxjs";
-import { MatLegacySnackBar as MatSnackBar } from "@angular/material/legacy-snack-bar";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { LoggingService } from "../logging/logging.service";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { LOCATION_TOKEN } from "../../utils/di-tokens";

@@ -23,7 +23,7 @@ import {
   ViewChild,
 } from "@angular/core";
 import { Changelog } from "../changelog";
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from "@angular/material/legacy-dialog";
+import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { isObservable, Observable } from "rxjs";
 import { LatestChangesService } from "../latest-changes.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";

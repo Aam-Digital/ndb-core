@@ -23,8 +23,8 @@ import {
   NgModule,
   ValueProvider,
 } from "@angular/core";
-import { MatLegacyProgressBarModule as MatProgressBarModule } from "@angular/material/legacy-progress-bar";
-import { MatLegacyDialogModule as MatDialogModule } from "@angular/material/legacy-dialog";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatDialogModule } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
 import { DemoDataInitializerService } from "./demo-data-initializer.service";
 
@@ -34,12 +34,12 @@ import { DemoDataInitializerService } from "./demo-data-initializer.service";
  * Import this module in the root AppModule to automatically write demo data into the database on loading of the module.
  * You need to pass providers for {@link DemoDataGenerator} implementations to the `forRoot()` method to register them.
  *
-  ```
-  DemoDataModule.forRoot([
-     ...DemoChildGenerator.provider({count: 150}),
-     { provide: DemoUserGeneratorService, useClass: DemoUserGeneratorService }
-  ])
-  ```
+ ```
+ DemoDataModule.forRoot([
+ ...DemoChildGenerator.provider({count: 150}),
+ { provide: DemoUserGeneratorService, useClass: DemoUserGeneratorService }
+ ])
+ ```
  *
  * In addition to importing the `DemoDataModule` you need to call the {@link DemoDataService}'s `publishDemoData()` method
  * to actually start the data generation.

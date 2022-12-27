@@ -63,7 +63,7 @@ import { DemoActivityGeneratorService } from "./child-dev-project/attendance/dem
 import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-enum.module";
 import { ConfigModule } from "./core/config/config.module";
 import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-events-generator.service";
-import { MatLegacyPaginatorIntl as MatPaginatorIntl } from "@angular/material/legacy-paginator";
+import { MatPaginatorIntl } from "@angular/material/paginator";
 import { ReportingModule } from "./features/reporting/reporting.module";
 import { DashboardShortcutWidgetModule } from "./core/dashboard-shortcut-widget/dashboard-shortcut-widget.module";
 import { HistoricalDataModule } from "./features/historical-data/historical-data.module";

@@ -6,10 +6,10 @@ import { ConfigurableEnumDatatype } from "./configurable-enum-datatype/configura
 import { ConfigurableEnumDirective } from "./configurable-enum-directive/configurable-enum.directive";
 import { EditConfigurableEnumComponent } from "./edit-configurable-enum/edit-configurable-enum.component";
 import { DisplayConfigurableEnumComponent } from "./display-configurable-enum/display-configurable-enum.component";
-import { MatLegacyFormFieldModule as MatFormFieldModule } from "@angular/material/legacy-form-field";
-import { MatLegacySelectModule as MatSelectModule } from "@angular/material/legacy-select";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatSelectModule } from "@angular/material/select";
 import { ReactiveFormsModule } from "@angular/forms";
-import { MatLegacyTooltipModule as MatTooltipModule } from "@angular/material/legacy-tooltip";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 /**
  * Provides a generic functionality to define enums (collections of selectable options) in the config database

@@ -17,19 +17,19 @@
 
 import { NgModule } from "@angular/core";
 import { UserAccountComponent } from "./user-account/user-account.component";
-import { MatLegacyButtonModule as MatButtonModule } from "@angular/material/legacy-button";
-import { MatLegacyFormFieldModule as MatFormFieldModule } from "@angular/material/legacy-form-field";
-import { MatLegacyInputModule as MatInputModule } from "@angular/material/legacy-input";
+import { MatButtonModule } from "@angular/material/button";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
 import { CommonModule } from "@angular/common";
-import { MatLegacyTabsModule as MatTabsModule } from "@angular/material/legacy-tabs";
+import { MatTabsModule } from "@angular/material/tabs";
 import { TabStateModule } from "../../utils/tab-state/tab-state.module";
-import { MatLegacyTooltipModule as MatTooltipModule } from "@angular/material/legacy-tooltip";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { Angulartics2Module } from "angulartics2";
 import { ReactiveFormsModule } from "@angular/forms";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { SessionModule } from "../session/session.module";
 import { UserSecurityComponent } from "./user-security/user-security.component";
-import { MatLegacySelectModule as MatSelectModule } from "@angular/material/legacy-select";
+import { MatSelectModule } from "@angular/material/select";
 
 /**
  * Provides a User functionality including user account forms.

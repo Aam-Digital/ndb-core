@@ -10,7 +10,7 @@ import { KeycloakAuthService } from "../keycloak-auth.service";
 import { SessionModule } from "../../../session.module";
 import { MockedTestingModule } from "../../../../../utils/mocked-testing.module";
 import { of, throwError } from "rxjs";
-import { MatLegacySnackBar as MatSnackBar } from "@angular/material/legacy-snack-bar";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { HttpErrorResponse } from "@angular/common/http";
 
 describe("PasswordResetComponent", () => {

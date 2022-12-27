@@ -1,5 +1,5 @@
 import { AfterViewChecked, Component, ViewChild } from "@angular/core";
-import { MatLegacyButton as MatButton } from "@angular/material/legacy-button";
+import { MatButton } from "@angular/material/button";
 
 @Component({
   selector: "app-dialog-close",

@@ -3,10 +3,10 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { FormDialogWrapperComponent } from "./form-dialog-wrapper.component";
 import { FormDialogModule } from "../form-dialog.module";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { MatLegacyDialogRef as MatDialogRef } from "@angular/material/legacy-dialog";
+import { MatDialogRef } from "@angular/material/dialog";
 import { Subject } from "rxjs";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { MatLegacySnackBarModule as MatSnackBarModule } from "@angular/material/legacy-snack-bar";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { Child } from "../../../child-dev-project/children/model/child";
 
 describe("FormDialogWrapperComponent", () => {

@@ -2,14 +2,14 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { EntityFormComponent } from "./entity-form/entity-form.component";
 import { EntityFormService } from "./entity-form.service";
-import { MatLegacyButtonModule as MatButtonModule } from "@angular/material/legacy-button";
+import { MatButtonModule } from "@angular/material/button";
 import { ViewModule } from "../../view/view.module";
 import { PermissionsModule } from "../../permissions/permissions.module";
-import { MatLegacyTooltipModule as MatTooltipModule } from "@angular/material/legacy-tooltip";
-import { MatLegacyFormFieldModule as MatFormFieldModule } from "@angular/material/legacy-form-field";
-import { MatLegacyTabsModule as MatTabsModule } from "@angular/material/legacy-tabs";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatTabsModule } from "@angular/material/tabs";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatLegacyChipsModule as MatChipsModule } from "@angular/material/legacy-chips";
+import { MatChipsModule } from "@angular/material/chips";
 
 @NgModule({
   declarations: [EntityFormComponent],

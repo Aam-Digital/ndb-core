@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { MatLegacyButtonModule as MatButtonModule } from "@angular/material/legacy-button";
-import { MatLegacyDialogModule as MatDialogModule } from "@angular/material/legacy-dialog";
+import { MatButtonModule } from "@angular/material/button";
+import { MatDialogModule } from "@angular/material/dialog";
 import { FormDialogService } from "./form-dialog.service";
 import { FormDialogWrapperComponent } from "./form-dialog-wrapper/form-dialog-wrapper.component";
 import { FormsModule } from "@angular/forms";

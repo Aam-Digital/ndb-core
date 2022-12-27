@@ -12,7 +12,7 @@
     (matChipInputTokenEnd)="select($event)"
   />
 
-  <mat-chip-list #chipList [disabled]="formControl.disabled || loading.value">
+  <mat-chip-grid #chipList [disabled]="formControl.disabled || loading.value">
     <ng-container *ngIf="showEntities">
       <mat-basic-chip
         [selectable]="selectable && formControl.enabled"
@@ -36,7 +36,7 @@
         ></fa-icon>
       </mat-basic-chip>
     </ng-container>
-  </mat-chip-list>
+  </mat-chip-grid>
 
   <mat-autocomplete
     #autoSuggestions="matAutocomplete"

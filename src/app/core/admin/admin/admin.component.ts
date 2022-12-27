@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { AlertService } from "../../alerts/alert.service";
 import { BackupService } from "../services/backup.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
-import { MatLegacySnackBar as MatSnackBar } from "@angular/material/legacy-snack-bar";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { ChildPhotoUpdateService } from "../services/child-photo-update.service";
 import { ConfigService } from "../../config/config.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";

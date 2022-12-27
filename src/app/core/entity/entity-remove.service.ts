@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
 import { EntityMapperService } from "./entity-mapper.service";
-import { MatLegacySnackBar as MatSnackBar } from "@angular/material/legacy-snack-bar";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { Entity } from "./model/entity";
 import { Observable, race, Subject } from "rxjs";
 import { map } from "rxjs/operators";

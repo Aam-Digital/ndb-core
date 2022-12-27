@@ -10,7 +10,7 @@ import { Child } from "../../../../child-dev-project/children/model/child";
 import { EntityFormModule } from "../entity-form.module";
 import { EntityFormService } from "../entity-form.service";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { MatLegacySnackBarModule as MatSnackBarModule } from "@angular/material/legacy-snack-bar";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { AlertsModule } from "../../../alerts/alerts.module";
 import { ReactiveFormsModule } from "@angular/forms";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";

@@ -2,7 +2,7 @@ import { UpdateManagerService } from "./update-manager.service";
 import { discardPeriodicTasks, fakeAsync, tick } from "@angular/core/testing";
 import { ApplicationRef } from "@angular/core";
 import { SwUpdate, VersionEvent } from "@angular/service-worker";
-import { MatLegacySnackBar as MatSnackBar } from "@angular/material/legacy-snack-bar";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { Subject } from "rxjs";
 

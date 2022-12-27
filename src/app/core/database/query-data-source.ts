@@ -1,6 +1,6 @@
 import { CollectionViewer, DataSource } from "@angular/cdk/collections";
 import { BehaviorSubject, Observable } from "rxjs";
-import { MatLegacyPaginator as MatPaginator } from "@angular/material/legacy-paginator";
+import { MatPaginator } from "@angular/material/paginator";
 import { Entity } from "../entity/model/entity";
 import { Database } from "./database";
 

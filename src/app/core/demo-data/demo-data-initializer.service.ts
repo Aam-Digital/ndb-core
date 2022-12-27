@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { DemoDataService } from "./demo-data.service";
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
 import { LocalSession } from "../session/session-service/local-session";
-import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
+import { MatDialog } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
 import { LoggingService } from "../logging/logging.service";
 import { AppSettings } from "../app-config/app-settings";

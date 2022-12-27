@@ -18,7 +18,7 @@
 import { TestBed } from "@angular/core/testing";
 
 import { LatestChangesService } from "./latest-changes.service";
-import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
+import { MatDialog } from "@angular/material/dialog";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { environment } from "../../../environments/environment";
 

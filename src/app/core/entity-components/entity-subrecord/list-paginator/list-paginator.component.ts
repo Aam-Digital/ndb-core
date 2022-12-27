@@ -7,8 +7,8 @@ import {
   AfterViewInit,
   OnInit,
 } from "@angular/core";
-import { MatLegacyPaginator as MatPaginator, LegacyPageEvent as PageEvent } from "@angular/material/legacy-paginator";
-import { MatLegacyTableDataSource as MatTableDataSource } from "@angular/material/legacy-table";
+import { MatPaginator, PageEvent } from "@angular/material/paginator";
+import { MatTableDataSource } from "@angular/material/table";
 import { User } from "../../../user/user";
 import { SessionService } from "../../../session/session-service/session.service";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";

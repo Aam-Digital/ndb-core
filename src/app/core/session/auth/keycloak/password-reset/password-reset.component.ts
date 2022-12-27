@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { AuthService } from "../../auth.service";
 import { KeycloakAuthService } from "../keycloak-auth.service";
 import { FormControl, Validators } from "@angular/forms";
-import { MatLegacySnackBar as MatSnackBar } from "@angular/material/legacy-snack-bar";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
   selector: "app-password-reset",

@@ -13,8 +13,8 @@ import { Entity } from "../../../entity/model/entity";
 import { BehaviorSubject } from "rxjs";
 import { FormControl } from "@angular/forms";
 import { filter, map } from "rxjs/operators";
-import { MatLegacyChipInputEvent as MatChipInputEvent } from "@angular/material/legacy-chips";
-import { MatLegacyAutocompleteTrigger as MatAutocompleteTrigger } from "@angular/material/legacy-autocomplete";
+import { MatChipInputEvent } from "@angular/material/chips";
+import { MatAutocompleteTrigger } from "@angular/material/autocomplete";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 

@@ -13,7 +13,7 @@ import { DataFilter } from "../../entity-components/entity-subrecord/entity-subr
 import { FilterGeneratorService } from "../../entity-components/entity-list/filter-generator.service";
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { FilterOverlayComponent } from "../filter-overlay/filter-overlay.component";
-import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
+import { MatDialog } from "@angular/material/dialog";
 import { getUrlWithoutParams } from "../../../utils/utils";
 
 /**

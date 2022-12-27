@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { MenuItem } from "../../navigation/menu-item";
 import { OnInitDynamicComponent } from "../../view/dynamic-components/on-init-dynamic-component.interface";
-import { MatLegacyTableDataSource as MatTableDataSource } from "@angular/material/legacy-table";
+import { MatTableDataSource } from "@angular/material/table";
 import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
 
 /**
