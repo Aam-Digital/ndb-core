@@ -15,10 +15,10 @@
   <mat-hint align="end">
     Map data from <a target="_blank" href="https://openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a>
   </mat-hint>
-  <button *ngIf="formControl.enabled" (click)="clearInput()" matSuffix mat-icon-button type="button">
+  <button *ngIf="formControl.enabled" (click)="clearInput()" matIconSuffix mat-icon-button type="button">
     <fa-icon icon="x"></fa-icon>
   </button>
-  <button (click)="openMap()" matSuffix mat-icon-button type="button">
+  <button (click)="openMap()" matIconSuffix mat-icon-button type="button">
     <fa-icon icon="map"></fa-icon>
   </button>
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectLocation($event.option.value)">

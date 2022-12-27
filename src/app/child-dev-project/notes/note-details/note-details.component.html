@@ -56,16 +56,16 @@
     <!-- General context of Note -->
     <div class="content-header">
       <mat-form-field>
+        <mat-label>{{dateLabel}}</mat-label>
         <input
           matInput
-          [placeholder]="dateLabel"
           name="date"
           [disabled]="formDialogWrapper.readonly"
           [(ngModel)]="entity.date"
           [matDatepicker]="picker"
         />
         <mat-datepicker-toggle
-          matSuffix
+          matIconSuffix
           [for]="picker"
         ></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
@@ -89,8 +89,8 @@
       </mat-form-field>
 
       <mat-form-field>
+        <mat-label>{{categoryLabel}}</mat-label>
         <mat-select
-          [placeholder]="categoryLabel"
           name="type"
           [(ngModel)]="entity.category"
           [disabled]="formDialogWrapper.readonly"
@@ -123,9 +123,9 @@
     <!-- Primary information of Note -->
     <div class="mat-elevation-z2 flex-column gap-small padding-small">
       <mat-form-field class="input-medium">
+        <mat-label>{{subjectLabel}}</mat-label>
         <input
           matInput
-          [placeholder]="subjectLabel"
           name="subject"
           type="text"
           cdkFocusInitial
@@ -135,6 +135,7 @@
       </mat-form-field>
 
       <mat-form-field>
+        <mat-label>{{textLabel}}</mat-label>
         <textarea
           matInput
           [placeholder]="textLabel"
@@ -194,14 +195,14 @@
     </app-entity-select>
 
     <app-entity-select *ngIf="relatedEntitiesSchema?.additional"
-      class="form-section"
-      [entityType]="relatedEntitiesSchema?.additional"
-      [withPrefix]="true"
-      [(selection)]="entity.relatedEntities"
-      (selectionChange)="entityForm.form.markAsDirty()"
-      [disabled]="formDialogWrapper.readonly"
-      [label]="relatedEntitiesSchema.label"
-      [placeholder]="relatedEntitiesSchema.label"
+                       class="form-section"
+                       [entityType]="relatedEntitiesSchema?.additional"
+                       [withPrefix]="true"
+                       [(selection)]="entity.relatedEntities"
+                       (selectionChange)="entityForm.form.markAsDirty()"
+                       [disabled]="formDialogWrapper.readonly"
+                       [label]="relatedEntitiesSchema.label"
+                       [placeholder]="relatedEntitiesSchema.label"
     >
     </app-entity-select>
 

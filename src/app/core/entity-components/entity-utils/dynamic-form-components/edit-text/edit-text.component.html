@@ -6,7 +6,7 @@
     [title]="label"
     type="text"
   />
-  <mat-error>
+  <mat-error *ngIf="formControl.errors">
     <app-error-hint [form]="formControl"></app-error-hint>
   </mat-error>
 </mat-form-field>

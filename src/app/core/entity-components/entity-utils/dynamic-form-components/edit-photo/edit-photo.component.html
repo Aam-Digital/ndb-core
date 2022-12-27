@@ -9,6 +9,7 @@
   *ngIf="formControl.enabled && editPhotoAllowed"
   class="child-pic-photofile"
 >
+  <mat-label>{{label}}</mat-label>
   <input
     #photoFileInput
     i18n-matTooltip="Tooltip for edit photo component"
@@ -16,9 +17,8 @@
     matInput
     (change)="changeFilename(photoFileInput.value)"
     [value]="formControl.value?.path"
-    [placeholder]="label"
     [title]="label"
     type="text"
   />
-  <fa-icon matSuffix (click)="changeFilename('')" icon="times"></fa-icon>
+  <fa-icon matIconSuffix (click)="changeFilename('')" icon="times"></fa-icon>
 </mat-form-field>

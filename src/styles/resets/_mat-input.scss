@@ -5,7 +5,10 @@
   color: mat.get-color-from-palette(mat.$light-theme-foreground-palette, text) !important;
 }
 
-/* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version. */
-.mat-select-disabled .mat-select-value {
+.mat-mdc-select-disabled .mat-mdc-select-value {
   color: mat.get-color-from-palette(mat.$light-theme-foreground-palette, text) !important;
+}
+
+.mdc-text-field--filled {
+  background: transparent !important;
 }
