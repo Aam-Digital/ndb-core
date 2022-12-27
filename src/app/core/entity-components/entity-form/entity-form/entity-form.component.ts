@@ -1,7 +1,10 @@
-import { Component, Input, ViewEncapsulation } from "@angular/core";
+import { Component, Input, OnInit, ViewEncapsulation } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { FormFieldConfig } from "./FormConfig";
 import { EntityForm } from "../entity-form.service";
+import { EntityMapperService } from "../../../entity/entity-mapper.service";
+import { filter } from "rxjs/operators";
+import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 
 /**
  * A general purpose form component for displaying and editing entities.
@@ -20,7 +23,7 @@ import { EntityForm } from "../entity-form.service";
   // dynamically created)
   encapsulation: ViewEncapsulation.None,
 })
-export class EntityFormComponent {
+export class EntityFormComponent implements OnInit {
   /**
    * The entity which should be displayed and edited
    */
@@ -30,5 +33,46 @@ export class EntityFormComponent {
 
   @Input() columnHeaders?: (string | null)[];
 
+  @Input() saveInProgress = false;
+
   @Input() form: EntityForm<Entity>;
+
+  constructor(
+    private entityMapper: EntityMapperService,
+    private confirmationDialog: ConfirmationDialogService
+  ) {}
+
+  ngOnInit() {
+    this.entityMapper
+      .receiveUpdates(this.entity.getConstructor())
+      .pipe(filter(({ entity }) => entity.getId() === this.entity.getId()))
+      .subscribe(({ entity }) => this.applyChanges(entity));
+  }
+
+  private async applyChanges(entity) {
+    console.log("save in progres", this.saveInProgress, this.columns);
+    if (this.saveInProgress || this.formIsUpToDate(entity)) {
+      // this is the component that currently saves the values -> no need to apply changes.
+      return;
+    }
+    if (
+      this.form.pristine ||
+      (await this.confirmationDialog.getConfirmation(
+        $localize`Load changes?`,
+        $localize`Local changes are in conflict with updated values synced from the server. Do you want the local changes to be overwritten with the latest values?`
+      ))
+    ) {
+      this.form.patchValue(entity as any);
+      this.form.markAsPristine();
+    }
+  }
+
+  private formIsUpToDate(entity: Entity): boolean {
+    return Object.entries(this.form.getRawValue()).every(([key, value]) => {
+      console.log("comparing", entity[key], value, entity[key] === value);
+      return (
+        entity[key] === value || (entity[key] === undefined && value === null)
+      );
+    });
+  }
 }

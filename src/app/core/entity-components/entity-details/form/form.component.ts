@@ -35,7 +35,6 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
   creatingNew = false;
   saveInProgress = false;
   form: EntityForm<Entity>;
-  private initialFormValues: any;
 
   constructor(
     private router: Router,
@@ -60,41 +59,14 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
       [].concat(...this.columns),
       this.entity
     );
-    this.initialFormValues = this.form.getRawValue();
     if (!this.creatingNew) {
       this.form.disable();
     }
-    this.entityMapper
-      .receiveUpdates(this.entity.getConstructor())
-      .pipe(filter(({ entity }) => entity.getId() === this.entity.getId()))
-      .subscribe(({ entity }) => this.applyChanges(entity));
-  }
-
-  private async applyChanges(entity) {
-    if (this.saveInProgress || this.formIsUpToDate(entity)) {
-      // this is the component that currently saves the values -> no need to apply changes.
-      return;
-    }
-    if (
-      this.form.pristine ||
-      (await this.confirmationDialog.getConfirmation(
-        $localize`Load changes?`,
-        $localize`Local changes are in conflict with updated values synced from the server. Do you want the local changes to be overwritten with the latest values?`
-      ))
-    ) {
-      this.resetForm(entity);
-    }
-  }
-
-  private formIsUpToDate(entity: Entity): boolean {
-    return Object.entries(this.form.getRawValue()).every(
-      ([key, value]) =>
-        entity[key] === value || (entity[key] === undefined && value === null)
-    );
   }
 
   async saveClicked() {
     this.saveInProgress = true;
+    console.log("save is true");
     try {
       await this.entityFormService.saveChanges(this.form, this.entity);
       this.form.markAsPristine();
@@ -108,7 +80,10 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
       }
     }
     // Reset state after a short delay
-    setTimeout(() => (this.saveInProgress = false), 1000);
+    setTimeout(() => {
+      this.saveInProgress = false;
+      console.log("save is false");
+    }, 1000);
   }
 
   cancelClicked() {
@@ -121,7 +96,7 @@ export class FormComponent implements OnInitDynamicComponent, OnInit {
 
   private resetForm(entity = this.entity) {
     // Patch form with values from the entity
-    this.form.patchValue(Object.assign(this.initialFormValues, entity));
+    this.form.patchValue(entity as any);
     this.form.markAsPristine();
   }
 }
