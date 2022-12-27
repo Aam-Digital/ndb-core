@@ -38,7 +38,7 @@
         Add New
       </button>
       <button mat-icon-button color="primary" [matMenuTriggerFor]="additional">
-        <fa-icon class="standard-icon" icon="ellipsis-v"></fa-icon>
+        <fa-icon icon="ellipsis-v"></fa-icon>
       </button>
     </div>
   </div>
@@ -82,7 +82,7 @@
     <div *ngTemplateOutlet="filterDialog"></div>
 
     <button mat-icon-button color="primary" [matMenuTriggerFor]="additional">
-      <fa-icon icon="ellipsis-v" class="standard-icon"></fa-icon>
+      <fa-icon icon="ellipsis-v"></fa-icon>
     </button>
   </div>
 
@@ -149,7 +149,7 @@
       }"
     >
       <fa-icon
-        class="standard-icon color-accent"
+        class="color-accent"
         aria-label="add element"
         icon="plus-circle"
       ></fa-icon>
@@ -161,7 +161,7 @@
     <button mat-menu-item (click)="filterComponent.openFilterOverlay()">
       <fa-icon
         aria-label="filter"
-        class="standard-icon color-accent"
+        class="color-accent"
         icon="filter"
       >
       </fa-icon>
@@ -177,7 +177,7 @@
     [filename]="listName.replace(' ', '')"
   >
     <fa-icon
-      class="standard-icon color-accent"
+      class="color-accent"
       aria-label="download csv"
       icon="download"
       angulartics2On="click"

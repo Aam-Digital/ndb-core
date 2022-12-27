@@ -28,7 +28,7 @@
         [matMenuTriggerFor]="additional"
         color="primary"
       >
-        <fa-icon icon="ellipsis-v" class="standard-icon"></fa-icon>
+        <fa-icon icon="ellipsis-v"></fa-icon>
       </button>
       <mat-menu
         #additional
@@ -41,7 +41,7 @@
           [filename]="'event_' + entity.subject.replace(' ', '-') + '_' + (entity.date | date:'YYYY-MM-dd')"
         >
           <fa-icon
-            class="standard-icon color-accent"
+            class="color-accent"
             aria-label="download csv"
             icon="download"
             angulartics2On="click"
