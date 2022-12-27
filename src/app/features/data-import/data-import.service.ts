@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Database } from "../../core/database/database";
 import { BackupService } from "../../core/admin/services/backup.service";
 import { ConfirmationDialogService } from "../../core/confirmation-dialog/confirmation-dialog.service";
-import { MatLegacySnackBar as MatSnackBar } from "@angular/material/legacy-snack-bar";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { ImportMetaData } from "./import-meta-data.type";
 import { v4 as uuid } from "uuid";
 import { Entity } from "../../core/entity/model/entity";

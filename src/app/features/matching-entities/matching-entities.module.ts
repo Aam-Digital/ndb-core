@@ -1,12 +1,12 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatchingEntitiesComponent } from "./matching-entities/matching-entities.component";
-import { MatLegacyCardModule as MatCardModule } from "@angular/material/legacy-card";
+import { MatCardModule } from "@angular/material/card";
 import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
-import { MatLegacyButtonModule as MatButtonModule } from "@angular/material/legacy-button";
+import { MatButtonModule } from "@angular/material/button";
 import { ViewModule } from "../../core/view/view.module";
-import { MatLegacyTableModule as MatTableModule } from "@angular/material/legacy-table";
-import { MatLegacyTooltipModule as MatTooltipModule } from "@angular/material/legacy-tooltip";
+import { MatTableModule } from "@angular/material/table";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { FilterModule } from "../../core/filter/filter.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EntityUtilsModule } from "../../core/entity-components/entity-utils/entity-utils.module";

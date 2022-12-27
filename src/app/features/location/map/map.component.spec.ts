@@ -11,7 +11,7 @@ import * as L from "leaflet";
 import { Coordinates } from "../coordinates";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { MapConfig } from "../map-config";
-import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
+import { MatDialog } from "@angular/material/dialog";
 import { MapPopupConfig } from "../map-popup/map-popup.component";
 
 describe("MapComponent", () => {

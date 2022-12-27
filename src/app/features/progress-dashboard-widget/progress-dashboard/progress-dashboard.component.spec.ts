@@ -12,7 +12,7 @@ import { AlertService } from "../../../core/alerts/alert.service";
 import { ProgressDashboardWidgetModule } from "../progress-dashboard-widget.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { ProgressDashboardConfig } from "./progress-dashboard-config";
-import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
+import { MatDialog } from "@angular/material/dialog";
 import { BehaviorSubject, Subject } from "rxjs";
 import { take } from "rxjs/operators";
 import { SessionService } from "../../../core/session/session-service/session.service";

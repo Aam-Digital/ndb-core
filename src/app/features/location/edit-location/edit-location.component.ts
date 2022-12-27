@@ -6,7 +6,7 @@ import {
 } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
 import { BehaviorSubject, concatMap, of, Subject } from "rxjs";
 import { catchError, debounceTime, filter, map, tap } from "rxjs/operators";
-import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
+import { MatDialog } from "@angular/material/dialog";
 import {
   MapPopupComponent,
   MapPopupConfig,

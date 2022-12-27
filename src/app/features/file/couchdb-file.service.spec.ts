@@ -8,7 +8,7 @@ import {
   HttpEventType,
   HttpStatusCode,
 } from "@angular/common/http";
-import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
+import { MatDialog } from "@angular/material/dialog";
 import {
   BehaviorSubject,
   EMPTY,
@@ -20,7 +20,7 @@ import {
 import { ShowFileComponent } from "./show-file/show-file.component";
 import { Entity } from "../../core/entity/model/entity";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
-import { MatLegacySnackBar as MatSnackBar } from "@angular/material/legacy-snack-bar";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { UpdatedEntity } from "../../core/entity/model/entity-update";
 import {
   entityRegistry,

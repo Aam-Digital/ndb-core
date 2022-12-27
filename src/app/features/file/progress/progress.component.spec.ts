@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ProgressComponent } from "./progress.component";
-import { MAT_LEGACY_SNACK_BAR_DATA as MAT_SNACK_BAR_DATA } from "@angular/material/legacy-snack-bar";
+import { MAT_SNACK_BAR_DATA } from "@angular/material/snack-bar";
 import { of } from "rxjs";
-import { MatLegacyProgressBarModule as MatProgressBarModule } from "@angular/material/legacy-progress-bar";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
 
 describe("ProgressComponent", () => {
   let component: ProgressComponent;

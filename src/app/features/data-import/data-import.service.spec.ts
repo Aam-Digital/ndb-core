@@ -2,7 +2,7 @@ import { TestBed, waitForAsync } from "@angular/core/testing";
 import { DataImportService } from "./data-import.service";
 import { Database } from "../../core/database/database";
 import { ConfirmationDialogService } from "../../core/confirmation-dialog/confirmation-dialog.service";
-import { MatLegacySnackBar as MatSnackBar, MatLegacySnackBarRef as MatSnackBarRef } from "@angular/material/legacy-snack-bar";
+import { MatSnackBar, MatSnackBarRef } from "@angular/material/snack-bar";
 import { NEVER, of } from "rxjs";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { ParseResult } from "ngx-papaparse";

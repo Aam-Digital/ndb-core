@@ -16,12 +16,12 @@ import {
   shareReplay,
 } from "rxjs/operators";
 import { Observable, of } from "rxjs";
-import { MatLegacyDialog as MatDialog } from "@angular/material/legacy-dialog";
+import { MatDialog } from "@angular/material/dialog";
 import { ShowFileComponent } from "./show-file/show-file.component";
 import { Entity } from "../../core/entity/model/entity";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { FileService } from "./file.service";
-import { MatLegacySnackBar as MatSnackBar } from "@angular/material/legacy-snack-bar";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { ProgressComponent } from "./progress/progress.component";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { LoggingService } from "../../core/logging/logging.service";

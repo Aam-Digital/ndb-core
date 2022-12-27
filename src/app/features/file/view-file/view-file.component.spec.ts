@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ViewFileComponent } from "./view-file.component";
 import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
-import { MatLegacyButtonHarness as MatButtonHarness } from "@angular/material/legacy-button/testing";
+import { MatButtonHarness } from "@angular/material/button/testing";
 import { Entity } from "../../../core/entity/model/entity";
 import { FileService } from "../file.service";
 

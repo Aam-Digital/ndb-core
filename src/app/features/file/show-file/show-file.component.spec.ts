@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ShowFileComponent } from "./show-file.component";
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from "@angular/material/legacy-dialog";
+import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
-import { MatLegacyButtonHarness as MatButtonHarness } from "@angular/material/legacy-button/testing";
+import { MatButtonHarness } from "@angular/material/button/testing";
 
 describe("ShowFileComponent", () => {
   let component: ShowFileComponent;
