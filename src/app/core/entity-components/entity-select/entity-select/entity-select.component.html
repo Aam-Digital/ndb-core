@@ -14,8 +14,8 @@
 
   <mat-chip-grid #chipList [disabled]="formControl.disabled || loading.value">
     <ng-container *ngIf="showEntities">
-      <mat-basic-chip
-        [selectable]="selectable && formControl.enabled"
+      <mat-chip-row
+        [editable]="selectable && formControl.enabled"
         [removable]="removable && formControl.enabled"
         *ngFor="let entity of selectedEntities"
         class="chip"
@@ -34,7 +34,7 @@
           prefix="far"
           (click)="unselectEntity(entity)"
         ></fa-icon>
-      </mat-basic-chip>
+      </mat-chip-row>
     </ng-container>
   </mat-chip-grid>
 

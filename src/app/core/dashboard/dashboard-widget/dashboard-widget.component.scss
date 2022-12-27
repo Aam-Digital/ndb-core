@@ -42,7 +42,7 @@ $border-radius-card: 4px;
 }
 
 .widget-headline {
-  grid-area:headline;
+  grid-area: headline;
   text-align: end;
   place-self: end;
 
@@ -78,10 +78,6 @@ $border-radius-card: 4px;
 
 /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version.
    */
-/* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version.
-   */
-/* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version.
-   */
 .mat-button-wrapper {
   display: flex;
 }
@@ -96,12 +92,12 @@ $border-radius-card: 4px;
 
 // Map containing the colors that belong to a certain theme
 $themes: (
-  general    : #555555,
-  child      : #1565C0,
+  general : #555555,
+  child : #1565C0,
   attendance : #00838F,
-  note       : #008f53,
-  class      : #2E7D32,
-  school     : #9E9D24,
+  note : #008f53,
+  class : #2E7D32,
+  school : #9E9D24,
 );
 
 @each $ident, $color in $themes {

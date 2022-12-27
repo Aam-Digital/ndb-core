@@ -1,10 +1,11 @@
 @use "@angular/material" as mat;
 
 /* display disabled form values in black for better readability as we disable forms by default */
-.mat-input-element:disabled {
+.mat-mdc-input-element:disabled {
   color: mat.get-color-from-palette(mat.$light-theme-foreground-palette, text) !important;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version. */
 .mat-select-disabled .mat-select-value {
   color: mat.get-color-from-palette(mat.$light-theme-foreground-palette, text) !important;
 }
