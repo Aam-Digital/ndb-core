@@ -1,7 +1,7 @@
 @use "src/styles/mixins/grid-layout";
 
 .entity-form-columns {
-  @include grid-layout.adaptive($min-block-width: 330px, $max-screen-width: 414px);
+  @include grid-layout.adaptive($min-block-width: 250px, $max-screen-width: 414px);
 }
 
 .entity-form-cell {
