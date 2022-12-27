@@ -1,7 +1,5 @@
 @use "src/styles/variables/sizes";
 
-// Usually, this is the `:host` pseudo-selector but since the
-// view encapsulation is None, this has to be the name
 :host {
   display: flex;
   flex-direction: column;

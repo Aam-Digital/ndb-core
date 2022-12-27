@@ -90,6 +90,7 @@ export class FormComponent<E extends Entity>
   private resetForm(entity = this.entity) {
     // Patch form with values from the entity
     this.form.patchValue(entity as any);
+    // Clear values that are not yet present on the entity
     const newKeys = Object.keys(
       _.omit(this.form.controls, Object.keys(this.entity))
     );

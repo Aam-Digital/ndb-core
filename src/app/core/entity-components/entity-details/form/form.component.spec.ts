@@ -90,7 +90,6 @@ describe("FormComponent", () => {
     component.form.get("name").setValue("my name");
     component.cancelClicked();
 
-    console.log("value", component.form.getRawValue(), component.entity);
     expect(component.form.get("name")).toHaveValue(null);
   });
 

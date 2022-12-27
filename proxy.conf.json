@@ -1,6 +1,6 @@
 {
   "/db": {
-    "target": "http://localhost:3000",
+    "target": "https://dev.aam-digital.net/db",
     "secure": true,
     "logLevel": "debug",
     "changeOrigin": true,

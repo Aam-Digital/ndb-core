@@ -23,17 +23,17 @@ import { ConfirmationDialogService } from "../../../confirmation-dialog/confirma
   // dynamically created)
   encapsulation: ViewEncapsulation.None,
 })
-export class EntityFormComponent<E extends Entity = Entity> implements OnInit {
+export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
   /**
    * The entity which should be displayed and edited
    */
-  @Input() entity: E;
+  @Input() entity: T;
 
   @Input() columns: FormFieldConfig[][];
 
   @Input() columnHeaders?: (string | null)[];
 
-  @Input() form: EntityForm<E>;
+  @Input() form: EntityForm<T>;
 
   constructor(
     private entityMapper: EntityMapperService,
@@ -47,7 +47,7 @@ export class EntityFormComponent<E extends Entity = Entity> implements OnInit {
       .subscribe(({ entity }) => this.applyChanges(entity));
   }
 
-  private async applyChanges(entity) {
+  private async applyChanges(entity: Entity) {
     if (this.formIsUpToDate(entity)) {
       // this is the component that currently saves the values -> no need to apply changes.
       return;
