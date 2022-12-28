@@ -8,29 +8,17 @@
   margin-top: sizes.$large;
 }
 
-.mat-mdc-card {
-  display: grid;
+.mat-mdc-card[disabled] {
+  background-color: mat.get-color-from-palette(mat.$grey-palette, $hue: 400, $opacity: 0.1);
+}
 
-  grid-template-rows:
-    auto  // Heading: takes its intrinsic space (but no more)
-    1fr   // Content: takes all available space ('grows')
-    auto; // Button: takes its intrinsic space (but no more)
+mat-card-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
 
-  // choose a very opaque background when the card is disabled
-  &[disabled] {
-    background-color: mat.get-color-from-palette(mat.$grey-palette, $hue: 400, $opacity: 0.1);
-  }
-
-  // Content: adapt typography
-  > p {
-    @include custom-typography.text-secondary();
-  }
-
-  // Add some margin to the top to make it distinct from the content
   > button {
-    // we can't simply use `margin-top: ...` because it is overridden
-    // by the native mat-button
-    margin: sizes.$regular 0 0 0;
     width: 100%;
   }
 }
