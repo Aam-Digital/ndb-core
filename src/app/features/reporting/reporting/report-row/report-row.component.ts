@@ -20,6 +20,7 @@ export class ReportRowComponent {
   @Input() set rows(rows: ReportRow[]) {
     this.dataSource.data = rows;
   }
+
   displayedColumns: string[] = ["name", "count"];
 
   getGroupedByString = getGroupingInformationString;

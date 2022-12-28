@@ -181,7 +181,7 @@ const reportingService = {
 };
 
 export default {
-  title: "Features/Reporting",
+  title: "Features/Reporting/Report",
   component: ReportingComponent,
   decorators: [
     moduleMetadata({
