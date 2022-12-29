@@ -5,6 +5,7 @@ import { EntityForm } from "../entity-form.service";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { filter } from "rxjs/operators";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * A general purpose form component for displaying and editing entities.
@@ -15,6 +16,7 @@ import { ConfirmationDialogService } from "../../../confirmation-dialog/confirma
  * This component can be used directly or in a popup.
  * Inside the entity details component use the FormComponent which is registered as dynamic component.
  */
+@UntilDestroy()
 @Component({
   selector: "app-entity-form",
   templateUrl: "./entity-form.component.html",
@@ -43,7 +45,10 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
   ngOnInit() {
     this.entityMapper
       .receiveUpdates(this.entity.getConstructor())
-      .pipe(filter(({ entity }) => entity.getId() === this.entity.getId()))
+      .pipe(
+        filter(({ entity }) => entity.getId() === this.entity.getId()),
+        untilDestroyed(this)
+      )
       .subscribe(({ entity }) => this.applyChanges(entity));
   }
 
