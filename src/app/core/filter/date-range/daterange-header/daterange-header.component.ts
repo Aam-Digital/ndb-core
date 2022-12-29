@@ -2,6 +2,7 @@ import {
   ChangeDetectorRef,
   Component,
   Inject,
+  Input,
   OnDestroy,
   OnInit,
 } from "@angular/core";
@@ -11,6 +12,7 @@ import {
   MAT_DATE_FORMATS,
 } from "@angular/material/core";
 import { MatCalendar } from "@angular/material/datepicker";
+import { DateRangeFilterConfig } from "app/core/entity-components/entity-list/EntityListConfig";
 import { Subject, takeUntil } from "rxjs";
 
 @Component({
@@ -20,6 +22,7 @@ import { Subject, takeUntil } from "rxjs";
 })
 export class DaterangeHeaderComponent<D> implements OnDestroy {
   private readonly destroy$ = new Subject<void>();
+  @Input() dateRangeFilterConfig: DateRangeFilterConfig;
 
   constructor(
     public calendar: MatCalendar<D>, // calendar instance of picker

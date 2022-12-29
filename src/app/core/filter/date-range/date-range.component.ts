@@ -1,18 +1,13 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
-import {
-  DateRangeFilterConfig,
-  FilterConfig,
-} from "app/core/entity-components/entity-list/EntityListConfig";
+import { MatDialog } from "@angular/material/dialog";
 import { FilterComponentSettings } from "app/core/entity-components/entity-list/filter-component.settings";
 import { DataFilter } from "app/core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { Entity } from "app/core/entity/model/entity";
 import moment from "moment";
-import {
-  FilterSelection,
-  FilterSelectionOption,
-} from "../filter-selection/filter-selection";
+import { FilterSelectionOption } from "../filter-selection/filter-selection";
 import { DaterangeHeaderComponent } from "./daterange-header/daterange-header.component";
+import { DaterangePanelComponent } from "./daterange-panel/daterange-panel.component";
 
 @Component({
   selector: "app-date-range",
@@ -31,6 +26,8 @@ export class DateRangeComponent<T extends Entity> {
   @Output() selectedOptionChange = new EventEmitter<string>();
 
   @Input() dateRangeFilterConfig: FilterComponentSettings<T>;
+
+  constructor(private dialog: MatDialog) {}
 
   apply() {
     let option: FilterSelectionOption<T> =
@@ -58,5 +55,22 @@ export class DateRangeComponent<T extends Entity> {
         $lte: endString,
       },
     };
+  }
+
+  openDialog() {
+    this.dialog
+      .open(DaterangePanelComponent, {
+        width: "40%",
+        height: "40%",
+        data: { fromDate: this.fromDate, toDate: this.toDate },
+      })
+      .afterClosed()
+      .subscribe((res) => {
+        if (res) {
+          this.fromDate = res.start;
+          this.toDate = res.end;
+          this.apply();
+        }
+      });
   }
 }

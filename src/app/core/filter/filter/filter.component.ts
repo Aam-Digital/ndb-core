@@ -101,8 +101,6 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
         ),
       {} as DataFilter<T>
     );
-    console.log(this.filterSelections);
-    console.log(this.filterObj);
     this.filterObjChange.emit(this.filterObj);
   }
 

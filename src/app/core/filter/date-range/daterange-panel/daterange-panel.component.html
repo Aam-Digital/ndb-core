@@ -7,4 +7,9 @@
   >
     {{ item }}
   </button>
+  <mat-calendar
+    (selectedChange)="selectedRangeChange($event)"
+    [selected]="selectedRangeValue"
+  >
+  </mat-calendar>
 </mat-card>

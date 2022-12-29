@@ -2,7 +2,7 @@
   <mat-label>Enter a date range</mat-label>
 
   <!-- the dual input field: -->
-  <mat-date-range-input [rangePicker]="picker">
+  <mat-date-range-input>
     <!-- start part -->
     <input
       matStartDate
@@ -20,11 +20,8 @@
   </mat-date-range-input>
 
   <!-- the picker trigger button -->
-  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-
-  <!-- the actual picker -->
-  <mat-date-range-picker
-    #picker
-    [calendarHeaderComponent]="DaterangeHeaderComponent"
-  ></mat-date-range-picker>
+  <mat-datepicker-toggle
+    matSuffix
+    (click)="openDialog()"
+  ></mat-datepicker-toggle>
 </mat-form-field>
