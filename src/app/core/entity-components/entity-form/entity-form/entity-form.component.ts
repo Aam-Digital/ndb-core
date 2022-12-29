@@ -1,19 +1,11 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  ViewEncapsulation,
-} from "@angular/core";
+import { Component, Input, OnInit, ViewEncapsulation } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { FormFieldConfig } from "./FormConfig";
-import { EntityForm, EntityFormService } from "../entity-form.service";
-import { AlertService } from "../../../alerts/alert.service";
-import { InvalidFormFieldError } from "../invalid-form-field.error";
+import { EntityForm } from "../entity-form.service";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { filter } from "rxjs/operators";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * A general purpose form component for displaying and editing entities.
@@ -24,6 +16,7 @@ import { ConfirmationDialogService } from "../../../confirmation-dialog/confirma
  * This component can be used directly or in a popup.
  * Inside the entity details component use the FormComponent which is registered as dynamic component.
  */
+@UntilDestroy()
 @Component({
   selector: "app-entity-form",
   templateUrl: "./entity-form.component.html",
@@ -38,66 +31,29 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
    */
   @Input() entity: T;
 
-  /**
-   * Whether the form should be opened in editing mode or not
-   */
-  @Input() editing = false;
+  @Input() columns: FormFieldConfig[][];
 
-  /**
-   * The form field definitions. Either as a string or as a FormFieldConfig object.
-   * Missing information will be fetched from the entity schema definition.
-   * @param columns The columns which should be displayed
-   */
-  @Input() set columns(columns: (FormFieldConfig | string)[][]) {
-    this._columns = columns.map((row) =>
-      row.map((field) => {
-        if (typeof field === "string") {
-          return { id: field };
-        } else {
-          return field;
-        }
-      })
-    );
-  }
-
-  _columns: FormFieldConfig[][] = [];
   @Input() columnHeaders?: (string | null)[];
 
-  /**
-   * This will be emitted whenever changes have been successfully saved to the entity.
-   */
-  @Output() save = new EventEmitter<T>();
-
-  /**
-   * This will be emitted whenever the cancel button is pressed.
-   */
-  @Output() cancel = new EventEmitter<void>();
-
-  form: EntityForm<T>;
-
-  private saveInProgress = false;
-  private initialFormValues: any;
+  @Input() form: EntityForm<T>;
 
   constructor(
-    private entityFormService: EntityFormService,
-    private alertService: AlertService,
     private entityMapper: EntityMapperService,
     private confirmationDialog: ConfirmationDialogService
   ) {}
 
   ngOnInit() {
-    this.buildFormConfig();
-    if (!this.editing) {
-      this.form.disable();
-    }
     this.entityMapper
       .receiveUpdates(this.entity.getConstructor())
-      .pipe(filter(({ entity }) => entity.getId() === this.entity.getId()))
+      .pipe(
+        filter(({ entity }) => entity.getId() === this.entity.getId()),
+        untilDestroyed(this)
+      )
       .subscribe(({ entity }) => this.applyChanges(entity));
   }
 
-  private async applyChanges(entity) {
-    if (this.saveInProgress || this.formIsUpToDate(entity)) {
+  private async applyChanges(entity: Entity) {
+    if (this.formIsUpToDate(entity)) {
       // this is the component that currently saves the values -> no need to apply changes.
       return;
     }
@@ -108,57 +64,18 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
         $localize`Local changes are in conflict with updated values synced from the server. Do you want the local changes to be overwritten with the latest values?`
       ))
     ) {
-      this.resetForm(entity);
-    }
-  }
-
-  async saveForm(): Promise<void> {
-    this.saveInProgress = true;
-    try {
-      await this.entityFormService.saveChanges(this.form, this.entity);
+      this.form.patchValue(entity as any);
       this.form.markAsPristine();
-      this.save.emit(this.entity);
-      this.form.disable();
-    } catch (err) {
-      if (!(err instanceof InvalidFormFieldError)) {
-        this.alertService.addDanger(err.message);
-      }
     }
-    // Reset state after a short delay
-    setTimeout(() => (this.saveInProgress = false), 1000);
   }
 
-  cancelClicked() {
-    this.cancel.emit();
-    this.resetForm();
-    this.form.disable();
-  }
-
-  private buildFormConfig() {
-    const flattenedFormFields = new Array<FormFieldConfig>().concat(
-      ...this._columns
-    );
-    this.entityFormService.extendFormFieldConfig(
-      flattenedFormFields,
-      this.entity.getConstructor()
-    );
-    this.form = this.entityFormService.createFormGroup(
-      flattenedFormFields,
-      this.entity
-    );
-    this.initialFormValues = this.form.getRawValue();
-  }
-
-  private resetForm(entity = this.entity) {
-    // Patch form with values from the entity
-    this.form.patchValue(Object.assign(this.initialFormValues, entity));
-    this.form.markAsPristine();
-  }
-
-  private formIsUpToDate(entity: T): boolean {
-    return Object.entries(this.form.getRawValue()).every(
-      ([key, value]) =>
-        entity[key] === value || (entity[key] === undefined && value === null)
-    );
+  private formIsUpToDate(entity: Entity): boolean {
+    return Object.entries(this.form.getRawValue()).every(([key, value]) => {
+      return (
+        (entity[key] === undefined && value === null) ||
+        entity[key] === value ||
+        JSON.stringify(entity[key]) === JSON.stringify(value)
+      );
+    });
   }
 }
