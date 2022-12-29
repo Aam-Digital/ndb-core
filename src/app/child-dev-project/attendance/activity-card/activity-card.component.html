@@ -1,21 +1,25 @@
 <mat-card
-  appearance="outlined"
   appBorderHighlight
   [borderClass]="'border-' + warningLevel"
   class="main-card"
 >
-  <h3 class="card-title">{{event?.subject}}</h3>
-  <p class="text-secondary">
-    <fa-icon icon="child"></fa-icon> {{event.children.length}} {
-      event.children.length, plural, one {participant} other {participants}
+  <mat-card-header>
+    <mat-card-title>{{event?.subject}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="text-secondary">
+    <fa-icon icon="child"></fa-icon>
+    {{event.children.length}} {
+    event.children.length, plural, one {participant} other {participants}
     }
     <ng-container *ngIf="!recurring">
-      <span class="sep">/</span><fa-icon icon="calendar"></fa-icon> {{
+      <span class="sep">/</span>
+      <fa-icon icon="calendar"></fa-icon>
+      {{
       event.date | date: "shortDate"
       }}
     </ng-container>
     <span class="sep">/</span>{{
-      event.category?.label
+    event.category?.label
     }}
-  </p>
+  </mat-card-content>
 </mat-card>
