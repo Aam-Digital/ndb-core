@@ -15,11 +15,8 @@ describe("EntityFormComponent", () => {
 
   let mockConfirmation: jasmine.SpyObj<ConfirmationDialogService>;
 
-  const testChild = new Child();
-
   beforeEach(waitForAsync(() => {
     mockConfirmation = jasmine.createSpyObj(["getConfirmation"]);
-
     TestBed.configureTestingModule({
       imports: [
         EntityFormModule,
@@ -33,11 +30,12 @@ describe("EntityFormComponent", () => {
   }));
 
   beforeEach(() => {
-    testChild.name = "Test Name";
     fixture = TestBed.createComponent(EntityFormComponent<Child>);
     component = fixture.componentInstance;
-    component.entity = testChild;
-    component.columns = [[{ id: "name" }]];
+    component.entity = new Child();
+    component.columns = [
+      [{ id: "name" }, { id: "projectNumber" }, { id: "photo" }],
+    ];
     component.form = TestBed.inject(EntityFormService).createFormGroup(
       component.columns[0],
       component.entity
@@ -49,29 +47,69 @@ describe("EntityFormComponent", () => {
     expect(component).toBeTruthy();
   });
 
+  it("should not change anything if changed entity has same values as form", () => {
+    return expectApplyChangesPopup(
+      "not-shown",
+      { name: "updated" },
+      { name: "updated" },
+      { name: "updated" }
+    );
+  });
+
   it("should overwrite form if user confirms it", async () => {
-    mockConfirmation.getConfirmation.and.resolveTo(true);
-    component.form.get("name").setValue("Other Name");
-    component.form.markAsDirty();
-    testChild.name = "Changed Name";
-
-    const entityMapper = TestBed.inject(EntityMapperService);
-    await entityMapper.save(testChild);
-
-    expect(component.form.get("name")).toHaveValue("Changed Name");
-    expect(mockConfirmation.getConfirmation).toHaveBeenCalled();
+    const formValues = { name: "other" };
+    const remoteValues = { name: "changed" };
+    await expectApplyChangesPopup(
+      "yes",
+      formValues,
+      remoteValues,
+      remoteValues
+    );
   });
 
   it("should not overwrite form if user declines it", async () => {
-    mockConfirmation.getConfirmation.and.resolveTo(false);
-    component.form.get("name").setValue("Other Name");
-    component.form.markAsDirty();
-    testChild.name = "Changed Name";
+    const formValues = { name: "other" };
+    const remoteValues = { name: "changed" };
+    await expectApplyChangesPopup("no", formValues, remoteValues, formValues);
+  });
+
+  it("should overwrite without popup for changes affecting untouched fields", async () => {
+    const formValues = { projectNumber: "other" };
+    const remoteValues = { name: "changed", _rev: "new rev" };
+    await expectApplyChangesPopup("not-shown", formValues, remoteValues, {
+      projectNumber: "other",
+      name: "changed",
+      _rev: "new rev",
+    });
+  });
+
+  async function expectApplyChangesPopup(
+    popupAction: "not-shown" | "yes" | "no",
+    formChanges: Partial<Child>,
+    remoteChanges: Partial<Child>,
+    expectedFormValues: Partial<Child>
+  ) {
+    mockConfirmation.getConfirmation.and.resolveTo(popupAction === "yes");
+    for (const c in formChanges) {
+      component._form.get(c).setValue(formChanges[c]);
+      component._form.get(c).markAsDirty();
+    }
+    const updatedChild = new Child(component.entity.getId());
+    for (const c in remoteChanges) {
+      updatedChild[c] = remoteChanges[c];
+    }
 
     const entityMapper = TestBed.inject(EntityMapperService);
-    await entityMapper.save(testChild);
+    await entityMapper.save(updatedChild);
 
-    expect(component.form.get("name")).toHaveValue("Other Name");
-    expect(mockConfirmation.getConfirmation).toHaveBeenCalled();
-  });
+    for (const v in expectedFormValues) {
+      const form = component._form.get(v);
+      if (form) {
+        expect(form).toHaveValue(expectedFormValues[v]);
+      }
+    }
+    expect(mockConfirmation.getConfirmation.calls.any()).toBe(
+      popupAction !== "not-shown"
+    );
+  }
 });

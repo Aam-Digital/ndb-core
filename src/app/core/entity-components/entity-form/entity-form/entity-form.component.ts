@@ -35,7 +35,13 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
 
   @Input() columnHeaders?: (string | null)[];
 
-  @Input() form: EntityForm<T>;
+  @Input() set form(form: EntityForm<T>) {
+    this._form = form;
+    this.initialFormValues = form.getRawValue();
+  }
+
+  _form: EntityForm<T>;
+  initialFormValues: any;
 
   constructor(
     private entityMapper: EntityMapperService,
@@ -52,30 +58,60 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
       .subscribe(({ entity }) => this.applyChanges(entity));
   }
 
-  private async applyChanges(entity: Entity) {
+  private async applyChanges(entity: T) {
     if (this.formIsUpToDate(entity)) {
       // this is the component that currently saves the values -> no need to apply changes.
       return;
     }
     if (
-      this.form.pristine ||
+      this.changesOnlyAffectPristineFields(entity) ||
       (await this.confirmationDialog.getConfirmation(
         $localize`Load changes?`,
         $localize`Local changes are in conflict with updated values synced from the server. Do you want the local changes to be overwritten with the latest values?`
       ))
     ) {
-      this.form.patchValue(entity as any);
-      this.form.markAsPristine();
+      Object.assign(this.initialFormValues, entity);
+      this._form.patchValue(entity as any);
     }
   }
 
-  private formIsUpToDate(entity: Entity): boolean {
-    return Object.entries(this.form.getRawValue()).every(([key, value]) => {
-      return (
-        (entity[key] === undefined && value === null) ||
-        entity[key] === value ||
-        JSON.stringify(entity[key]) === JSON.stringify(value)
-      );
+  private changesOnlyAffectPristineFields(updatedEntity: T) {
+    if (this._form.pristine) {
+      return true;
+    }
+
+    const dirtyFields = Object.entries(this._form.controls).filter(
+      ([_, form]) => form.dirty
+    );
+    for (const [key] of dirtyFields) {
+      if (
+        this.entityEqualsFormValue(
+          updatedEntity[key],
+          this.initialFormValues[key]
+        )
+      ) {
+        // keep our pending form field changes
+        delete updatedEntity[key];
+      } else {
+        // dirty form field has conflicting change
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  private formIsUpToDate(entity: T): boolean {
+    return Object.entries(this._form.getRawValue()).every(([key, value]) => {
+      return this.entityEqualsFormValue(entity[key], value);
     });
+  }
+
+  private entityEqualsFormValue(entityValue, formValue) {
+    return (
+      (entityValue === undefined && formValue === null) ||
+      entityValue === formValue ||
+      JSON.stringify(entityValue) === JSON.stringify(formValue)
+    );
   }
 }
