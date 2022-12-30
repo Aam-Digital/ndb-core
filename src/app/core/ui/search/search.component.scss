@@ -4,3 +4,20 @@
   background-color: mat.get-color-from-palette(mat.$light-theme-background-palette, status-bar);
   font-style: italic;
 }
+
+.search-input, .search-input::placeholder {
+  color: white !important;
+}
+
+
+.searchbar {
+  margin-top: 10px;
+
+  .mat-mdc-form-field-focus-overlay {
+    background-color: transparent !important;
+  }
+
+  .mdc-text-field--filled .mdc-line-ripple::before, .mdc-text-field--active .mdc-line-ripple::before, .mdc-text-field--filled .mdc-line-ripple::after {
+    border-bottom-color: white !important;
+  }
+}
