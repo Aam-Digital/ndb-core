@@ -5,7 +5,6 @@ import { MatCardModule } from "@angular/material/card";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Note } from "../../notes/model/note";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { BorderHighlightDirective } from "../../../core/common-components/border-highlight/border-highlight.directive";
 

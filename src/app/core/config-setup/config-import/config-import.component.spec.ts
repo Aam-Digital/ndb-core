@@ -2,8 +2,6 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ConfigImportComponent } from "./config-import.component";
 import { ConfigImportParserService } from "../config-import-parser.service";
-import { InputFileComponent } from "../../../features/data-import/input-file/input-file.component";
-import { MatFormFieldModule } from "@angular/material/form-field";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { ConfigSetupModule } from "../config-setup.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
