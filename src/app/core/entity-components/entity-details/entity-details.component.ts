@@ -80,27 +80,21 @@ export class EntityDetailsComponent {
   }
 
   private setInitialPanelsConfig() {
-    this.panels = this.config.panels.map((p) => {
-      return {
-        title: p.title,
-        components: [],
-      };
-    });
+    this.panels = this.config.panels.map((p) => ({
+      title: p.title,
+      components: [],
+    }));
   }
 
   private setFullPanelsConfig() {
-    this.panels = this.config.panels.map((p) => {
-      return {
-        title: p.title,
-        components: p.components.map((c) => {
-          return {
-            title: c.title,
-            component: c.component,
-            config: this.getPanelConfig(c),
-          };
-        }),
-      };
-    });
+    this.panels = this.config.panels.map((p) => ({
+      title: p.title,
+      components: p.components.map((c) => ({
+        title: c.title,
+        component: c.component,
+        config: this.getPanelConfig(c),
+      })),
+    }));
     this.isLoading = false;
   }
 
