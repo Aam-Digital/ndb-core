@@ -1,32 +1,11 @@
 <app-dialog-close mat-dialog-close></app-dialog-close>
 <div mat-dialog-content>
-  <div class="main-content">
-    <div
-      *ngFor="let row of data.columns"
-      class="flex-row align-baseline gap-small full-width"
-    >
-      <div class="flex-grow">
-        <div
-          [appDynamicComponent]="{
-            component: row.edit,
-            config: {
-              formFieldConfig: row,
-              propertySchema: data.entity.getSchema().get(row.id),
-              formControl: form.get(row.id)
-            }
-          }"
-        ></div>
-      </div>
-      <fa-icon
-        (click)="tooltipElement.show()"
-        #tooltipElement="matTooltip"
-        *ngIf="row.tooltip"
-        matIconSuffix
-        icon="question-circle"
-        [matTooltip]="row.tooltip"
-      ></fa-icon>
-    </div>
-  </div>
+  <app-entity-form
+    [columns]="columns"
+    [entity]="data.entity"
+    [form]="form"
+  >
+  </app-entity-form>
 
   <div *ngFor="let col of viewOnlyColumns">
     <app-pill
