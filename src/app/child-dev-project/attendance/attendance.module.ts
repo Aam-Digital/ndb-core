@@ -41,12 +41,9 @@ import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
 import { AttendanceBlockComponent } from "./attendance-block/attendance-block.component";
 import { RecentAttendanceBlocksComponent } from "../children/children-list/recent-attendance-blocks/recent-attendance-blocks.component";
 import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
-import { ActivityAttendanceSectionComponent } from "./activity-attendance-section/activity-attendance-section.component";
 import { AttendanceCalendarComponent } from "./attendance-calendar/attendance-calendar.component";
-import { GroupedChildAttendanceComponent } from "../children/child-details/grouped-child-attendance/grouped-child-attendance.component";
 import { MatTabsModule } from "@angular/material/tabs";
 import { AttendanceStatusSelectComponent } from "./attendance-status-select/attendance-status-select.component";
-import { AttendanceWeekDashboardComponent } from "./dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component";
 import { RouterModule } from "@angular/router";
 import { Angulartics2Module } from "angulartics2";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
@@ -89,11 +86,8 @@ export class HorizontalHammerConfig extends HammerGestureConfig {
     RollCallComponent,
     AttendanceBlockComponent,
     RecentAttendanceBlocksComponent,
-    ActivityAttendanceSectionComponent,
     AttendanceCalendarComponent,
-    GroupedChildAttendanceComponent,
     AttendanceStatusSelectComponent,
-    AttendanceWeekDashboardComponent,
     AttendanceSummaryComponent,
     RollCallTabComponent,
   ],
@@ -139,11 +133,10 @@ export class HorizontalHammerConfig extends HammerGestureConfig {
     RollCallComponent,
     AttendanceStatusSelectComponent,
     AttendanceDayBlockComponent,
-    ActivityAttendanceSectionComponent,
     AttendanceBlockComponent,
     AttendanceCalendarComponent,
     AttendanceDetailsComponent,
-    AttendanceWeekDashboardComponent,
+    AttendanceSummaryComponent,
   ],
   providers: [
     {
@@ -154,9 +147,6 @@ export class HorizontalHammerConfig extends HammerGestureConfig {
 })
 export class AttendanceModule {
   static dynamicComponents = [
-    ActivityAttendanceSectionComponent,
-    AttendanceWeekDashboardComponent,
-    GroupedChildAttendanceComponent,
     AttendanceBlockComponent,
     RecentAttendanceBlocksComponent,
   ];

@@ -85,4 +85,32 @@ export const componentRoutes: Routes = [
         (c) => c.DataImportComponent
       ),
   },
+  {
+    path: "dynamic/MatchingEntities",
+    loadComponent: () =>
+      import(
+        "./features/matching-entities/matching-entities/matching-entities.component"
+      ).then((c) => c.MatchingEntitiesComponent),
+  },
+  {
+    path: "dynamic/ActivityAttendanceSection",
+    loadComponent: () =>
+      import(
+        "./child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component"
+      ).then((c) => c.ActivityAttendanceSectionComponent),
+  },
+  {
+    path: "dynamic/AttendanceWeekDashboard",
+    loadComponent: () =>
+      import(
+        "./child-dev-project/attendance/dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component"
+      ).then((c) => c.AttendanceWeekDashboardComponent),
+  },
+  {
+    path: "dynamic/GroupedChildAttendance",
+    loadComponent: () =>
+      import(
+        "./child-dev-project/children/child-details/grouped-child-attendance/grouped-child-attendance.component"
+      ).then((c) => c.GroupedChildAttendanceComponent),
+  },
 ];

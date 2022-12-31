@@ -15,9 +15,13 @@ import { ActivityAttendance } from "../../model/activity-attendance";
 import { RecurringActivity } from "../../model/recurring-activity";
 import moment, { Moment } from "moment";
 import { groupBy } from "../../../../utils/utils";
-import { MatTableDataSource } from "@angular/material/table";
-import { MatPaginator } from "@angular/material/paginator";
+import { MatTableDataSource, MatTableModule } from "@angular/material/table";
+import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
+import { DashboardModule } from "../../../../core/dashboard/dashboard.module";
+import { NgForOf, NgIf } from "@angular/common";
+import { EntitySelectModule } from "../../../../core/entity-components/entity-select/entity-select.module";
+import { AttendanceModule } from "../../attendance.module";
 
 interface AttendanceWeekRow {
   childId: string;
@@ -30,6 +34,16 @@ interface AttendanceWeekRow {
   selector: "app-attendance-week-dashboard",
   templateUrl: "./attendance-week-dashboard.component.html",
   styleUrls: ["./attendance-week-dashboard.component.scss"],
+  imports: [
+    DashboardModule,
+    NgIf,
+    MatTableModule,
+    EntitySelectModule,
+    NgForOf,
+    MatPaginatorModule,
+    AttendanceModule,
+  ],
+  standalone: true,
 })
 export class AttendanceWeekDashboardComponent
   implements OnInitDynamicComponent, OnInit, AfterViewInit

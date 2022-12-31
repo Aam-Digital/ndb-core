@@ -1,6 +1,5 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { MatchingEntitiesComponent } from "./matching-entities/matching-entities.component";
 import { MatCardModule } from "@angular/material/card";
 import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { MatButtonModule } from "@angular/material/button";
@@ -16,7 +15,6 @@ import { LocationModule } from "../location/location.module";
  * Facilitate finding suitable entities and connecting them.
  */
 @NgModule({
-  declarations: [MatchingEntitiesComponent],
   imports: [
     CommonModule,
     MatCardModule,
@@ -30,8 +28,5 @@ import { LocationModule } from "../location/location.module";
     EntityUtilsModule,
     LocationModule,
   ],
-  exports: [MatchingEntitiesComponent],
 })
-export class MatchingEntitiesModule {
-  static dynamicComponents: [MatchingEntitiesComponent];
-}
+export class MatchingEntitiesModule {}
