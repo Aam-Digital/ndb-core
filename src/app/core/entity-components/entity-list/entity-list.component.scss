@@ -7,8 +7,6 @@
  */
 .filter-field {
   @media screen and (min-width: breakpoints.$md) {
-    position: relative;
-    top: 12px;
     // restricts the width so that the field does not feel too big
     max-width: 412px;
   }
