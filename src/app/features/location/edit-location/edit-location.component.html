@@ -12,7 +12,6 @@
     (focusout)="inputElement.value = formControl.value?.display_name"
     [matAutocomplete]="auto"
   >
-  <!--  TODO buttons sometimes wrap in form field -->
   <button *ngIf="formControl.enabled" (click)="clearInput()" matIconSuffix mat-icon-button type="button">
     <fa-icon icon="xmark"></fa-icon>
   </button>
