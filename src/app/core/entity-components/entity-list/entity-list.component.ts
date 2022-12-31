@@ -27,7 +27,8 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { DataFilter } from "../entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { FilterComponent } from "../../filter/filter/filter.component";
+import { FilterOverlayComponent } from "../../filter/filter-overlay/filter-overlay.component";
+import { MatDialog } from "@angular/material/dialog";
 
 /**
  * This component allows to create a full blown table with pagination, filtering, searching and grouping.
@@ -57,7 +58,6 @@ export class EntityListComponent<T extends Entity>
   @Output() addNewClick = new EventEmitter();
 
   @ViewChild(EntitySubrecordComponent) entityTable: EntitySubrecordComponent<T>;
-  @ViewChild(FilterComponent) filterComponent: FilterComponent<T>;
 
   isDesktop: boolean;
 
@@ -103,7 +103,8 @@ export class EntityListComponent<T extends Entity>
     private activatedRoute: ActivatedRoute,
     private analyticsService: AnalyticsService,
     private entityMapperService: EntityMapperService,
-    private entities: EntityRegistry
+    private entities: EntityRegistry,
+    private dialog: MatDialog
   ) {
     if (this.activatedRoute.component === EntityListComponent) {
       // the component is used for a route and not inside a template
@@ -223,5 +224,20 @@ export class EntityListComponent<T extends Entity>
 
   private getSelectedColumnIndexByName(columnGroupName: string) {
     return this.columnGroups.findIndex((c) => c.name === columnGroupName);
+  }
+
+  /**
+   * Calling this function will display the filters in a popup
+   */
+  openFilterOverlay() {
+    this.dialog.open(FilterOverlayComponent, {
+      data: {
+        filterConfig: this.filtersConfig,
+        entityType: this.entityConstructor,
+        entities: this.allEntities,
+        useUrlQueryParams: true,
+        filterObjChange: (filter: DataFilter<T>) => (this.filterObj = filter),
+      },
+    });
   }
 }

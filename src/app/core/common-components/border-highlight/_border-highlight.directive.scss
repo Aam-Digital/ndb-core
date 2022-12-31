@@ -10,5 +10,6 @@
  * This itself does not actually change the appearance, but specifying a border-color will do so.
  */
 .border-left-highlight {
-  border-left: sizes.$small solid !important;
+  border-left-width: sizes.$small !important;
+  border-left-style: solid !important;
 }
