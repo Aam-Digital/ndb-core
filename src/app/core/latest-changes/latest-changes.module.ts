@@ -28,8 +28,6 @@ import { ChangelogComponent } from "./changelog/changelog.component";
 import { UpdateManagerService } from "./update-manager.service";
 import { MarkdownModule } from "ngx-markdown";
 import { MatCardModule } from "@angular/material/card";
-import { LatestChangesDialogService } from "./latest-changes-dialog.service";
-import { LatestChangesService } from "./latest-changes.service";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 import { LOCATION_TOKEN } from "../../utils/di-tokens";
@@ -58,12 +56,7 @@ import { LOCATION_TOKEN } from "../../utils/di-tokens";
   ],
   declarations: [AppVersionComponent, ChangelogComponent],
   exports: [AppVersionComponent],
-  providers: [
-    LatestChangesService,
-    LatestChangesDialogService,
-    UpdateManagerService,
-    { provide: LOCATION_TOKEN, useValue: window.location },
-  ],
+  providers: [{ provide: LOCATION_TOKEN, useValue: window.location }],
 })
 export class LatestChangesModule {
   constructor(private updateManagerService: UpdateManagerService) {

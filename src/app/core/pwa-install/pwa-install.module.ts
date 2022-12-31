@@ -5,7 +5,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatToolbarModule } from "@angular/material/toolbar";
-import { PwaInstallService } from "./pwa-install.service";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { WINDOW_TOKEN } from "../../utils/di-tokens";
 import { Angulartics2Module } from "angulartics2";
@@ -21,7 +20,7 @@ import { Angulartics2Module } from "angulartics2";
     MatSnackBarModule,
     Angulartics2Module,
   ],
-  providers: [PwaInstallService, { provide: WINDOW_TOKEN, useValue: window }],
+  providers: [{ provide: WINDOW_TOKEN, useValue: window }],
   exports: [PwaInstallComponent],
 })
 export class PwaInstallModule {}

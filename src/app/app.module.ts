@@ -60,7 +60,6 @@ import { EntityListModule } from "./core/entity-components/entity-list/entity-li
 import { AttendanceModule } from "./child-dev-project/attendance/attendance.module";
 import { DemoActivityGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-generator.service";
 import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-enum.module";
-import { ConfigModule } from "./core/config/config.module";
 import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-events-generator.service";
 import { MatPaginatorIntl } from "@angular/material/paginator";
 import { ReportingModule } from "./features/reporting/reporting.module";
@@ -116,7 +115,6 @@ import { MatchingEntitiesModule } from "./features/matching-entities/matching-en
     AlertsModule,
     EntityModule,
     SessionModule,
-    ConfigModule,
     ConfigSetupModule,
     UiModule,
     SyncStatusModule,

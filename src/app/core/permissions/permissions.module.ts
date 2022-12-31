@@ -4,10 +4,10 @@ import { DisableEntityOperationDirective } from "./permission-directive/disable-
 import { DisabledWrapperComponent } from "./permission-directive/disabled-wrapper.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { UserRoleGuard } from "./permission-guard/user-role.guard";
-import { AbilityService } from "./ability/ability.service";
 import { PureAbility } from "@casl/ability";
-import { PermissionEnforcerService } from "./permission-enforcer/permission-enforcer.service";
 import { EntityAbility } from "./ability/entity-ability";
+import { PermissionEnforcerService } from "./permission-enforcer/permission-enforcer.service";
+import { AbilityService } from "./ability/ability.service";
 
 @NgModule({
   declarations: [DisableEntityOperationDirective, DisabledWrapperComponent],

@@ -24,7 +24,6 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatListModule } from "@angular/material/list";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Angulartics2Module } from "angulartics2";
-import { ConfigModule } from "../config/config.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ViewModule } from "../view/view.module";
 
@@ -41,12 +40,10 @@ import { ViewModule } from "../view/view.module";
     MatButtonModule,
     MatTooltipModule,
     Angulartics2Module,
-    ConfigModule,
     FontAwesomeModule,
     ViewModule,
   ],
   declarations: [NavigationComponent],
   exports: [NavigationComponent],
-  providers: [],
 })
 export class NavigationModule {}

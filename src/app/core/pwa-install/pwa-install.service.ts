@@ -26,7 +26,7 @@ enum OS {
   Other,
 }
 
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class PwaInstallService {
   /**
    * Resolves once/if it is possible to directly install the app

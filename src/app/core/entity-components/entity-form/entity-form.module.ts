@@ -1,7 +1,6 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { EntityFormComponent } from "./entity-form/entity-form.component";
-import { EntityFormService } from "./entity-form.service";
 import { MatButtonModule } from "@angular/material/button";
 import { ViewModule } from "../../view/view.module";
 import { PermissionsModule } from "../../permissions/permissions.module";
@@ -24,7 +23,6 @@ import { MatChipsModule } from "@angular/material/chips";
     FontAwesomeModule,
     MatChipsModule,
   ],
-  providers: [EntityFormService],
   exports: [EntityFormComponent],
 })
 export class EntityFormModule {}

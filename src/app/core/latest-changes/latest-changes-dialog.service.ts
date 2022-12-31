@@ -25,7 +25,7 @@ import { LatestChangesService } from "./latest-changes.service";
  * Manage the changelog information and display it to the user
  * on request or automatically on the first visit of a new version after update.
  */
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class LatestChangesDialogService {
   public static readonly VERSION_KEY = "AppVersion";
 

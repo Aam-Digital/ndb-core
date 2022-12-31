@@ -121,7 +121,7 @@ import { EntitySelectModule } from "../../core/entity-components/entity-select/e
     BirthdayDashboardComponent,
     ChildBlockTooltipComponent,
   ],
-  providers: [ChildrenService, DatePipe, PercentPipe],
+  providers: [DatePipe, PercentPipe],
   exports: [ChildBlockComponent, BirthdayDashboardComponent],
 })
 export class ChildrenModule {

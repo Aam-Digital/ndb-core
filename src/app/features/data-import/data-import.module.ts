@@ -1,6 +1,5 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { DataImportService } from "./data-import.service";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatStepperModule } from "@angular/material/stepper";
@@ -32,6 +31,5 @@ import { MatExpansionModule } from "@angular/material/expansion";
     MatExpansionModule,
   ],
   exports: [InputFileComponent],
-  providers: [DataImportService],
 })
 export class DataImportModule {}

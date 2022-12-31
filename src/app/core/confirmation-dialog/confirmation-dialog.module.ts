@@ -26,6 +26,5 @@ import { CommonComponentsModule } from "../common-components/common-components.m
     CommonComponentsModule,
   ],
   declarations: [ConfirmationDialogComponent],
-  providers: [ConfirmationDialogService],
 })
 export class ConfirmationDialogModule {}

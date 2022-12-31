@@ -19,7 +19,6 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { EntityMapperService } from "./entity-mapper.service";
 import { EntitySchemaService } from "./schema/entity-schema.service";
-import { EntityConfigService } from "./entity-config.service";
 import { entityRegistry, EntityRegistry } from "./database-entity.decorator";
 
 /**
@@ -42,11 +41,6 @@ import { entityRegistry, EntityRegistry } from "./database-entity.decorator";
  */
 @NgModule({
   imports: [CommonModule],
-  providers: [
-    EntityMapperService,
-    EntitySchemaService,
-    EntityConfigService,
-    { provide: EntityRegistry, useValue: entityRegistry },
-  ],
+  providers: [{ provide: EntityRegistry, useValue: entityRegistry }],
 })
 export class EntityModule {}

@@ -29,7 +29,6 @@ import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { ScreenWidthObserver } from "../../../../utils/media/screen-size-observer.service";
 import { WINDOW_TOKEN } from "../../../../utils/di-tokens";
-import { MediaModule } from "../../../../utils/media/media.module";
 import { DateWithAge } from "../../../../child-dev-project/children/model/dateWithAge";
 import { FormDialogService } from "../../../form-dialog/form-dialog.service";
 
@@ -43,7 +42,6 @@ describe("EntitySubrecordComponent", () => {
         EntitySubrecordModule,
         MockedTestingModule.withState(),
         FontAwesomeTestingModule,
-        MediaModule,
       ],
       providers: [
         { provide: WINDOW_TOKEN, useValue: window },

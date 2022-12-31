@@ -18,7 +18,6 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
-import { AlertService } from "./alert.service";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 
 /**
@@ -26,6 +25,5 @@ import { MatSnackBarModule } from "@angular/material/snack-bar";
  */
 @NgModule({
   imports: [CommonModule, MatSnackBarModule],
-  providers: [AlertService],
 })
 export class AlertsModule {}

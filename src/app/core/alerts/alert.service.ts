@@ -33,7 +33,7 @@ import { AlertDisplay } from "./alert-display";
  * You can also use the {@link MatSnackBar} when you want to have more control over what you
  * want to display to the user.
  */
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class AlertService {
   /** All alerts currently to be displayed */
   alerts: ExtendedAlertConfig[] = [];

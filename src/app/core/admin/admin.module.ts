@@ -43,6 +43,5 @@ import { RouterLink } from "@angular/router";
     DataImportModule,
     RouterLink,
   ],
-  providers: [ChildPhotoUpdateService, BackupService],
 })
 export class AdminModule {}

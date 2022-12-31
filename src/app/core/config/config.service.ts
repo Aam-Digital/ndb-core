@@ -16,7 +16,7 @@ import { LoggingService } from "../logging/logging.service";
  * Access dynamic app configuration retrieved from the database
  * that defines how the interface and data models should look.
  */
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class ConfigService {
   /**
    * Subscribe to receive the current config and get notified whenever the config is updated.

@@ -46,6 +46,5 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
   ],
   declarations: [SyncStatusComponent, BackgroundProcessingIndicatorComponent],
   exports: [SyncStatusComponent],
-  providers: [],
 })
 export class SyncStatusModule {}

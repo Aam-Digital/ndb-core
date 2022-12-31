@@ -25,7 +25,6 @@ import { MatButtonModule } from "@angular/material/button";
     MatIconModule,
     MatButtonModule,
   ],
-  providers: [LanguageService],
   exports: [LanguageSelectComponent],
 })
 export class LanguageModule {

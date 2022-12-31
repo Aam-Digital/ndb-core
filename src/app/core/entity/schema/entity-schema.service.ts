@@ -46,7 +46,7 @@ import { dateWithAgeEntitySchemaDatatype } from "../schema-datatypes/datatype-da
  * also see the How-To Guides:
  * - [Create A New Entity Type]{@link /additional-documentation/how-to-guides/create-a-new-entity-type.html}
  */
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class EntitySchemaService {
   /**
    * Internal registry of data type definitions.
