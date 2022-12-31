@@ -12,9 +12,7 @@
     (focusout)="inputElement.value = formControl.value?.display_name"
     [matAutocomplete]="auto"
   >
-  <mat-hint align="end">
-    Map data from <a target="_blank" href="https://openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a>
-  </mat-hint>
+  <!--  TODO buttons sometimes wrap in form field -->
   <button *ngIf="formControl.enabled" (click)="clearInput()" matIconSuffix mat-icon-button type="button">
     <fa-icon icon="xmark"></fa-icon>
   </button>
@@ -28,4 +26,7 @@
       {{option.display_name}}
     </mat-option>
   </mat-autocomplete>
+  <mat-hint align="end">
+    Map data from <a target="_blank" href="https://openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a>
+  </mat-hint>
 </mat-form-field>
