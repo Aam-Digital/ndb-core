@@ -1,6 +1,5 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { EntityListComponent } from "./entity-list.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { Angulartics2Module } from "angulartics2";
@@ -27,7 +26,6 @@ import { CommonComponentsModule } from "../../common-components/common-component
 import { FilterModule } from "../../filter/filter.module";
 
 @NgModule({
-  declarations: [EntityListComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -55,8 +53,5 @@ import { FilterModule } from "../../filter/filter.module";
     CommonComponentsModule,
     FilterModule,
   ],
-  exports: [EntityListComponent],
 })
-export class EntityListModule {
-  dynamicComponents = [EntityListComponent];
-}
+export class EntityListModule {}

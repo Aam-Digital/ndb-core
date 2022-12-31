@@ -1,6 +1,5 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { DataImportComponent } from "./data-import/data-import.component";
 import { DataImportService } from "./data-import.service";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -16,7 +15,7 @@ import { InputFileComponent } from "./input-file/input-file.component";
 import { MatExpansionModule } from "@angular/material/expansion";
 
 @NgModule({
-  declarations: [DataImportComponent, InputFileComponent],
+  declarations: [InputFileComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -32,9 +31,7 @@ import { MatExpansionModule } from "@angular/material/expansion";
     ExportModule,
     MatExpansionModule,
   ],
-    exports: [DataImportComponent, InputFileComponent],
+  exports: [InputFileComponent],
   providers: [DataImportService],
 })
-export class DataImportModule {
-  static dynamicComponents = [DataImportComponent];
-}
+export class DataImportModule {}

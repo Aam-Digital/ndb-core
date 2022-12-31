@@ -1,52 +1,7 @@
 import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { EntityDetailsComponent } from "./entity-details.component";
-import { ReactiveFormsModule } from "@angular/forms";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatInputModule } from "@angular/material/input";
-import { MatExpansionModule } from "@angular/material/expansion";
-import { MatButtonModule } from "@angular/material/button";
-import { MatSnackBarModule } from "@angular/material/snack-bar";
-import { MatNativeDateModule } from "@angular/material/core";
-import { ViewModule } from "../../view/view.module";
-import { EntityModule } from "../../entity/entity.module";
-import { AlertsModule } from "../../alerts/alerts.module";
-import { PermissionsModule } from "../../permissions/permissions.module";
 import { FormComponent } from "./form/form.component";
-import { EntityFormModule } from "../entity-form/entity-form.module";
-import { MatTabsModule } from "@angular/material/tabs";
-import { Angulartics2Module } from "angulartics2";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatMenuModule } from "@angular/material/menu";
-import { EntityUtilsModule } from "../entity-utils/entity-utils.module";
-import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
-import { MatProgressBarModule } from "@angular/material/progress-bar";
 
-@NgModule({
-  declarations: [EntityDetailsComponent, FormComponent],
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatExpansionModule,
-    ViewModule,
-    MatButtonModule,
-    MatSnackBarModule,
-    MatNativeDateModule,
-    EntityModule,
-    AlertsModule,
-    PermissionsModule,
-    MatTooltipModule,
-    EntityFormModule,
-    Angulartics2Module,
-    MatTabsModule,
-    MatMenuModule,
-    FontAwesomeModule,
-    EntityUtilsModule,
-    MatProgressBarModule,
-    TabStateModule,
-  ],
-})
+@NgModule({})
 export class EntityDetailsModule {
-  static dynamicComponents = [EntityDetailsComponent, FormComponent];
+  static dynamicComponents = [FormComponent];
 }

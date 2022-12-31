@@ -14,12 +14,17 @@ import { RouteData } from "../../../core/view/dynamic-routing/view-config.interf
 import { ExportService } from "../../../core/export/export-service/export.service";
 import { ExportColumnConfig } from "../../../core/export/export-service/export-column-config";
 import { RouteTarget } from "../../../app.routing";
+import { ViewModule } from "../../../core/view/view.module";
+import { ReportingModule } from "../reporting.module";
+import { NgIf } from "@angular/common";
 
 @RouteTarget("Reporting")
 @Component({
   selector: "app-reporting",
   templateUrl: "./reporting.component.html",
   styleUrls: ["./reporting.component.scss"],
+  imports: [ViewModule, ReportingModule, NgIf],
+  standalone: true,
 })
 export class ReportingComponent implements OnInit {
   availableReports: ReportConfig[];

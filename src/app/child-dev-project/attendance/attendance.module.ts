@@ -29,7 +29,6 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { FormsModule } from "@angular/forms";
 import { AttendanceDayBlockComponent } from "./dashboard-widgets/attendance-week-dashboard/attendance-day-block/attendance-day-block.component";
 import { AttendanceDetailsComponent } from "./attendance-details/attendance-details.component";
-import { AddDayAttendanceComponent } from "./add-day-attendance/add-day-attendance.component";
 import { RollCallComponent } from "./add-day-attendance/roll-call/roll-call.component";
 import { MatTableModule } from "@angular/material/table";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
@@ -51,7 +50,6 @@ import { AttendanceWeekDashboardComponent } from "./dashboard-widgets/attendance
 import { RouterModule } from "@angular/router";
 import { Angulartics2Module } from "angulartics2";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
-import { AttendanceManagerComponent } from "./attendance-manager/attendance-manager.component";
 import { EntityUtilsModule } from "../../core/entity-components/entity-utils/entity-utils.module";
 import { DashboardModule } from "../../core/dashboard/dashboard.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -88,7 +86,6 @@ export class HorizontalHammerConfig extends HammerGestureConfig {
     RollCallSetupComponent,
     AttendanceDayBlockComponent,
     AttendanceDetailsComponent,
-    AddDayAttendanceComponent,
     RollCallComponent,
     AttendanceBlockComponent,
     RecentAttendanceBlocksComponent,
@@ -97,7 +94,6 @@ export class HorizontalHammerConfig extends HammerGestureConfig {
     GroupedChildAttendanceComponent,
     AttendanceStatusSelectComponent,
     AttendanceWeekDashboardComponent,
-    AttendanceManagerComponent,
     AttendanceSummaryComponent,
     RollCallTabComponent,
   ],
@@ -158,8 +154,6 @@ export class HorizontalHammerConfig extends HammerGestureConfig {
 })
 export class AttendanceModule {
   static dynamicComponents = [
-    AddDayAttendanceComponent,
-    AttendanceManagerComponent,
     ActivityAttendanceSectionComponent,
     AttendanceWeekDashboardComponent,
     GroupedChildAttendanceComponent,

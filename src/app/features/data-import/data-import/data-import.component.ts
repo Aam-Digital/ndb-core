@@ -3,7 +3,7 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
-  FormRecord,
+  FormRecord, ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
 import { DataImportService } from "../data-import.service";
@@ -16,12 +16,35 @@ import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { RouteTarget } from "../../../app.routing";
 import { Entity } from "app/core/entity/model/entity";
 import { ParsedData } from "../input-file/input-file.component";
+import { DataImportModule } from "../data-import.module";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatSelectModule } from "@angular/material/select";
+import { AsyncPipe, KeyValuePipe, NgForOf, NgIf } from "@angular/common";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { MatInputModule } from "@angular/material/input";
+import { MatButtonModule } from "@angular/material/button";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
 
 @RouteTarget("Import")
 @Component({
   selector: "app-data-import",
   templateUrl: "./data-import.component.html",
   styleUrls: ["./data-import.component.scss"],
+  imports: [
+    DataImportModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    KeyValuePipe,
+    MatExpansionModule,
+    MatInputModule,
+    MatButtonModule,
+    NgIf,
+    NgForOf,
+    MatAutocompleteModule,
+    AsyncPipe
+  ],
+  standalone: true
 })
 export class DataImportComponent {
   importData: ParsedData;

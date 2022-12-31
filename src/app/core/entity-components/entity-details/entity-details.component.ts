@@ -18,6 +18,17 @@ import {
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { RouteTarget } from "../../../app.routing";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { ViewModule } from "../../view/view.module";
+import { MatButtonModule } from "@angular/material/button";
+import { MatMenuModule } from "@angular/material/menu";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { PermissionsModule } from "../../permissions/permissions.module";
+import { Angulartics2OnModule } from "angulartics2";
+import { MatTabsModule } from "@angular/material/tabs";
+import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { CommonModule, NgForOf, NgIf } from "@angular/common";
 
 /**
  * This component can be used to display an entity in more detail.
@@ -30,6 +41,21 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
   selector: "app-entity-details",
   templateUrl: "./entity-details.component.html",
   styleUrls: ["./entity-details.component.scss"],
+  standalone: true,
+  imports: [
+    ViewModule,
+    MatButtonModule,
+    MatMenuModule,
+    FontAwesomeModule,
+    PermissionsModule,
+    Angulartics2OnModule,
+    MatTabsModule,
+    TabStateModule,
+    MatTooltipModule,
+    MatProgressBarModule,
+    NgIf,
+    NgForOf,
+  ],
 })
 export class EntityDetailsComponent {
   entity: Entity;

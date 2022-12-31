@@ -41,13 +41,7 @@ import { MatButtonModule } from "@angular/material/button";
     MatPaginatorModule,
     MatButtonModule,
   ],
-  declarations: [
-    DashboardComponent,
-    DashboardWidgetComponent,
-    WidgetContentComponent,
-  ],
+  declarations: [DashboardWidgetComponent, WidgetContentComponent],
   exports: [DashboardWidgetComponent, WidgetContentComponent],
 })
-export class DashboardModule {
-  static dynamicComponents = [DashboardComponent];
-}
+export class DashboardModule {}

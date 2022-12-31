@@ -5,7 +5,7 @@ import { Entity } from "../../../entity/model/entity";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { getParentUrl } from "../../../../utils/utils";
 import { Router } from "@angular/router";
-import { Location } from "@angular/common";
+import { CommonModule, Location, NgIf } from "@angular/common";
 import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
 import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
 import {
@@ -15,6 +15,9 @@ import {
 import { AlertService } from "../../../alerts/alert.service";
 import { toFormFieldConfig } from "../../entity-subrecord/entity-subrecord/entity-subrecord-config";
 import * as _ from "lodash-es";
+import { MatButtonModule } from "@angular/material/button";
+import { PermissionsModule } from "../../../permissions/permissions.module";
+import { EntityFormModule } from "../../entity-form/entity-form.module";
 
 /**
  * A simple wrapper function of the EntityFormComponent which can be used as a dynamic component
@@ -25,6 +28,8 @@ import * as _ from "lodash-es";
   selector: "app-form",
   templateUrl: "./form.component.html",
   styleUrls: ["./form.component.scss"],
+  imports: [MatButtonModule, PermissionsModule, EntityFormModule, NgIf],
+  standalone: true,
 })
 export class FormComponent<E extends Entity>
   implements OnInitDynamicComponent, OnInit

@@ -1,6 +1,5 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ReportingComponent } from "./reporting/reporting.component";
 import { MatButtonModule } from "@angular/material/button";
 import { MatListModule } from "@angular/material/list";
 import { MatTableModule } from "@angular/material/table";
@@ -23,7 +22,6 @@ import { MatTreeModule } from "@angular/material/tree";
 
 @NgModule({
   declarations: [
-    ReportingComponent,
     ReportRowComponent,
     SelectReportComponent,
     ObjectTableComponent,
@@ -47,8 +45,6 @@ import { MatTreeModule } from "@angular/material/tree";
     MatSortModule,
     MatTreeModule,
   ],
-  exports: [SelectReportComponent, ReportingComponent],
+  exports: [SelectReportComponent, ReportRowComponent, ObjectTableComponent],
 })
-export class ReportingModule {
-  static dynamicComponents = [ReportingComponent];
-}
+export class ReportingModule {}

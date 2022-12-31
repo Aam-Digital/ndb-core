@@ -73,8 +73,16 @@ export class RouterService {
   }
 
   private createRoute(view: ViewConfig, additionalRoutes: Route[]) {
-    if (view.lazyLoaded) {
-      const path = view._id.substring(PREFIX_VIEW_CONFIG.length);
+    const path = view._id.substring(PREFIX_VIEW_CONFIG.length);
+    const existing = additionalRoutes.find(
+      (r) => r.path === `dynamic/${view.component}`
+    );
+    if (existing) {
+      return this.generateRouteFromConfig(view, {
+        ...existing,
+        path,
+      });
+    } else if (view.lazyLoaded) {
       const route = additionalRoutes.find((r) => r.path === path);
       return this.generateRouteFromConfig(view, route);
     } else {

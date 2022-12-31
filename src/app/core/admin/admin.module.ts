@@ -1,6 +1,5 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { AdminComponent } from "./admin/admin.component";
 import { MatButtonModule } from "@angular/material/button";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { BrowserModule } from "@angular/platform-browser";
@@ -44,9 +43,6 @@ import { RouterLink } from "@angular/router";
     DataImportModule,
     RouterLink,
   ],
-  declarations: [AdminComponent],
   providers: [ChildPhotoUpdateService, BackupService],
 })
-export class AdminModule {
-  static dynamicComponents = [AdminComponent];
-}
+export class AdminModule {}

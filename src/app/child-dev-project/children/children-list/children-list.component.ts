@@ -6,6 +6,7 @@ import { ChildrenService } from "../children.service";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 import { RouteTarget } from "../../../app.routing";
+import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
 
 @UntilDestroy()
 @RouteTarget("ChildrenList")
@@ -21,6 +22,8 @@ import { RouteTarget } from "../../../app.routing";
       (addNewClick)="routeTo('new')"
     ></app-entity-list>
   `,
+  standalone: true,
+  imports: [EntityListComponent],
 })
 export class ChildrenListComponent implements OnInit {
   childrenList: Child[] = [];
