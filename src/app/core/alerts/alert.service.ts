@@ -72,7 +72,11 @@ export class AlertService {
       AlertService.ALERT_BASE_CLASS + "--" + alert.type,
     ];
 
-    this.snackBar.open(alert.message, "dismiss", snackConfig);
+    this.snackBar.open(
+      alert.message,
+      $localize`:alert dismiss action:dismiss`,
+      snackConfig
+    );
   }
 
   /**

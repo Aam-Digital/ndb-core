@@ -11,7 +11,12 @@
         (click)="treeControl.toggle(node)"
         [attr.aria-label]="'Toggle ' + node.header.label"
       >
-        <fa-icon [icon]="treeControl.isExpanded(node) ? 'chevron-down' : 'chevron-right'"></fa-icon>
+        <fa-icon
+          class="expand-icon-button"
+          [icon]="
+            treeControl.isExpanded(node) ? 'chevron-down' : 'chevron-right'
+          "
+        ></fa-icon>
       </button>
 
       {{ node.header.label }} {{ getGroupedByString(node.header.groupedBy) }}

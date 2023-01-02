@@ -6,11 +6,13 @@ $max-icon-width: 22px;
 $max-text-width: 60rem;
 
 $standard-sizes: (
+  x-small : 0.25em,
   small : 0.5em,
   regular : 1em,
   large : 2em
 );
 
+$x-small: map-get($standard-sizes, x-small);
 $small: map-get($standard-sizes, small);
 $regular: map-get($standard-sizes, regular);
 $large: map-get($standard-sizes, large);
