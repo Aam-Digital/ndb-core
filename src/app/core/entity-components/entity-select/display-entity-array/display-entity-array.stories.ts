@@ -9,7 +9,6 @@ import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 import { ChildrenService } from "../../../../child-dev-project/children/children.service";
-import { EntitySelectModule } from "../entity-select.module";
 
 const child1 = new Child();
 child1.name = "Test Name";
@@ -52,12 +51,7 @@ export default {
   component: DisplayEntityArrayComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        EntitySelectModule,
-        StorybookBaseModule,
-        SchoolsModule,
-        ChildrenModule,
-      ],
+      imports: [StorybookBaseModule, SchoolsModule, ChildrenModule],
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper([]) },
         { provide: ChildrenService, useValue: null },

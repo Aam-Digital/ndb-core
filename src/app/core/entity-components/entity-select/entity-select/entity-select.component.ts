@@ -11,17 +11,37 @@ import {
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { Entity } from "../../../entity/model/entity";
 import { BehaviorSubject } from "rxjs";
-import { FormControl } from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { filter, map } from "rxjs/operators";
-import { MatChipInputEvent } from "@angular/material/chips";
-import { MatAutocompleteTrigger } from "@angular/material/autocomplete";
+import { MatChipInputEvent, MatChipsModule } from "@angular/material/chips";
+import {
+  MatAutocompleteModule,
+  MatAutocompleteTrigger,
+} from "@angular/material/autocomplete";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { NgForOf, NgIf } from "@angular/common";
+import { DisplayEntityComponent } from "../display-entity/display-entity.component";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @Component({
   selector: "app-entity-select",
   templateUrl: "./entity-select.component.html",
   styleUrls: ["./entity-select.component.scss"],
+  imports: [
+    MatFormFieldModule,
+    NgIf,
+    ReactiveFormsModule,
+    MatAutocompleteModule,
+    MatChipsModule,
+    NgForOf,
+    DisplayEntityComponent,
+    FontAwesomeModule,
+    MatTooltipModule,
+  ],
+  standalone: true,
 })
 @UntilDestroy()
 export class EntitySelectComponent<E extends Entity> implements OnChanges {

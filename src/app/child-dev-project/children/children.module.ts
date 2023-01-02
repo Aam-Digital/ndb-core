@@ -35,15 +35,9 @@ import { MatSortModule } from "@angular/material/sort";
 import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatChipsModule } from "@angular/material/chips";
-import { ChildrenService } from "./children.service";
-import { EntityCountDashboardComponent } from "./dashboard-widgets/entity-count-dashboard/entity-count-dashboard.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { SchoolsModule } from "../schools/schools.module";
-import { EducationalMaterialComponent } from "./educational-material/educational-material-component/educational-material.component";
-import { AserComponent } from "./aser/aser-component/aser.component";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { HealthCheckupComponent } from "./health-checkup/health-checkup-component/health-checkup.component";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
@@ -51,21 +45,16 @@ import { ConfirmationDialogModule } from "../../core/confirmation-dialog/confirm
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { Angulartics2Module } from "angulartics2";
 import { ViewModule } from "../../core/view/view.module";
-import { ChildBlockComponent } from "./child-block/child-block.component";
 import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
-import { BmiBlockComponent } from "./children-list/bmi-block/bmi-block.component";
-import { ChildrenBmiDashboardComponent } from "./dashboard-widgets/children-bmi-dashboard/children-bmi-dashboard.component";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { PhotoDatatype } from "./child-photo-service/datatype-photo";
-import { EntityUtilsModule } from "../../core/entity-components/entity-utils/entity-utils.module";
 import { DashboardModule } from "../../core/dashboard/dashboard.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ExportModule } from "../../core/export/export.module";
-import { BirthdayDashboardComponent } from "./dashboard-widgets/birthday-dashboard/birthday-dashboard.component";
 import { ChildBlockTooltipComponent } from "./child-block/child-block-tooltip/child-block-tooltip.component";
 import { CommonComponentsModule } from "../../core/common-components/common-components.module";
-import { EntitySelectModule } from "../../core/entity-components/entity-select/entity-select.module";
+import { SchoolBlockComponent } from "../schools/school-block/school-block.component";
 
 @NgModule({
   imports: [
@@ -90,7 +79,6 @@ import { EntitySelectModule } from "../../core/entity-components/entity-select/e
     MatAutocompleteModule,
     MatTooltipModule,
     MatChipsModule,
-    BrowserAnimationsModule,
     ReactiveFormsModule,
     SchoolsModule,
     ReactiveFormsModule,
@@ -103,39 +91,17 @@ import { EntitySelectModule } from "../../core/entity-components/entity-select/e
     ViewModule,
     EntitySubrecordModule,
     EntityListModule,
-    EntityUtilsModule,
     DashboardModule,
     FontAwesomeModule,
     ExportModule,
     CommonComponentsModule,
-    EntitySelectModule,
+    SchoolBlockComponent,
   ],
-  declarations: [
-    ChildBlockComponent,
-    EntityCountDashboardComponent,
-    EducationalMaterialComponent,
-    AserComponent,
-    HealthCheckupComponent,
-    BmiBlockComponent,
-    ChildrenBmiDashboardComponent,
-    BirthdayDashboardComponent,
-    ChildBlockTooltipComponent,
-  ],
+  declarations: [ChildBlockTooltipComponent],
   providers: [DatePipe, PercentPipe],
-  exports: [ChildBlockComponent, BirthdayDashboardComponent],
+  exports: [ChildBlockTooltipComponent],
 })
 export class ChildrenModule {
-  static dynamicComponents = [
-    AserComponent,
-    ChildBlockComponent,
-    EntityCountDashboardComponent,
-    ChildrenBmiDashboardComponent,
-    BmiBlockComponent,
-    EducationalMaterialComponent,
-    HealthCheckupComponent,
-    BirthdayDashboardComponent,
-  ];
-
   constructor(entitySchemaService: EntitySchemaService) {
     entitySchemaService.registerSchemaDatatype(new PhotoDatatype());
   }

@@ -54,7 +54,6 @@ import { FormDialogModule } from "./core/form-dialog/form-dialog.module";
 import { AnalyticsService } from "./core/analytics/analytics.service";
 import { ViewModule } from "./core/view/view.module";
 import { DashboardModule } from "./core/dashboard/dashboard.module";
-import { EntityDetailsModule } from "./core/entity-components/entity-details/entity-details.module";
 import { EntitySubrecordModule } from "./core/entity-components/entity-subrecord/entity-subrecord.module";
 import { EntityListModule } from "./core/entity-components/entity-list/entity-list.module";
 import { AttendanceModule } from "./child-dev-project/attendance/attendance.module";
@@ -63,9 +62,6 @@ import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-en
 import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-events-generator.service";
 import { MatPaginatorIntl } from "@angular/material/paginator";
 import { ReportingModule } from "./features/reporting/reporting.module";
-import { DashboardShortcutWidgetModule } from "./core/dashboard-shortcut-widget/dashboard-shortcut-widget.module";
-import { HistoricalDataModule } from "./features/historical-data/historical-data.module";
-import { EntityUtilsModule } from "./core/entity-components/entity-utils/entity-utils.module";
 import { DemoHistoricalDataGenerator } from "./features/historical-data/demo-historical-data-generator";
 import { TranslatableMatPaginator } from "./core/language/TranslatableMatPaginator";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
@@ -128,10 +124,8 @@ import { MatchingEntitiesModule } from "./features/matching-entities/matching-en
     AdminModule,
     EntitySubrecordModule,
     EntityListModule,
-    EntityDetailsModule,
     ConfigurableEnumModule,
     ReportingModule,
-    EntityUtilsModule,
     FileModule,
     DemoDataModule.forRoot([
       ...DemoConfigGeneratorService.provider(),
@@ -160,8 +154,6 @@ import { MatchingEntitiesModule } from "./features/matching-entities/matching-en
       ...DemoPermissionGeneratorService.provider(),
     ]),
     AttendanceModule,
-    DashboardShortcutWidgetModule,
-    HistoricalDataModule,
     SupportModule,
     DatabaseModule,
     LocationModule,

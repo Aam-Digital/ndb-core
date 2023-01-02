@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EditConfigurableEnumComponent } from "./edit-configurable-enum.component";
-import { EntityDetailsModule } from "../../entity-components/entity-details/entity-details.module";
 import { ReactiveFormsModule, FormControl, FormGroup } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ConfigService } from "../../config/config.service";
@@ -20,7 +19,6 @@ describe("EditConfigurableEnumComponent", () => {
     mockConfigService.getConfig.and.returnValue([]);
     await TestBed.configureTestingModule({
       imports: [
-        EntityDetailsModule,
         NoopAnimationsModule,
         ReactiveFormsModule,
         MatFormFieldModule,

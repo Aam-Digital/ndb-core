@@ -20,8 +20,8 @@ import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 import { DashboardModule } from "../../../../core/dashboard/dashboard.module";
 import { NgForOf, NgIf } from "@angular/common";
-import { EntitySelectModule } from "../../../../core/entity-components/entity-select/entity-select.module";
 import { AttendanceModule } from "../../attendance.module";
+import { DisplayEntityComponent } from "../../../../core/entity-components/entity-select/display-entity/display-entity.component";
 
 interface AttendanceWeekRow {
   childId: string;
@@ -38,10 +38,10 @@ interface AttendanceWeekRow {
     DashboardModule,
     NgIf,
     MatTableModule,
-    EntitySelectModule,
     NgForOf,
     MatPaginatorModule,
     AttendanceModule,
+    DisplayEntityComponent,
   ],
   standalone: true,
 })

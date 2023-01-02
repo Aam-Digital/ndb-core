@@ -1,7 +1,6 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { DynamicComponentDirective } from "./dynamic-components/dynamic-component.directive";
-import { FaDynamicIconComponent } from "./fa-dynamic-icon/fa-dynamic-icon.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ViewTitleComponent } from "../entity-components/entity-utils/view-title/view-title.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -21,7 +20,6 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 @NgModule({
   declarations: [
     DynamicComponentDirective,
-    FaDynamicIconComponent,
     ViewTitleComponent,
     ApplicationLoadingComponent,
     NotFoundComponent,
@@ -37,7 +35,6 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
   providers: [{ provide: ViewRegistry, useValue: viewRegistry }],
   exports: [
     DynamicComponentDirective,
-    FaDynamicIconComponent,
     ViewTitleComponent,
     ApplicationLoadingComponent,
   ],

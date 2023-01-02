@@ -9,6 +9,13 @@ import { School } from "../model/school";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { ChildrenService } from "../../children/children.service";
 import { Entity } from "../../../core/entity/model/entity";
+import { CommonComponentsModule } from "../../../core/common-components/common-components.module";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { FormsModule } from "@angular/forms";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { NgIf } from "@angular/common";
 
 @DynamicComponent("ChildSchoolOverview")
 @DynamicComponent("PreviousSchools")
@@ -17,6 +24,16 @@ import { Entity } from "../../../core/entity/model/entity";
   selector: "app-child-school-overview",
   templateUrl: "./child-school-overview.component.html",
   styleUrls: ["./child-school-overview.component.scss"],
+  imports: [
+    CommonComponentsModule,
+    FontAwesomeModule,
+    EntitySubrecordModule,
+    MatSlideToggleModule,
+    FormsModule,
+    MatTooltipModule,
+    NgIf,
+  ],
+  standalone: true,
 })
 export class ChildSchoolOverviewComponent
   implements OnChanges, OnInitDynamicComponent

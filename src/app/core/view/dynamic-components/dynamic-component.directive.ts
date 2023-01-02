@@ -41,6 +41,9 @@ export class DynamicComponentDirective implements OnChanges {
       const existing = this.router.config.find(
         (r) => r.path === `dynamic/${this.appDynamicComponent.component}`
       );
+      if (!existing) {
+        console.log("ap", this.appDynamicComponent);
+      }
       component =
         (await existing.loadComponent()) as ComponentType<OnInitDynamicComponent>;
     }

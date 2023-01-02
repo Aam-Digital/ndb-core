@@ -30,6 +30,7 @@ import { LocationModule } from "../../location/location.module";
 import { MatButtonModule } from "@angular/material/button";
 import { FilterModule } from "../../../core/filter/filter.module";
 import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
+import { EntityPropertyViewComponent } from "../../../core/entity-components/entity-utils/entity-property-view/entity-property-view.component";
 
 interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -57,6 +58,7 @@ interface MatchingSide extends MatchingSideConfig {
     NgForOf,
     FilterModule,
     EntitySubrecordModule,
+    EntityPropertyViewComponent,
   ],
   standalone: true,
 })

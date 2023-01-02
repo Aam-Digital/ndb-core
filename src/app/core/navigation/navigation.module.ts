@@ -26,6 +26,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { Angulartics2Module } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ViewModule } from "../view/view.module";
+import { FaDynamicIconComponent } from "../view/fa-dynamic-icon/fa-dynamic-icon.component";
 
 /**
  * Manages the main app navigation menu
@@ -42,6 +43,7 @@ import { ViewModule } from "../view/view.module";
     Angulartics2Module,
     FontAwesomeModule,
     ViewModule,
+    FaDynamicIconComponent,
   ],
   declarations: [NavigationComponent],
   exports: [NavigationComponent],

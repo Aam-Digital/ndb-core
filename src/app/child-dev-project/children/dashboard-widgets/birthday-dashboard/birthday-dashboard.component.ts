@@ -3,15 +3,27 @@ import { EntityMapperService } from "../../../../core/entity/entity-mapper.servi
 import { Child } from "../../model/child";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { MatTableDataSource } from "@angular/material/table";
-import { MatPaginator } from "@angular/material/paginator";
+import { MatTableDataSource, MatTableModule } from "@angular/material/table";
+import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { Entity } from "../../../../core/entity/model/entity";
+import { DashboardModule } from "../../../../core/dashboard/dashboard.module";
+import { DatePipe, NgIf } from "@angular/common";
+import { DisplayEntityComponent } from "../../../../core/entity-components/entity-select/display-entity/display-entity.component";
 
 @DynamicComponent("BirthdayDashboard")
 @Component({
   selector: "app-birthday-dashboard",
   templateUrl: "./birthday-dashboard.component.html",
   styleUrls: ["./birthday-dashboard.component.scss"],
+  imports: [
+    DashboardModule,
+    NgIf,
+    MatTableModule,
+    DisplayEntityComponent,
+    DatePipe,
+    MatPaginatorModule,
+  ],
+  standalone: true,
 })
 export class BirthdayDashboardComponent
   implements OnInitDynamicComponent, OnInit, AfterViewInit

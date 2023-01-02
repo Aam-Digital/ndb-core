@@ -18,6 +18,7 @@ import { FilterService } from "../../../core/filter/filter.service";
 import { Child } from "../../children/model/child";
 import { School } from "../../schools/model/school";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
+import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain entity.
@@ -27,6 +28,8 @@ import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 @Component({
   selector: "app-notes-related-to-entity",
   templateUrl: "./notes-related-to-entity.component.html",
+  imports: [EntitySubrecordModule],
+  standalone: true,
 })
 export class NotesRelatedToEntityComponent
   implements OnChanges, OnInitDynamicComponent

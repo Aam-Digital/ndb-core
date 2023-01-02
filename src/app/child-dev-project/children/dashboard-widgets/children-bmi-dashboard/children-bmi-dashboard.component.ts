@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ViewChild } from "@angular/core";
-import { MatTableDataSource } from "@angular/material/table";
-import { MatPaginator } from "@angular/material/paginator";
+import { MatTableDataSource, MatTableModule } from "@angular/material/table";
+import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { OnInitDynamicComponent } from "app/core/view/dynamic-components/on-init-dynamic-component.interface";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
@@ -8,6 +8,9 @@ import { WarningLevel } from "../../../../core/entity/model/warning-level";
 import { HealthCheck } from "../../health-checkup/model/health-check";
 import { groupBy } from "../../../../utils/utils";
 import { Child } from "../../model/child";
+import { DashboardModule } from "../../../../core/dashboard/dashboard.module";
+import { DecimalPipe, NgIf } from "@angular/common";
+import { DisplayEntityComponent } from "../../../../core/entity-components/entity-select/display-entity/display-entity.component";
 
 interface BmiRow {
   childId: string;
@@ -19,6 +22,15 @@ interface BmiRow {
   selector: "app-children-bmi-dashboard",
   templateUrl: "./children-bmi-dashboard.component.html",
   styleUrls: ["./children-bmi-dashboard.component.scss"],
+  imports: [
+    DashboardModule,
+    NgIf,
+    MatTableModule,
+    DecimalPipe,
+    MatPaginatorModule,
+    DisplayEntityComponent,
+  ],
+  standalone: true,
 })
 export class ChildrenBmiDashboardComponent
   implements OnInitDynamicComponent, AfterViewInit

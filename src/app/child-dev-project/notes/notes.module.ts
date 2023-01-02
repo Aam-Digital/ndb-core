@@ -4,7 +4,6 @@ import { NoteDetailsComponent } from "./note-details/note-details.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatSelectModule } from "@angular/material/select";
-import { NotesManagerComponent } from "./notes-manager/notes-manager.component";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { MatTableModule } from "@angular/material/table";
@@ -21,7 +20,6 @@ import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { SchoolsModule } from "../schools/schools.module";
 import { MatListModule } from "@angular/material/list";
 import { ChildrenModule } from "../children/children.module";
@@ -39,26 +37,17 @@ import { AttendanceModule } from "../attendance/attendance.module";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { ChildMeetingNoteAttendanceComponent } from "./note-details/child-meeting-attendance/child-meeting-note-attendance.component";
 import { EntityUtilsModule } from "../../core/entity-components/entity-utils/entity-utils.module";
-import { NoteAttendanceCountBlockComponent } from "./note-attendance-block/note-attendance-count-block.component";
 import { MatMenuModule } from "@angular/material/menu";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { NotesDashboardComponent } from "./dashboard-widgets/notes-dashboard/notes-dashboard.component";
-import { NotesRelatedToEntityComponent } from "./notes-related-to-entity/notes-related-to-entity.component";
 import { DashboardModule } from "../../core/dashboard/dashboard.module";
 import { ExportModule } from "../../core/export/export.module";
 import { CommonComponentsModule } from "../../core/common-components/common-components.module";
-import { ImportantNotesDashboardComponent } from "./dashboard-widgets/important-notes-dashboard/important-notes-dashboard.component";
-import { EntitySelectModule } from "../../core/entity-components/entity-select/entity-select.module";
+import { EntitySelectComponent } from "../../core/entity-components/entity-select/entity-select/entity-select.component";
+import { ConfigurableEnumDirective } from "../../core/configurable-enum/configurable-enum-directive/configurable-enum.directive";
+import { DisplayEntityComponent } from "../../core/entity-components/entity-select/display-entity/display-entity.component";
 
 @NgModule({
-  declarations: [
-    NoteDetailsComponent,
-    ChildMeetingNoteAttendanceComponent,
-    NoteAttendanceCountBlockComponent,
-    NotesDashboardComponent,
-    NotesRelatedToEntityComponent,
-    ImportantNotesDashboardComponent,
-  ],
+  declarations: [NoteDetailsComponent, ChildMeetingNoteAttendanceComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -83,7 +72,6 @@ import { EntitySelectModule } from "../../core/entity-components/entity-select/e
     MatTooltipModule,
     MatTabsModule,
     MatSlideToggleModule,
-    BrowserAnimationsModule,
     ReactiveFormsModule,
     SchoolsModule,
     ReactiveFormsModule,
@@ -107,15 +95,10 @@ import { EntitySelectModule } from "../../core/entity-components/entity-select/e
     DashboardModule,
     ExportModule,
     CommonComponentsModule,
-    EntitySelectModule,
+    EntitySelectComponent,
+    ConfigurableEnumDirective,
+    DisplayEntityComponent,
   ],
   exports: [NoteDetailsComponent],
 })
-export class NotesModule {
-  static dynamicComponents = [
-    NoteAttendanceCountBlockComponent,
-    NotesDashboardComponent,
-    NotesRelatedToEntityComponent,
-    ImportantNotesDashboardComponent,
-  ];
-}
+export class NotesModule {}

@@ -1,8 +1,6 @@
 import { Injector, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CouchdbFileService } from "./couchdb-file.service";
-import { EditFileComponent } from "./edit-file/edit-file.component";
-import { ViewFileComponent } from "./view-file/view-file.component";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
@@ -23,12 +21,7 @@ import { fileDataType } from "./file-data-type";
 import { MatDialogModule } from "@angular/material/dialog";
 
 @NgModule({
-  declarations: [
-    EditFileComponent,
-    ViewFileComponent,
-    ShowFileComponent,
-    ProgressComponent,
-  ],
+  declarations: [ShowFileComponent, ProgressComponent],
   imports: [
     CommonModule,
     MatButtonModule,
@@ -52,8 +45,6 @@ import { MatDialogModule } from "@angular/material/dialog";
   ],
 })
 export class FileModule {
-  static dynamicComponents = [EditFileComponent, ViewFileComponent];
-
   constructor(entitySchemaService: EntitySchemaService) {
     entitySchemaService.registerSchemaDatatype(fileDataType);
   }

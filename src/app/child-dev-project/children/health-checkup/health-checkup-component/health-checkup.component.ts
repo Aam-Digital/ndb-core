@@ -7,15 +7,19 @@ import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components
 import { PanelConfig } from "../../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { FormFieldConfig } from "../../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
+import { EntitySubrecordModule } from "../../../../core/entity-components/entity-subrecord/entity-subrecord.module";
 
 @DynamicComponent("HealthCheckup")
 @UntilDestroy()
 @Component({
   selector: "app-health-checkup",
   templateUrl: "./health-checkup.component.html",
+  imports: [EntitySubrecordModule],
+  standalone: true,
 })
 export class HealthCheckupComponent
-  implements OnChanges, OnInitDynamicComponent {
+  implements OnChanges, OnInitDynamicComponent
+{
   records = new Array<HealthCheck>();
   /**
    * Column Description for the SubentityRecordComponent
@@ -35,6 +39,7 @@ export class HealthCheckupComponent
     },
   ];
   @Input() child: Child;
+
   constructor(private childrenService: ChildrenService) {}
 
   private getBMI(healthCheck: HealthCheck): string {

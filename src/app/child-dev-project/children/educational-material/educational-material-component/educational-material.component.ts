@@ -9,6 +9,7 @@ import { EntityMapperService } from "../../../../core/entity/entity-mapper.servi
 import { applyUpdate } from "../../../../core/entity/model/entity-update";
 import { filter } from "rxjs/operators";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { EntitySubrecordModule } from "../../../../core/entity-components/entity-subrecord/entity-subrecord.module";
 
 /**
  * Displays educational materials of a child, such as a pencil, rulers, e.t.c
@@ -19,9 +20,12 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 @Component({
   selector: "app-educational-material",
   templateUrl: "./educational-material.component.html",
+  imports: [EntitySubrecordModule],
+  standalone: true,
 })
 export class EducationalMaterialComponent
-  implements OnChanges, OnInitDynamicComponent {
+  implements OnChanges, OnInitDynamicComponent
+{
   @Input() child: Child;
   records: EducationalMaterial[] = [];
   summary = "";

@@ -11,19 +11,13 @@ import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 import { ChildrenService } from "../../../../child-dev-project/children/children.service";
-import { EntitySelectModule } from "../entity-select.module";
 
 export default {
   title: "Core/EntityComponents/DisplayEntity",
   component: DisplayEntityComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        EntitySelectModule,
-        StorybookBaseModule,
-        SchoolsModule,
-        ChildrenModule,
-      ],
+      imports: [StorybookBaseModule, SchoolsModule, ChildrenModule],
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper([]) },
         { provide: ChildrenService, useValue: null },

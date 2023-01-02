@@ -7,6 +7,7 @@ import { Entity } from "../../../../entity/model/entity";
  */
 @Pipe({
   name: "entityFunction",
+  standalone: true,
 })
 export class EntityFunctionPipe implements PipeTransform {
   transform(value: Entity, func?: (entity: Entity) => any): any {

@@ -10,12 +10,17 @@ import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on
 import { ChildrenService } from "../children.service";
 import { Child } from "../model/child";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
+import { NgIf } from "@angular/common";
+import { CommonComponentsModule } from "../../../core/common-components/common-components.module";
+import { ChildrenModule } from "../children.module";
 
 @DynamicComponent("ChildBlock")
 @Component({
   selector: "app-child-block",
   templateUrl: "./child-block.component.html",
   styleUrls: ["./child-block.component.scss"],
+  imports: [NgIf, CommonComponentsModule, ChildrenModule],
+  standalone: true,
 })
 export class ChildBlockComponent implements OnInitDynamicComponent, OnChanges {
   @Input() entity: Child;

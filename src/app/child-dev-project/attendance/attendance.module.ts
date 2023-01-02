@@ -39,7 +39,6 @@ import { MatSortModule } from "@angular/material/sort";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { FormDialogModule } from "../../core/form-dialog/form-dialog.module";
 import { AttendanceBlockComponent } from "./attendance-block/attendance-block.component";
-import { RecentAttendanceBlocksComponent } from "../children/children-list/recent-attendance-blocks/recent-attendance-blocks.component";
 import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { AttendanceCalendarComponent } from "./attendance-calendar/attendance-calendar.component";
 import { MatTabsModule } from "@angular/material/tabs";
@@ -47,7 +46,6 @@ import { AttendanceStatusSelectComponent } from "./attendance-status-select/atte
 import { RouterModule } from "@angular/router";
 import { Angulartics2Module } from "angulartics2";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
-import { EntityUtilsModule } from "../../core/entity-components/entity-utils/entity-utils.module";
 import { DashboardModule } from "../../core/dashboard/dashboard.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatPaginatorModule } from "@angular/material/paginator";
@@ -65,7 +63,7 @@ import { TabStateModule } from "../../utils/tab-state/tab-state.module";
 import { CommonComponentsModule } from "../../core/common-components/common-components.module";
 import { MatDialogModule } from "@angular/material/dialog";
 import { FilterModule } from "../../core/filter/filter.module";
-import { EntitySelectModule } from "../../core/entity-components/entity-select/entity-select.module";
+import { ChildBlockComponent } from "../children/child-block/child-block.component";
 
 @Injectable()
 // Only allow horizontal swiping
@@ -85,7 +83,6 @@ export class HorizontalHammerConfig extends HammerGestureConfig {
     AttendanceDetailsComponent,
     RollCallComponent,
     AttendanceBlockComponent,
-    RecentAttendanceBlocksComponent,
     AttendanceCalendarComponent,
     AttendanceStatusSelectComponent,
     AttendanceSummaryComponent,
@@ -114,7 +111,6 @@ export class HorizontalHammerConfig extends HammerGestureConfig {
     RouterModule,
     Angulartics2Module,
     MatSlideToggleModule,
-    EntityUtilsModule,
     FontAwesomeModule,
     DashboardModule,
     MatPaginatorModule,
@@ -125,7 +121,7 @@ export class HorizontalHammerConfig extends HammerGestureConfig {
     CommonComponentsModule,
     MatDialogModule,
     FilterModule,
-    EntitySelectModule,
+    ChildBlockComponent,
   ],
   exports: [
     ActivityCardComponent,
@@ -145,9 +141,4 @@ export class HorizontalHammerConfig extends HammerGestureConfig {
     },
   ],
 })
-export class AttendanceModule {
-  static dynamicComponents = [
-    AttendanceBlockComponent,
-    RecentAttendanceBlocksComponent,
-  ];
-}
+export class AttendanceModule {}

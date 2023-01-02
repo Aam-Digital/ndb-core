@@ -28,6 +28,7 @@ import { MatSortModule } from "@angular/material/sort";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
+import { FaDynamicIconComponent } from "../view/fa-dynamic-icon/fa-dynamic-icon.component";
 
 @NgModule({
   imports: [
@@ -40,6 +41,7 @@ import { MatButtonModule } from "@angular/material/button";
     MatSortModule,
     MatPaginatorModule,
     MatButtonModule,
+    FaDynamicIconComponent,
   ],
   declarations: [DashboardWidgetComponent, WidgetContentComponent],
   exports: [DashboardWidgetComponent, WidgetContentComponent],

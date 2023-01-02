@@ -41,42 +41,39 @@ import { EntityUtilsModule } from "../entity-components/entity-utils/entity-util
 import { LanguageModule } from "../language/language.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { PwaInstallModule } from "app/core/pwa-install/pwa-install.module";
-import { UserSecurityComponent } from "../user/user-security/user-security.component";
-import { EntitySelectModule } from "../entity-components/entity-select/entity-select.module";
+import { DisplayEntityComponent } from "../entity-components/entity-select/display-entity/display-entity.component";
 
 /**
  * The core user interface structure that ties different components together into the overall app layout.
  */
 @NgModule({
-    imports: [
-        CommonModule,
-        FormsModule,
-        LatestChangesModule,
-        NavigationModule,
-        RouterModule,
-        SessionModule,
-        SyncStatusModule,
-        MatSidenavModule,
-        MatToolbarModule,
-        MatButtonModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatAutocompleteModule,
-        ChildrenModule,
-        SchoolsModule,
-        NotesModule,
-        Angulartics2Module,
-        PermissionsModule,
-        EntityUtilsModule,
-        ReactiveFormsModule,
-        LanguageModule,
-        FontAwesomeModule,
-        PwaInstallModule,
-        EntitySelectModule,
-    ],
+  imports: [
+    CommonModule,
+    FormsModule,
+    LatestChangesModule,
+    NavigationModule,
+    RouterModule,
+    SessionModule,
+    SyncStatusModule,
+    MatSidenavModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatAutocompleteModule,
+    ChildrenModule,
+    SchoolsModule,
+    NotesModule,
+    Angulartics2Module,
+    PermissionsModule,
+    EntityUtilsModule,
+    ReactiveFormsModule,
+    LanguageModule,
+    FontAwesomeModule,
+    PwaInstallModule,
+    DisplayEntityComponent,
+  ],
   declarations: [SearchComponent, UiComponent, PrimaryActionComponent],
   exports: [UiComponent],
 })
-export class UiModule {
-  static dynamicComponents = [UserSecurityComponent];
-}
+export class UiModule {}

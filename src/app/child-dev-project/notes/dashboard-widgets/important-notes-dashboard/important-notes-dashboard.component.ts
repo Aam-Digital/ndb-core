@@ -3,14 +3,16 @@ import { Note } from "../../model/note";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { MatTableDataSource } from "@angular/material/table";
-import { MatPaginator } from "@angular/material/paginator";
+import { MatTableDataSource, MatTableModule } from "@angular/material/table";
+import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
 import { NoteDetailsComponent } from "../../note-details/note-details.component";
 import { applyUpdate } from "../../../../core/entity/model/entity-update";
 import { concat, Observable } from "rxjs";
 import { first, map } from "rxjs/operators";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { DashboardModule } from "../../../../core/dashboard/dashboard.module";
+import { DatePipe, NgIf, NgStyle } from "@angular/common";
 
 @DynamicComponent("ImportantNotesDashboard")
 @DynamicComponent("ImportantNotesComponent") // TODO remove after all existing instances are updated
@@ -19,6 +21,15 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
   selector: "app-important-notes-dashboard",
   templateUrl: "./important-notes-dashboard.component.html",
   styleUrls: ["./important-notes-dashboard.component.scss"],
+  imports: [
+    DashboardModule,
+    NgIf,
+    MatTableModule,
+    DatePipe,
+    NgStyle,
+    MatPaginatorModule,
+  ],
+  standalone: true,
 })
 export class ImportantNotesDashboardComponent
   implements OnInit, OnInitDynamicComponent, AfterViewInit

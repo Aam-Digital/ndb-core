@@ -8,6 +8,10 @@ import { EntityMapperService } from "../../../../core/entity/entity-mapper.servi
 import { Entity } from "../../../../core/entity/model/entity";
 import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
+import { DashboardModule } from "../../../../core/dashboard/dashboard.module";
+import { MatTableModule } from "@angular/material/table";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { Angulartics2Module } from "angulartics2";
 
 @DynamicComponent("ChildrenCountDashboard")
 @DynamicComponent("EntityCountDashboard")
@@ -15,6 +19,13 @@ import { IconName } from "@fortawesome/fontawesome-svg-core";
   selector: "app-entity-count-dashboard",
   templateUrl: "./entity-count-dashboard.component.html",
   styleUrls: ["./entity-count-dashboard.component.scss"],
+  imports: [
+    DashboardModule,
+    MatTableModule,
+    FontAwesomeModule,
+    Angulartics2Module,
+  ],
+  standalone: true,
 })
 export class EntityCountDashboardComponent
   implements OnInitDynamicComponent, OnInit

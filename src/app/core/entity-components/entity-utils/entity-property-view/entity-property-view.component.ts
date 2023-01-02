@@ -7,12 +7,16 @@ import {
 import { Entity } from "../../../entity/model/entity";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { ColumnConfig } from "../../entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { NgIf } from "@angular/common";
+import { ViewModule } from "../../../view/view.module";
 
 @Component({
   selector: "app-entity-property-view",
   templateUrl: "./entity-property-view.component.html",
   styleUrls: ["./entity-property-view.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [NgIf, ViewModule],
+  standalone: true,
 })
 export class EntityPropertyViewComponent<E extends Entity = Entity>
   implements OnInit

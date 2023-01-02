@@ -5,12 +5,16 @@ import { ViewDirective } from "../../entity-utils/view-components/view.directive
 import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { Router } from "@angular/router";
+import { NgClass, NgIf } from "@angular/common";
+import { ViewModule } from "../../../view/view.module";
 
 @DynamicComponent("DisplayEntity")
 @Component({
   selector: "app-display-entity",
   templateUrl: "./display-entity.component.html",
   styleUrls: ["./display-entity.component.scss"],
+  imports: [NgClass, NgIf, ViewModule],
+  standalone: true,
 })
 export class DisplayEntityComponent
   extends ViewDirective<string>

@@ -16,48 +16,30 @@
  */
 
 import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { NgForOf, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
-import { MatCardModule } from "@angular/material/card";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { MatProgressBarModule } from "@angular/material/progress-bar";
-import { ChildrenModule } from "../../child-dev-project/children/children.module";
-import { ProgressDashboardComponent } from "./progress-dashboard/progress-dashboard.component";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { DashboardModule } from "../../core/dashboard/dashboard.module";
-import { ViewModule } from "../../core/view/view.module";
+import { ReactiveFormsModule } from "@angular/forms";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EditProgressDashboardComponent } from "./edit-progress-dashboard/edit-progress-dashboard.component";
 import { MatDialogModule } from "@angular/material/dialog";
-import { MatDividerModule } from "@angular/material/divider";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatTableModule } from "@angular/material/table";
 import { CommonComponentsModule } from "../../core/common-components/common-components.module";
 
 @NgModule({
   imports: [
-    CommonModule,
-    FormsModule,
-    MatCardModule,
-    MatButtonModule,
-    MatProgressBarModule,
-    MatInputModule,
-    MatFormFieldModule,
-    ChildrenModule,
-    DashboardModule,
-    ViewModule,
-    FontAwesomeModule,
-    MatDialogModule,
-    MatDividerModule,
-    ReactiveFormsModule,
-    MatTooltipModule,
-    MatTableModule,
     CommonComponentsModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    NgIf,
+    NgForOf,
+    MatButtonModule,
+    FontAwesomeModule,
+    MatTooltipModule,
   ],
-  declarations: [ProgressDashboardComponent, EditProgressDashboardComponent],
-  exports: [ProgressDashboardComponent],
+  declarations: [EditProgressDashboardComponent],
 })
-export class ProgressDashboardWidgetModule {
-  static dynamicComponents = [ProgressDashboardComponent];
-}
+export class ProgressDashboardWidgetModule {}

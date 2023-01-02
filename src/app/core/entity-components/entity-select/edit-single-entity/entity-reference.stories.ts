@@ -13,7 +13,6 @@ import { DatabaseField } from "../../../entity/database-field.decorator";
 import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 import { User } from "../../../user/user";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { EntitySelectModule } from "../entity-select.module";
 import { ConfirmationDialogModule } from "../../../confirmation-dialog/confirmation-dialog.module";
 
 const testUser = new User("1");
@@ -30,7 +29,6 @@ export default {
     moduleMetadata({
       imports: [
         EntityFormModule,
-        EntitySelectModule,
         ConfirmationDialogModule,
         AlertsModule,
         StorybookBaseModule,

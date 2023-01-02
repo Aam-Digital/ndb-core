@@ -11,7 +11,6 @@ import { Entity } from "../../../entity/model/entity";
 import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 import { User } from "../../../user/user";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { EntitySelectModule } from "../entity-select.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { School } from "../../../../child-dev-project/schools/model/school";
 
@@ -39,11 +38,7 @@ describe("EntitySelectComponent", () => {
           ]),
         },
       ],
-      imports: [
-        EntitySelectModule,
-        NoopAnimationsModule,
-        FontAwesomeTestingModule,
-      ],
+      imports: [NoopAnimationsModule, FontAwesomeTestingModule],
     }).compileComponents();
   });
 

@@ -1,10 +1,15 @@
 import { AfterViewInit, Component, Optional, ViewChild } from "@angular/core";
-import { MatPaginator } from "@angular/material/paginator";
+import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { QueryDataSource } from "../../core/database/query-data-source";
 import { Entity } from "../../core/entity/model/entity";
 import { Database } from "../../core/database/database";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { RouteTarget } from "../../app.routing";
+import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatTableModule } from "@angular/material/table";
+import { MatSortModule } from "@angular/material/sort";
+import { CompareRevComponent } from "../compare-rev/compare-rev.component";
 
 /**
  * List all document conflicts and allow the user to expand for details and manual resolution.
@@ -13,6 +18,17 @@ import { RouteTarget } from "../../app.routing";
 @Component({
   selector: "app-conflict-resolution-list",
   templateUrl: "./conflict-resolution-list.component.html",
+  imports: [
+    NgIf,
+    MatProgressBarModule,
+    AsyncPipe,
+    MatTableModule,
+    MatSortModule,
+    CompareRevComponent,
+    NgForOf,
+    MatPaginatorModule,
+  ],
+  standalone: true,
 })
 export class ConflictResolutionListComponent implements AfterViewInit {
   /** visible table columns in the template */

@@ -4,7 +4,6 @@ import { FormComponent } from "./form.component";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { Router } from "@angular/router";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { EntityDetailsModule } from "../entity-details.module";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "../../../alerts/alert.service";
 import { EntityFormService } from "../../entity-form/entity-form.service";
@@ -17,7 +16,7 @@ describe("FormComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EntityDetailsModule, MockedTestingModule.withState()],
+      imports: [FormComponent, MockedTestingModule.withState()],
       providers: [{ provide: ConfirmationDialogService, useValue: null }],
     }).compileComponents();
   });

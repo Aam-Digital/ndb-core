@@ -7,11 +7,24 @@ import { ConfigurableEnumValue } from "../configurable-enum.interface";
 import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
 import { arrayEntitySchemaDatatype } from "../../entity/schema-datatypes/datatype-array";
 import { compareEnums } from "../../../utils/utils";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { ReactiveFormsModule } from "@angular/forms";
+import { MatSelectModule } from "@angular/material/select";
+import { ConfigurableEnumDirective } from "../configurable-enum-directive/configurable-enum.directive";
+import { NgIf } from "@angular/common";
 
 @DynamicComponent("EditConfigurableEnum")
 @Component({
   selector: "app-edit-configurable-enum",
   templateUrl: "./edit-configurable-enum.component.html",
+  imports: [
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatSelectModule,
+    ConfigurableEnumDirective,
+    NgIf,
+  ],
+  standalone: true,
 })
 export class EditConfigurableEnumComponent extends EditComponent<ConfigurableEnumValue> {
   enumId: string;

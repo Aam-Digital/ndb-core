@@ -13,7 +13,6 @@ import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatSortModule } from "@angular/material/sort";
 import { MatTableModule } from "@angular/material/table";
-import { SchoolBlockComponent } from "./school-block/school-block.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
@@ -25,9 +24,7 @@ import { EntityListModule } from "../../core/entity-components/entity-list/entit
 import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ViewModule } from "../../core/view/view.module";
-import { ActivitiesOverviewComponent } from "./activities-overview/activities-overview.component";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
-import { ChildSchoolOverviewComponent } from "./child-school-overview/child-school-overview.component";
 import { CommonComponentsModule } from "../../core/common-components/common-components.module";
 
 @NgModule({
@@ -72,18 +69,6 @@ import { CommonComponentsModule } from "../../core/common-components/common-comp
     MatSlideToggleModule,
     CommonComponentsModule,
   ],
-  declarations: [
-    SchoolBlockComponent,
-    ActivitiesOverviewComponent,
-    ChildSchoolOverviewComponent,
-  ],
-  exports: [SchoolBlockComponent, ChildSchoolOverviewComponent],
   providers: [DatePipe],
 })
-export class SchoolsModule {
-  static dynamicComponents = [
-    ChildSchoolOverviewComponent,
-    SchoolBlockComponent,
-    ActivitiesOverviewComponent,
-  ];
-}
+export class SchoolsModule {}

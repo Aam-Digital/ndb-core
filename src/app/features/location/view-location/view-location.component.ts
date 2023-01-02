@@ -7,5 +7,6 @@ import { GeoResult } from "../geo.service";
 @Component({
   selector: "app-view-location",
   template: "{{ value?.display_name }}",
+  standalone: true,
 })
 export class ViewLocationComponent extends ViewDirective<GeoResult> {}
