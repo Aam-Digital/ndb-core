@@ -6,7 +6,7 @@ describe("Todo", () => {
     _id: "Todo:some-id",
 
     subject: "new task",
-    deadline: new Date("2022-12-01"),
+    deadline: "2022-12-01",
     description: "details of the task",
     assignedTo: ["demo"],
     relatedEntities: [],

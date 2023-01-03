@@ -37,7 +37,7 @@ export class Todo extends Entity {
     return instance;
   }
 
-  @DatabaseField({ label: $localize`:Label:Deadline` })
+  @DatabaseField({ dataType: "date-only", label: $localize`:Label:Deadline` })
   deadline: Date;
 
   @DatabaseField({ label: $localize`:Label:Subject` })

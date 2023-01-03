@@ -82,6 +82,60 @@ export class DatabaseIndexingService {
   }
 
   /**
+   * Generate and create a new database query index for the given entity type and property.
+   *
+   * This allows you to efficiently query documents of that entity type based on values of the reference property,
+   * e.g. query all Notes (entityType="Note") that are related to a certain user (referenceProperty="authors").
+   *
+   * Query this index using the given indexId like this:
+   * generateIndexOnProperty("myIndex", "Note", "category", false);
+   * queryIndexDocs(Note, "myIndex/by_category")
+   *
+   * @param indexId id to query this index after creation (--> {indexId}/by_{referenceProperty})
+   * @param entityTypePrefix entity type to limit the documents included in this index
+   * @param referenceProperty property key on the documents whose value is indexed as a query key
+   * @param isArrayProperty whether referenceProperty is an array of values to be indexed separately or a single value
+   * @param secondaryIndex (optional) additional property to emit as a secondary index to narrow queries further
+   */
+  generateIndexOnProperty(
+    indexId: string,
+    entityTypePrefix: string,
+    referenceProperty: string,
+    isArrayProperty: boolean,
+    secondaryIndex?: string
+  ): Promise<void> {
+    const emitParamFormatter = (primaryParam) => {
+      if (secondaryIndex) {
+        return `emit([${primaryParam}, doc.${secondaryIndex}]);`;
+      } else {
+        return `emit(${primaryParam});`;
+      }
+    };
+
+    const simpleEmit = emitParamFormatter("doc." + referenceProperty);
+    const arrayEmit = `
+      if (!Array.isArray(doc.${referenceProperty})) return;
+      doc.${referenceProperty}.forEach((relatedEntity) => {
+        ${emitParamFormatter("relatedEntity")}
+      });`;
+
+    const designDoc = {
+      _id: "_design/" + indexId,
+      views: {
+        [`by_${referenceProperty}`]: {
+          map: `(doc) => {
+            if (!doc._id.startsWith("${entityTypePrefix}")) return;
+
+            ${isArrayProperty ? arrayEmit : simpleEmit}
+          }`,
+        },
+      },
+    };
+
+    return this.createIndex(designDoc);
+  }
+
+  /**
    * Load data from the Database through the given, previously created index.
    * @param entityConstructor
    * @param indexName The name of the previously created index to be queried.

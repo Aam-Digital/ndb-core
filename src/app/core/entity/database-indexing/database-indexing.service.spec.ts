@@ -150,4 +150,82 @@ describe("DatabaseIndexingService", () => {
       jasmine.objectContaining({ details: "test-index" }),
     ]);
   });
+
+  it("should generate index for entity property", async () => {
+    const call = spyOn(service, "createIndex");
+    await service.generateIndexOnProperty(
+      "testIndex",
+      "Todo",
+      "relatedEntities",
+      true
+    );
+
+    const actualCreatedDesignDoc = call.calls.argsFor(0)[0];
+    expect(cleanedUpStringify(actualCreatedDesignDoc)).toEqual(
+      cleanedUpStringify({
+        _id: "_design/testIndex",
+        views: {
+          by_relatedEntities: {
+            map: `(doc) => {
+            if (!doc._id.startsWith("Todo")) return;
+            if (!Array.isArray(doc.relatedEntities)) return;
+            doc.relatedEntities.forEach((relatedEntity) => {
+              emit(relatedEntity);
+            });
+          }`,
+          },
+        },
+      })
+    );
+  });
+
+  it("should generate index for entity property that is not an array", async () => {
+    const call = spyOn(service, "createIndex");
+    await service.generateIndexOnProperty(
+      "testIndex",
+      "Note",
+      "category",
+      false
+    );
+
+    const actualCreatedDesignDoc = call.calls.argsFor(0)[0];
+    expect(
+      cleanedUpStringify(actualCreatedDesignDoc.views.by_category.map)
+    ).toEqual(
+      cleanedUpStringify(`(doc) => {
+            if (!doc._id.startsWith("Note")) return;
+
+            emit(doc.category);
+          }`)
+    );
+  });
+
+  it("should generate index for entity property with secondary index", async () => {
+    const call = spyOn(service, "createIndex");
+    await service.generateIndexOnProperty(
+      "testIndex",
+      "Todo",
+      "relatedEntities",
+      true,
+      "deadline"
+    );
+
+    const actualCreatedDesignDoc = call.calls.argsFor(0)[0];
+    expect(
+      cleanedUpStringify(actualCreatedDesignDoc.views.by_relatedEntities.map)
+    ).toEqual(
+      cleanedUpStringify(`(doc) => {
+            if (!doc._id.startsWith("Todo")) return;
+            if (!Array.isArray(doc.relatedEntities)) return;
+
+            doc.relatedEntities.forEach((relatedEntity) => {
+              emit([relatedEntity, doc.deadline]);
+            });
+          }`)
+    );
+  });
 });
+
+function cleanedUpStringify(doc) {
+  return JSON.stringify(doc).replace(/\s/g, "").replace(/\\n/g, "");
+}

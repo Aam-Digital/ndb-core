@@ -54,7 +54,14 @@ export class TodosRelatedToEntityComponent implements OnInitDynamicComponent {
     private dbIndexingService: DatabaseIndexingService,
     private sessionService: SessionService
   ) {
-    this.createIndex();
+    // TODO: move this generic index creation into schema
+    this.dbIndexingService.generateIndexOnProperty(
+      "todo_index",
+      Todo.ENTITY_TYPE,
+      this.referenceProperty,
+      true,
+      "deadline"
+    );
   }
 
   async onInitFromDynamicConfig(config: PanelConfig) {
@@ -65,36 +72,16 @@ export class TodosRelatedToEntityComponent implements OnInitDynamicComponent {
     this.toggleInactive();
   }
 
-  private createIndex() {
-    // TODO: move this generic index creation into schema + indexing service
-
-    const designDoc = {
-      _id: "_design/todo_index",
-      views: {
-        by_entity: {
-          map: `(doc) => {
-            if (!doc._id.startsWith("${Todo.ENTITY_TYPE}")) return;
-            if (!Array.isArray(doc.${this.referenceProperty})) return;
-
-            var d = new Date(doc.deadline || null);
-            var dateString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0")
-
-            doc.${this.referenceProperty}.forEach((relatedEntity) => {
-              emit([relatedEntity, dateString]);
-            });
-          }`,
-        },
-      },
-    };
-    return this.dbIndexingService.createIndex(designDoc);
-  }
-
   private loadDataFor(entityId: string): Promise<Todo[]> {
-    return this.dbIndexingService.queryIndexDocs(Todo, "todo_index/by_entity", {
-      startkey: [entityId, "\uffff"],
-      endkey: [entityId],
-      descending: true,
-    });
+    return this.dbIndexingService.queryIndexDocs(
+      Todo,
+      "todo_index/by_" + this.referenceProperty,
+      {
+        startkey: [entityId, "\uffff"],
+        endkey: [entityId],
+        descending: true,
+      }
+    );
   }
 
   public getNewEntryFunction(): () => Todo {

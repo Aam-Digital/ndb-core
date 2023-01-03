@@ -17,7 +17,10 @@ describe("TodosRelatedToEntityComponent", () => {
       providers: [
         {
           provide: DatabaseIndexingService,
-          useValue: jasmine.createSpyObj(["createIndex", "queryIndexDocs"]),
+          useValue: jasmine.createSpyObj([
+            "generateIndexOnProperty",
+            "queryIndexDocs",
+          ]),
         },
         { provide: SessionService, useValue: null },
         { provide: AlertService, useValue: null },
