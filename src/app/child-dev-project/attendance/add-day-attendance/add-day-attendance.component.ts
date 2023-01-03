@@ -7,12 +7,12 @@ import { RollCallComponent } from "./roll-call/roll-call.component";
 import { ActivatedRoute } from "@angular/router";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 import { RouteTarget } from "../../../app.routing";
-import { ViewModule } from "../../../core/view/view.module";
 import { NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { AttendanceModule } from "../attendance.module";
+import { RollCallSetupComponent } from "./roll-call-setup/roll-call-setup.component";
+import { ViewTitleComponent } from "../../../core/entity-components/entity-utils/view-title/view-title.component";
 
 /**
  * additional config specifically for AddDayAttendanceComponent
@@ -28,12 +28,13 @@ export interface AddDayAttendanceConfig {
   templateUrl: "./add-day-attendance.component.html",
   styleUrls: ["./add-day-attendance.component.scss"],
   imports: [
-    ViewModule,
     NgIf,
     MatButtonModule,
     FontAwesomeModule,
     MatTooltipModule,
-    AttendanceModule,
+    RollCallSetupComponent,
+    RollCallComponent,
+    ViewTitleComponent,
   ],
   standalone: true,
 })

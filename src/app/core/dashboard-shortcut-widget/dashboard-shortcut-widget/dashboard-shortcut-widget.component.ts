@@ -5,6 +5,8 @@ import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
 import { FaDynamicIconComponent } from "../../view/fa-dynamic-icon/fa-dynamic-icon.component";
 import { RouterLink } from "@angular/router";
+import { DashboardWidgetComponent } from "../../dashboard/dashboard-widget/dashboard-widget.component";
+import { WidgetContentComponent } from "../../dashboard/dashboard-widget/widget-content/widget-content.component";
 
 /**
  * A simple list of shortcuts displayed as a dashboard widget for easy access to important navigation.
@@ -18,6 +20,8 @@ import { RouterLink } from "@angular/router";
     MatTableModule,
     FaDynamicIconComponent,
     RouterLink,
+    DashboardWidgetComponent,
+    WidgetContentComponent,
   ],
   standalone: true,
 })

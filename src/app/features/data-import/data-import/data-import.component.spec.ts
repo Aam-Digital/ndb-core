@@ -4,7 +4,6 @@ import { DataImportService } from "../data-import.service";
 import { FormControl } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { DownloadService } from "../../../core/export/download-service/download.service";
-import { DataImportModule } from "../data-import.module";
 import { ParseResult } from "ngx-papaparse";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { ImportMetaData } from "../import-meta-data.type";
@@ -38,7 +37,7 @@ describe("DataImportComponent", () => {
     ]);
     TestBed.configureTestingModule({
       imports: [
-        DataImportModule,
+        DataImportComponent,
         NoopAnimationsModule,
         FontAwesomeTestingModule,
       ],

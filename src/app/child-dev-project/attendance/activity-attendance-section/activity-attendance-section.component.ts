@@ -17,11 +17,12 @@ import { FormFieldConfig } from "../../../core/entity-components/entity-form/ent
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
-import { AttendanceModule } from "../attendance.module";
-import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
+import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { AttendanceCalendarComponent } from "../attendance-calendar/attendance-calendar.component";
+import { AttendanceSummaryComponent } from "../attendance-summary/attendance-summary.component";
 
 @DynamicComponent("ActivityAttendanceSection")
 @Component({
@@ -30,11 +31,12 @@ import { MatButtonModule } from "@angular/material/button";
   imports: [
     NgIf,
     MatProgressBarModule,
-    AttendanceModule,
-    EntitySubrecordModule,
+    EntitySubrecordComponent,
     MatSlideToggleModule,
     MatTooltipModule,
     MatButtonModule,
+    AttendanceCalendarComponent,
+    AttendanceSummaryComponent,
   ],
   standalone: true,
 })

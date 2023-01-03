@@ -1,12 +1,10 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { FormDialogWrapperComponent } from "./form-dialog-wrapper.component";
-import { FormDialogModule } from "../form-dialog.module";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { MatDialogRef } from "@angular/material/dialog";
 import { Subject } from "rxjs";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { Child } from "../../../child-dev-project/children/model/child";
 
 describe("FormDialogWrapperComponent", () => {
@@ -15,20 +13,14 @@ describe("FormDialogWrapperComponent", () => {
 
   let saveEntitySpy: jasmine.Spy;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        imports: [
-          FormDialogModule,
-          MockedTestingModule.withState(),
-          MatSnackBarModule,
-        ],
-        providers: [{ provide: MatDialogRef, useValue: {} }],
-      }).compileComponents();
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [FormDialogWrapperComponent, MockedTestingModule.withState()],
+      providers: [{ provide: MatDialogRef, useValue: {} }],
+    }).compileComponents();
 
-      saveEntitySpy = spyOn(TestBed.inject(EntityMapperService), "save");
-    })
-  );
+    saveEntitySpy = spyOn(TestBed.inject(EntityMapperService), "save");
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(FormDialogWrapperComponent);

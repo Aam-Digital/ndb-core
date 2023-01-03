@@ -6,14 +6,14 @@ import { DynamicComponent } from "../../../view/dynamic-components/dynamic-compo
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { Router } from "@angular/router";
 import { NgClass, NgIf } from "@angular/common";
-import { ViewModule } from "../../../view/view.module";
+import { DynamicComponentDirective } from "../../../view/dynamic-components/dynamic-component.directive";
 
 @DynamicComponent("DisplayEntity")
 @Component({
   selector: "app-display-entity",
   templateUrl: "./display-entity.component.html",
   styleUrls: ["./display-entity.component.scss"],
-  imports: [NgClass, NgIf, ViewModule],
+  imports: [NgClass, NgIf, DynamicComponentDirective],
   standalone: true,
 })
 export class DisplayEntityComponent

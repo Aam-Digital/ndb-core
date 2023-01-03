@@ -2,13 +2,13 @@ import { Component, Input } from "@angular/core";
 import { ActivityAttendance } from "../model/activity-attendance";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { DatePipe, NgForOf, NgIf } from "@angular/common";
-import { ViewModule } from "../../../core/view/view.module";
+import { DynamicComponentDirective } from "../../../core/view/dynamic-components/dynamic-component.directive";
 
 @Component({
   selector: "app-attendance-summary",
   templateUrl: "./attendance-summary.component.html",
   styleUrls: ["./attendance-summary.component.scss"],
-  imports: [NgIf, DatePipe, NgForOf, ViewModule],
+  imports: [NgIf, DatePipe, NgForOf, DynamicComponentDirective],
   standalone: true,
 })
 export class AttendanceSummaryComponent {

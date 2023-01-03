@@ -20,8 +20,8 @@ import { ActivatedRoute } from "@angular/router";
 import { DynamicComponentConfig } from "../../view/dynamic-components/dynamic-component-config.interface";
 import { RouteData } from "../../view/dynamic-routing/view-config.interface";
 import { RouteTarget } from "../../../app.routing";
-import { ViewModule } from "../../view/view.module";
 import { NgFor } from "@angular/common";
+import { DynamicComponentDirective } from "../../view/dynamic-components/dynamic-component.directive";
 
 @RouteTarget("Dashboard")
 @Component({
@@ -31,7 +31,7 @@ import { NgFor } from "@angular/common";
     [appDynamicComponent]="widgetConfig"
   ></ng-template>`,
   styleUrls: ["./dashboard.component.scss"],
-  imports: [ViewModule, NgFor],
+  imports: [NgFor, DynamicComponentDirective],
   standalone: true,
 })
 export class DashboardComponent implements OnInit {

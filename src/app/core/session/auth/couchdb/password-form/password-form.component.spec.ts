@@ -7,7 +7,6 @@ import {
 } from "@angular/core/testing";
 
 import { PasswordFormComponent } from "./password-form.component";
-import { UserModule } from "../../../../user/user.module";
 import { MockedTestingModule } from "../../../../../utils/mocked-testing.module";
 import { SessionService } from "../../../session-service/session.service";
 import { CouchdbAuthService } from "../couchdb-auth.service";
@@ -23,7 +22,7 @@ describe("PasswordFormComponent", () => {
     mockCouchDBAuth = jasmine.createSpyObj(["changePassword"]);
 
     await TestBed.configureTestingModule({
-      imports: [UserModule, MockedTestingModule.withState()],
+      imports: [PasswordFormComponent, MockedTestingModule.withState()],
       providers: [{ provide: SessionService, useValue: mockSessionService }],
     }).compileComponents();
 

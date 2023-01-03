@@ -10,7 +10,6 @@ import {
   EntitySubrecordComponent,
   TableRow,
 } from "./entity-subrecord.component";
-import { EntitySubrecordModule } from "../entity-subrecord.module";
 import { Entity } from "../../../entity/model/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { ConfigurableEnumValue } from "../../../configurable-enum/configurable-enum.interface";
@@ -39,7 +38,7 @@ describe("EntitySubrecordComponent", () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
-        EntitySubrecordModule,
+        EntitySubrecordComponent,
         MockedTestingModule.withState(),
         FontAwesomeTestingModule,
       ],

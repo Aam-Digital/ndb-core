@@ -30,19 +30,19 @@ import { DataFilter } from "../entity-subrecord/entity-subrecord/entity-subrecor
 import { FilterOverlayComponent } from "../../filter/filter-overlay/filter-overlay.component";
 import { MatDialog } from "@angular/material/dialog";
 import { NgForOf, NgIf, NgStyle, NgTemplateOutlet } from "@angular/common";
-import { ViewModule } from "../../view/view.module";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2OnModule } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatMenuModule } from "@angular/material/menu";
-import { FilterModule } from "../../filter/filter.module";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { EntitySubrecordModule } from "../entity-subrecord/entity-subrecord.module";
-import { PermissionsModule } from "../../permissions/permissions.module";
-import { ExportModule } from "../../export/export.module";
 import { FormsModule } from "@angular/forms";
+import { FilterComponent } from "../../filter/filter/filter.component";
+import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
+import { ViewTitleComponent } from "../entity-utils/view-title/view-title.component";
+import { ExportDataDirective } from "../../export/export-data-directive/export-data.directive";
+import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -61,21 +61,22 @@ import { FormsModule } from "@angular/forms";
   imports: [
     NgIf,
     NgStyle,
-    ViewModule,
     MatButtonModule,
     Angulartics2OnModule,
     FontAwesomeModule,
     MatMenuModule,
     NgTemplateOutlet,
-    FilterModule,
     MatTabsModule,
     NgForOf,
     MatFormFieldModule,
     MatInputModule,
-    EntitySubrecordModule,
-    PermissionsModule,
-    ExportModule,
+    EntitySubrecordComponent,
     FormsModule,
+    FilterComponent,
+    TabStateModule,
+    ViewTitleComponent,
+    ExportDataDirective,
+    DisableEntityOperationDirective,
   ],
   standalone: true,
 })

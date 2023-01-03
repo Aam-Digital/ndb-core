@@ -16,18 +16,7 @@
  */
 
 import { Injector, NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { LoginComponent } from "./login/login.component";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { EntityModule } from "../entity/entity.module";
-import { MatButtonModule } from "@angular/material/button";
-import { MatCardModule } from "@angular/material/card";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
-import { RouterModule } from "@angular/router";
-import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
-import { MatDialogModule } from "@angular/material/dialog";
-import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { HTTP_INTERCEPTORS } from "@angular/common/http";
 import { SyncedSessionService } from "./session-service/synced-session.service";
 import { LocalSession } from "./session-service/local-session";
 import { RemoteSession } from "./session-service/remote-session";
@@ -56,30 +45,6 @@ import { serviceProvider } from "../../utils/utils";
  * [Session Handling, Authentication & Synchronisation]{@link /additional-documentation/concepts/session-and-authentication-system.html}
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    EntityModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    RouterModule,
-    HttpClientModule,
-    MatDialogModule,
-    MatProgressBarModule,
-    Angulartics2OnModule,
-    ReactiveFormsModule,
-    FontAwesomeModule,
-    MatTooltipModule,
-  ],
-  declarations: [
-    LoginComponent,
-    PasswordFormComponent,
-    AccountPageComponent,
-    PasswordResetComponent,
-  ],
-  exports: [LoginComponent, AccountPageComponent, PasswordFormComponent],
   providers: [
     SyncedSessionService,
     LocalSession,

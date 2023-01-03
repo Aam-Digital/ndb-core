@@ -15,6 +15,8 @@ import { MatTableModule } from "@angular/material/table";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { DashboardWidgetComponent } from "../../../core/dashboard/dashboard-widget/dashboard-widget.component";
+import { WidgetContentComponent } from "../../../core/dashboard/dashboard-widget/widget-content/widget-content.component";
 
 @Component({
   selector: "app-progress-dashboard",
@@ -26,6 +28,8 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     MatProgressBarModule,
     MatButtonModule,
     FontAwesomeModule,
+    DashboardWidgetComponent,
+    WidgetContentComponent,
   ],
   standalone: true,
 })

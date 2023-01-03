@@ -9,7 +9,6 @@ import {
 import { ProgressDashboardComponent } from "./progress-dashboard.component";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { AlertService } from "../../../core/alerts/alert.service";
-import { ProgressDashboardWidgetModule } from "../progress-dashboard-widget.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { ProgressDashboardConfig } from "./progress-dashboard-config";
 import { MatDialog } from "@angular/material/dialog";
@@ -40,7 +39,7 @@ describe("ProgressDashboardComponent", () => {
 
       TestBed.configureTestingModule({
         imports: [
-          ProgressDashboardWidgetModule,
+          ProgressDashboardComponent,
           MockedTestingModule.withState(),
           FontAwesomeTestingModule,
         ],

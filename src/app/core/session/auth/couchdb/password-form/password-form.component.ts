@@ -1,10 +1,14 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { FormBuilder, ValidationErrors, Validators } from "@angular/forms";
+import { FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from "@angular/forms";
 import { SessionService } from "../../../session-service/session.service";
 import { LoggingService } from "../../../../logging/logging.service";
 import { AuthService } from "../../auth.service";
 import { CouchdbAuthService } from "../couchdb-auth.service";
 import { AlertService } from "../../../../alerts/alert.service";
+import { KeyValuePipe, NgForOf, NgIf, NgSwitch, NgSwitchCase } from "@angular/common";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatButtonModule } from "@angular/material/button";
 
 /**
  * A simple password form that enforces secure password.
@@ -12,6 +16,18 @@ import { AlertService } from "../../../../alerts/alert.service";
 @Component({
   selector: "app-password-form",
   templateUrl: "./password-form.component.html",
+  imports: [
+    NgIf,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    NgForOf,
+    KeyValuePipe,
+    NgSwitchCase,
+    MatButtonModule,
+    NgSwitch
+  ],
+  standalone: true
 })
 export class PasswordFormComponent implements OnInit {
   @Input() username: string;

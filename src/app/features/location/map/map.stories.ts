@@ -1,7 +1,6 @@
 import { moduleMetadata } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { Meta, Story } from "@storybook/angular/types-6-0";
-import { LocationModule } from "../location.module";
 import { MapComponent } from "./map.component";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 
@@ -10,7 +9,7 @@ export default {
   component: MapComponent,
   decorators: [
     moduleMetadata({
-      imports: [LocationModule, StorybookBaseModule],
+      imports: [MapComponent, StorybookBaseModule],
       providers: [EntitySchemaService],
     }),
   ],

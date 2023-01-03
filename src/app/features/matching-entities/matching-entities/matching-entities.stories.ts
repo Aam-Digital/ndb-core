@@ -1,7 +1,6 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { MatchingEntitiesComponent } from "./matching-entities.component";
-import { MatchingEntitiesModule } from "../matching-entities.module";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
@@ -55,7 +54,7 @@ export default {
   component: MatchingEntitiesComponent,
   decorators: [
     moduleMetadata({
-      imports: [MatchingEntitiesModule, StorybookBaseModule],
+      imports: [MatchingEntitiesComponent, StorybookBaseModule],
       providers: [
         {
           provide: EntityMapperService,

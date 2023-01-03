@@ -1,7 +1,6 @@
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 
 import { PwaInstallComponent } from "./pwa-install.component";
-import { PwaInstallModule } from "./pwa-install.module";
 import { PwaInstallService, PWAInstallType } from "./pwa-install.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { firstValueFrom, Subject } from "rxjs";
@@ -25,7 +24,7 @@ describe("PwaInstallComponent", () => {
     mockSnackbar = jasmine.createSpyObj(["openFromTemplate"]);
     await TestBed.configureTestingModule({
       imports: [
-        PwaInstallModule,
+        PwaInstallComponent,
         MockedTestingModule,
         FontAwesomeTestingModule,
       ],

@@ -20,12 +20,10 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { UiComponent } from "./ui.component";
 import { SwUpdate } from "@angular/service-worker";
 import { EMPTY, Subject } from "rxjs";
-import { UiModule } from "../ui.module";
 import { ConfigService } from "../../config/config.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 
 describe("UiComponent", () => {
   let component: UiComponent;
@@ -43,10 +41,9 @@ describe("UiComponent", () => {
 
     TestBed.configureTestingModule({
       imports: [
-        UiModule,
+        UiComponent,
         MockedTestingModule.withState(),
         FontAwesomeTestingModule,
-        TabStateModule,
       ],
       providers: [
         { provide: SwUpdate, useValue: mockSwUpdate },

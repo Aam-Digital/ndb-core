@@ -1,39 +1,14 @@
 import { Injector, NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { CouchdbFileService } from "./couchdb-file.service";
-import { MatButtonModule } from "@angular/material/button";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatProgressBarModule } from "@angular/material/progress-bar";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { MatInputModule } from "@angular/material/input";
-import { ReactiveFormsModule } from "@angular/forms";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatRippleModule } from "@angular/material/core";
-import { ShowFileComponent } from "./show-file/show-file.component";
 import { environment } from "../../../environments/environment";
 import { SessionType } from "../../core/session/session-type";
 import { FileService } from "./file.service";
 import { MockFileService } from "./mock-file.service";
 import { serviceProvider } from "../../utils/utils";
-import { ProgressComponent } from "./progress/progress.component";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { fileDataType } from "./file-data-type";
-import { MatDialogModule } from "@angular/material/dialog";
 
 @NgModule({
-  declarations: [ShowFileComponent, ProgressComponent],
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    FontAwesomeModule,
-    MatProgressBarModule,
-    MatProgressSpinnerModule,
-    MatInputModule,
-    ReactiveFormsModule,
-    MatTooltipModule,
-    MatRippleModule,
-    MatDialogModule,
-  ],
   providers: [
     CouchdbFileService,
     MockFileService,

@@ -8,8 +8,8 @@ import {
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import { MatSort, MatSortable } from "@angular/material/sort";
-import { MatTableDataSource } from "@angular/material/table";
+import { MatSort, MatSortable, MatSortModule } from "@angular/material/sort";
+import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { AlertService } from "../../../alerts/alert.service";
@@ -40,6 +40,15 @@ import {
 import { FilterService } from "../../../filter/filter.service";
 import { FormDialogService } from "../../../form-dialog/form-dialog.service";
 import { Router } from "@angular/router";
+import { NgForOf, NgIf } from "@angular/common";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { DynamicComponentDirective } from "../../../view/dynamic-components/dynamic-component.directive";
+import { MatButtonModule } from "@angular/material/button";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
+import { Angulartics2Module } from "angulartics2";
+import { ListPaginatorComponent } from "../list-paginator/list-paginator.component";
 
 export interface TableRow<T extends Entity> {
   record: T;
@@ -64,6 +73,21 @@ export interface TableRow<T extends Entity> {
   selector: "app-entity-subrecord",
   templateUrl: "./entity-subrecord.component.html",
   styleUrls: ["./entity-subrecord.component.scss"],
+  imports: [
+    NgIf,
+    MatProgressBarModule,
+    MatTableModule,
+    MatSortModule,
+    NgForOf,
+    MatTooltipModule,
+    DynamicComponentDirective,
+    MatButtonModule,
+    FontAwesomeModule,
+    DisableEntityOperationDirective,
+    Angulartics2Module,
+    ListPaginatorComponent,
+  ],
+  standalone: true,
 })
 export class EntitySubrecordComponent<T extends Entity>
   implements OnChanges, OnInit

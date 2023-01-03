@@ -1,6 +1,5 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
-import { AttendanceModule } from "../attendance.module";
 import {
   ActivityAttendance,
   generateEventWithAttendance,
@@ -17,7 +16,7 @@ export default {
   component: AttendanceBlockComponent,
   decorators: [
     moduleMetadata({
-      imports: [AttendanceModule, MatNativeDateModule],
+      imports: [AttendanceBlockComponent, MatNativeDateModule],
       providers: [
         { provide: EntityMapperService, useValue: null },
         { provide: ConfigService, useValue: {} },

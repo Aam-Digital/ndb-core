@@ -9,7 +9,6 @@ import { EntityListComponent } from "./entity-list.component";
 import { BooleanFilterConfig, EntityListConfig } from "./EntityListConfig";
 import { Entity } from "../../entity/model/entity";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { EntityListModule } from "./entity-list.module";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { AttendanceService } from "../../../child-dev-project/attendance/attendance.service";
 import { ExportService } from "../../export/export-service/export.service";
@@ -94,7 +93,7 @@ describe("EntityListComponent", () => {
 
     TestBed.configureTestingModule({
       imports: [
-        EntityListModule,
+        EntityListComponent,
         MockedTestingModule.withState(),
         FontAwesomeTestingModule,
       ],

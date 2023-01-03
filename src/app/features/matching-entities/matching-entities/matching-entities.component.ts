@@ -24,13 +24,12 @@ import { ConfigService } from "../../../core/config/config.service";
 import { MatTableModule } from "@angular/material/table";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { EntityUtilsModule } from "../../../core/entity-components/entity-utils/entity-utils.module";
 import { NgForOf, NgIf } from "@angular/common";
-import { LocationModule } from "../../location/location.module";
 import { MatButtonModule } from "@angular/material/button";
-import { FilterModule } from "../../../core/filter/filter.module";
-import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { EntityPropertyViewComponent } from "../../../core/entity-components/entity-utils/entity-property-view/entity-property-view.component";
+import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { MapComponent } from "../../location/map/map.component";
+import { FilterComponent } from "../../../core/filter/filter/filter.component";
 
 interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -51,14 +50,13 @@ interface MatchingSide extends MatchingSideConfig {
     MatTableModule,
     FontAwesomeModule,
     MatTooltipModule,
-    EntityUtilsModule,
     NgIf,
-    LocationModule,
     MatButtonModule,
     NgForOf,
-    FilterModule,
-    EntitySubrecordModule,
+    EntitySubrecordComponent,
     EntityPropertyViewComponent,
+    MapComponent,
+    FilterComponent,
   ],
   standalone: true,
 })

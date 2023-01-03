@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { EducationalMaterialComponent } from "./educational-material.component";
 import { Child } from "../../model/child";
-import { ChildrenModule } from "../../children.module";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { EducationalMaterial } from "../model/educational-material";
 import { ConfigurableEnumValue } from "../../../../core/configurable-enum/configurable-enum.interface";
@@ -24,15 +23,13 @@ describe("EducationalMaterialComponent", () => {
     label: "Ruler",
   };
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        imports: [ChildrenModule, MockedTestingModule.withState()],
-      }).compileComponents();
-      const entityMapper = TestBed.inject(EntityMapperService);
-      spyOn(entityMapper, "receiveUpdates").and.returnValue(updates);
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [EducationalMaterialComponent, MockedTestingModule.withState()],
+    }).compileComponents();
+    const entityMapper = TestBed.inject(EntityMapperService);
+    spyOn(entityMapper, "receiveUpdates").and.returnValue(updates);
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EducationalMaterialComponent);

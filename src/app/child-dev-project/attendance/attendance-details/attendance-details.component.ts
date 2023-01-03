@@ -15,8 +15,8 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { DatePipe, NgIf, PercentPipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
-import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
 import { AttendanceCalendarComponent } from "../attendance-calendar/attendance-calendar.component";
+import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 
 @Component({
   selector: "app-attendance-details",
@@ -32,7 +32,7 @@ import { AttendanceCalendarComponent } from "../attendance-calendar/attendance-c
     DatePipe,
     FormsModule,
     MatInputModule,
-    EntitySubrecordModule,
+    EntitySubrecordComponent,
     AttendanceCalendarComponent,
   ],
   standalone: true,

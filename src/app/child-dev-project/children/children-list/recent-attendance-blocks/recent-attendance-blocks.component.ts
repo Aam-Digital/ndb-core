@@ -11,8 +11,8 @@ import {
   ScreenWidthObserver,
   ScreenSize,
 } from "../../../../utils/media/screen-size-observer.service";
-import { AttendanceModule } from "../../../attendance/attendance.module";
 import { NgForOf, SlicePipe } from "@angular/common";
+import { AttendanceBlockComponent } from "../../../attendance/attendance-block/attendance-block.component";
 
 /**
  * This component lists attendance blocks for a child for recent months filtered by institutions.
@@ -30,7 +30,7 @@ import { NgForOf, SlicePipe } from "@angular/common";
       [forChild]="child.getId()"
     ></app-attendance-block>
   `,
-  imports: [AttendanceModule, NgForOf, SlicePipe],
+  imports: [NgForOf, SlicePipe, AttendanceBlockComponent],
   standalone: true,
 })
 export class RecentAttendanceBlocksComponent implements OnInitDynamicComponent {

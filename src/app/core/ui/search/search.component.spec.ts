@@ -6,7 +6,6 @@ import { School } from "../../../child-dev-project/schools/model/school";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 import { Subscription } from "rxjs";
 import { Entity } from "../../entity/model/entity";
-import { UiModule } from "../ui.module";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { SwUpdate } from "@angular/service-worker";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -26,7 +25,7 @@ describe("SearchComponent", () => {
 
     TestBed.configureTestingModule({
       imports: [
-        UiModule,
+        SearchComponent,
         MockedTestingModule.withState(),
         FontAwesomeTestingModule,
       ],

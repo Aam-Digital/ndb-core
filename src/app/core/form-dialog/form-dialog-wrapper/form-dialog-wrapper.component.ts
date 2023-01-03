@@ -19,7 +19,7 @@ import { NgIf } from "@angular/common";
 import { AbilityModule } from "@casl/angular";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
-import { PermissionsModule } from "../../permissions/permissions.module";
+import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 
 /**
  * Use `<app-form-dialog-wrapper>` in your form templates to handle the saving and resetting of the edited entity.
@@ -47,7 +47,7 @@ import { PermissionsModule } from "../../permissions/permissions.module";
     AbilityModule,
     MatButtonModule,
     Angulartics2Module,
-    PermissionsModule,
+    DisableEntityOperationDirective,
   ],
   standalone: true,
 })

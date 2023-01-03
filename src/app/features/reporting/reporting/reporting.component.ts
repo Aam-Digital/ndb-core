@@ -14,16 +14,24 @@ import { RouteData } from "../../../core/view/dynamic-routing/view-config.interf
 import { ExportService } from "../../../core/export/export-service/export.service";
 import { ExportColumnConfig } from "../../../core/export/export-service/export-column-config";
 import { RouteTarget } from "../../../app.routing";
-import { ViewModule } from "../../../core/view/view.module";
-import { ReportingModule } from "../reporting.module";
 import { NgIf } from "@angular/common";
+import { ViewTitleComponent } from "../../../core/entity-components/entity-utils/view-title/view-title.component";
+import { SelectReportComponent } from "./select-report/select-report.component";
+import { ReportRowComponent } from "./report-row/report-row.component";
+import { ObjectTableComponent } from "./object-table/object-table.component";
 
 @RouteTarget("Reporting")
 @Component({
   selector: "app-reporting",
   templateUrl: "./reporting.component.html",
   styleUrls: ["./reporting.component.scss"],
-  imports: [ViewModule, ReportingModule, NgIf],
+  imports: [
+    NgIf,
+    ViewTitleComponent,
+    SelectReportComponent,
+    ReportRowComponent,
+    ObjectTableComponent,
+  ],
   standalone: true,
 })
 export class ReportingComponent implements OnInit {

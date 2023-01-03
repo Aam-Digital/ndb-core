@@ -7,6 +7,8 @@ import {
   TemplateRef,
   ViewChild,
 } from "@angular/core";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { NgTemplateOutlet } from "@angular/common";
 
 /**
  * This component is used to display a tooltip when a element is elementDisabled.
@@ -15,14 +17,20 @@ import {
  */
 @Component({
   selector: "app-disabled-wrapper",
-  template: ` <div
-    [matTooltip]="text"
-    [matTooltipDisabled]="!elementDisabled"
-    style="display: inline"
-    #wrapper
-  >
-    <ng-container *ngTemplateOutlet="template"></ng-container>
-  </div>`,
+  template: `
+    <div
+      [matTooltip]="text"
+      [matTooltipDisabled]="!elementDisabled"
+      style="display: inline"
+      #wrapper
+    >
+      <ng-container *ngTemplateOutlet="template"></ng-container>
+    </div>`,
+  imports: [
+    MatTooltipModule,
+    NgTemplateOutlet
+  ],
+  standalone: true
 })
 export class DisabledWrapperComponent implements AfterViewInit {
   /**

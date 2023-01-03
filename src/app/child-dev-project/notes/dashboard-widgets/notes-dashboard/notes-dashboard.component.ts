@@ -10,6 +10,8 @@ import { EntityRegistry } from "../../../../core/entity/database-entity.decorato
 import { EntityConstructor } from "../../../../core/entity/model/entity";
 import { DecimalPipe, NgIf } from "@angular/common";
 import { DisplayEntityComponent } from "../../../../core/entity-components/entity-select/display-entity/display-entity.component";
+import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget/dashboard-widget.component";
+import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-widget/widget-content/widget-content.component";
 
 /**
  * Dashboard Widget displaying entities that do not have a recently added Note.
@@ -28,6 +30,8 @@ import { DisplayEntityComponent } from "../../../../core/entity-components/entit
     DisplayEntityComponent,
     DecimalPipe,
     MatPaginatorModule,
+    DashboardWidgetComponent,
+    WidgetContentComponent,
   ],
   standalone: true,
 })

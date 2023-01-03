@@ -1,7 +1,6 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { ChildrenModule } from "../../../../child-dev-project/children/children.module";
 import { DisplayEntityArrayComponent } from "./display-entity-array.component";
 import { BehaviorSubject } from "rxjs";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";

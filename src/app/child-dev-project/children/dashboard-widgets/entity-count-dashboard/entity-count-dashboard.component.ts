@@ -11,6 +11,8 @@ import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { MatTableModule } from "@angular/material/table";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Angulartics2Module } from "angulartics2";
+import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget/dashboard-widget.component";
+import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-widget/widget-content/widget-content.component";
 
 @DynamicComponent("ChildrenCountDashboard")
 @DynamicComponent("EntityCountDashboard")
@@ -22,6 +24,8 @@ import { Angulartics2Module } from "angulartics2";
     MatTableModule,
     FontAwesomeModule,
     Angulartics2Module,
+    DashboardWidgetComponent,
+    WidgetContentComponent,
   ],
   standalone: true,
 })

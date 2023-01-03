@@ -1,8 +1,10 @@
 import { Component } from "@angular/core";
 import { RouteTarget } from "../../../app.routing";
-import { ParsedData } from "../../../features/data-import/input-file/input-file.component";
+import {
+  InputFileComponent,
+  ParsedData,
+} from "../../../features/data-import/input-file/input-file.component";
 import { ConfigImportParserService } from "../config-import-parser.service";
-import { DataImportModule } from "../../../features/data-import/data-import.module";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
@@ -18,12 +20,12 @@ import { ClipboardModule } from "@angular/cdk/clipboard";
   templateUrl: "./config-import.component.html",
   styleUrls: ["./config-import.component.scss"],
   imports: [
-    DataImportModule,
     MatFormFieldModule,
     FormsModule,
     MatInputModule,
     MatButtonModule,
     ClipboardModule,
+    InputFileComponent,
   ],
   standalone: true,
 })

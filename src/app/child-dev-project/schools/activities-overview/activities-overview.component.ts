@@ -6,14 +6,14 @@ import { Entity } from "app/core/entity/model/entity";
 import { DynamicComponent } from "app/core/view/dynamic-components/dynamic-component.decorator";
 import { OnInitDynamicComponent } from "app/core/view/dynamic-components/on-init-dynamic-component.interface";
 import { delay } from "rxjs";
-import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
+import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 
 @DynamicComponent("ActivitiesOverview")
 @Component({
   selector: "app-activities-overview",
   templateUrl: "./activities-overview.component.html",
   styleUrls: ["./activities-overview.component.scss"],
-  imports: [EntitySubrecordModule],
+  imports: [EntitySubrecordComponent],
   standalone: true,
 })
 export class ActivitiesOverviewComponent implements OnInitDynamicComponent {

@@ -7,7 +7,6 @@ import {
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { FormBuilder, FormGroup } from "@angular/forms";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { ProgressDashboardWidgetModule } from "../progress-dashboard-widget.module";
 import {
   ConfigService,
   createTestingConfigService,
@@ -40,7 +39,7 @@ describe("EditProgressDashboardComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProgressDashboardWidgetModule, FontAwesomeTestingModule],
+      imports: [EditProgressDashboardComponent, FontAwesomeTestingModule],
       providers: [
         {
           provide: MAT_DIALOG_DATA,

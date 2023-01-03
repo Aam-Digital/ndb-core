@@ -19,8 +19,10 @@ import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 import { NgForOf, NgIf } from "@angular/common";
-import { AttendanceModule } from "../../attendance.module";
 import { DisplayEntityComponent } from "../../../../core/entity-components/entity-select/display-entity/display-entity.component";
+import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget/dashboard-widget.component";
+import { AttendanceDayBlockComponent } from "./attendance-day-block/attendance-day-block.component";
+import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-widget/widget-content/widget-content.component";
 
 interface AttendanceWeekRow {
   childId: string;
@@ -38,8 +40,10 @@ interface AttendanceWeekRow {
     MatTableModule,
     NgForOf,
     MatPaginatorModule,
-    AttendanceModule,
     DisplayEntityComponent,
+    DashboardWidgetComponent,
+    WidgetContentComponent,
+    AttendanceDayBlockComponent,
   ],
   standalone: true,
 })

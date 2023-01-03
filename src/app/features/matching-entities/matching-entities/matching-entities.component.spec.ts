@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MatchingEntitiesComponent } from "./matching-entities.component";
 import { MatchingEntitiesConfig } from "./matching-entities-config";
 import { Entity } from "../../../core/entity/model/entity";
-import { MatchingEntitiesModule } from "../matching-entities.module";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
@@ -43,7 +42,7 @@ describe("MatchingEntitiesComponent", () => {
     mockConfigService = jasmine.createSpyObj(["getConfig"]);
 
     await TestBed.configureTestingModule({
-      imports: [MatchingEntitiesModule],
+      imports: [MatchingEntitiesComponent],
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },

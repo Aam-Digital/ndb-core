@@ -15,7 +15,6 @@ import {
   mockEntityMapper,
   MockEntityMapperService,
 } from "../../../../core/entity/mock-entity-mapper-service";
-import { ChildrenModule } from "../../children.module";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { RecurringActivity } from "../../../attendance/model/recurring-activity";
 import { defaultInteractionTypes } from "../../../../core/config/default-config/default-interaction-types";
@@ -35,7 +34,7 @@ describe("EntityCountDashboardComponent", () => {
     entityMapper = mockEntityMapper();
     TestBed.configureTestingModule({
       imports: [
-        ChildrenModule,
+        EntityCountDashboardComponent,
         MockedTestingModule.withState(),
         FontAwesomeTestingModule,
       ],

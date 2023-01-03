@@ -7,7 +7,6 @@ import {
 } from "../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { AttendanceDetailsComponent } from "./attendance-details.component";
-import { AttendanceModule } from "../attendance.module";
 import { MatDialogRef } from "@angular/material/dialog";
 import { AttendanceService } from "../attendance.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
@@ -55,7 +54,7 @@ export default {
   decorators: [
     moduleMetadata({
       imports: [
-        AttendanceModule,
+        AttendanceDetailsComponent,
         StorybookBaseModule,
         MockedTestingModule.withState(),
       ],

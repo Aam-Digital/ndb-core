@@ -9,7 +9,6 @@ import { ChildrenListComponent } from "./children-list.component";
 import { ChildrenService } from "../children.service";
 import { of } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
-import { ChildrenModule } from "../children.module";
 import { Child } from "../model/child";
 import {
   BooleanFilterConfig,
@@ -85,10 +84,9 @@ describe("ChildrenListComponent", () => {
     mockChildrenService.getChildren.and.returnValue(of([]));
     TestBed.configureTestingModule({
       imports: [
-        ChildrenModule,
+        ChildrenListComponent,
         MockedTestingModule.withState(),
         FontAwesomeTestingModule,
-        TabStateModule,
       ],
       providers: [
         {

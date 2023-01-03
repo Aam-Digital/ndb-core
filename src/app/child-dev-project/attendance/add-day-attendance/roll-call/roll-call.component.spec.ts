@@ -12,7 +12,6 @@ import { By } from "@angular/platform-browser";
 import { ConfigService } from "../../../../core/config/config.service";
 import { Child } from "../../../children/model/child";
 import { LoggingService } from "../../../../core/logging/logging.service";
-import { AttendanceModule } from "../../attendance.module";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { ConfirmationDialogService } from "../../../../core/confirmation-dialog/confirmation-dialog.service";
 import { LoginState } from "../../../../core/session/session-states/login-state.enum";
@@ -63,7 +62,7 @@ describe("RollCallComponent", () => {
 
       TestBed.configureTestingModule({
         imports: [
-          AttendanceModule,
+          RollCallComponent,
           MockedTestingModule.withState(LoginState.LOGGED_IN, [
             participant1,
             participant2,

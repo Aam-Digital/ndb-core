@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceWeekDashboardComponent } from "./attendance-week-dashboard.component";
-import { AttendanceModule } from "../../attendance.module";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { Child } from "../../../children/model/child";
 import { EventNote } from "../../model/event-note";
@@ -25,7 +24,7 @@ describe("AttendanceWeekDashboardComponent", () => {
     mockAttendanceService.getAllActivityAttendancesForPeriod.and.resolveTo([]);
     TestBed.configureTestingModule({
       imports: [
-        AttendanceModule,
+        AttendanceWeekDashboardComponent,
         MockedTestingModule.withState(),
         FontAwesomeTestingModule,
       ],

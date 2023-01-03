@@ -10,6 +10,8 @@ import { groupBy } from "../../../../utils/utils";
 import { Child } from "../../model/child";
 import { DecimalPipe, NgIf } from "@angular/common";
 import { DisplayEntityComponent } from "../../../../core/entity-components/entity-select/display-entity/display-entity.component";
+import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget/dashboard-widget.component";
+import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-widget/widget-content/widget-content.component";
 
 interface BmiRow {
   childId: string;
@@ -27,6 +29,8 @@ interface BmiRow {
     DecimalPipe,
     MatPaginatorModule,
     DisplayEntityComponent,
+    DashboardWidgetComponent,
+    WidgetContentComponent,
   ],
   standalone: true,
 })

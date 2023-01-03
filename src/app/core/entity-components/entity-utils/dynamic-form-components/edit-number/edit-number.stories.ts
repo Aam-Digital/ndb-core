@@ -1,6 +1,5 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
-import { EntityUtilsModule } from "../../entity-utils.module";
 import { EntitySchemaService } from "../../../../entity/schema/entity-schema.service";
 import { EntityFormComponent } from "../../../entity-form/entity-form/entity-form.component";
 import { FormFieldConfig } from "../../../entity-form/entity-form/FormConfig";

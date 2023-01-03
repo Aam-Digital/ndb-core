@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { EntityPropertyViewComponent } from "./entity-property-view.component";
-import { EntityUtilsModule } from "../entity-utils.module";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import {
   ConfigService,
@@ -19,7 +18,7 @@ describe("EntityPropertyViewComponent", () => {
     testEntity = Child.create("tester");
 
     await TestBed.configureTestingModule({
-      imports: [EntityUtilsModule],
+      imports: [EntityPropertyViewComponent],
       providers: [
         EntitySchemaService,
         { provide: ConfigService, useValue: createTestingConfigService() },

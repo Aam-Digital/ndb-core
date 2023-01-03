@@ -7,12 +7,22 @@ import {
 } from "@angular/core";
 import { getUrlWithoutParams } from "../../../../utils/utils";
 import { Router } from "@angular/router";
-import { Location } from "@angular/common";
+import { Location, NgIf } from "@angular/common";
+import { MatButtonModule } from "@angular/material/button";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @Component({
   selector: "app-view-title",
   templateUrl: "./view-title.component.html",
   styleUrls: ["./view-title.component.scss"],
+  imports: [
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    FontAwesomeModule
+  ],
+  standalone: true
 })
 export class ViewTitleComponent implements OnChanges {
   /** The page title to be displayed */

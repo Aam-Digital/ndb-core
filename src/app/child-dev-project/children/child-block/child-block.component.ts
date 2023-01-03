@@ -11,14 +11,15 @@ import { ChildrenService } from "../children.service";
 import { Child } from "../model/child";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { NgIf } from "@angular/common";
-import { ChildrenModule } from "../children.module";
+import { TemplateTooltipDirective } from "../../../core/common-components/template-tooltip/template-tooltip.directive";
+import { ChildBlockTooltipComponent } from "./child-block-tooltip/child-block-tooltip.component";
 
 @DynamicComponent("ChildBlock")
 @Component({
   selector: "app-child-block",
   templateUrl: "./child-block.component.html",
   styleUrls: ["./child-block.component.scss"],
-  imports: [NgIf, ChildrenModule],
+  imports: [NgIf, TemplateTooltipDirective, ChildBlockTooltipComponent],
   standalone: true,
 })
 export class ChildBlockComponent implements OnInitDynamicComponent, OnChanges {

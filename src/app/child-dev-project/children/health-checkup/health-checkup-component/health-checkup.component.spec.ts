@@ -4,7 +4,6 @@ import { HealthCheckupComponent } from "./health-checkup.component";
 import { of } from "rxjs";
 import { Child } from "../../model/child";
 import { ChildrenService } from "../../children.service";
-import { ChildrenModule } from "../../children.module";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 
 describe("HealthCheckupComponent", () => {
@@ -22,7 +21,7 @@ describe("HealthCheckupComponent", () => {
     mockChildrenService.getHealthChecksOfChild.and.returnValue(of([]));
 
     TestBed.configureTestingModule({
-      imports: [ChildrenModule, MockedTestingModule.withState()],
+      imports: [HealthCheckupComponent, MockedTestingModule.withState()],
       providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
     }).compileComponents();
   }));

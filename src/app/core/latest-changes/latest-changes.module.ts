@@ -16,18 +16,7 @@
  */
 
 import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { AppVersionComponent } from "./app-version/app-version.component";
-import { HttpClientModule } from "@angular/common/http";
-import { SessionModule } from "../session/session.module";
-import { MatButtonModule } from "@angular/material/button";
-import { MatDialogModule } from "@angular/material/dialog";
-import { MatSnackBarModule } from "@angular/material/snack-bar";
-import { ChangelogComponent } from "./changelog/changelog.component";
 import { UpdateManagerService } from "./update-manager.service";
-import { MarkdownModule } from "ngx-markdown";
-import { MatCardModule } from "@angular/material/card";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 import { LOCATION_TOKEN } from "../../utils/di-tokens";
 
@@ -41,19 +30,6 @@ import { LOCATION_TOKEN } from "../../utils/di-tokens";
  * text (after markdown characters) with a ".".
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    SessionModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatSnackBarModule,
-    HttpClientModule,
-    MarkdownModule,
-    MatCardModule,
-    FontAwesomeModule,
-  ],
-  declarations: [AppVersionComponent, ChangelogComponent],
-  exports: [AppVersionComponent],
   providers: [{ provide: LOCATION_TOKEN, useValue: window.location }],
 })
 export class LatestChangesModule {

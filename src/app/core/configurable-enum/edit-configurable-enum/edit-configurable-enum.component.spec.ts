@@ -4,9 +4,6 @@ import { EditConfigurableEnumComponent } from "./edit-configurable-enum.componen
 import { ReactiveFormsModule, FormControl, FormGroup } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ConfigService } from "../../config/config.service";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatSelectModule } from "@angular/material/select";
-import { ConfigurableEnumModule } from "../configurable-enum.module";
 
 describe("EditConfigurableEnumComponent", () => {
   let component: EditConfigurableEnumComponent;
@@ -21,11 +18,8 @@ describe("EditConfigurableEnumComponent", () => {
       imports: [
         NoopAnimationsModule,
         ReactiveFormsModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        ConfigurableEnumModule,
+        EditConfigurableEnumComponent,
       ],
-      declarations: [EditConfigurableEnumComponent],
       providers: [{ provide: ConfigService, useValue: mockConfigService }],
     }).compileComponents();
   });

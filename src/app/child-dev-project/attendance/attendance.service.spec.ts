@@ -6,7 +6,6 @@ import { Database } from "../../core/database/database";
 import { RecurringActivity } from "./model/recurring-activity";
 import moment from "moment";
 import { defaultInteractionTypes } from "../../core/config/default-config/default-interaction-types";
-import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
 import { EventNote } from "./model/event-note";
 import { ChildrenService } from "../children/children.service";
@@ -48,7 +47,7 @@ describe("AttendanceService", () => {
     e2_1 = createEvent(new Date("2020-01-01"), activity2.getId(true));
 
     TestBed.configureTestingModule({
-      imports: [ConfigurableEnumModule, DatabaseTestingModule],
+      imports: [DatabaseTestingModule],
       providers: [AttendanceService, ChildrenService],
     });
     service = TestBed.inject(AttendanceService);

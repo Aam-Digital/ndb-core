@@ -16,8 +16,7 @@
  */
 
 import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { HttpClient, HttpClientModule } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { MarkdownModule, MarkedOptions } from "ngx-markdown";
 import { MarkedRendererCustom } from "./MarkedRendererCustom";
 
@@ -39,8 +38,6 @@ function markedOptionsFactory(): MarkedOptions {
  */
 @NgModule({
   imports: [
-    CommonModule,
-    HttpClientModule,
     MarkdownModule.forRoot({
       loader: HttpClient,
       markedOptions: {
@@ -50,5 +47,4 @@ function markedOptionsFactory(): MarkedOptions {
     }),
   ],
 })
-export class MarkdownPageModule {
-}
+export class MarkdownPageModule {}

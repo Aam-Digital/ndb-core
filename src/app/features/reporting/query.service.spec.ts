@@ -18,7 +18,6 @@ import { ChildrenService } from "../../child-dev-project/children/children.servi
 import { AttendanceService } from "../../child-dev-project/attendance/attendance.service";
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
 import { Database } from "../../core/database/database";
-import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
 import { Note } from "../../child-dev-project/notes/model/note";
 import { genders } from "../../child-dev-project/children/model/genders";
 import { EntityConfigService } from "app/core/entity/entity-config.service";
@@ -26,7 +25,6 @@ import { ConfigService } from "app/core/config/config.service";
 import { EventAttendance } from "../../child-dev-project/attendance/model/event-attendance";
 import { AttendanceStatusType } from "../../child-dev-project/attendance/model/attendance-status";
 import { DatabaseTestingModule } from "../../utils/database-testing.module";
-import { ChildrenModule } from "../../child-dev-project/children/children.module";
 
 describe("QueryService", () => {
   let service: QueryService;
@@ -48,7 +46,7 @@ describe("QueryService", () => {
 
   beforeEach(waitForAsync(async () => {
     TestBed.configureTestingModule({
-      imports: [DatabaseTestingModule, ConfigurableEnumModule, ChildrenModule],
+      imports: [DatabaseTestingModule],
       providers: [ChildrenService, AttendanceService, EntityConfigService],
     });
     service = TestBed.inject(QueryService);

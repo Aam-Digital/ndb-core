@@ -28,6 +28,7 @@ import { ConfigurableEnumDirective } from "../../../core/configurable-enum/confi
 import { BorderHighlightDirective } from "../../../core/common-components/border-highlight/border-highlight.directive";
 import { EntitySelectComponent } from "../../../core/entity-components/entity-select/entity-select/entity-select.component";
 import { MatCheckboxModule } from "@angular/material/checkbox";
+import { ChildMeetingNoteAttendanceComponent } from "./child-meeting-attendance/child-meeting-note-attendance.component";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -54,6 +55,7 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
     EntitySelectComponent,
     MatCheckboxModule,
     NgIf,
+    ChildMeetingNoteAttendanceComponent,
   ],
   standalone: true,
 })

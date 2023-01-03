@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { PrimaryActionComponent } from "./primary-action.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { UiModule } from "../ui.module";
 import { SwUpdate } from "@angular/service-worker";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
@@ -13,7 +12,7 @@ describe("PrimaryActionComponent", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-        UiModule,
+        PrimaryActionComponent,
         MockedTestingModule.withState(),
         FontAwesomeTestingModule,
       ],

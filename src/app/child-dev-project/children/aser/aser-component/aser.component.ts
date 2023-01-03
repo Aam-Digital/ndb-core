@@ -7,7 +7,7 @@ import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components
 import { PanelConfig } from "../../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { FormFieldConfig } from "../../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
-import { EntitySubrecordModule } from "../../../../core/entity-components/entity-subrecord/entity-subrecord.module";
+import { EntitySubrecordComponent } from "../../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 
 @UntilDestroy()
 @DynamicComponent("Aser")
@@ -19,7 +19,7 @@ import { EntitySubrecordModule } from "../../../../core/entity-components/entity
     [newRecordFactory]="generateNewRecordFactory()"
   ></app-entity-subrecord>`,
   standalone: true,
-  imports: [EntitySubrecordModule],
+  imports: [EntitySubrecordComponent],
 })
 export class AserComponent implements OnChanges, OnInitDynamicComponent {
   @Input() child: Child;

@@ -7,7 +7,6 @@ import {
 
 import { PasswordResetComponent } from "./password-reset.component";
 import { KeycloakAuthService } from "../keycloak-auth.service";
-import { SessionModule } from "../../../session.module";
 import { MockedTestingModule } from "../../../../../utils/mocked-testing.module";
 import { of, throwError } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -21,7 +20,7 @@ describe("PasswordResetComponent", () => {
   beforeEach(async () => {
     mockAuthService = jasmine.createSpyObj(["forgotPassword"]);
     await TestBed.configureTestingModule({
-      imports: [SessionModule, MockedTestingModule.withState()],
+      imports: [PasswordResetComponent, MockedTestingModule.withState()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PasswordResetComponent);

@@ -18,19 +18,13 @@
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ErrorHandler, LOCALE_ID, NgModule } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 
 import { AppComponent } from "./app.component";
-import { UiModule } from "./core/ui/ui.module";
 import { RouteRegistry, routesRegistry, routing } from "./app.routing";
 import { SessionModule } from "./core/session/session.module";
-import { SyncStatusModule } from "./core/sync-status/sync-status.module";
-import { NavigationModule } from "./core/navigation/navigation.module";
 import { LatestChangesModule } from "./core/latest-changes/latest-changes.module";
-import { UserModule } from "./core/user/user.module";
 
-import { ProgressDashboardWidgetModule } from "./features/progress-dashboard-widget/progress-dashboard-widget.module";
 import { ChildrenModule } from "./child-dev-project/children/children.module";
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
@@ -46,24 +40,18 @@ import { DemoEducationalMaterialGeneratorService } from "./child-dev-project/chi
 import { DemoHealthCheckGeneratorService } from "./child-dev-project/children/health-checkup/demo-data/demo-health-check-generator.service";
 import { DemoProgressDashboardWidgetGeneratorService } from "./features/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service";
 import { DemoUserGeneratorService } from "./core/user/demo-user-generator.service";
-import { FormDialogModule } from "./core/form-dialog/form-dialog.module";
 import { AnalyticsService } from "./core/analytics/analytics.service";
 import { ViewModule } from "./core/view/view.module";
-import { EntitySubrecordModule } from "./core/entity-components/entity-subrecord/entity-subrecord.module";
-import { EntityListModule } from "./core/entity-components/entity-list/entity-list.module";
-import { AttendanceModule } from "./child-dev-project/attendance/attendance.module";
 import { DemoActivityGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-generator.service";
 import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-enum.module";
 import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-events-generator.service";
 import { MatPaginatorIntl } from "@angular/material/paginator";
-import { ReportingModule } from "./features/reporting/reporting.module";
 import { DemoHistoricalDataGenerator } from "./features/historical-data/demo-historical-data-generator";
 import { TranslatableMatPaginator } from "./core/language/TranslatableMatPaginator";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
 import { DemoPermissionGeneratorService } from "./core/permissions/demo-permission-generator.service";
-import { SupportModule } from "./core/support/support.module";
 import { DemoConfigGeneratorService } from "./core/config/demo-config-generator.service";
 import { DatabaseModule } from "./core/database/database.module";
 import { Angulartics2Matomo, Angulartics2Module } from "angulartics2";
@@ -78,7 +66,11 @@ import {
 } from "./core/language/date-adapter-with-formatting";
 import { FileModule } from "./features/file/file.module";
 import { LocationModule } from "./features/location/location.module";
-import { MatchingEntitiesModule } from "./features/matching-entities/matching-entities.module";
+import { LanguageModule } from "./core/language/language.module";
+import { PermissionsModule } from "./core/permissions/permissions.module";
+import { PwaInstallModule } from "./core/pwa-install/pwa-install.module";
+import { UiComponent } from "./core/ui/ui/ui.component";
+import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 
 // TODO analyze with webpack bundle analyzer
 /**
@@ -100,23 +92,6 @@ import { MatchingEntitiesModule } from "./features/matching-entities/matching-en
     BrowserAnimationsModule,
     HttpClientModule,
     routing,
-    ViewModule,
-    FormsModule,
-    FormDialogModule,
-    EntityModule,
-    SessionModule,
-    UiModule,
-    SyncStatusModule,
-    LatestChangesModule,
-    NavigationModule,
-    UserModule,
-    ProgressDashboardWidgetModule,
-    ChildrenModule,
-    EntitySubrecordModule,
-    EntityListModule,
-    ConfigurableEnumModule,
-    ReportingModule,
-    FileModule,
     // TODO make lazy loaded
     DemoDataModule.forRoot([
       ...DemoConfigGeneratorService.provider(),
@@ -144,11 +119,21 @@ import { MatchingEntitiesModule } from "./features/matching-entities/matching-en
       }),
       ...DemoPermissionGeneratorService.provider(),
     ]),
-    AttendanceModule,
-    SupportModule,
     DatabaseModule,
     LocationModule,
-    MatchingEntitiesModule,
+    LanguageModule,
+    PermissionsModule,
+    PwaInstallModule,
+    ViewModule,
+    EntityModule,
+    SessionModule,
+    LatestChangesModule,
+    ChildrenModule,
+    ConfigurableEnumModule,
+    FileModule,
+    UiComponent,
+
+    MatSnackBarModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },

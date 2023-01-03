@@ -16,7 +16,6 @@ import { School } from "../model/school";
 import { ChildrenService } from "../../children/children.service";
 import { Child } from "../../children/model/child";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
-import { ChildrenModule } from "../../children/children.module";
 
 describe("ChildSchoolOverviewComponent", () => {
   let component: ChildSchoolOverviewComponent;
@@ -39,7 +38,7 @@ describe("ChildSchoolOverviewComponent", () => {
 
     TestBed.configureTestingModule({
       imports: [
-        ChildrenModule,
+        ChildSchoolOverviewComponent,
         MockedTestingModule.withState(),
         FontAwesomeTestingModule,
       ],

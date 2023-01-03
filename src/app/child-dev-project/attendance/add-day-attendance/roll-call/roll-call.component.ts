@@ -25,9 +25,9 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ChildBlockComponent } from "../../../children/child-block/child-block.component";
-import { AttendanceModule } from "../../attendance.module";
 import { RollCallTabComponent } from "./roll-call-tab/roll-call-tab.component";
 import { HammerModule } from "@angular/platform-browser";
+import { AttendanceModule } from "../../attendance.module";
 
 /**
  * Displays the participants of the given event one by one to mark attendance status.
@@ -54,6 +54,7 @@ import { HammerModule } from "@angular/platform-browser";
     NgClass,
     RollCallTabComponent,
     HammerModule,
+    AttendanceModule,
   ],
   standalone: true,
 })

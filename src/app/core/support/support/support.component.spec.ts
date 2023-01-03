@@ -6,7 +6,6 @@ import {
 } from "@angular/core/testing";
 
 import { SupportComponent } from "./support.component";
-import { SupportModule } from "../support.module";
 import { SessionService } from "../../session/session-service/session.service";
 import { BehaviorSubject, of } from "rxjs";
 import { SyncState } from "../../session/session-states/sync-state.enum";
@@ -45,7 +44,7 @@ describe("SupportComponent", () => {
     mockDB = jasmine.createSpyObj(["destroy"]);
     mockLocation = jasmine.createSpyObj(["reload"]);
     await TestBed.configureTestingModule({
-      imports: [SupportModule, HttpClientTestingModule, NoopAnimationsModule],
+      imports: [SupportComponent, HttpClientTestingModule, NoopAnimationsModule],
       providers: [
         { provide: SessionService, useValue: mockSessionService },
         { provide: SwUpdate, useValue: mockSW },

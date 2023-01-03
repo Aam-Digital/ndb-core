@@ -16,7 +16,8 @@ import { AlertService } from "../../../alerts/alert.service";
 import { toFormFieldConfig } from "../../entity-subrecord/entity-subrecord/entity-subrecord-config";
 import * as _ from "lodash-es";
 import { MatButtonModule } from "@angular/material/button";
-import { PermissionsModule } from "../../../permissions/permissions.module";
+import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
+import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
 
 /**
  * A simple wrapper function of the EntityFormComponent which can be used as a dynamic component
@@ -27,7 +28,12 @@ import { PermissionsModule } from "../../../permissions/permissions.module";
   selector: "app-form",
   templateUrl: "./form.component.html",
   styleUrls: ["./form.component.scss"],
-  imports: [MatButtonModule, PermissionsModule, NgIf],
+  imports: [
+    MatButtonModule,
+    NgIf,
+    EntityFormComponent,
+    DisableEntityOperationDirective,
+  ],
   standalone: true,
 })
 export class FormComponent<E extends Entity>

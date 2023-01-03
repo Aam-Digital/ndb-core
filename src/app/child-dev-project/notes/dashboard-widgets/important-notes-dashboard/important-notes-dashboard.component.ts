@@ -12,6 +12,8 @@ import { concat, Observable } from "rxjs";
 import { first, map } from "rxjs/operators";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { DatePipe, NgIf, NgStyle } from "@angular/common";
+import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget/dashboard-widget.component";
+import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-widget/widget-content/widget-content.component";
 
 @DynamicComponent("ImportantNotesDashboard")
 @DynamicComponent("ImportantNotesComponent") // TODO remove after all existing instances are updated
@@ -26,6 +28,8 @@ import { DatePipe, NgIf, NgStyle } from "@angular/common";
     DatePipe,
     NgStyle,
     MatPaginatorModule,
+    DashboardWidgetComponent,
+    WidgetContentComponent,
   ],
   standalone: true,
 })

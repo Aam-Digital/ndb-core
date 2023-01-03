@@ -8,6 +8,8 @@ import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { Entity } from "../../../../core/entity/model/entity";
 import { DatePipe, NgIf } from "@angular/common";
 import { DisplayEntityComponent } from "../../../../core/entity-components/entity-select/display-entity/display-entity.component";
+import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget/dashboard-widget.component";
+import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-widget/widget-content/widget-content.component";
 
 @DynamicComponent("BirthdayDashboard")
 @Component({
@@ -20,6 +22,8 @@ import { DisplayEntityComponent } from "../../../../core/entity-components/entit
     DisplayEntityComponent,
     DatePipe,
     MatPaginatorModule,
+    DashboardWidgetComponent,
+    WidgetContentComponent,
   ],
   standalone: true,
 })

@@ -23,7 +23,6 @@ import { DatabaseField } from "../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { ConfigService } from "../../config/config.service";
-import { ConfigurableEnumModule } from "../configurable-enum.module";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
 
 describe("ConfigurableEnumDatatype", () => {
@@ -55,7 +54,6 @@ describe("ConfigurableEnumDatatype", () => {
     configService.getConfig.and.returnValue(TEST_CONFIG);
 
     TestBed.configureTestingModule({
-      imports: [ConfigurableEnumModule],
       providers: [
         EntitySchemaService,
         { provide: ConfigService, useValue: configService },

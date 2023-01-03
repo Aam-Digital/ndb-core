@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { AddDayAttendanceComponent } from "./add-day-attendance.component";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { Note } from "../../notes/model/note";
-import { AttendanceModule } from "../attendance.module";
 import { ChildrenService } from "../../children/children.service";
 import { of } from "rxjs";
 import { AttendanceService } from "../attendance.service";
@@ -25,7 +24,7 @@ describe("AddDayAttendanceComponent", () => {
 
       TestBed.configureTestingModule({
         imports: [
-          AttendanceModule,
+          AddDayAttendanceComponent,
           MockedTestingModule.withState(),
           FontAwesomeTestingModule,
         ],
