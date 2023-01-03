@@ -32,9 +32,7 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 import { SearchComponent } from "./search/search.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { ChildrenModule } from "../../child-dev-project/children/children.module";
-import { SchoolsModule } from "../../child-dev-project/schools/schools.module";
 import { PrimaryActionComponent } from "./primary-action/primary-action.component";
-import { NotesModule } from "../../child-dev-project/notes/notes.module";
 import { Angulartics2Module } from "angulartics2";
 import { PermissionsModule } from "../permissions/permissions.module";
 import { EntityUtilsModule } from "../entity-components/entity-utils/entity-utils.module";
@@ -62,8 +60,6 @@ import { DisplayEntityComponent } from "../entity-components/entity-select/displ
     MatInputModule,
     MatAutocompleteModule,
     ChildrenModule,
-    SchoolsModule,
-    NotesModule,
     Angulartics2Module,
     PermissionsModule,
     EntityUtilsModule,

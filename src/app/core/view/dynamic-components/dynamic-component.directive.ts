@@ -15,6 +15,7 @@ import { ComponentType } from "@angular/cdk/overlay";
  */
 @Directive({
   selector: "[appDynamicComponent]",
+  standalone: true
 })
 export class DynamicComponentDirective implements OnChanges {
   @Input() appDynamicComponent: DynamicComponentConfig;

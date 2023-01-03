@@ -10,7 +10,6 @@ import { SessionService } from "../../../core/session/session-service/session.se
 import { waitForChangeTo } from "../../../core/session/session-states/session-utils";
 import { SyncState } from "../../../core/session/session-states/sync-state.enum";
 import { firstValueFrom } from "rxjs";
-import { DashboardModule } from "../../../core/dashboard/dashboard.module";
 import { PercentPipe } from "@angular/common";
 import { MatTableModule } from "@angular/material/table";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
@@ -22,7 +21,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
   templateUrl: "./progress-dashboard.component.html",
   styleUrls: ["./progress-dashboard.component.scss"],
   imports: [
-    DashboardModule,
     PercentPipe,
     MatTableModule,
     MatProgressBarModule,

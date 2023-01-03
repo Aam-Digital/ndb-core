@@ -11,7 +11,6 @@ import { applyUpdate } from "../../../../core/entity/model/entity-update";
 import { concat, Observable } from "rxjs";
 import { first, map } from "rxjs/operators";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { DashboardModule } from "../../../../core/dashboard/dashboard.module";
 import { DatePipe, NgIf, NgStyle } from "@angular/common";
 
 @DynamicComponent("ImportantNotesDashboard")
@@ -22,7 +21,6 @@ import { DatePipe, NgIf, NgStyle } from "@angular/common";
   templateUrl: "./important-notes-dashboard.component.html",
   styleUrls: ["./important-notes-dashboard.component.scss"],
   imports: [
-    DashboardModule,
     NgIf,
     MatTableModule,
     DatePipe,

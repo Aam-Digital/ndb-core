@@ -50,10 +50,10 @@ export function RouteTarget(name: string) {
 export const allRoutes: Routes = [
   // routes are added dynamically by the RouterService
   {
-    path: "coming-soon",
-    loadChildren: () =>
-      import("./core/coming-soon/coming-soon.module").then(
-        (m) => m["ComingSoonModule"]
+    path: "coming-soon/:feature",
+    loadComponent: () =>
+      import("./core/coming-soon/coming-soon/coming-soon.component").then(
+        (c) => c.ComingSoonComponent
       ),
   },
   { path: "user-account", component: UserAccountComponent },

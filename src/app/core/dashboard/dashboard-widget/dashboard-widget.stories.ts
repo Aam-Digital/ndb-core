@@ -1,6 +1,5 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
-import { DashboardModule } from "../dashboard.module";
 import { DashboardWidgetComponent } from "./dashboard-widget.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
@@ -9,7 +8,7 @@ export default {
   component: DashboardWidgetComponent,
   decorators: [
     moduleMetadata({
-      imports: [DashboardModule, StorybookBaseModule],
+      imports: [DashboardWidgetComponent, StorybookBaseModule],
     }),
   ],
 } as Meta;

@@ -18,7 +18,6 @@ import { groupBy } from "../../../../utils/utils";
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
-import { DashboardModule } from "../../../../core/dashboard/dashboard.module";
 import { NgForOf, NgIf } from "@angular/common";
 import { AttendanceModule } from "../../attendance.module";
 import { DisplayEntityComponent } from "../../../../core/entity-components/entity-select/display-entity/display-entity.component";
@@ -35,7 +34,6 @@ interface AttendanceWeekRow {
   templateUrl: "./attendance-week-dashboard.component.html",
   styleUrls: ["./attendance-week-dashboard.component.scss"],
   imports: [
-    DashboardModule,
     NgIf,
     MatTableModule,
     NgForOf,

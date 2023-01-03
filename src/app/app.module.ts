@@ -24,7 +24,6 @@ import { HttpClientModule } from "@angular/common/http";
 import { AppComponent } from "./app.component";
 import { UiModule } from "./core/ui/ui.module";
 import { RouteRegistry, routesRegistry, routing } from "./app.routing";
-import { AlertsModule } from "./core/alerts/alerts.module";
 import { SessionModule } from "./core/session/session.module";
 import { SyncStatusModule } from "./core/sync-status/sync-status.module";
 import { NavigationModule } from "./core/navigation/navigation.module";
@@ -33,10 +32,8 @@ import { UserModule } from "./core/user/user.module";
 
 import { ProgressDashboardWidgetModule } from "./features/progress-dashboard-widget/progress-dashboard-widget.module";
 import { ChildrenModule } from "./child-dev-project/children/children.module";
-import { SchoolsModule } from "./child-dev-project/schools/schools.module";
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
-import { AdminModule } from "./core/admin/admin.module";
 import { EntityModule } from "./core/entity/entity.module";
 import { DemoDataModule } from "./core/demo-data/demo-data.module";
 import { LoggingErrorHandler } from "./core/logging/logging-error-handler";
@@ -49,11 +46,9 @@ import { DemoEducationalMaterialGeneratorService } from "./child-dev-project/chi
 import { DemoHealthCheckGeneratorService } from "./child-dev-project/children/health-checkup/demo-data/demo-health-check-generator.service";
 import { DemoProgressDashboardWidgetGeneratorService } from "./features/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service";
 import { DemoUserGeneratorService } from "./core/user/demo-user-generator.service";
-import { ConfirmationDialogModule } from "./core/confirmation-dialog/confirmation-dialog.module";
 import { FormDialogModule } from "./core/form-dialog/form-dialog.module";
 import { AnalyticsService } from "./core/analytics/analytics.service";
 import { ViewModule } from "./core/view/view.module";
-import { DashboardModule } from "./core/dashboard/dashboard.module";
 import { EntitySubrecordModule } from "./core/entity-components/entity-subrecord/entity-subrecord.module";
 import { EntityListModule } from "./core/entity-components/entity-list/entity-list.module";
 import { AttendanceModule } from "./child-dev-project/attendance/attendance.module";
@@ -82,10 +77,10 @@ import {
   DateAdapterWithFormatting,
 } from "./core/language/date-adapter-with-formatting";
 import { FileModule } from "./features/file/file.module";
-import { ConfigSetupModule } from "./core/config-setup/config-setup.module";
 import { LocationModule } from "./features/location/location.module";
 import { MatchingEntitiesModule } from "./features/matching-entities/matching-entities.module";
 
+// TODO analyze with webpack bundle analyzer
 /**
  * Main entry point of the application.
  * Imports required modules and does basic setup.
@@ -94,6 +89,7 @@ import { MatchingEntitiesModule } from "./features/matching-entities/matching-en
 @NgModule({
   declarations: [AppComponent],
   imports: [
+    // TODO check how service worker handles lazy loaded components
     ServiceWorkerModule.register("/ngsw-worker.js", {
       enabled: environment.production,
     }),
@@ -106,27 +102,22 @@ import { MatchingEntitiesModule } from "./features/matching-entities/matching-en
     routing,
     ViewModule,
     FormsModule,
-    ConfirmationDialogModule,
     FormDialogModule,
-    AlertsModule,
     EntityModule,
     SessionModule,
-    ConfigSetupModule,
     UiModule,
     SyncStatusModule,
     LatestChangesModule,
     NavigationModule,
     UserModule,
-    DashboardModule,
     ProgressDashboardWidgetModule,
     ChildrenModule,
-    SchoolsModule,
-    AdminModule,
     EntitySubrecordModule,
     EntityListModule,
     ConfigurableEnumModule,
     ReportingModule,
     FileModule,
+    // TODO make lazy loaded
     DemoDataModule.forRoot([
       ...DemoConfigGeneratorService.provider(),
       ...DemoChildGenerator.provider({ count: 120 }),

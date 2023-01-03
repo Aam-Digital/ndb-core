@@ -9,7 +9,6 @@ import {
   TestBed,
   tick,
 } from "@angular/core/testing";
-import { NotesModule } from "../notes.module";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -101,7 +100,7 @@ describe("NotesManagerComponent", () => {
 
     TestBed.configureTestingModule({
       imports: [
-        NotesModule,
+        NotesManagerComponent,
         MockedTestingModule.withState(),
         FontAwesomeTestingModule,
       ],

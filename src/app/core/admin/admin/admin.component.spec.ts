@@ -11,7 +11,6 @@ import { BackupService } from "../services/backup.service";
 import { ConfigService } from "../../config/config.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { SessionType } from "../../session/session-type";
-import { AdminModule } from "../admin.module";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { environment } from "../../../../environments/environment";
 
@@ -56,7 +55,7 @@ describe("AdminComponent", () => {
     environment.session_type = SessionType.mock;
 
     TestBed.configureTestingModule({
-      imports: [AdminModule, MockedTestingModule.withState()],
+      imports: [AdminComponent, MockedTestingModule.withState()],
       providers: [
         { provide: BackupService, useValue: mockBackupService },
         { provide: ConfigService, useValue: mockConfigService },

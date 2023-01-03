@@ -5,14 +5,11 @@ import { MatTableModule } from "@angular/material/table";
 import { MatSortModule } from "@angular/material/sort";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { EntityModule } from "../../entity/entity.module";
-import { AlertsModule } from "../../alerts/alerts.module";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { ViewModule } from "../../view/view.module";
 import { ReactiveFormsModule } from "@angular/forms";
-import { ConfirmationDialogModule } from "../../confirmation-dialog/confirmation-dialog.module";
-import { EntityFormModule } from "../entity-form/entity-form.module";
 import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatToolbarModule } from "@angular/material/toolbar";
@@ -26,7 +23,6 @@ import { MatRippleModule } from "@angular/material/core";
 import { MatChipsModule } from "@angular/material/chips";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
-import { CommonComponentsModule } from "../../common-components/common-components.module";
 
 @NgModule({
   declarations: [
@@ -36,7 +32,6 @@ import { CommonComponentsModule } from "../../common-components/common-component
   ],
   imports: [
     CommonModule,
-    AlertsModule,
     MatSnackBarModule,
     EntityModule,
     MatTableModule,
@@ -44,12 +39,10 @@ import { CommonComponentsModule } from "../../common-components/common-component
     MatSortModule,
     ViewModule,
     ReactiveFormsModule,
-    ConfirmationDialogModule,
     MatTooltipModule,
     MatButtonModule,
     MatSlideToggleModule,
     MatToolbarModule,
-    EntityFormModule,
     FontAwesomeModule,
     Angulartics2Module,
     MatFormFieldModule,
@@ -59,7 +52,6 @@ import { CommonComponentsModule } from "../../common-components/common-component
     MatChipsModule,
     MatMenuModule,
     MatProgressBarModule,
-    CommonComponentsModule,
   ],
   exports: [EntitySubrecordComponent],
 })

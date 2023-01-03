@@ -33,6 +33,7 @@ import { TemplateTooltipComponent } from "./template-tooltip.component";
  */
 @Directive({
   selector: "[appTemplateTooltip]",
+  standalone: true,
 })
 export class TemplateTooltipDirective implements OnInit, OnDestroy {
   /**

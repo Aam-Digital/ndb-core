@@ -1,5 +1,6 @@
 import { Routes } from "@angular/router";
 
+// TODO make a build script that looks for annotations and creates this
 export const componentRoutes: Routes = [
   {
     path: "dynamic/Dashboard",

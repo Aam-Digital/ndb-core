@@ -4,7 +4,6 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatDialogModule } from "@angular/material/dialog";
 import { FormDialogWrapperComponent } from "./form-dialog-wrapper/form-dialog-wrapper.component";
 import { FormsModule } from "@angular/forms";
-import { ConfirmationDialogModule } from "../confirmation-dialog/confirmation-dialog.module";
 import { Angulartics2Module } from "angulartics2";
 import { PermissionsModule } from "../permissions/permissions.module";
 import { AbilityModule } from "@casl/angular";
@@ -22,7 +21,6 @@ import { AbilityModule } from "@casl/angular";
     MatDialogModule,
     MatButtonModule,
     FormsModule,
-    ConfirmationDialogModule,
     Angulartics2Module,
     PermissionsModule,
     AbilityModule,

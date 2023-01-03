@@ -8,7 +8,6 @@ import { WarningLevel } from "../../../../core/entity/model/warning-level";
 import { HealthCheck } from "../../health-checkup/model/health-check";
 import { groupBy } from "../../../../utils/utils";
 import { Child } from "../../model/child";
-import { DashboardModule } from "../../../../core/dashboard/dashboard.module";
 import { DecimalPipe, NgIf } from "@angular/common";
 import { DisplayEntityComponent } from "../../../../core/entity-components/entity-select/display-entity/display-entity.component";
 
@@ -23,7 +22,6 @@ interface BmiRow {
   templateUrl: "./children-bmi-dashboard.component.html",
   styleUrls: ["./children-bmi-dashboard.component.scss"],
   imports: [
-    DashboardModule,
     NgIf,
     MatTableModule,
     DecimalPipe,

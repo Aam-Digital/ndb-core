@@ -6,7 +6,6 @@ import { MatStepperModule } from "@angular/material/stepper";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
-import { AlertsModule } from "../../core/alerts/alerts.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { ExportModule } from "../../core/export/export.module";
@@ -24,7 +23,6 @@ import { MatExpansionModule } from "@angular/material/expansion";
     MatSelectModule,
     MatStepperModule,
     ReactiveFormsModule,
-    AlertsModule,
     FontAwesomeModule,
     MatAutocompleteModule,
     ExportModule,

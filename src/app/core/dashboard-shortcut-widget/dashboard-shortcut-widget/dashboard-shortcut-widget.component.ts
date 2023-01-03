@@ -3,7 +3,6 @@ import { MenuItem } from "../../navigation/menu-item";
 import { OnInitDynamicComponent } from "../../view/dynamic-components/on-init-dynamic-component.interface";
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
-import { DashboardModule } from "../../dashboard/dashboard.module";
 import { FaDynamicIconComponent } from "../../view/fa-dynamic-icon/fa-dynamic-icon.component";
 import { RouterLink } from "@angular/router";
 
@@ -16,7 +15,6 @@ import { RouterLink } from "@angular/router";
   templateUrl: "./dashboard-shortcut-widget.component.html",
   styleUrls: ["./dashboard-shortcut-widget.component.scss"],
   imports: [
-    DashboardModule,
     MatTableModule,
     FaDynamicIconComponent,
     RouterLink,

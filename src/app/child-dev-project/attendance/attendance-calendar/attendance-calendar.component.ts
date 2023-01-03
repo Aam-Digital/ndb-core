@@ -10,6 +10,7 @@ import { Note } from "../../notes/model/note";
 import {
   MatCalendar,
   MatCalendarCellCssClasses,
+  MatDatepickerModule,
 } from "@angular/material/datepicker";
 import moment, { Moment } from "moment";
 import { EventAttendance } from "../model/event-attendance";
@@ -26,12 +27,34 @@ import { applyUpdate } from "../../../core/entity/model/entity-update";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { AttendanceService } from "../attendance.service";
 import { AnalyticsService } from "../../../core/analytics/analytics.service";
+import { DatePipe, NgIf, PercentPipe } from "@angular/common";
+import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
+import { AttendanceStatusSelectComponent } from "../attendance-status-select/attendance-status-select.component";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { FormsModule } from "@angular/forms";
+import { MatButtonModule } from "@angular/material/button";
+import { Angulartics2Module } from "angulartics2";
 
 @Component({
   selector: "app-attendance-calendar",
   templateUrl: "./attendance-calendar.component.html",
   styleUrls: ["./attendance-calendar.component.scss"],
   encapsulation: ViewEncapsulation.None,
+  imports: [
+    MatDatepickerModule,
+    DatePipe,
+    NgIf,
+    DialogCloseComponent,
+    AttendanceStatusSelectComponent,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    PercentPipe,
+    MatButtonModule,
+    Angulartics2Module,
+  ],
+  standalone: true,
 })
 @UntilDestroy()
 export class AttendanceCalendarComponent implements OnChanges {

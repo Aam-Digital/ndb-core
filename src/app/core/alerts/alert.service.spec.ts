@@ -17,7 +17,6 @@
 
 import { AlertService } from "./alert.service";
 import { TestBed } from "@angular/core/testing";
-import { AlertsModule } from "./alerts.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
 describe("AlertService", () => {
@@ -25,7 +24,7 @@ describe("AlertService", () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [AlertsModule, NoopAnimationsModule],
+      imports: [NoopAnimationsModule],
     });
     service = TestBed.inject(AlertService);
   });

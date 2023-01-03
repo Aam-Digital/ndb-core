@@ -3,26 +3,20 @@ import { moduleMetadata } from "@storybook/angular";
 import { EntityUtilsModule } from "../../entity-utils.module";
 import { EntitySchemaService } from "../../../../entity/schema/entity-schema.service";
 import { EntityFormComponent } from "../../../entity-form/entity-form/entity-form.component";
-import { EntityFormModule } from "../../../entity-form/entity-form.module";
 import { FormFieldConfig } from "../../../entity-form/entity-form/FormConfig";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
-import { AlertsModule } from "../../../../alerts/alerts.module";
 import { Entity } from "../../../../entity/model/entity";
 import { DatabaseField } from "../../../../entity/database-field.decorator";
 import { DatabaseEntity } from "../../../../entity/database-entity.decorator";
 import { StorybookBaseModule } from "../../../../../utils/storybook-base.module";
+import { EditNumberComponent } from "./edit-number.component";
 
 export default {
   title: "Core/EntityComponents/Entity Property Fields/Number",
   component: EntityFormComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        EntityFormModule,
-        EntityUtilsModule,
-        AlertsModule,
-        StorybookBaseModule,
-      ],
+      imports: [EntityFormComponent, EditNumberComponent, StorybookBaseModule],
       providers: [
         EntitySchemaService,
         {
@@ -48,6 +42,7 @@ const Template: Story<EntityFormComponent> = (args: EntityFormComponent) => ({
 class TestEntity extends Entity {
   @DatabaseField() test: number;
 }
+
 const fieldConfig: FormFieldConfig = {
   id: "test",
   view: "DisplayNumber",

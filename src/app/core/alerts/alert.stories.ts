@@ -1,6 +1,5 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
-import { AlertsModule } from "./alerts.module";
 import { StorybookBaseModule } from "../../utils/storybook-base.module";
 import { AlertStoriesHelperComponent } from "./alert-stories-helper.component";
 
@@ -10,7 +9,7 @@ export default {
   decorators: [
     moduleMetadata({
       declarations: [AlertStoriesHelperComponent],
-      imports: [StorybookBaseModule, AlertsModule],
+      imports: [StorybookBaseModule],
     }),
   ],
 } as Meta;

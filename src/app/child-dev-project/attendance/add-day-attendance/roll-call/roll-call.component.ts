@@ -20,6 +20,14 @@ import { LoggingService } from "../../../../core/logging/logging.service";
 import { sortByAttribute } from "../../../../utils/utils";
 import { NoteDetailsComponent } from "../../../notes/note-details/note-details.component";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
+import { NgClass, NgForOf, NgIf } from "@angular/common";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatButtonModule } from "@angular/material/button";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { ChildBlockComponent } from "../../../children/child-block/child-block.component";
+import { AttendanceModule } from "../../attendance.module";
+import { RollCallTabComponent } from "./roll-call-tab/roll-call-tab.component";
+import { HammerModule } from "@angular/platform-browser";
 
 /**
  * Displays the participants of the given event one by one to mark attendance status.
@@ -36,6 +44,18 @@ import { FormDialogService } from "../../../../core/form-dialog/form-dialog.serv
       ]),
     ]),
   ],
+  imports: [
+    NgIf,
+    MatProgressBarModule,
+    MatButtonModule,
+    FontAwesomeModule,
+    ChildBlockComponent,
+    NgForOf,
+    NgClass,
+    RollCallTabComponent,
+    HammerModule,
+  ],
+  standalone: true,
 })
 export class RollCallComponent implements OnChanges {
   /**

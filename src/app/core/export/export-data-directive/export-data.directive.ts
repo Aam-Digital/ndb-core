@@ -20,6 +20,7 @@ export type ExportDataFormat = "csv" | "json";
  */
 @Directive({
   selector: "[appExportData]",
+  standalone: true,
 })
 export class ExportDataDirective {
   /** data to be exported */

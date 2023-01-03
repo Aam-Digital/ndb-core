@@ -1,7 +1,6 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { SchoolsModule } from "../../../../child-dev-project/schools/schools.module";
 import { ChildrenModule } from "../../../../child-dev-project/children/children.module";
 import { DisplayEntityArrayComponent } from "./display-entity-array.component";
 import { BehaviorSubject } from "rxjs";
@@ -51,7 +50,7 @@ export default {
   component: DisplayEntityArrayComponent,
   decorators: [
     moduleMetadata({
-      imports: [StorybookBaseModule, SchoolsModule, ChildrenModule],
+      imports: [StorybookBaseModule, DisplayEntityArrayComponent],
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper([]) },
         { provide: ChildrenService, useValue: null },

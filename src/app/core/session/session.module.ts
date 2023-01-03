@@ -20,7 +20,6 @@ import { CommonModule } from "@angular/common";
 import { LoginComponent } from "./login/login.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { EntityModule } from "../entity/entity.module";
-import { AlertsModule } from "../alerts/alerts.module";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -61,7 +60,6 @@ import { serviceProvider } from "../../utils/utils";
     CommonModule,
     FormsModule,
     EntityModule,
-    AlertsModule,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,

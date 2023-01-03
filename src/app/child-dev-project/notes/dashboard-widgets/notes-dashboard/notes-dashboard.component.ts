@@ -8,7 +8,6 @@ import { DynamicComponent } from "../../../../core/view/dynamic-components/dynam
 import { Child } from "../../../children/model/child";
 import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
 import { EntityConstructor } from "../../../../core/entity/model/entity";
-import { DashboardModule } from "../../../../core/dashboard/dashboard.module";
 import { DecimalPipe, NgIf } from "@angular/common";
 import { DisplayEntityComponent } from "../../../../core/entity-components/entity-select/display-entity/display-entity.component";
 
@@ -24,7 +23,6 @@ import { DisplayEntityComponent } from "../../../../core/entity-components/entit
   templateUrl: "./notes-dashboard.component.html",
   styleUrls: ["./notes-dashboard.component.scss"],
   imports: [
-    DashboardModule,
     NgIf,
     MatTableModule,
     DisplayEntityComponent,

@@ -19,7 +19,6 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { SyncStatusComponent } from "./sync-status/sync-status.component";
 import { SessionModule } from "../session/session.module";
-import { AlertsModule } from "../alerts/alerts.module";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
@@ -34,7 +33,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
   imports: [
     CommonModule,
     SessionModule,
-    AlertsModule,
     MatButtonModule,
     MatDialogModule,
     MatProgressBarModule,

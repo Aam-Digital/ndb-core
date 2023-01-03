@@ -3,7 +3,6 @@ import { Note } from "../model/note";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { EMPTY } from "rxjs";
 import { ChildrenService } from "../../children/children.service";
-import { NotesModule } from "../notes.module";
 import { Child } from "../../children/model/child";
 import { MatDialogRef } from "@angular/material/dialog";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
@@ -50,7 +49,7 @@ describe("NoteDetailsComponent", () => {
 
     TestBed.configureTestingModule({
       imports: [
-        NotesModule,
+        NoteDetailsComponent,
         MockedTestingModule.withState(LoginState.LOGGED_IN, children),
         FontAwesomeTestingModule,
       ],

@@ -8,11 +8,34 @@ import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { EventNote } from "../model/event-note";
+import { FormDialogWrapperComponent } from "../../../core/form-dialog/form-dialog-wrapper/form-dialog-wrapper.component";
+import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
+import { MatDialogModule } from "@angular/material/dialog";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { DatePipe, NgIf, PercentPipe } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { MatInputModule } from "@angular/material/input";
+import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
+import { AttendanceCalendarComponent } from "../attendance-calendar/attendance-calendar.component";
 
 @Component({
   selector: "app-attendance-details",
   templateUrl: "./attendance-details.component.html",
   styleUrls: ["./attendance-details.component.scss"],
+  imports: [
+    FormDialogWrapperComponent,
+    DialogCloseComponent,
+    MatDialogModule,
+    MatFormFieldModule,
+    NgIf,
+    PercentPipe,
+    DatePipe,
+    FormsModule,
+    MatInputModule,
+    EntitySubrecordModule,
+    AttendanceCalendarComponent,
+  ],
+  standalone: true,
 })
 export class AttendanceDetailsComponent
   implements ShowsEntity<ActivityAttendance>, OnInitDynamicComponent

@@ -25,11 +25,9 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EditProgressDashboardComponent } from "./edit-progress-dashboard/edit-progress-dashboard.component";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { CommonComponentsModule } from "../../core/common-components/common-components.module";
 
 @NgModule({
   imports: [
-    CommonComponentsModule,
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,

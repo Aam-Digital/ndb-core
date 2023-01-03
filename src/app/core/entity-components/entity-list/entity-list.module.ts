@@ -17,12 +17,10 @@ import { ViewModule } from "../../view/view.module";
 import { PermissionsModule } from "../../permissions/permissions.module";
 import { EntitySubrecordModule } from "../entity-subrecord/entity-subrecord.module";
 import { EntityUtilsModule } from "../entity-utils/entity-utils.module";
-import { EntityFormModule } from "../entity-form/entity-form.module";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatTabsModule } from "@angular/material/tabs";
 import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
-import { CommonComponentsModule } from "../../common-components/common-components.module";
 import { FilterModule } from "../../filter/filter.module";
 
 @NgModule({
@@ -47,10 +45,8 @@ import { FilterModule } from "../../filter/filter.module";
     MatTabsModule,
     EntitySubrecordModule,
     EntityUtilsModule,
-    EntityFormModule,
     FontAwesomeModule,
     TabStateModule,
-    CommonComponentsModule,
     FilterModule,
   ],
 })

@@ -56,6 +56,7 @@ type PositionState = "left" | "center" | "right";
       ),
     ]),
   ],
+  standalone: true,
 })
 export class RollCallTabComponent {
   @Input()

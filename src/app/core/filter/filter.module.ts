@@ -5,7 +5,6 @@ import { Angulartics2Module } from "angulartics2";
 import { ListFilterComponent } from "./list-filter/list-filter.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
-import { CommonComponentsModule } from "../common-components/common-components.module";
 import { FilterOverlayComponent } from "./filter-overlay/filter-overlay.component";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
@@ -18,7 +17,6 @@ import { MatButtonModule } from "@angular/material/button";
     Angulartics2Module,
     MatFormFieldModule,
     MatSelectModule,
-    CommonComponentsModule,
     MatDialogModule,
     MatButtonModule,
   ],

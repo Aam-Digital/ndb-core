@@ -13,6 +13,7 @@ import { Directive, HostBinding, Input } from "@angular/core";
  */
 @Directive({
   selector: "[appBorderHighlight]",
+  standalone: true,
 })
 export class BorderHighlightDirective {
   readonly CLASS_NAME = "border-left-highlight";

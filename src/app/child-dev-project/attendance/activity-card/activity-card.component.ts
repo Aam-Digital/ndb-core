@@ -1,11 +1,22 @@
 import { Component, Input } from "@angular/core";
 import { Note } from "../../notes/model/note";
 import { RecurringActivity } from "../model/recurring-activity";
+import { MatCardModule } from "@angular/material/card";
+import { BorderHighlightDirective } from "../../../core/common-components/border-highlight/border-highlight.directive";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { DatePipe } from "@angular/common";
 
 @Component({
   selector: "app-activity-card",
   templateUrl: "./activity-card.component.html",
   styleUrls: ["./activity-card.component.scss"],
+  imports: [
+    MatCardModule,
+    BorderHighlightDirective,
+    FontAwesomeModule,
+    DatePipe,
+  ],
+  standalone: true,
 })
 export class ActivityCardComponent {
   /**
@@ -14,6 +25,7 @@ export class ActivityCardComponent {
   @Input() event: Note;
 
   private _displayAsRecurring: boolean | null = null;
+
   /**
    * Whether the event or activity is displayed in the style of events generated from a generic recurring activity.
    *
@@ -22,6 +34,7 @@ export class ActivityCardComponent {
   @Input() set recurring(value: boolean) {
     this._displayAsRecurring = value;
   }
+
   get recurring(): boolean {
     if (this._displayAsRecurring !== null) {
       return this._displayAsRecurring;

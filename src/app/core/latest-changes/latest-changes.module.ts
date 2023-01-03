@@ -18,7 +18,6 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { AppVersionComponent } from "./app-version/app-version.component";
-import { AlertsModule } from "../alerts/alerts.module";
 import { HttpClientModule } from "@angular/common/http";
 import { SessionModule } from "../session/session.module";
 import { MatButtonModule } from "@angular/material/button";
@@ -44,7 +43,6 @@ import { LOCATION_TOKEN } from "../../utils/di-tokens";
 @NgModule({
   imports: [
     CommonModule,
-    AlertsModule,
     SessionModule,
     MatDialogModule,
     MatButtonModule,

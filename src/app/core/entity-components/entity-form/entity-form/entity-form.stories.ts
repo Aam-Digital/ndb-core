@@ -3,7 +3,6 @@ import { Meta, Story } from "@storybook/angular/types-6-0";
 import { ChildPhotoService } from "../../../../child-dev-project/children/child-photo-service/child-photo.service";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { ChildrenModule } from "../../../../child-dev-project/children/children.module";
-import { EntityFormModule } from "../entity-form.module";
 import { EntityFormComponent } from "./entity-form.component";
 import { School } from "../../../../child-dev-project/schools/model/school";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
@@ -23,7 +22,7 @@ export default {
   decorators: [
     moduleMetadata({
       imports: [
-        EntityFormModule,
+        EntityFormComponent,
         StorybookBaseModule,
         ChildrenModule,
         MockedTestingModule.withState(LoginState.LOGGED_IN, [s1, s2, s3]),

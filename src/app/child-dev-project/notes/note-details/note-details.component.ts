@@ -13,6 +13,21 @@ import { compareEnums } from "../../../utils/utils";
 import { FormDialogWrapperComponent } from "../../../core/form-dialog/form-dialog-wrapper/form-dialog-wrapper.component";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
+import { DatePipe, NgIf } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { MatButtonModule } from "@angular/material/button";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatMenuModule } from "@angular/material/menu";
+import { ExportDataDirective } from "../../../core/export/export-data-directive/export-data.directive";
+import { Angulartics2Module } from "angulartics2";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MatSelectModule } from "@angular/material/select";
+import { ConfigurableEnumDirective } from "../../../core/configurable-enum/configurable-enum-directive/configurable-enum.directive";
+import { BorderHighlightDirective } from "../../../core/common-components/border-highlight/border-highlight.directive";
+import { EntitySelectComponent } from "../../../core/entity-components/entity-select/entity-select/entity-select.component";
+import { MatCheckboxModule } from "@angular/material/checkbox";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -21,6 +36,26 @@ import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-fie
   selector: "app-note-details",
   templateUrl: "./note-details.component.html",
   styleUrls: ["./note-details.component.scss"],
+  imports: [
+    FormDialogWrapperComponent,
+    DatePipe,
+    FormsModule,
+    MatButtonModule,
+    FontAwesomeModule,
+    MatMenuModule,
+    ExportDataDirective,
+    Angulartics2Module,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatSelectModule,
+    ConfigurableEnumDirective,
+    BorderHighlightDirective,
+    EntitySelectComponent,
+    MatCheckboxModule,
+    NgIf,
+  ],
+  standalone: true,
 })
 export class NoteDetailsComponent implements ShowsEntity<Note> {
   @Input() entity: Note;

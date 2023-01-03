@@ -6,7 +6,6 @@ import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { Entity } from "../../../../core/entity/model/entity";
-import { DashboardModule } from "../../../../core/dashboard/dashboard.module";
 import { DatePipe, NgIf } from "@angular/common";
 import { DisplayEntityComponent } from "../../../../core/entity-components/entity-select/display-entity/display-entity.component";
 
@@ -16,7 +15,6 @@ import { DisplayEntityComponent } from "../../../../core/entity-components/entit
   templateUrl: "./birthday-dashboard.component.html",
   styleUrls: ["./birthday-dashboard.component.scss"],
   imports: [
-    DashboardModule,
     NgIf,
     MatTableModule,
     DisplayEntityComponent,
