@@ -34,7 +34,7 @@ export function applyUpdate<T extends Entity>(
   entities: T[],
   next: UpdatedEntity<T>
 ): T[] {
-  if (!next || !next.entity) {
+  if (!next || !next.entity || !entities) {
     return entities;
   }
   switch (next.type) {
