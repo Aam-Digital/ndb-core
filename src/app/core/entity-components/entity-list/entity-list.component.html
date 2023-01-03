@@ -1,12 +1,8 @@
 <!-- Desktop version -->
 <div *ngIf="isDesktop">
-
   <!-- Header bar; contains the title on the left and controls on the right -->
 
-  <div
-    class="flex-row justify-space-between"
-    [ngStyle]="offsetFilterStyle"
-  >
+  <div class="flex-row justify-space-between" [ngStyle]="offsetFilterStyle">
     <app-view-title>
       {{ listName }}
     </app-view-title>
@@ -16,25 +12,21 @@
         mat-stroked-button
         color="accent"
         class="standard-add-button"
-        style="background-color: white !important;"
         (click)="addNewClick.emit()"
         angulartics2On="click"
         angularticsCategory="UserAction"
         [angularticsAction]="
-            listName.toLowerCase().replace(' ', '_') + '_add_new'
-          "
+          listName.toLowerCase().replace(' ', '_') + '_add_new'
+        "
         [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
         angularticsAction="list_add_entity"
         *appDisabledEntityOperation="{
-            entity: entityConstructor,
-            operation: 'create'
-          }"
+          entity: entityConstructor,
+          operation: 'create'
+        }"
         i18n
       >
-        <fa-icon
-          aria-label="add element"
-          icon="plus-circle"
-        ></fa-icon>
+        <fa-icon aria-label="add element" icon="plus-circle" class="standard-icon-with-text"></fa-icon>
         Add New
       </button>
       <button mat-icon-button color="primary" [matMenuTriggerFor]="additional">
@@ -59,7 +51,10 @@
 
   <div>
     <div *ngIf="columnGroups.length > 1">
-      <mat-tab-group [(selectedIndex)]="selectedColumnGroupIndex" appTabStateMemo>
+      <mat-tab-group
+        [(selectedIndex)]="selectedColumnGroupIndex"
+        appTabStateMemo
+      >
         <mat-tab
           *ngFor="let item of columnGroups"
           [label]="item.name"
@@ -96,8 +91,7 @@
     <mat-label
       i18n="Filter placeholder|Allows the user to filter through entities"
     >Filter
-    </mat-label
-    >
+    </mat-label>
     <input
       class="full-width"
       matInput
@@ -132,9 +126,7 @@
 </ng-template>
 
 <mat-menu #additional>
-
   <div class="hide-desktop">
-
     <button
       mat-menu-item
       (click)="addNewClick.emit()"
@@ -149,7 +141,7 @@
       }"
     >
       <fa-icon
-        class="color-accent"
+        class="color-accent standard-icon-with-text"
         aria-label="add element"
         icon="plus-circle"
       ></fa-icon>
@@ -161,11 +153,11 @@
     <button mat-menu-item (click)="openFilterOverlay()">
       <fa-icon
         aria-label="filter"
-        class="color-accent"
+        class="color-accent standard-icon-with-text"
         icon="filter"
       >
       </fa-icon>
-      <span> Filter options </span>
+      <span i18n="Show filter options popup for list"> Filter options </span>
     </button>
   </div>
 
@@ -177,7 +169,7 @@
     [filename]="listName.replace(' ', '')"
   >
     <fa-icon
-      class="color-accent"
+      class="color-accent standard-icon-with-text"
       aria-label="download csv"
       icon="download"
       angulartics2On="click"

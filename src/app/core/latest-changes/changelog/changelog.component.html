@@ -19,17 +19,14 @@
 
 <mat-dialog-content #changelogContainer>
   <div *ngFor="let changelog of changelogs" class="changelog-entry-container">
-    <h2>{{changelog?.name || noChangelogAvailable}}</h2>
+    <h2>{{ changelog?.name || noChangelogAvailable }}</h2>
     <div class="padding-bottom-regular">
       <span
-      ><fa-icon icon="calendar-alt"></fa-icon
-      >
+        ><fa-icon icon="calendar-alt"></fa-icon>
         {{ changelog?.published_at | date }}</span
       >
       <span class="padding-left-small"
-      ><fa-icon icon="tag"></fa-icon
-      >
-      {{ changelog?.tag_name }}</span
+        ><fa-icon icon="tag"></fa-icon> {{ changelog?.tag_name }}</span
       >
     </div>
     <markdown [data]="changelog?.body"></markdown>
@@ -46,12 +43,11 @@
 </mat-dialog-content>
 
 <mat-dialog-actions class="flex-row gap-regular flex-wrap">
-  <button mat-raised-button (click)="loadPreviousRelease()" i18n>
+  <button mat-stroked-button (click)="loadPreviousRelease()" i18n>
     Show previous changes
   </button>
   <button
     mat-raised-button
-    color="accent"
     [mat-dialog-close]="true"
     i18n="Generic close button"
     class="remove-margin-left"

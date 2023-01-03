@@ -37,6 +37,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     NgForOf,
   ],
   standalone: true,
+  styleUrls: ["./edit-location.component.scss"],
 })
 export class EditLocationComponent extends EditComponent<GeoResult> {
   filteredOptions = new Subject<GeoResult[]>();
