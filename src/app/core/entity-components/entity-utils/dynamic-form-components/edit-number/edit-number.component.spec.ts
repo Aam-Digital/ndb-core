@@ -6,6 +6,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { setupEditComponent } from "../edit-component.spec";
+import { ErrorHintComponent } from "../../error-hint/error-hint.component";
 
 describe("EditNumberComponent", () => {
   let component: EditNumberComponent;
@@ -20,7 +21,7 @@ describe("EditNumberComponent", () => {
         ReactiveFormsModule,
         NoopAnimationsModule,
       ],
-      declarations: [EditNumberComponent],
+      declarations: [EditNumberComponent, ErrorHintComponent],
     }).compileComponents();
   });
 

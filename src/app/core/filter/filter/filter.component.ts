@@ -12,8 +12,6 @@ import { FilterComponentSettings } from "../../entity-components/entity-list/fil
 import { DataFilter } from "../../entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { FilterGeneratorService } from "../../entity-components/entity-list/filter-generator.service";
 import { ActivatedRoute, Params, Router } from "@angular/router";
-import { FilterOverlayComponent } from "../filter-overlay/filter-overlay.component";
-import { MatDialog } from "@angular/material/dialog";
 import { getUrlWithoutParams } from "../../../utils/utils";
 
 /**
@@ -63,8 +61,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   constructor(
     private filterGenerator: FilterGeneratorService,
     private router: Router,
-    private route: ActivatedRoute,
-    private dialog: MatDialog
+    private route: ActivatedRoute
   ) {}
 
   async ngOnChanges(changes: SimpleChanges) {
@@ -122,23 +119,6 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
       if (params.hasOwnProperty(f.filterSettings.name)) {
         f.selectedOption = params[f.filterSettings.name];
       }
-    });
-  }
-
-  /**
-   * Calling this function will display the filters in a popup
-   */
-  openFilterOverlay() {
-    this.dialog.open(FilterOverlayComponent, {
-      data: {
-        filterSelections: this.filterSelections,
-        filterChangeCallback: (
-          filter: FilterComponentSettings<T>,
-          option: string
-        ) => {
-          this.filterOptionSelected(filter, option);
-        },
-      },
     });
   }
 }

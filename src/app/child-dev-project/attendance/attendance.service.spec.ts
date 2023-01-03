@@ -1,4 +1,4 @@
-import { TestBed } from "@angular/core/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceService } from "./attendance.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
@@ -38,7 +38,7 @@ describe("AttendanceService", () => {
   let activity1, activity2: RecurringActivity;
   let e1_1, e1_2, e1_3, e2_1: EventNote;
 
-  beforeEach(async () => {
+  beforeEach(waitForAsync(() => {
     activity1 = RecurringActivity.create("activity 1");
     activity2 = RecurringActivity.create("activity 2");
 
@@ -55,18 +55,16 @@ describe("AttendanceService", () => {
 
     entityMapper = TestBed.inject<EntityMapperService>(EntityMapperService);
 
-    await entityMapper.save(activity1);
-    await entityMapper.save(activity2);
+    entityMapper.save(activity1);
+    entityMapper.save(activity2);
 
-    await entityMapper.save(e1_1);
-    await entityMapper.save(e1_2);
-    await entityMapper.save(e1_3);
-    await entityMapper.save(e2_1);
-  });
+    entityMapper.save(e1_1);
+    entityMapper.save(e1_2);
+    entityMapper.save(e1_3);
+    entityMapper.save(e2_1);
+  }));
 
-  afterEach(async () => {
-    await TestBed.inject(Database).destroy();
-  });
+  afterEach(() => TestBed.inject(Database).destroy());
 
   it("should be created", () => {
     expect(service).toBeTruthy();

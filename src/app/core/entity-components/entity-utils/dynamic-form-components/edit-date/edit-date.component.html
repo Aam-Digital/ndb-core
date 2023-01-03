@@ -1,12 +1,12 @@
 <mat-form-field [formGroup]="parent">
+  <mat-label>{{label}}</mat-label>
   <input
     matInput
     [formControlName]="formControlName"
-    [placeholder]="label"
     [matDatepicker]="datepickerComp"
   />
   <mat-datepicker-toggle
-    matSuffix
+    matIconSuffix
     [for]="datepickerComp"
   ></mat-datepicker-toggle>
   <mat-datepicker #datepickerComp></mat-datepicker>

@@ -1,22 +1,23 @@
 @use "sass:map";
 
-$max-icon-width           : 22px;
-$standard-icon            : 1.5em;
+$max-icon-width: 22px;
 // This is the maximum width a text should have in order not to
 // show too much text at a time in a line which hinders readability
-$max-text-width           : 60rem;
+$max-text-width: 60rem;
 
 $standard-sizes: (
-  small   : 0.5em,
+  x-small : 0.25em,
+  small : 0.5em,
   regular : 1em,
-  large   : 2em
+  large : 2em
 );
 
-$small    : map-get($standard-sizes, small);
-$regular  : map-get($standard-sizes, regular);
-$large    : map-get($standard-sizes, large);
+$x-small: map-get($standard-sizes, x-small);
+$small: map-get($standard-sizes, small);
+$regular: map-get($standard-sizes, regular);
+$large: map-get($standard-sizes, large);
 
-$margin-main-view-right   : 28px;
-$margin-main-view-left    : 28px;
-$margin-main-view-top     : 16px;
-$margin-main-view-bottom  : 64px;
+$margin-main-view-right: 28px;
+$margin-main-view-left: 28px;
+$margin-main-view-top: 16px;
+$margin-main-view-bottom: 64px;
