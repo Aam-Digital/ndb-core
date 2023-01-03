@@ -1,9 +1,16 @@
-<app-dialog-close mat-dialog-close></app-dialog-close>
+<div mat-dialog-title>
+  <div class="flex-row gap-regular">
+    <h1 class="flex-grow">
+      <span *ngIf="!entity.isNew">{{ entity.subject }}</span>
+      <span
+        *ngIf="entity.isNew"
+        i18n="Todo details heading for new record"
+        class="heading-new"
+      >
+        Creating new item
+      </span>
+    </h1>
 
-<mat-dialog-content>
-  <h1>{{ entity.subject }}</h1>
-
-  <div class="margin-bottom-large">
     <app-todo-completion
       [entity]="entity"
       (complete)="completeTodo()"
@@ -12,11 +19,14 @@
     ></app-todo-completion>
   </div>
 
+  <app-dialog-close mat-dialog-close></app-dialog-close>
+</div>
+
+<mat-dialog-content>
   <app-entity-form
     [entity]="entity"
-    [editing]="true"
     [columns]="formColumns"
-    [noButtons]="true"
+    [form]="form"
   ></app-entity-form>
 </mat-dialog-content>
 

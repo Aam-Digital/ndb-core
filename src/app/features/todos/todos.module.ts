@@ -62,6 +62,7 @@ import { PermissionsModule } from "../../core/permissions/permissions.module";
     DisplayRecurringIntervalComponent,
     TodoCompletionComponent,
     DisplayTodoCompletionComponent,
+    TodoDetailsComponent,
   ],
 })
 export class TodosModule {

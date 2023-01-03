@@ -4,39 +4,57 @@ import {
   Inject,
   Input,
   Output,
-  ViewChild,
+  OnInit,
 } from "@angular/core";
 import { Todo } from "../model/todo";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { DetailsComponentData } from "../../../core/entity-components/entity-subrecord/row-details/row-details.component";
-import { EntityFormComponent } from "../../../core/entity-components/entity-form/entity-form/entity-form.component";
 import { TodoService } from "../todo.service";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 import { YesNoCancelButtons } from "../../../core/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
+import {
+  EntityForm,
+  EntityFormService,
+} from "../../../core/entity-components/entity-form/entity-form.service";
+import { InvalidFormFieldError } from "../../../core/entity-components/entity-form/invalid-form-field.error";
+import { AlertService } from "../../../core/alerts/alert.service";
+import {
+  EntityRemoveService,
+  RemoveResult,
+} from "../../../core/entity/entity-remove.service";
 
 @Component({
   selector: "app-todo-details",
   templateUrl: "./todo-details.component.html",
   styleUrls: ["./todo-details.component.scss"],
 })
-export class TodoDetailsComponent {
+export class TodoDetailsComponent implements OnInit {
   @Input() entity: Todo;
 
   @Output() close = new EventEmitter<Todo>();
 
-  @ViewChild(EntityFormComponent) entityForm;
-
   formColumns: FormFieldConfig[][];
+  form: EntityForm<Todo>;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) data: DetailsComponentData<Todo>,
+    @Inject(MAT_DIALOG_DATA) data: DetailsComponentData,
     private dialogRef: MatDialogRef<any>,
     private todoService: TodoService,
+    private entityFormService: EntityFormService,
+    private entityRemoveService: EntityRemoveService,
+    private alertService: AlertService,
     private confirmationDialog: ConfirmationDialogService
   ) {
-    this.entity = data.entity;
+    this.entity = data.entity as Todo;
     this.formColumns = [data.columns];
+  }
+
+  ngOnInit(): void {
+    this.form = this.entityFormService.createFormGroup(
+      [].concat(...this.formColumns),
+      this.entity
+    );
   }
 
   cancel() {
@@ -44,13 +62,18 @@ export class TodoDetailsComponent {
   }
 
   async save() {
-    // TODO: handle invalid forms (currently it somehow just silently fails to save ...)
-    await this.entityForm.saveForm();
-    this.dialogRef.close();
+    try {
+      await this.entityFormService.saveChanges(this.form, this.entity);
+      this.dialogRef.close();
+    } catch (err) {
+      if (!(err instanceof InvalidFormFieldError)) {
+        this.alertService.addDanger(err.message);
+      }
+    }
   }
 
   async completeTodo() {
-    if (this.entityForm.form.dirty) {
+    if (this.form.dirty) {
       const confirmationResult = await this.confirmationDialog.getConfirmation(
         $localize`Save changes?`,
         $localize`Do you want to save your changes to the ${Todo.label} before marking it as completed? Otherwise, changes will be discarded.`,
@@ -62,10 +85,10 @@ export class TodoDetailsComponent {
         return;
       }
       if (confirmationResult === true) {
-        await this.entityForm.saveForm();
+        await this.entityFormService.saveChanges(this.form, this.entity);
       }
       if (confirmationResult === false) {
-        this.entityForm.resetForm();
+        this.entityFormService.resetForm(this.form, this.entity);
       }
     }
     await this.todoService.completeTodo(this.entity);
@@ -77,6 +100,11 @@ export class TodoDetailsComponent {
   }
 
   delete() {
-    //TODO: handle delete (or delegate it to a reusable form-actions component)
+    //TODO: refactor this into a reusable form-actions component (duplicated from RowDetailsComponent)
+    this.entityRemoveService.remove(this.entity).subscribe((res) => {
+      if (res === RemoveResult.REMOVED) {
+        this.dialogRef.close();
+      }
+    });
   }
 }
