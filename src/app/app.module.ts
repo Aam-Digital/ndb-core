@@ -29,30 +29,15 @@ import { ChildrenModule } from "./child-dev-project/children/children.module";
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
 import { EntityModule } from "./core/entity/entity.module";
-import { DemoDataModule } from "./core/demo-data/demo-data.module";
 import { LoggingErrorHandler } from "./core/logging/logging-error-handler";
-import { DemoChildGenerator } from "./child-dev-project/children/demo-data-generators/demo-child-generator.service";
-import { DemoSchoolGenerator } from "./child-dev-project/schools/demo-school-generator.service";
-import { DemoChildSchoolRelationGenerator } from "./child-dev-project/children/demo-data-generators/demo-child-school-relation-generator.service";
-import { DemoNoteGeneratorService } from "./child-dev-project/notes/demo-data/demo-note-generator.service";
-import { DemoAserGeneratorService } from "./child-dev-project/children/aser/demo-aser-generator.service";
-import { DemoEducationalMaterialGeneratorService } from "./child-dev-project/children/educational-material/demo-educational-material-generator.service";
-import { DemoHealthCheckGeneratorService } from "./child-dev-project/children/health-checkup/demo-data/demo-health-check-generator.service";
-import { DemoProgressDashboardWidgetGeneratorService } from "./features/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service";
-import { DemoUserGeneratorService } from "./core/user/demo-user-generator.service";
 import { AnalyticsService } from "./core/analytics/analytics.service";
 import { ViewModule } from "./core/view/view.module";
-import { DemoActivityGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-generator.service";
 import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-enum.module";
-import { DemoActivityEventsGeneratorService } from "./child-dev-project/attendance/demo-data/demo-activity-events-generator.service";
 import { MatPaginatorIntl } from "@angular/material/paginator";
-import { DemoHistoricalDataGenerator } from "./features/historical-data/demo-historical-data-generator";
 import { TranslatableMatPaginator } from "./core/language/TranslatableMatPaginator";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
-import { DemoPermissionGeneratorService } from "./core/permissions/demo-permission-generator.service";
-import { DemoConfigGeneratorService } from "./core/config/demo-config-generator.service";
 import { DatabaseModule } from "./core/database/database.module";
 import { Angulartics2Matomo, Angulartics2Module } from "angulartics2";
 import {
@@ -70,7 +55,8 @@ import { LanguageModule } from "./core/language/language.module";
 import { PermissionsModule } from "./core/permissions/permissions.module";
 import { PwaInstallModule } from "./core/pwa-install/pwa-install.module";
 import { UiComponent } from "./core/ui/ui/ui.component";
-import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { MatDialogModule } from "@angular/material/dialog";
 
 // TODO analyze with webpack bundle analyzer
 /**
@@ -92,33 +78,6 @@ import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
     BrowserAnimationsModule,
     HttpClientModule,
     routing,
-    // TODO make lazy loaded
-    DemoDataModule.forRoot([
-      ...DemoConfigGeneratorService.provider(),
-      ...DemoChildGenerator.provider({ count: 120 }),
-      ...DemoSchoolGenerator.provider({ count: 8 }),
-      ...DemoChildSchoolRelationGenerator.provider(),
-      ...DemoActivityGeneratorService.provider(),
-      ...DemoActivityEventsGeneratorService.provider({ forNLastYears: 1 }),
-      ...DemoNoteGeneratorService.provider({
-        minNotesPerChild: 2,
-        maxNotesPerChild: 6,
-        groupNotes: 3,
-      }),
-      ...DemoAserGeneratorService.provider(),
-      ...DemoEducationalMaterialGeneratorService.provider({
-        minCount: 3,
-        maxCount: 8,
-      }),
-      ...DemoHealthCheckGeneratorService.provider(),
-      ...DemoProgressDashboardWidgetGeneratorService.provider(),
-      ...DemoUserGeneratorService.provider(),
-      ...DemoHistoricalDataGenerator.provider({
-        minCountAttributes: 2,
-        maxCountAttributes: 5,
-      }),
-      ...DemoPermissionGeneratorService.provider(),
-    ]),
     DatabaseModule,
     LocationModule,
     LanguageModule,
@@ -134,6 +93,7 @@ import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
     UiComponent,
 
     MatSnackBarModule,
+    MatDialogModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
