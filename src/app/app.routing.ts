@@ -25,6 +25,7 @@ import { UserAccountComponent } from "./core/user/user-account/user-account.comp
 import { SupportComponent } from "./core/support/support/support.component";
 
 export class RouteRegistry extends Registry<ComponentType<any>> {}
+
 export const routesRegistry = new RouteRegistry();
 
 /**
@@ -70,7 +71,5 @@ export const allRoutes: Routes = [
 /**
  * Main app RouterModule with centrally configured allRoutes.
  */
-export const routing: ModuleWithProviders<RouterModule> = RouterModule.forRoot(
-  allRoutes,
-  { relativeLinkResolution: "legacy" }
-);
+export const routing: ModuleWithProviders<RouterModule> =
+  RouterModule.forRoot(allRoutes);

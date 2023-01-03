@@ -6,6 +6,7 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { setupEditComponent } from "../edit-component.spec";
+import { ErrorHintComponent } from "../../error-hint/error-hint.component";
 
 describe("EditLongTextComponent", () => {
   let component: EditLongTextComponent;
@@ -19,7 +20,7 @@ describe("EditLongTextComponent", () => {
         MatInputModule,
         ReactiveFormsModule,
       ],
-      declarations: [EditLongTextComponent],
+      declarations: [EditLongTextComponent, ErrorHintComponent],
     }).compileComponents();
   });
 

@@ -1,5 +1,5 @@
 <app-dialog-close mat-dialog-close></app-dialog-close>
-<div mat-dialog-content>
+<mat-dialog-content>
   <app-entity-form
     [columns]="columns"
     [entity]="data.entity"
@@ -27,8 +27,8 @@
     </app-pill>
     <!-- avoid scroll bar + move delete into [...] menu -->
   </div>
-</div>
-<div mat-dialog-actions>
+</mat-dialog-content>
+<mat-dialog-actions>
   <button
     mat-raised-button
     (click)="save()"
@@ -43,7 +43,7 @@
     mat-icon-button
     [matMenuTriggerFor]="additional"
   >
-    <fa-icon icon="ellipsis-v" class="standard-icon"></fa-icon>
+    <fa-icon icon="ellipsis-v"></fa-icon>
   </button>
   <mat-menu
     #additional
@@ -67,4 +67,4 @@
       <span i18n="Generic delete button"> Delete </span>
     </button>
   </mat-menu>
-</div>
+</mat-dialog-actions>

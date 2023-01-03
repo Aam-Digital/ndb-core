@@ -2,15 +2,15 @@
 @use "src/styles/variables/colors";
 
 .border-ok {
-  border-color: colors.$success;
+  border-color: colors.$success !important;
 }
 
 .border-warning {
-  border-color: colors.$warn;
+  border-color: colors.$warn !important;
 }
 
 .border-urgent {
-  border-color: colors.$error;
+  border-color: colors.$error !important;
 }
 
 .main-card {

@@ -13,8 +13,9 @@
     placeholder="No file selected"
     (click)="fileInput.click()"
   />
-  <button mat-icon-button matSuffix (click)="fileInput.click()">
+  <button mat-icon-button matIconSuffix (click)="fileInput.click()">
     <fa-icon icon="upload"></fa-icon>
   </button>
-  <mat-error *ngIf="formControl.invalid">{{ formControl.errors.fileInvalid || formControl.errors.parsingError }}</mat-error>
+  <mat-error
+    *ngIf="formControl.invalid">{{ formControl.errors.fileInvalid || formControl.errors.parsingError }}</mat-error>
 </mat-form-field>

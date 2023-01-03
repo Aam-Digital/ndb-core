@@ -87,7 +87,7 @@ export class MatchingEntitiesComponent
 
   async ngOnInit() {
     this.route?.data?.subscribe((data: RouteData<MatchingEntitiesConfig>) => {
-      if (!data?.config) {
+      if (!data?.config.leftSide || !data?.config.rightSide) {
         return;
       }
       this.initConfig(data.config);

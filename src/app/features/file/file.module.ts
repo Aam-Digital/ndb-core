@@ -20,6 +20,7 @@ import { serviceProvider } from "../../utils/utils";
 import { ProgressComponent } from "./progress/progress.component";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { fileDataType } from "./file-data-type";
+import { MatDialogModule } from "@angular/material/dialog";
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { fileDataType } from "./file-data-type";
     ReactiveFormsModule,
     MatTooltipModule,
     MatRippleModule,
+    MatDialogModule,
   ],
   providers: [
     CouchdbFileService,

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ChildBlockTooltipComponent } from "./child-block-tooltip.component";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("ChildBlockTooltipComponent", () => {
   let component: ChildBlockTooltipComponent;
@@ -9,6 +10,7 @@ describe("ChildBlockTooltipComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ChildBlockTooltipComponent],
+      imports: [FontAwesomeTestingModule],
     }).compileComponents();
   });
 

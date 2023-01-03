@@ -14,15 +14,16 @@
           }">
         </ng-container>
       </div>
-      <fa-icon
-        (click)="tooltipElement.show()"
-        #tooltipElement="matTooltip"
+      <button
         *ngIf="row.tooltip"
-        matSuffix
-        icon="question-circle"
+        mat-icon-button
+        type="button"
+        #tooltipElement="matTooltip"
         [matTooltip]="row.tooltip"
-        class="tooltip-suffix"
-      ></fa-icon>
+        (click)="tooltipElement.show()"
+      >
+        <fa-icon icon="question-circle"></fa-icon>
+      </button>
     </div>
   </div>
 </form>
