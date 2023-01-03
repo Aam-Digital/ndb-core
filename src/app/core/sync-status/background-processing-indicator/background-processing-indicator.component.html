@@ -15,11 +15,10 @@
 </button>
 
 <mat-menu #taskListDropdown="matMenu">
-  <div style="padding: 5px">
-
-    <div i18n>
-      The following processes are still running in the background. Until these are
-      finished some pages may be slow or incomplete.
+  <div class="padding-left-regular padding-right-regular">
+    <div i18n class="details-header">
+      The following processes are still running in the background. Until these
+      are finished some pages may be slow or incomplete.
     </div>
 
     <div
@@ -27,10 +26,7 @@
       class="flex-row gap-small align-center mat-subtitle-2 details-line"
     >
       <div>
-        <mat-spinner
-          *ngIf="process.pending"
-          [diameter]="20"
-        ></mat-spinner>
+        <mat-spinner *ngIf="process.pending" [diameter]="20"></mat-spinner>
         <fa-icon
           *ngIf="!process.pending"
           icon="check"

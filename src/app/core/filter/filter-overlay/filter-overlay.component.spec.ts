@@ -2,8 +2,8 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { FilterOverlayComponent } from "./filter-overlay.component";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { FilterModule } from "../filter.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("FilterOverlayComponent", () => {
   let component: FilterOverlayComponent<any>;

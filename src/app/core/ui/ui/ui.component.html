@@ -95,8 +95,13 @@
           <button mat-icon-button class="footer-cell" routerLink="/support" (click)="closeSidenavOnMobile()">
             <fa-icon icon="info-circle" class="info-icon"></fa-icon>
           </button>
-          <button mat-button class="footer-cell full-width" style="height: 100%">
-            <app-version></app-version>
+          <button
+            mat-button
+            class="footer-cell full-width"
+            style="height: 100%"
+            (click)="version.showLatestChanges()"
+          >
+            <app-version #version></app-version>
           </button>
         </div>
       </div>
