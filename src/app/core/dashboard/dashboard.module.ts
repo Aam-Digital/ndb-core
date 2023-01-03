@@ -28,6 +28,7 @@ import { MatSortModule } from "@angular/material/sort";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
+import { DashboardListWidgetComponent } from "./dashboard-list-widget/dashboard-list-widget.component";
 
 @NgModule({
   imports: [
@@ -45,8 +46,13 @@ import { MatButtonModule } from "@angular/material/button";
     DashboardComponent,
     DashboardWidgetComponent,
     WidgetContentComponent,
+    DashboardListWidgetComponent,
   ],
-  exports: [DashboardWidgetComponent, WidgetContentComponent],
+  exports: [
+    DashboardWidgetComponent,
+    WidgetContentComponent,
+    DashboardListWidgetComponent,
+  ],
 })
 export class DashboardModule {
   static dynamicComponents = [DashboardComponent];

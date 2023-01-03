@@ -1,60 +1,35 @@
-<app-dashboard-widget
+<app-dashboard-list-widget
   icon="exclamation-triangle"
-  [title]="notesDataSource.data.length"
   subtitle="Notes needing follow-up"
   i18n-subtitle="subtitle|dashboard showing notes that require action"
   theme="note"
-  [loading]="loading"
+  entityType="Note"
+  [dataMapper]="dataMapper"
 >
-  <app-widget-content>
-    <div *ngIf="notesDataSource.data.length > 0">
-      <table
-        mat-table
-        [dataSource]="notesDataSource"
-        aria-label="Notes needing follow-up"
-      >
-        <!-- Table header only for assistive technologies like screen readers -->
-        <tr hidden="true">
-          <th scope="col">Date</th>
-          <th scope="col">Title</th>
-        </tr>
-        <ng-container matColumnDef="date">
-          <td *matCellDef="let note" class="date-cell">
-            {{ note.date | date }}
-          </td>
-        </ng-container>
+  <table mat-table aria-label="Notes needing follow-up">
+    <!-- Table header only for assistive technologies like screen readers -->
+    <tr hidden="true">
+      <th scope="col">Date</th>
+      <th scope="col">Title</th>
+    </tr>
+    <ng-container matColumnDef="date">
+      <td *matCellDef="let note" class="date-cell row-indicator">
+        {{ note.date | date }}
+      </td>
+    </ng-container>
 
-        <ng-container
-          matColumnDef="title"
-        >
-          <td *matCellDef="let note" class="subject-cell">
-            {{ note.subject }}
-          </td>
-        </ng-container>
+    <ng-container matColumnDef="title">
+      <td *matCellDef="let note" class="subject-cell">
+        {{ note.subject }}
+      </td>
+    </ng-container>
 
-        <tr
-          mat-row
-          *matRowDef="let row; columns: ['date', 'title'];"
-          class="dashboard-table-row row-view"
-          (click)="openNote(row)"
-          [ngStyle]="{'--important-notes-bg-color': row.getColor?.()}"
-        ></tr>
-      </table>
-    </div>
-    <div
-      *ngIf="notesDataSource.data.length === 0"
-      class="headline"
-    >
-      <span i18n="Description when there are no notes that need a follow-up">
-        no notes that need immediate attention
-      </span>
-    </div>
-    <mat-paginator
-      #paginator
-      [style.display]="paginator.getNumberOfPages() === 0 ? 'none' : ''"
-      [pageSizeOptions]="[5]"
-      [hidePageSize]="true"
-    >
-    </mat-paginator>
-  </app-widget-content>
-</app-dashboard-widget>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: ['date', 'title']"
+      class="dashboard-table-row row-view"
+      (click)="openNote(row)"
+      [ngStyle]="{'--row-indicator-color': row.getColor?.()}"
+    ></tr>
+  </table>
+</app-dashboard-list-widget>
