@@ -25,6 +25,8 @@ import { DisplayTodoCompletionComponent } from "./todo-completion/display-todo-c
 import { MatMenuModule } from "@angular/material/menu";
 import { Angulartics2Module } from "angulartics2";
 import { PermissionsModule } from "../../core/permissions/permissions.module";
+import { TodoListComponent } from "./todo-list.component";
+import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
 
 @NgModule({
   declarations: [
@@ -35,6 +37,7 @@ import { PermissionsModule } from "../../core/permissions/permissions.module";
     TodoCompletionComponent,
     TodoDetailsComponent,
     DisplayTodoCompletionComponent,
+    TodoListComponent,
   ],
   imports: [
     CommonModule,
@@ -55,6 +58,7 @@ import { PermissionsModule } from "../../core/permissions/permissions.module";
     MatMenuModule,
     Angulartics2Module,
     PermissionsModule,
+    EntityListModule,
   ],
   exports: [
     TodosRelatedToEntityComponent,
@@ -63,10 +67,12 @@ import { PermissionsModule } from "../../core/permissions/permissions.module";
     TodoCompletionComponent,
     DisplayTodoCompletionComponent,
     TodoDetailsComponent,
+    TodoListComponent,
   ],
 })
 export class TodosModule {
   static dynamicComponents: [
+    TodoListComponent,
     TodosRelatedToEntityComponent,
     EditRecurringIntervalComponent,
     DisplayTodoCompletionComponent,

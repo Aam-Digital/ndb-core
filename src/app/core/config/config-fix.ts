@@ -1154,7 +1154,7 @@ export const defaultJsonConfig = {
       ]
   },
   "view:todo": {
-    "component": "EntityList",
+    "component": "TodoList",
     "config": {
       "entity": "Todo",
       "columns": ["deadline", "subject", "assignedTo", "relatedEntities"],
