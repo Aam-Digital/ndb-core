@@ -1,4 +1,4 @@
-import { TestBed } from "@angular/core/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
 
 import {
   AttendanceInfo,
@@ -46,7 +46,7 @@ describe("QueryService", () => {
     (i) => i.id === "COACHING_CLASS"
   );
 
-  beforeEach(async () => {
+  beforeEach(waitForAsync(async () => {
     TestBed.configureTestingModule({
       imports: [DatabaseTestingModule, ConfigurableEnumModule, ChildrenModule],
       providers: [ChildrenService, AttendanceService, EntityConfigService],
@@ -58,11 +58,9 @@ describe("QueryService", () => {
     await configService.loadConfig();
     entityConfigService.addConfigAttributes(School);
     entityConfigService.addConfigAttributes(Child);
-  });
+  }));
 
-  afterEach(async () => {
-    await TestBed.inject(Database).destroy();
-  });
+  afterEach(() => TestBed.inject(Database).destroy());
 
   it("should be created", () => {
     expect(service).toBeTruthy();
@@ -435,7 +433,9 @@ describe("QueryService", () => {
   });
 
   it("should create a attendance report with percentages", async () => {
-    const lateAttendanceStatus = defaultAttendanceStatusTypes.find((status) => status.id === "LATE");
+    const lateAttendanceStatus = defaultAttendanceStatusTypes.find(
+      (status) => status.id === "LATE"
+    );
     const presentTwice = await createChild();
     const presentOnce = await createChild();
     const alwaysAbsent = await createChild();
@@ -461,21 +461,21 @@ describe("QueryService", () => {
       present: 2,
       total: 2,
       percentage: "1.00",
-      detailedStatus: { "PRESENT": 1, "LATE": 1 }
+      detailedStatus: { PRESENT: 1, LATE: 1 },
     });
     expect(report).toContain({
       participant: presentOnce.getId(),
       present: 1,
       total: 2,
       percentage: "0.50",
-      detailedStatus: { "PRESENT": 1, "ABSENT": 1 }
+      detailedStatus: { PRESENT: 1, ABSENT: 1 },
     });
     expect(report).toContain({
       participant: alwaysAbsent.getId(),
       present: 0,
       total: 2,
       percentage: "0.00",
-      detailedStatus: { "ABSENT": 2 }
+      detailedStatus: { ABSENT: 2 },
     });
   });
 

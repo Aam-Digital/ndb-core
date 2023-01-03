@@ -15,9 +15,10 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<mat-card class="mat-elevation-z2 full-width border-box-sizing">
-  <mat-card-title i18n="Sign in title"> Please Sign In </mat-card-title>
-
+<mat-card appearance="outlined" class="mat-elevation-z2 full-width border-box-sizing">
+  <mat-card-header>
+    <mat-card-title i18n="Sign in title"> Please Sign In</mat-card-title>
+  </mat-card-header>
   <mat-card-content>
     <form>
       <p class="login-error">
@@ -54,7 +55,7 @@
           />
           <fa-icon
             [icon]="passwordVisible ? 'eye-slash' : 'eye'"
-            matSuffix
+            matIconSuffix
             [matTooltip]="passwordVisible ? hidePasswordHint : showPasswordHint"
             (click)="togglePasswordVisible()"
           >

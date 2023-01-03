@@ -6,6 +6,5 @@ import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-co
 @Component({
   selector: "app-edit-boolean",
   templateUrl: "./edit-boolean.component.html",
-  styleUrls: ["./edit-boolean.component.scss"],
 })
 export class EditBooleanComponent extends EditComponent<boolean> {}

@@ -1,21 +1,11 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  ViewEncapsulation,
-} from "@angular/core";
+import { Component, Input, OnInit, ViewEncapsulation } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { FormFieldConfig } from "./FormConfig";
-import { EntityForm, EntityFormService } from "../entity-form.service";
-import { AlertService } from "../../../alerts/alert.service";
-import { InvalidFormFieldError } from "../invalid-form-field.error";
+import { EntityForm } from "../entity-form.service";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { filter } from "rxjs/operators";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { AbstractControl } from "@angular/forms";
 
 /**
  * A general purpose form component for displaying and editing entities.
@@ -36,66 +26,29 @@ import { AbstractControl } from "@angular/forms";
   encapsulation: ViewEncapsulation.None,
 })
 export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
-  // TODO: move the buttons into FormComponent and make this a plain generated <form> for easier reuse
-  @Input() noButtons = false;
-
   /**
    * The entity which should be displayed and edited
    */
   @Input() entity: T;
 
-  /**
-   * Whether the form should be opened in editing mode or not
-   */
-  @Input() editing = false;
+  @Input() columns: FormFieldConfig[][];
 
-  /**
-   * The form field definitions. Either as a string or as a FormFieldConfig object.
-   * Missing information will be fetched from the entity schema definition.
-   * @param columns The columns which should be displayed
-   */
-  @Input() set columns(columns: (FormFieldConfig | string)[][]) {
-    this._columns = columns.map((row) =>
-      row.map((field) => {
-        if (typeof field === "string") {
-          return { id: field };
-        } else {
-          return field;
-        }
-      })
-    );
-  }
-
-  _columns: FormFieldConfig[][] = [];
   @Input() columnHeaders?: (string | null)[];
 
-  /**
-   * This will be emitted whenever changes have been successfully saved to the entity.
-   */
-  @Output() save = new EventEmitter<T>();
+  @Input() set form(form: EntityForm<T>) {
+    this._form = form;
+    this.initialFormValues = form.getRawValue();
+  }
 
-  /**
-   * This will be emitted whenever the cancel button is pressed.
-   */
-  @Output() cancel = new EventEmitter<void>();
-
-  form: EntityForm<T>;
-
-  private saveInProgress = false;
-  private initialFormValues: any;
+  _form: EntityForm<T>;
+  initialFormValues: any;
 
   constructor(
-    private entityFormService: EntityFormService,
-    private alertService: AlertService,
     private entityMapper: EntityMapperService,
     private confirmationDialog: ConfirmationDialogService
   ) {}
 
   ngOnInit() {
-    this.buildFormConfig();
-    if (!this.editing) {
-      this.form.disable();
-    }
     this.entityMapper
       .receiveUpdates(this.entity.getConstructor())
       .pipe(
@@ -106,7 +59,7 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
   }
 
   private async applyChanges(entity: T) {
-    if (this.saveInProgress || this.formIsUpToDate(entity)) {
+    if (this.formIsUpToDate(entity)) {
       // this is the component that currently saves the values -> no need to apply changes.
       return;
     }
@@ -118,20 +71,25 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
       ))
     ) {
       Object.assign(this.initialFormValues, entity);
-      this.form.patchValue(entity as any);
+      this._form.patchValue(entity as any);
     }
   }
 
   private changesOnlyAffectPristineFields(updatedEntity: T) {
-    if (this.form.pristine) {
+    if (this._form.pristine) {
       return true;
     }
 
-    const dirtyFields = Object.entries(this.form.controls).filter(
-      ([key, form]) => form.dirty
+    const dirtyFields = Object.entries(this._form.controls).filter(
+      ([_, form]) => form.dirty
     );
-    for (const [key, form] of dirtyFields) {
-      if (this.initialFormValues[key] === updatedEntity[key]) {
+    for (const [key] of dirtyFields) {
+      if (
+        this.entityEqualsFormValue(
+          updatedEntity[key],
+          this.initialFormValues[key]
+        )
+      ) {
         // keep our pending form field changes
         delete updatedEntity[key];
       } else {
@@ -143,53 +101,17 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
     return true;
   }
 
-  async saveForm(): Promise<void> {
-    this.saveInProgress = true;
-    try {
-      await this.entityFormService.saveChanges(this.form, this.entity);
-      this.form.markAsPristine();
-      this.save.emit(this.entity);
-      this.form.disable();
-    } catch (err) {
-      if (!(err instanceof InvalidFormFieldError)) {
-        this.alertService.addDanger(err.message);
-      }
-    }
-    // Reset state after a short delay
-    setTimeout(() => (this.saveInProgress = false), 1000);
-  }
-
-  cancelClicked() {
-    this.cancel.emit();
-    this.resetForm();
-    this.form.disable();
-  }
-
-  private buildFormConfig() {
-    const flattenedFormFields = new Array<FormFieldConfig>().concat(
-      ...this._columns
-    );
-    this.entityFormService.extendFormFieldConfig(
-      flattenedFormFields,
-      this.entity.getConstructor()
-    );
-    this.form = this.entityFormService.createFormGroup(
-      flattenedFormFields,
-      this.entity
-    );
-    this.initialFormValues = this.form.getRawValue();
-  }
-
-  private resetForm(entity = this.entity) {
-    // Patch form with values from the entity
-    this.form.patchValue(Object.assign(this.initialFormValues, entity));
-    this.form.markAsPristine();
-  }
-
   private formIsUpToDate(entity: T): boolean {
-    return Object.entries(this.form.getRawValue()).every(
-      ([key, value]) =>
-        entity[key] === value || (entity[key] === undefined && value === null)
+    return Object.entries(this._form.getRawValue()).every(([key, value]) => {
+      return this.entityEqualsFormValue(entity[key], value);
+    });
+  }
+
+  private entityEqualsFormValue(entityValue, formValue) {
+    return (
+      (entityValue === undefined && formValue === null) ||
+      entityValue === formValue ||
+      JSON.stringify(entityValue) === JSON.stringify(formValue)
     );
   }
 }

@@ -17,7 +17,7 @@ declare namespace Cypress {
 function create(menuItem: string, name: string): void {
   cy.get(`[ng-reflect-angulartics-label="${menuItem}"]`).click();
   cy.contains("button", "Add New").click();
-  cy.get("[ng-reflect-placeholder=Name]").type(name);
+  cy.contains("mat-label", "Name").type(name);
   cy.contains("button", "Save").click();
 }
 

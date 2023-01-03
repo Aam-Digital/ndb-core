@@ -11,6 +11,8 @@ import { DateWithAge } from "../../../../../child-dev-project/children/model/dat
 })
 export class EditAgeComponent extends EditComponent<DateWithAge> {
   dateChanged(event: MatDatepickerInputEvent<any>) {
-    this.formControl.setValue(new DateWithAge(event.value));
+    if (event.value) {
+      this.formControl.setValue(new DateWithAge(event.value));
+    }
   }
 }

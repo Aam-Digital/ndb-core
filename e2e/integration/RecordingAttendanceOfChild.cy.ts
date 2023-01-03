@@ -4,7 +4,6 @@ describe("Scenario: Recording attendance of a child - E2E test", function () {
   });
 
   it("WHEN I record attendance for this class", () => {
-    cy.get(".mat-card", { timeout: 10000 }).should("be.visible").eq(0).click();
     cy.contains("button", "Record").click();
   });
 
@@ -14,10 +13,8 @@ describe("Scenario: Recording attendance of a child - E2E test", function () {
       .eq(0)
       .click({ scrollBehavior: "center" });
     cy.get(".font-size-rel").first().invoke("text").as("childName");
-    cy.get(".group-select-option").contains("Present").click();
-    cy.get(
-      "app-add-day-attendance.ng-star-inserted > .flex-row > .mat-focus-indicator"
-    ).click();
+    cy.contains("div", "Present").click();
+    cy.get('[icon="arrow-left"]').click({ force: true });
     cy.contains("button", "Save").click();
   });
 

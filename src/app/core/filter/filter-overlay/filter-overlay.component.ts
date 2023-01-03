@@ -1,14 +1,15 @@
 import { Component, Inject } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { FilterComponentSettings } from "../../entity-components/entity-list/filter-component.settings";
-import { Entity } from "../../entity/model/entity";
+import { Entity, EntityConstructor } from "../../entity/model/entity";
+import { DataFilter } from "../../entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { FilterConfig } from "../../entity-components/entity-list/EntityListConfig";
 
 export interface FilterOverlayData<T extends Entity> {
-  filterSelections: FilterComponentSettings<T>[];
-  filterChangeCallback: (
-    filter: FilterComponentSettings<T>,
-    option: string
-  ) => void;
+  filterConfig: FilterConfig[];
+  entityType: EntityConstructor<T>;
+  entities: T[];
+  useUrlQueryParams: true;
+  filterObjChange: (filter: DataFilter<T>) => void;
 }
 
 /**
@@ -22,8 +23,4 @@ export interface FilterOverlayData<T extends Entity> {
 })
 export class FilterOverlayComponent<T extends Entity> {
   constructor(@Inject(MAT_DIALOG_DATA) public data: FilterOverlayData<T>) {}
-
-  optionDidChange(filter: FilterComponentSettings<T>, option: string) {
-    this.data.filterChangeCallback(filter, option);
-  }
 }

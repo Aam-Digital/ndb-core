@@ -1,9 +1,9 @@
 <mat-form-field [formGroup]="parent">
+  <mat-label>{{label}}</mat-label>
   <input
     matInput
     type="number"
     [formControlName]="formControlName"
-    [placeholder]="label"
     [title]="label"
   />
   <mat-error>

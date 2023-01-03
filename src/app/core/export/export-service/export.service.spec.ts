@@ -1,4 +1,4 @@
-import { TestBed } from "@angular/core/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ExportService } from "./export.service";
 import { ConfigurableEnumValue } from "../../configurable-enum/configurable-enum.interface";
@@ -24,7 +24,7 @@ describe("ExportService", () => {
   let service: ExportService;
   let entityMapper: EntityMapperService;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [DatabaseTestingModule],
       providers: [
@@ -37,11 +37,9 @@ describe("ExportService", () => {
 
     service = TestBed.inject<ExportService>(ExportService);
     entityMapper = TestBed.inject(EntityMapperService);
-  });
+  }));
 
-  afterEach(async () => {
-    await TestBed.inject(Database).destroy();
-  });
+  afterEach(() => TestBed.inject(Database).destroy());
 
   it("should be created", () => {
     expect(service).toBeTruthy();
@@ -52,6 +50,7 @@ describe("ExportService", () => {
       propertyOne;
       propertyTwo;
     }
+
     const test = new TestClass();
     test.propertyOne = "Hello";
     test.propertyTwo = "World";
@@ -82,6 +81,7 @@ describe("ExportService", () => {
       propOne;
       propTwo;
     }
+
     const test = new TestClass("1");
     test._rev = "2";
     test.propOne = "first";

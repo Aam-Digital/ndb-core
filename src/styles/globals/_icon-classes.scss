@@ -1,10 +1,6 @@
 @use "../variables/sizes";
 
-.standard-icon {
-  font-size: sizes.$standard-icon;
-}
-
 .standard-icon-with-text {
-  font-size: sizes.$standard-icon;
   margin-right: sizes.$small;
+  vertical-align: middle;
 }

@@ -18,7 +18,7 @@ import {
   template: ` <div
     [matTooltip]="text"
     [matTooltipDisabled]="!elementDisabled"
-    style="display: inline-block"
+    style="display: inline"
     #wrapper
   >
     <ng-container *ngTemplateOutlet="template"></ng-container>
