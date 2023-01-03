@@ -7,10 +7,8 @@ import {
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { FormBuilder, FormGroup } from "@angular/forms";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import {
-  ConfigService,
-  createTestingConfigService,
-} from "../../../core/config/config.service";
+import { ConfigService } from "../../../core/config/config.service";
+import { createTestingConfigService } from "../../../core/config/testing-config-service";
 
 describe("EditProgressDashboardComponent", () => {
   let component: EditProgressDashboardComponent;

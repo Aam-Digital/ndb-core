@@ -16,12 +16,10 @@ import {
   ViewRegistry,
 } from "../core/view/dynamic-components/dynamic-component.decorator";
 import { RouteRegistry, routesRegistry } from "../app.routing";
-import {
-  ConfigService,
-  createTestingConfigService,
-} from "../core/config/config.service";
+import { ConfigService } from "../core/config/config.service";
 import { SessionType } from "../core/session/session-type";
 import { environment } from "../../environments/environment";
+import { createTestingConfigService } from "../core/config/testing-config-service";
 
 /**
  * Utility module that creates a simple environment where a correctly configured database and session is set up.

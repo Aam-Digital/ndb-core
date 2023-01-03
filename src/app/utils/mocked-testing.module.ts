@@ -28,12 +28,10 @@ import {
 } from "../core/view/dynamic-components/dynamic-component.decorator";
 import { RouteRegistry, routesRegistry } from "../app.routing";
 import { MatNativeDateModule } from "@angular/material/core";
-import {
-  ConfigService,
-  createTestingConfigService,
-} from "../core/config/config.service";
+import { ConfigService } from "../core/config/config.service";
 import { environment } from "../../environments/environment";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { createTestingConfigService } from "../core/config/testing-config-service";
 
 export const TEST_USER = "test";
 export const TEST_PASSWORD = "pass";
