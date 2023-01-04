@@ -64,24 +64,30 @@ export interface GroupConfig {
   columns: string[];
 }
 
-export interface FilterConfig {
+export type FilterConfig<T = any> =
+  | BasicFilterConfig
+  | BooleanFilterConfig
+  | PrebuiltFilterConfig<T>
+  | ConfigurableEnumFilterConfig<T>;
+
+export interface BasicFilterConfig {
   id: string;
   type?: string;
   default?: string;
   label?: string;
 }
 
-export interface BooleanFilterConfig extends FilterConfig {
+export interface BooleanFilterConfig extends BasicFilterConfig {
   true: string;
   false: string;
   all: string;
 }
 
-export interface PrebuiltFilterConfig<T extends Entity> extends FilterConfig {
+export interface PrebuiltFilterConfig<T> extends BasicFilterConfig {
   options: FilterSelectionOption<T>[];
 }
 
-export interface ConfigurableEnumFilterConfig<T> extends FilterConfig {
+export interface ConfigurableEnumFilterConfig<T> extends BasicFilterConfig {
   enumId: string;
 }
 

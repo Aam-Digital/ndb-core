@@ -24,6 +24,7 @@ import { School } from "../../../child-dev-project/schools/model/school";
 import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
 import { TimeInterval } from "../recurring-interval/time-interval";
 import { TodoCompletion } from "./todo-completion";
+import { WarningLevel } from "../../../core/entity/model/warning-level";
 
 @DatabaseEntity("Todo")
 export class Todo extends Entity {
@@ -105,6 +106,16 @@ export class Todo extends Entity {
   }
 
   get isOverdue(): boolean {
-    return this.deadline.getTime() < new Date().getTime();
+    return !this.completed && this.deadline.getTime() < new Date().getTime();
+  }
+
+  getWarningLevel(): WarningLevel {
+    if (this.isOverdue) {
+      return WarningLevel.URGENT;
+    }
+    if (this.completed) {
+      return WarningLevel.OK;
+    }
+    return WarningLevel.NONE;
   }
 }
