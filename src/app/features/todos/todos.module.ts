@@ -27,6 +27,9 @@ import { Angulartics2Module } from "angulartics2";
 import { PermissionsModule } from "../../core/permissions/permissions.module";
 import { TodoListComponent } from "./todo-list.component";
 import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
+import { TodosDashboardComponent } from "./todos-dashboard/todos-dashboard.component";
+import { DashboardModule } from "../../core/dashboard/dashboard.module";
+import { MatTableModule } from "@angular/material/table";
 
 @NgModule({
   declarations: [
@@ -38,6 +41,7 @@ import { EntityListModule } from "../../core/entity-components/entity-list/entit
     TodoDetailsComponent,
     DisplayTodoCompletionComponent,
     TodoListComponent,
+    TodosDashboardComponent,
   ],
   imports: [
     CommonModule,
@@ -59,6 +63,8 @@ import { EntityListModule } from "../../core/entity-components/entity-list/entit
     Angulartics2Module,
     PermissionsModule,
     EntityListModule,
+    DashboardModule,
+    MatTableModule,
   ],
   exports: [
     TodosRelatedToEntityComponent,
@@ -68,12 +74,14 @@ import { EntityListModule } from "../../core/entity-components/entity-list/entit
     DisplayTodoCompletionComponent,
     TodoDetailsComponent,
     TodoListComponent,
+    TodosDashboardComponent,
   ],
 })
 export class TodosModule {
   static dynamicComponents: [
     TodoListComponent,
     TodosRelatedToEntityComponent,
+    TodosDashboardComponent,
     EditRecurringIntervalComponent,
     DisplayTodoCompletionComponent,
     DisplayRecurringIntervalComponent

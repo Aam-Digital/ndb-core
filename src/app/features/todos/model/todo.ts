@@ -40,6 +40,13 @@ export class Todo extends Entity {
   @DatabaseField({ dataType: "date-only", label: $localize`:Label:Deadline` })
   deadline: Date;
 
+  @DatabaseField({
+    dataType: "date-only",
+    label: $localize`:Label:Start date`,
+    description: $localize`:Description:When you are planning to start work so that you keep enough time before the actual hard deadline.`,
+  })
+  startDate: Date;
+
   @DatabaseField({ label: $localize`:Label:Subject` })
   subject: string = "";
 
@@ -95,5 +102,9 @@ export class Todo extends Entity {
 
   get isActive(): boolean {
     return !this.completed;
+  }
+
+  get isOverdue(): boolean {
+    return this.deadline.getTime() < new Date().getTime();
   }
 }

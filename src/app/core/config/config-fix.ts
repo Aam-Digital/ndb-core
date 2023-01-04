@@ -182,6 +182,10 @@ export const defaultJsonConfig = {
           }
         },
         {
+          "component": "TodosDashboard",
+          "config": {}
+        },
+        {
           "component": "NotesDashboard",
           "config": {
             "sinceDays": 28,
@@ -1143,15 +1147,7 @@ export const defaultJsonConfig = {
   },
 
   "entity:Todo": {
-    "attributes": [
-      {
-        "name": "startDate",
-        "schema": {
-          dataType: "date-only",
-          label: $localize`:Label:Start date`
-        }
-      }
-      ]
+    "attributes": []
   },
   "view:todo": {
     "component": "TodoList",
