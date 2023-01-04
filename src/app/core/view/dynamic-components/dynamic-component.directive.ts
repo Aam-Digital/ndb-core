@@ -4,6 +4,7 @@ import { OnInitDynamicComponent } from "./on-init-dynamic-component.interface";
 import { ViewRegistry } from "./dynamic-component.decorator";
 import { Router } from "@angular/router";
 import { ComponentType } from "@angular/cdk/overlay";
+import { componentRoutes } from "../../../component-routes";
 
 /**
  * Directive to mark a template into which a component that is dynamically injected from config should be loaded
@@ -15,7 +16,7 @@ import { ComponentType } from "@angular/cdk/overlay";
  */
 @Directive({
   selector: "[appDynamicComponent]",
-  standalone: true
+  standalone: true,
 })
 export class DynamicComponentDirective implements OnChanges {
   @Input() appDynamicComponent: DynamicComponentConfig;
@@ -39,14 +40,9 @@ export class DynamicComponentDirective implements OnChanges {
     if (this.registry.has(this.appDynamicComponent.component)) {
       component = this.registry.get(this.appDynamicComponent.component);
     } else {
-      const existing = this.router.config.find(
-        (r) => r.path === `dynamic/${this.appDynamicComponent.component}`
-      );
-      if (!existing) {
-        console.log("ap", this.appDynamicComponent);
-      }
-      component =
-        (await existing.loadComponent()) as ComponentType<OnInitDynamicComponent>;
+      component = await componentRoutes.get(
+        this.appDynamicComponent.component
+      )();
     }
 
     this.viewContainerRef.clear();

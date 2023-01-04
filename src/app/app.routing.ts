@@ -23,7 +23,6 @@ import { ApplicationLoadingComponent } from "./core/view/dynamic-routing/empty/a
 import { NotFoundComponent } from "./core/view/dynamic-routing/not-found/not-found.component";
 import { UserAccountComponent } from "./core/user/user-account/user-account.component";
 import { SupportComponent } from "./core/support/support/support.component";
-import { componentRoutes } from "./component-routes";
 
 export class RouteRegistry extends Registry<ComponentType<any>> {}
 
@@ -60,7 +59,6 @@ export const allRoutes: Routes = [
   { path: "support", component: SupportComponent },
   { path: "404", component: NotFoundComponent },
   { path: "**", pathMatch: "full", component: ApplicationLoadingComponent },
-  ...componentRoutes,
 ];
 
 /**

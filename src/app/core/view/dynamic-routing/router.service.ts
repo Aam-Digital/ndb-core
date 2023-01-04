@@ -10,6 +10,7 @@ import {
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { RouteRegistry } from "../../../app.routing";
 import { NotFoundComponent } from "./not-found/not-found.component";
+import { componentRoutes } from "../../../component-routes";
 
 /**
  * The RouterService dynamically sets up Angular routing from config loaded through the {@link ConfigService}.
@@ -74,12 +75,9 @@ export class RouterService {
 
   private createRoute(view: ViewConfig, additionalRoutes: Route[]) {
     const path = view._id.substring(PREFIX_VIEW_CONFIG.length);
-    const existing = additionalRoutes.find(
-      (r) => r.path === `dynamic/${view.component}`
-    );
-    if (existing) {
+    if (componentRoutes.has(view.component)) {
       return this.generateRouteFromConfig(view, {
-        ...existing,
+        loadComponent: componentRoutes.get(view.component),
         path,
       });
     } else if (view.lazyLoaded) {
