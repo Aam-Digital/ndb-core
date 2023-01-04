@@ -19,12 +19,11 @@ describe("LanguageSelectComponent", () => {
       "initDefaultLanguage",
     ]);
     await TestBed.configureTestingModule({
-      declarations: [LanguageSelectComponent],
+      imports: [LanguageSelectComponent, RouterTestingModule],
       providers: [
         { provide: LOCATION_TOKEN, useValue: mockLocation },
         { provide: LanguageService, useValue: mockTranslationService },
       ],
-      imports: [LanguageSelectComponent, RouterTestingModule],
     }).compileComponents();
   });
 

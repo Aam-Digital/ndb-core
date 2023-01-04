@@ -11,11 +11,7 @@ describe("PrimaryActionComponent", () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        PrimaryActionComponent,
-        MockedTestingModule.withState(),
-        FontAwesomeTestingModule,
-      ],
+      imports: [PrimaryActionComponent, MockedTestingModule.withState()],
       providers: [{ provide: SwUpdate, useValue: {} }],
     }).compileComponents();
   });

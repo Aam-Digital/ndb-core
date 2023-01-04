@@ -8,19 +8,17 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
-import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { ConfigService } from "../../../core/config/config.service";
 import { of, ReplaySubject } from "rxjs";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { Coordinates } from "../../location/coordinates";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("MatchingEntitiesComponent", () => {
   let component: MatchingEntitiesComponent;
   let fixture: ComponentFixture<MatchingEntitiesComponent>;
 
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let mockActivatedRoute;
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
 
   let testConfig: MatchingEntitiesConfig = {
     columns: [],
@@ -36,19 +34,13 @@ describe("MatchingEntitiesComponent", () => {
   };
 
   beforeEach(async () => {
-    mockEntityMapper = jasmine.createSpyObj(["loadType", "save"]);
-    mockEntityMapper.loadType.and.resolveTo([]);
     mockActivatedRoute = { data: null };
-    mockConfigService = jasmine.createSpyObj(["getConfig"]);
 
     await TestBed.configureTestingModule({
-      imports: [MatchingEntitiesComponent],
+      imports: [MatchingEntitiesComponent, MockedTestingModule.withState()],
       providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: FormDialogService, useValue: null },
-        EntitySchemaService,
-        { provide: ConfigService, useValue: mockConfigService },
       ],
     }).compileComponents();
 
@@ -78,7 +70,8 @@ describe("MatchingEntitiesComponent", () => {
 
   it("should use central default config and overwrite with dynamic config of the component", () => {
     testConfig.columns = [["defaultA", "defaultB"]];
-    mockConfigService.getConfig.and.returnValue(testConfig);
+    const configService = TestBed.inject(ConfigService);
+    spyOn(configService, "getConfig").and.returnValue(testConfig);
     const currentConfig: MatchingEntitiesConfig = {
       columns: [["newA", "newB"]],
     };
@@ -143,7 +136,8 @@ describe("MatchingEntitiesComponent", () => {
       ["_rev", "phone"],
     ];
     const allChildren: Child[] = [Child.create("1"), Child.create("2")];
-    mockEntityMapper.loadType.and.resolveTo(allChildren);
+    const loadTypeSpy = spyOn(TestBed.inject(EntityMapperService), "loadType");
+    loadTypeSpy.and.resolveTo(allChildren);
 
     await component.ngOnInit();
 
@@ -158,7 +152,7 @@ describe("MatchingEntitiesComponent", () => {
 
     expect(component.sideDetails[1].selected).toBeUndefined();
     expect(component.sideDetails[1].entityType).toEqual(Child);
-    expect(mockEntityMapper.loadType).toHaveBeenCalledWith(Child);
+    expect(loadTypeSpy).toHaveBeenCalledWith(Child);
     expect(component.sideDetails[1].availableEntities).toEqual(allChildren);
     expect(component.sideDetails[1].columns).toEqual(["name", "phone"]);
   });
@@ -172,13 +166,14 @@ describe("MatchingEntitiesComponent", () => {
     const testEntity = new Entity();
     const matchedEntity = Child.create("matched child");
     component.columns = [["_id", "name"]];
+    const saveSpy = spyOn(TestBed.inject(EntityMapperService), "save");
 
     await component.ngOnInit();
     component.sideDetails[0].selectMatch(testEntity);
     component.sideDetails[1].selectMatch(matchedEntity);
     await component.createMatch();
 
-    expect(mockEntityMapper.save).toHaveBeenCalledWith(
+    expect(saveSpy).toHaveBeenCalledWith(
       jasmine.objectContaining({
         schoolId: testEntity.getId(false),
         childId: matchedEntity.getId(false),
@@ -186,9 +181,7 @@ describe("MatchingEntitiesComponent", () => {
           "ChildSchoolRelation " + testEntity.toString() + " - matched child",
       } as Partial<ChildSchoolRelation>)
     );
-    expect(mockEntityMapper.save).toHaveBeenCalledWith(
-      jasmine.any(ChildSchoolRelation)
-    );
+    expect(saveSpy).toHaveBeenCalledWith(jasmine.any(ChildSchoolRelation));
   });
 
   it("should create distance column and publish updates", async () => {

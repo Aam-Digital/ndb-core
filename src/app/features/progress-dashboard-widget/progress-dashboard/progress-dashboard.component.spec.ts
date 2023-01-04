@@ -9,7 +9,6 @@ import {
 import { ProgressDashboardComponent } from "./progress-dashboard.component";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { AlertService } from "../../../core/alerts/alert.service";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { ProgressDashboardConfig } from "./progress-dashboard-config";
 import { MatDialog } from "@angular/material/dialog";
 import { BehaviorSubject, Subject } from "rxjs";
@@ -26,39 +25,29 @@ describe("ProgressDashboardComponent", () => {
   let mockSession: jasmine.SpyObj<SessionService>;
   let mockSync: BehaviorSubject<SyncState>;
 
-  beforeEach(
-    waitForAsync(() => {
-      mockEntityMapper = jasmine.createSpyObj("mockEntityService", [
-        "load",
-        "save",
-      ]);
-      mockEntityMapper.load.and.resolveTo({ title: "test", parts: [] } as any);
-      mockEntityMapper.save.and.resolveTo();
-      mockSync = new BehaviorSubject(SyncState.UNSYNCED);
-      mockSession = jasmine.createSpyObj([], { syncState: mockSync });
+  beforeEach(waitForAsync(() => {
+    mockEntityMapper = jasmine.createSpyObj("mockEntityService", [
+      "load",
+      "save",
+    ]);
+    mockEntityMapper.load.and.resolveTo({ title: "test", parts: [] } as any);
+    mockEntityMapper.save.and.resolveTo();
+    mockSync = new BehaviorSubject(SyncState.UNSYNCED);
+    mockSession = jasmine.createSpyObj([], { syncState: mockSync });
 
-      TestBed.configureTestingModule({
-        imports: [
-          ProgressDashboardComponent,
-          MockedTestingModule.withState(),
-          FontAwesomeTestingModule,
-        ],
-        providers: [
-          { provide: EntityMapperService, useValue: mockEntityMapper },
-          { provide: MatDialog, useValue: mockDialog },
-          { provide: SessionService, useValue: mockSession },
-          {
-            provide: AlertService,
-            useValue: jasmine.createSpyObj([
-              "addDebug",
-              "addInfo",
-              "addWarning",
-            ]),
-          },
-        ],
-      }).compileComponents();
-    })
-  );
+    TestBed.configureTestingModule({
+      imports: [ProgressDashboardComponent, MockedTestingModule.withState()],
+      providers: [
+        { provide: EntityMapperService, useValue: mockEntityMapper },
+        { provide: MatDialog, useValue: mockDialog },
+        { provide: SessionService, useValue: mockSession },
+        {
+          provide: AlertService,
+          useValue: jasmine.createSpyObj(["addDebug", "addInfo", "addWarning"]),
+        },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ProgressDashboardComponent);

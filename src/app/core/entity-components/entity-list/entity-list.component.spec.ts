@@ -92,11 +92,7 @@ describe("EntityListComponent", () => {
     };
 
     TestBed.configureTestingModule({
-      imports: [
-        EntityListComponent,
-        MockedTestingModule.withState(),
-        FontAwesomeTestingModule,
-      ],
+      imports: [EntityListComponent, MockedTestingModule.withState()],
       providers: [
         { provide: ExportService, useValue: {} },
         { provide: AttendanceService, useValue: mockAttendanceService },
@@ -135,6 +131,7 @@ describe("EntityListComponent", () => {
     createComponent();
     initComponentInputs();
     expect(component.selectedColumnGroupIndex).toBe(1);
+    console.log("component groups", component.columnGroups);
 
     const tabGroup = await loader.getHarness(MatTabGroupHarness);
     const groups = await tabGroup.getTabs();

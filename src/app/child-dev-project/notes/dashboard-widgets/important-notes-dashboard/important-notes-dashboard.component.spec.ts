@@ -5,9 +5,7 @@ import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { LoginState } from "../../../../core/session/session-states/login-state.enum";
 import { Note } from "../../model/note";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
-import { MatPaginatorModule } from "@angular/material/paginator";
 import { warningLevels } from "../../../warning-levels";
-import { DashboardModule } from "../../../../core/dashboard/dashboard.module";
 
 describe("ImportantNotesDashboardComponent", () => {
   let component: ImportantNotesDashboardComponent;
@@ -23,10 +21,8 @@ describe("ImportantNotesDashboardComponent", () => {
     await TestBed.configureTestingModule({
       imports: [
         MockedTestingModule.withState(LoginState.LOGGED_IN, mockNotes),
-        MatPaginatorModule,
-        DashboardModule,
+        ImportantNotesDashboardComponent,
       ],
-      declarations: [ImportantNotesDashboardComponent],
       providers: [
         {
           provide: FormDialogService,

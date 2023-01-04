@@ -44,7 +44,11 @@ import {
   DEFAULT_LANGUAGE,
   LANGUAGE_LOCAL_STORAGE_KEY,
 } from "./core/language/language-statics";
-import { DateAdapter, MAT_DATE_FORMATS } from "@angular/material/core";
+import {
+  DateAdapter,
+  MAT_DATE_FORMATS,
+  MatNativeDateModule,
+} from "@angular/material/core";
 import {
   DATE_FORMATS,
   DateAdapterWithFormatting,
@@ -78,6 +82,7 @@ import { MatDialogModule } from "@angular/material/dialog";
     BrowserAnimationsModule,
     HttpClientModule,
     routing,
+
     DatabaseModule,
     LocationModule,
     LanguageModule,
@@ -94,6 +99,7 @@ import { MatDialogModule } from "@angular/material/dialog";
 
     MatSnackBarModule,
     MatDialogModule,
+    MatNativeDateModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },

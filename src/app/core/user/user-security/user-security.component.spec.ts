@@ -17,7 +17,6 @@ import {
 } from "../../session/auth/keycloak/keycloak-auth.service";
 import { of, throwError } from "rxjs";
 import { User } from "../user";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { AppSettings } from "../../app-config/app-settings";
 import { SessionService } from "../../session/session-service/session.service";
 
@@ -58,7 +57,7 @@ describe("UserSecurityComponent", () => {
     });
 
     await TestBed.configureTestingModule({
-      imports: [UserSecurityComponent, MockedTestingModule, FontAwesomeTestingModule],
+      imports: [UserSecurityComponent, MockedTestingModule],
       providers: [
         { provide: AuthService, useClass: KeycloakAuthService },
         { provide: HttpClient, useValue: mockHttp },

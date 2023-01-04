@@ -7,7 +7,6 @@ import { ChildrenService } from "../../children/children.service";
 import { of } from "rxjs";
 import { AttendanceService } from "../attendance.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("AddDayAttendanceComponent", () => {
   let component: AddDayAttendanceComponent;
@@ -15,29 +14,23 @@ describe("AddDayAttendanceComponent", () => {
 
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
 
-  beforeEach(
-    waitForAsync(() => {
-      mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
-        "getChildren",
-      ]);
-      mockChildrenService.getChildren.and.returnValue(of([]));
+  beforeEach(waitForAsync(() => {
+    mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
+      "getChildren",
+    ]);
+    mockChildrenService.getChildren.and.returnValue(of([]));
 
-      TestBed.configureTestingModule({
-        imports: [
-          AddDayAttendanceComponent,
-          MockedTestingModule.withState(),
-          FontAwesomeTestingModule,
-        ],
-        providers: [
-          { provide: ChildrenService, useValue: mockChildrenService },
-          {
-            provide: AttendanceService,
-            useValue: { getEventsOnDate: () => Promise.resolve([]) },
-          },
-        ],
-      }).compileComponents();
-    })
-  );
+    TestBed.configureTestingModule({
+      imports: [AddDayAttendanceComponent, MockedTestingModule.withState()],
+      providers: [
+        { provide: ChildrenService, useValue: mockChildrenService },
+        {
+          provide: AttendanceService,
+          useValue: { getEventsOnDate: () => Promise.resolve([]) },
+        },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AddDayAttendanceComponent);

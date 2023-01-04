@@ -22,8 +22,8 @@ describe("DisableEntityOperationDirective", () => {
     });
 
     TestBed.configureTestingModule({
-      declarations: [TestComponent, DisableEntityOperationDirective],
-      imports: [MatTooltipModule],
+      declarations: [TestComponent],
+      imports: [DisableEntityOperationDirective],
       providers: [
         { provide: EntityAbility, useValue: mockAbility },
         { provide: AbilityService, useValue: mockAbilityService },
@@ -92,7 +92,7 @@ describe("DisableEntityOperationDirective", () => {
 });
 
 @Component({
-  template: `<button
+  template: ` <button
     *appDisabledEntityOperation="{
       operation: 'create',
       entity: entityConstructor

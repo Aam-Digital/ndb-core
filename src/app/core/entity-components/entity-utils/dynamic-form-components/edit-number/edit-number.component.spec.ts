@@ -1,12 +1,9 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EditNumberComponent } from "./edit-number.component";
-import { UntypedFormGroup, ReactiveFormsModule } from "@angular/forms";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
+import { UntypedFormGroup } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { setupEditComponent } from "../edit-component.spec";
-import { ErrorHintComponent } from "../../error-hint/error-hint.component";
 
 describe("EditNumberComponent", () => {
   let component: EditNumberComponent;
@@ -15,13 +12,7 @@ describe("EditNumberComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        MatFormFieldModule,
-        MatInputModule,
-        ReactiveFormsModule,
-        NoopAnimationsModule,
-      ],
-      declarations: [EditNumberComponent, ErrorHintComponent],
+      imports: [EditNumberComponent, NoopAnimationsModule],
     }).compileComponents();
   });
 

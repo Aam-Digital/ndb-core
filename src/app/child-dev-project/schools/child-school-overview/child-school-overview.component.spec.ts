@@ -11,7 +11,6 @@ import { SimpleChange } from "@angular/core";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import moment from "moment";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { School } from "../model/school";
 import { ChildrenService } from "../../children/children.service";
 import { Child } from "../../children/model/child";
@@ -37,11 +36,7 @@ describe("ChildSchoolOverviewComponent", () => {
     ]);
 
     TestBed.configureTestingModule({
-      imports: [
-        ChildSchoolOverviewComponent,
-        MockedTestingModule.withState(),
-        FontAwesomeTestingModule,
-      ],
+      imports: [ChildSchoolOverviewComponent, MockedTestingModule.withState()],
       providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
     }).compileComponents();
   }));

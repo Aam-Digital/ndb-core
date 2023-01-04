@@ -22,10 +22,12 @@ import { RemoteSession } from "./remote-session";
 import { SessionType } from "../session-type";
 import { fakeAsync, flush, TestBed, tick } from "@angular/core/testing";
 import { HttpErrorResponse, HttpStatusCode } from "@angular/common/http";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
+import {
+  MockedTestingModule,
+  TEST_PASSWORD,
+  TEST_USER,
+} from "../../../utils/mocked-testing.module";
 import { testSessionServiceImplementation } from "./session.service.spec";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { PouchDatabase } from "../../database/pouch-database";
 import { SessionModule } from "../session.module";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
@@ -60,7 +62,7 @@ describe("SyncedSessionService", () => {
     mockAuthService.autoLogin.and.rejectWith();
 
     TestBed.configureTestingModule({
-      imports: [SessionModule, NoopAnimationsModule, FontAwesomeTestingModule],
+      imports: [SessionModule, MockedTestingModule],
       providers: [
         PouchDatabase,
         { provide: AuthService, useValue: mockAuthService },

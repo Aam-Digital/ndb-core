@@ -25,7 +25,6 @@ import moment from "moment";
 import { Subject } from "rxjs";
 import { UpdatedEntity } from "../../../entity/model/entity-update";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { ScreenWidthObserver } from "../../../../utils/media/screen-size-observer.service";
 import { WINDOW_TOKEN } from "../../../../utils/di-tokens";
 import { DateWithAge } from "../../../../child-dev-project/children/model/dateWithAge";
@@ -37,11 +36,7 @@ describe("EntitySubrecordComponent", () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
-        EntitySubrecordComponent,
-        MockedTestingModule.withState(),
-        FontAwesomeTestingModule,
-      ],
+      imports: [EntitySubrecordComponent, MockedTestingModule.withState()],
       providers: [
         { provide: WINDOW_TOKEN, useValue: window },
         {

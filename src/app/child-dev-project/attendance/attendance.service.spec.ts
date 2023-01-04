@@ -48,7 +48,6 @@ describe("AttendanceService", () => {
 
     TestBed.configureTestingModule({
       imports: [DatabaseTestingModule],
-      providers: [AttendanceService, ChildrenService],
     });
     service = TestBed.inject(AttendanceService);
 

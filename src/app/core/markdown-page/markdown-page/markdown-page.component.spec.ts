@@ -14,24 +14,22 @@ describe("HowToComponent", () => {
 
   let mockRouteData: BehaviorSubject<RouteData<MarkdownPageConfig>>;
 
-  beforeEach(
-    waitForAsync(() => {
-      mockRouteData = new BehaviorSubject({
-        config: { markdownFile: "test.md" },
-      });
+  beforeEach(waitForAsync(() => {
+    mockRouteData = new BehaviorSubject({
+      config: { markdownFile: "test.md" },
+    });
 
-      TestBed.configureTestingModule({
-        declarations: [MarkdownPageComponent],
-        imports: [
-          HttpClientModule,
-          MarkdownModule.forRoot({ loader: HttpClient }),
-        ],
-        providers: [
-          { provide: ActivatedRoute, useValue: { data: mockRouteData } },
-        ],
-      }).compileComponents();
-    })
-  );
+    TestBed.configureTestingModule({
+      imports: [
+        MarkdownPageComponent,
+        HttpClientModule,
+        MarkdownModule.forRoot({ loader: HttpClient }),
+      ],
+      providers: [
+        { provide: ActivatedRoute, useValue: { data: mockRouteData } },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(MarkdownPageComponent);

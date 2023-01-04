@@ -33,7 +33,6 @@ describe("RollCallSetupComponent", () => {
     mockAttendanceService.getEventsOnDate.and.resolveTo([]);
 
     TestBed.configureTestingModule({
-      declarations: [RollCallSetupComponent],
       imports: [RollCallSetupComponent, MockedTestingModule.withState()],
       providers: [
         { provide: ChildrenService, useValue: mockChildrenService },

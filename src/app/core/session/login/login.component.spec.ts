@@ -28,7 +28,7 @@ import { LoggingService } from "../../logging/logging.service";
 import { SessionService } from "../session-service/session.service";
 import { LoginState } from "../session-states/login-state.enum";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { AuthService } from "../auth/auth.service";
 
 describe("LoginComponent", () => {
   let component: LoginComponent;
@@ -38,8 +38,11 @@ describe("LoginComponent", () => {
   beforeEach(waitForAsync(() => {
     mockSessionService = jasmine.createSpyObj(["login"]);
     TestBed.configureTestingModule({
-      imports: [LoginComponent, MockedTestingModule, FontAwesomeTestingModule],
-      providers: [{ provide: SessionService, useValue: mockSessionService }],
+      imports: [LoginComponent, MockedTestingModule],
+      providers: [
+        { provide: SessionService, useValue: mockSessionService },
+        { provide: AuthService, useValue: {} },
+      ],
     }).compileComponents();
   }));
 

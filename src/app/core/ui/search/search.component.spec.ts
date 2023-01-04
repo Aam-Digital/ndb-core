@@ -8,7 +8,7 @@ import { Subscription } from "rxjs";
 import { Entity } from "../../entity/model/entity";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { SwUpdate } from "@angular/service-worker";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 
 describe("SearchComponent", () => {
   let component: SearchComponent;
@@ -24,12 +24,9 @@ describe("SearchComponent", () => {
     ]);
 
     TestBed.configureTestingModule({
-      imports: [
-        SearchComponent,
-        MockedTestingModule.withState(),
-        FontAwesomeTestingModule,
-      ],
+      imports: [SearchComponent, MockedTestingModule.withState()],
       providers: [
+        UserRoleGuard,
         { provide: DatabaseIndexingService, useValue: mockIndexService },
         { provide: SwUpdate, useValue: {} },
       ],

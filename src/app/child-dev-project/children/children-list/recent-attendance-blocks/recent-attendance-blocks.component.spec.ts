@@ -27,7 +27,7 @@ describe("RecentAttendanceBlocksComponent", () => {
     ]);
 
     TestBed.configureTestingModule({
-      declarations: [RecentAttendanceBlocksComponent],
+      imports: [RecentAttendanceBlocksComponent],
       providers: [
         { provide: AttendanceService, useValue: mockAttendanceService },
         { provide: WINDOW_TOKEN, useValue: window },

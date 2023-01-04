@@ -6,7 +6,6 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { firstValueFrom, Subject } from "rxjs";
 import { take } from "rxjs/operators";
 import { MockedTestingModule } from "../../utils/mocked-testing.module";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("PwaInstallComponent", () => {
   let mockPWAInstallService: jasmine.SpyObj<PwaInstallService>;
@@ -23,11 +22,7 @@ describe("PwaInstallComponent", () => {
     ]);
     mockSnackbar = jasmine.createSpyObj(["openFromTemplate"]);
     await TestBed.configureTestingModule({
-      imports: [
-        PwaInstallComponent,
-        MockedTestingModule,
-        FontAwesomeTestingModule,
-      ],
+      imports: [PwaInstallComponent, MockedTestingModule],
       providers: [
         { provide: PwaInstallService, useValue: mockPWAInstallService },
         { provide: MatSnackBar, useValue: mockSnackbar },

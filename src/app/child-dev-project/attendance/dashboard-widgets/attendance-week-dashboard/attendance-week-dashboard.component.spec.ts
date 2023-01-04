@@ -10,7 +10,6 @@ import { ActivityAttendance } from "../../model/activity-attendance";
 import { AttendanceService } from "../../attendance.service";
 import { RecurringActivity } from "../../model/recurring-activity";
 import moment from "moment";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("AttendanceWeekDashboardComponent", () => {
   let component: AttendanceWeekDashboardComponent;
@@ -26,7 +25,6 @@ describe("AttendanceWeekDashboardComponent", () => {
       imports: [
         AttendanceWeekDashboardComponent,
         MockedTestingModule.withState(),
-        FontAwesomeTestingModule,
       ],
       providers: [
         { provide: AttendanceService, useValue: mockAttendanceService },

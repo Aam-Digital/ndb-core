@@ -16,6 +16,7 @@ import { LoggingService } from "../../logging/logging.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { UpdatedEntity } from "../../entity/model/entity-update";
 import { AuthUser } from "../../session/session-service/auth-user";
+import { PermissionsModule } from "../permissions.module";
 
 describe("AbilityService", () => {
   let service: AbilityService;
@@ -47,9 +48,7 @@ describe("AbilityService", () => {
     mockLoggingService = jasmine.createSpyObj(["warn"]);
 
     TestBed.configureTestingModule({
-      imports: [
-        MockedTestingModule.withState(),
-      ],
+      imports: [MockedTestingModule.withState()],
       providers: [
         { provide: SessionService, useValue: mockSessionService },
         { provide: EntityMapperService, useValue: mockEntityMapper },

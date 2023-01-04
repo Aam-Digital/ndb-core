@@ -14,8 +14,6 @@ import moment from "moment";
 import { defaultAttendanceStatusTypes } from "../../core/config/default-config/default-attendance-status-types";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { defaultInteractionTypes } from "../../core/config/default-config/default-interaction-types";
-import { ChildrenService } from "../../child-dev-project/children/children.service";
-import { AttendanceService } from "../../child-dev-project/attendance/attendance.service";
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
 import { Database } from "../../core/database/database";
 import { Note } from "../../child-dev-project/notes/model/note";
@@ -47,7 +45,6 @@ describe("QueryService", () => {
   beforeEach(waitForAsync(async () => {
     TestBed.configureTestingModule({
       imports: [DatabaseTestingModule],
-      providers: [ChildrenService, AttendanceService, EntityConfigService],
     });
     service = TestBed.inject(QueryService);
     const configService = TestBed.inject(ConfigService);

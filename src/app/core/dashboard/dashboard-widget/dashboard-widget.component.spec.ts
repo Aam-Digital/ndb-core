@@ -10,8 +10,11 @@ describe("DashboardWidgetComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [FaDynamicIconComponent],
-      imports: [FontAwesomeTestingModule, DashboardWidgetComponent],
+      imports: [
+        FaDynamicIconComponent,
+        FontAwesomeTestingModule,
+        DashboardWidgetComponent,
+      ],
     }).compileComponents();
   });
 

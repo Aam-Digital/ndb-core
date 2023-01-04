@@ -6,6 +6,7 @@ import { MatDialogRef } from "@angular/material/dialog";
 import { Subject } from "rxjs";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { Child } from "../../../child-dev-project/children/model/child";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
 
 describe("FormDialogWrapperComponent", () => {
   let component: FormDialogWrapperComponent<Child>;
@@ -15,7 +16,11 @@ describe("FormDialogWrapperComponent", () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [FormDialogWrapperComponent, MockedTestingModule.withState()],
+      imports: [
+        FormDialogWrapperComponent,
+        MockedTestingModule.withState(),
+        MatSnackBarModule,
+      ],
       providers: [{ provide: MatDialogRef, useValue: {} }],
     }).compileComponents();
 

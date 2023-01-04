@@ -10,6 +10,7 @@ import { PasswordFormComponent } from "./password-form.component";
 import { MockedTestingModule } from "../../../../../utils/mocked-testing.module";
 import { SessionService } from "../../../session-service/session.service";
 import { CouchdbAuthService } from "../couchdb-auth.service";
+import { AuthService } from "../../auth.service";
 
 describe("PasswordFormComponent", () => {
   let component: PasswordFormComponent;
@@ -23,7 +24,10 @@ describe("PasswordFormComponent", () => {
 
     await TestBed.configureTestingModule({
       imports: [PasswordFormComponent, MockedTestingModule.withState()],
-      providers: [{ provide: SessionService, useValue: mockSessionService }],
+      providers: [
+        { provide: SessionService, useValue: mockSessionService },
+        { provide: AuthService, useValue: {} },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PasswordFormComponent);

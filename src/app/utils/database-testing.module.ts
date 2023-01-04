@@ -20,6 +20,8 @@ import { ConfigService } from "../core/config/config.service";
 import { SessionType } from "../core/session/session-type";
 import { environment } from "../../environments/environment";
 import { createTestingConfigService } from "../core/config/testing-config-service";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { AppModule } from "../app.module";
 
 /**
  * Utility module that creates a simple environment where a correctly configured database and session is set up.
@@ -32,17 +34,9 @@ import { createTestingConfigService } from "../core/config/testing-config-servic
  * ```
  */
 @NgModule({
+  imports: [AppModule],
   providers: [
-    LoggingService,
-    PouchDatabase,
-    { provide: Database, useExisting: PouchDatabase },
-    EntityMapperService,
-    EntitySchemaService,
     { provide: SessionService, useClass: LocalSession },
-    DatabaseIndexingService,
-    { provide: EntityRegistry, useValue: entityRegistry },
-    { provide: ViewRegistry, useValue: viewRegistry },
-    { provide: RouteRegistry, useValue: routesRegistry },
     { provide: ConfigService, useValue: createTestingConfigService() },
   ],
 })

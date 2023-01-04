@@ -32,6 +32,12 @@ import { ConfigService } from "../core/config/config.service";
 import { environment } from "../../environments/environment";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { createTestingConfigService } from "../core/config/testing-config-service";
+import { MatDialogModule } from "@angular/material/dialog";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { ReactiveFormsModule } from "@angular/forms";
+import { AbilityService } from "../core/permissions/ability/ability.service";
+import { AppModule } from "../app.module";
 
 export const TEST_USER = "test";
 export const TEST_PASSWORD = "pass";
@@ -51,27 +57,17 @@ export const TEST_PASSWORD = "pass";
  */
 @NgModule({
   imports: [
+    AppModule,
     NoopAnimationsModule,
-    Angulartics2Module.forRoot(),
     RouterTestingModule,
-    MatNativeDateModule,
-    FontAwesomeTestingModule,
+    HttpClientTestingModule,
+    ReactiveFormsModule,
   ],
   providers: [
     {
       provide: AnalyticsService,
       useValue: { eventTrack: () => undefined },
     },
-    {
-      provide: LOCATION_TOKEN,
-      useValue: window.location,
-    },
-    EntitySchemaService,
-    EntityAbility,
-    { provide: PureAbility, useExisting: EntityAbility },
-    { provide: EntityRegistry, useValue: entityRegistry },
-    { provide: ViewRegistry, useValue: viewRegistry },
-    { provide: RouteRegistry, useValue: routesRegistry },
     {
       provide: DatabaseIndexingService,
       useValue: {
@@ -85,10 +81,10 @@ export const TEST_PASSWORD = "pass";
 export class MockedTestingModule {
   static withState(
     loginState = LoginState.LOGGED_IN,
-    data: Entity[] = []
+    data: Entity[] = [new User(TEST_USER)]
   ): ModuleWithProviders<MockedTestingModule> {
     environment.session_type = SessionType.mock;
-    const mockedEntityMapper = mockEntityMapper([new User(TEST_USER), ...data]);
+    const mockedEntityMapper = mockEntityMapper([...data]);
     const session = createLocalSession(loginState === LoginState.LOGGED_IN);
     return {
       ngModule: MockedTestingModule,

@@ -9,7 +9,6 @@ import { defaultAttendanceStatusTypes } from "../../../core/config/default-confi
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { By } from "@angular/platform-browser";
 import { ChildMeetingNoteAttendanceComponent } from "./child-meeting-attendance/child-meeting-note-attendance.component";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { LoginState } from "../../../core/session/session-states/login-state.enum";
 
 function generateTestNote(forChildren: Child[]) {
@@ -51,7 +50,6 @@ describe("NoteDetailsComponent", () => {
       imports: [
         NoteDetailsComponent,
         MockedTestingModule.withState(LoginState.LOGGED_IN, children),
-        FontAwesomeTestingModule,
       ],
       providers: [
         { provide: MatDialogRef, useValue: dialogRefMock },

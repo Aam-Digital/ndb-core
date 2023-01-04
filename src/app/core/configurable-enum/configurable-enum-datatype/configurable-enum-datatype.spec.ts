@@ -24,6 +24,7 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { ConfigService } from "../../config/config.service";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
+import { ConfigurableEnumModule } from "../configurable-enum.module";
 
 describe("ConfigurableEnumDatatype", () => {
   const TEST_CONFIG: ConfigurableEnumConfig = [
@@ -54,10 +55,8 @@ describe("ConfigurableEnumDatatype", () => {
     configService.getConfig.and.returnValue(TEST_CONFIG);
 
     TestBed.configureTestingModule({
-      providers: [
-        EntitySchemaService,
-        { provide: ConfigService, useValue: configService },
-      ],
+      imports: [ConfigurableEnumModule],
+      providers: [{ provide: ConfigService, useValue: configService }],
     });
 
     entitySchemaService =

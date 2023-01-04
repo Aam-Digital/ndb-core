@@ -35,8 +35,8 @@ describe("TemplateTooltipDirective", () => {
 
   beforeEach(() => {
     fixture = TestBed.configureTestingModule({
-      declarations: [MockComponent, TemplateTooltipDirective],
-      imports: [CommonModule, OverlayModule, NoopAnimationsModule],
+      declarations: [MockComponent],
+      imports: [TemplateTooltipDirective, NoopAnimationsModule],
     }).createComponent(MockComponent);
     fixture.detectChanges();
   });

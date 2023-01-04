@@ -23,14 +23,11 @@ describe("EditTextWithAutocompleteComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [EditTextWithAutocompleteComponent],
       imports: [
-        MockedTestingModule.withState(),
-        FontAwesomeTestingModule,
         EditTextWithAutocompleteComponent,
+        MockedTestingModule.withState(),
       ],
       providers: [
-        EntityFormService,
         {
           provide: ConfirmationDialogService,
           useValue: new ConfirmationDialogService(null),

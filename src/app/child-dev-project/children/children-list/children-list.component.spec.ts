@@ -17,8 +17,6 @@ import {
 import { School } from "../../schools/model/school";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ExportService } from "../../../core/export/export-service/export.service";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;
@@ -83,11 +81,7 @@ describe("ChildrenListComponent", () => {
   beforeEach(waitForAsync(() => {
     mockChildrenService.getChildren.and.returnValue(of([]));
     TestBed.configureTestingModule({
-      imports: [
-        ChildrenListComponent,
-        MockedTestingModule.withState(),
-        FontAwesomeTestingModule,
-      ],
+      imports: [ChildrenListComponent, MockedTestingModule.withState()],
       providers: [
         {
           provide: ChildrenService,

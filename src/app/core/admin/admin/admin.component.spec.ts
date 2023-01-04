@@ -18,11 +18,6 @@ describe("AdminComponent", () => {
   let component: AdminComponent;
   let fixture: ComponentFixture<AdminComponent>;
 
-  const mockConfigService = jasmine.createSpyObj<ConfigService>([
-    "exportConfig",
-    "saveConfig",
-    "loadConfig",
-  ]);
   const mockBackupService = jasmine.createSpyObj<BackupService>([
     "getJsonExport",
     "getCsvExport",
@@ -58,7 +53,6 @@ describe("AdminComponent", () => {
       imports: [AdminComponent, MockedTestingModule.withState()],
       providers: [
         { provide: BackupService, useValue: mockBackupService },
-        { provide: ConfigService, useValue: mockConfigService },
         {
           provide: ConfirmationDialogService,
           useValue: confirmationDialogMock,
@@ -97,19 +91,25 @@ describe("AdminComponent", () => {
 
   it("should call config service for configuration export", fakeAsync(() => {
     spyOn(document, "createElement").and.returnValue(tmplink);
+    const exportConfigSpy = spyOn(
+      TestBed.inject(ConfigService),
+      "exportConfig"
+    );
+
     component.downloadConfigClick();
-    expect(mockConfigService.exportConfig).toHaveBeenCalled();
+    expect(exportConfigSpy).toHaveBeenCalled();
     tick();
     expect(tmplink.click).toHaveBeenCalled();
   }));
 
   it("should save and apply new configuration", fakeAsync(() => {
     const mockFileReader = createFileReaderMock("{}");
-    mockConfigService.saveConfig.and.resolveTo(null);
+    const saveConfigSpy = spyOn(TestBed.inject(ConfigService), "saveConfig");
+    saveConfigSpy.and.resolveTo(null);
     component.uploadConfigFile({ target: { files: [] } } as any);
     tick();
     expect(mockFileReader.readAsText).toHaveBeenCalled();
-    expect(mockConfigService.saveConfig).toHaveBeenCalled();
+    expect(saveConfigSpy).toHaveBeenCalled();
   }));
 
   it("should open dialog and call backup service when loading backup", fakeAsync(() => {

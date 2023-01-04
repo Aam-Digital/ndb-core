@@ -13,13 +13,7 @@ describe("EditTextComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        NoopAnimationsModule,
-        MatFormFieldModule,
-        ReactiveFormsModule,
-        MatInputModule,
-      ],
-      declarations: [EditTextComponent],
+      imports: [EditTextComponent, NoopAnimationsModule],
     }).compileComponents();
   });
 

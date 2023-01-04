@@ -14,6 +14,7 @@ import { AttendanceService } from "../attendance.service";
 import { AnalyticsService } from "../../../core/analytics/analytics.service";
 import { EntityAbility } from "../../../core/permissions/ability/entity-ability";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
+import { MatNativeDateModule } from "@angular/material/core";
 
 describe("AttendanceCalendarComponent", () => {
   let component: AttendanceCalendarComponent;
@@ -25,7 +26,7 @@ describe("AttendanceCalendarComponent", () => {
     ]);
     mockAttendanceService.createEventForActivity.and.resolveTo(new EventNote());
     TestBed.configureTestingModule({
-      imports: [AttendanceCalendarComponent],
+      imports: [AttendanceCalendarComponent, MatNativeDateModule],
       providers: [
         {
           provide: EntityMapperService,
