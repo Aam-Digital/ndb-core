@@ -47,6 +47,7 @@ export class TodoListComponent implements OnInit {
 
   private init(config: EntityListConfig) {
     this.listConfig = config;
+    this.listConfig.sortByDefault = this.listConfig.sortByDefault ?? { active: "deadline", direction: "asc" };
     this.addPrebuiltFilters();
   }
 
