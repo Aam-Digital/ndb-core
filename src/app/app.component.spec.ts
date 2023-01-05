@@ -77,6 +77,7 @@ describe("AppComponent", () => {
 
   it("should start tracking with config from db", fakeAsync(() => {
     environment.production = true; // tracking is only active in production mode
+    environment.demo_mode = false;
     const testConfig = new Config(Config.CONFIG_KEY, {
       [USAGE_ANALYTICS_CONFIG_ID]: {
         url: "matomo-test-endpoint",

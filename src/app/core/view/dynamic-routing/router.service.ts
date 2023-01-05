@@ -75,14 +75,15 @@ export class RouterService {
 
   private createRoute(view: ViewConfig, additionalRoutes: Route[]) {
     const path = view._id.substring(PREFIX_VIEW_CONFIG.length);
-    if (componentRoutes.has(view.component)) {
+    const route = additionalRoutes.find((r) => r.path === path);
+
+    if (route) {
+      return this.generateRouteFromConfig(view, route);
+    } else if (componentRoutes.has(view.component)) {
       return this.generateRouteFromConfig(view, {
         loadComponent: componentRoutes.get(view.component),
         path,
       });
-    } else if (view.lazyLoaded) {
-      const route = additionalRoutes.find((r) => r.path === path);
-      return this.generateRouteFromConfig(view, route);
     } else {
       return this.generateRouteFromConfig(view);
     }

@@ -14,6 +14,7 @@ import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guar
 import { RouteRegistry, routesRegistry } from "../../../app.routing";
 import { ApplicationLoadingComponent } from "./empty/application-loading.component";
 import { NotFoundComponent } from "./not-found/not-found.component";
+import { componentRoutes } from "../../../component-routes";
 
 class TestComponent extends Component {}
 
@@ -69,15 +70,19 @@ describe("RouterService", () => {
       },
     ];
     const expectedRoutes = [
-      { path: "child", component: ChildrenListComponent, data: {} },
+      {
+        path: "child",
+        loadComponent: componentRoutes.get("ChildrenList"),
+        data: {},
+      },
       {
         path: "child/:id",
-        component: EntityDetailsComponent,
+        loadComponent: componentRoutes.get("EntityDetails"),
         data: { config: testViewConfig },
       },
       {
         path: "admin",
-        component: AdminComponent,
+        loadComponent: componentRoutes.get("Admin"),
         canActivate: [UserRoleGuard],
         data: { permittedUserRoles: ["user_app"] },
       },
@@ -153,7 +158,7 @@ describe("RouterService", () => {
     const expectedRoutes = [
       {
         path: "admin",
-        component: AdminComponent,
+        loadComponent: componentRoutes.get("Admin"),
         canActivate: [UserRoleGuard],
         data: { permittedUserRoles: ["admin"] },
       },
