@@ -6,7 +6,7 @@ describe("When on a big screen, the filter component above the entity list shoul
 
   it("WHEN I am on an entities page", () => {
     cy.get(
-      '[ng-reflect-angulartics-label="Children"] > .mat-list-item-content'
+      '[ng-reflect-angulartics-label="Children"] > .mdc-list-item__content > .mat-mdc-list-item-unscoped-content > .flex-row'
     ).click();
   });
 
@@ -22,9 +22,11 @@ describe("When on a small screen, the filter component above the entity list sho
   });
 
   it("WHEN I am on an entities page", () => {
-    cy.get(":nth-child(1) > .ng-star-inserted > .mat-focus-indicator").click();
     cy.get(
-      '[ng-reflect-angulartics-label="Children"] > .mat-list-item-content'
+      ":nth-child(1) > .ng-star-inserted > .mdc-icon-button > .mat-mdc-button-touch-target"
+    ).click();
+    cy.get(
+      '[ng-reflect-angulartics-label="Children"] > .mdc-list-item__content > .mat-mdc-list-item-unscoped-content > .flex-row'
     ).click();
   });
 
