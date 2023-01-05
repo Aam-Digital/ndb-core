@@ -27,8 +27,4 @@ export class DateAdapterWithFormatting extends NativeDateAdapter {
     }
     return value ? moment(value, true).locale(this.locale).toDate() : null;
   }
-
-  // override getFirstDayOfWeek(): number {
-  //   return 1;
-  // }
 }

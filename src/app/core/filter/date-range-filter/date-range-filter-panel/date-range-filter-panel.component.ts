@@ -1,3 +1,12 @@
+import { Component, Inject } from "@angular/core";
+import { DateAdapter } from "@angular/material/core";
+import {
+  DateRange,
+  MatDateSelectionModel,
+  MatRangeDateSelectionModel,
+} from "@angular/material/datepicker";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+
 const customPresets = [
   "today",
   "last 7 days",
@@ -12,34 +21,24 @@ const customPresets = [
 // equivalent to "today" | "last 7 days" | … | "last year"
 type CustomPreset = typeof customPresets[number];
 
-import { Component, Inject, Input } from "@angular/core";
-import { DateAdapter } from "@angular/material/core";
-import {
-  DateRange,
-  MatDateSelectionModel,
-  MatRangeDateSelectionModel,
-} from "@angular/material/datepicker";
-import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
-
 @Component({
-  selector: "app-daterange-panel",
-  templateUrl: "./daterange-panel.component.html",
-  styleUrls: ["./daterange-panel.component.scss"],
+  selector: "app-date-range-filter-panel",
+  templateUrl: "./date-range-filter-panel.component.html",
+  styleUrls: ["./date-range-filter-panel.component.scss"],
   providers: [
     { provide: MatDateSelectionModel, useClass: MatRangeDateSelectionModel },
   ],
 })
-export class DaterangePanelComponent<D> {
+export class DateRangeFilterPanelComponent<D> {
   // list of range presets we want to provide:
   readonly customPresets = customPresets;
 
-  @Input() selectedRangeValue: DateRange<D> | undefined;
+  selectedRangeValue: DateRange<D> | undefined;
 
   constructor(
     private dateAdapter: DateAdapter<D>,
-    // private picker: MatDateRangePicker<D>,
     @Inject(MAT_DIALOG_DATA) public data,
-    private dialogRef: MatDialogRef<DaterangePanelComponent<D>>
+    private dialogRef: MatDialogRef<DateRangeFilterPanelComponent<D>>
   ) {
     this.selectedRangeValue = new DateRange(data.fromDate, data.toDate);
   }
@@ -48,6 +47,7 @@ export class DaterangePanelComponent<D> {
     const today = this.today;
     const year = this.dateAdapter.getYear(today);
 
+    // TODO: do this using config offsets?
     switch (rangeName) {
       case "today":
         return [today, today];

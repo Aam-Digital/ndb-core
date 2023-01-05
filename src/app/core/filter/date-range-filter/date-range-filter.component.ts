@@ -1,25 +1,18 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { FormControl, FormGroup } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { FilterComponentSettings } from "app/core/entity-components/entity-list/filter-component.settings";
 import { DataFilter } from "app/core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { Entity } from "app/core/entity/model/entity";
 import moment from "moment";
 import { FilterSelectionOption } from "../filter-selection/filter-selection";
-import { DaterangeHeaderComponent } from "./daterange-header/daterange-header.component";
-import { DaterangePanelComponent } from "./daterange-panel/daterange-panel.component";
+import { DateRangeFilterPanelComponent } from "./date-range-filter-panel/date-range-filter-panel.component";
 
 @Component({
-  selector: "app-date-range",
-  templateUrl: "./date-range.component.html",
-  styleUrls: ["./date-range.component.scss"],
+  selector: "app-date-range-filter",
+  templateUrl: "./date-range-filter.component.html",
+  styleUrls: ["./date-range-filter.component.scss"],
 })
-export class DateRangeComponent<T extends Entity> {
-  range = new FormGroup({
-    start: new FormControl(),
-    end: new FormControl(),
-  });
-  readonly DaterangeHeaderComponent = DaterangeHeaderComponent;
+export class DateRangeFilterComponent<T extends Entity> {
   fromDate: Date;
   toDate: Date;
 
@@ -44,24 +37,19 @@ export class DateRangeComponent<T extends Entity> {
   }
 
   buildFilter(): DataFilter<Entity> {
-    const start = moment(this.fromDate);
-    const end = moment(this.toDate);
-    const startString = start.format("YYYY-MM-DD");
-    const endString = end.format("YYYY-MM-DD");
-
     return {
       [this.dateRangeFilterConfig.filterConfig.id]: {
-        $gte: startString,
-        $lte: endString,
+        $gte: moment(this.fromDate).format("YYYY-MM-DD"),
+        $lte: moment(this.toDate).format("YYYY-MM-DD"),
       },
     };
   }
 
   openDialog() {
     this.dialog
-      .open(DaterangePanelComponent, {
-        width: "40%",
-        height: "40%",
+      .open(DateRangeFilterPanelComponent, {
+        width: "80%",
+        maxHeight: "90vh",
         data: { fromDate: this.fromDate, toDate: this.toDate },
       })
       .afterClosed()

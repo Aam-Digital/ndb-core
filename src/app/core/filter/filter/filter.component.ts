@@ -13,7 +13,6 @@ import { DataFilter } from "../../entity-components/entity-subrecord/entity-subr
 import { FilterGeneratorService } from "../../entity-components/entity-list/filter-generator.service";
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { getUrlWithoutParams } from "../../../utils/utils";
-import { FilterSelection } from "../filter-selection/filter-selection";
 
 /**
  * This component can be used to display filters, for example above tables.

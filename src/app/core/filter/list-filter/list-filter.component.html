@@ -1,8 +1,4 @@
-<mat-form-field
-  *ngIf="filterConfig.name != 'date'"
-  appearance="fill"
-  class="full-width"
->
+<mat-form-field appearance="fill" class="full-width">
   <mat-label>{{ filterConfig.label || filterConfig.name }}</mat-label>
   <mat-select
     [id]="filterConfig.name"

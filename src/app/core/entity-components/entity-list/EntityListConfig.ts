@@ -2,7 +2,7 @@ import { Entity } from "../../entity/model/entity";
 import { FilterSelectionOption } from "../../filter/filter-selection/filter-selection";
 import { FormFieldConfig } from "../entity-form/entity-form/FormConfig";
 import { ExportColumnConfig } from "../../export/export-service/export-column-config";
-import moment, { unitOfTime } from "moment";
+import { unitOfTime } from "moment";
 
 export interface EntityListConfig {
   /**
@@ -104,8 +104,8 @@ export interface DateRangeFilterConfig extends FilterConfig {
     | "Saturday"
     | "saturday";
   options: {
-    startOffsets: { amount: number; unit: unitOfTime.Base }[];
-    endOffsets: { amount: number; unit: unitOfTime.Base }[];
+    startOffsets?: { amount: number; unit: unitOfTime.Base }[];
+    endOffsets?: { amount: number; unit: unitOfTime.Base }[];
     label: string;
   }[];
 }

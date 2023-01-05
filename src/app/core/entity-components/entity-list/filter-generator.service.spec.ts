@@ -211,15 +211,15 @@ describe("FilterGeneratorService", () => {
       startingDayOfWeek: "Monday",
       options: [
         {
-          offsets: [{ amount: 0, unit: "days" }],
+          startOffsets: [{ amount: 0, unit: "days" }],
           label: "Today",
         },
         {
-          offsets: [{ amount: 2, unit: "days" }],
+          startOffsets: [{ amount: 2, unit: "days" }],
           label: "Since last two days",
         },
         {
-          offsets: [{ amount: 3, unit: "weeks" }],
+          startOffsets: [{ amount: 3, unit: "weeks" }],
           label: "Since last three weeks",
         },
       ],

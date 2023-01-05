@@ -11,10 +11,10 @@
   >
   </app-list-filter>
 
-  <app-date-range
+  <app-date-range-filter
     *ngIf="filter.filterSettings.name === 'date'"
     [dateRangeFilterConfig]="filter"
     (selectedOptionChange)="filterOptionSelected(filter, $event)"
   >
-  </app-date-range>
+  </app-date-range-filter>
 </ng-container>
