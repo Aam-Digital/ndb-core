@@ -804,7 +804,8 @@ export const defaultJsonConfig = {
               "config": {
                 "cols": [[
                   "linkedGroups",
-                  "participants"
+                  "participants",
+                  "excludedParticipants"
                 ]]
               }
             }
