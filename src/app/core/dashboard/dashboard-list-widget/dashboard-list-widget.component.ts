@@ -41,7 +41,7 @@ export class DashboardListWidgetComponent<E>
   implements OnChanges, AfterViewInit
 {
   @Input() subtitle: string;
-  @Input() icon: IconName;
+  @Input() icon: IconName = "exclamation-triangle";
   @Input() theme: DashboardTheme;
   @Input() title: string | number;
   /** optional tooltip to explain detailed meaning of this widget / statistic */
