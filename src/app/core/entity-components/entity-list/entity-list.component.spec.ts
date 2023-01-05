@@ -13,7 +13,6 @@ import { DatabaseField } from "../../entity/database-field.decorator";
 import { AttendanceService } from "../../../child-dev-project/attendance/attendance.service";
 import { ExportService } from "../../export/export-service/export.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subject } from "rxjs";
 import { RouteData } from "../../view/dynamic-routing/view-config.interface";

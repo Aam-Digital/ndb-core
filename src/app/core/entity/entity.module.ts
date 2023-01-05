@@ -16,8 +16,6 @@
  */
 
 import { NgModule } from "@angular/core";
-import { EntityMapperService } from "./entity-mapper.service";
-import { EntitySchemaService } from "./schema/entity-schema.service";
 import { entityRegistry, EntityRegistry } from "./database-entity.decorator";
 
 /**

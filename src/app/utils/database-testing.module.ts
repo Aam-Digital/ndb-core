@@ -1,26 +1,11 @@
 import { NgModule } from "@angular/core";
-import { Database } from "../core/database/database";
 import { PouchDatabase } from "../core/database/pouch-database";
-import { LoggingService } from "../core/logging/logging.service";
-import { EntityMapperService } from "../core/entity/entity-mapper.service";
-import { EntitySchemaService } from "../core/entity/schema/entity-schema.service";
 import { SessionService } from "../core/session/session-service/session.service";
 import { LocalSession } from "../core/session/session-service/local-session";
-import { DatabaseIndexingService } from "../core/entity/database-indexing/database-indexing.service";
-import {
-  entityRegistry,
-  EntityRegistry,
-} from "../core/entity/database-entity.decorator";
-import {
-  viewRegistry,
-  ViewRegistry,
-} from "../core/view/dynamic-components/dynamic-component.decorator";
-import { RouteRegistry, routesRegistry } from "../app.routing";
 import { ConfigService } from "../core/config/config.service";
 import { SessionType } from "../core/session/session-type";
 import { environment } from "../../environments/environment";
 import { createTestingConfigService } from "../core/config/testing-config-service";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { AppModule } from "../app.module";
 
 /**

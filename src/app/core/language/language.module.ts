@@ -1,5 +1,4 @@
 import { NgModule } from "@angular/core";
-import { LanguageSelectComponent } from "./language-select/language-select.component";
 import { LanguageService } from "./language.service";
 
 /**

@@ -16,13 +16,7 @@
  */
 
 import { DemoDataServiceConfig, DemoDataService } from "./demo-data.service";
-import {
-  ClassProvider,
-  FactoryProvider,
-  ModuleWithProviders,
-  NgModule,
-  ValueProvider,
-} from "@angular/core";
+import { NgModule } from "@angular/core";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatDialogModule } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";

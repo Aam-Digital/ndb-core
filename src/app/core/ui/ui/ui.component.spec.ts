@@ -23,7 +23,6 @@ import { EMPTY, Subject } from "rxjs";
 import { ConfigService } from "../../config/config.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 
 describe("UiComponent", () => {

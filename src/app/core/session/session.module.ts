@@ -27,12 +27,6 @@ import { AuthService } from "./auth/auth.service";
 import { KeycloakAuthService } from "./auth/keycloak/keycloak-auth.service";
 import { CouchdbAuthService } from "./auth/couchdb/couchdb-auth.service";
 import { AuthProvider } from "./auth/auth-provider";
-import { PasswordFormComponent } from "./auth/couchdb/password-form/password-form.component";
-import { AccountPageComponent } from "./auth/keycloak/account-page/account-page.component";
-import { Angulartics2OnModule } from "angulartics2";
-import { PasswordResetComponent } from "./auth/keycloak/password-reset/password-reset.component";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatTooltipModule } from "@angular/material/tooltip";
 import { AuthInterceptor } from "./auth/auth.interceptor";
 import { serviceProvider } from "../../utils/utils";
 

@@ -5,7 +5,7 @@ import { Entity } from "../../../entity/model/entity";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { getParentUrl } from "../../../../utils/utils";
 import { Router } from "@angular/router";
-import { CommonModule, Location, NgIf } from "@angular/common";
+import { Location, NgIf } from "@angular/common";
 import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
 import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
 import {

@@ -14,7 +14,6 @@ import { MockedTestingModule } from "app/utils/mocked-testing.module";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { EditTextWithAutocompleteComponent } from "./edit-text-with-autocomplete.component";
 import { By } from "@angular/platform-browser";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("EditTextWithAutocompleteComponent", () => {
   let component: EditTextWithAutocompleteComponent;

@@ -7,36 +7,17 @@ import { mockEntityMapper } from "../core/entity/mock-entity-mapper-service";
 import { User } from "../core/user/user";
 import { AnalyticsService } from "../core/analytics/analytics.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { Angulartics2Module } from "angulartics2";
 import { RouterTestingModule } from "@angular/router/testing";
 import { Database } from "../core/database/database";
 import { SessionType } from "../core/session/session-type";
 import { PouchDatabase } from "../core/database/pouch-database";
-import { LOCATION_TOKEN, WINDOW_TOKEN } from "./di-tokens";
 import { Entity } from "../core/entity/model/entity";
-import { PureAbility } from "@casl/ability";
-import { EntityAbility } from "../core/permissions/ability/entity-ability";
-import { EntitySchemaService } from "../core/entity/schema/entity-schema.service";
 import { DatabaseIndexingService } from "../core/entity/database-indexing/database-indexing.service";
-import {
-  entityRegistry,
-  EntityRegistry,
-} from "../core/entity/database-entity.decorator";
-import {
-  viewRegistry,
-  ViewRegistry,
-} from "../core/view/dynamic-components/dynamic-component.decorator";
-import { RouteRegistry, routesRegistry } from "../app.routing";
-import { MatNativeDateModule } from "@angular/material/core";
 import { ConfigService } from "../core/config/config.service";
 import { environment } from "../../environments/environment";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { createTestingConfigService } from "../core/config/testing-config-service";
-import { MatDialogModule } from "@angular/material/dialog";
-import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { ReactiveFormsModule } from "@angular/forms";
-import { AbilityService } from "../core/permissions/ability/ability.service";
 import { AppModule } from "../app.module";
 
 export const TEST_USER = "test";
@@ -96,7 +77,6 @@ export class MockedTestingModule {
         { provide: EntityMapperService, useValue: mockedEntityMapper },
         { provide: ConfigService, useValue: createTestingConfigService() },
         { provide: Database, useValue: session.getDatabase() },
-        { provide: WINDOW_TOKEN, useValue: window },
       ],
     };
   }
