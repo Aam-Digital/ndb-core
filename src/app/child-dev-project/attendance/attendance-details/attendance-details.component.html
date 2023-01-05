@@ -15,9 +15,9 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<app-dialog-close mat-dialog-close></app-dialog-close>
 <app-form-dialog-wrapper #dialogForm [entity]="entity" [readonly]="true">
   <h1>
+    <app-dialog-close mat-dialog-close></app-dialog-close>
     {{ entity?.activity?.title }}: {{ entity.periodFrom | date: "shortDate" }} -
     {{ entity.periodTo | date: "shortDate" }}
   </h1>
@@ -32,10 +32,10 @@
     >
       Attendance:
       {{
-        (focusedChild
+      (focusedChild
           ? entity?.getAttendancePercentage(focusedChild)
           : entity?.getAttendancePercentageAverage()
-        ) | percent: "1.0-0"
+      ) | percent: "1.0-0"
       }}
     </div>
 

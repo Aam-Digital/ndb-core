@@ -5,6 +5,7 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { SchoolBlockComponent } from "../../schools/school-block/school-block.component";
 import { ChildrenService } from "../children.service";
 import { Child } from "../model/child";
+import { TemplateTooltipDirective } from "../../../core/common-components/template-tooltip/template-tooltip.directive";
 
 describe("ChildBlockComponent", () => {
   let component: ChildBlockComponent;
@@ -18,7 +19,11 @@ describe("ChildBlockComponent", () => {
     mockChildrenService.getChild.and.resolveTo(new Child(""));
 
     TestBed.configureTestingModule({
-      declarations: [SchoolBlockComponent, ChildBlockComponent],
+      declarations: [
+        SchoolBlockComponent,
+        ChildBlockComponent,
+        TemplateTooltipDirective,
+      ],
       imports: [RouterTestingModule],
       providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
     }).compileComponents();

@@ -15,33 +15,29 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<app-form-dialog-wrapper
-  #dialogForm
-  [entity]="entity"
->
+<app-form-dialog-wrapper #dialogForm [entity]="entity">
   <h1>{{ entity.date | date }}: {{ entity.subject }}</h1>
 
   <form #entityForm="ngForm" class="flex-column gap-regular">
     <div class="additional-actions-menu">
-      <button
-        mat-icon-button
-        [matMenuTriggerFor]="additional"
-        color="primary"
-      >
-        <fa-icon icon="ellipsis-v" class="standard-icon"></fa-icon>
+      <button mat-icon-button [matMenuTriggerFor]="additional" color="primary">
+        <fa-icon icon="ellipsis-v"></fa-icon>
       </button>
-      <mat-menu
-        #additional
-      >
+      <mat-menu #additional>
         <button
           mat-menu-item
           [appExportData]="[entity]"
           format="csv"
           [exportConfig]="exportConfig"
-          [filename]="'event_' + entity.subject.replace(' ', '-') + '_' + (entity.date | date:'YYYY-MM-dd')"
+          [filename]="
+            'event_' +
+            entity.subject.replace(' ', '-') +
+            '_' +
+            (entity.date | date : 'YYYY-MM-dd')
+          "
         >
           <fa-icon
-            class="standard-icon color-accent"
+            class="color-accent standard-icon-with-text"
             aria-label="download csv"
             icon="download"
             angulartics2On="click"
@@ -56,16 +52,16 @@
     <!-- General context of Note -->
     <div class="content-header">
       <mat-form-field>
+        <mat-label>{{ dateLabel }}</mat-label>
         <input
           matInput
-          [placeholder]="dateLabel"
           name="date"
           [disabled]="formDialogWrapper.readonly"
           [(ngModel)]="entity.date"
           [matDatepicker]="picker"
         />
         <mat-datepicker-toggle
-          matSuffix
+          matIconSuffix
           [for]="picker"
         ></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
@@ -89,17 +85,15 @@
       </mat-form-field>
 
       <mat-form-field>
+        <mat-label>{{ categoryLabel }}</mat-label>
         <mat-select
-          [placeholder]="categoryLabel"
           name="type"
           [(ngModel)]="entity.category"
           [disabled]="formDialogWrapper.readonly"
           [compareWith]="compareFn"
         >
           <mat-option
-            *appConfigurableEnum="
-              let interaction of INTERACTION_TYPE_CONFIG
-            "
+            *appConfigurableEnum="let interaction of INTERACTION_TYPE_CONFIG"
             [value]="interaction"
             [appBorderHighlight]="interaction.color"
           >
@@ -117,15 +111,14 @@
         [label]="authorsLabel"
       >
       </app-entity-select>
-
     </div>
 
     <!-- Primary information of Note -->
     <div class="mat-elevation-z2 flex-column gap-small padding-small">
       <mat-form-field class="input-medium">
+        <mat-label>{{ subjectLabel }}</mat-label>
         <input
           matInput
-          [placeholder]="subjectLabel"
           name="subject"
           type="text"
           cdkFocusInitial
@@ -135,6 +128,7 @@
       </mat-form-field>
 
       <mat-form-field>
+        <mat-label>{{ textLabel }}</mat-label>
         <textarea
           matInput
           [placeholder]="textLabel"
@@ -171,7 +165,6 @@
       </mat-option>
     </app-entity-select>
 
-
     <div *ngIf="entity.category?.isMeeting">
       <app-child-meeting-note-attendance
         [mobile]="mobile"
@@ -193,7 +186,8 @@
     >
     </app-entity-select>
 
-    <app-entity-select *ngIf="relatedEntitiesSchema?.additional"
+    <app-entity-select
+      *ngIf="relatedEntitiesSchema?.additional"
       class="form-section"
       [entityType]="relatedEntitiesSchema?.additional"
       [withPrefix]="true"
@@ -204,6 +198,5 @@
       [placeholder]="relatedEntitiesSchema.label"
     >
     </app-entity-select>
-
   </form>
 </app-form-dialog-wrapper>

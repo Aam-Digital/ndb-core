@@ -32,7 +32,7 @@
     color="primary"
     [matMenuTriggerFor]="additional"
   >
-    <fa-icon icon="ellipsis-v" class="standard-icon"></fa-icon>
+    <fa-icon icon="ellipsis-v"></fa-icon>
   </button>
 </div>
 
@@ -57,9 +57,9 @@
   </button>
 </mat-menu>
 
-<mat-tab-group (selectedIndexChange)="trackTabChanged($event)" appTabStateMemo [preserveContent]="true" #tabGroup>
+<mat-tab-group (selectedIndexChange)="trackTabChanged($event)" appTabStateMemo [preserveContent]="true">
   <mat-tab
-    *ngFor="let panelConfig of panels; let i = index"
+    *ngFor="let panelConfig of panels"
     [disabled]="creatingNew"
   >
     <ng-template mat-tab-label>
@@ -73,7 +73,7 @@
       {{ panelConfig.title }}
     </span>
     </ng-template>
-    
+
     <ng-template matTabContent>
       <div *ngIf="isLoading" class="process-spinner">
         <mat-progress-bar mode="indeterminate"></mat-progress-bar>

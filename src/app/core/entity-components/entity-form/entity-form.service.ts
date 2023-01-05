@@ -28,6 +28,12 @@ export class EntityFormService {
     private ability: EntityAbility
   ) {}
 
+  /**
+   * Uses schema information to fill missing fields in the FormFieldConfig.
+   * @param formFields
+   * @param entityType
+   * @param forTable
+   */
   public extendFormFieldConfig(
     formFields: FormFieldConfig[],
     entityType: EntityConstructor,
@@ -71,10 +77,19 @@ export class EntityFormService {
     }
   }
 
+  /**
+   * Creates a FormGroups from the formFields and the existing values from the entity.
+   * Missing fields in the formFields are filled with schema information.
+   * @param formFields
+   * @param entity
+   * @param forTable
+   */
   public createFormGroup<T extends Entity>(
     formFields: FormFieldConfig[],
-    entity: T
+    entity: T,
+    forTable = false
   ): EntityForm<T> {
+    this.extendFormFieldConfig(formFields, entity.getConstructor(), forTable);
     const formConfig = {};
     const entitySchema = entity.getSchema();
     formFields

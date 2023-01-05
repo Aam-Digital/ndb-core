@@ -8,7 +8,7 @@ import { MatTreeModule } from "@angular/material/tree";
 import { MatButtonModule } from "@angular/material/button";
 
 export default {
-  title: "Features/Report Row",
+  title: "Features/Reporting/Report Row",
   component: ReportRowComponent,
   decorators: [
     moduleMetadata({

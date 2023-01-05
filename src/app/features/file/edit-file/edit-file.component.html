@@ -13,11 +13,12 @@
     matTooltip="Show file"
     [matTooltipDisabled]="!formControl.value"
   />
-  <button *ngIf="formControl.value && formControl.enabled" type="button" mat-icon-button matSuffix (click)="delete()"
+  <button *ngIf="formControl.value && formControl.enabled" type="button" mat-icon-button matIconSuffix
+          (click)="delete()"
           i18n-mattooltip="Tooltip remove file" matTooltip="Remove file">
     <fa-icon icon="xmark"></fa-icon>
   </button>
-  <button *ngIf="formControl.enabled" type="button" mat-icon-button matSuffix (click)="fileUpload.click()"
+  <button *ngIf="formControl.enabled" type="button" mat-icon-button matIconSuffix (click)="fileUpload.click()"
           i18n-matTooltip="Tooltip upload file button" matTooltip="Upload file">
     <fa-icon icon="upload"></fa-icon>
   </button>

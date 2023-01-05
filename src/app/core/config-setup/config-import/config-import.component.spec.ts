@@ -2,6 +2,9 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ConfigImportComponent } from "./config-import.component";
 import { ConfigImportParserService } from "../config-import-parser.service";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { ConfigSetupModule } from "../config-setup.module";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
 describe("ConfigImportComponent", () => {
   let component: ConfigImportComponent;
@@ -13,7 +16,11 @@ describe("ConfigImportComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ConfigImportComponent],
+      imports: [
+        ConfigSetupModule,
+        FontAwesomeTestingModule,
+        NoopAnimationsModule,
+      ],
       providers: [
         { provide: ConfigImportParserService, useValue: mockConfigParser },
       ],

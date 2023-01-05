@@ -76,6 +76,7 @@ export class EntitySubrecordComponent<T extends Entity>
   @Input() set columns(columns: ColumnConfig[]) {
     this._columns = columns.map(toFormFieldConfig);
     this.filteredColumns = this._columns.filter((col) => !col.hideFromTable);
+    this.idForSavingPagination = this._columns.map((col) => col.id).join("");
   }
 
   _columns: FormFieldConfig[] = [];
@@ -253,9 +254,6 @@ export class EntitySubrecordComponent<T extends Entity>
           this.getEntityConstructor(),
           true
         );
-        this.idForSavingPagination = this._columns
-          .map((col) => (typeof col === "object" ? col.id : col))
-          .join("");
       } catch (err) {
         this.loggingService.warn(`Error creating form definitions: ${err}`);
       }
@@ -299,7 +297,8 @@ export class EntitySubrecordComponent<T extends Entity>
       if (!row.formGroup) {
         row.formGroup = this.entityFormService.createFormGroup(
           this._columns,
-          row.record
+          row.record,
+          true
         );
       }
       row.formGroup.enable();

@@ -10,7 +10,7 @@
   @include grid-layout.adaptive($min-block-width: 250px, $max-screen-width: 414px)
 }
 
-:host {
+mat-dialog-content {
   display: flex;
   flex-direction: column;
   align-items: center;
