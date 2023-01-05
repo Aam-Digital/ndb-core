@@ -94,8 +94,6 @@ export class EntitySubrecordComponent<T extends Entity>
 
   private _records: T[] = [];
 
-  @Output() recordsChange = new EventEmitter<T[]>();
-
   /**
    * factory method to create a new instance of the displayed Entity type
    * used when the user adds a new entity to the list.
@@ -360,13 +358,11 @@ export class EntitySubrecordComponent<T extends Entity>
     this.records = this._records.filter(
       (rec) => rec.getId() !== deleted.getId()
     );
-    this.recordsChange.emit(this._records);
   }
 
   private addToTable(record: T) {
     // use setter so datasource is also updated
     this.records = [record].concat(this._records);
-    this.recordsChange.emit(this._records);
   }
 
   /**
