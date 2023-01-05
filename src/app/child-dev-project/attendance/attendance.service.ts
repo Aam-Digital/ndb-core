@@ -248,18 +248,25 @@ export class AttendanceService {
     date: Date
   ): Promise<EventNote> {
     const instance = new EventNote();
-    const schoolParticipants = await this.loadParticipantsOfGroups(
-      activity.linkedGroups
-    );
     instance.date = date;
     instance.subject = activity.title;
-    instance.children = [
-      ...new Set(activity.participants.concat(...schoolParticipants)), //  remove duplicates
-    ];
+    instance.children = await this.getActiveParticipantsOfActivity(activity);
     instance.schools = activity.linkedGroups;
     instance.relatesTo = activity.getId(true);
     instance.category = activity.type;
     return instance;
+  }
+
+  async getActiveParticipantsOfActivity(
+    activity: RecurringActivity
+  ): Promise<string[]> {
+    const schoolParticipants = await this.loadParticipantsOfGroups(
+      activity.linkedGroups
+    );
+
+    return [
+      ...new Set(activity.participants.concat(...schoolParticipants)), //  remove duplicates
+    ].filter((p) => !activity.excludedParticipants.includes(p));
   }
 
   /**
