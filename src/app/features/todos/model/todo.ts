@@ -38,22 +38,28 @@ export class Todo extends Entity {
     return instance;
   }
 
-  @DatabaseField({ dataType: "date-only", label: $localize`:Label:Deadline` })
+  @DatabaseField({ label: $localize`:Label:Subject`, showInDetailsView: true })
+  subject: string = "";
+
+  @DatabaseField({
+    dataType: "date-only",
+    label: $localize`:Label:Deadline`,
+    showInDetailsView: true,
+  })
   deadline: Date;
 
   @DatabaseField({
     dataType: "date-only",
     label: $localize`:Label:Start date`,
     description: $localize`:Description:When you are planning to start work so that you keep enough time before the actual hard deadline.`,
+    showInDetailsView: true,
   })
   startDate: Date;
-
-  @DatabaseField({ label: $localize`:Label:Subject` })
-  subject: string = "";
 
   @DatabaseField({
     label: $localize`:Label:Description`,
     editComponent: "EditLongText",
+    showInDetailsView: true,
   })
   description: string = "";
 
@@ -61,6 +67,7 @@ export class Todo extends Entity {
     label: $localize`:Label:Assigned to`,
     dataType: "entity-array",
     additional: User.ENTITY_TYPE,
+    showInDetailsView: true,
   })
   assignedTo: string[] = [];
 
@@ -77,6 +84,7 @@ export class Todo extends Entity {
       School.ENTITY_TYPE,
       RecurringActivity.ENTITY_TYPE,
     ],
+    showInDetailsView: true,
   })
   relatedEntities: string[] = [];
 
@@ -92,6 +100,7 @@ export class Todo extends Entity {
         interval: { amount: 1, unit: "month" },
       },
     ] as { label: string; interval: TimeInterval }[],
+    showInDetailsView: true,
   })
   repetitionInterval: TimeInterval;
 

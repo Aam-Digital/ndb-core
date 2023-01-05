@@ -91,6 +91,11 @@ export class FormDialogService {
     component?: ComponentType<any>
   ): MatDialogRef<RowDetailsComponent> {
     // TODO: merge this with openDialog method above for removing further duplication (see #921)
+
+    if (!columnsOverall) {
+      columnsOverall = FormDialogService.getSchemaFieldsForDetailsView(entity);
+    }
+
     const columns: FormFieldConfig[] = this.inferFormFieldColumns(
       columnsOverall,
       entity
@@ -130,5 +135,29 @@ export class FormDialogService {
 
   private isDynamicComponent(component): component is OnInitDynamicComponent {
     return typeof component.onInitFromDynamicConfig === "function";
+  }
+
+  static getSchemaFieldsForDetailsView(entity: Entity): FormFieldConfig[] {
+    let formFields: string[] = [];
+    let isUsingShowFlag = false;
+
+    for (const [key, field] of entity.getSchema()) {
+      if (field.showInDetailsView) {
+        formFields.push(key);
+      }
+      if (field.showInDetailsView !== undefined) {
+        isUsingShowFlag = true;
+      }
+    }
+
+    if (!isUsingShowFlag) {
+      const excludedFields = Array.from(Entity.schema.keys());
+
+      formFields = Array.from(entity.getSchema().keys()).filter(
+        (k: string) => !excludedFields.includes(k)
+      );
+    }
+
+    return formFields.map((k: string) => ({ id: k }));
   }
 }

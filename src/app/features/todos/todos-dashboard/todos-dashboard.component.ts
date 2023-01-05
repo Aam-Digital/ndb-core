@@ -5,7 +5,6 @@ import { FormDialogService } from "../../../core/form-dialog/form-dialog.service
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { TodoDetailsComponent } from "../todo-details/todo-details.component";
 import { SessionService } from "../../../core/session/session-service/session.service";
-import { Entity } from "../../../core/entity/model/entity";
 import moment from "moment";
 
 @DynamicComponent("TodosDashboard")
@@ -47,15 +46,6 @@ export class TodosDashboardComponent implements OnInitDynamicComponent {
   };
 
   openEntity(entity: Todo) {
-    // TODO: maybe mark within schema which fields should be displayed in default details view or access the view:todo/:id config here?
-    const excludedFields = [...Array.from(Entity.schema.keys()), "completed"];
-
-    this.formDialog.openSimpleForm(
-      entity,
-      Array.from(entity.getSchema().keys()).filter(
-        (k) => !excludedFields.includes(k)
-      ),
-      TodoDetailsComponent
-    );
+    this.formDialog.openSimpleForm(entity, undefined, TodoDetailsComponent);
   }
 }

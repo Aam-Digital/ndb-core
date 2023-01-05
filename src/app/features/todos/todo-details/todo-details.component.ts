@@ -3,8 +3,8 @@ import {
   EventEmitter,
   Inject,
   Input,
-  Output,
   OnInit,
+  Output,
 } from "@angular/core";
 import { Todo } from "../model/todo";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";

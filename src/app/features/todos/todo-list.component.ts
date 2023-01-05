@@ -47,7 +47,10 @@ export class TodoListComponent implements OnInit {
 
   private init(config: EntityListConfig) {
     this.listConfig = config;
-    this.listConfig.sortByDefault = this.listConfig.sortByDefault ?? { active: "deadline", direction: "asc" };
+    this.listConfig.sortByDefault = this.listConfig.sortByDefault ?? {
+      active: "deadline",
+      direction: "asc",
+    };
     this.addPrebuiltFilters();
   }
 
@@ -139,10 +142,6 @@ export class TodoListComponent implements OnInit {
   }
 
   showDetails(entity: Todo) {
-    this.formDialog.openSimpleForm(
-      entity,
-      this.listConfig.columns,
-      TodoDetailsComponent
-    );
+    this.formDialog.openSimpleForm(entity, undefined, TodoDetailsComponent);
   }
 }
