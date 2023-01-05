@@ -62,7 +62,6 @@ import { UiComponent } from "./core/ui/ui/ui.component";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatDialogModule } from "@angular/material/dialog";
 
-// TODO analyze with webpack bundle analyzer
 /**
  * Main entry point of the application.
  * Imports required modules and does basic setup.
@@ -71,7 +70,6 @@ import { MatDialogModule } from "@angular/material/dialog";
 @NgModule({
   declarations: [AppComponent],
   imports: [
-    // TODO check how service worker handles lazy loaded components
     ServiceWorkerModule.register("/ngsw-worker.js", {
       enabled: environment.production,
     }),
