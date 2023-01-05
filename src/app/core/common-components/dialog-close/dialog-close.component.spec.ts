@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { DialogCloseComponent } from "./dialog-close.component";
 import { DialogModule } from "@angular/cdk/dialog";
 import { MatButtonModule } from "@angular/material/button";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("DialogCloseComponent", () => {
   let component: DialogCloseComponent;
@@ -11,7 +12,7 @@ describe("DialogCloseComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [DialogCloseComponent],
-      imports: [DialogModule, MatButtonModule],
+      imports: [DialogModule, MatButtonModule, FontAwesomeTestingModule],
     }).compileComponents();
   });
 

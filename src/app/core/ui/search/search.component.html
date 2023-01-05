@@ -1,13 +1,12 @@
-<div class="white mat-subheading-1 remove-margin-bottom full-width">
-  <mat-form-field floatLabel="never" class="full-width">
-    <span matPrefix class="padding-right-small">
-      <fa-icon matPrefix icon="search"></fa-icon>
-    </span>
-    <mat-label i18n="Search label">Search</mat-label>
+<div class="white mat-subtitle-2 remove-margin-bottom full-width">
+  <mat-form-field class="full-width searchbar">
+    <fa-icon matIconPrefix class="padding-right-small" icon="search"></fa-icon>
     <input
-      class="full-width"
+      class="full-width search-input"
       matInput
       title="Search"
+      i18n-placeholder="Search label"
+      placeholder="Search"
       [formControl]="formControl"
       [matAutocomplete]="autoResults"
     />

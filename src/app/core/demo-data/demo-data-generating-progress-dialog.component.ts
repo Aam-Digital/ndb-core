@@ -23,8 +23,11 @@ import { Component } from "@angular/core";
  * see {@link DemoDataModule}
  */
 @Component({
-  template:
-    "<p i18n>Generating sample data for this demo ...</p>" +
-    '<mat-progress-bar mode="indeterminate"></mat-progress-bar>',
+  template: `
+    <mat-dialog-content>
+      <p i18n>Generating sample data for this demo ...</p>
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </mat-dialog-content>
+  `,
 })
 export class DemoDataGeneratingProgressDialogComponent {}

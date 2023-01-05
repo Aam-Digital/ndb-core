@@ -8,7 +8,7 @@ describe("Scenario: Linking a child to a school - E2E test", function () {
 
   it("WHEN I add an entry in the 'Previous Schools' section with a specific school", function () {
     // type to the input "Filter" the name of child
-    cy.get('[data-placeholder="e.g. name, age"]').type("E2E Child");
+    cy.get('[placeholder="e.g. name, age"]').type("E2E Child");
 
     // Click on the Child in Table list
     cy.get("tbody > :nth-child(1)").click();
@@ -17,9 +17,9 @@ describe("Scenario: Linking a child to a school - E2E test", function () {
     cy.contains("div", "Education").should("be.visible").click();
 
     // get the Add School button and click on it
-    cy.get(
-      "app-child-school-overview.ng-star-inserted > app-entity-subrecord > .mat-table > thead > .mat-header-row > .cdk-column-actions > app-disabled-wrapper.ng-star-inserted > .mat-tooltip-trigger"
-    )
+    cy.contains("div", "School History")
+      .get('[icon="plus-circle"]')
+      .first()
       .should("be.visible")
       .click();
 

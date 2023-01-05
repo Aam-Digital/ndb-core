@@ -8,6 +8,7 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatInputModule } from "@angular/material/input";
 import { MatNativeDateModule } from "@angular/material/core";
 import { setupEditComponent } from "../edit-component.spec";
+import { ErrorHintComponent } from "../../error-hint/error-hint.component";
 
 describe("EditDateComponent", () => {
   let component: EditDateComponent;
@@ -23,7 +24,7 @@ describe("EditDateComponent", () => {
         MatInputModule,
         MatNativeDateModule,
       ],
-      declarations: [EditDateComponent],
+      declarations: [EditDateComponent, ErrorHintComponent],
     }).compileComponents();
   });
 

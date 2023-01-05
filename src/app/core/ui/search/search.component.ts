@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, ViewEncapsulation } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { from, Observable } from "rxjs";
 import { concatMap, debounceTime, skipUntil, tap } from "rxjs/operators";
@@ -19,6 +19,7 @@ import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guar
   selector: "app-search",
   templateUrl: "./search.component.html",
   styleUrls: ["./search.component.scss"],
+  encapsulation: ViewEncapsulation.None,
 })
 export class SearchComponent {
   MIN_CHARACTERS_FOR_SEARCH: number = 3;
@@ -93,6 +94,7 @@ export class SearchComponent {
     ]);
     this.formControl.setValue("");
   }
+
   /**
    * Check if the input should start an actual search.
    * Only search for words starting with a char or number -> no searching for space or no input

@@ -14,6 +14,7 @@ import { DateWithAge } from "../../../../../child-dev-project/children/model/dat
 import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatDatepickerInputHarness } from "@angular/material/datepicker/testing";
+import { ErrorHintComponent } from "../../error-hint/error-hint.component";
 
 describe("EditAgeComponent", () => {
   let component: EditAgeComponent;
@@ -32,7 +33,7 @@ describe("EditAgeComponent", () => {
         FontAwesomeTestingModule,
         MatInputModule,
       ],
-      declarations: [EditAgeComponent],
+      declarations: [EditAgeComponent, ErrorHintComponent],
     }).compileComponents();
   });
 

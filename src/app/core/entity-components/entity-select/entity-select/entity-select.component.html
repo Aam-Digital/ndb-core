@@ -12,12 +12,13 @@
     (matChipInputTokenEnd)="select($event)"
   />
 
-  <mat-chip-list #chipList [disabled]="formControl.disabled || loading.value">
+  <mat-chip-grid #chipList>
     <ng-container *ngIf="showEntities">
-      <mat-basic-chip
-        [selectable]="selectable && formControl.enabled"
+      <mat-chip-row
+        [editable]="selectable && formControl.enabled"
         [removable]="removable && formControl.enabled"
         *ngFor="let entity of selectedEntities"
+        (removed)="unselectEntity(entity)"
         class="chip"
       >
         <app-display-entity
@@ -25,25 +26,23 @@
           [entityToDisplay]="entity"
           [linkDisabled]="formControl.enabled"
         ></app-display-entity>
-        <fa-icon
-          *ngIf="removable && formControl.enabled"
-          i18n-matTooltip="tooltip for remove icon-button"
-          matTooltip="remove"
-          class="remove-item"
-          icon="minus-square"
-          prefix="far"
-          (click)="unselectEntity(entity)"
-        ></fa-icon>
-      </mat-basic-chip>
+        <button matChipRemove *ngIf="removable && formControl.enabled">
+          <fa-icon
+            i18n-matTooltip="tooltip for remove icon-button"
+            matTooltip="remove"
+            icon="xmark"
+          ></fa-icon>
+        </button>
+
+      </mat-chip-row>
     </ng-container>
-  </mat-chip-list>
+  </mat-chip-grid>
 
   <mat-autocomplete
     #autoSuggestions="matAutocomplete"
     (optionSelected)="selectEntity($event.option.value)"
     autoActiveFirstOption
   >
-    <!-- Optional header -->
     <ng-content select="mat-option"></ng-content>
     <mat-option *ngFor="let res of filteredEntities" [value]="res">
       <app-display-entity

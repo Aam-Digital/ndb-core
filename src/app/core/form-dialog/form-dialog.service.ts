@@ -87,7 +87,7 @@ export class FormDialogService {
   openSimpleForm<E extends Entity>(
     entity: E,
     columnsOverall: ColumnConfig[]
-  ): MatDialogRef<RowDetailsComponent<Entity>> {
+  ): MatDialogRef<RowDetailsComponent, E> {
     // TODO: merge this with openDialog method above for removing further duplication (see #921)
     const columns: FormFieldConfig[] = this.inferFormFieldColumns(
       columnsOverall,
