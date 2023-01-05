@@ -3,18 +3,16 @@ import { TestBed } from "@angular/core/testing";
 import { Route, Router } from "@angular/router";
 import { RouterTestingModule } from "@angular/router/testing";
 import { ChildrenListComponent } from "../../../child-dev-project/children/children-list/children-list.component";
-import { AdminComponent } from "../../admin/admin/admin.component";
 import { ConfigService } from "../../config/config.service";
 import { LoggingService } from "../../logging/logging.service";
 
 import { RouterService } from "./router.service";
-import { EntityDetailsComponent } from "../../entity-components/entity-details/entity-details.component";
 import { ViewConfig } from "./view-config.interface";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { RouteRegistry, routesRegistry } from "../../../app.routing";
 import { ApplicationLoadingComponent } from "./empty/application-loading.component";
 import { NotFoundComponent } from "./not-found/not-found.component";
-import { componentRoutes } from "../../../component-routes";
+import { dynamicComponents } from "../../../dynamic-components";
 
 class TestComponent extends Component {}
 
@@ -72,17 +70,17 @@ describe("RouterService", () => {
     const expectedRoutes = [
       {
         path: "child",
-        loadComponent: componentRoutes.get("ChildrenList"),
+        loadComponent: dynamicComponents.get("ChildrenList"),
         data: {},
       },
       {
         path: "child/:id",
-        loadComponent: componentRoutes.get("EntityDetails"),
+        loadComponent: dynamicComponents.get("EntityDetails"),
         data: { config: testViewConfig },
       },
       {
         path: "admin",
-        loadComponent: componentRoutes.get("Admin"),
+        loadComponent: dynamicComponents.get("Admin"),
         canActivate: [UserRoleGuard],
         data: { permittedUserRoles: ["user_app"] },
       },
@@ -158,7 +156,7 @@ describe("RouterService", () => {
     const expectedRoutes = [
       {
         path: "admin",
-        loadComponent: componentRoutes.get("Admin"),
+        loadComponent: dynamicComponents.get("Admin"),
         canActivate: [UserRoleGuard],
         data: { permittedUserRoles: ["admin"] },
       },

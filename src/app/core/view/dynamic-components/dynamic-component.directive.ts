@@ -2,9 +2,8 @@ import { Directive, Input, OnChanges, ViewContainerRef } from "@angular/core";
 import { DynamicComponentConfig } from "./dynamic-component-config.interface";
 import { OnInitDynamicComponent } from "./on-init-dynamic-component.interface";
 import { ViewRegistry } from "./dynamic-component.decorator";
-import { Router } from "@angular/router";
 import { ComponentType } from "@angular/cdk/overlay";
-import { componentRoutes } from "../../../component-routes";
+import { dynamicComponents } from "../../../dynamic-components";
 
 /**
  * Directive to mark a template into which a component that is dynamically injected from config should be loaded
@@ -23,8 +22,7 @@ export class DynamicComponentDirective implements OnChanges {
 
   constructor(
     public viewContainerRef: ViewContainerRef,
-    private registry: ViewRegistry,
-    private router: Router
+    private registry: ViewRegistry
   ) {}
 
   async ngOnChanges() {
@@ -40,7 +38,7 @@ export class DynamicComponentDirective implements OnChanges {
     if (this.registry.has(this.appDynamicComponent.component)) {
       component = this.registry.get(this.appDynamicComponent.component);
     } else {
-      component = await componentRoutes.get(
+      component = await dynamicComponents.get(
         this.appDynamicComponent.component
       )();
     }

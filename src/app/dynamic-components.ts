@@ -1,7 +1,7 @@
 import { Type } from "@angular/core";
 
 // TODO make a build script that looks for annotations and creates this
-export const componentRoutes = new Map<string, () => Promise<Type<any>>>([
+export const dynamicComponents = new Map<string, () => Promise<Type<any>>>([
   [
     "Dashboard",
     () =>
