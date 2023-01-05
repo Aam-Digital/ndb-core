@@ -4,6 +4,7 @@ import {
   ContentChild,
   Input,
   OnChanges,
+  OnInit,
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
@@ -15,6 +16,7 @@ import { BehaviorSubject } from "rxjs";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { filter, map } from "rxjs/operators";
 import { applyUpdate } from "../../entity/model/entity-update";
+import { Entity } from "../../entity/model/entity";
 
 /**
  * Base dashboard widget to build widgets that display a number of entries as a table.
@@ -38,7 +40,7 @@ import { applyUpdate } from "../../entity/model/entity-update";
   styleUrls: ["./dashboard-list-widget.component.scss"],
 })
 export class DashboardListWidgetComponent<E>
-  implements OnChanges, AfterViewInit
+  implements OnInit, OnChanges, AfterViewInit
 {
   @Input() subtitle: string;
   @Input() icon: IconName = "exclamation-triangle";
@@ -49,8 +51,9 @@ export class DashboardListWidgetComponent<E>
   @Input() headline: string;
 
   /**
-   * array of items to be displayed in paginated widget table
-   * you can use an observable with async pipe here to let the component automatically handle "loading" indicator.
+   * array of items to be displayed in paginated widget table.
+   * you can use an observable with async pipe here to let the component automatically handle "loading" indicator:
+   * `[entries]="myDataObservable | async"`
    *
    * Alternatively define an entityType and dataPipe to let the component load data itself.
    */
@@ -99,8 +102,7 @@ export class DashboardListWidgetComponent<E>
     this.entityMapperService
       .receiveUpdates(this.entityType)
       .subscribe((update) =>
-        // @ts-ignore
-        this.data.next(applyUpdate(this.data.value, update))
+        this.data.next(applyUpdate(this.data.value as Entity[], update) as E[])
       );
   }
 
