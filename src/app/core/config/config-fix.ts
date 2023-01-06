@@ -1168,36 +1168,5 @@ export const defaultJsonConfig = {
       ]
     }
   },
-  "view:todo/:id": {
-    "component": "EntityDetails",
-    "config": {
-      "entity": "Todo",
-      "panels": [
-        {
-          "title": $localize`:Panel title:Overview`,
-          "components": [
-            {
-              "title": "",
-              "component": "Form",
-              "config": {
-                "cols": [
-                  [
-                    "subject",
-                    "description",
-                    "relatedEntities"
-                  ],
-                  [
-                    "assignedTo",
-                    "deadline",
-                    "startDate",
-                    "repetitionInterval"
-                  ]
-                ]
-              }
-            }
-          ]
-        }
-      ],
-    }
   }
 };
