@@ -22,8 +22,8 @@ import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guar
   encapsulation: ViewEncapsulation.None,
 })
 export class SearchComponent {
+  static INPUT_DEBOUNCE_TIME_MS: number = 400;
   MIN_CHARACTERS_FOR_SEARCH: number = 3;
-  INPUT_DEBOUNCE_TIME_MS: number = 400;
 
   readonly NOTHING_ENTERED = 0;
   readonly TOO_FEW_CHARACTERS = 1;
@@ -46,7 +46,7 @@ export class SearchComponent {
     private entities: EntityRegistry
   ) {
     this.results = this.formControl.valueChanges.pipe(
-      debounceTime(this.INPUT_DEBOUNCE_TIME_MS),
+      debounceTime(SearchComponent.INPUT_DEBOUNCE_TIME_MS),
       skipUntil(this.createSearchIndex()),
       tap((next) => (this.state = this.updateState(next))),
       concatMap((next: string) => this.searchResults(next))

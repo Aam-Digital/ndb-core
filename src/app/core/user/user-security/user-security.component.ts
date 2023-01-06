@@ -47,6 +47,12 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
     ) {
       this.userIsPermitted = true;
     }
+    // automatically skip trailing and leading whitespaces when the form changes
+    this.form.valueChanges.subscribe((next) => {
+      if (next.email.startsWith(" ") || next.email.endsWith(" ")) {
+        this.form.get("email").setValue(next.email.trim());
+      }
+    });
     if (authService instanceof KeycloakAuthService) {
       this.keycloak = authService;
       this.keycloak

@@ -108,10 +108,8 @@ export class EntityListComponent<T extends Entity>
   ) {
     if (this.activatedRoute.component === EntityListComponent) {
       // the component is used for a route and not inside a template
-      this.isLoading = true;
-      this.activatedRoute.data.subscribe(
-        (config: RouteData<EntityListConfig>) =>
-          this.buildComponentFromConfig(config)
+      this.activatedRoute.data.subscribe((data: RouteData<EntityListConfig>) =>
+        this.buildComponentFromConfig(data.config)
       );
     }
 
@@ -132,22 +130,43 @@ export class EntityListComponent<T extends Entity>
       });
   }
 
-  private async buildComponentFromConfig(data: RouteData<EntityListConfig>) {
-    this.listConfig = data.config;
-    this.entityConstructor = this.entities.get(
-      this.listConfig.entity
-    ) as EntityConstructor<T>;
+  private async buildComponentFromConfig(newConfig: EntityListConfig) {
+    this.listConfig = newConfig;
+
+    if (this.listConfig?.entity) {
+      this.entityConstructor = this.entities.get(
+        this.listConfig.entity
+      ) as EntityConstructor<T>;
+    }
+
+    if (!this.allEntities || this.allEntities.length === 0) {
+      await this.loadEntities();
+    }
+
+    this.listName =
+      this.listConfig.title ??
+      this.listName ??
+      this.entityConstructor?.labelPlural;
+
+    this.addColumnsFromColumnGroups();
+    this.initColumnGroups(this.listConfig.columnGroups);
+    this.filtersConfig = this.listConfig.filters ?? this.filtersConfig ?? [];
+
+    this.displayColumnGroupByName(
+      this.screenWidthObserver.isDesktop()
+        ? this.defaultColumnGroup
+        : this.mobileColumnGroup
+    );
+  }
+
+  private async loadEntities() {
+    this.isLoading = true;
+
     this.allEntities = await this.entityMapperService.loadType(
       this.entityConstructor
     );
+
     this.isLoading = false;
-    this.addNewClick.subscribe(() =>
-      this.router.navigate(["new"], { relativeTo: this.activatedRoute })
-    );
-    await this.ngOnChanges({
-      listConfig: undefined,
-      allEntities: undefined,
-    });
   }
 
   ngAfterViewInit() {
@@ -157,15 +176,7 @@ export class EntityListComponent<T extends Entity>
 
   async ngOnChanges(changes: SimpleChanges): Promise<void> {
     if (changes.hasOwnProperty("listConfig")) {
-      this.listName =
-        this.listConfig.title || this.entityConstructor?.labelPlural;
-      this.addColumnsFromColumnGroups();
-      this.initColumnGroups(this.listConfig.columnGroups);
-      this.filtersConfig = this.listConfig.filters || [];
-      this.displayColumnGroupByName(this.defaultColumnGroup);
-      if (!this.screenWidthObserver.isDesktop()) {
-        this.displayColumnGroupByName(this.mobileColumnGroup);
-      }
+      await this.buildComponentFromConfig(this.listConfig);
     }
   }
 
@@ -239,5 +250,12 @@ export class EntityListComponent<T extends Entity>
         filterObjChange: (filter: DataFilter<T>) => (this.filterObj = filter),
       },
     });
+  }
+
+  addNew() {
+    if (this.clickMode === "navigate") {
+      this.router.navigate(["new"], { relativeTo: this.activatedRoute });
+    }
+    this.addNewClick.emit();
   }
 }
