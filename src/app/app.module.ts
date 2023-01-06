@@ -21,17 +21,15 @@ import { ErrorHandler, LOCALE_ID, NgModule } from "@angular/core";
 import { HttpClientModule } from "@angular/common/http";
 
 import { AppComponent } from "./app.component";
-import { routing } from "./app.routing";
+import { allRoutes } from "./app.routing";
 import { SessionModule } from "./core/session/session.module";
 import { LatestChangesModule } from "./core/latest-changes/latest-changes.module";
 
 import { ChildrenModule } from "./child-dev-project/children/children.module";
 import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
-import { EntityModule } from "./core/entity/entity.module";
 import { LoggingErrorHandler } from "./core/logging/logging-error-handler";
 import { AnalyticsService } from "./core/analytics/analytics.service";
-import { ViewModule } from "./core/view/view.module";
 import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-enum.module";
 import { MatPaginatorIntl } from "@angular/material/paginator";
 import { TranslatableMatPaginator } from "./core/language/TranslatableMatPaginator";
@@ -44,11 +42,7 @@ import {
   DEFAULT_LANGUAGE,
   LANGUAGE_LOCAL_STORAGE_KEY,
 } from "./core/language/language-statics";
-import {
-  DateAdapter,
-  MAT_DATE_FORMATS,
-  MatNativeDateModule,
-} from "@angular/material/core";
+import { DateAdapter, MAT_DATE_FORMATS } from "@angular/material/core";
 import {
   DATE_FORMATS,
   DateAdapterWithFormatting,
@@ -57,11 +51,26 @@ import { FileModule } from "./features/file/file.module";
 import { LocationModule } from "./features/location/location.module";
 import { LanguageModule } from "./core/language/language.module";
 import { PermissionsModule } from "./core/permissions/permissions.module";
-import { PwaInstallModule } from "./core/pwa-install/pwa-install.module";
 import { UiComponent } from "./core/ui/ui/ui.component";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatDialogModule } from "@angular/material/dialog";
 import { componentRegistry, ComponentRegistry } from "./dynamic-components";
+import { CoreModule } from "./core/core.module";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "./core/entity/database-entity.decorator";
+import { LOCATION_TOKEN, WINDOW_TOKEN } from "./utils/di-tokens";
+import { AttendanceModule } from "./child-dev-project/attendance/attendance.module";
+import { NotesModule } from "./child-dev-project/notes/notes.module";
+import { SchoolsModule } from "./child-dev-project/schools/schools.module";
+import { ConflictResolutionModule } from "./conflict-resolution/conflict-resolution.module";
+import { DataImportModule } from "./features/data-import/data-import.module";
+import { HistoricalDataModule } from "./features/historical-data/historical-data.module";
+import { MatchingEntitiesModule } from "./features/matching-entities/matching-entities.module";
+import { ProgressDashboardWidgetModule } from "./features/progress-dashboard-widget/progress-dashboard-widget.module";
+import { ReportingModule } from "./features/reporting/reporting.module";
+import { RouterModule } from "@angular/router";
 
 /**
  * Main entry point of the application.
@@ -71,6 +80,7 @@ import { componentRegistry, ComponentRegistry } from "./dynamic-components";
 @NgModule({
   declarations: [AppComponent],
   imports: [
+    // Global Angular modules
     ServiceWorkerModule.register("/ngsw-worker.js", {
       enabled: environment.production,
     }),
@@ -80,30 +90,43 @@ import { componentRegistry, ComponentRegistry } from "./dynamic-components";
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    routing,
-
-    DatabaseModule,
-    LocationModule,
-    LanguageModule,
-    PermissionsModule,
-    PwaInstallModule,
-    ViewModule,
-    EntityModule,
-    SessionModule,
-    LatestChangesModule,
-    ChildrenModule,
+    RouterModule.forRoot(allRoutes),
+    // Core modules
+    CoreModule,
     ConfigurableEnumModule,
+    DatabaseModule,
+    LanguageModule,
+    LatestChangesModule,
+    PermissionsModule,
+    SessionModule,
+    // child-dev modules
+    AttendanceModule,
+    ChildrenModule,
+    NotesModule,
+    SchoolsModule,
+    // conflict resolution
+    ConflictResolutionModule,
+    // feature module
+    DataImportModule,
     FileModule,
+    HistoricalDataModule,
+    LocationModule,
+    MatchingEntitiesModule,
+    ProgressDashboardWidgetModule,
+    ReportingModule,
+    // top level component
     UiComponent,
-
+    // Global Angular Material modules
     MatSnackBarModule,
     MatDialogModule,
-    MatNativeDateModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
     { provide: MatPaginatorIntl, useValue: TranslatableMatPaginator() },
     { provide: ComponentRegistry, useValue: componentRegistry },
+    { provide: EntityRegistry, useValue: entityRegistry },
+    { provide: WINDOW_TOKEN, useValue: window },
+    { provide: LOCATION_TOKEN, useValue: window.location },
     {
       provide: LOCALE_ID,
       useValue:

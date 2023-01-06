@@ -18,8 +18,6 @@
 import { NgModule } from "@angular/core";
 import { UpdateManagerService } from "./update-manager.service";
 
-import { LOCATION_TOKEN } from "../../utils/di-tokens";
-
 /**
  * Displaying app version and changelog information to the user
  * through components that can be used in other templates
@@ -29,9 +27,7 @@ import { LOCATION_TOKEN } from "../../utils/di-tokens";
  * pre-releases are excluded and individual lines in the body can be hidden by starting
  * text (after markdown characters) with a ".".
  */
-@NgModule({
-  providers: [{ provide: LOCATION_TOKEN, useValue: window.location }],
-})
+@NgModule({})
 export class LatestChangesModule {
   constructor(private updateManagerService: UpdateManagerService) {
     this.updateManagerService.notifyUserWhenUpdateAvailable();

@@ -18,10 +18,16 @@
 import { NgModule } from "@angular/core";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { PhotoDatatype } from "./child-photo-service/datatype-photo";
+import { ComponentRegistry } from "../../dynamic-components";
+import { childrenComponents } from "./children-components";
 
 @NgModule({})
 export class ChildrenModule {
-  constructor(entitySchemaService: EntitySchemaService) {
+  constructor(
+    entitySchemaService: EntitySchemaService,
+    components: ComponentRegistry
+  ) {
     entitySchemaService.registerSchemaDatatype(new PhotoDatatype());
+    components.addAll(childrenComponents);
   }
 }

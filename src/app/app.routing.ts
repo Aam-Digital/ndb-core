@@ -15,8 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { RouterModule, Routes } from "@angular/router";
-import { ModuleWithProviders } from "@angular/core";
+import { Routes } from "@angular/router";
 import { ApplicationLoadingComponent } from "./core/view/dynamic-routing/empty/application-loading.component";
 import { NotFoundComponent } from "./core/view/dynamic-routing/not-found/not-found.component";
 import { UserAccountComponent } from "./core/user/user-account/user-account.component";
@@ -28,7 +27,7 @@ import { SupportComponent } from "./core/support/support/support.component";
  * The name provided to the annotation can then be used in the configuration.
  *
  * IMPORTANT:
- *  TODO add component to registry
+ *  The component also needs to be added to the `...Components` list of the respective module.
  */
 export const RouteTarget = (_name: string) => (_) => undefined;
 
@@ -49,9 +48,3 @@ export const allRoutes: Routes = [
   { path: "404", component: NotFoundComponent },
   { path: "**", pathMatch: "full", component: ApplicationLoadingComponent },
 ];
-
-/**
- * Main app RouterModule with centrally configured allRoutes.
- */
-export const routing: ModuleWithProviders<RouterModule> =
-  RouterModule.forRoot(allRoutes);

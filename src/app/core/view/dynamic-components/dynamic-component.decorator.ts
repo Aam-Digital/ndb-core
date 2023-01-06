@@ -6,25 +6,17 @@ import { ComponentType } from "@angular/cdk/overlay";
  * A dynamic component can be referenced from the config with the name defined on the decorator.
  *
  * IMPORTANT:
- *  Angular ignores all components without references in the code in a production build.
- *  Dynamic components should therefore be added to a static array in the module where they are declared.
+ *  The component also needs to be added to the `...Components` list of the respective module.
  *
  * @example
- * ```
+ * ```javascript
  * @DynamicComponent("DoSomething")
  * @Component(...)
- * class DoSomethingComponent {
+ * class DoSomethingComponent implements OnInitDynamicComponent {
  *   // Component definition
  * }
  *
- * // In the module
- * @NgModule({declaration: [DoSomethingComponent]})
- * export class DoSomethingModule {
- *   static componentRegistry = [DoSomethingComponent];
- * }
- *
  * // Later in some config:
- *
  * {
  *   view: "DoSomething"
  * }

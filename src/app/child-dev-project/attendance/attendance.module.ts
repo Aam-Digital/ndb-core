@@ -16,6 +16,12 @@
  */
 
 import { NgModule } from "@angular/core";
+import { ComponentRegistry } from "../../dynamic-components";
+import { attendanceComponents } from "./attendance-components";
 
 @NgModule({})
-export class AttendanceModule {}
+export class AttendanceModule {
+  constructor(components: ComponentRegistry) {
+    components.addAll(attendanceComponents);
+  }
+}

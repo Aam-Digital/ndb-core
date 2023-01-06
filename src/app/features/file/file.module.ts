@@ -7,6 +7,8 @@ import { MockFileService } from "./mock-file.service";
 import { serviceProvider } from "../../utils/utils";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { fileDataType } from "./file-data-type";
+import { ComponentRegistry } from "../../dynamic-components";
+import { fileComponents } from "./file-components";
 
 @NgModule({
   providers: [
@@ -20,7 +22,11 @@ import { fileDataType } from "./file-data-type";
   ],
 })
 export class FileModule {
-  constructor(entitySchemaService: EntitySchemaService) {
+  constructor(
+    entitySchemaService: EntitySchemaService,
+    components: ComponentRegistry
+  ) {
     entitySchemaService.registerSchemaDatatype(fileDataType);
+    components.addAll(fileComponents);
   }
 }
