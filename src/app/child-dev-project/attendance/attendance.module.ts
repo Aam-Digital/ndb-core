@@ -15,29 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable, NgModule } from "@angular/core";
-import {
-  HAMMER_GESTURE_CONFIG,
-  HammerGestureConfig,
-} from "@angular/platform-browser";
-import * as Hammer from "hammerjs";
+import { NgModule } from "@angular/core";
 
-@Injectable()
-// Only allow horizontal swiping
-export class HorizontalHammerConfig extends HammerGestureConfig {
-  overrides = {
-    swipe: { direction: Hammer.DIRECTION_HORIZONTAL },
-    pinch: { enable: false },
-    rotate: { enable: false },
-  };
-}
-
-@NgModule({
-  providers: [
-    {
-      provide: HAMMER_GESTURE_CONFIG,
-      useClass: HorizontalHammerConfig,
-    },
-  ],
-})
+@NgModule({})
 export class AttendanceModule {}

@@ -26,8 +26,21 @@ import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ChildBlockComponent } from "../../../children/child-block/child-block.component";
 import { RollCallTabComponent } from "./roll-call-tab/roll-call-tab.component";
-import { HammerModule } from "@angular/platform-browser";
-import { AttendanceModule } from "../../attendance.module";
+import {
+  HAMMER_GESTURE_CONFIG,
+  HammerGestureConfig,
+  HammerModule,
+} from "@angular/platform-browser";
+import Hammer from "hammerjs";
+
+// Only allow horizontal swiping
+class HorizontalHammerConfig extends HammerGestureConfig {
+  overrides = {
+    swipe: { direction: Hammer.DIRECTION_HORIZONTAL },
+    pinch: { enable: false },
+    rotate: { enable: false },
+  };
+}
 
 /**
  * Displays the participants of the given event one by one to mark attendance status.
@@ -54,7 +67,12 @@ import { AttendanceModule } from "../../attendance.module";
     NgClass,
     RollCallTabComponent,
     HammerModule,
-    AttendanceModule,
+  ],
+  providers: [
+    {
+      provide: HAMMER_GESTURE_CONFIG,
+      useClass: HorizontalHammerConfig,
+    },
   ],
   standalone: true,
 })
