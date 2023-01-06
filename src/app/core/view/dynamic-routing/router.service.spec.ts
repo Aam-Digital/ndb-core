@@ -1,7 +1,6 @@
 import { Component } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { Route, Router } from "@angular/router";
-import { RouterTestingModule } from "@angular/router/testing";
 import { ChildrenListComponent } from "../../../child-dev-project/children/children-list/children-list.component";
 import { ConfigService } from "../../config/config.service";
 import { LoggingService } from "../../logging/logging.service";
@@ -11,31 +10,22 @@ import { ViewConfig } from "./view-config.interface";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { ApplicationLoadingComponent } from "./empty/application-loading.component";
 import { NotFoundComponent } from "./not-found/not-found.component";
-import {
-  ComponentRegistry,
-  componentRegistry,
-} from "../../../dynamic-components";
+import { componentRegistry } from "../../../dynamic-components";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 class TestComponent extends Component {}
 
 describe("RouterService", () => {
   let service: RouterService;
 
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
   let mockLoggingService: jasmine.SpyObj<LoggingService>;
 
   beforeEach(() => {
-    mockConfigService = jasmine.createSpyObj(["getAllConfigs"]);
-    mockConfigService.getAllConfigs.and.returnValue([]);
     mockLoggingService = jasmine.createSpyObj(["warn"]);
 
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
-      providers: [
-        { provide: ConfigService, useValue: mockConfigService },
-        { provide: LoggingService, useValue: mockLoggingService },
-        { provide: ComponentRegistry, useValue: componentRegistry },
-      ],
+      imports: [MockedTestingModule],
+      providers: [{ provide: LoggingService, useValue: mockLoggingService }],
     });
     service = TestBed.inject(RouterService);
   });
@@ -135,11 +125,14 @@ describe("RouterService", () => {
       { _id: "view:child", component: "ChildrenList", config: { foo: 1 } },
       { _id: "view:child2", component: "ChildrenList", config: { foo: 2 } },
     ];
-
-    mockConfigService.getAllConfigs.and.returnValue(routeConfigs1);
+    const getAllConfigSpy = spyOn(
+      TestBed.inject(ConfigService),
+      "getAllConfigs"
+    );
+    getAllConfigSpy.and.returnValue(routeConfigs1);
     service.initRouting();
 
-    mockConfigService.getAllConfigs.and.returnValue(routeConfigs2);
+    getAllConfigSpy.and.returnValue(routeConfigs2);
     service.initRouting();
 
     const router = TestBed.inject<Router>(Router);
