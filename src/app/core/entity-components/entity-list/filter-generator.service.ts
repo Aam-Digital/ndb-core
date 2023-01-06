@@ -5,9 +5,9 @@ import {
 } from "../../filter/filter-selection/filter-selection";
 import {
   BooleanFilterConfig,
+  DateRangeFilterConfig,
   FilterConfig,
   PrebuiltFilterConfig,
-  DateRangeFilterConfig,
   weekDayMap,
 } from "./EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
@@ -135,12 +135,12 @@ export class FilterGeneratorService {
       dateFS.push({
         key: "option_" + (dateFS.length + 1),
         label: option.label,
-        filterFun: (c: Entity) => {
-          return moment(c[filterConfig.id]).isSameOrAfter(relevantDate, "day");
+        filter: {
+          [filterConfig.id]: { $gte: relevantDate.format("YYYY-MM-DD") },
         },
       });
     }
-    dateFS.push({ key: "", label: $localize`All`, filterFun: () => true });
+    dateFS.push({ key: "", label: $localize`All`, filter: {} });
     return dateFS;
   }
 
