@@ -8,7 +8,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import { MatSort, MatSortable, MatSortModule } from "@angular/material/sort";
+import { MatSort, MatSortable, MatSortModule, Sort, SortDirection } from "@angular/material/sort";
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
@@ -27,8 +27,8 @@ import {
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { tableSort } from "./table-sort";
 import {
-  ScreenWidthObserver,
   ScreenSize,
+  ScreenWidthObserver,
 } from "../../../../utils/media/screen-size-observer.service";
 import { Subscription } from "rxjs";
 import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
@@ -118,8 +118,6 @@ export class EntitySubrecordComponent<T extends Entity>
 
   private _records: T[] = [];
 
-  @Output() recordsChange = new EventEmitter<T[]>();
-
   /**
    * factory method to create a new instance of the displayed Entity type
    * used when the user adds a new entity to the list.
@@ -136,6 +134,9 @@ export class EntitySubrecordComponent<T extends Entity>
   /** columns displayed in the template's table */
   @Input() columnsToDisplay: string[] = [];
 
+  /** how to sort data by default during initialization */
+  @Input() defaultSort: Sort;
+
   /** data displayed in the template's table */
   recordsDataSource = new MatTableDataSource<TableRow<T>>();
 
@@ -145,9 +146,16 @@ export class EntitySubrecordComponent<T extends Entity>
   idForSavingPagination = "startWert";
 
   @ViewChild(MatSort) set sort(matSort: MatSort) {
-    // Initialize sort once available
+    // Initialize sort once available, workaround according to https://github.com/angular/components/issues/15008#issuecomment-516386055
     this.recordsDataSource.sort = matSort;
-    setTimeout(() => this.initDefaultSort());
+
+    this.recordsDataSource.sortData = (data, sort) =>
+      tableSort(data, {
+        active: sort.active as keyof T | "",
+        direction: sort.direction,
+      });
+
+    setTimeout(() => this.sortDefault());
   }
 
   get sort(): MatSort {
@@ -263,7 +271,7 @@ export class EntitySubrecordComponent<T extends Entity>
       if (this.columnsToDisplay.length < 2) {
         this.setupTable();
       }
-      this.initDefaultSort();
+      this.sortDefault();
     }
     if (changes.hasOwnProperty("columnsToDisplay")) {
       this.mediaSubscription.unsubscribe();
@@ -284,24 +292,32 @@ export class EntitySubrecordComponent<T extends Entity>
     }
   }
 
-  private initDefaultSort() {
-    this.recordsDataSource.sortData = (data, sort) =>
-      tableSort(data, {
-        active: sort.active as keyof T | "",
-        direction: sort.direction,
-      });
+  private sortDefault() {
     if (!this.sort || this.sort.active) {
       // do not overwrite existing sort
       return;
     }
 
+    if (!this.defaultSort) {
+      this.defaultSort = this.inferDefaultSort();
+    }
+
+    this.sort.sort({
+      id: this.defaultSort.active,
+      start: this.defaultSort.direction,
+      disableClear: false,
+    });
+  }
+
+  private inferDefaultSort(): Sort {
     // initial sorting by first column, ensure that not the 'action' column is used
     const sortBy =
       this.columnsToDisplay[0] === "actions"
         ? this.columnsToDisplay[1]
         : this.columnsToDisplay[0];
     const sortByColumn = this._columns.find((c) => c.id === sortBy);
-    let sortDirection = "asc";
+
+    let sortDirection: SortDirection = "asc";
     if (
       sortByColumn?.view === "DisplayDate" ||
       sortByColumn?.edit === "EditDate"
@@ -310,10 +326,7 @@ export class EntitySubrecordComponent<T extends Entity>
       sortDirection = "desc";
     }
 
-    this.sort.sort({
-      id: sortBy,
-      start: sortDirection,
-    } as MatSortable);
+    return { active: sortBy, direction: sortDirection };
   }
 
   edit(row: TableRow<T>) {
@@ -384,13 +397,11 @@ export class EntitySubrecordComponent<T extends Entity>
     this.records = this._records.filter(
       (rec) => rec.getId() !== deleted.getId()
     );
-    this.recordsChange.emit(this._records);
   }
 
   private addToTable(record: T) {
     // use setter so datasource is also updated
     this.records = [record].concat(this._records);
-    this.recordsChange.emit(this._records);
   }
 
   /**

@@ -67,7 +67,7 @@ export class FaDynamicIconComponent {
    */
   @Input() set icon(icon: string) {
     let definition = iconAliases.get(icon);
-    if (!definition) {
+    if (!definition && icon) {
       const iconAndDef = icon.split(" ");
       if (iconAndDef.length === 1) {
         definition = this.iconLibrary.getIconDefinition(

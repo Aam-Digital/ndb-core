@@ -108,15 +108,7 @@ describe("AttendanceService", () => {
 
   it("gets events and loads additional participants from linked schools", async () => {
     const linkedSchoolId = "test_school";
-    const childSchool1 = new ChildSchoolRelation();
-    childSchool1.childId = "2";
-    childSchool1.schoolId = linkedSchoolId;
-    childSchool1.start = new Date();
-    const childSchool2 = new ChildSchoolRelation();
-    childSchool2.childId = "3";
-    childSchool2.schoolId = linkedSchoolId;
-    childSchool2.start = new Date();
-    await entityMapper.saveAll([childSchool1, childSchool2]);
+    await createChildrenInSchool(linkedSchoolId, ["2", "3"]);
 
     const testNoteWithSchool = Note.create(new Date("2021-01-01"));
     testNoteWithSchool.children = ["1", "2"];
@@ -128,6 +120,23 @@ describe("AttendanceService", () => {
     expect(actualEvents).toHaveSize(1);
     expect(actualEvents[0].children).toEqual(
       jasmine.arrayWithExactContents(["1", "2", "3"])
+    );
+  });
+
+  it("gets active participants and removes those explicitly excluded", async () => {
+    const linkedSchoolId = "test_school";
+    await createChildrenInSchool(linkedSchoolId, ["excluded", "member"]);
+
+    const activity = new RecurringActivity();
+    activity.linkedGroups = [linkedSchoolId];
+    activity.excludedParticipants = ["excluded"];
+    activity.participants = ["direct", "excluded"];
+
+    const actualParticipants = await service.getActiveParticipantsOfActivity(
+      activity
+    );
+    expect(actualParticipants).toEqual(
+      jasmine.arrayWithExactContents(["member", "direct"])
     );
   });
 
@@ -331,4 +340,17 @@ describe("AttendanceService", () => {
     expect(events).toHaveSize(1);
     expect(events[0].subject).toBe(sameDayEvent.subject);
   });
+
+  async function createChildrenInSchool(
+    schoolId: string,
+    childrenIds: string[]
+  ) {
+    for (const childId of childrenIds) {
+      const childSchool = new ChildSchoolRelation();
+      childSchool.childId = childId;
+      childSchool.schoolId = schoolId;
+      childSchool.start = new Date();
+      await entityMapper.save(childSchool);
+    }
+  }
 });

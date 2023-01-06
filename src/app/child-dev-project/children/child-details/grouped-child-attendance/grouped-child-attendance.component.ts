@@ -48,9 +48,9 @@ export class GroupedChildAttendanceComponent
 
   private async loadActivities() {
     this.loading = true;
-    this.activities = await this.attendanceService.getActivitiesForChild(
-      this.child.getId()
-    );
+    this.activities = (
+      await this.attendanceService.getActivitiesForChild(this.child.getId())
+    ).filter((a) => !a.excludedParticipants.includes(this.child.getId()));
     this.loading = false;
   }
 }

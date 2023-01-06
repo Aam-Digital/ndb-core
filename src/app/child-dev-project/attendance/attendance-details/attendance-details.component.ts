@@ -53,7 +53,7 @@ export class AttendanceDetailsComponent
       view: "ReadonlyFunction",
       additional: (note: Note) => {
         if (this.focusedChild) {
-          return note.getAttendance(this.focusedChild).status.label;
+          return note.getAttendance(this.focusedChild)?.status?.label || "-";
         } else {
           return (
             (calculateAverageAttendance(note).average * 100).toFixed(0) + "%" ||

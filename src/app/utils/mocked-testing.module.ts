@@ -19,6 +19,7 @@ import { createTestingConfigService } from "../core/config/testing-config-servic
 import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { ReactiveFormsModule } from "@angular/forms";
 import { AppModule } from "../app.module";
+import { ComponentRegistry } from "../dynamic-components";
 
 export const TEST_USER = "test";
 export const TEST_PASSWORD = "pass";
@@ -79,6 +80,10 @@ export class MockedTestingModule {
         { provide: Database, useValue: session.getDatabase() },
       ],
     };
+  }
+
+  constructor(components: ComponentRegistry) {
+    components.allowDuplicates();
   }
 }
 
