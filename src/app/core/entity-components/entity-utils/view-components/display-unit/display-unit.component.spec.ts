@@ -9,7 +9,7 @@ describe("DisplayUnitComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DisplayUnitComponent],
+      imports: [DisplayUnitComponent],
     }).compileComponents();
   });
 

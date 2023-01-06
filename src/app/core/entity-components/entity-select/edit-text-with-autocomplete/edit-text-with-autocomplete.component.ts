@@ -7,8 +7,15 @@ import { Entity } from "../../../entity/model/entity";
 import { BehaviorSubject } from "rxjs";
 import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { FormControl } from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { ConfirmationDialogService } from "app/core/confirmation-dialog/confirmation-dialog.service";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
+import { DisplayEntityComponent } from "../display-entity/display-entity.component";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 /**
  * This component creates a normal text input with autocomplete.
@@ -36,6 +43,19 @@ import { ConfirmationDialogService } from "app/core/confirmation-dialog/confirma
   selector: "app-edit-text-with-autocomplete",
   templateUrl: "./edit-text-with-autocomplete.component.html",
   styleUrls: ["./edit-text-with-autocomplete.component.scss"],
+  imports: [
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatInputModule,
+    MatAutocompleteModule,
+    AsyncPipe,
+    DisplayEntityComponent,
+    NgForOf,
+    NgIf,
+    FontAwesomeModule,
+    MatTooltipModule,
+  ],
+  standalone: true,
 })
 export class EditTextWithAutocompleteComponent extends EditComponent<string> {
   /**

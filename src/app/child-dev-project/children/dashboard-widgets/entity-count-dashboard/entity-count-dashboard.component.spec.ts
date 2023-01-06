@@ -9,13 +9,11 @@ import {
 import { EntityCountDashboardComponent } from "./entity-count-dashboard.component";
 import { Center, Child } from "../../model/child";
 import { ConfigurableEnumValue } from "../../../../core/configurable-enum/configurable-enum.interface";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import {
   mockEntityMapper,
   MockEntityMapperService,
 } from "../../../../core/entity/mock-entity-mapper-service";
-import { ChildrenModule } from "../../children.module";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { RecurringActivity } from "../../../attendance/model/recurring-activity";
 import { defaultInteractionTypes } from "../../../../core/config/default-config/default-interaction-types";
@@ -34,11 +32,7 @@ describe("EntityCountDashboardComponent", () => {
   beforeEach(waitForAsync(() => {
     entityMapper = mockEntityMapper();
     TestBed.configureTestingModule({
-      imports: [
-        ChildrenModule,
-        MockedTestingModule.withState(),
-        FontAwesomeTestingModule,
-      ],
+      imports: [EntityCountDashboardComponent, MockedTestingModule.withState()],
       providers: [{ provide: EntityMapperService, useValue: entityMapper }],
     }).compileComponents();
   }));

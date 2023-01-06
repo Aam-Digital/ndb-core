@@ -28,7 +28,7 @@ import { AUTH_ENABLED } from "../session/auth/auth.interceptor";
  * Manage the changelog information and display it to the user
  * on request or automatically on the first visit of a new version after update.
  */
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class LatestChangesService {
   private static GITHUB_API = "https://api.github.com/repos/";
 

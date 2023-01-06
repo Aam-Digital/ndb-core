@@ -11,7 +11,7 @@ describe("DisplayAgeComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DisplayAgeComponent],
+      imports: [DisplayAgeComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(DisplayAgeComponent);

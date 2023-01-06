@@ -4,11 +4,9 @@ import {
   TestBed,
   tick,
 } from "@angular/core/testing";
-import { ChildrenModule } from "../../children.module";
 import { ChildrenBmiDashboardComponent } from "./children-bmi-dashboard.component";
 import { HealthCheck } from "../../health-checkup/model/health-check";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 
 describe("ChildrenBmiDashboardComponent", () => {
@@ -20,11 +18,7 @@ describe("ChildrenBmiDashboardComponent", () => {
     mockEntityMapper = jasmine.createSpyObj("mockEntityMapper", ["loadType"]);
     mockEntityMapper.loadType.and.resolveTo([]);
     TestBed.configureTestingModule({
-      imports: [
-        ChildrenModule,
-        MockedTestingModule.withState(),
-        FontAwesomeTestingModule,
-      ],
+      imports: [ChildrenBmiDashboardComponent, MockedTestingModule.withState()],
       providers: [{ provide: EntityMapperService, useValue: mockEntityMapper }],
     }).compileComponents();
   });

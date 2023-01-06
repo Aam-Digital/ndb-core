@@ -16,7 +16,7 @@ describe("ViewFileComponent", () => {
   beforeEach(async () => {
     mockFileService = jasmine.createSpyObj(["showFile"]);
     await TestBed.configureTestingModule({
-      declarations: [ViewFileComponent],
+      imports: [ViewFileComponent],
       providers: [{ provide: FileService, useValue: mockFileService }],
     }).compileComponents();
 

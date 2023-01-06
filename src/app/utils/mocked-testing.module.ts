@@ -7,33 +7,19 @@ import { mockEntityMapper } from "../core/entity/mock-entity-mapper-service";
 import { User } from "../core/user/user";
 import { AnalyticsService } from "../core/analytics/analytics.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { Angulartics2Module } from "angulartics2";
 import { RouterTestingModule } from "@angular/router/testing";
 import { Database } from "../core/database/database";
 import { SessionType } from "../core/session/session-type";
 import { PouchDatabase } from "../core/database/pouch-database";
-import { LOCATION_TOKEN, WINDOW_TOKEN } from "./di-tokens";
 import { Entity } from "../core/entity/model/entity";
-import { PureAbility } from "@casl/ability";
-import { EntityAbility } from "../core/permissions/ability/entity-ability";
-import { EntitySchemaService } from "../core/entity/schema/entity-schema.service";
 import { DatabaseIndexingService } from "../core/entity/database-indexing/database-indexing.service";
-import {
-  entityRegistry,
-  EntityRegistry,
-} from "../core/entity/database-entity.decorator";
-import {
-  viewRegistry,
-  ViewRegistry,
-} from "../core/view/dynamic-components/dynamic-component.decorator";
-import { RouteRegistry, routesRegistry } from "../app.routing";
-import { MatNativeDateModule } from "@angular/material/core";
-import {
-  ConfigService,
-  createTestingConfigService,
-} from "../core/config/config.service";
+import { ConfigService } from "../core/config/config.service";
 import { environment } from "../../environments/environment";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { createTestingConfigService } from "../core/config/testing-config-service";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { ReactiveFormsModule } from "@angular/forms";
+import { AppModule } from "../app.module";
+import { ComponentRegistry } from "../dynamic-components";
 
 export const TEST_USER = "test";
 export const TEST_PASSWORD = "pass";
@@ -53,27 +39,17 @@ export const TEST_PASSWORD = "pass";
  */
 @NgModule({
   imports: [
+    AppModule,
     NoopAnimationsModule,
-    Angulartics2Module.forRoot(),
     RouterTestingModule,
-    MatNativeDateModule,
-    FontAwesomeTestingModule,
+    HttpClientTestingModule,
+    ReactiveFormsModule,
   ],
   providers: [
     {
       provide: AnalyticsService,
       useValue: { eventTrack: () => undefined },
     },
-    {
-      provide: LOCATION_TOKEN,
-      useValue: window.location,
-    },
-    EntitySchemaService,
-    EntityAbility,
-    { provide: PureAbility, useExisting: EntityAbility },
-    { provide: EntityRegistry, useValue: entityRegistry },
-    { provide: ViewRegistry, useValue: viewRegistry },
-    { provide: RouteRegistry, useValue: routesRegistry },
     {
       provide: DatabaseIndexingService,
       useValue: {
@@ -87,10 +63,10 @@ export const TEST_PASSWORD = "pass";
 export class MockedTestingModule {
   static withState(
     loginState = LoginState.LOGGED_IN,
-    data: Entity[] = []
+    data: Entity[] = [new User(TEST_USER)]
   ): ModuleWithProviders<MockedTestingModule> {
     environment.session_type = SessionType.mock;
-    const mockedEntityMapper = mockEntityMapper([new User(TEST_USER), ...data]);
+    const mockedEntityMapper = mockEntityMapper([...data]);
     const session = createLocalSession(loginState === LoginState.LOGGED_IN);
     return {
       ngModule: MockedTestingModule,
@@ -102,9 +78,12 @@ export class MockedTestingModule {
         { provide: EntityMapperService, useValue: mockedEntityMapper },
         { provide: ConfigService, useValue: createTestingConfigService() },
         { provide: Database, useValue: session.getDatabase() },
-        { provide: WINDOW_TOKEN, useValue: window },
       ],
     };
+  }
+
+  constructor(components: ComponentRegistry) {
+    components.allowDuplicates();
   }
 }
 

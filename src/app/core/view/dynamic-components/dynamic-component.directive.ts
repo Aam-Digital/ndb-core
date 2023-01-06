@@ -1,7 +1,6 @@
 import { Directive, Input, OnChanges, ViewContainerRef } from "@angular/core";
 import { DynamicComponentConfig } from "./dynamic-component-config.interface";
-import { OnInitDynamicComponent } from "./on-init-dynamic-component.interface";
-import { ViewRegistry } from "./dynamic-component.decorator";
+import { ComponentRegistry } from "../../../dynamic-components";
 
 /**
  * Directive to mark a template into which a component that is dynamically injected from config should be loaded
@@ -13,32 +12,37 @@ import { ViewRegistry } from "./dynamic-component.decorator";
  */
 @Directive({
   selector: "[appDynamicComponent]",
+  standalone: true,
 })
 export class DynamicComponentDirective implements OnChanges {
   @Input() appDynamicComponent: DynamicComponentConfig;
 
   constructor(
     public viewContainerRef: ViewContainerRef,
-    private registry: ViewRegistry
+    private components: ComponentRegistry
   ) {}
 
-  ngOnChanges(): void {
-    this.loadDynamicComponent();
+  async ngOnChanges() {
+    await this.loadDynamicComponent();
   }
 
-  private loadDynamicComponent() {
+  private async loadDynamicComponent() {
     if (!this.appDynamicComponent) {
       return;
     }
 
-    const component = this.registry.get(this.appDynamicComponent.component);
+    const component = await this.components.get(
+      this.appDynamicComponent.component
+    )();
 
     this.viewContainerRef.clear();
 
-    const componentRef =
-      this.viewContainerRef.createComponent<OnInitDynamicComponent>(component);
-    componentRef.instance.onInitFromDynamicConfig(
-      this.appDynamicComponent.config
-    );
+    const componentRef = this.viewContainerRef.createComponent(component);
+
+    if (componentRef.instance.onInitFromDynamicConfig) {
+      componentRef.instance.onInitFromDynamicConfig(
+        this.appDynamicComponent.config
+      );
+    }
   }
 }

@@ -19,7 +19,6 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { UserAccountComponent } from "./user-account.component";
 import { SessionService } from "../../session/session-service/session.service";
-import { UserModule } from "../user.module";
 import { LoggingService } from "../../logging/logging.service";
 import { AuthService } from "../../session/auth/auth.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
@@ -42,7 +41,7 @@ describe("UserAccountComponent", () => {
     mockLoggingService = jasmine.createSpyObj(["error"]);
 
     TestBed.configureTestingModule({
-      imports: [UserModule, MockedTestingModule.withState()],
+      imports: [UserAccountComponent, MockedTestingModule.withState()],
       providers: [
         { provide: SessionService, useValue: mockSessionService },
         { provide: AuthService, useValue: { changePassword: () => undefined } },

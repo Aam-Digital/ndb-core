@@ -4,10 +4,8 @@ import { FilterService } from "./filter.service";
 import { defaultInteractionTypes } from "../config/default-config/default-interaction-types";
 import { DataFilter } from "../entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { Note } from "../../child-dev-project/notes/model/note";
-import {
-  ConfigService,
-  createTestingConfigService,
-} from "../config/config.service";
+import { ConfigService } from "../config/config.service";
+import { createTestingConfigService } from "../config/testing-config-service";
 
 describe("FilterService", () => {
   let service: FilterService;

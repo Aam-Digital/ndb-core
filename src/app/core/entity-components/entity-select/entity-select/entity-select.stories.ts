@@ -7,9 +7,7 @@ import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { ChildrenService } from "../../../../child-dev-project/children/children.service";
 import { BehaviorSubject } from "rxjs";
 import { EntitySelectComponent } from "./entity-select.component";
-import { ChildrenModule } from "../../../../child-dev-project/children/children.module";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
-import { EntitySelectModule } from "../entity-select.module";
 import { School } from "../../../../child-dev-project/schools/model/school";
 
 const child1 = new Child();
@@ -39,7 +37,7 @@ export default {
   component: EntitySelectComponent,
   decorators: [
     moduleMetadata({
-      imports: [EntitySelectModule, StorybookBaseModule, ChildrenModule],
+      imports: [EntitySelectComponent, StorybookBaseModule],
       declarations: [],
       providers: [
         { provide: BackupService, useValue: {} },

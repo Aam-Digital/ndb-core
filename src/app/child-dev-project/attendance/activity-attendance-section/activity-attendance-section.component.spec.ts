@@ -8,7 +8,6 @@ import { ActivityAttendance } from "../model/activity-attendance";
 import { EventNote } from "../model/event-note";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
-import { AttendanceModule } from "../attendance.module";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import moment from "moment";
 
@@ -30,7 +29,7 @@ describe("ActivityAttendanceSectionComponent", () => {
       ]);
       mockAttendanceService.getActivityAttendances.and.resolveTo(testRecords);
       TestBed.configureTestingModule({
-        imports: [AttendanceModule, MockedTestingModule.withState()],
+        imports: [ActivityAttendanceSectionComponent, MockedTestingModule.withState()],
         providers: [
           { provide: AttendanceService, useValue: mockAttendanceService },
           DatePipe,

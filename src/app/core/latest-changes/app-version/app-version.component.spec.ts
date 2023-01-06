@@ -18,9 +18,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AppVersionComponent } from "./app-version.component";
-import { MatDialogModule } from "@angular/material/dialog";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { ChangelogComponent } from "../changelog/changelog.component";
 import { LatestChangesDialogService } from "../latest-changes-dialog.service";
 
 describe("AppVersionComponent", () => {
@@ -29,27 +27,24 @@ describe("AppVersionComponent", () => {
 
   let latestChangesDialogService: jasmine.SpyObj<LatestChangesDialogService>;
 
-  beforeEach(
-    waitForAsync(() => {
-      latestChangesDialogService = jasmine.createSpyObj([
-        "getCurrentVersion",
-        "showLatestChanges",
-      ]);
+  beforeEach(waitForAsync(() => {
+    latestChangesDialogService = jasmine.createSpyObj([
+      "getCurrentVersion",
+      "showLatestChanges",
+    ]);
 
-      TestBed.configureTestingModule({
-        declarations: [AppVersionComponent, ChangelogComponent],
-        imports: [MatDialogModule, NoopAnimationsModule],
-        providers: [
-          {
-            provide: LatestChangesDialogService,
-            useValue: latestChangesDialogService,
-          },
-        ],
-      });
+    TestBed.configureTestingModule({
+      imports: [AppVersionComponent, NoopAnimationsModule],
+      providers: [
+        {
+          provide: LatestChangesDialogService,
+          useValue: latestChangesDialogService,
+        },
+      ],
+    });
 
-      TestBed.compileComponents();
-    })
-  );
+    TestBed.compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AppVersionComponent);

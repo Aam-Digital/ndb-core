@@ -13,9 +13,8 @@ describe("EditPhotoComponent", () => {
   beforeEach(async () => {
     mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
     await TestBed.configureTestingModule({
-      imports: [NoopAnimationsModule],
+      imports: [EditPhotoComponent, NoopAnimationsModule],
       providers: [{ provide: SessionService, useValue: mockSessionService }],
-      declarations: [EditPhotoComponent],
     }).compileComponents();
   });
 

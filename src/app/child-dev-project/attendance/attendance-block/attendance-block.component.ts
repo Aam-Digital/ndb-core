@@ -1,7 +1,9 @@
 import { Component, Inject, Input, LOCALE_ID, OnChanges } from "@angular/core";
 import { ActivityAttendance } from "../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
-import { formatPercent } from "@angular/common";
+import { DatePipe, formatPercent, NgIf, PercentPipe } from "@angular/common";
+import { TemplateTooltipDirective } from "../../../core/common-components/template-tooltip/template-tooltip.directive";
+import { AttendanceCalendarComponent } from "../attendance-calendar/attendance-calendar.component";
 
 /**
  * Display attendance details of a single period for a participant as a compact block.
@@ -10,6 +12,14 @@ import { formatPercent } from "@angular/common";
   selector: "app-attendance-block",
   templateUrl: "./attendance-block.component.html",
   styleUrls: ["./attendance-block.component.scss"],
+  imports: [
+    NgIf,
+    PercentPipe,
+    DatePipe,
+    TemplateTooltipDirective,
+    AttendanceCalendarComponent,
+  ],
+  standalone: true,
 })
 export class AttendanceBlockComponent implements OnChanges {
   @Input() attendanceData: ActivityAttendance;
@@ -17,8 +27,7 @@ export class AttendanceBlockComponent implements OnChanges {
   LStatus = AttendanceLogicalStatus;
   logicalCount: { [key in AttendanceLogicalStatus]?: number };
 
-  constructor(@Inject(LOCALE_ID) private locale: string) {
-  }
+  constructor(@Inject(LOCALE_ID) private locale: string) {}
 
   ngOnChanges() {
     this.logicalCount =
@@ -34,15 +43,17 @@ export class AttendanceBlockComponent implements OnChanges {
   }
 
   get attendancePercentage(): string {
-    const percentage = this.attendanceData.getAttendancePercentage(this.forChild);
+    const percentage = this.attendanceData.getAttendancePercentage(
+      this.forChild
+    );
     if (!Number.isFinite(percentage)) {
-      return '-'
+      return "-";
     } else {
       return formatPercent(percentage, this.locale, "1.0-0");
     }
   }
 
   get warningLevel(): string {
-    return this.attendanceData.getWarningLevel(this.forChild)
+    return this.attendanceData.getWarningLevel(this.forChild);
   }
 }

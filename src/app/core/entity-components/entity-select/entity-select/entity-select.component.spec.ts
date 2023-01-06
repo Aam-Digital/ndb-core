@@ -5,15 +5,12 @@ import {
   tick,
 } from "@angular/core/testing";
 import { EntitySelectComponent } from "./entity-select.component";
-import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Entity } from "../../../entity/model/entity";
-import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 import { User } from "../../../user/user";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { EntitySelectModule } from "../entity-select.module";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { School } from "../../../../child-dev-project/schools/model/school";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
+import { LoginState } from "../../../session/session-states/login-state.enum";
 
 describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any>;
@@ -29,20 +26,13 @@ describe("EntitySelectComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      providers: [
-        {
-          provide: EntityMapperService,
-          useValue: mockEntityMapper([
-            ...testUsers,
-            ...testChildren,
-            ...otherEntities,
-          ]),
-        },
-      ],
       imports: [
-        EntitySelectModule,
-        NoopAnimationsModule,
-        FontAwesomeTestingModule,
+        EntitySelectComponent,
+        MockedTestingModule.withState(LoginState.LOGGED_IN, [
+          ...testUsers,
+          ...testChildren,
+          ...otherEntities,
+        ]),
       ],
     }).compileComponents();
   });

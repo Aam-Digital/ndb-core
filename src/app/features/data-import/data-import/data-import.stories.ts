@@ -1,14 +1,11 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
-import { DataImportModule } from "../data-import.module";
 import { DataImportComponent } from "./data-import.component";
 import { DataImportService } from "../data-import.service";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { EntityConstructor } from "../../../core/entity/model/entity";
 import { PouchDatabase } from "../../../core/database/pouch-database";
 import { Database } from "../../../core/database/database";
-import { MatDialogModule } from "@angular/material/dialog";
-import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { BackupService } from "../../../core/admin/services/backup.service";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 import { QueryService } from "../../reporting/query.service";
@@ -23,10 +20,8 @@ export default {
   decorators: [
     moduleMetadata({
       imports: [
-        DataImportModule,
+        DataImportComponent,
         StorybookBaseModule,
-        MatDialogModule,
-        MatSnackBarModule,
       ],
       declarations: [],
       providers: [

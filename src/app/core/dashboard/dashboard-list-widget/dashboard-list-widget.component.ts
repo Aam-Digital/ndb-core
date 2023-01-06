@@ -9,14 +9,19 @@ import {
   ViewChild,
 } from "@angular/core";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
-import { DashboardTheme } from "../dashboard-widget/dashboard-widget.component";
+import {
+  DashboardTheme,
+  DashboardWidgetComponent,
+} from "../dashboard-widget/dashboard-widget.component";
 import { MatTable, MatTableDataSource } from "@angular/material/table";
-import { MatPaginator } from "@angular/material/paginator";
+import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { BehaviorSubject } from "rxjs";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { filter, map } from "rxjs/operators";
 import { applyUpdate } from "../../entity/model/entity-update";
 import { Entity } from "../../entity/model/entity";
+import { NgIf } from "@angular/common";
+import { WidgetContentComponent } from "../dashboard-widget/widget-content/widget-content.component";
 
 /**
  * Base dashboard widget to build widgets that display a number of entries as a table.
@@ -38,6 +43,13 @@ import { Entity } from "../../entity/model/entity";
   selector: "app-dashboard-list-widget",
   templateUrl: "./dashboard-list-widget.component.html",
   styleUrls: ["./dashboard-list-widget.component.scss"],
+  imports: [
+    DashboardWidgetComponent,
+    WidgetContentComponent,
+    NgIf,
+    MatPaginatorModule,
+  ],
+  standalone: true,
 })
 export class DashboardListWidgetComponent<E>
   implements OnInit, OnChanges, AfterViewInit

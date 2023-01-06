@@ -20,6 +20,27 @@ import { LoggingService } from "../../../../core/logging/logging.service";
 import { sortByAttribute } from "../../../../utils/utils";
 import { NoteDetailsComponent } from "../../../notes/note-details/note-details.component";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
+import { NgClass, NgForOf, NgIf } from "@angular/common";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatButtonModule } from "@angular/material/button";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { ChildBlockComponent } from "../../../children/child-block/child-block.component";
+import { RollCallTabComponent } from "./roll-call-tab/roll-call-tab.component";
+import {
+  HAMMER_GESTURE_CONFIG,
+  HammerGestureConfig,
+  HammerModule,
+} from "@angular/platform-browser";
+import Hammer from "hammerjs";
+
+// Only allow horizontal swiping
+class HorizontalHammerConfig extends HammerGestureConfig {
+  overrides = {
+    swipe: { direction: Hammer.DIRECTION_HORIZONTAL },
+    pinch: { enable: false },
+    rotate: { enable: false },
+  };
+}
 
 /**
  * Displays the participants of the given event one by one to mark attendance status.
@@ -36,6 +57,24 @@ import { FormDialogService } from "../../../../core/form-dialog/form-dialog.serv
       ]),
     ]),
   ],
+  imports: [
+    NgIf,
+    MatProgressBarModule,
+    MatButtonModule,
+    FontAwesomeModule,
+    ChildBlockComponent,
+    NgForOf,
+    NgClass,
+    RollCallTabComponent,
+    HammerModule,
+  ],
+  providers: [
+    {
+      provide: HAMMER_GESTURE_CONFIG,
+      useClass: HorizontalHammerConfig,
+    },
+  ],
+  standalone: true,
 })
 export class RollCallComponent implements OnChanges {
   /**

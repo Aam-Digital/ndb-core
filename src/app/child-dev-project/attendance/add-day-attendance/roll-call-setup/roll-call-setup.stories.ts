@@ -7,7 +7,6 @@ import moment from "moment";
 import { Note } from "../../../notes/model/note";
 import { DemoActivityGeneratorService } from "../../demo-data/demo-activity-generator.service";
 import { SessionService } from "../../../../core/session/session-service/session.service";
-import { AttendanceModule } from "../../attendance.module";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { LoginState } from "../../../../core/session/session-states/login-state.enum";
@@ -48,7 +47,7 @@ export default {
   decorators: [
     moduleMetadata({
       imports: [
-        AttendanceModule,
+        RollCallSetupComponent,
         StorybookBaseModule,
         MockedTestingModule.withState(LoginState.LOGGED_IN, [
           ...demoChildren,

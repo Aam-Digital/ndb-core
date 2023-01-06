@@ -12,10 +12,9 @@ import { School } from "../../../child-dev-project/schools/model/school";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 import { Subscription } from "rxjs";
 import { Entity } from "../../entity/model/entity";
-import { UiModule } from "../ui.module";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { SwUpdate } from "@angular/service-worker";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 
 describe("SearchComponent", () => {
   SearchComponent.INPUT_DEBOUNCE_TIME_MS = 4;
@@ -35,12 +34,9 @@ describe("SearchComponent", () => {
     mockIndexService.queryIndexRaw.and.resolveTo({ rows: [] });
 
     TestBed.configureTestingModule({
-      imports: [
-        UiModule,
-        MockedTestingModule.withState(),
-        FontAwesomeTestingModule,
-      ],
+      imports: [SearchComponent, MockedTestingModule.withState()],
       providers: [
+        UserRoleGuard,
         { provide: DatabaseIndexingService, useValue: mockIndexService },
         { provide: SwUpdate, useValue: {} },
       ],

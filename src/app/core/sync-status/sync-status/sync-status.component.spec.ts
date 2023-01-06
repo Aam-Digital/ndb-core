@@ -24,7 +24,6 @@ import { SyncState } from "../../session/session-states/sync-state.enum";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 import { BehaviorSubject } from "rxjs";
 import { BackgroundProcessState } from "../background-process-state.interface";
-import { SyncStatusModule } from "../sync-status.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import {
   EntityRegistry,
@@ -58,7 +57,7 @@ describe("SyncStatusComponent", () => {
 
       TestBed.configureTestingModule({
         imports: [
-          SyncStatusModule,
+          SyncStatusComponent,
           NoopAnimationsModule,
           FontAwesomeTestingModule,
         ],

@@ -8,7 +8,6 @@ import {
 
 import { ChildrenService } from "../../../children/children.service";
 import { NotesDashboardComponent } from "./notes-dashboard.component";
-import { ChildrenModule } from "../../../children/children.module";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { RecurringActivity } from "../../../attendance/model/recurring-activity";
 
@@ -27,7 +26,7 @@ describe("NotesDashboardComponent", () => {
     );
 
     TestBed.configureTestingModule({
-      imports: [ChildrenModule, MockedTestingModule.withState()],
+      imports: [NotesDashboardComponent, MockedTestingModule.withState()],
       providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
     }).compileComponents();
   }));

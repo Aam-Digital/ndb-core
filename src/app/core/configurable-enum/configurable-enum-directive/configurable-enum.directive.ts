@@ -14,6 +14,7 @@ import { ConfigService } from "../../config/config.service";
  */
 @Directive({
   selector: "[appConfigurableEnum]",
+  standalone: true,
 })
 export class ConfigurableEnumDirective {
   /**
@@ -25,9 +26,8 @@ export class ConfigurableEnumDirective {
       enumConfigId = CONFIGURABLE_ENUM_CONFIG_PREFIX + enumConfigId;
     }
 
-    const options = this.configService.getConfig<ConfigurableEnumConfig>(
-      enumConfigId
-    );
+    const options =
+      this.configService.getConfig<ConfigurableEnumConfig>(enumConfigId);
     for (const item of options) {
       this.viewContainerRef.createEmbeddedView(this.templateRef, {
         $implicit: item,

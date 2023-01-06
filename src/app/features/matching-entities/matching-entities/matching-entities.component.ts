@@ -21,6 +21,15 @@ import { FormDialogService } from "../../../core/form-dialog/form-dialog.service
 import { addAlphaToHexColor } from "../../../utils/style-utils";
 import { ReplaySubject } from "rxjs";
 import { ConfigService } from "../../../core/config/config.service";
+import { MatTableModule } from "@angular/material/table";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { NgForOf, NgIf } from "@angular/common";
+import { MatButtonModule } from "@angular/material/button";
+import { EntityPropertyViewComponent } from "../../../core/entity-components/entity-utils/entity-property-view/entity-property-view.component";
+import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { MapComponent } from "../../location/map/map.component";
+import { FilterComponent } from "../../../core/filter/filter/filter.component";
 
 interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -37,6 +46,19 @@ interface MatchingSide extends MatchingSideConfig {
   selector: "app-matching-entities",
   templateUrl: "./matching-entities.component.html",
   styleUrls: ["./matching-entities.component.scss"],
+  imports: [
+    MatTableModule,
+    FontAwesomeModule,
+    MatTooltipModule,
+    NgIf,
+    MatButtonModule,
+    NgForOf,
+    EntitySubrecordComponent,
+    EntityPropertyViewComponent,
+    MapComponent,
+    FilterComponent,
+  ],
+  standalone: true,
 })
 export class MatchingEntitiesComponent
   implements OnInit, OnInitDynamicComponent

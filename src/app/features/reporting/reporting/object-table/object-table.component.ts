@@ -6,13 +6,20 @@ import {
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import { MatTableDataSource } from "@angular/material/table";
-import { MatSort } from "@angular/material/sort";
+import { MatTableDataSource, MatTableModule } from "@angular/material/table";
+import { MatSort, MatSortModule } from "@angular/material/sort";
+import { NgForOf } from "@angular/common";
 
 @Component({
   selector: "app-object-table",
   templateUrl: "./object-table.component.html",
   styleUrls: ["./object-table.component.scss"],
+  imports: [
+    MatTableModule,
+    NgForOf,
+    MatSortModule
+  ],
+  standalone: true
 })
 export class ObjectTableComponent implements OnChanges, AfterViewInit {
   @Input() objects: any[];

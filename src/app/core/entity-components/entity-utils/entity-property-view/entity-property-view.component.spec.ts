@@ -1,12 +1,9 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { EntityPropertyViewComponent } from "./entity-property-view.component";
-import { EntityUtilsModule } from "../entity-utils.module";
-import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
-import {
-  ConfigService,
-  createTestingConfigService,
-} from "../../../config/config.service";
+import { ConfigService } from "../../../config/config.service";
 import { Child } from "../../../../child-dev-project/children/model/child";
+import { createTestingConfigService } from "../../../config/testing-config-service";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 
 describe("EntityPropertyViewComponent", () => {
   let component: EntityPropertyViewComponent;
@@ -19,9 +16,8 @@ describe("EntityPropertyViewComponent", () => {
     testEntity = Child.create("tester");
 
     await TestBed.configureTestingModule({
-      imports: [EntityUtilsModule],
+      imports: [EntityPropertyViewComponent, MockedTestingModule],
       providers: [
-        EntitySchemaService,
         { provide: ConfigService, useValue: createTestingConfigService() },
       ],
     }).compileComponents();

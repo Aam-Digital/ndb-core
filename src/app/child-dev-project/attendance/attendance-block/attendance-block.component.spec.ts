@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceBlockComponent } from "./attendance-block.component";
 import { ActivityAttendance } from "../model/activity-attendance";
-import { AttendanceModule } from "../attendance.module";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("AttendanceBlockComponent", () => {
@@ -12,7 +11,7 @@ describe("AttendanceBlockComponent", () => {
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        imports: [AttendanceModule, MockedTestingModule.withState()],
+        imports: [AttendanceBlockComponent, MockedTestingModule.withState()],
       }).compileComponents();
     })
   );

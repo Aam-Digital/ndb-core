@@ -20,15 +20,19 @@ import { ActivatedRoute } from "@angular/router";
 import { DynamicComponentConfig } from "../../view/dynamic-components/dynamic-component-config.interface";
 import { RouteData } from "../../view/dynamic-routing/view-config.interface";
 import { RouteTarget } from "../../../app.routing";
+import { NgFor } from "@angular/common";
+import { DynamicComponentDirective } from "../../view/dynamic-components/dynamic-component.directive";
 
 @RouteTarget("Dashboard")
 @Component({
   selector: "app-dashboard",
-  template: `<ng-template
+  template: ` <ng-template
     *ngFor="let widgetConfig of widgets"
     [appDynamicComponent]="widgetConfig"
   ></ng-template>`,
   styleUrls: ["./dashboard.component.scss"],
+  imports: [NgFor, DynamicComponentDirective],
+  standalone: true,
 })
 export class DashboardComponent implements OnInit {
   widgets: DynamicComponentConfig[] = [];

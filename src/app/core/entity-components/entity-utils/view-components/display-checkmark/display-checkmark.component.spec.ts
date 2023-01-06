@@ -6,13 +6,11 @@ describe("DisplayCheckmarkComponent", () => {
   let component: DisplayCheckmarkComponent;
   let fixture: ComponentFixture<DisplayCheckmarkComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        declarations: [DisplayCheckmarkComponent],
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [DisplayCheckmarkComponent],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(DisplayCheckmarkComponent);

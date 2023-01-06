@@ -8,15 +8,13 @@ import {
   ConfigurableEnumValue,
 } from "../configurable-enum/configurable-enum.interface";
 import { filter } from "rxjs/operators";
-import { mockEntityMapper } from "../entity/mock-entity-mapper-service";
-import { defaultJsonConfig } from "./config-fix";
 import { LoggingService } from "../logging/logging.service";
 
 /**
  * Access dynamic app configuration retrieved from the database
  * that defines how the interface and data models should look.
  */
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class ConfigService {
   /**
    * Subscribe to receive the current config and get notified whenever the config is updated.
@@ -110,15 +108,4 @@ export class ConfigService {
 
     return config;
   }
-}
-
-export function createTestingConfigService(
-  configsObject: any = defaultJsonConfig
-): ConfigService {
-  const configService = new ConfigService(
-    mockEntityMapper(),
-    new LoggingService()
-  );
-  configService["currentConfig"] = new Config(Config.CONFIG_KEY, configsObject);
-  return configService;
 }

@@ -19,6 +19,14 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
 import { SessionService } from "../session-service/session.service";
 import { LoginState } from "../session-states/login-state.enum";
 import { LoggingService } from "../../logging/logging.service";
+import { MatCardModule } from "@angular/material/card";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { FormsModule } from "@angular/forms";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatButtonModule } from "@angular/material/button";
+import { PasswordResetComponent } from "../auth/keycloak/password-reset/password-reset.component";
 
 /**
  * Form to allow users to enter their credentials and log in.
@@ -27,6 +35,17 @@ import { LoggingService } from "../../logging/logging.service";
   selector: "app-login",
   templateUrl: "./login.component.html",
   styleUrls: ["./login.component.scss"],
+  imports: [
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    FontAwesomeModule,
+    MatTooltipModule,
+    MatButtonModule,
+    PasswordResetComponent
+  ],
+  standalone: true
 })
 export class LoginComponent implements AfterViewInit {
   /** true while a login is started but result is not received yet */

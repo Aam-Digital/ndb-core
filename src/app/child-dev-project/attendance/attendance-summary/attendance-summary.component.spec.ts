@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { AttendanceSummaryComponent } from "./attendance-summary.component";
-import { AttendanceModule } from "../attendance.module";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("AttendanceSummaryComponent", () => {
@@ -10,7 +9,7 @@ describe("AttendanceSummaryComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AttendanceModule, MockedTestingModule.withState()],
+      imports: [AttendanceSummaryComponent, MockedTestingModule.withState()],
     }).compileComponents();
   });
 

@@ -4,7 +4,6 @@ import { DatePipe } from "@angular/common";
 import { ConfigService } from "../../../core/config/config.service";
 import { HistoricalEntityData } from "../model/historical-entity-data";
 import { HistoricalDataComponent } from "./historical-data.component";
-import { HistoricalDataModule } from "../historical-data.module";
 import { HistoricalDataService } from "../historical-data.service";
 import { ratingAnswers } from "../model/rating-answers";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
@@ -16,7 +15,7 @@ export default {
   decorators: [
     moduleMetadata({
       imports: [
-        HistoricalDataModule,
+        HistoricalDataComponent,
         StorybookBaseModule,
         MockedTestingModule.withState(),
       ],

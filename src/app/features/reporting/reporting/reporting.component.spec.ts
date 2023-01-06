@@ -6,8 +6,6 @@ import {
 } from "@angular/core/testing";
 
 import { ReportingComponent } from "./reporting.component";
-import { CommonModule } from "@angular/common";
-import { ReportingModule } from "../reporting.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Subject } from "rxjs";
 import { ActivatedRoute } from "@angular/router";
@@ -48,10 +46,8 @@ describe("ReportingComponent", () => {
     mockExportService = jasmine.createSpyObj(["runExportQuery"]);
     mockReportingService.calculateReport.and.resolveTo([]);
     await TestBed.configureTestingModule({
-      declarations: [ReportingComponent],
       imports: [
-        CommonModule,
-        ReportingModule,
+        ReportingComponent,
         NoopAnimationsModule,
         FontAwesomeTestingModule,
         MatNativeDateModule,

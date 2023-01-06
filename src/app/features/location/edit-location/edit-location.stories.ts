@@ -1,18 +1,16 @@
 import { moduleMetadata } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { Meta, Story } from "@storybook/angular/types-6-0";
-import { LocationModule } from "../location.module";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { EntityFormComponent } from "../../../core/entity-components/entity-form/entity-form/entity-form.component";
-import { EntityFormModule } from "../../../core/entity-components/entity-form/entity-form.module";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
-import { AlertsModule } from "../../../core/alerts/alerts.module";
 import { HttpClientModule } from "@angular/common/http";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
+import { EditLocationComponent } from "./edit-location.component";
 
 export default {
   title: "Features/Location/EditLocation",
@@ -20,10 +18,9 @@ export default {
   decorators: [
     moduleMetadata({
       imports: [
-        LocationModule,
+        EntityFormComponent,
+        EditLocationComponent,
         StorybookBaseModule,
-        EntityFormModule,
-        AlertsModule,
         HttpClientModule,
       ],
       providers: [

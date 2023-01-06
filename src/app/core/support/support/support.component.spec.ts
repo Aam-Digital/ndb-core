@@ -6,7 +6,6 @@ import {
 } from "@angular/core/testing";
 
 import { SupportComponent } from "./support.component";
-import { SupportModule } from "../support.module";
 import { SessionService } from "../../session/session-service/session.service";
 import { BehaviorSubject, of } from "rxjs";
 import { SyncState } from "../../session/session-states/sync-state.enum";
@@ -16,10 +15,11 @@ import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { TEST_USER } from "../../../utils/mocked-testing.module";
 import { RemoteSession } from "../../session/session-service/remote-session";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { HttpClient } from "@angular/common/http";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { SyncedSessionService } from "../../session/session-service/synced-session.service";
+import { MatDialogModule } from "@angular/material/dialog";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
 describe("SupportComponent", () => {
   let component: SupportComponent;
@@ -45,7 +45,12 @@ describe("SupportComponent", () => {
     mockDB = jasmine.createSpyObj(["destroy"]);
     mockLocation = jasmine.createSpyObj(["reload"]);
     await TestBed.configureTestingModule({
-      imports: [SupportModule, HttpClientTestingModule, NoopAnimationsModule],
+      imports: [
+        SupportComponent,
+        MatDialogModule,
+        HttpClientTestingModule,
+        NoopAnimationsModule,
+      ],
       providers: [
         { provide: SessionService, useValue: mockSessionService },
         { provide: SwUpdate, useValue: mockSW },

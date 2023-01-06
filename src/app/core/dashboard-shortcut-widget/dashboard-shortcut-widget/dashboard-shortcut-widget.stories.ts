@@ -1,7 +1,6 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { RouterTestingModule } from "@angular/router/testing";
-import { DashboardShortcutWidgetModule } from "../dashboard-shortcut-widget.module";
 import { DashboardShortcutWidgetComponent } from "./dashboard-shortcut-widget.component";
 import { MenuItem } from "../../navigation/menu-item";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
@@ -12,9 +11,9 @@ export default {
   decorators: [
     moduleMetadata({
       imports: [
-        DashboardShortcutWidgetModule,
         RouterTestingModule,
         StorybookBaseModule,
+        DashboardShortcutWidgetComponent,
       ],
     }),
   ],
