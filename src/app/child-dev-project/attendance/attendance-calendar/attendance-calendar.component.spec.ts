@@ -105,4 +105,17 @@ describe("AttendanceCalendarComponent", () => {
     expect(component.selectedEventStats.average).toEqual(0.5);
     expect(component.selectedEventStats.excludedUnknown).toBe(1);
   });
+
+  it("should add focused participant on the fly if not part of event already", () => {
+    const testDate = new Date();
+    const excludedChild = new Child("excluded_child");
+    const note = new Note();
+    note.date = testDate;
+    component.records = [note];
+    component.highlightForChild = excludedChild.getId();
+
+    component.selectDay(testDate);
+
+    expect(component.selectedEvent.children).toContain(excludedChild.getId());
+  });
 });

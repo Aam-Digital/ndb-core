@@ -46,14 +46,10 @@ export class SearchComponent {
     private entities: EntityRegistry
   ) {
     this.results = this.formControl.valueChanges.pipe(
-      tap(x => console.log("starting", new Date().toISOString())),
       debounceTime(SearchComponent.INPUT_DEBOUNCE_TIME_MS),
-      tap(x => console.log("debounced", new Date().toISOString())),
       skipUntil(this.createSearchIndex()),
-      tap(x => console.log("index ready", new Date().toISOString())),
       tap((next) => (this.state = this.updateState(next))),
-      concatMap((next: string) => this.searchResults(next)),
-    tap(x => console.log("done", new Date().toISOString())),
+      concatMap((next: string) => this.searchResults(next))
     );
   }
 

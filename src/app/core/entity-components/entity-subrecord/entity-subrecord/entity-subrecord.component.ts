@@ -8,7 +8,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import {MatSort, Sort, SortDirection} from "@angular/material/sort";
+import { MatSort, Sort, SortDirection } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
@@ -27,8 +27,8 @@ import {
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { tableSort } from "./table-sort";
 import {
-  ScreenWidthObserver,
   ScreenSize,
+  ScreenWidthObserver,
 } from "../../../../utils/media/screen-size-observer.service";
 import { Subscription } from "rxjs";
 import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
@@ -111,7 +111,7 @@ export class EntitySubrecordComponent<T extends Entity>
   @Input() columnsToDisplay: string[] = [];
 
   /** how to sort data by default during initialization */
-  @Input() sortByDefault: Sort;
+  @Input() defaultSort: Sort;
 
   /** data displayed in the template's table */
   recordsDataSource = new MatTableDataSource<TableRow<T>>();
@@ -274,14 +274,18 @@ export class EntitySubrecordComponent<T extends Entity>
       return;
     }
 
-    if (!this.sortByDefault) {
-      this.sortByDefault = this.inferSortByDefault();
+    if (!this.defaultSort) {
+      this.defaultSort = this.inferDefaultSort();
     }
 
-    this.sort.sort({ id: this.sortByDefault.active, start: this.sortByDefault.direction, disableClear: false });
+    this.sort.sort({
+      id: this.defaultSort.active,
+      start: this.defaultSort.direction,
+      disableClear: false,
+    });
   }
 
-  private inferSortByDefault(): Sort {
+  private inferDefaultSort(): Sort {
     // initial sorting by first column, ensure that not the 'action' column is used
     const sortBy =
       this.columnsToDisplay[0] === "actions"

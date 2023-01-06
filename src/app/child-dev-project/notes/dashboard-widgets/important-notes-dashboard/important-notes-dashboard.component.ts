@@ -4,8 +4,6 @@ import { DynamicComponent } from "../../../../core/view/dynamic-components/dynam
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
 import { NoteDetailsComponent } from "../../note-details/note-details.component";
-import { OperatorFunction } from "rxjs";
-import { map } from "rxjs/operators";
 import { UntilDestroy } from "@ngneat/until-destroy";
 
 @DynamicComponent("ImportantNotesDashboard")

@@ -2,7 +2,7 @@ import { Entity } from "../../entity/model/entity";
 import { FilterSelectionOption } from "../../filter/filter-selection/filter-selection";
 import { FormFieldConfig } from "../entity-form/entity-form/FormConfig";
 import { ExportColumnConfig } from "../../export/export-service/export-column-config";
-import {Sort} from "@angular/material/sort";
+import { Sort } from "@angular/material/sort";
 
 export interface EntityListConfig {
   /**
@@ -42,7 +42,7 @@ export interface EntityListConfig {
    * Optional initial sort order.
    * Default is to sort by the first column.
    */
-  sortByDefault?: Sort;
+  defaultSort?: Sort;
 
   /**
    * Optional config defining what fields are included in exports.

@@ -12,9 +12,8 @@ import { Component } from "@angular/core";
 import { MatTableModule } from "@angular/material/table";
 import { By } from "@angular/platform-browser";
 import { Note } from "../../../child-dev-project/notes/model/note";
-import { BehaviorSubject } from "rxjs";
+import { Subject } from "rxjs";
 import { UpdatedEntity } from "../../entity/model/entity-update";
-import { map } from "rxjs/operators";
 
 @Component({
   template: `<app-dashboard-list-widget
@@ -41,11 +40,11 @@ describe("DashboardListWidgetComponent", () => {
   let component: DashboardListWidgetComponent<any>;
 
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
-  let mockEntityUpdates: BehaviorSubject<UpdatedEntity<any>>;
+  let mockEntityUpdates: Subject<UpdatedEntity<any>>;
 
   beforeEach(async () => {
     mockEntityMapper = jasmine.createSpyObj(["loadType", "receiveUpdates"]);
-    mockEntityUpdates = new BehaviorSubject<UpdatedEntity<Note>>(undefined);
+    mockEntityUpdates = new Subject<UpdatedEntity<Note>>();
     mockEntityMapper.receiveUpdates.and.returnValue(
       mockEntityUpdates.asObservable()
     );
