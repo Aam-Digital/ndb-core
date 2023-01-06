@@ -8,7 +8,12 @@ import {
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import { MatSort, MatSortable, MatSortModule, Sort, SortDirection } from "@angular/material/sort";
+import {
+  MatSort,
+  MatSortModule,
+  Sort,
+  SortDirection,
+} from "@angular/material/sort";
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
