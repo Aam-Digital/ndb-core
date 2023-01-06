@@ -91,7 +91,7 @@ export class TodoListComponent implements OnInit {
     filter.options = [
       {
         key: "current",
-        label: $localize`:Filter-option for todos:Current`,
+        label: $localize`:Filter-option for todos:Currently Active`,
         filter: {
           $and: [
             { completed: undefined },

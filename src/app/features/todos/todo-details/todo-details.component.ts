@@ -11,7 +11,6 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { DetailsComponentData } from "../../../core/entity-components/entity-subrecord/row-details/row-details.component";
 import { TodoService } from "../todo.service";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
-import { YesNoCancelButtons } from "../../../core/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import {
   EntityForm,
@@ -74,6 +73,9 @@ export class TodoDetailsComponent implements OnInit {
 
   async completeTodo() {
     if (this.form.dirty) {
+      // we assume the user always wants to save pending changes rather than discard them
+      await this.entityFormService.saveChanges(this.form, this.entity);
+      /*
       const confirmationResult = await this.confirmationDialog.getConfirmation(
         $localize`Save changes?`,
         $localize`Do you want to save your changes to the ${Todo.label} before marking it as completed? Otherwise, changes will be discarded.`,
@@ -90,6 +92,7 @@ export class TodoDetailsComponent implements OnInit {
       if (confirmationResult === false) {
         this.entityFormService.resetForm(this.form, this.entity);
       }
+      */
     }
     await this.todoService.completeTodo(this.entity);
     this.dialogRef.close();

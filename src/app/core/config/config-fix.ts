@@ -1167,6 +1167,5 @@ export const defaultJsonConfig = {
         { "id": "startDate" }
       ]
     }
-  },
   }
 };
