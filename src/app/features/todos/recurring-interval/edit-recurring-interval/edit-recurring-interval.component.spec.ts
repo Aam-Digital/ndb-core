@@ -52,7 +52,7 @@ describe("EditRecurringIntervalComponent", () => {
     const customIntervalResult: TimeInterval = { amount: 88, unit: "days" };
     mockDialog.open.and.returnValue({
       afterClosed: () => of(customIntervalResult),
-    } as MatDialogRef<typeof component>);
+    } as MatDialogRef<CustomIntervalComponent>);
 
     component.openCustomIntervalSelection({
       source: undefined,
