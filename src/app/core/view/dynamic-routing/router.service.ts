@@ -8,9 +8,8 @@ import {
   ViewConfig,
 } from "./view-config.interface";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
-import { RouteRegistry } from "../../../app.routing";
 import { NotFoundComponent } from "./not-found/not-found.component";
-import { dynamicComponents } from "../../../dynamic-components";
+import { ComponentRegistry } from "../../../dynamic-components";
 
 /**
  * The RouterService dynamically sets up Angular routing from config loaded through the {@link ConfigService}.
@@ -26,7 +25,7 @@ export class RouterService {
     private configService: ConfigService,
     private router: Router,
     private loggingService: LoggingService,
-    private registry: RouteRegistry
+    private components: ComponentRegistry
   ) {}
 
   /**
@@ -79,23 +78,15 @@ export class RouterService {
 
     if (route) {
       return this.generateRouteFromConfig(view, route);
-    } else if (dynamicComponents.has(view.component)) {
+    } else {
       return this.generateRouteFromConfig(view, {
-        loadComponent: dynamicComponents.get(view.component),
+        loadComponent: this.components.get(view.component),
         path,
       });
-    } else {
-      return this.generateRouteFromConfig(view);
     }
   }
 
-  private generateRouteFromConfig(
-    view: ViewConfig,
-    route: Route = {
-      path: view._id.substring(PREFIX_VIEW_CONFIG.length),
-      component: this.registry.get(view.component),
-    }
-  ): Route {
+  private generateRouteFromConfig(view: ViewConfig, route: Route): Route {
     const routeData: RouteData = {};
 
     if (view.permittedUserRoles) {

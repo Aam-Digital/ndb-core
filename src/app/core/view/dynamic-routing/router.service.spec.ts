@@ -9,10 +9,12 @@ import { LoggingService } from "../../logging/logging.service";
 import { RouterService } from "./router.service";
 import { ViewConfig } from "./view-config.interface";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
-import { RouteRegistry, routesRegistry } from "../../../app.routing";
 import { ApplicationLoadingComponent } from "./empty/application-loading.component";
 import { NotFoundComponent } from "./not-found/not-found.component";
-import { dynamicComponents } from "../../../dynamic-components";
+import {
+  ComponentRegistry,
+  componentRegistry,
+} from "../../../dynamic-components";
 
 class TestComponent extends Component {}
 
@@ -32,7 +34,7 @@ describe("RouterService", () => {
       providers: [
         { provide: ConfigService, useValue: mockConfigService },
         { provide: LoggingService, useValue: mockLoggingService },
-        { provide: RouteRegistry, useValue: routesRegistry },
+        { provide: ComponentRegistry, useValue: componentRegistry },
       ],
     });
     service = TestBed.inject(RouterService);
@@ -70,17 +72,17 @@ describe("RouterService", () => {
     const expectedRoutes = [
       {
         path: "child",
-        loadComponent: dynamicComponents.get("ChildrenList"),
+        loadComponent: componentRegistry.get("ChildrenList"),
         data: {},
       },
       {
         path: "child/:id",
-        loadComponent: dynamicComponents.get("EntityDetails"),
+        loadComponent: componentRegistry.get("EntityDetails"),
         data: { config: testViewConfig },
       },
       {
         path: "admin",
-        loadComponent: dynamicComponents.get("Admin"),
+        loadComponent: componentRegistry.get("Admin"),
         canActivate: [UserRoleGuard],
         data: { permittedUserRoles: ["user_app"] },
       },
@@ -156,7 +158,7 @@ describe("RouterService", () => {
     const expectedRoutes = [
       {
         path: "admin",
-        loadComponent: dynamicComponents.get("Admin"),
+        loadComponent: componentRegistry.get("Admin"),
         canActivate: [UserRoleGuard],
         data: { permittedUserRoles: ["admin"] },
       },

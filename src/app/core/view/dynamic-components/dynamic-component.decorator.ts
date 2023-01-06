@@ -1,11 +1,5 @@
 import { OnInitDynamicComponent } from "./on-init-dynamic-component.interface";
-import { Registry } from "../../registry/dynamic-registry";
 import { ComponentType } from "@angular/cdk/overlay";
-
-export class ViewRegistry extends Registry<
-  ComponentType<OnInitDynamicComponent>
-> {}
-export const viewRegistry = new ViewRegistry();
 
 /**
  * Decorator to annotate a class that serves as dynamic component
@@ -26,7 +20,7 @@ export const viewRegistry = new ViewRegistry();
  * // In the module
  * @NgModule({declaration: [DoSomethingComponent]})
  * export class DoSomethingModule {
- *   static dynamicComponents = [DoSomethingComponent];
+ *   static componentRegistry = [DoSomethingComponent];
  * }
  *
  * // Later in some config:
@@ -35,10 +29,8 @@ export const viewRegistry = new ViewRegistry();
  *   view: "DoSomething"
  * }
  * ```
- * @param name with which the component can be accessed
+ * @param _name with which the component can be accessed
  */
-export function DynamicComponent(name: string) {
-  return (ctor: ComponentType<OnInitDynamicComponent>) => {
-    viewRegistry.add(name, ctor);
-  };
-}
+export const DynamicComponent =
+  (_name: string) => (_: ComponentType<OnInitDynamicComponent>) =>
+    undefined;

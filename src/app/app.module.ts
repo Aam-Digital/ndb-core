@@ -21,7 +21,7 @@ import { ErrorHandler, LOCALE_ID, NgModule } from "@angular/core";
 import { HttpClientModule } from "@angular/common/http";
 
 import { AppComponent } from "./app.component";
-import { RouteRegistry, routesRegistry, routing } from "./app.routing";
+import { routing } from "./app.routing";
 import { SessionModule } from "./core/session/session.module";
 import { LatestChangesModule } from "./core/latest-changes/latest-changes.module";
 
@@ -61,6 +61,7 @@ import { PwaInstallModule } from "./core/pwa-install/pwa-install.module";
 import { UiComponent } from "./core/ui/ui/ui.component";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatDialogModule } from "@angular/material/dialog";
+import { componentRegistry, ComponentRegistry } from "./dynamic-components";
 
 /**
  * Main entry point of the application.
@@ -102,7 +103,7 @@ import { MatDialogModule } from "@angular/material/dialog";
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
     { provide: MatPaginatorIntl, useValue: TranslatableMatPaginator() },
-    { provide: RouteRegistry, useValue: routesRegistry },
+    { provide: ComponentRegistry, useValue: componentRegistry },
     {
       provide: LOCALE_ID,
       useValue:

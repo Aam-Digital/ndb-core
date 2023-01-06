@@ -1,7 +1,12 @@
 import { Type } from "@angular/core";
+import { Registry } from "./core/registry/dynamic-registry";
+
+export class ComponentRegistry extends Registry<() => Promise<Type<any>>> {}
 
 // TODO make a build script that looks for annotations and creates this
-export const dynamicComponents = new Map<string, () => Promise<Type<any>>>([
+export const componentRegistry = new ComponentRegistry();
+
+const components: [string, () => Promise<Type<any>>][] = [
   [
     "Dashboard",
     () =>
@@ -485,4 +490,6 @@ export const dynamicComponents = new Map<string, () => Promise<Type<any>>>([
         "./features/progress-dashboard-widget/progress-dashboard/progress-dashboard.component"
       ).then((c) => c.ProgressDashboardComponent),
   ],
-]);
+];
+
+components.forEach(([key, value]) => componentRegistry.set(key, value));

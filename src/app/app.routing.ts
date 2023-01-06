@@ -17,16 +17,10 @@
 
 import { RouterModule, Routes } from "@angular/router";
 import { ModuleWithProviders } from "@angular/core";
-import { ComponentType } from "@angular/cdk/overlay";
-import { Registry } from "./core/registry/dynamic-registry";
 import { ApplicationLoadingComponent } from "./core/view/dynamic-routing/empty/application-loading.component";
 import { NotFoundComponent } from "./core/view/dynamic-routing/not-found/not-found.component";
 import { UserAccountComponent } from "./core/user/user-account/user-account.component";
 import { SupportComponent } from "./core/support/support/support.component";
-
-export class RouteRegistry extends Registry<ComponentType<any>> {}
-
-export const routesRegistry = new RouteRegistry();
 
 /**
  * Marks a class to be the target when routing.
@@ -34,14 +28,9 @@ export const routesRegistry = new RouteRegistry();
  * The name provided to the annotation can then be used in the configuration.
  *
  * IMPORTANT:
- *  Angular ignores all components without references in the code in a production build.
- *  Dynamic components should therefore be added to a static array in the module where they are declared.
+ *  TODO add component to registry
  */
-export function RouteTarget(name: string) {
-  return (ctor: ComponentType<any>) => {
-    routesRegistry.add(name, ctor);
-  };
-}
+export const RouteTarget = (_name: string) => (_) => undefined;
 
 /**
  * All routes configured for the main app routing.

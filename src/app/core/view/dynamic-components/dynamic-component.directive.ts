@@ -1,9 +1,6 @@
 import { Directive, Input, OnChanges, ViewContainerRef } from "@angular/core";
 import { DynamicComponentConfig } from "./dynamic-component-config.interface";
-import { OnInitDynamicComponent } from "./on-init-dynamic-component.interface";
-import { ViewRegistry } from "./dynamic-component.decorator";
-import { ComponentType } from "@angular/cdk/overlay";
-import { dynamicComponents } from "../../../dynamic-components";
+import { ComponentRegistry } from "../../../dynamic-components";
 
 /**
  * Directive to mark a template into which a component that is dynamically injected from config should be loaded
@@ -22,7 +19,7 @@ export class DynamicComponentDirective implements OnChanges {
 
   constructor(
     public viewContainerRef: ViewContainerRef,
-    private registry: ViewRegistry
+    private components: ComponentRegistry
   ) {}
 
   async ngOnChanges() {
@@ -34,21 +31,18 @@ export class DynamicComponentDirective implements OnChanges {
       return;
     }
 
-    let component: ComponentType<OnInitDynamicComponent>;
-    if (this.registry.has(this.appDynamicComponent.component)) {
-      component = this.registry.get(this.appDynamicComponent.component);
-    } else {
-      component = await dynamicComponents.get(
-        this.appDynamicComponent.component
-      )();
-    }
+    const component = await this.components.get(
+      this.appDynamicComponent.component
+    )();
 
     this.viewContainerRef.clear();
 
-    const componentRef =
-      this.viewContainerRef.createComponent<OnInitDynamicComponent>(component);
-    componentRef.instance.onInitFromDynamicConfig(
-      this.appDynamicComponent.config
-    );
+    const componentRef = this.viewContainerRef.createComponent(component);
+
+    if (componentRef.instance.onInitFromDynamicConfig) {
+      componentRef.instance.onInitFromDynamicConfig(
+        this.appDynamicComponent.config
+      );
+    }
   }
 }
