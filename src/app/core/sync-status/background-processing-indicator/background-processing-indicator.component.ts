@@ -47,7 +47,8 @@ export class BackgroundProcessingIndicatorComponent implements OnInit {
           this.taskListDropdownTrigger.closeMenu();
         } else {
           if (!this.wasClosed) {
-            this.taskListDropdownTrigger.openMenu();
+            // need to wait for change cycle that shows sync button
+            setTimeout(() => this.taskListDropdownTrigger.openMenu());
           }
         }
       });

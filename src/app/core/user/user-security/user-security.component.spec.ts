@@ -181,6 +181,18 @@ describe("UserSecurityComponent", () => {
     flush();
   }));
 
+  it("Automatically trims whitespaces on the email input", fakeAsync(() => {
+    initComponent();
+
+    component.form.get("email").setValue("some_copied_email@mail.com  ");
+    tick();
+
+    expect(component.form.errors).toBeNull();
+    expect(component.form.get("email")).toHaveValue(
+      "some_copied_email@mail.com"
+    );
+  }));
+
   function initComponent(keycloakResult = of(keycloakUser)) {
     mockHttp.get.and.returnValue(keycloakResult);
     component.onInitFromDynamicConfig({ entity: user });

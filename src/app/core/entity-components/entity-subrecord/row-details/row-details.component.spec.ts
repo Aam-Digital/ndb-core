@@ -19,9 +19,9 @@ import { AlertService } from "../../../alerts/alert.service";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 
 describe("RowDetailsComponent", () => {
-  let component: RowDetailsComponent<any>;
-  let fixture: ComponentFixture<RowDetailsComponent<any>>;
-  const detailsComponentData: DetailsComponentData<any> = {
+  let component: RowDetailsComponent;
+  let fixture: ComponentFixture<RowDetailsComponent>;
+  const detailsComponentData: DetailsComponentData = {
     entity: new Entity(),
     columns: [],
   };

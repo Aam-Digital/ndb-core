@@ -91,7 +91,5 @@ export const allRoutes: Routes = [
 /**
  * Main app RouterModule with centrally configured allRoutes.
  */
-export const routing: ModuleWithProviders<RouterModule> = RouterModule.forRoot(
-  allRoutes,
-  { relativeLinkResolution: "legacy" }
-);
+export const routing: ModuleWithProviders<RouterModule> =
+  RouterModule.forRoot(allRoutes);

@@ -17,9 +17,9 @@ import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.erro
 /**
  * Data interface that must be given when opening the dialog
  */
-export interface DetailsComponentData<E extends Entity> {
+export interface DetailsComponentData {
   /** The row to edit / view */
-  entity: E;
+  entity: Entity;
   /** The columns to edit / view */
   columns: FormFieldConfig[];
   /** Additional columns that only provide context information */
@@ -32,23 +32,24 @@ export interface DetailsComponentData<E extends Entity> {
 @Component({
   selector: "app-row-details",
   templateUrl: "./row-details.component.html",
-  styleUrls: ["./row-details.component.scss"],
 })
-export class RowDetailsComponent<E extends Entity> {
-  form: EntityForm<E>;
+export class RowDetailsComponent {
+  form: EntityForm<Entity>;
+  columns: FormFieldConfig[][];
 
   viewOnlyColumns: FormFieldConfig[];
   tempEntity: Entity;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: DetailsComponentData<E>,
-    private dialogRef: MatDialogRef<RowDetailsComponent<E>>,
+    @Inject(MAT_DIALOG_DATA) public data: DetailsComponentData,
+    private dialogRef: MatDialogRef<RowDetailsComponent, Entity>,
     private formService: EntityFormService,
     private ability: EntityAbility,
     private entityRemoveService: EntityRemoveService,
     private alertService: AlertService
   ) {
     this.form = this.formService.createFormGroup(data.columns, data.entity);
+    this.columns = data.columns.map((col) => [col]);
     if (!this.data.entity.isNew && this.ability.cannot("update", data.entity)) {
       this.form.disable();
     }

@@ -27,7 +27,8 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { DataFilter } from "../entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { FilterComponent } from "../../filter/filter/filter.component";
+import { FilterOverlayComponent } from "../../filter/filter-overlay/filter-overlay.component";
+import { MatDialog } from "@angular/material/dialog";
 
 /**
  * This component allows to create a full blown table with pagination, filtering, searching and grouping.
@@ -57,7 +58,6 @@ export class EntityListComponent<T extends Entity>
   @Output() addNewClick = new EventEmitter();
 
   @ViewChild(EntitySubrecordComponent) entityTable: EntitySubrecordComponent<T>;
-  @ViewChild(FilterComponent) filterComponent: FilterComponent<T>;
 
   isDesktop: boolean;
 
@@ -103,14 +103,13 @@ export class EntityListComponent<T extends Entity>
     private activatedRoute: ActivatedRoute,
     private analyticsService: AnalyticsService,
     private entityMapperService: EntityMapperService,
-    private entities: EntityRegistry
+    private entities: EntityRegistry,
+    private dialog: MatDialog
   ) {
     if (this.activatedRoute.component === EntityListComponent) {
       // the component is used for a route and not inside a template
-      this.isLoading = true;
-      this.activatedRoute.data.subscribe(
-        (config: RouteData<EntityListConfig>) =>
-          this.buildComponentFromConfig(config)
+      this.activatedRoute.data.subscribe((data: RouteData<EntityListConfig>) =>
+        this.buildComponentFromConfig(data.config)
       );
     }
 
@@ -131,22 +130,43 @@ export class EntityListComponent<T extends Entity>
       });
   }
 
-  private async buildComponentFromConfig(data: RouteData<EntityListConfig>) {
-    this.listConfig = data.config;
-    this.entityConstructor = this.entities.get(
-      this.listConfig.entity
-    ) as EntityConstructor<T>;
+  private async buildComponentFromConfig(newConfig: EntityListConfig) {
+    this.listConfig = newConfig;
+
+    if (this.listConfig?.entity) {
+      this.entityConstructor = this.entities.get(
+        this.listConfig.entity
+      ) as EntityConstructor<T>;
+    }
+
+    if (!this.allEntities || this.allEntities.length === 0) {
+      await this.loadEntities();
+    }
+
+    this.listName =
+      this.listConfig.title ??
+      this.listName ??
+      this.entityConstructor?.labelPlural;
+
+    this.addColumnsFromColumnGroups();
+    this.initColumnGroups(this.listConfig.columnGroups);
+    this.filtersConfig = this.listConfig.filters ?? this.filtersConfig ?? [];
+
+    this.displayColumnGroupByName(
+      this.screenWidthObserver.isDesktop()
+        ? this.defaultColumnGroup
+        : this.mobileColumnGroup
+    );
+  }
+
+  private async loadEntities() {
+    this.isLoading = true;
+
     this.allEntities = await this.entityMapperService.loadType(
       this.entityConstructor
     );
+
     this.isLoading = false;
-    this.addNewClick.subscribe(() =>
-      this.router.navigate(["new"], { relativeTo: this.activatedRoute })
-    );
-    await this.ngOnChanges({
-      listConfig: undefined,
-      allEntities: undefined,
-    });
   }
 
   ngAfterViewInit() {
@@ -156,15 +176,7 @@ export class EntityListComponent<T extends Entity>
 
   async ngOnChanges(changes: SimpleChanges): Promise<void> {
     if (changes.hasOwnProperty("listConfig")) {
-      this.listName =
-        this.listConfig.title || this.entityConstructor?.labelPlural;
-      this.addColumnsFromColumnGroups();
-      this.initColumnGroups(this.listConfig.columnGroups);
-      this.filtersConfig = this.listConfig.filters || [];
-      this.displayColumnGroupByName(this.defaultColumnGroup);
-      if (!this.screenWidthObserver.isDesktop()) {
-        this.displayColumnGroupByName(this.mobileColumnGroup);
-      }
+      await this.buildComponentFromConfig(this.listConfig);
     }
   }
 
@@ -223,5 +235,27 @@ export class EntityListComponent<T extends Entity>
 
   private getSelectedColumnIndexByName(columnGroupName: string) {
     return this.columnGroups.findIndex((c) => c.name === columnGroupName);
+  }
+
+  /**
+   * Calling this function will display the filters in a popup
+   */
+  openFilterOverlay() {
+    this.dialog.open(FilterOverlayComponent, {
+      data: {
+        filterConfig: this.filtersConfig,
+        entityType: this.entityConstructor,
+        entities: this.allEntities,
+        useUrlQueryParams: true,
+        filterObjChange: (filter: DataFilter<T>) => (this.filterObj = filter),
+      },
+    });
+  }
+
+  addNew() {
+    if (this.clickMode === "navigate") {
+      this.router.navigate(["new"], { relativeTo: this.activatedRoute });
+    }
+    this.addNewClick.emit();
   }
 }

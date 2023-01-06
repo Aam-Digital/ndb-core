@@ -7,7 +7,12 @@ import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { PublicFormConfig } from "../public-form-config";
 import { Entity } from "../../../core/entity/model/entity";
-import { ColumnConfig } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { toFormFieldConfig } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
+import {
+  EntityForm,
+  EntityFormService,
+} from "../../../core/entity-components/entity-form/entity-form.service";
 
 @Component({
   selector: "app-public-form",
@@ -16,13 +21,15 @@ import { ColumnConfig } from "../../../core/entity-components/entity-subrecord/e
 })
 export class PublicFormComponent {
   entity: Entity;
-  columns: ColumnConfig[][];
+  columns: FormFieldConfig[][];
+  form: EntityForm<Entity>;
 
   constructor(
     private database: PouchDatabase,
     private route: ActivatedRoute,
     private entities: EntityRegistry,
-    private entityMapper: EntityMapperService
+    private entityMapper: EntityMapperService,
+    private entityFormService: EntityFormService
   ) {
     // TODO the component should probably not handle this and it is very similar to the RemoteSession
     this.database.initIndexedDB(
@@ -53,7 +60,11 @@ export class PublicFormComponent {
       // TODO parse ConfigurableEnums, dates etc. (entity format)
       this.entity[prop] = value;
     });
-    this.columns = config.columns;
+    this.columns = config.columns.map((row) => row.map(toFormFieldConfig));
+    this.form = this.entityFormService.createFormGroup(
+      [].concat(...this.columns),
+      this.entity
+    );
   }
 
   private getDefaultConfig() {

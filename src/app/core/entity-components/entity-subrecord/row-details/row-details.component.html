@@ -1,32 +1,11 @@
 <app-dialog-close mat-dialog-close></app-dialog-close>
-<div mat-dialog-content>
-  <div class="main-content">
-    <div
-      *ngFor="let row of data.columns"
-      class="flex-row align-baseline gap-small full-width"
-    >
-      <div class="flex-grow">
-        <div
-          [appDynamicComponent]="{
-            component: row.edit,
-            config: {
-              formFieldConfig: row,
-              propertySchema: data.entity.getSchema().get(row.id),
-              formControl: form.get(row.id)
-            }
-          }"
-        ></div>
-      </div>
-      <fa-icon
-        (click)="tooltipElement.show()"
-        #tooltipElement="matTooltip"
-        *ngIf="row.tooltip"
-        matSuffix
-        icon="question-circle"
-        [matTooltip]="row.tooltip"
-      ></fa-icon>
-    </div>
-  </div>
+<mat-dialog-content>
+  <app-entity-form
+    [columns]="columns"
+    [entity]="data.entity"
+    [form]="form"
+  >
+  </app-entity-form>
 
   <div *ngFor="let col of viewOnlyColumns">
     <app-pill
@@ -48,8 +27,8 @@
     </app-pill>
     <!-- avoid scroll bar + move delete into [...] menu -->
   </div>
-</div>
-<div mat-dialog-actions>
+</mat-dialog-content>
+<mat-dialog-actions>
   <button
     mat-raised-button
     (click)="save()"
@@ -64,7 +43,7 @@
     mat-icon-button
     [matMenuTriggerFor]="additional"
   >
-    <fa-icon icon="ellipsis-v" class="standard-icon"></fa-icon>
+    <fa-icon icon="ellipsis-v"></fa-icon>
   </button>
   <mat-menu
     #additional
@@ -88,4 +67,4 @@
       <span i18n="Generic delete button"> Delete </span>
     </button>
   </mat-menu>
-</div>
+</mat-dialog-actions>

@@ -1,4 +1,4 @@
-import { TestBed } from "@angular/core/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceService } from "./attendance.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
@@ -38,7 +38,7 @@ describe("AttendanceService", () => {
   let activity1, activity2: RecurringActivity;
   let e1_1, e1_2, e1_3, e2_1: EventNote;
 
-  beforeEach(async () => {
+  beforeEach(waitForAsync(() => {
     activity1 = RecurringActivity.create("activity 1");
     activity2 = RecurringActivity.create("activity 2");
 
@@ -55,18 +55,16 @@ describe("AttendanceService", () => {
 
     entityMapper = TestBed.inject<EntityMapperService>(EntityMapperService);
 
-    await entityMapper.save(activity1);
-    await entityMapper.save(activity2);
+    entityMapper.save(activity1);
+    entityMapper.save(activity2);
 
-    await entityMapper.save(e1_1);
-    await entityMapper.save(e1_2);
-    await entityMapper.save(e1_3);
-    await entityMapper.save(e2_1);
-  });
+    entityMapper.save(e1_1);
+    entityMapper.save(e1_2);
+    entityMapper.save(e1_3);
+    entityMapper.save(e2_1);
+  }));
 
-  afterEach(async () => {
-    await TestBed.inject(Database).destroy();
-  });
+  afterEach(() => TestBed.inject(Database).destroy());
 
   it("should be created", () => {
     expect(service).toBeTruthy();
@@ -112,15 +110,7 @@ describe("AttendanceService", () => {
 
   it("gets events and loads additional participants from linked schools", async () => {
     const linkedSchoolId = "test_school";
-    const childSchool1 = new ChildSchoolRelation();
-    childSchool1.childId = "2";
-    childSchool1.schoolId = linkedSchoolId;
-    childSchool1.start = new Date();
-    const childSchool2 = new ChildSchoolRelation();
-    childSchool2.childId = "3";
-    childSchool2.schoolId = linkedSchoolId;
-    childSchool2.start = new Date();
-    await entityMapper.saveAll([childSchool1, childSchool2]);
+    await createChildrenInSchool(linkedSchoolId, ["2", "3"]);
 
     const testNoteWithSchool = Note.create(new Date("2021-01-01"));
     testNoteWithSchool.children = ["1", "2"];
@@ -132,6 +122,23 @@ describe("AttendanceService", () => {
     expect(actualEvents).toHaveSize(1);
     expect(actualEvents[0].children).toEqual(
       jasmine.arrayWithExactContents(["1", "2", "3"])
+    );
+  });
+
+  it("gets active participants and removes those explicitly excluded", async () => {
+    const linkedSchoolId = "test_school";
+    await createChildrenInSchool(linkedSchoolId, ["excluded", "member"]);
+
+    const activity = new RecurringActivity();
+    activity.linkedGroups = [linkedSchoolId];
+    activity.excludedParticipants = ["excluded"];
+    activity.participants = ["direct", "excluded"];
+
+    const actualParticipants = await service.getActiveParticipantsOfActivity(
+      activity
+    );
+    expect(actualParticipants).toEqual(
+      jasmine.arrayWithExactContents(["member", "direct"])
     );
   });
 
@@ -335,4 +342,17 @@ describe("AttendanceService", () => {
     expect(events).toHaveSize(1);
     expect(events[0].subject).toBe(sameDayEvent.subject);
   });
+
+  async function createChildrenInSchool(
+    schoolId: string,
+    childrenIds: string[]
+  ) {
+    for (const childId of childrenIds) {
+      const childSchool = new ChildSchoolRelation();
+      childSchool.childId = childId;
+      childSchool.schoolId = schoolId;
+      childSchool.start = new Date();
+      await entityMapper.save(childSchool);
+    }
+  }
 });
