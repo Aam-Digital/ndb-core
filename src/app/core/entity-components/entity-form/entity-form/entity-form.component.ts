@@ -17,6 +17,7 @@ import { DynamicComponentDirective } from "../../../view/dynamic-components/dyna
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { Subscription } from "rxjs";
 
 /**
  * A general purpose form component for displaying and editing entities.
@@ -65,7 +66,8 @@ export class EntityFormComponent<T extends Entity = Entity>
    */
   @Input() gridLayout = true;
 
-  initialFormValues: any;
+  private initialFormValues: any;
+  private changesSubscription: Subscription;
 
   constructor(
     private entityMapper: EntityMapperService,
@@ -74,7 +76,8 @@ export class EntityFormComponent<T extends Entity = Entity>
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.entity && this.entity) {
-      this.entityMapper
+      this.changesSubscription?.unsubscribe();
+      this.changesSubscription = this.entityMapper
         .receiveUpdates(this.entity.getConstructor())
         .pipe(
           filter(({ entity }) => entity.getId() === this.entity.getId()),
@@ -88,9 +91,7 @@ export class EntityFormComponent<T extends Entity = Entity>
   }
 
   private async applyChanges(entity: T) {
-    console.log("apply", entity);
     if (this.formIsUpToDate(entity)) {
-      // this is the component that currently saves the values -> no need to apply changes.
       Object.assign(this.entity, entity as any);
       return;
     }
@@ -125,7 +126,6 @@ export class EntityFormComponent<T extends Entity = Entity>
         // keep our pending form field changes
         delete updatedEntity[key];
       } else {
-        console.log(key, updatedEntity[key], this.initialFormValues[key]);
         // dirty form field has conflicting change
         return false;
       }

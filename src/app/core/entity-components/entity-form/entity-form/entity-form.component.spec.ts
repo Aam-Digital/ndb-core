@@ -7,7 +7,7 @@ import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { EntityFormService } from "../entity-form.service";
 
-fdescribe("EntityFormComponent", () => {
+describe("EntityFormComponent", () => {
   let component: EntityFormComponent<Child>;
   let fixture: ComponentFixture<EntityFormComponent<Child>>;
 
@@ -83,7 +83,7 @@ fdescribe("EntityFormComponent", () => {
     );
   });
 
-  fit("should overwrite without popup for changes affecting untouched fields", async () => {
+  it("should overwrite without popup for changes affecting untouched fields", async () => {
     const originalEntity = { projectNumber: "p1" };
     const formValues = { projectNumber: "p2" };
     const remoteValues = {
@@ -119,10 +119,7 @@ fdescribe("EntityFormComponent", () => {
       component.form.get(c).markAsDirty();
     }
     const updatedChild = new Child(component.entity.getId());
-    for (const c in remoteChanges) {
-      console.log("c", c, remoteChanges[c]);
-      updatedChild[c] = remoteChanges[c];
-    }
+    Object.assign(updatedChild, remoteChanges);
 
     const entityMapper = TestBed.inject(EntityMapperService);
     await entityMapper.save(updatedChild);
