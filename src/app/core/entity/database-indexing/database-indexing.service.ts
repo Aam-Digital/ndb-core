@@ -22,6 +22,8 @@ import { BackgroundProcessState } from "../../sync-status/background-process-sta
 import { Entity, EntityConstructor } from "../model/entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { first } from "rxjs/operators";
+import { arrayEntitySchemaDatatype } from "../schema-datatypes/datatype-array";
+import { entityArrayEntitySchemaDatatype } from "../schema-datatypes/datatype-entity-array";
 
 /**
  * Manage database query index creation and use, working as a facade in front of the Database service.
@@ -82,27 +84,29 @@ export class DatabaseIndexingService {
   }
 
   /**
-   * Generate and create a new database query index for the given entity type and property.
+   * Generate and save a new database query index for the given entity type and property.
    *
    * This allows you to efficiently query documents of that entity type based on values of the reference property,
-   * e.g. query all Notes (entityType="Note") that are related to a certain user (referenceProperty="authors").
+   * e.g. query all Notes (entityType=Note) that are related to a certain user (referenceProperty="authors").
    *
    * Query this index using the given indexId like this:
-   * generateIndexOnProperty("myIndex", "Note", "category", false);
+   * generateIndexOnProperty("myIndex", Note, "category");
    * queryIndexDocs(Note, "myIndex/by_category")
    *
    * @param indexId id to query this index after creation (--> {indexId}/by_{referenceProperty})
-   * @param entityTypePrefix entity type to limit the documents included in this index
+   * @param entity entity type to limit the documents included in this index
    * @param referenceProperty property key on the documents whose value is indexed as a query key
-   * @param isArrayProperty whether referenceProperty is an array of values to be indexed separately or a single value
    * @param secondaryIndex (optional) additional property to emit as a secondary index to narrow queries further
    */
-  generateIndexOnProperty(
+  generateIndexOnProperty<
+    E extends Entity,
+    REF extends keyof E & string,
+    SEC extends keyof E & string
+  >(
     indexId: string,
-    entityTypePrefix: string,
-    referenceProperty: string,
-    isArrayProperty: boolean,
-    secondaryIndex?: string
+    entity: EntityConstructor<E>,
+    referenceProperty: REF,
+    secondaryIndex?: SEC
   ): Promise<void> {
     const emitParamFormatter = (primaryParam) => {
       if (secondaryIndex) {
@@ -111,6 +115,10 @@ export class DatabaseIndexingService {
         return `emit(${primaryParam});`;
       }
     };
+    const dataType = entity.schema.get(referenceProperty).dataType;
+    const isArrayProperty =
+      dataType === arrayEntitySchemaDatatype.name ||
+      dataType === entityArrayEntitySchemaDatatype.name;
 
     const simpleEmit = emitParamFormatter("doc." + referenceProperty);
     const arrayEmit = `
@@ -124,7 +132,7 @@ export class DatabaseIndexingService {
       views: {
         [`by_${referenceProperty}`]: {
           map: `(doc) => {
-            if (!doc._id.startsWith("${entityTypePrefix}")) return;
+            if (!doc._id.startsWith("${entity.ENTITY_TYPE}")) return;
 
             ${isArrayProperty ? arrayEmit : simpleEmit}
           }`,

@@ -34,7 +34,7 @@ export class TodosRelatedToEntityComponent implements OnInitDynamicComponent {
   private entity: Entity;
 
   /** the property name of the Todo that contains the ids referencing related entities */
-  private referenceProperty: string = "relatedEntities";
+  private referenceProperty: keyof Todo & string = "relatedEntities";
 
   showInactive: boolean;
 
@@ -57,9 +57,8 @@ export class TodosRelatedToEntityComponent implements OnInitDynamicComponent {
     // TODO: move this generic index creation into schema
     this.dbIndexingService.generateIndexOnProperty(
       "todo_index",
-      Todo.ENTITY_TYPE,
+      Todo,
       this.referenceProperty,
-      true,
       "deadline"
     );
   }

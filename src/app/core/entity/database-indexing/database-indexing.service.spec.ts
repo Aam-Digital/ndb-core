@@ -21,6 +21,8 @@ import { EntitySchemaService } from "../schema/entity-schema.service";
 import { expectObservable } from "../../../utils/test-utils/observable-utils";
 import { fakeAsync, tick } from "@angular/core/testing";
 import { firstValueFrom } from "rxjs";
+import { Todo } from "../../../features/todos/model/todo";
+import { Note } from "../../../child-dev-project/notes/model/note";
 
 describe("DatabaseIndexingService", () => {
   let service: DatabaseIndexingService;
@@ -153,12 +155,7 @@ describe("DatabaseIndexingService", () => {
 
   it("should generate index for entity property", async () => {
     const call = spyOn(service, "createIndex");
-    await service.generateIndexOnProperty(
-      "testIndex",
-      "Todo",
-      "relatedEntities",
-      true
-    );
+    await service.generateIndexOnProperty("testIndex", Todo, "relatedEntities");
 
     const actualCreatedDesignDoc = call.calls.argsFor(0)[0];
     expect(cleanedUpStringify(actualCreatedDesignDoc)).toEqual(
@@ -181,12 +178,7 @@ describe("DatabaseIndexingService", () => {
 
   it("should generate index for entity property that is not an array", async () => {
     const call = spyOn(service, "createIndex");
-    await service.generateIndexOnProperty(
-      "testIndex",
-      "Note",
-      "category",
-      false
-    );
+    await service.generateIndexOnProperty("testIndex", Note, "category");
 
     const actualCreatedDesignDoc = call.calls.argsFor(0)[0];
     expect(
@@ -204,9 +196,8 @@ describe("DatabaseIndexingService", () => {
     const call = spyOn(service, "createIndex");
     await service.generateIndexOnProperty(
       "testIndex",
-      "Todo",
+      Todo,
       "relatedEntities",
-      true,
       "deadline"
     );
 
