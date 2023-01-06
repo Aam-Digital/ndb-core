@@ -119,6 +119,22 @@ describe("EntitySubrecordComponent", () => {
     expect(component.recordsDataSource.sort.active).toBe("date");
   });
 
+  it("should use input defaultSort if defined", () => {
+    component.columns = ["date", "subject"];
+    component.columnsToDisplay = ["date", "subject"];
+    const n1 = Note.create(new Date(), "1");
+    const n2 = Note.create(new Date(), "2");
+    const n3 = Note.create(new Date(), "3");
+
+    component.records = [n3, n1, n2];
+
+    component.defaultSort = { active: "subject", direction: "asc" };
+    component.ngOnChanges({ columns: undefined, records: undefined });
+
+    expect(component.recordsDataSource.sort.direction).toBe("asc");
+    expect(component.recordsDataSource.sort.active).toBe("subject");
+  });
+
   it("should sort standard objects", () => {
     const children = [
       new Child("0"),
