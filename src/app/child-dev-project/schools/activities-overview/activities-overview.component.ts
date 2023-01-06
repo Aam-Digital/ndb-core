@@ -28,6 +28,7 @@ export class ActivitiesOverviewComponent implements OnInitDynamicComponent {
     { id: "type" },
     { id: "assignedTo" },
     { id: "linkedGroups" },
+    { id: "excludedParticipants" },
   ];
 
   entity: Entity;

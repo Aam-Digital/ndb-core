@@ -1,4 +1,10 @@
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+  waitForAsync,
+} from "@angular/core/testing";
 
 import { SearchComponent } from "./search.component";
 import { Child } from "../../../child-dev-project/children/model/child";
@@ -12,6 +18,8 @@ import { SwUpdate } from "@angular/service-worker";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("SearchComponent", () => {
+  SearchComponent.INPUT_DEBOUNCE_TIME_MS = 4;
+
   let component: SearchComponent;
   let fixture: ComponentFixture<SearchComponent>;
 
@@ -23,6 +31,8 @@ describe("SearchComponent", () => {
       "queryIndexRaw",
       "createIndex",
     ]);
+    mockIndexService.createIndex.and.resolveTo();
+    mockIndexService.queryIndexRaw.and.resolveTo({ rows: [] });
 
     TestBed.configureTestingModule({
       imports: [
@@ -53,21 +63,26 @@ describe("SearchComponent", () => {
     expect(mockIndexService.createIndex).toHaveBeenCalled();
   });
 
-  it("should not search for less than MIN_CHARACTERS_FOR_SEARCH character of input", (done) => {
-    const tests = ["A", "AB"];
-    let iteration = 0;
-    subscription = component.results.subscribe((next) => {
-      iteration++;
-      expect(next).toBeEmpty();
-      expect(mockIndexService.queryIndexRaw).not.toHaveBeenCalled();
-      if (iteration === 2) {
-        done();
-      }
-    });
-    tests.forEach((t, index) => {
-      setTimeout(() => component.formControl.setValue(t), 600 * index); // debounce
-    });
-  });
+  it("should not search for less than MIN_CHARACTERS_FOR_SEARCH character of input", fakeAsync(() => {
+    const subscr = component.results.subscribe();
+
+    component.formControl.setValue("A");
+    tick(SearchComponent.INPUT_DEBOUNCE_TIME_MS * 2);
+    expect(component.state).toBe(component.TOO_FEW_CHARACTERS);
+    expect(mockIndexService.queryIndexRaw).not.toHaveBeenCalled();
+
+    component.formControl.setValue("AB");
+    tick(SearchComponent.INPUT_DEBOUNCE_TIME_MS * 2);
+    expect(component.state).toBe(component.TOO_FEW_CHARACTERS);
+    expect(mockIndexService.queryIndexRaw).not.toHaveBeenCalled();
+
+    component.formControl.setValue("ABC");
+    tick(SearchComponent.INPUT_DEBOUNCE_TIME_MS * 2);
+    expect(component.state).toBe(component.NO_RESULTS);
+    expect(mockIndexService.queryIndexRaw).toHaveBeenCalled();
+
+    subscr.unsubscribe();
+  }));
 
   function expectResultToBeEmpty(done: DoneFn) {
     subscription = component.results.subscribe((next) => {
