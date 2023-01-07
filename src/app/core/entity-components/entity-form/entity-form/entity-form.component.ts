@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewEncapsulation } from "@angular/core";
+import { Component, Input, OnChanges, ViewEncapsulation } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { FormFieldConfig } from "./FormConfig";
 import { EntityForm } from "../entity-form.service";
@@ -35,11 +35,13 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     NgIf,
     MatButtonModule,
     MatTooltipModule,
-    FontAwesomeModule
+    FontAwesomeModule,
   ],
-  standalone: true
+  standalone: true,
 })
-export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
+export class EntityFormComponent<T extends Entity = Entity>
+  implements OnChanges
+{
   /**
    * The entity which should be displayed and edited
    */
@@ -49,12 +51,8 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
 
   @Input() columnHeaders?: (string | null)[];
 
-  @Input() set form(form: EntityForm<T>) {
-    this._form = form;
-    this.initialFormValues = form.getRawValue();
-  }
+  @Input() form: EntityForm<T>;
 
-  _form: EntityForm<T>;
   initialFormValues: any;
 
   constructor(
@@ -62,14 +60,19 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
     private confirmationDialog: ConfirmationDialogService
   ) {}
 
-  ngOnInit() {
-    this.entityMapper
-      .receiveUpdates(this.entity.getConstructor())
-      .pipe(
-        filter(({ entity }) => entity.getId() === this.entity.getId()),
-        untilDestroyed(this)
-      )
-      .subscribe(({ entity }) => this.applyChanges(entity));
+  ngOnChanges() {
+    if (this.entity) {
+      this.entityMapper
+        .receiveUpdates(this.entity.getConstructor())
+        .pipe(
+          filter(({ entity }) => entity.getId() === this.entity.getId()),
+          untilDestroyed(this)
+        )
+        .subscribe(({ entity }) => this.applyChanges(entity));
+    }
+    if (this.form) {
+      this.initialFormValues = this.form.getRawValue();
+    }
   }
 
   private async applyChanges(entity: T) {
@@ -85,16 +88,16 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
       ))
     ) {
       Object.assign(this.initialFormValues, entity);
-      this._form.patchValue(entity as any);
+      this.form.patchValue(entity as any);
     }
   }
 
   private changesOnlyAffectPristineFields(updatedEntity: T) {
-    if (this._form.pristine) {
+    if (this.form.pristine) {
       return true;
     }
 
-    const dirtyFields = Object.entries(this._form.controls).filter(
+    const dirtyFields = Object.entries(this.form.controls).filter(
       ([_, form]) => form.dirty
     );
     for (const [key] of dirtyFields) {
@@ -116,7 +119,7 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
   }
 
   private formIsUpToDate(entity: T): boolean {
-    return Object.entries(this._form.getRawValue()).every(([key, value]) => {
+    return Object.entries(this.form.getRawValue()).every(([key, value]) => {
       return this.entityEqualsFormValue(entity[key], value);
     });
   }
