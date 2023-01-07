@@ -31,7 +31,7 @@ export class PublicFormComponent {
   entity: Entity;
   columns: FormFieldConfig[][];
   form: EntityForm<Entity>;
-  title = "Form";
+  title = $localize`:Default form title:Form`;
 
   constructor(
     private database: PouchDatabase,
