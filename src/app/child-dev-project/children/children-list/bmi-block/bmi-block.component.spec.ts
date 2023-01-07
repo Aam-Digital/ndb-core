@@ -20,7 +20,7 @@ describe("BmiBlockComponent", () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [BmiBlockComponent],
+      imports: [BmiBlockComponent],
       providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
     }).compileComponents();
   }));

@@ -8,8 +8,8 @@ import {
   ViewConfig,
 } from "./view-config.interface";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
-import { RouteRegistry } from "../../../app.routing";
 import { NotFoundComponent } from "./not-found/not-found.component";
+import { ComponentRegistry } from "../../../dynamic-components";
 import { AuthGuard } from "../../session/auth.guard";
 
 /**
@@ -26,7 +26,7 @@ export class RouterService {
     private configService: ConfigService,
     private router: Router,
     private loggingService: LoggingService,
-    private registry: RouteRegistry
+    private components: ComponentRegistry
   ) {}
 
   /**
@@ -74,22 +74,20 @@ export class RouterService {
   }
 
   private createRoute(view: ViewConfig, additionalRoutes: Route[]) {
-    if (view.lazyLoaded) {
-      const path = view._id.substring(PREFIX_VIEW_CONFIG.length);
-      const route = additionalRoutes.find((r) => r.path === path);
+    const path = view._id.substring(PREFIX_VIEW_CONFIG.length);
+    const route = additionalRoutes.find((r) => r.path === path);
+
+    if (route) {
       return this.generateRouteFromConfig(view, route);
     } else {
-      return this.generateRouteFromConfig(view);
+      return this.generateRouteFromConfig(view, {
+        loadComponent: this.components.get(view.component),
+        path,
+      });
     }
   }
 
-  private generateRouteFromConfig(
-    view: ViewConfig,
-    route: Route = {
-      path: view._id.substring(PREFIX_VIEW_CONFIG.length),
-      component: this.registry.get(view.component),
-    }
-  ): Route {
+  private generateRouteFromConfig(view: ViewConfig, route: Route): Route {
     const routeData: RouteData = {};
     route.canActivate = [AuthGuard];
 

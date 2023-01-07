@@ -1,12 +1,9 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
-import { EntityUtilsModule } from "../../entity-utils.module";
 import { EntitySchemaService } from "../../../../entity/schema/entity-schema.service";
 import { EntityFormComponent } from "../../../entity-form/entity-form/entity-form.component";
-import { EntityFormModule } from "../../../entity-form/entity-form.module";
 import { FormFieldConfig } from "../../../entity-form/entity-form/FormConfig";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
-import { AlertsModule } from "../../../../alerts/alerts.module";
 import { Entity } from "../../../../entity/model/entity";
 import { DatabaseField } from "../../../../entity/database-field.decorator";
 import { DatabaseEntity } from "../../../../entity/database-entity.decorator";
@@ -17,12 +14,7 @@ export default {
   component: EntityFormComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        EntityFormModule,
-        EntityUtilsModule,
-        AlertsModule,
-        StorybookBaseModule,
-      ],
+      imports: [EntityFormComponent, StorybookBaseModule],
       providers: [
         EntitySchemaService,
         {
@@ -49,6 +41,7 @@ class BooleanTestEntity extends Entity {
   @DatabaseField() check: boolean;
   @DatabaseField() name: string;
 }
+
 const fieldConfig: FormFieldConfig = {
   id: "check",
   edit: "EditBoolean",

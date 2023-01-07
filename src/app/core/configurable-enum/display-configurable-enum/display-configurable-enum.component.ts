@@ -12,6 +12,7 @@ import { ConfigurableEnumValue } from "../configurable-enum.interface";
 @Component({
   selector: "app-display-configurable-enum",
   template: `{{ value?.label }}`,
+  standalone: true,
 })
 export class DisplayConfigurableEnumComponent extends ViewDirective<ConfigurableEnumValue> {
   @HostBinding("style.background-color") private style;

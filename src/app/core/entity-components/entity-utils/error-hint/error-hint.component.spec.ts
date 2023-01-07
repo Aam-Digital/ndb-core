@@ -10,7 +10,7 @@ describe("ErrorHintComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ErrorHintComponent],
+      imports: [ErrorHintComponent],
     }).compileComponents();
   });
 

@@ -9,8 +9,7 @@ describe("ChildBlockTooltipComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ChildBlockTooltipComponent],
-      imports: [FontAwesomeTestingModule],
+      imports: [ChildBlockTooltipComponent, FontAwesomeTestingModule],
     }).compileComponents();
   });
 

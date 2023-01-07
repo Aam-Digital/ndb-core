@@ -2,7 +2,6 @@ import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { StorybookBaseModule } from "app/utils/storybook-base.module";
 import { SupportComponent } from "./support.component";
-import { SupportModule } from "../support.module";
 import { SessionService } from "../../session/session-service/session.service";
 import { BehaviorSubject } from "rxjs";
 import { SyncState } from "../../session/session-states/sync-state.enum";
@@ -16,7 +15,7 @@ export default {
   component: SupportComponent,
   decorators: [
     moduleMetadata({
-      imports: [SupportModule, StorybookBaseModule, HttpClientTestingModule],
+      imports: [SupportComponent, StorybookBaseModule, HttpClientTestingModule],
       providers: [
         { provide: WINDOW_TOKEN, useValue: window },
         { provide: LOCATION_TOKEN, useValue: window.location },
@@ -34,7 +33,7 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<SupportComponent> = (args: SupportModule) => ({
+const Template: Story<SupportComponent> = (args: SupportComponent) => ({
   component: SupportComponent,
   props: args,
 });

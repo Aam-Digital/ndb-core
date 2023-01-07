@@ -19,10 +19,24 @@ import { Component, ViewChild } from "@angular/core";
 import { SessionService } from "../../session/session-service/session.service";
 import { Title } from "@angular/platform-browser";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { MatDrawerMode } from "@angular/material/sidenav";
+import { MatDrawerMode, MatSidenavModule } from "@angular/material/sidenav";
 import { ConfigService } from "../../config/config.service";
 import { UiConfig } from "../ui-config";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
+import { MatToolbarModule } from "@angular/material/toolbar";
+import { NgIf } from "@angular/common";
+import { MatButtonModule } from "@angular/material/button";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { RouterLink, RouterOutlet } from "@angular/router";
+import { Angulartics2Module } from "angulartics2";
+import { SearchComponent } from "../search/search.component";
+import { SyncStatusComponent } from "../../sync-status/sync-status/sync-status.component";
+import { LanguageSelectComponent } from "../../language/language-select/language-select.component";
+import { NavigationComponent } from "../../navigation/navigation/navigation.component";
+import { PwaInstallComponent } from "../../pwa-install/pwa-install.component";
+import { AppVersionComponent } from "../../latest-changes/app-version/app-version.component";
+import { LoginComponent } from "../../session/login/login.component";
+import { PrimaryActionComponent } from "../primary-action/primary-action.component";
 import { Router } from "@angular/router";
 
 /**
@@ -34,6 +48,25 @@ import { Router } from "@angular/router";
   selector: "app-ui",
   templateUrl: "./ui.component.html",
   styleUrls: ["./ui.component.scss"],
+  imports: [
+    MatToolbarModule,
+    NgIf,
+    MatButtonModule,
+    FontAwesomeModule,
+    RouterLink,
+    Angulartics2Module,
+    SearchComponent,
+    SyncStatusComponent,
+    LanguageSelectComponent,
+    MatSidenavModule,
+    NavigationComponent,
+    PwaInstallComponent,
+    AppVersionComponent,
+    RouterOutlet,
+    LoginComponent,
+    PrimaryActionComponent
+  ],
+  standalone: true
 })
 export class UiComponent {
   /** display mode for the menu to make it responsive and usable on smaller screens */

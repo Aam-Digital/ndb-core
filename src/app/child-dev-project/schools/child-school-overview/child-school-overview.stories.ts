@@ -6,7 +6,6 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { LoginState } from "../../../core/session/session-states/login-state.enum";
 import { School } from "../model/school";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
-import { SchoolsModule } from "../schools.module";
 import { Child } from "../../children/model/child";
 
 const child = new Child("testChild");
@@ -40,7 +39,7 @@ export default {
   decorators: [
     moduleMetadata({
       imports: [
-        SchoolsModule,
+        ChildSchoolOverviewComponent,
         StorybookBaseModule,
         MockedTestingModule.withState(LoginState.LOGGED_IN, [
           school1,

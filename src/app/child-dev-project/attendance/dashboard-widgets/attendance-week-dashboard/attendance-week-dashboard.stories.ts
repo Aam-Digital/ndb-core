@@ -1,7 +1,6 @@
 import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { AttendanceWeekDashboardComponent } from "./attendance-week-dashboard.component";
-import { AttendanceModule } from "../../attendance.module";
 import { RecurringActivity } from "../../model/recurring-activity";
 import { Child } from "../../../children/model/child";
 import { generateEventWithAttendance } from "../../model/activity-attendance";
@@ -55,7 +54,7 @@ export default {
   decorators: [
     moduleMetadata({
       imports: [
-        AttendanceModule,
+        AttendanceWeekDashboardComponent,
         StorybookBaseModule,
         MockedTestingModule.withState(LoginState.LOGGED_IN, [
           act1,

@@ -10,8 +10,11 @@ describe("ViewTitleComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ViewTitleComponent],
-      imports: [RouterTestingModule, FontAwesomeTestingModule],
+      imports: [
+        ViewTitleComponent,
+        RouterTestingModule,
+        FontAwesomeTestingModule,
+      ],
     }).compileComponents();
   });
 

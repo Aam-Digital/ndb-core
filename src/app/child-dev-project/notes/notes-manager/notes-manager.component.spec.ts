@@ -9,7 +9,6 @@ import {
   TestBed,
   tick,
 } from "@angular/core/testing";
-import { NotesModule } from "../notes.module";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -21,12 +20,9 @@ import {
   EntityListConfig,
 } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { InteractionType } from "../model/interaction-type.interface";
-import { ConfigService } from "../../../core/config/config.service";
 import { EventNote } from "../../attendance/model/event-note";
 import { UpdatedEntity } from "../../../core/entity/model/entity-update";
-import { ExportService } from "../../../core/export/export-service/export.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { Ordering } from "../../../core/configurable-enum/configurable-enum-ordering";
 
 describe("NotesManagerComponent", () => {
@@ -89,27 +85,14 @@ describe("NotesManagerComponent", () => {
   ]);
 
   beforeEach(() => {
-    const mockConfigService = jasmine.createSpyObj("mockConfigService", [
-      "getConfigurableEnumValues",
-      "getConfig",
-    ]);
-    mockConfigService.getConfigurableEnumValues.and.returnValue(
-      testInteractionTypes
-    );
     mockNoteObservable = new Subject<UpdatedEntity<Note>>();
     mockEventNoteObservable = new Subject<UpdatedEntity<EventNote>>();
 
     TestBed.configureTestingModule({
-      imports: [
-        NotesModule,
-        MockedTestingModule.withState(),
-        FontAwesomeTestingModule,
-      ],
+      imports: [NotesManagerComponent, MockedTestingModule.withState()],
       providers: [
         { provide: FormDialogService, useValue: dialogMock },
         { provide: ActivatedRoute, useValue: routeMock },
-        { provide: ConfigService, useValue: mockConfigService },
-        { provide: ExportService, useValue: {} },
       ],
     }).compileComponents();
 

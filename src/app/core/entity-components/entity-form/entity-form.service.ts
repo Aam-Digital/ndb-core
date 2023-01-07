@@ -18,7 +18,7 @@ export type EntityForm<T extends Entity> = TypedForm<Partial<T>>;
  * This service provides helper functions for creating tables or forms for an entity as well as saving
  * new changes correctly to the entity.
  */
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class EntityFormService {
   constructor(
     private fb: FormBuilder,

@@ -8,7 +8,7 @@ describe("SelectReportComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [SelectReportComponent],
+      imports: [SelectReportComponent],
     }).compileComponents();
   });
 

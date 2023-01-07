@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { DashboardWidgetComponent } from "./dashboard-widget.component";
 import { FaDynamicIconComponent } from "../../view/fa-dynamic-icon/fa-dynamic-icon.component";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { DashboardModule } from "../dashboard.module";
 
 describe("DashboardWidgetComponent", () => {
   let component: DashboardWidgetComponent;
@@ -11,8 +10,11 @@ describe("DashboardWidgetComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [FaDynamicIconComponent],
-      imports: [FontAwesomeTestingModule, DashboardModule],
+      imports: [
+        FaDynamicIconComponent,
+        FontAwesomeTestingModule,
+        DashboardWidgetComponent,
+      ],
     }).compileComponents();
   });
 

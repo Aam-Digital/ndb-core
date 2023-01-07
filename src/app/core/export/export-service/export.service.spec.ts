@@ -7,8 +7,6 @@ import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { Entity } from "../../entity/model/entity";
 import { QueryService } from "../../../features/reporting/query.service";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { ChildrenService } from "../../../child-dev-project/children/children.service";
-import { AttendanceService } from "../../../child-dev-project/attendance/attendance.service";
 import { Database } from "../../database/database";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { Child } from "../../../child-dev-project/children/model/child";
@@ -27,12 +25,6 @@ describe("ExportService", () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [DatabaseTestingModule],
-      providers: [
-        ExportService,
-        QueryService,
-        ChildrenService,
-        AttendanceService,
-      ],
     });
 
     service = TestBed.inject<ExportService>(ExportService);

@@ -15,7 +15,7 @@ import { Entity } from "../../core/entity/model/entity";
 import { School } from "../schools/model/school";
 import { User } from "../../core/user/user";
 
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class ChildrenService {
   constructor(
     private entityMapper: EntityMapperService,

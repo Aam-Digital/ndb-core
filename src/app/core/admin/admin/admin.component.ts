@@ -10,6 +10,9 @@ import { readFile } from "../../../utils/utils";
 import { RouteTarget } from "../../../app.routing";
 import { Database } from "../../database/database";
 import { ExtendedAlertConfig } from "../../alerts/alert-config";
+import { MatButtonModule } from "@angular/material/button";
+import { RouterLink } from "@angular/router";
+import { DatePipe, NgForOf } from "@angular/common";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -20,6 +23,8 @@ import { ExtendedAlertConfig } from "../../alerts/alert-config";
   selector: "app-admin",
   templateUrl: "./admin.component.html",
   styleUrls: ["./admin.component.scss"],
+  imports: [MatButtonModule, RouterLink, NgForOf, DatePipe],
+  standalone: true,
 })
 export class AdminComponent implements OnInit {
   /** all alerts */

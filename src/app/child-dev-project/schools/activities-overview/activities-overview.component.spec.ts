@@ -15,7 +15,6 @@ import { Subject } from "rxjs";
 import { School } from "../model/school";
 
 import { ActivitiesOverviewComponent } from "./activities-overview.component";
-import { SchoolsModule } from "../schools.module";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 
@@ -28,7 +27,7 @@ describe("ActivitiesOverviewComponent", () => {
   beforeEach(async () => {
     entityMapper = mockEntityMapper();
     await TestBed.configureTestingModule({
-      imports: [SchoolsModule, MockedTestingModule.withState()],
+      imports: [ActivitiesOverviewComponent, MockedTestingModule.withState()],
       providers: [
         { provide: EntityMapperService, useValue: entityMapper },
         { provide: FormDialogService, useValue: null },

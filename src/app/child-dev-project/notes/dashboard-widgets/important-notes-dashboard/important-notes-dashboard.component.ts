@@ -4,15 +4,18 @@ import { DynamicComponent } from "../../../../core/view/dynamic-components/dynam
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
 import { NoteDetailsComponent } from "../../note-details/note-details.component";
-import { UntilDestroy } from "@ngneat/until-destroy";
+import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
+import { MatTableModule } from "@angular/material/table";
+import { DatePipe, NgStyle } from "@angular/common";
 
 @DynamicComponent("ImportantNotesDashboard")
 @DynamicComponent("ImportantNotesComponent") // TODO remove after all existing instances are updated
-@UntilDestroy()
 @Component({
   selector: "app-important-notes-dashboard",
   templateUrl: "./important-notes-dashboard.component.html",
   styleUrls: ["./important-notes-dashboard.component.scss"],
+  imports: [DashboardListWidgetComponent, MatTableModule, DatePipe, NgStyle],
+  standalone: true,
 })
 export class ImportantNotesDashboardComponent
   implements OnInitDynamicComponent

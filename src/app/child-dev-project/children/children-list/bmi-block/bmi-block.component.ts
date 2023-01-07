@@ -18,6 +18,7 @@ import { DynamicComponent } from "../../../../core/view/dynamic-components/dynam
     {{ currentHealthCheck?.bmi.toFixed(2) }}
   </span>`,
   styleUrls: ["./bmi-block.component.scss"],
+  standalone: true,
 })
 export class BmiBlockComponent implements OnInitDynamicComponent {
   public currentHealthCheck: HealthCheck;

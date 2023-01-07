@@ -29,9 +29,23 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { DataFilter } from "../entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { FilterOverlayComponent } from "../../filter/filter-overlay/filter-overlay.component";
 import { MatDialog } from "@angular/material/dialog";
+import { NgForOf, NgIf, NgStyle, NgTemplateOutlet } from "@angular/common";
+import { MatButtonModule } from "@angular/material/button";
+import { Angulartics2OnModule } from "angulartics2";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatMenuModule } from "@angular/material/menu";
+import { MatTabsModule } from "@angular/material/tabs";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { FormsModule } from "@angular/forms";
+import { FilterComponent } from "../../filter/filter/filter.component";
+import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
+import { ViewTitleComponent } from "../entity-utils/view-title/view-title.component";
+import { ExportDataDirective } from "../../export/export-data-directive/export-data.directive";
+import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 
 /**
- * This component allows to create a full blown table with pagination, filtering, searching and grouping.
+ * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
  * The filter and grouping settings are written into the URL params to allow going back to the previous view.
  * The pagination settings are stored for each user.
  * The columns can be any kind of component.
@@ -44,6 +58,27 @@ import { MatDialog } from "@angular/material/dialog";
   selector: "app-entity-list",
   templateUrl: "./entity-list.component.html",
   styleUrls: ["./entity-list.component.scss"],
+  imports: [
+    NgIf,
+    NgStyle,
+    MatButtonModule,
+    Angulartics2OnModule,
+    FontAwesomeModule,
+    MatMenuModule,
+    NgTemplateOutlet,
+    MatTabsModule,
+    NgForOf,
+    MatFormFieldModule,
+    MatInputModule,
+    EntitySubrecordComponent,
+    FormsModule,
+    FilterComponent,
+    TabStateModule,
+    ViewTitleComponent,
+    ExportDataDirective,
+    DisableEntityOperationDirective,
+  ],
+  standalone: true,
 })
 @UntilDestroy()
 export class EntityListComponent<T extends Entity>

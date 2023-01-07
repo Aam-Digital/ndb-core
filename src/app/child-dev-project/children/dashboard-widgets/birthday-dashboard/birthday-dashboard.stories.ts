@@ -1,7 +1,6 @@
 import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { BirthdayDashboardComponent } from "./birthday-dashboard.component";
-import { ChildrenModule } from "../../children.module";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { LoginState } from "../../../../core/session/session-states/login-state.enum";
 import { Child } from "../../model/child";
@@ -36,7 +35,7 @@ export default {
   decorators: [
     moduleMetadata({
       imports: [
-        ChildrenModule,
+        BirthdayDashboardComponent,
         StorybookBaseModule,
         MockedTestingModule.withState(LoginState.LOGGED_IN, [
           child2,

@@ -1,6 +1,10 @@
 import { Component, Inject } from "@angular/core";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from "@angular/material/dialog";
 import { Entity } from "../../../entity/model/entity";
 import {
   EntityForm,
@@ -13,6 +17,17 @@ import {
 } from "../../../entity/entity-remove.service";
 import { AlertService } from "../../../alerts/alert.service";
 import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
+import { DialogCloseComponent } from "../../../common-components/dialog-close/dialog-close.component";
+import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
+import { NgForOf, NgIf } from "@angular/common";
+import { PillComponent } from "../../../common-components/pill/pill.component";
+import { DynamicComponentDirective } from "../../../view/dynamic-components/dynamic-component.directive";
+import { MatButtonModule } from "@angular/material/button";
+import { MatMenuModule } from "@angular/material/menu";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { Angulartics2Module } from "angulartics2";
+import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 /**
  * Data interface that must be given when opening the dialog
@@ -32,6 +47,22 @@ export interface DetailsComponentData {
 @Component({
   selector: "app-row-details",
   templateUrl: "./row-details.component.html",
+  imports: [
+    DialogCloseComponent,
+    MatDialogModule,
+    EntityFormComponent,
+    NgForOf,
+    PillComponent,
+    DynamicComponentDirective,
+    NgIf,
+    MatButtonModule,
+    MatMenuModule,
+    FontAwesomeModule,
+    Angulartics2Module,
+    DisableEntityOperationDirective,
+    MatTooltipModule,
+  ],
+  standalone: true,
 })
 export class RowDetailsComponent {
   form: EntityForm<Entity>;

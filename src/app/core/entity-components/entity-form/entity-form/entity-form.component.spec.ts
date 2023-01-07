@@ -2,9 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { EntityFormComponent } from "./entity-form.component";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { EntityFormModule } from "../entity-form.module";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { ReactiveFormsModule } from "@angular/forms";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { EntityFormService } from "../entity-form.service";
@@ -19,9 +17,8 @@ describe("EntityFormComponent", () => {
     mockConfirmation = jasmine.createSpyObj(["getConfirmation"]);
     TestBed.configureTestingModule({
       imports: [
-        EntityFormModule,
         MockedTestingModule.withState(),
-        ReactiveFormsModule,
+        EntityFormComponent
       ],
       providers: [
         { provide: ConfirmationDialogService, useValue: mockConfirmation },

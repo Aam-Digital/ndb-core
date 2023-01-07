@@ -6,7 +6,6 @@ import {
 } from "@angular/core/testing";
 
 import { EditLocationComponent } from "./edit-location.component";
-import { LocationModule } from "../location.module";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { setupEditComponent } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component.spec";
 import { GeoResult, GeoService } from "../geo.service";
@@ -31,7 +30,7 @@ describe("EditLocationComponent", () => {
     mockGeoService.lookup.and.returnValue(of([]));
     mockDialog = jasmine.createSpyObj(["open"]);
     await TestBed.configureTestingModule({
-      imports: [LocationModule, MockedTestingModule.withState()],
+      imports: [EditLocationComponent, MockedTestingModule.withState()],
       providers: [
         { provide: GeoService, useValue: mockGeoService },
         { provide: MatDialog, useValue: mockDialog },

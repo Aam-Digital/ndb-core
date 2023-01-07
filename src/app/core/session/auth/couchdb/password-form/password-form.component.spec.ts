@@ -7,10 +7,10 @@ import {
 } from "@angular/core/testing";
 
 import { PasswordFormComponent } from "./password-form.component";
-import { UserModule } from "../../../../user/user.module";
 import { MockedTestingModule } from "../../../../../utils/mocked-testing.module";
 import { SessionService } from "../../../session-service/session.service";
 import { CouchdbAuthService } from "../couchdb-auth.service";
+import { AuthService } from "../../auth.service";
 
 describe("PasswordFormComponent", () => {
   let component: PasswordFormComponent;
@@ -23,8 +23,11 @@ describe("PasswordFormComponent", () => {
     mockCouchDBAuth = jasmine.createSpyObj(["changePassword"]);
 
     await TestBed.configureTestingModule({
-      imports: [UserModule, MockedTestingModule.withState()],
-      providers: [{ provide: SessionService, useValue: mockSessionService }],
+      imports: [PasswordFormComponent, MockedTestingModule.withState()],
+      providers: [
+        { provide: SessionService, useValue: mockSessionService },
+        { provide: AuthService, useValue: {} },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PasswordFormComponent);

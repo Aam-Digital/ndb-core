@@ -6,12 +6,10 @@ import {
 } from "./edit-progress-dashboard.component";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { FormBuilder, FormGroup } from "@angular/forms";
+import { ConfigService } from "../../../core/config/config.service";
+import { createTestingConfigService } from "../../../core/config/testing-config-service";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { ProgressDashboardWidgetModule } from "../progress-dashboard-widget.module";
-import {
-  ConfigService,
-  createTestingConfigService,
-} from "../../../core/config/config.service";
 
 describe("EditProgressDashboardComponent", () => {
   let component: EditProgressDashboardComponent;
@@ -40,7 +38,11 @@ describe("EditProgressDashboardComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProgressDashboardWidgetModule, FontAwesomeTestingModule],
+      imports: [
+        EditProgressDashboardComponent,
+        NoopAnimationsModule,
+        FontAwesomeTestingModule,
+      ],
       providers: [
         {
           provide: MAT_DIALOG_DATA,

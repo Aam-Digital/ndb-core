@@ -10,7 +10,6 @@ import {
   EntitySubrecordComponent,
   TableRow,
 } from "./entity-subrecord.component";
-import { EntitySubrecordModule } from "../entity-subrecord.module";
 import { Entity } from "../../../entity/model/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { ConfigurableEnumValue } from "../../../configurable-enum/configurable-enum.interface";
@@ -26,10 +25,8 @@ import moment from "moment";
 import { Subject } from "rxjs";
 import { UpdatedEntity } from "../../../entity/model/entity-update";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { ScreenWidthObserver } from "../../../../utils/media/screen-size-observer.service";
 import { WINDOW_TOKEN } from "../../../../utils/di-tokens";
-import { MediaModule } from "../../../../utils/media/media.module";
 import { DateWithAge } from "../../../../child-dev-project/children/model/dateWithAge";
 import { FormDialogService } from "../../../form-dialog/form-dialog.service";
 
@@ -39,12 +36,7 @@ describe("EntitySubrecordComponent", () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
-        EntitySubrecordModule,
-        MockedTestingModule.withState(),
-        FontAwesomeTestingModule,
-        MediaModule,
-      ],
+      imports: [EntitySubrecordComponent, MockedTestingModule.withState()],
       providers: [
         { provide: WINDOW_TOKEN, useValue: window },
         {

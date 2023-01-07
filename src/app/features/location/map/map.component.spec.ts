@@ -24,7 +24,7 @@ describe("MapComponent", () => {
   beforeEach(async () => {
     mockDialog = jasmine.createSpyObj(["open"]);
     await TestBed.configureTestingModule({
-      declarations: [MapComponent],
+      imports: [MapComponent],
       providers: [
         { provide: ConfigService, useValue: { getConfig: () => config } },
         { provide: MatDialog, useValue: mockDialog },

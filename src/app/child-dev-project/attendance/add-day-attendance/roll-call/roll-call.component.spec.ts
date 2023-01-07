@@ -12,14 +12,12 @@ import { By } from "@angular/platform-browser";
 import { ConfigService } from "../../../../core/config/config.service";
 import { Child } from "../../../children/model/child";
 import { LoggingService } from "../../../../core/logging/logging.service";
-import { AttendanceModule } from "../../attendance.module";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { ConfirmationDialogService } from "../../../../core/confirmation-dialog/confirmation-dialog.service";
 import { LoginState } from "../../../../core/session/session-states/login-state.enum";
 import { SimpleChange } from "@angular/core";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { ChildrenService } from "../../../children/children.service";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 const PRESENT = {
   id: "PRESENT",
@@ -40,7 +38,6 @@ describe("RollCallComponent", () => {
   let component: RollCallComponent;
   let fixture: ComponentFixture<RollCallComponent>;
 
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
   let mockLoggingService: jasmine.SpyObj<LoggingService>;
 
   let participant1: Child, participant2: Child, participant3: Child;
@@ -49,36 +46,28 @@ describe("RollCallComponent", () => {
     eventEntity: new SimpleChange(undefined, {}, true),
   };
 
-  beforeEach(
-    waitForAsync(() => {
-      participant1 = new Child("child1");
-      participant2 = new Child("child2");
-      participant3 = new Child("child3");
+  beforeEach(waitForAsync(() => {
+    participant1 = new Child("child1");
+    participant2 = new Child("child2");
+    participant3 = new Child("child3");
 
-      mockConfigService = jasmine.createSpyObj("mockConfigService", [
-        "getConfigurableEnumValues",
-      ]);
-      mockConfigService.getConfigurableEnumValues.and.returnValue([]);
-      mockLoggingService = jasmine.createSpyObj(["warn"]);
+    mockLoggingService = jasmine.createSpyObj(["warn"]);
 
-      TestBed.configureTestingModule({
-        imports: [
-          AttendanceModule,
-          MockedTestingModule.withState(LoginState.LOGGED_IN, [
-            participant1,
-            participant2,
-            participant3,
-          ]),
-          FontAwesomeTestingModule,
-        ],
-        providers: [
-          { provide: ConfigService, useValue: mockConfigService },
-          { provide: LoggingService, useValue: mockLoggingService },
-          { provide: ChildrenService, useValue: {} },
-        ],
-      }).compileComponents();
-    })
-  );
+    TestBed.configureTestingModule({
+      imports: [
+        RollCallComponent,
+        MockedTestingModule.withState(LoginState.LOGGED_IN, [
+          participant1,
+          participant2,
+          participant3,
+        ]),
+      ],
+      providers: [
+        { provide: LoggingService, useValue: mockLoggingService },
+        { provide: ChildrenService, useValue: {} },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(RollCallComponent);
@@ -93,7 +82,8 @@ describe("RollCallComponent", () => {
 
   it("should display all available attendance status to select", async () => {
     const options = [PRESENT, ABSENT];
-    mockConfigService.getConfigurableEnumValues.and.returnValue(options);
+    const configService = TestBed.inject(ConfigService);
+    spyOn(configService, "getConfigurableEnumValues").and.returnValue(options);
     component.eventEntity.addChild(participant1);
     await component.ngOnChanges(dummyChanges);
     fixture.detectChanges();

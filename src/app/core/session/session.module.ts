@@ -16,19 +16,7 @@
  */
 
 import { Injector, NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { LoginComponent } from "./login/login.component";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { EntityModule } from "../entity/entity.module";
-import { AlertsModule } from "../alerts/alerts.module";
-import { MatButtonModule } from "@angular/material/button";
-import { MatCardModule } from "@angular/material/card";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
-import { RouterModule } from "@angular/router";
-import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
-import { MatDialogModule } from "@angular/material/dialog";
-import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { HTTP_INTERCEPTORS } from "@angular/common/http";
 import { SyncedSessionService } from "./session-service/synced-session.service";
 import { LocalSession } from "./session-service/local-session";
 import { RemoteSession } from "./session-service/remote-session";
@@ -39,12 +27,6 @@ import { AuthService } from "./auth/auth.service";
 import { KeycloakAuthService } from "./auth/keycloak/keycloak-auth.service";
 import { CouchdbAuthService } from "./auth/couchdb/couchdb-auth.service";
 import { AuthProvider } from "./auth/auth-provider";
-import { PasswordFormComponent } from "./auth/couchdb/password-form/password-form.component";
-import { AccountPageComponent } from "./auth/keycloak/account-page/account-page.component";
-import { Angulartics2OnModule } from "angulartics2";
-import { PasswordResetComponent } from "./auth/keycloak/password-reset/password-reset.component";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatTooltipModule } from "@angular/material/tooltip";
 import { AuthInterceptor } from "./auth/auth.interceptor";
 import { serviceProvider } from "../../utils/utils";
 
@@ -57,31 +39,6 @@ import { serviceProvider } from "../../utils/utils";
  * [Session Handling, Authentication & Synchronisation]{@link /additional-documentation/concepts/session-and-authentication-system.html}
  */
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    EntityModule,
-    AlertsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    RouterModule,
-    HttpClientModule,
-    MatDialogModule,
-    MatProgressBarModule,
-    Angulartics2OnModule,
-    ReactiveFormsModule,
-    FontAwesomeModule,
-    MatTooltipModule,
-  ],
-  declarations: [
-    LoginComponent,
-    PasswordFormComponent,
-    AccountPageComponent,
-    PasswordResetComponent,
-  ],
-  exports: [LoginComponent, AccountPageComponent, PasswordFormComponent],
   providers: [
     SyncedSessionService,
     LocalSession,

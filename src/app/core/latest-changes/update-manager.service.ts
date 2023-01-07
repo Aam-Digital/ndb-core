@@ -31,7 +31,7 @@ import { LOCATION_TOKEN } from "../../utils/di-tokens";
  * The user receives a toast (hover message) if an update is available
  * and can click that to reload the app with the new version.
  */
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class UpdateManagerService {
   private readonly UPDATE_PREFIX = "update-";
 

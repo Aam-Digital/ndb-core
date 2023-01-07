@@ -5,7 +5,6 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { School } from "../model/school";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { ConfigService } from "../../../core/config/config.service";
-import { FaDynamicIconComponent } from "../../../core/view/fa-dynamic-icon/fa-dynamic-icon.component";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("SchoolBlockComponent", () => {
@@ -14,21 +13,22 @@ describe("SchoolBlockComponent", () => {
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let mockConfigService: jasmine.SpyObj<ConfigService>;
 
-  beforeEach(
-    waitForAsync(() => {
-      mockEntityMapper = jasmine.createSpyObj(["load"]);
-      mockConfigService = jasmine.createSpyObj(["getConfig"]);
+  beforeEach(waitForAsync(() => {
+    mockEntityMapper = jasmine.createSpyObj(["load"]);
+    mockConfigService = jasmine.createSpyObj(["getConfig"]);
 
-      TestBed.configureTestingModule({
-        declarations: [SchoolBlockComponent, FaDynamicIconComponent],
-        imports: [RouterTestingModule, FontAwesomeTestingModule],
-        providers: [
-          { provide: EntityMapperService, useValue: mockEntityMapper },
-          { provide: ConfigService, useValue: mockConfigService },
-        ],
-      }).compileComponents();
-    })
-  );
+    TestBed.configureTestingModule({
+      imports: [
+        SchoolBlockComponent,
+        RouterTestingModule,
+        FontAwesomeTestingModule,
+      ],
+      providers: [
+        { provide: EntityMapperService, useValue: mockEntityMapper },
+        { provide: ConfigService, useValue: mockConfigService },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(SchoolBlockComponent);

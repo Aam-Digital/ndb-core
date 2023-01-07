@@ -1,7 +1,6 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { HealthCheckupComponent } from "./health-checkup.component";
-import { ChildrenModule } from "../../children.module";
 import { ChildrenService } from "../../children.service";
 import { HealthCheck } from "../model/health-check";
 import moment from "moment";
@@ -29,7 +28,7 @@ export default {
   decorators: [
     moduleMetadata({
       imports: [
-        ChildrenModule,
+        HealthCheckupComponent,
         StorybookBaseModule,
         MockedTestingModule.withState(),
       ],

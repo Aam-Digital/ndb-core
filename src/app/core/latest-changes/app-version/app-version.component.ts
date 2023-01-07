@@ -25,6 +25,7 @@ import { LatestChangesDialogService } from "../latest-changes-dialog.service";
 @Component({
   selector: "app-version",
   templateUrl: "./app-version.component.html",
+  standalone: true,
 })
 export class AppVersionComponent implements OnInit {
   /** the current app version */
