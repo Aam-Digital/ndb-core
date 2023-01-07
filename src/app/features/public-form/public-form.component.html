@@ -1,1 +1,17 @@
+<h1>{{ title }}</h1>
 <app-entity-form [entity]="entity" [columns]="columns" [form]="form"></app-entity-form>
+<button
+  mat-raised-button
+  (click)="submit()"
+  i18n="Submit form button"
+  color="accent"
+>
+  Submit Form
+</button>
+<button
+  mat-stroked-button
+  (click)="reset()"
+  i18n="Reset form button"
+>
+  Reset
+</button>

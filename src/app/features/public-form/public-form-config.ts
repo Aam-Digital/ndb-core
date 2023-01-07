@@ -4,6 +4,7 @@ import { DatabaseField } from "../../core/entity/database-field.decorator";
 
 @DatabaseEntity("PublicFormConfig")
 export class PublicFormConfig extends Entity {
+  @DatabaseField() title: string;
   @DatabaseField() entity: string;
   @DatabaseField() columns: string[][];
   @DatabaseField() prefilled: { [key in string]: any };
