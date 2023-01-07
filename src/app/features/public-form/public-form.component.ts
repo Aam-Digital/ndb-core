@@ -17,6 +17,7 @@ import { EntityFormComponent } from "../../core/entity-components/entity-form/en
 import { MatButtonModule } from "@angular/material/button";
 import { ConfigService } from "../../core/config/config.service";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
   selector: "app-public-form",
@@ -25,12 +26,12 @@ import { EntitySchemaService } from "../../core/entity/schema/entity-schema.serv
   imports: [EntityFormComponent, MatButtonModule],
   standalone: true,
 })
-export class PublicFormComponent {
-  private entityType: EntityConstructor;
-  private prefilled: any = {};
-  entity: Entity;
+export class PublicFormComponent<E extends Entity> {
+  private entityType: EntityConstructor<E>;
+  private prefilled: Partial<E> = {};
+  entity: E;
   columns: FormFieldConfig[][];
-  form: EntityForm<Entity>;
+  form: EntityForm<E>;
   title = $localize`:Default form title:Form`;
 
   constructor(
@@ -40,7 +41,8 @@ export class PublicFormComponent {
     private entityMapper: EntityMapperService,
     private entityFormService: EntityFormService,
     private configService: ConfigService,
-    private entitySchemaService: EntitySchemaService
+    private entitySchemaService: EntitySchemaService,
+    private snackbar: MatSnackBar
   ) {
     // TODO the component should probably not handle this and it is very similar to the RemoteSession
     this.database.initIndexedDB(
@@ -65,6 +67,7 @@ export class PublicFormComponent {
   submit() {
     this.entityFormService
       .saveChanges(this.form, this.entity)
+      .then(() => this.snackbar.open($localize`Successfully submitted form`))
       .then(() => this.initForm());
   }
 
@@ -75,7 +78,7 @@ export class PublicFormComponent {
   private async loadFormConfig() {
     const id = this.route.snapshot.paramMap.get("id");
     const config = await this.entityMapper.load(PublicFormConfig, id);
-    this.entityType = this.entities.get(config.entity);
+    this.entityType = this.entities.get(config.entity) as EntityConstructor<E>;
     if (config.prefilled) {
       this.prefilled = this.entitySchemaService.transformDatabaseToEntityFormat(
         config.prefilled,
