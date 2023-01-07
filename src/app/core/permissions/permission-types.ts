@@ -1,4 +1,4 @@
-import { PureAbility, RawRuleOf } from "@casl/ability";
+import { Ability, RawRuleOf } from "@casl/ability";
 import { Entity, EntityConstructor } from "../entity/model/entity";
 
 /**
@@ -30,7 +30,7 @@ export type EntitySubject = EntityConstructor | Entity | string;
  * The format that the JSON defined rules need to have.
  * In the JSON object the Entities can be specified by using their ENTITY_TYPE string representation.
  */
-export type DatabaseRule = RawRuleOf<PureAbility<[EntityAction, string]>>;
+export type DatabaseRule = RawRuleOf<Ability<[EntityAction, string]>>;
 
 /**
  * The format of the JSON object which defines the rules for each role.

@@ -29,6 +29,7 @@ import { SessionService } from "../session-service/session.service";
 import { LoginState } from "../session-states/login-state.enum";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { AuthService } from "../auth/auth.service";
+import { NEVER } from "rxjs";
 
 describe("LoginComponent", () => {
   let component: LoginComponent;
@@ -36,7 +37,7 @@ describe("LoginComponent", () => {
   let mockSessionService: jasmine.SpyObj<SessionService>;
 
   beforeEach(waitForAsync(() => {
-    mockSessionService = jasmine.createSpyObj(["login"]);
+    mockSessionService = jasmine.createSpyObj(["login"], { loginState: NEVER });
     TestBed.configureTestingModule({
       imports: [LoginComponent, MockedTestingModule],
       providers: [
