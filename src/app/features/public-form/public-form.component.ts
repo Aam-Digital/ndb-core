@@ -1,23 +1,26 @@
 import { Component } from "@angular/core";
-import { AppSettings } from "../../../core/app-config/app-settings";
-import { PouchDatabase } from "../../../core/database/pouch-database";
+import { AppSettings } from "../../core/app-config/app-settings";
+import { PouchDatabase } from "../../core/database/pouch-database";
 import PouchDB from "pouchdb-browser";
 import { ActivatedRoute } from "@angular/router";
-import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { PublicFormConfig } from "../public-form-config";
-import { Entity } from "../../../core/entity/model/entity";
-import { toFormFieldConfig } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
+import { EntityRegistry } from "../../core/entity/database-entity.decorator";
+import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { PublicFormConfig } from "./public-form-config";
+import { Entity } from "../../core/entity/model/entity";
+import { toFormFieldConfig } from "../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { FormFieldConfig } from "../../core/entity-components/entity-form/entity-form/FormConfig";
 import {
   EntityForm,
   EntityFormService,
-} from "../../../core/entity-components/entity-form/entity-form.service";
+} from "../../core/entity-components/entity-form/entity-form.service";
+import { EntityFormComponent } from "../../core/entity-components/entity-form/entity-form/entity-form.component";
 
 @Component({
   selector: "app-public-form",
   templateUrl: "./public-form.component.html",
   styleUrls: ["./public-form.component.scss"],
+  imports: [EntityFormComponent],
+  standalone: true,
 })
 export class PublicFormComponent {
   entity: Entity;

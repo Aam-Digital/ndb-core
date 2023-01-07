@@ -21,6 +21,7 @@ import { NotFoundComponent } from "./core/view/dynamic-routing/not-found/not-fou
 import { UserAccountComponent } from "./core/user/user-account/user-account.component";
 import { SupportComponent } from "./core/support/support/support.component";
 import { AuthGuard } from "./core/session/auth.guard";
+import { LoginComponent } from "./core/session/login/login.component";
 
 /**
  * Marks a class to be the target when routing.
@@ -54,7 +55,10 @@ export const allRoutes: Routes = [
   // this can't be configured in config as the config is only loaded on login
   {
     path: "public-form/:id",
-    component: PublicFormComponent,
+    loadComponent: () =>
+      import("./features/public-form/public-form.component").then(
+        (c) => c.PublicFormComponent
+      ),
   },
   { path: "login", component: LoginComponent },
   { path: "404", component: NotFoundComponent },

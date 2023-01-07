@@ -71,7 +71,6 @@ import { MatchingEntitiesModule } from "./features/matching-entities/matching-en
 import { ProgressDashboardWidgetModule } from "./features/progress-dashboard-widget/progress-dashboard-widget.module";
 import { ReportingModule } from "./features/reporting/reporting.module";
 import { RouterModule } from "@angular/router";
-import { PublicFormModule } from "./features/public-form/public-form.module";
 
 /**
  * Main entry point of the application.
@@ -114,7 +113,6 @@ import { PublicFormModule } from "./features/public-form/public-form.module";
     LocationModule,
     MatchingEntitiesModule,
     ProgressDashboardWidgetModule,
-    PublicFormModule,
     ReportingModule,
 
     // top level component
