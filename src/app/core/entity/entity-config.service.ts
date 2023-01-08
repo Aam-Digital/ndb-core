@@ -28,18 +28,21 @@ export class EntityConfigService {
 
   /**
    * Assigns additional schema-fields to all entities that are
-   * defined inside the config. Entities that are not registered
-   * using the {@link DatabaseEntity}-Decorator won't work and will
-   * trigger an error message
+   * defined inside the config.
+   * Entities that are registered later (due to lazy loading) will also be updated.
    */
   setupEntitiesFromConfig() {
-    for (const config of this.configService.getAllConfigs<
+    const entityConfigs = this.configService.getAllConfigs<
       EntityConfig & { _id: string }
-    >(ENTITY_CONFIG_PREFIX)) {
-      const id = config._id.substring(ENTITY_CONFIG_PREFIX.length);
-      const ctor = this.entities.get(id);
-      this.addConfigAttributes(ctor, config);
-    }
+    >(ENTITY_CONFIG_PREFIX);
+    this.entities.registerCallback((key, ctor) => {
+      const config = entityConfigs.find(
+        ({ _id }) => _id === `${ENTITY_CONFIG_PREFIX}${key}`
+      );
+      if (config) {
+        this.addConfigAttributes(ctor, config);
+      }
+    });
   }
 
   /**

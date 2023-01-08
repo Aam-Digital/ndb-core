@@ -61,16 +61,31 @@ describe("EntityConfigService", () => {
     expect(result).toBe(config);
   });
 
-  it("throws an error when trying to setting the entities up from config and they are not registered", () => {
-    const configWithInvalidEntities: (EntityConfig & { _id: string })[] = [
+  it("adds schema once an entity has been registered", () => {
+    const attributeConfig = {
+      name: "some-attribute",
+      schema: {
+        dataType: "string",
+      },
+    };
+    const laterRegisteredEntitiesConfig: (EntityConfig & { _id: string })[] = [
       {
-        _id: "entity:IDoNotExist",
-        attributes: [],
+        _id: "entity:IDontExistYet",
+        attributes: [attributeConfig],
       },
     ];
-    mockConfigService.getAllConfigs.and.returnValue(configWithInvalidEntities);
+    mockConfigService.getAllConfigs.and.returnValue(
+      laterRegisteredEntitiesConfig
+    );
 
-    expect(() => service.setupEntitiesFromConfig()).toThrowError();
+    service.setupEntitiesFromConfig();
+
+    TestBed.inject(EntityRegistry).add("IDontExistYet", Test);
+
+    expect([...Test.schema.entries()]).toContain([
+      attributeConfig.name,
+      attributeConfig.schema,
+    ]);
   });
 
   it("appends custom definitions for each entity from the config", () => {
