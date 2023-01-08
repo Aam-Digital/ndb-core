@@ -9,6 +9,7 @@
 export abstract class Registry<T> extends Map<string, T> {
   // This controls whether the registry will throw an error when a key is added multiple times
   private failOnDuplicate = true;
+  private callbacks: ((key: string, value: T) => undefined)[] = [];
 
   constructor(private beforeAddCheck?: (key: string, mapping: T) => void) {
     super();
@@ -26,6 +27,7 @@ export abstract class Registry<T> extends Map<string, T> {
       );
     }
     this.set(key, mapping);
+    this.callbacks.forEach((callback) => callback(key, mapping));
   }
 
   public addAll(tuples: [string, T][]) {
@@ -48,5 +50,12 @@ export abstract class Registry<T> extends Map<string, T> {
    */
   public allowDuplicates() {
     this.failOnDuplicate = false;
+  }
+
+  public registerCallback(callback: (key: string, value: T) => any) {
+    for (const [key, value] of this.entries()) {
+      callback(key, value);
+    }
+    this.callbacks.push(callback);
   }
 }
