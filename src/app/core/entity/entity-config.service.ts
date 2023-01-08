@@ -36,7 +36,6 @@ export class EntityConfigService {
     for (const config of this.configService.getAllConfigs<
       EntityConfig & { _id: string }
     >(ENTITY_CONFIG_PREFIX)) {
-      // TODO some entities are lazy loaded and dont receive config
       const id = config._id.substring(ENTITY_CONFIG_PREFIX.length);
       const ctor = this.entities.get(id);
       this.addConfigAttributes(ctor, config);

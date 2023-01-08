@@ -114,7 +114,6 @@ import { RouterModule } from "@angular/router";
     MatchingEntitiesModule,
     ProgressDashboardWidgetModule,
     ReportingModule,
-
     // top level component
     UiComponent,
     // Global Angular Material modules
