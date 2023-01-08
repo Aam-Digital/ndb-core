@@ -124,15 +124,14 @@ export class CouchdbFileService extends FileService {
   }
 
   showFile(entity: Entity, property: string) {
-    const obs = this.http.get(
-      `${this.attachmentsUrl}/${entity.getId(true)}/${property}`,
-      {
+    const obs = this.http
+      .get(`${this.attachmentsUrl}/${entity.getId(true)}/${property}`, {
         responseType: "blob",
         reportProgress: true,
         observe: "events",
         headers: { "ngsw-bypass": "" },
-      }
-    );
+      })
+      .pipe(shareReplay());
     this.reportProgress($localize`Loading "${entity[property]}"`, obs);
     obs
       .pipe(filter((e) => e.type === HttpEventType.Response))

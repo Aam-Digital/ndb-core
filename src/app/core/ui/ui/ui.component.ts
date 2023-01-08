@@ -27,7 +27,7 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 import { NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { RouterLink, RouterOutlet } from "@angular/router";
+import { Router, RouterLink, RouterOutlet } from "@angular/router";
 import { Angulartics2Module } from "angulartics2";
 import { SearchComponent } from "../search/search.component";
 import { SyncStatusComponent } from "../../sync-status/sync-status/sync-status.component";
@@ -37,7 +37,6 @@ import { PwaInstallComponent } from "../../pwa-install/pwa-install.component";
 import { AppVersionComponent } from "../../latest-changes/app-version/app-version.component";
 import { LoginComponent } from "../../session/login/login.component";
 import { PrimaryActionComponent } from "../primary-action/primary-action.component";
-import { Router } from "@angular/router";
 
 /**
  * The main user interface component as root element for the app structure
@@ -64,9 +63,9 @@ import { Router } from "@angular/router";
     AppVersionComponent,
     RouterOutlet,
     LoginComponent,
-    PrimaryActionComponent
+    PrimaryActionComponent,
   ],
-  standalone: true
+  standalone: true,
 })
 export class UiComponent {
   /** display mode for the menu to make it responsive and usable on smaller screens */
