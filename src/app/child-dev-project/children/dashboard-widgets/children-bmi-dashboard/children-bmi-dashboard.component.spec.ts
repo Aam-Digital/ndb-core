@@ -12,14 +12,10 @@ import { EntityMapperService } from "../../../../core/entity/entity-mapper.servi
 describe("ChildrenBmiDashboardComponent", () => {
   let component: ChildrenBmiDashboardComponent;
   let fixture: ComponentFixture<ChildrenBmiDashboardComponent>;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
 
   beforeEach(() => {
-    mockEntityMapper = jasmine.createSpyObj("mockEntityMapper", ["loadType"]);
-    mockEntityMapper.loadType.and.resolveTo([]);
     TestBed.configureTestingModule({
       imports: [ChildrenBmiDashboardComponent, MockedTestingModule.withState()],
-      providers: [{ provide: EntityMapperService, useValue: mockEntityMapper }],
     }).compileComponents();
   });
 
@@ -52,15 +48,12 @@ describe("ChildrenBmiDashboardComponent", () => {
       height: 115,
       weight: 30,
     });
-    mockEntityMapper.loadType.and.resolveTo([
-      healthCheck1,
-      healthCheck2,
-      healthCheck3,
-    ]);
+    const loadTypeSpy = spyOn(TestBed.inject(EntityMapperService), "loadType");
+    loadTypeSpy.and.resolveTo([healthCheck1, healthCheck2, healthCheck3]);
 
     component.onInitFromDynamicConfig();
 
-    expect(mockEntityMapper.loadType).toHaveBeenCalledWith(HealthCheck);
+    expect(loadTypeSpy).toHaveBeenCalledWith(HealthCheck);
     tick();
     expect(component.bmiDataSource.data).toEqual([
       { childId: "testID", bmi: healthCheck2.bmi },

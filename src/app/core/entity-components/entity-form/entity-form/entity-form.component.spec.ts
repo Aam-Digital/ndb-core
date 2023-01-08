@@ -34,6 +34,7 @@ describe("EntityFormComponent", () => {
       component.columns[0],
       component.entity
     );
+    component.ngOnChanges({ entity: true, form: true } as any);
     fixture.detectChanges();
   });
 

@@ -1,4 +1,10 @@
-import { Component, Input, OnChanges, ViewEncapsulation } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  ViewEncapsulation,
+} from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { FormFieldConfig } from "./FormConfig";
 import { EntityForm } from "../entity-form.service";
@@ -60,8 +66,8 @@ export class EntityFormComponent<T extends Entity = Entity>
     private confirmationDialog: ConfirmationDialogService
   ) {}
 
-  ngOnChanges() {
-    if (this.entity) {
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.entity && this.entity) {
       this.entityMapper
         .receiveUpdates(this.entity.getConstructor())
         .pipe(
@@ -70,7 +76,7 @@ export class EntityFormComponent<T extends Entity = Entity>
         )
         .subscribe(({ entity }) => this.applyChanges(entity));
     }
-    if (this.form) {
+    if (changes.form && this.form) {
       this.initialFormValues = this.form.getRawValue();
     }
   }
