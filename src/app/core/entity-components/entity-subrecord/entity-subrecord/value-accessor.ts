@@ -15,7 +15,12 @@ export function getReadableValue<OBJECT, PROPERTY extends keyof OBJECT>(
   if (isConfigurableEnum(value)) {
     return value.label;
   } else if (Array.isArray(value)) {
-    return value.map((v) => getReadableValue({ v }, "v"));
+    if (value.every((val) => value.indexOf(val) === 0)) {
+      // only return a single value if all elements in array are same
+      return getReadableValue({ v: value[0] }, "v");
+    } else {
+      return value.map((v) => getReadableValue({ v }, "v"));
+    }
   } else {
     return value;
   }

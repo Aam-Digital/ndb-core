@@ -68,14 +68,14 @@ export class ReportingComponent implements OnInit {
 
     if (selectedReport.mode === "exporting") {
       await this.createExport(
-        selectedReport.aggregationDefinitions,
+        selectedReport.aggregationDefinitions as ExportColumnConfig[],
         fromDate,
         dayAfterToDate
       );
       this.mode = "exporting";
     } else {
       await this.createReport(
-        selectedReport.aggregationDefinitions,
+        selectedReport.aggregationDefinitions as Aggregation[],
         fromDate,
         dayAfterToDate
       );

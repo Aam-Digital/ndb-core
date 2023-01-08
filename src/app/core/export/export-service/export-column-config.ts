@@ -24,4 +24,6 @@ export interface ExportColumnConfig {
    * => overall result: two export rows: [{ name: "child1", phone: "123"}, {name: "child2", phone: "567"}]
    */
   subQueries?: ExportColumnConfig[];
+
+  groupBy?: { label: string; property: string };
 }

@@ -4,6 +4,7 @@ import { getReadableValue } from "../../entity-components/entity-subrecord/entit
 import { ExportColumnConfig } from "./export-column-config";
 import { QueryService } from "../../../features/reporting/query.service";
 import moment from "moment";
+import { groupBy } from "../../../utils/utils";
 
 /**
  * Prepare data for export in csv format.
@@ -65,13 +66,15 @@ export class ExportService {
    * @param config (Optional) config specifying how export should look
    * @param from (Optional) limits the data which is fetched from the database and is also available inside the query. If not provided, all data is fetched.
    * @param to (Optional) same as from.If not provided, today is used.
+   * @param groupByProperty (optional) groups the data using the value at the given property and adds a column to the final table.
    * @returns array with the result of the queries and sub queries
    */
   async runExportQuery(
     data: any[],
     config?: ExportColumnConfig[],
     from?: Date,
-    to?: Date
+    to?: Date,
+    groupByProperty?: { label: string; property: string }
   ): Promise<ExportRow[]> {
     if (!data) {
       // The query of each first level ExportColumnConfig is used as data-basis for the further subQueries
@@ -82,7 +85,8 @@ export class ExportService {
           baseData,
           c.subQueries,
           from,
-          to
+          to,
+          c.groupBy
         );
         combinedResults.push(...result);
       }
@@ -91,14 +95,32 @@ export class ExportService {
 
     const flattenedExportRows: ExportRow[] = [];
     if (config) {
-      for (const dataRow of data) {
-        const extendedExportableRows = await this.generateExportRows(
-          dataRow,
-          config,
-          from,
-          to
-        );
-        flattenedExportRows.push(...extendedExportableRows);
+      if (groupByProperty) {
+        const groups = groupBy(data, groupByProperty.property);
+        for (const [group, values] of groups.entries()) {
+          const groupColumn: ExportColumnConfig = {
+            label: groupByProperty.label,
+            query: `:setString(${getReadableValue({ group }, "group")})`,
+          };
+
+          const extendedExportableRows = await this.generateExportRows(
+            values,
+            [groupColumn].concat(...config),
+            from,
+            to
+          );
+          flattenedExportRows.push(...extendedExportableRows);
+        }
+      } else {
+        for (const dataRow of data) {
+          const extendedExportableRows = await this.generateExportRows(
+            dataRow,
+            config,
+            from,
+            to
+          );
+          flattenedExportRows.push(...extendedExportableRows);
+        }
       }
     } else {
       flattenedExportRows.push(...data);
@@ -123,8 +145,8 @@ export class ExportService {
   }
 
   /**
-   * Generate one or more export row objects from the given data object and config.
-   * @param object A single data object to be exported as one or more export row objects
+   * Generate one or more export row objects from the given data data and config.
+   * @param data A data to be exported as one or more export row objects
    * @param config
    * @param from
    * @param to
@@ -132,19 +154,15 @@ export class ExportService {
    * @private
    */
   private async generateExportRows(
-    object: Object,
+    data: any | any[],
     config: ExportColumnConfig[],
     from: Date,
     to: Date
   ): Promise<ExportRow[]> {
     let exportRows: ExportRow[] = [{}];
     for (const exportColumnConfig of config) {
-      const partialExportObjects: ExportRow[] = await this.getExportRowsForColumn(
-        object,
-        exportColumnConfig,
-        from,
-        to
-      );
+      const partialExportObjects: ExportRow[] =
+        await this.getExportRowsForColumn(data, exportColumnConfig, from, to);
 
       exportRows = this.mergePartialExportRows(
         exportRows,
@@ -155,15 +173,15 @@ export class ExportService {
   }
 
   /**
-   * Generate one or more (partial) export row objects from a single property of the data object
-   * @param object
+   * Generate one or more (partial) export row objects from a single property of the data
+   * @param data
    * @param exportColumnConfig
    * @param from
    * @param to
    * @private
    */
   private async getExportRowsForColumn(
-    object: Object,
+    data: any | any[],
     exportColumnConfig: ExportColumnConfig,
     from: Date,
     to: Date
@@ -172,7 +190,7 @@ export class ExportService {
       exportColumnConfig.label ?? exportColumnConfig.query.replace(".", "");
     const value = await this.getValueForQuery(
       exportColumnConfig,
-      object,
+      data,
       from,
       to
     );
@@ -203,7 +221,7 @@ export class ExportService {
 
   private async getValueForQuery(
     exportColumnConfig: ExportColumnConfig,
-    object: Object,
+    data: any | any[],
     from: Date,
     to: Date
   ): Promise<any> {
@@ -211,7 +229,7 @@ export class ExportService {
       exportColumnConfig.query,
       from,
       to,
-      [object]
+      Array.isArray(data) ? data : [data]
     );
 
     if (!Array.isArray(value)) {
