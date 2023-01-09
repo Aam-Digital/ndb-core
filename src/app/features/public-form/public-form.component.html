@@ -1,7 +1,7 @@
 <mat-card>
   <mat-card-header>
-    <mat-card-title>{{ formConfig.title }}</mat-card-title>
-    <mat-card-subtitle>{{ formConfig.description }}</mat-card-subtitle>
+    <mat-card-title>{{ formConfig?.title }}</mat-card-title>
+    <mat-card-subtitle>{{ formConfig?.description }}</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
     <app-entity-form [entity]="entity" [columns]="columns" [form]="form" [gridLayout]="false"></app-entity-form>
