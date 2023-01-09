@@ -69,7 +69,7 @@ describe("PublicFormComponent", () => {
     tick();
 
     expect(component.entity.getConstructor()).toBe(Child);
-    expect(component.title).toBe("test form");
+    expect(component.formConfig.title).toBe("test form");
   }));
 
   it("should prefill entity with transformed values", fakeAsync(() => {

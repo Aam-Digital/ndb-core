@@ -18,21 +18,22 @@ import { MatButtonModule } from "@angular/material/button";
 import { ConfigService } from "../../core/config/config.service";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatCardModule } from "@angular/material/card";
 
 @Component({
   selector: "app-public-form",
   templateUrl: "./public-form.component.html",
   styleUrls: ["./public-form.component.scss"],
-  imports: [EntityFormComponent, MatButtonModule],
+  imports: [EntityFormComponent, MatButtonModule, MatCardModule],
   standalone: true,
 })
 export class PublicFormComponent<E extends Entity> {
   private entityType: EntityConstructor<E>;
   private prefilled: Partial<E> = {};
+  formConfig: PublicFormConfig;
   entity: E;
   columns: FormFieldConfig[][];
   form: EntityForm<E>;
-  title = $localize`:Default form title:Form`;
 
   constructor(
     private database: PouchDatabase,
@@ -77,16 +78,19 @@ export class PublicFormComponent<E extends Entity> {
 
   private async loadFormConfig() {
     const id = this.route.snapshot.paramMap.get("id");
-    const config = await this.entityMapper.load(PublicFormConfig, id);
-    this.entityType = this.entities.get(config.entity) as EntityConstructor<E>;
-    if (config.prefilled) {
+    this.formConfig = await this.entityMapper.load(PublicFormConfig, id);
+    this.entityType = this.entities.get(
+      this.formConfig.entity
+    ) as EntityConstructor<E>;
+    if (this.formConfig.prefilled) {
       this.prefilled = this.entitySchemaService.transformDatabaseToEntityFormat(
-        config.prefilled,
+        this.formConfig.prefilled,
         this.entityType.schema
       );
     }
-    this.columns = config.columns.map((row) => row.map(toFormFieldConfig));
-    this.title = config.title ?? this.title;
+    this.columns = this.formConfig.columns.map((row) =>
+      row.map(toFormFieldConfig)
+    );
     this.initForm();
   }
 
