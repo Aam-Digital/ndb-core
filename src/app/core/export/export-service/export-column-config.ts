@@ -25,5 +25,9 @@ export interface ExportColumnConfig {
    */
   subQueries?: ExportColumnConfig[];
 
+  /**
+   * Group the results of the query based on unique values at `property`.
+   * This will also add another column to the list with the title `label` and the distinct values in the rows.
+   */
   groupBy?: { label: string; property: string };
 }

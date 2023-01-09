@@ -481,6 +481,25 @@ describe("ExportService", () => {
     );
   });
 
+  it("should allow to group results", async () => {
+    const s1 = createSchoolInDB("sameName");
+    const s2 = createSchoolInDB("sameName");
+    const s3 = createSchoolInDB("otherName");
+
+    const result = await service.createExport([
+      {
+        query: `${School.ENTITY_TYPE}:toArray`,
+        groupBy: { label: "Name", property: "name" },
+        subQueries: [{ query: ":count", label: "Amount" }],
+      },
+    ]);
+
+    expect(result).toEqual([
+      { Name: "sameName", Amount: 2 },
+      { Name: "otherName", Amount: 1 },
+    ]);
+  });
+
   async function createChildInDB(name: string): Promise<Child> {
     const child = new Child();
     child.name = name;
