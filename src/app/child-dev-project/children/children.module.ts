@@ -20,9 +20,22 @@ import { EntitySchemaService } from "../../core/entity/schema/entity-schema.serv
 import { PhotoDatatype } from "./child-photo-service/datatype-photo";
 import { ComponentRegistry } from "../../dynamic-components";
 import { childrenComponents } from "./children-components";
+import { Aser } from "./aser/model/aser";
+import { EducationalMaterial } from "./educational-material/model/educational-material";
+import { HealthCheck } from "./health-checkup/model/health-check";
+import { Child } from "./model/child";
+import { ChildSchoolRelation } from "./model/childSchoolRelation";
 
 @NgModule({})
 export class ChildrenModule {
+  static databaseEntities = [
+    Aser,
+    EducationalMaterial,
+    HealthCheck,
+    Child,
+    ChildSchoolRelation,
+  ];
+
   constructor(
     entitySchemaService: EntitySchemaService,
     components: ComponentRegistry
