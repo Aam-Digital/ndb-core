@@ -1,17 +1,18 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { Todo } from "./model/todo";
-import { RouteTarget } from "../../app.routing";
+import { Todo } from "../model/todo";
+import { RouteTarget } from "../../../app.routing";
 import {
   EntityListConfig,
   PrebuiltFilterConfig,
-} from "../../core/entity-components/entity-list/EntityListConfig";
-import { RouteData } from "../../core/view/dynamic-routing/view-config.interface";
-import { SessionService } from "../../core/session/session-service/session.service";
-import { FormDialogService } from "../../core/form-dialog/form-dialog.service";
-import { TodoDetailsComponent } from "./todo-details/todo-details.component";
-import { LoggingService } from "../../core/logging/logging.service";
+} from "../../../core/entity-components/entity-list/EntityListConfig";
+import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
+import { SessionService } from "../../../core/session/session-service/session.service";
+import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
+import { TodoDetailsComponent } from "../todo-details/todo-details.component";
+import { LoggingService } from "../../../core/logging/logging.service";
 import moment from "moment";
+import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
 
 @RouteTarget("TodoList")
 @Component({
@@ -25,6 +26,8 @@ import moment from "moment";
       (addNewClick)="createNew()"
     ></app-entity-list>
   `,
+  standalone: true,
+  imports: [EntityListComponent],
 })
 export class TodoListComponent implements OnInit {
   // TODO: make this component obsolete by generalizing Entity and EntityList so that we can define a viewDetailsComponent on the entity that gets opened as popup?

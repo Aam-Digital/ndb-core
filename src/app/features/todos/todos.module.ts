@@ -1,93 +1,61 @@
 import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { TodosRelatedToEntityComponent } from "./todos-related-to-entity/todos-related-to-entity.component";
-import { EntitySubrecordModule } from "../../core/entity-components/entity-subrecord/entity-subrecord.module";
-import { EditRecurringIntervalComponent } from "./recurring-interval/edit-recurring-interval/edit-recurring-interval.component";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { EntityUtilsModule } from "../../core/entity-components/entity-utils/entity-utils.module";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatSelectModule } from "@angular/material/select";
-import { MatButtonModule } from "@angular/material/button";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { CustomIntervalComponent } from "./recurring-interval/custom-interval/custom-interval.component";
-import { MatDialogModule } from "@angular/material/dialog";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { timeIntervalDatatype } from "./recurring-interval/time-interval.datatype";
-import { DisplayRecurringIntervalComponent } from "./recurring-interval/display-recurring-interval/display-recurring-interval.component";
-import { TodoCompletionComponent } from "./todo-completion/todo-completion/todo-completion.component";
-import { TodoDetailsComponent } from "./todo-details/todo-details.component";
-import { CommonComponentsModule } from "../../core/common-components/common-components.module";
-import { EntityFormModule } from "../../core/entity-components/entity-form/entity-form.module";
-import { MatSlideToggleModule } from "@angular/material/slide-toggle";
-import { DisplayTodoCompletionComponent } from "./todo-completion/display-todo-completion/display-todo-completion.component";
-import { MatMenuModule } from "@angular/material/menu";
-import { Angulartics2Module } from "angulartics2";
-import { PermissionsModule } from "../../core/permissions/permissions.module";
-import { TodoListComponent } from "./todo-list.component";
-import { EntityListModule } from "../../core/entity-components/entity-list/entity-list.module";
-import { TodosDashboardComponent } from "./todos-dashboard/todos-dashboard.component";
-import { DashboardModule } from "../../core/dashboard/dashboard.module";
-import { MatTableModule } from "@angular/material/table";
+import { Todo } from "./model/todo";
+import { ComponentRegistry } from "../../dynamic-components";
 
-@NgModule({
-  declarations: [
-    TodosRelatedToEntityComponent,
-    EditRecurringIntervalComponent,
-    CustomIntervalComponent,
-    DisplayRecurringIntervalComponent,
-    TodoCompletionComponent,
-    TodoDetailsComponent,
-    DisplayTodoCompletionComponent,
-    TodoListComponent,
-    TodosDashboardComponent,
-  ],
-  imports: [
-    CommonModule,
-    EntitySubrecordModule,
-    MatFormFieldModule,
-    MatInputModule,
-    ReactiveFormsModule,
-    EntityUtilsModule,
-    FontAwesomeModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatTooltipModule,
-    FormsModule,
-    MatDialogModule,
-    CommonComponentsModule,
-    EntityFormModule,
-    MatSlideToggleModule,
-    MatMenuModule,
-    Angulartics2Module,
-    PermissionsModule,
-    EntityListModule,
-    DashboardModule,
-    MatTableModule,
-  ],
-  exports: [
-    TodosRelatedToEntityComponent,
-    EditRecurringIntervalComponent,
-    DisplayRecurringIntervalComponent,
-    TodoCompletionComponent,
-    DisplayTodoCompletionComponent,
-    TodoDetailsComponent,
-    TodoListComponent,
-    TodosDashboardComponent,
-  ],
-})
+@NgModule({})
 export class TodosModule {
-  static dynamicComponents: [
-    TodoListComponent,
-    TodosRelatedToEntityComponent,
-    TodosDashboardComponent,
-    EditRecurringIntervalComponent,
-    DisplayTodoCompletionComponent,
-    DisplayRecurringIntervalComponent
-  ];
+  static databaseEntities = [Todo];
 
-  constructor(entitySchemaService: EntitySchemaService) {
+  constructor(
+    components: ComponentRegistry,
+    entitySchemaService: EntitySchemaService
+  ) {
     entitySchemaService.registerSchemaDatatype(timeIntervalDatatype);
+    components.addAll([
+      [
+        "TodoList",
+        () =>
+          import("./todo-list/todo-list.component").then(
+            (c) => c.TodoListComponent
+          ),
+      ],
+      [
+        "TodosRelatedToEntity",
+        () =>
+          import(
+            "./todos-related-to-entity/todos-related-to-entity.component"
+          ).then((c) => c.TodosRelatedToEntityComponent),
+      ],
+      [
+        "TodosDashboardComponent",
+        () =>
+          import("./todos-dashboard/todos-dashboard.component").then(
+            (c) => c.TodosDashboardComponent
+          ),
+      ],
+      [
+        "EditRecurringIntervalComponent",
+        () =>
+          import(
+            "./recurring-interval/edit-recurring-interval/edit-recurring-interval.component"
+          ).then((c) => c.EditRecurringIntervalComponent),
+      ],
+      [
+        "DisplayRecurringIntervalComponent",
+        () =>
+          import(
+            "./recurring-interval/display-recurring-interval/display-recurring-interval.component"
+          ).then((c) => c.DisplayRecurringIntervalComponent),
+      ],
+      [
+        "DisplayTodoCompletionComponent",
+        () =>
+          import(
+            "./todo-completion/display-todo-completion/display-todo-completion.component"
+          ).then((c) => c.DisplayTodoCompletionComponent),
+      ],
+    ]);
   }
 }

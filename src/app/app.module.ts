@@ -71,6 +71,7 @@ import { MatchingEntitiesModule } from "./features/matching-entities/matching-en
 import { ProgressDashboardWidgetModule } from "./features/progress-dashboard-widget/progress-dashboard-widget.module";
 import { ReportingModule } from "./features/reporting/reporting.module";
 import { RouterModule } from "@angular/router";
+import { TodosModule } from "./features/todos/todos.module";
 
 /**
  * Main entry point of the application.
@@ -114,12 +115,12 @@ import { RouterModule } from "@angular/router";
     MatchingEntitiesModule,
     ProgressDashboardWidgetModule,
     ReportingModule,
+    TodosModule,
     // top level component
     UiComponent,
     // Global Angular Material modules
     MatSnackBarModule,
     MatDialogModule,
-    TodosModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },

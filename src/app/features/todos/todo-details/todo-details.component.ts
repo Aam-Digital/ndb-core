@@ -7,7 +7,11 @@ import {
   Output,
 } from "@angular/core";
 import { Todo } from "../model/todo";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from "@angular/material/dialog";
 import { DetailsComponentData } from "../../../core/entity-components/entity-subrecord/row-details/row-details.component";
 import { TodoService } from "../todo.service";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
@@ -22,11 +26,33 @@ import {
   EntityRemoveService,
   RemoveResult,
 } from "../../../core/entity/entity-remove.service";
+import { NgIf } from "@angular/common";
+import { TodoCompletionComponent } from "../todo-completion/todo-completion/todo-completion.component";
+import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
+import { EntityFormComponent } from "../../../core/entity-components/entity-form/entity-form/entity-form.component";
+import { MatButtonModule } from "@angular/material/button";
+import { MatMenuModule } from "@angular/material/menu";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { DisableEntityOperationDirective } from "../../../core/permissions/permission-directive/disable-entity-operation.directive";
+import { Angulartics2Module } from "angulartics2";
 
 @Component({
   selector: "app-todo-details",
   templateUrl: "./todo-details.component.html",
   styleUrls: ["./todo-details.component.scss"],
+  standalone: true,
+  imports: [
+    MatDialogModule,
+    NgIf,
+    TodoCompletionComponent,
+    DialogCloseComponent,
+    EntityFormComponent,
+    MatButtonModule,
+    MatMenuModule,
+    FontAwesomeModule,
+    DisableEntityOperationDirective,
+    Angulartics2Module,
+  ],
 })
 export class TodoDetailsComponent implements OnInit {
   @Input() entity: Todo;

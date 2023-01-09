@@ -5,6 +5,11 @@ import { generateLabelFromInterval, TimeInterval } from "../time-interval";
 import { MatDialog } from "@angular/material/dialog";
 import { CustomIntervalComponent } from "../custom-interval/custom-interval.component";
 import { MatOptionSelectionChange } from "@angular/material/core";
+import { MatInputModule } from "@angular/material/input";
+import { ReactiveFormsModule } from "@angular/forms";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatSelectModule } from "@angular/material/select";
+import { NgForOf, NgIf } from "@angular/common";
 
 /**
  * Form field to edit a time interval for repetitions.
@@ -16,6 +21,15 @@ import { MatOptionSelectionChange } from "@angular/material/core";
   selector: "app-edit-recurring-interval",
   templateUrl: "./edit-recurring-interval.component.html",
   styleUrls: ["./edit-recurring-interval.component.scss"],
+  standalone: true,
+  imports: [
+    MatInputModule,
+    ReactiveFormsModule,
+    FontAwesomeModule,
+    MatSelectModule,
+    NgIf,
+    NgForOf,
+  ],
 })
 export class EditRecurringIntervalComponent
   extends EditComponent<any>

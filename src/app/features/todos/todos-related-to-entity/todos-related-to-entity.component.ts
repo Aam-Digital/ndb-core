@@ -10,12 +10,17 @@ import { SessionService } from "../../../core/session/session-service/session.se
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { TodoDetailsComponent } from "../todo-details/todo-details.component";
 import { DataFilter } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { FormsModule } from "@angular/forms";
 
 @DynamicComponent("TodosRelatedToEntity")
 @Component({
   selector: "app-todos-related-to-entity",
   templateUrl: "./todos-related-to-entity.component.html",
   styleUrls: ["./todos-related-to-entity.component.scss"],
+  standalone: true,
+  imports: [EntitySubrecordComponent, MatSlideToggleModule, FormsModule],
 })
 export class TodosRelatedToEntityComponent implements OnInitDynamicComponent {
   entries: Todo[] = [];

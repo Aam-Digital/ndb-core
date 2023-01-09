@@ -6,12 +6,24 @@ import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on
 import { TodoDetailsComponent } from "../todo-details/todo-details.component";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import moment from "moment";
+import { DashboardListWidgetComponent } from "../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
+import { DatePipe, NgStyle } from "@angular/common";
+import { MatTableModule } from "@angular/material/table";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @DynamicComponent("TodosDashboard")
 @Component({
   selector: "app-todos-dashboard",
   templateUrl: "./todos-dashboard.component.html",
   styleUrls: ["./todos-dashboard.component.scss"],
+  standalone: true,
+  imports: [
+    DashboardListWidgetComponent,
+    NgStyle,
+    MatTableModule,
+    MatTooltipModule,
+    DatePipe,
+  ],
 })
 export class TodosDashboardComponent implements OnInitDynamicComponent {
   dataMapper: (data: Todo[]) => Todo[] = (data) =>

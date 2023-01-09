@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { CustomIntervalComponent } from "./custom-interval.component";
-import { TodosModule } from "../../todos.module";
 import { ConfigService } from "../../../../core/config/config.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
@@ -11,8 +10,7 @@ describe("CustomIntervalComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [CustomIntervalComponent],
-      imports: [TodosModule, NoopAnimationsModule],
+      imports: [CustomIntervalComponent, NoopAnimationsModule],
       providers: [{ provide: ConfigService, useValue: null }],
     }).compileComponents();
 

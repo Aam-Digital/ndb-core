@@ -1,11 +1,9 @@
 import { moduleMetadata } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { Meta, Story } from "@storybook/angular/types-6-0";
-import {EditRecurringIntervalComponent} from "./edit-recurring-interval.component";
-import {TodosModule} from "../../todos.module";
-import {EntityFormComponent} from "../../../../core/entity-components/entity-form/entity-form/entity-form.component";
-import { EntityFormModule } from "../../../../core/entity-components/entity-form/entity-form.module";
-import { EntityUtilsModule } from "../../../../core/entity-components/entity-utils/entity-utils.module";
+import { EditRecurringIntervalComponent } from "./edit-recurring-interval.component";
+import { TodosModule } from "../../todos.module";
+import { EntityFormComponent } from "../../../../core/entity-components/entity-form/entity-form/entity-form.component";
 import { EntitySchemaService } from "../../../../core/entity/schema/entity-schema.service";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { DatabaseEntity } from "../../../../core/entity/database-entity.decorator";
@@ -19,12 +17,7 @@ export default {
   component: EditRecurringIntervalComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        TodosModule,
-        EntityFormModule,
-        EntityUtilsModule,
-        StorybookBaseModule,
-      ],
+      imports: [TodosModule, StorybookBaseModule],
       providers: [
         EntitySchemaService,
         {
