@@ -45,7 +45,12 @@ export class ExportService {
     from?: Date,
     to?: Date
   ): Promise<string> {
-    const readableExportRow = await this.runExportQuery(data, config, from, to);
+    let readableExportRow: ExportRow[];
+    if (data) {
+      readableExportRow = await this.createExportOfData(data, config, from, to);
+    } else {
+      readableExportRow = await this.createExport(config, from, to);
+    }
 
     // Collect all properties because papa only uses the properties of the first object
     const keys = new Set<string>();
@@ -60,72 +65,93 @@ export class ExportService {
     });
   }
 
+  async createExport(
+    config: ExportColumnConfig[],
+    from?: Date,
+    to?: Date
+  ): Promise<ExportRow[]> {
+    const combinedResults: ExportRow[] = [];
+    for (const c of config) {
+      const baseData = await this.queryService.queryData(c.query, from, to);
+      const result = await this.createExportOfData(
+        baseData,
+        c.subQueries,
+        from,
+        to,
+        c.groupBy
+      );
+      combinedResults.push(...result);
+    }
+    return combinedResults;
+  }
+
   /**
    * Creates a dataset with the provided values that can be used for a simple table or export.
-   * @param data (Optional) an array of elements. If not provided, the first query in `config` will be used to get the data.
+   * @param data an array of elements. If not provided, the first query in `config` will be used to get the data.
    * @param config (Optional) config specifying how export should look
    * @param from (Optional) limits the data which is fetched from the database and is also available inside the query. If not provided, all data is fetched.
    * @param to (Optional) same as from.If not provided, today is used.
    * @param groupByProperty (optional) groups the data using the value at the given property and adds a column to the final table.
    * @returns array with the result of the queries and sub queries
    */
-  async runExportQuery(
+  async createExportOfData(
     data: any[],
-    config?: ExportColumnConfig[],
+    config: ExportColumnConfig[],
     from?: Date,
     to?: Date,
     groupByProperty?: { label: string; property: string }
   ): Promise<ExportRow[]> {
-    if (!data) {
-      // The query of each first level ExportColumnConfig is used as data-basis for the further subQueries
-      const combinedResults: ExportRow[] = [];
-      for (const c of config) {
-        const baseData = await this.queryService.queryData(c.query, from, to);
-        const result = await this.runExportQuery(
-          baseData,
-          c.subQueries,
-          from,
-          to,
-          c.groupBy
-        );
-        combinedResults.push(...result);
-      }
-      return combinedResults;
-    }
-
-    const flattenedExportRows: ExportRow[] = [];
+    let flattenedExportRows: ExportRow[];
     if (config) {
-      if (groupByProperty) {
-        const groups = groupBy(data, groupByProperty.property);
-        for (const [group, values] of groups.entries()) {
-          const groupColumn: ExportColumnConfig = {
-            label: groupByProperty.label,
-            query: `:setString(${getReadableValue({ group }, "group")})`,
-          };
-
-          const extendedExportableRows = await this.generateExportRows(
-            values,
-            [groupColumn].concat(...config),
-            from,
-            to
-          );
-          flattenedExportRows.push(...extendedExportableRows);
-        }
-      } else {
-        for (const dataRow of data) {
-          const extendedExportableRows = await this.generateExportRows(
-            dataRow,
-            config,
-            from,
-            to
-          );
-          flattenedExportRows.push(...extendedExportableRows);
-        }
-      }
+      flattenedExportRows = await this.generateExportRowsForData(
+        data,
+        config,
+        from,
+        to,
+        groupByProperty
+      );
     } else {
-      flattenedExportRows.push(...data);
+      flattenedExportRows = data;
     }
     return this.transformToReadableFormat(flattenedExportRows);
+  }
+
+  private async generateExportRowsForData(
+    data: any[],
+    config: ExportColumnConfig[],
+    from: Date,
+    to: Date,
+    groupByProperty?: { label: string; property: string }
+  ) {
+    const result: ExportRow[] = [];
+    if (groupByProperty) {
+      const groups = groupBy(data, groupByProperty.property);
+      for (const [group, values] of groups.entries()) {
+        const groupColumn: ExportColumnConfig = {
+          label: groupByProperty.label,
+          query: `:setString(${getReadableValue({ group }, "group")})`,
+        };
+
+        const extendedExportableRows = await this.generateExportRows(
+          values,
+          [groupColumn].concat(...config),
+          from,
+          to
+        );
+        result.push(...extendedExportableRows);
+      }
+    } else {
+      for (const dataRow of data) {
+        const extendedExportableRows = await this.generateExportRows(
+          dataRow,
+          config,
+          from,
+          to
+        );
+        result.push(...extendedExportableRows);
+      }
+    }
+    return result;
   }
 
   private transformToReadableFormat(flattenedExportRows: ExportRow[]) {
@@ -205,17 +231,13 @@ export class ExportService {
         to
       );
     } else {
-      const additionalRows: ExportRow[] = [];
-      for (const v of value) {
-        const addRows = await this.generateExportRows(
-          v,
-          exportColumnConfig.subQueries,
-          from,
-          to
-        );
-        additionalRows.push(...addRows);
-      }
-      return additionalRows;
+      return this.generateExportRowsForData(
+        value,
+        exportColumnConfig.subQueries,
+        from,
+        to,
+        exportColumnConfig.groupBy
+      );
     }
   }
 

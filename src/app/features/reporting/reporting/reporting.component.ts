@@ -90,8 +90,7 @@ export class ReportingComponent implements OnInit {
     fromDate: Date,
     toDate: Date
   ) {
-    this.data = await this.exportService.runExportQuery(
-      undefined,
+    this.data = await this.exportService.createExport(
       exportConfig,
       fromDate,
       toDate

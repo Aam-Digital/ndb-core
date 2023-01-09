@@ -9,7 +9,7 @@ import { ReportingComponent } from "./reporting.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Subject } from "rxjs";
 import { ActivatedRoute } from "@angular/router";
-import { ReportingService } from "../reporting.service";
+import { Aggregation, ReportingService } from "../reporting.service";
 import { MatNativeDateModule } from "@angular/material/core";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 import { ReportRow } from "../report-row";
@@ -43,7 +43,7 @@ describe("ReportingComponent", () => {
 
   beforeEach(async () => {
     mockReportingService = jasmine.createSpyObj(["calculateReport"]);
-    mockExportService = jasmine.createSpyObj(["runExportQuery"]);
+    mockExportService = jasmine.createSpyObj(["createExport"]);
     mockReportingService.calculateReport.and.resolveTo([]);
     await TestBed.configureTestingModule({
       imports: [
@@ -82,7 +82,7 @@ describe("ReportingComponent", () => {
     expect(component.loading).toBeFalse();
 
     expect(mockReportingService.calculateReport).toHaveBeenCalledWith(
-      testReport.aggregationDefinitions,
+      testReport.aggregationDefinitions as Aggregation[],
       jasmine.any(Date),
       jasmine.any(Date)
     );
@@ -197,7 +197,7 @@ describe("ReportingComponent", () => {
       { First: 1, Second: 2 },
       { First: 3, Second: 4 },
     ];
-    mockExportService.runExportQuery.and.resolveTo(data);
+    mockExportService.createExport.and.resolveTo(data);
 
     await component.calculateResults(
       { aggregationDefinitions: [], title: "", mode: "exporting" },
@@ -205,8 +205,7 @@ describe("ReportingComponent", () => {
       new Date()
     );
 
-    expect(mockExportService.runExportQuery).toHaveBeenCalledWith(
-      undefined,
+    expect(mockExportService.createExport).toHaveBeenCalledWith(
       [],
       jasmine.any(Date),
       jasmine.any(Date)

@@ -231,7 +231,10 @@ describe("ExportService", () => {
         ],
       },
     ];
-    const results = await service.runExportQuery([emptyActivity], exportConfig);
+    const results = await service.createExportOfData(
+      [emptyActivity],
+      exportConfig
+    );
     const resultRow = results[0];
     expect(resultRow["activity"]).toBe(emptyActivity.title);
     expect(resultRow["school_name"]).toEqual([]);

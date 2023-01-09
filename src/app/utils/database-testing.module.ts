@@ -7,6 +7,7 @@ import { SessionType } from "../core/session/session-type";
 import { environment } from "../../environments/environment";
 import { createTestingConfigService } from "../core/config/testing-config-service";
 import { AppModule } from "../app.module";
+import { ComponentRegistry } from "../dynamic-components";
 
 /**
  * Utility module that creates a simple environment where a correctly configured database and session is set up.
@@ -26,8 +27,9 @@ import { AppModule } from "../app.module";
   ],
 })
 export class DatabaseTestingModule {
-  constructor(pouchDatabase: PouchDatabase) {
+  constructor(pouchDatabase: PouchDatabase, components: ComponentRegistry) {
     environment.session_type = SessionType.mock;
     pouchDatabase.initInMemoryDB();
+    components.allowDuplicates();
   }
 }
