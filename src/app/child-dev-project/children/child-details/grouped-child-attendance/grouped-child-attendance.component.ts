@@ -5,6 +5,11 @@ import { PanelConfig } from "../../../../core/entity-components/entity-details/E
 import { AttendanceService } from "../../../attendance/attendance.service";
 import { RecurringActivity } from "../../../attendance/model/recurring-activity";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
+import { NgForOf, NgIf } from "@angular/common";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatTabsModule } from "@angular/material/tabs";
+import { TabStateModule } from "../../../../utils/tab-state/tab-state.module";
+import { ActivityAttendanceSectionComponent } from "../../../attendance/activity-attendance-section/activity-attendance-section.component";
 
 @DynamicComponent("GroupedChildAttendance")
 @Component({
@@ -12,6 +17,15 @@ import { DynamicComponent } from "../../../../core/view/dynamic-components/dynam
   templateUrl: "./grouped-child-attendance.component.html",
   styleUrls: ["./grouped-child-attendance.component.scss"],
   encapsulation: ViewEncapsulation.None,
+  imports: [
+    NgIf,
+    MatProgressBarModule,
+    MatTabsModule,
+    TabStateModule,
+    ActivityAttendanceSectionComponent,
+    NgForOf,
+  ],
+  standalone: true,
 })
 export class GroupedChildAttendanceComponent
   implements OnChanges, OnInitDynamicComponent

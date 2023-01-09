@@ -8,7 +8,7 @@ import { LoggingService } from "../../logging/logging.service";
  * This service allows to start a download process from the browser.
  * Depending on the browser and the setting this might open a popup or directly download the file.
  */
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class DownloadService {
   constructor(
     private exportService: ExportService,

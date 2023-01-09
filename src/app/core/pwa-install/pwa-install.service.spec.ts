@@ -1,5 +1,4 @@
 import { TestBed } from "@angular/core/testing";
-import { PwaInstallModule } from "./pwa-install.module";
 
 import { PwaInstallService, PWAInstallType } from "./pwa-install.service";
 import { WINDOW_TOKEN } from "../../utils/di-tokens";
@@ -17,7 +16,6 @@ describe("PwaInstallService", () => {
       matchMedia: () => ({}),
     };
     TestBed.configureTestingModule({
-      imports: [PwaInstallModule],
       providers: [{ provide: WINDOW_TOKEN, useValue: mockWindow }],
     });
     service = TestBed.inject(PwaInstallService);

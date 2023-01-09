@@ -21,6 +21,7 @@ import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-co
 @Component({
   selector: "app-display-age",
   template: "{{ date?.age }}",
+  standalone: true,
 })
 export class DisplayAgeComponent extends ViewDirective<any> {
   date: DateWithAge;

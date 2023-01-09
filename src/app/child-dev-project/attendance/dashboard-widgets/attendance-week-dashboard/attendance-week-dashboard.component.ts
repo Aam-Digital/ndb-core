@@ -15,9 +15,14 @@ import { ActivityAttendance } from "../../model/activity-attendance";
 import { RecurringActivity } from "../../model/recurring-activity";
 import moment, { Moment } from "moment";
 import { groupBy } from "../../../../utils/utils";
-import { MatTableDataSource } from "@angular/material/table";
-import { MatPaginator } from "@angular/material/paginator";
+import { MatTableDataSource, MatTableModule } from "@angular/material/table";
+import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
+import { NgForOf, NgIf } from "@angular/common";
+import { DisplayEntityComponent } from "../../../../core/entity-components/entity-select/display-entity/display-entity.component";
+import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget/dashboard-widget.component";
+import { AttendanceDayBlockComponent } from "./attendance-day-block/attendance-day-block.component";
+import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-widget/widget-content/widget-content.component";
 
 interface AttendanceWeekRow {
   childId: string;
@@ -30,6 +35,17 @@ interface AttendanceWeekRow {
   selector: "app-attendance-week-dashboard",
   templateUrl: "./attendance-week-dashboard.component.html",
   styleUrls: ["./attendance-week-dashboard.component.scss"],
+  imports: [
+    NgIf,
+    MatTableModule,
+    NgForOf,
+    MatPaginatorModule,
+    DisplayEntityComponent,
+    DashboardWidgetComponent,
+    WidgetContentComponent,
+    AttendanceDayBlockComponent,
+  ],
+  standalone: true,
 })
 export class AttendanceWeekDashboardComponent
   implements OnInitDynamicComponent, OnInit, AfterViewInit

@@ -1,7 +1,12 @@
 import { Component } from "@angular/core";
 import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
 import { OnInitDynamicComponent } from "../../view/dynamic-components/on-init-dynamic-component.interface";
-import { FormBuilder, FormControl, Validators } from "@angular/forms";
+import {
+  FormBuilder,
+  FormControl,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
 import {
   KeycloakAuthService,
   KeycloakUser,
@@ -14,12 +19,29 @@ import { AlertService } from "../../alerts/alert.service";
 import { SessionService } from "../../session/session-service/session.service";
 import { HttpClient } from "@angular/common/http";
 import { AppSettings } from "../../app-config/app-settings";
+import { NgForOf, NgIf } from "@angular/common";
+import { MatButtonModule } from "@angular/material/button";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatSelectModule } from "@angular/material/select";
 
 @DynamicComponent("UserSecurity")
 @Component({
   selector: "app-user-security",
   templateUrl: "./user-security.component.html",
   styleUrls: ["./user-security.component.scss"],
+  imports: [
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    NgForOf,
+  ],
+  standalone: true,
 })
 export class UserSecurityComponent implements OnInitDynamicComponent {
   form = this.fb.group({

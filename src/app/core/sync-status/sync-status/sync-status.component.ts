@@ -22,6 +22,9 @@ import { DatabaseIndexingService } from "../../entity/database-indexing/database
 import { BackgroundProcessState } from "../background-process-state.interface";
 import { BehaviorSubject } from "rxjs";
 import { debounceTime } from "rxjs/operators";
+import {
+  BackgroundProcessingIndicatorComponent
+} from "../background-processing-indicator/background-processing-indicator.component";
 
 /**
  * A small indicator component that displays an icon when there is currently synchronization
@@ -33,6 +36,10 @@ import { debounceTime } from "rxjs/operators";
 @Component({
   selector: "app-sync-status",
   templateUrl: "./sync-status.component.html",
+  imports: [
+    BackgroundProcessingIndicatorComponent
+  ],
+  standalone: true
 })
 export class SyncStatusComponent {
   private indexingProcesses: BackgroundProcessState[];

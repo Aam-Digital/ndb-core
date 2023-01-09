@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EditFileComponent } from "./edit-file.component";
-import { FileModule } from "../file.module";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { FormControl } from "@angular/forms";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -31,7 +30,7 @@ describe("EditFileComponent", () => {
     mockAlertService = jasmine.createSpyObj(["addDanger", "addInfo"]);
     mockEntityMapper = jasmine.createSpyObj(["save"]);
     await TestBed.configureTestingModule({
-      imports: [FileModule, FontAwesomeTestingModule, NoopAnimationsModule],
+      imports: [EditFileComponent, FontAwesomeTestingModule, NoopAnimationsModule],
       providers: [
         EntitySchemaService,
         { provide: AlertService, useValue: mockAlertService },

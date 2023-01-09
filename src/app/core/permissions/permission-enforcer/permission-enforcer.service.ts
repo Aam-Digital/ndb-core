@@ -17,7 +17,7 @@ import { firstValueFrom } from "rxjs";
  * All entities of these entity types are loaded and checked whether the currently logged-in user has read permissions.
  * If one entity is found for which the user does **not** have read permissions, then the local database is destroyed and a new sync has to start.
  */
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class PermissionEnforcerService {
   /**
    * This is a suffix used to persist the user-relevant rules in local storage to later check for changes.

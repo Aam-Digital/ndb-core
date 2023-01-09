@@ -15,7 +15,6 @@ describe("HistoricalDataService", () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [DatabaseTestingModule],
-      providers: [HistoricalDataService],
     });
     service = TestBed.inject(HistoricalDataService);
   }));

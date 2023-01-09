@@ -6,6 +6,11 @@ import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { filter } from "rxjs/operators";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { NgForOf, NgIf } from "@angular/common";
+import { DynamicComponentDirective } from "../../../view/dynamic-components/dynamic-component.directive";
+import { MatButtonModule } from "@angular/material/button";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 /**
  * A general purpose form component for displaying and editing entities.
@@ -24,6 +29,15 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
   // Use no encapsulation because we want to change the value of children (the mat-form-fields that are
   // dynamically created)
   encapsulation: ViewEncapsulation.None,
+  imports: [
+    NgForOf,
+    DynamicComponentDirective,
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    FontAwesomeModule
+  ],
+  standalone: true
 })
 export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
   /**

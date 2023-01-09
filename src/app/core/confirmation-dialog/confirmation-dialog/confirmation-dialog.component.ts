@@ -1,5 +1,8 @@
 import { Component, Inject } from "@angular/core";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from "@angular/material/dialog";
+import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
+import { NgForOf, NgIf } from "@angular/common";
+import { MatButtonModule } from "@angular/material/button";
 
 /**
  * A configurable confirmation dialog box
@@ -8,6 +11,14 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 @Component({
   selector: "app-confirmation-dialog",
   templateUrl: "./confirmation-dialog.component.html",
+  imports: [
+    DialogCloseComponent,
+    NgIf,
+    MatDialogModule,
+    MatButtonModule,
+    NgForOf
+  ],
+  standalone: true
 })
 export class ConfirmationDialogComponent {
   /**

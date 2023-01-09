@@ -1,5 +1,4 @@
 import { TestBed, waitForAsync } from "@angular/core/testing";
-import { AppModule } from "../app.module";
 import moment from "moment";
 import { Database } from "../core/database/database";
 import { DemoDataService } from "../core/demo-data/demo-data.service";
@@ -14,7 +13,7 @@ xdescribe("Performance Tests", () => {
     environment.session_type = SessionType.mock; // change to SessionType.local to run performance tests with the InBrowser database
 
     await TestBed.configureTestingModule({
-      imports: [AppModule, DatabaseTestingModule],
+      imports: [DatabaseTestingModule],
     }).compileComponents();
     const demoDataService = TestBed.inject(DemoDataService);
     const setup = new Timer();

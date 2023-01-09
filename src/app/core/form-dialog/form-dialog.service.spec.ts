@@ -5,7 +5,6 @@ import { Component, EventEmitter, Input } from "@angular/core";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Entity } from "../entity/model/entity";
 import { ShowsEntity } from "./shows-entity.interface";
-import { FormDialogModule } from "./form-dialog.module";
 import { FormDialogWrapperComponent } from "./form-dialog-wrapper/form-dialog-wrapper.component";
 import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
 import { Angulartics2Module } from "angulartics2";
@@ -22,7 +21,6 @@ describe("FormDialogService", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-        FormDialogModule,
         MatDialogModule,
         NoopAnimationsModule,
         Angulartics2Module.forRoot(),

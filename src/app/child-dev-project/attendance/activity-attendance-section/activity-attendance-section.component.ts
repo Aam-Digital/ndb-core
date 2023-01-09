@@ -10,17 +10,35 @@ import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on
 import { RecurringActivity } from "../model/recurring-activity";
 import { AttendanceDetailsComponent } from "../attendance-details/attendance-details.component";
 import { AttendanceService } from "../attendance.service";
-import { formatPercent } from "@angular/common";
+import { formatPercent, NgIf } from "@angular/common";
 import { ActivityAttendance } from "../model/activity-attendance";
 import moment from "moment";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatButtonModule } from "@angular/material/button";
+import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { AttendanceCalendarComponent } from "../attendance-calendar/attendance-calendar.component";
+import { AttendanceSummaryComponent } from "../attendance-summary/attendance-summary.component";
 
 @DynamicComponent("ActivityAttendanceSection")
 @Component({
   selector: "app-activity-attendance-section",
   templateUrl: "./activity-attendance-section.component.html",
+  imports: [
+    NgIf,
+    MatProgressBarModule,
+    EntitySubrecordComponent,
+    MatSlideToggleModule,
+    MatTooltipModule,
+    MatButtonModule,
+    AttendanceCalendarComponent,
+    AttendanceSummaryComponent,
+  ],
+  standalone: true,
 })
 export class ActivityAttendanceSectionComponent
   implements OnChanges, OnInitDynamicComponent

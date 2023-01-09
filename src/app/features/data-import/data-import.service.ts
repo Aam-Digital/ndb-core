@@ -16,7 +16,7 @@ import { dateWithAgeEntitySchemaDatatype } from "../../core/entity/schema-dataty
 /**
  * This service handels the parsing of CSV files and importing of data
  */
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class DataImportService {
   private readonly dateDataTypes = [
     dateEntitySchemaDatatype,

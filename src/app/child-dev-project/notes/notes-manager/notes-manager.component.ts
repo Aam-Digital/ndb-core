@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { Note } from "../model/note";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { ActivatedRoute } from "@angular/router";
@@ -17,6 +17,10 @@ import { RouteData } from "../../../core/view/dynamic-routing/view-config.interf
 import { merge } from "rxjs";
 import { RouteTarget } from "../../../app.routing";
 import moment from "moment";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { NgIf } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { Angulartics2Module } from "angulartics2";
 
 /**
  * additional config specifically for NotesManagerComponent
@@ -33,11 +37,17 @@ export interface NotesManagerConfig {
 @Component({
   selector: "app-notes-manager",
   templateUrl: "./notes-manager.component.html",
+  imports: [
+    EntityListComponent,
+    MatSlideToggleModule,
+    NgIf,
+    FormsModule,
+    Angulartics2Module,
+  ],
+  standalone: true,
 })
 @UntilDestroy()
 export class NotesManagerComponent implements OnInit {
-  @ViewChild("entityList") entityList: EntityListComponent<Note>;
-
   @Input() includeEventNotes: boolean;
   @Input() showEventNotesToggle: boolean;
 

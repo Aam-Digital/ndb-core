@@ -6,7 +6,6 @@ import {
 } from "@angular/core/testing";
 
 import { HistoricalDataComponent } from "./historical-data.component";
-import { HistoricalDataModule } from "../historical-data.module";
 import { Entity } from "../../../core/entity/model/entity";
 import { HistoricalEntityData } from "../model/historical-entity-data";
 import moment from "moment";
@@ -24,7 +23,7 @@ describe("HistoricalDataComponent", () => {
     mockHistoricalDataService.getHistoricalDataFor.and.resolveTo([]);
 
     await TestBed.configureTestingModule({
-      imports: [HistoricalDataModule, MockedTestingModule.withState()],
+      imports: [HistoricalDataComponent, MockedTestingModule.withState()],
       providers: [
         { provide: HistoricalDataService, useValue: mockHistoricalDataService },
         { provide: FormDialogService, useValue: null },

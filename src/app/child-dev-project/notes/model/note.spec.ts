@@ -17,7 +17,6 @@ import {
   CONFIGURABLE_ENUM_CONFIG_PREFIX,
   ConfigurableEnumConfig,
 } from "../../../core/configurable-enum/configurable-enum.interface";
-import { createTestingConfigService } from "../../../core/config/config.service";
 import {
   getWarningLevelColor,
   WarningLevel,
@@ -25,6 +24,7 @@ import {
 import { testEntitySubclass } from "../../../core/entity/model/entity.spec";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 import { Ordering } from "../../../core/configurable-enum/configurable-enum-ordering";
+import { createTestingConfigService } from "../../../core/config/testing-config-service";
 
 const testStatusTypes: ConfigurableEnumConfig<AttendanceStatusType> = [
   {

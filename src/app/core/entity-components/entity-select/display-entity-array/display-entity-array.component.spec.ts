@@ -9,7 +9,6 @@ import { DisplayEntityArrayComponent } from "./display-entity-array.component";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { Note } from "../../../../child-dev-project/notes/model/note";
-import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import {
   DatabaseEntity,
   EntityRegistry,
@@ -29,14 +28,13 @@ describe("DisplayEntityArrayComponent", () => {
   beforeEach(async () => {
     testEntities = [new Child(), new Child(), new School()];
     await TestBed.configureTestingModule({
-      declarations: [DisplayEntityArrayComponent],
+      imports: [DisplayEntityArrayComponent],
       providers: [
         {
           provide: EntityMapperService,
           useValue: mockEntityMapper(testEntities),
         },
         { provide: EntityRegistry, useValue: entityRegistry },
-        EntitySchemaService,
       ],
     }).compileComponents();
   });

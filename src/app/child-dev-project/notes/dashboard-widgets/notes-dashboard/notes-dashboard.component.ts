@@ -1,13 +1,17 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
 import { ChildrenService } from "../../../children/children.service";
 import moment from "moment";
-import { MatTableDataSource } from "@angular/material/table";
-import { MatPaginator } from "@angular/material/paginator";
+import { MatTableDataSource, MatTableModule } from "@angular/material/table";
+import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 import { Child } from "../../../children/model/child";
 import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
 import { EntityConstructor } from "../../../../core/entity/model/entity";
+import { DecimalPipe, NgIf } from "@angular/common";
+import { DisplayEntityComponent } from "../../../../core/entity-components/entity-select/display-entity/display-entity.component";
+import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget/dashboard-widget.component";
+import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-widget/widget-content/widget-content.component";
 
 /**
  * Dashboard Widget displaying entities that do not have a recently added Note.
@@ -20,6 +24,16 @@ import { EntityConstructor } from "../../../../core/entity/model/entity";
   selector: "app-no-recent-notes-dashboard",
   templateUrl: "./notes-dashboard.component.html",
   styleUrls: ["./notes-dashboard.component.scss"],
+  imports: [
+    NgIf,
+    MatTableModule,
+    DisplayEntityComponent,
+    DecimalPipe,
+    MatPaginatorModule,
+    DashboardWidgetComponent,
+    WidgetContentComponent,
+  ],
+  standalone: true,
 })
 export class NotesDashboardComponent
   implements OnInitDynamicComponent, OnInit, AfterViewInit

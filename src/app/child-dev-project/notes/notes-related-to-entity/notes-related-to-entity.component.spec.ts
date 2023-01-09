@@ -5,7 +5,6 @@ import {
   TestBed,
   tick,
 } from "@angular/core/testing";
-import { NotesModule } from "../notes.module";
 import { ChildrenService } from "../../children/children.service";
 import { Note } from "../model/note";
 import { Child } from "../../children/model/child";
@@ -29,7 +28,7 @@ describe("NotesRelatedToEntityComponent", () => {
     mockChildrenService = jasmine.createSpyObj(["getNotesRelatedTo"]);
     mockChildrenService.getNotesRelatedTo.and.resolveTo([]);
     TestBed.configureTestingModule({
-      imports: [NotesModule, MockedTestingModule.withState()],
+      imports: [NotesRelatedToEntityComponent, MockedTestingModule.withState()],
       providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
     }).compileComponents();
   });

@@ -9,7 +9,6 @@ import { RollCallSetupComponent } from "./roll-call-setup.component";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { RecurringActivity } from "../../model/recurring-activity";
 import { ChildrenService } from "../../../children/children.service";
-import { AttendanceModule } from "../../attendance.module";
 import { AttendanceService } from "../../attendance.service";
 import { EventNote } from "../../model/event-note";
 import {
@@ -34,8 +33,7 @@ describe("RollCallSetupComponent", () => {
     mockAttendanceService.getEventsOnDate.and.resolveTo([]);
 
     TestBed.configureTestingModule({
-      declarations: [RollCallSetupComponent],
-      imports: [AttendanceModule, MockedTestingModule.withState()],
+      imports: [RollCallSetupComponent, MockedTestingModule.withState()],
       providers: [
         { provide: ChildrenService, useValue: mockChildrenService },
         { provide: AttendanceService, useValue: mockAttendanceService },

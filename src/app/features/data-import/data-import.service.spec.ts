@@ -10,9 +10,7 @@ import { ImportMetaData } from "./import-meta-data.type";
 import { expectEntitiesToBeInDatabase } from "../../utils/expect-entity-data.spec";
 import { Child } from "../../child-dev-project/children/model/child";
 import moment from "moment";
-import { DataImportModule } from "./data-import.module";
 import { DatabaseTestingModule } from "../../utils/database-testing.module";
-import { ChildrenModule } from "../../child-dev-project/children/children.module";
 
 describe("DataImportService", () => {
   let db: Database;
@@ -45,7 +43,7 @@ describe("DataImportService", () => {
     mockConfirmationService = jasmine.createSpyObj(["getConfirmation"]);
     mockConfirmationService.getConfirmation.and.resolveTo(true);
     TestBed.configureTestingModule({
-      imports: [DataImportModule, DatabaseTestingModule, ChildrenModule],
+      imports: [DatabaseTestingModule],
       providers: [
         {
           provide: ConfirmationDialogService,

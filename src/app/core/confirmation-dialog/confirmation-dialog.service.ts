@@ -16,14 +16,14 @@ import { firstValueFrom } from "rxjs";
  *
  * @example
  this.confirmationDialog
-  .getConfirmation('Delete?', 'Are you sure you want to delete this record?')
-  .then((confirmed) => {
+ .getConfirmation('Delete?', 'Are you sure you want to delete this record?')
+ .then((confirmed) => {
     if (confirmed) {
        // delete
     }
   });
  */
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class ConfirmationDialogService {
   constructor(private dialog: MatDialog) {}
 

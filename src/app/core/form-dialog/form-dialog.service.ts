@@ -26,7 +26,7 @@ import { EntitySchemaService } from "../entity/schema/entity-schema.service";
  * @example
  formDialog.getConfirmation(NoteDetailsComponent, noteEntity);
  */
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class FormDialogService {
   static dialogSettings = {
     width: "80%",

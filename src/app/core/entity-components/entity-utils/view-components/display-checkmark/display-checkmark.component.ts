@@ -10,5 +10,6 @@ import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-co
 @Component({
   selector: "app-display-tick",
   template: `{{ value ? "✓" : "" }}`,
+  standalone: true,
 })
 export class DisplayCheckmarkComponent extends ViewDirective<boolean> {}

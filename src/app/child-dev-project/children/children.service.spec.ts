@@ -21,7 +21,6 @@ describe("ChildrenService", () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [DatabaseTestingModule],
-      providers: [ChildrenService],
     });
 
     entityMapper = TestBed.inject(EntityMapperService);

@@ -9,5 +9,6 @@ import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-co
 @Component({
   selector: "app-display-text",
   template: `{{ value }}`,
+  standalone: true,
 })
 export class DisplayTextComponent extends ViewDirective<string> {}

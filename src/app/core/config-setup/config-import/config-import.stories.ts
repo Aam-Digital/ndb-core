@@ -1,7 +1,6 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { ConfigImportComponent } from "./config-import.component";
-import { ConfigSetupModule } from "../config-setup.module";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { ConfigService } from "../../config/config.service";
 
@@ -10,7 +9,7 @@ export default {
   component: ConfigImportComponent,
   decorators: [
     moduleMetadata({
-      imports: [ConfigSetupModule, StorybookBaseModule],
+      imports: [ConfigImportComponent, StorybookBaseModule],
       providers: [
         {
           provide: ConfigService,

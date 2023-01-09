@@ -15,18 +15,11 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { RouterModule, Routes } from "@angular/router";
-import { ModuleWithProviders } from "@angular/core";
-import { ComponentType } from "@angular/cdk/overlay";
-import { Registry } from "./core/registry/dynamic-registry";
+import { Routes } from "@angular/router";
 import { ApplicationLoadingComponent } from "./core/view/dynamic-routing/empty/application-loading.component";
 import { NotFoundComponent } from "./core/view/dynamic-routing/not-found/not-found.component";
 import { UserAccountComponent } from "./core/user/user-account/user-account.component";
 import { SupportComponent } from "./core/support/support/support.component";
-
-export class RouteRegistry extends Registry<ComponentType<any>> {}
-
-export const routesRegistry = new RouteRegistry();
 
 /**
  * Marks a class to be the target when routing.
@@ -34,14 +27,9 @@ export const routesRegistry = new RouteRegistry();
  * The name provided to the annotation can then be used in the configuration.
  *
  * IMPORTANT:
- *  Angular ignores all components without references in the code in a production build.
- *  Dynamic components should therefore be added to a static array in the module where they are declared.
+ *  The component also needs to be added to the `...Components` list of the respective module.
  */
-export function RouteTarget(name: string) {
-  return (ctor: ComponentType<any>) => {
-    routesRegistry.add(name, ctor);
-  };
-}
+export const RouteTarget = (_name: string) => (_) => undefined;
 
 /**
  * All routes configured for the main app routing.
@@ -49,17 +37,10 @@ export function RouteTarget(name: string) {
 export const allRoutes: Routes = [
   // routes are added dynamically by the RouterService
   {
-    path: "admin/conflicts",
-    loadChildren: () =>
-      import("./conflict-resolution/conflict-resolution.module").then(
-        (m) => m["ConflictResolutionModule"]
-      ),
-  },
-  {
-    path: "coming-soon",
-    loadChildren: () =>
-      import("./core/coming-soon/coming-soon.module").then(
-        (m) => m["ComingSoonModule"]
+    path: "coming-soon/:feature",
+    loadComponent: () =>
+      import("./core/coming-soon/coming-soon/coming-soon.component").then(
+        (c) => c.ComingSoonComponent
       ),
   },
   { path: "user-account", component: UserAccountComponent },
@@ -67,9 +48,3 @@ export const allRoutes: Routes = [
   { path: "404", component: NotFoundComponent },
   { path: "**", pathMatch: "full", component: ApplicationLoadingComponent },
 ];
-
-/**
- * Main app RouterModule with centrally configured allRoutes.
- */
-export const routing: ModuleWithProviders<RouterModule> =
-  RouterModule.forRoot(allRoutes);

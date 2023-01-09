@@ -4,7 +4,6 @@ import { ReportingComponent } from "./reporting.component";
 import { ActivatedRoute } from "@angular/router";
 import { of } from "rxjs";
 import { ReportingService } from "../reporting.service";
-import { ReportingModule } from "../reporting.module";
 import { genders } from "../../../child-dev-project/children/model/genders";
 import { ExportService } from "../../../core/export/export-service/export.service";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
@@ -185,7 +184,7 @@ export default {
   component: ReportingComponent,
   decorators: [
     moduleMetadata({
-      imports: [ReportingModule, StorybookBaseModule],
+      imports: [ReportingComponent, StorybookBaseModule],
       providers: [
         {
           provide: ActivatedRoute,

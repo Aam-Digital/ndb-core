@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { FilterOverlayComponent } from "./filter-overlay.component";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { FilterModule } from "../filter.module";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("FilterOverlayComponent", () => {
@@ -11,7 +10,7 @@ describe("FilterOverlayComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FilterModule, MockedTestingModule.withState()],
+      imports: [FilterOverlayComponent, MockedTestingModule.withState()],
       providers: [{ provide: MAT_DIALOG_DATA, useValue: {} }],
     }).compileComponents();
   });

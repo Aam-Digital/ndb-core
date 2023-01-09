@@ -330,6 +330,10 @@ export const defaultJsonConfig = {
     "component": "ConfigImport",
     "permittedUserRoles": ["admin_app"]
   },
+  "view:admin/conflicts": {
+    "component": "ConflictResolution",
+    "permittedUserRoles": ["admin_app"]
+  },
   "view:import": {
     "component": "Import",
     "permittedUserRoles": ["admin_app"]
@@ -377,10 +381,6 @@ export const defaultJsonConfig = {
       ],
     },
     "permittedUserRoles": ["admin_app"]
-  },
-  "view:admin/conflicts": {
-    "permittedUserRoles": ["admin_app"],
-    "lazyLoaded": true
   },
   "view:help": {
     "component": "MarkdownPage",

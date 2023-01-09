@@ -4,5 +4,6 @@ import { Component } from "@angular/core";
   selector: "app-pill",
   templateUrl: "./pill.component.html",
   styleUrls: ["./pill.component.scss"],
+  standalone: true,
 })
 export class PillComponent {}

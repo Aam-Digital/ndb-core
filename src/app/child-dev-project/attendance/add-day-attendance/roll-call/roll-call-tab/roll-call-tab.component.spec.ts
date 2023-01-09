@@ -9,8 +9,7 @@ describe("RollCallTabComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [RollCallTabComponent],
-      imports: [NoopAnimationsModule],
+      imports: [RollCallTabComponent, NoopAnimationsModule],
     }).compileComponents();
   });
 

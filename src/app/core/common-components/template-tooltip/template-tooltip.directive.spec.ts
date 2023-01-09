@@ -6,8 +6,6 @@ import {
   tick,
 } from "@angular/core/testing";
 import { Component } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { OverlayModule } from "@angular/cdk/overlay";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
 describe("TemplateTooltipDirective", () => {
@@ -35,8 +33,8 @@ describe("TemplateTooltipDirective", () => {
 
   beforeEach(() => {
     fixture = TestBed.configureTestingModule({
-      declarations: [MockComponent, TemplateTooltipDirective],
-      imports: [CommonModule, OverlayModule, NoopAnimationsModule],
+      declarations: [MockComponent],
+      imports: [TemplateTooltipDirective, NoopAnimationsModule],
     }).createComponent(MockComponent);
     fixture.detectChanges();
   });

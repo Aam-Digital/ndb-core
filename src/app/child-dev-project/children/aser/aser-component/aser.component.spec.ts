@@ -4,7 +4,6 @@ import { ChildrenService } from "../../children.service";
 import { Child } from "../../model/child";
 import { of } from "rxjs";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { ChildrenModule } from "../../children.module";
 
 describe("AserComponent", () => {
   let component: AserComponent;
@@ -19,16 +18,12 @@ describe("AserComponent", () => {
     },
   };
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        imports: [ChildrenModule, MockedTestingModule.withState()],
-        providers: [
-          { provide: ChildrenService, useValue: mockChildrenService },
-        ],
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [AserComponent, MockedTestingModule.withState()],
+      providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AserComponent);

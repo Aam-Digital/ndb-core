@@ -17,15 +17,15 @@
 
 import { AlertService } from "./alert.service";
 import { TestBed } from "@angular/core/testing";
-import { AlertsModule } from "./alerts.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
 
 describe("AlertService", () => {
   let service: AlertService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [AlertsModule, NoopAnimationsModule],
+      imports: [NoopAnimationsModule, MatSnackBarModule],
     });
     service = TestBed.inject(AlertService);
   });

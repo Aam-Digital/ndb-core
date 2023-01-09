@@ -9,6 +9,13 @@ import { LoggingService } from "../../../core/logging/logging.service";
 import { FileService } from "../file.service";
 import { distinctUntilChanged, filter } from "rxjs/operators";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { NgClass, NgIf } from "@angular/common";
+import { MatInputModule } from "@angular/material/input";
+import { ReactiveFormsModule } from "@angular/forms";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatButtonModule } from "@angular/material/button";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 /**
  * This component should be used as a `editComponent` when a property should store files.
@@ -19,6 +26,17 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
   selector: "app-edit-file",
   templateUrl: "./edit-file.component.html",
   styleUrls: ["./edit-file.component.scss"],
+  imports: [
+    MatFormFieldModule,
+    NgClass,
+    MatInputModule,
+    ReactiveFormsModule,
+    MatTooltipModule,
+    NgIf,
+    MatButtonModule,
+    FontAwesomeModule,
+  ],
+  standalone: true,
 })
 export class EditFileComponent extends EditComponent<string> {
   @ViewChild("fileUpload") fileInput: ElementRef<HTMLInputElement>;

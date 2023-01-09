@@ -14,8 +14,6 @@ import { MockedTestingModule } from "app/utils/mocked-testing.module";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { EditTextWithAutocompleteComponent } from "./edit-text-with-autocomplete.component";
 import { By } from "@angular/platform-browser";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { EntitySelectModule } from "../entity-select.module";
 
 describe("EditTextWithAutocompleteComponent", () => {
   let component: EditTextWithAutocompleteComponent;
@@ -24,14 +22,11 @@ describe("EditTextWithAutocompleteComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [EditTextWithAutocompleteComponent],
       imports: [
-        EntitySelectModule,
+        EditTextWithAutocompleteComponent,
         MockedTestingModule.withState(),
-        FontAwesomeTestingModule,
       ],
       providers: [
-        EntityFormService,
         {
           provide: ConfirmationDialogService,
           useValue: new ConfirmationDialogService(null),

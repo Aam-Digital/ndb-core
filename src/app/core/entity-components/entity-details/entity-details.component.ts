@@ -18,6 +18,18 @@ import {
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { RouteTarget } from "../../../app.routing";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { MatButtonModule } from "@angular/material/button";
+import { MatMenuModule } from "@angular/material/menu";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { Angulartics2OnModule } from "angulartics2";
+import { MatTabsModule } from "@angular/material/tabs";
+import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { NgForOf, NgIf } from "@angular/common";
+import { ViewTitleComponent } from "../entity-utils/view-title/view-title.component";
+import { DynamicComponentDirective } from "../../view/dynamic-components/dynamic-component.directive";
+import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 
 /**
  * This component can be used to display an entity in more detail.
@@ -30,6 +42,22 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
   selector: "app-entity-details",
   templateUrl: "./entity-details.component.html",
   styleUrls: ["./entity-details.component.scss"],
+  standalone: true,
+  imports: [
+    MatButtonModule,
+    MatMenuModule,
+    FontAwesomeModule,
+    Angulartics2OnModule,
+    MatTabsModule,
+    TabStateModule,
+    MatTooltipModule,
+    MatProgressBarModule,
+    NgIf,
+    NgForOf,
+    ViewTitleComponent,
+    DynamicComponentDirective,
+    DisableEntityOperationDirective,
+  ],
 })
 export class EntityDetailsComponent {
   entity: Entity;

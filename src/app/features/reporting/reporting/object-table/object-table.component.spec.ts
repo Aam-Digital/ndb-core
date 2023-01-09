@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ObjectTableComponent } from "./object-table.component";
-import { MatTableModule } from "@angular/material/table";
 
 describe("ObjectTableComponent", () => {
   let component: ObjectTableComponent;
@@ -9,8 +8,7 @@ describe("ObjectTableComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MatTableModule],
-      declarations: [ObjectTableComponent],
+      imports: [ObjectTableComponent],
     }).compileComponents();
   });
 

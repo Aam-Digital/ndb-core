@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ShowFileComponent } from "./show-file.component";
-import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatButtonHarness } from "@angular/material/button/testing";
@@ -13,8 +13,7 @@ describe("ShowFileComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ShowFileComponent],
-      imports: [MatDialogModule],
+      imports: [ShowFileComponent],
       providers: [{ provide: MAT_DIALOG_DATA, useValue: "test.link" }],
     }).compileComponents();
 

@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { InputFileComponent } from "./input-file.component";
 import { Papa } from "ngx-papaparse";
-import { DataImportModule } from "../data-import.module";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 function mockFileEvent(mockFile: { name: string }): Event {
@@ -15,7 +14,7 @@ describe("InputFileComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DataImportModule, MockedTestingModule.withState()],
+      imports: [InputFileComponent, MockedTestingModule.withState()],
     }).compileComponents();
   });
 

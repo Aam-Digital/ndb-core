@@ -7,6 +7,7 @@ import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
 @Component({
   selector: "app-display-percentage",
   template: "{{ value ? value + '%' : '-' }}",
+  standalone: true,
 })
 export class DisplayPercentageComponent extends ViewDirective<number> {
   /**

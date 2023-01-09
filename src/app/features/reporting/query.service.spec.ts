@@ -14,11 +14,8 @@ import moment from "moment";
 import { defaultAttendanceStatusTypes } from "../../core/config/default-config/default-attendance-status-types";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { defaultInteractionTypes } from "../../core/config/default-config/default-interaction-types";
-import { ChildrenService } from "../../child-dev-project/children/children.service";
-import { AttendanceService } from "../../child-dev-project/attendance/attendance.service";
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
 import { Database } from "../../core/database/database";
-import { ConfigurableEnumModule } from "../../core/configurable-enum/configurable-enum.module";
 import { Note } from "../../child-dev-project/notes/model/note";
 import { genders } from "../../child-dev-project/children/model/genders";
 import { EntityConfigService } from "app/core/entity/entity-config.service";
@@ -26,7 +23,6 @@ import { ConfigService } from "app/core/config/config.service";
 import { EventAttendance } from "../../child-dev-project/attendance/model/event-attendance";
 import { AttendanceStatusType } from "../../child-dev-project/attendance/model/attendance-status";
 import { DatabaseTestingModule } from "../../utils/database-testing.module";
-import { ChildrenModule } from "../../child-dev-project/children/children.module";
 
 describe("QueryService", () => {
   let service: QueryService;
@@ -48,8 +44,7 @@ describe("QueryService", () => {
 
   beforeEach(waitForAsync(async () => {
     TestBed.configureTestingModule({
-      imports: [DatabaseTestingModule, ConfigurableEnumModule, ChildrenModule],
-      providers: [ChildrenService, AttendanceService, EntityConfigService],
+      imports: [DatabaseTestingModule],
     });
     service = TestBed.inject(QueryService);
     const configService = TestBed.inject(ConfigService);

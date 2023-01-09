@@ -28,6 +28,10 @@ export abstract class Registry<T> extends Map<string, T> {
     this.set(key, mapping);
   }
 
+  public addAll(tuples: [string, T][]) {
+    tuples.forEach(([name, value]) => this.add(name, value));
+  }
+
   public get(key: string): T {
     if (!this.has(key)) {
       throw Error(

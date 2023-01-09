@@ -8,7 +8,7 @@ describe("DisplayPercentageComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DisplayPercentageComponent],
+      imports: [DisplayPercentageComponent],
     }).compileComponents();
   });
 

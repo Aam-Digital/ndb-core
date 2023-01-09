@@ -1,11 +1,22 @@
 import { Component, TemplateRef, ViewChild } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { PwaInstallService, PWAInstallType } from "./pwa-install.service";
+import { NgIf } from "@angular/common";
+import { MatButtonModule } from "@angular/material/button";
+import { Angulartics2Module } from "angulartics2";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @Component({
   selector: "app-pwa-install",
   templateUrl: "./pwa-install.component.html",
   styleUrls: ["./pwa-install.component.scss"],
+  imports: [
+    NgIf,
+    MatButtonModule,
+    Angulartics2Module,
+    FontAwesomeModule
+  ],
+  standalone: true
 })
 export class PwaInstallComponent {
   @ViewChild("iOSInstallInstructions")

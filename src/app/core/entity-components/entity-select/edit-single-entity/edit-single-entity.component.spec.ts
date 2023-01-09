@@ -13,7 +13,6 @@ import { School } from "../../../../child-dev-project/schools/model/school";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { FormControl } from "@angular/forms";
-import { EntitySelectModule } from "../entity-select.module";
 
 describe("EditSingleEntityComponent", () => {
   let component: EditSingleEntityComponent;
@@ -22,7 +21,7 @@ describe("EditSingleEntityComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EntitySelectModule, MockedTestingModule.withState()],
+      imports: [EditSingleEntityComponent, MockedTestingModule.withState()],
       providers: [EntityFormService],
     }).compileComponents();
     loadTypeSpy = spyOn(TestBed.inject(EntityMapperService), "loadType");
