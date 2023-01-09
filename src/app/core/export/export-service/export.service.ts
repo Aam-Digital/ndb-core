@@ -129,7 +129,7 @@ export class ExportService {
       for (const [group, values] of groups.entries()) {
         const groupColumn: ExportColumnConfig = {
           label: groupByProperty.label,
-          query: `:setString(${getReadableValue({ group }, "group")})`,
+          query: `:setString(${getReadableValue(group)})`,
         };
         const rows = await this.generateExportRows(
           values,
@@ -151,13 +151,13 @@ export class ExportService {
   private transformToReadableFormat(flattenedExportRows: ExportRow[]) {
     return flattenedExportRows.map((row) => {
       const readableRow = {};
-      Object.keys(row).forEach((key) => {
-        if (row[key] instanceof Date) {
+      Object.entries(row).forEach(([key, value]) => {
+        if (value instanceof Date) {
           // Export data according to local timezone offset - data is loaded through Entity Schema system and thereby has the correct date in the current device's timezone
           // TODO: make this output format configurable or use the different date schema types [GITHUB #1185]
-          readableRow[key] = moment(row[key]).format("YYYY-MM-DD");
+          readableRow[key] = moment(value).format("YYYY-MM-DD");
         } else {
-          readableRow[key] = getReadableValue(row, key);
+          readableRow[key] = getReadableValue(value);
         }
       });
       return readableRow;
