@@ -12,7 +12,7 @@ import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { filter } from "rxjs/operators";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { NgForOf, NgIf } from "@angular/common";
+import { NgClass, NgForOf, NgIf } from "@angular/common";
 import { DynamicComponentDirective } from "../../../view/dynamic-components/dynamic-component.directive";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -42,6 +42,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     MatButtonModule,
     MatTooltipModule,
     FontAwesomeModule,
+    NgClass,
   ],
   standalone: true,
 })
@@ -58,6 +59,11 @@ export class EntityFormComponent<T extends Entity = Entity>
   @Input() columnHeaders?: (string | null)[];
 
   @Input() form: EntityForm<T>;
+
+  /**
+   * Whether the component should use a grid layout or just rows
+   */
+  @Input() gridLayout = true;
 
   initialFormValues: any;
 

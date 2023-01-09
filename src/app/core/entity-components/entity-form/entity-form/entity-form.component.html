@@ -1,4 +1,4 @@
-<form class="entity-form-columns">
+<form [ngClass]="{ 'grid-layout': gridLayout }">
   <div *ngFor="let col of columns; let i=index" class="entity-form-cell">
     <h2 *ngIf="columnHeaders?.[i]">{{columnHeaders[i]}}</h2>
     <div *ngFor="let row of col">
