@@ -131,24 +131,18 @@ export class ExportService {
           label: groupByProperty.label,
           query: `:setString(${getReadableValue({ group }, "group")})`,
         };
-
-        const extendedExportableRows = await this.generateExportRows(
+        const rows = await this.generateExportRows(
           values,
           [groupColumn].concat(...config),
           from,
           to
         );
-        result.push(...extendedExportableRows);
+        result.push(...rows);
       }
     } else {
       for (const dataRow of data) {
-        const extendedExportableRows = await this.generateExportRows(
-          dataRow,
-          config,
-          from,
-          to
-        );
-        result.push(...extendedExportableRows);
+        const rows = await this.generateExportRows(dataRow, config, from, to);
+        result.push(...rows);
       }
     }
     return result;

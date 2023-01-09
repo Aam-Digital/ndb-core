@@ -482,9 +482,9 @@ describe("ExportService", () => {
   });
 
   it("should allow to group results", async () => {
-    const s1 = createSchoolInDB("sameName");
-    const s2 = createSchoolInDB("sameName");
-    const s3 = createSchoolInDB("otherName");
+    createSchoolInDB("sameName");
+    createSchoolInDB("sameName");
+    createSchoolInDB("otherName");
 
     const result = await service.createExport([
       {
@@ -494,10 +494,12 @@ describe("ExportService", () => {
       },
     ]);
 
-    expect(result).toEqual([
-      { Name: "sameName", Amount: 2 },
-      { Name: "otherName", Amount: 1 },
-    ]);
+    expect(result).toEqual(
+      jasmine.arrayWithExactContents([
+        { Name: "sameName", Amount: 2 },
+        { Name: "otherName", Amount: 1 },
+      ])
+    );
   });
 
   async function createChildInDB(name: string): Promise<Child> {
