@@ -30,6 +30,8 @@ import { EntityPropertyViewComponent } from "../../../core/entity-components/ent
 import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { LocationEntity, MapComponent } from "../../location/map/map.component";
 import { FilterComponent } from "../../../core/filter/filter/filter.component";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatSelectModule } from "@angular/material/select";
 
 interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -57,6 +59,8 @@ interface MatchingSide extends MatchingSideConfig {
     EntityPropertyViewComponent,
     MapComponent,
     FilterComponent,
+    MatFormFieldModule,
+    MatSelectModule,
   ],
   standalone: true,
 })
@@ -64,6 +68,7 @@ export class MatchingEntitiesComponent
   implements OnInit, OnInitDynamicComponent
 {
   static DEFAULT_CONFIG_KEY = "appConfig:matching-entities";
+  array = Array;
 
   @Input() entity: Entity;
 
