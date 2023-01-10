@@ -18,9 +18,13 @@
 import { NgModule } from "@angular/core";
 import { ComponentRegistry } from "../../dynamic-components";
 import { attendanceComponents } from "./attendance-components";
+import { RecurringActivity } from "./model/recurring-activity";
+import { EventNote } from "./model/event-note";
 
 @NgModule({})
 export class AttendanceModule {
+  static databaseEntities = [RecurringActivity, EventNote];
+
   constructor(components: ComponentRegistry) {
     components.addAll(attendanceComponents);
   }
