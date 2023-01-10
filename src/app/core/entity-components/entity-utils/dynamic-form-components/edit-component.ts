@@ -64,11 +64,19 @@ export abstract class EditComponent<T> implements OnInitDynamicComponent {
    */
   entity: Entity;
 
+  /**
+   * Additional config details for the specific component implementation.
+   * Can be defined through entity schema also.
+   */
+  additional?: any;
+
   onInitFromDynamicConfig(config: EditPropertyConfig<T>) {
     if (!config.formFieldConfig.forTable) {
       this.label = config.formFieldConfig.label || config.propertySchema?.label;
       this.tooltip = config.formFieldConfig.tooltip;
     }
+    this.additional =
+      config.formFieldConfig?.additional ?? config.propertySchema?.additional;
     this.formControlName = config.formFieldConfig.id;
     // This type casts are needed as the normal types throw errors in the templates
     this.formControl = config.formControl as FormControl<T>;

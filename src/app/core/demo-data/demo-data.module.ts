@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { DemoDataServiceConfig, DemoDataService } from "./demo-data.service";
+import { DemoDataService, DemoDataServiceConfig } from "./demo-data.service";
 import { NgModule } from "@angular/core";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatDialogModule } from "@angular/material/dialog";
@@ -35,6 +35,7 @@ import { DemoProgressDashboardWidgetGeneratorService } from "../../features/prog
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
 import { DemoHistoricalDataGenerator } from "../../features/historical-data/demo-historical-data-generator";
 import { DemoPermissionGeneratorService } from "../permissions/demo-permission-generator.service";
+import { DemoTodoGeneratorService } from "../../features/todos/model/demo-todo-generator.service";
 
 const demoDataGeneratorProviders = [
   ...DemoConfigGeneratorService.provider(),
@@ -61,6 +62,7 @@ const demoDataGeneratorProviders = [
     maxCountAttributes: 5,
   }),
   ...DemoPermissionGeneratorService.provider(),
+  ...DemoTodoGeneratorService.provider(),
 ];
 
 /**

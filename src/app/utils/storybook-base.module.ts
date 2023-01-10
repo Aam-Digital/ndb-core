@@ -25,6 +25,12 @@ import { WINDOW_TOKEN } from "./di-tokens";
 import { createTestingConfigService } from "../core/config/testing-config-service";
 import { componentRegistry } from "../dynamic-components";
 
+export const entityFormStorybookDefaulParameters = {
+  controls: {
+    exclude: ["_columns"],
+  },
+};
+
 export const mockAbilityService = {
   abilityUpdated: new Subject<void>(),
 };

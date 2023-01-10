@@ -12,6 +12,8 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { OnInitDynamicComponent } from "../view/dynamic-components/on-init-dynamic-component.interface";
 import { EntityAbility } from "../permissions/ability/entity-ability";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
+import { DatabaseEntity } from "../entity/database-entity.decorator";
+import { DatabaseField } from "../entity/database-field.decorator";
 
 describe("FormDialogService", () => {
   let service: FormDialogService;
@@ -92,6 +94,35 @@ describe("FormDialogService", () => {
     expect(
       dialogRef.componentInstance.hasCalledInitFromDynamicConfig
     ).toBeTrue();
+  });
+
+  it("should get columns from schema fields marked showInDetailsView", () => {
+    @DatabaseEntity("TestWithShowInDetails")
+    class TestWithShowInDetails extends Entity {
+      @DatabaseField({ showInDetailsView: true }) shown;
+      @DatabaseField({ showInDetailsView: false }) hidden;
+      @DatabaseField() ignored;
+    }
+
+    const actualFields = FormDialogService.getSchemaFieldsForDetailsView(
+      new TestWithShowInDetails()
+    );
+
+    expect(actualFields.map((x) => x.id)).toEqual(["shown"]);
+  });
+
+  it("should get all columns of entity (without generic Entity fields) if showInDetailsView flag is not used", () => {
+    @DatabaseEntity("TestWithoutShowInDetails")
+    class TestWithoutShowInDetails extends Entity {
+      @DatabaseField() field1;
+      @DatabaseField() field2;
+    }
+
+    const actualFields = FormDialogService.getSchemaFieldsForDetailsView(
+      new TestWithoutShowInDetails()
+    );
+
+    expect(actualFields.map((x) => x.id)).toEqual(["field1", "field2"]);
   });
 });
 
