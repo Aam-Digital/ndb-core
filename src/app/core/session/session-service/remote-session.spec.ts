@@ -63,7 +63,7 @@ describe("RemoteSessionService", () => {
   });
 
   it("should try auto-login if fetch fails and fetch again", async () => {
-    const initSpy = spyOn(service["database"], "initIndexedDB");
+    const initSpy = spyOn(service["database"], "initRemoteDB");
     spyOn(PouchDB, "fetch").and.returnValues(
       Promise.resolve({
         status: HttpStatusCode.Unauthorized,
@@ -77,12 +77,11 @@ describe("RemoteSessionService", () => {
     });
     mockAuthService.autoLogin.and.resolveTo();
     await service.handleSuccessfulLogin(testUser);
-    const dbOptions: PouchDB.Configuration.RemoteDatabaseConfiguration =
-      initSpy.calls.mostRecent().args[1];
+    const fetch = initSpy.calls.mostRecent().args[1];
 
     const url = "/db/_changes";
     const opts = { headers: {} };
-    await expectAsync(dbOptions.fetch(url, opts)).toBeResolved();
+    await expectAsync(fetch(url, opts)).toBeResolved();
 
     expect(PouchDB.fetch).toHaveBeenCalledTimes(2);
     expect(PouchDB.fetch).toHaveBeenCalledWith(url, opts);

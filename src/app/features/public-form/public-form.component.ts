@@ -1,7 +1,5 @@
 import { Component } from "@angular/core";
-import { AppSettings } from "../../core/app-config/app-settings";
 import { PouchDatabase } from "../../core/database/pouch-database";
-import PouchDB from "pouchdb-browser";
 import { ActivatedRoute } from "@angular/router";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
@@ -45,22 +43,7 @@ export class PublicFormComponent<E extends Entity> {
     private entitySchemaService: EntitySchemaService,
     private snackbar: MatSnackBar
   ) {
-    // TODO the component should probably not handle this and it is very similar to the RemoteSession
-    this.database.initIndexedDB(
-      `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}`,
-      {
-        adapter: "http",
-        skip_setup: true,
-        fetch: (url, opts: any) => {
-          if (typeof url === "string") {
-            const remoteUrl =
-              AppSettings.DB_PROXY_PREFIX +
-              url.split(AppSettings.DB_PROXY_PREFIX)[1];
-            return PouchDB.fetch(remoteUrl, opts);
-          }
-        },
-      }
-    );
+    this.database.initRemoteDB();
     // wait for config to be initialized
     this.configService.configUpdates.subscribe(() => this.loadFormConfig());
   }
