@@ -7,8 +7,11 @@ import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 import { Entity } from "../../../../entity/model/entity";
 import { DatabaseField } from "../../../../entity/database-field.decorator";
 import { DatabaseEntity } from "../../../../entity/database-entity.decorator";
-import { StorybookBaseModule } from "../../../../../utils/storybook-base.module";
 import { EditNumberComponent } from "./edit-number.component";
+import {
+  entityFormStorybookDefaulParameters,
+  StorybookBaseModule,
+} from "../../../../../utils/storybook-base.module";
 
 export default {
   title: "Core/EntityComponents/Entity Property Fields/Number",
@@ -25,11 +28,7 @@ export default {
       ],
     }),
   ],
-  parameters: {
-    controls: {
-      exclude: ["_columns"],
-    },
-  },
+  parameters: entityFormStorybookDefaulParameters,
 } as Meta;
 
 const Template: Story<EntityFormComponent> = (args: EntityFormComponent) => ({
