@@ -53,6 +53,11 @@ export const defaultJsonConfig = {
         "link": "/note"
       },
       {
+        "name": $localize`:Menu item:Tasks`,
+        "icon": "tasks",
+        "link": "/todo"
+      },
+      {
         "name": $localize`:Menu item:Admin`,
         "icon": "wrench",
         "link": "/admin"
@@ -175,6 +180,10 @@ export const defaultJsonConfig = {
           "config": {
             "warningLevels": ["WARNING", "URGENT"],
           }
+        },
+        {
+          "component": "TodosDashboard",
+          "config": {}
         },
         {
           "component": "NotesDashboard",
@@ -688,11 +697,15 @@ export const defaultJsonConfig = {
           ]
         },
         {
-          "title": $localize`:Panel title:Notes & Reports`,
+          "title": $localize`:Panel title:Notes & Tasks`,
           "components": [
             {
               "title": "",
               "component": "NotesRelatedToEntity"
+            },
+            {
+              "title": "Tasks",
+              "component": "TodosRelatedToEntity"
             }
           ]
         },
@@ -1108,6 +1121,28 @@ export const defaultJsonConfig = {
       "newEntityMatchPropertyLeft": "childId",
       "newEntityMatchPropertyRight": "schoolId",
       "columnsToReview": ["start", "end", "result", "childId", "schoolId"]
+    }
+  },
+
+  "entity:Todo": {
+    "attributes": []
+  },
+  "view:todo": {
+    "component": "TodoList",
+    "config": {
+      "entity": "Todo",
+      "columns": ["deadline", "subject", "assignedTo", "startDate", "relatedEntities"],
+      "filters": [
+        { "id": "assignedTo" },
+
+        {
+          "id": "due-status",
+          "type": "prebuilt"
+        },
+        { "id": "deadline" },
+        { "id": "deadline" },
+        { "id": "startDate" }
+      ]
     }
   }
 };

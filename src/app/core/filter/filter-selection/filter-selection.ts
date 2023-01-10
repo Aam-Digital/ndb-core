@@ -108,7 +108,7 @@ export class FilterSelection<T extends Entity> {
  * Represents one specific option to filter data in a certain way.
  * used by {@link FilterSelection}
  */
-export interface FilterSelectionOption<T extends Entity> {
+export interface FilterSelectionOption<T> {
   /** identifier for this option in the parent FilterSelection instance */
   key: string;
 

@@ -1,5 +1,8 @@
 import { moduleMetadata } from "@storybook/angular";
-import { StorybookBaseModule } from "../../../utils/storybook-base.module";
+import {
+  entityFormStorybookDefaulParameters,
+  StorybookBaseModule,
+} from "../../../utils/storybook-base.module";
 import { Meta, Story } from "@storybook/angular/types-6-0";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { EntityFormComponent } from "../../../core/entity-components/entity-form/entity-form/entity-form.component";
@@ -30,11 +33,7 @@ export default {
       ],
     }),
   ],
-  parameters: {
-    controls: {
-      exclude: ["_columns"],
-    },
-  },
+  parameters: entityFormStorybookDefaulParameters,
 } as Meta;
 
 @DatabaseEntity("LocationTest")

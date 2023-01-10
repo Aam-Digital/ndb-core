@@ -1,7 +1,8 @@
+@use "src/styles/variables/sizes";
 
 .child-pic {
-  width: 28px;
-  height: 28px;
+  width: sizes.$icon-block;
+  height: sizes.$icon-block;
   border-radius: 50%;
   object-fit: cover;
   margin-right: 4px;

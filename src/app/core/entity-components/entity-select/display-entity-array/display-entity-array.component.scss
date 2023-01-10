@@ -1,0 +1,7 @@
+@use "src/styles/variables/sizes";
+
+.display-entity {
+  display: inline-block;
+  margin-right: sizes.$small;
+  vertical-align: middle;
+}
