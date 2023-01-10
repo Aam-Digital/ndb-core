@@ -13,26 +13,21 @@ import { ConfirmationDialogService } from "../../confirmation-dialog/confirmatio
 import { SessionType } from "../../session/session-type";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { environment } from "../../../../environments/environment";
+import { DownloadService } from "../../export/download-service/download.service";
 
 describe("AdminComponent", () => {
   let component: AdminComponent;
   let fixture: ComponentFixture<AdminComponent>;
 
   const mockBackupService = jasmine.createSpyObj<BackupService>([
-    "getJsonExport",
-    "getCsvExport",
+    "getDatabaseExport",
     "clearDatabase",
-    "importJson",
+    "restoreData",
   ]);
+  let mockDownloadService: jasmine.SpyObj<DownloadService>;
 
   const confirmationDialogMock =
     jasmine.createSpyObj<ConfirmationDialogService>(["getConfirmation"]);
-
-  const tmplink: jasmine.SpyObj<HTMLAnchorElement> = jasmine.createSpyObj(
-    "mockLink",
-    ["click"],
-    ["href", "target", "download"]
-  );
 
   function createFileReaderMock(result: string = "") {
     const mockFileReader: any = {
@@ -48,6 +43,7 @@ describe("AdminComponent", () => {
 
   beforeEach(waitForAsync(() => {
     environment.session_type = SessionType.mock;
+    mockDownloadService = jasmine.createSpyObj(["triggerDownload"]);
 
     TestBed.configureTestingModule({
       imports: [AdminComponent, MockedTestingModule.withState()],
@@ -57,6 +53,7 @@ describe("AdminComponent", () => {
           provide: ConfirmationDialogService,
           useValue: confirmationDialogMock,
         },
+        { provide: DownloadService, useValue: mockDownloadService },
       ],
     }).compileComponents();
   }));
@@ -72,25 +69,22 @@ describe("AdminComponent", () => {
   });
 
   it("should call backup service for json export", fakeAsync(() => {
-    spyOn(document, "createElement").and.callFake(() => tmplink);
-    mockBackupService.getJsonExport.and.resolveTo("");
+    mockBackupService.getDatabaseExport.and.resolveTo([]);
     component.saveBackup();
-    expect(mockBackupService.getJsonExport).toHaveBeenCalled();
+    expect(mockBackupService.getDatabaseExport).toHaveBeenCalled();
     tick();
-    expect(tmplink.click).toHaveBeenCalled();
+    expect(mockDownloadService.triggerDownload).toHaveBeenCalled();
   }));
 
   it("should call backup service for csv export", fakeAsync(() => {
-    spyOn(document, "createElement").and.returnValue(tmplink);
-    mockBackupService.getCsvExport.and.resolveTo("");
+    mockBackupService.getDatabaseExport.and.resolveTo([]);
     component.saveCsvExport();
-    expect(mockBackupService.getCsvExport).toHaveBeenCalled();
+    expect(mockBackupService.getDatabaseExport).toHaveBeenCalled();
     tick();
-    expect(tmplink.click).toHaveBeenCalled();
+    expect(mockDownloadService.triggerDownload).toHaveBeenCalled();
   }));
 
   it("should call config service for configuration export", fakeAsync(() => {
-    spyOn(document, "createElement").and.returnValue(tmplink);
     const exportConfigSpy = spyOn(
       TestBed.inject(ConfigService),
       "exportConfig"
@@ -99,7 +93,7 @@ describe("AdminComponent", () => {
     component.downloadConfigClick();
     expect(exportConfigSpy).toHaveBeenCalled();
     tick();
-    expect(tmplink.click).toHaveBeenCalled();
+    expect(mockDownloadService.triggerDownload).toHaveBeenCalled();
   }));
 
   it("should save and apply new configuration", fakeAsync(() => {
@@ -114,25 +108,25 @@ describe("AdminComponent", () => {
 
   it("should open dialog and call backup service when loading backup", fakeAsync(() => {
     const mockFileReader = createFileReaderMock("[]");
-    mockBackupService.getJsonExport.and.resolveTo("[]");
+    mockBackupService.getDatabaseExport.and.resolveTo([]);
     confirmationDialogMock.getConfirmation.and.resolveTo(true);
 
     component.loadBackup({ target: { files: [] } } as any);
-    expect(mockBackupService.getJsonExport).toHaveBeenCalled();
+    expect(mockBackupService.getDatabaseExport).toHaveBeenCalled();
     tick();
     expect(mockFileReader.readAsText).toHaveBeenCalled();
     expect(confirmationDialogMock.getConfirmation).toHaveBeenCalled();
     flush();
     expect(mockBackupService.clearDatabase).toHaveBeenCalled();
-    expect(mockBackupService.importJson).toHaveBeenCalled();
+    expect(mockBackupService.restoreData).toHaveBeenCalled();
   }));
 
   it("should open dialog when clearing database", fakeAsync(() => {
-    mockBackupService.getJsonExport.and.resolveTo("");
+    mockBackupService.getDatabaseExport.and.resolveTo([]);
     confirmationDialogMock.getConfirmation.and.resolveTo(true);
 
     component.clearDatabase();
-    expect(mockBackupService.getJsonExport).toHaveBeenCalled();
+    expect(mockBackupService.getDatabaseExport).toHaveBeenCalled();
     tick();
     expect(confirmationDialogMock.getConfirmation).toHaveBeenCalled();
     flush();

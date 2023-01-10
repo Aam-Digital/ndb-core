@@ -3,7 +3,6 @@ import { Database } from "../../database/database";
 import { User } from "../../user/user";
 import { Papa } from "ngx-papaparse";
 import { Config } from "../../config/config";
-import { DownloadService } from "../../export/download-service/download.service";
 
 /**
  * Create and load backups of the database.
@@ -12,32 +11,14 @@ import { DownloadService } from "../../export/download-service/download.service"
   providedIn: "root",
 })
 export class BackupService {
-  constructor(
-    private db: Database,
-    private papa: Papa,
-    private downloadService: DownloadService
-  ) {}
+  constructor(private db: Database, private papa: Papa) {}
 
   /**
-   * Creates a List of JSON elements separated by `BackupService.SEPARATOR_ROW` holding all elements of the database.
-   * This method can be used to created a backup of the data.
-   *
-   * @returns Promise<string> a string containing all elements of the database separated by SEPARATOR_ROW
+   * Creates an array holding all elements of the database.
+   * This method can be used to create a backup of the data.
    */
-  async getJsonExport(): Promise<string> {
-    //TODO
-    const results = await this.db.getAll();
-    return JSON.stringify(results);
-  }
-
-  /**
-   * Creates a CSV string of the whole database
-   *
-   * @returns string a valid CSV string
-   */
-  async getCsvExport(): Promise<string> {
-    const results = await this.db.getAll();
-    return this.downloadService.createCsv(results);
+  async getDatabaseExport(): Promise<any[]> {
+    return await this.db.getAll();
   }
 
   /**
@@ -66,38 +47,10 @@ export class BackupService {
    * @param json An array of entities to be written to the database
    * @param forceUpdate should existing objects be overridden? Default false
    */
-  async importJson(json, forceUpdate = false): Promise<void> {
-    const documents = JSON.parse(json);
+  async restoreData(documents, forceUpdate = false): Promise<void> {
     for (const record of documents) {
       // Remove _rev so CouchDB treats it as a new rather than a updated document
       delete record._rev;
-      await this.db.put(record, forceUpdate);
-    }
-  }
-
-  /**
-   * Fills the database with the elements of the CSV string
-   *
-   * @param csv a valid CSV string
-   * @param forceUpdate should existing elements be overridden? Default false
-   *
-   * @returns Promise<any> a promise that resolves after all save operations are done
-   */
-  async importCsv(csv, forceUpdate = false): Promise<void> {
-    const parsedCsv = this.papa.parse(csv, {
-      header: true,
-      dynamicTyping: true,
-      skipEmptyLines: true,
-    });
-
-    for (const record of parsedCsv.data) {
-      // remove undefined properties
-      for (const propertyName in record) {
-        if (record[propertyName] === null || propertyName === "_rev") {
-          delete record[propertyName];
-        }
-      }
-
       await this.db.put(record, forceUpdate);
     }
   }
