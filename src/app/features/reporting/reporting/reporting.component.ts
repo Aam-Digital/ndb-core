@@ -1,6 +1,9 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { Aggregation, ReportingService } from "../reporting.service";
+import {
+  Aggregation,
+  DataAggregationService,
+} from "../data-aggregation.service";
 import {
   getGroupingInformationString,
   GroupByDescription,
@@ -11,14 +14,14 @@ import {
 } from "./reporting-component-config";
 import moment from "moment";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
-import { ExportService } from "../../../core/export/export-service/export.service";
-import { ExportColumnConfig } from "../../../core/export/export-service/export-column-config";
+import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
 import { RouteTarget } from "../../../app.routing";
 import { NgIf } from "@angular/common";
 import { ViewTitleComponent } from "../../../core/entity-components/entity-utils/view-title/view-title.component";
 import { SelectReportComponent } from "./select-report/select-report.component";
 import { ReportRowComponent } from "./report-row/report-row.component";
 import { ObjectTableComponent } from "./object-table/object-table.component";
+import { DataTransformationService } from "../../../core/export/data-transformation-service/data-transformation.service";
 
 @RouteTarget("Reporting")
 @Component({
@@ -44,8 +47,8 @@ export class ReportingComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private reportingService: ReportingService,
-    private exportService: ExportService
+    private dataAggregationService: DataAggregationService,
+    private dataTransformationService: DataTransformationService
   ) {}
 
   ngOnInit() {
@@ -90,7 +93,7 @@ export class ReportingComponent implements OnInit {
     fromDate: Date,
     toDate: Date
   ) {
-    this.data = await this.exportService.createExport(
+    this.data = await this.dataTransformationService.queryAndTransformData(
       exportConfig,
       fromDate,
       toDate
@@ -103,7 +106,7 @@ export class ReportingComponent implements OnInit {
     fromDate: Date,
     toDate: Date
   ) {
-    this.data = await this.reportingService.calculateReport(
+    this.data = await this.dataAggregationService.calculateReport(
       aggregationDefinitions,
       fromDate,
       toDate

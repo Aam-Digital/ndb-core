@@ -2,8 +2,8 @@ import { Injectable } from "@angular/core";
 import { Database } from "../../database/database";
 import { User } from "../../user/user";
 import { Papa } from "ngx-papaparse";
-import { ExportService } from "../../export/export-service/export.service";
 import { Config } from "../../config/config";
+import { DownloadService } from "../../export/download-service/download.service";
 
 /**
  * Create and load backups of the database.
@@ -15,7 +15,7 @@ export class BackupService {
   constructor(
     private db: Database,
     private papa: Papa,
-    private exportService: ExportService
+    private downloadService: DownloadService
   ) {}
 
   /**
@@ -25,8 +25,9 @@ export class BackupService {
    * @returns Promise<string> a string containing all elements of the database separated by SEPARATOR_ROW
    */
   async getJsonExport(): Promise<string> {
+    //TODO
     const results = await this.db.getAll();
-    return this.exportService.createJson(results);
+    return JSON.stringify(results);
   }
 
   /**
@@ -36,7 +37,7 @@ export class BackupService {
    */
   async getCsvExport(): Promise<string> {
     const results = await this.db.getAll();
-    return this.exportService.createCsv(results);
+    return this.downloadService.createCsv(results);
   }
 
   /**

@@ -1,11 +1,6 @@
 import { TestBed, waitForAsync } from "@angular/core/testing";
 
-import { ExportService } from "./export.service";
-import { ConfigurableEnumValue } from "../../configurable-enum/configurable-enum.interface";
-import { DatabaseField } from "../../entity/database-field.decorator";
-import { DatabaseEntity } from "../../entity/database-entity.decorator";
-import { Entity } from "../../entity/model/entity";
-import { QueryService } from "../../../features/reporting/query.service";
+import { DataTransformationService } from "./data-transformation.service";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { Database } from "../../database/database";
 import { Note } from "../../../child-dev-project/notes/model/note";
@@ -18,8 +13,8 @@ import moment from "moment";
 import { DatabaseTestingModule } from "../../../utils/database-testing.module";
 import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
 
-describe("ExportService", () => {
-  let service: ExportService;
+describe("DataTransformationService", () => {
+  let service: DataTransformationService;
   let entityMapper: EntityMapperService;
 
   beforeEach(waitForAsync(() => {
@@ -27,7 +22,9 @@ describe("ExportService", () => {
       imports: [DatabaseTestingModule],
     });
 
-    service = TestBed.inject<ExportService>(ExportService);
+    service = TestBed.inject<DataTransformationService>(
+      DataTransformationService
+    );
     entityMapper = TestBed.inject(EntityMapperService);
   }));
 
@@ -35,76 +32,6 @@ describe("ExportService", () => {
 
   it("should be created", () => {
     expect(service).toBeTruthy();
-  });
-
-  it("should export to json array", () => {
-    class TestClass {
-      propertyOne;
-      propertyTwo;
-    }
-
-    const test = new TestClass();
-    test.propertyOne = "Hello";
-    test.propertyTwo = "World";
-
-    const result = service.createJson([test, test]);
-
-    expect(result).toEqual(
-      '[{"propertyOne":"Hello","propertyTwo":"World"},{"propertyOne":"Hello","propertyTwo":"World"}]'
-    );
-  });
-
-  it("should contain a column for every property", async () => {
-    const docs = [
-      { _id: "Test:1", test: 1 },
-      { _id: "Test:2", other: 2 },
-    ];
-
-    const csvExport = await service.createCsv(docs);
-
-    const rows = csvExport.split(ExportService.SEPARATOR_ROW);
-    expect(rows).toHaveSize(2 + 1); // includes 1 header line
-    expect(rows[0].split(ExportService.SEPARATOR_COL)).toHaveSize(3);
-  });
-
-  it("should create a csv string correctly", async () => {
-    @DatabaseEntity("TestForCsvEntity")
-    class TestClass extends Entity {
-      propOne;
-      propTwo;
-    }
-
-    const test = new TestClass("1");
-    test._rev = "2";
-    test.propOne = "first";
-    test.propTwo = "second";
-    const expected =
-      '"_id","_rev","propOne","propTwo"' +
-      ExportService.SEPARATOR_ROW +
-      '"TestForCsvEntity:1","2","first","second"';
-    const result = await service.createCsv([test]);
-    expect(result).toEqual(expected);
-  });
-
-  it("should export all properties if no config is provided", async () => {
-    const testObject1 = {
-      name: "foo",
-      age: 12,
-    };
-    const testObject2 = {
-      name: "bar",
-      age: 15,
-      extra: true,
-    };
-
-    const csvResult = await service.createCsv([testObject1, testObject2]);
-
-    const resultRows = csvResult.split(ExportService.SEPARATOR_ROW);
-    expect(resultRows).toEqual([
-      '"name","age","extra"',
-      '"foo","12",',
-      '"bar","15","true"',
-    ]);
   });
 
   it("should export only properties mentioned in config", async () => {
@@ -118,43 +45,12 @@ describe("ExportService", () => {
       extra: true,
     };
 
-    const csvResult = await service.createCsv(
+    const result = await service.transformData(
       [testObject1, testObject2],
-      [{ label: "test name", query: ".name" }]
+      [{ label: "test_name", query: ".name" }]
     );
 
-    const resultRows = csvResult.split(ExportService.SEPARATOR_ROW);
-    expect(resultRows).toEqual(['"test name"', '"foo"', '"bar"']);
-  });
-
-  it("should transform object properties to their label for export", async () => {
-    const testEnumValue: ConfigurableEnumValue = {
-      id: "ID VALUE",
-      label: "label value",
-    };
-    const testDate = "2020-01-30";
-
-    @DatabaseEntity("TestEntity")
-    class TestEntity extends Entity {
-      @DatabaseField() enumProperty: ConfigurableEnumValue;
-      @DatabaseField() dateProperty: Date;
-      @DatabaseField() boolProperty: boolean;
-    }
-
-    const testEntity = new TestEntity();
-    testEntity.enumProperty = testEnumValue;
-    testEntity.dateProperty = new Date(testDate);
-    testEntity.boolProperty = true;
-
-    const csvExport = await service.createCsv([testEntity]);
-
-    const rows = csvExport.split(ExportService.SEPARATOR_ROW);
-    expect(rows).toHaveSize(1 + 1); // includes 1 header line
-    const columnValues = rows[1].split(ExportService.SEPARATOR_COL);
-    expect(columnValues).toHaveSize(3 + 1); // Properties + _id
-    expect(columnValues).toContain('"' + testEnumValue.label + '"');
-    expect(columnValues).toContain('"' + testDate + '"');
-    expect(columnValues).toContain('"true"');
+    expect(result).toEqual([{ test_name: "foo" }, { test_name: "bar" }]);
   });
 
   it("should load fields from related entity for joint export", async () => {
@@ -170,22 +66,20 @@ describe("ExportService", () => {
     const query1 =
       ":getRelated(ChildSchoolRelation, schoolId).childId:toEntities(Child).name";
     const exportConfig: ExportColumnConfig[] = [
-      { label: "school name", query: ".name" },
-      { label: "child name", query: query1 },
+      { label: "school_name", query: ".name" },
+      { label: "child_name", query: query1 },
     ];
-    const result1 = await service.createCsv(
+    const result1 = await service.transformData(
       [school1, school2, school3],
       exportConfig
     );
-    const resultRows = result1.split(ExportService.SEPARATOR_ROW);
-    expect(resultRows).toEqual([
-      `"${exportConfig[0].label}","${exportConfig[1].label}"`,
-      '"School with student","John"',
-      '"School without student",""',
-      jasmine.stringMatching(
-        // order of student names is somehow random "Jane,John" or "John,Jane"
-        /"School with multiple students","(Jane,John|John,Jane)"/
-      ),
+    expect(result1).toEqual([
+      { school_name: "School with student", child_name: "John" },
+      { school_name: "School without student", child_name: [] },
+      {
+        school_name: "School with multiple students",
+        child_name: jasmine.arrayWithExactContents(["Jane", "John"]),
+      },
     ]);
   });
 
@@ -203,14 +97,13 @@ describe("ExportService", () => {
         subQueries: [{ label: "participant", query: ".name" }],
       },
     ];
-    const result1 = await service.createCsv([noteA, noteB], exportConfig);
-    const resultRows = result1.split(ExportService.SEPARATOR_ROW);
-    expect(resultRows).toEqual([
-      `"${exportConfig[0].label}","${exportConfig[1].subQueries[0].label}"`,
-      '"A","John"',
-      '"A","Jane"',
-      '"B","John"',
-      '"B","Jack"',
+    const result1 = await service.transformData([noteA, noteB], exportConfig);
+
+    expect(result1).toEqual([
+      { note: "A", participant: "John" },
+      { note: "A", participant: "Jane" },
+      { note: "B", participant: "John" },
+      { note: "B", participant: "Jack" },
     ]);
   });
 
@@ -231,10 +124,7 @@ describe("ExportService", () => {
         ],
       },
     ];
-    const results = await service.createExportOfData(
-      [emptyActivity],
-      exportConfig
-    );
+    const results = await service.transformData([emptyActivity], exportConfig);
     const resultRow = results[0];
     expect(resultRow["activity"]).toBe(emptyActivity.title);
     expect(resultRow["school_name"]).toEqual([]);
@@ -268,36 +158,12 @@ describe("ExportService", () => {
       },
     ];
 
-    const result = await service.createCsv([note], exportConfig);
+    const result = await service.transformData([note], exportConfig);
 
-    const resultRows = result.split(ExportService.SEPARATOR_ROW);
-    expect(resultRows).toEqual([
-      `"${exportConfig[0].label}","participant","status"`,
-      '"Note 1","present kid","PRESENT"',
-      '"Note 1","absent kid","ABSENT"',
-      '"Note 1","unknown kid",""',
-    ]);
-  });
-
-  it("should export a date as YYYY-MM-dd only", async () => {
-    const dateString = "2021-01-01";
-    const dateObject = new Date(dateString);
-    dateObject.setHours(10, 11, 12);
-
-    const exportData = [
-      {
-        date: dateObject,
-        number: 10,
-        string: "someString",
-      },
-    ];
-
-    const csv = await service.createCsv(exportData);
-
-    const results = csv.split(ExportService.SEPARATOR_ROW);
-    expect(results).toEqual([
-      '"date","number","string"',
-      `"${dateString}","10","someString"`,
+    expect(result).toEqual([
+      { note: "Note 1", participant: "present kid", status: "PRESENT" },
+      { note: "Note 1", participant: "absent kid", status: "ABSENT" },
+      { note: "Note 1", participant: "unknown kid", status: "" },
     ]);
   });
 
@@ -325,20 +191,22 @@ describe("ExportService", () => {
             query: ".school:toEntities(School)",
             subQueries: [
               { label: "Name", query: "name" },
-              { label: "School ID", query: "entityId" },
+              { label: "school_id", query: "entityId" },
             ],
           },
         ],
       },
     ];
 
-    const result = await service.createCsv([note], exportConfig);
+    const result = await service.transformData([note], exportConfig);
 
-    const resultRows = result.split(ExportService.SEPARATOR_ROW);
-    expect(resultRows).toEqual([
-      '"participant","Name","School ID"',
-      '"child without school","",""',
-      `"child with school","${school.name}","${school.getId()}"`,
+    expect(result).toEqual([
+      { participant: "child without school", Name: [], school_id: [] },
+      {
+        participant: "child with school",
+        Name: school.name,
+        school_id: school.getId(),
+      },
     ]);
   });
 
@@ -375,13 +243,11 @@ describe("ExportService", () => {
         ],
       },
     ];
-    const result = await service.createCsv(undefined, exportConfig);
+    const result = await service.queryAndTransformData(exportConfig);
 
-    const resultRows = result.split(ExportService.SEPARATOR_ROW);
-    expect(resultRows).toEqual([
-      '"Name","Participation"',
-      '"some child","0.50"',
-      '"some child","1.00"',
+    expect(result).toEqual([
+      { Name: "some child", Participation: "0.50" },
+      { Name: "some child", Participation: "1.00" },
     ]);
   });
 
@@ -397,8 +263,7 @@ describe("ExportService", () => {
     todayNote.date = new Date();
     await entityMapper.save(todayNote);
 
-    let result = await service.createCsv(
-      undefined,
+    let result = await service.queryAndTransformData(
       [
         {
           query: `${Note.ENTITY_TYPE}:toArray`,
@@ -407,8 +272,8 @@ describe("ExportService", () => {
       ],
       moment().subtract(5, "days").toDate()
     );
-    let resultRows = result.split(ExportService.SEPARATOR_ROW);
-    expect(resultRows).toEqual(['"subject"', '"yesterday"', '"today"']);
+
+    expect(result.map((x) => x.subject)).toEqual(["yesterday", "today"]);
 
     const query = [
       { query: "name" },
@@ -417,51 +282,36 @@ describe("ExportService", () => {
         subQueries: [{ query: "subject" }],
       },
     ];
-    result = await service.createCsv(
+    result = await service.transformData(
       [child],
       query,
       moment().subtract(5, "days").toDate()
     );
-    resultRows = result.split(ExportService.SEPARATOR_ROW);
-    expect(resultRows).toEqual([
-      '"name","subject"',
-      '"Child","yesterday"',
-      '"Child","today"',
+
+    expect(result).toEqual([
+      { name: "Child", subject: "yesterday" },
+      { name: "Child", subject: "today" },
     ]);
 
     query[1].query = ":getRelated(Note, children)[* date > ? & date <= ?]";
-    result = await service.createCsv(
+    result = await service.transformData(
       [child],
       query,
       moment().subtract(1, "weeks").subtract(1, "day").toDate(),
       moment().subtract(1, "day").toDate()
     );
-    resultRows = result.split(ExportService.SEPARATOR_ROW);
-    expect(resultRows).toEqual([
-      '"name","subject"',
-      '"Child","one week ago"',
-      '"Child","yesterday"',
+
+    expect(result).toEqual([
+      { name: "Child", subject: "one week ago" },
+      { name: "Child", subject: "yesterday" },
     ]);
-  });
-
-  it("should not use query service if no export config is provided", async () => {
-    const data = [{ key: "some" }, { key: "data" }];
-    const queryService = TestBed.inject(QueryService);
-    spyOn(queryService, "queryData").and.callThrough();
-
-    const result = await service.createCsv(data);
-
-    expect(queryService.queryData).not.toHaveBeenCalled();
-    expect(result).toBe(
-      `"key"${ExportService.SEPARATOR_ROW}"some"${ExportService.SEPARATOR_ROW}"data"`
-    );
   });
 
   it("should work when using the count function", async () => {
     await createNoteInDB("first", [new Child(), new Child()]);
     await createNoteInDB("second", [new Child()]);
 
-    const result = await service.createCsv(undefined, [
+    const result = await service.queryAndTransformData([
       {
         query: `${Note.ENTITY_TYPE}:toArray`,
         subQueries: [
@@ -471,12 +321,10 @@ describe("ExportService", () => {
       },
     ]);
 
-    const resultRows = result.split(ExportService.SEPARATOR_ROW);
-    expect(resultRows).toEqual(
+    expect(result).toEqual(
       jasmine.arrayWithExactContents([
-        '"subject","Children"',
-        '"first","2"',
-        '"second","1"',
+        { subject: "first", Children: 2 },
+        { subject: "second", Children: 1 },
       ])
     );
   });
@@ -486,7 +334,7 @@ describe("ExportService", () => {
     createSchoolInDB("sameName");
     createSchoolInDB("otherName");
 
-    const result = await service.createExport([
+    const result = await service.queryAndTransformData([
       {
         query: `${School.ENTITY_TYPE}:toArray`,
         groupBy: { label: "Name", property: "name" },

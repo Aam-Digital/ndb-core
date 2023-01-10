@@ -3,8 +3,8 @@ import { TestBed } from "@angular/core/testing";
 import { BackupService } from "./backup.service";
 import { Database } from "../../database/database";
 import { PouchDatabase } from "../../database/pouch-database";
-import { ExportService } from "../../export/export-service/export.service";
-import { QueryService } from "../../../features/reporting/query.service";
+import { DownloadService } from "../../export/download-service/download.service";
+import { DataTransformationService } from "../../export/data-transformation-service/data-transformation.service";
 
 describe("BackupService", () => {
   let db: PouchDatabase;
@@ -15,8 +15,8 @@ describe("BackupService", () => {
     TestBed.configureTestingModule({
       providers: [
         BackupService,
-        ExportService,
-        { provide: QueryService, useValue: { queryData: () => [] } },
+        DownloadService,
+        { provide: DataTransformationService, useValue: {} },
         { provide: Database, useValue: db },
       ],
     });
@@ -87,23 +87,23 @@ describe("BackupService", () => {
 
     const csvExport = await service.getCsvExport();
 
-    expect(csvExport.split(ExportService.SEPARATOR_ROW)).toHaveSize(2 + 1); // includes 1 header line
+    expect(csvExport.split(DownloadService.SEPARATOR_ROW)).toHaveSize(2 + 1); // includes 1 header line
   });
 
   it("importCsv should add records", async () => {
     const csv =
       "_id" +
-      ExportService.SEPARATOR_COL +
+      DownloadService.SEPARATOR_COL +
       "test" +
-      ExportService.SEPARATOR_ROW +
+      DownloadService.SEPARATOR_ROW +
       '"Test:1"' +
-      ExportService.SEPARATOR_COL +
+      DownloadService.SEPARATOR_COL +
       "1" +
-      ExportService.SEPARATOR_ROW +
+      DownloadService.SEPARATOR_ROW +
       '"Test:2"' +
-      ExportService.SEPARATOR_COL +
+      DownloadService.SEPARATOR_COL +
       "2" +
-      ExportService.SEPARATOR_ROW;
+      DownloadService.SEPARATOR_ROW;
 
     await service.importCsv(csv, true);
 
@@ -118,14 +118,14 @@ describe("BackupService", () => {
   it("importCsv should not add empty properties to records", async () => {
     const csv =
       "_id" +
-      ExportService.SEPARATOR_COL +
+      DownloadService.SEPARATOR_COL +
       "other" +
-      ExportService.SEPARATOR_COL +
+      DownloadService.SEPARATOR_COL +
       "test" +
-      ExportService.SEPARATOR_ROW +
+      DownloadService.SEPARATOR_ROW +
       '"Test:1"' +
-      ExportService.SEPARATOR_COL +
-      ExportService.SEPARATOR_COL +
+      DownloadService.SEPARATOR_COL +
+      DownloadService.SEPARATOR_COL +
       "1";
 
     await service.importCsv(csv);
