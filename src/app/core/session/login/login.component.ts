@@ -29,10 +29,12 @@ import { MatButtonModule } from "@angular/material/button";
 import { PasswordResetComponent } from "../auth/keycloak/password-reset/password-reset.component";
 import { ActivatedRoute, Router } from "@angular/router";
 import { filter } from "rxjs/operators";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Form to allow users to enter their credentials and log in.
  */
+@UntilDestroy()
 @Component({
   selector: "app-login",
   templateUrl: "./login.component.html",
@@ -45,9 +47,9 @@ import { filter } from "rxjs/operators";
     FontAwesomeModule,
     MatTooltipModule,
     MatButtonModule,
-    PasswordResetComponent
+    PasswordResetComponent,
   ],
-  standalone: true
+  standalone: true,
 })
 export class LoginComponent implements AfterViewInit {
   /** true while a login is started but result is not received yet */
@@ -76,7 +78,10 @@ export class LoginComponent implements AfterViewInit {
     private router: Router
   ) {
     this._sessionService.loginState
-      .pipe(filter((state) => state === LoginState.LOGGED_IN))
+      .pipe(
+        untilDestroyed(this),
+        filter((state) => state === LoginState.LOGGED_IN)
+      )
       .subscribe(() => this.routeAfterLogin());
   }
 

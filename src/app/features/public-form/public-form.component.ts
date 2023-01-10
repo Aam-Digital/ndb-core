@@ -17,7 +17,9 @@ import { ConfigService } from "../../core/config/config.service";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatCardModule } from "@angular/material/card";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: "app-public-form",
   templateUrl: "./public-form.component.html",
@@ -45,7 +47,9 @@ export class PublicFormComponent<E extends Entity> {
   ) {
     this.database.initRemoteDB();
     // wait for config to be initialized
-    this.configService.configUpdates.subscribe(() => this.loadFormConfig());
+    this.configService.configUpdates
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.loadFormConfig());
   }
 
   submit() {
