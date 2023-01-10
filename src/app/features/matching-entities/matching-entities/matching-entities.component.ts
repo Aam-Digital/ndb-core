@@ -28,7 +28,7 @@ import { NgForOf, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { EntityPropertyViewComponent } from "../../../core/entity-components/entity-utils/entity-property-view/entity-property-view.component";
 import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
-import { MapComponent } from "../../location/map/map.component";
+import { LocationEntity, MapComponent } from "../../location/map/map.component";
 import { FilterComponent } from "../../../core/filter/filter/filter.component";
 
 interface MatchingSide extends MatchingSideConfig {
@@ -69,7 +69,7 @@ export class MatchingEntitiesComponent
 
   @Input() leftSide: MatchingSideConfig = {};
   @Input() rightSide: MatchingSideConfig = {};
-  mapEntities: { entity: Entity; property: string }[] = [];
+  mapEntities: LocationEntity[] = [];
 
   columnsToDisplay = [];
 
@@ -79,7 +79,7 @@ export class MatchingEntitiesComponent
    */
   @Input() columns: [ColumnConfig, ColumnConfig][];
 
-  @Input() showMap: [string, string];
+  @Input() showMap: [string | string[], string | string[]];
 
   @Input()
   matchActionLabel: string = $localize`:Matching button label:create matching`;
@@ -109,7 +109,7 @@ export class MatchingEntitiesComponent
 
   async ngOnInit() {
     this.route?.data?.subscribe((data: RouteData<MatchingEntitiesConfig>) => {
-      if (!data?.config.leftSide || !data?.config.rightSide) {
+      if (!data?.config?.leftSide || !data?.config?.rightSide) {
         return;
       }
       this.initConfig(data.config);
@@ -268,12 +268,13 @@ export class MatchingEntitiesComponent
   }
 
   private getDistanceColumnConfig(index: number) {
+    const mapProp = this.showMap[index];
     return {
       id: "distance",
       label: $localize`:Matching View column name:Distance`,
       view: "DisplayDistance",
       additional: {
-        coordinatesProperty: this.showMap[index],
+        coordinatesProperty: Array.isArray(mapProp) ? mapProp : [mapProp],
         compareCoordinates: new ReplaySubject(),
       },
     };
@@ -284,7 +285,10 @@ export class MatchingEntitiesComponent
     this.columns?.forEach((column) => {
       const cell = column[otherIndex];
       if (typeof cell !== "string" && cell?.id === "distance") {
-        cell.additional.compareCoordinates.next(entity[this.showMap[index]]);
+        const property = this.showMap[index];
+        const coordProps = Array.isArray(property) ? property : [property];
+        const coordinates = coordProps.map((prop) => entity[prop]);
+        cell.additional.compareCoordinates.next(coordinates);
       }
     });
   }

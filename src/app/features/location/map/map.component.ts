@@ -26,19 +26,15 @@ import { MatButtonModule } from "@angular/material/button";
 
 export interface LocationEntity {
   entity: Entity;
-  property: string;
+  property: string | string[];
 }
 
 @Component({
   selector: "app-map",
   templateUrl: "./map.component.html",
   styleUrls: ["./map.component.scss"],
-  imports: [
-    FontAwesomeModule,
-    NgIf,
-    MatButtonModule
-  ],
-  standalone: true
+  imports: [FontAwesomeModule, NgIf, MatButtonModule],
+  standalone: true,
 })
 export class MapComponent implements AfterViewInit {
   private readonly start_location: L.LatLngTuple = [52.4790412, 13.4319106];
@@ -148,15 +144,20 @@ export class MapComponent implements AfterViewInit {
   }
 
   private createEntityMarkers(entities: LocationEntity[]) {
-    return entities
-      .filter(({ entity, property }) => !!entity?.[property])
-      .map(({ entity, property }) => {
-        const marker = L.marker([entity[property].lat, entity[property].lon]);
-        marker.bindTooltip(entity.toString());
-        marker.on("click", () => this.entityClick.emit(entity));
-        marker["entity"] = entity;
-        return marker;
-      });
+    const markers: L.Marker[] = [];
+    entities.forEach(({ entity, property }) => {
+      const propArr = Array.isArray(property) ? property : [property];
+      propArr
+        .filter((prop) => !!entity?.[prop])
+        .map((prop) => {
+          const marker = L.marker([entity[prop].lat, entity[prop].lon]);
+          marker.bindTooltip(entity.toString());
+          marker.on("click", () => this.entityClick.emit(entity));
+          marker["entity"] = entity;
+          markers.push(marker);
+        });
+    });
+    return markers;
   }
 
   private clearMarkers(markers: L.Marker[]) {

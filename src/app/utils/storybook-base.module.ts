@@ -24,6 +24,7 @@ import { SyncState } from "../core/session/session-states/sync-state.enum";
 import { WINDOW_TOKEN } from "./di-tokens";
 import { createTestingConfigService } from "../core/config/testing-config-service";
 import { componentRegistry } from "../dynamic-components";
+import { AppModule } from "../app.module";
 
 export const mockAbilityService = {
   abilityUpdated: new Subject<void>(),
@@ -35,6 +36,7 @@ export const mockAbilityService = {
 @NgModule({
   declarations: [],
   imports: [
+    AppModule,
     CommonModule,
     BrowserAnimationsModule,
     FontAwesomeModule,

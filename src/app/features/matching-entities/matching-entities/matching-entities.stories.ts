@@ -41,6 +41,7 @@ const entitiesB = [
     gender: genders[1],
     center: centersUnique[0],
     address: { lat: 52.4720412, lon: 13.4319106 },
+    otherAddress: { lat: 52.4720412, lon: 13.4419106 },
   }),
   Object.assign(Child.create("other child"), {
     gender: genders[2],
@@ -96,7 +97,7 @@ TwoSidedMatching.args = {
   leftSide: { entityType: Child.ENTITY_TYPE },
   rightSide: { entityType: RecurringActivity.ENTITY_TYPE },
   columns: columnsMapping,
-  showMap: ["address", "address"],
+  showMap: [["address", "otherAddress"], "address"],
 };
 
 export const LeftMatch = Template.bind({});
