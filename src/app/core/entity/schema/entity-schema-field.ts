@@ -96,4 +96,7 @@ export interface EntitySchemaField {
   description?: string;
 
   validators?: FormValidatorConfig;
+
+  /** whether to show this field in the default details view */
+  showInDetailsView?: boolean;
 }

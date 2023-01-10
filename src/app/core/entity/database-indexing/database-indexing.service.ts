@@ -22,6 +22,8 @@ import { BackgroundProcessState } from "../../sync-status/background-process-sta
 import { Entity, EntityConstructor } from "../model/entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { first } from "rxjs/operators";
+import { arrayEntitySchemaDatatype } from "../schema-datatypes/datatype-array";
+import { entityArrayEntitySchemaDatatype } from "../schema-datatypes/datatype-entity-array";
 
 /**
  * Manage database query index creation and use, working as a facade in front of the Database service.
@@ -79,6 +81,66 @@ export class DatabaseIndexingService {
 
     indexState.pending = false;
     this._indicesRegistered.next(this._indicesRegistered.value);
+  }
+
+  /**
+   * Generate and save a new database query index for the given entity type and property.
+   *
+   * This allows you to efficiently query documents of that entity type based on values of the reference property,
+   * e.g. query all Notes (entityType=Note) that are related to a certain user (referenceProperty="authors").
+   *
+   * Query this index using the given indexId like this:
+   * generateIndexOnProperty("myIndex", Note, "category");
+   * queryIndexDocs(Note, "myIndex/by_category")
+   *
+   * @param indexId id to query this index after creation (--> {indexId}/by_{referenceProperty})
+   * @param entity entity type to limit the documents included in this index
+   * @param referenceProperty property key on the documents whose value is indexed as a query key
+   * @param secondaryIndex (optional) additional property to emit as a secondary index to narrow queries further
+   */
+  generateIndexOnProperty<
+    E extends Entity,
+    REF extends keyof E & string,
+    SEC extends keyof E & string
+  >(
+    indexId: string,
+    entity: EntityConstructor<E>,
+    referenceProperty: REF,
+    secondaryIndex?: SEC
+  ): Promise<void> {
+    const emitParamFormatter = (primaryParam) => {
+      if (secondaryIndex) {
+        return `emit([${primaryParam}, doc.${secondaryIndex}]);`;
+      } else {
+        return `emit(${primaryParam});`;
+      }
+    };
+    const dataType = entity.schema.get(referenceProperty).dataType;
+    const isArrayProperty =
+      dataType === arrayEntitySchemaDatatype.name ||
+      dataType === entityArrayEntitySchemaDatatype.name;
+
+    const simpleEmit = emitParamFormatter("doc." + referenceProperty);
+    const arrayEmit = `
+      if (!Array.isArray(doc.${referenceProperty})) return;
+      doc.${referenceProperty}.forEach((relatedEntity) => {
+        ${emitParamFormatter("relatedEntity")}
+      });`;
+
+    const designDoc = {
+      _id: "_design/" + indexId,
+      views: {
+        [`by_${referenceProperty}`]: {
+          map: `(doc) => {
+            if (!doc._id.startsWith("${entity.ENTITY_TYPE}")) return;
+
+            ${isArrayProperty ? arrayEmit : simpleEmit}
+          }`,
+        },
+      },
+    };
+
+    return this.createIndex(designDoc);
   }
 
   /**

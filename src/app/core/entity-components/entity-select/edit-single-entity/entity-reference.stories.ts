@@ -4,7 +4,10 @@ import { EntitySchemaService } from "../../../entity/schema/entity-schema.servic
 import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
+import {
+  entityFormStorybookDefaulParameters,
+  StorybookBaseModule,
+} from "../../../../utils/storybook-base.module";
 import { DatabaseEntity } from "../../../entity/database-entity.decorator";
 import { Entity } from "../../../entity/model/entity";
 import { DatabaseField } from "../../../entity/database-field.decorator";
@@ -37,11 +40,7 @@ export default {
       ],
     }),
   ],
-  parameters: {
-    controls: {
-      exclude: ["_columns"],
-    },
-  },
+  parameters: entityFormStorybookDefaulParameters,
 } as Meta;
 
 const Template: Story<EntityFormComponent> = (args: EntityFormComponent) => ({
