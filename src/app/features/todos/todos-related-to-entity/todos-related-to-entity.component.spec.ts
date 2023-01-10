@@ -2,37 +2,37 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { TodosRelatedToEntityComponent } from "./todos-related-to-entity.component";
 import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
-import { SessionService } from "app/core/session/session-service/session.service";
-import { AlertService } from "../../../core/alerts/alert.service";
-import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
-import { CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { Entity } from "../../../core/entity/model/entity";
 
 describe("TodosRelatedToEntityComponent", () => {
   let component: TodosRelatedToEntityComponent;
   let fixture: ComponentFixture<TodosRelatedToEntityComponent>;
 
+  let mockIndexingService: jasmine.SpyObj<DatabaseIndexingService>;
+
   beforeEach(async () => {
+    mockIndexingService = jasmine.createSpyObj([
+      "generateIndexOnProperty",
+      "queryIndexDocs",
+    ]);
+    mockIndexingService.queryIndexDocs.and.resolveTo([]);
+
     await TestBed.configureTestingModule({
-      declarations: [TodosRelatedToEntityComponent],
+      imports: [TodosRelatedToEntityComponent, MockedTestingModule.withState()],
       providers: [
         {
           provide: DatabaseIndexingService,
-          useValue: jasmine.createSpyObj([
-            "generateIndexOnProperty",
-            "queryIndexDocs",
-          ]),
+          useValue: mockIndexingService,
         },
-        { provide: SessionService, useValue: null },
-        { provide: AlertService, useValue: null },
-        { provide: FormDialogService, useValue: null },
-      ],
-      schemas: [
-        CUSTOM_ELEMENTS_SCHEMA, // ignore countless dependencies of entity-subrecord
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TodosRelatedToEntityComponent);
     component = fixture.componentInstance;
+
+    component.entity = new Entity();
+
     fixture.detectChanges();
   });
 

@@ -115,7 +115,11 @@ export class Todo extends Entity {
   }
 
   get isOverdue(): boolean {
-    return !this.completed && this.deadline.getTime() < new Date().getTime();
+    return !!(
+      !this.completed &&
+      this.deadline &&
+      this.deadline.getTime() < new Date().getTime()
+    );
   }
 
   getWarningLevel(): WarningLevel {

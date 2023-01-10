@@ -1,23 +1,26 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { DisplayRecurringIntervalComponent } from './display-recurring-interval.component';
+import { DisplayRecurringIntervalComponent } from "./display-recurring-interval.component";
+import { generateLabelFromInterval, TimeInterval } from "../time-interval";
 
-describe('DisplayRecurringIntervalComponent', () => {
+describe("DisplayRecurringIntervalComponent", () => {
   let component: DisplayRecurringIntervalComponent;
   let fixture: ComponentFixture<DisplayRecurringIntervalComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DisplayRecurringIntervalComponent ]
-    })
-    .compileComponents();
+      imports: [DisplayRecurringIntervalComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(DisplayRecurringIntervalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it("should load dynamic config and generate human-readable label", () => {
+    const testInterval: TimeInterval = { amount: 2, unit: "weeks" };
+    component.onInitFromDynamicConfig({ value: testInterval } as any);
+
+    expect(component.label).toBe(generateLabelFromInterval(testInterval));
   });
 });

@@ -47,10 +47,15 @@ export class TodosDashboardComponent implements OnInitDynamicComponent {
   };
 
   sortEntries = (a: Todo, b: Todo) => {
-    if (a.isOverdue || b.isOverdue) {
-      // list overdue todos first
+    // list overdue todos first
+    if (a.isOverdue && b.isOverdue) {
       return a.deadline?.getTime() - b.deadline?.getTime();
+    } else if (a.isOverdue) {
+      return -1; // a first
+    } else if (b.isOverdue) {
+      return 1; // b first
     }
+
     return (
       (a.startDate ?? a.deadline)?.getTime() -
       (b.startDate ?? b.deadline)?.getTime()

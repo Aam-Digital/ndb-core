@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { TodoCompletionComponent } from "./todo-completion.component";
-import { TodosModule } from "../../todos.module";
 import { ConfigService } from "../../../../core/config/config.service";
 import { Todo } from "../../model/todo";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -12,7 +11,7 @@ describe("TodoCompletionComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TodosModule, FontAwesomeTestingModule],
+      imports: [TodoCompletionComponent, FontAwesomeTestingModule],
       providers: [{ provide: ConfigService, useValue: null }],
     }).compileComponents();
 

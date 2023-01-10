@@ -4,16 +4,10 @@ import { TodoDetailsComponent } from "./todo-details.component";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Todo } from "../model/todo";
-import { TodosModule } from "../todos.module";
-import { ConfigService } from "../../../core/config/config.service";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { SessionService } from "../../../core/session/session-service/session.service";
 import { TodoService } from "../todo.service";
-import { AbilityService } from "../../../core/permissions/ability/ability.service";
-import { of } from "rxjs";
-import { Angulartics2 } from "angulartics2";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { LoginState } from "../../../core/session/session-states/login-state.enum";
+import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 
 describe("TodoDetailsComponent", () => {
   let component: TodoDetailsComponent;
@@ -21,29 +15,46 @@ describe("TodoDetailsComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TodosModule, FontAwesomeTestingModule],
+      imports: [
+        TodoDetailsComponent,
+        MockedTestingModule.withState(LoginState.LOGGED_IN),
+      ],
       providers: [
         { provide: AlertService, useValue: null },
         {
           provide: MAT_DIALOG_DATA,
           useValue: { entity: new Todo(), columns: [] },
         },
-        { provide: MatDialogRef, useValue: null },
-        { provide: ConfigService, useValue: null },
-        { provide: SessionService, useValue: null },
-        { provide: EntityMapperService, useValue: mockEntityMapper() },
-        { provide: TodoService, useValue: null },
-        { provide: AbilityService, useValue: { abilityUpdated: of() } },
-        { provide: Angulartics2, useValue: null },
+        { provide: MatDialogRef, useValue: jasmine.createSpyObj(["close"]) },
+        TodoService,
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TodoDetailsComponent);
     component = fixture.componentInstance;
+
+    component.entity = new Todo();
+
     fixture.detectChanges();
   });
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should save entity with all changes when completing todo", async () => {
+    const editedEntityProp = "subject";
+    component.formColumns = [[{ id: editedEntityProp }]];
+    component.ngOnInit();
+
+    component.form.get(editedEntityProp).setValue("123");
+    component.form.get(editedEntityProp).markAsDirty();
+    await component.completeTodo();
+
+    const savedEntity = await TestBed.inject<EntityMapperService>(
+      EntityMapperService
+    ).load(Todo, component.entity.getId(true));
+    expect(savedEntity.subject).toBe("123");
+    expect(savedEntity.completed).toBeTruthy();
   });
 });

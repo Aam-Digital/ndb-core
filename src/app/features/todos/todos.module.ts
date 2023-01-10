@@ -29,28 +29,28 @@ export class TodosModule {
           ).then((c) => c.TodosRelatedToEntityComponent),
       ],
       [
-        "TodosDashboardComponent",
+        "TodosDashboard",
         () =>
           import("./todos-dashboard/todos-dashboard.component").then(
             (c) => c.TodosDashboardComponent
           ),
       ],
       [
-        "EditRecurringIntervalComponent",
+        "EditRecurringInterval",
         () =>
           import(
             "./recurring-interval/edit-recurring-interval/edit-recurring-interval.component"
           ).then((c) => c.EditRecurringIntervalComponent),
       ],
       [
-        "DisplayRecurringIntervalComponent",
+        "DisplayRecurringInterval",
         () =>
           import(
             "./recurring-interval/display-recurring-interval/display-recurring-interval.component"
           ).then((c) => c.DisplayRecurringIntervalComponent),
       ],
       [
-        "DisplayTodoCompletionComponent",
+        "DisplayTodoCompletion",
         () =>
           import(
             "./todo-completion/display-todo-completion/display-todo-completion.component"

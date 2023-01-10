@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { Entity } from "../../../core/entity/model/entity";
@@ -25,7 +25,7 @@ import { FormsModule } from "@angular/forms";
 export class TodosRelatedToEntityComponent implements OnInitDynamicComponent {
   entries: Todo[] = [];
 
-  columns: FormFieldConfig[] = [
+  @Input() columns: FormFieldConfig[] = [
     { id: "deadline" },
     { id: "subject" },
     { id: "startDate" },
@@ -36,7 +36,7 @@ export class TodosRelatedToEntityComponent implements OnInitDynamicComponent {
     { id: "completed", hideFromForm: true },
   ];
 
-  private entity: Entity;
+  @Input() entity: Entity;
 
   /** the property name of the Todo that contains the ids referencing related entities */
   private referenceProperty: keyof Todo & string = "relatedEntities";

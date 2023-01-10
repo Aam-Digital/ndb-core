@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { TodoListComponent } from "./todo-list.component";
+import { ActivatedRoute } from "@angular/router";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { of } from "rxjs";
 
 describe("TodoListComponent", () => {
   let component: TodoListComponent;
@@ -8,7 +11,8 @@ describe("TodoListComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TodoListComponent],
+      imports: [TodoListComponent, MockedTestingModule.withState()],
+      providers: [{ provide: ActivatedRoute, useValue: { data: of([]) } }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TodoListComponent);
