@@ -13,6 +13,7 @@ import { TodoDetailsComponent } from "../todo-details/todo-details.component";
 import { LoggingService } from "../../../core/logging/logging.service";
 import moment from "moment";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
+import { FilterSelectionOption } from "../../../core/filter/filter-selection/filter-selection";
 
 @RouteTarget("TodoList")
 @Component({
@@ -92,31 +93,7 @@ export class TodoListComponent implements OnInit {
 
   private buildFilterDueStatus(filter: PrebuiltFilterConfig<Todo>) {
     filter.options = [
-      {
-        key: "current",
-        label: $localize`:Filter-option for todos:Currently Active`,
-        filter: {
-          $and: [
-            { completed: undefined },
-            {
-              $or: [
-                {
-                  startDate: {
-                    $lte: moment().format("YYYY-MM-DD"),
-                    $gt: "",
-                  },
-                },
-                {
-                  deadline: {
-                    $lte: moment().format("YYYY-MM-DD"),
-                    $gt: "",
-                  },
-                },
-              ],
-            },
-          ],
-        },
-      },
+      filterCurrentlyActive,
       {
         key: "overdue",
         label: $localize`:Filter-option for todos:Overdue`,
@@ -148,3 +125,29 @@ export class TodoListComponent implements OnInit {
     this.formDialog.openSimpleForm(entity, undefined, TodoDetailsComponent);
   }
 }
+
+const filterCurrentlyActive: FilterSelectionOption<Todo> = {
+  key: "current",
+  label: $localize`:Filter-option for todos:Currently Active`,
+  filter: {
+    $and: [
+      { completed: undefined },
+      {
+        $or: [
+          {
+            startDate: {
+              $lte: moment().format("YYYY-MM-DD"),
+              $gt: "",
+            },
+          },
+          {
+            deadline: {
+              $lte: moment().format("YYYY-MM-DD"),
+              $gt: "",
+            },
+          },
+        ],
+      },
+    ],
+  },
+};
