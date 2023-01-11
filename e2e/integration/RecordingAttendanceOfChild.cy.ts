@@ -19,7 +19,7 @@ describe("Scenario: Recording attendance of a child - E2E test", function () {
   });
 
   it("THEN in the details page of this child under 'attendance' for the specific class I should see a green background for the current day", function () {
-    cy.get("#mat-input-2")
+    cy.get('[placeholder="Search"]')
       .focus()
       .type(this.childName)
       .wait(500)

@@ -1,4 +1,10 @@
-import { Component, Input, OnInit, ViewEncapsulation } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  ViewEncapsulation,
+} from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { FormFieldConfig } from "./FormConfig";
 import { EntityForm } from "../entity-form.service";
@@ -6,7 +12,7 @@ import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { filter } from "rxjs/operators";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { NgForOf, NgIf } from "@angular/common";
+import { NgClass, NgForOf, NgIf } from "@angular/common";
 import { DynamicComponentDirective } from "../../../view/dynamic-components/dynamic-component.directive";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -35,11 +41,14 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     NgIf,
     MatButtonModule,
     MatTooltipModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    NgClass,
   ],
-  standalone: true
+  standalone: true,
 })
-export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
+export class EntityFormComponent<T extends Entity = Entity>
+  implements OnChanges
+{
   /**
    * The entity which should be displayed and edited
    */
@@ -49,12 +58,13 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
 
   @Input() columnHeaders?: (string | null)[];
 
-  @Input() set form(form: EntityForm<T>) {
-    this._form = form;
-    this.initialFormValues = form.getRawValue();
-  }
+  @Input() form: EntityForm<T>;
 
-  _form: EntityForm<T>;
+  /**
+   * Whether the component should use a grid layout or just rows
+   */
+  @Input() gridLayout = true;
+
   initialFormValues: any;
 
   constructor(
@@ -62,14 +72,19 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
     private confirmationDialog: ConfirmationDialogService
   ) {}
 
-  ngOnInit() {
-    this.entityMapper
-      .receiveUpdates(this.entity.getConstructor())
-      .pipe(
-        filter(({ entity }) => entity.getId() === this.entity.getId()),
-        untilDestroyed(this)
-      )
-      .subscribe(({ entity }) => this.applyChanges(entity));
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.entity && this.entity) {
+      this.entityMapper
+        .receiveUpdates(this.entity.getConstructor())
+        .pipe(
+          filter(({ entity }) => entity.getId() === this.entity.getId()),
+          untilDestroyed(this)
+        )
+        .subscribe(({ entity }) => this.applyChanges(entity));
+    }
+    if (changes.form && this.form) {
+      this.initialFormValues = this.form.getRawValue();
+    }
   }
 
   private async applyChanges(entity: T) {
@@ -85,16 +100,16 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
       ))
     ) {
       Object.assign(this.initialFormValues, entity);
-      this._form.patchValue(entity as any);
+      this.form.patchValue(entity as any);
     }
   }
 
   private changesOnlyAffectPristineFields(updatedEntity: T) {
-    if (this._form.pristine) {
+    if (this.form.pristine) {
       return true;
     }
 
-    const dirtyFields = Object.entries(this._form.controls).filter(
+    const dirtyFields = Object.entries(this.form.controls).filter(
       ([_, form]) => form.dirty
     );
     for (const [key] of dirtyFields) {
@@ -116,7 +131,7 @@ export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
   }
 
   private formIsUpToDate(entity: T): boolean {
-    return Object.entries(this._form.getRawValue()).every(([key, value]) => {
+    return Object.entries(this.form.getRawValue()).every(([key, value]) => {
       return this.entityEqualsFormValue(entity[key], value);
     });
   }

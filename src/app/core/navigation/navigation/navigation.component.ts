@@ -21,7 +21,6 @@ import { NavigationMenuConfig } from "../navigation-menu-config.interface";
 import { ConfigService } from "../../config/config.service";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { SessionService } from "../../session/session-service/session.service";
 import { NavigationEnd, Router, RouterLink } from "@angular/router";
 import { filter, startWith } from "rxjs/operators";
 import { MatListModule } from "@angular/material/list";
@@ -57,7 +56,6 @@ export class NavigationComponent {
   constructor(
     private userRoleGuard: UserRoleGuard,
     private configService: ConfigService,
-    private session: SessionService,
     private router: Router
   ) {
     this.configService.configUpdates
@@ -125,9 +123,5 @@ export class NavigationComponent {
         );
       }
     }
-  }
-
-  logout() {
-    this.session.logout();
   }
 }

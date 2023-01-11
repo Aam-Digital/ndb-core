@@ -35,6 +35,7 @@ import { ObservableQueue } from "./observable-queue/observable-queue";
 @Injectable()
 export class CouchdbFileService extends FileService {
   private attachmentsUrl = `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}-attachments`;
+  // TODO it seems like failed requests are executed again when a new one is done
   private requestQueue = new ObservableQueue();
 
   constructor(
@@ -123,15 +124,14 @@ export class CouchdbFileService extends FileService {
   }
 
   showFile(entity: Entity, property: string) {
-    const obs = this.http.get(
-      `${this.attachmentsUrl}/${entity.getId(true)}/${property}`,
-      {
+    const obs = this.http
+      .get(`${this.attachmentsUrl}/${entity.getId(true)}/${property}`, {
         responseType: "blob",
         reportProgress: true,
         observe: "events",
         headers: { "ngsw-bypass": "" },
-      }
-    );
+      })
+      .pipe(shareReplay());
     this.reportProgress($localize`Loading "${entity[property]}"`, obs);
     obs
       .pipe(filter((e) => e.type === HttpEventType.Response))

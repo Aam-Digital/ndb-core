@@ -18,7 +18,7 @@ export interface ViewConfig<T = any> {
   /**
    * Allows to restrict the route to the given list of user roles.
    * If set, the route can only be visited by users which have a role which is in the list.
-   * If not set, all logged in users can vist the route.
+   * If not set, all logged-in users can visit the route.
    */
   permittedUserRoles?: string[];
 

@@ -26,19 +26,12 @@ describe("ProgressDashboardComponent", () => {
   let mockSync: BehaviorSubject<SyncState>;
 
   beforeEach(waitForAsync(() => {
-    mockEntityMapper = jasmine.createSpyObj("mockEntityService", [
-      "load",
-      "save",
-    ]);
-    mockEntityMapper.load.and.resolveTo({ title: "test", parts: [] } as any);
-    mockEntityMapper.save.and.resolveTo();
     mockSync = new BehaviorSubject(SyncState.UNSYNCED);
     mockSession = jasmine.createSpyObj([], { syncState: mockSync });
 
     TestBed.configureTestingModule({
       imports: [ProgressDashboardComponent, MockedTestingModule.withState()],
       providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: MatDialog, useValue: mockDialog },
         { provide: SessionService, useValue: mockSession },
         {
@@ -47,6 +40,12 @@ describe("ProgressDashboardComponent", () => {
         },
       ],
     }).compileComponents();
+    mockEntityMapper = TestBed.inject(EntityMapperService) as any;
+    spyOn(mockEntityMapper, "load").and.resolveTo({
+      title: "test",
+      parts: [],
+    } as any);
+    spyOn(mockEntityMapper, "save").and.resolveTo();
   }));
 
   beforeEach(() => {
