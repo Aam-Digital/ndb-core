@@ -19,6 +19,10 @@ export class EventAttendance {
   }
   set status(value) {
     if (typeof value === "object") {
+      if (value.isInvalidOption) {
+        value.shortName = "?";
+        value.countAs = NullAttendanceStatusType.countAs;
+      }
       this._status = value;
     } else {
       this._status = NullAttendanceStatusType;

@@ -109,4 +109,20 @@ describe("ConfigurableEnumDatatype", () => {
     expect(entity.optionInAdditional).toEqual(TEST_CONFIG[2]);
     expect(entity).toHaveId("Test");
   });
+
+  it("should gracefully handle invalid enum ids and show a dummy option to users", () => {
+    const data = {
+      _id: "Test",
+      option: "INVALID_OPTION",
+    };
+    const entity = new TestEntity();
+
+    entitySchemaService.loadDataIntoEntity(entity, data);
+
+    expect(entity.option).toEqual({
+      id: "INVALID_OPTION",
+      isInvalidOption: true,
+      label: "[invalid option] INVALID_OPTION",
+    });
+  });
 });
