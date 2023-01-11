@@ -49,15 +49,16 @@ export class DemoDataInitializerService {
     }
     this.registerDemoUsers();
 
+    await this.localSession.login(
+      DemoUserGeneratorService.DEFAULT_USERNAME,
+      DemoUserGeneratorService.DEFAULT_PASSWORD
+    );
+
     this.initializeDefaultDatabase();
     await this.demoDataService.publishDemoData();
 
     dialogRef.close();
 
-    await this.localSession.login(
-      DemoUserGeneratorService.DEFAULT_USERNAME,
-      DemoUserGeneratorService.DEFAULT_PASSWORD
-    );
     this.syncDatabaseOnUserChange();
   }
 

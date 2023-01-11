@@ -57,9 +57,9 @@ export class AbilityService {
     const userRules = this.getRulesForUser(rules);
     if (userRules.length === 0 || userRules.length === rules.default?.length) {
       // No rules or only default rules defined
-      const { name, roles } = this.sessionService.getCurrentUser();
+      const user = this.sessionService.getCurrentUser();
       this.logger.warn(
-        `no rules found for user "${name}" with roles "${roles}"`
+        `no rules found for user "${user?.name}" with roles "${user?.roles}"`
       );
     }
     this.updateAbilityWithRules(userRules);
