@@ -22,7 +22,7 @@ describe("Scenario: Recording attendance of a child - E2E test", function () {
     cy.get('[placeholder="Search"]')
       .focus()
       .type(this.childName)
-      .wait(500)
+      .wait(1500)
       .type("{downArrow}")
       .type("{enter}");
     cy.get("#mat-tab-label-0-2").click();
