@@ -98,7 +98,7 @@ export class ChangelogComponent implements OnInit {
     }
 
     const lastDisplayedVersion =
-      this.changelogs[this.changelogs.length - 1].tag_name;
+      this.changelogs[this.changelogs.length - 1]?.tag_name;
     this.latestChangesService
       .getChangelogsBeforeVersion(lastDisplayedVersion, 1)
       .pipe(untilDestroyed(this))
