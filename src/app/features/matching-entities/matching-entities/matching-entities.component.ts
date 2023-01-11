@@ -40,6 +40,7 @@ interface MatchingSide extends MatchingSideConfig {
   selectMatch?: (e) => void;
   entityType: EntityConstructor;
   selected?: Entity;
+  selectedMapProperties?: string[];
 }
 
 @RouteTarget("MatchingEntities")
@@ -84,8 +85,6 @@ export class MatchingEntitiesComponent
    */
   @Input() columns: [ColumnConfig, ColumnConfig][];
 
-  @Input() showMap: [string | string[], string | string[]];
-
   @Input()
   matchActionLabel: string = $localize`:Matching button label:create matching`;
 
@@ -120,11 +119,11 @@ export class MatchingEntitiesComponent
       this.initConfig(data.config);
     });
 
-    this.initDistanceColumn();
     this.sideDetails = [
       await this.initSideDetails(this.leftSide, 0),
       await this.initSideDetails(this.rightSide, 1),
     ];
+    this.initDistanceColumn();
     this.columnsToDisplay = ["side-0", "side-1"];
   }
 
@@ -139,7 +138,6 @@ export class MatchingEntitiesComponent
     config = Object.assign({}, defaultConfig, config);
 
     this.columns = config.columns ?? this.columns;
-    this.showMap = config.showMap ?? this.showMap;
     this.matchActionLabel = config.matchActionLabel ?? this.matchActionLabel;
     this.onMatch = config.onMatch ?? this.onMatch;
 
@@ -163,6 +161,7 @@ export class MatchingEntitiesComponent
 
     if (!newSide.entityType) {
       newSide.selected = newSide.selected ?? this.entity;
+      newSide.entityType = newSide.selected.getConstructor();
       this.updateDistanceColumn(sideIndex, newSide.selected);
     }
 
@@ -191,11 +190,15 @@ export class MatchingEntitiesComponent
       this.applySelectedFilters(newSide, {});
     }
 
-    if (this.showMap && newSide.availableEntities) {
+    newSide.mapProperties = Array.isArray(side.mapProperties)
+      ? side.mapProperties
+      : [side.mapProperties];
+    newSide.selectedMapProperties = newSide.mapProperties;
+    if (newSide.mapProperties && newSide.availableEntities) {
       this.mapEntities = this.mapEntities.concat(
         newSide.availableEntities.map((entity) => ({
           entity,
-          property: this.showMap[sideIndex],
+          property: newSide.mapProperties,
         }))
       );
     }
@@ -262,6 +265,10 @@ export class MatchingEntitiesComponent
     }
   }
 
+  updateMapProperties(side: MatchingSide, properties: string[]) {
+    side.selectedMapProperties = [...properties];
+  }
+
   private initDistanceColumn() {
     this.columns?.forEach((column) => {
       column.forEach((row, i) => {
@@ -273,13 +280,12 @@ export class MatchingEntitiesComponent
   }
 
   private getDistanceColumnConfig(index: number) {
-    const mapProp = this.showMap[index];
     return {
       id: "distance",
       label: $localize`:Matching View column name:Distance`,
       view: "DisplayDistance",
       additional: {
-        coordinatesProperty: Array.isArray(mapProp) ? mapProp : [mapProp],
+        coordinatesProperty: this.sideDetails[index].mapProperties,
         compareCoordinates: new ReplaySubject(),
       },
     };
@@ -290,9 +296,8 @@ export class MatchingEntitiesComponent
     this.columns?.forEach((column) => {
       const cell = column[otherIndex];
       if (typeof cell !== "string" && cell?.id === "distance") {
-        const property = this.showMap[index];
-        const coordProps = Array.isArray(property) ? property : [property];
-        const coordinates = coordProps.map((prop) => entity[prop]);
+        const mapProps = this.sideDetails[otherIndex].selectedMapProperties;
+        const coordinates = mapProps.map((prop) => entity[prop]);
         cell.additional.compareCoordinates.next(coordinates);
       }
     });

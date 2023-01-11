@@ -94,10 +94,15 @@ const columnsMapping = [
 
 export const TwoSidedMatching = Template.bind({});
 TwoSidedMatching.args = {
-  leftSide: { entityType: Child.ENTITY_TYPE },
-  rightSide: { entityType: RecurringActivity.ENTITY_TYPE },
+  leftSide: {
+    entityType: Child.ENTITY_TYPE,
+    mapProperties: ["address", "otherAddress"],
+  },
+  rightSide: {
+    entityType: RecurringActivity.ENTITY_TYPE,
+    mapProperties: "address",
+  },
   columns: columnsMapping,
-  showMap: [["address", "otherAddress"], "address"],
 };
 
 export const LeftMatch = Template.bind({});

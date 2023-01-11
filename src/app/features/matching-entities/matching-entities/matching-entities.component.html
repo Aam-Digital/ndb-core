@@ -31,24 +31,24 @@
 </div>
 
 <div class="margin-bottom-large flex-column gap-small">
-  <mat-form-field *ngIf="array.isArray(showMap[0])">
-    <mat-label>{{leftSide.entityType?.label}}</mat-label>
-    <mat-select multiple>
-      <mat-option *ngFor="let prop of showMap[0]">{{ prop }}</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <mat-form-field *ngIf="array.isArray(showMap[1])">
-    <mat-label>{{rightSide.entityType?.label}}</mat-label>
-    <mat-select multiple>
-      <mat-option *ngFor="let prop of showMap[1]">{{ prop }}</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <app-map *ngIf="showMap" class="flex-grow"
+  <div>
+    <ng-container *ngFor="let side of sideDetails">
+      <mat-form-field *ngIf="side.mapProperties.length" style="width: 50%">
+        <mat-label i18n="Label for selection of properties displayed in map|e.g. Map properties - Participant">
+          Map properties - {{side.entityType.label}}
+        </mat-label>
+        <mat-select [(value)]="side.selectedMapProperties" (valueChange)="updateMapProperties(side, $event)" multiple>
+          <mat-option *ngFor="let prop of side.mapProperties" [value]="prop">{{ prop }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </ng-container>
+  </div>
+  <app-map *ngIf="leftSide.mapProperties || rightSide.mapProperties" class="flex-grow"
            [expandable]="true"
            [entities]="mapEntities"
            [highlightedEntities]="[
-              { entity: sideDetails?.[0].selected, property: showMap[0] },
-              { entity: sideDetails?.[1].selected, property: showMap[1]}
+              { entity: sideDetails?.[0].selected, property: sideDetails?.[0].selectedMapProperties },
+              { entity: sideDetails?.[1].selected, property: sideDetails?.[1].selectedMapProperties }
             ]"
            (entityClick)="entityInMapClicked($event)"
   ></app-map>

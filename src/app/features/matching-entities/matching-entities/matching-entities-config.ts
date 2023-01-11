@@ -51,6 +51,8 @@ export interface MatchingSideConfig {
 
   /** columns of the available entities table. Usually inferred from matching columns of the component */
   columns?: ColumnConfig[];
+
+  mapProperties?: string | string[];
 }
 
 export interface NewMatchAction {
