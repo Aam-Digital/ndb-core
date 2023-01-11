@@ -10,6 +10,7 @@ import {
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { NotFoundComponent } from "./not-found/not-found.component";
 import { ComponentRegistry } from "../../../dynamic-components";
+import { AuthGuard } from "../../session/auth.guard";
 
 /**
  * The RouterService dynamically sets up Angular routing from config loaded through the {@link ConfigService}.
@@ -88,9 +89,10 @@ export class RouterService {
 
   private generateRouteFromConfig(view: ViewConfig, route: Route): Route {
     const routeData: RouteData = {};
+    route.canActivate = [AuthGuard];
 
     if (view.permittedUserRoles) {
-      route.canActivate = [UserRoleGuard];
+      route.canActivate.push(UserRoleGuard);
       routeData.permittedUserRoles = view.permittedUserRoles;
     }
 

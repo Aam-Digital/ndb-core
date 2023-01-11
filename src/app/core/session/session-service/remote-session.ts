@@ -75,29 +75,25 @@ export class RemoteSession extends SessionService {
   }
 
   public async handleSuccessfulLogin(userObject: AuthUser) {
-    this.database.initIndexedDB(
+    this.database.initRemoteDB(
       `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}`,
-      {
-        adapter: "http",
-        skip_setup: true,
-        fetch: (url, opts: any) => {
-          if (typeof url === "string") {
-            const remoteUrl =
-              AppSettings.DB_PROXY_PREFIX +
-              url.split(AppSettings.DB_PROXY_PREFIX)[1];
-            return this.sendRequest(remoteUrl, opts).then((initialRes) =>
-              // retry login if request failed with unauthorized
-              initialRes.status === HttpStatusCode.Unauthorized
-                ? this.authService
-                    .autoLogin()
-                    .then(() => this.sendRequest(remoteUrl, opts))
-                    // return initial response if request failed again
-                    .then((newRes) => (newRes.ok ? newRes : initialRes))
-                    .catch(() => initialRes)
-                : initialRes
-            );
-          }
-        },
+      (url, opts: any) => {
+        if (typeof url === "string") {
+          const remoteUrl =
+            AppSettings.DB_PROXY_PREFIX +
+            url.split(AppSettings.DB_PROXY_PREFIX)[1];
+          return this.sendRequest(remoteUrl, opts).then((initialRes) =>
+            // retry login if request failed with unauthorized
+            initialRes.status === HttpStatusCode.Unauthorized
+              ? this.authService
+                  .autoLogin()
+                  .then(() => this.sendRequest(remoteUrl, opts))
+                  // return initial response if request failed again
+                  .then((newRes) => (newRes.ok ? newRes : initialRes))
+                  .catch(() => initialRes)
+              : initialRes
+          );
+        }
       }
     );
     this.currentDBUser = userObject;

@@ -29,14 +29,17 @@ import { SessionService } from "../session-service/session.service";
 import { LoginState } from "../session-states/login-state.enum";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { AuthService } from "../auth/auth.service";
+import { Subject } from "rxjs";
+import { ActivatedRoute, Router } from "@angular/router";
 
 describe("LoginComponent", () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
   let mockSessionService: jasmine.SpyObj<SessionService>;
+  let loginState = new Subject();
 
   beforeEach(waitForAsync(() => {
-    mockSessionService = jasmine.createSpyObj(["login"]);
+    mockSessionService = jasmine.createSpyObj(["login"], { loginState });
     TestBed.configureTestingModule({
       imports: [LoginComponent, MockedTestingModule],
       providers: [
@@ -90,6 +93,17 @@ describe("LoginComponent", () => {
     const firstInputElement = document.getElementsByTagName("input")[0];
     expect(document.activeElement).toBe(firstInputElement);
   }));
+
+  it("should route to redirect uri once state changes to 'logged-in'", () => {
+    const navigateSpy = spyOn(TestBed.inject(Router), "navigateByUrl");
+    TestBed.inject(ActivatedRoute).snapshot.queryParams = {
+      redirect_uri: "someUrl",
+    };
+
+    loginState.next(LoginState.LOGGED_IN);
+
+    expect(navigateSpy).toHaveBeenCalledWith("someUrl");
+  });
 
   function expectErrorMessageOnState(loginState: LoginState) {
     mockSessionService.login.and.resolveTo(loginState);

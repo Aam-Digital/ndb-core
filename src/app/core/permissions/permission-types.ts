@@ -38,6 +38,8 @@ export type DatabaseRule = RawRuleOf<Ability<[EntityAction, string]>>;
  * The rules defined in 'default' will be prepended to any other rules defined for a user
  */
 export interface DatabaseRules {
+  public?: DatabaseRule[];
   default?: DatabaseRule[];
+
   [key: string]: DatabaseRule[];
 }
