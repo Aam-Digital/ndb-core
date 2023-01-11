@@ -36,6 +36,7 @@ const entitiesA = [
     address: { lat: 52.4730412, lon: 13.4319106 },
   }),
 ];
+RecurringActivity.schema.set("center", Child.schema.get("center"));
 const entitiesB = [
   Object.assign(Child.create("sample child"), {
     gender: genders[1],
