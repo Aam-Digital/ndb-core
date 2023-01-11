@@ -75,7 +75,7 @@ export class MatchingEntitiesComponent
 
   @Input() leftSide: MatchingSideConfig = {};
   @Input() rightSide: MatchingSideConfig = {};
-  mapEntities: LocationEntity[] = [];
+  mapEntities: (LocationEntity & { side: MatchingSide })[] = [];
 
   columnsToDisplay = [];
 
@@ -198,12 +198,20 @@ export class MatchingEntitiesComponent
       this.mapEntities = this.mapEntities.concat(
         newSide.availableEntities.map((entity) => ({
           entity,
-          property: newSide.mapProperties,
+          property: newSide.selectedMapProperties,
+          side: newSide,
         }))
       );
     }
 
     return newSide;
+  }
+
+  updateMapMarkers() {
+    this.mapEntities = this.mapEntities.map((mapEntity) => ({
+      ...mapEntity,
+      property: mapEntity.side.selectedMapProperties,
+    }));
   }
 
   private highlightSelectedRow(
@@ -263,10 +271,6 @@ export class MatchingEntitiesComponent
     if (side) {
       side.selectMatch(entity);
     }
-  }
-
-  updateMapProperties(side: MatchingSide, properties: string[]) {
-    side.selectedMapProperties = [...properties];
   }
 
   private initDistanceColumn() {
