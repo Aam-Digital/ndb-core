@@ -54,7 +54,6 @@ export class DemoDataInitializerService {
       DemoUserGeneratorService.DEFAULT_PASSWORD
     );
 
-    this.initializeDefaultDatabase();
     await this.demoDataService.publishDemoData();
 
     dialogRef.close();
@@ -121,15 +120,6 @@ export class DemoDataInitializerService {
     if (this.liveSyncHandle) {
       this.liveSyncHandle.cancel();
       this.liveSyncHandle = undefined;
-    }
-  }
-
-  private initializeDefaultDatabase() {
-    const dbName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${AppSettings.DB_NAME}`;
-    if (environment.session_type === SessionType.mock) {
-      this.pouchDatabase.initInMemoryDB(dbName);
-    } else {
-      this.pouchDatabase.initIndexedDB(dbName);
     }
   }
 }

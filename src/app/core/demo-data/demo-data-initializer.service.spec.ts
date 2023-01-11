@@ -83,7 +83,7 @@ describe("DemoDataInitializerService", () => {
     );
   });
 
-  it("it should publish the demo data after loging in the default user", fakeAsync(() => {
+  it("it should publish the demo data after logging in the default user", fakeAsync(() => {
     service.run();
 
     expect(mockSessionService.login).toHaveBeenCalled();
@@ -111,17 +111,6 @@ describe("DemoDataInitializerService", () => {
     tick();
 
     expect(closeSpy).toHaveBeenCalled();
-  }));
-
-  it("should initialize the database before publishing", fakeAsync(() => {
-    const database = TestBed.inject(Database) as PouchDatabase;
-    expect(database.getPouchDB()).toBeUndefined();
-
-    service.run();
-    tick();
-
-    expect(database.getPouchDB()).toBeDefined();
-    expect(database.getPouchDB().name).toBe(demoUserDBName);
   }));
 
   it("should sync with existing demo data when another user logs in", fakeAsync(() => {
