@@ -173,7 +173,7 @@ describe("Note", () => {
     expect(reloadedEntity.getAttendance("1").status).toEqual(status);
   });
 
-  it("sets default NullAttendanceStatusType for attendance entries with invalid value", function () {
+  it("sets default NullAttendanceStatusType for attendance entries with missing value", function () {
     const status = testStatusTypes.find((c) => c.id === "ABSENT");
     const rawData = {
       _id: ENTITY_TYPE + ":" + "test",
@@ -188,9 +188,13 @@ describe("Note", () => {
     const reloadedEntity = new Note();
     entitySchemaService.loadDataIntoEntity(reloadedEntity, rawData);
 
-    expect(reloadedEntity.getAttendance("2").status).toEqual(
-      NullAttendanceStatusType
-    );
+    expect(reloadedEntity.getAttendance("2").status).toEqual({
+      id: "non-existing-id",
+      label: "[invalid option] non-existing-id",
+      shortName: "?",
+      countAs: AttendanceLogicalStatus.IGNORE,
+      isInvalidOption: true,
+    } as any);
     expect(reloadedEntity.getAttendance("3").status).toEqual(
       NullAttendanceStatusType
     );
