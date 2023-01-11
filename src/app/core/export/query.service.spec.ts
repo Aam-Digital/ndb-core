@@ -6,16 +6,16 @@ import {
   QueryService,
 } from "./query.service";
 import { Child } from "../../child-dev-project/children/model/child";
-import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../entity/entity-mapper.service";
 import { School } from "../../child-dev-project/schools/model/school";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
 import moment from "moment";
-import { defaultAttendanceStatusTypes } from "../../core/config/default-config/default-attendance-status-types";
+import { defaultAttendanceStatusTypes } from "../config/default-config/default-attendance-status-types";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
-import { defaultInteractionTypes } from "../../core/config/default-config/default-interaction-types";
+import { defaultInteractionTypes } from "../config/default-config/default-interaction-types";
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
-import { Database } from "../../core/database/database";
+import { Database } from "../database/database";
 import { Note } from "../../child-dev-project/notes/model/note";
 import { genders } from "../../child-dev-project/children/model/genders";
 import { EntityConfigService } from "app/core/entity/entity-config.service";

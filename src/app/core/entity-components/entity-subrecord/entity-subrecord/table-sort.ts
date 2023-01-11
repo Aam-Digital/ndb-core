@@ -39,7 +39,7 @@ function getComparableValue<OBJECT, PROPERTY extends keyof OBJECT>(
   if (Ordering.hasOrdinalValue(value)) {
     return value._ordinal;
   }
-  value = getReadableValue(obj, key);
+  value = getReadableValue(value);
   if (value instanceof Date) {
     return value.getTime() + "";
   } else if (typeof value === "number") {

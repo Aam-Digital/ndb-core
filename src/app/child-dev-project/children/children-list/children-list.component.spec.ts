@@ -16,7 +16,7 @@ import {
 } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { School } from "../../schools/model/school";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { ExportService } from "../../../core/export/export-service/export.service";
+import { DownloadService } from "../../../core/export/download-service/download.service";
 
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;
@@ -88,7 +88,7 @@ describe("ChildrenListComponent", () => {
           useValue: mockChildrenService,
         },
         { provide: ActivatedRoute, useValue: routeMock },
-        { provide: ExportService, useValue: {} },
+        { provide: DownloadService, useValue: {} },
       ],
     }).compileComponents();
   }));
