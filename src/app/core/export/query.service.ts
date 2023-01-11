@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
-import { Entity, EntityConstructor } from "../../core/entity/model/entity";
+import { Entity, EntityConstructor } from "../entity/model/entity";
 import { Child } from "../../child-dev-project/children/model/child";
 import { School } from "../../child-dev-project/schools/model/school";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { Note } from "../../child-dev-project/notes/model/note";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
-import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../entity/entity-mapper.service";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { ChildrenService } from "../../child-dev-project/children/children.service";
 import { AttendanceService } from "../../child-dev-project/attendance/attendance.service";

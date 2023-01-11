@@ -899,56 +899,33 @@ export const defaultJsonConfig = {
           "mode": "exporting",
           "aggregationDefinitions": [
             {
-              "query": `${EventNote.ENTITY_TYPE}:toArray:filterByObjectAttribute(category, id, SCHOOL_CLASS)[* date >= ? & date <= ?]:getAttendanceArray:getAttendanceReport`,
+              "query": `${EventNote.ENTITY_TYPE}:toArray[* date >= ? & date <= ?]`,
+              groupBy: { label: "Type", property: "category" },
               "subQueries": [
                 {
-                  "label": $localize`:Name of column of a report:Type`,
-                  "query": ":setString(" + $localize`School Class` + ")"
-                },
-                {
-                  "label": $localize`:Name of a column of a report:Name`,
-                  "query": `.participant:toEntities(Child).name`
-                },
-                {
-                  "label": $localize`:Name of a column of a report:Total`,
-                  "query": `total`
-                },
-                {
-                  "label": $localize`:Name of a column of a report:Present`,
-                  "query": `present`
-                },
-                {
-                  "label": $localize`:Name of a column of a report:Rate`,
-                  "query": `percentage`
-                },
-                {
-                  "label": $localize`:Name of a column of a report:Late`,
-                  "query": `detailedStatus.LATE`
-                }
-              ]
-            },
-            {
-              "query": `${EventNote.ENTITY_TYPE}:toArray:filterByObjectAttribute(category, id, COACHING_CLASS)[* date >= ? & date <= ?]:getAttendanceArray:getAttendanceReport`,
-              "subQueries": [
-                {
-                  "label": $localize`:Name of column of a report:Type`,
-                  "query": ":setString(" + $localize`Coaching Class` + ")"
-                },
-                {
-                  "label": $localize`:Name of a column of a report:Name`,
-                  "query": `.participant:toEntities(Child).name`
-                },
-                {
-                  "label": $localize`:Name of a column of a report:Total`,
-                  "query": `total`
-                },
-                {
-                  "label": $localize`:Name of a column of a report:Present`,
-                  "query": `present`
-                },
-                {
-                  "label": $localize`:Name of a column of a report:Rate`,
-                  "query": `percentage`
+                  query: ":getAttendanceArray:getAttendanceReport",
+                  subQueries: [
+                    {
+                      "label": $localize`:Name of a column of a report:Name`,
+                      "query": `.participant:toEntities(Child).name`
+                    },
+                    {
+                      "label": $localize`:Name of a column of a report:Total`,
+                      "query": `total`
+                    },
+                    {
+                      "label": $localize`:Name of a column of a report:Present`,
+                      "query": `present`
+                    },
+                    {
+                      "label": $localize`:Name of a column of a report:Rate`,
+                      "query": `percentage`
+                    },
+                    {
+                      "label": $localize`:Name of a column of a report:Late`,
+                      "query": `detailedStatus.LATE`
+                    }
+                  ]
                 }
               ]
             },

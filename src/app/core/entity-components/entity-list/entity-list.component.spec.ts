@@ -11,7 +11,6 @@ import { Entity } from "../../entity/model/entity";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { AttendanceService } from "../../../child-dev-project/attendance/attendance.service";
-import { ExportService } from "../../export/export-service/export.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subject } from "rxjs";
@@ -93,7 +92,6 @@ describe("EntityListComponent", () => {
     TestBed.configureTestingModule({
       imports: [EntityListComponent, MockedTestingModule.withState()],
       providers: [
-        { provide: ExportService, useValue: {} },
         { provide: AttendanceService, useValue: mockAttendanceService },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: FormDialogService, useValue: null },

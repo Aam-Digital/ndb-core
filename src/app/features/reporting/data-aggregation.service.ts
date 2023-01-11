@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { QueryService } from "./query.service";
+import { QueryService } from "../../core/export/query.service";
 import { GroupByDescription, ReportRow } from "./report-row";
 
 export interface Aggregation {
@@ -12,7 +12,7 @@ export interface Aggregation {
 @Injectable({
   providedIn: "root",
 })
-export class ReportingService {
+export class DataAggregationService {
   private fromDate: Date;
   private toDate: Date;
 
