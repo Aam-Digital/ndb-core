@@ -1,4 +1,10 @@
-import { Directive, Input, OnChanges, ViewContainerRef } from "@angular/core";
+import {
+  ChangeDetectorRef,
+  Directive,
+  Input,
+  OnChanges,
+  ViewContainerRef,
+} from "@angular/core";
 import { DynamicComponentConfig } from "./dynamic-component-config.interface";
 import { ComponentRegistry } from "../../../dynamic-components";
 
@@ -19,7 +25,8 @@ export class DynamicComponentDirective implements OnChanges {
 
   constructor(
     public viewContainerRef: ViewContainerRef,
-    private components: ComponentRegistry
+    private components: ComponentRegistry,
+    private changeDetector: ChangeDetectorRef
   ) {}
 
   async ngOnChanges() {
@@ -44,5 +51,7 @@ export class DynamicComponentDirective implements OnChanges {
         this.appDynamicComponent.config
       );
     }
+    // it seems like the asynchronicity of this function requires this
+    this.changeDetector.detectChanges();
   }
 }
