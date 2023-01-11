@@ -28,8 +28,8 @@ import { ComponentRegistry } from "../dynamic-components";
 })
 export class DatabaseTestingModule {
   constructor(pouchDatabase: PouchDatabase, components: ComponentRegistry) {
-    components.allowDuplicates();
     environment.session_type = SessionType.mock;
     pouchDatabase.initInMemoryDB();
+    components.allowDuplicates();
   }
 }

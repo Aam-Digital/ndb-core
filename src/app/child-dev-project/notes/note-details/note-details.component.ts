@@ -6,7 +6,7 @@ import { INTERACTION_TYPE_CONFIG_ID } from "../model/interaction-type.interface"
 import { Child } from "../../children/model/child";
 import { User } from "../../../core/user/user";
 import { School } from "../../schools/model/school";
-import { ExportColumnConfig } from "../../../core/export/export-service/export-column-config";
+import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
 import { ConfigService } from "../../../core/config/config.service";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { compareEnums } from "../../../utils/utils";

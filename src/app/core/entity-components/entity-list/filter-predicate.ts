@@ -1,12 +1,8 @@
 import { Entity } from "../../entity/model/entity";
 import { getReadableValue } from "../entity-subrecord/entity-subrecord/value-accessor";
 
-export function entityFilterPredicate<T extends Entity, P extends keyof T>(
-  data: T,
-  filter: string
-): boolean {
-  const keys = Object.keys(data) as P[];
-  return keys.some((property) =>
-    String(getReadableValue(data, property)).toLowerCase().includes(filter)
+export function entityFilterPredicate(data: Entity, filter: string): boolean {
+  return [...Object.values(data)].some((value) =>
+    String(getReadableValue(value)).toLowerCase().includes(filter)
   );
 }

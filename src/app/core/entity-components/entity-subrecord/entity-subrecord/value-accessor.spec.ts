@@ -7,13 +7,14 @@ describe("getReadableValue", () => {
     type: string
   ) {
     let index = 0;
-    for (const key of Object.keys(obj) as PROPERTY[]) {
-      const accessed = getReadableValue(obj, key);
+    for (const value of Object.values(obj)) {
+      const accessed = getReadableValue(value);
       expect(accessed).toEqual(expected[index]);
       expect(typeof accessed).toBe(type);
       index += 1;
     }
   }
+
   it("should return a string for string-objects", () => {
     const obj = {
       a: "ABC",
@@ -34,25 +35,21 @@ describe("getReadableValue", () => {
 
   it("should return the label when the queried object has a 'label' key", () => {
     const object = {
-      data: {
-        label: "data label",
-        value1: 123,
-        value2: "hello",
-      },
+      label: "data label",
+      value1: 123,
+      value2: "hello",
     };
-    const accessed = getReadableValue(object, "data");
+    const accessed = getReadableValue(object);
     expect(typeof accessed).toBe("string");
     expect(accessed).toBe("data label");
   });
 
   it("should return the object itself if it does not contain a label", () => {
     const object = {
-      data: {
-        value1: 123,
-        value2: "hello",
-      },
+      value1: 123,
+      value2: "hello",
     };
-    const accessed = getReadableValue(object, "data");
+    const accessed = getReadableValue(object);
     expect(typeof accessed).toBe("object");
     expect(accessed).toEqual({
       value1: 123,
@@ -60,14 +57,12 @@ describe("getReadableValue", () => {
     });
   });
 
-  it("should return a array of labels if a object has an array of configurable enums", () => {
-    const object = {
-      arr: [
-        { label: "Label1", value: "val1" },
-        { label: "Label2", value: "val2" },
-      ],
-    };
-    const readableValue = getReadableValue(object, "arr");
+  it("should return a array of labels if a object is an array of configurable enums", () => {
+    const object = [
+      { label: "Label1", value: "val1" },
+      { label: "Label2", value: "val2" },
+    ];
+    const readableValue = getReadableValue(object);
     expect(readableValue).toEqual(["Label1", "Label2"]);
   });
 });

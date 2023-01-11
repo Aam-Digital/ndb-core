@@ -1,7 +1,7 @@
 import { Entity } from "../../entity/model/entity";
 import { FilterSelectionOption } from "../../filter/filter-selection/filter-selection";
 import { FormFieldConfig } from "../entity-form/entity-form/FormConfig";
-import { ExportColumnConfig } from "../../export/export-service/export-column-config";
+import { ExportColumnConfig } from "../../export/data-transformation-service/export-column-config";
 import { Sort } from "@angular/material/sort";
 
 export interface EntityListConfig {

@@ -1,8 +1,11 @@
 import { TestBed } from "@angular/core/testing";
 
-import { Aggregation, ReportingService } from "./reporting.service";
+import {
+  Aggregation,
+  DataAggregationService,
+} from "./data-aggregation.service";
 import { Child } from "../../child-dev-project/children/model/child";
-import { QueryService } from "./query.service";
+import { QueryService } from "../../core/export/query.service";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
 import moment from "moment";
 import { School } from "../../child-dev-project/schools/model/school";
@@ -10,15 +13,15 @@ import { ChildSchoolRelation } from "../../child-dev-project/children/model/chil
 import { centersUnique } from "../../child-dev-project/children/demo-data-generators/fixtures/centers";
 import { genders } from "../../child-dev-project/children/model/genders";
 
-describe("ReportingService", () => {
-  let service: ReportingService;
+describe("DataAggregationService", () => {
+  let service: DataAggregationService;
   let mockQueryService: jasmine.SpyObj<QueryService>;
   beforeEach(() => {
     mockQueryService = jasmine.createSpyObj(["queryData"]);
     TestBed.configureTestingModule({
       providers: [{ provide: QueryService, useValue: mockQueryService }],
     });
-    service = TestBed.inject(ReportingService);
+    service = TestBed.inject(DataAggregationService);
   });
 
   it("should be created", () => {
